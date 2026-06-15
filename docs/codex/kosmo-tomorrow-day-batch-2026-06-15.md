@@ -1,20 +1,20 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T15:49:04.575Z
+Generated: 2026-06-15T15:56:47.802Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
 
 - Execution mode: source_free_path_until_exact_owner_unlock
 - Source-root unlocked: no
-- Owner unlock components: 9/11
-- Owner unlock guards: 115/115
+- Owner unlock components: 23/23
+- Owner unlock guards: 236/236
 - Acceptance known checks: -
 - Source queue: source_independent_work_queue_ready
 - Codex executable now: 0
 - Open owner actions: 2
 - Live GitHub probe: 9/9
-- Latest handoff: 270
+- Latest handoff: 278
 - Public-ready after plan: 0
 
 ## Policy

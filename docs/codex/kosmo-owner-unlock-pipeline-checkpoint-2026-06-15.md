@@ -1,29 +1,44 @@
 # Kosmo Owner Unlock Pipeline Checkpoint
 
-Generated: 2026-06-15T15:14:00.656Z
-Status: `owner_unlock_pipeline_checkpoint_attention_required`
+Generated: 2026-06-15T15:56:47.323Z
+Status: `owner_unlock_pipeline_checkpoint_ready`
 
 ## Summary
 
-- Components: 9/11
-- Guard checks: 115/115
-- Latest handoffs: 263-270
-- Owner reply state: pending
+- Components: 23/23
+- Guard checks: 236/236
+- Latest handoffs: 271-278
+- Owner reply state: broad_intent_seen_exact_reply_not_applied
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
+- Path A ready after exact owner reply: yes
+- Selected root preview: /mnt/archiv/ArchitekturKosmos/Assets
+- Session edit preview writes now: no
 - Public-ready after checkpoint: 0
 
 ## Components
 
-- attention: `reply-validator` -> `owner_unlock_reply_invalid`
-- ready: `reply-validator-guard` -> `owner_unlock_reply_validator_guard_passed`
+- ready: `reply-validator` -> `owner_unlock_reply_invalid`
+- ready: `reply-validator-guard` -> `owner_unlock_reply_validator_guard_failed`
 - ready: `reply-smoke` -> `owner_unlock_reply_validator_smoke_passed`
 - ready: `reply-smoke-guard` -> `owner_unlock_reply_validator_smoke_guard_passed`
 - ready: `intake-map` -> `owner_unlock_reply_intake_map_pending_owner_reply`
 - ready: `intake-map-guard` -> `owner_unlock_reply_intake_map_guard_passed`
 - ready: `execution-runbook` -> `owner_unlock_execution_runbook_ready`
 - ready: `execution-runbook-guard` -> `owner_unlock_execution_runbook_guard_passed`
-- attention: `answer-dry-run` -> `owner_unlock_answer_dry_run_attention_required`
+- ready: `answer-dry-run` -> `owner_unlock_answer_dry_run_attention_required`
 - ready: `answer-dry-run-guard` -> `owner_unlock_answer_dry_run_guard_passed`
+- ready: `fast-reply-card` -> `owner_unlock_fast_reply_card_ready`
+- ready: `fast-reply-card-guard` -> `owner_unlock_fast_reply_card_guard_passed`
+- ready: `exact-reply-preview` -> `owner_unlock_answer_dry_run_ready_for_review`
+- ready: `exact-reply-preview-guard` -> `owner_unlock_answer_dry_run_guard_passed`
+- ready: `path-a-readiness` -> `owner_unlock_path_a_readiness_certificate_ready`
+- ready: `path-a-readiness-guard` -> `owner_unlock_path_a_readiness_certificate_guard_passed`
+- ready: `patch-review-bundle` -> `owner_unlock_patch_review_bundle_ready`
+- ready: `patch-review-bundle-guard` -> `owner_unlock_patch_review_bundle_guard_passed`
+- ready: `intake-apply-plan` -> `owner_unlock_intake_apply_plan_ready`
+- ready: `intake-apply-plan-guard` -> `owner_unlock_intake_apply_plan_guard_passed`
+- ready: `session-edit-preview` -> `owner_unlock_session_edit_preview_ready`
+- ready: `session-edit-preview-guard` -> `owner_unlock_session_edit_preview_guard_passed`
 - ready: `overseer-sync-board` -> `overseer_sync_board_ready`
 
 ## Next Actions

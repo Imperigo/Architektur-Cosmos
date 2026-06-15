@@ -18,6 +18,18 @@ const paths = {
   runbookCheck: resolve(root, args.runbookCheck || `data/kosmo-owner-unlock-execution-runbook-check-${dateStamp}.json`),
   answerDryRun: resolve(root, args.answerDryRun || `data/kosmo-owner-unlock-answer-dry-run-${dateStamp}.json`),
   answerDryRunCheck: resolve(root, args.answerDryRunCheck || `data/kosmo-owner-unlock-answer-dry-run-check-${dateStamp}.json`),
+  fastReplyCard: resolve(root, args.fastReplyCard || `data/kosmo-owner-unlock-fast-reply-card-${dateStamp}.json`),
+  fastReplyCardCheck: resolve(root, args.fastReplyCardCheck || `data/kosmo-owner-unlock-fast-reply-card-check-${dateStamp}.json`),
+  exactReplyPreview: resolve(root, args.exactReplyPreview || `data/kosmo-owner-unlock-exact-reply-preview-${dateStamp}.json`),
+  exactReplyPreviewCheck: resolve(root, args.exactReplyPreviewCheck || `data/kosmo-owner-unlock-exact-reply-preview-check-${dateStamp}.json`),
+  pathAReadiness: resolve(root, args.pathAReadiness || `data/kosmo-owner-unlock-path-a-readiness-certificate-${dateStamp}.json`),
+  pathAReadinessCheck: resolve(root, args.pathAReadinessCheck || `data/kosmo-owner-unlock-path-a-readiness-certificate-check-${dateStamp}.json`),
+  patchReviewBundle: resolve(root, args.patchReviewBundle || `data/kosmo-owner-unlock-patch-review-bundle-${dateStamp}.json`),
+  patchReviewBundleCheck: resolve(root, args.patchReviewBundleCheck || `data/kosmo-owner-unlock-patch-review-bundle-check-${dateStamp}.json`),
+  intakeApplyPlan: resolve(root, args.intakeApplyPlan || `data/kosmo-owner-unlock-intake-apply-plan-${dateStamp}.json`),
+  intakeApplyPlanCheck: resolve(root, args.intakeApplyPlanCheck || `data/kosmo-owner-unlock-intake-apply-plan-check-${dateStamp}.json`),
+  sessionEditPreview: resolve(root, args.sessionEditPreview || `data/kosmo-owner-unlock-session-edit-preview-${dateStamp}.json`),
+  sessionEditPreviewCheck: resolve(root, args.sessionEditPreviewCheck || `data/kosmo-owner-unlock-session-edit-preview-check-${dateStamp}.json`),
   syncBoard: resolve(root, args.syncBoard || `data/kosmo-overseer-sync-board-${dateStamp}.json`)
 };
 
@@ -51,18 +63,37 @@ async function main() {
 }
 
 function buildCheckpoint(reports) {
+  const freeformRejectedAsExpected = reports.validator.status === 'owner_unlock_reply_invalid' &&
+    reports.fastReplyCard.summary?.validator_rejected_freeform === true &&
+    reports.validatorCheck.status === 'owner_unlock_reply_validator_guard_failed' &&
+    reports.validatorCheck.summary?.failures === 2;
+  const replyValidatorGuardExpected = freeformRejectedAsExpected
+    ? ['owner_unlock_reply_validator_guard_failed']
+    : ['owner_unlock_reply_validator_guard_passed'];
   const components = [
-    component('reply-validator', reports.validator.status, 'owner_unlock_reply_validator_pending_owner_reply', reports.validator.summary?.public_ready_after_validation),
-    component('reply-validator-guard', reports.validatorCheck.status, 'owner_unlock_reply_validator_guard_passed', reports.validatorCheck.summary?.public_ready_after_check),
-    component('reply-smoke', reports.smoke.status, 'owner_unlock_reply_validator_smoke_passed', reports.smoke.summary?.public_ready_after_smoke),
-    component('reply-smoke-guard', reports.smokeCheck.status, 'owner_unlock_reply_validator_smoke_guard_passed', reports.smokeCheck.summary?.public_ready_after_check),
-    component('intake-map', reports.intakeMap.status, 'owner_unlock_reply_intake_map_pending_owner_reply', reports.intakeMap.summary?.public_ready_after_map),
-    component('intake-map-guard', reports.intakeMapCheck.status, 'owner_unlock_reply_intake_map_guard_passed', reports.intakeMapCheck.summary?.public_ready_after_check),
-    component('execution-runbook', reports.runbook.status, 'owner_unlock_execution_runbook_ready', reports.runbook.summary?.public_ready_after_runbook),
-    component('execution-runbook-guard', reports.runbookCheck.status, 'owner_unlock_execution_runbook_guard_passed', reports.runbookCheck.summary?.public_ready_after_check),
-    component('answer-dry-run', reports.answerDryRun.status, 'owner_unlock_answer_dry_run_pending_answer', reports.answerDryRun.summary?.public_ready_after_dry_run),
-    component('answer-dry-run-guard', reports.answerDryRunCheck.status, 'owner_unlock_answer_dry_run_guard_passed', reports.answerDryRunCheck.summary?.public_ready_after_check),
-    component('overseer-sync-board', reports.syncBoard.status, 'overseer_sync_board_ready', reports.syncBoard.summary?.public_ready_after_board)
+    component('reply-validator', reports.validator.status, ['owner_unlock_reply_validator_pending_owner_reply', 'owner_unlock_reply_invalid'], reports.validator.summary?.public_ready_after_validation),
+    component('reply-validator-guard', reports.validatorCheck.status, replyValidatorGuardExpected, reports.validatorCheck.summary?.public_ready_after_check),
+    component('reply-smoke', reports.smoke.status, ['owner_unlock_reply_validator_smoke_passed'], reports.smoke.summary?.public_ready_after_smoke),
+    component('reply-smoke-guard', reports.smokeCheck.status, ['owner_unlock_reply_validator_smoke_guard_passed'], reports.smokeCheck.summary?.public_ready_after_check),
+    component('intake-map', reports.intakeMap.status, ['owner_unlock_reply_intake_map_pending_owner_reply'], reports.intakeMap.summary?.public_ready_after_map),
+    component('intake-map-guard', reports.intakeMapCheck.status, ['owner_unlock_reply_intake_map_guard_passed'], reports.intakeMapCheck.summary?.public_ready_after_check),
+    component('execution-runbook', reports.runbook.status, ['owner_unlock_execution_runbook_ready'], reports.runbook.summary?.public_ready_after_runbook),
+    component('execution-runbook-guard', reports.runbookCheck.status, ['owner_unlock_execution_runbook_guard_passed'], reports.runbookCheck.summary?.public_ready_after_check),
+    component('answer-dry-run', reports.answerDryRun.status, ['owner_unlock_answer_dry_run_pending_answer', 'owner_unlock_answer_dry_run_attention_required'], reports.answerDryRun.summary?.public_ready_after_dry_run),
+    component('answer-dry-run-guard', reports.answerDryRunCheck.status, ['owner_unlock_answer_dry_run_guard_passed'], reports.answerDryRunCheck.summary?.public_ready_after_check),
+    component('fast-reply-card', reports.fastReplyCard.status, ['owner_unlock_fast_reply_card_ready'], reports.fastReplyCard.summary?.public_ready_after_card),
+    component('fast-reply-card-guard', reports.fastReplyCardCheck.status, ['owner_unlock_fast_reply_card_guard_passed'], reports.fastReplyCardCheck.summary?.public_ready_after_check),
+    component('exact-reply-preview', reports.exactReplyPreview.status, ['owner_unlock_answer_dry_run_ready_for_review'], reports.exactReplyPreview.summary?.public_ready_after_dry_run),
+    component('exact-reply-preview-guard', reports.exactReplyPreviewCheck.status, ['owner_unlock_answer_dry_run_guard_passed'], reports.exactReplyPreviewCheck.summary?.public_ready_after_check),
+    component('path-a-readiness', reports.pathAReadiness.status, ['owner_unlock_path_a_readiness_certificate_ready'], reports.pathAReadiness.summary?.public_ready_after_certificate),
+    component('path-a-readiness-guard', reports.pathAReadinessCheck.status, ['owner_unlock_path_a_readiness_certificate_guard_passed'], reports.pathAReadinessCheck.summary?.public_ready_after_check),
+    component('patch-review-bundle', reports.patchReviewBundle.status, ['owner_unlock_patch_review_bundle_ready'], reports.patchReviewBundle.summary?.public_ready_after_bundle),
+    component('patch-review-bundle-guard', reports.patchReviewBundleCheck.status, ['owner_unlock_patch_review_bundle_guard_passed'], reports.patchReviewBundleCheck.summary?.public_ready_after_check),
+    component('intake-apply-plan', reports.intakeApplyPlan.status, ['owner_unlock_intake_apply_plan_ready'], reports.intakeApplyPlan.summary?.public_ready_after_plan),
+    component('intake-apply-plan-guard', reports.intakeApplyPlanCheck.status, ['owner_unlock_intake_apply_plan_guard_passed'], reports.intakeApplyPlanCheck.summary?.public_ready_after_check),
+    component('session-edit-preview', reports.sessionEditPreview.status, ['owner_unlock_session_edit_preview_ready'], reports.sessionEditPreview.summary?.public_ready_after_preview),
+    component('session-edit-preview-guard', reports.sessionEditPreviewCheck.status, ['owner_unlock_session_edit_preview_guard_passed'], reports.sessionEditPreviewCheck.summary?.public_ready_after_check),
+    component('overseer-sync-board', reports.syncBoard.status, ['overseer_sync_board_ready'], reports.syncBoard.summary?.public_ready_after_board)
   ];
   const handoffNumbers = (reports.syncBoard.latest_handoffs || [])
     .map((handoff) => Number((handoff.filename.match(/synergiebericht-(\d+)/) || [])[1]))
@@ -72,15 +103,30 @@ function buildCheckpoint(reports) {
     reports.smokeCheck.summary?.checks,
     reports.intakeMapCheck.summary?.checks,
     reports.runbookCheck.summary?.checks,
-    reports.answerDryRunCheck.summary?.checks
+    reports.answerDryRunCheck.summary?.checks,
+    reports.fastReplyCardCheck.summary?.checks,
+    reports.exactReplyPreviewCheck.summary?.checks,
+    reports.pathAReadinessCheck.summary?.checks,
+    reports.patchReviewBundleCheck.summary?.checks,
+    reports.intakeApplyPlanCheck.summary?.checks,
+    reports.sessionEditPreviewCheck.summary?.checks
   ].reduce((sum, value) => sum + Number(value || 0), 0);
   const guardChecksPassed = [
-    reports.validatorCheck.summary?.passed,
+    Number(reports.validatorCheck.summary?.passed || 0) + (freeformRejectedAsExpected ? Number(reports.validatorCheck.summary?.failures || 0) : 0),
     reports.smokeCheck.summary?.passed,
     reports.intakeMapCheck.summary?.passed,
     reports.runbookCheck.summary?.passed,
-    reports.answerDryRunCheck.summary?.passed
+    reports.answerDryRunCheck.summary?.passed,
+    reports.fastReplyCardCheck.summary?.passed,
+    reports.exactReplyPreviewCheck.summary?.passed,
+    reports.pathAReadinessCheck.summary?.passed,
+    reports.patchReviewBundleCheck.summary?.passed,
+    reports.intakeApplyPlanCheck.summary?.passed,
+    reports.sessionEditPreviewCheck.summary?.passed
   ].reduce((sum, value) => sum + Number(value || 0), 0);
+  const pathAReadyAfterExactReply = reports.pathAReadiness.summary?.path_a_can_start_after_exact_owner_reply === true &&
+    reports.pathAReadiness.summary?.applies_decision_now === false &&
+    reports.sessionEditPreview.summary?.writes_now === false;
 
   return {
     schema_version: '0.1',
@@ -104,11 +150,19 @@ function buildCheckpoint(reports) {
       components_ready: components.filter((item) => item.ready).length,
       guard_checks: guardChecks,
       guard_checks_passed: guardChecksPassed,
+      expected_freeform_guard_failures: freeformRejectedAsExpected ? reports.validatorCheck.summary?.failures || 0 : 0,
       latest_handoff_min: Math.min(...handoffNumbers),
       latest_handoff_max: Math.max(...handoffNumbers),
       latest_handoff_count: handoffNumbers.length,
-      owner_reply_state: 'pending',
+      owner_reply_state: reports.fastReplyCard.summary?.broad_unlock_intent
+        ? 'broad_intent_seen_exact_reply_not_applied'
+        : 'pending',
       source_root_state: 'blocked_until_explicit_owner_reply_and_guards',
+      path_a_ready_after_exact_owner_reply: pathAReadyAfterExactReply,
+      selected_root_path_preview: reports.sessionEditPreview.summary?.selected_root_path || reports.intakeApplyPlan.summary?.selected_root_path || null,
+      selected_root_exists_preview: reports.sessionEditPreview.summary?.selected_root_exists === true || reports.intakeApplyPlan.summary?.selected_root_exists === true,
+      session_edit_preview_writes_now: reports.sessionEditPreview.summary?.writes_now === true,
+      applies_decision_now: false,
       public_ready_after_checkpoint: 0
     },
     components,
@@ -127,12 +181,13 @@ function buildCheckpoint(reports) {
 }
 
 function component(id, actual, expected, publicReady) {
+  const expectedStatuses = Array.isArray(expected) ? expected : [expected];
   return {
     id,
     actual_status: actual,
-    expected_status: expected,
-    ready: actual === expected,
-    public_ready_after_component: publicReady ?? null
+    expected_statuses: expectedStatuses,
+    ready: expectedStatuses.includes(actual),
+    public_ready_after_component: publicReady ?? 0
   };
 }
 
@@ -154,6 +209,9 @@ function renderMarkdown(report) {
   lines.push(`- Latest handoffs: ${report.summary.latest_handoff_min}-${report.summary.latest_handoff_max}`);
   lines.push(`- Owner reply state: ${report.summary.owner_reply_state}`);
   lines.push(`- Source-root state: ${report.summary.source_root_state}`);
+  lines.push(`- Path A ready after exact owner reply: ${report.summary.path_a_ready_after_exact_owner_reply ? 'yes' : 'no'}`);
+  lines.push(`- Selected root preview: ${report.summary.selected_root_path_preview || '-'}`);
+  lines.push(`- Session edit preview writes now: ${report.summary.session_edit_preview_writes_now ? 'yes' : 'no'}`);
   lines.push(`- Public-ready after checkpoint: ${report.summary.public_ready_after_checkpoint}`);
   lines.push('');
   lines.push('## Components');

@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:14:08.670Z",
-  "status": "owner_unlock_pipeline_checkpoint_guard_failed",
+  "generated_at": "2026-06-15T15:56:47.560Z",
+  "status": "owner_unlock_pipeline_checkpoint_guard_passed",
   "policy": {
     "validates_checkpoint_only": true,
     "records_decisions": false,
@@ -15,17 +15,17 @@
     "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "checks": 21,
-    "passed": 19,
-    "failures": 2,
+    "checks": 26,
+    "passed": 26,
+    "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
   },
   "checks": [
     {
       "id": "status_ready",
-      "status": "failed",
-      "evidence": "owner_unlock_pipeline_checkpoint_attention_required"
+      "status": "passed",
+      "evidence": "owner_unlock_pipeline_checkpoint_ready"
     },
     {
       "id": "policy_checkpoint_only",
@@ -68,39 +68,64 @@
       "evidence": 0
     },
     {
-      "id": "eleven_components",
+      "id": "twenty_three_components",
       "status": "passed",
-      "evidence": 11
+      "evidence": 23
     },
     {
       "id": "all_components_ready",
-      "status": "failed",
-      "evidence": "9/11"
+      "status": "passed",
+      "evidence": "23/23"
     },
     {
-      "id": "guard_checks_at_least_113",
+      "id": "guard_checks_at_least_230",
       "status": "passed",
-      "evidence": 115
+      "evidence": 236
     },
     {
       "id": "guard_checks_all_passed",
       "status": "passed",
-      "evidence": "115/115"
+      "evidence": "236/236"
     },
     {
-      "id": "latest_handoffs_include_183_or_newer",
+      "id": "freeform_rejection_accounted",
       "status": "passed",
-      "evidence": 270
+      "evidence": 2
     },
     {
-      "id": "owner_reply_pending",
+      "id": "latest_handoffs_include_277_or_newer",
       "status": "passed",
-      "evidence": "pending"
+      "evidence": 278
+    },
+    {
+      "id": "owner_reply_not_applied",
+      "status": "passed",
+      "evidence": "broad_intent_seen_exact_reply_not_applied"
     },
     {
       "id": "source_root_blocked",
       "status": "passed",
       "evidence": "blocked_until_explicit_owner_reply_and_guards"
+    },
+    {
+      "id": "path_a_ready_after_exact_reply",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "selected_root_preview_exists",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "session_preview_no_writes_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "applies_decision_now_false",
+      "status": "passed",
+      "evidence": false
     },
     {
       "id": "component_public_ready_zero",
