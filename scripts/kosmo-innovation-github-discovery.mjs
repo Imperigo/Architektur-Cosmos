@@ -14,10 +14,15 @@ const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-innovation-git
 
 const queries = [
   query('bim_llm', 'BIM LLM', 'bim_rag_workers'),
-  query('ifc_ai_architecture', 'IFC AI architecture', 'ifc_reasoning'),
-  query('document_ai_markdown_ocr', 'document AI markdown OCR', 'kosmo_prepare'),
+  query('ifcopenshell_bim', 'ifcopenshell BIM', 'ifc_reasoning'),
+  query('building_information_modeling_ai', 'building information modeling AI', 'bim_ai_experiments'),
+  query('document_layout_analysis_ocr', 'document layout analysis OCR', 'kosmo_prepare'),
+  query('architectural_specification_ocr', 'architectural specification OCR', 'kosmo_prepare'),
   query('architecture_rag_bim', 'architecture RAG BIM', 'reference_retrieval'),
-  query('3d_asset_retrieval_architecture', '3D asset retrieval architecture', 'kosmo_asset')
+  query('3d_model_retrieval', '3d model retrieval', 'kosmo_asset'),
+  query('sketch_based_3d_retrieval', 'sketch based 3D retrieval', 'kosmo_asset'),
+  query('blender_bim_mcp', 'Blender BIM MCP', 'worker_integration'),
+  query('bonsai_ifcopenshell_mcp', 'Bonsai IfcOpenShell MCP', 'worker_integration')
 ];
 
 main().catch((error) => {
@@ -47,6 +52,7 @@ async function main() {
       raw_results: searches.reduce((sum, search) => sum + search.results.length, 0),
       unique_candidates: candidates.length,
       recommended_for_review: candidates.filter((candidate) => candidate.review_priority !== 'low').length,
+      lanes_with_results: countLanesWithResults(searches),
       executable_now: 0,
       public_ready_after_discovery: 0
     },
@@ -54,7 +60,10 @@ async function main() {
     candidates,
     recommended_next_moves: [
       'Review BIM/LLM candidates for architecture-specific RAG patterns, not for immediate adoption.',
-      'Keep empty IFC/document/asset searches as query feedback; refine search terms before installing anything.',
+      'Review IfcOpenShell/Bonsai/MCP candidates as worker-integration references before touching local Blender or IFC runtime.',
+      'Review document-layout and architectural-specification OCR candidates only as public-safe fixture inspiration.',
+      'Review 3D retrieval candidates for KosmoAsset similarity search ideas, not as production dependencies.',
+      'Keep empty architecture-RAG searches as query feedback; refine search terms before installing anything.',
       'Promote only candidates that have clear primary repositories, recent activity and a source-free fixture path.'
     ]
   };
@@ -133,6 +142,8 @@ function rankCandidates(results) {
 }
 
 function priorityFor(result) {
+  const text = `${result.repo} ${result.description}`.toLowerCase();
+  if (/ifcopenshell|bonsai|blender|architectural specification|document layout|3d model retrieval|sketch/.test(text) && /2026-/.test(result.updated_at_observed || '')) return 'high';
   if ((result.stars_observed || 0) >= 25 && /2026-/.test(result.updated_at_observed || '')) return 'medium';
   if (/2026-06/.test(result.updated_at_observed || '')) return 'medium';
   return 'low';
@@ -146,6 +157,10 @@ function priorityWeight(priority) {
 
 function query(id, text, lane) {
   return { id, text, lane };
+}
+
+function countLanesWithResults(searches) {
+  return new Set(searches.filter((search) => search.results.length > 0).map((search) => search.lane)).size;
 }
 
 function renderMarkdown(report) {
@@ -163,6 +178,7 @@ function renderMarkdown(report) {
   lines.push(`- Raw results: ${report.summary.raw_results}`);
   lines.push(`- Unique candidates: ${report.summary.unique_candidates}`);
   lines.push(`- Recommended for review: ${report.summary.recommended_for_review}`);
+  lines.push(`- Lanes with results: ${report.summary.lanes_with_results}`);
   lines.push(`- Executable now: ${report.summary.executable_now}`);
   lines.push(`- Public-ready after discovery: ${report.summary.public_ready_after_discovery}`);
   lines.push('');

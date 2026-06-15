@@ -1,6 +1,6 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T14:13:00.930Z
+Generated: 2026-06-15T14:18:38.861Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
@@ -72,7 +72,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `prepare-references-asset-fixture-chain` Prepare References Asset Fixture Chain | review_only_ready | no | source package kosmo-prepare-phase1-adapter-fixture-2026-06-15, fixture assets 2, public-ready 0 |
 | `fixture-chain-local-worker-task-pack` Fixture Chain Local Worker Task Pack | review_only_ready | no | 3 tasks, executable now 0, missing refs 0 |
 | `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
-| `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 1/5 queries with results, 8 candidates, failures 0 |
+| `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-16, failures 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |

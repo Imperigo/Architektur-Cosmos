@@ -33,6 +33,7 @@ async function main() {
     summary: {
       discovery_status: discovery.status,
       queries: discovery.summary?.queries ?? null,
+      lanes_with_results: discovery.summary?.lanes_with_results ?? null,
       candidates: discovery.summary?.unique_candidates ?? null,
       failures: failures.length,
       public_ready_after_check: 0
@@ -65,8 +66,12 @@ function checkDiscovery(discovery) {
   expect(discovery.policy?.runs_tools_now === false, findings, 'no_tool_runs', 'Discovery must not run discovered tools.');
   expect(discovery.policy?.reads_private_content === false, findings, 'no_private_reads', 'Discovery must not read private content.');
   expect(discovery.policy?.public_ready_after_discovery === 0, findings, 'public_ready_zero', 'Discovery must keep public-ready at 0.');
-  expect((discovery.searches || []).length >= 5, findings, 'query_count', 'Discovery must include at least five search queries.');
+  expect((discovery.searches || []).length >= 10, findings, 'query_count', 'Discovery must include at least ten search queries.');
   expect(Number.isInteger(discovery.summary?.queries_with_results), findings, 'queries_with_results_count', 'Discovery must report queries with results.');
+  expect(Number.isInteger(discovery.summary?.lanes_with_results), findings, 'lanes_with_results_count', 'Discovery must report lanes with results.');
+  ['bim_rag_workers', 'ifc_reasoning', 'kosmo_prepare', 'kosmo_asset', 'worker_integration'].forEach((lane) => {
+    expect((discovery.searches || []).some((search) => search.lane === lane), findings, `lane_query:${lane}`, `Discovery must include a query for ${lane}.`);
+  });
   for (const candidate of discovery.candidates || []) {
     expect(candidate.source_type === 'primary_github_repository', findings, `primary_source:${candidate.repo}`, `${candidate.repo} must be a primary GitHub repository.`);
     expect(/^https:\/\/github\.com\//.test(candidate.url), findings, `github_url:${candidate.repo}`, `${candidate.repo} must use a GitHub URL.`);
@@ -92,6 +97,7 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push(`- Discovery status: ${report.summary.discovery_status}`);
   lines.push(`- Queries: ${report.summary.queries}`);
+  lines.push(`- Lanes with results: ${report.summary.lanes_with_results}`);
   lines.push(`- Candidates: ${report.summary.candidates}`);
   lines.push(`- Failures: ${report.summary.failures}`);
   lines.push(`- Public-ready after check: ${report.summary.public_ready_after_check}`);

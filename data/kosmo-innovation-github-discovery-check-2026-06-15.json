@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:10:22.375Z",
+  "generated_at": "2026-06-15T14:18:38.620Z",
   "status": "innovation_github_discovery_guard_passed",
   "policy": {
     "validates_discovery_only": true,
@@ -13,8 +13,9 @@
   ],
   "summary": {
     "discovery_status": "innovation_github_discovery_ready",
-    "queries": 5,
-    "candidates": 8,
+    "queries": 10,
+    "lanes_with_results": 5,
+    "candidates": 23,
     "failures": 0,
     "public_ready_after_check": 0
   },
@@ -62,12 +63,167 @@
     {
       "id": "query_count",
       "severity": "passed",
-      "message": "Discovery must include at least five search queries."
+      "message": "Discovery must include at least ten search queries."
     },
     {
       "id": "queries_with_results_count",
       "severity": "passed",
       "message": "Discovery must report queries with results."
+    },
+    {
+      "id": "lanes_with_results_count",
+      "severity": "passed",
+      "message": "Discovery must report lanes with results."
+    },
+    {
+      "id": "lane_query:bim_rag_workers",
+      "severity": "passed",
+      "message": "Discovery must include a query for bim_rag_workers."
+    },
+    {
+      "id": "lane_query:ifc_reasoning",
+      "severity": "passed",
+      "message": "Discovery must include a query for ifc_reasoning."
+    },
+    {
+      "id": "lane_query:kosmo_prepare",
+      "severity": "passed",
+      "message": "Discovery must include a query for kosmo_prepare."
+    },
+    {
+      "id": "lane_query:kosmo_asset",
+      "severity": "passed",
+      "message": "Discovery must include a query for kosmo_asset."
+    },
+    {
+      "id": "lane_query:worker_integration",
+      "severity": "passed",
+      "message": "Discovery must include a query for worker_integration."
+    },
+    {
+      "id": "primary_source:SII-sc22mc/DocFusion",
+      "severity": "passed",
+      "message": "SII-sc22mc/DocFusion must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:SII-sc22mc/DocFusion",
+      "severity": "passed",
+      "message": "SII-sc22mc/DocFusion must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:SII-sc22mc/DocFusion",
+      "severity": "passed",
+      "message": "SII-sc22mc/DocFusion must not install/download now."
+    },
+    {
+      "id": "no_private:SII-sc22mc/DocFusion",
+      "severity": "passed",
+      "message": "SII-sc22mc/DocFusion must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:SII-sc22mc/DocFusion",
+      "severity": "passed",
+      "message": "SII-sc22mc/DocFusion must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:yanghairui/3DRetrieval",
+      "severity": "passed",
+      "message": "yanghairui/3DRetrieval must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:yanghairui/3DRetrieval",
+      "severity": "passed",
+      "message": "yanghairui/3DRetrieval must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:yanghairui/3DRetrieval",
+      "severity": "passed",
+      "message": "yanghairui/3DRetrieval must not install/download now."
+    },
+    {
+      "id": "no_private:yanghairui/3DRetrieval",
+      "severity": "passed",
+      "message": "yanghairui/3DRetrieval must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:yanghairui/3DRetrieval",
+      "severity": "passed",
+      "message": "yanghairui/3DRetrieval must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:lee-agi/3d_model_base",
+      "severity": "passed",
+      "message": "lee-agi/3d_model_base must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:lee-agi/3d_model_base",
+      "severity": "passed",
+      "message": "lee-agi/3d_model_base must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:lee-agi/3d_model_base",
+      "severity": "passed",
+      "message": "lee-agi/3d_model_base must not install/download now."
+    },
+    {
+      "id": "no_private:lee-agi/3d_model_base",
+      "severity": "passed",
+      "message": "lee-agi/3d_model_base must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:lee-agi/3d_model_base",
+      "severity": "passed",
+      "message": "lee-agi/3d_model_base must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "severity": "passed",
+      "message": "lfniederauer/blender-agentic-bonsai-sketcher-mcp must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "severity": "passed",
+      "message": "lfniederauer/blender-agentic-bonsai-sketcher-mcp must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "severity": "passed",
+      "message": "lfniederauer/blender-agentic-bonsai-sketcher-mcp must not install/download now."
+    },
+    {
+      "id": "no_private:lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "severity": "passed",
+      "message": "lfniederauer/blender-agentic-bonsai-sketcher-mcp must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "severity": "passed",
+      "message": "lfniederauer/blender-agentic-bonsai-sketcher-mcp must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "severity": "passed",
+      "message": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "severity": "passed",
+      "message": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "severity": "passed",
+      "message": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must not install/download now."
+    },
+    {
+      "id": "no_private:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "severity": "passed",
+      "message": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "severity": "passed",
+      "message": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must keep public-ready at 0."
     },
     {
       "id": "primary_source:mac999/BIM_LLM_code_agent",
@@ -118,6 +274,131 @@
       "id": "public_ready_zero:HamidKiavarz/BIM-LLM",
       "severity": "passed",
       "message": "HamidKiavarz/BIM-LLM must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:Ryanglambert/3d_model_retriever",
+      "severity": "passed",
+      "message": "Ryanglambert/3d_model_retriever must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:Ryanglambert/3d_model_retriever",
+      "severity": "passed",
+      "message": "Ryanglambert/3d_model_retriever must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:Ryanglambert/3d_model_retriever",
+      "severity": "passed",
+      "message": "Ryanglambert/3d_model_retriever must not install/download now."
+    },
+    {
+      "id": "no_private:Ryanglambert/3d_model_retriever",
+      "severity": "passed",
+      "message": "Ryanglambert/3d_model_retriever must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:Ryanglambert/3d_model_retriever",
+      "severity": "passed",
+      "message": "Ryanglambert/3d_model_retriever must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:lyx-x/SketchRetrieval",
+      "severity": "passed",
+      "message": "lyx-x/SketchRetrieval must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:lyx-x/SketchRetrieval",
+      "severity": "passed",
+      "message": "lyx-x/SketchRetrieval must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:lyx-x/SketchRetrieval",
+      "severity": "passed",
+      "message": "lyx-x/SketchRetrieval must not install/download now."
+    },
+    {
+      "id": "no_private:lyx-x/SketchRetrieval",
+      "severity": "passed",
+      "message": "lyx-x/SketchRetrieval must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:lyx-x/SketchRetrieval",
+      "severity": "passed",
+      "message": "lyx-x/SketchRetrieval must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:tianbao-li/MI3DOR",
+      "severity": "passed",
+      "message": "tianbao-li/MI3DOR must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:tianbao-li/MI3DOR",
+      "severity": "passed",
+      "message": "tianbao-li/MI3DOR must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:tianbao-li/MI3DOR",
+      "severity": "passed",
+      "message": "tianbao-li/MI3DOR must not install/download now."
+    },
+    {
+      "id": "no_private:tianbao-li/MI3DOR",
+      "severity": "passed",
+      "message": "tianbao-li/MI3DOR must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:tianbao-li/MI3DOR",
+      "severity": "passed",
+      "message": "tianbao-li/MI3DOR must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:trymtrim/MultimediaRetrieval",
+      "severity": "passed",
+      "message": "trymtrim/MultimediaRetrieval must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:trymtrim/MultimediaRetrieval",
+      "severity": "passed",
+      "message": "trymtrim/MultimediaRetrieval must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:trymtrim/MultimediaRetrieval",
+      "severity": "passed",
+      "message": "trymtrim/MultimediaRetrieval must not install/download now."
+    },
+    {
+      "id": "no_private:trymtrim/MultimediaRetrieval",
+      "severity": "passed",
+      "message": "trymtrim/MultimediaRetrieval must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:trymtrim/MultimediaRetrieval",
+      "severity": "passed",
+      "message": "trymtrim/MultimediaRetrieval must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:RukiQ/sketchSearchMobi",
+      "severity": "passed",
+      "message": "RukiQ/sketchSearchMobi must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:RukiQ/sketchSearchMobi",
+      "severity": "passed",
+      "message": "RukiQ/sketchSearchMobi must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:RukiQ/sketchSearchMobi",
+      "severity": "passed",
+      "message": "RukiQ/sketchSearchMobi must not install/download now."
+    },
+    {
+      "id": "no_private:RukiQ/sketchSearchMobi",
+      "severity": "passed",
+      "message": "RukiQ/sketchSearchMobi must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:RukiQ/sketchSearchMobi",
+      "severity": "passed",
+      "message": "RukiQ/sketchSearchMobi must keep public-ready at 0."
     },
     {
       "id": "primary_source:mac999/BIM_LLM",
@@ -268,6 +549,131 @@
       "id": "public_ready_zero:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining",
       "severity": "passed",
       "message": "W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:akhil-haridas/ifcopenshell-bimsurfer",
+      "severity": "passed",
+      "message": "akhil-haridas/ifcopenshell-bimsurfer must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:akhil-haridas/ifcopenshell-bimsurfer",
+      "severity": "passed",
+      "message": "akhil-haridas/ifcopenshell-bimsurfer must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:akhil-haridas/ifcopenshell-bimsurfer",
+      "severity": "passed",
+      "message": "akhil-haridas/ifcopenshell-bimsurfer must not install/download now."
+    },
+    {
+      "id": "no_private:akhil-haridas/ifcopenshell-bimsurfer",
+      "severity": "passed",
+      "message": "akhil-haridas/ifcopenshell-bimsurfer must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:akhil-haridas/ifcopenshell-bimsurfer",
+      "severity": "passed",
+      "message": "akhil-haridas/ifcopenshell-bimsurfer must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:arhimatrix/X-BIM",
+      "severity": "passed",
+      "message": "arhimatrix/X-BIM must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:arhimatrix/X-BIM",
+      "severity": "passed",
+      "message": "arhimatrix/X-BIM must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:arhimatrix/X-BIM",
+      "severity": "passed",
+      "message": "arhimatrix/X-BIM must not install/download now."
+    },
+    {
+      "id": "no_private:arhimatrix/X-BIM",
+      "severity": "passed",
+      "message": "arhimatrix/X-BIM must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:arhimatrix/X-BIM",
+      "severity": "passed",
+      "message": "arhimatrix/X-BIM must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:bohan0701/3D-model-retrieval",
+      "severity": "passed",
+      "message": "bohan0701/3D-model-retrieval must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:bohan0701/3D-model-retrieval",
+      "severity": "passed",
+      "message": "bohan0701/3D-model-retrieval must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:bohan0701/3D-model-retrieval",
+      "severity": "passed",
+      "message": "bohan0701/3D-model-retrieval must not install/download now."
+    },
+    {
+      "id": "no_private:bohan0701/3D-model-retrieval",
+      "severity": "passed",
+      "message": "bohan0701/3D-model-retrieval must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:bohan0701/3D-model-retrieval",
+      "severity": "passed",
+      "message": "bohan0701/3D-model-retrieval must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:URRealHero/LightFieldDescriptor",
+      "severity": "passed",
+      "message": "URRealHero/LightFieldDescriptor must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:URRealHero/LightFieldDescriptor",
+      "severity": "passed",
+      "message": "URRealHero/LightFieldDescriptor must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:URRealHero/LightFieldDescriptor",
+      "severity": "passed",
+      "message": "URRealHero/LightFieldDescriptor must not install/download now."
+    },
+    {
+      "id": "no_private:URRealHero/LightFieldDescriptor",
+      "severity": "passed",
+      "message": "URRealHero/LightFieldDescriptor must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:URRealHero/LightFieldDescriptor",
+      "severity": "passed",
+      "message": "URRealHero/LightFieldDescriptor must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:AFangCCC/MVCL",
+      "severity": "passed",
+      "message": "AFangCCC/MVCL must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:AFangCCC/MVCL",
+      "severity": "passed",
+      "message": "AFangCCC/MVCL must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:AFangCCC/MVCL",
+      "severity": "passed",
+      "message": "AFangCCC/MVCL must not install/download now."
+    },
+    {
+      "id": "no_private:AFangCCC/MVCL",
+      "severity": "passed",
+      "message": "AFangCCC/MVCL must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:AFangCCC/MVCL",
+      "severity": "passed",
+      "message": "AFangCCC/MVCL must keep public-ready at 0."
     }
   ]
 }
