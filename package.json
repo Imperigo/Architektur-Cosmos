@@ -222,6 +222,8 @@
     "kosmo:innovation-dependency-preflight-plan-check": "node scripts/kosmo-innovation-dependency-preflight-plan-check.mjs",
     "kosmo:innovation-dependency-preflight-runner": "node scripts/kosmo-innovation-dependency-preflight-runner.mjs",
     "kosmo:innovation-dependency-preflight-runner-check": "node scripts/kosmo-innovation-dependency-preflight-runner-check.mjs",
+    "kosmo:innovation-dependency-install-queue": "node scripts/kosmo-innovation-dependency-install-queue.mjs",
+    "kosmo:innovation-dependency-install-queue-check": "node scripts/kosmo-innovation-dependency-install-queue-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",

@@ -1,0 +1,199 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:49:37.986Z",
+  "status": "innovation_dependency_install_queue_guard_passed",
+  "policy": {
+    "validates_queue_only": true,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-dependency-install-queue-2026-06-15.json"
+  ],
+  "summary": {
+    "queue_status": "innovation_dependency_install_queue_ready",
+    "queue_items": 7,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Queue schema_version must be 0.1."
+    },
+    {
+      "id": "queue_ready",
+      "severity": "passed",
+      "message": "Install queue must be ready."
+    },
+    {
+      "id": "queue_only",
+      "severity": "passed",
+      "message": "Queue must be queue-only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Queue must not install dependencies."
+    },
+    {
+      "id": "no_downloads",
+      "severity": "passed",
+      "message": "Queue must not download models."
+    },
+    {
+      "id": "no_tool_runs",
+      "severity": "passed",
+      "message": "Queue must not run tools."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Queue must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Queue must keep public-ready at 0."
+    },
+    {
+      "id": "owner_batch_required",
+      "severity": "passed",
+      "message": "Queue must require an explicit owner install batch."
+    },
+    {
+      "id": "executable_zero",
+      "severity": "passed",
+      "message": "Queue executable_now must be 0."
+    },
+    {
+      "id": "queue_items_present",
+      "severity": "passed",
+      "message": "Queue must include install items."
+    },
+    {
+      "id": "item_owner_batch:markitdown",
+      "severity": "passed",
+      "message": "markitdown must require explicit install batch."
+    },
+    {
+      "id": "item_not_executable:markitdown",
+      "severity": "passed",
+      "message": "markitdown must not be executable now."
+    },
+    {
+      "id": "item_public_ready_zero:markitdown",
+      "severity": "passed",
+      "message": "markitdown must keep public-ready at 0."
+    },
+    {
+      "id": "item_owner_batch:docling",
+      "severity": "passed",
+      "message": "docling must require explicit install batch."
+    },
+    {
+      "id": "item_not_executable:docling",
+      "severity": "passed",
+      "message": "docling must not be executable now."
+    },
+    {
+      "id": "item_public_ready_zero:docling",
+      "severity": "passed",
+      "message": "docling must keep public-ready at 0."
+    },
+    {
+      "id": "item_owner_batch:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must require explicit install batch."
+    },
+    {
+      "id": "item_not_executable:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must not be executable now."
+    },
+    {
+      "id": "item_public_ready_zero:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must keep public-ready at 0."
+    },
+    {
+      "id": "item_owner_batch:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must require explicit install batch."
+    },
+    {
+      "id": "item_not_executable:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must not be executable now."
+    },
+    {
+      "id": "item_public_ready_zero:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must keep public-ready at 0."
+    },
+    {
+      "id": "item_owner_batch:speckle",
+      "severity": "passed",
+      "message": "speckle must require explicit install batch."
+    },
+    {
+      "id": "item_not_executable:speckle",
+      "severity": "passed",
+      "message": "speckle must not be executable now."
+    },
+    {
+      "id": "item_public_ready_zero:speckle",
+      "severity": "passed",
+      "message": "speckle must keep public-ready at 0."
+    },
+    {
+      "id": "item_owner_batch:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must require explicit install batch."
+    },
+    {
+      "id": "item_not_executable:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must not be executable now."
+    },
+    {
+      "id": "item_public_ready_zero:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must keep public-ready at 0."
+    },
+    {
+      "id": "model_root_gate:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must require a model root decision."
+    },
+    {
+      "id": "item_owner_batch:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must require explicit install batch."
+    },
+    {
+      "id": "item_not_executable:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must not be executable now."
+    },
+    {
+      "id": "item_public_ready_zero:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must keep public-ready at 0."
+    },
+    {
+      "id": "ocr_source_root_gate",
+      "severity": "passed",
+      "message": "DeepSeek OCR must remain blocked until Source Root unlock."
+    },
+    {
+      "id": "model_root_gate:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must require a model root decision."
+    }
+  ]
+}
