@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:26:23.497Z",
+  "generated_at": "2026-06-15T14:29:59.702Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -58,6 +58,8 @@
     "data/kosmo-innovation-github-review-queue-check-2026-06-15.json",
     "data/kosmo-innovation-github-readme-signal-scan-2026-06-15.json",
     "data/kosmo-innovation-github-readme-signal-scan-check-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-contract-plan-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-contract-plan-check-2026-06-15.json",
     "data/kosmo-tomorrow-day-batch-2026-06-15.json",
     "data/kosmo-tomorrow-day-batch-check-2026-06-15.json",
     "data/kosmo-innovation-lane-plan-2026-06-15.json",
@@ -65,7 +67,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 35,
+    "cards": 36,
     "blocking_cards": 4,
     "owner_action_cards": 16,
     "source_root_blocked": true,
@@ -176,6 +178,8 @@
     "github_readme_signal_scan_status": "innovation_github_readme_signal_scan_ready",
     "github_readme_signal_scan_items": 7,
     "github_readme_signal_scan_high_signal_items": 5,
+    "github_fixture_contract_plan_status": "innovation_github_fixture_contract_plan_ready",
+    "github_fixture_contract_plan_count": 5,
     "tomorrow_day_batch_status": "tomorrow_day_batch_ready",
     "tomorrow_day_batch_target_date": "2026-06-16",
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
@@ -462,6 +466,15 @@
       "source_ref": "data/kosmo-innovation-github-readme-signal-scan-2026-06-15.json"
     },
     {
+      "id": "github-fixture-contract-plan",
+      "title": "GitHub Fixture Contract Plan",
+      "status": "review_only_ready",
+      "signal": "5 plans, prepare 2, asset 1, worker 2, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Source-free synthetic fixture contract plan; no GitHub code copied",
+      "source_ref": "data/kosmo-innovation-github-fixture-contract-plan-2026-06-15.json"
+    },
+    {
       "id": "tomorrow-day-batch",
       "title": "Tomorrow Day Batch",
       "status": "ready",
@@ -529,6 +542,7 @@
     "github_innovation_discovery_card",
     "github_innovation_review_queue_card",
     "github_readme_signal_scan_card",
+    "github_fixture_contract_plan_card",
     "tomorrow_day_batch_card",
     "worker_boundary_card",
     "innovation_lane_card",

@@ -55,6 +55,8 @@ const refs = {
   githubReviewQueueCheck: `data/kosmo-innovation-github-review-queue-check-${dateStamp}.json`,
   githubReadmeSignalScan: `data/kosmo-innovation-github-readme-signal-scan-${dateStamp}.json`,
   githubReadmeSignalScanCheck: `data/kosmo-innovation-github-readme-signal-scan-check-${dateStamp}.json`,
+  githubFixtureContractPlan: `data/kosmo-innovation-github-fixture-contract-plan-${dateStamp}.json`,
+  githubFixtureContractPlanCheck: `data/kosmo-innovation-github-fixture-contract-plan-check-${dateStamp}.json`,
   tomorrowDayBatch: `data/kosmo-tomorrow-day-batch-${dateStamp}.json`,
   tomorrowDayBatchCheck: `data/kosmo-tomorrow-day-batch-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
@@ -129,6 +131,8 @@ function buildBridge(reports) {
   const githubReviewQueueCheckSummary = reports.githubReviewQueueCheck?.summary || {};
   const githubReadmeSignalScanSummary = reports.githubReadmeSignalScan?.summary || {};
   const githubReadmeSignalScanCheckSummary = reports.githubReadmeSignalScanCheck?.summary || {};
+  const githubFixtureContractPlanSummary = reports.githubFixtureContractPlan?.summary || {};
+  const githubFixtureContractPlanCheckSummary = reports.githubFixtureContractPlanCheck?.summary || {};
   const tomorrowDayBatchSummary = reports.tomorrowDayBatch?.summary || {};
   const tomorrowDayBatchCheckSummary = reports.tomorrowDayBatchCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
@@ -516,6 +520,18 @@ function buildBridge(reports) {
       source_ref: refs.githubReadmeSignalScan
     },
     {
+      id: 'github-fixture-contract-plan',
+      title: 'GitHub Fixture Contract Plan',
+      status: reports.githubFixtureContractPlan?.status === 'innovation_github_fixture_contract_plan_ready' &&
+        reports.githubFixtureContractPlanCheck?.status === 'innovation_github_fixture_contract_plan_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubFixtureContractPlanSummary.contract_plans ?? 0} plans, prepare ${githubFixtureContractPlanSummary.kosmo_prepare_plans ?? '-'}, asset ${githubFixtureContractPlanSummary.kosmo_asset_plans ?? '-'}, worker ${githubFixtureContractPlanSummary.worker_integration_plans ?? '-'}, failures ${githubFixtureContractPlanCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Source-free synthetic fixture contract plan; no GitHub code copied',
+      source_ref: refs.githubFixtureContractPlan
+    },
+    {
       id: 'tomorrow-day-batch',
       title: 'Tomorrow Day Batch',
       status: reports.tomorrowDayBatch?.status === 'tomorrow_day_batch_ready' &&
@@ -685,6 +701,8 @@ function buildBridge(reports) {
       github_readme_signal_scan_status: reports.githubReadmeSignalScan?.status || null,
       github_readme_signal_scan_items: githubReadmeSignalScanSummary.scanned_items ?? null,
       github_readme_signal_scan_high_signal_items: githubReadmeSignalScanSummary.high_signal_items ?? null,
+      github_fixture_contract_plan_status: reports.githubFixtureContractPlan?.status || null,
+      github_fixture_contract_plan_count: githubFixtureContractPlanSummary.contract_plans ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -722,6 +740,7 @@ function buildBridge(reports) {
       'github_innovation_discovery_card',
       'github_innovation_review_queue_card',
       'github_readme_signal_scan_card',
+      'github_fixture_contract_plan_card',
       'tomorrow_day_batch_card',
       'worker_boundary_card',
       'innovation_lane_card',
