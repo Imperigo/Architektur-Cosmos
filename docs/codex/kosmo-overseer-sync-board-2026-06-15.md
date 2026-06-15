@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T15:00:21.087Z
+Generated: 2026-06-15T15:01:27.634Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-266-references-intake-readiness.md` | Codex Synergiebericht 266 - References Intake Readiness | 2 |
 | `2026-06-15-codex-synergiebericht-265-training-eval-readiness.md` | Codex Synergiebericht 265 - Training Eval Readiness | 2 |
 | `2026-06-15-codex-synergiebericht-264-today-loop-github-fixtures.md` | Codex Synergiebericht 264 - Today Loop GitHub Fixtures | 2 |
 | `2026-06-15-codex-synergiebericht-263-orbit-status-bridge-ui.md` | Codex Synergiebericht 263 - Orbit Status Bridge UI | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-261-tomorrow-batch-github-fixtures.md` | Codex Synergiebericht 261 - Tomorrow Batch GitHub Fixtures | 2 |
 | `2026-06-15-codex-synergiebericht-260-day-batch-github-fixtures.md` | Codex Synergiebericht 260 - Day Batch GitHub Fixtures | 2 |
 | `2026-06-15-codex-synergiebericht-259-github-fixture-payload-smoke.md` | Codex Synergiebericht 259 - GitHub Fixture Payload Smoke | 2 |
-| `2026-06-15-codex-synergiebericht-258-github-fixture-payloads.md` | Codex Synergiebericht 258 - GitHub Fixture Payloads | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 258-265 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 259-266 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
