@@ -1,0 +1,245 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:47:20.829Z",
+  "status": "innovation_dependency_preflight_run_completed",
+  "policy": {
+    "local_availability_check_only": true,
+    "whitelisted_commands_only": true,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_run": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-dependency-preflight-plan-2026-06-15.json"
+  ],
+  "summary": {
+    "dependency_groups": 7,
+    "available_groups": 0,
+    "unavailable_groups": 7,
+    "checks": 14,
+    "passed_checks": 1,
+    "failures": 0,
+    "public_ready_after_run": 0
+  },
+  "groups": [
+    {
+      "id": "docling",
+      "runtime": "python",
+      "checks": [
+        {
+          "id": "pip_show:docling",
+          "kind": "python_package",
+          "command_label": "python -m pip show docling",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "id": "python_import:docling",
+          "kind": "python_import",
+          "command_label": "python -c \"import docling; print(getattr(docling, \\\"__version__\\\", \\\"unknown\\\"))\"",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "available": false,
+      "installs_dependencies_now": false,
+      "downloads_models_now": false,
+      "runs_tools_now": false,
+      "reads_private_content": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "markitdown",
+      "runtime": "python",
+      "checks": [
+        {
+          "id": "pip_show:markitdown",
+          "kind": "python_package",
+          "command_label": "python -m pip show markitdown",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "id": "python_import:markitdown",
+          "kind": "python_import",
+          "command_label": "python -c \"import markitdown; print(getattr(markitdown, \\\"__name__\\\", \\\"markitdown\\\"))\"",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "available": false,
+      "installs_dependencies_now": false,
+      "downloads_models_now": false,
+      "runs_tools_now": false,
+      "reads_private_content": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "ifcopenshell",
+      "runtime": "python",
+      "checks": [
+        {
+          "id": "pip_show:ifcopenshell",
+          "kind": "python_package",
+          "command_label": "python -m pip show ifcopenshell",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "id": "python_import:ifcopenshell",
+          "kind": "python_import",
+          "command_label": "python -c \"import ifcopenshell; print(getattr(ifcopenshell, \\\"__version__\\\", getattr(ifcopenshell, \\\"version\\\", \\\"unknown\\\")))\"",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "available": false,
+      "installs_dependencies_now": false,
+      "downloads_models_now": false,
+      "runs_tools_now": false,
+      "reads_private_content": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "qwen_embedding_reranker",
+      "runtime": "model_or_python",
+      "checks": [
+        {
+          "id": "python_import:transformers",
+          "kind": "python_import",
+          "command_label": "python -c \"import transformers; print(transformers.__version__)\"",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "id": "model_dir:qwen3-embedding",
+          "kind": "model_dir",
+          "command_label": "local model directory lookup: qwen3-embedding|qwen-embedding|Qwen3-Embedding",
+          "status": "unavailable",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "No matching local model directory found."
+        }
+      ],
+      "available": false,
+      "installs_dependencies_now": false,
+      "downloads_models_now": false,
+      "runs_tools_now": false,
+      "reads_private_content": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "deepseek_ocr",
+      "runtime": "model_or_python",
+      "checks": [
+        {
+          "id": "python_import:torch_transformers",
+          "kind": "python_import",
+          "command_label": "python -c \"import torch, transformers; print(torch.__version__, transformers.__version__)\"",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "id": "model_dir:deepseek-ocr",
+          "kind": "model_dir",
+          "command_label": "local model directory lookup: deepseek-ocr|DeepSeek-OCR",
+          "status": "unavailable",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "No matching local model directory found."
+        }
+      ],
+      "available": false,
+      "installs_dependencies_now": false,
+      "downloads_models_now": false,
+      "runs_tools_now": false,
+      "reads_private_content": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "topologicpy",
+      "runtime": "python",
+      "checks": [
+        {
+          "id": "pip_show:topologicpy",
+          "kind": "python_package",
+          "command_label": "python -m pip show topologicpy",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "id": "python_import:topologicpy",
+          "kind": "python_import",
+          "command_label": "python -c \"import topologicpy; print(getattr(topologicpy, \\\"__name__\\\", \\\"topologicpy\\\"))\"",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        }
+      ],
+      "available": false,
+      "installs_dependencies_now": false,
+      "downloads_models_now": false,
+      "runs_tools_now": false,
+      "reads_private_content": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "speckle",
+      "runtime": "python_or_node",
+      "checks": [
+        {
+          "id": "pip_show:specklepy",
+          "kind": "python_package",
+          "command_label": "python -m pip show specklepy",
+          "status": "unavailable",
+          "exit_code": null,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "id": "node_probe:speckle-contract-only",
+          "kind": "node_probe",
+          "command_label": "node -e \"console.log(\\\"speckle-contract-only\\\")\"",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "speckle-contract-only",
+          "stderr": ""
+        }
+      ],
+      "available": false,
+      "installs_dependencies_now": false,
+      "downloads_models_now": false,
+      "runs_tools_now": false,
+      "reads_private_content": false,
+      "public_ready_after_group": 0
+    }
+  ],
+  "failures": [],
+  "next_actions": [
+    "Review unavailable groups before installing anything.",
+    "Keep all installs/downloads in a separate explicit owner-approved dependency batch.",
+    "After dependencies exist, rerun this availability check and then fixture-only smoke checks."
+  ]
+}
