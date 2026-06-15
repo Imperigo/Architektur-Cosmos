@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:35:23.517Z",
+  "generated_at": "2026-06-15T18:41:05.801Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -128,6 +128,8 @@
     "data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-check-2026-06-15.json",
     "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-15.json",
     "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-15.json",
     "data/kosmo-codex-morning-routine-run-2026-06-15.json",
     "data/kosmo-codex-morning-routine-run-check-2026-06-15.json",
     "data/kosmo-today-loop-plan-2026-06-15.json",
@@ -147,9 +149,9 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 76,
-    "blocking_cards": 4,
-    "owner_action_cards": 25,
+    "cards": 77,
+    "blocking_cards": 5,
+    "owner_action_cards": 26,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -342,6 +344,10 @@
     "github_worker_runtime_rollback_redaction_fixture_groups": 3,
     "github_worker_runtime_rollback_redaction_redaction_rules": 5,
     "github_worker_runtime_rollback_redaction_rollback_steps": 5,
+    "github_worker_runtime_apply_guard_status": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply",
+    "github_worker_runtime_apply_guard_exact_reply_valid": false,
+    "github_worker_runtime_apply_guard_separate_runtime_allowed": false,
+    "github_worker_runtime_apply_guard_check_failures": 0,
     "training_eval_rubric_status": "training_eval_rubric_pack_ready",
     "training_eval_rubric_suites": 6,
     "training_eval_rubric_criteria": 24,
@@ -986,6 +992,15 @@
       "source_ref": "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-15.json"
     },
     {
+      "id": "github-worker-runtime-apply-guard",
+      "title": "GitHub Worker Runtime Apply Guard",
+      "status": "blocked_owner_action_required",
+      "signal": "exact reply missing, separate runtime blocked, execute 0, checks 31/31",
+      "owner_action_required": true,
+      "route_hint": "Exact owner key=value reply gate for later separate source-free runtime batch; guard never executes runtime",
+      "source_ref": "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-15.json"
+    },
+    {
       "id": "training-eval-rubric",
       "title": "Training Eval Rubric",
       "status": "review_only_ready",
@@ -1105,6 +1120,7 @@
     "github_worker_adapter_boundary_negative_fixtures_card",
     "github_worker_runtime_batch_readiness_plan_card",
     "github_worker_runtime_rollback_redaction_fixtures_card",
+    "github_worker_runtime_apply_guard_card",
     "training_eval_rubric_card",
     "training_eval_row_template_card",
     "training_eval_review_queue_card",

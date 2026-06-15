@@ -130,6 +130,8 @@ function buildPlan(reports) {
       'npm run kosmo:innovation-github-worker-runtime-batch-readiness-plan-check',
       'npm run kosmo:innovation-github-worker-runtime-rollback-redaction-fixtures',
       'npm run kosmo:innovation-github-worker-runtime-rollback-redaction-fixtures-check',
+      'npm run kosmo:innovation-github-worker-runtime-apply-guard',
+      'npm run kosmo:innovation-github-worker-runtime-apply-guard-check',
       'npm run kosmo:local-worker-fixture-chain-task-pack',
       'npm run kosmo:local-worker-fixture-chain-task-pack-check',
       'npm run kosmo:local-worker-innovation-output-smoke',

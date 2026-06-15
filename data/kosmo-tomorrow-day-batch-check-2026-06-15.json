@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:35:23.254Z",
+  "generated_at": "2026-06-15T18:41:05.543Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -133,6 +133,11 @@
       "id": "start_sequence_github_worker_runtime_rollback_redaction_fixtures",
       "severity": "passed",
       "message": "Start sequence must include GitHub worker runtime rollback/redaction fixtures."
+    },
+    {
+      "id": "start_sequence_github_worker_runtime_apply_guard",
+      "severity": "passed",
+      "message": "Start sequence must include GitHub worker runtime apply guard."
     },
     {
       "id": "start_sequence_local_worker_task_pack",
