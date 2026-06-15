@@ -2,6 +2,8 @@
 
 Source reference: [lfniederauer/blender-agentic-bonsai-sketcher-mcp](https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp)
 Lane: `worker_integration`
+Promotion decision: `promote_to_worker_boundary_fixture_contract`
+Training eval lane: `worker_output_review`
 
 This directory is a synthetic GitHub-signal fixture skeleton only. The repository is used as a source reference, not as copied implementation material.
 

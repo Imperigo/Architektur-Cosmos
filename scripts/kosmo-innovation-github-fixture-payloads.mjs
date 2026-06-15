@@ -103,6 +103,7 @@ function buildPayload({ manifest, fixture }) {
     source_repo: manifest.source_repo,
     source_url: manifest.source_url,
     source_repo_is_reference_only: true,
+    promotion: manifest.promotion || null,
     policy: {
       private_content: false,
       generated_or_public_safe: true,
@@ -119,6 +120,8 @@ function buildPayload({ manifest, fixture }) {
       rights_state: 'public_safe_synthetic',
       repository_review_required_before_adapter_work: true,
       human_review_required_before_training: true,
+      training_eval_lane: manifest.promotion?.training_eval_lane || null,
+      ontology_bindings_present: Boolean((manifest.promotion?.ontology_bindings?.entities || []).length && (manifest.promotion?.ontology_bindings?.relations || []).length),
       allowed_for_private_gate_testing: false
     }
   };

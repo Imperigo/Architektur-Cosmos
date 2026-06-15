@@ -2,6 +2,8 @@
 
 Source reference: [cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System](https://github.com/cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System)
 Lane: `kosmo_prepare`
+Promotion decision: `promote_to_synthetic_document_fixture_contract`
+Training eval lane: `source_extraction_review`
 
 This directory is a synthetic GitHub-signal fixture skeleton only. The repository is used as a source reference, not as copied implementation material.
 

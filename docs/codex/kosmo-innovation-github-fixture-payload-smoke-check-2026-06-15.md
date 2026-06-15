@@ -1,6 +1,6 @@
 # Kosmo Innovation GitHub Fixture Payload Smoke Check
 
-Generated: 2026-06-15T15:14:00.619Z
+Generated: 2026-06-15T16:39:39.982Z
 Status: `innovation_github_fixture_payload_smoke_guard_passed`
 
 ## Summary
@@ -9,6 +9,7 @@ Status: `innovation_github_fixture_payload_smoke_guard_passed`
 - Payloads: 10
 - Lanes: 3
 - Content types: 6
+- Training lanes: 3
 - Failures: 0
 - Public-ready after check: 0
 
@@ -29,4 +30,5 @@ Status: `innovation_github_fixture_payload_smoke_guard_passed`
 - passed: `payload_count` - Smoke must cover at least 10 payloads.
 - passed: `lanes_complete` - Smoke must cover all required lanes.
 - passed: `content_types_complete` - Smoke must cover all required content types.
+- passed: `training_lanes_complete` - Smoke must cover at least three training lanes.
 - passed: `smoke_failures_zero` - Smoke failures must be 0.

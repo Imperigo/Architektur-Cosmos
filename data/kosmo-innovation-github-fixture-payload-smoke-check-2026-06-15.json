@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:14:00.619Z",
+  "generated_at": "2026-06-15T16:39:39.982Z",
   "status": "innovation_github_fixture_payload_smoke_guard_passed",
   "policy": {
     "validates_smoke_only": true,
@@ -21,6 +21,7 @@
     "payloads": 10,
     "lanes": 3,
     "content_types": 6,
+    "training_lanes": 3,
     "failures": 0,
     "public_ready_after_check": 0
   },
@@ -99,6 +100,11 @@
       "id": "content_types_complete",
       "severity": "passed",
       "message": "Smoke must cover all required content types."
+    },
+    {
+      "id": "training_lanes_complete",
+      "severity": "passed",
+      "message": "Smoke must cover at least three training lanes."
     },
     {
       "id": "smoke_failures_zero",

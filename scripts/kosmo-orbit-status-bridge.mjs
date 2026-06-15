@@ -785,7 +785,7 @@ function buildBridge(reports) {
         reports.githubFixtureSkeletonsCheck?.status === 'innovation_github_fixture_skeletons_guard_passed'
         ? 'review_only_ready'
         : 'needs_review',
-      signal: `${githubFixtureSkeletonsSummary.directories ?? 0} directories, ${githubFixtureSkeletonsSummary.files_written ?? 0} files, executable ${githubFixtureSkeletonsSummary.executable_now ?? 0}, failures ${githubFixtureSkeletonsCheckSummary.failures ?? 0}`,
+      signal: `${githubFixtureSkeletonsSummary.directories ?? 0} directories, ${githubFixtureSkeletonsSummary.files_written ?? 0} files, matrix ${githubFixtureSkeletonsSummary.matrix_promotable ?? '-'}, executable ${githubFixtureSkeletonsSummary.executable_now ?? 0}, failures ${githubFixtureSkeletonsCheckSummary.failures ?? 0}`,
       owner_action_required: false,
       route_hint: 'Synthetic GitHub-signal fixture skeletons; no clone/install/run',
       source_ref: refs.githubFixtureSkeletons
@@ -809,7 +809,7 @@ function buildBridge(reports) {
         reports.githubFixturePayloadSmokeCheck?.status === 'innovation_github_fixture_payload_smoke_guard_passed'
         ? 'review_only_ready'
         : 'needs_review',
-      signal: `${githubFixturePayloadSmokeSummary.payloads ?? 0} payloads, lanes ${githubFixturePayloadSmokeSummary.lanes ?? 0}/${githubFixturePayloadSmokeSummary.required_lanes ?? 0}, content ${githubFixturePayloadSmokeSummary.content_types ?? 0}/${githubFixturePayloadSmokeSummary.required_content_types ?? 0}, failures ${githubFixturePayloadSmokeCheckSummary.failures ?? 0}`,
+      signal: `${githubFixturePayloadSmokeSummary.payloads ?? 0} payloads, lanes ${githubFixturePayloadSmokeSummary.lanes ?? 0}/${githubFixturePayloadSmokeSummary.required_lanes ?? 0}, training ${githubFixturePayloadSmokeSummary.training_lanes ?? '-'}, content ${githubFixturePayloadSmokeSummary.content_types ?? 0}/${githubFixturePayloadSmokeSummary.required_content_types ?? 0}, failures ${githubFixturePayloadSmokeCheckSummary.failures ?? 0}`,
       owner_action_required: false,
       route_hint: 'Lane-specific fixture shape smoke for Prepare/Asset/Worker Integration',
       source_ref: refs.githubFixturePayloadSmoke
@@ -1045,11 +1045,13 @@ function buildBridge(reports) {
       github_fixture_skeletons_status: reports.githubFixtureSkeletons?.status || null,
       github_fixture_skeletons_directories: githubFixtureSkeletonsSummary.directories ?? null,
       github_fixture_skeletons_files: githubFixtureSkeletonsSummary.files_written ?? null,
+      github_fixture_skeletons_matrix_promotable: githubFixtureSkeletonsSummary.matrix_promotable ?? null,
       github_fixture_payloads_status: reports.githubFixturePayloads?.status || null,
       github_fixture_payloads_written: githubFixturePayloadsSummary.payloads_written ?? null,
       github_fixture_payload_smoke_status: reports.githubFixturePayloadSmoke?.status || null,
       github_fixture_payload_smoke_payloads: githubFixturePayloadSmokeSummary.payloads ?? null,
       github_fixture_payload_smoke_lanes: githubFixturePayloadSmokeSummary.lanes ?? null,
+      github_fixture_payload_smoke_training_lanes: githubFixturePayloadSmokeSummary.training_lanes ?? null,
       github_fixture_payload_smoke_content_types: githubFixturePayloadSmokeSummary.content_types ?? null,
       training_eval_rubric_status: reports.trainingEvalRubricPack?.status || null,
       training_eval_rubric_suites: trainingEvalRubricSummary.suites ?? null,

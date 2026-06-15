@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:34:51.944Z",
+  "generated_at": "2026-06-15T16:39:36.609Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 284
+      "files": 285
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 134
+      "files": 135
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-286-matrix-gated-fixtures.md",
+      "title": "Codex Synergiebericht 286 - Matrix-Gated Fixtures",
+      "mirrored_inboxes": 2,
+      "bytes": 2699,
+      "modified_at": "2026-06-15T16:39:25.338Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md",
       "title": "Codex Synergiebericht 285 - GitHub Promotion Matrix",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1814,
       "modified_at": "2026-06-15T15:59:19.396Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-278-owner-unlock-pipeline-rollup.md",
-      "title": "Codex Synergiebericht 278: Owner Unlock Pipeline Rollup",
-      "mirrored_inboxes": 2,
-      "bytes": 1759,
-      "modified_at": "2026-06-15T15:55:59.031Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 278-285 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 279-286 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

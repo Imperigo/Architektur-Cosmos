@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:34:53.284Z",
+  "generated_at": "2026-06-15T16:39:38.093Z",
   "status": "codex_morning_routine_run_guard_passed",
   "policy": {
     "validates_morning_execution_evidence": true,
@@ -94,12 +94,12 @@
     {
       "id": "latest_handoff_283_or_newer",
       "status": "passed",
-      "evidence": 285
+      "evidence": 286
     },
     {
       "id": "latest_handoff_mirrored_283_or_newer",
       "status": "passed",
-      "evidence": 285
+      "evidence": 286
     },
     {
       "id": "source_root_blocked_blocks_private",

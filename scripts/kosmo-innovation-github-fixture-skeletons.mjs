@@ -7,6 +7,7 @@ const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const dateStamp = new Date().toISOString().slice(0, 10);
 const planPath = resolve(root, args.plan || `data/kosmo-innovation-github-fixture-contract-plan-${dateStamp}.json`);
+const matrixPath = resolve(root, args.matrix || `data/kosmo-innovation-github-promotion-matrix-${dateStamp}.json`);
 const outputJson = resolve(root, args.out || `data/kosmo-innovation-github-fixture-skeletons-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-innovation-github-fixture-skeletons-${dateStamp}.md`);
 
@@ -17,15 +18,25 @@ main().catch((error) => {
 
 async function main() {
   const plan = JSON.parse(await readFile(planPath, 'utf8'));
+  const matrix = JSON.parse(await readFile(matrixPath, 'utf8'));
   const writtenFiles = [];
   const failures = [];
   if (plan.status !== 'innovation_github_fixture_contract_plan_ready') {
     failures.push(`Contract plan not ready: ${plan.status}`);
   }
+  if (matrix.status !== 'innovation_github_promotion_matrix_ready') {
+    failures.push(`Promotion matrix not ready: ${matrix.status}`);
+  }
+  const promotionsByFixture = new Map((matrix.promotion_items || []).map((item) => [item.fixture_id, item]));
 
   for (const contract of plan.contract_plans || []) {
+    const promotion = promotionsByFixture.get(contract.fixture_id);
+    if (!promotion?.source_free_promotable) {
+      failures.push(`Contract is not source-free promotable in promotion matrix: ${contract.fixture_id}`);
+      continue;
+    }
     const rootDir = resolve(root, contract.proposed_fixture_root);
-    const manifest = fixtureManifest(contract);
+    const manifest = fixtureManifest(contract, promotion);
     await mkdir(rootDir, { recursive: true });
     await writeFile(resolve(rootDir, 'fixture-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
     await writeFile(resolve(rootDir, 'README.md'), fixtureReadme(contract, manifest));
@@ -52,9 +63,10 @@ async function main() {
       public_ready_after_skeletons: 0,
       note: 'Skeletons are generated from contract metadata only. They do not copy repository code, README prose, private sources or worker outputs.'
     },
-    source_refs: [relative(root, planPath)],
+    source_refs: [relative(root, planPath), relative(root, matrixPath)],
     summary: {
       contract_plans: plan.contract_plans?.length ?? 0,
+      matrix_promotable: matrix.summary?.promotable_source_free ?? null,
       directories: plan.contract_plans?.length ?? 0,
       files_written: writtenFiles.length,
       executable_now: 0,
@@ -86,7 +98,7 @@ async function main() {
   if (failures.length > 0) process.exitCode = 1;
 }
 
-function fixtureManifest(contract) {
+function fixtureManifest(contract, promotion) {
   return {
     schema_version: '0.1',
     generated_at: new Date().toISOString(),
@@ -97,6 +109,16 @@ function fixtureManifest(contract) {
     source_repo_is_reference_only: true,
     source_lane: contract.source_lane,
     lane: contract.target_lane,
+    promotion: {
+      matrix_id: promotion.id,
+      source_free_promotable: promotion.source_free_promotable,
+      promotion_decision: promotion.promotion_decision,
+      training_eval_lane: promotion.training_eval_lane,
+      ontology_bindings: promotion.ontology_bindings,
+      local_worker_allowed_now: promotion.local_worker_allowed_now,
+      private_content_allowed: promotion.private_content_allowed,
+      public_ready_after_item: promotion.public_ready_after_item
+    },
     status: 'github_signal_fixture_skeleton_only',
     policy: {
       synthetic_fixture_only: true,
@@ -217,6 +239,8 @@ function fixtureReadme(contract, manifest) {
   lines.push('');
   lines.push(`Source reference: [${contract.source_repo}](${contract.source_url})`);
   lines.push(`Lane: \`${contract.target_lane}\``);
+  lines.push(`Promotion decision: \`${manifest.promotion.promotion_decision}\``);
+  lines.push(`Training eval lane: \`${manifest.promotion.training_eval_lane}\``);
   lines.push('');
   lines.push('This directory is a synthetic GitHub-signal fixture skeleton only. The repository is used as a source reference, not as copied implementation material.');
   lines.push('');
@@ -246,6 +270,7 @@ function renderMarkdown(report) {
   lines.push('## Summary');
   lines.push('');
   lines.push(`- Contract plans: ${report.summary.contract_plans}`);
+  lines.push(`- Matrix promotable: ${report.summary.matrix_promotable}`);
   lines.push(`- Directories: ${report.summary.directories}`);
   lines.push(`- Files written: ${report.summary.files_written}`);
   lines.push(`- Executable now: ${report.summary.executable_now}`);

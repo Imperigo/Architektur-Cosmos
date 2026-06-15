@@ -2,6 +2,8 @@
 
 Source reference: [mac999/BIM_LLM_code_agent](https://github.com/mac999/BIM_LLM_code_agent)
 Lane: `worker_integration`
+Promotion decision: `promote_to_worker_boundary_fixture_contract`
+Training eval lane: `worker_output_review`
 
 This directory is a synthetic GitHub-signal fixture skeleton only. The repository is used as a source reference, not as copied implementation material.
 

@@ -41,6 +41,7 @@ async function main() {
 
   const contentTypes = new Set(payloads.map(({ payload }) => payload.content?.type).filter(Boolean));
   const lanes = new Set(payloads.map(({ payload }) => payload.lane).filter(Boolean));
+  const trainingLanes = new Set(payloads.map(({ payload }) => payload.promotion?.training_eval_lane).filter(Boolean));
 
   for (const type of requiredContentTypes) {
     if (!contentTypes.has(type)) failures.push(`Missing content type: ${type}`);
@@ -59,6 +60,10 @@ async function main() {
     if (payload.policy?.public_ready !== false) failures.push(`Payload claims public_ready: ${file}`);
     if (payload.expected_review?.repository_review_required_before_adapter_work !== true) failures.push(`Payload missing repository review gate: ${file}`);
     if (payload.expected_review?.human_review_required_before_training !== true) failures.push(`Payload missing human training review gate: ${file}`);
+    if (payload.promotion?.source_free_promotable !== true) failures.push(`Payload missing source-free promotion metadata: ${file}`);
+    if (!payload.promotion?.training_eval_lane) failures.push(`Payload missing promotion training lane: ${file}`);
+    if (!(payload.promotion?.ontology_bindings?.entities || []).length) failures.push(`Payload missing ontology entity bindings: ${file}`);
+    if (!(payload.promotion?.ontology_bindings?.relations || []).length) failures.push(`Payload missing ontology relation bindings: ${file}`);
   }
 
   const report = {
@@ -85,6 +90,7 @@ async function main() {
       required_lanes: requiredLanes.size,
       content_types: contentTypes.size,
       required_content_types: requiredContentTypes.size,
+      training_lanes: trainingLanes.size,
       failures: failures.length,
       public_ready_after_smoke: 0
     },
@@ -95,6 +101,10 @@ async function main() {
     content_type_counts: [...contentTypes].sort().map((type) => ({
       type,
       count: payloads.filter(({ payload }) => payload.content?.type === type).length
+    })),
+    training_lane_counts: [...trainingLanes].sort().map((lane) => ({
+      lane,
+      count: payloads.filter(({ payload }) => payload.promotion?.training_eval_lane === lane).length
     })),
     failures,
     next_actions: [
@@ -132,6 +142,7 @@ function renderMarkdown(report) {
   lines.push(`- Payloads: ${report.summary.payloads}`);
   lines.push(`- Lanes: ${report.summary.lanes}/${report.summary.required_lanes}`);
   lines.push(`- Content types: ${report.summary.content_types}/${report.summary.required_content_types}`);
+  lines.push(`- Training lanes: ${report.summary.training_lanes}`);
   lines.push(`- Failures: ${report.summary.failures}`);
   lines.push(`- Public-ready after smoke: ${report.summary.public_ready_after_smoke}`);
   lines.push('');
@@ -142,6 +153,10 @@ function renderMarkdown(report) {
   lines.push('## Content Types');
   lines.push('');
   report.content_type_counts.forEach((item) => lines.push(`- ${item.type}: ${item.count}`));
+  lines.push('');
+  lines.push('## Training Lanes');
+  lines.push('');
+  report.training_lane_counts.forEach((item) => lines.push(`- ${item.lane}: ${item.count}`));
   lines.push('');
   return lines.join('\n');
 }

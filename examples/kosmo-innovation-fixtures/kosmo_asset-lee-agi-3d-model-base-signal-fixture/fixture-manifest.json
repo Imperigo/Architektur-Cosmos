@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:38:01.433Z",
+  "generated_at": "2026-06-15T16:39:38.796Z",
   "contract_id": "github-fixture-plan-02",
   "fixture_id": "kosmo_asset-lee-agi-3d-model-base-signal-fixture",
   "source_repo": "lee-agi/3d_model_base",
@@ -8,6 +8,27 @@
   "source_repo_is_reference_only": true,
   "source_lane": "kosmo_asset",
   "lane": "kosmo_asset",
+  "promotion": {
+    "matrix_id": "promotion-02",
+    "source_free_promotable": true,
+    "promotion_decision": "promote_to_synthetic_asset_retrieval_fixture_contract",
+    "training_eval_lane": "asset_candidate_review",
+    "ontology_bindings": {
+      "entities": [
+        "asset_record",
+        "building_element",
+        "material_system"
+      ],
+      "relations": [
+        "asset_derived_from_element",
+        "asset_uses_material",
+        "eval_item_tests_asset"
+      ]
+    },
+    "local_worker_allowed_now": false,
+    "private_content_allowed": false,
+    "public_ready_after_item": 0
+  },
   "status": "github_signal_fixture_skeleton_only",
   "policy": {
     "synthetic_fixture_only": true,

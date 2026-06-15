@@ -40,6 +40,7 @@ async function main() {
       payloads: smoke.summary?.payloads ?? null,
       lanes: smoke.summary?.lanes ?? null,
       content_types: smoke.summary?.content_types ?? null,
+      training_lanes: smoke.summary?.training_lanes ?? null,
       failures: failures.length,
       public_ready_after_check: 0
     },
@@ -86,6 +87,7 @@ function checkSmoke(smoke) {
   expect((smoke.summary?.payloads ?? 0) >= 10, findings, 'payload_count', 'Smoke must cover at least 10 payloads.');
   expect(smoke.summary?.lanes === smoke.summary?.required_lanes, findings, 'lanes_complete', 'Smoke must cover all required lanes.');
   expect(smoke.summary?.content_types === smoke.summary?.required_content_types, findings, 'content_types_complete', 'Smoke must cover all required content types.');
+  expect((smoke.summary?.training_lanes ?? 0) >= 3, findings, 'training_lanes_complete', 'Smoke must cover at least three training lanes.');
   expect(smoke.summary?.failures === 0, findings, 'smoke_failures_zero', 'Smoke failures must be 0.');
   return findings;
 }
@@ -107,6 +109,7 @@ function renderMarkdown(report) {
   lines.push(`- Payloads: ${report.summary.payloads}`);
   lines.push(`- Lanes: ${report.summary.lanes}`);
   lines.push(`- Content types: ${report.summary.content_types}`);
+  lines.push(`- Training lanes: ${report.summary.training_lanes ?? '-'}`);
   lines.push(`- Failures: ${report.summary.failures}`);
   lines.push(`- Public-ready after check: ${report.summary.public_ready_after_check}`);
   lines.push('');

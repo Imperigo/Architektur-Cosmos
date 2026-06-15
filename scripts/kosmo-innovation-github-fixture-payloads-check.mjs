@@ -102,6 +102,13 @@ async function checkPayloads(report) {
     expect(payload.policy?.public_ready_after_payload === 0, findings, `payload_public_ready_zero:${file}`, `${file} must keep public-ready after payload at 0.`);
     expect(payload.expected_review?.repository_review_required_before_adapter_work === true, findings, `payload_repo_review:${file}`, `${file} must require repository review before adapter work.`);
     expect(payload.expected_review?.human_review_required_before_training === true, findings, `payload_human_review:${file}`, `${file} must require human review before training.`);
+    expect(payload.promotion?.source_free_promotable === true, findings, `payload_promotable:${file}`, `${file} must carry source-free promotion metadata.`);
+    expect(Boolean(payload.promotion?.promotion_decision), findings, `payload_promotion_decision:${file}`, `${file} must carry a promotion decision.`);
+    expect(Boolean(payload.promotion?.training_eval_lane), findings, `payload_training_lane:${file}`, `${file} must carry a training eval lane.`);
+    expect((payload.promotion?.ontology_bindings?.entities || []).length > 0, findings, `payload_ontology_entities:${file}`, `${file} must carry ontology entity bindings.`);
+    expect((payload.promotion?.ontology_bindings?.relations || []).length > 0, findings, `payload_ontology_relations:${file}`, `${file} must carry ontology relation bindings.`);
+    expect(payload.expected_review?.training_eval_lane === payload.promotion?.training_eval_lane, findings, `payload_review_training_lane:${file}`, `${file} expected review must match the promotion training lane.`);
+    expect(payload.expected_review?.ontology_bindings_present === true, findings, `payload_review_ontology:${file}`, `${file} expected review must confirm ontology bindings.`);
   }
   return findings;
 }

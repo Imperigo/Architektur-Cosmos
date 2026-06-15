@@ -2,6 +2,8 @@
 
 Source reference: [lee-agi/3d_model_base](https://github.com/lee-agi/3d_model_base)
 Lane: `kosmo_asset`
+Promotion decision: `promote_to_synthetic_asset_retrieval_fixture_contract`
+Training eval lane: `asset_candidate_review`
 
 This directory is a synthetic GitHub-signal fixture skeleton only. The repository is used as a source reference, not as copied implementation material.
 

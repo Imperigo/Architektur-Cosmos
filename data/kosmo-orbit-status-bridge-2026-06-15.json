@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:34:53.990Z",
+  "generated_at": "2026-06-15T16:39:40.223Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -216,7 +216,7 @@
     "codex_morning_routine_run_status": "codex_morning_routine_run_ready",
     "codex_morning_routine_run_next_batch": "source_free_innovation_and_guarding",
     "codex_morning_routine_run_remote_behind_total": 0,
-    "codex_morning_routine_run_latest_handoff": 285,
+    "codex_morning_routine_run_latest_handoff": 286,
     "github_readme_signal_scan_status": "innovation_github_readme_signal_scan_ready",
     "github_readme_signal_scan_items": 7,
     "github_readme_signal_scan_high_signal_items": 5,
@@ -229,11 +229,13 @@
     "github_fixture_skeletons_status": "innovation_github_fixture_skeletons_ready",
     "github_fixture_skeletons_directories": 5,
     "github_fixture_skeletons_files": 10,
+    "github_fixture_skeletons_matrix_promotable": 5,
     "github_fixture_payloads_status": "innovation_github_fixture_payloads_ready",
     "github_fixture_payloads_written": 10,
     "github_fixture_payload_smoke_status": "innovation_github_fixture_payload_smoke_passed",
     "github_fixture_payload_smoke_payloads": 10,
     "github_fixture_payload_smoke_lanes": 3,
+    "github_fixture_payload_smoke_training_lanes": 3,
     "github_fixture_payload_smoke_content_types": 6,
     "training_eval_rubric_status": "training_eval_rubric_pack_ready",
     "training_eval_rubric_suites": 6,
@@ -630,7 +632,7 @@
       "id": "codex-morning-routine-run",
       "title": "Codex Morning Routine Run",
       "status": "review_only_ready",
-      "signal": "fetch 2/2, behind 0, handoff 285, next source_free_innovation_and_guarding, failures 0",
+      "signal": "fetch 2/2, behind 0, handoff 286, next source_free_innovation_and_guarding, failures 0",
       "owner_action_required": false,
       "route_hint": "Guarded morning execution evidence: git fetch, handoff mirror, Source Root gate, next-batch route",
       "source_ref": "data/kosmo-codex-morning-routine-run-2026-06-15.json"
@@ -666,7 +668,7 @@
       "id": "github-fixture-skeletons",
       "title": "GitHub Fixture Skeletons",
       "status": "review_only_ready",
-      "signal": "5 directories, 10 files, executable 0, failures 0",
+      "signal": "5 directories, 10 files, matrix 5, executable 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Synthetic GitHub-signal fixture skeletons; no clone/install/run",
       "source_ref": "data/kosmo-innovation-github-fixture-skeletons-2026-06-15.json"
@@ -684,7 +686,7 @@
       "id": "github-fixture-payload-smoke",
       "title": "GitHub Fixture Payload Smoke",
       "status": "review_only_ready",
-      "signal": "10 payloads, lanes 3/3, content 6/6, failures 0",
+      "signal": "10 payloads, lanes 3/3, training 3, content 6/6, failures 0",
       "owner_action_required": false,
       "route_hint": "Lane-specific fixture shape smoke for Prepare/Asset/Worker Integration",
       "source_ref": "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json"

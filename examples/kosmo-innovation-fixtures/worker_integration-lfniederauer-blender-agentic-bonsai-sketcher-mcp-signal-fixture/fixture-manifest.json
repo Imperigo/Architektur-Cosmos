@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:38:01.434Z",
+  "generated_at": "2026-06-15T16:39:38.796Z",
   "contract_id": "github-fixture-plan-03",
   "fixture_id": "worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
   "source_repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
@@ -8,6 +8,27 @@
   "source_repo_is_reference_only": true,
   "source_lane": "ifc_reasoning",
   "lane": "worker_integration",
+  "promotion": {
+    "matrix_id": "promotion-03",
+    "source_free_promotable": true,
+    "promotion_decision": "promote_to_worker_boundary_fixture_contract",
+    "training_eval_lane": "worker_output_review",
+    "ontology_bindings": {
+      "entities": [
+        "eval_review_item",
+        "source_record",
+        "asset_record"
+      ],
+      "relations": [
+        "eval_item_tests_project",
+        "eval_item_tests_asset",
+        "source_blocks_public_release"
+      ]
+    },
+    "local_worker_allowed_now": false,
+    "private_content_allowed": false,
+    "public_ready_after_item": 0
+  },
   "status": "github_signal_fixture_skeleton_only",
   "policy": {
     "synthetic_fixture_only": true,

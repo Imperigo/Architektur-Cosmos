@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:41:16.795Z",
+  "generated_at": "2026-06-15T16:39:39.270Z",
   "status": "generated_github_signal_fixture_payload",
   "contract_id": "github-fixture-plan-02",
   "fixture_id": "synthetic_asset_manifest",
@@ -9,6 +9,27 @@
   "source_repo": "lee-agi/3d_model_base",
   "source_url": "https://github.com/lee-agi/3d_model_base",
   "source_repo_is_reference_only": true,
+  "promotion": {
+    "matrix_id": "promotion-02",
+    "source_free_promotable": true,
+    "promotion_decision": "promote_to_synthetic_asset_retrieval_fixture_contract",
+    "training_eval_lane": "asset_candidate_review",
+    "ontology_bindings": {
+      "entities": [
+        "asset_record",
+        "building_element",
+        "material_system"
+      ],
+      "relations": [
+        "asset_derived_from_element",
+        "asset_uses_material",
+        "eval_item_tests_asset"
+      ]
+    },
+    "local_worker_allowed_now": false,
+    "private_content_allowed": false,
+    "public_ready_after_item": 0
+  },
   "policy": {
     "private_content": false,
     "generated_or_public_safe": true,
@@ -58,6 +79,8 @@
     "rights_state": "public_safe_synthetic",
     "repository_review_required_before_adapter_work": true,
     "human_review_required_before_training": true,
+    "training_eval_lane": "asset_candidate_review",
+    "ontology_bindings_present": true,
     "allowed_for_private_gate_testing": false
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:38:01.433Z",
+  "generated_at": "2026-06-15T16:39:38.795Z",
   "contract_id": "github-fixture-plan-01",
   "fixture_id": "kosmo_prepare-sii-sc22mc-docfusion-signal-fixture",
   "source_repo": "SII-sc22mc/DocFusion",
@@ -8,6 +8,27 @@
   "source_repo_is_reference_only": true,
   "source_lane": "kosmo_prepare",
   "lane": "kosmo_prepare",
+  "promotion": {
+    "matrix_id": "promotion-01",
+    "source_free_promotable": true,
+    "promotion_decision": "promote_to_synthetic_document_fixture_contract",
+    "training_eval_lane": "source_extraction_review",
+    "ontology_bindings": {
+      "entities": [
+        "source_record",
+        "reference_project",
+        "eval_review_item"
+      ],
+      "relations": [
+        "project_has_source",
+        "eval_item_tests_project",
+        "source_blocks_public_release"
+      ]
+    },
+    "local_worker_allowed_now": false,
+    "private_content_allowed": false,
+    "public_ready_after_item": 0
+  },
   "status": "github_signal_fixture_skeleton_only",
   "policy": {
     "synthetic_fixture_only": true,

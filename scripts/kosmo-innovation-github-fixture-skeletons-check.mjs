@@ -84,6 +84,8 @@ async function checkSkeletons(report) {
   expect(report.policy?.runs_discovered_code_now === false, findings, 'no_discovered_code_run', 'Report must not run discovered code.');
   expect(report.policy?.reads_private_content === false, findings, 'no_private_reads', 'Report must not read private content.');
   expect(report.policy?.public_ready_after_skeletons === 0, findings, 'public_ready_zero', 'Report must keep public-ready at 0.');
+  expect((report.source_refs || []).some((ref) => ref.includes('promotion-matrix')), findings, 'uses_promotion_matrix', 'Report must use the GitHub promotion matrix as a source ref.');
+  expect(Number(report.summary?.matrix_promotable || 0) >= 1, findings, 'matrix_promotable_present', 'Report summary must include promotable matrix items.');
   expect((report.written_files || []).length >= 10, findings, 'written_file_count', 'Report must write at least two files per GitHub fixture contract.');
 
   for (const file of report.written_files || []) {
@@ -101,6 +103,13 @@ async function checkSkeletons(report) {
       expect(manifest.policy?.install_required_now === false, findings, `manifest_no_install:${file}`, `${file} must not require install now.`);
       expect(manifest.policy?.tool_run_required_now === false, findings, `manifest_no_run:${file}`, `${file} must not require tool run now.`);
       expect(manifest.policy?.public_ready_after_fixture === 0, findings, `manifest_public_ready_zero:${file}`, `${file} must keep public-ready at 0.`);
+      expect(manifest.promotion?.source_free_promotable === true, findings, `manifest_promotable:${file}`, `${file} must be source-free promotable.`);
+      expect(Boolean(manifest.promotion?.promotion_decision), findings, `manifest_promotion_decision:${file}`, `${file} must include a promotion decision.`);
+      expect(Boolean(manifest.promotion?.training_eval_lane), findings, `manifest_training_lane:${file}`, `${file} must include a training eval lane.`);
+      expect((manifest.promotion?.ontology_bindings?.entities || []).length > 0, findings, `manifest_ontology_entities:${file}`, `${file} must include ontology entity bindings.`);
+      expect((manifest.promotion?.ontology_bindings?.relations || []).length > 0, findings, `manifest_ontology_relations:${file}`, `${file} must include ontology relation bindings.`);
+      expect(manifest.promotion?.local_worker_allowed_now === false, findings, `manifest_worker_blocked:${file}`, `${file} must keep local worker execution blocked.`);
+      expect(manifest.promotion?.private_content_allowed === false, findings, `manifest_private_blocked:${file}`, `${file} must block private content.`);
       expect((manifest.fixtures || []).length >= 1, findings, `manifest_fixture_count:${file}`, `${file} must include fixtures.`);
       expect((manifest.fixtures || []).every((fixture) => fixture.private_content === false), findings, `manifest_fixture_no_private:${file}`, `${file} fixtures must be non-private.`);
     }

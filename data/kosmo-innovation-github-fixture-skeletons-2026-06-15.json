@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:13:45.902Z",
+  "generated_at": "2026-06-15T16:39:38.797Z",
   "status": "innovation_github_fixture_skeletons_ready",
   "policy": {
     "skeletons_only": true,
@@ -18,10 +18,12 @@
     "note": "Skeletons are generated from contract metadata only. They do not copy repository code, README prose, private sources or worker outputs."
   },
   "source_refs": [
-    "data/kosmo-innovation-github-fixture-contract-plan-2026-06-15.json"
+    "data/kosmo-innovation-github-fixture-contract-plan-2026-06-15.json",
+    "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json"
   ],
   "summary": {
     "contract_plans": 5,
+    "matrix_promotable": 5,
     "directories": 5,
     "files_written": 10,
     "executable_now": 0,

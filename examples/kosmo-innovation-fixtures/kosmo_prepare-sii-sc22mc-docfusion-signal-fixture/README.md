@@ -2,6 +2,8 @@
 
 Source reference: [SII-sc22mc/DocFusion](https://github.com/SII-sc22mc/DocFusion)
 Lane: `kosmo_prepare`
+Promotion decision: `promote_to_synthetic_document_fixture_contract`
+Training eval lane: `source_extraction_review`
 
 This directory is a synthetic GitHub-signal fixture skeleton only. The repository is used as a source reference, not as copied implementation material.
 
