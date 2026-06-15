@@ -1,6 +1,6 @@
 # Kosmo Owner Remaining Decision Brief
 
-Generated: 2026-06-15T06:16:28.336Z
+Generated: 2026-06-15T13:48:18.447Z
 Status: `owner_remaining_decision_brief_ready`
 
 ## Summary

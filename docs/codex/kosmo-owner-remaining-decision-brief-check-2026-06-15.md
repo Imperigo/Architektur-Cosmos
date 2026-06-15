@@ -1,6 +1,6 @@
 # Kosmo Owner Remaining Decision Brief Check
 
-Generated: 2026-06-15T06:16:28.588Z
+Generated: 2026-06-15T13:48:18.687Z
 Status: `owner_remaining_decision_brief_guard_passed`
 
 ## Summary

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:36:58.882Z",
+  "generated_at": "2026-06-15T13:48:18.926Z",
   "status": "vision_completion_roadmap_ready",
   "policy": {
     "review_only": true,
@@ -16,7 +16,7 @@
     "data/kosmo-source-independent-work-queue-2026-06-15.json",
     "data/kosmoreferences-pilot-gap-label-review-2026-06-15.json",
     "data/kosmoasset-candidate-taxonomy-review-2026-06-15.json",
-    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-14.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json",
     "data/kosmo-training-eval-row-template-2026-06-15.json",
     "data/kosmo-training-eval-review-queue-plan-2026-06-15.json",
     "data/kosmo-architecture-ontology-seed-2026-06-15.json"
@@ -28,7 +28,7 @@
     "owner_unlock_components": 11,
     "owner_unlock_guard_checks_passed": 113,
     "owner_unlock_guard_checks": 113,
-    "owner_unlock_latest_handoff_max": 211,
+    "owner_unlock_latest_handoff_max": 240,
     "source_free_codex_tasks_remaining": 0,
     "codex_ready_tonight": 2,
     "pilot_gap_owner_decisions": 7,

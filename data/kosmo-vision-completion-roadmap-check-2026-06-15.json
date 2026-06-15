@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:42:50.797Z",
+  "generated_at": "2026-06-15T13:48:19.166Z",
   "status": "vision_completion_roadmap_guard_passed",
   "policy": {
     "validates_roadmap_only": true,
@@ -73,7 +73,7 @@
     {
       "id": "owner_unlock_handoff_current",
       "status": "passed",
-      "evidence": 211
+      "evidence": 240
     },
     {
       "id": "source_free_tasks_zero",

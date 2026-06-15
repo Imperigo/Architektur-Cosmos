@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:46:38.021Z",
+  "generated_at": "2026-06-15T13:48:17.507Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 238
+      "files": 239
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 88
+      "files": 89
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md",
+      "title": "Codex Synergiebericht 240: Source-Independent Queue Refresh",
+      "mirrored_inboxes": 2,
+      "bytes": 1876,
+      "modified_at": "2026-06-15T13:47:19.615Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md",
       "title": "Codex Synergiebericht 239: Orbit Local Worker Fixture Card",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1631,
       "modified_at": "2026-06-15T13:25:04.137Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-232-dependency-phase1-install.md",
-      "title": "Codex Synergiebericht 232: Dependency Phase 1 Install",
-      "mirrored_inboxes": 2,
-      "bytes": 1526,
-      "modified_at": "2026-06-15T13:22:04.157Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 232-239 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 233-240 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

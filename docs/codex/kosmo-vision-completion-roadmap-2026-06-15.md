@@ -1,6 +1,6 @@
 # Kosmo Vision Completion Roadmap
 
-Generated: 2026-06-15T10:36:58.882Z
+Generated: 2026-06-15T13:48:18.926Z
 Status: `vision_completion_roadmap_ready`
 
 ## Summary
@@ -8,7 +8,7 @@ Status: `vision_completion_roadmap_ready`
 - Phases: 6
 - Immediate owner gates: 2
 - Owner unlock checkpoint: 11/11 components, 113/113 guards
-- Owner unlock latest handoff: 211
+- Owner unlock latest handoff: 240
 - Source-free Codex tasks remaining: 0
 - Codex-ready tonight: 2
 - Pilot-gap owner decisions: 7
