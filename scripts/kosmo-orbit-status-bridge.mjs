@@ -30,6 +30,8 @@ const refs = {
   ownerUnlockPathAReadinessCertificateCheck: `data/kosmo-owner-unlock-path-a-readiness-certificate-check-${dateStamp}.json`,
   ownerUnlockPatchReviewBundle: `data/kosmo-owner-unlock-patch-review-bundle-${dateStamp}.json`,
   ownerUnlockPatchReviewBundleCheck: `data/kosmo-owner-unlock-patch-review-bundle-check-${dateStamp}.json`,
+  ownerUnlockIntakeApplyPlan: `data/kosmo-owner-unlock-intake-apply-plan-${dateStamp}.json`,
+  ownerUnlockIntakeApplyPlanCheck: `data/kosmo-owner-unlock-intake-apply-plan-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -129,6 +131,8 @@ function buildBridge(reports) {
   const ownerUnlockPathAReadinessCheckSummary = reports.ownerUnlockPathAReadinessCertificateCheck?.summary || {};
   const ownerUnlockPatchReviewBundleSummary = reports.ownerUnlockPatchReviewBundle?.summary || {};
   const ownerUnlockPatchReviewBundleCheckSummary = reports.ownerUnlockPatchReviewBundleCheck?.summary || {};
+  const ownerUnlockIntakeApplyPlanSummary = reports.ownerUnlockIntakeApplyPlan?.summary || {};
+  const ownerUnlockIntakeApplyPlanCheckSummary = reports.ownerUnlockIntakeApplyPlanCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -391,6 +395,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Review exact intake patch operations before any template edit',
       source_ref: refs.ownerUnlockPatchReviewBundle
+    },
+    {
+      id: 'owner-unlock-intake-apply-plan',
+      title: 'Owner Unlock Intake Apply Plan',
+      status: reports.ownerUnlockIntakeApplyPlan?.status === 'owner_unlock_intake_apply_plan_ready' &&
+        reports.ownerUnlockIntakeApplyPlanCheck?.status === 'owner_unlock_intake_apply_plan_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.ownerUnlockIntakeApplyPlan?.status
+        ? `${ownerUnlockIntakeApplyPlanSummary.planned_field_edits ?? 0} field edits, target empty ${ownerUnlockIntakeApplyPlanSummary.target_intake_currently_empty ? 'yes' : 'no'}, root exists ${ownerUnlockIntakeApplyPlanSummary.selected_root_exists ? 'yes' : 'no'}, writes now ${ownerUnlockIntakeApplyPlanSummary.writes_intake_now ? 'yes' : 'no'}, failures ${ownerUnlockIntakeApplyPlanCheckSummary.failures ?? 0}`
+        : 'missing intake apply plan',
+      owner_action_required: true,
+      route_hint: 'Field-level apply plan for the owner intake template; review only',
+      source_ref: refs.ownerUnlockIntakeApplyPlan
     },
     {
       id: 'source-root-activation',
@@ -918,6 +936,9 @@ function buildBridge(reports) {
       owner_unlock_patch_review_bundle_status: reports.ownerUnlockPatchReviewBundle?.status || null,
       owner_unlock_patch_review_bundle_operations: ownerUnlockPatchReviewBundleSummary.patch_operations ?? null,
       owner_unlock_patch_review_bundle_applies_now: ownerUnlockPatchReviewBundleSummary.applies_patch_now ?? null,
+      owner_unlock_intake_apply_plan_status: reports.ownerUnlockIntakeApplyPlan?.status || null,
+      owner_unlock_intake_apply_plan_field_edits: ownerUnlockIntakeApplyPlanSummary.planned_field_edits ?? null,
+      owner_unlock_intake_apply_plan_writes_now: ownerUnlockIntakeApplyPlanSummary.writes_intake_now ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -946,6 +967,7 @@ function buildBridge(reports) {
       'owner_unlock_exact_reply_preview_card',
       'owner_unlock_path_a_readiness_card',
       'owner_unlock_patch_review_bundle_card',
+      'owner_unlock_intake_apply_plan_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -1041,6 +1063,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Owner unlock exact reply preview: ${bridge.summary.owner_unlock_exact_reply_preview_status}, validator ${bridge.summary.owner_unlock_exact_reply_preview_validator_status ?? '-'}, patches ${bridge.summary.owner_unlock_exact_reply_preview_patch_operations ?? '-'}`);
   lines.push(`- Owner unlock Path A readiness: ${bridge.summary.owner_unlock_path_a_readiness_status}, can start after exact reply ${bridge.summary.owner_unlock_path_a_can_start_after_exact_reply ?? '-'}, applies now ${bridge.summary.owner_unlock_path_a_applies_now ?? '-'}`);
   lines.push(`- Owner unlock patch review bundle: ${bridge.summary.owner_unlock_patch_review_bundle_status}, operations ${bridge.summary.owner_unlock_patch_review_bundle_operations ?? '-'}, applies now ${bridge.summary.owner_unlock_patch_review_bundle_applies_now ?? '-'}`);
+  lines.push(`- Owner unlock intake apply plan: ${bridge.summary.owner_unlock_intake_apply_plan_status}, field edits ${bridge.summary.owner_unlock_intake_apply_plan_field_edits ?? '-'}, writes now ${bridge.summary.owner_unlock_intake_apply_plan_writes_now ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

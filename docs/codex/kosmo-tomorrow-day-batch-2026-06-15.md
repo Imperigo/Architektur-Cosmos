@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T15:37:55.290Z
+Generated: 2026-06-15T15:42:53.092Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -59,6 +59,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:owner-unlock-path-a-readiness-certificate-check`
 - `npm run kosmo:owner-unlock-patch-review-bundle`
 - `npm run kosmo:owner-unlock-patch-review-bundle-check`
+- `npm run kosmo:owner-unlock-intake-apply-plan`
+- `npm run kosmo:owner-unlock-intake-apply-plan-check`
 
 ## Path A If Exact Owner Unlock Reply Is Present
 
