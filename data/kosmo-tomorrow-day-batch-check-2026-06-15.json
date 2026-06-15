@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:30:00.661Z",
+  "generated_at": "2026-06-15T14:48:02.296Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -88,6 +88,21 @@
       "id": "start_sequence_live_github",
       "severity": "passed",
       "message": "Start sequence must include live GitHub watchlist."
+    },
+    {
+      "id": "start_sequence_github_fixture_skeletons",
+      "severity": "passed",
+      "message": "Start sequence must include GitHub fixture skeletons."
+    },
+    {
+      "id": "start_sequence_github_fixture_payloads",
+      "severity": "passed",
+      "message": "Start sequence must include GitHub fixture payloads."
+    },
+    {
+      "id": "start_sequence_github_fixture_payload_smoke",
+      "severity": "passed",
+      "message": "Start sequence must include GitHub fixture payload smoke."
     },
     {
       "id": "start_sequence_owner_checkpoint",

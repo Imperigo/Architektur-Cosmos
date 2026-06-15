@@ -73,6 +73,9 @@ function checkPlan(plan) {
   expect(plan.policy?.installs_or_downloads_now === false, findings, 'no_installs_downloads', 'Plan must not install or download by default.');
   expect(plan.policy?.public_ready_after_plan === 0, findings, 'public_ready_zero', 'Plan must keep public-ready at 0.');
   expect(startSequence.includes('innovation-github-watchlist'), findings, 'start_sequence_live_github', 'Start sequence must include live GitHub watchlist.');
+  expect(startSequence.includes('innovation-github-fixture-skeletons'), findings, 'start_sequence_github_fixture_skeletons', 'Start sequence must include GitHub fixture skeletons.');
+  expect(startSequence.includes('innovation-github-fixture-payloads'), findings, 'start_sequence_github_fixture_payloads', 'Start sequence must include GitHub fixture payloads.');
+  expect(startSequence.includes('innovation-github-fixture-payload-smoke'), findings, 'start_sequence_github_fixture_payload_smoke', 'Start sequence must include GitHub fixture payload smoke.');
   expect(startSequence.includes('owner-unlock-pipeline-checkpoint'), findings, 'start_sequence_owner_checkpoint', 'Start sequence must include owner unlock checkpoint.');
   expect(pathA.includes('owner-unlock-reply-validator'), findings, 'path_a_reply_validator', 'Path A must validate owner replies.');
   expect(pathA.includes('owner-unlock-answer-dry-run'), findings, 'path_a_dry_run', 'Path A must dry-run owner replies before activation.');

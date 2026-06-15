@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T14:30:00.423Z
+Generated: 2026-06-15T14:48:02.058Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -38,6 +38,12 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:innovation-github-readme-signal-scan-check`
 - `npm run kosmo:innovation-github-fixture-contract-plan`
 - `npm run kosmo:innovation-github-fixture-contract-plan-check`
+- `npm run kosmo:innovation-github-fixture-skeletons`
+- `npm run kosmo:innovation-github-fixture-skeletons-check`
+- `npm run kosmo:innovation-github-fixture-payloads`
+- `npm run kosmo:innovation-github-fixture-payloads-check`
+- `npm run kosmo:innovation-github-fixture-payload-smoke`
+- `npm run kosmo:innovation-github-fixture-payload-smoke-check`
 - `npm run kosmo:codex-daily-loop-routine`
 - `npm run kosmo:codex-daily-loop-routine-check`
 - `npm run kosmo:owner-unlock-pipeline-checkpoint`
