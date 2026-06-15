@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:24:08.410Z",
+  "generated_at": "2026-06-15T15:29:12.643Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 271
+      "files": 272
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 121
+      "files": 122
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-273-owner-exact-reply-preview.md",
+      "title": "Codex Synergiebericht 273 - Owner Exact Reply Preview",
+      "mirrored_inboxes": 2,
+      "bytes": 1773,
+      "modified_at": "2026-06-15T15:29:01.255Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-272-day-batch-after-fast-reply.md",
       "title": "Codex Synergiebericht 272 - Day Batch After Fast Reply",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1114,
       "modified_at": "2026-06-15T15:01:20.911Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-265-training-eval-readiness.md",
-      "title": "Codex Synergiebericht 265 - Training Eval Readiness",
-      "mirrored_inboxes": 2,
-      "bytes": 1656,
-      "modified_at": "2026-06-15T15:00:14.215Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 265-272 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 266-273 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
