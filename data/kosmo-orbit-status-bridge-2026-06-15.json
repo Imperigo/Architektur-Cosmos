@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:42:53.064Z",
+  "generated_at": "2026-06-15T15:50:29.993Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -35,6 +35,8 @@
     "data/kosmo-owner-unlock-patch-review-bundle-check-2026-06-15.json",
     "data/kosmo-owner-unlock-intake-apply-plan-2026-06-15.json",
     "data/kosmo-owner-unlock-intake-apply-plan-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-edit-preview-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-edit-preview-check-2026-06-15.json",
     "data/kosmo-source-root-activation-preflight-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-15.json",
@@ -91,9 +93,9 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 48,
+    "cards": 49,
     "blocking_cards": 4,
-    "owner_action_cards": 21,
+    "owner_action_cards": 22,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -396,6 +398,15 @@
       "owner_action_required": true,
       "route_hint": "Field-level apply plan for the owner intake template; review only",
       "source_ref": "data/kosmo-owner-unlock-intake-apply-plan-2026-06-15.json"
+    },
+    {
+      "id": "owner-unlock-session-edit-preview",
+      "title": "Owner Unlock Session Edit Preview",
+      "status": "review_only_ready",
+      "signal": "6 preview edits, session files 1, manual triage 5, writes now no, failures 0",
+      "owner_action_required": true,
+      "route_hint": "Preview which session files would change after exact owner unlock; review only",
+      "source_ref": "data/kosmo-owner-unlock-session-edit-preview-2026-06-15.json"
     },
     {
       "id": "source-root-activation",

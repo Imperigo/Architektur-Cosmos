@@ -129,7 +129,9 @@ function buildPlan(reports) {
       'npm run kosmo:owner-unlock-patch-review-bundle',
       'npm run kosmo:owner-unlock-patch-review-bundle-check',
       'npm run kosmo:owner-unlock-intake-apply-plan',
-      'npm run kosmo:owner-unlock-intake-apply-plan-check'
+      'npm run kosmo:owner-unlock-intake-apply-plan-check',
+      'npm run kosmo:owner-unlock-session-edit-preview',
+      'npm run kosmo:owner-unlock-session-edit-preview-check'
     ],
     path_a_if_exact_owner_unlock_reply_present: [
       'npm run kosmo:owner-unlock-prompt-pack-check',

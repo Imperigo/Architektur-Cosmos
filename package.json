@@ -286,6 +286,8 @@
     "kosmo:owner-unlock-patch-review-bundle-check": "node scripts/kosmo-owner-unlock-patch-review-bundle-check.mjs",
     "kosmo:owner-unlock-intake-apply-plan": "node scripts/kosmo-owner-unlock-intake-apply-plan.mjs",
     "kosmo:owner-unlock-intake-apply-plan-check": "node scripts/kosmo-owner-unlock-intake-apply-plan-check.mjs",
+    "kosmo:owner-unlock-session-edit-preview": "node scripts/kosmo-owner-unlock-session-edit-preview.mjs",
+    "kosmo:owner-unlock-session-edit-preview-check": "node scripts/kosmo-owner-unlock-session-edit-preview-check.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:44:23.407Z",
+  "generated_at": "2026-06-15T15:50:29.516Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 275
+      "files": 276
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 125
+      "files": 126
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-277-owner-unlock-session-edit-preview.md",
+      "title": "Codex Synergiebericht 277: Owner Unlock Session Edit Preview",
+      "mirrored_inboxes": 2,
+      "bytes": 1981,
+      "modified_at": "2026-06-15T15:50:12.284Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-276-owner-unlock-intake-apply-plan.md",
       "title": "Codex Synergiebericht 276 - Owner Unlock Intake Apply Plan",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1946,
       "modified_at": "2026-06-15T15:11:33.475Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-269-orbit-training-readiness.md",
-      "title": "Codex Synergiebericht 269 - Orbit Training Readiness",
-      "mirrored_inboxes": 2,
-      "bytes": 1476,
-      "modified_at": "2026-06-15T15:10:05.984Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 269-276 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 270-277 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

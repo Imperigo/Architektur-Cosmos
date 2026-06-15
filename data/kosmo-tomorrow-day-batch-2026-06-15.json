@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:42:53.092Z",
+  "generated_at": "2026-06-15T15:49:04.575Z",
   "date": "2026-06-15",
   "target_date": "2026-06-16",
   "status": "tomorrow_day_batch_ready",
@@ -74,7 +74,9 @@
     "npm run kosmo:owner-unlock-patch-review-bundle",
     "npm run kosmo:owner-unlock-patch-review-bundle-check",
     "npm run kosmo:owner-unlock-intake-apply-plan",
-    "npm run kosmo:owner-unlock-intake-apply-plan-check"
+    "npm run kosmo:owner-unlock-intake-apply-plan-check",
+    "npm run kosmo:owner-unlock-session-edit-preview",
+    "npm run kosmo:owner-unlock-session-edit-preview-check"
   ],
   "path_a_if_exact_owner_unlock_reply_present": [
     "npm run kosmo:owner-unlock-prompt-pack-check",

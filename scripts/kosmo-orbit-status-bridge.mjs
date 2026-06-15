@@ -32,6 +32,8 @@ const refs = {
   ownerUnlockPatchReviewBundleCheck: `data/kosmo-owner-unlock-patch-review-bundle-check-${dateStamp}.json`,
   ownerUnlockIntakeApplyPlan: `data/kosmo-owner-unlock-intake-apply-plan-${dateStamp}.json`,
   ownerUnlockIntakeApplyPlanCheck: `data/kosmo-owner-unlock-intake-apply-plan-check-${dateStamp}.json`,
+  ownerUnlockSessionEditPreview: `data/kosmo-owner-unlock-session-edit-preview-${dateStamp}.json`,
+  ownerUnlockSessionEditPreviewCheck: `data/kosmo-owner-unlock-session-edit-preview-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -133,6 +135,8 @@ function buildBridge(reports) {
   const ownerUnlockPatchReviewBundleCheckSummary = reports.ownerUnlockPatchReviewBundleCheck?.summary || {};
   const ownerUnlockIntakeApplyPlanSummary = reports.ownerUnlockIntakeApplyPlan?.summary || {};
   const ownerUnlockIntakeApplyPlanCheckSummary = reports.ownerUnlockIntakeApplyPlanCheck?.summary || {};
+  const ownerUnlockSessionEditPreviewSummary = reports.ownerUnlockSessionEditPreview?.summary || {};
+  const ownerUnlockSessionEditPreviewCheckSummary = reports.ownerUnlockSessionEditPreviewCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -409,6 +413,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Field-level apply plan for the owner intake template; review only',
       source_ref: refs.ownerUnlockIntakeApplyPlan
+    },
+    {
+      id: 'owner-unlock-session-edit-preview',
+      title: 'Owner Unlock Session Edit Preview',
+      status: reports.ownerUnlockSessionEditPreview?.status === 'owner_unlock_session_edit_preview_ready' &&
+        reports.ownerUnlockSessionEditPreviewCheck?.status === 'owner_unlock_session_edit_preview_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.ownerUnlockSessionEditPreview?.status
+        ? `${ownerUnlockSessionEditPreviewSummary.preview_edits ?? 0} preview edits, session files ${ownerUnlockSessionEditPreviewSummary.session_file_edits ?? 0}, manual triage ${ownerUnlockSessionEditPreviewSummary.manual_triage_edits ?? 0}, writes now ${ownerUnlockSessionEditPreviewSummary.writes_now ? 'yes' : 'no'}, failures ${ownerUnlockSessionEditPreviewCheckSummary.failures ?? 0}`
+        : 'missing session edit preview',
+      owner_action_required: true,
+      route_hint: 'Preview which session files would change after exact owner unlock; review only',
+      source_ref: refs.ownerUnlockSessionEditPreview
     },
     {
       id: 'source-root-activation',
