@@ -1,0 +1,90 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:51:37.808Z",
+  "status": "codex_daily_loop_routine_ready",
+  "policy": {
+    "autonomous_loop_until_user_stop_or_budget": true,
+    "max_tick_minutes": 2,
+    "avoids_idle_wait": true,
+    "no_unrelated_reverts": true,
+    "no_private_processing_without_source_root_unlock": true,
+    "installs_downloads_require_explicit_batch": true,
+    "public_ready_after_routine": 0
+  },
+  "morning_routine": [
+    {
+      "id": "repo_state_scan",
+      "description": "Git states in ArchitectureCosmos and KosmoOrbit, scoped dirty-file review, no unrelated resets.",
+      "status": "active"
+    },
+    {
+      "id": "handoff_intake",
+      "description": "Read latest Claude/KosmoOverseer inbox notes and compare against Codex-owned lane state.",
+      "status": "active"
+    },
+    {
+      "id": "source_root_gate",
+      "description": "Run or inspect Source Root gate status before any private OCR, embedding, training or source scan.",
+      "status": "active"
+    },
+    {
+      "id": "orbit_health",
+      "description": "Check KosmoOrbit handoff visibility and whether a status artifact needs mirroring.",
+      "status": "active"
+    },
+    {
+      "id": "innovation_watch",
+      "description": "Review local queue plus trusted upstream innovation candidates before installing or downloading anything.",
+      "status": "active"
+    },
+    {
+      "id": "priority_pick",
+      "description": "Pick the highest-value safe block: guards, fixture-only experiments, handoff clarity, or bug cleanup.",
+      "status": "active"
+    },
+    {
+      "id": "commit_push",
+      "description": "Commit and push completed blocks with exact staging and a worker-facing handoff note.",
+      "status": "active"
+    }
+  ],
+  "today_loop_priorities": [
+    {
+      "id": "finish_dependency_lane",
+      "description": "Dependency preflight plan, availability runner and install queue are the active safe innovation lane.",
+      "status": "active"
+    },
+    {
+      "id": "prepare_install_batch_without_execution",
+      "description": "Keep installs/downloads as explicit future batch with model-root and Source-Root gates.",
+      "status": "active"
+    },
+    {
+      "id": "strengthen_worker_contracts",
+      "description": "Improve Codex/Claude/KosmoOverseer handoff contracts whenever code changes touch shared boundaries.",
+      "status": "active"
+    },
+    {
+      "id": "source_independent_progress",
+      "description": "When Source Root is blocked, progress with fixtures, schemas, review-only contracts and Orbit status.",
+      "status": "active"
+    },
+    {
+      "id": "cleanup_and_guarding",
+      "description": "If no feature block is available, reduce ambiguity, add checks, and clean generated status docs safely.",
+      "status": "active"
+    }
+  ],
+  "escalation_rules": [
+    "Ask the owner only for decisions that change private source processing, public release, credentials, destructive filesystem actions or large installs/downloads.",
+    "If an exact Source Root is required, keep the structured unlock phrase requirement visible.",
+    "If a worker artifact is changed, mirror a handoff to KosmoOrbit inbox."
+  ],
+  "fallback_work": [
+    "Run fixture-only checks and improve their guards.",
+    "Audit handoff consistency between ArchitectureCosmos and KosmoOrbit.",
+    "Create review packets for owner decisions.",
+    "Inspect trusted upstream docs or repos for relevant architecture-AI improvements, then add queue-only plans.",
+    "Clean local generated artifacts only when they are Codex-owned and safely scoped."
+  ]
+}

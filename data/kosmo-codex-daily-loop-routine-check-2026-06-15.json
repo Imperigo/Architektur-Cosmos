@@ -1,0 +1,113 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:51:38.039Z",
+  "status": "codex_daily_loop_routine_guard_passed",
+  "policy": {
+    "validates_autonomous_loop_contract": true,
+    "installs_downloads_require_explicit_batch": true,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-codex-daily-loop-routine-2026-06-15.json"
+  ],
+  "summary": {
+    "routine_status": "codex_daily_loop_routine_ready",
+    "morning_steps": 7,
+    "today_priorities": 5,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Routine schema_version must be 0.1."
+    },
+    {
+      "id": "routine_ready",
+      "severity": "passed",
+      "message": "Routine must be ready."
+    },
+    {
+      "id": "tick_limit",
+      "severity": "passed",
+      "message": "Routine must keep tick interval at or below two minutes."
+    },
+    {
+      "id": "no_idle_wait",
+      "severity": "passed",
+      "message": "Routine must avoid idle wait."
+    },
+    {
+      "id": "no_unrelated_reverts",
+      "severity": "passed",
+      "message": "Routine must protect unrelated dirty work."
+    },
+    {
+      "id": "source_root_gate",
+      "severity": "passed",
+      "message": "Routine must gate private processing on Source Root unlock."
+    },
+    {
+      "id": "install_batch_gate",
+      "severity": "passed",
+      "message": "Routine must require explicit install/download batch."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Routine must keep public-ready at 0."
+    },
+    {
+      "id": "morning_step:repo_state_scan",
+      "severity": "passed",
+      "message": "Morning routine must include repo_state_scan."
+    },
+    {
+      "id": "morning_step:handoff_intake",
+      "severity": "passed",
+      "message": "Morning routine must include handoff_intake."
+    },
+    {
+      "id": "morning_step:source_root_gate",
+      "severity": "passed",
+      "message": "Morning routine must include source_root_gate."
+    },
+    {
+      "id": "morning_step:orbit_health",
+      "severity": "passed",
+      "message": "Morning routine must include orbit_health."
+    },
+    {
+      "id": "morning_step:innovation_watch",
+      "severity": "passed",
+      "message": "Morning routine must include innovation_watch."
+    },
+    {
+      "id": "morning_step:priority_pick",
+      "severity": "passed",
+      "message": "Morning routine must include priority_pick."
+    },
+    {
+      "id": "morning_step:commit_push",
+      "severity": "passed",
+      "message": "Morning routine must include commit_push."
+    },
+    {
+      "id": "today_priority:finish_dependency_lane",
+      "severity": "passed",
+      "message": "Today loop priorities must include finish_dependency_lane."
+    },
+    {
+      "id": "today_priority:source_independent_progress",
+      "severity": "passed",
+      "message": "Today loop priorities must include source_independent_progress."
+    },
+    {
+      "id": "today_priority:cleanup_and_guarding",
+      "severity": "passed",
+      "message": "Today loop priorities must include cleanup_and_guarding."
+    }
+  ]
+}
