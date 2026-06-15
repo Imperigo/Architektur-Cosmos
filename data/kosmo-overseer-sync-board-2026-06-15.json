@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:01:12.017Z",
+  "generated_at": "2026-06-15T17:06:55.054Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 289
+      "files": 290
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 139
+      "files": 140
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-291-validator-fixtures.md",
+      "title": "Codex Synergiebericht 291 - Validator Fixtures",
+      "mirrored_inboxes": 2,
+      "bytes": 3306,
+      "modified_at": "2026-06-15T17:06:43.590Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-290-local-worker-output-validator.md",
       "title": "Codex Synergiebericht 290 - Local Worker Output Validator",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2530,
       "modified_at": "2026-06-15T16:28:10.432Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-283-session-apply-guard-smoke.md",
-      "title": "Codex Synergiebericht 283 - Session Apply Guard Smoke",
-      "mirrored_inboxes": 2,
-      "bytes": 2636,
-      "modified_at": "2026-06-15T16:20:30.794Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 283-290 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 284-291 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

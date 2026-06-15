@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:01:13.447Z",
+  "generated_at": "2026-06-15T17:06:56.593Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -76,6 +76,8 @@
     "data/kosmo-local-worker-innovation-output-adapter-plan-check-2026-06-15.json",
     "data/kosmo-local-worker-innovation-output-validator-2026-06-15.json",
     "data/kosmo-local-worker-innovation-output-validator-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-output-validator-fixtures-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-output-validator-fixtures-check-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
     "data/kosmo-innovation-github-discovery-2026-06-15.json",
@@ -111,7 +113,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 58,
+    "cards": 59,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -238,6 +240,12 @@
     "local_worker_innovation_output_validator_public_ready_after_validation": 0,
     "local_worker_innovation_output_validator_check_status": "local_worker_innovation_output_validator_guard_passed",
     "local_worker_innovation_output_validator_check_failures": 0,
+    "local_worker_innovation_output_validator_fixtures_status": "local_worker_innovation_output_validator_fixtures_passed",
+    "local_worker_innovation_output_validator_fixtures_positive_status": "local_worker_innovation_output_validator_passed",
+    "local_worker_innovation_output_validator_fixtures_negative_status": "local_worker_innovation_output_validator_needs_review",
+    "local_worker_innovation_output_validator_fixtures_negative_failures": 4,
+    "local_worker_innovation_output_validator_fixtures_check_status": "local_worker_innovation_output_validator_fixtures_guard_passed",
+    "local_worker_innovation_output_validator_fixtures_check_failures": 0,
     "github_watchlist_status": "innovation_github_watchlist_ready",
     "github_watchlist_candidates": 9,
     "github_watchlist_live_probe_succeeded": 9,
@@ -661,6 +669,15 @@
       "owner_action_required": false,
       "route_hint": "Metadata-only validator for future local-worker outputs; waiting is acceptable until outputs exist",
       "source_ref": "data/kosmo-local-worker-innovation-output-validator-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-output-validator-fixtures",
+      "title": "Local Worker Innovation Output Validator Fixtures",
+      "status": "review_only_ready",
+      "signal": "positive local_worker_innovation_output_validator_passed, negative local_worker_innovation_output_validator_needs_review, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Synthetic positive/negative regression fixtures for validator behavior; no real worker execution",
+      "source_ref": "data/kosmo-local-worker-innovation-output-validator-fixtures-check-2026-06-15.json"
     },
     {
       "id": "github-innovation-watchlist",

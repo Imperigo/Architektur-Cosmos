@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:06:56.115Z",
+  "status": "local_worker_innovation_output_validator_fixtures_passed",
+  "policy": {
+    "review_only": true,
+    "synthetic_fixtures_only": true,
+    "reads_private_content": false,
+    "executes_local_workers": false,
+    "starts_models": false,
+    "writes_worker_packets": false,
+    "fixture_outputs_are_public_safe_synthetic": true,
+    "public_ready_after_fixtures": 0
+  },
+  "summary": {
+    "positive_validator_status": "local_worker_innovation_output_validator_passed",
+    "positive_present_outputs": 5,
+    "positive_failures": 0,
+    "negative_validator_status": "local_worker_innovation_output_validator_needs_review",
+    "negative_present_outputs": 5,
+    "negative_failures": 4,
+    "negative_forbidden_hits": 5,
+    "public_ready_after_fixtures": 0,
+    "failures": 0
+  },
+  "scenarios": [
+    {
+      "scenario": "positive",
+      "fixture_plan": "data/kosmo-local-worker-innovation-output-validator-positive-fixture-plan-2026-06-15.json",
+      "fixture_plan_check": "data/kosmo-local-worker-innovation-output-validator-positive-fixture-plan-check-2026-06-15.json",
+      "validator_report": "data/kosmo-local-worker-innovation-output-validator-positive-fixture-report-2026-06-15.json",
+      "validator_markdown": "docs/codex/kosmo-local-worker-innovation-output-validator-positive-fixture-report-2026-06-15.md",
+      "validator_status": "local_worker_innovation_output_validator_passed",
+      "summary": {
+        "adapters": 5,
+        "expected_outputs": 5,
+        "present_outputs": 5,
+        "parsed_outputs": 5,
+        "missing_outputs": 0,
+        "invalid_json_outputs": 0,
+        "required_fields_missing_total": 0,
+        "policy_mismatches": 0,
+        "training_lane_mismatches": 0,
+        "ontology_binding_mismatches": 0,
+        "forbidden_terms_hit_count": 0,
+        "body_copy_allowed": false,
+        "repo_conversion_allowed_now": 0,
+        "training_rows_promoted": 0,
+        "public_ready_after_validation": 0,
+        "failures": 0
+      },
+      "output_refs": [
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/positive/github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture.review.json",
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/positive/github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture.review.json",
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/positive/github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture.review.json",
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/positive/github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture.review.json",
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/positive/github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture.review.json"
+      ]
+    },
+    {
+      "scenario": "negative",
+      "fixture_plan": "data/kosmo-local-worker-innovation-output-validator-negative-fixture-plan-2026-06-15.json",
+      "fixture_plan_check": "data/kosmo-local-worker-innovation-output-validator-negative-fixture-plan-check-2026-06-15.json",
+      "validator_report": "data/kosmo-local-worker-innovation-output-validator-negative-fixture-report-2026-06-15.json",
+      "validator_markdown": "docs/codex/kosmo-local-worker-innovation-output-validator-negative-fixture-report-2026-06-15.md",
+      "validator_status": "local_worker_innovation_output_validator_needs_review",
+      "summary": {
+        "adapters": 5,
+        "expected_outputs": 5,
+        "present_outputs": 5,
+        "parsed_outputs": 5,
+        "missing_outputs": 0,
+        "invalid_json_outputs": 0,
+        "required_fields_missing_total": 0,
+        "policy_mismatches": 5,
+        "training_lane_mismatches": 5,
+        "ontology_binding_mismatches": 5,
+        "forbidden_terms_hit_count": 5,
+        "body_copy_allowed": false,
+        "repo_conversion_allowed_now": 0,
+        "training_rows_promoted": 0,
+        "public_ready_after_validation": 0,
+        "failures": 4
+      },
+      "output_refs": [
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture.review.json",
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture.review.json",
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture.review.json",
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture.review.json",
+        "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture.review.json"
+      ]
+    }
+  ],
+  "failures": []
+}

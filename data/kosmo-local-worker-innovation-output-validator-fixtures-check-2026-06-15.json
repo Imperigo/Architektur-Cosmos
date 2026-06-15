@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:06:56.347Z",
+  "status": "local_worker_innovation_output_validator_fixtures_guard_passed",
+  "policy": {
+    "review_only": true,
+    "synthetic_fixtures_only": true,
+    "reads_private_content": false,
+    "executes_local_workers": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-output-validator-fixtures-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 14,
+    "passed": 14,
+    "failures": 0,
+    "positive_status": "local_worker_innovation_output_validator_passed",
+    "negative_status": "local_worker_innovation_output_validator_needs_review",
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_validator_fixtures_passed"
+    },
+    {
+      "id": "policy_synthetic_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "two_scenarios",
+      "status": "passed",
+      "evidence": 2
+    },
+    {
+      "id": "positive_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_validator_passed"
+    },
+    {
+      "id": "positive_no_failures",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "positive_all_present",
+      "status": "passed",
+      "evidence": "5/0"
+    },
+    {
+      "id": "negative_needs_review",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_validator_needs_review"
+    },
+    {
+      "id": "negative_has_failures",
+      "status": "passed",
+      "evidence": 4
+    },
+    {
+      "id": "negative_has_forbidden_hits",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "fixture_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    }
+  ]
+}

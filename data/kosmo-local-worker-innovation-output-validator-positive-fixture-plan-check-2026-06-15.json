@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:06:55.996Z",
+  "status": "local_worker_innovation_output_adapter_plan_guard_passed",
+  "fixture_scenario": "positive",
+  "summary": {
+    "failures": 0,
+    "adapters": 5,
+    "public_ready_after_check": 0
+  }
+}

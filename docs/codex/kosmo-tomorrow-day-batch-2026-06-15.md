@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T17:01:13.689Z
+Generated: 2026-06-15T17:06:56.831Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -57,6 +57,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:local-worker-innovation-output-adapter-plan-check`
 - `npm run kosmo:local-worker-innovation-output-validator`
 - `npm run kosmo:local-worker-innovation-output-validator-check`
+- `npm run kosmo:local-worker-innovation-output-validator-fixtures`
+- `npm run kosmo:local-worker-innovation-output-validator-fixtures-check`
 - `npm run kosmo:codex-daily-loop-routine`
 - `npm run kosmo:codex-daily-loop-routine-check`
 - `npm run kosmo:codex-morning-routine-run`

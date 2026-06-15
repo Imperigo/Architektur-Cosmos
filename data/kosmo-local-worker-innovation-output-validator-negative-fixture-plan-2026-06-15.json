@@ -1,0 +1,310 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:06:56.056Z",
+  "status": "local_worker_innovation_output_adapter_plan_ready",
+  "policy": {
+    "review_only": true,
+    "adapter_plan_only": true,
+    "reads_private_content_now": false,
+    "reads_worker_output_bodies_now": false,
+    "future_parser_body_copy_allowed": false,
+    "stores_worker_body_in_git": false,
+    "stores_worker_recommendations_in_git": false,
+    "stores_metadata_only": true,
+    "executes_local_workers": false,
+    "starts_models": false,
+    "writes_repo_derivatives_now": false,
+    "public_ready_after_plan": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-output-smoke-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-output-smoke-check-2026-06-15.json"
+  ],
+  "summary": {
+    "adapters": 5,
+    "source_smoke_expected_outputs": 5,
+    "smoke_guard_failures": 0,
+    "lanes": 3,
+    "training_lanes": 3,
+    "metadata_capture_fields": 11,
+    "body_copy_allowed": false,
+    "repo_conversion_allowed_now": 0,
+    "public_ready_after_plan": 0,
+    "failures": 0
+  },
+  "adapters": [
+    {
+      "adapter_id": "adapter-github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture",
+      "task_id": "github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture",
+      "lane": "kosmo_prepare",
+      "expected_output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture.review.json",
+      "training_eval_lane": "source_extraction_review",
+      "ontology_entities": [
+        "source_record",
+        "reference_project",
+        "eval_review_item"
+      ],
+      "ontology_relations": [
+        "project_has_source",
+        "eval_item_tests_project",
+        "source_blocks_public_release"
+      ],
+      "allowed_read_mode": "json_schema_and_metadata_only",
+      "may_parse_json": true,
+      "may_store_body_excerpt_in_git": false,
+      "may_store_worker_recommendations_in_git": false,
+      "may_store_policy_flags_in_git": true,
+      "may_store_counts_and_presence_in_git": true,
+      "repo_conversion_allowed_now": false,
+      "public_ready_after_adapter": 0,
+      "required_metadata_capture": [
+        "exists",
+        "bytes",
+        "json_valid",
+        "schema_version_present",
+        "required_fields_present_count",
+        "required_fields_missing",
+        "policy_flags_match",
+        "training_eval_lane_match",
+        "ontology_bindings_match",
+        "forbidden_terms_hit_count",
+        "public_ready_flag_present"
+      ],
+      "required_validation_steps": [
+        "stat expected output path",
+        "parse JSON only if file exists and path is under worker_packets",
+        "validate required top-level fields from smoke contract",
+        "validate policy booleans remain false for private, GitHub copy, repo conversion, training and public-ready",
+        "record only counts, booleans, ids and missing-field names",
+        "discard worker recommendation text before writing repo report"
+      ],
+      "hard_stops": [
+        "do_not_copy_output_body",
+        "do_not_store_recommendation_text",
+        "do_not_promote_training_rows",
+        "do_not_convert_to_repo_artifact",
+        "do_not_mark_public_ready"
+      ]
+    },
+    {
+      "adapter_id": "adapter-github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture",
+      "task_id": "github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture",
+      "lane": "kosmo_asset",
+      "expected_output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture.review.json",
+      "training_eval_lane": "asset_candidate_review",
+      "ontology_entities": [
+        "asset_record",
+        "building_element",
+        "material_system"
+      ],
+      "ontology_relations": [
+        "asset_derived_from_element",
+        "asset_uses_material",
+        "eval_item_tests_asset"
+      ],
+      "allowed_read_mode": "json_schema_and_metadata_only",
+      "may_parse_json": true,
+      "may_store_body_excerpt_in_git": false,
+      "may_store_worker_recommendations_in_git": false,
+      "may_store_policy_flags_in_git": true,
+      "may_store_counts_and_presence_in_git": true,
+      "repo_conversion_allowed_now": false,
+      "public_ready_after_adapter": 0,
+      "required_metadata_capture": [
+        "exists",
+        "bytes",
+        "json_valid",
+        "schema_version_present",
+        "required_fields_present_count",
+        "required_fields_missing",
+        "policy_flags_match",
+        "training_eval_lane_match",
+        "ontology_bindings_match",
+        "forbidden_terms_hit_count",
+        "public_ready_flag_present"
+      ],
+      "required_validation_steps": [
+        "stat expected output path",
+        "parse JSON only if file exists and path is under worker_packets",
+        "validate required top-level fields from smoke contract",
+        "validate policy booleans remain false for private, GitHub copy, repo conversion, training and public-ready",
+        "record only counts, booleans, ids and missing-field names",
+        "discard worker recommendation text before writing repo report"
+      ],
+      "hard_stops": [
+        "do_not_copy_output_body",
+        "do_not_store_recommendation_text",
+        "do_not_promote_training_rows",
+        "do_not_convert_to_repo_artifact",
+        "do_not_mark_public_ready"
+      ]
+    },
+    {
+      "adapter_id": "adapter-github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+      "task_id": "github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+      "lane": "worker_integration",
+      "expected_output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture.review.json",
+      "training_eval_lane": "worker_output_review",
+      "ontology_entities": [
+        "eval_review_item",
+        "source_record",
+        "asset_record"
+      ],
+      "ontology_relations": [
+        "eval_item_tests_project",
+        "eval_item_tests_asset",
+        "source_blocks_public_release"
+      ],
+      "allowed_read_mode": "json_schema_and_metadata_only",
+      "may_parse_json": true,
+      "may_store_body_excerpt_in_git": false,
+      "may_store_worker_recommendations_in_git": false,
+      "may_store_policy_flags_in_git": true,
+      "may_store_counts_and_presence_in_git": true,
+      "repo_conversion_allowed_now": false,
+      "public_ready_after_adapter": 0,
+      "required_metadata_capture": [
+        "exists",
+        "bytes",
+        "json_valid",
+        "schema_version_present",
+        "required_fields_present_count",
+        "required_fields_missing",
+        "policy_flags_match",
+        "training_eval_lane_match",
+        "ontology_bindings_match",
+        "forbidden_terms_hit_count",
+        "public_ready_flag_present"
+      ],
+      "required_validation_steps": [
+        "stat expected output path",
+        "parse JSON only if file exists and path is under worker_packets",
+        "validate required top-level fields from smoke contract",
+        "validate policy booleans remain false for private, GitHub copy, repo conversion, training and public-ready",
+        "record only counts, booleans, ids and missing-field names",
+        "discard worker recommendation text before writing repo report"
+      ],
+      "hard_stops": [
+        "do_not_copy_output_body",
+        "do_not_store_recommendation_text",
+        "do_not_promote_training_rows",
+        "do_not_convert_to_repo_artifact",
+        "do_not_mark_public_ready"
+      ]
+    },
+    {
+      "adapter_id": "adapter-github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture",
+      "task_id": "github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture",
+      "lane": "kosmo_prepare",
+      "expected_output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture.review.json",
+      "training_eval_lane": "source_extraction_review",
+      "ontology_entities": [
+        "source_record",
+        "reference_project",
+        "eval_review_item"
+      ],
+      "ontology_relations": [
+        "project_has_source",
+        "eval_item_tests_project",
+        "source_blocks_public_release"
+      ],
+      "allowed_read_mode": "json_schema_and_metadata_only",
+      "may_parse_json": true,
+      "may_store_body_excerpt_in_git": false,
+      "may_store_worker_recommendations_in_git": false,
+      "may_store_policy_flags_in_git": true,
+      "may_store_counts_and_presence_in_git": true,
+      "repo_conversion_allowed_now": false,
+      "public_ready_after_adapter": 0,
+      "required_metadata_capture": [
+        "exists",
+        "bytes",
+        "json_valid",
+        "schema_version_present",
+        "required_fields_present_count",
+        "required_fields_missing",
+        "policy_flags_match",
+        "training_eval_lane_match",
+        "ontology_bindings_match",
+        "forbidden_terms_hit_count",
+        "public_ready_flag_present"
+      ],
+      "required_validation_steps": [
+        "stat expected output path",
+        "parse JSON only if file exists and path is under worker_packets",
+        "validate required top-level fields from smoke contract",
+        "validate policy booleans remain false for private, GitHub copy, repo conversion, training and public-ready",
+        "record only counts, booleans, ids and missing-field names",
+        "discard worker recommendation text before writing repo report"
+      ],
+      "hard_stops": [
+        "do_not_copy_output_body",
+        "do_not_store_recommendation_text",
+        "do_not_promote_training_rows",
+        "do_not_convert_to_repo_artifact",
+        "do_not_mark_public_ready"
+      ]
+    },
+    {
+      "adapter_id": "adapter-github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+      "task_id": "github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+      "lane": "worker_integration",
+      "expected_output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/synthetic-validator-fixtures/negative/github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture.review.json",
+      "training_eval_lane": "worker_output_review",
+      "ontology_entities": [
+        "eval_review_item",
+        "source_record",
+        "asset_record"
+      ],
+      "ontology_relations": [
+        "eval_item_tests_project",
+        "eval_item_tests_asset",
+        "source_blocks_public_release"
+      ],
+      "allowed_read_mode": "json_schema_and_metadata_only",
+      "may_parse_json": true,
+      "may_store_body_excerpt_in_git": false,
+      "may_store_worker_recommendations_in_git": false,
+      "may_store_policy_flags_in_git": true,
+      "may_store_counts_and_presence_in_git": true,
+      "repo_conversion_allowed_now": false,
+      "public_ready_after_adapter": 0,
+      "required_metadata_capture": [
+        "exists",
+        "bytes",
+        "json_valid",
+        "schema_version_present",
+        "required_fields_present_count",
+        "required_fields_missing",
+        "policy_flags_match",
+        "training_eval_lane_match",
+        "ontology_bindings_match",
+        "forbidden_terms_hit_count",
+        "public_ready_flag_present"
+      ],
+      "required_validation_steps": [
+        "stat expected output path",
+        "parse JSON only if file exists and path is under worker_packets",
+        "validate required top-level fields from smoke contract",
+        "validate policy booleans remain false for private, GitHub copy, repo conversion, training and public-ready",
+        "record only counts, booleans, ids and missing-field names",
+        "discard worker recommendation text before writing repo report"
+      ],
+      "hard_stops": [
+        "do_not_copy_output_body",
+        "do_not_store_recommendation_text",
+        "do_not_promote_training_rows",
+        "do_not_convert_to_repo_artifact",
+        "do_not_mark_public_ready"
+      ]
+    }
+  ],
+  "next_actions": [
+    "Implement a future metadata-only validator only after an actual local-worker fixture run exists.",
+    "Validator output may store booleans, counts, ids and missing-field lists, but not worker body text.",
+    "Keep Output Contract Review and human/overseer review before any repo conversion.",
+    "Keep Source Root and private content blocked until exact owner unlock is present."
+  ],
+  "failures": [],
+  "fixture_scenario": "negative"
+}
