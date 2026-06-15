@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T15:29:12.643Z
+Generated: 2026-06-15T15:34:40.127Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-274-path-a-readiness-certificate.md` | Codex Synergiebericht 274 - Path A Readiness Certificate | 2 |
 | `2026-06-15-codex-synergiebericht-273-owner-exact-reply-preview.md` | Codex Synergiebericht 273 - Owner Exact Reply Preview | 2 |
 | `2026-06-15-codex-synergiebericht-272-day-batch-after-fast-reply.md` | Codex Synergiebericht 272 - Day Batch After Fast Reply | 2 |
 | `2026-06-15-codex-synergiebericht-271-owner-fast-reply-card.md` | Codex Synergiebericht 271 - Owner Fast Reply Card | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-269-orbit-training-readiness.md` | Codex Synergiebericht 269 - Orbit Training Readiness | 2 |
 | `2026-06-15-codex-synergiebericht-268-readiness-blocks-day-batch.md` | Codex Synergiebericht 268 - Readiness Blocks Day Batch | 2 |
 | `2026-06-15-codex-synergiebericht-267-asset-intake-readiness.md` | Codex Synergiebericht 267 - Asset Intake Readiness | 2 |
-| `2026-06-15-codex-synergiebericht-266-references-intake-readiness.md` | Codex Synergiebericht 266 - References Intake Readiness | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 266-273 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 267-274 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
