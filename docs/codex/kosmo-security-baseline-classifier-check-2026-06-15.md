@@ -1,6 +1,6 @@
 # Kosmo Security Baseline Classifier Check
 
-Generated: 2026-06-15T13:08:13.526Z
+Generated: 2026-06-15T13:09:27.828Z
 Status: `security_baseline_classifier_guard_passed`
 
 ## Summary
@@ -24,3 +24,4 @@ Status: `security_baseline_classifier_guard_passed`
 - passed: `personal_count_present` - Classifier must count personal findings.
 - passed: `secret_count_present` - Classifier must count secret findings.
 - passed: `top_files_present` - Classifier must include top files by count.
+- passed: `unclassified_files_present` - Classifier must include unclassified files by count.

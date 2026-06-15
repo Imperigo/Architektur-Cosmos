@@ -1,6 +1,6 @@
 # Kosmo Security Baseline Classifier
 
-Generated: 2026-06-15T13:08:13.281Z
+Generated: 2026-06-15T13:09:27.591Z
 Status: `security_baseline_classifier_ready`
 
 ## Summary
@@ -40,6 +40,25 @@ Status: `security_baseline_classifier_ready`
 - `docs/codex/kosmo-source-root-decision-session-2026-06-13.md`: 3
 - `docs/codex/kosmo-source-root-selection-brief-2026-06-13.md`: 3
 - `docs/codex/kosmo-source-root-unlock-runbook-2026-06-13.md`: 3
+
+## Unclassified Files
+
+- `data/kosmo-storage-mount-snapshot-2026-06-14.json`: 3
+- `data/kosmo-storage-mount-snapshot-2026-06-15.json`: 3
+- `docs/codex/kosmo-storage-mount-snapshot-2026-06-14.md`: 3
+- `docs/codex/kosmo-storage-mount-snapshot-2026-06-15.md`: 3
+- `docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md`: 2
+- `data/kosmoreferences-local-library-inventory-2026-06-13.json`: 1
+- `data/kosmoreferences-pilots.json`: 1
+- `data/kosmoreferences-source-inventory-2026-06-13.json`: 1
+- `data/kosmoreferences-worker-doctrine-2026-06-13.json`: 1
+- `docs/codex/kosmoreferences-kosmoasset-pilot-plan-2026-06-13.md`: 1
+- `docs/codex/kosmoreferences-local-library-inventory-2026-06-13.md`: 1
+- `docs/codex/kosmoreferences-source-inventory-2026-06-13.md`: 1
+- `docs/codex/swiss-timber-candidate-sogn-benedetg-2026-06-13.md`: 1
+- `examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json`: 1
+- `examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json`: 1
+- `scripts/kosmo-owner-unlock-prompt-pack.mjs`: 1
 
 ## Next Actions
 

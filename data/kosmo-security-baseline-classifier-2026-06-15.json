@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:08:13.281Z",
+  "generated_at": "2026-06-15T13:09:27.591Z",
   "status": "security_baseline_classifier_ready",
   "policy": {
     "classifier_only": true,
@@ -112,6 +112,72 @@
     {
       "file": "docs/codex/kosmo-source-root-unlock-runbook-2026-06-13.md",
       "count": 3
+    }
+  ],
+  "unclassified_files": [
+    {
+      "file": "data/kosmo-storage-mount-snapshot-2026-06-14.json",
+      "count": 3
+    },
+    {
+      "file": "data/kosmo-storage-mount-snapshot-2026-06-15.json",
+      "count": 3
+    },
+    {
+      "file": "docs/codex/kosmo-storage-mount-snapshot-2026-06-14.md",
+      "count": 3
+    },
+    {
+      "file": "docs/codex/kosmo-storage-mount-snapshot-2026-06-15.md",
+      "count": 3
+    },
+    {
+      "file": "docs/codex/kosmo-private-library-sync-resolution-2026-06-13.md",
+      "count": 2
+    },
+    {
+      "file": "data/kosmoreferences-local-library-inventory-2026-06-13.json",
+      "count": 1
+    },
+    {
+      "file": "data/kosmoreferences-pilots.json",
+      "count": 1
+    },
+    {
+      "file": "data/kosmoreferences-source-inventory-2026-06-13.json",
+      "count": 1
+    },
+    {
+      "file": "data/kosmoreferences-worker-doctrine-2026-06-13.json",
+      "count": 1
+    },
+    {
+      "file": "docs/codex/kosmoreferences-kosmoasset-pilot-plan-2026-06-13.md",
+      "count": 1
+    },
+    {
+      "file": "docs/codex/kosmoreferences-local-library-inventory-2026-06-13.md",
+      "count": 1
+    },
+    {
+      "file": "docs/codex/kosmoreferences-source-inventory-2026-06-13.md",
+      "count": 1
+    },
+    {
+      "file": "docs/codex/swiss-timber-candidate-sogn-benedetg-2026-06-13.md",
+      "count": 1
+    },
+    {
+      "file": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+      "count": 1
+    },
+    {
+      "file": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+      "count": 1
+    },
+    {
+      "file": "scripts/kosmo-owner-unlock-prompt-pack.mjs",
+      "count": 1
     }
   ],
   "secret_summary": {

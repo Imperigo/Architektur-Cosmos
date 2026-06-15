@@ -69,6 +69,7 @@ function checkClassifier(classifier) {
   expect(Number.isInteger(classifier.summary?.personal_identifier_findings), findings, 'personal_count_present', 'Classifier must count personal findings.');
   expect(Number.isInteger(classifier.summary?.secret_findings), findings, 'secret_count_present', 'Classifier must count secret findings.');
   expect(Array.isArray(classifier.top_files), findings, 'top_files_present', 'Classifier must include top files by count.');
+  expect(Array.isArray(classifier.unclassified_files), findings, 'unclassified_files_present', 'Classifier must include unclassified files by count.');
   return findings;
 }
 

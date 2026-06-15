@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:08:13.526Z",
+  "generated_at": "2026-06-15T13:09:27.828Z",
   "status": "security_baseline_classifier_guard_passed",
   "policy": {
     "validates_classifier_only": true,
@@ -74,6 +74,11 @@
       "id": "top_files_present",
       "severity": "passed",
       "message": "Classifier must include top files by count."
+    },
+    {
+      "id": "unclassified_files_present",
+      "severity": "passed",
+      "message": "Classifier must include unclassified files by count."
     }
   ]
 }

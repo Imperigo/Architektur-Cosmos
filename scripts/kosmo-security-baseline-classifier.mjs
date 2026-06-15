@@ -71,6 +71,9 @@ const topFiles = [...countByPath(personalMatches).entries()]
   .sort((a, b) => b[1] - a[1])
   .slice(0, 20)
   .map(([file, count]) => ({ file, count }));
+const unclassifiedFiles = [...countByPath(personalMatches.filter((item) => item.category === 'must_redact')).entries()]
+  .sort((a, b) => b[1] - a[1])
+  .map(([file, count]) => ({ file, count }));
 
 const report = {
   schema_version: '0.1',
@@ -94,6 +97,7 @@ const report = {
   category_counts: byCategory,
   rule_counts: byRule,
   top_files: topFiles,
+  unclassified_files: unclassifiedFiles,
   secret_summary: {
     count: secretMatches.length,
     labels: [...new Set(secretMatches.map((item) => item.label))]
@@ -184,6 +188,10 @@ function renderMarkdown(report) {
   lines.push('## Top Files By Count');
   lines.push('');
   report.top_files.forEach((item) => lines.push(`- \`${item.file}\`: ${item.count}`));
+  lines.push('');
+  lines.push('## Unclassified Files');
+  lines.push('');
+  report.unclassified_files.forEach((item) => lines.push(`- \`${item.file}\`: ${item.count}`));
   lines.push('');
   lines.push('## Next Actions');
   lines.push('');
