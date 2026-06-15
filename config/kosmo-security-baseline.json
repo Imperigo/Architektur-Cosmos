@@ -1,0 +1,112 @@
+{
+  "schema_version": "0.1",
+  "status": "active",
+  "description": "Explicit private-repo baseline for personal-identifier findings. This never suppresses secrets.",
+  "policy": {
+    "suppresses_finding_types": ["personal_identifier"],
+    "suppresses_secret_patterns": false,
+    "owner_review_required_before_public_export": true,
+    "public_ready_after_baseline": 0
+  },
+  "rules": [
+    {
+      "id": "source_root_artifacts",
+      "category": "private_repo_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "data/kosmo-source-root-*",
+        "docs/codex/kosmo-source-root-*",
+        "examples/kosmo-references/provenance/source-root-*"
+      ],
+      "rationale": "Source-root discovery and decision artifacts are local operational records."
+    },
+    {
+      "id": "storage_mount_snapshots",
+      "category": "private_repo_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "data/kosmo-storage-mount-snapshot-*",
+        "docs/codex/kosmo-storage-mount-snapshot-*"
+      ],
+      "rationale": "Mount snapshots are private workstation diagnostics and not public export inputs."
+    },
+    {
+      "id": "onedrive_sync_artifacts",
+      "category": "private_repo_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "data/kosmo-onedrive-sync-error-summary-*",
+        "docs/codex/kosmo-onedrive-sync-error-summary-*"
+      ],
+      "rationale": "OneDrive sync diagnostics can include local account/path hints."
+    },
+    {
+      "id": "owner_review_artifacts",
+      "category": "private_repo_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "data/kosmo-owner-*",
+        "docs/codex/kosmo-owner-*"
+      ],
+      "rationale": "Owner review packets are private governance artifacts."
+    },
+    {
+      "id": "private_library_diagnostics",
+      "category": "private_repo_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "data/kosmoreferences-private-library-*",
+        "docs/codex/kosmoreferences-private-library-*",
+        "docs/codex/kosmo-private-library-sync-resolution-*"
+      ],
+      "rationale": "Private library diagnostics are not public export inputs."
+    },
+    {
+      "id": "kosmoreferences_operational_artifacts",
+      "category": "private_repo_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "data/kosmoreferences-local-library-inventory-*",
+        "data/kosmoreferences-source-inventory-*",
+        "data/kosmoreferences-worker-doctrine-*",
+        "data/kosmoreferences-pilots.json",
+        "docs/codex/kosmoreferences-local-library-inventory-*",
+        "docs/codex/kosmoreferences-source-inventory-*",
+        "docs/codex/kosmoreferences-kosmoasset-pilot-plan-*",
+        "docs/codex/swiss-timber-candidate-sogn-benedetg-*"
+      ],
+      "rationale": "KosmoReferences operational planning artifacts may mention owner-provided private source pools."
+    },
+    {
+      "id": "generated_orbit_reviews",
+      "category": "generated_review_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "examples/kosmo-orbit/review/*"
+      ],
+      "rationale": "Generated Orbit review fixtures need separate public-export filtering."
+    },
+    {
+      "id": "reference_source_package_examples",
+      "category": "generated_review_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "examples/kosmo-references/source-packages/*/source-package.json"
+      ],
+      "rationale": "Review-only source package examples are not public-ready exports."
+    },
+    {
+      "id": "local_context_scripts",
+      "category": "script_context_allowed",
+      "finding_types": ["personal_identifier"],
+      "path_globs": [
+        "scripts/kosmo-source-root-locator.mjs",
+        "scripts/kosmo-storage-mount-snapshot.mjs",
+        "scripts/kosmo-private-library-diagnostic.mjs",
+        "scripts/kosmo-onedrive-sync-error-summary.mjs",
+        "scripts/kosmo-owner-unlock-prompt-pack.mjs"
+      ],
+      "rationale": "These scripts intentionally detect or explain local operational paths and names."
+    }
+  ]
+}

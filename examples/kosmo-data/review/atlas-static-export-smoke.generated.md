@@ -1,6 +1,6 @@
 # KosmoData Atlas Static Export Smoke
 
-Generated: 2026-06-01T20:09:19.262Z
+Generated: 2026-06-15T13:14:14.032Z
 Status: `atlas_static_export_smoke_passed`
 HTML: `out/atlas/index.html`
 

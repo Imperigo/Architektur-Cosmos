@@ -63,8 +63,10 @@ const requiredHeaders = [
   'Content-Security-Policy'
 ];
 
+const baseline = loadSecurityBaseline();
 const failures = [];
 const warnings = [];
+const suppressedPersonalFindings = [];
 
 main();
 
@@ -82,6 +84,8 @@ function main() {
     console.log('\nWarnings:');
     warnings.forEach((warning) => console.log(`- ${warning}`));
   }
+
+  printSecurityBaselineSuppression();
 
   if (failures.length > 0) {
     console.error('\nSecurity check failed:');
@@ -127,6 +131,11 @@ function listTextFiles(directory) {
 function checkPersonalExposure(files) {
   const matches = findMatches(files, personalPatterns);
   matches.forEach((match) => {
+    const rule = baseline.findRule(match.relativePath, 'personal_identifier');
+    if (rule) {
+      suppressedPersonalFindings.push({ ...match, rule });
+      return;
+    }
     failures.push(`Personal identifier found in ${match.relativePath}:${match.lineNumber}`);
   });
 }
@@ -192,6 +201,60 @@ function runNpmAudit() {
     if (result.stdout?.trim()) warnings.push(result.stdout.trim());
     if (result.stderr?.trim()) warnings.push(result.stderr.trim());
   }
+}
+
+function loadSecurityBaseline() {
+  const baselinePath = path.join(repoRoot, 'config', 'kosmo-security-baseline.json');
+  const empty = { findRule: () => null };
+
+  if (!existsSync(baselinePath)) return empty;
+
+  try {
+    const parsed = JSON.parse(readFileSync(baselinePath, 'utf8'));
+    if (parsed?.status !== 'active') {
+      warnings.push(`Security baseline ignored because status is ${parsed?.status || 'missing'}`);
+      return empty;
+    }
+    if (parsed?.policy?.suppresses_secret_patterns !== false) {
+      failures.push('Security baseline must not suppress secret patterns');
+      return empty;
+    }
+    const rules = (parsed.rules || []).map((rule) => ({
+      ...rule,
+      pathRegexes: (rule.path_globs || []).map(globToRegex)
+    }));
+    return {
+      findRule(relativePath, findingType) {
+        return rules.find((rule) => (
+          (rule.finding_types || []).includes(findingType)
+          && !(rule.finding_types || []).includes('secret')
+          && rule.pathRegexes.some((regex) => regex.test(relativePath))
+        )) || null;
+      }
+    };
+  } catch (error) {
+    failures.push(`Failed to load config/kosmo-security-baseline.json: ${error.message}`);
+    return empty;
+  }
+}
+
+function globToRegex(glob) {
+  const escaped = glob.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+  return new RegExp(`^${escaped}$`);
+}
+
+function printSecurityBaselineSuppression() {
+  if (suppressedPersonalFindings.length === 0) return;
+  const counts = new Map();
+  suppressedPersonalFindings.forEach((finding) => {
+    const key = `${finding.rule.category}:${finding.rule.id}`;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  });
+  console.log('\nSecurity baseline suppressed personal identifier findings:');
+  console.log(`- Total: ${suppressedPersonalFindings.length}`);
+  [...counts.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .forEach(([key, count]) => console.log(`- ${key}: ${count}`));
 }
 
 function findMatches(files, patterns) {

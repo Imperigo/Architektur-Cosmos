@@ -1,6 +1,6 @@
 # KosmoOrbit Static Export Smoke
 
-Generated: 2026-06-02T14:43:07.648Z
+Generated: 2026-06-15T13:14:14.286Z
 Status: `orbit_static_export_smoke_passed`
 HTML: `out/orbit/index.html`
 
@@ -8,7 +8,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 
 ## Summary
 
-- checks: 82/82 passed
+- checks: 84/84 passed
 
 ## Checks
 
@@ -47,6 +47,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `renders_runtime_boundary` | `passed` | Export renders MVP/runtime boundary. |
 | `renders_runtime_contract` | `passed` | Export renders local runtime contract. |
 | `renders_runtime_adapter` | `passed` | Export renders runtime adapter contract. |
+| `renders_kosmosketch_adapter` | `passed` | Export renders KosmoSketch tool adapter contract. |
 | `renders_installation_topology` | `passed` | Export renders local office installation topology. |
 | `renders_health_readiness` | `passed` | Export renders local health readiness contract. |
 | `renders_risk_register` | `passed` | Export renders human approval risk register. |
@@ -68,6 +69,7 @@ Checks the built static export for the visible KosmoOrbit demo panels. It does n
 | `keeps_no_runtime_side_effects` | `passed` | Export states that runtime side effects are off. |
 | `keeps_runtime_contract_safe` | `passed` | Export keeps runtime process/model/queue actions gated. |
 | `keeps_runtime_adapter_safe` | `passed` | Export keeps runtime adapters non-operational. |
+| `keeps_kosmosketch_adapter_review_only` | `passed` | Export keeps KosmoSketch backend, approval, artifact, Blender, BIM, IFC and 2D actions blocked. |
 | `keeps_workflow_delta_honest` | `passed` | Export keeps workflow delta honest about savings. |
 | `keeps_workstation_profile_review_only` | `passed` | Export keeps workstation profiles non-operational. |
 | `keeps_local_identity_review_only` | `passed` | Export keeps local identity non-operational. |
