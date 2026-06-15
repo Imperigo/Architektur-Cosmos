@@ -1,0 +1,138 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T14:04:25.385Z",
+  "status": "tomorrow_day_batch_guard_passed",
+  "policy": {
+    "validates_source_free_default": true,
+    "reads_private_content": false,
+    "installs_or_downloads": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-tomorrow-day-batch-2026-06-15.json"
+  ],
+  "summary": {
+    "plan_status": "tomorrow_day_batch_ready",
+    "target_date": "2026-06-16",
+    "path_b_blocks": 5,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Plan schema_version must be 0.1."
+    },
+    {
+      "id": "plan_ready",
+      "severity": "passed",
+      "message": "Plan must be ready."
+    },
+    {
+      "id": "tick_limit",
+      "severity": "passed",
+      "message": "Plan must keep max tick at or below two minutes."
+    },
+    {
+      "id": "checkup_limit",
+      "severity": "passed",
+      "message": "Plan must keep checkup interval at or below three minutes."
+    },
+    {
+      "id": "no_idle_wait",
+      "severity": "passed",
+      "message": "Plan must avoid idle wait between tasks."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Plan must not read private content by default."
+    },
+    {
+      "id": "no_private_inventory",
+      "severity": "passed",
+      "message": "Plan must not run private inventory by default."
+    },
+    {
+      "id": "no_ocr",
+      "severity": "passed",
+      "message": "Plan must not run OCR by default."
+    },
+    {
+      "id": "no_embeddings",
+      "severity": "passed",
+      "message": "Plan must not create embeddings by default."
+    },
+    {
+      "id": "no_fine_tuning",
+      "severity": "passed",
+      "message": "Plan must not run fine-tuning by default."
+    },
+    {
+      "id": "no_local_worker_execution",
+      "severity": "passed",
+      "message": "Plan must not execute local workers by default."
+    },
+    {
+      "id": "no_installs_downloads",
+      "severity": "passed",
+      "message": "Plan must not install or download by default."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Plan must keep public-ready at 0."
+    },
+    {
+      "id": "start_sequence_live_github",
+      "severity": "passed",
+      "message": "Start sequence must include live GitHub watchlist."
+    },
+    {
+      "id": "start_sequence_owner_checkpoint",
+      "severity": "passed",
+      "message": "Start sequence must include owner unlock checkpoint."
+    },
+    {
+      "id": "path_a_reply_validator",
+      "severity": "passed",
+      "message": "Path A must validate owner replies."
+    },
+    {
+      "id": "path_a_dry_run",
+      "severity": "passed",
+      "message": "Path A must dry-run owner replies before activation."
+    },
+    {
+      "id": "path_a_preflight",
+      "severity": "passed",
+      "message": "Path A must include source-root activation preflight."
+    },
+    {
+      "id": "path_b_block:live_innovation_scout",
+      "severity": "passed",
+      "message": "Path B must include live_innovation_scout."
+    },
+    {
+      "id": "path_b_block:guard_cleanup",
+      "severity": "passed",
+      "message": "Path B must include guard_cleanup."
+    },
+    {
+      "id": "path_b_block:orbit_visibility",
+      "severity": "passed",
+      "message": "Path B must include orbit_visibility."
+    },
+    {
+      "id": "path_b_block:owner_review_packet",
+      "severity": "passed",
+      "message": "Path B must include owner_review_packet."
+    },
+    {
+      "id": "path_b_block:handoff_and_push",
+      "severity": "passed",
+      "message": "Path B must include handoff_and_push."
+    }
+  ]
+}

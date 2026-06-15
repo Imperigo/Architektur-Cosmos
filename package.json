@@ -270,6 +270,8 @@
     "kosmo:innovation-lane-plan": "node scripts/kosmo-innovation-lane-plan.mjs",
     "kosmo:innovation-smoke": "node scripts/kosmo-innovation-smoke.mjs",
     "kosmo:day-batch-loop": "node scripts/kosmo-day-batch-loop.mjs",
+    "kosmo:tomorrow-day-batch": "node scripts/kosmo-tomorrow-day-batch.mjs",
+    "kosmo:tomorrow-day-batch-check": "node scripts/kosmo-tomorrow-day-batch-check.mjs",
     "kosmo:data-lane-sweep": "node scripts/kosmo-data-lane-sweep.mjs",
     "kosmo:data-lane-command-router": "node scripts/kosmo-data-lane-command-router.mjs",
     "kosmo:worker-boundary-pack": "node scripts/kosmo-worker-boundary-pack.mjs",
