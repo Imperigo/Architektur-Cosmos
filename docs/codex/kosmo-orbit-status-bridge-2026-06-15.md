@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T13:46:37.766Z
+Generated: 2026-06-15T14:13:00.930Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 30
+- Cards: 33
 - Blocking cards: 4
 - Owner action cards: 16
 - Source root blocked: yes
@@ -71,6 +71,9 @@ Status: `orbit_bridge_ready_with_blockers`
 | `asset-candidate-taxonomy` Asset Candidate Taxonomy | review_only_ready | yes | 10 reviews, 3 reviewable, owner 3, failures 0 |
 | `prepare-references-asset-fixture-chain` Prepare References Asset Fixture Chain | review_only_ready | no | source package kosmo-prepare-phase1-adapter-fixture-2026-06-15, fixture assets 2, public-ready 0 |
 | `fixture-chain-local-worker-task-pack` Fixture Chain Local Worker Task Pack | review_only_ready | no | 3 tasks, executable now 0, missing refs 0 |
+| `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
+| `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 1/5 queries with results, 8 candidates, failures 0 |
+| `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-16, failures 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
 | `owner-handoff` Owner Handoff | ready | yes | 6 questions, no filled answers recorded |
@@ -103,6 +106,9 @@ Status: `orbit_bridge_ready_with_blockers`
 - `asset_candidate_taxonomy_card`
 - `prepare_references_asset_fixture_chain_card`
 - `fixture_chain_local_worker_task_pack_card`
+- `github_innovation_watchlist_card`
+- `github_innovation_discovery_card`
+- `tomorrow_day_batch_card`
 - `worker_boundary_card`
 - `innovation_lane_card`
 - `owner_handoff_card`

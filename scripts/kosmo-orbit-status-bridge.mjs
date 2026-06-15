@@ -47,6 +47,12 @@ const refs = {
   assetPreparePhase1FixtureContractCheck: `data/kosmo-asset-prepare-phase1-fixture-contract-check-${dateStamp}.json`,
   localWorkerFixtureChainTaskPack: `data/kosmo-local-worker-fixture-chain-task-pack-${dateStamp}.json`,
   localWorkerFixtureChainTaskPackCheck: `data/kosmo-local-worker-fixture-chain-task-pack-check-${dateStamp}.json`,
+  githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
+  githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
+  githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
+  githubDiscoveryCheck: `data/kosmo-innovation-github-discovery-check-${dateStamp}.json`,
+  tomorrowDayBatch: `data/kosmo-tomorrow-day-batch-${dateStamp}.json`,
+  tomorrowDayBatchCheck: `data/kosmo-tomorrow-day-batch-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
   innovationSmoke: `data/kosmo-innovation-smoke-${dateStamp}.json`,
   nightLoop: `data/kosmo-night-loop-checkpoint-${dateStamp}.json`
@@ -111,6 +117,12 @@ function buildBridge(reports) {
   const assetPreparePhase1FixtureSummary = reports.assetPreparePhase1FixtureContractCheck?.summary || {};
   const localWorkerFixtureChainTaskPackSummary = reports.localWorkerFixtureChainTaskPack?.summary || {};
   const localWorkerFixtureChainTaskPackCheckSummary = reports.localWorkerFixtureChainTaskPackCheck?.summary || {};
+  const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
+  const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
+  const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
+  const githubDiscoveryCheckSummary = reports.githubDiscoveryCheck?.summary || {};
+  const tomorrowDayBatchSummary = reports.tomorrowDayBatch?.summary || {};
+  const tomorrowDayBatchCheckSummary = reports.tomorrowDayBatchCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
   const cards = [
     {
@@ -448,6 +460,42 @@ function buildBridge(reports) {
       source_ref: refs.localWorkerFixtureChainTaskPackCheck
     },
     {
+      id: 'github-innovation-watchlist',
+      title: 'GitHub Innovation Watchlist',
+      status: reports.githubWatchlist?.status === 'innovation_github_watchlist_ready' &&
+        reports.githubWatchlistCheck?.status === 'innovation_github_watchlist_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubWatchlistSummary.candidates ?? 0} seeded repos, live ${githubWatchlistSummary.live_probe_succeeded ?? '-'}, fallback ${githubWatchlistSummary.live_probe_fallback ?? '-'}, failures ${githubWatchlistCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Seeded live GitHub metadata probe; no install/download',
+      source_ref: refs.githubWatchlist
+    },
+    {
+      id: 'github-innovation-discovery',
+      title: 'GitHub Innovation Discovery',
+      status: reports.githubDiscovery?.status === 'innovation_github_discovery_ready' &&
+        reports.githubDiscoveryCheck?.status === 'innovation_github_discovery_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubDiscoverySummary.queries_with_results ?? 0}/${githubDiscoverySummary.queries ?? 0} queries with results, ${githubDiscoverySummary.unique_candidates ?? 0} candidates, failures ${githubDiscoveryCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Query-based public GitHub discovery; review queue only',
+      source_ref: refs.githubDiscovery
+    },
+    {
+      id: 'tomorrow-day-batch',
+      title: 'Tomorrow Day Batch',
+      status: reports.tomorrowDayBatch?.status === 'tomorrow_day_batch_ready' &&
+        reports.tomorrowDayBatchCheck?.status === 'tomorrow_day_batch_guard_passed'
+        ? 'ready'
+        : 'needs_review',
+      signal: `${tomorrowDayBatchSummary.execution_mode || 'missing mode'}, target ${reports.tomorrowDayBatch?.target_date || '-'}, failures ${tomorrowDayBatchCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Reproducible next-day start plan with Source Root gate',
+      source_ref: refs.tomorrowDayBatch
+    },
+    {
       id: 'worker-boundary',
       title: 'Worker Boundary',
       status: reports.workerBoundary?.status === 'worker_boundary_pack_guard_passed' ? 'locked' : 'needs_review',
@@ -593,6 +641,14 @@ function buildBridge(reports) {
       local_worker_fixture_chain_task_pack_missing_refs: localWorkerFixtureChainTaskPackSummary.missing_refs ?? null,
       local_worker_fixture_chain_task_pack_check_status: reports.localWorkerFixtureChainTaskPackCheck?.status || null,
       local_worker_fixture_chain_task_pack_check_failures: localWorkerFixtureChainTaskPackCheckSummary.failures ?? null,
+      github_watchlist_status: reports.githubWatchlist?.status || null,
+      github_watchlist_candidates: githubWatchlistSummary.candidates ?? null,
+      github_watchlist_live_probe_succeeded: githubWatchlistSummary.live_probe_succeeded ?? null,
+      github_discovery_status: reports.githubDiscovery?.status || null,
+      github_discovery_queries_with_results: githubDiscoverySummary.queries_with_results ?? null,
+      github_discovery_unique_candidates: githubDiscoverySummary.unique_candidates ?? null,
+      tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
+      tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
       public_ready_after_bridge: 0
     },
@@ -624,6 +680,9 @@ function buildBridge(reports) {
       'asset_candidate_taxonomy_card',
       'prepare_references_asset_fixture_chain_card',
       'fixture_chain_local_worker_task_pack_card',
+      'github_innovation_watchlist_card',
+      'github_innovation_discovery_card',
+      'tomorrow_day_batch_card',
       'worker_boundary_card',
       'innovation_lane_card',
       'owner_handoff_card'

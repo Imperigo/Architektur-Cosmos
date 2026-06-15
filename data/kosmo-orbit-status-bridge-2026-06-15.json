@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:46:37.766Z",
+  "generated_at": "2026-06-15T14:13:00.930Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -50,12 +50,18 @@
     "data/kosmo-asset-prepare-phase1-fixture-contract-check-2026-06-15.json",
     "data/kosmo-local-worker-fixture-chain-task-pack-2026-06-15.json",
     "data/kosmo-local-worker-fixture-chain-task-pack-check-2026-06-15.json",
+    "data/kosmo-innovation-github-watchlist-2026-06-15.json",
+    "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
+    "data/kosmo-innovation-github-discovery-2026-06-15.json",
+    "data/kosmo-innovation-github-discovery-check-2026-06-15.json",
+    "data/kosmo-tomorrow-day-batch-2026-06-15.json",
+    "data/kosmo-tomorrow-day-batch-check-2026-06-15.json",
     "data/kosmo-innovation-lane-plan-2026-06-15.json",
     "data/kosmo-innovation-smoke-2026-06-15.json",
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 30,
+    "cards": 33,
     "blocking_cards": 4,
     "owner_action_cards": 16,
     "source_root_blocked": true,
@@ -154,6 +160,14 @@
     "local_worker_fixture_chain_task_pack_missing_refs": 0,
     "local_worker_fixture_chain_task_pack_check_status": "local_worker_fixture_chain_task_pack_guard_passed",
     "local_worker_fixture_chain_task_pack_check_failures": 0,
+    "github_watchlist_status": "innovation_github_watchlist_ready",
+    "github_watchlist_candidates": 9,
+    "github_watchlist_live_probe_succeeded": 9,
+    "github_discovery_status": "innovation_github_discovery_ready",
+    "github_discovery_queries_with_results": 1,
+    "github_discovery_unique_candidates": 8,
+    "tomorrow_day_batch_status": "tomorrow_day_batch_ready",
+    "tomorrow_day_batch_target_date": "2026-06-16",
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
     "public_ready_after_bridge": 0
   },
@@ -402,6 +416,33 @@
       "source_ref": "data/kosmo-local-worker-fixture-chain-task-pack-check-2026-06-15.json"
     },
     {
+      "id": "github-innovation-watchlist",
+      "title": "GitHub Innovation Watchlist",
+      "status": "review_only_ready",
+      "signal": "9 seeded repos, live 9, fallback 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Seeded live GitHub metadata probe; no install/download",
+      "source_ref": "data/kosmo-innovation-github-watchlist-2026-06-15.json"
+    },
+    {
+      "id": "github-innovation-discovery",
+      "title": "GitHub Innovation Discovery",
+      "status": "review_only_ready",
+      "signal": "1/5 queries with results, 8 candidates, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Query-based public GitHub discovery; review queue only",
+      "source_ref": "data/kosmo-innovation-github-discovery-2026-06-15.json"
+    },
+    {
+      "id": "tomorrow-day-batch",
+      "title": "Tomorrow Day Batch",
+      "status": "ready",
+      "signal": "source_free_path_until_exact_owner_unlock, target 2026-06-16, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Reproducible next-day start plan with Source Root gate",
+      "source_ref": "data/kosmo-tomorrow-day-batch-2026-06-15.json"
+    },
+    {
       "id": "worker-boundary",
       "title": "Worker Boundary",
       "status": "locked",
@@ -456,6 +497,9 @@
     "asset_candidate_taxonomy_card",
     "prepare_references_asset_fixture_chain_card",
     "fixture_chain_local_worker_task_pack_card",
+    "github_innovation_watchlist_card",
+    "github_innovation_discovery_card",
+    "tomorrow_day_batch_card",
     "worker_boundary_card",
     "innovation_lane_card",
     "owner_handoff_card"
