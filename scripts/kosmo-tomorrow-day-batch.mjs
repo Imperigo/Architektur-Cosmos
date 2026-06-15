@@ -103,6 +103,8 @@ function buildPlan(reports) {
       'npm run kosmo:innovation-github-discovery-check',
       'npm run kosmo:innovation-github-review-queue',
       'npm run kosmo:innovation-github-review-queue-check',
+      'npm run kosmo:innovation-github-readme-signal-scan',
+      'npm run kosmo:innovation-github-readme-signal-scan-check',
       'npm run kosmo:codex-daily-loop-routine',
       'npm run kosmo:codex-daily-loop-routine-check',
       'npm run kosmo:owner-unlock-pipeline-checkpoint',

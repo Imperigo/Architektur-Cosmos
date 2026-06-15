@@ -232,6 +232,8 @@
     "kosmo:innovation-github-discovery-check": "node scripts/kosmo-innovation-github-discovery-check.mjs",
     "kosmo:innovation-github-review-queue": "node scripts/kosmo-innovation-github-review-queue.mjs",
     "kosmo:innovation-github-review-queue-check": "node scripts/kosmo-innovation-github-review-queue-check.mjs",
+    "kosmo:innovation-github-readme-signal-scan": "node scripts/kosmo-innovation-github-readme-signal-scan.mjs",
+    "kosmo:innovation-github-readme-signal-scan-check": "node scripts/kosmo-innovation-github-readme-signal-scan-check.mjs",
     "kosmo:codex-loop-checkpoint": "node scripts/kosmo-codex-loop-checkpoint.mjs",
     "kosmo:codex-loop-checkpoint-check": "node scripts/kosmo-codex-loop-checkpoint-check.mjs",
     "kosmo:security-baseline-policy": "node scripts/kosmo-security-baseline-policy.mjs",

@@ -53,6 +53,8 @@ const refs = {
   githubDiscoveryCheck: `data/kosmo-innovation-github-discovery-check-${dateStamp}.json`,
   githubReviewQueue: `data/kosmo-innovation-github-review-queue-${dateStamp}.json`,
   githubReviewQueueCheck: `data/kosmo-innovation-github-review-queue-check-${dateStamp}.json`,
+  githubReadmeSignalScan: `data/kosmo-innovation-github-readme-signal-scan-${dateStamp}.json`,
+  githubReadmeSignalScanCheck: `data/kosmo-innovation-github-readme-signal-scan-check-${dateStamp}.json`,
   tomorrowDayBatch: `data/kosmo-tomorrow-day-batch-${dateStamp}.json`,
   tomorrowDayBatchCheck: `data/kosmo-tomorrow-day-batch-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
@@ -125,6 +127,8 @@ function buildBridge(reports) {
   const githubDiscoveryCheckSummary = reports.githubDiscoveryCheck?.summary || {};
   const githubReviewQueueSummary = reports.githubReviewQueue?.summary || {};
   const githubReviewQueueCheckSummary = reports.githubReviewQueueCheck?.summary || {};
+  const githubReadmeSignalScanSummary = reports.githubReadmeSignalScan?.summary || {};
+  const githubReadmeSignalScanCheckSummary = reports.githubReadmeSignalScanCheck?.summary || {};
   const tomorrowDayBatchSummary = reports.tomorrowDayBatch?.summary || {};
   const tomorrowDayBatchCheckSummary = reports.tomorrowDayBatchCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
@@ -500,6 +504,18 @@ function buildBridge(reports) {
       source_ref: refs.githubReviewQueue
     },
     {
+      id: 'github-readme-signal-scan',
+      title: 'GitHub README Signal Scan',
+      status: reports.githubReadmeSignalScan?.status === 'innovation_github_readme_signal_scan_ready' &&
+        reports.githubReadmeSignalScanCheck?.status === 'innovation_github_readme_signal_scan_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubReadmeSignalScanSummary.scanned_items ?? 0} scanned, README ${githubReadmeSignalScanSummary.readme_available ?? '-'}, high-signal ${githubReadmeSignalScanSummary.high_signal_items ?? '-'}, failures ${githubReadmeSignalScanCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Derived README signal scan only; no raw content stored',
+      source_ref: refs.githubReadmeSignalScan
+    },
+    {
       id: 'tomorrow-day-batch',
       title: 'Tomorrow Day Batch',
       status: reports.tomorrowDayBatch?.status === 'tomorrow_day_batch_ready' &&
@@ -666,6 +682,9 @@ function buildBridge(reports) {
       github_review_queue_status: reports.githubReviewQueue?.status || null,
       github_review_queue_items: githubReviewQueueSummary.review_items ?? null,
       github_review_queue_high_priority_items: githubReviewQueueSummary.high_priority_items ?? null,
+      github_readme_signal_scan_status: reports.githubReadmeSignalScan?.status || null,
+      github_readme_signal_scan_items: githubReadmeSignalScanSummary.scanned_items ?? null,
+      github_readme_signal_scan_high_signal_items: githubReadmeSignalScanSummary.high_signal_items ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -702,6 +721,7 @@ function buildBridge(reports) {
       'github_innovation_watchlist_card',
       'github_innovation_discovery_card',
       'github_innovation_review_queue_card',
+      'github_readme_signal_scan_card',
       'tomorrow_day_batch_card',
       'worker_boundary_card',
       'innovation_lane_card',

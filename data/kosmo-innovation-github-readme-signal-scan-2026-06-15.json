@@ -1,0 +1,420 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T14:26:22.950Z",
+  "status": "innovation_github_readme_signal_scan_ready",
+  "policy": {
+    "signal_scan_only": true,
+    "stores_raw_readme_content": false,
+    "stores_readme_snippets": false,
+    "clones_repositories_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content": false,
+    "public_ready_after_scan": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-review-queue-2026-06-15.json"
+  ],
+  "summary": {
+    "queue_items": 7,
+    "scanned_items": 7,
+    "readme_available": 6,
+    "license_known": 0,
+    "high_signal_items": 5,
+    "execute_now": 0,
+    "public_ready_after_scan": 0
+  },
+  "scanned_items": [
+    {
+      "id": "github-review-01",
+      "repo": "SII-sc22mc/DocFusion",
+      "url": "https://github.com/SII-sc22mc/DocFusion",
+      "lane": "kosmo_prepare",
+      "review_priority": "high",
+      "repository": {
+        "name_with_owner": "SII-sc22mc/DocFusion",
+        "description": "A Unified Framework for Document Parsing Tasks (Including Document Layout Analysis, OCR, Formula Recognition, and Table Recognition)",
+        "homepage_url": null,
+        "license_spdx": null,
+        "topics": [],
+        "stars_observed": 15,
+        "updated_at_observed": "2026-03-19T09:29:34Z"
+      },
+      "readme": {
+        "available": true,
+        "html_url": "https://github.com/SII-sc22mc/DocFusion/blob/main/README.md",
+        "path": "README.md",
+        "size_bytes": 2352,
+        "raw_content_stored": false,
+        "snippets_stored": false
+      },
+      "keyword_hits": {
+        "document_processing": [
+          "layout",
+          "table",
+          "document"
+        ],
+        "ifc_bim": [],
+        "worker_integration": [
+          "http"
+        ],
+        "retrieval": [],
+        "runtime_risk": [
+          "install",
+          "pip",
+          "conda"
+        ]
+      },
+      "signal_score": 3,
+      "recommended_review_depth": "public_readme_review_next",
+      "allowed_now": {
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-02",
+      "repo": "yanghairui/3DRetrieval",
+      "url": "https://github.com/yanghairui/3DRetrieval",
+      "lane": "kosmo_asset",
+      "review_priority": "high",
+      "repository": {
+        "name_with_owner": "yanghairui/3DRetrieval",
+        "description": "Sequential learning for sketch-based 3D model retrieval",
+        "homepage_url": null,
+        "license_spdx": null,
+        "topics": [],
+        "stars_observed": 6,
+        "updated_at_observed": "2026-03-17T01:14:58Z"
+      },
+      "readme": {
+        "available": true,
+        "html_url": "https://github.com/yanghairui/3DRetrieval/blob/main/README.md",
+        "path": "README.md",
+        "size_bytes": 1904,
+        "raw_content_stored": false,
+        "snippets_stored": false
+      },
+      "keyword_hits": {
+        "document_processing": [],
+        "ifc_bim": [],
+        "worker_integration": [
+          "http"
+        ],
+        "retrieval": [
+          "retrieval"
+        ],
+        "runtime_risk": []
+      },
+      "signal_score": 2,
+      "recommended_review_depth": "metadata_only_for_now",
+      "allowed_now": {
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": false,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-03",
+      "repo": "lee-agi/3d_model_base",
+      "url": "https://github.com/lee-agi/3d_model_base",
+      "lane": "kosmo_asset",
+      "review_priority": "high",
+      "repository": {
+        "name_with_owner": "lee-agi/3d_model_base",
+        "description": "3d model Retrieval Engine of BTBU",
+        "homepage_url": null,
+        "license_spdx": null,
+        "topics": [],
+        "stars_observed": 4,
+        "updated_at_observed": "2026-02-08T17:47:43Z"
+      },
+      "readme": {
+        "available": true,
+        "html_url": "https://github.com/lee-agi/3d_model_base/blob/master/readme",
+        "path": "readme",
+        "size_bytes": 1518,
+        "raw_content_stored": false,
+        "snippets_stored": false
+      },
+      "keyword_hits": {
+        "document_processing": [
+          "table"
+        ],
+        "ifc_bim": [],
+        "worker_integration": [
+          "api"
+        ],
+        "retrieval": [
+          "retrieval"
+        ],
+        "runtime_risk": []
+      },
+      "signal_score": 3,
+      "recommended_review_depth": "public_readme_review_next",
+      "allowed_now": {
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-04",
+      "repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "lane": "ifc_reasoning",
+      "review_priority": "high",
+      "repository": {
+        "name_with_owner": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+        "description": "IFC tools, HTTP MCP, and ADK agents Extend upstream Blender MCP with Bonsai/IfcOpenShell bim_* tools, streamable HTTP + Docker deployment, Google ADK multi-agent runner and workflow knowledge base.",
+        "homepage_url": null,
+        "license_spdx": null,
+        "topics": [],
+        "stars_observed": 1,
+        "updated_at_observed": "2026-06-02T08:15:46Z"
+      },
+      "readme": {
+        "available": true,
+        "html_url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp/blob/main/readme.md",
+        "path": "readme.md",
+        "size_bytes": 15585,
+        "raw_content_stored": false,
+        "snippets_stored": false
+      },
+      "keyword_hits": {
+        "document_processing": [
+          "table",
+          "document"
+        ],
+        "ifc_bim": [
+          "ifc",
+          "ifcopenshell",
+          "bim",
+          "bonsai",
+          "blender"
+        ],
+        "worker_integration": [
+          "mcp",
+          "agent",
+          "api",
+          "http",
+          "docker"
+        ],
+        "retrieval": [],
+        "runtime_risk": [
+          "install",
+          "pip"
+        ]
+      },
+      "signal_score": 4,
+      "recommended_review_depth": "public_readme_review_next",
+      "allowed_now": {
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-05",
+      "repo": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "url": "https://github.com/cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "lane": "kosmo_prepare",
+      "review_priority": "high",
+      "repository": {
+        "name_with_owner": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+        "description": "A intelligence system for architectural specification documents. It supports image and PDF uploads, document layout analysis, OCR, table structure recognition, keyword extraction, structured database storage, and conditional search through a Web interface.",
+        "homepage_url": null,
+        "license_spdx": null,
+        "topics": [],
+        "stars_observed": 0,
+        "updated_at_observed": "2026-06-05T10:38:56Z"
+      },
+      "readme": {
+        "available": true,
+        "html_url": "https://github.com/cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System/blob/main/README.md",
+        "path": "README.md",
+        "size_bytes": 7287,
+        "raw_content_stored": false,
+        "snippets_stored": false
+      },
+      "keyword_hits": {
+        "document_processing": [
+          "pdf",
+          "ocr",
+          "table"
+        ],
+        "ifc_bim": [],
+        "worker_integration": [
+          "api",
+          "http"
+        ],
+        "retrieval": [],
+        "runtime_risk": [
+          "install",
+          "pip"
+        ]
+      },
+      "signal_score": 3,
+      "recommended_review_depth": "public_readme_review_next",
+      "allowed_now": {
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-06",
+      "repo": "mac999/BIM_LLM_code_agent",
+      "url": "https://github.com/mac999/BIM_LLM_code_agent",
+      "lane": "bim_rag_workers",
+      "review_priority": "medium",
+      "repository": {
+        "name_with_owner": "mac999/BIM_LLM_code_agent",
+        "description": "BIM LLM Code Agent with Vector and Graph RAG",
+        "homepage_url": null,
+        "license_spdx": null,
+        "topics": [
+          "agent",
+          "bim",
+          "code",
+          "gemma",
+          "ifc",
+          "llama",
+          "llm",
+          "ollama",
+          "rag"
+        ],
+        "stars_observed": 27,
+        "updated_at_observed": "2026-06-12T06:38:07Z"
+      },
+      "readme": {
+        "available": true,
+        "html_url": "https://github.com/mac999/BIM_LLM_code_agent/blob/main/README.md",
+        "path": "README.md",
+        "size_bytes": 6841,
+        "raw_content_stored": false,
+        "snippets_stored": false
+      },
+      "keyword_hits": {
+        "document_processing": [
+          "pdf",
+          "table"
+        ],
+        "ifc_bim": [
+          "ifc",
+          "ifcopenshell",
+          "bim"
+        ],
+        "worker_integration": [
+          "agent",
+          "api",
+          "http"
+        ],
+        "retrieval": [
+          "rag",
+          "vector",
+          "graph",
+          "similarity"
+        ],
+        "runtime_risk": [
+          "install",
+          "pip"
+        ]
+      },
+      "signal_score": 5,
+      "recommended_review_depth": "public_readme_review_next",
+      "allowed_now": {
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-07",
+      "repo": "HamidKiavarz/BIM-LLM",
+      "url": "https://github.com/HamidKiavarz/BIM-LLM",
+      "lane": "bim_rag_workers",
+      "review_priority": "medium",
+      "repository": {
+        "name_with_owner": "HamidKiavarz/BIM-LLM",
+        "description": "",
+        "homepage_url": null,
+        "license_spdx": null,
+        "topics": [],
+        "stars_observed": 1,
+        "updated_at_observed": "2026-06-11T16:48:45Z"
+      },
+      "readme": {
+        "available": false,
+        "html_url": null,
+        "path": null,
+        "size_bytes": null,
+        "raw_content_stored": false,
+        "snippets_stored": false
+      },
+      "keyword_hits": {
+        "document_processing": [],
+        "ifc_bim": [],
+        "worker_integration": [],
+        "retrieval": [],
+        "runtime_risk": []
+      },
+      "signal_score": 0,
+      "recommended_review_depth": "metadata_only_for_now",
+      "allowed_now": {
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": false,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    }
+  ],
+  "next_safe_actions": [
+    "Use high-signal items to draft source-free fixture contracts only.",
+    "Do not clone, install, download, or run any repository from this scan.",
+    "If a README suggests heavy runtime requirements, keep it as a risk note until an explicit install batch exists."
+  ]
+}
