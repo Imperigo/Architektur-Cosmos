@@ -1,6 +1,6 @@
 # Kosmo Day Batch Loop
 
-Generated: 2026-06-15T14:46:26.907Z
+Generated: 2026-06-15T14:53:25.433Z
 Status: `day_batch_loop_passed_review_only`
 
 ## Summary
@@ -108,78 +108,78 @@ Status: `day_batch_loop_passed_review_only`
 | Step | Status | Required | Duration |
 | --- | --- | --- | ---: |
 | OneDrive Sync Errors | passed | yes | 333ms |
-| Storage Mount Snapshot | passed | yes | 234ms |
-| Source Root Locator | passed | yes | 413ms |
-| Source Root Selection Brief | passed | yes | 236ms |
+| Storage Mount Snapshot | passed | yes | 235ms |
+| Source Root Locator | passed | yes | 433ms |
+| Source Root Selection Brief | passed | yes | 229ms |
 | Source Root Decision Session Create | skipped | no | 0ms |
-| Source Root Decision Session Refresh | passed | yes | 234ms |
+| Source Root Decision Session Refresh | passed | yes | 227ms |
 | Source Root Decision Session Check | passed | yes | 234ms |
-| Source Root Candidate Integrity Check | passed | yes | 236ms |
-| Private Library Diagnostic Metadata | passed | yes | 265ms |
-| Source Root Blocker Refresh | passed | yes | 234ms |
-| Source Root Owner Action Card | passed | yes | 235ms |
-| Source Root Owner Decision Packet | passed | yes | 238ms |
-| Source Root Owner Decision Packet Check | passed | yes | 226ms |
-| Source Root Decision Dry Run | passed | yes | 232ms |
-| Source Root Post-Owner Activation Queue | passed | yes | 233ms |
-| Source Root Post-Owner Activation Queue Check | passed | yes | 237ms |
-| Source Root Owner Final Decision Brief | passed | yes | 234ms |
-| Source Root Owner Choice Consequence Matrix | passed | yes | 236ms |
-| Local Model Inventory | passed | yes | 443ms |
-| Bootstrap Data Lane Sweep | passed | no | 19538ms |
-| Bootstrap Router | passed | yes | 230ms |
-| Core Data Lane Sweep | passed | yes | 15545ms |
-| Pilot Evidence Matrix | passed | yes | 237ms |
-| Pilot Gap Label Review | passed | yes | 233ms |
-| Pilot Gap Label Review Check | passed | yes | 231ms |
+| Source Root Candidate Integrity Check | passed | yes | 228ms |
+| Private Library Diagnostic Metadata | passed | yes | 271ms |
+| Source Root Blocker Refresh | passed | yes | 238ms |
+| Source Root Owner Action Card | passed | yes | 238ms |
+| Source Root Owner Decision Packet | passed | yes | 233ms |
+| Source Root Owner Decision Packet Check | passed | yes | 235ms |
+| Source Root Decision Dry Run | passed | yes | 235ms |
+| Source Root Post-Owner Activation Queue | passed | yes | 235ms |
+| Source Root Post-Owner Activation Queue Check | passed | yes | 232ms |
+| Source Root Owner Final Decision Brief | passed | yes | 231ms |
+| Source Root Owner Choice Consequence Matrix | passed | yes | 233ms |
+| Local Model Inventory | passed | yes | 422ms |
+| Bootstrap Data Lane Sweep | passed | no | 17852ms |
+| Bootstrap Router | passed | yes | 238ms |
+| Core Data Lane Sweep | passed | yes | 15887ms |
+| Pilot Evidence Matrix | passed | yes | 238ms |
+| Pilot Gap Label Review | passed | yes | 237ms |
+| Pilot Gap Label Review Check | passed | yes | 233ms |
 | Private Source Inventory Plan | passed | yes | 232ms |
-| Private Inventory Output Template | passed | yes | 234ms |
-| Private Inventory Output Check | passed | yes | 232ms |
-| Pilot Package Check | passed | yes | 235ms |
-| Asset Reference Bridge Check | passed | yes | 235ms |
-| Asset Source Candidate Map | passed | yes | 235ms |
-| Asset Candidate Taxonomy Review | passed | yes | 233ms |
+| Private Inventory Output Template | passed | yes | 242ms |
+| Private Inventory Output Check | passed | yes | 235ms |
+| Pilot Package Check | passed | yes | 237ms |
+| Asset Reference Bridge Check | passed | yes | 239ms |
+| Asset Source Candidate Map | passed | yes | 236ms |
+| Asset Candidate Taxonomy Review | passed | yes | 234ms |
 | Asset Candidate Taxonomy Review Check | passed | yes | 234ms |
-| Core Router | passed | yes | 230ms |
-| Worker Boundary Pack | passed | yes | 237ms |
-| Worker Boundary Pack Check | passed | yes | 234ms |
-| Source Root Activation Preflight | passed | yes | 241ms |
-| Private Metadata Inventory Runner | passed | yes | 235ms |
-| Private Metadata Inventory Fixture Smoke | passed | yes | 300ms |
-| Private Metadata Inventory Check | passed | yes | 234ms |
-| Local Worker Task Pack Refresh | passed | yes | 234ms |
-| Local Worker HTTP Runner Smoke | passed | yes | 241ms |
-| Local Worker HTTP Runner Check | passed | yes | 238ms |
-| Local Worker Output Review | passed | yes | 243ms |
-| Local Worker Launch Queue | passed | yes | 235ms |
-| Local Worker Output Conversion Plan | passed | yes | 232ms |
-| Local Worker Execution Runbook | passed | yes | 238ms |
-| Local Worker Execution Runbook Check | passed | yes | 228ms |
-| Local Worker Output Contract Review | passed | yes | 234ms |
-| Local Worker Output Contract Review Check | passed | yes | 229ms |
-| Owner Review Packet | passed | yes | 239ms |
-| Owner Review Packet Check | passed | yes | 235ms |
-| Owner Review Session Brief | passed | yes | 230ms |
-| Owner Review Session Brief Check | passed | yes | 239ms |
-| Night Loop Checkpoint | passed | yes | 232ms |
-| Source-Independent Work Queue | passed | yes | 236ms |
-| Innovation Lane Plan | passed | yes | 1098ms |
-| Innovation Smoke | passed | yes | 1730ms |
-| GitHub Discovery | passed | yes | 1102ms |
+| Core Router | passed | yes | 235ms |
+| Worker Boundary Pack | passed | yes | 239ms |
+| Worker Boundary Pack Check | passed | yes | 238ms |
+| Source Root Activation Preflight | passed | yes | 239ms |
+| Private Metadata Inventory Runner | passed | yes | 239ms |
+| Private Metadata Inventory Fixture Smoke | passed | yes | 289ms |
+| Private Metadata Inventory Check | passed | yes | 237ms |
+| Local Worker Task Pack Refresh | passed | yes | 236ms |
+| Local Worker HTTP Runner Smoke | passed | yes | 242ms |
+| Local Worker HTTP Runner Check | passed | yes | 239ms |
+| Local Worker Output Review | passed | yes | 244ms |
+| Local Worker Launch Queue | passed | yes | 230ms |
+| Local Worker Output Conversion Plan | passed | yes | 234ms |
+| Local Worker Execution Runbook | passed | yes | 233ms |
+| Local Worker Execution Runbook Check | passed | yes | 235ms |
+| Local Worker Output Contract Review | passed | yes | 230ms |
+| Local Worker Output Contract Review Check | passed | yes | 233ms |
+| Owner Review Packet | passed | yes | 242ms |
+| Owner Review Packet Check | passed | yes | 243ms |
+| Owner Review Session Brief | passed | yes | 237ms |
+| Owner Review Session Brief Check | passed | yes | 232ms |
+| Night Loop Checkpoint | passed | yes | 233ms |
+| Source-Independent Work Queue | passed | yes | 240ms |
+| Innovation Lane Plan | passed | yes | 1082ms |
+| Innovation Smoke | passed | yes | 1777ms |
+| GitHub Discovery | passed | yes | 1083ms |
 | GitHub Discovery Check | passed | yes | 244ms |
-| GitHub Review Queue | passed | yes | 234ms |
-| GitHub Review Queue Check | passed | yes | 236ms |
-| GitHub README Signal Scan | passed | yes | 6021ms |
-| GitHub README Signal Scan Check | passed | yes | 284ms |
+| GitHub Review Queue | passed | yes | 228ms |
+| GitHub Review Queue Check | passed | yes | 224ms |
+| GitHub README Signal Scan | passed | yes | 5900ms |
+| GitHub README Signal Scan Check | passed | yes | 293ms |
 | GitHub Fixture Contract Plan | passed | yes | 235ms |
-| GitHub Fixture Contract Plan Check | passed | yes | 233ms |
-| GitHub Fixture Skeletons | passed | yes | 236ms |
-| GitHub Fixture Skeletons Check | passed | yes | 227ms |
-| GitHub Fixture Payloads | passed | yes | 234ms |
-| GitHub Fixture Payloads Check | passed | yes | 245ms |
-| GitHub Fixture Payload Smoke | passed | yes | 239ms |
-| GitHub Fixture Payload Smoke Check | passed | yes | 238ms |
-| Orbit Status Bridge | passed | yes | 242ms |
+| GitHub Fixture Contract Plan Check | passed | yes | 240ms |
+| GitHub Fixture Skeletons | passed | yes | 242ms |
+| GitHub Fixture Skeletons Check | passed | yes | 243ms |
+| GitHub Fixture Payloads | passed | yes | 243ms |
+| GitHub Fixture Payloads Check | passed | yes | 244ms |
+| GitHub Fixture Payload Smoke | passed | yes | 242ms |
+| GitHub Fixture Payload Smoke Check | passed | yes | 239ms |
+| Orbit Status Bridge | passed | yes | 247ms |
 
 ## Next Actions
 
