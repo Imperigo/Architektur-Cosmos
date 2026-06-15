@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:56:43.722Z",
+  "generated_at": "2026-06-15T14:58:44.326Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 262
+      "files": 263
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 112
+      "files": 113
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-264-today-loop-github-fixtures.md",
+      "title": "Codex Synergiebericht 264 - Today Loop GitHub Fixtures",
+      "mirrored_inboxes": 2,
+      "bytes": 1210,
+      "modified_at": "2026-06-15T14:58:36.733Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-263-orbit-status-bridge-ui.md",
       "title": "Codex Synergiebericht 263 - Orbit Status Bridge UI",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1446,
       "modified_at": "2026-06-15T14:39:06.774Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-256-day-batch-github-chain.md",
-      "title": "Codex Synergiebericht 256: Day-Batch deckt GitHub-Innovationskette ab",
-      "mirrored_inboxes": 2,
-      "bytes": 1325,
-      "modified_at": "2026-06-15T14:34:19.858Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 256-263 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 257-264 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
