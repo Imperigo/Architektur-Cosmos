@@ -226,6 +226,8 @@
     "kosmo:innovation-dependency-install-queue-check": "node scripts/kosmo-innovation-dependency-install-queue-check.mjs",
     "kosmo:codex-daily-loop-routine": "node scripts/kosmo-codex-daily-loop-routine.mjs",
     "kosmo:codex-daily-loop-routine-check": "node scripts/kosmo-codex-daily-loop-routine-check.mjs",
+    "kosmo:codex-morning-routine-run": "node scripts/kosmo-codex-morning-routine-run.mjs",
+    "kosmo:codex-morning-routine-run-check": "node scripts/kosmo-codex-morning-routine-run-check.mjs",
     "kosmo:innovation-github-watchlist": "node scripts/kosmo-innovation-github-watchlist.mjs",
     "kosmo:innovation-github-watchlist-check": "node scripts/kosmo-innovation-github-watchlist-check.mjs",
     "kosmo:innovation-github-discovery": "node scripts/kosmo-innovation-github-discovery.mjs",

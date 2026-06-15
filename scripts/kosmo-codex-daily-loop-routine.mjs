@@ -11,6 +11,7 @@ const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-codex-daily-lo
 
 const morningRoutine = [
   step('repo_state_scan', 'Git states in ArchitectureCosmos and KosmoOrbit, scoped dirty-file review, no unrelated resets.'),
+  step('morning_routine_run', 'Execute the guarded morning evidence run: git fetch, handoff mirror check, Source Root status and next-batch routing.'),
   step('handoff_intake', 'Read latest Claude/KosmoOverseer inbox notes and compare against Codex-owned lane state.'),
   step('source_root_gate', 'Run or inspect Source Root gate status before any private OCR, embedding, training or source scan.'),
   step('orbit_health', 'Check KosmoOrbit handoff visibility and whether a status artifact needs mirroring.'),
@@ -34,6 +35,7 @@ const report = {
   policy: {
     autonomous_loop_until_user_stop_or_budget: true,
     max_tick_minutes: 2,
+    morning_execution_evidence_required: true,
     avoids_idle_wait: true,
     no_unrelated_reverts: true,
     no_private_processing_without_source_root_unlock: true,
@@ -81,6 +83,7 @@ function renderMarkdown(report) {
   lines.push('## Policy');
   lines.push('');
   lines.push(`- Max tick minutes: ${report.policy.max_tick_minutes}`);
+  lines.push(`- Morning execution evidence required: ${report.policy.morning_execution_evidence_required}`);
   lines.push(`- Avoids idle wait: ${report.policy.avoids_idle_wait}`);
   lines.push(`- Public-ready after routine: ${report.policy.public_ready_after_routine}`);
   lines.push(`- Installs/downloads require explicit batch: ${report.policy.installs_downloads_require_explicit_batch}`);

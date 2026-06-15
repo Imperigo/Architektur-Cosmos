@@ -1,12 +1,12 @@
 # Kosmo Codex Daily Loop Routine Check
 
-Generated: 2026-06-15T15:49:21.278Z
+Generated: 2026-06-15T16:27:27.433Z
 Status: `codex_daily_loop_routine_guard_passed`
 
 ## Summary
 
 - Routine status: codex_daily_loop_routine_ready
-- Morning steps: 7
+- Morning steps: 8
 - Today priorities: 5
 - Failures: 0
 - Public-ready after check: 0
@@ -16,12 +16,14 @@ Status: `codex_daily_loop_routine_guard_passed`
 - passed: `schema_version` - Routine schema_version must be 0.1.
 - passed: `routine_ready` - Routine must be ready.
 - passed: `tick_limit` - Routine must keep tick interval at or below two minutes.
+- passed: `morning_execution_evidence_required` - Routine must require a morning execution evidence run.
 - passed: `no_idle_wait` - Routine must avoid idle wait.
 - passed: `no_unrelated_reverts` - Routine must protect unrelated dirty work.
 - passed: `source_root_gate` - Routine must gate private processing on Source Root unlock.
 - passed: `install_batch_gate` - Routine must require explicit install/download batch.
 - passed: `public_ready_zero` - Routine must keep public-ready at 0.
 - passed: `morning_step:repo_state_scan` - Morning routine must include repo_state_scan.
+- passed: `morning_step:morning_routine_run` - Morning routine must include morning_routine_run.
 - passed: `morning_step:handoff_intake` - Morning routine must include handoff_intake.
 - passed: `morning_step:source_root_gate` - Morning routine must include source_root_gate.
 - passed: `morning_step:orbit_health` - Morning routine must include orbit_health.

@@ -76,6 +76,8 @@ function checkPlan(plan) {
   expect(startSequence.includes('innovation-github-fixture-skeletons'), findings, 'start_sequence_github_fixture_skeletons', 'Start sequence must include GitHub fixture skeletons.');
   expect(startSequence.includes('innovation-github-fixture-payloads'), findings, 'start_sequence_github_fixture_payloads', 'Start sequence must include GitHub fixture payloads.');
   expect(startSequence.includes('innovation-github-fixture-payload-smoke'), findings, 'start_sequence_github_fixture_payload_smoke', 'Start sequence must include GitHub fixture payload smoke.');
+  expect(startSequence.includes('codex-morning-routine-run'), findings, 'start_sequence_morning_routine_run', 'Start sequence must include Codex morning routine run.');
+  expect(startSequence.includes('codex-morning-routine-run-check'), findings, 'start_sequence_morning_routine_run_check', 'Start sequence must include Codex morning routine run check.');
   expect(startSequence.includes('owner-unlock-pipeline-checkpoint'), findings, 'start_sequence_owner_checkpoint', 'Start sequence must include owner unlock checkpoint.');
   expect(pathA.includes('owner-unlock-reply-validator'), findings, 'path_a_reply_validator', 'Path A must validate owner replies.');
   expect(pathA.includes('owner-unlock-answer-dry-run'), findings, 'path_a_dry_run', 'Path A must dry-run owner replies before activation.');

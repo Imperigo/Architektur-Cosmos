@@ -1,0 +1,145 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T16:28:19.136Z",
+  "status": "codex_morning_routine_run_guard_passed",
+  "policy": {
+    "validates_morning_execution_evidence": true,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "installs_or_downloads_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-codex-morning-routine-run-2026-06-15.json"
+  ],
+  "summary": {
+    "run_status": "codex_morning_routine_run_ready",
+    "checks": 24,
+    "passed": 24,
+    "failures": 0,
+    "next_batch_mode": "source_free_innovation_and_guarding",
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "run_ready",
+      "status": "passed",
+      "evidence": "codex_morning_routine_run_ready"
+    },
+    {
+      "id": "policy_execution_evidence",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_fetch_only",
+      "status": "passed",
+      "evidence": "true/false"
+    },
+    {
+      "id": "policy_no_resets",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_ocr",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_embeddings",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_installs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "two_repos_checked",
+      "status": "passed",
+      "evidence": 2
+    },
+    {
+      "id": "all_fetches_succeeded",
+      "status": "passed",
+      "evidence": "2/2"
+    },
+    {
+      "id": "repo_no_pull_or_merge",
+      "status": "passed",
+      "evidence": "architecture_cosmos:false,kosmo_orbit:false"
+    },
+    {
+      "id": "repo_no_resets",
+      "status": "passed",
+      "evidence": "architecture_cosmos:false,kosmo_orbit:false"
+    },
+    {
+      "id": "latest_handoff_283_or_newer",
+      "status": "passed",
+      "evidence": 284
+    },
+    {
+      "id": "latest_handoff_mirrored_283_or_newer",
+      "status": "passed",
+      "evidence": 284
+    },
+    {
+      "id": "source_root_blocked_blocks_private",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "innovation_signal_known",
+      "status": "passed",
+      "evidence": 32
+    },
+    {
+      "id": "next_batch_known",
+      "status": "passed",
+      "evidence": "source_free_innovation_and_guarding"
+    },
+    {
+      "id": "next_batch_has_commands",
+      "status": "passed",
+      "evidence": 9
+    },
+    {
+      "id": "hard_stop_no_dirty_pull",
+      "status": "passed",
+      "evidence": "do not pull over dirty worktrees automatically. do not treat broad owner intent as source root unlock. do not read private architecture source content from this routine. do not install dependencies or download models from this routine."
+    },
+    {
+      "id": "hard_stop_no_broad_unlock",
+      "status": "passed",
+      "evidence": "do not pull over dirty worktrees automatically. do not treat broad owner intent as source root unlock. do not read private architecture source content from this routine. do not install dependencies or download models from this routine."
+    },
+    {
+      "id": "hard_stop_no_private_source",
+      "status": "passed",
+      "evidence": "do not pull over dirty worktrees automatically. do not treat broad owner intent as source root unlock. do not read private architecture source content from this routine. do not install dependencies or download models from this routine."
+    },
+    {
+      "id": "hard_stop_no_install",
+      "status": "passed",
+      "evidence": "do not pull over dirty worktrees automatically. do not treat broad owner intent as source root unlock. do not read private architecture source content from this routine. do not install dependencies or download models from this routine."
+    }
+  ]
+}

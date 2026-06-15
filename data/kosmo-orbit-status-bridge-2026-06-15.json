@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:20:39.976Z",
+  "generated_at": "2026-06-15T16:28:19.389Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -86,6 +86,8 @@
     "data/kosmo-innovation-github-fixture-payloads-check-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
+    "data/kosmo-codex-morning-routine-run-2026-06-15.json",
+    "data/kosmo-codex-morning-routine-run-check-2026-06-15.json",
     "data/kosmo-training-eval-rubric-pack-2026-06-15.json",
     "data/kosmo-training-eval-rubric-pack-check-2026-06-15.json",
     "data/kosmo-training-eval-row-template-2026-06-15.json",
@@ -101,7 +103,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 53,
+    "cards": 54,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -209,6 +211,10 @@
     "github_review_queue_status": "innovation_github_review_queue_ready",
     "github_review_queue_items": 7,
     "github_review_queue_high_priority_items": 5,
+    "codex_morning_routine_run_status": "codex_morning_routine_run_ready",
+    "codex_morning_routine_run_next_batch": "source_free_innovation_and_guarding",
+    "codex_morning_routine_run_remote_behind_total": 0,
+    "codex_morning_routine_run_latest_handoff": 284,
     "github_readme_signal_scan_status": "innovation_github_readme_signal_scan_ready",
     "github_readme_signal_scan_items": 7,
     "github_readme_signal_scan_high_signal_items": 5,
@@ -615,6 +621,15 @@
       "source_ref": "data/kosmo-innovation-github-review-queue-2026-06-15.json"
     },
     {
+      "id": "codex-morning-routine-run",
+      "title": "Codex Morning Routine Run",
+      "status": "review_only_ready",
+      "signal": "fetch 2/2, behind 0, handoff 284, next source_free_innovation_and_guarding, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Guarded morning execution evidence: git fetch, handoff mirror, Source Root gate, next-batch route",
+      "source_ref": "data/kosmo-codex-morning-routine-run-2026-06-15.json"
+    },
+    {
       "id": "github-readme-signal-scan",
       "title": "GitHub README Signal Scan",
       "status": "review_only_ready",
@@ -767,6 +782,7 @@
     "github_innovation_watchlist_card",
     "github_innovation_discovery_card",
     "github_innovation_review_queue_card",
+    "codex_morning_routine_run_card",
     "github_readme_signal_scan_card",
     "github_fixture_contract_plan_card",
     "github_fixture_skeletons_card",

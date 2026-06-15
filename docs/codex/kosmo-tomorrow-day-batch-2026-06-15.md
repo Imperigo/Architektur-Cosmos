@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T16:20:40.217Z
+Generated: 2026-06-15T16:28:19.627Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -14,6 +14,9 @@ Status: `tomorrow_day_batch_ready`
 - Codex executable now: 0
 - Open owner actions: 2
 - Live GitHub probe: 9/9
+- Morning routine run: codex_morning_routine_run_ready
+- Morning next batch: source_free_innovation_and_guarding
+- Morning remote behind total: 0
 - Latest handoff: 283
 - Public-ready after plan: 0
 
@@ -46,6 +49,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:innovation-github-fixture-payload-smoke-check`
 - `npm run kosmo:codex-daily-loop-routine`
 - `npm run kosmo:codex-daily-loop-routine-check`
+- `npm run kosmo:codex-morning-routine-run`
+- `npm run kosmo:codex-morning-routine-run-check`
 - `npm run kosmo:owner-unlock-pipeline-checkpoint`
 - `npm run kosmo:owner-unlock-pipeline-checkpoint-check`
 - `npm run kosmo:source-independent-work-queue`

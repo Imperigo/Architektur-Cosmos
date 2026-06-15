@@ -1,6 +1,6 @@
 # Kosmo Tomorrow Day Batch Check
 
-Generated: 2026-06-15T16:20:40.454Z
+Generated: 2026-06-15T16:28:19.861Z
 Status: `tomorrow_day_batch_guard_passed`
 
 ## Summary
@@ -30,6 +30,8 @@ Status: `tomorrow_day_batch_guard_passed`
 - passed: `start_sequence_github_fixture_skeletons` - Start sequence must include GitHub fixture skeletons.
 - passed: `start_sequence_github_fixture_payloads` - Start sequence must include GitHub fixture payloads.
 - passed: `start_sequence_github_fixture_payload_smoke` - Start sequence must include GitHub fixture payload smoke.
+- passed: `start_sequence_morning_routine_run` - Start sequence must include Codex morning routine run.
+- passed: `start_sequence_morning_routine_run_check` - Start sequence must include Codex morning routine run check.
 - passed: `start_sequence_owner_checkpoint` - Start sequence must include owner unlock checkpoint.
 - passed: `path_a_reply_validator` - Path A must validate owner replies.
 - passed: `path_a_dry_run` - Path A must dry-run owner replies before activation.

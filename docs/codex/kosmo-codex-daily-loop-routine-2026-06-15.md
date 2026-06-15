@@ -1,11 +1,12 @@
 # Kosmo Codex Daily Loop Routine
 
-Generated: 2026-06-15T15:49:21.041Z
+Generated: 2026-06-15T16:27:27.190Z
 Status: `codex_daily_loop_routine_ready`
 
 ## Policy
 
 - Max tick minutes: 2
+- Morning execution evidence required: true
 - Avoids idle wait: true
 - Public-ready after routine: 0
 - Installs/downloads require explicit batch: true
@@ -13,12 +14,13 @@ Status: `codex_daily_loop_routine_ready`
 ## Morning Routine
 
 1. `repo_state_scan` - Git states in ArchitectureCosmos and KosmoOrbit, scoped dirty-file review, no unrelated resets.
-2. `handoff_intake` - Read latest Claude/KosmoOverseer inbox notes and compare against Codex-owned lane state.
-3. `source_root_gate` - Run or inspect Source Root gate status before any private OCR, embedding, training or source scan.
-4. `orbit_health` - Check KosmoOrbit handoff visibility and whether a status artifact needs mirroring.
-5. `innovation_watch` - Run seeded GitHub watchlist and query-based discovery before installing or downloading anything.
-6. `priority_pick` - Pick the highest-value safe block: guards, fixture-only experiments, handoff clarity, or bug cleanup.
-7. `commit_push` - Commit and push completed blocks with exact staging and a worker-facing handoff note.
+2. `morning_routine_run` - Execute the guarded morning evidence run: git fetch, handoff mirror check, Source Root status and next-batch routing.
+3. `handoff_intake` - Read latest Claude/KosmoOverseer inbox notes and compare against Codex-owned lane state.
+4. `source_root_gate` - Run or inspect Source Root gate status before any private OCR, embedding, training or source scan.
+5. `orbit_health` - Check KosmoOrbit handoff visibility and whether a status artifact needs mirroring.
+6. `innovation_watch` - Run seeded GitHub watchlist and query-based discovery before installing or downloading anything.
+7. `priority_pick` - Pick the highest-value safe block: guards, fixture-only experiments, handoff clarity, or bug cleanup.
+8. `commit_push` - Commit and push completed blocks with exact staging and a worker-facing handoff note.
 
 ## Today Loop Priorities
 

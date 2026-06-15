@@ -83,6 +83,8 @@ const refs = {
   githubFixturePayloadsCheck: `data/kosmo-innovation-github-fixture-payloads-check-${dateStamp}.json`,
   githubFixturePayloadSmoke: `data/kosmo-innovation-github-fixture-payload-smoke-${dateStamp}.json`,
   githubFixturePayloadSmokeCheck: `data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`,
+  codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
+  codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   trainingEvalRubricPack: `data/kosmo-training-eval-rubric-pack-${dateStamp}.json`,
   trainingEvalRubricPackCheck: `data/kosmo-training-eval-rubric-pack-check-${dateStamp}.json`,
   trainingEvalRowTemplate: `data/kosmo-training-eval-row-template-${dateStamp}.json`,
@@ -193,6 +195,8 @@ function buildBridge(reports) {
   const githubFixturePayloadsCheckSummary = reports.githubFixturePayloadsCheck?.summary || {};
   const githubFixturePayloadSmokeSummary = reports.githubFixturePayloadSmoke?.summary || {};
   const githubFixturePayloadSmokeCheckSummary = reports.githubFixturePayloadSmokeCheck?.summary || {};
+  const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
+  const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const trainingEvalRubricSummary = reports.trainingEvalRubricPack?.summary || {};
   const trainingEvalRubricCheckSummary = reports.trainingEvalRubricPackCheck?.summary || {};
   const trainingEvalRowTemplateSummary = reports.trainingEvalRowTemplate?.summary || {};
@@ -719,6 +723,20 @@ function buildBridge(reports) {
       source_ref: refs.githubReviewQueue
     },
     {
+      id: 'codex-morning-routine-run',
+      title: 'Codex Morning Routine Run',
+      status: reports.codexMorningRoutineRun?.status === 'codex_morning_routine_run_ready' &&
+        reports.codexMorningRoutineRunCheck?.status === 'codex_morning_routine_run_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.codexMorningRoutineRun?.status
+        ? `fetch ${codexMorningRoutineRunSummary.fetch_succeeded ?? 0}/${codexMorningRoutineRunSummary.repos_checked ?? 0}, behind ${codexMorningRoutineRunSummary.remote_behind_total ?? '-'}, handoff ${codexMorningRoutineRunSummary.latest_mirrored_handoff ?? '-'}, next ${codexMorningRoutineRunSummary.next_batch_mode || 'missing'}, failures ${codexMorningRoutineRunCheckSummary.failures ?? 0}`
+        : 'missing morning routine run',
+      owner_action_required: false,
+      route_hint: 'Guarded morning execution evidence: git fetch, handoff mirror, Source Root gate, next-batch route',
+      source_ref: refs.codexMorningRoutineRun
+    },
+    {
       id: 'github-readme-signal-scan',
       title: 'GitHub README Signal Scan',
       status: reports.githubReadmeSignalScan?.status === 'innovation_github_readme_signal_scan_ready' &&
@@ -993,6 +1011,10 @@ function buildBridge(reports) {
       github_review_queue_status: reports.githubReviewQueue?.status || null,
       github_review_queue_items: githubReviewQueueSummary.review_items ?? null,
       github_review_queue_high_priority_items: githubReviewQueueSummary.high_priority_items ?? null,
+      codex_morning_routine_run_status: reports.codexMorningRoutineRun?.status || null,
+      codex_morning_routine_run_next_batch: codexMorningRoutineRunSummary.next_batch_mode || null,
+      codex_morning_routine_run_remote_behind_total: codexMorningRoutineRunSummary.remote_behind_total ?? null,
+      codex_morning_routine_run_latest_handoff: codexMorningRoutineRunSummary.latest_mirrored_handoff ?? null,
       github_readme_signal_scan_status: reports.githubReadmeSignalScan?.status || null,
       github_readme_signal_scan_items: githubReadmeSignalScanSummary.scanned_items ?? null,
       github_readme_signal_scan_high_signal_items: githubReadmeSignalScanSummary.high_signal_items ?? null,
@@ -1073,6 +1095,7 @@ function buildBridge(reports) {
       'github_innovation_watchlist_card',
       'github_innovation_discovery_card',
       'github_innovation_review_queue_card',
+      'codex_morning_routine_run_card',
       'github_readme_signal_scan_card',
       'github_fixture_contract_plan_card',
       'github_fixture_skeletons_card',

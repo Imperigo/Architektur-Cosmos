@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:20:40.454Z",
+  "generated_at": "2026-06-15T16:28:19.861Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -103,6 +103,16 @@
       "id": "start_sequence_github_fixture_payload_smoke",
       "severity": "passed",
       "message": "Start sequence must include GitHub fixture payload smoke."
+    },
+    {
+      "id": "start_sequence_morning_routine_run",
+      "severity": "passed",
+      "message": "Start sequence must include Codex morning routine run."
+    },
+    {
+      "id": "start_sequence_morning_routine_run_check",
+      "severity": "passed",
+      "message": "Start sequence must include Codex morning routine run check."
     },
     {
       "id": "start_sequence_owner_checkpoint",

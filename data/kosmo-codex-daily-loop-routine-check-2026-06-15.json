@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:49:21.278Z",
+  "generated_at": "2026-06-15T16:27:27.433Z",
   "status": "codex_daily_loop_routine_guard_passed",
   "policy": {
     "validates_autonomous_loop_contract": true,
@@ -13,7 +13,7 @@
   ],
   "summary": {
     "routine_status": "codex_daily_loop_routine_ready",
-    "morning_steps": 7,
+    "morning_steps": 8,
     "today_priorities": 5,
     "failures": 0,
     "public_ready_after_check": 0
@@ -33,6 +33,11 @@
       "id": "tick_limit",
       "severity": "passed",
       "message": "Routine must keep tick interval at or below two minutes."
+    },
+    {
+      "id": "morning_execution_evidence_required",
+      "severity": "passed",
+      "message": "Routine must require a morning execution evidence run."
     },
     {
       "id": "no_idle_wait",
@@ -63,6 +68,11 @@
       "id": "morning_step:repo_state_scan",
       "severity": "passed",
       "message": "Morning routine must include repo_state_scan."
+    },
+    {
+      "id": "morning_step:morning_routine_run",
+      "severity": "passed",
+      "message": "Morning routine must include morning_routine_run."
     },
     {
       "id": "morning_step:handoff_intake",

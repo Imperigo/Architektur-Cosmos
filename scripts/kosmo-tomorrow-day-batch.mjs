@@ -14,6 +14,7 @@ const refs = {
   sourceQueue: resolve(root, args.sourceQueue || `data/kosmo-source-independent-work-queue-${dateStamp}.json`),
   ownerDecisionBrief: resolve(root, args.ownerDecisionBrief || `data/kosmo-owner-remaining-decision-brief-${dateStamp}.json`),
   githubWatchlist: resolve(root, args.githubWatchlist || `data/kosmo-innovation-github-watchlist-${dateStamp}.json`),
+  morningRun: resolve(root, args.morningRun || `data/kosmo-codex-morning-routine-run-${dateStamp}.json`),
   syncBoard: resolve(root, args.syncBoard || `data/kosmo-overseer-sync-board-${dateStamp}.json`)
 };
 
@@ -32,6 +33,7 @@ async function main() {
     sourceQueue: await readOptionalJson(refs.sourceQueue),
     ownerDecisionBrief: await readOptionalJson(refs.ownerDecisionBrief),
     githubWatchlist: await readOptionalJson(refs.githubWatchlist),
+    morningRun: await readOptionalJson(refs.morningRun),
     syncBoard: await readOptionalJson(refs.syncBoard)
   };
   const plan = buildPlan(reports);
@@ -92,6 +94,9 @@ function buildPlan(reports) {
       codex_executable_now: codexExecutableNow,
       open_owner_actions: openOwnerActions,
       live_github_probe: formatRatio(liveProbeSucceeded, (liveProbeSucceeded ?? 0) + (liveProbeFallback ?? 0)),
+      morning_routine_run_status: reports.morningRun?.status || null,
+      morning_next_batch_mode: reports.morningRun?.summary?.next_batch_mode || null,
+      morning_remote_behind_total: reports.morningRun?.summary?.remote_behind_total ?? null,
       latest_handoff: latestHandoff,
       public_ready_after_plan: 0
     },
@@ -115,6 +120,8 @@ function buildPlan(reports) {
       'npm run kosmo:innovation-github-fixture-payload-smoke-check',
       'npm run kosmo:codex-daily-loop-routine',
       'npm run kosmo:codex-daily-loop-routine-check',
+      'npm run kosmo:codex-morning-routine-run',
+      'npm run kosmo:codex-morning-routine-run-check',
       'npm run kosmo:owner-unlock-pipeline-checkpoint',
       'npm run kosmo:owner-unlock-pipeline-checkpoint-check',
       'npm run kosmo:source-independent-work-queue',
@@ -217,6 +224,9 @@ function renderMarkdown(plan) {
   lines.push(`- Codex executable now: ${plan.summary.codex_executable_now ?? '-'}`);
   lines.push(`- Open owner actions: ${plan.summary.open_owner_actions ?? '-'}`);
   lines.push(`- Live GitHub probe: ${plan.summary.live_github_probe || '-'}`);
+  lines.push(`- Morning routine run: ${plan.summary.morning_routine_run_status || '-'}`);
+  lines.push(`- Morning next batch: ${plan.summary.morning_next_batch_mode || '-'}`);
+  lines.push(`- Morning remote behind total: ${plan.summary.morning_remote_behind_total ?? '-'}`);
   lines.push(`- Latest handoff: ${plan.summary.latest_handoff ?? '-'}`);
   lines.push(`- Public-ready after plan: ${plan.summary.public_ready_after_plan}`);
   lines.push('');

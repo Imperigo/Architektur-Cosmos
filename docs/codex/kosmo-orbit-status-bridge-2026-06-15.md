@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T16:20:39.976Z
+Generated: 2026-06-15T16:28:19.389Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 53
+- Cards: 54
 - Blocking cards: 4
 - Owner action cards: 25
 - Source root blocked: yes
@@ -97,6 +97,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
 | `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
 | `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |
+| `codex-morning-routine-run` Codex Morning Routine Run | review_only_ready | no | fetch 2/2, behind 0, handoff 284, next source_free_innovation_and_guarding, failures 0 |
 | `github-readme-signal-scan` GitHub README Signal Scan | review_only_ready | no | 7 scanned, README 6, high-signal 5, failures 0 |
 | `github-fixture-contract-plan` GitHub Fixture Contract Plan | review_only_ready | no | 5 plans, prepare 2, asset 1, worker 2, failures 0 |
 | `github-fixture-skeletons` GitHub Fixture Skeletons | review_only_ready | no | 5 directories, 10 files, executable 0, failures 0 |
@@ -147,6 +148,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `github_innovation_watchlist_card`
 - `github_innovation_discovery_card`
 - `github_innovation_review_queue_card`
+- `codex_morning_routine_run_card`
 - `github_readme_signal_scan_card`
 - `github_fixture_contract_plan_card`
 - `github_fixture_skeletons_card`

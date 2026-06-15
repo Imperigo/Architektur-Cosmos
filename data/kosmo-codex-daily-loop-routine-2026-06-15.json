@@ -1,10 +1,11 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:49:21.041Z",
+  "generated_at": "2026-06-15T16:27:27.190Z",
   "status": "codex_daily_loop_routine_ready",
   "policy": {
     "autonomous_loop_until_user_stop_or_budget": true,
     "max_tick_minutes": 2,
+    "morning_execution_evidence_required": true,
     "avoids_idle_wait": true,
     "no_unrelated_reverts": true,
     "no_private_processing_without_source_root_unlock": true,
@@ -15,6 +16,11 @@
     {
       "id": "repo_state_scan",
       "description": "Git states in ArchitectureCosmos and KosmoOrbit, scoped dirty-file review, no unrelated resets.",
+      "status": "active"
+    },
+    {
+      "id": "morning_routine_run",
+      "description": "Execute the guarded morning evidence run: git fetch, handoff mirror check, Source Root status and next-batch routing.",
       "status": "active"
     },
     {

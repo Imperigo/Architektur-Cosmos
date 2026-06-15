@@ -61,12 +61,13 @@ function checkRoutine(routine) {
   expect(routine.schema_version === '0.1', findings, 'schema_version', 'Routine schema_version must be 0.1.');
   expect(routine.status === 'codex_daily_loop_routine_ready', findings, 'routine_ready', 'Routine must be ready.');
   expect(routine.policy?.max_tick_minutes <= 2, findings, 'tick_limit', 'Routine must keep tick interval at or below two minutes.');
+  expect(routine.policy?.morning_execution_evidence_required === true, findings, 'morning_execution_evidence_required', 'Routine must require a morning execution evidence run.');
   expect(routine.policy?.avoids_idle_wait === true, findings, 'no_idle_wait', 'Routine must avoid idle wait.');
   expect(routine.policy?.no_unrelated_reverts === true, findings, 'no_unrelated_reverts', 'Routine must protect unrelated dirty work.');
   expect(routine.policy?.no_private_processing_without_source_root_unlock === true, findings, 'source_root_gate', 'Routine must gate private processing on Source Root unlock.');
   expect(routine.policy?.installs_downloads_require_explicit_batch === true, findings, 'install_batch_gate', 'Routine must require explicit install/download batch.');
   expect(routine.policy?.public_ready_after_routine === 0, findings, 'public_ready_zero', 'Routine must keep public-ready at 0.');
-  ['repo_state_scan', 'handoff_intake', 'source_root_gate', 'orbit_health', 'innovation_watch', 'priority_pick', 'commit_push'].forEach((id) => {
+  ['repo_state_scan', 'morning_routine_run', 'handoff_intake', 'source_root_gate', 'orbit_health', 'innovation_watch', 'priority_pick', 'commit_push'].forEach((id) => {
     expect(morningIds.has(id), findings, `morning_step:${id}`, `Morning routine must include ${id}.`);
   });
   ['finish_dependency_lane', 'source_independent_progress', 'cleanup_and_guarding'].forEach((id) => {
