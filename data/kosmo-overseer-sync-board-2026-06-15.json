@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:14:41.469Z",
+  "generated_at": "2026-06-15T14:15:29.368Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 248
+      "files": 249
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 98
+      "files": 99
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-250-architecture-build-green.md",
+      "title": "Codex Synergiebericht 250: ArchitectureCosmos Build gruen",
+      "mirrored_inboxes": 2,
+      "bytes": 774,
+      "modified_at": "2026-06-15T14:15:15.917Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-249-kosmoorbit-health-green.md",
       "title": "Codex Synergiebericht 249: KosmoOrbit Health Check gruen",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2415,
       "modified_at": "2026-06-15T13:55:44.878Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-242-next-shift-acceptance-refresh.md",
-      "title": "Codex Synergiebericht 242: Next Shift Acceptance Refresh",
-      "mirrored_inboxes": 2,
-      "bytes": 1924,
-      "modified_at": "2026-06-15T13:51:22.179Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 242-249 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 243-250 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
