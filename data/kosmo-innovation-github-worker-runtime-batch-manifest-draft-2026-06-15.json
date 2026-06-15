@@ -1,0 +1,366 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T18:52:46.972Z",
+  "status": "innovation_github_worker_runtime_batch_manifest_draft_ready",
+  "policy": {
+    "manifest_draft_only": true,
+    "executes_runtime_now": false,
+    "executes_rollback_now": false,
+    "starts_models_now": false,
+    "installs_dependencies_now": false,
+    "reads_private_content_now": false,
+    "writes_runtime_outputs_now": false,
+    "writes_worker_outputs_now": false,
+    "writes_runtime_manifest_now": false,
+    "public_ready_after_manifest": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-check-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-check-2026-06-15.json"
+  ],
+  "summary": {
+    "runtime_batch_id": "github-worker-runtime-batch-draft-2026-06-15",
+    "selected_fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+    "prerequisites": 7,
+    "blocked_prerequisites": 4,
+    "phases": 6,
+    "expected_outputs": 6,
+    "review_gates": 7,
+    "open_review_gates": 5,
+    "exact_owner_reply_valid": false,
+    "executable_now": false,
+    "runtime_executable_now_from_readiness": false,
+    "writes_runtime_manifest_now": false,
+    "public_ready_after_manifest": 0,
+    "failures": 0
+  },
+  "prerequisites": [
+    {
+      "id": "readiness_plan_guard_passed",
+      "ready": true,
+      "description": "Runtime readiness plan and check are present."
+    },
+    {
+      "id": "rollback_redaction_guard_passed",
+      "ready": true,
+      "description": "Rollback/redaction fixtures and check are present."
+    },
+    {
+      "id": "log_redaction_negative_fixtures_passed",
+      "ready": true,
+      "description": "Unsafe runtime log cases are blocked."
+    },
+    {
+      "id": "exact_owner_runtime_reply_valid",
+      "ready": false,
+      "description": "Exact key=value owner reply is required."
+    },
+    {
+      "id": "runtime_readiness_executable",
+      "ready": false,
+      "description": "Readiness plan must permit runtime execution."
+    },
+    {
+      "id": "source_root_or_source_free_scope_confirmed",
+      "ready": false,
+      "description": "Runtime batch scope must be separately confirmed as source-free or source-root-safe."
+    },
+    {
+      "id": "pre_runtime_overseer_review_required",
+      "ready": false,
+      "description": "Overseer review must happen in a later runtime batch, not in this draft."
+    }
+  ],
+  "phases": [
+    {
+      "id": "preflight_guard_refresh",
+      "planned_actions": [
+        "rerun_readiness_plan",
+        "rerun_apply_guard",
+        "rerun_log_redaction_negative_fixtures"
+      ],
+      "executable_now": false,
+      "review_only": true
+    },
+    {
+      "id": "runtime_environment_snapshot",
+      "planned_actions": [
+        "capture_runtime_config_metadata",
+        "capture_gpu_model_metadata",
+        "capture_output_root_metadata"
+      ],
+      "executable_now": false,
+      "review_only": true
+    },
+    {
+      "id": "source_free_worker_invocation",
+      "planned_actions": [
+        "run_only_allowed_command_shapes",
+        "write_redacted_metadata_log",
+        "skip_private_inputs"
+      ],
+      "executable_now": false,
+      "review_only": true
+    },
+    {
+      "id": "post_output_validator_gate",
+      "planned_actions": [
+        "validate_metadata_only_outputs",
+        "block_raw_runtime_stdio",
+        "block_public_ready"
+      ],
+      "executable_now": false,
+      "review_only": true
+    },
+    {
+      "id": "rollback_ready_checkpoint",
+      "planned_actions": [
+        "record_stop_plan",
+        "record_output_cleanup_plan",
+        "record_config_restore_refs"
+      ],
+      "executable_now": false,
+      "review_only": true
+    },
+    {
+      "id": "overseer_handoff_review",
+      "planned_actions": [
+        "write_review_only_handoff",
+        "require_claude_kosmooverseer_review",
+        "require_owner_review_before_promotion"
+      ],
+      "executable_now": false,
+      "review_only": true
+    }
+  ],
+  "expected_outputs": [
+    {
+      "id": "runtime_batch_manifest_redacted",
+      "format": "json",
+      "written_now": false,
+      "review_only": true,
+      "redaction_required": true
+    },
+    {
+      "id": "runtime_metadata_log_redacted",
+      "format": "jsonl",
+      "written_now": false,
+      "review_only": true,
+      "redaction_required": true
+    },
+    {
+      "id": "worker_output_metadata_only",
+      "format": "json",
+      "written_now": false,
+      "review_only": true,
+      "redaction_required": true
+    },
+    {
+      "id": "post_output_validator_report",
+      "format": "json",
+      "written_now": false,
+      "review_only": true,
+      "redaction_required": true
+    },
+    {
+      "id": "rollback_manifest_redacted",
+      "format": "json",
+      "written_now": false,
+      "review_only": true,
+      "redaction_required": true
+    },
+    {
+      "id": "overseer_review_handoff",
+      "format": "markdown",
+      "written_now": false,
+      "review_only": true,
+      "redaction_required": true
+    }
+  ],
+  "rollback_refs": [
+    {
+      "id": "stop_runtime_processes",
+      "description": "Stop model/server/worker processes started by the separate runtime batch.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    },
+    {
+      "id": "remove_generated_runtime_outputs",
+      "description": "Remove generated runtime outputs from the runtime output root, leaving only redacted metadata logs.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    },
+    {
+      "id": "restore_pre_runtime_config",
+      "description": "Restore config snapshots captured before runtime start.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    },
+    {
+      "id": "invalidate_unreviewed_worker_outputs",
+      "description": "Mark worker outputs invalid until overseer review passes.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    },
+    {
+      "id": "rerun_readiness_without_execution",
+      "description": "Rerun readiness, negative fixtures and log-redaction checks after rollback.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    }
+  ],
+  "redaction_refs": [
+    {
+      "id": "private_path_redaction",
+      "placeholders": [
+        "<PRIVATE_SOURCE_ROOT>",
+        "<ONEDRIVE_PRIVATE_LIBRARY>",
+        "<ARCHIVE_LIBRARY>"
+      ],
+      "description": "Replace private path-like values with stable placeholders.",
+      "required_now": true
+    },
+    {
+      "id": "secret_token_redaction",
+      "placeholders": [
+        "<API_TOKEN>",
+        "<SSH_KEY>",
+        "<ENV_SECRET>"
+      ],
+      "description": "Replace token-like and key-like values before any handoff or Git write.",
+      "required_now": true
+    },
+    {
+      "id": "worker_output_body_redaction",
+      "placeholders": [
+        "<WORKER_OUTPUT_BODY_REDACTED>"
+      ],
+      "description": "Keep worker output bodies out of Git and expose metadata counts only.",
+      "required_now": true
+    },
+    {
+      "id": "github_source_text_redaction",
+      "placeholders": [
+        "<GITHUB_CODE_OR_README_REDACTED>"
+      ],
+      "description": "Do not copy GitHub code or README prose into runtime logs.",
+      "required_now": true
+    },
+    {
+      "id": "model_prompt_redaction",
+      "placeholders": [
+        "<PRIVATE_PROMPT_CONTEXT_REDACTED>"
+      ],
+      "description": "Redact prompts if they include private project or source-root context.",
+      "required_now": true
+    }
+  ],
+  "negative_log_fixture_refs": [
+    {
+      "id": "raw_private_source_path_in_log",
+      "leak_category": "private_path",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "raw_onedrive_library_path_in_log",
+      "leak_category": "private_path",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "secret_token_value_in_log",
+      "leak_category": "secret",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ssh_key_material_in_log",
+      "leak_category": "secret",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "worker_output_body_in_log",
+      "leak_category": "worker_output_body",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "github_code_excerpt_in_log",
+      "leak_category": "github_source_text",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "readme_prose_excerpt_in_log",
+      "leak_category": "github_source_text",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "private_prompt_context_in_log",
+      "leak_category": "private_prompt_context",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "raw_runtime_stdout_stderr_in_log",
+      "leak_category": "runtime_stdio",
+      "expected_status": "blocked"
+    },
+    {
+      "id": "public_ready_from_unreviewed_runtime_log",
+      "leak_category": "public_ready_false_positive",
+      "expected_status": "blocked"
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "exact_owner_reply_gate",
+      "passed": false,
+      "required_before_execution": true
+    },
+    {
+      "id": "source_root_or_source_free_gate",
+      "passed": false,
+      "required_before_execution": true
+    },
+    {
+      "id": "runtime_apply_guard_gate",
+      "passed": false,
+      "required_before_execution": true
+    },
+    {
+      "id": "log_redaction_gate",
+      "passed": true,
+      "required_before_execution": true
+    },
+    {
+      "id": "rollback_gate",
+      "passed": true,
+      "required_before_execution": true
+    },
+    {
+      "id": "overseer_review_gate",
+      "passed": false,
+      "required_before_execution": true
+    },
+    {
+      "id": "public_ready_gate",
+      "passed": false,
+      "required_before_execution": true
+    }
+  ],
+  "next_actions": [
+    "Keep this manifest as a draft until exact owner reply and runtime readiness both permit a separate batch.",
+    "Before any future runtime call, regenerate this manifest and its check from fresh guard outputs.",
+    "Do not write runtime outputs from this manifest draft."
+  ],
+  "hard_stops": [
+    "This manifest draft never executes runtime commands.",
+    "This manifest draft never starts models or local workers.",
+    "This manifest draft never reads private Source Root, OneDrive or archive-library content.",
+    "This manifest draft never writes runtime manifests, runtime outputs or worker outputs.",
+    "This manifest draft never marks anything public-ready."
+  ],
+  "failures": []
+}

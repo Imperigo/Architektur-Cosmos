@@ -1,6 +1,6 @@
 # Kosmo Today Loop Plan Check
 
-Generated: 2026-06-15T18:47:07.535Z
+Generated: 2026-06-15T18:52:47.717Z
 Status: `today_loop_plan_guard_passed`
 
 ## Summary
@@ -53,6 +53,7 @@ Status: `today_loop_plan_guard_passed`
 - passed: `innovation_scout_worker_runtime_rollback_redaction_fixtures` - Innovation scout must include GitHub worker runtime rollback/redaction fixtures.
 - passed: `innovation_scout_worker_runtime_apply_guard` - Innovation scout must include GitHub worker runtime apply guard.
 - passed: `innovation_scout_worker_runtime_log_redaction_negative_fixtures` - Innovation scout must include GitHub worker runtime log-redaction negative fixtures.
+- passed: `innovation_scout_worker_runtime_batch_manifest_draft` - Innovation scout must include GitHub worker runtime batch manifest draft.
 - passed: `path_a_private_metadata_after_gate` - Path A must include gated private metadata inventory.
 - passed: `path_b_private_scan_blocked` - Path B must explicitly block private scans.
 

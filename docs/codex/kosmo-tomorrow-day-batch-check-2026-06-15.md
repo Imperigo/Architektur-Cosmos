@@ -1,6 +1,6 @@
 # Kosmo Tomorrow Day Batch Check
 
-Generated: 2026-06-15T18:47:08.035Z
+Generated: 2026-06-15T18:52:48.203Z
 Status: `tomorrow_day_batch_guard_passed`
 
 ## Summary
@@ -38,6 +38,7 @@ Status: `tomorrow_day_batch_guard_passed`
 - passed: `start_sequence_github_worker_runtime_rollback_redaction_fixtures` - Start sequence must include GitHub worker runtime rollback/redaction fixtures.
 - passed: `start_sequence_github_worker_runtime_apply_guard` - Start sequence must include GitHub worker runtime apply guard.
 - passed: `start_sequence_github_worker_runtime_log_redaction_negative_fixtures` - Start sequence must include GitHub worker runtime log-redaction negative fixtures.
+- passed: `start_sequence_github_worker_runtime_batch_manifest_draft` - Start sequence must include GitHub worker runtime batch manifest draft.
 - passed: `start_sequence_local_worker_task_pack` - Start sequence must include local worker fixture-chain task pack.
 - passed: `start_sequence_local_worker_innovation_output_smoke` - Start sequence must include local worker innovation output smoke.
 - passed: `start_sequence_local_worker_innovation_output_adapter_plan` - Start sequence must include local worker innovation output adapter plan.

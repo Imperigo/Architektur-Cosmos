@@ -1,0 +1,159 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T18:52:47.218Z",
+  "status": "innovation_github_worker_runtime_batch_manifest_draft_guard_passed",
+  "policy": {
+    "validates_manifest_draft_only": true,
+    "executes_runtime_now": false,
+    "writes_runtime_outputs_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-2026-06-15.json"
+  ],
+  "summary": {
+    "manifest_status": "innovation_github_worker_runtime_batch_manifest_draft_ready",
+    "checks": 27,
+    "passed": 27,
+    "failures": 0,
+    "runtime_batch_id": "github-worker-runtime-batch-draft-2026-06-15",
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "innovation_github_worker_runtime_batch_manifest_draft_ready"
+    },
+    {
+      "id": "policy_manifest_draft_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_runtime_rollback",
+      "status": "passed",
+      "evidence": "{\"manifest_draft_only\":true,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"reads_private_content_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"writes_runtime_manifest_now\":false,\"public_ready_after_manifest\":0}"
+    },
+    {
+      "id": "policy_no_models_install",
+      "status": "passed",
+      "evidence": "{\"manifest_draft_only\":true,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"reads_private_content_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"writes_runtime_manifest_now\":false,\"public_ready_after_manifest\":0}"
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_outputs",
+      "status": "passed",
+      "evidence": "{\"manifest_draft_only\":true,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"reads_private_content_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"writes_runtime_manifest_now\":false,\"public_ready_after_manifest\":0}"
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "batch_id_present",
+      "status": "passed",
+      "evidence": "github-worker-runtime-batch-draft-2026-06-15"
+    },
+    {
+      "id": "executable_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "writes_manifest_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "prerequisites_present",
+      "status": "passed",
+      "evidence": "readiness_plan_guard_passed,rollback_redaction_guard_passed,log_redaction_negative_fixtures_passed,exact_owner_runtime_reply_valid,runtime_readiness_executable,source_root_or_source_free_scope_confirmed,pre_runtime_overseer_review_required"
+    },
+    {
+      "id": "blocked_prerequisites_expected",
+      "status": "passed",
+      "evidence": 4
+    },
+    {
+      "id": "phases_present",
+      "status": "passed",
+      "evidence": "preflight_guard_refresh,runtime_environment_snapshot,source_free_worker_invocation,post_output_validator_gate,rollback_ready_checkpoint,overseer_handoff_review"
+    },
+    {
+      "id": "phases_not_executable",
+      "status": "passed",
+      "evidence": "phases not executable"
+    },
+    {
+      "id": "expected_outputs_present",
+      "status": "passed",
+      "evidence": "runtime_batch_manifest_redacted,runtime_metadata_log_redacted,worker_output_metadata_only,post_output_validator_report,rollback_manifest_redacted,overseer_review_handoff"
+    },
+    {
+      "id": "expected_outputs_not_written",
+      "status": "passed",
+      "evidence": "outputs not written"
+    },
+    {
+      "id": "review_gates_present",
+      "status": "passed",
+      "evidence": "exact_owner_reply_gate,source_root_or_source_free_gate,runtime_apply_guard_gate,log_redaction_gate,rollback_gate,overseer_review_gate,public_ready_gate"
+    },
+    {
+      "id": "review_gates_open_expected",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "rollback_refs_present",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "redaction_refs_present",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "negative_log_refs_present",
+      "status": "passed",
+      "evidence": 10
+    },
+    {
+      "id": "source_refs_cover_inputs",
+      "status": "passed",
+      "evidence": "data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-2026-06-15.json,data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-check-2026-06-15.json,data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-15.json,data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-15.json,data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-15.json,data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-15.json,data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-2026-06-15.json,data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-check-2026-06-15.json"
+    },
+    {
+      "id": "hard_stop_no_runtime",
+      "status": "passed",
+      "evidence": "this manifest draft never executes runtime commands. this manifest draft never starts models or local workers. this manifest draft never reads private source root, onedrive or archive-library content. this manifest draft never writes runtime manifests, runtime outputs or worker outputs. this manifest draft never marks anything public-ready."
+    },
+    {
+      "id": "hard_stop_no_models_workers",
+      "status": "passed",
+      "evidence": "this manifest draft never executes runtime commands. this manifest draft never starts models or local workers. this manifest draft never reads private source root, onedrive or archive-library content. this manifest draft never writes runtime manifests, runtime outputs or worker outputs. this manifest draft never marks anything public-ready."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this manifest draft never executes runtime commands. this manifest draft never starts models or local workers. this manifest draft never reads private source root, onedrive or archive-library content. this manifest draft never writes runtime manifests, runtime outputs or worker outputs. this manifest draft never marks anything public-ready."
+    },
+    {
+      "id": "hard_stop_no_outputs",
+      "status": "passed",
+      "evidence": "this manifest draft never executes runtime commands. this manifest draft never starts models or local workers. this manifest draft never reads private source root, onedrive or archive-library content. this manifest draft never writes runtime manifests, runtime outputs or worker outputs. this manifest draft never marks anything public-ready."
+    },
+    {
+      "id": "hard_stop_no_public",
+      "status": "passed",
+      "evidence": "this manifest draft never executes runtime commands. this manifest draft never starts models or local workers. this manifest draft never reads private source root, onedrive or archive-library content. this manifest draft never writes runtime manifests, runtime outputs or worker outputs. this manifest draft never marks anything public-ready."
+    }
+  ]
+}

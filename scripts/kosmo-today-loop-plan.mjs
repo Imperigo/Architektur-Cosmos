@@ -185,7 +185,9 @@ function buildPlan(reports) {
           'npm run kosmo:innovation-github-worker-runtime-apply-guard',
           'npm run kosmo:innovation-github-worker-runtime-apply-guard-check',
           'npm run kosmo:innovation-github-worker-runtime-log-redaction-negative-fixtures',
-          'npm run kosmo:innovation-github-worker-runtime-log-redaction-negative-fixtures-check'
+          'npm run kosmo:innovation-github-worker-runtime-log-redaction-negative-fixtures-check',
+          'npm run kosmo:innovation-github-worker-runtime-batch-manifest-draft',
+          'npm run kosmo:innovation-github-worker-runtime-batch-manifest-draft-check'
         ],
         acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'GitHub fixture skeletons/payloads/smoke are review-only ready', 'no install/private-read/training action enabled']
       },

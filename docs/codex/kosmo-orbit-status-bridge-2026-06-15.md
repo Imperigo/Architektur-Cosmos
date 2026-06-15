@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T18:47:08.294Z
+Generated: 2026-06-15T18:52:48.459Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 78
+- Cards: 79
 - Blocking cards: 5
 - Owner action cards: 26
 - Source root blocked: yes
@@ -48,6 +48,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - GitHub worker runtime rollback/redaction fixtures: innovation_github_worker_runtime_rollback_redaction_fixtures_ready, groups 3, redaction rules 5, rollback steps 5
 - GitHub worker runtime apply guard: innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply, exact reply missing, separate runtime blocked, failures 0
 - GitHub worker runtime log-redaction negative fixtures: innovation_github_worker_runtime_log_redaction_negative_fixtures_ready, fixtures 10, blocked 10, leak categories 7
+- GitHub worker runtime batch manifest draft: innovation_github_worker_runtime_batch_manifest_draft_ready, id github-worker-runtime-batch-draft-2026-06-15, blocked prereqs 4, open gates 5
 - Training eval rubric: training_eval_rubric_pack_ready, suites 6, criteria 24
 - Training eval row template: training_eval_row_template_ready, templates 6
 - Training eval review queue: training_eval_review_queue_plan_ready, lanes 5
@@ -134,6 +135,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-worker-runtime-rollback-redaction-fixtures` GitHub Worker Runtime Rollback/Redaction Fixtures | review_only_ready | no | 3 groups, rules 5, rollback 5, runtime 0, failures 0 |
 | `github-worker-runtime-apply-guard` GitHub Worker Runtime Apply Guard | blocked_owner_action_required | yes | exact reply missing, separate runtime blocked, execute 0, checks 31/31 |
 | `github-worker-runtime-log-redaction-negative-fixtures` GitHub Worker Runtime Log-Redaction Negative Fixtures | review_only_ready | no | 10 negative fixtures, blocked 10, leak categories 7, runtime 0, failures 0 |
+| `github-worker-runtime-batch-manifest-draft` GitHub Worker Runtime Batch Manifest Draft | review_only_ready | no | github-worker-runtime-batch-draft-2026-06-15, prereqs 7, blocked 4, gates open 5, executable no, failures 0 |
 | `training-eval-rubric` Training Eval Rubric | review_only_ready | no | 6 suites, 24 criteria, eval items 24, failures 0 |
 | `training-eval-row-template` Training Eval Row Template | review_only_ready | no | 6 templates, 10 required fields, writes rows now 0, failures 0 |
 | `training-eval-review-queue` Training Eval Review Queue | review_only_ready | no | 5 lanes, 6 states, queue items now 0, failures 0 |
@@ -193,6 +195,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `github_worker_runtime_rollback_redaction_fixtures_card`
 - `github_worker_runtime_apply_guard_card`
 - `github_worker_runtime_log_redaction_negative_fixtures_card`
+- `github_worker_runtime_batch_manifest_draft_card`
 - `training_eval_rubric_card`
 - `training_eval_row_template_card`
 - `training_eval_review_queue_card`
