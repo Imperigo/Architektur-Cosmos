@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:33:06.112Z",
+  "contract_id": "qwen3_vl_visual_retrieval_fixture",
+  "candidate_id": "qwen3_vl_embedding",
+  "lane": "kosmo_multimodal_rag",
+  "status": "fixture_skeleton_only",
+  "policy": {
+    "generated_or_public_safe_only": true,
+    "private_content": false,
+    "install_required_now": false,
+    "tool_run_required_now": false,
+    "public_ready_after_fixture": 0
+  },
+  "fixtures": [
+    {
+      "id": "generated_facade_image_set",
+      "description": "Synthetic/public-safe facade and material thumbnails.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/generated_facade_image_set.fixture.json"
+    },
+    {
+      "id": "visual_query_set",
+      "description": "Queries for facade rhythm, material signal and plan-image distinction.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/visual_query_set.fixture.json"
+    }
+  ],
+  "acceptance": [
+    "Visual retrieval eval uses only generated/public-safe images.",
+    "Image provenance is explicit.",
+    "No private scan/photo embedding is generated."
+  ],
+  "forbidden_inputs": [
+    "/mnt/archiv private files",
+    "OneDrive private library files",
+    "private PDFs/books/scans/images",
+    "local worker private outputs",
+    "public-ready or rights-cleared claims"
+  ],
+  "allowed_outputs": [
+    "fixture manifest JSON",
+    "fixture smoke report JSON/Markdown",
+    "generated public-safe fixture files"
+  ]
+}

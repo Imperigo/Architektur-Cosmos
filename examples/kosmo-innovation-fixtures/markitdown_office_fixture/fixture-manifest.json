@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:33:06.111Z",
+  "contract_id": "markitdown_office_fixture",
+  "candidate_id": "markitdown",
+  "lane": "kosmo_prepare",
+  "status": "fixture_skeleton_only",
+  "policy": {
+    "generated_or_public_safe_only": true,
+    "private_content": false,
+    "install_required_now": false,
+    "tool_run_required_now": false,
+    "public_ready_after_fixture": 0
+  },
+  "fixtures": [
+    {
+      "id": "generated_docx",
+      "description": "Synthetic brief with project metadata, material list and source table.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/generated_docx.fixture.json"
+    },
+    {
+      "id": "generated_html",
+      "description": "Synthetic reference page with links and captions.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/generated_html.fixture.json"
+    }
+  ],
+  "acceptance": [
+    "Markdown output keeps headings, links and tables.",
+    "No OneDrive or archive files are read.",
+    "Conversion output is suitable for later KosmoReferences ingestion checks."
+  ],
+  "forbidden_inputs": [
+    "/mnt/archiv private files",
+    "OneDrive private library files",
+    "private PDFs/books/scans/images",
+    "local worker private outputs",
+    "public-ready or rights-cleared claims"
+  ],
+  "allowed_outputs": [
+    "fixture manifest JSON",
+    "fixture smoke report JSON/Markdown",
+    "generated public-safe fixture files"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:33:06.112Z",
+  "contract_id": "deepseek_ocr_public_scan_fixture",
+  "candidate_id": "deepseek_ocr",
+  "lane": "kosmo_prepare_ocr",
+  "status": "fixture_skeleton_only",
+  "policy": {
+    "generated_or_public_safe_only": true,
+    "private_content": false,
+    "install_required_now": false,
+    "tool_run_required_now": false,
+    "public_ready_after_fixture": 0
+  },
+  "fixtures": [
+    {
+      "id": "generated_plan_scan",
+      "description": "Synthetic plan-like raster with room labels, scale note and title block.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/generated_plan_scan.fixture.json"
+    },
+    {
+      "id": "expected_ocr_manifest",
+      "description": "Expected words, uncertainty rules and hallucination flags.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/expected_ocr_manifest.fixture.json"
+    }
+  ],
+  "acceptance": [
+    "OCR output includes confidence/uncertainty fields.",
+    "No OCR is run on private scans or books.",
+    "Output is never training-ready without human review."
+  ],
+  "forbidden_inputs": [
+    "/mnt/archiv private files",
+    "OneDrive private library files",
+    "private PDFs/books/scans/images",
+    "local worker private outputs",
+    "public-ready or rights-cleared claims"
+  ],
+  "allowed_outputs": [
+    "fixture manifest JSON",
+    "fixture smoke report JSON/Markdown",
+    "generated public-safe fixture files"
+  ]
+}

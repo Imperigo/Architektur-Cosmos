@@ -1,0 +1,651 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:33:05.870Z",
+  "status": "innovation_fixture_contracts_guard_passed",
+  "policy": {
+    "validates_contracts_only": true,
+    "installs_tools_now": false,
+    "reads_private_content": false,
+    "runs_private_ocr": false,
+    "runs_embeddings_on_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_check": 0,
+    "note": "This guard validates fixture contracts only. It does not install tools or create fixtures."
+  },
+  "source_refs": [
+    "data/kosmo-innovation-fixture-contracts-2026-06-15.json"
+  ],
+  "summary": {
+    "contracts_status": "innovation_fixture_contracts_ready",
+    "contracts": 9,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Contracts schema_version must be 0.1."
+    },
+    {
+      "id": "contracts_ready",
+      "severity": "passed",
+      "message": "Contracts report must be ready."
+    },
+    {
+      "id": "fixture_contracts_only",
+      "severity": "passed",
+      "message": "Report must be fixture-contracts-only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Report must not install tools."
+    },
+    {
+      "id": "no_clones",
+      "severity": "passed",
+      "message": "Report must not clone repositories."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Report must not read private content."
+    },
+    {
+      "id": "no_private_ocr",
+      "severity": "passed",
+      "message": "Report must not run private OCR."
+    },
+    {
+      "id": "no_private_embeddings",
+      "severity": "passed",
+      "message": "Report must not run private embeddings."
+    },
+    {
+      "id": "no_training",
+      "severity": "passed",
+      "message": "Report must not run training."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Report must keep public-ready at 0."
+    },
+    {
+      "id": "contract_count",
+      "severity": "passed",
+      "message": "Report must include at least eight contracts."
+    },
+    {
+      "id": "required_contract:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "Required contract missing: docling_public_pdf_fixture."
+    },
+    {
+      "id": "required_contract:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "Required contract missing: markitdown_office_fixture."
+    },
+    {
+      "id": "required_contract:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "Required contract missing: qwen3_retrieval_fixture."
+    },
+    {
+      "id": "required_contract:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "Required contract missing: ifcopenshell_geometry_fixture."
+    },
+    {
+      "id": "scout_candidate_present:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "docling_public_pdf_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "docling_public_pdf_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "docling_public_pdf_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "docling_public_pdf_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "docling_public_pdf_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "docling_public_pdf_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "docling_public_pdf_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:docling_public_pdf_fixture:public_pdf",
+      "severity": "passed",
+      "message": "public_pdf must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:docling_public_pdf_fixture:public_pdf",
+      "severity": "passed",
+      "message": "public_pdf must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:docling_public_pdf_fixture:generated_scan_png",
+      "severity": "passed",
+      "message": "generated_scan_png must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:docling_public_pdf_fixture:generated_scan_png",
+      "severity": "passed",
+      "message": "generated_scan_png must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:docling_public_pdf_fixture",
+      "severity": "passed",
+      "message": "docling_public_pdf_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "scout_candidate_present:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "markitdown_office_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "markitdown_office_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "markitdown_office_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "markitdown_office_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "markitdown_office_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "markitdown_office_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "markitdown_office_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:markitdown_office_fixture:generated_docx",
+      "severity": "passed",
+      "message": "generated_docx must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:markitdown_office_fixture:generated_docx",
+      "severity": "passed",
+      "message": "generated_docx must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:markitdown_office_fixture:generated_html",
+      "severity": "passed",
+      "message": "generated_html must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:markitdown_office_fixture:generated_html",
+      "severity": "passed",
+      "message": "generated_html must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:markitdown_office_fixture",
+      "severity": "passed",
+      "message": "markitdown_office_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "scout_candidate_present:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_retrieval_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_retrieval_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_retrieval_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_retrieval_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_retrieval_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_retrieval_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_retrieval_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:qwen3_retrieval_fixture:public_safe_reference_chunks",
+      "severity": "passed",
+      "message": "public_safe_reference_chunks must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:qwen3_retrieval_fixture:public_safe_reference_chunks",
+      "severity": "passed",
+      "message": "public_safe_reference_chunks must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:qwen3_retrieval_fixture:query_set",
+      "severity": "passed",
+      "message": "query_set must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:qwen3_retrieval_fixture:query_set",
+      "severity": "passed",
+      "message": "query_set must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:qwen3_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_retrieval_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "scout_candidate_present:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "ifcopenshell_geometry_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "ifcopenshell_geometry_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "ifcopenshell_geometry_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "ifcopenshell_geometry_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "ifcopenshell_geometry_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "ifcopenshell_geometry_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "ifcopenshell_geometry_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:ifcopenshell_geometry_fixture:generated_ifc_stub",
+      "severity": "passed",
+      "message": "generated_ifc_stub must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:ifcopenshell_geometry_fixture:generated_ifc_stub",
+      "severity": "passed",
+      "message": "generated_ifc_stub must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:ifcopenshell_geometry_fixture:expected_geometry_manifest",
+      "severity": "passed",
+      "message": "expected_geometry_manifest must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:ifcopenshell_geometry_fixture:expected_geometry_manifest",
+      "severity": "passed",
+      "message": "expected_geometry_manifest must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:ifcopenshell_geometry_fixture",
+      "severity": "passed",
+      "message": "ifcopenshell_geometry_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "scout_candidate_present:deepseek_ocr_public_scan_fixture",
+      "severity": "passed",
+      "message": "deepseek_ocr_public_scan_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:deepseek_ocr_public_scan_fixture",
+      "severity": "passed",
+      "message": "deepseek_ocr_public_scan_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:deepseek_ocr_public_scan_fixture",
+      "severity": "passed",
+      "message": "deepseek_ocr_public_scan_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:deepseek_ocr_public_scan_fixture",
+      "severity": "passed",
+      "message": "deepseek_ocr_public_scan_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:deepseek_ocr_public_scan_fixture",
+      "severity": "passed",
+      "message": "deepseek_ocr_public_scan_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:deepseek_ocr_public_scan_fixture",
+      "severity": "passed",
+      "message": "deepseek_ocr_public_scan_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:deepseek_ocr_public_scan_fixture",
+      "severity": "passed",
+      "message": "deepseek_ocr_public_scan_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:deepseek_ocr_public_scan_fixture:generated_plan_scan",
+      "severity": "passed",
+      "message": "generated_plan_scan must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:deepseek_ocr_public_scan_fixture:generated_plan_scan",
+      "severity": "passed",
+      "message": "generated_plan_scan must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:deepseek_ocr_public_scan_fixture:expected_ocr_manifest",
+      "severity": "passed",
+      "message": "expected_ocr_manifest must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:deepseek_ocr_public_scan_fixture:expected_ocr_manifest",
+      "severity": "passed",
+      "message": "expected_ocr_manifest must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:deepseek_ocr_public_scan_fixture",
+      "severity": "passed",
+      "message": "deepseek_ocr_public_scan_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "scout_candidate_present:qwen3_vl_visual_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_vl_visual_retrieval_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:qwen3_vl_visual_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_vl_visual_retrieval_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:qwen3_vl_visual_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_vl_visual_retrieval_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:qwen3_vl_visual_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_vl_visual_retrieval_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:qwen3_vl_visual_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_vl_visual_retrieval_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:qwen3_vl_visual_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_vl_visual_retrieval_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:qwen3_vl_visual_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_vl_visual_retrieval_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:qwen3_vl_visual_retrieval_fixture:generated_facade_image_set",
+      "severity": "passed",
+      "message": "generated_facade_image_set must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:qwen3_vl_visual_retrieval_fixture:generated_facade_image_set",
+      "severity": "passed",
+      "message": "generated_facade_image_set must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:qwen3_vl_visual_retrieval_fixture:visual_query_set",
+      "severity": "passed",
+      "message": "visual_query_set must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:qwen3_vl_visual_retrieval_fixture:visual_query_set",
+      "severity": "passed",
+      "message": "visual_query_set must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:qwen3_vl_visual_retrieval_fixture",
+      "severity": "passed",
+      "message": "qwen3_vl_visual_retrieval_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "scout_candidate_present:topologicpy_spatial_graph_fixture",
+      "severity": "passed",
+      "message": "topologicpy_spatial_graph_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:topologicpy_spatial_graph_fixture",
+      "severity": "passed",
+      "message": "topologicpy_spatial_graph_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:topologicpy_spatial_graph_fixture",
+      "severity": "passed",
+      "message": "topologicpy_spatial_graph_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:topologicpy_spatial_graph_fixture",
+      "severity": "passed",
+      "message": "topologicpy_spatial_graph_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:topologicpy_spatial_graph_fixture",
+      "severity": "passed",
+      "message": "topologicpy_spatial_graph_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:topologicpy_spatial_graph_fixture",
+      "severity": "passed",
+      "message": "topologicpy_spatial_graph_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:topologicpy_spatial_graph_fixture",
+      "severity": "passed",
+      "message": "topologicpy_spatial_graph_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:topologicpy_spatial_graph_fixture:synthetic_space_graph",
+      "severity": "passed",
+      "message": "synthetic_space_graph must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:topologicpy_spatial_graph_fixture:synthetic_space_graph",
+      "severity": "passed",
+      "message": "synthetic_space_graph must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:topologicpy_spatial_graph_fixture:expected_topology_report",
+      "severity": "passed",
+      "message": "expected_topology_report must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:topologicpy_spatial_graph_fixture:expected_topology_report",
+      "severity": "passed",
+      "message": "expected_topology_report must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:topologicpy_spatial_graph_fixture",
+      "severity": "passed",
+      "message": "topologicpy_spatial_graph_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "scout_candidate_present:paper2poster_publish_layout_fixture",
+      "severity": "passed",
+      "message": "paper2poster_publish_layout_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:paper2poster_publish_layout_fixture",
+      "severity": "passed",
+      "message": "paper2poster_publish_layout_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:paper2poster_publish_layout_fixture",
+      "severity": "passed",
+      "message": "paper2poster_publish_layout_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:paper2poster_publish_layout_fixture",
+      "severity": "passed",
+      "message": "paper2poster_publish_layout_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:paper2poster_publish_layout_fixture",
+      "severity": "passed",
+      "message": "paper2poster_publish_layout_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:paper2poster_publish_layout_fixture",
+      "severity": "passed",
+      "message": "paper2poster_publish_layout_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:paper2poster_publish_layout_fixture",
+      "severity": "passed",
+      "message": "paper2poster_publish_layout_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:paper2poster_publish_layout_fixture:synthetic_reference_summary",
+      "severity": "passed",
+      "message": "synthetic_reference_summary must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:paper2poster_publish_layout_fixture:synthetic_reference_summary",
+      "severity": "passed",
+      "message": "synthetic_reference_summary must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:paper2poster_publish_layout_fixture:layout_scoring_manifest",
+      "severity": "passed",
+      "message": "layout_scoring_manifest must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:paper2poster_publish_layout_fixture:layout_scoring_manifest",
+      "severity": "passed",
+      "message": "layout_scoring_manifest must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:paper2poster_publish_layout_fixture",
+      "severity": "passed",
+      "message": "paper2poster_publish_layout_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "scout_candidate_present:speckle_connector_boundary_fixture",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_fixture must map to a scout candidate."
+    },
+    {
+      "id": "install_now_false:speckle_connector_boundary_fixture",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_fixture must not install now."
+    },
+    {
+      "id": "private_content_false:speckle_connector_boundary_fixture",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_fixture must not allow private content now."
+    },
+    {
+      "id": "executable_false:speckle_connector_boundary_fixture",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_fixture must not be executable now."
+    },
+    {
+      "id": "public_ready_zero:speckle_connector_boundary_fixture",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_fixture must keep public-ready at 0."
+    },
+    {
+      "id": "output_root_safe:speckle_connector_boundary_fixture",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_fixture output root must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "fixtures_min:speckle_connector_boundary_fixture",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_fixture must define at least two fixtures."
+    },
+    {
+      "id": "fixture_no_private:speckle_connector_boundary_fixture:connector_contract_stub",
+      "severity": "passed",
+      "message": "connector_contract_stub must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:speckle_connector_boundary_fixture:connector_contract_stub",
+      "severity": "passed",
+      "message": "connector_contract_stub must be generated or public-safe."
+    },
+    {
+      "id": "fixture_no_private:speckle_connector_boundary_fixture:privacy_boundary_matrix",
+      "severity": "passed",
+      "message": "privacy_boundary_matrix must not use private content."
+    },
+    {
+      "id": "fixture_public_safe:speckle_connector_boundary_fixture:privacy_boundary_matrix",
+      "severity": "passed",
+      "message": "privacy_boundary_matrix must be generated or public-safe."
+    },
+    {
+      "id": "forbidden_private_roots:speckle_connector_boundary_fixture",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_fixture must explicitly forbid private roots."
+    },
+    {
+      "id": "summary_executable_zero",
+      "severity": "passed",
+      "message": "Summary executable_now must be 0."
+    }
+  ],
+  "next_actions": [
+    "Create generated fixture skeletons for the highest-priority contracts.",
+    "Run tool-specific smoke only after dependency policy review.",
+    "Keep private source roots, OCR and embeddings blocked until explicit Source Root gates pass."
+  ]
+}

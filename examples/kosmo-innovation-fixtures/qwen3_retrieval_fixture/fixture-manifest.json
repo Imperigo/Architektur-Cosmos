@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:33:06.111Z",
+  "contract_id": "qwen3_retrieval_fixture",
+  "candidate_id": "qwen3_embedding_reranker",
+  "lane": "kosmo_rag",
+  "status": "fixture_skeleton_only",
+  "policy": {
+    "generated_or_public_safe_only": true,
+    "private_content": false,
+    "install_required_now": false,
+    "tool_run_required_now": false,
+    "public_ready_after_fixture": 0
+  },
+  "fixtures": [
+    {
+      "id": "public_safe_reference_chunks",
+      "description": "Small synthetic/public-safe chunks for Villa Savoye, Sogn Benedetg and Ingenbohl-style fields.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/public_safe_reference_chunks.fixture.json"
+    },
+    {
+      "id": "query_set",
+      "description": "Architecture questions covering material, structure, typology and rights uncertainty.",
+      "status": "payload_pending",
+      "private_content": false,
+      "generated_or_public_safe": true,
+      "expected_payload_path": "payloads/query_set.fixture.json"
+    }
+  ],
+  "acceptance": [
+    "Embedding/rerank eval can run without private chunks.",
+    "Expected answers require grounded retrieved context.",
+    "No vector index is created from private content."
+  ],
+  "forbidden_inputs": [
+    "/mnt/archiv private files",
+    "OneDrive private library files",
+    "private PDFs/books/scans/images",
+    "local worker private outputs",
+    "public-ready or rights-cleared claims"
+  ],
+  "allowed_outputs": [
+    "fixture manifest JSON",
+    "fixture smoke report JSON/Markdown",
+    "generated public-safe fixture files"
+  ]
+}
