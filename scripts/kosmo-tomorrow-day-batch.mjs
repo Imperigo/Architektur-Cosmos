@@ -132,6 +132,8 @@ function buildPlan(reports) {
       'npm run kosmo:local-worker-innovation-output-validator-fixtures-check',
       'npm run kosmo:local-worker-innovation-launch-dry-run',
       'npm run kosmo:local-worker-innovation-launch-dry-run-check',
+      'npm run kosmo:local-worker-innovation-launch-owner-card',
+      'npm run kosmo:local-worker-innovation-launch-owner-card-check',
       'npm run kosmo:codex-daily-loop-routine',
       'npm run kosmo:codex-daily-loop-routine-check',
       'npm run kosmo:codex-morning-routine-run',

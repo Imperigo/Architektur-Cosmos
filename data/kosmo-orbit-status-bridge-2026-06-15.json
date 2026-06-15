@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:12:12.944Z",
+  "generated_at": "2026-06-15T17:17:13.615Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -80,6 +80,8 @@
     "data/kosmo-local-worker-innovation-output-validator-fixtures-check-2026-06-15.json",
     "data/kosmo-local-worker-innovation-launch-dry-run-2026-06-15.json",
     "data/kosmo-local-worker-innovation-launch-dry-run-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-owner-card-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-owner-card-check-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
     "data/kosmo-innovation-github-discovery-2026-06-15.json",
@@ -115,7 +117,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 60,
+    "cards": 61,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -255,6 +257,12 @@
     "local_worker_innovation_launch_dry_run_explicit_gate_required": 5,
     "local_worker_innovation_launch_dry_run_check_status": "local_worker_innovation_launch_dry_run_guard_passed",
     "local_worker_innovation_launch_dry_run_check_failures": 0,
+    "local_worker_innovation_launch_owner_card_status": "local_worker_innovation_launch_owner_card_ready",
+    "local_worker_innovation_launch_owner_card_tasks": 5,
+    "local_worker_innovation_launch_owner_card_recommended_choice": "hold_dry_run_ready",
+    "local_worker_innovation_launch_owner_card_execute_now": 0,
+    "local_worker_innovation_launch_owner_card_check_status": "local_worker_innovation_launch_owner_card_guard_passed",
+    "local_worker_innovation_launch_owner_card_check_failures": 0,
     "github_watchlist_status": "innovation_github_watchlist_ready",
     "github_watchlist_candidates": 9,
     "github_watchlist_live_probe_succeeded": 9,
@@ -696,6 +704,15 @@
       "owner_action_required": false,
       "route_hint": "Launch path prepared as dry-run only; explicit overseer gate required before any local worker execution",
       "source_ref": "data/kosmo-local-worker-innovation-launch-dry-run-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-launch-owner-card",
+      "title": "Local Worker Innovation Launch Owner Card",
+      "status": "review_only_ready",
+      "signal": "5 tasks, recommended hold_dry_run_ready, execute 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Owner/overseer decision card for later source-free local-worker launch; recommends hold",
+      "source_ref": "data/kosmo-local-worker-innovation-launch-owner-card-check-2026-06-15.json"
     },
     {
       "id": "github-innovation-watchlist",

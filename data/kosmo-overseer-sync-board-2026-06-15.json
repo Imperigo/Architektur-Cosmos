@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:12:11.391Z",
+  "generated_at": "2026-06-15T17:17:12.167Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 291
+      "files": 292
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 141
+      "files": 142
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-293-innovation-launch-owner-card.md",
+      "title": "Codex Synergiebericht 293 - Innovation Launch Owner Card",
+      "mirrored_inboxes": 2,
+      "bytes": 3096,
+      "modified_at": "2026-06-15T17:16:59.399Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-292-innovation-launch-dry-run.md",
       "title": "Codex Synergiebericht 292 - Innovation Launch Dry Run",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2699,
       "modified_at": "2026-06-15T16:39:25.338Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md",
-      "title": "Codex Synergiebericht 285 - GitHub Promotion Matrix",
-      "mirrored_inboxes": 2,
-      "bytes": 2394,
-      "modified_at": "2026-06-15T16:34:42.394Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 285-292 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 286-293 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

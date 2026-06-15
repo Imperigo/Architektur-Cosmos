@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:17:13.364Z",
+  "status": "local_worker_innovation_launch_owner_card_guard_passed",
+  "policy": {
+    "validates_card_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-owner-card-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 21,
+    "passed": 21,
+    "failures": 0,
+    "tasks": 5,
+    "recommended_choice": "hold_dry_run_ready",
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_owner_card_ready"
+    },
+    {
+      "id": "policy_card_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decision_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_execution_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_repo_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_promotion",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "five_tasks",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "dry_run_ready_five",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "validator_fixture_guarded",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "recommended_hold",
+      "status": "passed",
+      "evidence": "hold_dry_run_ready"
+    },
+    {
+      "id": "allowed_answers_present",
+      "status": "passed",
+      "evidence": "hold_dry_run_ready, approve_separate_source_free_launch_later, reject_or_rework_worker_launch"
+    },
+    {
+      "id": "exact_reply_source_free",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_choice=approve_separate_source_free_launch_later; confirmed_source_free_only=yes; confirmed_no_private_content=yes; confirmed_run_validator_after_outputs=yes; note=Nur die 5 GitHub-Innovation-Fixture-Tasks duerfen in einem separaten Launch-Batch laufen."
+    },
+    {
+      "id": "exact_reply_no_private",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_choice=approve_separate_source_free_launch_later; confirmed_source_free_only=yes; confirmed_no_private_content=yes; confirmed_run_validator_after_outputs=yes; note=Nur die 5 GitHub-Innovation-Fixture-Tasks duerfen in einem separaten Launch-Batch laufen."
+    },
+    {
+      "id": "tasks_no_execute_now",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "hard_stop_no_execution",
+      "status": "passed",
+      "evidence": "this card does not execute local workers. do not start models from this card. do not read private source root or private libraries. do not use private pdfs, scans, ocr text or onedrive content. do not clone or execute referenced github repositories. do not promote training rows or public-ready outputs."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this card does not execute local workers. do not start models from this card. do not read private source root or private libraries. do not use private pdfs, scans, ocr text or onedrive content. do not clone or execute referenced github repositories. do not promote training rows or public-ready outputs."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "this card does not execute local workers. do not start models from this card. do not read private source root or private libraries. do not use private pdfs, scans, ocr text or onedrive content. do not clone or execute referenced github repositories. do not promote training rows or public-ready outputs."
+    }
+  ]
+}

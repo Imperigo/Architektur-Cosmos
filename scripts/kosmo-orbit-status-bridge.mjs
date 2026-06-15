@@ -77,6 +77,8 @@ const refs = {
   localWorkerInnovationOutputValidatorFixturesCheck: `data/kosmo-local-worker-innovation-output-validator-fixtures-check-${dateStamp}.json`,
   localWorkerInnovationLaunchDryRun: `data/kosmo-local-worker-innovation-launch-dry-run-${dateStamp}.json`,
   localWorkerInnovationLaunchDryRunCheck: `data/kosmo-local-worker-innovation-launch-dry-run-check-${dateStamp}.json`,
+  localWorkerInnovationLaunchOwnerCard: `data/kosmo-local-worker-innovation-launch-owner-card-${dateStamp}.json`,
+  localWorkerInnovationLaunchOwnerCardCheck: `data/kosmo-local-worker-innovation-launch-owner-card-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -201,6 +203,8 @@ function buildBridge(reports) {
   const localWorkerInnovationOutputValidatorFixturesCheckSummary = reports.localWorkerInnovationOutputValidatorFixturesCheck?.summary || {};
   const localWorkerInnovationLaunchDryRunSummary = reports.localWorkerInnovationLaunchDryRun?.summary || {};
   const localWorkerInnovationLaunchDryRunCheckSummary = reports.localWorkerInnovationLaunchDryRunCheck?.summary || {};
+  const localWorkerInnovationLaunchOwnerCardSummary = reports.localWorkerInnovationLaunchOwnerCard?.summary || {};
+  const localWorkerInnovationLaunchOwnerCardCheckSummary = reports.localWorkerInnovationLaunchOwnerCardCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -774,6 +778,18 @@ function buildBridge(reports) {
       source_ref: refs.localWorkerInnovationLaunchDryRunCheck
     },
     {
+      id: 'local-worker-innovation-launch-owner-card',
+      title: 'Local Worker Innovation Launch Owner Card',
+      status: reports.localWorkerInnovationLaunchOwnerCard?.status === 'local_worker_innovation_launch_owner_card_ready' &&
+        reports.localWorkerInnovationLaunchOwnerCardCheck?.status === 'local_worker_innovation_launch_owner_card_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationLaunchOwnerCardSummary.tasks ?? 0} tasks, recommended ${localWorkerInnovationLaunchOwnerCardSummary.recommended_choice || '-'}, execute ${localWorkerInnovationLaunchOwnerCardSummary.execute_now ?? 0}, failures ${localWorkerInnovationLaunchOwnerCardCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Owner/overseer decision card for later source-free local-worker launch; recommends hold',
+      source_ref: refs.localWorkerInnovationLaunchOwnerCardCheck
+    },
+    {
       id: 'github-innovation-watchlist',
       title: 'GitHub Innovation Watchlist',
       status: reports.githubWatchlist?.status === 'innovation_github_watchlist_ready' &&
@@ -1144,6 +1160,12 @@ function buildBridge(reports) {
       local_worker_innovation_launch_dry_run_explicit_gate_required: localWorkerInnovationLaunchDryRunSummary.explicit_gate_required ?? null,
       local_worker_innovation_launch_dry_run_check_status: reports.localWorkerInnovationLaunchDryRunCheck?.status || null,
       local_worker_innovation_launch_dry_run_check_failures: localWorkerInnovationLaunchDryRunCheckSummary.failures ?? null,
+      local_worker_innovation_launch_owner_card_status: reports.localWorkerInnovationLaunchOwnerCard?.status || null,
+      local_worker_innovation_launch_owner_card_tasks: localWorkerInnovationLaunchOwnerCardSummary.tasks ?? null,
+      local_worker_innovation_launch_owner_card_recommended_choice: localWorkerInnovationLaunchOwnerCardSummary.recommended_choice ?? null,
+      local_worker_innovation_launch_owner_card_execute_now: localWorkerInnovationLaunchOwnerCardSummary.execute_now ?? null,
+      local_worker_innovation_launch_owner_card_check_status: reports.localWorkerInnovationLaunchOwnerCardCheck?.status || null,
+      local_worker_innovation_launch_owner_card_check_failures: localWorkerInnovationLaunchOwnerCardCheckSummary.failures ?? null,
       github_watchlist_status: reports.githubWatchlist?.status || null,
       github_watchlist_candidates: githubWatchlistSummary.candidates ?? null,
       github_watchlist_live_probe_succeeded: githubWatchlistSummary.live_probe_succeeded ?? null,
