@@ -1,0 +1,288 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:44:29.675Z",
+  "status": "innovation_dependency_preflight_plan_guard_passed",
+  "policy": {
+    "validates_plan_only": true,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-dependency-preflight-plan-2026-06-15.json"
+  ],
+  "summary": {
+    "plan_status": "innovation_dependency_preflight_plan_ready",
+    "dependency_groups": 7,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Plan schema_version must be 0.1."
+    },
+    {
+      "id": "plan_ready",
+      "severity": "passed",
+      "message": "Dependency preflight plan must be ready."
+    },
+    {
+      "id": "plan_only",
+      "severity": "passed",
+      "message": "Plan must be plan-only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Plan must not install dependencies."
+    },
+    {
+      "id": "no_downloads",
+      "severity": "passed",
+      "message": "Plan must not download models."
+    },
+    {
+      "id": "no_tool_runs",
+      "severity": "passed",
+      "message": "Plan must not run tools."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Plan must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Plan must keep public-ready at 0."
+    },
+    {
+      "id": "dependency_group_count",
+      "severity": "passed",
+      "message": "Plan must include at least six dependency groups."
+    },
+    {
+      "id": "executable_zero",
+      "severity": "passed",
+      "message": "Plan executable_now must be 0."
+    },
+    {
+      "id": "allowed_now_false:docling",
+      "severity": "passed",
+      "message": "docling must not be allowed now."
+    },
+    {
+      "id": "manual_gate:docling",
+      "severity": "passed",
+      "message": "docling must require manual dependency gate."
+    },
+    {
+      "id": "private_after_preflight_false:docling",
+      "severity": "passed",
+      "message": "docling must not allow private content after preflight."
+    },
+    {
+      "id": "public_ready_zero:docling",
+      "severity": "passed",
+      "message": "docling must keep public-ready at 0."
+    },
+    {
+      "id": "commands_present:docling",
+      "severity": "passed",
+      "message": "docling must define command templates."
+    },
+    {
+      "id": "no_install_commands:docling",
+      "severity": "passed",
+      "message": "docling command templates must not install, clone or download."
+    },
+    {
+      "id": "allowed_now_false:markitdown",
+      "severity": "passed",
+      "message": "markitdown must not be allowed now."
+    },
+    {
+      "id": "manual_gate:markitdown",
+      "severity": "passed",
+      "message": "markitdown must require manual dependency gate."
+    },
+    {
+      "id": "private_after_preflight_false:markitdown",
+      "severity": "passed",
+      "message": "markitdown must not allow private content after preflight."
+    },
+    {
+      "id": "public_ready_zero:markitdown",
+      "severity": "passed",
+      "message": "markitdown must keep public-ready at 0."
+    },
+    {
+      "id": "commands_present:markitdown",
+      "severity": "passed",
+      "message": "markitdown must define command templates."
+    },
+    {
+      "id": "no_install_commands:markitdown",
+      "severity": "passed",
+      "message": "markitdown command templates must not install, clone or download."
+    },
+    {
+      "id": "allowed_now_false:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must not be allowed now."
+    },
+    {
+      "id": "manual_gate:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must require manual dependency gate."
+    },
+    {
+      "id": "private_after_preflight_false:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must not allow private content after preflight."
+    },
+    {
+      "id": "public_ready_zero:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must keep public-ready at 0."
+    },
+    {
+      "id": "commands_present:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must define command templates."
+    },
+    {
+      "id": "no_install_commands:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell command templates must not install, clone or download."
+    },
+    {
+      "id": "allowed_now_false:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must not be allowed now."
+    },
+    {
+      "id": "manual_gate:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must require manual dependency gate."
+    },
+    {
+      "id": "private_after_preflight_false:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must not allow private content after preflight."
+    },
+    {
+      "id": "public_ready_zero:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must keep public-ready at 0."
+    },
+    {
+      "id": "commands_present:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must define command templates."
+    },
+    {
+      "id": "no_install_commands:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker command templates must not install, clone or download."
+    },
+    {
+      "id": "allowed_now_false:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must not be allowed now."
+    },
+    {
+      "id": "manual_gate:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must require manual dependency gate."
+    },
+    {
+      "id": "private_after_preflight_false:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must not allow private content after preflight."
+    },
+    {
+      "id": "public_ready_zero:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must keep public-ready at 0."
+    },
+    {
+      "id": "commands_present:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must define command templates."
+    },
+    {
+      "id": "no_install_commands:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr command templates must not install, clone or download."
+    },
+    {
+      "id": "allowed_now_false:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must not be allowed now."
+    },
+    {
+      "id": "manual_gate:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must require manual dependency gate."
+    },
+    {
+      "id": "private_after_preflight_false:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must not allow private content after preflight."
+    },
+    {
+      "id": "public_ready_zero:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must keep public-ready at 0."
+    },
+    {
+      "id": "commands_present:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must define command templates."
+    },
+    {
+      "id": "no_install_commands:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy command templates must not install, clone or download."
+    },
+    {
+      "id": "allowed_now_false:speckle",
+      "severity": "passed",
+      "message": "speckle must not be allowed now."
+    },
+    {
+      "id": "manual_gate:speckle",
+      "severity": "passed",
+      "message": "speckle must require manual dependency gate."
+    },
+    {
+      "id": "private_after_preflight_false:speckle",
+      "severity": "passed",
+      "message": "speckle must not allow private content after preflight."
+    },
+    {
+      "id": "public_ready_zero:speckle",
+      "severity": "passed",
+      "message": "speckle must keep public-ready at 0."
+    },
+    {
+      "id": "commands_present:speckle",
+      "severity": "passed",
+      "message": "speckle must define command templates."
+    },
+    {
+      "id": "no_install_commands:speckle",
+      "severity": "passed",
+      "message": "speckle command templates must not install, clone or download."
+    }
+  ],
+  "next_actions": [
+    "Use this plan as the dependency gate map.",
+    "Do not install/download from this plan; create a separate explicit preflight run script when needed."
+  ]
+}

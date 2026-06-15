@@ -1,0 +1,164 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:44:29.433Z",
+  "status": "innovation_dependency_preflight_plan_ready",
+  "policy": {
+    "plan_only": true,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_plan": 0,
+    "note": "This plan defines future dependency preflight checks only. It does not install packages, download models or execute tools."
+  },
+  "source_refs": [
+    "data/kosmo-innovation-tool-dry-smoke-2026-06-15.json"
+  ],
+  "summary": {
+    "dependency_groups": 7,
+    "command_templates": 14,
+    "executable_now": 0,
+    "failures": 0,
+    "public_ready_after_plan": 0
+  },
+  "dependency_groups": [
+    {
+      "id": "docling",
+      "runtime": "python",
+      "packages": [
+        "docling"
+      ],
+      "preflight_commands": [
+        "python -m pip show docling",
+        "python -c \"import docling; print(docling.__version__)\""
+      ],
+      "requires_passed_lanes": [
+        "docling_markitdown_document_shape"
+      ],
+      "allowed_now": false,
+      "requires_manual_dependency_gate": true,
+      "private_content_allowed_after_preflight": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "markitdown",
+      "runtime": "python",
+      "packages": [
+        "markitdown"
+      ],
+      "preflight_commands": [
+        "python -m pip show markitdown",
+        "python -c \"import markitdown; print(markitdown.__name__)\""
+      ],
+      "requires_passed_lanes": [
+        "docling_markitdown_document_shape"
+      ],
+      "allowed_now": false,
+      "requires_manual_dependency_gate": true,
+      "private_content_allowed_after_preflight": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "ifcopenshell",
+      "runtime": "python",
+      "packages": [
+        "ifcopenshell"
+      ],
+      "preflight_commands": [
+        "python -m pip show ifcopenshell",
+        "python -c \"import ifcopenshell; print(ifcopenshell.version)\""
+      ],
+      "requires_passed_lanes": [
+        "ifcopenshell_entity_shape"
+      ],
+      "allowed_now": false,
+      "requires_manual_dependency_gate": true,
+      "private_content_allowed_after_preflight": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "qwen_embedding_reranker",
+      "runtime": "model_or_python",
+      "packages": [
+        "sentence-transformers_or_transformers",
+        "Qwen3-Embedding model files"
+      ],
+      "preflight_commands": [
+        "python -c \"import transformers; print(transformers.__version__)\"",
+        "test -d \"$KOSMO_MODEL_ROOT/qwen3-embedding\""
+      ],
+      "requires_passed_lanes": [
+        "qwen_retrieval_shape"
+      ],
+      "allowed_now": false,
+      "requires_manual_dependency_gate": true,
+      "private_content_allowed_after_preflight": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "deepseek_ocr",
+      "runtime": "model_or_python",
+      "packages": [
+        "torch",
+        "transformers",
+        "DeepSeek-OCR model files"
+      ],
+      "preflight_commands": [
+        "python -c \"import torch, transformers; print(torch.__version__, transformers.__version__)\"",
+        "test -d \"$KOSMO_MODEL_ROOT/deepseek-ocr\""
+      ],
+      "requires_passed_lanes": [
+        "deepseek_ocr_shape"
+      ],
+      "allowed_now": false,
+      "requires_manual_dependency_gate": true,
+      "private_content_allowed_after_preflight": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "topologicpy",
+      "runtime": "python",
+      "packages": [
+        "topologicpy"
+      ],
+      "preflight_commands": [
+        "python -m pip show topologicpy",
+        "python -c \"import topologicpy; print(topologicpy.__name__)\""
+      ],
+      "requires_passed_lanes": [
+        "topologicpy_graph_shape"
+      ],
+      "allowed_now": false,
+      "requires_manual_dependency_gate": true,
+      "private_content_allowed_after_preflight": false,
+      "public_ready_after_group": 0
+    },
+    {
+      "id": "speckle",
+      "runtime": "python_or_node",
+      "packages": [
+        "specklepy_or_speckle_connector_contracts"
+      ],
+      "preflight_commands": [
+        "python -m pip show specklepy",
+        "node -e \"console.log(\\\"speckle-contract-only\\\")\""
+      ],
+      "requires_passed_lanes": [
+        "speckle_connector_boundary_shape"
+      ],
+      "allowed_now": false,
+      "requires_manual_dependency_gate": true,
+      "private_content_allowed_after_preflight": false,
+      "public_ready_after_group": 0
+    }
+  ],
+  "execution_sequence_after_gate": [
+    "Run preflight commands in an isolated local environment.",
+    "Record versions and availability only; do not process private source files.",
+    "Run fixture-only smoke scripts after dependencies are present.",
+    "Escalate before any model download, private OCR, private embedding or training run."
+  ],
+  "failures": []
+}

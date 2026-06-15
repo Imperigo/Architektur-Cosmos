@@ -218,6 +218,8 @@
     "kosmo:innovation-fixture-payload-smoke-check": "node scripts/kosmo-innovation-fixture-payload-smoke-check.mjs",
     "kosmo:innovation-tool-dry-smoke": "node scripts/kosmo-innovation-tool-dry-smoke.mjs",
     "kosmo:innovation-tool-dry-smoke-check": "node scripts/kosmo-innovation-tool-dry-smoke-check.mjs",
+    "kosmo:innovation-dependency-preflight-plan": "node scripts/kosmo-innovation-dependency-preflight-plan.mjs",
+    "kosmo:innovation-dependency-preflight-plan-check": "node scripts/kosmo-innovation-dependency-preflight-plan-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",
