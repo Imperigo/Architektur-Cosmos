@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T14:00:45.551Z
+Generated: 2026-06-15T14:05:40.678Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-245-tomorrow-day-batch-generator.md` | Codex Synergiebericht 245: Tomorrow-Day-Batch ist reproduzierbar | 2 |
 | `2026-06-15-codex-synergiebericht-244-live-github-morning-scout.md` | Codex Synergiebericht 244: Live-GitHub-Morgenroutine fuer Innovations-Scout | 2 |
 | `2026-06-15-codex-synergiebericht-243-vague-unlock-guard.md` | Codex Synergiebericht 243: Vage Owner-Freigaben bleiben gesperrt | 2 |
 | `2026-06-15-codex-synergiebericht-242-next-shift-acceptance-refresh.md` | Codex Synergiebericht 242: Next Shift Acceptance Refresh | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md` | Codex Synergiebericht 240: Source-Independent Queue Refresh | 2 |
 | `2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md` | Codex Synergiebericht 239: Orbit Local Worker Fixture Card | 2 |
 | `2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md` | Codex Synergiebericht 238: Local Worker Fixture Chain Task Pack | 2 |
-| `2026-06-15-codex-synergiebericht-237-orbit-fixture-chain-status.md` | Codex Synergiebericht 237: Orbit Fixture Chain Status | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 237-244 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 238-245 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
