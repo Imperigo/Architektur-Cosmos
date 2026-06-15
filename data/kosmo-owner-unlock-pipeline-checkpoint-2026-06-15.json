@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:48:17.972Z",
+  "generated_at": "2026-06-15T13:53:39.043Z",
   "status": "owner_unlock_pipeline_checkpoint_ready",
   "policy": {
     "checkpoint_only": true,
@@ -28,8 +28,8 @@
   "summary": {
     "components": 11,
     "components_ready": 11,
-    "guard_checks": 113,
-    "guard_checks_passed": 113,
+    "guard_checks": 115,
+    "guard_checks_passed": 115,
     "latest_handoff_min": 233,
     "latest_handoff_max": 240,
     "latest_handoff_count": 8,

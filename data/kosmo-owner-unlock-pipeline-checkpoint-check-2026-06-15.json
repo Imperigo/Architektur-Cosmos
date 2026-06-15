@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:48:18.206Z",
+  "generated_at": "2026-06-15T13:53:39.280Z",
   "status": "owner_unlock_pipeline_checkpoint_guard_passed",
   "policy": {
     "validates_checkpoint_only": true,
@@ -78,14 +78,14 @@
       "evidence": "11/11"
     },
     {
-      "id": "guard_checks_113",
+      "id": "guard_checks_at_least_113",
       "status": "passed",
-      "evidence": 113
+      "evidence": 115
     },
     {
       "id": "guard_checks_all_passed",
       "status": "passed",
-      "evidence": "113/113"
+      "evidence": "115/115"
     },
     {
       "id": "latest_handoffs_include_183_or_newer",

@@ -45,6 +45,12 @@ async function main() {
       answer: 'source_root_choice=select_exact_root_1; confirmed_exact_root=no; review_batches=batch-a; note=smoke',
       expected_status: 'owner_unlock_reply_invalid',
       expected_exit_code: 1
+    },
+    {
+      id: 'invalid_vague_all_free_grant',
+      answer: 'ich gebe alles frei',
+      expected_status: 'owner_unlock_reply_invalid',
+      expected_exit_code: 1
     }
   ];
 

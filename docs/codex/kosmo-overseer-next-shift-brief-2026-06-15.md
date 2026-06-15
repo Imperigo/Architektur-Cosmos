@@ -1,6 +1,6 @@
 # Kosmo Overseer Next Shift Brief
 
-Generated: 2026-06-15T13:50:39.249Z
+Generated: 2026-06-15T13:53:39.522Z
 Status: `overseer_next_shift_brief_ready`
 
 ## Summary

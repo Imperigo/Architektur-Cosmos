@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:37:01.829Z",
+  "generated_at": "2026-06-15T13:53:38.579Z",
   "status": "owner_unlock_reply_validator_smoke_passed",
   "policy": {
     "smoke_only": true,
@@ -13,10 +13,10 @@
     "public_ready_after_smoke": 0
   },
   "summary": {
-    "cases": 4,
-    "passed": 4,
+    "cases": 5,
+    "passed": 5,
     "failures": 0,
-    "expected_invalid_cases": 1,
+    "expected_invalid_cases": 2,
     "public_ready_after_smoke": 0
   },
   "cases": [
@@ -55,6 +55,18 @@
       "actual_exit_code": 1,
       "failures": [
         "select_exact_root_1 requires confirmed_exact_root=yes."
+      ],
+      "passed": true
+    },
+    {
+      "id": "invalid_vague_all_free_grant",
+      "expected_status": "owner_unlock_reply_invalid",
+      "actual_status": "owner_unlock_reply_invalid",
+      "expected_exit_code": 1,
+      "actual_exit_code": 1,
+      "failures": [
+        "Missing source_root_choice.",
+        "confirmed_exact_root must be yes or no."
       ],
       "passed": true
     }

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:37:02.078Z",
+  "generated_at": "2026-06-15T13:53:38.808Z",
   "status": "owner_unlock_reply_validator_smoke_guard_passed",
   "policy": {
     "validates_smoke_only": true,
@@ -15,8 +15,8 @@
     "data/kosmo-owner-unlock-reply-validator-smoke-2026-06-15.json"
   ],
   "summary": {
-    "checks": 21,
-    "passed": 21,
+    "checks": 23,
+    "passed": 23,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -68,9 +68,9 @@
       "evidence": 0
     },
     {
-      "id": "four_cases",
+      "id": "five_cases",
       "status": "passed",
-      "evidence": "pending_no_answer,valid_repair_onedrive_first,valid_select_exact_root_review_only,invalid_unlock_without_confirmation"
+      "evidence": "pending_no_answer,valid_repair_onedrive_first,valid_select_exact_root_review_only,invalid_unlock_without_confirmation,invalid_vague_all_free_grant"
     },
     {
       "id": "all_cases_passed",
@@ -103,9 +103,19 @@
       "evidence": 1
     },
     {
-      "id": "one_expected_invalid_case",
+      "id": "vague_all_free_rejected",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_invalid"
+    },
+    {
+      "id": "vague_all_free_exit_one",
       "status": "passed",
       "evidence": 1
+    },
+    {
+      "id": "two_expected_invalid_cases",
+      "status": "passed",
+      "evidence": 2
     },
     {
       "id": "hard_stops_no_intake_copy",
