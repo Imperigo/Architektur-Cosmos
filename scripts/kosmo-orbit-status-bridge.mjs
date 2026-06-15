@@ -115,6 +115,8 @@ const refs = {
   githubFixturePayloadsCheck: `data/kosmo-innovation-github-fixture-payloads-check-${dateStamp}.json`,
   githubFixturePayloadSmoke: `data/kosmo-innovation-github-fixture-payload-smoke-${dateStamp}.json`,
   githubFixturePayloadSmokeCheck: `data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`,
+  githubWorkerIntegrationSignalBridge: `data/kosmo-innovation-github-worker-integration-signal-bridge-${dateStamp}.json`,
+  githubWorkerIntegrationSignalBridgeCheck: `data/kosmo-innovation-github-worker-integration-signal-bridge-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
@@ -261,6 +263,8 @@ function buildBridge(reports) {
   const githubFixturePayloadsCheckSummary = reports.githubFixturePayloadsCheck?.summary || {};
   const githubFixturePayloadSmokeSummary = reports.githubFixturePayloadSmoke?.summary || {};
   const githubFixturePayloadSmokeCheckSummary = reports.githubFixturePayloadSmokeCheck?.summary || {};
+  const githubWorkerIntegrationSignalBridgeSummary = reports.githubWorkerIntegrationSignalBridge?.summary || {};
+  const githubWorkerIntegrationSignalBridgeCheckSummary = reports.githubWorkerIntegrationSignalBridgeCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
@@ -1082,6 +1086,18 @@ function buildBridge(reports) {
       source_ref: refs.githubFixturePayloadSmoke
     },
     {
+      id: 'github-worker-integration-signal-bridge',
+      title: 'GitHub Worker Integration Signal Bridge',
+      status: reports.githubWorkerIntegrationSignalBridge?.status === 'innovation_github_worker_integration_signal_bridge_ready' &&
+        reports.githubWorkerIntegrationSignalBridgeCheck?.status === 'innovation_github_worker_integration_signal_bridge_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubWorkerIntegrationSignalBridgeSummary.worker_integration_candidates ?? 0} candidates, top ${githubWorkerIntegrationSignalBridgeSummary.top_signal_score ?? '-'}, high ${githubWorkerIntegrationSignalBridgeSummary.high_signal_candidates ?? '-'}, executable ${githubWorkerIntegrationSignalBridgeSummary.executable_now ?? 0}, failures ${githubWorkerIntegrationSignalBridgeCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'BIM/RAG/IFC public GitHub signals mapped to local-worker command boundaries; no clone/install/run',
+      source_ref: refs.githubWorkerIntegrationSignalBridge
+    },
+    {
       id: 'training-eval-rubric',
       title: 'Training Eval Rubric',
       status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
@@ -1367,6 +1383,9 @@ function buildBridge(reports) {
       github_fixture_payload_smoke_lanes: githubFixturePayloadSmokeSummary.lanes ?? null,
       github_fixture_payload_smoke_training_lanes: githubFixturePayloadSmokeSummary.training_lanes ?? null,
       github_fixture_payload_smoke_content_types: githubFixturePayloadSmokeSummary.content_types ?? null,
+      github_worker_integration_signal_bridge_status: reports.githubWorkerIntegrationSignalBridge?.status || null,
+      github_worker_integration_signal_bridge_candidates: githubWorkerIntegrationSignalBridgeSummary.worker_integration_candidates ?? null,
+      github_worker_integration_signal_bridge_top_signal_score: githubWorkerIntegrationSignalBridgeSummary.top_signal_score ?? null,
       training_eval_rubric_status: reports.trainingEvalRubricPack?.status || null,
       training_eval_rubric_suites: trainingEvalRubricSummary.suites ?? null,
       training_eval_rubric_criteria: trainingEvalRubricSummary.criteria ?? null,
@@ -1440,6 +1459,7 @@ function buildBridge(reports) {
       'github_fixture_skeletons_card',
       'github_fixture_payloads_card',
       'github_fixture_payload_smoke_card',
+      'github_worker_integration_signal_bridge_card',
       'training_eval_rubric_card',
       'training_eval_row_template_card',
       'training_eval_review_queue_card',
@@ -1510,6 +1530,7 @@ function renderMarkdown(bridge) {
   lines.push(`- GitHub fixture skeletons: ${bridge.summary.github_fixture_skeletons_status}, directories ${bridge.summary.github_fixture_skeletons_directories ?? '-'}, files ${bridge.summary.github_fixture_skeletons_files ?? '-'}`);
   lines.push(`- GitHub fixture payloads: ${bridge.summary.github_fixture_payloads_status}, payloads ${bridge.summary.github_fixture_payloads_written ?? '-'}`);
   lines.push(`- GitHub fixture payload smoke: ${bridge.summary.github_fixture_payload_smoke_status}, payloads ${bridge.summary.github_fixture_payload_smoke_payloads ?? '-'}, lanes ${bridge.summary.github_fixture_payload_smoke_lanes ?? '-'}, content types ${bridge.summary.github_fixture_payload_smoke_content_types ?? '-'}`);
+  lines.push(`- GitHub worker integration signal bridge: ${bridge.summary.github_worker_integration_signal_bridge_status}, candidates ${bridge.summary.github_worker_integration_signal_bridge_candidates ?? '-'}, top signal ${bridge.summary.github_worker_integration_signal_bridge_top_signal_score ?? '-'}`);
   lines.push(`- Training eval rubric: ${bridge.summary.training_eval_rubric_status}, suites ${bridge.summary.training_eval_rubric_suites ?? '-'}, criteria ${bridge.summary.training_eval_rubric_criteria ?? '-'}`);
   lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);

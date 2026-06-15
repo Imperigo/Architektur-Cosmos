@@ -77,6 +77,7 @@ function checkPlan(plan) {
   expect(startSequence.includes('innovation-github-promotion-matrix'), findings, 'start_sequence_github_promotion_matrix', 'Start sequence must include GitHub promotion matrix.');
   expect(startSequence.includes('innovation-github-fixture-payloads'), findings, 'start_sequence_github_fixture_payloads', 'Start sequence must include GitHub fixture payloads.');
   expect(startSequence.includes('innovation-github-fixture-payload-smoke'), findings, 'start_sequence_github_fixture_payload_smoke', 'Start sequence must include GitHub fixture payload smoke.');
+  expect(startSequence.includes('innovation-github-worker-integration-signal-bridge'), findings, 'start_sequence_github_worker_integration_signal_bridge', 'Start sequence must include GitHub worker integration signal bridge.');
   expect(startSequence.includes('local-worker-fixture-chain-task-pack'), findings, 'start_sequence_local_worker_task_pack', 'Start sequence must include local worker fixture-chain task pack.');
   expect(startSequence.includes('local-worker-innovation-output-smoke'), findings, 'start_sequence_local_worker_innovation_output_smoke', 'Start sequence must include local worker innovation output smoke.');
   expect(startSequence.includes('local-worker-innovation-output-adapter-plan'), findings, 'start_sequence_local_worker_innovation_output_adapter_plan', 'Start sequence must include local worker innovation output adapter plan.');

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:06:19.202Z",
+  "generated_at": "2026-06-15T18:14:53.674Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -108,6 +108,11 @@
       "id": "start_sequence_github_fixture_payload_smoke",
       "severity": "passed",
       "message": "Start sequence must include GitHub fixture payload smoke."
+    },
+    {
+      "id": "start_sequence_github_worker_integration_signal_bridge",
+      "severity": "passed",
+      "message": "Start sequence must include GitHub worker integration signal bridge."
     },
     {
       "id": "start_sequence_local_worker_task_pack",

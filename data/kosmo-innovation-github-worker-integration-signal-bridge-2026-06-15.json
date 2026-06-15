@@ -1,0 +1,123 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T18:14:52.445Z",
+  "status": "innovation_github_worker_integration_signal_bridge_ready",
+  "policy": {
+    "bridge_only": true,
+    "metadata_only": true,
+    "public_repo_signals_only": true,
+    "copies_github_code_now": false,
+    "copies_readme_text_now": false,
+    "clones_repositories_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content_now": false,
+    "writes_runtime_adapter_now": false,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_bridge": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-readme-signal-scan-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-contract-plan-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
+    "data/kosmo-today-loop-plan-2026-06-15.json"
+  ],
+  "summary": {
+    "worker_integration_candidates": 2,
+    "top_signal_score": 5,
+    "high_signal_candidates": 2,
+    "today_loop_blocks": 6,
+    "executable_now": 0,
+    "adapter_contracts_written_now": 0,
+    "runtime_commands_enabled_now": 0,
+    "training_rows_promoted_now": 0,
+    "public_ready_after_bridge": 0,
+    "failures": 0
+  },
+  "candidate_bridges": [
+    {
+      "id": "worker-integration-signal-01",
+      "source_repo": "mac999/BIM_LLM_code_agent",
+      "source_url": "https://github.com/mac999/BIM_LLM_code_agent",
+      "fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+      "signal_score": 5,
+      "source_lane": "bim_rag_workers",
+      "target_lane": "worker_integration",
+      "readme_available": true,
+      "copied_readme_text_now": false,
+      "copied_github_code_now": false,
+      "mapped_future_capabilities": [
+        "local_worker_command_boundary",
+        "bim_ifc_runtime_scope_guard",
+        "rag_graph_retrieval_contract_review"
+      ],
+      "next_safe_actions": [
+        "Create a source-free command-boundary adapter contract.",
+        "Map allowed local worker input/output JSON only.",
+        "Keep clone/install/run/model-download actions blocked until separate reviewed runtime batch."
+      ],
+      "blocked_actions": [
+        "clone_repository",
+        "install_dependencies",
+        "download_models",
+        "run_discovered_code",
+        "read_private_content",
+        "copy_readme_text",
+        "copy_github_code",
+        "promote_public_ready"
+      ],
+      "public_ready_after_candidate": 0
+    },
+    {
+      "id": "worker-integration-signal-02",
+      "source_repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "source_url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "fixture_id": "worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+      "signal_score": 4,
+      "source_lane": "ifc_reasoning",
+      "target_lane": "worker_integration",
+      "readme_available": true,
+      "copied_readme_text_now": false,
+      "copied_github_code_now": false,
+      "mapped_future_capabilities": [
+        "local_worker_command_boundary",
+        "bim_ifc_runtime_scope_guard",
+        "rag_graph_retrieval_contract_review"
+      ],
+      "next_safe_actions": [
+        "Create a source-free command-boundary adapter contract.",
+        "Map allowed local worker input/output JSON only.",
+        "Keep clone/install/run/model-download actions blocked until separate reviewed runtime batch."
+      ],
+      "blocked_actions": [
+        "clone_repository",
+        "install_dependencies",
+        "download_models",
+        "run_discovered_code",
+        "read_private_content",
+        "copy_readme_text",
+        "copy_github_code",
+        "promote_public_ready"
+      ],
+      "public_ready_after_candidate": 0
+    }
+  ],
+  "recommended_next_contract": {
+    "source_repo": "mac999/BIM_LLM_code_agent",
+    "fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+    "reason": "Highest public metadata signal for BIM/RAG/IFC local worker command-boundary design.",
+    "contract_goal": "Define a source-free adapter boundary before any runtime implementation."
+  },
+  "hard_stops": [
+    "This bridge never clones GitHub repositories.",
+    "This bridge never installs dependencies or downloads models.",
+    "This bridge never runs discovered code.",
+    "This bridge never reads private Source Root, OneDrive or archive-library content.",
+    "This bridge never copies GitHub code or README text into Git.",
+    "This bridge never enables runtime adapters, local workers, training rows or public-ready state."
+  ],
+  "failures": []
+}

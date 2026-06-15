@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:10:02.385Z",
+  "generated_at": "2026-06-15T18:14:53.185Z",
   "status": "today_loop_plan_guard_passed",
   "policy": {
     "reads_private_content": false,
@@ -176,6 +176,11 @@
       "id": "innovation_scout_github_fixture_payload_smoke",
       "severity": "passed",
       "message": "Innovation scout must include GitHub fixture payload smoke."
+    },
+    {
+      "id": "innovation_scout_worker_integration_signal_bridge",
+      "severity": "passed",
+      "message": "Innovation scout must include GitHub worker integration signal bridge."
     },
     {
       "id": "path_a_private_metadata_after_gate",

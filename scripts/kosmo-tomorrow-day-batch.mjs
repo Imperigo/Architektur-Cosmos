@@ -120,6 +120,8 @@ function buildPlan(reports) {
       'npm run kosmo:innovation-github-fixture-payloads-check',
       'npm run kosmo:innovation-github-fixture-payload-smoke',
       'npm run kosmo:innovation-github-fixture-payload-smoke-check',
+      'npm run kosmo:innovation-github-worker-integration-signal-bridge',
+      'npm run kosmo:innovation-github-worker-integration-signal-bridge-check',
       'npm run kosmo:local-worker-fixture-chain-task-pack',
       'npm run kosmo:local-worker-fixture-chain-task-pack-check',
       'npm run kosmo:local-worker-innovation-output-smoke',

@@ -246,6 +246,8 @@
     "kosmo:innovation-github-fixture-payloads-check": "node scripts/kosmo-innovation-github-fixture-payloads-check.mjs",
     "kosmo:innovation-github-fixture-payload-smoke": "node scripts/kosmo-innovation-github-fixture-payload-smoke.mjs",
     "kosmo:innovation-github-fixture-payload-smoke-check": "node scripts/kosmo-innovation-github-fixture-payload-smoke-check.mjs",
+    "kosmo:innovation-github-worker-integration-signal-bridge": "node scripts/kosmo-innovation-github-worker-integration-signal-bridge.mjs",
+    "kosmo:innovation-github-worker-integration-signal-bridge-check": "node scripts/kosmo-innovation-github-worker-integration-signal-bridge-check.mjs",
     "kosmo:codex-loop-checkpoint": "node scripts/kosmo-codex-loop-checkpoint.mjs",
     "kosmo:codex-loop-checkpoint-check": "node scripts/kosmo-codex-loop-checkpoint-check.mjs",
     "kosmo:security-baseline-policy": "node scripts/kosmo-security-baseline-policy.mjs",
