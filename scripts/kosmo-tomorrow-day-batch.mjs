@@ -128,6 +128,8 @@ function buildPlan(reports) {
       'npm run kosmo:innovation-github-worker-adapter-boundary-negative-fixtures-check',
       'npm run kosmo:innovation-github-worker-runtime-batch-readiness-plan',
       'npm run kosmo:innovation-github-worker-runtime-batch-readiness-plan-check',
+      'npm run kosmo:innovation-github-worker-runtime-rollback-redaction-fixtures',
+      'npm run kosmo:innovation-github-worker-runtime-rollback-redaction-fixtures-check',
       'npm run kosmo:local-worker-fixture-chain-task-pack',
       'npm run kosmo:local-worker-fixture-chain-task-pack-check',
       'npm run kosmo:local-worker-innovation-output-smoke',

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:28:52.729Z",
+  "generated_at": "2026-06-15T18:35:22.527Z",
   "status": "today_loop_plan_ready",
   "policy": {
     "autonomous_until_local_time": "18:00",
@@ -146,7 +146,9 @@
         "npm run kosmo:innovation-github-worker-adapter-boundary-negative-fixtures",
         "npm run kosmo:innovation-github-worker-adapter-boundary-negative-fixtures-check",
         "npm run kosmo:innovation-github-worker-runtime-batch-readiness-plan",
-        "npm run kosmo:innovation-github-worker-runtime-batch-readiness-plan-check"
+        "npm run kosmo:innovation-github-worker-runtime-batch-readiness-plan-check",
+        "npm run kosmo:innovation-github-worker-runtime-rollback-redaction-fixtures",
+        "npm run kosmo:innovation-github-worker-runtime-rollback-redaction-fixtures-check"
       ],
       "acceptance": [
         "Scout report exists",

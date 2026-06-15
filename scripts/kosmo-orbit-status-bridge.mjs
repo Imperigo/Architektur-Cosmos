@@ -123,6 +123,8 @@ const refs = {
   githubWorkerAdapterBoundaryNegativeFixturesCheck: `data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-check-${dateStamp}.json`,
   githubWorkerRuntimeBatchReadinessPlan: `data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-${dateStamp}.json`,
   githubWorkerRuntimeBatchReadinessPlanCheck: `data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-check-${dateStamp}.json`,
+  githubWorkerRuntimeRollbackRedactionFixtures: `data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-${dateStamp}.json`,
+  githubWorkerRuntimeRollbackRedactionFixturesCheck: `data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
@@ -277,6 +279,8 @@ function buildBridge(reports) {
   const githubWorkerAdapterBoundaryNegativeFixturesCheckSummary = reports.githubWorkerAdapterBoundaryNegativeFixturesCheck?.summary || {};
   const githubWorkerRuntimeBatchReadinessPlanSummary = reports.githubWorkerRuntimeBatchReadinessPlan?.summary || {};
   const githubWorkerRuntimeBatchReadinessPlanCheckSummary = reports.githubWorkerRuntimeBatchReadinessPlanCheck?.summary || {};
+  const githubWorkerRuntimeRollbackRedactionFixturesSummary = reports.githubWorkerRuntimeRollbackRedactionFixtures?.summary || {};
+  const githubWorkerRuntimeRollbackRedactionFixturesCheckSummary = reports.githubWorkerRuntimeRollbackRedactionFixturesCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
@@ -1146,6 +1150,18 @@ function buildBridge(reports) {
       source_ref: refs.githubWorkerRuntimeBatchReadinessPlan
     },
     {
+      id: 'github-worker-runtime-rollback-redaction-fixtures',
+      title: 'GitHub Worker Runtime Rollback/Redaction Fixtures',
+      status: reports.githubWorkerRuntimeRollbackRedactionFixtures?.status === 'innovation_github_worker_runtime_rollback_redaction_fixtures_ready' &&
+        reports.githubWorkerRuntimeRollbackRedactionFixturesCheck?.status === 'innovation_github_worker_runtime_rollback_redaction_fixtures_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubWorkerRuntimeRollbackRedactionFixturesSummary.fixture_groups ?? 0} groups, rules ${githubWorkerRuntimeRollbackRedactionFixturesSummary.redaction_rules ?? 0}, rollback ${githubWorkerRuntimeRollbackRedactionFixturesSummary.rollback_steps ?? 0}, runtime ${githubWorkerRuntimeRollbackRedactionFixturesSummary.runtime_executed_now ?? 0}, failures ${githubWorkerRuntimeRollbackRedactionFixturesCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Source-free rollback/log-redaction fixtures only; no runtime, rollback, model or private-source execution',
+      source_ref: refs.githubWorkerRuntimeRollbackRedactionFixtures
+    },
+    {
       id: 'training-eval-rubric',
       title: 'Training Eval Rubric',
       status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
@@ -1443,6 +1459,10 @@ function buildBridge(reports) {
       github_worker_runtime_batch_readiness_plan_status: reports.githubWorkerRuntimeBatchReadinessPlan?.status || null,
       github_worker_runtime_batch_readiness_plan_ready_gates: githubWorkerRuntimeBatchReadinessPlanSummary.ready_gates ?? null,
       github_worker_runtime_batch_readiness_plan_blocked_gates: githubWorkerRuntimeBatchReadinessPlanSummary.blocked_gates ?? null,
+      github_worker_runtime_rollback_redaction_fixtures_status: reports.githubWorkerRuntimeRollbackRedactionFixtures?.status || null,
+      github_worker_runtime_rollback_redaction_fixture_groups: githubWorkerRuntimeRollbackRedactionFixturesSummary.fixture_groups ?? null,
+      github_worker_runtime_rollback_redaction_redaction_rules: githubWorkerRuntimeRollbackRedactionFixturesSummary.redaction_rules ?? null,
+      github_worker_runtime_rollback_redaction_rollback_steps: githubWorkerRuntimeRollbackRedactionFixturesSummary.rollback_steps ?? null,
       training_eval_rubric_status: reports.trainingEvalRubricPack?.status || null,
       training_eval_rubric_suites: trainingEvalRubricSummary.suites ?? null,
       training_eval_rubric_criteria: trainingEvalRubricSummary.criteria ?? null,
@@ -1520,6 +1540,7 @@ function buildBridge(reports) {
       'github_worker_adapter_boundary_contract_card',
       'github_worker_adapter_boundary_negative_fixtures_card',
       'github_worker_runtime_batch_readiness_plan_card',
+      'github_worker_runtime_rollback_redaction_fixtures_card',
       'training_eval_rubric_card',
       'training_eval_row_template_card',
       'training_eval_review_queue_card',
@@ -1594,6 +1615,7 @@ function renderMarkdown(bridge) {
   lines.push(`- GitHub worker adapter boundary contract: ${bridge.summary.github_worker_adapter_boundary_contract_status}, fixture ${bridge.summary.github_worker_adapter_boundary_contract_fixture ?? '-'}, commands ${bridge.summary.github_worker_adapter_boundary_contract_commands ?? '-'}`);
   lines.push(`- GitHub worker adapter boundary negative fixtures: ${bridge.summary.github_worker_adapter_boundary_negative_fixtures_status}, fixtures ${bridge.summary.github_worker_adapter_boundary_negative_fixtures_count ?? '-'}, blocked ${bridge.summary.github_worker_adapter_boundary_negative_fixtures_blocked ?? '-'}`);
   lines.push(`- GitHub worker runtime batch readiness plan: ${bridge.summary.github_worker_runtime_batch_readiness_plan_status}, ready gates ${bridge.summary.github_worker_runtime_batch_readiness_plan_ready_gates ?? '-'}, blocked gates ${bridge.summary.github_worker_runtime_batch_readiness_plan_blocked_gates ?? '-'}`);
+  lines.push(`- GitHub worker runtime rollback/redaction fixtures: ${bridge.summary.github_worker_runtime_rollback_redaction_fixtures_status}, groups ${bridge.summary.github_worker_runtime_rollback_redaction_fixture_groups ?? '-'}, redaction rules ${bridge.summary.github_worker_runtime_rollback_redaction_redaction_rules ?? '-'}, rollback steps ${bridge.summary.github_worker_runtime_rollback_redaction_rollback_steps ?? '-'}`);
   lines.push(`- Training eval rubric: ${bridge.summary.training_eval_rubric_status}, suites ${bridge.summary.training_eval_rubric_suites ?? '-'}, criteria ${bridge.summary.training_eval_rubric_criteria ?? '-'}`);
   lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);
