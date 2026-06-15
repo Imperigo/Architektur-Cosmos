@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:41:05.543Z",
+  "generated_at": "2026-06-15T18:47:08.035Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -138,6 +138,11 @@
       "id": "start_sequence_github_worker_runtime_apply_guard",
       "severity": "passed",
       "message": "Start sequence must include GitHub worker runtime apply guard."
+    },
+    {
+      "id": "start_sequence_github_worker_runtime_log_redaction_negative_fixtures",
+      "severity": "passed",
+      "message": "Start sequence must include GitHub worker runtime log-redaction negative fixtures."
     },
     {
       "id": "start_sequence_local_worker_task_pack",

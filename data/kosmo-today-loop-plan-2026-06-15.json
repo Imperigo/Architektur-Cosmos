@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:41:04.801Z",
+  "generated_at": "2026-06-15T18:47:07.283Z",
   "status": "today_loop_plan_ready",
   "policy": {
     "autonomous_until_local_time": "18:00",
@@ -150,7 +150,9 @@
         "npm run kosmo:innovation-github-worker-runtime-rollback-redaction-fixtures",
         "npm run kosmo:innovation-github-worker-runtime-rollback-redaction-fixtures-check",
         "npm run kosmo:innovation-github-worker-runtime-apply-guard",
-        "npm run kosmo:innovation-github-worker-runtime-apply-guard-check"
+        "npm run kosmo:innovation-github-worker-runtime-apply-guard-check",
+        "npm run kosmo:innovation-github-worker-runtime-log-redaction-negative-fixtures",
+        "npm run kosmo:innovation-github-worker-runtime-log-redaction-negative-fixtures-check"
       ],
       "acceptance": [
         "Scout report exists",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:41:05.801Z",
+  "generated_at": "2026-06-15T18:47:08.294Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -130,6 +130,8 @@
     "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-15.json",
     "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-15.json",
     "data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-check-2026-06-15.json",
     "data/kosmo-codex-morning-routine-run-2026-06-15.json",
     "data/kosmo-codex-morning-routine-run-check-2026-06-15.json",
     "data/kosmo-today-loop-plan-2026-06-15.json",
@@ -149,7 +151,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 77,
+    "cards": 78,
     "blocking_cards": 5,
     "owner_action_cards": 26,
     "source_root_blocked": true,
@@ -348,6 +350,10 @@
     "github_worker_runtime_apply_guard_exact_reply_valid": false,
     "github_worker_runtime_apply_guard_separate_runtime_allowed": false,
     "github_worker_runtime_apply_guard_check_failures": 0,
+    "github_worker_runtime_log_redaction_negative_fixtures_status": "innovation_github_worker_runtime_log_redaction_negative_fixtures_ready",
+    "github_worker_runtime_log_redaction_negative_fixtures_count": 10,
+    "github_worker_runtime_log_redaction_negative_fixtures_blocked": 10,
+    "github_worker_runtime_log_redaction_negative_fixtures_leak_categories": 7,
     "training_eval_rubric_status": "training_eval_rubric_pack_ready",
     "training_eval_rubric_suites": 6,
     "training_eval_rubric_criteria": 24,
@@ -1001,6 +1007,15 @@
       "source_ref": "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-15.json"
     },
     {
+      "id": "github-worker-runtime-log-redaction-negative-fixtures",
+      "title": "GitHub Worker Runtime Log-Redaction Negative Fixtures",
+      "status": "review_only_ready",
+      "signal": "10 negative fixtures, blocked 10, leak categories 7, runtime 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Synthetic unsafe runtime-log leak cases only; validates redaction blockers without reading private content or executing runtime",
+      "source_ref": "data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-2026-06-15.json"
+    },
+    {
       "id": "training-eval-rubric",
       "title": "Training Eval Rubric",
       "status": "review_only_ready",
@@ -1121,6 +1136,7 @@
     "github_worker_runtime_batch_readiness_plan_card",
     "github_worker_runtime_rollback_redaction_fixtures_card",
     "github_worker_runtime_apply_guard_card",
+    "github_worker_runtime_log_redaction_negative_fixtures_card",
     "training_eval_rubric_card",
     "training_eval_row_template_card",
     "training_eval_review_queue_card",
