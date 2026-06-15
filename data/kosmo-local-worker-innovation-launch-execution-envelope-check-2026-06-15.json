@@ -1,0 +1,146 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:36:44.468Z",
+  "status": "local_worker_innovation_launch_execution_envelope_guard_passed",
+  "policy": {
+    "validates_envelope_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-execution-envelope-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 24,
+    "passed": 24,
+    "failures": 0,
+    "envelope_status": "local_worker_innovation_launch_execution_envelope_prepared",
+    "mode": "empty_held_waiting_for_exact_reply",
+    "output_slots": 5,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_prepared",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_execution_envelope_prepared"
+    },
+    {
+      "id": "policy_envelope_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_slots_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_repo_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_promotion",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "five_empty_slots",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "slots_empty_held",
+      "status": "passed",
+      "evidence": "empty_held, empty_held, empty_held, empty_held, empty_held"
+    },
+    {
+      "id": "slots_write_false",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "slots_public_ready_zero",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "slot_paths_are_templates",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "required_fields_include_validator",
+      "status": "passed",
+      "evidence": "schema_version, generated_at, task_id, lane, source_free_inputs, worker_model, worker_prompt_ref, raw_output_summary, structured_output, self_reported_uncertainties, validation_status, public_ready_after_validation"
+    },
+    {
+      "id": "forbidden_private_fields",
+      "status": "passed",
+      "evidence": "private_source_excerpt, private_pdf_text, onedrive_file_content, credential, token, secret"
+    },
+    {
+      "id": "validator_after_write_required",
+      "status": "passed",
+      "evidence": "npm run kosmo:local-worker-innovation-output-validator"
+    },
+    {
+      "id": "summary_no_execution",
+      "status": "passed",
+      "evidence": "{\"mode\":\"empty_held_waiting_for_exact_reply\",\"output_slots\":5,\"empty_slots\":5,\"executable_now\":false,\"worker_outputs_written_now\":0,\"repo_outputs_written_now\":0,\"starts_models_now\":false,\"reads_private_content_now\":false,\"public_ready_after_envelope\":0,\"failures\":0}"
+    },
+    {
+      "id": "summary_no_model_or_private",
+      "status": "passed",
+      "evidence": "{\"mode\":\"empty_held_waiting_for_exact_reply\",\"output_slots\":5,\"empty_slots\":5,\"executable_now\":false,\"worker_outputs_written_now\":0,\"repo_outputs_written_now\":0,\"starts_models_now\":false,\"reads_private_content_now\":false,\"public_ready_after_envelope\":0,\"failures\":0}"
+    },
+    {
+      "id": "hard_stop_no_execution",
+      "status": "passed",
+      "evidence": "this envelope never executes local workers. this envelope never starts models. this envelope never creates worker output files. this envelope never reads private source root, onedrive or archive-library content. this envelope never promotes public-ready or training rows."
+    },
+    {
+      "id": "hard_stop_no_output_files",
+      "status": "passed",
+      "evidence": "this envelope never executes local workers. this envelope never starts models. this envelope never creates worker output files. this envelope never reads private source root, onedrive or archive-library content. this envelope never promotes public-ready or training rows."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this envelope never executes local workers. this envelope never starts models. this envelope never creates worker output files. this envelope never reads private source root, onedrive or archive-library content. this envelope never promotes public-ready or training rows."
+    },
+    {
+      "id": "hard_stop_no_public_training",
+      "status": "passed",
+      "evidence": "this envelope never executes local workers. this envelope never starts models. this envelope never creates worker output files. this envelope never reads private source root, onedrive or archive-library content. this envelope never promotes public-ready or training rows."
+    }
+  ]
+}

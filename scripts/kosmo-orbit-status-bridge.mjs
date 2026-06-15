@@ -85,6 +85,8 @@ const refs = {
   localWorkerInnovationLaunchApplyGuardSmokeCheck: `data/kosmo-local-worker-innovation-launch-apply-guard-smoke-check-${dateStamp}.json`,
   localWorkerInnovationLaunchRunbookCheckpoint: `data/kosmo-local-worker-innovation-launch-runbook-checkpoint-${dateStamp}.json`,
   localWorkerInnovationLaunchRunbookCheckpointCheck: `data/kosmo-local-worker-innovation-launch-runbook-checkpoint-check-${dateStamp}.json`,
+  localWorkerInnovationLaunchExecutionEnvelope: `data/kosmo-local-worker-innovation-launch-execution-envelope-${dateStamp}.json`,
+  localWorkerInnovationLaunchExecutionEnvelopeCheck: `data/kosmo-local-worker-innovation-launch-execution-envelope-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -217,6 +219,8 @@ function buildBridge(reports) {
   const localWorkerInnovationLaunchApplyGuardSmokeCheckSummary = reports.localWorkerInnovationLaunchApplyGuardSmokeCheck?.summary || {};
   const localWorkerInnovationLaunchRunbookCheckpointSummary = reports.localWorkerInnovationLaunchRunbookCheckpoint?.summary || {};
   const localWorkerInnovationLaunchRunbookCheckpointCheckSummary = reports.localWorkerInnovationLaunchRunbookCheckpointCheck?.summary || {};
+  const localWorkerInnovationLaunchExecutionEnvelopeSummary = reports.localWorkerInnovationLaunchExecutionEnvelope?.summary || {};
+  const localWorkerInnovationLaunchExecutionEnvelopeCheckSummary = reports.localWorkerInnovationLaunchExecutionEnvelopeCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -844,6 +848,18 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Aggregated launch preflight checkpoint; does not execute local workers',
       source_ref: refs.localWorkerInnovationLaunchRunbookCheckpointCheck
+    },
+    {
+      id: 'local-worker-innovation-launch-execution-envelope',
+      title: 'Local Worker Innovation Launch Execution Envelope',
+      status: reports.localWorkerInnovationLaunchExecutionEnvelope?.status === 'local_worker_innovation_launch_execution_envelope_prepared' &&
+        reports.localWorkerInnovationLaunchExecutionEnvelopeCheck?.status === 'local_worker_innovation_launch_execution_envelope_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationLaunchExecutionEnvelopeSummary.mode || '-'}, slots ${localWorkerInnovationLaunchExecutionEnvelopeSummary.empty_slots ?? 0}/${localWorkerInnovationLaunchExecutionEnvelopeSummary.output_slots ?? 0}, outputs ${localWorkerInnovationLaunchExecutionEnvelopeSummary.worker_outputs_written_now ?? 0}, failures ${localWorkerInnovationLaunchExecutionEnvelopeCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Empty guarded output-slot envelope for future separate local-worker launch',
+      source_ref: refs.localWorkerInnovationLaunchExecutionEnvelopeCheck
     },
     {
       id: 'github-innovation-watchlist',

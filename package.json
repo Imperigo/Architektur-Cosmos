@@ -282,6 +282,8 @@
     "kosmo:local-worker-innovation-launch-apply-guard-smoke-check": "node scripts/kosmo-local-worker-innovation-launch-apply-guard-smoke-check.mjs",
     "kosmo:local-worker-innovation-launch-runbook-checkpoint": "node scripts/kosmo-local-worker-innovation-launch-runbook-checkpoint.mjs",
     "kosmo:local-worker-innovation-launch-runbook-checkpoint-check": "node scripts/kosmo-local-worker-innovation-launch-runbook-checkpoint-check.mjs",
+    "kosmo:local-worker-innovation-launch-execution-envelope": "node scripts/kosmo-local-worker-innovation-launch-execution-envelope.mjs",
+    "kosmo:local-worker-innovation-launch-execution-envelope-check": "node scripts/kosmo-local-worker-innovation-launch-execution-envelope-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:30:19.115Z",
+  "generated_at": "2026-06-15T17:36:44.710Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -88,6 +88,8 @@
     "data/kosmo-local-worker-innovation-launch-apply-guard-smoke-check-2026-06-15.json",
     "data/kosmo-local-worker-innovation-launch-runbook-checkpoint-2026-06-15.json",
     "data/kosmo-local-worker-innovation-launch-runbook-checkpoint-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-execution-envelope-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-execution-envelope-check-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
     "data/kosmo-innovation-github-discovery-2026-06-15.json",
@@ -123,7 +125,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 64,
+    "cards": 65,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -746,6 +748,15 @@
       "owner_action_required": false,
       "route_hint": "Aggregated launch preflight checkpoint; does not execute local workers",
       "source_ref": "data/kosmo-local-worker-innovation-launch-runbook-checkpoint-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-launch-execution-envelope",
+      "title": "Local Worker Innovation Launch Execution Envelope",
+      "status": "review_only_ready",
+      "signal": "empty_held_waiting_for_exact_reply, slots 5/5, outputs 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Empty guarded output-slot envelope for future separate local-worker launch",
+      "source_ref": "data/kosmo-local-worker-innovation-launch-execution-envelope-check-2026-06-15.json"
     },
     {
       "id": "github-innovation-watchlist",

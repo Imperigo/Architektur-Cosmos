@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-15T17:30:16.271Z
+Generated: 2026-06-15T17:36:41.438Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-296-innovation-launch-execution-envelope.md` - 2026-06-15-codex-synergiebericht-296-innovation-launch-execution-envelope.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-15-codex-synergiebericht-296-innovation-launch-execution-envelope.md` - 2026-06-15-codex-synergiebericht-296-innovation-launch-execution-envelope.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-295-innovation-launch-runbook-checkpoint.md` - 2026-06-15-codex-synergiebericht-295-innovation-launch-runbook-checkpoint.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-295-innovation-launch-runbook-checkpoint.md` - 2026-06-15-codex-synergiebericht-295-innovation-launch-runbook-checkpoint.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-294-innovation-launch-apply-guard.md` - 2026-06-15-codex-synergiebericht-294-innovation-launch-apply-guard.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-290-local-worker-output-validator.md` - 2026-06-15-codex-synergiebericht-290-local-worker-output-validator.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-289-local-worker-output-adapter-plan.md` - 2026-06-15-codex-synergiebericht-289-local-worker-output-adapter-plan.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-289-local-worker-output-adapter-plan.md` - 2026-06-15-codex-synergiebericht-289-local-worker-output-adapter-plan.md must include a title.
-- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-288-local-worker-output-smoke.md` - 2026-06-15-codex-synergiebericht-288-local-worker-output-smoke.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-15-codex-synergiebericht-288-local-worker-output-smoke.md` - 2026-06-15-codex-synergiebericht-288-local-worker-output-smoke.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

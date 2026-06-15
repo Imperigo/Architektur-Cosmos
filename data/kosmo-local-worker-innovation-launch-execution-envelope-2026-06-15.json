@@ -1,0 +1,154 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:36:44.227Z",
+  "status": "local_worker_innovation_launch_execution_envelope_prepared",
+  "policy": {
+    "envelope_only": true,
+    "creates_output_slots_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "writes_worker_outputs_now": false,
+    "writes_repo_outputs_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_envelope": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-runbook-checkpoint-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-runbook-checkpoint-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-dry-run-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-2026-06-15.json"
+  ],
+  "summary": {
+    "mode": "empty_held_waiting_for_exact_reply",
+    "output_slots": 5,
+    "empty_slots": 5,
+    "executable_now": false,
+    "worker_outputs_written_now": 0,
+    "repo_outputs_written_now": 0,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_envelope": 0,
+    "failures": 0
+  },
+  "slot_contract": {
+    "required_fields_after_future_write": [
+      "schema_version",
+      "generated_at",
+      "task_id",
+      "lane",
+      "source_free_inputs",
+      "worker_model",
+      "worker_prompt_ref",
+      "raw_output_summary",
+      "structured_output",
+      "self_reported_uncertainties",
+      "validation_status",
+      "public_ready_after_validation"
+    ],
+    "forbidden_fields_after_future_write": [
+      "private_source_excerpt",
+      "private_pdf_text",
+      "onedrive_file_content",
+      "credential",
+      "token",
+      "secret"
+    ],
+    "required_validator_after_future_write": "npm run kosmo:local-worker-innovation-output-validator"
+  },
+  "slots": [
+    {
+      "slot_id": "source_free_worker_output_01",
+      "task_id": "github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture",
+      "lane": "kosmo_prepare",
+      "output_path_template": "data/local-worker-innovation-outputs/2026-06-15/github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture.json",
+      "markdown_path_template": "docs/codex/local-worker-innovation-outputs/2026-06-15/github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture.md",
+      "status": "empty_held",
+      "required_before_write": [
+        "separate_launch_batch_opened",
+        "runbook_checkpoint_ready_for_separate_preflight",
+        "local_worker_call_logged",
+        "output_validator_after_write_required"
+      ],
+      "writes_now": false,
+      "execute_now": false,
+      "public_ready_after_slot": 0
+    },
+    {
+      "slot_id": "source_free_worker_output_02",
+      "task_id": "github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture",
+      "lane": "kosmo_asset",
+      "output_path_template": "data/local-worker-innovation-outputs/2026-06-15/github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture.json",
+      "markdown_path_template": "docs/codex/local-worker-innovation-outputs/2026-06-15/github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture.md",
+      "status": "empty_held",
+      "required_before_write": [
+        "separate_launch_batch_opened",
+        "runbook_checkpoint_ready_for_separate_preflight",
+        "local_worker_call_logged",
+        "output_validator_after_write_required"
+      ],
+      "writes_now": false,
+      "execute_now": false,
+      "public_ready_after_slot": 0
+    },
+    {
+      "slot_id": "source_free_worker_output_03",
+      "task_id": "github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+      "lane": "worker_integration",
+      "output_path_template": "data/local-worker-innovation-outputs/2026-06-15/github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture.json",
+      "markdown_path_template": "docs/codex/local-worker-innovation-outputs/2026-06-15/github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture.md",
+      "status": "empty_held",
+      "required_before_write": [
+        "separate_launch_batch_opened",
+        "runbook_checkpoint_ready_for_separate_preflight",
+        "local_worker_call_logged",
+        "output_validator_after_write_required"
+      ],
+      "writes_now": false,
+      "execute_now": false,
+      "public_ready_after_slot": 0
+    },
+    {
+      "slot_id": "source_free_worker_output_04",
+      "task_id": "github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture",
+      "lane": "kosmo_prepare",
+      "output_path_template": "data/local-worker-innovation-outputs/2026-06-15/github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture.json",
+      "markdown_path_template": "docs/codex/local-worker-innovation-outputs/2026-06-15/github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture.md",
+      "status": "empty_held",
+      "required_before_write": [
+        "separate_launch_batch_opened",
+        "runbook_checkpoint_ready_for_separate_preflight",
+        "local_worker_call_logged",
+        "output_validator_after_write_required"
+      ],
+      "writes_now": false,
+      "execute_now": false,
+      "public_ready_after_slot": 0
+    },
+    {
+      "slot_id": "source_free_worker_output_05",
+      "task_id": "github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+      "lane": "worker_integration",
+      "output_path_template": "data/local-worker-innovation-outputs/2026-06-15/github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture.json",
+      "markdown_path_template": "docs/codex/local-worker-innovation-outputs/2026-06-15/github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture.md",
+      "status": "empty_held",
+      "required_before_write": [
+        "separate_launch_batch_opened",
+        "runbook_checkpoint_ready_for_separate_preflight",
+        "local_worker_call_logged",
+        "output_validator_after_write_required"
+      ],
+      "writes_now": false,
+      "execute_now": false,
+      "public_ready_after_slot": 0
+    }
+  ],
+  "hard_stops": [
+    "This envelope never executes local workers.",
+    "This envelope never starts models.",
+    "This envelope never creates worker output files.",
+    "This envelope never reads private Source Root, OneDrive or archive-library content.",
+    "This envelope never promotes public-ready or training rows."
+  ],
+  "failures": []
+}

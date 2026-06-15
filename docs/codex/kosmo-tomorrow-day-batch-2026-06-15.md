@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T17:30:19.350Z
+Generated: 2026-06-15T17:36:44.953Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -69,6 +69,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:local-worker-innovation-launch-apply-guard-smoke-check`
 - `npm run kosmo:local-worker-innovation-launch-runbook-checkpoint`
 - `npm run kosmo:local-worker-innovation-launch-runbook-checkpoint-check`
+- `npm run kosmo:local-worker-innovation-launch-execution-envelope`
+- `npm run kosmo:local-worker-innovation-launch-execution-envelope-check`
 - `npm run kosmo:codex-daily-loop-routine`
 - `npm run kosmo:codex-daily-loop-routine-check`
 - `npm run kosmo:codex-morning-routine-run`
