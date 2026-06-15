@@ -1,0 +1,140 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:05:38.703Z",
+  "status": "security_baseline_policy_ready",
+  "policy": {
+    "policy_only": true,
+    "modifies_security_check_now": false,
+    "suppresses_findings_now": false,
+    "secrets_never_allowed": true,
+    "public_ready_after_policy": 0
+  },
+  "categories": [
+    {
+      "id": "must_redact",
+      "description": "Identifiers or paths that would leak private owner, device, source-root or account information in public artifacts.",
+      "check_behavior": "security-check must fail until redacted"
+    },
+    {
+      "id": "private_repo_allowed",
+      "description": "Identifiers that are acceptable only because the repository is private and the artifact is operationally local.",
+      "check_behavior": "security-check may suppress only with explicit baseline entry"
+    },
+    {
+      "id": "generated_review_allowed",
+      "description": "Generated review examples that quote local roles or worker names and are not public export inputs.",
+      "check_behavior": "security-check may suppress only for exact generated paths"
+    },
+    {
+      "id": "script_context_allowed",
+      "description": "Scripts that contain local context strings needed for detection, but not secrets.",
+      "check_behavior": "security-check may suppress only personal-pattern findings, never secrets"
+    },
+    {
+      "id": "secret_never_allowed",
+      "description": "API keys, tokens, private keys and credentials.",
+      "check_behavior": "security-check must always fail"
+    }
+  ],
+  "initial_rules": [
+    {
+      "id": "source_root_artifacts",
+      "path_globs": [
+        "data/kosmo-source-root-*",
+        "docs/codex/kosmo-source-root-*",
+        "examples/kosmo-references/provenance/source-root-*"
+      ],
+      "category": "private_repo_allowed",
+      "finding_types": [
+        "personal_identifier"
+      ],
+      "rationale": "Source-root discovery and decision artifacts are local operational records.",
+      "suppress_now": false,
+      "owner_review_required_before_public_export": true
+    },
+    {
+      "id": "onedrive_sync_artifacts",
+      "path_globs": [
+        "data/kosmo-onedrive-sync-error-summary-*",
+        "docs/codex/kosmo-onedrive-sync-error-summary-*"
+      ],
+      "category": "private_repo_allowed",
+      "finding_types": [
+        "personal_identifier"
+      ],
+      "rationale": "OneDrive sync diagnostics can include local account/path hints.",
+      "suppress_now": false,
+      "owner_review_required_before_public_export": true
+    },
+    {
+      "id": "owner_review_artifacts",
+      "path_globs": [
+        "data/kosmo-owner-*",
+        "docs/codex/kosmo-owner-*"
+      ],
+      "category": "private_repo_allowed",
+      "finding_types": [
+        "personal_identifier"
+      ],
+      "rationale": "Owner review packets are private governance artifacts.",
+      "suppress_now": false,
+      "owner_review_required_before_public_export": true
+    },
+    {
+      "id": "private_library_diagnostics",
+      "path_globs": [
+        "data/kosmoreferences-private-library-*",
+        "docs/codex/kosmoreferences-private-library-*"
+      ],
+      "category": "private_repo_allowed",
+      "finding_types": [
+        "personal_identifier"
+      ],
+      "rationale": "Private library diagnostics are not public export inputs.",
+      "suppress_now": false,
+      "owner_review_required_before_public_export": true
+    },
+    {
+      "id": "generated_orbit_reviews",
+      "path_globs": [
+        "examples/kosmo-orbit/review/*"
+      ],
+      "category": "generated_review_allowed",
+      "finding_types": [
+        "personal_identifier"
+      ],
+      "rationale": "Generated Orbit review fixtures need separate public-export filtering.",
+      "suppress_now": false,
+      "owner_review_required_before_public_export": true
+    },
+    {
+      "id": "local_context_scripts",
+      "path_globs": [
+        "scripts/kosmo-source-root-locator.mjs",
+        "scripts/kosmo-storage-mount-snapshot.mjs",
+        "scripts/kosmo-private-library-diagnostic.mjs",
+        "scripts/kosmo-onedrive-sync-error-summary.mjs"
+      ],
+      "category": "script_context_allowed",
+      "finding_types": [
+        "personal_identifier"
+      ],
+      "rationale": "These scripts intentionally detect local operational paths and names.",
+      "suppress_now": false,
+      "owner_review_required_before_public_export": true
+    }
+  ],
+  "implementation_contract": [
+    "Baseline must be explicit data, not hard-coded broad regex weakening.",
+    "Baseline can suppress only personal identifier findings, never secret patterns.",
+    "Every suppressed finding must retain count and category in the report.",
+    "Public export workflows must keep failing on must_redact and secret_never_allowed.",
+    "New paths are not auto-allowed; they require a baseline rule update."
+  ],
+  "next_actions": [
+    "Create config/kosmo-security-baseline.json from this policy.",
+    "Patch scripts/security-check.mjs to load the baseline and report suppressed counts.",
+    "Run npm run security:check and verify secrets still hard-fail.",
+    "Only after that rerun npm run quality:check."
+  ]
+}

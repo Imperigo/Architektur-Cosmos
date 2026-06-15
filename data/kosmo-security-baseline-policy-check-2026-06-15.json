@@ -1,0 +1,238 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:05:38.937Z",
+  "status": "security_baseline_policy_guard_passed",
+  "policy": {
+    "validates_policy_only": true,
+    "suppresses_findings_now": false,
+    "secrets_never_allowed": true,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-security-baseline-policy-2026-06-15.json"
+  ],
+  "summary": {
+    "policy_status": "security_baseline_policy_ready",
+    "categories": 5,
+    "rules": 6,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Policy schema_version must be 0.1."
+    },
+    {
+      "id": "policy_ready",
+      "severity": "passed",
+      "message": "Policy must be ready."
+    },
+    {
+      "id": "policy_only",
+      "severity": "passed",
+      "message": "Policy must be policy-only."
+    },
+    {
+      "id": "no_security_check_patch",
+      "severity": "passed",
+      "message": "Policy must not patch security check now."
+    },
+    {
+      "id": "no_suppression_now",
+      "severity": "passed",
+      "message": "Policy must not suppress findings now."
+    },
+    {
+      "id": "secrets_never_allowed",
+      "severity": "passed",
+      "message": "Policy must keep secrets never allowed."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Policy must keep public-ready at 0."
+    },
+    {
+      "id": "category:must_redact",
+      "severity": "passed",
+      "message": "Policy must include category must_redact."
+    },
+    {
+      "id": "category:private_repo_allowed",
+      "severity": "passed",
+      "message": "Policy must include category private_repo_allowed."
+    },
+    {
+      "id": "category:generated_review_allowed",
+      "severity": "passed",
+      "message": "Policy must include category generated_review_allowed."
+    },
+    {
+      "id": "category:script_context_allowed",
+      "severity": "passed",
+      "message": "Policy must include category script_context_allowed."
+    },
+    {
+      "id": "category:secret_never_allowed",
+      "severity": "passed",
+      "message": "Policy must include category secret_never_allowed."
+    },
+    {
+      "id": "rules_present",
+      "severity": "passed",
+      "message": "Policy must include initial baseline rules."
+    },
+    {
+      "id": "rule_category:source_root_artifacts",
+      "severity": "passed",
+      "message": "source_root_artifacts must use a known category."
+    },
+    {
+      "id": "rule_personal_only:source_root_artifacts",
+      "severity": "passed",
+      "message": "source_root_artifacts must be scoped to personal identifiers."
+    },
+    {
+      "id": "rule_no_secret:source_root_artifacts",
+      "severity": "passed",
+      "message": "source_root_artifacts must not suppress secrets."
+    },
+    {
+      "id": "rule_no_suppress_now:source_root_artifacts",
+      "severity": "passed",
+      "message": "source_root_artifacts must not suppress now."
+    },
+    {
+      "id": "rule_owner_review:source_root_artifacts",
+      "severity": "passed",
+      "message": "source_root_artifacts must require owner review before public export."
+    },
+    {
+      "id": "rule_category:onedrive_sync_artifacts",
+      "severity": "passed",
+      "message": "onedrive_sync_artifacts must use a known category."
+    },
+    {
+      "id": "rule_personal_only:onedrive_sync_artifacts",
+      "severity": "passed",
+      "message": "onedrive_sync_artifacts must be scoped to personal identifiers."
+    },
+    {
+      "id": "rule_no_secret:onedrive_sync_artifacts",
+      "severity": "passed",
+      "message": "onedrive_sync_artifacts must not suppress secrets."
+    },
+    {
+      "id": "rule_no_suppress_now:onedrive_sync_artifacts",
+      "severity": "passed",
+      "message": "onedrive_sync_artifacts must not suppress now."
+    },
+    {
+      "id": "rule_owner_review:onedrive_sync_artifacts",
+      "severity": "passed",
+      "message": "onedrive_sync_artifacts must require owner review before public export."
+    },
+    {
+      "id": "rule_category:owner_review_artifacts",
+      "severity": "passed",
+      "message": "owner_review_artifacts must use a known category."
+    },
+    {
+      "id": "rule_personal_only:owner_review_artifacts",
+      "severity": "passed",
+      "message": "owner_review_artifacts must be scoped to personal identifiers."
+    },
+    {
+      "id": "rule_no_secret:owner_review_artifacts",
+      "severity": "passed",
+      "message": "owner_review_artifacts must not suppress secrets."
+    },
+    {
+      "id": "rule_no_suppress_now:owner_review_artifacts",
+      "severity": "passed",
+      "message": "owner_review_artifacts must not suppress now."
+    },
+    {
+      "id": "rule_owner_review:owner_review_artifacts",
+      "severity": "passed",
+      "message": "owner_review_artifacts must require owner review before public export."
+    },
+    {
+      "id": "rule_category:private_library_diagnostics",
+      "severity": "passed",
+      "message": "private_library_diagnostics must use a known category."
+    },
+    {
+      "id": "rule_personal_only:private_library_diagnostics",
+      "severity": "passed",
+      "message": "private_library_diagnostics must be scoped to personal identifiers."
+    },
+    {
+      "id": "rule_no_secret:private_library_diagnostics",
+      "severity": "passed",
+      "message": "private_library_diagnostics must not suppress secrets."
+    },
+    {
+      "id": "rule_no_suppress_now:private_library_diagnostics",
+      "severity": "passed",
+      "message": "private_library_diagnostics must not suppress now."
+    },
+    {
+      "id": "rule_owner_review:private_library_diagnostics",
+      "severity": "passed",
+      "message": "private_library_diagnostics must require owner review before public export."
+    },
+    {
+      "id": "rule_category:generated_orbit_reviews",
+      "severity": "passed",
+      "message": "generated_orbit_reviews must use a known category."
+    },
+    {
+      "id": "rule_personal_only:generated_orbit_reviews",
+      "severity": "passed",
+      "message": "generated_orbit_reviews must be scoped to personal identifiers."
+    },
+    {
+      "id": "rule_no_secret:generated_orbit_reviews",
+      "severity": "passed",
+      "message": "generated_orbit_reviews must not suppress secrets."
+    },
+    {
+      "id": "rule_no_suppress_now:generated_orbit_reviews",
+      "severity": "passed",
+      "message": "generated_orbit_reviews must not suppress now."
+    },
+    {
+      "id": "rule_owner_review:generated_orbit_reviews",
+      "severity": "passed",
+      "message": "generated_orbit_reviews must require owner review before public export."
+    },
+    {
+      "id": "rule_category:local_context_scripts",
+      "severity": "passed",
+      "message": "local_context_scripts must use a known category."
+    },
+    {
+      "id": "rule_personal_only:local_context_scripts",
+      "severity": "passed",
+      "message": "local_context_scripts must be scoped to personal identifiers."
+    },
+    {
+      "id": "rule_no_secret:local_context_scripts",
+      "severity": "passed",
+      "message": "local_context_scripts must not suppress secrets."
+    },
+    {
+      "id": "rule_no_suppress_now:local_context_scripts",
+      "severity": "passed",
+      "message": "local_context_scripts must not suppress now."
+    },
+    {
+      "id": "rule_owner_review:local_context_scripts",
+      "severity": "passed",
+      "message": "local_context_scripts must require owner review before public export."
+    }
+  ]
+}
