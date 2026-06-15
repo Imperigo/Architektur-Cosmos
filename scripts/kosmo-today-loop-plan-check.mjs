@@ -100,6 +100,7 @@ function checkPlan(plan) {
   expect(innovationCommands.includes('innovation-github-fixture-payloads'), findings, 'innovation_scout_github_fixture_payloads', 'Innovation scout must include GitHub fixture payloads.');
   expect(innovationCommands.includes('innovation-github-fixture-payload-smoke'), findings, 'innovation_scout_github_fixture_payload_smoke', 'Innovation scout must include GitHub fixture payload smoke.');
   expect(innovationCommands.includes('innovation-github-worker-integration-signal-bridge'), findings, 'innovation_scout_worker_integration_signal_bridge', 'Innovation scout must include GitHub worker integration signal bridge.');
+  expect(innovationCommands.includes('innovation-github-worker-adapter-boundary-contract'), findings, 'innovation_scout_worker_adapter_boundary_contract', 'Innovation scout must include GitHub worker adapter boundary contract.');
   expect((plan.path_a_if_owner_confirms_source_root || []).some((command) => command.includes('private-metadata-inventory')), findings, 'path_a_private_metadata_after_gate', 'Path A must include gated private metadata inventory.');
   expect((plan.path_b_while_blocked || []).some((item) => item.includes('Do not scan private')), findings, 'path_b_private_scan_blocked', 'Path B must explicitly block private scans.');
   return findings;

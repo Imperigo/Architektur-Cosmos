@@ -1,6 +1,6 @@
 # Kosmo Tomorrow Day Batch Check
 
-Generated: 2026-06-15T18:14:53.674Z
+Generated: 2026-06-15T18:19:46.044Z
 Status: `tomorrow_day_batch_guard_passed`
 
 ## Summary
@@ -32,6 +32,7 @@ Status: `tomorrow_day_batch_guard_passed`
 - passed: `start_sequence_github_fixture_payloads` - Start sequence must include GitHub fixture payloads.
 - passed: `start_sequence_github_fixture_payload_smoke` - Start sequence must include GitHub fixture payload smoke.
 - passed: `start_sequence_github_worker_integration_signal_bridge` - Start sequence must include GitHub worker integration signal bridge.
+- passed: `start_sequence_github_worker_adapter_boundary_contract` - Start sequence must include GitHub worker adapter boundary contract.
 - passed: `start_sequence_local_worker_task_pack` - Start sequence must include local worker fixture-chain task pack.
 - passed: `start_sequence_local_worker_innovation_output_smoke` - Start sequence must include local worker innovation output smoke.
 - passed: `start_sequence_local_worker_innovation_output_adapter_plan` - Start sequence must include local worker innovation output adapter plan.

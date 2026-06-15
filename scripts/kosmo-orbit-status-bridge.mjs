@@ -117,6 +117,8 @@ const refs = {
   githubFixturePayloadSmokeCheck: `data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`,
   githubWorkerIntegrationSignalBridge: `data/kosmo-innovation-github-worker-integration-signal-bridge-${dateStamp}.json`,
   githubWorkerIntegrationSignalBridgeCheck: `data/kosmo-innovation-github-worker-integration-signal-bridge-check-${dateStamp}.json`,
+  githubWorkerAdapterBoundaryContract: `data/kosmo-innovation-github-worker-adapter-boundary-contract-${dateStamp}.json`,
+  githubWorkerAdapterBoundaryContractCheck: `data/kosmo-innovation-github-worker-adapter-boundary-contract-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
@@ -265,6 +267,8 @@ function buildBridge(reports) {
   const githubFixturePayloadSmokeCheckSummary = reports.githubFixturePayloadSmokeCheck?.summary || {};
   const githubWorkerIntegrationSignalBridgeSummary = reports.githubWorkerIntegrationSignalBridge?.summary || {};
   const githubWorkerIntegrationSignalBridgeCheckSummary = reports.githubWorkerIntegrationSignalBridgeCheck?.summary || {};
+  const githubWorkerAdapterBoundaryContractSummary = reports.githubWorkerAdapterBoundaryContract?.summary || {};
+  const githubWorkerAdapterBoundaryContractCheckSummary = reports.githubWorkerAdapterBoundaryContractCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
@@ -1098,6 +1102,18 @@ function buildBridge(reports) {
       source_ref: refs.githubWorkerIntegrationSignalBridge
     },
     {
+      id: 'github-worker-adapter-boundary-contract',
+      title: 'GitHub Worker Adapter Boundary Contract',
+      status: reports.githubWorkerAdapterBoundaryContract?.status === 'innovation_github_worker_adapter_boundary_contract_ready' &&
+        reports.githubWorkerAdapterBoundaryContractCheck?.status === 'innovation_github_worker_adapter_boundary_contract_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubWorkerAdapterBoundaryContractSummary.selected_fixture_id || '-'}, commands ${githubWorkerAdapterBoundaryContractSummary.allowed_command_shapes ?? 0}, runtime ${githubWorkerAdapterBoundaryContractSummary.runtime_enabled_now ?? 0}, public ${githubWorkerAdapterBoundaryContractSummary.public_ready_after_contract ?? 0}, failures ${githubWorkerAdapterBoundaryContractCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Source-free adapter boundary contract for highest BIM/RAG worker signal; still no runtime adapter',
+      source_ref: refs.githubWorkerAdapterBoundaryContract
+    },
+    {
       id: 'training-eval-rubric',
       title: 'Training Eval Rubric',
       status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
@@ -1386,6 +1402,9 @@ function buildBridge(reports) {
       github_worker_integration_signal_bridge_status: reports.githubWorkerIntegrationSignalBridge?.status || null,
       github_worker_integration_signal_bridge_candidates: githubWorkerIntegrationSignalBridgeSummary.worker_integration_candidates ?? null,
       github_worker_integration_signal_bridge_top_signal_score: githubWorkerIntegrationSignalBridgeSummary.top_signal_score ?? null,
+      github_worker_adapter_boundary_contract_status: reports.githubWorkerAdapterBoundaryContract?.status || null,
+      github_worker_adapter_boundary_contract_fixture: githubWorkerAdapterBoundaryContractSummary.selected_fixture_id ?? null,
+      github_worker_adapter_boundary_contract_commands: githubWorkerAdapterBoundaryContractSummary.allowed_command_shapes ?? null,
       training_eval_rubric_status: reports.trainingEvalRubricPack?.status || null,
       training_eval_rubric_suites: trainingEvalRubricSummary.suites ?? null,
       training_eval_rubric_criteria: trainingEvalRubricSummary.criteria ?? null,
@@ -1460,6 +1479,7 @@ function buildBridge(reports) {
       'github_fixture_payloads_card',
       'github_fixture_payload_smoke_card',
       'github_worker_integration_signal_bridge_card',
+      'github_worker_adapter_boundary_contract_card',
       'training_eval_rubric_card',
       'training_eval_row_template_card',
       'training_eval_review_queue_card',
@@ -1531,6 +1551,7 @@ function renderMarkdown(bridge) {
   lines.push(`- GitHub fixture payloads: ${bridge.summary.github_fixture_payloads_status}, payloads ${bridge.summary.github_fixture_payloads_written ?? '-'}`);
   lines.push(`- GitHub fixture payload smoke: ${bridge.summary.github_fixture_payload_smoke_status}, payloads ${bridge.summary.github_fixture_payload_smoke_payloads ?? '-'}, lanes ${bridge.summary.github_fixture_payload_smoke_lanes ?? '-'}, content types ${bridge.summary.github_fixture_payload_smoke_content_types ?? '-'}`);
   lines.push(`- GitHub worker integration signal bridge: ${bridge.summary.github_worker_integration_signal_bridge_status}, candidates ${bridge.summary.github_worker_integration_signal_bridge_candidates ?? '-'}, top signal ${bridge.summary.github_worker_integration_signal_bridge_top_signal_score ?? '-'}`);
+  lines.push(`- GitHub worker adapter boundary contract: ${bridge.summary.github_worker_adapter_boundary_contract_status}, fixture ${bridge.summary.github_worker_adapter_boundary_contract_fixture ?? '-'}, commands ${bridge.summary.github_worker_adapter_boundary_contract_commands ?? '-'}`);
   lines.push(`- Training eval rubric: ${bridge.summary.training_eval_rubric_status}, suites ${bridge.summary.training_eval_rubric_suites ?? '-'}, criteria ${bridge.summary.training_eval_rubric_criteria ?? '-'}`);
   lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);
