@@ -83,6 +83,8 @@ const refs = {
   localWorkerInnovationLaunchApplyGuardCheck: `data/kosmo-local-worker-innovation-launch-apply-guard-check-${dateStamp}.json`,
   localWorkerInnovationLaunchApplyGuardSmoke: `data/kosmo-local-worker-innovation-launch-apply-guard-smoke-${dateStamp}.json`,
   localWorkerInnovationLaunchApplyGuardSmokeCheck: `data/kosmo-local-worker-innovation-launch-apply-guard-smoke-check-${dateStamp}.json`,
+  localWorkerInnovationLaunchRunbookCheckpoint: `data/kosmo-local-worker-innovation-launch-runbook-checkpoint-${dateStamp}.json`,
+  localWorkerInnovationLaunchRunbookCheckpointCheck: `data/kosmo-local-worker-innovation-launch-runbook-checkpoint-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -213,6 +215,8 @@ function buildBridge(reports) {
   const localWorkerInnovationLaunchApplyGuardCheckSummary = reports.localWorkerInnovationLaunchApplyGuardCheck?.summary || {};
   const localWorkerInnovationLaunchApplyGuardSmokeSummary = reports.localWorkerInnovationLaunchApplyGuardSmoke?.summary || {};
   const localWorkerInnovationLaunchApplyGuardSmokeCheckSummary = reports.localWorkerInnovationLaunchApplyGuardSmokeCheck?.summary || {};
+  const localWorkerInnovationLaunchRunbookCheckpointSummary = reports.localWorkerInnovationLaunchRunbookCheckpoint?.summary || {};
+  const localWorkerInnovationLaunchRunbookCheckpointCheckSummary = reports.localWorkerInnovationLaunchRunbookCheckpointCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -824,6 +828,22 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Synthetic empty/exact/broad-private regression smoke for launch apply guard',
       source_ref: refs.localWorkerInnovationLaunchApplyGuardSmokeCheck
+    },
+    {
+      id: 'local-worker-innovation-launch-runbook-checkpoint',
+      title: 'Local Worker Innovation Launch Runbook Checkpoint',
+      status: [
+        'local_worker_innovation_launch_runbook_checkpoint_waiting_for_exact_reply',
+        'local_worker_innovation_launch_runbook_checkpoint_ready_for_separate_preflight',
+        'local_worker_innovation_launch_runbook_checkpoint_blocked_by_reply'
+      ].includes(reports.localWorkerInnovationLaunchRunbookCheckpoint?.status) &&
+        reports.localWorkerInnovationLaunchRunbookCheckpointCheck?.status === 'local_worker_innovation_launch_runbook_checkpoint_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationLaunchRunbookCheckpointSummary.launch_mode || '-'}, gates ${localWorkerInnovationLaunchRunbookCheckpointSummary.gates_passed ?? 0}/${localWorkerInnovationLaunchRunbookCheckpointSummary.gates ?? 0}, execute ${localWorkerInnovationLaunchRunbookCheckpointSummary.execute_now ?? 0}, failures ${localWorkerInnovationLaunchRunbookCheckpointCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Aggregated launch preflight checkpoint; does not execute local workers',
+      source_ref: refs.localWorkerInnovationLaunchRunbookCheckpointCheck
     },
     {
       id: 'github-innovation-watchlist',

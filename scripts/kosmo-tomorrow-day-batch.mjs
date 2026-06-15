@@ -138,6 +138,8 @@ function buildPlan(reports) {
       'npm run kosmo:local-worker-innovation-launch-apply-guard-check',
       'npm run kosmo:local-worker-innovation-launch-apply-guard-smoke',
       'npm run kosmo:local-worker-innovation-launch-apply-guard-smoke-check',
+      'npm run kosmo:local-worker-innovation-launch-runbook-checkpoint',
+      'npm run kosmo:local-worker-innovation-launch-runbook-checkpoint-check',
       'npm run kosmo:codex-daily-loop-routine',
       'npm run kosmo:codex-daily-loop-routine-check',
       'npm run kosmo:codex-morning-routine-run',

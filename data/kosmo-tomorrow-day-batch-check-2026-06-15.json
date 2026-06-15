@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:25:19.563Z",
+  "generated_at": "2026-06-15T17:30:19.587Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -153,6 +153,11 @@
       "id": "start_sequence_local_worker_innovation_launch_apply_guard_smoke",
       "severity": "passed",
       "message": "Start sequence must include local worker innovation launch apply guard smoke."
+    },
+    {
+      "id": "start_sequence_local_worker_innovation_launch_runbook_checkpoint",
+      "severity": "passed",
+      "message": "Start sequence must include local worker innovation launch runbook checkpoint."
     },
     {
       "id": "start_sequence_morning_routine_run",

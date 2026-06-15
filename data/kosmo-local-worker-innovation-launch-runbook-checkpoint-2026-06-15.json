@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:30:18.626Z",
+  "status": "local_worker_innovation_launch_runbook_checkpoint_waiting_for_exact_reply",
+  "policy": {
+    "checkpoint_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "writes_worker_outputs_now": false,
+    "writes_repo_outputs_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_checkpoint": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-dry-run-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-dry-run-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-owner-card-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-owner-card-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-smoke-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-smoke-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-output-validator-fixtures-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-output-validator-fixtures-check-2026-06-15.json"
+  ],
+  "summary": {
+    "launch_mode": "hold_waiting_for_exact_reply",
+    "gates": 10,
+    "gates_passed": 10,
+    "tasks": 5,
+    "exact_reply_valid": false,
+    "waiting_for_exact_reply": true,
+    "blocked_by_reply": false,
+    "separate_launch_allowed_after_apply_guard": false,
+    "execute_now": 0,
+    "starts_models_now": false,
+    "public_ready_after_checkpoint": 0,
+    "failures": 0
+  },
+  "gates": [
+    {
+      "id": "dry_run_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_dry_run_ready"
+    },
+    {
+      "id": "dry_run_guard_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_dry_run_guard_passed"
+    },
+    {
+      "id": "owner_card_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_owner_card_ready"
+    },
+    {
+      "id": "owner_card_guard_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_owner_card_guard_passed"
+    },
+    {
+      "id": "apply_guard_guarded",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_waiting_for_exact_reply"
+    },
+    {
+      "id": "apply_guard_check_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_guard_passed"
+    },
+    {
+      "id": "apply_guard_smoke_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_smoke_passed"
+    },
+    {
+      "id": "apply_guard_smoke_check_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_smoke_guard_passed"
+    },
+    {
+      "id": "validator_fixtures_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_validator_fixtures_passed"
+    },
+    {
+      "id": "validator_fixtures_guard_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_validator_fixtures_guard_passed"
+    }
+  ],
+  "task_ids": [
+    "github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture",
+    "github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture",
+    "github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+    "github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture",
+    "github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture"
+  ],
+  "separate_launch_preflight_commands": [
+    "npm run kosmo:local-worker-innovation-launch-dry-run",
+    "npm run kosmo:local-worker-innovation-launch-dry-run-check",
+    "npm run kosmo:local-worker-innovation-launch-owner-card",
+    "npm run kosmo:local-worker-innovation-launch-owner-card-check",
+    "npm run kosmo:local-worker-innovation-launch-apply-guard",
+    "npm run kosmo:local-worker-innovation-launch-apply-guard-check",
+    "npm run kosmo:local-worker-innovation-output-validator-fixtures",
+    "npm run kosmo:local-worker-innovation-output-validator-fixtures-check",
+    "npm run kosmo:local-worker-innovation-launch-runbook-checkpoint",
+    "npm run kosmo:local-worker-innovation-launch-runbook-checkpoint-check"
+  ],
+  "next_actions": [
+    "Keep local-worker innovation launch held.",
+    "Wait for the exact source-free launch reply or rework the reply if blocked.",
+    "Continue source-free prep and do not read private Source Root from this path."
+  ],
+  "hard_stops": [
+    "This checkpoint never executes local workers.",
+    "This checkpoint never starts models.",
+    "This checkpoint never reads private Source Root, OneDrive or archive-library content.",
+    "This checkpoint never writes worker outputs or repo outputs.",
+    "This checkpoint never promotes public-ready or training rows."
+  ],
+  "failures": []
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:25:16.536Z",
+  "generated_at": "2026-06-15T17:30:16.028Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 293
+      "files": 294
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 143
+      "files": 144
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-295-innovation-launch-runbook-checkpoint.md",
+      "title": "Codex Synergiebericht 295 - Innovation Launch Runbook Checkpoint",
+      "mirrored_inboxes": 2,
+      "bytes": 3008,
+      "modified_at": "2026-06-15T17:30:00.334Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-294-innovation-launch-apply-guard.md",
       "title": "Codex Synergiebericht 294 - Innovation Launch Apply Guard",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 3353,
       "modified_at": "2026-06-15T16:50:37.052Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-287-local-worker-innovation-task-pack.md",
-      "title": "Codex Synergiebericht 287 - Local Worker Innovation Task Pack",
-      "mirrored_inboxes": 2,
-      "bytes": 3047,
-      "modified_at": "2026-06-15T16:45:27.594Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 287-294 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 288-295 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

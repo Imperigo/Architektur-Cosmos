@@ -1,0 +1,141 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:30:18.866Z",
+  "status": "local_worker_innovation_launch_runbook_checkpoint_guard_passed",
+  "policy": {
+    "validates_checkpoint_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-runbook-checkpoint-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 23,
+    "passed": 23,
+    "failures": 0,
+    "checkpoint_status": "local_worker_innovation_launch_runbook_checkpoint_waiting_for_exact_reply",
+    "launch_mode": "hold_waiting_for_exact_reply",
+    "execute_now": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_guarded",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_runbook_checkpoint_waiting_for_exact_reply"
+    },
+    {
+      "id": "launch_mode_guarded",
+      "status": "passed",
+      "evidence": "hold_waiting_for_exact_reply"
+    },
+    {
+      "id": "policy_checkpoint_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_repo_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_promotion",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "execute_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "starts_models_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "ten_gates_passed",
+      "status": "passed",
+      "evidence": "10/10"
+    },
+    {
+      "id": "five_tasks",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "waiting_mode_no_launch_allowed",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "ready_mode_requires_exact_reply",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "preflight_commands_include_checkpoint",
+      "status": "passed",
+      "evidence": "npm run kosmo:local-worker-innovation-launch-dry-run, npm run kosmo:local-worker-innovation-launch-dry-run-check, npm run kosmo:local-worker-innovation-launch-owner-card, npm run kosmo:local-worker-innovation-launch-owner-card-check, npm run kosmo:local-worker-innovation-launch-apply-guard, npm run kosmo:local-worker-innovation-launch-apply-guard-check, npm run kosmo:local-worker-innovation-output-validator-fixtures, npm run kosmo:local-worker-innovation-output-validator-fixtures-check, npm run kosmo:local-worker-innovation-launch-runbook-checkpoint, npm run kosmo:local-worker-innovation-launch-runbook-checkpoint-check"
+    },
+    {
+      "id": "preflight_commands_include_apply_guard",
+      "status": "passed",
+      "evidence": "npm run kosmo:local-worker-innovation-launch-dry-run, npm run kosmo:local-worker-innovation-launch-dry-run-check, npm run kosmo:local-worker-innovation-launch-owner-card, npm run kosmo:local-worker-innovation-launch-owner-card-check, npm run kosmo:local-worker-innovation-launch-apply-guard, npm run kosmo:local-worker-innovation-launch-apply-guard-check, npm run kosmo:local-worker-innovation-output-validator-fixtures, npm run kosmo:local-worker-innovation-output-validator-fixtures-check, npm run kosmo:local-worker-innovation-launch-runbook-checkpoint, npm run kosmo:local-worker-innovation-launch-runbook-checkpoint-check"
+    },
+    {
+      "id": "preflight_commands_include_validator_fixtures",
+      "status": "passed",
+      "evidence": "npm run kosmo:local-worker-innovation-launch-dry-run, npm run kosmo:local-worker-innovation-launch-dry-run-check, npm run kosmo:local-worker-innovation-launch-owner-card, npm run kosmo:local-worker-innovation-launch-owner-card-check, npm run kosmo:local-worker-innovation-launch-apply-guard, npm run kosmo:local-worker-innovation-launch-apply-guard-check, npm run kosmo:local-worker-innovation-output-validator-fixtures, npm run kosmo:local-worker-innovation-output-validator-fixtures-check, npm run kosmo:local-worker-innovation-launch-runbook-checkpoint, npm run kosmo:local-worker-innovation-launch-runbook-checkpoint-check"
+    },
+    {
+      "id": "hard_stop_no_execution",
+      "status": "passed",
+      "evidence": "this checkpoint never executes local workers. this checkpoint never starts models. this checkpoint never reads private source root, onedrive or archive-library content. this checkpoint never writes worker outputs or repo outputs. this checkpoint never promotes public-ready or training rows."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this checkpoint never executes local workers. this checkpoint never starts models. this checkpoint never reads private source root, onedrive or archive-library content. this checkpoint never writes worker outputs or repo outputs. this checkpoint never promotes public-ready or training rows."
+    },
+    {
+      "id": "hard_stop_no_outputs",
+      "status": "passed",
+      "evidence": "this checkpoint never executes local workers. this checkpoint never starts models. this checkpoint never reads private source root, onedrive or archive-library content. this checkpoint never writes worker outputs or repo outputs. this checkpoint never promotes public-ready or training rows."
+    },
+    {
+      "id": "hard_stop_no_public_or_training",
+      "status": "passed",
+      "evidence": "this checkpoint never executes local workers. this checkpoint never starts models. this checkpoint never reads private source root, onedrive or archive-library content. this checkpoint never writes worker outputs or repo outputs. this checkpoint never promotes public-ready or training rows."
+    }
+  ]
+}
