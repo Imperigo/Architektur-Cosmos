@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:59:57.888Z",
+  "generated_at": "2026-06-15T18:06:18.714Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -98,6 +98,8 @@
     "data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-15.json",
     "data/kosmo-local-worker-innovation-conversion-apply-guard-2026-06-15.json",
     "data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-conversion-evidence-ledger-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
     "data/kosmo-innovation-github-discovery-2026-06-15.json",
@@ -133,7 +135,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 69,
+    "cards": 70,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -801,6 +803,15 @@
       "owner_action_required": false,
       "route_hint": "Apply guard for future conversion plan; validates exact reply and still executes nothing",
       "source_ref": "data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-conversion-evidence-ledger",
+      "title": "Local Worker Innovation Conversion Evidence Ledger",
+      "status": "review_only_ready",
+      "signal": "waiting_for_conversion_evidence, entries 7, apply no, public 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Metadata-only audit ledger for local-worker conversion gates; no conversion or repo derivative",
+      "source_ref": "data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-2026-06-15.json"
     },
     {
       "id": "github-innovation-watchlist",

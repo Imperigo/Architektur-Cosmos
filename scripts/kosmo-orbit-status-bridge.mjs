@@ -95,6 +95,8 @@ const refs = {
   localWorkerInnovationConversionPlanPreviewCheck: `data/kosmo-local-worker-innovation-conversion-plan-preview-check-${dateStamp}.json`,
   localWorkerInnovationConversionApplyGuard: `data/kosmo-local-worker-innovation-conversion-apply-guard-${dateStamp}.json`,
   localWorkerInnovationConversionApplyGuardCheck: `data/kosmo-local-worker-innovation-conversion-apply-guard-check-${dateStamp}.json`,
+  localWorkerInnovationConversionEvidenceLedger: `data/kosmo-local-worker-innovation-conversion-evidence-ledger-${dateStamp}.json`,
+  localWorkerInnovationConversionEvidenceLedgerCheck: `data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -237,6 +239,8 @@ function buildBridge(reports) {
   const localWorkerInnovationConversionPlanPreviewCheckSummary = reports.localWorkerInnovationConversionPlanPreviewCheck?.summary || {};
   const localWorkerInnovationConversionApplyGuardSummary = reports.localWorkerInnovationConversionApplyGuard?.summary || {};
   const localWorkerInnovationConversionApplyGuardCheckSummary = reports.localWorkerInnovationConversionApplyGuardCheck?.summary || {};
+  const localWorkerInnovationConversionEvidenceLedgerSummary = reports.localWorkerInnovationConversionEvidenceLedger?.summary || {};
+  const localWorkerInnovationConversionEvidenceLedgerCheckSummary = reports.localWorkerInnovationConversionEvidenceLedgerCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -924,6 +928,18 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Apply guard for future conversion plan; validates exact reply and still executes nothing',
       source_ref: refs.localWorkerInnovationConversionApplyGuardCheck
+    },
+    {
+      id: 'local-worker-innovation-conversion-evidence-ledger',
+      title: 'Local Worker Innovation Conversion Evidence Ledger',
+      status: reports.localWorkerInnovationConversionEvidenceLedger?.status === 'local_worker_innovation_conversion_evidence_ledger_ready' &&
+        reports.localWorkerInnovationConversionEvidenceLedgerCheck?.status === 'local_worker_innovation_conversion_evidence_ledger_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationConversionEvidenceLedgerSummary.mode || '-'}, entries ${localWorkerInnovationConversionEvidenceLedgerSummary.ledger_entries ?? 0}, apply ${localWorkerInnovationConversionEvidenceLedgerSummary.apply_allowed_after_ledger ? 'yes' : 'no'}, public ${localWorkerInnovationConversionEvidenceLedgerSummary.public_ready_after_ledger ?? 0}, failures ${localWorkerInnovationConversionEvidenceLedgerCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Metadata-only audit ledger for local-worker conversion gates; no conversion or repo derivative',
+      source_ref: refs.localWorkerInnovationConversionEvidenceLedgerCheck
     },
     {
       id: 'github-innovation-watchlist',

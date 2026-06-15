@@ -1,6 +1,6 @@
 # Kosmo Tomorrow Day Batch Check
 
-Generated: 2026-06-15T17:59:58.381Z
+Generated: 2026-06-15T18:06:19.202Z
 Status: `tomorrow_day_batch_guard_passed`
 
 ## Summary
@@ -46,6 +46,7 @@ Status: `tomorrow_day_batch_guard_passed`
 - passed: `start_sequence_local_worker_innovation_human_overseer_review_decision_card` - Start sequence must include local worker innovation human/overseer review decision card.
 - passed: `start_sequence_local_worker_innovation_conversion_plan_preview` - Start sequence must include local worker innovation conversion plan preview.
 - passed: `start_sequence_local_worker_innovation_conversion_apply_guard` - Start sequence must include local worker innovation conversion apply guard.
+- passed: `start_sequence_local_worker_innovation_conversion_evidence_ledger` - Start sequence must include local worker innovation conversion evidence ledger.
 - passed: `start_sequence_morning_routine_run` - Start sequence must include Codex morning routine run.
 - passed: `start_sequence_morning_routine_run_check` - Start sequence must include Codex morning routine run check.
 - passed: `start_sequence_owner_checkpoint` - Start sequence must include owner unlock checkpoint.

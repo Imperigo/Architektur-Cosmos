@@ -150,6 +150,8 @@ function buildPlan(reports) {
       'npm run kosmo:local-worker-innovation-conversion-plan-preview-check',
       'npm run kosmo:local-worker-innovation-conversion-apply-guard',
       'npm run kosmo:local-worker-innovation-conversion-apply-guard-check',
+      'npm run kosmo:local-worker-innovation-conversion-evidence-ledger',
+      'npm run kosmo:local-worker-innovation-conversion-evidence-ledger-check',
       'npm run kosmo:codex-daily-loop-routine',
       'npm run kosmo:codex-daily-loop-routine-check',
       'npm run kosmo:codex-morning-routine-run',
