@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T16:55:04.034Z",
+  "status": "local_worker_innovation_output_adapter_plan_guard_passed",
+  "policy": {
+    "review_only": true,
+    "reads_private_content_now": false,
+    "reads_worker_output_bodies_now": false,
+    "body_copy_allowed": false,
+    "executes_local_workers": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-output-adapter-plan-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 17,
+    "passed": 17,
+    "failures": 0,
+    "adapters": 5,
+    "metadata_capture_fields": 11,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_adapter_plan_ready"
+    },
+    {
+      "id": "policy_plan_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_body_reads_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_body_git",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_recommendations_git",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_metadata_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "five_adapters",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "metadata_fields_present",
+      "status": "passed",
+      "evidence": 11
+    },
+    {
+      "id": "all_adapter_paths_worker_packets",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "all_adapters_metadata_read_mode",
+      "status": "passed",
+      "evidence": "json_schema_and_metadata_only, json_schema_and_metadata_only, json_schema_and_metadata_only, json_schema_and_metadata_only, json_schema_and_metadata_only"
+    },
+    {
+      "id": "all_adapters_no_body_git",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "all_adapters_no_repo_conversion",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "all_adapters_public_ready_zero",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "all_adapters_have_hard_stops",
+      "status": "passed",
+      "evidence": 5
+    }
+  ]
+}

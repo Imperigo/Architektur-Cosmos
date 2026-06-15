@@ -124,6 +124,8 @@ function buildPlan(reports) {
       'npm run kosmo:local-worker-fixture-chain-task-pack-check',
       'npm run kosmo:local-worker-innovation-output-smoke',
       'npm run kosmo:local-worker-innovation-output-smoke-check',
+      'npm run kosmo:local-worker-innovation-output-adapter-plan',
+      'npm run kosmo:local-worker-innovation-output-adapter-plan-check',
       'npm run kosmo:codex-daily-loop-routine',
       'npm run kosmo:codex-daily-loop-routine-check',
       'npm run kosmo:codex-morning-routine-run',

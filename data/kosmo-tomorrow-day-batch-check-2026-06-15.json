@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:50:49.342Z",
+  "generated_at": "2026-06-15T16:55:04.743Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -118,6 +118,11 @@
       "id": "start_sequence_local_worker_innovation_output_smoke",
       "severity": "passed",
       "message": "Start sequence must include local worker innovation output smoke."
+    },
+    {
+      "id": "start_sequence_local_worker_innovation_output_adapter_plan",
+      "severity": "passed",
+      "message": "Start sequence must include local worker innovation output adapter plan."
     },
     {
       "id": "start_sequence_morning_routine_run",

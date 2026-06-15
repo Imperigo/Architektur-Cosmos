@@ -266,6 +266,8 @@
     "kosmo:local-worker-fixture-chain-task-pack-check": "node scripts/kosmo-local-worker-fixture-chain-task-pack-check.mjs",
     "kosmo:local-worker-innovation-output-smoke": "node scripts/kosmo-local-worker-innovation-output-smoke.mjs",
     "kosmo:local-worker-innovation-output-smoke-check": "node scripts/kosmo-local-worker-innovation-output-smoke-check.mjs",
+    "kosmo:local-worker-innovation-output-adapter-plan": "node scripts/kosmo-local-worker-innovation-output-adapter-plan.mjs",
+    "kosmo:local-worker-innovation-output-adapter-plan-check": "node scripts/kosmo-local-worker-innovation-output-adapter-plan-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",

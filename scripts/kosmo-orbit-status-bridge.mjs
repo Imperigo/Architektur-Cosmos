@@ -69,6 +69,8 @@ const refs = {
   localWorkerFixtureChainTaskPackCheck: `data/kosmo-local-worker-fixture-chain-task-pack-check-${dateStamp}.json`,
   localWorkerInnovationOutputSmoke: `data/kosmo-local-worker-innovation-output-smoke-${dateStamp}.json`,
   localWorkerInnovationOutputSmokeCheck: `data/kosmo-local-worker-innovation-output-smoke-check-${dateStamp}.json`,
+  localWorkerInnovationOutputAdapterPlan: `data/kosmo-local-worker-innovation-output-adapter-plan-${dateStamp}.json`,
+  localWorkerInnovationOutputAdapterPlanCheck: `data/kosmo-local-worker-innovation-output-adapter-plan-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -185,6 +187,8 @@ function buildBridge(reports) {
   const localWorkerFixtureChainTaskPackCheckSummary = reports.localWorkerFixtureChainTaskPackCheck?.summary || {};
   const localWorkerInnovationOutputSmokeSummary = reports.localWorkerInnovationOutputSmoke?.summary || {};
   const localWorkerInnovationOutputSmokeCheckSummary = reports.localWorkerInnovationOutputSmokeCheck?.summary || {};
+  const localWorkerInnovationOutputAdapterPlanSummary = reports.localWorkerInnovationOutputAdapterPlan?.summary || {};
+  const localWorkerInnovationOutputAdapterPlanCheckSummary = reports.localWorkerInnovationOutputAdapterPlanCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -707,6 +711,18 @@ function buildBridge(reports) {
       source_ref: refs.localWorkerInnovationOutputSmokeCheck
     },
     {
+      id: 'local-worker-innovation-output-adapter-plan',
+      title: 'Local Worker Innovation Output Adapter Plan',
+      status: reports.localWorkerInnovationOutputAdapterPlan?.status === 'local_worker_innovation_output_adapter_plan_ready' &&
+        reports.localWorkerInnovationOutputAdapterPlanCheck?.status === 'local_worker_innovation_output_adapter_plan_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationOutputAdapterPlanSummary.adapters ?? 0} adapters, metadata ${localWorkerInnovationOutputAdapterPlanSummary.metadata_capture_fields ?? 0}, body copy ${localWorkerInnovationOutputAdapterPlanSummary.body_copy_allowed === false ? 'no' : 'review'}, failures ${localWorkerInnovationOutputAdapterPlanCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Metadata-only adapter plan for later local-worker output validation; no body copy',
+      source_ref: refs.localWorkerInnovationOutputAdapterPlanCheck
+    },
+    {
       id: 'github-innovation-watchlist',
       title: 'GitHub Innovation Watchlist',
       status: reports.githubWatchlist?.status === 'innovation_github_watchlist_ready' &&
@@ -1049,6 +1065,13 @@ function buildBridge(reports) {
       local_worker_innovation_output_smoke_executable_now: localWorkerInnovationOutputSmokeSummary.executable_now ?? null,
       local_worker_innovation_output_smoke_check_status: reports.localWorkerInnovationOutputSmokeCheck?.status || null,
       local_worker_innovation_output_smoke_check_failures: localWorkerInnovationOutputSmokeCheckSummary.failures ?? null,
+      local_worker_innovation_output_adapter_plan_status: reports.localWorkerInnovationOutputAdapterPlan?.status || null,
+      local_worker_innovation_output_adapter_plan_adapters: localWorkerInnovationOutputAdapterPlanSummary.adapters ?? null,
+      local_worker_innovation_output_adapter_plan_metadata_capture_fields: localWorkerInnovationOutputAdapterPlanSummary.metadata_capture_fields ?? null,
+      local_worker_innovation_output_adapter_plan_body_copy_allowed: localWorkerInnovationOutputAdapterPlanSummary.body_copy_allowed ?? null,
+      local_worker_innovation_output_adapter_plan_repo_conversion_allowed_now: localWorkerInnovationOutputAdapterPlanSummary.repo_conversion_allowed_now ?? null,
+      local_worker_innovation_output_adapter_plan_check_status: reports.localWorkerInnovationOutputAdapterPlanCheck?.status || null,
+      local_worker_innovation_output_adapter_plan_check_failures: localWorkerInnovationOutputAdapterPlanCheckSummary.failures ?? null,
       github_watchlist_status: reports.githubWatchlist?.status || null,
       github_watchlist_candidates: githubWatchlistSummary.candidates ?? null,
       github_watchlist_live_probe_succeeded: githubWatchlistSummary.live_probe_succeeded ?? null,
