@@ -1,0 +1,189 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:18:06.423Z",
+  "status": "dependency_install_batch_brief_guard_passed",
+  "policy": {
+    "validates_decision_brief_only": true,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-dependency-install-batch-brief-2026-06-15.json"
+  ],
+  "summary": {
+    "brief_status": "dependency_install_batch_brief_ready",
+    "phases": 3,
+    "phase_1_package_count": 5,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Brief schema_version must be 0.1."
+    },
+    {
+      "id": "brief_ready",
+      "severity": "passed",
+      "message": "Brief must be ready."
+    },
+    {
+      "id": "decision_brief_only",
+      "severity": "passed",
+      "message": "Brief must be decision-brief-only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Brief must not install dependencies."
+    },
+    {
+      "id": "no_model_downloads",
+      "severity": "passed",
+      "message": "Brief must not download models."
+    },
+    {
+      "id": "no_tool_runs",
+      "severity": "passed",
+      "message": "Brief must not run tools."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Brief must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Brief must keep public-ready at 0."
+    },
+    {
+      "id": "phase_count",
+      "severity": "passed",
+      "message": "Brief must include three phases."
+    },
+    {
+      "id": "phase_1_packages",
+      "severity": "passed",
+      "message": "Phase 1 must include the package candidates."
+    },
+    {
+      "id": "phase_not_executing:phase_1_python_package_env",
+      "severity": "passed",
+      "message": "phase_1_python_package_env must not execute now."
+    },
+    {
+      "id": "phase_no_private_reads:phase_1_python_package_env",
+      "severity": "passed",
+      "message": "phase_1_python_package_env must not read private content."
+    },
+    {
+      "id": "item_not_executing:markitdown",
+      "severity": "passed",
+      "message": "markitdown must not execute now."
+    },
+    {
+      "id": "item_public_ready_zero:markitdown",
+      "severity": "passed",
+      "message": "markitdown must keep public-ready at 0."
+    },
+    {
+      "id": "item_not_executing:docling",
+      "severity": "passed",
+      "message": "docling must not execute now."
+    },
+    {
+      "id": "item_public_ready_zero:docling",
+      "severity": "passed",
+      "message": "docling must keep public-ready at 0."
+    },
+    {
+      "id": "item_not_executing:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must not execute now."
+    },
+    {
+      "id": "item_public_ready_zero:ifcopenshell",
+      "severity": "passed",
+      "message": "ifcopenshell must keep public-ready at 0."
+    },
+    {
+      "id": "item_not_executing:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must not execute now."
+    },
+    {
+      "id": "item_public_ready_zero:topologicpy",
+      "severity": "passed",
+      "message": "topologicpy must keep public-ready at 0."
+    },
+    {
+      "id": "item_not_executing:speckle",
+      "severity": "passed",
+      "message": "speckle must not execute now."
+    },
+    {
+      "id": "item_public_ready_zero:speckle",
+      "severity": "passed",
+      "message": "speckle must keep public-ready at 0."
+    },
+    {
+      "id": "phase_not_executing:phase_2_embedding_model_root",
+      "severity": "passed",
+      "message": "phase_2_embedding_model_root must not execute now."
+    },
+    {
+      "id": "phase_no_private_reads:phase_2_embedding_model_root",
+      "severity": "passed",
+      "message": "phase_2_embedding_model_root must not read private content."
+    },
+    {
+      "id": "item_not_executing:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must not execute now."
+    },
+    {
+      "id": "item_public_ready_zero:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must keep public-ready at 0."
+    },
+    {
+      "id": "model_root_gate:qwen_embedding_reranker",
+      "severity": "passed",
+      "message": "qwen_embedding_reranker must require model root decision."
+    },
+    {
+      "id": "phase_not_executing:phase_3_ocr_model_root",
+      "severity": "passed",
+      "message": "phase_3_ocr_model_root must not execute now."
+    },
+    {
+      "id": "phase_no_private_reads:phase_3_ocr_model_root",
+      "severity": "passed",
+      "message": "phase_3_ocr_model_root must not read private content."
+    },
+    {
+      "id": "item_not_executing:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must not execute now."
+    },
+    {
+      "id": "item_public_ready_zero:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must keep public-ready at 0."
+    },
+    {
+      "id": "model_root_gate:deepseek_ocr",
+      "severity": "passed",
+      "message": "deepseek_ocr must require model root decision."
+    },
+    {
+      "id": "ocr_source_root_gate",
+      "severity": "passed",
+      "message": "DeepSeek OCR must stay source-root gated."
+    }
+  ]
+}

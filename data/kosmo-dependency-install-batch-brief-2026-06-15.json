@@ -1,0 +1,217 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:18:06.189Z",
+  "status": "dependency_install_batch_brief_ready",
+  "policy": {
+    "decision_brief_only": true,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "source_root_required_for_private_processing": true,
+    "secrets_required": false,
+    "public_ready_after_brief": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-dependency-install-queue-2026-06-15.json",
+    "data/kosmo-innovation-github-watchlist-2026-06-15.json",
+    "data/kosmo-innovation-dependency-preflight-runner-2026-06-15.json"
+  ],
+  "current_availability": {
+    "dependency_groups": 7,
+    "available_groups": 0,
+    "passed_checks": 1,
+    "checks": 14
+  },
+  "phases": [
+    {
+      "id": "phase_1_python_package_env",
+      "status": "ready_for_separate_execution",
+      "purpose": "Enable fixture-only KosmoPrepare and geometry smoke tests.",
+      "environment_root": "/mnt/data/ArchitekturKosmos/tools/kosmo-python-tools",
+      "packages": [
+        {
+          "id": "markitdown",
+          "priority": 1,
+          "install_type": "python_package",
+          "targets": [
+            "markitdown"
+          ],
+          "risk": "low",
+          "expected_size": "small",
+          "purpose": "KosmoPrepare document conversion",
+          "validation_after_install": "fixture-only document conversion tests",
+          "repo": "microsoft/markitdown",
+          "url": "https://github.com/microsoft/markitdown",
+          "kosmo_fit": "high",
+          "blocked_until_source_root_unlock": false,
+          "requires_model_root_decision": false,
+          "executes_now": false,
+          "public_ready_after_item": 0
+        },
+        {
+          "id": "docling",
+          "priority": 2,
+          "install_type": "python_package",
+          "targets": [
+            "docling"
+          ],
+          "risk": "medium",
+          "expected_size": "medium",
+          "purpose": "KosmoPrepare richer PDF/document parsing",
+          "validation_after_install": "fixture-only PDF/document parsing tests",
+          "repo": "docling-project/docling",
+          "url": "https://github.com/docling-project/docling",
+          "kosmo_fit": "high",
+          "blocked_until_source_root_unlock": false,
+          "requires_model_root_decision": false,
+          "executes_now": false,
+          "public_ready_after_item": 0
+        },
+        {
+          "id": "ifcopenshell",
+          "priority": 3,
+          "install_type": "python_package",
+          "targets": [
+            "ifcopenshell"
+          ],
+          "risk": "medium",
+          "expected_size": "medium",
+          "purpose": "IFC and geometry extraction baseline",
+          "validation_after_install": "fixture-only IFC entity smoke",
+          "repo": "IfcOpenShell/IfcOpenShell",
+          "url": "https://github.com/IfcOpenShell/IfcOpenShell",
+          "kosmo_fit": "high",
+          "blocked_until_source_root_unlock": false,
+          "requires_model_root_decision": false,
+          "executes_now": false,
+          "public_ready_after_item": 0
+        },
+        {
+          "id": "topologicpy",
+          "priority": 4,
+          "install_type": "python_package",
+          "targets": [
+            "topologicpy"
+          ],
+          "risk": "medium",
+          "expected_size": "medium",
+          "purpose": "Spatial/topological graph experiments",
+          "validation_after_install": "fixture-only graph shape tests",
+          "repo": "wassimj/topologicpy",
+          "url": "https://github.com/wassimj/topologicpy",
+          "kosmo_fit": "medium",
+          "blocked_until_source_root_unlock": false,
+          "requires_model_root_decision": false,
+          "executes_now": false,
+          "public_ready_after_item": 0
+        },
+        {
+          "id": "speckle",
+          "priority": 5,
+          "install_type": "python_package",
+          "targets": [
+            "specklepy"
+          ],
+          "risk": "low",
+          "expected_size": "small",
+          "purpose": "Speckle connector research boundary",
+          "validation_after_install": "connector contract smoke only",
+          "repo": "specklesystems/specklepy",
+          "url": "https://github.com/specklesystems/specklepy",
+          "kosmo_fit": "medium",
+          "blocked_until_source_root_unlock": false,
+          "requires_model_root_decision": false,
+          "executes_now": false,
+          "public_ready_after_item": 0
+        }
+      ],
+      "executes_now": false,
+      "reads_private_content": false,
+      "validation_after_phase": [
+        "npm run kosmo:innovation-dependency-preflight-runner",
+        "npm run kosmo:innovation-dependency-preflight-runner-check",
+        "fixture-only MarkItDown/Docling document smoke",
+        "fixture-only IfcOpenShell entity smoke"
+      ]
+    },
+    {
+      "id": "phase_2_embedding_model_root",
+      "status": "blocked_until_model_root_decision",
+      "purpose": "Prepare retrieval/RAG foundation for KosmoReferences.",
+      "model_root": "/mnt/data/ArchitekturKosmos/Models",
+      "packages": [
+        {
+          "id": "qwen_embedding_reranker",
+          "priority": 6,
+          "install_type": "model_download",
+          "targets": [
+            "Qwen embedding/reranker model files"
+          ],
+          "risk": "high",
+          "expected_size": "large",
+          "purpose": "KosmoReferences retrieval and reranking",
+          "validation_after_install": "fixture-only embedding smoke; no private embeddings",
+          "repo": "QwenLM/Qwen3-Embedding",
+          "url": "https://github.com/QwenLM/Qwen3-Embedding",
+          "kosmo_fit": "high",
+          "blocked_until_source_root_unlock": false,
+          "requires_model_root_decision": true,
+          "executes_now": false,
+          "public_ready_after_item": 0
+        }
+      ],
+      "executes_now": false,
+      "reads_private_content": false,
+      "validation_after_phase": [
+        "fixture-only embedding smoke; no private embeddings"
+      ]
+    },
+    {
+      "id": "phase_3_ocr_model_root",
+      "status": "blocked_until_source_root_and_ocr_gate",
+      "purpose": "Prepare local OCR experiments for scanned architecture sources.",
+      "model_root": "/mnt/data/ArchitekturKosmos/Models",
+      "packages": [
+        {
+          "id": "deepseek_ocr",
+          "priority": 7,
+          "install_type": "model_download",
+          "targets": [
+            "DeepSeek-OCR model files"
+          ],
+          "risk": "high",
+          "expected_size": "large",
+          "purpose": "Local OCR experiments for scanned architecture sources",
+          "validation_after_install": "fixture-only OCR smoke; private OCR blocked until Source Root unlock",
+          "repo": "deepseek-ai/DeepSeek-OCR",
+          "url": "https://github.com/deepseek-ai/DeepSeek-OCR",
+          "kosmo_fit": "medium",
+          "blocked_until_source_root_unlock": true,
+          "requires_model_root_decision": true,
+          "executes_now": false,
+          "public_ready_after_item": 0
+        }
+      ],
+      "executes_now": false,
+      "reads_private_content": false,
+      "validation_after_phase": [
+        "fixture-only OCR smoke; private OCR remains blocked"
+      ]
+    }
+  ],
+  "recommended_next_command_batch": [
+    "Create isolated Python environment under /mnt/data/ArchitekturKosmos/tools/kosmo-python-tools.",
+    "Install phase_1 Python packages there only.",
+    "Record exact versions and rerun dependency preflight runner.",
+    "Do not download models in the Python package phase.",
+    "Do not process private content in any install validation."
+  ],
+  "summary": {
+    "phase_1_package_count": 5,
+    "phase_2_model_count": 1,
+    "phase_3_model_count": 1,
+    "executable_now": 0,
+    "public_ready_after_brief": 0
+  }
+}
