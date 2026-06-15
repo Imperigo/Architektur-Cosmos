@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:35:39.648Z",
+  "status": "generated_public_safe_fixture_payload",
+  "contract_id": "paper2poster_publish_layout_fixture",
+  "candidate_id": "paper2poster",
+  "fixture_id": "layout_scoring_manifest",
+  "policy": {
+    "private_content": false,
+    "generated_or_public_safe": true,
+    "tool_output": false,
+    "public_ready": false,
+    "public_ready_after_payload": 0
+  },
+  "description": "Expected poster zones, hierarchy and review criteria.",
+  "content": {
+    "type": "publish_layout_fixture",
+    "zones": [
+      "title",
+      "context",
+      "analysis",
+      "image_placeholder",
+      "rights_note"
+    ],
+    "scoring": [
+      "hierarchy",
+      "source_visibility",
+      "review_only_status"
+    ]
+  },
+  "expected_review": {
+    "provenance_state": "generated_fixture",
+    "rights_state": "public_safe_synthetic",
+    "human_review_required_before_training": true,
+    "allowed_for_private_gate_testing": false
+  }
+}

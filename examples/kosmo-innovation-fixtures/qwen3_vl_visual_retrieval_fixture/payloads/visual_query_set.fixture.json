@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:35:39.647Z",
+  "status": "generated_public_safe_fixture_payload",
+  "contract_id": "qwen3_vl_visual_retrieval_fixture",
+  "candidate_id": "qwen3_vl_embedding",
+  "fixture_id": "visual_query_set",
+  "policy": {
+    "private_content": false,
+    "generated_or_public_safe": true,
+    "tool_output": false,
+    "public_ready": false,
+    "public_ready_after_payload": 0
+  },
+  "description": "Queries for facade rhythm, material signal and plan-image distinction.",
+  "content": {
+    "type": "visual_retrieval_fixture",
+    "image_manifest": [
+      {
+        "id": "facade-generated-01",
+        "tags": [
+          "facade",
+          "rhythm",
+          "synthetic"
+        ]
+      },
+      {
+        "id": "material-generated-01",
+        "tags": [
+          "material",
+          "texture",
+          "synthetic"
+        ]
+      }
+    ]
+  },
+  "expected_review": {
+    "provenance_state": "generated_fixture",
+    "rights_state": "public_safe_synthetic",
+    "human_review_required_before_training": true,
+    "allowed_for_private_gate_testing": false
+  }
+}

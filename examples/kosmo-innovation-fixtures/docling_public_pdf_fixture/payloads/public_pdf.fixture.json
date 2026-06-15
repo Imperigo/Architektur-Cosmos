@@ -1,0 +1,47 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:35:39.644Z",
+  "status": "generated_public_safe_fixture_payload",
+  "contract_id": "docling_public_pdf_fixture",
+  "candidate_id": "docling",
+  "fixture_id": "public_pdf",
+  "policy": {
+    "private_content": false,
+    "generated_or_public_safe": true,
+    "tool_output": false,
+    "public_ready": false,
+    "public_ready_after_payload": 0
+  },
+  "description": "Tiny public-domain or generated architecture-style PDF with title, sections, table and image placeholder.",
+  "content": {
+    "type": "document_conversion_fixture",
+    "title": "Generated Architecture Reference Fixture",
+    "sections": [
+      {
+        "heading": "Project Metadata",
+        "rows": [
+          [
+            "project",
+            "generated-pilot"
+          ],
+          [
+            "rights_state",
+            "synthetic"
+          ]
+        ]
+      },
+      {
+        "heading": "Material Notes",
+        "paragraphs": [
+          "Generated fixture paragraph for conversion shape checks."
+        ]
+      }
+    ]
+  },
+  "expected_review": {
+    "provenance_state": "generated_fixture",
+    "rights_state": "public_safe_synthetic",
+    "human_review_required_before_training": true,
+    "allowed_for_private_gate_testing": false
+  }
+}

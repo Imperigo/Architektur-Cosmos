@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:35:39.646Z",
+  "status": "generated_public_safe_fixture_payload",
+  "contract_id": "qwen3_retrieval_fixture",
+  "candidate_id": "qwen3_embedding_reranker",
+  "fixture_id": "public_safe_reference_chunks",
+  "policy": {
+    "private_content": false,
+    "generated_or_public_safe": true,
+    "tool_output": false,
+    "public_ready": false,
+    "public_ready_after_payload": 0
+  },
+  "description": "Small synthetic/public-safe chunks for Villa Savoye, Sogn Benedetg and Ingenbohl-style fields.",
+  "content": {
+    "type": "retrieval_fixture",
+    "chunks": [
+      {
+        "id": "villa-savoye-generated",
+        "topic": "typology",
+        "text": "Generated fixture: a pilotis-supported house reference with roof garden and promenade fields."
+      },
+      {
+        "id": "sogn-benedetg-generated",
+        "topic": "material_structure",
+        "text": "Generated fixture: timber chapel reference with structural rhythm and light analysis fields."
+      }
+    ],
+    "queries": [
+      {
+        "id": "q-material-structure",
+        "text": "Which fixture discusses timber structure and light?"
+      }
+    ]
+  },
+  "expected_review": {
+    "provenance_state": "generated_fixture",
+    "rights_state": "public_safe_synthetic",
+    "human_review_required_before_training": true,
+    "allowed_for_private_gate_testing": false
+  }
+}

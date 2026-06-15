@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:35:39.647Z",
+  "status": "generated_public_safe_fixture_payload",
+  "contract_id": "topologicpy_spatial_graph_fixture",
+  "candidate_id": "topologicpy",
+  "fixture_id": "expected_topology_report",
+  "policy": {
+    "private_content": false,
+    "generated_or_public_safe": true,
+    "tool_output": false,
+    "public_ready": false,
+    "public_ready_after_payload": 0
+  },
+  "description": "Expected graph metrics and architectural interpretation slots.",
+  "content": {
+    "type": "spatial_graph_fixture",
+    "nodes": [
+      "entry",
+      "hall",
+      "room",
+      "terrace"
+    ],
+    "edges": [
+      [
+        "entry",
+        "hall"
+      ],
+      [
+        "hall",
+        "room"
+      ],
+      [
+        "room",
+        "terrace"
+      ]
+    ],
+    "expected_metrics": [
+      "degree",
+      "adjacency",
+      "circulation_depth"
+    ]
+  },
+  "expected_review": {
+    "provenance_state": "generated_fixture",
+    "rights_state": "public_safe_synthetic",
+    "human_review_required_before_training": true,
+    "allowed_for_private_gate_testing": false
+  }
+}

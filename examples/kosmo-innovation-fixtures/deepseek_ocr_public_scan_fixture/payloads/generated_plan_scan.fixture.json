@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:35:39.646Z",
+  "status": "generated_public_safe_fixture_payload",
+  "contract_id": "deepseek_ocr_public_scan_fixture",
+  "candidate_id": "deepseek_ocr",
+  "fixture_id": "generated_plan_scan",
+  "policy": {
+    "private_content": false,
+    "generated_or_public_safe": true,
+    "tool_output": false,
+    "public_ready": false,
+    "public_ready_after_payload": 0
+  },
+  "description": "Synthetic plan-like raster with room labels, scale note and title block.",
+  "content": {
+    "type": "ocr_fixture",
+    "expected_words": [
+      "ROOM",
+      "SECTION",
+      "SCALE",
+      "NORTH"
+    ],
+    "uncertainty_required": true
+  },
+  "expected_review": {
+    "provenance_state": "generated_fixture",
+    "rights_state": "public_safe_synthetic",
+    "human_review_required_before_training": true,
+    "allowed_for_private_gate_testing": false
+  }
+}

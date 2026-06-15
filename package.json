@@ -212,6 +212,8 @@
     "kosmo:innovation-fixture-contracts-check": "node scripts/kosmo-innovation-fixture-contracts-check.mjs",
     "kosmo:innovation-fixture-skeletons": "node scripts/kosmo-innovation-fixture-skeletons.mjs",
     "kosmo:innovation-fixture-skeletons-check": "node scripts/kosmo-innovation-fixture-skeletons-check.mjs",
+    "kosmo:innovation-fixture-payloads": "node scripts/kosmo-innovation-fixture-payloads.mjs",
+    "kosmo:innovation-fixture-payloads-check": "node scripts/kosmo-innovation-fixture-payloads-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",

@@ -1,0 +1,879 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:35:39.893Z",
+  "status": "innovation_fixture_payloads_guard_passed",
+  "policy": {
+    "validates_payloads_only": true,
+    "installs_tools_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-fixture-payloads-2026-06-15.json"
+  ],
+  "summary": {
+    "payloads_status": "innovation_fixture_payloads_ready",
+    "payloads_checked": 18,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Payload report schema_version must be 0.1."
+    },
+    {
+      "id": "payloads_ready",
+      "severity": "passed",
+      "message": "Payload report must be ready."
+    },
+    {
+      "id": "generated_payloads_only",
+      "severity": "passed",
+      "message": "Report must be generated-payloads-only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Report must not install tools."
+    },
+    {
+      "id": "no_tool_runs",
+      "severity": "passed",
+      "message": "Report must not run tools."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Report must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Report must keep public-ready at 0."
+    },
+    {
+      "id": "payload_count",
+      "severity": "passed",
+      "message": "Report must include at least 18 payloads."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json must require human review before training."
+    },
+    {
+      "id": "payload_root:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "payload_extension:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must use .fixture.json extension."
+    },
+    {
+      "id": "payload_exists:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must exist."
+    },
+    {
+      "id": "payload_status:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must be generated public-safe payload."
+    },
+    {
+      "id": "payload_no_private:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must declare no private content."
+    },
+    {
+      "id": "payload_not_tool_output:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must not claim to be tool output."
+    },
+    {
+      "id": "payload_public_ready_false:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must keep public_ready false."
+    },
+    {
+      "id": "payload_public_ready_zero:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must keep public-ready after payload at 0."
+    },
+    {
+      "id": "payload_human_review:examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json",
+      "severity": "passed",
+      "message": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json must require human review before training."
+    }
+  ],
+  "next_actions": [
+    "Create isolated smoke readers for fixture payload shape.",
+    "Keep dependency installation separate and explicit.",
+    "Do not run private OCR, embeddings or training."
+  ]
+}
