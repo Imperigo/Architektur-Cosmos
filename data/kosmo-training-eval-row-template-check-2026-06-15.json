@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T04:59:37.908Z",
+  "generated_at": "2026-06-15T14:59:18.541Z",
   "status": "training_eval_row_template_guard_passed",
   "policy": {
     "validates_template_only": true,

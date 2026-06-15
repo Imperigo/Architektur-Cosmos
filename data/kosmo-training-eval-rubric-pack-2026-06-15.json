@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T04:59:36.959Z",
+  "generated_at": "2026-06-15T14:59:17.830Z",
   "status": "training_eval_rubric_pack_ready",
   "policy": {
     "rubric_only": true,
@@ -14,7 +14,7 @@
   "source_refs": [
     "data/kosmo-training-memory-readiness-pack-2026-06-15.json",
     "data/kosmo-local-worker-pilot-task-queue-2026-06-15.json",
-    "data/kosmo-vision-completion-roadmap-2026-06-14.json"
+    "data/kosmo-vision-completion-roadmap-2026-06-15.json"
   ],
   "summary": {
     "suites": 6,
