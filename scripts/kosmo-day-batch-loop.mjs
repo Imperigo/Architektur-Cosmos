@@ -94,6 +94,12 @@ const steps = [
   step('github_readme_signal_scan_check', 'GitHub README Signal Scan Check', ['run', 'kosmo:innovation-github-readme-signal-scan-check']),
   step('github_fixture_contract_plan', 'GitHub Fixture Contract Plan', ['run', 'kosmo:innovation-github-fixture-contract-plan']),
   step('github_fixture_contract_plan_check', 'GitHub Fixture Contract Plan Check', ['run', 'kosmo:innovation-github-fixture-contract-plan-check']),
+  step('github_fixture_skeletons', 'GitHub Fixture Skeletons', ['run', 'kosmo:innovation-github-fixture-skeletons']),
+  step('github_fixture_skeletons_check', 'GitHub Fixture Skeletons Check', ['run', 'kosmo:innovation-github-fixture-skeletons-check']),
+  step('github_fixture_payloads', 'GitHub Fixture Payloads', ['run', 'kosmo:innovation-github-fixture-payloads']),
+  step('github_fixture_payloads_check', 'GitHub Fixture Payloads Check', ['run', 'kosmo:innovation-github-fixture-payloads-check']),
+  step('github_fixture_payload_smoke', 'GitHub Fixture Payload Smoke', ['run', 'kosmo:innovation-github-fixture-payload-smoke']),
+  step('github_fixture_payload_smoke_check', 'GitHub Fixture Payload Smoke Check', ['run', 'kosmo:innovation-github-fixture-payload-smoke-check']),
   step('orbit_status_bridge', 'Orbit Status Bridge', ['run', 'kosmo:orbit-status-bridge'])
 ];
 
@@ -137,6 +143,9 @@ async function main() {
   console.log(`Local worker execution runbook check: ${report.summary.local_worker_execution_runbook_check_status}`);
   console.log(`Innovation smoke: ${report.summary.innovation_smoke_status}`);
   console.log(`GitHub fixture contract plan: ${report.summary.github_fixture_contract_plan_status}`);
+  console.log(`GitHub fixture skeletons: ${report.summary.github_fixture_skeletons_status}`);
+  console.log(`GitHub fixture payloads: ${report.summary.github_fixture_payloads_status}`);
+  console.log(`GitHub fixture payload smoke: ${report.summary.github_fixture_payload_smoke_status}`);
   console.log(`Orbit bridge: ${report.summary.orbit_bridge_status}`);
   console.log(`Source-root owner action: ${report.summary.source_root_owner_action_status}`);
   console.log(`Wrote: ${relative(root, outputMd)}`);
@@ -251,6 +260,12 @@ async function buildReport({ results, startedAt }) {
   const githubReadmeSignalScanCheck = await readOptionalJson(`data/kosmo-innovation-github-readme-signal-scan-check-${dateStamp}.json`);
   const githubFixtureContractPlan = await readOptionalJson(`data/kosmo-innovation-github-fixture-contract-plan-${dateStamp}.json`);
   const githubFixtureContractPlanCheck = await readOptionalJson(`data/kosmo-innovation-github-fixture-contract-plan-check-${dateStamp}.json`);
+  const githubFixtureSkeletons = await readOptionalJson(`data/kosmo-innovation-github-fixture-skeletons-${dateStamp}.json`);
+  const githubFixtureSkeletonsCheck = await readOptionalJson(`data/kosmo-innovation-github-fixture-skeletons-check-${dateStamp}.json`);
+  const githubFixturePayloads = await readOptionalJson(`data/kosmo-innovation-github-fixture-payloads-${dateStamp}.json`);
+  const githubFixturePayloadsCheck = await readOptionalJson(`data/kosmo-innovation-github-fixture-payloads-check-${dateStamp}.json`);
+  const githubFixturePayloadSmoke = await readOptionalJson(`data/kosmo-innovation-github-fixture-payload-smoke-${dateStamp}.json`);
+  const githubFixturePayloadSmokeCheck = await readOptionalJson(`data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`);
   const orbitBridge = await readOptionalJson(`data/kosmo-orbit-status-bridge-${dateStamp}.json`);
   const ownerHandoffPassed = ownerPacket?.status === 'owner_review_packet_guard_passed' &&
     ownerSession?.status === 'owner_review_session_brief_guard_passed';
@@ -290,6 +305,12 @@ async function buildReport({ results, startedAt }) {
     invariant('github_readme_signal_scan_guard_passed', githubReadmeSignalScanCheck?.status === 'innovation_github_readme_signal_scan_guard_passed', githubReadmeSignalScanCheck?.status),
     invariant('github_fixture_contract_plan_ready', githubFixtureContractPlan?.status === 'innovation_github_fixture_contract_plan_ready' && (githubFixtureContractPlan?.summary?.executable_now ?? 0) === 0, `${githubFixtureContractPlan?.status}, execute=${githubFixtureContractPlan?.summary?.executable_now ?? 'missing'}`),
     invariant('github_fixture_contract_plan_guard_passed', githubFixtureContractPlanCheck?.status === 'innovation_github_fixture_contract_plan_guard_passed', githubFixtureContractPlanCheck?.status),
+    invariant('github_fixture_skeletons_ready', githubFixtureSkeletons?.status === 'innovation_github_fixture_skeletons_ready' && (githubFixtureSkeletons?.summary?.executable_now ?? 0) === 0, `${githubFixtureSkeletons?.status}, execute=${githubFixtureSkeletons?.summary?.executable_now ?? 'missing'}`),
+    invariant('github_fixture_skeletons_guard_passed', githubFixtureSkeletonsCheck?.status === 'innovation_github_fixture_skeletons_guard_passed', githubFixtureSkeletonsCheck?.status),
+    invariant('github_fixture_payloads_ready', githubFixturePayloads?.status === 'innovation_github_fixture_payloads_ready' && (githubFixturePayloads?.summary?.executable_now ?? 0) === 0, `${githubFixturePayloads?.status}, execute=${githubFixturePayloads?.summary?.executable_now ?? 'missing'}`),
+    invariant('github_fixture_payloads_guard_passed', githubFixturePayloadsCheck?.status === 'innovation_github_fixture_payloads_guard_passed', githubFixturePayloadsCheck?.status),
+    invariant('github_fixture_payload_smoke_passed', githubFixturePayloadSmoke?.status === 'innovation_github_fixture_payload_smoke_passed' && (githubFixturePayloadSmoke?.summary?.failures ?? 1) === 0, `${githubFixturePayloadSmoke?.status}, failures=${githubFixturePayloadSmoke?.summary?.failures ?? 'missing'}`),
+    invariant('github_fixture_payload_smoke_guard_passed', githubFixturePayloadSmokeCheck?.status === 'innovation_github_fixture_payload_smoke_guard_passed', githubFixturePayloadSmokeCheck?.status),
     invariant('orbit_bridge_ready', ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status), orbitBridge?.status),
     invariant('source_root_activation_guarded', [
       'source_root_activation_waiting_for_owner_storage_action',
@@ -370,6 +391,14 @@ async function buildReport({ results, startedAt }) {
       github_readme_signal_scan_items: githubReadmeSignalScan?.summary?.scanned_items ?? null,
       github_fixture_contract_plan_status: githubFixtureContractPlan?.status || null,
       github_fixture_contract_plan_count: githubFixtureContractPlan?.summary?.contract_plans ?? null,
+      github_fixture_skeletons_status: githubFixtureSkeletons?.status || null,
+      github_fixture_skeletons_files: githubFixtureSkeletons?.summary?.files_written ?? null,
+      github_fixture_payloads_status: githubFixturePayloads?.status || null,
+      github_fixture_payloads_written: githubFixturePayloads?.summary?.payloads_written ?? null,
+      github_fixture_payload_smoke_status: githubFixturePayloadSmoke?.status || null,
+      github_fixture_payload_smoke_payloads: githubFixturePayloadSmoke?.summary?.payloads ?? null,
+      github_fixture_payload_smoke_lanes: githubFixturePayloadSmoke?.summary?.lanes ?? null,
+      github_fixture_payload_smoke_content_types: githubFixturePayloadSmoke?.summary?.content_types ?? null,
       orbit_bridge_status: orbitBridge?.status || null,
       source_root_blocker_status: blocker?.status || null,
       source_root_decision_session_refresh_status: decisionSessionRefresh?.status || null,
@@ -502,6 +531,12 @@ async function buildReport({ results, startedAt }) {
       `data/kosmo-innovation-github-readme-signal-scan-check-${dateStamp}.json`,
       `data/kosmo-innovation-github-fixture-contract-plan-${dateStamp}.json`,
       `data/kosmo-innovation-github-fixture-contract-plan-check-${dateStamp}.json`,
+      `data/kosmo-innovation-github-fixture-skeletons-${dateStamp}.json`,
+      `data/kosmo-innovation-github-fixture-skeletons-check-${dateStamp}.json`,
+      `data/kosmo-innovation-github-fixture-payloads-${dateStamp}.json`,
+      `data/kosmo-innovation-github-fixture-payloads-check-${dateStamp}.json`,
+      `data/kosmo-innovation-github-fixture-payload-smoke-${dateStamp}.json`,
+      `data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`,
       `data/kosmo-orbit-status-bridge-${dateStamp}.json`
     ],
     invariants,
@@ -561,6 +596,9 @@ function renderMarkdown(report) {
   lines.push(`- GitHub review queue: ${report.summary.github_review_queue_status}, items ${report.summary.github_review_queue_items ?? '-'}`);
   lines.push(`- GitHub README signal scan: ${report.summary.github_readme_signal_scan_status}, items ${report.summary.github_readme_signal_scan_items ?? '-'}`);
   lines.push(`- GitHub fixture contract plan: ${report.summary.github_fixture_contract_plan_status}, plans ${report.summary.github_fixture_contract_plan_count ?? '-'}`);
+  lines.push(`- GitHub fixture skeletons: ${report.summary.github_fixture_skeletons_status}, files ${report.summary.github_fixture_skeletons_files ?? '-'}`);
+  lines.push(`- GitHub fixture payloads: ${report.summary.github_fixture_payloads_status}, payloads ${report.summary.github_fixture_payloads_written ?? '-'}`);
+  lines.push(`- GitHub fixture payload smoke: ${report.summary.github_fixture_payload_smoke_status}, payloads ${report.summary.github_fixture_payload_smoke_payloads ?? '-'}, lanes ${report.summary.github_fixture_payload_smoke_lanes ?? '-'}, content types ${report.summary.github_fixture_payload_smoke_content_types ?? '-'}`);
   lines.push(`- Orbit bridge: ${report.summary.orbit_bridge_status}`);
   lines.push(`- Source-root blocker: ${report.summary.source_root_blocker_status}`);
   lines.push(`- Source-root decision session refresh: ${report.summary.source_root_decision_session_refresh_status}, changed ${report.summary.source_root_decision_session_refresh_changed ? 'yes' : 'no'}, options ${report.summary.source_root_decision_session_refresh_options ?? '-'}, failures ${report.summary.source_root_decision_session_refresh_failures ?? '-'}`);
