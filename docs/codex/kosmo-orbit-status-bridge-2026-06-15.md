@@ -1,6 +1,6 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T13:43:43.215Z
+Generated: 2026-06-15T13:46:37.766Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
@@ -29,7 +29,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6
 - Local worker execution runbook: local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0
 - Local worker output contracts: local_worker_output_contract_review_ready, contracts 9, present valid 9, repo conversion now 0, execute now 0, check local_worker_output_contract_review_guard_passed, failures 0
-- Source-independent work queue: source_independent_work_queue_ready, tasks 6, completed 4, codex executable 0, owner actions 2, failures 0
+- Source-independent work queue: source_independent_work_queue_ready, tasks 9, completed 7, codex executable 0, owner actions 2, failures 0
 - Pilot gap label review: pilot_gap_label_review_ready, labels 12, hard blockers 7, owner decisions 7, check pilot_gap_label_review_guard_passed, failures 0
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
@@ -61,7 +61,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
 | `local-worker-execution-runbook` Local Worker Execution Runbook | review_only_ready | no | local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0 |
 | `local-worker-output-contracts` Local Worker Output Contracts | review_only_ready | no | 9 contracts, present 9, repo 0, execute 0, failures 0 |
-| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 6 tasks, completed 4, codex 0, owner 2, failures 0 |
+| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 9 tasks, completed 7, codex 0, owner 2, failures 0 |
 | `private-metadata-inventory` Private Metadata Inventory | blocked_with_smoke_passed | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `pilot-gap-labels` Pilot Gap Labels | review_only_ready | yes | 12 labels, 7 hard blockers, owner 7, failures 0 |

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:43:43.487Z",
+  "generated_at": "2026-06-15T13:46:38.021Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 237
+      "files": 238
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 87
+      "files": 88
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md",
+      "title": "Codex Synergiebericht 239: Orbit Local Worker Fixture Card",
+      "mirrored_inboxes": 2,
+      "bytes": 1715,
+      "modified_at": "2026-06-15T13:44:13.811Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md",
       "title": "Codex Synergiebericht 238: Local Worker Fixture Chain Task Pack",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1526,
       "modified_at": "2026-06-15T13:22:04.157Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-231-dependency-install-batch-brief.md",
-      "title": "Codex Synergiebericht 231: Dependency Install Batch Brief",
-      "mirrored_inboxes": 2,
-      "bytes": 1781,
-      "modified_at": "2026-06-15T13:18:24.419Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 231-238 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 232-239 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

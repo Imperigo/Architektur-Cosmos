@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-15T13:43:43.716Z
+Generated: 2026-06-15T13:46:38.253Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md` - 2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md` - 2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md` - 2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md` - 2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-237-orbit-fixture-chain-status.md` - 2026-06-15-codex-synergiebericht-237-orbit-fixture-chain-status.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md` - 2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-232-dependency-phase1-install.md` - 2026-06-15-codex-synergiebericht-232-dependency-phase1-install.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-232-dependency-phase1-install.md` - 2026-06-15-codex-synergiebericht-232-dependency-phase1-install.md must include a title.
-- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-231-dependency-install-batch-brief.md` - 2026-06-15-codex-synergiebericht-231-dependency-install-batch-brief.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-15-codex-synergiebericht-231-dependency-install-batch-brief.md` - 2026-06-15-codex-synergiebericht-231-dependency-install-batch-brief.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

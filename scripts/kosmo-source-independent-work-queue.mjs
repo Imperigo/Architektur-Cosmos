@@ -20,6 +20,9 @@ const refs = {
   pilotGapLabelReview: resolve(root, args.pilotGapLabelReview || `data/kosmoreferences-pilot-gap-label-review-${dateStamp}.json`),
   pilotGapLabelReviewCheck: resolve(root, args.pilotGapLabelReviewCheck || `data/kosmoreferences-pilot-gap-label-review-check-${dateStamp}.json`),
   choiceMatrix: resolve(root, args.choiceMatrix || `data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`),
+  preparePhase1SourcePackageContractCheck: resolve(root, args.preparePhase1SourcePackageContractCheck || `data/kosmo-prepare-phase1-source-package-contract-check-${dateStamp}.json`),
+  assetPreparePhase1FixtureContractCheck: resolve(root, args.assetPreparePhase1FixtureContractCheck || `data/kosmo-asset-prepare-phase1-fixture-contract-check-${dateStamp}.json`),
+  localWorkerFixtureChainTaskPackCheck: resolve(root, args.localWorkerFixtureChainTaskPackCheck || `data/kosmo-local-worker-fixture-chain-task-pack-check-${dateStamp}.json`),
   orbitBridge: resolve(root, args.orbitBridge || `data/kosmo-orbit-status-bridge-${dateStamp}.json`)
 };
 
@@ -45,6 +48,9 @@ async function main() {
     pilotGapLabelReview: await readOptionalJson(refs.pilotGapLabelReview),
     pilotGapLabelReviewCheck: await readOptionalJson(refs.pilotGapLabelReviewCheck),
     choiceMatrix: await readJson(refs.choiceMatrix),
+    preparePhase1SourcePackageContractCheck: await readOptionalJson(refs.preparePhase1SourcePackageContractCheck),
+    assetPreparePhase1FixtureContractCheck: await readOptionalJson(refs.assetPreparePhase1FixtureContractCheck),
+    localWorkerFixtureChainTaskPackCheck: await readOptionalJson(refs.localWorkerFixtureChainTaskPackCheck),
     orbitBridge: await readOptionalJson(refs.orbitBridge)
   };
   const queue = buildQueue(reports);
@@ -81,6 +87,9 @@ function buildQueue({
   pilotGapLabelReview,
   pilotGapLabelReviewCheck,
   choiceMatrix,
+  preparePhase1SourcePackageContractCheck,
+  assetPreparePhase1FixtureContractCheck,
+  localWorkerFixtureChainTaskPackCheck,
   orbitBridge
 }) {
   const failures = [];
@@ -97,8 +106,11 @@ function buildQueue({
     pilotGapLabelReviewCheck?.status === 'pilot_gap_label_review_guard_passed';
   const localWorkerContractDone = localWorkerOutputContractReview?.status === 'local_worker_output_contract_review_ready' &&
     localWorkerOutputContractReviewCheck?.status === 'local_worker_output_contract_review_guard_passed';
+  const prepareSourcePackageDone = preparePhase1SourcePackageContractCheck?.status === 'prepare_phase1_source_package_contract_guard_passed';
+  const assetPrepareFixtureDone = assetPreparePhase1FixtureContractCheck?.status === 'kosmoasset_prepare_phase1_fixture_contract_guard_passed';
+  const localWorkerFixtureChainDone = localWorkerFixtureChainTaskPackCheck?.status === 'local_worker_fixture_chain_task_pack_guard_passed';
   const orbitRefreshDone = ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status) &&
-    (orbitBridge?.summary?.cards ?? 0) >= 28 &&
+    (orbitBridge?.summary?.cards ?? 0) >= 30 &&
     (orbitBridge?.summary?.source_independent_work_queue_completed_review_only ?? 0) >= 3 &&
     (orbitBridge?.summary?.public_ready_after_bridge ?? 0) === 0;
 
@@ -155,6 +167,48 @@ function buildQueue({
       evidence: localWorkerContractDone
         ? `completed ${localWorkerOutputContractReview.summary?.contracts ?? 0} contracts, guard ${localWorkerOutputContractReviewCheck.summary?.passed ?? 0}/${localWorkerOutputContractReviewCheck.summary?.checks ?? 0}`
         : `outputs ${localWorkerRunbook.summary?.outputs_present ?? 0}/${localWorkerRunbook.summary?.tasks_total ?? 0}, executable ${localWorkerRunbook.summary?.execute_allowed_if_output_missing ?? 0}`
+    }),
+    task({
+      id: 'codex_prepare_phase1_source_package_contract',
+      lane: 'kosmoprepare-kosmoreferences',
+      actor: 'codex',
+      action: 'Keep the synthetic KosmoPrepare source package contract checked and source-free.',
+      executableNow: !prepareSourcePackageDone,
+      completed: prepareSourcePackageDone,
+      ownerAction: false,
+      sourceIndependent: true,
+      command: 'npm run kosmo:prepare-phase1-source-package-contract && npm run kosmo:prepare-phase1-source-package-contract-check',
+      evidence: prepareSourcePackageDone
+        ? `completed package ${preparePhase1SourcePackageContractCheck.summary?.package_id ?? 'n/a'}, failures ${preparePhase1SourcePackageContractCheck.summary?.failures ?? 0}`
+        : 'synthetic source package contract missing or guard not passed'
+    }),
+    task({
+      id: 'codex_asset_prepare_phase1_fixture_contract',
+      lane: 'kosmoasset',
+      actor: 'codex',
+      action: 'Keep the synthetic KosmoAsset fixture library contract checked and public-ready blocked.',
+      executableNow: !assetPrepareFixtureDone,
+      completed: assetPrepareFixtureDone,
+      ownerAction: false,
+      sourceIndependent: true,
+      command: 'npm run kosmo:asset-prepare-phase1-fixture-contract && npm run kosmo:asset-prepare-phase1-fixture-contract-check',
+      evidence: assetPrepareFixtureDone
+        ? `completed library ${assetPreparePhase1FixtureContractCheck.summary?.library_id ?? 'n/a'}, assets ${assetPreparePhase1FixtureContractCheck.summary?.assets ?? 0}, failures ${assetPreparePhase1FixtureContractCheck.summary?.failures ?? 0}`
+        : 'synthetic asset fixture contract missing or guard not passed'
+    }),
+    task({
+      id: 'codex_local_worker_fixture_chain_task_pack',
+      lane: 'local_worker',
+      actor: 'codex',
+      action: 'Keep the fixture-only local worker task pack defined but not executable by default.',
+      executableNow: !localWorkerFixtureChainDone,
+      completed: localWorkerFixtureChainDone,
+      ownerAction: false,
+      sourceIndependent: true,
+      command: 'npm run kosmo:local-worker-fixture-chain-task-pack && npm run kosmo:local-worker-fixture-chain-task-pack-check',
+      evidence: localWorkerFixtureChainDone
+        ? `completed ${localWorkerFixtureChainTaskPackCheck.summary?.tasks ?? 0} tasks, executable ${localWorkerFixtureChainTaskPackCheck.summary?.executable_now ?? 0}, failures ${localWorkerFixtureChainTaskPackCheck.summary?.failures ?? 0}`
+        : 'fixture-chain local worker task pack missing or guard not passed'
     }),
     task({
       id: 'owner_open_review_batches',

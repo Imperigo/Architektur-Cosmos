@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:43:43.215Z",
+  "generated_at": "2026-06-15T13:46:37.766Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -121,8 +121,8 @@
     "local_worker_output_contract_review_check_status": "local_worker_output_contract_review_guard_passed",
     "local_worker_output_contract_review_check_failures": 0,
     "source_independent_work_queue_status": "source_independent_work_queue_ready",
-    "source_independent_work_queue_tasks": 6,
-    "source_independent_work_queue_completed_review_only": 4,
+    "source_independent_work_queue_tasks": 9,
+    "source_independent_work_queue_completed_review_only": 7,
     "source_independent_work_queue_codex_executable_now": 0,
     "source_independent_work_queue_owner_actions": 2,
     "source_independent_work_queue_failures": 0,
@@ -315,7 +315,7 @@
       "id": "source-independent-work-queue",
       "title": "Source-Independent Work Queue",
       "status": "review_only_ready",
-      "signal": "6 tasks, completed 4, codex 0, owner 2, failures 0",
+      "signal": "9 tasks, completed 7, codex 0, owner 2, failures 0",
       "owner_action_required": true,
       "route_hint": "Safe work that does not require private source-root activation",
       "source_ref": "data/kosmo-source-independent-work-queue-2026-06-15.json"

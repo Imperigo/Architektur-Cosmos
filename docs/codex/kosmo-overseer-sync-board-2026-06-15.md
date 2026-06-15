@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T13:43:43.487Z
+Generated: 2026-06-15T13:46:38.021Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md` | Codex Synergiebericht 239: Orbit Local Worker Fixture Card | 2 |
 | `2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md` | Codex Synergiebericht 238: Local Worker Fixture Chain Task Pack | 2 |
 | `2026-06-15-codex-synergiebericht-237-orbit-fixture-chain-status.md` | Codex Synergiebericht 237: Orbit Fixture Chain Status | 2 |
 | `2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md` | Codex Synergiebericht 236: KosmoAsset Prepare Phase 1 Fixture Contract | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-234-prepare-phase1-adapter-fixture.md` | Codex Synergiebericht 234: Prepare Phase 1 Adapter Fixture | 2 |
 | `2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md` | Codex Synergiebericht 233: Dependency Phase 1 Fixture Smoke | 2 |
 | `2026-06-15-codex-synergiebericht-232-dependency-phase1-install.md` | Codex Synergiebericht 232: Dependency Phase 1 Install | 2 |
-| `2026-06-15-codex-synergiebericht-231-dependency-install-batch-brief.md` | Codex Synergiebericht 231: Dependency Install Batch Brief | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 231-238 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 232-239 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
