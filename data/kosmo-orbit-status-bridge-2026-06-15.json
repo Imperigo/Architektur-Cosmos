@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:59:29.569Z",
+  "generated_at": "2026-06-15T16:04:09.311Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -37,6 +37,8 @@
     "data/kosmo-owner-unlock-intake-apply-plan-check-2026-06-15.json",
     "data/kosmo-owner-unlock-session-edit-preview-2026-06-15.json",
     "data/kosmo-owner-unlock-session-edit-preview-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-operational-start-card-2026-06-15.json",
+    "data/kosmo-owner-unlock-operational-start-card-check-2026-06-15.json",
     "data/kosmo-source-root-activation-preflight-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-15.json",
@@ -93,9 +95,9 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 49,
+    "cards": 50,
     "blocking_cards": 4,
-    "owner_action_cards": 22,
+    "owner_action_cards": 23,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -407,6 +409,15 @@
       "owner_action_required": true,
       "route_hint": "Preview which session files would change after exact owner unlock; review only",
       "source_ref": "data/kosmo-owner-unlock-session-edit-preview-2026-06-15.json"
+    },
+    {
+      "id": "owner-unlock-operational-start-card",
+      "title": "Owner Unlock Operational Start Card",
+      "status": "owner_action",
+      "signal": "6/6 components, next 9, blocked 5, writes now no, failures 0",
+      "owner_action_required": true,
+      "route_hint": "Single start card for the exact owner-unlock path; checklist only",
+      "source_ref": "data/kosmo-owner-unlock-operational-start-card-2026-06-15.json"
     },
     {
       "id": "source-root-activation",

@@ -288,6 +288,8 @@
     "kosmo:owner-unlock-intake-apply-plan-check": "node scripts/kosmo-owner-unlock-intake-apply-plan-check.mjs",
     "kosmo:owner-unlock-session-edit-preview": "node scripts/kosmo-owner-unlock-session-edit-preview.mjs",
     "kosmo:owner-unlock-session-edit-preview-check": "node scripts/kosmo-owner-unlock-session-edit-preview-check.mjs",
+    "kosmo:owner-unlock-operational-start-card": "node scripts/kosmo-owner-unlock-operational-start-card.mjs",
+    "kosmo:owner-unlock-operational-start-card-check": "node scripts/kosmo-owner-unlock-operational-start-card-check.mjs",
     "kosmo:villa-provenance-brief": "node scripts/kosmo-villa-provenance-review-brief.mjs",
     "kosmo:ingenbohl-pdf-brief": "node scripts/kosmo-ingenbohl-pdf-extraction-brief.mjs",
     "kosmo:sogn-source-root-brief": "node scripts/kosmo-sogn-source-root-decision-brief.mjs",

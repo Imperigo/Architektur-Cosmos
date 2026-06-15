@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T16:03:19.574Z",
+  "status": "owner_unlock_operational_start_card_ready",
+  "policy": {
+    "card_only": true,
+    "records_decisions": false,
+    "writes_intake_now": false,
+    "writes_session_files_now": false,
+    "executes_commands_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "runs_local_llm_now": false,
+    "public_ready_after_card": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-edit-preview-2026-06-15.json",
+    "data/kosmo-source-root-post-owner-activation-queue-2026-06-15.json",
+    "data/kosmo-owner-unlock-fast-reply-card-2026-06-15.json",
+    "data/kosmo-tomorrow-day-batch-2026-06-15.json",
+    "data/kosmo-overseer-sync-board-2026-06-15.json"
+  ],
+  "summary": {
+    "components": 6,
+    "ready_components": 6,
+    "checkpoint_status": "owner_unlock_pipeline_checkpoint_ready",
+    "checkpoint_guards": "236/236",
+    "owner_reply_state": "broad_intent_seen_exact_reply_not_applied",
+    "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
+    "selected_root_path_preview": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "selected_root_exists_preview": true,
+    "expected_session_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json",
+    "session_edit_preview_writes_now": false,
+    "post_owner_queue_steps": 7,
+    "post_owner_queue_executable_now": 0,
+    "post_owner_queue_blocked_now": 7,
+    "next_commands": 9,
+    "blocked_commands": 5,
+    "writes_now": false,
+    "failures": 0,
+    "public_ready_after_card": 0
+  },
+  "components": [
+    {
+      "id": "pipeline_checkpoint",
+      "ready": true
+    },
+    {
+      "id": "session_edit_preview",
+      "ready": true
+    },
+    {
+      "id": "post_owner_queue",
+      "ready": true
+    },
+    {
+      "id": "fast_reply_card",
+      "ready": true
+    },
+    {
+      "id": "tomorrow_batch",
+      "ready": true
+    },
+    {
+      "id": "sync_board",
+      "ready": true
+    }
+  ],
+  "exact_owner_reply_template": "source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+  "next_commands_after_exact_reply": [
+    "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"",
+    "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"",
+    "npm run kosmo:owner-unlock-session-edit-preview",
+    "npm run kosmo:owner-unlock-session-edit-preview-check",
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:source-root-post-owner-activation-queue",
+    "npm run kosmo:source-root-post-owner-activation-queue-check"
+  ],
+  "blocked_commands_until_guards_pass": [
+    "npm run kosmo:private-metadata-inventory",
+    "npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\"",
+    "private OCR/PDF/book extraction",
+    "local LLM private-content task assignment",
+    "public-ready promotion"
+  ],
+  "worker_notes": {
+    "codex": "Start with this card, then run checkpoint and queue guards before any private metadata task.",
+    "claude_code": "Do not apply the session edit unless the exact owner reply is present and reviewed.",
+    "local_llm": "No private-content work is executable from this card.",
+    "kosmo_overseer": "Treat this as an operational checklist, not owner approval."
+  },
+  "hard_stops": [
+    "Do not treat broad freeform approval as exact owner reply.",
+    "Do not write intake or session files from this card.",
+    "Do not run private inventory, OCR, embeddings or local LLM private tasks from this card.",
+    "Do not change public-ready state."
+  ],
+  "failures": []
+}

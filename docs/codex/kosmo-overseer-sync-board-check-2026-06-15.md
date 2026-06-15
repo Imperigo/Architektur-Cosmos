@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-15T15:59:29.331Z
+Generated: 2026-06-15T16:04:09.066Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-280-owner-unlock-operational-start-card.md` - 2026-06-15-codex-synergiebericht-280-owner-unlock-operational-start-card.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-15-codex-synergiebericht-280-owner-unlock-operational-start-card.md` - 2026-06-15-codex-synergiebericht-280-owner-unlock-operational-start-card.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-279-post-owner-queue-date-guard.md` - 2026-06-15-codex-synergiebericht-279-post-owner-queue-date-guard.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-279-post-owner-queue-date-guard.md` - 2026-06-15-codex-synergiebericht-279-post-owner-queue-date-guard.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-278-owner-unlock-pipeline-rollup.md` - 2026-06-15-codex-synergiebericht-278-owner-unlock-pipeline-rollup.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-274-path-a-readiness-certificate.md` - 2026-06-15-codex-synergiebericht-274-path-a-readiness-certificate.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-273-owner-exact-reply-preview.md` - 2026-06-15-codex-synergiebericht-273-owner-exact-reply-preview.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-273-owner-exact-reply-preview.md` - 2026-06-15-codex-synergiebericht-273-owner-exact-reply-preview.md must include a title.
-- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-272-day-batch-after-fast-reply.md` - 2026-06-15-codex-synergiebericht-272-day-batch-after-fast-reply.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-15-codex-synergiebericht-272-day-batch-after-fast-reply.md` - 2026-06-15-codex-synergiebericht-272-day-batch-after-fast-reply.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

@@ -34,6 +34,8 @@ const refs = {
   ownerUnlockIntakeApplyPlanCheck: `data/kosmo-owner-unlock-intake-apply-plan-check-${dateStamp}.json`,
   ownerUnlockSessionEditPreview: `data/kosmo-owner-unlock-session-edit-preview-${dateStamp}.json`,
   ownerUnlockSessionEditPreviewCheck: `data/kosmo-owner-unlock-session-edit-preview-check-${dateStamp}.json`,
+  ownerUnlockOperationalStartCard: `data/kosmo-owner-unlock-operational-start-card-${dateStamp}.json`,
+  ownerUnlockOperationalStartCardCheck: `data/kosmo-owner-unlock-operational-start-card-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -137,6 +139,8 @@ function buildBridge(reports) {
   const ownerUnlockIntakeApplyPlanCheckSummary = reports.ownerUnlockIntakeApplyPlanCheck?.summary || {};
   const ownerUnlockSessionEditPreviewSummary = reports.ownerUnlockSessionEditPreview?.summary || {};
   const ownerUnlockSessionEditPreviewCheckSummary = reports.ownerUnlockSessionEditPreviewCheck?.summary || {};
+  const ownerUnlockOperationalStartCardSummary = reports.ownerUnlockOperationalStartCard?.summary || {};
+  const ownerUnlockOperationalStartCardCheckSummary = reports.ownerUnlockOperationalStartCardCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -427,6 +431,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Preview which session files would change after exact owner unlock; review only',
       source_ref: refs.ownerUnlockSessionEditPreview
+    },
+    {
+      id: 'owner-unlock-operational-start-card',
+      title: 'Owner Unlock Operational Start Card',
+      status: reports.ownerUnlockOperationalStartCard?.status === 'owner_unlock_operational_start_card_ready' &&
+        reports.ownerUnlockOperationalStartCardCheck?.status === 'owner_unlock_operational_start_card_guard_passed'
+        ? 'owner_action'
+        : 'needs_review',
+      signal: reports.ownerUnlockOperationalStartCard?.status
+        ? `${ownerUnlockOperationalStartCardSummary.ready_components ?? 0}/${ownerUnlockOperationalStartCardSummary.components ?? 0} components, next ${ownerUnlockOperationalStartCardSummary.next_commands ?? 0}, blocked ${ownerUnlockOperationalStartCardSummary.blocked_commands ?? 0}, writes now ${ownerUnlockOperationalStartCardSummary.writes_now ? 'yes' : 'no'}, failures ${ownerUnlockOperationalStartCardCheckSummary.failures ?? 0}`
+        : 'missing operational start card',
+      owner_action_required: true,
+      route_hint: 'Single start card for the exact owner-unlock path; checklist only',
+      source_ref: refs.ownerUnlockOperationalStartCard
     },
     {
       id: 'source-root-activation',
