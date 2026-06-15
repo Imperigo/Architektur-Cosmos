@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:45:31.324Z",
+  "generated_at": "2026-06-15T17:50:07.379Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 297
+      "files": 298
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 147
+      "files": 148
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-299-conversion-plan-preview.md",
+      "title": "Codex Synergiebericht 299 - Conversion Plan Preview",
+      "mirrored_inboxes": 2,
+      "bytes": 3185,
+      "modified_at": "2026-06-15T17:49:51.760Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-298-human-overseer-review-decision-card.md",
       "title": "Codex Synergiebericht 298 - Human/Overseer Review Decision Card",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 3047,
       "modified_at": "2026-06-15T17:11:56.542Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-291-validator-fixtures.md",
-      "title": "Codex Synergiebericht 291 - Validator Fixtures",
-      "mirrored_inboxes": 2,
-      "bytes": 3306,
-      "modified_at": "2026-06-15T17:06:43.590Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 291-298 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 292-299 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:45:36.322Z",
+  "generated_at": "2026-06-15T17:50:12.898Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -173,6 +173,11 @@
       "id": "start_sequence_local_worker_innovation_human_overseer_review_decision_card",
       "severity": "passed",
       "message": "Start sequence must include local worker innovation human/overseer review decision card."
+    },
+    {
+      "id": "start_sequence_local_worker_innovation_conversion_plan_preview",
+      "severity": "passed",
+      "message": "Start sequence must include local worker innovation conversion plan preview."
     },
     {
       "id": "start_sequence_morning_routine_run",

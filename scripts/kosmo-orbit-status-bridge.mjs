@@ -91,6 +91,8 @@ const refs = {
   localWorkerInnovationPostOutputIntakeReviewCheck: `data/kosmo-local-worker-innovation-post-output-intake-review-check-${dateStamp}.json`,
   localWorkerInnovationHumanOverseerReviewDecisionCard: `data/kosmo-local-worker-innovation-human-overseer-review-decision-card-${dateStamp}.json`,
   localWorkerInnovationHumanOverseerReviewDecisionCardCheck: `data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-${dateStamp}.json`,
+  localWorkerInnovationConversionPlanPreview: `data/kosmo-local-worker-innovation-conversion-plan-preview-${dateStamp}.json`,
+  localWorkerInnovationConversionPlanPreviewCheck: `data/kosmo-local-worker-innovation-conversion-plan-preview-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -229,6 +231,8 @@ function buildBridge(reports) {
   const localWorkerInnovationPostOutputIntakeReviewCheckSummary = reports.localWorkerInnovationPostOutputIntakeReviewCheck?.summary || {};
   const localWorkerInnovationHumanOverseerReviewDecisionCardSummary = reports.localWorkerInnovationHumanOverseerReviewDecisionCard?.summary || {};
   const localWorkerInnovationHumanOverseerReviewDecisionCardCheckSummary = reports.localWorkerInnovationHumanOverseerReviewDecisionCardCheck?.summary || {};
+  const localWorkerInnovationConversionPlanPreviewSummary = reports.localWorkerInnovationConversionPlanPreview?.summary || {};
+  const localWorkerInnovationConversionPlanPreviewCheckSummary = reports.localWorkerInnovationConversionPlanPreviewCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -892,6 +896,18 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Decision card for future intake candidates; no apply, conversion or public-ready state',
       source_ref: refs.localWorkerInnovationHumanOverseerReviewDecisionCardCheck
+    },
+    {
+      id: 'local-worker-innovation-conversion-plan-preview',
+      title: 'Local Worker Innovation Conversion Plan Preview',
+      status: reports.localWorkerInnovationConversionPlanPreview?.status === 'local_worker_innovation_conversion_plan_preview_ready' &&
+        reports.localWorkerInnovationConversionPlanPreviewCheck?.status === 'local_worker_innovation_conversion_plan_preview_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationConversionPlanPreviewSummary.mode || '-'}, eligible ${localWorkerInnovationConversionPlanPreviewSummary.eligible_candidates ?? 0}, conversions ${localWorkerInnovationConversionPlanPreviewSummary.conversions_executed_now ?? 0}, public ${localWorkerInnovationConversionPlanPreviewSummary.public_ready_after_preview ?? 0}, failures ${localWorkerInnovationConversionPlanPreviewCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Preview-only conversion plan for future approved local-worker candidates; no repo derivatives',
+      source_ref: refs.localWorkerInnovationConversionPlanPreviewCheck
     },
     {
       id: 'github-innovation-watchlist',

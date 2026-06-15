@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T17:45:31.324Z
+Generated: 2026-06-15T17:50:07.379Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-299-conversion-plan-preview.md` | Codex Synergiebericht 299 - Conversion Plan Preview | 2 |
 | `2026-06-15-codex-synergiebericht-298-human-overseer-review-decision-card.md` | Codex Synergiebericht 298 - Human/Overseer Review Decision Card | 2 |
 | `2026-06-15-codex-synergiebericht-297-post-output-intake-review.md` | Codex Synergiebericht 297 - Post-Output Intake Review | 2 |
 | `2026-06-15-codex-synergiebericht-296-innovation-launch-execution-envelope.md` | Codex Synergiebericht 296 - Innovation Launch Execution Envelope | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-294-innovation-launch-apply-guard.md` | Codex Synergiebericht 294 - Innovation Launch Apply Guard | 2 |
 | `2026-06-15-codex-synergiebericht-293-innovation-launch-owner-card.md` | Codex Synergiebericht 293 - Innovation Launch Owner Card | 2 |
 | `2026-06-15-codex-synergiebericht-292-innovation-launch-dry-run.md` | Codex Synergiebericht 292 - Innovation Launch Dry Run | 2 |
-| `2026-06-15-codex-synergiebericht-291-validator-fixtures.md` | Codex Synergiebericht 291 - Validator Fixtures | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 291-298 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 292-299 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
