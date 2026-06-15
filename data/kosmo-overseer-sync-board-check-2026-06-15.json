@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:05:40.910Z",
+  "generated_at": "2026-06-15T14:11:29.784Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,26 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-247-github-discovery-scout.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-247-github-discovery-scout.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-15-codex-synergiebericht-247-github-discovery-scout.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-247-github-discovery-scout.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-246-day-batch-loop-green.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-246-day-batch-loop-green.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-15-codex-synergiebericht-246-day-batch-loop-green.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-246-day-batch-loop-green.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-245-tomorrow-day-batch-generator.md",
       "severity": "passed",
       "message": "2026-06-15-codex-synergiebericht-245-tomorrow-day-batch-generator.md must be mirrored in both inboxes."
@@ -214,26 +234,6 @@
       "id": "handoff_title:2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md",
       "severity": "passed",
       "message": "2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md must include a title."
     },
     {
       "id": "source_root_blocked",

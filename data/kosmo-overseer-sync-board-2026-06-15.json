@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:05:40.678Z",
+  "generated_at": "2026-06-15T14:11:29.560Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 244
+      "files": 246
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 94
+      "files": 96
     }
   ],
   "summary": {
@@ -47,6 +47,20 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-247-github-discovery-scout.md",
+      "title": "Codex Synergiebericht 247: GitHub Discovery Scout fuer neue Code-Kandidaten",
+      "mirrored_inboxes": 2,
+      "bytes": 1330,
+      "modified_at": "2026-06-15T14:11:05.226Z"
+    },
+    {
+      "filename": "2026-06-15-codex-synergiebericht-246-day-batch-loop-green.md",
+      "title": "Codex Synergiebericht 246: Day-Batch-Loop gruen, Source Root weiter gesperrt",
+      "mirrored_inboxes": 2,
+      "bytes": 1162,
+      "modified_at": "2026-06-15T14:08:07.851Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-245-tomorrow-day-batch-generator.md",
       "title": "Codex Synergiebericht 245: Tomorrow-Day-Batch ist reproduzierbar",
@@ -88,20 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1876,
       "modified_at": "2026-06-15T13:47:19.615Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-239-orbit-local-worker-fixture-card.md",
-      "title": "Codex Synergiebericht 239: Orbit Local Worker Fixture Card",
-      "mirrored_inboxes": 2,
-      "bytes": 1715,
-      "modified_at": "2026-06-15T13:44:13.811Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-238-local-worker-fixture-chain-task-pack.md",
-      "title": "Codex Synergiebericht 238: Local Worker Fixture Chain Task Pack",
-      "mirrored_inboxes": 2,
-      "bytes": 2150,
-      "modified_at": "2026-06-15T13:43:01.262Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 238-245 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 240-247 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
