@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:28:19.861Z",
+  "generated_at": "2026-06-15T16:34:54.460Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -93,6 +93,11 @@
       "id": "start_sequence_github_fixture_skeletons",
       "severity": "passed",
       "message": "Start sequence must include GitHub fixture skeletons."
+    },
+    {
+      "id": "start_sequence_github_promotion_matrix",
+      "severity": "passed",
+      "message": "Start sequence must include GitHub promotion matrix."
     },
     {
       "id": "start_sequence_github_fixture_payloads",

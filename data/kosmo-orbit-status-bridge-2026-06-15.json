@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:28:19.389Z",
+  "generated_at": "2026-06-15T16:34:53.990Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -80,6 +80,8 @@
     "data/kosmo-innovation-github-readme-signal-scan-check-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-contract-plan-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-contract-plan-check-2026-06-15.json",
+    "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json",
+    "data/kosmo-innovation-github-promotion-matrix-check-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-skeletons-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-skeletons-check-2026-06-15.json",
     "data/kosmo-innovation-github-fixture-payloads-2026-06-15.json",
@@ -103,7 +105,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 54,
+    "cards": 55,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -214,12 +216,16 @@
     "codex_morning_routine_run_status": "codex_morning_routine_run_ready",
     "codex_morning_routine_run_next_batch": "source_free_innovation_and_guarding",
     "codex_morning_routine_run_remote_behind_total": 0,
-    "codex_morning_routine_run_latest_handoff": 284,
+    "codex_morning_routine_run_latest_handoff": 285,
     "github_readme_signal_scan_status": "innovation_github_readme_signal_scan_ready",
     "github_readme_signal_scan_items": 7,
     "github_readme_signal_scan_high_signal_items": 5,
     "github_fixture_contract_plan_status": "innovation_github_fixture_contract_plan_ready",
     "github_fixture_contract_plan_count": 5,
+    "github_promotion_matrix_status": "innovation_github_promotion_matrix_ready",
+    "github_promotion_matrix_promotable": 5,
+    "github_promotion_matrix_held_items": 2,
+    "github_promotion_matrix_training_lanes": 3,
     "github_fixture_skeletons_status": "innovation_github_fixture_skeletons_ready",
     "github_fixture_skeletons_directories": 5,
     "github_fixture_skeletons_files": 10,
@@ -624,7 +630,7 @@
       "id": "codex-morning-routine-run",
       "title": "Codex Morning Routine Run",
       "status": "review_only_ready",
-      "signal": "fetch 2/2, behind 0, handoff 284, next source_free_innovation_and_guarding, failures 0",
+      "signal": "fetch 2/2, behind 0, handoff 285, next source_free_innovation_and_guarding, failures 0",
       "owner_action_required": false,
       "route_hint": "Guarded morning execution evidence: git fetch, handoff mirror, Source Root gate, next-batch route",
       "source_ref": "data/kosmo-codex-morning-routine-run-2026-06-15.json"
@@ -646,6 +652,15 @@
       "owner_action_required": false,
       "route_hint": "Source-free synthetic fixture contract plan; no GitHub code copied",
       "source_ref": "data/kosmo-innovation-github-fixture-contract-plan-2026-06-15.json"
+    },
+    {
+      "id": "github-promotion-matrix",
+      "title": "GitHub Promotion Matrix",
+      "status": "review_only_ready",
+      "signal": "5 promotable, held 2, lanes 3, training 3, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Source-free promotion decisions from public GitHub signals into fixture/training/ontology lanes",
+      "source_ref": "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json"
     },
     {
       "id": "github-fixture-skeletons",
@@ -785,6 +800,7 @@
     "codex_morning_routine_run_card",
     "github_readme_signal_scan_card",
     "github_fixture_contract_plan_card",
+    "github_promotion_matrix_card",
     "github_fixture_skeletons_card",
     "github_fixture_payloads_card",
     "github_fixture_payload_smoke_card",

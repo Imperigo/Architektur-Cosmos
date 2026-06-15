@@ -238,6 +238,8 @@
     "kosmo:innovation-github-readme-signal-scan-check": "node scripts/kosmo-innovation-github-readme-signal-scan-check.mjs",
     "kosmo:innovation-github-fixture-contract-plan": "node scripts/kosmo-innovation-github-fixture-contract-plan.mjs",
     "kosmo:innovation-github-fixture-contract-plan-check": "node scripts/kosmo-innovation-github-fixture-contract-plan-check.mjs",
+    "kosmo:innovation-github-promotion-matrix": "node scripts/kosmo-innovation-github-promotion-matrix.mjs",
+    "kosmo:innovation-github-promotion-matrix-check": "node scripts/kosmo-innovation-github-promotion-matrix-check.mjs",
     "kosmo:innovation-github-fixture-skeletons": "node scripts/kosmo-innovation-github-fixture-skeletons.mjs",
     "kosmo:innovation-github-fixture-skeletons-check": "node scripts/kosmo-innovation-github-fixture-skeletons-check.mjs",
     "kosmo:innovation-github-fixture-payloads": "node scripts/kosmo-innovation-github-fixture-payloads.mjs",

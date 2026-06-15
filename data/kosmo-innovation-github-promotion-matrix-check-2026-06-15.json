@@ -1,0 +1,221 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T16:34:53.750Z",
+  "status": "innovation_github_promotion_matrix_guard_passed",
+  "policy": {
+    "validates_matrix_only": true,
+    "source_free_only": true,
+    "reads_private_content": false,
+    "installs_or_downloads": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json"
+  ],
+  "summary": {
+    "matrix_status": "innovation_github_promotion_matrix_ready",
+    "checks": 39,
+    "passed": 39,
+    "failures": 0,
+    "promotable_source_free": 5,
+    "held_items": 2,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "matrix_ready",
+      "status": "passed",
+      "evidence": "innovation_github_promotion_matrix_ready"
+    },
+    {
+      "id": "policy_matrix_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_source_free",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_clone",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_code_copy",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_raw_readme",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_installs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_downloads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_run_code",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_rows",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_embeddings",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "has_review_queue_items",
+      "status": "passed",
+      "evidence": 7
+    },
+    {
+      "id": "has_contract_plans",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "promotable_matches_contracts",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "target_lanes_at_least_three",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "training_lanes_linked_at_least_three",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "next_batch_source_free",
+      "status": "passed",
+      "evidence": "source_free_innovation_and_guarding"
+    },
+    {
+      "id": "executable_now_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "no_failures",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "promotion_items_source_free",
+      "status": "passed",
+      "evidence": "promotion-01:true,promotion-02:true,promotion-03:true,promotion-04:true,promotion-05:true"
+    },
+    {
+      "id": "promotion_items_have_fixture_root",
+      "status": "passed",
+      "evidence": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/,examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/,examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/,examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/,examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/"
+    },
+    {
+      "id": "promotion_items_have_training_lane",
+      "status": "passed",
+      "evidence": "source_extraction_review,asset_candidate_review,worker_output_review,source_extraction_review,worker_output_review"
+    },
+    {
+      "id": "promotion_items_have_ontology_bindings",
+      "status": "passed",
+      "evidence": "promotion-01,promotion-02,promotion-03,promotion-04,promotion-05"
+    },
+    {
+      "id": "items_execute_now_false",
+      "status": "passed",
+      "evidence": "promotion-01:false,promotion-02:false,promotion-03:false,promotion-04:false,promotion-05:false,github-review-02:false,github-review-07:false"
+    },
+    {
+      "id": "items_local_worker_blocked",
+      "status": "passed",
+      "evidence": "promotion-01:false,promotion-02:false,promotion-03:false,promotion-04:false,promotion-05:false,github-review-02:false,github-review-07:false"
+    },
+    {
+      "id": "items_private_blocked",
+      "status": "passed",
+      "evidence": "promotion-01:false,promotion-02:false,promotion-03:false,promotion-04:false,promotion-05:false,github-review-02:false,github-review-07:false"
+    },
+    {
+      "id": "items_public_ready_zero",
+      "status": "passed",
+      "evidence": "promotion-01:0,promotion-02:0,promotion-03:0,promotion-04:0,promotion-05:0,github-review-02:0,github-review-07:0"
+    },
+    {
+      "id": "sequence_has_fixture_skeletons",
+      "status": "passed",
+      "evidence": "npm run kosmo:innovation-github-fixture-skeletons npm run kosmo:innovation-github-fixture-skeletons-check npm run kosmo:innovation-github-fixture-payloads npm run kosmo:innovation-github-fixture-payloads-check npm run kosmo:innovation-github-fixture-payload-smoke npm run kosmo:innovation-github-fixture-payload-smoke-check npm run kosmo:training-eval-review-queue-plan npm run kosmo:training-eval-review-queue-plan-check npm run kosmo:architecture-ontology-seed npm run kosmo:architecture-ontology-seed-check"
+    },
+    {
+      "id": "sequence_has_payload_smoke",
+      "status": "passed",
+      "evidence": "npm run kosmo:innovation-github-fixture-skeletons npm run kosmo:innovation-github-fixture-skeletons-check npm run kosmo:innovation-github-fixture-payloads npm run kosmo:innovation-github-fixture-payloads-check npm run kosmo:innovation-github-fixture-payload-smoke npm run kosmo:innovation-github-fixture-payload-smoke-check npm run kosmo:training-eval-review-queue-plan npm run kosmo:training-eval-review-queue-plan-check npm run kosmo:architecture-ontology-seed npm run kosmo:architecture-ontology-seed-check"
+    },
+    {
+      "id": "sequence_has_training_eval_queue",
+      "status": "passed",
+      "evidence": "npm run kosmo:innovation-github-fixture-skeletons npm run kosmo:innovation-github-fixture-skeletons-check npm run kosmo:innovation-github-fixture-payloads npm run kosmo:innovation-github-fixture-payloads-check npm run kosmo:innovation-github-fixture-payload-smoke npm run kosmo:innovation-github-fixture-payload-smoke-check npm run kosmo:training-eval-review-queue-plan npm run kosmo:training-eval-review-queue-plan-check npm run kosmo:architecture-ontology-seed npm run kosmo:architecture-ontology-seed-check"
+    },
+    {
+      "id": "sequence_has_ontology_seed",
+      "status": "passed",
+      "evidence": "npm run kosmo:innovation-github-fixture-skeletons npm run kosmo:innovation-github-fixture-skeletons-check npm run kosmo:innovation-github-fixture-payloads npm run kosmo:innovation-github-fixture-payloads-check npm run kosmo:innovation-github-fixture-payload-smoke npm run kosmo:innovation-github-fixture-payload-smoke-check npm run kosmo:training-eval-review-queue-plan npm run kosmo:training-eval-review-queue-plan-check npm run kosmo:architecture-ontology-seed npm run kosmo:architecture-ontology-seed-check"
+    },
+    {
+      "id": "sequence_no_forbidden_runtime",
+      "status": "passed",
+      "evidence": "npm run kosmo:innovation-github-fixture-skeletons npm run kosmo:innovation-github-fixture-skeletons-check npm run kosmo:innovation-github-fixture-payloads npm run kosmo:innovation-github-fixture-payloads-check npm run kosmo:innovation-github-fixture-payload-smoke npm run kosmo:innovation-github-fixture-payload-smoke-check npm run kosmo:training-eval-review-queue-plan npm run kosmo:training-eval-review-queue-plan-check npm run kosmo:architecture-ontology-seed npm run kosmo:architecture-ontology-seed-check"
+    },
+    {
+      "id": "hard_stop_no_clone",
+      "status": "passed",
+      "evidence": "do not clone public github repositories from this matrix. do not copy github source code, readme prose, datasets, models or assets. do not create private-derived training rows before source root, provenance and rights gates pass. do not install dependencies or download models from this matrix. do not mark any promotion item public-ready."
+    },
+    {
+      "id": "hard_stop_no_copy",
+      "status": "passed",
+      "evidence": "do not clone public github repositories from this matrix. do not copy github source code, readme prose, datasets, models or assets. do not create private-derived training rows before source root, provenance and rights gates pass. do not install dependencies or download models from this matrix. do not mark any promotion item public-ready."
+    },
+    {
+      "id": "hard_stop_no_private_training",
+      "status": "passed",
+      "evidence": "do not clone public github repositories from this matrix. do not copy github source code, readme prose, datasets, models or assets. do not create private-derived training rows before source root, provenance and rights gates pass. do not install dependencies or download models from this matrix. do not mark any promotion item public-ready."
+    },
+    {
+      "id": "hard_stop_no_install_download",
+      "status": "passed",
+      "evidence": "do not clone public github repositories from this matrix. do not copy github source code, readme prose, datasets, models or assets. do not create private-derived training rows before source root, provenance and rights gates pass. do not install dependencies or download models from this matrix. do not mark any promotion item public-ready."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "do not clone public github repositories from this matrix. do not copy github source code, readme prose, datasets, models or assets. do not create private-derived training rows before source root, provenance and rights gates pass. do not install dependencies or download models from this matrix. do not mark any promotion item public-ready."
+    }
+  ]
+}

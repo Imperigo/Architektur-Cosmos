@@ -74,6 +74,7 @@ function checkPlan(plan) {
   expect(plan.policy?.public_ready_after_plan === 0, findings, 'public_ready_zero', 'Plan must keep public-ready at 0.');
   expect(startSequence.includes('innovation-github-watchlist'), findings, 'start_sequence_live_github', 'Start sequence must include live GitHub watchlist.');
   expect(startSequence.includes('innovation-github-fixture-skeletons'), findings, 'start_sequence_github_fixture_skeletons', 'Start sequence must include GitHub fixture skeletons.');
+  expect(startSequence.includes('innovation-github-promotion-matrix'), findings, 'start_sequence_github_promotion_matrix', 'Start sequence must include GitHub promotion matrix.');
   expect(startSequence.includes('innovation-github-fixture-payloads'), findings, 'start_sequence_github_fixture_payloads', 'Start sequence must include GitHub fixture payloads.');
   expect(startSequence.includes('innovation-github-fixture-payload-smoke'), findings, 'start_sequence_github_fixture_payload_smoke', 'Start sequence must include GitHub fixture payload smoke.');
   expect(startSequence.includes('codex-morning-routine-run'), findings, 'start_sequence_morning_routine_run', 'Start sequence must include Codex morning routine run.');

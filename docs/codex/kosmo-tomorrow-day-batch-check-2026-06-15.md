@@ -1,6 +1,6 @@
 # Kosmo Tomorrow Day Batch Check
 
-Generated: 2026-06-15T16:28:19.861Z
+Generated: 2026-06-15T16:34:54.460Z
 Status: `tomorrow_day_batch_guard_passed`
 
 ## Summary
@@ -28,6 +28,7 @@ Status: `tomorrow_day_batch_guard_passed`
 - passed: `public_ready_zero` - Plan must keep public-ready at 0.
 - passed: `start_sequence_live_github` - Start sequence must include live GitHub watchlist.
 - passed: `start_sequence_github_fixture_skeletons` - Start sequence must include GitHub fixture skeletons.
+- passed: `start_sequence_github_promotion_matrix` - Start sequence must include GitHub promotion matrix.
 - passed: `start_sequence_github_fixture_payloads` - Start sequence must include GitHub fixture payloads.
 - passed: `start_sequence_github_fixture_payload_smoke` - Start sequence must include GitHub fixture payload smoke.
 - passed: `start_sequence_morning_routine_run` - Start sequence must include Codex morning routine run.

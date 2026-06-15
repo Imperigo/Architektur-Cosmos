@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:28:18.902Z",
+  "generated_at": "2026-06-15T16:34:53.053Z",
   "status": "codex_morning_routine_run_ready",
   "policy": {
     "morning_execution_evidence": true,
@@ -30,8 +30,8 @@
     "fetch_succeeded": 2,
     "remote_behind_total": 0,
     "dirty_repos": 2,
-    "latest_handoff": 284,
-    "latest_mirrored_handoff": 284,
+    "latest_handoff": 285,
+    "latest_mirrored_handoff": 285,
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
     "source_root_blocked": true,
     "private_processing_allowed": false,
@@ -48,14 +48,14 @@
       "id": "architecture_cosmos",
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "branch": "main",
-      "head": "ced175325156221ca1e1b5a3e20938dedb04e044",
-      "origin_main": "ced175325156221ca1e1b5a3e20938dedb04e044",
+      "head": "7d81662837837215111b336ba2301ac40263f110",
+      "origin_main": "7d81662837837215111b336ba2301ac40263f110",
       "fetch_attempted": true,
       "fetch_succeeded": true,
       "fetch_error": null,
       "remote_behind_count": 0,
       "remote_ahead_count": 0,
-      "dirty_count": 1079,
+      "dirty_count": 1061,
       "dirty_sample": [
         "M .github/workflows/ci.yml",
         "M .github/workflows/live-security.yml",
@@ -90,8 +90,8 @@
       "id": "kosmo_orbit",
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
       "branch": "main",
-      "head": "0428cdb17fdf7baa325f75b3866685f2e967bc26",
-      "origin_main": "0428cdb17fdf7baa325f75b3866685f2e967bc26",
+      "head": "5fc01d90776266287dcec50c01fc96a0e0c32831",
+      "origin_main": "5fc01d90776266287dcec50c01fc96a0e0c32831",
       "fetch_attempted": true,
       "fetch_succeeded": true,
       "fetch_error": null,
@@ -99,7 +99,7 @@
       "remote_ahead_count": 0,
       "dirty_count": 1,
       "dirty_sample": [
-        "?? _overseer/intake/inbox/2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md"
+        "?? _overseer/intake/inbox/2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md"
       ],
       "pulls_or_merges_now": false,
       "resets_now": false
@@ -110,21 +110,21 @@
       {
         "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
         "exists": true,
-        "files": 283,
-        "latest_number": 284,
-        "latest_file": "2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md"
+        "files": 284,
+        "latest_number": 285,
+        "latest_file": "2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md"
       },
       {
         "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
         "exists": true,
-        "files": 81,
-        "latest_number": 284,
-        "latest_file": "2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md"
+        "files": 82,
+        "latest_number": 285,
+        "latest_file": "2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md"
       }
     ],
-    "latest_number": 284,
-    "latest_mirrored_number": 284,
-    "latest_mirrored_file": "2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md"
+    "latest_number": 285,
+    "latest_mirrored_number": 285,
+    "latest_mirrored_file": "2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md"
   },
   "next_batch": {
     "mode": "source_free_innovation_and_guarding",

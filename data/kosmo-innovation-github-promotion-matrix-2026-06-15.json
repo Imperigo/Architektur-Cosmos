@@ -1,0 +1,282 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T16:34:53.520Z",
+  "status": "innovation_github_promotion_matrix_ready",
+  "policy": {
+    "matrix_only": true,
+    "source_free_only": true,
+    "clones_repositories_now": false,
+    "stores_raw_readme_content": false,
+    "copies_github_code": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content": false,
+    "creates_training_rows_now": false,
+    "creates_embeddings_now": false,
+    "public_ready_after_matrix": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-review-queue-2026-06-15.json",
+    "data/kosmo-innovation-github-readme-signal-scan-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-contract-plan-2026-06-15.json",
+    "data/kosmo-training-eval-review-queue-plan-2026-06-15.json",
+    "data/kosmo-architecture-ontology-seed-2026-06-15.json",
+    "data/kosmo-codex-morning-routine-run-2026-06-15.json"
+  ],
+  "summary": {
+    "review_queue_items": 7,
+    "scanned_items": 7,
+    "contract_plans": 5,
+    "promotable_source_free": 5,
+    "held_items": 2,
+    "target_lanes": 3,
+    "training_lanes_linked": 3,
+    "ontology_entity_types": 8,
+    "ontology_relation_types": 10,
+    "next_batch_mode": "source_free_innovation_and_guarding",
+    "executable_now": 0,
+    "public_ready_after_matrix": 0,
+    "failures": 0
+  },
+  "promotion_items": [
+    {
+      "id": "promotion-01",
+      "source_repo": "SII-sc22mc/DocFusion",
+      "source_url": "https://github.com/SII-sc22mc/DocFusion",
+      "review_queue_id": "github-review-01",
+      "target_lane": "kosmo_prepare",
+      "fixture_id": "kosmo_prepare-sii-sc22mc-docfusion-signal-fixture",
+      "fixture_root": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/",
+      "signal_score": 3,
+      "readme_available": true,
+      "source_free_promotable": true,
+      "promotion_decision": "promote_to_synthetic_document_fixture_contract",
+      "training_eval_lane": "source_extraction_review",
+      "ontology_bindings": {
+        "entities": [
+          "source_record",
+          "reference_project",
+          "eval_review_item"
+        ],
+        "relations": [
+          "project_has_source",
+          "eval_item_tests_project",
+          "source_blocks_public_release"
+        ]
+      },
+      "required_guards_before_worker_use": [
+        "fixture_skeleton_guard",
+        "fixture_payload_guard",
+        "fixture_payload_smoke",
+        "training_eval_review_queue_guard",
+        "ontology_seed_guard",
+        "overseer_review"
+      ],
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "promotion-02",
+      "source_repo": "lee-agi/3d_model_base",
+      "source_url": "https://github.com/lee-agi/3d_model_base",
+      "review_queue_id": "github-review-03",
+      "target_lane": "kosmo_asset",
+      "fixture_id": "kosmo_asset-lee-agi-3d-model-base-signal-fixture",
+      "fixture_root": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/",
+      "signal_score": 3,
+      "readme_available": true,
+      "source_free_promotable": true,
+      "promotion_decision": "promote_to_synthetic_asset_retrieval_fixture_contract",
+      "training_eval_lane": "asset_candidate_review",
+      "ontology_bindings": {
+        "entities": [
+          "asset_record",
+          "building_element",
+          "material_system"
+        ],
+        "relations": [
+          "asset_derived_from_element",
+          "asset_uses_material",
+          "eval_item_tests_asset"
+        ]
+      },
+      "required_guards_before_worker_use": [
+        "fixture_skeleton_guard",
+        "fixture_payload_guard",
+        "fixture_payload_smoke",
+        "training_eval_review_queue_guard",
+        "ontology_seed_guard",
+        "overseer_review"
+      ],
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "promotion-03",
+      "source_repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "source_url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "review_queue_id": "github-review-04",
+      "target_lane": "worker_integration",
+      "fixture_id": "worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+      "fixture_root": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/",
+      "signal_score": 4,
+      "readme_available": true,
+      "source_free_promotable": true,
+      "promotion_decision": "promote_to_worker_boundary_fixture_contract",
+      "training_eval_lane": "worker_output_review",
+      "ontology_bindings": {
+        "entities": [
+          "eval_review_item",
+          "source_record",
+          "asset_record"
+        ],
+        "relations": [
+          "eval_item_tests_project",
+          "eval_item_tests_asset",
+          "source_blocks_public_release"
+        ]
+      },
+      "required_guards_before_worker_use": [
+        "fixture_skeleton_guard",
+        "fixture_payload_guard",
+        "fixture_payload_smoke",
+        "training_eval_review_queue_guard",
+        "ontology_seed_guard",
+        "overseer_review"
+      ],
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "promotion-04",
+      "source_repo": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "source_url": "https://github.com/cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "review_queue_id": "github-review-05",
+      "target_lane": "kosmo_prepare",
+      "fixture_id": "kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture",
+      "fixture_root": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/",
+      "signal_score": 3,
+      "readme_available": true,
+      "source_free_promotable": true,
+      "promotion_decision": "promote_to_synthetic_document_fixture_contract",
+      "training_eval_lane": "source_extraction_review",
+      "ontology_bindings": {
+        "entities": [
+          "source_record",
+          "reference_project",
+          "eval_review_item"
+        ],
+        "relations": [
+          "project_has_source",
+          "eval_item_tests_project",
+          "source_blocks_public_release"
+        ]
+      },
+      "required_guards_before_worker_use": [
+        "fixture_skeleton_guard",
+        "fixture_payload_guard",
+        "fixture_payload_smoke",
+        "training_eval_review_queue_guard",
+        "ontology_seed_guard",
+        "overseer_review"
+      ],
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "promotion-05",
+      "source_repo": "mac999/BIM_LLM_code_agent",
+      "source_url": "https://github.com/mac999/BIM_LLM_code_agent",
+      "review_queue_id": "github-review-06",
+      "target_lane": "worker_integration",
+      "fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+      "fixture_root": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/",
+      "signal_score": 5,
+      "readme_available": true,
+      "source_free_promotable": true,
+      "promotion_decision": "promote_to_worker_boundary_fixture_contract",
+      "training_eval_lane": "worker_output_review",
+      "ontology_bindings": {
+        "entities": [
+          "eval_review_item",
+          "source_record",
+          "asset_record"
+        ],
+        "relations": [
+          "eval_item_tests_project",
+          "eval_item_tests_asset",
+          "source_blocks_public_release"
+        ]
+      },
+      "required_guards_before_worker_use": [
+        "fixture_skeleton_guard",
+        "fixture_payload_guard",
+        "fixture_payload_smoke",
+        "training_eval_review_queue_guard",
+        "ontology_seed_guard",
+        "overseer_review"
+      ],
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_item": 0
+    }
+  ],
+  "held_items": [
+    {
+      "id": "github-review-02",
+      "source_repo": "yanghairui/3DRetrieval",
+      "source_url": "https://github.com/yanghairui/3DRetrieval",
+      "target_lane": "kosmo_asset",
+      "signal_score": 2,
+      "source_free_promotable": false,
+      "promotion_decision": "hold_for_more_public_signal_or_owner_review",
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-07",
+      "source_repo": "HamidKiavarz/BIM-LLM",
+      "source_url": "https://github.com/HamidKiavarz/BIM-LLM",
+      "target_lane": "bim_rag_workers",
+      "signal_score": 0,
+      "source_free_promotable": false,
+      "promotion_decision": "hold_for_more_public_signal_or_owner_review",
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_item": 0
+    }
+  ],
+  "next_source_free_sequence": [
+    "npm run kosmo:innovation-github-fixture-skeletons",
+    "npm run kosmo:innovation-github-fixture-skeletons-check",
+    "npm run kosmo:innovation-github-fixture-payloads",
+    "npm run kosmo:innovation-github-fixture-payloads-check",
+    "npm run kosmo:innovation-github-fixture-payload-smoke",
+    "npm run kosmo:innovation-github-fixture-payload-smoke-check",
+    "npm run kosmo:training-eval-review-queue-plan",
+    "npm run kosmo:training-eval-review-queue-plan-check",
+    "npm run kosmo:architecture-ontology-seed",
+    "npm run kosmo:architecture-ontology-seed-check"
+  ],
+  "hard_stops": [
+    "Do not clone public GitHub repositories from this matrix.",
+    "Do not copy GitHub source code, README prose, datasets, models or assets.",
+    "Do not create private-derived training rows before Source Root, provenance and rights gates pass.",
+    "Do not install dependencies or download models from this matrix.",
+    "Do not mark any promotion item public-ready."
+  ],
+  "failures": []
+}

@@ -112,6 +112,8 @@ function buildPlan(reports) {
       'npm run kosmo:innovation-github-readme-signal-scan-check',
       'npm run kosmo:innovation-github-fixture-contract-plan',
       'npm run kosmo:innovation-github-fixture-contract-plan-check',
+      'npm run kosmo:innovation-github-promotion-matrix',
+      'npm run kosmo:innovation-github-promotion-matrix-check',
       'npm run kosmo:innovation-github-fixture-skeletons',
       'npm run kosmo:innovation-github-fixture-skeletons-check',
       'npm run kosmo:innovation-github-fixture-payloads',

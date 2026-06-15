@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-15T16:28:18.046Z
+Generated: 2026-06-15T16:34:52.180Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md` - 2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md` - 2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md` - 2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md` - 2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-283-session-apply-guard-smoke.md` - 2026-06-15-codex-synergiebericht-283-session-apply-guard-smoke.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-279-post-owner-queue-date-guard.md` - 2026-06-15-codex-synergiebericht-279-post-owner-queue-date-guard.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-278-owner-unlock-pipeline-rollup.md` - 2026-06-15-codex-synergiebericht-278-owner-unlock-pipeline-rollup.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-278-owner-unlock-pipeline-rollup.md` - 2026-06-15-codex-synergiebericht-278-owner-unlock-pipeline-rollup.md must include a title.
-- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-277-owner-unlock-session-edit-preview.md` - 2026-06-15-codex-synergiebericht-277-owner-unlock-session-edit-preview.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-15-codex-synergiebericht-277-owner-unlock-session-edit-preview.md` - 2026-06-15-codex-synergiebericht-277-owner-unlock-session-edit-preview.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

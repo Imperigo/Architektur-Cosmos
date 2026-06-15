@@ -77,6 +77,8 @@ const refs = {
   githubReadmeSignalScanCheck: `data/kosmo-innovation-github-readme-signal-scan-check-${dateStamp}.json`,
   githubFixtureContractPlan: `data/kosmo-innovation-github-fixture-contract-plan-${dateStamp}.json`,
   githubFixtureContractPlanCheck: `data/kosmo-innovation-github-fixture-contract-plan-check-${dateStamp}.json`,
+  githubPromotionMatrix: `data/kosmo-innovation-github-promotion-matrix-${dateStamp}.json`,
+  githubPromotionMatrixCheck: `data/kosmo-innovation-github-promotion-matrix-check-${dateStamp}.json`,
   githubFixtureSkeletons: `data/kosmo-innovation-github-fixture-skeletons-${dateStamp}.json`,
   githubFixtureSkeletonsCheck: `data/kosmo-innovation-github-fixture-skeletons-check-${dateStamp}.json`,
   githubFixturePayloads: `data/kosmo-innovation-github-fixture-payloads-${dateStamp}.json`,
@@ -189,6 +191,8 @@ function buildBridge(reports) {
   const githubReadmeSignalScanCheckSummary = reports.githubReadmeSignalScanCheck?.summary || {};
   const githubFixtureContractPlanSummary = reports.githubFixtureContractPlan?.summary || {};
   const githubFixtureContractPlanCheckSummary = reports.githubFixtureContractPlanCheck?.summary || {};
+  const githubPromotionMatrixSummary = reports.githubPromotionMatrix?.summary || {};
+  const githubPromotionMatrixCheckSummary = reports.githubPromotionMatrixCheck?.summary || {};
   const githubFixtureSkeletonsSummary = reports.githubFixtureSkeletons?.summary || {};
   const githubFixtureSkeletonsCheckSummary = reports.githubFixtureSkeletonsCheck?.summary || {};
   const githubFixturePayloadsSummary = reports.githubFixturePayloads?.summary || {};
@@ -761,6 +765,20 @@ function buildBridge(reports) {
       source_ref: refs.githubFixtureContractPlan
     },
     {
+      id: 'github-promotion-matrix',
+      title: 'GitHub Promotion Matrix',
+      status: reports.githubPromotionMatrix?.status === 'innovation_github_promotion_matrix_ready' &&
+        reports.githubPromotionMatrixCheck?.status === 'innovation_github_promotion_matrix_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.githubPromotionMatrix?.status
+        ? `${githubPromotionMatrixSummary.promotable_source_free ?? 0} promotable, held ${githubPromotionMatrixSummary.held_items ?? 0}, lanes ${githubPromotionMatrixSummary.target_lanes ?? 0}, training ${githubPromotionMatrixSummary.training_lanes_linked ?? 0}, failures ${githubPromotionMatrixCheckSummary.failures ?? 0}`
+        : 'missing GitHub promotion matrix',
+      owner_action_required: false,
+      route_hint: 'Source-free promotion decisions from public GitHub signals into fixture/training/ontology lanes',
+      source_ref: refs.githubPromotionMatrix
+    },
+    {
       id: 'github-fixture-skeletons',
       title: 'GitHub Fixture Skeletons',
       status: reports.githubFixtureSkeletons?.status === 'innovation_github_fixture_skeletons_ready' &&
@@ -1020,6 +1038,10 @@ function buildBridge(reports) {
       github_readme_signal_scan_high_signal_items: githubReadmeSignalScanSummary.high_signal_items ?? null,
       github_fixture_contract_plan_status: reports.githubFixtureContractPlan?.status || null,
       github_fixture_contract_plan_count: githubFixtureContractPlanSummary.contract_plans ?? null,
+      github_promotion_matrix_status: reports.githubPromotionMatrix?.status || null,
+      github_promotion_matrix_promotable: githubPromotionMatrixSummary.promotable_source_free ?? null,
+      github_promotion_matrix_held_items: githubPromotionMatrixSummary.held_items ?? null,
+      github_promotion_matrix_training_lanes: githubPromotionMatrixSummary.training_lanes_linked ?? null,
       github_fixture_skeletons_status: reports.githubFixtureSkeletons?.status || null,
       github_fixture_skeletons_directories: githubFixtureSkeletonsSummary.directories ?? null,
       github_fixture_skeletons_files: githubFixtureSkeletonsSummary.files_written ?? null,
@@ -1098,6 +1120,7 @@ function buildBridge(reports) {
       'codex_morning_routine_run_card',
       'github_readme_signal_scan_card',
       'github_fixture_contract_plan_card',
+      'github_promotion_matrix_card',
       'github_fixture_skeletons_card',
       'github_fixture_payloads_card',
       'github_fixture_payload_smoke_card',

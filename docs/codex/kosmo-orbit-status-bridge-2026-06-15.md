@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T16:28:19.389Z
+Generated: 2026-06-15T16:34:53.990Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 54
+- Cards: 55
 - Blocking cards: 4
 - Owner action cards: 25
 - Source root blocked: yes
@@ -97,9 +97,10 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
 | `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
 | `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |
-| `codex-morning-routine-run` Codex Morning Routine Run | review_only_ready | no | fetch 2/2, behind 0, handoff 284, next source_free_innovation_and_guarding, failures 0 |
+| `codex-morning-routine-run` Codex Morning Routine Run | review_only_ready | no | fetch 2/2, behind 0, handoff 285, next source_free_innovation_and_guarding, failures 0 |
 | `github-readme-signal-scan` GitHub README Signal Scan | review_only_ready | no | 7 scanned, README 6, high-signal 5, failures 0 |
 | `github-fixture-contract-plan` GitHub Fixture Contract Plan | review_only_ready | no | 5 plans, prepare 2, asset 1, worker 2, failures 0 |
+| `github-promotion-matrix` GitHub Promotion Matrix | review_only_ready | no | 5 promotable, held 2, lanes 3, training 3, failures 0 |
 | `github-fixture-skeletons` GitHub Fixture Skeletons | review_only_ready | no | 5 directories, 10 files, executable 0, failures 0 |
 | `github-fixture-payloads` GitHub Fixture Payloads | review_only_ready | no | 5 manifests, 10 payloads, executable 0, failures 0 |
 | `github-fixture-payload-smoke` GitHub Fixture Payload Smoke | review_only_ready | no | 10 payloads, lanes 3/3, content 6/6, failures 0 |
@@ -151,6 +152,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `codex_morning_routine_run_card`
 - `github_readme_signal_scan_card`
 - `github_fixture_contract_plan_card`
+- `github_promotion_matrix_card`
 - `github_fixture_skeletons_card`
 - `github_fixture_payloads_card`
 - `github_fixture_payload_smoke_card`
