@@ -228,6 +228,8 @@
     "kosmo:codex-daily-loop-routine-check": "node scripts/kosmo-codex-daily-loop-routine-check.mjs",
     "kosmo:innovation-github-watchlist": "node scripts/kosmo-innovation-github-watchlist.mjs",
     "kosmo:innovation-github-watchlist-check": "node scripts/kosmo-innovation-github-watchlist-check.mjs",
+    "kosmo:innovation-github-discovery": "node scripts/kosmo-innovation-github-discovery.mjs",
+    "kosmo:innovation-github-discovery-check": "node scripts/kosmo-innovation-github-discovery-check.mjs",
     "kosmo:codex-loop-checkpoint": "node scripts/kosmo-codex-loop-checkpoint.mjs",
     "kosmo:codex-loop-checkpoint-check": "node scripts/kosmo-codex-loop-checkpoint-check.mjs",
     "kosmo:security-baseline-policy": "node scripts/kosmo-security-baseline-policy.mjs",

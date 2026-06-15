@@ -1,0 +1,273 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T14:10:22.375Z",
+  "status": "innovation_github_discovery_guard_passed",
+  "policy": {
+    "validates_discovery_only": true,
+    "reads_private_content": false,
+    "installs_or_downloads": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-discovery-2026-06-15.json"
+  ],
+  "summary": {
+    "discovery_status": "innovation_github_discovery_ready",
+    "queries": 5,
+    "candidates": 8,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Discovery schema_version must be 0.1."
+    },
+    {
+      "id": "discovery_ready",
+      "severity": "passed",
+      "message": "Discovery must be ready."
+    },
+    {
+      "id": "discovery_only",
+      "severity": "passed",
+      "message": "Discovery must be discovery-only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Discovery must not install dependencies."
+    },
+    {
+      "id": "no_downloads",
+      "severity": "passed",
+      "message": "Discovery must not download models."
+    },
+    {
+      "id": "no_tool_runs",
+      "severity": "passed",
+      "message": "Discovery must not run discovered tools."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Discovery must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Discovery must keep public-ready at 0."
+    },
+    {
+      "id": "query_count",
+      "severity": "passed",
+      "message": "Discovery must include at least five search queries."
+    },
+    {
+      "id": "queries_with_results_count",
+      "severity": "passed",
+      "message": "Discovery must report queries with results."
+    },
+    {
+      "id": "primary_source:mac999/BIM_LLM_code_agent",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM_code_agent must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:mac999/BIM_LLM_code_agent",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM_code_agent must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:mac999/BIM_LLM_code_agent",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM_code_agent must not install/download now."
+    },
+    {
+      "id": "no_private:mac999/BIM_LLM_code_agent",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM_code_agent must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:mac999/BIM_LLM_code_agent",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM_code_agent must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:HamidKiavarz/BIM-LLM",
+      "severity": "passed",
+      "message": "HamidKiavarz/BIM-LLM must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:HamidKiavarz/BIM-LLM",
+      "severity": "passed",
+      "message": "HamidKiavarz/BIM-LLM must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:HamidKiavarz/BIM-LLM",
+      "severity": "passed",
+      "message": "HamidKiavarz/BIM-LLM must not install/download now."
+    },
+    {
+      "id": "no_private:HamidKiavarz/BIM-LLM",
+      "severity": "passed",
+      "message": "HamidKiavarz/BIM-LLM must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:HamidKiavarz/BIM-LLM",
+      "severity": "passed",
+      "message": "HamidKiavarz/BIM-LLM must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:mac999/BIM_LLM",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:mac999/BIM_LLM",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:mac999/BIM_LLM",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM must not install/download now."
+    },
+    {
+      "id": "no_private:mac999/BIM_LLM",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:mac999/BIM_LLM",
+      "severity": "passed",
+      "message": "mac999/BIM_LLM must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:ThanhPhuc3107/LLM_v2",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v2 must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:ThanhPhuc3107/LLM_v2",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v2 must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:ThanhPhuc3107/LLM_v2",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v2 must not install/download now."
+    },
+    {
+      "id": "no_private:ThanhPhuc3107/LLM_v2",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v2 must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:ThanhPhuc3107/LLM_v2",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v2 must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:ThanhPhuc3107/LLM_v1",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v1 must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:ThanhPhuc3107/LLM_v1",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v1 must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:ThanhPhuc3107/LLM_v1",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v1 must not install/download now."
+    },
+    {
+      "id": "no_private:ThanhPhuc3107/LLM_v1",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v1 must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:ThanhPhuc3107/LLM_v1",
+      "severity": "passed",
+      "message": "ThanhPhuc3107/LLM_v1 must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:Shiraf1Q84/bim-llm",
+      "severity": "passed",
+      "message": "Shiraf1Q84/bim-llm must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:Shiraf1Q84/bim-llm",
+      "severity": "passed",
+      "message": "Shiraf1Q84/bim-llm must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:Shiraf1Q84/bim-llm",
+      "severity": "passed",
+      "message": "Shiraf1Q84/bim-llm must not install/download now."
+    },
+    {
+      "id": "no_private:Shiraf1Q84/bim-llm",
+      "severity": "passed",
+      "message": "Shiraf1Q84/bim-llm must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:Shiraf1Q84/bim-llm",
+      "severity": "passed",
+      "message": "Shiraf1Q84/bim-llm must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:salanueva/bim_llm",
+      "severity": "passed",
+      "message": "salanueva/bim_llm must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:salanueva/bim_llm",
+      "severity": "passed",
+      "message": "salanueva/bim_llm must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:salanueva/bim_llm",
+      "severity": "passed",
+      "message": "salanueva/bim_llm must not install/download now."
+    },
+    {
+      "id": "no_private:salanueva/bim_llm",
+      "severity": "passed",
+      "message": "salanueva/bim_llm must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:salanueva/bim_llm",
+      "severity": "passed",
+      "message": "salanueva/bim_llm must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining",
+      "severity": "passed",
+      "message": "W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must be a primary GitHub repository."
+    },
+    {
+      "id": "github_url:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining",
+      "severity": "passed",
+      "message": "W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining",
+      "severity": "passed",
+      "message": "W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must not install/download now."
+    },
+    {
+      "id": "no_private:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining",
+      "severity": "passed",
+      "message": "W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining",
+      "severity": "passed",
+      "message": "W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must keep public-ready at 0."
+    }
+  ]
+}

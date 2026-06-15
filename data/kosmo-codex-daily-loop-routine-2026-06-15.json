@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:58:57.286Z",
+  "generated_at": "2026-06-15T14:10:41.904Z",
   "status": "codex_daily_loop_routine_ready",
   "policy": {
     "autonomous_loop_until_user_stop_or_budget": true,
@@ -34,7 +34,7 @@
     },
     {
       "id": "innovation_watch",
-      "description": "Review local queue plus trusted upstream innovation candidates before installing or downloading anything.",
+      "description": "Run seeded GitHub watchlist and query-based discovery before installing or downloading anything.",
       "status": "active"
     },
     {

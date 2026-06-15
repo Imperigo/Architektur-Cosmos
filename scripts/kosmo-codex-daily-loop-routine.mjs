@@ -14,7 +14,7 @@ const morningRoutine = [
   step('handoff_intake', 'Read latest Claude/KosmoOverseer inbox notes and compare against Codex-owned lane state.'),
   step('source_root_gate', 'Run or inspect Source Root gate status before any private OCR, embedding, training or source scan.'),
   step('orbit_health', 'Check KosmoOrbit handoff visibility and whether a status artifact needs mirroring.'),
-  step('innovation_watch', 'Review local queue plus trusted upstream innovation candidates before installing or downloading anything.'),
+  step('innovation_watch', 'Run seeded GitHub watchlist and query-based discovery before installing or downloading anything.'),
   step('priority_pick', 'Pick the highest-value safe block: guards, fixture-only experiments, handoff clarity, or bug cleanup.'),
   step('commit_push', 'Commit and push completed blocks with exact staging and a worker-facing handoff note.')
 ];

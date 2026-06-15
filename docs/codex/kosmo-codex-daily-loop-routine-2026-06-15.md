@@ -1,6 +1,6 @@
 # Kosmo Codex Daily Loop Routine
 
-Generated: 2026-06-15T13:58:57.286Z
+Generated: 2026-06-15T14:10:41.904Z
 Status: `codex_daily_loop_routine_ready`
 
 ## Policy
@@ -16,7 +16,7 @@ Status: `codex_daily_loop_routine_ready`
 2. `handoff_intake` - Read latest Claude/KosmoOverseer inbox notes and compare against Codex-owned lane state.
 3. `source_root_gate` - Run or inspect Source Root gate status before any private OCR, embedding, training or source scan.
 4. `orbit_health` - Check KosmoOrbit handoff visibility and whether a status artifact needs mirroring.
-5. `innovation_watch` - Review local queue plus trusted upstream innovation candidates before installing or downloading anything.
+5. `innovation_watch` - Run seeded GitHub watchlist and query-based discovery before installing or downloading anything.
 6. `priority_pick` - Pick the highest-value safe block: guards, fixture-only experiments, handoff clarity, or bug cleanup.
 7. `commit_push` - Commit and push completed blocks with exact staging and a worker-facing handoff note.
 

@@ -99,6 +99,8 @@ function buildPlan(reports) {
       'git status --short in ArchitectureCosmos and KosmoOrbit',
       'npm run kosmo:innovation-github-watchlist',
       'npm run kosmo:innovation-github-watchlist-check',
+      'npm run kosmo:innovation-github-discovery',
+      'npm run kosmo:innovation-github-discovery-check',
       'npm run kosmo:codex-daily-loop-routine',
       'npm run kosmo:codex-daily-loop-routine-check',
       'npm run kosmo:owner-unlock-pipeline-checkpoint',
