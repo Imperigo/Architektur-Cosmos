@@ -53,6 +53,7 @@ import { OrbitRuntimeContract } from './OrbitRuntimeContract';
 import { OrbitKosmoSketchAdapterContract } from './OrbitKosmoSketchAdapterContract';
 import { OrbitRoleSwitcher } from './OrbitRoleSwitcher';
 import { OrbitSectionIndex } from './OrbitSectionIndex';
+import { OrbitStatusBridge } from './OrbitStatusBridge';
 import { OrbitToolRegistry } from './OrbitToolRegistry';
 import { OrbitToolchainReadiness } from './OrbitToolchainReadiness';
 import { OrbitVisionBridge } from './OrbitVisionBridge';
@@ -307,6 +308,10 @@ export default function OrbitPage() {
           </header>
 
           <OrbitSectionIndex />
+
+          <div id="status-bridge" className="scroll-mt-4">
+            <OrbitStatusBridge />
+          </div>
 
           <section className="grid gap-4 lg:grid-cols-[0.95fr_1.35fr_0.9fr]">
             <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">

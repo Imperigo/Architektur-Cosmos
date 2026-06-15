@@ -7,6 +7,7 @@ const sectionGroups = [
       { href: '#projektpaket', label: 'Projektpaket' },
       { href: '#live-gate', label: 'Live-Gate' },
       { href: '#launch-brief', label: 'Launch' },
+      { href: '#status-bridge', label: 'Status' },
       { href: '#github-imperigo-gate', label: 'GitHub' },
       { href: '#push-decision-draft', label: 'Push Draft' },
       { href: '#office-pilot', label: 'Buero-Pilot' }
