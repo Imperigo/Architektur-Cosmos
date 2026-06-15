@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 
 const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const dateStamp = new Date().toISOString().slice(0, 10);
+
+const refs = {
+  operationalStartCard: resolve(root, args.operationalStartCard || `data/kosmo-owner-unlock-operational-start-card-${dateStamp}.json`),
+  pipelineCheckpoint: resolve(root, args.pipelineCheckpoint || `data/kosmo-owner-unlock-pipeline-checkpoint-${dateStamp}.json`),
+  sessionEditPreview: resolve(root, args.sessionEditPreview || `data/kosmo-owner-unlock-session-edit-preview-${dateStamp}.json`),
+  postOwnerQueue: resolve(root, args.postOwnerQueue || `data/kosmo-source-root-post-owner-activation-queue-${dateStamp}.json`)
+};
 
 const outputJson = resolve(root, args.out || `data/kosmo-owner-unlock-execution-runbook-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-owner-unlock-execution-runbook-${dateStamp}.md`);
@@ -16,7 +23,9 @@ main().catch((error) => {
 });
 
 async function main() {
-  const report = buildReport();
+  const reports = {};
+  for (const [key, path] of Object.entries(refs)) reports[key] = await readOptionalJson(path);
+  const report = buildReport(reports);
 
   await mkdir(dirname(outputJson), { recursive: true });
   await mkdir(dirname(outputMd), { recursive: true });
@@ -32,77 +41,96 @@ async function main() {
   console.log(`Wrote: ${relative(root, outputMd)}`);
 }
 
-function buildReport() {
+function buildReport(reports) {
+  const exactOwnerReply = reports.operationalStartCard?.exact_owner_reply_template || '<owner_reply>';
+  const expectedSessionFile = reports.operationalStartCard?.summary?.expected_session_file ||
+    `examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json`;
+  const selectedRoot = reports.operationalStartCard?.summary?.selected_root_path_preview ||
+    reports.sessionEditPreview?.summary?.selected_root_path ||
+    null;
   const phases = [
     {
-      id: 'phase-1-validate-owner-reply',
+      id: 'phase-1-start-card-and-checkpoint',
+      title: 'Open the current operational start card and checkpoint',
+      type: 'command',
+      commands: [
+        'npm run kosmo:owner-unlock-operational-start-card',
+        'npm run kosmo:owner-unlock-operational-start-card-check',
+        'npm run kosmo:owner-unlock-pipeline-checkpoint',
+        'npm run kosmo:owner-unlock-pipeline-checkpoint-check'
+      ],
+      stop_if: [
+        'Operational start card guard has any failure.',
+        'Pipeline checkpoint is not owner_unlock_pipeline_checkpoint_ready.',
+        'The start card does not point to the current source-root session file.'
+      ],
+      mutates_project_files: false
+    },
+    {
+      id: 'phase-2-validate-exact-owner-reply',
       title: 'Validate explicit owner reply',
       type: 'command',
       commands: [
-        'npm run kosmo:owner-unlock-reply-validator -- --answer "<owner_reply>"',
+        `npm run kosmo:owner-unlock-reply-validator -- --answer "${exactOwnerReply}"`,
         'npm run kosmo:owner-unlock-reply-validator-check'
       ],
       stop_if: [
         'Validator status is not owner_unlock_reply_valid.',
-        'Validator guard has any failure.'
+        'Validator guard has any failure.',
+        'The owner reply is broad/freeform rather than exact key-value text.'
       ],
       mutates_project_files: false
     },
     {
-      id: 'phase-2-map-to-intake-patch',
-      title: 'Map validated reply to reviewable intake patch',
+      id: 'phase-3-dry-run-and-patch-preview',
+      title: 'Dry-run the exact reply and preview patch effects',
       type: 'command',
       commands: [
-        'npm run kosmo:owner-unlock-reply-intake-map',
-        'npm run kosmo:owner-unlock-reply-intake-map-check'
+        `npm run kosmo:owner-unlock-answer-dry-run -- --answer "${exactOwnerReply}"`,
+        'npm run kosmo:owner-unlock-exact-reply-preview-check',
+        'npm run kosmo:owner-unlock-patch-review-bundle',
+        'npm run kosmo:owner-unlock-patch-review-bundle-check'
       ],
       stop_if: [
-        'Map status is not owner_unlock_reply_intake_map_ready_for_review.',
-        'Map guard has any failure.',
-        'Any proposed owner-card patch is not allowed by the template.'
+        'Answer dry-run is not ready for review.',
+        'Patch review bundle has any failure.',
+        'Any patch writes intake/session files now.'
       ],
       mutates_project_files: false
     },
     {
-      id: 'phase-3-human-review-intake-patch',
-      title: 'Review proposed intake patch before editing template',
+      id: 'phase-4-review-session-edit-preview',
+      title: 'Review current session edit preview before any session edit',
       type: 'manual_gate',
+      commands: [
+        'npm run kosmo:owner-unlock-session-edit-preview',
+        'npm run kosmo:owner-unlock-session-edit-preview-check'
+      ],
+      stop_if: [
+        'Session edit preview guard has any failure.',
+        'Preview target is not the current source-root decision session file.',
+        'Preview would write now or change public-ready.'
+      ],
+      mutates_project_files: false,
+      expected_target_file: expectedSessionFile
+    },
+    {
+      id: 'phase-5-apply-reviewed-source-root-session-only',
+      title: 'Apply exactly the reviewed source-root session fields',
+      type: 'manual_or_reviewed_edit',
       commands: [],
       stop_if: [
-        'Claude/Codex/KosmoOverseer have not reviewed the map.',
-        'Owner intent is ambiguous.',
-        'The selected source-root path is not explicitly confirmed.'
-      ],
-      mutates_project_files: false
-    },
-    {
-      id: 'phase-4-apply-intake-only-after-review',
-      title: 'Apply reviewed fields to owner answer intake template',
-      type: 'manual_or_reviewed_edit',
-      commands: [
-        'npm run kosmo:owner-answer-intake-check'
-      ],
-      stop_if: [
-        'Intake guard has any failure.',
-        'Filled answers do not match the reviewed map.'
+        'Exact owner reply is not present in normal chat.',
+        'Claude/Codex/KosmoOverseer have not reviewed the session preview.',
+        'Target file is not the current source-root decision session.',
+        'Proposed root path is not the selected root preview.'
       ],
       mutates_project_files: true,
       allowed_target_files: [
-        'examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-14.json'
-      ]
-    },
-    {
-      id: 'phase-5-plan-session-edits',
-      title: 'Generate session edit plan only after intake guard passes',
-      type: 'command',
-      commands: [
-        'npm run kosmo:owner-answer-session-edit-plan'
+        expectedSessionFile
       ],
-      stop_if: [
-        'Session edit plan is blocked by intake guard.',
-        'Planned edits include unexpected target files.'
-      ],
-      mutates_project_files: false
+      expected_selected_root_path: selectedRoot,
+      public_ready_after_edit: 0
     },
     {
       id: 'phase-6-source-root-guards',
@@ -116,7 +144,8 @@ function buildReport() {
       ],
       stop_if: [
         'Any source-root guard fails.',
-        'Root path is missing, incomplete, or not owner-confirmed.'
+        'Root path is missing, incomplete, or not owner-confirmed.',
+        'Activation preflight is interpreted as public promotion.'
       ],
       mutates_project_files: false
     },
@@ -127,12 +156,30 @@ function buildReport() {
       condition: 'Only after phase 6 passes.',
       commands: [
         'npm run kosmo:source-root-post-owner-activation-queue',
-        'npm run kosmo:source-root-post-owner-activation-queue-check',
-        'npm run kosmo:post-source-root-metadata-readiness-pack'
+        'npm run kosmo:source-root-post-owner-activation-queue-check'
       ],
       stop_if: [
         'Any queue or readiness guard fails.',
+        'Queue still shows executable_now=0 after the reviewed session edit should have been applied.',
         'Any artifact tries to mark private-derived material public-ready.'
+      ],
+      mutates_project_files: false
+    },
+    {
+      id: 'phase-8-private-metadata-only-if-queue-unblocks',
+      title: 'Run private metadata only if the guarded queue makes it executable',
+      type: 'conditional_command',
+      condition: 'Only after phase 7 reports activation_ready=true and private_metadata_inventory executable_now=true.',
+      commands: [
+        'npm run kosmo:private-metadata-inventory',
+        'npm run kosmo:private-metadata-inventory-check',
+        'npm run kosmo:data-lane-sweep',
+        'npm run kosmo:references-nightly-gate'
+      ],
+      stop_if: [
+        'Post-owner queue keeps private metadata blocked.',
+        'Any private metadata check fails.',
+        'Any output contains private full text, scans, screenshots or public-ready promotion.'
       ],
       mutates_project_files: false
     }
@@ -152,22 +199,40 @@ function buildReport() {
       runs_private_inventory_now: false,
       public_ready_after_runbook: 0
     },
+    source_refs: Object.values(refs).map((path) => relative(root, path)),
     summary: {
       phases: phases.length,
       commands: phases.reduce((sum, phase) => sum + phase.commands.length, 0),
       manual_gates: phases.filter((phase) => phase.type.includes('manual')).length,
       phases_that_may_mutate_after_review: phases.filter((phase) => phase.mutates_project_files).length,
+      expected_session_file: expectedSessionFile,
+      expected_selected_root_path: selectedRoot,
+      operational_start_card_status: reports.operationalStartCard?.status || null,
+      pipeline_checkpoint_status: reports.pipelineCheckpoint?.status || null,
+      session_edit_preview_status: reports.sessionEditPreview?.status || null,
+      post_owner_queue_status: reports.postOwnerQueue?.status || null,
+      post_owner_queue_executable_now: reports.postOwnerQueue?.summary?.executable_now ?? null,
       public_ready_after_runbook: 0
     },
     phases,
     hard_stops: [
-      'Do not run source-root private diagnostics from a merely valid reply.',
-      'Do not edit intake before reviewing the intake map.',
-      'Do not edit session files before the intake guard passes.',
+      'Do not run source-root private diagnostics from a merely valid reply or broad freeform approval.',
+      'Do not edit intake files from this runbook.',
+      'Do not edit session files before the exact reply, start card, checkpoint and session preview guards pass.',
+      `Do not edit any source-root session except ${expectedSessionFile}.`,
       'Do not read private content in this runbook step.',
+      'Do not run private metadata inventory unless the post-owner queue explicitly unblocks it.',
       'Do not mark any private-derived material public-ready.'
     ]
   };
+}
+
+async function readOptionalJson(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 function renderMarkdown(report) {
@@ -183,6 +248,12 @@ function renderMarkdown(report) {
   lines.push(`- Commands: ${report.summary.commands}`);
   lines.push(`- Manual gates: ${report.summary.manual_gates}`);
   lines.push(`- Mutating phases after review: ${report.summary.phases_that_may_mutate_after_review}`);
+  lines.push(`- Expected session file: \`${report.summary.expected_session_file}\``);
+  lines.push(`- Expected selected root path: ${report.summary.expected_selected_root_path || '-'}`);
+  lines.push(`- Operational start card: ${report.summary.operational_start_card_status || 'missing'}`);
+  lines.push(`- Pipeline checkpoint: ${report.summary.pipeline_checkpoint_status || 'missing'}`);
+  lines.push(`- Session edit preview: ${report.summary.session_edit_preview_status || 'missing'}`);
+  lines.push(`- Post-owner queue: ${report.summary.post_owner_queue_status || 'missing'}; executable now ${report.summary.post_owner_queue_executable_now ?? '-'}`);
   lines.push(`- Public-ready after runbook: ${report.summary.public_ready_after_runbook}`);
   lines.push('');
   lines.push('## Phases');

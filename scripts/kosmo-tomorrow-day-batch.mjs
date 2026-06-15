@@ -133,7 +133,9 @@ function buildPlan(reports) {
       'npm run kosmo:owner-unlock-session-edit-preview',
       'npm run kosmo:owner-unlock-session-edit-preview-check',
       'npm run kosmo:owner-unlock-operational-start-card',
-      'npm run kosmo:owner-unlock-operational-start-card-check'
+      'npm run kosmo:owner-unlock-operational-start-card-check',
+      'npm run kosmo:owner-unlock-execution-runbook',
+      'npm run kosmo:owner-unlock-execution-runbook-check'
     ],
     path_a_if_exact_owner_unlock_reply_present: [
       'npm run kosmo:owner-unlock-prompt-pack-check',

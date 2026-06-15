@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:37:03.051Z",
+  "generated_at": "2026-06-15T16:08:48.717Z",
   "status": "owner_unlock_execution_runbook_guard_passed",
   "policy": {
     "validates_runbook_only": true,
@@ -16,8 +16,8 @@
     "data/kosmo-owner-unlock-execution-runbook-2026-06-15.json"
   ],
   "summary": {
-    "checks": 25,
-    "passed": 25,
+    "checks": 38,
+    "passed": 38,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -69,29 +69,34 @@
       "evidence": 0
     },
     {
-      "id": "seven_phases",
+      "id": "eight_phases",
       "status": "passed",
-      "evidence": "phase-1-validate-owner-reply,phase-2-map-to-intake-patch,phase-3-human-review-intake-patch,phase-4-apply-intake-only-after-review,phase-5-plan-session-edits,phase-6-source-root-guards,phase-7-post-source-readiness"
+      "evidence": "phase-1-start-card-and-checkpoint,phase-2-validate-exact-owner-reply,phase-3-dry-run-and-patch-preview,phase-4-review-session-edit-preview,phase-5-apply-reviewed-source-root-session-only,phase-6-source-root-guards,phase-7-post-source-readiness,phase-8-private-metadata-only-if-queue-unblocks"
     },
     {
-      "id": "validator_first",
+      "id": "start_card_first",
       "status": "passed",
-      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\""
+      "evidence": "npm run kosmo:owner-unlock-operational-start-card"
     },
     {
-      "id": "map_after_validator",
+      "id": "validator_after_start_card",
       "status": "passed",
-      "evidence": "npm run kosmo:owner-unlock-reply-intake-map"
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\""
     },
     {
-      "id": "manual_gate_before_intake_edit",
+      "id": "dry_run_after_validator",
       "status": "passed",
-      "evidence": "manual_gate:true"
+      "evidence": "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\""
     },
     {
-      "id": "intake_guard_before_session_plan",
+      "id": "session_preview_before_mutation",
       "status": "passed",
-      "evidence": "npm run kosmo:owner-answer-intake-check -> npm run kosmo:owner-answer-session-edit-plan"
+      "evidence": "npm run kosmo:owner-unlock-session-edit-preview,npm run kosmo:owner-unlock-session-edit-preview-check -> true"
+    },
+    {
+      "id": "manual_gate_before_session_edit",
+      "status": "passed",
+      "evidence": "manual_gate:manual_or_reviewed_edit"
     },
     {
       "id": "source_guards_conditional",
@@ -104,19 +109,39 @@
       "evidence": "Only after phase 6 passes."
     },
     {
+      "id": "private_metadata_final_conditional",
+      "status": "passed",
+      "evidence": "Only after phase 7 reports activation_ready=true and private_metadata_inventory executable_now=true."
+    },
+    {
       "id": "expected_command_count",
       "status": "passed",
-      "evidence": 12
+      "evidence": 21
     },
     {
       "id": "includes_activation_preflight",
       "status": "passed",
-      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"; npm run kosmo:owner-unlock-reply-validator-check; npm run kosmo:owner-unlock-reply-intake-map; npm run kosmo:owner-unlock-reply-intake-map-check; npm run kosmo:owner-answer-intake-check; npm run kosmo:owner-answer-session-edit-plan; npm run kosmo:source-root-decision-session-check; npm run kosmo:source-root-blocker-refresh; npm run kosmo:source-root-activation-preflight; npm run kosmo:source-root-post-owner-activation-queue; npm run kosmo:source-root-post-owner-activation-queue-check; npm run kosmo:post-source-root-metadata-readiness-pack"
+      "evidence": "npm run kosmo:owner-unlock-operational-start-card; npm run kosmo:owner-unlock-operational-start-card-check; npm run kosmo:owner-unlock-pipeline-checkpoint; npm run kosmo:owner-unlock-pipeline-checkpoint-check; npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"; npm run kosmo:owner-unlock-reply-validator-check; npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"; npm run kosmo:owner-unlock-exact-reply-preview-check; npm run kosmo:owner-unlock-patch-review-bundle; npm run kosmo:owner-unlock-patch-review-bundle-check; npm run kosmo:owner-unlock-session-edit-preview; npm run kosmo:owner-unlock-session-edit-preview-check; npm run kosmo:source-root-decision-session-check; npm run kosmo:source-root-blocker-refresh; npm run kosmo:source-root-activation-preflight; npm run kosmo:source-root-post-owner-activation-queue; npm run kosmo:source-root-post-owner-activation-queue-check; npm run kosmo:private-metadata-inventory; npm run kosmo:private-metadata-inventory-check; npm run kosmo:data-lane-sweep; npm run kosmo:references-nightly-gate"
     },
     {
-      "id": "includes_post_source_readiness",
+      "id": "includes_start_card_check",
       "status": "passed",
-      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"; npm run kosmo:owner-unlock-reply-validator-check; npm run kosmo:owner-unlock-reply-intake-map; npm run kosmo:owner-unlock-reply-intake-map-check; npm run kosmo:owner-answer-intake-check; npm run kosmo:owner-answer-session-edit-plan; npm run kosmo:source-root-decision-session-check; npm run kosmo:source-root-blocker-refresh; npm run kosmo:source-root-activation-preflight; npm run kosmo:source-root-post-owner-activation-queue; npm run kosmo:source-root-post-owner-activation-queue-check; npm run kosmo:post-source-root-metadata-readiness-pack"
+      "evidence": "npm run kosmo:owner-unlock-operational-start-card; npm run kosmo:owner-unlock-operational-start-card-check; npm run kosmo:owner-unlock-pipeline-checkpoint; npm run kosmo:owner-unlock-pipeline-checkpoint-check; npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"; npm run kosmo:owner-unlock-reply-validator-check; npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"; npm run kosmo:owner-unlock-exact-reply-preview-check; npm run kosmo:owner-unlock-patch-review-bundle; npm run kosmo:owner-unlock-patch-review-bundle-check; npm run kosmo:owner-unlock-session-edit-preview; npm run kosmo:owner-unlock-session-edit-preview-check; npm run kosmo:source-root-decision-session-check; npm run kosmo:source-root-blocker-refresh; npm run kosmo:source-root-activation-preflight; npm run kosmo:source-root-post-owner-activation-queue; npm run kosmo:source-root-post-owner-activation-queue-check; npm run kosmo:private-metadata-inventory; npm run kosmo:private-metadata-inventory-check; npm run kosmo:data-lane-sweep; npm run kosmo:references-nightly-gate"
+    },
+    {
+      "id": "includes_session_preview_check",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-operational-start-card; npm run kosmo:owner-unlock-operational-start-card-check; npm run kosmo:owner-unlock-pipeline-checkpoint; npm run kosmo:owner-unlock-pipeline-checkpoint-check; npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"; npm run kosmo:owner-unlock-reply-validator-check; npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"; npm run kosmo:owner-unlock-exact-reply-preview-check; npm run kosmo:owner-unlock-patch-review-bundle; npm run kosmo:owner-unlock-patch-review-bundle-check; npm run kosmo:owner-unlock-session-edit-preview; npm run kosmo:owner-unlock-session-edit-preview-check; npm run kosmo:source-root-decision-session-check; npm run kosmo:source-root-blocker-refresh; npm run kosmo:source-root-activation-preflight; npm run kosmo:source-root-post-owner-activation-queue; npm run kosmo:source-root-post-owner-activation-queue-check; npm run kosmo:private-metadata-inventory; npm run kosmo:private-metadata-inventory-check; npm run kosmo:data-lane-sweep; npm run kosmo:references-nightly-gate"
+    },
+    {
+      "id": "includes_post_owner_queue_check",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-operational-start-card; npm run kosmo:owner-unlock-operational-start-card-check; npm run kosmo:owner-unlock-pipeline-checkpoint; npm run kosmo:owner-unlock-pipeline-checkpoint-check; npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"; npm run kosmo:owner-unlock-reply-validator-check; npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"; npm run kosmo:owner-unlock-exact-reply-preview-check; npm run kosmo:owner-unlock-patch-review-bundle; npm run kosmo:owner-unlock-patch-review-bundle-check; npm run kosmo:owner-unlock-session-edit-preview; npm run kosmo:owner-unlock-session-edit-preview-check; npm run kosmo:source-root-decision-session-check; npm run kosmo:source-root-blocker-refresh; npm run kosmo:source-root-activation-preflight; npm run kosmo:source-root-post-owner-activation-queue; npm run kosmo:source-root-post-owner-activation-queue-check; npm run kosmo:private-metadata-inventory; npm run kosmo:private-metadata-inventory-check; npm run kosmo:data-lane-sweep; npm run kosmo:references-nightly-gate"
+    },
+    {
+      "id": "includes_private_metadata_check_only_final",
+      "status": "passed",
+      "evidence": "npm run kosmo:private-metadata-inventory; npm run kosmo:private-metadata-inventory-check; npm run kosmo:data-lane-sweep; npm run kosmo:references-nightly-gate"
     },
     {
       "id": "one_mutating_phase_after_review",
@@ -124,29 +149,69 @@
       "evidence": 1
     },
     {
+      "id": "current_session_file_summary",
+      "status": "passed",
+      "evidence": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json"
+    },
+    {
+      "id": "only_current_session_target_allowed",
+      "status": "passed",
+      "evidence": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json"
+    },
+    {
+      "id": "no_old_2026_06_14_targets",
+      "status": "passed",
+      "evidence": "old target search"
+    },
+    {
+      "id": "start_card_status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_operational_start_card_ready"
+    },
+    {
+      "id": "checkpoint_status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_pipeline_checkpoint_ready"
+    },
+    {
+      "id": "queue_status_ready",
+      "status": "passed",
+      "evidence": "source_root_post_owner_activation_queue_ready"
+    },
+    {
+      "id": "queue_still_blocked_now",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
       "id": "hard_stop_no_private_diagnostic_from_valid_reply",
       "status": "passed",
-      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+      "evidence": "do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready."
     },
     {
-      "id": "hard_stop_review_before_intake",
+      "id": "hard_stop_no_intake_edit",
       "status": "passed",
-      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+      "evidence": "do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready."
     },
     {
-      "id": "hard_stop_intake_guard_before_session",
+      "id": "hard_stop_current_session_only",
       "status": "passed",
-      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+      "evidence": "do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready."
     },
     {
       "id": "hard_stop_no_private_content",
       "status": "passed",
-      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+      "evidence": "do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready."
+    },
+    {
+      "id": "hard_stop_private_metadata_queue_gate",
+      "status": "passed",
+      "evidence": "do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready."
     },
     {
       "id": "hard_stop_no_public_ready",
       "status": "passed",
-      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+      "evidence": "do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready."
     }
   ]
 }

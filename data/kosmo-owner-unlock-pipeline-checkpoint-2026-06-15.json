@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:59:29.805Z",
+  "generated_at": "2026-06-15T16:08:48.955Z",
   "status": "owner_unlock_pipeline_checkpoint_ready",
   "policy": {
     "checkpoint_only": true,
@@ -40,11 +40,11 @@
   "summary": {
     "components": 23,
     "components_ready": 23,
-    "guard_checks": 236,
-    "guard_checks_passed": 236,
+    "guard_checks": 249,
+    "guard_checks_passed": 249,
     "expected_freeform_guard_failures": 2,
-    "latest_handoff_min": 272,
-    "latest_handoff_max": 279,
+    "latest_handoff_min": 274,
+    "latest_handoff_max": 281,
     "latest_handoff_count": 8,
     "owner_reply_state": "broad_intent_seen_exact_reply_not_applied",
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",

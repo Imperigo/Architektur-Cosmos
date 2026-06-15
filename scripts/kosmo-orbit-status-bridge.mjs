@@ -36,6 +36,8 @@ const refs = {
   ownerUnlockSessionEditPreviewCheck: `data/kosmo-owner-unlock-session-edit-preview-check-${dateStamp}.json`,
   ownerUnlockOperationalStartCard: `data/kosmo-owner-unlock-operational-start-card-${dateStamp}.json`,
   ownerUnlockOperationalStartCardCheck: `data/kosmo-owner-unlock-operational-start-card-check-${dateStamp}.json`,
+  ownerUnlockExecutionRunbook: `data/kosmo-owner-unlock-execution-runbook-${dateStamp}.json`,
+  ownerUnlockExecutionRunbookCheck: `data/kosmo-owner-unlock-execution-runbook-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -141,6 +143,8 @@ function buildBridge(reports) {
   const ownerUnlockSessionEditPreviewCheckSummary = reports.ownerUnlockSessionEditPreviewCheck?.summary || {};
   const ownerUnlockOperationalStartCardSummary = reports.ownerUnlockOperationalStartCard?.summary || {};
   const ownerUnlockOperationalStartCardCheckSummary = reports.ownerUnlockOperationalStartCardCheck?.summary || {};
+  const ownerUnlockExecutionRunbookSummary = reports.ownerUnlockExecutionRunbook?.summary || {};
+  const ownerUnlockExecutionRunbookCheckSummary = reports.ownerUnlockExecutionRunbookCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -445,6 +449,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Single start card for the exact owner-unlock path; checklist only',
       source_ref: refs.ownerUnlockOperationalStartCard
+    },
+    {
+      id: 'owner-unlock-execution-runbook',
+      title: 'Owner Unlock Execution Runbook',
+      status: reports.ownerUnlockExecutionRunbook?.status === 'owner_unlock_execution_runbook_ready' &&
+        reports.ownerUnlockExecutionRunbookCheck?.status === 'owner_unlock_execution_runbook_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.ownerUnlockExecutionRunbook?.status
+        ? `${ownerUnlockExecutionRunbookSummary.phases ?? 0} phases, ${ownerUnlockExecutionRunbookSummary.commands ?? 0} commands, target ${ownerUnlockExecutionRunbookSummary.expected_session_file || 'missing'}, queue executable ${ownerUnlockExecutionRunbookSummary.post_owner_queue_executable_now ?? '-'}, failures ${ownerUnlockExecutionRunbookCheckSummary.failures ?? 0}`
+        : 'missing execution runbook',
+      owner_action_required: true,
+      route_hint: 'Current guarded source-root unlock sequence; runbook only',
+      source_ref: refs.ownerUnlockExecutionRunbook
     },
     {
       id: 'source-root-activation',

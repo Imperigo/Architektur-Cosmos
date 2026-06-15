@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:37:02.814Z",
+  "generated_at": "2026-06-15T16:08:48.477Z",
   "status": "owner_unlock_execution_runbook_ready",
   "policy": {
     "runbook_only": true,
@@ -12,83 +12,109 @@
     "runs_private_inventory_now": false,
     "public_ready_after_runbook": 0
   },
+  "source_refs": [
+    "data/kosmo-owner-unlock-operational-start-card-2026-06-15.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-edit-preview-2026-06-15.json",
+    "data/kosmo-source-root-post-owner-activation-queue-2026-06-15.json"
+  ],
   "summary": {
-    "phases": 7,
-    "commands": 12,
+    "phases": 8,
+    "commands": 21,
     "manual_gates": 2,
     "phases_that_may_mutate_after_review": 1,
+    "expected_session_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json",
+    "expected_selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "operational_start_card_status": "owner_unlock_operational_start_card_ready",
+    "pipeline_checkpoint_status": "owner_unlock_pipeline_checkpoint_ready",
+    "session_edit_preview_status": "owner_unlock_session_edit_preview_ready",
+    "post_owner_queue_status": "source_root_post_owner_activation_queue_ready",
+    "post_owner_queue_executable_now": 0,
     "public_ready_after_runbook": 0
   },
   "phases": [
     {
-      "id": "phase-1-validate-owner-reply",
+      "id": "phase-1-start-card-and-checkpoint",
+      "title": "Open the current operational start card and checkpoint",
+      "type": "command",
+      "commands": [
+        "npm run kosmo:owner-unlock-operational-start-card",
+        "npm run kosmo:owner-unlock-operational-start-card-check",
+        "npm run kosmo:owner-unlock-pipeline-checkpoint",
+        "npm run kosmo:owner-unlock-pipeline-checkpoint-check"
+      ],
+      "stop_if": [
+        "Operational start card guard has any failure.",
+        "Pipeline checkpoint is not owner_unlock_pipeline_checkpoint_ready.",
+        "The start card does not point to the current source-root session file."
+      ],
+      "mutates_project_files": false
+    },
+    {
+      "id": "phase-2-validate-exact-owner-reply",
       "title": "Validate explicit owner reply",
       "type": "command",
       "commands": [
-        "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"",
+        "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"",
         "npm run kosmo:owner-unlock-reply-validator-check"
       ],
       "stop_if": [
         "Validator status is not owner_unlock_reply_valid.",
-        "Validator guard has any failure."
+        "Validator guard has any failure.",
+        "The owner reply is broad/freeform rather than exact key-value text."
       ],
       "mutates_project_files": false
     },
     {
-      "id": "phase-2-map-to-intake-patch",
-      "title": "Map validated reply to reviewable intake patch",
+      "id": "phase-3-dry-run-and-patch-preview",
+      "title": "Dry-run the exact reply and preview patch effects",
       "type": "command",
       "commands": [
-        "npm run kosmo:owner-unlock-reply-intake-map",
-        "npm run kosmo:owner-unlock-reply-intake-map-check"
+        "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"",
+        "npm run kosmo:owner-unlock-exact-reply-preview-check",
+        "npm run kosmo:owner-unlock-patch-review-bundle",
+        "npm run kosmo:owner-unlock-patch-review-bundle-check"
       ],
       "stop_if": [
-        "Map status is not owner_unlock_reply_intake_map_ready_for_review.",
-        "Map guard has any failure.",
-        "Any proposed owner-card patch is not allowed by the template."
+        "Answer dry-run is not ready for review.",
+        "Patch review bundle has any failure.",
+        "Any patch writes intake/session files now."
       ],
       "mutates_project_files": false
     },
     {
-      "id": "phase-3-human-review-intake-patch",
-      "title": "Review proposed intake patch before editing template",
+      "id": "phase-4-review-session-edit-preview",
+      "title": "Review current session edit preview before any session edit",
       "type": "manual_gate",
+      "commands": [
+        "npm run kosmo:owner-unlock-session-edit-preview",
+        "npm run kosmo:owner-unlock-session-edit-preview-check"
+      ],
+      "stop_if": [
+        "Session edit preview guard has any failure.",
+        "Preview target is not the current source-root decision session file.",
+        "Preview would write now or change public-ready."
+      ],
+      "mutates_project_files": false,
+      "expected_target_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json"
+    },
+    {
+      "id": "phase-5-apply-reviewed-source-root-session-only",
+      "title": "Apply exactly the reviewed source-root session fields",
+      "type": "manual_or_reviewed_edit",
       "commands": [],
       "stop_if": [
-        "Claude/Codex/KosmoOverseer have not reviewed the map.",
-        "Owner intent is ambiguous.",
-        "The selected source-root path is not explicitly confirmed."
-      ],
-      "mutates_project_files": false
-    },
-    {
-      "id": "phase-4-apply-intake-only-after-review",
-      "title": "Apply reviewed fields to owner answer intake template",
-      "type": "manual_or_reviewed_edit",
-      "commands": [
-        "npm run kosmo:owner-answer-intake-check"
-      ],
-      "stop_if": [
-        "Intake guard has any failure.",
-        "Filled answers do not match the reviewed map."
+        "Exact owner reply is not present in normal chat.",
+        "Claude/Codex/KosmoOverseer have not reviewed the session preview.",
+        "Target file is not the current source-root decision session.",
+        "Proposed root path is not the selected root preview."
       ],
       "mutates_project_files": true,
       "allowed_target_files": [
-        "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-14.json"
-      ]
-    },
-    {
-      "id": "phase-5-plan-session-edits",
-      "title": "Generate session edit plan only after intake guard passes",
-      "type": "command",
-      "commands": [
-        "npm run kosmo:owner-answer-session-edit-plan"
+        "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json"
       ],
-      "stop_if": [
-        "Session edit plan is blocked by intake guard.",
-        "Planned edits include unexpected target files."
-      ],
-      "mutates_project_files": false
+      "expected_selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "public_ready_after_edit": 0
     },
     {
       "id": "phase-6-source-root-guards",
@@ -102,7 +128,8 @@
       ],
       "stop_if": [
         "Any source-root guard fails.",
-        "Root path is missing, incomplete, or not owner-confirmed."
+        "Root path is missing, incomplete, or not owner-confirmed.",
+        "Activation preflight is interpreted as public promotion."
       ],
       "mutates_project_files": false
     },
@@ -113,21 +140,41 @@
       "condition": "Only after phase 6 passes.",
       "commands": [
         "npm run kosmo:source-root-post-owner-activation-queue",
-        "npm run kosmo:source-root-post-owner-activation-queue-check",
-        "npm run kosmo:post-source-root-metadata-readiness-pack"
+        "npm run kosmo:source-root-post-owner-activation-queue-check"
       ],
       "stop_if": [
         "Any queue or readiness guard fails.",
+        "Queue still shows executable_now=0 after the reviewed session edit should have been applied.",
         "Any artifact tries to mark private-derived material public-ready."
+      ],
+      "mutates_project_files": false
+    },
+    {
+      "id": "phase-8-private-metadata-only-if-queue-unblocks",
+      "title": "Run private metadata only if the guarded queue makes it executable",
+      "type": "conditional_command",
+      "condition": "Only after phase 7 reports activation_ready=true and private_metadata_inventory executable_now=true.",
+      "commands": [
+        "npm run kosmo:private-metadata-inventory",
+        "npm run kosmo:private-metadata-inventory-check",
+        "npm run kosmo:data-lane-sweep",
+        "npm run kosmo:references-nightly-gate"
+      ],
+      "stop_if": [
+        "Post-owner queue keeps private metadata blocked.",
+        "Any private metadata check fails.",
+        "Any output contains private full text, scans, screenshots or public-ready promotion."
       ],
       "mutates_project_files": false
     }
   ],
   "hard_stops": [
-    "Do not run source-root private diagnostics from a merely valid reply.",
-    "Do not edit intake before reviewing the intake map.",
-    "Do not edit session files before the intake guard passes.",
+    "Do not run source-root private diagnostics from a merely valid reply or broad freeform approval.",
+    "Do not edit intake files from this runbook.",
+    "Do not edit session files before the exact reply, start card, checkpoint and session preview guards pass.",
+    "Do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json.",
     "Do not read private content in this runbook step.",
+    "Do not run private metadata inventory unless the post-owner queue explicitly unblocks it.",
     "Do not mark any private-derived material public-ready."
   ]
 }

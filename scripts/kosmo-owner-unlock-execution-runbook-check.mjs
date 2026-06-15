@@ -65,6 +65,8 @@ function buildChecks(runbook) {
   const phases = runbook.phases || [];
   const commands = phases.flatMap((phase) => phase.commands || []);
   const hardStops = (runbook.hard_stops || []).join(' ').toLowerCase();
+  const expectedSessionFile = `examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json`;
+  const allowedTargets = phases.flatMap((phase) => phase.allowed_target_files || []);
   return [
     check('status_ready', runbook.status === 'owner_unlock_execution_runbook_ready', runbook.status),
     check('policy_runbook_only', runbook.policy?.runbook_only === true, runbook.policy?.runbook_only),
@@ -75,21 +77,34 @@ function buildChecks(runbook) {
     check('policy_no_private_reads_now', runbook.policy?.reads_private_content_now === false, runbook.policy?.reads_private_content_now),
     check('policy_no_inventory_now', runbook.policy?.runs_private_inventory_now === false, runbook.policy?.runs_private_inventory_now),
     check('public_ready_zero', runbook.summary?.public_ready_after_runbook === 0, runbook.summary?.public_ready_after_runbook),
-    check('seven_phases', phases.length === 7, phases.map((phase) => phase.id).join(',')),
-    check('validator_first', phases[0]?.commands?.[0]?.includes('owner-unlock-reply-validator'), phases[0]?.commands?.[0]),
-    check('map_after_validator', phases[1]?.commands?.[0]?.includes('owner-unlock-reply-intake-map'), phases[1]?.commands?.[0]),
-    check('manual_gate_before_intake_edit', phases[2]?.type === 'manual_gate' && phases[3]?.mutates_project_files === true, `${phases[2]?.type}:${phases[3]?.mutates_project_files}`),
-    check('intake_guard_before_session_plan', phases[3]?.commands?.includes('npm run kosmo:owner-answer-intake-check') && phases[4]?.commands?.includes('npm run kosmo:owner-answer-session-edit-plan'), `${phases[3]?.commands?.join(',')} -> ${phases[4]?.commands?.join(',')}`),
+    check('eight_phases', phases.length === 8, phases.map((phase) => phase.id).join(',')),
+    check('start_card_first', phases[0]?.commands?.[0]?.includes('owner-unlock-operational-start-card'), phases[0]?.commands?.[0]),
+    check('validator_after_start_card', phases[1]?.commands?.[0]?.includes('owner-unlock-reply-validator'), phases[1]?.commands?.[0]),
+    check('dry_run_after_validator', phases[2]?.commands?.[0]?.includes('owner-unlock-answer-dry-run'), phases[2]?.commands?.[0]),
+    check('session_preview_before_mutation', phases[3]?.commands?.includes('npm run kosmo:owner-unlock-session-edit-preview') && phases[4]?.mutates_project_files === true, `${phases[3]?.commands?.join(',')} -> ${phases[4]?.mutates_project_files}`),
+    check('manual_gate_before_session_edit', phases[3]?.type === 'manual_gate' && phases[4]?.type === 'manual_or_reviewed_edit', `${phases[3]?.type}:${phases[4]?.type}`),
     check('source_guards_conditional', phases[5]?.type === 'conditional_command' && phases[5]?.condition?.includes('Only if'), phases[5]?.condition),
     check('post_source_conditional', phases[6]?.type === 'conditional_command' && phases[6]?.condition?.includes('Only after phase 6 passes'), phases[6]?.condition),
-    check('expected_command_count', commands.length === 12, commands.length),
+    check('private_metadata_final_conditional', phases[7]?.type === 'conditional_command' && phases[7]?.condition?.includes('private_metadata_inventory executable_now=true'), phases[7]?.condition),
+    check('expected_command_count', commands.length === 21, commands.length),
     check('includes_activation_preflight', commands.includes('npm run kosmo:source-root-activation-preflight'), commands.join('; ')),
-    check('includes_post_source_readiness', commands.includes('npm run kosmo:post-source-root-metadata-readiness-pack'), commands.join('; ')),
+    check('includes_start_card_check', commands.includes('npm run kosmo:owner-unlock-operational-start-card-check'), commands.join('; ')),
+    check('includes_session_preview_check', commands.includes('npm run kosmo:owner-unlock-session-edit-preview-check'), commands.join('; ')),
+    check('includes_post_owner_queue_check', commands.includes('npm run kosmo:source-root-post-owner-activation-queue-check'), commands.join('; ')),
+    check('includes_private_metadata_check_only_final', phases[7]?.commands?.includes('npm run kosmo:private-metadata-inventory-check'), phases[7]?.commands?.join('; ')),
     check('one_mutating_phase_after_review', runbook.summary?.phases_that_may_mutate_after_review === 1, runbook.summary?.phases_that_may_mutate_after_review),
-    check('hard_stop_no_private_diagnostic_from_valid_reply', hardStops.includes('merely valid reply'), hardStops),
-    check('hard_stop_review_before_intake', hardStops.includes('reviewing the intake map'), hardStops),
-    check('hard_stop_intake_guard_before_session', hardStops.includes('intake guard passes'), hardStops),
+    check('current_session_file_summary', runbook.summary?.expected_session_file === expectedSessionFile, runbook.summary?.expected_session_file),
+    check('only_current_session_target_allowed', allowedTargets.length === 1 && allowedTargets[0] === expectedSessionFile, allowedTargets.join(',')),
+    check('no_old_2026_06_14_targets', !JSON.stringify(runbook).includes('source-root-decision-session-2026-06-14') && !JSON.stringify(runbook).includes('owner-answer-intake-template-2026-06-14'), 'old target search'),
+    check('start_card_status_ready', runbook.summary?.operational_start_card_status === 'owner_unlock_operational_start_card_ready', runbook.summary?.operational_start_card_status),
+    check('checkpoint_status_ready', runbook.summary?.pipeline_checkpoint_status === 'owner_unlock_pipeline_checkpoint_ready', runbook.summary?.pipeline_checkpoint_status),
+    check('queue_status_ready', runbook.summary?.post_owner_queue_status === 'source_root_post_owner_activation_queue_ready', runbook.summary?.post_owner_queue_status),
+    check('queue_still_blocked_now', runbook.summary?.post_owner_queue_executable_now === 0, runbook.summary?.post_owner_queue_executable_now),
+    check('hard_stop_no_private_diagnostic_from_valid_reply', hardStops.includes('merely valid reply') && hardStops.includes('freeform'), hardStops),
+    check('hard_stop_no_intake_edit', hardStops.includes('do not edit intake files'), hardStops),
+    check('hard_stop_current_session_only', hardStops.includes(expectedSessionFile.toLowerCase()), hardStops),
     check('hard_stop_no_private_content', hardStops.includes('private content'), hardStops),
+    check('hard_stop_private_metadata_queue_gate', hardStops.includes('post-owner queue explicitly unblocks'), hardStops),
     check('hard_stop_no_public_ready', hardStops.includes('public-ready'), hardStops)
   ];
 }
