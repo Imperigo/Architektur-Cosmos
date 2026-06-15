@@ -1,0 +1,334 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:41:52.065Z",
+  "status": "daily_innovation_scout_guard_passed",
+  "policy": {
+    "scout_only": true,
+    "installs_tools_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_check": 0,
+    "note": "This guard validates innovation scout policy and candidate coverage only."
+  },
+  "source_refs": [
+    "data/kosmo-daily-innovation-scout-2026-06-15.json"
+  ],
+  "summary": {
+    "scout_status": "daily_innovation_scout_ready",
+    "candidates": 9,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Scout schema_version must be 0.1."
+    },
+    {
+      "id": "scout_status_ready",
+      "severity": "passed",
+      "message": "Scout status must be ready."
+    },
+    {
+      "id": "scout_only",
+      "severity": "passed",
+      "message": "Scout must be scout-only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Scout must not install tools."
+    },
+    {
+      "id": "no_clones",
+      "severity": "passed",
+      "message": "Scout must not clone repositories."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Scout must not read private content."
+    },
+    {
+      "id": "no_private_ocr",
+      "severity": "passed",
+      "message": "Scout must not run private OCR."
+    },
+    {
+      "id": "no_private_embeddings",
+      "severity": "passed",
+      "message": "Scout must not run private embeddings."
+    },
+    {
+      "id": "no_training",
+      "severity": "passed",
+      "message": "Scout must not run training."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Scout public-ready must remain 0."
+    },
+    {
+      "id": "candidate_count",
+      "severity": "passed",
+      "message": "Scout must include at least eight candidates."
+    },
+    {
+      "id": "candidate_present:markitdown",
+      "severity": "passed",
+      "message": "Scout must include markitdown."
+    },
+    {
+      "id": "candidate_present:docling",
+      "severity": "passed",
+      "message": "Scout must include docling."
+    },
+    {
+      "id": "candidate_present:qwen3_embedding_reranker",
+      "severity": "passed",
+      "message": "Scout must include qwen3_embedding_reranker."
+    },
+    {
+      "id": "candidate_present:ifcopenshell",
+      "severity": "passed",
+      "message": "Scout must include ifcopenshell."
+    },
+    {
+      "id": "source_url:markitdown",
+      "severity": "passed",
+      "message": "Candidate markitdown must include a source URL."
+    },
+    {
+      "id": "primary_source:markitdown",
+      "severity": "passed",
+      "message": "Candidate markitdown must use a primary source."
+    },
+    {
+      "id": "install_now_false:markitdown",
+      "severity": "passed",
+      "message": "Candidate markitdown must not install now."
+    },
+    {
+      "id": "private_content_false:markitdown",
+      "severity": "passed",
+      "message": "Candidate markitdown must not allow private content now."
+    },
+    {
+      "id": "priority_range:markitdown",
+      "severity": "passed",
+      "message": "Candidate markitdown priority must be 1-5."
+    },
+    {
+      "id": "source_url:docling",
+      "severity": "passed",
+      "message": "Candidate docling must include a source URL."
+    },
+    {
+      "id": "primary_source:docling",
+      "severity": "passed",
+      "message": "Candidate docling must use a primary source."
+    },
+    {
+      "id": "install_now_false:docling",
+      "severity": "passed",
+      "message": "Candidate docling must not install now."
+    },
+    {
+      "id": "private_content_false:docling",
+      "severity": "passed",
+      "message": "Candidate docling must not allow private content now."
+    },
+    {
+      "id": "priority_range:docling",
+      "severity": "passed",
+      "message": "Candidate docling priority must be 1-5."
+    },
+    {
+      "id": "source_url:deepseek_ocr",
+      "severity": "passed",
+      "message": "Candidate deepseek_ocr must include a source URL."
+    },
+    {
+      "id": "primary_source:deepseek_ocr",
+      "severity": "passed",
+      "message": "Candidate deepseek_ocr must use a primary source."
+    },
+    {
+      "id": "install_now_false:deepseek_ocr",
+      "severity": "passed",
+      "message": "Candidate deepseek_ocr must not install now."
+    },
+    {
+      "id": "private_content_false:deepseek_ocr",
+      "severity": "passed",
+      "message": "Candidate deepseek_ocr must not allow private content now."
+    },
+    {
+      "id": "priority_range:deepseek_ocr",
+      "severity": "passed",
+      "message": "Candidate deepseek_ocr priority must be 1-5."
+    },
+    {
+      "id": "source_url:qwen3_embedding_reranker",
+      "severity": "passed",
+      "message": "Candidate qwen3_embedding_reranker must include a source URL."
+    },
+    {
+      "id": "primary_source:qwen3_embedding_reranker",
+      "severity": "passed",
+      "message": "Candidate qwen3_embedding_reranker must use a primary source."
+    },
+    {
+      "id": "install_now_false:qwen3_embedding_reranker",
+      "severity": "passed",
+      "message": "Candidate qwen3_embedding_reranker must not install now."
+    },
+    {
+      "id": "private_content_false:qwen3_embedding_reranker",
+      "severity": "passed",
+      "message": "Candidate qwen3_embedding_reranker must not allow private content now."
+    },
+    {
+      "id": "priority_range:qwen3_embedding_reranker",
+      "severity": "passed",
+      "message": "Candidate qwen3_embedding_reranker priority must be 1-5."
+    },
+    {
+      "id": "source_url:qwen3_vl_embedding",
+      "severity": "passed",
+      "message": "Candidate qwen3_vl_embedding must include a source URL."
+    },
+    {
+      "id": "primary_source:qwen3_vl_embedding",
+      "severity": "passed",
+      "message": "Candidate qwen3_vl_embedding must use a primary source."
+    },
+    {
+      "id": "install_now_false:qwen3_vl_embedding",
+      "severity": "passed",
+      "message": "Candidate qwen3_vl_embedding must not install now."
+    },
+    {
+      "id": "private_content_false:qwen3_vl_embedding",
+      "severity": "passed",
+      "message": "Candidate qwen3_vl_embedding must not allow private content now."
+    },
+    {
+      "id": "priority_range:qwen3_vl_embedding",
+      "severity": "passed",
+      "message": "Candidate qwen3_vl_embedding priority must be 1-5."
+    },
+    {
+      "id": "source_url:ifcopenshell",
+      "severity": "passed",
+      "message": "Candidate ifcopenshell must include a source URL."
+    },
+    {
+      "id": "primary_source:ifcopenshell",
+      "severity": "passed",
+      "message": "Candidate ifcopenshell must use a primary source."
+    },
+    {
+      "id": "install_now_false:ifcopenshell",
+      "severity": "passed",
+      "message": "Candidate ifcopenshell must not install now."
+    },
+    {
+      "id": "private_content_false:ifcopenshell",
+      "severity": "passed",
+      "message": "Candidate ifcopenshell must not allow private content now."
+    },
+    {
+      "id": "priority_range:ifcopenshell",
+      "severity": "passed",
+      "message": "Candidate ifcopenshell priority must be 1-5."
+    },
+    {
+      "id": "source_url:topologicpy",
+      "severity": "passed",
+      "message": "Candidate topologicpy must include a source URL."
+    },
+    {
+      "id": "primary_source:topologicpy",
+      "severity": "passed",
+      "message": "Candidate topologicpy must use a primary source."
+    },
+    {
+      "id": "install_now_false:topologicpy",
+      "severity": "passed",
+      "message": "Candidate topologicpy must not install now."
+    },
+    {
+      "id": "private_content_false:topologicpy",
+      "severity": "passed",
+      "message": "Candidate topologicpy must not allow private content now."
+    },
+    {
+      "id": "priority_range:topologicpy",
+      "severity": "passed",
+      "message": "Candidate topologicpy priority must be 1-5."
+    },
+    {
+      "id": "source_url:speckle",
+      "severity": "passed",
+      "message": "Candidate speckle must include a source URL."
+    },
+    {
+      "id": "primary_source:speckle",
+      "severity": "passed",
+      "message": "Candidate speckle must use a primary source."
+    },
+    {
+      "id": "install_now_false:speckle",
+      "severity": "passed",
+      "message": "Candidate speckle must not install now."
+    },
+    {
+      "id": "private_content_false:speckle",
+      "severity": "passed",
+      "message": "Candidate speckle must not allow private content now."
+    },
+    {
+      "id": "priority_range:speckle",
+      "severity": "passed",
+      "message": "Candidate speckle priority must be 1-5."
+    },
+    {
+      "id": "source_url:paper2poster",
+      "severity": "passed",
+      "message": "Candidate paper2poster must include a source URL."
+    },
+    {
+      "id": "primary_source:paper2poster",
+      "severity": "passed",
+      "message": "Candidate paper2poster must use a primary source."
+    },
+    {
+      "id": "install_now_false:paper2poster",
+      "severity": "passed",
+      "message": "Candidate paper2poster must not install now."
+    },
+    {
+      "id": "private_content_false:paper2poster",
+      "severity": "passed",
+      "message": "Candidate paper2poster must not allow private content now."
+    },
+    {
+      "id": "priority_range:paper2poster",
+      "severity": "passed",
+      "message": "Candidate paper2poster priority must be 1-5."
+    },
+    {
+      "id": "private_gate_sequence",
+      "severity": "passed",
+      "message": "Recommended sequence must include private gate."
+    }
+  ],
+  "next_actions": [
+    "Use the scout to prioritize source-free fixture contracts.",
+    "Do not install or clone candidates during this block.",
+    "Refresh the scout when owner unlocks Source Root or when a tool becomes immediately actionable."
+  ]
+}

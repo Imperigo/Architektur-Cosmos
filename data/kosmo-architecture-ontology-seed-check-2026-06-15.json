@@ -1,0 +1,155 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T04:59:39.209Z",
+  "status": "architecture_ontology_seed_guard_passed",
+  "policy": {
+    "validates_seed_only": true,
+    "reads_private_content_now": false,
+    "creates_assets_now": false,
+    "creates_eval_rows_now": false,
+    "writes_training_data_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-architecture-ontology-seed-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 26,
+    "passed": 26,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "architecture_ontology_seed_ready"
+    },
+    {
+      "id": "policy_seed_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_source_free",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_writes",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_assets_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_eval_rows_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "entity_types_eight",
+      "status": "passed",
+      "evidence": 8
+    },
+    {
+      "id": "relation_types_ten",
+      "status": "passed",
+      "evidence": 10
+    },
+    {
+      "id": "facet_groups_six",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "pilots_supported_three",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "asset_lanes_supported_three",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "review_lanes_supported_five",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "required_entities_present",
+      "status": "passed",
+      "evidence": "reference_project,source_record,building_element,material_system,space_pattern,structure_system,asset_record,eval_review_item"
+    },
+    {
+      "id": "required_facets_present",
+      "status": "passed",
+      "evidence": "typology,material,structure,space,construction,rights_privacy"
+    },
+    {
+      "id": "all_entities_public_ready_false",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "all_facets_public_ready_false",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "relations_require_source_basis",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "pilot_alignment_three",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "pilot_alignment_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "hard_stop_no_private_instantiation",
+      "status": "passed",
+      "evidence": "do not instantiate private project facts from this ontology seed. do not create assets, eval rows, embeddings or training data from this seed. do not mark ontology-derived records public_ready true. keep source provenance and rights/privacy facets mandatory."
+    },
+    {
+      "id": "hard_stop_no_assets_eval_embeddings_training",
+      "status": "passed",
+      "evidence": "do not instantiate private project facts from this ontology seed. do not create assets, eval rows, embeddings or training data from this seed. do not mark ontology-derived records public_ready true. keep source provenance and rights/privacy facets mandatory."
+    },
+    {
+      "id": "hard_stop_public_ready_false",
+      "status": "passed",
+      "evidence": "do not instantiate private project facts from this ontology seed. do not create assets, eval rows, embeddings or training data from this seed. do not mark ontology-derived records public_ready true. keep source provenance and rights/privacy facets mandatory."
+    },
+    {
+      "id": "hard_stop_rights_privacy_mandatory",
+      "status": "passed",
+      "evidence": "do not instantiate private project facts from this ontology seed. do not create assets, eval rows, embeddings or training data from this seed. do not mark ontology-derived records public_ready true. keep source provenance and rights/privacy facets mandatory."
+    }
+  ]
+}

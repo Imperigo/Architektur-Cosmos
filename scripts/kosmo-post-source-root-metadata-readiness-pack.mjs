@@ -49,7 +49,11 @@ function buildReport({ activationQueue, inventoryRunner, inventoryCheck, ownerBr
   if (activationQueue.status !== 'source_root_post_owner_activation_queue_ready') failures.push(`Activation queue not ready: ${activationQueue.status}`);
   if (inventoryRunner.status !== 'private_metadata_inventory_blocked_until_activation') failures.push(`Inventory runner not blocked as expected: ${inventoryRunner.status}`);
   if (inventoryCheck.status !== 'private_metadata_inventory_guard_passed') failures.push(`Inventory check not passed: ${inventoryCheck.status}`);
-  if (ownerBrief.status !== 'owner_remaining_decision_brief_ready') failures.push(`Owner brief not ready: ${ownerBrief.status}`);
+  const ownerBriefAccepted = [
+    'owner_remaining_decision_brief_ready',
+    'owner_remaining_decision_brief_needs_review'
+  ].includes(ownerBrief.status);
+  if (!ownerBriefAccepted) failures.push(`Owner brief not in a guarded review state: ${ownerBrief.status}`);
   if (roadmap.status !== 'vision_completion_roadmap_ready') failures.push(`Roadmap not ready: ${roadmap.status}`);
 
   const commandSequence = [

@@ -1,0 +1,186 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T04:59:38.562Z",
+  "status": "training_eval_review_queue_plan_guard_passed",
+  "policy": {
+    "validates_plan_only": true,
+    "creates_queue_items_now": false,
+    "writes_eval_rows_now": false,
+    "writes_training_data_now": false,
+    "writes_embeddings_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-training-eval-review-queue-plan-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 32,
+    "passed": 32,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "training_eval_review_queue_plan_ready"
+    },
+    {
+      "id": "policy_plan_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_source_free",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_queue_items_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_eval_rows_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_embeddings_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_fine_tuning_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_storage",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "five_review_lanes",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "six_queue_states",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "four_role_assignments",
+      "status": "passed",
+      "evidence": 4
+    },
+    {
+      "id": "templates_six",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "required_fields_ten",
+      "status": "passed",
+      "evidence": 10
+    },
+    {
+      "id": "rubric_suites_six",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "rubric_criteria_twenty_four",
+      "status": "passed",
+      "evidence": 24
+    },
+    {
+      "id": "pilot_worker_tasks_twelve",
+      "status": "passed",
+      "evidence": 12
+    },
+    {
+      "id": "queue_items_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "approved_eval_rows_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "training_rows_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_queue_states_public_ready_false",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "roles_cover_workers_and_owner",
+      "status": "passed",
+      "evidence": "local_llm_worker,central_codex_worker,claude_code_worker,human_owner"
+    },
+    {
+      "id": "promotion_gates_cover_source_rights_owner",
+      "status": "passed",
+      "evidence": "source_grounding_passed architecture_quality_passed rights_privacy_passed codex_or_claude_review_recorded owner_gate_required_before_training_or_public_release"
+    },
+    {
+      "id": "allowed_inputs_are_summary_or_metadata_only",
+      "status": "passed",
+      "evidence": "reviewed_public_safe_summary owner_approved_private_derived_summary local_worker_structured_metadata_without_body"
+    },
+    {
+      "id": "forbidden_inputs_block_raw_bodies",
+      "status": "passed",
+      "evidence": "raw_private_source_text ocr_body pdf_body private_image_bytes local_worker_prose_body unreviewed_public_ready_claim"
+    },
+    {
+      "id": "hard_stop_no_queue_items",
+      "status": "passed",
+      "evidence": "do not create queue items from this plan. do not copy private source text, ocr/pdf bodies or local worker prose bodies. do not create embeddings or fine-tunes now. do not mark any row public_ready true. do not train from approved_eval_only rows without a later owner-approved training gate."
+    },
+    {
+      "id": "hard_stop_no_private_bodies",
+      "status": "passed",
+      "evidence": "do not create queue items from this plan. do not copy private source text, ocr/pdf bodies or local worker prose bodies. do not create embeddings or fine-tunes now. do not mark any row public_ready true. do not train from approved_eval_only rows without a later owner-approved training gate."
+    },
+    {
+      "id": "hard_stop_no_embedding_finetune",
+      "status": "passed",
+      "evidence": "do not create queue items from this plan. do not copy private source text, ocr/pdf bodies or local worker prose bodies. do not create embeddings or fine-tunes now. do not mark any row public_ready true. do not train from approved_eval_only rows without a later owner-approved training gate."
+    },
+    {
+      "id": "hard_stop_public_ready_false",
+      "status": "passed",
+      "evidence": "do not create queue items from this plan. do not copy private source text, ocr/pdf bodies or local worker prose bodies. do not create embeddings or fine-tunes now. do not mark any row public_ready true. do not train from approved_eval_only rows without a later owner-approved training gate."
+    },
+    {
+      "id": "hard_stop_no_training_without_owner_gate",
+      "status": "passed",
+      "evidence": "do not create queue items from this plan. do not copy private source text, ocr/pdf bodies or local worker prose bodies. do not create embeddings or fine-tunes now. do not mark any row public_ready true. do not train from approved_eval_only rows without a later owner-approved training gate."
+    }
+  ]
+}

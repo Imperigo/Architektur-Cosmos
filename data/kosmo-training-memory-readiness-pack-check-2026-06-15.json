@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T04:59:36.628Z",
+  "status": "kosmo_training_memory_readiness_pack_guard_passed",
+  "policy": {
+    "validates_pack_only": true,
+    "writes_training_data_now": false,
+    "writes_embeddings_now": false,
+    "runs_fine_tuning_now": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-training-memory-readiness-pack-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 20,
+    "passed": 20,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "kosmo_training_memory_readiness_pack_ready"
+    },
+    {
+      "id": "policy_readiness_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_training_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_embeddings_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_fine_tuning_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_copy",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_raw_private_text",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_bodies",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "four_training_lanes",
+      "status": "passed",
+      "evidence": "rag_corpus,eval_set,fine_tune_candidates,embedding_manifest"
+    },
+    {
+      "id": "expected_lanes_present",
+      "status": "passed",
+      "evidence": "rag_corpus,eval_set,fine_tune_candidates,embedding_manifest"
+    },
+    {
+      "id": "lanes_not_executable_now",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "lanes_write_nothing_now",
+      "status": "passed",
+      "evidence": 4
+    },
+    {
+      "id": "lane_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "candidate_sources_present",
+      "status": "passed",
+      "evidence": 18
+    },
+    {
+      "id": "candidate_sources_public_false",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "output_contract_no_git_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "hard_stops_training_private_content",
+      "status": "passed",
+      "evidence": "do not train or fine-tune on unverified private content. do not create embeddings from private source contents before source-root, rights and privacy guards pass. do not copy worker output bodies into training data. do not put private ocr/pdf text, scans, images, plans or assets into git. prepare schemas and eval rubrics first; data rows come only after provenance and rights review. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stops_public_ready",
+      "status": "passed",
+      "evidence": "do not train or fine-tune on unverified private content. do not create embeddings from private source contents before source-root, rights and privacy guards pass. do not copy worker output bodies into training data. do not put private ocr/pdf text, scans, images, plans or assets into git. prepare schemas and eval rubrics first; data rows come only after provenance and rights review. keep public-ready at 0."
+    }
+  ]
+}

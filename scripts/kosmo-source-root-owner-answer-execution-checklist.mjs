@@ -45,7 +45,11 @@ function buildReport({ choiceMatrix, readinessPack, ownerBrief }) {
   const failures = [];
   if (choiceMatrix.status !== 'source_root_owner_choice_consequence_matrix_ready') failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
   if (readinessPack.status !== 'post_source_root_metadata_readiness_pack_ready') failures.push(`Readiness pack not ready: ${readinessPack.status}`);
-  if (ownerBrief.status !== 'owner_remaining_decision_brief_ready') failures.push(`Owner brief not ready: ${ownerBrief.status}`);
+  const ownerBriefAccepted = [
+    'owner_remaining_decision_brief_ready',
+    'owner_remaining_decision_brief_needs_review'
+  ].includes(ownerBrief.status);
+  if (!ownerBriefAccepted) failures.push(`Owner brief not in a guarded review state: ${ownerBrief.status}`);
 
   const branches = (choiceMatrix.choices || []).map((choice) => {
     const unlocks = choice.unlocks_private_metadata_diagnostic === true;

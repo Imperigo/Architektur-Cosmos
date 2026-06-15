@@ -1,0 +1,316 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:42:38.610Z",
+  "status": "owner_answer_intake_guard_passed_pending_owner_input",
+  "policy": {
+    "reads_private_content": false,
+    "writes_session_files": false,
+    "records_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates owner answer intake only. It never applies answers to decision sessions."
+  },
+  "source_refs": [
+    "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-15.json",
+    "data/kosmo-owner-answer-sheet-2026-06-15.json"
+  ],
+  "summary": {
+    "source_root_answer_present": false,
+    "owner_card_answers": 5,
+    "owner_card_answers_present": 0,
+    "reference_decision_answers": 10,
+    "reference_decision_answers_present": 0,
+    "filled_answers": 0,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "findings": [
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Intake must not record decisions."
+    },
+    {
+      "id": "writes_session_files_false",
+      "severity": "passed",
+      "message": "Intake must not write session files."
+    },
+    {
+      "id": "writes_public_files_false",
+      "severity": "passed",
+      "message": "Intake must not write public files."
+    },
+    {
+      "id": "writes_public_manifest_false",
+      "severity": "passed",
+      "message": "Intake must not write public manifests."
+    },
+    {
+      "id": "public_ready_after_intake_zero",
+      "severity": "passed",
+      "message": "Intake must keep public_ready_after_intake at 0."
+    },
+    {
+      "id": "source_root_answer_present",
+      "severity": "passed",
+      "message": "Source-root answer block must exist."
+    },
+    {
+      "id": "source_root_selected_decision_allowed",
+      "severity": "passed",
+      "message": "Source-root selected_decision must be null or an allowed decision."
+    },
+    {
+      "id": "source_root_safe_default_match",
+      "severity": "passed",
+      "message": "Source-root safe default must match answer sheet."
+    },
+    {
+      "id": "source_root_no_public_ready_flag",
+      "severity": "passed",
+      "message": "Source-root intake must not contain a public-ready flag."
+    },
+    {
+      "id": "owner_card_answer_count_match",
+      "severity": "passed",
+      "message": "Owner card answer count must match answer sheet cards."
+    },
+    {
+      "id": "owner_card_known:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Owner card batch-a-villa-savoye-image-candidates must exist in answer sheet."
+    },
+    {
+      "id": "owner_card_choice_allowed:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Owner card batch-a-villa-savoye-image-candidates choice must be null or allowed."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Owner card batch-a-villa-savoye-image-candidates must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "owner_card_known:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Owner card batch-b-villa-savoye-derived-files must exist in answer sheet."
+    },
+    {
+      "id": "owner_card_choice_allowed:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Owner card batch-b-villa-savoye-derived-files choice must be null or allowed."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Owner card batch-b-villa-savoye-derived-files must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "owner_card_known:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Owner card batch-c-model-promotion-confirmation must exist in answer sheet."
+    },
+    {
+      "id": "owner_card_choice_allowed:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Owner card batch-c-model-promotion-confirmation choice must be null or allowed."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Owner card batch-c-model-promotion-confirmation must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "owner_card_known:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Owner card batch-d-sogn-benedetg-source-gap must exist in answer sheet."
+    },
+    {
+      "id": "owner_card_choice_allowed:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Owner card batch-d-sogn-benedetg-source-gap choice must be null or allowed."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Owner card batch-d-sogn-benedetg-source-gap must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "owner_card_known:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Owner card batch-e-kosmoasset-human-reviews must exist in answer sheet."
+    },
+    {
+      "id": "owner_card_choice_allowed:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Owner card batch-e-kosmoasset-human-reviews choice must be null or allowed."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Owner card batch-e-kosmoasset-human-reviews must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "reference_answer_count_match",
+      "severity": "passed",
+      "message": "Reference answer count must match answer sheet decisions."
+    },
+    {
+      "id": "reference_decision_known:villa-savoye-exterior-savoye-3-cc0",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-exterior-savoye-3-cc0 must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:villa-savoye-exterior-savoye-3-cc0",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-exterior-savoye-3-cc0 selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:villa-savoye-exterior-savoye-3-cc0",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-exterior-savoye-3-cc0 must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:villa-savoye-exterior-loc-full",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-exterior-loc-full must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:villa-savoye-exterior-loc-full",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-exterior-loc-full selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:villa-savoye-exterior-loc-full",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-exterior-loc-full must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:villa-savoye-interior-chaise-cc-by-sa",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-interior-chaise-cc-by-sa must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:villa-savoye-interior-chaise-cc-by-sa",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-interior-chaise-cc-by-sa selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:villa-savoye-interior-chaise-cc-by-sa",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-interior-chaise-cc-by-sa must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:public/archive-models/villa-savoye/low.glb",
+      "severity": "passed",
+      "message": "Reference decision public/archive-models/villa-savoye/low.glb must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:public/archive-models/villa-savoye/low.glb",
+      "severity": "passed",
+      "message": "Reference decision public/archive-models/villa-savoye/low.glb selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:public/archive-models/villa-savoye/low.glb",
+      "severity": "passed",
+      "message": "Reference decision public/archive-models/villa-savoye/low.glb must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:villa-savoye",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:villa-savoye",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:villa-savoye",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:alterszentrum-kloster-ingenbohl",
+      "severity": "passed",
+      "message": "Reference decision alterszentrum-kloster-ingenbohl must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:alterszentrum-kloster-ingenbohl",
+      "severity": "passed",
+      "message": "Reference decision alterszentrum-kloster-ingenbohl selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:alterszentrum-kloster-ingenbohl",
+      "severity": "passed",
+      "message": "Reference decision alterszentrum-kloster-ingenbohl must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_decision_known:sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Reference decision sogn-benedetg-source-gap must exist in answer sheet."
+    },
+    {
+      "id": "reference_decision_choice_allowed:sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Reference decision sogn-benedetg-source-gap selected_decision must be null or allowed."
+    },
+    {
+      "id": "reference_decision_public_ready_false:sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Reference decision sogn-benedetg-source-gap must keep public_ready_after_decision false."
+    }
+  ],
+  "next_actions": [
+    "If filled_answers is 0, keep waiting for owner input.",
+    "If filled_answers is greater than 0, Codex/Claude may prepare a separate reviewed session edit plan.",
+    "Do not apply source-root or owner decisions without explicit owner confirmation and follow-up checks."
+  ]
+}

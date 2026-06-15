@@ -1,0 +1,69 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:37:01.829Z",
+  "status": "owner_unlock_reply_validator_smoke_passed",
+  "policy": {
+    "smoke_only": true,
+    "executes_validator_cli_only": true,
+    "records_decisions": false,
+    "mutates_intake_template": false,
+    "mutates_session_files": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_smoke": 0
+  },
+  "summary": {
+    "cases": 4,
+    "passed": 4,
+    "failures": 0,
+    "expected_invalid_cases": 1,
+    "public_ready_after_smoke": 0
+  },
+  "cases": [
+    {
+      "id": "pending_no_answer",
+      "expected_status": "owner_unlock_reply_validator_pending_owner_reply",
+      "actual_status": "owner_unlock_reply_validator_pending_owner_reply",
+      "expected_exit_code": 0,
+      "actual_exit_code": 0,
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "valid_repair_onedrive_first",
+      "expected_status": "owner_unlock_reply_valid",
+      "actual_status": "owner_unlock_reply_valid",
+      "expected_exit_code": 0,
+      "actual_exit_code": 0,
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "valid_select_exact_root_review_only",
+      "expected_status": "owner_unlock_reply_valid",
+      "actual_status": "owner_unlock_reply_valid",
+      "expected_exit_code": 0,
+      "actual_exit_code": 0,
+      "failures": [],
+      "passed": true
+    },
+    {
+      "id": "invalid_unlock_without_confirmation",
+      "expected_status": "owner_unlock_reply_invalid",
+      "actual_status": "owner_unlock_reply_invalid",
+      "expected_exit_code": 1,
+      "actual_exit_code": 1,
+      "failures": [
+        "select_exact_root_1 requires confirmed_exact_root=yes."
+      ],
+      "passed": true
+    }
+  ],
+  "hard_stops": [
+    "Smoke cases use synthetic owner replies only.",
+    "Do not copy smoke answers into owner intake files.",
+    "Do not run private inventory from this smoke.",
+    "Do not read private content.",
+    "Keep public-ready at 0."
+  ]
+}

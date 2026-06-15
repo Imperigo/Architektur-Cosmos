@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:41:17.688Z",
+  "status": "owner_unlock_reply_validator_pending_owner_reply",
+  "policy": {
+    "validator_only": true,
+    "records_decisions": false,
+    "mutates_intake_template": false,
+    "mutates_session_files": false,
+    "executes_commands": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_validation": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-prompt-pack-2026-06-15.json"
+  ],
+  "summary": {
+    "answer_present": false,
+    "valid": false,
+    "source_root_choices": 3,
+    "review_batch_choices": 5,
+    "failures": 0,
+    "public_ready_after_validation": 0
+  },
+  "parsed_answer": null,
+  "required_format": [
+    "source_root_choice=...",
+    "confirmed_exact_root=...",
+    "review_batches=...",
+    "note=..."
+  ],
+  "safe_default_reply": [
+    "source_root_choice=repair_onedrive_first",
+    "confirmed_exact_root=no",
+    "review_batches=none",
+    "note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist."
+  ],
+  "next_actions": [
+    "Wait for explicit owner reply in the required format.",
+    "Keep source-root and review batches pending."
+  ],
+  "hard_stops": [
+    "Do not treat a valid reply as an applied decision.",
+    "Do not mutate intake or session files from this validator.",
+    "Do not run commands from this validator.",
+    "Do not read private content.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

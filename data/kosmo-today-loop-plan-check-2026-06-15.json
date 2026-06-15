@@ -1,0 +1,166 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:41:51.820Z",
+  "status": "today_loop_plan_guard_passed",
+  "policy": {
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_check": 0,
+    "note": "This guard validates the daily loop plan only. It does not execute tasks."
+  },
+  "source_refs": [
+    "data/kosmo-today-loop-plan-2026-06-15.json"
+  ],
+  "summary": {
+    "plan_status": "today_loop_plan_ready",
+    "execution_mode": "source_free_path_b",
+    "work_blocks": 5,
+    "tick_max_minutes": 2,
+    "checkup_interval_minutes": 3,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Plan schema_version must be 0.1."
+    },
+    {
+      "id": "plan_status_known",
+      "severity": "passed",
+      "message": "Plan status must be known."
+    },
+    {
+      "id": "max_tick_two_minutes",
+      "severity": "passed",
+      "message": "Max loop tick must be at most two minutes."
+    },
+    {
+      "id": "checkup_three_minutes",
+      "severity": "passed",
+      "message": "Checkup interval must be at most three minutes."
+    },
+    {
+      "id": "no_idle_wait",
+      "severity": "passed",
+      "message": "Plan must prohibit idle waits between tasks."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Plan must not read private content."
+    },
+    {
+      "id": "no_private_copies",
+      "severity": "passed",
+      "message": "Plan must not copy private content."
+    },
+    {
+      "id": "no_private_ocr",
+      "severity": "passed",
+      "message": "Plan must not run private OCR."
+    },
+    {
+      "id": "no_private_embeddings",
+      "severity": "passed",
+      "message": "Plan must not run embeddings on private content."
+    },
+    {
+      "id": "no_fine_tuning",
+      "severity": "passed",
+      "message": "Plan must not run fine-tuning."
+    },
+    {
+      "id": "no_public_writes",
+      "severity": "passed",
+      "message": "Plan must not write public files."
+    },
+    {
+      "id": "no_public_manifest",
+      "severity": "passed",
+      "message": "Plan must not write public manifest."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Plan public-ready must remain 0."
+    },
+    {
+      "id": "loop_until_18_local",
+      "severity": "passed",
+      "message": "Loop must target 18:00 local time."
+    },
+    {
+      "id": "loop_tick_max_two",
+      "severity": "passed",
+      "message": "Loop tick max must be at most two minutes."
+    },
+    {
+      "id": "loop_checkup_three",
+      "severity": "passed",
+      "message": "Loop checkup interval must be at most three minutes."
+    },
+    {
+      "id": "data_lane_passed",
+      "severity": "passed",
+      "message": "Data lane should be review-only passed at plan time."
+    },
+    {
+      "id": "worker_boundary_passed",
+      "severity": "passed",
+      "message": "Worker boundary guard should pass at plan time."
+    },
+    {
+      "id": "source_root_not_unlocked",
+      "severity": "passed",
+      "message": "Source Root should remain locked unless explicit owner answer exists."
+    },
+    {
+      "id": "work_blocks_minimum",
+      "severity": "passed",
+      "message": "Plan must include at least five work blocks."
+    },
+    {
+      "id": "work_block:innovation_scout",
+      "severity": "passed",
+      "message": "Plan must include work block innovation_scout."
+    },
+    {
+      "id": "work_block:references_schema_hardening",
+      "severity": "passed",
+      "message": "Plan must include work block references_schema_hardening."
+    },
+    {
+      "id": "work_block:asset_schema_hardening",
+      "severity": "passed",
+      "message": "Plan must include work block asset_schema_hardening."
+    },
+    {
+      "id": "work_block:training_eval_readiness",
+      "severity": "passed",
+      "message": "Plan must include work block training_eval_readiness."
+    },
+    {
+      "id": "work_block:orbit_and_handoff",
+      "severity": "passed",
+      "message": "Plan must include work block orbit_and_handoff."
+    },
+    {
+      "id": "path_a_private_metadata_after_gate",
+      "severity": "passed",
+      "message": "Path A must include gated private metadata inventory."
+    },
+    {
+      "id": "path_b_private_scan_blocked",
+      "severity": "passed",
+      "message": "Path B must explicitly block private scans."
+    }
+  ],
+  "next_actions": [
+    "Use the plan as today loop entrypoint.",
+    "Run innovation scout next, then source-free references/assets/training blocks.",
+    "Refresh handoff and commit exact Codex-owned files after each coherent block."
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T04:51:36.700Z",
+  "status": "today_loop_plan_ready",
+  "policy": {
+    "autonomous_until_local_time": "18:00",
+    "max_tick_minutes": 2,
+    "checkup_interval_minutes": 3,
+    "no_idle_wait_between_tasks": true,
+    "source_root_gate_respected": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_ocr": false,
+    "runs_embeddings_on_private_content": false,
+    "runs_fine_tuning": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_plan": 0,
+    "note": "This plan drives Codex source-free work until the owner explicitly confirms a Source Root. It does not unlock private libraries."
+  },
+  "source_refs": [
+    "data/kosmodata-lane-sweep-2026-06-15.json",
+    "data/kosmo-data-lane-command-router-2026-06-15.json",
+    "data/kosmo-worker-boundary-pack-check-2026-06-15.json",
+    "data/kosmo-day-batch-loop-2026-06-15.json",
+    "data/kosmo-source-root-owner-action-card-2026-06-15.json",
+    "data/kosmo-source-root-owner-final-decision-brief-2026-06-15.json",
+    "data/kosmo-tomorrow-day-batch-2026-06-15.json"
+  ],
+  "summary": {
+    "execution_mode": "source_free_path_b",
+    "current_blocker": "source_root_owner_confirmation_pending",
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "data_lane_steps": "24/24",
+    "router_status": "worker_router_guarded_review_only",
+    "worker_boundary_guard_status": "worker_boundary_pack_guard_passed",
+    "day_batch_loop_status": "day_batch_loop_needs_review",
+    "owner_action_required": true,
+    "source_root_unlocked": false,
+    "source_root_final_brief_status": null,
+    "inherited_tomorrow_plan_status": "tomorrow_day_batch_ready",
+    "public_ready_after_plan": 0
+  },
+  "loop": {
+    "date": "2026-06-15",
+    "until_local": "2026-06-15T18:00:00+02:00",
+    "tick_max_minutes": 2,
+    "checkup_interval_minutes": 3,
+    "immediate_next_task_policy": "start_next_task_without_waiting_when_current_task_finishes",
+    "stop_early_only_if": [
+      "no source-free tasks remain",
+      "all checks, handoffs and pushes are complete",
+      "a command requires owner/admin input that cannot be inferred safely"
+    ]
+  },
+  "morning_routine": [
+    {
+      "id": "refresh_daily_data_lane",
+      "command": "npm run kosmo:data-lane-sweep",
+      "required_before_loop": true
+    },
+    {
+      "id": "refresh_worker_router",
+      "command": "npm run kosmo:data-lane-command-router",
+      "required_before_loop": true
+    },
+    {
+      "id": "refresh_worker_boundary",
+      "command": "npm run kosmo:worker-boundary-pack",
+      "required_before_loop": true
+    },
+    {
+      "id": "guard_worker_boundary",
+      "command": "npm run kosmo:worker-boundary-pack-check",
+      "required_before_loop": true
+    },
+    {
+      "id": "refresh_owner_handoff",
+      "command": "npm run kosmo:owner-review-session-brief && npm run kosmo:owner-review-session-brief-check",
+      "required_before_loop": true
+    },
+    {
+      "id": "refresh_overseer_board",
+      "command": "npm run kosmo:overseer-sync-board && npm run kosmo:overseer-sync-board-check",
+      "required_before_loop": true
+    }
+  ],
+  "work_blocks": [
+    {
+      "id": "innovation_scout",
+      "lane": "kosmo-prepare-kosmoreferences-kosmoasset",
+      "objective": "Check current primary-source code and model candidates that can accelerate ArchitekturKosmos without installing or touching private data.",
+      "first_commands": [
+        "npm run kosmo:daily-innovation-scout",
+        "npm run kosmo:daily-innovation-scout-check"
+      ],
+      "acceptance": [
+        "Scout report exists",
+        "all candidates mapped to lanes",
+        "no install/private-read/training action enabled"
+      ]
+    },
+    {
+      "id": "references_schema_hardening",
+      "lane": "kosmoreferences",
+      "objective": "Tighten source-free pilot package contracts for Villa Savoye, Sogn Benedetg and Ingenbohl.",
+      "first_commands": [
+        "npm run kosmo:pilot-gap-label-review",
+        "npm run kosmo:pilot-gap-label-review-check",
+        "npm run kosmo:pilot-intake-readiness-pack",
+        "npm run kosmo:pilot-intake-readiness-pack-check"
+      ],
+      "acceptance": [
+        "pilot gaps have machine labels",
+        "intake readiness remains review-only",
+        "public-ready remains 0"
+      ]
+    },
+    {
+      "id": "asset_schema_hardening",
+      "lane": "kosmoasset",
+      "objective": "Prepare review-only asset intake from reference candidates without public release.",
+      "first_commands": [
+        "npm run kosmo:asset-source-candidate-map",
+        "npm run kosmo:asset-candidate-taxonomy-review",
+        "npm run kosmo:asset-candidate-taxonomy-review-check",
+        "npm run kosmo:asset-intake-readiness-pack",
+        "npm run kosmo:asset-intake-readiness-pack-check"
+      ],
+      "acceptance": [
+        "asset candidates remain review-only",
+        "rights/owner fields explicit",
+        "local worker can classify metadata only"
+      ]
+    },
+    {
+      "id": "training_eval_readiness",
+      "lane": "kosmo-training",
+      "objective": "Keep future Kosmo training data honest before private ingestion: rubric, row template, review queue and ontology.",
+      "first_commands": [
+        "npm run kosmo:training-eval-rubric-pack",
+        "npm run kosmo:training-eval-rubric-pack-check",
+        "npm run kosmo:training-eval-row-template",
+        "npm run kosmo:training-eval-row-template-check",
+        "npm run kosmo:training-eval-review-queue-plan",
+        "npm run kosmo:training-eval-review-queue-plan-check",
+        "npm run kosmo:architecture-ontology-seed",
+        "npm run kosmo:architecture-ontology-seed-check"
+      ],
+      "acceptance": [
+        "no raw private text fields",
+        "evaluation gates explicit",
+        "ontology fields map to references/assets"
+      ]
+    },
+    {
+      "id": "orbit_and_handoff",
+      "lane": "kosmoorbit-overseer-sync",
+      "objective": "Expose today status in Orbit and mirror handoff for Claude/KosmoOverseer.",
+      "first_commands": [
+        "npm run kosmo:orbit-status-bridge",
+        "npm run kosmo:overseer-sync-board",
+        "npm run kosmo:overseer-sync-board-check"
+      ],
+      "acceptance": [
+        "Orbit bridge updated",
+        "handoff mirrored",
+        "checks pass before commit/push"
+      ]
+    }
+  ],
+  "path_a_if_owner_confirms_source_root": [
+    "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"",
+    "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\"",
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:source-root-post-owner-activation-queue",
+    "npm run kosmo:source-root-post-owner-activation-queue-check",
+    "npm run kosmo:private-metadata-inventory",
+    "npm run kosmo:private-metadata-inventory-check"
+  ],
+  "path_b_while_blocked": [
+    "Continue source-free schema, guard, eval, Orbit and handoff work.",
+    "Do not scan private books, plans, PDFs, OCR text, OneDrive libraries or archive roots.",
+    "Use public/current technical research only for planning and isolated experiments.",
+    "Commit only repo-safe metadata, docs, scripts and checks."
+  ],
+  "handoff_notes": [
+    "Codex may add clearly named Codex-owned reports and scripts.",
+    "Codex must label any change that affects Claude/KosmoOverseer files.",
+    "Local LLM work stays metadata-review-only until Source Root and owner gates pass."
+  ]
+}

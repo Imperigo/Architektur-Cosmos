@@ -1,0 +1,153 @@
+# Kosmo Day Batch Loop
+
+Generated: 2026-06-15T10:42:50.556Z
+Status: `day_batch_loop_passed_review_only`
+
+## Summary
+
+- Required steps: 57/57
+- Allowed bootstrap failures: 0
+- Skipped steps: 1
+- Core sweep: kosmodata_lane_sweep_review_only_passed
+- Router: worker_router_guarded_review_only
+- Worker boundary: worker_boundary_pack_guard_passed
+- Owner handoff: passed
+- Source-root activation: source_root_activation_waiting_for_owner_storage_action
+- Private metadata inventory: private_metadata_inventory_blocked_until_activation
+- Private metadata inventory fixture: private_metadata_inventory_fixture_passed
+- Private metadata inventory check: private_metadata_inventory_guard_passed
+- Local worker HTTP runner: local_worker_http_runner_dry_run_ready, guard passed, safe inputs 6
+- Local worker HTTP runner check: local_worker_http_runner_guard_passed, failures 0
+- Local worker execution runbook: local_worker_execution_runbook_idle_review_only, runner-safe 8, executable now 0
+- Local worker execution runbook check: local_worker_execution_runbook_guard_passed, failures 0
+- Local worker output contract review: local_worker_output_contract_review_ready, contracts 9, present valid 9, repo conversion now 0, execute now 0, failures 0, check local_worker_output_contract_review_guard_passed
+- Source-independent work queue: source_independent_work_queue_ready, tasks 6, completed 4, codex executable 0, owner actions 2, failures 0
+- Innovation smoke: innovation_smoke_passed_review_only
+- Orbit bridge: orbit_bridge_ready_with_blockers
+- Source-root blocker: source_root_blocker_still_active
+- Source-root decision session refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
+- Source-root candidate integrity: source_root_candidate_integrity_owner_review_ready, existing 8, exact roots 1, failures 0
+- Source-root owner action: source_root_owner_action_required
+- Source-root owner decision packet: source_root_owner_decision_packet_ready, templates 3, exact roots 1, failures 0
+- Source-root owner decision packet check: source_root_owner_decision_packet_guard_passed, failures 0, warnings 0
+- Source-root decision dry run: source_root_decision_dry_run_ready, scenarios 3, metadata scenarios 1, failures 0
+- Source-root post-owner activation queue: source_root_post_owner_activation_queue_ready, steps 7, executable 0, blocked 7, failures 0
+- Source-root post-owner activation queue check: source_root_post_owner_activation_queue_guard_passed, failures 0, warnings 0
+- Source-root owner final decision brief: source_root_owner_final_decision_brief_ready, options 3, unlock options 1, failures 0
+- Source-root owner choice consequence matrix: source_root_owner_choice_consequence_matrix_ready, choices 3, unlock 1, blocked 2, failures 0
+- Pilot gap label review: pilot_gap_label_review_ready, labels 12, hard blockers 7, owner decisions 7, local worker now 5, failures 0, check pilot_gap_label_review_guard_passed
+- Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
+- Asset candidate taxonomy review: kosmoasset_candidate_taxonomy_review_ready, candidates 10, reviewable 3, owner confirmations 3, failures 0, check kosmoasset_candidate_taxonomy_review_guard_passed
+- Private diagnostic allowed: no
+- Night loop checkpoint: night_loop_guarded_ready
+- Public-ready after loop: 0
+
+## Invariants
+
+| Invariant | Status | Evidence |
+| --- | --- | --- |
+| `required_steps_passed` | passed | 57/57 |
+| `core_sweep_review_only` | passed | kosmodata_lane_sweep_review_only_passed |
+| `router_guarded_review_only` | passed | worker_router_guarded_review_only |
+| `worker_boundary_passed` | passed | worker_boundary_pack_guard_passed |
+| `source_root_decision_session_refresh_safe` | passed | source_root_decision_session_refresh_not_needed |
+| `source_root_candidate_integrity_ready` | passed | source_root_candidate_integrity_owner_review_ready |
+| `source_root_owner_action_card_ready` | passed | source_root_owner_action_required |
+| `source_root_owner_decision_packet_ready` | passed | source_root_owner_decision_packet_ready |
+| `source_root_owner_decision_packet_guard_passed` | passed | source_root_owner_decision_packet_guard_passed |
+| `source_root_decision_dry_run_ready` | passed | source_root_decision_dry_run_ready |
+| `source_root_post_owner_activation_queue_ready` | passed | source_root_post_owner_activation_queue_ready |
+| `source_root_post_owner_activation_queue_guard_passed` | passed | source_root_post_owner_activation_queue_guard_passed |
+| `source_root_owner_final_decision_brief_ready` | passed | source_root_owner_final_decision_brief_ready |
+| `source_root_owner_choice_consequence_matrix_ready` | passed | source_root_owner_choice_consequence_matrix_ready |
+| `pilot_gap_label_review_ready` | passed | pilot_gap_label_review_ready |
+| `pilot_gap_label_review_guard_passed` | passed | pilot_gap_label_review_guard_passed |
+| `asset_source_candidate_map_ready` | passed | kosmoasset_source_candidate_map_review_only_ready |
+| `asset_candidate_taxonomy_review_ready` | passed | kosmoasset_candidate_taxonomy_review_ready |
+| `asset_candidate_taxonomy_review_guard_passed` | passed | kosmoasset_candidate_taxonomy_review_guard_passed |
+| `owner_handoff_passed` | passed | owner_review_packet_guard_passed / owner_review_session_brief_guard_passed |
+| `innovation_smoke_review_only` | passed | innovation_smoke_passed_review_only |
+| `orbit_bridge_ready` | passed | orbit_bridge_ready_with_blockers |
+| `source_root_activation_guarded` | passed | source_root_activation_waiting_for_owner_storage_action |
+| `private_metadata_inventory_guarded` | passed | private_metadata_inventory_blocked_until_activation |
+| `private_metadata_inventory_fixture_smoke_passed` | passed | private_metadata_inventory_fixture_passed, matches=6 |
+| `private_metadata_inventory_guard_passed` | passed | private_metadata_inventory_guard_passed |
+| `local_worker_http_runner_guarded` | passed | local_worker_http_runner_dry_run_ready, guard=true |
+| `local_worker_http_runner_check_passed` | passed | local_worker_http_runner_guard_passed |
+| `local_worker_execution_runbook_guarded` | passed | local_worker_execution_runbook_idle_review_only |
+| `local_worker_execution_runbook_check_passed` | passed | local_worker_execution_runbook_guard_passed |
+| `local_worker_output_contract_review_ready` | passed | local_worker_output_contract_review_ready |
+| `local_worker_output_contract_review_guard_passed` | passed | local_worker_output_contract_review_guard_passed |
+| `source_independent_work_queue_ready` | passed | source_independent_work_queue_ready |
+| `public_ready_zero` | passed | public_ready=0 |
+| `private_source_guard_state_valid` | passed | private_diagnostic_allowed=false, activation=source_root_activation_waiting_for_owner_storage_action |
+
+## Steps
+
+| Step | Status | Required | Duration |
+| --- | --- | --- | ---: |
+| OneDrive Sync Errors | passed | yes | 339ms |
+| Storage Mount Snapshot | passed | yes | 238ms |
+| Source Root Locator | passed | yes | 418ms |
+| Source Root Selection Brief | passed | yes | 239ms |
+| Source Root Decision Session Create | skipped | no | 0ms |
+| Source Root Decision Session Refresh | passed | yes | 241ms |
+| Source Root Decision Session Check | passed | yes | 243ms |
+| Source Root Candidate Integrity Check | passed | yes | 249ms |
+| Private Library Diagnostic Metadata | passed | yes | 284ms |
+| Source Root Blocker Refresh | passed | yes | 234ms |
+| Source Root Owner Action Card | passed | yes | 236ms |
+| Source Root Owner Decision Packet | passed | yes | 231ms |
+| Source Root Owner Decision Packet Check | passed | yes | 233ms |
+| Source Root Decision Dry Run | passed | yes | 235ms |
+| Source Root Post-Owner Activation Queue | passed | yes | 239ms |
+| Source Root Post-Owner Activation Queue Check | passed | yes | 243ms |
+| Source Root Owner Final Decision Brief | passed | yes | 239ms |
+| Source Root Owner Choice Consequence Matrix | passed | yes | 238ms |
+| Local Model Inventory | passed | yes | 435ms |
+| Bootstrap Data Lane Sweep | passed | no | 24551ms |
+| Bootstrap Router | passed | yes | 246ms |
+| Core Data Lane Sweep | passed | yes | 17429ms |
+| Pilot Evidence Matrix | passed | yes | 243ms |
+| Pilot Gap Label Review | passed | yes | 240ms |
+| Pilot Gap Label Review Check | passed | yes | 236ms |
+| Private Source Inventory Plan | passed | yes | 235ms |
+| Private Inventory Output Template | passed | yes | 236ms |
+| Private Inventory Output Check | passed | yes | 238ms |
+| Pilot Package Check | passed | yes | 245ms |
+| Asset Reference Bridge Check | passed | yes | 239ms |
+| Asset Source Candidate Map | passed | yes | 233ms |
+| Asset Candidate Taxonomy Review | passed | yes | 239ms |
+| Asset Candidate Taxonomy Review Check | passed | yes | 240ms |
+| Core Router | passed | yes | 236ms |
+| Worker Boundary Pack | passed | yes | 240ms |
+| Worker Boundary Pack Check | passed | yes | 234ms |
+| Source Root Activation Preflight | passed | yes | 248ms |
+| Private Metadata Inventory Runner | passed | yes | 234ms |
+| Private Metadata Inventory Fixture Smoke | passed | yes | 296ms |
+| Private Metadata Inventory Check | passed | yes | 244ms |
+| Local Worker Task Pack Refresh | passed | yes | 241ms |
+| Local Worker HTTP Runner Smoke | passed | yes | 236ms |
+| Local Worker HTTP Runner Check | passed | yes | 236ms |
+| Local Worker Output Review | passed | yes | 242ms |
+| Local Worker Launch Queue | passed | yes | 235ms |
+| Local Worker Output Conversion Plan | passed | yes | 242ms |
+| Local Worker Execution Runbook | passed | yes | 235ms |
+| Local Worker Execution Runbook Check | passed | yes | 239ms |
+| Local Worker Output Contract Review | passed | yes | 239ms |
+| Local Worker Output Contract Review Check | passed | yes | 244ms |
+| Owner Review Packet | passed | yes | 251ms |
+| Owner Review Packet Check | passed | yes | 238ms |
+| Owner Review Session Brief | passed | yes | 236ms |
+| Owner Review Session Brief Check | passed | yes | 245ms |
+| Night Loop Checkpoint | passed | yes | 236ms |
+| Source-Independent Work Queue | passed | yes | 237ms |
+| Innovation Lane Plan | passed | yes | 1063ms |
+| Innovation Smoke | passed | yes | 1706ms |
+| Orbit Status Bridge | passed | yes | 244ms |
+
+## Next Actions
+
+- Use this script as the daily autonomous KosmoReferences/KosmoAsset review-only loop.
+- If source-root remains blocked, present the owner review packet and do not run private extraction.
+- After a real source root is recorded, rerun this loop before any pilot-first private inventory.

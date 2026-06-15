@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:36:59.863Z",
+  "status": "source_root_owner_answer_execution_checklist_guard_passed",
+  "policy": {
+    "validates_checklist_only": true,
+    "records_decisions": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "executes_commands": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-source-root-owner-answer-execution-checklist-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 16,
+    "passed": 16,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "source_root_owner_answer_execution_checklist_ready"
+    },
+    {
+      "id": "policy_checklist_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_command_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "three_branches",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "expected_branches_present",
+      "status": "passed",
+      "evidence": "keep_blocked,repair_onedrive_first,select_exact_root_1"
+    },
+    {
+      "id": "one_unlock_branch",
+      "status": "passed",
+      "evidence": "select_exact_root_1"
+    },
+    {
+      "id": "nothing_executable_now",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "owner_confirmation_required",
+      "status": "passed",
+      "evidence": "keep_blocked:true,repair_onedrive_first:true,select_exact_root_1:true"
+    },
+    {
+      "id": "unlock_allows_inventory_after_guards_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "blocked_branches_no_inventory",
+      "status": "passed",
+      "evidence": "blocked branches"
+    },
+    {
+      "id": "no_forbidden_commands",
+      "status": "passed"
+    },
+    {
+      "id": "hard_stops_present",
+      "status": "passed",
+      "evidence": 6
+    }
+  ]
+}

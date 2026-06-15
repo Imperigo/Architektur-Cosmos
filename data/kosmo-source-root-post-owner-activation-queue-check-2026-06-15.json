@@ -1,0 +1,380 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:41:56.200Z",
+  "status": "source_root_post_owner_activation_queue_guard_passed",
+  "policy": {
+    "validates_queue_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory_now": false,
+    "executes_commands": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_check": 0,
+    "note": "This guard validates the post-owner activation queue. It does not execute queue steps or inspect private sources."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-post-owner-activation-queue-2026-06-15.json"
+  ],
+  "summary": {
+    "queue_status": "source_root_post_owner_activation_queue_ready",
+    "activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "activation_ready": false,
+    "decision_still_pending": true,
+    "queue_steps": 7,
+    "executable_now": 0,
+    "blocked_now": 7,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "queue_ready",
+      "severity": "passed",
+      "message": "Queue status must be ready."
+    },
+    {
+      "id": "queue_only_true",
+      "severity": "passed",
+      "message": "Queue must be queue-only."
+    },
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Queue must not record decisions."
+    },
+    {
+      "id": "mutates_decision_session_false",
+      "severity": "passed",
+      "message": "Queue must not mutate the decision session."
+    },
+    {
+      "id": "reads_private_content_false",
+      "severity": "passed",
+      "message": "Queue must not read private content."
+    },
+    {
+      "id": "copies_private_content_false",
+      "severity": "passed",
+      "message": "Queue must not copy private content."
+    },
+    {
+      "id": "runs_private_inventory_now_false",
+      "severity": "passed",
+      "message": "Queue must not run private inventory now."
+    },
+    {
+      "id": "writes_public_files_false",
+      "severity": "passed",
+      "message": "Queue must not write public files."
+    },
+    {
+      "id": "writes_public_manifest_false",
+      "severity": "passed",
+      "message": "Queue must not write public manifests."
+    },
+    {
+      "id": "queue_public_ready_zero",
+      "severity": "passed",
+      "message": "Queue public-ready after queue must be 0."
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "severity": "passed",
+      "message": "Queue summary public-ready must be 0."
+    },
+    {
+      "id": "queue_step_count_matches",
+      "severity": "passed",
+      "message": "Summary queue_steps must match step rows."
+    },
+    {
+      "id": "executable_count_matches",
+      "severity": "passed",
+      "message": "Summary executable_now must match step rows."
+    },
+    {
+      "id": "blocked_count_matches",
+      "severity": "passed",
+      "message": "Summary blocked_now must match step rows."
+    },
+    {
+      "id": "queue_internal_failures_zero",
+      "severity": "passed",
+      "message": "Queue internal failures must be 0."
+    },
+    {
+      "id": "pending_activation_not_ready",
+      "severity": "passed",
+      "message": "Pending decision must not be activation-ready."
+    },
+    {
+      "id": "pending_executable_zero",
+      "severity": "passed",
+      "message": "Pending decision must keep executable_now at 0."
+    },
+    {
+      "id": "pending_all_blocked",
+      "severity": "passed",
+      "message": "Pending decision must keep all queue steps blocked."
+    },
+    {
+      "id": "queue_steps_array",
+      "severity": "passed",
+      "message": "Queue steps must be an array."
+    },
+    {
+      "id": "expected_step_count",
+      "severity": "passed",
+      "message": "Queue must contain the expected seven steps."
+    },
+    {
+      "id": "step_order:record_owner_decision",
+      "severity": "passed",
+      "message": "Step 1 must be record_owner_decision."
+    },
+    {
+      "id": "step_order:decision_session_check",
+      "severity": "passed",
+      "message": "Step 2 must be decision_session_check."
+    },
+    {
+      "id": "step_order:blocker_refresh",
+      "severity": "passed",
+      "message": "Step 3 must be blocker_refresh."
+    },
+    {
+      "id": "step_order:activation_preflight",
+      "severity": "passed",
+      "message": "Step 4 must be activation_preflight."
+    },
+    {
+      "id": "step_order:private_metadata_inventory",
+      "severity": "passed",
+      "message": "Step 5 must be private_metadata_inventory."
+    },
+    {
+      "id": "step_order:private_metadata_inventory_check",
+      "severity": "passed",
+      "message": "Step 6 must be private_metadata_inventory_check."
+    },
+    {
+      "id": "step_order:day_batch_loop",
+      "severity": "passed",
+      "message": "Step 7 must be day_batch_loop."
+    },
+    {
+      "id": "step_phase:record_owner_decision",
+      "severity": "passed",
+      "message": "record_owner_decision must include a phase."
+    },
+    {
+      "id": "step_command:record_owner_decision",
+      "severity": "passed",
+      "message": "record_owner_decision must include a command."
+    },
+    {
+      "id": "step_requires:record_owner_decision",
+      "severity": "passed",
+      "message": "record_owner_decision must include requires array."
+    },
+    {
+      "id": "step_blocked_reason:record_owner_decision",
+      "severity": "passed",
+      "message": "record_owner_decision must explain why it is blocked."
+    },
+    {
+      "id": "step_safe_command:record_owner_decision",
+      "severity": "passed",
+      "message": "record_owner_decision command must stay in the safe queue command set."
+    },
+    {
+      "id": "step_phase:decision_session_check",
+      "severity": "passed",
+      "message": "decision_session_check must include a phase."
+    },
+    {
+      "id": "step_command:decision_session_check",
+      "severity": "passed",
+      "message": "decision_session_check must include a command."
+    },
+    {
+      "id": "step_requires:decision_session_check",
+      "severity": "passed",
+      "message": "decision_session_check must include requires array."
+    },
+    {
+      "id": "step_blocked_reason:decision_session_check",
+      "severity": "passed",
+      "message": "decision_session_check must explain why it is blocked."
+    },
+    {
+      "id": "step_safe_command:decision_session_check",
+      "severity": "passed",
+      "message": "decision_session_check command must stay in the safe queue command set."
+    },
+    {
+      "id": "step_phase:blocker_refresh",
+      "severity": "passed",
+      "message": "blocker_refresh must include a phase."
+    },
+    {
+      "id": "step_command:blocker_refresh",
+      "severity": "passed",
+      "message": "blocker_refresh must include a command."
+    },
+    {
+      "id": "step_requires:blocker_refresh",
+      "severity": "passed",
+      "message": "blocker_refresh must include requires array."
+    },
+    {
+      "id": "step_blocked_reason:blocker_refresh",
+      "severity": "passed",
+      "message": "blocker_refresh must explain why it is blocked."
+    },
+    {
+      "id": "step_safe_command:blocker_refresh",
+      "severity": "passed",
+      "message": "blocker_refresh command must stay in the safe queue command set."
+    },
+    {
+      "id": "step_phase:activation_preflight",
+      "severity": "passed",
+      "message": "activation_preflight must include a phase."
+    },
+    {
+      "id": "step_command:activation_preflight",
+      "severity": "passed",
+      "message": "activation_preflight must include a command."
+    },
+    {
+      "id": "step_requires:activation_preflight",
+      "severity": "passed",
+      "message": "activation_preflight must include requires array."
+    },
+    {
+      "id": "step_blocked_reason:activation_preflight",
+      "severity": "passed",
+      "message": "activation_preflight must explain why it is blocked."
+    },
+    {
+      "id": "step_safe_command:activation_preflight",
+      "severity": "passed",
+      "message": "activation_preflight command must stay in the safe queue command set."
+    },
+    {
+      "id": "step_phase:private_metadata_inventory",
+      "severity": "passed",
+      "message": "private_metadata_inventory must include a phase."
+    },
+    {
+      "id": "step_command:private_metadata_inventory",
+      "severity": "passed",
+      "message": "private_metadata_inventory must include a command."
+    },
+    {
+      "id": "step_requires:private_metadata_inventory",
+      "severity": "passed",
+      "message": "private_metadata_inventory must include requires array."
+    },
+    {
+      "id": "step_blocked_reason:private_metadata_inventory",
+      "severity": "passed",
+      "message": "private_metadata_inventory must explain why it is blocked."
+    },
+    {
+      "id": "step_safe_command:private_metadata_inventory",
+      "severity": "passed",
+      "message": "private_metadata_inventory command must stay in the safe queue command set."
+    },
+    {
+      "id": "private_inventory_executable_matches_activation",
+      "severity": "passed",
+      "message": "Private metadata inventory may be executable only when activation_ready is true."
+    },
+    {
+      "id": "step_phase:private_metadata_inventory_check",
+      "severity": "passed",
+      "message": "private_metadata_inventory_check must include a phase."
+    },
+    {
+      "id": "step_command:private_metadata_inventory_check",
+      "severity": "passed",
+      "message": "private_metadata_inventory_check must include a command."
+    },
+    {
+      "id": "step_requires:private_metadata_inventory_check",
+      "severity": "passed",
+      "message": "private_metadata_inventory_check must include requires array."
+    },
+    {
+      "id": "step_blocked_reason:private_metadata_inventory_check",
+      "severity": "passed",
+      "message": "private_metadata_inventory_check must explain why it is blocked."
+    },
+    {
+      "id": "step_safe_command:private_metadata_inventory_check",
+      "severity": "passed",
+      "message": "private_metadata_inventory_check command must stay in the safe queue command set."
+    },
+    {
+      "id": "step_phase:day_batch_loop",
+      "severity": "passed",
+      "message": "day_batch_loop must include a phase."
+    },
+    {
+      "id": "step_command:day_batch_loop",
+      "severity": "passed",
+      "message": "day_batch_loop must include a command."
+    },
+    {
+      "id": "step_requires:day_batch_loop",
+      "severity": "passed",
+      "message": "day_batch_loop must include requires array."
+    },
+    {
+      "id": "step_blocked_reason:day_batch_loop",
+      "severity": "passed",
+      "message": "day_batch_loop must explain why it is blocked."
+    },
+    {
+      "id": "step_safe_command:day_batch_loop",
+      "severity": "passed",
+      "message": "day_batch_loop command must stay in the safe queue command set."
+    },
+    {
+      "id": "hard_stops_present",
+      "severity": "passed",
+      "message": "Queue must include hard stops."
+    },
+    {
+      "id": "hard_stop_no_ocr_pdf",
+      "severity": "passed",
+      "message": "Hard stops must block private OCR/PDF extraction."
+    },
+    {
+      "id": "hard_stop_no_private_git_copy",
+      "severity": "passed",
+      "message": "Hard stops must block copying private files into Git."
+    },
+    {
+      "id": "hard_stop_no_local_llm_private",
+      "severity": "passed",
+      "message": "Hard stops must block local LLM private-content work before activation."
+    },
+    {
+      "id": "hard_stop_public_ready",
+      "severity": "passed",
+      "message": "Hard stops must keep public-ready blocked."
+    }
+  ],
+  "next_actions": [
+    "Use the queue as the only safe post-owner source-root activation order.",
+    "Keep all queue steps blocked until an explicit owner-confirmed source-root decision is recorded.",
+    "Rerun this guard after changing queue policy, step order or activation preflight logic."
+  ]
+}

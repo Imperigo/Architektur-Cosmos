@@ -1,0 +1,152 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:37:03.051Z",
+  "status": "owner_unlock_execution_runbook_guard_passed",
+  "policy": {
+    "validates_runbook_only": true,
+    "executes_commands_now": false,
+    "records_decisions": false,
+    "writes_intake_file_now": false,
+    "mutates_session_files_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-execution-runbook-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 25,
+    "passed": 25,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_execution_runbook_ready"
+    },
+    {
+      "id": "policy_runbook_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_commands_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_write_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "seven_phases",
+      "status": "passed",
+      "evidence": "phase-1-validate-owner-reply,phase-2-map-to-intake-patch,phase-3-human-review-intake-patch,phase-4-apply-intake-only-after-review,phase-5-plan-session-edits,phase-6-source-root-guards,phase-7-post-source-readiness"
+    },
+    {
+      "id": "validator_first",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\""
+    },
+    {
+      "id": "map_after_validator",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-intake-map"
+    },
+    {
+      "id": "manual_gate_before_intake_edit",
+      "status": "passed",
+      "evidence": "manual_gate:true"
+    },
+    {
+      "id": "intake_guard_before_session_plan",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-answer-intake-check -> npm run kosmo:owner-answer-session-edit-plan"
+    },
+    {
+      "id": "source_guards_conditional",
+      "status": "passed",
+      "evidence": "Only if reviewed intake/session plan selects source-root diagnostic."
+    },
+    {
+      "id": "post_source_conditional",
+      "status": "passed",
+      "evidence": "Only after phase 6 passes."
+    },
+    {
+      "id": "expected_command_count",
+      "status": "passed",
+      "evidence": 12
+    },
+    {
+      "id": "includes_activation_preflight",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"; npm run kosmo:owner-unlock-reply-validator-check; npm run kosmo:owner-unlock-reply-intake-map; npm run kosmo:owner-unlock-reply-intake-map-check; npm run kosmo:owner-answer-intake-check; npm run kosmo:owner-answer-session-edit-plan; npm run kosmo:source-root-decision-session-check; npm run kosmo:source-root-blocker-refresh; npm run kosmo:source-root-activation-preflight; npm run kosmo:source-root-post-owner-activation-queue; npm run kosmo:source-root-post-owner-activation-queue-check; npm run kosmo:post-source-root-metadata-readiness-pack"
+    },
+    {
+      "id": "includes_post_source_readiness",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"; npm run kosmo:owner-unlock-reply-validator-check; npm run kosmo:owner-unlock-reply-intake-map; npm run kosmo:owner-unlock-reply-intake-map-check; npm run kosmo:owner-answer-intake-check; npm run kosmo:owner-answer-session-edit-plan; npm run kosmo:source-root-decision-session-check; npm run kosmo:source-root-blocker-refresh; npm run kosmo:source-root-activation-preflight; npm run kosmo:source-root-post-owner-activation-queue; npm run kosmo:source-root-post-owner-activation-queue-check; npm run kosmo:post-source-root-metadata-readiness-pack"
+    },
+    {
+      "id": "one_mutating_phase_after_review",
+      "status": "passed",
+      "evidence": 1
+    },
+    {
+      "id": "hard_stop_no_private_diagnostic_from_valid_reply",
+      "status": "passed",
+      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+    },
+    {
+      "id": "hard_stop_review_before_intake",
+      "status": "passed",
+      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+    },
+    {
+      "id": "hard_stop_intake_guard_before_session",
+      "status": "passed",
+      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "do not run source-root private diagnostics from a merely valid reply. do not edit intake before reviewing the intake map. do not edit session files before the intake guard passes. do not read private content in this runbook step. do not mark any private-derived material public-ready."
+    }
+  ]
+}

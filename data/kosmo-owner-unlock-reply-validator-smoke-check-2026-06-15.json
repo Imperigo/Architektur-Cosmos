@@ -1,0 +1,131 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:37:02.078Z",
+  "status": "owner_unlock_reply_validator_smoke_guard_passed",
+  "policy": {
+    "validates_smoke_only": true,
+    "records_decisions": false,
+    "mutates_intake_template": false,
+    "mutates_session_files": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-reply-validator-smoke-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 21,
+    "passed": 21,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_passed",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_validator_smoke_passed"
+    },
+    {
+      "id": "policy_smoke_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_validator_cli_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "four_cases",
+      "status": "passed",
+      "evidence": "pending_no_answer,valid_repair_onedrive_first,valid_select_exact_root_review_only,invalid_unlock_without_confirmation"
+    },
+    {
+      "id": "all_cases_passed",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "pending_case_present",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_validator_pending_owner_reply"
+    },
+    {
+      "id": "repair_case_valid",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_valid"
+    },
+    {
+      "id": "select_root_case_valid",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_valid"
+    },
+    {
+      "id": "invalid_case_rejected",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_invalid"
+    },
+    {
+      "id": "invalid_case_exit_one",
+      "status": "passed",
+      "evidence": 1
+    },
+    {
+      "id": "one_expected_invalid_case",
+      "status": "passed",
+      "evidence": 1
+    },
+    {
+      "id": "hard_stops_no_intake_copy",
+      "status": "passed",
+      "evidence": "smoke cases use synthetic owner replies only. do not copy smoke answers into owner intake files. do not run private inventory from this smoke. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stops_no_inventory",
+      "status": "passed",
+      "evidence": "smoke cases use synthetic owner replies only. do not copy smoke answers into owner intake files. do not run private inventory from this smoke. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stops_no_private_content",
+      "status": "passed",
+      "evidence": "smoke cases use synthetic owner replies only. do not copy smoke answers into owner intake files. do not run private inventory from this smoke. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stops_public_ready_zero",
+      "status": "passed",
+      "evidence": "smoke cases use synthetic owner replies only. do not copy smoke answers into owner intake files. do not run private inventory from this smoke. do not read private content. keep public-ready at 0."
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:41:19.362Z",
+  "status": "owner_unlock_pipeline_checkpoint_ready",
+  "policy": {
+    "checkpoint_only": true,
+    "records_decisions": false,
+    "writes_intake_file_now": false,
+    "mutates_session_files_now": false,
+    "executes_commands_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_checkpoint": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-reply-validator-2026-06-15.json",
+    "data/kosmo-owner-unlock-reply-validator-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-reply-validator-smoke-2026-06-15.json",
+    "data/kosmo-owner-unlock-reply-validator-smoke-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-reply-intake-map-2026-06-15.json",
+    "data/kosmo-owner-unlock-reply-intake-map-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-execution-runbook-2026-06-15.json",
+    "data/kosmo-owner-unlock-execution-runbook-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-answer-dry-run-2026-06-15.json",
+    "data/kosmo-owner-unlock-answer-dry-run-check-2026-06-15.json",
+    "data/kosmo-overseer-sync-board-2026-06-15.json"
+  ],
+  "summary": {
+    "components": 11,
+    "components_ready": 11,
+    "guard_checks": 113,
+    "guard_checks_passed": 113,
+    "latest_handoff_min": 205,
+    "latest_handoff_max": 212,
+    "latest_handoff_count": 8,
+    "owner_reply_state": "pending",
+    "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
+    "public_ready_after_checkpoint": 0
+  },
+  "components": [
+    {
+      "id": "reply-validator",
+      "actual_status": "owner_unlock_reply_validator_pending_owner_reply",
+      "expected_status": "owner_unlock_reply_validator_pending_owner_reply",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "reply-validator-guard",
+      "actual_status": "owner_unlock_reply_validator_guard_passed",
+      "expected_status": "owner_unlock_reply_validator_guard_passed",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "reply-smoke",
+      "actual_status": "owner_unlock_reply_validator_smoke_passed",
+      "expected_status": "owner_unlock_reply_validator_smoke_passed",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "reply-smoke-guard",
+      "actual_status": "owner_unlock_reply_validator_smoke_guard_passed",
+      "expected_status": "owner_unlock_reply_validator_smoke_guard_passed",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "intake-map",
+      "actual_status": "owner_unlock_reply_intake_map_pending_owner_reply",
+      "expected_status": "owner_unlock_reply_intake_map_pending_owner_reply",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "intake-map-guard",
+      "actual_status": "owner_unlock_reply_intake_map_guard_passed",
+      "expected_status": "owner_unlock_reply_intake_map_guard_passed",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "execution-runbook",
+      "actual_status": "owner_unlock_execution_runbook_ready",
+      "expected_status": "owner_unlock_execution_runbook_ready",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "execution-runbook-guard",
+      "actual_status": "owner_unlock_execution_runbook_guard_passed",
+      "expected_status": "owner_unlock_execution_runbook_guard_passed",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "answer-dry-run",
+      "actual_status": "owner_unlock_answer_dry_run_pending_answer",
+      "expected_status": "owner_unlock_answer_dry_run_pending_answer",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "answer-dry-run-guard",
+      "actual_status": "owner_unlock_answer_dry_run_guard_passed",
+      "expected_status": "owner_unlock_answer_dry_run_guard_passed",
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "overseer-sync-board",
+      "actual_status": "overseer_sync_board_ready",
+      "expected_status": "overseer_sync_board_ready",
+      "ready": true,
+      "public_ready_after_component": 0
+    }
+  ],
+  "next_actions": [
+    "Wait for explicit owner reply in the Owner Unlock Prompt format.",
+    "Run the execution runbook sequence; do not skip validator, intake map, or human review gates.",
+    "Keep private inventory blocked until source-root guards pass."
+  ],
+  "hard_stops": [
+    "Do not treat this checkpoint as owner approval.",
+    "Do not read private content from this checkpoint.",
+    "Do not run private inventory from this checkpoint.",
+    "Do not mark private-derived material public-ready."
+  ]
+}

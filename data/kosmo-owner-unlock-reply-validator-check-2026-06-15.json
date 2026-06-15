@@ -1,0 +1,147 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:41:17.925Z",
+  "status": "owner_unlock_reply_validator_guard_passed",
+  "policy": {
+    "validates_reply_validator_only": true,
+    "records_decisions": false,
+    "mutates_intake_template": false,
+    "mutates_session_files": false,
+    "executes_commands": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-reply-validator-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 24,
+    "passed": 24,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_pending_or_valid",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_validator_pending_owner_reply"
+    },
+    {
+      "id": "pending_answer_contract",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "valid_answer_contract",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_validator_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_commands",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "three_source_root_choices",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "five_review_batch_cards",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "required_format_complete",
+      "status": "passed",
+      "evidence": "source_root_choice=...; confirmed_exact_root=...; review_batches=...; note=..."
+    },
+    {
+      "id": "required_format_has_source_root",
+      "status": "passed",
+      "evidence": "source_root_choice=...; confirmed_exact_root=...; review_batches=...; note=..."
+    },
+    {
+      "id": "required_format_has_confirmed_root",
+      "status": "passed",
+      "evidence": "source_root_choice=...; confirmed_exact_root=...; review_batches=...; note=..."
+    },
+    {
+      "id": "required_format_has_review_batches",
+      "status": "passed",
+      "evidence": "source_root_choice=...; confirmed_exact_root=...; review_batches=...; note=..."
+    },
+    {
+      "id": "hard_stop_no_decision_application",
+      "status": "passed",
+      "evidence": "do not treat a valid reply as an applied decision. do not mutate intake or session files from this validator. do not run commands from this validator. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_mutation",
+      "status": "passed",
+      "evidence": "do not treat a valid reply as an applied decision. do not mutate intake or session files from this validator. do not run commands from this validator. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_commands",
+      "status": "passed",
+      "evidence": "do not treat a valid reply as an applied decision. do not mutate intake or session files from this validator. do not run commands from this validator. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not treat a valid reply as an applied decision. do not mutate intake or session files from this validator. do not run commands from this validator. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_public_ready_zero",
+      "status": "passed",
+      "evidence": "do not treat a valid reply as an applied decision. do not mutate intake or session files from this validator. do not run commands from this validator. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "no_failures_for_guarded_state",
+      "status": "passed",
+      "evidence": ""
+    }
+  ]
+}

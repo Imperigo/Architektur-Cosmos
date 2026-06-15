@@ -1,0 +1,72 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:42:44.174Z",
+  "status": "local_worker_http_runner_dry_run_ready",
+  "policy": {
+    "review_only": true,
+    "default_dry_run": true,
+    "starts_model": false,
+    "reads_private_context_paths": false,
+    "reads_private_source_paths": false,
+    "writes_git": false,
+    "writes_cloud": false,
+    "public_ready_after_runner": 0,
+    "note": "This runner only permits task-pack inputs that are existing relative repo report paths under data/, docs/ or examples/. It refuses private_context_paths and absolute input refs."
+  },
+  "task_pack": "data/kosmo-local-worker-task-pack-2026-06-15.json",
+  "task": {
+    "task_id": "kosmo-asset-source-candidate-triage",
+    "lane": "kosmoasset",
+    "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/asset-source-candidate-triage.private.json",
+    "output_filename": "asset-source-candidate-triage.private.json",
+    "output_already_exists": true,
+    "execute_requested": false,
+    "force_requested": false
+  },
+  "model": {
+    "endpoint": "http://127.0.0.1:11434/api/generate",
+    "name": "kosmo-qwen3-coder:30b-a3b-q4km",
+    "used": false
+  },
+  "guard": {
+    "passed": true,
+    "failures": [],
+    "safe_inputs": [
+      {
+        "ref": "data/kosmoasset-source-candidate-map-2026-06-15.json",
+        "bytes": 8932,
+        "truncated": false
+      },
+      {
+        "ref": "docs/codex/kosmoasset-source-candidate-map-2026-06-15.md",
+        "bytes": 4082,
+        "truncated": false
+      },
+      {
+        "ref": "data/kosmo-source-root-selection-brief-2026-06-15.json",
+        "bytes": 8608,
+        "truncated": false
+      },
+      {
+        "ref": "docs/codex/kosmo-source-root-selection-brief-2026-06-15.md",
+        "bytes": 5628,
+        "truncated": false
+      },
+      {
+        "ref": "data/kosmo-data-lane-command-router-2026-06-15.json",
+        "bytes": 4680,
+        "truncated": false
+      },
+      {
+        "ref": "data/kosmo-worker-boundary-pack-check-2026-06-15.json",
+        "bytes": 7093,
+        "truncated": false
+      }
+    ]
+  },
+  "model_result": null,
+  "next_actions": [
+    "Output already exists; review it before considering --force.",
+    "Keep this runner out of public promotion and Git/cloud writes."
+  ]
+}

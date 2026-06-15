@@ -1,0 +1,194 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:36:58.882Z",
+  "status": "vision_completion_roadmap_ready",
+  "policy": {
+    "review_only": true,
+    "strategic_plan_only": true,
+    "reads_private_content": false,
+    "records_owner_decisions": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_roadmap": 0
+  },
+  "source_refs": [
+    "data/kosmo-day-batch-loop-2026-06-15.json",
+    "data/kosmo-owner-remaining-decision-brief-2026-06-15.json",
+    "data/kosmo-source-independent-work-queue-2026-06-15.json",
+    "data/kosmoreferences-pilot-gap-label-review-2026-06-15.json",
+    "data/kosmoasset-candidate-taxonomy-review-2026-06-15.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-14.json",
+    "data/kosmo-training-eval-row-template-2026-06-15.json",
+    "data/kosmo-training-eval-review-queue-plan-2026-06-15.json",
+    "data/kosmo-architecture-ontology-seed-2026-06-15.json"
+  ],
+  "summary": {
+    "phases": 6,
+    "immediate_owner_gates": 2,
+    "owner_unlock_components_ready": 11,
+    "owner_unlock_components": 11,
+    "owner_unlock_guard_checks_passed": 113,
+    "owner_unlock_guard_checks": 113,
+    "owner_unlock_latest_handoff_max": 211,
+    "source_free_codex_tasks_remaining": 0,
+    "codex_ready_tonight": 2,
+    "pilot_gap_owner_decisions": 7,
+    "asset_owner_confirmations": 3,
+    "training_eval_templates": 6,
+    "training_eval_required_fields": 10,
+    "training_review_lanes": 5,
+    "training_review_queue_states": 6,
+    "ontology_entity_types": 8,
+    "ontology_relation_types": 10,
+    "ontology_facet_groups": 6,
+    "public_ready_after_roadmap": 0,
+    "failures": 0
+  },
+  "phases": [
+    {
+      "id": "phase_1_owner_unlock",
+      "title": "Owner/Overseer Unlock",
+      "objective": "Capture the explicit owner source-root/review-batch answer through dry-run, map review and guards without weakening privacy rules.",
+      "status": "dry_run_pipeline_ready_blocked_by_owner_reply",
+      "gates": [
+        "owner_unlock_answer_dry_run",
+        "intake_map_review",
+        "source_root_choice",
+        "owner_open_review_batches"
+      ],
+      "deliverables": [
+        "Validated owner reply dry-run",
+        "Reviewed intake patch",
+        "Recorded owner answer intake",
+        "Activation preflight rerun"
+      ],
+      "codex_now": [
+        "Use checkpoint 11/11 components and 113/113 guards",
+        "Run npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\" before any intake edit",
+        "Keep source-root private diagnostics blocked until reviewed intake and source-root guards pass"
+      ],
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "phase_2_private_metadata_inventory",
+      "title": "Private Metadata Inventory",
+      "objective": "After owner unlock, scan metadata only for pilot-relevant private sources.",
+      "status": "blocked_until_source_root_activation",
+      "gates": [
+        "source_root_activation_preflight",
+        "private_metadata_inventory_check"
+      ],
+      "deliverables": [
+        "Pilot-scoped metadata inventory",
+        "No OCR/text extraction yet",
+        "No private files in Git"
+      ],
+      "codex_now": [
+        "Keep output contract strict",
+        "Prepare review templates for Villa/Sogn/Ingenbohl"
+      ],
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "phase_3_pilot_reference_packages",
+      "title": "Pilot Reference Packages",
+      "objective": "Turn Villa Savoye, Sogn Benedetg and Ingenbohl into complete review-only KosmoReferences packages.",
+      "status": "partially_ready_review_only",
+      "gates": [
+        "7 pilot owner decisions",
+        "file rights/provenance",
+        "source evidence"
+      ],
+      "deliverables": [
+        "Project metadata",
+        "Plan/image/PDF slots with rights state",
+        "Typology/material/structure/space/construction analysis",
+        "Export status private/review-only/public-ready false"
+      ],
+      "codex_now": [
+        "Use 12 gap labels as worklist",
+        "Prioritize Villa file provenance, Sogn source evidence, Ingenbohl PDF decision"
+      ],
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "phase_4_kosmoasset_bridge",
+      "title": "KosmoAsset Bridge",
+      "objective": "Convert validated reference signals into 2D/3D/material asset candidates without public release.",
+      "status": "review_only_ready",
+      "gates": [
+        "3 asset owner confirmations",
+        "rights review",
+        "manual metadata review"
+      ],
+      "deliverables": [
+        "Material/texture candidate lanes",
+        "Project asset scope review",
+        "Asset provenance contracts",
+        "No automatic public release"
+      ],
+      "codex_now": [
+        "Use 10 asset taxonomy reviews",
+        "Keep repo conversion at 0 until manual approval"
+      ],
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "phase_5_local_worker_fleet",
+      "title": "Local Worker Fleet",
+      "objective": "Use local LLMs for cheap fleissarbeit while Codex/Claude supervise quality and architecture.",
+      "status": "contracts_ready_no_execution_now",
+      "gates": [
+        "manual metadata review",
+        "safe task execution request",
+        "output guard"
+      ],
+      "deliverables": [
+        "Runnable local worker command map",
+        "Output contracts",
+        "Review-only worker packets",
+        "No blind commit of local output"
+      ],
+      "codex_now": [
+        "Convert worker outputs only through guarded metadata review",
+        "Keep smart models as overseer/reviewer"
+      ],
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "phase_6_kosmo_training_memory",
+      "title": "Kosmo Training Memory",
+      "objective": "Transform verified references/assets into future RAG, eval and fine-tuning material for Kosmo KI.",
+      "status": "training_scaffold_ready_blocked_by_verified_data",
+      "gates": [
+        "verified provenance",
+        "rights classification",
+        "quality evals",
+        "owner training gate"
+      ],
+      "deliverables": [
+        "Architecture-specific schema",
+        "Architecture ontology seed",
+        "Eval row template",
+        "Eval review queue",
+        "RAG corpus",
+        "Evaluation set",
+        "Fine-tuning candidate set"
+      ],
+      "codex_now": [
+        "Do not train on unverified private content",
+        "Use 6 eval row templates and 5 review lanes",
+        "Bind future rows to ontology 8/10/6",
+        "Keep queue items, eval rows, embeddings and fine-tunes at 0 until verified data and owner training gate exist"
+      ],
+      "public_ready_after_phase": 0
+    }
+  ],
+  "tonight_batch": [
+    "Publish this roadmap artifact and guard status.",
+    "Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply.",
+    "Keep Owner Unlock Prompt as the single next human decision surface.",
+    "Keep the training scaffold as schema/review-only: no queue items, eval rows, embeddings or fine-tunes.",
+    "Do not run private inventory, local worker execution or public promotion until owner gates pass."
+  ],
+  "failures": []
+}

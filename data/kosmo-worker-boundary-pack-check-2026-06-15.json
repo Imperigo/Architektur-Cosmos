@@ -1,0 +1,224 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:42:42.673Z",
+  "status": "worker_boundary_pack_guard_passed",
+  "policy": {
+    "records_decisions": false,
+    "applies_decisions": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "local_worker_git_allowed": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates the worker boundary pack. It does not unlock private diagnostics, record decisions or run worker tasks."
+  },
+  "source_refs": [
+    "data/kosmo-worker-boundary-pack-2026-06-15.json"
+  ],
+  "summary": {
+    "pack_status": "worker_boundary_pack_review_only_locked",
+    "worker_count": 3,
+    "allowed_commands": 22,
+    "blocked_commands": 3,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "findings": [
+    {
+      "id": "pack_status_guarded",
+      "severity": "passed",
+      "message": "Pack must remain review-only locked or metadata-diagnostic ready."
+    },
+    {
+      "id": "metadata_only_true",
+      "severity": "passed",
+      "message": "Pack must be metadata-only."
+    },
+    {
+      "id": "reads_private_content_false",
+      "severity": "passed",
+      "message": "Pack must not read private content."
+    },
+    {
+      "id": "copies_private_content_false",
+      "severity": "passed",
+      "message": "Pack must not copy private content."
+    },
+    {
+      "id": "public_writes_false",
+      "severity": "passed",
+      "message": "Pack must block public writes."
+    },
+    {
+      "id": "public_ready_false",
+      "severity": "passed",
+      "message": "Pack must block public-ready flags."
+    },
+    {
+      "id": "local_worker_git_false",
+      "severity": "passed",
+      "message": "Pack must block local-worker Git."
+    },
+    {
+      "id": "data_lane_complete",
+      "severity": "passed",
+      "message": "Data lane must have all configured steps passed."
+    },
+    {
+      "id": "data_lane_review_only_passed",
+      "severity": "passed",
+      "message": "Data lane must be review-only passed."
+    },
+    {
+      "id": "source_root_state_guarded",
+      "severity": "passed",
+      "message": "Source-root must be blocked or activation preflight must be metadata-diagnostic ready."
+    },
+    {
+      "id": "probable_libraries_guarded",
+      "severity": "passed",
+      "message": "Probable private libraries may only be nonzero after activation is ready."
+    },
+    {
+      "id": "selected_root_guarded",
+      "severity": "passed",
+      "message": "Selected root may exist only after activation is ready."
+    },
+    {
+      "id": "private_diagnostic_guarded",
+      "severity": "passed",
+      "message": "Private diagnostic may only be allowed when activation preflight is ready."
+    },
+    {
+      "id": "private_inventory_guarded",
+      "severity": "passed",
+      "message": "Private inventory may only be allowed when activation preflight is ready."
+    },
+    {
+      "id": "source_root_activation_status_known",
+      "severity": "passed",
+      "message": "Source-root activation status must be a known guarded state."
+    },
+    {
+      "id": "public_ready_total_zero",
+      "severity": "passed",
+      "message": "Public-ready total must remain 0."
+    },
+    {
+      "id": "three_workers",
+      "severity": "passed",
+      "message": "Pack must define three worker boundaries."
+    },
+    {
+      "id": "worker_present:kosmo-local-llm",
+      "severity": "passed",
+      "message": "Worker boundary must exist: kosmo-local-llm."
+    },
+    {
+      "id": "worker_present:codex-central-overseer",
+      "severity": "passed",
+      "message": "Worker boundary must exist: codex-central-overseer."
+    },
+    {
+      "id": "worker_present:claude-code-kosmooverseer",
+      "severity": "passed",
+      "message": "Worker boundary must exist: claude-code-kosmooverseer."
+    },
+    {
+      "id": "local_scope_metadata_only",
+      "severity": "passed",
+      "message": "Local LLM scope must be metadata_review_only."
+    },
+    {
+      "id": "local_blocks_private_reads",
+      "severity": "passed",
+      "message": "Local LLM must block private reads/OCR."
+    },
+    {
+      "id": "local_blocks_private_copy",
+      "severity": "passed",
+      "message": "Local LLM must block private excerpts in Git."
+    },
+    {
+      "id": "local_blocks_public_ready",
+      "severity": "passed",
+      "message": "Local LLM must block public-ready writes."
+    },
+    {
+      "id": "local_blocks_git_cloud",
+      "severity": "passed",
+      "message": "Local LLM must block Git/cloud/upload commands."
+    },
+    {
+      "id": "pack_command_allowed",
+      "severity": "passed",
+      "message": "Worker boundary pack command must be allowed."
+    },
+    {
+      "id": "activation_preflight_command_allowed",
+      "severity": "passed",
+      "message": "Activation preflight command must be allowed."
+    },
+    {
+      "id": "private_metadata_inventory_command_allowed",
+      "severity": "passed",
+      "message": "Private metadata inventory command must be available as a self-guarding command."
+    },
+    {
+      "id": "private_library_diagnostic_guarded",
+      "severity": "passed",
+      "message": "Private-library diagnostic must be blocked until activation preflight is ready."
+    },
+    {
+      "id": "private_inventory_extraction_guarded",
+      "severity": "passed",
+      "message": "Private inventory extraction must be blocked until activation preflight is ready."
+    },
+    {
+      "id": "public_promotion_blocked",
+      "severity": "passed",
+      "message": "Public promotion must be blocked."
+    },
+    {
+      "id": "no_public_ready_command_allowed",
+      "severity": "passed",
+      "message": "No allowed command may set public_ready=true."
+    },
+    {
+      "id": "trigger_real_root",
+      "severity": "passed",
+      "message": "Escalation triggers must include real private library root."
+    },
+    {
+      "id": "trigger_onedrive_sync",
+      "severity": "passed",
+      "message": "Escalation triggers must include OneDrive sync repair."
+    },
+    {
+      "id": "trigger_private_diagnostic_allowed",
+      "severity": "passed",
+      "message": "Escalation triggers must include private_diagnostic_allowed=true."
+    },
+    {
+      "id": "trigger_activation_preflight",
+      "severity": "passed",
+      "message": "Escalation triggers must include activation preflight readiness."
+    },
+    {
+      "id": "trigger_private_metadata_inventory",
+      "severity": "passed",
+      "message": "Escalation triggers must include private metadata inventory contract output."
+    },
+    {
+      "id": "trigger_owner_answers",
+      "severity": "passed",
+      "message": "Escalation triggers must include explicit current owner answers."
+    }
+  ],
+  "next_actions": [
+    "Use the worker boundary pack as first instruction context for local LLM and overseer handoffs.",
+    "Keep private reads, Git/cloud actions and public-ready flags blocked while the pack is review-only locked.",
+    "Rerun this guard after router, source-root or worker role changes."
+  ]
+}

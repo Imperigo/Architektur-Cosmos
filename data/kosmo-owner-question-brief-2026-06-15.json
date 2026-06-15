@@ -1,0 +1,116 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T10:42:39.089Z",
+  "status": "owner_question_brief_ready",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_brief": 0,
+    "note": "This brief is owner-facing question copy only. Answers must be entered into the intake template and checked before any session edit plan."
+  },
+  "source_refs": [
+    "data/kosmo-owner-answer-sheet-2026-06-15.json",
+    "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-15.json",
+    "data/kosmo-owner-answer-session-edit-plan-2026-06-15.json"
+  ],
+  "summary": {
+    "questions": 6,
+    "source_root_questions": 1,
+    "owner_card_questions": 5,
+    "intake_status": "owner_answer_intake_template_pending_owner_input",
+    "session_edit_plan_status": "owner_answer_session_edit_plan_pending_owner_input",
+    "planned_edits": 0,
+    "public_ready_after_brief": 0
+  },
+  "questions": [
+    {
+      "id": "source-root",
+      "title": "Private Source-Root",
+      "question": "Welcher Pfad ist die echte grosse Buch-/ETH-/HSLU-Architektur-Library, oder soll alles blockiert bleiben bis Archiv/OneDrive sauber sichtbar ist?",
+      "safe_default": "keep_blocked",
+      "allowed_answers": [
+        "keep_blocked",
+        "mount_archive_first",
+        "repair_onedrive_first",
+        "select_existing_root_for_private_diagnostic",
+        "select_root_after_mount_check"
+      ],
+      "answer_field": "source_root_answer.selected_decision",
+      "note_field": "source_root_answer.owner_note"
+    },
+    {
+      "id": "batch-a-villa-savoye-image-candidates",
+      "title": "Batch A: Villa Savoye Image Candidates",
+      "question": "Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?",
+      "safe_default": "needs_more_source_context",
+      "allowed_answers": [
+        "keep_all_blocked",
+        "open_one_source_credit_review",
+        "needs_more_context"
+      ],
+      "answer_field": "owner_card_answers.batch-a-villa-savoye-image-candidates.owner_choice",
+      "note_field": "owner_card_answers.batch-a-villa-savoye-image-candidates.owner_note"
+    },
+    {
+      "id": "batch-b-villa-savoye-derived-files",
+      "title": "Batch B: Villa Savoye Derived Files",
+      "question": "Sollen alle abgeleiteten Villa-Dateien blockiert bleiben, bis Plan-/Modell-Herkunft sauber belegt ist?",
+      "safe_default": "keep_blocked",
+      "allowed_answers": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "answer_field": "owner_card_answers.batch-b-villa-savoye-derived-files.owner_choice",
+      "note_field": "owner_card_answers.batch-b-villa-savoye-derived-files.owner_note"
+    },
+    {
+      "id": "batch-c-model-promotion-confirmation",
+      "title": "Batch C: Model Promotion Confirmation",
+      "question": "Sollen die vorhandenen Modelle weiterhin als diagrammatische Studien blockiert bleiben, bis Modellqualitaet und Quellenbasis geprueft sind?",
+      "safe_default": "needs_more_source_context",
+      "allowed_answers": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "answer_field": "owner_card_answers.batch-c-model-promotion-confirmation.owner_choice",
+      "note_field": "owner_card_answers.batch-c-model-promotion-confirmation.owner_note"
+    },
+    {
+      "id": "batch-d-sogn-benedetg-source-gap",
+      "title": "Batch D: Sogn Benedetg Source Gap",
+      "question": "Soll Sogn Benedetg link-only bleiben, bis der echte private Bibliotheks-Root sichtbar ist?",
+      "safe_default": "needs_more_source_context",
+      "allowed_answers": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "answer_field": "owner_card_answers.batch-d-sogn-benedetg-source-gap.owner_choice",
+      "note_field": "owner_card_answers.batch-d-sogn-benedetg-source-gap.owner_note"
+    },
+    {
+      "id": "batch-e-kosmoasset-human-reviews",
+      "title": "Batch E: KosmoAsset Human Reviews",
+      "question": "Welche lokalen Study-Assets sollen ein Human Review bekommen, ohne Public-Promotion zu erlauben?",
+      "safe_default": "needs-review",
+      "allowed_answers": [
+        "keep_needs_review",
+        "assign_named_human_review",
+        "block_public"
+      ],
+      "answer_field": "owner_card_answers.batch-e-kosmoasset-human-reviews.owner_choice",
+      "note_field": "owner_card_answers.batch-e-kosmoasset-human-reviews.owner_note"
+    }
+  ],
+  "answer_flow": [
+    "Owner answers this brief in plain language.",
+    "Codex/Claude transfers explicitly confirmed answers into the owner answer intake template.",
+    "Run npm run kosmo:owner-answer-intake-check.",
+    "Run npm run kosmo:owner-answer-session-edit-plan.",
+    "Only then review any planned session edit."
+  ]
+}
