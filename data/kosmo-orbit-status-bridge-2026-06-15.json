@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:42:50.540Z",
+  "generated_at": "2026-06-15T13:40:01.271Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -46,12 +46,14 @@
     "data/kosmoasset-source-candidate-map-2026-06-15.json",
     "data/kosmoasset-candidate-taxonomy-review-2026-06-15.json",
     "data/kosmoasset-candidate-taxonomy-review-check-2026-06-15.json",
+    "data/kosmo-prepare-phase1-source-package-contract-check-2026-06-15.json",
+    "data/kosmo-asset-prepare-phase1-fixture-contract-check-2026-06-15.json",
     "data/kosmo-innovation-lane-plan-2026-06-15.json",
     "data/kosmo-innovation-smoke-2026-06-15.json",
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 28,
+    "cards": 29,
     "blocking_cards": 4,
     "owner_action_cards": 16,
     "source_root_blocked": true,
@@ -137,6 +139,13 @@
     "asset_candidate_taxonomy_review_owner_confirmations": 3,
     "asset_candidate_taxonomy_review_check_status": "kosmoasset_candidate_taxonomy_review_guard_passed",
     "asset_candidate_taxonomy_review_check_failures": 0,
+    "prepare_phase1_source_package_contract_check_status": "prepare_phase1_source_package_contract_guard_passed",
+    "prepare_phase1_source_package_contract_package_id": "kosmo-prepare-phase1-adapter-fixture-2026-06-15",
+    "prepare_phase1_source_package_contract_failures": 0,
+    "asset_prepare_phase1_fixture_contract_check_status": "kosmoasset_prepare_phase1_fixture_contract_guard_passed",
+    "asset_prepare_phase1_fixture_contract_library_id": "kosmo-prepare-phase1-fixture",
+    "asset_prepare_phase1_fixture_contract_assets": 2,
+    "asset_prepare_phase1_fixture_contract_failures": 0,
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
     "public_ready_after_bridge": 0
   },
@@ -367,6 +376,15 @@
       "source_ref": "data/kosmoasset-candidate-taxonomy-review-2026-06-15.json"
     },
     {
+      "id": "prepare-references-asset-fixture-chain",
+      "title": "Prepare References Asset Fixture Chain",
+      "status": "review_only_ready",
+      "signal": "source package kosmo-prepare-phase1-adapter-fixture-2026-06-15, fixture assets 2, public-ready 0",
+      "owner_action_required": false,
+      "route_hint": "Source-free KosmoPrepare -> KosmoReferences -> KosmoAsset fixture chain",
+      "source_ref": "data/kosmo-asset-prepare-phase1-fixture-contract-check-2026-06-15.json"
+    },
+    {
       "id": "worker-boundary",
       "title": "Worker Boundary",
       "status": "locked",
@@ -419,6 +437,7 @@
     "asset_reference_bridge_card",
     "asset_source_candidate_map_card",
     "asset_candidate_taxonomy_card",
+    "prepare_references_asset_fixture_chain_card",
     "worker_boundary_card",
     "innovation_lane_card",
     "owner_handoff_card"

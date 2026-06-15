@@ -43,6 +43,8 @@ const refs = {
   assetSourceCandidateMap: `data/kosmoasset-source-candidate-map-${dateStamp}.json`,
   assetCandidateTaxonomyReview: `data/kosmoasset-candidate-taxonomy-review-${dateStamp}.json`,
   assetCandidateTaxonomyReviewCheck: `data/kosmoasset-candidate-taxonomy-review-check-${dateStamp}.json`,
+  preparePhase1SourcePackageContractCheck: `data/kosmo-prepare-phase1-source-package-contract-check-${dateStamp}.json`,
+  assetPreparePhase1FixtureContractCheck: `data/kosmo-asset-prepare-phase1-fixture-contract-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
   innovationSmoke: `data/kosmo-innovation-smoke-${dateStamp}.json`,
   nightLoop: `data/kosmo-night-loop-checkpoint-${dateStamp}.json`
@@ -103,6 +105,8 @@ function buildBridge(reports) {
   const assetSourceCandidateSummary = reports.assetSourceCandidateMap?.summary || {};
   const assetCandidateTaxonomySummary = reports.assetCandidateTaxonomyReview?.summary || {};
   const assetCandidateTaxonomyCheckSummary = reports.assetCandidateTaxonomyReviewCheck?.summary || {};
+  const preparePhase1SourcePackageSummary = reports.preparePhase1SourcePackageContractCheck?.summary || {};
+  const assetPreparePhase1FixtureSummary = reports.assetPreparePhase1FixtureContractCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
   const cards = [
     {
@@ -416,6 +420,18 @@ function buildBridge(reports) {
       source_ref: refs.assetCandidateTaxonomyReview
     },
     {
+      id: 'prepare-references-asset-fixture-chain',
+      title: 'Prepare References Asset Fixture Chain',
+      status: reports.preparePhase1SourcePackageContractCheck?.status === 'prepare_phase1_source_package_contract_guard_passed' &&
+        reports.assetPreparePhase1FixtureContractCheck?.status === 'kosmoasset_prepare_phase1_fixture_contract_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `source package ${preparePhase1SourcePackageSummary.package_id || 'missing'}, fixture assets ${assetPreparePhase1FixtureSummary.assets ?? '-'}, public-ready ${assetPreparePhase1FixtureSummary.public_ready_after_check ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Source-free KosmoPrepare -> KosmoReferences -> KosmoAsset fixture chain',
+      source_ref: refs.assetPreparePhase1FixtureContractCheck
+    },
+    {
       id: 'worker-boundary',
       title: 'Worker Boundary',
       status: reports.workerBoundary?.status === 'worker_boundary_pack_guard_passed' ? 'locked' : 'needs_review',
@@ -548,6 +564,13 @@ function buildBridge(reports) {
       asset_candidate_taxonomy_review_owner_confirmations: assetCandidateTaxonomySummary.owner_confirmations_required ?? null,
       asset_candidate_taxonomy_review_check_status: reports.assetCandidateTaxonomyReviewCheck?.status || null,
       asset_candidate_taxonomy_review_check_failures: assetCandidateTaxonomyCheckSummary.failures ?? null,
+      prepare_phase1_source_package_contract_check_status: reports.preparePhase1SourcePackageContractCheck?.status || null,
+      prepare_phase1_source_package_contract_package_id: preparePhase1SourcePackageSummary.package_id || null,
+      prepare_phase1_source_package_contract_failures: preparePhase1SourcePackageSummary.failures ?? null,
+      asset_prepare_phase1_fixture_contract_check_status: reports.assetPreparePhase1FixtureContractCheck?.status || null,
+      asset_prepare_phase1_fixture_contract_library_id: assetPreparePhase1FixtureSummary.library_id || null,
+      asset_prepare_phase1_fixture_contract_assets: assetPreparePhase1FixtureSummary.assets ?? null,
+      asset_prepare_phase1_fixture_contract_failures: assetPreparePhase1FixtureSummary.failures ?? null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
       public_ready_after_bridge: 0
     },
@@ -577,6 +600,7 @@ function buildBridge(reports) {
       'asset_reference_bridge_card',
       'asset_source_candidate_map_card',
       'asset_candidate_taxonomy_card',
+      'prepare_references_asset_fixture_chain_card',
       'worker_boundary_card',
       'innovation_lane_card',
       'owner_handoff_card'
@@ -635,6 +659,8 @@ function renderMarkdown(bridge) {
   lines.push(`- Asset bridge: ${bridge.summary.asset_bridge_status}`);
   lines.push(`- Asset source candidate map: ${bridge.summary.asset_source_candidate_map_status}, candidates ${bridge.summary.asset_source_candidate_map_candidates ?? '-'}`);
   lines.push(`- Asset candidate taxonomy review: ${bridge.summary.asset_candidate_taxonomy_review_status}, candidates ${bridge.summary.asset_candidate_taxonomy_review_candidates ?? '-'}, reviewable ${bridge.summary.asset_candidate_taxonomy_review_reviewable_lanes ?? '-'}, owner confirmations ${bridge.summary.asset_candidate_taxonomy_review_owner_confirmations ?? '-'}, check ${bridge.summary.asset_candidate_taxonomy_review_check_status}, failures ${bridge.summary.asset_candidate_taxonomy_review_check_failures ?? '-'}`);
+  lines.push(`- Prepare source package contract: ${bridge.summary.prepare_phase1_source_package_contract_check_status}, package ${bridge.summary.prepare_phase1_source_package_contract_package_id ?? '-'}, failures ${bridge.summary.prepare_phase1_source_package_contract_failures ?? '-'}`);
+  lines.push(`- Asset prepare fixture contract: ${bridge.summary.asset_prepare_phase1_fixture_contract_check_status}, library ${bridge.summary.asset_prepare_phase1_fixture_contract_library_id ?? '-'}, assets ${bridge.summary.asset_prepare_phase1_fixture_contract_assets ?? '-'}, failures ${bridge.summary.asset_prepare_phase1_fixture_contract_failures ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

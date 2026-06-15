@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T10:42:50.540Z
+Generated: 2026-06-15T13:40:01.271Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 28
+- Cards: 29
 - Blocking cards: 4
 - Owner action cards: 16
 - Source root blocked: yes
@@ -34,6 +34,8 @@ Status: `orbit_bridge_ready_with_blockers`
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
 - Asset candidate taxonomy review: kosmoasset_candidate_taxonomy_review_ready, candidates 10, reviewable 3, owner confirmations 3, check kosmoasset_candidate_taxonomy_review_guard_passed, failures 0
+- Prepare source package contract: prepare_phase1_source_package_contract_guard_passed, package kosmo-prepare-phase1-adapter-fixture-2026-06-15, failures 0
+- Asset prepare fixture contract: kosmoasset_prepare_phase1_fixture_contract_guard_passed, library kosmo-prepare-phase1-fixture, assets 2, failures 0
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -66,6 +68,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `asset-reference-bridge` Asset Reference Bridge | review_only_ready | yes | 3/3 pilot bridges, 6 assets, public-ready 0 |
 | `asset-source-candidates` Asset Source Candidates | review_only_ready | yes | 3 asset-lane candidates, material 2, public-ready 0 |
 | `asset-candidate-taxonomy` Asset Candidate Taxonomy | review_only_ready | yes | 10 reviews, 3 reviewable, owner 3, failures 0 |
+| `prepare-references-asset-fixture-chain` Prepare References Asset Fixture Chain | review_only_ready | no | source package kosmo-prepare-phase1-adapter-fixture-2026-06-15, fixture assets 2, public-ready 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
 | `owner-handoff` Owner Handoff | ready | yes | 6 questions, no filled answers recorded |
@@ -96,6 +99,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `asset_reference_bridge_card`
 - `asset_source_candidate_map_card`
 - `asset_candidate_taxonomy_card`
+- `prepare_references_asset_fixture_chain_card`
 - `worker_boundary_card`
 - `innovation_lane_card`
 - `owner_handoff_card`

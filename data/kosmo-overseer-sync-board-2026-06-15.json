@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:40:50.255Z",
+  "generated_at": "2026-06-15T13:40:01.535Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 211
+      "files": 235
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 60
+      "files": 85
     }
   ],
   "summary": {
@@ -43,65 +43,65 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 253,
+    "historical_handoff_mirror_missing_files": 254,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
     {
-      "filename": "2026-06-15-codex-synergiebericht-212-tagesbatch-morgenloop.md",
-      "title": "Codex Synergiebericht 212: Tagesbatch Morgenloop",
+      "filename": "2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md",
+      "title": "Codex Synergiebericht 236: KosmoAsset Prepare Phase 1 Fixture Contract",
       "mirrored_inboxes": 2,
-      "bytes": 2406,
-      "modified_at": "2026-06-15T10:40:38.226Z"
+      "bytes": 2863,
+      "modified_at": "2026-06-15T13:38:48.964Z"
     },
     {
-      "filename": "2026-06-14-codex-synergiebericht-211-tomorrow-day-batch.md",
-      "title": "Codex Synergiebericht 211: Tomorrow Day Batch",
+      "filename": "2026-06-15-codex-synergiebericht-235-prepare-phase1-source-package-contract.md",
+      "title": "Codex Synergiebericht 235: KosmoPrepare Phase 1 Source Package Contract",
       "mirrored_inboxes": 2,
-      "bytes": 1049,
-      "modified_at": "2026-06-14T19:07:08.713Z"
+      "bytes": 3074,
+      "modified_at": "2026-06-15T13:35:05.116Z"
     },
     {
-      "filename": "2026-06-14-codex-synergiebericht-210-acceptance-certificate-refresh.md",
-      "title": "Codex Synergiebericht 210: Acceptance Certificate Refresh",
+      "filename": "2026-06-15-codex-synergiebericht-234-prepare-phase1-adapter-fixture.md",
+      "title": "Codex Synergiebericht 234: Prepare Phase 1 Adapter Fixture",
       "mirrored_inboxes": 2,
-      "bytes": 961,
-      "modified_at": "2026-06-14T19:04:01.097Z"
+      "bytes": 1802,
+      "modified_at": "2026-06-15T13:28:18.036Z"
     },
     {
-      "filename": "2026-06-14-codex-synergiebericht-209-orbit-acceptance-certificate-status.md",
-      "title": "Codex Synergiebericht 209: Orbit Acceptance Certificate Status",
+      "filename": "2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md",
+      "title": "Codex Synergiebericht 233: Dependency Phase 1 Fixture Smoke",
       "mirrored_inboxes": 2,
-      "bytes": 843,
-      "modified_at": "2026-06-14T19:02:11.333Z"
+      "bytes": 1631,
+      "modified_at": "2026-06-15T13:25:04.137Z"
     },
     {
-      "filename": "2026-06-14-codex-synergiebericht-208-evening-batch-acceptance-certificate.md",
-      "title": "Codex Synergiebericht 208: Evening Batch Acceptance Certificate",
+      "filename": "2026-06-15-codex-synergiebericht-232-dependency-phase1-install.md",
+      "title": "Codex Synergiebericht 232: Dependency Phase 1 Install",
       "mirrored_inboxes": 2,
-      "bytes": 1264,
-      "modified_at": "2026-06-14T19:00:11.942Z"
+      "bytes": 1526,
+      "modified_at": "2026-06-15T13:22:04.157Z"
     },
     {
-      "filename": "2026-06-14-codex-synergiebericht-207-orbit-next-shift-status.md",
-      "title": "Codex Synergiebericht 207: Orbit Next Shift Status",
+      "filename": "2026-06-15-codex-synergiebericht-231-dependency-install-batch-brief.md",
+      "title": "Codex Synergiebericht 231: Dependency Install Batch Brief",
       "mirrored_inboxes": 2,
-      "bytes": 884,
-      "modified_at": "2026-06-14T18:56:44.954Z"
+      "bytes": 1781,
+      "modified_at": "2026-06-15T13:18:24.419Z"
     },
     {
-      "filename": "2026-06-14-codex-synergiebericht-206-overseer-next-shift-training-ontology-refresh.md",
-      "title": "Codex Synergiebericht 206: Overseer Next Shift Training/Ontology Refresh",
+      "filename": "2026-06-15-codex-synergiebericht-230-security-baseline-active.md",
+      "title": "Codex Synergiebericht 230: Active Security Baseline",
       "mirrored_inboxes": 2,
-      "bytes": 1659,
-      "modified_at": "2026-06-14T18:54:28.276Z"
+      "bytes": 1818,
+      "modified_at": "2026-06-15T13:14:55.111Z"
     },
     {
-      "filename": "2026-06-14-codex-synergiebericht-205-orbit-evening-rollup-status.md",
-      "title": "Codex Synergiebericht 205: Orbit Evening Rollup Status",
+      "filename": "2026-06-15-codex-synergiebericht-229-security-unclassified-files.md",
+      "title": "Codex Synergiebericht 229: Security Unclassified Files",
       "mirrored_inboxes": 2,
-      "bytes": 814,
-      "modified_at": "2026-06-14T18:51:39.193Z"
+      "bytes": 1528,
+      "modified_at": "2026-06-15T13:09:50.545Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 205-212 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 229-236 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

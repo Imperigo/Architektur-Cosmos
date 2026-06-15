@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T10:40:50.255Z
+Generated: 2026-06-15T13:40:01.535Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -13,21 +13,21 @@ Status: `overseer_sync_board_ready`
 - Local worker review: local_worker_outputs_present_review_only, outputs 9/9, risk 0
 - Latest handoffs tracked: 8
 - Latest handoff mirror missing files: 0
-- Historical handoff mirror missing files: 253
+- Historical handoff mirror missing files: 254
 - Public-ready after board: 0
 
 ## Latest Handoffs
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
-| `2026-06-15-codex-synergiebericht-212-tagesbatch-morgenloop.md` | Codex Synergiebericht 212: Tagesbatch Morgenloop | 2 |
-| `2026-06-14-codex-synergiebericht-211-tomorrow-day-batch.md` | Codex Synergiebericht 211: Tomorrow Day Batch | 2 |
-| `2026-06-14-codex-synergiebericht-210-acceptance-certificate-refresh.md` | Codex Synergiebericht 210: Acceptance Certificate Refresh | 2 |
-| `2026-06-14-codex-synergiebericht-209-orbit-acceptance-certificate-status.md` | Codex Synergiebericht 209: Orbit Acceptance Certificate Status | 2 |
-| `2026-06-14-codex-synergiebericht-208-evening-batch-acceptance-certificate.md` | Codex Synergiebericht 208: Evening Batch Acceptance Certificate | 2 |
-| `2026-06-14-codex-synergiebericht-207-orbit-next-shift-status.md` | Codex Synergiebericht 207: Orbit Next Shift Status | 2 |
-| `2026-06-14-codex-synergiebericht-206-overseer-next-shift-training-ontology-refresh.md` | Codex Synergiebericht 206: Overseer Next Shift Training/Ontology Refresh | 2 |
-| `2026-06-14-codex-synergiebericht-205-orbit-evening-rollup-status.md` | Codex Synergiebericht 205: Orbit Evening Rollup Status | 2 |
+| `2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md` | Codex Synergiebericht 236: KosmoAsset Prepare Phase 1 Fixture Contract | 2 |
+| `2026-06-15-codex-synergiebericht-235-prepare-phase1-source-package-contract.md` | Codex Synergiebericht 235: KosmoPrepare Phase 1 Source Package Contract | 2 |
+| `2026-06-15-codex-synergiebericht-234-prepare-phase1-adapter-fixture.md` | Codex Synergiebericht 234: Prepare Phase 1 Adapter Fixture | 2 |
+| `2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md` | Codex Synergiebericht 233: Dependency Phase 1 Fixture Smoke | 2 |
+| `2026-06-15-codex-synergiebericht-232-dependency-phase1-install.md` | Codex Synergiebericht 232: Dependency Phase 1 Install | 2 |
+| `2026-06-15-codex-synergiebericht-231-dependency-install-batch-brief.md` | Codex Synergiebericht 231: Dependency Install Batch Brief | 2 |
+| `2026-06-15-codex-synergiebericht-230-security-baseline-active.md` | Codex Synergiebericht 230: Active Security Baseline | 2 |
+| `2026-06-15-codex-synergiebericht-229-security-unclassified-files.md` | Codex Synergiebericht 229: Security Unclassified Files | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 205-212 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 229-236 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
