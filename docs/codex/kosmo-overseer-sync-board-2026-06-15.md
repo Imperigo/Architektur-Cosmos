@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T14:47:22.443Z
+Generated: 2026-06-15T14:48:55.979Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-261-tomorrow-batch-github-fixtures.md` | Codex Synergiebericht 261 - Tomorrow Batch GitHub Fixtures | 2 |
 | `2026-06-15-codex-synergiebericht-260-day-batch-github-fixtures.md` | Codex Synergiebericht 260 - Day Batch GitHub Fixtures | 2 |
 | `2026-06-15-codex-synergiebericht-259-github-fixture-payload-smoke.md` | Codex Synergiebericht 259 - GitHub Fixture Payload Smoke | 2 |
 | `2026-06-15-codex-synergiebericht-258-github-fixture-payloads.md` | Codex Synergiebericht 258 - GitHub Fixture Payloads | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-256-day-batch-github-chain.md` | Codex Synergiebericht 256: Day-Batch deckt GitHub-Innovationskette ab | 2 |
 | `2026-06-15-codex-synergiebericht-255-github-fixture-contract-plan.md` | Codex Synergiebericht 255: GitHub-inspirierter Fixture Contract Plan | 2 |
 | `2026-06-15-codex-synergiebericht-254-github-readme-signal-scan.md` | Codex Synergiebericht 254: GitHub README Signal Scan | 2 |
-| `2026-06-15-codex-synergiebericht-253-github-review-queue.md` | Codex Synergiebericht 253: GitHub Discovery Review Queue | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 253-260 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 254-261 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

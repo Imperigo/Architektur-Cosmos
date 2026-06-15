@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:47:22.443Z",
+  "generated_at": "2026-06-15T14:48:55.979Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 259
+      "files": 260
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 109
+      "files": 110
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-261-tomorrow-batch-github-fixtures.md",
+      "title": "Codex Synergiebericht 261 - Tomorrow Batch GitHub Fixtures",
+      "mirrored_inboxes": 2,
+      "bytes": 1371,
+      "modified_at": "2026-06-15T14:48:49.359Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-260-day-batch-github-fixtures.md",
       "title": "Codex Synergiebericht 260 - Day Batch GitHub Fixtures",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1377,
       "modified_at": "2026-06-15T14:27:02.485Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-253-github-review-queue.md",
-      "title": "Codex Synergiebericht 253: GitHub Discovery Review Queue",
-      "mirrored_inboxes": 2,
-      "bytes": 1311,
-      "modified_at": "2026-06-15T14:23:05.384Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 253-260 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 254-261 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
