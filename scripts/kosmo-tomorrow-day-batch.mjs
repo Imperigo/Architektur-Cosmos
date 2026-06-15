@@ -144,6 +144,8 @@ function buildPlan(reports) {
       'npm run kosmo:local-worker-innovation-launch-execution-envelope-check',
       'npm run kosmo:local-worker-innovation-post-output-intake-review',
       'npm run kosmo:local-worker-innovation-post-output-intake-review-check',
+      'npm run kosmo:local-worker-innovation-human-overseer-review-decision-card',
+      'npm run kosmo:local-worker-innovation-human-overseer-review-decision-card-check',
       'npm run kosmo:codex-daily-loop-routine',
       'npm run kosmo:codex-daily-loop-routine-check',
       'npm run kosmo:codex-morning-routine-run',

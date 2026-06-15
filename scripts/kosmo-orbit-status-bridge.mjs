@@ -89,6 +89,8 @@ const refs = {
   localWorkerInnovationLaunchExecutionEnvelopeCheck: `data/kosmo-local-worker-innovation-launch-execution-envelope-check-${dateStamp}.json`,
   localWorkerInnovationPostOutputIntakeReview: `data/kosmo-local-worker-innovation-post-output-intake-review-${dateStamp}.json`,
   localWorkerInnovationPostOutputIntakeReviewCheck: `data/kosmo-local-worker-innovation-post-output-intake-review-check-${dateStamp}.json`,
+  localWorkerInnovationHumanOverseerReviewDecisionCard: `data/kosmo-local-worker-innovation-human-overseer-review-decision-card-${dateStamp}.json`,
+  localWorkerInnovationHumanOverseerReviewDecisionCardCheck: `data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -225,6 +227,8 @@ function buildBridge(reports) {
   const localWorkerInnovationLaunchExecutionEnvelopeCheckSummary = reports.localWorkerInnovationLaunchExecutionEnvelopeCheck?.summary || {};
   const localWorkerInnovationPostOutputIntakeReviewSummary = reports.localWorkerInnovationPostOutputIntakeReview?.summary || {};
   const localWorkerInnovationPostOutputIntakeReviewCheckSummary = reports.localWorkerInnovationPostOutputIntakeReviewCheck?.summary || {};
+  const localWorkerInnovationHumanOverseerReviewDecisionCardSummary = reports.localWorkerInnovationHumanOverseerReviewDecisionCard?.summary || {};
+  const localWorkerInnovationHumanOverseerReviewDecisionCardCheckSummary = reports.localWorkerInnovationHumanOverseerReviewDecisionCardCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -876,6 +880,18 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Review-only intake gate for future local-worker outputs; no direct repo conversion',
       source_ref: refs.localWorkerInnovationPostOutputIntakeReviewCheck
+    },
+    {
+      id: 'local-worker-innovation-human-overseer-review-decision-card',
+      title: 'Local Worker Innovation Human/Overseer Review Decision Card',
+      status: reports.localWorkerInnovationHumanOverseerReviewDecisionCard?.status === 'local_worker_innovation_human_overseer_review_decision_card_ready' &&
+        reports.localWorkerInnovationHumanOverseerReviewDecisionCardCheck?.status === 'local_worker_innovation_human_overseer_review_decision_card_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationHumanOverseerReviewDecisionCardSummary.mode || '-'}, candidates ${localWorkerInnovationHumanOverseerReviewDecisionCardSummary.review_candidates ?? 0}, decisions ${localWorkerInnovationHumanOverseerReviewDecisionCardSummary.decisions_applied_now ?? 0}, public ${localWorkerInnovationHumanOverseerReviewDecisionCardSummary.public_ready_after_card ?? 0}, failures ${localWorkerInnovationHumanOverseerReviewDecisionCardCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Decision card for future intake candidates; no apply, conversion or public-ready state',
+      source_ref: refs.localWorkerInnovationHumanOverseerReviewDecisionCardCheck
     },
     {
       id: 'github-innovation-watchlist',

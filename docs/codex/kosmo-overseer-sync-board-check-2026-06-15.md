@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-15T17:41:05.794Z
+Generated: 2026-06-15T17:45:31.575Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-298-human-overseer-review-decision-card.md` - 2026-06-15-codex-synergiebericht-298-human-overseer-review-decision-card.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-15-codex-synergiebericht-298-human-overseer-review-decision-card.md` - 2026-06-15-codex-synergiebericht-298-human-overseer-review-decision-card.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-297-post-output-intake-review.md` - 2026-06-15-codex-synergiebericht-297-post-output-intake-review.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-297-post-output-intake-review.md` - 2026-06-15-codex-synergiebericht-297-post-output-intake-review.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-296-innovation-launch-execution-envelope.md` - 2026-06-15-codex-synergiebericht-296-innovation-launch-execution-envelope.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-292-innovation-launch-dry-run.md` - 2026-06-15-codex-synergiebericht-292-innovation-launch-dry-run.md must include a title.
 - passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-291-validator-fixtures.md` - 2026-06-15-codex-synergiebericht-291-validator-fixtures.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-15-codex-synergiebericht-291-validator-fixtures.md` - 2026-06-15-codex-synergiebericht-291-validator-fixtures.md must include a title.
-- passed: `handoff_mirrored:2026-06-15-codex-synergiebericht-290-local-worker-output-validator.md` - 2026-06-15-codex-synergiebericht-290-local-worker-output-validator.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-15-codex-synergiebericht-290-local-worker-output-validator.md` - 2026-06-15-codex-synergiebericht-290-local-worker-output-validator.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

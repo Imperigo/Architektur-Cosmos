@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:45:35.350Z",
+  "status": "local_worker_innovation_human_overseer_review_decision_card_ready",
+  "policy": {
+    "decision_card_only": true,
+    "applies_decisions_now": false,
+    "metadata_only": true,
+    "reads_private_sources_now": false,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "copies_worker_output_body_now": false,
+    "copies_worker_recommendation_text_now": false,
+    "writes_repo_derivatives_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_card": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-post-output-intake-review-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-output-validator-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-execution-envelope-2026-06-15.json"
+  ],
+  "summary": {
+    "mode": "waiting_for_review_candidates",
+    "review_candidates": 0,
+    "waiting_items": 5,
+    "blocked_candidates": 0,
+    "decisions_applied_now": 0,
+    "accepted_now": 0,
+    "repo_conversions_now": 0,
+    "training_rows_promoted_now": 0,
+    "worker_output_bodies_copied_now": 0,
+    "worker_recommendation_text_copied_now": 0,
+    "public_ready_after_card": 0,
+    "failures": 0
+  },
+  "question": "Noch keine lokalen Worker-Outputs vorhanden. Soll die Review-Decision-Card bereit gehalten werden?",
+  "recommended_answer": {
+    "id": "hold_waiting_for_review_candidates",
+    "label": "Halten bis Kandidaten existieren",
+    "reason": "Aktuell gibt es keine validierten lokalen Worker-Outputs; eine Entscheidung waere nur scheinbar autonom."
+  },
+  "allowed_answers": [
+    {
+      "id": "hold_waiting_for_review_candidates",
+      "effect": "Keine Entscheidung, keine Uebernahme, weiter warten."
+    },
+    {
+      "id": "approve_review_candidate_for_separate_conversion_plan",
+      "effect": "Nur fuer einen spaeteren separaten Conversion-Plan vormerken; keine direkte Uebernahme."
+    },
+    {
+      "id": "reject_or_rework_review_candidate",
+      "effect": "Kandidat bleibt blockiert; lokale Worker-Ausgabe oder Validator/Policy wird ueberarbeitet."
+    }
+  ],
+  "exact_reply_template_for_future_candidate": "local_worker_review_decision=approve_review_candidate_for_separate_conversion_plan; candidate_task_id=<task_id>; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_direct_repo_conversion=yes; confirmed_public_ready_false=yes; note=Nur als Review-Kandidat fuer einen separaten Conversion-Plan vormerken.",
+  "candidates": [],
+  "required_before_any_future_apply": [
+    "candidate exists in post-output intake review",
+    "output validator guard passed",
+    "human_or_overseer_review_decision recorded separately",
+    "no_private_content assertion confirmed",
+    "separate conversion plan guard required",
+    "public_ready remains false"
+  ],
+  "hard_stops": [
+    "This card never applies review decisions.",
+    "This card never accepts worker outputs into repo artifacts.",
+    "This card never copies worker output bodies or recommendation text into Git.",
+    "This card never promotes training rows.",
+    "This card never marks public-ready.",
+    "This card never reads private Source Root, OneDrive or archive-library content."
+  ],
+  "failures": []
+}

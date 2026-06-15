@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:41:09.595Z",
+  "generated_at": "2026-06-15T17:45:35.831Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -92,6 +92,8 @@
     "data/kosmo-local-worker-innovation-launch-execution-envelope-check-2026-06-15.json",
     "data/kosmo-local-worker-innovation-post-output-intake-review-2026-06-15.json",
     "data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
     "data/kosmo-innovation-github-discovery-2026-06-15.json",
@@ -127,7 +129,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 66,
+    "cards": 67,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -768,6 +770,15 @@
       "owner_action_required": false,
       "route_hint": "Review-only intake gate for future local-worker outputs; no direct repo conversion",
       "source_ref": "data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-human-overseer-review-decision-card",
+      "title": "Local Worker Innovation Human/Overseer Review Decision Card",
+      "status": "review_only_ready",
+      "signal": "waiting_for_review_candidates, candidates 0, decisions 0, public 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Decision card for future intake candidates; no apply, conversion or public-ready state",
+      "source_ref": "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-2026-06-15.json"
     },
     {
       "id": "github-innovation-watchlist",
