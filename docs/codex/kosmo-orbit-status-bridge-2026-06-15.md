@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T14:29:59.702Z
+Generated: 2026-06-15T14:50:59.492Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 36
+- Cards: 39
 - Blocking cards: 4
 - Owner action cards: 16
 - Source root blocked: yes
@@ -37,6 +37,10 @@ Status: `orbit_bridge_ready_with_blockers`
 - Prepare source package contract: prepare_phase1_source_package_contract_guard_passed, package kosmo-prepare-phase1-adapter-fixture-2026-06-15, failures 0
 - Asset prepare fixture contract: kosmoasset_prepare_phase1_fixture_contract_guard_passed, library kosmo-prepare-phase1-fixture, assets 2, failures 0
 - Local worker fixture chain task pack: local_worker_fixture_chain_task_pack_ready, tasks 3, executable 0, missing refs 0, check local_worker_fixture_chain_task_pack_guard_passed, failures 0
+- GitHub fixture contract plan: innovation_github_fixture_contract_plan_ready, plans 5
+- GitHub fixture skeletons: innovation_github_fixture_skeletons_ready, directories 5, files 10
+- GitHub fixture payloads: innovation_github_fixture_payloads_ready, payloads 10
+- GitHub fixture payload smoke: innovation_github_fixture_payload_smoke_passed, payloads 10, lanes 3, content types 6
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -44,7 +48,7 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | ready | no | 57/57 required steps |
+| `day-batch` Daily Batch | ready | no | 71/71 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
 | `source-root-decision-refresh` Source Root Decision Refresh | review_only_ready | no | source_root_decision_session_refresh_not_needed, changed no, options 10 |
 | `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |
@@ -76,6 +80,9 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |
 | `github-readme-signal-scan` GitHub README Signal Scan | review_only_ready | no | 7 scanned, README 6, high-signal 5, failures 0 |
 | `github-fixture-contract-plan` GitHub Fixture Contract Plan | review_only_ready | no | 5 plans, prepare 2, asset 1, worker 2, failures 0 |
+| `github-fixture-skeletons` GitHub Fixture Skeletons | review_only_ready | no | 5 directories, 10 files, executable 0, failures 0 |
+| `github-fixture-payloads` GitHub Fixture Payloads | review_only_ready | no | 5 manifests, 10 payloads, executable 0, failures 0 |
+| `github-fixture-payload-smoke` GitHub Fixture Payload Smoke | review_only_ready | no | 10 payloads, lanes 3/3, content 6/6, failures 0 |
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-16, failures 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
@@ -114,6 +121,9 @@ Status: `orbit_bridge_ready_with_blockers`
 - `github_innovation_review_queue_card`
 - `github_readme_signal_scan_card`
 - `github_fixture_contract_plan_card`
+- `github_fixture_skeletons_card`
+- `github_fixture_payloads_card`
+- `github_fixture_payload_smoke_card`
 - `tomorrow_day_batch_card`
 - `worker_boundary_card`
 - `innovation_lane_card`

@@ -57,6 +57,12 @@ const refs = {
   githubReadmeSignalScanCheck: `data/kosmo-innovation-github-readme-signal-scan-check-${dateStamp}.json`,
   githubFixtureContractPlan: `data/kosmo-innovation-github-fixture-contract-plan-${dateStamp}.json`,
   githubFixtureContractPlanCheck: `data/kosmo-innovation-github-fixture-contract-plan-check-${dateStamp}.json`,
+  githubFixtureSkeletons: `data/kosmo-innovation-github-fixture-skeletons-${dateStamp}.json`,
+  githubFixtureSkeletonsCheck: `data/kosmo-innovation-github-fixture-skeletons-check-${dateStamp}.json`,
+  githubFixturePayloads: `data/kosmo-innovation-github-fixture-payloads-${dateStamp}.json`,
+  githubFixturePayloadsCheck: `data/kosmo-innovation-github-fixture-payloads-check-${dateStamp}.json`,
+  githubFixturePayloadSmoke: `data/kosmo-innovation-github-fixture-payload-smoke-${dateStamp}.json`,
+  githubFixturePayloadSmokeCheck: `data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`,
   tomorrowDayBatch: `data/kosmo-tomorrow-day-batch-${dateStamp}.json`,
   tomorrowDayBatchCheck: `data/kosmo-tomorrow-day-batch-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
@@ -133,6 +139,12 @@ function buildBridge(reports) {
   const githubReadmeSignalScanCheckSummary = reports.githubReadmeSignalScanCheck?.summary || {};
   const githubFixtureContractPlanSummary = reports.githubFixtureContractPlan?.summary || {};
   const githubFixtureContractPlanCheckSummary = reports.githubFixtureContractPlanCheck?.summary || {};
+  const githubFixtureSkeletonsSummary = reports.githubFixtureSkeletons?.summary || {};
+  const githubFixtureSkeletonsCheckSummary = reports.githubFixtureSkeletonsCheck?.summary || {};
+  const githubFixturePayloadsSummary = reports.githubFixturePayloads?.summary || {};
+  const githubFixturePayloadsCheckSummary = reports.githubFixturePayloadsCheck?.summary || {};
+  const githubFixturePayloadSmokeSummary = reports.githubFixturePayloadSmoke?.summary || {};
+  const githubFixturePayloadSmokeCheckSummary = reports.githubFixturePayloadSmokeCheck?.summary || {};
   const tomorrowDayBatchSummary = reports.tomorrowDayBatch?.summary || {};
   const tomorrowDayBatchCheckSummary = reports.tomorrowDayBatchCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
@@ -532,6 +544,42 @@ function buildBridge(reports) {
       source_ref: refs.githubFixtureContractPlan
     },
     {
+      id: 'github-fixture-skeletons',
+      title: 'GitHub Fixture Skeletons',
+      status: reports.githubFixtureSkeletons?.status === 'innovation_github_fixture_skeletons_ready' &&
+        reports.githubFixtureSkeletonsCheck?.status === 'innovation_github_fixture_skeletons_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubFixtureSkeletonsSummary.directories ?? 0} directories, ${githubFixtureSkeletonsSummary.files_written ?? 0} files, executable ${githubFixtureSkeletonsSummary.executable_now ?? 0}, failures ${githubFixtureSkeletonsCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Synthetic GitHub-signal fixture skeletons; no clone/install/run',
+      source_ref: refs.githubFixtureSkeletons
+    },
+    {
+      id: 'github-fixture-payloads',
+      title: 'GitHub Fixture Payloads',
+      status: reports.githubFixturePayloads?.status === 'innovation_github_fixture_payloads_ready' &&
+        reports.githubFixturePayloadsCheck?.status === 'innovation_github_fixture_payloads_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubFixturePayloadsSummary.manifests ?? 0} manifests, ${githubFixturePayloadsSummary.payloads_written ?? 0} payloads, executable ${githubFixturePayloadsSummary.executable_now ?? 0}, failures ${githubFixturePayloadsCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Synthetic JSON payloads only; no copied GitHub or private content',
+      source_ref: refs.githubFixturePayloads
+    },
+    {
+      id: 'github-fixture-payload-smoke',
+      title: 'GitHub Fixture Payload Smoke',
+      status: reports.githubFixturePayloadSmoke?.status === 'innovation_github_fixture_payload_smoke_passed' &&
+        reports.githubFixturePayloadSmokeCheck?.status === 'innovation_github_fixture_payload_smoke_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubFixturePayloadSmokeSummary.payloads ?? 0} payloads, lanes ${githubFixturePayloadSmokeSummary.lanes ?? 0}/${githubFixturePayloadSmokeSummary.required_lanes ?? 0}, content ${githubFixturePayloadSmokeSummary.content_types ?? 0}/${githubFixturePayloadSmokeSummary.required_content_types ?? 0}, failures ${githubFixturePayloadSmokeCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Lane-specific fixture shape smoke for Prepare/Asset/Worker Integration',
+      source_ref: refs.githubFixturePayloadSmoke
+    },
+    {
       id: 'tomorrow-day-batch',
       title: 'Tomorrow Day Batch',
       status: reports.tomorrowDayBatch?.status === 'tomorrow_day_batch_ready' &&
@@ -703,6 +751,15 @@ function buildBridge(reports) {
       github_readme_signal_scan_high_signal_items: githubReadmeSignalScanSummary.high_signal_items ?? null,
       github_fixture_contract_plan_status: reports.githubFixtureContractPlan?.status || null,
       github_fixture_contract_plan_count: githubFixtureContractPlanSummary.contract_plans ?? null,
+      github_fixture_skeletons_status: reports.githubFixtureSkeletons?.status || null,
+      github_fixture_skeletons_directories: githubFixtureSkeletonsSummary.directories ?? null,
+      github_fixture_skeletons_files: githubFixtureSkeletonsSummary.files_written ?? null,
+      github_fixture_payloads_status: reports.githubFixturePayloads?.status || null,
+      github_fixture_payloads_written: githubFixturePayloadsSummary.payloads_written ?? null,
+      github_fixture_payload_smoke_status: reports.githubFixturePayloadSmoke?.status || null,
+      github_fixture_payload_smoke_payloads: githubFixturePayloadSmokeSummary.payloads ?? null,
+      github_fixture_payload_smoke_lanes: githubFixturePayloadSmokeSummary.lanes ?? null,
+      github_fixture_payload_smoke_content_types: githubFixturePayloadSmokeSummary.content_types ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -741,6 +798,9 @@ function buildBridge(reports) {
       'github_innovation_review_queue_card',
       'github_readme_signal_scan_card',
       'github_fixture_contract_plan_card',
+      'github_fixture_skeletons_card',
+      'github_fixture_payloads_card',
+      'github_fixture_payload_smoke_card',
       'tomorrow_day_batch_card',
       'worker_boundary_card',
       'innovation_lane_card',
@@ -803,6 +863,10 @@ function renderMarkdown(bridge) {
   lines.push(`- Prepare source package contract: ${bridge.summary.prepare_phase1_source_package_contract_check_status}, package ${bridge.summary.prepare_phase1_source_package_contract_package_id ?? '-'}, failures ${bridge.summary.prepare_phase1_source_package_contract_failures ?? '-'}`);
   lines.push(`- Asset prepare fixture contract: ${bridge.summary.asset_prepare_phase1_fixture_contract_check_status}, library ${bridge.summary.asset_prepare_phase1_fixture_contract_library_id ?? '-'}, assets ${bridge.summary.asset_prepare_phase1_fixture_contract_assets ?? '-'}, failures ${bridge.summary.asset_prepare_phase1_fixture_contract_failures ?? '-'}`);
   lines.push(`- Local worker fixture chain task pack: ${bridge.summary.local_worker_fixture_chain_task_pack_status}, tasks ${bridge.summary.local_worker_fixture_chain_task_pack_tasks ?? '-'}, executable ${bridge.summary.local_worker_fixture_chain_task_pack_executable_now ?? '-'}, missing refs ${bridge.summary.local_worker_fixture_chain_task_pack_missing_refs ?? '-'}, check ${bridge.summary.local_worker_fixture_chain_task_pack_check_status}, failures ${bridge.summary.local_worker_fixture_chain_task_pack_check_failures ?? '-'}`);
+  lines.push(`- GitHub fixture contract plan: ${bridge.summary.github_fixture_contract_plan_status}, plans ${bridge.summary.github_fixture_contract_plan_count ?? '-'}`);
+  lines.push(`- GitHub fixture skeletons: ${bridge.summary.github_fixture_skeletons_status}, directories ${bridge.summary.github_fixture_skeletons_directories ?? '-'}, files ${bridge.summary.github_fixture_skeletons_files ?? '-'}`);
+  lines.push(`- GitHub fixture payloads: ${bridge.summary.github_fixture_payloads_status}, payloads ${bridge.summary.github_fixture_payloads_written ?? '-'}`);
+  lines.push(`- GitHub fixture payload smoke: ${bridge.summary.github_fixture_payload_smoke_status}, payloads ${bridge.summary.github_fixture_payload_smoke_payloads ?? '-'}, lanes ${bridge.summary.github_fixture_payload_smoke_lanes ?? '-'}, content types ${bridge.summary.github_fixture_payload_smoke_content_types ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');
