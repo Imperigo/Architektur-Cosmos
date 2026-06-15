@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:25:18.842Z",
+  "status": "local_worker_innovation_launch_apply_guard_smoke_guard_passed",
+  "policy": {
+    "validates_smoke_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-apply-guard-smoke-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 12,
+    "passed": 12,
+    "failures": 0,
+    "scenarios": 3,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_passed",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_smoke_passed"
+    },
+    {
+      "id": "policy_smoke_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_synthetic_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "three_scenarios",
+      "status": "passed",
+      "evidence": "3/3"
+    },
+    {
+      "id": "empty_waits",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_waiting_for_exact_reply"
+    },
+    {
+      "id": "exact_allows_separate_only",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_ready_for_separate_dry_run_batch"
+    },
+    {
+      "id": "broad_private_blocks",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_blocked_by_reply"
+    },
+    {
+      "id": "all_scenarios_no_failures",
+      "status": "passed",
+      "evidence": "empty_reply:0, exact_reply:0, broad_or_private_reply:0"
+    }
+  ]
+}

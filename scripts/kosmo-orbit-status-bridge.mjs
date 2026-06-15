@@ -79,6 +79,10 @@ const refs = {
   localWorkerInnovationLaunchDryRunCheck: `data/kosmo-local-worker-innovation-launch-dry-run-check-${dateStamp}.json`,
   localWorkerInnovationLaunchOwnerCard: `data/kosmo-local-worker-innovation-launch-owner-card-${dateStamp}.json`,
   localWorkerInnovationLaunchOwnerCardCheck: `data/kosmo-local-worker-innovation-launch-owner-card-check-${dateStamp}.json`,
+  localWorkerInnovationLaunchApplyGuard: `data/kosmo-local-worker-innovation-launch-apply-guard-${dateStamp}.json`,
+  localWorkerInnovationLaunchApplyGuardCheck: `data/kosmo-local-worker-innovation-launch-apply-guard-check-${dateStamp}.json`,
+  localWorkerInnovationLaunchApplyGuardSmoke: `data/kosmo-local-worker-innovation-launch-apply-guard-smoke-${dateStamp}.json`,
+  localWorkerInnovationLaunchApplyGuardSmokeCheck: `data/kosmo-local-worker-innovation-launch-apply-guard-smoke-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -205,6 +209,10 @@ function buildBridge(reports) {
   const localWorkerInnovationLaunchDryRunCheckSummary = reports.localWorkerInnovationLaunchDryRunCheck?.summary || {};
   const localWorkerInnovationLaunchOwnerCardSummary = reports.localWorkerInnovationLaunchOwnerCard?.summary || {};
   const localWorkerInnovationLaunchOwnerCardCheckSummary = reports.localWorkerInnovationLaunchOwnerCardCheck?.summary || {};
+  const localWorkerInnovationLaunchApplyGuardSummary = reports.localWorkerInnovationLaunchApplyGuard?.summary || {};
+  const localWorkerInnovationLaunchApplyGuardCheckSummary = reports.localWorkerInnovationLaunchApplyGuardCheck?.summary || {};
+  const localWorkerInnovationLaunchApplyGuardSmokeSummary = reports.localWorkerInnovationLaunchApplyGuardSmoke?.summary || {};
+  const localWorkerInnovationLaunchApplyGuardSmokeCheckSummary = reports.localWorkerInnovationLaunchApplyGuardSmokeCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -788,6 +796,34 @@ function buildBridge(reports) {
       owner_action_required: false,
       route_hint: 'Owner/overseer decision card for later source-free local-worker launch; recommends hold',
       source_ref: refs.localWorkerInnovationLaunchOwnerCardCheck
+    },
+    {
+      id: 'local-worker-innovation-launch-apply-guard',
+      title: 'Local Worker Innovation Launch Apply Guard',
+      status: [
+        'local_worker_innovation_launch_apply_guard_waiting_for_exact_reply',
+        'local_worker_innovation_launch_apply_guard_ready_for_separate_dry_run_batch',
+        'local_worker_innovation_launch_apply_guard_blocked_by_reply'
+      ].includes(reports.localWorkerInnovationLaunchApplyGuard?.status) &&
+        reports.localWorkerInnovationLaunchApplyGuardCheck?.status === 'local_worker_innovation_launch_apply_guard_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `answer ${localWorkerInnovationLaunchApplyGuardSummary.answer_present ? 'present' : 'missing'}, exact ${localWorkerInnovationLaunchApplyGuardSummary.exact_reply_valid ? 'yes' : 'no'}, separate ${localWorkerInnovationLaunchApplyGuardSummary.separate_launch_allowed_after_guard ? 'yes' : 'no'}, execute ${localWorkerInnovationLaunchApplyGuardSummary.execute_now ?? 0}, failures ${localWorkerInnovationLaunchApplyGuardCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Exact-reply guard for later source-free local-worker launch; validates only and never starts workers',
+      source_ref: refs.localWorkerInnovationLaunchApplyGuardCheck
+    },
+    {
+      id: 'local-worker-innovation-launch-apply-guard-smoke',
+      title: 'Local Worker Innovation Launch Apply Guard Smoke',
+      status: reports.localWorkerInnovationLaunchApplyGuardSmoke?.status === 'local_worker_innovation_launch_apply_guard_smoke_passed' &&
+        reports.localWorkerInnovationLaunchApplyGuardSmokeCheck?.status === 'local_worker_innovation_launch_apply_guard_smoke_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationLaunchApplyGuardSmokeSummary.passed_scenarios ?? 0}/${localWorkerInnovationLaunchApplyGuardSmokeSummary.scenarios ?? 0} scenarios, failures ${localWorkerInnovationLaunchApplyGuardSmokeCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Synthetic empty/exact/broad-private regression smoke for launch apply guard',
+      source_ref: refs.localWorkerInnovationLaunchApplyGuardSmokeCheck
     },
     {
       id: 'github-innovation-watchlist',

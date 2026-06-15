@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:17:14.093Z",
+  "generated_at": "2026-06-15T17:25:19.563Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -143,6 +143,16 @@
       "id": "start_sequence_local_worker_innovation_launch_owner_card",
       "severity": "passed",
       "message": "Start sequence must include local worker innovation launch owner card."
+    },
+    {
+      "id": "start_sequence_local_worker_innovation_launch_apply_guard",
+      "severity": "passed",
+      "message": "Start sequence must include local worker innovation launch apply guard."
+    },
+    {
+      "id": "start_sequence_local_worker_innovation_launch_apply_guard_smoke",
+      "severity": "passed",
+      "message": "Start sequence must include local worker innovation launch apply guard smoke."
     },
     {
       "id": "start_sequence_morning_routine_run",

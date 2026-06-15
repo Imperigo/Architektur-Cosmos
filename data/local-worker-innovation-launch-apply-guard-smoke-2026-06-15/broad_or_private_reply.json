@@ -1,0 +1,69 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:25:18.608Z",
+  "status": "local_worker_innovation_launch_apply_guard_blocked_by_reply",
+  "policy": {
+    "guard_only": true,
+    "records_owner_decision_now": false,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "writes_worker_outputs_now": false,
+    "writes_repo_outputs_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_guard": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-owner-card-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-owner-card-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-dry-run-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-dry-run-check-2026-06-15.json"
+  ],
+  "summary": {
+    "answer_present": true,
+    "exact_reply_valid": false,
+    "separate_launch_allowed_after_guard": false,
+    "tasks": 5,
+    "dry_run_ready_tasks": 5,
+    "validator_fixture_guarded": true,
+    "execute_now": 0,
+    "starts_models_now": false,
+    "public_ready_after_guard": 0,
+    "readiness_failures": 0,
+    "reply_failures": 6,
+    "failures": 6
+  },
+  "parsed_answer": {},
+  "required_exact_reply": [
+    "local_worker_innovation_launch_choice=approve_separate_source_free_launch_later",
+    "confirmed_source_free_only=yes",
+    "confirmed_no_private_content=yes",
+    "confirmed_run_validator_after_outputs=yes",
+    "note=Nur die 5 GitHub-Innovation-Fixture-Tasks duerfen in einem separaten Launch-Batch laufen."
+  ],
+  "allowed_choices": [
+    "hold_dry_run_ready",
+    "approve_separate_source_free_launch_later",
+    "reject_or_rework_worker_launch"
+  ],
+  "next_actions": [
+    "Keep the local-worker launch held.",
+    "Use the exact reply template from the owner card if a later source-free launch should be allowed.",
+    "Do not start models, read private sources, or write worker outputs from this guard."
+  ],
+  "hard_stops": [
+    "This guard never executes local workers.",
+    "This guard never starts models.",
+    "This guard never reads private Source Root, OneDrive or archive-library content.",
+    "This guard never promotes public-ready or training rows.",
+    "A broad approval is not enough; exact key=value fields are required."
+  ],
+  "failures": [
+    "Missing local_worker_innovation_launch_choice.",
+    "Missing confirmed_source_free_only.",
+    "Missing confirmed_no_private_content.",
+    "Missing confirmed_run_validator_after_outputs.",
+    "note must explicitly mention the 5 GitHub-Innovation-Fixture-Tasks.",
+    "Private-content wording requires confirmed_no_private_content=yes."
+  ]
+}

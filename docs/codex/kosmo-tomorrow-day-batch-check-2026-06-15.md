@@ -1,6 +1,6 @@
 # Kosmo Tomorrow Day Batch Check
 
-Generated: 2026-06-15T17:17:14.093Z
+Generated: 2026-06-15T17:25:19.563Z
 Status: `tomorrow_day_batch_guard_passed`
 
 ## Summary
@@ -38,6 +38,8 @@ Status: `tomorrow_day_batch_guard_passed`
 - passed: `start_sequence_local_worker_innovation_output_validator_fixtures` - Start sequence must include local worker innovation output validator fixtures.
 - passed: `start_sequence_local_worker_innovation_launch_dry_run` - Start sequence must include local worker innovation launch dry run.
 - passed: `start_sequence_local_worker_innovation_launch_owner_card` - Start sequence must include local worker innovation launch owner card.
+- passed: `start_sequence_local_worker_innovation_launch_apply_guard` - Start sequence must include local worker innovation launch apply guard.
+- passed: `start_sequence_local_worker_innovation_launch_apply_guard_smoke` - Start sequence must include local worker innovation launch apply guard smoke.
 - passed: `start_sequence_morning_routine_run` - Start sequence must include Codex morning routine run.
 - passed: `start_sequence_morning_routine_run_check` - Start sequence must include Codex morning routine run check.
 - passed: `start_sequence_owner_checkpoint` - Start sequence must include owner unlock checkpoint.

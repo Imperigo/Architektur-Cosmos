@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T17:17:13.615Z",
+  "generated_at": "2026-06-15T17:25:19.093Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -82,6 +82,10 @@
     "data/kosmo-local-worker-innovation-launch-dry-run-check-2026-06-15.json",
     "data/kosmo-local-worker-innovation-launch-owner-card-2026-06-15.json",
     "data/kosmo-local-worker-innovation-launch-owner-card-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-check-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-smoke-2026-06-15.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-smoke-check-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-2026-06-15.json",
     "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
     "data/kosmo-innovation-github-discovery-2026-06-15.json",
@@ -117,7 +121,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 61,
+    "cards": 63,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -713,6 +717,24 @@
       "owner_action_required": false,
       "route_hint": "Owner/overseer decision card for later source-free local-worker launch; recommends hold",
       "source_ref": "data/kosmo-local-worker-innovation-launch-owner-card-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-launch-apply-guard",
+      "title": "Local Worker Innovation Launch Apply Guard",
+      "status": "review_only_ready",
+      "signal": "answer missing, exact no, separate no, execute 0, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Exact-reply guard for later source-free local-worker launch; validates only and never starts workers",
+      "source_ref": "data/kosmo-local-worker-innovation-launch-apply-guard-check-2026-06-15.json"
+    },
+    {
+      "id": "local-worker-innovation-launch-apply-guard-smoke",
+      "title": "Local Worker Innovation Launch Apply Guard Smoke",
+      "status": "review_only_ready",
+      "signal": "3/3 scenarios, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Synthetic empty/exact/broad-private regression smoke for launch apply guard",
+      "source_ref": "data/kosmo-local-worker-innovation-launch-apply-guard-smoke-check-2026-06-15.json"
     },
     {
       "id": "github-innovation-watchlist",

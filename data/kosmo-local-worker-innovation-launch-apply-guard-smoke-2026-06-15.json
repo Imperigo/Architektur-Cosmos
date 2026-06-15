@@ -1,0 +1,145 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:25:18.616Z",
+  "status": "local_worker_innovation_launch_apply_guard_smoke_passed",
+  "policy": {
+    "smoke_only": true,
+    "uses_synthetic_answers_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_smoke": 0
+  },
+  "source_refs": [
+    "scripts/kosmo-local-worker-innovation-launch-apply-guard.mjs"
+  ],
+  "summary": {
+    "scenarios": 3,
+    "passed_scenarios": 3,
+    "failures": 0,
+    "execute_now": 0,
+    "public_ready_after_smoke": 0
+  },
+  "results": [
+    {
+      "id": "empty_reply",
+      "output_ref": "data/local-worker-innovation-launch-apply-guard-smoke-2026-06-15/empty_reply.json",
+      "status": "local_worker_innovation_launch_apply_guard_waiting_for_exact_reply",
+      "exact_reply_valid": false,
+      "separate_launch_allowed_after_guard": false,
+      "failures": 0,
+      "checks": [
+        {
+          "id": "status_matches",
+          "status": "passed",
+          "evidence": "local_worker_innovation_launch_apply_guard_waiting_for_exact_reply expected local_worker_innovation_launch_apply_guard_waiting_for_exact_reply"
+        },
+        {
+          "id": "exact_valid_matches",
+          "status": "passed",
+          "evidence": false
+        },
+        {
+          "id": "launch_allowed_matches",
+          "status": "passed",
+          "evidence": false
+        },
+        {
+          "id": "execute_zero",
+          "status": "passed",
+          "evidence": 0
+        },
+        {
+          "id": "public_ready_zero",
+          "status": "passed",
+          "evidence": 0
+        },
+        {
+          "id": "no_model_start",
+          "status": "passed",
+          "evidence": false
+        }
+      ]
+    },
+    {
+      "id": "exact_reply",
+      "output_ref": "data/local-worker-innovation-launch-apply-guard-smoke-2026-06-15/exact_reply.json",
+      "status": "local_worker_innovation_launch_apply_guard_ready_for_separate_dry_run_batch",
+      "exact_reply_valid": true,
+      "separate_launch_allowed_after_guard": true,
+      "failures": 0,
+      "checks": [
+        {
+          "id": "status_matches",
+          "status": "passed",
+          "evidence": "local_worker_innovation_launch_apply_guard_ready_for_separate_dry_run_batch expected local_worker_innovation_launch_apply_guard_ready_for_separate_dry_run_batch"
+        },
+        {
+          "id": "exact_valid_matches",
+          "status": "passed",
+          "evidence": true
+        },
+        {
+          "id": "launch_allowed_matches",
+          "status": "passed",
+          "evidence": true
+        },
+        {
+          "id": "execute_zero",
+          "status": "passed",
+          "evidence": 0
+        },
+        {
+          "id": "public_ready_zero",
+          "status": "passed",
+          "evidence": 0
+        },
+        {
+          "id": "no_model_start",
+          "status": "passed",
+          "evidence": false
+        }
+      ]
+    },
+    {
+      "id": "broad_or_private_reply",
+      "output_ref": "data/local-worker-innovation-launch-apply-guard-smoke-2026-06-15/broad_or_private_reply.json",
+      "status": "local_worker_innovation_launch_apply_guard_blocked_by_reply",
+      "exact_reply_valid": false,
+      "separate_launch_allowed_after_guard": false,
+      "failures": 0,
+      "checks": [
+        {
+          "id": "status_matches",
+          "status": "passed",
+          "evidence": "local_worker_innovation_launch_apply_guard_blocked_by_reply expected local_worker_innovation_launch_apply_guard_blocked_by_reply"
+        },
+        {
+          "id": "exact_valid_matches",
+          "status": "passed",
+          "evidence": false
+        },
+        {
+          "id": "launch_allowed_matches",
+          "status": "passed",
+          "evidence": false
+        },
+        {
+          "id": "execute_zero",
+          "status": "passed",
+          "evidence": 0
+        },
+        {
+          "id": "public_ready_zero",
+          "status": "passed",
+          "evidence": 0
+        },
+        {
+          "id": "no_model_start",
+          "status": "passed",
+          "evidence": false
+        }
+      ]
+    }
+  ]
+}

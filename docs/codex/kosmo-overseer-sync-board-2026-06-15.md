@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T17:17:12.167Z
+Generated: 2026-06-15T17:25:16.536Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-294-innovation-launch-apply-guard.md` | Codex Synergiebericht 294 - Innovation Launch Apply Guard | 2 |
 | `2026-06-15-codex-synergiebericht-293-innovation-launch-owner-card.md` | Codex Synergiebericht 293 - Innovation Launch Owner Card | 2 |
 | `2026-06-15-codex-synergiebericht-292-innovation-launch-dry-run.md` | Codex Synergiebericht 292 - Innovation Launch Dry Run | 2 |
 | `2026-06-15-codex-synergiebericht-291-validator-fixtures.md` | Codex Synergiebericht 291 - Validator Fixtures | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-289-local-worker-output-adapter-plan.md` | Codex Synergiebericht 289 - Local Worker Output Adapter Plan | 2 |
 | `2026-06-15-codex-synergiebericht-288-local-worker-output-smoke.md` | Codex Synergiebericht 288 - Local Worker Output Smoke | 2 |
 | `2026-06-15-codex-synergiebericht-287-local-worker-innovation-task-pack.md` | Codex Synergiebericht 287 - Local Worker Innovation Task Pack | 2 |
-| `2026-06-15-codex-synergiebericht-286-matrix-gated-fixtures.md` | Codex Synergiebericht 286 - Matrix-Gated Fixtures | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 286-293 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 287-294 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
