@@ -1,18 +1,18 @@
 # Kosmo Owner Unlock Answer Dry Run
 
-Generated: 2026-06-15T10:41:18.879Z
-Status: `owner_unlock_answer_dry_run_pending_answer`
+Generated: 2026-06-15T15:13:00.099Z
+Status: `owner_unlock_answer_dry_run_attention_required`
 
 ## Summary
 
-- Answer present: no
-- Validator: owner_unlock_reply_validator_pending_owner_reply
-- Validator guard: owner_unlock_reply_validator_guard_passed
-- Intake map: owner_unlock_reply_intake_map_pending_owner_reply
+- Answer present: yes
+- Validator: owner_unlock_reply_invalid
+- Validator guard: owner_unlock_reply_validator_guard_failed
+- Intake map: owner_unlock_reply_intake_map_blocked_by_invalid_reply
 - Intake map guard: owner_unlock_reply_intake_map_guard_passed
 - Patch operations: 0
 - Owner card patches: 0
-- Failures: 0
+- Failures: 5
 - Public-ready after dry-run: 0
 
 ## Outputs
@@ -35,3 +35,11 @@ Status: `owner_unlock_answer_dry_run_pending_answer`
 - Do not write the intake template from this dry-run.
 - Do not read private content.
 - Keep public-ready at 0.
+
+## Failures
+
+- validator exited 1
+- validator-check exited 1
+- Missing source_root_choice.
+- confirmed_exact_root must be yes or no.
+- validator-check reported failures

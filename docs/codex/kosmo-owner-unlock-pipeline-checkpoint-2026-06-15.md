@@ -1,20 +1,20 @@
 # Kosmo Owner Unlock Pipeline Checkpoint
 
-Generated: 2026-06-15T13:53:39.043Z
-Status: `owner_unlock_pipeline_checkpoint_ready`
+Generated: 2026-06-15T15:14:00.656Z
+Status: `owner_unlock_pipeline_checkpoint_attention_required`
 
 ## Summary
 
-- Components: 11/11
+- Components: 9/11
 - Guard checks: 115/115
-- Latest handoffs: 233-240
+- Latest handoffs: 263-270
 - Owner reply state: pending
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
 - Public-ready after checkpoint: 0
 
 ## Components
 
-- ready: `reply-validator` -> `owner_unlock_reply_validator_pending_owner_reply`
+- attention: `reply-validator` -> `owner_unlock_reply_invalid`
 - ready: `reply-validator-guard` -> `owner_unlock_reply_validator_guard_passed`
 - ready: `reply-smoke` -> `owner_unlock_reply_validator_smoke_passed`
 - ready: `reply-smoke-guard` -> `owner_unlock_reply_validator_smoke_guard_passed`
@@ -22,7 +22,7 @@ Status: `owner_unlock_pipeline_checkpoint_ready`
 - ready: `intake-map-guard` -> `owner_unlock_reply_intake_map_guard_passed`
 - ready: `execution-runbook` -> `owner_unlock_execution_runbook_ready`
 - ready: `execution-runbook-guard` -> `owner_unlock_execution_runbook_guard_passed`
-- ready: `answer-dry-run` -> `owner_unlock_answer_dry_run_pending_answer`
+- attention: `answer-dry-run` -> `owner_unlock_answer_dry_run_attention_required`
 - ready: `answer-dry-run-guard` -> `owner_unlock_answer_dry_run_guard_passed`
 - ready: `overseer-sync-board` -> `overseer_sync_board_ready`
 

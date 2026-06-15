@@ -22,6 +22,8 @@ const refs = {
   sourceRootPostOwnerActivationQueueCheck: `data/kosmo-source-root-post-owner-activation-queue-check-${dateStamp}.json`,
   sourceRootOwnerFinalDecisionBrief: `data/kosmo-source-root-owner-final-decision-brief-${dateStamp}.json`,
   sourceRootOwnerChoiceConsequenceMatrix: `data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`,
+  ownerUnlockFastReplyCard: `data/kosmo-owner-unlock-fast-reply-card-${dateStamp}.json`,
+  ownerUnlockFastReplyCardCheck: `data/kosmo-owner-unlock-fast-reply-card-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -113,6 +115,8 @@ function buildBridge(reports) {
   const postOwnerActivationQueueCheckSummary = reports.sourceRootPostOwnerActivationQueueCheck?.summary || {};
   const ownerFinalDecisionBriefSummary = reports.sourceRootOwnerFinalDecisionBrief?.summary || {};
   const ownerChoiceConsequenceMatrixSummary = reports.sourceRootOwnerChoiceConsequenceMatrix?.summary || {};
+  const ownerUnlockFastReplyCardSummary = reports.ownerUnlockFastReplyCard?.summary || {};
+  const ownerUnlockFastReplyCardCheckSummary = reports.ownerUnlockFastReplyCardCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -319,6 +323,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Preview consequences before recording an owner source-root choice',
       source_ref: refs.sourceRootOwnerChoiceConsequenceMatrix
+    },
+    {
+      id: 'owner-unlock-fast-reply-card',
+      title: 'Owner Unlock Fast Reply Card',
+      status: reports.ownerUnlockFastReplyCard?.status === 'owner_unlock_fast_reply_card_ready' &&
+        reports.ownerUnlockFastReplyCardCheck?.status === 'owner_unlock_fast_reply_card_guard_passed'
+        ? 'owner_action'
+        : 'needs_review',
+      signal: reports.ownerUnlockFastReplyCard?.status
+        ? `broad intent ${ownerUnlockFastReplyCardSummary.broad_unlock_intent ? 'yes' : 'no'}, suggestions ${ownerUnlockFastReplyCardSummary.suggested_replies ?? 0}, applies now ${ownerUnlockFastReplyCardSummary.applies_decision_now ? 'yes' : 'no'}, failures ${ownerUnlockFastReplyCardCheckSummary.failures ?? 0}`
+        : 'missing fast reply card',
+      owner_action_required: true,
+      route_hint: 'Turn freeform owner intent into exact validator-ready reply text without applying it',
+      source_ref: refs.ownerUnlockFastReplyCard
     },
     {
       id: 'source-root-activation',
@@ -834,6 +852,9 @@ function buildBridge(reports) {
       architecture_ontology_seed_status: reports.architectureOntologySeed?.status || null,
       architecture_ontology_entity_types: architectureOntologySummary.entity_types ?? null,
       architecture_ontology_relation_types: architectureOntologySummary.relation_types ?? null,
+      owner_unlock_fast_reply_card_status: reports.ownerUnlockFastReplyCard?.status || null,
+      owner_unlock_fast_reply_card_broad_intent: ownerUnlockFastReplyCardSummary.broad_unlock_intent ?? null,
+      owner_unlock_fast_reply_card_applies_now: ownerUnlockFastReplyCardSummary.applies_decision_now ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -858,6 +879,7 @@ function buildBridge(reports) {
       'source_root_post_owner_activation_queue_check_card',
       'source_root_owner_final_decision_brief_card',
       'source_root_owner_choice_consequence_matrix_card',
+      'owner_unlock_fast_reply_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -949,6 +971,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);
   lines.push(`- Architecture ontology seed: ${bridge.summary.architecture_ontology_seed_status}, entities ${bridge.summary.architecture_ontology_entity_types ?? '-'}, relations ${bridge.summary.architecture_ontology_relation_types ?? '-'}`);
+  lines.push(`- Owner unlock fast reply card: ${bridge.summary.owner_unlock_fast_reply_card_status}, broad intent ${bridge.summary.owner_unlock_fast_reply_card_broad_intent ?? '-'}, applies now ${bridge.summary.owner_unlock_fast_reply_card_applies_now ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

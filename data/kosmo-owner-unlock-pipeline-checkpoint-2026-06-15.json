@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:53:39.043Z",
-  "status": "owner_unlock_pipeline_checkpoint_ready",
+  "generated_at": "2026-06-15T15:14:00.656Z",
+  "status": "owner_unlock_pipeline_checkpoint_attention_required",
   "policy": {
     "checkpoint_only": true,
     "records_decisions": false,
@@ -27,11 +27,11 @@
   ],
   "summary": {
     "components": 11,
-    "components_ready": 11,
+    "components_ready": 9,
     "guard_checks": 115,
     "guard_checks_passed": 115,
-    "latest_handoff_min": 233,
-    "latest_handoff_max": 240,
+    "latest_handoff_min": 263,
+    "latest_handoff_max": 270,
     "latest_handoff_count": 8,
     "owner_reply_state": "pending",
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
@@ -40,9 +40,9 @@
   "components": [
     {
       "id": "reply-validator",
-      "actual_status": "owner_unlock_reply_validator_pending_owner_reply",
+      "actual_status": "owner_unlock_reply_invalid",
       "expected_status": "owner_unlock_reply_validator_pending_owner_reply",
-      "ready": true,
+      "ready": false,
       "public_ready_after_component": 0
     },
     {
@@ -96,9 +96,9 @@
     },
     {
       "id": "answer-dry-run",
-      "actual_status": "owner_unlock_answer_dry_run_pending_answer",
+      "actual_status": "owner_unlock_answer_dry_run_attention_required",
       "expected_status": "owner_unlock_answer_dry_run_pending_answer",
-      "ready": true,
+      "ready": false,
       "public_ready_after_component": 0
     },
     {

@@ -31,6 +31,7 @@ const bridge = orbitStatusBridgeData as OrbitStatusBridgeReport;
 const githubCards = bridge.orbit_cards.filter((card) => card.id.startsWith('github-'));
 const trainingCards = bridge.orbit_cards.filter((card) => card.id.startsWith('training-') || card.id === 'architecture-ontology-seed');
 const blockerCards = bridge.orbit_cards.filter((card) => card.status === 'blocked' || card.status.startsWith('blocked_') || card.status === 'needs_review');
+const ownerActionCards = bridge.orbit_cards.filter((card) => card.owner_action_required || card.status === 'owner_action');
 
 function toneForStatus(status: string) {
   if (status === 'review_only_ready' || status === 'ready' || status === 'guard_passed' || status === 'locked') {
@@ -121,21 +122,42 @@ export function OrbitStatusBridge() {
           </div>
         </div>
 
-        <div className="min-w-0 rounded-lg border border-rose-200/20 bg-rose-400/[0.055] p-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="text-base font-semibold text-white">Aktive Blocker</h3>
-            <span className="text-xs text-rose-100">{blockerCards.length}</span>
+        <div className="grid min-w-0 gap-4">
+          <div className="rounded-lg border border-amber-200/20 bg-amber-400/[0.055] p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-base font-semibold text-white">Owner Actions</h3>
+              <span className="text-xs text-amber-100">{ownerActionCards.length}</span>
+            </div>
+            <div className="mt-3 grid gap-2">
+              {ownerActionCards.map((card) => (
+                <article key={card.id} className="rounded-md border border-white/10 bg-black/24 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h4 className="text-sm font-semibold leading-5 text-white">{card.title}</h4>
+                    <StatusPill value={card.status} />
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-stone-300">{card.signal}</p>
+                  <p className="mt-2 text-xs leading-5 text-stone-500">{card.route_hint}</p>
+                </article>
+              ))}
+            </div>
           </div>
-          <div className="mt-3 grid gap-2">
-            {blockerCards.map((card) => (
-              <article key={card.id} className="rounded-md border border-white/10 bg-black/24 p-3">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h4 className="text-sm font-semibold leading-5 text-white">{card.title}</h4>
-                  <StatusPill value={card.status} />
-                </div>
-                <p className="mt-2 text-xs leading-5 text-stone-300">{card.signal}</p>
-              </article>
-            ))}
+
+          <div className="rounded-lg border border-rose-200/20 bg-rose-400/[0.055] p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-base font-semibold text-white">Aktive Blocker</h3>
+              <span className="text-xs text-rose-100">{blockerCards.length}</span>
+            </div>
+            <div className="mt-3 grid gap-2">
+              {blockerCards.map((card) => (
+                <article key={card.id} className="rounded-md border border-white/10 bg-black/24 p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h4 className="text-sm font-semibold leading-5 text-white">{card.title}</h4>
+                    <StatusPill value={card.status} />
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-stone-300">{card.signal}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </div>

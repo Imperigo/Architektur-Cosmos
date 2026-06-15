@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T15:17:20.662Z",
+  "status": "owner_unlock_fast_reply_card_guard_passed",
+  "policy": {
+    "review_only": true,
+    "records_owner_decision": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-fast-reply-card-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 12,
+    "passed": 12,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_fast_reply_card_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "does_not_apply_decision",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "suggests_exact_unlock_reply",
+      "status": "passed",
+      "evidence": "source_root_choice=select_exact_root_1;confirmed_exact_root=yes;review_batches=all_review_only;note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+    },
+    {
+      "id": "suggests_safe_default_reply",
+      "status": "passed",
+      "evidence": "source_root_choice=repair_onedrive_first;confirmed_exact_root=no;review_batches=none;note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist."
+    },
+    {
+      "id": "hard_stop_no_approval",
+      "status": "passed",
+      "evidence": "do not treat this card as owner approval. do not rewrite the owner reply automatically. do not edit intake/session files from this card. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not treat this card as owner approval. do not rewrite the owner reply automatically. do not edit intake/session files from this card. do not read private content. keep public-ready at 0."
+    }
+  ]
+}

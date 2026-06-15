@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:53:39.280Z",
-  "status": "owner_unlock_pipeline_checkpoint_guard_passed",
+  "generated_at": "2026-06-15T15:14:08.670Z",
+  "status": "owner_unlock_pipeline_checkpoint_guard_failed",
   "policy": {
     "validates_checkpoint_only": true,
     "records_decisions": false,
@@ -16,16 +16,16 @@
   ],
   "summary": {
     "checks": 21,
-    "passed": 21,
-    "failures": 0,
+    "passed": 19,
+    "failures": 2,
     "warnings": 0,
     "public_ready_after_check": 0
   },
   "checks": [
     {
       "id": "status_ready",
-      "status": "passed",
-      "evidence": "owner_unlock_pipeline_checkpoint_ready"
+      "status": "failed",
+      "evidence": "owner_unlock_pipeline_checkpoint_attention_required"
     },
     {
       "id": "policy_checkpoint_only",
@@ -74,8 +74,8 @@
     },
     {
       "id": "all_components_ready",
-      "status": "passed",
-      "evidence": "11/11"
+      "status": "failed",
+      "evidence": "9/11"
     },
     {
       "id": "guard_checks_at_least_113",
@@ -90,7 +90,7 @@
     {
       "id": "latest_handoffs_include_183_or_newer",
       "status": "passed",
-      "evidence": 240
+      "evidence": 270
     },
     {
       "id": "owner_reply_pending",

@@ -119,7 +119,9 @@ function buildPlan(reports) {
       'npm run kosmo:owner-unlock-pipeline-checkpoint-check',
       'npm run kosmo:source-independent-work-queue',
       'npm run kosmo:owner-remaining-decision-brief',
-      'npm run kosmo:owner-remaining-decision-brief-check'
+      'npm run kosmo:owner-remaining-decision-brief-check',
+      'npm run kosmo:owner-unlock-fast-reply-card',
+      'npm run kosmo:owner-unlock-fast-reply-card-check'
     ],
     path_a_if_exact_owner_unlock_reply_present: [
       'npm run kosmo:owner-unlock-prompt-pack-check',

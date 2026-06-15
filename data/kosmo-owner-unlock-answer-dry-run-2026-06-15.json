@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:41:18.879Z",
-  "status": "owner_unlock_answer_dry_run_pending_answer",
+  "generated_at": "2026-06-15T15:13:00.099Z",
+  "status": "owner_unlock_answer_dry_run_attention_required",
   "policy": {
     "dry_run_only": true,
     "writes_isolated_reports_only": true,
@@ -20,14 +20,14 @@
     "data/owner-unlock-dry-runs/2026-06-15/intake-map-check.json"
   ],
   "summary": {
-    "answer_present": false,
-    "validator_status": "owner_unlock_reply_validator_pending_owner_reply",
-    "validator_guard_status": "owner_unlock_reply_validator_guard_passed",
-    "intake_map_status": "owner_unlock_reply_intake_map_pending_owner_reply",
+    "answer_present": true,
+    "validator_status": "owner_unlock_reply_invalid",
+    "validator_guard_status": "owner_unlock_reply_validator_guard_failed",
+    "intake_map_status": "owner_unlock_reply_intake_map_blocked_by_invalid_reply",
     "intake_map_guard_status": "owner_unlock_reply_intake_map_guard_passed",
     "patch_operations": 0,
     "owner_card_patches": 0,
-    "failures": 0,
+    "failures": 5,
     "public_ready_after_dry_run": 0
   },
   "dry_run_outputs": {
@@ -40,16 +40,16 @@
   "steps": [
     {
       "id": "validator",
-      "exit_code": 0,
-      "command": "/usr/bin/node scripts/kosmo-owner-unlock-reply-validator.mjs --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/2026-06-15/validator.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/2026-06-15/validator.md",
-      "stdout_tail": "Valid: no\nFailures: 0\nPublic-ready after validation: 0\nWrote: data/owner-unlock-dry-runs/2026-06-15/validator.md",
+      "exit_code": 1,
+      "command": "/usr/bin/node scripts/kosmo-owner-unlock-reply-validator.mjs --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/2026-06-15/validator.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/2026-06-15/validator.md --answer ich gebe alles frei",
+      "stdout_tail": "Valid: no\nFailures: 2\nPublic-ready after validation: 0\nWrote: data/owner-unlock-dry-runs/2026-06-15/validator.md",
       "stderr_tail": ""
     },
     {
       "id": "validator-check",
-      "exit_code": 0,
+      "exit_code": 1,
       "command": "/usr/bin/node scripts/kosmo-owner-unlock-reply-validator-check.mjs --validator /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/2026-06-15/validator.json --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/2026-06-15/validator-check.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/2026-06-15/validator-check.md",
-      "stdout_tail": "Status: owner_unlock_reply_validator_guard_passed\nChecks: 24/24\nFailures: 0\nWrote: data/owner-unlock-dry-runs/2026-06-15/validator-check.md",
+      "stdout_tail": "Status: owner_unlock_reply_validator_guard_failed\nChecks: 22/24\nFailures: 2\nWrote: data/owner-unlock-dry-runs/2026-06-15/validator-check.md",
       "stderr_tail": ""
     },
     {
@@ -78,5 +78,11 @@
     "Do not read private content.",
     "Keep public-ready at 0."
   ],
-  "failures": []
+  "failures": [
+    "validator exited 1",
+    "validator-check exited 1",
+    "Missing source_root_choice.",
+    "confirmed_exact_root must be yes or no.",
+    "validator-check reported failures"
+  ]
 }

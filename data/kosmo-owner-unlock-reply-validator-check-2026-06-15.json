@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:41:17.925Z",
-  "status": "owner_unlock_reply_validator_guard_passed",
+  "generated_at": "2026-06-15T15:17:20.367Z",
+  "status": "owner_unlock_reply_validator_guard_failed",
   "policy": {
     "validates_reply_validator_only": true,
     "records_decisions": false,
@@ -17,26 +17,26 @@
   ],
   "summary": {
     "checks": 24,
-    "passed": 24,
-    "failures": 0,
+    "passed": 22,
+    "failures": 2,
     "warnings": 0,
     "public_ready_after_check": 0
   },
   "checks": [
     {
       "id": "status_pending_or_valid",
-      "status": "passed",
-      "evidence": "owner_unlock_reply_validator_pending_owner_reply"
+      "status": "failed",
+      "evidence": "owner_unlock_reply_invalid"
     },
     {
       "id": "pending_answer_contract",
       "status": "passed",
-      "evidence": false
+      "evidence": true
     },
     {
       "id": "valid_answer_contract",
       "status": "passed",
-      "evidence": false
+      "evidence": true
     },
     {
       "id": "policy_validator_only",
@@ -140,8 +140,8 @@
     },
     {
       "id": "no_failures_for_guarded_state",
-      "status": "passed",
-      "evidence": ""
+      "status": "failed",
+      "evidence": "Missing source_root_choice.; confirmed_exact_root must be yes or no."
     }
   ]
 }

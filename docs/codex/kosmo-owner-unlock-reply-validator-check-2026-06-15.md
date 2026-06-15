@@ -1,20 +1,20 @@
 # Kosmo Owner Unlock Reply Validator Check
 
-Generated: 2026-06-15T10:41:17.925Z
-Status: `owner_unlock_reply_validator_guard_passed`
+Generated: 2026-06-15T15:17:20.367Z
+Status: `owner_unlock_reply_validator_guard_failed`
 
 ## Summary
 
-- Checks: 24/24
-- Failures: 0
+- Checks: 22/24
+- Failures: 2
 - Warnings: 0
 - Public-ready after check: 0
 
 ## Checks
 
-- passed: `status_pending_or_valid` - owner_unlock_reply_validator_pending_owner_reply
-- passed: `pending_answer_contract` - false
-- passed: `valid_answer_contract` - false
+- failed: `status_pending_or_valid` - owner_unlock_reply_invalid
+- passed: `pending_answer_contract` - true
+- passed: `valid_answer_contract` - true
 - passed: `policy_validator_only` - true
 - passed: `policy_no_decision_recording` - false
 - passed: `policy_no_intake_mutation` - false
@@ -35,4 +35,4 @@ Status: `owner_unlock_reply_validator_guard_passed`
 - passed: `hard_stop_no_commands` - do not treat a valid reply as an applied decision. do not mutate intake or session files from this validator. do not run commands from this validator. do not read private content. keep public-ready at 0.
 - passed: `hard_stop_no_private_content` - do not treat a valid reply as an applied decision. do not mutate intake or session files from this validator. do not run commands from this validator. do not read private content. keep public-ready at 0.
 - passed: `hard_stop_public_ready_zero` - do not treat a valid reply as an applied decision. do not mutate intake or session files from this validator. do not run commands from this validator. do not read private content. keep public-ready at 0.
-- passed: `no_failures_for_guarded_state` - 
+- failed: `no_failures_for_guarded_state` - Missing source_root_choice.; confirmed_exact_root must be yes or no.

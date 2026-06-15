@@ -1,13 +1,13 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T15:07:31.910Z
+Generated: 2026-06-15T15:18:02.133Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 43
+- Cards: 44
 - Blocking cards: 4
-- Owner action cards: 16
+- Owner action cards: 17
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
 - Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
@@ -45,6 +45,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Training eval row template: training_eval_row_template_ready, templates 6
 - Training eval review queue: training_eval_review_queue_plan_ready, lanes 5
 - Architecture ontology seed: architecture_ontology_seed_ready, entities 8, relations 10
+- Owner unlock fast reply card: owner_unlock_fast_reply_card_ready, broad intent true, applies now false
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -64,6 +65,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `source-root-post-owner-activation-queue-check` Source Root Post-Owner Activation Queue Check | guard_passed | no | 0 failures, 0 warnings |
 | `source-root-owner-final-decision-brief` Source Root Owner Final Decision Brief | owner_action | yes | 3 options, unlock 1, failures 0 |
 | `source-root-owner-choice-consequence-matrix` Source Root Owner Choice Consequence Matrix | owner_action | yes | 3 choices, unlock 1, blocked 2, failures 0 |
+| `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | owner_action | yes | broad intent yes, suggestions 2, applies now no, failures 0 |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
@@ -115,6 +117,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `source_root_post_owner_activation_queue_check_card`
 - `source_root_owner_final_decision_brief_card`
 - `source_root_owner_choice_consequence_matrix_card`
+- `owner_unlock_fast_reply_card`
 - `source_root_activation_card`
 - `private_metadata_inventory_card`
 - `pilot_reference_cards`

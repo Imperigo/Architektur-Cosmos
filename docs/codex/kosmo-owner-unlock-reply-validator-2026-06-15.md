@@ -1,15 +1,15 @@
 # Kosmo Owner Unlock Reply Validator
 
-Generated: 2026-06-15T10:41:17.688Z
-Status: `owner_unlock_reply_validator_pending_owner_reply`
+Generated: 2026-06-15T15:12:59.634Z
+Status: `owner_unlock_reply_invalid`
 
 ## Summary
 
-- Answer present: no
+- Answer present: yes
 - Valid: no
 - Source-root choices: 3
 - Review batch choices: 5
-- Failures: 0
+- Failures: 2
 - Public-ready after validation: 0
 
 ## Required Format
@@ -31,3 +31,8 @@ Status: `owner_unlock_reply_validator_pending_owner_reply`
 - Do not run commands from this validator.
 - Do not read private content.
 - Keep public-ready at 0.
+
+## Failures
+
+- Missing source_root_choice.
+- confirmed_exact_root must be yes or no.

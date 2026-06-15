@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:41:17.688Z",
-  "status": "owner_unlock_reply_validator_pending_owner_reply",
+  "generated_at": "2026-06-15T15:12:59.634Z",
+  "status": "owner_unlock_reply_invalid",
   "policy": {
     "validator_only": true,
     "records_decisions": false,
@@ -16,14 +16,14 @@
     "data/kosmo-owner-unlock-prompt-pack-2026-06-15.json"
   ],
   "summary": {
-    "answer_present": false,
+    "answer_present": true,
     "valid": false,
     "source_root_choices": 3,
     "review_batch_choices": 5,
-    "failures": 0,
+    "failures": 2,
     "public_ready_after_validation": 0
   },
-  "parsed_answer": null,
+  "parsed_answer": {},
   "required_format": [
     "source_root_choice=...",
     "confirmed_exact_root=...",
@@ -47,5 +47,8 @@
     "Do not read private content.",
     "Keep public-ready at 0."
   ],
-  "failures": []
+  "failures": [
+    "Missing source_root_choice.",
+    "confirmed_exact_root must be yes or no."
+  ]
 }
