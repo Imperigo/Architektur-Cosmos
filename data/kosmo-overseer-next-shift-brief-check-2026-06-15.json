@@ -1,0 +1,136 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:27:41.516Z",
+  "status": "overseer_next_shift_brief_guard_passed",
+  "policy": {
+    "validates_brief_only": true,
+    "reads_private_content": false,
+    "records_owner_decisions": false,
+    "executes_commands": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-overseer-next-shift-brief-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 22,
+    "passed": 22,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "overseer_next_shift_brief_ready"
+    },
+    {
+      "id": "policy_brief_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_commands",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_workers_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "eight_completed_packs",
+      "status": "passed",
+      "evidence": 8
+    },
+    {
+      "id": "five_claude_actions",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "four_codex_actions",
+      "status": "passed",
+      "evidence": 4
+    },
+    {
+      "id": "actions_not_executable",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "action_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "owner_prompt_format_present",
+      "status": "passed",
+      "evidence": "source_root_choice=...,confirmed_exact_root=...,review_batches=...,note=..."
+    },
+    {
+      "id": "training_scaffold_summary_present",
+      "status": "passed",
+      "evidence": "6/5/8"
+    },
+    {
+      "id": "tomorrow_sequence_uses_reply_validator",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-prompt-pack-check,npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\",npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\",npm run kosmo:source-root-decision-session-check,npm run kosmo:source-root-blocker-refresh,npm run kosmo:source-root-activation-preflight,npm run kosmo:source-root-post-owner-activation-queue,npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "tomorrow_sequence_uses_answer_dry_run",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-prompt-pack-check,npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\",npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\",npm run kosmo:source-root-decision-session-check,npm run kosmo:source-root-blocker-refresh,npm run kosmo:source-root-activation-preflight,npm run kosmo:source-root-post-owner-activation-queue,npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "tomorrow_sequence_guarded",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-prompt-pack-check,npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\",npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\",npm run kosmo:source-root-decision-session-check,npm run kosmo:source-root-blocker-refresh,npm run kosmo:source-root-activation-preflight,npm run kosmo:source-root-post-owner-activation-queue,npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "hard_stops_no_private_work",
+      "status": "passed",
+      "evidence": "do not infer owner answers from chat context or prepared prompt packs. do not run private inventory until explicit owner answer and source-root guards pass. do not expose private source paths, file contents, ocr text, scans, plans or worker bodies in orbit. do not create eval rows, queue items, embeddings or fine-tunes from this brief. do not execute local workers from this brief. do not set public-ready."
+    },
+    {
+      "id": "hard_stops_no_eval_queue_embedding_finetune",
+      "status": "passed",
+      "evidence": "do not infer owner answers from chat context or prepared prompt packs. do not run private inventory until explicit owner answer and source-root guards pass. do not expose private source paths, file contents, ocr text, scans, plans or worker bodies in orbit. do not create eval rows, queue items, embeddings or fine-tunes from this brief. do not execute local workers from this brief. do not set public-ready."
+    },
+    {
+      "id": "hard_stops_public_ready",
+      "status": "passed",
+      "evidence": "do not infer owner answers from chat context or prepared prompt packs. do not run private inventory until explicit owner answer and source-root guards pass. do not expose private source paths, file contents, ocr text, scans, plans or worker bodies in orbit. do not create eval rows, queue items, embeddings or fine-tunes from this brief. do not execute local workers from this brief. do not set public-ready."
+    }
+  ]
+}

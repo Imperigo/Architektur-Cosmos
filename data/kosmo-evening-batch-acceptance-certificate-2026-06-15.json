@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:27:41.750Z",
+  "status": "evening_batch_acceptance_certificate_ready",
+  "policy": {
+    "certificate_only": true,
+    "reads_private_content_now": false,
+    "records_owner_decisions": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers_now": false,
+    "creates_eval_rows_now": false,
+    "writes_training_data_now": false,
+    "public_ready_after_certificate": 0
+  },
+  "source_refs": [
+    "data/kosmo-vision-completion-roadmap-check-2026-06-15.json",
+    "data/kosmo-evening-batch-rollup-check-2026-06-15.json",
+    "data/kosmo-overseer-next-shift-brief-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-check-2026-06-15.json",
+    "data/kosmo-overseer-sync-board-check-2026-06-15.json"
+  ],
+  "summary": {
+    "guard_families": 5,
+    "known_guard_checks_passed": 136,
+    "known_guard_checks_total": 136,
+    "latest_handoff_min": 205,
+    "latest_handoff_max": 212,
+    "owner_reply_status": "pending",
+    "public_ready_after_certificate": 0,
+    "failures": 0
+  },
+  "guard_families": [
+    {
+      "id": "vision_roadmap",
+      "status": "vision_completion_roadmap_guard_passed",
+      "passed": 25,
+      "checks": 25,
+      "failures": 0
+    },
+    {
+      "id": "evening_rollup",
+      "status": "kosmo_evening_batch_rollup_guard_passed",
+      "passed": 22,
+      "checks": 22,
+      "failures": 0
+    },
+    {
+      "id": "next_shift",
+      "status": "overseer_next_shift_brief_guard_passed",
+      "passed": 22,
+      "checks": 22,
+      "failures": 0
+    },
+    {
+      "id": "owner_unlock_checkpoint",
+      "status": "owner_unlock_pipeline_checkpoint_guard_passed",
+      "passed": 21,
+      "checks": 21,
+      "failures": 0
+    },
+    {
+      "id": "overseer_sync_board",
+      "status": "overseer_sync_board_guard_passed",
+      "passed": 46,
+      "checks": 46,
+      "failures": 0
+    }
+  ],
+  "acceptance_statement": "Evening batch is accepted as source-free, review-only, handoff-synced and blocked on explicit owner source-root reply.",
+  "hard_stops": [
+    "Do not treat this certificate as owner approval.",
+    "Do not run private inventory, OCR, embeddings, fine-tuning or local worker execution from this certificate.",
+    "Do not create eval rows or queue items from this certificate.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

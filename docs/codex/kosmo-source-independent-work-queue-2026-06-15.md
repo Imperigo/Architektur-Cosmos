@@ -1,6 +1,6 @@
 # Kosmo Source-Independent Work Queue
 
-Generated: 2026-06-15T10:42:47.524Z
+Generated: 2026-06-15T12:27:42.225Z
 Status: `source_independent_work_queue_ready`
 
 ## Summary
@@ -26,7 +26,7 @@ Status: `source_independent_work_queue_ready`
 | `codex_pilot_gap_label_review` | kosmoreferences | codex | completed_review_only | no | no | `npm run kosmo:pilot-gap-label-review && npm run kosmo:pilot-gap-label-review-check` | completed 12 labels, guard 11/11 |
 | `codex_local_worker_output_contract_review` | local_worker | codex | completed_review_only | no | no | `npm run kosmo:local-worker-output-contract-review && npm run kosmo:local-worker-output-contract-review-check` | completed 9 contracts, guard 11/11 |
 | `owner_open_review_batches` | owner_decision | owner_or_overseer | owner_action_required | no | yes | `review docs/codex/kosmo-owner-review-packet-2026-06-14.md` | open batches 5, open items 16 |
-| `codex_orbit_status_refresh` | orbit | codex | completed_review_only | no | no | `npm run kosmo:orbit-status-bridge` | completed 28 cards, blockers 5, owner 16 |
+| `codex_orbit_status_refresh` | orbit | codex | completed_review_only | no | no | `npm run kosmo:orbit-status-bridge` | completed 28 cards, blockers 4, owner 16 |
 
 ## Hard Stops
 

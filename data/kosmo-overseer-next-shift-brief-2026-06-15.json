@@ -1,0 +1,186 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:27:41.277Z",
+  "status": "overseer_next_shift_brief_ready",
+  "policy": {
+    "brief_only": true,
+    "reads_private_content": false,
+    "records_owner_decisions": false,
+    "mutates_session_files": false,
+    "executes_commands": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers_now": false,
+    "public_ready_after_brief": 0
+  },
+  "source_refs": [
+    "data/kosmo-evening-batch-rollup-2026-06-15.json",
+    "data/kosmo-owner-unlock-prompt-pack-2026-06-15.json",
+    "data/kosmo-vision-completion-roadmap-2026-06-15.json",
+    "data/kosmo-overseer-sync-board-2026-06-15.json"
+  ],
+  "summary": {
+    "completed_packs": 8,
+    "claude_actions": 5,
+    "codex_actions": 4,
+    "owner_gates": 2,
+    "latest_handoffs": 8,
+    "latest_mirror_missing": null,
+    "training_eval_templates": 6,
+    "training_review_lanes": 5,
+    "ontology_entity_types": 8,
+    "failures": 0,
+    "public_ready_after_brief": 0
+  },
+  "completed_packs": [
+    {
+      "id": "post_source_metadata",
+      "status": "post_source_root_metadata_readiness_pack_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "owner_answer_paths",
+      "status": "source_root_owner_answer_execution_checklist_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "pilot_intake",
+      "status": "kosmoreferences_pilot_intake_readiness_pack_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "asset_intake",
+      "status": "kosmoasset_intake_readiness_pack_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "training_memory",
+      "status": "kosmo_training_memory_readiness_pack_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "training_eval_template",
+      "status": "training_eval_row_template_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "training_review_queue",
+      "status": "training_eval_review_queue_plan_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    },
+    {
+      "id": "architecture_ontology_seed",
+      "status": "architecture_ontology_seed_ready",
+      "executable_now": false,
+      "public_ready_after_pack": 0
+    }
+  ],
+  "claude_actions": [
+    {
+      "id": "read_handoffs_198_to_205",
+      "description": "Review newest Codex handoffs before changing shared Orbit/KosmoOverseer behavior.",
+      "owner": "claude-code-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "verify_orbit_training_ontology_rollup_ui",
+      "description": "Confirm KosmoOrbit DataPanel shows Training Template, Review Queue, Ontology Seed and Evening Rollup without private content.",
+      "owner": "claude-code-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "prepare_owner_reply_capture",
+      "description": "Use Owner Unlock Prompt Pack as the next owner-facing input surface.",
+      "owner": "claude-code-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "review_training_scaffold_boundaries",
+      "description": "Confirm training scaffold remains schema/review-only with no eval rows, embeddings or fine-tunes.",
+      "owner": "claude-code-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "do_not_apply_source_root_without_owner",
+      "description": "Do not mutate source-root decision/session files until owner answer is explicit.",
+      "owner": "claude-code-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    }
+  ],
+  "codex_actions": [
+    {
+      "id": "wait_for_owner_source_root_answer",
+      "description": "After owner answer, record only explicit fields into intake/session files.",
+      "owner": "codex-central-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "run_post_answer_guard_chain",
+      "description": "Run decision check, blocker refresh, activation preflight and matching readiness packs.",
+      "owner": "codex-central-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "maintain_training_ontology_guards",
+      "description": "Keep eval template, review queue, ontology and rollup guards synced before any future data promotion.",
+      "owner": "codex-central-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    },
+    {
+      "id": "continue_source_free_schema_work_if_needed",
+      "description": "If no owner answer arrives, continue only source-free schemas, UI status and guard work.",
+      "owner": "codex-central-overseer",
+      "executable_now": false,
+      "public_ready_after_action": 0
+    }
+  ],
+  "owner_prompt": {
+    "source": "data/kosmo-owner-unlock-prompt-pack-2026-06-15.json",
+    "required_owner_reply_format": [
+      "source_root_choice=...",
+      "confirmed_exact_root=...",
+      "review_batches=...",
+      "note=..."
+    ],
+    "safe_default_reply": [
+      "source_root_choice=repair_onedrive_first",
+      "confirmed_exact_root=no",
+      "review_batches=none",
+      "note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist."
+    ],
+    "unlock_reply_requires_exact_confirmation": true
+  },
+  "tomorrow_first_sequence_after_owner_answer": [
+    "npm run kosmo:owner-unlock-prompt-pack-check",
+    "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"",
+    "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\"",
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:source-root-post-owner-activation-queue",
+    "npm run kosmo:source-root-post-owner-activation-queue-check"
+  ],
+  "hard_stops": [
+    "Do not infer owner answers from chat context or prepared prompt packs.",
+    "Do not run private inventory until explicit owner answer and source-root guards pass.",
+    "Do not expose private source paths, file contents, OCR text, scans, plans or worker bodies in Orbit.",
+    "Do not create eval rows, queue items, embeddings or fine-tunes from this brief.",
+    "Do not execute local workers from this brief.",
+    "Do not set public-ready."
+  ],
+  "failures": []
+}
