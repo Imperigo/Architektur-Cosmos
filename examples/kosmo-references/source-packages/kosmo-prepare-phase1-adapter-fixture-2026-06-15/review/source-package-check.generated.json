@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-06-15T13:33:51.056Z",
+  "package_path": "examples/kosmo-references/source-packages/kosmo-prepare-phase1-adapter-fixture-2026-06-15/source-package.json",
+  "package_id": "kosmo-prepare-phase1-adapter-fixture-2026-06-15",
+  "title": "KosmoPrepare Phase 1 Adapter Fixture Source Package",
+  "status": "passed",
+  "summary": {
+    "sources": 1,
+    "extraction_artifacts": 4,
+    "candidate_projects": 1,
+    "review_gates": 7
+  },
+  "checks": [
+    {
+      "kind": "source",
+      "id": "kosmo-prepare-synthetic-html",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/source.synthetic.html",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/examples/kosmo-prepare/phase1-adapter-fixture/source.synthetic.html",
+      "expected_sha256": "ac2799e8f50b635a6a028bda5a635ea9d115f186ba077bec2b785b14183a49c8",
+      "actual_sha256": "ac2799e8f50b635a6a028bda5a635ea9d115f186ba077bec2b785b14183a49c8",
+      "expected_bytes": 362,
+      "actual_bytes": 362
+    },
+    {
+      "kind": "artifact",
+      "id": "kosmo-prepare-markitdown-md",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/converted.markitdown.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/examples/kosmo-prepare/phase1-adapter-fixture/converted.markitdown.md",
+      "expected_sha256": "8831c3c41596fd1cb087190a85cfc838e825747ed459f3085c812da6efc57d79",
+      "actual_sha256": "8831c3c41596fd1cb087190a85cfc838e825747ed459f3085c812da6efc57d79",
+      "expected_bytes": 192,
+      "actual_bytes": 192
+    },
+    {
+      "kind": "artifact",
+      "id": "kosmo-prepare-ifc-entity-manifest",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/ifcopenshell-entity-manifest.json",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/examples/kosmo-prepare/phase1-adapter-fixture/ifcopenshell-entity-manifest.json",
+      "expected_sha256": "c3735a4bdb3b03f20234f612026dc545e39f99858838a58b97640eba1955acd5",
+      "actual_sha256": "c3735a4bdb3b03f20234f612026dc545e39f99858838a58b97640eba1955acd5",
+      "expected_bytes": 440,
+      "actual_bytes": 440
+    },
+    {
+      "kind": "artifact",
+      "id": "kosmo-prepare-adapter-report-json",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.json",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.json",
+      "expected_sha256": "aa1a8af15268107ba07ecaf6d82e0e93fe285a06392dedd3808a9dd201707b0b",
+      "actual_sha256": "aa1a8af15268107ba07ecaf6d82e0e93fe285a06392dedd3808a9dd201707b0b",
+      "expected_bytes": 1559,
+      "actual_bytes": 1559
+    },
+    {
+      "kind": "artifact",
+      "id": "kosmo-prepare-adapter-report-md",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.md",
+      "status": "pass",
+      "resolved_path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.md",
+      "expected_sha256": "ad4c95cb17bc7c4d8fa1a71af88973cf397f1b63d440a4da541761fd2831edf7",
+      "actual_sha256": "ad4c95cb17bc7c4d8fa1a71af88973cf397f1b63d440a4da541761fd2831edf7",
+      "expected_bytes": 1047,
+      "actual_bytes": 1047
+    }
+  ],
+  "failures": [],
+  "warnings": []
+}
