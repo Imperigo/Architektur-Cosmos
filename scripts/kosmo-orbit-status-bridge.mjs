@@ -685,9 +685,9 @@ function buildBridge(reports) {
         reports.localWorkerFixtureChainTaskPackCheck?.status === 'local_worker_fixture_chain_task_pack_guard_passed'
         ? 'review_only_ready'
         : 'needs_review',
-      signal: `${localWorkerFixtureChainTaskPackSummary.tasks ?? 0} tasks, executable now ${localWorkerFixtureChainTaskPackSummary.executable_now ?? '-'}, missing refs ${localWorkerFixtureChainTaskPackSummary.missing_refs ?? '-'}`,
+      signal: `${localWorkerFixtureChainTaskPackSummary.tasks ?? 0} tasks, GitHub ${localWorkerFixtureChainTaskPackSummary.github_innovation_tasks ?? 0}, payloads ${localWorkerFixtureChainTaskPackSummary.github_payload_refs ?? 0}, training ${localWorkerFixtureChainTaskPackSummary.training_lanes ?? 0}, executable now ${localWorkerFixtureChainTaskPackSummary.executable_now ?? '-'}, missing refs ${localWorkerFixtureChainTaskPackSummary.missing_refs ?? '-'}`,
       owner_action_required: false,
-      route_hint: 'Fixture-only local LLM task pack; not executed by Orbit',
+      route_hint: 'Fixture-only local LLM task pack with matrix-gated GitHub innovation tasks; not executed by Orbit',
       source_ref: refs.localWorkerFixtureChainTaskPackCheck
     },
     {
@@ -1016,6 +1016,12 @@ function buildBridge(reports) {
       asset_prepare_phase1_fixture_contract_failures: assetPreparePhase1FixtureSummary.failures ?? null,
       local_worker_fixture_chain_task_pack_status: reports.localWorkerFixtureChainTaskPack?.status || null,
       local_worker_fixture_chain_task_pack_tasks: localWorkerFixtureChainTaskPackSummary.tasks ?? null,
+      local_worker_fixture_chain_task_pack_legacy_tasks: localWorkerFixtureChainTaskPackSummary.legacy_fixture_chain_tasks ?? null,
+      local_worker_fixture_chain_task_pack_github_innovation_tasks: localWorkerFixtureChainTaskPackSummary.github_innovation_tasks ?? null,
+      local_worker_fixture_chain_task_pack_github_payload_refs: localWorkerFixtureChainTaskPackSummary.github_payload_refs ?? null,
+      local_worker_fixture_chain_task_pack_training_lanes: localWorkerFixtureChainTaskPackSummary.training_lanes ?? null,
+      local_worker_fixture_chain_task_pack_ontology_entity_types: localWorkerFixtureChainTaskPackSummary.ontology_entity_types ?? null,
+      local_worker_fixture_chain_task_pack_ontology_relation_types: localWorkerFixtureChainTaskPackSummary.ontology_relation_types ?? null,
       local_worker_fixture_chain_task_pack_executable_now: localWorkerFixtureChainTaskPackSummary.executable_now ?? null,
       local_worker_fixture_chain_task_pack_missing_refs: localWorkerFixtureChainTaskPackSummary.missing_refs ?? null,
       local_worker_fixture_chain_task_pack_check_status: reports.localWorkerFixtureChainTaskPackCheck?.status || null,

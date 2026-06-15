@@ -1,6 +1,6 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T16:39:40.223Z
+Generated: 2026-06-15T16:45:34.186Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
@@ -36,7 +36,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Asset candidate taxonomy review: kosmoasset_candidate_taxonomy_review_ready, candidates 10, reviewable 3, owner confirmations 3, check kosmoasset_candidate_taxonomy_review_guard_passed, failures 0
 - Prepare source package contract: prepare_phase1_source_package_contract_guard_passed, package kosmo-prepare-phase1-adapter-fixture-2026-06-15, failures 0
 - Asset prepare fixture contract: kosmoasset_prepare_phase1_fixture_contract_guard_passed, library kosmo-prepare-phase1-fixture, assets 2, failures 0
-- Local worker fixture chain task pack: local_worker_fixture_chain_task_pack_ready, tasks 3, executable 0, missing refs 0, check local_worker_fixture_chain_task_pack_guard_passed, failures 0
+- Local worker fixture chain task pack: local_worker_fixture_chain_task_pack_ready, tasks 8, executable 0, missing refs 0, check local_worker_fixture_chain_task_pack_guard_passed, failures 0
 - GitHub fixture contract plan: innovation_github_fixture_contract_plan_ready, plans 5
 - GitHub fixture skeletons: innovation_github_fixture_skeletons_ready, directories 5, files 10
 - GitHub fixture payloads: innovation_github_fixture_payloads_ready, payloads 10
@@ -93,7 +93,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `asset-source-candidates` Asset Source Candidates | review_only_ready | yes | 3 asset-lane candidates, material 2, public-ready 0 |
 | `asset-candidate-taxonomy` Asset Candidate Taxonomy | review_only_ready | yes | 10 reviews, 3 reviewable, owner 3, failures 0 |
 | `prepare-references-asset-fixture-chain` Prepare References Asset Fixture Chain | review_only_ready | no | source package kosmo-prepare-phase1-adapter-fixture-2026-06-15, fixture assets 2, public-ready 0 |
-| `fixture-chain-local-worker-task-pack` Fixture Chain Local Worker Task Pack | review_only_ready | no | 3 tasks, executable now 0, missing refs 0 |
+| `fixture-chain-local-worker-task-pack` Fixture Chain Local Worker Task Pack | review_only_ready | no | 8 tasks, GitHub 5, payloads 10, training 3, executable now 0, missing refs 0 |
 | `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
 | `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
 | `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:42:27.801Z",
+  "generated_at": "2026-06-15T16:45:33.936Z",
   "status": "local_worker_fixture_chain_task_pack_guard_passed",
   "policy": {
     "review_only": true,
@@ -15,7 +15,13 @@
   ],
   "summary": {
     "pack_status": "local_worker_fixture_chain_task_pack_ready",
-    "tasks": 3,
+    "tasks": 8,
+    "legacy_fixture_chain_tasks": 3,
+    "github_innovation_tasks": 5,
+    "github_payload_refs": 10,
+    "training_lanes": 3,
+    "ontology_entity_types": 6,
+    "ontology_relation_types": 6,
     "executable_now": 0,
     "missing_refs": 0,
     "failures": 0,
@@ -83,9 +89,39 @@
       "message": "No local worker task should execute now."
     },
     {
-      "id": "three_tasks",
+      "id": "eight_tasks",
       "severity": "passed",
-      "message": "Task pack must include exactly three fixture-chain tasks."
+      "message": "Task pack must include three legacy fixture-chain tasks plus five GitHub innovation tasks."
+    },
+    {
+      "id": "three_legacy_tasks",
+      "severity": "passed",
+      "message": "Task pack must retain the three legacy fixture-chain tasks."
+    },
+    {
+      "id": "five_github_innovation_tasks",
+      "severity": "passed",
+      "message": "Task pack must include five source-free GitHub innovation tasks."
+    },
+    {
+      "id": "ten_github_payload_refs",
+      "severity": "passed",
+      "message": "Task pack must reference ten synthetic GitHub fixture payloads."
+    },
+    {
+      "id": "training_lanes_present",
+      "severity": "passed",
+      "message": "Task pack must carry at least three training eval lanes."
+    },
+    {
+      "id": "ontology_entities_present",
+      "severity": "passed",
+      "message": "Task pack must carry ontology entity bindings."
+    },
+    {
+      "id": "ontology_relations_present",
+      "severity": "passed",
+      "message": "Task pack must carry ontology relation bindings."
     },
     {
       "id": "all_runner_safe",
@@ -98,6 +134,36 @@
       "message": "All fixture tasks must be hold/not execute now."
     },
     {
+      "id": "github_worker_hold",
+      "severity": "passed",
+      "message": "GitHub innovation tasks must hold local-worker execution."
+    },
+    {
+      "id": "github_private_blocked",
+      "severity": "passed",
+      "message": "GitHub innovation tasks must block private content."
+    },
+    {
+      "id": "github_public_ready_zero",
+      "severity": "passed",
+      "message": "GitHub innovation tasks must keep public-ready at 0."
+    },
+    {
+      "id": "github_training_lane",
+      "severity": "passed",
+      "message": "GitHub innovation tasks must carry training eval lanes."
+    },
+    {
+      "id": "github_ontology_bindings",
+      "severity": "passed",
+      "message": "GitHub innovation tasks must carry ontology bindings."
+    },
+    {
+      "id": "github_payload_inputs",
+      "severity": "passed",
+      "message": "GitHub innovation tasks must point to synthetic payload inputs."
+    },
+    {
       "id": "private_forbidden",
       "severity": "passed",
       "message": "Forbidden actions must block private source reads."
@@ -106,6 +172,11 @@
       "id": "embedding_forbidden",
       "severity": "passed",
       "message": "Forbidden actions must block embeddings/training."
+    },
+    {
+      "id": "github_execution_forbidden",
+      "severity": "passed",
+      "message": "Forbidden actions must block GitHub repo execution."
     }
   ]
 }

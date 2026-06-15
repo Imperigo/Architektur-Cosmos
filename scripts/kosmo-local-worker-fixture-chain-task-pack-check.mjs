@@ -37,6 +37,12 @@ async function main() {
     summary: {
       pack_status: pack.status,
       tasks: pack.tasks?.length ?? 0,
+      legacy_fixture_chain_tasks: pack.summary?.legacy_fixture_chain_tasks ?? null,
+      github_innovation_tasks: pack.summary?.github_innovation_tasks ?? null,
+      github_payload_refs: pack.summary?.github_payload_refs ?? null,
+      training_lanes: pack.summary?.training_lanes ?? null,
+      ontology_entity_types: pack.summary?.ontology_entity_types ?? null,
+      ontology_relation_types: pack.summary?.ontology_relation_types ?? null,
       executable_now: pack.summary?.executable_now ?? null,
       missing_refs: pack.summary?.missing_refs ?? null,
       failures: failures.length,
@@ -73,11 +79,24 @@ function checkPack(pack) {
   expect(pack.policy?.public_ready_after_pack === 0, findings, 'public_ready_zero', 'Task pack must keep public-ready at 0.');
   expect(pack.summary?.missing_refs === 0, findings, 'no_missing_refs', 'Task pack must have no missing input refs.');
   expect(pack.summary?.executable_now === 0, findings, 'no_executable_now', 'No local worker task should execute now.');
-  expect(Array.isArray(pack.tasks) && pack.tasks.length === 3, findings, 'three_tasks', 'Task pack must include exactly three fixture-chain tasks.');
+  expect(Array.isArray(pack.tasks) && pack.tasks.length === 8, findings, 'eight_tasks', 'Task pack must include three legacy fixture-chain tasks plus five GitHub innovation tasks.');
+  expect(pack.summary?.legacy_fixture_chain_tasks === 3, findings, 'three_legacy_tasks', 'Task pack must retain the three legacy fixture-chain tasks.');
+  expect(pack.summary?.github_innovation_tasks === 5, findings, 'five_github_innovation_tasks', 'Task pack must include five source-free GitHub innovation tasks.');
+  expect(pack.summary?.github_payload_refs === 10, findings, 'ten_github_payload_refs', 'Task pack must reference ten synthetic GitHub fixture payloads.');
+  expect(pack.summary?.training_lanes >= 3, findings, 'training_lanes_present', 'Task pack must carry at least three training eval lanes.');
+  expect(pack.summary?.ontology_entity_types >= 3, findings, 'ontology_entities_present', 'Task pack must carry ontology entity bindings.');
+  expect(pack.summary?.ontology_relation_types >= 3, findings, 'ontology_relations_present', 'Task pack must carry ontology relation bindings.');
   expect((pack.tasks || []).every((task) => task.runner_safe === true), findings, 'all_runner_safe', 'All fixture tasks must be runner-safe if explicitly started later.');
   expect((pack.tasks || []).every((task) => task.execute_now === false), findings, 'all_hold', 'All fixture tasks must be hold/not execute now.');
+  expect((pack.tasks || []).filter((task) => task.task_id?.startsWith('github-innovation-')).every((task) => task.local_worker_allowed_now === false), findings, 'github_worker_hold', 'GitHub innovation tasks must hold local-worker execution.');
+  expect((pack.tasks || []).filter((task) => task.task_id?.startsWith('github-innovation-')).every((task) => task.private_content_allowed === false), findings, 'github_private_blocked', 'GitHub innovation tasks must block private content.');
+  expect((pack.tasks || []).filter((task) => task.task_id?.startsWith('github-innovation-')).every((task) => task.public_ready_after_task === 0), findings, 'github_public_ready_zero', 'GitHub innovation tasks must keep public-ready at 0.');
+  expect((pack.tasks || []).filter((task) => task.task_id?.startsWith('github-innovation-')).every((task) => typeof task.training_eval_lane === 'string' && task.training_eval_lane.length > 0), findings, 'github_training_lane', 'GitHub innovation tasks must carry training eval lanes.');
+  expect((pack.tasks || []).filter((task) => task.task_id?.startsWith('github-innovation-')).every((task) => Array.isArray(task.ontology_bindings?.entities) && task.ontology_bindings.entities.length > 0 && Array.isArray(task.ontology_bindings?.relations) && task.ontology_bindings.relations.length > 0), findings, 'github_ontology_bindings', 'GitHub innovation tasks must carry ontology bindings.');
+  expect((pack.tasks || []).filter((task) => task.task_id?.startsWith('github-innovation-')).every((task) => (task.input_refs || []).some((ref) => ref.includes('/payloads/'))), findings, 'github_payload_inputs', 'GitHub innovation tasks must point to synthetic payload inputs.');
   expect((pack.forbidden_actions || []).some((action) => action.includes('Do not read private source folders')), findings, 'private_forbidden', 'Forbidden actions must block private source reads.');
   expect((pack.forbidden_actions || []).some((action) => action.includes('Do not generate embeddings')), findings, 'embedding_forbidden', 'Forbidden actions must block embeddings/training.');
+  expect((pack.forbidden_actions || []).some((action) => action.includes('Do not run downloaded GitHub repositories')), findings, 'github_execution_forbidden', 'Forbidden actions must block GitHub repo execution.');
   return findings;
 }
 
@@ -96,6 +115,12 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push(`- Pack status: ${report.summary.pack_status}`);
   lines.push(`- Tasks: ${report.summary.tasks}`);
+  lines.push(`- Legacy fixture-chain tasks: ${report.summary.legacy_fixture_chain_tasks}`);
+  lines.push(`- GitHub innovation tasks: ${report.summary.github_innovation_tasks}`);
+  lines.push(`- GitHub payload refs: ${report.summary.github_payload_refs}`);
+  lines.push(`- Training lanes: ${report.summary.training_lanes}`);
+  lines.push(`- Ontology entity types: ${report.summary.ontology_entity_types}`);
+  lines.push(`- Ontology relation types: ${report.summary.ontology_relation_types}`);
   lines.push(`- Executable now: ${report.summary.executable_now}`);
   lines.push(`- Missing refs: ${report.summary.missing_refs}`);
   lines.push(`- Failures: ${report.summary.failures}`);

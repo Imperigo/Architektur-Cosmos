@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:39:40.223Z",
+  "generated_at": "2026-06-15T16:45:34.186Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -199,7 +199,13 @@
     "asset_prepare_phase1_fixture_contract_assets": 2,
     "asset_prepare_phase1_fixture_contract_failures": 0,
     "local_worker_fixture_chain_task_pack_status": "local_worker_fixture_chain_task_pack_ready",
-    "local_worker_fixture_chain_task_pack_tasks": 3,
+    "local_worker_fixture_chain_task_pack_tasks": 8,
+    "local_worker_fixture_chain_task_pack_legacy_tasks": 3,
+    "local_worker_fixture_chain_task_pack_github_innovation_tasks": 5,
+    "local_worker_fixture_chain_task_pack_github_payload_refs": 10,
+    "local_worker_fixture_chain_task_pack_training_lanes": 3,
+    "local_worker_fixture_chain_task_pack_ontology_entity_types": 6,
+    "local_worker_fixture_chain_task_pack_ontology_relation_types": 6,
     "local_worker_fixture_chain_task_pack_executable_now": 0,
     "local_worker_fixture_chain_task_pack_missing_refs": 0,
     "local_worker_fixture_chain_task_pack_check_status": "local_worker_fixture_chain_task_pack_guard_passed",
@@ -596,9 +602,9 @@
       "id": "fixture-chain-local-worker-task-pack",
       "title": "Fixture Chain Local Worker Task Pack",
       "status": "review_only_ready",
-      "signal": "3 tasks, executable now 0, missing refs 0",
+      "signal": "8 tasks, GitHub 5, payloads 10, training 3, executable now 0, missing refs 0",
       "owner_action_required": false,
-      "route_hint": "Fixture-only local LLM task pack; not executed by Orbit",
+      "route_hint": "Fixture-only local LLM task pack with matrix-gated GitHub innovation tasks; not executed by Orbit",
       "source_ref": "data/kosmo-local-worker-fixture-chain-task-pack-check-2026-06-15.json"
     },
     {

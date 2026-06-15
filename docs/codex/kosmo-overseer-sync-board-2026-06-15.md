@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T16:39:36.609Z
+Generated: 2026-06-15T16:45:33.209Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-287-local-worker-innovation-task-pack.md` | Codex Synergiebericht 287 - Local Worker Innovation Task Pack | 2 |
 | `2026-06-15-codex-synergiebericht-286-matrix-gated-fixtures.md` | Codex Synergiebericht 286 - Matrix-Gated Fixtures | 2 |
 | `2026-06-15-codex-synergiebericht-285-github-promotion-matrix.md` | Codex Synergiebericht 285 - GitHub Promotion Matrix | 2 |
 | `2026-06-15-codex-synergiebericht-284-codex-morning-routine-run.md` | Codex Synergiebericht 284 - Codex Morning Routine Run | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-282-session-apply-guard.md` | Codex Synergiebericht 282: Session Apply Guard | 2 |
 | `2026-06-15-codex-synergiebericht-281-owner-unlock-runbook-refresh.md` | Codex Synergiebericht 281: Owner Unlock Runbook Refresh | 2 |
 | `2026-06-15-codex-synergiebericht-280-owner-unlock-operational-start-card.md` | Codex Synergiebericht 280: Owner Unlock Operational Start Card | 2 |
-| `2026-06-15-codex-synergiebericht-279-post-owner-queue-date-guard.md` | Codex Synergiebericht 279: Post-Owner Queue Date Guard | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 279-286 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 280-287 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

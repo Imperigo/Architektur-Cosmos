@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:42:27.564Z",
+  "generated_at": "2026-06-15T16:45:33.702Z",
   "status": "local_worker_fixture_chain_task_pack_ready",
   "policy": {
     "review_only": true,
@@ -19,12 +19,34 @@
     "examples/kosmo-assets/kosmo-prepare-phase1-fixture/library.json",
     "data/kosmo-asset-prepare-phase1-fixture-contract-check-2026-06-15.json",
     "data/kosmo-orbit-status-bridge-2026-06-15.json",
-    "data/kosmo-worker-boundary-pack-check-2026-06-15.json"
+    "data/kosmo-worker-boundary-pack-check-2026-06-15.json",
+    "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json",
+    "data/kosmo-innovation-github-promotion-matrix-check-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-payloads-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-payloads-check-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
+    "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/payloads/synthetic_document_manifest.fixture.json",
+    "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/payloads/synthetic_layout_expectation.fixture.json",
+    "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/payloads/synthetic_asset_manifest.fixture.json",
+    "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/payloads/synthetic_similarity_query.fixture.json",
+    "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/payloads/synthetic_command_boundary.fixture.json",
+    "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/payloads/synthetic_runtime_risk_matrix.fixture.json",
+    "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/payloads/synthetic_document_manifest.fixture.json",
+    "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/payloads/synthetic_layout_expectation.fixture.json",
+    "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/payloads/synthetic_command_boundary.fixture.json",
+    "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/payloads/synthetic_runtime_risk_matrix.fixture.json"
   ],
   "summary": {
-    "tasks": 3,
+    "tasks": 8,
+    "legacy_fixture_chain_tasks": 3,
+    "github_innovation_tasks": 5,
+    "github_payload_refs": 10,
+    "training_lanes": 3,
+    "ontology_entity_types": 6,
+    "ontology_relation_types": 6,
     "executable_now": 0,
-    "runner_safe_tasks": 3,
+    "runner_safe_tasks": 8,
     "missing_refs": 0,
     "public_ready_after_pack": 0
   },
@@ -88,11 +110,237 @@
         "Keeps Source Root and owner gates blocked.",
         "Does not recommend executing private ingestion, OCR, embeddings, training, Git or cloud writes."
       ]
+    },
+    {
+      "task_id": "github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture",
+      "priority": 10,
+      "lane": "kosmo_prepare",
+      "source_repo": "SII-sc22mc/DocFusion",
+      "source_url": "https://github.com/SII-sc22mc/DocFusion",
+      "runner_safe": true,
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_task": 0,
+      "training_eval_lane": "source_extraction_review",
+      "ontology_bindings": {
+        "entities": [
+          "source_record",
+          "reference_project",
+          "eval_review_item"
+        ],
+        "relations": [
+          "project_has_source",
+          "eval_item_tests_project",
+          "source_blocks_public_release"
+        ]
+      },
+      "input_refs": [
+        "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json",
+        "data/kosmo-innovation-github-promotion-matrix-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-15.json",
+        "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/payloads/synthetic_document_manifest.fixture.json",
+        "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/payloads/synthetic_layout_expectation.fixture.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture.review.json",
+      "objective": "Review the synthetic document/OCR fixture payloads and propose adapter-contract improvements for KosmoPrepare.",
+      "acceptance": [
+        "Uses only the synthetic fixture payloads and summarized promotion metadata listed in input_refs.",
+        "Keeps training_eval_lane=source_extraction_review as review metadata only; no training row is promoted.",
+        "Confirms ontology entity/relation bindings are present and flags gaps instead of inventing private facts.",
+        "Does not clone, install, execute, benchmark or call the referenced GitHub repository.",
+        "Does not read private sources, create embeddings, start models, write Git/cloud outputs or mark public-ready."
+      ]
+    },
+    {
+      "task_id": "github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture",
+      "priority": 11,
+      "lane": "kosmo_asset",
+      "source_repo": "lee-agi/3d_model_base",
+      "source_url": "https://github.com/lee-agi/3d_model_base",
+      "runner_safe": true,
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_task": 0,
+      "training_eval_lane": "asset_candidate_review",
+      "ontology_bindings": {
+        "entities": [
+          "asset_record",
+          "building_element",
+          "material_system"
+        ],
+        "relations": [
+          "asset_derived_from_element",
+          "asset_uses_material",
+          "eval_item_tests_asset"
+        ]
+      },
+      "input_refs": [
+        "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json",
+        "data/kosmo-innovation-github-promotion-matrix-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-15.json",
+        "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/payloads/synthetic_asset_manifest.fixture.json",
+        "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/payloads/synthetic_similarity_query.fixture.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_asset-lee-agi-3d-model-base-signal-fixture.review.json",
+      "objective": "Review the synthetic asset-retrieval fixture payloads and propose metadata and retrieval-contract improvements for KosmoAsset.",
+      "acceptance": [
+        "Uses only the synthetic fixture payloads and summarized promotion metadata listed in input_refs.",
+        "Keeps training_eval_lane=asset_candidate_review as review metadata only; no training row is promoted.",
+        "Confirms ontology entity/relation bindings are present and flags gaps instead of inventing private facts.",
+        "Does not clone, install, execute, benchmark or call the referenced GitHub repository.",
+        "Does not read private sources, create embeddings, start models, write Git/cloud outputs or mark public-ready."
+      ]
+    },
+    {
+      "task_id": "github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+      "priority": 12,
+      "lane": "worker_integration",
+      "source_repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "source_url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "runner_safe": true,
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_task": 0,
+      "training_eval_lane": "worker_output_review",
+      "ontology_bindings": {
+        "entities": [
+          "eval_review_item",
+          "source_record",
+          "asset_record"
+        ],
+        "relations": [
+          "eval_item_tests_project",
+          "eval_item_tests_asset",
+          "source_blocks_public_release"
+        ]
+      },
+      "input_refs": [
+        "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json",
+        "data/kosmo-innovation-github-promotion-matrix-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-15.json",
+        "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/payloads/synthetic_command_boundary.fixture.json",
+        "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/payloads/synthetic_runtime_risk_matrix.fixture.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture.review.json",
+      "objective": "Review the synthetic worker-boundary fixture payloads and propose safer command, runtime and handoff constraints.",
+      "acceptance": [
+        "Uses only the synthetic fixture payloads and summarized promotion metadata listed in input_refs.",
+        "Keeps training_eval_lane=worker_output_review as review metadata only; no training row is promoted.",
+        "Confirms ontology entity/relation bindings are present and flags gaps instead of inventing private facts.",
+        "Does not clone, install, execute, benchmark or call the referenced GitHub repository.",
+        "Does not read private sources, create embeddings, start models, write Git/cloud outputs or mark public-ready."
+      ]
+    },
+    {
+      "task_id": "github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture",
+      "priority": 13,
+      "lane": "kosmo_prepare",
+      "source_repo": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "source_url": "https://github.com/cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "runner_safe": true,
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_task": 0,
+      "training_eval_lane": "source_extraction_review",
+      "ontology_bindings": {
+        "entities": [
+          "source_record",
+          "reference_project",
+          "eval_review_item"
+        ],
+        "relations": [
+          "project_has_source",
+          "eval_item_tests_project",
+          "source_blocks_public_release"
+        ]
+      },
+      "input_refs": [
+        "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json",
+        "data/kosmo-innovation-github-promotion-matrix-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-15.json",
+        "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/payloads/synthetic_document_manifest.fixture.json",
+        "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/payloads/synthetic_layout_expectation.fixture.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture.review.json",
+      "objective": "Review the synthetic document/OCR fixture payloads and propose adapter-contract improvements for KosmoPrepare.",
+      "acceptance": [
+        "Uses only the synthetic fixture payloads and summarized promotion metadata listed in input_refs.",
+        "Keeps training_eval_lane=source_extraction_review as review metadata only; no training row is promoted.",
+        "Confirms ontology entity/relation bindings are present and flags gaps instead of inventing private facts.",
+        "Does not clone, install, execute, benchmark or call the referenced GitHub repository.",
+        "Does not read private sources, create embeddings, start models, write Git/cloud outputs or mark public-ready."
+      ]
+    },
+    {
+      "task_id": "github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+      "priority": 14,
+      "lane": "worker_integration",
+      "source_repo": "mac999/BIM_LLM_code_agent",
+      "source_url": "https://github.com/mac999/BIM_LLM_code_agent",
+      "runner_safe": true,
+      "execute_now": false,
+      "local_worker_allowed_now": false,
+      "private_content_allowed": false,
+      "public_ready_after_task": 0,
+      "training_eval_lane": "worker_output_review",
+      "ontology_bindings": {
+        "entities": [
+          "eval_review_item",
+          "source_record",
+          "asset_record"
+        ],
+        "relations": [
+          "eval_item_tests_project",
+          "eval_item_tests_asset",
+          "source_blocks_public_release"
+        ]
+      },
+      "input_refs": [
+        "data/kosmo-innovation-github-promotion-matrix-2026-06-15.json",
+        "data/kosmo-innovation-github-promotion-matrix-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payloads-check-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-15.json",
+        "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-15.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-15.json",
+        "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/payloads/synthetic_command_boundary.fixture.json",
+        "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/payloads/synthetic_runtime_risk_matrix.fixture.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/worker_integration-mac999-bim-llm-code-agent-signal-fixture.review.json",
+      "objective": "Review the synthetic worker-boundary fixture payloads and propose safer command, runtime and handoff constraints.",
+      "acceptance": [
+        "Uses only the synthetic fixture payloads and summarized promotion metadata listed in input_refs.",
+        "Keeps training_eval_lane=worker_output_review as review metadata only; no training row is promoted.",
+        "Confirms ontology entity/relation bindings are present and flags gaps instead of inventing private facts.",
+        "Does not clone, install, execute, benchmark or call the referenced GitHub repository.",
+        "Does not read private sources, create embeddings, start models, write Git/cloud outputs or mark public-ready."
+      ]
     }
   ],
   "forbidden_actions": [
     "Do not read private source folders, PDFs, scans, OCR text, OneDrive libraries or archive roots.",
     "Do not generate embeddings or training data.",
+    "Do not run downloaded GitHub repositories, package installs, model calls or MCP tools from these fixtures.",
     "Do not convert worker output into repo data automatically.",
     "Do not mark assets or references public-ready.",
     "Do not run Git or cloud writes from the local worker."
