@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:37:29.032Z",
+  "status": "innovation_fixture_payload_smoke_guard_passed",
+  "policy": {
+    "validates_smoke_only": true,
+    "installs_tools_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-fixture-payload-smoke-2026-06-15.json"
+  ],
+  "summary": {
+    "smoke_status": "innovation_fixture_payload_smoke_passed",
+    "payloads": 18,
+    "content_types": 8,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Smoke schema_version must be 0.1."
+    },
+    {
+      "id": "smoke_passed",
+      "severity": "passed",
+      "message": "Payload smoke must pass."
+    },
+    {
+      "id": "fixture_payloads_only",
+      "severity": "passed",
+      "message": "Smoke must read fixture payloads only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Smoke must not install tools."
+    },
+    {
+      "id": "no_tool_runs",
+      "severity": "passed",
+      "message": "Smoke must not run tools."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Smoke must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Smoke must keep public-ready at 0."
+    },
+    {
+      "id": "payload_count",
+      "severity": "passed",
+      "message": "Smoke must cover at least 18 payloads."
+    },
+    {
+      "id": "content_types_complete",
+      "severity": "passed",
+      "message": "Smoke must cover all required content types."
+    },
+    {
+      "id": "smoke_failures_zero",
+      "severity": "passed",
+      "message": "Smoke failures must be 0."
+    }
+  ],
+  "next_actions": [
+    "Add public-safe tool-shape smoke for document conversion and IFC entity extraction.",
+    "Keep dependency installs and real tool execution gated separately."
+  ]
+}

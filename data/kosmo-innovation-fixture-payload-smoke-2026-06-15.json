@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:37:28.798Z",
+  "status": "innovation_fixture_payload_smoke_passed",
+  "policy": {
+    "reads_fixture_payloads_only": true,
+    "installs_tools_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_smoke": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-fixture-payloads-2026-06-15.json"
+  ],
+  "summary": {
+    "payloads": 18,
+    "content_types": 8,
+    "required_content_types": 8,
+    "failures": 0,
+    "public_ready_after_smoke": 0
+  },
+  "content_type_counts": [
+    {
+      "type": "connector_boundary_fixture",
+      "count": 2
+    },
+    {
+      "type": "document_conversion_fixture",
+      "count": 4
+    },
+    {
+      "type": "ifc_shape_manifest",
+      "count": 2
+    },
+    {
+      "type": "ocr_fixture",
+      "count": 2
+    },
+    {
+      "type": "publish_layout_fixture",
+      "count": 2
+    },
+    {
+      "type": "retrieval_fixture",
+      "count": 2
+    },
+    {
+      "type": "spatial_graph_fixture",
+      "count": 2
+    },
+    {
+      "type": "visual_retrieval_fixture",
+      "count": 2
+    }
+  ],
+  "failures": [],
+  "next_actions": [
+    "Create tool-specific dry smoke scripts that read these payload shapes.",
+    "Keep actual dependency installation separate and explicit.",
+    "Use these fixture payloads as the first public-safe tests for future Docling/MarkItDown/Qwen/IfcOpenShell integration."
+  ]
+}
