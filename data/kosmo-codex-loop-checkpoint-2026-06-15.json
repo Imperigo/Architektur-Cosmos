@@ -1,0 +1,75 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:56:50.275Z",
+  "status": "codex_loop_checkpoint_ready",
+  "policy": {
+    "checkpoint_only": true,
+    "runs_checks_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "reads_private_content": false,
+    "public_ready_after_checkpoint": 0
+  },
+  "summary": {
+    "artifacts_expected": 5,
+    "artifacts_found": 5,
+    "missing_artifacts": 0,
+    "failed_guards": 0,
+    "public_ready_after_checkpoint": 0
+  },
+  "artifacts": [
+    {
+      "id": "dependency_preflight_plan",
+      "path": "data/kosmo-innovation-dependency-preflight-plan-check-2026-06-15.json",
+      "status": "found",
+      "guard_status": "innovation_dependency_preflight_plan_guard_passed",
+      "generated_at": "2026-06-15T12:44:29.675Z",
+      "failures": 0
+    },
+    {
+      "id": "dependency_preflight_runner",
+      "path": "data/kosmo-innovation-dependency-preflight-runner-check-2026-06-15.json",
+      "status": "found",
+      "guard_status": "innovation_dependency_preflight_runner_guard_passed",
+      "generated_at": "2026-06-15T12:47:21.082Z",
+      "failures": 0
+    },
+    {
+      "id": "dependency_install_queue",
+      "path": "data/kosmo-innovation-dependency-install-queue-check-2026-06-15.json",
+      "status": "found",
+      "guard_status": "innovation_dependency_install_queue_guard_passed",
+      "generated_at": "2026-06-15T12:49:37.986Z",
+      "failures": 0
+    },
+    {
+      "id": "daily_loop_routine",
+      "path": "data/kosmo-codex-daily-loop-routine-check-2026-06-15.json",
+      "status": "found",
+      "guard_status": "codex_daily_loop_routine_guard_passed",
+      "generated_at": "2026-06-15T12:51:38.039Z",
+      "failures": 0
+    },
+    {
+      "id": "github_watchlist",
+      "path": "data/kosmo-innovation-github-watchlist-check-2026-06-15.json",
+      "status": "found",
+      "guard_status": "innovation_github_watchlist_guard_passed",
+      "generated_at": "2026-06-15T12:54:31.341Z",
+      "failures": 0
+    }
+  ],
+  "current_loop_state": [
+    "Dependency lane has plan, local availability runner and install queue.",
+    "GitHub innovation watchlist is captured as queue-only input.",
+    "Daily Codex morning routine is recorded and guarded.",
+    "Source Root remains the gate for private OCR, private embeddings, private training and source scans.",
+    "Next autonomous work should stay fixture-only or queue-only unless an explicit install/download batch is started."
+  ],
+  "next_safe_blocks": [
+    "Create dependency batch decision brief for the owner and Claude.",
+    "Prepare fixture-only MarkItDown/Docling sample contracts without installing packages.",
+    "Prepare IFC fixture acceptance criteria for IfcOpenShell before dependency install.",
+    "Audit KosmoOrbit status display expectations against new handoffs."
+  ]
+}

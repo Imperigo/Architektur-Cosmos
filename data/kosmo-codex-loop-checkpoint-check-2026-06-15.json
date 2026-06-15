@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:56:50.510Z",
+  "status": "codex_loop_checkpoint_guard_passed",
+  "policy": {
+    "validates_checkpoint_only": true,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-codex-loop-checkpoint-2026-06-15.json"
+  ],
+  "summary": {
+    "checkpoint_status": "codex_loop_checkpoint_ready",
+    "artifacts_found": 5,
+    "artifacts_expected": 5,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Checkpoint schema_version must be 0.1."
+    },
+    {
+      "id": "checkpoint_ready",
+      "severity": "passed",
+      "message": "Checkpoint must be ready."
+    },
+    {
+      "id": "checkpoint_only",
+      "severity": "passed",
+      "message": "Checkpoint must be checkpoint-only."
+    },
+    {
+      "id": "no_check_runs",
+      "severity": "passed",
+      "message": "Checkpoint must not rerun checks."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Checkpoint must not install dependencies."
+    },
+    {
+      "id": "no_downloads",
+      "severity": "passed",
+      "message": "Checkpoint must not download models."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Checkpoint must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Checkpoint must keep public-ready at 0."
+    },
+    {
+      "id": "all_artifacts_found",
+      "severity": "passed",
+      "message": "Checkpoint must find all expected artifacts."
+    },
+    {
+      "id": "failed_guards_zero",
+      "severity": "passed",
+      "message": "Checkpoint failed guards must be 0."
+    },
+    {
+      "id": "next_blocks_present",
+      "severity": "passed",
+      "message": "Checkpoint must include next safe blocks."
+    }
+  ]
+}
