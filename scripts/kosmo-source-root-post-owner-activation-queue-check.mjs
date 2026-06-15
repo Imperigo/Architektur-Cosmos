@@ -134,6 +134,7 @@ function checkSummary(queue) {
 function checkSteps(queue) {
   const findings = [];
   const steps = queue.queue_steps || [];
+  const expectedSourceRootSession = `source-root-decision-session-${dateStamp}.json`;
   expect(Array.isArray(queue.queue_steps), findings, 'queue_steps_array', 'Queue steps must be an array.');
   expect(steps.length === expectedStepIds.length, findings, 'expected_step_count', 'Queue must contain the expected seven steps.');
   expectedStepIds.forEach((id, index) => {
@@ -155,6 +156,14 @@ function checkSteps(queue) {
         findings,
         'private_inventory_executable_matches_activation',
         'Private metadata inventory may be executable only when activation_ready is true.'
+      );
+    }
+    if (step.id === 'record_owner_decision') {
+      expect(
+        String(step.command || '').includes(expectedSourceRootSession),
+        findings,
+        'record_owner_decision_uses_current_session_date',
+        `Record-owner-decision command must point to ${expectedSourceRootSession}.`
       );
     }
   }

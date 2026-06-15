@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:41:56.200Z",
+  "generated_at": "2026-06-15T15:58:48.769Z",
   "status": "source_root_post_owner_activation_queue_guard_passed",
   "policy": {
     "validates_queue_only": true,
@@ -190,6 +190,11 @@
       "id": "step_safe_command:record_owner_decision",
       "severity": "passed",
       "message": "record_owner_decision command must stay in the safe queue command set."
+    },
+    {
+      "id": "record_owner_decision_uses_current_session_date",
+      "severity": "passed",
+      "message": "Record-owner-decision command must point to source-root-decision-session-2026-06-15.json."
     },
     {
       "id": "step_phase:decision_session_check",

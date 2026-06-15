@@ -68,7 +68,7 @@ function buildReport({ dryRun, activationPreflight, privateMetadataRunner, priva
     queueStep({
       id: 'record_owner_decision',
       phase: 'owner',
-      command: 'edit examples/kosmo-references/provenance/source-root-decision-session-2026-06-14.json',
+      command: `edit examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json`,
       purpose: 'Record exactly one owner-confirmed source-root decision.',
       requires: ['explicit owner/KosmoOverseer confirmation'],
       executableNow: false,

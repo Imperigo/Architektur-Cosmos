@@ -1,6 +1,6 @@
 # Kosmo Source-Root Post-Owner Activation Queue
 
-Generated: 2026-06-15T10:41:55.957Z
+Generated: 2026-06-15T15:58:48.536Z
 Status: `source_root_post_owner_activation_queue_ready`
 
 ## Summary
@@ -22,7 +22,7 @@ Status: `source_root_post_owner_activation_queue_ready`
 
 | Step | Phase | Executable now | Command | Blocked reason |
 | --- | --- | --- | --- | --- |
-| `record_owner_decision` | owner | no | `edit examples/kosmo-references/provenance/source-root-decision-session-2026-06-14.json` | human decision required |
+| `record_owner_decision` | owner | no | `edit examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json` | human decision required |
 | `decision_session_check` | guard | no | `npm run kosmo:source-root-decision-session-check` | no recorded decision yet |
 | `blocker_refresh` | guard | no | `npm run kosmo:source-root-blocker-refresh` | decision check pending |
 | `activation_preflight` | activation | no | `npm run kosmo:source-root-activation-preflight` | source-root owner decision pending |

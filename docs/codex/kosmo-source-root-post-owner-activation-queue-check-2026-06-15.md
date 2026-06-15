@@ -1,6 +1,6 @@
 # Kosmo Source-Root Post-Owner Activation Queue Check
 
-Generated: 2026-06-15T10:41:56.200Z
+Generated: 2026-06-15T15:58:48.769Z
 Status: `source_root_post_owner_activation_queue_guard_passed`
 
 ## Summary
@@ -50,6 +50,7 @@ Status: `source_root_post_owner_activation_queue_guard_passed`
 - passed: `step_requires:record_owner_decision` - record_owner_decision must include requires array.
 - passed: `step_blocked_reason:record_owner_decision` - record_owner_decision must explain why it is blocked.
 - passed: `step_safe_command:record_owner_decision` - record_owner_decision command must stay in the safe queue command set.
+- passed: `record_owner_decision_uses_current_session_date` - Record-owner-decision command must point to source-root-decision-session-2026-06-15.json.
 - passed: `step_phase:decision_session_check` - decision_session_check must include a phase.
 - passed: `step_command:decision_session_check` - decision_session_check must include a command.
 - passed: `step_requires:decision_session_check` - decision_session_check must include requires array.

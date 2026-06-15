@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T15:56:47.560Z",
+  "generated_at": "2026-06-15T15:59:30.038Z",
   "status": "owner_unlock_pipeline_checkpoint_guard_passed",
   "policy": {
     "validates_checkpoint_only": true,
@@ -95,7 +95,7 @@
     {
       "id": "latest_handoffs_include_277_or_newer",
       "status": "passed",
-      "evidence": 278
+      "evidence": 279
     },
     {
       "id": "owner_reply_not_applied",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T10:41:55.957Z",
+  "generated_at": "2026-06-15T15:58:48.536Z",
   "status": "source_root_post_owner_activation_queue_ready",
   "policy": {
     "queue_only": true,
@@ -39,7 +39,7 @@
     {
       "id": "record_owner_decision",
       "phase": "owner",
-      "command": "edit examples/kosmo-references/provenance/source-root-decision-session-2026-06-14.json",
+      "command": "edit examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json",
       "purpose": "Record exactly one owner-confirmed source-root decision.",
       "requires": [
         "explicit owner/KosmoOverseer confirmation"

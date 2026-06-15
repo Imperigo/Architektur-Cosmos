@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T15:56:09.897Z
+Generated: 2026-06-15T15:59:29.101Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-279-post-owner-queue-date-guard.md` | Codex Synergiebericht 279: Post-Owner Queue Date Guard | 2 |
 | `2026-06-15-codex-synergiebericht-278-owner-unlock-pipeline-rollup.md` | Codex Synergiebericht 278: Owner Unlock Pipeline Rollup | 2 |
 | `2026-06-15-codex-synergiebericht-277-owner-unlock-session-edit-preview.md` | Codex Synergiebericht 277: Owner Unlock Session Edit Preview | 2 |
 | `2026-06-15-codex-synergiebericht-276-owner-unlock-intake-apply-plan.md` | Codex Synergiebericht 276 - Owner Unlock Intake Apply Plan | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-274-path-a-readiness-certificate.md` | Codex Synergiebericht 274 - Path A Readiness Certificate | 2 |
 | `2026-06-15-codex-synergiebericht-273-owner-exact-reply-preview.md` | Codex Synergiebericht 273 - Owner Exact Reply Preview | 2 |
 | `2026-06-15-codex-synergiebericht-272-day-batch-after-fast-reply.md` | Codex Synergiebericht 272 - Day Batch After Fast Reply | 2 |
-| `2026-06-15-codex-synergiebericht-271-owner-fast-reply-card.md` | Codex Synergiebericht 271 - Owner Fast Reply Card | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 271-278 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 272-279 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
