@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:48:17.739Z",
+  "generated_at": "2026-06-15T14:00:45.788Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,46 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-244-live-github-morning-scout.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-244-live-github-morning-scout.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-15-codex-synergiebericht-244-live-github-morning-scout.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-244-live-github-morning-scout.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-243-vague-unlock-guard.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-243-vague-unlock-guard.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-15-codex-synergiebericht-243-vague-unlock-guard.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-243-vague-unlock-guard.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-242-next-shift-acceptance-refresh.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-242-next-shift-acceptance-refresh.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-15-codex-synergiebericht-242-next-shift-acceptance-refresh.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-242-next-shift-acceptance-refresh.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-241-owner-roadmap-refresh.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-241-owner-roadmap-refresh.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-15-codex-synergiebericht-241-owner-roadmap-refresh.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-241-owner-roadmap-refresh.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md",
       "severity": "passed",
       "message": "2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md must be mirrored in both inboxes."
@@ -194,46 +234,6 @@
       "id": "handoff_title:2026-06-15-codex-synergiebericht-237-orbit-fixture-chain-status.md",
       "severity": "passed",
       "message": "2026-06-15-codex-synergiebericht-237-orbit-fixture-chain-status.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-235-prepare-phase1-source-package-contract.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-235-prepare-phase1-source-package-contract.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-15-codex-synergiebericht-235-prepare-phase1-source-package-contract.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-235-prepare-phase1-source-package-contract.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-234-prepare-phase1-adapter-fixture.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-234-prepare-phase1-adapter-fixture.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-15-codex-synergiebericht-234-prepare-phase1-adapter-fixture.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-234-prepare-phase1-adapter-fixture.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md must include a title."
     },
     {
       "id": "source_root_blocked",

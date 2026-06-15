@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:48:17.507Z",
+  "generated_at": "2026-06-15T14:00:45.551Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 239
+      "files": 243
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 89
+      "files": 93
     }
   ],
   "summary": {
@@ -47,6 +47,34 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-244-live-github-morning-scout.md",
+      "title": "Codex Synergiebericht 244: Live-GitHub-Morgenroutine fuer Innovations-Scout",
+      "mirrored_inboxes": 2,
+      "bytes": 1965,
+      "modified_at": "2026-06-15T13:59:45.092Z"
+    },
+    {
+      "filename": "2026-06-15-codex-synergiebericht-243-vague-unlock-guard.md",
+      "title": "Codex Synergiebericht 243: Vage Owner-Freigaben bleiben gesperrt",
+      "mirrored_inboxes": 2,
+      "bytes": 2415,
+      "modified_at": "2026-06-15T13:55:44.878Z"
+    },
+    {
+      "filename": "2026-06-15-codex-synergiebericht-242-next-shift-acceptance-refresh.md",
+      "title": "Codex Synergiebericht 242: Next Shift Acceptance Refresh",
+      "mirrored_inboxes": 2,
+      "bytes": 1924,
+      "modified_at": "2026-06-15T13:51:22.179Z"
+    },
+    {
+      "filename": "2026-06-15-codex-synergiebericht-241-owner-roadmap-refresh.md",
+      "title": "Codex Synergiebericht 241: Owner Roadmap Refresh",
+      "mirrored_inboxes": 2,
+      "bytes": 2614,
+      "modified_at": "2026-06-15T13:49:11.783Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md",
       "title": "Codex Synergiebericht 240: Source-Independent Queue Refresh",
@@ -74,34 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1860,
       "modified_at": "2026-06-15T13:40:41.017Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-236-asset-prepare-phase1-fixture-contract.md",
-      "title": "Codex Synergiebericht 236: KosmoAsset Prepare Phase 1 Fixture Contract",
-      "mirrored_inboxes": 2,
-      "bytes": 2863,
-      "modified_at": "2026-06-15T13:38:48.964Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-235-prepare-phase1-source-package-contract.md",
-      "title": "Codex Synergiebericht 235: KosmoPrepare Phase 1 Source Package Contract",
-      "mirrored_inboxes": 2,
-      "bytes": 3074,
-      "modified_at": "2026-06-15T13:35:05.116Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-234-prepare-phase1-adapter-fixture.md",
-      "title": "Codex Synergiebericht 234: Prepare Phase 1 Adapter Fixture",
-      "mirrored_inboxes": 2,
-      "bytes": 1802,
-      "modified_at": "2026-06-15T13:28:18.036Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-233-dependency-phase1-fixture-smoke.md",
-      "title": "Codex Synergiebericht 233: Dependency Phase 1 Fixture Smoke",
-      "mirrored_inboxes": 2,
-      "bytes": 1631,
-      "modified_at": "2026-06-15T13:25:04.137Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 233-240 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 237-244 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
