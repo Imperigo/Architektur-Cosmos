@@ -35,6 +35,8 @@ async function main() {
     summary: {
       watchlist_status: watchlist.status,
       candidates: watchlist.candidates?.length ?? null,
+      live_probe_succeeded: watchlist.summary?.live_probe_succeeded ?? null,
+      live_probe_fallback: watchlist.summary?.live_probe_fallback ?? null,
       failures: failures.length,
       public_ready_after_check: 0
     },
@@ -65,12 +67,16 @@ function checkWatchlist(watchlist) {
   expect(watchlist.policy?.runs_tools_now === false, findings, 'no_tool_runs', 'Watchlist must not run tools.');
   expect(watchlist.policy?.reads_private_content === false, findings, 'no_private_reads', 'Watchlist must not read private content.');
   expect(watchlist.policy?.public_ready_after_watchlist === 0, findings, 'public_ready_zero', 'Watchlist must keep public-ready at 0.');
+  expect(watchlist.live_probe?.attempted === true, findings, 'live_probe_attempted', 'Watchlist must attempt live GitHub metadata probes.');
+  expect(Number.isInteger(watchlist.summary?.live_probe_succeeded), findings, 'live_probe_succeeded_count', 'Watchlist must report live probe success count.');
+  expect(Number.isInteger(watchlist.summary?.live_probe_fallback), findings, 'live_probe_fallback_count', 'Watchlist must report live probe fallback count.');
   expect((watchlist.candidates || []).length >= 7, findings, 'candidate_count', 'Watchlist must include at least seven candidates.');
   ['microsoft/markitdown', 'docling-project/docling', 'IfcOpenShell/IfcOpenShell', 'QwenLM/Qwen3-Embedding'].forEach((repo) => {
     expect((watchlist.candidates || []).some((item) => item.repo === repo), findings, `required_repo:${repo}`, `Watchlist must include ${repo}.`);
   });
   for (const item of watchlist.candidates || []) {
     expect(item.source_type === 'primary_github_repository', findings, `primary_source:${item.repo}`, `${item.repo} must be a primary GitHub source.`);
+    expect(['live_gh_repo_view', 'static_seed_fallback'].includes(item.source_observation), findings, `source_observation:${item.repo}`, `${item.repo} must declare live or fallback observation.`);
     expect(/^https:\/\/github\.com\//.test(item.url), findings, `github_url:${item.repo}`, `${item.repo} must use a GitHub URL.`);
     expect(item.install_or_download_now === false, findings, `no_execute:${item.repo}`, `${item.repo} must not install/download now.`);
     expect(item.private_content_allowed === false, findings, `no_private:${item.repo}`, `${item.repo} must not allow private content.`);
@@ -94,6 +100,8 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push(`- Watchlist status: ${report.summary.watchlist_status}`);
   lines.push(`- Candidates: ${report.summary.candidates}`);
+  lines.push(`- Live probe succeeded: ${report.summary.live_probe_succeeded}`);
+  lines.push(`- Live probe fallback: ${report.summary.live_probe_fallback}`);
   lines.push(`- Failures: ${report.summary.failures}`);
   lines.push(`- Public-ready after check: ${report.summary.public_ready_after_check}`);
   lines.push('');

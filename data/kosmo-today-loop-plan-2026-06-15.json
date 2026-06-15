@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:34:06.590Z",
+  "generated_at": "2026-06-15T13:58:57.758Z",
   "status": "today_loop_plan_ready",
   "policy": {
     "autonomous_until_local_time": "18:00",

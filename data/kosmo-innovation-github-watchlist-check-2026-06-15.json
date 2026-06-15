@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:34:06.353Z",
+  "generated_at": "2026-06-15T13:58:57.051Z",
   "status": "innovation_github_watchlist_guard_passed",
   "policy": {
     "validates_watchlist_only": true,
@@ -16,6 +16,8 @@
   "summary": {
     "watchlist_status": "innovation_github_watchlist_ready",
     "candidates": 9,
+    "live_probe_succeeded": 9,
+    "live_probe_fallback": 0,
     "failures": 0,
     "public_ready_after_check": 0
   },
@@ -61,6 +63,21 @@
       "message": "Watchlist must keep public-ready at 0."
     },
     {
+      "id": "live_probe_attempted",
+      "severity": "passed",
+      "message": "Watchlist must attempt live GitHub metadata probes."
+    },
+    {
+      "id": "live_probe_succeeded_count",
+      "severity": "passed",
+      "message": "Watchlist must report live probe success count."
+    },
+    {
+      "id": "live_probe_fallback_count",
+      "severity": "passed",
+      "message": "Watchlist must report live probe fallback count."
+    },
+    {
       "id": "candidate_count",
       "severity": "passed",
       "message": "Watchlist must include at least seven candidates."
@@ -91,6 +108,11 @@
       "message": "microsoft/markitdown must be a primary GitHub source."
     },
     {
+      "id": "source_observation:microsoft/markitdown",
+      "severity": "passed",
+      "message": "microsoft/markitdown must declare live or fallback observation."
+    },
+    {
       "id": "github_url:microsoft/markitdown",
       "severity": "passed",
       "message": "microsoft/markitdown must use a GitHub URL."
@@ -114,6 +136,11 @@
       "id": "primary_source:docling-project/docling",
       "severity": "passed",
       "message": "docling-project/docling must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:docling-project/docling",
+      "severity": "passed",
+      "message": "docling-project/docling must declare live or fallback observation."
     },
     {
       "id": "github_url:docling-project/docling",
@@ -141,6 +168,11 @@
       "message": "IfcOpenShell/IfcOpenShell must be a primary GitHub source."
     },
     {
+      "id": "source_observation:IfcOpenShell/IfcOpenShell",
+      "severity": "passed",
+      "message": "IfcOpenShell/IfcOpenShell must declare live or fallback observation."
+    },
+    {
       "id": "github_url:IfcOpenShell/IfcOpenShell",
       "severity": "passed",
       "message": "IfcOpenShell/IfcOpenShell must use a GitHub URL."
@@ -164,6 +196,11 @@
       "id": "primary_source:QwenLM/Qwen3-Embedding",
       "severity": "passed",
       "message": "QwenLM/Qwen3-Embedding must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:QwenLM/Qwen3-Embedding",
+      "severity": "passed",
+      "message": "QwenLM/Qwen3-Embedding must declare live or fallback observation."
     },
     {
       "id": "github_url:QwenLM/Qwen3-Embedding",
@@ -191,6 +228,11 @@
       "message": "deepseek-ai/DeepSeek-OCR must be a primary GitHub source."
     },
     {
+      "id": "source_observation:deepseek-ai/DeepSeek-OCR",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR must declare live or fallback observation."
+    },
+    {
       "id": "github_url:deepseek-ai/DeepSeek-OCR",
       "severity": "passed",
       "message": "deepseek-ai/DeepSeek-OCR must use a GitHub URL."
@@ -214,6 +256,11 @@
       "id": "primary_source:wassimj/topologicpy",
       "severity": "passed",
       "message": "wassimj/topologicpy must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:wassimj/topologicpy",
+      "severity": "passed",
+      "message": "wassimj/topologicpy must declare live or fallback observation."
     },
     {
       "id": "github_url:wassimj/topologicpy",
@@ -241,6 +288,11 @@
       "message": "specklesystems/specklepy must be a primary GitHub source."
     },
     {
+      "id": "source_observation:specklesystems/specklepy",
+      "severity": "passed",
+      "message": "specklesystems/specklepy must declare live or fallback observation."
+    },
+    {
       "id": "github_url:specklesystems/specklepy",
       "severity": "passed",
       "message": "specklesystems/specklepy must use a GitHub URL."
@@ -266,6 +318,11 @@
       "message": "docling-project/docling-mcp must be a primary GitHub source."
     },
     {
+      "id": "source_observation:docling-project/docling-mcp",
+      "severity": "passed",
+      "message": "docling-project/docling-mcp must declare live or fallback observation."
+    },
+    {
       "id": "github_url:docling-project/docling-mcp",
       "severity": "passed",
       "message": "docling-project/docling-mcp must use a GitHub URL."
@@ -289,6 +346,11 @@
       "id": "primary_source:deepseek-ai/DeepSeek-OCR-2",
       "severity": "passed",
       "message": "deepseek-ai/DeepSeek-OCR-2 must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:deepseek-ai/DeepSeek-OCR-2",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR-2 must declare live or fallback observation."
     },
     {
       "id": "github_url:deepseek-ai/DeepSeek-OCR-2",
