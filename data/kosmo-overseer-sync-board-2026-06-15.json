@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:11:29.560Z",
+  "generated_at": "2026-06-15T14:13:39.836Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 246
+      "files": 247
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 96
+      "files": 97
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-248-orbit-innovation-visibility.md",
+      "title": "Codex Synergiebericht 248: Orbit sieht Innovation und Morgenplan",
+      "mirrored_inboxes": 2,
+      "bytes": 884,
+      "modified_at": "2026-06-15T14:13:20.636Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-247-github-discovery-scout.md",
       "title": "Codex Synergiebericht 247: GitHub Discovery Scout fuer neue Code-Kandidaten",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2614,
       "modified_at": "2026-06-15T13:49:11.783Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md",
-      "title": "Codex Synergiebericht 240: Source-Independent Queue Refresh",
-      "mirrored_inboxes": 2,
-      "bytes": 1876,
-      "modified_at": "2026-06-15T13:47:19.615Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 240-247 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 241-248 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

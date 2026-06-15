@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T14:11:29.560Z
+Generated: 2026-06-15T14:13:39.836Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-248-orbit-innovation-visibility.md` | Codex Synergiebericht 248: Orbit sieht Innovation und Morgenplan | 2 |
 | `2026-06-15-codex-synergiebericht-247-github-discovery-scout.md` | Codex Synergiebericht 247: GitHub Discovery Scout fuer neue Code-Kandidaten | 2 |
 | `2026-06-15-codex-synergiebericht-246-day-batch-loop-green.md` | Codex Synergiebericht 246: Day-Batch-Loop gruen, Source Root weiter gesperrt | 2 |
 | `2026-06-15-codex-synergiebericht-245-tomorrow-day-batch-generator.md` | Codex Synergiebericht 245: Tomorrow-Day-Batch ist reproduzierbar | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-243-vague-unlock-guard.md` | Codex Synergiebericht 243: Vage Owner-Freigaben bleiben gesperrt | 2 |
 | `2026-06-15-codex-synergiebericht-242-next-shift-acceptance-refresh.md` | Codex Synergiebericht 242: Next Shift Acceptance Refresh | 2 |
 | `2026-06-15-codex-synergiebericht-241-owner-roadmap-refresh.md` | Codex Synergiebericht 241: Owner Roadmap Refresh | 2 |
-| `2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md` | Codex Synergiebericht 240: Source-Independent Queue Refresh | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 240-247 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 241-248 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

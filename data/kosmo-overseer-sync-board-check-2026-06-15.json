@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:11:29.784Z",
+  "generated_at": "2026-06-15T14:13:40.072Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,16 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-248-orbit-innovation-visibility.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-248-orbit-innovation-visibility.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-15-codex-synergiebericht-248-orbit-innovation-visibility.md",
+      "severity": "passed",
+      "message": "2026-06-15-codex-synergiebericht-248-orbit-innovation-visibility.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-247-github-discovery-scout.md",
       "severity": "passed",
       "message": "2026-06-15-codex-synergiebericht-247-github-discovery-scout.md must be mirrored in both inboxes."
@@ -224,16 +234,6 @@
       "id": "handoff_title:2026-06-15-codex-synergiebericht-241-owner-roadmap-refresh.md",
       "severity": "passed",
       "message": "2026-06-15-codex-synergiebericht-241-owner-roadmap-refresh.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md",
-      "severity": "passed",
-      "message": "2026-06-15-codex-synergiebericht-240-source-independent-queue-refresh.md must include a title."
     },
     {
       "id": "source_root_blocked",
