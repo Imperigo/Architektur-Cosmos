@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T14:31:20.080Z
+Generated: 2026-06-15T14:35:30.247Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-256-day-batch-github-chain.md` | Codex Synergiebericht 256: Day-Batch deckt GitHub-Innovationskette ab | 2 |
 | `2026-06-15-codex-synergiebericht-255-github-fixture-contract-plan.md` | Codex Synergiebericht 255: GitHub-inspirierter Fixture Contract Plan | 2 |
 | `2026-06-15-codex-synergiebericht-254-github-readme-signal-scan.md` | Codex Synergiebericht 254: GitHub README Signal Scan | 2 |
 | `2026-06-15-codex-synergiebericht-253-github-review-queue.md` | Codex Synergiebericht 253: GitHub Discovery Review Queue | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-251-today-plan-discovery-sync.md` | Codex Synergiebericht 251: Today-Loop kennt GitHub Discovery | 2 |
 | `2026-06-15-codex-synergiebericht-250-architecture-build-green.md` | Codex Synergiebericht 250: ArchitectureCosmos Build gruen | 2 |
 | `2026-06-15-codex-synergiebericht-249-kosmoorbit-health-green.md` | Codex Synergiebericht 249: KosmoOrbit Health Check gruen | 2 |
-| `2026-06-15-codex-synergiebericht-248-orbit-innovation-visibility.md` | Codex Synergiebericht 248: Orbit sieht Innovation und Morgenplan | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 248-255 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 249-256 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
