@@ -1,0 +1,153 @@
+{
+  "schema_version": "0.1",
+  "library_id": "kosmo-prepare-phase1-fixture",
+  "name": "KosmoPrepare Phase 1 Fixture Asset Library",
+  "description": "Synthetic local review-only KosmoAsset bridge derived from the KosmoPrepare phase 1 adapter fixture.",
+  "status": "draft",
+  "rights_scope": "local_review_only",
+  "created_at": "2026-06-15",
+  "updated_at": "2026-06-15",
+  "storage_policy": {
+    "uploads_allowed": false,
+    "public_assets_allowed": false,
+    "local_assets_allowed": true,
+    "max_local_size_mb": 10,
+    "notes": [
+      "Synthetic fixture only.",
+      "No private source files, scans, textures, model downloads or public releases.",
+      "This library tests KosmoPrepare to KosmoAsset metadata flow only."
+    ]
+  },
+  "assets": [
+    {
+      "id": "synthetic-timber-frame-material-001",
+      "title": "Synthetic Timber Frame Material Profile",
+      "description": "Review-only material profile produced from the synthetic KosmoPrepare fixture.",
+      "asset_type": "material",
+      "category": "material",
+      "source_kind": "generated",
+      "source_basis": [
+        "Derived from synthetic source package kosmo-prepare-phase1-adapter-fixture-2026-06-15.",
+        "No sampled texture, protected image or product data was used."
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos synthetic fixture",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "draft",
+      "confidence": 0.74,
+      "formats": [
+        {
+          "format": "material_json",
+          "path": "assets/materials/timber-frame.material.json",
+          "software": [
+            "blender",
+            "archicad",
+            "kosmo"
+          ],
+          "status": "exists"
+        }
+      ],
+      "preview": {
+        "kind": "material_swatch",
+        "label": "Timber",
+        "primary": "#b98b5d",
+        "secondary": "#6f7f68",
+        "swatches": [
+          "#d7b98e",
+          "#b98b5d",
+          "#6f4f33"
+        ]
+      },
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "synthetic-fixture",
+        "timber",
+        "material-profile",
+        "kosmoprepare",
+        "kosmoasset"
+      ],
+      "material_tags": [
+        "timber",
+        "mineral-plinth"
+      ],
+      "kosmodata_refs": [
+        {
+          "kind": "material_context",
+          "entry_id": "kosmo-prepare-phase1-fixture",
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Synthetic fixture context only; not a public architecture reference entry."
+        }
+      ]
+    },
+    {
+      "id": "synthetic-primary-column-component-001",
+      "title": "Synthetic Primary Column Component Logic",
+      "description": "Review-only structural component metadata from the synthetic IfcOpenShell entity manifest.",
+      "asset_type": "component",
+      "category": "structure",
+      "source_kind": "generated",
+      "source_basis": [
+        "Derived from synthetic source package kosmo-prepare-phase1-adapter-fixture-2026-06-15.",
+        "Uses synthetic IFC entity names only; no measured geometry or private project model."
+      ],
+      "rights_status": "generated_needs_review",
+      "license": "review_only",
+      "credit": "Architecture Cosmos synthetic fixture",
+      "public_use_allowed": false,
+      "local_only": true,
+      "review_status": "draft",
+      "confidence": 0.7,
+      "formats": [
+        {
+          "format": "json",
+          "path": "assets/components/synthetic-primary-column.component.json",
+          "software": [
+            "kosmo",
+            "ifcopenshell"
+          ],
+          "status": "exists"
+        }
+      ],
+      "preview": {
+        "kind": "wireframe_component",
+        "label": "Column logic",
+        "primary": "#00e7ff",
+        "secondary": "#f5b342"
+      },
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web",
+        "ifc"
+      ],
+      "tags": [
+        "synthetic-fixture",
+        "structure",
+        "column",
+        "ifcopenshell",
+        "kosmoasset"
+      ],
+      "material_tags": [
+        "timber"
+      ],
+      "kosmodata_refs": [
+        {
+          "kind": "typology_context",
+          "entry_id": "kosmo-prepare-phase1-fixture",
+          "relation": "typology_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "notes": "Synthetic fixture context only; used to test structure-to-asset mapping."
+        }
+      ]
+    }
+  ]
+}

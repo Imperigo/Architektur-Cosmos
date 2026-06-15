@@ -1,0 +1,30 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:37:59.369Z",
+  "generator": "kosmo-asset-prepare-phase1-fixture-contract",
+  "status": "local_review_material_profile_generated",
+  "source_package_ref": "examples/kosmo-references/source-packages/kosmo-prepare-phase1-adapter-fixture-2026-06-15/source-package.json",
+  "source_package_id": "kosmo-prepare-phase1-adapter-fixture-2026-06-15",
+  "synthetic_fixture_only": true,
+  "material_system": "timber frame with mineral plinth",
+  "layers": [
+    {
+      "id": "timber-frame",
+      "role": "primary_structure",
+      "material_family": "timber",
+      "review_status": "synthetic_fixture"
+    },
+    {
+      "id": "mineral-plinth",
+      "role": "base_contact",
+      "material_family": "mineral",
+      "review_status": "synthetic_fixture"
+    }
+  ],
+  "export_slots": [
+    "blender",
+    "archicad",
+    "kosmoasset"
+  ],
+  "public_use_allowed": false
+}

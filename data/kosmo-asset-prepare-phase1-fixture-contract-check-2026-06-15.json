@@ -1,0 +1,120 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:37:59.676Z",
+  "status": "kosmoasset_prepare_phase1_fixture_contract_guard_passed",
+  "policy": {
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "ingests_assets": false,
+    "uploads_allowed": false,
+    "public_assets_allowed": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-asset-prepare-phase1-fixture-contract-2026-06-15.json",
+    "examples/kosmo-assets/kosmo-prepare-phase1-fixture/library.json"
+  ],
+  "summary": {
+    "contract_status": "kosmoasset_prepare_phase1_fixture_contract_ready",
+    "library_id": "kosmo-prepare-phase1-fixture",
+    "assets": 2,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Report schema_version must be 0.1."
+    },
+    {
+      "id": "contract_ready",
+      "severity": "passed",
+      "message": "Contract must be ready."
+    },
+    {
+      "id": "synthetic_only",
+      "severity": "passed",
+      "message": "Contract must be synthetic-only."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Contract must not read private content."
+    },
+    {
+      "id": "no_private_copies",
+      "severity": "passed",
+      "message": "Contract must not copy private content."
+    },
+    {
+      "id": "no_asset_ingestion",
+      "severity": "passed",
+      "message": "Contract must not ingest external assets."
+    },
+    {
+      "id": "no_uploads",
+      "severity": "passed",
+      "message": "Contract must keep uploads disabled."
+    },
+    {
+      "id": "no_public_assets",
+      "severity": "passed",
+      "message": "Contract must not allow public assets."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Contract must keep public-ready at 0."
+    },
+    {
+      "id": "library_schema",
+      "severity": "passed",
+      "message": "Library schema_version must be 0.1."
+    },
+    {
+      "id": "library_review_only",
+      "severity": "passed",
+      "message": "Library must be local_review_only."
+    },
+    {
+      "id": "library_uploads_false",
+      "severity": "passed",
+      "message": "Library uploads must be disabled."
+    },
+    {
+      "id": "library_public_false",
+      "severity": "passed",
+      "message": "Library public assets must be disabled."
+    },
+    {
+      "id": "two_assets",
+      "severity": "passed",
+      "message": "Fixture library must include exactly two asset candidates."
+    },
+    {
+      "id": "all_assets_private",
+      "severity": "passed",
+      "message": "All fixture assets must have public_use_allowed=false."
+    },
+    {
+      "id": "all_assets_local_only",
+      "severity": "passed",
+      "message": "All fixture assets must be local_only."
+    },
+    {
+      "id": "asset_library_check_passes",
+      "severity": "passed",
+      "message": "kosmo-asset-library-check passed for the fixture library."
+    }
+  ],
+  "checker_stdout": [
+    "KosmoAsset library check",
+    "Library: examples/kosmo-assets/kosmo-prepare-phase1-fixture/library.json",
+    "Status: passed",
+    "Assets: 2",
+    "Failures: 0",
+    "Warnings: 2",
+    "Wrote: examples/kosmo-assets/kosmo-prepare-phase1-fixture/review/asset-library-check.generated.md"
+  ]
+}

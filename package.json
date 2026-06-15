@@ -242,6 +242,8 @@
     "kosmo:prepare-phase1-adapter-fixture-check": "node scripts/kosmo-prepare-phase1-adapter-fixture-check.mjs",
     "kosmo:prepare-phase1-source-package-contract": "node scripts/kosmo-prepare-phase1-source-package-contract.mjs",
     "kosmo:prepare-phase1-source-package-contract-check": "node scripts/kosmo-prepare-phase1-source-package-contract-check.mjs",
+    "kosmo:asset-prepare-phase1-fixture-contract": "node scripts/kosmo-asset-prepare-phase1-fixture-contract.mjs",
+    "kosmo:asset-prepare-phase1-fixture-contract-check": "node scripts/kosmo-asset-prepare-phase1-fixture-contract-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",

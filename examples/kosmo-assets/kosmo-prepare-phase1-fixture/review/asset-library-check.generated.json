@@ -1,0 +1,140 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:37:59.670Z",
+  "generator": "kosmo-asset-library-check",
+  "library_path": "examples/kosmo-assets/kosmo-prepare-phase1-fixture/library.json",
+  "library_id": "kosmo-prepare-phase1-fixture",
+  "name": "KosmoPrepare Phase 1 Fixture Asset Library",
+  "status": "passed",
+  "mode": "local_review_only",
+  "policy": {
+    "no_uploads": true,
+    "no_public_publish": true,
+    "public_assets_require_rights": [
+      "licensed",
+      "public_domain",
+      "own_work"
+    ],
+    "generated_assets_need_review_before_public_use": true
+  },
+  "summary": {
+    "asset_count": 2,
+    "local_ready_count": 2,
+    "public_ready_count": 0,
+    "planned_only_count": 0,
+    "failure_count": 0,
+    "warning_count": 2,
+    "formats": {
+      "material_json": 1,
+      "json": 1
+    },
+    "asset_types": {
+      "material": 1,
+      "component": 1
+    },
+    "categories": {
+      "material": 1,
+      "structure": 1
+    },
+    "rights_status": {
+      "generated_needs_review": 2
+    },
+    "kosmodata_ref_count": 2
+  },
+  "assets": [
+    {
+      "id": "synthetic-timber-frame-material-001",
+      "title": "Synthetic Timber Frame Material Profile",
+      "asset_type": "material",
+      "category": "material",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": true,
+      "planned_only": false,
+      "formats": [
+        "material_json"
+      ],
+      "preview_kind": "material_swatch",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "material_context",
+          "entry_id": "kosmo-prepare-phase1-fixture",
+          "entry_title": null,
+          "relation": "material_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": false
+        }
+      ],
+      "existing_format_count": 1,
+      "planned_format_count": 0,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web"
+      ],
+      "tags": [
+        "synthetic-fixture",
+        "timber",
+        "material-profile",
+        "kosmoprepare",
+        "kosmoasset"
+      ]
+    },
+    {
+      "id": "synthetic-primary-column-component-001",
+      "title": "Synthetic Primary Column Component Logic",
+      "asset_type": "component",
+      "category": "structure",
+      "rights_status": "generated_needs_review",
+      "review_status": "draft",
+      "public_use_allowed": false,
+      "rights_public_safe": false,
+      "local_ready": true,
+      "planned_only": false,
+      "formats": [
+        "json"
+      ],
+      "preview_kind": "wireframe_component",
+      "kosmodata_ref_count": 1,
+      "kosmodata_refs": [
+        {
+          "kind": "typology_context",
+          "entry_id": "kosmo-prepare-phase1-fixture",
+          "entry_title": null,
+          "relation": "typology_context",
+          "usage_policy": "derived_asset_review_required",
+          "review_status": "needs_human_review",
+          "entry_exists": false
+        }
+      ],
+      "existing_format_count": 1,
+      "planned_format_count": 0,
+      "export_targets": [
+        "blender",
+        "archicad",
+        "web",
+        "ifc"
+      ],
+      "tags": [
+        "synthetic-fixture",
+        "structure",
+        "column",
+        "ifcopenshell",
+        "kosmoasset"
+      ]
+    }
+  ],
+  "failures": [],
+  "warnings": [
+    "synthetic-timber-frame-material-001.kosmodata_refs[0] references unknown KosmoData entry: kosmo-prepare-phase1-fixture",
+    "synthetic-primary-column-component-001.kosmodata_refs[0] references unknown KosmoData entry: kosmo-prepare-phase1-fixture"
+  ],
+  "next_actions": [
+    "Review warnings, especially private research, missing source entry links and planned export keys.",
+    "Fix unknown KosmoData references before relying on asset/context bridge reports."
+  ]
+}

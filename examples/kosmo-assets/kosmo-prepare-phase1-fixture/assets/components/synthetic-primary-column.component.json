@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:37:59.369Z",
+  "generator": "kosmo-asset-prepare-phase1-fixture-contract",
+  "status": "local_review_component_profile_generated",
+  "source_package_ref": "examples/kosmo-references/source-packages/kosmo-prepare-phase1-adapter-fixture-2026-06-15/source-package.json",
+  "source_package_id": "kosmo-prepare-phase1-adapter-fixture-2026-06-15",
+  "synthetic_fixture_only": true,
+  "ifc_schema": "IFC4",
+  "semantic_entities": [
+    {
+      "type": "IfcProject",
+      "name": "KosmoPrepare Synthetic Fixture"
+    },
+    {
+      "type": "IfcSite",
+      "name": "Synthetic Site"
+    },
+    {
+      "type": "IfcBuilding",
+      "name": "Synthetic Pavilion"
+    },
+    {
+      "type": "IfcBuildingStorey",
+      "name": "Ground Level"
+    },
+    {
+      "type": "IfcMaterial",
+      "name": "Timber"
+    }
+  ],
+  "component_logic": [
+    {
+      "id": "primary-column-set",
+      "role": "load_path",
+      "derived_from_entity_type": "IfcBuildingStorey",
+      "review_status": "synthetic_fixture"
+    },
+    {
+      "id": "timber-material-assignment",
+      "role": "material_context",
+      "derived_from_entity_type": "IfcMaterial",
+      "review_status": "synthetic_fixture"
+    }
+  ],
+  "export_slots": [
+    "json",
+    "ifc_semantic_review",
+    "kosmoasset"
+  ],
+  "public_use_allowed": false
+}
