@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:42:27.801Z",
+  "status": "local_worker_fixture_chain_task_pack_guard_passed",
+  "policy": {
+    "review_only": true,
+    "reads_private_content": false,
+    "starts_models": false,
+    "executes_workers_now": false,
+    "writes_repo_outputs_from_workers": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-fixture-chain-task-pack-2026-06-15.json"
+  ],
+  "summary": {
+    "pack_status": "local_worker_fixture_chain_task_pack_ready",
+    "tasks": 3,
+    "executable_now": 0,
+    "missing_refs": 0,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Pack schema_version must be 0.1."
+    },
+    {
+      "id": "pack_ready",
+      "severity": "passed",
+      "message": "Task pack must be ready."
+    },
+    {
+      "id": "review_only",
+      "severity": "passed",
+      "message": "Task pack must be review-only."
+    },
+    {
+      "id": "fixture_only",
+      "severity": "passed",
+      "message": "Task pack must be fixture-only."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Task pack must not read private content."
+    },
+    {
+      "id": "no_private_copies",
+      "severity": "passed",
+      "message": "Task pack must not copy private content."
+    },
+    {
+      "id": "does_not_start_models",
+      "severity": "passed",
+      "message": "Task pack must not start models by itself."
+    },
+    {
+      "id": "does_not_execute_now",
+      "severity": "passed",
+      "message": "Task pack must not execute workers now."
+    },
+    {
+      "id": "no_repo_conversion",
+      "severity": "passed",
+      "message": "Task pack must not write repo outputs from workers."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Task pack must keep public-ready at 0."
+    },
+    {
+      "id": "no_missing_refs",
+      "severity": "passed",
+      "message": "Task pack must have no missing input refs."
+    },
+    {
+      "id": "no_executable_now",
+      "severity": "passed",
+      "message": "No local worker task should execute now."
+    },
+    {
+      "id": "three_tasks",
+      "severity": "passed",
+      "message": "Task pack must include exactly three fixture-chain tasks."
+    },
+    {
+      "id": "all_runner_safe",
+      "severity": "passed",
+      "message": "All fixture tasks must be runner-safe if explicitly started later."
+    },
+    {
+      "id": "all_hold",
+      "severity": "passed",
+      "message": "All fixture tasks must be hold/not execute now."
+    },
+    {
+      "id": "private_forbidden",
+      "severity": "passed",
+      "message": "Forbidden actions must block private source reads."
+    },
+    {
+      "id": "embedding_forbidden",
+      "severity": "passed",
+      "message": "Forbidden actions must block embeddings/training."
+    }
+  ]
+}
