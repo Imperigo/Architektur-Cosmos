@@ -71,6 +71,8 @@ const refs = {
   localWorkerInnovationOutputSmokeCheck: `data/kosmo-local-worker-innovation-output-smoke-check-${dateStamp}.json`,
   localWorkerInnovationOutputAdapterPlan: `data/kosmo-local-worker-innovation-output-adapter-plan-${dateStamp}.json`,
   localWorkerInnovationOutputAdapterPlanCheck: `data/kosmo-local-worker-innovation-output-adapter-plan-check-${dateStamp}.json`,
+  localWorkerInnovationOutputValidator: `data/kosmo-local-worker-innovation-output-validator-${dateStamp}.json`,
+  localWorkerInnovationOutputValidatorCheck: `data/kosmo-local-worker-innovation-output-validator-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -189,6 +191,8 @@ function buildBridge(reports) {
   const localWorkerInnovationOutputSmokeCheckSummary = reports.localWorkerInnovationOutputSmokeCheck?.summary || {};
   const localWorkerInnovationOutputAdapterPlanSummary = reports.localWorkerInnovationOutputAdapterPlan?.summary || {};
   const localWorkerInnovationOutputAdapterPlanCheckSummary = reports.localWorkerInnovationOutputAdapterPlanCheck?.summary || {};
+  const localWorkerInnovationOutputValidatorSummary = reports.localWorkerInnovationOutputValidator?.summary || {};
+  const localWorkerInnovationOutputValidatorCheckSummary = reports.localWorkerInnovationOutputValidatorCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -723,6 +727,21 @@ function buildBridge(reports) {
       source_ref: refs.localWorkerInnovationOutputAdapterPlanCheck
     },
     {
+      id: 'local-worker-innovation-output-validator',
+      title: 'Local Worker Innovation Output Validator',
+      status: [
+        'local_worker_innovation_output_validator_waiting_for_outputs',
+        'local_worker_innovation_output_validator_passed'
+      ].includes(reports.localWorkerInnovationOutputValidator?.status) &&
+        reports.localWorkerInnovationOutputValidatorCheck?.status === 'local_worker_innovation_output_validator_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationOutputValidatorSummary.present_outputs ?? 0}/${localWorkerInnovationOutputValidatorSummary.expected_outputs ?? 0} present, missing ${localWorkerInnovationOutputValidatorSummary.missing_outputs ?? 0}, parsed ${localWorkerInnovationOutputValidatorSummary.parsed_outputs ?? 0}, failures ${localWorkerInnovationOutputValidatorCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Metadata-only validator for future local-worker outputs; waiting is acceptable until outputs exist',
+      source_ref: refs.localWorkerInnovationOutputValidatorCheck
+    },
+    {
       id: 'github-innovation-watchlist',
       title: 'GitHub Innovation Watchlist',
       status: reports.githubWatchlist?.status === 'innovation_github_watchlist_ready' &&
@@ -1072,6 +1091,14 @@ function buildBridge(reports) {
       local_worker_innovation_output_adapter_plan_repo_conversion_allowed_now: localWorkerInnovationOutputAdapterPlanSummary.repo_conversion_allowed_now ?? null,
       local_worker_innovation_output_adapter_plan_check_status: reports.localWorkerInnovationOutputAdapterPlanCheck?.status || null,
       local_worker_innovation_output_adapter_plan_check_failures: localWorkerInnovationOutputAdapterPlanCheckSummary.failures ?? null,
+      local_worker_innovation_output_validator_status: reports.localWorkerInnovationOutputValidator?.status || null,
+      local_worker_innovation_output_validator_expected_outputs: localWorkerInnovationOutputValidatorSummary.expected_outputs ?? null,
+      local_worker_innovation_output_validator_present_outputs: localWorkerInnovationOutputValidatorSummary.present_outputs ?? null,
+      local_worker_innovation_output_validator_missing_outputs: localWorkerInnovationOutputValidatorSummary.missing_outputs ?? null,
+      local_worker_innovation_output_validator_parsed_outputs: localWorkerInnovationOutputValidatorSummary.parsed_outputs ?? null,
+      local_worker_innovation_output_validator_public_ready_after_validation: localWorkerInnovationOutputValidatorSummary.public_ready_after_validation ?? null,
+      local_worker_innovation_output_validator_check_status: reports.localWorkerInnovationOutputValidatorCheck?.status || null,
+      local_worker_innovation_output_validator_check_failures: localWorkerInnovationOutputValidatorCheckSummary.failures ?? null,
       github_watchlist_status: reports.githubWatchlist?.status || null,
       github_watchlist_candidates: githubWatchlistSummary.candidates ?? null,
       github_watchlist_live_probe_succeeded: githubWatchlistSummary.live_probe_succeeded ?? null,

@@ -1,0 +1,118 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T17:01:13.195Z",
+  "status": "local_worker_innovation_output_validator_guard_passed",
+  "policy": {
+    "review_only": true,
+    "metadata_only": true,
+    "allows_waiting_for_outputs": true,
+    "stores_worker_body_in_git": false,
+    "executes_local_workers": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-output-validator-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 18,
+    "passed": 18,
+    "failures": 0,
+    "validator_status": "local_worker_innovation_output_validator_waiting_for_outputs",
+    "expected_outputs": 5,
+    "present_outputs": 0,
+    "missing_outputs": 5,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_valid_or_waiting",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_validator_waiting_for_outputs"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_metadata_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_sources",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_body_git",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_recommendations_git",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_repo_derivatives",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "expected_five_outputs",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "body_copy_not_allowed",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "repo_conversion_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "training_promotion_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "files_under_worker_packets",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "no_failures_in_waiting_state",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "missing_outputs_not_failure",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_validator_waiting_for_outputs"
+    },
+    {
+      "id": "hard_stops_present",
+      "status": "passed",
+      "evidence": 6
+    }
+  ]
+}

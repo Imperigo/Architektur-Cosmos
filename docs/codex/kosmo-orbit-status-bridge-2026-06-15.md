@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T16:55:04.277Z
+Generated: 2026-06-15T17:01:13.447Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 57
+- Cards: 58
 - Blocking cards: 4
 - Owner action cards: 25
 - Source root blocked: yes
@@ -96,6 +96,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `fixture-chain-local-worker-task-pack` Fixture Chain Local Worker Task Pack | review_only_ready | no | 8 tasks, GitHub 5, payloads 10, training 3, executable now 0, missing refs 0 |
 | `local-worker-innovation-output-smoke` Local Worker Innovation Output Smoke | review_only_ready | no | 5 expected outputs, training 3, ontology 5, executable 0, failures 0 |
 | `local-worker-innovation-output-adapter-plan` Local Worker Innovation Output Adapter Plan | review_only_ready | no | 5 adapters, metadata 11, body copy no, failures 0 |
+| `local-worker-innovation-output-validator` Local Worker Innovation Output Validator | review_only_ready | no | 0/5 present, missing 5, parsed 0, failures 0 |
 | `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
 | `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
 | `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:55:02.856Z",
+  "generated_at": "2026-06-15T17:01:12.017Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 288
+      "files": 289
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 138
+      "files": 139
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-15-codex-synergiebericht-290-local-worker-output-validator.md",
+      "title": "Codex Synergiebericht 290 - Local Worker Output Validator",
+      "mirrored_inboxes": 2,
+      "bytes": 3262,
+      "modified_at": "2026-06-15T17:01:01.017Z"
+    },
     {
       "filename": "2026-06-15-codex-synergiebericht-289-local-worker-output-adapter-plan.md",
       "title": "Codex Synergiebericht 289 - Local Worker Output Adapter Plan",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2636,
       "modified_at": "2026-06-15T16:20:30.794Z"
-    },
-    {
-      "filename": "2026-06-15-codex-synergiebericht-282-session-apply-guard.md",
-      "title": "Codex Synergiebericht 282: Session Apply Guard",
-      "mirrored_inboxes": 2,
-      "bytes": 1845,
-      "modified_at": "2026-06-15T16:13:47.800Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 282-289 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 283-290 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
