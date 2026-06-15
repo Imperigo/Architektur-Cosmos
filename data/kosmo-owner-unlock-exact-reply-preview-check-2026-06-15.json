@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T15:27:40.292Z",
+  "status": "owner_unlock_answer_dry_run_guard_passed",
+  "policy": {
+    "validates_dry_run_only": true,
+    "records_decisions": false,
+    "writes_intake_file": false,
+    "mutates_session_files": false,
+    "runs_source_root_guards": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-exact-reply-preview-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 23,
+    "passed": 23,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_known",
+      "status": "passed",
+      "evidence": "owner_unlock_answer_dry_run_ready_for_review"
+    },
+    {
+      "id": "policy_dry_run_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_isolated_reports_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_source_root_guards",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "four_steps",
+      "status": "passed",
+      "evidence": "validator,validator-check,intake-map,intake-map-check"
+    },
+    {
+      "id": "validator_step_present",
+      "status": "passed",
+      "evidence": "validator,validator-check,intake-map,intake-map-check"
+    },
+    {
+      "id": "validator_check_step_present",
+      "status": "passed",
+      "evidence": "validator,validator-check,intake-map,intake-map-check"
+    },
+    {
+      "id": "intake_map_step_present",
+      "status": "passed",
+      "evidence": "validator,validator-check,intake-map,intake-map-check"
+    },
+    {
+      "id": "intake_map_check_step_present",
+      "status": "passed",
+      "evidence": "validator,validator-check,intake-map,intake-map-check"
+    },
+    {
+      "id": "ready_requires_valid_validator",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_valid"
+    },
+    {
+      "id": "ready_requires_map_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_intake_map_ready_for_review"
+    },
+    {
+      "id": "pending_has_no_patch",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "hard_stop_no_approval",
+      "status": "passed",
+      "evidence": "do not treat this dry-run as applied owner approval. do not run source-root guards from this dry-run. do not write the intake template from this dry-run. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_source_root_guards",
+      "status": "passed",
+      "evidence": "do not treat this dry-run as applied owner approval. do not run source-root guards from this dry-run. do not write the intake template from this dry-run. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_intake_write",
+      "status": "passed",
+      "evidence": "do not treat this dry-run as applied owner approval. do not run source-root guards from this dry-run. do not write the intake template from this dry-run. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not treat this dry-run as applied owner approval. do not run source-root guards from this dry-run. do not write the intake template from this dry-run. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_public_ready_zero",
+      "status": "passed",
+      "evidence": "do not treat this dry-run as applied owner approval. do not run source-root guards from this dry-run. do not write the intake template from this dry-run. do not read private content. keep public-ready at 0."
+    }
+  ]
+}

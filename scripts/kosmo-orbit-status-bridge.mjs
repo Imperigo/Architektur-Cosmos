@@ -24,6 +24,8 @@ const refs = {
   sourceRootOwnerChoiceConsequenceMatrix: `data/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.json`,
   ownerUnlockFastReplyCard: `data/kosmo-owner-unlock-fast-reply-card-${dateStamp}.json`,
   ownerUnlockFastReplyCardCheck: `data/kosmo-owner-unlock-fast-reply-card-check-${dateStamp}.json`,
+  ownerUnlockExactReplyPreview: `data/kosmo-owner-unlock-exact-reply-preview-${dateStamp}.json`,
+  ownerUnlockExactReplyPreviewCheck: `data/kosmo-owner-unlock-exact-reply-preview-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -117,6 +119,8 @@ function buildBridge(reports) {
   const ownerChoiceConsequenceMatrixSummary = reports.sourceRootOwnerChoiceConsequenceMatrix?.summary || {};
   const ownerUnlockFastReplyCardSummary = reports.ownerUnlockFastReplyCard?.summary || {};
   const ownerUnlockFastReplyCardCheckSummary = reports.ownerUnlockFastReplyCardCheck?.summary || {};
+  const ownerUnlockExactReplyPreviewSummary = reports.ownerUnlockExactReplyPreview?.summary || {};
+  const ownerUnlockExactReplyPreviewCheckSummary = reports.ownerUnlockExactReplyPreviewCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -337,6 +341,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Turn freeform owner intent into exact validator-ready reply text without applying it',
       source_ref: refs.ownerUnlockFastReplyCard
+    },
+    {
+      id: 'owner-unlock-exact-reply-preview',
+      title: 'Owner Unlock Exact Reply Preview',
+      status: reports.ownerUnlockExactReplyPreview?.status === 'owner_unlock_answer_dry_run_ready_for_review' &&
+        reports.ownerUnlockExactReplyPreviewCheck?.status === 'owner_unlock_answer_dry_run_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.ownerUnlockExactReplyPreview?.status
+        ? `validator ${ownerUnlockExactReplyPreviewSummary.validator_status || 'missing'}, intake ${ownerUnlockExactReplyPreviewSummary.intake_map_status || 'missing'}, patches ${ownerUnlockExactReplyPreviewSummary.patch_operations ?? 0}, failures ${ownerUnlockExactReplyPreviewCheckSummary.failures ?? 0}`
+        : 'missing exact reply preview',
+      owner_action_required: true,
+      route_hint: 'Proof that the exact reply block reaches dry-run review without applying a decision',
+      source_ref: refs.ownerUnlockExactReplyPreview
     },
     {
       id: 'source-root-activation',
@@ -855,6 +873,9 @@ function buildBridge(reports) {
       owner_unlock_fast_reply_card_status: reports.ownerUnlockFastReplyCard?.status || null,
       owner_unlock_fast_reply_card_broad_intent: ownerUnlockFastReplyCardSummary.broad_unlock_intent ?? null,
       owner_unlock_fast_reply_card_applies_now: ownerUnlockFastReplyCardSummary.applies_decision_now ?? null,
+      owner_unlock_exact_reply_preview_status: reports.ownerUnlockExactReplyPreview?.status || null,
+      owner_unlock_exact_reply_preview_validator_status: ownerUnlockExactReplyPreviewSummary.validator_status ?? null,
+      owner_unlock_exact_reply_preview_patch_operations: ownerUnlockExactReplyPreviewSummary.patch_operations ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -880,6 +901,7 @@ function buildBridge(reports) {
       'source_root_owner_final_decision_brief_card',
       'source_root_owner_choice_consequence_matrix_card',
       'owner_unlock_fast_reply_card',
+      'owner_unlock_exact_reply_preview_card',
       'source_root_activation_card',
       'private_metadata_inventory_card',
       'pilot_reference_cards',
@@ -972,6 +994,7 @@ function renderMarkdown(bridge) {
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);
   lines.push(`- Architecture ontology seed: ${bridge.summary.architecture_ontology_seed_status}, entities ${bridge.summary.architecture_ontology_entity_types ?? '-'}, relations ${bridge.summary.architecture_ontology_relation_types ?? '-'}`);
   lines.push(`- Owner unlock fast reply card: ${bridge.summary.owner_unlock_fast_reply_card_status}, broad intent ${bridge.summary.owner_unlock_fast_reply_card_broad_intent ?? '-'}, applies now ${bridge.summary.owner_unlock_fast_reply_card_applies_now ?? '-'}`);
+  lines.push(`- Owner unlock exact reply preview: ${bridge.summary.owner_unlock_exact_reply_preview_status}, validator ${bridge.summary.owner_unlock_exact_reply_preview_validator_status ?? '-'}, patches ${bridge.summary.owner_unlock_exact_reply_preview_patch_operations ?? '-'}`);
   lines.push(`- Innovation smoke: ${bridge.summary.innovation_smoke_status}`);
   lines.push(`- Public-ready after bridge: ${bridge.summary.public_ready_after_bridge}`);
   lines.push('');

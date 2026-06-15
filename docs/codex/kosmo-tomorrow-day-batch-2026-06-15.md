@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T15:22:59.469Z
+Generated: 2026-06-15T15:27:50.917Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -53,6 +53,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:owner-remaining-decision-brief-check`
 - `npm run kosmo:owner-unlock-fast-reply-card`
 - `npm run kosmo:owner-unlock-fast-reply-card-check`
+- `npm run kosmo:owner-unlock-exact-reply-preview`
+- `npm run kosmo:owner-unlock-exact-reply-preview-check`
 
 ## Path A If Exact Owner Unlock Reply Is Present
 
