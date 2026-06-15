@@ -1,12 +1,14 @@
 # Kosmo Owner Unlock Session Apply Guard
 
-Generated: 2026-06-15T16:14:01.292Z
+Generated: 2026-06-15T16:20:38.438Z
 Status: `owner_unlock_session_apply_guard_waiting_for_manual_apply`
 
 ## Summary
 
 - Mode: waiting_for_manual_apply
 - Target file: `examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json`
+- Session path: `examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json`
+- Fixture session: no
 - Session status: source_root_decision_session_pending
 - Preview status: owner_unlock_session_edit_preview_ready
 - Expected decision: select_existing_root_for_private_diagnostic

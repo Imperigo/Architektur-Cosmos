@@ -10,6 +10,7 @@ const dateStamp = new Date().toISOString().slice(0, 10);
 
 const previewPath = resolve(root, args.preview || `data/kosmo-owner-unlock-session-edit-preview-${dateStamp}.json`);
 const sessionPath = resolve(root, args.session || `examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json`);
+const allowFixtureSession = args.allowFixtureSession === true || args.allowFixtureSession === 'true';
 const outputJson = resolve(root, args.out || `data/kosmo-owner-unlock-session-apply-guard-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-owner-unlock-session-apply-guard-${dateStamp}.md`);
 
@@ -52,7 +53,10 @@ async function buildReport({ preview, session }) {
 
   if (preview.status !== 'owner_unlock_session_edit_preview_ready') failures.push(`Preview is not ready: ${preview.status}`);
   if (targetFile !== expectedTarget) failures.push(`Preview target file is not current session: ${targetFile}`);
-  if (relative(root, sessionPath) !== expectedTarget) failures.push(`Session path is not current expected target: ${relative(root, sessionPath)}`);
+  const sessionRelativePath = relative(root, sessionPath);
+  if (sessionRelativePath !== expectedTarget && !allowFixtureSession) {
+    failures.push(`Session path is not current expected target: ${sessionRelativePath}`);
+  }
   if (preview.summary?.writes_now !== false) failures.push('Preview writes now.');
   if (preview.summary?.public_ready_after_preview !== 0) failures.push('Preview changes public-ready.');
   if (session.policy?.auto_inventory !== false) failures.push('Session auto_inventory must stay false.');
@@ -108,6 +112,8 @@ async function buildReport({ preview, session }) {
     summary: {
       mode,
       target_file: expectedTarget,
+      session_path: sessionRelativePath,
+      fixture_session: allowFixtureSession,
       session_status: session.status,
       preview_status: preview.status,
       expected_selected_decision: proposed.selected_decision || null,
@@ -176,6 +182,8 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push(`- Mode: ${report.summary.mode}`);
   lines.push(`- Target file: \`${report.summary.target_file}\``);
+  lines.push(`- Session path: \`${report.summary.session_path}\``);
+  lines.push(`- Fixture session: ${report.summary.fixture_session ? 'yes' : 'no'}`);
   lines.push(`- Session status: ${report.summary.session_status}`);
   lines.push(`- Preview status: ${report.summary.preview_status}`);
   lines.push(`- Expected decision: ${report.summary.expected_selected_decision || '-'}`);

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:14:02.242Z",
+  "generated_at": "2026-06-15T16:20:39.498Z",
   "status": "owner_unlock_pipeline_checkpoint_ready",
   "policy": {
     "checkpoint_only": true,
@@ -37,16 +37,18 @@
     "data/kosmo-owner-unlock-session-edit-preview-check-2026-06-15.json",
     "data/kosmo-owner-unlock-session-apply-guard-2026-06-15.json",
     "data/kosmo-owner-unlock-session-apply-guard-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-06-15.json",
     "data/kosmo-overseer-sync-board-2026-06-15.json"
   ],
   "summary": {
-    "components": 25,
-    "components_ready": 25,
-    "guard_checks": 268,
-    "guard_checks_passed": 268,
+    "components": 27,
+    "components_ready": 27,
+    "guard_checks": 283,
+    "guard_checks_passed": 283,
     "expected_freeform_guard_failures": 2,
-    "latest_handoff_min": 275,
-    "latest_handoff_max": 282,
+    "latest_handoff_min": 276,
+    "latest_handoff_max": 283,
     "latest_handoff_count": 8,
     "owner_reply_state": "broad_intent_seen_exact_reply_not_applied",
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
@@ -57,6 +59,10 @@
     "session_apply_guard_status": "owner_unlock_session_apply_guard_waiting_for_manual_apply",
     "session_apply_guard_mode": "waiting_for_manual_apply",
     "session_apply_guard_private_diagnostic_allowed": false,
+    "session_apply_guard_smoke_status": "owner_unlock_session_apply_guard_smoke_passed",
+    "session_apply_guard_smoke_mode": "applied_matches_preview",
+    "session_apply_guard_smoke_private_diagnostic_allowed": true,
+    "session_apply_guard_smoke_writes_real_session": false,
     "applies_decision_now": false,
     "public_ready_after_checkpoint": 0
   },
@@ -276,6 +282,24 @@
       "actual_status": "owner_unlock_session_apply_guard_check_passed",
       "expected_statuses": [
         "owner_unlock_session_apply_guard_check_passed"
+      ],
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-apply-guard-smoke",
+      "actual_status": "owner_unlock_session_apply_guard_smoke_passed",
+      "expected_statuses": [
+        "owner_unlock_session_apply_guard_smoke_passed"
+      ],
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-apply-guard-smoke-check",
+      "actual_status": "owner_unlock_session_apply_guard_smoke_check_passed",
+      "expected_statuses": [
+        "owner_unlock_session_apply_guard_smoke_check_passed"
       ],
       "ready": true,
       "public_ready_after_component": 0

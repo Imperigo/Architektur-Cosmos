@@ -32,6 +32,8 @@ const paths = {
   sessionEditPreviewCheck: resolve(root, args.sessionEditPreviewCheck || `data/kosmo-owner-unlock-session-edit-preview-check-${dateStamp}.json`),
   sessionApplyGuard: resolve(root, args.sessionApplyGuard || `data/kosmo-owner-unlock-session-apply-guard-${dateStamp}.json`),
   sessionApplyGuardCheck: resolve(root, args.sessionApplyGuardCheck || `data/kosmo-owner-unlock-session-apply-guard-check-${dateStamp}.json`),
+  sessionApplyGuardSmoke: resolve(root, args.sessionApplyGuardSmoke || `data/kosmo-owner-unlock-session-apply-guard-smoke-${dateStamp}.json`),
+  sessionApplyGuardSmokeCheck: resolve(root, args.sessionApplyGuardSmokeCheck || `data/kosmo-owner-unlock-session-apply-guard-smoke-check-${dateStamp}.json`),
   syncBoard: resolve(root, args.syncBoard || `data/kosmo-overseer-sync-board-${dateStamp}.json`)
 };
 
@@ -97,6 +99,8 @@ function buildCheckpoint(reports) {
     component('session-edit-preview-guard', reports.sessionEditPreviewCheck.status, ['owner_unlock_session_edit_preview_guard_passed'], reports.sessionEditPreviewCheck.summary?.public_ready_after_check),
     component('session-apply-guard', reports.sessionApplyGuard.status, ['owner_unlock_session_apply_guard_waiting_for_manual_apply', 'owner_unlock_session_apply_guard_passed_after_manual_apply'], reports.sessionApplyGuard.summary?.public_ready_after_guard),
     component('session-apply-guard-check', reports.sessionApplyGuardCheck.status, ['owner_unlock_session_apply_guard_check_passed'], reports.sessionApplyGuardCheck.summary?.public_ready_after_check),
+    component('session-apply-guard-smoke', reports.sessionApplyGuardSmoke.status, ['owner_unlock_session_apply_guard_smoke_passed'], reports.sessionApplyGuardSmoke.summary?.public_ready_after_smoke),
+    component('session-apply-guard-smoke-check', reports.sessionApplyGuardSmokeCheck.status, ['owner_unlock_session_apply_guard_smoke_check_passed'], reports.sessionApplyGuardSmokeCheck.summary?.public_ready_after_check),
     component('overseer-sync-board', reports.syncBoard.status, ['overseer_sync_board_ready'], reports.syncBoard.summary?.public_ready_after_board)
   ];
   const handoffNumbers = (reports.syncBoard.latest_handoffs || [])
@@ -114,7 +118,8 @@ function buildCheckpoint(reports) {
     reports.patchReviewBundleCheck.summary?.checks,
     reports.intakeApplyPlanCheck.summary?.checks,
     reports.sessionEditPreviewCheck.summary?.checks,
-    reports.sessionApplyGuardCheck.summary?.checks
+    reports.sessionApplyGuardCheck.summary?.checks,
+    reports.sessionApplyGuardSmokeCheck.summary?.checks
   ].reduce((sum, value) => sum + Number(value || 0), 0);
   const guardChecksPassed = [
     Number(reports.validatorCheck.summary?.passed || 0) + (freeformRejectedAsExpected ? Number(reports.validatorCheck.summary?.failures || 0) : 0),
@@ -128,7 +133,8 @@ function buildCheckpoint(reports) {
     reports.patchReviewBundleCheck.summary?.passed,
     reports.intakeApplyPlanCheck.summary?.passed,
     reports.sessionEditPreviewCheck.summary?.passed,
-    reports.sessionApplyGuardCheck.summary?.passed
+    reports.sessionApplyGuardCheck.summary?.passed,
+    reports.sessionApplyGuardSmokeCheck.summary?.passed
   ].reduce((sum, value) => sum + Number(value || 0), 0);
   const pathAReadyAfterExactReply = reports.pathAReadiness.summary?.path_a_can_start_after_exact_owner_reply === true &&
     reports.pathAReadiness.summary?.applies_decision_now === false &&
@@ -171,6 +177,10 @@ function buildCheckpoint(reports) {
       session_apply_guard_status: reports.sessionApplyGuard.status,
       session_apply_guard_mode: reports.sessionApplyGuard.summary?.mode || null,
       session_apply_guard_private_diagnostic_allowed: reports.sessionApplyGuard.summary?.private_diagnostic_allowed_after_apply === true,
+      session_apply_guard_smoke_status: reports.sessionApplyGuardSmoke.status,
+      session_apply_guard_smoke_mode: reports.sessionApplyGuardSmoke.summary?.fixture_mode || null,
+      session_apply_guard_smoke_private_diagnostic_allowed: reports.sessionApplyGuardSmoke.summary?.fixture_private_diagnostic_allowed_after_apply === true,
+      session_apply_guard_smoke_writes_real_session: reports.sessionApplyGuardSmoke.policy?.writes_real_session === true,
       applies_decision_now: false,
       public_ready_after_checkpoint: 0
     },
@@ -221,6 +231,9 @@ function renderMarkdown(report) {
   lines.push(`- Path A ready after exact owner reply: ${report.summary.path_a_ready_after_exact_owner_reply ? 'yes' : 'no'}`);
   lines.push(`- Selected root preview: ${report.summary.selected_root_path_preview || '-'}`);
   lines.push(`- Session edit preview writes now: ${report.summary.session_edit_preview_writes_now ? 'yes' : 'no'}`);
+  lines.push(`- Session apply guard mode: ${report.summary.session_apply_guard_mode || '-'}`);
+  lines.push(`- Fixture apply smoke mode: ${report.summary.session_apply_guard_smoke_mode || '-'}`);
+  lines.push(`- Fixture smoke writes real session: ${report.summary.session_apply_guard_smoke_writes_real_session ? 'yes' : 'no'}`);
   lines.push(`- Public-ready after checkpoint: ${report.summary.public_ready_after_checkpoint}`);
   lines.push('');
   lines.push('## Components');

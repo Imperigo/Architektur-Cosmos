@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:14:02.481Z",
+  "generated_at": "2026-06-15T16:20:39.733Z",
   "status": "owner_unlock_pipeline_checkpoint_guard_passed",
   "policy": {
     "validates_checkpoint_only": true,
@@ -15,8 +15,8 @@
     "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "checks": 28,
-    "passed": 28,
+    "checks": 32,
+    "passed": 32,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -68,24 +68,24 @@
       "evidence": 0
     },
     {
-      "id": "twenty_five_components",
+      "id": "twenty_seven_components",
       "status": "passed",
-      "evidence": 25
+      "evidence": 27
     },
     {
       "id": "all_components_ready",
       "status": "passed",
-      "evidence": "25/25"
+      "evidence": "27/27"
     },
     {
-      "id": "guard_checks_at_least_260",
+      "id": "guard_checks_at_least_280",
       "status": "passed",
-      "evidence": 268
+      "evidence": 283
     },
     {
       "id": "guard_checks_all_passed",
       "status": "passed",
-      "evidence": "268/268"
+      "evidence": "283/283"
     },
     {
       "id": "freeform_rejection_accounted",
@@ -95,7 +95,7 @@
     {
       "id": "latest_handoffs_include_277_or_newer",
       "status": "passed",
-      "evidence": 282
+      "evidence": 283
     },
     {
       "id": "owner_reply_not_applied",
@@ -129,6 +129,26 @@
     },
     {
       "id": "session_apply_waiting_blocks_private_diagnostic",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "session_apply_smoke_passed",
+      "status": "passed",
+      "evidence": "owner_unlock_session_apply_guard_smoke_passed"
+    },
+    {
+      "id": "session_apply_smoke_mode_applied",
+      "status": "passed",
+      "evidence": "applied_matches_preview"
+    },
+    {
+      "id": "session_apply_smoke_allows_private_diagnostic",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "session_apply_smoke_no_real_write",
       "status": "passed",
       "evidence": false
     },

@@ -137,7 +137,9 @@ function buildPlan(reports) {
       'npm run kosmo:owner-unlock-execution-runbook',
       'npm run kosmo:owner-unlock-execution-runbook-check',
       'npm run kosmo:owner-unlock-session-apply-guard',
-      'npm run kosmo:owner-unlock-session-apply-guard-check'
+      'npm run kosmo:owner-unlock-session-apply-guard-check',
+      'npm run kosmo:owner-unlock-session-apply-guard-smoke',
+      'npm run kosmo:owner-unlock-session-apply-guard-smoke-check'
     ],
     path_a_if_exact_owner_unlock_reply_present: [
       'npm run kosmo:owner-unlock-prompt-pack-check',

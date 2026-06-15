@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:14:02.721Z",
+  "generated_at": "2026-06-15T16:20:39.976Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -43,6 +43,8 @@
     "data/kosmo-owner-unlock-execution-runbook-check-2026-06-15.json",
     "data/kosmo-owner-unlock-session-apply-guard-2026-06-15.json",
     "data/kosmo-owner-unlock-session-apply-guard-check-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-15.json",
+    "data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-06-15.json",
     "data/kosmo-source-root-activation-preflight-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-runner-2026-06-15.json",
     "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-15.json",
@@ -99,7 +101,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-15.json"
   ],
   "summary": {
-    "cards": 52,
+    "cards": 53,
     "blocking_cards": 4,
     "owner_action_cards": 25,
     "source_root_blocked": true,
@@ -440,6 +442,15 @@
       "owner_action_required": true,
       "route_hint": "Proves the manual session edit matches the reviewed preview before activation",
       "source_ref": "data/kosmo-owner-unlock-session-apply-guard-2026-06-15.json"
+    },
+    {
+      "id": "owner-unlock-session-apply-guard-smoke",
+      "title": "Owner Unlock Session Apply Guard Smoke",
+      "status": "review_only_ready",
+      "signal": "applied_matches_preview, matches yes, private diagnostic yes, checks 18/18, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Fixture-only proof that the apply guard passes after the reviewed session edit",
+      "source_ref": "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-15.json"
     },
     {
       "id": "source-root-activation",

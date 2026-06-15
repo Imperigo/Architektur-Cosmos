@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:14:01.292Z",
+  "generated_at": "2026-06-15T16:20:38.438Z",
   "status": "owner_unlock_session_apply_guard_waiting_for_manual_apply",
   "policy": {
     "guard_only": true,
@@ -17,6 +17,8 @@
   "summary": {
     "mode": "waiting_for_manual_apply",
     "target_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json",
+    "session_path": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-15.json",
+    "fixture_session": false,
     "session_status": "source_root_decision_session_pending",
     "preview_status": "owner_unlock_session_edit_preview_ready",
     "expected_selected_decision": "select_existing_root_for_private_diagnostic",

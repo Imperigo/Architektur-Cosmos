@@ -40,6 +40,8 @@ const refs = {
   ownerUnlockExecutionRunbookCheck: `data/kosmo-owner-unlock-execution-runbook-check-${dateStamp}.json`,
   ownerUnlockSessionApplyGuard: `data/kosmo-owner-unlock-session-apply-guard-${dateStamp}.json`,
   ownerUnlockSessionApplyGuardCheck: `data/kosmo-owner-unlock-session-apply-guard-check-${dateStamp}.json`,
+  ownerUnlockSessionApplyGuardSmoke: `data/kosmo-owner-unlock-session-apply-guard-smoke-${dateStamp}.json`,
+  ownerUnlockSessionApplyGuardSmokeCheck: `data/kosmo-owner-unlock-session-apply-guard-smoke-check-${dateStamp}.json`,
   sourceRootActivation: `data/kosmo-source-root-activation-preflight-${dateStamp}.json`,
   privateMetadataInventory: `data/kosmo-private-metadata-inventory-runner-${dateStamp}.json`,
   privateMetadataInventoryFixture: `data/kosmo-private-metadata-inventory-fixture-smoke-${dateStamp}.json`,
@@ -149,6 +151,8 @@ function buildBridge(reports) {
   const ownerUnlockExecutionRunbookCheckSummary = reports.ownerUnlockExecutionRunbookCheck?.summary || {};
   const ownerUnlockSessionApplyGuardSummary = reports.ownerUnlockSessionApplyGuard?.summary || {};
   const ownerUnlockSessionApplyGuardCheckSummary = reports.ownerUnlockSessionApplyGuardCheck?.summary || {};
+  const ownerUnlockSessionApplyGuardSmokeSummary = reports.ownerUnlockSessionApplyGuardSmoke?.summary || {};
+  const ownerUnlockSessionApplyGuardSmokeCheckSummary = reports.ownerUnlockSessionApplyGuardSmokeCheck?.summary || {};
   const activationSummary = reports.sourceRootActivation?.summary || {};
   const privateInventorySummary = reports.privateMetadataInventory?.summary || {};
   const privateInventoryFixtureSummary = reports.privateMetadataInventoryFixture?.summary || {};
@@ -484,6 +488,20 @@ function buildBridge(reports) {
       owner_action_required: true,
       route_hint: 'Proves the manual session edit matches the reviewed preview before activation',
       source_ref: refs.ownerUnlockSessionApplyGuard
+    },
+    {
+      id: 'owner-unlock-session-apply-guard-smoke',
+      title: 'Owner Unlock Session Apply Guard Smoke',
+      status: reports.ownerUnlockSessionApplyGuardSmoke?.status === 'owner_unlock_session_apply_guard_smoke_passed' &&
+        reports.ownerUnlockSessionApplyGuardSmokeCheck?.status === 'owner_unlock_session_apply_guard_smoke_check_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: reports.ownerUnlockSessionApplyGuardSmoke?.status
+        ? `${ownerUnlockSessionApplyGuardSmokeSummary.fixture_mode || 'missing'}, matches ${ownerUnlockSessionApplyGuardSmokeSummary.fixture_matches_preview ? 'yes' : 'no'}, private diagnostic ${ownerUnlockSessionApplyGuardSmokeSummary.fixture_private_diagnostic_allowed_after_apply ? 'yes' : 'no'}, checks ${ownerUnlockSessionApplyGuardSmokeSummary.guard_checks_passed ?? 0}/${ownerUnlockSessionApplyGuardSmokeSummary.guard_checks ?? 0}, failures ${ownerUnlockSessionApplyGuardSmokeCheckSummary.failures ?? 0}`
+        : 'missing session apply guard smoke',
+      owner_action_required: false,
+      route_hint: 'Fixture-only proof that the apply guard passes after the reviewed session edit',
+      source_ref: refs.ownerUnlockSessionApplyGuardSmoke
     },
     {
       id: 'source-root-activation',
