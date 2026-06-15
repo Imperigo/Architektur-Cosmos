@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T16:50:48.618Z",
+  "status": "local_worker_innovation_output_smoke_guard_passed",
+  "policy": {
+    "review_only": true,
+    "reads_private_content": false,
+    "executes_local_workers": false,
+    "starts_models": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-output-smoke-2026-06-15.json"
+  ],
+  "summary": {
+    "checks": 20,
+    "passed": 20,
+    "failures": 0,
+    "expected_outputs": 5,
+    "training_lanes": 3,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_output_smoke_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_source_free",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_outputs_written",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_repo_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_promotion",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "five_expected_outputs",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "three_training_lanes",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "all_outputs_hold_execution",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_outputs_no_repo_conversion",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_outputs_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_outputs_under_worker_packets",
+      "status": "passed",
+      "evidence": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture.review.json, /mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_asset-lee-agi-3d-model-base-signal-fixture.review.json, /mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture.review.json, /mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture.review.json, /mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/worker_integration-mac999-bim-llm-code-agent-signal-fixture.review.json"
+    },
+    {
+      "id": "all_outputs_have_training_lane",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_outputs_have_ontology_bindings",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "all_outputs_require_policy_shape",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "hard_stops_present",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    }
+  ]
+}

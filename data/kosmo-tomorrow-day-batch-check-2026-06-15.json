@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T16:45:34.666Z",
+  "generated_at": "2026-06-15T16:50:49.342Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -108,6 +108,16 @@
       "id": "start_sequence_github_fixture_payload_smoke",
       "severity": "passed",
       "message": "Start sequence must include GitHub fixture payload smoke."
+    },
+    {
+      "id": "start_sequence_local_worker_task_pack",
+      "severity": "passed",
+      "message": "Start sequence must include local worker fixture-chain task pack."
+    },
+    {
+      "id": "start_sequence_local_worker_innovation_output_smoke",
+      "severity": "passed",
+      "message": "Start sequence must include local worker innovation output smoke."
     },
     {
       "id": "start_sequence_morning_routine_run",

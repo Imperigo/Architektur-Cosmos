@@ -77,6 +77,8 @@ function checkPlan(plan) {
   expect(startSequence.includes('innovation-github-promotion-matrix'), findings, 'start_sequence_github_promotion_matrix', 'Start sequence must include GitHub promotion matrix.');
   expect(startSequence.includes('innovation-github-fixture-payloads'), findings, 'start_sequence_github_fixture_payloads', 'Start sequence must include GitHub fixture payloads.');
   expect(startSequence.includes('innovation-github-fixture-payload-smoke'), findings, 'start_sequence_github_fixture_payload_smoke', 'Start sequence must include GitHub fixture payload smoke.');
+  expect(startSequence.includes('local-worker-fixture-chain-task-pack'), findings, 'start_sequence_local_worker_task_pack', 'Start sequence must include local worker fixture-chain task pack.');
+  expect(startSequence.includes('local-worker-innovation-output-smoke'), findings, 'start_sequence_local_worker_innovation_output_smoke', 'Start sequence must include local worker innovation output smoke.');
   expect(startSequence.includes('codex-morning-routine-run'), findings, 'start_sequence_morning_routine_run', 'Start sequence must include Codex morning routine run.');
   expect(startSequence.includes('codex-morning-routine-run-check'), findings, 'start_sequence_morning_routine_run_check', 'Start sequence must include Codex morning routine run check.');
   expect(startSequence.includes('owner-unlock-pipeline-checkpoint'), findings, 'start_sequence_owner_checkpoint', 'Start sequence must include owner unlock checkpoint.');

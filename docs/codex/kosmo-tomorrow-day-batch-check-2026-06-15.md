@@ -1,6 +1,6 @@
 # Kosmo Tomorrow Day Batch Check
 
-Generated: 2026-06-15T16:45:34.666Z
+Generated: 2026-06-15T16:50:49.342Z
 Status: `tomorrow_day_batch_guard_passed`
 
 ## Summary
@@ -31,6 +31,8 @@ Status: `tomorrow_day_batch_guard_passed`
 - passed: `start_sequence_github_promotion_matrix` - Start sequence must include GitHub promotion matrix.
 - passed: `start_sequence_github_fixture_payloads` - Start sequence must include GitHub fixture payloads.
 - passed: `start_sequence_github_fixture_payload_smoke` - Start sequence must include GitHub fixture payload smoke.
+- passed: `start_sequence_local_worker_task_pack` - Start sequence must include local worker fixture-chain task pack.
+- passed: `start_sequence_local_worker_innovation_output_smoke` - Start sequence must include local worker innovation output smoke.
 - passed: `start_sequence_morning_routine_run` - Start sequence must include Codex morning routine run.
 - passed: `start_sequence_morning_routine_run_check` - Start sequence must include Codex morning routine run check.
 - passed: `start_sequence_owner_checkpoint` - Start sequence must include owner unlock checkpoint.

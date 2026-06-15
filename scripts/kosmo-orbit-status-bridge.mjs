@@ -67,6 +67,8 @@ const refs = {
   assetPreparePhase1FixtureContractCheck: `data/kosmo-asset-prepare-phase1-fixture-contract-check-${dateStamp}.json`,
   localWorkerFixtureChainTaskPack: `data/kosmo-local-worker-fixture-chain-task-pack-${dateStamp}.json`,
   localWorkerFixtureChainTaskPackCheck: `data/kosmo-local-worker-fixture-chain-task-pack-check-${dateStamp}.json`,
+  localWorkerInnovationOutputSmoke: `data/kosmo-local-worker-innovation-output-smoke-${dateStamp}.json`,
+  localWorkerInnovationOutputSmokeCheck: `data/kosmo-local-worker-innovation-output-smoke-check-${dateStamp}.json`,
   githubWatchlist: `data/kosmo-innovation-github-watchlist-${dateStamp}.json`,
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
@@ -181,6 +183,8 @@ function buildBridge(reports) {
   const assetPreparePhase1FixtureSummary = reports.assetPreparePhase1FixtureContractCheck?.summary || {};
   const localWorkerFixtureChainTaskPackSummary = reports.localWorkerFixtureChainTaskPack?.summary || {};
   const localWorkerFixtureChainTaskPackCheckSummary = reports.localWorkerFixtureChainTaskPackCheck?.summary || {};
+  const localWorkerInnovationOutputSmokeSummary = reports.localWorkerInnovationOutputSmoke?.summary || {};
+  const localWorkerInnovationOutputSmokeCheckSummary = reports.localWorkerInnovationOutputSmokeCheck?.summary || {};
   const githubWatchlistSummary = reports.githubWatchlist?.summary || {};
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
@@ -691,6 +695,18 @@ function buildBridge(reports) {
       source_ref: refs.localWorkerFixtureChainTaskPackCheck
     },
     {
+      id: 'local-worker-innovation-output-smoke',
+      title: 'Local Worker Innovation Output Smoke',
+      status: reports.localWorkerInnovationOutputSmoke?.status === 'local_worker_innovation_output_smoke_ready' &&
+        reports.localWorkerInnovationOutputSmokeCheck?.status === 'local_worker_innovation_output_smoke_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${localWorkerInnovationOutputSmokeSummary.expected_outputs ?? 0} expected outputs, training ${localWorkerInnovationOutputSmokeSummary.training_lanes ?? 0}, ontology ${localWorkerInnovationOutputSmokeSummary.ontology_bound_outputs ?? 0}, executable ${localWorkerInnovationOutputSmokeSummary.executable_now ?? 0}, failures ${localWorkerInnovationOutputSmokeCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Expected output contract for later local-worker fixture runs; no worker execution',
+      source_ref: refs.localWorkerInnovationOutputSmokeCheck
+    },
+    {
       id: 'github-innovation-watchlist',
       title: 'GitHub Innovation Watchlist',
       status: reports.githubWatchlist?.status === 'innovation_github_watchlist_ready' &&
@@ -1026,6 +1042,13 @@ function buildBridge(reports) {
       local_worker_fixture_chain_task_pack_missing_refs: localWorkerFixtureChainTaskPackSummary.missing_refs ?? null,
       local_worker_fixture_chain_task_pack_check_status: reports.localWorkerFixtureChainTaskPackCheck?.status || null,
       local_worker_fixture_chain_task_pack_check_failures: localWorkerFixtureChainTaskPackCheckSummary.failures ?? null,
+      local_worker_innovation_output_smoke_status: reports.localWorkerInnovationOutputSmoke?.status || null,
+      local_worker_innovation_output_smoke_expected_outputs: localWorkerInnovationOutputSmokeSummary.expected_outputs ?? null,
+      local_worker_innovation_output_smoke_training_lanes: localWorkerInnovationOutputSmokeSummary.training_lanes ?? null,
+      local_worker_innovation_output_smoke_ontology_bound_outputs: localWorkerInnovationOutputSmokeSummary.ontology_bound_outputs ?? null,
+      local_worker_innovation_output_smoke_executable_now: localWorkerInnovationOutputSmokeSummary.executable_now ?? null,
+      local_worker_innovation_output_smoke_check_status: reports.localWorkerInnovationOutputSmokeCheck?.status || null,
+      local_worker_innovation_output_smoke_check_failures: localWorkerInnovationOutputSmokeCheckSummary.failures ?? null,
       github_watchlist_status: reports.githubWatchlist?.status || null,
       github_watchlist_candidates: githubWatchlistSummary.candidates ?? null,
       github_watchlist_live_probe_succeeded: githubWatchlistSummary.live_probe_succeeded ?? null,
