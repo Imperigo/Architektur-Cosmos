@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T18:19:46.295Z
+Generated: 2026-06-15T18:24:36.376Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 73
+- Cards: 74
 - Blocking cards: 4
 - Owner action cards: 25
 - Source root blocked: yes
@@ -43,6 +43,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - GitHub fixture payload smoke: innovation_github_fixture_payload_smoke_passed, payloads 10, lanes 3, content types 6
 - GitHub worker integration signal bridge: innovation_github_worker_integration_signal_bridge_ready, candidates 2, top signal 5
 - GitHub worker adapter boundary contract: innovation_github_worker_adapter_boundary_contract_ready, fixture worker_integration-mac999-bim-llm-code-agent-signal-fixture, commands 3
+- GitHub worker adapter boundary negative fixtures: innovation_github_worker_adapter_boundary_negative_fixtures_ready, fixtures 8, blocked 8
 - Training eval rubric: training_eval_rubric_pack_ready, suites 6, criteria 24
 - Training eval row template: training_eval_row_template_ready, templates 6
 - Training eval review queue: training_eval_review_queue_plan_ready, lanes 5
@@ -124,6 +125,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-fixture-payload-smoke` GitHub Fixture Payload Smoke | review_only_ready | no | 10 payloads, lanes 3/3, training 3, content 6/6, failures 0 |
 | `github-worker-integration-signal-bridge` GitHub Worker Integration Signal Bridge | review_only_ready | no | 2 candidates, top 5, high 2, executable 0, failures 0 |
 | `github-worker-adapter-boundary-contract` GitHub Worker Adapter Boundary Contract | review_only_ready | no | worker_integration-mac999-bim-llm-code-agent-signal-fixture, commands 3, runtime 0, public 0, failures 0 |
+| `github-worker-adapter-boundary-negative-fixtures` GitHub Worker Adapter Boundary Negative Fixtures | review_only_ready | no | 8 negative fixtures, blocked 8, categories 6, runtime 0, failures 0 |
 | `training-eval-rubric` Training Eval Rubric | review_only_ready | no | 6 suites, 24 criteria, eval items 24, failures 0 |
 | `training-eval-row-template` Training Eval Row Template | review_only_ready | no | 6 templates, 10 required fields, writes rows now 0, failures 0 |
 | `training-eval-review-queue` Training Eval Review Queue | review_only_ready | no | 5 lanes, 6 states, queue items now 0, failures 0 |
@@ -178,6 +180,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `github_fixture_payload_smoke_card`
 - `github_worker_integration_signal_bridge_card`
 - `github_worker_adapter_boundary_contract_card`
+- `github_worker_adapter_boundary_negative_fixtures_card`
 - `training_eval_rubric_card`
 - `training_eval_row_template_card`
 - `training_eval_review_queue_card`

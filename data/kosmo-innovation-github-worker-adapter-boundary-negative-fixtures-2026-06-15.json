@@ -1,0 +1,222 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T18:24:34.915Z",
+  "status": "innovation_github_worker_adapter_boundary_negative_fixtures_ready",
+  "policy": {
+    "negative_fixtures_only": true,
+    "synthetic_payloads_only": true,
+    "reads_private_content_now": false,
+    "copies_github_code_now": false,
+    "copies_readme_text_now": false,
+    "clones_repositories_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "writes_runtime_adapter_now": false,
+    "executes_local_workers_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_fixtures": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-adapter-boundary-contract-2026-06-15.json",
+    "data/kosmo-innovation-github-worker-adapter-boundary-contract-check-2026-06-15.json"
+  ],
+  "summary": {
+    "selected_fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+    "negative_fixtures": 8,
+    "expected_blocked": 8,
+    "categories": 6,
+    "contract_blocked_actions": 18,
+    "runtime_executed_now": 0,
+    "adapter_files_written_now": 0,
+    "local_workers_executed_now": 0,
+    "training_rows_promoted_now": 0,
+    "public_ready_after_fixtures": 0,
+    "failures": 0
+  },
+  "required_categories": [
+    "private_path",
+    "runtime_command",
+    "readme_or_code_copy",
+    "public_ready_false_positive",
+    "training_promotion",
+    "review_gate_missing"
+  ],
+  "negative_fixtures": [
+    {
+      "id": "private_path_placeholder_input",
+      "category": "private_path",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_github_code_now": false,
+      "copied_readme_text_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_payload": {
+        "input_path": "<PRIVATE_SOURCE_ROOT>/architecture-books/protected-reference.pdf",
+        "requested_command_shape": "parse_synthetic_fixture_manifest",
+        "private_content_allowed": true
+      },
+      "expected_block_reasons": [
+        "private_path_detected",
+        "private_content_flag_true"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "runtime_clone_command",
+      "category": "runtime_command",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_github_code_now": false,
+      "copied_readme_text_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_payload": {
+        "requested_command": "git clone https://example.invalid/repo.git",
+        "requested_command_shape": "summarize_generated_ifc_rag_trace",
+        "network_allowed": true
+      },
+      "expected_block_reasons": [
+        "clone_repository",
+        "network_access",
+        "unexpected_executable_command"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "dependency_install_command",
+      "category": "runtime_command",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_github_code_now": false,
+      "copied_readme_text_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_payload": {
+        "requested_command": "pip install unreviewed-bim-package",
+        "requested_command_shape": "summarize_generated_ifc_rag_trace"
+      },
+      "expected_block_reasons": [
+        "install_dependencies",
+        "unexpected_executable_command"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "copied_readme_text_claim",
+      "category": "readme_or_code_copy",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_github_code_now": false,
+      "copied_readme_text_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_payload": {
+        "copied_readme_text_now": true,
+        "source_repo_is_reference_only": false,
+        "requested_command_shape": "validate_worker_output_metadata"
+      },
+      "expected_block_reasons": [
+        "copy_readme_text",
+        "source_repo_reference_only_violation"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "copied_github_code_claim",
+      "category": "readme_or_code_copy",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_github_code_now": false,
+      "copied_readme_text_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_payload": {
+        "copied_github_code_now": true,
+        "file_origin": "github_source_file",
+        "requested_command_shape": "validate_worker_output_metadata"
+      },
+      "expected_block_reasons": [
+        "copy_github_code",
+        "github_source_file_detected"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "public_ready_false_positive",
+      "category": "public_ready_false_positive",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_github_code_now": false,
+      "copied_readme_text_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_payload": {
+        "public_ready": true,
+        "rights_state": "unknown",
+        "requested_command_shape": "validate_worker_output_metadata"
+      },
+      "expected_block_reasons": [
+        "promote_public_ready",
+        "rights_state_unknown"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "training_promotion_request",
+      "category": "training_promotion",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_github_code_now": false,
+      "copied_readme_text_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_payload": {
+        "promote_training_row": true,
+        "training_lane": "worker_output_review",
+        "human_overseer_review_gate": false
+      },
+      "expected_block_reasons": [
+        "promote_training_row",
+        "missing_human_overseer_review_gate"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "missing_launch_apply_guard",
+      "category": "review_gate_missing",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_github_code_now": false,
+      "copied_readme_text_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_payload": {
+        "runtime_adapter_requested": true,
+        "separate_launch_apply_guard": false,
+        "requested_command_shape": "summarize_generated_ifc_rag_trace"
+      },
+      "expected_block_reasons": [
+        "write_runtime_adapter",
+        "execute_local_worker",
+        "missing_separate_launch_apply_guard"
+      ],
+      "public_ready_after_fixture": 0
+    }
+  ],
+  "next_actions": [
+    "Use these cases to harden future runtime adapter review before any implementation.",
+    "Keep all negative fixture payloads synthetic and metadata-only.",
+    "Do not convert this fixture pack into runtime execution without a separate apply guard."
+  ],
+  "hard_stops": [
+    "These negative fixtures never read private Source Root, OneDrive or archive-library content.",
+    "These negative fixtures never clone repositories, install dependencies or download models.",
+    "These negative fixtures never run discovered code or local workers.",
+    "These negative fixtures never copy GitHub code or README text into Git.",
+    "These negative fixtures never write runtime adapter files.",
+    "These negative fixtures never promote training rows or public-ready state."
+  ],
+  "failures": []
+}

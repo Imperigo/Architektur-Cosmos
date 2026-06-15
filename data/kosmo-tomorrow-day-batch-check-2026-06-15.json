@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:19:46.044Z",
+  "generated_at": "2026-06-15T18:24:36.123Z",
   "status": "tomorrow_day_batch_guard_passed",
   "policy": {
     "validates_source_free_default": true,
@@ -118,6 +118,11 @@
       "id": "start_sequence_github_worker_adapter_boundary_contract",
       "severity": "passed",
       "message": "Start sequence must include GitHub worker adapter boundary contract."
+    },
+    {
+      "id": "start_sequence_github_worker_adapter_boundary_negative_fixtures",
+      "severity": "passed",
+      "message": "Start sequence must include GitHub worker adapter boundary negative fixtures."
     },
     {
       "id": "start_sequence_local_worker_task_pack",
