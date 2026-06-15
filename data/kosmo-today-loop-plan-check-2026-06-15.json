@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:30:00.183Z",
+  "generated_at": "2026-06-15T14:57:53.690Z",
   "status": "today_loop_plan_guard_passed",
   "policy": {
     "reads_private_content": false,
@@ -146,6 +146,21 @@
       "id": "work_block:orbit_and_handoff",
       "severity": "passed",
       "message": "Plan must include work block orbit_and_handoff."
+    },
+    {
+      "id": "innovation_scout_github_fixture_skeletons",
+      "severity": "passed",
+      "message": "Innovation scout must include GitHub fixture skeletons."
+    },
+    {
+      "id": "innovation_scout_github_fixture_payloads",
+      "severity": "passed",
+      "message": "Innovation scout must include GitHub fixture payloads."
+    },
+    {
+      "id": "innovation_scout_github_fixture_payload_smoke",
+      "severity": "passed",
+      "message": "Innovation scout must include GitHub fixture payload smoke."
     },
     {
       "id": "path_a_private_metadata_after_gate",

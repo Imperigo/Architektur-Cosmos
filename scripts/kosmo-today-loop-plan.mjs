@@ -126,8 +126,27 @@ function buildPlan(reports) {
         id: 'innovation_scout',
         lane: 'kosmo-prepare-kosmoreferences-kosmoasset',
         objective: 'Check current primary-source code and model candidates that can accelerate ArchitekturKosmos without installing or touching private data.',
-        first_commands: ['npm run kosmo:daily-innovation-scout', 'npm run kosmo:daily-innovation-scout-check', 'npm run kosmo:innovation-github-watchlist', 'npm run kosmo:innovation-github-watchlist-check', 'npm run kosmo:innovation-github-discovery', 'npm run kosmo:innovation-github-discovery-check', 'npm run kosmo:innovation-github-review-queue', 'npm run kosmo:innovation-github-review-queue-check', 'npm run kosmo:innovation-github-readme-signal-scan', 'npm run kosmo:innovation-github-readme-signal-scan-check', 'npm run kosmo:innovation-github-fixture-contract-plan', 'npm run kosmo:innovation-github-fixture-contract-plan-check'],
-        acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'no install/private-read/training action enabled']
+        first_commands: [
+          'npm run kosmo:daily-innovation-scout',
+          'npm run kosmo:daily-innovation-scout-check',
+          'npm run kosmo:innovation-github-watchlist',
+          'npm run kosmo:innovation-github-watchlist-check',
+          'npm run kosmo:innovation-github-discovery',
+          'npm run kosmo:innovation-github-discovery-check',
+          'npm run kosmo:innovation-github-review-queue',
+          'npm run kosmo:innovation-github-review-queue-check',
+          'npm run kosmo:innovation-github-readme-signal-scan',
+          'npm run kosmo:innovation-github-readme-signal-scan-check',
+          'npm run kosmo:innovation-github-fixture-contract-plan',
+          'npm run kosmo:innovation-github-fixture-contract-plan-check',
+          'npm run kosmo:innovation-github-fixture-skeletons',
+          'npm run kosmo:innovation-github-fixture-skeletons-check',
+          'npm run kosmo:innovation-github-fixture-payloads',
+          'npm run kosmo:innovation-github-fixture-payloads-check',
+          'npm run kosmo:innovation-github-fixture-payload-smoke',
+          'npm run kosmo:innovation-github-fixture-payload-smoke-check'
+        ],
+        acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'GitHub fixture skeletons/payloads/smoke are review-only ready', 'no install/private-read/training action enabled']
       },
       {
         id: 'references_schema_hardening',

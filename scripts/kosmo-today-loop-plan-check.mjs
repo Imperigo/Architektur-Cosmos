@@ -92,6 +92,10 @@ function checkPlan(plan) {
   for (const required of ['innovation_scout', 'references_schema_hardening', 'asset_schema_hardening', 'training_eval_readiness', 'orbit_and_handoff']) {
     expect((plan.work_blocks || []).some((block) => block.id === required), findings, `work_block:${required}`, `Plan must include work block ${required}.`);
   }
+  const innovationCommands = ((plan.work_blocks || []).find((block) => block.id === 'innovation_scout')?.first_commands || []).join(' ');
+  expect(innovationCommands.includes('innovation-github-fixture-skeletons'), findings, 'innovation_scout_github_fixture_skeletons', 'Innovation scout must include GitHub fixture skeletons.');
+  expect(innovationCommands.includes('innovation-github-fixture-payloads'), findings, 'innovation_scout_github_fixture_payloads', 'Innovation scout must include GitHub fixture payloads.');
+  expect(innovationCommands.includes('innovation-github-fixture-payload-smoke'), findings, 'innovation_scout_github_fixture_payload_smoke', 'Innovation scout must include GitHub fixture payload smoke.');
   expect((plan.path_a_if_owner_confirms_source_root || []).some((command) => command.includes('private-metadata-inventory')), findings, 'path_a_private_metadata_after_gate', 'Path A must include gated private metadata inventory.');
   expect((plan.path_b_while_blocked || []).some((item) => item.includes('Do not scan private')), findings, 'path_b_private_scan_blocked', 'Path B must explicitly block private scans.');
   return findings;
