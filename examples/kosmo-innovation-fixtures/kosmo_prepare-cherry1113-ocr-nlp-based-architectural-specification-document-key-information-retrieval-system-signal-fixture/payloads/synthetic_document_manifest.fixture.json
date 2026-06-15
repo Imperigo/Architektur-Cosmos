@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T14:41:16.796Z",
+  "status": "generated_github_signal_fixture_payload",
+  "contract_id": "github-fixture-plan-04",
+  "fixture_id": "synthetic_document_manifest",
+  "fixture_root_id": "kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture",
+  "lane": "kosmo_prepare",
+  "source_repo": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+  "source_url": "https://github.com/cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+  "source_repo_is_reference_only": true,
+  "policy": {
+    "private_content": false,
+    "generated_or_public_safe": true,
+    "copied_github_code": false,
+    "copied_readme_text": false,
+    "tool_output": false,
+    "public_ready": false,
+    "public_ready_after_payload": 0
+  },
+  "description": "Generated architecture document manifest with sections, drawing labels and table placeholders.",
+  "content": {
+    "type": "synthetic_architecture_document_manifest",
+    "project_stub": "generated-reference-pilot",
+    "pages": [
+      {
+        "page": 1,
+        "labels": [
+          "PROJECT",
+          "SITE",
+          "SCALE"
+        ],
+        "has_table": true,
+        "has_image_placeholder": true
+      },
+      {
+        "page": 2,
+        "labels": [
+          "PLAN",
+          "SECTION",
+          "MATERIAL"
+        ],
+        "has_table": false,
+        "has_image_placeholder": true
+      }
+    ],
+    "extraction_targets": [
+      "title",
+      "architect",
+      "year",
+      "plan_labels",
+      "material_terms",
+      "uncertain_tokens"
+    ]
+  },
+  "expected_review": {
+    "provenance_state": "generated_fixture",
+    "rights_state": "public_safe_synthetic",
+    "repository_review_required_before_adapter_work": true,
+    "human_review_required_before_training": true,
+    "allowed_for_private_gate_testing": false
+  }
+}

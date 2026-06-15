@@ -238,6 +238,8 @@
     "kosmo:innovation-github-fixture-contract-plan-check": "node scripts/kosmo-innovation-github-fixture-contract-plan-check.mjs",
     "kosmo:innovation-github-fixture-skeletons": "node scripts/kosmo-innovation-github-fixture-skeletons.mjs",
     "kosmo:innovation-github-fixture-skeletons-check": "node scripts/kosmo-innovation-github-fixture-skeletons-check.mjs",
+    "kosmo:innovation-github-fixture-payloads": "node scripts/kosmo-innovation-github-fixture-payloads.mjs",
+    "kosmo:innovation-github-fixture-payloads-check": "node scripts/kosmo-innovation-github-fixture-payloads-check.mjs",
     "kosmo:codex-loop-checkpoint": "node scripts/kosmo-codex-loop-checkpoint.mjs",
     "kosmo:codex-loop-checkpoint-check": "node scripts/kosmo-codex-loop-checkpoint-check.mjs",
     "kosmo:security-baseline-policy": "node scripts/kosmo-security-baseline-policy.mjs",

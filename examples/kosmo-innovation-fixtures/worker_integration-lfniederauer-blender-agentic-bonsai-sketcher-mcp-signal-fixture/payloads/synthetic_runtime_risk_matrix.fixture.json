@@ -1,0 +1,50 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T14:41:16.796Z",
+  "status": "generated_github_signal_fixture_payload",
+  "contract_id": "github-fixture-plan-03",
+  "fixture_id": "synthetic_runtime_risk_matrix",
+  "fixture_root_id": "worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+  "lane": "worker_integration",
+  "source_repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+  "source_url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+  "source_repo_is_reference_only": true,
+  "policy": {
+    "private_content": false,
+    "generated_or_public_safe": true,
+    "copied_github_code": false,
+    "copied_readme_text": false,
+    "tool_output": false,
+    "public_ready": false,
+    "public_ready_after_payload": 0
+  },
+  "description": "Expected risk and output-contract matrix for BIM/IFC/RAG worker handoff review.",
+  "content": {
+    "type": "runtime_risk_matrix",
+    "blocked_actions": [
+      "network_clone",
+      "dependency_install",
+      "private_file_read",
+      "unreviewed_code_execution",
+      "public_asset_export"
+    ],
+    "required_overseer_checks": [
+      "input_contract",
+      "output_schema",
+      "rights_state",
+      "runtime_scope"
+    ],
+    "escalation_on": [
+      "missing provenance",
+      "private path detected",
+      "unexpected executable command"
+    ]
+  },
+  "expected_review": {
+    "provenance_state": "generated_fixture",
+    "rights_state": "public_safe_synthetic",
+    "repository_review_required_before_adapter_work": true,
+    "human_review_required_before_training": true,
+    "allowed_for_private_gate_testing": false
+  }
+}
