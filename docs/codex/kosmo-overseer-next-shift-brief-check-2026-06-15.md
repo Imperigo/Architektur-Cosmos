@@ -1,11 +1,11 @@
 # Kosmo Overseer Next Shift Brief Check
 
-Generated: 2026-06-15T12:27:41.516Z
+Generated: 2026-06-15T13:50:39.489Z
 Status: `overseer_next_shift_brief_guard_passed`
 
 ## Summary
 
-- Checks: 22/22
+- Checks: 24/24
 - Failures: 0
 - Warnings: 0
 - Public-ready after check: 0
@@ -24,6 +24,8 @@ Status: `overseer_next_shift_brief_guard_passed`
 - passed: `eight_completed_packs` - 8
 - passed: `five_claude_actions` - 5
 - passed: `four_codex_actions` - 4
+- passed: `latest_handoff_max_current` - 240
+- passed: `latest_handoff_mirror_clean` - 0
 - passed: `actions_not_executable` - 
 - passed: `action_public_ready_zero` - 
 - passed: `owner_prompt_format_present` - source_root_choice=...,confirmed_exact_root=...,review_batches=...,note=...

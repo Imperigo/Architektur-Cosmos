@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T12:27:41.750Z",
+  "generated_at": "2026-06-15T13:50:39.724Z",
   "status": "evening_batch_acceptance_certificate_ready",
   "policy": {
     "certificate_only": true,
@@ -22,10 +22,10 @@
   ],
   "summary": {
     "guard_families": 5,
-    "known_guard_checks_passed": 136,
-    "known_guard_checks_total": 136,
-    "latest_handoff_min": 205,
-    "latest_handoff_max": 212,
+    "known_guard_checks_passed": 138,
+    "known_guard_checks_total": 138,
+    "latest_handoff_min": 233,
+    "latest_handoff_max": 240,
     "owner_reply_status": "pending",
     "public_ready_after_certificate": 0,
     "failures": 0
@@ -48,8 +48,8 @@
     {
       "id": "next_shift",
       "status": "overseer_next_shift_brief_guard_passed",
-      "passed": 22,
-      "checks": 22,
+      "passed": 24,
+      "checks": 24,
       "failures": 0
     },
     {

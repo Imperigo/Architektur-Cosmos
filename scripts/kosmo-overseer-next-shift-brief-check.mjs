@@ -76,6 +76,8 @@ function buildChecks(brief) {
     check('eight_completed_packs', (brief.completed_packs || []).length === 8, (brief.completed_packs || []).length),
     check('five_claude_actions', (brief.claude_actions || []).length === 5, (brief.claude_actions || []).length),
     check('four_codex_actions', (brief.codex_actions || []).length === 4, (brief.codex_actions || []).length),
+    check('latest_handoff_max_current', (brief.summary?.latest_handoff_max ?? 0) >= 240, brief.summary?.latest_handoff_max),
+    check('latest_handoff_mirror_clean', brief.summary?.latest_mirror_missing === 0, brief.summary?.latest_mirror_missing),
     check('actions_not_executable', allActions.every((action) => action.executable_now === false), allActions.filter((action) => action.executable_now).map((action) => action.id).join(',')),
     check('action_public_ready_zero', allActions.every((action) => action.public_ready_after_action === 0), allActions.filter((action) => action.public_ready_after_action !== 0).map((action) => action.id).join(',')),
     check('owner_prompt_format_present', (brief.owner_prompt?.required_owner_reply_format || []).length >= 4, (brief.owner_prompt?.required_owner_reply_format || []).join(',')),

@@ -1,6 +1,6 @@
 # Kosmo Overseer Next Shift Brief
 
-Generated: 2026-06-15T12:27:41.277Z
+Generated: 2026-06-15T13:50:39.249Z
 Status: `overseer_next_shift_brief_ready`
 
 ## Summary
@@ -9,8 +9,8 @@ Status: `overseer_next_shift_brief_ready`
 - Claude actions: 5
 - Codex actions: 4
 - Owner gates: 2
-- Latest handoffs: 8
-- Latest mirror missing: null
+- Latest handoffs: 8 (233-240)
+- Latest mirror missing: 0
 - Training eval templates: 6
 - Training review lanes: 5
 - Ontology entity types: 8
@@ -18,7 +18,7 @@ Status: `overseer_next_shift_brief_ready`
 
 ## Claude Actions
 
-- `read_handoffs_198_to_205`: Review newest Codex handoffs before changing shared Orbit/KosmoOverseer behavior.
+- `read_handoffs_233_to_240`: Review newest Codex handoffs 233-240 before changing shared Orbit/KosmoOverseer behavior.
 - `verify_orbit_training_ontology_rollup_ui`: Confirm KosmoOrbit DataPanel shows Training Template, Review Queue, Ontology Seed and Evening Rollup without private content.
 - `prepare_owner_reply_capture`: Use Owner Unlock Prompt Pack as the next owner-facing input surface.
 - `review_training_scaffold_boundaries`: Confirm training scaffold remains schema/review-only with no eval rows, embeddings or fine-tunes.

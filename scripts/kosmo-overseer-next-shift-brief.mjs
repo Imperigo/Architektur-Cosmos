@@ -50,6 +50,7 @@ function buildReport({ rollup, promptPack, roadmap, syncBoard }) {
   if (promptPack.status !== 'owner_unlock_prompt_pack_ready') failures.push(`Prompt pack not ready: ${promptPack.status}`);
   if (roadmap.status !== 'vision_completion_roadmap_ready') failures.push(`Roadmap not ready: ${roadmap.status}`);
   if (syncBoard.status !== 'overseer_sync_board_ready') failures.push(`Sync board not ready: ${syncBoard.status}`);
+  const handoffRange = latestHandoffRange(syncBoard);
 
   const completedPacks = (rollup.packs || []).map((pack) => ({
     id: pack.id,
@@ -59,7 +60,7 @@ function buildReport({ rollup, promptPack, roadmap, syncBoard }) {
   }));
 
   const claudeActions = [
-    action('read_handoffs_198_to_205', 'Review newest Codex handoffs before changing shared Orbit/KosmoOverseer behavior.', 'claude-code-overseer', false),
+    action(`read_handoffs_${handoffRange.min}_to_${handoffRange.max}`, `Review newest Codex handoffs ${handoffRange.label} before changing shared Orbit/KosmoOverseer behavior.`, 'claude-code-overseer', false),
     action('verify_orbit_training_ontology_rollup_ui', 'Confirm KosmoOrbit DataPanel shows Training Template, Review Queue, Ontology Seed and Evening Rollup without private content.', 'claude-code-overseer', false),
     action('prepare_owner_reply_capture', 'Use Owner Unlock Prompt Pack as the next owner-facing input surface.', 'claude-code-overseer', false),
     action('review_training_scaffold_boundaries', 'Confirm training scaffold remains schema/review-only with no eval rows, embeddings or fine-tunes.', 'claude-code-overseer', false),
@@ -99,7 +100,10 @@ function buildReport({ rollup, promptPack, roadmap, syncBoard }) {
       codex_actions: codexActions.length,
       owner_gates: rollup.summary?.owner_gates ?? 2,
       latest_handoffs: syncBoard.summary?.latest_handoffs ?? null,
-      latest_mirror_missing: syncBoard.summary?.latest_mirror_missing ?? null,
+      latest_handoff_min: handoffRange.min,
+      latest_handoff_max: handoffRange.max,
+      latest_handoff_range: handoffRange.label,
+      latest_mirror_missing: syncBoard.summary?.latest_handoff_mirror_missing_files ?? null,
       training_eval_templates: rollup.summary?.training_eval_templates ?? null,
       training_review_lanes: rollup.summary?.training_review_lanes ?? null,
       ontology_entity_types: rollup.summary?.ontology_entity_types ?? null,
@@ -147,6 +151,16 @@ function action(id, description, owner, executableNow) {
   };
 }
 
+function latestHandoffRange(syncBoard) {
+  const numbers = (syncBoard.latest_handoffs || [])
+    .map((handoff) => Number((handoff.filename?.match(/synergiebericht-(\d+)/) || [])[1]))
+    .filter(Number.isFinite);
+  if (numbers.length === 0) return { min: 0, max: 0, label: 'n/a' };
+  const min = Math.min(...numbers);
+  const max = Math.max(...numbers);
+  return { min, max, label: `${min}-${max}` };
+}
+
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
@@ -164,7 +178,7 @@ function renderMarkdown(report) {
   lines.push(`- Claude actions: ${report.summary.claude_actions}`);
   lines.push(`- Codex actions: ${report.summary.codex_actions}`);
   lines.push(`- Owner gates: ${report.summary.owner_gates}`);
-  lines.push(`- Latest handoffs: ${report.summary.latest_handoffs}`);
+  lines.push(`- Latest handoffs: ${report.summary.latest_handoffs} (${report.summary.latest_handoff_range})`);
   lines.push(`- Latest mirror missing: ${report.summary.latest_mirror_missing}`);
   lines.push(`- Training eval templates: ${report.summary.training_eval_templates}`);
   lines.push(`- Training review lanes: ${report.summary.training_review_lanes}`);

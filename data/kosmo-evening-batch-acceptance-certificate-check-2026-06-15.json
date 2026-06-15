@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T12:27:41.987Z",
+  "generated_at": "2026-06-15T13:50:39.965Z",
   "status": "evening_batch_acceptance_certificate_guard_passed",
   "policy": {
     "validates_certificate_only": true,
@@ -74,12 +74,12 @@
     {
       "id": "all_known_guards_passed",
       "status": "passed",
-      "evidence": "136/136"
+      "evidence": "138/138"
     },
     {
       "id": "latest_handoff_current",
       "status": "passed",
-      "evidence": 212
+      "evidence": 240
     },
     {
       "id": "owner_reply_pending",
