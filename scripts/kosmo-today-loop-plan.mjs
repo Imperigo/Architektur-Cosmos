@@ -177,7 +177,9 @@ function buildPlan(reports) {
           'npm run kosmo:innovation-github-worker-adapter-boundary-contract',
           'npm run kosmo:innovation-github-worker-adapter-boundary-contract-check',
           'npm run kosmo:innovation-github-worker-adapter-boundary-negative-fixtures',
-          'npm run kosmo:innovation-github-worker-adapter-boundary-negative-fixtures-check'
+          'npm run kosmo:innovation-github-worker-adapter-boundary-negative-fixtures-check',
+          'npm run kosmo:innovation-github-worker-runtime-batch-readiness-plan',
+          'npm run kosmo:innovation-github-worker-runtime-batch-readiness-plan-check'
         ],
         acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'GitHub fixture skeletons/payloads/smoke are review-only ready', 'no install/private-read/training action enabled']
       },

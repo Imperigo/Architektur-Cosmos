@@ -121,6 +121,8 @@ const refs = {
   githubWorkerAdapterBoundaryContractCheck: `data/kosmo-innovation-github-worker-adapter-boundary-contract-check-${dateStamp}.json`,
   githubWorkerAdapterBoundaryNegativeFixtures: `data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-${dateStamp}.json`,
   githubWorkerAdapterBoundaryNegativeFixturesCheck: `data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-check-${dateStamp}.json`,
+  githubWorkerRuntimeBatchReadinessPlan: `data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-${dateStamp}.json`,
+  githubWorkerRuntimeBatchReadinessPlanCheck: `data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
@@ -273,6 +275,8 @@ function buildBridge(reports) {
   const githubWorkerAdapterBoundaryContractCheckSummary = reports.githubWorkerAdapterBoundaryContractCheck?.summary || {};
   const githubWorkerAdapterBoundaryNegativeFixturesSummary = reports.githubWorkerAdapterBoundaryNegativeFixtures?.summary || {};
   const githubWorkerAdapterBoundaryNegativeFixturesCheckSummary = reports.githubWorkerAdapterBoundaryNegativeFixturesCheck?.summary || {};
+  const githubWorkerRuntimeBatchReadinessPlanSummary = reports.githubWorkerRuntimeBatchReadinessPlan?.summary || {};
+  const githubWorkerRuntimeBatchReadinessPlanCheckSummary = reports.githubWorkerRuntimeBatchReadinessPlanCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
@@ -1130,6 +1134,18 @@ function buildBridge(reports) {
       source_ref: refs.githubWorkerAdapterBoundaryNegativeFixtures
     },
     {
+      id: 'github-worker-runtime-batch-readiness-plan',
+      title: 'GitHub Worker Runtime Batch Readiness Plan',
+      status: reports.githubWorkerRuntimeBatchReadinessPlan?.status === 'innovation_github_worker_runtime_batch_readiness_plan_ready' &&
+        reports.githubWorkerRuntimeBatchReadinessPlanCheck?.status === 'innovation_github_worker_runtime_batch_readiness_plan_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubWorkerRuntimeBatchReadinessPlanSummary.ready_gates ?? 0}/${githubWorkerRuntimeBatchReadinessPlanSummary.readiness_gates ?? 0} gates ready, blocked ${githubWorkerRuntimeBatchReadinessPlanSummary.blocked_gates ?? 0}, runtime ${githubWorkerRuntimeBatchReadinessPlanSummary.runtime_executable_now ? 'yes' : 'no'}, failures ${githubWorkerRuntimeBatchReadinessPlanCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Runtime readiness contract only; dependency/runtime/source-root/owner gates still block execution',
+      source_ref: refs.githubWorkerRuntimeBatchReadinessPlan
+    },
+    {
       id: 'training-eval-rubric',
       title: 'Training Eval Rubric',
       status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
@@ -1424,6 +1440,9 @@ function buildBridge(reports) {
       github_worker_adapter_boundary_negative_fixtures_status: reports.githubWorkerAdapterBoundaryNegativeFixtures?.status || null,
       github_worker_adapter_boundary_negative_fixtures_count: githubWorkerAdapterBoundaryNegativeFixturesSummary.negative_fixtures ?? null,
       github_worker_adapter_boundary_negative_fixtures_blocked: githubWorkerAdapterBoundaryNegativeFixturesSummary.expected_blocked ?? null,
+      github_worker_runtime_batch_readiness_plan_status: reports.githubWorkerRuntimeBatchReadinessPlan?.status || null,
+      github_worker_runtime_batch_readiness_plan_ready_gates: githubWorkerRuntimeBatchReadinessPlanSummary.ready_gates ?? null,
+      github_worker_runtime_batch_readiness_plan_blocked_gates: githubWorkerRuntimeBatchReadinessPlanSummary.blocked_gates ?? null,
       training_eval_rubric_status: reports.trainingEvalRubricPack?.status || null,
       training_eval_rubric_suites: trainingEvalRubricSummary.suites ?? null,
       training_eval_rubric_criteria: trainingEvalRubricSummary.criteria ?? null,
@@ -1500,6 +1519,7 @@ function buildBridge(reports) {
       'github_worker_integration_signal_bridge_card',
       'github_worker_adapter_boundary_contract_card',
       'github_worker_adapter_boundary_negative_fixtures_card',
+      'github_worker_runtime_batch_readiness_plan_card',
       'training_eval_rubric_card',
       'training_eval_row_template_card',
       'training_eval_review_queue_card',
@@ -1573,6 +1593,7 @@ function renderMarkdown(bridge) {
   lines.push(`- GitHub worker integration signal bridge: ${bridge.summary.github_worker_integration_signal_bridge_status}, candidates ${bridge.summary.github_worker_integration_signal_bridge_candidates ?? '-'}, top signal ${bridge.summary.github_worker_integration_signal_bridge_top_signal_score ?? '-'}`);
   lines.push(`- GitHub worker adapter boundary contract: ${bridge.summary.github_worker_adapter_boundary_contract_status}, fixture ${bridge.summary.github_worker_adapter_boundary_contract_fixture ?? '-'}, commands ${bridge.summary.github_worker_adapter_boundary_contract_commands ?? '-'}`);
   lines.push(`- GitHub worker adapter boundary negative fixtures: ${bridge.summary.github_worker_adapter_boundary_negative_fixtures_status}, fixtures ${bridge.summary.github_worker_adapter_boundary_negative_fixtures_count ?? '-'}, blocked ${bridge.summary.github_worker_adapter_boundary_negative_fixtures_blocked ?? '-'}`);
+  lines.push(`- GitHub worker runtime batch readiness plan: ${bridge.summary.github_worker_runtime_batch_readiness_plan_status}, ready gates ${bridge.summary.github_worker_runtime_batch_readiness_plan_ready_gates ?? '-'}, blocked gates ${bridge.summary.github_worker_runtime_batch_readiness_plan_blocked_gates ?? '-'}`);
   lines.push(`- Training eval rubric: ${bridge.summary.training_eval_rubric_status}, suites ${bridge.summary.training_eval_rubric_suites ?? '-'}, criteria ${bridge.summary.training_eval_rubric_criteria ?? '-'}`);
   lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);

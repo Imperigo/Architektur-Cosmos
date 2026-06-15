@@ -1,6 +1,6 @@
 # Kosmo Today Loop Plan Check
 
-Generated: 2026-06-15T18:24:35.641Z
+Generated: 2026-06-15T18:28:52.970Z
 Status: `today_loop_plan_guard_passed`
 
 ## Summary
@@ -49,6 +49,7 @@ Status: `today_loop_plan_guard_passed`
 - passed: `innovation_scout_worker_integration_signal_bridge` - Innovation scout must include GitHub worker integration signal bridge.
 - passed: `innovation_scout_worker_adapter_boundary_contract` - Innovation scout must include GitHub worker adapter boundary contract.
 - passed: `innovation_scout_worker_adapter_boundary_negative_fixtures` - Innovation scout must include GitHub worker adapter boundary negative fixtures.
+- passed: `innovation_scout_worker_runtime_batch_readiness_plan` - Innovation scout must include GitHub worker runtime batch readiness plan.
 - passed: `path_a_private_metadata_after_gate` - Path A must include gated private metadata inventory.
 - passed: `path_b_private_scan_blocked` - Path B must explicitly block private scans.
 

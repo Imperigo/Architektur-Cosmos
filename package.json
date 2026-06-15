@@ -252,6 +252,8 @@
     "kosmo:innovation-github-worker-adapter-boundary-contract-check": "node scripts/kosmo-innovation-github-worker-adapter-boundary-contract-check.mjs",
     "kosmo:innovation-github-worker-adapter-boundary-negative-fixtures": "node scripts/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures.mjs",
     "kosmo:innovation-github-worker-adapter-boundary-negative-fixtures-check": "node scripts/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-check.mjs",
+    "kosmo:innovation-github-worker-runtime-batch-readiness-plan": "node scripts/kosmo-innovation-github-worker-runtime-batch-readiness-plan.mjs",
+    "kosmo:innovation-github-worker-runtime-batch-readiness-plan-check": "node scripts/kosmo-innovation-github-worker-runtime-batch-readiness-plan-check.mjs",
     "kosmo:codex-loop-checkpoint": "node scripts/kosmo-codex-loop-checkpoint.mjs",
     "kosmo:codex-loop-checkpoint-check": "node scripts/kosmo-codex-loop-checkpoint-check.mjs",
     "kosmo:security-baseline-policy": "node scripts/kosmo-security-baseline-policy.mjs",

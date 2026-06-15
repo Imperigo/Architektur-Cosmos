@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T18:24:35.641Z",
+  "generated_at": "2026-06-15T18:28:52.970Z",
   "status": "today_loop_plan_guard_passed",
   "policy": {
     "reads_private_content": false,
@@ -191,6 +191,11 @@
       "id": "innovation_scout_worker_adapter_boundary_negative_fixtures",
       "severity": "passed",
       "message": "Innovation scout must include GitHub worker adapter boundary negative fixtures."
+    },
+    {
+      "id": "innovation_scout_worker_runtime_batch_readiness_plan",
+      "severity": "passed",
+      "message": "Innovation scout must include GitHub worker runtime batch readiness plan."
     },
     {
       "id": "path_a_private_metadata_after_gate",
