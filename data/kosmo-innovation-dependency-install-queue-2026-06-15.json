@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T12:49:37.757Z",
+  "generated_at": "2026-06-15T13:20:51.388Z",
   "status": "innovation_dependency_install_queue_ready",
   "policy": {
     "queue_only": true,
@@ -15,104 +15,14 @@
     "data/kosmo-innovation-dependency-preflight-runner-2026-06-15.json"
   ],
   "summary": {
-    "unavailable_groups": 7,
-    "python_package_items": 5,
+    "unavailable_groups": 2,
+    "python_package_items": 0,
     "model_download_items": 2,
     "blocked_until_source_root_unlock": 1,
     "executable_now": 0,
     "public_ready_after_queue": 0
   },
   "recommended_order": [
-    {
-      "id": "markitdown",
-      "priority": 1,
-      "purpose": "KosmoPrepare document conversion",
-      "install_type": "python_package",
-      "targets": [
-        "markitdown"
-      ],
-      "risk": "low",
-      "expected_size": "small",
-      "validation_after_install": "fixture-only document conversion tests",
-      "current_status": "unavailable",
-      "blocked_until_source_root_unlock": false,
-      "requires_model_root_decision": false,
-      "requires_explicit_owner_install_batch": true,
-      "executable_now": false,
-      "public_ready_after_item": 0
-    },
-    {
-      "id": "docling",
-      "priority": 2,
-      "purpose": "KosmoPrepare richer PDF/document parsing",
-      "install_type": "python_package",
-      "targets": [
-        "docling"
-      ],
-      "risk": "medium",
-      "expected_size": "medium",
-      "validation_after_install": "fixture-only PDF/document parsing tests",
-      "current_status": "unavailable",
-      "blocked_until_source_root_unlock": false,
-      "requires_model_root_decision": false,
-      "requires_explicit_owner_install_batch": true,
-      "executable_now": false,
-      "public_ready_after_item": 0
-    },
-    {
-      "id": "ifcopenshell",
-      "priority": 3,
-      "purpose": "IFC and geometry extraction baseline",
-      "install_type": "python_package",
-      "targets": [
-        "ifcopenshell"
-      ],
-      "risk": "medium",
-      "expected_size": "medium",
-      "validation_after_install": "fixture-only IFC entity smoke",
-      "current_status": "unavailable",
-      "blocked_until_source_root_unlock": false,
-      "requires_model_root_decision": false,
-      "requires_explicit_owner_install_batch": true,
-      "executable_now": false,
-      "public_ready_after_item": 0
-    },
-    {
-      "id": "topologicpy",
-      "priority": 4,
-      "purpose": "Spatial/topological graph experiments",
-      "install_type": "python_package",
-      "targets": [
-        "topologicpy"
-      ],
-      "risk": "medium",
-      "expected_size": "medium",
-      "validation_after_install": "fixture-only graph shape tests",
-      "current_status": "unavailable",
-      "blocked_until_source_root_unlock": false,
-      "requires_model_root_decision": false,
-      "requires_explicit_owner_install_batch": true,
-      "executable_now": false,
-      "public_ready_after_item": 0
-    },
-    {
-      "id": "speckle",
-      "priority": 5,
-      "purpose": "Speckle connector research boundary",
-      "install_type": "python_package",
-      "targets": [
-        "specklepy"
-      ],
-      "risk": "low",
-      "expected_size": "small",
-      "validation_after_install": "connector contract smoke only",
-      "current_status": "unavailable",
-      "blocked_until_source_root_unlock": false,
-      "requires_model_root_decision": false,
-      "requires_explicit_owner_install_batch": true,
-      "executable_now": false,
-      "public_ready_after_item": 0
-    },
     {
       "id": "qwen_embedding_reranker",
       "priority": 6,

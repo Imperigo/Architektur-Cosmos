@@ -1,0 +1,47 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T15:21:09+02:00",
+  "status": "dependency_phase1_install_completed",
+  "policy": {
+    "isolated_environment": true,
+    "installs_python_packages_now": true,
+    "downloads_models_now": false,
+    "runs_tools_on_private_content": false,
+    "reads_private_content": false,
+    "public_ready_after_install": 0
+  },
+  "environment": {
+    "root": "/mnt/data/ArchitekturKosmos/tools/kosmo-python-tools",
+    "venv": "/mnt/data/ArchitekturKosmos/tools/kosmo-python-tools/.venv",
+    "python": "/mnt/data/ArchitekturKosmos/tools/kosmo-python-tools/.venv/bin/python"
+  },
+  "installed_packages": [
+    { "name": "markitdown", "version": "0.1.6" },
+    { "name": "docling", "version": "2.102.1" },
+    { "name": "ifcopenshell", "version": "0.8.5" },
+    { "name": "topologicpy", "version": "0.9.43" },
+    { "name": "specklepy", "version": "3.0.8" }
+  ],
+  "supporting_packages_observed": [
+    { "name": "torch", "version": "2.12.0" },
+    { "name": "transformers", "version": "5.12.0" }
+  ],
+  "post_install_preflight": {
+    "status": "innovation_dependency_preflight_runner_guard_passed",
+    "available_groups": 5,
+    "dependency_groups": 7,
+    "passed_checks": 12,
+    "checks": 14
+  },
+  "remaining_queue": {
+    "status": "innovation_dependency_install_queue_guard_passed",
+    "queue_items": 2,
+    "remaining": ["qwen_embedding_reranker", "deepseek_ocr"]
+  },
+  "next_actions": [
+    "Build fixture-only MarkItDown/Docling document smoke against synthetic test files.",
+    "Build fixture-only IfcOpenShell entity smoke against synthetic IFC.",
+    "Keep Qwen and DeepSeek as model-root gated items.",
+    "Do not run OCR, embeddings or training on private sources before Source Root unlock."
+  ]
+}

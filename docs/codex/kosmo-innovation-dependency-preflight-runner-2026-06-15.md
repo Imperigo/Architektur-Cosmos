@@ -1,27 +1,27 @@
 # Kosmo Innovation Dependency Preflight Runner
 
-Generated: 2026-06-15T12:47:20.829Z
+Generated: 2026-06-15T13:20:44.179Z
 Status: `innovation_dependency_preflight_run_completed`
 
 ## Summary
 
 - Dependency groups: 7
-- Available groups: 0
-- Unavailable groups: 7
-- Passed checks: 1/14
+- Available groups: 5
+- Unavailable groups: 2
+- Passed checks: 12/14
 - Public-ready after run: 0
 
 ## Groups
 
 | Group | Available | Passed Checks |
 | --- | --- | ---: |
-| `docling` | no | 0/2 |
-| `markitdown` | no | 0/2 |
-| `ifcopenshell` | no | 0/2 |
-| `qwen_embedding_reranker` | no | 0/2 |
-| `deepseek_ocr` | no | 0/2 |
-| `topologicpy` | no | 0/2 |
-| `speckle` | no | 1/2 |
+| `docling` | yes | 2/2 |
+| `markitdown` | yes | 2/2 |
+| `ifcopenshell` | yes | 2/2 |
+| `qwen_embedding_reranker` | no | 1/2 |
+| `deepseek_ocr` | no | 1/2 |
+| `topologicpy` | yes | 2/2 |
+| `speckle` | yes | 2/2 |
 
 ## Next Actions
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T12:47:21.082Z",
+  "generated_at": "2026-06-15T13:20:44.408Z",
   "status": "innovation_dependency_preflight_runner_guard_passed",
   "policy": {
     "validates_local_availability_check_only": true,
@@ -16,9 +16,9 @@
   "summary": {
     "run_status": "innovation_dependency_preflight_run_completed",
     "dependency_groups": 7,
-    "available_groups": 0,
+    "available_groups": 5,
     "checks": 14,
-    "passed_checks": 1,
+    "passed_checks": 12,
     "failures": 0,
     "public_ready_after_check": 0
   },

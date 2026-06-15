@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T12:49:37.986Z",
+  "generated_at": "2026-06-15T13:20:51.622Z",
   "status": "innovation_dependency_install_queue_guard_passed",
   "policy": {
     "validates_queue_only": true,
@@ -15,7 +15,7 @@
   ],
   "summary": {
     "queue_status": "innovation_dependency_install_queue_ready",
-    "queue_items": 7,
+    "queue_items": 2,
     "failures": 0,
     "public_ready_after_check": 0
   },
@@ -74,81 +74,6 @@
       "id": "queue_items_present",
       "severity": "passed",
       "message": "Queue must include install items."
-    },
-    {
-      "id": "item_owner_batch:markitdown",
-      "severity": "passed",
-      "message": "markitdown must require explicit install batch."
-    },
-    {
-      "id": "item_not_executable:markitdown",
-      "severity": "passed",
-      "message": "markitdown must not be executable now."
-    },
-    {
-      "id": "item_public_ready_zero:markitdown",
-      "severity": "passed",
-      "message": "markitdown must keep public-ready at 0."
-    },
-    {
-      "id": "item_owner_batch:docling",
-      "severity": "passed",
-      "message": "docling must require explicit install batch."
-    },
-    {
-      "id": "item_not_executable:docling",
-      "severity": "passed",
-      "message": "docling must not be executable now."
-    },
-    {
-      "id": "item_public_ready_zero:docling",
-      "severity": "passed",
-      "message": "docling must keep public-ready at 0."
-    },
-    {
-      "id": "item_owner_batch:ifcopenshell",
-      "severity": "passed",
-      "message": "ifcopenshell must require explicit install batch."
-    },
-    {
-      "id": "item_not_executable:ifcopenshell",
-      "severity": "passed",
-      "message": "ifcopenshell must not be executable now."
-    },
-    {
-      "id": "item_public_ready_zero:ifcopenshell",
-      "severity": "passed",
-      "message": "ifcopenshell must keep public-ready at 0."
-    },
-    {
-      "id": "item_owner_batch:topologicpy",
-      "severity": "passed",
-      "message": "topologicpy must require explicit install batch."
-    },
-    {
-      "id": "item_not_executable:topologicpy",
-      "severity": "passed",
-      "message": "topologicpy must not be executable now."
-    },
-    {
-      "id": "item_public_ready_zero:topologicpy",
-      "severity": "passed",
-      "message": "topologicpy must keep public-ready at 0."
-    },
-    {
-      "id": "item_owner_batch:speckle",
-      "severity": "passed",
-      "message": "speckle must require explicit install batch."
-    },
-    {
-      "id": "item_not_executable:speckle",
-      "severity": "passed",
-      "message": "speckle must not be executable now."
-    },
-    {
-      "id": "item_public_ready_zero:speckle",
-      "severity": "passed",
-      "message": "speckle must keep public-ready at 0."
     },
     {
       "id": "item_owner_batch:qwen_embedding_reranker",

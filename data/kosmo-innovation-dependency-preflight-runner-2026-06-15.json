@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T12:47:20.829Z",
+  "generated_at": "2026-06-15T13:20:44.179Z",
   "status": "innovation_dependency_preflight_run_completed",
   "policy": {
     "local_availability_check_only": true,
@@ -17,10 +17,10 @@
   ],
   "summary": {
     "dependency_groups": 7,
-    "available_groups": 0,
-    "unavailable_groups": 7,
+    "available_groups": 5,
+    "unavailable_groups": 2,
     "checks": 14,
-    "passed_checks": 1,
+    "passed_checks": 12,
     "failures": 0,
     "public_ready_after_run": 0
   },
@@ -33,22 +33,22 @@
           "id": "pip_show:docling",
           "kind": "python_package",
           "command_label": "python -m pip show docling",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "Name: docling\nVersion: 2.102.1\nSummary: SDK and CLI for parsing PDF, DOCX, HTML, and more, to a unified document representation for powering downstream workflows such as gen AI applications.\nHome-page: https://github.com/docling-project/docling\nAuthor: \nAuthor-email: Christoph Auer <cau@zurich.ibm.com>, Michele Dolfi <dol@zurich.ibm.com>, Maxim Lysak <mly@zurich.ibm.com>, Nikos Livathinos <nli@zurich.ibm.com>, Ahmed Nassar <ahn@zurich.ibm.com>, Panos Vagenas <pva@zurich.ibm.com>, Peter Staar <taa@zurich.ibm.com>\nLicense-Expression: MIT\nLocation: /mnt/data/ArchitekturKosmos/tools/kosmo-python-tools/.venv/lib/python3.14/site-packages\nRequires: docling-slim\nRequired-by:",
           "stderr": ""
         },
         {
           "id": "python_import:docling",
           "kind": "python_import",
           "command_label": "python -c \"import docling; print(getattr(docling, \\\"__version__\\\", \\\"unknown\\\"))\"",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "unknown",
           "stderr": ""
         }
       ],
-      "available": false,
+      "available": true,
       "installs_dependencies_now": false,
       "downloads_models_now": false,
       "runs_tools_now": false,
@@ -63,22 +63,22 @@
           "id": "pip_show:markitdown",
           "kind": "python_package",
           "command_label": "python -m pip show markitdown",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "Name: markitdown\nVersion: 0.1.6\nSummary: Utility tool for converting various files to Markdown\nHome-page: \nAuthor: \nAuthor-email: Adam Fourney <adamfo@microsoft.com>\nLicense-Expression: MIT\nLocation: /mnt/data/ArchitekturKosmos/tools/kosmo-python-tools/.venv/lib/python3.14/site-packages\nRequires: beautifulsoup4, charset-normalizer, defusedxml, magika, markdownify, requests\nRequired-by:",
           "stderr": ""
         },
         {
           "id": "python_import:markitdown",
           "kind": "python_import",
           "command_label": "python -c \"import markitdown; print(getattr(markitdown, \\\"__name__\\\", \\\"markitdown\\\"))\"",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "markitdown",
           "stderr": ""
         }
       ],
-      "available": false,
+      "available": true,
       "installs_dependencies_now": false,
       "downloads_models_now": false,
       "runs_tools_now": false,
@@ -93,22 +93,22 @@
           "id": "pip_show:ifcopenshell",
           "kind": "python_package",
           "command_label": "python -m pip show ifcopenshell",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "Name: ifcopenshell\nVersion: 0.8.5\nSummary: Python bindings, utility functions, and high-level API for IfcOpenShell\nHome-page: http://ifcopenshell.org\nAuthor: \nAuthor-email: Dion Moult <dion@thinkmoult.com>\nLicense: \nLocation: /mnt/data/ArchitekturKosmos/tools/kosmo-python-tools/.venv/lib/python3.14/site-packages\nRequires: isodate, lark, numpy, python-dateutil, shapely, typing-extensions\nRequired-by:",
           "stderr": ""
         },
         {
           "id": "python_import:ifcopenshell",
           "kind": "python_import",
           "command_label": "python -c \"import ifcopenshell; print(getattr(ifcopenshell, \\\"__version__\\\", getattr(ifcopenshell, \\\"version\\\", \\\"unknown\\\")))\"",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "0.8.5",
           "stderr": ""
         }
       ],
-      "available": false,
+      "available": true,
       "installs_dependencies_now": false,
       "downloads_models_now": false,
       "runs_tools_now": false,
@@ -123,9 +123,9 @@
           "id": "python_import:transformers",
           "kind": "python_import",
           "command_label": "python -c \"import transformers; print(transformers.__version__)\"",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "5.12.0",
           "stderr": ""
         },
         {
@@ -153,9 +153,9 @@
           "id": "python_import:torch_transformers",
           "kind": "python_import",
           "command_label": "python -c \"import torch, transformers; print(torch.__version__, transformers.__version__)\"",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "2.12.0+cu130 5.12.0",
           "stderr": ""
         },
         {
@@ -183,22 +183,22 @@
           "id": "pip_show:topologicpy",
           "kind": "python_package",
           "command_label": "python -m pip show topologicpy",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "Name: topologicpy\nVersion: 0.9.43\nSummary: An AI-Powered Spatial Modelling and Analysis Software Library for Architecture, Engineering, and Construction.\nHome-page: https://github.com/wassimj/TopologicPy\nAuthor: \nAuthor-email: Wassim Jabi <wassim.jabi@gmail.com>\nLicense: AGPL v3 License\n\nCopyright (c) 2024 Wassim Jabi\n\nThis program is free software: you can redistribute it and/or modify it under\nthe terms of the GNU Affero General Public License as published by the Free Software\nFoundation, either version 3 of the License, or (at your option) any later\nversion.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT\nANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS\nFOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more\ndetails.\n\nYou should have received a copy of the GNU Affero General Public License along with\nthis program. If not, see <https://www.gnu.org/licenses/>.\n\nLocation: /mnt/data/ArchitekturKosmos/tools/kosmo-python-tools/.venv/lib/python3.14/site-packages\nRequires: lark, numpy, pandas, plotly, scipy, shapely, topologic_core, webcolors\nRequired-by:",
           "stderr": ""
         },
         {
           "id": "python_import:topologicpy",
           "kind": "python_import",
           "command_label": "python -c \"import topologicpy; print(getattr(topologicpy, \\\"__name__\\\", \\\"topologicpy\\\"))\"",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "topologicpy",
           "stderr": ""
         }
       ],
-      "available": false,
+      "available": true,
       "installs_dependencies_now": false,
       "downloads_models_now": false,
       "runs_tools_now": false,
@@ -213,9 +213,9 @@
           "id": "pip_show:specklepy",
           "kind": "python_package",
           "command_label": "python -m pip show specklepy",
-          "status": "unavailable",
-          "exit_code": null,
-          "stdout": "",
+          "status": "passed",
+          "exit_code": 0,
+          "stdout": "Name: specklepy\nVersion: 3.0.8\nSummary: The Python SDK for Speckle\nHome-page: https://speckle.systems/\nAuthor: \nAuthor-email: Speckle Systems <devops@speckle.systems>\nLicense: Apache-2.0\nLocation: /mnt/data/ArchitekturKosmos/tools/kosmo-python-tools/.venv/lib/python3.14/site-packages\nRequires: appdirs, attrs, deprecated, gql, httpx, pydantic, pydantic-settings, ujson\nRequired-by:",
           "stderr": ""
         },
         {
@@ -228,7 +228,7 @@
           "stderr": ""
         }
       ],
-      "available": false,
+      "available": true,
       "installs_dependencies_now": false,
       "downloads_models_now": false,
       "runs_tools_now": false,
