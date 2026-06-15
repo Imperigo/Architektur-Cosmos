@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T04:58:49.232Z",
+  "generated_at": "2026-06-15T15:00:43.337Z",
   "status": "kosmoreferences_pilot_intake_readiness_pack_guard_passed",
   "policy": {
     "validates_pack_only": true,
