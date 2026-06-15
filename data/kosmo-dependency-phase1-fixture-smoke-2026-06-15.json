@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T13:24:45.600Z",
+  "status": "dependency_phase1_fixture_smoke_passed",
+  "policy": {
+    "fixture_only": true,
+    "uses_synthetic_inputs_only": true,
+    "downloads_models_now": false,
+    "reads_private_content": false,
+    "runs_private_ocr": false,
+    "runs_embeddings_on_private_content": false,
+    "public_ready_after_smoke": 0
+  },
+  "environment": {
+    "python": "/mnt/data/ArchitekturKosmos/tools/kosmo-python-tools/.venv/bin/python"
+  },
+  "summary": {
+    "checks": 5,
+    "passed_checks": 5,
+    "failures": 0,
+    "public_ready_after_smoke": 0
+  },
+  "checks": [
+    {
+      "id": "markitdown_html_conversion",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "converted_html_to_markdown",
+      "stderr": "",
+      "reads_private_content": false,
+      "public_ready_after_check": 0
+    },
+    {
+      "id": "docling_import_only",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "2.102.1",
+      "stderr": "",
+      "reads_private_content": false,
+      "public_ready_after_check": 0
+    },
+    {
+      "id": "ifcopenshell_synthetic_entity",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "Synthetic Kosmo Fixture",
+      "stderr": "",
+      "reads_private_content": false,
+      "public_ready_after_check": 0
+    },
+    {
+      "id": "topologicpy_import_only",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "0.9.43",
+      "stderr": "",
+      "reads_private_content": false,
+      "public_ready_after_check": 0
+    },
+    {
+      "id": "specklepy_import_only",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "3.0.8",
+      "stderr": "",
+      "reads_private_content": false,
+      "public_ready_after_check": 0
+    }
+  ]
+}

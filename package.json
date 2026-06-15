@@ -236,6 +236,8 @@
     "kosmo:security-baseline-classifier-check": "node scripts/kosmo-security-baseline-classifier-check.mjs",
     "kosmo:dependency-install-batch-brief": "node scripts/kosmo-dependency-install-batch-brief.mjs",
     "kosmo:dependency-install-batch-brief-check": "node scripts/kosmo-dependency-install-batch-brief-check.mjs",
+    "kosmo:dependency-phase1-fixture-smoke": "node scripts/kosmo-dependency-phase1-fixture-smoke.mjs",
+    "kosmo:dependency-phase1-fixture-smoke-check": "node scripts/kosmo-dependency-phase1-fixture-smoke-check.mjs",
     "kosmo:owner-unlock-prompt-pack": "node scripts/kosmo-owner-unlock-prompt-pack.mjs",
     "kosmo:owner-unlock-prompt-pack-check": "node scripts/kosmo-owner-unlock-prompt-pack-check.mjs",
     "kosmo:overseer-next-shift-brief": "node scripts/kosmo-overseer-next-shift-brief.mjs",
