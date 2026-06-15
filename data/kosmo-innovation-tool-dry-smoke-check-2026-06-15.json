@@ -1,0 +1,224 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:41:28.447Z",
+  "status": "innovation_tool_dry_smoke_guard_passed",
+  "policy": {
+    "validates_dry_smoke_only": true,
+    "installs_tools_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-tool-dry-smoke-2026-06-15.json"
+  ],
+  "summary": {
+    "smoke_status": "innovation_tool_dry_smoke_passed",
+    "tool_lanes": 8,
+    "passed_lanes": 8,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Smoke schema_version must be 0.1."
+    },
+    {
+      "id": "dry_smoke_passed",
+      "severity": "passed",
+      "message": "Tool dry smoke must pass."
+    },
+    {
+      "id": "dry_smoke_only",
+      "severity": "passed",
+      "message": "Smoke must be dry-smoke-only."
+    },
+    {
+      "id": "fixture_payloads_only",
+      "severity": "passed",
+      "message": "Smoke must read fixture payloads only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Smoke must not install tools."
+    },
+    {
+      "id": "no_tool_runs",
+      "severity": "passed",
+      "message": "Smoke must not run tools."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Smoke must not read private content."
+    },
+    {
+      "id": "no_private_ocr",
+      "severity": "passed",
+      "message": "Smoke must not run private OCR."
+    },
+    {
+      "id": "no_private_embeddings",
+      "severity": "passed",
+      "message": "Smoke must not run private embeddings."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Smoke must keep public-ready at 0."
+    },
+    {
+      "id": "tool_lane_count",
+      "severity": "passed",
+      "message": "Smoke must cover eight tool lanes."
+    },
+    {
+      "id": "all_lanes_passed",
+      "severity": "passed",
+      "message": "All tool lanes must pass."
+    },
+    {
+      "id": "payload_count",
+      "severity": "passed",
+      "message": "Smoke must read at least 18 payloads."
+    },
+    {
+      "id": "executable_zero",
+      "severity": "passed",
+      "message": "Smoke executable_now must be 0."
+    },
+    {
+      "id": "failures_zero",
+      "severity": "passed",
+      "message": "Smoke failures must be 0."
+    },
+    {
+      "id": "lane_passed:docling_markitdown_document_shape",
+      "severity": "passed",
+      "message": "docling_markitdown_document_shape must pass."
+    },
+    {
+      "id": "lane_payloads:docling_markitdown_document_shape",
+      "severity": "passed",
+      "message": "docling_markitdown_document_shape must include payloads."
+    },
+    {
+      "id": "lane_public_ready_zero:docling_markitdown_document_shape",
+      "severity": "passed",
+      "message": "docling_markitdown_document_shape must keep public-ready at 0."
+    },
+    {
+      "id": "lane_passed:qwen_retrieval_shape",
+      "severity": "passed",
+      "message": "qwen_retrieval_shape must pass."
+    },
+    {
+      "id": "lane_payloads:qwen_retrieval_shape",
+      "severity": "passed",
+      "message": "qwen_retrieval_shape must include payloads."
+    },
+    {
+      "id": "lane_public_ready_zero:qwen_retrieval_shape",
+      "severity": "passed",
+      "message": "qwen_retrieval_shape must keep public-ready at 0."
+    },
+    {
+      "id": "lane_passed:ifcopenshell_entity_shape",
+      "severity": "passed",
+      "message": "ifcopenshell_entity_shape must pass."
+    },
+    {
+      "id": "lane_payloads:ifcopenshell_entity_shape",
+      "severity": "passed",
+      "message": "ifcopenshell_entity_shape must include payloads."
+    },
+    {
+      "id": "lane_public_ready_zero:ifcopenshell_entity_shape",
+      "severity": "passed",
+      "message": "ifcopenshell_entity_shape must keep public-ready at 0."
+    },
+    {
+      "id": "lane_passed:deepseek_ocr_shape",
+      "severity": "passed",
+      "message": "deepseek_ocr_shape must pass."
+    },
+    {
+      "id": "lane_payloads:deepseek_ocr_shape",
+      "severity": "passed",
+      "message": "deepseek_ocr_shape must include payloads."
+    },
+    {
+      "id": "lane_public_ready_zero:deepseek_ocr_shape",
+      "severity": "passed",
+      "message": "deepseek_ocr_shape must keep public-ready at 0."
+    },
+    {
+      "id": "lane_passed:qwen_vl_visual_shape",
+      "severity": "passed",
+      "message": "qwen_vl_visual_shape must pass."
+    },
+    {
+      "id": "lane_payloads:qwen_vl_visual_shape",
+      "severity": "passed",
+      "message": "qwen_vl_visual_shape must include payloads."
+    },
+    {
+      "id": "lane_public_ready_zero:qwen_vl_visual_shape",
+      "severity": "passed",
+      "message": "qwen_vl_visual_shape must keep public-ready at 0."
+    },
+    {
+      "id": "lane_passed:topologicpy_graph_shape",
+      "severity": "passed",
+      "message": "topologicpy_graph_shape must pass."
+    },
+    {
+      "id": "lane_payloads:topologicpy_graph_shape",
+      "severity": "passed",
+      "message": "topologicpy_graph_shape must include payloads."
+    },
+    {
+      "id": "lane_public_ready_zero:topologicpy_graph_shape",
+      "severity": "passed",
+      "message": "topologicpy_graph_shape must keep public-ready at 0."
+    },
+    {
+      "id": "lane_passed:paper2poster_layout_shape",
+      "severity": "passed",
+      "message": "paper2poster_layout_shape must pass."
+    },
+    {
+      "id": "lane_payloads:paper2poster_layout_shape",
+      "severity": "passed",
+      "message": "paper2poster_layout_shape must include payloads."
+    },
+    {
+      "id": "lane_public_ready_zero:paper2poster_layout_shape",
+      "severity": "passed",
+      "message": "paper2poster_layout_shape must keep public-ready at 0."
+    },
+    {
+      "id": "lane_passed:speckle_connector_boundary_shape",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_shape must pass."
+    },
+    {
+      "id": "lane_payloads:speckle_connector_boundary_shape",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_shape must include payloads."
+    },
+    {
+      "id": "lane_public_ready_zero:speckle_connector_boundary_shape",
+      "severity": "passed",
+      "message": "speckle_connector_boundary_shape must keep public-ready at 0."
+    }
+  ],
+  "next_actions": [
+    "Prepare dependency preflight contracts for the highest-priority lanes.",
+    "Do not install or execute external tools until a separate dependency gate is accepted."
+  ]
+}

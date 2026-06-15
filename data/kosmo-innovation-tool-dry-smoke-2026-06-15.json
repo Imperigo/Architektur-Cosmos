@@ -1,0 +1,143 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-15T12:41:28.211Z",
+  "status": "innovation_tool_dry_smoke_passed",
+  "policy": {
+    "dry_smoke_only": true,
+    "reads_fixture_payloads_only": true,
+    "installs_tools_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "runs_private_ocr": false,
+    "runs_embeddings_on_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_smoke": 0,
+    "note": "This dry smoke validates fixture payload shapes for future tool integrations. It does not import, install or execute external tools."
+  },
+  "source_refs": [
+    "data/kosmo-innovation-fixture-payloads-2026-06-15.json"
+  ],
+  "summary": {
+    "tool_lanes": 8,
+    "passed_lanes": 8,
+    "payloads_read": 18,
+    "executable_now": 0,
+    "failures": 0,
+    "public_ready_after_smoke": 0
+  },
+  "tool_lanes": [
+    {
+      "id": "docling_markitdown_document_shape",
+      "status": "passed",
+      "content_types": [
+        "document_conversion_fixture"
+      ],
+      "payloads": [
+        "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/public_pdf.fixture.json",
+        "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture/payloads/generated_scan_png.fixture.json",
+        "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_docx.fixture.json",
+        "examples/kosmo-innovation-fixtures/markitdown_office_fixture/payloads/generated_html.fixture.json"
+      ],
+      "failures": [],
+      "public_ready_after_lane": 0
+    },
+    {
+      "id": "qwen_retrieval_shape",
+      "status": "passed",
+      "content_types": [
+        "retrieval_fixture"
+      ],
+      "payloads": [
+        "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/public_safe_reference_chunks.fixture.json",
+        "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture/payloads/query_set.fixture.json"
+      ],
+      "failures": [],
+      "public_ready_after_lane": 0
+    },
+    {
+      "id": "ifcopenshell_entity_shape",
+      "status": "passed",
+      "content_types": [
+        "ifc_shape_manifest"
+      ],
+      "payloads": [
+        "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/generated_ifc_stub.fixture.json",
+        "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture/payloads/expected_geometry_manifest.fixture.json"
+      ],
+      "failures": [],
+      "public_ready_after_lane": 0
+    },
+    {
+      "id": "deepseek_ocr_shape",
+      "status": "passed",
+      "content_types": [
+        "ocr_fixture"
+      ],
+      "payloads": [
+        "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/generated_plan_scan.fixture.json",
+        "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture/payloads/expected_ocr_manifest.fixture.json"
+      ],
+      "failures": [],
+      "public_ready_after_lane": 0
+    },
+    {
+      "id": "qwen_vl_visual_shape",
+      "status": "passed",
+      "content_types": [
+        "visual_retrieval_fixture"
+      ],
+      "payloads": [
+        "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/generated_facade_image_set.fixture.json",
+        "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture/payloads/visual_query_set.fixture.json"
+      ],
+      "failures": [],
+      "public_ready_after_lane": 0
+    },
+    {
+      "id": "topologicpy_graph_shape",
+      "status": "passed",
+      "content_types": [
+        "spatial_graph_fixture"
+      ],
+      "payloads": [
+        "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/synthetic_space_graph.fixture.json",
+        "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture/payloads/expected_topology_report.fixture.json"
+      ],
+      "failures": [],
+      "public_ready_after_lane": 0
+    },
+    {
+      "id": "paper2poster_layout_shape",
+      "status": "passed",
+      "content_types": [
+        "publish_layout_fixture"
+      ],
+      "payloads": [
+        "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/synthetic_reference_summary.fixture.json",
+        "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture/payloads/layout_scoring_manifest.fixture.json"
+      ],
+      "failures": [],
+      "public_ready_after_lane": 0
+    },
+    {
+      "id": "speckle_connector_boundary_shape",
+      "status": "passed",
+      "content_types": [
+        "connector_boundary_fixture"
+      ],
+      "payloads": [
+        "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/connector_contract_stub.fixture.json",
+        "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture/payloads/privacy_boundary_matrix.fixture.json"
+      ],
+      "failures": [],
+      "public_ready_after_lane": 0
+    }
+  ],
+  "failures": [],
+  "next_actions": [
+    "Create isolated dependency preflight scripts for Docling, MarkItDown, Qwen and IfcOpenShell.",
+    "Keep those preflights install-free until dependency policy is explicitly accepted.",
+    "After dependency preflight, add optional local-only smoke commands that consume generated fixtures only."
+  ]
+}
