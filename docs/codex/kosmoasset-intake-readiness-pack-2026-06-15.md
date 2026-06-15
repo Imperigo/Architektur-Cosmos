@@ -1,6 +1,6 @@
 # KosmoAsset Intake Readiness Pack
 
-Generated: 2026-06-15T04:58:49.470Z
+Generated: 2026-06-15T15:01:48.991Z
 Status: `kosmoasset_intake_readiness_pack_ready`
 
 ## Summary
