@@ -1,6 +1,6 @@
 # Kosmo Today Loop Plan
 
-Generated: 2026-06-15T14:18:39.101Z
+Generated: 2026-06-15T14:22:24.670Z
 Status: `today_loop_plan_ready`
 
 ## Summary
@@ -31,7 +31,7 @@ Status: `today_loop_plan_ready`
 
 - Lane: kosmo-prepare-kosmoreferences-kosmoasset
 - Objective: Check current primary-source code and model candidates that can accelerate ArchitekturKosmos without installing or touching private data.
-- First commands: `npm run kosmo:daily-innovation-scout`, `npm run kosmo:daily-innovation-scout-check`, `npm run kosmo:innovation-github-watchlist`, `npm run kosmo:innovation-github-watchlist-check`, `npm run kosmo:innovation-github-discovery`, `npm run kosmo:innovation-github-discovery-check`
+- First commands: `npm run kosmo:daily-innovation-scout`, `npm run kosmo:daily-innovation-scout-check`, `npm run kosmo:innovation-github-watchlist`, `npm run kosmo:innovation-github-watchlist-check`, `npm run kosmo:innovation-github-discovery`, `npm run kosmo:innovation-github-discovery-check`, `npm run kosmo:innovation-github-review-queue`, `npm run kosmo:innovation-github-review-queue-check`
 - Acceptance: Scout report exists; all candidates mapped to lanes; no install/private-read/training action enabled
 
 ### references_schema_hardening

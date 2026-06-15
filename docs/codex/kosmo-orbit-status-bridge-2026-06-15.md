@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-15T14:18:38.861Z
+Generated: 2026-06-15T14:22:24.430Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 33
+- Cards: 34
 - Blocking cards: 4
 - Owner action cards: 16
 - Source root blocked: yes
@@ -73,6 +73,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `fixture-chain-local-worker-task-pack` Fixture Chain Local Worker Task Pack | review_only_ready | no | 3 tasks, executable now 0, missing refs 0 |
 | `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
 | `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
+| `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-16, failures 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
@@ -108,6 +109,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - `fixture_chain_local_worker_task_pack_card`
 - `github_innovation_watchlist_card`
 - `github_innovation_discovery_card`
+- `github_innovation_review_queue_card`
 - `tomorrow_day_batch_card`
 - `worker_boundary_card`
 - `innovation_lane_card`

@@ -51,6 +51,8 @@ const refs = {
   githubWatchlistCheck: `data/kosmo-innovation-github-watchlist-check-${dateStamp}.json`,
   githubDiscovery: `data/kosmo-innovation-github-discovery-${dateStamp}.json`,
   githubDiscoveryCheck: `data/kosmo-innovation-github-discovery-check-${dateStamp}.json`,
+  githubReviewQueue: `data/kosmo-innovation-github-review-queue-${dateStamp}.json`,
+  githubReviewQueueCheck: `data/kosmo-innovation-github-review-queue-check-${dateStamp}.json`,
   tomorrowDayBatch: `data/kosmo-tomorrow-day-batch-${dateStamp}.json`,
   tomorrowDayBatchCheck: `data/kosmo-tomorrow-day-batch-check-${dateStamp}.json`,
   innovationPlan: `data/kosmo-innovation-lane-plan-${dateStamp}.json`,
@@ -121,6 +123,8 @@ function buildBridge(reports) {
   const githubWatchlistCheckSummary = reports.githubWatchlistCheck?.summary || {};
   const githubDiscoverySummary = reports.githubDiscovery?.summary || {};
   const githubDiscoveryCheckSummary = reports.githubDiscoveryCheck?.summary || {};
+  const githubReviewQueueSummary = reports.githubReviewQueue?.summary || {};
+  const githubReviewQueueCheckSummary = reports.githubReviewQueueCheck?.summary || {};
   const tomorrowDayBatchSummary = reports.tomorrowDayBatch?.summary || {};
   const tomorrowDayBatchCheckSummary = reports.tomorrowDayBatchCheck?.summary || {};
   const innovationSummary = reports.innovationSmoke?.summary || {};
@@ -484,6 +488,18 @@ function buildBridge(reports) {
       source_ref: refs.githubDiscovery
     },
     {
+      id: 'github-innovation-review-queue',
+      title: 'GitHub Innovation Review Queue',
+      status: reports.githubReviewQueue?.status === 'innovation_github_review_queue_ready' &&
+        reports.githubReviewQueueCheck?.status === 'innovation_github_review_queue_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubReviewQueueSummary.review_items ?? 0} review items, high ${githubReviewQueueSummary.high_priority_items ?? '-'}, execute ${githubReviewQueueSummary.execute_now ?? 0}, failures ${githubReviewQueueCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Prioritized public README/metadata review only; no clone/install/run',
+      source_ref: refs.githubReviewQueue
+    },
+    {
       id: 'tomorrow-day-batch',
       title: 'Tomorrow Day Batch',
       status: reports.tomorrowDayBatch?.status === 'tomorrow_day_batch_ready' &&
@@ -647,6 +663,9 @@ function buildBridge(reports) {
       github_discovery_status: reports.githubDiscovery?.status || null,
       github_discovery_queries_with_results: githubDiscoverySummary.queries_with_results ?? null,
       github_discovery_unique_candidates: githubDiscoverySummary.unique_candidates ?? null,
+      github_review_queue_status: reports.githubReviewQueue?.status || null,
+      github_review_queue_items: githubReviewQueueSummary.review_items ?? null,
+      github_review_queue_high_priority_items: githubReviewQueueSummary.high_priority_items ?? null,
       tomorrow_day_batch_status: reports.tomorrowDayBatch?.status || null,
       tomorrow_day_batch_target_date: reports.tomorrowDayBatch?.target_date || null,
       innovation_smoke_status: reports.innovationSmoke?.status || null,
@@ -682,6 +701,7 @@ function buildBridge(reports) {
       'fixture_chain_local_worker_task_pack_card',
       'github_innovation_watchlist_card',
       'github_innovation_discovery_card',
+      'github_innovation_review_queue_card',
       'tomorrow_day_batch_card',
       'worker_boundary_card',
       'innovation_lane_card',

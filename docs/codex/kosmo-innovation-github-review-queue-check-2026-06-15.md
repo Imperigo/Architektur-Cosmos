@@ -1,0 +1,87 @@
+# Kosmo Innovation GitHub Review Queue Check
+
+Generated: 2026-06-15T14:22:24.190Z
+Status: `innovation_github_review_queue_guard_passed`
+
+## Summary
+
+- Queue status: innovation_github_review_queue_ready
+- Review items: 7
+- Failures: 0
+- Public-ready after check: 0
+
+## Findings
+
+- passed: `schema_version` - Queue schema_version must be 0.1.
+- passed: `queue_ready` - Queue must be ready.
+- passed: `review_queue_only` - Queue must be review-only.
+- passed: `no_clone` - Queue must not clone repositories.
+- passed: `no_installs` - Queue must not install dependencies.
+- passed: `no_downloads` - Queue must not download models.
+- passed: `no_run_code` - Queue must not run discovered code.
+- passed: `no_private_reads` - Queue must not read private content.
+- passed: `public_ready_zero` - Queue must keep public-ready at 0.
+- passed: `review_item_count` - Queue must include at least five review items.
+- passed: `lane_present:kosmo_prepare` - Queue must include kosmo_prepare.
+- passed: `lane_present:kosmo_asset` - Queue must include kosmo_asset.
+- passed: `lane_present:ifc_reasoning` - Queue must include ifc_reasoning.
+- passed: `lane_present:bim_rag_workers` - Queue must include bim_rag_workers.
+- passed: `hard_stop_no_clone` - Hard stops must forbid cloning.
+- passed: `hard_stop_no_install` - Hard stops must forbid installs.
+- passed: `hard_stop_no_run` - Hard stops must forbid running discovered code.
+- passed: `review_mode:github-review-01` - github-review-01 must be public metadata/readme only.
+- passed: `no_clone:github-review-01` - github-review-01 must forbid clone.
+- passed: `no_install:github-review-01` - github-review-01 must forbid install.
+- passed: `no_download:github-review-01` - github-review-01 must forbid downloads.
+- passed: `no_run:github-review-01` - github-review-01 must forbid running code.
+- passed: `no_private:github-review-01` - github-review-01 must forbid private reads.
+- passed: `no_public:github-review-01` - github-review-01 must forbid public promotion.
+- passed: `public_ready_zero:github-review-01` - github-review-01 must keep public-ready at 0.
+- passed: `review_mode:github-review-02` - github-review-02 must be public metadata/readme only.
+- passed: `no_clone:github-review-02` - github-review-02 must forbid clone.
+- passed: `no_install:github-review-02` - github-review-02 must forbid install.
+- passed: `no_download:github-review-02` - github-review-02 must forbid downloads.
+- passed: `no_run:github-review-02` - github-review-02 must forbid running code.
+- passed: `no_private:github-review-02` - github-review-02 must forbid private reads.
+- passed: `no_public:github-review-02` - github-review-02 must forbid public promotion.
+- passed: `public_ready_zero:github-review-02` - github-review-02 must keep public-ready at 0.
+- passed: `review_mode:github-review-03` - github-review-03 must be public metadata/readme only.
+- passed: `no_clone:github-review-03` - github-review-03 must forbid clone.
+- passed: `no_install:github-review-03` - github-review-03 must forbid install.
+- passed: `no_download:github-review-03` - github-review-03 must forbid downloads.
+- passed: `no_run:github-review-03` - github-review-03 must forbid running code.
+- passed: `no_private:github-review-03` - github-review-03 must forbid private reads.
+- passed: `no_public:github-review-03` - github-review-03 must forbid public promotion.
+- passed: `public_ready_zero:github-review-03` - github-review-03 must keep public-ready at 0.
+- passed: `review_mode:github-review-04` - github-review-04 must be public metadata/readme only.
+- passed: `no_clone:github-review-04` - github-review-04 must forbid clone.
+- passed: `no_install:github-review-04` - github-review-04 must forbid install.
+- passed: `no_download:github-review-04` - github-review-04 must forbid downloads.
+- passed: `no_run:github-review-04` - github-review-04 must forbid running code.
+- passed: `no_private:github-review-04` - github-review-04 must forbid private reads.
+- passed: `no_public:github-review-04` - github-review-04 must forbid public promotion.
+- passed: `public_ready_zero:github-review-04` - github-review-04 must keep public-ready at 0.
+- passed: `review_mode:github-review-05` - github-review-05 must be public metadata/readme only.
+- passed: `no_clone:github-review-05` - github-review-05 must forbid clone.
+- passed: `no_install:github-review-05` - github-review-05 must forbid install.
+- passed: `no_download:github-review-05` - github-review-05 must forbid downloads.
+- passed: `no_run:github-review-05` - github-review-05 must forbid running code.
+- passed: `no_private:github-review-05` - github-review-05 must forbid private reads.
+- passed: `no_public:github-review-05` - github-review-05 must forbid public promotion.
+- passed: `public_ready_zero:github-review-05` - github-review-05 must keep public-ready at 0.
+- passed: `review_mode:github-review-06` - github-review-06 must be public metadata/readme only.
+- passed: `no_clone:github-review-06` - github-review-06 must forbid clone.
+- passed: `no_install:github-review-06` - github-review-06 must forbid install.
+- passed: `no_download:github-review-06` - github-review-06 must forbid downloads.
+- passed: `no_run:github-review-06` - github-review-06 must forbid running code.
+- passed: `no_private:github-review-06` - github-review-06 must forbid private reads.
+- passed: `no_public:github-review-06` - github-review-06 must forbid public promotion.
+- passed: `public_ready_zero:github-review-06` - github-review-06 must keep public-ready at 0.
+- passed: `review_mode:github-review-07` - github-review-07 must be public metadata/readme only.
+- passed: `no_clone:github-review-07` - github-review-07 must forbid clone.
+- passed: `no_install:github-review-07` - github-review-07 must forbid install.
+- passed: `no_download:github-review-07` - github-review-07 must forbid downloads.
+- passed: `no_run:github-review-07` - github-review-07 must forbid running code.
+- passed: `no_private:github-review-07` - github-review-07 must forbid private reads.
+- passed: `no_public:github-review-07` - github-review-07 must forbid public promotion.
+- passed: `public_ready_zero:github-review-07` - github-review-07 must keep public-ready at 0.

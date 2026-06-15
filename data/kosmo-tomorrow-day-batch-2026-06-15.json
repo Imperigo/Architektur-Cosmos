@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:18:39.578Z",
+  "generated_at": "2026-06-15T14:22:25.148Z",
   "date": "2026-06-15",
   "target_date": "2026-06-16",
   "status": "tomorrow_day_batch_ready",
@@ -46,6 +46,8 @@
     "npm run kosmo:innovation-github-watchlist-check",
     "npm run kosmo:innovation-github-discovery",
     "npm run kosmo:innovation-github-discovery-check",
+    "npm run kosmo:innovation-github-review-queue",
+    "npm run kosmo:innovation-github-review-queue-check",
     "npm run kosmo:codex-daily-loop-routine",
     "npm run kosmo:codex-daily-loop-routine-check",
     "npm run kosmo:owner-unlock-pipeline-checkpoint",

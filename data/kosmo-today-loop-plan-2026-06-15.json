@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T14:18:39.101Z",
+  "generated_at": "2026-06-15T14:22:24.670Z",
   "status": "today_loop_plan_ready",
   "policy": {
     "autonomous_until_local_time": "18:00",
@@ -96,7 +96,9 @@
         "npm run kosmo:innovation-github-watchlist",
         "npm run kosmo:innovation-github-watchlist-check",
         "npm run kosmo:innovation-github-discovery",
-        "npm run kosmo:innovation-github-discovery-check"
+        "npm run kosmo:innovation-github-discovery-check",
+        "npm run kosmo:innovation-github-review-queue",
+        "npm run kosmo:innovation-github-review-queue-check"
       ],
       "acceptance": [
         "Scout report exists",

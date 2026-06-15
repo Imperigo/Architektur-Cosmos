@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-16
 
-Generated: 2026-06-15T14:18:39.578Z
+Generated: 2026-06-15T14:22:25.148Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -32,6 +32,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:innovation-github-watchlist-check`
 - `npm run kosmo:innovation-github-discovery`
 - `npm run kosmo:innovation-github-discovery-check`
+- `npm run kosmo:innovation-github-review-queue`
+- `npm run kosmo:innovation-github-review-queue-check`
 - `npm run kosmo:codex-daily-loop-routine`
 - `npm run kosmo:codex-daily-loop-routine-check`
 - `npm run kosmo:owner-unlock-pipeline-checkpoint`
