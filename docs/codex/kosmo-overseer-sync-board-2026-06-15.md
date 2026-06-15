@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-15T14:16:34.656Z
+Generated: 2026-06-15T14:20:07.175Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-15-codex-synergiebericht-252-github-discovery-refinement.md` | Codex Synergiebericht 252: GitHub Discovery verfeinert | 2 |
 | `2026-06-15-codex-synergiebericht-251-today-plan-discovery-sync.md` | Codex Synergiebericht 251: Today-Loop kennt GitHub Discovery | 2 |
 | `2026-06-15-codex-synergiebericht-250-architecture-build-green.md` | Codex Synergiebericht 250: ArchitectureCosmos Build gruen | 2 |
 | `2026-06-15-codex-synergiebericht-249-kosmoorbit-health-green.md` | Codex Synergiebericht 249: KosmoOrbit Health Check gruen | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-15-codex-synergiebericht-247-github-discovery-scout.md` | Codex Synergiebericht 247: GitHub Discovery Scout fuer neue Code-Kandidaten | 2 |
 | `2026-06-15-codex-synergiebericht-246-day-batch-loop-green.md` | Codex Synergiebericht 246: Day-Batch-Loop gruen, Source Root weiter gesperrt | 2 |
 | `2026-06-15-codex-synergiebericht-245-tomorrow-day-batch-generator.md` | Codex Synergiebericht 245: Tomorrow-Day-Batch ist reproduzierbar | 2 |
-| `2026-06-15-codex-synergiebericht-244-live-github-morning-scout.md` | Codex Synergiebericht 244: Live-GitHub-Morgenroutine fuer Innovations-Scout | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 244-251 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 245-252 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.
