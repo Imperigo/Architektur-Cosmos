@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:34:02.007Z",
+  "status": "owner_unlock_session_apply_guard_smoke_check_passed",
+  "policy": {
+    "validates_smoke_only": true,
+    "writes_real_session": false,
+    "records_decisions_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-16.json"
+  ],
+  "summary": {
+    "smoke_status": "owner_unlock_session_apply_guard_smoke_passed",
+    "checks": 15,
+    "passed": 15,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_passed",
+      "status": "passed",
+      "evidence": "owner_unlock_session_apply_guard_smoke_passed"
+    },
+    {
+      "id": "policy_fixture_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_real_session_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decisions_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "fixture_guard_passed_after_apply",
+      "status": "passed",
+      "evidence": "owner_unlock_session_apply_guard_passed_after_manual_apply"
+    },
+    {
+      "id": "fixture_guard_check_passed",
+      "status": "passed",
+      "evidence": "owner_unlock_session_apply_guard_check_passed"
+    },
+    {
+      "id": "fixture_mode_applied",
+      "status": "passed",
+      "evidence": "applied_matches_preview"
+    },
+    {
+      "id": "fixture_matches_preview",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "fixture_allows_private_diagnostic",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "guard_checks_all_passed",
+      "status": "passed",
+      "evidence": "18/18"
+    },
+    {
+      "id": "temp_refs_are_tmp",
+      "status": "passed",
+      "evidence": ".tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-16/source-root-decision-session-2026-06-16.json,.tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-16/guard.json,.tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-16/guard-check.json"
+    },
+    {
+      "id": "no_failures",
+      "status": "passed",
+      "evidence": 0
+    }
+  ]
+}

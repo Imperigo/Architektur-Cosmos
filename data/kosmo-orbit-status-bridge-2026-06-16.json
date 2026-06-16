@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:31:27.511Z",
+  "generated_at": "2026-06-16T05:34:02.258Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -160,7 +160,7 @@
   ],
   "summary": {
     "cards": 82,
-    "blocking_cards": 15,
+    "blocking_cards": 5,
     "owner_action_cards": 26,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_passed_review_only",
@@ -393,21 +393,21 @@
     "architecture_ontology_seed_status": "architecture_ontology_seed_ready",
     "architecture_ontology_entity_types": 8,
     "architecture_ontology_relation_types": 10,
-    "owner_unlock_fast_reply_card_status": null,
-    "owner_unlock_fast_reply_card_broad_intent": null,
-    "owner_unlock_fast_reply_card_applies_now": null,
-    "owner_unlock_exact_reply_preview_status": null,
-    "owner_unlock_exact_reply_preview_validator_status": null,
-    "owner_unlock_exact_reply_preview_patch_operations": null,
-    "owner_unlock_path_a_readiness_status": null,
-    "owner_unlock_path_a_can_start_after_exact_reply": null,
-    "owner_unlock_path_a_applies_now": null,
-    "owner_unlock_patch_review_bundle_status": null,
-    "owner_unlock_patch_review_bundle_operations": null,
-    "owner_unlock_patch_review_bundle_applies_now": null,
-    "owner_unlock_intake_apply_plan_status": null,
-    "owner_unlock_intake_apply_plan_field_edits": null,
-    "owner_unlock_intake_apply_plan_writes_now": null,
+    "owner_unlock_fast_reply_card_status": "owner_unlock_fast_reply_card_ready",
+    "owner_unlock_fast_reply_card_broad_intent": false,
+    "owner_unlock_fast_reply_card_applies_now": false,
+    "owner_unlock_exact_reply_preview_status": "owner_unlock_answer_dry_run_ready_for_review",
+    "owner_unlock_exact_reply_preview_validator_status": "owner_unlock_reply_valid",
+    "owner_unlock_exact_reply_preview_patch_operations": 6,
+    "owner_unlock_path_a_readiness_status": "owner_unlock_path_a_readiness_certificate_ready",
+    "owner_unlock_path_a_can_start_after_exact_reply": true,
+    "owner_unlock_path_a_applies_now": false,
+    "owner_unlock_patch_review_bundle_status": "owner_unlock_patch_review_bundle_ready",
+    "owner_unlock_patch_review_bundle_operations": 6,
+    "owner_unlock_patch_review_bundle_applies_now": false,
+    "owner_unlock_intake_apply_plan_status": "owner_unlock_intake_apply_plan_ready",
+    "owner_unlock_intake_apply_plan_field_edits": 13,
+    "owner_unlock_intake_apply_plan_writes_now": false,
     "tomorrow_day_batch_status": "tomorrow_day_batch_ready",
     "tomorrow_day_batch_target_date": "2026-06-17",
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
@@ -525,8 +525,8 @@
     {
       "id": "owner-unlock-fast-reply-card",
       "title": "Owner Unlock Fast Reply Card",
-      "status": "needs_review",
-      "signal": "missing fast reply card",
+      "status": "owner_action",
+      "signal": "broad intent no, suggestions 2, applies now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Turn freeform owner intent into exact validator-ready reply text without applying it",
       "source_ref": "data/kosmo-owner-unlock-fast-reply-card-2026-06-16.json"
@@ -534,8 +534,8 @@
     {
       "id": "owner-unlock-exact-reply-preview",
       "title": "Owner Unlock Exact Reply Preview",
-      "status": "needs_review",
-      "signal": "missing exact reply preview",
+      "status": "review_only_ready",
+      "signal": "validator owner_unlock_reply_valid, intake owner_unlock_reply_intake_map_ready_for_review, patches 6, failures 0",
       "owner_action_required": true,
       "route_hint": "Proof that the exact reply block reaches dry-run review without applying a decision",
       "source_ref": "data/kosmo-owner-unlock-exact-reply-preview-2026-06-16.json"
@@ -543,8 +543,8 @@
     {
       "id": "owner-unlock-path-a-readiness",
       "title": "Owner Unlock Path A Readiness",
-      "status": "needs_review",
-      "signal": "missing Path A readiness certificate",
+      "status": "owner_action",
+      "signal": "can start after exact reply yes, applies now no, activation ready no, failures 0",
       "owner_action_required": true,
       "route_hint": "Certificate of the exact owner-reply path before any private activation",
       "source_ref": "data/kosmo-owner-unlock-path-a-readiness-certificate-2026-06-16.json"
@@ -552,8 +552,8 @@
     {
       "id": "owner-unlock-patch-review-bundle",
       "title": "Owner Unlock Patch Review Bundle",
-      "status": "needs_review",
-      "signal": "missing patch review bundle",
+      "status": "review_only_ready",
+      "signal": "6 patches, source-root 1, owner cards 5, applies now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Review exact intake patch operations before any template edit",
       "source_ref": "data/kosmo-owner-unlock-patch-review-bundle-2026-06-16.json"
@@ -561,8 +561,8 @@
     {
       "id": "owner-unlock-intake-apply-plan",
       "title": "Owner Unlock Intake Apply Plan",
-      "status": "needs_review",
-      "signal": "missing intake apply plan",
+      "status": "review_only_ready",
+      "signal": "13 field edits, target empty yes, root exists yes, writes now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Field-level apply plan for the owner intake template; review only",
       "source_ref": "data/kosmo-owner-unlock-intake-apply-plan-2026-06-16.json"
@@ -570,8 +570,8 @@
     {
       "id": "owner-unlock-session-edit-preview",
       "title": "Owner Unlock Session Edit Preview",
-      "status": "needs_review",
-      "signal": "missing session edit preview",
+      "status": "review_only_ready",
+      "signal": "6 preview edits, session files 1, manual triage 5, writes now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Preview which session files would change after exact owner unlock; review only",
       "source_ref": "data/kosmo-owner-unlock-session-edit-preview-2026-06-16.json"
@@ -579,8 +579,8 @@
     {
       "id": "owner-unlock-operational-start-card",
       "title": "Owner Unlock Operational Start Card",
-      "status": "needs_review",
-      "signal": "missing operational start card",
+      "status": "owner_action",
+      "signal": "6/6 components, next 9, blocked 5, writes now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Single start card for the exact owner-unlock path; checklist only",
       "source_ref": "data/kosmo-owner-unlock-operational-start-card-2026-06-16.json"
@@ -588,8 +588,8 @@
     {
       "id": "owner-unlock-execution-runbook",
       "title": "Owner Unlock Execution Runbook",
-      "status": "needs_review",
-      "signal": "missing execution runbook",
+      "status": "review_only_ready",
+      "signal": "8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, queue executable 0, failures 0",
       "owner_action_required": true,
       "route_hint": "Current guarded source-root unlock sequence; runbook only",
       "source_ref": "data/kosmo-owner-unlock-execution-runbook-2026-06-16.json"
@@ -597,8 +597,8 @@
     {
       "id": "owner-unlock-session-apply-guard",
       "title": "Owner Unlock Session Apply Guard",
-      "status": "needs_review",
-      "signal": "missing session apply guard",
+      "status": "review_only_ready",
+      "signal": "waiting_for_manual_apply, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, matches no, private diagnostic no, failures 0",
       "owner_action_required": true,
       "route_hint": "Proves the manual session edit matches the reviewed preview before activation",
       "source_ref": "data/kosmo-owner-unlock-session-apply-guard-2026-06-16.json"
@@ -606,8 +606,8 @@
     {
       "id": "owner-unlock-session-apply-guard-smoke",
       "title": "Owner Unlock Session Apply Guard Smoke",
-      "status": "needs_review",
-      "signal": "missing session apply guard smoke",
+      "status": "review_only_ready",
+      "signal": "applied_matches_preview, matches yes, private diagnostic yes, checks 18/18, failures 0",
       "owner_action_required": false,
       "route_hint": "Fixture-only proof that the apply guard passes after the reviewed session edit",
       "source_ref": "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-16.json"

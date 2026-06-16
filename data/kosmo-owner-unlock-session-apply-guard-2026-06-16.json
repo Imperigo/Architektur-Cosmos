@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:34:01.129Z",
+  "status": "owner_unlock_session_apply_guard_waiting_for_manual_apply",
+  "policy": {
+    "guard_only": true,
+    "writes_session_files_now": false,
+    "records_decisions_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_guard": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-session-edit-preview-2026-06-16.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json"
+  ],
+  "summary": {
+    "mode": "waiting_for_manual_apply",
+    "target_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
+    "session_path": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
+    "fixture_session": false,
+    "session_status": "source_root_decision_session_pending",
+    "preview_status": "owner_unlock_session_edit_preview_ready",
+    "expected_selected_decision": "select_existing_root_for_private_diagnostic",
+    "actual_selected_decision": null,
+    "expected_selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "actual_selected_root_path": null,
+    "selected_root_exists": true,
+    "matches_preview": false,
+    "untouched_pending": true,
+    "private_diagnostic_allowed_after_apply": false,
+    "failures": 0,
+    "warnings": 1,
+    "public_ready_after_guard": 0
+  },
+  "expected_after_apply": {
+    "status": "source_root_decision_session_recorded",
+    "selected_decision": "select_existing_root_for_private_diagnostic",
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+  },
+  "next_actions": [
+    "Do not run private metadata inventory.",
+    "If exact owner reply is present and reviewed, apply only the expected_after_apply fields to the target session file.",
+    "Rerun this guard before source-root activation preflight."
+  ],
+  "hard_stops": [
+    "Do not apply this guard automatically.",
+    "Do not infer approval from a broad freeform reply.",
+    "Do not run private inventory while this guard is waiting.",
+    "Do not change public-ready state."
+  ],
+  "failures": [],
+  "warnings": [
+    "Manual apply has not happened yet; private diagnostics remain blocked."
+  ]
+}

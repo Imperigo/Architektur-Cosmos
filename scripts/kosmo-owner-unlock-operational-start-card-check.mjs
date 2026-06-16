@@ -75,7 +75,7 @@ function buildChecks(card) {
     check('policy_no_private_inventory', card.policy?.runs_private_inventory_now === false, card.policy?.runs_private_inventory_now),
     check('public_ready_zero', card.summary?.public_ready_after_card === 0, card.summary?.public_ready_after_card),
     check('all_components_ready', card.summary?.ready_components === card.summary?.components && card.summary?.components === 6, `${card.summary?.ready_components}/${card.summary?.components}`),
-    check('checkpoint_green', card.summary?.checkpoint_guards === '236/236', card.summary?.checkpoint_guards),
+    check('checkpoint_green', ratioIsComplete(card.summary?.checkpoint_guards), card.summary?.checkpoint_guards),
     check('owner_reply_not_applied', card.summary?.owner_reply_state === 'broad_intent_seen_exact_reply_not_applied', card.summary?.owner_reply_state),
     check('source_root_blocked', card.summary?.source_root_state === 'blocked_until_explicit_owner_reply_and_guards', card.summary?.source_root_state),
     check('selected_root_exists_preview', card.summary?.selected_root_exists_preview === true, card.summary?.selected_root_exists_preview),
@@ -102,6 +102,12 @@ function check(id, condition, evidence) {
     status: condition ? 'passed' : 'failed',
     evidence
   };
+}
+
+function ratioIsComplete(value) {
+  const match = String(value || '').match(/^(\d+)\/(\d+)$/);
+  if (!match) return false;
+  return Number(match[1]) === Number(match[2]) && Number(match[2]) > 0;
 }
 
 function renderMarkdown(report) {

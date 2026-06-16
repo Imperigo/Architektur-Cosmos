@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-16T04:50:35.221Z",
+  "status": "source_root_decision_session_pending",
+  "source_refs": [
+    "data/kosmo-source-root-selection-brief-2026-06-16.json",
+    "data/kosmo-source-root-locator-2026-06-16.json",
+    "data/kosmo-storage-mount-snapshot-2026-06-16.json"
+  ],
+  "policy": {
+    "auto_inventory": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_session": 0,
+    "selected_root_required_before_inventory": true,
+    "rule": "This session records the owner/overseer source-root decision only. It never reads, copies, ingests or approves private source content."
+  },
+  "allowed_decisions": [
+    "keep_blocked",
+    "mount_archive_first",
+    "repair_onedrive_first",
+    "select_existing_root_for_private_diagnostic",
+    "select_root_after_mount_check"
+  ],
+  "selected_decision": null,
+  "selected_root_path": null,
+  "owner_note": "",
+  "diagnostic_command_after_recorded_selection": "npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\"",
+  "selection_options": [
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+      "classification": "possible_source_root",
+      "score": 70,
+      "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+      "classification": "possible_source_root",
+      "score": 60,
+      "recommended_action": "Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+      "classification": "possible_source_root",
+      "score": 60,
+      "recommended_action": "Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow",
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+      "classification": "possible_source_root",
+      "score": 52,
+      "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "classification": "possible_source_root",
+      "score": 52,
+      "recommended_action": "Keep blocked unless owner/overseer confirms this exact path as the real source root.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+      "classification": "possible_source_root",
+      "score": 48,
+      "recommended_action": "Treat as OneDrive mirror candidate; confirm completeness and sync health before any private metadata inventory.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+      "classification": "possible_source_root",
+      "score": 48,
+      "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+      "classification": "possible_source_root",
+      "score": 48,
+      "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "mount_archive_or_missing_root",
+      "path": null,
+      "classification": "missing_or_unmounted_root",
+      "score": null,
+      "recommended_action": "Mount or expose the real archive/OneDrive library root, then rerun locator and private-library diagnostic.",
+      "safe_default": "keep_blocked"
+    },
+    {
+      "id": "repair_onedrive_first",
+      "path": null,
+      "classification": "sync_repair_first",
+      "score": null,
+      "recommended_action": "Resolve OneDrive sync error roots before using visible OneDrive mirrors for inventory.",
+      "safe_default": "repair_before_inventory"
+    }
+  ],
+  "blocked_until_recorded_selection": [
+    "sogn_private_source_inventory",
+    "ingenbohl_pdf_private_extraction",
+    "source_dependent_asset_authoring",
+    "public_ready_promotion_from_private_sources"
+  ],
+  "next_actions": [
+    "Owner/Claude/KosmoOverseer sets selected_decision and, if selecting a root, selected_root_path.",
+    "Run npm run kosmo:source-root-decision-session-check.",
+    "Only after a passing recorded selection may Codex/Claude run the private-library diagnostic against the selected root.",
+    "Keep all source-dependent public-ready states at 0 until later provenance and rights reviews pass."
+  ]
+}

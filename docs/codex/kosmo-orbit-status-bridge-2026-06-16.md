@@ -1,12 +1,12 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T05:31:27.511Z
+Generated: 2026-06-16T05:34:02.258Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
 - Cards: 82
-- Blocking cards: 15
+- Blocking cards: 5
 - Owner action cards: 26
 - Source root blocked: yes
 - Day batch: day_batch_loop_passed_review_only
@@ -55,11 +55,11 @@ Status: `orbit_bridge_ready_with_blockers`
 - Training eval row template: training_eval_row_template_ready, templates 6
 - Training eval review queue: training_eval_review_queue_plan_ready, lanes 5
 - Architecture ontology seed: architecture_ontology_seed_ready, entities 8, relations 10
-- Owner unlock fast reply card: null, broad intent -, applies now -
-- Owner unlock exact reply preview: null, validator -, patches -
-- Owner unlock Path A readiness: null, can start after exact reply -, applies now -
-- Owner unlock patch review bundle: null, operations -, applies now -
-- Owner unlock intake apply plan: null, field edits -, writes now -
+- Owner unlock fast reply card: owner_unlock_fast_reply_card_ready, broad intent false, applies now false
+- Owner unlock exact reply preview: owner_unlock_answer_dry_run_ready_for_review, validator owner_unlock_reply_valid, patches 6
+- Owner unlock Path A readiness: owner_unlock_path_a_readiness_certificate_ready, can start after exact reply true, applies now false
+- Owner unlock patch review bundle: owner_unlock_patch_review_bundle_ready, operations 6, applies now false
+- Owner unlock intake apply plan: owner_unlock_intake_apply_plan_ready, field edits 13, writes now false
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -79,16 +79,16 @@ Status: `orbit_bridge_ready_with_blockers`
 | `source-root-post-owner-activation-queue-check` Source Root Post-Owner Activation Queue Check | guard_passed | no | 0 failures, 0 warnings |
 | `source-root-owner-final-decision-brief` Source Root Owner Final Decision Brief | owner_action | yes | 3 options, unlock 1, failures 0 |
 | `source-root-owner-choice-consequence-matrix` Source Root Owner Choice Consequence Matrix | owner_action | yes | 3 choices, unlock 1, blocked 2, failures 0 |
-| `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | needs_review | yes | missing fast reply card |
-| `owner-unlock-exact-reply-preview` Owner Unlock Exact Reply Preview | needs_review | yes | missing exact reply preview |
-| `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | needs_review | yes | missing Path A readiness certificate |
-| `owner-unlock-patch-review-bundle` Owner Unlock Patch Review Bundle | needs_review | yes | missing patch review bundle |
-| `owner-unlock-intake-apply-plan` Owner Unlock Intake Apply Plan | needs_review | yes | missing intake apply plan |
-| `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | needs_review | yes | missing session edit preview |
-| `owner-unlock-operational-start-card` Owner Unlock Operational Start Card | needs_review | yes | missing operational start card |
-| `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | needs_review | yes | missing execution runbook |
-| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | needs_review | yes | missing session apply guard |
-| `owner-unlock-session-apply-guard-smoke` Owner Unlock Session Apply Guard Smoke | needs_review | no | missing session apply guard smoke |
+| `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | owner_action | yes | broad intent no, suggestions 2, applies now no, failures 0 |
+| `owner-unlock-exact-reply-preview` Owner Unlock Exact Reply Preview | review_only_ready | yes | validator owner_unlock_reply_valid, intake owner_unlock_reply_intake_map_ready_for_review, patches 6, failures 0 |
+| `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | owner_action | yes | can start after exact reply yes, applies now no, activation ready no, failures 0 |
+| `owner-unlock-patch-review-bundle` Owner Unlock Patch Review Bundle | review_only_ready | yes | 6 patches, source-root 1, owner cards 5, applies now no, failures 0 |
+| `owner-unlock-intake-apply-plan` Owner Unlock Intake Apply Plan | review_only_ready | yes | 13 field edits, target empty yes, root exists yes, writes now no, failures 0 |
+| `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | review_only_ready | yes | 6 preview edits, session files 1, manual triage 5, writes now no, failures 0 |
+| `owner-unlock-operational-start-card` Owner Unlock Operational Start Card | owner_action | yes | 6/6 components, next 9, blocked 5, writes now no, failures 0 |
+| `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | review_only_ready | yes | 8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, queue executable 0, failures 0 |
+| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | review_only_ready | yes | waiting_for_manual_apply, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, matches no, private diagnostic no, failures 0 |
+| `owner-unlock-session-apply-guard-smoke` Owner Unlock Session Apply Guard Smoke | review_only_ready | no | applied_matches_preview, matches yes, private diagnostic yes, checks 18/18, failures 0 |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
