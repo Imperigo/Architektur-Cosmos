@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-16T17:57:08.003Z
+Generated: 2026-06-16T17:58:58.318Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md` - 2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md` - 2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-332-abendbatch-zusatz-audits.md` - 2026-06-16-codex-synergiebericht-332-abendbatch-zusatz-audits.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-332-abendbatch-zusatz-audits.md` - 2026-06-16-codex-synergiebericht-332-abendbatch-zusatz-audits.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-331-abendbatch-execution.md` - 2026-06-16-codex-synergiebericht-331-abendbatch-execution.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md` - 2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md` - 2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md` - 2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md must include a title.
-- passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md` - 2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md` - 2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked or metadata-only allowed.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked or metadata-only allowed.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

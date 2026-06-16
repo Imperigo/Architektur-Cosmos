@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:56:41.583Z",
+  "generated_at": "2026-06-16T17:58:58.613Z",
   "status": "cross_worker_delta_audit_ready",
   "policy": {
     "audit_only": true,
@@ -24,12 +24,12 @@
   "summary": {
     "repos": 2,
     "visible_repos": 2,
-    "latest_handoff_number": 331,
+    "latest_handoff_number": 333,
     "latest_handoffs": 10,
     "active_handoff_inboxes": 2,
     "latest_unmirrored_handoffs": 0,
     "foreign_commits_needing_review": 6,
-    "dirty_repo_entries": 1331,
+    "dirty_repo_entries": 1333,
     "failures": 0,
     "public_ready_after_audit": 0
   },
@@ -40,9 +40,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "exists": true,
       "branch": "main",
-      "head": "90175ca",
-      "status_count": 1328,
+      "head": "17e4306",
+      "status_count": 1329,
       "recent_commits": [
+        {
+          "hash": "17e4306",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T19:57:30+02:00",
+          "subject": "Record evening audit follow-up"
+        },
         {
           "hash": "90175ca",
           "author": "Architecture Cosmos Maintainer",
@@ -108,12 +114,6 @@
           "author": "Architecture Cosmos Maintainer",
           "date": "2026-06-16T07:36:59+02:00",
           "subject": "Refresh owner gate terminal status"
-        },
-        {
-          "hash": "baa3e3c",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:35:39+02:00",
-          "subject": "Prepare owner unlock helper chain"
         }
       ]
     },
@@ -123,9 +123,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
       "exists": true,
       "branch": "main",
-      "head": "9889d28",
-      "status_count": 3,
+      "head": "1def2f3",
+      "status_count": 4,
       "recent_commits": [
+        {
+          "hash": "1def2f3",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T19:57:37+02:00",
+          "subject": "Add Codex evening audit handoff"
+        },
         {
           "hash": "9889d28",
           "author": "Andrin Baumann",
@@ -191,12 +197,6 @@
           "author": "Andrin Baumann",
           "date": "2026-06-16T08:11:38+02:00",
           "subject": "Guard: Konfig-Knoten-Args als gelieferte Felder zählen (Falsch-Positiv-Fix)"
-        },
-        {
-          "hash": "872e0f1",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:49:29+02:00",
-          "subject": "Add worktree guard audit handoff"
         }
       ]
     }
@@ -205,15 +205,29 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 330
+      "files": 332
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 196
+      "files": 199
     }
   ],
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md",
+      "number": 333,
+      "title": "Codex Synergiebericht 333 - Cross-Worker Commit Review",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T17:58:48.189Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-332-abendbatch-zusatz-audits.md",
+      "number": 332,
+      "title": "Codex Synergiebericht 332 - Abendbatch Zusatz-Audits",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T17:57:37.763Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-331-abendbatch-execution.md",
       "number": 331,
@@ -269,23 +283,15 @@
       "title": "Codex Synergiebericht 324: Terminal Gate Audit",
       "mirrored_inboxes": 2,
       "modified_at": "2026-06-16T05:43:11.999Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-323-owner-gate-terminal-status.md",
-      "number": 323,
-      "title": "Codex Synergiebericht 323: Owner Gate Terminal Status",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T05:36:47.188Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-322-owner-unlock-helper-chain.md",
-      "number": 322,
-      "title": "Codex Synergiebericht 322: Owner Unlock Helper Chain",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T05:35:11.864Z"
     }
   ],
   "foreign_commits_needing_review": [
+    {
+      "hash": "1def2f3",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T19:57:37+02:00",
+      "subject": "Add Codex evening audit handoff"
+    },
     {
       "hash": "9889d28",
       "author": "Andrin Baumann",
@@ -315,12 +321,6 @@
       "author": "Andrin Baumann",
       "date": "2026-06-16T14:39:55+02:00",
       "subject": "Review-Fixes (heutige Changes): 7 bestätigte Bugs aus adversarialer Multi-Agent-Review"
-    },
-    {
-      "hash": "b60d11b",
-      "author": "Andrin Baumann",
-      "date": "2026-06-16T14:36:21+02:00",
-      "subject": "Add source root unlock handoff"
     }
   ],
   "next_actions": [

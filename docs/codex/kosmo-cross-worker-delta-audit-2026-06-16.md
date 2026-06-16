@@ -1,24 +1,26 @@
 # Kosmo Cross-Worker Delta Audit
 
-Generated: 2026-06-16T17:56:41.583Z
+Generated: 2026-06-16T17:58:58.613Z
 Status: `cross_worker_delta_audit_ready`
 
 ## Summary
 
 - Repos: 2/2
-- Latest handoff: 331
+- Latest handoff: 333
 - Latest unmirrored handoffs: 0
 - Foreign commits needing review: 6
-- Dirty repo entries: 1331
+- Dirty repo entries: 1333
 - Public-ready after audit: 0
 
 ## Repos
 
-- architecture-cosmos: main @ 90175ca, dirty 1328
-- kosmo-orbit: main @ 9889d28, dirty 3
+- architecture-cosmos: main @ 17e4306, dirty 1329
+- kosmo-orbit: main @ 1def2f3, dirty 4
 
 ## Latest Handoffs
 
+- 333: Codex Synergiebericht 333 - Cross-Worker Commit Review (mirrors 2)
+- 332: Codex Synergiebericht 332 - Abendbatch Zusatz-Audits (mirrors 2)
 - 331: Codex Synergiebericht 331 - Abendbatch Execution (mirrors 2)
 - 330: Codex Synergiebericht 330: Grosser Abendbatch (mirrors 2)
 - 329: Codex Synergiebericht 329: Review-Batches review-only triagiert (mirrors 2)
@@ -27,17 +29,15 @@ Status: `cross_worker_delta_audit_ready`
 - 326: Codex Synergiebericht 326: Cross-Worker Delta Audit (mirrors 2)
 - 325: Codex Synergiebericht 325: Worktree Guard Audit (mirrors 2)
 - 324: Codex Synergiebericht 324: Terminal Gate Audit (mirrors 2)
-- 323: Codex Synergiebericht 323: Owner Gate Terminal Status (mirrors 2)
-- 322: Codex Synergiebericht 322: Owner Unlock Helper Chain (mirrors 2)
 
 ## Foreign Commits Needing Review
 
+- 1def2f3: Andrin Baumann - Add Codex evening audit handoff
 - 9889d28: Andrin Baumann - Add Codex evening batch handoff
 - b6a9928: Andrin Baumann - Add evening big batch handoff
 - c9eef0c: Andrin Baumann - Add review batch triage handoff
 - 9c1ba39: Andrin Baumann - Pipeline-Recipe 'Wettbewerb: Phase-0 → Plan' — volle Lane-Spanne (Prepare→Design→Publish)
 - fbb48e1: Andrin Baumann - Review-Fixes (heutige Changes): 7 bestätigte Bugs aus adversarialer Multi-Agent-Review
-- b60d11b: Andrin Baumann - Add source root unlock handoff
 
 ## Next Actions
 

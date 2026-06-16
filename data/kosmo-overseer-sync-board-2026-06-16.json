@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:57:07.742Z",
+  "generated_at": "2026-06-16T17:58:58.079Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 331
+      "files": 332
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 197
+      "files": 199
     }
   ],
   "summary": {
@@ -43,16 +43,23 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 270,
+    "historical_handoff_mirror_missing_files": 271,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
     {
+      "filename": "2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md",
+      "title": "Codex Synergiebericht 333 - Cross-Worker Commit Review",
+      "mirrored_inboxes": 2,
+      "bytes": 1093,
+      "modified_at": "2026-06-16T17:58:48.189Z"
+    },
+    {
       "filename": "2026-06-16-codex-synergiebericht-332-abendbatch-zusatz-audits.md",
       "title": "Codex Synergiebericht 332 - Abendbatch Zusatz-Audits",
       "mirrored_inboxes": 2,
-      "bytes": 1208,
-      "modified_at": "2026-06-16T17:57:02.704Z"
+      "bytes": 1207,
+      "modified_at": "2026-06-16T17:57:37.763Z"
     },
     {
       "filename": "2026-06-16-codex-synergiebericht-331-abendbatch-execution.md",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2320,
       "modified_at": "2026-06-16T10:39:35.507Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md",
-      "title": "Codex Synergiebericht 325: Worktree Guard Audit",
-      "mirrored_inboxes": 2,
-      "bytes": 1665,
-      "modified_at": "2026-06-16T05:48:40.361Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 325-332 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 326-333 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
