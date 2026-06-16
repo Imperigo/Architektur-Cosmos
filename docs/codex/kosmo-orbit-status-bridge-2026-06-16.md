@@ -1,15 +1,15 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T05:28:12.721Z
+Generated: 2026-06-16T05:30:34.815Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
 - Cards: 82
-- Blocking cards: 18
+- Blocking cards: 15
 - Owner action cards: 26
 - Source root blocked: yes
-- Day batch: day_batch_loop_needs_review
+- Day batch: day_batch_loop_passed_review_only
 - Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
 - Source-root candidate integrity: source_root_candidate_integrity_owner_review_ready, existing 8, exact roots 1, failures 0
 - Source-root owner action: source_root_owner_action_required
@@ -25,8 +25,8 @@ Status: `orbit_bridge_ready_with_blockers`
 - Private metadata inventory: private_metadata_inventory_blocked_until_activation
 - Private metadata inventory fixture: private_metadata_inventory_fixture_passed
 - Private metadata inventory check: private_metadata_inventory_guard_passed
-- Local models: null
-- Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 8
+- Local models: local_model_inventory_ready_review_only
+- Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6
 - Local worker execution runbook: local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0
 - Local worker output contracts: local_worker_output_contract_review_ready, contracts 9, present valid 9, repo conversion now 0, execute now 0, check local_worker_output_contract_review_guard_passed, failures 0
 - Source-independent work queue: source_independent_work_queue_ready, tasks 9, completed 7, codex executable 0, owner actions 2, failures 0
@@ -60,14 +60,14 @@ Status: `orbit_bridge_ready_with_blockers`
 - Owner unlock Path A readiness: null, can start after exact reply -, applies now -
 - Owner unlock patch review bundle: null, operations -, applies now -
 - Owner unlock intake apply plan: null, field edits -, writes now -
-- Innovation smoke: null
+- Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
 ## Orbit Cards
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | needs_review | no | 13/14 required steps |
+| `day-batch` Daily Batch | ready | no | 71/71 required steps |
 | `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
 | `source-root-decision-refresh` Source Root Decision Refresh | review_only_ready | no | source_root_decision_session_refresh_not_needed, changed no, options 10 |
 | `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |
@@ -90,8 +90,8 @@ Status: `orbit_bridge_ready_with_blockers`
 | `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | needs_review | yes | missing session apply guard |
 | `owner-unlock-session-apply-guard-smoke` Owner Unlock Session Apply Guard Smoke | needs_review | no | missing session apply guard smoke |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
-| `local-models` Local Models | needs_review | no | 0/0 roles, 0 Ollama models, 0 GB |
-| `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 8 |
+| `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
+| `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
 | `local-worker-execution-runbook` Local Worker Execution Runbook | review_only_ready | no | local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0 |
 | `local-worker-output-contracts` Local Worker Output Contracts | review_only_ready | no | 9 contracts, present 9, repo 0, execute 0, failures 0 |
 | `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 9 tasks, completed 7, codex 0, owner 2, failures 0 |
@@ -147,7 +147,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `architecture-ontology-seed` Architecture Ontology Seed | review_only_ready | no | 8 entities, 10 relations, 6 facet groups, failures 0 |
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-17, failures 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
-| `innovation` Innovation Lanes | needs_review | no | 0/0 public-safe smoke checks passed |
+| `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
 | `owner-handoff` Owner Handoff | ready | yes | 6 questions, no filled answers recorded |
 
 ## Recommended Orbit Sections
