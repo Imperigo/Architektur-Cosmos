@@ -57,6 +57,76 @@ function buildPacket({ ownerAction, decisionRefresh, candidateIntegrity, decisio
   const exactRootOptions = optionChecks.filter((option) => option.guard_class === 'owner_confirmable_exact_root' && option.exists);
   const workflowOptions = optionChecks.filter((option) => option.guard_class === 'workflow_mirror_or_codex_context');
   const assetOptions = optionChecks.filter((option) => option.guard_class === 'asset_material_library_candidate');
+  const alreadySatisfied = ownerAction.status === 'source_root_owner_action_satisfied_metadata_only' &&
+    decisionCheck.status === 'passed_recorded_private_diagnostic_allowed' &&
+    checkSummary.private_diagnostic_allowed === true &&
+    decisionSession.status === 'source_root_decision_session_recorded';
+
+  if (alreadySatisfied) {
+    return {
+      schema_version: '0.1',
+      generated_at: new Date().toISOString(),
+      status: 'source_root_owner_decision_packet_satisfied_metadata_only',
+      policy: {
+        owner_prompt_only: true,
+        records_decisions: false,
+        mutates_decision_session: false,
+        reads_private_content: false,
+        copies_private_content: false,
+        writes_public_files: false,
+        writes_public_manifest: false,
+        public_ready_after_packet: 0,
+        note: 'The owner decision has already been recorded and guarded. This packet is retained as a satisfied metadata-only audit surface.'
+      },
+      source_refs: Object.values(refs).map((path) => relative(root, path)),
+      summary: {
+        owner_action_required: false,
+        recommended_decision: ownerSummary.recommended_decision || null,
+        decision_refresh_status: decisionRefresh.status,
+        decision_refresh_options: refreshSummary.refreshed_options ?? null,
+        candidate_integrity_status: candidateIntegrity.status,
+        visible_path_options: integritySummary.existing_path_options ?? null,
+        owner_confirmable_exact_roots: exactRootOptions.length,
+        workflow_mirror_options: workflowOptions.length,
+        asset_candidate_options: assetOptions.length,
+        selected_decision: checkSummary.selected_decision || null,
+        selected_root_path: checkSummary.selected_root_path || null,
+        private_diagnostic_allowed: true,
+        decision_templates: 0,
+        failures: 0,
+        public_ready_after_packet: 0
+      },
+      owner_question: {
+        id: 'source_root_decision_now',
+        prompt: 'Source-root decision has already been recorded and guarded.',
+        allowed_answer_shape: {
+          selected_decision: decisionSession.allowed_decisions || [],
+          selected_root_path: 'already recorded'
+        },
+        safe_default: 'already_recorded'
+      },
+      decision_templates: [],
+      option_groups: {
+        owner_confirmable_exact_roots: exactRootOptions.map(optionSummary),
+        workflow_mirrors_keep_blocked: workflowOptions.map(optionSummary),
+        asset_sources_for_kosmoasset_review_only: assetOptions.map(optionSummary)
+      },
+      forbidden_until_after_recorded_owner_decision: [
+        'private OCR or PDF/book text extraction',
+        'copying private scans, plans, images or lecture material into Git',
+        'public-ready promotion for private-source-derived references or assets'
+      ],
+      exact_next_commands_after_recorded_owner_decision: [
+        'npm run kosmo:source-root-decision-session-check',
+        'npm run kosmo:source-root-blocker-refresh',
+        'npm run kosmo:source-root-activation-preflight',
+        'npm run kosmo:private-metadata-inventory',
+        'npm run kosmo:private-metadata-inventory-check',
+        'npm run kosmo:day-batch-loop'
+      ],
+      failures: []
+    };
+  }
 
   if (ownerAction.status !== 'source_root_owner_action_required') failures.push(`Unexpected owner action status: ${ownerAction.status}`);
   if (![

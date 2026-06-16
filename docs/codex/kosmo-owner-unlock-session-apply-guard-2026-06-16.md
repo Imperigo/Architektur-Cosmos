@@ -1,24 +1,24 @@
 # Kosmo Owner Unlock Session Apply Guard
 
-Generated: 2026-06-16T05:34:01.129Z
-Status: `owner_unlock_session_apply_guard_waiting_for_manual_apply`
+Generated: 2026-06-16T12:13:47.629Z
+Status: `owner_unlock_session_apply_guard_passed_after_manual_apply`
 
 ## Summary
 
-- Mode: waiting_for_manual_apply
+- Mode: applied_matches_preview
 - Target file: `examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json`
 - Session path: `examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json`
 - Fixture session: no
-- Session status: source_root_decision_session_pending
+- Session status: source_root_decision_session_recorded
 - Preview status: owner_unlock_session_edit_preview_ready
 - Expected decision: select_existing_root_for_private_diagnostic
-- Actual decision: -
+- Actual decision: select_existing_root_for_private_diagnostic
 - Expected root path: /mnt/archiv/ArchitekturKosmos/Assets
-- Actual root path: -
+- Actual root path: /mnt/archiv/ArchitekturKosmos/Assets
 - Selected root exists: yes
-- Matches preview: no
-- Untouched pending: yes
-- Private diagnostic allowed after apply: no
+- Matches preview: yes
+- Untouched pending: no
+- Private diagnostic allowed after apply: yes
 - Public-ready after guard: 0
 
 ## Expected After Apply
@@ -34,9 +34,10 @@ Status: `owner_unlock_session_apply_guard_waiting_for_manual_apply`
 
 ## Next Actions
 
-- Do not run private metadata inventory.
-- If exact owner reply is present and reviewed, apply only the expected_after_apply fields to the target session file.
-- Rerun this guard before source-root activation preflight.
+- Run npm run kosmo:source-root-decision-session-check.
+- Run npm run kosmo:source-root-blocker-refresh.
+- Run npm run kosmo:source-root-activation-preflight.
+- Run npm run kosmo:source-root-post-owner-activation-queue and its guard.
 
 ## Hard Stops
 
@@ -51,4 +52,4 @@ Status: `owner_unlock_session_apply_guard_waiting_for_manual_apply`
 
 ## Warnings
 
-- Manual apply has not happened yet; private diagnostics remain blocked.
+- None.

@@ -43,7 +43,12 @@ async function main() {
 
 function buildReport({ choiceMatrix, readinessPack, ownerBrief }) {
   const failures = [];
-  if (choiceMatrix.status !== 'source_root_owner_choice_consequence_matrix_ready') failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
+  const sourceRootChoiceSatisfied = choiceMatrix.status === 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only';
+  const choiceMatrixAccepted = [
+    'source_root_owner_choice_consequence_matrix_ready',
+    'source_root_owner_choice_consequence_matrix_satisfied_metadata_only'
+  ].includes(choiceMatrix.status);
+  if (!choiceMatrixAccepted) failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
   if (readinessPack.status !== 'post_source_root_metadata_readiness_pack_ready') failures.push(`Readiness pack not ready: ${readinessPack.status}`);
   const ownerBriefAccepted = [
     'owner_remaining_decision_brief_ready',
@@ -51,7 +56,34 @@ function buildReport({ choiceMatrix, readinessPack, ownerBrief }) {
   ].includes(ownerBrief.status);
   if (!ownerBriefAccepted) failures.push(`Owner brief not in a guarded review state: ${ownerBrief.status}`);
 
-  const branches = (choiceMatrix.choices || []).map((choice) => {
+  const branches = sourceRootChoiceSatisfied
+    ? [{
+        id: 'recorded_metadata_only_source_root',
+        label: 'Recorded metadata-only Source Root',
+        selected_decision: choiceMatrix.summary?.selected_decision || null,
+        selected_root_path: choiceMatrix.summary?.selected_root_path || null,
+        owner_confirmation_required: false,
+        unlocks_private_metadata_diagnostic: choiceMatrix.summary?.private_diagnostic_allowed === true,
+        executable_now: false,
+        public_ready_after_branch: 0,
+        allowed_after_explicit_owner_answer: {
+          record_decision: false,
+          run_guard_sequence: true,
+          run_private_metadata_inventory_after_guards: true,
+          run_private_ocr_or_pdf_text_extraction: false,
+          copy_private_files_to_git: false,
+          set_public_ready: false,
+          run_local_llm_on_private_file_contents: false
+        },
+        command_order_after_recording: [
+          'npm run kosmo:private-metadata-inventory',
+          'npm run kosmo:private-metadata-inventory-check'
+        ],
+        immediate_codex_action: 'Continue metadata-only diagnostics and guarded review batches; keep private content extraction and public-ready blocked.',
+        next_human_review: 'review private metadata inventory output contract before any extraction or local LLM content tasks',
+        caution: 'Recorded source root does not approve OCR, PDF text extraction, private file copying, local LLM file-content tasks, or public-ready promotion.'
+      }]
+    : (choiceMatrix.choices || []).map((choice) => {
     const unlocks = choice.unlocks_private_metadata_diagnostic === true;
     const guardSequence = choice.guard_sequence_after_recording || [];
     return {

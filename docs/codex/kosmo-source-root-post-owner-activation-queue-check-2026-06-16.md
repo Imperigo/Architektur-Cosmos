@@ -1,17 +1,17 @@
 # Kosmo Source-Root Post-Owner Activation Queue Check
 
-Generated: 2026-06-16T05:11:38.523Z
+Generated: 2026-06-16T12:30:34.170Z
 Status: `source_root_post_owner_activation_queue_guard_passed`
 
 ## Summary
 
 - Queue status: source_root_post_owner_activation_queue_ready
-- Activation: source_root_activation_waiting_for_owner_storage_action
-- Activation ready: no
-- Decision still pending: yes
+- Activation: source_root_activation_ready_for_private_metadata_diagnostic
+- Activation ready: yes
+- Decision still pending: no
 - Queue steps: 7
-- Executable now: 0
-- Blocked now: 7
+- Executable now: 2
+- Blocked now: 5
 - Failures: 0
 - Warnings: 0
 - Public-ready after check: 0
@@ -33,9 +33,6 @@ Status: `source_root_post_owner_activation_queue_guard_passed`
 - passed: `executable_count_matches` - Summary executable_now must match step rows.
 - passed: `blocked_count_matches` - Summary blocked_now must match step rows.
 - passed: `queue_internal_failures_zero` - Queue internal failures must be 0.
-- passed: `pending_activation_not_ready` - Pending decision must not be activation-ready.
-- passed: `pending_executable_zero` - Pending decision must keep executable_now at 0.
-- passed: `pending_all_blocked` - Pending decision must keep all queue steps blocked.
 - passed: `queue_steps_array` - Queue steps must be an array.
 - passed: `expected_step_count` - Queue must contain the expected seven steps.
 - passed: `step_order:record_owner_decision` - Step 1 must be record_owner_decision.
@@ -69,13 +66,13 @@ Status: `source_root_post_owner_activation_queue_guard_passed`
 - passed: `step_phase:private_metadata_inventory` - private_metadata_inventory must include a phase.
 - passed: `step_command:private_metadata_inventory` - private_metadata_inventory must include a command.
 - passed: `step_requires:private_metadata_inventory` - private_metadata_inventory must include requires array.
-- passed: `step_blocked_reason:private_metadata_inventory` - private_metadata_inventory must explain why it is blocked.
+- passed: `step_executable_no_blocker:private_metadata_inventory` - private_metadata_inventory cannot be executable while blocked_reason is set.
 - passed: `step_safe_command:private_metadata_inventory` - private_metadata_inventory command must stay in the safe queue command set.
 - passed: `private_inventory_executable_matches_activation` - Private metadata inventory may be executable only when activation_ready is true.
 - passed: `step_phase:private_metadata_inventory_check` - private_metadata_inventory_check must include a phase.
 - passed: `step_command:private_metadata_inventory_check` - private_metadata_inventory_check must include a command.
 - passed: `step_requires:private_metadata_inventory_check` - private_metadata_inventory_check must include requires array.
-- passed: `step_blocked_reason:private_metadata_inventory_check` - private_metadata_inventory_check must explain why it is blocked.
+- passed: `step_executable_no_blocker:private_metadata_inventory_check` - private_metadata_inventory_check cannot be executable while blocked_reason is set.
 - passed: `step_safe_command:private_metadata_inventory_check` - private_metadata_inventory_check command must stay in the safe queue command set.
 - passed: `step_phase:day_batch_loop` - day_batch_loop must include a phase.
 - passed: `step_command:day_batch_loop` - day_batch_loop must include a command.

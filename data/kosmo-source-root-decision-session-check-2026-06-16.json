@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T12:31:08.484Z",
+  "session_path": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
+  "status": "passed_recorded_private_diagnostic_allowed",
+  "policy": {
+    "review_only": true,
+    "private_content_read": false,
+    "copied_private_content": false,
+    "public_ready_allowed": false,
+    "public_ready_after_session_required": 0
+  },
+  "summary": {
+    "selected_decision": "select_existing_root_for_private_diagnostic",
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "selected_root_exists": true,
+    "selected_root_in_locator_options": true,
+    "selection_options": 10,
+    "blocked_items": 4,
+    "private_diagnostic_allowed": true,
+    "public_ready_after_session": 0,
+    "failures": 0,
+    "warnings": 0
+  },
+  "blocked_until_recorded_selection": [
+    "sogn_private_source_inventory",
+    "ingenbohl_pdf_private_extraction",
+    "source_dependent_asset_authoring",
+    "public_ready_promotion_from_private_sources"
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Run npm run kosmo:private-library-diagnostic -- --roots \"/mnt/archiv/ArchitekturKosmos/Assets\"",
+    "Open a private metadata-only inventory task under KosmoZentrale."
+  ]
+}

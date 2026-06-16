@@ -1,35 +1,35 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T10:42:40.746Z
+Generated: 2026-06-16T12:31:41.275Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
 - Cards: 85
-- Blocking cards: 5
-- Owner action cards: 26
-- Source root blocked: yes
+- Blocking cards: 4
+- Owner action cards: 20
+- Source root blocked: no
 - Day batch: day_batch_loop_passed_review_only
-- Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
+- Source-root decision refresh: source_root_decision_session_refresh_refused, changed no, options 10, failures 1
 - Source-root candidate integrity: source_root_candidate_integrity_owner_review_ready, existing 8, exact roots 1, failures 0
-- Source-root owner action: source_root_owner_action_required
-- Source-root recommended decision: repair_onedrive_first_or_confirm_complete_non_onedrive_root
-- Source-root owner decision packet: source_root_owner_decision_packet_ready, templates 3, exact roots 1, failures 0
+- Source-root owner action: source_root_owner_action_satisfied_metadata_only
+- Source-root recommended decision: already_allowed
+- Source-root owner decision packet: source_root_owner_decision_packet_satisfied_metadata_only, templates 0, exact roots 1, failures 0
 - Source-root owner decision packet check: source_root_owner_decision_packet_guard_passed, failures 0, warnings 0
-- Source-root decision dry run: source_root_decision_dry_run_ready, scenarios 3, metadata scenarios 1, failures 0
-- Source-root post-owner activation queue: source_root_post_owner_activation_queue_ready, steps 7, executable 0, blocked 7, failures 0
+- Source-root decision dry run: source_root_decision_dry_run_satisfied_recorded_selection, scenarios 0, metadata scenarios 1, failures 0
+- Source-root post-owner activation queue: source_root_post_owner_activation_queue_ready, steps 7, executable 2, blocked 5, failures 0
 - Source-root post-owner activation queue check: source_root_post_owner_activation_queue_guard_passed, failures 0, warnings 0
-- Source-root owner final decision brief: source_root_owner_final_decision_brief_ready, options 3, unlock options 1, failures 0
-- Source-root owner choice consequence matrix: source_root_owner_choice_consequence_matrix_ready, choices 3, unlock 1, blocked 2, failures 0
-- Source-root activation: source_root_activation_waiting_for_owner_storage_action
-- Private metadata inventory: private_metadata_inventory_blocked_until_activation
+- Source-root owner final decision brief: source_root_owner_final_decision_brief_satisfied_metadata_only, options 0, unlock options 0, failures 0
+- Source-root owner choice consequence matrix: source_root_owner_choice_consequence_matrix_satisfied_metadata_only, choices 0, unlock 0, blocked 0, failures 0
+- Source-root activation: source_root_activation_ready_for_private_metadata_diagnostic
+- Private metadata inventory: private_metadata_inventory_ready_private_output_written
 - Private metadata inventory fixture: private_metadata_inventory_fixture_passed
 - Private metadata inventory check: private_metadata_inventory_guard_passed
 - Local models: local_model_inventory_ready_review_only
 - Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6
 - Local worker execution runbook: local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0
 - Local worker output contracts: local_worker_output_contract_review_ready, contracts 9, present valid 9, repo conversion now 0, execute now 0, check local_worker_output_contract_review_guard_passed, failures 0
-- Source-independent work queue: source_independent_work_queue_ready, tasks 9, completed 7, codex executable 0, owner actions 2, failures 0
+- Source-independent work queue: source_independent_work_queue_ready, tasks 9, completed 8, codex executable 0, owner actions 1, failures 0
 - Pilot gap label review: pilot_gap_label_review_ready, labels 12, hard blockers 7, owner decisions 7, check pilot_gap_label_review_guard_passed, failures 0
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
@@ -70,18 +70,18 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | ready | no | 71/71 required steps |
-| `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
-| `source-root-decision-refresh` Source Root Decision Refresh | review_only_ready | no | source_root_decision_session_refresh_not_needed, changed no, options 10 |
+| `day-batch` Daily Batch | ready | no | 70/70 required steps |
+| `source-root` Source Root | ready | no | private diagnostic allowed |
+| `source-root-decision-refresh` Source Root Decision Refresh | needs_review | no | source_root_decision_session_refresh_refused, changed no, options 10 |
 | `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |
-| `source-root-owner-action` Source Root Owner Action | blocked | yes | action required: repair_onedrive_first_or_confirm_complete_non_onedrive_root |
-| `source-root-owner-decision-packet` Source Root Owner Decision Packet | ready | yes | 3 templates, exact roots 1, failures 0 |
+| `source-root-owner-action` Source Root Owner Action | ready | no | decision select_existing_root_for_private_diagnostic, root /mnt/archiv/ArchitekturKosmos/Assets |
+| `source-root-owner-decision-packet` Source Root Owner Decision Packet | needs_review | yes | 0 templates, exact roots 1, failures 0 |
 | `source-root-owner-decision-packet-check` Source Root Owner Decision Packet Check | locked | no | source_root_owner_decision_packet_guard_passed, failures 0, warnings 0 |
-| `source-root-decision-dry-run` Source Root Decision Dry Run | review_only_ready | no | 3 scenarios, metadata 1, failures 0 |
-| `source-root-post-owner-activation-queue` Source Root Post-Owner Activation Queue | review_only_ready | no | 7 steps, executable 0, blocked 7 |
+| `source-root-decision-dry-run` Source Root Decision Dry Run | needs_review | no | 0 scenarios, metadata 1, failures 0 |
+| `source-root-post-owner-activation-queue` Source Root Post-Owner Activation Queue | review_only_ready | no | 7 steps, executable 2, blocked 5 |
 | `source-root-post-owner-activation-queue-check` Source Root Post-Owner Activation Queue Check | guard_passed | no | 0 failures, 0 warnings |
-| `source-root-owner-final-decision-brief` Source Root Owner Final Decision Brief | owner_action | yes | 3 options, unlock 1, failures 0 |
-| `source-root-owner-choice-consequence-matrix` Source Root Owner Choice Consequence Matrix | owner_action | yes | 3 choices, unlock 1, blocked 2, failures 0 |
+| `source-root-owner-final-decision-brief` Source Root Owner Final Decision Brief | ready | no | 0 options, unlock 0, failures 0 |
+| `source-root-owner-choice-consequence-matrix` Source Root Owner Choice Consequence Matrix | ready | no | 0 choices, unlock 0, blocked 0, failures 0 |
 | `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | owner_action | yes | broad intent no, suggestions 2, applies now no, failures 0 |
 | `owner-unlock-exact-reply-preview` Owner Unlock Exact Reply Preview | review_only_ready | yes | validator owner_unlock_reply_valid, intake owner_unlock_reply_intake_map_ready_for_review, patches 6, failures 0 |
 | `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | owner_action | yes | can start after exact reply yes, applies now no, activation ready no, failures 0 |
@@ -90,15 +90,15 @@ Status: `orbit_bridge_ready_with_blockers`
 | `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | review_only_ready | yes | 6 preview edits, session files 1, manual triage 5, writes now no, failures 0 |
 | `owner-unlock-operational-start-card` Owner Unlock Operational Start Card | owner_action | yes | 6/6 components, next 9, blocked 5, writes now no, failures 0 |
 | `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | review_only_ready | yes | 8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, queue executable 0, failures 0 |
-| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | review_only_ready | yes | waiting_for_manual_apply, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, matches no, private diagnostic no, failures 0 |
+| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | review_only_ready | yes | applied_matches_preview, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, matches yes, private diagnostic yes, failures 0 |
 | `owner-unlock-session-apply-guard-smoke` Owner Unlock Session Apply Guard Smoke | review_only_ready | no | applied_matches_preview, matches yes, private diagnostic yes, checks 18/18, failures 0 |
-| `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
+| `source-root-activation` Source Root Activation | ready | no | activation ready for /mnt/archiv/ArchitekturKosmos/Assets |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
 | `local-worker-execution-runbook` Local Worker Execution Runbook | review_only_ready | no | local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0 |
 | `local-worker-output-contracts` Local Worker Output Contracts | review_only_ready | no | 9 contracts, present 9, repo 0, execute 0, failures 0 |
-| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 9 tasks, completed 7, codex 0, owner 2, failures 0 |
-| `private-metadata-inventory` Private Metadata Inventory | blocked_with_smoke_passed | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed |
+| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 9 tasks, completed 8, codex 0, owner 1, failures 0 |
+| `private-metadata-inventory` Private Metadata Inventory | review_only_ready | no | 24 candidates, scanned 5705 files |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `pilot-gap-labels` Pilot Gap Labels | review_only_ready | yes | 12 labels, 7 hard blockers, owner 7, failures 0 |
 | `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |
@@ -152,7 +152,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `training-eval-review-queue` Training Eval Review Queue | review_only_ready | no | 5 lanes, 6 states, queue items now 0, failures 0 |
 | `architecture-ontology-seed` Architecture Ontology Seed | review_only_ready | no | 8 entities, 10 relations, 6 facet groups, failures 0 |
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-17, failures 0 |
-| `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
+| `worker-boundary` Worker Boundary | locked | no | 3 workers, 1 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
 | `owner-handoff` Owner Handoff | ready | yes | 6 questions, no filled answers recorded |
 

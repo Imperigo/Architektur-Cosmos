@@ -33,6 +33,10 @@ async function main() {
   const sessionEditPlan = await readJson(refs.sessionEditPlan);
   const sourceRootOwnerDecisionPacket = await readJson(refs.sourceRootOwnerDecisionPacket);
   const dataLaneSweep = await readJson(refs.dataLaneSweep);
+  const sourceRootDecisionSatisfied = sourceRootOwnerDecisionPacket.status === 'source_root_owner_decision_packet_satisfied_metadata_only';
+  const sourceRootDecisionRequiredStatus = sourceRootDecisionSatisfied
+    ? 'source_root_owner_decision_packet_satisfied_metadata_only'
+    : 'source_root_owner_decision_packet_ready';
 
   const packet = {
     schema_version: '0.1',
@@ -63,6 +67,9 @@ async function main() {
       source_root_owner_decision_templates: sourceRootOwnerDecisionPacket.summary?.decision_templates ?? null,
       source_root_owner_decision_exact_roots: sourceRootOwnerDecisionPacket.summary?.owner_confirmable_exact_roots ?? null,
       source_root_owner_decision_public_ready_after: sourceRootOwnerDecisionPacket.summary?.public_ready_after_packet ?? null,
+      source_root_owner_decision_satisfied: sourceRootDecisionSatisfied,
+      source_root_owner_selected_decision: sourceRootOwnerDecisionPacket.summary?.selected_decision ?? null,
+      source_root_owner_selected_root_path: sourceRootOwnerDecisionPacket.summary?.selected_root_path ?? null,
       public_ready_after_packet: 0
     },
     review_order: [
@@ -109,16 +116,20 @@ async function main() {
       {
         order: 6,
         title: 'Source Root Owner Decision Packet',
-        purpose: 'Present safe source-root decision templates without applying them.',
+        purpose: sourceRootDecisionSatisfied
+          ? 'Confirm the source-root decision has already been recorded for metadata-only diagnostics.'
+          : 'Present safe source-root decision templates without applying them.',
         json: relative(root, refs.sourceRootOwnerDecisionPacket),
         markdown: `docs/codex/kosmo-source-root-owner-decision-packet-${dateStamp}.md`,
-        required_status: 'source_root_owner_decision_packet_ready'
+        required_status: sourceRootDecisionRequiredStatus
       }
     ],
     next_actions: [
       'Use the owner question brief as the only owner-facing prompt for this review round.',
       'Do not edit decision sessions directly from chat text.',
-      'Transfer explicit owner answers into the intake template, then run intake check and session edit plan.',
+      sourceRootDecisionSatisfied
+        ? 'Treat Source Root as recorded for metadata-only diagnostics; do not ask for the same Source Root choice again.'
+        : 'Transfer explicit owner answers into the intake template, then run intake check and session edit plan.',
       'Keep public-ready at 0 until separate provenance, rights and promotion reviews pass.'
     ]
   };

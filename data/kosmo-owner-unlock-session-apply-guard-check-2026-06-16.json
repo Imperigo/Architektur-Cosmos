@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:34:01.376Z",
+  "generated_at": "2026-06-16T12:13:47.871Z",
   "status": "owner_unlock_session_apply_guard_check_passed",
   "policy": {
     "validates_guard_only": true,
@@ -14,8 +14,8 @@
     "data/kosmo-owner-unlock-session-apply-guard-2026-06-16.json"
   ],
   "summary": {
-    "guard_status": "owner_unlock_session_apply_guard_waiting_for_manual_apply",
-    "mode": "waiting_for_manual_apply",
+    "guard_status": "owner_unlock_session_apply_guard_passed_after_manual_apply",
+    "mode": "applied_matches_preview",
     "checks": 18,
     "passed": 18,
     "failures": 0,
@@ -25,7 +25,7 @@
     {
       "id": "status_acceptable",
       "status": "passed",
-      "evidence": "owner_unlock_session_apply_guard_waiting_for_manual_apply"
+      "evidence": "owner_unlock_session_apply_guard_passed_after_manual_apply"
     },
     {
       "id": "policy_guard_only",
@@ -80,17 +80,17 @@
     {
       "id": "pending_or_matches_preview",
       "status": "passed",
-      "evidence": "true/false"
+      "evidence": "false/true"
     },
     {
       "id": "waiting_blocks_private_diagnostic",
       "status": "passed",
-      "evidence": false
+      "evidence": true
     },
     {
       "id": "applied_allows_private_diagnostic",
       "status": "passed",
-      "evidence": false
+      "evidence": true
     },
     {
       "id": "hard_stop_no_auto_apply",

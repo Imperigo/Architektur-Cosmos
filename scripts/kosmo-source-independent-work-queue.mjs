@@ -93,12 +93,17 @@ function buildQueue({
   orbitBridge
 }) {
   const failures = [];
+  const sourceRootChoiceSatisfied = choiceMatrix.status === 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only';
+  const choiceMatrixAccepted = [
+    'source_root_owner_choice_consequence_matrix_ready',
+    'source_root_owner_choice_consequence_matrix_satisfied_metadata_only'
+  ].includes(choiceMatrix.status);
   if (dataLaneSweep.status !== 'kosmodata_lane_sweep_review_only_passed') failures.push(`Data lane not passed: ${dataLaneSweep.status}`);
   if (nightLoop.status !== 'night_loop_guarded_ready') failures.push(`Night loop not guarded ready: ${nightLoop.status}`);
   if (localWorkerRunbook.status !== 'local_worker_execution_runbook_idle_review_only') failures.push(`Local worker runbook not idle review-only: ${localWorkerRunbook.status}`);
   if (assetSourceMap.status !== 'kosmoasset_source_candidate_map_review_only_ready') failures.push(`Asset source map not ready: ${assetSourceMap.status}`);
   if (pilotEvidence.status !== 'pilot_evidence_matrix_review_only') failures.push(`Pilot evidence matrix not review-only: ${pilotEvidence.status}`);
-  if (choiceMatrix.status !== 'source_root_owner_choice_consequence_matrix_ready') failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
+  if (!choiceMatrixAccepted) failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
 
   const assetTaxonomyDone = assetCandidateTaxonomyReview?.status === 'kosmoasset_candidate_taxonomy_review_ready' &&
     assetCandidateTaxonomyReviewCheck?.status === 'kosmoasset_candidate_taxonomy_review_guard_passed';
@@ -119,12 +124,19 @@ function buildQueue({
       id: 'owner_source_root_choice',
       lane: 'owner_decision',
       actor: 'owner_or_overseer',
-      action: 'Review final decision brief and consequence matrix; choose keep_blocked, repair_onedrive_first or exact-root metadata diagnostic.',
+      action: sourceRootChoiceSatisfied
+        ? 'Source-root choice is recorded; keep the metadata-only guard state visible for overseer review.'
+        : 'Review final decision brief and consequence matrix; choose keep_blocked, repair_onedrive_first or exact-root metadata diagnostic.',
       executableNow: false,
-      ownerAction: true,
+      completed: sourceRootChoiceSatisfied,
+      ownerAction: !sourceRootChoiceSatisfied,
       sourceIndependent: true,
-      command: 'review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.md',
-      evidence: `choices ${choiceMatrix.summary?.choices ?? 0}, unlock ${choiceMatrix.summary?.unlock_choices ?? 0}`
+      command: sourceRootChoiceSatisfied
+        ? 'review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-16.md'
+        : 'review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.md',
+      evidence: sourceRootChoiceSatisfied
+        ? `recorded ${choiceMatrix.summary?.selected_decision ?? 'n/a'} at ${choiceMatrix.summary?.selected_root_path ?? 'n/a'}`
+        : `choices ${choiceMatrix.summary?.choices ?? 0}, unlock ${choiceMatrix.summary?.unlock_choices ?? 0}`
     }),
     task({
       id: 'codex_asset_candidate_taxonomy_review',

@@ -25,7 +25,7 @@ const steps = [
     () => !existsSync(sourceRootSession),
     `Session already exists: ${relative(root, sourceRootSession)}`
   ),
-  step('source_root_decision_session_refresh', 'Source Root Decision Session Refresh', ['run', 'kosmo:source-root-decision-session-refresh']),
+  step('source_root_decision_session_refresh', 'Source Root Decision Session Refresh', ['run', 'kosmo:source-root-decision-session-refresh'], { allowFailure: true }),
   step('source_root_decision_session_check', 'Source Root Decision Session Check', ['run', 'kosmo:source-root-decision-session-check']),
   step('source_root_candidate_integrity_check', 'Source Root Candidate Integrity Check', ['run', 'kosmo:source-root-candidate-integrity-check']),
   step('private_library_diagnostic', 'Private Library Diagnostic Metadata', [
@@ -272,24 +272,40 @@ async function buildReport({ results, startedAt }) {
   const invariants = [
     invariant('required_steps_passed', requiredFailures.length === 0, `${required.length - requiredFailures.length}/${required.length}`),
     invariant('core_sweep_review_only', sweep?.status === 'kosmodata_lane_sweep_review_only_passed', sweep?.status),
-    invariant('router_guarded_review_only', router?.status === 'worker_router_guarded_review_only', router?.status),
+    invariant('router_guarded_review_only', [
+      'worker_router_guarded_review_only',
+      'worker_router_private_diagnostic_ready'
+    ].includes(router?.status), router?.status),
     invariant('worker_boundary_passed', boundary?.status === 'worker_boundary_pack_guard_passed', boundary?.status),
     invariant('source_root_decision_session_refresh_safe', [
       'source_root_decision_session_refreshed_pending',
-      'source_root_decision_session_refresh_not_needed'
+      'source_root_decision_session_refresh_not_needed',
+      'source_root_decision_session_refresh_refused'
     ].includes(decisionSessionRefresh?.status), decisionSessionRefresh?.status),
     invariant('source_root_candidate_integrity_ready', candidateIntegrity?.status === 'source_root_candidate_integrity_owner_review_ready', candidateIntegrity?.status),
     invariant('source_root_owner_action_card_ready', [
       'source_root_owner_action_required',
       'source_root_owner_action_satisfied_metadata_only'
     ].includes(sourceRootOwnerAction?.status), sourceRootOwnerAction?.status),
-    invariant('source_root_owner_decision_packet_ready', sourceRootOwnerDecisionPacket?.status === 'source_root_owner_decision_packet_ready', sourceRootOwnerDecisionPacket?.status),
+    invariant('source_root_owner_decision_packet_ready', [
+      'source_root_owner_decision_packet_ready',
+      'source_root_owner_decision_packet_satisfied_metadata_only'
+    ].includes(sourceRootOwnerDecisionPacket?.status), sourceRootOwnerDecisionPacket?.status),
     invariant('source_root_owner_decision_packet_guard_passed', sourceRootOwnerDecisionPacketCheck?.status === 'source_root_owner_decision_packet_guard_passed', sourceRootOwnerDecisionPacketCheck?.status),
-    invariant('source_root_decision_dry_run_ready', sourceRootDecisionDryRun?.status === 'source_root_decision_dry_run_ready', sourceRootDecisionDryRun?.status),
+    invariant('source_root_decision_dry_run_ready', [
+      'source_root_decision_dry_run_ready',
+      'source_root_decision_dry_run_satisfied_recorded_selection'
+    ].includes(sourceRootDecisionDryRun?.status), sourceRootDecisionDryRun?.status),
     invariant('source_root_post_owner_activation_queue_ready', sourceRootPostOwnerActivationQueue?.status === 'source_root_post_owner_activation_queue_ready', sourceRootPostOwnerActivationQueue?.status),
     invariant('source_root_post_owner_activation_queue_guard_passed', sourceRootPostOwnerActivationQueueCheck?.status === 'source_root_post_owner_activation_queue_guard_passed', sourceRootPostOwnerActivationQueueCheck?.status),
-    invariant('source_root_owner_final_decision_brief_ready', sourceRootOwnerFinalDecisionBrief?.status === 'source_root_owner_final_decision_brief_ready', sourceRootOwnerFinalDecisionBrief?.status),
-    invariant('source_root_owner_choice_consequence_matrix_ready', sourceRootOwnerChoiceConsequenceMatrix?.status === 'source_root_owner_choice_consequence_matrix_ready', sourceRootOwnerChoiceConsequenceMatrix?.status),
+    invariant('source_root_owner_final_decision_brief_ready', [
+      'source_root_owner_final_decision_brief_ready',
+      'source_root_owner_final_decision_brief_satisfied_metadata_only'
+    ].includes(sourceRootOwnerFinalDecisionBrief?.status), sourceRootOwnerFinalDecisionBrief?.status),
+    invariant('source_root_owner_choice_consequence_matrix_ready', [
+      'source_root_owner_choice_consequence_matrix_ready',
+      'source_root_owner_choice_consequence_matrix_satisfied_metadata_only'
+    ].includes(sourceRootOwnerChoiceConsequenceMatrix?.status), sourceRootOwnerChoiceConsequenceMatrix?.status),
     invariant('pilot_gap_label_review_ready', pilotGapLabelReview?.status === 'pilot_gap_label_review_ready', pilotGapLabelReview?.status),
     invariant('pilot_gap_label_review_guard_passed', pilotGapLabelReviewCheck?.status === 'pilot_gap_label_review_guard_passed', pilotGapLabelReviewCheck?.status),
     invariant('asset_source_candidate_map_ready', assetSourceCandidateMap?.status === 'kosmoasset_source_candidate_map_review_only_ready', assetSourceCandidateMap?.status),

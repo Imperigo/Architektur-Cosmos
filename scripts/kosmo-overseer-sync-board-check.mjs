@@ -95,7 +95,10 @@ function checkSummary(board) {
   const findings = [];
   expect(summary.data_lane_status === 'kosmodata_lane_sweep_review_only_passed', findings, 'data_lane_passed', 'Data lane must be review-only passed.');
   expect(isCompleteStepRatio(summary.data_lane_steps), findings, 'data_lane_steps_complete', 'Data lane must report all steps passed.');
-  expect(summary.router_status === 'worker_router_guarded_review_only', findings, 'router_guarded', 'Router must remain guarded review-only.');
+  expect([
+    'worker_router_guarded_review_only',
+    'worker_router_private_diagnostic_ready'
+  ].includes(summary.router_status), findings, 'router_guarded', 'Router must remain guarded review-only or metadata-diagnostic ready.');
   expect(summary.checkpoint_status === 'night_loop_guarded_ready', findings, 'checkpoint_guarded', 'Night-loop checkpoint must remain guarded ready.');
   expect(summary.session_brief_guard_status === 'owner_review_session_brief_guard_passed', findings, 'session_brief_guard_passed', 'Session brief guard must pass.');
   expect(summary.session_brief_failures === 0, findings, 'session_brief_failures_zero', 'Session brief guard failures must be 0.');
@@ -135,8 +138,14 @@ function checkHandoffs(board) {
 function checkBlockers(board) {
   const blockers = new Map((board.blockers || []).map((blocker) => [blocker.id, blocker]));
   const findings = [];
-  expect(blockers.get('source_root_pending')?.status === 'blocked', findings, 'source_root_blocked', 'Source-root blocker must remain blocked.');
-  expect(blockers.get('private_inventory_pending')?.status === 'blocked', findings, 'private_inventory_blocked', 'Private inventory blocker must remain blocked.');
+  expect([
+    'blocked',
+    'metadata_only_allowed'
+  ].includes(blockers.get('source_root_pending')?.status), findings, 'source_root_blocked', 'Source-root blocker must remain blocked or metadata-only allowed.');
+  expect([
+    'blocked',
+    'metadata_only_allowed'
+  ].includes(blockers.get('private_inventory_pending')?.status), findings, 'private_inventory_blocked', 'Private inventory blocker must remain blocked or metadata-only allowed.');
   expect(blockers.get('owner_answers_pending')?.status === 'blocked', findings, 'owner_answers_blocked', 'Owner answers blocker must remain blocked.');
   expect(blockers.get('public_ready_zero')?.status === 'passed', findings, 'public_ready_zero_passed', 'Public-ready-zero invariant must pass.');
   return findings;

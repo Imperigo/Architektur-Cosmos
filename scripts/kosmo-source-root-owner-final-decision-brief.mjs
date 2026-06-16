@@ -52,6 +52,74 @@ async function main() {
 
 function buildBrief({ selectionBrief, decisionPacket, decisionPacketCheck, decisionSessionCheck, activationQueueCheck }) {
   const failures = [];
+  const alreadySatisfied = decisionPacket.status === 'source_root_owner_decision_packet_satisfied_metadata_only' &&
+    decisionPacketCheck.status === 'source_root_owner_decision_packet_guard_passed' &&
+    decisionSessionCheck.status === 'passed_recorded_private_diagnostic_allowed' &&
+    activationQueueCheck.status === 'source_root_post_owner_activation_queue_guard_passed';
+
+  if (alreadySatisfied) {
+    return {
+      schema_version: '0.1',
+      generated_at: new Date().toISOString(),
+      status: 'source_root_owner_final_decision_brief_satisfied_metadata_only',
+      policy: {
+        owner_brief_only: true,
+        records_decisions: false,
+        mutates_decision_session: false,
+        reads_private_content: false,
+        copies_private_content: false,
+        runs_private_inventory_now: false,
+        writes_public_files: false,
+        writes_public_manifest: false,
+        public_ready_after_brief: 0,
+        note: 'The final owner source-root decision has already been recorded and guarded. This brief is retained as a satisfied audit.'
+      },
+      source_refs: Object.values(refs).map((path) => relative(root, path)),
+      summary: {
+        selection_status: selectionBrief.status,
+        decision_packet_status: decisionPacket.status,
+        decision_packet_guard_status: decisionPacketCheck.status,
+        decision_session_status: decisionSessionCheck.status,
+        activation_queue_guard_status: activationQueueCheck.status,
+        locator_candidates: selectionBrief.summary?.candidates ?? null,
+        probable_private_libraries: selectionBrief.summary?.probable_large_private_libraries ?? null,
+        workflow_or_project_mirrors: selectionBrief.summary?.workflow_or_project_mirrors ?? null,
+        onedrive_like_roots: selectionBrief.summary?.onedrive_like_roots ?? null,
+        roots_with_sync_errors: selectionBrief.summary?.roots_with_sync_errors ?? null,
+        decision_options: 0,
+        unlock_options: 0,
+        recommended_default: 'already_recorded',
+        selected_decision: decisionSessionCheck.summary?.selected_decision || null,
+        selected_root_path: decisionSessionCheck.summary?.selected_root_path || null,
+        private_diagnostic_allowed: true,
+        failures: 0,
+        public_ready_after_brief: 0
+      },
+      owner_prompt: {
+        question: 'Source-root decision has already been recorded and guarded.',
+        safe_default: 'already_recorded',
+        exact_unlock_warning: 'Metadata-only diagnostics are allowed; OCR, copying private content and public-ready promotion remain blocked.'
+      },
+      answer_choices: [],
+      visible_source_root_candidates: [],
+      post_decision_command_order: [
+        'npm run kosmo:source-root-decision-session-check',
+        'npm run kosmo:source-root-blocker-refresh',
+        'npm run kosmo:source-root-activation-preflight',
+        'npm run kosmo:source-root-post-owner-activation-queue',
+        'npm run kosmo:source-root-post-owner-activation-queue-check',
+        'npm run kosmo:private-metadata-inventory',
+        'npm run kosmo:private-metadata-inventory-check'
+      ],
+      hard_stops: [
+        'Do not run OCR/PDF extraction from private sources at this stage.',
+        'Do not copy private source files into Git.',
+        'Do not set public-ready from this source-root decision.'
+      ],
+      failures: []
+    };
+  }
+
   if (selectionBrief.status !== 'source_root_owner_selection_needed') failures.push(`Selection brief not owner-needed: ${selectionBrief.status}`);
   if (decisionPacket.status !== 'source_root_owner_decision_packet_ready') failures.push(`Decision packet not ready: ${decisionPacket.status}`);
   if (decisionPacketCheck.status !== 'source_root_owner_decision_packet_guard_passed') failures.push(`Decision packet guard not passed: ${decisionPacketCheck.status}`);

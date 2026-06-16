@@ -55,7 +55,10 @@ function buildReport({ dryRun, activationPreflight, privateMetadataRunner, priva
   const decisionStillPending = dryRun?.summary?.metadata_diagnostic_scenarios === 1 &&
     activationPreflight?.summary?.private_diagnostic_allowed !== true;
 
-  if (dryRun.status !== 'source_root_decision_dry_run_ready') failures.push(`Dry run not ready: ${dryRun.status}`);
+  if (![
+    'source_root_decision_dry_run_ready',
+    'source_root_decision_dry_run_satisfied_recorded_selection'
+  ].includes(dryRun.status)) failures.push(`Dry run not ready: ${dryRun.status}`);
   if (![
     'source_root_activation_waiting_for_owner_storage_action',
     'source_root_activation_ready_for_private_metadata_diagnostic',
@@ -99,7 +102,7 @@ function buildReport({ dryRun, activationPreflight, privateMetadataRunner, priva
       purpose: 'Confirm metadata diagnostic activation only.',
       requires: ['blocker_refresh updated', 'worker boundary guard passed'],
       executableNow: false,
-      blockedReason: activationReady ? null : 'source-root owner decision pending'
+      blockedReason: activationReady ? 'activation preflight already passed' : 'source-root owner decision pending'
     }),
     queueStep({
       id: 'private_metadata_inventory',

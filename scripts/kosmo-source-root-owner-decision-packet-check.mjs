@@ -95,6 +95,25 @@ async function checkPacket({ packet, candidateIntegrity, decisionSession }) {
       .map((option) => option.path)
   );
 
+  if (packet.status === 'source_root_owner_decision_packet_satisfied_metadata_only') {
+    expect(packet.policy?.records_decisions === false, findings, 'records_decisions_false', 'Packet must not record decisions.');
+    expect(packet.policy?.mutates_decision_session === false, findings, 'mutates_decision_session_false', 'Packet must not mutate the decision session.');
+    expect(packet.policy?.reads_private_content === false, findings, 'reads_private_content_false', 'Packet must not read private content.');
+    expect(packet.policy?.copies_private_content === false, findings, 'copies_private_content_false', 'Packet must not copy private content.');
+    expect(packet.policy?.writes_public_files === false, findings, 'writes_public_files_false', 'Packet must not write public files.');
+    expect(packet.policy?.writes_public_manifest === false, findings, 'writes_public_manifest_false', 'Packet must not write public manifests.');
+    expect(packet.policy?.public_ready_after_packet === 0, findings, 'packet_public_ready_zero', 'Packet must keep public-ready at 0.');
+    expect(packet.summary?.private_diagnostic_allowed === true, findings, 'private_diagnostic_allowed_after_recorded_selection', 'Satisfied packet must reflect guarded private diagnostic allowance.');
+    expect(packet.summary?.selected_decision === 'select_existing_root_for_private_diagnostic', findings, 'selected_decision_recorded', 'Satisfied packet must expose the recorded source-root decision.');
+    expect(typeof packet.summary?.selected_root_path === 'string' && packet.summary.selected_root_path.startsWith('/'), findings, 'selected_root_recorded', 'Satisfied packet must expose the recorded absolute source-root path.');
+    expect(candidateIntegrity.status === 'source_root_candidate_integrity_owner_review_ready', findings, 'candidate_integrity_ready', 'Candidate integrity must be ready.');
+    expect(decisionSession.status === 'source_root_decision_session_recorded', findings, 'decision_session_recorded', 'Decision session must be recorded in satisfied mode.');
+    expect(decisionSession.selected_decision === packet.summary?.selected_decision, findings, 'session_decision_matches_packet', 'Session decision must match packet summary.');
+    expect(decisionSession.selected_root_path === packet.summary?.selected_root_path, findings, 'session_root_matches_packet', 'Session root must match packet summary.');
+    expect(templates.length === 0, findings, 'no_pending_templates_after_satisfied', 'Satisfied packet must not expose pending owner decision templates.');
+    return findings;
+  }
+
   expect(packet.status === 'source_root_owner_decision_packet_ready', findings, 'packet_ready', 'Packet status must be ready.');
   expect(packet.policy?.records_decisions === false, findings, 'records_decisions_false', 'Packet must not record decisions.');
   expect(packet.policy?.mutates_decision_session === false, findings, 'mutates_decision_session_false', 'Packet must not mutate the decision session.');

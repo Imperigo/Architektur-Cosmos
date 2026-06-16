@@ -1,14 +1,14 @@
 # Kosmo Local Worker HTTP Runner Check
 
-Generated: 2026-06-16T05:09:10.620Z
+Generated: 2026-06-16T12:31:16.517Z
 Status: `local_worker_http_runner_guard_passed`
 
 ## Summary
 
 - Runner status: local_worker_http_runner_dry_run_ready
-- Task: kosmo-public-source-link-synthesis
+- Task: kosmo-asset-source-candidate-triage
 - Guard passed: yes
-- Safe inputs: 8
+- Safe inputs: 6
 - Execute requested: no
 - Model used: no
 - Failures: 0
@@ -30,22 +30,18 @@ Status: `local_worker_http_runner_guard_passed`
 - passed: `guard_passed` - Runner guard must pass.
 - passed: `guard_failures_zero` - Runner guard failures must be zero.
 - passed: `safe_inputs_present` - Runner must enumerate safe input reports.
-- passed: `safe_input_root:data/kosmoreferences-data-lane-status.json` - Safe input must stay under data/, docs/ or examples/: data/kosmoreferences-data-lane-status.json
-- passed: `safe_input_not_truncated:data/kosmoreferences-data-lane-status.json` - Safe input should not be truncated for the default smoke task: data/kosmoreferences-data-lane-status.json
-- passed: `safe_input_root:examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json` - Safe input must stay under data/, docs/ or examples/: examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json
-- passed: `safe_input_not_truncated:examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json` - Safe input should not be truncated for the default smoke task: examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json
-- passed: `safe_input_root:examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json` - Safe input must stay under data/, docs/ or examples/: examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json
-- passed: `safe_input_not_truncated:examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json` - Safe input should not be truncated for the default smoke task: examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json
-- passed: `safe_input_root:examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json` - Safe input must stay under data/, docs/ or examples/: examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json
-- passed: `safe_input_not_truncated:examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json` - Safe input should not be truncated for the default smoke task: examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json
-- passed: `safe_input_root:data/kosmo-private-metadata-inventory-runner-2026-06-16.json` - Safe input must stay under data/, docs/ or examples/: data/kosmo-private-metadata-inventory-runner-2026-06-16.json
-- passed: `safe_input_not_truncated:data/kosmo-private-metadata-inventory-runner-2026-06-16.json` - Safe input should not be truncated for the default smoke task: data/kosmo-private-metadata-inventory-runner-2026-06-16.json
-- passed: `safe_input_root:data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json` - Safe input must stay under data/, docs/ or examples/: data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json
-- passed: `safe_input_not_truncated:data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json` - Safe input should not be truncated for the default smoke task: data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json
-- passed: `safe_input_root:data/kosmo-private-metadata-inventory-check-2026-06-16.json` - Safe input must stay under data/, docs/ or examples/: data/kosmo-private-metadata-inventory-check-2026-06-16.json
-- passed: `safe_input_not_truncated:data/kosmo-private-metadata-inventory-check-2026-06-16.json` - Safe input should not be truncated for the default smoke task: data/kosmo-private-metadata-inventory-check-2026-06-16.json
-- passed: `safe_input_root:docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md` - Safe input must stay under data/, docs/ or examples/: docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md
-- passed: `safe_input_not_truncated:docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md` - Safe input should not be truncated for the default smoke task: docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md
+- passed: `safe_input_root:data/kosmoasset-source-candidate-map-2026-06-16.json` - Safe input must stay under data/, docs/ or examples/: data/kosmoasset-source-candidate-map-2026-06-16.json
+- passed: `safe_input_not_truncated:data/kosmoasset-source-candidate-map-2026-06-16.json` - Safe input should not be truncated for the default smoke task: data/kosmoasset-source-candidate-map-2026-06-16.json
+- passed: `safe_input_root:docs/codex/kosmoasset-source-candidate-map-2026-06-16.md` - Safe input must stay under data/, docs/ or examples/: docs/codex/kosmoasset-source-candidate-map-2026-06-16.md
+- passed: `safe_input_not_truncated:docs/codex/kosmoasset-source-candidate-map-2026-06-16.md` - Safe input should not be truncated for the default smoke task: docs/codex/kosmoasset-source-candidate-map-2026-06-16.md
+- passed: `safe_input_root:data/kosmo-source-root-selection-brief-2026-06-16.json` - Safe input must stay under data/, docs/ or examples/: data/kosmo-source-root-selection-brief-2026-06-16.json
+- passed: `safe_input_not_truncated:data/kosmo-source-root-selection-brief-2026-06-16.json` - Safe input should not be truncated for the default smoke task: data/kosmo-source-root-selection-brief-2026-06-16.json
+- passed: `safe_input_root:docs/codex/kosmo-source-root-selection-brief-2026-06-16.md` - Safe input must stay under data/, docs/ or examples/: docs/codex/kosmo-source-root-selection-brief-2026-06-16.md
+- passed: `safe_input_not_truncated:docs/codex/kosmo-source-root-selection-brief-2026-06-16.md` - Safe input should not be truncated for the default smoke task: docs/codex/kosmo-source-root-selection-brief-2026-06-16.md
+- passed: `safe_input_root:data/kosmo-data-lane-command-router-2026-06-16.json` - Safe input must stay under data/, docs/ or examples/: data/kosmo-data-lane-command-router-2026-06-16.json
+- passed: `safe_input_not_truncated:data/kosmo-data-lane-command-router-2026-06-16.json` - Safe input should not be truncated for the default smoke task: data/kosmo-data-lane-command-router-2026-06-16.json
+- passed: `safe_input_root:data/kosmo-worker-boundary-pack-check-2026-06-16.json` - Safe input must stay under data/, docs/ or examples/: data/kosmo-worker-boundary-pack-check-2026-06-16.json
+- passed: `safe_input_not_truncated:data/kosmo-worker-boundary-pack-check-2026-06-16.json` - Safe input should not be truncated for the default smoke task: data/kosmo-worker-boundary-pack-check-2026-06-16.json
 - passed: `no_model_use_without_execute` - Runner must not use a model unless execute is requested.
 - passed: `dry_run_model_unused` - Dry-run runner must not start a model.
 

@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "created_at": "2026-06-16T12:31:12.589Z",
+  "status": "private_inventory_template_only",
+  "policy": {
+    "private_content_included": false,
+    "copied_private_files": false,
+    "public_ready_after_inventory": 0,
+    "public_writes_allowed": false,
+    "long_quotes_allowed": false,
+    "rule": "A private inventory output may contain metadata, fingerprints and own-written summaries only. It must not contain book/PDF text, scans, screenshots, plans, private images or public-ready approvals."
+  },
+  "inventory_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-inventory",
+  "source_root": null,
+  "run_id": null,
+  "pilots": [
+    {
+      "pilot_id": "villa-savoye",
+      "inventory_status": "not_started",
+      "metadata_counts": {
+        "candidate_files": 0,
+        "source_records": 0,
+        "rights_records": 0
+      },
+      "path_fingerprints": [],
+      "gap_summary": "",
+      "rights_status": "review_only",
+      "public_ready": false,
+      "open_questions": []
+    },
+    {
+      "pilot_id": "kapelle-sogn-benedetg",
+      "inventory_status": "not_started",
+      "metadata_counts": {
+        "candidate_files": 0,
+        "source_records": 0,
+        "rights_records": 0
+      },
+      "path_fingerprints": [],
+      "gap_summary": "",
+      "rights_status": "review_only",
+      "public_ready": false,
+      "open_questions": []
+    },
+    {
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "inventory_status": "not_started",
+      "metadata_counts": {
+        "candidate_files": 0,
+        "source_records": 0,
+        "rights_records": 0
+      },
+      "path_fingerprints": [],
+      "gap_summary": "",
+      "rights_status": "review_only",
+      "public_ready": false,
+      "open_questions": []
+    }
+  ],
+  "forbidden_content_guard": {
+    "max_summary_chars": 1200,
+    "max_open_question_chars": 300,
+    "forbidden_fields": [
+      "full_text",
+      "ocr_text",
+      "pdf_text",
+      "book_excerpt",
+      "page_scan",
+      "image_base64",
+      "copied_plan",
+      "private_image"
+    ]
+  },
+  "next_actions": [
+    "Use this template only after source-root decision and private-library diagnostic pass.",
+    "Write real inventory outputs under KosmoZentrale private paths.",
+    "Run npm run kosmo:private-inventory-output-check -- --inventory \"<private-inventory-json>\" before handing results to Codex/Claude."
+  ]
+}

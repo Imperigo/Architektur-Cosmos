@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:09:17.463Z",
+  "generated_at": "2026-06-16T12:31:13.542Z",
   "status": "kosmoasset_source_candidate_map_review_only_ready",
   "policy": {
     "metadata_only": true,
@@ -18,7 +18,7 @@
   ],
   "summary": {
     "selection_status": "source_root_owner_selection_needed",
-    "asset_bridge_status": null,
+    "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "source_candidates_seen": 10,
     "asset_lane_candidates": 3,
     "material_library_candidates": 2,
@@ -186,7 +186,7 @@
     },
     {
       "id": "asset_bridge_review_only",
-      "active": true,
+      "active": false,
       "message": "KosmoAsset reference bridge must stay review-only and passing before new candidate lanes are promoted."
     },
     {

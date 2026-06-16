@@ -81,12 +81,12 @@ async function main() {
     blockers: [
       {
         id: 'source_root_pending',
-        status: checkpoint.summary?.source_root_blocked ? 'blocked' : 'needs_review',
+        status: checkpoint.summary?.source_root_blocked ? 'blocked' : 'metadata_only_allowed',
         evidence: `source_root_blocked=${checkpoint.summary?.source_root_blocked}`
       },
       {
         id: 'private_inventory_pending',
-        status: checkpoint.summary?.private_inventory_blocked ? 'blocked' : 'needs_review',
+        status: checkpoint.summary?.private_inventory_blocked ? 'blocked' : 'metadata_only_allowed',
         evidence: `private_inventory_blocked=${checkpoint.summary?.private_inventory_blocked}`
       },
       {

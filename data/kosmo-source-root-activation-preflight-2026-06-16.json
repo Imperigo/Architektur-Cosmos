@@ -1,0 +1,180 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T12:31:14.960Z",
+  "status": "source_root_activation_ready_for_private_metadata_diagnostic",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_preflight": 0,
+    "note": "This preflight converts existing guard reports into an activation sequence. It does not select a source root or read private files."
+  },
+  "source_refs": [
+    "data/kosmo-storage-mount-snapshot-2026-06-16.json",
+    "data/kosmo-source-root-decision-session-check-2026-06-16.json",
+    "data/kosmo-source-root-blocker-refresh-2026-06-16.json",
+    "data/kosmo-private-source-inventory-plan-2026-06-16.json",
+    "examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-16.json",
+    "data/kosmo-private-inventory-output-check-2026-06-16.json",
+    "data/kosmo-local-model-inventory-2026-06-16.json",
+    "data/kosmo-worker-boundary-pack-check-2026-06-16.json"
+  ],
+  "summary": {
+    "data_mount_visible": true,
+    "data_mount_available_gib": 3243.3,
+    "archive_mount_visible": true,
+    "onedrive_marker_files": 59,
+    "source_root_probable_libraries": 0,
+    "source_root_decision_status": "passed_recorded_private_diagnostic_allowed",
+    "selected_decision": "select_existing_root_for_private_diagnostic",
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "selected_root_exists": true,
+    "private_diagnostic_allowed": true,
+    "private_inventory_plan_status": "private_metadata_inventory_plan_ready",
+    "private_inventory_contract_status": "private_inventory_output_contract_passed",
+    "local_model_inventory_status": "local_model_inventory_ready_review_only",
+    "worker_boundary_status": "worker_boundary_pack_guard_passed",
+    "private_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-inventory",
+    "private_root_outside_repo": true,
+    "activation_ready": true,
+    "safe_command_count": 15,
+    "blocked_command_count": 0,
+    "public_ready_after_preflight": 0
+  },
+  "pilot_scope": [
+    {
+      "pilot_id": "villa-savoye",
+      "title": "Villa Savoye",
+      "first_pass": "metadata_only_media_plan_model_provenance",
+      "source_need": "file-level provenance and build-log evidence for existing media, diagrams and low.glb",
+      "allowed_after_activation": true,
+      "public_ready_after_inventory": false
+    },
+    {
+      "pilot_id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "first_pass": "metadata_only_private_library_source_discovery",
+      "source_need": "private book/ETH/HSLU references for timber structure, drawings, materials and model basis",
+      "allowed_after_activation": true,
+      "public_ready_after_inventory": false
+    },
+    {
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "first_pass": "metadata_only_pdf_and_structure_source_discovery",
+      "source_need": "private/link-only study-commission PDF decision, structure/material evidence and model basis",
+      "allowed_after_activation": true,
+      "public_ready_after_inventory": false
+    }
+  ],
+  "safe_activation_sequence": [
+    {
+      "id": "storage_snapshot",
+      "command": "npm run kosmo:storage-mount-snapshot",
+      "purpose": "refresh mount metadata only"
+    },
+    {
+      "id": "source_root_locator",
+      "command": "npm run kosmo:source-root-locator",
+      "purpose": "refresh source-root candidate metadata"
+    },
+    {
+      "id": "source_root_selection_brief",
+      "command": "npm run kosmo:source-root-selection-brief",
+      "purpose": "refresh owner selection worksheet"
+    },
+    {
+      "id": "source_root_decision_check",
+      "command": "npm run kosmo:source-root-decision-session-check",
+      "purpose": "verify selected root and owner decision"
+    },
+    {
+      "id": "source_root_blocker_refresh",
+      "command": "npm run kosmo:source-root-blocker-refresh",
+      "purpose": "summarize blocker state"
+    },
+    {
+      "id": "private_library_diagnostic_selected_root",
+      "command": "npm run kosmo:private-library-diagnostic -- --roots \"/mnt/archiv/ArchitekturKosmos/Assets\"",
+      "purpose": "metadata-only diagnostic for the owner-approved root"
+    },
+    {
+      "id": "private_metadata_inventory_selected_root",
+      "command": "npm run kosmo:private-metadata-inventory -- --root \"/mnt/archiv/ArchitekturKosmos/Assets\"",
+      "purpose": "pilot-scoped metadata inventory for the owner-approved root"
+    },
+    {
+      "id": "private_source_inventory_plan",
+      "command": "npm run kosmo:private-source-inventory-plan",
+      "purpose": "build pilot-first metadata inventory scope"
+    },
+    {
+      "id": "private_inventory_output_template",
+      "command": "npm run kosmo:private-inventory-output-template",
+      "purpose": "refresh safe private-output contract template"
+    },
+    {
+      "id": "private_inventory_output_check",
+      "command": "npm run kosmo:private-inventory-output-check",
+      "purpose": "verify output contract contains no private content"
+    },
+    {
+      "id": "data_lane_sweep",
+      "command": "npm run kosmo:data-lane-sweep",
+      "purpose": "refresh KosmoReferences/KosmoAsset guard state"
+    },
+    {
+      "id": "data_lane_router",
+      "command": "npm run kosmo:data-lane-command-router",
+      "purpose": "refresh safe command routing"
+    },
+    {
+      "id": "worker_boundary_pack",
+      "command": "npm run kosmo:worker-boundary-pack",
+      "purpose": "refresh worker boundary map"
+    },
+    {
+      "id": "worker_boundary_pack_check",
+      "command": "npm run kosmo:worker-boundary-pack-check",
+      "purpose": "verify worker boundaries"
+    },
+    {
+      "id": "day_batch_loop",
+      "command": "npm run kosmo:day-batch-loop",
+      "purpose": "rerun full review-only loop before any handoff"
+    }
+  ],
+  "blocked_commands": [],
+  "git_guard": {
+    "private_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-inventory",
+    "private_root_outside_repo": true,
+    "allowed_in_git": [
+      "metadata counts",
+      "file path fingerprints",
+      "rights status placeholders",
+      "gap summaries written in own words"
+    ],
+    "forbidden_in_git": [
+      "book scans",
+      "PDF full text",
+      "protected plans or screenshots",
+      "private images",
+      "long quotations",
+      "public-ready promotion flags"
+    ]
+  },
+  "handoff_for_workers": {
+    "codex": "Maintain this preflight and review-only gates; do not infer a source root.",
+    "claude_code": "If you edit source-root sessions or private inventory flows, leave a dated handoff and rerun this preflight.",
+    "local_llm": "After activation, only process pilot-scoped metadata tasks and return contract-checked outputs.",
+    "kosmo_overseer": "Treat activation_ready=true as permission for metadata diagnostics only, not as public promotion."
+  },
+  "next_actions": [
+    "Run the safe activation sequence in order.",
+    "Keep pilot scope limited to Villa Savoye, Kapelle Sogn Benedetg and Alterszentrum Kloster Ingenbohl.",
+    "Run private inventory output check before handing any metadata back to Codex/Claude.",
+    "Keep public-ready false until rights/provenance review passes."
+  ]
+}

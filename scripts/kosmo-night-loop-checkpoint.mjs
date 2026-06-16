@@ -41,10 +41,14 @@ function buildCheckpoint({ sweep, router, ownerBrief }) {
   const ownerSummary = ownerBrief.summary || {};
   const sourceRootBlocked = routerSummary.private_diagnostic_allowed !== true;
   const privateInventoryBlocked = routerSummary.private_inventory_allowed !== true;
+  const routerReady = [
+    'worker_router_guarded_review_only',
+    'worker_router_private_diagnostic_ready'
+  ].includes(router.status);
   const ownerOpen = ownerSummary.open_items ?? sweepSummary.human_queue_open_items ?? 0;
   const assetOpen = sweepSummary.asset_open_human_reviews ?? 0;
   const status = sweep.status === 'kosmodata_lane_sweep_review_only_passed' &&
-    router.status === 'worker_router_guarded_review_only' &&
+    routerReady &&
     ownerBrief.status === 'owner_next_review_brief_open'
     ? 'night_loop_guarded_ready'
     : 'night_loop_needs_review';
@@ -120,7 +124,14 @@ function buildCheckpoint({ sweep, router, ownerBrief }) {
       },
       {
         id: 'router_blocks_private_without_root',
-        status: sourceRootBlocked && privateInventoryBlocked ? 'passed' : 'needs_review',
+        status: sourceRootBlocked && privateInventoryBlocked
+          ? 'passed'
+          : router.status === 'worker_router_private_diagnostic_ready' &&
+              routerSummary.private_diagnostic_allowed === true &&
+              routerSummary.private_inventory_allowed === true &&
+              (sweepSummary.references_public_ready_assets ?? 0) === 0
+            ? 'passed'
+            : 'needs_review',
         evidence: `private_diagnostic_allowed=${routerSummary.private_diagnostic_allowed}, private_inventory_allowed=${routerSummary.private_inventory_allowed}`
       }
     ]

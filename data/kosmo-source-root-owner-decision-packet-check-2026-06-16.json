@@ -1,0 +1,114 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T12:30:33.442Z",
+  "status": "source_root_owner_decision_packet_guard_passed",
+  "policy": {
+    "guard_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates the owner decision packet and its source-root templates. It does not apply owner decisions."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-owner-decision-packet-2026-06-16.json",
+    "data/kosmo-source-root-candidate-integrity-check-2026-06-16.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json"
+  ],
+  "summary": {
+    "packet_status": "source_root_owner_decision_packet_satisfied_metadata_only",
+    "candidate_integrity_status": "source_root_candidate_integrity_owner_review_ready",
+    "decision_session_status": "source_root_decision_session_recorded",
+    "decision_templates": 0,
+    "unlocking_templates": 0,
+    "owner_confirmable_exact_roots": 1,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "findings": [
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Packet must not record decisions."
+    },
+    {
+      "id": "mutates_decision_session_false",
+      "severity": "passed",
+      "message": "Packet must not mutate the decision session."
+    },
+    {
+      "id": "reads_private_content_false",
+      "severity": "passed",
+      "message": "Packet must not read private content."
+    },
+    {
+      "id": "copies_private_content_false",
+      "severity": "passed",
+      "message": "Packet must not copy private content."
+    },
+    {
+      "id": "writes_public_files_false",
+      "severity": "passed",
+      "message": "Packet must not write public files."
+    },
+    {
+      "id": "writes_public_manifest_false",
+      "severity": "passed",
+      "message": "Packet must not write public manifests."
+    },
+    {
+      "id": "packet_public_ready_zero",
+      "severity": "passed",
+      "message": "Packet must keep public-ready at 0."
+    },
+    {
+      "id": "private_diagnostic_allowed_after_recorded_selection",
+      "severity": "passed",
+      "message": "Satisfied packet must reflect guarded private diagnostic allowance."
+    },
+    {
+      "id": "selected_decision_recorded",
+      "severity": "passed",
+      "message": "Satisfied packet must expose the recorded source-root decision."
+    },
+    {
+      "id": "selected_root_recorded",
+      "severity": "passed",
+      "message": "Satisfied packet must expose the recorded absolute source-root path."
+    },
+    {
+      "id": "candidate_integrity_ready",
+      "severity": "passed",
+      "message": "Candidate integrity must be ready."
+    },
+    {
+      "id": "decision_session_recorded",
+      "severity": "passed",
+      "message": "Decision session must be recorded in satisfied mode."
+    },
+    {
+      "id": "session_decision_matches_packet",
+      "severity": "passed",
+      "message": "Session decision must match packet summary."
+    },
+    {
+      "id": "session_root_matches_packet",
+      "severity": "passed",
+      "message": "Session root must match packet summary."
+    },
+    {
+      "id": "no_pending_templates_after_satisfied",
+      "severity": "passed",
+      "message": "Satisfied packet must not expose pending owner decision templates."
+    }
+  ],
+  "next_actions": [
+    "Use this guarded packet as the owner-facing source-root decision surface.",
+    "Record a decision only after explicit owner/KosmoOverseer confirmation.",
+    "Rerun source-root decision-session check and day batch after any recorded decision."
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T12:31:09.448Z",
+  "status": "owner_next_review_brief_open",
+  "policy": {
+    "records_decisions": false,
+    "public_writes_allowed": false,
+    "public_ready_after_brief": 0,
+    "note": "This brief prepares owner questions only. It does not record decisions, approve public display, promote assets or modify manifests."
+  },
+  "source_refs": [
+    "data/kosmo-human-decision-owner-batches-2026-06-16.json",
+    "data/kosmo-data-lane-command-router-2026-06-16.json"
+  ],
+  "summary": {
+    "open_batches": 5,
+    "open_items": 16,
+    "router_status": "worker_router_private_diagnostic_ready",
+    "private_diagnostic_allowed": true,
+    "private_inventory_allowed": true,
+    "public_ready_after_brief": 0
+  },
+  "recommended_order": [
+    "batch-a-villa-savoye-image-candidates",
+    "batch-b-villa-savoye-derived-files",
+    "batch-c-model-promotion-confirmation",
+    "batch-d-sogn-benedetg-source-gap",
+    "batch-e-kosmoasset-human-reviews"
+  ],
+  "review_cards": [
+    {
+      "order": 1,
+      "batch_id": "batch-a-villa-savoye-image-candidates",
+      "label": "Batch A: Villa Savoye Image Candidates",
+      "intent": "Decide whether any Villa Savoye image candidate should enter a deeper source/credit review.",
+      "open_items": 3,
+      "safe_default": "needs_more_source_context",
+      "recommended_owner_question": "Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?",
+      "recommended_stance": [
+        "If no public preview is needed now, leave all three blocked.",
+        "If a preview is needed, open a separate source-basis review before any public-ready change."
+      ],
+      "decision_effect": "No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.",
+      "command_hint_after_decision": "npm run kosmo:owner-decision-session-check",
+      "items": [
+        {
+          "id": "reference:villa-savoye-public-image-candidates:villa-savoye-exterior-savoye-3-cc0",
+          "lane": "KosmoReferences",
+          "title": "villa-savoye-exterior-savoye-3-cc0",
+          "safe_default": "needs_more_source_context",
+          "source_path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "reference:villa-savoye-public-image-candidates:villa-savoye-exterior-loc-full",
+          "lane": "KosmoReferences",
+          "title": "villa-savoye-exterior-loc-full",
+          "safe_default": "needs_more_source_context",
+          "source_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "reference:villa-savoye-public-image-candidates:villa-savoye-interior-chaise-cc-by-sa",
+          "lane": "KosmoReferences",
+          "title": "villa-savoye-interior-chaise-cc-by-sa",
+          "safe_default": "needs_more_source_context",
+          "source_path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+          "public_ready_after_decision": false
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "batch_id": "batch-b-villa-savoye-derived-files",
+      "label": "Batch B: Villa Savoye Derived Files",
+      "intent": "Keep generated or derived Villa Savoye files from becoming public-facing without source-basis review.",
+      "open_items": 4,
+      "safe_default": "keep_blocked",
+      "recommended_owner_question": "Sollen alle abgeleiteten Villa-Dateien blockiert bleiben, bis Plan-/Modell-Herkunft sauber belegt ist?",
+      "recommended_stance": [
+        "Record `keep_blocked` unless the owner explicitly starts a source-basis review for this batch."
+      ],
+      "decision_effect": "No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.",
+      "command_hint_after_decision": "npm run kosmo:owner-decision-session-check",
+      "items": [
+        {
+          "id": "reference:villa-savoye-blocked-derived-files:public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+          "lane": "KosmoReferences",
+          "title": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+          "safe_default": "keep_blocked",
+          "source_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "reference:villa-savoye-blocked-derived-files:public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+          "lane": "KosmoReferences",
+          "title": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+          "safe_default": "keep_blocked",
+          "source_path": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "reference:villa-savoye-blocked-derived-files:public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+          "lane": "KosmoReferences",
+          "title": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+          "safe_default": "keep_blocked",
+          "source_path": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "reference:villa-savoye-blocked-derived-files:public/archive-models/villa-savoye/low.glb",
+          "lane": "KosmoReferences",
+          "title": "public/archive-models/villa-savoye/low.glb",
+          "safe_default": "keep_blocked",
+          "source_path": "public/archive-models/villa-savoye/low.glb",
+          "public_ready_after_decision": false
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "batch_id": "batch-c-model-promotion-confirmation",
+      "label": "Batch C: Model Promotion Confirmation",
+      "intent": "Prevent diagrammatic massing/model studies from being presented as measured or source-complete architecture models.",
+      "open_items": 2,
+      "safe_default": "needs_more_source_context",
+      "recommended_owner_question": "Sollen die vorhandenen Modelle weiterhin als diagrammatische Studien blockiert bleiben, bis Modellqualitaet und Quellenbasis geprueft sind?",
+      "recommended_stance": [
+        "Defer promotion until a separate model-quality and source-confidence review exists."
+      ],
+      "decision_effect": "No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.",
+      "command_hint_after_decision": "npm run kosmo:owner-decision-session-check",
+      "items": [
+        {
+          "id": "reference:model-promotion-owner-confirmation:villa-savoye",
+          "lane": "KosmoReferences",
+          "title": "villa-savoye",
+          "safe_default": "needs_more_source_context",
+          "source_path": "public/archive-models/villa-savoye/low.glb",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "reference:model-promotion-owner-confirmation:alterszentrum-kloster-ingenbohl",
+          "lane": "KosmoReferences",
+          "title": "alterszentrum-kloster-ingenbohl",
+          "safe_default": "needs_more_source_context",
+          "source_path": "public/archive-models/alterszentrum-kloster-ingenbohl/low.glb",
+          "public_ready_after_decision": false
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "batch_id": "batch-d-sogn-benedetg-source-gap",
+      "label": "Batch D: Sogn Benedetg Source Gap",
+      "intent": "Keep the Sogn Benedetg lane honest until the larger private library roots are visible.",
+      "open_items": 1,
+      "safe_default": "needs_more_source_context",
+      "recommended_owner_question": "Soll Sogn Benedetg link-only bleiben, bis der echte private Bibliotheks-Root sichtbar ist?",
+      "recommended_stance": [
+        "Keep open until the large OneDrive/book/ETH/HSLU library can be indexed or mounted."
+      ],
+      "decision_effect": "No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.",
+      "command_hint_after_decision": "npm run kosmo:owner-decision-session-check",
+      "items": [
+        {
+          "id": "reference:sogn-benedetg-source-gap:sogn-benedetg-source-gap",
+          "lane": "KosmoReferences",
+          "title": "sogn-benedetg-source-gap",
+          "safe_default": "needs_more_source_context",
+          "source_path": null,
+          "public_ready_after_decision": false
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "batch_id": "batch-e-kosmoasset-human-reviews",
+      "label": "Batch E: KosmoAsset Human Reviews",
+      "intent": "Review local-only study assets for Blender, DXF, web and future ArchiCAD workflows without public promotion.",
+      "open_items": 6,
+      "safe_default": "needs-review",
+      "recommended_owner_question": "Welche lokalen Study-Assets sollen ein Human Review bekommen, ohne Public-Promotion zu erlauben?",
+      "recommended_stance": [
+        "Use `needs-review` until a named reviewer has opened the local files.",
+        "Use `block-public` for anything that should remain private/local even after local approval."
+      ],
+      "decision_effect": "No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.",
+      "command_hint_after_decision": "npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+      "items": [
+        {
+          "id": "asset:villa-savoye-concrete-frame-material-001:blender",
+          "lane": "KosmoAsset",
+          "title": "Villa Savoye Concrete Frame Material Study",
+          "safe_default": "needs-review",
+          "source_path": "villa-savoye-concrete-frame-material-001",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "asset:villa-savoye-five-points-diagram-001:web",
+          "lane": "KosmoAsset",
+          "title": "Villa Savoye Five Points Diagram Kit",
+          "safe_default": "needs-review",
+          "source_path": "villa-savoye-five-points-diagram-001",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "asset:sogn-benedetg-wood-shingle-material-001:blender",
+          "lane": "KosmoAsset",
+          "title": "Sogn Benedetg Wood Shingle Material Study",
+          "safe_default": "needs-review",
+          "source_path": "sogn-benedetg-wood-shingle-material-001",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "asset:sogn-benedetg-light-band-detail-001:dxf",
+          "lane": "KosmoAsset",
+          "title": "Sogn Benedetg Light Band Detail Study",
+          "safe_default": "needs-review",
+          "source_path": "sogn-benedetg-light-band-detail-001",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "asset:ingenbohl-mineral-pigment-material-001:blender",
+          "lane": "KosmoAsset",
+          "title": "Ingenbohl Mineral Pigment Material Study",
+          "safe_default": "needs-review",
+          "source_path": "ingenbohl-mineral-pigment-material-001",
+          "public_ready_after_decision": false
+        },
+        {
+          "id": "asset:ingenbohl-concrete-core-frame-study-001:blender",
+          "lane": "KosmoAsset",
+          "title": "Ingenbohl Concrete Core and Frame Study",
+          "safe_default": "needs-review",
+          "source_path": "ingenbohl-concrete-core-frame-study-001",
+          "public_ready_after_decision": false
+        }
+      ]
+    }
+  ],
+  "safe_default_if_owner_unavailable": "keep_all_open_items_blocked_or_needs_review",
+  "next_actions": [
+    "Present one review card at a time to the owner.",
+    "If owner is unavailable, keep safe defaults and do not apply decisions.",
+    "After owner records reference choices, run npm run kosmo:owner-decision-session-check.",
+    "After asset reviewer choices, rerun npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json.",
+    "Always rerun npm run kosmo:data-lane-sweep and npm run kosmo:data-lane-command-router after decision edits."
+  ]
+}

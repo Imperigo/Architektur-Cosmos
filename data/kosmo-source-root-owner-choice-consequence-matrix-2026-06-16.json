@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:11:39.030Z",
-  "status": "source_root_owner_choice_consequence_matrix_ready",
+  "generated_at": "2026-06-16T12:30:34.663Z",
+  "status": "source_root_owner_choice_consequence_matrix_satisfied_metadata_only",
   "policy": {
     "matrix_only": true,
     "records_decisions": false,
@@ -12,7 +12,7 @@
     "writes_public_files": false,
     "writes_public_manifest": false,
     "public_ready_after_matrix": 0,
-    "note": "This matrix previews consequences of owner choices. It does not apply choices or inspect private sources."
+    "note": "The owner source-root choice has already been recorded and guarded. The matrix is retained as a satisfied metadata-only audit."
   },
   "source_refs": [
     "data/kosmo-source-root-owner-final-decision-brief-2026-06-16.json",
@@ -20,105 +20,28 @@
     "data/kosmo-source-root-post-owner-activation-queue-check-2026-06-16.json"
   ],
   "summary": {
-    "final_brief_status": "source_root_owner_final_decision_brief_ready",
-    "dry_run_status": "source_root_decision_dry_run_ready",
+    "final_brief_status": "source_root_owner_final_decision_brief_satisfied_metadata_only",
+    "dry_run_status": "source_root_decision_dry_run_satisfied_recorded_selection",
     "queue_guard_status": "source_root_post_owner_activation_queue_guard_passed",
-    "choices": 3,
-    "unlock_choices": 1,
-    "blocked_choices": 2,
+    "choices": 0,
+    "unlock_choices": 0,
+    "blocked_choices": 0,
     "failures": 0,
-    "public_ready_after_matrix": 0
+    "public_ready_after_matrix": 0,
+    "selected_decision": "select_existing_root_for_private_diagnostic",
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "private_diagnostic_allowed": true
   },
-  "choices": [
-    {
-      "id": "keep_blocked",
-      "label": "Keep source-root blocked",
-      "selected_decision": "keep_blocked",
-      "selected_root_path": null,
-      "owner_confirmation_required": true,
-      "unlocks_private_metadata_diagnostic": false,
-      "private_work_after_recording": "blocked",
-      "public_ready_after_choice": 0,
-      "first_command_after_recording": "npm run kosmo:source-root-decision-session-check",
-      "guard_sequence_after_recording": [
-        "npm run kosmo:source-root-decision-session-check",
-        "npm run kosmo:source-root-blocker-refresh",
-        "npm run kosmo:source-root-activation-preflight",
-        "npm run kosmo:source-root-post-owner-activation-queue",
-        "npm run kosmo:source-root-post-owner-activation-queue-check",
-        "npm run kosmo:day-batch-loop"
-      ],
-      "still_blocked_after_choice": [
-        "private metadata inventory",
-        "private OCR/PDF/book text extraction",
-        "source-dependent authoring",
-        "public-ready promotion from private sources",
-        "local LLM tasks with private file contents"
-      ],
-      "next_human_review": "owner confirms a real complete source root or repair/mount action is complete",
-      "caution": "Owner is not ready to identify the complete private architecture library root."
-    },
-    {
-      "id": "repair_onedrive_first",
-      "label": "Repair OneDrive first",
-      "selected_decision": "repair_onedrive_first",
-      "selected_root_path": null,
-      "owner_confirmation_required": true,
-      "unlocks_private_metadata_diagnostic": false,
-      "private_work_after_recording": "blocked",
-      "public_ready_after_choice": 0,
-      "first_command_after_recording": "npm run kosmo:source-root-decision-session-check",
-      "guard_sequence_after_recording": [
-        "npm run kosmo:source-root-decision-session-check",
-        "npm run kosmo:source-root-blocker-refresh",
-        "npm run kosmo:source-root-activation-preflight",
-        "npm run kosmo:source-root-post-owner-activation-queue",
-        "npm run kosmo:source-root-post-owner-activation-queue-check",
-        "npm run kosmo:day-batch-loop"
-      ],
-      "still_blocked_after_choice": [
-        "private metadata inventory",
-        "private OCR/PDF/book text extraction",
-        "source-dependent authoring",
-        "public-ready promotion from private sources",
-        "local LLM tasks with private file contents"
-      ],
-      "next_human_review": "owner confirms a real complete source root or repair/mount action is complete",
-      "caution": "Owner says the intended source root is a OneDrive mirror but sync markers/completeness are not resolved."
-    },
-    {
-      "id": "select_exact_root_1",
-      "label": "Select visible exact root for metadata diagnostic",
-      "selected_decision": "select_existing_root_for_private_diagnostic",
-      "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
-      "owner_confirmation_required": true,
-      "unlocks_private_metadata_diagnostic": true,
-      "private_work_after_recording": "metadata_only_possible_after_all_guards",
-      "public_ready_after_choice": 0,
-      "first_command_after_recording": "npm run kosmo:source-root-decision-session-check",
-      "guard_sequence_after_recording": [
-        "npm run kosmo:source-root-decision-session-check",
-        "npm run kosmo:source-root-blocker-refresh",
-        "npm run kosmo:source-root-activation-preflight",
-        "npm run kosmo:source-root-post-owner-activation-queue",
-        "npm run kosmo:source-root-post-owner-activation-queue-check",
-        "npm run kosmo:private-metadata-inventory",
-        "npm run kosmo:private-metadata-inventory-check",
-        "npm run kosmo:day-batch-loop"
-      ],
-      "still_blocked_after_choice": [
-        "private OCR/PDF/book text extraction",
-        "copying private files into Git",
-        "public-ready promotion from private sources",
-        "local LLM file-content tasks before metadata output guards pass"
-      ],
-      "next_human_review": "review private metadata inventory output contract before any extraction or local LLM content tasks",
-      "caution": "Visible archive subtree; owner/overseer may confirm this exact path before diagnostics."
-    }
-  ],
+  "choices": [],
   "recommendation": {
-    "safe_default": "repair_onedrive_first_or_keep_blocked",
-    "rule": "Pick the unlock choice only after explicit owner confirmation that the exact path is the complete private architecture source root."
+    "safe_default": "already_recorded",
+    "rule": "The selected root is recorded for metadata-only diagnostics. Keep OCR, PDF text extraction, private file copying, local LLM file-content tasks and public-ready promotion blocked until separately approved."
   },
+  "hard_stops": [
+    "Do not OCR or extract private PDF/book text from this satisfied matrix.",
+    "Do not copy private files, scans, OCR text, or protected assets into Git.",
+    "Do not set public-ready from private sources.",
+    "Do not run local LLM tasks on private file contents before a separate guarded contract exists."
+  ],
   "failures": []
 }

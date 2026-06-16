@@ -46,16 +46,25 @@ async function main() {
 
 function buildReport({ queue, choiceMatrix, answerSheet, pilotGapLabels, assetTaxonomy }) {
   const failures = [];
+  const sourceRootChoiceSatisfied = choiceMatrix.status === 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only';
+  const choiceMatrixAccepted = [
+    'source_root_owner_choice_consequence_matrix_ready',
+    'source_root_owner_choice_consequence_matrix_satisfied_metadata_only'
+  ].includes(choiceMatrix.status);
   if (queue.status !== 'source_independent_work_queue_ready') failures.push(`Queue not ready: ${queue.status}`);
   if ((queue.summary?.codex_executable_now ?? 1) !== 0) failures.push('Source-free Codex tasks are not complete.');
-  if (choiceMatrix.status !== 'source_root_owner_choice_consequence_matrix_ready') failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
+  if (!choiceMatrixAccepted) failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
   if (answerSheet.status !== 'owner_answer_sheet_ready') failures.push(`Owner answer sheet not ready: ${answerSheet.status}`);
 
   const sourceRootDecision = {
     id: 'source_root_choice',
-    status: 'owner_action_required',
-    question: 'Welche Source-Root-Option soll als naechster Zustand gelten?',
-    recommended_default: 'repair_onedrive_first_or_keep_blocked_until_complete_root_is_confirmed',
+    status: sourceRootChoiceSatisfied ? 'recorded_metadata_only' : 'owner_action_required',
+    question: sourceRootChoiceSatisfied
+      ? 'Source Root ist aufgezeichnet; welche spaeteren privaten Inhaltsverarbeitungen bleiben separat gesperrt?'
+      : 'Welche Source-Root-Option soll als naechster Zustand gelten?',
+    recommended_default: sourceRootChoiceSatisfied
+      ? 'keep_metadata_only_until_next_explicit_owner_approval'
+      : 'repair_onedrive_first_or_keep_blocked_until_complete_root_is_confirmed',
     choices: (choiceMatrix.choices || []).map((choice) => ({
       id: choice.id,
       label: choice.label,
@@ -63,7 +72,17 @@ function buildReport({ queue, choiceMatrix, answerSheet, pilotGapLabels, assetTa
       public_ready_after_choice: choice.public_ready_after_choice ?? 0,
       caution: choice.caution
     })),
-    safe_after_answer: 'Run source-root decision checks and activation preflight before any private metadata inventory.'
+    recorded_selection: sourceRootChoiceSatisfied
+      ? {
+          selected_decision: choiceMatrix.summary?.selected_decision || null,
+          selected_root_path: choiceMatrix.summary?.selected_root_path || null,
+          private_diagnostic_allowed: choiceMatrix.summary?.private_diagnostic_allowed === true,
+          public_ready_after_choice: 0
+        }
+      : null,
+    safe_after_answer: sourceRootChoiceSatisfied
+      ? 'Continue metadata-only diagnostics and review batches; do not OCR, extract private PDF text, copy private files to Git, run local LLMs on private contents, or set public-ready.'
+      : 'Run source-root decision checks and activation preflight before any private metadata inventory.'
   };
 
   const reviewBatchDecision = {
@@ -78,7 +97,9 @@ function buildReport({ queue, choiceMatrix, answerSheet, pilotGapLabels, assetTa
     safe_after_answer: 'Record answers into owner intake/session only; keep public-ready at 0.'
   };
 
-  const decisions = [sourceRootDecision, reviewBatchDecision];
+  const decisions = sourceRootChoiceSatisfied
+    ? [sourceRootDecision, reviewBatchDecision]
+    : [sourceRootDecision, reviewBatchDecision];
 
   return {
     schema_version: '0.1',

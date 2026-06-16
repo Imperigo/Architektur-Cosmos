@@ -93,6 +93,7 @@ function checkPolicy(packet) {
 
 function checkSummary(packet) {
   const summary = packet.summary || {};
+  const sourceRootDecisionSatisfied = summary.source_root_owner_decision_packet_status === 'source_root_owner_decision_packet_satisfied_metadata_only';
   const findings = [];
   expect(summary.data_lane_status === 'kosmodata_lane_sweep_review_only_passed', findings, 'data_lane_review_only_passed', 'Packet must reference a review-only passed data lane.');
   expect(summary.question_brief_status === 'owner_question_brief_ready', findings, 'question_brief_ready', 'Question brief must be ready.');
@@ -103,8 +104,16 @@ function checkSummary(packet) {
   expect(summary.filled_answers === 0, findings, 'filled_answers_zero', 'Packet must not contain filled answers.');
   expect(summary.session_edit_plan_status === 'owner_answer_session_edit_plan_pending_owner_input', findings, 'session_edit_plan_pending_owner', 'Session edit plan must remain pending owner input.');
   expect(summary.planned_edits === 0, findings, 'planned_edits_zero', 'Packet must not plan edits.');
-  expect(summary.source_root_owner_decision_packet_status === 'source_root_owner_decision_packet_ready', findings, 'source_root_owner_decision_packet_ready', 'Source-root owner decision packet must be ready.');
-  expect(summary.source_root_owner_decision_templates >= 3, findings, 'source_root_owner_decision_templates_present', 'Source-root owner decision packet must expose decision templates.');
+  expect([
+    'source_root_owner_decision_packet_ready',
+    'source_root_owner_decision_packet_satisfied_metadata_only'
+  ].includes(summary.source_root_owner_decision_packet_status), findings, 'source_root_owner_decision_packet_ready', 'Source-root owner decision packet must be ready or satisfied.');
+  expect(
+    sourceRootDecisionSatisfied ? summary.source_root_owner_decision_exact_roots >= 1 : summary.source_root_owner_decision_templates >= 3,
+    findings,
+    'source_root_owner_decision_templates_present',
+    'Source-root owner decision packet must expose decision templates or a satisfied exact root.'
+  );
   expect(summary.source_root_owner_decision_public_ready_after === 0, findings, 'source_root_owner_decision_public_ready_zero', 'Source-root owner decision packet must keep public-ready at 0.');
   expect(summary.public_ready_after_packet === 0, findings, 'summary_public_ready_zero', 'Packet summary must keep public-ready at 0.');
   return findings;
@@ -119,14 +128,20 @@ function checkReviewOrder(packet) {
     ['Owner Answer Intake', 'owner_answer_intake_template_pending_owner_input'],
     ['Owner Answer Intake Check', 'owner_answer_intake_guard_passed_pending_owner_input'],
     ['Session Edit Plan', 'owner_answer_session_edit_plan_pending_owner_input'],
-    ['Source Root Owner Decision Packet', 'source_root_owner_decision_packet_ready']
+    ['Source Root Owner Decision Packet', null]
   ];
   expect(order.length === required.length, findings, 'review_order_length', `Packet review order must contain ${required.length} items.`);
   required.forEach(([title, status], index) => {
     const item = order[index];
     expect(item?.order === index + 1, findings, `review_order_number:${index + 1}`, `Review order item ${index + 1} must be in sequence.`);
     expect(item?.title === title, findings, `review_order_title:${title}`, `Review order item ${index + 1} must be ${title}.`);
-    expect(item?.required_status === status, findings, `review_order_status:${title}`, `${title} must require status ${status}.`);
+    const statusAccepted = status
+      ? item?.required_status === status
+      : [
+          'source_root_owner_decision_packet_ready',
+          'source_root_owner_decision_packet_satisfied_metadata_only'
+        ].includes(item?.required_status);
+    expect(statusAccepted, findings, `review_order_status:${title}`, `${title} must require an accepted status.`);
     expect(typeof item?.json === 'string' && item.json.length > 0, findings, `review_order_json:${title}`, `${title} must include a JSON source path.`);
   });
   return findings;

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:09:10.374Z",
+  "generated_at": "2026-06-16T12:31:16.283Z",
   "status": "local_worker_http_runner_dry_run_ready",
   "policy": {
     "review_only": true,
@@ -15,10 +15,10 @@
   },
   "task_pack": "data/kosmo-local-worker-task-pack-2026-06-16.json",
   "task": {
-    "task_id": "kosmo-public-source-link-synthesis",
-    "lane": "source_discovery",
-    "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/public-source-link-synthesis.private.json",
-    "output_filename": "public-source-link-synthesis.private.json",
+    "task_id": "kosmo-asset-source-candidate-triage",
+    "lane": "kosmoasset",
+    "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/asset-source-candidate-triage.private.json",
+    "output_filename": "asset-source-candidate-triage.private.json",
     "output_already_exists": true,
     "execute_requested": false,
     "force_requested": false
@@ -33,43 +33,33 @@
     "failures": [],
     "safe_inputs": [
       {
-        "ref": "data/kosmoreferences-data-lane-status.json",
-        "bytes": 7391,
+        "ref": "data/kosmoasset-source-candidate-map-2026-06-16.json",
+        "bytes": 8932,
         "truncated": false
       },
       {
-        "ref": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
-        "bytes": 3446,
+        "ref": "docs/codex/kosmoasset-source-candidate-map-2026-06-16.md",
+        "bytes": 4082,
         "truncated": false
       },
       {
-        "ref": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
-        "bytes": 2927,
+        "ref": "data/kosmo-source-root-selection-brief-2026-06-16.json",
+        "bytes": 8609,
         "truncated": false
       },
       {
-        "ref": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
-        "bytes": 3593,
+        "ref": "docs/codex/kosmo-source-root-selection-brief-2026-06-16.md",
+        "bytes": 5629,
         "truncated": false
       },
       {
-        "ref": "data/kosmo-private-metadata-inventory-runner-2026-06-16.json",
-        "bytes": 2691,
+        "ref": "data/kosmo-data-lane-command-router-2026-06-16.json",
+        "bytes": 4225,
         "truncated": false
       },
       {
-        "ref": "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json",
-        "bytes": 4306,
-        "truncated": false
-      },
-      {
-        "ref": "data/kosmo-private-metadata-inventory-check-2026-06-16.json",
-        "bytes": 13489,
-        "truncated": false
-      },
-      {
-        "ref": "docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md",
-        "bytes": 8308,
+        "ref": "data/kosmo-worker-boundary-pack-check-2026-06-16.json",
+        "bytes": 7099,
         "truncated": false
       }
     ]

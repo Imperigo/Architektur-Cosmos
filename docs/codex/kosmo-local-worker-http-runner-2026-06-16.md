@@ -1,12 +1,12 @@
 # Kosmo Local Worker HTTP Runner
 
-Generated: 2026-06-16T05:09:10.374Z
+Generated: 2026-06-16T12:31:16.283Z
 Status: `local_worker_http_runner_dry_run_ready`
 
 ## Task
 
-- Task: `kosmo-public-source-link-synthesis`
-- Lane: source_discovery
+- Task: `kosmo-asset-source-candidate-triage`
+- Lane: kosmoasset
 - Output exists: yes
 - Execute requested: no
 
@@ -14,7 +14,7 @@ Status: `local_worker_http_runner_dry_run_ready`
 
 - Passed: yes
 - Failures: 0
-- Safe inputs: 8
+- Safe inputs: 6
 
 ## Model
 

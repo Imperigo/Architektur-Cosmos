@@ -1,12 +1,12 @@
 # KosmoAsset Source Candidate Map
 
-Generated: 2026-06-16T05:09:17.463Z
+Generated: 2026-06-16T12:31:13.542Z
 Status: `kosmoasset_source_candidate_map_review_only_ready`
 
 ## Summary
 
 - Selection status: source_root_owner_selection_needed
-- Asset bridge: null
+- Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Source candidates seen: 10
 - Asset-lane candidates: 3
 - Material library candidates: 2
@@ -32,7 +32,7 @@ Status: `kosmoasset_source_candidate_map_review_only_ready`
 ## Blockers
 
 - `source_root_owner_selection`: active - Owner/KosmoOverseer has not selected an exact private source root.
-- `asset_bridge_review_only`: active - KosmoAsset reference bridge must stay review-only and passing before new candidate lanes are promoted.
+- `asset_bridge_review_only`: clear - KosmoAsset reference bridge must stay review-only and passing before new candidate lanes are promoted.
 - `public_ready_zero`: active - All source-derived KosmoAsset candidates stay public-ready=false until rights and human review gates pass.
 
 ## Next Actions

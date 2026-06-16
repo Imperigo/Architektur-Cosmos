@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-16T10:42:41.513Z
+Generated: 2026-06-16T12:33:25.077Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -25,7 +25,7 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `public_ready_after_board_zero` - Board policy must keep public-ready after board at 0.
 - passed: `data_lane_passed` - Data lane must be review-only passed.
 - passed: `data_lane_steps_complete` - Data lane must report all steps passed.
-- passed: `router_guarded` - Router must remain guarded review-only.
+- passed: `router_guarded` - Router must remain guarded review-only or metadata-diagnostic ready.
 - passed: `checkpoint_guarded` - Night-loop checkpoint must remain guarded ready.
 - passed: `session_brief_guard_passed` - Session brief guard must pass.
 - passed: `session_brief_failures_zero` - Session brief guard failures must be 0.
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md` - 2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md` - 2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md` - 2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md` - 2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md` - 2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md must be mirrored in both inboxes.
@@ -56,10 +58,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-322-owner-unlock-helper-chain.md` - 2026-06-16-codex-synergiebericht-322-owner-unlock-helper-chain.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md` - 2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md` - 2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md must include a title.
-- passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md` - 2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md` - 2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md must include a title.
-- passed: `source_root_blocked` - Source-root blocker must remain blocked.
-- passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
+- passed: `source_root_blocked` - Source-root blocker must remain blocked or metadata-only allowed.
+- passed: `private_inventory_blocked` - Private inventory blocker must remain blocked or metadata-only allowed.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.
 - passed: `public_ready_zero_passed` - Public-ready-zero invariant must pass.
 

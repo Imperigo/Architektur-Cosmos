@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T12:30:33.681Z",
+  "status": "source_root_decision_dry_run_satisfied_recorded_selection",
+  "policy": {
+    "dry_run_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_dry_run": 0,
+    "note": "The owner decision has already been recorded and guarded; pending decision scenarios are archived."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-owner-decision-packet-2026-06-16.json",
+    "data/kosmo-source-root-owner-decision-packet-check-2026-06-16.json",
+    "data/kosmo-source-root-activation-preflight-2026-06-16.json",
+    "data/kosmo-private-metadata-inventory-check-2026-06-16.json"
+  ],
+  "summary": {
+    "packet_status": "source_root_owner_decision_packet_satisfied_metadata_only",
+    "packet_guard_status": "source_root_owner_decision_packet_guard_passed",
+    "activation_status": "source_root_activation_ready_for_private_metadata_diagnostic",
+    "private_metadata_guard_status": "private_metadata_inventory_guard_passed",
+    "recorded_selection": true,
+    "scenarios": 0,
+    "metadata_diagnostic_scenarios": 1,
+    "blocked_scenarios": 0,
+    "failures": 0,
+    "public_ready_after_dry_run": 0
+  },
+  "scenarios": [],
+  "still_forbidden_in_all_scenarios": [
+    "private OCR or PDF/book text extraction",
+    "copying private scans, plans, images or lecture material into Git",
+    "public-ready promotion for source-dependent references or assets",
+    "local LLM tasks that read private file contents outside guarded metadata-only contracts"
+  ],
+  "exact_commands_after_owner_records_decision": [
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:private-metadata-inventory",
+    "npm run kosmo:private-metadata-inventory-check",
+    "npm run kosmo:day-batch-loop"
+  ],
+  "failures": []
+}

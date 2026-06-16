@@ -47,6 +47,60 @@ async function main() {
 
 function buildReport({ packet, packetCheck, activationPreflight, privateMetadataCheck }) {
   const failures = [];
+  const recordedSelectionSatisfied = packet.status === 'source_root_owner_decision_packet_satisfied_metadata_only' &&
+    packetCheck.status === 'source_root_owner_decision_packet_guard_passed' &&
+    activationPreflight?.summary?.activation_ready === true &&
+    privateMetadataCheck.status === 'private_metadata_inventory_guard_passed';
+
+  if (recordedSelectionSatisfied) {
+    return {
+      schema_version: '0.1',
+      generated_at: new Date().toISOString(),
+      status: 'source_root_decision_dry_run_satisfied_recorded_selection',
+      policy: {
+        dry_run_only: true,
+        records_decisions: false,
+        mutates_decision_session: false,
+        reads_private_content: false,
+        copies_private_content: false,
+        runs_private_inventory: false,
+        writes_public_files: false,
+        writes_public_manifest: false,
+        public_ready_after_dry_run: 0,
+        note: 'The owner decision has already been recorded and guarded; pending decision scenarios are archived.'
+      },
+      source_refs: Object.values(refs).map((path) => relative(root, path)),
+      summary: {
+        packet_status: packet.status,
+        packet_guard_status: packetCheck.status,
+        activation_status: activationPreflight.status || null,
+        private_metadata_guard_status: privateMetadataCheck.status || null,
+        recorded_selection: true,
+        scenarios: 0,
+        metadata_diagnostic_scenarios: 1,
+        blocked_scenarios: 0,
+        failures: 0,
+        public_ready_after_dry_run: 0
+      },
+      scenarios: [],
+      still_forbidden_in_all_scenarios: [
+        'private OCR or PDF/book text extraction',
+        'copying private scans, plans, images or lecture material into Git',
+        'public-ready promotion for source-dependent references or assets',
+        'local LLM tasks that read private file contents outside guarded metadata-only contracts'
+      ],
+      exact_commands_after_owner_records_decision: [
+        'npm run kosmo:source-root-decision-session-check',
+        'npm run kosmo:source-root-blocker-refresh',
+        'npm run kosmo:source-root-activation-preflight',
+        'npm run kosmo:private-metadata-inventory',
+        'npm run kosmo:private-metadata-inventory-check',
+        'npm run kosmo:day-batch-loop'
+      ],
+      failures: []
+    };
+  }
+
   if (packet.status !== 'source_root_owner_decision_packet_ready') failures.push(`Packet not ready: ${packet.status}`);
   if (packetCheck.status !== 'source_root_owner_decision_packet_guard_passed') failures.push(`Packet guard not passed: ${packetCheck.status}`);
   if (activationPreflight?.summary?.activation_ready === true) failures.push('Activation is already ready; dry-run should be replaced by real post-decision checks.');

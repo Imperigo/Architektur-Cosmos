@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:09:10.620Z",
+  "generated_at": "2026-06-16T12:31:16.517Z",
   "status": "local_worker_http_runner_guard_passed",
   "policy": {
     "validates_report_only": true,
@@ -16,9 +16,9 @@
   ],
   "summary": {
     "runner_status": "local_worker_http_runner_dry_run_ready",
-    "task_id": "kosmo-public-source-link-synthesis",
+    "task_id": "kosmo-asset-source-candidate-triage",
     "guard_passed": true,
-    "safe_inputs": 8,
+    "safe_inputs": 6,
     "execute_requested": false,
     "model_used": false,
     "failures": 0,
@@ -92,84 +92,64 @@
       "message": "Runner must enumerate safe input reports."
     },
     {
-      "id": "safe_input_root:data/kosmoreferences-data-lane-status.json",
+      "id": "safe_input_root:data/kosmoasset-source-candidate-map-2026-06-16.json",
       "severity": "passed",
-      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmoreferences-data-lane-status.json"
+      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmoasset-source-candidate-map-2026-06-16.json"
     },
     {
-      "id": "safe_input_not_truncated:data/kosmoreferences-data-lane-status.json",
+      "id": "safe_input_not_truncated:data/kosmoasset-source-candidate-map-2026-06-16.json",
       "severity": "passed",
-      "message": "Safe input should not be truncated for the default smoke task: data/kosmoreferences-data-lane-status.json"
+      "message": "Safe input should not be truncated for the default smoke task: data/kosmoasset-source-candidate-map-2026-06-16.json"
     },
     {
-      "id": "safe_input_root:examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+      "id": "safe_input_root:docs/codex/kosmoasset-source-candidate-map-2026-06-16.md",
       "severity": "passed",
-      "message": "Safe input must stay under data/, docs/ or examples/: examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json"
+      "message": "Safe input must stay under data/, docs/ or examples/: docs/codex/kosmoasset-source-candidate-map-2026-06-16.md"
     },
     {
-      "id": "safe_input_not_truncated:examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+      "id": "safe_input_not_truncated:docs/codex/kosmoasset-source-candidate-map-2026-06-16.md",
       "severity": "passed",
-      "message": "Safe input should not be truncated for the default smoke task: examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json"
+      "message": "Safe input should not be truncated for the default smoke task: docs/codex/kosmoasset-source-candidate-map-2026-06-16.md"
     },
     {
-      "id": "safe_input_root:examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+      "id": "safe_input_root:data/kosmo-source-root-selection-brief-2026-06-16.json",
       "severity": "passed",
-      "message": "Safe input must stay under data/, docs/ or examples/: examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json"
+      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-source-root-selection-brief-2026-06-16.json"
     },
     {
-      "id": "safe_input_not_truncated:examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+      "id": "safe_input_not_truncated:data/kosmo-source-root-selection-brief-2026-06-16.json",
       "severity": "passed",
-      "message": "Safe input should not be truncated for the default smoke task: examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json"
+      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-source-root-selection-brief-2026-06-16.json"
     },
     {
-      "id": "safe_input_root:examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+      "id": "safe_input_root:docs/codex/kosmo-source-root-selection-brief-2026-06-16.md",
       "severity": "passed",
-      "message": "Safe input must stay under data/, docs/ or examples/: examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json"
+      "message": "Safe input must stay under data/, docs/ or examples/: docs/codex/kosmo-source-root-selection-brief-2026-06-16.md"
     },
     {
-      "id": "safe_input_not_truncated:examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+      "id": "safe_input_not_truncated:docs/codex/kosmo-source-root-selection-brief-2026-06-16.md",
       "severity": "passed",
-      "message": "Safe input should not be truncated for the default smoke task: examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json"
+      "message": "Safe input should not be truncated for the default smoke task: docs/codex/kosmo-source-root-selection-brief-2026-06-16.md"
     },
     {
-      "id": "safe_input_root:data/kosmo-private-metadata-inventory-runner-2026-06-16.json",
+      "id": "safe_input_root:data/kosmo-data-lane-command-router-2026-06-16.json",
       "severity": "passed",
-      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-private-metadata-inventory-runner-2026-06-16.json"
+      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-data-lane-command-router-2026-06-16.json"
     },
     {
-      "id": "safe_input_not_truncated:data/kosmo-private-metadata-inventory-runner-2026-06-16.json",
+      "id": "safe_input_not_truncated:data/kosmo-data-lane-command-router-2026-06-16.json",
       "severity": "passed",
-      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-private-metadata-inventory-runner-2026-06-16.json"
+      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-data-lane-command-router-2026-06-16.json"
     },
     {
-      "id": "safe_input_root:data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json",
+      "id": "safe_input_root:data/kosmo-worker-boundary-pack-check-2026-06-16.json",
       "severity": "passed",
-      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json"
+      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-worker-boundary-pack-check-2026-06-16.json"
     },
     {
-      "id": "safe_input_not_truncated:data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json",
+      "id": "safe_input_not_truncated:data/kosmo-worker-boundary-pack-check-2026-06-16.json",
       "severity": "passed",
-      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json"
-    },
-    {
-      "id": "safe_input_root:data/kosmo-private-metadata-inventory-check-2026-06-16.json",
-      "severity": "passed",
-      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-private-metadata-inventory-check-2026-06-16.json"
-    },
-    {
-      "id": "safe_input_not_truncated:data/kosmo-private-metadata-inventory-check-2026-06-16.json",
-      "severity": "passed",
-      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-private-metadata-inventory-check-2026-06-16.json"
-    },
-    {
-      "id": "safe_input_root:docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md",
-      "severity": "passed",
-      "message": "Safe input must stay under data/, docs/ or examples/: docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md"
-    },
-    {
-      "id": "safe_input_not_truncated:docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md",
-      "severity": "passed",
-      "message": "Safe input should not be truncated for the default smoke task: docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md"
+      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-worker-boundary-pack-check-2026-06-16.json"
     },
     {
       "id": "no_model_use_without_execute",

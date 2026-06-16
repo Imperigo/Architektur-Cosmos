@@ -1,0 +1,153 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T12:30:32.958Z",
+  "status": "source_root_owner_action_satisfied_metadata_only",
+  "policy": {
+    "decision_card_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_card": 0,
+    "note": "This card summarizes the owner action needed to unlock metadata diagnostics. It does not edit the decision session or inspect private sources."
+  },
+  "source_refs": [
+    "data/kosmo-storage-mount-snapshot-2026-06-16.json",
+    "data/kosmo-source-root-blocker-refresh-2026-06-16.json",
+    "data/kosmo-source-root-selection-brief-2026-06-16.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
+    "data/kosmo-source-root-decision-session-check-2026-06-16.json",
+    "data/kosmo-source-root-activation-preflight-2026-06-16.json",
+    "data/kosmo-private-metadata-inventory-check-2026-06-16.json"
+  ],
+  "summary": {
+    "owner_action_required": false,
+    "data_mount_visible": true,
+    "data_mount_available_gib": 3243.3,
+    "archive_mount_visible": true,
+    "onedrive_marker_files": 59,
+    "probable_large_private_libraries": 0,
+    "workflow_mirrors": 68,
+    "candidate_roots": 8,
+    "decision_session_status": "source_root_decision_session_recorded",
+    "decision_check_status": "passed_recorded_private_diagnostic_allowed",
+    "selected_decision": "select_existing_root_for_private_diagnostic",
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "selected_root_exists": true,
+    "private_diagnostic_allowed": true,
+    "activation_status": "source_root_activation_ready_for_private_metadata_diagnostic",
+    "metadata_inventory_guard_status": "private_metadata_inventory_guard_passed",
+    "recommended_decision": "already_allowed",
+    "public_ready_after_card": 0
+  },
+  "decision_file": {
+    "path": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
+    "fields_to_set_only_after_owner_confirmation": [
+      "status",
+      "selected_decision",
+      "selected_root_path",
+      "owner_confirmation_note"
+    ],
+    "valid_selected_decision_values": [
+      "keep_blocked",
+      "mount_archive_first",
+      "repair_onedrive_first",
+      "select_existing_root_for_private_diagnostic",
+      "select_root_after_mount_check"
+    ],
+    "safe_examples": [
+      {
+        "when": "real complete private library root is visible now",
+        "status": "source_root_decision_session_recorded",
+        "selected_decision": "select_existing_root_for_private_diagnostic",
+        "selected_root_path": "<absolute-owner-approved-root>"
+      },
+      {
+        "when": "archive HDD/private library is not mounted yet",
+        "status": "source_root_decision_session_recorded",
+        "selected_decision": "mount_archive_first",
+        "selected_root_path": null
+      },
+      {
+        "when": "OneDrive root is intended but sync markers remain unresolved",
+        "status": "source_root_decision_session_recorded",
+        "selected_decision": "repair_onedrive_first",
+        "selected_root_path": null
+      }
+    ]
+  },
+  "candidate_roots": [
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+      "score": 70,
+      "caution": "workflow/project mirror; likely not the full private architecture library"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+      "score": 60,
+      "caution": "archive path; verify it is an own mounted archive disk"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+      "score": 60,
+      "caution": "archive path; verify it is an own mounted archive disk"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow",
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+      "score": 52,
+      "caution": "workflow/project mirror; likely not the full private architecture library"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "score": 52,
+      "caution": "archive path; verify it is an own mounted archive disk"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+      "score": 48,
+      "caution": "OneDrive-like path; verify sync markers and completeness"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+      "score": 48,
+      "caution": "workflow/project mirror; likely not the full private architecture library"
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+      "score": 48,
+      "caution": "workflow/project mirror; likely not the full private architecture library"
+    }
+  ],
+  "exact_next_commands_after_owner_edit": [
+    "npm run kosmo:storage-mount-snapshot",
+    "npm run kosmo:source-root-locator",
+    "npm run kosmo:source-root-selection-brief",
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:private-metadata-inventory",
+    "npm run kosmo:private-metadata-inventory-fixture-smoke",
+    "npm run kosmo:private-metadata-inventory-check",
+    "npm run kosmo:day-batch-loop"
+  ],
+  "still_forbidden_until_later_gates": [
+    "private OCR or PDF/book text extraction",
+    "copying private scans, images, plans or lecture material into Git",
+    "public-ready promotion for Sogn Benedetg, Ingenbohl or source-dependent assets",
+    "local LLM tasks that read private file contents"
+  ],
+  "owner_prompt": [
+    "Source-root owner action is satisfied for metadata diagnostics only.",
+    "Continue with guarded private metadata inventory and output checks."
+  ]
+}

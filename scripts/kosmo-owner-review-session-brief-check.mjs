@@ -96,7 +96,10 @@ function checkSummary(brief) {
   const findings = [];
   expect(brief.summary?.packet_status === 'owner_review_packet_ready', findings, 'packet_ready', 'Session brief must reference a ready owner review packet.');
   expect(brief.summary?.packet_guard_status === 'owner_review_packet_guard_passed', findings, 'packet_guard_passed', 'Session brief must reference a passing packet guard.');
-  expect(brief.summary?.router_status === 'worker_router_guarded_review_only', findings, 'router_guarded_review_only', 'Session brief must keep router guarded review-only.');
+  expect([
+    'worker_router_guarded_review_only',
+    'worker_router_private_diagnostic_ready'
+  ].includes(brief.summary?.router_status), findings, 'router_guarded_review_only', 'Session brief must keep router guarded review-only or private-diagnostic ready.');
   expect(brief.summary?.questions === 6, findings, 'question_count_six', 'Session brief must contain six owner questions.');
   expect(brief.summary?.prior_signals === 5, findings, 'prior_signal_count_five', 'Session brief must classify five prior owner signals.');
   expect(brief.summary?.prior_signals_recordable_now === 0, findings, 'prior_signals_recordable_zero', 'No prior signal may be recordable now.');
@@ -137,9 +140,12 @@ function checkQuestions(brief, questionBrief) {
 function checkSourceRoot(brief) {
   const status = brief.source_root_status || {};
   const findings = [];
-  expect(status.current_selected_decision == null, findings, 'source_root_decision_pending', 'Source-root decision must remain pending.');
-  expect(status.current_selected_root_path == null, findings, 'source_root_path_pending', 'Source-root path must remain pending.');
-  expect(status.safe_default === 'keep_blocked', findings, 'source_root_safe_default_keep_blocked', 'Source-root safe default must remain keep_blocked.');
+  const recordedMetadataOnly = status.current_selected_decision === 'select_existing_root_for_private_diagnostic' &&
+    typeof status.current_selected_root_path === 'string' &&
+    status.current_selected_root_path.length > 0;
+  expect(status.current_selected_decision == null || recordedMetadataOnly, findings, 'source_root_decision_pending', 'Source-root decision must remain pending or recorded metadata-only.');
+  expect(status.current_selected_root_path == null || recordedMetadataOnly, findings, 'source_root_path_pending', 'Source-root path must remain pending or recorded metadata-only.');
+  expect(['keep_blocked', 'metadata_only_after_recorded_root'].includes(status.safe_default), findings, 'source_root_safe_default_keep_blocked', 'Source-root safe default must remain keep_blocked or metadata-only after recorded root.');
   return findings;
 }
 

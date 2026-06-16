@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:11:38.523Z",
+  "generated_at": "2026-06-16T12:30:34.170Z",
   "status": "source_root_post_owner_activation_queue_guard_passed",
   "policy": {
     "validates_queue_only": true,
@@ -20,12 +20,12 @@
   ],
   "summary": {
     "queue_status": "source_root_post_owner_activation_queue_ready",
-    "activation_status": "source_root_activation_waiting_for_owner_storage_action",
-    "activation_ready": false,
-    "decision_still_pending": true,
+    "activation_status": "source_root_activation_ready_for_private_metadata_diagnostic",
+    "activation_ready": true,
+    "decision_still_pending": false,
     "queue_steps": 7,
-    "executable_now": 0,
-    "blocked_now": 7,
+    "executable_now": 2,
+    "blocked_now": 5,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -105,21 +105,6 @@
       "id": "queue_internal_failures_zero",
       "severity": "passed",
       "message": "Queue internal failures must be 0."
-    },
-    {
-      "id": "pending_activation_not_ready",
-      "severity": "passed",
-      "message": "Pending decision must not be activation-ready."
-    },
-    {
-      "id": "pending_executable_zero",
-      "severity": "passed",
-      "message": "Pending decision must keep executable_now at 0."
-    },
-    {
-      "id": "pending_all_blocked",
-      "severity": "passed",
-      "message": "Pending decision must keep all queue steps blocked."
     },
     {
       "id": "queue_steps_array",
@@ -287,9 +272,9 @@
       "message": "private_metadata_inventory must include requires array."
     },
     {
-      "id": "step_blocked_reason:private_metadata_inventory",
+      "id": "step_executable_no_blocker:private_metadata_inventory",
       "severity": "passed",
-      "message": "private_metadata_inventory must explain why it is blocked."
+      "message": "private_metadata_inventory cannot be executable while blocked_reason is set."
     },
     {
       "id": "step_safe_command:private_metadata_inventory",
@@ -317,9 +302,9 @@
       "message": "private_metadata_inventory_check must include requires array."
     },
     {
-      "id": "step_blocked_reason:private_metadata_inventory_check",
+      "id": "step_executable_no_blocker:private_metadata_inventory_check",
       "severity": "passed",
-      "message": "private_metadata_inventory_check must explain why it is blocked."
+      "message": "private_metadata_inventory_check cannot be executable while blocked_reason is set."
     },
     {
       "id": "step_safe_command:private_metadata_inventory_check",

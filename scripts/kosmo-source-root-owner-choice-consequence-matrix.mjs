@@ -47,6 +47,52 @@ async function main() {
 }
 
 function buildMatrix({ finalBrief, dryRun, queueGuard }) {
+  if (isSatisfiedMetadataOnly({ finalBrief, dryRun, queueGuard })) {
+    return {
+      schema_version: '0.1',
+      generated_at: new Date().toISOString(),
+      status: 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only',
+      policy: {
+        matrix_only: true,
+        records_decisions: false,
+        mutates_decision_session: false,
+        reads_private_content: false,
+        copies_private_content: false,
+        runs_private_inventory_now: false,
+        writes_public_files: false,
+        writes_public_manifest: false,
+        public_ready_after_matrix: 0,
+        note: 'The owner source-root choice has already been recorded and guarded. The matrix is retained as a satisfied metadata-only audit.'
+      },
+      source_refs: Object.values(refs).map((path) => relative(root, path)),
+      summary: {
+        final_brief_status: finalBrief.status,
+        dry_run_status: dryRun.status,
+        queue_guard_status: queueGuard.status,
+        choices: 0,
+        unlock_choices: 0,
+        blocked_choices: 0,
+        failures: 0,
+        public_ready_after_matrix: 0,
+        selected_decision: finalBrief.summary?.selected_decision || null,
+        selected_root_path: finalBrief.summary?.selected_root_path || null,
+        private_diagnostic_allowed: finalBrief.summary?.private_diagnostic_allowed === true
+      },
+      choices: [],
+      recommendation: {
+        safe_default: 'already_recorded',
+        rule: 'The selected root is recorded for metadata-only diagnostics. Keep OCR, PDF text extraction, private file copying, local LLM file-content tasks and public-ready promotion blocked until separately approved.'
+      },
+      hard_stops: [
+        'Do not OCR or extract private PDF/book text from this satisfied matrix.',
+        'Do not copy private files, scans, OCR text, or protected assets into Git.',
+        'Do not set public-ready from private sources.',
+        'Do not run local LLM tasks on private file contents before a separate guarded contract exists.'
+      ],
+      failures: []
+    };
+  }
+
   const failures = [];
   if (finalBrief.status !== 'source_root_owner_final_decision_brief_ready') failures.push(`Final brief not ready: ${finalBrief.status}`);
   if (dryRun.status !== 'source_root_decision_dry_run_ready') failures.push(`Decision dry run not ready: ${dryRun.status}`);
@@ -149,6 +195,18 @@ function buildMatrix({ finalBrief, dryRun, queueGuard }) {
     },
     failures
   };
+}
+
+function isSatisfiedMetadataOnly({ finalBrief, dryRun, queueGuard }) {
+  return finalBrief.status === 'source_root_owner_final_decision_brief_satisfied_metadata_only' &&
+    dryRun.status === 'source_root_decision_dry_run_satisfied_recorded_selection' &&
+    queueGuard.status === 'source_root_post_owner_activation_queue_guard_passed' &&
+    finalBrief.summary?.selected_decision === 'select_existing_root_for_private_diagnostic' &&
+    typeof finalBrief.summary?.selected_root_path === 'string' &&
+    finalBrief.summary.selected_root_path.length > 0 &&
+    finalBrief.summary?.private_diagnostic_allowed === true &&
+    (finalBrief.summary?.public_ready_after_brief ?? 0) === 0 &&
+    (dryRun.summary?.public_ready_after_dry_run ?? 0) === 0;
 }
 
 async function readJson(path) {

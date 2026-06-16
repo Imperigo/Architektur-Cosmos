@@ -1,0 +1,308 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T12:31:15.268Z",
+  "status": "private_metadata_inventory_ready_private_output_written",
+  "policy": {
+    "metadata_only": true,
+    "reads_file_contents": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_run": 0,
+    "note": "This runner uses directory and file metadata only. It never opens source files for content extraction."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-activation-preflight-2026-06-16.json"
+  ],
+  "summary": {
+    "mode": "private_guarded",
+    "activation_status": "source_root_activation_ready_for_private_metadata_diagnostic",
+    "activation_ready": true,
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "scan_root": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "root_scanned": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "scan_truncated": false,
+    "files_scanned": 5705,
+    "dirs_scanned": 577,
+    "total_candidate_matches": 24,
+    "pilots": 3,
+    "max_files": 25000,
+    "max_depth": 12,
+    "max_matches_per_pilot": 60,
+    "private_output_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-inventory",
+    "private_inventory_written": true,
+    "private_inventory_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-inventory/kosmo-private-metadata-inventory-2026-06-16.json",
+    "public_ready_after_run": 0
+  },
+  "pilots": [
+    {
+      "pilot_id": "villa-savoye",
+      "title": "Villa Savoye",
+      "candidate_files": 20,
+      "extensions": {
+        ".glb": 3,
+        ".jpg": 8,
+        ".md": 3,
+        ".pdf": 6
+      },
+      "largest_file_bytes": 57016807,
+      "match_fingerprints": [
+        {
+          "path_hash": "8a93be410d8719b804676107",
+          "extension": ".glb",
+          "size_bytes": 39536,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "fb653f7f6db7e08659a3b7db",
+          "extension": ".jpg",
+          "size_bytes": 2154227,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "c8741f859bc941ced2d4f8a8",
+          "extension": ".jpg",
+          "size_bytes": 1775497,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "a03a95a577b7a3d6b1d26825",
+          "extension": ".jpg",
+          "size_bytes": 29345,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "d799b53eb1fd86bf3e3d8430",
+          "extension": ".jpg",
+          "size_bytes": 99151,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "9f35e0d3dc91e6fec8863578",
+          "extension": ".md",
+          "size_bytes": 1677,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "5139d813f08720ae30af628d",
+          "extension": ".md",
+          "size_bytes": 1423,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "78f583ee7bde473c8f2b266d",
+          "extension": ".pdf",
+          "size_bytes": 2332,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "d1b490f48ca7ead60480a19d",
+          "extension": ".pdf",
+          "size_bytes": 2351,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "6906b9808999ee9205e2d738",
+          "extension": ".pdf",
+          "size_bytes": 2354,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "3871e1b0732834847dc09386",
+          "extension": ".pdf",
+          "size_bytes": 2350,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "a20db8146f7b1ccb3fb02a66",
+          "extension": ".glb",
+          "size_bytes": 39536,
+          "mtime_day": "2026-05-19",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "c641ab3c9e8d5da9fc1f170f",
+          "extension": ".glb",
+          "size_bytes": 39536,
+          "mtime_day": "2026-05-19",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "7f55dfb2e97315416c6cac5a",
+          "extension": ".jpg",
+          "size_bytes": 2154227,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "81d4633352a5680c0cd23c8b",
+          "extension": ".jpg",
+          "size_bytes": 2126261,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "f247ffa1260834916cfb8a9f",
+          "extension": ".jpg",
+          "size_bytes": 1775497,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "f666f4acb6d7183019ab8485",
+          "extension": ".jpg",
+          "size_bytes": 202071,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "57408d37cea67955a77d3f0a",
+          "extension": ".md",
+          "size_bytes": 1179,
+          "mtime_day": "2026-05-19",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "eaff4d53be07c37e88e1393f",
+          "extension": ".pdf",
+          "size_bytes": 3914874,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        },
+        {
+          "path_hash": "afb3f80f81654f464c5099f0",
+          "extension": ".pdf",
+          "size_bytes": 57016807,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "savoye"
+          ]
+        }
+      ],
+      "rights_status": "review_only",
+      "public_ready": false
+    },
+    {
+      "pilot_id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "candidate_files": 2,
+      "extensions": {
+        ".jpg": 1,
+        ".png": 1
+      },
+      "largest_file_bytes": 858327,
+      "match_fingerprints": [
+        {
+          "path_hash": "71b95ccacb5b83e5c08b51ce",
+          "extension": ".jpg",
+          "size_bytes": 13760,
+          "mtime_day": "2026-05-27",
+          "keyword_hits": [
+            "zumthor"
+          ]
+        },
+        {
+          "path_hash": "f78edee9fd62ba6723126f68",
+          "extension": ".png",
+          "size_bytes": 858327,
+          "mtime_day": "2022-08-19",
+          "keyword_hits": [
+            "zumthor"
+          ]
+        }
+      ],
+      "rights_status": "review_only",
+      "public_ready": false
+    },
+    {
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "candidate_files": 2,
+      "extensions": {
+        ".md": 2
+      },
+      "largest_file_bytes": 1324,
+      "match_fingerprints": [
+        {
+          "path_hash": "3b845edec45db062ddc3694a",
+          "extension": ".md",
+          "size_bytes": 1039,
+          "mtime_day": "2026-05-19",
+          "keyword_hits": [
+            "ingenbohl",
+            "kloster",
+            "alterszentrum"
+          ]
+        },
+        {
+          "path_hash": "49f98b9e18fea3626fc0e3d6",
+          "extension": ".md",
+          "size_bytes": 1324,
+          "mtime_day": "2026-05-18",
+          "keyword_hits": [
+            "ingenbohl",
+            "kloster",
+            "alterszentrum"
+          ]
+        }
+      ],
+      "rights_status": "review_only",
+      "public_ready": false
+    }
+  ],
+  "blocked_reason": null,
+  "next_actions": [
+    "Run private inventory output check against the private output path before any handoff.",
+    "Keep output review-only and pilot-scoped.",
+    "Do not run OCR or content extraction from this metadata inventory."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T12:30:31.686Z",
+  "status": "source_root_decision_session_refresh_refused",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "records_owner_decision": false,
+    "overwrites_owner_decision": false,
+    "public_ready_after_refresh": 0,
+    "note": "This refresh only updates pending selection options from the current source-root selection brief. It refuses to write if an owner decision is present."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-selection-brief-2026-06-16.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json"
+  ],
+  "summary": {
+    "safe_to_refresh": false,
+    "changed": false,
+    "previous_options": 10,
+    "refreshed_options": 10,
+    "selection_brief_options": 10,
+    "archive_options_after_refresh": 8,
+    "selected_decision": "select_existing_root_for_private_diagnostic",
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "failures": 1,
+    "public_ready_after_refresh": 0
+  },
+  "failures": [
+    "session contains an owner decision or is not pending; refresh refused to avoid overwriting human state"
+  ],
+  "next_actions": [
+    "Do not auto-refresh a recorded source-root decision session.",
+    "If the existing decision is obsolete, ask Owner/KosmoOverseer for explicit reset instructions."
+  ]
+}

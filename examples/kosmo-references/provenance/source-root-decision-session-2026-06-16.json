@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
   "created_at": "2026-06-16T04:50:35.221Z",
-  "status": "source_root_decision_session_pending",
+  "status": "source_root_decision_session_recorded",
   "source_refs": [
     "data/kosmo-source-root-selection-brief-2026-06-16.json",
     "data/kosmo-source-root-locator-2026-06-16.json",
@@ -24,9 +24,9 @@
     "select_existing_root_for_private_diagnostic",
     "select_root_after_mount_check"
   ],
-  "selected_decision": null,
-  "selected_root_path": null,
-  "owner_note": "",
+  "selected_decision": "select_existing_root_for_private_diagnostic",
+  "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+  "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
   "diagnostic_command_after_recorded_selection": "npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\"",
   "selection_options": [
     {

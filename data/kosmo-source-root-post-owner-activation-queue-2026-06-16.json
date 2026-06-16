@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:11:38.283Z",
+  "generated_at": "2026-06-16T12:30:33.924Z",
   "status": "source_root_post_owner_activation_queue_ready",
   "policy": {
     "queue_only": true,
@@ -22,16 +22,16 @@
     "data/kosmo-worker-boundary-pack-check-2026-06-16.json"
   ],
   "summary": {
-    "dry_run_status": "source_root_decision_dry_run_ready",
-    "activation_status": "source_root_activation_waiting_for_owner_storage_action",
-    "activation_ready": false,
-    "decision_still_pending": true,
-    "private_metadata_runner_status": "private_metadata_inventory_blocked_until_activation",
+    "dry_run_status": "source_root_decision_dry_run_satisfied_recorded_selection",
+    "activation_status": "source_root_activation_ready_for_private_metadata_diagnostic",
+    "activation_ready": true,
+    "decision_still_pending": false,
+    "private_metadata_runner_status": "private_metadata_inventory_ready_private_output_written",
     "private_metadata_guard_status": "private_metadata_inventory_guard_passed",
     "worker_boundary_status": "worker_boundary_pack_guard_passed",
     "queue_steps": 7,
-    "executable_now": 0,
-    "blocked_now": 7,
+    "executable_now": 2,
+    "blocked_now": 5,
     "failures": 0,
     "public_ready_after_queue": 0
   },
@@ -79,7 +79,7 @@
         "worker boundary guard passed"
       ],
       "executable_now": false,
-      "blocked_reason": "source-root owner decision pending"
+      "blocked_reason": "activation preflight already passed"
     },
     {
       "id": "private_metadata_inventory",
@@ -89,8 +89,8 @@
       "requires": [
         "activation_preflight reports ready"
       ],
-      "executable_now": false,
-      "blocked_reason": "activation not ready"
+      "executable_now": true,
+      "blocked_reason": null
     },
     {
       "id": "private_metadata_inventory_check",
@@ -100,8 +100,8 @@
       "requires": [
         "private_metadata_inventory completed"
       ],
-      "executable_now": false,
-      "blocked_reason": "activation not ready"
+      "executable_now": true,
+      "blocked_reason": null
     },
     {
       "id": "day_batch_loop",

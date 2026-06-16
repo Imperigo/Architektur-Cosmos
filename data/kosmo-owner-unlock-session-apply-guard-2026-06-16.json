@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:34:01.129Z",
-  "status": "owner_unlock_session_apply_guard_waiting_for_manual_apply",
+  "generated_at": "2026-06-16T12:13:47.629Z",
+  "status": "owner_unlock_session_apply_guard_passed_after_manual_apply",
   "policy": {
     "guard_only": true,
     "writes_session_files_now": false,
@@ -15,22 +15,22 @@
     "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json"
   ],
   "summary": {
-    "mode": "waiting_for_manual_apply",
+    "mode": "applied_matches_preview",
     "target_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
     "session_path": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
     "fixture_session": false,
-    "session_status": "source_root_decision_session_pending",
+    "session_status": "source_root_decision_session_recorded",
     "preview_status": "owner_unlock_session_edit_preview_ready",
     "expected_selected_decision": "select_existing_root_for_private_diagnostic",
-    "actual_selected_decision": null,
+    "actual_selected_decision": "select_existing_root_for_private_diagnostic",
     "expected_selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
-    "actual_selected_root_path": null,
+    "actual_selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
     "selected_root_exists": true,
-    "matches_preview": false,
-    "untouched_pending": true,
-    "private_diagnostic_allowed_after_apply": false,
+    "matches_preview": true,
+    "untouched_pending": false,
+    "private_diagnostic_allowed_after_apply": true,
     "failures": 0,
-    "warnings": 1,
+    "warnings": 0,
     "public_ready_after_guard": 0
   },
   "expected_after_apply": {
@@ -40,9 +40,10 @@
     "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
   },
   "next_actions": [
-    "Do not run private metadata inventory.",
-    "If exact owner reply is present and reviewed, apply only the expected_after_apply fields to the target session file.",
-    "Rerun this guard before source-root activation preflight."
+    "Run npm run kosmo:source-root-decision-session-check.",
+    "Run npm run kosmo:source-root-blocker-refresh.",
+    "Run npm run kosmo:source-root-activation-preflight.",
+    "Run npm run kosmo:source-root-post-owner-activation-queue and its guard."
   ],
   "hard_stops": [
     "Do not apply this guard automatically.",
@@ -51,7 +52,5 @@
     "Do not change public-ready state."
   ],
   "failures": [],
-  "warnings": [
-    "Manual apply has not happened yet; private diagnostics remain blocked."
-  ]
+  "warnings": []
 }

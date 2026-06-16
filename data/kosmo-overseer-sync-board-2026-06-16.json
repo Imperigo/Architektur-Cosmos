@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T10:42:41.272Z",
+  "generated_at": "2026-06-16T12:33:24.838Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,20 +22,20 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 326
+      "files": 327
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 188
+      "files": 191
     }
   ],
   "summary": {
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
     "data_lane_steps": "24/24",
-    "router_status": "worker_router_guarded_review_only",
+    "router_status": "worker_router_private_diagnostic_ready",
     "checkpoint_status": "night_loop_guarded_ready",
-    "next_loop": "prepare_owner_source_root_decision_and_batch_questions",
+    "next_loop": "resolve_owner_review_batch",
     "session_brief_guard_status": "owner_review_session_brief_guard_passed",
     "session_brief_failures": 0,
     "local_worker_review_status": "local_worker_outputs_present_review_only",
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 266,
+    "historical_handoff_mirror_missing_files": 268,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md",
+      "title": "Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory",
+      "mirrored_inboxes": 2,
+      "bytes": 2201,
+      "modified_at": "2026-06-16T12:33:14.708Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md",
       "title": "Codex Synergiebericht 327: KosmoOrbit Validation",
@@ -95,25 +102,18 @@
       "mirrored_inboxes": 2,
       "bytes": 837,
       "modified_at": "2026-06-16T05:31:45.792Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md",
-      "title": "Codex Synergiebericht 320: Day Batch Loop Green",
-      "mirrored_inboxes": 2,
-      "bytes": 1414,
-      "modified_at": "2026-06-16T05:31:03.810Z"
     }
   ],
   "blockers": [
     {
       "id": "source_root_pending",
-      "status": "blocked",
-      "evidence": "source_root_blocked=true"
+      "status": "metadata_only_allowed",
+      "evidence": "source_root_blocked=false"
     },
     {
       "id": "private_inventory_pending",
-      "status": "blocked",
-      "evidence": "private_inventory_blocked=true"
+      "status": "metadata_only_allowed",
+      "evidence": "private_inventory_blocked=false"
     },
     {
       "id": "owner_answers_pending",
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 320-327 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 321-328 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

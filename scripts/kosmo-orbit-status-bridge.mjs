@@ -465,26 +465,30 @@ function buildBridge(reports) {
     {
       id: 'source-root-owner-final-decision-brief',
       title: 'Source Root Owner Final Decision Brief',
-      status: reports.sourceRootOwnerFinalDecisionBrief?.status === 'source_root_owner_final_decision_brief_ready'
-        ? 'owner_action'
-        : 'needs_review',
+      status: reports.sourceRootOwnerFinalDecisionBrief?.status === 'source_root_owner_final_decision_brief_satisfied_metadata_only'
+        ? 'ready'
+        : reports.sourceRootOwnerFinalDecisionBrief?.status === 'source_root_owner_final_decision_brief_ready'
+          ? 'owner_action'
+          : 'needs_review',
       signal: reports.sourceRootOwnerFinalDecisionBrief?.status
         ? `${ownerFinalDecisionBriefSummary.decision_options ?? 0} options, unlock ${ownerFinalDecisionBriefSummary.unlock_options ?? 0}, failures ${ownerFinalDecisionBriefSummary.failures ?? 0}`
         : 'missing owner final decision brief',
-      owner_action_required: true,
+      owner_action_required: reports.sourceRootOwnerFinalDecisionBrief?.status !== 'source_root_owner_final_decision_brief_satisfied_metadata_only',
       route_hint: 'Single owner-facing source-root decision surface',
       source_ref: refs.sourceRootOwnerFinalDecisionBrief
     },
     {
       id: 'source-root-owner-choice-consequence-matrix',
       title: 'Source Root Owner Choice Consequence Matrix',
-      status: reports.sourceRootOwnerChoiceConsequenceMatrix?.status === 'source_root_owner_choice_consequence_matrix_ready'
-        ? 'owner_action'
-        : 'needs_review',
+      status: reports.sourceRootOwnerChoiceConsequenceMatrix?.status === 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only'
+        ? 'ready'
+        : reports.sourceRootOwnerChoiceConsequenceMatrix?.status === 'source_root_owner_choice_consequence_matrix_ready'
+          ? 'owner_action'
+          : 'needs_review',
       signal: reports.sourceRootOwnerChoiceConsequenceMatrix?.status
         ? `${ownerChoiceConsequenceMatrixSummary.choices ?? 0} choices, unlock ${ownerChoiceConsequenceMatrixSummary.unlock_choices ?? 0}, blocked ${ownerChoiceConsequenceMatrixSummary.blocked_choices ?? 0}, failures ${ownerChoiceConsequenceMatrixSummary.failures ?? 0}`
         : 'missing owner choice consequence matrix',
-      owner_action_required: true,
+      owner_action_required: reports.sourceRootOwnerChoiceConsequenceMatrix?.status !== 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only',
       route_hint: 'Preview consequences before recording an owner source-root choice',
       source_ref: refs.sourceRootOwnerChoiceConsequenceMatrix
     },
