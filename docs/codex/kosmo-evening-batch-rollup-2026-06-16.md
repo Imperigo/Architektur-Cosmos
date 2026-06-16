@@ -1,14 +1,14 @@
 # Kosmo Evening Batch Rollup
 
-Generated: 2026-06-16T05:33:08.382Z
-Status: `kosmo_evening_batch_rollup_ready`
+Generated: 2026-06-16T18:00:16.778Z
+Status: `kosmo_evening_batch_rollup_needs_review`
 
 ## Summary
 
 - Phases: 6
 - Readiness packs: 8
 - Executable now: 0
-- Owner gates: 2
+- Owner gates: 1
 - Source-free Codex tasks remaining: 0
 - Training eval templates: 6
 - Training review lanes: 5

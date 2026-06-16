@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:33:08.626Z",
-  "status": "kosmo_evening_batch_rollup_guard_passed",
+  "generated_at": "2026-06-16T18:00:17.023Z",
+  "status": "kosmo_evening_batch_rollup_guard_failed",
   "policy": {
     "validates_rollup_only": true,
     "reads_private_content": false,
@@ -16,16 +16,16 @@
   ],
   "summary": {
     "checks": 22,
-    "passed": 22,
-    "failures": 0,
+    "passed": 21,
+    "failures": 1,
     "warnings": 0,
     "public_ready_after_check": 0
   },
   "checks": [
     {
       "id": "status_ready",
-      "status": "passed",
-      "evidence": "kosmo_evening_batch_rollup_ready"
+      "status": "failed",
+      "evidence": "kosmo_evening_batch_rollup_needs_review"
     },
     {
       "id": "policy_rollup_only",

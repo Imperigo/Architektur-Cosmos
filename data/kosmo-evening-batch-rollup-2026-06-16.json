@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:33:08.382Z",
-  "status": "kosmo_evening_batch_rollup_ready",
+  "generated_at": "2026-06-16T18:00:16.778Z",
+  "status": "kosmo_evening_batch_rollup_needs_review",
   "policy": {
     "rollup_only": true,
     "reads_private_content": false,
@@ -12,7 +12,7 @@
     "public_ready_after_rollup": 0
   },
   "source_refs": [
-    "data/kosmo-vision-completion-roadmap-2026-06-15.json",
+    "data/kosmo-vision-completion-roadmap-2026-06-16.json",
     "data/kosmo-source-root-owner-answer-execution-checklist-2026-06-16.json",
     "data/kosmo-post-source-root-metadata-readiness-pack-2026-06-16.json",
     "data/kosmoreferences-pilot-intake-readiness-pack-2026-06-16.json",
@@ -27,12 +27,12 @@
     "readiness_packs": 8,
     "guarded_checks": "post-source, owner paths, pilot intake, asset intake, training memory, eval template, review queue, ontology",
     "executable_now": 0,
-    "owner_gates": 2,
+    "owner_gates": 1,
     "source_free_codex_tasks_remaining": 0,
     "training_eval_templates": 6,
     "training_review_lanes": 5,
     "ontology_entity_types": 8,
-    "failures": 0,
+    "failures": 1,
     "public_ready_after_rollup": 0
   },
   "packs": [
@@ -133,5 +133,7 @@
     "Do not execute local workers from this rollup.",
     "Keep public-ready at 0."
   ],
-  "failures": []
+  "failures": [
+    "roadmap not ready: vision_completion_roadmap_needs_review"
+  ]
 }

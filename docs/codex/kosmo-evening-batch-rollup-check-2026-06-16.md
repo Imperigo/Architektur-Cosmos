@@ -1,18 +1,18 @@
 # Kosmo Evening Batch Rollup Check
 
-Generated: 2026-06-16T05:33:08.626Z
-Status: `kosmo_evening_batch_rollup_guard_passed`
+Generated: 2026-06-16T18:00:17.023Z
+Status: `kosmo_evening_batch_rollup_guard_failed`
 
 ## Summary
 
-- Checks: 22/22
-- Failures: 0
+- Checks: 21/22
+- Failures: 1
 - Warnings: 0
 - Public-ready after check: 0
 
 ## Checks
 
-- passed: `status_ready` - kosmo_evening_batch_rollup_ready
+- failed: `status_ready` - kosmo_evening_batch_rollup_needs_review
 - passed: `policy_rollup_only` - true
 - passed: `policy_no_private_reads` - false
 - passed: `policy_no_decisions` - false

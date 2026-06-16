@@ -1,6 +1,6 @@
 # Kosmo Owner Unlock Pipeline Checkpoint Check
 
-Generated: 2026-06-16T17:47:24.298Z
+Generated: 2026-06-16T18:00:52.544Z
 Status: `owner_unlock_pipeline_checkpoint_guard_failed`
 
 ## Summary
@@ -26,7 +26,7 @@ Status: `owner_unlock_pipeline_checkpoint_guard_failed`
 - passed: `guard_checks_at_least_280` - 283
 - failed: `guard_checks_all_passed` - 276/283
 - failed: `freeform_rejection_accounted` - 0
-- passed: `latest_handoffs_include_277_or_newer` - 330
+- passed: `latest_handoffs_include_277_or_newer` - 333
 - passed: `owner_reply_not_applied` - pending
 - passed: `source_root_blocked` - blocked_until_explicit_owner_reply_and_guards
 - passed: `path_a_ready_after_exact_reply` - true

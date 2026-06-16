@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:58:58.079Z",
+  "generated_at": "2026-06-16T18:01:27.441Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 332
+      "files": 333
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 199
+      "files": 200
     }
   ],
   "summary": {
@@ -48,11 +48,18 @@
   },
   "latest_handoffs": [
     {
+      "filename": "2026-06-16-codex-synergiebericht-334-evening-rollup-needs-review.md",
+      "title": "Codex Synergiebericht 334 - Evening Rollup Needs Review",
+      "mirrored_inboxes": 2,
+      "bytes": 1701,
+      "modified_at": "2026-06-16T18:01:27.174Z"
+    },
+    {
       "filename": "2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md",
       "title": "Codex Synergiebericht 333 - Cross-Worker Commit Review",
       "mirrored_inboxes": 2,
-      "bytes": 1093,
-      "modified_at": "2026-06-16T17:58:48.189Z"
+      "bytes": 1092,
+      "modified_at": "2026-06-16T17:59:15.370Z"
     },
     {
       "filename": "2026-06-16-codex-synergiebericht-332-abendbatch-zusatz-audits.md",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1258,
       "modified_at": "2026-06-16T10:42:16.784Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md",
-      "title": "Codex Synergiebericht 326: Cross-Worker Delta Audit",
-      "mirrored_inboxes": 2,
-      "bytes": 2320,
-      "modified_at": "2026-06-16T10:39:35.507Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 326-333 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 327-334 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
