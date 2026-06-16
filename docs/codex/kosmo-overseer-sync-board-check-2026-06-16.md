@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-16T05:44:43.465Z
+Generated: 2026-06-16T05:48:45.403Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md` - 2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md` - 2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md` - 2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md` - 2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-323-owner-gate-terminal-status.md` - 2026-06-16-codex-synergiebericht-323-owner-gate-terminal-status.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md` - 2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md` - 2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md` - 2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md must include a title.
-- passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md` - 2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md` - 2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

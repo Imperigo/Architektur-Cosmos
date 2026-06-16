@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:44:42.958Z",
+  "generated_at": "2026-06-16T05:48:10.246Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -142,6 +142,8 @@
     "data/kosmo-innovation-github-worker-runtime-manifest-validator-check-2026-06-16.json",
     "data/kosmo-terminal-gate-audit-2026-06-16.json",
     "data/kosmo-terminal-gate-audit-check-2026-06-16.json",
+    "data/kosmo-worktree-guard-audit-2026-06-16.json",
+    "data/kosmo-worktree-guard-audit-check-2026-06-16.json",
     "data/kosmo-codex-morning-routine-run-2026-06-16.json",
     "data/kosmo-codex-morning-routine-run-check-2026-06-16.json",
     "data/kosmo-today-loop-plan-2026-06-16.json",
@@ -161,7 +163,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-16.json"
   ],
   "summary": {
-    "cards": 83,
+    "cards": 84,
     "blocking_cards": 5,
     "owner_action_cards": 26,
     "source_root_blocked": true,
@@ -335,6 +337,13 @@
     "terminal_gate_audit_public_ready_after_audit": 0,
     "terminal_gate_audit_check_status": "terminal_gate_audit_guard_passed",
     "terminal_gate_audit_check_failures": 0,
+    "worktree_guard_audit_status": "worktree_guard_audit_dirty_review_required",
+    "worktree_guard_audit_entries": 1403,
+    "worktree_guard_audit_staged": 0,
+    "worktree_guard_audit_untracked": 268,
+    "worktree_guard_audit_broad_stage_allowed": false,
+    "worktree_guard_audit_check_status": "worktree_guard_audit_guard_passed",
+    "worktree_guard_audit_check_failures": 0,
     "codex_morning_routine_run_status": "codex_morning_routine_run_ready",
     "codex_morning_routine_run_next_batch": "source_free_innovation_and_guarding",
     "codex_morning_routine_run_remote_behind_total": 0,
@@ -1096,6 +1105,15 @@
       "owner_action_required": false,
       "route_hint": "Source-free proof that private/source-root/runtime gates remain closed until exact owner actions land",
       "source_ref": "data/kosmo-terminal-gate-audit-2026-06-16.json"
+    },
+    {
+      "id": "worktree-guard-audit",
+      "title": "Worktree Guard Audit",
+      "status": "guard_passed",
+      "signal": "1403 dirty entries, staged 0, untracked 268, broad stage blocked, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Worker safety audit for dirty worktree coordination; exact staging only",
+      "source_ref": "data/kosmo-worktree-guard-audit-2026-06-16.json"
     },
     {
       "id": "training-eval-rubric",

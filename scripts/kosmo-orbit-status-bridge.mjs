@@ -139,6 +139,8 @@ const refs = {
   githubWorkerRuntimeManifestValidatorCheck: `data/kosmo-innovation-github-worker-runtime-manifest-validator-check-${dateStamp}.json`,
   terminalGateAudit: `data/kosmo-terminal-gate-audit-${dateStamp}.json`,
   terminalGateAuditCheck: `data/kosmo-terminal-gate-audit-check-${dateStamp}.json`,
+  worktreeGuardAudit: `data/kosmo-worktree-guard-audit-${dateStamp}.json`,
+  worktreeGuardAuditCheck: `data/kosmo-worktree-guard-audit-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
@@ -309,6 +311,8 @@ function buildBridge(reports) {
   const githubWorkerRuntimeManifestValidatorCheckSummary = reports.githubWorkerRuntimeManifestValidatorCheck?.summary || {};
   const terminalGateAuditSummary = reports.terminalGateAudit?.summary || {};
   const terminalGateAuditCheckSummary = reports.terminalGateAuditCheck?.summary || {};
+  const worktreeGuardAuditSummary = reports.worktreeGuardAudit?.summary || {};
+  const worktreeGuardAuditCheckSummary = reports.worktreeGuardAuditCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
@@ -1277,6 +1281,18 @@ function buildBridge(reports) {
       source_ref: refs.terminalGateAudit
     },
     {
+      id: 'worktree-guard-audit',
+      title: 'Worktree Guard Audit',
+      status: ['worktree_guard_audit_dirty_review_required', 'worktree_guard_audit_clean'].includes(reports.worktreeGuardAudit?.status) &&
+        reports.worktreeGuardAuditCheck?.status === 'worktree_guard_audit_guard_passed'
+        ? 'guard_passed'
+        : 'needs_review',
+      signal: `${worktreeGuardAuditSummary.entries ?? 0} dirty entries, staged ${worktreeGuardAuditSummary.staged ?? 0}, untracked ${worktreeGuardAuditSummary.untracked ?? 0}, broad stage ${worktreeGuardAuditSummary.broad_stage_allowed ? 'allowed' : 'blocked'}, failures ${worktreeGuardAuditCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Worker safety audit for dirty worktree coordination; exact staging only',
+      source_ref: refs.worktreeGuardAudit
+    },
+    {
       id: 'training-eval-rubric',
       title: 'Training Eval Rubric',
       status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
@@ -1557,6 +1573,13 @@ function buildBridge(reports) {
       terminal_gate_audit_public_ready_after_audit: terminalGateAuditSummary.public_ready_after_audit ?? null,
       terminal_gate_audit_check_status: reports.terminalGateAuditCheck?.status || null,
       terminal_gate_audit_check_failures: terminalGateAuditCheckSummary.failures ?? null,
+      worktree_guard_audit_status: reports.worktreeGuardAudit?.status || null,
+      worktree_guard_audit_entries: worktreeGuardAuditSummary.entries ?? null,
+      worktree_guard_audit_staged: worktreeGuardAuditSummary.staged ?? null,
+      worktree_guard_audit_untracked: worktreeGuardAuditSummary.untracked ?? null,
+      worktree_guard_audit_broad_stage_allowed: worktreeGuardAuditSummary.broad_stage_allowed ?? null,
+      worktree_guard_audit_check_status: reports.worktreeGuardAuditCheck?.status || null,
+      worktree_guard_audit_check_failures: worktreeGuardAuditCheckSummary.failures ?? null,
       codex_morning_routine_run_status: reports.codexMorningRoutineRun?.status || null,
       codex_morning_routine_run_next_batch: codexMorningRoutineRunSummary.next_batch_mode || null,
       codex_morning_routine_run_remote_behind_total: codexMorningRoutineRunSummary.remote_behind_total ?? null,
@@ -1775,6 +1798,7 @@ function renderMarkdown(bridge) {
   lines.push(`- GitHub worker runtime manifest validator plan: ${bridge.summary.github_worker_runtime_manifest_validator_plan_status}, rules ${bridge.summary.github_worker_runtime_manifest_validator_plan_rules ?? '-'}, fixture categories ${bridge.summary.github_worker_runtime_manifest_validator_plan_fixture_categories ?? '-'}, executable ${bridge.summary.github_worker_runtime_manifest_validator_plan_executable_now ?? '-'}, failures ${bridge.summary.github_worker_runtime_manifest_validator_plan_check_failures ?? '-'}`);
   lines.push(`- GitHub worker runtime manifest validator: ${bridge.summary.github_worker_runtime_manifest_validator_status}, validated ${bridge.summary.github_worker_runtime_manifest_validator_validated_manifests ?? '-'}, blocked ${bridge.summary.github_worker_runtime_manifest_validator_blocked_manifests ?? '-'}, review-only ${bridge.summary.github_worker_runtime_manifest_validator_review_only_valid_manifests ?? '-'}, public-ready ${bridge.summary.github_worker_runtime_manifest_validator_public_ready_after_validation ?? '-'}, failures ${bridge.summary.github_worker_runtime_manifest_validator_check_failures ?? '-'}`);
   lines.push(`- Terminal gate audit: ${bridge.summary.terminal_gate_audit_status}, blockers ${bridge.summary.terminal_gate_audit_terminal_blockers ?? '-'}, executable ${bridge.summary.terminal_gate_audit_actions_executable_now ?? '-'}, public-ready ${bridge.summary.terminal_gate_audit_public_ready_after_audit ?? '-'}, failures ${bridge.summary.terminal_gate_audit_check_failures ?? '-'}`);
+  lines.push(`- Worktree guard audit: ${bridge.summary.worktree_guard_audit_status}, entries ${bridge.summary.worktree_guard_audit_entries ?? '-'}, staged ${bridge.summary.worktree_guard_audit_staged ?? '-'}, untracked ${bridge.summary.worktree_guard_audit_untracked ?? '-'}, broad stage ${bridge.summary.worktree_guard_audit_broad_stage_allowed ? 'allowed' : 'blocked'}, failures ${bridge.summary.worktree_guard_audit_check_failures ?? '-'}`);
   lines.push(`- Training eval rubric: ${bridge.summary.training_eval_rubric_status}, suites ${bridge.summary.training_eval_rubric_suites ?? '-'}, criteria ${bridge.summary.training_eval_rubric_criteria ?? '-'}`);
   lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);

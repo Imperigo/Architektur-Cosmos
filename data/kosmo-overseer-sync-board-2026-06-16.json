@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:44:43.227Z",
+  "generated_at": "2026-06-16T05:48:45.163Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 323
+      "files": 324
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 183
+      "files": 184
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md",
+      "title": "Codex Synergiebericht 325: Worktree Guard Audit",
+      "mirrored_inboxes": 2,
+      "bytes": 1665,
+      "modified_at": "2026-06-16T05:48:40.361Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md",
       "title": "Codex Synergiebericht 324: Terminal Gate Audit",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2755,
       "modified_at": "2026-06-16T05:27:27.531Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md",
-      "title": "Codex Synergiebericht 317: Runtime Manifest Validator Flow Integration",
-      "mirrored_inboxes": 2,
-      "bytes": 1718,
-      "modified_at": "2026-06-16T05:24:37.904Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 317-324 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 318-325 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

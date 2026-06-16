@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:44:43.465Z",
+  "generated_at": "2026-06-16T05:48:45.403Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -156,6 +156,16 @@
       "message": "Latest handoffs must include synergiebericht 115 or newer."
     },
     {
+      "id": "handoff_mirrored:2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md",
+      "severity": "passed",
+      "message": "2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md",
+      "severity": "passed",
+      "message": "2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md must include a title."
+    },
+    {
       "id": "handoff_mirrored:2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md",
       "severity": "passed",
       "message": "2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md must be mirrored in both inboxes."
@@ -224,16 +234,6 @@
       "id": "handoff_title:2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md",
       "severity": "passed",
       "message": "2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md must include a title."
-    },
-    {
-      "id": "handoff_mirrored:2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md",
-      "severity": "passed",
-      "message": "2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md must be mirrored in both inboxes."
-    },
-    {
-      "id": "handoff_title:2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md",
-      "severity": "passed",
-      "message": "2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md must include a title."
     },
     {
       "id": "source_root_blocked",

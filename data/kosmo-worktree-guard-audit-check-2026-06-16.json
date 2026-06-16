@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:48:10.488Z",
+  "status": "worktree_guard_audit_guard_passed",
+  "policy": {
+    "validates_audit_only": true,
+    "reads_file_contents": false,
+    "stages_files": false,
+    "reverts_files": false,
+    "broad_stage_allowed": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-worktree-guard-audit-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 12,
+    "passed": 12,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "known_status",
+      "status": "passed",
+      "evidence": "worktree_guard_audit_dirty_review_required"
+    },
+    {
+      "id": "audit_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "no_file_content_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_staging",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_reverts",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "broad_stage_blocked",
+      "status": "passed",
+      "evidence": "false/false"
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": "0/0"
+    },
+    {
+      "id": "entry_counts_present",
+      "status": "passed",
+      "evidence": "{\"entries\":1403,\"staged\":0,\"unstaged\":1135,\"untracked\":268,\"top_level_buckets\":27,\"status_code_buckets\":2,\"high_risk_path_hints\":80,\"broad_stage_allowed\":false,\"public_ready_after_audit\":0}"
+    },
+    {
+      "id": "top_level_buckets_present",
+      "status": "passed",
+      "evidence": "27/27"
+    },
+    {
+      "id": "rule_blocks_git_add_dot",
+      "status": "passed",
+      "evidence": "do not run git add . in this repository. stage exact files only and inspect git diff --cached --stat before commit. treat existing dirty files as user/other-worker state unless the current worker created them in this batch. do not revert unrelated dirty files. if a file owned by another worker must change, write a handoff."
+    },
+    {
+      "id": "rule_exact_files",
+      "status": "passed",
+      "evidence": "do not run git add . in this repository. stage exact files only and inspect git diff --cached --stat before commit. treat existing dirty files as user/other-worker state unless the current worker created them in this batch. do not revert unrelated dirty files. if a file owned by another worker must change, write a handoff."
+    },
+    {
+      "id": "rule_no_unrelated_reverts",
+      "status": "passed",
+      "evidence": "do not run git add . in this repository. stage exact files only and inspect git diff --cached --stat before commit. treat existing dirty files as user/other-worker state unless the current worker created them in this batch. do not revert unrelated dirty files. if a file owned by another worker must change, write a handoff."
+    }
+  ]
+}
