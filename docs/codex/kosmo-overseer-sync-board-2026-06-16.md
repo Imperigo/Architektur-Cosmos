@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-16T18:03:39.135Z
+Generated: 2026-06-16T18:06:30.668Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-16-codex-synergiebericht-336-cross-worker-audit-ledger.md` | Codex Synergiebericht 336 - Cross-Worker Audit Ledger | 2 |
 | `2026-06-16-codex-synergiebericht-335-cross-worker-review-2.md` | Codex Synergiebericht 335 - Cross-Worker Review 2 | 2 |
 | `2026-06-16-codex-synergiebericht-334-evening-rollup-needs-review.md` | Codex Synergiebericht 334 - Evening Rollup Needs Review | 2 |
 | `2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md` | Codex Synergiebericht 333 - Cross-Worker Commit Review | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-16-codex-synergiebericht-331-abendbatch-execution.md` | Codex Synergiebericht 331 - Abendbatch Execution | 2 |
 | `2026-06-16-codex-synergiebericht-330-grosser-abendbatch.md` | Codex Synergiebericht 330: Grosser Abendbatch | 2 |
 | `2026-06-16-codex-synergiebericht-329-review-batches-triaged.md` | Codex Synergiebericht 329: Review-Batches review-only triagiert | 2 |
-| `2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md` | Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 328-335 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 329-336 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

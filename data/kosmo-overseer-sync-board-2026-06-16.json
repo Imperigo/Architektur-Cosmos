@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:03:39.135Z",
+  "generated_at": "2026-06-16T18:06:30.668Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 334
+      "files": 335
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 201
+      "files": 202
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-336-cross-worker-audit-ledger.md",
+      "title": "Codex Synergiebericht 336 - Cross-Worker Audit Ledger",
+      "mirrored_inboxes": 2,
+      "bytes": 1065,
+      "modified_at": "2026-06-16T18:06:30.402Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-335-cross-worker-review-2.md",
       "title": "Codex Synergiebericht 335 - Cross-Worker Review 2",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2808,
       "modified_at": "2026-06-16T17:16:07.487Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md",
-      "title": "Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory",
-      "mirrored_inboxes": 2,
-      "bytes": 2201,
-      "modified_at": "2026-06-16T12:33:14.708Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 328-335 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 329-336 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

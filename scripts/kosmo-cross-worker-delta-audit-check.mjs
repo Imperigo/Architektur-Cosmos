@@ -65,7 +65,7 @@ function buildChecks(audit) {
     check('status_ready', audit.status === 'cross_worker_delta_audit_ready', audit.status),
     check('audit_only', audit.policy?.audit_only === true, audit.policy?.audit_only),
     check('no_private_reads', audit.policy?.reads_private_content === false, audit.policy?.reads_private_content),
-    check('no_file_content_reads', audit.policy?.reads_file_contents === false, audit.policy?.reads_file_contents),
+    check('review_note_reads_only', audit.policy?.reads_file_contents === 'review_notes_only' && audit.policy?.reads_review_notes_only === true, `${audit.policy?.reads_file_contents}/${audit.policy?.reads_review_notes_only}`),
     check('handoff_headings_only', audit.policy?.reads_handoff_headings_only === true, audit.policy?.reads_handoff_headings_only),
     check('no_repo_writes', audit.policy?.writes_repo_code === false, audit.policy?.writes_repo_code),
     check('no_staging', audit.policy?.stages_files === false, audit.policy?.stages_files),
@@ -74,6 +74,9 @@ function buildChecks(audit) {
     check('latest_handoff_present', Number(audit.summary?.latest_handoff_number) >= 300, audit.summary?.latest_handoff_number),
     check('handoffs_mirrored', audit.summary?.latest_unmirrored_handoffs === 0, audit.summary?.latest_unmirrored_handoffs),
     check('foreign_commit_review_count_present', Number.isInteger(audit.summary?.foreign_commits_needing_review), audit.summary?.foreign_commits_needing_review),
+    check('review_ledger_present', audit.review_ledger?.exists === true && Number(audit.review_ledger?.files) >= 1, `${audit.review_ledger?.exists}/${audit.review_ledger?.files}`),
+    check('reviewed_foreign_count_present', Number.isInteger(audit.summary?.reviewed_foreign_commits), audit.summary?.reviewed_foreign_commits),
+    check('ignored_handoff_count_present', Number.isInteger(audit.summary?.foreign_handoff_commits_ignored), audit.summary?.foreign_handoff_commits_ignored),
     check('next_actions_preserve_gates', actions.includes('source-root') && actions.includes('runtime gates'), actions),
     check('next_actions_exact_staging', actions.includes('exact staging'), actions),
     check('no_failures_listed', (audit.failures || []).length === 0, (audit.failures || []).join('; '))

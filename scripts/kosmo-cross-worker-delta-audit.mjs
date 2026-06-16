@@ -29,6 +29,7 @@ const handoffInboxes = [
   resolve(root, args.mirrorOrbitInbox || '/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox')
 ];
 
+const reviewDocsDir = resolve(root, args.reviewDocs || 'docs/codex');
 const outputJson = resolve(root, args.out || `data/kosmo-cross-worker-delta-audit-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-cross-worker-delta-audit-${dateStamp}.md`);
 
@@ -41,7 +42,8 @@ async function main() {
   const repoReports = [];
   for (const repo of repos) repoReports.push(await readRepo(repo));
   const inboxReports = await Promise.all(handoffInboxes.map((path) => readInbox(path)));
-  const audit = buildAudit(repoReports, inboxReports);
+  const reviewLedger = await readReviewLedger(reviewDocsDir);
+  const audit = buildAudit(repoReports, inboxReports, reviewLedger);
 
   await mkdir(dirname(outputJson), { recursive: true });
   await mkdir(dirname(outputMd), { recursive: true });
@@ -110,14 +112,38 @@ async function readInbox(path) {
   return { path, exists: true, files };
 }
 
-function buildAudit(repoReports, inboxReports) {
+async function readReviewLedger(path) {
+  const exists = await pathExists(path);
+  if (!exists) return { path, exists: false, files: [], reviewed_hashes: [] };
+  const entries = (await readdir(path))
+    .filter((name) => /^kosmo-cross-worker-commit-review.*\.md$/.test(name))
+    .sort();
+  const hashes = new Set();
+  const files = [];
+  for (const filename of entries) {
+    const text = await readFile(resolve(path, filename), 'utf8');
+    const reviewedHashes = [...text.matchAll(/`([0-9a-f]{7,40})`/gi)]
+      .map((match) => match[1].slice(0, 7).toLowerCase());
+    reviewedHashes.forEach((hash) => hashes.add(hash));
+    files.push({ filename, reviewed_hashes: reviewedHashes });
+  }
+  return { path, exists: true, files, reviewed_hashes: [...hashes].sort() };
+}
+
+function buildAudit(repoReports, inboxReports, reviewLedger) {
   const latestHandoffs = mergeLatestHandoffs(inboxReports, 10);
   const activeInboxCount = inboxReports.filter((inbox) => inbox.exists).length;
   const latestUnmirrored = latestHandoffs.filter((handoff) => handoff.mirrored_inboxes < activeInboxCount);
   const kosmoOrbit = repoReports.find((repo) => repo.id === 'kosmo-orbit');
-  const foreignCommits = (kosmoOrbit?.recent_commits || [])
+  const foreignCandidates = (kosmoOrbit?.recent_commits || [])
     .filter((commit) => !/codex/i.test(commit.author))
-    .slice(0, 6);
+    .slice(0, 12);
+  const ignoredHandoffCommits = foreignCandidates.filter(isHandoffCommit);
+  const functionalForeignCommits = foreignCandidates.filter((commit) => !isHandoffCommit(commit));
+  const reviewedForeignCommits = functionalForeignCommits
+    .filter((commit) => reviewLedger.reviewed_hashes.includes(commit.hash.toLowerCase()));
+  const foreignCommits = functionalForeignCommits
+    .filter((commit) => !reviewLedger.reviewed_hashes.includes(commit.hash.toLowerCase()));
   const failures = [];
   if (repoReports.some((repo) => !repo.exists)) failures.push('One or more expected repos are missing.');
   if (latestUnmirrored.length > 0) failures.push('Latest handoffs are not mirrored in all active inboxes.');
@@ -132,8 +158,9 @@ function buildAudit(repoReports, inboxReports) {
     policy: {
       audit_only: true,
       reads_private_content: false,
-      reads_file_contents: false,
+      reads_file_contents: 'review_notes_only',
       reads_handoff_headings_only: true,
+      reads_review_notes_only: true,
       writes_repo_code: false,
       stages_files: false,
       public_ready_after_audit: 0
@@ -149,6 +176,10 @@ function buildAudit(repoReports, inboxReports) {
       latest_handoffs: latestHandoffs.length,
       active_handoff_inboxes: activeInboxCount,
       latest_unmirrored_handoffs: latestUnmirrored.length,
+      foreign_commits_seen: foreignCandidates.length,
+      foreign_handoff_commits_ignored: ignoredHandoffCommits.length,
+      functional_foreign_commits_seen: functionalForeignCommits.length,
+      reviewed_foreign_commits: reviewedForeignCommits.length,
       foreign_commits_needing_review: foreignCommits.length,
       dirty_repo_entries: repoReports.reduce((sum, repo) => sum + (repo.status_count || 0), 0),
       failures: failures.length,
@@ -169,16 +200,28 @@ function buildAudit(repoReports, inboxReports) {
       exists: inbox.exists,
       files: inbox.files.length
     })),
+    review_ledger: {
+      path: reviewLedger.path,
+      exists: reviewLedger.exists,
+      files: reviewLedger.files.length,
+      reviewed_hashes: reviewLedger.reviewed_hashes
+    },
     latest_handoffs: latestHandoffs,
+    foreign_handoff_commits_ignored: ignoredHandoffCommits,
+    reviewed_foreign_commits: reviewedForeignCommits,
     foreign_commits_needing_review: foreignCommits,
     next_actions: [
-      'Review non-Codex KosmoOrbit commits before editing related Orbit files.',
+      'Review unreviewed functional non-Codex KosmoOrbit commits before editing related Orbit files.',
       'Keep ArchitectureCosmos source-root and runtime gates closed until exact owner replies pass.',
       'Write a handoff when Codex changes shared Worker/Orbit coordination files.',
       'Use exact staging only; the worktree guard still blocks broad staging.'
     ],
     failures
   };
+}
+
+function isHandoffCommit(commit) {
+  return /handoff/i.test(commit.subject || '');
 }
 
 async function git(cwd, args) {
@@ -250,6 +293,9 @@ function renderMarkdown(audit) {
   lines.push(`- Repos: ${audit.summary.visible_repos}/${audit.summary.repos}`);
   lines.push(`- Latest handoff: ${audit.summary.latest_handoff_number ?? '-'}`);
   lines.push(`- Latest unmirrored handoffs: ${audit.summary.latest_unmirrored_handoffs}`);
+  lines.push(`- Functional foreign commits seen: ${audit.summary.functional_foreign_commits_seen}`);
+  lines.push(`- Reviewed foreign commits: ${audit.summary.reviewed_foreign_commits}`);
+  lines.push(`- Foreign handoff commits ignored: ${audit.summary.foreign_handoff_commits_ignored}`);
   lines.push(`- Foreign commits needing review: ${audit.summary.foreign_commits_needing_review}`);
   lines.push(`- Dirty repo entries: ${audit.summary.dirty_repo_entries}`);
   lines.push(`- Public-ready after audit: ${audit.summary.public_ready_after_audit}`);
@@ -266,8 +312,29 @@ function renderMarkdown(audit) {
     lines.push(`- ${handoff.number}: ${handoff.title || handoff.filename} (mirrors ${handoff.mirrored_inboxes})`);
   });
   lines.push('');
+  lines.push('## Review Ledger');
+  lines.push('');
+  lines.push(`- Exists: ${audit.review_ledger.exists}`);
+  lines.push(`- Files: ${audit.review_ledger.files}`);
+  lines.push(`- Reviewed hashes: ${audit.review_ledger.reviewed_hashes.join(', ') || '-'}`);
+  lines.push('');
+  lines.push('## Reviewed Foreign Commits');
+  lines.push('');
+  if (audit.reviewed_foreign_commits.length === 0) lines.push('- none');
+  audit.reviewed_foreign_commits.forEach((commit) => {
+    lines.push(`- ${commit.hash}: ${commit.author} - ${commit.subject}`);
+  });
+  lines.push('');
+  lines.push('## Ignored Foreign Handoff Commits');
+  lines.push('');
+  if (audit.foreign_handoff_commits_ignored.length === 0) lines.push('- none');
+  audit.foreign_handoff_commits_ignored.forEach((commit) => {
+    lines.push(`- ${commit.hash}: ${commit.author} - ${commit.subject}`);
+  });
+  lines.push('');
   lines.push('## Foreign Commits Needing Review');
   lines.push('');
+  if (audit.foreign_commits_needing_review.length === 0) lines.push('- none');
   audit.foreign_commits_needing_review.forEach((commit) => {
     lines.push(`- ${commit.hash}: ${commit.author} - ${commit.subject}`);
   });

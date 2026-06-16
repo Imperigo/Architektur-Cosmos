@@ -1,12 +1,13 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:03:39.680Z",
+  "generated_at": "2026-06-16T18:06:31.205Z",
   "status": "cross_worker_delta_audit_ready",
   "policy": {
     "audit_only": true,
     "reads_private_content": false,
-    "reads_file_contents": false,
+    "reads_file_contents": "review_notes_only",
     "reads_handoff_headings_only": true,
+    "reads_review_notes_only": true,
     "writes_repo_code": false,
     "stages_files": false,
     "public_ready_after_audit": 0
@@ -24,12 +25,16 @@
   "summary": {
     "repos": 2,
     "visible_repos": 2,
-    "latest_handoff_number": 335,
+    "latest_handoff_number": 336,
     "latest_handoffs": 10,
     "active_handoff_inboxes": 2,
     "latest_unmirrored_handoffs": 0,
-    "foreign_commits_needing_review": 6,
-    "dirty_repo_entries": 1330,
+    "foreign_commits_seen": 12,
+    "foreign_handoff_commits_ignored": 8,
+    "functional_foreign_commits_seen": 4,
+    "reviewed_foreign_commits": 4,
+    "foreign_commits_needing_review": 0,
+    "dirty_repo_entries": 1335,
     "failures": 0,
     "public_ready_after_audit": 0
   },
@@ -40,9 +45,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "exists": true,
       "branch": "main",
-      "head": "828fddf",
-      "status_count": 1329,
+      "head": "fdc561e",
+      "status_count": 1334,
       "recent_commits": [
+        {
+          "hash": "fdc561e",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T20:03:54+02:00",
+          "subject": "Review additional KosmoOrbit worker commits"
+        },
         {
           "hash": "828fddf",
           "author": "Architecture Cosmos Maintainer",
@@ -108,12 +119,6 @@
           "author": "Architecture Cosmos Maintainer",
           "date": "2026-06-16T07:49:29+02:00",
           "subject": "Add worktree guard audit"
-        },
-        {
-          "hash": "355adde",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:45:03+02:00",
-          "subject": "Refresh queue after terminal gate audit"
         }
       ]
     },
@@ -123,9 +128,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
       "exists": true,
       "branch": "main",
-      "head": "8704a06",
+      "head": "f59d8ef",
       "status_count": 1,
       "recent_commits": [
+        {
+          "hash": "f59d8ef",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T20:03:59+02:00",
+          "subject": "Add Codex cross-worker review 2 handoff"
+        },
         {
           "hash": "8704a06",
           "author": "Andrin Baumann",
@@ -191,12 +202,6 @@
           "author": "Andrin Baumann",
           "date": "2026-06-16T13:03:59+02:00",
           "subject": "Agent-Modus freeze-sicher: kein Auto-30B-Load mehr beim Aktivieren"
-        },
-        {
-          "hash": "81a61b2",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T12:42:27+02:00",
-          "subject": "Add KosmoOrbit validation handoff"
         }
       ]
     }
@@ -205,15 +210,35 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 334
+      "files": 335
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 201
+      "files": 202
     }
   ],
+  "review_ledger": {
+    "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/docs/codex",
+    "exists": true,
+    "files": 2,
+    "reviewed_hashes": [
+      "6448930",
+      "6cac828",
+      "9c1ba39",
+      "ccbc4a8",
+      "ec59221",
+      "fbb48e1"
+    ]
+  },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-336-cross-worker-audit-ledger.md",
+      "number": 336,
+      "title": "Codex Synergiebericht 336 - Cross-Worker Audit Ledger",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T18:06:30.402Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-335-cross-worker-review-2.md",
       "number": 335,
@@ -276,27 +301,20 @@
       "title": "Codex Synergiebericht 327: KosmoOrbit Validation",
       "mirrored_inboxes": 2,
       "modified_at": "2026-06-16T10:42:16.784Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md",
-      "number": 326,
-      "title": "Codex Synergiebericht 326: Cross-Worker Delta Audit",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T10:39:35.507Z"
     }
   ],
-  "foreign_commits_needing_review": [
+  "foreign_handoff_commits_ignored": [
+    {
+      "hash": "f59d8ef",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T20:03:59+02:00",
+      "subject": "Add Codex cross-worker review 2 handoff"
+    },
     {
       "hash": "8704a06",
       "author": "Andrin Baumann",
       "date": "2026-06-16T20:02:00+02:00",
       "subject": "Add Codex evening rollup handoff"
-    },
-    {
-      "hash": "ccbc4a8",
-      "author": "Andrin Baumann",
-      "date": "2026-06-16T20:00:07+02:00",
-      "subject": "Pipeline: Cross-Lane-Feldnamen-Aliase — Lanes verketten automatisch"
     },
     {
       "hash": "019beb1",
@@ -321,10 +339,49 @@
       "author": "Andrin Baumann",
       "date": "2026-06-16T19:39:21+02:00",
       "subject": "Add evening big batch handoff"
+    },
+    {
+      "hash": "c9eef0c",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T19:17:11+02:00",
+      "subject": "Add review batch triage handoff"
+    },
+    {
+      "hash": "b60d11b",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T14:36:21+02:00",
+      "subject": "Add source root unlock handoff"
     }
   ],
+  "reviewed_foreign_commits": [
+    {
+      "hash": "ccbc4a8",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T20:00:07+02:00",
+      "subject": "Pipeline: Cross-Lane-Feldnamen-Aliase — Lanes verketten automatisch"
+    },
+    {
+      "hash": "9c1ba39",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T19:15:25+02:00",
+      "subject": "Pipeline-Recipe 'Wettbewerb: Phase-0 → Plan' — volle Lane-Spanne (Prepare→Design→Publish)"
+    },
+    {
+      "hash": "fbb48e1",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T14:39:55+02:00",
+      "subject": "Review-Fixes (heutige Changes): 7 bestätigte Bugs aus adversarialer Multi-Agent-Review"
+    },
+    {
+      "hash": "ec59221",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T13:03:59+02:00",
+      "subject": "Agent-Modus freeze-sicher: kein Auto-30B-Load mehr beim Aktivieren"
+    }
+  ],
+  "foreign_commits_needing_review": [],
   "next_actions": [
-    "Review non-Codex KosmoOrbit commits before editing related Orbit files.",
+    "Review unreviewed functional non-Codex KosmoOrbit commits before editing related Orbit files.",
     "Keep ArchitectureCosmos source-root and runtime gates closed until exact owner replies pass.",
     "Write a handoff when Codex changes shared Worker/Orbit coordination files.",
     "Use exact staging only; the worktree guard still blocks broad staging."
