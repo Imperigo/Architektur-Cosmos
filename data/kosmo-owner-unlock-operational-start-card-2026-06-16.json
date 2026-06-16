@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:33:35.437Z",
-  "status": "owner_unlock_operational_start_card_ready",
+  "generated_at": "2026-06-16T18:07:40.612Z",
+  "status": "owner_unlock_operational_start_card_needs_review",
   "policy": {
     "card_only": true,
     "records_decisions": false,
@@ -14,7 +14,7 @@
     "public_ready_after_card": 0
   },
   "source_refs": [
-    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-16.json",
     "data/kosmo-owner-unlock-session-edit-preview-2026-06-16.json",
     "data/kosmo-source-root-post-owner-activation-queue-2026-06-16.json",
     "data/kosmo-owner-unlock-fast-reply-card-2026-06-16.json",
@@ -23,32 +23,32 @@
   ],
   "summary": {
     "components": 6,
-    "ready_components": 6,
-    "checkpoint_status": "owner_unlock_pipeline_checkpoint_ready",
-    "checkpoint_guards": "283/283",
-    "owner_reply_state": "broad_intent_seen_exact_reply_not_applied",
+    "ready_components": 4,
+    "checkpoint_status": "owner_unlock_pipeline_checkpoint_attention_required",
+    "checkpoint_guards": "276/283",
+    "owner_reply_state": "pending",
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
     "selected_root_path_preview": "/mnt/archiv/ArchitekturKosmos/Assets",
     "selected_root_exists_preview": true,
     "expected_session_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
     "session_edit_preview_writes_now": false,
     "post_owner_queue_steps": 7,
-    "post_owner_queue_executable_now": 0,
-    "post_owner_queue_blocked_now": 7,
+    "post_owner_queue_executable_now": 2,
+    "post_owner_queue_blocked_now": 5,
     "next_commands": 9,
     "blocked_commands": 5,
     "writes_now": false,
-    "failures": 0,
+    "failures": 1,
     "public_ready_after_card": 0
   },
   "components": [
     {
       "id": "pipeline_checkpoint",
-      "ready": true
+      "ready": false
     },
     {
       "id": "session_edit_preview",
-      "ready": true
+      "ready": false
     },
     {
       "id": "post_owner_queue",
@@ -98,5 +98,7 @@
     "Do not run private inventory, OCR, embeddings or local LLM private tasks from this card.",
     "Do not change public-ready state."
   ],
-  "failures": []
+  "failures": [
+    "Post-owner queue is not fully blocked while decision is pending."
+  ]
 }

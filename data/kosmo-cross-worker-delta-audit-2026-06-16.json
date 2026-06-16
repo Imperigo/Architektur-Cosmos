@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:07:05.014Z",
+  "generated_at": "2026-06-16T18:08:13.391Z",
   "status": "cross_worker_delta_audit_ready",
   "policy": {
     "audit_only": true,
@@ -25,7 +25,7 @@
   "summary": {
     "repos": 2,
     "visible_repos": 2,
-    "latest_handoff_number": 336,
+    "latest_handoff_number": 337,
     "latest_handoffs": 10,
     "active_handoff_inboxes": 2,
     "latest_unmirrored_handoffs": 0,
@@ -34,7 +34,7 @@
     "functional_foreign_commits_seen": 3,
     "reviewed_foreign_commits": 3,
     "foreign_commits_needing_review": 0,
-    "dirty_repo_entries": 1328,
+    "dirty_repo_entries": 1333,
     "failures": 0,
     "public_ready_after_audit": 0
   },
@@ -45,9 +45,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "exists": true,
       "branch": "main",
-      "head": "fdab41e",
-      "status_count": 1328,
+      "head": "3615a24",
+      "status_count": 1332,
       "recent_commits": [
+        {
+          "hash": "3615a24",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T20:07:22+02:00",
+          "subject": "Refresh evening final status"
+        },
         {
           "hash": "fdab41e",
           "author": "Architecture Cosmos Maintainer",
@@ -113,12 +119,6 @@
           "author": "Architecture Cosmos Maintainer",
           "date": "2026-06-16T12:40:59+02:00",
           "subject": "Add cross-worker delta audit"
-        },
-        {
-          "hash": "3588436",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:49:57+02:00",
-          "subject": "Refresh queue after worktree guard audit"
         }
       ]
     },
@@ -129,7 +129,7 @@
       "exists": true,
       "branch": "main",
       "head": "0120daa",
-      "status_count": 0,
+      "status_count": 1,
       "recent_commits": [
         {
           "hash": "0120daa",
@@ -210,12 +210,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 335
+      "files": 336
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 202
+      "files": 203
     }
   ],
   "review_ledger": {
@@ -232,6 +232,13 @@
     ]
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-337-owner-unlock-operational-start-card.md",
+      "number": 337,
+      "title": "Codex Synergiebericht 337 - Owner Unlock Operational Start Card",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T18:08:12.501Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-336-cross-worker-audit-ledger.md",
       "number": 336,
@@ -294,13 +301,6 @@
       "title": "Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory",
       "mirrored_inboxes": 2,
       "modified_at": "2026-06-16T12:33:14.708Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md",
-      "number": 327,
-      "title": "Codex Synergiebericht 327: KosmoOrbit Validation",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T10:42:16.784Z"
     }
   ],
   "foreign_handoff_commits_ignored": [

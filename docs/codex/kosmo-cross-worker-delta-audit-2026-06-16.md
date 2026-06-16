@@ -1,27 +1,28 @@
 # Kosmo Cross-Worker Delta Audit
 
-Generated: 2026-06-16T18:07:05.014Z
+Generated: 2026-06-16T18:08:13.391Z
 Status: `cross_worker_delta_audit_ready`
 
 ## Summary
 
 - Repos: 2/2
-- Latest handoff: 336
+- Latest handoff: 337
 - Latest unmirrored handoffs: 0
 - Functional foreign commits seen: 3
 - Reviewed foreign commits: 3
 - Foreign handoff commits ignored: 9
 - Foreign commits needing review: 0
-- Dirty repo entries: 1328
+- Dirty repo entries: 1333
 - Public-ready after audit: 0
 
 ## Repos
 
-- architecture-cosmos: main @ fdab41e, dirty 1328
-- kosmo-orbit: main @ 0120daa, dirty 0
+- architecture-cosmos: main @ 3615a24, dirty 1332
+- kosmo-orbit: main @ 0120daa, dirty 1
 
 ## Latest Handoffs
 
+- 337: Codex Synergiebericht 337 - Owner Unlock Operational Start Card (mirrors 2)
 - 336: Codex Synergiebericht 336 - Cross-Worker Audit Ledger (mirrors 2)
 - 335: Codex Synergiebericht 335 - Cross-Worker Review 2 (mirrors 2)
 - 334: Codex Synergiebericht 334 - Evening Rollup Needs Review (mirrors 2)
@@ -31,7 +32,6 @@ Status: `cross_worker_delta_audit_ready`
 - 330: Codex Synergiebericht 330: Grosser Abendbatch (mirrors 2)
 - 329: Codex Synergiebericht 329: Review-Batches review-only triagiert (mirrors 2)
 - 328: Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory (mirrors 2)
-- 327: Codex Synergiebericht 327: KosmoOrbit Validation (mirrors 2)
 
 ## Review Ledger
 

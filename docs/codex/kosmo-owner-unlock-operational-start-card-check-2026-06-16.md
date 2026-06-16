@@ -1,17 +1,17 @@
 # Kosmo Owner Unlock Operational Start Card Check
 
-Generated: 2026-06-16T05:34:00.385Z
-Status: `owner_unlock_operational_start_card_guard_passed`
+Generated: 2026-06-16T18:07:40.859Z
+Status: `owner_unlock_operational_start_card_guard_failed`
 
 ## Summary
 
-- Checks: 28/28
-- Failures: 0
+- Checks: 23/28
+- Failures: 5
 - Public-ready after check: 0
 
 ## Checks
 
-- passed: `status_ready` - owner_unlock_operational_start_card_ready
+- failed: `status_ready` - owner_unlock_operational_start_card_needs_review
 - passed: `policy_card_only` - true
 - passed: `policy_no_decisions` - false
 - passed: `policy_no_intake_write` - false
@@ -20,13 +20,13 @@ Status: `owner_unlock_operational_start_card_guard_passed`
 - passed: `policy_no_private_reads` - false
 - passed: `policy_no_private_inventory` - false
 - passed: `public_ready_zero` - 0
-- passed: `all_components_ready` - 6/6
-- passed: `checkpoint_green` - 283/283
-- passed: `owner_reply_not_applied` - broad_intent_seen_exact_reply_not_applied
+- failed: `all_components_ready` - 4/6
+- failed: `checkpoint_green` - 276/283
+- failed: `owner_reply_not_applied` - pending
 - passed: `source_root_blocked` - blocked_until_explicit_owner_reply_and_guards
 - passed: `selected_root_exists_preview` - true
 - passed: `current_session_file` - examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json
-- passed: `queue_fully_blocked` - 0/7/7
+- failed: `queue_fully_blocked` - 2/5/7
 - passed: `exact_reply_has_root_choice` - source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.
 - passed: `exact_reply_has_confirmed_yes` - source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.
 - passed: `exact_reply_has_assets_path` - source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.

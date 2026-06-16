@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:34:00.385Z",
-  "status": "owner_unlock_operational_start_card_guard_passed",
+  "generated_at": "2026-06-16T18:07:40.859Z",
+  "status": "owner_unlock_operational_start_card_guard_failed",
   "policy": {
     "validates_card_only": true,
     "records_decisions": false,
@@ -17,15 +17,15 @@
   ],
   "summary": {
     "checks": 28,
-    "passed": 28,
-    "failures": 0,
+    "passed": 23,
+    "failures": 5,
     "public_ready_after_check": 0
   },
   "checks": [
     {
       "id": "status_ready",
-      "status": "passed",
-      "evidence": "owner_unlock_operational_start_card_ready"
+      "status": "failed",
+      "evidence": "owner_unlock_operational_start_card_needs_review"
     },
     {
       "id": "policy_card_only",
@@ -69,18 +69,18 @@
     },
     {
       "id": "all_components_ready",
-      "status": "passed",
-      "evidence": "6/6"
+      "status": "failed",
+      "evidence": "4/6"
     },
     {
       "id": "checkpoint_green",
-      "status": "passed",
-      "evidence": "283/283"
+      "status": "failed",
+      "evidence": "276/283"
     },
     {
       "id": "owner_reply_not_applied",
-      "status": "passed",
-      "evidence": "broad_intent_seen_exact_reply_not_applied"
+      "status": "failed",
+      "evidence": "pending"
     },
     {
       "id": "source_root_blocked",
@@ -99,8 +99,8 @@
     },
     {
       "id": "queue_fully_blocked",
-      "status": "passed",
-      "evidence": "0/7/7"
+      "status": "failed",
+      "evidence": "2/5/7"
     },
     {
       "id": "exact_reply_has_root_choice",

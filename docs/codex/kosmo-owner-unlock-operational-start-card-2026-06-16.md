@@ -1,18 +1,18 @@
 # Kosmo Owner Unlock Operational Start Card
 
-Generated: 2026-06-16T05:33:35.437Z
-Status: `owner_unlock_operational_start_card_ready`
+Generated: 2026-06-16T18:07:40.612Z
+Status: `owner_unlock_operational_start_card_needs_review`
 
 ## Summary
 
-- Components: 6/6
-- Checkpoint: owner_unlock_pipeline_checkpoint_ready (283/283)
-- Owner reply state: broad_intent_seen_exact_reply_not_applied
+- Components: 4/6
+- Checkpoint: owner_unlock_pipeline_checkpoint_attention_required (276/283)
+- Owner reply state: pending
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
 - Selected root preview: /mnt/archiv/ArchitekturKosmos/Assets
 - Selected root exists preview: yes
 - Expected session file: `examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json`
-- Queue: 7 steps, executable 0, blocked 7
+- Queue: 7 steps, executable 2, blocked 5
 - Writes now: no
 - Public-ready after card: 0
 
@@ -55,3 +55,7 @@ source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches
 - Do not write intake or session files from this card.
 - Do not run private inventory, OCR, embeddings or local LLM private tasks from this card.
 - Do not change public-ready state.
+
+## Failures
+
+- Post-owner queue is not fully blocked while decision is pending.
