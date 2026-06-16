@@ -131,6 +131,8 @@ const refs = {
   githubWorkerRuntimeLogRedactionNegativeFixturesCheck: `data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-check-${dateStamp}.json`,
   githubWorkerRuntimeBatchManifestDraft: `data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-${dateStamp}.json`,
   githubWorkerRuntimeBatchManifestDraftCheck: `data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-check-${dateStamp}.json`,
+  githubWorkerRuntimeManifestNegativeFixtures: `data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-${dateStamp}.json`,
+  githubWorkerRuntimeManifestNegativeFixturesCheck: `data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
@@ -293,6 +295,8 @@ function buildBridge(reports) {
   const githubWorkerRuntimeLogRedactionNegativeFixturesCheckSummary = reports.githubWorkerRuntimeLogRedactionNegativeFixturesCheck?.summary || {};
   const githubWorkerRuntimeBatchManifestDraftSummary = reports.githubWorkerRuntimeBatchManifestDraft?.summary || {};
   const githubWorkerRuntimeBatchManifestDraftCheckSummary = reports.githubWorkerRuntimeBatchManifestDraftCheck?.summary || {};
+  const githubWorkerRuntimeManifestNegativeFixturesSummary = reports.githubWorkerRuntimeManifestNegativeFixtures?.summary || {};
+  const githubWorkerRuntimeManifestNegativeFixturesCheckSummary = reports.githubWorkerRuntimeManifestNegativeFixturesCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
@@ -1213,6 +1217,18 @@ function buildBridge(reports) {
       source_ref: refs.githubWorkerRuntimeBatchManifestDraft
     },
     {
+      id: 'github-worker-runtime-manifest-negative-fixtures',
+      title: 'GitHub Worker Runtime Manifest Negative Fixtures',
+      status: reports.githubWorkerRuntimeManifestNegativeFixtures?.status === 'innovation_github_worker_runtime_manifest_negative_fixtures_ready' &&
+        reports.githubWorkerRuntimeManifestNegativeFixturesCheck?.status === 'innovation_github_worker_runtime_manifest_negative_fixtures_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubWorkerRuntimeManifestNegativeFixturesSummary.negative_fixtures ?? 0} manifest negatives, blocked ${githubWorkerRuntimeManifestNegativeFixturesSummary.expected_blocked ?? 0}, categories ${githubWorkerRuntimeManifestNegativeFixturesSummary.categories ?? 0}, executable ${githubWorkerRuntimeManifestNegativeFixturesSummary.executable_now ?? 0}, failures ${githubWorkerRuntimeManifestNegativeFixturesCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Synthetic unsafe runtime-manifest cases only; blocks executable/private/secret/raw-output/public-ready manifest variants',
+      source_ref: refs.githubWorkerRuntimeManifestNegativeFixtures
+    },
+    {
       id: 'training-eval-rubric',
       title: 'Training Eval Rubric',
       status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
@@ -1526,6 +1542,10 @@ function buildBridge(reports) {
       github_worker_runtime_batch_manifest_draft_id: githubWorkerRuntimeBatchManifestDraftSummary.runtime_batch_id ?? null,
       github_worker_runtime_batch_manifest_draft_blocked_prerequisites: githubWorkerRuntimeBatchManifestDraftSummary.blocked_prerequisites ?? null,
       github_worker_runtime_batch_manifest_draft_open_review_gates: githubWorkerRuntimeBatchManifestDraftSummary.open_review_gates ?? null,
+      github_worker_runtime_manifest_negative_fixtures_status: reports.githubWorkerRuntimeManifestNegativeFixtures?.status || null,
+      github_worker_runtime_manifest_negative_fixtures_count: githubWorkerRuntimeManifestNegativeFixturesSummary.negative_fixtures ?? null,
+      github_worker_runtime_manifest_negative_fixtures_blocked: githubWorkerRuntimeManifestNegativeFixturesSummary.expected_blocked ?? null,
+      github_worker_runtime_manifest_negative_fixtures_categories: githubWorkerRuntimeManifestNegativeFixturesSummary.categories ?? null,
       training_eval_rubric_status: reports.trainingEvalRubricPack?.status || null,
       training_eval_rubric_suites: trainingEvalRubricSummary.suites ?? null,
       training_eval_rubric_criteria: trainingEvalRubricSummary.criteria ?? null,

@@ -1,0 +1,213 @@
+# Kosmo Orbit Status Bridge
+
+Generated: 2026-06-16T05:06:47.496Z
+Status: `orbit_bridge_ready_with_blockers`
+
+## Summary
+
+- Cards: 80
+- Blocking cards: 39
+- Owner action cards: 21
+- Source root blocked: yes
+- Day batch: day_batch_loop_needs_review
+- Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
+- Source-root candidate integrity: source_root_candidate_integrity_owner_review_ready, existing 8, exact roots 1, failures 0
+- Source-root owner action: source_root_owner_action_required
+- Source-root recommended decision: repair_onedrive_first_or_confirm_complete_non_onedrive_root
+- Source-root owner decision packet: source_root_owner_decision_packet_ready, templates 3, exact roots 1, failures 0
+- Source-root owner decision packet check: source_root_owner_decision_packet_guard_passed, failures 0, warnings 0
+- Source-root decision dry run: source_root_decision_dry_run_ready, scenarios 3, metadata scenarios 1, failures 0
+- Source-root post-owner activation queue: null, steps -, executable -, blocked -, failures -
+- Source-root post-owner activation queue check: null, failures -, warnings -
+- Source-root owner final decision brief: null, options -, unlock options -, failures -
+- Source-root owner choice consequence matrix: null, choices -, unlock -, blocked -, failures -
+- Source-root activation: source_root_activation_waiting_for_owner_storage_action
+- Private metadata inventory: private_metadata_inventory_blocked_until_activation
+- Private metadata inventory fixture: private_metadata_inventory_fixture_passed
+- Private metadata inventory check: private_metadata_inventory_guard_passed
+- Local models: null
+- Local worker HTTP runner: null, check null, safe inputs -
+- Local worker execution runbook: null, check null, executable now -
+- Local worker output contracts: null, contracts -, present valid -, repo conversion now -, execute now -, check null, failures -
+- Source-independent work queue: null, tasks -, completed -, codex executable -, owner actions -, failures -
+- Pilot gap label review: null, labels -, hard blockers -, owner decisions -, check null, failures -
+- Asset bridge: null
+- Asset source candidate map: null, candidates -
+- Asset candidate taxonomy review: null, candidates -, reviewable -, owner confirmations -, check null, failures -
+- Prepare source package contract: prepare_phase1_source_package_contract_guard_passed, package kosmo-prepare-phase1-adapter-fixture-2026-06-16, failures 0
+- Asset prepare fixture contract: kosmoasset_prepare_phase1_fixture_contract_guard_passed, library kosmo-prepare-phase1-fixture, assets 2, failures 0
+- Local worker fixture chain task pack: local_worker_fixture_chain_task_pack_ready, tasks 8, executable 0, missing refs 0, check local_worker_fixture_chain_task_pack_guard_passed, failures 0
+- GitHub fixture contract plan: innovation_github_fixture_contract_plan_ready, plans 5
+- GitHub fixture skeletons: innovation_github_fixture_skeletons_ready, directories 5, files 10
+- GitHub fixture payloads: innovation_github_fixture_payloads_ready, payloads 10
+- GitHub fixture payload smoke: innovation_github_fixture_payload_smoke_passed, payloads 10, lanes 3, content types 6
+- GitHub worker integration signal bridge: innovation_github_worker_integration_signal_bridge_ready, candidates 2, top signal 5
+- GitHub worker adapter boundary contract: innovation_github_worker_adapter_boundary_contract_ready, fixture worker_integration-mac999-bim-llm-code-agent-signal-fixture, commands 3
+- GitHub worker adapter boundary negative fixtures: innovation_github_worker_adapter_boundary_negative_fixtures_ready, fixtures 8, blocked 8
+- GitHub worker runtime batch readiness plan: innovation_github_worker_runtime_batch_readiness_plan_ready, ready gates 5, blocked gates 5
+- GitHub worker runtime rollback/redaction fixtures: innovation_github_worker_runtime_rollback_redaction_fixtures_ready, groups 3, redaction rules 5, rollback steps 5
+- GitHub worker runtime apply guard: innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply, exact reply missing, separate runtime blocked, failures 0
+- GitHub worker runtime log-redaction negative fixtures: innovation_github_worker_runtime_log_redaction_negative_fixtures_ready, fixtures 10, blocked 10, leak categories 7
+- GitHub worker runtime batch manifest draft: innovation_github_worker_runtime_batch_manifest_draft_ready, id github-worker-runtime-batch-draft-2026-06-16, blocked prereqs 4, open gates 5
+- Training eval rubric: null, suites -, criteria -
+- Training eval row template: null, templates -
+- Training eval review queue: null, lanes -
+- Architecture ontology seed: null, entities -, relations -
+- Owner unlock fast reply card: null, broad intent -, applies now -
+- Owner unlock exact reply preview: null, validator -, patches -
+- Owner unlock Path A readiness: null, can start after exact reply -, applies now -
+- Owner unlock patch review bundle: null, operations -, applies now -
+- Owner unlock intake apply plan: null, field edits -, writes now -
+- Innovation smoke: null
+- Public-ready after bridge: 0
+
+## Orbit Cards
+
+| Card | Status | Owner Action | Signal |
+| --- | --- | --- | --- |
+| `day-batch` Daily Batch | needs_review | no | 13/14 required steps |
+| `source-root` Source Root | blocked | yes | blocked: 0 probable libraries, 59 OneDrive markers |
+| `source-root-decision-refresh` Source Root Decision Refresh | review_only_ready | no | source_root_decision_session_refresh_not_needed, changed no, options 10 |
+| `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |
+| `source-root-owner-action` Source Root Owner Action | blocked | yes | action required: repair_onedrive_first_or_confirm_complete_non_onedrive_root |
+| `source-root-owner-decision-packet` Source Root Owner Decision Packet | ready | yes | 3 templates, exact roots 1, failures 0 |
+| `source-root-owner-decision-packet-check` Source Root Owner Decision Packet Check | locked | no | source_root_owner_decision_packet_guard_passed, failures 0, warnings 0 |
+| `source-root-decision-dry-run` Source Root Decision Dry Run | review_only_ready | no | 3 scenarios, metadata 1, failures 0 |
+| `source-root-post-owner-activation-queue` Source Root Post-Owner Activation Queue | needs_review | no | missing post-owner activation queue |
+| `source-root-post-owner-activation-queue-check` Source Root Post-Owner Activation Queue Check | needs_review | no | missing post-owner activation queue guard |
+| `source-root-owner-final-decision-brief` Source Root Owner Final Decision Brief | needs_review | yes | missing owner final decision brief |
+| `source-root-owner-choice-consequence-matrix` Source Root Owner Choice Consequence Matrix | needs_review | yes | missing owner choice consequence matrix |
+| `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | needs_review | yes | missing fast reply card |
+| `owner-unlock-exact-reply-preview` Owner Unlock Exact Reply Preview | needs_review | yes | missing exact reply preview |
+| `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | needs_review | yes | missing Path A readiness certificate |
+| `owner-unlock-patch-review-bundle` Owner Unlock Patch Review Bundle | needs_review | yes | missing patch review bundle |
+| `owner-unlock-intake-apply-plan` Owner Unlock Intake Apply Plan | needs_review | yes | missing intake apply plan |
+| `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | needs_review | yes | missing session edit preview |
+| `owner-unlock-operational-start-card` Owner Unlock Operational Start Card | needs_review | yes | missing operational start card |
+| `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | needs_review | yes | missing execution runbook |
+| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | needs_review | yes | missing session apply guard |
+| `owner-unlock-session-apply-guard-smoke` Owner Unlock Session Apply Guard Smoke | needs_review | no | missing session apply guard smoke |
+| `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
+| `local-models` Local Models | needs_review | no | 0/0 roles, 0 Ollama models, 0 GB |
+| `local-worker-http-runner` Local Worker HTTP Runner | needs_review | no | missing runner report |
+| `local-worker-execution-runbook` Local Worker Execution Runbook | needs_review | no | missing execution runbook |
+| `local-worker-output-contracts` Local Worker Output Contracts | needs_review | no | 0 contracts, present 0, repo 0, execute 0, failures 0 |
+| `source-independent-work-queue` Source-Independent Work Queue | needs_review | no | missing source-independent work queue |
+| `private-metadata-inventory` Private Metadata Inventory | blocked_with_smoke_passed | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed |
+| `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
+| `pilot-gap-labels` Pilot Gap Labels | needs_review | no | 0 labels, 0 hard blockers, owner 0, failures 0 |
+| `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |
+| `asset-reference-bridge` Asset Reference Bridge | needs_review | no | 0/0 pilot bridges, 0 assets, public-ready 0 |
+| `asset-source-candidates` Asset Source Candidates | needs_review | no | 0 asset-lane candidates, material 0, public-ready 0 |
+| `asset-candidate-taxonomy` Asset Candidate Taxonomy | needs_review | no | 0 reviews, 0 reviewable, owner 0, failures 0 |
+| `prepare-references-asset-fixture-chain` Prepare References Asset Fixture Chain | review_only_ready | no | source package kosmo-prepare-phase1-adapter-fixture-2026-06-16, fixture assets 2, public-ready 0 |
+| `fixture-chain-local-worker-task-pack` Fixture Chain Local Worker Task Pack | review_only_ready | no | 8 tasks, GitHub 5, payloads 10, training 3, executable now 0, missing refs 0 |
+| `local-worker-innovation-output-smoke` Local Worker Innovation Output Smoke | review_only_ready | no | 5 expected outputs, training 3, ontology 5, executable 0, failures 0 |
+| `local-worker-innovation-output-adapter-plan` Local Worker Innovation Output Adapter Plan | review_only_ready | no | 5 adapters, metadata 11, body copy no, failures 0 |
+| `local-worker-innovation-output-validator` Local Worker Innovation Output Validator | review_only_ready | no | 0/5 present, missing 5, parsed 0, failures 0 |
+| `local-worker-innovation-output-validator-fixtures` Local Worker Innovation Output Validator Fixtures | review_only_ready | no | positive local_worker_innovation_output_validator_passed, negative local_worker_innovation_output_validator_needs_review, failures 0 |
+| `local-worker-innovation-launch-dry-run` Local Worker Innovation Launch Dry Run | review_only_ready | no | 5/5 dry-run ready, execute 0, gates 5, failures 0 |
+| `local-worker-innovation-launch-owner-card` Local Worker Innovation Launch Owner Card | review_only_ready | no | 5 tasks, recommended hold_dry_run_ready, execute 0, failures 0 |
+| `local-worker-innovation-launch-apply-guard` Local Worker Innovation Launch Apply Guard | review_only_ready | no | answer missing, exact no, separate no, execute 0, failures 0 |
+| `local-worker-innovation-launch-apply-guard-smoke` Local Worker Innovation Launch Apply Guard Smoke | review_only_ready | no | 3/3 scenarios, failures 0 |
+| `local-worker-innovation-launch-runbook-checkpoint` Local Worker Innovation Launch Runbook Checkpoint | review_only_ready | no | hold_waiting_for_exact_reply, gates 10/10, execute 0, failures 0 |
+| `local-worker-innovation-launch-execution-envelope` Local Worker Innovation Launch Execution Envelope | review_only_ready | no | empty_held_waiting_for_exact_reply, slots 5/5, outputs 0, failures 0 |
+| `local-worker-innovation-post-output-intake-review` Local Worker Innovation Post-Output Intake Review | needs_review | no | -, candidates 0, accepted 0, public 0, failures 0 |
+| `local-worker-innovation-human-overseer-review-decision-card` Local Worker Innovation Human/Overseer Review Decision Card | needs_review | no | -, candidates 0, decisions 0, public 0, failures 0 |
+| `local-worker-innovation-conversion-plan-preview` Local Worker Innovation Conversion Plan Preview | needs_review | no | -, eligible 0, conversions 0, public 0, failures 0 |
+| `local-worker-innovation-conversion-apply-guard` Local Worker Innovation Conversion Apply Guard | needs_review | no | -, eligible 0, apply no, conversions 0, failures 0 |
+| `local-worker-innovation-conversion-evidence-ledger` Local Worker Innovation Conversion Evidence Ledger | needs_review | no | -, entries 0, apply no, public 0, failures 0 |
+| `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
+| `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
+| `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |
+| `codex-morning-routine-run` Codex Morning Routine Run | review_only_ready | no | fetch 2/2, behind 0, handoff 311, next source_free_innovation_and_guarding, failures 0 |
+| `today-loop-plan` Today Loop Plan | ready | no | source_free_path_b, blocks 6, tick 2m, checkup 3m, failures 0 |
+| `github-readme-signal-scan` GitHub README Signal Scan | review_only_ready | no | 7 scanned, README 6, high-signal 5, failures 0 |
+| `github-fixture-contract-plan` GitHub Fixture Contract Plan | review_only_ready | no | 5 plans, prepare 2, asset 1, worker 2, failures 0 |
+| `github-promotion-matrix` GitHub Promotion Matrix | review_only_ready | no | 5 promotable, held 2, lanes 3, training 3, failures 0 |
+| `github-fixture-skeletons` GitHub Fixture Skeletons | review_only_ready | no | 5 directories, 10 files, matrix 5, executable 0, failures 0 |
+| `github-fixture-payloads` GitHub Fixture Payloads | review_only_ready | no | 5 manifests, 10 payloads, executable 0, failures 0 |
+| `github-fixture-payload-smoke` GitHub Fixture Payload Smoke | review_only_ready | no | 10 payloads, lanes 3/3, training 3, content 6/6, failures 0 |
+| `github-worker-integration-signal-bridge` GitHub Worker Integration Signal Bridge | review_only_ready | no | 2 candidates, top 5, high 2, executable 0, failures 0 |
+| `github-worker-adapter-boundary-contract` GitHub Worker Adapter Boundary Contract | review_only_ready | no | worker_integration-mac999-bim-llm-code-agent-signal-fixture, commands 3, runtime 0, public 0, failures 0 |
+| `github-worker-adapter-boundary-negative-fixtures` GitHub Worker Adapter Boundary Negative Fixtures | review_only_ready | no | 8 negative fixtures, blocked 8, categories 6, runtime 0, failures 0 |
+| `github-worker-runtime-batch-readiness-plan` GitHub Worker Runtime Batch Readiness Plan | review_only_ready | no | 5/10 gates ready, blocked 5, runtime no, failures 0 |
+| `github-worker-runtime-rollback-redaction-fixtures` GitHub Worker Runtime Rollback/Redaction Fixtures | review_only_ready | no | 3 groups, rules 5, rollback 5, runtime 0, failures 0 |
+| `github-worker-runtime-apply-guard` GitHub Worker Runtime Apply Guard | blocked_owner_action_required | yes | exact reply missing, separate runtime blocked, execute 0, checks 31/31 |
+| `github-worker-runtime-log-redaction-negative-fixtures` GitHub Worker Runtime Log-Redaction Negative Fixtures | review_only_ready | no | 10 negative fixtures, blocked 10, leak categories 7, runtime 0, failures 0 |
+| `github-worker-runtime-batch-manifest-draft` GitHub Worker Runtime Batch Manifest Draft | review_only_ready | no | github-worker-runtime-batch-draft-2026-06-16, prereqs 7, blocked 4, gates open 5, executable no, failures 0 |
+| `github-worker-runtime-manifest-negative-fixtures` GitHub Worker Runtime Manifest Negative Fixtures | review_only_ready | no | 10 manifest negatives, blocked 10, categories 8, executable 0, failures 0 |
+| `training-eval-rubric` Training Eval Rubric | needs_review | no | 0 suites, 0 criteria, eval items 0, failures 0 |
+| `training-eval-row-template` Training Eval Row Template | needs_review | no | 0 templates, 0 required fields, writes rows now 0, failures 0 |
+| `training-eval-review-queue` Training Eval Review Queue | needs_review | no | 0 lanes, 0 states, queue items now 0, failures 0 |
+| `architecture-ontology-seed` Architecture Ontology Seed | needs_review | no | 0 entities, 0 relations, 0 facet groups, failures 0 |
+| `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-17, failures 0 |
+| `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
+| `innovation` Innovation Lanes | needs_review | no | 0/0 public-safe smoke checks passed |
+| `owner-handoff` Owner Handoff | ready | yes | 6 questions, no filled answers recorded |
+
+## Recommended Orbit Sections
+
+- `status_strip`
+- `local_models_card`
+- `local_worker_http_runner_card`
+- `local_worker_execution_runbook_card`
+- `local_worker_output_contract_card`
+- `source_independent_work_queue_card`
+- `source_root_blocker_card`
+- `source_root_decision_refresh_card`
+- `source_root_candidate_integrity_card`
+- `source_root_owner_action_card`
+- `source_root_owner_decision_packet_card`
+- `source_root_owner_decision_packet_check_card`
+- `source_root_decision_dry_run_card`
+- `source_root_post_owner_activation_queue_card`
+- `source_root_post_owner_activation_queue_check_card`
+- `source_root_owner_final_decision_brief_card`
+- `source_root_owner_choice_consequence_matrix_card`
+- `owner_unlock_fast_reply_card`
+- `owner_unlock_exact_reply_preview_card`
+- `owner_unlock_path_a_readiness_card`
+- `owner_unlock_patch_review_bundle_card`
+- `owner_unlock_intake_apply_plan_card`
+- `source_root_activation_card`
+- `private_metadata_inventory_card`
+- `pilot_reference_cards`
+- `pilot_gap_label_card`
+- `asset_reference_bridge_card`
+- `asset_source_candidate_map_card`
+- `asset_candidate_taxonomy_card`
+- `prepare_references_asset_fixture_chain_card`
+- `fixture_chain_local_worker_task_pack_card`
+- `github_innovation_watchlist_card`
+- `github_innovation_discovery_card`
+- `github_innovation_review_queue_card`
+- `codex_morning_routine_run_card`
+- `github_readme_signal_scan_card`
+- `github_fixture_contract_plan_card`
+- `github_promotion_matrix_card`
+- `github_fixture_skeletons_card`
+- `github_fixture_payloads_card`
+- `github_fixture_payload_smoke_card`
+- `github_worker_integration_signal_bridge_card`
+- `github_worker_adapter_boundary_contract_card`
+- `github_worker_adapter_boundary_negative_fixtures_card`
+- `github_worker_runtime_batch_readiness_plan_card`
+- `github_worker_runtime_rollback_redaction_fixtures_card`
+- `github_worker_runtime_apply_guard_card`
+- `github_worker_runtime_log_redaction_negative_fixtures_card`
+- `github_worker_runtime_batch_manifest_draft_card`
+- `training_eval_rubric_card`
+- `training_eval_row_template_card`
+- `training_eval_review_queue_card`
+- `architecture_ontology_seed_card`
+- `tomorrow_day_batch_card`
+- `worker_boundary_card`
+- `innovation_lane_card`
+- `owner_handoff_card`
+
+## Next Actions
+
+- KosmoOrbit can render orbit_cards as a read-only dashboard.
+- Do not add action buttons for blocked private commands until source-root passes.
+- Use owner_action_required cards to prepare the next owner review conversation.

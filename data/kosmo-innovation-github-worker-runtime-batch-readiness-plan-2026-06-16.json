@@ -1,0 +1,146 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:00:13.105Z",
+  "status": "innovation_github_worker_runtime_batch_readiness_plan_ready",
+  "policy": {
+    "readiness_plan_only": true,
+    "executes_runtime_now": false,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "clones_repositories_now": false,
+    "reads_private_content_now": false,
+    "writes_runtime_adapter_now": false,
+    "writes_worker_outputs_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_plan": 0
+  },
+  "source_refs": [
+    "data/kosmo-dependency-install-batch-brief-2026-06-16.json",
+    "data/kosmo-dependency-install-batch-brief-check-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-launch-apply-guard-check-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-launch-execution-envelope-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-launch-execution-envelope-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-adapter-boundary-contract-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-adapter-boundary-contract-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-check-2026-06-16.json",
+    "data/kosmo-source-root-blocker-refresh-2026-06-16.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json"
+  ],
+  "summary": {
+    "selected_fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+    "readiness_gates": 10,
+    "ready_gates": 5,
+    "blocked_gates": 5,
+    "runtime_executable_now": false,
+    "dependencies_installable_now": false,
+    "models_startable_now": false,
+    "private_inputs_allowed_now": false,
+    "local_workers_executable_now": false,
+    "rollback_plan_required": true,
+    "log_redaction_required": true,
+    "public_ready_after_plan": 0,
+    "failures": 0
+  },
+  "gate_items": [
+    {
+      "id": "dependency_brief_guard",
+      "state": "ready",
+      "description": "Dependency install/download decision brief is reviewed but not executable.",
+      "executable_now": false
+    },
+    {
+      "id": "adapter_boundary_contract_guard",
+      "state": "ready",
+      "description": "Adapter boundary contract is review-only ready.",
+      "executable_now": false
+    },
+    {
+      "id": "negative_fixture_guard",
+      "state": "ready",
+      "description": "Negative fixtures block private/runtime/copy/public-ready false positives.",
+      "executable_now": false
+    },
+    {
+      "id": "execution_envelope_guard",
+      "state": "ready",
+      "description": "Execution envelope exists but is empty and held.",
+      "executable_now": false
+    },
+    {
+      "id": "exact_launch_apply_reply",
+      "state": "blocked",
+      "description": "Exact launch apply reply required before local worker execution.",
+      "executable_now": false
+    },
+    {
+      "id": "source_root_unlock",
+      "state": "blocked",
+      "description": "Source Root must be explicitly unlocked before private inputs.",
+      "executable_now": false
+    },
+    {
+      "id": "owner_checkpoint_path_a",
+      "state": "ready",
+      "description": "Path A is structurally ready after exact owner reply.",
+      "executable_now": false
+    },
+    {
+      "id": "dependency_runtime_apply_batch",
+      "state": "blocked",
+      "description": "Separate owner-approved dependency/runtime apply batch is still required.",
+      "executable_now": false
+    },
+    {
+      "id": "model_runtime_gate",
+      "state": "blocked",
+      "description": "Model/runtime start gate must be explicit and separately reversible.",
+      "executable_now": false
+    },
+    {
+      "id": "rollback_and_log_redaction",
+      "state": "blocked",
+      "description": "Rollback plan and log redaction proof must exist before runtime.",
+      "executable_now": false
+    }
+  ],
+  "required_before_any_runtime_batch": [
+    "exact owner launch apply reply validated",
+    "separate dependency/runtime apply batch approved",
+    "runtime adapter implementation reviewed separately",
+    "Source Root gate passed before any private input",
+    "model/runtime root confirmed",
+    "rollback plan written and checked",
+    "log redaction proof written and checked",
+    "negative fixtures still guard private/runtime/copy/public-ready cases"
+  ],
+  "forbidden_now": [
+    "clone_repository",
+    "install_dependencies",
+    "download_models",
+    "start_model",
+    "execute_local_worker",
+    "read_private_source_root",
+    "write_runtime_adapter",
+    "write_worker_outputs",
+    "promote_training_rows",
+    "mark_public_ready"
+  ],
+  "next_actions": [
+    "Prepare rollback/log-redaction fixture plans as source-free review artifacts.",
+    "Keep runtime batch blocked until exact owner apply and dependency/runtime batch review exist.",
+    "Do not convert this readiness plan into execution."
+  ],
+  "hard_stops": [
+    "This readiness plan never executes runtime, local workers or discovered code.",
+    "This readiness plan never installs dependencies, downloads models or clones repositories.",
+    "This readiness plan never starts models.",
+    "This readiness plan never reads private Source Root, OneDrive or archive-library content.",
+    "This readiness plan never writes runtime adapter files or worker outputs.",
+    "This readiness plan never promotes training rows or public-ready state."
+  ],
+  "failures": []
+}

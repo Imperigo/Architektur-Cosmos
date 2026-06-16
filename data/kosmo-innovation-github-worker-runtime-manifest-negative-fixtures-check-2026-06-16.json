@@ -1,0 +1,201 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:06:46.302Z",
+  "status": "innovation_github_worker_runtime_manifest_negative_fixtures_guard_passed",
+  "policy": {
+    "validates_negative_fixtures_only": true,
+    "reads_private_content_now": false,
+    "executes_runtime_now": false,
+    "writes_runtime_manifest_now": false,
+    "writes_runtime_outputs_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-2026-06-16.json"
+  ],
+  "summary": {
+    "fixtures_status": "innovation_github_worker_runtime_manifest_negative_fixtures_ready",
+    "checks": 35,
+    "passed": 35,
+    "failures": 0,
+    "negative_fixtures": 10,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "innovation_github_worker_runtime_manifest_negative_fixtures_ready"
+    },
+    {
+      "id": "policy_negative_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_synthetic_manifest_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_sensitive_copy",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_manifest_shapes_only\":true,\"reads_private_content_now\":false,\"copies_private_content_now\":false,\"copies_secret_values_now\":false,\"copies_worker_output_body_now\":false,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"writes_runtime_manifest_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"promotes_public_ready_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "policy_no_worker_body_copy",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_runtime_rollback_models",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_manifest_shapes_only\":true,\"reads_private_content_now\":false,\"copies_private_content_now\":false,\"copies_secret_values_now\":false,\"copies_worker_output_body_now\":false,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"writes_runtime_manifest_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"promotes_public_ready_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "policy_no_installs_downloads",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_manifest_shapes_only\":true,\"reads_private_content_now\":false,\"copies_private_content_now\":false,\"copies_secret_values_now\":false,\"copies_worker_output_body_now\":false,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"writes_runtime_manifest_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"promotes_public_ready_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "policy_no_writes",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_manifest_shapes_only\":true,\"reads_private_content_now\":false,\"copies_private_content_now\":false,\"copies_secret_values_now\":false,\"copies_worker_output_body_now\":false,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"writes_runtime_manifest_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"promotes_public_ready_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "policy_no_public_ready",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_manifest_shapes_only\":true,\"reads_private_content_now\":false,\"copies_private_content_now\":false,\"copies_secret_values_now\":false,\"copies_worker_output_body_now\":false,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"writes_runtime_manifest_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"promotes_public_ready_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "fixture_count",
+      "status": "passed",
+      "evidence": 10
+    },
+    {
+      "id": "expected_blocked_count",
+      "status": "passed",
+      "evidence": "10/10"
+    },
+    {
+      "id": "categories_present",
+      "status": "passed",
+      "evidence": "execution_state,missing_guard,raw_runtime_output,worker_output_body,private_path,secret,runtime_side_effect,public_ready_false_positive"
+    },
+    {
+      "id": "all_fixtures_blocked",
+      "status": "passed",
+      "evidence": "all blocked"
+    },
+    {
+      "id": "all_fixtures_synthetic",
+      "status": "passed",
+      "evidence": "all synthetic"
+    },
+    {
+      "id": "all_no_execution_writes",
+      "status": "passed",
+      "evidence": "no execution/writes"
+    },
+    {
+      "id": "all_no_copy",
+      "status": "passed",
+      "evidence": "no private/secret/worker body copy"
+    },
+    {
+      "id": "all_public_ready_zero",
+      "status": "passed",
+      "evidence": "public ready zero"
+    },
+    {
+      "id": "execution_state_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "missing_guard_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "rollback_redaction_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "raw_runtime_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "worker_output_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "private_path_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "secret_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "side_effect_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "public_ready_reasons",
+      "status": "passed",
+      "evidence": "executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown"
+    },
+    {
+      "id": "summary_zeroes",
+      "status": "passed",
+      "evidence": "{\"runtime_batch_id\":\"github-worker-runtime-batch-draft-2026-06-16\",\"negative_fixtures\":10,\"expected_blocked\":10,\"categories\":8,\"executable_now\":0,\"runtime_executed_now\":0,\"rollback_executed_now\":0,\"runtime_manifest_written_now\":0,\"runtime_outputs_written_now\":0,\"worker_outputs_written_now\":0,\"public_ready_after_fixtures\":0,\"failures\":0}"
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "source_refs_cover_manifest_inputs",
+      "status": "passed",
+      "evidence": "data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-check-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-check-2026-06-16.json"
+    },
+    {
+      "id": "hard_stop_no_runtime",
+      "status": "passed",
+      "evidence": "these manifest negative fixtures never execute runtime commands. these manifest negative fixtures never execute rollback commands. these manifest negative fixtures never start models, install dependencies or download models. these manifest negative fixtures never read private source root, onedrive or archive-library content. these manifest negative fixtures never copy private content, secret values or worker output bodies. these manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs. these manifest negative fixtures never promote public-ready state."
+    },
+    {
+      "id": "hard_stop_no_models_installs",
+      "status": "passed",
+      "evidence": "these manifest negative fixtures never execute runtime commands. these manifest negative fixtures never execute rollback commands. these manifest negative fixtures never start models, install dependencies or download models. these manifest negative fixtures never read private source root, onedrive or archive-library content. these manifest negative fixtures never copy private content, secret values or worker output bodies. these manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs. these manifest negative fixtures never promote public-ready state."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "these manifest negative fixtures never execute runtime commands. these manifest negative fixtures never execute rollback commands. these manifest negative fixtures never start models, install dependencies or download models. these manifest negative fixtures never read private source root, onedrive or archive-library content. these manifest negative fixtures never copy private content, secret values or worker output bodies. these manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs. these manifest negative fixtures never promote public-ready state."
+    },
+    {
+      "id": "hard_stop_no_sensitive_copy",
+      "status": "passed",
+      "evidence": "these manifest negative fixtures never execute runtime commands. these manifest negative fixtures never execute rollback commands. these manifest negative fixtures never start models, install dependencies or download models. these manifest negative fixtures never read private source root, onedrive or archive-library content. these manifest negative fixtures never copy private content, secret values or worker output bodies. these manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs. these manifest negative fixtures never promote public-ready state."
+    },
+    {
+      "id": "hard_stop_no_writes",
+      "status": "passed",
+      "evidence": "these manifest negative fixtures never execute runtime commands. these manifest negative fixtures never execute rollback commands. these manifest negative fixtures never start models, install dependencies or download models. these manifest negative fixtures never read private source root, onedrive or archive-library content. these manifest negative fixtures never copy private content, secret values or worker output bodies. these manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs. these manifest negative fixtures never promote public-ready state."
+    },
+    {
+      "id": "hard_stop_no_public",
+      "status": "passed",
+      "evidence": "these manifest negative fixtures never execute runtime commands. these manifest negative fixtures never execute rollback commands. these manifest negative fixtures never start models, install dependencies or download models. these manifest negative fixtures never read private source root, onedrive or archive-library content. these manifest negative fixtures never copy private content, secret values or worker output bodies. these manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs. these manifest negative fixtures never promote public-ready state."
+    }
+  ]
+}

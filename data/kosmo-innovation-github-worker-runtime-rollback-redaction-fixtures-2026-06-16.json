@@ -1,0 +1,188 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:00:13.586Z",
+  "status": "innovation_github_worker_runtime_rollback_redaction_fixtures_ready",
+  "policy": {
+    "fixture_plan_only": true,
+    "synthetic_metadata_only": true,
+    "executes_runtime_now": false,
+    "executes_rollback_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "writes_runtime_outputs_now": false,
+    "writes_worker_outputs_now": false,
+    "copies_secret_values_now": false,
+    "copies_worker_output_body_now": false,
+    "copies_github_code_or_readme_now": false,
+    "public_ready_after_fixtures": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-2026-06-16.json"
+  ],
+  "summary": {
+    "selected_fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+    "fixture_groups": 3,
+    "redaction_rules": 5,
+    "rollback_steps": 5,
+    "forbidden_fields_total": 11,
+    "runtime_executed_now": 0,
+    "rollback_executed_now": 0,
+    "runtime_outputs_written_now": 0,
+    "worker_outputs_written_now": 0,
+    "public_ready_after_fixtures": 0,
+    "failures": 0
+  },
+  "fixture_groups": [
+    {
+      "id": "redacted_log_shape_fixture",
+      "purpose": "Define safe runtime log shape before any runtime exists.",
+      "required_fields": [
+        "event_id",
+        "runtime_batch_id",
+        "status",
+        "redacted_paths_count",
+        "redacted_secrets_count",
+        "public_ready"
+      ],
+      "forbidden_fields": [
+        "raw_private_path",
+        "raw_secret",
+        "worker_output_body",
+        "github_code_excerpt",
+        "readme_prose_excerpt"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "rollback_manifest_shape_fixture",
+      "purpose": "Define reversible runtime-batch manifest shape.",
+      "required_fields": [
+        "runtime_batch_id",
+        "pre_state_snapshot_id",
+        "created_outputs",
+        "stop_commands_reviewed",
+        "rollback_status"
+      ],
+      "forbidden_fields": [
+        "destructive_command_unreviewed",
+        "private_source_body",
+        "secret_value"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "post_rollback_evidence_fixture",
+      "purpose": "Define evidence expected after rollback without keeping private/runtime payloads.",
+      "required_fields": [
+        "runtime_batch_id",
+        "outputs_removed_count",
+        "configs_restored",
+        "redaction_check_passed",
+        "overseer_review_required"
+      ],
+      "forbidden_fields": [
+        "raw_runtime_stdout",
+        "raw_runtime_stderr",
+        "private_input_excerpt"
+      ],
+      "public_ready_after_fixture": 0
+    }
+  ],
+  "redaction_rules": [
+    {
+      "id": "private_path_redaction",
+      "placeholders": [
+        "<PRIVATE_SOURCE_ROOT>",
+        "<ONEDRIVE_PRIVATE_LIBRARY>",
+        "<ARCHIVE_LIBRARY>"
+      ],
+      "description": "Replace private path-like values with stable placeholders.",
+      "required_now": true
+    },
+    {
+      "id": "secret_token_redaction",
+      "placeholders": [
+        "<API_TOKEN>",
+        "<SSH_KEY>",
+        "<ENV_SECRET>"
+      ],
+      "description": "Replace token-like and key-like values before any handoff or Git write.",
+      "required_now": true
+    },
+    {
+      "id": "worker_output_body_redaction",
+      "placeholders": [
+        "<WORKER_OUTPUT_BODY_REDACTED>"
+      ],
+      "description": "Keep worker output bodies out of Git and expose metadata counts only.",
+      "required_now": true
+    },
+    {
+      "id": "github_source_text_redaction",
+      "placeholders": [
+        "<GITHUB_CODE_OR_README_REDACTED>"
+      ],
+      "description": "Do not copy GitHub code or README prose into runtime logs.",
+      "required_now": true
+    },
+    {
+      "id": "model_prompt_redaction",
+      "placeholders": [
+        "<PRIVATE_PROMPT_CONTEXT_REDACTED>"
+      ],
+      "description": "Redact prompts if they include private project or source-root context.",
+      "required_now": true
+    }
+  ],
+  "rollback_steps": [
+    {
+      "id": "stop_runtime_processes",
+      "description": "Stop model/server/worker processes started by the separate runtime batch.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    },
+    {
+      "id": "remove_generated_runtime_outputs",
+      "description": "Remove generated runtime outputs from the runtime output root, leaving only redacted metadata logs.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    },
+    {
+      "id": "restore_pre_runtime_config",
+      "description": "Restore config snapshots captured before runtime start.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    },
+    {
+      "id": "invalidate_unreviewed_worker_outputs",
+      "description": "Mark worker outputs invalid until overseer review passes.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    },
+    {
+      "id": "rerun_readiness_without_execution",
+      "description": "Rerun readiness, negative fixtures and log-redaction checks after rollback.",
+      "executable_now": false,
+      "requires_overseer_review": true
+    }
+  ],
+  "required_before_runtime_unblock": [
+    "redacted_log_shape_fixture_check_passed",
+    "rollback_manifest_shape_fixture_check_passed",
+    "post_rollback_evidence_fixture_check_passed",
+    "runtime_batch_readiness_plan_still_guard_passed",
+    "negative_fixtures_still_guard_passed",
+    "separate_runtime_apply_guard_passed"
+  ],
+  "hard_stops": [
+    "These fixtures never execute runtime or rollback commands.",
+    "These fixtures never start models or local workers.",
+    "These fixtures never read private Source Root, OneDrive or archive-library content.",
+    "These fixtures never write runtime outputs or worker outputs.",
+    "These fixtures never copy secret values, worker output bodies, GitHub code or README text.",
+    "These fixtures never promote public-ready state."
+  ],
+  "failures": []
+}

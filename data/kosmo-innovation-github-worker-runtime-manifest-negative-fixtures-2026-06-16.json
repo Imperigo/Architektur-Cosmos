@@ -1,0 +1,371 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:06:46.072Z",
+  "status": "innovation_github_worker_runtime_manifest_negative_fixtures_ready",
+  "policy": {
+    "negative_fixtures_only": true,
+    "synthetic_manifest_shapes_only": true,
+    "reads_private_content_now": false,
+    "copies_private_content_now": false,
+    "copies_secret_values_now": false,
+    "copies_worker_output_body_now": false,
+    "executes_runtime_now": false,
+    "executes_rollback_now": false,
+    "starts_models_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "writes_runtime_manifest_now": false,
+    "writes_runtime_outputs_now": false,
+    "writes_worker_outputs_now": false,
+    "promotes_public_ready_now": false,
+    "public_ready_after_fixtures": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-check-2026-06-16.json"
+  ],
+  "summary": {
+    "runtime_batch_id": "github-worker-runtime-batch-draft-2026-06-16",
+    "negative_fixtures": 10,
+    "expected_blocked": 10,
+    "categories": 8,
+    "executable_now": 0,
+    "runtime_executed_now": 0,
+    "rollback_executed_now": 0,
+    "runtime_manifest_written_now": 0,
+    "runtime_outputs_written_now": 0,
+    "worker_outputs_written_now": 0,
+    "public_ready_after_fixtures": 0,
+    "failures": 0
+  },
+  "required_categories": [
+    "execution_state",
+    "missing_guard",
+    "raw_runtime_output",
+    "worker_output_body",
+    "private_path",
+    "secret",
+    "runtime_side_effect",
+    "public_ready_false_positive"
+  ],
+  "negative_fixtures": [
+    {
+      "id": "manifest_marks_executable_now",
+      "category": "execution_state",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "executable_now": true,
+        "runtime_executable_now": true,
+        "writes_runtime_manifest_now": true
+      },
+      "expected_block_reasons": [
+        "executable_now_true",
+        "runtime_executable_now_true",
+        "writes_runtime_manifest_now_true"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_skips_runtime_apply_guard",
+      "category": "missing_guard",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "prerequisite_ids": [
+          "readiness_plan_guard_passed",
+          "rollback_redaction_guard_passed"
+        ],
+        "missing_prerequisite_ids": [
+          "runtime_apply_guard_gate"
+        ]
+      },
+      "expected_block_reasons": [
+        "runtime_apply_guard_gate_missing"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_missing_rollback_redaction_refs",
+      "category": "missing_guard",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "rollback_refs": [],
+        "redaction_refs": [],
+        "negative_log_fixture_refs": []
+      },
+      "expected_block_reasons": [
+        "rollback_refs_missing",
+        "redaction_refs_missing",
+        "negative_log_fixture_refs_missing"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_writes_raw_runtime_outputs",
+      "category": "raw_runtime_output",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "expected_outputs": [
+          {
+            "id": "raw_runtime_stdout",
+            "written_now": true,
+            "redaction_required": false
+          },
+          {
+            "id": "raw_runtime_stderr",
+            "written_now": true,
+            "redaction_required": false
+          }
+        ]
+      },
+      "expected_block_reasons": [
+        "raw_runtime_stdout_requested",
+        "raw_runtime_stderr_requested",
+        "redaction_required_false"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_embeds_worker_output_body",
+      "category": "worker_output_body",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "expected_outputs": [
+          {
+            "id": "worker_output_body",
+            "written_now": true,
+            "metadata_only": false
+          }
+        ]
+      },
+      "expected_block_reasons": [
+        "worker_output_body_requested",
+        "metadata_only_false"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_contains_private_source_path",
+      "category": "private_path",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "input_refs": [
+          "<PRIVATE_SOURCE_ROOT>/books/protected-plan.pdf",
+          "<ONEDRIVE_PRIVATE_LIBRARY>/11 AI Workflow/source.pdf"
+        ]
+      },
+      "expected_block_reasons": [
+        "private_source_path_present",
+        "onedrive_private_path_present"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_contains_secret_field",
+      "category": "secret",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "env": {
+          "OPENAI_API_KEY": "<API_TOKEN>",
+          "SSH_PRIVATE_KEY": "<SSH_KEY>"
+        },
+        "redacted_secrets_count": 0
+      },
+      "expected_block_reasons": [
+        "secret_field_present",
+        "ssh_key_field_present",
+        "redacted_secrets_count_zero"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_starts_models_or_installs_dependencies",
+      "category": "runtime_side_effect",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "phases": [
+          {
+            "id": "install_dependencies",
+            "executable_now": true
+          },
+          {
+            "id": "download_models",
+            "executable_now": true
+          },
+          {
+            "id": "start_model_runtime",
+            "executable_now": true
+          }
+        ]
+      },
+      "expected_block_reasons": [
+        "install_dependencies_phase_executable",
+        "download_models_phase_executable",
+        "start_model_runtime_phase_executable"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_skips_overseer_review_gate",
+      "category": "missing_guard",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "review_gates": [
+          {
+            "id": "log_redaction_gate",
+            "passed": true
+          },
+          {
+            "id": "rollback_gate",
+            "passed": true
+          },
+          {
+            "id": "public_ready_gate",
+            "passed": true
+          }
+        ]
+      },
+      "expected_block_reasons": [
+        "overseer_review_gate_missing",
+        "public_ready_gate_passed"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "manifest_promotes_public_ready",
+      "category": "public_ready_false_positive",
+      "synthetic_only": true,
+      "executable_now": false,
+      "expected_status": "blocked",
+      "simulated_manifest_shape": {
+        "public_ready": true,
+        "public_ready_after_manifest": 1,
+        "rights_state": "unknown"
+      },
+      "expected_block_reasons": [
+        "public_ready_true",
+        "public_ready_after_manifest_nonzero",
+        "rights_state_unknown"
+      ],
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "runtime_executed_now": false,
+      "rollback_executed_now": false,
+      "runtime_manifest_written_now": false,
+      "runtime_outputs_written_now": false,
+      "worker_outputs_written_now": false,
+      "public_ready_after_fixture": 0
+    }
+  ],
+  "next_actions": [
+    "Use these fixtures to harden any future runtime-manifest validator before runtime adapter work starts.",
+    "Keep manifest generation review-only until exact owner reply, redaction and overseer gates are green.",
+    "Regenerate these fixtures after any runtime manifest schema change."
+  ],
+  "hard_stops": [
+    "These manifest negative fixtures never execute runtime commands.",
+    "These manifest negative fixtures never execute rollback commands.",
+    "These manifest negative fixtures never start models, install dependencies or download models.",
+    "These manifest negative fixtures never read private Source Root, OneDrive or archive-library content.",
+    "These manifest negative fixtures never copy private content, secret values or worker output bodies.",
+    "These manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs.",
+    "These manifest negative fixtures never promote public-ready state."
+  ],
+  "failures": []
+}

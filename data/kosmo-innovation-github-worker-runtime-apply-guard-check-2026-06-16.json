@@ -1,0 +1,183 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:00:14.310Z",
+  "status": "innovation_github_worker_runtime_apply_guard_guard_passed",
+  "policy": {
+    "validates_guard_only": true,
+    "executes_runtime_now": false,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 31,
+    "passed": 31,
+    "failures": 0,
+    "guard_status": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply",
+    "exact_reply_valid": false,
+    "separate_runtime_allowed_after_guard": false,
+    "execute_now": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_guarded",
+      "status": "passed",
+      "evidence": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply"
+    },
+    {
+      "id": "policy_guard_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decision_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_runtime_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_rollback_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_local_workers_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_dependency_install",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_outputs",
+      "status": "passed",
+      "evidence": "{\"guard_only\":true,\"records_owner_decision_now\":false,\"executes_runtime_now\":false,\"executes_rollback_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"reads_private_content_now\":false,\"writes_runtime_outputs_now\":false,\"writes_worker_outputs_now\":false,\"copies_secret_values_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_guard\":0}"
+    },
+    {
+      "id": "policy_no_secret_copy",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_promotion",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "execute_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "runtime_not_executable_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "starts_models_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_private_reads_summary",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_runtime_outputs_summary",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "exact_reply_required_choice",
+      "status": "passed",
+      "evidence": "github_worker_runtime_choice=approve_separate_source_free_runtime_batch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_no_model_or_worker_start_from_guard=yes confirmed_rerun_redaction_and_rollback_checks=yes confirmed_runtime_outputs_review_only=yes note=Nur ein separater GitHub-Worker-Runtime-Batch darf nach erneut gruenen Guards vorbereitet werden."
+    },
+    {
+      "id": "exact_reply_source_free",
+      "status": "passed",
+      "evidence": "github_worker_runtime_choice=approve_separate_source_free_runtime_batch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_no_model_or_worker_start_from_guard=yes confirmed_rerun_redaction_and_rollback_checks=yes confirmed_runtime_outputs_review_only=yes note=Nur ein separater GitHub-Worker-Runtime-Batch darf nach erneut gruenen Guards vorbereitet werden."
+    },
+    {
+      "id": "exact_reply_no_private",
+      "status": "passed",
+      "evidence": "github_worker_runtime_choice=approve_separate_source_free_runtime_batch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_no_model_or_worker_start_from_guard=yes confirmed_rerun_redaction_and_rollback_checks=yes confirmed_runtime_outputs_review_only=yes note=Nur ein separater GitHub-Worker-Runtime-Batch darf nach erneut gruenen Guards vorbereitet werden."
+    },
+    {
+      "id": "exact_reply_no_start_from_guard",
+      "status": "passed",
+      "evidence": "github_worker_runtime_choice=approve_separate_source_free_runtime_batch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_no_model_or_worker_start_from_guard=yes confirmed_rerun_redaction_and_rollback_checks=yes confirmed_runtime_outputs_review_only=yes note=Nur ein separater GitHub-Worker-Runtime-Batch darf nach erneut gruenen Guards vorbereitet werden."
+    },
+    {
+      "id": "exact_reply_redaction_rerun",
+      "status": "passed",
+      "evidence": "github_worker_runtime_choice=approve_separate_source_free_runtime_batch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_no_model_or_worker_start_from_guard=yes confirmed_rerun_redaction_and_rollback_checks=yes confirmed_runtime_outputs_review_only=yes note=Nur ein separater GitHub-Worker-Runtime-Batch darf nach erneut gruenen Guards vorbereitet werden."
+    },
+    {
+      "id": "exact_reply_review_only_outputs",
+      "status": "passed",
+      "evidence": "github_worker_runtime_choice=approve_separate_source_free_runtime_batch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_no_model_or_worker_start_from_guard=yes confirmed_rerun_redaction_and_rollback_checks=yes confirmed_runtime_outputs_review_only=yes note=Nur ein separater GitHub-Worker-Runtime-Batch darf nach erneut gruenen Guards vorbereitet werden."
+    },
+    {
+      "id": "separate_runtime_flag_consistent",
+      "status": "passed",
+      "evidence": "false/false"
+    },
+    {
+      "id": "valid_reply_has_ready_status",
+      "status": "passed",
+      "evidence": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply"
+    },
+    {
+      "id": "invalid_or_waiting_no_runtime",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "hard_stop_no_runtime",
+      "status": "passed",
+      "evidence": "this guard never executes runtime commands. this guard never executes rollback commands. this guard never starts models or local workers. this guard never installs dependencies. this guard never reads private source root, onedrive or archive-library content. this guard never writes runtime outputs or worker outputs. this guard never copies secret values. a broad approval is not enough; exact key=value fields are required."
+    },
+    {
+      "id": "hard_stop_no_models_workers",
+      "status": "passed",
+      "evidence": "this guard never executes runtime commands. this guard never executes rollback commands. this guard never starts models or local workers. this guard never installs dependencies. this guard never reads private source root, onedrive or archive-library content. this guard never writes runtime outputs or worker outputs. this guard never copies secret values. a broad approval is not enough; exact key=value fields are required."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this guard never executes runtime commands. this guard never executes rollback commands. this guard never starts models or local workers. this guard never installs dependencies. this guard never reads private source root, onedrive or archive-library content. this guard never writes runtime outputs or worker outputs. this guard never copies secret values. a broad approval is not enough; exact key=value fields are required."
+    },
+    {
+      "id": "hard_stop_exact_required",
+      "status": "passed",
+      "evidence": "this guard never executes runtime commands. this guard never executes rollback commands. this guard never starts models or local workers. this guard never installs dependencies. this guard never reads private source root, onedrive or archive-library content. this guard never writes runtime outputs or worker outputs. this guard never copies secret values. a broad approval is not enough; exact key=value fields are required."
+    }
+  ]
+}

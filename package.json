@@ -262,6 +262,8 @@
     "kosmo:innovation-github-worker-runtime-log-redaction-negative-fixtures-check": "node scripts/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-check.mjs",
     "kosmo:innovation-github-worker-runtime-batch-manifest-draft": "node scripts/kosmo-innovation-github-worker-runtime-batch-manifest-draft.mjs",
     "kosmo:innovation-github-worker-runtime-batch-manifest-draft-check": "node scripts/kosmo-innovation-github-worker-runtime-batch-manifest-draft-check.mjs",
+    "kosmo:innovation-github-worker-runtime-manifest-negative-fixtures": "node scripts/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures.mjs",
+    "kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check": "node scripts/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-check.mjs",
     "kosmo:codex-loop-checkpoint": "node scripts/kosmo-codex-loop-checkpoint.mjs",
     "kosmo:codex-loop-checkpoint-check": "node scripts/kosmo-codex-loop-checkpoint-check.mjs",
     "kosmo:security-baseline-policy": "node scripts/kosmo-security-baseline-policy.mjs",

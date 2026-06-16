@@ -1,0 +1,276 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:00:14.558Z",
+  "status": "innovation_github_worker_runtime_log_redaction_negative_fixtures_ready",
+  "policy": {
+    "negative_fixtures_only": true,
+    "synthetic_log_shapes_only": true,
+    "reads_private_content_now": false,
+    "copies_private_content_now": false,
+    "copies_secret_values_now": false,
+    "copies_worker_output_body_now": false,
+    "copies_github_code_or_readme_now": false,
+    "executes_runtime_now": false,
+    "executes_rollback_now": false,
+    "starts_models_now": false,
+    "writes_runtime_outputs_now": false,
+    "writes_worker_outputs_now": false,
+    "promotes_public_ready_now": false,
+    "public_ready_after_fixtures": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-16.json"
+  ],
+  "summary": {
+    "selected_fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+    "negative_fixtures": 10,
+    "expected_blocked": 10,
+    "leak_categories": 7,
+    "runtime_executed_now": 0,
+    "rollback_executed_now": 0,
+    "runtime_outputs_written_now": 0,
+    "worker_outputs_written_now": 0,
+    "public_ready_after_fixtures": 0,
+    "failures": 0
+  },
+  "required_leak_categories": [
+    "private_path",
+    "secret",
+    "worker_output_body",
+    "github_source_text",
+    "private_prompt_context",
+    "runtime_stdio",
+    "public_ready_false_positive"
+  ],
+  "negative_fixtures": [
+    {
+      "id": "raw_private_source_path_in_log",
+      "leak_category": "private_path",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-001",
+        "raw_private_path": "<PRIVATE_SOURCE_ROOT>/books/protected-plan.pdf",
+        "redacted_paths_count": 0
+      },
+      "expected_block_reasons": [
+        "raw_private_path_present",
+        "redacted_paths_count_zero"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "raw_onedrive_library_path_in_log",
+      "leak_category": "private_path",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-002",
+        "raw_private_path": "<ONEDRIVE_PRIVATE_LIBRARY>/11 AI Workflow/source.pdf",
+        "private_library_marker": true
+      },
+      "expected_block_reasons": [
+        "raw_onedrive_path_present",
+        "private_library_marker_true"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "secret_token_value_in_log",
+      "leak_category": "secret",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-003",
+        "raw_secret": "<API_TOKEN>",
+        "redacted_secrets_count": 0
+      },
+      "expected_block_reasons": [
+        "raw_secret_present",
+        "redacted_secrets_count_zero"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "ssh_key_material_in_log",
+      "leak_category": "secret",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-004",
+        "raw_secret": "<SSH_KEY>",
+        "secret_kind": "ssh_private_key"
+      },
+      "expected_block_reasons": [
+        "raw_secret_present",
+        "ssh_private_key_marker_present"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "worker_output_body_in_log",
+      "leak_category": "worker_output_body",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-005",
+        "worker_output_body": "<WORKER_OUTPUT_BODY_REDACTED>",
+        "metadata_only": false
+      },
+      "expected_block_reasons": [
+        "worker_output_body_present",
+        "metadata_only_false"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "github_code_excerpt_in_log",
+      "leak_category": "github_source_text",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-006",
+        "github_code_excerpt": "<GITHUB_CODE_OR_README_REDACTED>",
+        "source_repo_reference_only": false
+      },
+      "expected_block_reasons": [
+        "github_code_excerpt_present",
+        "source_repo_reference_only_false"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "readme_prose_excerpt_in_log",
+      "leak_category": "github_source_text",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-007",
+        "readme_prose_excerpt": "<GITHUB_CODE_OR_README_REDACTED>",
+        "copied_readme_text_now": true
+      },
+      "expected_block_reasons": [
+        "readme_prose_excerpt_present",
+        "copied_readme_text_now_true"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "private_prompt_context_in_log",
+      "leak_category": "private_prompt_context",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-008",
+        "private_prompt_context": "<PRIVATE_PROMPT_CONTEXT_REDACTED>",
+        "prompt_redaction_applied": false
+      },
+      "expected_block_reasons": [
+        "private_prompt_context_present",
+        "prompt_redaction_missing"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "raw_runtime_stdout_stderr_in_log",
+      "leak_category": "runtime_stdio",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-009",
+        "raw_runtime_stdout": "synthetic unredacted stdout payload",
+        "raw_runtime_stderr": "synthetic unredacted stderr payload"
+      },
+      "expected_block_reasons": [
+        "raw_runtime_stdout_present",
+        "raw_runtime_stderr_present"
+      ],
+      "public_ready_after_fixture": 0
+    },
+    {
+      "id": "public_ready_from_unreviewed_runtime_log",
+      "leak_category": "public_ready_false_positive",
+      "synthetic_only": true,
+      "copied_private_content_now": false,
+      "copied_secret_value_now": false,
+      "copied_worker_output_body_now": false,
+      "copied_github_code_or_readme_now": false,
+      "executed_now": false,
+      "expected_status": "blocked",
+      "simulated_log_shape": {
+        "event_id": "synthetic-runtime-log-010",
+        "public_ready": true,
+        "overseer_review_required": false,
+        "rights_state": "unknown"
+      },
+      "expected_block_reasons": [
+        "public_ready_true",
+        "overseer_review_required_false",
+        "rights_state_unknown"
+      ],
+      "public_ready_after_fixture": 0
+    }
+  ],
+  "next_actions": [
+    "Use these cases to harden future runtime log validators before any local worker runtime exists.",
+    "Keep all payloads synthetic and metadata-only.",
+    "Do not convert these negative fixtures into runtime execution without a separate apply guard."
+  ],
+  "hard_stops": [
+    "These negative fixtures never read private Source Root, OneDrive or archive-library content.",
+    "These negative fixtures never copy private content, secret values, worker output bodies, GitHub code or README text.",
+    "These negative fixtures never execute runtime or rollback commands.",
+    "These negative fixtures never start models or local workers.",
+    "These negative fixtures never write runtime outputs or worker outputs.",
+    "These negative fixtures never promote public-ready state."
+  ],
+  "failures": []
+}
