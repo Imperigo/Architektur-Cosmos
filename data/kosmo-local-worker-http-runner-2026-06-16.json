@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:09:10.374Z",
+  "status": "local_worker_http_runner_dry_run_ready",
+  "policy": {
+    "review_only": true,
+    "default_dry_run": true,
+    "starts_model": false,
+    "reads_private_context_paths": false,
+    "reads_private_source_paths": false,
+    "writes_git": false,
+    "writes_cloud": false,
+    "public_ready_after_runner": 0,
+    "note": "This runner only permits task-pack inputs that are existing relative repo report paths under data/, docs/ or examples/. It refuses private_context_paths and absolute input refs."
+  },
+  "task_pack": "data/kosmo-local-worker-task-pack-2026-06-16.json",
+  "task": {
+    "task_id": "kosmo-public-source-link-synthesis",
+    "lane": "source_discovery",
+    "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13/public-source-link-synthesis.private.json",
+    "output_filename": "public-source-link-synthesis.private.json",
+    "output_already_exists": true,
+    "execute_requested": false,
+    "force_requested": false
+  },
+  "model": {
+    "endpoint": "http://127.0.0.1:11434/api/generate",
+    "name": "kosmo-qwen3-coder:30b-a3b-q4km",
+    "used": false
+  },
+  "guard": {
+    "passed": true,
+    "failures": [],
+    "safe_inputs": [
+      {
+        "ref": "data/kosmoreferences-data-lane-status.json",
+        "bytes": 7391,
+        "truncated": false
+      },
+      {
+        "ref": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+        "bytes": 3446,
+        "truncated": false
+      },
+      {
+        "ref": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+        "bytes": 2927,
+        "truncated": false
+      },
+      {
+        "ref": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.json",
+        "bytes": 3593,
+        "truncated": false
+      },
+      {
+        "ref": "data/kosmo-private-metadata-inventory-runner-2026-06-16.json",
+        "bytes": 2691,
+        "truncated": false
+      },
+      {
+        "ref": "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-16.json",
+        "bytes": 4306,
+        "truncated": false
+      },
+      {
+        "ref": "data/kosmo-private-metadata-inventory-check-2026-06-16.json",
+        "bytes": 13489,
+        "truncated": false
+      },
+      {
+        "ref": "docs/codex/kosmo-private-metadata-inventory-check-2026-06-16.md",
+        "bytes": 8308,
+        "truncated": false
+      }
+    ]
+  },
+  "model_result": null,
+  "next_actions": [
+    "Output already exists; review it before considering --force.",
+    "Keep this runner out of public promotion and Git/cloud writes."
+  ]
+}

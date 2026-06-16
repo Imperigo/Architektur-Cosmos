@@ -1,0 +1,301 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:10:43.355Z",
+  "status": "pilot_packages_review_only_complete",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "public_ready_after_check": 0,
+    "note": "This check validates repo-visible pilot package metadata only. It does not fetch pages, read private libraries, OCR PDFs, copy media or promote public assets."
+  },
+  "source_refs": [
+    "data/kosmoreferences-registry.json"
+  ],
+  "summary": {
+    "required_pilots": 3,
+    "complete_pilots": 3,
+    "checks": 39,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "pilots": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "registry_path": "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+      "source_package_id": "villa-savoye-public-source-candidate-2026-06-13",
+      "source_package_path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
+      "status": "pilot_package_review_only_complete",
+      "media_slots": [
+        "exterior",
+        "interior",
+        "plan",
+        "section"
+      ],
+      "source_candidates": 3,
+      "asset_candidates": 3,
+      "model_packages": 1,
+      "analysis_layers": [
+        "structure",
+        "spatial_order",
+        "material_system",
+        "topos_typos_tectonics"
+      ],
+      "public_ready": false,
+      "checks": [
+        {
+          "id": "registry_entry:villa-savoye",
+          "status": "passed",
+          "message": "Pilot must exist in registry entry_drafts."
+        },
+        {
+          "id": "registry_public_ready_false:villa-savoye",
+          "status": "passed",
+          "message": "Registry entry must keep public_ready=false."
+        },
+        {
+          "id": "draft_exists:villa-savoye",
+          "status": "passed",
+          "message": "Entry draft JSON must exist."
+        },
+        {
+          "id": "source_package_exists:villa-savoye",
+          "status": "passed",
+          "message": "Linked source package JSON must exist."
+        },
+        {
+          "id": "source_package_link_only:villa-savoye",
+          "status": "passed",
+          "message": "Source package must keep source files and extracted text non-public."
+        },
+        {
+          "id": "media_slots:villa-savoye",
+          "status": "passed",
+          "message": "Draft must include exterior, interior, plan and section slots."
+        },
+        {
+          "id": "source_candidates:villa-savoye",
+          "status": "passed",
+          "message": "Draft must include source candidates."
+        },
+        {
+          "id": "source_candidates_link_only:villa-savoye",
+          "status": "passed",
+          "message": "All source candidates must stay link-only."
+        },
+        {
+          "id": "asset_candidates:villa-savoye",
+          "status": "passed",
+          "message": "Draft must include asset candidates."
+        },
+        {
+          "id": "asset_candidates_private:villa-savoye",
+          "status": "passed",
+          "message": "All asset candidates must keep public_display_allowed=false."
+        },
+        {
+          "id": "model_slots:villa-savoye",
+          "status": "passed",
+          "message": "Draft must include model package slots."
+        },
+        {
+          "id": "analysis_fields:villa-savoye",
+          "status": "passed",
+          "message": "Draft must include structure, material and typology/spatial analysis coverage."
+        },
+        {
+          "id": "review_only_status:villa-savoye",
+          "status": "passed",
+          "message": "Draft ingestion stage must remain review_only_draft."
+        }
+      ]
+    },
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "registry_path": "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
+      "source_package_id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
+      "source_package_path": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+      "status": "pilot_package_review_only_complete",
+      "media_slots": [
+        "exterior",
+        "interior",
+        "plan",
+        "section"
+      ],
+      "source_candidates": 4,
+      "asset_candidates": 3,
+      "model_packages": 1,
+      "analysis_layers": [
+        "material_system",
+        "structure",
+        "topos_typos_tectonics"
+      ],
+      "public_ready": false,
+      "checks": [
+        {
+          "id": "registry_entry:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot must exist in registry entry_drafts."
+        },
+        {
+          "id": "registry_public_ready_false:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Registry entry must keep public_ready=false."
+        },
+        {
+          "id": "draft_exists:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Entry draft JSON must exist."
+        },
+        {
+          "id": "source_package_exists:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Linked source package JSON must exist."
+        },
+        {
+          "id": "source_package_link_only:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Source package must keep source files and extracted text non-public."
+        },
+        {
+          "id": "media_slots:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Draft must include exterior, interior, plan and section slots."
+        },
+        {
+          "id": "source_candidates:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Draft must include source candidates."
+        },
+        {
+          "id": "source_candidates_link_only:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "All source candidates must stay link-only."
+        },
+        {
+          "id": "asset_candidates:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Draft must include asset candidates."
+        },
+        {
+          "id": "asset_candidates_private:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "All asset candidates must keep public_display_allowed=false."
+        },
+        {
+          "id": "model_slots:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Draft must include model package slots."
+        },
+        {
+          "id": "analysis_fields:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Draft must include structure, material and typology/spatial analysis coverage."
+        },
+        {
+          "id": "review_only_status:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Draft ingestion stage must remain review_only_draft."
+        }
+      ]
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "registry_path": "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+      "source_package_id": "alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
+      "source_package_path": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+      "status": "pilot_package_review_only_complete",
+      "media_slots": [
+        "exterior",
+        "interior",
+        "plan",
+        "section"
+      ],
+      "source_candidates": 5,
+      "asset_candidates": 3,
+      "model_packages": 1,
+      "analysis_layers": [
+        "structure",
+        "material_system",
+        "topos_typos_tectonics"
+      ],
+      "public_ready": false,
+      "checks": [
+        {
+          "id": "registry_entry:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot must exist in registry entry_drafts."
+        },
+        {
+          "id": "registry_public_ready_false:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Registry entry must keep public_ready=false."
+        },
+        {
+          "id": "draft_exists:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Entry draft JSON must exist."
+        },
+        {
+          "id": "source_package_exists:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Linked source package JSON must exist."
+        },
+        {
+          "id": "source_package_link_only:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Source package must keep source files and extracted text non-public."
+        },
+        {
+          "id": "media_slots:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Draft must include exterior, interior, plan and section slots."
+        },
+        {
+          "id": "source_candidates:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Draft must include source candidates."
+        },
+        {
+          "id": "source_candidates_link_only:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "All source candidates must stay link-only."
+        },
+        {
+          "id": "asset_candidates:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Draft must include asset candidates."
+        },
+        {
+          "id": "asset_candidates_private:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "All asset candidates must keep public_display_allowed=false."
+        },
+        {
+          "id": "model_slots:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Draft must include model package slots."
+        },
+        {
+          "id": "analysis_fields:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Draft must include structure, material and typology/spatial analysis coverage."
+        },
+        {
+          "id": "review_only_status:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Draft ingestion stage must remain review_only_draft."
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "next_actions": [
+    "Use these three pilot packages as the review-only KosmoReferences Day-2 baseline.",
+    "Keep source-dependent assets blocked until source-root, provenance and rights gates pass.",
+    "Use the pilot package check before Orbit status bridge or local-worker conversion decisions."
+  ]
+}

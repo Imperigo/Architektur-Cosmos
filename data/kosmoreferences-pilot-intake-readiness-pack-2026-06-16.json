@@ -1,0 +1,352 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:12:30.259Z",
+  "status": "kosmoreferences_pilot_intake_readiness_pack_ready",
+  "policy": {
+    "readiness_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers": false,
+    "writes_public_files": false,
+    "public_ready_after_pack": 0
+  },
+  "source_refs": [
+    "data/kosmoreferences-pilot-evidence-matrix-2026-06-16.json",
+    "data/kosmoreferences-pilot-package-check-2026-06-16.json",
+    "data/kosmo-source-root-owner-answer-execution-checklist-2026-06-16.json"
+  ],
+  "summary": {
+    "pilots": 3,
+    "total_stages": 24,
+    "blocked_now": 24,
+    "complete_review_only_pilots": 3,
+    "evidence_gap_count": 12,
+    "public_ready_assets": 0,
+    "failures": 0,
+    "public_ready_after_pack": 0
+  },
+  "pilots": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "package_status": "pilot_package_review_only_complete",
+      "evidence_source_state": "public link package exists; local media/model assets exist but need file-level review",
+      "gap_count": 4,
+      "blocking_gap_types": [
+        "file_level_rights",
+        "plan_section_provenance"
+      ],
+      "recommended_workers": [
+        "codex-central-overseer",
+        "kosmo-local-llm",
+        "local-batch-workers"
+      ],
+      "source_package_path": "examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
+      "entry_draft_path": "examples/kosmo-references/entry-drafts/villa-savoye.entry-draft.json",
+      "public_ready": false,
+      "intake_stages": [
+        {
+          "id": "metadata_inventory_match",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "villa-savoye: matched filenames/counts only; no file bodies",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "source_list_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "villa-savoye: reviewed source list with provenance status",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "media_plan_slot_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "villa-savoye: exterior/interior/plan/section slots mapped to source candidates",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "rights_and_provenance_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "villa-savoye: file-level rights/provenance review remains review-only",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "analysis_layer_completion",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "villa-savoye: structure/material/typology analysis fields completed from approved metadata",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "asset_candidate_bridge",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoasset_lane",
+          "expected_output": "villa-savoye: review-only KosmoAsset candidate bridge",
+          "guard": "npm run kosmo:references-nightly-gate"
+        },
+        {
+          "id": "local_worker_packet",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "local_llm_after_overseer_guard",
+          "expected_output": "villa-savoye: local worker task packet without private file contents in Git",
+          "guard": "manual overseer review plus local worker output contract"
+        },
+        {
+          "id": "orbit_status_update",
+          "status": "blocked_until_prior_stages_pass",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_or_claude_overseer",
+          "expected_output": "villa-savoye: Orbit-visible status after guards",
+          "guard": "npm run kosmo:data-lane-sweep"
+        }
+      ]
+    },
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "package_status": "pilot_package_review_only_complete",
+      "evidence_source_state": "public link package exists; no visible local book/lecture package yet",
+      "gap_count": 4,
+      "blocking_gap_types": [
+        "local_library_source",
+        "timber_structure"
+      ],
+      "recommended_workers": [
+        "kosmo-local-llm",
+        "local-batch-workers",
+        "owner_plus_codex"
+      ],
+      "source_package_path": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+      "entry_draft_path": "examples/kosmo-references/entry-drafts/kapelle-sogn-benedetg.entry-draft.json",
+      "public_ready": false,
+      "intake_stages": [
+        {
+          "id": "metadata_inventory_match",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "kapelle-sogn-benedetg: matched filenames/counts only; no file bodies",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "source_list_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "kapelle-sogn-benedetg: reviewed source list with provenance status",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "media_plan_slot_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "kapelle-sogn-benedetg: exterior/interior/plan/section slots mapped to source candidates",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "rights_and_provenance_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "kapelle-sogn-benedetg: file-level rights/provenance review remains review-only",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "analysis_layer_completion",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "kapelle-sogn-benedetg: structure/material/typology analysis fields completed from approved metadata",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "asset_candidate_bridge",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoasset_lane",
+          "expected_output": "kapelle-sogn-benedetg: review-only KosmoAsset candidate bridge",
+          "guard": "npm run kosmo:references-nightly-gate"
+        },
+        {
+          "id": "local_worker_packet",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "local_llm_after_overseer_guard",
+          "expected_output": "kapelle-sogn-benedetg: local worker task packet without private file contents in Git",
+          "guard": "manual overseer review plus local worker output contract"
+        },
+        {
+          "id": "orbit_status_update",
+          "status": "blocked_until_prior_stages_pass",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_or_claude_overseer",
+          "expected_output": "kapelle-sogn-benedetg: Orbit-visible status after guards",
+          "guard": "npm run kosmo:data-lane-sweep"
+        }
+      ]
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "package_status": "pilot_package_review_only_complete",
+      "evidence_source_state": "public link package exists, including study-commission PDF link; no copied PDF/media content in package",
+      "gap_count": 4,
+      "blocking_gap_types": [
+        "competition_pdf_extraction",
+        "structure_evidence"
+      ],
+      "recommended_workers": [
+        "codex-central-overseer",
+        "kosmo-local-llm",
+        "local-batch-workers"
+      ],
+      "source_package_path": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+      "entry_draft_path": "examples/kosmo-references/entry-drafts/alterszentrum-kloster-ingenbohl.entry-draft.json",
+      "public_ready": false,
+      "intake_stages": [
+        {
+          "id": "metadata_inventory_match",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "alterszentrum-kloster-ingenbohl: matched filenames/counts only; no file bodies",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "source_list_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "alterszentrum-kloster-ingenbohl: reviewed source list with provenance status",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "media_plan_slot_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "alterszentrum-kloster-ingenbohl: exterior/interior/plan/section slots mapped to source candidates",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "rights_and_provenance_review",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "alterszentrum-kloster-ingenbohl: file-level rights/provenance review remains review-only",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "analysis_layer_completion",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoreferences_lane",
+          "expected_output": "alterszentrum-kloster-ingenbohl: structure/material/typology analysis fields completed from approved metadata",
+          "guard": "npm run kosmo:pilot-package-check"
+        },
+        {
+          "id": "asset_candidate_bridge",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_kosmoasset_lane",
+          "expected_output": "alterszentrum-kloster-ingenbohl: review-only KosmoAsset candidate bridge",
+          "guard": "npm run kosmo:references-nightly-gate"
+        },
+        {
+          "id": "local_worker_packet",
+          "status": "blocked_until_source_root_unlock",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "local_llm_after_overseer_guard",
+          "expected_output": "alterszentrum-kloster-ingenbohl: local worker task packet without private file contents in Git",
+          "guard": "manual overseer review plus local worker output contract"
+        },
+        {
+          "id": "orbit_status_update",
+          "status": "blocked_until_prior_stages_pass",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "public_ready_after_stage": 0,
+          "worker_owner": "codex_or_claude_overseer",
+          "expected_output": "alterszentrum-kloster-ingenbohl: Orbit-visible status after guards",
+          "guard": "npm run kosmo:data-lane-sweep"
+        }
+      ]
+    }
+  ],
+  "command_order_after_source_root_unlock": [
+    "npm run kosmo:private-metadata-inventory",
+    "npm run kosmo:private-metadata-inventory-check",
+    "npm run kosmo:pilot-evidence-matrix",
+    "npm run kosmo:pilot-package-check",
+    "npm run kosmo:pilot-intake-readiness-pack",
+    "npm run kosmo:pilot-intake-readiness-pack-check",
+    "npm run kosmo:data-lane-sweep",
+    "npm run kosmo:references-nightly-gate"
+  ],
+  "hard_stops": [
+    "Do not execute pilot intake stages before the owner source-root answer is explicit and guards pass.",
+    "Do not read private file contents in this readiness pack.",
+    "Do not OCR, extract PDF text, or send private source contents to local LLM workers from this pack.",
+    "Do not copy private files or generated private outputs into Git.",
+    "Keep every pilot review-only and public-ready false."
+  ],
+  "failures": []
+}

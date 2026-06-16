@@ -1,0 +1,143 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:09:11.376Z",
+  "status": "local_worker_execution_runbook_idle_review_only",
+  "policy": {
+    "runbook_only": true,
+    "starts_model": false,
+    "reads_private_outputs": false,
+    "reads_private_sources": false,
+    "writes_worker_outputs": false,
+    "writes_git": false,
+    "writes_cloud": false,
+    "public_ready_after_runbook": 0,
+    "note": "This runbook derives safe execution decisions from task metadata and guard reports only."
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-task-pack-2026-06-16.json",
+    "data/kosmo-local-worker-launch-queue-2026-06-16.json",
+    "data/kosmo-local-worker-output-conversion-plan-2026-06-16.json",
+    "data/kosmo-local-worker-http-runner-check-2026-06-16.json"
+  ],
+  "guard_state": {
+    "launch_queue_status": "local_worker_launch_queue_idle_outputs_present",
+    "launchable_now": 0,
+    "conversion_plan_status": "local_worker_output_conversion_plan_review_only",
+    "repo_conversion_allowed_now": 0,
+    "runner_check_status": "local_worker_http_runner_guard_passed",
+    "runner_check_failures": 0
+  },
+  "summary": {
+    "tasks_total": 9,
+    "outputs_present": 9,
+    "outputs_missing": 0,
+    "runner_safe_tasks": 8,
+    "blocked_by_private_context": 1,
+    "execute_allowed_if_output_missing": 0,
+    "public_ready_after_runbook": 0
+  },
+  "tasks": [
+    {
+      "task_id": "kosmo-private-doctrine-summary",
+      "lane": "kosmoreferences",
+      "output_filename": "doctrine-summary.private.md",
+      "output_status": "present",
+      "runner_safe": false,
+      "blockers": [
+        "private_context_paths"
+      ],
+      "execution_decision": "do_not_execute_runner_blocked",
+      "safe_command": null
+    },
+    {
+      "task_id": "kosmo-reference-pilot-gap-map",
+      "lane": "kosmoreferences",
+      "output_filename": "reference-pilot-gap-map.private.json",
+      "output_status": "present",
+      "runner_safe": true,
+      "blockers": [],
+      "execution_decision": "do_not_execute_output_present",
+      "safe_command": "npm run kosmo:local-worker-http-runner -- --task kosmo-reference-pilot-gap-map"
+    },
+    {
+      "task_id": "kosmo-book-library-mount-questions",
+      "lane": "source_discovery",
+      "output_filename": "book-library-mount-questions.private.md",
+      "output_status": "present",
+      "runner_safe": true,
+      "blockers": [],
+      "execution_decision": "do_not_execute_output_present",
+      "safe_command": "npm run kosmo:local-worker-http-runner -- --task kosmo-book-library-mount-questions"
+    },
+    {
+      "task_id": "kosmo-asset-seed-candidates",
+      "lane": "kosmoasset",
+      "output_filename": "asset-seed-candidates.private.json",
+      "output_status": "present",
+      "runner_safe": true,
+      "blockers": [],
+      "execution_decision": "do_not_execute_output_present",
+      "safe_command": "npm run kosmo:local-worker-http-runner -- --task kosmo-asset-seed-candidates"
+    },
+    {
+      "task_id": "kosmo-public-source-link-synthesis",
+      "lane": "source_discovery",
+      "output_filename": "public-source-link-synthesis.private.json",
+      "output_status": "present",
+      "runner_safe": true,
+      "blockers": [],
+      "execution_decision": "do_not_execute_output_present",
+      "safe_command": "npm run kosmo:local-worker-http-runner -- --task kosmo-public-source-link-synthesis"
+    },
+    {
+      "task_id": "kosmo-asset-source-candidate-triage",
+      "lane": "kosmoasset",
+      "output_filename": "asset-source-candidate-triage.private.json",
+      "output_status": "present",
+      "runner_safe": true,
+      "blockers": [],
+      "execution_decision": "do_not_execute_output_present",
+      "safe_command": "npm run kosmo:local-worker-http-runner -- --task kosmo-asset-source-candidate-triage"
+    },
+    {
+      "task_id": "kosmo-human-decision-queue-triage",
+      "lane": "human_review_support",
+      "output_filename": "human-decision-queue-triage.private.md",
+      "output_status": "present",
+      "runner_safe": true,
+      "blockers": [],
+      "execution_decision": "do_not_execute_output_present",
+      "safe_command": "npm run kosmo:local-worker-http-runner -- --task kosmo-human-decision-queue-triage"
+    },
+    {
+      "task_id": "kosmo-owner-batch-review-questions",
+      "lane": "human_review_support",
+      "output_filename": "owner-batch-review-questions.private.md",
+      "output_status": "present",
+      "runner_safe": true,
+      "blockers": [],
+      "execution_decision": "do_not_execute_output_present",
+      "safe_command": "npm run kosmo:local-worker-http-runner -- --task kosmo-owner-batch-review-questions"
+    },
+    {
+      "task_id": "kosmo-owner-session-safe-next-tasks",
+      "lane": "human_review_support",
+      "output_filename": "owner-session-safe-next-tasks.private.md",
+      "output_status": "present",
+      "runner_safe": true,
+      "blockers": [],
+      "execution_decision": "do_not_execute_output_present",
+      "safe_command": "npm run kosmo:local-worker-http-runner -- --task kosmo-owner-session-safe-next-tasks"
+    }
+  ],
+  "command_templates": {
+    "dry_run": "npm run kosmo:local-worker-http-runner -- --task <task_id>",
+    "execute": "npm run kosmo:local-worker-http-runner -- --task <task_id> --execute",
+    "force_execute_existing_output": "npm run kosmo:local-worker-http-runner -- --task <task_id> --execute --force"
+  },
+  "next_actions": [
+    "Do not execute local worker tasks now; required outputs are already present or tasks are not runner-safe.",
+    "Use this runbook to choose future --execute targets only after a task output is missing and runner/check guards pass.",
+    "Keep private_context_paths tasks manual/overseer-reviewed until a separate private-safe adapter exists."
+  ]
+}

@@ -1,0 +1,371 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:09:11.620Z",
+  "status": "local_worker_execution_runbook_guard_passed",
+  "policy": {
+    "validates_report_only": true,
+    "starts_model": false,
+    "reads_private_outputs": false,
+    "reads_private_sources": false,
+    "executes_worker_tasks": false,
+    "writes_git": false,
+    "writes_cloud": false,
+    "public_ready_after_check": 0,
+    "note": "This guard validates the local worker execution runbook only. It does not execute local models or read private worker output contents."
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-execution-runbook-2026-06-16.json"
+  ],
+  "summary": {
+    "runbook_status": "local_worker_execution_runbook_idle_review_only",
+    "tasks_total": 9,
+    "runner_safe_tasks": 8,
+    "executable_now": 0,
+    "blocked_by_private_context": 1,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "runbook_status_guarded",
+      "severity": "passed",
+      "message": "Runbook status must be idle review-only or explicitly list executable tasks."
+    },
+    {
+      "id": "runbook_only_true",
+      "severity": "passed",
+      "message": "Runbook must be runbook-only."
+    },
+    {
+      "id": "starts_model_false",
+      "severity": "passed",
+      "message": "Runbook must not start models."
+    },
+    {
+      "id": "reads_private_outputs_false",
+      "severity": "passed",
+      "message": "Runbook must not read private outputs."
+    },
+    {
+      "id": "reads_private_sources_false",
+      "severity": "passed",
+      "message": "Runbook must not read private sources."
+    },
+    {
+      "id": "writes_worker_outputs_false",
+      "severity": "passed",
+      "message": "Runbook must not write worker outputs."
+    },
+    {
+      "id": "writes_git_false",
+      "severity": "passed",
+      "message": "Runbook must not write Git."
+    },
+    {
+      "id": "writes_cloud_false",
+      "severity": "passed",
+      "message": "Runbook must not write cloud."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Runbook must keep public-ready at 0."
+    },
+    {
+      "id": "task_count_matches",
+      "severity": "passed",
+      "message": "Summary task count must match task rows."
+    },
+    {
+      "id": "output_count_matches",
+      "severity": "passed",
+      "message": "Present + missing outputs must equal total tasks."
+    },
+    {
+      "id": "runner_safe_count_matches",
+      "severity": "passed",
+      "message": "Runner-safe count must match task rows."
+    },
+    {
+      "id": "private_context_count_matches",
+      "severity": "passed",
+      "message": "Private-context blocker count must match task rows."
+    },
+    {
+      "id": "executable_count_matches",
+      "severity": "passed",
+      "message": "Executable-now count must match task rows."
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "severity": "passed",
+      "message": "Summary public-ready after runbook must be 0."
+    },
+    {
+      "id": "launch_queue_state_valid",
+      "severity": "passed",
+      "message": "Launch queue must be idle or explicitly launchable."
+    },
+    {
+      "id": "repo_conversion_zero",
+      "severity": "passed",
+      "message": "Repo conversion must remain 0."
+    },
+    {
+      "id": "runner_check_passed",
+      "severity": "passed",
+      "message": "HTTP runner check must pass."
+    },
+    {
+      "id": "runner_check_failures_zero",
+      "severity": "passed",
+      "message": "HTTP runner check failures must be 0."
+    },
+    {
+      "id": "task_id_present:kosmo-private-doctrine-summary",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-private-doctrine-summary",
+      "severity": "passed",
+      "message": "kosmo-private-doctrine-summary output status must be known."
+    },
+    {
+      "id": "blocked_has_blockers:kosmo-private-doctrine-summary",
+      "severity": "passed",
+      "message": "kosmo-private-doctrine-summary must explain why it is blocked."
+    },
+    {
+      "id": "blocked_safe_command_null:kosmo-private-doctrine-summary",
+      "severity": "passed",
+      "message": "kosmo-private-doctrine-summary must not expose safe_command when blocked."
+    },
+    {
+      "id": "task_id_present:kosmo-reference-pilot-gap-map",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-reference-pilot-gap-map",
+      "severity": "passed",
+      "message": "kosmo-reference-pilot-gap-map output status must be known."
+    },
+    {
+      "id": "runner_safe_without_blockers:kosmo-reference-pilot-gap-map",
+      "severity": "passed",
+      "message": "kosmo-reference-pilot-gap-map cannot be runner-safe while blockers exist."
+    },
+    {
+      "id": "safe_command_present:kosmo-reference-pilot-gap-map",
+      "severity": "passed",
+      "message": "kosmo-reference-pilot-gap-map needs a safe command when runner-safe."
+    },
+    {
+      "id": "present_decision_matches:kosmo-reference-pilot-gap-map",
+      "severity": "passed",
+      "message": "kosmo-reference-pilot-gap-map output-present decision must match present output."
+    },
+    {
+      "id": "task_id_present:kosmo-book-library-mount-questions",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-book-library-mount-questions",
+      "severity": "passed",
+      "message": "kosmo-book-library-mount-questions output status must be known."
+    },
+    {
+      "id": "runner_safe_without_blockers:kosmo-book-library-mount-questions",
+      "severity": "passed",
+      "message": "kosmo-book-library-mount-questions cannot be runner-safe while blockers exist."
+    },
+    {
+      "id": "safe_command_present:kosmo-book-library-mount-questions",
+      "severity": "passed",
+      "message": "kosmo-book-library-mount-questions needs a safe command when runner-safe."
+    },
+    {
+      "id": "present_decision_matches:kosmo-book-library-mount-questions",
+      "severity": "passed",
+      "message": "kosmo-book-library-mount-questions output-present decision must match present output."
+    },
+    {
+      "id": "task_id_present:kosmo-asset-seed-candidates",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-asset-seed-candidates",
+      "severity": "passed",
+      "message": "kosmo-asset-seed-candidates output status must be known."
+    },
+    {
+      "id": "runner_safe_without_blockers:kosmo-asset-seed-candidates",
+      "severity": "passed",
+      "message": "kosmo-asset-seed-candidates cannot be runner-safe while blockers exist."
+    },
+    {
+      "id": "safe_command_present:kosmo-asset-seed-candidates",
+      "severity": "passed",
+      "message": "kosmo-asset-seed-candidates needs a safe command when runner-safe."
+    },
+    {
+      "id": "present_decision_matches:kosmo-asset-seed-candidates",
+      "severity": "passed",
+      "message": "kosmo-asset-seed-candidates output-present decision must match present output."
+    },
+    {
+      "id": "task_id_present:kosmo-public-source-link-synthesis",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-public-source-link-synthesis",
+      "severity": "passed",
+      "message": "kosmo-public-source-link-synthesis output status must be known."
+    },
+    {
+      "id": "runner_safe_without_blockers:kosmo-public-source-link-synthesis",
+      "severity": "passed",
+      "message": "kosmo-public-source-link-synthesis cannot be runner-safe while blockers exist."
+    },
+    {
+      "id": "safe_command_present:kosmo-public-source-link-synthesis",
+      "severity": "passed",
+      "message": "kosmo-public-source-link-synthesis needs a safe command when runner-safe."
+    },
+    {
+      "id": "present_decision_matches:kosmo-public-source-link-synthesis",
+      "severity": "passed",
+      "message": "kosmo-public-source-link-synthesis output-present decision must match present output."
+    },
+    {
+      "id": "task_id_present:kosmo-asset-source-candidate-triage",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-asset-source-candidate-triage",
+      "severity": "passed",
+      "message": "kosmo-asset-source-candidate-triage output status must be known."
+    },
+    {
+      "id": "runner_safe_without_blockers:kosmo-asset-source-candidate-triage",
+      "severity": "passed",
+      "message": "kosmo-asset-source-candidate-triage cannot be runner-safe while blockers exist."
+    },
+    {
+      "id": "safe_command_present:kosmo-asset-source-candidate-triage",
+      "severity": "passed",
+      "message": "kosmo-asset-source-candidate-triage needs a safe command when runner-safe."
+    },
+    {
+      "id": "present_decision_matches:kosmo-asset-source-candidate-triage",
+      "severity": "passed",
+      "message": "kosmo-asset-source-candidate-triage output-present decision must match present output."
+    },
+    {
+      "id": "task_id_present:kosmo-human-decision-queue-triage",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-human-decision-queue-triage",
+      "severity": "passed",
+      "message": "kosmo-human-decision-queue-triage output status must be known."
+    },
+    {
+      "id": "runner_safe_without_blockers:kosmo-human-decision-queue-triage",
+      "severity": "passed",
+      "message": "kosmo-human-decision-queue-triage cannot be runner-safe while blockers exist."
+    },
+    {
+      "id": "safe_command_present:kosmo-human-decision-queue-triage",
+      "severity": "passed",
+      "message": "kosmo-human-decision-queue-triage needs a safe command when runner-safe."
+    },
+    {
+      "id": "present_decision_matches:kosmo-human-decision-queue-triage",
+      "severity": "passed",
+      "message": "kosmo-human-decision-queue-triage output-present decision must match present output."
+    },
+    {
+      "id": "task_id_present:kosmo-owner-batch-review-questions",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-owner-batch-review-questions",
+      "severity": "passed",
+      "message": "kosmo-owner-batch-review-questions output status must be known."
+    },
+    {
+      "id": "runner_safe_without_blockers:kosmo-owner-batch-review-questions",
+      "severity": "passed",
+      "message": "kosmo-owner-batch-review-questions cannot be runner-safe while blockers exist."
+    },
+    {
+      "id": "safe_command_present:kosmo-owner-batch-review-questions",
+      "severity": "passed",
+      "message": "kosmo-owner-batch-review-questions needs a safe command when runner-safe."
+    },
+    {
+      "id": "present_decision_matches:kosmo-owner-batch-review-questions",
+      "severity": "passed",
+      "message": "kosmo-owner-batch-review-questions output-present decision must match present output."
+    },
+    {
+      "id": "task_id_present:kosmo-owner-session-safe-next-tasks",
+      "severity": "passed",
+      "message": "Each task must have an id."
+    },
+    {
+      "id": "output_status_known:kosmo-owner-session-safe-next-tasks",
+      "severity": "passed",
+      "message": "kosmo-owner-session-safe-next-tasks output status must be known."
+    },
+    {
+      "id": "runner_safe_without_blockers:kosmo-owner-session-safe-next-tasks",
+      "severity": "passed",
+      "message": "kosmo-owner-session-safe-next-tasks cannot be runner-safe while blockers exist."
+    },
+    {
+      "id": "safe_command_present:kosmo-owner-session-safe-next-tasks",
+      "severity": "passed",
+      "message": "kosmo-owner-session-safe-next-tasks needs a safe command when runner-safe."
+    },
+    {
+      "id": "present_decision_matches:kosmo-owner-session-safe-next-tasks",
+      "severity": "passed",
+      "message": "kosmo-owner-session-safe-next-tasks output-present decision must match present output."
+    },
+    {
+      "id": "dry_run_command_present",
+      "severity": "passed",
+      "message": "Dry-run command template must use HTTP runner."
+    },
+    {
+      "id": "execute_command_has_execute",
+      "severity": "passed",
+      "message": "Execute command template must include --execute."
+    },
+    {
+      "id": "force_command_has_force",
+      "severity": "passed",
+      "message": "Force command template must include --force."
+    },
+    {
+      "id": "commands_no_git_cloud",
+      "severity": "passed",
+      "message": "Command templates must not include Git or cloud writes."
+    }
+  ],
+  "next_actions": [
+    "Use the execution runbook as the safe command map for future local worker runs.",
+    "Do not execute local worker tasks while executable_now is 0.",
+    "Rerun this guard after task-pack, launch queue, conversion plan or runner-check changes."
+  ]
+}

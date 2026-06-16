@@ -1,0 +1,223 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:09:10.881Z",
+  "status": "local_worker_launch_queue_idle_outputs_present",
+  "policy": {
+    "metadata_only": true,
+    "starts_processes": false,
+    "starts_models": false,
+    "reads_private_outputs": false,
+    "copies_private_content": false,
+    "local_worker_git_allowed": false,
+    "public_ready_allowed": false,
+    "note": "This queue decides whether local worker tasks need launch or review. It does not start models, read private output contents or run tasks."
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-task-pack-2026-06-16.json",
+    "data/kosmo-worker-boundary-pack-2026-06-16.json",
+    "data/kosmo-worker-boundary-pack-check-2026-06-16.json",
+    "data/kosmo-local-worker-output-review-2026-06-16.json",
+    "data/kosmo-private-metadata-inventory-check-2026-06-16.json"
+  ],
+  "summary": {
+    "target_worker": "kosmo-odysseus-local-llm",
+    "tasks_total": 9,
+    "tasks_present": 9,
+    "tasks_missing": 0,
+    "launchable_now": 0,
+    "guard_passed": true,
+    "private_metadata_inventory_guard_passed": true,
+    "outputs_complete": true,
+    "local_worker_git_blocked": true,
+    "public_ready_blocked": true,
+    "public_ready_after_queue": 0
+  },
+  "tasks": [
+    {
+      "task_id": "kosmo-private-doctrine-summary",
+      "priority": 1,
+      "lane": "kosmoreferences",
+      "output_filename": "doctrine-summary.private.md",
+      "output_status": "present",
+      "output_bytes": 4062,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-reference-pilot-gap-map",
+      "priority": 2,
+      "lane": "kosmoreferences",
+      "output_filename": "reference-pilot-gap-map.private.json",
+      "output_status": "present",
+      "output_bytes": 4111,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-book-library-mount-questions",
+      "priority": 3,
+      "lane": "source_discovery",
+      "output_filename": "book-library-mount-questions.private.md",
+      "output_status": "present",
+      "output_bytes": 2884,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-asset-seed-candidates",
+      "priority": 4,
+      "lane": "kosmoasset",
+      "output_filename": "asset-seed-candidates.private.json",
+      "output_status": "present",
+      "output_bytes": 2988,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-public-source-link-synthesis",
+      "priority": 5,
+      "lane": "source_discovery",
+      "output_filename": "public-source-link-synthesis.private.json",
+      "output_status": "present",
+      "output_bytes": 2070,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-asset-source-candidate-triage",
+      "priority": 6,
+      "lane": "kosmoasset",
+      "output_filename": "asset-source-candidate-triage.private.json",
+      "output_status": "present",
+      "output_bytes": 9272,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-human-decision-queue-triage",
+      "priority": 7,
+      "lane": "human_review_support",
+      "output_filename": "human-decision-queue-triage.private.md",
+      "output_status": "present",
+      "output_bytes": 4396,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-owner-batch-review-questions",
+      "priority": 8,
+      "lane": "human_review_support",
+      "output_filename": "owner-batch-review-questions.private.md",
+      "output_status": "present",
+      "output_bytes": 4020,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    },
+    {
+      "task_id": "kosmo-owner-session-safe-next-tasks",
+      "priority": 9,
+      "lane": "human_review_support",
+      "output_filename": "owner-session-safe-next-tasks.private.md",
+      "output_status": "present",
+      "output_bytes": 2091,
+      "launch_decision": "do_not_launch_output_present",
+      "allowed_mode": "metadata_review_only",
+      "guard_state": {
+        "worker_boundary_guard_passed": true,
+        "private_metadata_inventory_guard_passed": true
+      },
+      "forbidden_side_effects": [
+        "private reads/OCR outside provided refs",
+        "Git commands",
+        "cloud/R2/D1 writes",
+        "public-ready flags"
+      ]
+    }
+  ],
+  "next_actions": [
+    "Do not launch new local LLM tasks now; all required outputs are present.",
+    "Keep private metadata inventory tasks blocked unless source-root activation and private metadata inventory guard pass.",
+    "Codex/Claude should review existing private outputs metadata-safely before converting anything into repo artifacts.",
+    "Create a new task pack only after owner/source-root state changes or a new explicit worker objective is defined."
+  ]
+}
