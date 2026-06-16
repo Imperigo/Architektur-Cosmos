@@ -1,24 +1,29 @@
 # Kosmo Owner Answer Session Edit Plan
 
-Generated: 2026-06-16T12:31:10.919Z
-Status: `owner_answer_session_edit_plan_pending_owner_input`
+Generated: 2026-06-16T17:15:01.634Z
+Status: `owner_answer_session_edit_plan_ready_for_review`
 
 ## Summary
 
-- Intake guard: owner_answer_intake_guard_passed_pending_owner_input
+- Intake guard: owner_answer_intake_guard_passed_with_answers
 - Intake guard failures: 0
-- Filled answers: 0
-- Planned edits: 0
-- Source-root session edits: 0
+- Filled answers: 6
+- Planned edits: 6
+- Source-root session edits: 1
 - Owner decision session edits: 0
 - Public-ready after plan: 0
 
 ## Planned Edits
 
-- none
+- source_root_decision -> `examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json`
+- owner_card_triage_note -> `manual-review-only`
+- owner_card_triage_note -> `manual-review-only`
+- owner_card_triage_note -> `manual-review-only`
+- owner_card_triage_note -> `manual-review-only`
+- owner_card_triage_note -> `manual-review-only`
 
 ## Next Actions
 
-- Wait for explicit owner answers in the intake template.
-- Rerun npm run kosmo:owner-answer-intake-check after intake fields are filled.
-- Rerun this edit plan before any session edit.
+- Review this plan with Codex/Claude before changing any session file.
+- Apply only explicitly confirmed owner answers.
+- After applying reviewed session edits, rerun source-root/owner decision checks and the full data-lane sweep.

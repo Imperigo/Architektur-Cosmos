@@ -47,9 +47,13 @@ function buildCheckpoint({ sweep, router, ownerBrief }) {
   ].includes(router.status);
   const ownerOpen = ownerSummary.open_items ?? sweepSummary.human_queue_open_items ?? 0;
   const assetOpen = sweepSummary.asset_open_human_reviews ?? 0;
+  const ownerBriefReady = [
+    'owner_next_review_brief_open',
+    'owner_next_review_brief_clear'
+  ].includes(ownerBrief.status);
   const status = sweep.status === 'kosmodata_lane_sweep_review_only_passed' &&
     routerReady &&
-    ownerBrief.status === 'owner_next_review_brief_open'
+    ownerBriefReady
     ? 'night_loop_guarded_ready'
     : 'night_loop_needs_review';
 
@@ -100,8 +104,10 @@ function buildCheckpoint({ sweep, router, ownerBrief }) {
         'npm run kosmo:data-lane-sweep',
         'npm run kosmo:data-lane-command-router',
         'npm run kosmo:owner-next-review-brief',
-        'npm run kosmo:owner-review-session-brief',
-        'npm run kosmo:owner-review-session-brief-check',
+        'npm run kosmo:owner-answer-sheet',
+        'npm run kosmo:owner-answer-sheet-check',
+        'npm run kosmo:owner-review-batch-resolution-ledger',
+        'npm run kosmo:owner-review-batch-resolution-ledger-check',
         'Present one owner review card or record a confirmed source-root decision.',
         'After any decision edit, rerun sweep/router/checkpoint.'
       ]

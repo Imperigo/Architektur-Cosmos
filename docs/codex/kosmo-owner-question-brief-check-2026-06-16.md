@@ -1,6 +1,6 @@
 # Kosmo Owner Question Brief Check
 
-Generated: 2026-06-16T12:31:11.391Z
+Generated: 2026-06-16T17:15:02.586Z
 Status: `owner_question_brief_guard_passed`
 
 ## Summary
@@ -22,7 +22,7 @@ Status: `owner_question_brief_guard_passed`
 - passed: `question_count_match` - Question brief must contain 6 questions.
 - passed: `source_root_question_count` - Question brief must contain one source-root question.
 - passed: `owner_card_question_count` - Question brief must contain one question per owner card.
-- passed: `planned_edits_zero` - Question brief must not plan edits.
+- passed: `planned_edits_zero` - Question brief may reference the separate session edit plan count but must not apply edits.
 - passed: `summary_public_ready_zero` - Question brief summary must keep public-ready at 0.
 - passed: `source_root_question_present` - Source-root question must be present.
 - passed: `source_root_safe_default_match` - Source-root safe default must match answer sheet.

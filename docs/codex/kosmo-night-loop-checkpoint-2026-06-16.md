@@ -1,15 +1,15 @@
 # Kosmo Night Loop Checkpoint
 
-Generated: 2026-06-16T12:31:19.380Z
+Generated: 2026-06-16T17:15:02.822Z
 Status: `night_loop_guarded_ready`
 
 ## Summary
 
-- Data lane: 24/24 (kosmodata_lane_sweep_review_only_passed)
-- Duration: 17537ms
+- Data lane: 26/26 (kosmodata_lane_sweep_review_only_passed)
+- Duration: 16060ms
 - Router: worker_router_private_diagnostic_ready
-- Owner brief: owner_next_review_brief_open
-- Owner open: 5 batches / 16 items
+- Owner brief: owner_next_review_brief_clear
+- Owner open: 0 batches / 0 items
 - Asset reviews open: 6
 - Source root blocked: no
 - Private inventory blocked: no
@@ -19,15 +19,17 @@ Status: `night_loop_guarded_ready`
 
 ## Next Loop
 
-Primary action: `resolve_owner_review_batch`
+Primary action: `resolve_asset_human_reviews`
 First owner card: `batch-a-villa-savoye-image-candidates`
 
 Recommended sequence:
 - npm run kosmo:data-lane-sweep
 - npm run kosmo:data-lane-command-router
 - npm run kosmo:owner-next-review-brief
-- npm run kosmo:owner-review-session-brief
-- npm run kosmo:owner-review-session-brief-check
+- npm run kosmo:owner-answer-sheet
+- npm run kosmo:owner-answer-sheet-check
+- npm run kosmo:owner-review-batch-resolution-ledger
+- npm run kosmo:owner-review-batch-resolution-ledger-check
 - Present one owner review card or record a confirmed source-root decision.
 - After any decision edit, rerun sweep/router/checkpoint.
 

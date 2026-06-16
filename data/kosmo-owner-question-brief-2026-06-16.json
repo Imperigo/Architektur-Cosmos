@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:31:11.153Z",
+  "generated_at": "2026-06-16T17:15:02.348Z",
   "status": "owner_question_brief_ready",
   "policy": {
     "records_decisions": false,
@@ -20,8 +20,8 @@
     "source_root_questions": 1,
     "owner_card_questions": 5,
     "intake_status": "owner_answer_intake_template_pending_owner_input",
-    "session_edit_plan_status": "owner_answer_session_edit_plan_pending_owner_input",
-    "planned_edits": 0,
+    "session_edit_plan_status": "owner_answer_session_edit_plan_ready_for_review",
+    "planned_edits": 6,
     "public_ready_after_brief": 0
   },
   "questions": [

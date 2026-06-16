@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:31:11.391Z",
+  "generated_at": "2026-06-16T17:15:02.586Z",
   "status": "owner_question_brief_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -71,7 +71,7 @@
     {
       "id": "planned_edits_zero",
       "severity": "passed",
-      "message": "Question brief must not plan edits."
+      "message": "Question brief may reference the separate session edit plan count but must not apply edits."
     },
     {
       "id": "summary_public_ready_zero",

@@ -1,0 +1,121 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:15:00.435Z",
+  "status": "owner_review_card_set_ready",
+  "policy": {
+    "records_decisions": false,
+    "public_ready_after_set": 0,
+    "public_writes_allowed": false,
+    "note": "This set prepares owner review cards only. It does not record decisions, approve public display or promote assets."
+  },
+  "source_refs": [
+    "data/kosmo-owner-next-review-brief-2026-06-16.json"
+  ],
+  "summary": {
+    "cards": 5,
+    "open_items": 0,
+    "public_ready_after_set": 0,
+    "first_card": "batch-a-villa-savoye-image-candidates"
+  },
+  "cards": [
+    {
+      "order": 1,
+      "batch_id": "batch-a-villa-savoye-image-candidates",
+      "label": "Batch A: Villa Savoye Image Candidates",
+      "owner_question": "Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?",
+      "items": 0,
+      "safe_default": "needs_more_source_context",
+      "public_ready_after_card": 0,
+      "options": [
+        "keep_all_blocked",
+        "open_one_source_credit_review",
+        "needs_more_context"
+      ],
+      "recommended_stance": [
+        "If no public preview is needed now, leave all three blocked.",
+        "If a preview is needed, open a separate source-basis review before any public-ready change."
+      ],
+      "command_hint_after_decision": "npm run kosmo:owner-decision-session-check"
+    },
+    {
+      "order": 2,
+      "batch_id": "batch-b-villa-savoye-derived-files",
+      "label": "Batch B: Villa Savoye Derived Files",
+      "owner_question": "Sollen alle abgeleiteten Villa-Dateien blockiert bleiben, bis Plan-/Modell-Herkunft sauber belegt ist?",
+      "items": 0,
+      "safe_default": "keep_blocked",
+      "public_ready_after_card": 0,
+      "options": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "recommended_stance": [
+        "Record `keep_blocked` unless the owner explicitly starts a source-basis review for this batch."
+      ],
+      "command_hint_after_decision": "npm run kosmo:owner-decision-session-check"
+    },
+    {
+      "order": 3,
+      "batch_id": "batch-c-model-promotion-confirmation",
+      "label": "Batch C: Model Promotion Confirmation",
+      "owner_question": "Sollen die vorhandenen Modelle weiterhin als diagrammatische Studien blockiert bleiben, bis Modellqualitaet und Quellenbasis geprueft sind?",
+      "items": 0,
+      "safe_default": "needs_more_source_context",
+      "public_ready_after_card": 0,
+      "options": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "recommended_stance": [
+        "Defer promotion until a separate model-quality and source-confidence review exists."
+      ],
+      "command_hint_after_decision": "npm run kosmo:owner-decision-session-check"
+    },
+    {
+      "order": 4,
+      "batch_id": "batch-d-sogn-benedetg-source-gap",
+      "label": "Batch D: Sogn Benedetg Source Gap",
+      "owner_question": "Soll Sogn Benedetg link-only bleiben, bis der echte private Bibliotheks-Root sichtbar ist?",
+      "items": 0,
+      "safe_default": "needs_more_source_context",
+      "public_ready_after_card": 0,
+      "options": [
+        "use_safe_default",
+        "open_separate_review",
+        "needs_more_context"
+      ],
+      "recommended_stance": [
+        "Keep open until the large OneDrive/book/ETH/HSLU library can be indexed or mounted."
+      ],
+      "command_hint_after_decision": "npm run kosmo:owner-decision-session-check"
+    },
+    {
+      "order": 5,
+      "batch_id": "batch-e-kosmoasset-human-reviews",
+      "label": "Batch E: KosmoAsset Human Reviews",
+      "owner_question": "Welche lokalen Study-Assets sollen ein Human Review bekommen, ohne Public-Promotion zu erlauben?",
+      "items": 0,
+      "safe_default": "needs-review",
+      "public_ready_after_card": 0,
+      "options": [
+        "keep_needs_review",
+        "assign_named_human_review",
+        "block_public"
+      ],
+      "recommended_stance": [
+        "Use `needs-review` until a named reviewer has opened the local files.",
+        "Use `block-public` for anything that should remain private/local even after local approval."
+      ],
+      "command_hint_after_decision": "npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json"
+    }
+  ],
+  "next_actions": [
+    "Present one card at a time.",
+    "If owner is unavailable, keep every card at safe default.",
+    "After reference decisions, run npm run kosmo:owner-decision-session-check.",
+    "After asset decisions, run npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json.",
+    "After any decision edit, rerun sweep, router and night-loop checkpoint."
+  ]
+}

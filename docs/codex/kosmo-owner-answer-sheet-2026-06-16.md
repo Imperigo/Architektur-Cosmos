@@ -1,6 +1,6 @@
 # Kosmo Owner Answer Sheet
 
-Generated: 2026-06-16T12:31:09.947Z
+Generated: 2026-06-16T17:15:00.673Z
 Status: `owner_answer_sheet_ready`
 
 ## Guardrails
@@ -15,7 +15,7 @@ Status: `owner_answer_sheet_ready`
 - Source-root options: 10
 - Source-root options source: source_root_selection_brief
 - Owner cards: 5
-- Owner card items: 16
+- Owner card items: 0
 - Reference decision items: 10
 
 ## 1. Source-Root Answer
@@ -62,7 +62,7 @@ Blocked until recorded selection:
 Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?
 
 - Batch: `batch-a-villa-savoye-image-candidates`
-- Items: 3
+- Items: 0
 - Safe default: `needs_more_source_context`
 - Public-ready after card: 0
 - Options: `keep_all_blocked`, `open_one_source_credit_review`, `needs_more_context`
@@ -77,7 +77,7 @@ owner_note:
 Sollen alle abgeleiteten Villa-Dateien blockiert bleiben, bis Plan-/Modell-Herkunft sauber belegt ist?
 
 - Batch: `batch-b-villa-savoye-derived-files`
-- Items: 4
+- Items: 0
 - Safe default: `keep_blocked`
 - Public-ready after card: 0
 - Options: `use_safe_default`, `open_separate_review`, `needs_more_context`
@@ -92,7 +92,7 @@ owner_note:
 Sollen die vorhandenen Modelle weiterhin als diagrammatische Studien blockiert bleiben, bis Modellqualitaet und Quellenbasis geprueft sind?
 
 - Batch: `batch-c-model-promotion-confirmation`
-- Items: 2
+- Items: 0
 - Safe default: `needs_more_source_context`
 - Public-ready after card: 0
 - Options: `use_safe_default`, `open_separate_review`, `needs_more_context`
@@ -107,7 +107,7 @@ owner_note:
 Soll Sogn Benedetg link-only bleiben, bis der echte private Bibliotheks-Root sichtbar ist?
 
 - Batch: `batch-d-sogn-benedetg-source-gap`
-- Items: 1
+- Items: 0
 - Safe default: `needs_more_source_context`
 - Public-ready after card: 0
 - Options: `use_safe_default`, `open_separate_review`, `needs_more_context`
@@ -122,7 +122,7 @@ owner_note:
 Welche lokalen Study-Assets sollen ein Human Review bekommen, ohne Public-Promotion zu erlauben?
 
 - Batch: `batch-e-kosmoasset-human-reviews`
-- Items: 6
+- Items: 0
 - Safe default: `needs-review`
 - Public-ready after card: 0
 - Options: `keep_needs_review`, `assign_named_human_review`, `block_public`

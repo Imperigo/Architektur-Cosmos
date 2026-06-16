@@ -78,10 +78,17 @@ const steps = [
   step('local_worker_execution_runbook_check', 'Local Worker Execution Runbook Check', ['run', 'kosmo:local-worker-execution-runbook-check']),
   step('local_worker_output_contract_review', 'Local Worker Output Contract Review', ['run', 'kosmo:local-worker-output-contract-review']),
   step('local_worker_output_contract_review_check', 'Local Worker Output Contract Review Check', ['run', 'kosmo:local-worker-output-contract-review-check']),
-  step('owner_review_packet', 'Owner Review Packet', ['run', 'kosmo:owner-review-packet']),
-  step('owner_review_packet_check', 'Owner Review Packet Check', ['run', 'kosmo:owner-review-packet-check']),
-  step('owner_review_session_brief', 'Owner Review Session Brief', ['run', 'kosmo:owner-review-session-brief']),
-  step('owner_review_session_brief_check', 'Owner Review Session Brief Check', ['run', 'kosmo:owner-review-session-brief-check']),
+  step('owner_next_review_brief', 'Owner Next Review Brief', ['run', 'kosmo:owner-next-review-brief']),
+  step('owner_review_card_set', 'Owner Review Card Set', ['run', 'kosmo:owner-review-card-set']),
+  step('owner_answer_sheet', 'Owner Answer Sheet', ['run', 'kosmo:owner-answer-sheet']),
+  step('owner_answer_sheet_check', 'Owner Answer Sheet Check', ['run', 'kosmo:owner-answer-sheet-check']),
+  step('owner_answer_intake_template', 'Owner Answer Intake Template', ['run', 'kosmo:owner-answer-intake-template']),
+  step('owner_answer_intake_check', 'Owner Answer Intake Check', ['run', 'kosmo:owner-answer-intake-check']),
+  step('owner_answer_session_edit_plan', 'Owner Answer Session Edit Plan', ['run', 'kosmo:owner-answer-session-edit-plan']),
+  step('owner_review_batch_resolution_ledger', 'Owner Review Batch Resolution Ledger', ['run', 'kosmo:owner-review-batch-resolution-ledger']),
+  step('owner_review_batch_resolution_ledger_check', 'Owner Review Batch Resolution Ledger Check', ['run', 'kosmo:owner-review-batch-resolution-ledger-check']),
+  step('owner_question_brief', 'Owner Question Brief', ['run', 'kosmo:owner-question-brief']),
+  step('owner_question_brief_check', 'Owner Question Brief Check', ['run', 'kosmo:owner-question-brief-check']),
   step('night_loop_checkpoint', 'Night Loop Checkpoint', ['run', 'kosmo:night-loop-checkpoint']),
   step('source_independent_work_queue', 'Source-Independent Work Queue', ['run', 'kosmo:source-independent-work-queue']),
   step('innovation_lane_plan', 'Innovation Lane Plan', ['run', 'kosmo:innovation-lane-plan']),
@@ -221,8 +228,12 @@ async function buildReport({ results, startedAt }) {
   const sweep = await readOptionalJson(`data/kosmodata-lane-sweep-${dateStamp}.json`);
   const router = await readOptionalJson(`data/kosmo-data-lane-command-router-${dateStamp}.json`);
   const boundary = await readOptionalJson(`data/kosmo-worker-boundary-pack-check-${dateStamp}.json`);
-  const ownerPacket = await readOptionalJson(`data/kosmo-owner-review-packet-check-${dateStamp}.json`);
-  const ownerSession = await readOptionalJson(`data/kosmo-owner-review-session-brief-check-${dateStamp}.json`);
+  const ownerNextReviewBrief = await readOptionalJson(`data/kosmo-owner-next-review-brief-${dateStamp}.json`);
+  const ownerAnswerSheetCheck = await readOptionalJson(`data/kosmo-owner-answer-sheet-check-${dateStamp}.json`);
+  const ownerAnswerIntakeCheck = await readOptionalJson(`data/kosmo-owner-answer-intake-check-${dateStamp}.json`);
+  const ownerReviewBatchResolutionLedger = await readOptionalJson(`data/kosmo-owner-review-batch-resolution-ledger-${dateStamp}.json`);
+  const ownerReviewBatchResolutionLedgerCheck = await readOptionalJson(`data/kosmo-owner-review-batch-resolution-ledger-check-${dateStamp}.json`);
+  const ownerQuestionBriefCheck = await readOptionalJson(`data/kosmo-owner-question-brief-check-${dateStamp}.json`);
   const blocker = await readOptionalJson(`data/kosmo-source-root-blocker-refresh-${dateStamp}.json`);
   const decisionSessionRefresh = await readOptionalJson(`data/kosmo-source-root-decision-session-refresh-${dateStamp}.json`);
   const candidateIntegrity = await readOptionalJson(`data/kosmo-source-root-candidate-integrity-check-${dateStamp}.json`);
@@ -267,8 +278,16 @@ async function buildReport({ results, startedAt }) {
   const githubFixturePayloadSmoke = await readOptionalJson(`data/kosmo-innovation-github-fixture-payload-smoke-${dateStamp}.json`);
   const githubFixturePayloadSmokeCheck = await readOptionalJson(`data/kosmo-innovation-github-fixture-payload-smoke-check-${dateStamp}.json`);
   const orbitBridge = await readOptionalJson(`data/kosmo-orbit-status-bridge-${dateStamp}.json`);
-  const ownerHandoffPassed = ownerPacket?.status === 'owner_review_packet_guard_passed' &&
-    ownerSession?.status === 'owner_review_session_brief_guard_passed';
+  const ownerHandoffPassed = ownerNextReviewBrief?.status === 'owner_next_review_brief_clear' &&
+    ownerAnswerSheetCheck?.status === 'owner_answer_sheet_guard_passed' &&
+    ownerAnswerIntakeCheck?.status === 'owner_answer_intake_guard_passed_with_answers' &&
+    ownerReviewBatchResolutionLedger?.status === 'owner_review_batch_resolution_ledger_ready' &&
+    ownerReviewBatchResolutionLedgerCheck?.status === 'owner_review_batch_resolution_ledger_guard_passed' &&
+    ownerQuestionBriefCheck?.status === 'owner_question_brief_guard_passed' &&
+    (ownerNextReviewBrief?.summary?.open_batches ?? 1) === 0 &&
+    (ownerReviewBatchResolutionLedger?.summary?.public_ready_after_ledger ?? 1) === 0 &&
+    (ownerReviewBatchResolutionLedgerCheck?.summary?.failures ?? 1) === 0 &&
+    (ownerQuestionBriefCheck?.summary?.failures ?? 1) === 0;
   const invariants = [
     invariant('required_steps_passed', requiredFailures.length === 0, `${required.length - requiredFailures.length}/${required.length}`),
     invariant('core_sweep_review_only', sweep?.status === 'kosmodata_lane_sweep_review_only_passed', sweep?.status),
@@ -311,7 +330,11 @@ async function buildReport({ results, startedAt }) {
     invariant('asset_source_candidate_map_ready', assetSourceCandidateMap?.status === 'kosmoasset_source_candidate_map_review_only_ready', assetSourceCandidateMap?.status),
     invariant('asset_candidate_taxonomy_review_ready', assetCandidateTaxonomyReview?.status === 'kosmoasset_candidate_taxonomy_review_ready', assetCandidateTaxonomyReview?.status),
     invariant('asset_candidate_taxonomy_review_guard_passed', assetCandidateTaxonomyReviewCheck?.status === 'kosmoasset_candidate_taxonomy_review_guard_passed', assetCandidateTaxonomyReviewCheck?.status),
-    invariant('owner_handoff_passed', ownerHandoffPassed, `${ownerPacket?.status || 'missing'} / ${ownerSession?.status || 'missing'}`),
+    invariant(
+      'owner_handoff_passed',
+      ownerHandoffPassed,
+      `${ownerNextReviewBrief?.status || 'missing'} / ${ownerReviewBatchResolutionLedger?.status || 'missing'} / ${ownerReviewBatchResolutionLedgerCheck?.status || 'missing'}`
+    ),
     invariant('innovation_smoke_review_only', innovationSmoke?.status === 'innovation_smoke_passed_review_only', innovationSmoke?.status),
     invariant('github_discovery_ready', githubDiscovery?.status === 'innovation_github_discovery_ready' && (githubDiscovery?.summary?.executable_now ?? 0) === 0, `${githubDiscovery?.status}, execute=${githubDiscovery?.summary?.executable_now ?? 'missing'}`),
     invariant('github_discovery_guard_passed', githubDiscoveryCheck?.status === 'innovation_github_discovery_guard_passed', githubDiscoveryCheck?.status),

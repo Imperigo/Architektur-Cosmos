@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:33:25.077Z",
+  "generated_at": "2026-06-16T17:15:23.988Z",
   "status": "overseer_sync_board_guard_passed",
   "policy": {
     "records_decisions": false,
@@ -16,7 +16,7 @@
   ],
   "summary": {
     "board_status": "overseer_sync_board_ready",
-    "data_lane_steps": "24/24",
+    "data_lane_steps": "26/26",
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
     "local_worker_outputs": "9/9",

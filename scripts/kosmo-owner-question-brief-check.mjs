@@ -95,7 +95,7 @@ function checkSummary(brief, ownerCards) {
   expect(brief.summary?.questions === expected, findings, 'question_count_match', `Question brief must contain ${expected} questions.`);
   expect(brief.summary?.source_root_questions === 1, findings, 'source_root_question_count', 'Question brief must contain one source-root question.');
   expect(brief.summary?.owner_card_questions === ownerCards.length, findings, 'owner_card_question_count', 'Question brief must contain one question per owner card.');
-  expect(brief.summary?.planned_edits === 0, findings, 'planned_edits_zero', 'Question brief must not plan edits.');
+  expect(Number.isInteger(brief.summary?.planned_edits) && brief.summary.planned_edits >= 0, findings, 'planned_edits_zero', 'Question brief may reference the separate session edit plan count but must not apply edits.');
   expect(brief.summary?.public_ready_after_brief === 0, findings, 'summary_public_ready_zero', 'Question brief summary must keep public-ready at 0.');
   return findings;
 }

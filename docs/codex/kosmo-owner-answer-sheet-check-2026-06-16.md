@@ -1,13 +1,13 @@
 # Kosmo Owner Answer Sheet Check
 
-Generated: 2026-06-16T12:31:10.193Z
+Generated: 2026-06-16T17:15:00.914Z
 Status: `owner_answer_sheet_guard_passed`
 
 ## Summary
 
 - Answer sheet: owner_answer_sheet_ready
 - Owner cards: 5/5
-- Owner card items: 16
+- Owner card items: 0
 - Source-root options: 10
 - Reference decisions: 10/10
 - Public-ready after guard: 0

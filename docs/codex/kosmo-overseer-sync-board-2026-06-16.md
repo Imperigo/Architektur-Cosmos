@@ -1,19 +1,19 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-16T12:33:24.838Z
+Generated: 2026-06-16T17:15:23.743Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
 
-- Data lane: 24/24 (kosmodata_lane_sweep_review_only_passed)
+- Data lane: 26/26 (kosmodata_lane_sweep_review_only_passed)
 - Router: worker_router_private_diagnostic_ready
 - Checkpoint: night_loop_guarded_ready
-- Next loop: resolve_owner_review_batch
+- Next loop: resolve_asset_human_reviews
 - Session brief guard: owner_review_session_brief_guard_passed, failures 0
 - Local worker review: local_worker_outputs_present_review_only, outputs 9/9, risk 0
 - Latest handoffs tracked: 8
 - Latest handoff mirror missing files: 0
-- Historical handoff mirror missing files: 268
+- Historical handoff mirror missing files: 270
 - Public-ready after board: 0
 
 ## Latest Handoffs

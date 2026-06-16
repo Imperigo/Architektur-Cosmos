@@ -1,15 +1,15 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T12:31:41.275Z
+Generated: 2026-06-16T17:15:17.997Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
 - Cards: 85
-- Blocking cards: 4
-- Owner action cards: 20
+- Blocking cards: 6
+- Owner action cards: 19
 - Source root blocked: no
-- Day batch: day_batch_loop_passed_review_only
+- Day batch: day_batch_loop_needs_review
 - Source-root decision refresh: source_root_decision_session_refresh_refused, changed no, options 10, failures 1
 - Source-root candidate integrity: source_root_candidate_integrity_owner_review_ready, existing 8, exact roots 1, failures 0
 - Source-root owner action: source_root_owner_action_satisfied_metadata_only
@@ -29,7 +29,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6
 - Local worker execution runbook: local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0
 - Local worker output contracts: local_worker_output_contract_review_ready, contracts 9, present valid 9, repo conversion now 0, execute now 0, check local_worker_output_contract_review_guard_passed, failures 0
-- Source-independent work queue: source_independent_work_queue_ready, tasks 9, completed 8, codex executable 0, owner actions 1, failures 0
+- Source-independent work queue: source_independent_work_queue_ready, tasks 9, completed 9, codex executable 0, owner actions 0, failures 0
 - Pilot gap label review: pilot_gap_label_review_ready, labels 12, hard blockers 7, owner decisions 7, check pilot_gap_label_review_guard_passed, failures 0
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
@@ -70,7 +70,7 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | ready | no | 70/70 required steps |
+| `day-batch` Daily Batch | needs_review | no | 59/60 required steps |
 | `source-root` Source Root | ready | no | private diagnostic allowed |
 | `source-root-decision-refresh` Source Root Decision Refresh | needs_review | no | source_root_decision_session_refresh_refused, changed no, options 10 |
 | `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |
@@ -97,7 +97,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 6 |
 | `local-worker-execution-runbook` Local Worker Execution Runbook | review_only_ready | no | local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0 |
 | `local-worker-output-contracts` Local Worker Output Contracts | review_only_ready | no | 9 contracts, present 9, repo 0, execute 0, failures 0 |
-| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 9 tasks, completed 8, codex 0, owner 1, failures 0 |
+| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | no | 9 tasks, completed 9, codex 0, owner 0, failures 0 |
 | `private-metadata-inventory` Private Metadata Inventory | review_only_ready | no | 24 candidates, scanned 5705 files |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `pilot-gap-labels` Pilot Gap Labels | review_only_ready | yes | 12 labels, 7 hard blockers, owner 7, failures 0 |
@@ -154,7 +154,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-17, failures 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 1 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |
-| `owner-handoff` Owner Handoff | ready | yes | 6 questions, no filled answers recorded |
+| `owner-handoff` Owner Handoff | needs_review | yes | 6 questions, no filled answers recorded |
 
 ## Recommended Orbit Sections
 

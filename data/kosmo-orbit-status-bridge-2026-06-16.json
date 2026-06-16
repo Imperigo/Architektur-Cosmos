@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:31:41.275Z",
+  "generated_at": "2026-06-16T17:15:17.997Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -166,10 +166,10 @@
   ],
   "summary": {
     "cards": 85,
-    "blocking_cards": 4,
-    "owner_action_cards": 20,
+    "blocking_cards": 6,
+    "owner_action_cards": 19,
     "source_root_blocked": false,
-    "day_batch_status": "day_batch_loop_passed_review_only",
+    "day_batch_status": "day_batch_loop_needs_review",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_refused",
     "source_root_decision_refresh_changed": false,
     "source_root_decision_refresh_options": 10,
@@ -232,9 +232,9 @@
     "local_worker_output_contract_review_check_failures": 0,
     "source_independent_work_queue_status": "source_independent_work_queue_ready",
     "source_independent_work_queue_tasks": 9,
-    "source_independent_work_queue_completed_review_only": 8,
+    "source_independent_work_queue_completed_review_only": 9,
     "source_independent_work_queue_codex_executable_now": 0,
-    "source_independent_work_queue_owner_actions": 1,
+    "source_independent_work_queue_owner_actions": 0,
     "source_independent_work_queue_failures": 0,
     "pilot_gap_label_review_status": "pilot_gap_label_review_ready",
     "pilot_gap_label_review_labels": 12,
@@ -443,8 +443,8 @@
     {
       "id": "day-batch",
       "title": "Daily Batch",
-      "status": "ready",
-      "signal": "70/70 required steps",
+      "status": "needs_review",
+      "signal": "59/60 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-16.json"
@@ -687,8 +687,8 @@
       "id": "source-independent-work-queue",
       "title": "Source-Independent Work Queue",
       "status": "review_only_ready",
-      "signal": "9 tasks, completed 8, codex 0, owner 1, failures 0",
-      "owner_action_required": true,
+      "signal": "9 tasks, completed 9, codex 0, owner 0, failures 0",
+      "owner_action_required": false,
       "route_hint": "Safe work that does not require private source-root activation",
       "source_ref": "data/kosmo-source-independent-work-queue-2026-06-16.json"
     },
@@ -1199,7 +1199,7 @@
     {
       "id": "owner-handoff",
       "title": "Owner Handoff",
-      "status": "ready",
+      "status": "needs_review",
       "signal": "6 questions, no filled answers recorded",
       "owner_action_required": true,
       "route_hint": "Present source-root and review packet questions",

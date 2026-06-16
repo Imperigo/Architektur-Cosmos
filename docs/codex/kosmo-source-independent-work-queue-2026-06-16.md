@@ -1,6 +1,6 @@
 # Kosmo Source-Independent Work Queue
 
-Generated: 2026-06-16T12:31:41.518Z
+Generated: 2026-06-16T17:15:03.077Z
 Status: `source_independent_work_queue_ready`
 
 ## Summary
@@ -10,9 +10,9 @@ Status: `source_independent_work_queue_ready`
 - Source-root blocked: no
 - Private inventory blocked: no
 - Tasks: 9
-- Completed review-only: 8
+- Completed review-only: 9
 - Codex executable now: 0
-- Owner actions: 1
+- Owner actions: 0
 - Blocked by private/source root: 0
 - Failures: 0
 - Public-ready after queue: 0
@@ -28,8 +28,8 @@ Status: `source_independent_work_queue_ready`
 | `codex_prepare_phase1_source_package_contract` | kosmoprepare-kosmoreferences | codex | completed_review_only | no | no | `npm run kosmo:prepare-phase1-source-package-contract && npm run kosmo:prepare-phase1-source-package-contract-check` | completed package kosmo-prepare-phase1-adapter-fixture-2026-06-16, failures 0 |
 | `codex_asset_prepare_phase1_fixture_contract` | kosmoasset | codex | completed_review_only | no | no | `npm run kosmo:asset-prepare-phase1-fixture-contract && npm run kosmo:asset-prepare-phase1-fixture-contract-check` | completed library kosmo-prepare-phase1-fixture, assets 2, failures 0 |
 | `codex_local_worker_fixture_chain_task_pack` | local_worker | codex | completed_review_only | no | no | `npm run kosmo:local-worker-fixture-chain-task-pack && npm run kosmo:local-worker-fixture-chain-task-pack-check` | completed 8 tasks, executable 0, failures 0 |
-| `owner_open_review_batches` | owner_decision | owner_or_overseer | owner_action_required | no | yes | `review docs/codex/kosmo-owner-review-packet-2026-06-14.md` | open batches 5, open items 16 |
-| `codex_orbit_status_refresh` | orbit | codex | completed_review_only | no | no | `npm run kosmo:orbit-status-bridge` | completed 85 cards, blockers 4, owner 20 |
+| `owner_open_review_batches` | owner_decision | owner_or_overseer | completed_review_only | no | no | `review docs/codex/kosmo-owner-review-batch-resolution-ledger-2026-06-16.md` | resolved review-only 5 batches / 16 items |
+| `codex_orbit_status_refresh` | orbit | codex | completed_review_only | no | no | `npm run kosmo:orbit-status-bridge` | completed 85 cards, blockers 4, owner 19 |
 
 ## Hard Stops
 

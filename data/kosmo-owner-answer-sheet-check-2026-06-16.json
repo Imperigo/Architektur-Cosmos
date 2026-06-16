@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:31:10.193Z",
+  "generated_at": "2026-06-16T17:15:00.914Z",
   "status": "owner_answer_sheet_guard_passed",
   "policy": {
     "reads_private_content": false,
@@ -21,7 +21,7 @@
     "answer_sheet_status": "owner_answer_sheet_ready",
     "owner_cards": 5,
     "answer_sheet_owner_cards": 5,
-    "answer_sheet_owner_card_items": 16,
+    "answer_sheet_owner_card_items": 0,
     "source_root_allowed_decisions": 5,
     "answer_sheet_source_root_options": 10,
     "owner_reference_decisions": 10,

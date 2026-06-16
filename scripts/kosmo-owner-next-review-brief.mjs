@@ -8,6 +8,7 @@ const args = parseArgs(process.argv.slice(2));
 const dateStamp = new Date().toISOString().slice(0, 10);
 const batchesPath = resolve(root, args.batches || `data/kosmo-human-decision-owner-batches-${dateStamp}.json`);
 const routerPath = resolve(root, args.router || `data/kosmo-data-lane-command-router-${dateStamp}.json`);
+const resolutionLedgerPath = resolve(root, args.resolutionLedger || `data/kosmo-owner-review-batch-resolution-ledger-${dateStamp}.json`);
 const outputJson = resolve(root, args.out || `data/kosmo-owner-next-review-brief-${dateStamp}.json`);
 const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-owner-next-review-brief-${dateStamp}.md`);
 
@@ -19,22 +20,40 @@ main().catch((error) => {
 async function main() {
   const batches = JSON.parse(await readFile(batchesPath, 'utf8'));
   const router = JSON.parse(await readFile(routerPath, 'utf8'));
-  const openBatches = (batches.batches || []).filter((batch) => batch.open_items > 0);
-  const reviewCards = openBatches.map((batch, index) => buildReviewCard(batch, index + 1));
+  const resolutionLedger = await readOptionalJson(resolutionLedgerPath);
+  const resolvedBatchIds = new Set((resolutionLedger?.resolutions || [])
+    .filter((resolution) => resolution.resolution_status === 'triaged_review_only')
+    .map((resolution) => resolution.batch_id));
+  const openBatches = (batches.batches || []).filter((batch) => batch.open_items > 0 && !resolvedBatchIds.has(batch.id));
+  const resolvedBatches = (batches.batches || []).filter((batch) => resolvedBatchIds.has(batch.id));
+  const reviewCards = [
+    ...openBatches.map((batch, index) => buildReviewCard(batch, index + 1)),
+    ...resolvedBatches.map((batch, index) => buildReviewCard(batch, openBatches.length + index + 1, true))
+  ];
+  const resolvedItems = (resolutionLedger?.resolutions || [])
+    .filter((resolution) => resolution.resolution_status === 'triaged_review_only')
+    .reduce((sum, resolution) => sum + (resolution.resolved_item_count || 0), 0);
   const brief = {
     schema_version: '0.1',
     generated_at: new Date().toISOString(),
-    status: reviewCards.length > 0 ? 'owner_next_review_brief_open' : 'owner_next_review_brief_clear',
+    status: openBatches.length > 0 ? 'owner_next_review_brief_open' : 'owner_next_review_brief_clear',
     policy: {
       records_decisions: false,
       public_writes_allowed: false,
       public_ready_after_brief: 0,
       note: 'This brief prepares owner questions only. It does not record decisions, approve public display, promote assets or modify manifests.'
     },
-    source_refs: [relative(root, batchesPath), relative(root, routerPath)],
+    source_refs: [
+      relative(root, batchesPath),
+      relative(root, routerPath),
+      relative(root, resolutionLedgerPath)
+    ],
     summary: {
-      open_batches: reviewCards.length,
-      open_items: batches.summary?.open_items ?? reviewCards.reduce((sum, card) => sum + card.open_items, 0),
+      open_batches: openBatches.length,
+      open_items: Math.max(0, (batches.summary?.open_items ?? reviewCards.reduce((sum, card) => sum + card.open_items, 0)) - resolvedItems),
+      resolved_batches_review_only: resolvedBatchIds.size,
+      resolved_items_review_only: resolvedItems,
+      resolution_ledger_status: resolutionLedger?.status || null,
       router_status: router.status,
       private_diagnostic_allowed: router.summary?.private_diagnostic_allowed === true,
       private_inventory_allowed: router.summary?.private_inventory_allowed === true,
@@ -64,18 +83,21 @@ async function main() {
   console.log(`Wrote: ${relative(root, outputMd)}`);
 }
 
-function buildReviewCard(batch, order) {
+function buildReviewCard(batch, order, resolvedReviewOnly = false) {
   const safeDefault = dominantSafeDefault(batch.safe_defaults || {});
   return {
     order,
     batch_id: batch.id,
     label: batch.label,
     intent: batch.intent,
-    open_items: batch.open_items,
+    open_items: resolvedReviewOnly ? 0 : batch.open_items,
+    resolved_review_only: resolvedReviewOnly,
     safe_default: safeDefault,
     recommended_owner_question: ownerQuestion(batch, safeDefault),
     recommended_stance: batch.recommended_stance || [],
-    decision_effect: 'No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.',
+    decision_effect: resolvedReviewOnly
+      ? 'This card has already been triaged review-only; no public-ready changes are allowed.'
+      : 'No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.',
     command_hint_after_decision: commandHint(batch),
     items: (batch.items || []).map((item) => ({
       id: item.id,
@@ -120,6 +142,14 @@ function dominantSafeDefault(counts) {
   return entries.sort((a, b) => b[1] - a[1])[0][0];
 }
 
+async function readOptionalJson(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 function renderMarkdown(brief) {
   const lines = [];
   lines.push('# Kosmo Owner Next Review Brief');
@@ -131,6 +161,9 @@ function renderMarkdown(brief) {
   lines.push('');
   lines.push(`- Open batches: ${brief.summary.open_batches}`);
   lines.push(`- Open items: ${brief.summary.open_items}`);
+  lines.push(`- Resolved review-only batches: ${brief.summary.resolved_batches_review_only}`);
+  lines.push(`- Resolved review-only items: ${brief.summary.resolved_items_review_only}`);
+  lines.push(`- Resolution ledger: ${brief.summary.resolution_ledger_status || 'none'}`);
   lines.push(`- Router: ${brief.summary.router_status}`);
   lines.push(`- Private diagnostic allowed: ${brief.summary.private_diagnostic_allowed ? 'yes' : 'no'}`);
   lines.push(`- Private inventory allowed: ${brief.summary.private_inventory_allowed ? 'yes' : 'no'}`);

@@ -45,6 +45,20 @@ const steps = [
     report: dataReport('kosmo-human-decision-owner-batches')
   },
   {
+    id: 'owner_review_batch_resolution_ledger',
+    label: 'Owner Review Batch Resolution Ledger',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-review-batch-resolution-ledger'],
+    report: dataReport('kosmo-owner-review-batch-resolution-ledger')
+  },
+  {
+    id: 'owner_review_batch_resolution_ledger_check',
+    label: 'Owner Review Batch Resolution Ledger Check',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-review-batch-resolution-ledger-check'],
+    report: dataReport('kosmo-owner-review-batch-resolution-ledger-check')
+  },
+  {
     id: 'local_worker_output_review',
     label: 'Local Worker Output Review',
     command: 'npm',
@@ -210,6 +224,8 @@ async function main() {
   const assetFullReview = await readOptionalJson(reportPath('kosmoasset_seed_full_review'));
   const humanDecisionQueue = await readOptionalJson(reportPath('human_decision_queue'));
   const ownerDecisionBatches = await readOptionalJson(reportPath('owner_decision_batches'));
+  const ownerReviewBatchResolutionLedger = await readOptionalJson(reportPath('owner_review_batch_resolution_ledger'));
+  const ownerReviewBatchResolutionLedgerCheck = await readOptionalJson(reportPath('owner_review_batch_resolution_ledger_check'));
   const localWorkerReview = await readOptionalJson(reportPath('local_worker_output_review'));
   const pilotEvidenceMatrix = await readOptionalJson(reportPath('pilot_evidence_matrix'));
   const villaBrief = await readOptionalJson(reportPath('villa_provenance_review_brief'));
@@ -237,7 +253,7 @@ async function main() {
   const failedSteps = stepResults.filter((step) => step.exit_code !== 0);
   const status = failedSteps.length
     ? 'kosmodata_lane_sweep_failed'
-    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief, ownerReviewSessionBriefCheck })
+    : isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, ownerReviewBatchResolutionLedger, ownerReviewBatchResolutionLedgerCheck, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief, ownerReviewSessionBriefCheck })
       ? 'kosmodata_lane_sweep_review_only_passed'
       : 'kosmodata_lane_sweep_needs_review';
 
@@ -351,6 +367,12 @@ async function main() {
       owner_next_review_brief_status: ownerNextReviewBrief?.status || null,
       owner_next_review_brief_open_batches: ownerNextReviewBrief?.summary?.open_batches ?? null,
       owner_next_review_brief_open_items: ownerNextReviewBrief?.summary?.open_items ?? null,
+      owner_next_review_brief_resolved_batches_review_only: ownerNextReviewBrief?.summary?.resolved_batches_review_only ?? null,
+      owner_review_batch_resolution_ledger_status: ownerReviewBatchResolutionLedger?.status || null,
+      owner_review_batch_resolution_ledger_resolved_batches: ownerReviewBatchResolutionLedger?.summary?.resolved_batches ?? null,
+      owner_review_batch_resolution_ledger_resolved_items: ownerReviewBatchResolutionLedger?.summary?.resolved_items ?? null,
+      owner_review_batch_resolution_ledger_check_status: ownerReviewBatchResolutionLedgerCheck?.status || null,
+      owner_review_batch_resolution_ledger_check_failures: ownerReviewBatchResolutionLedgerCheck?.summary?.failures ?? null,
       owner_review_card_set_status: ownerReviewCardSet?.status || null,
       owner_review_card_set_cards: ownerReviewCardSet?.summary?.cards ?? null,
       owner_review_card_set_open_items: ownerReviewCardSet?.summary?.open_items ?? null,
@@ -397,6 +419,8 @@ async function main() {
       private_source_inventory_plan: stepById.get('private_source_inventory_plan')?.report,
       private_inventory_output_template: stepById.get('private_inventory_output_template')?.report,
       private_inventory_output_check: stepById.get('private_inventory_output_check')?.report,
+      owner_review_batch_resolution_ledger: stepById.get('owner_review_batch_resolution_ledger')?.report,
+      owner_review_batch_resolution_ledger_check: stepById.get('owner_review_batch_resolution_ledger_check')?.report,
       owner_next_review_brief: stepById.get('owner_next_review_brief')?.report,
       owner_review_card_set: stepById.get('owner_review_card_set')?.report,
       owner_answer_sheet: stepById.get('owner_answer_sheet')?.report,
@@ -412,7 +436,7 @@ async function main() {
       owner_review_session_brief_check: dataReport('kosmo-owner-review-session-brief-check')
     },
     steps: stepResults,
-    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief, ownerReviewSessionBriefCheck })
+    next_actions: nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, ownerReviewBatchResolutionLedger, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief, ownerReviewSessionBriefCheck })
   };
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -471,7 +495,7 @@ async function runStep(step) {
   };
 }
 
-function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck }) {
+function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, ownerReviewBatchResolutionLedger, ownerReviewBatchResolutionLedgerCheck, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputTemplate, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck }) {
   const referencesOk = referencesGate?.status === 'passed_review_only' &&
     (referencesGate?.summary?.public_ready_assets ?? referencesStatus?.summary?.public_ready_assets) === 0;
   const assetOk = assetFullReview?.status === 'asset_full_review_ready_for_human_decisions' &&
@@ -481,6 +505,15 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     humanDecisionQueue?.summary?.public_ready_after_queue === 0;
   const batchesOk = ['owner_decision_batches_open', 'owner_decision_batches_clear'].includes(ownerDecisionBatches?.status) &&
     ownerDecisionBatches?.summary?.public_ready_after_batches === 0;
+  const ownerReviewBatchResolutionLedgerOk = ownerReviewBatchResolutionLedger?.status === 'owner_review_batch_resolution_ledger_ready' &&
+    ownerReviewBatchResolutionLedger?.summary?.owner_action_required === 0 &&
+    ownerReviewBatchResolutionLedger?.summary?.public_ready_after_ledger === 0 &&
+    ownerReviewBatchResolutionLedger?.policy?.records_reference_item_decisions !== true &&
+    ownerReviewBatchResolutionLedger?.policy?.records_asset_approvals !== true &&
+    ownerReviewBatchResolutionLedger?.policy?.reads_private_content !== true;
+  const ownerReviewBatchResolutionLedgerCheckOk = ownerReviewBatchResolutionLedgerCheck?.status === 'owner_review_batch_resolution_ledger_guard_passed' &&
+    ownerReviewBatchResolutionLedgerCheck?.summary?.failures === 0 &&
+    ownerReviewBatchResolutionLedgerCheck?.summary?.public_ready_after_guard === 0;
   const localWorkerOk = localWorkerReview?.status === 'local_worker_outputs_present_review_only' &&
     localWorkerReview?.summary?.missing_outputs === 0 &&
     localWorkerReview?.summary?.invalid_json_outputs === 0 &&
@@ -566,18 +599,25 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     ownerQuestionBriefCheck?.summary?.public_ready_after_guard === 0 &&
     ownerQuestionBriefCheck?.policy?.records_decisions !== true &&
     ownerQuestionBriefCheck?.policy?.writes_session_files !== true;
-  return referencesOk && assetOk && queueOk && batchesOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk && ownerAnswerSessionEditPlanOk && ownerQuestionBriefOk && ownerQuestionBriefCheckOk;
+  return referencesOk && assetOk && queueOk && batchesOk && ownerReviewBatchResolutionLedgerOk && ownerReviewBatchResolutionLedgerCheckOk && localWorkerOk && pilotEvidenceOk && villaBriefOk && ingenbohlBriefOk && sognBriefOk && sourceRootLocatorOk && sourceRootSelectionBriefOk && sourceRootDecisionSessionOk && privateSourceInventoryPlanOk && privateInventoryTemplateOk && privateInventoryOutputCheckOk && ownerAnswerSheetOk && ownerAnswerSheetCheckOk && ownerAnswerIntakeTemplateOk && ownerAnswerIntakeCheckOk && ownerAnswerSessionEditPlanOk && ownerQuestionBriefOk && ownerQuestionBriefCheckOk;
 }
 
-function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief, ownerReviewSessionBriefCheck }) {
+function nextActions({ failedSteps, referencesGate, referencesStatus, assetFullReview, humanDecisionQueue, ownerDecisionBatches, ownerReviewBatchResolutionLedger, localWorkerReview, pilotEvidenceMatrix, villaBrief, ingenbohlBrief, sognBrief, sourceRootLocator, sourceRootSelectionBrief, sourceRootDecisionSessionCheck, privateSourceInventoryPlan, privateInventoryOutputCheck, ownerAnswerSheet, ownerAnswerSheetCheck, ownerAnswerIntakeTemplate, ownerAnswerIntakeCheck, ownerAnswerSessionEditPlan, ownerQuestionBrief, ownerQuestionBriefCheck, ownerReviewPacket, ownerReviewPacketCheck, ownerReviewSessionBrief, ownerReviewSessionBriefCheck }) {
   if (failedSteps.length > 0) return [`Fix failed sweep steps: ${failedSteps.map((step) => step.id).join(', ')}.`];
   const actions = [];
   const ownerPending = humanDecisionQueue?.summary?.reference_items ?? referencesGate?.summary?.owner_decision_session_pending ?? referencesStatus?.summary?.owner_decision_session_pending ?? 0;
   if (ownerPending > 0) actions.push(`Owner resolves ${ownerPending} KosmoReferences decisions before public promotion review.`);
   const assetOpen = humanDecisionQueue?.summary?.asset_items ?? assetFullReview?.summary?.open_human_review_count ?? 0;
   if (assetOpen > 0) actions.push(`Complete ${assetOpen} KosmoAsset human reviews before local approvals or sandbox certificates.`);
-  const openBatches = ownerDecisionBatches?.summary?.batches_with_open_items ?? 0;
+  const openBatches = Math.max(
+    0,
+    (ownerDecisionBatches?.summary?.batches_with_open_items ?? 0) -
+      (ownerReviewBatchResolutionLedger?.summary?.resolved_batches ?? 0)
+  );
   if (openBatches > 0) actions.push(`Use ${openBatches} owner decision batches for review rounds instead of asking all open items at once.`);
+  if ((ownerReviewBatchResolutionLedger?.summary?.resolved_batches ?? 0) > 0) {
+    actions.push(`Owner review batches triaged review-only: ${ownerReviewBatchResolutionLedger.summary.resolved_batches} batches / ${ownerReviewBatchResolutionLedger.summary.resolved_items} items.`);
+  }
   const localWorkerRisk = localWorkerReview?.summary?.high_risk_hits ?? 0;
   const localWorkerMissing = localWorkerReview?.summary?.missing_outputs ?? 0;
   if (localWorkerMissing > 0) actions.push(`Regenerate ${localWorkerMissing} missing local worker output files before using worker packets.`);
@@ -701,6 +741,12 @@ function renderMarkdown(report) {
   lines.push(`- Owner answer session edit plan: ${report.summary.owner_answer_session_edit_plan_status}`);
   lines.push(`- Owner answer session edit planned edits: ${report.summary.owner_answer_session_edit_plan_planned_edits}`);
   lines.push(`- Owner answer session edit public-ready after plan: ${report.summary.owner_answer_session_edit_plan_public_ready_after}`);
+  lines.push(`- Owner review batch resolution ledger: ${report.summary.owner_review_batch_resolution_ledger_status}`);
+  lines.push(`- Owner review batch resolution ledger resolved batches/items: ${report.summary.owner_review_batch_resolution_ledger_resolved_batches ?? '-'}/${report.summary.owner_review_batch_resolution_ledger_resolved_items ?? '-'}`);
+  lines.push(`- Owner review batch resolution ledger check: ${report.summary.owner_review_batch_resolution_ledger_check_status}, failures ${report.summary.owner_review_batch_resolution_ledger_check_failures ?? '-'}`);
+  lines.push(`- Owner next review brief: ${report.summary.owner_next_review_brief_status}`);
+  lines.push(`- Owner next review open batches/items: ${report.summary.owner_next_review_brief_open_batches ?? '-'}/${report.summary.owner_next_review_brief_open_items ?? '-'}`);
+  lines.push(`- Owner next review resolved batches review-only: ${report.summary.owner_next_review_brief_resolved_batches_review_only ?? '-'}`);
   lines.push(`- Owner question brief: ${report.summary.owner_question_brief_status}`);
   lines.push(`- Owner question brief questions: ${report.summary.owner_question_brief_questions}`);
   lines.push(`- Owner question brief public-ready after brief: ${report.summary.owner_question_brief_public_ready_after}`);

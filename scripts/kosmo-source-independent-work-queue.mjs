@@ -114,6 +114,17 @@ function buildQueue({
   const prepareSourcePackageDone = preparePhase1SourcePackageContractCheck?.status === 'prepare_phase1_source_package_contract_guard_passed';
   const assetPrepareFixtureDone = assetPreparePhase1FixtureContractCheck?.status === 'kosmoasset_prepare_phase1_fixture_contract_guard_passed';
   const localWorkerFixtureChainDone = localWorkerFixtureChainTaskPackCheck?.status === 'local_worker_fixture_chain_task_pack_guard_passed';
+  const ownerReviewBatchesResolved = dataLaneSweep.summary?.owner_next_review_brief_status === 'owner_next_review_brief_clear' &&
+    (dataLaneSweep.summary?.owner_next_review_brief_open_batches ?? dataLaneSweep.summary?.owner_batches_open ?? 0) === 0 &&
+    dataLaneSweep.summary?.owner_review_batch_resolution_ledger_status === 'owner_review_batch_resolution_ledger_ready' &&
+    dataLaneSweep.summary?.owner_review_batch_resolution_ledger_check_status === 'owner_review_batch_resolution_ledger_guard_passed' &&
+    (dataLaneSweep.summary?.owner_review_batch_resolution_ledger_check_failures ?? 0) === 0;
+  const ownerReviewOpenBatches = ownerReviewBatchesResolved
+    ? 0
+    : dataLaneSweep.summary?.owner_next_review_brief_open_batches ?? dataLaneSweep.summary?.owner_batches_open ?? 0;
+  const ownerReviewOpenItems = ownerReviewBatchesResolved
+    ? 0
+    : dataLaneSweep.summary?.owner_next_review_brief_open_items ?? dataLaneSweep.summary?.owner_batches_open_items ?? 0;
   const orbitRefreshDone = ['orbit_bridge_ready_with_blockers', 'orbit_bridge_all_ready_review_only'].includes(orbitBridge?.status) &&
     (orbitBridge?.summary?.cards ?? 0) >= 30 &&
     (orbitBridge?.summary?.source_independent_work_queue_completed_review_only ?? 0) >= 3 &&
@@ -226,12 +237,19 @@ function buildQueue({
       id: 'owner_open_review_batches',
       lane: 'owner_decision',
       actor: 'owner_or_overseer',
-      action: 'Resolve open owner review batches for references/assets from the existing answer sheet.',
+      action: ownerReviewBatchesResolved
+        ? 'Owner review batches are triaged review-only in the resolution ledger; keep item-level approvals blocked.'
+        : 'Resolve open owner review batches for references/assets from the existing answer sheet.',
       executableNow: false,
-      ownerAction: true,
+      completed: ownerReviewBatchesResolved,
+      ownerAction: !ownerReviewBatchesResolved,
       sourceIndependent: true,
-      command: 'review docs/codex/kosmo-owner-review-packet-2026-06-14.md',
-      evidence: `open batches ${dataLaneSweep.summary?.owner_batches_open ?? 0}, open items ${dataLaneSweep.summary?.owner_batches_open_items ?? 0}`
+      command: ownerReviewBatchesResolved
+        ? 'review docs/codex/kosmo-owner-review-batch-resolution-ledger-2026-06-16.md'
+        : 'review docs/codex/kosmo-owner-review-packet-2026-06-14.md',
+      evidence: ownerReviewBatchesResolved
+        ? `resolved review-only ${dataLaneSweep.summary?.owner_review_batch_resolution_ledger_resolved_batches ?? 0} batches / ${dataLaneSweep.summary?.owner_review_batch_resolution_ledger_resolved_items ?? 0} items`
+        : `open batches ${ownerReviewOpenBatches}, open items ${ownerReviewOpenItems}`
     }),
     task({
       id: 'codex_orbit_status_refresh',

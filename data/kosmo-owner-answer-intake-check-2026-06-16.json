@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:31:10.682Z",
-  "status": "owner_answer_intake_guard_passed_pending_owner_input",
+  "generated_at": "2026-06-16T17:15:01.393Z",
+  "status": "owner_answer_intake_guard_passed_with_answers",
   "policy": {
     "reads_private_content": false,
     "writes_session_files": false,
@@ -16,12 +16,12 @@
     "data/kosmo-owner-answer-sheet-2026-06-16.json"
   ],
   "summary": {
-    "source_root_answer_present": false,
+    "source_root_answer_present": true,
     "owner_card_answers": 5,
-    "owner_card_answers_present": 0,
+    "owner_card_answers_present": 5,
     "reference_decision_answers": 10,
     "reference_decision_answers_present": 0,
-    "filled_answers": 0,
+    "filled_answers": 6,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_guard": 0
@@ -71,6 +71,16 @@
       "id": "source_root_no_public_ready_flag",
       "severity": "passed",
       "message": "Source-root intake must not contain a public-ready flag."
+    },
+    {
+      "id": "source_root_path_absolute",
+      "severity": "passed",
+      "message": "Selected root path must be an absolute path."
+    },
+    {
+      "id": "source_root_path_exists",
+      "severity": "passed",
+      "message": "Selected root path must exist before private diagnostic is allowed."
     },
     {
       "id": "owner_card_answer_count_match",

@@ -114,6 +114,8 @@
     "kosmo:owner-decision-worksheet": "node scripts/kosmo-owner-decision-worksheet.mjs",
     "kosmo:human-decision-queue": "node scripts/kosmo-human-decision-queue.mjs",
     "kosmo:human-decision-owner-batches": "node scripts/kosmo-human-decision-owner-batches.mjs",
+    "kosmo:owner-review-batch-resolution-ledger": "node scripts/kosmo-owner-review-batch-resolution-ledger.mjs",
+    "kosmo:owner-review-batch-resolution-ledger-check": "node scripts/kosmo-owner-review-batch-resolution-ledger-check.mjs",
     "kosmo:owner-next-review-brief": "node scripts/kosmo-owner-next-review-brief.mjs",
     "kosmo:owner-review-card": "node scripts/kosmo-owner-review-card.mjs",
     "kosmo:owner-review-card-set": "node scripts/kosmo-owner-review-card-set.mjs",

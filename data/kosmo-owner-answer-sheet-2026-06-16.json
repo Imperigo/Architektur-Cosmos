@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:31:09.947Z",
+  "generated_at": "2026-06-16T17:15:00.673Z",
   "status": "owner_answer_sheet_ready",
   "policy": {
     "records_decisions": false,
@@ -21,7 +21,7 @@
     "source_root_options": 10,
     "source_root_options_source": "source_root_selection_brief",
     "owner_cards": 5,
-    "owner_card_items": 16,
+    "owner_card_items": 0,
     "owner_reference_decisions": 10,
     "public_ready_after_sheet": 0
   },
@@ -163,7 +163,7 @@
           "batch_id": "batch-a-villa-savoye-image-candidates",
           "label": "Batch A: Villa Savoye Image Candidates",
           "question": "Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?",
-          "items": 3,
+          "items": 0,
           "safe_default": "needs_more_source_context",
           "options": [
             "keep_all_blocked",
@@ -176,7 +176,7 @@
           "batch_id": "batch-b-villa-savoye-derived-files",
           "label": "Batch B: Villa Savoye Derived Files",
           "question": "Sollen alle abgeleiteten Villa-Dateien blockiert bleiben, bis Plan-/Modell-Herkunft sauber belegt ist?",
-          "items": 4,
+          "items": 0,
           "safe_default": "keep_blocked",
           "options": [
             "use_safe_default",
@@ -189,7 +189,7 @@
           "batch_id": "batch-c-model-promotion-confirmation",
           "label": "Batch C: Model Promotion Confirmation",
           "question": "Sollen die vorhandenen Modelle weiterhin als diagrammatische Studien blockiert bleiben, bis Modellqualitaet und Quellenbasis geprueft sind?",
-          "items": 2,
+          "items": 0,
           "safe_default": "needs_more_source_context",
           "options": [
             "use_safe_default",
@@ -202,7 +202,7 @@
           "batch_id": "batch-d-sogn-benedetg-source-gap",
           "label": "Batch D: Sogn Benedetg Source Gap",
           "question": "Soll Sogn Benedetg link-only bleiben, bis der echte private Bibliotheks-Root sichtbar ist?",
-          "items": 1,
+          "items": 0,
           "safe_default": "needs_more_source_context",
           "options": [
             "use_safe_default",
@@ -215,7 +215,7 @@
           "batch_id": "batch-e-kosmoasset-human-reviews",
           "label": "Batch E: KosmoAsset Human Reviews",
           "question": "Welche lokalen Study-Assets sollen ein Human Review bekommen, ohne Public-Promotion zu erlauben?",
-          "items": 6,
+          "items": 0,
           "safe_default": "needs-review",
           "options": [
             "keep_needs_review",

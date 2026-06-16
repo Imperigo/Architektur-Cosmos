@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:15:01.872Z",
+  "status": "owner_review_batch_resolution_ledger_ready",
+  "policy": {
+    "review_only": true,
+    "records_reference_item_decisions": false,
+    "records_asset_approvals": false,
+    "writes_session_files": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_ledger": 0,
+    "note": "This ledger resolves owner review cards as review-only triage only. It does not approve reference items, assets or public display."
+  },
+  "source_refs": [
+    "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-16.json",
+    "data/kosmo-owner-answer-intake-check-2026-06-16.json",
+    "data/kosmo-human-decision-owner-batches-2026-06-16.json"
+  ],
+  "summary": {
+    "intake_status": "owner_answer_intake_template_pending_owner_input",
+    "intake_check_status": "owner_answer_intake_guard_passed_with_answers",
+    "batches_status": "owner_decision_batches_open",
+    "batches": 5,
+    "resolved_batches": 5,
+    "unresolved_batches": 0,
+    "items": 16,
+    "resolved_items": 16,
+    "owner_action_required": 0,
+    "failures": 0,
+    "public_ready_after_ledger": 0
+  },
+  "resolutions": [
+    {
+      "batch_id": "batch-a-villa-savoye-image-candidates",
+      "label": "Batch A: Villa Savoye Image Candidates",
+      "owner_choice": "needs_more_context",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "resolution_status": "triaged_review_only",
+      "item_count": 3,
+      "resolved_item_count": 3,
+      "public_ready_after_resolution": 0,
+      "item_policy_after_resolution": "keep_reference_images_blocked_pending_context",
+      "remaining_blockers": [
+        "public_ready_promotion",
+        "private_content_extraction",
+        "source_credit_or_derived_file_basis_review"
+      ]
+    },
+    {
+      "batch_id": "batch-b-villa-savoye-derived-files",
+      "label": "Batch B: Villa Savoye Derived Files",
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "resolution_status": "triaged_review_only",
+      "item_count": 4,
+      "resolved_item_count": 4,
+      "public_ready_after_resolution": 0,
+      "item_policy_after_resolution": "use_safe_default_keep_review_only",
+      "remaining_blockers": [
+        "public_ready_promotion",
+        "private_content_extraction",
+        "source_credit_or_derived_file_basis_review"
+      ]
+    },
+    {
+      "batch_id": "batch-c-model-promotion-confirmation",
+      "label": "Batch C: Model Promotion Confirmation",
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "resolution_status": "triaged_review_only",
+      "item_count": 2,
+      "resolved_item_count": 2,
+      "public_ready_after_resolution": 0,
+      "item_policy_after_resolution": "use_safe_default_keep_review_only",
+      "remaining_blockers": [
+        "public_ready_promotion",
+        "private_content_extraction",
+        "model_quality_and_source_confidence_review"
+      ]
+    },
+    {
+      "batch_id": "batch-d-sogn-benedetg-source-gap",
+      "label": "Batch D: Sogn Benedetg Source Gap",
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "resolution_status": "triaged_review_only",
+      "item_count": 1,
+      "resolved_item_count": 1,
+      "public_ready_after_resolution": 0,
+      "item_policy_after_resolution": "use_safe_default_keep_review_only",
+      "remaining_blockers": [
+        "public_ready_promotion",
+        "private_content_extraction",
+        "sogn_private_source_context_review"
+      ]
+    },
+    {
+      "batch_id": "batch-e-kosmoasset-human-reviews",
+      "label": "Batch E: KosmoAsset Human Reviews",
+      "owner_choice": "keep_needs_review",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "resolution_status": "triaged_review_only",
+      "item_count": 6,
+      "resolved_item_count": 6,
+      "public_ready_after_resolution": 0,
+      "item_policy_after_resolution": "keep_assets_needs_review",
+      "remaining_blockers": [
+        "public_ready_promotion",
+        "private_content_extraction",
+        "named_human_file_review"
+      ]
+    }
+  ],
+  "next_actions": [
+    "Treat owner review cards as triaged review-only.",
+    "Keep individual reference media, derived files and model promotion decisions blocked unless a separate item-level review is opened.",
+    "Keep KosmoAsset candidates in needs-review/local-review state until named human file review exists.",
+    "Rerun data-lane, router, Orbit and overseer sync after this ledger changes."
+  ],
+  "hard_stops": [
+    "Do not convert this ledger into public-ready approvals.",
+    "Do not copy private files into Git.",
+    "Do not OCR or extract private source text from this ledger.",
+    "Do not run local LLMs on private file contents from this ledger."
+  ],
+  "failures": []
+}

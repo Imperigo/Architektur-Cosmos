@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:31:10.919Z",
-  "status": "owner_answer_session_edit_plan_pending_owner_input",
+  "generated_at": "2026-06-16T17:15:01.634Z",
+  "status": "owner_answer_session_edit_plan_ready_for_review",
   "policy": {
     "writes_session_files": false,
     "applies_decisions": false,
@@ -18,18 +18,69 @@
     "examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json"
   ],
   "summary": {
-    "intake_guard_status": "owner_answer_intake_guard_passed_pending_owner_input",
+    "intake_guard_status": "owner_answer_intake_guard_passed_with_answers",
     "intake_guard_failures": 0,
-    "filled_answers": 0,
-    "planned_edits": 0,
-    "source_root_session_edits": 0,
+    "filled_answers": 6,
+    "planned_edits": 6,
+    "source_root_session_edits": 1,
     "owner_decision_session_edits": 0,
     "public_ready_after_plan": 0
   },
-  "planned_edits": [],
+  "planned_edits": [
+    {
+      "target_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-13.json",
+      "edit_type": "source_root_decision",
+      "selected_decision": "select_existing_root_for_private_diagnostic",
+      "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "current_selected_decision": null,
+      "current_selected_root_path": null,
+      "public_ready_after_edit": 0
+    },
+    {
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "batch_id": "batch-a-villa-savoye-image-candidates",
+      "owner_choice": "needs_more_context",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "public_ready_after_edit": 0
+    },
+    {
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "batch_id": "batch-b-villa-savoye-derived-files",
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "public_ready_after_edit": 0
+    },
+    {
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "batch_id": "batch-c-model-promotion-confirmation",
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "public_ready_after_edit": 0
+    },
+    {
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "batch_id": "batch-d-sogn-benedetg-source-gap",
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "public_ready_after_edit": 0
+    },
+    {
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "batch_id": "batch-e-kosmoasset-human-reviews",
+      "owner_choice": "keep_needs_review",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "public_ready_after_edit": 0
+    }
+  ],
   "next_actions": [
-    "Wait for explicit owner answers in the intake template.",
-    "Rerun npm run kosmo:owner-answer-intake-check after intake fields are filled.",
-    "Rerun this edit plan before any session edit."
+    "Review this plan with Codex/Claude before changing any session file.",
+    "Apply only explicitly confirmed owner answers.",
+    "After applying reviewed session edits, rerun source-root/owner decision checks and the full data-lane sweep."
   ]
 }

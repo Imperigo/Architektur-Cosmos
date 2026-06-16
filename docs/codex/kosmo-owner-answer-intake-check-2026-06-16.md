@@ -1,14 +1,14 @@
 # Kosmo Owner Answer Intake Check
 
-Generated: 2026-06-16T12:31:10.682Z
-Status: `owner_answer_intake_guard_passed_pending_owner_input`
+Generated: 2026-06-16T17:15:01.393Z
+Status: `owner_answer_intake_guard_passed_with_answers`
 
 ## Summary
 
-- Source-root answer present: no
-- Owner card answers present: 0/5
+- Source-root answer present: yes
+- Owner card answers present: 5/5
 - Reference decision answers present: 0/10
-- Filled answers: 0
+- Filled answers: 6
 - Failures: 0
 - Warnings: 0
 - Public-ready after guard: 0
@@ -24,6 +24,8 @@ Status: `owner_answer_intake_guard_passed_pending_owner_input`
 - passed: `source_root_selected_decision_allowed` - Source-root selected_decision must be null or an allowed decision.
 - passed: `source_root_safe_default_match` - Source-root safe default must match answer sheet.
 - passed: `source_root_no_public_ready_flag` - Source-root intake must not contain a public-ready flag.
+- passed: `source_root_path_absolute` - Selected root path must be an absolute path.
+- passed: `source_root_path_exists` - Selected root path must exist before private diagnostic is allowed.
 - passed: `owner_card_answer_count_match` - Owner card answer count must match answer sheet cards.
 - passed: `owner_card_known:batch-a-villa-savoye-image-candidates` - Owner card batch-a-villa-savoye-image-candidates must exist in answer sheet.
 - passed: `owner_card_choice_allowed:batch-a-villa-savoye-image-candidates` - Owner card batch-a-villa-savoye-image-candidates choice must be null or allowed.

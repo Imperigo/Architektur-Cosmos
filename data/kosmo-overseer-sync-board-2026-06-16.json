@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:33:24.838Z",
+  "generated_at": "2026-06-16T17:15:23.743Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -27,15 +27,15 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 191
+      "files": 193
     }
   ],
   "summary": {
     "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
-    "data_lane_steps": "24/24",
+    "data_lane_steps": "26/26",
     "router_status": "worker_router_private_diagnostic_ready",
     "checkpoint_status": "night_loop_guarded_ready",
-    "next_loop": "resolve_owner_review_batch",
+    "next_loop": "resolve_asset_human_reviews",
     "session_brief_guard_status": "owner_review_session_brief_guard_passed",
     "session_brief_failures": 0,
     "local_worker_review_status": "local_worker_outputs_present_review_only",
@@ -43,7 +43,7 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 268,
+    "historical_handoff_mirror_missing_files": 270,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [

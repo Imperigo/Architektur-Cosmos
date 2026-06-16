@@ -20,9 +20,12 @@ main().catch((error) => {
 
 async function main() {
   const answerSheet = JSON.parse(await readFile(answerSheetPath, 'utf8'));
+  const existingIntake = await readOptionalJson(outputJson);
   const sourceRoot = getSection(answerSheet, 'source-root-decision');
   const ownerCards = getSection(answerSheet, 'owner-review-cards');
   const referenceDecisions = getSection(answerSheet, 'reference-owner-decisions');
+  const existingCardsById = new Map((existingIntake?.owner_card_answers || []).map((answer) => [answer.batch_id, answer]));
+  const existingReferencesById = new Map((existingIntake?.reference_decision_answers || []).map((answer) => [`${answer.group_id}:${answer.item_id}`, answer]));
 
   const intake = {
     schema_version: '0.1',
@@ -38,9 +41,9 @@ async function main() {
     },
     source_refs: [relative(root, answerSheetPath)],
     source_root_answer: {
-      selected_decision: null,
-      selected_root_path: null,
-      owner_note: '',
+      selected_decision: existingIntake?.source_root_answer?.selected_decision ?? null,
+      selected_root_path: existingIntake?.source_root_answer?.selected_root_path ?? null,
+      owner_note: existingIntake?.source_root_answer?.owner_note ?? '',
       allowed_decisions: sourceRoot.allowed_decisions,
       safe_default: sourceRoot.safe_default,
       blocked_until_recorded_selection: sourceRoot.blocked_until_recorded_selection
@@ -48,8 +51,8 @@ async function main() {
     owner_card_answers: ownerCards.cards.map((card) => ({
       batch_id: card.batch_id,
       label: card.label,
-      owner_choice: null,
-      owner_note: '',
+      owner_choice: existingCardsById.get(card.batch_id)?.owner_choice ?? null,
+      owner_note: existingCardsById.get(card.batch_id)?.owner_note ?? '',
       allowed_choices: card.options,
       safe_default: card.safe_default,
       items: card.items,
@@ -58,18 +61,18 @@ async function main() {
     reference_decision_answers: referenceDecisions.decisions.map((decision) => ({
       group_id: decision.group_id,
       item_id: decision.item_id,
-      selected_decision: null,
-      owner_note: '',
+      selected_decision: existingReferencesById.get(`${decision.group_id}:${decision.item_id}`)?.selected_decision ?? null,
+      owner_note: existingReferencesById.get(`${decision.group_id}:${decision.item_id}`)?.owner_note ?? '',
       allowed_decisions: referenceDecisions.allowed_decisions,
       safe_default: decision.safe_default,
       public_ready_after_decision: false
     })),
     summary: {
-      source_root_answer_present: false,
+      source_root_answer_present: Boolean(existingIntake?.source_root_answer?.selected_decision),
       owner_card_answers: ownerCards.cards.length,
-      owner_card_answers_present: 0,
+      owner_card_answers_present: ownerCards.cards.filter((card) => existingCardsById.get(card.batch_id)?.owner_choice).length,
       reference_decision_answers: referenceDecisions.decisions.length,
-      reference_decision_answers_present: 0,
+      reference_decision_answers_present: referenceDecisions.decisions.filter((decision) => existingReferencesById.get(`${decision.group_id}:${decision.item_id}`)?.selected_decision).length,
       public_ready_after_intake: 0
     },
     next_actions: [
@@ -95,6 +98,14 @@ function getSection(sheet, id) {
   const section = (sheet.sections || []).find((candidate) => candidate.id === id);
   if (!section) throw new Error(`Missing answer sheet section: ${id}`);
   return section;
+}
+
+async function readOptionalJson(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 function renderMarkdown(intake) {

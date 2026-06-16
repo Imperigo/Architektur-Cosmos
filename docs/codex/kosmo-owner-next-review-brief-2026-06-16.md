@@ -1,12 +1,15 @@
 # Kosmo Owner Next Review Brief
 
-Generated: 2026-06-16T12:31:09.448Z
-Status: `owner_next_review_brief_open`
+Generated: 2026-06-16T17:15:00.191Z
+Status: `owner_next_review_brief_clear`
 
 ## Summary
 
-- Open batches: 5
-- Open items: 16
+- Open batches: 0
+- Open items: 0
+- Resolved review-only batches: 5
+- Resolved review-only items: 16
+- Resolution ledger: owner_review_batch_resolution_ledger_ready
 - Router: worker_router_private_diagnostic_ready
 - Private diagnostic allowed: yes
 - Private inventory allowed: yes
@@ -20,9 +23,9 @@ Intent: Decide whether any Villa Savoye image candidate should enter a deeper so
 
 Owner question: Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?
 
-Open items: 3
+Open items: 0
 Safe default: `needs_more_source_context`
-Decision effect: No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.
+Decision effect: This card has already been triaged review-only; no public-ready changes are allowed.
 Command after decision: `npm run kosmo:owner-decision-session-check`
 
 Recommended stance:
@@ -35,9 +38,9 @@ Intent: Keep generated or derived Villa Savoye files from becoming public-facing
 
 Owner question: Sollen alle abgeleiteten Villa-Dateien blockiert bleiben, bis Plan-/Modell-Herkunft sauber belegt ist?
 
-Open items: 4
+Open items: 0
 Safe default: `keep_blocked`
-Decision effect: No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.
+Decision effect: This card has already been triaged review-only; no public-ready changes are allowed.
 Command after decision: `npm run kosmo:owner-decision-session-check`
 
 Recommended stance:
@@ -49,9 +52,9 @@ Intent: Prevent diagrammatic massing/model studies from being presented as measu
 
 Owner question: Sollen die vorhandenen Modelle weiterhin als diagrammatische Studien blockiert bleiben, bis Modellqualitaet und Quellenbasis geprueft sind?
 
-Open items: 2
+Open items: 0
 Safe default: `needs_more_source_context`
-Decision effect: No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.
+Decision effect: This card has already been triaged review-only; no public-ready changes are allowed.
 Command after decision: `npm run kosmo:owner-decision-session-check`
 
 Recommended stance:
@@ -63,9 +66,9 @@ Intent: Keep the Sogn Benedetg lane honest until the larger private library root
 
 Owner question: Soll Sogn Benedetg link-only bleiben, bis der echte private Bibliotheks-Root sichtbar ist?
 
-Open items: 1
+Open items: 0
 Safe default: `needs_more_source_context`
-Decision effect: No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.
+Decision effect: This card has already been triaged review-only; no public-ready changes are allowed.
 Command after decision: `npm run kosmo:owner-decision-session-check`
 
 Recommended stance:
@@ -77,9 +80,9 @@ Intent: Review local-only study assets for Blender, DXF, web and future ArchiCAD
 
 Owner question: Welche lokalen Study-Assets sollen ein Human Review bekommen, ohne Public-Promotion zu erlauben?
 
-Open items: 6
+Open items: 0
 Safe default: `needs-review`
-Decision effect: No public-ready changes are allowed from this card; any positive direction opens or confirms a separate reviewed step.
+Decision effect: This card has already been triaged review-only; no public-ready changes are allowed.
 Command after decision: `npm run kosmo:asset-full-review -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json`
 
 Recommended stance:
