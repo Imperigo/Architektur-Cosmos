@@ -16,8 +16,8 @@
     "public_ready_after_intake": 0
   },
   "repo_heads": {
-    "architecture_cosmos": "ccc539e",
-    "kosmo_orbit": "b15c639"
+    "architecture_cosmos": "25dcfe6",
+    "kosmo_orbit": "5621aff"
   },
   "latest_handoffs": [
     "2026-06-16-codex-synergiebericht-337-owner-unlock-operational-start-card.md",

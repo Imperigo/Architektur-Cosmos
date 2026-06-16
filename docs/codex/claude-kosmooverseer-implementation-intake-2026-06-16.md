@@ -9,8 +9,8 @@ This package is the current Codex state prepared for Claude Code and KosmoOverse
 
 ## Current Repo Heads
 
-- ArchitectureCosmos: `ccc539e`
-- KosmoOrbit: `b15c639`
+- ArchitectureCosmos: `25dcfe6`
+- KosmoOrbit: `5621aff`
 
 ## Read First
 
