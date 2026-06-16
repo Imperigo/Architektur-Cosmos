@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-16T05:36:16.722Z
+Generated: 2026-06-16T05:43:20.251Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,14 +20,14 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md` | Codex Synergiebericht 324: Terminal Gate Audit | 2 |
+| `2026-06-16-codex-synergiebericht-323-owner-gate-terminal-status.md` | Codex Synergiebericht 323: Owner Gate Terminal Status | 2 |
 | `2026-06-16-codex-synergiebericht-322-owner-unlock-helper-chain.md` | Codex Synergiebericht 322: Owner Unlock Helper Chain | 2 |
 | `2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md` | Codex Synergiebericht 321: Local Model Inventory Refresh | 2 |
 | `2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md` | Codex Synergiebericht 320: Day Batch Loop Green | 2 |
 | `2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md` | Codex Synergiebericht 319: Local Worker Conversion Governance | 2 |
 | `2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md` | Codex Synergiebericht 318: Training/Eval/Ontology Refresh | 2 |
 | `2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md` | Codex Synergiebericht 317: Runtime Manifest Validator Flow Integration | 2 |
-| `2026-06-16-codex-synergiebericht-316-runtime-manifest-validator.md` | Codex Synergiebericht 316: Runtime Manifest Validator | 2 |
-| `2026-06-16-codex-synergiebericht-315-runtime-manifest-validator-orbit-integration.md` | Codex Synergiebericht 315: Runtime Manifest Validator Orbit Integration | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 315-322 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 317-324 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

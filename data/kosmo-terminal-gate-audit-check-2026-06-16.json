@@ -1,0 +1,141 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:44:00.019Z",
+  "status": "terminal_gate_audit_guard_passed",
+  "policy": {
+    "validates_audit_only": true,
+    "records_decisions": false,
+    "writes_session_files": false,
+    "reads_private_content": false,
+    "runs_private_inventory": false,
+    "runs_runtime_batches": false,
+    "changes_public_ready": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-terminal-gate-audit-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 23,
+    "passed": 23,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_guarded_blocked",
+      "status": "passed",
+      "evidence": "terminal_gate_audit_guarded_blocked"
+    },
+    {
+      "id": "policy_audit_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_writes",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_runtime_batches",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_public_ready_zero",
+      "status": "passed",
+      "evidence": "0/0"
+    },
+    {
+      "id": "five_terminal_blockers",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "source_root_blocker_present",
+      "status": "passed",
+      "evidence": "source-root,source-root-owner-action,source-root-activation,private-metadata-inventory,github-worker-runtime-apply-guard"
+    },
+    {
+      "id": "source_root_owner_action_present",
+      "status": "passed",
+      "evidence": "source-root,source-root-owner-action,source-root-activation,private-metadata-inventory,github-worker-runtime-apply-guard"
+    },
+    {
+      "id": "source_root_activation_present",
+      "status": "passed",
+      "evidence": "source-root,source-root-owner-action,source-root-activation,private-metadata-inventory,github-worker-runtime-apply-guard"
+    },
+    {
+      "id": "private_metadata_inventory_present",
+      "status": "passed",
+      "evidence": "source-root,source-root-owner-action,source-root-activation,private-metadata-inventory,github-worker-runtime-apply-guard"
+    },
+    {
+      "id": "runtime_apply_guard_present",
+      "status": "passed",
+      "evidence": "source-root,source-root-owner-action,source-root-activation,private-metadata-inventory,github-worker-runtime-apply-guard"
+    },
+    {
+      "id": "source_root_session_blocked",
+      "status": "passed",
+      "evidence": "passed_pending_owner_input"
+    },
+    {
+      "id": "runtime_guard_blocked",
+      "status": "passed",
+      "evidence": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply"
+    },
+    {
+      "id": "actions_not_executable",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "hard_stop_private_tasks",
+      "status": "passed",
+      "evidence": "do not infer source-root selection from broad owner intent. do not run private inventory, ocr, embeddings or local llm private tasks while this audit is terminal-blocked. do not run the github worker runtime batch while exact runtime approval is missing. do not promote any reference or asset to public-ready from this audit. if a worker changes related files, create a handoff before the next loop."
+    },
+    {
+      "id": "hard_stop_runtime_batch",
+      "status": "passed",
+      "evidence": "do not infer source-root selection from broad owner intent. do not run private inventory, ocr, embeddings or local llm private tasks while this audit is terminal-blocked. do not run the github worker runtime batch while exact runtime approval is missing. do not promote any reference or asset to public-ready from this audit. if a worker changes related files, create a handoff before the next loop."
+    },
+    {
+      "id": "hard_stop_public_ready",
+      "status": "passed",
+      "evidence": "do not infer source-root selection from broad owner intent. do not run private inventory, ocr, embeddings or local llm private tasks while this audit is terminal-blocked. do not run the github worker runtime batch while exact runtime approval is missing. do not promote any reference or asset to public-ready from this audit. if a worker changes related files, create a handoff before the next loop."
+    },
+    {
+      "id": "unlock_sequence_starts_validator",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-session-edit-preview npm run kosmo:owner-unlock-session-edit-preview-check npm run kosmo:source-root-decision-session-check npm run kosmo:source-root-blocker-refresh npm run kosmo:source-root-activation-preflight npm run kosmo:source-root-post-owner-activation-queue npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "unlock_sequence_keeps_guard_order",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-session-edit-preview npm run kosmo:owner-unlock-session-edit-preview-check npm run kosmo:source-root-decision-session-check npm run kosmo:source-root-blocker-refresh npm run kosmo:source-root-activation-preflight npm run kosmo:source-root-post-owner-activation-queue npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "no_failures_listed",
+      "status": "passed",
+      "evidence": ""
+    }
+  ]
+}

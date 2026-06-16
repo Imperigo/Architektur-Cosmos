@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:41:32.030Z",
+  "status": "terminal_gate_audit_guarded_blocked",
+  "policy": {
+    "audit_only": true,
+    "records_decisions": false,
+    "writes_session_files": false,
+    "reads_private_content": false,
+    "runs_private_inventory": false,
+    "runs_runtime_batches": false,
+    "changes_public_ready": false,
+    "public_ready_after_audit": 0
+  },
+  "source_refs": [
+    "data/kosmo-orbit-status-bridge-2026-06-16.json",
+    "data/kosmo-owner-unlock-operational-start-card-2026-06-16.json",
+    "data/kosmo-owner-unlock-operational-start-card-check-2026-06-16.json",
+    "data/kosmo-source-root-decision-session-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-16.json"
+  ],
+  "summary": {
+    "orbit_status": "orbit_bridge_ready_with_blockers",
+    "orbit_cards": 82,
+    "terminal_blockers": 5,
+    "owner_action_cards": 26,
+    "source_root_session_status": "passed_pending_owner_input",
+    "operational_start_status": "owner_unlock_operational_start_card_ready",
+    "operational_start_check_status": "owner_unlock_operational_start_card_guard_passed",
+    "runtime_apply_guard_status": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply",
+    "runtime_apply_guard_check_status": "innovation_github_worker_runtime_apply_guard_guard_passed",
+    "source_root_recorded_selection": false,
+    "runtime_execute_allowed_now": null,
+    "actions_executable_now": 0,
+    "failures": 0,
+    "public_ready_after_audit": 0
+  },
+  "terminal_blockers": [
+    {
+      "id": "source-root",
+      "title": "Source Root",
+      "status": "blocked",
+      "signal": "blocked: 0 probable libraries, 59 OneDrive markers",
+      "owner_action_required": true,
+      "source_ref": "data/kosmo-source-root-blocker-refresh-2026-06-16.json"
+    },
+    {
+      "id": "source-root-owner-action",
+      "title": "Source Root Owner Action",
+      "status": "blocked",
+      "signal": "action required: repair_onedrive_first_or_confirm_complete_non_onedrive_root",
+      "owner_action_required": true,
+      "source_ref": "data/kosmo-source-root-owner-action-card-2026-06-16.json"
+    },
+    {
+      "id": "source-root-activation",
+      "title": "Source Root Activation",
+      "status": "blocked",
+      "signal": "source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4",
+      "owner_action_required": true,
+      "source_ref": "data/kosmo-source-root-activation-preflight-2026-06-16.json"
+    },
+    {
+      "id": "private-metadata-inventory",
+      "title": "Private Metadata Inventory",
+      "status": "blocked_with_smoke_passed",
+      "signal": "blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed",
+      "owner_action_required": true,
+      "source_ref": "data/kosmo-private-metadata-inventory-runner-2026-06-16.json"
+    },
+    {
+      "id": "github-worker-runtime-apply-guard",
+      "title": "GitHub Worker Runtime Apply Guard",
+      "status": "blocked_owner_action_required",
+      "signal": "exact reply missing, separate runtime blocked, execute 0, checks 31/31",
+      "owner_action_required": true,
+      "source_ref": "data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-16.json"
+    }
+  ],
+  "owner_unlock_sequence_after_explicit_reply": [
+    "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"",
+    "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\"",
+    "npm run kosmo:owner-unlock-session-edit-preview",
+    "npm run kosmo:owner-unlock-session-edit-preview-check",
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:source-root-post-owner-activation-queue",
+    "npm run kosmo:source-root-post-owner-activation-queue-check"
+  ],
+  "hard_stops": [
+    "Do not infer source-root selection from broad owner intent.",
+    "Do not run private inventory, OCR, embeddings or local LLM private tasks while this audit is terminal-blocked.",
+    "Do not run the GitHub worker runtime batch while exact runtime approval is missing.",
+    "Do not promote any reference or asset to public-ready from this audit.",
+    "If a worker changes related files, create a handoff before the next loop."
+  ],
+  "failures": []
+}

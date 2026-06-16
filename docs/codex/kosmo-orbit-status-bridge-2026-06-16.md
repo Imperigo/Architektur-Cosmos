@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T05:36:17.215Z
+Generated: 2026-06-16T05:42:28.025Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 82
+- Cards: 83
 - Blocking cards: 5
 - Owner action cards: 26
 - Source root blocked: yes
@@ -51,6 +51,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - GitHub worker runtime batch manifest draft: innovation_github_worker_runtime_batch_manifest_draft_ready, id github-worker-runtime-batch-draft-2026-06-16, blocked prereqs 4, open gates 5
 - GitHub worker runtime manifest validator plan: innovation_github_worker_runtime_manifest_validator_plan_ready, rules 10, fixture categories 8, executable 0, failures 0
 - GitHub worker runtime manifest validator: innovation_github_worker_runtime_manifest_validator_passed, validated 12, blocked 11, review-only 1, public-ready 0, failures 0
+- Terminal gate audit: terminal_gate_audit_guarded_blocked, blockers 5, executable 0, public-ready 0, failures 0
 - Training eval rubric: training_eval_rubric_pack_ready, suites 6, criteria 24
 - Training eval row template: training_eval_row_template_ready, templates 6
 - Training eval review queue: training_eval_review_queue_plan_ready, lanes 5
@@ -141,6 +142,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-worker-runtime-manifest-negative-fixtures` GitHub Worker Runtime Manifest Negative Fixtures | review_only_ready | no | 10 manifest negatives, blocked 10, categories 8, executable 0, failures 0 |
 | `github-worker-runtime-manifest-validator-plan` GitHub Worker Runtime Manifest Validator Plan | review_only_ready | no | 10 rules, fixtures 8, executable 0, failures 0 |
 | `github-worker-runtime-manifest-validator` GitHub Worker Runtime Manifest Validator | review_only_ready | no | 12 manifests, blocked 11, review-only 1, failures 0 |
+| `terminal-gate-audit` Terminal Gate Audit | guard_passed | no | 5 terminal blockers, executable 0, public-ready 0, checks 23/23 |
 | `training-eval-rubric` Training Eval Rubric | review_only_ready | no | 6 suites, 24 criteria, eval items 24, failures 0 |
 | `training-eval-row-template` Training Eval Row Template | review_only_ready | no | 6 templates, 10 required fields, writes rows now 0, failures 0 |
 | `training-eval-review-queue` Training Eval Review Queue | review_only_ready | no | 5 lanes, 6 states, queue items now 0, failures 0 |

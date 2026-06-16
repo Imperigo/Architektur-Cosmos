@@ -346,6 +346,8 @@
     "kosmo:owner-unlock-session-edit-preview-check": "node scripts/kosmo-owner-unlock-session-edit-preview-check.mjs",
     "kosmo:owner-unlock-operational-start-card": "node scripts/kosmo-owner-unlock-operational-start-card.mjs",
     "kosmo:owner-unlock-operational-start-card-check": "node scripts/kosmo-owner-unlock-operational-start-card-check.mjs",
+    "kosmo:terminal-gate-audit": "node scripts/kosmo-terminal-gate-audit.mjs",
+    "kosmo:terminal-gate-audit-check": "node scripts/kosmo-terminal-gate-audit-check.mjs",
     "kosmo:owner-unlock-session-apply-guard": "node scripts/kosmo-owner-unlock-session-apply-guard.mjs",
     "kosmo:owner-unlock-session-apply-guard-check": "node scripts/kosmo-owner-unlock-session-apply-guard-check.mjs",
     "kosmo:owner-unlock-session-apply-guard-smoke": "node scripts/kosmo-owner-unlock-session-apply-guard-smoke.mjs",

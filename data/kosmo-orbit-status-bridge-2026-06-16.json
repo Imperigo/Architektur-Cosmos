@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:36:17.215Z",
+  "generated_at": "2026-06-16T05:42:28.025Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -140,6 +140,8 @@
     "data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-check-2026-06-16.json",
     "data/kosmo-innovation-github-worker-runtime-manifest-validator-2026-06-16.json",
     "data/kosmo-innovation-github-worker-runtime-manifest-validator-check-2026-06-16.json",
+    "data/kosmo-terminal-gate-audit-2026-06-16.json",
+    "data/kosmo-terminal-gate-audit-check-2026-06-16.json",
     "data/kosmo-codex-morning-routine-run-2026-06-16.json",
     "data/kosmo-codex-morning-routine-run-check-2026-06-16.json",
     "data/kosmo-today-loop-plan-2026-06-16.json",
@@ -159,7 +161,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-16.json"
   ],
   "summary": {
-    "cards": 82,
+    "cards": 83,
     "blocking_cards": 5,
     "owner_action_cards": 26,
     "source_root_blocked": true,
@@ -327,6 +329,12 @@
     "github_worker_runtime_manifest_validator_public_ready_after_validation": 0,
     "github_worker_runtime_manifest_validator_check_status": "innovation_github_worker_runtime_manifest_validator_guard_passed",
     "github_worker_runtime_manifest_validator_check_failures": 0,
+    "terminal_gate_audit_status": "terminal_gate_audit_guarded_blocked",
+    "terminal_gate_audit_terminal_blockers": 5,
+    "terminal_gate_audit_actions_executable_now": 0,
+    "terminal_gate_audit_public_ready_after_audit": 0,
+    "terminal_gate_audit_check_status": "terminal_gate_audit_guard_passed",
+    "terminal_gate_audit_check_failures": 0,
     "codex_morning_routine_run_status": "codex_morning_routine_run_ready",
     "codex_morning_routine_run_next_batch": "source_free_innovation_and_guarding",
     "codex_morning_routine_run_remote_behind_total": 0,
@@ -1079,6 +1087,15 @@
       "owner_action_required": false,
       "route_hint": "Static metadata validator for runtime manifests; blocks unsafe manifest shapes and never executes runtime",
       "source_ref": "data/kosmo-innovation-github-worker-runtime-manifest-validator-2026-06-16.json"
+    },
+    {
+      "id": "terminal-gate-audit",
+      "title": "Terminal Gate Audit",
+      "status": "guard_passed",
+      "signal": "5 terminal blockers, executable 0, public-ready 0, checks 23/23",
+      "owner_action_required": false,
+      "route_hint": "Source-free proof that private/source-root/runtime gates remain closed until exact owner actions land",
+      "source_ref": "data/kosmo-terminal-gate-audit-2026-06-16.json"
     },
     {
       "id": "training-eval-rubric",
