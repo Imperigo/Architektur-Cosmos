@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:18:27.349Z",
+  "generated_at": "2026-06-16T05:24:10.550Z",
   "date": "2026-06-16",
   "target_date": "2026-06-17",
   "status": "tomorrow_day_batch_ready",
@@ -84,6 +84,8 @@
     "npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check",
     "npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan",
     "npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan-check",
+    "npm run kosmo:innovation-github-worker-runtime-manifest-validator",
+    "npm run kosmo:innovation-github-worker-runtime-manifest-validator-check",
     "npm run kosmo:local-worker-fixture-chain-task-pack",
     "npm run kosmo:local-worker-fixture-chain-task-pack-check",
     "npm run kosmo:local-worker-innovation-output-smoke",

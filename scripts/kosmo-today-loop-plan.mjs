@@ -18,6 +18,8 @@ const refs = {
   conversionEvidenceLedgerCheck: resolve(root, args.conversionEvidenceLedgerCheck || `data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-${dateStamp}.json`),
   runtimeManifestValidatorPlan: resolve(root, args.runtimeManifestValidatorPlan || `data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-${dateStamp}.json`),
   runtimeManifestValidatorPlanCheck: resolve(root, args.runtimeManifestValidatorPlanCheck || `data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-check-${dateStamp}.json`),
+  runtimeManifestValidator: resolve(root, args.runtimeManifestValidator || `data/kosmo-innovation-github-worker-runtime-manifest-validator-${dateStamp}.json`),
+  runtimeManifestValidatorCheck: resolve(root, args.runtimeManifestValidatorCheck || `data/kosmo-innovation-github-worker-runtime-manifest-validator-check-${dateStamp}.json`),
   tomorrowPlan: resolve(root, args.tomorrowPlan || `data/kosmo-tomorrow-day-batch-${dateStamp}.json`)
 };
 
@@ -41,6 +43,8 @@ async function main() {
     conversionEvidenceLedgerCheck: await readOptionalJson(refs.conversionEvidenceLedgerCheck),
     runtimeManifestValidatorPlan: await readOptionalJson(refs.runtimeManifestValidatorPlan),
     runtimeManifestValidatorPlanCheck: await readOptionalJson(refs.runtimeManifestValidatorPlanCheck),
+    runtimeManifestValidator: await readOptionalJson(refs.runtimeManifestValidator),
+    runtimeManifestValidatorCheck: await readOptionalJson(refs.runtimeManifestValidatorCheck),
     tomorrowPlan: await readOptionalJson(refs.tomorrowPlan)
   };
   const plan = buildPlan(reports);
@@ -107,6 +111,8 @@ function buildPlan(reports) {
       conversion_evidence_ledger_guard_status: reports.conversionEvidenceLedgerCheck?.status || null,
       runtime_manifest_validator_plan_status: reports.runtimeManifestValidatorPlan?.status || null,
       runtime_manifest_validator_plan_guard_status: reports.runtimeManifestValidatorPlanCheck?.status || null,
+      runtime_manifest_validator_status: reports.runtimeManifestValidator?.status || null,
+      runtime_manifest_validator_guard_status: reports.runtimeManifestValidatorCheck?.status || null,
       day_batch_loop_status: reports.dayBatchLoop?.status || null,
       owner_action_required: ownerActionRequired,
       source_root_unlocked: sourceRootUnlocked,
@@ -197,9 +203,11 @@ function buildPlan(reports) {
           'npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures',
           'npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check',
           'npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan',
-          'npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan-check'
+          'npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan-check',
+          'npm run kosmo:innovation-github-worker-runtime-manifest-validator',
+          'npm run kosmo:innovation-github-worker-runtime-manifest-validator-check'
         ],
-        acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'GitHub fixture skeletons/payloads/smoke are review-only ready', 'runtime manifest validator plan is guard-passed', 'no install/private-read/training action enabled']
+        acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'GitHub fixture skeletons/payloads/smoke are review-only ready', 'runtime manifest validator and plan are guard-passed', 'no install/private-read/training action enabled']
       },
       {
         id: 'references_schema_hardening',
@@ -287,6 +295,7 @@ function renderMarkdown(plan) {
   lines.push(`- Worker boundary guard: ${plan.summary.worker_boundary_guard_status}`);
   lines.push(`- Conversion evidence ledger: ${plan.summary.conversion_evidence_ledger_status}`);
   lines.push(`- Runtime manifest validator plan: ${plan.summary.runtime_manifest_validator_plan_status}, guard ${plan.summary.runtime_manifest_validator_plan_guard_status}`);
+  lines.push(`- Runtime manifest validator: ${plan.summary.runtime_manifest_validator_status}, guard ${plan.summary.runtime_manifest_validator_guard_status}`);
   lines.push(`- Source-root unlocked: ${plan.summary.source_root_unlocked ? 'yes' : 'no'}`);
   lines.push(`- Public-ready after plan: ${plan.summary.public_ready_after_plan}`);
   lines.push('');

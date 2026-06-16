@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-17
 
-Generated: 2026-06-16T05:18:27.349Z
+Generated: 2026-06-16T05:24:10.550Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -69,6 +69,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check`
 - `npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan`
 - `npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan-check`
+- `npm run kosmo:innovation-github-worker-runtime-manifest-validator`
+- `npm run kosmo:innovation-github-worker-runtime-manifest-validator-check`
 - `npm run kosmo:local-worker-fixture-chain-task-pack`
 - `npm run kosmo:local-worker-fixture-chain-task-pack-check`
 - `npm run kosmo:local-worker-innovation-output-smoke`

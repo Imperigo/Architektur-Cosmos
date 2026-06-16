@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T05:18:57.012Z
+Generated: 2026-06-16T05:24:11.048Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 81
+- Cards: 82
 - Blocking cards: 27
 - Owner action cards: 26
 - Source root blocked: yes
@@ -50,6 +50,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - GitHub worker runtime log-redaction negative fixtures: innovation_github_worker_runtime_log_redaction_negative_fixtures_ready, fixtures 10, blocked 10, leak categories 7
 - GitHub worker runtime batch manifest draft: innovation_github_worker_runtime_batch_manifest_draft_ready, id github-worker-runtime-batch-draft-2026-06-16, blocked prereqs 4, open gates 5
 - GitHub worker runtime manifest validator plan: innovation_github_worker_runtime_manifest_validator_plan_ready, rules 10, fixture categories 8, executable 0, failures 0
+- GitHub worker runtime manifest validator: innovation_github_worker_runtime_manifest_validator_passed, validated 12, blocked 11, review-only 1, public-ready 0, failures 0
 - Training eval rubric: null, suites -, criteria -
 - Training eval row template: null, templates -
 - Training eval review queue: null, lanes -
@@ -139,6 +140,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-worker-runtime-batch-manifest-draft` GitHub Worker Runtime Batch Manifest Draft | review_only_ready | no | github-worker-runtime-batch-draft-2026-06-16, prereqs 7, blocked 4, gates open 5, executable no, failures 0 |
 | `github-worker-runtime-manifest-negative-fixtures` GitHub Worker Runtime Manifest Negative Fixtures | review_only_ready | no | 10 manifest negatives, blocked 10, categories 8, executable 0, failures 0 |
 | `github-worker-runtime-manifest-validator-plan` GitHub Worker Runtime Manifest Validator Plan | review_only_ready | no | 10 rules, fixtures 8, executable 0, failures 0 |
+| `github-worker-runtime-manifest-validator` GitHub Worker Runtime Manifest Validator | review_only_ready | no | 12 manifests, blocked 11, review-only 1, failures 0 |
 | `training-eval-rubric` Training Eval Rubric | needs_review | no | 0 suites, 0 criteria, eval items 0, failures 0 |
 | `training-eval-row-template` Training Eval Row Template | needs_review | no | 0 templates, 0 required fields, writes rows now 0, failures 0 |
 | `training-eval-review-queue` Training Eval Review Queue | needs_review | no | 0 lanes, 0 states, queue items now 0, failures 0 |
