@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:11:51.051Z",
+  "generated_at": "2026-06-16T18:42:19.570Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 337
+      "files": 338
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 204
+      "files": 206
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 271,
+    "historical_handoff_mirror_missing_files": 272,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-339-public-website-references-assets.md",
+      "title": "Codex Synergiebericht 339 - Public Website References Assets",
+      "mirrored_inboxes": 2,
+      "bytes": 1692,
+      "modified_at": "2026-06-16T18:42:06.007Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-338-claude-kosmooverseer-implementation-intake.md",
       "title": "Codex Synergiebericht 338 - Claude/KosmoOverseer Implementation Intake",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1207,
       "modified_at": "2026-06-16T17:57:37.763Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-331-abendbatch-execution.md",
-      "title": "Codex Synergiebericht 331 - Abendbatch Execution",
-      "mirrored_inboxes": 2,
-      "bytes": 4087,
-      "modified_at": "2026-06-16T17:56:06.909Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 331-338 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 332-339 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

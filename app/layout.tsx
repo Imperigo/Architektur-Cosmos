@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Architektur Kosmos',
-  description: 'A radial architecture atlas for time, style, theory, place, and relation.',
+  description: 'Öffentliche KosmoReferences- und KosmoAsset-Demo für Architekturprojekte, Medien, Pläne, Analyse-Layer und 3D-Preview-Modelle.',
   icons: {
     icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
     shortcut: [{ url: '/icon.svg', type: 'image/svg+xml' }]
