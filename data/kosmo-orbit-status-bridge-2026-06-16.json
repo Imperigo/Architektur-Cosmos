@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:26:47.608Z",
+  "generated_at": "2026-06-16T05:28:12.721Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -160,7 +160,7 @@
   ],
   "summary": {
     "cards": 82,
-    "blocking_cards": 23,
+    "blocking_cards": 18,
     "owner_action_cards": 26,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_needs_review",
@@ -840,8 +840,8 @@
     {
       "id": "local-worker-innovation-post-output-intake-review",
       "title": "Local Worker Innovation Post-Output Intake Review",
-      "status": "needs_review",
-      "signal": "-, candidates 0, accepted 0, public 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "waiting_for_worker_outputs, candidates 0, accepted 0, public 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Review-only intake gate for future local-worker outputs; no direct repo conversion",
       "source_ref": "data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-16.json"
@@ -849,8 +849,8 @@
     {
       "id": "local-worker-innovation-human-overseer-review-decision-card",
       "title": "Local Worker Innovation Human/Overseer Review Decision Card",
-      "status": "needs_review",
-      "signal": "-, candidates 0, decisions 0, public 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "waiting_for_review_candidates, candidates 0, decisions 0, public 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Decision card for future intake candidates; no apply, conversion or public-ready state",
       "source_ref": "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-2026-06-16.json"
@@ -858,8 +858,8 @@
     {
       "id": "local-worker-innovation-conversion-plan-preview",
       "title": "Local Worker Innovation Conversion Plan Preview",
-      "status": "needs_review",
-      "signal": "-, eligible 0, conversions 0, public 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "waiting_for_positive_review_decisions, eligible 0, conversions 0, public 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Preview-only conversion plan for future approved local-worker candidates; no repo derivatives",
       "source_ref": "data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-16.json"
@@ -867,8 +867,8 @@
     {
       "id": "local-worker-innovation-conversion-apply-guard",
       "title": "Local Worker Innovation Conversion Apply Guard",
-      "status": "needs_review",
-      "signal": "-, eligible 0, apply no, conversions 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "waiting_for_positive_review_decisions, eligible 0, apply no, conversions 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Apply guard for future conversion plan; validates exact reply and still executes nothing",
       "source_ref": "data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-16.json"
@@ -876,8 +876,8 @@
     {
       "id": "local-worker-innovation-conversion-evidence-ledger",
       "title": "Local Worker Innovation Conversion Evidence Ledger",
-      "status": "needs_review",
-      "signal": "-, entries 0, apply no, public 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "waiting_for_conversion_evidence, entries 7, apply no, public 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Metadata-only audit ledger for local-worker conversion gates; no conversion or repo derivative",
       "source_ref": "data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-2026-06-16.json"

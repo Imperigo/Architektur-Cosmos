@@ -1,0 +1,196 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:28:12.469Z",
+  "status": "local_worker_innovation_conversion_evidence_ledger_guard_passed",
+  "policy": {
+    "validates_ledger_only": true,
+    "executes_conversions_now": false,
+    "reads_private_content_now": false,
+    "writes_repo_derivatives_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-conversion-evidence-ledger-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 34,
+    "passed": 34,
+    "failures": 0,
+    "ledger_status": "local_worker_innovation_conversion_evidence_ledger_ready",
+    "mode": "waiting_for_conversion_evidence",
+    "ledger_entries": 7,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_conversion_evidence_ledger_ready"
+    },
+    {
+      "id": "mode_guarded",
+      "status": "passed",
+      "evidence": "waiting_for_conversion_evidence"
+    },
+    {
+      "id": "policy_ledger_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_metadata_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_apply_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_conversion_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_body_copy",
+      "status": "passed",
+      "evidence": "{\"ledger_only\":true,\"metadata_only\":true,\"applies_conversion_now\":false,\"executes_conversions_now\":false,\"reads_private_sources_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"copies_worker_output_body_now\":false,\"copies_worker_recommendation_text_now\":false,\"writes_repo_derivatives_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_ledger\":0}"
+    },
+    {
+      "id": "policy_no_repo_derivatives",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "ledger_entries_count",
+      "status": "passed",
+      "evidence": 7
+    },
+    {
+      "id": "has_validator_entry",
+      "status": "passed",
+      "evidence": "output_validator_status_recorded,output_validator_check_recorded,post_output_intake_review_guard_recorded,human_overseer_decision_card_guard_recorded,conversion_plan_preview_guard_recorded,conversion_apply_guard_recorded,no_apply_allowed_now"
+    },
+    {
+      "id": "has_intake_entry",
+      "status": "passed",
+      "evidence": "output_validator_status_recorded,output_validator_check_recorded,post_output_intake_review_guard_recorded,human_overseer_decision_card_guard_recorded,conversion_plan_preview_guard_recorded,conversion_apply_guard_recorded,no_apply_allowed_now"
+    },
+    {
+      "id": "has_decision_card_entry",
+      "status": "passed",
+      "evidence": "output_validator_status_recorded,output_validator_check_recorded,post_output_intake_review_guard_recorded,human_overseer_decision_card_guard_recorded,conversion_plan_preview_guard_recorded,conversion_apply_guard_recorded,no_apply_allowed_now"
+    },
+    {
+      "id": "has_preview_entry",
+      "status": "passed",
+      "evidence": "output_validator_status_recorded,output_validator_check_recorded,post_output_intake_review_guard_recorded,human_overseer_decision_card_guard_recorded,conversion_plan_preview_guard_recorded,conversion_apply_guard_recorded,no_apply_allowed_now"
+    },
+    {
+      "id": "has_apply_guard_entry",
+      "status": "passed",
+      "evidence": "output_validator_status_recorded,output_validator_check_recorded,post_output_intake_review_guard_recorded,human_overseer_decision_card_guard_recorded,conversion_plan_preview_guard_recorded,conversion_apply_guard_recorded,no_apply_allowed_now"
+    },
+    {
+      "id": "has_no_apply_entry",
+      "status": "passed",
+      "evidence": "output_validator_status_recorded,output_validator_check_recorded,post_output_intake_review_guard_recorded,human_overseer_decision_card_guard_recorded,conversion_plan_preview_guard_recorded,conversion_apply_guard_recorded,no_apply_allowed_now"
+    },
+    {
+      "id": "entry_metadata_only",
+      "status": "passed",
+      "evidence": "all entries metadata-only"
+    },
+    {
+      "id": "entry_no_body_copy",
+      "status": "passed",
+      "evidence": "no entry body copy"
+    },
+    {
+      "id": "apply_not_allowed",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "conversions_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "repo_outputs_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "training_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "body_copy_zero",
+      "status": "passed",
+      "evidence": "{\"mode\":\"waiting_for_conversion_evidence\",\"ledger_entries\":7,\"eligible_candidates\":0,\"apply_allowed_after_guard\":false,\"apply_allowed_after_ledger\":false,\"conversions_executed_now\":0,\"repo_outputs_written_now\":0,\"training_rows_promoted_now\":0,\"worker_output_bodies_copied_now\":0,\"worker_recommendation_text_copied_now\":0,\"public_ready_after_ledger\":0,\"failures\":0}"
+    },
+    {
+      "id": "source_refs_include_apply_guard",
+      "status": "passed",
+      "evidence": "data/kosmo-local-worker-innovation-output-validator-2026-06-16.json data/kosmo-local-worker-innovation-output-validator-check-2026-06-16.json data/kosmo-local-worker-innovation-post-output-intake-review-2026-06-16.json data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-16.json data/kosmo-local-worker-innovation-human-overseer-review-decision-card-2026-06-16.json data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-2026-06-16.json data/kosmo-local-worker-innovation-conversion-plan-preview-2026-06-16.json data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-16.json data/kosmo-local-worker-innovation-conversion-apply-guard-2026-06-16.json data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-16.json"
+    },
+    {
+      "id": "source_refs_include_review_chain",
+      "status": "passed",
+      "evidence": "data/kosmo-local-worker-innovation-output-validator-2026-06-16.json data/kosmo-local-worker-innovation-output-validator-check-2026-06-16.json data/kosmo-local-worker-innovation-post-output-intake-review-2026-06-16.json data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-16.json data/kosmo-local-worker-innovation-human-overseer-review-decision-card-2026-06-16.json data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-2026-06-16.json data/kosmo-local-worker-innovation-conversion-plan-preview-2026-06-16.json data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-16.json data/kosmo-local-worker-innovation-conversion-apply-guard-2026-06-16.json data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-16.json"
+    },
+    {
+      "id": "hard_stop_no_conversion",
+      "status": "passed",
+      "evidence": "this ledger never executes conversions. this ledger never writes repo derivatives. this ledger never copies worker output bodies or recommendation text into git. this ledger never promotes training rows. this ledger never marks public-ready. this ledger never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_repo_derivatives",
+      "status": "passed",
+      "evidence": "this ledger never executes conversions. this ledger never writes repo derivatives. this ledger never copies worker output bodies or recommendation text into git. this ledger never promotes training rows. this ledger never marks public-ready. this ledger never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_body_copy",
+      "status": "passed",
+      "evidence": "this ledger never executes conversions. this ledger never writes repo derivatives. this ledger never copies worker output bodies or recommendation text into git. this ledger never promotes training rows. this ledger never marks public-ready. this ledger never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_training_public",
+      "status": "passed",
+      "evidence": "this ledger never executes conversions. this ledger never writes repo derivatives. this ledger never copies worker output bodies or recommendation text into git. this ledger never promotes training rows. this ledger never marks public-ready. this ledger never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this ledger never executes conversions. this ledger never writes repo derivatives. this ledger never copies worker output bodies or recommendation text into git. this ledger never promotes training rows. this ledger never marks public-ready. this ledger never reads private source root, onedrive or archive-library content."
+    }
+  ]
+}

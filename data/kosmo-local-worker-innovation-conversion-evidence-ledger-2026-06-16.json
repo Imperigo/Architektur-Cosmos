@@ -1,0 +1,158 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:28:12.214Z",
+  "status": "local_worker_innovation_conversion_evidence_ledger_ready",
+  "policy": {
+    "ledger_only": true,
+    "metadata_only": true,
+    "applies_conversion_now": false,
+    "executes_conversions_now": false,
+    "reads_private_sources_now": false,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "copies_worker_output_body_now": false,
+    "copies_worker_recommendation_text_now": false,
+    "writes_repo_derivatives_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_ledger": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-output-validator-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-output-validator-check-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-post-output-intake-review-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-conversion-plan-preview-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-conversion-apply-guard-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-16.json"
+  ],
+  "summary": {
+    "mode": "waiting_for_conversion_evidence",
+    "ledger_entries": 7,
+    "eligible_candidates": 0,
+    "apply_allowed_after_guard": false,
+    "apply_allowed_after_ledger": false,
+    "conversions_executed_now": 0,
+    "repo_outputs_written_now": 0,
+    "training_rows_promoted_now": 0,
+    "worker_output_bodies_copied_now": 0,
+    "worker_recommendation_text_copied_now": 0,
+    "public_ready_after_ledger": 0,
+    "failures": 0
+  },
+  "ledger_entries": [
+    {
+      "id": "output_validator_status_recorded",
+      "source_ref": "data/kosmo-local-worker-innovation-output-validator-2026-06-16.json",
+      "status": "recorded",
+      "evidence_kind": "metadata_gate_status",
+      "metadata_only": true,
+      "copied_worker_body_now": false,
+      "copied_worker_recommendation_text_now": false,
+      "notes": {
+        "expected_outputs": 5,
+        "present_outputs": 0,
+        "stores_body_in_git": false,
+        "public_ready_after_validation": 0
+      }
+    },
+    {
+      "id": "output_validator_check_recorded",
+      "source_ref": "data/kosmo-local-worker-innovation-output-validator-check-2026-06-16.json",
+      "status": "recorded",
+      "evidence_kind": "metadata_gate_status",
+      "metadata_only": true,
+      "copied_worker_body_now": false,
+      "copied_worker_recommendation_text_now": false,
+      "notes": {
+        "guard_failures": 0,
+        "public_ready_after_check": 0
+      }
+    },
+    {
+      "id": "post_output_intake_review_guard_recorded",
+      "source_ref": "data/kosmo-local-worker-innovation-post-output-intake-review-check-2026-06-16.json",
+      "status": "recorded",
+      "evidence_kind": "metadata_gate_status",
+      "metadata_only": true,
+      "copied_worker_body_now": false,
+      "copied_worker_recommendation_text_now": false,
+      "notes": {
+        "intake_status": "local_worker_innovation_post_output_intake_review_ready",
+        "review_candidates": 0,
+        "accepted_now": 0
+      }
+    },
+    {
+      "id": "human_overseer_decision_card_guard_recorded",
+      "source_ref": "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-check-2026-06-16.json",
+      "status": "recorded",
+      "evidence_kind": "metadata_gate_status",
+      "metadata_only": true,
+      "copied_worker_body_now": false,
+      "copied_worker_recommendation_text_now": false,
+      "notes": {
+        "decision_card_status": "local_worker_innovation_human_overseer_review_decision_card_ready",
+        "review_candidates": 0,
+        "decisions_applied_now": 0
+      }
+    },
+    {
+      "id": "conversion_plan_preview_guard_recorded",
+      "source_ref": "data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-16.json",
+      "status": "recorded",
+      "evidence_kind": "metadata_gate_status",
+      "metadata_only": true,
+      "copied_worker_body_now": false,
+      "copied_worker_recommendation_text_now": false,
+      "notes": {
+        "preview_status": "local_worker_innovation_conversion_plan_preview_ready",
+        "eligible_candidates": 0,
+        "conversions_executed_now": 0
+      }
+    },
+    {
+      "id": "conversion_apply_guard_recorded",
+      "source_ref": "data/kosmo-local-worker-innovation-conversion-apply-guard-check-2026-06-16.json",
+      "status": "recorded",
+      "evidence_kind": "metadata_gate_status",
+      "metadata_only": true,
+      "copied_worker_body_now": false,
+      "copied_worker_recommendation_text_now": false,
+      "notes": {
+        "apply_guard_status": "local_worker_innovation_conversion_apply_guard_ready",
+        "apply_allowed_after_guard": false,
+        "conversions_executed_now": 0
+      }
+    },
+    {
+      "id": "no_apply_allowed_now",
+      "source_ref": "data/kosmo-local-worker-innovation-conversion-apply-guard-2026-06-16.json",
+      "status": "recorded",
+      "evidence_kind": "negative_apply_evidence",
+      "metadata_only": true,
+      "copied_worker_body_now": false,
+      "copied_worker_recommendation_text_now": false,
+      "notes": {
+        "mode": "waiting_for_positive_review_decisions",
+        "reason": "No exact positive apply reply and no eligible conversion candidates are present."
+      }
+    }
+  ],
+  "next_actions": [
+    "Keep local-worker conversion held until positive review candidates and exact apply evidence exist.",
+    "Use this ledger as the audit source for Orbit, Claude/KosmoOverseer handoff and future conversion apply planning.",
+    "Do not promote worker output to repo artifacts, training rows or public-ready state from this ledger."
+  ],
+  "hard_stops": [
+    "This ledger never executes conversions.",
+    "This ledger never writes repo derivatives.",
+    "This ledger never copies worker output bodies or recommendation text into Git.",
+    "This ledger never promotes training rows.",
+    "This ledger never marks public-ready.",
+    "This ledger never reads private Source Root, OneDrive or archive-library content."
+  ],
+  "failures": []
+}

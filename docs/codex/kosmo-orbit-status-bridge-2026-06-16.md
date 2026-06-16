@@ -1,12 +1,12 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T05:26:47.608Z
+Generated: 2026-06-16T05:28:12.721Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
 - Cards: 82
-- Blocking cards: 23
+- Blocking cards: 18
 - Owner action cards: 26
 - Source root blocked: yes
 - Day batch: day_batch_loop_needs_review
@@ -114,11 +114,11 @@ Status: `orbit_bridge_ready_with_blockers`
 | `local-worker-innovation-launch-apply-guard-smoke` Local Worker Innovation Launch Apply Guard Smoke | review_only_ready | no | 3/3 scenarios, failures 0 |
 | `local-worker-innovation-launch-runbook-checkpoint` Local Worker Innovation Launch Runbook Checkpoint | review_only_ready | no | hold_waiting_for_exact_reply, gates 10/10, execute 0, failures 0 |
 | `local-worker-innovation-launch-execution-envelope` Local Worker Innovation Launch Execution Envelope | review_only_ready | no | empty_held_waiting_for_exact_reply, slots 5/5, outputs 0, failures 0 |
-| `local-worker-innovation-post-output-intake-review` Local Worker Innovation Post-Output Intake Review | needs_review | no | -, candidates 0, accepted 0, public 0, failures 0 |
-| `local-worker-innovation-human-overseer-review-decision-card` Local Worker Innovation Human/Overseer Review Decision Card | needs_review | no | -, candidates 0, decisions 0, public 0, failures 0 |
-| `local-worker-innovation-conversion-plan-preview` Local Worker Innovation Conversion Plan Preview | needs_review | no | -, eligible 0, conversions 0, public 0, failures 0 |
-| `local-worker-innovation-conversion-apply-guard` Local Worker Innovation Conversion Apply Guard | needs_review | no | -, eligible 0, apply no, conversions 0, failures 0 |
-| `local-worker-innovation-conversion-evidence-ledger` Local Worker Innovation Conversion Evidence Ledger | needs_review | no | -, entries 0, apply no, public 0, failures 0 |
+| `local-worker-innovation-post-output-intake-review` Local Worker Innovation Post-Output Intake Review | review_only_ready | no | waiting_for_worker_outputs, candidates 0, accepted 0, public 0, failures 0 |
+| `local-worker-innovation-human-overseer-review-decision-card` Local Worker Innovation Human/Overseer Review Decision Card | review_only_ready | no | waiting_for_review_candidates, candidates 0, decisions 0, public 0, failures 0 |
+| `local-worker-innovation-conversion-plan-preview` Local Worker Innovation Conversion Plan Preview | review_only_ready | no | waiting_for_positive_review_decisions, eligible 0, conversions 0, public 0, failures 0 |
+| `local-worker-innovation-conversion-apply-guard` Local Worker Innovation Conversion Apply Guard | review_only_ready | no | waiting_for_positive_review_decisions, eligible 0, apply no, conversions 0, failures 0 |
+| `local-worker-innovation-conversion-evidence-ledger` Local Worker Innovation Conversion Evidence Ledger | review_only_ready | no | waiting_for_conversion_evidence, entries 7, apply no, public 0, failures 0 |
 | `github-innovation-watchlist` GitHub Innovation Watchlist | review_only_ready | no | 9 seeded repos, live 9, fallback 0, failures 0 |
 | `github-innovation-discovery` GitHub Innovation Discovery | review_only_ready | no | 5/10 queries with results, 23 candidates, failures 0 |
 | `github-innovation-review-queue` GitHub Innovation Review Queue | review_only_ready | no | 7 review items, high 5, execute 0, failures 0 |

@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:28:11.727Z",
+  "status": "local_worker_innovation_conversion_apply_guard_ready",
+  "policy": {
+    "guard_only": true,
+    "applies_conversion_now": false,
+    "executes_conversions_now": false,
+    "reads_private_sources_now": false,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "copies_worker_output_body_now": false,
+    "copies_worker_recommendation_text_now": false,
+    "writes_repo_derivatives_now": false,
+    "promotes_training_rows_now": false,
+    "public_ready_after_guard": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-conversion-plan-preview-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-conversion-plan-preview-check-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-2026-06-16.json",
+    "data/kosmo-local-worker-innovation-output-validator-2026-06-16.json"
+  ],
+  "summary": {
+    "mode": "waiting_for_positive_review_decisions",
+    "answer_present": false,
+    "exact_reply_valid": false,
+    "eligible_candidates": 0,
+    "apply_allowed_after_guard": false,
+    "conversions_executed_now": 0,
+    "repo_outputs_written_now": 0,
+    "training_rows_promoted_now": 0,
+    "worker_output_bodies_copied_now": 0,
+    "worker_recommendation_text_copied_now": 0,
+    "public_ready_after_guard": 0,
+    "readiness_failures": 0,
+    "reply_failures": 0,
+    "failures": 0
+  },
+  "parsed_answer": null,
+  "required_exact_reply": [
+    "local_worker_conversion_plan_choice=approve_separate_conversion_apply_later",
+    "candidate_task_id=<task_id>",
+    "confirmed_human_overseer_decision=yes",
+    "confirmed_validator_guard_passed=yes",
+    "confirmed_no_private_content=yes",
+    "confirmed_no_worker_body_copy=yes",
+    "confirmed_public_ready_false=yes",
+    "note=Nur separaten Conversion-Apply-Guard vorbereiten, keine direkte Uebernahme."
+  ],
+  "eligible_task_ids": [],
+  "next_actions": [
+    "Keep conversion held.",
+    "Wait for positive review decisions and an exact apply reply.",
+    "Do not write repo derivatives or copy worker output bodies from this guard."
+  ],
+  "hard_stops": [
+    "This guard never executes conversions.",
+    "This guard never writes repo derivatives.",
+    "This guard never copies worker output bodies or recommendation text into Git.",
+    "This guard never promotes training rows.",
+    "This guard never marks public-ready.",
+    "This guard never reads private Source Root, OneDrive or archive-library content."
+  ],
+  "failures": []
+}

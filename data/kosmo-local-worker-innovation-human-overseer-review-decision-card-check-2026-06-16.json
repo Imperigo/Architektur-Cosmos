@@ -1,0 +1,177 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:28:10.990Z",
+  "status": "local_worker_innovation_human_overseer_review_decision_card_guard_passed",
+  "policy": {
+    "validates_decision_card_only": true,
+    "applies_decisions_now": false,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-human-overseer-review-decision-card-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 30,
+    "passed": 30,
+    "failures": 0,
+    "card_status": "local_worker_innovation_human_overseer_review_decision_card_ready",
+    "mode": "waiting_for_review_candidates",
+    "review_candidates": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_human_overseer_review_decision_card_ready"
+    },
+    {
+      "id": "mode_guarded",
+      "status": "passed",
+      "evidence": "waiting_for_review_candidates"
+    },
+    {
+      "id": "policy_card_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_apply_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_metadata_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_body_copy",
+      "status": "passed",
+      "evidence": "{\"decision_card_only\":true,\"applies_decisions_now\":false,\"metadata_only\":true,\"reads_private_sources_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"copies_worker_output_body_now\":false,\"copies_worker_recommendation_text_now\":false,\"writes_repo_derivatives_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_card\":0}"
+    },
+    {
+      "id": "policy_no_derivatives",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "decisions_applied_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "accepted_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "repo_conversions_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "training_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "candidates_no_apply",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "candidates_no_conversion",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "candidate_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "allowed_answers_present",
+      "status": "passed",
+      "evidence": "hold_waiting_for_review_candidates, approve_review_candidate_for_separate_conversion_plan, reject_or_rework_review_candidate"
+    },
+    {
+      "id": "exact_reply_has_candidate",
+      "status": "passed",
+      "evidence": "local_worker_review_decision=approve_review_candidate_for_separate_conversion_plan; candidate_task_id=<task_id>; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_direct_repo_conversion=yes; confirmed_public_ready_false=yes; note=Nur als Review-Kandidat fuer einen separaten Conversion-Plan vormerken."
+    },
+    {
+      "id": "exact_reply_has_validator_guard",
+      "status": "passed",
+      "evidence": "local_worker_review_decision=approve_review_candidate_for_separate_conversion_plan; candidate_task_id=<task_id>; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_direct_repo_conversion=yes; confirmed_public_ready_false=yes; note=Nur als Review-Kandidat fuer einen separaten Conversion-Plan vormerken."
+    },
+    {
+      "id": "exact_reply_has_no_private",
+      "status": "passed",
+      "evidence": "local_worker_review_decision=approve_review_candidate_for_separate_conversion_plan; candidate_task_id=<task_id>; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_direct_repo_conversion=yes; confirmed_public_ready_false=yes; note=Nur als Review-Kandidat fuer einen separaten Conversion-Plan vormerken."
+    },
+    {
+      "id": "exact_reply_has_no_direct_conversion",
+      "status": "passed",
+      "evidence": "local_worker_review_decision=approve_review_candidate_for_separate_conversion_plan; candidate_task_id=<task_id>; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_direct_repo_conversion=yes; confirmed_public_ready_false=yes; note=Nur als Review-Kandidat fuer einen separaten Conversion-Plan vormerken."
+    },
+    {
+      "id": "exact_reply_has_public_false",
+      "status": "passed",
+      "evidence": "local_worker_review_decision=approve_review_candidate_for_separate_conversion_plan; candidate_task_id=<task_id>; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_direct_repo_conversion=yes; confirmed_public_ready_false=yes; note=Nur als Review-Kandidat fuer einen separaten Conversion-Plan vormerken."
+    },
+    {
+      "id": "hard_stop_no_apply",
+      "status": "passed",
+      "evidence": "this card never applies review decisions. this card never accepts worker outputs into repo artifacts. this card never copies worker output bodies or recommendation text into git. this card never promotes training rows. this card never marks public-ready. this card never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_accept",
+      "status": "passed",
+      "evidence": "this card never applies review decisions. this card never accepts worker outputs into repo artifacts. this card never copies worker output bodies or recommendation text into git. this card never promotes training rows. this card never marks public-ready. this card never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_body_copy",
+      "status": "passed",
+      "evidence": "this card never applies review decisions. this card never accepts worker outputs into repo artifacts. this card never copies worker output bodies or recommendation text into git. this card never promotes training rows. this card never marks public-ready. this card never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_training_public",
+      "status": "passed",
+      "evidence": "this card never applies review decisions. this card never accepts worker outputs into repo artifacts. this card never copies worker output bodies or recommendation text into git. this card never promotes training rows. this card never marks public-ready. this card never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this card never applies review decisions. this card never accepts worker outputs into repo artifacts. this card never copies worker output bodies or recommendation text into git. this card never promotes training rows. this card never marks public-ready. this card never reads private source root, onedrive or archive-library content."
+    }
+  ]
+}

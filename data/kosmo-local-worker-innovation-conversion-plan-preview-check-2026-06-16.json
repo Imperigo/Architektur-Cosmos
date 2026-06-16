@@ -1,0 +1,176 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:28:11.477Z",
+  "status": "local_worker_innovation_conversion_plan_preview_guard_passed",
+  "policy": {
+    "validates_preview_only": true,
+    "executes_conversions_now": false,
+    "reads_private_content_now": false,
+    "writes_repo_derivatives_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-conversion-plan-preview-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 30,
+    "passed": 30,
+    "failures": 0,
+    "preview_status": "local_worker_innovation_conversion_plan_preview_ready",
+    "mode": "waiting_for_positive_review_decisions",
+    "eligible_candidates": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_innovation_conversion_plan_preview_ready"
+    },
+    {
+      "id": "mode_guarded",
+      "status": "passed",
+      "evidence": "waiting_for_positive_review_decisions"
+    },
+    {
+      "id": "policy_preview_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_apply_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_conversion_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_body_copy",
+      "status": "passed",
+      "evidence": "{\"preview_only\":true,\"applies_decisions_now\":false,\"executes_conversions_now\":false,\"reads_private_sources_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"copies_worker_output_body_now\":false,\"copies_worker_recommendation_text_now\":false,\"writes_repo_derivatives_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_preview\":0}"
+    },
+    {
+      "id": "policy_no_repo_derivatives",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "conversions_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "repo_outputs_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "training_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "body_copy_zero",
+      "status": "passed",
+      "evidence": "{\"mode\":\"waiting_for_positive_review_decisions\",\"eligible_candidates\":0,\"conversion_steps_planned\":0,\"conversions_executed_now\":0,\"repo_outputs_written_now\":0,\"training_rows_promoted_now\":0,\"worker_output_bodies_copied_now\":0,\"worker_recommendation_text_copied_now\":0,\"public_ready_after_preview\":0,\"failures\":0}"
+    },
+    {
+      "id": "items_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "eligible_count_matches_items",
+      "status": "passed",
+      "evidence": "0/0"
+    },
+    {
+      "id": "allowed_future_apply_decisions",
+      "status": "passed",
+      "evidence": "hold_conversion_preview, approve_separate_conversion_apply_later, reject_or_rework_conversion_candidate"
+    },
+    {
+      "id": "exact_reply_has_candidate",
+      "status": "passed",
+      "evidence": "local_worker_conversion_plan_choice=approve_separate_conversion_apply_later; candidate_task_id=<task_id>; confirmed_human_overseer_decision=yes; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_worker_body_copy=yes; confirmed_public_ready_false=yes; note=Nur separaten Conversion-Apply-Guard vorbereiten, keine direkte Uebernahme."
+    },
+    {
+      "id": "exact_reply_has_human_overseer",
+      "status": "passed",
+      "evidence": "local_worker_conversion_plan_choice=approve_separate_conversion_apply_later; candidate_task_id=<task_id>; confirmed_human_overseer_decision=yes; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_worker_body_copy=yes; confirmed_public_ready_false=yes; note=Nur separaten Conversion-Apply-Guard vorbereiten, keine direkte Uebernahme."
+    },
+    {
+      "id": "exact_reply_has_validator",
+      "status": "passed",
+      "evidence": "local_worker_conversion_plan_choice=approve_separate_conversion_apply_later; candidate_task_id=<task_id>; confirmed_human_overseer_decision=yes; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_worker_body_copy=yes; confirmed_public_ready_false=yes; note=Nur separaten Conversion-Apply-Guard vorbereiten, keine direkte Uebernahme."
+    },
+    {
+      "id": "exact_reply_has_no_private",
+      "status": "passed",
+      "evidence": "local_worker_conversion_plan_choice=approve_separate_conversion_apply_later; candidate_task_id=<task_id>; confirmed_human_overseer_decision=yes; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_worker_body_copy=yes; confirmed_public_ready_false=yes; note=Nur separaten Conversion-Apply-Guard vorbereiten, keine direkte Uebernahme."
+    },
+    {
+      "id": "exact_reply_has_no_body_copy",
+      "status": "passed",
+      "evidence": "local_worker_conversion_plan_choice=approve_separate_conversion_apply_later; candidate_task_id=<task_id>; confirmed_human_overseer_decision=yes; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_worker_body_copy=yes; confirmed_public_ready_false=yes; note=Nur separaten Conversion-Apply-Guard vorbereiten, keine direkte Uebernahme."
+    },
+    {
+      "id": "exact_reply_has_public_false",
+      "status": "passed",
+      "evidence": "local_worker_conversion_plan_choice=approve_separate_conversion_apply_later; candidate_task_id=<task_id>; confirmed_human_overseer_decision=yes; confirmed_validator_guard_passed=yes; confirmed_no_private_content=yes; confirmed_no_worker_body_copy=yes; confirmed_public_ready_false=yes; note=Nur separaten Conversion-Apply-Guard vorbereiten, keine direkte Uebernahme."
+    },
+    {
+      "id": "hard_stop_no_conversion",
+      "status": "passed",
+      "evidence": "this preview never executes conversions. this preview never writes repo derivatives. this preview never copies worker output bodies or recommendation text into git. this preview never promotes training rows. this preview never marks public-ready. this preview never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_repo_derivatives",
+      "status": "passed",
+      "evidence": "this preview never executes conversions. this preview never writes repo derivatives. this preview never copies worker output bodies or recommendation text into git. this preview never promotes training rows. this preview never marks public-ready. this preview never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_body_copy",
+      "status": "passed",
+      "evidence": "this preview never executes conversions. this preview never writes repo derivatives. this preview never copies worker output bodies or recommendation text into git. this preview never promotes training rows. this preview never marks public-ready. this preview never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_training_public",
+      "status": "passed",
+      "evidence": "this preview never executes conversions. this preview never writes repo derivatives. this preview never copies worker output bodies or recommendation text into git. this preview never promotes training rows. this preview never marks public-ready. this preview never reads private source root, onedrive or archive-library content."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this preview never executes conversions. this preview never writes repo derivatives. this preview never copies worker output bodies or recommendation text into git. this preview never promotes training rows. this preview never marks public-ready. this preview never reads private source root, onedrive or archive-library content."
+    }
+  ]
+}
