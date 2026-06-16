@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:01:27.441Z",
+  "generated_at": "2026-06-16T18:03:39.135Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 333
+      "files": 334
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 200
+      "files": 201
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-335-cross-worker-review-2.md",
+      "title": "Codex Synergiebericht 335 - Cross-Worker Review 2",
+      "mirrored_inboxes": 2,
+      "bytes": 917,
+      "modified_at": "2026-06-16T18:03:38.881Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-334-evening-rollup-needs-review.md",
       "title": "Codex Synergiebericht 334 - Evening Rollup Needs Review",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2201,
       "modified_at": "2026-06-16T12:33:14.708Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md",
-      "title": "Codex Synergiebericht 327: KosmoOrbit Validation",
-      "mirrored_inboxes": 2,
-      "bytes": 1258,
-      "modified_at": "2026-06-16T10:42:16.784Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 327-334 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 328-335 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

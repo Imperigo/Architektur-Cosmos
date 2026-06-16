@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:01:27.981Z",
+  "generated_at": "2026-06-16T18:03:39.680Z",
   "status": "cross_worker_delta_audit_ready",
   "policy": {
     "audit_only": true,
@@ -24,12 +24,12 @@
   "summary": {
     "repos": 2,
     "visible_repos": 2,
-    "latest_handoff_number": 334,
+    "latest_handoff_number": 335,
     "latest_handoffs": 10,
     "active_handoff_inboxes": 2,
     "latest_unmirrored_handoffs": 0,
     "foreign_commits_needing_review": 6,
-    "dirty_repo_entries": 1349,
+    "dirty_repo_entries": 1330,
     "failures": 0,
     "public_ready_after_audit": 0
   },
@@ -40,9 +40,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "exists": true,
       "branch": "main",
-      "head": "22b24ae",
-      "status_count": 1348,
+      "head": "828fddf",
+      "status_count": 1329,
       "recent_commits": [
+        {
+          "hash": "828fddf",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T20:01:55+02:00",
+          "subject": "Record evening rollup blockers"
+        },
         {
           "hash": "22b24ae",
           "author": "Architecture Cosmos Maintainer",
@@ -108,12 +114,6 @@
           "author": "Architecture Cosmos Maintainer",
           "date": "2026-06-16T07:45:03+02:00",
           "subject": "Refresh queue after terminal gate audit"
-        },
-        {
-          "hash": "a29ffeb",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:44:13+02:00",
-          "subject": "Add terminal gate audit"
         }
       ]
     },
@@ -123,9 +123,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
       "exists": true,
       "branch": "main",
-      "head": "ccbc4a8",
+      "head": "8704a06",
       "status_count": 1,
       "recent_commits": [
+        {
+          "hash": "8704a06",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T20:02:00+02:00",
+          "subject": "Add Codex evening rollup handoff"
+        },
         {
           "hash": "ccbc4a8",
           "author": "Andrin Baumann",
@@ -191,12 +197,6 @@
           "author": "Andrin Baumann",
           "date": "2026-06-16T12:42:27+02:00",
           "subject": "Add KosmoOrbit validation handoff"
-        },
-        {
-          "hash": "45021e7",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T12:40:59+02:00",
-          "subject": "Add cross-worker delta audit handoff"
         }
       ]
     }
@@ -205,15 +205,22 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 333
+      "files": 334
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 200
+      "files": 201
     }
   ],
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-335-cross-worker-review-2.md",
+      "number": 335,
+      "title": "Codex Synergiebericht 335 - Cross-Worker Review 2",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T18:03:38.881Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-334-evening-rollup-needs-review.md",
       "number": 334,
@@ -276,16 +283,15 @@
       "title": "Codex Synergiebericht 326: Cross-Worker Delta Audit",
       "mirrored_inboxes": 2,
       "modified_at": "2026-06-16T10:39:35.507Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md",
-      "number": 325,
-      "title": "Codex Synergiebericht 325: Worktree Guard Audit",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T05:48:40.361Z"
     }
   ],
   "foreign_commits_needing_review": [
+    {
+      "hash": "8704a06",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T20:02:00+02:00",
+      "subject": "Add Codex evening rollup handoff"
+    },
     {
       "hash": "ccbc4a8",
       "author": "Andrin Baumann",
@@ -315,12 +321,6 @@
       "author": "Andrin Baumann",
       "date": "2026-06-16T19:39:21+02:00",
       "subject": "Add evening big batch handoff"
-    },
-    {
-      "hash": "c9eef0c",
-      "author": "Andrin Baumann",
-      "date": "2026-06-16T19:17:11+02:00",
-      "subject": "Add review batch triage handoff"
     }
   ],
   "next_actions": [
