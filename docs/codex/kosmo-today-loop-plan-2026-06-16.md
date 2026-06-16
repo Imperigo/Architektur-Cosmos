@@ -1,6 +1,6 @@
 # Kosmo Today Loop Plan
 
-Generated: 2026-06-16T05:24:10.071Z
+Generated: 2026-06-16T05:36:15.731Z
 Status: `today_loop_plan_ready`
 
 ## Summary
@@ -13,7 +13,7 @@ Status: `today_loop_plan_ready`
 - Data lane: kosmodata_lane_sweep_review_only_passed (24/24)
 - Router: worker_router_guarded_review_only
 - Worker boundary guard: worker_boundary_pack_guard_passed
-- Conversion evidence ledger: null
+- Conversion evidence ledger: local_worker_innovation_conversion_evidence_ledger_ready
 - Runtime manifest validator plan: innovation_github_worker_runtime_manifest_validator_plan_ready, guard innovation_github_worker_runtime_manifest_validator_plan_guard_passed
 - Runtime manifest validator: innovation_github_worker_runtime_manifest_validator_passed, guard innovation_github_worker_runtime_manifest_validator_guard_passed
 - Source-root unlocked: no
