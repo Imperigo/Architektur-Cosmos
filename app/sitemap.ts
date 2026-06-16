@@ -8,7 +8,7 @@ const allEntries = entries as Entry[];
 export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date('2026-05-18');
+  const now = new Date('2026-06-16');
 
   return [
     {
@@ -22,6 +22,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.95
+    },
+    {
+      url: `${siteUrl}/references/`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.98
+    },
+    {
+      url: `${siteUrl}/assets/`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.94
     },
     {
       url: `${siteUrl}/archive/`,
