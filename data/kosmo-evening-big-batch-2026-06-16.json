@@ -1,0 +1,168 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:38:02.315Z",
+  "date": "2026-06-16",
+  "target_date": "2026-06-17",
+  "status": "evening_big_batch_ready",
+  "policy": {
+    "review_only_default": true,
+    "reads_private_content_now": false,
+    "copies_private_content_to_git": false,
+    "runs_ocr_now": false,
+    "creates_embeddings_now": false,
+    "runs_fine_tuning_now": false,
+    "executes_local_workers_on_private_content_now": false,
+    "publishes_or_sets_public_ready": false,
+    "private_metadata_inventory_allowed_only_by_existing_guard": true,
+    "max_tick_minutes": 2,
+    "checkup_interval_minutes": 3,
+    "public_ready_after_batch": 0
+  },
+  "source_refs": [
+    "data/kosmodata-lane-sweep-2026-06-16.json",
+    "data/kosmo-day-batch-loop-2026-06-16.json",
+    "data/kosmo-source-independent-work-queue-2026-06-16.json",
+    "data/kosmo-night-loop-checkpoint-2026-06-16.json",
+    "data/kosmo-owner-review-batch-resolution-ledger-2026-06-16.json",
+    "data/kosmo-owner-review-batch-resolution-ledger-check-2026-06-16.json",
+    "data/kosmo-orbit-status-bridge-2026-06-16.json",
+    "data/kosmo-overseer-sync-board-2026-06-16.json",
+    "data/kosmo-overseer-sync-board-check-2026-06-16.json",
+    "data/kosmo-local-worker-execution-runbook-2026-06-16.json",
+    "data/kosmo-local-worker-execution-runbook-check-2026-06-16.json",
+    "data/kosmoasset-candidate-taxonomy-review-2026-06-16.json",
+    "data/kosmoasset-candidate-taxonomy-review-check-2026-06-16.json",
+    "data/kosmoreferences-pilot-gap-label-review-2026-06-16.json",
+    "data/kosmoreferences-pilot-gap-label-review-check-2026-06-16.json"
+  ],
+  "summary": {
+    "phases": 7,
+    "required_commands": 32,
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "day_loop_status": "day_batch_loop_passed_review_only",
+    "source_queue_status": "source_independent_work_queue_ready",
+    "night_checkpoint_status": "night_loop_guarded_ready",
+    "review_batches_resolved": 5,
+    "review_items_resolved": 16,
+    "owner_actions_now": 0,
+    "asset_open_reviews": 6,
+    "references_owner_pending": 10,
+    "orbit_blocking_cards": 6,
+    "overseer_next_loop": "resolve_asset_human_reviews",
+    "local_worker_executable_now": null,
+    "failures": 0,
+    "public_ready_after_batch": 0
+  },
+  "phases": [
+    {
+      "id": "01_refresh_and_lock_status",
+      "goal": "Status frisch halten und keine neuen privaten Inhalte anfassen.",
+      "commands": [
+        "npm run kosmo:data-lane-sweep",
+        "npm run kosmo:data-lane-command-router",
+        "npm run kosmo:source-independent-work-queue",
+        "npm run kosmo:night-loop-checkpoint"
+      ],
+      "executes_now_from_plan": false,
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "02_references_detail_review_prep",
+      "goal": "Detailreviews fuer die drei Piloten vorbereiten, aber keine Public-Freigabe setzen.",
+      "commands": [
+        "npm run kosmo:pilot-evidence-matrix",
+        "npm run kosmo:pilot-gap-label-review",
+        "npm run kosmo:pilot-gap-label-review-check",
+        "npm run kosmo:villa-provenance-brief",
+        "npm run kosmo:sogn-source-root-brief",
+        "npm run kosmo:ingenbohl-pdf-brief"
+      ],
+      "executes_now_from_plan": false,
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "03_asset_review_prep",
+      "goal": "KosmoAsset-Kandidaten weiter review-only strukturieren.",
+      "commands": [
+        "npm run kosmo:asset-reference-bridge-check",
+        "npm run kosmo:asset-source-candidate-map",
+        "npm run kosmo:asset-candidate-taxonomy-review",
+        "npm run kosmo:asset-candidate-taxonomy-review-check"
+      ],
+      "executes_now_from_plan": false,
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "04_local_worker_guarded_preflight",
+      "goal": "Lokale Worker nur mit Fixture-/Runbook-Gates vorbereiten, keine private Inhaltsausfuehrung.",
+      "commands": [
+        "npm run kosmo:local-worker-output-review",
+        "npm run kosmo:local-worker-output-contract-review",
+        "npm run kosmo:local-worker-output-contract-review-check",
+        "npm run kosmo:local-worker-execution-runbook",
+        "npm run kosmo:local-worker-execution-runbook-check"
+      ],
+      "executes_now_from_plan": false,
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "05_innovation_runtime_backlog",
+      "goal": "GitHub-/Runtime-Innovationen als review-only Backlog fuer morgen aktualisieren.",
+      "commands": [
+        "npm run kosmo:innovation-github-watchlist",
+        "npm run kosmo:innovation-github-watchlist-check",
+        "npm run kosmo:innovation-github-discovery",
+        "npm run kosmo:innovation-github-discovery-check",
+        "npm run kosmo:innovation-github-review-queue",
+        "npm run kosmo:innovation-github-review-queue-check"
+      ],
+      "executes_now_from_plan": false,
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "06_orbit_overseer_handoff",
+      "goal": "Orbit und Overseer mit Abendstand und Morgenauftrag synchronisieren.",
+      "commands": [
+        "npm run kosmo:orbit-status-bridge",
+        "npm run kosmo:overseer-sync-board",
+        "npm run kosmo:overseer-sync-board-check"
+      ],
+      "executes_now_from_plan": false,
+      "public_ready_after_phase": 0
+    },
+    {
+      "id": "07_final_acceptance",
+      "goal": "Abschluss pruefen, Handoff schreiben, gezielt committen und privat pushen.",
+      "commands": [
+        "npm run kosmo:day-batch-loop",
+        "npm run lint",
+        "git diff --cached --check",
+        "git status --short"
+      ],
+      "executes_now_from_plan": false,
+      "public_ready_after_phase": 0
+    }
+  ],
+  "tonight_focus": [
+    "References: Villa Savoye, Sogn Benedetg und Ingenbohl auf item-level Review vorbereiten.",
+    "Assets: sechs offene Human Reviews als echte naechste Owner-/Overseer-Entscheidung stehen lassen.",
+    "Local Worker: nur Contracts, Validatoren und Runbooks haerten; keine private Inhaltsarbeit starten.",
+    "Orbit/Overseer: Status sichtbar halten und Bericht 330 als Abendhandoff schreiben.",
+    "Git: nur eigene Abendbatch-Artefakte gezielt committen und pushen."
+  ],
+  "hard_stops": [
+    "Keine privaten PDFs, Scans, OCR-Texte oder geschuetzten Assets nach Git kopieren.",
+    "Keine Public-Freigabe und kein Asset-Promotion-Flag setzen.",
+    "Keine lokalen LLMs auf privaten Inhaltsdateien ausfuehren.",
+    "Keine Embeddings, Fine-Tunes oder Eval-Rows aus privaten Quellen erzeugen.",
+    "Keine fremden Worker-Artefakte verdeckt aendern; jede Aenderung im Handoff markieren.",
+    "Bei neuen Guard-Fehlern stoppen, Befund dokumentieren und nicht weiter eskalieren."
+  ],
+  "tomorrow_start": {
+    "first_command": "npm run kosmo:data-lane-sweep",
+    "second_command": "npm run kosmo:night-loop-checkpoint",
+    "third_command": "npm run kosmo:source-independent-work-queue",
+    "main_batch_after_green": "Work through phases 02-06, then run phase 07 final acceptance."
+  },
+  "failures": []
+}

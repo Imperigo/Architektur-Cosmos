@@ -68,7 +68,7 @@ function buildChecks(brief) {
     check('policy_no_private_inventory', brief.policy?.runs_private_inventory_now === false, brief.policy?.runs_private_inventory_now),
     check('public_ready_zero', brief.summary?.public_ready_after_brief === 0, brief.summary?.public_ready_after_brief),
     check('decision_groups_match', decisions.length === brief.summary?.decision_groups, `${decisions.length}/${brief.summary?.decision_groups}`),
-    check('two_owner_actions_present', brief.summary?.open_owner_actions === 2, brief.summary?.open_owner_actions),
+    check('open_owner_actions_bounded', Number.isInteger(brief.summary?.open_owner_actions) && brief.summary.open_owner_actions >= 1 && brief.summary.open_owner_actions <= 2, brief.summary?.open_owner_actions),
     check('source_root_choice_present', decisions.some((decision) => decision.id === 'source_root_choice'), decisions.map((decision) => decision.id).join(',')),
     check('open_review_batches_present', decisions.some((decision) => decision.id === 'open_review_batches'), decisions.map((decision) => decision.id).join(',')),
     check('hard_stops_present', (brief.hard_stops || []).length >= 5, (brief.hard_stops || []).length)

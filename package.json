@@ -206,6 +206,8 @@
     "kosmo:evening-batch-rollup-check": "node scripts/kosmo-evening-batch-rollup-check.mjs",
     "kosmo:evening-batch-acceptance-certificate": "node scripts/kosmo-evening-batch-acceptance-certificate.mjs",
     "kosmo:evening-batch-acceptance-certificate-check": "node scripts/kosmo-evening-batch-acceptance-certificate-check.mjs",
+    "kosmo:evening-big-batch": "node scripts/kosmo-evening-big-batch.mjs",
+    "kosmo:evening-big-batch-check": "node scripts/kosmo-evening-big-batch-check.mjs",
     "kosmo:today-loop-plan": "node scripts/kosmo-today-loop-plan.mjs",
     "kosmo:today-loop-plan-check": "node scripts/kosmo-today-loop-plan-check.mjs",
     "kosmo:daily-innovation-scout": "node scripts/kosmo-daily-innovation-scout.mjs",

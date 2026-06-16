@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:15:23.743Z",
+  "generated_at": "2026-06-16T17:38:41.810Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 327
+      "files": 329
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 193
+      "files": 195
     }
   ],
   "summary": {
@@ -47,6 +47,20 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-330-grosser-abendbatch.md",
+      "title": "Codex Synergiebericht 330: Grosser Abendbatch",
+      "mirrored_inboxes": 2,
+      "bytes": 1958,
+      "modified_at": "2026-06-16T17:38:31.154Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-329-review-batches-triaged.md",
+      "title": "Codex Synergiebericht 329: Review-Batches review-only triagiert",
+      "mirrored_inboxes": 2,
+      "bytes": 2808,
+      "modified_at": "2026-06-16T17:16:07.487Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md",
       "title": "Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory",
@@ -88,20 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1736,
       "modified_at": "2026-06-16T05:36:47.188Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-322-owner-unlock-helper-chain.md",
-      "title": "Codex Synergiebericht 322: Owner Unlock Helper Chain",
-      "mirrored_inboxes": 2,
-      "bytes": 3987,
-      "modified_at": "2026-06-16T05:35:11.864Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md",
-      "title": "Codex Synergiebericht 321: Local Model Inventory Refresh",
-      "mirrored_inboxes": 2,
-      "bytes": 837,
-      "modified_at": "2026-06-16T05:31:45.792Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 321-328 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 323-330 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

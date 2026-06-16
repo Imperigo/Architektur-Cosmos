@@ -1,0 +1,138 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:38:02.565Z",
+  "status": "evening_big_batch_guard_passed",
+  "policy": {
+    "validates_plan_only": true,
+    "reads_private_content": false,
+    "executes_local_workers": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-evening-big-batch-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 23,
+    "passed": 23,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "evening_big_batch_ready"
+    },
+    {
+      "id": "seven_phases",
+      "status": "passed",
+      "evidence": 7
+    },
+    {
+      "id": "required_commands_enough",
+      "status": "passed",
+      "evidence": 32
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_copy_private_to_git",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_ocr_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_embeddings_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_finetune_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_public_ready",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "owner_actions_clear",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "review_batches_resolved",
+      "status": "passed",
+      "evidence": "5/16"
+    },
+    {
+      "id": "has_data_lane_refresh",
+      "status": "passed",
+      "evidence": "npm run kosmo:data-lane-sweep npm run kosmo:data-lane-command-router npm run kosmo:source-independent-work-queue npm run kosmo:night-loop-checkpoint npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-gap-label-review npm run kosmo:pilot-gap-label-review-check npm run kosmo:villa-provenance-brief npm run kosmo:sogn-source-root-brief npm run kosmo:ingenbohl-pdf-brief npm run kosmo:asset-reference-bridge-check npm run kosmo:asset-source-candidate-map npm run kosmo:asset-candidate-taxonomy-review npm run kosmo:asset-candidate-taxonomy-review-check npm run kosmo:local-worker-output-review npm run kosmo:local-worker-output-contract-review npm run kosmo:local-worker-output-contract-review-check npm run kosmo:local-worker-execution-runbook npm run kosmo:local-worker-execution-runbook-check npm run kosmo:innovation-github-watchlist npm run kosmo:innovation-github-watchlist-check npm run kosmo:innovation-github-discovery npm run kosmo:innovation-github-discovery-check npm run kosmo:innovation-github-review-queue npm run kosmo:innovation-github-review-queue-check npm run kosmo:orbit-status-bridge npm run kosmo:overseer-sync-board npm run kosmo:overseer-sync-board-check npm run kosmo:day-batch-loop npm run lint git diff --cached --check git status --short"
+    },
+    {
+      "id": "has_references_pilot_work",
+      "status": "passed",
+      "evidence": "npm run kosmo:data-lane-sweep npm run kosmo:data-lane-command-router npm run kosmo:source-independent-work-queue npm run kosmo:night-loop-checkpoint npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-gap-label-review npm run kosmo:pilot-gap-label-review-check npm run kosmo:villa-provenance-brief npm run kosmo:sogn-source-root-brief npm run kosmo:ingenbohl-pdf-brief npm run kosmo:asset-reference-bridge-check npm run kosmo:asset-source-candidate-map npm run kosmo:asset-candidate-taxonomy-review npm run kosmo:asset-candidate-taxonomy-review-check npm run kosmo:local-worker-output-review npm run kosmo:local-worker-output-contract-review npm run kosmo:local-worker-output-contract-review-check npm run kosmo:local-worker-execution-runbook npm run kosmo:local-worker-execution-runbook-check npm run kosmo:innovation-github-watchlist npm run kosmo:innovation-github-watchlist-check npm run kosmo:innovation-github-discovery npm run kosmo:innovation-github-discovery-check npm run kosmo:innovation-github-review-queue npm run kosmo:innovation-github-review-queue-check npm run kosmo:orbit-status-bridge npm run kosmo:overseer-sync-board npm run kosmo:overseer-sync-board-check npm run kosmo:day-batch-loop npm run lint git diff --cached --check git status --short"
+    },
+    {
+      "id": "has_asset_review_work",
+      "status": "passed",
+      "evidence": "npm run kosmo:data-lane-sweep npm run kosmo:data-lane-command-router npm run kosmo:source-independent-work-queue npm run kosmo:night-loop-checkpoint npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-gap-label-review npm run kosmo:pilot-gap-label-review-check npm run kosmo:villa-provenance-brief npm run kosmo:sogn-source-root-brief npm run kosmo:ingenbohl-pdf-brief npm run kosmo:asset-reference-bridge-check npm run kosmo:asset-source-candidate-map npm run kosmo:asset-candidate-taxonomy-review npm run kosmo:asset-candidate-taxonomy-review-check npm run kosmo:local-worker-output-review npm run kosmo:local-worker-output-contract-review npm run kosmo:local-worker-output-contract-review-check npm run kosmo:local-worker-execution-runbook npm run kosmo:local-worker-execution-runbook-check npm run kosmo:innovation-github-watchlist npm run kosmo:innovation-github-watchlist-check npm run kosmo:innovation-github-discovery npm run kosmo:innovation-github-discovery-check npm run kosmo:innovation-github-review-queue npm run kosmo:innovation-github-review-queue-check npm run kosmo:orbit-status-bridge npm run kosmo:overseer-sync-board npm run kosmo:overseer-sync-board-check npm run kosmo:day-batch-loop npm run lint git diff --cached --check git status --short"
+    },
+    {
+      "id": "has_local_worker_guards",
+      "status": "passed",
+      "evidence": "npm run kosmo:data-lane-sweep npm run kosmo:data-lane-command-router npm run kosmo:source-independent-work-queue npm run kosmo:night-loop-checkpoint npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-gap-label-review npm run kosmo:pilot-gap-label-review-check npm run kosmo:villa-provenance-brief npm run kosmo:sogn-source-root-brief npm run kosmo:ingenbohl-pdf-brief npm run kosmo:asset-reference-bridge-check npm run kosmo:asset-source-candidate-map npm run kosmo:asset-candidate-taxonomy-review npm run kosmo:asset-candidate-taxonomy-review-check npm run kosmo:local-worker-output-review npm run kosmo:local-worker-output-contract-review npm run kosmo:local-worker-output-contract-review-check npm run kosmo:local-worker-execution-runbook npm run kosmo:local-worker-execution-runbook-check npm run kosmo:innovation-github-watchlist npm run kosmo:innovation-github-watchlist-check npm run kosmo:innovation-github-discovery npm run kosmo:innovation-github-discovery-check npm run kosmo:innovation-github-review-queue npm run kosmo:innovation-github-review-queue-check npm run kosmo:orbit-status-bridge npm run kosmo:overseer-sync-board npm run kosmo:overseer-sync-board-check npm run kosmo:day-batch-loop npm run lint git diff --cached --check git status --short"
+    },
+    {
+      "id": "has_orbit_overseer_sync",
+      "status": "passed",
+      "evidence": "npm run kosmo:data-lane-sweep npm run kosmo:data-lane-command-router npm run kosmo:source-independent-work-queue npm run kosmo:night-loop-checkpoint npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-gap-label-review npm run kosmo:pilot-gap-label-review-check npm run kosmo:villa-provenance-brief npm run kosmo:sogn-source-root-brief npm run kosmo:ingenbohl-pdf-brief npm run kosmo:asset-reference-bridge-check npm run kosmo:asset-source-candidate-map npm run kosmo:asset-candidate-taxonomy-review npm run kosmo:asset-candidate-taxonomy-review-check npm run kosmo:local-worker-output-review npm run kosmo:local-worker-output-contract-review npm run kosmo:local-worker-output-contract-review-check npm run kosmo:local-worker-execution-runbook npm run kosmo:local-worker-execution-runbook-check npm run kosmo:innovation-github-watchlist npm run kosmo:innovation-github-watchlist-check npm run kosmo:innovation-github-discovery npm run kosmo:innovation-github-discovery-check npm run kosmo:innovation-github-review-queue npm run kosmo:innovation-github-review-queue-check npm run kosmo:orbit-status-bridge npm run kosmo:overseer-sync-board npm run kosmo:overseer-sync-board-check npm run kosmo:day-batch-loop npm run lint git diff --cached --check git status --short"
+    },
+    {
+      "id": "has_final_lint",
+      "status": "passed",
+      "evidence": "npm run kosmo:data-lane-sweep npm run kosmo:data-lane-command-router npm run kosmo:source-independent-work-queue npm run kosmo:night-loop-checkpoint npm run kosmo:pilot-evidence-matrix npm run kosmo:pilot-gap-label-review npm run kosmo:pilot-gap-label-review-check npm run kosmo:villa-provenance-brief npm run kosmo:sogn-source-root-brief npm run kosmo:ingenbohl-pdf-brief npm run kosmo:asset-reference-bridge-check npm run kosmo:asset-source-candidate-map npm run kosmo:asset-candidate-taxonomy-review npm run kosmo:asset-candidate-taxonomy-review-check npm run kosmo:local-worker-output-review npm run kosmo:local-worker-output-contract-review npm run kosmo:local-worker-output-contract-review-check npm run kosmo:local-worker-execution-runbook npm run kosmo:local-worker-execution-runbook-check npm run kosmo:innovation-github-watchlist npm run kosmo:innovation-github-watchlist-check npm run kosmo:innovation-github-discovery npm run kosmo:innovation-github-discovery-check npm run kosmo:innovation-github-review-queue npm run kosmo:innovation-github-review-queue-check npm run kosmo:orbit-status-bridge npm run kosmo:overseer-sync-board npm run kosmo:overseer-sync-board-check npm run kosmo:day-batch-loop npm run lint git diff --cached --check git status --short"
+    },
+    {
+      "id": "hard_stops_private_sources",
+      "status": "passed",
+      "evidence": "keine privaten pdfs, scans, ocr-texte oder geschuetzten assets nach git kopieren. keine public-freigabe und kein asset-promotion-flag setzen. keine lokalen llms auf privaten inhaltsdateien ausfuehren. keine embeddings, fine-tunes oder eval-rows aus privaten quellen erzeugen. keine fremden worker-artefakte verdeckt aendern; jede aenderung im handoff markieren. bei neuen guard-fehlern stoppen, befund dokumentieren und nicht weiter eskalieren."
+    },
+    {
+      "id": "hard_stops_no_public",
+      "status": "passed",
+      "evidence": "keine privaten pdfs, scans, ocr-texte oder geschuetzten assets nach git kopieren. keine public-freigabe und kein asset-promotion-flag setzen. keine lokalen llms auf privaten inhaltsdateien ausfuehren. keine embeddings, fine-tunes oder eval-rows aus privaten quellen erzeugen. keine fremden worker-artefakte verdeckt aendern; jede aenderung im handoff markieren. bei neuen guard-fehlern stoppen, befund dokumentieren und nicht weiter eskalieren."
+    },
+    {
+      "id": "hard_stops_no_llm_private",
+      "status": "passed",
+      "evidence": "keine privaten pdfs, scans, ocr-texte oder geschuetzten assets nach git kopieren. keine public-freigabe und kein asset-promotion-flag setzen. keine lokalen llms auf privaten inhaltsdateien ausfuehren. keine embeddings, fine-tunes oder eval-rows aus privaten quellen erzeugen. keine fremden worker-artefakte verdeckt aendern; jede aenderung im handoff markieren. bei neuen guard-fehlern stoppen, befund dokumentieren und nicht weiter eskalieren."
+    },
+    {
+      "id": "hard_stops_worker_visibility",
+      "status": "passed",
+      "evidence": "keine privaten pdfs, scans, ocr-texte oder geschuetzten assets nach git kopieren. keine public-freigabe und kein asset-promotion-flag setzen. keine lokalen llms auf privaten inhaltsdateien ausfuehren. keine embeddings, fine-tunes oder eval-rows aus privaten quellen erzeugen. keine fremden worker-artefakte verdeckt aendern; jede aenderung im handoff markieren. bei neuen guard-fehlern stoppen, befund dokumentieren und nicht weiter eskalieren."
+    }
+  ]
+}
