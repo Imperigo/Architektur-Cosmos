@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board Check
 
-Generated: 2026-06-16T10:40:22.178Z
+Generated: 2026-06-16T10:42:41.513Z
 Status: `overseer_sync_board_guard_passed`
 
 ## Summary
@@ -42,6 +42,8 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox` - Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox
 - passed: `latest_handoffs_array_count` - Latest handoff array must contain eight items.
 - passed: `latest_handoff_includes_115` - Latest handoffs must include synergiebericht 115 or newer.
+- passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md` - 2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md must be mirrored in both inboxes.
+- passed: `handoff_title:2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md` - 2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md` - 2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md` - 2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md` - 2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md must be mirrored in both inboxes.
@@ -56,8 +58,6 @@ Status: `overseer_sync_board_guard_passed`
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md` - 2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md must include a title.
 - passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md` - 2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md must be mirrored in both inboxes.
 - passed: `handoff_title:2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md` - 2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md must include a title.
-- passed: `handoff_mirrored:2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md` - 2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md must be mirrored in both inboxes.
-- passed: `handoff_title:2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md` - 2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md must include a title.
 - passed: `source_root_blocked` - Source-root blocker must remain blocked.
 - passed: `private_inventory_blocked` - Private inventory blocker must remain blocked.
 - passed: `owner_answers_blocked` - Owner answers blocker must remain blocked.

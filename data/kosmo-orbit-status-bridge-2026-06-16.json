@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T10:40:21.433Z",
+  "generated_at": "2026-06-16T10:42:40.746Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -348,7 +348,7 @@
     "worktree_guard_audit_check_failures": 0,
     "cross_worker_delta_audit_status": "cross_worker_delta_audit_ready",
     "cross_worker_delta_audit_visible_repos": 2,
-    "cross_worker_delta_audit_latest_handoff_number": 326,
+    "cross_worker_delta_audit_latest_handoff_number": 327,
     "cross_worker_delta_audit_latest_unmirrored_handoffs": 0,
     "cross_worker_delta_audit_foreign_commits_needing_review": 6,
     "cross_worker_delta_audit_check_status": "cross_worker_delta_audit_guard_passed",
@@ -1128,7 +1128,7 @@
       "id": "cross-worker-delta-audit",
       "title": "Cross-Worker Delta Audit",
       "status": "guard_passed",
-      "signal": "2/2 repos, latest handoff 326, unmirrored 0, foreign commits 6, failures 0",
+      "signal": "2/2 repos, latest handoff 327, unmirrored 0, foreign commits 6, failures 0",
       "owner_action_required": false,
       "route_hint": "Source-free Git/Handoff delta audit across Codex, Claude and KosmoOrbit work",
       "source_ref": "data/kosmo-cross-worker-delta-audit-2026-06-16.json"

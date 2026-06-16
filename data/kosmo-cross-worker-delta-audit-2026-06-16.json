@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T10:40:20.954Z",
+  "generated_at": "2026-06-16T10:42:40.252Z",
   "status": "cross_worker_delta_audit_ready",
   "policy": {
     "audit_only": true,
@@ -24,12 +24,12 @@
   "summary": {
     "repos": 2,
     "visible_repos": 2,
-    "latest_handoff_number": 326,
+    "latest_handoff_number": 327,
     "latest_handoffs": 10,
     "active_handoff_inboxes": 2,
     "latest_unmirrored_handoffs": 0,
     "foreign_commits_needing_review": 6,
-    "dirty_repo_entries": 1417,
+    "dirty_repo_entries": 1396,
     "failures": 0,
     "public_ready_after_audit": 0
   },
@@ -40,9 +40,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "exists": true,
       "branch": "main",
-      "head": "3588436",
-      "status_count": 1416,
+      "head": "c1314a9",
+      "status_count": 1396,
       "recent_commits": [
+        {
+          "hash": "c1314a9",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T12:40:59+02:00",
+          "subject": "Add cross-worker delta audit"
+        },
         {
           "hash": "3588436",
           "author": "Architecture Cosmos Maintainer",
@@ -108,12 +114,6 @@
           "author": "Architecture Cosmos Maintainer",
           "date": "2026-06-16T07:24:47+02:00",
           "subject": "Surface runtime manifest validator"
-        },
-        {
-          "hash": "fd0ea1c",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:23:12+02:00",
-          "subject": "Add runtime manifest validator"
         }
       ]
     },
@@ -123,9 +123,21 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
       "exists": true,
       "branch": "main",
-      "head": "6cac828",
-      "status_count": 1,
+      "head": "81a61b2",
+      "status_count": 0,
       "recent_commits": [
+        {
+          "hash": "81a61b2",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T12:42:27+02:00",
+          "subject": "Add KosmoOrbit validation handoff"
+        },
+        {
+          "hash": "45021e7",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T12:40:59+02:00",
+          "subject": "Add cross-worker delta audit handoff"
+        },
         {
           "hash": "6cac828",
           "author": "Andrin Baumann",
@@ -185,18 +197,6 @@
           "author": "Andrin Baumann",
           "date": "2026-06-16T07:28:56+02:00",
           "subject": "Add local worker conversion handoff"
-        },
-        {
-          "hash": "6754181",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:27:43+02:00",
-          "subject": "Add training eval ontology handoff"
-        },
-        {
-          "hash": "cf5bbd9",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:24:47+02:00",
-          "subject": "Add runtime manifest validator flow handoff"
         }
       ]
     }
@@ -205,15 +205,22 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 325
+      "files": 326
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 187
+      "files": 188
     }
   ],
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md",
+      "number": 327,
+      "title": "Codex Synergiebericht 327: KosmoOrbit Validation",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T10:42:16.784Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md",
       "number": 326,
@@ -276,16 +283,21 @@
       "title": "Codex Synergiebericht 318: Training/Eval/Ontology Refresh",
       "mirrored_inboxes": 2,
       "modified_at": "2026-06-16T05:27:27.531Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md",
-      "number": 317,
-      "title": "Codex Synergiebericht 317: Runtime Manifest Validator Flow Integration",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T05:24:37.904Z"
     }
   ],
   "foreign_commits_needing_review": [
+    {
+      "hash": "81a61b2",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T12:42:27+02:00",
+      "subject": "Add KosmoOrbit validation handoff"
+    },
+    {
+      "hash": "45021e7",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T12:40:59+02:00",
+      "subject": "Add cross-worker delta audit handoff"
+    },
     {
       "hash": "6cac828",
       "author": "Andrin Baumann",
@@ -309,18 +321,6 @@
       "author": "Andrin Baumann",
       "date": "2026-06-16T07:44:13+02:00",
       "subject": "Add terminal gate audit handoff"
-    },
-    {
-      "hash": "d87b0cb",
-      "author": "Andrin Baumann",
-      "date": "2026-06-16T07:36:59+02:00",
-      "subject": "Add owner gate terminal handoff"
-    },
-    {
-      "hash": "f4a976b",
-      "author": "Andrin Baumann",
-      "date": "2026-06-16T07:36:51+02:00",
-      "subject": "Pipeline: schema-aware \"Aus Sprache\"-Generator + args-Support + Guard immer-an"
     }
   ],
   "next_actions": [

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T10:40:21.188Z",
+  "generated_at": "2026-06-16T10:42:40.492Z",
   "status": "cross_worker_delta_audit_guard_passed",
   "policy": {
     "validates_audit_only": true,
@@ -68,7 +68,7 @@
     {
       "id": "latest_handoff_present",
       "status": "passed",
-      "evidence": 326
+      "evidence": 327
     },
     {
       "id": "handoffs_mirrored",

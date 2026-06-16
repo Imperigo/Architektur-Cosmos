@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T10:40:21.939Z",
+  "generated_at": "2026-06-16T10:42:41.272Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 325
+      "files": 326
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 187
+      "files": 188
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md",
+      "title": "Codex Synergiebericht 327: KosmoOrbit Validation",
+      "mirrored_inboxes": 2,
+      "bytes": 1258,
+      "modified_at": "2026-06-16T10:42:16.784Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md",
       "title": "Codex Synergiebericht 326: Cross-Worker Delta Audit",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1414,
       "modified_at": "2026-06-16T05:31:03.810Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md",
-      "title": "Codex Synergiebericht 319: Local Worker Conversion Governance",
-      "mirrored_inboxes": 2,
-      "bytes": 2091,
-      "modified_at": "2026-06-16T05:28:41.433Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 319-326 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 320-327 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."
