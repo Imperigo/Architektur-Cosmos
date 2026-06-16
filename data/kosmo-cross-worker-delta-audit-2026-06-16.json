@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T10:42:40.252Z",
+  "generated_at": "2026-06-16T17:56:41.583Z",
   "status": "cross_worker_delta_audit_ready",
   "policy": {
     "audit_only": true,
@@ -24,12 +24,12 @@
   "summary": {
     "repos": 2,
     "visible_repos": 2,
-    "latest_handoff_number": 327,
+    "latest_handoff_number": 331,
     "latest_handoffs": 10,
     "active_handoff_inboxes": 2,
     "latest_unmirrored_handoffs": 0,
     "foreign_commits_needing_review": 6,
-    "dirty_repo_entries": 1396,
+    "dirty_repo_entries": 1331,
     "failures": 0,
     "public_ready_after_audit": 0
   },
@@ -40,9 +40,39 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "exists": true,
       "branch": "main",
-      "head": "c1314a9",
-      "status_count": 1396,
+      "head": "90175ca",
+      "status_count": 1328,
       "recent_commits": [
+        {
+          "hash": "90175ca",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T19:56:19+02:00",
+          "subject": "Run guarded Kosmo evening batch"
+        },
+        {
+          "hash": "c7a8dd4",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T19:39:21+02:00",
+          "subject": "Add guarded evening big batch"
+        },
+        {
+          "hash": "39d4c3f",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T19:17:11+02:00",
+          "subject": "Triag owner review batches review-only"
+        },
+        {
+          "hash": "fe63eb6",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T14:36:02+02:00",
+          "subject": "Unlock metadata-only source root diagnostics"
+        },
+        {
+          "hash": "5355c04",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T12:43:18+02:00",
+          "subject": "Refresh cross-worker audit after Orbit validation"
+        },
         {
           "hash": "c1314a9",
           "author": "Architecture Cosmos Maintainer",
@@ -84,36 +114,6 @@
           "author": "Architecture Cosmos Maintainer",
           "date": "2026-06-16T07:35:39+02:00",
           "subject": "Prepare owner unlock helper chain"
-        },
-        {
-          "hash": "8c430e1",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:31:52+02:00",
-          "subject": "Refresh local model inventory"
-        },
-        {
-          "hash": "b151f7f",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:31:12+02:00",
-          "subject": "Refresh day batch loop status"
-        },
-        {
-          "hash": "af183e6",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:28:56+02:00",
-          "subject": "Refresh local worker conversion governance"
-        },
-        {
-          "hash": "446d21f",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:27:43+02:00",
-          "subject": "Refresh training eval ontology state"
-        },
-        {
-          "hash": "1b84ed1",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:24:47+02:00",
-          "subject": "Surface runtime manifest validator"
         }
       ]
     },
@@ -123,9 +123,51 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
       "exists": true,
       "branch": "main",
-      "head": "81a61b2",
-      "status_count": 0,
+      "head": "9889d28",
+      "status_count": 3,
       "recent_commits": [
+        {
+          "hash": "9889d28",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T19:56:22+02:00",
+          "subject": "Add Codex evening batch handoff"
+        },
+        {
+          "hash": "b6a9928",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T19:39:21+02:00",
+          "subject": "Add evening big batch handoff"
+        },
+        {
+          "hash": "c9eef0c",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T19:17:11+02:00",
+          "subject": "Add review batch triage handoff"
+        },
+        {
+          "hash": "9c1ba39",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T19:15:25+02:00",
+          "subject": "Pipeline-Recipe 'Wettbewerb: Phase-0 → Plan' — volle Lane-Spanne (Prepare→Design→Publish)"
+        },
+        {
+          "hash": "fbb48e1",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T14:39:55+02:00",
+          "subject": "Review-Fixes (heutige Changes): 7 bestätigte Bugs aus adversarialer Multi-Agent-Review"
+        },
+        {
+          "hash": "b60d11b",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T14:36:21+02:00",
+          "subject": "Add source root unlock handoff"
+        },
+        {
+          "hash": "ec59221",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T13:03:59+02:00",
+          "subject": "Agent-Modus freeze-sicher: kein Auto-30B-Load mehr beim Aktivieren"
+        },
         {
           "hash": "81a61b2",
           "author": "Andrin Baumann",
@@ -155,48 +197,6 @@
           "author": "Andrin Baumann",
           "date": "2026-06-16T07:49:29+02:00",
           "subject": "Add worktree guard audit handoff"
-        },
-        {
-          "hash": "0026ba3",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:44:13+02:00",
-          "subject": "Add terminal gate audit handoff"
-        },
-        {
-          "hash": "d87b0cb",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:36:59+02:00",
-          "subject": "Add owner gate terminal handoff"
-        },
-        {
-          "hash": "f4a976b",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:36:51+02:00",
-          "subject": "Pipeline: schema-aware \"Aus Sprache\"-Generator + args-Support + Guard immer-an"
-        },
-        {
-          "hash": "4fc6192",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:35:45+02:00",
-          "subject": "Add owner unlock helper handoff"
-        },
-        {
-          "hash": "0f827c5",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:31:52+02:00",
-          "subject": "Add local model inventory handoff"
-        },
-        {
-          "hash": "41e6378",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:31:12+02:00",
-          "subject": "Add day batch loop handoff"
-        },
-        {
-          "hash": "68e7c98",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T07:28:56+02:00",
-          "subject": "Add local worker conversion handoff"
         }
       ]
     }
@@ -205,15 +205,43 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 326
+      "files": 330
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 188
+      "files": 196
     }
   ],
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-331-abendbatch-execution.md",
+      "number": 331,
+      "title": "Codex Synergiebericht 331 - Abendbatch Execution",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T17:56:06.909Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-330-grosser-abendbatch.md",
+      "number": 330,
+      "title": "Codex Synergiebericht 330: Grosser Abendbatch",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T17:38:31.154Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-329-review-batches-triaged.md",
+      "number": 329,
+      "title": "Codex Synergiebericht 329: Review-Batches review-only triagiert",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T17:16:07.487Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md",
+      "number": 328,
+      "title": "Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T12:33:14.708Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-327-kosmoorbit-validation.md",
       "number": 327,
@@ -255,72 +283,44 @@
       "title": "Codex Synergiebericht 322: Owner Unlock Helper Chain",
       "mirrored_inboxes": 2,
       "modified_at": "2026-06-16T05:35:11.864Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md",
-      "number": 321,
-      "title": "Codex Synergiebericht 321: Local Model Inventory Refresh",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T05:31:45.792Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md",
-      "number": 320,
-      "title": "Codex Synergiebericht 320: Day Batch Loop Green",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T05:31:03.810Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md",
-      "number": 319,
-      "title": "Codex Synergiebericht 319: Local Worker Conversion Governance",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T05:28:41.433Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md",
-      "number": 318,
-      "title": "Codex Synergiebericht 318: Training/Eval/Ontology Refresh",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T05:27:27.531Z"
     }
   ],
   "foreign_commits_needing_review": [
     {
-      "hash": "81a61b2",
+      "hash": "9889d28",
       "author": "Andrin Baumann",
-      "date": "2026-06-16T12:42:27+02:00",
-      "subject": "Add KosmoOrbit validation handoff"
+      "date": "2026-06-16T19:56:22+02:00",
+      "subject": "Add Codex evening batch handoff"
     },
     {
-      "hash": "45021e7",
+      "hash": "b6a9928",
       "author": "Andrin Baumann",
-      "date": "2026-06-16T12:40:59+02:00",
-      "subject": "Add cross-worker delta audit handoff"
+      "date": "2026-06-16T19:39:21+02:00",
+      "subject": "Add evening big batch handoff"
     },
     {
-      "hash": "6cac828",
+      "hash": "c9eef0c",
       "author": "Andrin Baumann",
-      "date": "2026-06-16T08:48:13+02:00",
-      "subject": "Guard handlungsfähig: \"⚡ tote Kanten entfernen\"-Button"
+      "date": "2026-06-16T19:17:11+02:00",
+      "subject": "Add review batch triage handoff"
     },
     {
-      "hash": "6448930",
+      "hash": "9c1ba39",
       "author": "Andrin Baumann",
-      "date": "2026-06-16T08:11:38+02:00",
-      "subject": "Guard: Konfig-Knoten-Args als gelieferte Felder zählen (Falsch-Positiv-Fix)"
+      "date": "2026-06-16T19:15:25+02:00",
+      "subject": "Pipeline-Recipe 'Wettbewerb: Phase-0 → Plan' — volle Lane-Spanne (Prepare→Design→Publish)"
     },
     {
-      "hash": "872e0f1",
+      "hash": "fbb48e1",
       "author": "Andrin Baumann",
-      "date": "2026-06-16T07:49:29+02:00",
-      "subject": "Add worktree guard audit handoff"
+      "date": "2026-06-16T14:39:55+02:00",
+      "subject": "Review-Fixes (heutige Changes): 7 bestätigte Bugs aus adversarialer Multi-Agent-Review"
     },
     {
-      "hash": "0026ba3",
+      "hash": "b60d11b",
       "author": "Andrin Baumann",
-      "date": "2026-06-16T07:44:13+02:00",
-      "subject": "Add terminal gate audit handoff"
+      "date": "2026-06-16T14:36:21+02:00",
+      "subject": "Add source root unlock handoff"
     }
   ],
   "next_actions": [

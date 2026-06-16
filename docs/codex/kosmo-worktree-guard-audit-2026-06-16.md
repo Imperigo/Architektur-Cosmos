@@ -1,24 +1,24 @@
 # Kosmo Worktree Guard Audit
 
-Generated: 2026-06-16T05:47:28.078Z
+Generated: 2026-06-16T17:56:41.018Z
 Status: `worktree_guard_audit_dirty_review_required`
 
 ## Summary
 
-- Entries: 1403
+- Entries: 1324
 - Staged: 0
-- Unstaged: 1135
-- Untracked: 268
+- Unstaged: 1194
+- Untracked: 130
 - High-risk path hints: 80
 - Broad stage allowed: no
 - Public-ready after audit: 0
 
 ## Top-Level Buckets
 
-- docs: 412
-- data: 356
+- docs: 374
 - examples: 344
-- scripts: 151
+- data: 318
+- scripts: 149
 - app: 58
 - public: 27
 - components: 19
@@ -34,7 +34,6 @@ Status: `worktree_guard_audit_dirty_review_required`
 - eslint.config.mjs: 1
 - next-env.d.ts: 1
 - next.config.js: 1
-- package.json: 1
 - postcss.config.js: 1
 - README.md: 1
 - SECURITY.md: 1
@@ -45,8 +44,8 @@ Status: `worktree_guard_audit_dirty_review_required`
 
 ## Status Code Buckets
 
-- ` M`: 1135
-- `??`: 268
+- ` M`: 1194
+- `??`: 130
 
 ## Worker Rules
 

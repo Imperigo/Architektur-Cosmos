@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:48:10.488Z",
+  "generated_at": "2026-06-16T17:56:41.273Z",
   "status": "worktree_guard_audit_guard_passed",
   "policy": {
     "validates_audit_only": true,
@@ -58,12 +58,12 @@
     {
       "id": "entry_counts_present",
       "status": "passed",
-      "evidence": "{\"entries\":1403,\"staged\":0,\"unstaged\":1135,\"untracked\":268,\"top_level_buckets\":27,\"status_code_buckets\":2,\"high_risk_path_hints\":80,\"broad_stage_allowed\":false,\"public_ready_after_audit\":0}"
+      "evidence": "{\"entries\":1324,\"staged\":0,\"unstaged\":1194,\"untracked\":130,\"top_level_buckets\":26,\"status_code_buckets\":2,\"high_risk_path_hints\":80,\"broad_stage_allowed\":false,\"public_ready_after_audit\":0}"
     },
     {
       "id": "top_level_buckets_present",
       "status": "passed",
-      "evidence": "27/27"
+      "evidence": "26/26"
     },
     {
       "id": "rule_blocks_git_add_dot",

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:47:28.078Z",
+  "generated_at": "2026-06-16T17:56:41.018Z",
   "status": "worktree_guard_audit_dirty_review_required",
   "policy": {
     "audit_only": true,
@@ -11,11 +11,11 @@
     "public_ready_after_audit": 0
   },
   "summary": {
-    "entries": 1403,
+    "entries": 1324,
     "staged": 0,
-    "unstaged": 1135,
-    "untracked": 268,
-    "top_level_buckets": 27,
+    "unstaged": 1194,
+    "untracked": 130,
+    "top_level_buckets": 26,
     "status_code_buckets": 2,
     "high_risk_path_hints": 80,
     "broad_stage_allowed": false,
@@ -25,19 +25,19 @@
     "by_top_level": [
       {
         "key": "docs",
-        "count": 412
-      },
-      {
-        "key": "data",
-        "count": 356
+        "count": 374
       },
       {
         "key": "examples",
         "count": 344
       },
       {
+        "key": "data",
+        "count": 318
+      },
+      {
         "key": "scripts",
-        "count": 151
+        "count": 149
       },
       {
         "key": "app",
@@ -100,10 +100,6 @@
         "count": 1
       },
       {
-        "key": "package.json",
-        "count": 1
-      },
-      {
         "key": "postcss.config.js",
         "count": 1
       },
@@ -135,11 +131,11 @@
     "by_status_code": [
       {
         "key": " M",
-        "count": 1135
+        "count": 1194
       },
       {
         "key": "??",
-        "count": 268
+        "count": 130
       }
     ]
   },
