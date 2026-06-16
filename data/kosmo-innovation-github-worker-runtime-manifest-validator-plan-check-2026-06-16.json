@@ -1,0 +1,124 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:15:42.237Z",
+  "status": "innovation_github_worker_runtime_manifest_validator_plan_guard_passed",
+  "policy": {
+    "validates_plan_only": true,
+    "writes_validator_code_now": false,
+    "executes_runtime_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-2026-06-16.json"
+  ],
+  "summary": {
+    "plan_status": "innovation_github_worker_runtime_manifest_validator_plan_ready",
+    "checks": 20,
+    "passed": 20,
+    "failures": 0,
+    "rules": 10,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "innovation_github_worker_runtime_manifest_validator_plan_ready"
+    },
+    {
+      "id": "policy_plan_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_code_execution",
+      "status": "passed",
+      "evidence": "{\"validator_plan_only\":true,\"writes_validator_code_now\":false,\"executes_validator_now\":false,\"executes_runtime_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"reads_private_content_now\":false,\"writes_runtime_manifest_now\":false,\"writes_runtime_outputs_now\":false,\"public_ready_after_plan\":0}"
+    },
+    {
+      "id": "policy_no_models_installs_private",
+      "status": "passed",
+      "evidence": "{\"validator_plan_only\":true,\"writes_validator_code_now\":false,\"executes_validator_now\":false,\"executes_runtime_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"reads_private_content_now\":false,\"writes_runtime_manifest_now\":false,\"writes_runtime_outputs_now\":false,\"public_ready_after_plan\":0}"
+    },
+    {
+      "id": "policy_no_manifest_outputs",
+      "status": "passed",
+      "evidence": "{\"validator_plan_only\":true,\"writes_validator_code_now\":false,\"executes_validator_now\":false,\"executes_runtime_now\":false,\"starts_models_now\":false,\"installs_dependencies_now\":false,\"reads_private_content_now\":false,\"writes_runtime_manifest_now\":false,\"writes_runtime_outputs_now\":false,\"public_ready_after_plan\":0}"
+    },
+    {
+      "id": "policy_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "rule_count",
+      "status": "passed",
+      "evidence": 10
+    },
+    {
+      "id": "all_categories_covered",
+      "status": "passed",
+      "evidence": "execution_state,missing_guard,raw_runtime_output,worker_output_body,private_path,secret,runtime_side_effect,public_ready_false_positive"
+    },
+    {
+      "id": "required_rules_present",
+      "status": "passed",
+      "evidence": "block_executable_manifest,require_runtime_apply_guard,require_rollback_redaction_refs,block_raw_runtime_outputs,block_worker_output_body,block_private_paths,block_secret_fields,block_runtime_side_effects,require_overseer_review_gate,block_public_ready_promotion"
+    },
+    {
+      "id": "all_rules_required_before_runtime",
+      "status": "passed",
+      "evidence": "all required before runtime"
+    },
+    {
+      "id": "all_rules_not_executable",
+      "status": "passed",
+      "evidence": "all not executable"
+    },
+    {
+      "id": "all_rules_public_ready_zero",
+      "status": "passed",
+      "evidence": "all public-ready zero"
+    },
+    {
+      "id": "implementation_requirements_present",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "summary_zeroes",
+      "status": "passed",
+      "evidence": "{\"runtime_batch_id\":\"github-worker-runtime-batch-draft-2026-06-16\",\"rules\":10,\"fixture_categories\":8,\"negative_fixtures\":10,\"expected_blocked\":10,\"executable_now\":0,\"validator_code_written_now\":0,\"runtime_executed_now\":0,\"public_ready_after_plan\":0,\"failures\":0}"
+    },
+    {
+      "id": "source_refs_cover_inputs",
+      "status": "passed",
+      "evidence": "data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-check-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-check-2026-06-16.json"
+    },
+    {
+      "id": "hard_stop_no_code",
+      "status": "passed",
+      "evidence": "this plan never writes validator code. this plan never executes runtime commands. this plan never starts models or installs dependencies. this plan never reads private source root, onedrive or archive-library content. this plan never writes runtime manifests or runtime outputs. this plan never promotes public-ready state."
+    },
+    {
+      "id": "hard_stop_no_runtime",
+      "status": "passed",
+      "evidence": "this plan never writes validator code. this plan never executes runtime commands. this plan never starts models or installs dependencies. this plan never reads private source root, onedrive or archive-library content. this plan never writes runtime manifests or runtime outputs. this plan never promotes public-ready state."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this plan never writes validator code. this plan never executes runtime commands. this plan never starts models or installs dependencies. this plan never reads private source root, onedrive or archive-library content. this plan never writes runtime manifests or runtime outputs. this plan never promotes public-ready state."
+    },
+    {
+      "id": "hard_stop_no_outputs",
+      "status": "passed",
+      "evidence": "this plan never writes validator code. this plan never executes runtime commands. this plan never starts models or installs dependencies. this plan never reads private source root, onedrive or archive-library content. this plan never writes runtime manifests or runtime outputs. this plan never promotes public-ready state."
+    },
+    {
+      "id": "hard_stop_no_public",
+      "status": "passed",
+      "evidence": "this plan never writes validator code. this plan never executes runtime commands. this plan never starts models or installs dependencies. this plan never reads private source root, onedrive or archive-library content. this plan never writes runtime manifests or runtime outputs. this plan never promotes public-ready state."
+    }
+  ]
+}

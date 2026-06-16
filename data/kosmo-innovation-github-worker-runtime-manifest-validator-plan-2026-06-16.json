@@ -1,0 +1,203 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:15:41.995Z",
+  "status": "innovation_github_worker_runtime_manifest_validator_plan_ready",
+  "policy": {
+    "validator_plan_only": true,
+    "writes_validator_code_now": false,
+    "executes_validator_now": false,
+    "executes_runtime_now": false,
+    "starts_models_now": false,
+    "installs_dependencies_now": false,
+    "reads_private_content_now": false,
+    "writes_runtime_manifest_now": false,
+    "writes_runtime_outputs_now": false,
+    "public_ready_after_plan": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-check-2026-06-16.json"
+  ],
+  "summary": {
+    "runtime_batch_id": "github-worker-runtime-batch-draft-2026-06-16",
+    "rules": 10,
+    "fixture_categories": 8,
+    "negative_fixtures": 10,
+    "expected_blocked": 10,
+    "executable_now": 0,
+    "validator_code_written_now": 0,
+    "runtime_executed_now": 0,
+    "public_ready_after_plan": 0,
+    "failures": 0
+  },
+  "rules": [
+    {
+      "id": "block_executable_manifest",
+      "fixture_categories": [
+        "execution_state"
+      ],
+      "fields": [
+        "executable_now",
+        "runtime_executable_now",
+        "writes_runtime_manifest_now"
+      ],
+      "action": "block",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "require_runtime_apply_guard",
+      "fixture_categories": [
+        "missing_guard"
+      ],
+      "fields": [
+        "runtime_apply_guard_gate",
+        "exact_owner_reply_gate"
+      ],
+      "action": "block_if_missing",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "require_rollback_redaction_refs",
+      "fixture_categories": [
+        "missing_guard"
+      ],
+      "fields": [
+        "rollback_refs",
+        "redaction_refs",
+        "negative_log_fixture_refs"
+      ],
+      "action": "block_if_empty",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "block_raw_runtime_outputs",
+      "fixture_categories": [
+        "raw_runtime_output"
+      ],
+      "fields": [
+        "raw_runtime_stdout",
+        "raw_runtime_stderr",
+        "redaction_required=false"
+      ],
+      "action": "block",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "block_worker_output_body",
+      "fixture_categories": [
+        "worker_output_body"
+      ],
+      "fields": [
+        "worker_output_body",
+        "metadata_only=false"
+      ],
+      "action": "block",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "block_private_paths",
+      "fixture_categories": [
+        "private_path"
+      ],
+      "fields": [
+        "PRIVATE_SOURCE_ROOT",
+        "ONEDRIVE_PRIVATE_LIBRARY"
+      ],
+      "action": "block",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "block_secret_fields",
+      "fixture_categories": [
+        "secret"
+      ],
+      "fields": [
+        "OPENAI_API_KEY",
+        "SSH_PRIVATE_KEY",
+        "raw_secret"
+      ],
+      "action": "block",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "block_runtime_side_effects",
+      "fixture_categories": [
+        "runtime_side_effect"
+      ],
+      "fields": [
+        "install_dependencies",
+        "download_models",
+        "start_model_runtime"
+      ],
+      "action": "block",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "require_overseer_review_gate",
+      "fixture_categories": [
+        "missing_guard"
+      ],
+      "fields": [
+        "overseer_review_gate"
+      ],
+      "action": "block_if_missing",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    },
+    {
+      "id": "block_public_ready_promotion",
+      "fixture_categories": [
+        "public_ready_false_positive"
+      ],
+      "fields": [
+        "public_ready=true",
+        "public_ready_after_manifest>0",
+        "rights_state=unknown"
+      ],
+      "action": "block",
+      "required_before_runtime": true,
+      "executable_now": false,
+      "public_ready_after_rule": 0
+    }
+  ],
+  "implementation_requirements": [
+    "Validator must fail closed when any required guard reference is missing.",
+    "Validator must reject runtime manifests with executable_now=true unless a later exact runtime apply gate explicitly permits a separate batch.",
+    "Validator must never inspect private files; it validates manifest metadata only.",
+    "Validator must redact or reject private paths, secrets, raw stdio and worker output bodies.",
+    "Validator must keep public_ready false/0 for every runtime-derived artifact."
+  ],
+  "next_actions": [
+    "Implement validator code only in a separate reviewed batch.",
+    "Use this plan as the rule source for future runtime manifest validator fixtures.",
+    "Keep runtime manifest validation source-free until owner/source-root gates change."
+  ],
+  "hard_stops": [
+    "This plan never writes validator code.",
+    "This plan never executes runtime commands.",
+    "This plan never starts models or installs dependencies.",
+    "This plan never reads private Source Root, OneDrive or archive-library content.",
+    "This plan never writes runtime manifests or runtime outputs.",
+    "This plan never promotes public-ready state."
+  ],
+  "failures": []
+}
