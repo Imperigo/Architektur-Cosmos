@@ -1,12 +1,12 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T05:24:11.048Z
+Generated: 2026-06-16T05:26:47.608Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
 - Cards: 82
-- Blocking cards: 27
+- Blocking cards: 23
 - Owner action cards: 26
 - Source root blocked: yes
 - Day batch: day_batch_loop_needs_review
@@ -51,10 +51,10 @@ Status: `orbit_bridge_ready_with_blockers`
 - GitHub worker runtime batch manifest draft: innovation_github_worker_runtime_batch_manifest_draft_ready, id github-worker-runtime-batch-draft-2026-06-16, blocked prereqs 4, open gates 5
 - GitHub worker runtime manifest validator plan: innovation_github_worker_runtime_manifest_validator_plan_ready, rules 10, fixture categories 8, executable 0, failures 0
 - GitHub worker runtime manifest validator: innovation_github_worker_runtime_manifest_validator_passed, validated 12, blocked 11, review-only 1, public-ready 0, failures 0
-- Training eval rubric: null, suites -, criteria -
-- Training eval row template: null, templates -
-- Training eval review queue: null, lanes -
-- Architecture ontology seed: null, entities -, relations -
+- Training eval rubric: training_eval_rubric_pack_ready, suites 6, criteria 24
+- Training eval row template: training_eval_row_template_ready, templates 6
+- Training eval review queue: training_eval_review_queue_plan_ready, lanes 5
+- Architecture ontology seed: architecture_ontology_seed_ready, entities 8, relations 10
 - Owner unlock fast reply card: null, broad intent -, applies now -
 - Owner unlock exact reply preview: null, validator -, patches -
 - Owner unlock Path A readiness: null, can start after exact reply -, applies now -
@@ -141,10 +141,10 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-worker-runtime-manifest-negative-fixtures` GitHub Worker Runtime Manifest Negative Fixtures | review_only_ready | no | 10 manifest negatives, blocked 10, categories 8, executable 0, failures 0 |
 | `github-worker-runtime-manifest-validator-plan` GitHub Worker Runtime Manifest Validator Plan | review_only_ready | no | 10 rules, fixtures 8, executable 0, failures 0 |
 | `github-worker-runtime-manifest-validator` GitHub Worker Runtime Manifest Validator | review_only_ready | no | 12 manifests, blocked 11, review-only 1, failures 0 |
-| `training-eval-rubric` Training Eval Rubric | needs_review | no | 0 suites, 0 criteria, eval items 0, failures 0 |
-| `training-eval-row-template` Training Eval Row Template | needs_review | no | 0 templates, 0 required fields, writes rows now 0, failures 0 |
-| `training-eval-review-queue` Training Eval Review Queue | needs_review | no | 0 lanes, 0 states, queue items now 0, failures 0 |
-| `architecture-ontology-seed` Architecture Ontology Seed | needs_review | no | 0 entities, 0 relations, 0 facet groups, failures 0 |
+| `training-eval-rubric` Training Eval Rubric | review_only_ready | no | 6 suites, 24 criteria, eval items 24, failures 0 |
+| `training-eval-row-template` Training Eval Row Template | review_only_ready | no | 6 templates, 10 required fields, writes rows now 0, failures 0 |
+| `training-eval-review-queue` Training Eval Review Queue | review_only_ready | no | 5 lanes, 6 states, queue items now 0, failures 0 |
+| `architecture-ontology-seed` Architecture Ontology Seed | review_only_ready | no | 8 entities, 10 relations, 6 facet groups, failures 0 |
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-06-17, failures 0 |
 | `worker-boundary` Worker Boundary | locked | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | needs_review | no | 0/0 public-safe smoke checks passed |

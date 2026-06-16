@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:24:11.048Z",
+  "generated_at": "2026-06-16T05:26:47.608Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -160,7 +160,7 @@
   ],
   "summary": {
     "cards": 82,
-    "blocking_cards": 27,
+    "blocking_cards": 23,
     "owner_action_cards": 26,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_needs_review",
@@ -383,16 +383,16 @@
     "github_worker_runtime_manifest_negative_fixtures_count": 10,
     "github_worker_runtime_manifest_negative_fixtures_blocked": 10,
     "github_worker_runtime_manifest_negative_fixtures_categories": 8,
-    "training_eval_rubric_status": null,
-    "training_eval_rubric_suites": null,
-    "training_eval_rubric_criteria": null,
-    "training_eval_row_template_status": null,
-    "training_eval_row_template_templates": null,
-    "training_eval_review_queue_status": null,
-    "training_eval_review_queue_lanes": null,
-    "architecture_ontology_seed_status": null,
-    "architecture_ontology_entity_types": null,
-    "architecture_ontology_relation_types": null,
+    "training_eval_rubric_status": "training_eval_rubric_pack_ready",
+    "training_eval_rubric_suites": 6,
+    "training_eval_rubric_criteria": 24,
+    "training_eval_row_template_status": "training_eval_row_template_ready",
+    "training_eval_row_template_templates": 6,
+    "training_eval_review_queue_status": "training_eval_review_queue_plan_ready",
+    "training_eval_review_queue_lanes": 5,
+    "architecture_ontology_seed_status": "architecture_ontology_seed_ready",
+    "architecture_ontology_entity_types": 8,
+    "architecture_ontology_relation_types": 10,
     "owner_unlock_fast_reply_card_status": null,
     "owner_unlock_fast_reply_card_broad_intent": null,
     "owner_unlock_fast_reply_card_applies_now": null,
@@ -1083,8 +1083,8 @@
     {
       "id": "training-eval-rubric",
       "title": "Training Eval Rubric",
-      "status": "needs_review",
-      "signal": "0 suites, 0 criteria, eval items 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "6 suites, 24 criteria, eval items 24, failures 0",
       "owner_action_required": false,
       "route_hint": "Kosmo KI quality rubric before any private training rows exist",
       "source_ref": "data/kosmo-training-eval-rubric-pack-2026-06-16.json"
@@ -1092,8 +1092,8 @@
     {
       "id": "training-eval-row-template",
       "title": "Training Eval Row Template",
-      "status": "needs_review",
-      "signal": "0 templates, 0 required fields, writes rows now 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "6 templates, 10 required fields, writes rows now 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Source-free row schema for future reviewed eval examples",
       "source_ref": "data/kosmo-training-eval-row-template-2026-06-16.json"
@@ -1101,8 +1101,8 @@
     {
       "id": "training-eval-review-queue",
       "title": "Training Eval Review Queue",
-      "status": "needs_review",
-      "signal": "0 lanes, 0 states, queue items now 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "5 lanes, 6 states, queue items now 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Human/overseer review queue before training data promotion",
       "source_ref": "data/kosmo-training-eval-review-queue-plan-2026-06-16.json"
@@ -1110,8 +1110,8 @@
     {
       "id": "architecture-ontology-seed",
       "title": "Architecture Ontology Seed",
-      "status": "needs_review",
-      "signal": "0 entities, 0 relations, 0 facet groups, failures 0",
+      "status": "review_only_ready",
+      "signal": "8 entities, 10 relations, 6 facet groups, failures 0",
       "owner_action_required": false,
       "route_hint": "Architecture ontology seed for References, Assets and future Kosmo evals",
       "source_ref": "data/kosmo-architecture-ontology-seed-2026-06-16.json"

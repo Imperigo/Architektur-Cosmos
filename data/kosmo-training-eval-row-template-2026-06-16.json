@@ -1,0 +1,289 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T05:26:46.136Z",
+  "status": "training_eval_row_template_ready",
+  "policy": {
+    "template_only": true,
+    "writes_eval_rows_now": false,
+    "writes_training_data_now": false,
+    "writes_embeddings_now": false,
+    "runs_fine_tuning_now": false,
+    "reads_private_content_now": false,
+    "stores_private_content": false,
+    "public_ready_after_template": 0
+  },
+  "source_refs": [
+    "data/kosmo-training-eval-rubric-pack-2026-06-16.json"
+  ],
+  "summary": {
+    "templates": 6,
+    "required_fields": 10,
+    "suites_from_rubric": 6,
+    "criteria_from_rubric": 24,
+    "writes_eval_rows_now": 0,
+    "writes_training_data_now": 0,
+    "public_ready_after_template": 0,
+    "failures": 0
+  },
+  "templates": [
+    {
+      "suite_id": "source_grounding_provenance",
+      "status": "template_only_no_rows",
+      "required_fields": [
+        "eval_id",
+        "suite_id",
+        "question",
+        "allowed_context_refs",
+        "expected_answer_shape",
+        "scoring_criteria",
+        "answer_key_review_state",
+        "rights_state",
+        "privacy_state",
+        "public_ready"
+      ],
+      "row_stub": {
+        "eval_id": "<source_grounding_provenance:slug>",
+        "suite_id": "source_grounding_provenance",
+        "question": "<reviewed-public-safe-question-placeholder>",
+        "allowed_context_refs": [],
+        "expected_answer_shape": "<short-form|structured-json|comparative-analysis|refusal>",
+        "scoring_criteria": [
+          "uses_only_reviewed_source_fields",
+          "separates_known_unknown_and_inferred",
+          "flags_missing_rights_or_source_basis",
+          "never_promotes_private_derived_content_public_ready"
+        ],
+        "answer_key_review_state": "not_written",
+        "rights_state": "not_reviewed",
+        "privacy_state": "no_private_content_in_template",
+        "public_ready": false
+      },
+      "forbidden_fields": [
+        "raw_private_text",
+        "ocr_body",
+        "pdf_body",
+        "private_image_bytes",
+        "worker_output_body"
+      ],
+      "public_ready_after_template": 0
+    },
+    {
+      "suite_id": "architectural_analysis_depth",
+      "status": "template_only_no_rows",
+      "required_fields": [
+        "eval_id",
+        "suite_id",
+        "question",
+        "allowed_context_refs",
+        "expected_answer_shape",
+        "scoring_criteria",
+        "answer_key_review_state",
+        "rights_state",
+        "privacy_state",
+        "public_ready"
+      ],
+      "row_stub": {
+        "eval_id": "<architectural_analysis_depth:slug>",
+        "suite_id": "architectural_analysis_depth",
+        "question": "<reviewed-public-safe-question-placeholder>",
+        "allowed_context_refs": [],
+        "expected_answer_shape": "<short-form|structured-json|comparative-analysis|refusal>",
+        "scoring_criteria": [
+          "typology_is_specific_not_keyword_only",
+          "material_and_construction_are_linked",
+          "structure_space_and_circulation_are_related",
+          "analysis_mentions_transferable_design_rule"
+        ],
+        "answer_key_review_state": "not_written",
+        "rights_state": "not_reviewed",
+        "privacy_state": "no_private_content_in_template",
+        "public_ready": false
+      },
+      "forbidden_fields": [
+        "raw_private_text",
+        "ocr_body",
+        "pdf_body",
+        "private_image_bytes",
+        "worker_output_body"
+      ],
+      "public_ready_after_template": 0
+    },
+    {
+      "suite_id": "asset_schema_quality",
+      "status": "template_only_no_rows",
+      "required_fields": [
+        "eval_id",
+        "suite_id",
+        "question",
+        "allowed_context_refs",
+        "expected_answer_shape",
+        "scoring_criteria",
+        "answer_key_review_state",
+        "rights_state",
+        "privacy_state",
+        "public_ready"
+      ],
+      "row_stub": {
+        "eval_id": "<asset_schema_quality:slug>",
+        "suite_id": "asset_schema_quality",
+        "question": "<reviewed-public-safe-question-placeholder>",
+        "allowed_context_refs": [],
+        "expected_answer_shape": "<short-form|structured-json|comparative-analysis|refusal>",
+        "scoring_criteria": [
+          "asset_category_and_export_target_fit",
+          "source_basis_and_rights_state_preserved",
+          "geometry_material_texture_fields_are_separated",
+          "public_release_state_stays_review_only"
+        ],
+        "answer_key_review_state": "not_written",
+        "rights_state": "not_reviewed",
+        "privacy_state": "no_private_content_in_template",
+        "public_ready": false
+      },
+      "forbidden_fields": [
+        "raw_private_text",
+        "ocr_body",
+        "pdf_body",
+        "private_image_bytes",
+        "worker_output_body"
+      ],
+      "public_ready_after_template": 0
+    },
+    {
+      "suite_id": "retrieval_answer_quality",
+      "status": "template_only_no_rows",
+      "required_fields": [
+        "eval_id",
+        "suite_id",
+        "question",
+        "allowed_context_refs",
+        "expected_answer_shape",
+        "scoring_criteria",
+        "answer_key_review_state",
+        "rights_state",
+        "privacy_state",
+        "public_ready"
+      ],
+      "row_stub": {
+        "eval_id": "<retrieval_answer_quality:slug>",
+        "suite_id": "retrieval_answer_quality",
+        "question": "<reviewed-public-safe-question-placeholder>",
+        "allowed_context_refs": [],
+        "expected_answer_shape": "<short-form|structured-json|comparative-analysis|refusal>",
+        "scoring_criteria": [
+          "answer_grounded_in_retrieved_context",
+          "refuses_or_asks_when_context_missing",
+          "compares_projects_without_false_equivalence",
+          "keeps_private_context_out_of_public_answer"
+        ],
+        "answer_key_review_state": "not_written",
+        "rights_state": "not_reviewed",
+        "privacy_state": "no_private_content_in_template",
+        "public_ready": false
+      },
+      "forbidden_fields": [
+        "raw_private_text",
+        "ocr_body",
+        "pdf_body",
+        "private_image_bytes",
+        "worker_output_body"
+      ],
+      "public_ready_after_template": 0
+    },
+    {
+      "suite_id": "local_worker_output_review",
+      "status": "template_only_no_rows",
+      "required_fields": [
+        "eval_id",
+        "suite_id",
+        "question",
+        "allowed_context_refs",
+        "expected_answer_shape",
+        "scoring_criteria",
+        "answer_key_review_state",
+        "rights_state",
+        "privacy_state",
+        "public_ready"
+      ],
+      "row_stub": {
+        "eval_id": "<local_worker_output_review:slug>",
+        "suite_id": "local_worker_output_review",
+        "question": "<reviewed-public-safe-question-placeholder>",
+        "allowed_context_refs": [],
+        "expected_answer_shape": "<short-form|structured-json|comparative-analysis|refusal>",
+        "scoring_criteria": [
+          "json_contract_validity",
+          "semantic_fit_to_task",
+          "risk_flags_for_private_or_public_release",
+          "requires_codex_or_claude_review_before_write"
+        ],
+        "answer_key_review_state": "not_written",
+        "rights_state": "not_reviewed",
+        "privacy_state": "no_private_content_in_template",
+        "public_ready": false
+      },
+      "forbidden_fields": [
+        "raw_private_text",
+        "ocr_body",
+        "pdf_body",
+        "private_image_bytes",
+        "worker_output_body"
+      ],
+      "public_ready_after_template": 0
+    },
+    {
+      "suite_id": "kosmo_architecture_identity",
+      "status": "template_only_no_rows",
+      "required_fields": [
+        "eval_id",
+        "suite_id",
+        "question",
+        "allowed_context_refs",
+        "expected_answer_shape",
+        "scoring_criteria",
+        "answer_key_review_state",
+        "rights_state",
+        "privacy_state",
+        "public_ready"
+      ],
+      "row_stub": {
+        "eval_id": "<kosmo_architecture_identity:slug>",
+        "suite_id": "kosmo_architecture_identity",
+        "question": "<reviewed-public-safe-question-placeholder>",
+        "allowed_context_refs": [],
+        "expected_answer_shape": "<short-form|structured-json|comparative-analysis|refusal>",
+        "scoring_criteria": [
+          "uses_architectural_vocabulary_precisely",
+          "connects_reference_to_design_operation",
+          "distinguishes_fact_analysis_and_proposal",
+          "maintains_rights_privacy_and_review_boundaries"
+        ],
+        "answer_key_review_state": "not_written",
+        "rights_state": "not_reviewed",
+        "privacy_state": "no_private_content_in_template",
+        "public_ready": false
+      },
+      "forbidden_fields": [
+        "raw_private_text",
+        "ocr_body",
+        "pdf_body",
+        "private_image_bytes",
+        "worker_output_body"
+      ],
+      "public_ready_after_template": 0
+    }
+  ],
+  "next_actions_after_verified_data": [
+    "Instantiate rows only from reviewed public-safe summaries or approved private-derived summaries.",
+    "Require answer key review before using a row in evals.",
+    "Keep public_ready false until rights and privacy review pass."
+  ],
+  "hard_stops": [
+    "Do not place private source text into eval rows.",
+    "Do not place OCR/PDF bodies into eval rows.",
+    "Do not place local worker output bodies into eval rows.",
+    "Do not create embeddings or fine-tunes from templates.",
+    "Keep public_ready false."
+  ],
+  "failures": []
+}
