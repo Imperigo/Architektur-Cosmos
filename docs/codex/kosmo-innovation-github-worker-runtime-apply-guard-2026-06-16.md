@@ -1,7 +1,7 @@
 # Kosmo Innovation GitHub Worker Runtime Apply Guard
 
-Generated: 2026-06-16T05:00:14.070Z
-Status: `innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply`
+Generated: 2026-06-16T17:48:07.551Z
+Status: `innovation_github_worker_runtime_apply_guard_not_ready`
 
 ## Summary
 
@@ -9,15 +9,15 @@ Status: `innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply`
 - Exact reply valid: no
 - Separate runtime allowed after guard: no
 - Selected fixture: `worker_integration-mac999-bim-llm-code-agent-signal-fixture`
-- Ready gates: 5
-- Blocked gates: 5
+- Ready gates: 6
+- Blocked gates: 4
 - Rollback fixture groups: 3
 - Redaction rules: 5
 - Source Root state: blocked_until_explicit_owner_reply_and_guards
 - Execute now: 0
 - Runtime executable now: no
 - Public-ready after guard: 0
-- Failures: 0
+- Failures: 2
 
 ## Required Exact Reply
 
@@ -44,4 +44,5 @@ github_worker_runtime_choice=approve_separate_source_free_runtime_batch_later; c
 
 ## Failures
 
-- None.
+- Source Root blocker status changed and must be reviewed: source_root_blocker_needs_review
+- Owner unlock checkpoint not ready: owner_unlock_pipeline_checkpoint_attention_required

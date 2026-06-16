@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:15:41.995Z",
-  "status": "innovation_github_worker_runtime_manifest_validator_plan_ready",
+  "generated_at": "2026-06-16T17:49:45.673Z",
+  "status": "innovation_github_worker_runtime_manifest_validator_plan_needs_review",
   "policy": {
     "validator_plan_only": true,
     "writes_validator_code_now": false,
@@ -30,7 +30,7 @@
     "validator_code_written_now": 0,
     "runtime_executed_now": 0,
     "public_ready_after_plan": 0,
-    "failures": 0
+    "failures": 2
   },
   "rules": [
     {
@@ -199,5 +199,8 @@
     "This plan never writes runtime manifests or runtime outputs.",
     "This plan never promotes public-ready state."
   ],
-  "failures": []
+  "failures": [
+    "Manifest draft not ready: innovation_github_worker_runtime_batch_manifest_draft_needs_review",
+    "Manifest negative fixtures not ready: innovation_github_worker_runtime_manifest_negative_fixtures_needs_review"
+  ]
 }

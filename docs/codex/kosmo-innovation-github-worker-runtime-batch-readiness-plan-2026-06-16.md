@@ -1,14 +1,14 @@
 # Kosmo Innovation GitHub Worker Runtime Batch Readiness Plan
 
-Generated: 2026-06-16T05:00:13.105Z
+Generated: 2026-06-16T17:47:43.783Z
 Status: `innovation_github_worker_runtime_batch_readiness_plan_ready`
 
 ## Summary
 
 - Selected fixture: `worker_integration-mac999-bim-llm-code-agent-signal-fixture`
 - Readiness gates: 10
-- Ready gates: 5
-- Blocked gates: 5
+- Ready gates: 6
+- Blocked gates: 4
 - Runtime executable now: no
 - Dependencies installable now: no
 - Private inputs allowed now: no
@@ -22,7 +22,7 @@ Status: `innovation_github_worker_runtime_batch_readiness_plan_ready`
 - `negative_fixture_guard`: ready - Negative fixtures block private/runtime/copy/public-ready false positives.
 - `execution_envelope_guard`: ready - Execution envelope exists but is empty and held.
 - `exact_launch_apply_reply`: blocked - Exact launch apply reply required before local worker execution.
-- `source_root_unlock`: blocked - Source Root must be explicitly unlocked before private inputs.
+- `source_root_unlock`: ready - Source Root must be explicitly unlocked before private inputs.
 - `owner_checkpoint_path_a`: ready - Path A is structurally ready after exact owner reply.
 - `dependency_runtime_apply_batch`: blocked - Separate owner-approved dependency/runtime apply batch is still required.
 - `model_runtime_gate`: blocked - Model/runtime start gate must be explicit and separately reversible.

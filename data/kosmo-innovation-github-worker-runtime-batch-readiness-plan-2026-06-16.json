@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:00:13.105Z",
+  "generated_at": "2026-06-16T17:47:43.783Z",
   "status": "innovation_github_worker_runtime_batch_readiness_plan_ready",
   "policy": {
     "readiness_plan_only": true,
@@ -28,13 +28,13 @@
     "data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-2026-06-16.json",
     "data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-check-2026-06-16.json",
     "data/kosmo-source-root-blocker-refresh-2026-06-16.json",
-    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json"
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-16.json"
   ],
   "summary": {
     "selected_fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
     "readiness_gates": 10,
-    "ready_gates": 5,
-    "blocked_gates": 5,
+    "ready_gates": 6,
+    "blocked_gates": 4,
     "runtime_executable_now": false,
     "dependencies_installable_now": false,
     "models_startable_now": false,
@@ -78,7 +78,7 @@
     },
     {
       "id": "source_root_unlock",
-      "state": "blocked",
+      "state": "ready",
       "description": "Source Root must be explicitly unlocked before private inputs.",
       "executable_now": false
     },

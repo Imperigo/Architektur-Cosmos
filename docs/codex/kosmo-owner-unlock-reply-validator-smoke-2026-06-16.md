@@ -1,22 +1,22 @@
 # Kosmo Owner Unlock Reply Validator Smoke
 
-Generated: 2026-06-16T04:58:33.976Z
-Status: `owner_unlock_reply_validator_smoke_failed`
+Generated: 2026-06-16T17:35:32.676Z
+Status: `owner_unlock_reply_validator_smoke_passed`
 
 ## Summary
 
-- Cases: 0/5
-- Failures: 5
+- Cases: 5/5
+- Failures: 0
 - Expected invalid cases: 2
 - Public-ready after smoke: 0
 
 ## Cases
 
-- failed: `pending_no_answer` expected `owner_unlock_reply_validator_pending_owner_reply`, got `missing-output`, exit 1
-- failed: `valid_repair_onedrive_first` expected `owner_unlock_reply_valid`, got `missing-output`, exit 1
-- failed: `valid_select_exact_root_review_only` expected `owner_unlock_reply_valid`, got `missing-output`, exit 1
-- failed: `invalid_unlock_without_confirmation` expected `owner_unlock_reply_invalid`, got `missing-output`, exit 1
-- failed: `invalid_vague_all_free_grant` expected `owner_unlock_reply_invalid`, got `missing-output`, exit 1
+- passed: `pending_no_answer` expected `owner_unlock_reply_validator_pending_owner_reply`, got `owner_unlock_reply_validator_pending_owner_reply`, exit 0
+- passed: `valid_repair_onedrive_first` expected `owner_unlock_reply_valid`, got `owner_unlock_reply_valid`, exit 0
+- passed: `valid_select_exact_root_review_only` expected `owner_unlock_reply_valid`, got `owner_unlock_reply_valid`, exit 0
+- passed: `invalid_unlock_without_confirmation` expected `owner_unlock_reply_invalid`, got `owner_unlock_reply_invalid`, exit 1
+- passed: `invalid_vague_all_free_grant` expected `owner_unlock_reply_invalid`, got `owner_unlock_reply_invalid`, exit 1
 
 ## Hard Stops
 

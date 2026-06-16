@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:00:15.288Z",
+  "generated_at": "2026-06-16T17:49:21.356Z",
   "status": "innovation_github_worker_runtime_batch_manifest_draft_guard_passed",
   "policy": {
     "validates_manifest_draft_only": true,
@@ -12,7 +12,7 @@
     "data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-2026-06-16.json"
   ],
   "summary": {
-    "manifest_status": "innovation_github_worker_runtime_batch_manifest_draft_ready",
+    "manifest_status": "innovation_github_worker_runtime_batch_manifest_draft_needs_review",
     "checks": 27,
     "passed": 27,
     "failures": 0,
@@ -23,7 +23,7 @@
     {
       "id": "status_ready",
       "status": "passed",
-      "evidence": "innovation_github_worker_runtime_batch_manifest_draft_ready"
+      "evidence": "innovation_github_worker_runtime_batch_manifest_draft_needs_review"
     },
     {
       "id": "policy_manifest_draft_only",

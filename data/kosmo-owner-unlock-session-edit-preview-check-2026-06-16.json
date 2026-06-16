@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:12:55.744Z",
-  "status": "owner_unlock_session_edit_preview_guard_passed",
+  "generated_at": "2026-06-16T17:47:22.705Z",
+  "status": "owner_unlock_session_edit_preview_guard_failed",
   "policy": {
     "review_only": true,
     "validates_preview_only": true,
@@ -16,15 +16,15 @@
   ],
   "summary": {
     "checks": 22,
-    "passed": 22,
-    "failures": 0,
+    "passed": 21,
+    "failures": 1,
     "public_ready_after_check": 0
   },
   "checks": [
     {
       "id": "status_ready",
-      "status": "passed",
-      "evidence": "owner_unlock_session_edit_preview_ready"
+      "status": "failed",
+      "evidence": "owner_unlock_session_edit_preview_needs_review"
     },
     {
       "id": "policy_review_only",

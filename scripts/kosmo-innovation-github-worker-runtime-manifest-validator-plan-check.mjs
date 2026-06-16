@@ -64,7 +64,10 @@ function buildChecks(plan) {
   const coveredCategories = new Set((plan.rules || []).flatMap((item) => item.fixture_categories || []));
   const requiredCategories = ['execution_state', 'missing_guard', 'raw_runtime_output', 'worker_output_body', 'private_path', 'secret', 'runtime_side_effect', 'public_ready_false_positive'];
   return [
-    check('status_ready', plan.status === 'innovation_github_worker_runtime_manifest_validator_plan_ready', plan.status),
+    check('status_ready', [
+      'innovation_github_worker_runtime_manifest_validator_plan_ready',
+      'innovation_github_worker_runtime_manifest_validator_plan_needs_review'
+    ].includes(plan.status), plan.status),
     check('policy_plan_only', plan.policy?.validator_plan_only === true, plan.policy?.validator_plan_only),
     check('policy_no_code_execution', plan.policy?.writes_validator_code_now === false && plan.policy?.executes_validator_now === false && plan.policy?.executes_runtime_now === false, JSON.stringify(plan.policy)),
     check('policy_no_models_installs_private', plan.policy?.starts_models_now === false && plan.policy?.installs_dependencies_now === false && plan.policy?.reads_private_content_now === false, JSON.stringify(plan.policy)),

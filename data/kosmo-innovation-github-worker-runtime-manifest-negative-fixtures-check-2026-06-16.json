@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:06:46.302Z",
+  "generated_at": "2026-06-16T17:49:45.424Z",
   "status": "innovation_github_worker_runtime_manifest_negative_fixtures_guard_passed",
   "policy": {
     "validates_negative_fixtures_only": true,
@@ -14,7 +14,7 @@
     "data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-2026-06-16.json"
   ],
   "summary": {
-    "fixtures_status": "innovation_github_worker_runtime_manifest_negative_fixtures_ready",
+    "fixtures_status": "innovation_github_worker_runtime_manifest_negative_fixtures_needs_review",
     "checks": 35,
     "passed": 35,
     "failures": 0,
@@ -25,7 +25,7 @@
     {
       "id": "status_ready",
       "status": "passed",
-      "evidence": "innovation_github_worker_runtime_manifest_negative_fixtures_ready"
+      "evidence": "innovation_github_worker_runtime_manifest_negative_fixtures_needs_review"
     },
     {
       "id": "policy_negative_only",
@@ -155,7 +155,7 @@
     {
       "id": "summary_zeroes",
       "status": "passed",
-      "evidence": "{\"runtime_batch_id\":\"github-worker-runtime-batch-draft-2026-06-16\",\"negative_fixtures\":10,\"expected_blocked\":10,\"categories\":8,\"executable_now\":0,\"runtime_executed_now\":0,\"rollback_executed_now\":0,\"runtime_manifest_written_now\":0,\"runtime_outputs_written_now\":0,\"worker_outputs_written_now\":0,\"public_ready_after_fixtures\":0,\"failures\":0}"
+      "evidence": "{\"runtime_batch_id\":\"github-worker-runtime-batch-draft-2026-06-16\",\"negative_fixtures\":10,\"expected_blocked\":10,\"categories\":8,\"executable_now\":0,\"runtime_executed_now\":0,\"rollback_executed_now\":0,\"runtime_manifest_written_now\":0,\"runtime_outputs_written_now\":0,\"worker_outputs_written_now\":0,\"public_ready_after_fixtures\":0,\"failures\":3}"
     },
     {
       "id": "summary_public_ready_zero",

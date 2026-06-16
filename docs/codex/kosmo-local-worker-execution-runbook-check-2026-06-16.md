@@ -1,6 +1,6 @@
 # Kosmo Local Worker Execution Runbook Check
 
-Generated: 2026-06-16T12:31:17.707Z
+Generated: 2026-06-16T17:45:32.850Z
 Status: `local_worker_execution_runbook_guard_passed`
 
 ## Summary

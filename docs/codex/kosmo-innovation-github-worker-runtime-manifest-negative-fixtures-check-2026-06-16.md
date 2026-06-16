@@ -1,11 +1,11 @@
 # Kosmo Innovation GitHub Worker Runtime Manifest Negative Fixtures Check
 
-Generated: 2026-06-16T05:06:46.302Z
+Generated: 2026-06-16T17:49:45.424Z
 Status: `innovation_github_worker_runtime_manifest_negative_fixtures_guard_passed`
 
 ## Summary
 
-- Fixtures status: innovation_github_worker_runtime_manifest_negative_fixtures_ready
+- Fixtures status: innovation_github_worker_runtime_manifest_negative_fixtures_needs_review
 - Checks: 35/35
 - Negative fixtures: 10
 - Failures: 0
@@ -13,7 +13,7 @@ Status: `innovation_github_worker_runtime_manifest_negative_fixtures_guard_passe
 
 ## Checks
 
-- passed: `status_ready` - innovation_github_worker_runtime_manifest_negative_fixtures_ready
+- passed: `status_ready` - innovation_github_worker_runtime_manifest_negative_fixtures_needs_review
 - passed: `policy_negative_only` - true
 - passed: `policy_synthetic_manifest_only` - true
 - passed: `policy_no_private_sensitive_copy` - {"negative_fixtures_only":true,"synthetic_manifest_shapes_only":true,"reads_private_content_now":false,"copies_private_content_now":false,"copies_secret_values_now":false,"copies_worker_output_body_now":false,"executes_runtime_now":false,"executes_rollback_now":false,"starts_models_now":false,"installs_dependencies_now":false,"downloads_models_now":false,"writes_runtime_manifest_now":false,"writes_runtime_outputs_now":false,"writes_worker_outputs_now":false,"promotes_public_ready_now":false,"public_ready_after_fixtures":0}
@@ -39,7 +39,7 @@ Status: `innovation_github_worker_runtime_manifest_negative_fixtures_guard_passe
 - passed: `secret_reasons` - executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown
 - passed: `side_effect_reasons` - executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown
 - passed: `public_ready_reasons` - executable_now_true,runtime_executable_now_true,writes_runtime_manifest_now_true,runtime_apply_guard_gate_missing,rollback_refs_missing,redaction_refs_missing,negative_log_fixture_refs_missing,raw_runtime_stdout_requested,raw_runtime_stderr_requested,redaction_required_false,worker_output_body_requested,metadata_only_false,private_source_path_present,onedrive_private_path_present,secret_field_present,ssh_key_field_present,redacted_secrets_count_zero,install_dependencies_phase_executable,download_models_phase_executable,start_model_runtime_phase_executable,overseer_review_gate_missing,public_ready_gate_passed,public_ready_true,public_ready_after_manifest_nonzero,rights_state_unknown
-- passed: `summary_zeroes` - {"runtime_batch_id":"github-worker-runtime-batch-draft-2026-06-16","negative_fixtures":10,"expected_blocked":10,"categories":8,"executable_now":0,"runtime_executed_now":0,"rollback_executed_now":0,"runtime_manifest_written_now":0,"runtime_outputs_written_now":0,"worker_outputs_written_now":0,"public_ready_after_fixtures":0,"failures":0}
+- passed: `summary_zeroes` - {"runtime_batch_id":"github-worker-runtime-batch-draft-2026-06-16","negative_fixtures":10,"expected_blocked":10,"categories":8,"executable_now":0,"runtime_executed_now":0,"rollback_executed_now":0,"runtime_manifest_written_now":0,"runtime_outputs_written_now":0,"worker_outputs_written_now":0,"public_ready_after_fixtures":0,"failures":3}
 - passed: `summary_public_ready_zero` - 0
 - passed: `source_refs_cover_manifest_inputs` - data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-check-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-apply-guard-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-apply-guard-check-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-2026-06-16.json,data/kosmo-innovation-github-worker-runtime-log-redaction-negative-fixtures-check-2026-06-16.json
 - passed: `hard_stop_no_runtime` - these manifest negative fixtures never execute runtime commands. these manifest negative fixtures never execute rollback commands. these manifest negative fixtures never start models, install dependencies or download models. these manifest negative fixtures never read private source root, onedrive or archive-library content. these manifest negative fixtures never copy private content, secret values or worker output bodies. these manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs. these manifest negative fixtures never promote public-ready state.

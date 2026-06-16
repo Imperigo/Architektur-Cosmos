@@ -1,6 +1,6 @@
 # Kosmo Local Worker Execution Runbook
 
-Generated: 2026-06-16T12:31:17.477Z
+Generated: 2026-06-16T17:45:32.608Z
 Status: `local_worker_execution_runbook_idle_review_only`
 
 ## Summary

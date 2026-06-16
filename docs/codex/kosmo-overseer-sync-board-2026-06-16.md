@@ -1,6 +1,6 @@
 # Kosmo Overseer Sync Board
 
-Generated: 2026-06-16T17:38:41.810Z
+Generated: 2026-06-16T17:53:48.920Z
 Status: `overseer_sync_board_ready`
 
 ## Summary
@@ -20,6 +20,7 @@ Status: `overseer_sync_board_ready`
 
 | File | Title | Mirrors |
 | --- | --- | ---: |
+| `2026-06-16-codex-synergiebericht-331-abendbatch-execution.md` | Codex Synergiebericht 331 - Abendbatch Execution | 2 |
 | `2026-06-16-codex-synergiebericht-330-grosser-abendbatch.md` | Codex Synergiebericht 330: Grosser Abendbatch | 2 |
 | `2026-06-16-codex-synergiebericht-329-review-batches-triaged.md` | Codex Synergiebericht 329: Review-Batches review-only triagiert | 2 |
 | `2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md` | Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory | 2 |
@@ -27,7 +28,6 @@ Status: `overseer_sync_board_ready`
 | `2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md` | Codex Synergiebericht 326: Cross-Worker Delta Audit | 2 |
 | `2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md` | Codex Synergiebericht 325: Worktree Guard Audit | 2 |
 | `2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md` | Codex Synergiebericht 324: Terminal Gate Audit | 2 |
-| `2026-06-16-codex-synergiebericht-323-owner-gate-terminal-status.md` | Codex Synergiebericht 323: Owner Gate Terminal Status | 2 |
 
 ## Blockers
 
@@ -40,7 +40,7 @@ Status: `overseer_sync_board_ready`
 
 ## Next Actions
 
-- Claude/KosmoOverseer reviews latest handoffs 323-330 before editing related files.
+- Claude/KosmoOverseer reviews latest handoffs 324-331 before editing related files.
 - Use the owner review session brief as the next owner-facing entry point.
 - Keep local worker tasks review-only while source-root and owner answers are pending.
 - After any explicit owner answer, update intake first, then rerun guards and this sync board.

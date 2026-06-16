@@ -1,6 +1,6 @@
 # Kosmo Owner Unlock Path A Readiness Certificate
 
-Generated: 2026-06-16T05:33:10.699Z
+Generated: 2026-06-16T17:47:20.882Z
 Status: `owner_unlock_path_a_readiness_certificate_ready`
 
 ## Summary
@@ -12,9 +12,9 @@ Status: `owner_unlock_path_a_readiness_certificate_ready`
 - Intake map: owner_unlock_reply_intake_map_ready_for_review
 - Patch operations: 6
 - Owner card patches: 5
-- Source-root activation: source_root_activation_waiting_for_owner_storage_action
-- Activation ready now: no
-- Source-root still blocked now: yes
+- Source-root activation: source_root_activation_ready_for_private_metadata_diagnostic
+- Activation ready now: yes
+- Source-root still blocked now: no
 - Path A can start after exact owner reply: yes
 - Applies decision now: no
 - Public-ready after certificate: 0

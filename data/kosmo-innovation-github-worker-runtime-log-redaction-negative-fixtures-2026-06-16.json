@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:00:14.558Z",
-  "status": "innovation_github_worker_runtime_log_redaction_negative_fixtures_ready",
+  "generated_at": "2026-06-16T17:48:35.046Z",
+  "status": "innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review",
   "policy": {
     "negative_fixtures_only": true,
     "synthetic_log_shapes_only": true,
@@ -34,7 +34,7 @@
     "runtime_outputs_written_now": 0,
     "worker_outputs_written_now": 0,
     "public_ready_after_fixtures": 0,
-    "failures": 0
+    "failures": 1
   },
   "required_leak_categories": [
     "private_path",
@@ -272,5 +272,7 @@
     "These negative fixtures never write runtime outputs or worker outputs.",
     "These negative fixtures never promote public-ready state."
   ],
-  "failures": []
+  "failures": [
+    "Runtime apply guard in unexpected state: innovation_github_worker_runtime_apply_guard_not_ready"
+  ]
 }

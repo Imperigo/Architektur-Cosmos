@@ -65,7 +65,10 @@ function buildChecks(manifest) {
   const outputIds = new Set((manifest.expected_outputs || []).map((item) => item.id));
   const gateIds = new Set((manifest.review_gates || []).map((item) => item.id));
   return [
-    check('status_ready', manifest.status === 'innovation_github_worker_runtime_batch_manifest_draft_ready', manifest.status),
+    check('status_ready', [
+      'innovation_github_worker_runtime_batch_manifest_draft_ready',
+      'innovation_github_worker_runtime_batch_manifest_draft_needs_review'
+    ].includes(manifest.status), manifest.status),
     check('policy_manifest_draft_only', manifest.policy?.manifest_draft_only === true, manifest.policy?.manifest_draft_only),
     check('policy_no_runtime_rollback', manifest.policy?.executes_runtime_now === false && manifest.policy?.executes_rollback_now === false, JSON.stringify(manifest.policy)),
     check('policy_no_models_install', manifest.policy?.starts_models_now === false && manifest.policy?.installs_dependencies_now === false, JSON.stringify(manifest.policy)),

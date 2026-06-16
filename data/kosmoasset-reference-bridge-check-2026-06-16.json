@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:09:47.764Z",
+  "generated_at": "2026-06-16T17:45:28.235Z",
   "status": "kosmoasset_reference_bridge_review_only_passed",
   "policy": {
     "metadata_only": true,
@@ -17,7 +17,8 @@
     "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-library-check.generated.json",
     "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-export-plan.generated.json",
     "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json",
-    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-promotion-guard.generated.json"
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-promotion-guard.generated.json",
+    "data/kosmoreferences-pilot-package-check-2026-06-16.json"
   ],
   "summary": {
     "pilots": 3,

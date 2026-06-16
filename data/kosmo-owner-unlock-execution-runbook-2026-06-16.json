@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:34:00.627Z",
+  "generated_at": "2026-06-16T17:35:43.997Z",
   "status": "owner_unlock_execution_runbook_ready",
   "policy": {
     "runbook_only": true,
@@ -14,7 +14,7 @@
   },
   "source_refs": [
     "data/kosmo-owner-unlock-operational-start-card-2026-06-16.json",
-    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-16.json",
     "data/kosmo-owner-unlock-session-edit-preview-2026-06-16.json",
     "data/kosmo-source-root-post-owner-activation-queue-2026-06-16.json"
   ],
@@ -26,10 +26,10 @@
     "expected_session_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
     "expected_selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
     "operational_start_card_status": "owner_unlock_operational_start_card_ready",
-    "pipeline_checkpoint_status": "owner_unlock_pipeline_checkpoint_ready",
+    "pipeline_checkpoint_status": null,
     "session_edit_preview_status": "owner_unlock_session_edit_preview_ready",
     "post_owner_queue_status": "source_root_post_owner_activation_queue_ready",
-    "post_owner_queue_executable_now": 0,
+    "post_owner_queue_executable_now": 2,
     "public_ready_after_runbook": 0
   },
   "phases": [

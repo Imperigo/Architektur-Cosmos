@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:15:17.997Z",
+  "generated_at": "2026-06-16T17:53:48.640Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -166,10 +166,10 @@
   ],
   "summary": {
     "cards": 85,
-    "blocking_cards": 6,
+    "blocking_cards": 13,
     "owner_action_cards": 19,
     "source_root_blocked": false,
-    "day_batch_status": "day_batch_loop_needs_review",
+    "day_batch_status": "day_batch_loop_passed_review_only",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_refused",
     "source_root_decision_refresh_changed": false,
     "source_root_decision_refresh_options": 10,
@@ -320,7 +320,7 @@
     "github_review_queue_status": "innovation_github_review_queue_ready",
     "github_review_queue_items": 7,
     "github_review_queue_high_priority_items": 5,
-    "github_worker_runtime_manifest_validator_plan_status": "innovation_github_worker_runtime_manifest_validator_plan_ready",
+    "github_worker_runtime_manifest_validator_plan_status": "innovation_github_worker_runtime_manifest_validator_plan_needs_review",
     "github_worker_runtime_manifest_validator_plan_rules": 10,
     "github_worker_runtime_manifest_validator_plan_fixture_categories": 8,
     "github_worker_runtime_manifest_validator_plan_executable_now": 0,
@@ -387,25 +387,25 @@
     "github_worker_adapter_boundary_negative_fixtures_count": 8,
     "github_worker_adapter_boundary_negative_fixtures_blocked": 8,
     "github_worker_runtime_batch_readiness_plan_status": "innovation_github_worker_runtime_batch_readiness_plan_ready",
-    "github_worker_runtime_batch_readiness_plan_ready_gates": 5,
-    "github_worker_runtime_batch_readiness_plan_blocked_gates": 5,
+    "github_worker_runtime_batch_readiness_plan_ready_gates": 6,
+    "github_worker_runtime_batch_readiness_plan_blocked_gates": 4,
     "github_worker_runtime_rollback_redaction_fixtures_status": "innovation_github_worker_runtime_rollback_redaction_fixtures_ready",
     "github_worker_runtime_rollback_redaction_fixture_groups": 3,
     "github_worker_runtime_rollback_redaction_redaction_rules": 5,
     "github_worker_runtime_rollback_redaction_rollback_steps": 5,
-    "github_worker_runtime_apply_guard_status": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply",
+    "github_worker_runtime_apply_guard_status": "innovation_github_worker_runtime_apply_guard_not_ready",
     "github_worker_runtime_apply_guard_exact_reply_valid": false,
     "github_worker_runtime_apply_guard_separate_runtime_allowed": false,
     "github_worker_runtime_apply_guard_check_failures": 0,
-    "github_worker_runtime_log_redaction_negative_fixtures_status": "innovation_github_worker_runtime_log_redaction_negative_fixtures_ready",
+    "github_worker_runtime_log_redaction_negative_fixtures_status": "innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review",
     "github_worker_runtime_log_redaction_negative_fixtures_count": 10,
     "github_worker_runtime_log_redaction_negative_fixtures_blocked": 10,
     "github_worker_runtime_log_redaction_negative_fixtures_leak_categories": 7,
-    "github_worker_runtime_batch_manifest_draft_status": "innovation_github_worker_runtime_batch_manifest_draft_ready",
+    "github_worker_runtime_batch_manifest_draft_status": "innovation_github_worker_runtime_batch_manifest_draft_needs_review",
     "github_worker_runtime_batch_manifest_draft_id": "github-worker-runtime-batch-draft-2026-06-16",
     "github_worker_runtime_batch_manifest_draft_blocked_prerequisites": 4,
     "github_worker_runtime_batch_manifest_draft_open_review_gates": 5,
-    "github_worker_runtime_manifest_negative_fixtures_status": "innovation_github_worker_runtime_manifest_negative_fixtures_ready",
+    "github_worker_runtime_manifest_negative_fixtures_status": "innovation_github_worker_runtime_manifest_negative_fixtures_needs_review",
     "github_worker_runtime_manifest_negative_fixtures_count": 10,
     "github_worker_runtime_manifest_negative_fixtures_blocked": 10,
     "github_worker_runtime_manifest_negative_fixtures_categories": 8,
@@ -431,7 +431,7 @@
     "owner_unlock_patch_review_bundle_status": "owner_unlock_patch_review_bundle_ready",
     "owner_unlock_patch_review_bundle_operations": 6,
     "owner_unlock_patch_review_bundle_applies_now": false,
-    "owner_unlock_intake_apply_plan_status": "owner_unlock_intake_apply_plan_ready",
+    "owner_unlock_intake_apply_plan_status": "owner_unlock_intake_apply_plan_needs_review",
     "owner_unlock_intake_apply_plan_field_edits": 13,
     "owner_unlock_intake_apply_plan_writes_now": false,
     "tomorrow_day_batch_status": "tomorrow_day_batch_ready",
@@ -443,8 +443,8 @@
     {
       "id": "day-batch",
       "title": "Daily Batch",
-      "status": "needs_review",
-      "signal": "59/60 required steps",
+      "status": "ready",
+      "signal": "77/77 required steps",
       "owner_action_required": false,
       "route_hint": "KosmoReferences/KosmoAsset daily loop",
       "source_ref": "data/kosmo-day-batch-loop-2026-06-16.json"
@@ -570,7 +570,7 @@
       "id": "owner-unlock-path-a-readiness",
       "title": "Owner Unlock Path A Readiness",
       "status": "owner_action",
-      "signal": "can start after exact reply yes, applies now no, activation ready no, failures 0",
+      "signal": "can start after exact reply yes, applies now no, activation ready yes, failures 0",
       "owner_action_required": true,
       "route_hint": "Certificate of the exact owner-reply path before any private activation",
       "source_ref": "data/kosmo-owner-unlock-path-a-readiness-certificate-2026-06-16.json"
@@ -587,8 +587,8 @@
     {
       "id": "owner-unlock-intake-apply-plan",
       "title": "Owner Unlock Intake Apply Plan",
-      "status": "review_only_ready",
-      "signal": "13 field edits, target empty yes, root exists yes, writes now no, failures 0",
+      "status": "needs_review",
+      "signal": "13 field edits, target empty no, root exists yes, writes now no, failures 2",
       "owner_action_required": true,
       "route_hint": "Field-level apply plan for the owner intake template; review only",
       "source_ref": "data/kosmo-owner-unlock-intake-apply-plan-2026-06-16.json"
@@ -596,8 +596,8 @@
     {
       "id": "owner-unlock-session-edit-preview",
       "title": "Owner Unlock Session Edit Preview",
-      "status": "review_only_ready",
-      "signal": "6 preview edits, session files 1, manual triage 5, writes now no, failures 0",
+      "status": "needs_review",
+      "signal": "6 preview edits, session files 1, manual triage 5, writes now no, failures 1",
       "owner_action_required": true,
       "route_hint": "Preview which session files would change after exact owner unlock; review only",
       "source_ref": "data/kosmo-owner-unlock-session-edit-preview-2026-06-16.json"
@@ -614,8 +614,8 @@
     {
       "id": "owner-unlock-execution-runbook",
       "title": "Owner Unlock Execution Runbook",
-      "status": "review_only_ready",
-      "signal": "8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, queue executable 0, failures 0",
+      "status": "needs_review",
+      "signal": "8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, queue executable 2, failures 2",
       "owner_action_required": true,
       "route_hint": "Current guarded source-root unlock sequence; runbook only",
       "source_ref": "data/kosmo-owner-unlock-execution-runbook-2026-06-16.json"
@@ -623,8 +623,8 @@
     {
       "id": "owner-unlock-session-apply-guard",
       "title": "Owner Unlock Session Apply Guard",
-      "status": "review_only_ready",
-      "signal": "applied_matches_preview, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, matches yes, private diagnostic yes, failures 0",
+      "status": "needs_review",
+      "signal": "applied_matches_preview, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, matches yes, private diagnostic no, failures 2",
       "owner_action_required": true,
       "route_hint": "Proves the manual session edit matches the reviewed preview before activation",
       "source_ref": "data/kosmo-owner-unlock-session-apply-guard-2026-06-16.json"
@@ -1038,7 +1038,7 @@
       "id": "github-worker-runtime-batch-readiness-plan",
       "title": "GitHub Worker Runtime Batch Readiness Plan",
       "status": "review_only_ready",
-      "signal": "5/10 gates ready, blocked 5, runtime no, failures 0",
+      "signal": "6/10 gates ready, blocked 4, runtime no, failures 0",
       "owner_action_required": false,
       "route_hint": "Runtime readiness contract only; dependency/runtime/source-root/owner gates still block execution",
       "source_ref": "data/kosmo-innovation-github-worker-runtime-batch-readiness-plan-2026-06-16.json"
@@ -1055,7 +1055,7 @@
     {
       "id": "github-worker-runtime-apply-guard",
       "title": "GitHub Worker Runtime Apply Guard",
-      "status": "blocked_owner_action_required",
+      "status": "needs_review",
       "signal": "exact reply missing, separate runtime blocked, execute 0, checks 31/31",
       "owner_action_required": true,
       "route_hint": "Exact owner key=value reply gate for later separate source-free runtime batch; guard never executes runtime",
@@ -1064,7 +1064,7 @@
     {
       "id": "github-worker-runtime-log-redaction-negative-fixtures",
       "title": "GitHub Worker Runtime Log-Redaction Negative Fixtures",
-      "status": "review_only_ready",
+      "status": "needs_review",
       "signal": "10 negative fixtures, blocked 10, leak categories 7, runtime 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Synthetic unsafe runtime-log leak cases only; validates redaction blockers without reading private content or executing runtime",
@@ -1073,7 +1073,7 @@
     {
       "id": "github-worker-runtime-batch-manifest-draft",
       "title": "GitHub Worker Runtime Batch Manifest Draft",
-      "status": "review_only_ready",
+      "status": "needs_review",
       "signal": "github-worker-runtime-batch-draft-2026-06-16, prereqs 7, blocked 4, gates open 5, executable no, failures 0",
       "owner_action_required": false,
       "route_hint": "Review-only runtime batch manifest draft; no manifest/output writes and no runtime execution",
@@ -1082,7 +1082,7 @@
     {
       "id": "github-worker-runtime-manifest-negative-fixtures",
       "title": "GitHub Worker Runtime Manifest Negative Fixtures",
-      "status": "review_only_ready",
+      "status": "needs_review",
       "signal": "10 manifest negatives, blocked 10, categories 8, executable 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Synthetic unsafe runtime-manifest cases only; blocks executable/private/secret/raw-output/public-ready manifest variants",
@@ -1091,7 +1091,7 @@
     {
       "id": "github-worker-runtime-manifest-validator-plan",
       "title": "GitHub Worker Runtime Manifest Validator Plan",
-      "status": "review_only_ready",
+      "status": "needs_review",
       "signal": "10 rules, fixtures 8, executable 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Source-free implementation plan for validating future runtime manifests before any execution or private-source reads",

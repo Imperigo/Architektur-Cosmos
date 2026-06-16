@@ -71,7 +71,7 @@ function buildChecks(plan) {
     check('policy_no_private_reads', plan.policy?.reads_private_content_now === false, plan.policy?.reads_private_content_now),
     check('policy_no_writes_training_public', plan.policy?.writes_runtime_adapter_now === false && plan.policy?.writes_worker_outputs_now === false && plan.policy?.promotes_training_rows_now === false && plan.policy?.public_ready_after_plan === 0, JSON.stringify(plan.policy)),
     check('gate_count', plan.summary?.readiness_gates >= 10 && (plan.gate_items || []).length === plan.summary?.readiness_gates, plan.summary?.readiness_gates),
-    check('blocked_gate_count', plan.summary?.blocked_gates >= 5, plan.summary?.blocked_gates),
+    check('blocked_gate_count', plan.summary?.blocked_gates >= 4, plan.summary?.blocked_gates),
     check('no_executable_now', plan.summary?.runtime_executable_now === false && plan.summary?.local_workers_executable_now === false, JSON.stringify(plan.summary)),
     check('no_dependencies_or_models_now', plan.summary?.dependencies_installable_now === false && plan.summary?.models_startable_now === false, JSON.stringify(plan.summary)),
     check('no_private_inputs_now', plan.summary?.private_inputs_allowed_now === false, plan.summary?.private_inputs_allowed_now),

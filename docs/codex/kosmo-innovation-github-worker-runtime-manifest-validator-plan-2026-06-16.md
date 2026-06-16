@@ -1,7 +1,7 @@
 # Kosmo Innovation GitHub Worker Runtime Manifest Validator Plan
 
-Generated: 2026-06-16T05:15:41.995Z
-Status: `innovation_github_worker_runtime_manifest_validator_plan_ready`
+Generated: 2026-06-16T17:49:45.673Z
+Status: `innovation_github_worker_runtime_manifest_validator_plan_needs_review`
 
 ## Summary
 
@@ -13,7 +13,7 @@ Status: `innovation_github_worker_runtime_manifest_validator_plan_ready`
 - Executable now: 0
 - Validator code written now: 0
 - Public-ready after plan: 0
-- Failures: 0
+- Failures: 2
 
 ## Rules
 
@@ -38,3 +38,8 @@ Status: `innovation_github_worker_runtime_manifest_validator_plan_ready`
 - This plan never reads private Source Root, OneDrive or archive-library content.
 - This plan never writes runtime manifests or runtime outputs.
 - This plan never promotes public-ready state.
+
+## Failures
+
+- Manifest draft not ready: innovation_github_worker_runtime_batch_manifest_draft_needs_review
+- Manifest negative fixtures not ready: innovation_github_worker_runtime_manifest_negative_fixtures_needs_review

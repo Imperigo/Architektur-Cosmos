@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:34:00.875Z",
-  "status": "owner_unlock_execution_runbook_guard_passed",
+  "generated_at": "2026-06-16T17:35:44.254Z",
+  "status": "owner_unlock_execution_runbook_guard_failed",
   "policy": {
     "validates_runbook_only": true,
     "executes_commands_now": false,
@@ -17,8 +17,8 @@
   ],
   "summary": {
     "checks": 39,
-    "passed": 39,
-    "failures": 0,
+    "passed": 37,
+    "failures": 2,
     "warnings": 0,
     "public_ready_after_check": 0
   },
@@ -175,8 +175,8 @@
     },
     {
       "id": "checkpoint_status_ready",
-      "status": "passed",
-      "evidence": "owner_unlock_pipeline_checkpoint_ready"
+      "status": "failed",
+      "evidence": null
     },
     {
       "id": "queue_status_ready",
@@ -185,8 +185,8 @@
     },
     {
       "id": "queue_still_blocked_now",
-      "status": "passed",
-      "evidence": 0
+      "status": "failed",
+      "evidence": 2
     },
     {
       "id": "hard_stop_no_private_diagnostic_from_valid_reply",

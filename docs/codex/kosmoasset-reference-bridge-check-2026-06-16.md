@@ -1,6 +1,6 @@
 # KosmoAsset Reference Bridge Check
 
-Generated: 2026-06-16T05:09:47.764Z
+Generated: 2026-06-16T17:45:28.235Z
 Status: `kosmoasset_reference_bridge_review_only_passed`
 
 ## Summary

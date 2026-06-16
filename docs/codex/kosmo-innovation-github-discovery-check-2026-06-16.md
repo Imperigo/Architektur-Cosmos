@@ -1,0 +1,147 @@
+# Kosmo Innovation GitHub Discovery Check
+
+Generated: 2026-06-16T17:45:41.371Z
+Status: `innovation_github_discovery_guard_passed`
+
+## Summary
+
+- Discovery status: innovation_github_discovery_ready
+- Queries: 10
+- Lanes with results: 5
+- Candidates: 23
+- Failures: 0
+- Public-ready after check: 0
+
+## Findings
+
+- passed: `schema_version` - Discovery schema_version must be 0.1.
+- passed: `discovery_ready` - Discovery must be ready.
+- passed: `discovery_only` - Discovery must be discovery-only.
+- passed: `no_installs` - Discovery must not install dependencies.
+- passed: `no_downloads` - Discovery must not download models.
+- passed: `no_tool_runs` - Discovery must not run discovered tools.
+- passed: `no_private_reads` - Discovery must not read private content.
+- passed: `public_ready_zero` - Discovery must keep public-ready at 0.
+- passed: `query_count` - Discovery must include at least ten search queries.
+- passed: `queries_with_results_count` - Discovery must report queries with results.
+- passed: `lanes_with_results_count` - Discovery must report lanes with results.
+- passed: `lane_query:bim_rag_workers` - Discovery must include a query for bim_rag_workers.
+- passed: `lane_query:ifc_reasoning` - Discovery must include a query for ifc_reasoning.
+- passed: `lane_query:kosmo_prepare` - Discovery must include a query for kosmo_prepare.
+- passed: `lane_query:kosmo_asset` - Discovery must include a query for kosmo_asset.
+- passed: `lane_query:worker_integration` - Discovery must include a query for worker_integration.
+- passed: `primary_source:SII-sc22mc/DocFusion` - SII-sc22mc/DocFusion must be a primary GitHub repository.
+- passed: `github_url:SII-sc22mc/DocFusion` - SII-sc22mc/DocFusion must use a GitHub URL.
+- passed: `no_execute:SII-sc22mc/DocFusion` - SII-sc22mc/DocFusion must not install/download now.
+- passed: `no_private:SII-sc22mc/DocFusion` - SII-sc22mc/DocFusion must not allow private content.
+- passed: `public_ready_zero:SII-sc22mc/DocFusion` - SII-sc22mc/DocFusion must keep public-ready at 0.
+- passed: `primary_source:yanghairui/3DRetrieval` - yanghairui/3DRetrieval must be a primary GitHub repository.
+- passed: `github_url:yanghairui/3DRetrieval` - yanghairui/3DRetrieval must use a GitHub URL.
+- passed: `no_execute:yanghairui/3DRetrieval` - yanghairui/3DRetrieval must not install/download now.
+- passed: `no_private:yanghairui/3DRetrieval` - yanghairui/3DRetrieval must not allow private content.
+- passed: `public_ready_zero:yanghairui/3DRetrieval` - yanghairui/3DRetrieval must keep public-ready at 0.
+- passed: `primary_source:lee-agi/3d_model_base` - lee-agi/3d_model_base must be a primary GitHub repository.
+- passed: `github_url:lee-agi/3d_model_base` - lee-agi/3d_model_base must use a GitHub URL.
+- passed: `no_execute:lee-agi/3d_model_base` - lee-agi/3d_model_base must not install/download now.
+- passed: `no_private:lee-agi/3d_model_base` - lee-agi/3d_model_base must not allow private content.
+- passed: `public_ready_zero:lee-agi/3d_model_base` - lee-agi/3d_model_base must keep public-ready at 0.
+- passed: `primary_source:lfniederauer/blender-agentic-bonsai-sketcher-mcp` - lfniederauer/blender-agentic-bonsai-sketcher-mcp must be a primary GitHub repository.
+- passed: `github_url:lfniederauer/blender-agentic-bonsai-sketcher-mcp` - lfniederauer/blender-agentic-bonsai-sketcher-mcp must use a GitHub URL.
+- passed: `no_execute:lfniederauer/blender-agentic-bonsai-sketcher-mcp` - lfniederauer/blender-agentic-bonsai-sketcher-mcp must not install/download now.
+- passed: `no_private:lfniederauer/blender-agentic-bonsai-sketcher-mcp` - lfniederauer/blender-agentic-bonsai-sketcher-mcp must not allow private content.
+- passed: `public_ready_zero:lfniederauer/blender-agentic-bonsai-sketcher-mcp` - lfniederauer/blender-agentic-bonsai-sketcher-mcp must keep public-ready at 0.
+- passed: `primary_source:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System` - cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must be a primary GitHub repository.
+- passed: `github_url:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System` - cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must use a GitHub URL.
+- passed: `no_execute:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System` - cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must not install/download now.
+- passed: `no_private:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System` - cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must not allow private content.
+- passed: `public_ready_zero:cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System` - cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System must keep public-ready at 0.
+- passed: `primary_source:mac999/BIM_LLM_code_agent` - mac999/BIM_LLM_code_agent must be a primary GitHub repository.
+- passed: `github_url:mac999/BIM_LLM_code_agent` - mac999/BIM_LLM_code_agent must use a GitHub URL.
+- passed: `no_execute:mac999/BIM_LLM_code_agent` - mac999/BIM_LLM_code_agent must not install/download now.
+- passed: `no_private:mac999/BIM_LLM_code_agent` - mac999/BIM_LLM_code_agent must not allow private content.
+- passed: `public_ready_zero:mac999/BIM_LLM_code_agent` - mac999/BIM_LLM_code_agent must keep public-ready at 0.
+- passed: `primary_source:HamidKiavarz/BIM-LLM` - HamidKiavarz/BIM-LLM must be a primary GitHub repository.
+- passed: `github_url:HamidKiavarz/BIM-LLM` - HamidKiavarz/BIM-LLM must use a GitHub URL.
+- passed: `no_execute:HamidKiavarz/BIM-LLM` - HamidKiavarz/BIM-LLM must not install/download now.
+- passed: `no_private:HamidKiavarz/BIM-LLM` - HamidKiavarz/BIM-LLM must not allow private content.
+- passed: `public_ready_zero:HamidKiavarz/BIM-LLM` - HamidKiavarz/BIM-LLM must keep public-ready at 0.
+- passed: `primary_source:Ryanglambert/3d_model_retriever` - Ryanglambert/3d_model_retriever must be a primary GitHub repository.
+- passed: `github_url:Ryanglambert/3d_model_retriever` - Ryanglambert/3d_model_retriever must use a GitHub URL.
+- passed: `no_execute:Ryanglambert/3d_model_retriever` - Ryanglambert/3d_model_retriever must not install/download now.
+- passed: `no_private:Ryanglambert/3d_model_retriever` - Ryanglambert/3d_model_retriever must not allow private content.
+- passed: `public_ready_zero:Ryanglambert/3d_model_retriever` - Ryanglambert/3d_model_retriever must keep public-ready at 0.
+- passed: `primary_source:lyx-x/SketchRetrieval` - lyx-x/SketchRetrieval must be a primary GitHub repository.
+- passed: `github_url:lyx-x/SketchRetrieval` - lyx-x/SketchRetrieval must use a GitHub URL.
+- passed: `no_execute:lyx-x/SketchRetrieval` - lyx-x/SketchRetrieval must not install/download now.
+- passed: `no_private:lyx-x/SketchRetrieval` - lyx-x/SketchRetrieval must not allow private content.
+- passed: `public_ready_zero:lyx-x/SketchRetrieval` - lyx-x/SketchRetrieval must keep public-ready at 0.
+- passed: `primary_source:tianbao-li/MI3DOR` - tianbao-li/MI3DOR must be a primary GitHub repository.
+- passed: `github_url:tianbao-li/MI3DOR` - tianbao-li/MI3DOR must use a GitHub URL.
+- passed: `no_execute:tianbao-li/MI3DOR` - tianbao-li/MI3DOR must not install/download now.
+- passed: `no_private:tianbao-li/MI3DOR` - tianbao-li/MI3DOR must not allow private content.
+- passed: `public_ready_zero:tianbao-li/MI3DOR` - tianbao-li/MI3DOR must keep public-ready at 0.
+- passed: `primary_source:trymtrim/MultimediaRetrieval` - trymtrim/MultimediaRetrieval must be a primary GitHub repository.
+- passed: `github_url:trymtrim/MultimediaRetrieval` - trymtrim/MultimediaRetrieval must use a GitHub URL.
+- passed: `no_execute:trymtrim/MultimediaRetrieval` - trymtrim/MultimediaRetrieval must not install/download now.
+- passed: `no_private:trymtrim/MultimediaRetrieval` - trymtrim/MultimediaRetrieval must not allow private content.
+- passed: `public_ready_zero:trymtrim/MultimediaRetrieval` - trymtrim/MultimediaRetrieval must keep public-ready at 0.
+- passed: `primary_source:RukiQ/sketchSearchMobi` - RukiQ/sketchSearchMobi must be a primary GitHub repository.
+- passed: `github_url:RukiQ/sketchSearchMobi` - RukiQ/sketchSearchMobi must use a GitHub URL.
+- passed: `no_execute:RukiQ/sketchSearchMobi` - RukiQ/sketchSearchMobi must not install/download now.
+- passed: `no_private:RukiQ/sketchSearchMobi` - RukiQ/sketchSearchMobi must not allow private content.
+- passed: `public_ready_zero:RukiQ/sketchSearchMobi` - RukiQ/sketchSearchMobi must keep public-ready at 0.
+- passed: `primary_source:mac999/BIM_LLM` - mac999/BIM_LLM must be a primary GitHub repository.
+- passed: `github_url:mac999/BIM_LLM` - mac999/BIM_LLM must use a GitHub URL.
+- passed: `no_execute:mac999/BIM_LLM` - mac999/BIM_LLM must not install/download now.
+- passed: `no_private:mac999/BIM_LLM` - mac999/BIM_LLM must not allow private content.
+- passed: `public_ready_zero:mac999/BIM_LLM` - mac999/BIM_LLM must keep public-ready at 0.
+- passed: `primary_source:ThanhPhuc3107/LLM_v2` - ThanhPhuc3107/LLM_v2 must be a primary GitHub repository.
+- passed: `github_url:ThanhPhuc3107/LLM_v2` - ThanhPhuc3107/LLM_v2 must use a GitHub URL.
+- passed: `no_execute:ThanhPhuc3107/LLM_v2` - ThanhPhuc3107/LLM_v2 must not install/download now.
+- passed: `no_private:ThanhPhuc3107/LLM_v2` - ThanhPhuc3107/LLM_v2 must not allow private content.
+- passed: `public_ready_zero:ThanhPhuc3107/LLM_v2` - ThanhPhuc3107/LLM_v2 must keep public-ready at 0.
+- passed: `primary_source:ThanhPhuc3107/LLM_v1` - ThanhPhuc3107/LLM_v1 must be a primary GitHub repository.
+- passed: `github_url:ThanhPhuc3107/LLM_v1` - ThanhPhuc3107/LLM_v1 must use a GitHub URL.
+- passed: `no_execute:ThanhPhuc3107/LLM_v1` - ThanhPhuc3107/LLM_v1 must not install/download now.
+- passed: `no_private:ThanhPhuc3107/LLM_v1` - ThanhPhuc3107/LLM_v1 must not allow private content.
+- passed: `public_ready_zero:ThanhPhuc3107/LLM_v1` - ThanhPhuc3107/LLM_v1 must keep public-ready at 0.
+- passed: `primary_source:Shiraf1Q84/bim-llm` - Shiraf1Q84/bim-llm must be a primary GitHub repository.
+- passed: `github_url:Shiraf1Q84/bim-llm` - Shiraf1Q84/bim-llm must use a GitHub URL.
+- passed: `no_execute:Shiraf1Q84/bim-llm` - Shiraf1Q84/bim-llm must not install/download now.
+- passed: `no_private:Shiraf1Q84/bim-llm` - Shiraf1Q84/bim-llm must not allow private content.
+- passed: `public_ready_zero:Shiraf1Q84/bim-llm` - Shiraf1Q84/bim-llm must keep public-ready at 0.
+- passed: `primary_source:salanueva/bim_llm` - salanueva/bim_llm must be a primary GitHub repository.
+- passed: `github_url:salanueva/bim_llm` - salanueva/bim_llm must use a GitHub URL.
+- passed: `no_execute:salanueva/bim_llm` - salanueva/bim_llm must not install/download now.
+- passed: `no_private:salanueva/bim_llm` - salanueva/bim_llm must not allow private content.
+- passed: `public_ready_zero:salanueva/bim_llm` - salanueva/bim_llm must keep public-ready at 0.
+- passed: `primary_source:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining` - W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must be a primary GitHub repository.
+- passed: `github_url:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining` - W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must use a GitHub URL.
+- passed: `no_execute:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining` - W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must not install/download now.
+- passed: `no_private:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining` - W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must not allow private content.
+- passed: `public_ready_zero:W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining` - W2000ds/Bimodal-LLM-Symbolic-Configuration-Dependency-Mining must keep public-ready at 0.
+- passed: `primary_source:akhil-haridas/ifcopenshell-bimsurfer` - akhil-haridas/ifcopenshell-bimsurfer must be a primary GitHub repository.
+- passed: `github_url:akhil-haridas/ifcopenshell-bimsurfer` - akhil-haridas/ifcopenshell-bimsurfer must use a GitHub URL.
+- passed: `no_execute:akhil-haridas/ifcopenshell-bimsurfer` - akhil-haridas/ifcopenshell-bimsurfer must not install/download now.
+- passed: `no_private:akhil-haridas/ifcopenshell-bimsurfer` - akhil-haridas/ifcopenshell-bimsurfer must not allow private content.
+- passed: `public_ready_zero:akhil-haridas/ifcopenshell-bimsurfer` - akhil-haridas/ifcopenshell-bimsurfer must keep public-ready at 0.
+- passed: `primary_source:arhimatrix/X-BIM` - arhimatrix/X-BIM must be a primary GitHub repository.
+- passed: `github_url:arhimatrix/X-BIM` - arhimatrix/X-BIM must use a GitHub URL.
+- passed: `no_execute:arhimatrix/X-BIM` - arhimatrix/X-BIM must not install/download now.
+- passed: `no_private:arhimatrix/X-BIM` - arhimatrix/X-BIM must not allow private content.
+- passed: `public_ready_zero:arhimatrix/X-BIM` - arhimatrix/X-BIM must keep public-ready at 0.
+- passed: `primary_source:bohan0701/3D-model-retrieval` - bohan0701/3D-model-retrieval must be a primary GitHub repository.
+- passed: `github_url:bohan0701/3D-model-retrieval` - bohan0701/3D-model-retrieval must use a GitHub URL.
+- passed: `no_execute:bohan0701/3D-model-retrieval` - bohan0701/3D-model-retrieval must not install/download now.
+- passed: `no_private:bohan0701/3D-model-retrieval` - bohan0701/3D-model-retrieval must not allow private content.
+- passed: `public_ready_zero:bohan0701/3D-model-retrieval` - bohan0701/3D-model-retrieval must keep public-ready at 0.
+- passed: `primary_source:URRealHero/LightFieldDescriptor` - URRealHero/LightFieldDescriptor must be a primary GitHub repository.
+- passed: `github_url:URRealHero/LightFieldDescriptor` - URRealHero/LightFieldDescriptor must use a GitHub URL.
+- passed: `no_execute:URRealHero/LightFieldDescriptor` - URRealHero/LightFieldDescriptor must not install/download now.
+- passed: `no_private:URRealHero/LightFieldDescriptor` - URRealHero/LightFieldDescriptor must not allow private content.
+- passed: `public_ready_zero:URRealHero/LightFieldDescriptor` - URRealHero/LightFieldDescriptor must keep public-ready at 0.
+- passed: `primary_source:AFangCCC/MVCL` - AFangCCC/MVCL must be a primary GitHub repository.
+- passed: `github_url:AFangCCC/MVCL` - AFangCCC/MVCL must use a GitHub URL.
+- passed: `no_execute:AFangCCC/MVCL` - AFangCCC/MVCL must not install/download now.
+- passed: `no_private:AFangCCC/MVCL` - AFangCCC/MVCL must not allow private content.
+- passed: `public_ready_zero:AFangCCC/MVCL` - AFangCCC/MVCL must keep public-ready at 0.

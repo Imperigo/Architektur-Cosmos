@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:14:55.959Z",
+  "generated_at": "2026-06-16T17:45:29.211Z",
   "status": "worker_router_private_diagnostic_ready",
   "source_refs": [
     "data/kosmodata-lane-sweep-2026-06-16.json"

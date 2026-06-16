@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:00:14.310Z",
+  "generated_at": "2026-06-16T17:48:34.799Z",
   "status": "innovation_github_worker_runtime_apply_guard_guard_passed",
   "policy": {
     "validates_guard_only": true,
@@ -17,7 +17,7 @@
     "checks": 31,
     "passed": 31,
     "failures": 0,
-    "guard_status": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply",
+    "guard_status": "innovation_github_worker_runtime_apply_guard_not_ready",
     "exact_reply_valid": false,
     "separate_runtime_allowed_after_guard": false,
     "execute_now": 0,
@@ -27,7 +27,7 @@
     {
       "id": "status_guarded",
       "status": "passed",
-      "evidence": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply"
+      "evidence": "innovation_github_worker_runtime_apply_guard_not_ready"
     },
     {
       "id": "policy_guard_only",
@@ -152,7 +152,7 @@
     {
       "id": "valid_reply_has_ready_status",
       "status": "passed",
-      "evidence": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply"
+      "evidence": "innovation_github_worker_runtime_apply_guard_not_ready"
     },
     {
       "id": "invalid_or_waiting_no_runtime",

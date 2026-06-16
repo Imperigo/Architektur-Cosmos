@@ -1,6 +1,6 @@
 # KosmoAsset Source Candidate Map
 
-Generated: 2026-06-16T12:31:13.542Z
+Generated: 2026-06-16T17:45:28.477Z
 Status: `kosmoasset_source_candidate_map_review_only_ready`
 
 ## Summary

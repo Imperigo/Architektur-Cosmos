@@ -1,12 +1,12 @@
 # Kosmo Owner Unlock Reply Validator
 
-Generated: 2026-06-16T12:12:29.580Z
-Status: `owner_unlock_reply_valid`
+Generated: 2026-06-16T17:35:43.031Z
+Status: `owner_unlock_reply_validator_pending_owner_reply`
 
 ## Summary
 
-- Answer present: yes
-- Valid: yes
+- Answer present: no
+- Valid: no
 - Source-root choices: 3
 - Review batch choices: 5
 - Failures: 0
@@ -21,9 +21,8 @@ Status: `owner_unlock_reply_valid`
 
 ## Next Actions
 
-- Copy only explicit validated fields into owner answer intake/session files.
-- Run owner answer intake check, session edit plan and source-root guards.
-- Do not run private inventory unless the selected branch permits it and guards pass.
+- Wait for explicit owner reply in the required format.
+- Keep source-root and review batches pending.
 
 ## Hard Stops
 

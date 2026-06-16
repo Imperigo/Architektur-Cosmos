@@ -1,17 +1,17 @@
 # Kosmo Owner Unlock Answer Dry Run
 
-Generated: 2026-06-16T12:12:30.321Z
-Status: `owner_unlock_answer_dry_run_ready_for_review`
+Generated: 2026-06-16T17:47:19.018Z
+Status: `owner_unlock_answer_dry_run_pending_answer`
 
 ## Summary
 
-- Answer present: yes
-- Validator: owner_unlock_reply_valid
+- Answer present: no
+- Validator: owner_unlock_reply_validator_pending_owner_reply
 - Validator guard: owner_unlock_reply_validator_guard_passed
-- Intake map: owner_unlock_reply_intake_map_ready_for_review
+- Intake map: owner_unlock_reply_intake_map_pending_owner_reply
 - Intake map guard: owner_unlock_reply_intake_map_guard_passed
-- Patch operations: 6
-- Owner card patches: 5
+- Patch operations: 0
+- Owner card patches: 0
 - Failures: 0
 - Public-ready after dry-run: 0
 
@@ -25,9 +25,8 @@ Status: `owner_unlock_answer_dry_run_ready_for_review`
 
 ## Next Actions
 
-- Review the generated intake map before editing any intake template.
-- If the map is accepted, apply only reviewed fields to the owner answer intake template.
-- After the intake edit, run owner-answer-intake-check before any session plan.
+- Do not edit intake or session files.
+- Correct the owner reply format or wait for a valid explicit answer.
 
 ## Hard Stops
 

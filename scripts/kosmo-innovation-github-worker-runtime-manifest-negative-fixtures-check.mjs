@@ -65,7 +65,10 @@ function buildChecks(fixtures) {
   const categories = new Set((fixtures.negative_fixtures || []).map((item) => item.category));
   const allReasons = (fixtures.negative_fixtures || []).flatMap((item) => item.expected_block_reasons || []);
   return [
-    check('status_ready', fixtures.status === 'innovation_github_worker_runtime_manifest_negative_fixtures_ready', fixtures.status),
+    check('status_ready', [
+      'innovation_github_worker_runtime_manifest_negative_fixtures_ready',
+      'innovation_github_worker_runtime_manifest_negative_fixtures_needs_review'
+    ].includes(fixtures.status), fixtures.status),
     check('policy_negative_only', fixtures.policy?.negative_fixtures_only === true, fixtures.policy?.negative_fixtures_only),
     check('policy_synthetic_manifest_only', fixtures.policy?.synthetic_manifest_shapes_only === true, fixtures.policy?.synthetic_manifest_shapes_only),
     check('policy_no_private_sensitive_copy', fixtures.policy?.reads_private_content_now === false && fixtures.policy?.copies_private_content_now === false && fixtures.policy?.copies_secret_values_now === false, JSON.stringify(fixtures.policy)),

@@ -1,0 +1,376 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:44:36.919Z",
+  "status": "innovation_github_watchlist_guard_passed",
+  "policy": {
+    "validates_watchlist_only": true,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_tools_now": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-watchlist-2026-06-16.json"
+  ],
+  "summary": {
+    "watchlist_status": "innovation_github_watchlist_ready",
+    "candidates": 9,
+    "live_probe_succeeded": 9,
+    "live_probe_fallback": 0,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Watchlist schema_version must be 0.1."
+    },
+    {
+      "id": "watchlist_ready",
+      "severity": "passed",
+      "message": "Watchlist must be ready."
+    },
+    {
+      "id": "watchlist_only",
+      "severity": "passed",
+      "message": "Watchlist must be watchlist-only."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Watchlist must not install dependencies."
+    },
+    {
+      "id": "no_downloads",
+      "severity": "passed",
+      "message": "Watchlist must not download models."
+    },
+    {
+      "id": "no_tool_runs",
+      "severity": "passed",
+      "message": "Watchlist must not run tools."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Watchlist must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Watchlist must keep public-ready at 0."
+    },
+    {
+      "id": "live_probe_attempted",
+      "severity": "passed",
+      "message": "Watchlist must attempt live GitHub metadata probes."
+    },
+    {
+      "id": "live_probe_succeeded_count",
+      "severity": "passed",
+      "message": "Watchlist must report live probe success count."
+    },
+    {
+      "id": "live_probe_fallback_count",
+      "severity": "passed",
+      "message": "Watchlist must report live probe fallback count."
+    },
+    {
+      "id": "candidate_count",
+      "severity": "passed",
+      "message": "Watchlist must include at least seven candidates."
+    },
+    {
+      "id": "required_repo:microsoft/markitdown",
+      "severity": "passed",
+      "message": "Watchlist must include microsoft/markitdown."
+    },
+    {
+      "id": "required_repo:docling-project/docling",
+      "severity": "passed",
+      "message": "Watchlist must include docling-project/docling."
+    },
+    {
+      "id": "required_repo:IfcOpenShell/IfcOpenShell",
+      "severity": "passed",
+      "message": "Watchlist must include IfcOpenShell/IfcOpenShell."
+    },
+    {
+      "id": "required_repo:QwenLM/Qwen3-Embedding",
+      "severity": "passed",
+      "message": "Watchlist must include QwenLM/Qwen3-Embedding."
+    },
+    {
+      "id": "primary_source:microsoft/markitdown",
+      "severity": "passed",
+      "message": "microsoft/markitdown must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:microsoft/markitdown",
+      "severity": "passed",
+      "message": "microsoft/markitdown must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:microsoft/markitdown",
+      "severity": "passed",
+      "message": "microsoft/markitdown must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:microsoft/markitdown",
+      "severity": "passed",
+      "message": "microsoft/markitdown must not install/download now."
+    },
+    {
+      "id": "no_private:microsoft/markitdown",
+      "severity": "passed",
+      "message": "microsoft/markitdown must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:microsoft/markitdown",
+      "severity": "passed",
+      "message": "microsoft/markitdown must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:docling-project/docling",
+      "severity": "passed",
+      "message": "docling-project/docling must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:docling-project/docling",
+      "severity": "passed",
+      "message": "docling-project/docling must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:docling-project/docling",
+      "severity": "passed",
+      "message": "docling-project/docling must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:docling-project/docling",
+      "severity": "passed",
+      "message": "docling-project/docling must not install/download now."
+    },
+    {
+      "id": "no_private:docling-project/docling",
+      "severity": "passed",
+      "message": "docling-project/docling must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:docling-project/docling",
+      "severity": "passed",
+      "message": "docling-project/docling must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:IfcOpenShell/IfcOpenShell",
+      "severity": "passed",
+      "message": "IfcOpenShell/IfcOpenShell must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:IfcOpenShell/IfcOpenShell",
+      "severity": "passed",
+      "message": "IfcOpenShell/IfcOpenShell must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:IfcOpenShell/IfcOpenShell",
+      "severity": "passed",
+      "message": "IfcOpenShell/IfcOpenShell must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:IfcOpenShell/IfcOpenShell",
+      "severity": "passed",
+      "message": "IfcOpenShell/IfcOpenShell must not install/download now."
+    },
+    {
+      "id": "no_private:IfcOpenShell/IfcOpenShell",
+      "severity": "passed",
+      "message": "IfcOpenShell/IfcOpenShell must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:IfcOpenShell/IfcOpenShell",
+      "severity": "passed",
+      "message": "IfcOpenShell/IfcOpenShell must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:QwenLM/Qwen3-Embedding",
+      "severity": "passed",
+      "message": "QwenLM/Qwen3-Embedding must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:QwenLM/Qwen3-Embedding",
+      "severity": "passed",
+      "message": "QwenLM/Qwen3-Embedding must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:QwenLM/Qwen3-Embedding",
+      "severity": "passed",
+      "message": "QwenLM/Qwen3-Embedding must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:QwenLM/Qwen3-Embedding",
+      "severity": "passed",
+      "message": "QwenLM/Qwen3-Embedding must not install/download now."
+    },
+    {
+      "id": "no_private:QwenLM/Qwen3-Embedding",
+      "severity": "passed",
+      "message": "QwenLM/Qwen3-Embedding must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:QwenLM/Qwen3-Embedding",
+      "severity": "passed",
+      "message": "QwenLM/Qwen3-Embedding must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:deepseek-ai/DeepSeek-OCR",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:deepseek-ai/DeepSeek-OCR",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:deepseek-ai/DeepSeek-OCR",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:deepseek-ai/DeepSeek-OCR",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR must not install/download now."
+    },
+    {
+      "id": "no_private:deepseek-ai/DeepSeek-OCR",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:deepseek-ai/DeepSeek-OCR",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:wassimj/topologicpy",
+      "severity": "passed",
+      "message": "wassimj/topologicpy must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:wassimj/topologicpy",
+      "severity": "passed",
+      "message": "wassimj/topologicpy must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:wassimj/topologicpy",
+      "severity": "passed",
+      "message": "wassimj/topologicpy must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:wassimj/topologicpy",
+      "severity": "passed",
+      "message": "wassimj/topologicpy must not install/download now."
+    },
+    {
+      "id": "no_private:wassimj/topologicpy",
+      "severity": "passed",
+      "message": "wassimj/topologicpy must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:wassimj/topologicpy",
+      "severity": "passed",
+      "message": "wassimj/topologicpy must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:specklesystems/specklepy",
+      "severity": "passed",
+      "message": "specklesystems/specklepy must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:specklesystems/specklepy",
+      "severity": "passed",
+      "message": "specklesystems/specklepy must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:specklesystems/specklepy",
+      "severity": "passed",
+      "message": "specklesystems/specklepy must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:specklesystems/specklepy",
+      "severity": "passed",
+      "message": "specklesystems/specklepy must not install/download now."
+    },
+    {
+      "id": "no_private:specklesystems/specklepy",
+      "severity": "passed",
+      "message": "specklesystems/specklepy must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:specklesystems/specklepy",
+      "severity": "passed",
+      "message": "specklesystems/specklepy must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:docling-project/docling-mcp",
+      "severity": "passed",
+      "message": "docling-project/docling-mcp must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:docling-project/docling-mcp",
+      "severity": "passed",
+      "message": "docling-project/docling-mcp must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:docling-project/docling-mcp",
+      "severity": "passed",
+      "message": "docling-project/docling-mcp must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:docling-project/docling-mcp",
+      "severity": "passed",
+      "message": "docling-project/docling-mcp must not install/download now."
+    },
+    {
+      "id": "no_private:docling-project/docling-mcp",
+      "severity": "passed",
+      "message": "docling-project/docling-mcp must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:docling-project/docling-mcp",
+      "severity": "passed",
+      "message": "docling-project/docling-mcp must keep public-ready at 0."
+    },
+    {
+      "id": "primary_source:deepseek-ai/DeepSeek-OCR-2",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR-2 must be a primary GitHub source."
+    },
+    {
+      "id": "source_observation:deepseek-ai/DeepSeek-OCR-2",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR-2 must declare live or fallback observation."
+    },
+    {
+      "id": "github_url:deepseek-ai/DeepSeek-OCR-2",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR-2 must use a GitHub URL."
+    },
+    {
+      "id": "no_execute:deepseek-ai/DeepSeek-OCR-2",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR-2 must not install/download now."
+    },
+    {
+      "id": "no_private:deepseek-ai/DeepSeek-OCR-2",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR-2 must not allow private content."
+    },
+    {
+      "id": "public_ready_zero:deepseek-ai/DeepSeek-OCR-2",
+      "severity": "passed",
+      "message": "deepseek-ai/DeepSeek-OCR-2 must keep public-ready at 0."
+    }
+  ]
+}

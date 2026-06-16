@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:00:14.070Z",
-  "status": "innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply",
+  "generated_at": "2026-06-16T17:48:07.551Z",
+  "status": "innovation_github_worker_runtime_apply_guard_not_ready",
   "policy": {
     "guard_only": true,
     "records_owner_decision_now": false,
@@ -23,15 +23,15 @@
     "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-2026-06-16.json",
     "data/kosmo-innovation-github-worker-runtime-rollback-redaction-fixtures-check-2026-06-16.json",
     "data/kosmo-source-root-blocker-refresh-2026-06-16.json",
-    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-15.json"
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-16.json"
   ],
   "summary": {
     "answer_present": false,
     "exact_reply_valid": false,
     "separate_runtime_allowed_after_guard": false,
     "selected_fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
-    "readiness_ready_gates": 5,
-    "readiness_blocked_gates": 5,
+    "readiness_ready_gates": 6,
+    "readiness_blocked_gates": 4,
     "rollback_fixture_groups": 3,
     "redaction_rules": 5,
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
@@ -41,9 +41,9 @@
     "reads_private_content_now": false,
     "writes_runtime_outputs_now": false,
     "public_ready_after_guard": 0,
-    "readiness_failures": 0,
+    "readiness_failures": 2,
     "reply_failures": 0,
-    "failures": 0
+    "failures": 2
   },
   "parsed_answer": null,
   "required_exact_reply": [
@@ -70,5 +70,8 @@
     "This guard never copies secret values.",
     "A broad approval is not enough; exact key=value fields are required."
   ],
-  "failures": []
+  "failures": [
+    "Source Root blocker status changed and must be reviewed: source_root_blocker_needs_review",
+    "Owner unlock checkpoint not ready: owner_unlock_pipeline_checkpoint_attention_required"
+  ]
 }

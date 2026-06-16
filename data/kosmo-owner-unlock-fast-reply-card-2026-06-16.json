@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:33:09.369Z",
+  "generated_at": "2026-06-16T17:47:19.506Z",
   "status": "owner_unlock_fast_reply_card_ready",
   "policy": {
     "review_only": true,
@@ -12,12 +12,13 @@
     "public_ready_after_card": 0
   },
   "source_refs": [
-    "data/kosmo-owner-unlock-prompt-pack-2026-06-16.json"
+    "data/kosmo-owner-unlock-prompt-pack-2026-06-16.json",
+    "data/kosmo-owner-unlock-reply-validator-2026-06-16.json"
   ],
   "summary": {
     "answer_present": false,
     "broad_unlock_intent": false,
-    "validator_status": "missing",
+    "validator_status": "owner_unlock_reply_validator_pending_owner_reply",
     "validator_rejected_freeform": false,
     "suggested_replies": 2,
     "applies_decision_now": false,

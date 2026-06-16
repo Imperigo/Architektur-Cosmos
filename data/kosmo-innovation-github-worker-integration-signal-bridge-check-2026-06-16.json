@@ -1,0 +1,161 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:46:40.275Z",
+  "status": "innovation_github_worker_integration_signal_bridge_guard_passed",
+  "policy": {
+    "validates_bridge_only": true,
+    "reads_private_content_now": false,
+    "clones_or_installs_now": false,
+    "runs_discovered_code_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-integration-signal-bridge-2026-06-16.json"
+  ],
+  "summary": {
+    "bridge_status": "innovation_github_worker_integration_signal_bridge_ready",
+    "checks": 27,
+    "passed": 27,
+    "failures": 0,
+    "candidates": 2,
+    "top_signal_score": 5,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "innovation_github_worker_integration_signal_bridge_ready"
+    },
+    {
+      "id": "policy_bridge_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_metadata_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_public_repo_signals_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_code_or_readme_copy",
+      "status": "passed",
+      "evidence": "{\"bridge_only\":true,\"metadata_only\":true,\"public_repo_signals_only\":true,\"copies_github_code_now\":false,\"copies_readme_text_now\":false,\"clones_repositories_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"runs_discovered_code_now\":false,\"reads_private_content_now\":false,\"writes_runtime_adapter_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_bridge\":0}"
+    },
+    {
+      "id": "policy_no_clone_install_download",
+      "status": "passed",
+      "evidence": "{\"bridge_only\":true,\"metadata_only\":true,\"public_repo_signals_only\":true,\"copies_github_code_now\":false,\"copies_readme_text_now\":false,\"clones_repositories_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"runs_discovered_code_now\":false,\"reads_private_content_now\":false,\"writes_runtime_adapter_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_bridge\":0}"
+    },
+    {
+      "id": "policy_no_run_private",
+      "status": "passed",
+      "evidence": "{\"bridge_only\":true,\"metadata_only\":true,\"public_repo_signals_only\":true,\"copies_github_code_now\":false,\"copies_readme_text_now\":false,\"clones_repositories_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"runs_discovered_code_now\":false,\"reads_private_content_now\":false,\"writes_runtime_adapter_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_bridge\":0}"
+    },
+    {
+      "id": "policy_no_runtime_adapter_now",
+      "status": "passed",
+      "evidence": "{\"bridge_only\":true,\"metadata_only\":true,\"public_repo_signals_only\":true,\"copies_github_code_now\":false,\"copies_readme_text_now\":false,\"clones_repositories_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"runs_discovered_code_now\":false,\"reads_private_content_now\":false,\"writes_runtime_adapter_now\":false,\"executes_local_workers_now\":false,\"starts_models_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_bridge\":0}"
+    },
+    {
+      "id": "policy_no_training",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "candidate_count",
+      "status": "passed",
+      "evidence": 2
+    },
+    {
+      "id": "high_signal_count",
+      "status": "passed",
+      "evidence": 2
+    },
+    {
+      "id": "top_signal_score",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "executable_zero",
+      "status": "passed",
+      "evidence": "{\"worker_integration_candidates\":2,\"top_signal_score\":5,\"high_signal_candidates\":2,\"today_loop_blocks\":6,\"executable_now\":0,\"adapter_contracts_written_now\":0,\"runtime_commands_enabled_now\":0,\"training_rows_promoted_now\":0,\"public_ready_after_bridge\":0,\"failures\":0}"
+    },
+    {
+      "id": "adapter_contracts_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "training_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "candidate_lanes_worker_integration",
+      "status": "passed",
+      "evidence": "worker_integration,worker_integration"
+    },
+    {
+      "id": "candidate_blocks_runtime",
+      "status": "passed",
+      "evidence": "blocked actions"
+    },
+    {
+      "id": "candidate_no_copy",
+      "status": "passed",
+      "evidence": "no copy flags"
+    },
+    {
+      "id": "recommended_next_contract_present",
+      "status": "passed",
+      "evidence": "worker_integration-mac999-bim-llm-code-agent-signal-fixture"
+    },
+    {
+      "id": "source_refs_complete",
+      "status": "passed",
+      "evidence": "data/kosmo-innovation-github-readme-signal-scan-2026-06-16.json data/kosmo-innovation-github-fixture-contract-plan-2026-06-16.json data/kosmo-innovation-github-fixture-payload-smoke-2026-06-16.json data/kosmo-today-loop-plan-2026-06-16.json"
+    },
+    {
+      "id": "hard_stop_no_clone",
+      "status": "passed",
+      "evidence": "this bridge never clones github repositories. this bridge never installs dependencies or downloads models. this bridge never runs discovered code. this bridge never reads private source root, onedrive or archive-library content. this bridge never copies github code or readme text into git. this bridge never enables runtime adapters, local workers, training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_install_download",
+      "status": "passed",
+      "evidence": "this bridge never clones github repositories. this bridge never installs dependencies or downloads models. this bridge never runs discovered code. this bridge never reads private source root, onedrive or archive-library content. this bridge never copies github code or readme text into git. this bridge never enables runtime adapters, local workers, training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_run",
+      "status": "passed",
+      "evidence": "this bridge never clones github repositories. this bridge never installs dependencies or downloads models. this bridge never runs discovered code. this bridge never reads private source root, onedrive or archive-library content. this bridge never copies github code or readme text into git. this bridge never enables runtime adapters, local workers, training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this bridge never clones github repositories. this bridge never installs dependencies or downloads models. this bridge never runs discovered code. this bridge never reads private source root, onedrive or archive-library content. this bridge never copies github code or readme text into git. this bridge never enables runtime adapters, local workers, training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_copy",
+      "status": "passed",
+      "evidence": "this bridge never clones github repositories. this bridge never installs dependencies or downloads models. this bridge never runs discovered code. this bridge never reads private source root, onedrive or archive-library content. this bridge never copies github code or readme text into git. this bridge never enables runtime adapters, local workers, training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_runtime_public",
+      "status": "passed",
+      "evidence": "this bridge never clones github repositories. this bridge never installs dependencies or downloads models. this bridge never runs discovered code. this bridge never reads private source root, onedrive or archive-library content. this bridge never copies github code or readme text into git. this bridge never enables runtime adapters, local workers, training rows or public-ready state."
+    }
+  ]
+}

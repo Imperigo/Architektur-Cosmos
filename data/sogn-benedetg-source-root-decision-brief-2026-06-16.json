@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:45:22.146Z",
+  "status": "sogn_source_root_decision_needed",
+  "policy": {
+    "review_only": true,
+    "public_ready_allowed": false,
+    "private_content_copied": false,
+    "generated_geometry_allowed_now": false,
+    "note": "This brief records the source-root decision needed for Sogn Benedetg. It does not copy private books, lecture text, plans, images or public web page bodies."
+  },
+  "source_refs": [
+    "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
+    "examples/kosmo-references/provenance/kapelle-sogn-benedetg-file-level-provenance-2026-06-13.json",
+    "data/kosmoreferences-private-library-diagnostic-2026-06-13.json",
+    "data/kosmo-onedrive-sync-error-summary-2026-06-13.json"
+  ],
+  "summary": {
+    "public_link_sources": 4,
+    "local_file_count": 0,
+    "public_ready_files": 0,
+    "private_library_status": "library_candidate_visible",
+    "private_library_book_like_files": 168,
+    "private_library_sync_errors": 30,
+    "archive_mount_visible": true,
+    "onedrive_marker_files": 59,
+    "onedrive_leaf_markers": 58,
+    "onedrive_missing_items": 58,
+    "recommended_default": "keep_link_only_until_private_source_root_visible",
+    "public_ready_after_brief": 0
+  },
+  "decision_options": [
+    {
+      "id": "keep_link_only",
+      "description": "Keep Sogn Benedetg as a public-link, review-only source candidate.",
+      "safe_default": true,
+      "public_ready_after_option": 0
+    },
+    {
+      "id": "mount_private_library_root",
+      "description": "Mount or expose the real private book/ETH/HSLU library root, then rerun diagnostics before source inventory.",
+      "safe_default": false,
+      "public_ready_after_option": 0
+    },
+    {
+      "id": "repair_onedrive_then_scan",
+      "description": "Resolve OneDrive sync errors first, then rerun the OneDrive and private-library diagnostics.",
+      "safe_default": false,
+      "public_ready_after_option": 0
+    },
+    {
+      "id": "create_private_metadata_inventory",
+      "description": "After a real source root is visible, create a private metadata-only inventory for Sogn-related books, lectures, plans and images.",
+      "safe_default": false,
+      "public_ready_after_option": 0
+    }
+  ],
+  "blocked_modes": [
+    "public_geometry_from_hypothesis",
+    "copy_private_book_or_lecture_text_to_git",
+    "copy_public_web_page_bodies_to_git",
+    "publish_plan_or_image_without_file_level_rights",
+    "mark_sogn_assets_public_ready_from_this_brief"
+  ],
+  "next_actions": [
+    "Keep Sogn Benedetg link-only and review-only until the real private source root is visible.",
+    "Resolve the OneDrive repair sweep or mount the archive/private-library root before source inventory.",
+    "If a root becomes visible, write only metadata inventories to KosmoZentrale private paths first.",
+    "Do not harden teardrop-plan, timber-structure or material claims before source review exists."
+  ]
+}

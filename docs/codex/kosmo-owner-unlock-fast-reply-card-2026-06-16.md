@@ -1,13 +1,13 @@
 # Kosmo Owner Unlock Fast Reply Card
 
-Generated: 2026-06-16T05:33:09.369Z
+Generated: 2026-06-16T17:47:19.506Z
 Status: `owner_unlock_fast_reply_card_ready`
 
 ## Summary
 
 - Answer present: no
 - Broad unlock intent: no
-- Validator status: missing
+- Validator status: owner_unlock_reply_validator_pending_owner_reply
 - Applies decision now: no
 - Public-ready after card: 0
 

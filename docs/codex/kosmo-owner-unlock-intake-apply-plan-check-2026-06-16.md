@@ -1,18 +1,18 @@
 # Kosmo Owner Unlock Intake Apply Plan Check
 
-Generated: 2026-06-16T12:12:55.256Z
-Status: `owner_unlock_intake_apply_plan_guard_passed`
+Generated: 2026-06-16T17:47:22.180Z
+Status: `owner_unlock_intake_apply_plan_guard_failed`
 
 ## Summary
 
-- Checks: 22/22
-- Failures: 0
+- Checks: 20/22
+- Failures: 2
 - Warnings: 0
 - Public-ready after check: 0
 
 ## Checks
 
-- passed: `status_ready` - owner_unlock_intake_apply_plan_ready
+- failed: `status_ready` - owner_unlock_intake_apply_plan_needs_review
 - passed: `policy_review_only` - true
 - passed: `policy_plan_only` - true
 - passed: `policy_no_write_now` - false/false
@@ -25,7 +25,7 @@ Status: `owner_unlock_intake_apply_plan_guard_passed`
 - passed: `planned_field_count` - 13
 - passed: `source_root_field_count` - 3
 - passed: `owner_card_field_count` - 10
-- passed: `target_empty_before_apply` - true
+- failed: `target_empty_before_apply` - false
 - passed: `selected_root_exists` - true
 - passed: `all_fields_write_false` - 
 - passed: `after_apply_intake_check_first` - npm run kosmo:owner-answer-intake-check npm run kosmo:owner-answer-session-edit-plan npm run kosmo:source-root-decision-session-check npm run kosmo:source-root-blocker-refresh npm run kosmo:source-root-activation-preflight

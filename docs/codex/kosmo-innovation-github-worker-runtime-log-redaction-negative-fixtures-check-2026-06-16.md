@@ -1,11 +1,11 @@
 # Kosmo Innovation GitHub Worker Runtime Log Redaction Negative Fixtures Check
 
-Generated: 2026-06-16T05:00:14.799Z
+Generated: 2026-06-16T17:48:59.861Z
 Status: `innovation_github_worker_runtime_log_redaction_negative_fixtures_guard_passed`
 
 ## Summary
 
-- Fixtures status: innovation_github_worker_runtime_log_redaction_negative_fixtures_ready
+- Fixtures status: innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review
 - Checks: 30/30
 - Negative fixtures: 10
 - Failures: 0
@@ -13,7 +13,7 @@ Status: `innovation_github_worker_runtime_log_redaction_negative_fixtures_guard_
 
 ## Checks
 
-- passed: `status_ready` - innovation_github_worker_runtime_log_redaction_negative_fixtures_ready
+- passed: `status_ready` - innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review
 - passed: `policy_negative_only` - true
 - passed: `policy_synthetic_log_only` - true
 - passed: `policy_no_private_reads` - false
@@ -34,8 +34,8 @@ Status: `innovation_github_worker_runtime_log_redaction_negative_fixtures_guard_
 - passed: `prompt_reason_present` - raw_private_path_present,redacted_paths_count_zero,raw_onedrive_path_present,private_library_marker_true,raw_secret_present,redacted_secrets_count_zero,raw_secret_present,ssh_private_key_marker_present,worker_output_body_present,metadata_only_false,github_code_excerpt_present,source_repo_reference_only_false,readme_prose_excerpt_present,copied_readme_text_now_true,private_prompt_context_present,prompt_redaction_missing,raw_runtime_stdout_present,raw_runtime_stderr_present,public_ready_true,overseer_review_required_false,rights_state_unknown
 - passed: `stdio_reason_present` - raw_private_path_present,redacted_paths_count_zero,raw_onedrive_path_present,private_library_marker_true,raw_secret_present,redacted_secrets_count_zero,raw_secret_present,ssh_private_key_marker_present,worker_output_body_present,metadata_only_false,github_code_excerpt_present,source_repo_reference_only_false,readme_prose_excerpt_present,copied_readme_text_now_true,private_prompt_context_present,prompt_redaction_missing,raw_runtime_stdout_present,raw_runtime_stderr_present,public_ready_true,overseer_review_required_false,rights_state_unknown
 - passed: `public_ready_reason_present` - raw_private_path_present,redacted_paths_count_zero,raw_onedrive_path_present,private_library_marker_true,raw_secret_present,redacted_secrets_count_zero,raw_secret_present,ssh_private_key_marker_present,worker_output_body_present,metadata_only_false,github_code_excerpt_present,source_repo_reference_only_false,readme_prose_excerpt_present,copied_readme_text_now_true,private_prompt_context_present,prompt_redaction_missing,raw_runtime_stdout_present,raw_runtime_stderr_present,public_ready_true,overseer_review_required_false,rights_state_unknown
-- passed: `runtime_zero` - {"selected_fixture_id":"worker_integration-mac999-bim-llm-code-agent-signal-fixture","negative_fixtures":10,"expected_blocked":10,"leak_categories":7,"runtime_executed_now":0,"rollback_executed_now":0,"runtime_outputs_written_now":0,"worker_outputs_written_now":0,"public_ready_after_fixtures":0,"failures":0}
-- passed: `outputs_zero` - {"selected_fixture_id":"worker_integration-mac999-bim-llm-code-agent-signal-fixture","negative_fixtures":10,"expected_blocked":10,"leak_categories":7,"runtime_executed_now":0,"rollback_executed_now":0,"runtime_outputs_written_now":0,"worker_outputs_written_now":0,"public_ready_after_fixtures":0,"failures":0}
+- passed: `runtime_zero` - {"selected_fixture_id":"worker_integration-mac999-bim-llm-code-agent-signal-fixture","negative_fixtures":10,"expected_blocked":10,"leak_categories":7,"runtime_executed_now":0,"rollback_executed_now":0,"runtime_outputs_written_now":0,"worker_outputs_written_now":0,"public_ready_after_fixtures":0,"failures":1}
+- passed: `outputs_zero` - {"selected_fixture_id":"worker_integration-mac999-bim-llm-code-agent-signal-fixture","negative_fixtures":10,"expected_blocked":10,"leak_categories":7,"runtime_executed_now":0,"rollback_executed_now":0,"runtime_outputs_written_now":0,"worker_outputs_written_now":0,"public_ready_after_fixtures":0,"failures":1}
 - passed: `public_ready_zero` - 0
 - passed: `hard_stop_no_private` - these negative fixtures never read private source root, onedrive or archive-library content. these negative fixtures never copy private content, secret values, worker output bodies, github code or readme text. these negative fixtures never execute runtime or rollback commands. these negative fixtures never start models or local workers. these negative fixtures never write runtime outputs or worker outputs. these negative fixtures never promote public-ready state.
 - passed: `hard_stop_no_sensitive_copy` - these negative fixtures never read private source root, onedrive or archive-library content. these negative fixtures never copy private content, secret values, worker output bodies, github code or readme text. these negative fixtures never execute runtime or rollback commands. these negative fixtures never start models or local workers. these negative fixtures never write runtime outputs or worker outputs. these negative fixtures never promote public-ready state.

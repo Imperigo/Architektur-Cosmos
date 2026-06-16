@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:15:42.237Z",
+  "generated_at": "2026-06-16T17:50:07.908Z",
   "status": "innovation_github_worker_runtime_manifest_validator_plan_guard_passed",
   "policy": {
     "validates_plan_only": true,
@@ -12,7 +12,7 @@
     "data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-2026-06-16.json"
   ],
   "summary": {
-    "plan_status": "innovation_github_worker_runtime_manifest_validator_plan_ready",
+    "plan_status": "innovation_github_worker_runtime_manifest_validator_plan_needs_review",
     "checks": 20,
     "passed": 20,
     "failures": 0,
@@ -23,7 +23,7 @@
     {
       "id": "status_ready",
       "status": "passed",
-      "evidence": "innovation_github_worker_runtime_manifest_validator_plan_ready"
+      "evidence": "innovation_github_worker_runtime_manifest_validator_plan_needs_review"
     },
     {
       "id": "policy_plan_only",
@@ -88,7 +88,7 @@
     {
       "id": "summary_zeroes",
       "status": "passed",
-      "evidence": "{\"runtime_batch_id\":\"github-worker-runtime-batch-draft-2026-06-16\",\"rules\":10,\"fixture_categories\":8,\"negative_fixtures\":10,\"expected_blocked\":10,\"executable_now\":0,\"validator_code_written_now\":0,\"runtime_executed_now\":0,\"public_ready_after_plan\":0,\"failures\":0}"
+      "evidence": "{\"runtime_batch_id\":\"github-worker-runtime-batch-draft-2026-06-16\",\"rules\":10,\"fixture_categories\":8,\"negative_fixtures\":10,\"expected_blocked\":10,\"executable_now\":0,\"validator_code_written_now\":0,\"runtime_executed_now\":0,\"public_ready_after_plan\":0,\"failures\":2}"
     },
     {
       "id": "source_refs_cover_inputs",

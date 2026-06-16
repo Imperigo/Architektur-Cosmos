@@ -1,7 +1,7 @@
 # Kosmo Innovation GitHub Worker Runtime Batch Manifest Draft
 
-Generated: 2026-06-16T05:00:15.048Z
-Status: `innovation_github_worker_runtime_batch_manifest_draft_ready`
+Generated: 2026-06-16T17:49:00.109Z
+Status: `innovation_github_worker_runtime_batch_manifest_draft_needs_review`
 
 ## Summary
 
@@ -16,7 +16,7 @@ Status: `innovation_github_worker_runtime_batch_manifest_draft_ready`
 - Exact owner reply valid: no
 - Executable now: no
 - Public-ready after manifest: 0
-- Failures: 0
+- Failures: 2
 
 ## Phases
 
@@ -44,3 +44,8 @@ Status: `innovation_github_worker_runtime_batch_manifest_draft_ready`
 - This manifest draft never reads private Source Root, OneDrive or archive-library content.
 - This manifest draft never writes runtime manifests, runtime outputs or worker outputs.
 - This manifest draft never marks anything public-ready.
+
+## Failures
+
+- Runtime apply guard in unexpected state: innovation_github_worker_runtime_apply_guard_not_ready
+- Log redaction negative fixtures not ready: innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review

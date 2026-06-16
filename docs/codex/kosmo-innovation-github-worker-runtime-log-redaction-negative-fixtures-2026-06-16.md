@@ -1,7 +1,7 @@
 # Kosmo Innovation GitHub Worker Runtime Log Redaction Negative Fixtures
 
-Generated: 2026-06-16T05:00:14.558Z
-Status: `innovation_github_worker_runtime_log_redaction_negative_fixtures_ready`
+Generated: 2026-06-16T17:48:35.046Z
+Status: `innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review`
 
 ## Summary
 
@@ -12,7 +12,7 @@ Status: `innovation_github_worker_runtime_log_redaction_negative_fixtures_ready`
 - Runtime executed now: 0
 - Runtime outputs written now: 0
 - Public-ready after fixtures: 0
-- Failures: 0
+- Failures: 1
 
 ## Negative Fixtures
 
@@ -35,3 +35,7 @@ Status: `innovation_github_worker_runtime_log_redaction_negative_fixtures_ready`
 - These negative fixtures never start models or local workers.
 - These negative fixtures never write runtime outputs or worker outputs.
 - These negative fixtures never promote public-ready state.
+
+## Failures
+
+- Runtime apply guard in unexpected state: innovation_github_worker_runtime_apply_guard_not_ready

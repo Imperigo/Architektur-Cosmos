@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:06:46.072Z",
-  "status": "innovation_github_worker_runtime_manifest_negative_fixtures_ready",
+  "generated_at": "2026-06-16T17:49:21.597Z",
+  "status": "innovation_github_worker_runtime_manifest_negative_fixtures_needs_review",
   "policy": {
     "negative_fixtures_only": true,
     "synthetic_manifest_shapes_only": true,
@@ -42,7 +42,7 @@
     "runtime_outputs_written_now": 0,
     "worker_outputs_written_now": 0,
     "public_ready_after_fixtures": 0,
-    "failures": 0
+    "failures": 3
   },
   "required_categories": [
     "execution_state",
@@ -367,5 +367,9 @@
     "These manifest negative fixtures never write runtime manifests, runtime outputs or worker outputs.",
     "These manifest negative fixtures never promote public-ready state."
   ],
-  "failures": []
+  "failures": [
+    "Manifest draft not ready: innovation_github_worker_runtime_batch_manifest_draft_needs_review",
+    "Runtime apply guard in unexpected state: innovation_github_worker_runtime_apply_guard_not_ready",
+    "Log redaction negative fixtures not ready: innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review"
+  ]
 }

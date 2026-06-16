@@ -1,6 +1,6 @@
 # Kosmo Owner Unlock Answer Dry Run Check
 
-Generated: 2026-06-16T12:12:30.567Z
+Generated: 2026-06-16T17:47:19.259Z
 Status: `owner_unlock_answer_dry_run_guard_passed`
 
 ## Summary
@@ -12,7 +12,7 @@ Status: `owner_unlock_answer_dry_run_guard_passed`
 
 ## Checks
 
-- passed: `status_known` - owner_unlock_answer_dry_run_ready_for_review
+- passed: `status_known` - owner_unlock_answer_dry_run_pending_answer
 - passed: `policy_dry_run_only` - true
 - passed: `policy_isolated_reports_only` - true
 - passed: `policy_no_decisions` - false
@@ -27,9 +27,9 @@ Status: `owner_unlock_answer_dry_run_guard_passed`
 - passed: `validator_check_step_present` - validator,validator-check,intake-map,intake-map-check
 - passed: `intake_map_step_present` - validator,validator-check,intake-map,intake-map-check
 - passed: `intake_map_check_step_present` - validator,validator-check,intake-map,intake-map-check
-- passed: `ready_requires_valid_validator` - owner_unlock_reply_valid
-- passed: `ready_requires_map_ready` - owner_unlock_reply_intake_map_ready_for_review
-- passed: `pending_has_no_patch` - 6
+- passed: `ready_requires_valid_validator` - owner_unlock_reply_validator_pending_owner_reply
+- passed: `ready_requires_map_ready` - owner_unlock_reply_intake_map_pending_owner_reply
+- passed: `pending_has_no_patch` - 0
 - passed: `hard_stop_no_approval` - do not treat this dry-run as applied owner approval. do not run source-root guards from this dry-run. do not write the intake template from this dry-run. do not read private content. keep public-ready at 0.
 - passed: `hard_stop_no_source_root_guards` - do not treat this dry-run as applied owner approval. do not run source-root guards from this dry-run. do not write the intake template from this dry-run. do not read private content. keep public-ready at 0.
 - passed: `hard_stop_no_intake_write` - do not treat this dry-run as applied owner approval. do not run source-root guards from this dry-run. do not write the intake template from this dry-run. do not read private content. keep public-ready at 0.

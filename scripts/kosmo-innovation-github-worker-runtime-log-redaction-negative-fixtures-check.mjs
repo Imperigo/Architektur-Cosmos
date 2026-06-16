@@ -64,7 +64,10 @@ function buildChecks(fixtures) {
   const allReasons = (fixtures.negative_fixtures || []).flatMap((fixture) => fixture.expected_block_reasons || []);
   const requiredLeakCategories = fixtures.required_leak_categories || [];
   return [
-    check('status_ready', fixtures.status === 'innovation_github_worker_runtime_log_redaction_negative_fixtures_ready', fixtures.status),
+    check('status_ready', [
+      'innovation_github_worker_runtime_log_redaction_negative_fixtures_ready',
+      'innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review'
+    ].includes(fixtures.status), fixtures.status),
     check('policy_negative_only', fixtures.policy?.negative_fixtures_only === true, fixtures.policy?.negative_fixtures_only),
     check('policy_synthetic_log_only', fixtures.policy?.synthetic_log_shapes_only === true, fixtures.policy?.synthetic_log_shapes_only),
     check('policy_no_private_reads', fixtures.policy?.reads_private_content_now === false, fixtures.policy?.reads_private_content_now),

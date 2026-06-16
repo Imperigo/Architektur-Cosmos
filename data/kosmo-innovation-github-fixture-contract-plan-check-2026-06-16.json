@@ -1,0 +1,303 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:46:37.788Z",
+  "status": "innovation_github_fixture_contract_plan_guard_passed",
+  "policy": {
+    "validates_plan_only": true,
+    "copies_github_code": false,
+    "reads_private_content": false,
+    "installs_or_downloads": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-fixture-contract-plan-2026-06-16.json"
+  ],
+  "summary": {
+    "plan_status": "innovation_github_fixture_contract_plan_ready",
+    "contract_plans": 5,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Plan schema_version must be 0.1."
+    },
+    {
+      "id": "plan_ready",
+      "severity": "passed",
+      "message": "Plan must be ready."
+    },
+    {
+      "id": "plan_only",
+      "severity": "passed",
+      "message": "Plan must be plan-only."
+    },
+    {
+      "id": "synthetic_only",
+      "severity": "passed",
+      "message": "Plan must use synthetic fixtures only."
+    },
+    {
+      "id": "no_code_copy",
+      "severity": "passed",
+      "message": "Plan must not copy GitHub code."
+    },
+    {
+      "id": "no_raw_readme",
+      "severity": "passed",
+      "message": "Plan must not store raw README content."
+    },
+    {
+      "id": "no_clone",
+      "severity": "passed",
+      "message": "Plan must not clone repositories."
+    },
+    {
+      "id": "no_install",
+      "severity": "passed",
+      "message": "Plan must not install dependencies."
+    },
+    {
+      "id": "no_download",
+      "severity": "passed",
+      "message": "Plan must not download models."
+    },
+    {
+      "id": "no_run_code",
+      "severity": "passed",
+      "message": "Plan must not run discovered code."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Plan must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Plan must keep public-ready at 0."
+    },
+    {
+      "id": "plan_count",
+      "severity": "passed",
+      "message": "Plan must include at least three contract plans."
+    },
+    {
+      "id": "target_lane:kosmo_prepare",
+      "severity": "passed",
+      "message": "Plan must include kosmo_prepare."
+    },
+    {
+      "id": "target_lane:kosmo_asset",
+      "severity": "passed",
+      "message": "Plan must include kosmo_asset."
+    },
+    {
+      "id": "target_lane:worker_integration",
+      "severity": "passed",
+      "message": "Plan must include worker_integration."
+    },
+    {
+      "id": "fixture_root:github-fixture-plan-01",
+      "severity": "passed",
+      "message": "github-fixture-plan-01 must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "execute_false:github-fixture-plan-01",
+      "severity": "passed",
+      "message": "github-fixture-plan-01 must not execute now."
+    },
+    {
+      "id": "public_ready_zero:github-fixture-plan-01",
+      "severity": "passed",
+      "message": "github-fixture-plan-01 must keep public-ready at 0."
+    },
+    {
+      "id": "guard_synthetic:github-fixture-plan-01",
+      "severity": "passed",
+      "message": "github-fixture-plan-01 must require synthetic inputs."
+    },
+    {
+      "id": "guard_no_code:github-fixture-plan-01",
+      "severity": "passed",
+      "message": "github-fixture-plan-01 must forbid copying GitHub code."
+    },
+    {
+      "id": "guard_no_readme:github-fixture-plan-01",
+      "severity": "passed",
+      "message": "github-fixture-plan-01 must forbid copying README text."
+    },
+    {
+      "id": "guard_no_clone:github-fixture-plan-01",
+      "severity": "passed",
+      "message": "github-fixture-plan-01 must forbid repository clone."
+    },
+    {
+      "id": "guard_no_install:github-fixture-plan-01",
+      "severity": "passed",
+      "message": "github-fixture-plan-01 must forbid dependency install."
+    },
+    {
+      "id": "fixture_root:github-fixture-plan-02",
+      "severity": "passed",
+      "message": "github-fixture-plan-02 must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "execute_false:github-fixture-plan-02",
+      "severity": "passed",
+      "message": "github-fixture-plan-02 must not execute now."
+    },
+    {
+      "id": "public_ready_zero:github-fixture-plan-02",
+      "severity": "passed",
+      "message": "github-fixture-plan-02 must keep public-ready at 0."
+    },
+    {
+      "id": "guard_synthetic:github-fixture-plan-02",
+      "severity": "passed",
+      "message": "github-fixture-plan-02 must require synthetic inputs."
+    },
+    {
+      "id": "guard_no_code:github-fixture-plan-02",
+      "severity": "passed",
+      "message": "github-fixture-plan-02 must forbid copying GitHub code."
+    },
+    {
+      "id": "guard_no_readme:github-fixture-plan-02",
+      "severity": "passed",
+      "message": "github-fixture-plan-02 must forbid copying README text."
+    },
+    {
+      "id": "guard_no_clone:github-fixture-plan-02",
+      "severity": "passed",
+      "message": "github-fixture-plan-02 must forbid repository clone."
+    },
+    {
+      "id": "guard_no_install:github-fixture-plan-02",
+      "severity": "passed",
+      "message": "github-fixture-plan-02 must forbid dependency install."
+    },
+    {
+      "id": "fixture_root:github-fixture-plan-03",
+      "severity": "passed",
+      "message": "github-fixture-plan-03 must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "execute_false:github-fixture-plan-03",
+      "severity": "passed",
+      "message": "github-fixture-plan-03 must not execute now."
+    },
+    {
+      "id": "public_ready_zero:github-fixture-plan-03",
+      "severity": "passed",
+      "message": "github-fixture-plan-03 must keep public-ready at 0."
+    },
+    {
+      "id": "guard_synthetic:github-fixture-plan-03",
+      "severity": "passed",
+      "message": "github-fixture-plan-03 must require synthetic inputs."
+    },
+    {
+      "id": "guard_no_code:github-fixture-plan-03",
+      "severity": "passed",
+      "message": "github-fixture-plan-03 must forbid copying GitHub code."
+    },
+    {
+      "id": "guard_no_readme:github-fixture-plan-03",
+      "severity": "passed",
+      "message": "github-fixture-plan-03 must forbid copying README text."
+    },
+    {
+      "id": "guard_no_clone:github-fixture-plan-03",
+      "severity": "passed",
+      "message": "github-fixture-plan-03 must forbid repository clone."
+    },
+    {
+      "id": "guard_no_install:github-fixture-plan-03",
+      "severity": "passed",
+      "message": "github-fixture-plan-03 must forbid dependency install."
+    },
+    {
+      "id": "fixture_root:github-fixture-plan-04",
+      "severity": "passed",
+      "message": "github-fixture-plan-04 must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "execute_false:github-fixture-plan-04",
+      "severity": "passed",
+      "message": "github-fixture-plan-04 must not execute now."
+    },
+    {
+      "id": "public_ready_zero:github-fixture-plan-04",
+      "severity": "passed",
+      "message": "github-fixture-plan-04 must keep public-ready at 0."
+    },
+    {
+      "id": "guard_synthetic:github-fixture-plan-04",
+      "severity": "passed",
+      "message": "github-fixture-plan-04 must require synthetic inputs."
+    },
+    {
+      "id": "guard_no_code:github-fixture-plan-04",
+      "severity": "passed",
+      "message": "github-fixture-plan-04 must forbid copying GitHub code."
+    },
+    {
+      "id": "guard_no_readme:github-fixture-plan-04",
+      "severity": "passed",
+      "message": "github-fixture-plan-04 must forbid copying README text."
+    },
+    {
+      "id": "guard_no_clone:github-fixture-plan-04",
+      "severity": "passed",
+      "message": "github-fixture-plan-04 must forbid repository clone."
+    },
+    {
+      "id": "guard_no_install:github-fixture-plan-04",
+      "severity": "passed",
+      "message": "github-fixture-plan-04 must forbid dependency install."
+    },
+    {
+      "id": "fixture_root:github-fixture-plan-05",
+      "severity": "passed",
+      "message": "github-fixture-plan-05 must stay under examples/kosmo-innovation-fixtures."
+    },
+    {
+      "id": "execute_false:github-fixture-plan-05",
+      "severity": "passed",
+      "message": "github-fixture-plan-05 must not execute now."
+    },
+    {
+      "id": "public_ready_zero:github-fixture-plan-05",
+      "severity": "passed",
+      "message": "github-fixture-plan-05 must keep public-ready at 0."
+    },
+    {
+      "id": "guard_synthetic:github-fixture-plan-05",
+      "severity": "passed",
+      "message": "github-fixture-plan-05 must require synthetic inputs."
+    },
+    {
+      "id": "guard_no_code:github-fixture-plan-05",
+      "severity": "passed",
+      "message": "github-fixture-plan-05 must forbid copying GitHub code."
+    },
+    {
+      "id": "guard_no_readme:github-fixture-plan-05",
+      "severity": "passed",
+      "message": "github-fixture-plan-05 must forbid copying README text."
+    },
+    {
+      "id": "guard_no_clone:github-fixture-plan-05",
+      "severity": "passed",
+      "message": "github-fixture-plan-05 must forbid repository clone."
+    },
+    {
+      "id": "guard_no_install:github-fixture-plan-05",
+      "severity": "passed",
+      "message": "github-fixture-plan-05 must forbid dependency install."
+    }
+  ]
+}

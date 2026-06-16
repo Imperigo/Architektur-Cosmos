@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:33:11.442Z",
+  "generated_at": "2026-06-16T17:47:21.671Z",
   "status": "owner_unlock_patch_review_bundle_guard_passed",
   "policy": {
     "review_only": true,

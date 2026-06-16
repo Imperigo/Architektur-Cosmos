@@ -1,17 +1,17 @@
 # Kosmo Owner Unlock Session Edit Preview Check
 
-Generated: 2026-06-16T12:12:55.744Z
-Status: `owner_unlock_session_edit_preview_guard_passed`
+Generated: 2026-06-16T17:47:22.705Z
+Status: `owner_unlock_session_edit_preview_guard_failed`
 
 ## Summary
 
-- Checks: 22/22
-- Failures: 0
+- Checks: 21/22
+- Failures: 1
 - Public-ready after check: 0
 
 ## Checks
 
-- passed: `status_ready` - owner_unlock_session_edit_preview_ready
+- failed: `status_ready` - owner_unlock_session_edit_preview_needs_review
 - passed: `policy_review_only` - true
 - passed: `policy_preview_only` - true
 - passed: `policy_no_session_write_now` - false

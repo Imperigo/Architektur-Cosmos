@@ -1,0 +1,387 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:45:41.888Z",
+  "status": "innovation_github_review_queue_guard_passed",
+  "policy": {
+    "validates_review_only_queue": true,
+    "reads_private_content": false,
+    "installs_or_downloads": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-review-queue-2026-06-16.json"
+  ],
+  "summary": {
+    "queue_status": "innovation_github_review_queue_ready",
+    "review_items": 7,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Queue schema_version must be 0.1."
+    },
+    {
+      "id": "queue_ready",
+      "severity": "passed",
+      "message": "Queue must be ready."
+    },
+    {
+      "id": "review_queue_only",
+      "severity": "passed",
+      "message": "Queue must be review-only."
+    },
+    {
+      "id": "no_clone",
+      "severity": "passed",
+      "message": "Queue must not clone repositories."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Queue must not install dependencies."
+    },
+    {
+      "id": "no_downloads",
+      "severity": "passed",
+      "message": "Queue must not download models."
+    },
+    {
+      "id": "no_run_code",
+      "severity": "passed",
+      "message": "Queue must not run discovered code."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Queue must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Queue must keep public-ready at 0."
+    },
+    {
+      "id": "review_item_count",
+      "severity": "passed",
+      "message": "Queue must include at least five review items."
+    },
+    {
+      "id": "lane_present:kosmo_prepare",
+      "severity": "passed",
+      "message": "Queue must include kosmo_prepare."
+    },
+    {
+      "id": "lane_present:kosmo_asset",
+      "severity": "passed",
+      "message": "Queue must include kosmo_asset."
+    },
+    {
+      "id": "lane_present:ifc_reasoning",
+      "severity": "passed",
+      "message": "Queue must include ifc_reasoning."
+    },
+    {
+      "id": "lane_present:bim_rag_workers",
+      "severity": "passed",
+      "message": "Queue must include bim_rag_workers."
+    },
+    {
+      "id": "hard_stop_no_clone",
+      "severity": "passed",
+      "message": "Hard stops must forbid cloning."
+    },
+    {
+      "id": "hard_stop_no_install",
+      "severity": "passed",
+      "message": "Hard stops must forbid installs."
+    },
+    {
+      "id": "hard_stop_no_run",
+      "severity": "passed",
+      "message": "Hard stops must forbid running discovered code."
+    },
+    {
+      "id": "review_mode:github-review-01",
+      "severity": "passed",
+      "message": "github-review-01 must be public metadata/readme only."
+    },
+    {
+      "id": "no_clone:github-review-01",
+      "severity": "passed",
+      "message": "github-review-01 must forbid clone."
+    },
+    {
+      "id": "no_install:github-review-01",
+      "severity": "passed",
+      "message": "github-review-01 must forbid install."
+    },
+    {
+      "id": "no_download:github-review-01",
+      "severity": "passed",
+      "message": "github-review-01 must forbid downloads."
+    },
+    {
+      "id": "no_run:github-review-01",
+      "severity": "passed",
+      "message": "github-review-01 must forbid running code."
+    },
+    {
+      "id": "no_private:github-review-01",
+      "severity": "passed",
+      "message": "github-review-01 must forbid private reads."
+    },
+    {
+      "id": "no_public:github-review-01",
+      "severity": "passed",
+      "message": "github-review-01 must forbid public promotion."
+    },
+    {
+      "id": "public_ready_zero:github-review-01",
+      "severity": "passed",
+      "message": "github-review-01 must keep public-ready at 0."
+    },
+    {
+      "id": "review_mode:github-review-02",
+      "severity": "passed",
+      "message": "github-review-02 must be public metadata/readme only."
+    },
+    {
+      "id": "no_clone:github-review-02",
+      "severity": "passed",
+      "message": "github-review-02 must forbid clone."
+    },
+    {
+      "id": "no_install:github-review-02",
+      "severity": "passed",
+      "message": "github-review-02 must forbid install."
+    },
+    {
+      "id": "no_download:github-review-02",
+      "severity": "passed",
+      "message": "github-review-02 must forbid downloads."
+    },
+    {
+      "id": "no_run:github-review-02",
+      "severity": "passed",
+      "message": "github-review-02 must forbid running code."
+    },
+    {
+      "id": "no_private:github-review-02",
+      "severity": "passed",
+      "message": "github-review-02 must forbid private reads."
+    },
+    {
+      "id": "no_public:github-review-02",
+      "severity": "passed",
+      "message": "github-review-02 must forbid public promotion."
+    },
+    {
+      "id": "public_ready_zero:github-review-02",
+      "severity": "passed",
+      "message": "github-review-02 must keep public-ready at 0."
+    },
+    {
+      "id": "review_mode:github-review-03",
+      "severity": "passed",
+      "message": "github-review-03 must be public metadata/readme only."
+    },
+    {
+      "id": "no_clone:github-review-03",
+      "severity": "passed",
+      "message": "github-review-03 must forbid clone."
+    },
+    {
+      "id": "no_install:github-review-03",
+      "severity": "passed",
+      "message": "github-review-03 must forbid install."
+    },
+    {
+      "id": "no_download:github-review-03",
+      "severity": "passed",
+      "message": "github-review-03 must forbid downloads."
+    },
+    {
+      "id": "no_run:github-review-03",
+      "severity": "passed",
+      "message": "github-review-03 must forbid running code."
+    },
+    {
+      "id": "no_private:github-review-03",
+      "severity": "passed",
+      "message": "github-review-03 must forbid private reads."
+    },
+    {
+      "id": "no_public:github-review-03",
+      "severity": "passed",
+      "message": "github-review-03 must forbid public promotion."
+    },
+    {
+      "id": "public_ready_zero:github-review-03",
+      "severity": "passed",
+      "message": "github-review-03 must keep public-ready at 0."
+    },
+    {
+      "id": "review_mode:github-review-04",
+      "severity": "passed",
+      "message": "github-review-04 must be public metadata/readme only."
+    },
+    {
+      "id": "no_clone:github-review-04",
+      "severity": "passed",
+      "message": "github-review-04 must forbid clone."
+    },
+    {
+      "id": "no_install:github-review-04",
+      "severity": "passed",
+      "message": "github-review-04 must forbid install."
+    },
+    {
+      "id": "no_download:github-review-04",
+      "severity": "passed",
+      "message": "github-review-04 must forbid downloads."
+    },
+    {
+      "id": "no_run:github-review-04",
+      "severity": "passed",
+      "message": "github-review-04 must forbid running code."
+    },
+    {
+      "id": "no_private:github-review-04",
+      "severity": "passed",
+      "message": "github-review-04 must forbid private reads."
+    },
+    {
+      "id": "no_public:github-review-04",
+      "severity": "passed",
+      "message": "github-review-04 must forbid public promotion."
+    },
+    {
+      "id": "public_ready_zero:github-review-04",
+      "severity": "passed",
+      "message": "github-review-04 must keep public-ready at 0."
+    },
+    {
+      "id": "review_mode:github-review-05",
+      "severity": "passed",
+      "message": "github-review-05 must be public metadata/readme only."
+    },
+    {
+      "id": "no_clone:github-review-05",
+      "severity": "passed",
+      "message": "github-review-05 must forbid clone."
+    },
+    {
+      "id": "no_install:github-review-05",
+      "severity": "passed",
+      "message": "github-review-05 must forbid install."
+    },
+    {
+      "id": "no_download:github-review-05",
+      "severity": "passed",
+      "message": "github-review-05 must forbid downloads."
+    },
+    {
+      "id": "no_run:github-review-05",
+      "severity": "passed",
+      "message": "github-review-05 must forbid running code."
+    },
+    {
+      "id": "no_private:github-review-05",
+      "severity": "passed",
+      "message": "github-review-05 must forbid private reads."
+    },
+    {
+      "id": "no_public:github-review-05",
+      "severity": "passed",
+      "message": "github-review-05 must forbid public promotion."
+    },
+    {
+      "id": "public_ready_zero:github-review-05",
+      "severity": "passed",
+      "message": "github-review-05 must keep public-ready at 0."
+    },
+    {
+      "id": "review_mode:github-review-06",
+      "severity": "passed",
+      "message": "github-review-06 must be public metadata/readme only."
+    },
+    {
+      "id": "no_clone:github-review-06",
+      "severity": "passed",
+      "message": "github-review-06 must forbid clone."
+    },
+    {
+      "id": "no_install:github-review-06",
+      "severity": "passed",
+      "message": "github-review-06 must forbid install."
+    },
+    {
+      "id": "no_download:github-review-06",
+      "severity": "passed",
+      "message": "github-review-06 must forbid downloads."
+    },
+    {
+      "id": "no_run:github-review-06",
+      "severity": "passed",
+      "message": "github-review-06 must forbid running code."
+    },
+    {
+      "id": "no_private:github-review-06",
+      "severity": "passed",
+      "message": "github-review-06 must forbid private reads."
+    },
+    {
+      "id": "no_public:github-review-06",
+      "severity": "passed",
+      "message": "github-review-06 must forbid public promotion."
+    },
+    {
+      "id": "public_ready_zero:github-review-06",
+      "severity": "passed",
+      "message": "github-review-06 must keep public-ready at 0."
+    },
+    {
+      "id": "review_mode:github-review-07",
+      "severity": "passed",
+      "message": "github-review-07 must be public metadata/readme only."
+    },
+    {
+      "id": "no_clone:github-review-07",
+      "severity": "passed",
+      "message": "github-review-07 must forbid clone."
+    },
+    {
+      "id": "no_install:github-review-07",
+      "severity": "passed",
+      "message": "github-review-07 must forbid install."
+    },
+    {
+      "id": "no_download:github-review-07",
+      "severity": "passed",
+      "message": "github-review-07 must forbid downloads."
+    },
+    {
+      "id": "no_run:github-review-07",
+      "severity": "passed",
+      "message": "github-review-07 must forbid running code."
+    },
+    {
+      "id": "no_private:github-review-07",
+      "severity": "passed",
+      "message": "github-review-07 must forbid private reads."
+    },
+    {
+      "id": "no_public:github-review-07",
+      "severity": "passed",
+      "message": "github-review-07 must forbid public promotion."
+    },
+    {
+      "id": "public_ready_zero:github-review-07",
+      "severity": "passed",
+      "message": "github-review-07 must keep public-ready at 0."
+    }
+  ]
+}

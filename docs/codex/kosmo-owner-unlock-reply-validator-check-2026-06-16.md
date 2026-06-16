@@ -1,6 +1,6 @@
 # Kosmo Owner Unlock Reply Validator Check
 
-Generated: 2026-06-16T12:12:29.825Z
+Generated: 2026-06-16T17:35:43.271Z
 Status: `owner_unlock_reply_validator_guard_passed`
 
 ## Summary
@@ -12,9 +12,9 @@ Status: `owner_unlock_reply_validator_guard_passed`
 
 ## Checks
 
-- passed: `status_pending_or_valid` - owner_unlock_reply_valid
-- passed: `pending_answer_contract` - true
-- passed: `valid_answer_contract` - true
+- passed: `status_pending_or_valid` - owner_unlock_reply_validator_pending_owner_reply
+- passed: `pending_answer_contract` - false
+- passed: `valid_answer_contract` - false
 - passed: `policy_validator_only` - true
 - passed: `policy_no_decision_recording` - false
 - passed: `policy_no_intake_mutation` - false

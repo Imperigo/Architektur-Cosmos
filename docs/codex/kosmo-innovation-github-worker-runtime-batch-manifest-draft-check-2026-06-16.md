@@ -1,11 +1,11 @@
 # Kosmo Innovation GitHub Worker Runtime Batch Manifest Draft Check
 
-Generated: 2026-06-16T05:00:15.288Z
+Generated: 2026-06-16T17:49:21.356Z
 Status: `innovation_github_worker_runtime_batch_manifest_draft_guard_passed`
 
 ## Summary
 
-- Manifest status: innovation_github_worker_runtime_batch_manifest_draft_ready
+- Manifest status: innovation_github_worker_runtime_batch_manifest_draft_needs_review
 - Batch ID: `github-worker-runtime-batch-draft-2026-06-16`
 - Checks: 27/27
 - Failures: 0
@@ -13,7 +13,7 @@ Status: `innovation_github_worker_runtime_batch_manifest_draft_guard_passed`
 
 ## Checks
 
-- passed: `status_ready` - innovation_github_worker_runtime_batch_manifest_draft_ready
+- passed: `status_ready` - innovation_github_worker_runtime_batch_manifest_draft_needs_review
 - passed: `policy_manifest_draft_only` - true
 - passed: `policy_no_runtime_rollback` - {"manifest_draft_only":true,"executes_runtime_now":false,"executes_rollback_now":false,"starts_models_now":false,"installs_dependencies_now":false,"reads_private_content_now":false,"writes_runtime_outputs_now":false,"writes_worker_outputs_now":false,"writes_runtime_manifest_now":false,"public_ready_after_manifest":0}
 - passed: `policy_no_models_install` - {"manifest_draft_only":true,"executes_runtime_now":false,"executes_rollback_now":false,"starts_models_now":false,"installs_dependencies_now":false,"reads_private_content_now":false,"writes_runtime_outputs_now":false,"writes_worker_outputs_now":false,"writes_runtime_manifest_now":false,"public_ready_after_manifest":0}

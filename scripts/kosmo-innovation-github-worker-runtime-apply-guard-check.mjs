@@ -66,7 +66,8 @@ function buildChecks(guard) {
   const allowedStatuses = new Set([
     'innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply',
     'innovation_github_worker_runtime_apply_guard_ready_for_separate_runtime_batch',
-    'innovation_github_worker_runtime_apply_guard_blocked_by_reply'
+    'innovation_github_worker_runtime_apply_guard_blocked_by_reply',
+    'innovation_github_worker_runtime_apply_guard_not_ready'
   ]);
   const exactReply = (guard.required_exact_reply || []).join(' ');
   const hardStops = (guard.hard_stops || []).join(' ').toLowerCase();

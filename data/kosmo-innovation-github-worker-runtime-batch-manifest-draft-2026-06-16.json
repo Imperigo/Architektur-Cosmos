@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:00:15.048Z",
-  "status": "innovation_github_worker_runtime_batch_manifest_draft_ready",
+  "generated_at": "2026-06-16T17:49:00.109Z",
+  "status": "innovation_github_worker_runtime_batch_manifest_draft_needs_review",
   "policy": {
     "manifest_draft_only": true,
     "executes_runtime_now": false,
@@ -38,7 +38,7 @@
     "runtime_executable_now_from_readiness": false,
     "writes_runtime_manifest_now": false,
     "public_ready_after_manifest": 0,
-    "failures": 0
+    "failures": 2
   },
   "prerequisites": [
     {
@@ -362,5 +362,8 @@
     "This manifest draft never writes runtime manifests, runtime outputs or worker outputs.",
     "This manifest draft never marks anything public-ready."
   ],
-  "failures": []
+  "failures": [
+    "Runtime apply guard in unexpected state: innovation_github_worker_runtime_apply_guard_not_ready",
+    "Log redaction negative fixtures not ready: innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review"
+  ]
 }

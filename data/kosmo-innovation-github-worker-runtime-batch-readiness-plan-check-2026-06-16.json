@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:00:13.347Z",
+  "generated_at": "2026-06-16T17:48:06.795Z",
   "status": "innovation_github_worker_runtime_batch_readiness_plan_guard_passed",
   "policy": {
     "validates_readiness_plan_only": true,
@@ -16,7 +16,7 @@
     "checks": 23,
     "passed": 23,
     "failures": 0,
-    "blocked_gates": 5,
+    "blocked_gates": 4,
     "public_ready_after_check": 0
   },
   "checks": [
@@ -58,17 +58,17 @@
     {
       "id": "blocked_gate_count",
       "status": "passed",
-      "evidence": 5
+      "evidence": 4
     },
     {
       "id": "no_executable_now",
       "status": "passed",
-      "evidence": "{\"selected_fixture_id\":\"worker_integration-mac999-bim-llm-code-agent-signal-fixture\",\"readiness_gates\":10,\"ready_gates\":5,\"blocked_gates\":5,\"runtime_executable_now\":false,\"dependencies_installable_now\":false,\"models_startable_now\":false,\"private_inputs_allowed_now\":false,\"local_workers_executable_now\":false,\"rollback_plan_required\":true,\"log_redaction_required\":true,\"public_ready_after_plan\":0,\"failures\":0}"
+      "evidence": "{\"selected_fixture_id\":\"worker_integration-mac999-bim-llm-code-agent-signal-fixture\",\"readiness_gates\":10,\"ready_gates\":6,\"blocked_gates\":4,\"runtime_executable_now\":false,\"dependencies_installable_now\":false,\"models_startable_now\":false,\"private_inputs_allowed_now\":false,\"local_workers_executable_now\":false,\"rollback_plan_required\":true,\"log_redaction_required\":true,\"public_ready_after_plan\":0,\"failures\":0}"
     },
     {
       "id": "no_dependencies_or_models_now",
       "status": "passed",
-      "evidence": "{\"selected_fixture_id\":\"worker_integration-mac999-bim-llm-code-agent-signal-fixture\",\"readiness_gates\":10,\"ready_gates\":5,\"blocked_gates\":5,\"runtime_executable_now\":false,\"dependencies_installable_now\":false,\"models_startable_now\":false,\"private_inputs_allowed_now\":false,\"local_workers_executable_now\":false,\"rollback_plan_required\":true,\"log_redaction_required\":true,\"public_ready_after_plan\":0,\"failures\":0}"
+      "evidence": "{\"selected_fixture_id\":\"worker_integration-mac999-bim-llm-code-agent-signal-fixture\",\"readiness_gates\":10,\"ready_gates\":6,\"blocked_gates\":4,\"runtime_executable_now\":false,\"dependencies_installable_now\":false,\"models_startable_now\":false,\"private_inputs_allowed_now\":false,\"local_workers_executable_now\":false,\"rollback_plan_required\":true,\"log_redaction_required\":true,\"public_ready_after_plan\":0,\"failures\":0}"
     },
     {
       "id": "no_private_inputs_now",
@@ -78,7 +78,7 @@
     {
       "id": "rollback_redaction_required",
       "status": "passed",
-      "evidence": "{\"selected_fixture_id\":\"worker_integration-mac999-bim-llm-code-agent-signal-fixture\",\"readiness_gates\":10,\"ready_gates\":5,\"blocked_gates\":5,\"runtime_executable_now\":false,\"dependencies_installable_now\":false,\"models_startable_now\":false,\"private_inputs_allowed_now\":false,\"local_workers_executable_now\":false,\"rollback_plan_required\":true,\"log_redaction_required\":true,\"public_ready_after_plan\":0,\"failures\":0}"
+      "evidence": "{\"selected_fixture_id\":\"worker_integration-mac999-bim-llm-code-agent-signal-fixture\",\"readiness_gates\":10,\"ready_gates\":6,\"blocked_gates\":4,\"runtime_executable_now\":false,\"dependencies_installable_now\":false,\"models_startable_now\":false,\"private_inputs_allowed_now\":false,\"local_workers_executable_now\":false,\"rollback_plan_required\":true,\"log_redaction_required\":true,\"public_ready_after_plan\":0,\"failures\":0}"
     },
     {
       "id": "required_gates_present",

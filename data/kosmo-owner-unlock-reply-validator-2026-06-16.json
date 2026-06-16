@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:12:29.580Z",
-  "status": "owner_unlock_reply_valid",
+  "generated_at": "2026-06-16T17:35:43.031Z",
+  "status": "owner_unlock_reply_validator_pending_owner_reply",
   "policy": {
     "validator_only": true,
     "records_decisions": false,
@@ -16,19 +16,14 @@
     "data/kosmo-owner-unlock-prompt-pack-2026-06-16.json"
   ],
   "summary": {
-    "answer_present": true,
-    "valid": true,
+    "answer_present": false,
+    "valid": false,
     "source_root_choices": 3,
     "review_batch_choices": 5,
     "failures": 0,
     "public_ready_after_validation": 0
   },
-  "parsed_answer": {
-    "source_root_choice": "select_exact_root_1",
-    "confirmed_exact_root": "yes",
-    "review_batches": "all_review_only",
-    "note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
-  },
+  "parsed_answer": null,
   "required_format": [
     "source_root_choice=...",
     "confirmed_exact_root=...",
@@ -42,9 +37,8 @@
     "note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist."
   ],
   "next_actions": [
-    "Copy only explicit validated fields into owner answer intake/session files.",
-    "Run owner answer intake check, session edit plan and source-root guards.",
-    "Do not run private inventory unless the selected branch permits it and guards pass."
+    "Wait for explicit owner reply in the required format.",
+    "Keep source-root and review batches pending."
   ],
   "hard_stops": [
     "Do not treat a valid reply as an applied decision.",

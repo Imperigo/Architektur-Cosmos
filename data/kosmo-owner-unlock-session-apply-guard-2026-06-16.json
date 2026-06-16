@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:13:47.629Z",
-  "status": "owner_unlock_session_apply_guard_passed_after_manual_apply",
+  "generated_at": "2026-06-16T17:47:22.975Z",
+  "status": "owner_unlock_session_apply_guard_failed",
   "policy": {
     "guard_only": true,
     "writes_session_files_now": false,
@@ -20,7 +20,7 @@
     "session_path": "examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json",
     "fixture_session": false,
     "session_status": "source_root_decision_session_recorded",
-    "preview_status": "owner_unlock_session_edit_preview_ready",
+    "preview_status": "owner_unlock_session_edit_preview_needs_review",
     "expected_selected_decision": "select_existing_root_for_private_diagnostic",
     "actual_selected_decision": "select_existing_root_for_private_diagnostic",
     "expected_selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
@@ -28,8 +28,8 @@
     "selected_root_exists": true,
     "matches_preview": true,
     "untouched_pending": false,
-    "private_diagnostic_allowed_after_apply": true,
-    "failures": 0,
+    "private_diagnostic_allowed_after_apply": false,
+    "failures": 1,
     "warnings": 0,
     "public_ready_after_guard": 0
   },
@@ -40,10 +40,9 @@
     "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
   },
   "next_actions": [
-    "Run npm run kosmo:source-root-decision-session-check.",
-    "Run npm run kosmo:source-root-blocker-refresh.",
-    "Run npm run kosmo:source-root-activation-preflight.",
-    "Run npm run kosmo:source-root-post-owner-activation-queue and its guard."
+    "Do not run private metadata inventory.",
+    "If exact owner reply is present and reviewed, apply only the expected_after_apply fields to the target session file.",
+    "Rerun this guard before source-root activation preflight."
   ],
   "hard_stops": [
     "Do not apply this guard automatically.",
@@ -51,6 +50,8 @@
     "Do not run private inventory while this guard is waiting.",
     "Do not change public-ready state."
   ],
-  "failures": [],
+  "failures": [
+    "Preview is not ready: owner_unlock_session_edit_preview_needs_review"
+  ],
   "warnings": []
 }

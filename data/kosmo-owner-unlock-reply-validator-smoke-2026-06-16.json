@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T04:58:33.976Z",
-  "status": "owner_unlock_reply_validator_smoke_failed",
+  "generated_at": "2026-06-16T17:35:32.676Z",
+  "status": "owner_unlock_reply_validator_smoke_passed",
   "policy": {
     "smoke_only": true,
     "executes_validator_cli_only": true,
@@ -14,8 +14,8 @@
   },
   "summary": {
     "cases": 5,
-    "passed": 0,
-    "failures": 5,
+    "passed": 5,
+    "failures": 0,
     "expected_invalid_cases": 2,
     "public_ready_after_smoke": 0
   },
@@ -23,57 +23,52 @@
     {
       "id": "pending_no_answer",
       "expected_status": "owner_unlock_reply_validator_pending_owner_reply",
-      "actual_status": "missing-output",
+      "actual_status": "owner_unlock_reply_validator_pending_owner_reply",
       "expected_exit_code": 0,
-      "actual_exit_code": 1,
-      "failures": [
-        "Could not read case output: ENOENT: no such file or directory, open '/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-reply-validator-smoke/pending_no_answer.json'"
-      ],
-      "passed": false
+      "actual_exit_code": 0,
+      "failures": [],
+      "passed": true
     },
     {
       "id": "valid_repair_onedrive_first",
       "expected_status": "owner_unlock_reply_valid",
-      "actual_status": "missing-output",
+      "actual_status": "owner_unlock_reply_valid",
       "expected_exit_code": 0,
-      "actual_exit_code": 1,
-      "failures": [
-        "Could not read case output: ENOENT: no such file or directory, open '/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-reply-validator-smoke/valid_repair_onedrive_first.json'"
-      ],
-      "passed": false
+      "actual_exit_code": 0,
+      "failures": [],
+      "passed": true
     },
     {
       "id": "valid_select_exact_root_review_only",
       "expected_status": "owner_unlock_reply_valid",
-      "actual_status": "missing-output",
+      "actual_status": "owner_unlock_reply_valid",
       "expected_exit_code": 0,
-      "actual_exit_code": 1,
-      "failures": [
-        "Could not read case output: ENOENT: no such file or directory, open '/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-reply-validator-smoke/valid_select_exact_root_review_only.json'"
-      ],
-      "passed": false
+      "actual_exit_code": 0,
+      "failures": [],
+      "passed": true
     },
     {
       "id": "invalid_unlock_without_confirmation",
       "expected_status": "owner_unlock_reply_invalid",
-      "actual_status": "missing-output",
+      "actual_status": "owner_unlock_reply_invalid",
       "expected_exit_code": 1,
       "actual_exit_code": 1,
       "failures": [
-        "Could not read case output: ENOENT: no such file or directory, open '/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-reply-validator-smoke/invalid_unlock_without_confirmation.json'"
+        "select_exact_root_1 requires confirmed_exact_root=yes."
       ],
-      "passed": false
+      "passed": true
     },
     {
       "id": "invalid_vague_all_free_grant",
       "expected_status": "owner_unlock_reply_invalid",
-      "actual_status": "missing-output",
+      "actual_status": "owner_unlock_reply_invalid",
       "expected_exit_code": 1,
       "actual_exit_code": 1,
       "failures": [
-        "Could not read case output: ENOENT: no such file or directory, open '/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-reply-validator-smoke/invalid_vague_all_free_grant.json'"
+        "Missing source_root_choice.",
+        "confirmed_exact_root must be yes or no."
       ],
-      "passed": false
+      "passed": true
     }
   ],
   "hard_stops": [

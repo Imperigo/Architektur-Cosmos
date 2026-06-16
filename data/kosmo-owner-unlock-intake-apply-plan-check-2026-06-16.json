@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:12:55.256Z",
-  "status": "owner_unlock_intake_apply_plan_guard_passed",
+  "generated_at": "2026-06-16T17:47:22.180Z",
+  "status": "owner_unlock_intake_apply_plan_guard_failed",
   "policy": {
     "review_only": true,
     "validates_plan_only": true,
@@ -16,16 +16,16 @@
   ],
   "summary": {
     "checks": 22,
-    "passed": 22,
-    "failures": 0,
+    "passed": 20,
+    "failures": 2,
     "warnings": 0,
     "public_ready_after_check": 0
   },
   "checks": [
     {
       "id": "status_ready",
-      "status": "passed",
-      "evidence": "owner_unlock_intake_apply_plan_ready"
+      "status": "failed",
+      "evidence": "owner_unlock_intake_apply_plan_needs_review"
     },
     {
       "id": "policy_review_only",
@@ -89,8 +89,8 @@
     },
     {
       "id": "target_empty_before_apply",
-      "status": "passed",
-      "evidence": true
+      "status": "failed",
+      "evidence": false
     },
     {
       "id": "selected_root_exists",

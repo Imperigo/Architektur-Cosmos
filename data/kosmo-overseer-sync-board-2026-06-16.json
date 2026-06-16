@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:38:41.810Z",
+  "generated_at": "2026-06-16T17:53:48.920Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 329
+      "files": 330
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 195
+      "files": 196
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-331-abendbatch-execution.md",
+      "title": "Codex Synergiebericht 331 - Abendbatch Execution",
+      "mirrored_inboxes": 2,
+      "bytes": 4088,
+      "modified_at": "2026-06-16T17:53:33.230Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-330-grosser-abendbatch.md",
       "title": "Codex Synergiebericht 330: Grosser Abendbatch",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 1782,
       "modified_at": "2026-06-16T05:43:11.999Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-323-owner-gate-terminal-status.md",
-      "title": "Codex Synergiebericht 323: Owner Gate Terminal Status",
-      "mirrored_inboxes": 2,
-      "bytes": 1736,
-      "modified_at": "2026-06-16T05:36:47.188Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 323-330 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 324-331 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

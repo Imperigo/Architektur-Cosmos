@@ -1,15 +1,15 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T17:15:17.997Z
+Generated: 2026-06-16T17:53:48.640Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
 - Cards: 85
-- Blocking cards: 6
+- Blocking cards: 13
 - Owner action cards: 19
 - Source root blocked: no
-- Day batch: day_batch_loop_needs_review
+- Day batch: day_batch_loop_passed_review_only
 - Source-root decision refresh: source_root_decision_session_refresh_refused, changed no, options 10, failures 1
 - Source-root candidate integrity: source_root_candidate_integrity_owner_review_ready, existing 8, exact roots 1, failures 0
 - Source-root owner action: source_root_owner_action_satisfied_metadata_only
@@ -44,12 +44,12 @@ Status: `orbit_bridge_ready_with_blockers`
 - GitHub worker integration signal bridge: innovation_github_worker_integration_signal_bridge_ready, candidates 2, top signal 5
 - GitHub worker adapter boundary contract: innovation_github_worker_adapter_boundary_contract_ready, fixture worker_integration-mac999-bim-llm-code-agent-signal-fixture, commands 3
 - GitHub worker adapter boundary negative fixtures: innovation_github_worker_adapter_boundary_negative_fixtures_ready, fixtures 8, blocked 8
-- GitHub worker runtime batch readiness plan: innovation_github_worker_runtime_batch_readiness_plan_ready, ready gates 5, blocked gates 5
+- GitHub worker runtime batch readiness plan: innovation_github_worker_runtime_batch_readiness_plan_ready, ready gates 6, blocked gates 4
 - GitHub worker runtime rollback/redaction fixtures: innovation_github_worker_runtime_rollback_redaction_fixtures_ready, groups 3, redaction rules 5, rollback steps 5
-- GitHub worker runtime apply guard: innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply, exact reply missing, separate runtime blocked, failures 0
-- GitHub worker runtime log-redaction negative fixtures: innovation_github_worker_runtime_log_redaction_negative_fixtures_ready, fixtures 10, blocked 10, leak categories 7
-- GitHub worker runtime batch manifest draft: innovation_github_worker_runtime_batch_manifest_draft_ready, id github-worker-runtime-batch-draft-2026-06-16, blocked prereqs 4, open gates 5
-- GitHub worker runtime manifest validator plan: innovation_github_worker_runtime_manifest_validator_plan_ready, rules 10, fixture categories 8, executable 0, failures 0
+- GitHub worker runtime apply guard: innovation_github_worker_runtime_apply_guard_not_ready, exact reply missing, separate runtime blocked, failures 0
+- GitHub worker runtime log-redaction negative fixtures: innovation_github_worker_runtime_log_redaction_negative_fixtures_needs_review, fixtures 10, blocked 10, leak categories 7
+- GitHub worker runtime batch manifest draft: innovation_github_worker_runtime_batch_manifest_draft_needs_review, id github-worker-runtime-batch-draft-2026-06-16, blocked prereqs 4, open gates 5
+- GitHub worker runtime manifest validator plan: innovation_github_worker_runtime_manifest_validator_plan_needs_review, rules 10, fixture categories 8, executable 0, failures 0
 - GitHub worker runtime manifest validator: innovation_github_worker_runtime_manifest_validator_passed, validated 12, blocked 11, review-only 1, public-ready 0, failures 0
 - Terminal gate audit: terminal_gate_audit_guarded_blocked, blockers 5, executable 0, public-ready 0, failures 0
 - Worktree guard audit: worktree_guard_audit_dirty_review_required, entries 1403, staged 0, untracked 268, broad stage blocked, failures 0
@@ -62,7 +62,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Owner unlock exact reply preview: owner_unlock_answer_dry_run_ready_for_review, validator owner_unlock_reply_valid, patches 6
 - Owner unlock Path A readiness: owner_unlock_path_a_readiness_certificate_ready, can start after exact reply true, applies now false
 - Owner unlock patch review bundle: owner_unlock_patch_review_bundle_ready, operations 6, applies now false
-- Owner unlock intake apply plan: owner_unlock_intake_apply_plan_ready, field edits 13, writes now false
+- Owner unlock intake apply plan: owner_unlock_intake_apply_plan_needs_review, field edits 13, writes now false
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -70,7 +70,7 @@ Status: `orbit_bridge_ready_with_blockers`
 
 | Card | Status | Owner Action | Signal |
 | --- | --- | --- | --- |
-| `day-batch` Daily Batch | needs_review | no | 59/60 required steps |
+| `day-batch` Daily Batch | ready | no | 77/77 required steps |
 | `source-root` Source Root | ready | no | private diagnostic allowed |
 | `source-root-decision-refresh` Source Root Decision Refresh | needs_review | no | source_root_decision_session_refresh_refused, changed no, options 10 |
 | `source-root-candidate-integrity` Source Root Candidate Integrity | review_only_ready | yes | 8/8 paths visible, exact roots 1, failures 0 |
@@ -84,13 +84,13 @@ Status: `orbit_bridge_ready_with_blockers`
 | `source-root-owner-choice-consequence-matrix` Source Root Owner Choice Consequence Matrix | ready | no | 0 choices, unlock 0, blocked 0, failures 0 |
 | `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | owner_action | yes | broad intent no, suggestions 2, applies now no, failures 0 |
 | `owner-unlock-exact-reply-preview` Owner Unlock Exact Reply Preview | review_only_ready | yes | validator owner_unlock_reply_valid, intake owner_unlock_reply_intake_map_ready_for_review, patches 6, failures 0 |
-| `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | owner_action | yes | can start after exact reply yes, applies now no, activation ready no, failures 0 |
+| `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | owner_action | yes | can start after exact reply yes, applies now no, activation ready yes, failures 0 |
 | `owner-unlock-patch-review-bundle` Owner Unlock Patch Review Bundle | review_only_ready | yes | 6 patches, source-root 1, owner cards 5, applies now no, failures 0 |
-| `owner-unlock-intake-apply-plan` Owner Unlock Intake Apply Plan | review_only_ready | yes | 13 field edits, target empty yes, root exists yes, writes now no, failures 0 |
-| `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | review_only_ready | yes | 6 preview edits, session files 1, manual triage 5, writes now no, failures 0 |
+| `owner-unlock-intake-apply-plan` Owner Unlock Intake Apply Plan | needs_review | yes | 13 field edits, target empty no, root exists yes, writes now no, failures 2 |
+| `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | needs_review | yes | 6 preview edits, session files 1, manual triage 5, writes now no, failures 1 |
 | `owner-unlock-operational-start-card` Owner Unlock Operational Start Card | owner_action | yes | 6/6 components, next 9, blocked 5, writes now no, failures 0 |
-| `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | review_only_ready | yes | 8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, queue executable 0, failures 0 |
-| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | review_only_ready | yes | applied_matches_preview, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, matches yes, private diagnostic yes, failures 0 |
+| `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | needs_review | yes | 8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, queue executable 2, failures 2 |
+| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | needs_review | yes | applied_matches_preview, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json, matches yes, private diagnostic no, failures 2 |
 | `owner-unlock-session-apply-guard-smoke` Owner Unlock Session Apply Guard Smoke | review_only_ready | no | applied_matches_preview, matches yes, private diagnostic yes, checks 18/18, failures 0 |
 | `source-root-activation` Source Root Activation | ready | no | activation ready for /mnt/archiv/ArchitekturKosmos/Assets |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 8 Ollama models, 70 GB |
@@ -136,13 +136,13 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-worker-integration-signal-bridge` GitHub Worker Integration Signal Bridge | review_only_ready | no | 2 candidates, top 5, high 2, executable 0, failures 0 |
 | `github-worker-adapter-boundary-contract` GitHub Worker Adapter Boundary Contract | review_only_ready | no | worker_integration-mac999-bim-llm-code-agent-signal-fixture, commands 3, runtime 0, public 0, failures 0 |
 | `github-worker-adapter-boundary-negative-fixtures` GitHub Worker Adapter Boundary Negative Fixtures | review_only_ready | no | 8 negative fixtures, blocked 8, categories 6, runtime 0, failures 0 |
-| `github-worker-runtime-batch-readiness-plan` GitHub Worker Runtime Batch Readiness Plan | review_only_ready | no | 5/10 gates ready, blocked 5, runtime no, failures 0 |
+| `github-worker-runtime-batch-readiness-plan` GitHub Worker Runtime Batch Readiness Plan | review_only_ready | no | 6/10 gates ready, blocked 4, runtime no, failures 0 |
 | `github-worker-runtime-rollback-redaction-fixtures` GitHub Worker Runtime Rollback/Redaction Fixtures | review_only_ready | no | 3 groups, rules 5, rollback 5, runtime 0, failures 0 |
-| `github-worker-runtime-apply-guard` GitHub Worker Runtime Apply Guard | blocked_owner_action_required | yes | exact reply missing, separate runtime blocked, execute 0, checks 31/31 |
-| `github-worker-runtime-log-redaction-negative-fixtures` GitHub Worker Runtime Log-Redaction Negative Fixtures | review_only_ready | no | 10 negative fixtures, blocked 10, leak categories 7, runtime 0, failures 0 |
-| `github-worker-runtime-batch-manifest-draft` GitHub Worker Runtime Batch Manifest Draft | review_only_ready | no | github-worker-runtime-batch-draft-2026-06-16, prereqs 7, blocked 4, gates open 5, executable no, failures 0 |
-| `github-worker-runtime-manifest-negative-fixtures` GitHub Worker Runtime Manifest Negative Fixtures | review_only_ready | no | 10 manifest negatives, blocked 10, categories 8, executable 0, failures 0 |
-| `github-worker-runtime-manifest-validator-plan` GitHub Worker Runtime Manifest Validator Plan | review_only_ready | no | 10 rules, fixtures 8, executable 0, failures 0 |
+| `github-worker-runtime-apply-guard` GitHub Worker Runtime Apply Guard | needs_review | yes | exact reply missing, separate runtime blocked, execute 0, checks 31/31 |
+| `github-worker-runtime-log-redaction-negative-fixtures` GitHub Worker Runtime Log-Redaction Negative Fixtures | needs_review | no | 10 negative fixtures, blocked 10, leak categories 7, runtime 0, failures 0 |
+| `github-worker-runtime-batch-manifest-draft` GitHub Worker Runtime Batch Manifest Draft | needs_review | no | github-worker-runtime-batch-draft-2026-06-16, prereqs 7, blocked 4, gates open 5, executable no, failures 0 |
+| `github-worker-runtime-manifest-negative-fixtures` GitHub Worker Runtime Manifest Negative Fixtures | needs_review | no | 10 manifest negatives, blocked 10, categories 8, executable 0, failures 0 |
+| `github-worker-runtime-manifest-validator-plan` GitHub Worker Runtime Manifest Validator Plan | needs_review | no | 10 rules, fixtures 8, executable 0, failures 0 |
 | `github-worker-runtime-manifest-validator` GitHub Worker Runtime Manifest Validator | review_only_ready | no | 12 manifests, blocked 11, review-only 1, failures 0 |
 | `terminal-gate-audit` Terminal Gate Audit | guard_passed | no | 5 terminal blockers, executable 0, public-ready 0, checks 23/23 |
 | `worktree-guard-audit` Worktree Guard Audit | guard_passed | no | 1403 dirty entries, staged 0, untracked 268, broad stage blocked, failures 0 |

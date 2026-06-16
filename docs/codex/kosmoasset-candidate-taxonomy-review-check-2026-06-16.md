@@ -1,6 +1,6 @@
 # KosmoAsset Candidate Taxonomy Review Check
 
-Generated: 2026-06-16T12:31:14.014Z
+Generated: 2026-06-16T17:45:28.963Z
 Status: `kosmoasset_candidate_taxonomy_review_guard_passed`
 
 ## Summary

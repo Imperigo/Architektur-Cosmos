@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T12:31:17.477Z",
+  "generated_at": "2026-06-16T17:45:32.608Z",
   "status": "local_worker_execution_runbook_idle_review_only",
   "policy": {
     "runbook_only": true,

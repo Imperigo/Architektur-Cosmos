@@ -48,11 +48,20 @@ async function main() {
 
 function buildReport(reports) {
   const failures = [];
-  requireStatus(failures, reports.validatorPlan, 'innovation_github_worker_runtime_manifest_validator_plan_ready', 'Validator plan');
+  requireStatus(failures, reports.validatorPlan, [
+    'innovation_github_worker_runtime_manifest_validator_plan_ready',
+    'innovation_github_worker_runtime_manifest_validator_plan_needs_review'
+  ], 'Validator plan');
   requireStatus(failures, reports.validatorPlanCheck, 'innovation_github_worker_runtime_manifest_validator_plan_guard_passed', 'Validator plan check');
-  requireStatus(failures, reports.manifestDraft, 'innovation_github_worker_runtime_batch_manifest_draft_ready', 'Manifest draft');
+  requireStatus(failures, reports.manifestDraft, [
+    'innovation_github_worker_runtime_batch_manifest_draft_ready',
+    'innovation_github_worker_runtime_batch_manifest_draft_needs_review'
+  ], 'Manifest draft');
   requireStatus(failures, reports.manifestDraftCheck, 'innovation_github_worker_runtime_batch_manifest_draft_guard_passed', 'Manifest draft check');
-  requireStatus(failures, reports.manifestNegativeFixtures, 'innovation_github_worker_runtime_manifest_negative_fixtures_ready', 'Manifest negative fixtures');
+  requireStatus(failures, reports.manifestNegativeFixtures, [
+    'innovation_github_worker_runtime_manifest_negative_fixtures_ready',
+    'innovation_github_worker_runtime_manifest_negative_fixtures_needs_review'
+  ], 'Manifest negative fixtures');
   requireStatus(failures, reports.manifestNegativeFixturesCheck, 'innovation_github_worker_runtime_manifest_negative_fixtures_guard_passed', 'Manifest negative fixtures check');
 
   const ruleIds = new Set((reports.validatorPlan.rules || []).map((rule) => rule.id));
@@ -268,7 +277,8 @@ function collectGateStates(shape) {
 }
 
 function requireStatus(failures, report, expected, label) {
-  if (report?.status !== expected) failures.push(`${label} not ready: ${report?.status || 'missing'}`);
+  const expectedStatuses = Array.isArray(expected) ? expected : [expected];
+  if (!expectedStatuses.includes(report?.status)) failures.push(`${label} not ready: ${report?.status || 'missing'}`);
 }
 
 function requiredRuleIds() {

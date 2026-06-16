@@ -1,6 +1,6 @@
 # Kosmo Owner Unlock Execution Runbook
 
-Generated: 2026-06-16T05:34:00.627Z
+Generated: 2026-06-16T17:35:43.997Z
 Status: `owner_unlock_execution_runbook_ready`
 
 ## Summary
@@ -12,9 +12,9 @@ Status: `owner_unlock_execution_runbook_ready`
 - Expected session file: `examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json`
 - Expected selected root path: /mnt/archiv/ArchitekturKosmos/Assets
 - Operational start card: owner_unlock_operational_start_card_ready
-- Pipeline checkpoint: owner_unlock_pipeline_checkpoint_ready
+- Pipeline checkpoint: missing
 - Session edit preview: owner_unlock_session_edit_preview_ready
-- Post-owner queue: source_root_post_owner_activation_queue_ready; executable now 0
+- Post-owner queue: source_root_post_owner_activation_queue_ready; executable now 2
 - Public-ready after runbook: 0
 
 ## Phases

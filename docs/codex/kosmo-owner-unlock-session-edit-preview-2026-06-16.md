@@ -1,12 +1,12 @@
 # Kosmo Owner Unlock Session Edit Preview
 
-Generated: 2026-06-16T12:12:55.504Z
-Status: `owner_unlock_session_edit_preview_ready`
+Generated: 2026-06-16T17:47:22.445Z
+Status: `owner_unlock_session_edit_preview_needs_review`
 
 ## Summary
 
-- Intake apply plan: owner_unlock_intake_apply_plan_ready
-- Source-root session: source_root_decision_session_pending
+- Intake apply plan: owner_unlock_intake_apply_plan_needs_review
+- Source-root session: source_root_decision_session_recorded
 - Owner decision session: owner_decision_session_pending
 - Preview edits: 6
 - Session file edits: 1
@@ -41,3 +41,9 @@ Status: `owner_unlock_session_edit_preview_ready`
 - Do not run private inventory from this preview.
 - Do not read private content.
 - Do not change public-ready state.
+
+## Failures
+
+- Intake apply plan not ready: owner_unlock_intake_apply_plan_needs_review
+- Source-root session not pending: source_root_decision_session_recorded
+- Source-root session already has a recorded selection.

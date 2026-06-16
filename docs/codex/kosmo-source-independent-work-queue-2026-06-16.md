@@ -1,6 +1,6 @@
 # Kosmo Source-Independent Work Queue
 
-Generated: 2026-06-16T17:15:03.077Z
+Generated: 2026-06-16T17:45:36.599Z
 Status: `source_independent_work_queue_ready`
 
 ## Summary
@@ -29,7 +29,7 @@ Status: `source_independent_work_queue_ready`
 | `codex_asset_prepare_phase1_fixture_contract` | kosmoasset | codex | completed_review_only | no | no | `npm run kosmo:asset-prepare-phase1-fixture-contract && npm run kosmo:asset-prepare-phase1-fixture-contract-check` | completed library kosmo-prepare-phase1-fixture, assets 2, failures 0 |
 | `codex_local_worker_fixture_chain_task_pack` | local_worker | codex | completed_review_only | no | no | `npm run kosmo:local-worker-fixture-chain-task-pack && npm run kosmo:local-worker-fixture-chain-task-pack-check` | completed 8 tasks, executable 0, failures 0 |
 | `owner_open_review_batches` | owner_decision | owner_or_overseer | completed_review_only | no | no | `review docs/codex/kosmo-owner-review-batch-resolution-ledger-2026-06-16.md` | resolved review-only 5 batches / 16 items |
-| `codex_orbit_status_refresh` | orbit | codex | completed_review_only | no | no | `npm run kosmo:orbit-status-bridge` | completed 85 cards, blockers 4, owner 19 |
+| `codex_orbit_status_refresh` | orbit | codex | completed_review_only | no | no | `npm run kosmo:orbit-status-bridge` | completed 85 cards, blockers 6, owner 19 |
 
 ## Hard Stops
 

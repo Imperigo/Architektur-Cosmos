@@ -1,0 +1,159 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T17:46:41.293Z",
+  "status": "innovation_github_worker_adapter_boundary_negative_fixtures_guard_passed",
+  "policy": {
+    "validates_negative_fixtures_only": true,
+    "reads_private_content_now": false,
+    "executes_runtime_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-worker-adapter-boundary-negative-fixtures-2026-06-16.json"
+  ],
+  "summary": {
+    "fixtures_status": "innovation_github_worker_adapter_boundary_negative_fixtures_ready",
+    "checks": 27,
+    "passed": 27,
+    "failures": 0,
+    "negative_fixtures": 8,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "innovation_github_worker_adapter_boundary_negative_fixtures_ready"
+    },
+    {
+      "id": "policy_negative_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_synthetic_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_code_readme_copy",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_payloads_only\":true,\"reads_private_content_now\":false,\"copies_github_code_now\":false,\"copies_readme_text_now\":false,\"clones_repositories_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"runs_discovered_code_now\":false,\"writes_runtime_adapter_now\":false,\"executes_local_workers_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "policy_no_clone_install_download",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_payloads_only\":true,\"reads_private_content_now\":false,\"copies_github_code_now\":false,\"copies_readme_text_now\":false,\"clones_repositories_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"runs_discovered_code_now\":false,\"writes_runtime_adapter_now\":false,\"executes_local_workers_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "policy_no_run_runtime",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_payloads_only\":true,\"reads_private_content_now\":false,\"copies_github_code_now\":false,\"copies_readme_text_now\":false,\"clones_repositories_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"runs_discovered_code_now\":false,\"writes_runtime_adapter_now\":false,\"executes_local_workers_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "policy_no_training_public",
+      "status": "passed",
+      "evidence": "{\"negative_fixtures_only\":true,\"synthetic_payloads_only\":true,\"reads_private_content_now\":false,\"copies_github_code_now\":false,\"copies_readme_text_now\":false,\"clones_repositories_now\":false,\"installs_dependencies_now\":false,\"downloads_models_now\":false,\"runs_discovered_code_now\":false,\"writes_runtime_adapter_now\":false,\"executes_local_workers_now\":false,\"promotes_training_rows_now\":false,\"public_ready_after_fixtures\":0}"
+    },
+    {
+      "id": "fixture_count",
+      "status": "passed",
+      "evidence": 8
+    },
+    {
+      "id": "expected_blocked_count",
+      "status": "passed",
+      "evidence": "8/8"
+    },
+    {
+      "id": "all_fixtures_blocked",
+      "status": "passed",
+      "evidence": "all blocked"
+    },
+    {
+      "id": "all_fixtures_synthetic",
+      "status": "passed",
+      "evidence": "all synthetic"
+    },
+    {
+      "id": "all_no_copy_execution",
+      "status": "passed",
+      "evidence": "no copy/execution"
+    },
+    {
+      "id": "required_categories_present",
+      "status": "passed",
+      "evidence": "private_path,runtime_command,readme_or_code_copy,public_ready_false_positive,training_promotion,review_gate_missing"
+    },
+    {
+      "id": "private_path_reason_present",
+      "status": "passed",
+      "evidence": "private_path_detected,private_content_flag_true,clone_repository,network_access,unexpected_executable_command,install_dependencies,unexpected_executable_command,copy_readme_text,source_repo_reference_only_violation,copy_github_code,github_source_file_detected,promote_public_ready,rights_state_unknown,promote_training_row,missing_human_overseer_review_gate,write_runtime_adapter,execute_local_worker,missing_separate_launch_apply_guard"
+    },
+    {
+      "id": "runtime_reason_present",
+      "status": "passed",
+      "evidence": "private_path_detected,private_content_flag_true,clone_repository,network_access,unexpected_executable_command,install_dependencies,unexpected_executable_command,copy_readme_text,source_repo_reference_only_violation,copy_github_code,github_source_file_detected,promote_public_ready,rights_state_unknown,promote_training_row,missing_human_overseer_review_gate,write_runtime_adapter,execute_local_worker,missing_separate_launch_apply_guard"
+    },
+    {
+      "id": "copy_reason_present",
+      "status": "passed",
+      "evidence": "private_path_detected,private_content_flag_true,clone_repository,network_access,unexpected_executable_command,install_dependencies,unexpected_executable_command,copy_readme_text,source_repo_reference_only_violation,copy_github_code,github_source_file_detected,promote_public_ready,rights_state_unknown,promote_training_row,missing_human_overseer_review_gate,write_runtime_adapter,execute_local_worker,missing_separate_launch_apply_guard"
+    },
+    {
+      "id": "public_ready_reason_present",
+      "status": "passed",
+      "evidence": "private_path_detected,private_content_flag_true,clone_repository,network_access,unexpected_executable_command,install_dependencies,unexpected_executable_command,copy_readme_text,source_repo_reference_only_violation,copy_github_code,github_source_file_detected,promote_public_ready,rights_state_unknown,promote_training_row,missing_human_overseer_review_gate,write_runtime_adapter,execute_local_worker,missing_separate_launch_apply_guard"
+    },
+    {
+      "id": "training_reason_present",
+      "status": "passed",
+      "evidence": "private_path_detected,private_content_flag_true,clone_repository,network_access,unexpected_executable_command,install_dependencies,unexpected_executable_command,copy_readme_text,source_repo_reference_only_violation,copy_github_code,github_source_file_detected,promote_public_ready,rights_state_unknown,promote_training_row,missing_human_overseer_review_gate,write_runtime_adapter,execute_local_worker,missing_separate_launch_apply_guard"
+    },
+    {
+      "id": "apply_guard_reason_present",
+      "status": "passed",
+      "evidence": "private_path_detected,private_content_flag_true,clone_repository,network_access,unexpected_executable_command,install_dependencies,unexpected_executable_command,copy_readme_text,source_repo_reference_only_violation,copy_github_code,github_source_file_detected,promote_public_ready,rights_state_unknown,promote_training_row,missing_human_overseer_review_gate,write_runtime_adapter,execute_local_worker,missing_separate_launch_apply_guard"
+    },
+    {
+      "id": "runtime_zero",
+      "status": "passed",
+      "evidence": "{\"selected_fixture_id\":\"worker_integration-mac999-bim-llm-code-agent-signal-fixture\",\"negative_fixtures\":8,\"expected_blocked\":8,\"categories\":6,\"contract_blocked_actions\":18,\"runtime_executed_now\":0,\"adapter_files_written_now\":0,\"local_workers_executed_now\":0,\"training_rows_promoted_now\":0,\"public_ready_after_fixtures\":0,\"failures\":0}"
+    },
+    {
+      "id": "training_public_zero",
+      "status": "passed",
+      "evidence": "{\"selected_fixture_id\":\"worker_integration-mac999-bim-llm-code-agent-signal-fixture\",\"negative_fixtures\":8,\"expected_blocked\":8,\"categories\":6,\"contract_blocked_actions\":18,\"runtime_executed_now\":0,\"adapter_files_written_now\":0,\"local_workers_executed_now\":0,\"training_rows_promoted_now\":0,\"public_ready_after_fixtures\":0,\"failures\":0}"
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "these negative fixtures never read private source root, onedrive or archive-library content. these negative fixtures never clone repositories, install dependencies or download models. these negative fixtures never run discovered code or local workers. these negative fixtures never copy github code or readme text into git. these negative fixtures never write runtime adapter files. these negative fixtures never promote training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_clone_install",
+      "status": "passed",
+      "evidence": "these negative fixtures never read private source root, onedrive or archive-library content. these negative fixtures never clone repositories, install dependencies or download models. these negative fixtures never run discovered code or local workers. these negative fixtures never copy github code or readme text into git. these negative fixtures never write runtime adapter files. these negative fixtures never promote training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_run",
+      "status": "passed",
+      "evidence": "these negative fixtures never read private source root, onedrive or archive-library content. these negative fixtures never clone repositories, install dependencies or download models. these negative fixtures never run discovered code or local workers. these negative fixtures never copy github code or readme text into git. these negative fixtures never write runtime adapter files. these negative fixtures never promote training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_copy",
+      "status": "passed",
+      "evidence": "these negative fixtures never read private source root, onedrive or archive-library content. these negative fixtures never clone repositories, install dependencies or download models. these negative fixtures never run discovered code or local workers. these negative fixtures never copy github code or readme text into git. these negative fixtures never write runtime adapter files. these negative fixtures never promote training rows or public-ready state."
+    },
+    {
+      "id": "hard_stop_no_runtime_public",
+      "status": "passed",
+      "evidence": "these negative fixtures never read private source root, onedrive or archive-library content. these negative fixtures never clone repositories, install dependencies or download models. these negative fixtures never run discovered code or local workers. these negative fixtures never copy github code or readme text into git. these negative fixtures never write runtime adapter files. these negative fixtures never promote training rows or public-ready state."
+    }
+  ]
+}

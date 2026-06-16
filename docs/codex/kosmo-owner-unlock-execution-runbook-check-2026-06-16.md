@@ -1,12 +1,12 @@
 # Kosmo Owner Unlock Execution Runbook Check
 
-Generated: 2026-06-16T05:34:00.875Z
-Status: `owner_unlock_execution_runbook_guard_passed`
+Generated: 2026-06-16T17:35:44.254Z
+Status: `owner_unlock_execution_runbook_guard_failed`
 
 ## Summary
 
-- Checks: 39/39
-- Failures: 0
+- Checks: 37/39
+- Failures: 2
 - Warnings: 0
 - Public-ready after check: 0
 
@@ -42,9 +42,9 @@ Status: `owner_unlock_execution_runbook_guard_passed`
 - passed: `session_apply_guard_after_manual_edit` - npm run kosmo:owner-unlock-session-apply-guard; npm run kosmo:owner-unlock-session-apply-guard-check
 - passed: `no_old_2026_06_14_targets` - old target search
 - passed: `start_card_status_ready` - owner_unlock_operational_start_card_ready
-- passed: `checkpoint_status_ready` - owner_unlock_pipeline_checkpoint_ready
+- failed: `checkpoint_status_ready` - -
 - passed: `queue_status_ready` - source_root_post_owner_activation_queue_ready
-- passed: `queue_still_blocked_now` - 0
+- failed: `queue_still_blocked_now` - 2
 - passed: `hard_stop_no_private_diagnostic_from_valid_reply` - do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready.
 - passed: `hard_stop_no_intake_edit` - do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready.
 - passed: `hard_stop_current_session_only` - do not run source-root private diagnostics from a merely valid reply or broad freeform approval. do not edit intake files from this runbook. do not edit session files before the exact reply, start card, checkpoint and session preview guards pass. do not edit any source-root session except examples/kosmo-references/provenance/source-root-decision-session-2026-06-16.json. do not read private content in this runbook step. do not run private metadata inventory unless the post-owner queue explicitly unblocks it. do not mark any private-derived material public-ready.

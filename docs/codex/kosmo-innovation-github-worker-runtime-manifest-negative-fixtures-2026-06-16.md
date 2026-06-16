@@ -1,7 +1,7 @@
 # Kosmo Innovation GitHub Worker Runtime Manifest Negative Fixtures
 
-Generated: 2026-06-16T05:06:46.072Z
-Status: `innovation_github_worker_runtime_manifest_negative_fixtures_ready`
+Generated: 2026-06-16T17:49:21.597Z
+Status: `innovation_github_worker_runtime_manifest_negative_fixtures_needs_review`
 
 ## Summary
 
@@ -14,7 +14,7 @@ Status: `innovation_github_worker_runtime_manifest_negative_fixtures_ready`
 - Runtime outputs written now: 0
 - Worker outputs written now: 0
 - Public-ready after fixtures: 0
-- Failures: 0
+- Failures: 3
 
 ## Fixtures
 

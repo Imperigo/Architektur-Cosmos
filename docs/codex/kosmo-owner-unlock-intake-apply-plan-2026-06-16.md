@@ -1,7 +1,7 @@
 # Kosmo Owner Unlock Intake Apply Plan
 
-Generated: 2026-06-16T12:12:55.010Z
-Status: `owner_unlock_intake_apply_plan_ready`
+Generated: 2026-06-16T17:47:21.926Z
+Status: `owner_unlock_intake_apply_plan_needs_review`
 
 ## Summary
 
@@ -10,7 +10,7 @@ Status: `owner_unlock_intake_apply_plan_ready`
 - Planned field edits: 13
 - Source-root field edits: 3
 - Owner-card field edits: 10
-- Target intake currently empty: yes
+- Target intake currently empty: no
 - Selected root path: /mnt/archiv/ArchitekturKosmos/Assets
 - Selected root exists: yes
 - Writes intake now: no
@@ -18,19 +18,19 @@ Status: `owner_unlock_intake_apply_plan_ready`
 
 ## Planned Field Edits
 
-- `/source_root_answer/selected_decision`: `null` -> `select_existing_root_for_private_diagnostic`
-- `/source_root_answer/selected_root_path`: `null` -> `/mnt/archiv/ArchitekturKosmos/Assets`
-- `/source_root_answer/owner_note`: `` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
-- `/owner_card_answers/0/owner_choice`: `null` -> `needs_more_context`
-- `/owner_card_answers/0/owner_note`: `` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
-- `/owner_card_answers/1/owner_choice`: `null` -> `use_safe_default`
-- `/owner_card_answers/1/owner_note`: `` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
-- `/owner_card_answers/2/owner_choice`: `null` -> `use_safe_default`
-- `/owner_card_answers/2/owner_note`: `` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
-- `/owner_card_answers/3/owner_choice`: `null` -> `use_safe_default`
-- `/owner_card_answers/3/owner_note`: `` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
-- `/owner_card_answers/4/owner_choice`: `null` -> `keep_needs_review`
-- `/owner_card_answers/4/owner_note`: `` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
+- `/source_root_answer/selected_decision`: `select_existing_root_for_private_diagnostic` -> `select_existing_root_for_private_diagnostic`
+- `/source_root_answer/selected_root_path`: `/mnt/archiv/ArchitekturKosmos/Assets` -> `/mnt/archiv/ArchitekturKosmos/Assets`
+- `/source_root_answer/owner_note`: `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
+- `/owner_card_answers/0/owner_choice`: `needs_more_context` -> `needs_more_context`
+- `/owner_card_answers/0/owner_note`: `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
+- `/owner_card_answers/1/owner_choice`: `use_safe_default` -> `use_safe_default`
+- `/owner_card_answers/1/owner_note`: `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
+- `/owner_card_answers/2/owner_choice`: `use_safe_default` -> `use_safe_default`
+- `/owner_card_answers/2/owner_note`: `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
+- `/owner_card_answers/3/owner_choice`: `use_safe_default` -> `use_safe_default`
+- `/owner_card_answers/3/owner_note`: `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
+- `/owner_card_answers/4/owner_choice`: `keep_needs_review` -> `keep_needs_review`
+- `/owner_card_answers/4/owner_note`: `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.` -> `/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.`
 
 ## After Manual Apply Commands
 
@@ -48,3 +48,7 @@ Status: `owner_unlock_intake_apply_plan_ready`
 - Do not run source-root guards from this plan.
 - Do not read private content.
 - Keep public-ready at 0.
+
+## Failures
+
+- Target intake template already contains at least one field that this plan would overwrite.
