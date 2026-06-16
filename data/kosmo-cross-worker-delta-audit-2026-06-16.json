@@ -1,0 +1,333 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T10:40:20.954Z",
+  "status": "cross_worker_delta_audit_ready",
+  "policy": {
+    "audit_only": true,
+    "reads_private_content": false,
+    "reads_file_contents": false,
+    "reads_handoff_headings_only": true,
+    "writes_repo_code": false,
+    "stages_files": false,
+    "public_ready_after_audit": 0
+  },
+  "source_refs": [
+    {
+      "id": "architecture-cosmos",
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos"
+    },
+    {
+      "id": "kosmo-orbit",
+      "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit"
+    }
+  ],
+  "summary": {
+    "repos": 2,
+    "visible_repos": 2,
+    "latest_handoff_number": 326,
+    "latest_handoffs": 10,
+    "active_handoff_inboxes": 2,
+    "latest_unmirrored_handoffs": 0,
+    "foreign_commits_needing_review": 6,
+    "dirty_repo_entries": 1417,
+    "failures": 0,
+    "public_ready_after_audit": 0
+  },
+  "repos": [
+    {
+      "id": "architecture-cosmos",
+      "role": "codex-central",
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
+      "exists": true,
+      "branch": "main",
+      "head": "3588436",
+      "status_count": 1416,
+      "recent_commits": [
+        {
+          "hash": "3588436",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:49:57+02:00",
+          "subject": "Refresh queue after worktree guard audit"
+        },
+        {
+          "hash": "d8bc0d6",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:49:29+02:00",
+          "subject": "Add worktree guard audit"
+        },
+        {
+          "hash": "355adde",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:45:03+02:00",
+          "subject": "Refresh queue after terminal gate audit"
+        },
+        {
+          "hash": "a29ffeb",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:44:13+02:00",
+          "subject": "Add terminal gate audit"
+        },
+        {
+          "hash": "197eaab",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:36:59+02:00",
+          "subject": "Refresh owner gate terminal status"
+        },
+        {
+          "hash": "baa3e3c",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:35:39+02:00",
+          "subject": "Prepare owner unlock helper chain"
+        },
+        {
+          "hash": "8c430e1",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:31:52+02:00",
+          "subject": "Refresh local model inventory"
+        },
+        {
+          "hash": "b151f7f",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:31:12+02:00",
+          "subject": "Refresh day batch loop status"
+        },
+        {
+          "hash": "af183e6",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:28:56+02:00",
+          "subject": "Refresh local worker conversion governance"
+        },
+        {
+          "hash": "446d21f",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:27:43+02:00",
+          "subject": "Refresh training eval ontology state"
+        },
+        {
+          "hash": "1b84ed1",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:24:47+02:00",
+          "subject": "Surface runtime manifest validator"
+        },
+        {
+          "hash": "fd0ea1c",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T07:23:12+02:00",
+          "subject": "Add runtime manifest validator"
+        }
+      ]
+    },
+    {
+      "id": "kosmo-orbit",
+      "role": "orbit-claude-codex-shared",
+      "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
+      "exists": true,
+      "branch": "main",
+      "head": "6cac828",
+      "status_count": 1,
+      "recent_commits": [
+        {
+          "hash": "6cac828",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T08:48:13+02:00",
+          "subject": "Guard handlungsfähig: \"⚡ tote Kanten entfernen\"-Button"
+        },
+        {
+          "hash": "6448930",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T08:11:38+02:00",
+          "subject": "Guard: Konfig-Knoten-Args als gelieferte Felder zählen (Falsch-Positiv-Fix)"
+        },
+        {
+          "hash": "872e0f1",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:49:29+02:00",
+          "subject": "Add worktree guard audit handoff"
+        },
+        {
+          "hash": "0026ba3",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:44:13+02:00",
+          "subject": "Add terminal gate audit handoff"
+        },
+        {
+          "hash": "d87b0cb",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:36:59+02:00",
+          "subject": "Add owner gate terminal handoff"
+        },
+        {
+          "hash": "f4a976b",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:36:51+02:00",
+          "subject": "Pipeline: schema-aware \"Aus Sprache\"-Generator + args-Support + Guard immer-an"
+        },
+        {
+          "hash": "4fc6192",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:35:45+02:00",
+          "subject": "Add owner unlock helper handoff"
+        },
+        {
+          "hash": "0f827c5",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:31:52+02:00",
+          "subject": "Add local model inventory handoff"
+        },
+        {
+          "hash": "41e6378",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:31:12+02:00",
+          "subject": "Add day batch loop handoff"
+        },
+        {
+          "hash": "68e7c98",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:28:56+02:00",
+          "subject": "Add local worker conversion handoff"
+        },
+        {
+          "hash": "6754181",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:27:43+02:00",
+          "subject": "Add training eval ontology handoff"
+        },
+        {
+          "hash": "cf5bbd9",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T07:24:47+02:00",
+          "subject": "Add runtime manifest validator flow handoff"
+        }
+      ]
+    }
+  ],
+  "handoff_inboxes": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
+      "exists": true,
+      "files": 325
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
+      "exists": true,
+      "files": 187
+    }
+  ],
+  "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md",
+      "number": 326,
+      "title": "Codex Synergiebericht 326: Cross-Worker Delta Audit",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T10:39:35.507Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md",
+      "number": 325,
+      "title": "Codex Synergiebericht 325: Worktree Guard Audit",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:48:40.361Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-324-terminal-gate-audit.md",
+      "number": 324,
+      "title": "Codex Synergiebericht 324: Terminal Gate Audit",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:43:11.999Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-323-owner-gate-terminal-status.md",
+      "number": 323,
+      "title": "Codex Synergiebericht 323: Owner Gate Terminal Status",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:36:47.188Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-322-owner-unlock-helper-chain.md",
+      "number": 322,
+      "title": "Codex Synergiebericht 322: Owner Unlock Helper Chain",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:35:11.864Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-321-local-model-inventory-refresh.md",
+      "number": 321,
+      "title": "Codex Synergiebericht 321: Local Model Inventory Refresh",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:31:45.792Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-320-day-batch-loop-green.md",
+      "number": 320,
+      "title": "Codex Synergiebericht 320: Day Batch Loop Green",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:31:03.810Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-319-local-worker-conversion-governance.md",
+      "number": 319,
+      "title": "Codex Synergiebericht 319: Local Worker Conversion Governance",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:28:41.433Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md",
+      "number": 318,
+      "title": "Codex Synergiebericht 318: Training/Eval/Ontology Refresh",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:27:27.531Z"
+    },
+    {
+      "filename": "2026-06-16-codex-synergiebericht-317-runtime-manifest-validator-flow-integration.md",
+      "number": 317,
+      "title": "Codex Synergiebericht 317: Runtime Manifest Validator Flow Integration",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T05:24:37.904Z"
+    }
+  ],
+  "foreign_commits_needing_review": [
+    {
+      "hash": "6cac828",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T08:48:13+02:00",
+      "subject": "Guard handlungsfähig: \"⚡ tote Kanten entfernen\"-Button"
+    },
+    {
+      "hash": "6448930",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T08:11:38+02:00",
+      "subject": "Guard: Konfig-Knoten-Args als gelieferte Felder zählen (Falsch-Positiv-Fix)"
+    },
+    {
+      "hash": "872e0f1",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T07:49:29+02:00",
+      "subject": "Add worktree guard audit handoff"
+    },
+    {
+      "hash": "0026ba3",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T07:44:13+02:00",
+      "subject": "Add terminal gate audit handoff"
+    },
+    {
+      "hash": "d87b0cb",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T07:36:59+02:00",
+      "subject": "Add owner gate terminal handoff"
+    },
+    {
+      "hash": "f4a976b",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T07:36:51+02:00",
+      "subject": "Pipeline: schema-aware \"Aus Sprache\"-Generator + args-Support + Guard immer-an"
+    }
+  ],
+  "next_actions": [
+    "Review non-Codex KosmoOrbit commits before editing related Orbit files.",
+    "Keep ArchitectureCosmos source-root and runtime gates closed until exact owner replies pass.",
+    "Write a handoff when Codex changes shared Worker/Orbit coordination files.",
+    "Use exact staging only; the worktree guard still blocks broad staging."
+  ],
+  "failures": []
+}

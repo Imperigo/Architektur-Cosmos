@@ -1,0 +1,99 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T10:40:21.188Z",
+  "status": "cross_worker_delta_audit_guard_passed",
+  "policy": {
+    "validates_audit_only": true,
+    "reads_private_content": false,
+    "reads_file_contents": false,
+    "writes_repo_code": false,
+    "stages_files": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-cross-worker-delta-audit-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 15,
+    "passed": 15,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "cross_worker_delta_audit_ready"
+    },
+    {
+      "id": "audit_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_file_content_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "handoff_headings_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "no_repo_writes",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_staging",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": "0/0"
+    },
+    {
+      "id": "expected_repos_visible",
+      "status": "passed",
+      "evidence": "architecture-cosmos,kosmo-orbit/2"
+    },
+    {
+      "id": "latest_handoff_present",
+      "status": "passed",
+      "evidence": 326
+    },
+    {
+      "id": "handoffs_mirrored",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "foreign_commit_review_count_present",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "next_actions_preserve_gates",
+      "status": "passed",
+      "evidence": "review non-codex kosmoorbit commits before editing related orbit files. keep architecturecosmos source-root and runtime gates closed until exact owner replies pass. write a handoff when codex changes shared worker/orbit coordination files. use exact staging only; the worktree guard still blocks broad staging."
+    },
+    {
+      "id": "next_actions_exact_staging",
+      "status": "passed",
+      "evidence": "review non-codex kosmoorbit commits before editing related orbit files. keep architecturecosmos source-root and runtime gates closed until exact owner replies pass. write a handoff when codex changes shared worker/orbit coordination files. use exact staging only; the worktree guard still blocks broad staging."
+    },
+    {
+      "id": "no_failures_listed",
+      "status": "passed",
+      "evidence": ""
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:49:38.763Z",
+  "generated_at": "2026-06-16T10:40:21.433Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -144,6 +144,8 @@
     "data/kosmo-terminal-gate-audit-check-2026-06-16.json",
     "data/kosmo-worktree-guard-audit-2026-06-16.json",
     "data/kosmo-worktree-guard-audit-check-2026-06-16.json",
+    "data/kosmo-cross-worker-delta-audit-2026-06-16.json",
+    "data/kosmo-cross-worker-delta-audit-check-2026-06-16.json",
     "data/kosmo-codex-morning-routine-run-2026-06-16.json",
     "data/kosmo-codex-morning-routine-run-check-2026-06-16.json",
     "data/kosmo-today-loop-plan-2026-06-16.json",
@@ -163,7 +165,7 @@
     "data/kosmo-night-loop-checkpoint-2026-06-16.json"
   ],
   "summary": {
-    "cards": 84,
+    "cards": 85,
     "blocking_cards": 5,
     "owner_action_cards": 26,
     "source_root_blocked": true,
@@ -344,6 +346,13 @@
     "worktree_guard_audit_broad_stage_allowed": false,
     "worktree_guard_audit_check_status": "worktree_guard_audit_guard_passed",
     "worktree_guard_audit_check_failures": 0,
+    "cross_worker_delta_audit_status": "cross_worker_delta_audit_ready",
+    "cross_worker_delta_audit_visible_repos": 2,
+    "cross_worker_delta_audit_latest_handoff_number": 326,
+    "cross_worker_delta_audit_latest_unmirrored_handoffs": 0,
+    "cross_worker_delta_audit_foreign_commits_needing_review": 6,
+    "cross_worker_delta_audit_check_status": "cross_worker_delta_audit_guard_passed",
+    "cross_worker_delta_audit_check_failures": 0,
     "codex_morning_routine_run_status": "codex_morning_routine_run_ready",
     "codex_morning_routine_run_next_batch": "source_free_innovation_and_guarding",
     "codex_morning_routine_run_remote_behind_total": 0,
@@ -1114,6 +1123,15 @@
       "owner_action_required": false,
       "route_hint": "Worker safety audit for dirty worktree coordination; exact staging only",
       "source_ref": "data/kosmo-worktree-guard-audit-2026-06-16.json"
+    },
+    {
+      "id": "cross-worker-delta-audit",
+      "title": "Cross-Worker Delta Audit",
+      "status": "guard_passed",
+      "signal": "2/2 repos, latest handoff 326, unmirrored 0, foreign commits 6, failures 0",
+      "owner_action_required": false,
+      "route_hint": "Source-free Git/Handoff delta audit across Codex, Claude and KosmoOrbit work",
+      "source_ref": "data/kosmo-cross-worker-delta-audit-2026-06-16.json"
     },
     {
       "id": "training-eval-rubric",

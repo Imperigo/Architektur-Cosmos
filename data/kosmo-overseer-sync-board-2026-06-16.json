@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:49:39.033Z",
+  "generated_at": "2026-06-16T10:40:21.939Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 324
+      "files": 325
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 184
+      "files": 187
     }
   ],
   "summary": {
@@ -43,10 +43,17 @@
     "local_worker_high_risk_hits": 0,
     "latest_handoffs": 8,
     "latest_handoff_mirror_missing_files": 0,
-    "historical_handoff_mirror_missing_files": 264,
+    "historical_handoff_mirror_missing_files": 266,
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-326-cross-worker-delta-audit.md",
+      "title": "Codex Synergiebericht 326: Cross-Worker Delta Audit",
+      "mirrored_inboxes": 2,
+      "bytes": 2320,
+      "modified_at": "2026-06-16T10:39:35.507Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-325-worktree-guard-audit.md",
       "title": "Codex Synergiebericht 325: Worktree Guard Audit",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 2091,
       "modified_at": "2026-06-16T05:28:41.433Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-318-training-eval-ontology-refresh.md",
-      "title": "Codex Synergiebericht 318: Training/Eval/Ontology Refresh",
-      "mirrored_inboxes": 2,
-      "bytes": 2755,
-      "modified_at": "2026-06-16T05:27:27.531Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 318-325 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 319-326 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T10:38:12.110Z",
+  "status": "local_worker_innovation_launch_apply_guard_guard_passed",
+  "policy": {
+    "validates_guard_only": true,
+    "executes_local_workers_now": false,
+    "starts_models_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-innovation-launch-apply-guard-2026-06-16.json"
+  ],
+  "summary": {
+    "checks": 23,
+    "passed": 23,
+    "failures": 0,
+    "guard_status": "local_worker_innovation_launch_apply_guard_waiting_for_exact_reply",
+    "exact_reply_valid": false,
+    "separate_launch_allowed_after_guard": false,
+    "execute_now": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_guarded",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_waiting_for_exact_reply"
+    },
+    {
+      "id": "policy_guard_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decision_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_execution_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_model_start",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_repo_outputs",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_promotion",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "execute_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "starts_models_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "tasks_five",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "exact_reply_required_choice",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_choice=approve_separate_source_free_launch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_run_validator_after_outputs=yes note=Nur die 5 GitHub-Innovation-Fixture-Tasks duerfen in einem separaten Launch-Batch laufen."
+    },
+    {
+      "id": "exact_reply_source_free",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_choice=approve_separate_source_free_launch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_run_validator_after_outputs=yes note=Nur die 5 GitHub-Innovation-Fixture-Tasks duerfen in einem separaten Launch-Batch laufen."
+    },
+    {
+      "id": "exact_reply_no_private",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_choice=approve_separate_source_free_launch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_run_validator_after_outputs=yes note=Nur die 5 GitHub-Innovation-Fixture-Tasks duerfen in einem separaten Launch-Batch laufen."
+    },
+    {
+      "id": "exact_reply_validator",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_choice=approve_separate_source_free_launch_later confirmed_source_free_only=yes confirmed_no_private_content=yes confirmed_run_validator_after_outputs=yes note=Nur die 5 GitHub-Innovation-Fixture-Tasks duerfen in einem separaten Launch-Batch laufen."
+    },
+    {
+      "id": "separate_launch_flag_consistent",
+      "status": "passed",
+      "evidence": "false/false"
+    },
+    {
+      "id": "valid_reply_has_ready_status",
+      "status": "passed",
+      "evidence": "local_worker_innovation_launch_apply_guard_waiting_for_exact_reply"
+    },
+    {
+      "id": "invalid_or_waiting_no_launch",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "hard_stop_no_execution",
+      "status": "passed",
+      "evidence": "this guard never executes local workers. this guard never starts models. this guard never reads private source root, onedrive or archive-library content. this guard never promotes public-ready or training rows. a broad approval is not enough; exact key=value fields are required."
+    },
+    {
+      "id": "hard_stop_no_private",
+      "status": "passed",
+      "evidence": "this guard never executes local workers. this guard never starts models. this guard never reads private source root, onedrive or archive-library content. this guard never promotes public-ready or training rows. a broad approval is not enough; exact key=value fields are required."
+    },
+    {
+      "id": "hard_stop_exact_required",
+      "status": "passed",
+      "evidence": "this guard never executes local workers. this guard never starts models. this guard never reads private source root, onedrive or archive-library content. this guard never promotes public-ready or training rows. a broad approval is not enough; exact key=value fields are required."
+    }
+  ]
+}

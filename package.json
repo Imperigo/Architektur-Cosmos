@@ -350,6 +350,8 @@
     "kosmo:terminal-gate-audit-check": "node scripts/kosmo-terminal-gate-audit-check.mjs",
     "kosmo:worktree-guard-audit": "node scripts/kosmo-worktree-guard-audit.mjs",
     "kosmo:worktree-guard-audit-check": "node scripts/kosmo-worktree-guard-audit-check.mjs",
+    "kosmo:cross-worker-delta-audit": "node scripts/kosmo-cross-worker-delta-audit.mjs",
+    "kosmo:cross-worker-delta-audit-check": "node scripts/kosmo-cross-worker-delta-audit-check.mjs",
     "kosmo:owner-unlock-session-apply-guard": "node scripts/kosmo-owner-unlock-session-apply-guard.mjs",
     "kosmo:owner-unlock-session-apply-guard-check": "node scripts/kosmo-owner-unlock-session-apply-guard-check.mjs",
     "kosmo:owner-unlock-session-apply-guard-smoke": "node scripts/kosmo-owner-unlock-session-apply-guard-smoke.mjs",

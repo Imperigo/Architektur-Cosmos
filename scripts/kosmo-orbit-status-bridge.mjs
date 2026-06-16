@@ -141,6 +141,8 @@ const refs = {
   terminalGateAuditCheck: `data/kosmo-terminal-gate-audit-check-${dateStamp}.json`,
   worktreeGuardAudit: `data/kosmo-worktree-guard-audit-${dateStamp}.json`,
   worktreeGuardAuditCheck: `data/kosmo-worktree-guard-audit-check-${dateStamp}.json`,
+  crossWorkerDeltaAudit: `data/kosmo-cross-worker-delta-audit-${dateStamp}.json`,
+  crossWorkerDeltaAuditCheck: `data/kosmo-cross-worker-delta-audit-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
@@ -313,6 +315,8 @@ function buildBridge(reports) {
   const terminalGateAuditCheckSummary = reports.terminalGateAuditCheck?.summary || {};
   const worktreeGuardAuditSummary = reports.worktreeGuardAudit?.summary || {};
   const worktreeGuardAuditCheckSummary = reports.worktreeGuardAuditCheck?.summary || {};
+  const crossWorkerDeltaAuditSummary = reports.crossWorkerDeltaAudit?.summary || {};
+  const crossWorkerDeltaAuditCheckSummary = reports.crossWorkerDeltaAuditCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
@@ -1293,6 +1297,18 @@ function buildBridge(reports) {
       source_ref: refs.worktreeGuardAudit
     },
     {
+      id: 'cross-worker-delta-audit',
+      title: 'Cross-Worker Delta Audit',
+      status: reports.crossWorkerDeltaAudit?.status === 'cross_worker_delta_audit_ready' &&
+        reports.crossWorkerDeltaAuditCheck?.status === 'cross_worker_delta_audit_guard_passed'
+        ? 'guard_passed'
+        : 'needs_review',
+      signal: `${crossWorkerDeltaAuditSummary.visible_repos ?? 0}/${crossWorkerDeltaAuditSummary.repos ?? 0} repos, latest handoff ${crossWorkerDeltaAuditSummary.latest_handoff_number ?? '-'}, unmirrored ${crossWorkerDeltaAuditSummary.latest_unmirrored_handoffs ?? '-'}, foreign commits ${crossWorkerDeltaAuditSummary.foreign_commits_needing_review ?? '-'}, failures ${crossWorkerDeltaAuditCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Source-free Git/Handoff delta audit across Codex, Claude and KosmoOrbit work',
+      source_ref: refs.crossWorkerDeltaAudit
+    },
+    {
       id: 'training-eval-rubric',
       title: 'Training Eval Rubric',
       status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
@@ -1580,6 +1596,13 @@ function buildBridge(reports) {
       worktree_guard_audit_broad_stage_allowed: worktreeGuardAuditSummary.broad_stage_allowed ?? null,
       worktree_guard_audit_check_status: reports.worktreeGuardAuditCheck?.status || null,
       worktree_guard_audit_check_failures: worktreeGuardAuditCheckSummary.failures ?? null,
+      cross_worker_delta_audit_status: reports.crossWorkerDeltaAudit?.status || null,
+      cross_worker_delta_audit_visible_repos: crossWorkerDeltaAuditSummary.visible_repos ?? null,
+      cross_worker_delta_audit_latest_handoff_number: crossWorkerDeltaAuditSummary.latest_handoff_number ?? null,
+      cross_worker_delta_audit_latest_unmirrored_handoffs: crossWorkerDeltaAuditSummary.latest_unmirrored_handoffs ?? null,
+      cross_worker_delta_audit_foreign_commits_needing_review: crossWorkerDeltaAuditSummary.foreign_commits_needing_review ?? null,
+      cross_worker_delta_audit_check_status: reports.crossWorkerDeltaAuditCheck?.status || null,
+      cross_worker_delta_audit_check_failures: crossWorkerDeltaAuditCheckSummary.failures ?? null,
       codex_morning_routine_run_status: reports.codexMorningRoutineRun?.status || null,
       codex_morning_routine_run_next_batch: codexMorningRoutineRunSummary.next_batch_mode || null,
       codex_morning_routine_run_remote_behind_total: codexMorningRoutineRunSummary.remote_behind_total ?? null,
@@ -1799,6 +1822,7 @@ function renderMarkdown(bridge) {
   lines.push(`- GitHub worker runtime manifest validator: ${bridge.summary.github_worker_runtime_manifest_validator_status}, validated ${bridge.summary.github_worker_runtime_manifest_validator_validated_manifests ?? '-'}, blocked ${bridge.summary.github_worker_runtime_manifest_validator_blocked_manifests ?? '-'}, review-only ${bridge.summary.github_worker_runtime_manifest_validator_review_only_valid_manifests ?? '-'}, public-ready ${bridge.summary.github_worker_runtime_manifest_validator_public_ready_after_validation ?? '-'}, failures ${bridge.summary.github_worker_runtime_manifest_validator_check_failures ?? '-'}`);
   lines.push(`- Terminal gate audit: ${bridge.summary.terminal_gate_audit_status}, blockers ${bridge.summary.terminal_gate_audit_terminal_blockers ?? '-'}, executable ${bridge.summary.terminal_gate_audit_actions_executable_now ?? '-'}, public-ready ${bridge.summary.terminal_gate_audit_public_ready_after_audit ?? '-'}, failures ${bridge.summary.terminal_gate_audit_check_failures ?? '-'}`);
   lines.push(`- Worktree guard audit: ${bridge.summary.worktree_guard_audit_status}, entries ${bridge.summary.worktree_guard_audit_entries ?? '-'}, staged ${bridge.summary.worktree_guard_audit_staged ?? '-'}, untracked ${bridge.summary.worktree_guard_audit_untracked ?? '-'}, broad stage ${bridge.summary.worktree_guard_audit_broad_stage_allowed ? 'allowed' : 'blocked'}, failures ${bridge.summary.worktree_guard_audit_check_failures ?? '-'}`);
+  lines.push(`- Cross-worker delta audit: ${bridge.summary.cross_worker_delta_audit_status}, repos ${bridge.summary.cross_worker_delta_audit_visible_repos ?? '-'}, latest handoff ${bridge.summary.cross_worker_delta_audit_latest_handoff_number ?? '-'}, unmirrored ${bridge.summary.cross_worker_delta_audit_latest_unmirrored_handoffs ?? '-'}, foreign commits ${bridge.summary.cross_worker_delta_audit_foreign_commits_needing_review ?? '-'}, failures ${bridge.summary.cross_worker_delta_audit_check_failures ?? '-'}`);
   lines.push(`- Training eval rubric: ${bridge.summary.training_eval_rubric_status}, suites ${bridge.summary.training_eval_rubric_suites ?? '-'}, criteria ${bridge.summary.training_eval_rubric_criteria ?? '-'}`);
   lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);
