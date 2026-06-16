@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:08:12.776Z",
+  "generated_at": "2026-06-16T18:11:51.051Z",
   "status": "overseer_sync_board_ready",
   "policy": {
     "records_decisions": false,
@@ -22,12 +22,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 336
+      "files": 337
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 203
+      "files": 204
     }
   ],
   "summary": {
@@ -47,6 +47,13 @@
     "public_ready_after_board": 0
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-338-claude-kosmooverseer-implementation-intake.md",
+      "title": "Codex Synergiebericht 338 - Claude/KosmoOverseer Implementation Intake",
+      "mirrored_inboxes": 2,
+      "bytes": 1453,
+      "modified_at": "2026-06-16T18:11:50.218Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-337-owner-unlock-operational-start-card.md",
       "title": "Codex Synergiebericht 337 - Owner Unlock Operational Start Card",
@@ -95,13 +102,6 @@
       "mirrored_inboxes": 2,
       "bytes": 4087,
       "modified_at": "2026-06-16T17:56:06.909Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-330-grosser-abendbatch.md",
-      "title": "Codex Synergiebericht 330: Grosser Abendbatch",
-      "mirrored_inboxes": 2,
-      "bytes": 1958,
-      "modified_at": "2026-06-16T17:38:31.154Z"
     }
   ],
   "blockers": [
@@ -127,7 +127,7 @@
     }
   ],
   "next_actions": [
-    "Claude/KosmoOverseer reviews latest handoffs 330-337 before editing related files.",
+    "Claude/KosmoOverseer reviews latest handoffs 331-338 before editing related files.",
     "Use the owner review session brief as the next owner-facing entry point.",
     "Keep local worker tasks review-only while source-root and owner answers are pending.",
     "After any explicit owner answer, update intake first, then rerun guards and this sync board."

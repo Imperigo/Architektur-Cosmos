@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:08:13.391Z",
+  "generated_at": "2026-06-16T18:11:50.510Z",
   "status": "cross_worker_delta_audit_ready",
   "policy": {
     "audit_only": true,
@@ -25,7 +25,7 @@
   "summary": {
     "repos": 2,
     "visible_repos": 2,
-    "latest_handoff_number": 337,
+    "latest_handoff_number": 338,
     "latest_handoffs": 10,
     "active_handoff_inboxes": 2,
     "latest_unmirrored_handoffs": 0,
@@ -34,7 +34,7 @@
     "functional_foreign_commits_seen": 3,
     "reviewed_foreign_commits": 3,
     "foreign_commits_needing_review": 0,
-    "dirty_repo_entries": 1333,
+    "dirty_repo_entries": 1330,
     "failures": 0,
     "public_ready_after_audit": 0
   },
@@ -45,9 +45,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "exists": true,
       "branch": "main",
-      "head": "3615a24",
-      "status_count": 1332,
+      "head": "ccc539e",
+      "status_count": 1329,
       "recent_commits": [
+        {
+          "hash": "ccc539e",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T20:08:28+02:00",
+          "subject": "Add owner unlock operational start card"
+        },
         {
           "hash": "3615a24",
           "author": "Architecture Cosmos Maintainer",
@@ -113,12 +119,6 @@
           "author": "Architecture Cosmos Maintainer",
           "date": "2026-06-16T12:43:18+02:00",
           "subject": "Refresh cross-worker audit after Orbit validation"
-        },
-        {
-          "hash": "c1314a9",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T12:40:59+02:00",
-          "subject": "Add cross-worker delta audit"
         }
       ]
     },
@@ -128,9 +128,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
       "exists": true,
       "branch": "main",
-      "head": "0120daa",
+      "head": "b15c639",
       "status_count": 1,
       "recent_commits": [
+        {
+          "hash": "b15c639",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T20:08:39+02:00",
+          "subject": "Add Codex owner unlock start card handoff"
+        },
         {
           "hash": "0120daa",
           "author": "Andrin Baumann",
@@ -196,12 +202,6 @@
           "author": "Andrin Baumann",
           "date": "2026-06-16T14:39:55+02:00",
           "subject": "Review-Fixes (heutige Changes): 7 bestätigte Bugs aus adversarialer Multi-Agent-Review"
-        },
-        {
-          "hash": "b60d11b",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T14:36:21+02:00",
-          "subject": "Add source root unlock handoff"
         }
       ]
     }
@@ -210,12 +210,12 @@
     {
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 336
+      "files": 337
     },
     {
       "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
       "exists": true,
-      "files": 203
+      "files": 204
     }
   ],
   "review_ledger": {
@@ -232,6 +232,13 @@
     ]
   },
   "latest_handoffs": [
+    {
+      "filename": "2026-06-16-codex-synergiebericht-338-claude-kosmooverseer-implementation-intake.md",
+      "number": 338,
+      "title": "Codex Synergiebericht 338 - Claude/KosmoOverseer Implementation Intake",
+      "mirrored_inboxes": 2,
+      "modified_at": "2026-06-16T18:11:50.218Z"
+    },
     {
       "filename": "2026-06-16-codex-synergiebericht-337-owner-unlock-operational-start-card.md",
       "number": 337,
@@ -294,16 +301,15 @@
       "title": "Codex Synergiebericht 329: Review-Batches review-only triagiert",
       "mirrored_inboxes": 2,
       "modified_at": "2026-06-16T17:16:07.487Z"
-    },
-    {
-      "filename": "2026-06-16-codex-synergiebericht-328-source-root-unlocked-metadata-inventory.md",
-      "number": 328,
-      "title": "Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory",
-      "mirrored_inboxes": 2,
-      "modified_at": "2026-06-16T12:33:14.708Z"
     }
   ],
   "foreign_handoff_commits_ignored": [
+    {
+      "hash": "b15c639",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T20:08:39+02:00",
+      "subject": "Add Codex owner unlock start card handoff"
+    },
     {
       "hash": "0120daa",
       "author": "Andrin Baumann",
@@ -351,12 +357,6 @@
       "author": "Andrin Baumann",
       "date": "2026-06-16T19:17:11+02:00",
       "subject": "Add review batch triage handoff"
-    },
-    {
-      "hash": "b60d11b",
-      "author": "Andrin Baumann",
-      "date": "2026-06-16T14:36:21+02:00",
-      "subject": "Add source root unlock handoff"
     }
   ],
   "reviewed_foreign_commits": [

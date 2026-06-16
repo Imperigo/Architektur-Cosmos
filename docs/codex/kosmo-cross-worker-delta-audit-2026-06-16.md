@@ -1,27 +1,28 @@
 # Kosmo Cross-Worker Delta Audit
 
-Generated: 2026-06-16T18:08:13.391Z
+Generated: 2026-06-16T18:11:50.510Z
 Status: `cross_worker_delta_audit_ready`
 
 ## Summary
 
 - Repos: 2/2
-- Latest handoff: 337
+- Latest handoff: 338
 - Latest unmirrored handoffs: 0
 - Functional foreign commits seen: 3
 - Reviewed foreign commits: 3
 - Foreign handoff commits ignored: 9
 - Foreign commits needing review: 0
-- Dirty repo entries: 1333
+- Dirty repo entries: 1330
 - Public-ready after audit: 0
 
 ## Repos
 
-- architecture-cosmos: main @ 3615a24, dirty 1332
-- kosmo-orbit: main @ 0120daa, dirty 1
+- architecture-cosmos: main @ ccc539e, dirty 1329
+- kosmo-orbit: main @ b15c639, dirty 1
 
 ## Latest Handoffs
 
+- 338: Codex Synergiebericht 338 - Claude/KosmoOverseer Implementation Intake (mirrors 2)
 - 337: Codex Synergiebericht 337 - Owner Unlock Operational Start Card (mirrors 2)
 - 336: Codex Synergiebericht 336 - Cross-Worker Audit Ledger (mirrors 2)
 - 335: Codex Synergiebericht 335 - Cross-Worker Review 2 (mirrors 2)
@@ -31,7 +32,6 @@ Status: `cross_worker_delta_audit_ready`
 - 331: Codex Synergiebericht 331 - Abendbatch Execution (mirrors 2)
 - 330: Codex Synergiebericht 330: Grosser Abendbatch (mirrors 2)
 - 329: Codex Synergiebericht 329: Review-Batches review-only triagiert (mirrors 2)
-- 328: Codex Synergiebericht 328: Source Root Unlocked Metadata Inventory (mirrors 2)
 
 ## Review Ledger
 
@@ -47,6 +47,7 @@ Status: `cross_worker_delta_audit_ready`
 
 ## Ignored Foreign Handoff Commits
 
+- b15c639: Andrin Baumann - Add Codex owner unlock start card handoff
 - 0120daa: Andrin Baumann - Add Codex cross-worker audit ledger handoff
 - f59d8ef: Andrin Baumann - Add Codex cross-worker review 2 handoff
 - 8704a06: Andrin Baumann - Add Codex evening rollup handoff
@@ -55,7 +56,6 @@ Status: `cross_worker_delta_audit_ready`
 - 9889d28: Andrin Baumann - Add Codex evening batch handoff
 - b6a9928: Andrin Baumann - Add evening big batch handoff
 - c9eef0c: Andrin Baumann - Add review batch triage handoff
-- b60d11b: Andrin Baumann - Add source root unlock handoff
 
 ## Foreign Commits Needing Review
 

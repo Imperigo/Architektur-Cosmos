@@ -1,6 +1,6 @@
 # Kosmo Cross-Worker Delta Audit Check
 
-Generated: 2026-06-16T18:08:13.661Z
+Generated: 2026-06-16T18:11:50.759Z
 Status: `cross_worker_delta_audit_guard_passed`
 
 ## Summary
@@ -20,7 +20,7 @@ Status: `cross_worker_delta_audit_guard_passed`
 - passed: `no_staging` - false
 - passed: `public_ready_zero` - 0/0
 - passed: `expected_repos_visible` - architecture-cosmos,kosmo-orbit/2
-- passed: `latest_handoff_present` - 337
+- passed: `latest_handoff_present` - 338
 - passed: `handoffs_mirrored` - 0
 - passed: `foreign_commit_review_count_present` - 0
 - passed: `review_ledger_present` - true/2

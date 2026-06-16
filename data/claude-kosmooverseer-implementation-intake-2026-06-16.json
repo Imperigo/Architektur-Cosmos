@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-16T18:10:30Z",
+  "status": "claude_kosmooverseer_implementation_intake_ready",
+  "audience": [
+    "claude_code",
+    "kosmo_overseer"
+  ],
+  "source_policy": {
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "runs_ocr_now": false,
+    "runs_embeddings_now": false,
+    "runs_training_now": false,
+    "runs_local_worker_private_tasks_now": false,
+    "public_ready_after_intake": 0
+  },
+  "repo_heads": {
+    "architecture_cosmos": "ccc539e",
+    "kosmo_orbit": "b15c639"
+  },
+  "latest_handoffs": [
+    "2026-06-16-codex-synergiebericht-337-owner-unlock-operational-start-card.md",
+    "2026-06-16-codex-synergiebericht-336-cross-worker-audit-ledger.md",
+    "2026-06-16-codex-synergiebericht-335-cross-worker-review-2.md",
+    "2026-06-16-codex-synergiebericht-334-evening-rollup-needs-review.md",
+    "2026-06-16-codex-synergiebericht-333-cross-worker-commit-review.md",
+    "2026-06-16-codex-synergiebericht-332-abendbatch-zusatz-audits.md",
+    "2026-06-16-codex-synergiebericht-331-abendbatch-execution.md",
+    "2026-06-16-codex-synergiebericht-330-grosser-abendbatch.md"
+  ],
+  "primary_docs": [
+    "docs/codex/kosmo-tomorrow-day-batch-2026-06-16.md",
+    "docs/codex/kosmo-owner-unlock-operational-start-card-2026-06-16.md",
+    "docs/codex/kosmo-cross-worker-delta-audit-2026-06-16.md",
+    "docs/codex/kosmo-overseer-sync-board-2026-06-16.md",
+    "docs/codex/kosmo-evening-batch-acceptance-certificate-2026-06-16.md",
+    "docs/codex/kosmo-cross-worker-commit-review-2026-06-16.md",
+    "docs/codex/kosmo-cross-worker-commit-review-2-2026-06-16.md"
+  ],
+  "implementation_tasks_for_claude": [
+    {
+      "id": "ingest_codex_handoffs_330_337",
+      "priority": "p0",
+      "description": "Read handoffs 330-337 and register them in KosmoOverseer as the current Codex state.",
+      "acceptance": "KosmoOverseer can display latest Codex handoff number 337 and no latest mirror gaps."
+    },
+    {
+      "id": "surface_owner_unlock_start_card",
+      "priority": "p0",
+      "description": "Make the Owner Unlock Operational Start Card the owner-facing starting point for the next decision.",
+      "acceptance": "UI/status clearly says needs_review, writes now no, public-ready 0, blocked commands 5."
+    },
+    {
+      "id": "honor_cross_worker_review_ledger",
+      "priority": "p0",
+      "description": "Use the improved Cross-Worker Delta Audit as source of truth: reviewed functional commits 3/3, needing review 0, handoff commits ignored.",
+      "acceptance": "KosmoOverseer does not ask Claude to re-review handoff-only commits, but remains conservative for new functional commits."
+    },
+    {
+      "id": "run_tomorrow_source_free_batch_only",
+      "priority": "p1",
+      "description": "Follow the 2026-06-17 Tomorrow Day Batch in source-free mode until exact owner unlock passes.",
+      "acceptance": "No private inventory, OCR, embeddings, training, downloads or local worker private-content execution are started."
+    },
+    {
+      "id": "preserve_dirty_worktree_guard",
+      "priority": "p1",
+      "description": "Respect dirty worktree guard: exact staging only, no git add dot, unrelated dirty files remain untouched.",
+      "acceptance": "New commits contain only intended Claude/KosmoOverseer files and matching handoff notes."
+    }
+  ],
+  "start_commands": [
+    "git status --short",
+    "npm run kosmo:cross-worker-delta-audit",
+    "npm run kosmo:cross-worker-delta-audit-check",
+    "npm run kosmo:overseer-sync-board",
+    "npm run kosmo:overseer-sync-board-check",
+    "npm run kosmo:owner-unlock-operational-start-card",
+    "npm run kosmo:owner-unlock-operational-start-card-check",
+    "npm run kosmo:tomorrow-day-batch",
+    "npm run kosmo:tomorrow-day-batch-check"
+  ],
+  "hard_stops": [
+    "Do not treat this intake as owner approval.",
+    "Do not run private inventory, OCR, embeddings, training or local worker private-content tasks.",
+    "Do not promote anything to public-ready.",
+    "Do not apply source-root session edits without exact owner reply and passing guards.",
+    "Do not broadly stage the dirty worktree."
+  ],
+  "exact_owner_reply_template": "source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+}
