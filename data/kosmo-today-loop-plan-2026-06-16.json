@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T05:06:46.540Z",
+  "generated_at": "2026-06-16T05:18:26.869Z",
   "status": "today_loop_plan_ready",
   "policy": {
     "autonomous_until_local_time": "18:00",
@@ -28,6 +28,8 @@
     "data/kosmo-source-root-owner-final-decision-brief-2026-06-16.json",
     "data/kosmo-local-worker-innovation-conversion-evidence-ledger-2026-06-16.json",
     "data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-2026-06-16.json",
+    "data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-check-2026-06-16.json",
     "data/kosmo-tomorrow-day-batch-2026-06-16.json"
   ],
   "summary": {
@@ -39,10 +41,12 @@
     "worker_boundary_guard_status": "worker_boundary_pack_guard_passed",
     "conversion_evidence_ledger_status": null,
     "conversion_evidence_ledger_guard_status": null,
+    "runtime_manifest_validator_plan_status": "innovation_github_worker_runtime_manifest_validator_plan_ready",
+    "runtime_manifest_validator_plan_guard_status": "innovation_github_worker_runtime_manifest_validator_plan_guard_passed",
     "day_batch_loop_status": "day_batch_loop_needs_review",
     "owner_action_required": true,
     "source_root_unlocked": false,
-    "source_root_final_brief_status": null,
+    "source_root_final_brief_status": "source_root_owner_final_decision_brief_ready",
     "inherited_tomorrow_plan_status": "tomorrow_day_batch_ready",
     "public_ready_after_plan": 0
   },
@@ -156,12 +160,15 @@
         "npm run kosmo:innovation-github-worker-runtime-batch-manifest-draft",
         "npm run kosmo:innovation-github-worker-runtime-batch-manifest-draft-check",
         "npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures",
-        "npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check"
+        "npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check",
+        "npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan",
+        "npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan-check"
       ],
       "acceptance": [
         "Scout report exists",
         "all candidates mapped to lanes",
         "GitHub fixture skeletons/payloads/smoke are review-only ready",
+        "runtime manifest validator plan is guard-passed",
         "no install/private-read/training action enabled"
       ]
     },

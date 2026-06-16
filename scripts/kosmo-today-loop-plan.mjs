@@ -16,6 +16,8 @@ const refs = {
   sourceRootFinalBrief: resolve(root, args.sourceRootFinalBrief || `data/kosmo-source-root-owner-final-decision-brief-${dateStamp}.json`),
   conversionEvidenceLedger: resolve(root, args.conversionEvidenceLedger || `data/kosmo-local-worker-innovation-conversion-evidence-ledger-${dateStamp}.json`),
   conversionEvidenceLedgerCheck: resolve(root, args.conversionEvidenceLedgerCheck || `data/kosmo-local-worker-innovation-conversion-evidence-ledger-check-${dateStamp}.json`),
+  runtimeManifestValidatorPlan: resolve(root, args.runtimeManifestValidatorPlan || `data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-${dateStamp}.json`),
+  runtimeManifestValidatorPlanCheck: resolve(root, args.runtimeManifestValidatorPlanCheck || `data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-check-${dateStamp}.json`),
   tomorrowPlan: resolve(root, args.tomorrowPlan || `data/kosmo-tomorrow-day-batch-${dateStamp}.json`)
 };
 
@@ -37,6 +39,8 @@ async function main() {
     sourceRootFinalBrief: await readOptionalJson(refs.sourceRootFinalBrief),
     conversionEvidenceLedger: await readOptionalJson(refs.conversionEvidenceLedger),
     conversionEvidenceLedgerCheck: await readOptionalJson(refs.conversionEvidenceLedgerCheck),
+    runtimeManifestValidatorPlan: await readOptionalJson(refs.runtimeManifestValidatorPlan),
+    runtimeManifestValidatorPlanCheck: await readOptionalJson(refs.runtimeManifestValidatorPlanCheck),
     tomorrowPlan: await readOptionalJson(refs.tomorrowPlan)
   };
   const plan = buildPlan(reports);
@@ -101,6 +105,8 @@ function buildPlan(reports) {
       worker_boundary_guard_status: reports.workerBoundaryCheck?.status || null,
       conversion_evidence_ledger_status: reports.conversionEvidenceLedger?.status || null,
       conversion_evidence_ledger_guard_status: reports.conversionEvidenceLedgerCheck?.status || null,
+      runtime_manifest_validator_plan_status: reports.runtimeManifestValidatorPlan?.status || null,
+      runtime_manifest_validator_plan_guard_status: reports.runtimeManifestValidatorPlanCheck?.status || null,
       day_batch_loop_status: reports.dayBatchLoop?.status || null,
       owner_action_required: ownerActionRequired,
       source_root_unlocked: sourceRootUnlocked,
@@ -189,9 +195,11 @@ function buildPlan(reports) {
           'npm run kosmo:innovation-github-worker-runtime-batch-manifest-draft',
           'npm run kosmo:innovation-github-worker-runtime-batch-manifest-draft-check',
           'npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures',
-          'npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check'
+          'npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check',
+          'npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan',
+          'npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan-check'
         ],
-        acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'GitHub fixture skeletons/payloads/smoke are review-only ready', 'no install/private-read/training action enabled']
+        acceptance: ['Scout report exists', 'all candidates mapped to lanes', 'GitHub fixture skeletons/payloads/smoke are review-only ready', 'runtime manifest validator plan is guard-passed', 'no install/private-read/training action enabled']
       },
       {
         id: 'references_schema_hardening',
@@ -278,6 +286,7 @@ function renderMarkdown(plan) {
   lines.push(`- Router: ${plan.summary.router_status}`);
   lines.push(`- Worker boundary guard: ${plan.summary.worker_boundary_guard_status}`);
   lines.push(`- Conversion evidence ledger: ${plan.summary.conversion_evidence_ledger_status}`);
+  lines.push(`- Runtime manifest validator plan: ${plan.summary.runtime_manifest_validator_plan_status}, guard ${plan.summary.runtime_manifest_validator_plan_guard_status}`);
   lines.push(`- Source-root unlocked: ${plan.summary.source_root_unlocked ? 'yes' : 'no'}`);
   lines.push(`- Public-ready after plan: ${plan.summary.public_ready_after_plan}`);
   lines.push('');

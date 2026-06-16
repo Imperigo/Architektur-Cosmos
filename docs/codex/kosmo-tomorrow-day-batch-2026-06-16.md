@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-17
 
-Generated: 2026-06-16T05:06:47.013Z
+Generated: 2026-06-16T05:18:27.349Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -10,9 +10,9 @@ Status: `tomorrow_day_batch_ready`
 - Owner unlock components: -
 - Owner unlock guards: -
 - Acceptance known checks: -
-- Source queue: -
-- Codex executable now: -
-- Open owner actions: -
+- Source queue: source_independent_work_queue_ready
+- Codex executable now: 0
+- Open owner actions: 2
 - Live GitHub probe: 9/9
 - Morning routine run: codex_morning_routine_run_ready
 - Morning next batch: source_free_innovation_and_guarding
@@ -67,6 +67,8 @@ Status: `tomorrow_day_batch_ready`
 - `npm run kosmo:innovation-github-worker-runtime-batch-manifest-draft-check`
 - `npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures`
 - `npm run kosmo:innovation-github-worker-runtime-manifest-negative-fixtures-check`
+- `npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan`
+- `npm run kosmo:innovation-github-worker-runtime-manifest-validator-plan-check`
 - `npm run kosmo:local-worker-fixture-chain-task-pack`
 - `npm run kosmo:local-worker-fixture-chain-task-pack-check`
 - `npm run kosmo:local-worker-innovation-output-smoke`

@@ -1,11 +1,11 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-16T05:12:47.792Z
+Generated: 2026-06-16T05:18:57.012Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
-- Cards: 80
+- Cards: 81
 - Blocking cards: 27
 - Owner action cards: 26
 - Source root blocked: yes
@@ -29,7 +29,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 8
 - Local worker execution runbook: local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0
 - Local worker output contracts: local_worker_output_contract_review_ready, contracts 9, present valid 9, repo conversion now 0, execute now 0, check local_worker_output_contract_review_guard_passed, failures 0
-- Source-independent work queue: source_independent_work_queue_ready, tasks 9, completed 5, codex executable 2, owner actions 2, failures 0
+- Source-independent work queue: source_independent_work_queue_ready, tasks 9, completed 7, codex executable 0, owner actions 2, failures 0
 - Pilot gap label review: pilot_gap_label_review_ready, labels 12, hard blockers 7, owner decisions 7, check pilot_gap_label_review_guard_passed, failures 0
 - Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
@@ -49,6 +49,7 @@ Status: `orbit_bridge_ready_with_blockers`
 - GitHub worker runtime apply guard: innovation_github_worker_runtime_apply_guard_waiting_for_exact_reply, exact reply missing, separate runtime blocked, failures 0
 - GitHub worker runtime log-redaction negative fixtures: innovation_github_worker_runtime_log_redaction_negative_fixtures_ready, fixtures 10, blocked 10, leak categories 7
 - GitHub worker runtime batch manifest draft: innovation_github_worker_runtime_batch_manifest_draft_ready, id github-worker-runtime-batch-draft-2026-06-16, blocked prereqs 4, open gates 5
+- GitHub worker runtime manifest validator plan: innovation_github_worker_runtime_manifest_validator_plan_ready, rules 10, fixture categories 8, executable 0, failures 0
 - Training eval rubric: null, suites -, criteria -
 - Training eval row template: null, templates -
 - Training eval review queue: null, lanes -
@@ -92,7 +93,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 8 |
 | `local-worker-execution-runbook` Local Worker Execution Runbook | review_only_ready | no | local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_passed, executable now 0 |
 | `local-worker-output-contracts` Local Worker Output Contracts | review_only_ready | no | 9 contracts, present 9, repo 0, execute 0, failures 0 |
-| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 9 tasks, completed 5, codex 2, owner 2, failures 0 |
+| `source-independent-work-queue` Source-Independent Work Queue | review_only_ready | yes | 9 tasks, completed 7, codex 0, owner 2, failures 0 |
 | `private-metadata-inventory` Private Metadata Inventory | blocked_with_smoke_passed | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_passed |
 | `pilot-references` Pilot References | review_only | yes | 3 pilots, 12 evidence gaps |
 | `pilot-gap-labels` Pilot Gap Labels | review_only_ready | yes | 12 labels, 7 hard blockers, owner 7, failures 0 |
@@ -137,6 +138,7 @@ Status: `orbit_bridge_ready_with_blockers`
 | `github-worker-runtime-log-redaction-negative-fixtures` GitHub Worker Runtime Log-Redaction Negative Fixtures | review_only_ready | no | 10 negative fixtures, blocked 10, leak categories 7, runtime 0, failures 0 |
 | `github-worker-runtime-batch-manifest-draft` GitHub Worker Runtime Batch Manifest Draft | review_only_ready | no | github-worker-runtime-batch-draft-2026-06-16, prereqs 7, blocked 4, gates open 5, executable no, failures 0 |
 | `github-worker-runtime-manifest-negative-fixtures` GitHub Worker Runtime Manifest Negative Fixtures | review_only_ready | no | 10 manifest negatives, blocked 10, categories 8, executable 0, failures 0 |
+| `github-worker-runtime-manifest-validator-plan` GitHub Worker Runtime Manifest Validator Plan | review_only_ready | no | 10 rules, fixtures 8, executable 0, failures 0 |
 | `training-eval-rubric` Training Eval Rubric | needs_review | no | 0 suites, 0 criteria, eval items 0, failures 0 |
 | `training-eval-row-template` Training Eval Row Template | needs_review | no | 0 templates, 0 required fields, writes rows now 0, failures 0 |
 | `training-eval-review-queue` Training Eval Review Queue | needs_review | no | 0 lanes, 0 states, queue items now 0, failures 0 |

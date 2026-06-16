@@ -133,6 +133,8 @@ const refs = {
   githubWorkerRuntimeBatchManifestDraftCheck: `data/kosmo-innovation-github-worker-runtime-batch-manifest-draft-check-${dateStamp}.json`,
   githubWorkerRuntimeManifestNegativeFixtures: `data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-${dateStamp}.json`,
   githubWorkerRuntimeManifestNegativeFixturesCheck: `data/kosmo-innovation-github-worker-runtime-manifest-negative-fixtures-check-${dateStamp}.json`,
+  githubWorkerRuntimeManifestValidatorPlan: `data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-${dateStamp}.json`,
+  githubWorkerRuntimeManifestValidatorPlanCheck: `data/kosmo-innovation-github-worker-runtime-manifest-validator-plan-check-${dateStamp}.json`,
   codexMorningRoutineRun: `data/kosmo-codex-morning-routine-run-${dateStamp}.json`,
   codexMorningRoutineRunCheck: `data/kosmo-codex-morning-routine-run-check-${dateStamp}.json`,
   todayLoopPlan: `data/kosmo-today-loop-plan-${dateStamp}.json`,
@@ -297,6 +299,8 @@ function buildBridge(reports) {
   const githubWorkerRuntimeBatchManifestDraftCheckSummary = reports.githubWorkerRuntimeBatchManifestDraftCheck?.summary || {};
   const githubWorkerRuntimeManifestNegativeFixturesSummary = reports.githubWorkerRuntimeManifestNegativeFixtures?.summary || {};
   const githubWorkerRuntimeManifestNegativeFixturesCheckSummary = reports.githubWorkerRuntimeManifestNegativeFixturesCheck?.summary || {};
+  const githubWorkerRuntimeManifestValidatorPlanSummary = reports.githubWorkerRuntimeManifestValidatorPlan?.summary || {};
+  const githubWorkerRuntimeManifestValidatorPlanCheckSummary = reports.githubWorkerRuntimeManifestValidatorPlanCheck?.summary || {};
   const codexMorningRoutineRunSummary = reports.codexMorningRoutineRun?.summary || {};
   const codexMorningRoutineRunCheckSummary = reports.codexMorningRoutineRunCheck?.summary || {};
   const todayLoopPlanSummary = reports.todayLoopPlan?.summary || {};
@@ -1229,6 +1233,18 @@ function buildBridge(reports) {
       source_ref: refs.githubWorkerRuntimeManifestNegativeFixtures
     },
     {
+      id: 'github-worker-runtime-manifest-validator-plan',
+      title: 'GitHub Worker Runtime Manifest Validator Plan',
+      status: reports.githubWorkerRuntimeManifestValidatorPlan?.status === 'innovation_github_worker_runtime_manifest_validator_plan_ready' &&
+        reports.githubWorkerRuntimeManifestValidatorPlanCheck?.status === 'innovation_github_worker_runtime_manifest_validator_plan_guard_passed'
+        ? 'review_only_ready'
+        : 'needs_review',
+      signal: `${githubWorkerRuntimeManifestValidatorPlanSummary.rules ?? 0} rules, fixtures ${githubWorkerRuntimeManifestValidatorPlanSummary.fixture_categories ?? 0}, executable ${githubWorkerRuntimeManifestValidatorPlanSummary.executable_now ?? 0}, failures ${githubWorkerRuntimeManifestValidatorPlanCheckSummary.failures ?? 0}`,
+      owner_action_required: false,
+      route_hint: 'Source-free implementation plan for validating future runtime manifests before any execution or private-source reads',
+      source_ref: refs.githubWorkerRuntimeManifestValidatorPlan
+    },
+    {
       id: 'training-eval-rubric',
       title: 'Training Eval Rubric',
       status: reports.trainingEvalRubricPack?.status === 'training_eval_rubric_pack_ready' &&
@@ -1490,6 +1506,12 @@ function buildBridge(reports) {
       github_review_queue_status: reports.githubReviewQueue?.status || null,
       github_review_queue_items: githubReviewQueueSummary.review_items ?? null,
       github_review_queue_high_priority_items: githubReviewQueueSummary.high_priority_items ?? null,
+      github_worker_runtime_manifest_validator_plan_status: reports.githubWorkerRuntimeManifestValidatorPlan?.status || null,
+      github_worker_runtime_manifest_validator_plan_rules: githubWorkerRuntimeManifestValidatorPlanSummary.rules ?? null,
+      github_worker_runtime_manifest_validator_plan_fixture_categories: githubWorkerRuntimeManifestValidatorPlanSummary.fixture_categories ?? null,
+      github_worker_runtime_manifest_validator_plan_executable_now: githubWorkerRuntimeManifestValidatorPlanSummary.executable_now ?? null,
+      github_worker_runtime_manifest_validator_plan_check_status: reports.githubWorkerRuntimeManifestValidatorPlanCheck?.status || null,
+      github_worker_runtime_manifest_validator_plan_check_failures: githubWorkerRuntimeManifestValidatorPlanCheckSummary.failures ?? null,
       codex_morning_routine_run_status: reports.codexMorningRoutineRun?.status || null,
       codex_morning_routine_run_next_batch: codexMorningRoutineRunSummary.next_batch_mode || null,
       codex_morning_routine_run_remote_behind_total: codexMorningRoutineRunSummary.remote_behind_total ?? null,
@@ -1705,6 +1727,7 @@ function renderMarkdown(bridge) {
   lines.push(`- GitHub worker runtime apply guard: ${bridge.summary.github_worker_runtime_apply_guard_status}, exact reply ${bridge.summary.github_worker_runtime_apply_guard_exact_reply_valid ? 'valid' : 'missing'}, separate runtime ${bridge.summary.github_worker_runtime_apply_guard_separate_runtime_allowed ? 'allowed' : 'blocked'}, failures ${bridge.summary.github_worker_runtime_apply_guard_check_failures ?? '-'}`);
   lines.push(`- GitHub worker runtime log-redaction negative fixtures: ${bridge.summary.github_worker_runtime_log_redaction_negative_fixtures_status}, fixtures ${bridge.summary.github_worker_runtime_log_redaction_negative_fixtures_count ?? '-'}, blocked ${bridge.summary.github_worker_runtime_log_redaction_negative_fixtures_blocked ?? '-'}, leak categories ${bridge.summary.github_worker_runtime_log_redaction_negative_fixtures_leak_categories ?? '-'}`);
   lines.push(`- GitHub worker runtime batch manifest draft: ${bridge.summary.github_worker_runtime_batch_manifest_draft_status}, id ${bridge.summary.github_worker_runtime_batch_manifest_draft_id ?? '-'}, blocked prereqs ${bridge.summary.github_worker_runtime_batch_manifest_draft_blocked_prerequisites ?? '-'}, open gates ${bridge.summary.github_worker_runtime_batch_manifest_draft_open_review_gates ?? '-'}`);
+  lines.push(`- GitHub worker runtime manifest validator plan: ${bridge.summary.github_worker_runtime_manifest_validator_plan_status}, rules ${bridge.summary.github_worker_runtime_manifest_validator_plan_rules ?? '-'}, fixture categories ${bridge.summary.github_worker_runtime_manifest_validator_plan_fixture_categories ?? '-'}, executable ${bridge.summary.github_worker_runtime_manifest_validator_plan_executable_now ?? '-'}, failures ${bridge.summary.github_worker_runtime_manifest_validator_plan_check_failures ?? '-'}`);
   lines.push(`- Training eval rubric: ${bridge.summary.training_eval_rubric_status}, suites ${bridge.summary.training_eval_rubric_suites ?? '-'}, criteria ${bridge.summary.training_eval_rubric_criteria ?? '-'}`);
   lines.push(`- Training eval row template: ${bridge.summary.training_eval_row_template_status}, templates ${bridge.summary.training_eval_row_template_templates ?? '-'}`);
   lines.push(`- Training eval review queue: ${bridge.summary.training_eval_review_queue_status}, lanes ${bridge.summary.training_eval_review_queue_lanes ?? '-'}`);
