@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:06:31.205Z",
+  "generated_at": "2026-06-16T18:07:05.014Z",
   "status": "cross_worker_delta_audit_ready",
   "policy": {
     "audit_only": true,
@@ -30,11 +30,11 @@
     "active_handoff_inboxes": 2,
     "latest_unmirrored_handoffs": 0,
     "foreign_commits_seen": 12,
-    "foreign_handoff_commits_ignored": 8,
-    "functional_foreign_commits_seen": 4,
-    "reviewed_foreign_commits": 4,
+    "foreign_handoff_commits_ignored": 9,
+    "functional_foreign_commits_seen": 3,
+    "reviewed_foreign_commits": 3,
     "foreign_commits_needing_review": 0,
-    "dirty_repo_entries": 1335,
+    "dirty_repo_entries": 1328,
     "failures": 0,
     "public_ready_after_audit": 0
   },
@@ -45,9 +45,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
       "exists": true,
       "branch": "main",
-      "head": "fdc561e",
-      "status_count": 1334,
+      "head": "fdab41e",
+      "status_count": 1328,
       "recent_commits": [
+        {
+          "hash": "fdab41e",
+          "author": "Architecture Cosmos Maintainer",
+          "date": "2026-06-16T20:06:44+02:00",
+          "subject": "Track reviewed cross-worker commits"
+        },
         {
           "hash": "fdc561e",
           "author": "Architecture Cosmos Maintainer",
@@ -113,12 +119,6 @@
           "author": "Architecture Cosmos Maintainer",
           "date": "2026-06-16T07:49:57+02:00",
           "subject": "Refresh queue after worktree guard audit"
-        },
-        {
-          "hash": "d8bc0d6",
-          "author": "Architecture Cosmos Maintainer",
-          "date": "2026-06-16T07:49:29+02:00",
-          "subject": "Add worktree guard audit"
         }
       ]
     },
@@ -128,9 +128,15 @@
       "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
       "exists": true,
       "branch": "main",
-      "head": "f59d8ef",
-      "status_count": 1,
+      "head": "0120daa",
+      "status_count": 0,
       "recent_commits": [
+        {
+          "hash": "0120daa",
+          "author": "Andrin Baumann",
+          "date": "2026-06-16T20:06:49+02:00",
+          "subject": "Add Codex cross-worker audit ledger handoff"
+        },
         {
           "hash": "f59d8ef",
           "author": "Andrin Baumann",
@@ -196,12 +202,6 @@
           "author": "Andrin Baumann",
           "date": "2026-06-16T14:36:21+02:00",
           "subject": "Add source root unlock handoff"
-        },
-        {
-          "hash": "ec59221",
-          "author": "Andrin Baumann",
-          "date": "2026-06-16T13:03:59+02:00",
-          "subject": "Agent-Modus freeze-sicher: kein Auto-30B-Load mehr beim Aktivieren"
         }
       ]
     }
@@ -305,6 +305,12 @@
   ],
   "foreign_handoff_commits_ignored": [
     {
+      "hash": "0120daa",
+      "author": "Andrin Baumann",
+      "date": "2026-06-16T20:06:49+02:00",
+      "subject": "Add Codex cross-worker audit ledger handoff"
+    },
+    {
       "hash": "f59d8ef",
       "author": "Andrin Baumann",
       "date": "2026-06-16T20:03:59+02:00",
@@ -371,12 +377,6 @@
       "author": "Andrin Baumann",
       "date": "2026-06-16T14:39:55+02:00",
       "subject": "Review-Fixes (heutige Changes): 7 bestätigte Bugs aus adversarialer Multi-Agent-Review"
-    },
-    {
-      "hash": "ec59221",
-      "author": "Andrin Baumann",
-      "date": "2026-06-16T13:03:59+02:00",
-      "subject": "Agent-Modus freeze-sicher: kein Auto-30B-Load mehr beim Aktivieren"
     }
   ],
   "foreign_commits_needing_review": [],

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:56:42.091Z",
+  "generated_at": "2026-06-16T18:07:05.521Z",
   "date": "2026-06-16",
   "target_date": "2026-06-17",
   "status": "tomorrow_day_batch_ready",
@@ -33,7 +33,7 @@
     "owner_unlock_components": "20/27",
     "owner_unlock_guards": "276/283",
     "acceptance_known_checks": null,
-    "acceptance_guard": null,
+    "acceptance_guard": "evening_batch_acceptance_certificate_needs_review",
     "source_queue_status": "source_independent_work_queue_ready",
     "codex_executable_now": 0,
     "open_owner_actions": 1,
@@ -41,7 +41,7 @@
     "morning_routine_run_status": "codex_morning_routine_run_ready",
     "morning_next_batch_mode": "source_free_innovation_and_guarding",
     "morning_remote_behind_total": 0,
-    "latest_handoff": 330,
+    "latest_handoff": 333,
     "public_ready_after_plan": 0
   },
   "start_sequence": [

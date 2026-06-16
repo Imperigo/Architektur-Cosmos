@@ -1,6 +1,6 @@
 # Kosmo Worktree Guard Audit
 
-Generated: 2026-06-16T17:56:41.018Z
+Generated: 2026-06-16T18:07:04.435Z
 Status: `worktree_guard_audit_dirty_review_required`
 
 ## Summary

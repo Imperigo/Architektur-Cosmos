@@ -1,6 +1,6 @@
 # Kosmo Cross-Worker Delta Audit Check
 
-Generated: 2026-06-16T18:06:31.445Z
+Generated: 2026-06-16T18:07:05.260Z
 Status: `cross_worker_delta_audit_guard_passed`
 
 ## Summary
@@ -24,8 +24,8 @@ Status: `cross_worker_delta_audit_guard_passed`
 - passed: `handoffs_mirrored` - 0
 - passed: `foreign_commit_review_count_present` - 0
 - passed: `review_ledger_present` - true/2
-- passed: `reviewed_foreign_count_present` - 4
-- passed: `ignored_handoff_count_present` - 8
+- passed: `reviewed_foreign_count_present` - 3
+- passed: `ignored_handoff_count_present` - 9
 - passed: `next_actions_preserve_gates` - review unreviewed functional non-codex kosmoorbit commits before editing related orbit files. keep architecturecosmos source-root and runtime gates closed until exact owner replies pass. write a handoff when codex changes shared worker/orbit coordination files. use exact staging only; the worktree guard still blocks broad staging.
 - passed: `next_actions_exact_staging` - review unreviewed functional non-codex kosmoorbit commits before editing related orbit files. keep architecturecosmos source-root and runtime gates closed until exact owner replies pass. write a handoff when codex changes shared worker/orbit coordination files. use exact staging only; the worktree guard still blocks broad staging.
 - passed: `no_failures_listed` - -

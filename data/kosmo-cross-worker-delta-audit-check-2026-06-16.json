@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T18:06:31.445Z",
+  "generated_at": "2026-06-16T18:07:05.260Z",
   "status": "cross_worker_delta_audit_guard_passed",
   "policy": {
     "validates_audit_only": true,
@@ -88,12 +88,12 @@
     {
       "id": "reviewed_foreign_count_present",
       "status": "passed",
-      "evidence": 4
+      "evidence": 3
     },
     {
       "id": "ignored_handoff_count_present",
       "status": "passed",
-      "evidence": 8
+      "evidence": 9
     },
     {
       "id": "next_actions_preserve_gates",

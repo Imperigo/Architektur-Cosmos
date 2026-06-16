@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-16T17:56:41.018Z",
+  "generated_at": "2026-06-16T18:07:04.435Z",
   "status": "worktree_guard_audit_dirty_review_required",
   "policy": {
     "audit_only": true,

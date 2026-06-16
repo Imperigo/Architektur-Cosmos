@@ -1,6 +1,6 @@
 # Kosmo Tagesauftrag 2026-06-17
 
-Generated: 2026-06-16T17:56:42.091Z
+Generated: 2026-06-16T18:07:05.521Z
 Status: `tomorrow_day_batch_ready`
 
 ## Summary
@@ -17,7 +17,7 @@ Status: `tomorrow_day_batch_ready`
 - Morning routine run: codex_morning_routine_run_ready
 - Morning next batch: source_free_innovation_and_guarding
 - Morning remote behind total: 0
-- Latest handoff: 330
+- Latest handoff: 333
 - Public-ready after plan: 0
 
 ## Policy

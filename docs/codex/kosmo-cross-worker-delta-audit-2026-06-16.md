@@ -1,6 +1,6 @@
 # Kosmo Cross-Worker Delta Audit
 
-Generated: 2026-06-16T18:06:31.205Z
+Generated: 2026-06-16T18:07:05.014Z
 Status: `cross_worker_delta_audit_ready`
 
 ## Summary
@@ -8,17 +8,17 @@ Status: `cross_worker_delta_audit_ready`
 - Repos: 2/2
 - Latest handoff: 336
 - Latest unmirrored handoffs: 0
-- Functional foreign commits seen: 4
-- Reviewed foreign commits: 4
-- Foreign handoff commits ignored: 8
+- Functional foreign commits seen: 3
+- Reviewed foreign commits: 3
+- Foreign handoff commits ignored: 9
 - Foreign commits needing review: 0
-- Dirty repo entries: 1335
+- Dirty repo entries: 1328
 - Public-ready after audit: 0
 
 ## Repos
 
-- architecture-cosmos: main @ fdc561e, dirty 1334
-- kosmo-orbit: main @ f59d8ef, dirty 1
+- architecture-cosmos: main @ fdab41e, dirty 1328
+- kosmo-orbit: main @ 0120daa, dirty 0
 
 ## Latest Handoffs
 
@@ -44,10 +44,10 @@ Status: `cross_worker_delta_audit_ready`
 - ccbc4a8: Andrin Baumann - Pipeline: Cross-Lane-Feldnamen-Aliase — Lanes verketten automatisch
 - 9c1ba39: Andrin Baumann - Pipeline-Recipe 'Wettbewerb: Phase-0 → Plan' — volle Lane-Spanne (Prepare→Design→Publish)
 - fbb48e1: Andrin Baumann - Review-Fixes (heutige Changes): 7 bestätigte Bugs aus adversarialer Multi-Agent-Review
-- ec59221: Andrin Baumann - Agent-Modus freeze-sicher: kein Auto-30B-Load mehr beim Aktivieren
 
 ## Ignored Foreign Handoff Commits
 
+- 0120daa: Andrin Baumann - Add Codex cross-worker audit ledger handoff
 - f59d8ef: Andrin Baumann - Add Codex cross-worker review 2 handoff
 - 8704a06: Andrin Baumann - Add Codex evening rollup handoff
 - 019beb1: Andrin Baumann - Add Codex cross-worker review handoff
