@@ -16,6 +16,7 @@
     "public:kosmodraw-analysis-check": "node scripts/kosmodraw-digitalization-analysis-check.mjs",
     "public:kosmodraw-gate": "npm run public:bundle-negative-smoke && npm run public:bundle-intake-review-check && npm run public:bundle-check && npm run public:kosmodraw-analysis-check && npm run public:gate-check",
     "public:route-content-smoke": "node scripts/public-route-content-smoke.mjs",
+    "public:demo-live-check": "npm run public:kosmodraw-gate && npm run public:route-content-smoke -- --base-url http://127.0.0.1:3000 && npm run public:gate-check -- --base-url http://127.0.0.1:3000",
     "ui:audit": "node scripts/ui-audit.mjs",
     "atlas:style-guard": "node scripts/atlas-style-sector-guard.mjs",
     "atlas:interaction-guard": "node scripts/atlas-interaction-guard.mjs",
