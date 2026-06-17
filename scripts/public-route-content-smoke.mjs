@@ -50,6 +50,10 @@ const routes = [
     includes: ['Alterszentrum Kloster Ingenbohl']
   },
   {
+    path: '/robots.txt',
+    rawIncludes: ['Sitemap: https://architekturkosmos.ch/sitemap.xml']
+  },
+  {
     path: '/sitemap.xml',
     rawIncludes: ['<urlset', '<loc>https://architekturkosmos.ch/orbit/</loc>']
   }
