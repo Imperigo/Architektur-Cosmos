@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 
 const root = process.cwd();
-const tmpRoot = resolve(root, '.tmp/kosmo-reference-bundle-negative-smoke');
+const tmpRoot = resolve(root, `.tmp/kosmo-reference-bundle-negative-smoke-${process.pid}`);
 const validatorPath = resolve(root, 'scripts/kosmo-reference-bundle-check.mjs');
 
 const baseBundle = {
@@ -106,6 +106,16 @@ const cases = [
       delete bundle.openings[0].at_xy;
     },
     expected: 'opening needs host_wall_id'
+  },
+  {
+    id: 'blocks_too_many_openings',
+    mutate: (bundle) => {
+      bundle.openings = Array.from({ length: 501 }, (_, index) => ({
+        ...bundle.openings[0],
+        id: `opening-${index}`
+      }));
+    },
+    expected: 'opening count must be <= 500'
   }
 ];
 

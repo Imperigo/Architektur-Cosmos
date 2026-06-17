@@ -15,6 +15,7 @@ const requiredFields = [
 const requiredArrays = ['rooms', 'walls', 'openings', 'stories', 'analysis_layers', 'asset_candidates'];
 const allowedOpeningKinds = new Set(['door', 'window', 'stair', 'void']);
 const allowedSourceKinds = new Set(['plan_image', 'photo', 'vector_plan', 'hybrid', 'sketch', 'sketch_to_3d']);
+const maxOpenings = 500;
 const privateLeakPatterns = [
   /\/mnt\//i,
   /\/home\//i,
@@ -91,6 +92,9 @@ function validateBundle(bundle, path) {
   scanPublicStrings(bundle, path);
   validateRooms(bundle.rooms ?? [], path);
   validateWalls(bundle.walls ?? [], path);
+  if (Array.isArray(bundle.openings) && bundle.openings.length > maxOpenings) {
+    recordFailure(`${path}:openings`, `opening count must be <= ${maxOpenings}, got ${bundle.openings.length}.`);
+  }
   validateOpenings(bundle.openings ?? [], path);
   validateStories(bundle.stories ?? [], path);
   validateReviewArtifact(bundle.model_preview, `${path}:model_preview`);
@@ -184,29 +188,37 @@ function validateOpenings(openings, path) {
     if (!hasOpeningPosition(opening)) {
       recordFailure(`${openingPath}:position`, 'opening needs host_wall_id + position_m or at_xy/position_xy/at/xy coordinates.');
     }
-    if (typeof opening.width_m !== 'number' || opening.width_m <= 0) {
-      recordFailure(`${openingPath}:width_m`, 'opening needs a positive numeric width_m.');
+    if (!isFinitePositiveNumber(opening.width_m)) {
+      recordFailure(`${openingPath}:width_m`, 'opening needs a finite positive numeric width_m.');
     }
-    if (kind === 'window' && typeof opening.sill_m !== 'number') {
+    if (kind === 'window' && !isFiniteNumber(opening.sill_m)) {
       recordWarning(`${openingPath}:sill_m`, 'window opening should include sill_m for IFC window placement.');
     }
-    if (typeof opening.height_m !== 'number' || opening.height_m <= 0) {
-      recordWarning(`${openingPath}:height_m`, 'opening should include a positive numeric height_m.');
+    if (!isFinitePositiveNumber(opening.height_m)) {
+      recordWarning(`${openingPath}:height_m`, 'opening should include a finite positive numeric height_m.');
     }
-    if (typeof opening.confidence !== 'number') {
+    if (!isFiniteNumber(opening.confidence)) {
       recordWarning(`${openingPath}:confidence`, 'opening has no numeric confidence.');
     }
   });
 }
 
 function hasOpeningPosition(opening) {
-  const hasHostPosition = Boolean(opening.host_wall_id) && typeof opening.position_m === 'number';
+  const hasHostPosition = Boolean(opening.host_wall_id) && isFiniteNumber(opening.position_m);
   const hasAtCoordinates = isPoint(opening.at_xy) || isPoint(opening.position_xy) || isPoint(opening.at) || isPoint(opening.xy);
   return hasHostPosition || hasAtCoordinates;
 }
 
 function isPoint(value) {
-  return Array.isArray(value) && value.length >= 2 && value.slice(0, 2).every((item) => typeof item === 'number');
+  return Array.isArray(value) && value.length >= 2 && value.slice(0, 2).every(isFiniteNumber);
+}
+
+function isFiniteNumber(value) {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function isFinitePositiveNumber(value) {
+  return isFiniteNumber(value) && value > 0;
 }
 
 function validateStories(stories, path) {
