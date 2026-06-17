@@ -1,5 +1,6 @@
 import entries from '@/data/mock-entries.json';
 import publicModelPreviews from '@/data/public-model-previews.json';
+import kosmoDrawDigitalizationAnalysis from '@/examples/kosmo-references/kosmodraw-digitalization-analysis.review-only.fixture.json';
 import kosmoDrawBundleIntakeReview from '@/examples/kosmo-references/review/kosmodraw-bundle-intake-review.generated.json';
 import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
 import type { AssetCandidate, Entry, EntryMedia } from '@/lib/types';
@@ -54,6 +55,25 @@ const bundleIntakeReview = kosmoDrawBundleIntakeReview as {
     };
   }>;
   next_actions: string[];
+};
+const digitalizationAnalysis = kosmoDrawDigitalizationAnalysis as {
+  source: string;
+  totals: {
+    n_rooms: number;
+    n_floors: number;
+    NGF_m2: number;
+    GF_m2: number;
+  };
+  structure: {
+    n_walls: number;
+    n_external: number;
+    n_internal: number;
+  };
+  quantities: {
+    volumes_m3: {
+      total: number;
+    };
+  };
 };
 const publicModelBySlug = new Map(publicModels.map((model) => [model.slug, model]));
 const publicAssetRights = new Set(['public_domain', 'licensed', 'own_work']);
@@ -187,6 +207,37 @@ export function publicKosmoDrawBundleIntakeStatus() {
       assets: bundle.assets
     })),
     nextActions: bundleIntakeReview.next_actions
+  };
+}
+
+export function publicKosmoDrawDigitalizationStatus() {
+  return {
+    status: 'review_only_analysis_candidate',
+    sourceLabel: digitalizationAnalysis.source,
+    publicReadyAfterIntake: 0,
+    fullBundleReady: false,
+    missingBundleFields: [
+      'project_slug',
+      'status',
+      'source_kind',
+      'rooms',
+      'walls',
+      'openings',
+      'stories',
+      'analysis_layers',
+      'asset_candidates'
+    ],
+    aggregateCounts: {
+      rooms: digitalizationAnalysis.totals.n_rooms,
+      floors: digitalizationAnalysis.totals.n_floors,
+      walls: digitalizationAnalysis.structure.n_walls,
+      externalWalls: digitalizationAnalysis.structure.n_external,
+      internalWalls: digitalizationAnalysis.structure.n_internal,
+      grossFloorAreaM2: digitalizationAnalysis.totals.GF_m2,
+      netFloorAreaM2: digitalizationAnalysis.totals.NGF_m2,
+      volumeTotalM3: digitalizationAnalysis.quantities.volumes_m3.total
+    },
+    nextStep: 'KosmoDraw muss elementweise rooms, walls, openings und stories liefern, bevor ArchitectureCosmos daraus ein kosmo_reference_bundle macht.'
   };
 }
 

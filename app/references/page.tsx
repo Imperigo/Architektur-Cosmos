@@ -5,6 +5,7 @@ import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
 import {
   ingenbohlEntry,
+  publicKosmoDrawDigitalizationStatus,
   publicEntryAssetTaxonomy,
   publicEntryReadiness,
   publicKosmoDrawBundleIntakeStatus,
@@ -36,6 +37,7 @@ export default function ReferencesPage() {
   const ingenbohlTaxonomy = publicEntryAssetTaxonomy(ingenbohl);
   const ingenbohlModelUrl = publicModelUrl(ingenbohl);
   const kosmoDrawIntake = publicKosmoDrawBundleIntakeStatus();
+  const kosmoDrawDigitalization = publicKosmoDrawDigitalizationStatus();
 
   return (
     <main className="entry-page min-h-screen bg-[#050707] text-[#f7f7f4]" style={{ '--entry-accent': '#66e1d2' } as React.CSSProperties}>
@@ -215,6 +217,22 @@ export default function ReferencesPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Digitalization Preflight</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Aggregierte KosmoDraw-Analysen sind sichtbar, aber noch kein Reference-Bundle.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Der neue Gate akzeptiert solche Reports als review-only Analyse-Kandidaten. Public-ready bleibt bei {kosmoDrawDigitalization.publicReadyAfterIntake},
+              bis elementweise Geometrie und Asset-Kandidaten im Bundle-Vertrag vorliegen.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <IntakeMetric label="Raeume aggregiert" value={kosmoDrawDigitalization.aggregateCounts.rooms} />
+            <IntakeMetric label="Waende aggregiert" value={kosmoDrawDigitalization.aggregateCounts.walls} />
+            <IntakeMetric label="Fehlende Bundlefelder" value={kosmoDrawDigitalization.missingBundleFields.length} />
           </div>
         </section>
 

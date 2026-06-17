@@ -8,6 +8,7 @@ import {
   publicEntryAssetTaxonomy,
   publicEntryReadiness,
   publicKosmoDrawBundleIntakeStatus,
+  publicKosmoDrawDigitalizationStatus,
   publicProjectMediaUrl,
   villaSavoyeAssetTaxonomy,
   villaSavoyeEntry,
@@ -31,6 +32,7 @@ export default function AssetsPage() {
   const ingenbohlReadiness = publicEntryReadiness(ingenbohl);
   const ingenbohlTaxonomy = publicEntryAssetTaxonomy(ingenbohl);
   const kosmoDrawIntake = publicKosmoDrawBundleIntakeStatus();
+  const kosmoDrawDigitalization = publicKosmoDrawDigitalizationStatus();
 
   return (
     <main className="entry-page min-h-screen bg-[#060805] text-[#f7f7f4]" style={{ '--entry-accent': '#b9f06a' } as React.CSSProperties}>
@@ -164,6 +166,23 @@ export default function AssetsPage() {
           </div>
         </section>
 
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Digitalization Asset Preflight</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Mengen- und Strukturreports werden nicht automatisch zu Assets.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Der Analyse-Check sieht {kosmoDrawDigitalization.aggregateCounts.rooms} aggregierte Raeume,
+              {kosmoDrawDigitalization.aggregateCounts.walls} Waende und {kosmoDrawDigitalization.aggregateCounts.volumeTotalM3} m3 Volumen.
+              Fuer KosmoAsset fehlen aber noch elementweise Bauteile, Oeffnungen und review-only Asset-Kandidaten.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <AssetMetric label="Geschosse" value={kosmoDrawDigitalization.aggregateCounts.floors} />
+            <AssetMetric label="NGF m2" value={kosmoDrawDigitalization.aggregateCounts.netFloorAreaM2} />
+            <AssetMetric label="Public-ready" value={kosmoDrawDigitalization.publicReadyAfterIntake} />
+          </div>
+        </section>
+
         <PublicAssetExplorer assets={assets} />
       </div>
     </main>
@@ -175,6 +194,15 @@ function AssetCapability({ title, text }: { title: string; text: string }) {
     <div className="border border-white/12 bg-[#11170c] p-4">
       <h2 className="text-lg font-semibold text-[#f7f7f4]">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{text}</p>
+    </div>
+  );
+}
+
+function AssetMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="border border-white/12 bg-[#11170c] p-4">
+      <div className="text-3xl font-semibold text-[#f7f7f4]">{value}</div>
+      <div className="mt-2 text-[10px] uppercase tracking-[0.16em] text-[#b9f06a]">{label}</div>
     </div>
   );
 }
