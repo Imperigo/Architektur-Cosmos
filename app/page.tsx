@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import { publicAssets, publicReferences, villaSavoyeEntry } from '@/lib/public-kosmo';
+import { ingenbohlEntry, publicAssets, publicReferences, villaSavoyeEntry } from '@/lib/public-kosmo';
 import { primaryPublicMediaUrl } from '@/lib/media';
 
 export default function Home() {
   const references = publicReferences();
   const assets = publicAssets();
   const pilot = villaSavoyeEntry();
+  const secondPilot = ingenbohlEntry();
   const pilotImage = primaryPublicMediaUrl(pilot);
 
   return (
@@ -60,6 +61,9 @@ export default function Home() {
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#0b6b60]">Pilotstatus</div>
               <h2 className="mt-2 text-2xl font-semibold">{pilot.title}</h2>
               <p className="mt-3 text-sm leading-6 text-[#3d443f]">{pilot.short_description}</p>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#496f00]">
+                Zweiter Public-Pilot: {secondPilot.title}
+              </p>
               <div className="mt-5 grid grid-cols-3 border border-[#111514]/10 text-center text-[10px] uppercase tracking-[0.12em] text-[#3d443f]">
                 <span className="border-r border-[#111514]/10 py-3">{pilot.media.filter((media) => media.url).length} Medien</span>
                 <span className="border-r border-[#111514]/10 py-3">{pilot.analysis_layers?.length ?? 0} Layer</span>
@@ -73,7 +77,7 @@ export default function Home() {
       <section className="mx-auto grid max-w-7xl gap-4 px-5 py-8 sm:px-8 md:grid-cols-3 lg:px-10">
         <PublicMetric label="Öffentliche Referenzen" value={references.length} text="Gefiltert nach public-display Medien und geprüften Datenbankprofilen." />
         <PublicMetric label="Öffentliche Assets" value={assets.length} text="Bilder, Pläne, Schnitte, Analyse-Metadaten und GLB-Preview-Modelle." />
-        <PublicMetric label="Aktueller Pilot" value="Villa Savoye" text="Planbereinigung, Analyse-Layer und 3D-Filter als erster vollständiger Prototyp." />
+        <PublicMetric label="Aktuelle Piloten" value="2 Piloten" text="Villa Savoye als Medien-/Modellpilot, Ingenbohl als review-only Asset- und Referenzpilot." />
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-6 border-t border-[#111514]/10 px-5 py-10 sm:px-8 md:grid-cols-2 lg:grid-cols-4 lg:px-10">
