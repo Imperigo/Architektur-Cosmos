@@ -8,6 +8,7 @@
     "build:fresh": "rm -rf .next out && next build && node scripts/next-static-export-assets.mjs",
     "start": "next start",
     "lint": "eslint .",
+    "public:gate-check": "node scripts/public-demo-gate-check.mjs",
     "ui:audit": "node scripts/ui-audit.mjs",
     "atlas:style-guard": "node scripts/atlas-style-sector-guard.mjs",
     "atlas:interaction-guard": "node scripts/atlas-interaction-guard.mjs",
