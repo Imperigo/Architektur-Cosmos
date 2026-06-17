@@ -20,6 +20,8 @@ export type PublicReference = {
   hasModel: boolean;
   mediaCount: number;
   analysisCount: number;
+  gateStatus: string;
+  readinessScore: number;
 };
 
 type PublicReferenceExplorerProps = {
@@ -132,6 +134,15 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               </div>
               <h3 className="mt-3 text-xl leading-tight text-[#f7f7f4]">{entry.title}</h3>
               <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{entry.summary}</p>
+              <div className="mt-4 border border-[#66e1d2]/18 bg-[#66e1d2]/6 p-3">
+                <div className="flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.12em] text-[#66e1d2]">
+                  <span>{entry.gateStatus}</span>
+                  <span>{entry.readinessScore}%</span>
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden bg-white/10">
+                  <div className="h-full bg-[#66e1d2]" style={{ width: `${entry.readinessScore}%` }} />
+                </div>
+              </div>
               <div className="mt-4 grid grid-cols-3 border border-white/10 text-center text-[10px] uppercase tracking-[0.12em] text-[#aeb8b2]">
                 <span className="border-r border-white/10 py-2">{entry.mediaCount} Medien</span>
                 <span className="border-r border-white/10 py-2">{entry.analysisCount} Layer</span>

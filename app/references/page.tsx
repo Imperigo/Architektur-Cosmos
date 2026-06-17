@@ -3,8 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
-import { publicReferences, villaSavoyeEntry, villaSavoyeModelUrl } from '@/lib/public-kosmo';
-import { publicDisplayMediaUrl } from '@/lib/media';
+import { publicProjectMediaUrl, publicReferences, villaSavoyeAssetTaxonomy, villaSavoyeEntry, villaSavoyeModelUrl, villaSavoyeReadiness } from '@/lib/public-kosmo';
 
 export const metadata: Metadata = {
   title: 'KosmoReferences | Architektur Kosmos',
@@ -18,6 +17,8 @@ export default function ReferencesPage() {
   const plan = villa.media.find((media) => media.type === 'plan');
   const section = villa.media.find((media) => media.type === 'section');
   const modelUrl = villaSavoyeModelUrl();
+  const readiness = villaSavoyeReadiness();
+  const taxonomy = villaSavoyeAssetTaxonomy();
 
   return (
     <main className="entry-page min-h-screen bg-[#050707] text-[#f7f7f4]" style={{ '--entry-accent': '#66e1d2' } as React.CSSProperties}>
@@ -45,8 +46,8 @@ export default function ReferencesPage() {
             </p>
           </div>
           <div className="overflow-hidden border border-white/14 bg-[#101513]">
-            {publicDisplayMediaUrl(exterior) ? (
-              <img src={publicDisplayMediaUrl(exterior) ?? ''} alt="Villa Savoye Referenzbild" className="aspect-[4/3] w-full object-cover" />
+            {publicProjectMediaUrl(villa, exterior) ? (
+              <img src={publicProjectMediaUrl(villa, exterior) ?? ''} alt="Villa Savoye Referenzbild" className="aspect-[4/3] w-full object-cover" />
             ) : null}
             <div className="p-4">
               <div className="text-[10px] uppercase tracking-[0.18em] text-[#66e1d2]">Hero-Bild Auswahl</div>
@@ -55,6 +56,16 @@ export default function ReferencesPage() {
               </p>
             </div>
           </div>
+        </section>
+
+        <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
+          {readiness.map((item) => (
+            <div key={item.label} className="border border-white/12 bg-[#101513] p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2]">{item.status}</div>
+              <h2 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.label}</h2>
+              <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+            </div>
+          ))}
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.95fr_1.05fr]">
@@ -81,8 +92,8 @@ export default function ReferencesPage() {
                   </div>
                   <span className="border border-[#111514]/14 px-2 py-1 text-[10px] uppercase tracking-[0.12em]">diagrammatisch</span>
                 </div>
-                {publicDisplayMediaUrl(media) ? (
-                  <img src={publicDisplayMediaUrl(media) ?? ''} alt={media?.label ?? 'Plan'} className="max-h-[360px] w-full object-contain" />
+                {publicProjectMediaUrl(villa, media) ? (
+                  <img src={publicProjectMediaUrl(villa, media) ?? ''} alt={media?.label ?? 'Plan'} className="max-h-[360px] w-full object-contain" />
                 ) : null}
                 <p className="mt-3 text-xs leading-5 text-[#4f5751]">{media?.credit}</p>
               </div>
@@ -92,6 +103,25 @@ export default function ReferencesPage() {
 
         <section className="border-t border-white/12 py-8">
           <EntryModelViewer modelUrl={modelUrl} title={villa.title} accent="#66e1d2" />
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoAsset Brücke</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Aus dem Referenzprojekt werden nutzbare Architekturbausteine.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Der öffentliche Pilot zeigt nicht nur Medien, sondern extrahierbare Prinzipien: Struktur, Zirkulation, Materialsystem und Zeichnungslogik. Das ist die Brücke von KosmoReferences zu KosmoAsset.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {taxonomy.map((item) => (
+              <div key={item.title} className="border border-white/12 bg-[#101513] p-4">
+                <div className="text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{item.kind}</div>
+                <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">

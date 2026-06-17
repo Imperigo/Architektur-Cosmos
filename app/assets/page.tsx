@@ -2,8 +2,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PublicAssetExplorer } from '@/components/public/PublicAssetExplorer';
-import { publicAssets, villaSavoyeEntry } from '@/lib/public-kosmo';
-import { publicDisplayMediaUrl } from '@/lib/media';
+import { publicAssets, publicProjectMediaUrl, villaSavoyeAssetTaxonomy, villaSavoyeEntry, villaSavoyeReadiness } from '@/lib/public-kosmo';
 
 export const metadata: Metadata = {
   title: 'KosmoAsset | Architektur Kosmos',
@@ -15,7 +14,9 @@ export default function AssetsPage() {
   const villa = villaSavoyeEntry();
   const plan = villa.media.find((media) => media.type === 'plan');
   const section = villa.media.find((media) => media.type === 'section');
-  const publicImages = villa.media.filter((media) => publicDisplayMediaUrl(media) && (media.type === 'exterior' || media.type === 'interior'));
+  const publicImages = villa.media.filter((media) => publicProjectMediaUrl(villa, media) && (media.type === 'exterior' || media.type === 'interior'));
+  const readiness = villaSavoyeReadiness();
+  const taxonomy = villaSavoyeAssetTaxonomy();
 
   return (
     <main className="entry-page min-h-screen bg-[#060805] text-[#f7f7f4]" style={{ '--entry-accent': '#b9f06a' } as React.CSSProperties}>
@@ -46,11 +47,11 @@ export default function AssetsPage() {
             <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#b9f06a]">Villa Savoye Assetpaket</div>
             <div className="mt-5 grid grid-cols-2 gap-3">
               {publicImages.map((media) => (
-                <img key={media.type} src={publicDisplayMediaUrl(media) ?? ''} alt={media.label} className="aspect-square w-full object-cover" />
+                <img key={media.type} src={publicProjectMediaUrl(villa, media) ?? ''} alt={media.label} className="aspect-square w-full object-cover" />
               ))}
               {[plan, section].filter(Boolean).map((media) => (
                 <div key={media?.type} className="flex aspect-square items-center justify-center bg-[#f7f7f4] p-3">
-                  {publicDisplayMediaUrl(media) ? <img src={publicDisplayMediaUrl(media) ?? ''} alt={media?.label ?? 'Diagramm'} className="max-h-full max-w-full object-contain" /> : null}
+                  {publicProjectMediaUrl(villa, media) ? <img src={publicProjectMediaUrl(villa, media) ?? ''} alt={media?.label ?? 'Diagramm'} className="max-h-full max-w-full object-contain" /> : null}
                 </div>
               ))}
             </div>
@@ -62,6 +63,35 @@ export default function AssetsPage() {
           <AssetCapability title="Pläne" text="Eigene diagrammatische Rekonstruktionen für Planlesung und Stilvereinheitlichung." />
           <AssetCapability title="Layer" text="Tragwerk, Material, Zirkulation, Hülle und Typologie als filterbare Metadaten." />
           <AssetCapability title="3D" text="Öffentliche Low-GLB-Previews als skizzenhaftes BIM-Verständnis." />
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Asset Taxonomie</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">KosmoAsset trennt Medien, Bauteile und Prinzipien.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Der öffentliche Asset-Pilot bleibt review-only in der Freigabe, zeigt aber bereits die spätere Struktur: Bilder und Zeichnungen sind Quellenoberflächen, daraus entstehen filterbare Architekturbausteine.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {taxonomy.map((item) => (
+              <div key={item.title} className="border border-white/12 bg-[#11170c] p-4">
+                <div className="text-[10px] uppercase tracking-[0.16em] text-[#b9f06a]">{item.kind}</div>
+                <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
+          {readiness.map((item) => (
+            <div key={item.label} className="border border-white/12 bg-[#11170c] p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a]">{item.status}</div>
+              <h2 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.label}</h2>
+              <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+            </div>
+          ))}
         </section>
 
         <PublicAssetExplorer assets={assets} />
