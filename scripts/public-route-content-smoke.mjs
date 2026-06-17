@@ -39,6 +39,7 @@ const routes = [
       'KosmoDraw Asset Intake',
       'Digitalization Asset Preflight',
       'KosmoPublish Plan Catalog',
+      'Public Asset Gate',
       'Villa Savoye'
     ]
   },

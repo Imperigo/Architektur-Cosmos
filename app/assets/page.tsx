@@ -7,6 +7,7 @@ import {
   publicAssets,
   publicEntryAssetTaxonomy,
   publicEntryReadiness,
+  publicGateStatusSummary,
   publicKosmoDrawBundleIntakeStatus,
   publicKosmoDrawDigitalizationStatus,
   publicKosmoPublishPlanCatalogStatus,
@@ -35,6 +36,7 @@ export default function AssetsPage() {
   const kosmoDrawIntake = publicKosmoDrawBundleIntakeStatus();
   const kosmoDrawDigitalization = publicKosmoDrawDigitalizationStatus();
   const kosmoPublishPlanCatalog = publicKosmoPublishPlanCatalogStatus();
+  const publicGateSummary = publicGateStatusSummary();
 
   return (
     <main className="entry-page min-h-screen bg-[#060805] text-[#f7f7f4]" style={{ '--entry-accent': '#b9f06a' } as React.CSSProperties}>
@@ -81,6 +83,25 @@ export default function AssetsPage() {
           <AssetCapability title="Pläne" text="Eigene diagrammatische Rekonstruktionen für Planlesung und Stilvereinheitlichung." />
           <AssetCapability title="Layer" text="Tragwerk, Material, Zirkulation, Hülle und Typologie als filterbare Metadaten." />
           <AssetCapability title="3D" text="Öffentliche Low-GLB-Previews als skizzenhaftes BIM-Verständnis." />
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Public Asset Gate</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Assets erscheinen erst nach Rechte-, Review- und Public-Pruefung.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Das Asset-Register zaehlt nur public-safe Oberflaechen. Review-only Kandidaten aus KosmoDraw, KosmoPublish und privaten Quellen bleiben sichtbar als Status, aber nicht als freigegebene Dateien.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {publicGateSummary.map((item) => (
+              <div key={item.label} className="border border-white/12 bg-[#11170c] p-4">
+                <div className="text-3xl font-semibold text-[#f7f7f4]">{item.value}</div>
+                <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a]">{item.label}</div>
+                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
