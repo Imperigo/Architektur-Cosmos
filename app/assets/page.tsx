@@ -52,8 +52,8 @@ export default function AssetsPage() {
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">public asset layer</span>
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">GLB Preview</span>
             </div>
-            <h1 className="max-w-5xl text-5xl font-semibold leading-[0.92] tracking-normal sm:text-7xl">
-              Aus Referenzen werden wiederverwendbare Architektur-Assets.
+            <h1 className="max-w-5xl text-[2rem] font-semibold leading-[1.02] tracking-normal sm:text-7xl sm:leading-[0.92]">
+              Aus Referenzen werden Architektur-Assets.
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
               KosmoAsset ist die öffentliche Schicht aus KosmoReferences: lizenzierte Bilder, eigene Plan- und Schnittdiagramme, Modell-Previews und Analyse-Layer. Private PDFs, Scans und interne Quellen bleiben draussen.
