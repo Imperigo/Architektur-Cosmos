@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { publicGateStatusSummary } from '@/lib/public-kosmo';
 
 export function OrbitPublicWebsiteGate() {
@@ -27,6 +28,18 @@ export function OrbitPublicWebsiteGate() {
             <p className="mt-2 text-sm leading-5 text-slate-200/78">{item.detail}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.14em]">
+        <Link href="/references" className="rounded-full border border-cyan-200/30 px-3 py-2 text-cyan-50 transition hover:border-cyan-100 hover:bg-cyan-100/10">
+          Open References
+        </Link>
+        <Link href="/assets" className="rounded-full border border-cyan-200/30 px-3 py-2 text-cyan-50 transition hover:border-cyan-100 hover:bg-cyan-100/10">
+          Open Assets
+        </Link>
+        <Link href="/atlas" className="rounded-full border border-cyan-200/30 px-3 py-2 text-cyan-50 transition hover:border-cyan-100 hover:bg-cyan-100/10">
+          Open Atlas
+        </Link>
       </div>
     </section>
   );
