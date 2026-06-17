@@ -80,6 +80,10 @@ const blockedPatterns = [
   /private-library/i,
   /onedrive/i,
   /archiv\/architekturkosmos\/assets/i,
+  /_overseer/i,
+  /\.claude/i,
+  /\.codex/i,
+  /worker[-_\s]?logs?/i,
   /\.pdf($|\?)/i,
   /archive-intake/i,
   /\bocr\b/i
