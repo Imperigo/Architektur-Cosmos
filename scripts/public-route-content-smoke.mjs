@@ -17,6 +17,10 @@ const routes = [
     includes: ['Architektur Kosmos']
   },
   {
+    path: '/archive/',
+    includes: ['KosmoData Archiv']
+  },
+  {
     path: '/references/',
     includes: [
       'KosmoReferences',

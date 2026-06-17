@@ -3,12 +3,12 @@ import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { ArchiveCursor } from '@/components/archive/ArchiveCursor';
 import { ArchiveHistoryControls } from '@/components/archive/ArchiveHistoryControls';
-import entries from '@/data/mock-entries.json';
 import relations from '@/data/relations.json';
 import archivePreview from '@/data/archive-preview.json';
+import { publicAtlasEntries } from '@/lib/public-kosmo';
 import type { Entry, EntryRelation, EntryType, StyleSectorId } from '@/lib/types';
 
-const allEintraege = entries as Entry[];
+const allEintraege = publicAtlasEntries() as Entry[];
 const allRelationen = relations as EntryRelation[];
 
 export const metadata: Metadata = {
@@ -123,11 +123,11 @@ export default function ArchivePage() {
               <i>Details</i>
             </summary>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-[#d7d7d0]">
-              Echte Bilder, Pläne und Modelldateien bleiben lokal, bis Rechte- und Größenprüfungen abgeschlossen sind. Der Intake-Befehl erzeugt eine private Ordnerstruktur, scannt Dateien und schreibt ein Dry-run-Manifest ohne Cloudflare zu berühren.
+              Echte Bilder, Pläne und Modelldateien bleiben review-only, bis Rechte- und Größenprüfungen abgeschlossen sind. Der Erfassungsprozess erzeugt eine geprüfte Paketstruktur, scannt Metadaten und schreibt ein Review-Manifest ohne öffentliche Freigabe.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <ArchiveMeta label="Lokaler Ordner" value="archive-intake/{entry_slug}" />
-              <ArchiveMeta label="Inbox" value="archive-inbox/{entry_slug}" />
+              <ArchiveMeta label="Review-Ordner" value="review-inbox/{entry_slug}" />
+              <ArchiveMeta label="Inbox" value="review-package/{entry_slug}" />
               <ArchiveMeta label="Manifest" value="out/asset-manifests/{entry_slug}.json" />
               <ArchiveMeta label="Upload" value="blockiert / nur Dry-run" />
             </div>
@@ -139,7 +139,7 @@ export default function ArchivePage() {
               <i>anzeigen</i>
             </summary>
             <ol className="mt-4 space-y-3 text-sm leading-6 text-[#d7d7d0]">
-              <li><span className="text-[#00e7ff]">01</span> Dateien in <code>archive-intake/villa-savoye/exterior</code>, <code>interior</code>, <code>section</code>, <code>plan</code> oder <code>models</code> legen.</li>
+              <li><span className="text-[#00e7ff]">01</span> Dateien in <code>review-inbox/villa-savoye/exterior</code>, <code>interior</code>, <code>section</code>, <code>plan</code> oder <code>models</code> legen.</li>
               <li><span className="text-[#00e7ff]">02</span> <code>npm run archive:asset-manifest -- --entry villa-savoye</code> ausführen.</li>
               <li><span className="text-[#00e7ff]">03</span> Blockierte Rechte, fehlende Slots und geplante R2-Keys im Manifest prüfen.</li>
             </ol>

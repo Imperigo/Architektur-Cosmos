@@ -30,6 +30,7 @@ const publicRoutes = [
   '/',
   '/orbit/',
   '/atlas/',
+  '/archive/',
   '/references/',
   '/assets/',
   '/atlas/villa-savoye/',
