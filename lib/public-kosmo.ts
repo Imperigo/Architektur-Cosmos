@@ -2,6 +2,7 @@ import entries from '@/data/mock-entries.json';
 import publicModelPreviews from '@/data/public-model-previews.json';
 import kosmoDrawDigitalizationAnalysis from '@/examples/kosmo-references/kosmodraw-digitalization-analysis.review-only.fixture.json';
 import kosmoDrawBundleIntakeReview from '@/examples/kosmo-references/review/kosmodraw-bundle-intake-review.generated.json';
+import kosmoPublishPlanCatalogStatus from '@/examples/kosmo-references/kosmopublish-plan-catalog-status.review-only.fixture.json';
 import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
 import type { AssetCandidate, Entry, EntryMedia } from '@/lib/types';
 import type { PublicAsset } from '@/components/public/PublicAssetExplorer';
@@ -73,6 +74,33 @@ const digitalizationAnalysis = kosmoDrawDigitalizationAnalysis as {
     volumes_m3: {
       total: number;
     };
+  };
+};
+const planCatalogStatus = kosmoPublishPlanCatalogStatus as {
+  status: string;
+  tool: {
+    name: string;
+    mode: string;
+    registration_status: string;
+    server_tool_count: number;
+  };
+  catalog: {
+    phase_count: number;
+    phase_codes: string[];
+    plan_number_pattern: string;
+    example_plan_numbers: string[];
+    outputs: string[];
+  };
+  quality: {
+    suite_status: string;
+    reported_test_count: number;
+    start_smoke_present: boolean;
+    stderr_start_banner_present: boolean;
+  };
+  public_gate: {
+    copies_private_paths: boolean;
+    publishes_plan_assets_now: boolean;
+    next_public_step: string;
   };
 };
 const publicModelBySlug = new Map(publicModels.map((model) => [model.slug, model]));
@@ -238,6 +266,28 @@ export function publicKosmoDrawDigitalizationStatus() {
       volumeTotalM3: digitalizationAnalysis.quantities.volumes_m3.total
     },
     nextStep: 'KosmoDraw muss elementweise rooms, walls, openings und stories liefern, bevor ArchitectureCosmos daraus ein kosmo_reference_bundle macht.'
+  };
+}
+
+export function publicKosmoPublishPlanCatalogStatus() {
+  return {
+    status: planCatalogStatus.status,
+    toolName: planCatalogStatus.tool.name,
+    mode: planCatalogStatus.tool.mode,
+    registrationStatus: planCatalogStatus.tool.registration_status,
+    serverToolCount: planCatalogStatus.tool.server_tool_count,
+    phaseCount: planCatalogStatus.catalog.phase_count,
+    phaseCodes: planCatalogStatus.catalog.phase_codes,
+    planNumberPattern: planCatalogStatus.catalog.plan_number_pattern,
+    examplePlanNumbers: planCatalogStatus.catalog.example_plan_numbers,
+    outputFields: planCatalogStatus.catalog.outputs,
+    suiteStatus: planCatalogStatus.quality.suite_status,
+    reportedTestCount: planCatalogStatus.quality.reported_test_count,
+    startSmokePresent: planCatalogStatus.quality.start_smoke_present,
+    stderrStartBannerPresent: planCatalogStatus.quality.stderr_start_banner_present,
+    copiesPrivatePaths: planCatalogStatus.public_gate.copies_private_paths,
+    publishesPlanAssetsNow: planCatalogStatus.public_gate.publishes_plan_assets_now,
+    nextPublicStep: planCatalogStatus.public_gate.next_public_step
   };
 }
 

@@ -14,6 +14,7 @@ const routes = [
       'KosmoReferences',
       'KosmoDraw Intake',
       'Digitalization Preflight',
+      'KosmoPublish Plan Catalog',
       'Villa Savoye',
       'Alterszentrum Kloster Ingenbohl'
     ]

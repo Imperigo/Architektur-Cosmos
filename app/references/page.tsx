@@ -9,6 +9,7 @@ import {
   publicEntryAssetTaxonomy,
   publicEntryReadiness,
   publicKosmoDrawBundleIntakeStatus,
+  publicKosmoPublishPlanCatalogStatus,
   publicModelUrl,
   publicProjectMediaUrl,
   publicReferences,
@@ -38,6 +39,7 @@ export default function ReferencesPage() {
   const ingenbohlModelUrl = publicModelUrl(ingenbohl);
   const kosmoDrawIntake = publicKosmoDrawBundleIntakeStatus();
   const kosmoDrawDigitalization = publicKosmoDrawDigitalizationStatus();
+  const kosmoPublishPlanCatalog = publicKosmoPublishPlanCatalogStatus();
 
   return (
     <main className="entry-page min-h-screen bg-[#050707] text-[#f7f7f4]" style={{ '--entry-accent': '#66e1d2' } as React.CSSProperties}>
@@ -233,6 +235,25 @@ export default function ReferencesPage() {
             <IntakeMetric label="Raeume aggregiert" value={kosmoDrawDigitalization.aggregateCounts.rooms} />
             <IntakeMetric label="Waende aggregiert" value={kosmoDrawDigitalization.aggregateCounts.walls} />
             <IntakeMetric label="Fehlende Bundlefelder" value={kosmoDrawDigitalization.missingBundleFields.length} />
+          </div>
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoPublish Plan Catalog</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planpakete bekommen ein Register, bevor sie als Public Assets erscheinen.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Der read-only Plankatalog ist als sichere Metadaten-Vorstufe markiert. Er ordnet Planvorschauen ueber {kosmoPublishPlanCatalog.phaseCount} Phasen,
+              setzt aber noch keine Plan-Assets automatisch public-ready.
+            </p>
+            <p className="mt-3 text-xs uppercase tracking-[0.14em] text-[#8f9994]">
+              Schema {kosmoPublishPlanCatalog.planNumberPattern}
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <IntakeMetric label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
+            <IntakeMetric label="Toolfelder" value={kosmoPublishPlanCatalog.outputFields.length} />
+            <IntakeMetric label="Public Assets" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
           </div>
         </section>
 

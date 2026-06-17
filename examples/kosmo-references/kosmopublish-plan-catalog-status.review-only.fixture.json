@@ -1,0 +1,40 @@
+{
+  "status": "review_only_plan_catalog_ready",
+  "source": "KosmoPublish handoff 2026-06-17, sanitized public-safe status",
+  "public_display_allowed": false,
+  "tool": {
+    "name": "kosmopublish_plan_catalog",
+    "mode": "read_only",
+    "registration_status": "ready_for_overseer_registration",
+    "server_tool_count": 8
+  },
+  "catalog": {
+    "phase_count": 6,
+    "phase_codes": ["21", "22", "23", "41", "51", "52"],
+    "discipline_prefix_example": "A",
+    "plan_number_pattern": "<discipline>.<phase>.<type>.<storey_or_index>",
+    "example_plan_numbers": ["A.21.GR.EG", "A.51.DT.03"],
+    "outputs": [
+      "plan_no",
+      "title",
+      "discipline",
+      "view",
+      "storey",
+      "scale",
+      "phase",
+      "status",
+      "revision"
+    ]
+  },
+  "quality": {
+    "suite_status": "green",
+    "reported_test_count": 1488,
+    "start_smoke_present": true,
+    "stderr_start_banner_present": true
+  },
+  "public_gate": {
+    "copies_private_paths": false,
+    "publishes_plan_assets_now": false,
+    "next_public_step": "Use catalog metadata to organize public plan previews after rights and owner review."
+  }
+}
