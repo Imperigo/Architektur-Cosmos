@@ -3,6 +3,7 @@
 const args = parseArgs(process.argv.slice(2));
 const baseUrl = String(args['base-url'] || 'http://127.0.0.1:3000').replace(/\/$/, '');
 const siteUrl = String(args['site-url'] || 'https://architekturkosmos.ch').replace(/\/$/, '');
+const verbose = Boolean(args.verbose);
 
 const blockedPatterns = [
   /\/mnt\//i,
@@ -62,7 +63,9 @@ async function main() {
     base_url: baseUrl,
     site_url: siteUrl,
     checked_route_count: checkedRoutes.length,
-    checkedRoutes,
+    checkedRoutes: verbose || checkedRoutes.some((route) => route.blocked_pattern_count > 0)
+      ? checkedRoutes
+      : undefined,
     findings: findings.filter((finding) => !finding.passed)
   };
 
