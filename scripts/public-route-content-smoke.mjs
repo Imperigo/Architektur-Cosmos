@@ -10,7 +10,7 @@ const routes = [
   },
   {
     path: '/orbit/',
-    includes: ['KosmoOrbit', 'Review-only Preview']
+    includes: ['KosmoOrbit', 'Review-only Preview', 'Public Website Gate']
   },
   {
     path: '/atlas/',

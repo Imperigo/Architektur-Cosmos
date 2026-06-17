@@ -44,6 +44,7 @@ import { OrbitProgressMap } from './OrbitProgressMap';
 import { OrbitPublishReadiness } from './OrbitPublishReadiness';
 import { OrbitPushDecisionDraft } from './OrbitPushDecisionDraft';
 import { OrbitProjectDashboard, type DesignHandoffPreview, type ProjectInspectorReport } from './OrbitProjectDashboard';
+import { OrbitPublicWebsiteGate } from './OrbitPublicWebsiteGate';
 import { OrbitQualityEvidence, type OrbitFullReviewReport, type OrbitRouteSmokeReport } from './OrbitQualityEvidence';
 import { OrbitReviewDecisionDraft } from './OrbitReviewDecisionDraft';
 import { OrbitRiskRegister } from './OrbitRiskRegister';
@@ -454,6 +455,10 @@ export default function OrbitPage() {
 
           <div id="demo-ready" className="scroll-mt-4">
             <OrbitDemoReadiness fullReview={fullReview} routeSmoke={routeSmoke} staticSmoke={staticSmoke} />
+          </div>
+
+          <div id="public-website-gate" className="scroll-mt-4">
+            <OrbitPublicWebsiteGate />
           </div>
 
           <div id="live-gate" className="scroll-mt-4">
