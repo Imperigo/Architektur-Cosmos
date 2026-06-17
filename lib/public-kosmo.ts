@@ -321,6 +321,37 @@ export function publicKosmoDrawBundleIntakeStatus() {
   };
 }
 
+export function publicGateStatusSummary() {
+  const references = publicReferences();
+  const assets = publicAssets();
+  const unsafeSignals = bundleIntakeReview.summary.unsafe_public_flag_count
+    + bundleIntakeReview.summary.private_leak_count
+    + (planCatalogStatus.public_gate.copies_private_paths ? 1 : 0);
+
+  return [
+    {
+      label: 'Public References',
+      value: references.length,
+      detail: 'Display-safe Referenzpakete mit Rights-Gate, Analyse- oder Modellstatus.'
+    },
+    {
+      label: 'Public Assets',
+      value: assets.length,
+      detail: 'Bilder, Diagramme, Analyse-Layer und GLB-Previews aus public-safe Quellen.'
+    },
+    {
+      label: 'GLB Previews',
+      value: publicModels.length,
+      detail: 'Oeffentliche Low-Modelle fuer skizzenhaftes BIM-Verstaendnis.'
+    },
+    {
+      label: 'Unsafe Signals',
+      value: unsafeSignals,
+      detail: 'KosmoDraw/KosmoPublish liefern keine unsicheren Public-Flags in die Website.'
+    }
+  ];
+}
+
 export function publicKosmoDrawDigitalizationStatus() {
   return {
     status: 'review_only_analysis_candidate',

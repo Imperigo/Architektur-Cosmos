@@ -5,6 +5,7 @@ import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
 import {
   ingenbohlEntry,
+  publicGateStatusSummary,
   publicKosmoDrawDigitalizationStatus,
   publicEntryAssetTaxonomy,
   publicEntryReadiness,
@@ -40,6 +41,7 @@ export default function ReferencesPage() {
   const kosmoDrawIntake = publicKosmoDrawBundleIntakeStatus();
   const kosmoDrawDigitalization = publicKosmoDrawDigitalizationStatus();
   const kosmoPublishPlanCatalog = publicKosmoPublishPlanCatalogStatus();
+  const publicGateSummary = publicGateStatusSummary();
 
   return (
     <main className="entry-page min-h-screen bg-[#050707] text-[#f7f7f4]" style={{ '--entry-accent': '#66e1d2' } as React.CSSProperties}>
@@ -87,6 +89,25 @@ export default function ReferencesPage() {
               <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
             </div>
           ))}
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Public Gate Status</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Die Demo zeigt nur, was durch die oeffentliche Pruefschicht darf.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Referenzen, Assets und Modell-Previews werden als public-safe Oberflaeche gezaehlt. KosmoDraw- und KosmoPublish-Zwischenstaende bleiben review-only, bis Rechte- und Owner-Gates explizit oeffnen.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {publicGateSummary.map((item) => (
+              <div key={item.label} className="border border-white/12 bg-[#101513] p-4">
+                <div className="text-3xl font-semibold text-[#f7f7f4]">{item.value}</div>
+                <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2]">{item.label}</div>
+                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.95fr_1.05fr]">
