@@ -63,7 +63,13 @@ const routes = [
   },
   {
     path: '/sitemap.xml',
-    rawIncludes: ['<urlset', '<loc>https://architekturkosmos.ch/orbit/</loc>']
+    rawIncludes: [
+      '<urlset',
+      '<loc>https://architekturkosmos.ch/references/</loc>',
+      '<loc>https://architekturkosmos.ch/assets/</loc>',
+      '<loc>https://architekturkosmos.ch/orbit/</loc>',
+      '<loc>https://architekturkosmos.ch/atlas/alterszentrum-kloster-ingenbohl/</loc>'
+    ]
   }
 ];
 
