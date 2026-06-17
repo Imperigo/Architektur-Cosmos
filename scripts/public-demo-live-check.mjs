@@ -17,6 +17,7 @@ async function main() {
   run('npm', ['run', 'public:kosmodraw-gate']);
   run('npm', ['run', 'public:route-content-smoke', '--', '--base-url', baseUrl]);
   run('npm', ['run', 'public:gate-check', '--', '--base-url', baseUrl]);
+  run('npm', ['run', 'public:sitemap-route-leak-check', '--', '--base-url', baseUrl]);
 }
 
 function assertNoConcurrentBuild() {
