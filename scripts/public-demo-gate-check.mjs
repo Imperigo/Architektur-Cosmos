@@ -35,6 +35,7 @@ const publicRoutes = [
   '/assets/',
   '/atlas/villa-savoye/',
   '/atlas/alterszentrum-kloster-ingenbohl/',
+  '/icon.svg',
   '/robots.txt',
   '/sitemap.xml'
 ];
