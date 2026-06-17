@@ -43,7 +43,7 @@ const routes = [
   },
   {
     path: '/sitemap.xml',
-    rawIncludes: ['<urlset']
+    rawIncludes: ['<urlset', '<loc>https://architekturkosmos.ch/orbit/</loc>']
   }
 ];
 

@@ -36,6 +36,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.94
     },
     {
+      url: `${siteUrl}/orbit/`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.9
+    },
+    {
       url: `${siteUrl}/archive/`,
       lastModified: now,
       changeFrequency: 'weekly',
