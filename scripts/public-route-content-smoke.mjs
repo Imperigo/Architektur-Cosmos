@@ -94,8 +94,14 @@ async function main() {
     const blockedMatches = blockedPatterns
       .filter((pattern) => pattern.test(body))
       .map((pattern) => pattern.toString());
+    const minBodyLength = route.minBodyLength ?? ((route.rawIncludes ?? []).length > 0 ? 20 : 500);
 
     check(response.ok, `${route.path}:status`, `Expected HTTP 2xx for ${route.path}, got ${response.status}.`);
+    check(
+      body.length >= minBodyLength,
+      `${route.path}:min_body_length`,
+      `Expected ${route.path} body length >= ${minBodyLength}, got ${body.length}.`
+    );
     for (const expected of route.includes ?? []) {
       check(
         normalized.includes(expected),
@@ -115,6 +121,8 @@ async function main() {
     checkedRoutes.push({
       path: route.path,
       status: response.status,
+      body_length: body.length,
+      min_body_length: minBodyLength,
       expected_text_count: (route.includes ?? []).length + (route.rawIncludes ?? []).length,
       blocked_pattern_count: blockedMatches.length
     });
