@@ -40,7 +40,9 @@ const routes = [
       'Digitalization Asset Preflight',
       'KosmoPublish Plan Catalog',
       'Public Asset Gate',
-      'Villa Savoye'
+      'Villa Savoye',
+      'Ingenbohl Review-Asset',
+      'Alterszentrum Kloster Ingenbohl'
     ]
   },
   {
