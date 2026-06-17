@@ -13,6 +13,10 @@ const routes = [
     includes: ['KosmoOrbit', 'Review-only Preview']
   },
   {
+    path: '/atlas/',
+    includes: ['Architektur Kosmos']
+  },
+  {
     path: '/references/',
     includes: [
       'KosmoReferences',

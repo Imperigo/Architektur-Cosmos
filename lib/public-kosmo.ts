@@ -151,6 +151,89 @@ export function publicEntryBySlug(slug: string) {
   return allEntries.find((entry) => entry.slug === slug);
 }
 
+export function publicAtlasEntries(): Entry[] {
+  return allEntries.map((entry) => {
+    const safeMedia = entry.media.map((media) => {
+      const url = publicProjectMediaUrl(entry, media);
+      return {
+        type: media.type,
+        label: media.label,
+        placeholder: publicSafeText(media.placeholder),
+        url: url ?? undefined,
+        credit: url ? publicSafeText(media.credit) : undefined,
+        license: media.license
+      };
+    });
+
+    return {
+      ...entry,
+      full_description: publicSafeText(entry.full_description),
+      short_description: publicSafeText(entry.short_description),
+      one_sentence: publicSafeText(entry.one_sentence),
+      media: safeMedia,
+      source_quality: publicSafeText(entry.source_quality),
+      source_documents: [],
+      source_url: undefined,
+      source_assets: undefined,
+      source_candidates: entry.source_candidates?.map((candidate) => {
+        const { url: _url, local_path: _localPath, ...safeCandidate } = candidate;
+        return {
+          ...safeCandidate,
+          title: publicSafeText(safeCandidate.title),
+          notes: publicSafeText(safeCandidate.notes)
+        };
+      }),
+      asset_candidates: entry.asset_candidates?.map((candidate) => {
+        const { local_path: _localPath, ...safeCandidate } = candidate;
+        return {
+          ...safeCandidate,
+          title: publicSafeText(safeCandidate.title),
+          planned_r2_key: candidate.public_display_allowed ? candidate.planned_r2_key : undefined
+        };
+      }),
+      model_assets: entry.model_assets?.map((model) => ({
+        ...model,
+        source_basis: publicSafeText(model.source_basis)
+      })),
+      model_packages: entry.model_packages?.map((modelPackage) => ({
+        ...modelPackage,
+        planned_paths: [],
+        notes: publicSafeText(modelPackage.notes)
+      })),
+      splat_assets: entry.splat_assets?.map((asset) => ({
+        ...asset,
+        source_basis: publicSafeText(asset.source_basis)
+      })),
+      analysis_layers: entry.analysis_layers?.map((layer) => ({
+        analysis_type: layer.analysis_type,
+        summary: publicSafeText(layer.summary),
+        review_status: layer.review_status
+      })),
+      architecture_text: entry.architecture_text ? {
+        ...entry.architecture_text,
+        source_basis: undefined,
+        overview: publicSafeText(entry.architecture_text.overview),
+        chapters: entry.architecture_text.chapters.map((chapter) => ({
+          ...chapter,
+          text: publicSafeText(chapter.text),
+          source_basis: undefined
+        }))
+      } : undefined,
+      model_3d: entry.model_3d ? {
+        ...entry.model_3d,
+        source_basis: undefined
+      } : undefined,
+      ingestion_status: entry.ingestion_status ? {
+        stage: entry.ingestion_status.stage,
+        source_status: entry.ingestion_status.source_status,
+        asset_status: entry.ingestion_status.asset_status,
+        model_status: entry.ingestion_status.model_status,
+        updated_at: entry.ingestion_status.updated_at
+      } : undefined
+    };
+  });
+}
+
 export function villaSavoyeModelUrl() {
   return publicModelUrl(villaSavoyeEntry()) ?? '/archive-models/villa-savoye/low.glb';
 }
@@ -300,6 +383,18 @@ export function materialTags(entry: Entry) {
     if (tag.startsWith('structure:')) materialSet.add(tag.replace('structure:', ''));
   });
   return [...materialSet].slice(0, 8);
+}
+
+function publicSafeText(value: string | undefined) {
+  if (!value) return value;
+  return value
+    .replace(/archive-intake\/[^\s,;)]*/gi, 'review-only intake path')
+    .replace(/\/mnt\/[^\s,;)]*/gi, 'private storage path')
+    .replace(/\/home\/[^\s,;)]*/gi, 'private home path')
+    .replace(/source-root/gi, 'private source gate')
+    .replace(/source root/gi, 'private source gate')
+    .replace(/onedrive/gi, 'cloud sync')
+    .replace(/private-library/gi, 'private library');
 }
 
 function publicReferenceWeight(entry: Entry) {

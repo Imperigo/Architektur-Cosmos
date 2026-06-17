@@ -29,6 +29,7 @@ const warnings = [];
 const publicRoutes = [
   '/',
   '/orbit/',
+  '/atlas/',
   '/references/',
   '/assets/',
   '/atlas/villa-savoye/',
