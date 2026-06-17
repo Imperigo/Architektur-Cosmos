@@ -3,7 +3,18 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
-import { publicProjectMediaUrl, publicReferences, villaSavoyeAssetTaxonomy, villaSavoyeEntry, villaSavoyeModelUrl, villaSavoyeReadiness } from '@/lib/public-kosmo';
+import {
+  ingenbohlEntry,
+  publicEntryAssetTaxonomy,
+  publicEntryReadiness,
+  publicModelUrl,
+  publicProjectMediaUrl,
+  publicReferences,
+  villaSavoyeAssetTaxonomy,
+  villaSavoyeEntry,
+  villaSavoyeModelUrl,
+  villaSavoyeReadiness
+} from '@/lib/public-kosmo';
 
 export const metadata: Metadata = {
   title: 'KosmoReferences | Architektur Kosmos',
@@ -19,6 +30,10 @@ export default function ReferencesPage() {
   const modelUrl = villaSavoyeModelUrl();
   const readiness = villaSavoyeReadiness();
   const taxonomy = villaSavoyeAssetTaxonomy();
+  const ingenbohl = ingenbohlEntry();
+  const ingenbohlReadiness = publicEntryReadiness(ingenbohl);
+  const ingenbohlTaxonomy = publicEntryAssetTaxonomy(ingenbohl);
+  const ingenbohlModelUrl = publicModelUrl(ingenbohl);
 
   return (
     <main className="entry-page min-h-screen bg-[#050707] text-[#f7f7f4]" style={{ '--entry-accent': '#66e1d2' } as React.CSSProperties}>
@@ -103,6 +118,39 @@ export default function ReferencesPage() {
 
         <section className="border-t border-white/12 py-8">
           <EntryModelViewer modelUrl={modelUrl} title={villa.title} accent="#66e1d2" />
+        </section>
+
+        <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.92fr_1.08fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Zweiter Public Pilot</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">{ingenbohl.title}</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Ingenbohl wird als zweiter Referenz-Prototyp sichtbar, aber bewusst anders als Villa Savoye:
+              Medien aus der privaten Recherche bleiben gesperrt, waehrend reviewed Analysefelder und das oeffentliche
+              GLB-Preview die KosmoReferences-/KosmoAsset-Struktur demonstrieren.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {ingenbohlReadiness.map((item) => (
+                <div key={item.label} className="border border-white/12 bg-[#101513] p-4">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2]">{item.status}</div>
+                  <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.label}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid gap-4">
+            {ingenbohlModelUrl ? <EntryModelViewer modelUrl={ingenbohlModelUrl} title={ingenbohl.title} accent="#66e1d2" /> : null}
+            <div className="grid gap-3 sm:grid-cols-2">
+              {ingenbohlTaxonomy.map((item) => (
+                <div key={item.title} className="border border-white/12 bg-[#101513] p-4">
+                  <div className="text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{item.kind}</div>
+                  <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">

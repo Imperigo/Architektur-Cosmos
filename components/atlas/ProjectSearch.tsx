@@ -2,11 +2,23 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import type { Entry } from '@/lib/types';
 import { formatYear } from '@/lib/wormhole-layout';
 
+export type ProjectSearchEntry = {
+  id: string;
+  slug: string;
+  title: string;
+  year_start: number;
+  authors: string[];
+  city?: string | null;
+  country?: string | null;
+  themes: string[];
+  entry_type: string;
+  style_sector: string;
+};
+
 type ProjectSearchProps = {
-  entries: Entry[];
+  entries: ProjectSearchEntry[];
   currentSlug?: string;
   variant?: 'atlas' | 'entry';
   developerMode?: boolean;
@@ -393,7 +405,7 @@ function isEditableKeyboardTarget(target: EventTarget | null) {
   return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
 }
 
-function scoreEntry(entry: Entry, normalizedQuery: string) {
+function scoreEntry(entry: ProjectSearchEntry, normalizedQuery: string) {
   const title = normalize(entry.title);
   const author = normalize(entry.authors.join(' '));
   const place = normalize([entry.city, entry.country].filter(Boolean).join(' '));

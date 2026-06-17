@@ -14,8 +14,9 @@ export function publicReferenceEntries() {
   return allEntries
     .filter((entry) => {
       const hasPublicMedia = entry.media.some((media) => publicProjectMediaUrl(entry, media));
+      const hasPublicSurface = hasPublicMedia || publicModelBySlug.has(entry.slug);
       const status = entry.database_profile?.status;
-      return hasPublicMedia && (status === 'reviewed' || status === 'published' || publicModelBySlug.has(entry.slug));
+      return hasPublicSurface && (status === 'reviewed' || status === 'published' || publicModelBySlug.has(entry.slug));
     })
     .sort((left, right) => publicReferenceWeight(right) - publicReferenceWeight(left));
 }
@@ -43,11 +44,24 @@ export function publicReferences(): PublicReference[] {
 }
 
 export function villaSavoyeEntry() {
-  return allEntries.find((entry) => entry.slug === 'villa-savoye') as Entry;
+  return publicEntryBySlug('villa-savoye') as Entry;
+}
+
+export function ingenbohlEntry() {
+  return publicEntryBySlug('alterszentrum-kloster-ingenbohl') as Entry;
+}
+
+export function publicEntryBySlug(slug: string) {
+  return allEntries.find((entry) => entry.slug === slug);
 }
 
 export function villaSavoyeModelUrl() {
-  return publicModelBySlug.get('villa-savoye')?.url ?? '/archive-models/villa-savoye/low.glb';
+  return publicModelUrl(villaSavoyeEntry()) ?? '/archive-models/villa-savoye/low.glb';
+}
+
+export function publicModelUrl(entryOrSlug: Entry | string | undefined) {
+  const slug = typeof entryOrSlug === 'string' ? entryOrSlug : entryOrSlug?.slug;
+  return slug ? publicModelBySlug.get(slug)?.url ?? null : null;
 }
 
 export function publicAssets(): PublicAsset[] {
@@ -117,6 +131,7 @@ export function materialTags(entry: Entry) {
 
 function publicReferenceWeight(entry: Entry) {
   return (entry.slug === 'villa-savoye' ? 1000 : 0)
+    + (entry.slug === 'alterszentrum-kloster-ingenbohl' ? 950 : 0)
     + (publicModelBySlug.has(entry.slug) ? 180 : 0)
     + (entry.database_profile?.status === 'reviewed' ? 100 : 0)
     + (entry.analysis_layers?.length ?? 0) * 8
@@ -159,26 +174,39 @@ export function publicGateStatus(entry: Entry) {
 export function publicReadinessScore(entry: Entry) {
   const mediaReady = Math.min(4, entry.media.filter((media) => publicProjectMediaUrl(entry, media)).length) * 15;
   const analysisReady = Math.min(6, (entry.analysis_layers ?? []).filter((layer) => layer.review_status === 'reviewed' || layer.review_status === 'verified').length) * 5;
-  const modelReady = publicModelBySlug.has(entry.slug) ? 10 : 0;
+  const modelReady = publicModelBySlug.has(entry.slug) ? 18 : 0;
   return Math.min(100, mediaReady + analysisReady + modelReady);
 }
 
 export function villaSavoyeReadiness() {
-  const villa = villaSavoyeEntry();
-  const reviewedLayers = (villa.analysis_layers ?? []).filter((layer) => layer.review_status === 'reviewed' || layer.review_status === 'verified').length;
-  const mediaReady = villa.media.filter((media) => publicProjectMediaUrl(villa, media)).length;
-  const model = publicModelBySlug.get(villa.slug);
+  return publicEntryReadiness(villaSavoyeEntry());
+}
+
+export function villaSavoyeAssetTaxonomy() {
+  return publicEntryAssetTaxonomy(villaSavoyeEntry());
+}
+
+export function publicEntryReadiness(entryOrSlug: Entry | string | undefined) {
+  const entry = resolveEntry(entryOrSlug);
+  if (!entry) return [];
+
+  const reviewedLayers = (entry.analysis_layers ?? []).filter((layer) => layer.review_status === 'reviewed' || layer.review_status === 'verified').length;
+  const mediaReady = entry.media.filter((media) => publicProjectMediaUrl(entry, media)).length;
+  const model = publicModelBySlug.get(entry.slug);
+  const hasReviewOnlyMedia = entry.media.some((media) => !publicProjectMediaUrl(entry, media));
 
   return [
     {
       label: 'Public media gate',
-      status: 'ready',
-      detail: `${mediaReady} display-safe Medien inkl. eigener Plan-/Schnittdiagramme.`
+      status: mediaReady > 0 ? 'ready' : 'private blocked',
+      detail: mediaReady > 0
+        ? `${mediaReady} display-safe Medien sind sichtbar; private Slots bleiben blockiert.`
+        : `0 display-safe Medien. ${hasReviewOnlyMedia ? 'Private/review-only Medien bleiben korrekt unsichtbar.' : 'Noch keine Medien-Slots.'}`
     },
     {
       label: 'Analyse-Layer',
-      status: 'reviewed',
-      detail: `${reviewedLayers}/${villa.analysis_layers?.length ?? 0} Layer sind reviewed oder verified.`
+      status: reviewedLayers > 0 ? 'reviewed' : 'pending',
+      detail: `${reviewedLayers}/${entry.analysis_layers?.length ?? 0} Layer sind reviewed oder verified.`
     },
     {
       label: '3D Preview',
@@ -186,15 +214,19 @@ export function villaSavoyeReadiness() {
       detail: model?.caveat ?? 'Noch kein oeffentliches Preview-Modell.'
     },
     {
-      label: 'KosmoPublish IFC-Pläne',
-      status: 'upstream gate',
-      detail: 'MCP-Tool ist integriert; belastbare Plan-Renderings warten auf wandhaltige IFCs aus KosmoDraw/KosmoPrepare.'
+      label: 'KosmoDraw Bundle',
+      status: 'review gate',
+      detail: '2D/Bild-zu-3D-Bundles werden nur als review_only aufgenommen; public_display_allowed bleibt false bis zur Freigabe.'
     }
   ];
 }
 
-export function villaSavoyeAssetTaxonomy() {
-  return [
+export function publicEntryAssetTaxonomy(entryOrSlug: Entry | string | undefined) {
+  const entry = resolveEntry(entryOrSlug);
+  if (!entry) return [];
+
+  if (entry.slug === 'villa-savoye') {
+    return [
     {
       title: 'Pilotis / Tragstruktur',
       kind: 'structure',
@@ -216,4 +248,64 @@ export function villaSavoyeAssetTaxonomy() {
       detail: 'Eigene diagrammatische SVG-Rekonstruktionen, nicht vermessene Bauplaene.'
     }
   ];
+  }
+
+  if (entry.slug === 'alterszentrum-kloster-ingenbohl') {
+    return [
+      {
+        title: 'Tragstruktur / Pflegecluster',
+        kind: 'structure',
+        detail: 'Stahlbeton-Skelett, aussteifender Kern und Pflegegeschosse als review-only Strukturprinzipien.'
+      },
+      {
+        title: 'Materialsystem / Trasskalk',
+        kind: 'material',
+        detail: 'Beton, Weisstanne, Kalk-/Lehmputz, bestehendes Mauerwerk und mineralischer Putz als Materialliste.'
+      },
+      {
+        title: 'Klosterplateau / Hangkante',
+        kind: 'site',
+        detail: 'Anbindung an Kloster, Terrainkante und Besucherebene als raeumliche Referenzlogik.'
+      },
+      {
+        title: 'Kapelle / Pflegeprogramm',
+        kind: 'program',
+        detail: 'Pflegezimmer, Kapelle, Cafe und Rueckzugsraeume als programmatische Asset-Kandidaten.'
+      }
+    ];
+  }
+
+  const materials = materialTags(entry);
+  const layerKinds = [...new Set((entry.analysis_layers ?? []).map((layer) => layer.analysis_type.replace(/_/g, ' ')))].slice(0, 4);
+
+  return [
+    {
+      title: 'Materialprofil',
+      kind: 'material',
+      detail: materials.length ? materials.join(', ') : 'Noch kein public-ready Materialprofil.'
+    },
+    {
+      title: 'Analyse-Layer',
+      kind: 'analysis',
+      detail: layerKinds.length ? layerKinds.join(', ') : 'Noch keine reviewed Analyse-Layer.'
+    },
+    {
+      title: 'Modell-/Zeichnungsstatus',
+      kind: 'review',
+      detail: publicModelBySlug.has(entry.slug) ? 'Oeffentliches Preview-Modell vorhanden; Zeichnungen bleiben gate-geprueft.' : 'Noch kein oeffentliches Preview-Modell.'
+    },
+    {
+      title: 'Public-Gate',
+      kind: 'governance',
+      detail: `${publicGateStatus(entry)} / Readiness ${publicReadinessScore(entry)}%.`
+    }
+  ];
+}
+
+export function isPublicPilotSlug(slug: string) {
+  return slug === 'villa-savoye' || slug === 'alterszentrum-kloster-ingenbohl';
+}
+
+function resolveEntry(entryOrSlug: Entry | string | undefined) {
+  return typeof entryOrSlug === 'string' ? publicEntryBySlug(entryOrSlug) : entryOrSlug;
 }

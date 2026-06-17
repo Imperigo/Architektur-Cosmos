@@ -5,17 +5,19 @@ import type { CSSProperties } from 'react';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { MediaLightbox } from '@/components/atlas/MediaLightbox';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
+import type { ProjectSearchEntry } from '@/components/atlas/ProjectSearch';
 import entries from '@/data/mock-entries.json';
 import publicModelPreviews from '@/data/public-model-previews.json';
 import relations from '@/data/relations.json';
 import { styleSectorColors } from '@/lib/atlas-layout';
 import { prettifyGermanText } from '@/lib/display-text';
-import { publicProjectMediaUrl, primaryPublicProjectMediaUrl, villaSavoyeAssetTaxonomy, villaSavoyeReadiness } from '@/lib/public-kosmo';
+import { isPublicPilotSlug, publicEntryAssetTaxonomy, publicEntryReadiness, publicProjectMediaUrl, primaryPublicProjectMediaUrl } from '@/lib/public-kosmo';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 
 const allEntries = entries as Entry[];
 const allRelationen = relations as EntryRelation[];
 const publicModels = publicModelPreviews.models as Array<{ slug: string; url: string }>;
+const publicSearchEntries = allEntries.map(publicSearchEntry);
 const siteUrl = 'https://architekturkosmos.ch';
 
 type ArchiveStatusMetric = {
@@ -73,6 +75,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
   if (!entry) notFound();
 
+  const displayEntry = publicDisplayEntry(entry);
   const related = relatedEntries(entry).slice(0, 8);
   const neighbors = timelineNeighbors(entry);
   const peers = stylePeers(entry).slice(0, 4);
@@ -82,11 +85,11 @@ export default async function EntryPage({ params }: EntryPageProps) {
   const jsonLd = entryJsonLd(entry);
   const yearLabel = formatYear(entry.year_start);
   const archiveScore = archiveLeseniness(entry);
-  const publicModelUrl = publicModelPreviewUrl(entry);
-  const heroImage = primaryMediaUrl(entry);
-  const visualProfile = entryVisualProfile(entry);
-  const displayOneSentence = prettifyGermanText(entry.one_sentence || entry.short_description);
-  const displayFullDescription = prettifyGermanText(entry.full_description);
+  const publicModelUrl = publicModelPreviewUrl(displayEntry);
+  const heroImage = primaryMediaUrl(displayEntry);
+  const visualProfile = entryVisualProfile(displayEntry);
+  const displayOneSentence = prettifyGermanText(displayEntry.one_sentence || displayEntry.short_description);
+  const displayFullDescription = prettifyGermanText(displayEntry.full_description);
 
   return (
     <main
@@ -99,7 +102,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
       } as CSSProperties}
     >
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <ProjectSearch entries={allEntries} currentSlug={entry.slug} />
+      <ProjectSearch entries={publicSearchEntries} currentSlug={entry.slug} />
       <div className="entry-cosmos-field" aria-hidden="true">
         {heroImage ? <span className="entry-object-backdrop" style={{ backgroundImage: `url(${heroImage})` }} /> : null}
         <span className="entry-ring entry-ring-a" />
@@ -143,22 +146,22 @@ export default async function EntryPage({ params }: EntryPageProps) {
             </p>
           </div>
 
-          <ArchiveStatusPanel entry={entry} relatedCount={related.length} archiveScore={archiveScore} accent={accent} />
+          <ArchiveStatusPanel entry={displayEntry} relatedCount={related.length} archiveScore={archiveScore} accent={accent} />
         </section>
 
-        <ModelAnalysisSection entry={entry} modelUrl={publicModelUrl} accent={accent} />
+        <ModelAnalysisSection entry={displayEntry} modelUrl={publicModelUrl} accent={accent} />
 
-        {entry.slug === 'villa-savoye' ? <VillaSavoyePublicPilotSection accent={accent} /> : null}
+        {isPublicPilotSlug(entry.slug) ? <PublicPilotSection entry={displayEntry} accent={accent} /> : null}
 
-        {entry.architecture_text ? <ArchitectureTextSection entry={entry} accent={accent} /> : null}
+        {displayEntry.architecture_text ? <ArchitectureTextSection entry={displayEntry} accent={accent} /> : null}
 
-        <ObjectIdentityPanel entry={entry} profile={visualProfile} accent={accent} />
+        <ObjectIdentityPanel entry={displayEntry} profile={visualProfile} accent={accent} />
 
         <section className="entry-study-grid grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
           <StudyCard
             title="Lesen"
             label="Lernimpuls"
-            body={studyPrompt(entry)}
+            body={studyPrompt(displayEntry)}
             accent={accent}
           />
           <StudyCard
@@ -170,7 +173,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <StudyCard
             title="Archiv"
             label={`${archiveScore}% strukturiert`}
-            body={archiveSummary(entry)}
+            body={archiveSummary(displayEntry)}
             accent={accent}
           />
         </section>
@@ -186,61 +189,61 @@ export default async function EntryPage({ params }: EntryPageProps) {
             </p>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            {entry.media.map((media) => (
-              <MediaCard key={media.type} media={media} entry={entry} profile={visualProfile} accent={accent} />
+            {displayEntry.media.map((media) => (
+              <MediaCard key={media.type} media={media} entry={displayEntry} profile={visualProfile} accent={accent} />
             ))}
           </div>
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-3">
-          <InfoBlock title="Themen" items={entry.themes} accent={accent} />
-          <InfoBlock title="Quellenpfad" items={sourceItems(entry)} accent={accent} />
-          <InfoBlock title="Datenbank Tags" items={entry.database_tags ?? []} accent={accent} empty="Noch keine Datenbank-Tags" />
+          <InfoBlock title="Themen" items={displayEntry.themes} accent={accent} />
+          <InfoBlock title="Quellenpfad" items={sourceItems(displayEntry)} accent={accent} />
+          <InfoBlock title="Datenbank Tags" items={displayEntry.database_tags ?? []} accent={accent} empty="Noch keine Datenbank-Tags" />
         </section>
 
-        {entry.analysis_layers?.length || entry.analysis_observations?.length ? (
+        {displayEntry.analysis_layers?.length || displayEntry.analysis_observations?.length ? (
           <section className="grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
             <AnalysisCard
               title="Tragwerk"
               accent={accent}
-              items={analysisItems(entry, ['structure'])}
+              items={analysisItems(displayEntry, ['structure'])}
               empty="Noch kein Tragwerkslayer."
             />
             <AnalysisCard
               title="Material"
               accent={accent}
-              items={analysisItems(entry, ['material_system', 'material_tag', 'roof_form'])}
+              items={analysisItems(displayEntry, ['material_system', 'material_tag', 'roof_form'])}
               empty="Noch kein Materiallayer."
             />
             <AnalysisCard
               title="Tektonik"
               accent={accent}
-              items={analysisItems(entry, ['tectonics', 'circulation', 'source_reconstruction'])}
+              items={analysisItems(displayEntry, ['tectonics', 'circulation', 'source_reconstruction'])}
               empty="Noch kein Tektoniklayer."
             />
           </section>
         ) : null}
 
-        {entry.ingestion_status || entry.model_packages?.length || entry.splat_assets?.length || entry.analysis_observations?.length ? (
+        {displayEntry.ingestion_status || displayEntry.model_packages?.length || displayEntry.splat_assets?.length || displayEntry.analysis_observations?.length ? (
           <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
             <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
               <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>KI-Referenzpilot</div>
               <h2 className="mt-3 text-2xl text-[#f7f7f4]">Erfassung, Modell und Analyse-Pipeline</h2>
               <div className="mt-5 grid gap-3 text-sm leading-6 text-[#cfcfca] sm:grid-cols-2">
-                {entry.ingestion_status ? (
+                {displayEntry.ingestion_status ? (
                   <>
-                    <EntryMeta label="Wurmloch-Status" value={entry.ingestion_status.stage.replace(/_/g, ' ')} />
-                    <EntryMeta label="Quellen" value={entry.ingestion_status.source_status.replace(/_/g, ' ')} />
-                    <EntryMeta label="Assets" value={entry.ingestion_status.asset_status.replace(/_/g, ' ')} />
-                    <EntryMeta label="Modelle" value={entry.ingestion_status.model_status.replace(/_/g, ' ')} />
+                    <EntryMeta label="Wurmloch-Status" value={displayEntry.ingestion_status.stage.replace(/_/g, ' ')} />
+                    <EntryMeta label="Quellen" value={displayEntry.ingestion_status.source_status.replace(/_/g, ' ')} />
+                    <EntryMeta label="Assets" value={displayEntry.ingestion_status.asset_status.replace(/_/g, ' ')} />
+                    <EntryMeta label="Modelle" value={displayEntry.ingestion_status.model_status.replace(/_/g, ' ')} />
                   </>
                 ) : null}
               </div>
-              {entry.model_packages?.length ? (
+              {displayEntry.model_packages?.length ? (
                 <div className="mt-6">
                   <h3 className="text-[10px] uppercase tracking-[0.18em]" style={{ color: accent }}>Modellpakete</h3>
                   <div className="mt-3 grid gap-3">
-                    {entry.model_packages.map((modelPackage) => (
+                    {displayEntry.model_packages.map((modelPackage) => (
                       <div key={modelPackage.package_type} className="border border-white/10 bg-[#050505]/45 p-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <span className="text-sm text-[#f7f7f4]">{modelPackage.package_type.replace(/_/g, ' ')}</span>
@@ -255,10 +258,10 @@ export default async function EntryPage({ params }: EntryPageProps) {
             </article>
 
             <div className="grid gap-6">
-              {entry.splat_assets?.length ? (
+              {displayEntry.splat_assets?.length ? (
                 <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
                   <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Gaussian-Splat-Ebene</div>
-                  {entry.splat_assets.map((splat) => (
+                  {displayEntry.splat_assets.map((splat) => (
                     <div key={splat.r2_key} className="mt-3">
                       <h2 className="text-xl text-[#f7f7f4]">{splat.title}</h2>
                       <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(splat.use_case ?? splat.source_basis)}</p>
@@ -268,10 +271,10 @@ export default async function EntryPage({ params }: EntryPageProps) {
                 </article>
               ) : null}
 
-              {entry.analysis_observations?.length ? (
+              {displayEntry.analysis_observations?.length ? (
                 <InfoBlock
                   title="Analysebeobachtungen"
-                  items={entry.analysis_observations.map((observation) => {
+                  items={displayEntry.analysis_observations.map((observation) => {
                     const confidence = typeof observation.confidence_score === 'number' ? ` ${Math.round(observation.confidence_score * 100)}%` : '';
                     return `${observation.analysis_type}: ${observation.label}${confidence}`;
                   })}
@@ -282,11 +285,11 @@ export default async function EntryPage({ params }: EntryPageProps) {
           </section>
         ) : null}
 
-        {entry.asset_candidates?.length ? (
+        {displayEntry.asset_candidates?.length ? (
           <section className="border-t border-white/12 py-8">
             <InfoBlock
               title="Asset-Kandidaten"
-              items={entry.asset_candidates.map((asset) => `${asset.kind}: ${asset.title} / ${asset.rights_status}${asset.public_display_allowed ? ' / anzeigebereit' : ' / Prüfung vor Veröffentlichung'}`)}
+              items={displayEntry.asset_candidates.map((asset) => `${asset.kind}: ${asset.title} / ${asset.rights_status}${asset.public_display_allowed ? ' / anzeigebereit' : ' / Prüfung vor Veröffentlichung'}`)}
               accent={accent}
             />
           </section>
@@ -354,9 +357,9 @@ export default async function EntryPage({ params }: EntryPageProps) {
   );
 }
 
-function VillaSavoyePublicPilotSection({ accent }: { accent: string }) {
-  const readiness = villaSavoyeReadiness();
-  const taxonomy = villaSavoyeAssetTaxonomy();
+function PublicPilotSection({ entry, accent }: { entry: Entry; accent: string }) {
+  const readiness = publicEntryReadiness(entry);
+  const taxonomy = publicEntryAssetTaxonomy(entry);
 
   return (
     <section className="border-t border-white/12 py-8">
@@ -364,11 +367,12 @@ function VillaSavoyePublicPilotSection({ accent }: { accent: string }) {
         <div>
           <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Public Pilot Readiness</div>
           <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
-            Villa Savoye verbindet Atlas, KosmoReferences und KosmoAsset.
+            {entry.title} verbindet Atlas, KosmoReferences und KosmoAsset.
           </h2>
         </div>
         <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
-          Diese Atlas-Seite folgt derselben Public-Gate-Logik wie `/references` und `/assets`: eigene Diagramme duerfen sichtbar sein, private Quellen und ungesicherte IFC/BIM-Schritte bleiben als Gate markiert.
+          Diese Atlas-Seite folgt derselben Public-Gate-Logik wie `/references` und `/assets`: nur freigegebene Medien
+          und Preview-Modelle duerfen sichtbar sein, private Quellen und KosmoDraw/KosmoPublish-Zwischenschritte bleiben review-only.
         </p>
       </div>
 
@@ -406,6 +410,52 @@ function EntryStat({ label, value }: { label: string; value: string }) {
 
 function findEntry(slug: string) {
   return allEntries.find((entry) => entry.slug === slug);
+}
+
+function publicDisplayEntry(entry: Entry): Entry {
+  const sourceDocuments = (entry.source_documents ?? []).filter((item) => !isBlockedPublicString(item));
+  const sourceUrl = entry.source_url && !isBlockedPublicString(entry.source_url) ? entry.source_url : undefined;
+
+  return {
+    ...entry,
+    source_documents: sourceDocuments,
+    source_url: sourceUrl,
+    media: entry.media.map((media) => {
+      const { source_url: _sourceUrl, ...safeMedia } = media;
+      return safeMedia;
+    }),
+    asset_candidates: entry.asset_candidates?.map((candidate) => {
+      const { source_url: _sourceUrl, local_path: _localPath, ...safeCandidate } = candidate;
+      return safeCandidate;
+    })
+  };
+}
+
+function publicSearchEntry(entry: Entry): ProjectSearchEntry {
+  return {
+    id: entry.id,
+    slug: entry.slug,
+    title: entry.title,
+    year_start: entry.year_start,
+    authors: entry.authors,
+    city: entry.city,
+    country: entry.country,
+    themes: entry.themes,
+    entry_type: entry.entry_type,
+    style_sector: entry.style_sector
+  };
+}
+
+function isBlockedPublicString(value: string) {
+  return /\/mnt\//i.test(value)
+    || /\/home\//i.test(value)
+    || /source-root/i.test(value)
+    || /private-library/i.test(value)
+    || /onedrive/i.test(value)
+    || /archiv\/architekturkosmos\/assets/i.test(value)
+    || /\.pdf($|\?)/i.test(value)
+    || /archive-intake/i.test(value)
+    || /\bocr\b/i.test(value);
 }
 
 function relatedEntries(entry: Entry) {
@@ -895,9 +945,15 @@ function entryVisualProfile(entry: Entry): EntryVisualProfile {
 }
 
 function sourceItems(entry: Entry) {
+  const sourceDocuments = entry.source_documents ?? [];
+  const publicDocuments = sourceDocuments.filter((item) => !/\.pdf($|\?)/i.test(item));
+  const hiddenDocuments = sourceDocuments.length - publicDocuments.length;
+  const publicSourceUrl = entry.source_url && !/\.pdf($|\?)/i.test(entry.source_url) ? entry.source_url : null;
+
   return [
-    ...(entry.source_documents ?? []),
-    ...(entry.source_url ? [entry.source_url] : []),
+    ...publicDocuments,
+    ...(hiddenDocuments > 0 ? [`${hiddenDocuments} Quellen-Dokumente nur als review-only Metadaten`] : []),
+    ...(publicSourceUrl ? [publicSourceUrl] : []),
     ...(entry.source_assets?.length ? [`${entry.source_assets.length} Quellenassets`] : [])
   ];
 }

@@ -2,7 +2,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PublicAssetExplorer } from '@/components/public/PublicAssetExplorer';
-import { publicAssets, publicProjectMediaUrl, villaSavoyeAssetTaxonomy, villaSavoyeEntry, villaSavoyeReadiness } from '@/lib/public-kosmo';
+import {
+  ingenbohlEntry,
+  publicAssets,
+  publicEntryAssetTaxonomy,
+  publicEntryReadiness,
+  publicProjectMediaUrl,
+  villaSavoyeAssetTaxonomy,
+  villaSavoyeEntry,
+  villaSavoyeReadiness
+} from '@/lib/public-kosmo';
 
 export const metadata: Metadata = {
   title: 'KosmoAsset | Architektur Kosmos',
@@ -17,6 +26,9 @@ export default function AssetsPage() {
   const publicImages = villa.media.filter((media) => publicProjectMediaUrl(villa, media) && (media.type === 'exterior' || media.type === 'interior'));
   const readiness = villaSavoyeReadiness();
   const taxonomy = villaSavoyeAssetTaxonomy();
+  const ingenbohl = ingenbohlEntry();
+  const ingenbohlReadiness = publicEntryReadiness(ingenbohl);
+  const ingenbohlTaxonomy = publicEntryAssetTaxonomy(ingenbohl);
 
   return (
     <main className="entry-page min-h-screen bg-[#060805] text-[#f7f7f4]" style={{ '--entry-accent': '#b9f06a' } as React.CSSProperties}>
@@ -92,6 +104,35 @@ export default function AssetsPage() {
               <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
             </div>
           ))}
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ingenbohl Review-Asset</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ein zweiter Pilot ohne private Medien-Leak.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              {ingenbohl.title} zeigt die naechste KosmoAsset-Bruecke: reviewed Analyse, Material- und Strukturkandidaten
+              sowie Modellstatus werden indexiert, aber Bilder, Pläne und private Quellen bleiben gesperrt.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {ingenbohlReadiness.map((item) => (
+                <div key={item.label} className="border border-white/12 bg-[#11170c] p-4">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a]">{item.status}</div>
+                  <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.label}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {ingenbohlTaxonomy.map((item) => (
+              <div key={item.title} className="border border-white/12 bg-[#11170c] p-4">
+                <div className="text-[10px] uppercase tracking-[0.16em] text-[#b9f06a]">{item.kind}</div>
+                <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <PublicAssetExplorer assets={assets} />

@@ -1,0 +1,105 @@
+{
+  "project_slug": "alterszentrum-kloster-ingenbohl",
+  "status": "review_only",
+  "source_kind": "hybrid",
+  "rooms": [
+    {
+      "id": "room-care-cluster-01",
+      "name": "Pflegecluster Studienraum",
+      "function": "care",
+      "polygon_xy": [
+        [0, 0],
+        [8, 0],
+        [8, 5],
+        [0, 5]
+      ],
+      "floor_level": 1,
+      "height_m": 3,
+      "area_m2": 40,
+      "confidence": 0.42,
+      "source_basis": "diagrammatic public metadata and review-only interpretation"
+    }
+  ],
+  "walls": [
+    {
+      "id": "wall-core-01",
+      "start_x": 0,
+      "start_y": 0,
+      "end_x": 8,
+      "end_y": 0,
+      "thickness_m": 0.28,
+      "height_m": 3,
+      "floor_level": 1,
+      "structural_role": "loadbearing",
+      "confidence": 0.4
+    }
+  ],
+  "openings": [
+    {
+      "id": "opening-window-01",
+      "type": "window",
+      "host_wall_id": "wall-core-01",
+      "position_m": 3.2,
+      "width_m": 1.6,
+      "height_m": 1.4,
+      "confidence": 0.35
+    }
+  ],
+  "stories": [
+    {
+      "id": "story-01",
+      "name": "Pflegegeschoss 1",
+      "elevation_m": 0,
+      "height_m": 3,
+      "confidence": 0.45
+    }
+  ],
+  "ifc_path": "/tmp/kosmodraw/alterszentrum-kloster-ingenbohl/review-model.ifc",
+  "model_preview": {
+    "glb_url": null,
+    "review_status": "draft",
+    "public_display_allowed": false,
+    "caveat": "Diagrammatisches Studienmodell, keine vermessene Rekonstruktion."
+  },
+  "drawings": [
+    {
+      "kind": "plan",
+      "url": null,
+      "review_status": "draft",
+      "public_display_allowed": false,
+      "caveat": "Aus KosmoDraw/KosmoPublish generierte Planvorschau; vor Public-Freigabe pruefen."
+    }
+  ],
+  "analysis_layers": [
+    {
+      "analysis_type": "source_reconstruction",
+      "review_status": "draft",
+      "summary": "Plan/Bild wurde in Raeume, Waende, Oeffnungen und Geschosse interpretiert."
+    },
+    {
+      "analysis_type": "material_system",
+      "review_status": "draft",
+      "summary": "Beton, Weisstanne, Kalkputz, Lehmputz und bestehendes Mauerwerk als Kandidaten."
+    }
+  ],
+  "asset_candidates": [
+    {
+      "kind": "model",
+      "title": "ingenbohl-diagrammatic-model.glb",
+      "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/models/low.glb",
+      "rights_status": "own_work",
+      "public_display_allowed": false,
+      "review_status": "draft",
+      "source_basis": "KosmoDraw review-only bundle"
+    },
+    {
+      "kind": "drawing",
+      "title": "ingenbohl-plan-preview.svg",
+      "planned_r2_key": "entries/alterszentrum-kloster-ingenbohl/drawings/plan-preview.svg",
+      "rights_status": "own_work",
+      "public_display_allowed": false,
+      "review_status": "draft",
+      "source_basis": "KosmoDraw plus KosmoPublish review-only chain"
+    }
+  ]
+}
