@@ -28,6 +28,7 @@ const failures = [];
 const warnings = [];
 const publicRoutes = [
   '/',
+  '/orbit/',
   '/references/',
   '/assets/',
   '/atlas/villa-savoye/',

@@ -33,6 +33,21 @@ const trainingCards = bridge.orbit_cards.filter((card) => card.id.startsWith('tr
 const blockerCards = bridge.orbit_cards.filter((card) => card.status === 'blocked' || card.status.startsWith('blocked_') || card.status === 'needs_review');
 const ownerActionCards = bridge.orbit_cards.filter((card) => card.owner_action_required || card.status === 'owner_action');
 
+function publicOrbitKey(value: string) {
+  return value
+    .replace(/source-root/gi, 'private-source-gate')
+    .replace(/source_root/gi, 'private_source_gate')
+    .replace(/onedrive/gi, 'cloud-sync');
+}
+
+function publicOrbitText(value: string | null | undefined) {
+  return String(value ?? '')
+    .replace(/source-root/gi, 'private source gate')
+    .replace(/source root/gi, 'private source gate')
+    .replace(/source_root/gi, 'private_source_gate')
+    .replace(/onedrive/gi, 'cloud sync');
+}
+
 function toneForStatus(status: string) {
   if (status === 'review_only_ready' || status === 'ready' || status === 'guard_passed' || status === 'locked') {
     return 'border-emerald-300/30 bg-emerald-400/10 text-emerald-100';
@@ -82,7 +97,7 @@ export function OrbitStatusBridge() {
         <SummaryMetric label="Cards" value={bridge.summary.cards} tone="green" />
         <SummaryMetric label="Blocker" value={bridge.summary.blocking_cards} tone={bridge.summary.blocking_cards > 0 ? 'red' : 'green'} />
         <SummaryMetric label="Owner Actions" value={bridge.summary.owner_action_cards} tone={bridge.summary.owner_action_cards > 0 ? 'yellow' : 'green'} />
-        <SummaryMetric label="Source Root" value={bridge.summary.source_root_blocked ? 'blocked' : 'ready'} tone={bridge.summary.source_root_blocked ? 'red' : 'green'} />
+        <SummaryMetric label="Private Gate" value={bridge.summary.source_root_blocked ? 'blocked' : 'ready'} tone={bridge.summary.source_root_blocked ? 'red' : 'green'} />
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
@@ -93,13 +108,13 @@ export function OrbitStatusBridge() {
           </div>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             {trainingCards.map((card) => (
-              <article key={card.id} className="rounded-lg border border-white/10 bg-black/24 p-3">
+              <article key={publicOrbitKey(card.id)} className="rounded-lg border border-white/10 bg-black/24 p-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h4 className="min-w-0 text-sm font-semibold leading-5 text-white">{card.title}</h4>
+                  <h4 className="min-w-0 text-sm font-semibold leading-5 text-white">{publicOrbitText(card.title)}</h4>
                   <StatusPill value={card.status} />
                 </div>
-                <p className="mt-3 text-sm leading-5 text-stone-300">{card.signal}</p>
-                <p className="mt-2 text-xs leading-5 text-stone-500">{card.route_hint}</p>
+                <p className="mt-3 text-sm leading-5 text-stone-300">{publicOrbitText(card.signal)}</p>
+                <p className="mt-2 text-xs leading-5 text-stone-500">{publicOrbitText(card.route_hint)}</p>
               </article>
             ))}
           </div>
@@ -110,13 +125,13 @@ export function OrbitStatusBridge() {
           </div>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             {githubCards.map((card) => (
-              <article key={card.id} className="rounded-lg border border-white/10 bg-black/24 p-3">
+              <article key={publicOrbitKey(card.id)} className="rounded-lg border border-white/10 bg-black/24 p-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h4 className="min-w-0 text-sm font-semibold leading-5 text-white">{card.title}</h4>
+                  <h4 className="min-w-0 text-sm font-semibold leading-5 text-white">{publicOrbitText(card.title)}</h4>
                   <StatusPill value={card.status} />
                 </div>
-                <p className="mt-3 text-sm leading-5 text-stone-300">{card.signal}</p>
-                <p className="mt-2 text-xs leading-5 text-stone-500">{card.route_hint}</p>
+                <p className="mt-3 text-sm leading-5 text-stone-300">{publicOrbitText(card.signal)}</p>
+                <p className="mt-2 text-xs leading-5 text-stone-500">{publicOrbitText(card.route_hint)}</p>
               </article>
             ))}
           </div>
@@ -130,13 +145,13 @@ export function OrbitStatusBridge() {
             </div>
             <div className="mt-3 grid gap-2">
               {ownerActionCards.map((card) => (
-                <article key={card.id} className="rounded-md border border-white/10 bg-black/24 p-3">
+                <article key={publicOrbitKey(card.id)} className="rounded-md border border-white/10 bg-black/24 p-3">
                   <div className="flex flex-wrap items-start justify-between gap-2">
-                    <h4 className="text-sm font-semibold leading-5 text-white">{card.title}</h4>
+                    <h4 className="text-sm font-semibold leading-5 text-white">{publicOrbitText(card.title)}</h4>
                     <StatusPill value={card.status} />
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-stone-300">{card.signal}</p>
-                  <p className="mt-2 text-xs leading-5 text-stone-500">{card.route_hint}</p>
+                  <p className="mt-2 text-xs leading-5 text-stone-300">{publicOrbitText(card.signal)}</p>
+                  <p className="mt-2 text-xs leading-5 text-stone-500">{publicOrbitText(card.route_hint)}</p>
                 </article>
               ))}
             </div>
@@ -149,12 +164,12 @@ export function OrbitStatusBridge() {
             </div>
             <div className="mt-3 grid gap-2">
               {blockerCards.map((card) => (
-                <article key={card.id} className="rounded-md border border-white/10 bg-black/24 p-3">
+                <article key={publicOrbitKey(card.id)} className="rounded-md border border-white/10 bg-black/24 p-3">
                   <div className="flex flex-wrap items-start justify-between gap-2">
-                    <h4 className="text-sm font-semibold leading-5 text-white">{card.title}</h4>
+                    <h4 className="text-sm font-semibold leading-5 text-white">{publicOrbitText(card.title)}</h4>
                     <StatusPill value={card.status} />
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-stone-300">{card.signal}</p>
+                  <p className="mt-2 text-xs leading-5 text-stone-300">{publicOrbitText(card.signal)}</p>
                 </article>
               ))}
             </div>

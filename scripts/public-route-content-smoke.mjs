@@ -9,6 +9,10 @@ const routes = [
     includes: ['Architektur Kosmos']
   },
   {
+    path: '/orbit/',
+    includes: ['KosmoOrbit', 'Review-only Preview']
+  },
+  {
     path: '/references/',
     includes: [
       'KosmoReferences',
