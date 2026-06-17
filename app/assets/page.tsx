@@ -7,6 +7,7 @@ import {
   publicAssets,
   publicEntryAssetTaxonomy,
   publicEntryReadiness,
+  publicKosmoDrawBundleIntakeStatus,
   publicProjectMediaUrl,
   villaSavoyeAssetTaxonomy,
   villaSavoyeEntry,
@@ -29,6 +30,7 @@ export default function AssetsPage() {
   const ingenbohl = ingenbohlEntry();
   const ingenbohlReadiness = publicEntryReadiness(ingenbohl);
   const ingenbohlTaxonomy = publicEntryAssetTaxonomy(ingenbohl);
+  const kosmoDrawIntake = publicKosmoDrawBundleIntakeStatus();
 
   return (
     <main className="entry-page min-h-screen bg-[#060805] text-[#f7f7f4]" style={{ '--entry-accent': '#b9f06a' } as React.CSSProperties}>
@@ -130,6 +132,33 @@ export default function AssetsPage() {
                 <div className="text-[10px] uppercase tracking-[0.16em] text-[#b9f06a]">{item.kind}</div>
                 <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">KosmoDraw Asset Intake</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Modell- und Zeichnungskandidaten bleiben zuerst Asset-Review.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Der Intake-Report sieht {kosmoDrawIntake.summary.asset_candidate_count} Kandidaten aus {kosmoDrawIntake.summary.bundle_count} Bundles.
+              Davon werden aktuell 0 automatisch public-ready gesetzt.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {kosmoDrawIntake.bundles.map((bundle) => (
+              <div key={bundle.projectSlug} className="border border-white/12 bg-[#11170c] p-4">
+                <div className="text-[10px] uppercase tracking-[0.16em] text-[#b9f06a]">{bundle.sourceKind}</div>
+                <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{bundle.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">
+                  {bundle.assets.total} Asset-Kandidaten, {bundle.openings.total} Oeffnungen, public-ready nach Intake: {bundle.publicReadyAfterIntake}.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.12em]">
+                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">{bundle.intakeAllowed ? 'review ready' : 'blocked'}</span>
+                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">private leaks {bundle.privateLeakCount}</span>
+                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">public flags {bundle.unsafePublicFlagCount}</span>
+                </div>
               </div>
             ))}
           </div>

@@ -7,6 +7,7 @@ import {
   ingenbohlEntry,
   publicEntryAssetTaxonomy,
   publicEntryReadiness,
+  publicKosmoDrawBundleIntakeStatus,
   publicModelUrl,
   publicProjectMediaUrl,
   publicReferences,
@@ -34,6 +35,7 @@ export default function ReferencesPage() {
   const ingenbohlReadiness = publicEntryReadiness(ingenbohl);
   const ingenbohlTaxonomy = publicEntryAssetTaxonomy(ingenbohl);
   const ingenbohlModelUrl = publicModelUrl(ingenbohl);
+  const kosmoDrawIntake = publicKosmoDrawBundleIntakeStatus();
 
   return (
     <main className="entry-page min-h-screen bg-[#050707] text-[#f7f7f4]" style={{ '--entry-accent': '#66e1d2' } as React.CSSProperties}>
@@ -179,6 +181,43 @@ export default function ReferencesPage() {
           <ProcessStep title="4 BIM skizzieren" text="KosmoVis zeigt ein GLB-Preview mit Modell-, Material- und Analysefiltern." />
         </section>
 
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoDraw Intake</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">2D/Bild-zu-3D kommt nur ueber Review-Gates in KosmoReferences.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Der aktuelle Intake-Report fasst KosmoDraw-Bundles als Metadaten zusammen. IFC-Pfade und lokale Artefakte
+              werden nicht in den Bericht kopiert, und public-ready bleibt nach Intake bei {kosmoDrawIntake.summary.public_ready_after_intake}.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <IntakeMetric label="Bundles" value={kosmoDrawIntake.summary.bundle_count} />
+              <IntakeMetric label="Openings" value={kosmoDrawIntake.summary.opening_count} />
+              <IntakeMetric label="Public Flags" value={kosmoDrawIntake.summary.unsafe_public_flag_count} />
+            </div>
+          </div>
+          <div className="grid gap-3">
+            {kosmoDrawIntake.bundles.map((bundle) => (
+              <div key={bundle.projectSlug} className="border border-white/12 bg-[#101513] p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{bundle.sourceKind}</div>
+                    <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{bundle.title}</h3>
+                  </div>
+                  <span className="border border-white/14 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-[#aeb8b2]">
+                    {bundle.intakeAllowed ? 'review ready' : 'blocked'}
+                  </span>
+                </div>
+                <div className="mt-4 grid grid-cols-4 gap-2 text-center text-xs text-[#b9c1bc]">
+                  <IntakeMini label="Raeume" value={bundle.rooms} />
+                  <IntakeMini label="Waende" value={bundle.walls} />
+                  <IntakeMini label="Oeffnungen" value={bundle.openings.total} />
+                  <IntakeMini label="Assets" value={bundle.assets.total} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <PublicReferenceExplorer references={references} />
       </div>
     </main>
@@ -190,6 +229,24 @@ function ProcessStep({ title, text }: { title: string; text: string }) {
     <div className="border border-white/12 bg-[#101513] p-4">
       <h3 className="text-lg font-semibold text-[#f7f7f4]">{title}</h3>
       <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{text}</p>
+    </div>
+  );
+}
+
+function IntakeMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="border border-white/12 bg-[#101513] p-4">
+      <div className="text-3xl font-semibold text-[#f7f7f4]">{value}</div>
+      <div className="mt-2 text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{label}</div>
+    </div>
+  );
+}
+
+function IntakeMini({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="border border-white/10 bg-[#050707] px-2 py-3">
+      <div className="text-lg font-semibold text-[#f7f7f4]">{value}</div>
+      <div className="mt-1 text-[9px] uppercase tracking-[0.12em] text-[#8f9994]">{label}</div>
     </div>
   );
 }

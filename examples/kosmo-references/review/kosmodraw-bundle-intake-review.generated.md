@@ -1,6 +1,6 @@
 # KosmoDraw Bundle Intake Review
 
-Generated: 2026-06-17T17:26:29.237Z
+Generated: 2026-06-17T17:29:23.463Z
 Status: `kosmodraw_bundle_intake_review_ready`
 
 ## Policy

@@ -1,5 +1,6 @@
 import entries from '@/data/mock-entries.json';
 import publicModelPreviews from '@/data/public-model-previews.json';
+import kosmoDrawBundleIntakeReview from '@/examples/kosmo-references/review/kosmodraw-bundle-intake-review.generated.json';
 import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
 import type { AssetCandidate, Entry, EntryMedia } from '@/lib/types';
 import type { PublicAsset } from '@/components/public/PublicAssetExplorer';
@@ -7,6 +8,53 @@ import type { PublicReference } from '@/components/public/PublicReferenceExplore
 
 const allEntries = entries as Entry[];
 const publicModels = publicModelPreviews.models as Array<{ slug: string; title: string; url: string; status: string; license: string; public_display_status: string; caveat: string }>;
+const bundleIntakeReview = kosmoDrawBundleIntakeReview as {
+  status: string;
+  summary: {
+    bundle_count: number;
+    project_count: number;
+    room_count: number;
+    wall_count: number;
+    opening_count: number;
+    story_count: number;
+    asset_candidate_count: number;
+    unsafe_public_flag_count: number;
+    private_leak_count: number;
+    failure_count: number;
+    public_ready_after_intake: number;
+    recommended_next_step: string;
+  };
+  bundles: Array<{
+    project_slug: string;
+    source_kind: string;
+    gates: {
+      intake_allowed: boolean;
+      public_ready_after_intake: number;
+      unsafe_public_flag_count: number;
+      private_leak_count: number;
+      ifc_path_present: boolean;
+      ifc_path_copied_to_report: boolean;
+    };
+    geometry: {
+      rooms: number;
+      walls: number;
+      stories: number;
+      openings: {
+        total: number;
+        by_kind: Record<string, number>;
+        at_xy_count: number;
+        host_wall_position_count: number;
+        windows_with_sill_count: number;
+      };
+    };
+    assets: {
+      total: number;
+      by_kind: Record<string, number>;
+      public_display_allowed_count: number;
+    };
+  }>;
+  next_actions: string[];
+};
 const publicModelBySlug = new Map(publicModels.map((model) => [model.slug, model]));
 const publicAssetRights = new Set(['public_domain', 'licensed', 'own_work']);
 
@@ -116,6 +164,30 @@ export function publicAssets(): PublicAsset[] {
   }
 
   return assets.sort((left, right) => `${left.project}-${left.kind}`.localeCompare(`${right.project}-${right.kind}`));
+}
+
+export function publicKosmoDrawBundleIntakeStatus() {
+  return {
+    status: bundleIntakeReview.status,
+    summary: bundleIntakeReview.summary,
+    bundles: bundleIntakeReview.bundles.map((bundle) => ({
+      projectSlug: bundle.project_slug,
+      title: publicEntryBySlug(bundle.project_slug)?.title ?? bundle.project_slug,
+      sourceKind: bundle.source_kind,
+      intakeAllowed: bundle.gates.intake_allowed,
+      publicReadyAfterIntake: bundle.gates.public_ready_after_intake,
+      privateLeakCount: bundle.gates.private_leak_count,
+      unsafePublicFlagCount: bundle.gates.unsafe_public_flag_count,
+      ifcPathPresent: bundle.gates.ifc_path_present,
+      ifcPathCopiedToReport: bundle.gates.ifc_path_copied_to_report,
+      rooms: bundle.geometry.rooms,
+      walls: bundle.geometry.walls,
+      stories: bundle.geometry.stories,
+      openings: bundle.geometry.openings,
+      assets: bundle.assets
+    })),
+    nextActions: bundleIntakeReview.next_actions
+  };
 }
 
 export function materialTags(entry: Entry) {
