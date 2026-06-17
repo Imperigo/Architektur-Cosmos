@@ -59,7 +59,7 @@ const routes = [
   },
   {
     path: '/robots.txt',
-    rawIncludes: ['Sitemap: https://architekturkosmos.ch/sitemap.xml']
+    rawIncludes: ['User-Agent: *', 'Allow: /', 'Sitemap: https://architekturkosmos.ch/sitemap.xml']
   },
   {
     path: '/sitemap.xml',
