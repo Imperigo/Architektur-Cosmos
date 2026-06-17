@@ -15,6 +15,7 @@
     "public:bundle-negative-smoke": "node scripts/kosmo-reference-bundle-negative-smoke.mjs",
     "public:kosmodraw-analysis-check": "node scripts/kosmodraw-digitalization-analysis-check.mjs",
     "public:kosmodraw-gate": "npm run public:bundle-negative-smoke && npm run public:bundle-intake-review-check && npm run public:bundle-check && npm run public:kosmodraw-analysis-check && npm run public:gate-check",
+    "public:route-content-smoke": "node scripts/public-route-content-smoke.mjs",
     "ui:audit": "node scripts/ui-audit.mjs",
     "atlas:style-guard": "node scripts/atlas-style-sector-guard.mjs",
     "atlas:interaction-guard": "node scripts/atlas-interaction-guard.mjs",
