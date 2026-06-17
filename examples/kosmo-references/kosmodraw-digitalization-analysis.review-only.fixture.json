@@ -1,0 +1,92 @@
+{
+  "source": "KosmoDraw digitalization analysis fixture: maisonette study, sanitized review-only metadata",
+  "totals": {
+    "n_rooms": 14,
+    "n_floors": 2,
+    "NGF_m2": 169.83,
+    "KF_m2": 61.45,
+    "GF_m2": 231.28,
+    "hnf_ratio": 0.683,
+    "construction_ratio": 0.266
+  },
+  "per_floor": [
+    {
+      "floor_level": 0,
+      "n_rooms": 8,
+      "NGF_m2": 79.39,
+      "GF_m2": 110.449,
+      "functions": {
+        "zimmer": {
+          "count": 3,
+          "area_m2": 43.34
+        },
+        "keller": {
+          "count": 1,
+          "area_m2": 11.04
+        },
+        "dusche": {
+          "count": 2,
+          "area_m2": 12.36
+        },
+        "korridor": {
+          "count": 1,
+          "area_m2": 10.15
+        },
+        "entree": {
+          "count": 1,
+          "area_m2": 2.5
+        }
+      }
+    },
+    {
+      "floor_level": 1,
+      "n_rooms": 6,
+      "NGF_m2": 90.44,
+      "GF_m2": 120.831,
+      "functions": {
+        "zimmer": {
+          "count": 2,
+          "area_m2": 31.06
+        },
+        "wohnzimmer": {
+          "count": 1,
+          "area_m2": 41.58
+        },
+        "hauswirtschaft": {
+          "count": 1,
+          "area_m2": 5.2
+        },
+        "entree": {
+          "count": 1,
+          "area_m2": 6.6
+        },
+        "bad": {
+          "count": 1,
+          "area_m2": 6
+        }
+      }
+    }
+  ],
+  "structure": {
+    "n_walls": 56,
+    "n_external": 48,
+    "n_internal": 8,
+    "external_length_m": 160,
+    "internal_length_m": 30,
+    "load_bearing_length_m": 160
+  },
+  "massing": {
+    "tower_height_m": 5,
+    "n_blocks": 14,
+    "floors": [0, 1],
+    "bbox_xy": [0, 0, 10, 9.6]
+  },
+  "quantities": {
+    "volumes_m3": {
+      "walls": 157.375,
+      "slabs": 53.386,
+      "roof": 43.592,
+      "total": 254.353
+    }
+  }
+}
