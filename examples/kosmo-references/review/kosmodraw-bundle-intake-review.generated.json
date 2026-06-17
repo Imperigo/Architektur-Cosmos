@@ -1,0 +1,188 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-17T17:26:29.237Z",
+  "generator": "kosmo-reference-bundle-intake-review",
+  "status": "kosmodraw_bundle_intake_review_ready",
+  "policy": {
+    "review_only": true,
+    "metadata_only": true,
+    "copies_ifc_paths_to_report": false,
+    "copies_private_paths_to_report": false,
+    "writes_public_data_now": false,
+    "writes_mock_entries_now": false,
+    "public_ready_after_intake": 0,
+    "owner_review_required_before_public_display": true
+  },
+  "source_refs": [
+    "examples/kosmo-references/kosmodraw-reference-bundle.review-only.fixture.json",
+    "examples/kosmo-references/kosmodraw-villa-savoye-sketch-to-3d.review-only.fixture.json"
+  ],
+  "summary": {
+    "bundle_count": 2,
+    "project_count": 2,
+    "room_count": 2,
+    "wall_count": 3,
+    "opening_count": 3,
+    "story_count": 2,
+    "asset_candidate_count": 4,
+    "unsafe_public_flag_count": 0,
+    "private_leak_count": 0,
+    "failure_count": 0,
+    "public_ready_after_intake": 0,
+    "recommended_next_step": "wait_for_real_kosmodraw_bundle_or_create_human_review_decision"
+  },
+  "bundles": [
+    {
+      "source_file": "examples/kosmo-references/kosmodraw-reference-bundle.review-only.fixture.json",
+      "project_slug": "alterszentrum-kloster-ingenbohl",
+      "status": "review_only",
+      "source_kind": "hybrid",
+      "gates": {
+        "intake_allowed": true,
+        "review_only": true,
+        "public_ready_after_intake": 0,
+        "unsafe_public_flag_count": 0,
+        "private_leak_count": 0,
+        "ifc_path_present": true,
+        "ifc_path_copied_to_report": false
+      },
+      "geometry": {
+        "rooms": 1,
+        "walls": 1,
+        "stories": 1,
+        "openings": {
+          "total": 1,
+          "by_kind": {
+            "window": 1
+          },
+          "at_xy_count": 0,
+          "host_wall_position_count": 1,
+          "windows_with_sill_count": 1
+        }
+      },
+      "review_artifacts": {
+        "model_preview": {
+          "present": true,
+          "review_status": "draft",
+          "public_display_allowed": false,
+          "url_present": false,
+          "caveat_present": true
+        },
+        "drawings": [
+          {
+            "present": true,
+            "review_status": "draft",
+            "public_display_allowed": false,
+            "url_present": false,
+            "caveat_present": true
+          }
+        ]
+      },
+      "assets": {
+        "total": 2,
+        "by_kind": {
+          "model": 1,
+          "drawing": 1
+        },
+        "public_display_allowed_count": 0,
+        "rights": {
+          "own_work": 2
+        }
+      },
+      "analysis_layers": [
+        {
+          "analysis_type": "source_reconstruction",
+          "review_status": "draft"
+        },
+        {
+          "analysis_type": "material_system",
+          "review_status": "draft"
+        }
+      ],
+      "failures": []
+    },
+    {
+      "source_file": "examples/kosmo-references/kosmodraw-villa-savoye-sketch-to-3d.review-only.fixture.json",
+      "project_slug": "villa-savoye",
+      "status": "review_only",
+      "source_kind": "sketch_to_3d",
+      "gates": {
+        "intake_allowed": true,
+        "review_only": true,
+        "public_ready_after_intake": 0,
+        "unsafe_public_flag_count": 0,
+        "private_leak_count": 0,
+        "ifc_path_present": true,
+        "ifc_path_copied_to_report": false
+      },
+      "geometry": {
+        "rooms": 1,
+        "walls": 2,
+        "stories": 1,
+        "openings": {
+          "total": 2,
+          "by_kind": {
+            "window": 1,
+            "door": 1
+          },
+          "at_xy_count": 1,
+          "host_wall_position_count": 1,
+          "windows_with_sill_count": 1
+        }
+      },
+      "review_artifacts": {
+        "model_preview": {
+          "present": true,
+          "review_status": "draft",
+          "public_display_allowed": false,
+          "url_present": false,
+          "caveat_present": true
+        },
+        "drawings": [
+          {
+            "present": true,
+            "review_status": "draft",
+            "public_display_allowed": false,
+            "url_present": false,
+            "caveat_present": true
+          }
+        ]
+      },
+      "assets": {
+        "total": 2,
+        "by_kind": {
+          "model": 1,
+          "drawing": 1
+        },
+        "public_display_allowed_count": 0,
+        "rights": {
+          "own_work": 2
+        }
+      },
+      "analysis_layers": [
+        {
+          "analysis_type": "source_reconstruction",
+          "review_status": "draft"
+        },
+        {
+          "analysis_type": "opening_semantics",
+          "review_status": "draft"
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "next_actions": [
+    "Ask KosmoDraw for a real reviewed opening bundle from sketch_to_3d/export_ifc, then rerun this intake review.",
+    "Map asset candidates into KosmoAsset review rows only after human/owner review.",
+    "If review is accepted later, create a separate public promotion decision; this intake does not promote."
+  ],
+  "hard_stops": [
+    "Do not copy IFC/local paths into public data.",
+    "Do not write data/mock-entries.json from this intake review.",
+    "Do not mark any asset public_display_allowed from this intake review.",
+    "Do not upload generated drawings or models to R2 from this intake review.",
+    "Require human/owner review before any public route displays new bundle outputs."
+  ],
+  "failures": []
+}
