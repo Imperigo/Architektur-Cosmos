@@ -6,7 +6,7 @@ const baseUrl = String(args['base-url'] || 'http://127.0.0.1:3000').replace(/\/$
 const routes = [
   {
     path: '/',
-    includes: ['Architektur Kosmos']
+    includes: ['Architektur Kosmos', 'KosmoOrbit']
   },
   {
     path: '/orbit/',

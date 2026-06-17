@@ -29,6 +29,7 @@ export default function Home() {
               <Link href="/references" className="border border-[#111514]/20 px-3 py-2 transition hover:border-[#0b6b60] hover:text-[#0b6b60]">References</Link>
               <Link href="/assets" className="border border-[#111514]/20 px-3 py-2 transition hover:border-[#496f00] hover:text-[#496f00]">Assets</Link>
               <Link href="/atlas" className="border border-[#111514]/20 px-3 py-2 transition hover:border-[#111514]">Atlas</Link>
+              <Link href="/orbit" className="border border-[#111514]/20 px-3 py-2 transition hover:border-[#0b4f88] hover:text-[#0b4f88]">Orbit</Link>
             </nav>
           </header>
 
@@ -75,10 +76,11 @@ export default function Home() {
         <PublicMetric label="Aktueller Pilot" value="Villa Savoye" text="Planbereinigung, Analyse-Layer und 3D-Filter als erster vollständiger Prototyp." />
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 border-t border-[#111514]/10 px-5 py-10 sm:px-8 lg:grid-cols-3 lg:px-10">
+      <section className="mx-auto grid max-w-7xl gap-6 border-t border-[#111514]/10 px-5 py-10 sm:px-8 md:grid-cols-2 lg:grid-cols-4 lg:px-10">
         <HomePanel href="/references" label="KosmoReferences" title="Projekt-Datenbank" text="Suche und filtere öffentliche Architekturprojekte nach Epoche, Material, Ort und Modellreife." />
         <HomePanel href="/assets" label="KosmoAsset" title="Asset-Datenbank" text="Prüfe öffentliche Bilder, Planzeichnungen, Schnittdiagramme, Analyse-Layer und Modell-Previews." />
         <HomePanel href="/atlas/villa-savoye/" label="Pilot" title="Villa Savoye" text="Öffne den kanonischen Pilot mit Bildern, Plänen, Text, Modellviewer und Layer-Filtern." />
+        <HomePanel href="/orbit" label="KosmoOrbit" title="Status-Cockpit" text="Prüfe den öffentlichen Review-Stand, aktive Gates, Rollen und Demo-Bereitschaft." />
       </section>
     </main>
   );
