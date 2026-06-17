@@ -1,26 +1,12 @@
 #!/usr/bin/env node
 
+import { publicLeakMatches } from './public-leak-patterns.mjs';
+
 const args = parseArgs(process.argv.slice(2));
 const baseUrl = String(args['base-url'] || 'http://127.0.0.1:3000').replace(/\/$/, '');
 const siteUrl = String(args['site-url'] || 'https://architekturkosmos.ch').replace(/\/$/, '');
 const verbose = Boolean(args.verbose);
 const minBodyLength = Number(args['min-body-length'] || 500);
-
-const blockedPatterns = [
-  /\/mnt\//i,
-  /\/home\//i,
-  /source-root/i,
-  /private-library/i,
-  /onedrive/i,
-  /archiv\/architekturkosmos\/assets/i,
-  /_overseer/i,
-  /\.claude/i,
-  /\.codex/i,
-  /worker[-_\s]?logs?/i,
-  /\.pdf($|\?)/i,
-  /archive-intake/i,
-  /\bocr\b/i
-];
 
 const findings = [];
 
@@ -49,9 +35,7 @@ async function main() {
     const url = `${baseUrl}${path}`;
     const response = await fetch(url);
     const body = await response.text();
-    const blockedMatches = blockedPatterns
-      .filter((pattern) => pattern.test(body))
-      .map((pattern) => pattern.toString());
+    const blockedMatches = publicLeakMatches(body);
 
     check(response.ok, `${path}:status`, `Expected HTTP 2xx for ${path}, got ${response.status}.`);
     check(

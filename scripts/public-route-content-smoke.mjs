@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { publicLeakMatches } from './public-leak-patterns.mjs';
+
 const args = parseArgs(process.argv.slice(2));
 const baseUrl = String(args['base-url'] || 'http://127.0.0.1:3000').replace(/\/$/, '');
 
@@ -73,22 +75,6 @@ const routes = [
   }
 ];
 
-const blockedPatterns = [
-  /\/mnt\//i,
-  /\/home\//i,
-  /source-root/i,
-  /private-library/i,
-  /onedrive/i,
-  /archiv\/architekturkosmos\/assets/i,
-  /_overseer/i,
-  /\.claude/i,
-  /\.codex/i,
-  /worker[-_\s]?logs?/i,
-  /\.pdf($|\?)/i,
-  /archive-intake/i,
-  /\bocr\b/i
-];
-
 const findings = [];
 
 main();
@@ -101,9 +87,7 @@ async function main() {
     const response = await fetch(url);
     const body = await response.text();
     const normalized = normalizeHtmlText(body);
-    const blockedMatches = blockedPatterns
-      .filter((pattern) => pattern.test(body))
-      .map((pattern) => pattern.toString());
+    const blockedMatches = publicLeakMatches(body);
     const minBodyLength = route.minBodyLength ?? ((route.rawIncludes ?? []).length > 0 ? 20 : 500);
 
     check(response.ok, `${route.path}:status`, `Expected HTTP 2xx for ${route.path}, got ${response.status}.`);
