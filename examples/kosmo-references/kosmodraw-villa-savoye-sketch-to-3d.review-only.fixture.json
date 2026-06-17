@@ -1,0 +1,130 @@
+{
+  "project_slug": "villa-savoye",
+  "status": "review_only",
+  "source_kind": "sketch_to_3d",
+  "rooms": [
+    {
+      "id": "room-salon-01",
+      "name": "Salon diagrammatic test room",
+      "function": "living",
+      "polygon_xy": [
+        [0, 0],
+        [9, 0],
+        [9, 6],
+        [0, 6]
+      ],
+      "floor_level": 1,
+      "height_m": 3.2,
+      "area_m2": 54,
+      "confidence": 0.58,
+      "source_basis": "KosmoDraw sketch_to_3d regularized strokes"
+    }
+  ],
+  "walls": [
+    {
+      "id": "wall-salon-south",
+      "start_x": 0,
+      "start_y": 0,
+      "end_x": 9,
+      "end_y": 0,
+      "thickness_m": 0.22,
+      "height_m": 3.2,
+      "floor_level": 1,
+      "structural_role": "facade",
+      "confidence": 0.55
+    },
+    {
+      "id": "wall-salon-west",
+      "start_x": 0,
+      "start_y": 0,
+      "end_x": 0,
+      "end_y": 6,
+      "thickness_m": 0.22,
+      "height_m": 3.2,
+      "floor_level": 1,
+      "structural_role": "partition",
+      "confidence": 0.52
+    }
+  ],
+  "openings": [
+    {
+      "id": "opening-ribbon-window-01",
+      "kind": "window",
+      "at_xy": [4.5, 0],
+      "width_m": 3.2,
+      "height_m": 1.25,
+      "sill_m": 0.9,
+      "floor_level": 1,
+      "confidence": 0.48,
+      "source_basis": "KosmoDraw at_xy opening consumed by export_ifc"
+    },
+    {
+      "id": "opening-door-01",
+      "kind": "door",
+      "host_wall_id": "wall-salon-west",
+      "position_m": 2.1,
+      "width_m": 0.95,
+      "height_m": 2.1,
+      "floor_level": 1,
+      "confidence": 0.5,
+      "source_basis": "KosmoDraw host wall opening consumed by export_ifc"
+    }
+  ],
+  "stories": [
+    {
+      "id": "story-01",
+      "name": "Piano nobile diagrammatic",
+      "elevation_m": 0,
+      "height_m": 3.2,
+      "confidence": 0.54
+    }
+  ],
+  "ifc_path": "/tmp/kosmodraw/villa-savoye/sketch-to-3d-review.ifc",
+  "model_preview": {
+    "glb_url": null,
+    "review_status": "draft",
+    "public_display_allowed": false,
+    "caveat": "Sketch-derived 3D/BIM review model with openings; not measured."
+  },
+  "drawings": [
+    {
+      "kind": "plan",
+      "url": null,
+      "review_status": "draft",
+      "public_display_allowed": false,
+      "caveat": "KosmoDraw/KosmoPublish generated drawing candidate; review before public display."
+    }
+  ],
+  "analysis_layers": [
+    {
+      "analysis_type": "source_reconstruction",
+      "review_status": "draft",
+      "summary": "Sketch strokes were interpreted as one room, two walls, one ribbon-window candidate and one door candidate."
+    },
+    {
+      "analysis_type": "opening_semantics",
+      "review_status": "draft",
+      "summary": "Window and door openings are present as IFC-ready void/filling candidates."
+    }
+  ],
+  "asset_candidates": [
+    {
+      "kind": "model",
+      "title": "villa-savoye-sketch-to-3d-review.glb",
+      "planned_r2_key": "entries/villa-savoye/models/sketch-to-3d-review.glb",
+      "rights_status": "own_work",
+      "public_display_allowed": false,
+      "review_status": "draft",
+      "source_basis": "KosmoDraw sketch_to_3d review bundle"
+    },
+    {
+      "kind": "drawing",
+      "title": "villa-savoye-opening-plan-review.svg",
+      "planned_r2_key": "entries/villa-savoye/drawings/opening-plan-review.svg",
+      "rights_status": "own_work",
+      "public_display_allowed": false,
+      "review_status": "draft",
+      "source_basis": "KosmoPublish render from KosmoDraw IFC review bundle"
+    }
+  ]
+}

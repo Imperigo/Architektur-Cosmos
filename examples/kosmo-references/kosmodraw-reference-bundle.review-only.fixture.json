@@ -42,6 +42,7 @@
       "position_m": 3.2,
       "width_m": 1.6,
       "height_m": 1.4,
+      "sill_m": 0.85,
       "confidence": 0.35
     }
   ],

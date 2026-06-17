@@ -13,6 +13,8 @@ const requiredFields = [
 ];
 
 const requiredArrays = ['rooms', 'walls', 'openings', 'stories', 'analysis_layers', 'asset_candidates'];
+const allowedOpeningKinds = new Set(['door', 'window', 'stair', 'void']);
+const allowedSourceKinds = new Set(['plan_image', 'photo', 'vector_plan', 'hybrid', 'sketch', 'sketch_to_3d']);
 const privateLeakPatterns = [
   /\/mnt\//i,
   /\/home\//i,
@@ -81,10 +83,18 @@ function validateBundle(bundle, path) {
     recordFailure(`${path}:project_slug`, 'project_slug must be a kebab-case slug.');
   }
 
+  if (!allowedSourceKinds.has(bundle.source_kind)) {
+    recordFailure(`${path}:source_kind`, `source_kind must be one of ${[...allowedSourceKinds].join(', ')}.`);
+  }
+
   scanForPublicFlags(bundle, path);
   scanPublicStrings(bundle, path);
   validateRooms(bundle.rooms ?? [], path);
   validateWalls(bundle.walls ?? [], path);
+  validateOpenings(bundle.openings ?? [], path);
+  validateStories(bundle.stories ?? [], path);
+  validateReviewArtifact(bundle.model_preview, `${path}:model_preview`);
+  validateReviewArtifacts(bundle.drawings ?? [], `${path}:drawings`);
   validateAnalysisLayers(bundle.analysis_layers ?? [], path);
   validateAssetCandidates(bundle.asset_candidates ?? [], path);
 
@@ -149,9 +159,82 @@ function validateRooms(rooms, path) {
 function validateWalls(walls, path) {
   walls.forEach((wall, index) => {
     if (!wall.id) recordWarning(`${path}:walls[${index}]:id`, 'wall has no id.');
+    if (!hasWallPosition(wall)) {
+      recordWarning(`${path}:walls[${index}]:position`, 'wall should provide start/end coordinates or angle_deg + length_m.');
+    }
     if (typeof wall.thickness_m !== 'number') recordWarning(`${path}:walls[${index}]:thickness_m`, 'wall has no numeric thickness_m.');
     if (typeof wall.confidence !== 'number') recordWarning(`${path}:walls[${index}]:confidence`, 'wall has no numeric confidence.');
   });
+}
+
+function hasWallPosition(wall) {
+  const hasStartEnd = ['start_x', 'start_y', 'end_x', 'end_y'].every((key) => typeof wall[key] === 'number');
+  const hasAngleLength = typeof wall.angle_deg === 'number' && typeof wall.length_m === 'number';
+  return hasStartEnd || hasAngleLength;
+}
+
+function validateOpenings(openings, path) {
+  openings.forEach((opening, index) => {
+    const openingPath = `${path}:openings[${index}]`;
+    const kind = opening.type ?? opening.kind;
+    if (!opening.id) recordWarning(`${openingPath}:id`, 'opening has no id.');
+    if (!allowedOpeningKinds.has(kind)) {
+      recordFailure(`${openingPath}:kind`, `opening type/kind must be one of ${[...allowedOpeningKinds].join(', ')}.`);
+    }
+    if (!hasOpeningPosition(opening)) {
+      recordFailure(`${openingPath}:position`, 'opening needs host_wall_id + position_m or at_xy/position_xy/at/xy coordinates.');
+    }
+    if (typeof opening.width_m !== 'number' || opening.width_m <= 0) {
+      recordFailure(`${openingPath}:width_m`, 'opening needs a positive numeric width_m.');
+    }
+    if (kind === 'window' && typeof opening.sill_m !== 'number') {
+      recordWarning(`${openingPath}:sill_m`, 'window opening should include sill_m for IFC window placement.');
+    }
+    if (typeof opening.height_m !== 'number' || opening.height_m <= 0) {
+      recordWarning(`${openingPath}:height_m`, 'opening should include a positive numeric height_m.');
+    }
+    if (typeof opening.confidence !== 'number') {
+      recordWarning(`${openingPath}:confidence`, 'opening has no numeric confidence.');
+    }
+  });
+}
+
+function hasOpeningPosition(opening) {
+  const hasHostPosition = Boolean(opening.host_wall_id) && typeof opening.position_m === 'number';
+  const hasAtCoordinates = isPoint(opening.at_xy) || isPoint(opening.position_xy) || isPoint(opening.at) || isPoint(opening.xy);
+  return hasHostPosition || hasAtCoordinates;
+}
+
+function isPoint(value) {
+  return Array.isArray(value) && value.length >= 2 && value.slice(0, 2).every((item) => typeof item === 'number');
+}
+
+function validateStories(stories, path) {
+  stories.forEach((story, index) => {
+    const storyPath = `${path}:stories[${index}]`;
+    if (!story.id) recordWarning(`${storyPath}:id`, 'story has no id.');
+    if (typeof story.elevation_m !== 'number') recordWarning(`${storyPath}:elevation_m`, 'story has no numeric elevation_m.');
+    if (typeof story.height_m !== 'number' || story.height_m <= 0) recordWarning(`${storyPath}:height_m`, 'story should include a positive numeric height_m.');
+  });
+}
+
+function validateReviewArtifacts(artifacts, path) {
+  if (!Array.isArray(artifacts)) {
+    recordFailure(path, 'drawings must be an array when present.');
+    return;
+  }
+
+  artifacts.forEach((artifact, index) => validateReviewArtifact(artifact, `${path}[${index}]`));
+}
+
+function validateReviewArtifact(artifact, path) {
+  if (!artifact) return;
+  if (artifact.public_display_allowed !== false) {
+    recordFailure(`${path}:public_display_allowed`, 'review artifact must explicitly set public_display_allowed false.');
+  }
+  if (!artifact.review_status) {
+    recordWarning(`${path}:review_status`, 'review artifact should include review_status.');
+  }
 }
 
 function validateAnalysisLayers(layers, path) {
