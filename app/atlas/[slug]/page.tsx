@@ -10,7 +10,7 @@ import publicModelPreviews from '@/data/public-model-previews.json';
 import relations from '@/data/relations.json';
 import { styleSectorColors } from '@/lib/atlas-layout';
 import { prettifyGermanText } from '@/lib/display-text';
-import { primaryPublicMediaUrl, publicDisplayMediaUrl } from '@/lib/media';
+import { publicProjectMediaUrl, primaryPublicProjectMediaUrl, villaSavoyeAssetTaxonomy, villaSavoyeReadiness } from '@/lib/public-kosmo';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 
 const allEntries = entries as Entry[];
@@ -147,6 +147,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
         </section>
 
         <ModelAnalysisSection entry={entry} modelUrl={publicModelUrl} accent={accent} />
+
+        {entry.slug === 'villa-savoye' ? <VillaSavoyePublicPilotSection accent={accent} /> : null}
 
         {entry.architecture_text ? <ArchitectureTextSection entry={entry} accent={accent} /> : null}
 
@@ -349,6 +351,47 @@ export default async function EntryPage({ params }: EntryPageProps) {
         </nav>
       </div>
     </main>
+  );
+}
+
+function VillaSavoyePublicPilotSection({ accent }: { accent: string }) {
+  const readiness = villaSavoyeReadiness();
+  const taxonomy = villaSavoyeAssetTaxonomy();
+
+  return (
+    <section className="border-t border-white/12 py-8">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Public Pilot Readiness</div>
+          <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
+            Villa Savoye verbindet Atlas, KosmoReferences und KosmoAsset.
+          </h2>
+        </div>
+        <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
+          Diese Atlas-Seite folgt derselben Public-Gate-Logik wie `/references` und `/assets`: eigene Diagramme duerfen sichtbar sein, private Quellen und ungesicherte IFC/BIM-Schritte bleiben als Gate markiert.
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-4">
+        {readiness.map((item) => (
+          <article key={item.label} className="entry-study-card border border-white/14 bg-[#071315]/55 p-4">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.16em]" style={{ color: accent }}>{item.status}</div>
+            <h3 className="mt-2 text-lg text-[#f7f7f4]">{item.label}</h3>
+            <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(item.detail)}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {taxonomy.map((item) => (
+          <article key={item.title} className="entry-study-card border border-white/14 bg-[#050505]/45 p-4">
+            <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{item.kind}</div>
+            <h3 className="mt-2 text-lg text-[#f7f7f4]">{item.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(item.detail)}</p>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -673,7 +716,7 @@ function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile
 
 function MediaCard({ media, entry, profile, accent }: { media: Entry['media'][number]; entry: Entry; profile: EntryVisualProfile; accent: string }) {
   const isDrawing = media.type === 'plan' || media.type === 'section';
-  const mediaUrl = publicDisplayMediaUrl(media);
+  const mediaUrl = publicProjectMediaUrl(entry, media);
 
   return (
     <article className={`entry-media-card entry-media-card-${media.type} border border-white/14 bg-[#070707]`}>
@@ -927,7 +970,7 @@ function publicModelPreviewUrl(entry: Entry) {
 }
 
 function primaryMediaUrl(entry: Entry) {
-  return primaryPublicMediaUrl(entry);
+  return primaryPublicProjectMediaUrl(entry);
 }
 
 function mediaSlotNumber(type: Entry['media'][number]['type']) {
@@ -995,7 +1038,7 @@ function germanStatusLabel(value: string) {
 
 function archiveStatusMetrics(entry: Entry, relatedCount: number): ArchiveStatusMetric[] {
   const sourceValue = Math.min(100, (entry.source_documents?.length ?? 0) * 20 + (entry.source_url ? 24 : 0) + (entry.source_candidates?.length ?? 0) * 8 + (entry.source_quality.includes('verified') ? 24 : 0));
-  const mediaValue = Math.min(100, new Set(entry.media.map((media) => media.type)).size * 20 + entry.media.filter((media) => publicDisplayMediaUrl(media)).length * 5);
+  const mediaValue = Math.min(100, new Set(entry.media.map((media) => media.type)).size * 20 + entry.media.filter((media) => publicProjectMediaUrl(entry, media)).length * 5);
   const networkValue = Math.min(100, relatedCount * 17 + (entry.database_tags?.length ?? 0) * 2);
   const hasPublicModelPreview = Boolean(publicModelPreviewUrl(entry));
   const plannedModelLayers = (entry.model_assets?.length ?? 0) + (entry.model_3d?.parts?.length ?? 0);
