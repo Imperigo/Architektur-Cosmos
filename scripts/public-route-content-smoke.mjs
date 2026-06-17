@@ -126,7 +126,7 @@ async function main() {
     status: findings.every((finding) => finding.passed) ? 'passed' : 'failed',
     base_url: baseUrl,
     checkedRoutes,
-    findings
+    failed_findings: findings.filter((finding) => !finding.passed)
   };
 
   console.log(JSON.stringify(summary, null, 2));
