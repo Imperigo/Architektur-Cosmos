@@ -11,6 +11,7 @@
     "public:gate-check": "node scripts/public-demo-gate-check.mjs",
     "public:bundle-check": "node scripts/kosmo-reference-bundle-check.mjs examples/kosmo-references/kosmodraw-reference-bundle.review-only.fixture.json examples/kosmo-references/kosmodraw-villa-savoye-sketch-to-3d.review-only.fixture.json",
     "public:bundle-intake-review": "node scripts/kosmo-reference-bundle-intake-review.mjs",
+    "public:bundle-intake-review-check": "node scripts/kosmo-reference-bundle-intake-review-check.mjs",
     "public:bundle-negative-smoke": "node scripts/kosmo-reference-bundle-negative-smoke.mjs",
     "ui:audit": "node scripts/ui-audit.mjs",
     "atlas:style-guard": "node scripts/atlas-style-sector-guard.mjs",
