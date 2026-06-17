@@ -25,6 +25,7 @@ const routes = [
       'KosmoAsset',
       'KosmoDraw Asset Intake',
       'Digitalization Asset Preflight',
+      'KosmoPublish Plan Catalog',
       'Villa Savoye'
     ]
   },

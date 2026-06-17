@@ -9,6 +9,7 @@ import {
   publicEntryReadiness,
   publicKosmoDrawBundleIntakeStatus,
   publicKosmoDrawDigitalizationStatus,
+  publicKosmoPublishPlanCatalogStatus,
   publicProjectMediaUrl,
   villaSavoyeAssetTaxonomy,
   villaSavoyeEntry,
@@ -33,6 +34,7 @@ export default function AssetsPage() {
   const ingenbohlTaxonomy = publicEntryAssetTaxonomy(ingenbohl);
   const kosmoDrawIntake = publicKosmoDrawBundleIntakeStatus();
   const kosmoDrawDigitalization = publicKosmoDrawDigitalizationStatus();
+  const kosmoPublishPlanCatalog = publicKosmoPublishPlanCatalogStatus();
 
   return (
     <main className="entry-page min-h-screen bg-[#060805] text-[#f7f7f4]" style={{ '--entry-accent': '#b9f06a' } as React.CSSProperties}>
@@ -180,6 +182,23 @@ export default function AssetsPage() {
             <AssetMetric label="Geschosse" value={kosmoDrawDigitalization.aggregateCounts.floors} />
             <AssetMetric label="NGF m2" value={kosmoDrawDigitalization.aggregateCounts.netFloorAreaM2} />
             <AssetMetric label="Public-ready" value={kosmoDrawDigitalization.publicReadyAfterIntake} />
+          </div>
+        </section>
+
+        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">KosmoPublish Plan Catalog</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planregister strukturieren Assets, bevor Dateien freigegeben werden.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+              Der Plankatalog ist als read-only Metadaten-Vorstufe sichtbar: {kosmoPublishPlanCatalog.phaseCount} Phasen,
+              {kosmoPublishPlanCatalog.outputFields.length} Felder und aktuell {kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} public-ready Plan-Assets.
+              Zeichnungen werden erst nach Rechte- und Owner-Review in KosmoAsset sichtbar.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <AssetMetric label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
+            <AssetMetric label="Felder" value={kosmoPublishPlanCatalog.outputFields.length} />
+            <AssetMetric label="Public Pläne" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
           </div>
         </section>
 
