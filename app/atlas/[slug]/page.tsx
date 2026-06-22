@@ -6,6 +6,7 @@ import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { MediaLightbox } from '@/components/atlas/MediaLightbox';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import type { ProjectSearchEntry } from '@/components/atlas/ProjectSearch';
+import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import entries from '@/data/mock-entries.json';
 import publicModelPreviews from '@/data/public-model-previews.json';
 import relations from '@/data/relations.json';
@@ -110,14 +111,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
         <span className="entry-ring entry-ring-c" />
       </div>
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-10">
-        <header className="flex items-center justify-between gap-4 border-b border-white/12 pb-4">
-          <Link href="/" className="entry-link text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">
-            Architektur Kosmos
-          </Link>
-          <Link href="/atlas/?return=kosmodata" className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
-            Zurück zu KosmoData
-          </Link>
-        </header>
+        <PublicSiteHeader active="atlas" context="Projektdossier" />
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1.08fr)_360px] lg:py-14">
           <div>

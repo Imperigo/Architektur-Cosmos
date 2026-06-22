@@ -19,7 +19,7 @@ import {
 
 export const metadata: Metadata = {
   title: 'KosmoAsset | Architektur Kosmos',
-  description: 'Öffentliche Architektur-Assets aus KosmoReferences: Bilder, Pläne, Analyse-Layer und GLB-Previews.'
+  description: 'Öffentliche Architektur-Assets aus KosmoReferences: Bilder, Pläne, Analyseebenen und 3D-Vorschauen.'
 };
 
 export default function AssetsPage() {
@@ -39,22 +39,22 @@ export default function AssetsPage() {
   const publicGateSummary = publicGateStatusSummary();
 
   return (
-    <main className="entry-page min-h-screen bg-[#060805] text-[#f7f7f4]" style={{ '--entry-accent': '#b9f06a' } as React.CSSProperties}>
-      <div className="mx-auto w-full max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
-        <PublicSiteHeader active="assets" accent="#b9f06a" />
+    <main className="entry-page ak-page-shell">
+      <div className="ak-page-inner">
+        <PublicSiteHeader active="assets" context="Öffentliche Assetbibliothek" />
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:py-14">
           <div>
             <div className="mb-4 flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a]">
               <span className="border border-[#b9f06a]/40 px-2.5 py-1">KosmoAsset</span>
-              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">public asset layer</span>
-              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">GLB Preview</span>
+              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Öffentliche Assetebene</span>
+              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">3D-Vorschau</span>
             </div>
             <h1 className="max-w-5xl text-[2rem] font-semibold leading-[1.02] tracking-normal sm:text-7xl sm:leading-[0.92]">
               Aus Referenzen werden Architektur-Assets.
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
-              KosmoAsset ist die öffentliche Schicht aus KosmoReferences: lizenzierte Bilder, eigene Plan- und Schnittdiagramme, Modell-Previews und Analyse-Layer. Private PDFs, Scans und interne Quellen bleiben draussen.
+              KosmoAsset ist die öffentliche Schicht aus KosmoReferences: lizenzierte Bilder, eigene Plan- und Schnittdiagramme, Modellvorschauen und Analyseebenen. Private PDFs, Scans und interne Quellen bleiben draussen.
             </p>
           </div>
           <div className="border border-white/14 bg-[#11170c] p-5">
@@ -72,19 +72,21 @@ export default function AssetsPage() {
           </div>
         </section>
 
+        <PublicAssetExplorer assets={assets} />
+
         <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
-          <AssetCapability title="Bilder" text="Nur public-display Assets aus Rights-Gate und lokalen Quellen." />
+          <AssetCapability title="Bilder" text="Nur öffentlich freigegebene Assets aus geprüften lokalen Quellen." />
           <AssetCapability title="Pläne" text="Eigene diagrammatische Rekonstruktionen für Planlesung und Stilvereinheitlichung." />
           <AssetCapability title="Layer" text="Tragwerk, Material, Zirkulation, Hülle und Typologie als filterbare Metadaten." />
-          <AssetCapability title="3D" text="Öffentliche Low-GLB-Previews als skizzenhaftes BIM-Verständnis." />
+          <AssetCapability title="3D" text="Öffentliche, reduzierte Modellvorschauen als skizzenhaftes BIM-Verständnis." />
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Public Asset Gate</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Assets erscheinen erst nach Rechte-, Review- und Public-Pruefung.</h2>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Öffentliche Freigabe</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Assets erscheinen erst nach Rechte- und Inhaltsprüfung.</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Das Asset-Register zaehlt nur public-safe Oberflaechen. Review-only Kandidaten aus KosmoDraw, KosmoPublish und privaten Quellen bleiben sichtbar als Status, aber nicht als freigegebene Dateien.
+              Das Asset-Register zählt nur öffentlich freigegebene Oberflächen. Ungeprüfte Kandidaten aus KosmoDraw, KosmoPublish und privaten Quellen bleiben als Status sichtbar, aber nicht als abrufbare Dateien.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -129,10 +131,10 @@ export default function AssetsPage() {
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ingenbohl Review-Asset</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ein zweiter Pilot ohne private Medien-Leak.</h2>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ingenbohl Assetprüfung</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ein zweiter Pilot ohne private Medien.</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              {ingenbohl.title} zeigt die naechste KosmoAsset-Bruecke: reviewed Analyse, Material- und Strukturkandidaten
+              {ingenbohl.title} zeigt die nächste KosmoAsset-Brücke: geprüfte Analyse-, Material- und Strukturkandidaten
               sowie Modellstatus werden indexiert, aber Bilder, Pläne und private Quellen bleiben gesperrt.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -171,7 +173,7 @@ export default function AssetsPage() {
                 <div className="text-[10px] uppercase tracking-[0.16em] text-[#b9f06a]">{bundle.sourceKind}</div>
                 <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{bundle.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">
-                  {bundle.assets.total} Asset-Kandidaten, {bundle.openings.total} Oeffnungen, public-ready nach Intake: {bundle.publicReadyAfterIntake}.
+                  {bundle.assets.total} Asset-Kandidaten, {bundle.openings.total} Öffnungen, öffentlich freigegeben nach Übernahme: {bundle.publicReadyAfterIntake}.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.12em]">
                   <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">{bundle.intakeAllowed ? 'review ready' : 'blocked'}</span>
@@ -188,9 +190,9 @@ export default function AssetsPage() {
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Digitalization Asset Preflight</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Mengen- und Strukturreports werden nicht automatisch zu Assets.</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Der Analyse-Check sieht {kosmoDrawDigitalization.aggregateCounts.rooms} aggregierte Raeume,
-              {kosmoDrawDigitalization.aggregateCounts.walls} Waende und {kosmoDrawDigitalization.aggregateCounts.volumeTotalM3} m3 Volumen.
-              Fuer KosmoAsset fehlen aber noch elementweise Bauteile, Oeffnungen und review-only Asset-Kandidaten.
+              Der Analyse-Check sieht {kosmoDrawDigitalization.aggregateCounts.rooms} aggregierte Räume,
+              {kosmoDrawDigitalization.aggregateCounts.walls} Wände und {kosmoDrawDigitalization.aggregateCounts.volumeTotalM3} m3 Volumen.
+              Für KosmoAsset fehlen aber noch elementweise Bauteile, Öffnungen und geprüfte Asset-Kandidaten.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -206,18 +208,17 @@ export default function AssetsPage() {
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planregister strukturieren Assets, bevor Dateien freigegeben werden.</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der Plankatalog ist als read-only Metadaten-Vorstufe sichtbar: {kosmoPublishPlanCatalog.phaseCount} Phasen,
-              {kosmoPublishPlanCatalog.outputFields.length} Felder und aktuell {kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} public-ready Plan-Assets.
-              Zeichnungen werden erst nach Rechte- und Owner-Review in KosmoAsset sichtbar.
+              {kosmoPublishPlanCatalog.outputFields.length} Felder und aktuell {kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} öffentlich freigegebene Plan-Assets.
+              Zeichnungen werden erst nach Rechteprüfung und Owner-Freigabe in KosmoAsset sichtbar.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <AssetMetric label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
             <AssetMetric label="Felder" value={kosmoPublishPlanCatalog.outputFields.length} />
-            <AssetMetric label="Public Pläne" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
+            <AssetMetric label="Öffentliche Pläne" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
           </div>
         </section>
 
-        <PublicAssetExplorer assets={assets} />
       </div>
     </main>
   );

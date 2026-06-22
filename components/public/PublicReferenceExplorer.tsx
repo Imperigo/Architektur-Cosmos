@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { Grid3X3, List, RotateCcw, Search } from 'lucide-react';
 
 export type PublicReference = {
   slug: string;
@@ -72,49 +73,53 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
   }, [query, style, material, view]);
 
   return (
-    <section className="border-t border-white/12 py-8">
+    <section className="public-explorer border-t border-white/12 py-8">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Öffentliche Referenzdatenbank</div>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#57b6c2]">Öffentliche Referenzdatenbank</div>
           <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Projekte suchen, filtern und öffnen</h2>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:w-[760px] lg:grid-cols-[1.35fr_1fr_1fr_auto]">
-          <label className="block">
-            <span className="sr-only">Suche</span>
+          <label className="public-filter-field">
+            <span className="public-filter-label">Suche</span>
+            <Search aria-hidden="true" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Projekt, Material, Ort"
-              className="h-11 w-full border border-white/14 bg-[#111514] px-3 text-sm text-[#f7f7f4] outline-none transition focus:border-[#66e1d2]"
+              className="ak-control h-11 w-full pl-10 pr-3 text-sm outline-none transition focus:border-[#57b6c2]"
             />
           </label>
-          <label className="block">
-            <span className="sr-only">Stil</span>
+          <label className="public-filter-field">
+            <span className="public-filter-label">Epoche</span>
             <select
               value={style}
               onChange={(event) => setStyle(event.target.value)}
-              className="h-11 w-full border border-white/14 bg-[#111514] px-3 text-sm text-[#f7f7f4] outline-none transition focus:border-[#66e1d2]"
+              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
             >
               {styles.map((item) => (
                 <option key={item} value={item}>{item === 'all' ? 'Alle Epochen' : styleLabels[item] ?? item.replace(/_/g, ' ')}</option>
               ))}
             </select>
           </label>
-          <label className="block">
-            <span className="sr-only">Material</span>
+          <label className="public-filter-field">
+            <span className="public-filter-label">Material</span>
             <select
               value={material}
               onChange={(event) => setMaterial(event.target.value)}
-              className="h-11 w-full border border-white/14 bg-[#111514] px-3 text-sm text-[#f7f7f4] outline-none transition focus:border-[#66e1d2]"
+              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
             >
               {materials.map((item) => (
                 <option key={item} value={item}>{item === 'all' ? 'Alle Materialien' : item.replace(/_/g, ' ')}</option>
               ))}
             </select>
           </label>
-          <div className="grid h-11 grid-cols-2 border border-white/14 bg-[#111514] p-1" aria-label="Ansicht">
-            <ViewButton active={view === 'grid'} onClick={() => setView('grid')}>Raster</ViewButton>
-            <ViewButton active={view === 'index'} onClick={() => setView('index')}>Index</ViewButton>
+          <div className="public-filter-field">
+            <span className="public-filter-label">Ansicht</span>
+            <div className="ak-control grid h-11 grid-cols-2 p-1" aria-label="Ansicht">
+              <ViewButton active={view === 'grid'} onClick={() => setView('grid')} icon={<Grid3X3 aria-hidden="true" />}>Raster</ViewButton>
+              <ViewButton active={view === 'index'} onClick={() => setView('index')} icon={<List aria-hidden="true" />}>Index</ViewButton>
+            </div>
           </div>
         </div>
       </div>
@@ -131,12 +136,13 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               setStyle('all');
               setMaterial('all');
             }}
-            className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2] transition hover:text-white"
+            className="inline-flex min-h-9 items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2] transition hover:text-white"
           >
+            <RotateCcw className="h-[18px] w-[18px]" aria-hidden="true" />
             Filter zurücksetzen
           </button>
         ) : (
-          <span className="text-[9px] uppercase tracking-[0.14em] text-[#65706b]">Public Gate aktiv</span>
+          <span className="text-[10px] uppercase tracking-[0.1em] text-[#8b92a2]">Freigabeprüfung aktiv</span>
         )}
       </div>
 
@@ -146,7 +152,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
           <Link
             key={entry.slug}
             href={`/atlas/${entry.slug}/`}
-            className="group overflow-hidden bg-[#0b100f] transition hover:bg-[#101816]"
+            className="ak-card group overflow-hidden transition hover:bg-[#1a1e27]"
           >
             <div className="aspect-[4/3] overflow-hidden bg-[#141817]">
               {entry.imageUrl ? (
@@ -160,20 +166,20 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               )}
             </div>
             <div className="p-4">
-              <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.14em] text-[#66e1d2]">
+              <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.1em] text-[#57b6c2]">
                 <span>{entry.year}</span>
                 <span>{styleLabels[entry.style] ?? entry.style.replace(/_/g, ' ')}</span>
-                {entry.hasModel ? <span>3D Preview</span> : null}
+                {entry.hasModel ? <span>3D-Vorschau</span> : null}
               </div>
               <h3 className="mt-3 text-xl leading-tight text-[#f7f7f4]">{entry.title}</h3>
               <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{entry.summary}</p>
-              <div className="mt-4 border border-[#66e1d2]/18 bg-[#66e1d2]/6 p-3">
-                <div className="flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.12em] text-[#66e1d2]">
+              <div className="mt-4 rounded-lg border border-[#57b6c2]/20 bg-[#57b6c2]/6 p-3">
+                <div className="flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.1em] text-[#57b6c2]">
                   <span>{entry.gateStatus}</span>
                   <span>{entry.readinessScore}%</span>
                 </div>
                 <div className="mt-2 h-1.5 overflow-hidden bg-white/10">
-                  <div className="h-full bg-[#66e1d2]" style={{ width: `${entry.readinessScore}%` }} />
+                  <div className="h-full bg-[#57b6c2]" style={{ width: `${entry.readinessScore}%` }} />
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-3 border border-white/10 text-center text-[10px] uppercase tracking-[0.12em] text-[#aeb8b2]">
@@ -194,15 +200,15 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
             <span>Projekt</span>
             <span>Ort / Autor</span>
             <span>Bestand</span>
-            <span>Readiness</span>
+            <span>Datenstand</span>
           </div>
           {visible.map((entry) => (
             <Link
               key={entry.slug}
               href={`/atlas/${entry.slug}/`}
-              className="grid gap-2 border-b border-white/10 px-3 py-4 transition hover:bg-[#66e1d2]/6 md:grid-cols-[80px_minmax(220px,1.2fr)_minmax(160px,0.8fr)_120px_100px] md:items-center md:gap-4"
+              className="grid gap-2 border-b border-white/10 px-3 py-4 transition hover:bg-[#57b6c2]/6 md:grid-cols-[80px_minmax(220px,1.2fr)_minmax(160px,0.8fr)_120px_100px] md:items-center md:gap-4"
             >
-              <span className="text-sm font-semibold text-[#66e1d2]">{entry.year}</span>
+              <span className="text-sm font-semibold text-[#57b6c2]">{entry.year}</span>
               <span>
                 <strong className="block text-base font-semibold text-[#f7f7f4]">{entry.title}</strong>
                 <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-[#7d8984]">
@@ -219,7 +225,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               <span className="flex items-center justify-between gap-3 md:block">
                 <span className="text-sm font-semibold text-[#f7f7f4]">{entry.readinessScore}%</span>
                 <span className="mt-2 block h-px flex-1 bg-white/10 md:w-full">
-                  <span className="block h-px bg-[#66e1d2]" style={{ width: `${entry.readinessScore}%` }} />
+                  <span className="block h-px bg-[#57b6c2]" style={{ width: `${entry.readinessScore}%` }} />
                 </span>
               </span>
             </Link>
@@ -234,7 +240,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
           <button
             type="button"
             onClick={() => setVisibleCount((count) => count + referencePageSize)}
-            className="border border-[#66e1d2]/45 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2] transition hover:bg-[#66e1d2] hover:text-[#07100f]"
+            className="inline-flex min-h-10 items-center rounded-lg border border-[#57b6c2]/45 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2] transition hover:bg-[#57b6c2] hover:text-[#07100f]"
           >
             Weitere {Math.min(referencePageSize, filtered.length - visible.length)} laden
           </button>
@@ -244,17 +250,17 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
   );
 }
 
-function ViewButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function ViewButton({ active, onClick, icon, children }: { active: boolean; onClick: () => void; icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <button
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`text-[9px] font-semibold uppercase tracking-[0.14em] transition ${
-        active ? 'bg-[#66e1d2] text-[#07100f]' : 'text-[#89958f] hover:text-white'
+      className={`inline-flex items-center justify-center gap-2 rounded-md font-mono text-[10px] font-semibold uppercase tracking-[0.08em] transition [&>svg]:h-[18px] [&>svg]:w-[18px] ${
+        active ? 'bg-[#57b6c2] text-[#07100f]' : 'text-[#8b92a2] hover:text-white'
       }`}
     >
-      {children}
+      {icon}{children}
     </button>
   );
 }

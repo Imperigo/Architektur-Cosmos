@@ -22,7 +22,7 @@ import {
 
 export const metadata: Metadata = {
   title: 'KosmoReferences | Architektur Kosmos',
-  description: 'Öffentliche Architekturreferenzen mit Bildern, Plänen, Analyse-Layern und 3D-Preview.'
+  description: 'Öffentliche Architekturreferenzen mit Bildern, Plänen, Analyseebenen und 3D-Vorschau.'
 };
 
 export default function ReferencesPage() {
@@ -44,16 +44,16 @@ export default function ReferencesPage() {
   const publicGateSummary = publicGateStatusSummary();
 
   return (
-    <main className="entry-page min-h-screen bg-[#050707] text-[#f7f7f4]" style={{ '--entry-accent': '#66e1d2' } as React.CSSProperties}>
-      <div className="mx-auto w-full max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
-        <PublicSiteHeader active="references" accent="#66e1d2" />
+    <main className="entry-page ak-page-shell">
+      <div className="ak-page-inner">
+        <PublicSiteHeader active="references" context="Öffentliche Referenzdatenbank" />
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_440px] lg:py-14">
           <div>
             <div className="mb-4 flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2]">
               <span className="border border-[#66e1d2]/40 px-2.5 py-1">KosmoReferences</span>
-              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">public display only</span>
-              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Pilot: Villa Savoye</span>
+              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Öffentlich freigegeben</span>
+              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Pilotprojekt Villa Savoye</span>
             </div>
             <h1 className="max-w-5xl text-5xl font-semibold leading-[0.92] tracking-normal sm:text-7xl">
               Eine Referenz ist nicht nur ein Bild, sondern ein lesbares Projektpaket.
@@ -69,11 +69,13 @@ export default function ReferencesPage() {
             <div className="p-4">
               <div className="text-[10px] uppercase tracking-[0.18em] text-[#66e1d2]">Hero-Bild Auswahl</div>
               <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">
-                Für den öffentlichen Pilot wird das Library-of-Congress-Bild verwendet, weil es als no-known-restrictions/public-domain-Kandidat im lokalen Rights-Gate markiert ist.
+                Das Titelbild stammt aus einem öffentlich nutzbaren Bestand der Library of Congress und hat die lokale Rechteprüfung durchlaufen.
               </p>
             </div>
           </div>
         </section>
+
+        <PublicReferenceExplorer references={references} />
 
         <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
           {readiness.map((item) => (
@@ -87,10 +89,10 @@ export default function ReferencesPage() {
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Public Gate Status</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Die Demo zeigt nur, was durch die oeffentliche Pruefschicht darf.</h2>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Freigabestatus</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Die Demo zeigt nur öffentlich geprüfte Inhalte.</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Referenzen, Assets und Modell-Previews werden als public-safe Oberflaeche gezaehlt. KosmoDraw- und KosmoPublish-Zwischenstaende bleiben review-only, bis Rechte- und Owner-Gates explizit oeffnen.
+              Referenzen, Assets und Modellvorschauen werden erst nach Rechte- und Inhaltsprüfung freigegeben. Zwischenstände aus KosmoDraw und KosmoPublish bleiben intern, bis der Owner sie ausdrücklich bestätigt.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -143,12 +145,12 @@ export default function ReferencesPage() {
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.92fr_1.08fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Zweiter Public Pilot</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Zweites Pilotprojekt</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">{ingenbohl.title}</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Ingenbohl wird als zweiter Referenz-Prototyp sichtbar, aber bewusst anders als Villa Savoye:
-              Medien aus der privaten Recherche bleiben gesperrt, waehrend reviewed Analysefelder und das oeffentliche
-              GLB-Preview die KosmoReferences-/KosmoAsset-Struktur demonstrieren.
+              Medien aus der privaten Recherche bleiben gesperrt. Geprüfte Analysefelder und die öffentliche
+              3D-Vorschau demonstrieren bereits die Struktur von KosmoReferences und KosmoAsset.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {ingenbohlReadiness.map((item) => (
@@ -197,13 +199,13 @@ export default function ReferencesPage() {
           <ProcessStep title="1 Bild erkennen" text="Öffentliche Bildkandidaten werden nach Rechte- und Lesbarkeitsstatus sortiert." />
           <ProcessStep title="2 Plan säubern" text="Low-res Pläne werden als eigene, öffentliche Diagramme nachgezeichnet und vereinheitlicht." />
           <ProcessStep title="3 Layer verstehen" text="KosmoDraw-Layer trennen Tragwerk, Hülle, Zirkulation, Material und Dachgarten." />
-          <ProcessStep title="4 BIM skizzieren" text="KosmoVis zeigt ein GLB-Preview mit Modell-, Material- und Analysefiltern." />
+          <ProcessStep title="4 BIM skizzieren" text="KosmoVis zeigt eine 3D-Vorschau mit Modell-, Material- und Analysefiltern." />
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoDraw Intake</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">2D/Bild-zu-3D kommt nur ueber Review-Gates in KosmoReferences.</h2>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoDraw Übernahme</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">2D- und Bilddaten gelangen nur geprüft in KosmoReferences.</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der aktuelle Intake-Report fasst KosmoDraw-Bundles als Metadaten zusammen. IFC-Pfade und lokale Artefakte
               werden nicht in den Bericht kopiert, und public-ready bleibt nach Intake bei {kosmoDrawIntake.summary.public_ready_after_intake}.
@@ -227,9 +229,9 @@ export default function ReferencesPage() {
                   </span>
                 </div>
                 <div className="mt-4 grid grid-cols-4 gap-2 text-center text-xs text-[#b9c1bc]">
-                  <IntakeMini label="Raeume" value={bundle.rooms} />
-                  <IntakeMini label="Waende" value={bundle.walls} />
-                  <IntakeMini label="Oeffnungen" value={bundle.openings.total} />
+                  <IntakeMini label="Räume" value={bundle.rooms} />
+                  <IntakeMini label="Wände" value={bundle.walls} />
+                  <IntakeMini label="Öffnungen" value={bundle.openings.total} />
                   <IntakeMini label="Assets" value={bundle.assets.total} />
                 </div>
               </div>
@@ -247,8 +249,8 @@ export default function ReferencesPage() {
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <IntakeMetric label="Raeume aggregiert" value={kosmoDrawDigitalization.aggregateCounts.rooms} />
-            <IntakeMetric label="Waende aggregiert" value={kosmoDrawDigitalization.aggregateCounts.walls} />
+            <IntakeMetric label="Räume aggregiert" value={kosmoDrawDigitalization.aggregateCounts.rooms} />
+            <IntakeMetric label="Wände aggregiert" value={kosmoDrawDigitalization.aggregateCounts.walls} />
             <IntakeMetric label="Fehlende Bundlefelder" value={kosmoDrawDigitalization.missingBundleFields.length} />
           </div>
         </section>
@@ -256,10 +258,10 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoPublish Plan Catalog</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planpakete bekommen ein Register, bevor sie als Public Assets erscheinen.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planpakete erhalten ein Register, bevor sie öffentlich erscheinen.</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Der read-only Plankatalog ist als sichere Metadaten-Vorstufe markiert. Er ordnet Planvorschauen ueber {kosmoPublishPlanCatalog.phaseCount} Phasen,
-              setzt aber noch keine Plan-Assets automatisch public-ready.
+              Der schreibgeschützte Plankatalog ist eine sichere Metadaten-Vorstufe. Er ordnet Planvorschauen über {kosmoPublishPlanCatalog.phaseCount} Phasen,
+              veröffentlicht aber keine Plan-Assets automatisch.
             </p>
             <p className="mt-3 text-xs uppercase tracking-[0.14em] text-[#8f9994]">
               Schema {kosmoPublishPlanCatalog.planNumberPattern}
@@ -268,11 +270,10 @@ export default function ReferencesPage() {
           <div className="grid gap-3 sm:grid-cols-3">
             <IntakeMetric label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
             <IntakeMetric label="Toolfelder" value={kosmoPublishPlanCatalog.outputFields.length} />
-            <IntakeMetric label="Public Assets" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
+            <IntakeMetric label="Öffentliche Assets" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
           </div>
         </section>
 
-        <PublicReferenceExplorer references={references} />
       </div>
     </main>
   );

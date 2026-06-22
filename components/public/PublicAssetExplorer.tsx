@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { Grid3X3, List, RotateCcw, Search } from 'lucide-react';
 
 export type PublicAsset = {
   id: string;
@@ -59,47 +60,60 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
   }, [query, kind, layer, project, view]);
 
   return (
-    <section className="border-t border-white/12 py-8">
+    <section className="public-explorer border-t border-white/12 py-8">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Öffentliche Assetdatenbank</div>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#57b6c2]">Öffentliche Assetbibliothek</div>
           <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Medien, Pläne, Layer und Modelle</h2>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 xl:w-[860px] xl:grid-cols-[1.25fr_0.8fr_1fr_1fr_auto]">
-          <label>
-            <span className="sr-only">Assets suchen</span>
+          <label className="public-filter-field">
+            <span className="public-filter-label">Suche</span>
+            <Search aria-hidden="true" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Asset, Projekt, Provenienz"
-              className="h-11 w-full border border-white/14 bg-[#111514] px-3 text-sm text-[#f7f7f4] outline-none transition focus:border-[#b9f06a]"
+              className="ak-control h-11 w-full pl-10 pr-3 text-sm outline-none transition focus:border-[#57b6c2]"
             />
           </label>
-          <select
-            value={kind}
-            onChange={(event) => setKind(event.target.value as PublicAsset['kind'] | 'all')}
-            className="h-11 border border-white/14 bg-[#111514] px-3 text-sm text-[#f7f7f4] outline-none transition focus:border-[#b9f06a]"
-          >
-            <option value="all">Alle Typen</option>
-            {Object.entries(kindLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
-          </select>
-          <select
-            value={layer}
-            onChange={(event) => setLayer(event.target.value)}
-            className="h-11 border border-white/14 bg-[#111514] px-3 text-sm text-[#f7f7f4] outline-none transition focus:border-[#b9f06a]"
-          >
-            {layers.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Layer' : item.replace(/_/g, ' ')}</option>)}
-          </select>
-          <select
-            value={project}
-            onChange={(event) => setProject(event.target.value)}
-            className="h-11 border border-white/14 bg-[#111514] px-3 text-sm text-[#f7f7f4] outline-none transition focus:border-[#b9f06a]"
-          >
-            {projects.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Projekte' : item}</option>)}
-          </select>
-          <div className="grid h-11 grid-cols-2 border border-white/14 bg-[#111514] p-1" aria-label="Ansicht">
-            <AssetViewButton active={view === 'grid'} onClick={() => setView('grid')}>Raster</AssetViewButton>
-            <AssetViewButton active={view === 'index'} onClick={() => setView('index')}>Index</AssetViewButton>
+          <label className="public-filter-field">
+            <span className="public-filter-label">Typ</span>
+            <select
+              value={kind}
+              onChange={(event) => setKind(event.target.value as PublicAsset['kind'] | 'all')}
+              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
+            >
+              <option value="all">Alle Typen</option>
+              {Object.entries(kindLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+            </select>
+          </label>
+          <label className="public-filter-field">
+            <span className="public-filter-label">Ebene</span>
+            <select
+              value={layer}
+              onChange={(event) => setLayer(event.target.value)}
+              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
+            >
+              {layers.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Ebenen' : item.replace(/_/g, ' ')}</option>)}
+            </select>
+          </label>
+          <label className="public-filter-field">
+            <span className="public-filter-label">Projekt</span>
+            <select
+              value={project}
+              onChange={(event) => setProject(event.target.value)}
+              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
+            >
+              {projects.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Projekte' : item}</option>)}
+            </select>
+          </label>
+          <div className="public-filter-field">
+            <span className="public-filter-label">Ansicht</span>
+            <div className="ak-control grid h-11 grid-cols-2 p-1" aria-label="Ansicht">
+              <AssetViewButton active={view === 'grid'} onClick={() => setView('grid')} icon={<Grid3X3 aria-hidden="true" />}>Raster</AssetViewButton>
+              <AssetViewButton active={view === 'index'} onClick={() => setView('index')} icon={<List aria-hidden="true" />}>Index</AssetViewButton>
+            </div>
           </div>
         </div>
       </div>
@@ -117,12 +131,13 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               setLayer('all');
               setProject('all');
             }}
-            className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a] transition hover:text-white"
+            className="inline-flex min-h-9 items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2] transition hover:text-white"
           >
+            <RotateCcw className="h-[18px] w-[18px]" aria-hidden="true" />
             Filter zurücksetzen
           </button>
         ) : (
-          <span className="text-[9px] uppercase tracking-[0.14em] text-[#65705f]">Rights Gate aktiv</span>
+          <span className="text-[10px] uppercase tracking-[0.1em] text-[#8b92a2]">Rechteprüfung aktiv</span>
         )}
       </div>
 
@@ -132,7 +147,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
           <a
             key={asset.id}
             href={asset.url}
-            className="group bg-[#0c110d] transition hover:bg-[#12190f]"
+            className="ak-card group overflow-hidden transition hover:bg-[#1a1e27]"
           >
             <div className="aspect-[4/3] overflow-hidden border-b border-white/10 bg-[#151a14]">
               {asset.previewUrl ? (
@@ -142,7 +157,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               )}
             </div>
             <div className="p-4">
-              <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.14em] text-[#b9f06a]">
+              <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.1em] text-[#57b6c2]">
                 <span>{kindLabels[asset.kind]}</span>
                 <span>{asset.layer.replace(/_/g, ' ')}</span>
               </div>
@@ -167,9 +182,9 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <a
               key={asset.id}
               href={asset.url}
-              className="grid gap-2 border-b border-white/10 px-3 py-4 transition hover:bg-[#b9f06a]/6 md:grid-cols-[90px_minmax(220px,1.2fr)_minmax(180px,0.8fr)_150px_130px] md:items-center md:gap-4"
+              className="grid gap-2 border-b border-white/10 px-3 py-4 transition hover:bg-[#57b6c2]/6 md:grid-cols-[90px_minmax(220px,1.2fr)_minmax(180px,0.8fr)_150px_130px] md:items-center md:gap-4"
             >
-              <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#b9f06a]">{kindLabels[asset.kind]}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2]">{kindLabels[asset.kind]}</span>
               <span>
                 <strong className="block text-sm font-semibold text-[#f7f7f4]">{asset.label}</strong>
                 <span className="mt-1 line-clamp-1 block text-[10px] text-[#69736b]">{asset.provenance}</span>
@@ -189,7 +204,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
           <button
             type="button"
             onClick={() => setVisibleCount((count) => count + assetPageSize)}
-            className="border border-[#b9f06a]/45 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a] transition hover:bg-[#b9f06a] hover:text-[#0b1108]"
+            className="inline-flex min-h-10 items-center rounded-lg border border-[#57b6c2]/45 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2] transition hover:bg-[#57b6c2] hover:text-[#0b1108]"
           >
             Weitere {Math.min(assetPageSize, filtered.length - visible.length)} laden
           </button>
@@ -199,17 +214,17 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
   );
 }
 
-function AssetViewButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function AssetViewButton({ active, onClick, icon, children }: { active: boolean; onClick: () => void; icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <button
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`text-[9px] font-semibold uppercase tracking-[0.14em] transition ${
-        active ? 'bg-[#b9f06a] text-[#0b1108]' : 'text-[#8f9a92] hover:text-white'
+      className={`inline-flex items-center justify-center gap-2 rounded-md font-mono text-[10px] font-semibold uppercase tracking-[0.08em] transition [&>svg]:h-[18px] [&>svg]:w-[18px] ${
+        active ? 'bg-[#57b6c2] text-[#0b1108]' : 'text-[#8b92a2] hover:text-white'
       }`}
     >
-      {children}
+      {icon}{children}
     </button>
   );
 }

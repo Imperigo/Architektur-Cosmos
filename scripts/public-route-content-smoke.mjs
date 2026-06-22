@@ -8,11 +8,11 @@ const baseUrl = String(args['base-url'] || 'http://127.0.0.1:3000').replace(/\/$
 const routes = [
   {
     path: '/',
-    includes: ['Architektur Kosmos', 'KosmoOrbit', '2 Piloten', 'Alterszentrum Kloster Ingenbohl']
+    includes: ['Architekturkosmos', 'Status', 'Pilotprojekte', 'Alterszentrum Kloster Ingenbohl']
   },
   {
     path: '/orbit/',
-    includes: ['KosmoOrbit', 'Review-only Preview', 'Public Website Gate', 'Open References', 'Open Assets', 'Open Atlas']
+    includes: ['KosmoOrbit', 'KosmoDesign Review Mode', 'Public Website Gate', 'Open References', 'Open Assets', 'Open Atlas']
   },
   {
     path: '/atlas/',
@@ -26,10 +26,10 @@ const routes = [
     path: '/references/',
     includes: [
       'KosmoReferences',
-      'KosmoDraw Intake',
+      'KosmoDraw Übernahme',
       'Digitalization Preflight',
       'KosmoPublish Plan Catalog',
-      'Public Gate Status',
+      'Freigabestatus',
       'Villa Savoye',
       'Alterszentrum Kloster Ingenbohl'
     ]
@@ -41,9 +41,9 @@ const routes = [
       'KosmoDraw Asset Intake',
       'Digitalization Asset Preflight',
       'KosmoPublish Plan Catalog',
-      'Public Asset Gate',
+      'Öffentliche Freigabe',
       'Villa Savoye',
-      'Ingenbohl Review-Asset',
+      'Ingenbohl Assetprüfung',
       'Alterszentrum Kloster Ingenbohl'
     ]
   },
