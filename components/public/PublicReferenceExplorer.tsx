@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 export type PublicReference = {
@@ -36,12 +36,14 @@ const styleLabels: Record<string, string> = {
   sustainable_architecture: 'Nachhaltigkeit',
   vernacular_architecture: 'Vernakulär'
 };
+const referencePageSize = 12;
 
 export function PublicReferenceExplorer({ references }: PublicReferenceExplorerProps) {
   const [query, setQuery] = useState('');
   const [style, setStyle] = useState('all');
   const [material, setMaterial] = useState('all');
   const [view, setView] = useState<'grid' | 'index'>('grid');
+  const [visibleCount, setVisibleCount] = useState(referencePageSize);
 
   const styles = useMemo(() => ['all', ...Array.from(new Set(references.map((entry) => entry.style))).sort()], [references]);
   const materials = useMemo(() => {
@@ -63,6 +65,11 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
     });
   }, [references, query, style, material]);
   const hasActiveFilters = Boolean(query.trim() || style !== 'all' || material !== 'all');
+  const visible = filtered.slice(0, visibleCount);
+
+  useEffect(() => {
+    setVisibleCount(referencePageSize);
+  }, [query, style, material, view]);
 
   return (
     <section className="border-t border-white/12 py-8">
@@ -135,7 +142,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
 
       {view === 'grid' ? (
         <div className="mt-6 grid gap-px bg-white/10 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((entry) => (
+          {visible.map((entry) => (
           <Link
             key={entry.slug}
             href={`/atlas/${entry.slug}/`}
@@ -189,7 +196,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
             <span>Bestand</span>
             <span>Readiness</span>
           </div>
-          {filtered.map((entry) => (
+          {visible.map((entry) => (
             <Link
               key={entry.slug}
               href={`/atlas/${entry.slug}/`}
@@ -219,6 +226,20 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
           ))}
         </div>
       )}
+      {visible.length < filtered.length ? (
+        <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/12 pt-4">
+          <span className="text-[10px] uppercase tracking-[0.14em] text-[#65706b]">
+            {visible.length} von {filtered.length} geladen
+          </span>
+          <button
+            type="button"
+            onClick={() => setVisibleCount((count) => count + referencePageSize)}
+            className="border border-[#66e1d2]/45 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2] transition hover:bg-[#66e1d2] hover:text-[#07100f]"
+          >
+            Weitere {Math.min(referencePageSize, filtered.length - visible.length)} laden
+          </button>
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export type PublicAsset = {
   id: string;
@@ -27,6 +27,7 @@ const kindLabels: Record<PublicAsset['kind'], string> = {
   model: '3D',
   analysis: 'Analyse'
 };
+const assetPageSize = 24;
 
 export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
   const [query, setQuery] = useState('');
@@ -34,6 +35,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
   const [layer, setLayer] = useState('all');
   const [project, setProject] = useState('all');
   const [view, setView] = useState<'grid' | 'index'>('grid');
+  const [visibleCount, setVisibleCount] = useState(assetPageSize);
 
   const layers = useMemo(() => ['all', ...Array.from(new Set(assets.map((asset) => asset.layer))).sort()], [assets]);
   const projects = useMemo(() => ['all', ...Array.from(new Set(assets.map((asset) => asset.project))).sort()], [assets]);
@@ -50,6 +52,11 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
     return matchesQuery && matchesKind && matchesLayer && matchesProject;
   }), [assets, kind, layer, project, query]);
   const hasActiveFilters = Boolean(query.trim() || kind !== 'all' || layer !== 'all' || project !== 'all');
+  const visible = filtered.slice(0, visibleCount);
+
+  useEffect(() => {
+    setVisibleCount(assetPageSize);
+  }, [query, kind, layer, project, view]);
 
   return (
     <section className="border-t border-white/12 py-8">
@@ -121,7 +128,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
 
       {view === 'grid' ? (
         <div className="mt-6 grid gap-px bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
-          {filtered.map((asset) => (
+          {visible.map((asset) => (
           <a
             key={asset.id}
             href={asset.url}
@@ -156,7 +163,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <span>Layer</span>
             <span>Status</span>
           </div>
-          {filtered.map((asset) => (
+          {visible.map((asset) => (
             <a
               key={asset.id}
               href={asset.url}
@@ -174,6 +181,20 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
           ))}
         </div>
       )}
+      {visible.length < filtered.length ? (
+        <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/12 pt-4">
+          <span className="text-[10px] uppercase tracking-[0.14em] text-[#65705f]">
+            {visible.length} von {filtered.length} geladen
+          </span>
+          <button
+            type="button"
+            onClick={() => setVisibleCount((count) => count + assetPageSize)}
+            className="border border-[#b9f06a]/45 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a] transition hover:bg-[#b9f06a] hover:text-[#0b1108]"
+          >
+            Weitere {Math.min(assetPageSize, filtered.length - visible.length)} laden
+          </button>
+        </div>
+      ) : null}
     </section>
   );
 }
