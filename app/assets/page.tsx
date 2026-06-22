@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { PublicAssetExplorer } from '@/components/public/PublicAssetExplorer';
+import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
   publicAssets,
@@ -41,13 +41,7 @@ export default function AssetsPage() {
   return (
     <main className="entry-page min-h-screen bg-[#060805] text-[#f7f7f4]" style={{ '--entry-accent': '#b9f06a' } as React.CSSProperties}>
       <div className="mx-auto w-full max-w-7xl px-5 py-5 sm:px-8 lg:px-10">
-        <header className="flex items-center justify-between gap-4 border-b border-white/12 pb-4">
-          <Link href="/" className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f7f7f4]/78">Architektur Kosmos</Link>
-          <nav className="flex flex-wrap justify-end gap-2 text-[10px] font-semibold uppercase tracking-[0.16em]">
-            <Link href="/references" className="border border-white/18 px-3 py-2 transition hover:border-[#66e1d2] hover:text-[#66e1d2]">References</Link>
-            <Link href="/atlas" className="border border-white/18 px-3 py-2 transition hover:border-[#b9f06a] hover:text-[#b9f06a]">Atlas</Link>
-          </nav>
-        </header>
+        <PublicSiteHeader active="assets" accent="#b9f06a" />
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:py-14">
           <div>
