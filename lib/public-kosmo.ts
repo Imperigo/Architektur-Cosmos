@@ -330,24 +330,24 @@ export function publicGateStatusSummary() {
 
   return [
     {
-      label: 'Public References',
+      label: 'Öffentliche Referenzen',
       value: references.length,
-      detail: 'Display-safe Referenzpakete mit Rights-Gate, Analyse- oder Modellstatus.'
+      detail: 'Geprüfte Referenzpakete mit geklärten Medienrechten, Analysen und Modellstatus.'
     },
     {
-      label: 'Public Assets',
+      label: 'Öffentliche Assets',
       value: assets.length,
-      detail: 'Bilder, Diagramme, Analyse-Layer und GLB-Previews aus public-safe Quellen.'
+      detail: 'Bilder, Diagramme, Analyseebenen und GLB-Vorschauen aus freigegebenen Quellen.'
     },
     {
-      label: 'GLB Previews',
+      label: '3D-Vorschauen',
       value: publicModels.length,
-      detail: 'Oeffentliche Low-Modelle fuer skizzenhaftes BIM-Verstaendnis.'
+      detail: 'Reduzierte Studienmodelle für ein skizzenhaftes BIM-Verständnis.'
     },
     {
-      label: 'Unsafe Signals',
+      label: 'Unsichere Freigaben',
       value: unsafeSignals,
-      detail: 'KosmoDraw/KosmoPublish liefern keine unsicheren Public-Flags in die Website.'
+      detail: 'KosmoDraw und KosmoPublish liefern keine ungeprüften Freigaben an die Website.'
     }
   ];
 }
@@ -496,26 +496,26 @@ export function publicEntryReadiness(entryOrSlug: Entry | string | undefined) {
 
   return [
     {
-      label: 'Public media gate',
-      status: mediaReady > 0 ? 'ready' : 'private blocked',
+      label: 'Medienfreigabe',
+      status: mediaReady > 0 ? 'freigegeben' : 'gesperrt',
       detail: mediaReady > 0
-        ? `${mediaReady} display-safe Medien sind sichtbar; private Slots bleiben blockiert.`
-        : `0 display-safe Medien. ${hasReviewOnlyMedia ? 'Private/review-only Medien bleiben korrekt unsichtbar.' : 'Noch keine Medien-Slots.'}`
+        ? `${mediaReady} geprüfte Medien sind sichtbar; private Plätze bleiben gesperrt.`
+        : `0 freigegebene Medien. ${hasReviewOnlyMedia ? 'Private Medien und Prüfstände bleiben korrekt unsichtbar.' : 'Noch keine Medienplätze.'}`
     },
     {
-      label: 'Analyse-Layer',
-      status: reviewedLayers > 0 ? 'reviewed' : 'pending',
-      detail: `${reviewedLayers}/${entry.analysis_layers?.length ?? 0} Layer sind reviewed oder verified.`
+      label: 'Analyseebenen',
+      status: reviewedLayers > 0 ? 'geprüft' : 'ausstehend',
+      detail: `${reviewedLayers}/${entry.analysis_layers?.length ?? 0} Analyseebenen sind geprüft.`
     },
     {
-      label: '3D Preview',
-      status: model ? 'public preview' : 'missing',
-      detail: model?.caveat ?? 'Noch kein oeffentliches Preview-Modell.'
+      label: '3D-Vorschau',
+      status: model ? 'öffentlich' : 'fehlt',
+      detail: model?.caveat ?? 'Noch kein öffentliches Vorschaumodell.'
     },
     {
-      label: 'KosmoDraw Bundle',
-      status: 'review gate',
-      detail: '2D/Bild-zu-3D-Bundles werden nur als review_only aufgenommen; public_display_allowed bleibt false bis zur Freigabe.'
+      label: 'KosmoDraw-Übernahme',
+      status: 'Prüfung erforderlich',
+      detail: '2D-/Bild-zu-3D-Projektpakete bleiben intern, bis Inhalt, Rechte und öffentliche Darstellung freigegeben sind.'
     }
   ];
 }
