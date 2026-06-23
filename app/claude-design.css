@@ -269,7 +269,7 @@ textarea {
   font-weight: 900;
 }
 
-.entry-page .ak-page-title {
+.ak-page-title {
   font-size: 28px;
   line-height: 1.04;
 }
@@ -787,9 +787,7 @@ textarea {
 }
 
 .orbit-page > div {
-  background:
-    radial-gradient(100% 80% at 50% -20%, rgb(87 182 194 / 6%), transparent 60%),
-    var(--ak-surface-base) !important;
+  background: var(--ak-surface-base) !important;
 }
 
 .orbit-page [class*="rounded-lg"] {
@@ -851,7 +849,7 @@ textarea {
 }
 
 @media (min-width: 640px) {
-  .entry-page .ak-page-title {
+  .ak-page-title {
     font-size: 60px;
     line-height: 1;
   }

@@ -12,7 +12,15 @@ const routes = [
   },
   {
     path: '/orbit/',
-    includes: ['KosmoOrbit', 'KosmoDesign Review Mode', 'Public Website Gate', 'Open References', 'Open Assets', 'Open Atlas']
+    includes: [
+      'ArchitekturKosmos: Entwicklungsstand',
+      'Was bereits funktioniert',
+      'Öffentliche Referenzen',
+      'Öffentliche Assets',
+      'KosmoDraw',
+      'Kosmo KI',
+      'Vom Referenzprojekt zum Architekturwissen'
+    ]
   },
   {
     path: '/atlas/',
