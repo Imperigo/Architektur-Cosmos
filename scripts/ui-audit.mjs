@@ -10,6 +10,7 @@ const files = {
   atlas: 'components/atlas/RadialAtlas.tsx',
   search: 'components/atlas/ProjectSearch.tsx',
   modelViewer: 'components/atlas/EntryModelViewer.tsx',
+  assetExplorer: 'components/public/PublicAssetExplorer.tsx',
   entryPage: 'app/atlas/[slug]/page.tsx'
 };
 
@@ -112,7 +113,10 @@ async function main() {
     checkIncludes(sources.modelViewer, "['hlkse', 'mep', 'haustechnik'", '3D viewer recognizes KosmoDraw services layers'),
     checkIncludes(sources.modelViewer, 'activeAnalysisLayers.map', '3D viewer only renders detected discipline controls'),
     checkIncludes(sources.modelViewer, 'activeMaterialLayers.map', '3D viewer only renders detected material controls'),
-    checkIncludes(sources.modelViewer, 'KosmoDraw-kompatible Layerstruktur', '3D viewer exposes the KosmoDraw layer contract')
+    checkIncludes(sources.modelViewer, 'KosmoDraw-kompatible Layerstruktur', '3D viewer exposes the KosmoDraw layer contract'),
+    checkIncludes(sources.assetExplorer, 'assetLayerLabel(asset.layer)', 'public asset explorer localizes layer metadata'),
+    checkIncludes(sources.assetExplorer, 'assetRightsLabel(asset.rights)', 'public asset explorer localizes rights metadata'),
+    checkIncludes(sources.assetExplorer, 'assetStatusLabel(asset.status)', 'public asset explorer localizes status metadata')
   ];
 
   const warnings = [

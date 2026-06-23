@@ -43,7 +43,18 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
   const filtered = useMemo(() => assets.filter((asset) => {
     const normalizedQuery = query.trim().toLowerCase();
     const matchesQuery = !normalizedQuery
-      || [asset.label, asset.project, asset.kind, asset.layer, asset.rights, asset.provenance]
+      || [
+        asset.label,
+        asset.project,
+        asset.kind,
+        asset.layer,
+        asset.rights,
+        asset.status,
+        asset.provenance,
+        assetLayerLabel(asset.layer),
+        assetRightsLabel(asset.rights),
+        assetStatusLabel(asset.status)
+      ]
         .join(' ')
         .toLowerCase()
         .includes(normalizedQuery);
@@ -95,7 +106,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               onChange={(event) => setLayer(event.target.value)}
               className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
             >
-              {layers.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Ebenen' : item.replace(/_/g, ' ')}</option>)}
+              {layers.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Ebenen' : assetLayerLabel(item)}</option>)}
             </select>
           </label>
           <label className="public-filter-field">
@@ -159,11 +170,11 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <div className="p-4">
               <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.1em] text-[#57b6c2]">
                 <span>{kindLabels[asset.kind]}</span>
-                <span>{asset.layer.replace(/_/g, ' ')}</span>
+                <span>{assetLayerLabel(asset.layer)}</span>
               </div>
               <h3 className="mt-3 text-base leading-tight text-[#f7f7f4]">{asset.label}</h3>
               <p className="mt-2 text-sm text-[#b9c1bc]">{asset.project}</p>
-              <div className="mt-4 text-[10px] uppercase tracking-[0.12em] text-[#7f8a82]">{asset.rights} / {asset.status}</div>
+              <div className="mt-4 text-[10px] uppercase tracking-[0.12em] text-[#7f8a82]">{assetRightsLabel(asset.rights)} / {assetStatusLabel(asset.status)}</div>
               <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-[#8f9a92]">{asset.provenance}</p>
             </div>
           </a>
@@ -175,7 +186,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <span>Typ</span>
             <span>Asset</span>
             <span>Projekt</span>
-            <span>Layer</span>
+            <span>Ebene</span>
             <span>Status</span>
           </div>
           {visible.map((asset) => (
@@ -190,8 +201,8 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
                 <span className="mt-1 line-clamp-1 block text-[10px] text-[#69736b]">{asset.provenance}</span>
               </span>
               <span className="text-xs text-[#a1aca4]">{asset.project}</span>
-              <span className="text-[10px] uppercase tracking-[0.12em] text-[#8f9a92]">{asset.layer.replace(/_/g, ' ')}</span>
-              <span className="text-[10px] uppercase tracking-[0.12em] text-[#8f9a92]">{asset.rights} / {asset.status}</span>
+              <span className="text-[10px] uppercase tracking-[0.12em] text-[#8f9a92]">{assetLayerLabel(asset.layer)}</span>
+              <span className="text-[10px] uppercase tracking-[0.12em] text-[#8f9a92]">{assetRightsLabel(asset.rights)} / {assetStatusLabel(asset.status)}</span>
             </a>
           ))}
         </div>
@@ -227,4 +238,48 @@ function AssetViewButton({ active, onClick, icon, children }: { active: boolean;
       {icon}{children}
     </button>
   );
+}
+
+function assetLayerLabel(value: string) {
+  const labels: Record<string, string> = {
+    '3d_preview': '3D-Vorschau',
+    analysis: 'Analyse',
+    circulation: 'Erschliessung',
+    envelope: 'Fassade',
+    image: 'Bild',
+    material_system: 'Materialsystem',
+    model: '3D-Modell',
+    plan: 'Grundriss',
+    section: 'Schnitt',
+    source_reconstruction: 'Quellenrekonstruktion',
+    structure: 'Tragwerk',
+    tectonics: 'Tektonik'
+  };
+  return labels[value] ?? readableMetadataValue(value);
+}
+
+function assetRightsLabel(value: string) {
+  const labels: Record<string, string> = {
+    generated_diagrammatic_model: 'Eigenes Studienmodell',
+    metadata_only: 'Nur Metadaten',
+    reviewed: 'Rechte geprüft',
+    verified: 'Verifiziert'
+  };
+  return labels[value] ?? readableMetadataValue(value);
+}
+
+function assetStatusLabel(value: string) {
+  const labels: Record<string, string> = {
+    owner_approved_public_preview: 'Öffentlich freigegeben',
+    public_display: 'Öffentlich sichtbar',
+    public_display_allowed: 'Öffentlich freigegeben',
+    public_preview_glb: 'Öffentliche 3D-Vorschau',
+    reviewed: 'Geprüft',
+    verified: 'Verifiziert'
+  };
+  return labels[value] ?? readableMetadataValue(value);
+}
+
+function readableMetadataValue(value: string) {
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }

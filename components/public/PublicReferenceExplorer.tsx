@@ -184,7 +184,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               </div>
               <div className="mt-4 grid grid-cols-3 border border-white/10 text-center text-[10px] uppercase tracking-[0.12em] text-[#aeb8b2]">
                 <span className="border-r border-white/10 py-2">{entry.mediaCount} Medien</span>
-                <span className="border-r border-white/10 py-2">{entry.analysisCount} Layer</span>
+                <span className="border-r border-white/10 py-2">{entry.analysisCount} Analysen</span>
                 <span className="py-2">{entry.materials.length || 0} Mat.</span>
               </div>
               <div className="mt-3 text-xs leading-5 text-[#858f89]">{entry.location}</div>
@@ -220,7 +220,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
                 {entry.authors.length ? <span className="block text-[#69736f]">{entry.authors.join(', ')}</span> : null}
               </span>
               <span className="text-[10px] uppercase tracking-[0.12em] text-[#9ca8a2]">
-                {entry.mediaCount} Medien / {entry.analysisCount} Layer
+                {entry.mediaCount} Medien / {entry.analysisCount} Analysen
               </span>
               <span className="flex items-center justify-between gap-3 md:block">
                 <span className="text-sm font-semibold text-[#f7f7f4]">{entry.readinessScore}%</span>
