@@ -269,6 +269,11 @@ textarea {
   font-weight: 900;
 }
 
+.entry-page .ak-page-title {
+  font-size: 28px;
+  line-height: 1.04;
+}
+
 .ak-page-shell h2,
 .ak-page-shell h3,
 .entry-page h2,
@@ -484,6 +489,13 @@ textarea {
 
   .ak-fullscreen-with-header > :not(.ak-site-header) {
     height: calc(100dvh - 60px) !important;
+  }
+}
+
+@media (min-width: 640px) {
+  .entry-page .ak-page-title {
+    font-size: 60px;
+    line-height: 1;
   }
 }
 

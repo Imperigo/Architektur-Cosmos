@@ -26,6 +26,8 @@ const routes = [
     path: '/references/',
     includes: [
       'KosmoReferences',
+      'Referenzatlas für Architekturprojekte',
+      'Projektbestand',
       'KosmoDraw Übernahme',
       'Digitalization Preflight',
       'KosmoPublish Plan Catalog',
@@ -38,6 +40,8 @@ const routes = [
     path: '/assets/',
     includes: [
       'KosmoAsset',
+      'Assetbibliothek für Planung und Analyse',
+      'Assetbestand',
       'KosmoDraw Asset Intake',
       'Digitalization Asset Preflight',
       'KosmoPublish Plan Catalog',

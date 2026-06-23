@@ -77,7 +77,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#57b6c2]">Öffentliche Referenzdatenbank</div>
-          <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Projekte suchen, filtern und öffnen</h2>
+          <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Projektbestand</h2>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:w-[760px] lg:grid-cols-[1.35fr_1fr_1fr_auto]">
           <label className="public-filter-field">

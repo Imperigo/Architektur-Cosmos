@@ -55,11 +55,11 @@ export default function ReferencesPage() {
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Öffentlich freigegeben</span>
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Pilotprojekt Villa Savoye</span>
             </div>
-            <h1 className="max-w-5xl text-5xl font-semibold leading-[0.92] tracking-normal sm:text-7xl">
-              Eine Referenz ist nicht nur ein Bild, sondern ein lesbares Projektpaket.
+            <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
+              Referenzatlas für Architekturprojekte
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
-              KosmoReferences zeigt öffentliche Architekturprojekte mit Quellenstatus, Bildern, bereinigten Planebenen, Analysefeldern und einem ersten skizzenhaften BIM-Verständnis. Die Demo nutzt nur öffentlich zeigbare Medien und eigene diagrammatische Rekonstruktionen.
+              Bauten werden mit Autorenschaft, Ort, Zeit, Quellen, Bildern, bereinigten Planebenen, Analysefeldern und Modellvorschauen erschlossen. Gezeigt werden ausschliesslich öffentlich freigegebene Medien und eigene diagrammatische Rekonstruktionen.
             </p>
           </div>
           <div className="overflow-hidden border border-white/14 bg-[#101513]">
@@ -90,7 +90,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Freigabestatus</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Die Demo zeigt nur öffentlich geprüfte Inhalte.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Geprüfter Bestand</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Referenzen, Assets und Modellvorschauen werden erst nach Rechte- und Inhaltsprüfung freigegeben. Zwischenstände aus KosmoDraw und KosmoPublish bleiben intern, bis der Owner sie ausdrücklich bestätigt.
             </p>
@@ -179,7 +179,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoAsset Brücke</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Aus dem Referenzprojekt werden nutzbare Architekturbausteine.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Vom Projekt zum Bauteil</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der öffentliche Pilot zeigt nicht nur Medien, sondern extrahierbare Prinzipien: Struktur, Zirkulation, Materialsystem und Zeichnungslogik. Das ist die Brücke von KosmoReferences zu KosmoAsset.
             </p>
@@ -205,7 +205,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoDraw Übernahme</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">2D- und Bilddaten gelangen nur geprüft in KosmoReferences.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Geprüfte Übernahme aus KosmoDraw</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der aktuelle Intake-Report fasst KosmoDraw-Bundles als Metadaten zusammen. IFC-Pfade und lokale Artefakte
               werden nicht in den Bericht kopiert, und public-ready bleibt nach Intake bei {kosmoDrawIntake.summary.public_ready_after_intake}.
@@ -242,7 +242,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Digitalization Preflight</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Aggregierte KosmoDraw-Analysen sind sichtbar, aber noch kein Reference-Bundle.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Analyse vor Modellübernahme</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der neue Gate akzeptiert solche Reports als review-only Analyse-Kandidaten. Public-ready bleibt bei {kosmoDrawDigitalization.publicReadyAfterIntake},
               bis elementweise Geometrie und Asset-Kandidaten im Bundle-Vertrag vorliegen.
@@ -258,7 +258,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoPublish Plan Catalog</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planpakete erhalten ein Register, bevor sie öffentlich erscheinen.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planregister und Freigabestatus</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der schreibgeschützte Plankatalog ist eine sichere Metadaten-Vorstufe. Er ordnet Planvorschauen über {kosmoPublishPlanCatalog.phaseCount} Phasen,
               veröffentlicht aber keine Plan-Assets automatisch.

@@ -64,7 +64,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
       <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#57b6c2]">Öffentliche Assetbibliothek</div>
-          <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Medien, Pläne, Layer und Modelle</h2>
+          <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Assetbestand</h2>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 xl:w-[860px] xl:grid-cols-[1.25fr_0.8fr_1fr_1fr_auto]">
           <label className="public-filter-field">
