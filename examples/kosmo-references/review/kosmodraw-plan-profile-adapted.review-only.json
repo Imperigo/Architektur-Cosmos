@@ -1,0 +1,338 @@
+{
+  "project_slug": "kosmodraw-plan-profile-contract-fixture",
+  "status": "review_only",
+  "public_display_allowed": false,
+  "source_kind": "vector_plan",
+  "source_contract": {
+    "name": "kosmodraw_plan_profile",
+    "schema_version": "0.1",
+    "contract_status": "draft",
+    "deterministic_projection": true
+  },
+  "rooms": [
+    {
+      "id": "R1",
+      "name": "Wohnen",
+      "function": "wohnen",
+      "polygon_xy": [
+        [
+          0,
+          0
+        ],
+        [
+          6,
+          0
+        ],
+        [
+          6,
+          5
+        ],
+        [
+          0,
+          5
+        ]
+      ],
+      "floor_level": 0,
+      "height_m": 2.6,
+      "area_m2": 30,
+      "source_basis": "KosmoDraw plan_profile v0.1 review-only geometry"
+    },
+    {
+      "id": "R2",
+      "name": "Küche",
+      "function": "kueche",
+      "polygon_xy": [
+        [
+          6,
+          0
+        ],
+        [
+          9,
+          0
+        ],
+        [
+          9,
+          5
+        ],
+        [
+          6,
+          5
+        ]
+      ],
+      "floor_level": 0,
+      "height_m": 2.6,
+      "area_m2": 15,
+      "source_basis": "KosmoDraw plan_profile v0.1 review-only geometry"
+    }
+  ],
+  "walls": [
+    {
+      "id": "W001",
+      "start_x": 0,
+      "start_y": 0,
+      "end_x": 0,
+      "end_y": 5,
+      "thickness_m": 0.3,
+      "height_m": 2.6,
+      "floor_level": 0,
+      "structural_role": "external",
+      "room_ids": [
+        "R1"
+      ],
+      "cad_layer": "A-WALL-EXT",
+      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+    },
+    {
+      "id": "W002",
+      "start_x": 0,
+      "start_y": 0,
+      "end_x": 6,
+      "end_y": 0,
+      "thickness_m": 0.3,
+      "height_m": 2.6,
+      "floor_level": 0,
+      "structural_role": "external",
+      "room_ids": [
+        "R1"
+      ],
+      "cad_layer": "A-WALL-EXT",
+      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+    },
+    {
+      "id": "W003",
+      "start_x": 0,
+      "start_y": 5,
+      "end_x": 6,
+      "end_y": 5,
+      "thickness_m": 0.3,
+      "height_m": 2.6,
+      "floor_level": 0,
+      "structural_role": "external",
+      "room_ids": [
+        "R1"
+      ],
+      "cad_layer": "A-WALL-EXT",
+      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+    },
+    {
+      "id": "W004",
+      "start_x": 6,
+      "start_y": 0,
+      "end_x": 6,
+      "end_y": 5,
+      "thickness_m": 0.15,
+      "height_m": 2.6,
+      "floor_level": 0,
+      "structural_role": "internal",
+      "room_ids": [
+        "R1",
+        "R2"
+      ],
+      "cad_layer": "A-WALL-INT",
+      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+    },
+    {
+      "id": "W005",
+      "start_x": 6,
+      "start_y": 0,
+      "end_x": 9,
+      "end_y": 0,
+      "thickness_m": 0.3,
+      "height_m": 2.6,
+      "floor_level": 0,
+      "structural_role": "external",
+      "room_ids": [
+        "R2"
+      ],
+      "cad_layer": "A-WALL-EXT",
+      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+    },
+    {
+      "id": "W006",
+      "start_x": 6,
+      "start_y": 5,
+      "end_x": 9,
+      "end_y": 5,
+      "thickness_m": 0.3,
+      "height_m": 2.6,
+      "floor_level": 0,
+      "structural_role": "external",
+      "room_ids": [
+        "R2"
+      ],
+      "cad_layer": "A-WALL-EXT",
+      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+    },
+    {
+      "id": "W007",
+      "start_x": 9,
+      "start_y": 0,
+      "end_x": 9,
+      "end_y": 5,
+      "thickness_m": 0.3,
+      "height_m": 2.6,
+      "floor_level": 0,
+      "structural_role": "external",
+      "room_ids": [
+        "R2"
+      ],
+      "cad_layer": "A-WALL-EXT",
+      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+    }
+  ],
+  "openings": [
+    {
+      "id": "O1",
+      "type": "door",
+      "host_wall_id": "W004",
+      "position_m": 2.5,
+      "position_t": 0.5,
+      "width_m": 0.9,
+      "height_m": 2.1,
+      "sill_m": 0,
+      "floor_level": 0,
+      "reveal": {
+        "depth_m": 0.15
+      },
+      "source_basis": "KosmoDraw plan_profile v0.1 hosted opening"
+    },
+    {
+      "id": "O2",
+      "type": "window",
+      "host_wall_id": "W002",
+      "position_m": 3,
+      "position_t": 0.5,
+      "width_m": 1.8,
+      "height_m": 1.3,
+      "sill_m": 0.9,
+      "floor_level": 0,
+      "reveal": {
+        "depth_m": 0.3
+      },
+      "source_basis": "KosmoDraw plan_profile v0.1 hosted opening"
+    }
+  ],
+  "stories": [
+    {
+      "id": "EG",
+      "name": "EG",
+      "floor_level": 0,
+      "elevation_m": 0,
+      "height_m": 2.6,
+      "source_basis": "KosmoDraw plan_profile v0.1 story bridge"
+    }
+  ],
+  "model_preview": null,
+  "drawings": [],
+  "plan_profile": {
+    "review_status": "draft",
+    "public_display_allowed": false,
+    "story_id": "EG",
+    "floor_level": 0,
+    "units": {
+      "length": "m",
+      "axes": "+X=Ost,+Y=Nord",
+      "origin": [
+        0,
+        0
+      ]
+    },
+    "room_stamps": [
+      {
+        "room_id": "R1",
+        "xy": [
+          3,
+          2.5
+        ],
+        "text": "Wohnen\n30.0 m²",
+        "area_m2": 30,
+        "function": "wohnen"
+      },
+      {
+        "room_id": "R2",
+        "xy": [
+          7.5,
+          2.5
+        ],
+        "text": "Küche\n15.0 m²",
+        "area_m2": 15,
+        "function": "kueche"
+      }
+    ],
+    "dimensions": [
+      {
+        "seg": [
+          [
+            0,
+            -1
+          ],
+          [
+            6,
+            -1
+          ]
+        ],
+        "length_m": 6,
+        "kind": "room"
+      },
+      {
+        "seg": [
+          [
+            0,
+            -2
+          ],
+          [
+            9,
+            -2
+          ]
+        ],
+        "length_m": 9,
+        "kind": "exterior"
+      },
+      {
+        "seg": [
+          [
+            6,
+            -1
+          ],
+          [
+            9,
+            -1
+          ]
+        ],
+        "length_m": 3,
+        "kind": "room"
+      }
+    ],
+    "grid": {
+      "spacing_m": 1,
+      "origin_xy": [
+        0,
+        0
+      ]
+    },
+    "bounds": [
+      0,
+      0,
+      9,
+      5
+    ]
+  },
+  "analysis_layers": [
+    {
+      "analysis_type": "plan_geometry",
+      "review_status": "draft",
+      "summary": "2 Räume und 7 deduplizierte Wandachsen aus plan_profile v0.1."
+    },
+    {
+      "analysis_type": "opening_semantics",
+      "review_status": "draft",
+      "summary": "2 gehostete Türen/Fenster mit Position entlang der Wandachse."
+    },
+    {
+      "analysis_type": "dimension_chains",
+      "review_status": "draft",
+      "summary": "3 Masssegmente; bleiben bis zur fachlichen Prüfung review-only."
+    }
+  ],
+  "asset_candidates": []
+}
