@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { Blend, Box, Eye, EyeOff, Layers3, Palette, RotateCcw, ScanLine } from 'lucide-react';
 import type { Material, Mesh, Object3D } from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
@@ -13,8 +14,28 @@ type EntryModelViewerProps = {
 
 type ViewerStatus = 'loading' | 'ready' | 'error';
 type ViewerStyle = 'realistic' | 'analysis' | 'materials' | 'ghost';
-type AnalysisLayerId = 'site' | 'mass' | 'structure' | 'envelope' | 'circulation' | 'roof_garden';
-type MaterialLayerId = 'mineral' | 'concrete' | 'glass' | 'landscape' | 'circulation' | 'annotation';
+type AnalysisLayerId =
+  | 'site'
+  | 'mass'
+  | 'structure'
+  | 'envelope'
+  | 'interior'
+  | 'circulation'
+  | 'landscape'
+  | 'infrastructure'
+  | 'services'
+  | 'context'
+  | 'analysis'
+  | 'general';
+type MaterialLayerId =
+  | 'mineral'
+  | 'concrete'
+  | 'timber'
+  | 'glass'
+  | 'metal'
+  | 'landscape'
+  | 'circulation'
+  | 'annotation';
 
 type ViewerMaterial = Material & { name: string };
 type ViewerMesh = Mesh & { material: ViewerMaterial | ViewerMaterial[] };
@@ -26,23 +47,48 @@ type MeshRecord = {
   originalMaterial: ViewerMaterial | ViewerMaterial[];
 };
 
-const analysisLayers: Array<{ id: AnalysisLayerId; label: string; color: string; description: string }> = [
-  { id: 'site', label: 'Site', color: '#6cff9a', description: 'terrain / ground context' },
-  { id: 'mass', label: 'Mass', color: '#f7f7f4', description: 'lifted body and slabs' },
-  { id: 'structure', label: 'Tragwerk', color: '#ffb000', description: 'pilotis, slabs, structural order' },
-  { id: 'envelope', label: 'Hülle', color: '#00e7ff', description: 'facade, ribbons, screens' },
-  { id: 'circulation', label: 'Zirkulation', color: '#ff4d8d', description: 'ramp and promenade' },
-  { id: 'roof_garden', label: 'Dachgarten', color: '#7dff6a', description: 'roof landscape' }
+type LayerDefinition<T extends string> = {
+  id: T;
+  label: string;
+  color: string;
+  description: string;
+};
+
+const analysisLayers: Array<LayerDefinition<AnalysisLayerId>> = [
+  { id: 'site', label: 'Terrain', color: '#74c2a0', description: 'Gelände und unmittelbarer Baugrund' },
+  { id: 'mass', label: 'Volumen', color: '#b6bdcb', description: 'Baukörper und räumliche Hauptvolumen' },
+  { id: 'structure', label: 'Tragwerk', color: '#cbb06a', description: 'Stützen, Platten, Kerne und tragende Ordnung' },
+  { id: 'envelope', label: 'Fassade', color: '#57b6c2', description: 'Gebäudehülle, Fenster und Fassadenschichten' },
+  { id: 'interior', label: 'Innenraum', color: '#b08a6e', description: 'Raumschichten, Ausbau und innere Organisation' },
+  { id: 'circulation', label: 'Erschließung', color: '#c082b4', description: 'Treppen, Rampen, Galerien und Zugänge' },
+  { id: 'landscape', label: 'Freiraum', color: '#82ad76', description: 'Gärten, Terrassen und bepflanzte Flächen' },
+  { id: 'infrastructure', label: 'Infrastruktur', color: '#6f9bcf', description: 'Verkehrs- und Versorgungselemente' },
+  { id: 'services', label: 'Gebäudetechnik', color: '#cd7670', description: 'HLKSE und technische Systeme' },
+  { id: 'context', label: 'Kontext', color: '#8b92a2', description: 'Städtebauliche und bauliche Umgebung' },
+  { id: 'analysis', label: 'Analyse', color: '#d39a68', description: 'Diagramme, Schnitte und analytische Spuren' },
+  { id: 'general', label: 'Allgemein', color: '#b6bdcb', description: 'Noch nicht genauer klassifizierte Modellteile' }
 ];
 
-const materialLayers: Array<{ id: MaterialLayerId; label: string; color: string; description: string }> = [
-  { id: 'mineral', label: 'Mineral', color: '#e8e5d7', description: 'render, plaster and mineral surfaces' },
-  { id: 'concrete', label: 'Concrete', color: '#b8b5aa', description: 'pilotis, slabs and structural concrete' },
-  { id: 'glass', label: 'Glass', color: '#74c8d4', description: 'ribbon windows and transparent envelope' },
-  { id: 'landscape', label: 'Landscape', color: '#65ff9a', description: 'site, ground and roof garden' },
-  { id: 'circulation', label: 'Path', color: '#ff4d8d', description: 'ramp, promenade and movement layers' },
-  { id: 'annotation', label: 'Trace', color: '#ffb000', description: 'analytical traces and source markers' }
+const materialLayers: Array<LayerDefinition<MaterialLayerId>> = [
+  { id: 'mineral', label: 'Mineralisch', color: '#d4d0c2', description: 'Putz, Mauerwerk und mineralische Oberflächen' },
+  { id: 'concrete', label: 'Beton', color: '#9fa3a9', description: 'Stahlbeton, Platten, Stützen und Kerne' },
+  { id: 'timber', label: 'Holz', color: '#b08a6e', description: 'Holzfassaden, Holzbau und Ausbau' },
+  { id: 'glass', label: 'Glas', color: '#57b6c2', description: 'Fenster, Glasfassaden und transparente Flächen' },
+  { id: 'metal', label: 'Metall', color: '#6f9bcf', description: 'Metallische Trag- und Fassadenelemente' },
+  { id: 'landscape', label: 'Vegetation', color: '#74c2a0', description: 'Terrain, Gärten und bepflanzte Flächen' },
+  { id: 'circulation', label: 'Bewegung', color: '#c082b4', description: 'Erschließung und Bewegungsräume' },
+  { id: 'annotation', label: 'Markierung', color: '#cbb06a', description: 'Analytische Spuren und Modellhinweise' }
 ];
+
+const viewerStyles: Array<{ id: ViewerStyle; label: string; icon: typeof Box }> = [
+  { id: 'realistic', label: 'Modell', icon: Box },
+  { id: 'analysis', label: 'Bauteile', icon: ScanLine },
+  { id: 'materials', label: 'Material', icon: Palette },
+  { id: 'ghost', label: 'Röntgen', icon: Blend }
+];
+
+const initialLayerVisibility = Object.fromEntries(analysisLayers.map((layer) => [layer.id, true])) as Record<AnalysisLayerId, boolean>;
+const initialMaterialVisibility = Object.fromEntries(materialLayers.map((layer) => [layer.id, true])) as Record<MaterialLayerId, boolean>;
 
 export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerProps) {
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -51,46 +97,38 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
   const materialModeMaterialsRef = useRef<Partial<Record<MaterialLayerId, ViewerMaterial>>>({});
   const ghostMaterialsRef = useRef<Partial<Record<AnalysisLayerId, ViewerMaterial>>>({});
   const viewerStyleRef = useRef<ViewerStyle>('realistic');
-  const visibleLayersRef = useRef<Record<AnalysisLayerId, boolean>>({
-    site: true,
-    mass: true,
-    structure: true,
-    envelope: true,
-    circulation: true,
-    roof_garden: true
-  });
-  const visibleMaterialsRef = useRef<Record<MaterialLayerId, boolean>>({
-    mineral: true,
-    concrete: true,
-    glass: true,
-    landscape: true,
-    circulation: true,
-    annotation: true
-  });
+  const visibleLayersRef = useRef(initialLayerVisibility);
+  const visibleMaterialsRef = useRef(initialMaterialVisibility);
   const [status, setStatus] = useState<ViewerStatus>('loading');
   const [viewerStyle, setViewerStyle] = useState<ViewerStyle>('realistic');
-  const [visibleLayers, setVisibleLayers] = useState<Record<AnalysisLayerId, boolean>>(() => ({
-    site: true,
-    mass: true,
-    structure: true,
-    envelope: true,
-    circulation: true,
-    roof_garden: true
-  }));
-  const [visibleMaterials, setVisibleMaterials] = useState<Record<MaterialLayerId, boolean>>(() => ({
-    mineral: true,
-    concrete: true,
-    glass: true,
-    landscape: true,
-    circulation: true,
-    annotation: true
-  }));
+  const [visibleLayers, setVisibleLayers] = useState(initialLayerVisibility);
+  const [visibleMaterials, setVisibleMaterials] = useState(initialMaterialVisibility);
+  const [layerCounts, setLayerCounts] = useState<Partial<Record<AnalysisLayerId, number>>>({});
+  const [materialCounts, setMaterialCounts] = useState<Partial<Record<MaterialLayerId, number>>>({});
+
+  const activeAnalysisLayers = useMemo(
+    () => analysisLayers.filter((layer) => (layerCounts[layer.id] ?? 0) > 0),
+    [layerCounts]
+  );
+  const activeMaterialLayers = useMemo(
+    () => materialLayers.filter((layer) => (materialCounts[layer.id] ?? 0) > 0),
+    [materialCounts]
+  );
+  const meshCount = Object.values(layerCounts).reduce((sum, count) => sum + (count ?? 0), 0);
 
   useEffect(() => {
     viewerStyleRef.current = viewerStyle;
     visibleLayersRef.current = visibleLayers;
     visibleMaterialsRef.current = visibleMaterials;
-    applyViewerStyle(meshRecordsRef.current, analysisMaterialsRef.current, materialModeMaterialsRef.current, ghostMaterialsRef.current, viewerStyle, visibleLayers, visibleMaterials);
+    applyViewerStyle(
+      meshRecordsRef.current,
+      analysisMaterialsRef.current,
+      materialModeMaterialsRef.current,
+      ghostMaterialsRef.current,
+      viewerStyle,
+      visibleLayers,
+      visibleMaterials
+    );
   }, [viewerStyle, visibleLayers, visibleMaterials]);
 
   useEffect(() => {
@@ -111,8 +149,8 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
       const mount = mountRef.current;
       const viewerQuality = detectViewerQuality();
       const scene = new Three.Scene();
-      scene.background = new Three.Color(0x050505);
-      scene.fog = new Three.Fog(0x050505, 18, 42);
+      scene.background = new Three.Color(0x0b0d12);
+      scene.fog = new Three.Fog(0x0b0d12, 18, 42);
       const analysisMaterials = {} as Record<AnalysisLayerId, ViewerMaterial>;
       const materialModeMaterials = {} as Record<MaterialLayerId, ViewerMaterial>;
       const ghostMaterials = {} as Record<AnalysisLayerId, ViewerMaterial>;
@@ -121,15 +159,15 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
         analysisMaterials[layer.id] = new Three.MeshStandardMaterial({
           color: new Three.Color(layer.color),
           emissive: new Three.Color(layer.color),
-          emissiveIntensity: 0.06,
-          roughness: 0.72,
+          emissiveIntensity: 0.035,
+          roughness: 0.78,
           metalness: 0
         });
         ghostMaterials[layer.id] = new Three.MeshStandardMaterial({
           color: new Three.Color(layer.color),
           transparent: true,
-          opacity: layer.id === 'structure' || layer.id === 'circulation' ? 0.72 : 0.18,
-          roughness: 0.88,
+          opacity: layer.id === 'structure' || layer.id === 'circulation' ? 0.74 : 0.16,
+          roughness: 0.9,
           metalness: 0,
           depthWrite: false
         });
@@ -139,11 +177,11 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
         materialModeMaterials[layer.id] = new Three.MeshStandardMaterial({
           color: new Three.Color(layer.color),
           emissive: new Three.Color(layer.color),
-          emissiveIntensity: layer.id === 'glass' || layer.id === 'circulation' ? 0.08 : 0.035,
+          emissiveIntensity: layer.id === 'glass' ? 0.06 : 0.025,
           transparent: layer.id === 'glass',
-          opacity: layer.id === 'glass' ? 0.78 : 1,
-          roughness: layer.id === 'glass' ? 0.42 : 0.86,
-          metalness: 0
+          opacity: layer.id === 'glass' ? 0.76 : 1,
+          roughness: layer.id === 'glass' || layer.id === 'metal' ? 0.38 : 0.84,
+          metalness: layer.id === 'metal' ? 0.28 : 0
         });
       });
 
@@ -173,15 +211,15 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
       controls.maxPolarAngle = Math.PI * 0.48;
       controls.update();
 
-      scene.add(new Three.HemisphereLight(0xeefcff, 0x071315, 1.45));
-      const keyLight = new Three.DirectionalLight(0xffffff, 2.2);
+      scene.add(new Three.HemisphereLight(0xeefcff, 0x101319, 1.35));
+      const keyLight = new Three.DirectionalLight(0xffffff, 2.1);
       keyLight.position.set(8, 12, 7);
       scene.add(keyLight);
-      const accentLight = new Three.PointLight(accent, 4.5, 28);
+      const accentLight = new Three.PointLight(accent, 3.1, 28);
       accentLight.position.set(-8, 5, -7);
       scene.add(accentLight);
 
-      const grid = new Three.GridHelper(30, 30, new Three.Color(accent), new Three.Color(0x183238));
+      const grid = new Three.GridHelper(30, 30, new Three.Color(accent), new Three.Color(0x252c36));
       grid.position.y = -0.02;
       scene.add(grid);
 
@@ -192,21 +230,35 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
           if (disposed) return;
           const model = gltf.scene;
           const meshRecords: MeshRecord[] = [];
+          const nextLayerCounts: Partial<Record<AnalysisLayerId, number>> = {};
+          const nextMaterialCounts: Partial<Record<MaterialLayerId, number>> = {};
+
           model.traverse((child: Object3D) => {
-            if ('isMesh' in child && child.isMesh) {
-              const mesh = child as ViewerMesh;
-              child.castShadow = false;
-              child.receiveShadow = true;
-              meshRecords.push({
-                mesh,
-                layer: layerFromMeshName(mesh.name),
-                materialLayer: materialLayerFromMesh(mesh.name, mesh.material),
-                originalMaterial: mesh.material
-              });
-            }
+            if (!('isMesh' in child) || !child.isMesh) return;
+
+            const mesh = child as ViewerMesh;
+            const semanticName = objectSemanticName(mesh);
+            const layer = layerFromMeshName(semanticName);
+            const materialLayer = materialLayerFromMesh(semanticName, mesh.material);
+            child.castShadow = false;
+            child.receiveShadow = true;
+            meshRecords.push({ mesh, layer, materialLayer, originalMaterial: mesh.material });
+            nextLayerCounts[layer] = (nextLayerCounts[layer] ?? 0) + 1;
+            nextMaterialCounts[materialLayer] = (nextMaterialCounts[materialLayer] ?? 0) + 1;
           });
+
           meshRecordsRef.current = meshRecords;
-          applyViewerStyle(meshRecords, analysisMaterials, materialModeMaterials, ghostMaterials, viewerStyleRef.current, visibleLayersRef.current, visibleMaterialsRef.current);
+          setLayerCounts(nextLayerCounts);
+          setMaterialCounts(nextMaterialCounts);
+          applyViewerStyle(
+            meshRecords,
+            analysisMaterials,
+            materialModeMaterials,
+            ghostMaterials,
+            viewerStyleRef.current,
+            visibleLayersRef.current,
+            visibleMaterialsRef.current
+          );
           scene.add(model);
           setStatus('ready');
         },
@@ -245,7 +297,7 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
         materialModeMaterialsRef.current = {};
         ghostMaterialsRef.current = {};
         renderer.dispose();
-        mount.removeChild(renderer.domElement);
+        if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
       };
     }
 
@@ -260,115 +312,194 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
   }, [accent, modelUrl]);
 
   function toggleLayer(layerId: AnalysisLayerId) {
-    setVisibleLayers((current) => ({
-      ...current,
-      [layerId]: !current[layerId]
-    }));
+    setVisibleLayers((current) => ({ ...current, [layerId]: !current[layerId] }));
   }
 
   function toggleMaterial(layerId: MaterialLayerId) {
-    setVisibleMaterials((current) => ({
-      ...current,
-      [layerId]: !current[layerId]
-    }));
+    setVisibleMaterials((current) => ({ ...current, [layerId]: !current[layerId] }));
   }
 
+  function resetVisibility() {
+    setVisibleLayers(initialLayerVisibility);
+    setVisibleMaterials(initialMaterialVisibility);
+  }
+
+  const activeFilters = viewerStyle === 'materials' ? activeMaterialLayers : activeAnalysisLayers;
+  const hiddenFilterCount = viewerStyle === 'materials'
+    ? activeMaterialLayers.filter((layer) => !visibleMaterials[layer.id]).length
+    : activeAnalysisLayers.filter((layer) => !visibleLayers[layer.id]).length;
+
   return (
-    <article id="model-viewer" className="entry-model-viewer border border-white/14 bg-[#050505]">
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
-        <div className="min-w-0 flex-1">
-          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>3D-Referenzkern / Blender-Layer</div>
-          <h2 className="mt-1 max-w-full overflow-wrap-anywhere text-lg leading-tight text-[#f7f7f4] sm:text-xl">{title} / Material-, Tragwerks- und Analysemodell</h2>
+    <article id="model-viewer" className="entry-model-viewer ak-model-viewer">
+      <header className="ak-model-viewer-header">
+        <div className="min-w-0">
+          <div className="ak-model-viewer-eyebrow">Interaktives Studienmodell</div>
+          <h2>{title}: Bauteile untersuchen</h2>
         </div>
-        <div className="shrink-0 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">ziehen drehen / scroll zoomen</div>
-      </div>
-      <div className="relative h-[420px] min-h-[320px] w-full overflow-hidden" style={{ '--viewer-accent': accent } as CSSProperties}>
+        <div className="ak-model-viewer-summary" aria-live="polite">
+          <Layers3 aria-hidden="true" />
+          {status === 'ready' ? `${meshCount} Modellteile` : status === 'loading' ? 'Modell wird geladen' : 'Modell nicht verfügbar'}
+        </div>
+      </header>
+
+      <div className="ak-model-viewer-stage" style={{ '--viewer-accent': accent } as CSSProperties}>
         <div ref={mountRef} className="h-full w-full" />
+
         {status === 'ready' ? (
-          <div className="entry-model-controls absolute left-3 top-3 max-w-[calc(100%-24px)] border border-white/15 bg-[#050505]/78 p-3 text-[#f7f7f4] backdrop-blur-md">
-            <div className="mb-2 text-[8px] uppercase tracking-[0.18em] text-[#8d8d87]">Darstellung</div>
-            <div className="mb-2 flex flex-wrap gap-1.5">
-              {[
-                ['realistic', 'Realistisch'],
-                ['analysis', 'Analyse'],
-                ['materials', 'Material'],
-                ['ghost', 'Ghost']
-              ].map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  className={`border px-2.5 py-1 text-[9px] uppercase tracking-[0.14em] transition ${viewerStyle === id ? 'border-[#00e7ff] bg-[#00e7ff] text-[#050505]' : 'border-white/25 bg-black/20 text-[#d7d7d0] hover:border-[#00e7ff]/70'}`}
-                  onClick={() => setViewerStyle(id as ViewerStyle)}
-                >
-                  {label}
+          <div className="entry-model-controls ak-model-controls">
+            <div className="ak-model-control-section">
+              <div className="ak-model-control-heading">
+                <span>Darstellung</span>
+                <button type="button" className="ak-model-reset" onClick={resetVisibility} disabled={hiddenFilterCount === 0} title="Alle Modellteile einblenden">
+                  <RotateCcw aria-hidden="true" />
+                  <span>Zurücksetzen</span>
                 </button>
-              ))}
+              </div>
+              <div className="ak-model-style-switch" role="group" aria-label="Darstellungsart">
+                {viewerStyles.map((style) => {
+                  const Icon = style.icon;
+                  return (
+                    <button
+                      key={style.id}
+                      type="button"
+                      className={viewerStyle === style.id ? 'is-active' : ''}
+                      aria-pressed={viewerStyle === style.id}
+                      onClick={() => setViewerStyle(style.id)}
+                    >
+                      <Icon aria-hidden="true" />
+                      <span>{style.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <div className="mb-1 text-[8px] uppercase tracking-[0.18em] text-[#8d8d87]">Analyse-Layer</div>
-            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-              {analysisLayers.map((layer) => (
-                <button
-                  key={layer.id}
-                  type="button"
-                  className={`flex min-w-0 items-center gap-1.5 border px-2 py-1 text-left transition ${visibleLayers[layer.id] ? 'border-white/25 bg-white/5 text-[#f7f7f4]' : 'border-white/10 bg-black/25 text-[#777]'}`}
-                  onClick={() => toggleLayer(layer.id)}
-                  title={layer.description}
-                >
-                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: visibleLayers[layer.id] ? layer.color : '#555' }} />
-                  <span className="truncate text-[9px] uppercase tracking-[0.12em]">{layer.label}</span>
-                </button>
-              ))}
-            </div>
-            <div className="mb-1 mt-2 text-[8px] uppercase tracking-[0.18em] text-[#8d8d87]">Materialfilter</div>
-            <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
-              {materialLayers.map((layer) => (
-                <button
-                  key={layer.id}
-                  type="button"
-                  className={`flex min-w-0 items-center gap-1.5 border px-2 py-1 text-left transition ${visibleMaterials[layer.id] ? 'border-white/25 bg-white/5 text-[#f7f7f4]' : 'border-white/10 bg-black/25 text-[#777]'}`}
-                  onClick={() => toggleMaterial(layer.id)}
-                  title={layer.description}
-                >
-                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: visibleMaterials[layer.id] ? layer.color : '#555' }} />
-                  <span className="truncate text-[9px] uppercase tracking-[0.12em]">{layer.label}</span>
-                </button>
-              ))}
+
+            <div className="ak-model-control-section">
+              <div className="ak-model-control-heading">
+                <span>{viewerStyle === 'materials' ? 'Materialgruppen' : 'Bauteilgruppen'}</span>
+                <span>{activeFilters.length} erkannt</span>
+              </div>
+              <div className="ak-model-filter-grid">
+                {viewerStyle === 'materials'
+                  ? activeMaterialLayers.map((layer) => (
+                    <FilterButton
+                      key={layer.id}
+                      label={layer.label}
+                      description={layer.description}
+                      color={layer.color}
+                      count={materialCounts[layer.id] ?? 0}
+                      visible={visibleMaterials[layer.id]}
+                      onClick={() => toggleMaterial(layer.id)}
+                    />
+                  ))
+                  : activeAnalysisLayers.map((layer) => (
+                    <FilterButton
+                      key={layer.id}
+                      label={layer.label}
+                      description={layer.description}
+                      color={layer.color}
+                      count={layerCounts[layer.id] ?? 0}
+                      visible={visibleLayers[layer.id]}
+                      onClick={() => toggleLayer(layer.id)}
+                    />
+                  ))}
+              </div>
             </div>
           </div>
         ) : null}
+
         {status !== 'ready' ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#050505]/82 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
-            {status === 'loading' ? '3D-Modell wird geladen' : '3D-Modell konnte nicht geladen werden'}
+          <div className="ak-model-viewer-status">
+            {status === 'loading' ? '3D-Modell wird vorbereitet' : '3D-Modell konnte nicht geladen werden'}
           </div>
         ) : null}
+
+        <div className="ak-model-viewer-hint">Ziehen zum Drehen · Scrollen zum Zoomen</div>
       </div>
-      <div className="grid gap-3 border-t border-white/10 p-4 text-sm leading-6 text-[#b8b8b2] md:grid-cols-3">
-        <div><span style={{ color: accent }}>Modell:</span> Site, Masse, Tragwerk, Hülle, Zirkulation, Dachgarten.</div>
-        <div><span style={{ color: accent }}>Material:</span> mineral, Beton, Glas, Landschaft, Pfad, Spur.</div>
-        <div><span style={{ color: accent }}>Blender:</span> Layernamen spiegeln spätere Import-Collections.</div>
-      </div>
+
+      <footer className="ak-model-viewer-footer">
+        <span>Diagrammatisches Studienmodell</span>
+        <span>{activeAnalysisLayers.length} Bauteilgruppen · {activeMaterialLayers.length} Materialgruppen</span>
+        <span>KosmoDraw-kompatible Layerstruktur</span>
+      </footer>
     </article>
   );
 }
 
+function FilterButton({
+  label,
+  description,
+  color,
+  count,
+  visible,
+  onClick
+}: {
+  label: string;
+  description: string;
+  color: string;
+  count: number;
+  visible: boolean;
+  onClick: () => void;
+}) {
+  const VisibilityIcon = visible ? Eye : EyeOff;
+
+  return (
+    <button
+      type="button"
+      className={visible ? 'ak-model-filter is-visible' : 'ak-model-filter'}
+      aria-pressed={visible}
+      onClick={onClick}
+      title={description}
+    >
+      <span className="ak-model-filter-swatch" style={{ background: visible ? color : 'transparent', borderColor: color }} />
+      <span className="ak-model-filter-label">{label}</span>
+      <span className="ak-model-filter-count">{count}</span>
+      <VisibilityIcon aria-hidden="true" />
+    </button>
+  );
+}
+
+function objectSemanticName(mesh: ViewerMesh) {
+  const names = [mesh.name];
+  let parent = mesh.parent;
+  while (parent) {
+    if (parent.name) names.push(parent.name);
+    parent = parent.parent;
+  }
+  return names.join(' ');
+}
+
 function layerFromMeshName(name: string): AnalysisLayerId {
   const normalized = name.toLowerCase();
-  if (normalized.includes('site') || normalized.includes('ground')) return 'site';
-  if (normalized.includes('structure') || normalized.includes('pilotis') || normalized.includes('slab')) return 'structure';
-  if (normalized.includes('envelope') || normalized.includes('window') || normalized.includes('screen')) return 'envelope';
-  if (normalized.includes('circulation') || normalized.includes('ramp') || normalized.includes('trace')) return 'circulation';
-  if (normalized.includes('roof_garden') || normalized.includes('roof garden') || normalized.includes('planted')) return 'roof_garden';
+  if (includesAny(normalized, ['hlkse', 'mep', 'haustechnik', 'tga', 'services'])) return 'services';
+  if (includesAny(normalized, ['tragwerk', 'structure', 'structural', 'pilotis', 'column', 'slab', 'core', 'frame', 'pier'])) return 'structure';
+  if (includesAny(normalized, ['fassade', 'facade', 'envelope', 'window', 'screen', 'ribbon'])) return 'envelope';
+  if (includesAny(normalized, ['ausbau', 'interior', 'finish', 'room', 'chapel', 'foyer', 'cell bay'])) return 'interior';
+  if (includesAny(normalized, ['circulation', 'ramp', 'stair', 'promenade', 'gallery', 'bridge', 'threshold', 'entry'])) return 'circulation';
+  if (includesAny(normalized, ['infrastructure', 'rail', 'station', 'transport', 'platform'])) return 'infrastructure';
+  if (includesAny(normalized, ['roof_garden', 'roof garden', 'roof_terrace', 'terrace', 'planted', 'garden', 'landscape'])) return 'landscape';
+  if (includesAny(normalized, ['site', 'ground', 'terrain', 'hill', 'plateau', 'plinth'])) return 'site';
+  if (includesAny(normalized, ['context', 'existing', 'monastery', 'expo'])) return 'context';
+  if (includesAny(normalized, ['analysis', 'trace', 'annotation', 'diagram'])) return 'analysis';
+  if (includesAny(normalized, ['mass', 'volume', 'tower', 'housing module', 'block'])) return 'mass';
+  if (includesAny(normalized, ['allgemein', 'general'])) return 'general';
   return 'mass';
 }
 
 function materialLayerFromMesh(name: string, material: ViewerMaterial | ViewerMaterial[]): MaterialLayerId {
   const normalized = `${name} ${materialName(material)}`.toLowerCase();
-  if (normalized.includes('glass') || normalized.includes('window')) return 'glass';
-  if (normalized.includes('site') || normalized.includes('ground') || normalized.includes('garden') || normalized.includes('planted')) return 'landscape';
-  if (normalized.includes('circulation') || normalized.includes('ramp') || normalized.includes('promenade')) return 'circulation';
-  if (normalized.includes('trace') || normalized.includes('annotation')) return 'annotation';
-  if (normalized.includes('concrete') || normalized.includes('pilotis') || normalized.includes('slab') || normalized.includes('structure')) return 'concrete';
+  if (includesAny(normalized, ['glass', 'window', 'glazing'])) return 'glass';
+  if (includesAny(normalized, ['timber', 'wood', 'holz', 'fir'])) return 'timber';
+  if (includesAny(normalized, ['steel', 'metal', 'aluminium', 'aluminum'])) return 'metal';
+  if (includesAny(normalized, ['site', 'ground', 'garden', 'planted', 'landscape', 'vegetation', 'terrace'])) return 'landscape';
+  if (includesAny(normalized, ['circulation', 'ramp', 'promenade', 'gallery', 'bridge', 'threshold'])) return 'circulation';
+  if (includesAny(normalized, ['trace', 'annotation', 'analysis', 'marker'])) return 'annotation';
+  if (includesAny(normalized, ['concrete', 'beton', 'pilotis', 'slab', 'structure', 'column', 'core', 'frame'])) return 'concrete';
   return 'mineral';
+}
+
+function includesAny(value: string, tokens: string[]) {
+  return tokens.some((token) => value.includes(token));
 }
 
 function materialName(material: ViewerMaterial | ViewerMaterial[]) {

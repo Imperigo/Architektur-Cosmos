@@ -104,7 +104,15 @@ async function main() {
     checkIncludes(sources.atlas, "renderMode=\"html\"", 'Mobile database uses HTML overlay'),
     checkIncludes(sources.search, 'project-search-trigger cosmos-trigger', 'Search trigger uses shared trigger class'),
     checkIncludes(sources.search, 'project-dev-trigger cosmos-trigger', 'Developer trigger uses shared trigger class'),
-    checkIncludes(sources.modelViewer, 'detectViewerQuality', '3D viewer has device quality detection')
+    checkIncludes(sources.modelViewer, 'detectViewerQuality', '3D viewer has device quality detection'),
+    checkIncludes(sources.modelViewer, 'objectSemanticName(mesh)', '3D viewer reads mesh and parent node names'),
+    checkIncludes(sources.modelViewer, "['tragwerk', 'structure', 'structural'", '3D viewer recognizes KosmoDraw structural layers'),
+    checkIncludes(sources.modelViewer, "['fassade', 'facade', 'envelope'", '3D viewer recognizes KosmoDraw facade layers'),
+    checkIncludes(sources.modelViewer, "['ausbau', 'interior', 'finish'", '3D viewer recognizes KosmoDraw interior layers'),
+    checkIncludes(sources.modelViewer, "['hlkse', 'mep', 'haustechnik'", '3D viewer recognizes KosmoDraw services layers'),
+    checkIncludes(sources.modelViewer, 'activeAnalysisLayers.map', '3D viewer only renders detected discipline controls'),
+    checkIncludes(sources.modelViewer, 'activeMaterialLayers.map', '3D viewer only renders detected material controls'),
+    checkIncludes(sources.modelViewer, 'KosmoDraw-kompatible Layerstruktur', '3D viewer exposes the KosmoDraw layer contract')
   ];
 
   const warnings = [
