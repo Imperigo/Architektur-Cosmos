@@ -32,6 +32,7 @@ const routes = [
       'Mengenprüfung aus KosmoDraw',
       'Planregister aus KosmoPublish',
       'Freigabestatus',
+      'Medienfreigabe',
       'Villa Savoye',
       'Alterszentrum Kloster Ingenbohl'
     ]
@@ -46,6 +47,8 @@ const routes = [
       'Mengenprüfung vor Assetübernahme',
       'Planregister aus KosmoPublish',
       'Öffentliche Freigabe',
+      'Alhambra: Raumordnung',
+      'Nur Metadaten',
       'Villa Savoye',
       'Ingenbohl Assetprüfung',
       'Alterszentrum Kloster Ingenbohl'
