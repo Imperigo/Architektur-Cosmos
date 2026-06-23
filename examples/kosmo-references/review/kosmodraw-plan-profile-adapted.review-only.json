@@ -6,8 +6,11 @@
   "source_contract": {
     "name": "kosmodraw_plan_profile",
     "schema_version": "0.1",
-    "contract_status": "draft",
-    "deterministic_projection": true
+    "contract_status": "producer_live",
+    "producer_commit": "01257fa",
+    "provenance": "exact_projection",
+    "deterministic_projection": true,
+    "confidence_passthrough": true
   },
   "rooms": [
     {
@@ -35,7 +38,8 @@
       "floor_level": 0,
       "height_m": 2.6,
       "area_m2": 30,
-      "source_basis": "KosmoDraw plan_profile v0.1 review-only geometry"
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     },
     {
       "id": "R2",
@@ -62,7 +66,8 @@
       "floor_level": 0,
       "height_m": 2.6,
       "area_m2": 15,
-      "source_basis": "KosmoDraw plan_profile v0.1 review-only geometry"
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     }
   ],
   "walls": [
@@ -79,8 +84,9 @@
       "room_ids": [
         "R1"
       ],
-      "cad_layer": "A-WALL-EXT",
-      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+      "cad_layer": "Aussenwand",
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     },
     {
       "id": "W002",
@@ -95,8 +101,9 @@
       "room_ids": [
         "R1"
       ],
-      "cad_layer": "A-WALL-EXT",
-      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+      "cad_layer": "Aussenwand",
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     },
     {
       "id": "W003",
@@ -111,8 +118,9 @@
       "room_ids": [
         "R1"
       ],
-      "cad_layer": "A-WALL-EXT",
-      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+      "cad_layer": "Aussenwand",
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     },
     {
       "id": "W004",
@@ -120,7 +128,7 @@
       "start_y": 0,
       "end_x": 6,
       "end_y": 5,
-      "thickness_m": 0.15,
+      "thickness_m": 0.2,
       "height_m": 2.6,
       "floor_level": 0,
       "structural_role": "internal",
@@ -128,8 +136,9 @@
         "R1",
         "R2"
       ],
-      "cad_layer": "A-WALL-INT",
-      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+      "cad_layer": "Innenwand",
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     },
     {
       "id": "W005",
@@ -144,8 +153,9 @@
       "room_ids": [
         "R2"
       ],
-      "cad_layer": "A-WALL-EXT",
-      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+      "cad_layer": "Aussenwand",
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     },
     {
       "id": "W006",
@@ -160,8 +170,9 @@
       "room_ids": [
         "R2"
       ],
-      "cad_layer": "A-WALL-EXT",
-      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+      "cad_layer": "Aussenwand",
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     },
     {
       "id": "W007",
@@ -176,8 +187,9 @@
       "room_ids": [
         "R2"
       ],
-      "cad_layer": "A-WALL-EXT",
-      "source_basis": "KosmoDraw plan_profile v0.1 wall axis"
+      "cad_layer": "Aussenwand",
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     }
   ],
   "openings": [
@@ -194,7 +206,8 @@
       "reveal": {
         "depth_m": 0.15
       },
-      "source_basis": "KosmoDraw plan_profile v0.1 hosted opening"
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     },
     {
       "id": "O2",
@@ -209,7 +222,8 @@
       "reveal": {
         "depth_m": 0.3
       },
-      "source_basis": "KosmoDraw plan_profile v0.1 hosted opening"
+      "confidence": 1,
+      "source_basis": "KosmoDraw plan_profile v0.1 exact projection"
     }
   ],
   "stories": [
@@ -237,6 +251,18 @@
         0
       ]
     },
+    "provenance": "exact_projection",
+    "confidence_summary": {
+      "element_count": 11,
+      "minimum": 1,
+      "average": 1,
+      "maximum": 1
+    },
+    "derived_by_consumer": {
+      "room_stamps": true,
+      "dimensions": true,
+      "grid": true
+    },
     "room_stamps": [
       {
         "room_id": "R1",
@@ -246,7 +272,9 @@
         ],
         "text": "Wohnen\n30.0 m²",
         "area_m2": 30,
-        "function": "wohnen"
+        "function": "wohnen",
+        "confidence": 1,
+        "source_basis": "ArchitectureCosmos consumer-derived room stamp"
       },
       {
         "room_id": "R2",
@@ -256,53 +284,12 @@
         ],
         "text": "Küche\n15.0 m²",
         "area_m2": 15,
-        "function": "kueche"
+        "function": "kueche",
+        "confidence": 1,
+        "source_basis": "ArchitectureCosmos consumer-derived room stamp"
       }
     ],
-    "dimensions": [
-      {
-        "seg": [
-          [
-            0,
-            -1
-          ],
-          [
-            6,
-            -1
-          ]
-        ],
-        "length_m": 6,
-        "kind": "room"
-      },
-      {
-        "seg": [
-          [
-            0,
-            -2
-          ],
-          [
-            9,
-            -2
-          ]
-        ],
-        "length_m": 9,
-        "kind": "exterior"
-      },
-      {
-        "seg": [
-          [
-            6,
-            -1
-          ],
-          [
-            9,
-            -1
-          ]
-        ],
-        "length_m": 3,
-        "kind": "room"
-      }
-    ],
+    "dimensions": [],
     "grid": {
       "spacing_m": 1,
       "origin_xy": [
@@ -321,7 +308,7 @@
     {
       "analysis_type": "plan_geometry",
       "review_status": "draft",
-      "summary": "2 Räume und 7 deduplizierte Wandachsen aus plan_profile v0.1."
+      "summary": "2 Räume und 7 deduplizierte Wandachsen aus dem live plan_profile-v0.1-Producer."
     },
     {
       "analysis_type": "opening_semantics",
@@ -331,7 +318,7 @@
     {
       "analysis_type": "dimension_chains",
       "review_status": "draft",
-      "summary": "3 Masssegmente; bleiben bis zur fachlichen Prüfung review-only."
+      "summary": "0 gelieferte Masssegmente; fehlende Ketten werden consumer-seitig erzeugt und bleiben bis zur fachlichen Prüfung intern."
     }
   ],
   "asset_candidates": []

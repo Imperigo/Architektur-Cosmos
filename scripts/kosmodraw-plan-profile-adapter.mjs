@@ -19,6 +19,9 @@ export function adaptPlanProfile(planProfile, options = {}) {
   if (!allowedSourceKinds.has(sourceKind)) {
     throw new Error(`sourceKind must be one of ${[...allowedSourceKinds].join(', ')}.`);
   }
+  const sourceBasis = planProfile.provenance === 'recognized'
+    ? 'KosmoDraw plan_profile v0.1 recognized geometry'
+    : 'KosmoDraw plan_profile v0.1 exact projection';
 
   const rooms = [...planProfile.rooms]
     .sort(byId)
@@ -30,7 +33,8 @@ export function adaptPlanProfile(planProfile, options = {}) {
       floor_level: finiteNumber(room.floor_level, planProfile.floor_level),
       height_m: finiteNumber(room.height_m, null),
       area_m2: finiteNumber(room.area_m2, polygonArea(room.boundary_xy)),
-      source_basis: 'KosmoDraw plan_profile v0.1 review-only geometry'
+      confidence: round(room.confidence),
+      source_basis: sourceBasis
     }));
 
   const walls = [...planProfile.walls]
@@ -49,7 +53,8 @@ export function adaptPlanProfile(planProfile, options = {}) {
         structural_role: wall.is_external ? 'external' : 'internal',
         room_ids: [...(wall.room_ids || [])].sort(),
         cad_layer: wall.cad_layer || null,
-        source_basis: 'KosmoDraw plan_profile v0.1 wall axis'
+        confidence: round(wall.confidence),
+        source_basis: sourceBasis
       };
     });
 
@@ -70,11 +75,29 @@ export function adaptPlanProfile(planProfile, options = {}) {
         sill_m: round(opening.sill_m),
         floor_level: planProfile.floor_level,
         reveal: opening.reveal || null,
-        source_basis: 'KosmoDraw plan_profile v0.1 hosted opening'
+        confidence: round(opening.confidence),
+        source_basis: sourceBasis
       };
     });
 
   const storyHeight = Math.max(0, ...rooms.map((room) => room.height_m || 0));
+  const roomStamps = deriveRoomStamps(planProfile.rooms);
+  const grid = planProfile.grid
+    ? {
+      spacing_m: round(planProfile.grid.spacing_m),
+      origin_xy: roundPoints([planProfile.grid.origin_xy])[0]
+    }
+    : {
+      spacing_m: 1,
+      origin_xy: roundPoints([planProfile.units.origin])[0]
+    };
+  const dimensions = (planProfile.dimensions || [])
+    .sort((left, right) => JSON.stringify(left.seg).localeCompare(JSON.stringify(right.seg)))
+    .map((dimension) => ({
+      ...dimension,
+      seg: roundPoints(dimension.seg),
+      length_m: round(dimension.length_m)
+    }));
   const stories = [{
     id: planProfile.story_id,
     name: planProfile.story_id,
@@ -92,8 +115,11 @@ export function adaptPlanProfile(planProfile, options = {}) {
     source_contract: {
       name: 'kosmodraw_plan_profile',
       schema_version: planProfile.schema_version,
-      contract_status: 'draft',
-      deterministic_projection: true
+      contract_status: 'producer_live',
+      producer_commit: '01257fa',
+      provenance: planProfile.provenance,
+      deterministic_projection: planProfile.provenance === 'exact_projection',
+      confidence_passthrough: true
     },
     rooms,
     walls,
@@ -107,31 +133,23 @@ export function adaptPlanProfile(planProfile, options = {}) {
       story_id: planProfile.story_id,
       floor_level: planProfile.floor_level,
       units: planProfile.units,
-      room_stamps: [...planProfile.room_stamps]
-        .sort((left, right) => String(left.room_id).localeCompare(String(right.room_id)))
-        .map((stamp) => ({
-          ...stamp,
-          xy: roundPoints([stamp.xy])[0],
-          area_m2: finiteNumber(stamp.area_m2, null)
-        })),
-      dimensions: [...planProfile.dimensions]
-        .sort((left, right) => JSON.stringify(left.seg).localeCompare(JSON.stringify(right.seg)))
-        .map((dimension) => ({
-          ...dimension,
-          seg: roundPoints(dimension.seg),
-          length_m: round(dimension.length_m)
-        })),
-      grid: {
-        spacing_m: round(planProfile.grid.spacing_m),
-        origin_xy: roundPoints([planProfile.grid.origin_xy])[0]
+      provenance: planProfile.provenance,
+      confidence_summary: confidenceSummary([...rooms, ...walls, ...openings]),
+      derived_by_consumer: {
+        room_stamps: !Array.isArray(planProfile.room_stamps),
+        dimensions: !Array.isArray(planProfile.dimensions),
+        grid: !planProfile.grid
       },
+      room_stamps: roomStamps,
+      dimensions,
+      grid,
       bounds: planProfile.bounds.map(round)
     },
     analysis_layers: [
       {
         analysis_type: 'plan_geometry',
         review_status: 'draft',
-        summary: `${rooms.length} Räume und ${walls.length} deduplizierte Wandachsen aus plan_profile v0.1.`
+        summary: `${rooms.length} Räume und ${walls.length} deduplizierte Wandachsen aus dem live plan_profile-v0.1-Producer.`
       },
       {
         analysis_type: 'opening_semantics',
@@ -141,7 +159,7 @@ export function adaptPlanProfile(planProfile, options = {}) {
       {
         analysis_type: 'dimension_chains',
         review_status: 'draft',
-        summary: `${planProfile.dimensions.length} Masssegmente; bleiben bis zur fachlichen Prüfung review-only.`
+        summary: `${dimensions.length} gelieferte Masssegmente; fehlende Ketten werden consumer-seitig erzeugt und bleiben bis zur fachlichen Prüfung intern.`
       }
     ],
     asset_candidates: []
@@ -161,11 +179,19 @@ export function validatePlanProfile(profile) {
   if (!validPoint(profile.units.origin)) {
     throw new Error('plan_profile units.origin must be a finite XY point.');
   }
+  if (!['exact_projection', 'recognized'].includes(profile.provenance)) {
+    throw new Error('plan_profile provenance must be exact_projection or recognized.');
+  }
   if (!profile.story_id || !Number.isInteger(profile.floor_level)) {
     throw new Error('plan_profile requires story_id and integer floor_level.');
   }
-  for (const key of ['rooms', 'walls', 'openings', 'room_stamps', 'dimensions']) {
+  for (const key of ['rooms', 'walls', 'openings']) {
     if (!Array.isArray(profile[key])) throw new Error(`plan_profile.${key} must be an array.`);
+  }
+  for (const key of ['room_stamps', 'dimensions']) {
+    if (profile[key] !== undefined && !Array.isArray(profile[key])) {
+      throw new Error(`plan_profile.${key} must be an array when present.`);
+    }
   }
   if (!Array.isArray(profile.bounds) || profile.bounds.length !== 4 || !profile.bounds.every(isFiniteNumber)) {
     throw new Error('plan_profile.bounds must contain four finite numbers.');
@@ -176,6 +202,7 @@ export function validatePlanProfile(profile) {
   profile.rooms.forEach((room) => {
     if (!validPolygon(room.boundary_xy)) throw new Error(`Room ${room.id} needs a valid boundary_xy polygon.`);
     if (!Number.isInteger(room.floor_level)) throw new Error(`Room ${room.id} needs integer floor_level.`);
+    validateConfidence(room.confidence, `Room ${room.id}`);
   });
   const wallSegments = new Set();
   profile.walls.forEach((wall) => {
@@ -189,6 +216,7 @@ export function validatePlanProfile(profile) {
     for (const roomId of wall.room_ids || []) {
       if (!roomIds.has(roomId)) throw new Error(`Wall ${wall.id} references unknown room ${roomId}.`);
     }
+    validateConfidence(wall.confidence, `Wall ${wall.id}`);
   });
   profile.openings.forEach((opening) => {
     if (!allowedOpeningKinds.has(opening.type)) throw new Error(`Opening ${opening.id} has unsupported type.`);
@@ -199,13 +227,14 @@ export function validatePlanProfile(profile) {
     if (!positive(opening.width_m) || !positive(opening.height_m) || !isFiniteNumber(opening.sill_m)) {
       throw new Error(`Opening ${opening.id} needs width_m, height_m and sill_m.`);
     }
+    validateConfidence(opening.confidence, `Opening ${opening.id}`);
   });
-  profile.room_stamps.forEach((stamp) => {
+  (profile.room_stamps || []).forEach((stamp) => {
     if (!roomIds.has(stamp.room_id) || !validPoint(stamp.xy)) {
       throw new Error(`Room stamp ${stamp.room_id} needs a known room and finite xy.`);
     }
   });
-  profile.dimensions.forEach((dimension, index) => {
+  (profile.dimensions || []).forEach((dimension, index) => {
     if (!validSegment(dimension.seg) || !positive(dimension.length_m)) {
       throw new Error(`Dimension ${index} needs a valid segment and positive length_m.`);
     }
@@ -213,7 +242,7 @@ export function validatePlanProfile(profile) {
       throw new Error(`Dimension ${index} length_m does not match its segment.`);
     }
   });
-  if (!positive(profile.grid?.spacing_m) || !validPoint(profile.grid?.origin_xy)) {
+  if (profile.grid && (!positive(profile.grid.spacing_m) || !validPoint(profile.grid.origin_xy))) {
     throw new Error('plan_profile.grid needs positive spacing_m and finite origin_xy.');
   }
   const calculatedBounds = boundsForRooms(profile.rooms);
@@ -230,6 +259,12 @@ function uniqueIds(items, label) {
     ids.add(item.id);
   }
   return ids;
+}
+
+function validateConfidence(value, label) {
+  if (!isFiniteNumber(value) || value < 0 || value > 1) {
+    throw new Error(`${label} confidence must be a finite number between 0 and 1.`);
+  }
 }
 
 function byId(left, right) {
@@ -293,6 +328,41 @@ function validPolygon(value) {
 
 function validPoint(value) {
   return Array.isArray(value) && value.length >= 2 && value.slice(0, 2).every(isFiniteNumber);
+}
+
+function deriveRoomStamps(rooms) {
+  return [...rooms]
+    .sort(byId)
+    .map((room) => {
+      const points = room.boundary_xy;
+      const xy = [
+        round(points.reduce((sum, point) => sum + point[0], 0) / points.length),
+        round(points.reduce((sum, point) => sum + point[1], 0) / points.length)
+      ];
+      const area = finiteNumber(room.area_m2, polygonArea(points));
+      return {
+        room_id: room.id,
+        xy,
+        text: `${room.name || room.id}\n${area.toFixed(1)} m²`,
+        area_m2: area,
+        function: room.function || null,
+        confidence: round(room.confidence),
+        source_basis: 'ArchitectureCosmos consumer-derived room stamp'
+      };
+    });
+}
+
+function confidenceSummary(elements) {
+  const values = elements.map((element) => element.confidence);
+  if (values.length === 0) {
+    return { element_count: 0, minimum: null, average: null, maximum: null };
+  }
+  return {
+    element_count: values.length,
+    minimum: round(Math.min(...values)),
+    average: round(values.reduce((sum, value) => sum + value, 0) / values.length),
+    maximum: round(Math.max(...values))
+  };
 }
 
 async function main() {

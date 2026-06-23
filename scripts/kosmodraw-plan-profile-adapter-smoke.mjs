@@ -14,7 +14,8 @@ const second = adaptPlanProfile(JSON.parse(JSON.stringify(profile)));
 check('deterministic_output', JSON.stringify(first) === JSON.stringify(second));
 check('review_only', first.status === 'review_only');
 check('public_display_blocked', first.public_display_allowed === false);
-check('draft_contract', first.source_contract.contract_status === 'draft');
+check('producer_live_contract', first.source_contract.contract_status === 'producer_live');
+check('exact_projection_provenance', first.source_contract.provenance === 'exact_projection');
 check('room_count', first.rooms.length === 2);
 check('wall_count', first.walls.length === 7);
 check('shared_wall_deduplicated', first.walls.filter((wall) => wall.room_ids.length === 2).length === 1);
@@ -26,8 +27,22 @@ check('stable_sort', first.walls.map((wall) => wall.id).join(',') === 'W001,W002
 check('analysis_review_only', first.analysis_layers.every((layer) => layer.review_status === 'draft'));
 check('plan_profile_blocked', first.plan_profile.public_display_allowed === false);
 check('room_stamps_preserved', first.plan_profile.room_stamps.length === 2);
-check('dimensions_preserved', first.plan_profile.dimensions.length === 3);
-check('grid_preserved', first.plan_profile.grid.spacing_m === 1);
+check('dimensions_optional', first.plan_profile.dimensions.length === 0);
+check('grid_consumer_derived', first.plan_profile.grid.spacing_m === 1 && first.plan_profile.derived_by_consumer.grid === true);
+check('confidence_passthrough', [...first.rooms, ...first.walls, ...first.openings].every((item) => item.confidence === 1));
+check('confidence_summary', first.plan_profile.confidence_summary.minimum === 1 && first.plan_profile.confidence_summary.average === 1);
+
+const recognized = adaptPlanProfile({
+  ...profile,
+  provenance: 'recognized',
+  rooms: profile.rooms.map((room, index) => ({ ...room, confidence: index === 0 ? 0.92 : 0.8 })),
+  walls: profile.walls.map((wall, index) => ({ ...wall, confidence: index === 3 ? 0.7 : 0.84 })),
+  openings: profile.openings.map((opening, index) => ({ ...opening, confidence: index === 0 ? 0.55 : 0.76 }))
+});
+check('recognized_provenance', recognized.source_contract.provenance === 'recognized');
+check('recognized_confidence_preserved', recognized.rooms[0].confidence === 0.92
+  && recognized.walls.find((wall) => wall.id === 'W004')?.confidence === 0.7
+  && recognized.openings[0].confidence === 0.55);
 
 expectFailure('reject_publicly_unsafe_schema', () => validatePlanProfile({ ...profile, schema_version: '1.0' }));
 expectFailure('reject_unknown_host_wall', () => validatePlanProfile({
@@ -50,10 +65,18 @@ expectFailure('reject_wrong_bounds', () => validatePlanProfile({
   ...profile,
   bounds: [0, 0, 10, 5]
 }));
+expectFailure('reject_missing_confidence', () => validatePlanProfile({
+  ...profile,
+  rooms: [{ ...profile.rooms[0], confidence: undefined }, profile.rooms[1]]
+}));
+expectFailure('reject_invalid_confidence', () => validatePlanProfile({
+  ...profile,
+  walls: [{ ...profile.walls[0], confidence: 1.2 }, ...profile.walls.slice(1)]
+}));
 
 const report = {
   status: failures.length === 0 ? 'passed' : 'failed',
-  checks: 23,
+  checks: 30,
   failures,
   summary: {
     rooms: first.rooms.length,

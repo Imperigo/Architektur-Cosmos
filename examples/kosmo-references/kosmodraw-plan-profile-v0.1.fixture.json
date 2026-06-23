@@ -1,5 +1,6 @@
 {
   "schema_version": "0.1",
+  "provenance": "exact_projection",
   "story_id": "EG",
   "floor_level": 0,
   "units": {
@@ -15,7 +16,8 @@
       "floor_level": 0,
       "boundary_xy": [[0, 0], [6, 0], [6, 5], [0, 5]],
       "height_m": 2.6,
-      "area_m2": 30
+      "area_m2": 30,
+      "confidence": 1
     },
     {
       "id": "R2",
@@ -24,7 +26,8 @@
       "floor_level": 0,
       "boundary_xy": [[6, 0], [9, 0], [9, 5], [6, 5]],
       "height_m": 2.6,
-      "area_m2": 15
+      "area_m2": 15,
+      "confidence": 1
     }
   ],
   "walls": [
@@ -35,7 +38,8 @@
       "height_m": 2.6,
       "is_external": true,
       "room_ids": ["R1"],
-      "cad_layer": "A-WALL-EXT"
+      "cad_layer": "Aussenwand",
+      "confidence": 1
     },
     {
       "id": "W002",
@@ -44,7 +48,8 @@
       "height_m": 2.6,
       "is_external": true,
       "room_ids": ["R1"],
-      "cad_layer": "A-WALL-EXT"
+      "cad_layer": "Aussenwand",
+      "confidence": 1
     },
     {
       "id": "W003",
@@ -53,16 +58,18 @@
       "height_m": 2.6,
       "is_external": true,
       "room_ids": ["R1"],
-      "cad_layer": "A-WALL-EXT"
+      "cad_layer": "Aussenwand",
+      "confidence": 1
     },
     {
       "id": "W004",
       "axis": [[6, 0], [6, 5]],
-      "thickness_m": 0.15,
+      "thickness_m": 0.2,
       "height_m": 2.6,
       "is_external": false,
       "room_ids": ["R1", "R2"],
-      "cad_layer": "A-WALL-INT"
+      "cad_layer": "Innenwand",
+      "confidence": 1
     },
     {
       "id": "W005",
@@ -71,7 +78,8 @@
       "height_m": 2.6,
       "is_external": true,
       "room_ids": ["R2"],
-      "cad_layer": "A-WALL-EXT"
+      "cad_layer": "Aussenwand",
+      "confidence": 1
     },
     {
       "id": "W006",
@@ -80,7 +88,8 @@
       "height_m": 2.6,
       "is_external": true,
       "room_ids": ["R2"],
-      "cad_layer": "A-WALL-EXT"
+      "cad_layer": "Aussenwand",
+      "confidence": 1
     },
     {
       "id": "W007",
@@ -89,7 +98,8 @@
       "height_m": 2.6,
       "is_external": true,
       "room_ids": ["R2"],
-      "cad_layer": "A-WALL-EXT"
+      "cad_layer": "Aussenwand",
+      "confidence": 1
     }
   ],
   "openings": [
@@ -103,7 +113,8 @@
       "sill_m": 0,
       "reveal": {
         "depth_m": 0.15
-      }
+      },
+      "confidence": 1
     },
     {
       "id": "O2",
@@ -115,45 +126,9 @@
       "sill_m": 0.9,
       "reveal": {
         "depth_m": 0.3
-      }
+      },
+      "confidence": 1
     }
   ],
-  "room_stamps": [
-    {
-      "room_id": "R1",
-      "xy": [3, 2.5],
-      "text": "Wohnen\n30.0 m²",
-      "area_m2": 30,
-      "function": "wohnen"
-    },
-    {
-      "room_id": "R2",
-      "xy": [7.5, 2.5],
-      "text": "Küche\n15.0 m²",
-      "area_m2": 15,
-      "function": "kueche"
-    }
-  ],
-  "dimensions": [
-    {
-      "seg": [[0, -1], [6, -1]],
-      "length_m": 6,
-      "kind": "room"
-    },
-    {
-      "seg": [[6, -1], [9, -1]],
-      "length_m": 3,
-      "kind": "room"
-    },
-    {
-      "seg": [[0, -2], [9, -2]],
-      "length_m": 9,
-      "kind": "exterior"
-    }
-  ],
-  "grid": {
-    "spacing_m": 1,
-    "origin_xy": [0, 0]
-  },
   "bounds": [0, 0, 9, 5]
 }
