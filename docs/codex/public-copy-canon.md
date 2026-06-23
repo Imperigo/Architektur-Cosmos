@@ -75,6 +75,19 @@ Status labels must tell the user what is true now:
 
 Do not expose raw enum values, file paths, repository terms or worker instructions in visible website copy.
 
+## Public Status Boundary
+
+The public status route explains product progress, available public data and current pilots. It must not render:
+
+- owner-action queues
+- worker logs or worker-specific state strings
+- local package or source paths
+- private-source diagnostics
+- internal review packets
+- raw command, smoke or deployment output
+
+Internal KosmoOrbit capabilities remain available to the installed application and worker system. The website only presents the public development state.
+
 ## Verification
 
 Changes to public copy should pass:
