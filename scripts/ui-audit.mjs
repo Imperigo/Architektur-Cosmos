@@ -116,7 +116,9 @@ async function main() {
     checkIncludes(sources.modelViewer, 'KosmoDraw-kompatible Layerstruktur', '3D viewer exposes the KosmoDraw layer contract'),
     checkIncludes(sources.assetExplorer, 'assetLayerLabel(asset.layer)', 'public asset explorer localizes layer metadata'),
     checkIncludes(sources.assetExplorer, 'assetRightsLabel(asset.rights)', 'public asset explorer localizes rights metadata'),
-    checkIncludes(sources.assetExplorer, 'assetStatusLabel(asset.status)', 'public asset explorer localizes status metadata')
+    checkIncludes(sources.assetExplorer, 'assetStatusLabel(asset.status)', 'public asset explorer localizes status metadata'),
+    checkIncludes(sources.assetExplorer, 'assetDisplayLabel(asset.label)', 'public asset explorer localizes architecture terms in labels'),
+    checkIncludes(sources.assetExplorer, 'assetProvenanceLabel(asset.provenance)', 'public asset explorer localizes provenance metadata')
   ];
 
   const warnings = [

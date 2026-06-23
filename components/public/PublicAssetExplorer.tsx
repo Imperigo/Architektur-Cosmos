@@ -45,12 +45,14 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
     const matchesQuery = !normalizedQuery
       || [
         asset.label,
+        assetDisplayLabel(asset.label),
         asset.project,
         asset.kind,
         asset.layer,
         asset.rights,
         asset.status,
         asset.provenance,
+        assetProvenanceLabel(asset.provenance),
         assetLayerLabel(asset.layer),
         assetRightsLabel(asset.rights),
         assetStatusLabel(asset.status)
@@ -172,10 +174,10 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
                 <span>{kindLabels[asset.kind]}</span>
                 <span>{assetLayerLabel(asset.layer)}</span>
               </div>
-              <h3 className="mt-3 text-base leading-tight text-[#f7f7f4]">{asset.label}</h3>
+              <h3 className="mt-3 text-base leading-tight text-[#f7f7f4]">{assetDisplayLabel(asset.label)}</h3>
               <p className="mt-2 text-sm text-[#b9c1bc]">{asset.project}</p>
               <div className="mt-4 text-[10px] uppercase tracking-[0.12em] text-[#7f8a82]">{assetRightsLabel(asset.rights)} / {assetStatusLabel(asset.status)}</div>
-              <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-[#8f9a92]">{asset.provenance}</p>
+              <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-[#8f9a92]">{assetProvenanceLabel(asset.provenance)}</p>
             </div>
           </a>
           ))}
@@ -197,8 +199,8 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             >
               <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2]">{kindLabels[asset.kind]}</span>
               <span>
-                <strong className="block text-sm font-semibold text-[#f7f7f4]">{asset.label}</strong>
-                <span className="mt-1 line-clamp-1 block text-[10px] text-[#69736b]">{asset.provenance}</span>
+                <strong className="block text-sm font-semibold text-[#f7f7f4]">{assetDisplayLabel(asset.label)}</strong>
+                <span className="mt-1 line-clamp-1 block text-[10px] text-[#69736b]">{assetProvenanceLabel(asset.provenance)}</span>
               </span>
               <span className="text-xs text-[#a1aca4]">{asset.project}</span>
               <span className="text-[10px] uppercase tracking-[0.12em] text-[#8f9a92]">{assetLayerLabel(asset.layer)}</span>
@@ -252,8 +254,10 @@ function assetLayerLabel(value: string) {
     plan: 'Grundriss',
     section: 'Schnitt',
     source_reconstruction: 'Quellenrekonstruktion',
+    spatial_order: 'Raumordnung',
     structure: 'Tragwerk',
-    tectonics: 'Tektonik'
+    tectonics: 'Tektonik',
+    typology: 'Typologie'
   };
   return labels[value] ?? readableMetadataValue(value);
 }
@@ -274,6 +278,8 @@ function assetStatusLabel(value: string) {
     public_display: 'Öffentlich sichtbar',
     public_display_allowed: 'Öffentlich freigegeben',
     public_preview_glb: 'Öffentliche 3D-Vorschau',
+    draft: 'Entwurf',
+    pending: 'Ausstehend',
     reviewed: 'Geprüft',
     verified: 'Verifiziert'
   };
@@ -282,4 +288,33 @@ function assetStatusLabel(value: string) {
 
 function readableMetadataValue(value: string) {
   return value.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function assetDisplayLabel(value: string) {
+  const [project, ...rest] = value.split(':');
+  if (!rest.length) return readableMetadataValue(value);
+  const subject = rest.join(':').trim();
+  return `${project}: ${architectureTermLabel(subject)}`;
+}
+
+function assetProvenanceLabel(value: string) {
+  const labels: Record<string, string> = {
+    'analysis metadata': 'Analysemetadaten',
+    'public gate': 'Öffentliche Freigabeprüfung'
+  };
+  return labels[value.toLowerCase()] ?? readableMetadataValue(value);
+}
+
+function architectureTermLabel(value: string) {
+  const labels: Record<string, string> = {
+    circulation: 'Erschliessung',
+    'environmental logic': 'Umweltstrategie',
+    'material system': 'Materialsystem',
+    'source reconstruction': 'Quellenrekonstruktion',
+    'spatial order': 'Raumordnung',
+    structure: 'Tragwerk',
+    tectonics: 'Tektonik',
+    typology: 'Typologie'
+  };
+  return labels[value.toLowerCase()] ?? readableMetadataValue(value);
 }
