@@ -77,7 +77,7 @@ export default function AssetsPage() {
         <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
           <AssetCapability title="Bilder" text="Nur öffentlich freigegebene Assets aus geprüften lokalen Quellen." />
           <AssetCapability title="Pläne" text="Eigene diagrammatische Rekonstruktionen für Planlesung und Stilvereinheitlichung." />
-          <AssetCapability title="Layer" text="Tragwerk, Material, Zirkulation, Hülle und Typologie als filterbare Metadaten." />
+          <AssetCapability title="Analyseebenen" text="Tragwerk, Material, Erschliessung, Fassade und Typologie als filterbare Metadaten." />
           <AssetCapability title="3D" text="Öffentliche, reduzierte Modellvorschauen als skizzenhaftes BIM-Verständnis." />
         </section>
 
@@ -102,7 +102,7 @@ export default function AssetsPage() {
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Asset Taxonomie</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ordnung der Assetbibliothek</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Medien, Bauteile und Prinzipien</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der öffentliche Asset-Pilot bleibt review-only in der Freigabe, zeigt aber bereits die spätere Struktur: Bilder und Zeichnungen sind Quellenoberflächen, daraus entstehen filterbare Architekturbausteine.
@@ -160,11 +160,11 @@ export default function AssetsPage() {
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">KosmoDraw Asset Intake</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Asset-Übernahme aus KosmoDraw</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Kandidaten aus Modell und Zeichnung</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Der Intake-Report sieht {kosmoDrawIntake.summary.asset_candidate_count} Kandidaten aus {kosmoDrawIntake.summary.bundle_count} Bundles.
-              Davon werden aktuell 0 automatisch public-ready gesetzt.
+              Der Prüfbericht sieht {kosmoDrawIntake.summary.asset_candidate_count} Kandidaten aus {kosmoDrawIntake.summary.bundle_count} Projektpaketen.
+              Davon werden aktuell 0 automatisch öffentlich freigegeben.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -176,9 +176,9 @@ export default function AssetsPage() {
                   {bundle.assets.total} Asset-Kandidaten, {bundle.openings.total} Öffnungen, öffentlich freigegeben nach Übernahme: {bundle.publicReadyAfterIntake}.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.12em]">
-                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">{bundle.intakeAllowed ? 'review ready' : 'blocked'}</span>
-                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">private leaks {bundle.privateLeakCount}</span>
-                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">public flags {bundle.unsafePublicFlagCount}</span>
+                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">{bundle.intakeAllowed ? 'prüfbereit' : 'gesperrt'}</span>
+                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">private Verweise {bundle.privateLeakCount}</span>
+                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">unsichere Freigaben {bundle.unsafePublicFlagCount}</span>
                 </div>
               </div>
             ))}
@@ -187,7 +187,7 @@ export default function AssetsPage() {
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Digitalization Asset Preflight</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Mengenprüfung vor Assetübernahme</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Mengen sind noch keine Bauteile</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der Analyse-Check sieht {kosmoDrawDigitalization.aggregateCounts.rooms} aggregierte Räume,
@@ -198,16 +198,16 @@ export default function AssetsPage() {
           <div className="grid gap-3 sm:grid-cols-3">
             <AssetMetric label="Geschosse" value={kosmoDrawDigitalization.aggregateCounts.floors} />
             <AssetMetric label="NGF m2" value={kosmoDrawDigitalization.aggregateCounts.netFloorAreaM2} />
-            <AssetMetric label="Public-ready" value={kosmoDrawDigitalization.publicReadyAfterIntake} />
+            <AssetMetric label="Öffentlich bereit" value={kosmoDrawDigitalization.publicReadyAfterIntake} />
           </div>
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">KosmoPublish Plan Catalog</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Planregister aus KosmoPublish</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planregister vor Veröffentlichung</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Der Plankatalog ist als read-only Metadaten-Vorstufe sichtbar: {kosmoPublishPlanCatalog.phaseCount} Phasen,
+              Der Plankatalog ist als schreibgeschützte Metadaten-Vorstufe sichtbar: {kosmoPublishPlanCatalog.phaseCount} Phasen,
               {kosmoPublishPlanCatalog.outputFields.length} Felder und aktuell {kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} öffentlich freigegebene Plan-Assets.
               Zeichnungen werden erst nach Rechteprüfung und Owner-Freigabe in KosmoAsset sichtbar.
             </p>

@@ -222,7 +222,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
             <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
               <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>KI-Referenzpilot</div>
-              <h2 className="mt-3 text-2xl text-[#f7f7f4]">Erfassung, Modell und Analyse-Pipeline</h2>
+              <h2 className="mt-3 text-2xl text-[#f7f7f4]">Vom Quellenfund zum geprüften Modell</h2>
               <div className="mt-5 grid gap-3 text-sm leading-6 text-[#cfcfca] sm:grid-cols-2">
                 {displayEntry.ingestion_status ? (
                   <>
@@ -359,14 +359,14 @@ function PublicPilotSection({ entry, accent }: { entry: Entry; accent: string })
     <section className="border-t border-white/12 py-8">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Public Pilot Readiness</div>
+          <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Freigabestatus des Pilotprojekts</div>
           <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
             {entry.title} verbindet Atlas, KosmoReferences und KosmoAsset.
           </h2>
         </div>
         <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
-          Diese Atlas-Seite folgt derselben Public-Gate-Logik wie `/references` und `/assets`: nur freigegebene Medien
-          und Preview-Modelle duerfen sichtbar sein, private Quellen und KosmoDraw/KosmoPublish-Zwischenschritte bleiben review-only.
+          Diese Atlas-Seite folgt derselben Freigabelogik wie Referenzen und Assets: Nur freigegebene Medien
+          und Vorschaumodelle dürfen sichtbar sein; private Quellen und KosmoDraw-/KosmoPublish-Zwischenschritte bleiben intern.
         </p>
       </div>
 
@@ -614,7 +614,7 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
   const publicPreviewReady = Boolean(modelUrl);
   const plannedModelCount = (entry.model_assets?.length ?? 0) + (entry.model_3d?.parts?.length ?? 0);
   const modelStatusLabel = publicPreviewReady
-    ? 'Öffentliches GLB-Preview vorhanden'
+      ? 'Öffentliche GLB-Vorschau vorhanden'
     : plannedModelCount > 0
       ? 'Modell-Layer geplant, GLB noch nicht öffentlich'
       : 'Modellaufbau offen';
@@ -625,7 +625,7 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
         <div>
           <div className="text-[10px] uppercase tracking-[0.24em]" style={{ color: accent }}>3D-Referenzkern</div>
           <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
-            Modell, Materialanalyse und Blender-Layer
+            Bauteile, Materialien und Modellstruktur
           </h2>
         </div>
         <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
@@ -640,7 +640,7 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
           {plannedModelCount} geplante Layer
         </span>
         <span className="border border-white/14 bg-[#050505]/50 px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">
-          Brain-Modellpipeline
+          Geprüfte Modellableitung
         </span>
       </div>
 
@@ -658,7 +658,7 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
         <InfoBlock
-          title="Blender-Collections"
+          title="Modellgruppen"
           items={blenderLayers}
           accent={accent}
           empty="Noch keine Modell-Collections geplant"

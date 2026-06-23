@@ -67,7 +67,7 @@ export default function ReferencesPage() {
               <img src={publicProjectMediaUrl(villa, exterior) ?? ''} alt="Villa Savoye Referenzbild" className="aspect-[4/3] w-full object-cover" />
             ) : null}
             <div className="p-4">
-              <div className="text-[10px] uppercase tracking-[0.18em] text-[#66e1d2]">Hero-Bild Auswahl</div>
+              <div className="text-[10px] uppercase tracking-[0.18em] text-[#66e1d2]">Geprüftes Titelbild</div>
               <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">
                 Das Titelbild stammt aus einem öffentlich nutzbaren Bestand der Library of Congress und hat die lokale Rechteprüfung durchlaufen.
               </p>
@@ -198,7 +198,7 @@ export default function ReferencesPage() {
         <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
           <ProcessStep title="1 Bild erkennen" text="Öffentliche Bildkandidaten werden nach Rechte- und Lesbarkeitsstatus sortiert." />
           <ProcessStep title="2 Plan säubern" text="Low-res Pläne werden als eigene, öffentliche Diagramme nachgezeichnet und vereinheitlicht." />
-          <ProcessStep title="3 Layer verstehen" text="KosmoDraw-Layer trennen Tragwerk, Hülle, Zirkulation, Material und Dachgarten." />
+          <ProcessStep title="3 Bauteile ordnen" text="KosmoDraw trennt Tragwerk, Fassade, Erschliessung, Material und Freiraum." />
           <ProcessStep title="4 BIM skizzieren" text="KosmoVis zeigt eine 3D-Vorschau mit Modell-, Material- und Analysefiltern." />
         </section>
 
@@ -207,13 +207,13 @@ export default function ReferencesPage() {
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoDraw Übernahme</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Geprüfte Übernahme aus KosmoDraw</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Der aktuelle Intake-Report fasst KosmoDraw-Bundles als Metadaten zusammen. IFC-Pfade und lokale Artefakte
-              werden nicht in den Bericht kopiert, und public-ready bleibt nach Intake bei {kosmoDrawIntake.summary.public_ready_after_intake}.
+              Der aktuelle Prüfbericht fasst KosmoDraw-Pakete als Metadaten zusammen. IFC-Pfade und lokale Artefakte
+              werden nicht in den Bericht kopiert; öffentlich freigegeben bleiben nach der Übernahme {kosmoDrawIntake.summary.public_ready_after_intake}.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <IntakeMetric label="Bundles" value={kosmoDrawIntake.summary.bundle_count} />
-              <IntakeMetric label="Openings" value={kosmoDrawIntake.summary.opening_count} />
-              <IntakeMetric label="Public Flags" value={kosmoDrawIntake.summary.unsafe_public_flag_count} />
+              <IntakeMetric label="Projektpakete" value={kosmoDrawIntake.summary.bundle_count} />
+              <IntakeMetric label="Öffnungen" value={kosmoDrawIntake.summary.opening_count} />
+              <IntakeMetric label="Unsichere Freigaben" value={kosmoDrawIntake.summary.unsafe_public_flag_count} />
             </div>
           </div>
           <div className="grid gap-3">
@@ -225,7 +225,7 @@ export default function ReferencesPage() {
                     <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{bundle.title}</h3>
                   </div>
                   <span className="border border-white/14 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-[#aeb8b2]">
-                    {bundle.intakeAllowed ? 'review ready' : 'blocked'}
+                    {bundle.intakeAllowed ? 'prüfbereit' : 'gesperrt'}
                   </span>
                 </div>
                 <div className="mt-4 grid grid-cols-4 gap-2 text-center text-xs text-[#b9c1bc]">
@@ -241,11 +241,11 @@ export default function ReferencesPage() {
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Digitalization Preflight</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Mengenprüfung aus KosmoDraw</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Analyse vor Modellübernahme</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Der neue Gate akzeptiert solche Reports als review-only Analyse-Kandidaten. Public-ready bleibt bei {kosmoDrawDigitalization.publicReadyAfterIntake},
-              bis elementweise Geometrie und Asset-Kandidaten im Bundle-Vertrag vorliegen.
+              Die Freigabeprüfung akzeptiert solche Berichte als interne Analysekandidaten. Öffentlich freigegeben bleiben {kosmoDrawDigitalization.publicReadyAfterIntake},
+              bis elementweise Geometrie und Asset-Kandidaten im Projektpaket vorliegen.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -257,7 +257,7 @@ export default function ReferencesPage() {
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoPublish Plan Catalog</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Planregister aus KosmoPublish</div>
             <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planregister und Freigabestatus</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der schreibgeschützte Plankatalog ist eine sichere Metadaten-Vorstufe. Er ordnet Planvorschauen über {kosmoPublishPlanCatalog.phaseCount} Phasen,
