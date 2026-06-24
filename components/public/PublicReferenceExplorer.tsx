@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { Grid3X3, ImageOff, List, RotateCcw, Search } from 'lucide-react';
 import { publicStatusLabel } from '@/lib/public-labels';
@@ -80,10 +80,13 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
   }
 
   return (
-    <section className="public-explorer border-t border-white/12 py-8">
+    <section
+      className="public-explorer border-t border-white/12 py-8"
+      style={{ '--public-explorer-accent': '#57b6c2' } as CSSProperties}
+    >
       <div className="public-explorer-head">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#57b6c2]">Öffentliche Referenzdatenbank</div>
+          <div className="public-explorer-kicker">Öffentliche Referenzdatenbank</div>
           <h2 className="public-explorer-title">Referenzdossiers im öffentlichen Bestand</h2>
         </div>
         <div className="public-filter-grid public-reference-filter-grid">
@@ -94,7 +97,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Projekt, Material, Ort"
-              className="ak-control h-11 w-full pl-10 pr-3 text-sm outline-none transition focus:border-[#57b6c2]"
+              className="ak-control public-filter-control public-filter-control-search"
             />
           </label>
           <label className="public-filter-field">
@@ -102,7 +105,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
             <select
               value={style}
               onChange={(event) => setStyle(event.target.value)}
-              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
+              className="ak-control public-filter-control"
             >
               {styles.map((item) => (
                 <option key={item} value={item}>{item === 'all' ? 'Alle Epochen' : styleLabels[item] ?? item.replace(/_/g, ' ')}</option>
@@ -114,7 +117,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
             <select
               value={material}
               onChange={(event) => setMaterial(event.target.value)}
-              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
+              className="ak-control public-filter-control"
             >
               {materials.map((item) => (
                 <option key={item} value={item}>{item === 'all' ? 'Alle Materialien' : item.replace(/_/g, ' ')}</option>

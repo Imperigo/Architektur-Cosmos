@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { Box, FileImage, FileText, Grid3X3, Layers3, List, RotateCcw, Search, type LucideIcon } from 'lucide-react';
 import {
   publicAssetDisplayLabel,
@@ -89,10 +89,13 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
   }
 
   return (
-    <section className="public-explorer border-t border-white/12 py-8">
+    <section
+      className="public-explorer border-t border-white/12 py-8"
+      style={{ '--public-explorer-accent': '#b9f06a' } as CSSProperties}
+    >
       <div className="public-explorer-head">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#57b6c2]">Öffentliche Assetbibliothek</div>
+          <div className="public-explorer-kicker">Öffentliche Assetbibliothek</div>
           <h2 className="public-explorer-title">Öffentliche Assets nach Projekt und Ebene</h2>
         </div>
         <div className="public-filter-grid public-asset-filter-grid">
@@ -103,7 +106,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Bauteil, Projekt, Quelle"
-              className="ak-control h-11 w-full pl-10 pr-3 text-sm outline-none transition focus:border-[#57b6c2]"
+              className="ak-control public-filter-control public-filter-control-search"
             />
           </label>
           <label className="public-filter-field">
@@ -111,7 +114,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <select
               value={kind}
               onChange={(event) => setKind(event.target.value as PublicAsset['kind'] | 'all')}
-              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
+              className="ak-control public-filter-control"
             >
               <option value="all">Alle Typen</option>
               {Object.entries(kindLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
@@ -122,7 +125,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <select
               value={layer}
               onChange={(event) => setLayer(event.target.value)}
-              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
+              className="ak-control public-filter-control"
             >
               {layers.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Ebenen' : publicAssetLayerLabel(item)}</option>)}
             </select>
@@ -132,7 +135,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <select
               value={project}
               onChange={(event) => setProject(event.target.value)}
-              className="ak-control h-11 w-full px-3 text-sm outline-none transition focus:border-[#57b6c2]"
+              className="ak-control public-filter-control"
             >
               {projects.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Projekte' : item}</option>)}
             </select>
