@@ -12,6 +12,14 @@ import publicModelPreviews from '@/data/public-model-previews.json';
 import relations from '@/data/relations.json';
 import { styleSectorColors } from '@/lib/atlas-layout';
 import { prettifyGermanText } from '@/lib/display-text';
+import {
+  publicEntryTypeLabel,
+  publicSourceQualityLabel,
+  publicStatusLabel,
+  publicStyleSectorLabel,
+  publicTechnicalLabel,
+  publicWorkflowLabel
+} from '@/lib/public-labels';
 import { isPublicPilotSlug, publicEntryAssetTaxonomy, publicEntryReadiness, publicProjectMediaUrl, primaryPublicProjectMediaUrl } from '@/lib/public-kosmo';
 import type { Entry, EntryRelation, StyleSectorId } from '@/lib/types';
 
@@ -226,10 +234,10 @@ export default async function EntryPage({ params }: EntryPageProps) {
               <div className="mt-5 grid gap-3 text-sm leading-6 text-[#cfcfca] sm:grid-cols-2">
                 {displayEntry.ingestion_status ? (
                   <>
-                    <EntryMeta label="Erfassung" value={publicWorkflowValue(displayEntry.ingestion_status.stage)} />
-                    <EntryMeta label="Quellen" value={publicWorkflowValue(displayEntry.ingestion_status.source_status)} />
-                    <EntryMeta label="Assets" value={publicWorkflowValue(displayEntry.ingestion_status.asset_status)} />
-                    <EntryMeta label="Modelle" value={publicWorkflowValue(displayEntry.ingestion_status.model_status)} />
+                    <EntryMeta label="Erfassung" value={publicWorkflowLabel(displayEntry.ingestion_status.stage)} />
+                    <EntryMeta label="Quellen" value={publicWorkflowLabel(displayEntry.ingestion_status.source_status)} />
+                    <EntryMeta label="Assets" value={publicWorkflowLabel(displayEntry.ingestion_status.asset_status)} />
+                    <EntryMeta label="Modelle" value={publicWorkflowLabel(displayEntry.ingestion_status.model_status)} />
                   </>
                 ) : null}
               </div>
@@ -240,8 +248,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
                     {displayEntry.model_packages.map((modelPackage) => (
                       <div key={modelPackage.package_type} className="border border-white/10 bg-[#050505]/45 p-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="text-sm text-[#f7f7f4]">{germanTechnicalLabel(modelPackage.package_type)}</span>
-                          <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: accent }}>{publicWorkflowValue(modelPackage.status)}</span>
+                          <span className="text-sm text-[#f7f7f4]">{publicTechnicalLabel(modelPackage.package_type)}</span>
+                          <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: accent }}>{publicWorkflowLabel(modelPackage.status)}</span>
                         </div>
                         <p className="mt-2 text-xs leading-5 text-[#b8b8b2]">{publicModelPackageNote(modelPackage)}</p>
                       </div>
@@ -270,7 +278,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
                   title="Analysebeobachtungen"
                   items={displayEntry.analysis_observations.map((observation) => {
                     const confidence = typeof observation.confidence_score === 'number' ? ` ${Math.round(observation.confidence_score * 100)}%` : '';
-                    return `${germanTechnicalLabel(observation.analysis_type)}: ${observation.label}${confidence}`;
+                    return `${publicTechnicalLabel(observation.analysis_type)}: ${observation.label}${confidence}`;
                   })}
                   accent={accent}
                 />
@@ -283,7 +291,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <section className="border-t border-white/12 py-8">
             <InfoBlock
               title="Asset-Kandidaten"
-              items={displayEntry.asset_candidates.map((asset) => `${germanTechnicalLabel(asset.kind)}: ${asset.title} / ${publicWorkflowValue(asset.rights_status)}${asset.public_display_allowed ? ' / öffentlich sichtbar' : ' / Prüfung vor Veröffentlichung'}`)}
+              items={displayEntry.asset_candidates.map((asset) => `${publicTechnicalLabel(asset.kind)}: ${asset.title} / ${publicWorkflowLabel(asset.rights_status)}${asset.public_display_allowed ? ' / öffentlich sichtbar' : ' / Prüfung vor Veröffentlichung'}`)}
               accent={accent}
             />
           </section>
@@ -550,7 +558,7 @@ function ArchiveStatusPanel({ entry, relatedCount, archiveScore, accent }: { ent
       <dl className="mt-4 grid gap-2 text-sm">
         <EntryMeta label="Quellen" value={publicSourceQualityLabel(entry.source_quality)} />
         <EntryMeta label="Kurs / Cluster" value={(entry.lecture_cluster ?? []).join(', ') || 'nicht zugeordnet'} />
-        {entry.database_profile ? <EntryMeta label="Datenbank" value={`${publicWorkflowValue(entry.database_profile.status)} / öffentliche Dossierdaten`} /> : null}
+        {entry.database_profile ? <EntryMeta label="Datenbank" value={`${publicWorkflowLabel(entry.database_profile.status)} / öffentliche Dossierdaten`} /> : null}
       </dl>
     </aside>
   );
@@ -693,7 +701,7 @@ function ArchitectureTextSection({ entry, accent }: { entry: Entry; accent: stri
           <h2 className="mt-3 max-w-xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">{prettifyGermanText(text.headline)}</h2>
           <div className="mt-4 flex flex-wrap gap-2 text-[9px] uppercase tracking-[0.14em] text-[#8d8d87]">
             <span className="border border-white/14 px-2.5 py-1">{text.language ?? 'de'}</span>
-            <span className="border border-white/14 px-2.5 py-1">{germanStatusLabel(text.review_status ?? 'draft_review')}</span>
+            <span className="border border-white/14 px-2.5 py-1">{publicStatusLabel(text.review_status ?? 'draft_review')}</span>
           </div>
         </div>
         <div>
@@ -924,8 +932,8 @@ function entryVisualProfile(entry: Entry): EntryVisualProfile {
     compositionTitle: 'Kompositionslesung',
     composition: [
       entry.short_description,
-      `Typologie: ${entry.entry_type.replace(/_/g, ' ')}`,
-      `Stilsektor: ${entry.style_sector.replace(/_/g, ' ')}`,
+      `Typologie: ${publicEntryTypeLabel(entry.entry_type)}`,
+      `Stilsektor: ${publicStyleSectorLabel(entry.style_sector)}`,
       `Filter: ${entry.themes.slice(0, 3).join(', ') || 'Prüfung offen'}`
     ],
     diagramType: 'generic',
@@ -953,8 +961,8 @@ function sourceItems(entry: Entry) {
 }
 
 function blenderLayerItems(entry: Entry) {
-  const modelLayers = (entry.model_assets ?? []).map((model) => `${germanTechnicalLabel(model.model_type)} / ${germanStatusLabel(model.review_status)}`);
-  const analysisLayers = (entry.analysis_layers ?? []).map((analysis) => `Analyse ${germanTechnicalLabel(analysis.analysis_type)} / ${germanStatusLabel(analysis.review_status)}`);
+  const modelLayers = (entry.model_assets ?? []).map((model) => `${publicTechnicalLabel(model.model_type)} / ${publicStatusLabel(model.review_status)}`);
+  const analysisLayers = (entry.analysis_layers ?? []).map((analysis) => `Analyse ${publicTechnicalLabel(analysis.analysis_type)} / ${publicStatusLabel(analysis.review_status)}`);
 
   if (modelLayers.length || analysisLayers.length) {
     return [...modelLayers, ...analysisLayers].slice(0, 10);
@@ -985,7 +993,7 @@ function materialFilterItems(entry: Entry) {
 }
 
 function modelSourceItems(entry: Entry) {
-  const modelSources = (entry.model_assets ?? []).map((model) => `${germanTechnicalLabel(model.model_type)}: ${publicModelSourceLabel(model.source_basis)}`);
+  const modelSources = (entry.model_assets ?? []).map((model) => `${publicTechnicalLabel(model.model_type)}: ${publicModelSourceLabel(model.source_basis)}`);
   if (modelSources.length) return modelSources.slice(0, 6);
   return [
     ...sourceItems(entry).slice(0, 3),
@@ -1005,7 +1013,7 @@ function extractAnalysisValues(data: Record<string, unknown> | undefined, keys: 
 function analysisItems(entry: Entry, types: string[]) {
   const layerItems = (entry.analysis_layers ?? [])
     .filter((layer) => types.includes(layer.analysis_type))
-    .map((layer) => `${germanTechnicalLabel(layer.analysis_type)}: ${layer.summary}`);
+    .map((layer) => `${publicTechnicalLabel(layer.analysis_type)}: ${layer.summary}`);
   const observationItems = (entry.analysis_observations ?? [])
     .filter((observation) => types.includes(observation.analysis_type))
     .map((observation) => {
@@ -1041,114 +1049,6 @@ function germanMediaTypeLabel(type: Entry['media'][number]['type']) {
     plan: 'Plan'
   };
   return labels[type];
-}
-
-function germanTechnicalLabel(value: string) {
-  const labels: Record<string, string> = {
-    analysis: 'Analyse',
-    circulation: 'Erschliessung',
-    envelope: 'Fassade',
-    facade: 'Fassade',
-    filter_classification: 'Filterordnung',
-    full: 'Vollmodell',
-    interior: 'Innenraum',
-    low: 'reduziertes Modell',
-    mass: 'Massenmodell',
-    material_system: 'Materialsystem',
-    material_tag: 'Materialhinweis',
-    model: 'Modell',
-    roof_form: 'Dachform',
-    site: 'Terrain',
-    source_reconstruction: 'Quellenrekonstruktion',
-    structure: 'Tragwerk',
-    tectonic: 'Tektonik',
-    tectonics: 'Tektonik',
-    typology: 'Typologie',
-    spatial_order: 'Raumordnung',
-    public_preview: 'öffentliche Vorschau',
-    public_preview_glb: 'öffentliche 3D-Vorschau',
-    plan_geometry: 'Plangeometrie',
-    opening_semantics: 'Öffnungen',
-    dimension_chains: 'Massketten'
-  };
-  return labels[value] ?? value.replace(/_/g, ' ');
-}
-
-function germanStatusLabel(value: string) {
-  const labels: Record<string, string> = {
-    draft: 'Entwurf',
-    draft_review: 'Entwurf in Prüfung',
-    generated_needs_review: 'generiert, Prüfung nötig',
-    needs_review: 'Prüfung nötig',
-    needs_source: 'Quelle nötig',
-    needs_source_review: 'Quellenprüfung nötig',
-    needs_sources: 'Quellen nötig',
-    planned: 'geplant',
-    public_preview: 'öffentliche Vorschau',
-    public_preview_glb: 'öffentliche 3D-Vorschau',
-    published: 'veröffentlicht',
-    review_only: 'in Prüfung',
-    reviewed: 'geprüft',
-    review: 'Prüfung',
-    source_review_only: 'Quellenprüfung intern',
-    verified: 'verifiziert'
-  };
-  return labels[value] ?? value.replace(/_/g, ' ');
-}
-
-function publicWorkflowValue(value: string) {
-  const labels: Record<string, string> = {
-    exact_projection: 'exakte Projektion',
-    private_blocked: 'privat gesperrt',
-    producer_live: 'Live-Erzeugung geprüft',
-    public_preview_ready: 'öffentliche Vorschau bereit',
-    ready: 'bereit',
-    recognized: 'erkannt',
-    source_review_only: 'Quellenprüfung intern',
-    model_layers_planned: 'Modellgruppen geplant'
-  };
-  return labels[value] ?? germanStatusLabel(value);
-}
-
-function publicEntryTypeLabel(value: string) {
-  const labels: Record<string, string> = {
-    building: 'Gebäude',
-    landscape: 'Landschaft',
-    theory: 'Theorie',
-    text: 'Text',
-    urban_space: 'Stadtraum',
-    exhibition: 'Ausstellung',
-    infrastructure: 'Infrastruktur'
-  };
-  return labels[value] ?? germanTechnicalLabel(value);
-}
-
-function publicStyleSectorLabel(value: StyleSectorId | string) {
-  const labels: Record<string, string> = {
-    ancient: 'Antike',
-    medieval: 'Mittelalter',
-    renaissance: 'Renaissance',
-    baroque: 'Barock',
-    modern_architecture: 'Moderne',
-    postwar_modern: 'Nachkriegsmoderne',
-    contemporary: 'Gegenwart',
-    sustainable_architecture: 'Nachhaltigkeit',
-    vernacular: 'Vernakulär',
-    landscape_urbanism: 'Landschaft und Stadt'
-  };
-  return labels[value] ?? String(value).replace(/_/g, ' ');
-}
-
-function publicSourceQualityLabel(value: string) {
-  const labels: Record<string, string> = {
-    verified_public_sources: 'öffentlich verifizierte Quellen',
-    captured_sources_with_diagrammatic_reconstruction: 'öffentliche Quellen mit eigener Diagrammrekonstruktion',
-    source_review_only: 'Quellenprüfung intern',
-    needs_source_review: 'Quellenprüfung nötig',
-    reviewed: 'geprüft',
-    verified: 'verifiziert'
-  };
-  return labels[value] ?? publicWorkflowValue(value);
 }
 
 function publicModelPackageNote(modelPackage: NonNullable<Entry['model_packages']>[number]) {

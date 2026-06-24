@@ -150,6 +150,54 @@ export function publicTechnicalLabel(value: string) {
   return labels[value] ?? value.replace(/[_-]/g, ' ');
 }
 
+export function publicStatusLabel(value: string) {
+  const labels: Record<string, string> = {
+    draft: 'Entwurf',
+    draft_review: 'Entwurf in Prüfung',
+    generated_needs_review: 'generiert, Prüfung nötig',
+    needs_review: 'Prüfung nötig',
+    needs_source: 'Quelle nötig',
+    needs_source_review: 'Quellenprüfung nötig',
+    needs_sources: 'Quellen nötig',
+    planned: 'geplant',
+    public_preview: 'öffentliche Vorschau',
+    public_preview_glb: 'öffentliche 3D-Vorschau',
+    published: 'veröffentlicht',
+    review: 'Prüfung',
+    review_only: 'in Prüfung',
+    reviewed: 'geprüft',
+    source_review_only: 'Quellenprüfung intern',
+    verified: 'verifiziert'
+  };
+  return labels[value] ?? publicTechnicalLabel(value);
+}
+
+export function publicWorkflowLabel(value: string) {
+  const labels: Record<string, string> = {
+    exact_projection: 'exakte Projektion',
+    private_blocked: 'privat gesperrt',
+    producer_live: 'Live-Erzeugung geprüft',
+    public_preview_ready: 'öffentliche Vorschau bereit',
+    ready: 'bereit',
+    recognized: 'erkannt',
+    source_review_only: 'Quellenprüfung intern',
+    model_layers_planned: 'Modellgruppen geplant'
+  };
+  return labels[value] ?? publicStatusLabel(value);
+}
+
+export function publicSourceQualityLabel(value: string) {
+  const labels: Record<string, string> = {
+    captured_sources_with_diagrammatic_reconstruction: 'öffentliche Quellen mit eigener Diagrammrekonstruktion',
+    needs_source_review: 'Quellenprüfung nötig',
+    reviewed: 'geprüft',
+    source_review_only: 'Quellenprüfung intern',
+    verified: 'verifiziert',
+    verified_public_sources: 'öffentlich verifizierte Quellen'
+  };
+  return labels[value] ?? publicWorkflowLabel(value);
+}
+
 export function readablePublicMetadataValue(value: string) {
   return value.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
