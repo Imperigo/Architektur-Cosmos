@@ -56,7 +56,7 @@ export default function ReferencesPage() {
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Pilotprojekt Villa Savoye</span>
             </div>
             <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
-              Architekturprojekte als prüfbare Dossiers
+              Aus Bauwerken werden prüfbare Referenzen
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
               Bauten werden mit Autorenschaft, Ort, Zeit, Quellen, Bildern, bereinigten Planebenen, Analysefeldern und Modellvorschauen erschlossen. Gezeigt werden ausschliesslich öffentlich freigegebene Medien und eigene diagrammatische Rekonstruktionen.
@@ -109,7 +109,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Villa Savoye / Pilotpaket</div>
-            <h2 className="mt-2 text-4xl font-semibold tracking-normal">Villa Savoye als vollständiger Referenzfall</h2>
+            <h2 className="mt-2 text-4xl font-semibold tracking-normal">Villa Savoye: fünf Punkte als Datenmodell</h2>
             <p className="mt-5 text-base leading-8 text-[#cbd1cc]">{villa.full_description}</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {villa.analysis_layers?.slice(0, 6).map((layer) => (
@@ -146,7 +146,7 @@ export default function ReferencesPage() {
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.92fr_1.08fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Zweites Pilotprojekt</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl als Schweizer Gegenwartspilot</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl: Pflegebau, Klosterstruktur, Materiallogik</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Ingenbohl wird als zweiter Referenz-Prototyp sichtbar, aber bewusst anders als Villa Savoye:
               Medien aus der privaten Recherche bleiben gesperrt. Geprüfte Analysefelder und die öffentliche
@@ -179,7 +179,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoAsset Brücke</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Aus Referenzen werden Bauteilgruppen</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Aus Lesarten entstehen wiederverwendbare Bauteilgruppen</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der öffentliche Pilot zeigt nicht nur Medien, sondern extrahierbare Prinzipien: Struktur, Zirkulation, Materialsystem und Zeichnungslogik. Das ist die Brücke von KosmoReferences zu KosmoAsset.
             </p>

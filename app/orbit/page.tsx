@@ -85,7 +85,7 @@ export default function OrbitPage() {
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Stand 23. Juni 2026</span>
             </div>
             <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
-              ArchitekturKosmos: Entwicklungsstand
+              Wo der ArchitekturKosmos bereits arbeitet
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
               Die öffentliche Website zeigt, welche Teile des ArchitekturKosmos bereits nutzbar sind, welche Piloten
@@ -123,7 +123,7 @@ export default function OrbitPage() {
         <section className="border-b border-white/10 py-10">
           <div className="mb-6 max-w-3xl">
             <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-[#57b6c2]">Systembereiche</div>
-            <h2 className="mt-2 text-3xl font-bold text-[#f4f6fa]">Was bereits funktioniert</h2>
+            <h2 className="mt-2 text-3xl font-bold text-[#f4f6fa]">Funktionen, die heute prüfbar sind</h2>
             <p className="mt-3 text-sm leading-7 text-[#b6bdcb]">
               Jeder Bereich hat eine klar getrennte Aufgabe. Öffentliche Freigabe erfolgt erst nach Inhalts- und Rechteprüfung.
             </p>
@@ -168,7 +168,7 @@ export default function OrbitPage() {
         <section className="grid gap-8 border-b border-white/10 py-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-[#57b6c2]">Pilotprojekte</div>
-            <h2 className="mt-2 text-3xl font-bold text-[#f4f6fa]">Vom Referenzprojekt zum Architekturwissen</h2>
+            <h2 className="mt-2 text-3xl font-bold text-[#f4f6fa]">Zwei Piloten zeigen den Weg vom Bau zum Wissen</h2>
             <p className="mt-4 text-sm leading-7 text-[#b6bdcb]">
               Die ersten Piloten erproben zwei unterschiedliche Wege: eine moderne Ikone mit öffentlich nutzbaren
               Medien und ein Schweizer Projekt mit bewusst gesperrten privaten Quellen.

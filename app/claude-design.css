@@ -270,8 +270,11 @@ textarea {
 }
 
 .ak-page-title {
-  font-size: 28px;
+  font-size: 38px;
   line-height: 1.04;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .ak-page-shell h2,

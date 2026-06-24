@@ -58,7 +58,7 @@ const bannedPhrases = [
   },
   {
     phrase: 'Assetbestand',
-    replacement: 'Geprüfte öffentliche Assets',
+    replacement: 'Freigegebene Bild-, Plan- und Modellelemente',
     reason: 'The assets page title should explain the public review boundary.'
   },
   {

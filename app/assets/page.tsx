@@ -51,10 +51,10 @@ export default function AssetsPage() {
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">3D-Vorschau</span>
             </div>
             <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
-              Bauteile, Materialien und Zeichnungen aus geprüften Referenzen
+              Aus Referenzen werden Bauteile
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
-              Der Bestand bündelt öffentlich freigegebene Bilder, eigene Plan- und Schnittdiagramme, Analyseebenen und reduzierte 3D-Modelle aus KosmoReferences. Private PDFs, Scans und interne Quellen bleiben ausgeschlossen.
+              Der Bestand bündelt öffentlich freigegebene Bilder, eigene Plan- und Schnittdiagramme, Analyseebenen und reduzierte 3D-Vorschauen aus KosmoReferences. Private PDFs, Scans und interne Quellen bleiben ausgeschlossen.
             </p>
           </div>
           <div className="border border-white/14 bg-[#11170c] p-5">
@@ -84,7 +84,7 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Öffentliche Freigabe</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Dateien werden erst nach Rechteprüfung zu Assets</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Erst die Rechteprüfung macht eine Datei zum Asset</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Das Asset-Register zählt nur öffentlich freigegebene Oberflächen. Ungeprüfte Kandidaten aus KosmoDraw, KosmoPublish und privaten Quellen bleiben als Status sichtbar, aber nicht als abrufbare Dateien.
             </p>
@@ -103,7 +103,7 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ordnung der Assetbibliothek</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Vom Projektbild zur wiederverwendbaren Bauinformation</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Bilder und Pläne werden zu Architekturbausteinen</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der öffentliche Asset-Pilot bleibt in Prüfung, zeigt aber bereits die spätere Struktur: Bilder und Zeichnungen sind Quellenoberflächen, daraus entstehen filterbare Architekturbausteine.
             </p>
@@ -132,7 +132,7 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ingenbohl Assetprüfung</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl zeigt Struktur, nicht gesperrte Quellen</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl liefert Struktur, Quellen bleiben geschützt</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               {ingenbohl.title} zeigt die nächste KosmoAsset-Brücke: geprüfte Analyse-, Material- und Strukturkandidaten
               sowie Modellstatus werden indexiert, aber Bilder, Pläne und private Quellen bleiben gesperrt.
@@ -161,7 +161,7 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Asset-Übernahme aus KosmoDraw</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Modell und Zeichnung liefern erst Kandidaten</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Zeichnung und Modell liefern Kandidaten, keine Freigaben</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der Prüfbericht sieht {kosmoDrawIntake.summary.asset_candidate_count} Kandidaten aus {kosmoDrawIntake.summary.bundle_count} Projektpaketen.
               Davon werden aktuell 0 automatisch öffentlich freigegeben.

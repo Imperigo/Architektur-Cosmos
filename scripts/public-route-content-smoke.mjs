@@ -13,13 +13,13 @@ const routes = [
   {
     path: '/orbit/',
     includes: [
-      'ArchitekturKosmos: Entwicklungsstand',
-      'Was bereits funktioniert',
+      'Wo der ArchitekturKosmos bereits arbeitet',
+      'Funktionen, die heute prüfbar sind',
       'Öffentliche Referenzen',
       'Öffentliche Assets',
       'KosmoDraw',
       'Kosmo KI',
-      'Vom Referenzprojekt zum Architekturwissen'
+      'Zwei Piloten zeigen den Weg vom Bau zum Wissen'
     ]
   },
   {
@@ -34,14 +34,14 @@ const routes = [
     path: '/references/',
     includes: [
       'KosmoReferences',
-      'Architekturprojekte als prüfbare Dossiers',
-      'Projektbestand',
+      'Aus Bauwerken werden prüfbare Referenzen',
+      'Öffentlich lesbare Referenzfälle',
       'KosmoDraw Übernahme',
       'Mengenprüfung aus KosmoDraw',
       'Planregister aus KosmoPublish',
       'Was öffentlich sichtbar sein darf',
-      'Villa Savoye als vollständiger Referenzfall',
-      'Aus Referenzen werden Bauteilgruppen',
+      'Villa Savoye: fünf Punkte als Datenmodell',
+      'Aus Lesarten entstehen wiederverwendbare Bauteilgruppen',
       'Medienfreigabe',
       'Villa Savoye',
       'Alterszentrum Kloster Ingenbohl'
@@ -51,13 +51,13 @@ const routes = [
     path: '/assets/',
     includes: [
       'KosmoAsset',
-      'Bauteile, Materialien und Zeichnungen aus geprüften Referenzen',
-      'Geprüfte öffentliche Assets',
+      'Aus Referenzen werden Bauteile',
+      'Freigegebene Bild-, Plan- und Modellelemente',
       'Asset-Übernahme aus KosmoDraw',
       'Mengenprüfung vor Assetübernahme',
       'Planregister aus KosmoPublish',
-      'Dateien werden erst nach Rechteprüfung zu Assets',
-      'Vom Projektbild zur wiederverwendbaren Bauinformation',
+      'Erst die Rechteprüfung macht eine Datei zum Asset',
+      'Bilder und Pläne werden zu Architekturbausteinen',
       'Alhambra: Raumordnung',
       'Metadaten ohne Rohdatei',
       'Villa Savoye',
