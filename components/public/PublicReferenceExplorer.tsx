@@ -73,6 +73,12 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
     setVisibleCount(referencePageSize);
   }, [query, style, material, view]);
 
+  function resetFilters() {
+    setQuery('');
+    setStyle('all');
+    setMaterial('all');
+  }
+
   return (
     <section className="public-explorer border-t border-white/12 py-8">
       <div className="public-explorer-head">
@@ -132,11 +138,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
         {hasActiveFilters ? (
           <button
             type="button"
-            onClick={() => {
-              setQuery('');
-              setStyle('all');
-              setMaterial('all');
-            }}
+            onClick={resetFilters}
             className="public-reset-button"
           >
             <RotateCcw aria-hidden="true" />
@@ -147,7 +149,17 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
         )}
       </div>
 
-      {view === 'grid' ? (
+      {visible.length === 0 ? (
+        <div className="public-empty-state">
+          <Search aria-hidden="true" />
+          <strong>Keine Referenz passt zu diesem Filter</strong>
+          <p>Suche, Epoche oder Material zurücksetzen, um den öffentlichen Bestand wieder vollständig zu sehen.</p>
+          <button type="button" className="public-reset-button" onClick={resetFilters}>
+            <RotateCcw aria-hidden="true" />
+            Filter zurücksetzen
+          </button>
+        </div>
+      ) : view === 'grid' ? (
         <div className="mt-6 grid gap-px bg-white/10 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((entry) => (
           <Link

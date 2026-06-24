@@ -81,6 +81,13 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
     setVisibleCount(assetPageSize);
   }, [query, kind, layer, project, view]);
 
+  function resetFilters() {
+    setQuery('');
+    setKind('all');
+    setLayer('all');
+    setProject('all');
+  }
+
   return (
     <section className="public-explorer border-t border-white/12 py-8">
       <div className="public-explorer-head">
@@ -147,12 +154,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
         {hasActiveFilters ? (
           <button
             type="button"
-            onClick={() => {
-              setQuery('');
-              setKind('all');
-              setLayer('all');
-              setProject('all');
-            }}
+            onClick={resetFilters}
             className="public-reset-button"
           >
             <RotateCcw aria-hidden="true" />
@@ -163,7 +165,17 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
         )}
       </div>
 
-      {view === 'grid' ? (
+      {visible.length === 0 ? (
+        <div className="public-empty-state">
+          <Search aria-hidden="true" />
+          <strong>Kein Asset passt zu diesem Filter</strong>
+          <p>Suche, Typ, Ebene oder Projekt zurücksetzen, um die öffentliche Assetbibliothek wieder vollständig zu sehen.</p>
+          <button type="button" className="public-reset-button" onClick={resetFilters}>
+            <RotateCcw aria-hidden="true" />
+            Filter zurücksetzen
+          </button>
+        </div>
+      ) : view === 'grid' ? (
         <div className="mt-6 grid gap-px bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
           {visible.map((asset) => (
           <a
