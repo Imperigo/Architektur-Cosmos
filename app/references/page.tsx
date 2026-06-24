@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
+import { PublicCardGrid, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -77,34 +78,30 @@ export default function ReferencesPage() {
 
         <PublicReferenceExplorer references={references} />
 
-        <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
+        <section className="border-t border-white/12 py-8">
+          <PublicCardGrid columns={4}>
           {readiness.map((item) => (
-            <div key={item.label} className="border border-white/12 bg-[#101513] p-4">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2]">{item.status}</div>
-              <h2 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.label}</h2>
-              <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
-            </div>
+            <PublicInfoCard key={item.label} accent="#66e1d2" kicker={item.status} title={item.label} body={<p>{item.detail}</p>} />
           ))}
+          </PublicCardGrid>
         </section>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Freigabestatus</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Was öffentlich sichtbar sein darf</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#66e1d2"
+          kicker="Freigabestatus"
+          title="Was öffentlich sichtbar sein darf"
+          body={(
+            <p>
               Referenzen, Assets und Modellvorschauen werden erst nach Rechte- und Inhaltsprüfung freigegeben. Zwischenstände aus KosmoDraw und KosmoPublish bleiben intern, bis der Owner sie ausdrücklich bestätigt.
             </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          )}
+        >
+          <PublicCardGrid columns={2}>
             {publicGateSummary.map((item) => (
-              <div key={item.label} className="border border-white/12 bg-[#101513] p-4">
-                <div className="text-3xl font-semibold text-[#f7f7f4]">{item.value}</div>
-                <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2]">{item.label}</div>
-                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
-              </div>
+              <PublicMetricCard key={item.label} accent="#66e1d2" label={item.label} value={item.value} detail={<p>{item.detail}</p>} />
             ))}
-          </div>
-        </section>
+          </PublicCardGrid>
+        </PublicSplitSection>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
@@ -195,11 +192,13 @@ export default function ReferencesPage() {
           </div>
         </section>
 
-        <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
-          <ProcessStep title="1 Bild erkennen" text="Öffentliche Bildkandidaten werden nach Rechte- und Lesbarkeitsstatus sortiert." />
-          <ProcessStep title="2 Plan säubern" text="Low-res Pläne werden als eigene, öffentliche Diagramme nachgezeichnet und vereinheitlicht." />
-          <ProcessStep title="3 Bauteile ordnen" text="KosmoDraw trennt Tragwerk, Fassade, Erschliessung, Material und Freiraum." />
-          <ProcessStep title="4 BIM skizzieren" text="KosmoVis zeigt eine 3D-Vorschau mit Modell-, Material- und Analysefiltern." />
+        <section className="border-t border-white/12 py-8">
+          <PublicCardGrid columns={4}>
+            <PublicInfoCard accent="#66e1d2" title="1 Bild erkennen" body={<p>Öffentliche Bildkandidaten werden nach Rechte- und Lesbarkeitsstatus sortiert.</p>} />
+            <PublicInfoCard accent="#66e1d2" title="2 Plan säubern" body={<p>Low-res Pläne werden als eigene, öffentliche Diagramme nachgezeichnet und vereinheitlicht.</p>} />
+            <PublicInfoCard accent="#66e1d2" title="3 Bauteile ordnen" body={<p>KosmoDraw trennt Tragwerk, Fassade, Erschliessung, Material und Freiraum.</p>} />
+            <PublicInfoCard accent="#66e1d2" title="4 BIM skizzieren" body={<p>KosmoVis zeigt eine 3D-Vorschau mit Modell-, Material- und Analysefiltern.</p>} />
+          </PublicCardGrid>
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
@@ -211,9 +210,9 @@ export default function ReferencesPage() {
               werden nicht in den Bericht kopiert; öffentlich freigegeben bleiben nach der Übernahme {kosmoDrawIntake.summary.public_ready_after_intake}.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <IntakeMetric label="Projektpakete" value={kosmoDrawIntake.summary.bundle_count} />
-              <IntakeMetric label="Öffnungen" value={kosmoDrawIntake.summary.opening_count} />
-              <IntakeMetric label="Unsichere Freigaben" value={kosmoDrawIntake.summary.unsafe_public_flag_count} />
+              <PublicMetricCard accent="#66e1d2" label="Projektpakete" value={kosmoDrawIntake.summary.bundle_count} />
+              <PublicMetricCard accent="#66e1d2" label="Öffnungen" value={kosmoDrawIntake.summary.opening_count} />
+              <PublicMetricCard accent="#66e1d2" label="Unsichere Freigaben" value={kosmoDrawIntake.summary.unsafe_public_flag_count} />
             </div>
           </div>
           <div className="grid gap-3">
@@ -249,9 +248,9 @@ export default function ReferencesPage() {
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <IntakeMetric label="Räume aggregiert" value={kosmoDrawDigitalization.aggregateCounts.rooms} />
-            <IntakeMetric label="Wände aggregiert" value={kosmoDrawDigitalization.aggregateCounts.walls} />
-            <IntakeMetric label="Fehlende Bundlefelder" value={kosmoDrawDigitalization.missingBundleFields.length} />
+            <PublicMetricCard accent="#66e1d2" label="Räume aggregiert" value={kosmoDrawDigitalization.aggregateCounts.rooms} />
+            <PublicMetricCard accent="#66e1d2" label="Wände aggregiert" value={kosmoDrawDigitalization.aggregateCounts.walls} />
+            <PublicMetricCard accent="#66e1d2" label="Fehlende Bundlefelder" value={kosmoDrawDigitalization.missingBundleFields.length} />
           </div>
         </section>
 
@@ -268,32 +267,14 @@ export default function ReferencesPage() {
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <IntakeMetric label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
-            <IntakeMetric label="Toolfelder" value={kosmoPublishPlanCatalog.outputFields.length} />
-            <IntakeMetric label="Öffentliche Assets" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
+            <PublicMetricCard accent="#66e1d2" label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
+            <PublicMetricCard accent="#66e1d2" label="Toolfelder" value={kosmoPublishPlanCatalog.outputFields.length} />
+            <PublicMetricCard accent="#66e1d2" label="Öffentliche Assets" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
           </div>
         </section>
 
       </div>
     </main>
-  );
-}
-
-function ProcessStep({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="border border-white/12 bg-[#101513] p-4">
-      <h3 className="text-lg font-semibold text-[#f7f7f4]">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{text}</p>
-    </div>
-  );
-}
-
-function IntakeMetric({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="border border-white/12 bg-[#101513] p-4">
-      <div className="text-3xl font-semibold text-[#f7f7f4]">{value}</div>
-      <div className="mt-2 text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{label}</div>
-    </div>
   );
 }
 

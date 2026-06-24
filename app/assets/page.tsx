@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Metadata } from 'next';
 import { PublicAssetExplorer } from '@/components/public/PublicAssetExplorer';
+import { PublicCardGrid, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -74,31 +75,31 @@ export default function AssetsPage() {
 
         <PublicAssetExplorer assets={assets} />
 
-        <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
-          <AssetCapability title="Bilder" text="Nur öffentlich freigegebene Assets aus geprüften lokalen Quellen." />
-          <AssetCapability title="Pläne" text="Eigene diagrammatische Rekonstruktionen für Planlesung und Stilvereinheitlichung." />
-          <AssetCapability title="Analyseebenen" text="Tragwerk, Material, Erschliessung, Fassade und Typologie als filterbare Metadaten." />
-          <AssetCapability title="3D" text="Öffentliche, reduzierte Modellvorschauen als skizzenhaftes BIM-Verständnis." />
+        <section className="border-t border-white/12 py-8">
+          <PublicCardGrid columns={4}>
+            <PublicInfoCard accent="#b9f06a" title="Bilder" body={<p>Nur öffentlich freigegebene Assets aus geprüften lokalen Quellen.</p>} />
+            <PublicInfoCard accent="#b9f06a" title="Pläne" body={<p>Eigene diagrammatische Rekonstruktionen für Planlesung und Stilvereinheitlichung.</p>} />
+            <PublicInfoCard accent="#b9f06a" title="Analyseebenen" body={<p>Tragwerk, Material, Erschliessung, Fassade und Typologie als filterbare Metadaten.</p>} />
+            <PublicInfoCard accent="#b9f06a" title="3D" body={<p>Öffentliche, reduzierte Modellvorschauen als skizzenhaftes BIM-Verständnis.</p>} />
+          </PublicCardGrid>
         </section>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Öffentliche Freigabe</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Erst die Rechteprüfung macht eine Datei zum Asset</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#b9f06a"
+          kicker="Öffentliche Freigabe"
+          title="Erst die Rechteprüfung macht eine Datei zum Asset"
+          body={(
+            <p>
               Das Asset-Register zählt nur öffentlich freigegebene Oberflächen. Ungeprüfte Kandidaten aus KosmoDraw, KosmoPublish und privaten Quellen bleiben als Status sichtbar, aber nicht als abrufbare Dateien.
             </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          )}
+        >
+          <PublicCardGrid columns={2}>
             {publicGateSummary.map((item) => (
-              <div key={item.label} className="border border-white/12 bg-[#11170c] p-4">
-                <div className="text-3xl font-semibold text-[#f7f7f4]">{item.value}</div>
-                <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a]">{item.label}</div>
-                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
-              </div>
+              <PublicMetricCard key={item.label} accent="#b9f06a" label={item.label} value={item.value} detail={<p>{item.detail}</p>} />
             ))}
-          </div>
-        </section>
+          </PublicCardGrid>
+        </PublicSplitSection>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
@@ -119,14 +120,12 @@ export default function AssetsPage() {
           </div>
         </section>
 
-        <section className="grid gap-4 border-t border-white/12 py-8 md:grid-cols-4">
+        <section className="border-t border-white/12 py-8">
+          <PublicCardGrid columns={4}>
           {readiness.map((item) => (
-            <div key={item.label} className="border border-white/12 bg-[#11170c] p-4">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a]">{item.status}</div>
-              <h2 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.label}</h2>
-              <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
-            </div>
+            <PublicInfoCard key={item.label} accent="#b9f06a" kicker={item.status} title={item.label} body={<p>{item.detail}</p>} />
           ))}
+          </PublicCardGrid>
         </section>
 
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
@@ -196,9 +195,9 @@ export default function AssetsPage() {
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <AssetMetric label="Geschosse" value={kosmoDrawDigitalization.aggregateCounts.floors} />
-            <AssetMetric label="NGF m2" value={kosmoDrawDigitalization.aggregateCounts.netFloorAreaM2} />
-            <AssetMetric label="Öffentlich bereit" value={kosmoDrawDigitalization.publicReadyAfterIntake} />
+            <PublicMetricCard accent="#b9f06a" label="Geschosse" value={kosmoDrawDigitalization.aggregateCounts.floors} />
+            <PublicMetricCard accent="#b9f06a" label="NGF m2" value={kosmoDrawDigitalization.aggregateCounts.netFloorAreaM2} />
+            <PublicMetricCard accent="#b9f06a" label="Öffentlich bereit" value={kosmoDrawDigitalization.publicReadyAfterIntake} />
           </div>
         </section>
 
@@ -213,31 +212,13 @@ export default function AssetsPage() {
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <AssetMetric label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
-            <AssetMetric label="Felder" value={kosmoPublishPlanCatalog.outputFields.length} />
-            <AssetMetric label="Öffentliche Pläne" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
+            <PublicMetricCard accent="#b9f06a" label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
+            <PublicMetricCard accent="#b9f06a" label="Felder" value={kosmoPublishPlanCatalog.outputFields.length} />
+            <PublicMetricCard accent="#b9f06a" label="Öffentliche Pläne" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
           </div>
         </section>
 
       </div>
     </main>
-  );
-}
-
-function AssetCapability({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="border border-white/12 bg-[#11170c] p-4">
-      <h2 className="text-lg font-semibold text-[#f7f7f4]">{title}</h2>
-      <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{text}</p>
-    </div>
-  );
-}
-
-function AssetMetric({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="border border-white/12 bg-[#11170c] p-4">
-      <div className="text-3xl font-semibold text-[#f7f7f4]">{value}</div>
-      <div className="mt-2 text-[10px] uppercase tracking-[0.16em] text-[#b9f06a]">{label}</div>
-    </div>
   );
 }
