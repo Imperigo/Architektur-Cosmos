@@ -1102,7 +1102,10 @@ textarea {
   }
 
   .ak-mobile-menu-button {
+    position: relative;
+    z-index: 94;
     display: inline-flex;
+    flex: 0 0 44px;
     width: 44px;
     padding: 0;
   }
@@ -1137,6 +1140,23 @@ textarea {
 
   .ak-fullscreen-with-header > :not(.ak-site-header) {
     height: calc(100dvh - 60px) !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .ak-site-brand {
+    max-width: calc(100% - 56px);
+  }
+
+  .ak-site-wordmark {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+  }
+
+  .ak-site-context {
+    max-width: 190px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

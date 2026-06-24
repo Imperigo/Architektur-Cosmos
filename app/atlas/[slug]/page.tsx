@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { CSSProperties } from 'react';
+import { Boxes, Images, Layers3, LibraryBig, Network, Search } from 'lucide-react';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { MediaLightbox } from '@/components/atlas/MediaLightbox';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
@@ -120,6 +121,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
       </div>
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-10">
         <PublicSiteHeader active="atlas" context="Projektdossier" />
+        <DossierNavigation entry={displayEntry} accent={accent} />
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1.08fr)_360px] lg:py-14">
           <div>
@@ -161,19 +163,19 @@ export default async function EntryPage({ params }: EntryPageProps) {
 
         <section className="entry-study-grid grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
           <StudyCard
-            title="Lesen"
-            label="Lernimpuls"
+            title="Lesart"
+            label="Analysezugang"
             body={studyPrompt(displayEntry)}
             accent={accent}
           />
           <StudyCard
-            title="Vergleichen"
+            title="Vergleichsachse"
             label={entry.style_sector.replace(/_/g, ' ')}
             body={peers.length ? peers.map((peer) => peer.title).join(' / ') : 'Noch keine nahen Vergleichseintraege.'}
             accent={accent}
           />
           <StudyCard
-            title="Archiv"
+            title="Dossierstand"
             label={`${archiveScore}% strukturiert`}
             body={archiveSummary(displayEntry)}
             accent={accent}
@@ -184,7 +186,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Objektmedien</div>
-              <h2 className="mt-2 text-3xl text-[#f7f7f4]">Bilder, Plan und Schnitt</h2>
+              <h2 className="mt-2 text-3xl text-[#f7f7f4]">Öffentliche Bild- und Zeichnungsebene</h2>
             </div>
             <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
               Die vier Slots werden als lesbare Projektgrundlage gezeigt: Atmosphäre, Raum, Grundrisslogik und Schnittsequenz.
@@ -204,7 +206,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
         </section>
 
         {displayEntry.analysis_layers?.length || displayEntry.analysis_observations?.length ? (
-          <section className="grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
+          <section id="analysis-layers" className="grid gap-4 border-t border-white/12 py-8 lg:grid-cols-3">
             <AnalysisCard
               title="Tragwerk"
               accent={accent}
@@ -230,7 +232,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
           <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
             <article className="entry-study-card border border-white/14 bg-[#071315]/55 p-5">
               <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Referenzaufbau</div>
-              <h2 className="mt-3 text-2xl text-[#f7f7f4]">Wie aus Quellen ein belastbares Projektdossier wird</h2>
+              <h2 className="mt-3 text-2xl text-[#f7f7f4]">Vom Quellenhinweis zur überprüfbaren Projektstruktur</h2>
               <div className="mt-5 grid gap-3 text-sm leading-6 text-[#cfcfca] sm:grid-cols-2">
                 {displayEntry.ingestion_status ? (
                   <>
@@ -298,8 +300,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
         ) : null}
 
         {compareEntries.length ? (
-          <section className="border-t border-white/12 py-8">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Vergleichen mit</h2>
+          <section id="entry-comparison" className="border-t border-white/12 py-8">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Vergleichbare Referenzknoten</h2>
             <div className="grid gap-3 lg:grid-cols-3">
               {compareEntries.map((candidate) => (
                 <Link key={candidate.id} href={`/atlas/${candidate.slug}/`} className="entry-link entry-study-card border border-white/14 bg-[#071315]/55 p-4">
@@ -312,8 +314,8 @@ export default async function EntryPage({ params }: EntryPageProps) {
           </section>
         ) : null}
 
-        <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Relationen</h2>
+        <section id="entry-network" className="border-t border-white/12 py-8">
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: accent }}>Netzwerkrelationen</h2>
           {related.length ? (
             <div className="entry-relation-network grid gap-3 sm:grid-cols-2">
               {related.map(({ relation, entry: relatedEntry }, index) => (
@@ -369,7 +371,7 @@ function PublicPilotSection({ entry, accent }: { entry: Entry; accent: string })
         <div>
           <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Freigabestatus des Pilotprojekts</div>
           <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
-            {entry.title} verbindet Atlas, KosmoReferences und KosmoAsset.
+            Prüfstatus, Modellspur und Asset-Brücke
           </h2>
         </div>
         <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
@@ -398,6 +400,52 @@ function PublicPilotSection({ entry, accent }: { entry: Entry; accent: string })
         ))}
       </div>
     </section>
+  );
+}
+
+function DossierNavigation({ entry, accent }: { entry: Entry; accent: string }) {
+  const items = [
+    { href: '#model-analysis', label: '3D / Layer', detail: 'Modell, Material, Tragwerk', Icon: Layers3 },
+    { href: '#media-gallery', label: 'Medien', detail: 'Bild, Plan, Schnitt', Icon: Images },
+    { href: '#analysis-layers', label: 'Analyse', detail: 'Struktur und Tektonik', Icon: Search },
+    { href: '#entry-network', label: 'Netzwerk', detail: 'Relationen und Vergleich', Icon: Network },
+    { href: '/references/', label: 'Referenzen', detail: 'öffentliche Dossiers', Icon: LibraryBig },
+    { href: '/assets/', label: 'Assets', detail: 'Bauteile und Vorschauen', Icon: Boxes }
+  ];
+
+  return (
+    <nav
+      className="entry-dossier-nav"
+      aria-label={`${entry.title} Dossiernavigation`}
+      style={{ '--entry-accent': accent } as CSSProperties}
+    >
+      {items.map((item) => {
+        const Icon = item.Icon;
+        const content = (
+          <>
+            <Icon aria-hidden="true" />
+            <span>
+              <strong>{item.label}</strong>
+              <small>{item.detail}</small>
+            </span>
+          </>
+        );
+
+        if (item.href.startsWith('#')) {
+          return (
+            <a key={item.href} href={item.href} className="entry-dossier-nav-link">
+              {content}
+            </a>
+          );
+        }
+
+        return (
+          <Link key={item.href} href={item.href} className="entry-dossier-nav-link">
+            {content}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
 
@@ -628,12 +676,12 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
       : 'Modellaufbau offen';
 
   return (
-    <section className="border-t border-white/12 py-10">
+    <section id="model-analysis" className="border-t border-white/12 py-10">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="text-[10px] uppercase tracking-[0.24em]" style={{ color: accent }}>3D-Referenzkern</div>
           <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
-            Bauteile, Materialien und Modellstruktur
+            Modellstruktur als lesbarer Gebäudekern
           </h2>
         </div>
         <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
@@ -694,7 +742,7 @@ function ArchitectureTextSection({ entry, accent }: { entry: Entry; accent: stri
   const chapters = text.chapters.slice(0, 4);
 
   return (
-    <section className="entry-architecture-text border-t border-white/12 py-10">
+    <section id="architecture-reading" className="entry-architecture-text border-t border-white/12 py-10">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
         <div>
           <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Architektonische Lesart</div>
@@ -722,7 +770,7 @@ function ArchitectureTextSection({ entry, accent }: { entry: Entry; accent: stri
 
 function ObjectIdentityPanel({ entry, profile, accent }: { entry: Entry; profile: EntryVisualProfile; accent: string }) {
   return (
-    <section className="entry-object-signature border-t border-white/12 py-8">
+    <section id="object-signature" className="entry-object-signature border-t border-white/12 py-8">
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <article className="entry-material-board border border-white/14 bg-[#071315]/60 p-5">
           <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Objekt-Signatur</div>
