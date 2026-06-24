@@ -1,4 +1,5 @@
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
+import { publicEntryTypeLabel } from '@/lib/public-labels';
 import type { Entry } from '@/lib/types';
 
 type ProjectPreviewCardProps = {
@@ -45,7 +46,7 @@ export function ProjectPreviewCard({ entry, x, y, width = 260 }: ProjectPreviewC
         })}
       </g>
       <text x={textX} y={y + 141} fill="#b8b8b8" fontSize="7.4" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.16em">
-        ÖFFNEN · {entryTypeLabel(entry.entry_type).toUpperCase()}
+        ÖFFNEN · {publicEntryTypeLabel(entry.entry_type).toUpperCase()}
       </text>
     </g>
   );
@@ -109,15 +110,4 @@ function themeColor(index: number) {
 
 function formatYear(year: number) {
   return year < 0 ? `${Math.abs(year)} v. Chr.` : `${year}`;
-}
-
-function entryTypeLabel(value: string) {
-  const labels: Record<string, string> = {
-    building: 'Gebäude',
-    housing: 'Wohnbau',
-    landscape: 'Landschaft',
-    infrastructure: 'Infrastruktur',
-    urban_plan: 'Stadtentwurf'
-  };
-  return labels[value] ?? value.replace(/_/g, ' ');
 }

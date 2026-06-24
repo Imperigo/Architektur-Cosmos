@@ -1,6 +1,7 @@
 import { ProjectMediaGrid } from '@/components/atlas/ProjectMediaGrid';
 import { styleSectorColors } from '@/lib/atlas-layout';
 import { prettifyGermanText } from '@/lib/display-text';
+import { publicEntryTypeLabel, publicStyleSectorLabel, publicTechnicalLabel } from '@/lib/public-labels';
 import type { Entry, StyleSectorId } from '@/lib/types';
 
 type ProjectDetailCardProps = {
@@ -244,7 +245,7 @@ function archiveStatusMetrics(values: { sources: number; media: number; models: 
 }
 
 function summaryList(items: string[] | undefined, maxItems: number) {
-  const cleanItems = (items ?? []).map((item) => technicalLabel(item));
+  const cleanItems = (items ?? []).map((item) => publicTechnicalLabel(item));
   if (cleanItems.length === 0) return 'Modellgruppen offen';
   const visible = cleanItems.slice(0, maxItems).join(' / ');
   const suffix = cleanItems.length > maxItems ? ` +${cleanItems.length - maxItems}` : '';
@@ -253,7 +254,7 @@ function summaryList(items: string[] | undefined, maxItems: number) {
 
 function cleanDatabaseTag(tag: string) {
   const parts = tag.split(':');
-  return technicalLabel(parts.length > 1 ? parts.slice(1).join(':') : tag);
+  return publicTechnicalLabel(parts.length > 1 ? parts.slice(1).join(':') : tag);
 }
 
 function wrapText(text: string, maxChars: number) {
@@ -289,7 +290,7 @@ function courseGroupLabel(entry: Entry) {
   if (combined.includes('global') || combined.includes('urban')) return 'Global History ETH';
   if (combined.includes('architekturgeschichte') || combined.includes('architecture_history') || combined.includes('architectural_history')) return 'Architekturgeschichte ETH';
   if (combined.includes('theory')) return 'Theoriegeschichte ETH';
-  return technicalLabel(entry.source_quality);
+  return publicTechnicalLabel(entry.source_quality);
 }
 
 function sourceLabelForEntry(entry: Entry) {
@@ -310,52 +311,9 @@ function primaryMediaCredit(entry: Entry) {
 }
 
 function layerLabelForEntry(entry: Entry) {
-  return `${entryTypeLabel(entry.entry_type)} / ${styleSectorLabel(entry.style_sector)}`;
+  return `${publicEntryTypeLabel(entry.entry_type)} / ${publicStyleSectorLabel(entry.style_sector)}`;
 }
 
 function styleColor(styleSector: StyleSectorId) {
   return styleSectorColors[styleSector];
-}
-
-function entryTypeLabel(value: string) {
-  const labels: Record<string, string> = {
-    building: 'Gebäude',
-    housing: 'Wohnbau',
-    infrastructure: 'Infrastruktur',
-    landscape: 'Landschaft',
-    urban_plan: 'Stadtentwurf'
-  };
-  return labels[value] ?? technicalLabel(value);
-}
-
-function styleSectorLabel(value: string) {
-  const labels: Record<string, string> = {
-    ancient: 'Antike',
-    early_modern: 'Frühe Neuzeit',
-    modern_architecture: 'Moderne',
-    postwar: 'Nachkriegsmoderne',
-    contemporary: 'Gegenwart'
-  };
-  return labels[value] ?? technicalLabel(value);
-}
-
-function technicalLabel(value: string) {
-  const labels: Record<string, string> = {
-    analysis: 'Analyse',
-    circulation: 'Erschliessung',
-    context: 'Kontext',
-    envelope: 'Fassade',
-    material_system: 'Materialsystem',
-    modern_architecture: 'Moderne',
-    plan_geometry: 'Plangeometrie',
-    public_preview: 'öffentliche Vorschau',
-    public_preview_glb: 'öffentliche 3D-Vorschau',
-    reviewed: 'geprüft',
-    source_reconstruction: 'Quellenrekonstruktion',
-    spatial_order: 'Raumordnung',
-    structure: 'Tragwerk',
-    tectonics: 'Tektonik',
-    typology: 'Typologie'
-  };
-  return labels[value] ?? value.replace(/[_-]/g, ' ');
 }
