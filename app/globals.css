@@ -7832,7 +7832,9 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .entry-page h1 {
     font-size: clamp(2rem, 11.5vw, 3.45rem);
     line-height: 0.98;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
   }
 
   .entry-object-backdrop {
@@ -7880,10 +7882,6 @@ html[data-cosmos-browser="opera"] .relation-strand {
   .entry-page .entry-relation-card,
   .entry-page .entry-media-card {
     padding: 14px;
-  }
-
-  .entry-page .entry-archive-panel {
-    order: -1;
   }
 
   .entry-page .entry-study-grid {
