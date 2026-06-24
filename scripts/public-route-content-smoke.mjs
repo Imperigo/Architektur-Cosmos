@@ -34,8 +34,8 @@ const routes = [
     path: '/references/',
     includes: [
       'KosmoReferences',
-      'Aus Bauwerken werden prüfbare Referenzen',
-      'Öffentlich lesbare Referenzfälle',
+      'Vom Bauwerk zum prüfbaren Dossier',
+      'Referenzdossiers im öffentlichen Bestand',
       'KosmoDraw Übernahme',
       'Mengenprüfung aus KosmoDraw',
       'Planregister aus KosmoPublish',
@@ -51,8 +51,8 @@ const routes = [
     path: '/assets/',
     includes: [
       'KosmoAsset',
-      'Aus Referenzen werden Bauteile',
-      'Freigegebene Bild-, Plan- und Modellelemente',
+      'Bauteile aus geprüften Referenzen',
+      'Öffentliche Assets nach Projekt und Ebene',
       'Asset-Übernahme aus KosmoDraw',
       'Mengenprüfung vor Assetübernahme',
       'Planregister aus KosmoPublish',

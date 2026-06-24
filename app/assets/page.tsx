@@ -51,7 +51,7 @@ export default function AssetsPage() {
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">3D-Vorschau</span>
             </div>
             <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
-              Aus Referenzen werden Bauteile
+              Bauteile aus geprüften Referenzen
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
               Der Bestand bündelt öffentlich freigegebene Bilder, eigene Plan- und Schnittdiagramme, Analyseebenen und reduzierte 3D-Vorschauen aus KosmoReferences. Private PDFs, Scans und interne Quellen bleiben ausgeschlossen.

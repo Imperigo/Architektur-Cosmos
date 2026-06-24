@@ -76,12 +76,12 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
 
   return (
     <section className="public-explorer border-t border-white/12 py-8">
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+      <div className="public-explorer-head">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#57b6c2]">Öffentliche Assetbibliothek</div>
-          <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Freigegebene Bild-, Plan- und Modellelemente</h2>
+          <h2 className="public-explorer-title">Öffentliche Assets nach Projekt und Ebene</h2>
         </div>
-        <div className="grid gap-2 sm:grid-cols-2 xl:w-[860px] xl:grid-cols-[1.25fr_0.8fr_1fr_1fr_auto]">
+        <div className="public-filter-grid public-asset-filter-grid">
           <label className="public-filter-field">
             <span className="public-filter-label">Suche</span>
             <Search aria-hidden="true" />
@@ -125,7 +125,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
           </label>
           <div className="public-filter-field">
             <span className="public-filter-label">Ansicht</span>
-            <div className="ak-control grid h-11 grid-cols-2 p-1" aria-label="Ansicht">
+            <div className="public-view-toggle ak-control" aria-label="Ansicht">
               <AssetViewButton active={view === 'grid'} onClick={() => setView('grid')} icon={<Grid3X3 aria-hidden="true" />}>Raster</AssetViewButton>
               <AssetViewButton active={view === 'index'} onClick={() => setView('index')} icon={<List aria-hidden="true" />}>Index</AssetViewButton>
             </div>
@@ -133,7 +133,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-y border-white/10 py-3">
+      <div className="public-results-bar">
         <div className="text-sm text-[#aeb8b2]">
           <strong className="font-semibold text-[#f7f7f4]">{filtered.length}</strong> von {assets.length} öffentlichen Assets sichtbar.
         </div>
@@ -146,13 +146,13 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               setLayer('all');
               setProject('all');
             }}
-            className="inline-flex min-h-9 items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2] transition hover:text-white"
+            className="public-reset-button"
           >
-            <RotateCcw className="h-[18px] w-[18px]" aria-hidden="true" />
+            <RotateCcw aria-hidden="true" />
             Filter zurücksetzen
           </button>
         ) : (
-          <span className="text-[10px] uppercase tracking-[0.1em] text-[#8b92a2]">Rechteprüfung aktiv</span>
+          <span className="public-status-pill">Rechteprüfung aktiv</span>
         )}
       </div>
 
@@ -219,7 +219,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
           <button
             type="button"
             onClick={() => setVisibleCount((count) => count + assetPageSize)}
-            className="inline-flex min-h-10 items-center rounded-lg border border-[#57b6c2]/45 px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2] transition hover:bg-[#57b6c2] hover:text-[#0b1108]"
+            className="public-load-more-button"
           >
             Weitere {Math.min(assetPageSize, filtered.length - visible.length)} laden
           </button>
@@ -235,9 +235,7 @@ function AssetViewButton({ active, onClick, icon, children }: { active: boolean;
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 rounded-md font-mono text-[10px] font-semibold uppercase tracking-[0.08em] transition [&>svg]:h-[18px] [&>svg]:w-[18px] ${
-        active ? 'bg-[#57b6c2] text-[#0b1108]' : 'text-[#8b92a2] hover:text-white'
-      }`}
+      className={`public-view-button ${active ? 'is-active' : ''}`}
     >
       {icon}{children}
     </button>
