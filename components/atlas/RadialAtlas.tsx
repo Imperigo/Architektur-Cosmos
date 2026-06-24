@@ -1,5 +1,6 @@
 'use client';
 
+import { GitBranch, Minus, Plus, RotateCcw } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type DragEvent, type MouseEvent as ReactMouseEvent, type PointerEvent, type RefObject, type TouchEvent as ReactTouchEvent, type WheelEvent as ReactWheelEvent } from 'react';
 import { ProjectDetailCard, type ProjectDetailFilter } from '@/components/atlas/ProjectDetailCard';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
@@ -117,7 +118,7 @@ type SourceLensId = (typeof sourceLensDefinitions)[number]['id'];
 type SourceLens = SourceLensId | null;
 const tagLayerDefinitions = [
   { id: 'public_space', label: 'Raum', terms: ['public-space', 'polis', 'city', 'urban', 'plaza', 'garden', 'courtyard', 'landscape-urbanism'] },
-  { id: 'reuse', label: 'Reuse', terms: ['reuse', 'industrial-reuse', 'palimpsest', 'urban-repair', 'conversion', 'umbau', 'renovation'] },
+  { id: 'reuse', label: 'Umbau', terms: ['reuse', 'industrial-reuse', 'palimpsest', 'urban-repair', 'conversion', 'umbau', 'renovation'] },
   { id: 'infrastructure', label: 'Infra', terms: ['infrastructure', 'rail', 'water', 'drainage', 'transport', 'bridge', 'canal'] },
   { id: 'landscape', label: 'Land', terms: ['landscape', 'garden', 'vegetation', 'topography', 'climate-landscape', 'terrain'] },
   { id: 'material', label: 'Material', terms: ['material:', 'stone', 'brick', 'concrete', 'glass', 'wood', 'steel', 'mud_brick', 'limestone', 'vegetation'] },
@@ -2108,9 +2109,15 @@ function MobileAtlasHud({
           <small>Pinch zoomt · Doppeltipp setzt Lupe</small>
         </p>
         <div>
-          <button type="button" onClick={(event) => stopAndRun(event, onZoomOut)} aria-label="Lupe verkleinern">−</button>
-          <button type="button" onClick={(event) => stopAndRun(event, onResetZoom)} aria-label="Lupe zurücksetzen">1:1</button>
-          <button type="button" onClick={(event) => stopAndRun(event, onZoomIn)} aria-label="Lupe vergrößern">+</button>
+          <button type="button" onClick={(event) => stopAndRun(event, onZoomOut)} aria-label="Lupe verkleinern">
+            <Minus aria-hidden="true" />
+          </button>
+          <button type="button" onClick={(event) => stopAndRun(event, onResetZoom)} aria-label="Lupe zurücksetzen">
+            <RotateCcw aria-hidden="true" />
+          </button>
+          <button type="button" onClick={(event) => stopAndRun(event, onZoomIn)} aria-label="Lupe vergrössern">
+            <Plus aria-hidden="true" />
+          </button>
         </div>
       </section>
 
@@ -2120,11 +2127,12 @@ function MobileAtlasHud({
         </button>
         {tagLayerDefinitions.map((layer) => (
           <button key={layer.id} type="button" className={activeTagLayer === layer.id ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectTagLayer(layer.id))} aria-pressed={activeTagLayer === layer.id}>
-            {layer.label}
+            {layer.id === 'material' ? 'Mat.' : layer.label}
           </button>
         ))}
         <button type="button" className={showRelations ? 'mobile-atlas-active' : ''} onClick={(event) => stopAndRun(event, onToggleRelations)} aria-pressed={showRelations}>
-          Netz
+          <GitBranch aria-hidden="true" />
+          <span>Netz</span>
         </button>
       </nav>
     </div>

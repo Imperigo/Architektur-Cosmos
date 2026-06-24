@@ -2722,6 +2722,14 @@ body:has(.orbit-page) {
   transition: border-color 140ms ease, color 140ms ease, background 140ms ease, transform 140ms ease;
 }
 
+.mobile-atlas-gesture button svg,
+.mobile-atlas-dock button svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  stroke-width: 1.75;
+}
+
 .mobile-atlas-gesture button:active {
   border-color: rgb(0 231 255 / 72%);
   background: rgb(0 231 255 / 16%);
@@ -2742,6 +2750,10 @@ body:has(.orbit-page) {
 
 .mobile-atlas-dock button {
   flex: 1 1 calc(25% - 7px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   min-width: 68px;
   min-height: 48px;
   border: 1px solid rgb(247 247 244 / 22%);
