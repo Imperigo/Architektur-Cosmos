@@ -132,7 +132,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
               <span className="border border-white/15 px-2.5 py-1">{yearLabel}</span>
               <span className="border border-white/15 px-2.5 py-1">{publicEntryTypeLabel(entry.entry_type)}</span>
               <span className="border px-2.5 py-1" style={{ borderColor: accent, color: accent }}>{publicStyleSectorLabel(entry.style_sector)}</span>
-              {entry.database_profile ? <span className="border px-2.5 py-1" style={{ borderColor: accent, color: accent }}>Datenbank Pilot</span> : null}
+              {entry.database_profile ? <span className="border px-2.5 py-1" style={{ borderColor: accent, color: accent }}>Referenzpilot</span> : null}
             </div>
             <h1 className="max-w-4xl text-4xl font-semibold leading-[0.95] tracking-normal text-[#f7f7f4] sm:text-6xl lg:text-7xl">
               {entry.title}
@@ -200,7 +200,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-3">
           <InfoBlock title="Themen" items={displayEntry.themes} accent={accent} />
           <InfoBlock title="Quellenpfad" items={sourceItems(displayEntry)} accent={accent} />
-          <InfoBlock title="Datenbank Tags" items={displayEntry.database_tags ?? []} accent={accent} empty="Noch keine Datenbank-Tags" />
+          <InfoBlock title="Dossiermerkmale" items={displayEntry.database_tags ?? []} accent={accent} empty="Noch keine Dossiermerkmale" />
         </section>
 
         {displayEntry.analysis_layers?.length || displayEntry.analysis_observations?.length ? (

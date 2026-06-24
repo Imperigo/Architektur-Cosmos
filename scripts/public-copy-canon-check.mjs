@@ -37,6 +37,11 @@ const bannedPhrases = [
     reason: 'The public site should describe architecture dossiers, not database internals.'
   },
   {
+    phrase: 'Datenbank Pilot',
+    replacement: 'Referenzpilot',
+    reason: 'Mixed-case chip copy can render as uppercase in the public UI.'
+  },
+  {
     phrase: 'ARCHIVPROFIL',
     replacement: 'DOSSIERSTAND',
     reason: 'Dossierstand is clearer for public reference readiness.'
@@ -80,6 +85,26 @@ const bannedPhrases = [
     phrase: 'Wurmloch-Status',
     replacement: 'Erfassung',
     reason: 'Internal metaphors should not appear as status copy on public pages.'
+  },
+  {
+    phrase: 'GLB-Modelle',
+    replacement: '3D-Vorschauen',
+    reason: 'Public copy should describe the visible model result, not the file format.'
+  },
+  {
+    phrase: 'GLB-Hinweis',
+    replacement: '3D-Vorschau',
+    reason: 'Public copy should not expose model file format jargon.'
+  },
+  {
+    phrase: 'vorbereiteten Layern',
+    replacement: 'vorbereiteten Analysegruppen',
+    reason: 'Layer wording reads like production shorthand in public UI.'
+  },
+  {
+    phrase: '3D-Modellbasis',
+    replacement: '3D-Vorschau',
+    reason: 'The public archive should label the user-facing model preview, not the backing basis.'
   }
 ];
 

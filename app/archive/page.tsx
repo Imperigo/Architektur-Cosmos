@@ -14,7 +14,7 @@ const allRelationen = relations as EntryRelation[];
 
 export const metadata: Metadata = {
   title: 'KosmoData Archiv | Architektur Kosmos',
-  description: 'Statische Vorschau der KosmoData-Archivstruktur, vorbereitet für Cloudflare D1 und spätere Medien- und Modellspeicherung.'
+  description: 'Statische Vorschau der KosmoData-Archivstruktur, vorbereitet für geprüfte Referenz-, Medien- und Modellabfragen.'
 };
 
 export default function ArchivePage() {
@@ -58,7 +58,7 @@ export default function ArchivePage() {
               Ein statischer Kontrollraum für Einträge, Quellen, Medienslots, Relationen, Analyseebenen und zukünftige 3D-Modellpakete.
             </p>
             <p className="mt-7 max-w-3xl text-base leading-8 text-[#cfcfca]">
-              Die Website liest weiterhin gebündelte JSON-Daten für maximale Geschwindigkeit und minimales Backend-Risiko. Cloudflare D1 ist als Vorschauarchiv für Validierung, Schemaentwurf und spätere Read-only-Abfragen vorbereitet. Echte Bilder, Pläne und GLB-Modelle können in Objektspeicher wechseln, sobald die Medienpolitik bereit ist.
+              Die Website liest weiterhin gebündelte JSON-Daten für maximale Geschwindigkeit und minimales Backend-Risiko. Das Vorschauarchiv ist für Validierung, Schemaentwurf und spätere Leseabfragen vorbereitet. Echte Bilder, Pläne und 3D-Vorschauen können in den Objektspeicher wechseln, sobald die Medienpolitik bereit ist.
             </p>
           </div>
 
@@ -68,12 +68,12 @@ export default function ArchivePage() {
         <section className="archive-metric-grid grid gap-3 border-t border-white/12 py-8 sm:grid-cols-2 lg:grid-cols-4">
           <Metric label="Einträge" value={allEintraege.length} />
           <Metric label="Relationen" value={allRelationen.length} />
-          <Metric label="Medienzeilen" value={archivePreview.entry_media.length} />
-          <Metric label="Modellebenen" value={archivePreview.entry_models.length} />
+          <Metric label="Medien" value={archivePreview.entry_media.length} />
+          <Metric label="Modellgruppen" value={archivePreview.entry_models.length} />
           <Metric label="Analyseebenen" value={archivePreview.entry_analysis.length} />
-          <Metric label="Quellenzeilen" value={archivePreview.entry_sources.length} />
-          <Metric label="Tags" value={archivePreview.tags.length} />
-          <Metric label="Pilotobjekte" value={pilotEintraege.length} />
+          <Metric label="Quellen" value={archivePreview.entry_sources.length} />
+          <Metric label="Dossiermerkmale" value={archivePreview.tags.length} />
+          <Metric label="Referenzpiloten" value={pilotEintraege.length} />
         </section>
 
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.9fr_1.1fr]">
@@ -147,7 +147,7 @@ export default function ArchivePage() {
 
         <section className="border-t border-white/12 py-8">
           <div className="mb-4 flex items-end justify-between gap-4">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Datenbank Pilot</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Referenzpilot</h2>
             <Link href={`/atlas/${pilot.slug}/`} className="entry-link border border-white/20 px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-[#d7d7d0]">
               Pilot öffnen
             </Link>
@@ -157,15 +157,15 @@ export default function ArchivePage() {
             <p className="mt-3 max-w-3xl text-sm leading-7 text-[#b8b8b2]">{pilot.one_sentence}</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <ArchiveMeta label="Medien" value={`${pilot.media.length} Medienslots`} />
-              <ArchiveMeta label="3D" value={`${pilot.model_assets?.length ?? 0} Modellebenen`} />
+              <ArchiveMeta label="3D" value={`${pilot.model_assets?.length ?? 0} Modellgruppen`} />
               <ArchiveMeta label="Analyse" value={`${pilot.analysis_layers?.length ?? 0} Analyseebenen`} />
-              <ArchiveMeta label="Tags" value={`${pilot.database_tags?.length ?? 0} Tags`} />
+              <ArchiveMeta label="Merkmale" value={`${pilot.database_tags?.length ?? 0} Dossiermerkmale`} />
             </div>
           </div>
         </section>
 
         <section className="border-t border-white/12 py-8">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Datenbank Pilotobjekte</h2>
+          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#00e7ff]">Referenzpiloten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {pilotEintraege.map((entry) => (
               <Link key={entry.id} href={`/atlas/${entry.slug}/`} className="entry-link entry-relation-card border border-white/14 bg-[#071315]/55 p-4">
@@ -288,10 +288,10 @@ function archiveHealth(entries: Entry[], entryRelations: EntryRelation[]): Archi
     },
     {
       id: 'models',
-      label: '3D-Modellbasis',
+      label: '3D-Vorschau',
       shortLabel: '3D',
       value: percentOf(withModels.length, total),
-      hint: 'Einträge mit Modellzeilen, GLB-Hinweis oder vorbereiteten Layern.'
+      hint: 'Einträge mit Modellgruppen, 3D-Vorschauen oder vorbereiteten Analysegruppen.'
     },
     {
       id: 'analysis',
@@ -376,7 +376,7 @@ function ArchiveHealthPanel({ health }: { health: ArchiveHealth }) {
       </div>
 
       <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-1">
-        <ArchiveMeta label="Datenbank" value={archivePreview.storage_target.database_name} />
+        <ArchiveMeta label="Archivspeicher" value={archivePreview.storage_target.database_name} />
         <ArchiveMeta label="Frontend" value={archivePreview.storage_target.frontend_connection.replace(/_/g, ' ')} />
         <ArchiveMeta label="Assets" value={archivePreview.storage_target.assets_status.replace(/_/g, ' ')} />
         <ArchiveMeta label="Geprüft" value={archivePreview.storage_target.last_verified} />
@@ -453,7 +453,7 @@ function Metric({ label, value }: { label: string; value: number }) {
         <span className="mt-2 block text-[10px] uppercase tracking-[0.18em] text-[#b8b8b2]">{label}</span>
       </summary>
       <p className="mt-3 text-xs leading-5 text-[#b8b8b2]">
-        Klickbare Datenbank-Kennzahl. Diese Werte kommen aus der statischen Archivvorschau und dienen später als Health-Signal für D1, Medien, Modelle und Analyseabdeckung.
+        Klickbare Archiv-Kennzahl. Diese Werte kommen aus der statischen Archivvorschau und dienen später als Health-Signal für Quellen, Medien, Modelle und Analyseabdeckung.
       </p>
     </details>
   );
