@@ -110,9 +110,9 @@ const sourceLensDefinitions = [
   { id: 'bestswiss', label: 'BestSwiss', terms: ['bestswissarchitects', 'best swiss architects'] },
   { id: 'instagram', label: 'Instagram', terms: ['instagram.com', 'instagram'] },
   { id: 'eth', label: 'ETH', terms: ['eth', 'lecture_pdf', 'lecture notes', 'architekturgeschichte', 'global history', 'landschaftsarchitektur'] },
-  { id: 'official', label: 'Official', terms: ['official', 'unesco', 'fondation', 'centres des monuments', 'stadt zürich', 'stadt-zuerich', 'thehighline.org', 'dainst'] },
-  { id: 'office', label: 'Office', terms: ['boltshauser', 'burckhardt', 'raderschall', 'diller scofidio', 'field operations', 'le corbusier', 'no architecture'] },
-  { id: 'archive', label: 'Archive', terms: ['archive', 'library of congress', 'wikimedia', 'commons', 'e-periodica', 'research collection'] }
+  { id: 'official', label: 'Offiziell', terms: ['official', 'unesco', 'fondation', 'centres des monuments', 'stadt zürich', 'stadt-zuerich', 'thehighline.org', 'dainst'] },
+  { id: 'office', label: 'Büro', terms: ['boltshauser', 'burckhardt', 'raderschall', 'diller scofidio', 'field operations', 'le corbusier', 'no architecture'] },
+  { id: 'archive', label: 'Archiv', terms: ['archive', 'library of congress', 'wikimedia', 'commons', 'e-periodica', 'research collection'] }
 ] as const;
 type SourceLensId = (typeof sourceLensDefinitions)[number]['id'];
 type SourceLens = SourceLensId | null;
@@ -1474,7 +1474,7 @@ export function RadialAtlas({ entries, relations }: { entries: Entry[]; relation
           ref={svgRef}
           viewBox={`0 0 ${atlasSize.width} ${atlasSize.height}`}
           aria-hidden={introState !== 'idle'}
-          aria-label={introState === 'idle' ? 'KosmoData Wurmloch-Atlas' : undefined}
+          aria-label={introState === 'idle' ? 'KosmoData Atlas' : undefined}
           className="h-full w-full touch-none cursor-none"
           onWheel={handleWheel}
           onTouchStart={handleTouchStart}
@@ -2022,7 +2022,7 @@ function FilterAccess({
             </div>
           </section>
           <section>
-            <div className="filter-access-section-title">Quellwebseite</div>
+            <div className="filter-access-section-title">Quellen</div>
             <div className="filter-access-grid filter-access-source-grid">
               {sourceLensDefinitions.map((source) => (
                 <button key={source.id} type="button" className={activeSourceLens === source.id ? 'filter-access-active' : ''} onClick={(event) => stopAndRun(event, () => onSelectSourceLens(source.id))}>
@@ -2556,7 +2556,7 @@ function ModuleHub({ onOpenKosmoData, onOpenKosmoAsset }: { onOpenKosmoData: () 
             ))}
           </ul>
           <button type="button" onClick={() => setSelectedModuleId(null)}>
-            Vorschau schließen
+            Vorschau schliessen
           </button>
         </aside>
       ) : null}
@@ -3641,7 +3641,7 @@ function assetHumanSessionCheckLabel(id: string, fallback: string) {
     source_basis_read: 'Quellenbasis gelesen',
     rights_risk_checked: 'Rechte-/Öffentlichkeits-Gate geprüft',
     local_file_opened: 'Lokale Datei angeschaut',
-    scale_origin_layer_checked: 'Maßstab, Ursprung und Layer geprüft',
+    scale_origin_layer_checked: 'Massstab, Ursprung und Layer geprüft',
     ai_slop_risk_checked: 'Qualität gegen KI-Slop geprüft',
     route_decision_ready: 'Routenentscheidung bereit'
   };
@@ -3938,7 +3938,7 @@ function formatAssetValue(value: string) {
     public_gate_blocked: 'Öffentlichkeits-Gate gesperrt',
     not_certified: 'nicht zertifiziert',
     record_or_defer_human_decision: 'Entscheid erfassen oder vertagen',
-    complete_asset_human_review_session_before_approval_commands: 'Prüfsession vor Freigabe abschließen',
+    complete_asset_human_review_session_before_approval_commands: 'Prüfsession vor Freigabe abschliessen',
     local_only: 'nur lokal',
     local_file: 'lokale Datei',
     planned: 'geplant',
@@ -3957,7 +3957,7 @@ function formatAssetText(value: string) {
     'Run human review and move review_status to reviewed or verified.': 'Menschliche Prüfung durchführen und den Prüfstatus danach auf geprüft oder verifiziert setzen.',
     'Review assets with local source files before promoting them to reusable workflow assets.': 'Assets mit lokalen Quelldateien prüfen, bevor sie zu wiederverwendbaren Workflow-Assets werden.',
     'Human review is still open; exchange profiles are naming proposals only.': 'Die menschliche Prüfung ist noch offen; Übergabeprofile sind aktuell nur Benennungsvorschläge.',
-    ['Cl' + 'ose human review before importing assets into production Blender/ArchiCAD files.']: 'Menschliche Prüfung abschließen, bevor Assets in produktive Blender- oder ArchiCAD-Dateien importiert werden.',
+    ['Cl' + 'ose human review before importing assets into production Blender/ArchiCAD files.']: 'Menschliche Prüfung abschliessen, bevor Assets in produktive Blender- oder ArchiCAD-Dateien importiert werden.',
     'Run a local Blender smoke only with review assets, not production files.': 'Lokalen Blender-Smoke-Test nur mit Prüfassets ausführen, nicht mit produktiven Dateien.',
     'Keep ArchiCAD profiles as layer/surface naming references until reviewed.': 'ArchiCAD-Profile bis zur Prüfung nur als Layer- und Oberflächenreferenz verwenden.',
     'Keep public web/download gates blocked until rights and review are explicit.': 'Öffentliche Web- und Download-Gates gesperrt halten, bis Rechte und Prüfung explizit geklärt sind.',
@@ -3998,7 +3998,7 @@ function WormholeBirthOverlay() {
           <i key={spark} style={{ '--spark-index': spark } as CSSProperties} />
         ))}
       </div>
-      <div className="wormhole-birth-label">Wurmloch wird erzeugt</div>
+      <div className="wormhole-birth-label">Atlas wird aufgebaut</div>
     </div>
   );
 }
@@ -4011,7 +4011,7 @@ function DatabaseReturnOverlay() {
         <span />
         <span />
       </div>
-      <div className="database-return-label">Zurück ins Wurmloch</div>
+      <div className="database-return-label">Zurück zum Atlas</div>
     </div>
   );
 }
@@ -5542,7 +5542,7 @@ function draftReadiness(draft: EntryEntwurf) {
 
 const mediaTypes: Array<'exterior' | 'interior' | 'section' | 'plan'> = ['exterior', 'interior', 'section', 'plan'];
 const mediaTypeLabels = {
-  exterior: 'Außen',
+  exterior: 'Aussen',
   interior: 'Innen',
   section: 'Schnitt',
   plan: 'Plan'
@@ -5602,7 +5602,7 @@ function SnappedEntryOverlay({ entry, onDismiss, onSelectFilter }: { entry: Entr
         transform={`translate(${cardX + cardWidth - closeWidth} ${actionY})`}
         role="button"
         tabIndex={0}
-        aria-label="Projekt schließen"
+        aria-label="Projekt schliessen"
         onClick={onDismiss}
         onKeyDown={(event) => {
           if (event.key !== 'Enter' && event.key !== ' ') return;

@@ -24,7 +24,7 @@ function WormholeRingsComponent({ state, isMoving = false, quality = 'balanced' 
   const frontDissolve = Math.max(0, 1 - state.timePosition / 0.22);
 
   return (
-    <g aria-label="Zeit-Wurmloch">
+    <g aria-label="Zeit-Atlas">
       <defs>
         <radialGradient id="wormhole-vignette" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#050505" stopOpacity="0.02" />
@@ -231,7 +231,7 @@ function OuterCurvature({ state, opacityScale, quality, isMoving }: { state: Wor
     );
   });
 
-  return <g aria-label="Wurmloch-Aussenkruemmung">{segments}</g>;
+  return <g aria-label="Atlas-Aussenkruemmung">{segments}</g>;
 }
 
 function wormholeStreamLines(state: WormholeState, options?: { count?: number; sampleCount?: number }) {

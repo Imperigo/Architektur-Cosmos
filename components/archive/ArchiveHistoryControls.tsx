@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export function ArchiveHistoryControls() {
@@ -26,14 +27,14 @@ export function ArchiveHistoryControls() {
   }
 
   return (
-    <nav className="archive-history-controls" aria-label="Datenbank Navigation">
+    <nav className="archive-history-controls" aria-label="Archivnavigation">
       <button type="button" onClick={goBack} aria-label="Zurück">
-        <span>←</span>
+        <ArrowLeft aria-hidden="true" />
         Zurück
       </button>
       <button type="button" onClick={goForward} aria-label="Vorwärts">
         Vorwärts
-        <span>→</span>
+        <ArrowRight aria-hidden="true" />
       </button>
     </nav>
   );

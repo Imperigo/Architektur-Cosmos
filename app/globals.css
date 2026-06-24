@@ -819,6 +819,10 @@ body:has(.orbit-page) {
 }
 
 .cosmos-media-lightbox-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   flex: 0 0 auto;
   min-height: 40px;
   border: 1px solid rgba(247, 247, 244, 0.18);
@@ -829,6 +833,12 @@ body:has(.orbit-page) {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.cosmos-media-lightbox-close svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
 }
 
 .cosmos-media-lightbox-close:hover,
@@ -1852,6 +1862,10 @@ body:has(.orbit-page) {
 }
 
 .brain-status-header button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   min-height: 28px;
   border: 1px solid rgb(247 247 244 / 20%);
   border-radius: 999px;
@@ -1861,6 +1875,12 @@ body:has(.orbit-page) {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 8px;
+}
+
+.brain-status-header button svg {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
 }
 
 .brain-status-grid {
@@ -3291,10 +3311,11 @@ button.database-intake-card:not(:disabled):hover {
   transform: translateY(-1px);
 }
 
-.archive-history-controls button span {
+.archive-history-controls button svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
   color: #00e7ff;
-  font-size: 13px;
-  line-height: 1;
 }
 
 .database-return-overlay {

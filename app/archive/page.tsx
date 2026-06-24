@@ -80,7 +80,7 @@ export default function ArchivePage() {
           <details className="entry-archive-panel archive-expandable-card border border-white/14 bg-[#071315]/70 p-5" open>
             <summary>
               <span>Archiv-Workflow</span>
-              <i>vergrößern</i>
+              <i>öffnen</i>
             </summary>
             <div className="space-y-3">
               {workflow.stages.map((stage) => (
@@ -117,7 +117,7 @@ export default function ArchivePage() {
               <i>Details</i>
             </summary>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-[#d7d7d0]">
-              Echte Bilder, Pläne und Modelldateien bleiben review-only, bis Rechte- und Größenprüfungen abgeschlossen sind. Der Erfassungsprozess erzeugt eine geprüfte Paketstruktur, scannt Metadaten und schreibt ein Review-Manifest ohne öffentliche Freigabe.
+              Echte Bilder, Pläne und Modelldateien bleiben review-only, bis Rechte- und Grössenprüfungen abgeschlossen sind. Der Erfassungsprozess erzeugt eine geprüfte Paketstruktur, scannt Metadaten und schreibt ein Review-Manifest ohne öffentliche Freigabe.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <ArchiveMeta label="Review-Ordner" value="review-inbox/{entry_slug}" />
@@ -277,7 +277,7 @@ function archiveHealth(entries: Entry[], entryRelations: EntryRelation[]): Archi
       label: 'Medienslots',
       shortLabel: 'Medien',
       value: percentOf(withMedia.length, total),
-      hint: 'Außen, Innen, Schnitt und Plan sind als Slot oder Medium angelegt.'
+      hint: 'Aussen, Innen, Schnitt und Plan sind als Slot oder Medium angelegt.'
     },
     {
       id: 'relations',
@@ -335,7 +335,7 @@ function archiveWorkflow(entries: Entry[]) {
     stages: [
       { label: 'Strukturierte Einträge', value: entries.length, description: 'Objekte, die aktuell als statisches JSON gebündelt und nach D1 exportierbar sind.' },
       { label: 'Quellengestützt', value: withQuellen.length, description: 'Einträge mit mindestens einem Quelldokument oder einer Quellen-URL.' },
-      { label: 'Vier Medienslots bereit', value: withAllMedia.length, description: 'Einträge mit Außenbild, Innenbild, Schnitt und Plan als Platzhalter oder Medienzeile.' },
+      { label: 'Vier Medienslots bereit', value: withAllMedia.length, description: 'Einträge mit Aussenbild, Innenbild, Schnitt und Plan als Platzhalter oder Medienzeile.' },
       { label: 'Beziehungsgraph bereit', value: withRelationen.length, description: 'Einträge, die mit mindestens einem weiteren Archivobjekt verbunden sind.' },
       { label: 'Modelldaten bereit', value: withModelle.length, description: 'Einträge mit geplanten 3D-Modellzeilen und R2-Schlüsseln.' },
       { label: 'Geprüfte Piloten', value: reviewed.length, description: 'Einträge, die über den Entwurfsstatus hinaus befördert wurden.' }

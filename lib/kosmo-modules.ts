@@ -25,8 +25,8 @@ export const kosmoOrbitModules: KosmoOrbitModule[] = [
     id: 'data',
     name: 'KosmoData',
     label: 'Referenzbibliothek / Atlas',
-    description: 'Wurmloch, Referenzarchiv, Projekte, Quellen und 3D-Modelle.',
-    detail: ['Architekturprojekte im Wurmloch', 'öffentliche und private Quellenlogik', 'Analyse-, Material- und Modell-Layer'],
+    description: 'Atlas, Referenzarchiv, Projekte, Quellen und 3D-Modelle.',
+    detail: ['Architekturprojekte im Atlas', 'öffentliche und private Quellenlogik', 'Analyse-, Material- und Modell-Layer'],
     metrics: [
       { label: 'Status', value: 'aktiv' },
       { label: 'Daten', value: '112 Einträge' },

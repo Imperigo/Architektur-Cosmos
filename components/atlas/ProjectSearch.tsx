@@ -279,7 +279,7 @@ export function ProjectSearch({
         data-ui-action="search"
         onClick={toggleSearch}
         aria-expanded={isOpen}
-        aria-label={isOpen ? 'Suche schließen' : 'Suche öffnen'}
+        aria-label={isOpen ? 'Suche schliessen' : 'Suche öffnen'}
       >
         <span className="project-search-mark" aria-hidden="true" />
         <span>Suche</span>
@@ -291,7 +291,7 @@ export function ProjectSearch({
           className={`project-dev-trigger cosmos-trigger ${isDeveloperMode ? 'project-dev-trigger-active' : ''}`}
           onClick={toggleDevGate}
           aria-expanded={isDevOpen}
-          aria-label={isDevOpen ? 'Internen Zugang schließen' : 'Internen Zugang öffnen'}
+          aria-label={isDevOpen ? 'Internen Zugang schliessen' : 'Internen Zugang öffnen'}
         >
           <span className="project-dev-mark" aria-hidden="true" />
           <span>{isDeveloperMode ? 'Intern aktiv' : 'Intern'}</span>

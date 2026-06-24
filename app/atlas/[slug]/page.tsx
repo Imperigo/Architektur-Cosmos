@@ -1043,7 +1043,7 @@ function mediaSlotNumber(type: Entry['media'][number]['type']) {
 
 function germanMediaTypeLabel(type: Entry['media'][number]['type']) {
   const labels: Record<Entry['media'][number]['type'], string> = {
-    exterior: 'Außen',
+    exterior: 'Aussen',
     interior: 'Innen',
     section: 'Schnitt',
     plan: 'Plan'
@@ -1076,7 +1076,7 @@ function archiveStatusMetrics(entry: Entry, relatedCount: number): ArchiveStatus
 
   return [
     { id: 'sources', label: 'Quellenlage', shortLabel: 'Quelle', value: Math.round(sourceValue), hint: 'Nachweise, Quellenkandidaten und Verifizierungsgrad.' },
-    { id: 'media', label: 'Medien / Pläne', shortLabel: 'Medien', value: Math.round(mediaValue), hint: 'Außen, Innen, Schnitt, Grundriss und öffentliche Medien.' },
+    { id: 'media', label: 'Medien / Pläne', shortLabel: 'Medien', value: Math.round(mediaValue), hint: 'Aussen, Innen, Schnitt, Grundriss und öffentliche Medien.' },
     { id: 'network', label: 'Wissensnetz', shortLabel: 'Netz', value: Math.round(networkValue), hint: 'Relationen, Tags und thematische Anschlussfähigkeit.' },
     { id: 'model', label: '3D-Modell', shortLabel: '3D', value: Math.round(modelValue), hint: hasPublicModelPreview ? 'Öffentliche 3D-Vorschau plus geplante Modellgruppen.' : 'Geplante Modellgruppen; noch keine öffentliche 3D-Vorschau.' },
     { id: 'analysis', label: 'Analyse', shortLabel: 'Analyse', value: Math.round(analysisValue), hint: 'Material, Tragwerk, Tektonik und Analyseebenen.' },

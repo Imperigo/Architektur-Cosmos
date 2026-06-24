@@ -1,5 +1,6 @@
 'use client';
 
+import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 type BrainStatus = {
@@ -53,6 +54,16 @@ type BrainActivation = {
 type TaskResponse = {
   count: number;
   results: BrainTask[];
+};
+
+const taskFilterLabels: Record<TaskFilter, string> = {
+  all: 'Alle',
+  research: 'Recherche',
+  media: 'Medien',
+  rights: 'Rechte',
+  model: 'Modell',
+  analysis: 'Analyse',
+  database: 'Daten'
 };
 
 type TaskFilter = 'all' | 'research' | 'media' | 'rights' | 'model' | 'analysis' | 'database';
@@ -180,7 +191,10 @@ export function BrainStatusWidget() {
         <section className="brain-status-panel cosmos-panel cosmos-text-safe" aria-label="Architektur-Kosmos Brain-Status">
           <div className="brain-status-header">
             <span>Cloud Brain V2</span>
-            <button type="button" onClick={closePanel} aria-label="Brain-Status schließen">Schließen</button>
+            <button type="button" onClick={closePanel} aria-label="Brain-Status schliessen">
+              <X aria-hidden="true" />
+              <span>Schliessen</span>
+            </button>
           </div>
 
           {isLoading ? <p className="brain-status-muted">Live-Brain-Snapshot wird gelesen...</p> : null}
@@ -223,7 +237,7 @@ export function BrainStatusWidget() {
                 </div>
               ) : null}
 
-              <div className="brain-task-toolbar" aria-label="Brain task filters">
+              <div className="brain-task-toolbar" aria-label="Brain-Aufgaben filtern">
                 {(['all', 'research', 'media', 'rights', 'model', 'analysis', 'database'] as const).map((filter) => (
                   <button
                     key={filter}
@@ -231,7 +245,7 @@ export function BrainStatusWidget() {
                     className={taskFilter === filter ? 'brain-task-filter-active' : ''}
                     onClick={() => setTaskFilter(filter)}
                   >
-                    {filter}
+                    {taskFilterLabels[filter]}
                   </button>
                 ))}
               </div>

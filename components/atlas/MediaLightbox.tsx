@@ -1,5 +1,6 @@
 'use client';
 
+import { X } from 'lucide-react';
 import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 
 type MediaLightboxProps = {
@@ -47,7 +48,7 @@ export function MediaLightbox({ src, label, type, credit, isDrawing = false, acc
 
       {isOpen ? (
         <div className="cosmos-media-lightbox" role="dialog" aria-modal="true" aria-labelledby={titleId}>
-          <button className="cosmos-media-lightbox-backdrop" type="button" aria-label="Vollbild schließen" onClick={() => setIsOpen(false)} />
+          <button className="cosmos-media-lightbox-backdrop" type="button" aria-label="Vollbild schliessen" onClick={() => setIsOpen(false)} />
           <figure className="cosmos-media-lightbox-frame" style={{ '--entry-accent': accent } as CSSProperties}>
             <div className="cosmos-media-lightbox-image-wrap">
               {/* eslint-disable-next-line @next/next/no-img-element -- Static export serves archive media directly. */}
@@ -63,8 +64,9 @@ export function MediaLightbox({ src, label, type, credit, isDrawing = false, acc
                 <h2 id={titleId}>{label}</h2>
                 {credit ? <p>{credit}</p> : null}
               </div>
-              <button type="button" className="cosmos-media-lightbox-close" onClick={() => setIsOpen(false)}>
-                Schließen
+              <button type="button" className="cosmos-media-lightbox-close" aria-label="Vollbild schliessen" onClick={() => setIsOpen(false)}>
+                <X aria-hidden="true" />
+                <span>Schliessen</span>
               </button>
             </figcaption>
           </figure>
