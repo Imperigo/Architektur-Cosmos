@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Grid3X3, List, RotateCcw, Search } from 'lucide-react';
+import { Box, FileImage, FileText, Grid3X3, Layers3, List, RotateCcw, Search, type LucideIcon } from 'lucide-react';
 import {
   publicAssetDisplayLabel,
   publicAssetKindLabels,
@@ -31,6 +31,13 @@ type PublicAssetExplorerProps = {
 
 const kindLabels: Record<PublicAsset['kind'], string> = publicAssetKindLabels;
 const assetPageSize = 24;
+const assetKindPreviewMeta: Record<PublicAsset['kind'], { Icon: LucideIcon; cue: string }> = {
+  image: { Icon: FileImage, cue: 'Bildfläche' },
+  plan: { Icon: FileText, cue: 'Planlesung' },
+  section: { Icon: FileText, cue: 'Schnittlesung' },
+  model: { Icon: Box, cue: 'Modellvorschau' },
+  analysis: { Icon: Layers3, cue: 'Analyseebene' }
+};
 
 export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
   const [query, setQuery] = useState('');
@@ -168,7 +175,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               {asset.previewUrl ? (
                 <img src={asset.previewUrl} alt={asset.label} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" />
               ) : (
-                <div className="flex h-full items-center justify-center px-4 text-center text-[10px] uppercase tracking-[0.18em] text-[#8ea56b]">{kindLabels[asset.kind]}</div>
+                <AssetPreviewPlaceholder asset={asset} />
               )}
             </div>
             <div className="p-4">
@@ -239,5 +246,19 @@ function AssetViewButton({ active, onClick, icon, children }: { active: boolean;
     >
       {icon}{children}
     </button>
+  );
+}
+
+function AssetPreviewPlaceholder({ asset }: { asset: PublicAsset }) {
+  const meta = assetKindPreviewMeta[asset.kind];
+  const Icon = meta.Icon;
+
+  return (
+    <div className="public-card-empty-preview public-asset-preview-empty" data-kind={asset.kind}>
+      <Icon aria-hidden="true" />
+      <strong>{kindLabels[asset.kind]}</strong>
+      <span>{publicAssetLayerLabel(asset.layer)}</span>
+      <small>{meta.cue}</small>
+    </div>
   );
 }

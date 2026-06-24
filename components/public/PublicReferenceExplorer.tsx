@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Grid3X3, List, RotateCcw, Search } from 'lucide-react';
+import { Grid3X3, ImageOff, List, RotateCcw, Search } from 'lucide-react';
 
 export type PublicReference = {
   slug: string;
@@ -162,7 +162,12 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-[10px] uppercase tracking-[0.18em] text-[#6f7772]">Bild in Prüfung</div>
+                <div className="public-card-empty-preview public-reference-preview-empty">
+                  <ImageOff aria-hidden="true" />
+                  <strong>Bild in Prüfung</strong>
+                  <span>{entry.title}</span>
+                  <small>kein öffentliches Bild freigegeben</small>
+                </div>
               )}
             </div>
             <div className="p-4">

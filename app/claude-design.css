@@ -473,6 +473,86 @@ textarea {
   text-transform: uppercase;
 }
 
+.public-card-empty-preview {
+  --preview-accent: var(--ak-accent);
+  display: grid;
+  height: 100%;
+  min-height: 100%;
+  min-width: 0;
+  place-items: center;
+  align-content: center;
+  gap: 7px;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--preview-accent) 18%, transparent), transparent 36%),
+    linear-gradient(135deg, color-mix(in srgb, var(--preview-accent) 10%, transparent), transparent 56%),
+    rgb(12 16 15 / 94%);
+  color: var(--ak-text-muted);
+  text-align: center;
+}
+
+.public-card-empty-preview svg {
+  width: 28px;
+  height: 28px;
+  color: color-mix(in srgb, var(--preview-accent) 72%, var(--ak-text-primary));
+  stroke-width: 1.65;
+}
+
+.public-card-empty-preview strong,
+.public-card-empty-preview span,
+.public-card-empty-preview small {
+  max-width: 100%;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.public-card-empty-preview strong {
+  color: color-mix(in srgb, var(--preview-accent) 78%, var(--ak-text-primary));
+  font-family: var(--ak-font-mono);
+  font-size: 10px;
+  font-weight: 720;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.public-card-empty-preview span {
+  color: var(--ak-text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.public-card-empty-preview small {
+  color: var(--ak-text-faint);
+  font-family: var(--ak-font-mono);
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.public-asset-preview-empty[data-kind="image"] {
+  --preview-accent: #57b6c2;
+}
+
+.public-asset-preview-empty[data-kind="plan"],
+.public-asset-preview-empty[data-kind="section"] {
+  --preview-accent: #f5b342;
+}
+
+.public-asset-preview-empty[data-kind="model"] {
+  --preview-accent: #9b8cff;
+}
+
+.public-asset-preview-empty[data-kind="analysis"] {
+  --preview-accent: #b9f06a;
+}
+
+.public-reference-preview-empty {
+  --preview-accent: #57b6c2;
+}
+
 .ak-card {
   border: 1px solid var(--ak-border-subtle);
   border-radius: var(--ak-radius-card);
