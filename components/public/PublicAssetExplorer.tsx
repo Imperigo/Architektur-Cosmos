@@ -185,7 +185,10 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               </div>
               <h3 className="mt-3 text-base leading-tight text-[#f7f7f4]">{publicAssetDisplayLabel(asset.label)}</h3>
               <p className="mt-2 text-sm text-[#b9c1bc]">{asset.project}</p>
-              <div className="mt-4 text-[10px] uppercase tracking-[0.12em] text-[#7f8a82]">{publicAssetRightsLabel(asset.rights)} / {publicAssetStatusLabel(asset.status)}</div>
+              <div className="public-card-chip-row mt-4">
+                <span>{publicAssetRightsLabel(asset.rights)}</span>
+                <span>{publicAssetStatusLabel(asset.status)}</span>
+              </div>
               <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-[#8f9a92]">{publicAssetProvenanceLabel(asset.provenance)}</p>
             </div>
           </a>

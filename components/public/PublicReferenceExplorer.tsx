@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Grid3X3, ImageOff, List, RotateCcw, Search } from 'lucide-react';
+import { publicStatusLabel } from '@/lib/public-labels';
 
 export type PublicReference = {
   slug: string;
@@ -178,9 +179,9 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               </div>
               <h3 className="mt-3 text-xl leading-tight text-[#f7f7f4]">{entry.title}</h3>
               <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{entry.summary}</p>
-              <div className="mt-4 rounded-lg border border-[#57b6c2]/20 bg-[#57b6c2]/6 p-3">
-                <div className="flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.1em] text-[#57b6c2]">
-                  <span>{entry.gateStatus}</span>
+              <div className="public-card-status-panel mt-4">
+                <div className="public-card-chip-row">
+                  <span>{publicStatusLabel(entry.gateStatus)}</span>
                   <span>{entry.readinessScore}%</span>
                 </div>
                 <div className="mt-2 h-1.5 overflow-hidden bg-white/10">

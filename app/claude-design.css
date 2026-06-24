@@ -553,6 +553,41 @@ textarea {
   --preview-accent: #57b6c2;
 }
 
+.public-card-status-panel {
+  border: 1px solid color-mix(in srgb, var(--ak-accent) 22%, transparent);
+  border-radius: var(--ak-radius-card);
+  background: color-mix(in srgb, var(--ak-accent) 6%, transparent);
+  padding: 12px;
+}
+
+.public-card-chip-row {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.public-card-chip-row span {
+  display: inline-flex;
+  min-height: 24px;
+  max-width: 100%;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--ak-accent) 26%, transparent);
+  border-radius: 999px;
+  padding: 0 8px;
+  color: color-mix(in srgb, var(--ak-accent) 72%, var(--ak-text-primary));
+  font-family: var(--ak-font-mono);
+  font-size: 9px;
+  font-weight: 680;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  overflow-wrap: normal;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .ak-card {
   border: 1px solid var(--ak-border-subtle);
   border-radius: var(--ak-radius-card);

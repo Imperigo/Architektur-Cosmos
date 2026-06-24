@@ -160,12 +160,15 @@ export function publicStatusLabel(value: string) {
     needs_source_review: 'Quellenprüfung nötig',
     needs_sources: 'Quellen nötig',
     planned: 'geplant',
+    'public pilot ready': 'Pilot öffentlich bereit',
     public_preview: 'öffentliche Vorschau',
     public_preview_glb: 'öffentliche 3D-Vorschau',
+    'public review demo': 'öffentliche Demo in Prüfung',
     published: 'veröffentlicht',
     review: 'Prüfung',
     review_only: 'in Prüfung',
     reviewed: 'geprüft',
+    'source review only': 'Quellenprüfung',
     source_review_only: 'Quellenprüfung intern',
     verified: 'verifiziert'
   };
