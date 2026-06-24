@@ -43,7 +43,7 @@ export function HomeCosmos({
               <StatusValue label="Pilotprojekte" value="2" />
             </div>
             <p className="mt-2 hidden max-w-xl text-[10px] leading-5 tracking-[0.04em] text-[#9aa7a5] sm:block">
-              Öffentliche Architekturprojekte, geprüfte Medien, Analyse-Layer und diagrammatische 3D-Modelle.
+              Ein lesbarer Ausschnitt aus KosmoReferences: geprüfte Projekte, Bild- und Planstände, Bauteilgruppen und reduzierte 3D-Studien.
             </p>
           </section>
 

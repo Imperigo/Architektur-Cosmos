@@ -51,7 +51,7 @@ export default function AssetsPage() {
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">3D-Vorschau</span>
             </div>
             <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
-              Assetbibliothek für Planung und Analyse
+              Bauteile, Materialien und Zeichnungen aus geprüften Referenzen
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
               Der Bestand bündelt öffentlich freigegebene Bilder, eigene Plan- und Schnittdiagramme, Analyseebenen und reduzierte 3D-Modelle aus KosmoReferences. Private PDFs, Scans und interne Quellen bleiben ausgeschlossen.
@@ -84,7 +84,7 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Öffentliche Freigabe</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Freigegebene Dateien und sichtbare Prüfstände</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Dateien werden erst nach Rechteprüfung zu Assets</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Das Asset-Register zählt nur öffentlich freigegebene Oberflächen. Ungeprüfte Kandidaten aus KosmoDraw, KosmoPublish und privaten Quellen bleiben als Status sichtbar, aber nicht als abrufbare Dateien.
             </p>
@@ -103,9 +103,9 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ordnung der Assetbibliothek</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Medien, Bauteile und Prinzipien</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Vom Projektbild zur wiederverwendbaren Bauinformation</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
-              Der öffentliche Asset-Pilot bleibt review-only in der Freigabe, zeigt aber bereits die spätere Struktur: Bilder und Zeichnungen sind Quellenoberflächen, daraus entstehen filterbare Architekturbausteine.
+              Der öffentliche Asset-Pilot bleibt in Prüfung, zeigt aber bereits die spätere Struktur: Bilder und Zeichnungen sind Quellenoberflächen, daraus entstehen filterbare Architekturbausteine.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -132,7 +132,7 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ingenbohl Assetprüfung</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl: Modell ohne private Medien</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl zeigt Struktur, nicht gesperrte Quellen</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               {ingenbohl.title} zeigt die nächste KosmoAsset-Brücke: geprüfte Analyse-, Material- und Strukturkandidaten
               sowie Modellstatus werden indexiert, aber Bilder, Pläne und private Quellen bleiben gesperrt.
@@ -161,7 +161,7 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Asset-Übernahme aus KosmoDraw</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Kandidaten aus Modell und Zeichnung</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Modell und Zeichnung liefern erst Kandidaten</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der Prüfbericht sieht {kosmoDrawIntake.summary.asset_candidate_count} Kandidaten aus {kosmoDrawIntake.summary.bundle_count} Projektpaketen.
               Davon werden aktuell 0 automatisch öffentlich freigegeben.
@@ -205,7 +205,7 @@ export default function AssetsPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Planregister aus KosmoPublish</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planregister vor Veröffentlichung</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planstände werden als Register, nicht als Rohdatei gezeigt</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der Plankatalog ist als schreibgeschützte Metadaten-Vorstufe sichtbar: {kosmoPublishPlanCatalog.phaseCount} Phasen,
               {kosmoPublishPlanCatalog.outputFields.length} Felder und aktuell {kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} öffentlich freigegebene Plan-Assets.

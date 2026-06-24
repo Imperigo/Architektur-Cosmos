@@ -285,32 +285,32 @@ export function ProjectSearch({
         <span>Suche</span>
       </button>
 
-      <div className="project-dev-gate" aria-label="Developer-Zugang">
+      <div className="project-dev-gate" aria-label="Interner Zugang">
         <button
           type="button"
           className={`project-dev-trigger cosmos-trigger ${isDeveloperMode ? 'project-dev-trigger-active' : ''}`}
           onClick={toggleDevGate}
           aria-expanded={isDevOpen}
-          aria-label={isDevOpen ? 'Dev Access schließen' : 'Dev Access öffnen'}
+          aria-label={isDevOpen ? 'Internen Zugang schließen' : 'Internen Zugang öffnen'}
         >
           <span className="project-dev-mark" aria-hidden="true" />
-          <span>{isDeveloperMode ? 'Dev on' : 'Dev'}</span>
+          <span>{isDeveloperMode ? 'Intern aktiv' : 'Intern'}</span>
         </button>
 
         {isDevOpen ? (
-          <div className="project-dev-panel cosmos-panel" role="dialog" aria-label="Developer-Zugang">
+          <div className="project-dev-panel cosmos-panel" role="dialog" aria-label="Interner Zugang">
             {isDeveloperMode ? (
               <>
-                <div className="project-dev-title">Dev-Ansichten freigeschaltet</div>
-                <p>Lokale Session-Freischaltung für private Copyright- und Draft-Werkzeuge. Keine echte Authentifizierung.</p>
+                <div className="project-dev-title">Interne Werkzeuge freigeschaltet</div>
+                <p>Lokale Session-Freischaltung für private Prüf-, Copyright- und Entwurfswerkzeuge. Keine öffentliche Authentifizierung.</p>
                 <button type="button" className="project-dev-action" onClick={() => setDevMode(false)}>
                   Wieder sperren
                 </button>
               </>
             ) : (
               <>
-                <div className="project-dev-title">Dev-Zugang</div>
-                <p>Schaltet private Draft-, Intake- und AI-Ansichten nur in dieser Browser-Session frei.</p>
+                <div className="project-dev-title">Interner Zugang</div>
+                <p>Schaltet private Prüf-, Erfassungs- und Entwurfsansichten nur in dieser Browser-Session frei.</p>
                 <div className="project-dev-field">
                   <input
                     ref={devInputRef}
@@ -321,7 +321,7 @@ export function ProjectSearch({
                     }}
                     onKeyDown={handleDevKeyDown}
                     placeholder="Code"
-                    aria-label="Dev-Code"
+                    aria-label="Interner Zugangscode"
                     type="password"
                   />
                   <button type="button" onClick={unlockDevMode}>
@@ -329,7 +329,7 @@ export function ProjectSearch({
                   </button>
                 </div>
                 {devError ? <div className="project-dev-error">{devError}</div> : null}
-                <div className="project-dev-hint">Nur lokale Schranke / keine öffentliche Auth</div>
+                <div className="project-dev-hint">Nur lokale Schranke / keine öffentliche Authentifizierung</div>
               </>
             )}
           </div>

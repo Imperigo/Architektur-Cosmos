@@ -285,7 +285,7 @@ export function publicAssets(): PublicAsset[] {
       id: `${model.slug}-model`,
       project: model.title,
       kind: 'model',
-      label: `${model.title}: öffentliches GLB-Preview`,
+      label: `${model.title}: öffentliche 3D-Vorschau`,
       url: model.url,
       rights: model.license,
       layer: '3d_preview',
@@ -337,7 +337,7 @@ export function publicGateStatusSummary() {
     {
       label: 'Öffentliche Assets',
       value: assets.length,
-      detail: 'Bilder, Diagramme, Analyseebenen und GLB-Vorschauen aus freigegebenen Quellen.'
+      detail: 'Bilder, Diagramme, Analyseebenen und 3D-Vorschauen aus freigegebenen Quellen.'
     },
     {
       label: '3D-Vorschauen',
@@ -419,7 +419,7 @@ export function materialTags(entry: Entry) {
 function publicSafeText(value: string | undefined) {
   if (!value) return value;
   return value
-    .replace(/archive-intake\/[^\s,;)]*/gi, 'review-only intake path')
+    .replace(/archive-intake\/[^\s,;)]*/gi, 'interner Prüfpfad')
     .replace(/\/mnt\/[^\s,;)]*/gi, 'private storage path')
     .replace(/\/home\/[^\s,;)]*/gi, 'private home path')
     .replace(/source-root/gi, 'private source gate')
@@ -554,7 +554,7 @@ export function publicEntryAssetTaxonomy(entryOrSlug: Entry | string | undefined
       {
         title: 'Tragstruktur / Pflegecluster',
         kind: 'structure',
-        detail: 'Stahlbeton-Skelett, aussteifender Kern und Pflegegeschosse als review-only Strukturprinzipien.'
+        detail: 'Stahlbeton-Skelett, aussteifender Kern und Pflegegeschosse als Strukturprinzipien in Prüfung.'
       },
       {
         title: 'Materialsystem / Trasskalk',
@@ -581,17 +581,17 @@ export function publicEntryAssetTaxonomy(entryOrSlug: Entry | string | undefined
     {
       title: 'Materialprofil',
       kind: 'material',
-      detail: materials.length ? materials.join(', ') : 'Noch kein public-ready Materialprofil.'
+      detail: materials.length ? materials.join(', ') : 'Noch kein öffentlich freigegebenes Materialprofil.'
     },
     {
-      title: 'Analyse-Layer',
+      title: 'Analyseebenen',
       kind: 'analysis',
-      detail: layerKinds.length ? layerKinds.join(', ') : 'Noch keine reviewed Analyse-Layer.'
+      detail: layerKinds.length ? layerKinds.join(', ') : 'Noch keine geprüften Analyseebenen.'
     },
     {
       title: 'Modell-/Zeichnungsstatus',
       kind: 'review',
-      detail: publicModelBySlug.has(entry.slug) ? 'Oeffentliches Preview-Modell vorhanden; Zeichnungen bleiben gate-geprueft.' : 'Noch kein oeffentliches Preview-Modell.'
+      detail: publicModelBySlug.has(entry.slug) ? 'Öffentliche 3D-Vorschau vorhanden; Zeichnungen bleiben geprüft.' : 'Noch keine öffentliche 3D-Vorschau.'
     },
     {
       title: 'Public-Gate',

@@ -56,7 +56,7 @@ export default function ReferencesPage() {
               <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Pilotprojekt Villa Savoye</span>
             </div>
             <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
-              Referenzatlas für Architekturprojekte
+              Architekturprojekte als prüfbare Dossiers
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
               Bauten werden mit Autorenschaft, Ort, Zeit, Quellen, Bildern, bereinigten Planebenen, Analysefeldern und Modellvorschauen erschlossen. Gezeigt werden ausschliesslich öffentlich freigegebene Medien und eigene diagrammatische Rekonstruktionen.
@@ -90,7 +90,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Freigabestatus</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Geprüfter Bestand</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Was öffentlich sichtbar sein darf</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Referenzen, Assets und Modellvorschauen werden erst nach Rechte- und Inhaltsprüfung freigegeben. Zwischenstände aus KosmoDraw und KosmoPublish bleiben intern, bis der Owner sie ausdrücklich bestätigt.
             </p>
@@ -109,7 +109,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Villa Savoye / Pilotpaket</div>
-            <h2 className="mt-2 text-4xl font-semibold tracking-normal">{villa.title}</h2>
+            <h2 className="mt-2 text-4xl font-semibold tracking-normal">Villa Savoye als vollständiger Referenzfall</h2>
             <p className="mt-5 text-base leading-8 text-[#cbd1cc]">{villa.full_description}</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {villa.analysis_layers?.slice(0, 6).map((layer) => (
@@ -146,7 +146,7 @@ export default function ReferencesPage() {
         <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.92fr_1.08fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Zweites Pilotprojekt</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">{ingenbohl.title}</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl als Schweizer Gegenwartspilot</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Ingenbohl wird als zweiter Referenz-Prototyp sichtbar, aber bewusst anders als Villa Savoye:
               Medien aus der privaten Recherche bleiben gesperrt. Geprüfte Analysefelder und die öffentliche
@@ -179,7 +179,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoAsset Brücke</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Vom Projekt zum Bauteil</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Aus Referenzen werden Bauteilgruppen</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der öffentliche Pilot zeigt nicht nur Medien, sondern extrahierbare Prinzipien: Struktur, Zirkulation, Materialsystem und Zeichnungslogik. Das ist die Brücke von KosmoReferences zu KosmoAsset.
             </p>
@@ -205,7 +205,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoDraw Übernahme</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Geprüfte Übernahme aus KosmoDraw</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Plan- und Modellstände werden zuerst geprüft</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der aktuelle Prüfbericht fasst KosmoDraw-Pakete als Metadaten zusammen. IFC-Pfade und lokale Artefakte
               werden nicht in den Bericht kopiert; öffentlich freigegeben bleiben nach der Übernahme {kosmoDrawIntake.summary.public_ready_after_intake}.
@@ -242,7 +242,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Mengenprüfung aus KosmoDraw</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Analyse vor Modellübernahme</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Mengenwerte erklären noch kein Gebäude</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Die Freigabeprüfung akzeptiert solche Berichte als interne Analysekandidaten. Öffentlich freigegeben bleiben {kosmoDrawDigitalization.publicReadyAfterIntake},
               bis elementweise Geometrie und Asset-Kandidaten im Projektpaket vorliegen.
@@ -258,7 +258,7 @@ export default function ReferencesPage() {
         <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Planregister aus KosmoPublish</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planregister und Freigabestatus</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Zeichnungen bleiben nachvollziehbar versioniert</h2>
             <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
               Der schreibgeschützte Plankatalog ist eine sichere Metadaten-Vorstufe. Er ordnet Planvorschauen über {kosmoPublishPlanCatalog.phaseCount} Phasen,
               veröffentlicht aber keine Plan-Assets automatisch.

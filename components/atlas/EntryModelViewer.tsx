@@ -420,7 +420,7 @@ export function EntryModelViewer({ modelUrl, title, accent }: EntryModelViewerPr
       <footer className="ak-model-viewer-footer">
         <span>Diagrammatisches Studienmodell</span>
         <span>{activeAnalysisLayers.length} Bauteilgruppen · {activeMaterialLayers.length} Materialgruppen</span>
-        <span>KosmoDraw-kompatible Layerstruktur</span>
+        <span>KosmoDraw-kompatible Modellstruktur</span>
       </footer>
     </article>
   );
