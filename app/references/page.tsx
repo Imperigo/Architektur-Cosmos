@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
-import { PublicCardGrid, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
+import { PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -63,17 +63,19 @@ export default function ReferencesPage() {
               Bauten werden mit Autorenschaft, Ort, Zeit, Quellen, Bildern, bereinigten Planebenen, Analysefeldern und Modellvorschauen erschlossen. Gezeigt werden ausschliesslich öffentlich freigegebene Medien und eigene diagrammatische Rekonstruktionen.
             </p>
           </div>
-          <div className="overflow-hidden border border-white/14 bg-[#101513]">
+          <PublicHeroPreview
+            accent="#66e1d2"
+            kicker="Geprüftes Titelbild"
+            caption={(
+              <p>
+                Das Titelbild stammt aus einem öffentlich nutzbaren Bestand der Library of Congress und hat die lokale Rechteprüfung durchlaufen.
+              </p>
+            )}
+          >
             {publicProjectMediaUrl(villa, exterior) ? (
               <img src={publicProjectMediaUrl(villa, exterior) ?? ''} alt="Villa Savoye Referenzbild" className="aspect-[4/3] w-full object-cover" />
             ) : null}
-            <div className="p-4">
-              <div className="text-[10px] uppercase tracking-[0.18em] text-[#66e1d2]">Geprüftes Titelbild</div>
-              <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">
-                Das Titelbild stammt aus einem öffentlich nutzbaren Bestand der Library of Congress und hat die lokale Rechteprüfung durchlaufen.
-              </p>
-            </div>
-          </div>
+          </PublicHeroPreview>
         </section>
 
         <PublicReferenceExplorer references={references} />

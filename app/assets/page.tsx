@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Metadata } from 'next';
 import { PublicAssetExplorer } from '@/components/public/PublicAssetExplorer';
-import { PublicCardGrid, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
+import { PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -58,19 +58,22 @@ export default function AssetsPage() {
               Der Bestand bündelt öffentlich freigegebene Bilder, eigene Plan- und Schnittdiagramme, Analyseebenen und reduzierte 3D-Vorschauen aus KosmoReferences. Private PDFs, Scans und interne Quellen bleiben ausgeschlossen.
             </p>
           </div>
-          <div className="border border-white/14 bg-[#11170c] p-5">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#b9f06a]">Villa Savoye Assetpaket</div>
-            <div className="mt-5 grid grid-cols-2 gap-3">
+          <PublicHeroPreview
+            accent="#b9f06a"
+            kicker="Villa Savoye Assetpaket"
+            caption={<p>Bildflächen, eigene Plan- und Schnittdiagramme werden als öffentlich geprüfte Asset-Oberflächen gezeigt.</p>}
+          >
+            <div className="public-hero-mosaic">
               {publicImages.map((media) => (
                 <img key={media.type} src={publicProjectMediaUrl(villa, media) ?? ''} alt={media.label} className="aspect-square w-full object-cover" />
               ))}
               {[plan, section].filter(Boolean).map((media) => (
-                <div key={media?.type} className="flex aspect-square items-center justify-center bg-[#f7f7f4] p-3">
+                <div key={media?.type} className="public-hero-mosaic-tile">
                   {publicProjectMediaUrl(villa, media) ? <img src={publicProjectMediaUrl(villa, media) ?? ''} alt={media?.label ?? 'Diagramm'} className="max-h-full max-w-full object-contain" /> : null}
                 </div>
               ))}
             </div>
-          </div>
+          </PublicHeroPreview>
         </section>
 
         <PublicAssetExplorer assets={assets} />

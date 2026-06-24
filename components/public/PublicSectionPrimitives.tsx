@@ -29,6 +29,12 @@ type PublicMetricCardProps = PublicAccentProps & {
   detail?: ReactNode;
 };
 
+type PublicHeroPreviewProps = PublicAccentProps & {
+  kicker: string;
+  caption: ReactNode;
+  children: ReactNode;
+};
+
 export function PublicSplitSection({ accent, kicker, title, body, children, id }: PublicSplitSectionProps) {
   return (
     <section
@@ -77,5 +83,20 @@ export function PublicMetricCard({ accent, label, value, detail }: PublicMetricC
       <div className="public-card-kicker">{label}</div>
       {detail ? <div className="public-card-body">{detail}</div> : null}
     </article>
+  );
+}
+
+export function PublicHeroPreview({ accent, kicker, caption, children }: PublicHeroPreviewProps) {
+  return (
+    <aside
+      className="public-hero-preview"
+      style={{ '--public-section-accent': accent } as CSSProperties}
+    >
+      <div className="public-hero-preview-media">{children}</div>
+      <div className="public-hero-preview-caption">
+        <div className="public-card-kicker">{kicker}</div>
+        <div className="public-card-body">{caption}</div>
+      </div>
+    </aside>
   );
 }

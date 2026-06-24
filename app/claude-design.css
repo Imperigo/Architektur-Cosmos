@@ -733,6 +733,63 @@ textarea {
   letter-spacing: 0;
 }
 
+.public-hero-preview {
+  overflow: hidden;
+  border: 1px solid var(--ak-border-subtle);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--public-section-accent) 8%, transparent), transparent 44%),
+    var(--ak-surface-card);
+}
+
+.public-hero-preview-media {
+  border-bottom: 1px solid var(--ak-border-subtle);
+  background:
+    linear-gradient(90deg, rgb(247 247 244 / 5%) 1px, transparent 1px),
+    linear-gradient(0deg, rgb(247 247 244 / 5%) 1px, transparent 1px),
+    rgb(5 7 8 / 70%);
+  background-size: 22px 22px;
+}
+
+.public-hero-preview-media > img {
+  display: block;
+  width: 100%;
+}
+
+.public-hero-preview-caption {
+  padding: 16px;
+}
+
+.public-hero-mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 20px;
+}
+
+.public-hero-mosaic img,
+.public-hero-mosaic-tile {
+  aspect-ratio: 1;
+  width: 100%;
+}
+
+.public-hero-mosaic img {
+  object-fit: cover;
+}
+
+.public-hero-mosaic-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ak-text-primary);
+  padding: 12px;
+}
+
+.public-hero-mosaic-tile img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
 .ak-card {
   border: 1px solid var(--ak-border-subtle);
   border-radius: var(--ak-radius-card);
