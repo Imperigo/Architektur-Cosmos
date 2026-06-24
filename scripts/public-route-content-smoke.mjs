@@ -52,14 +52,14 @@ const routes = [
     includes: [
       'KosmoAsset',
       'Bauteile, Materialien und Zeichnungen aus geprüften Referenzen',
-      'Assetbestand',
+      'Geprüfte öffentliche Assets',
       'Asset-Übernahme aus KosmoDraw',
       'Mengenprüfung vor Assetübernahme',
       'Planregister aus KosmoPublish',
       'Dateien werden erst nach Rechteprüfung zu Assets',
       'Vom Projektbild zur wiederverwendbaren Bauinformation',
       'Alhambra: Raumordnung',
-      'Nur Metadaten',
+      'Metadaten ohne Rohdatei',
       'Villa Savoye',
       'Ingenbohl Assetprüfung',
       'Alterszentrum Kloster Ingenbohl'

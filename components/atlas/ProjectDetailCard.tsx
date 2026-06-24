@@ -58,7 +58,7 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
         <g transform={`translate(${x + 238} ${y + 13})`}>
           <rect width="96" height="16" rx="8" fill={accent} opacity="0.16" stroke={accent} strokeWidth="0.5" />
           <text x="48" y="10.7" textAnchor="middle" fill={accent} fontSize="5.7" fontWeight="700" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
-            DATENBANK PILOT
+            REFERENZPILOT
           </text>
         </g>
       ) : null}
@@ -102,7 +102,7 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
       {isDatabasePilot ? (
         <g className="detail-database-pilot">
           <text x={x + 184} y={y + 207} fill={accent} fontSize="6.8" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.12em">
-            ARCHIVPROFIL
+            DOSSIERSTAND
           </text>
           <rect x={x + 184} y={y + 214} width="150" height="43" fill="#061315" stroke={accent} strokeWidth="0.45" opacity="0.86" />
           {archiveMetrics.map((metric, index) => {
@@ -122,7 +122,7 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
             );
           })}
           <text x={x + 184} y={y + 269} fill={accent} fontSize="6.6" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
-            3D / ANALYSE
+            MODELL UND ANALYSE
           </text>
           <text x={x + 184} y={y + 281} fill="#d7d7d0" fontSize="6.05" fontFamily="var(--font-sans), system-ui, sans-serif">
             {modelSummary}
@@ -140,14 +140,14 @@ export function ProjectDetailCard({ entry, x, y, onSelectFilter }: ProjectDetail
             {sourceLabel}
           </text>
           <text x={x + 184} y={y + 243} fill="#9c9c96" fontSize="6.4" fontFamily="var(--font-sans), system-ui, sans-serif">
-            {sourceAssetCount ? `${sourceAssetCount} lokale Assets` : 'Quelle verlinkt'}{mediaCredit ? ` · ${mediaCredit}` : ''}
+            {sourceAssetCount ? `${sourceAssetCount} geprüfte Dateien` : 'Quelle verlinkt'}{mediaCredit ? ` · ${mediaCredit}` : ''}
           </text>
         </g>
       ) : null}
       <g className="dossier-reactive-textblock">
         <rect x={x + 10} y={y + 230} width="108" height="17" fill="#fff" opacity="0.001" />
         <text x={x + 16} y={y + 242} fill="#b8b8b2" fontSize="7.2" fontFamily="var(--font-sans), system-ui, sans-serif" letterSpacing="0.1em">
-          FILTER AKTIVIEREN
+          VERKNÜPFEN
         </text>
       </g>
       {filterChips.slice(0, isDatabasePilot ? 3 : 4).map((filter, index) => {
@@ -244,8 +244,8 @@ function archiveStatusMetrics(values: { sources: number; media: number; models: 
 }
 
 function summaryList(items: string[] | undefined, maxItems: number) {
-  const cleanItems = (items ?? []).map((item) => item.replace(/_/g, ' '));
-  if (cleanItems.length === 0) return 'geplante Layer offen';
+  const cleanItems = (items ?? []).map((item) => technicalLabel(item));
+  if (cleanItems.length === 0) return 'Modellgruppen offen';
   const visible = cleanItems.slice(0, maxItems).join(' / ');
   const suffix = cleanItems.length > maxItems ? ` +${cleanItems.length - maxItems}` : '';
   return ellipsizeText(`${visible}${suffix}`, 39);
@@ -253,7 +253,7 @@ function summaryList(items: string[] | undefined, maxItems: number) {
 
 function cleanDatabaseTag(tag: string) {
   const parts = tag.split(':');
-  return (parts.length > 1 ? parts.slice(1).join(':') : tag).replace(/[_-]/g, ' ');
+  return technicalLabel(parts.length > 1 ? parts.slice(1).join(':') : tag);
 }
 
 function wrapText(text: string, maxChars: number) {
@@ -284,12 +284,12 @@ function courseGroupLabel(entry: Entry) {
   const cluster = entry.lecture_cluster?.join(' ') ?? '';
   const combined = `${source} ${cluster}`.toLowerCase();
 
-  if (combined.includes('afasia')) return 'Afasia Source Pull';
+  if (combined.includes('afasia')) return 'Afasia-Quellenstand';
   if (combined.includes('landschaft')) return 'Landschaftsarchitektur ETH';
   if (combined.includes('global') || combined.includes('urban')) return 'Global History ETH';
   if (combined.includes('architekturgeschichte') || combined.includes('architecture_history') || combined.includes('architectural_history')) return 'Architekturgeschichte ETH';
   if (combined.includes('theory')) return 'Theoriegeschichte ETH';
-  return entry.source_quality.replace(/_/g, ' ');
+  return technicalLabel(entry.source_quality);
 }
 
 function sourceLabelForEntry(entry: Entry) {
@@ -310,9 +310,52 @@ function primaryMediaCredit(entry: Entry) {
 }
 
 function layerLabelForEntry(entry: Entry) {
-  return `${entry.entry_type.replace(/_/g, ' ')} / ${entry.style_sector.replace(/_/g, ' ')}`;
+  return `${entryTypeLabel(entry.entry_type)} / ${styleSectorLabel(entry.style_sector)}`;
 }
 
 function styleColor(styleSector: StyleSectorId) {
   return styleSectorColors[styleSector];
+}
+
+function entryTypeLabel(value: string) {
+  const labels: Record<string, string> = {
+    building: 'Gebäude',
+    housing: 'Wohnbau',
+    infrastructure: 'Infrastruktur',
+    landscape: 'Landschaft',
+    urban_plan: 'Stadtentwurf'
+  };
+  return labels[value] ?? technicalLabel(value);
+}
+
+function styleSectorLabel(value: string) {
+  const labels: Record<string, string> = {
+    ancient: 'Antike',
+    early_modern: 'Frühe Neuzeit',
+    modern_architecture: 'Moderne',
+    postwar: 'Nachkriegsmoderne',
+    contemporary: 'Gegenwart'
+  };
+  return labels[value] ?? technicalLabel(value);
+}
+
+function technicalLabel(value: string) {
+  const labels: Record<string, string> = {
+    analysis: 'Analyse',
+    circulation: 'Erschliessung',
+    context: 'Kontext',
+    envelope: 'Fassade',
+    material_system: 'Materialsystem',
+    modern_architecture: 'Moderne',
+    plan_geometry: 'Plangeometrie',
+    public_preview: 'öffentliche Vorschau',
+    public_preview_glb: 'öffentliche 3D-Vorschau',
+    reviewed: 'geprüft',
+    source_reconstruction: 'Quellenrekonstruktion',
+    spatial_order: 'Raumordnung',
+    structure: 'Tragwerk',
+    tectonics: 'Tektonik',
+    typology: 'Typologie'
+  };
+  return labels[value] ?? value.replace(/[_-]/g, ' ');
 }

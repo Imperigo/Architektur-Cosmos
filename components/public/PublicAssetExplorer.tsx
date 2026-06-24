@@ -25,8 +25,8 @@ const kindLabels: Record<PublicAsset['kind'], string> = {
   image: 'Bild',
   plan: 'Plan',
   section: 'Schnitt',
-  model: '3D',
-  analysis: 'Analyse'
+  model: '3D-Vorschau',
+  analysis: 'Analyseprofil'
 };
 const assetPageSize = 24;
 
@@ -77,7 +77,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
       <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#57b6c2]">Öffentliche Assetbibliothek</div>
-          <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Assetbestand</h2>
+          <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4] sm:text-4xl">Geprüfte öffentliche Assets</h2>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 xl:w-[860px] xl:grid-cols-[1.25fr_0.8fr_1fr_1fr_auto]">
           <label className="public-filter-field">
@@ -86,7 +86,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Asset, Projekt, Provenienz"
+              placeholder="Bauteil, Projekt, Quelle"
               className="ak-control h-11 w-full pl-10 pr-3 text-sm outline-none transition focus:border-[#57b6c2]"
             />
           </label>
@@ -250,7 +250,7 @@ function assetLayerLabel(value: string) {
     envelope: 'Fassade',
     image: 'Bild',
     material_system: 'Materialsystem',
-    model: '3D-Modell',
+    model: 'Modellgruppe',
     plan: 'Grundriss',
     section: 'Schnitt',
     source_reconstruction: 'Quellenrekonstruktion',
@@ -265,7 +265,7 @@ function assetLayerLabel(value: string) {
 function assetRightsLabel(value: string) {
   const labels: Record<string, string> = {
     generated_diagrammatic_model: 'Eigenes Studienmodell',
-    metadata_only: 'Nur Metadaten',
+    metadata_only: 'Metadaten ohne Rohdatei',
     reviewed: 'Rechte geprüft',
     verified: 'Verifiziert'
   };
@@ -278,7 +278,7 @@ function assetStatusLabel(value: string) {
     public_display: 'Öffentlich sichtbar',
     public_display_allowed: 'Öffentlich freigegeben',
     public_preview_glb: 'Öffentliche 3D-Vorschau',
-    draft: 'Entwurf',
+    draft: 'In Vorbereitung',
     pending: 'Ausstehend',
     reviewed: 'Geprüft',
     verified: 'Verifiziert'
@@ -300,7 +300,7 @@ function assetDisplayLabel(value: string) {
 function assetProvenanceLabel(value: string) {
   const labels: Record<string, string> = {
     'analysis metadata': 'Analysemetadaten',
-    'public gate': 'Öffentliche Freigabeprüfung'
+    'public gate': 'Öffentliche Rechteprüfung'
   };
   return labels[value.toLowerCase()] ?? readableMetadataValue(value);
 }
