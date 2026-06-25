@@ -151,8 +151,8 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
       </div>
 
       <div className="public-results-bar">
-        <div className="text-sm text-[#aeb8b2]">
-          <strong className="font-semibold text-[#f7f7f4]">{filtered.length}</strong> von {assets.length} öffentlichen Assets sichtbar.
+        <div className="public-results-count">
+          <strong>{filtered.length}</strong> von {assets.length} öffentlichen Assets sichtbar.
         </div>
         {hasActiveFilters ? (
           <button
@@ -210,8 +210,8 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
           ))}
         </div>
       ) : (
-        <div className="mt-6 border-t border-white/12">
-          <div className="hidden grid-cols-[90px_minmax(220px,1.2fr)_minmax(180px,0.8fr)_150px_130px] gap-4 border-b border-white/12 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#65705f] md:grid">
+        <div className="public-index-table">
+          <div className="public-index-head hidden grid-cols-[90px_minmax(220px,1.2fr)_minmax(180px,0.8fr)_150px_130px] md:grid">
             <span>Typ</span>
             <span>Asset</span>
             <span>Projekt</span>
@@ -237,8 +237,8 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
         </div>
       )}
       {visible.length < filtered.length ? (
-        <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/12 pt-4">
-          <span className="text-[10px] uppercase tracking-[0.14em] text-[#65705f]">
+        <div className="public-load-more-row">
+          <span className="public-load-more-count">
             {visible.length} von {filtered.length} geladen
           </span>
           <button

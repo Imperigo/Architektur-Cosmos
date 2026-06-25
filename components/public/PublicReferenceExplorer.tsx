@@ -135,8 +135,8 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
       </div>
 
       <div className="public-results-bar">
-        <div className="text-sm text-[#aeb8b2]">
-          <strong className="font-semibold text-[#f7f7f4]">{filtered.length}</strong> von {references.length} öffentlichen Referenzen sichtbar.
+        <div className="public-results-count">
+          <strong>{filtered.length}</strong> von {references.length} öffentlichen Referenzen sichtbar.
         </div>
         {hasActiveFilters ? (
           <button
@@ -203,10 +203,10 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
                   <div className="public-progress-fill h-full" style={{ width: `${entry.readinessScore}%` }} />
                 </div>
               </div>
-              <div className="mt-4 grid grid-cols-3 border border-white/10 text-center text-[10px] uppercase tracking-[0.12em] text-[#aeb8b2]">
-                <span className="border-r border-white/10 py-2">{entry.mediaCount} Medien</span>
-                <span className="border-r border-white/10 py-2">{entry.analysisCount} Analysen</span>
-                <span className="py-2">{entry.materials.length || 0} Mat.</span>
+              <div className="public-card-stat-grid mt-4">
+                <span>{entry.mediaCount} Medien</span>
+                <span>{entry.analysisCount} Analysen</span>
+                <span>{entry.materials.length || 0} Mat.</span>
               </div>
               <div className="mt-3 text-xs leading-5 text-[#858f89]">{entry.location}</div>
               {entry.imageCredit ? <div className="mt-2 text-[10px] leading-4 text-[#6f7772]">{entry.imageCredit}</div> : null}
@@ -215,8 +215,8 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
           ))}
         </div>
       ) : (
-        <div className="mt-6 border-t border-white/12">
-          <div className="hidden grid-cols-[80px_minmax(220px,1.2fr)_minmax(160px,0.8fr)_120px_100px] gap-4 border-b border-white/12 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#65706b] md:grid">
+        <div className="public-index-table">
+          <div className="public-index-head hidden grid-cols-[80px_minmax(220px,1.2fr)_minmax(160px,0.8fr)_120px_100px] md:grid">
             <span>Jahr</span>
             <span>Projekt</span>
             <span>Ort / Autor</span>
@@ -254,8 +254,8 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
         </div>
       )}
       {visible.length < filtered.length ? (
-        <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/12 pt-4">
-          <span className="text-[10px] uppercase tracking-[0.14em] text-[#65706b]">
+        <div className="public-load-more-row">
+          <span className="public-load-more-count">
             {visible.length} von {filtered.length} geladen
           </span>
           <button
