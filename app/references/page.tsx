@@ -113,10 +113,13 @@ export default function ReferencesPage() {
             <p className="mt-5 text-base leading-8 text-[#cbd1cc]">{villa.full_description}</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {villa.analysis_layers?.slice(0, 6).map((layer) => (
-                <div key={layer.analysis_type} className="border border-white/12 bg-[#101513] p-4">
-                  <div className="text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{layer.analysis_type.replace(/_/g, ' ')}</div>
-                  <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{layer.summary}</p>
-                </div>
+                <PublicInfoCard
+                  key={layer.analysis_type}
+                  accent="#66e1d2"
+                  kicker="Analyseebene"
+                  title={layer.analysis_type.replace(/_/g, ' ')}
+                  body={<p>{layer.summary}</p>}
+                />
               ))}
             </div>
           </div>
@@ -154,11 +157,7 @@ export default function ReferencesPage() {
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {ingenbohlReadiness.map((item) => (
-                <div key={item.label} className="border border-white/12 bg-[#101513] p-4">
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2]">{item.status}</div>
-                  <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.label}</h3>
-                  <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
-                </div>
+                <PublicInfoCard key={item.label} accent="#66e1d2" kicker={item.status} title={item.label} body={<p>{item.detail}</p>} />
               ))}
             </div>
           </div>
@@ -166,11 +165,7 @@ export default function ReferencesPage() {
             {ingenbohlModelUrl ? <EntryModelViewer modelUrl={ingenbohlModelUrl} title={ingenbohl.title} accent="#66e1d2" /> : null}
             <div className="grid gap-3 sm:grid-cols-2">
               {ingenbohlTaxonomy.map((item) => (
-                <div key={item.title} className="border border-white/12 bg-[#101513] p-4">
-                  <div className="text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{item.kind}</div>
-                  <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
-                </div>
+                <PublicInfoCard key={item.title} accent="#66e1d2" kicker={item.kind} title={item.title} body={<p>{item.detail}</p>} />
               ))}
             </div>
           </div>
@@ -186,11 +181,7 @@ export default function ReferencesPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {taxonomy.map((item) => (
-              <div key={item.title} className="border border-white/12 bg-[#101513] p-4">
-                <div className="text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{item.kind}</div>
-                <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{item.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{item.detail}</p>
-              </div>
+              <PublicInfoCard key={item.title} accent="#66e1d2" kicker={item.kind} title={item.title} body={<p>{item.detail}</p>} />
             ))}
           </div>
         </section>
