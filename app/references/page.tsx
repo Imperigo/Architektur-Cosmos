@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
 import { PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
@@ -45,21 +46,21 @@ export default function ReferencesPage() {
   const publicGateSummary = publicGateStatusSummary();
 
   return (
-    <main className="entry-page ak-page-shell">
+    <main className="entry-page ak-page-shell" style={{ '--ak-accent': '#66e1d2' } as CSSProperties}>
       <div className="ak-page-inner">
         <PublicSiteHeader active="references" context="Öffentliche Referenzdatenbank" />
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_440px] lg:py-14">
           <div>
-            <div className="mb-4 flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#66e1d2]">
-              <span className="border border-[#66e1d2]/40 px-2.5 py-1">KosmoReferences</span>
-              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Öffentlich freigegeben</span>
-              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Pilotprojekt Villa Savoye</span>
+            <div className="public-hero-tags">
+              <span className="public-hero-tag public-hero-tag-accent">KosmoReferences</span>
+              <span className="public-hero-tag">Öffentlich freigegeben</span>
+              <span className="public-hero-tag">Pilotprojekt Villa Savoye</span>
             </div>
             <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
               Vom Bauwerk zum prüfbaren Dossier
             </h1>
-            <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
+            <p className="public-hero-lede">
               Bauten werden mit Autorenschaft, Ort, Zeit, Quellen, Bildern, bereinigten Planebenen, Analysefeldern und Modellvorschauen erschlossen. Gezeigt werden ausschliesslich öffentlich freigegebene Medien und eigene diagrammatische Rekonstruktionen.
             </p>
           </div>

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
 import { PublicAssetExplorer } from '@/components/public/PublicAssetExplorer';
 import { PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
@@ -40,21 +41,21 @@ export default function AssetsPage() {
   const publicGateSummary = publicGateStatusSummary();
 
   return (
-    <main className="entry-page ak-page-shell">
+    <main className="entry-page ak-page-shell" style={{ '--ak-accent': '#b9f06a' } as CSSProperties}>
       <div className="ak-page-inner">
         <PublicSiteHeader active="assets" context="Öffentliche Assetbibliothek" />
 
         <section className="grid gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:py-14">
           <div>
-            <div className="mb-4 flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#b9f06a]">
-              <span className="border border-[#b9f06a]/40 px-2.5 py-1">KosmoAsset</span>
-              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">Öffentliche Assetebene</span>
-              <span className="border border-white/14 px-2.5 py-1 text-[#aeb8b2]">3D-Vorschau</span>
+            <div className="public-hero-tags">
+              <span className="public-hero-tag public-hero-tag-accent">KosmoAsset</span>
+              <span className="public-hero-tag">Öffentliche Assetebene</span>
+              <span className="public-hero-tag">3D-Vorschau</span>
             </div>
             <h1 className="ak-page-title max-w-4xl font-semibold tracking-normal">
               Bauteile aus geprüften Referenzen
             </h1>
-            <p className="mt-7 max-w-3xl text-lg leading-8 text-[#cbd1cc]">
+            <p className="public-hero-lede">
               Der Bestand bündelt öffentlich freigegebene Bilder, eigene Plan- und Schnittdiagramme, Analyseebenen und reduzierte 3D-Vorschauen aus KosmoReferences. Private PDFs, Scans und interne Quellen bleiben ausgeschlossen.
             </p>
           </div>

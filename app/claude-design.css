@@ -368,6 +368,41 @@ textarea {
   letter-spacing: 0;
 }
 
+.public-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.public-hero-tag {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border: 1px solid var(--ak-border-subtle);
+  padding: 0 10px;
+  color: var(--ak-text-secondary);
+  font-family: var(--ak-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.public-hero-tag-accent {
+  border-color: color-mix(in srgb, var(--ak-accent) 42%, transparent);
+  color: var(--ak-accent);
+}
+
+.public-hero-lede {
+  margin-top: 28px;
+  max-width: 48rem;
+  color: var(--ak-text-secondary);
+  font-size: 18px;
+  line-height: 1.78;
+}
+
 .public-filter-grid {
   display: grid;
   gap: 10px;
