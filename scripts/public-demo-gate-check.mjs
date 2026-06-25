@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { publicLeakMatches } from './public-leak-patterns.mjs';
 
 const entries = JSON.parse(fs.readFileSync('data/mock-entries.json', 'utf8'));
 const publicModelPreviews = JSON.parse(fs.readFileSync('data/public-model-previews.json', 'utf8'));
@@ -11,18 +12,6 @@ const blockedLicenses = new Set([
   'unknown'
 ]);
 const allowedAssetRights = new Set(['public_domain', 'licensed', 'own_work']);
-const privateLeakPatterns = [
-  /\/mnt\//i,
-  /\/home\//i,
-  /source-root/i,
-  /private-library/i,
-  /onedrive/i,
-  /archiv\/architekturkosmos\/assets/i,
-  /\.pdf($|\?)/i,
-  /archive-intake/i,
-  /\bocr\b/i
-];
-
 const modelsBySlug = new Map(publicModelPreviews.models.map((model) => [model.slug, model]));
 const failures = [];
 const warnings = [];
@@ -62,7 +51,7 @@ function publicProjectMediaUrl(entry, media) {
 }
 
 function hasPrivateLeak(value) {
-  return privateLeakPatterns.some((pattern) => pattern.test(String(value ?? '')));
+  return publicLeakMatches(value ?? '').length > 0;
 }
 
 function recordFailure(id, detail) {
@@ -157,8 +146,9 @@ async function checkRenderedRoutes(baseUrl) {
     }
 
     const body = await response.text();
-    if (hasPrivateLeak(body)) {
-      recordFailure(`route:${route}:leak`, `rendered route contains a blocked private/source pattern.`);
+    const leakMatches = publicLeakMatches(body);
+    if (leakMatches.length > 0) {
+      recordFailure(`route:${route}:leak`, `rendered route contains blocked private/source patterns: ${leakMatches.join(', ')}`);
     }
   }
 
