@@ -1034,6 +1034,101 @@ textarea {
   letter-spacing: 0;
 }
 
+.public-bundle-card {
+  min-width: 0;
+  border: 1px solid var(--ak-border-subtle);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--public-section-accent) 8%, transparent), transparent 42%),
+    var(--ak-surface-card);
+  padding: 16px;
+}
+
+.public-bundle-card-head {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.public-bundle-card h3 {
+  margin: 8px 0 0;
+  color: var(--ak-text-primary);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.public-bundle-status {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  border: 1px solid var(--ak-border-subtle);
+  padding: 0 8px;
+  color: var(--ak-text-secondary);
+  font-family: var(--ak-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.public-bundle-metrics {
+  display: grid;
+  grid-template-columns: repeat(var(--public-bundle-metric-count), minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.public-bundle-metric {
+  min-width: 0;
+  border: 1px solid var(--ak-border-subtle);
+  background: rgb(5 7 7 / 42%);
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.public-bundle-metric strong {
+  display: block;
+  color: var(--ak-text-primary);
+  font-size: 18px;
+  font-weight: 760;
+  line-height: 1;
+}
+
+.public-bundle-metric span,
+.public-bundle-chips span {
+  color: var(--ak-text-faint);
+  font-family: var(--ak-font-mono);
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.public-bundle-metric span {
+  display: block;
+  margin-top: 5px;
+}
+
+.public-bundle-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.public-bundle-chips span {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  border: 1px solid var(--ak-border-subtle);
+  padding: 0 8px;
+}
+
 .public-hero-preview {
   overflow: hidden;
   border: 1px solid var(--ak-border-subtle);
@@ -1620,6 +1715,10 @@ textarea {
 @media (max-width: 640px) {
   .public-card-grid[data-columns="2"] {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .public-bundle-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

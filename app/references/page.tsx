@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
-import { PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
+import { PublicBundleCard, PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -211,23 +211,20 @@ export default function ReferencesPage() {
           </div>
           <div className="grid gap-3">
             {kosmoDrawIntake.bundles.map((bundle) => (
-              <div key={bundle.projectSlug} className="border border-white/12 bg-[#101513] p-4">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.16em] text-[#66e1d2]">{bundle.sourceKind}</div>
-                    <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{bundle.title}</h3>
-                  </div>
-                  <span className="border border-white/14 px-2 py-1 text-[10px] uppercase tracking-[0.12em] text-[#aeb8b2]">
-                    {bundle.intakeAllowed ? 'prüfbereit' : 'gesperrt'}
-                  </span>
-                </div>
-                <div className="mt-4 grid grid-cols-4 gap-2 text-center text-xs text-[#b9c1bc]">
-                  <IntakeMini label="Räume" value={bundle.rooms} />
-                  <IntakeMini label="Wände" value={bundle.walls} />
-                  <IntakeMini label="Öffnungen" value={bundle.openings.total} />
-                  <IntakeMini label="Assets" value={bundle.assets.total} />
-                </div>
-              </div>
+              <PublicBundleCard
+                key={bundle.projectSlug}
+                accent="#66e1d2"
+                kicker={bundle.sourceKind}
+                title={bundle.title}
+                status={bundle.intakeAllowed ? 'prüfbereit' : 'gesperrt'}
+                body={<p>Review-only Aufnahme aus KosmoDraw. Lokale Artefakte und IFC-Pfade bleiben ausgeschlossen.</p>}
+                metrics={[
+                  { label: 'Räume', value: bundle.rooms },
+                  { label: 'Wände', value: bundle.walls },
+                  { label: 'Öffnungen', value: bundle.openings.total },
+                  { label: 'Assets', value: bundle.assets.total }
+                ]}
+              />
             ))}
           </div>
         </section>
@@ -269,14 +266,5 @@ export default function ReferencesPage() {
 
       </div>
     </main>
-  );
-}
-
-function IntakeMini({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="border border-white/10 bg-[#050707] px-2 py-3">
-      <div className="text-lg font-semibold text-[#f7f7f4]">{value}</div>
-      <div className="mt-1 text-[9px] uppercase tracking-[0.12em] text-[#8f9994]">{label}</div>
-    </div>
   );
 }

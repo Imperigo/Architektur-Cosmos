@@ -35,6 +35,20 @@ type PublicHeroPreviewProps = PublicAccentProps & {
   children: ReactNode;
 };
 
+type PublicBundleMetric = {
+  label: string;
+  value: number | string;
+};
+
+type PublicBundleCardProps = PublicAccentProps & {
+  kicker: string;
+  title: string;
+  body: ReactNode;
+  status?: string;
+  metrics?: PublicBundleMetric[];
+  chips?: string[];
+};
+
 export function PublicSplitSection({ accent, kicker, title, body, children, id }: PublicSplitSectionProps) {
   return (
     <section
@@ -98,5 +112,41 @@ export function PublicHeroPreview({ accent, kicker, caption, children }: PublicH
         <div className="public-card-body">{caption}</div>
       </div>
     </aside>
+  );
+}
+
+export function PublicBundleCard({ accent, kicker, title, body, status, metrics = [], chips = [] }: PublicBundleCardProps) {
+  return (
+    <article
+      className="public-bundle-card"
+      style={{
+        '--public-section-accent': accent,
+        '--public-bundle-metric-count': Math.max(metrics.length, 1)
+      } as CSSProperties}
+    >
+      <div className="public-bundle-card-head">
+        <div>
+          <div className="public-card-kicker">{kicker}</div>
+          <h3>{title}</h3>
+        </div>
+        {status ? <span className="public-bundle-status">{status}</span> : null}
+      </div>
+      <div className="public-card-body">{body}</div>
+      {metrics.length > 0 ? (
+        <div className="public-bundle-metrics">
+          {metrics.map((metric) => (
+            <div key={metric.label} className="public-bundle-metric">
+              <strong>{metric.value}</strong>
+              <span>{metric.label}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {chips.length > 0 ? (
+        <div className="public-bundle-chips">
+          {chips.map((chip) => <span key={chip}>{chip}</span>)}
+        </div>
+      ) : null}
+    </article>
   );
 }

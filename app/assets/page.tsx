@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import { PublicAssetExplorer } from '@/components/public/PublicAssetExplorer';
-import { PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
+import { PublicBundleCard, PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -160,18 +160,18 @@ export default function AssetsPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {kosmoDrawIntake.bundles.map((bundle) => (
-              <div key={bundle.projectSlug} className="border border-white/12 bg-[#11170c] p-4">
-                <div className="text-[10px] uppercase tracking-[0.16em] text-[#b9f06a]">{bundle.sourceKind}</div>
-                <h3 className="mt-2 text-lg font-semibold text-[#f7f7f4]">{bundle.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">
-                  {bundle.assets.total} Asset-Kandidaten, {bundle.openings.total} Öffnungen, öffentlich freigegeben nach Übernahme: {bundle.publicReadyAfterIntake}.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.12em]">
-                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">{bundle.intakeAllowed ? 'prüfbereit' : 'gesperrt'}</span>
-                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">private Verweise {bundle.privateLeakCount}</span>
-                  <span className="border border-white/14 px-2 py-1 text-[#aeb8b2]">unsichere Freigaben {bundle.unsafePublicFlagCount}</span>
-                </div>
-              </div>
+              <PublicBundleCard
+                key={bundle.projectSlug}
+                accent="#b9f06a"
+                kicker={bundle.sourceKind}
+                title={bundle.title}
+                status={bundle.intakeAllowed ? 'prüfbereit' : 'gesperrt'}
+                body={<p>{bundle.assets.total} Asset-Kandidaten, {bundle.openings.total} Öffnungen, öffentlich freigegeben nach Übernahme: {bundle.publicReadyAfterIntake}.</p>}
+                chips={[
+                  `private Verweise ${bundle.privateLeakCount}`,
+                  `unsichere Freigaben ${bundle.unsafePublicFlagCount}`
+                ]}
+              />
             ))}
           </div>
         </section>
