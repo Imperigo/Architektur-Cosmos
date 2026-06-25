@@ -648,6 +648,53 @@ textarea {
   text-transform: uppercase;
 }
 
+.public-card-title {
+  margin-top: 12px;
+  color: var(--ak-text-primary);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.public-card-title-compact {
+  font-size: 16px;
+  line-height: 1.18;
+}
+
+.public-card-summary {
+  margin-top: 8px;
+  color: var(--ak-text-secondary);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.public-card-summary-compact {
+  line-height: 1.45;
+}
+
+.public-card-location {
+  margin-top: 12px;
+  color: var(--ak-text-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.public-card-credit,
+.public-card-provenance {
+  color: var(--ak-text-faint);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.public-card-credit {
+  margin-top: 8px;
+}
+
+.public-card-provenance {
+  margin-top: 8px;
+}
+
 .public-index-row {
   transition: background 160ms ease;
 }
@@ -658,6 +705,69 @@ textarea {
 
 .public-index-accent {
   color: color-mix(in srgb, var(--ak-accent) 82%, var(--ak-text-primary));
+}
+
+.public-index-accent-year {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.public-index-accent-label {
+  font-family: var(--ak-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.public-index-title {
+  display: block;
+  color: var(--ak-text-primary);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.22;
+}
+
+.public-index-title-compact {
+  font-size: 14px;
+}
+
+.public-index-submeta,
+.public-index-meta {
+  color: var(--ak-text-muted);
+  font-family: var(--ak-font-mono);
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.public-index-submeta {
+  display: block;
+  margin-top: 4px;
+}
+
+.public-index-body {
+  color: var(--ak-text-secondary);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.public-index-muted {
+  display: block;
+  margin-top: 4px;
+  color: var(--ak-text-faint);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.public-index-value {
+  color: var(--ak-text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .public-progress-track {

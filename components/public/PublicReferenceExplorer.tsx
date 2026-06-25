@@ -192,8 +192,8 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
                 <span>{styleLabels[entry.style] ?? entry.style.replace(/_/g, ' ')}</span>
                 {entry.hasModel ? <span>3D-Vorschau</span> : null}
               </div>
-              <h3 className="mt-3 text-xl leading-tight text-[#f7f7f4]">{entry.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#b9c1bc]">{entry.summary}</p>
+              <h3 className="public-card-title">{entry.title}</h3>
+              <p className="public-card-summary">{entry.summary}</p>
               <div className="public-card-status-panel mt-4">
                 <div className="public-card-chip-row">
                   <span>{publicStatusLabel(entry.gateStatus)}</span>
@@ -208,8 +208,8 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
                 <span>{entry.analysisCount} Analysen</span>
                 <span>{entry.materials.length || 0} Mat.</span>
               </div>
-              <div className="mt-3 text-xs leading-5 text-[#858f89]">{entry.location}</div>
-              {entry.imageCredit ? <div className="mt-2 text-[10px] leading-4 text-[#6f7772]">{entry.imageCredit}</div> : null}
+              <div className="public-card-location">{entry.location}</div>
+              {entry.imageCredit ? <div className="public-card-credit">{entry.imageCredit}</div> : null}
             </div>
           </Link>
           ))}
@@ -229,22 +229,22 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               href={`/atlas/${entry.slug}/`}
               className="public-index-row grid gap-2 border-b border-white/10 px-3 py-4 md:grid-cols-[80px_minmax(220px,1.2fr)_minmax(160px,0.8fr)_120px_100px] md:items-center md:gap-4"
             >
-              <span className="public-index-accent text-sm font-semibold">{entry.year}</span>
+              <span className="public-index-accent public-index-accent-year">{entry.year}</span>
               <span>
-                <strong className="block text-base font-semibold text-[#f7f7f4]">{entry.title}</strong>
-                <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-[#7d8984]">
+                <strong className="public-index-title">{entry.title}</strong>
+                <span className="public-index-submeta">
                   {styleLabels[entry.style] ?? entry.style.replace(/_/g, ' ')}
                 </span>
               </span>
-              <span className="text-xs leading-5 text-[#9ca8a2]">
+              <span className="public-index-body">
                 {entry.location || 'Ort in Prüfung'}
-                {entry.authors.length ? <span className="block text-[#69736f]">{entry.authors.join(', ')}</span> : null}
+                {entry.authors.length ? <span className="public-index-muted">{entry.authors.join(', ')}</span> : null}
               </span>
-              <span className="text-[10px] uppercase tracking-[0.12em] text-[#9ca8a2]">
+              <span className="public-index-meta">
                 {entry.mediaCount} Medien / {entry.analysisCount} Analysen
               </span>
               <span className="flex items-center justify-between gap-3 md:block">
-                <span className="text-sm font-semibold text-[#f7f7f4]">{entry.readinessScore}%</span>
+                <span className="public-index-value">{entry.readinessScore}%</span>
                 <span className="public-progress-track mt-2 block h-px flex-1 md:w-full">
                   <span className="public-progress-fill block h-px" style={{ width: `${entry.readinessScore}%` }} />
                 </span>

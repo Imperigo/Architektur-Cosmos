@@ -198,13 +198,13 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
                 <span>{kindLabels[asset.kind]}</span>
                 <span>{publicAssetLayerLabel(asset.layer)}</span>
               </div>
-              <h3 className="mt-3 text-base leading-tight text-[#f7f7f4]">{publicAssetDisplayLabel(asset.label)}</h3>
-              <p className="mt-2 text-sm text-[#b9c1bc]">{asset.project}</p>
+              <h3 className="public-card-title public-card-title-compact">{publicAssetDisplayLabel(asset.label)}</h3>
+              <p className="public-card-summary public-card-summary-compact">{asset.project}</p>
               <div className="public-card-chip-row mt-4">
                 <span>{publicAssetRightsLabel(asset.rights)}</span>
                 <span>{publicAssetStatusLabel(asset.status)}</span>
               </div>
-              <p className="mt-2 line-clamp-2 text-[11px] leading-4 text-[#8f9a92]">{publicAssetProvenanceLabel(asset.provenance)}</p>
+              <p className="public-card-provenance line-clamp-2">{publicAssetProvenanceLabel(asset.provenance)}</p>
             </div>
           </a>
           ))}
@@ -224,14 +224,14 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               href={asset.url}
               className="public-index-row grid gap-2 border-b border-white/10 px-3 py-4 md:grid-cols-[90px_minmax(220px,1.2fr)_minmax(180px,0.8fr)_150px_130px] md:items-center md:gap-4"
             >
-              <span className="public-index-accent text-[10px] font-semibold uppercase tracking-[0.1em]">{kindLabels[asset.kind]}</span>
+              <span className="public-index-accent public-index-accent-label">{kindLabels[asset.kind]}</span>
               <span>
-                <strong className="block text-sm font-semibold text-[#f7f7f4]">{publicAssetDisplayLabel(asset.label)}</strong>
-                <span className="mt-1 line-clamp-1 block text-[10px] text-[#69736b]">{publicAssetProvenanceLabel(asset.provenance)}</span>
+                <strong className="public-index-title public-index-title-compact">{publicAssetDisplayLabel(asset.label)}</strong>
+                <span className="public-index-muted line-clamp-1">{publicAssetProvenanceLabel(asset.provenance)}</span>
               </span>
-              <span className="text-xs text-[#a1aca4]">{asset.project}</span>
-              <span className="text-[10px] uppercase tracking-[0.12em] text-[#8f9a92]">{publicAssetLayerLabel(asset.layer)}</span>
-              <span className="text-[10px] uppercase tracking-[0.12em] text-[#8f9a92]">{publicAssetRightsLabel(asset.rights)} / {publicAssetStatusLabel(asset.status)}</span>
+              <span className="public-index-body">{asset.project}</span>
+              <span className="public-index-meta">{publicAssetLayerLabel(asset.layer)}</span>
+              <span className="public-index-meta">{publicAssetRightsLabel(asset.rights)} / {publicAssetStatusLabel(asset.status)}</span>
             </a>
           ))}
         </div>
