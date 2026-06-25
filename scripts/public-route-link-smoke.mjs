@@ -16,6 +16,8 @@ const seedRoutes = [
   '/atlas/alterszentrum-kloster-ingenbohl/'
 ];
 
+const requiredCoreLinks = ['/', '/references/', '/assets/', '/atlas/', '/orbit/'];
+
 const findings = [];
 
 main().catch((error) => {
@@ -33,10 +35,18 @@ async function main() {
     const response = await fetch(`${baseUrl}${path}`);
     const body = await response.text();
     const links = extractAnchorHrefs(body);
+    const normalizedLinks = new Set(links.map((href) => normalizeInternalHref(href)).filter(Boolean));
     const pageLeakMatches = publicLeakMatches(body);
 
     check(response.ok, `${path}:status`, `Expected HTTP 2xx for ${path}, got ${response.status}.`);
     check(pageLeakMatches.length === 0, `${path}:page_no_private_patterns`, `Blocked private/source patterns: ${pageLeakMatches.join(', ') || 'none'}.`);
+    for (const requiredPath of requiredCoreLinks) {
+      check(
+        normalizedLinks.has(requiredPath),
+        `${path}:core_link:${requiredPath}`,
+        `Expected ${path} to include core navigation link ${requiredPath}.`
+      );
+    }
 
     for (const href of links) {
       const linkLeakMatches = publicLeakMatches(href);
@@ -54,6 +64,7 @@ async function main() {
       path,
       status: response.status,
       anchor_count: links.length,
+      core_link_count: requiredCoreLinks.filter((requiredPath) => normalizedLinks.has(requiredPath)).length,
       private_pattern_count: pageLeakMatches.length
     });
   }
