@@ -67,11 +67,23 @@ const routes = [
   },
   {
     path: '/atlas/villa-savoye/',
-    includes: ['Villa Savoye']
+    includes: [
+      'Villa Savoye',
+      'Modellstruktur als lesbarer Gebäudekern',
+      'Prüfstatus, Modellspur und Asset-Brücke',
+      'Öffentliche 3D-Vorschau vorhanden',
+      'Freigabestatus des Pilotprojekts'
+    ]
   },
   {
     path: '/atlas/alterszentrum-kloster-ingenbohl/',
-    includes: ['Alterszentrum Kloster Ingenbohl']
+    includes: [
+      'Alterszentrum Kloster Ingenbohl',
+      'Modellstruktur als lesbarer Gebäudekern',
+      'Prüfstatus, Modellspur und Asset-Brücke',
+      'Öffentliche 3D-Vorschau vorhanden',
+      'Freigabestatus des Pilotprojekts'
+    ]
   },
   {
     path: '/icon.svg',
