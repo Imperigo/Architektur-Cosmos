@@ -168,9 +168,9 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
           <Link
             key={entry.slug}
             href={`/atlas/${entry.slug}/`}
-            className="ak-card group overflow-hidden transition hover:bg-[#1a1e27]"
+            className="ak-card public-explorer-card group overflow-hidden"
           >
-            <div className="aspect-[4/3] overflow-hidden bg-[#141817]">
+            <div className="public-reference-media-frame aspect-[4/3] overflow-hidden">
               {entry.imageUrl ? (
                 <img
                   src={entry.imageUrl}

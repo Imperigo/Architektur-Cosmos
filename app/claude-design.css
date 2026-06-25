@@ -537,6 +537,22 @@ textarea {
   text-align: center;
 }
 
+.public-explorer-card {
+  transition: background 160ms ease;
+}
+
+.public-explorer-card:hover {
+  background: var(--ak-surface-raised);
+}
+
+.public-reference-media-frame {
+  background: rgb(20 24 23);
+}
+
+.public-asset-media-frame {
+  background: color-mix(in srgb, var(--ak-accent) 5%, rgb(17 20 17));
+}
+
 .public-card-empty-preview svg {
   width: 28px;
   height: 28px;

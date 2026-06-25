@@ -184,9 +184,9 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
           <a
             key={asset.id}
             href={asset.url}
-            className="ak-card group overflow-hidden transition hover:bg-[#1a1e27]"
+            className="ak-card public-explorer-card group overflow-hidden"
           >
-            <div className="aspect-[4/3] overflow-hidden border-b border-white/10 bg-[#151a14]">
+            <div className="public-asset-media-frame aspect-[4/3] overflow-hidden border-b border-white/10">
               {asset.previewUrl ? (
                 <img src={asset.previewUrl} alt={asset.label} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" />
               ) : (
