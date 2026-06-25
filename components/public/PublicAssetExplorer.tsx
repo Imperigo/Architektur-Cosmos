@@ -194,7 +194,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               )}
             </div>
             <div className="p-4">
-              <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.1em] text-[#57b6c2]">
+              <div className="public-card-meta">
                 <span>{kindLabels[asset.kind]}</span>
                 <span>{publicAssetLayerLabel(asset.layer)}</span>
               </div>
@@ -222,9 +222,9 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <a
               key={asset.id}
               href={asset.url}
-              className="grid gap-2 border-b border-white/10 px-3 py-4 transition hover:bg-[#57b6c2]/6 md:grid-cols-[90px_minmax(220px,1.2fr)_minmax(180px,0.8fr)_150px_130px] md:items-center md:gap-4"
+              className="public-index-row grid gap-2 border-b border-white/10 px-3 py-4 md:grid-cols-[90px_minmax(220px,1.2fr)_minmax(180px,0.8fr)_150px_130px] md:items-center md:gap-4"
             >
-              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#57b6c2]">{kindLabels[asset.kind]}</span>
+              <span className="public-index-accent text-[10px] font-semibold uppercase tracking-[0.1em]">{kindLabels[asset.kind]}</span>
               <span>
                 <strong className="block text-sm font-semibold text-[#f7f7f4]">{publicAssetDisplayLabel(asset.label)}</strong>
                 <span className="mt-1 line-clamp-1 block text-[10px] text-[#69736b]">{publicAssetProvenanceLabel(asset.provenance)}</span>

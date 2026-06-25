@@ -623,6 +623,40 @@ textarea {
   white-space: nowrap;
 }
 
+.public-card-meta {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: color-mix(in srgb, var(--ak-accent) 78%, var(--ak-text-primary));
+  font-family: var(--ak-font-mono);
+  font-size: 10px;
+  font-weight: 680;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.public-index-row {
+  transition: background 160ms ease;
+}
+
+.public-index-row:hover {
+  background: color-mix(in srgb, var(--ak-accent) 6%, transparent);
+}
+
+.public-index-accent {
+  color: color-mix(in srgb, var(--ak-accent) 82%, var(--ak-text-primary));
+}
+
+.public-progress-track {
+  background: color-mix(in srgb, var(--ak-text-primary) 10%, transparent);
+}
+
+.public-progress-fill {
+  background: var(--ak-accent);
+}
+
 .public-empty-state {
   display: grid;
   min-height: 260px;

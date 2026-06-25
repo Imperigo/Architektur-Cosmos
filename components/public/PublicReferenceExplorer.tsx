@@ -187,7 +187,7 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               )}
             </div>
             <div className="p-4">
-              <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.1em] text-[#57b6c2]">
+              <div className="public-card-meta">
                 <span>{entry.year}</span>
                 <span>{styleLabels[entry.style] ?? entry.style.replace(/_/g, ' ')}</span>
                 {entry.hasModel ? <span>3D-Vorschau</span> : null}
@@ -199,8 +199,8 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
                   <span>{publicStatusLabel(entry.gateStatus)}</span>
                   <span>{entry.readinessScore}%</span>
                 </div>
-                <div className="mt-2 h-1.5 overflow-hidden bg-white/10">
-                  <div className="h-full bg-[#57b6c2]" style={{ width: `${entry.readinessScore}%` }} />
+                <div className="public-progress-track mt-2 h-1.5 overflow-hidden">
+                  <div className="public-progress-fill h-full" style={{ width: `${entry.readinessScore}%` }} />
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-3 border border-white/10 text-center text-[10px] uppercase tracking-[0.12em] text-[#aeb8b2]">
@@ -227,9 +227,9 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
             <Link
               key={entry.slug}
               href={`/atlas/${entry.slug}/`}
-              className="grid gap-2 border-b border-white/10 px-3 py-4 transition hover:bg-[#57b6c2]/6 md:grid-cols-[80px_minmax(220px,1.2fr)_minmax(160px,0.8fr)_120px_100px] md:items-center md:gap-4"
+              className="public-index-row grid gap-2 border-b border-white/10 px-3 py-4 md:grid-cols-[80px_minmax(220px,1.2fr)_minmax(160px,0.8fr)_120px_100px] md:items-center md:gap-4"
             >
-              <span className="text-sm font-semibold text-[#57b6c2]">{entry.year}</span>
+              <span className="public-index-accent text-sm font-semibold">{entry.year}</span>
               <span>
                 <strong className="block text-base font-semibold text-[#f7f7f4]">{entry.title}</strong>
                 <span className="mt-1 block text-[10px] uppercase tracking-[0.12em] text-[#7d8984]">
@@ -245,8 +245,8 @@ export function PublicReferenceExplorer({ references }: PublicReferenceExplorerP
               </span>
               <span className="flex items-center justify-between gap-3 md:block">
                 <span className="text-sm font-semibold text-[#f7f7f4]">{entry.readinessScore}%</span>
-                <span className="mt-2 block h-px flex-1 bg-white/10 md:w-full">
-                  <span className="block h-px bg-[#57b6c2]" style={{ width: `${entry.readinessScore}%` }} />
+                <span className="public-progress-track mt-2 block h-px flex-1 md:w-full">
+                  <span className="public-progress-fill block h-px" style={{ width: `${entry.readinessScore}%` }} />
                 </span>
               </span>
             </Link>
