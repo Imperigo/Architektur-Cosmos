@@ -7,6 +7,7 @@ import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { MediaLightbox } from '@/components/atlas/MediaLightbox';
 import { ProjectSearch } from '@/components/atlas/ProjectSearch';
 import type { ProjectSearchEntry } from '@/components/atlas/ProjectSearch';
+import { PublicCardGrid, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import entries from '@/data/mock-entries.json';
 import publicModelPreviews from '@/data/public-model-previews.json';
@@ -366,40 +367,30 @@ function PublicPilotSection({ entry, accent }: { entry: Entry; accent: string })
   const taxonomy = publicEntryAssetTaxonomy(entry);
 
   return (
-    <section className="border-t border-white/12 py-8">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.22em]" style={{ color: accent }}>Freigabestatus des Pilotprojekts</div>
-          <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
-            Prüfstatus, Modellspur und Asset-Brücke
-          </h2>
-        </div>
-        <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
+    <PublicSplitSection
+      accent={accent}
+      kicker="Freigabestatus des Pilotprojekts"
+      title="Prüfstatus, Modellspur und Asset-Brücke"
+      body={(
+        <p>
           Diese Atlas-Seite folgt derselben Freigabelogik wie Referenzen und Assets: Nur freigegebene Medien
           und Vorschaumodelle dürfen sichtbar sein; private Quellen und KosmoDraw-/KosmoPublish-Zwischenschritte bleiben intern.
         </p>
+      )}
+    >
+      <div className="grid gap-5">
+        <PublicCardGrid columns={4}>
+          {readiness.map((item) => (
+            <PublicInfoCard key={item.label} accent={accent} kicker={item.status} title={item.label} body={<p>{prettifyGermanText(item.detail)}</p>} />
+          ))}
+        </PublicCardGrid>
+        <PublicCardGrid columns={4}>
+          {taxonomy.map((item) => (
+            <PublicInfoCard key={item.title} accent={accent} kicker={item.kind} title={item.title} body={<p>{prettifyGermanText(item.detail)}</p>} />
+          ))}
+        </PublicCardGrid>
       </div>
-
-      <div className="grid gap-4 md:grid-cols-4">
-        {readiness.map((item) => (
-          <article key={item.label} className="entry-study-card border border-white/14 bg-[#071315]/55 p-4">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.16em]" style={{ color: accent }}>{item.status}</div>
-            <h3 className="mt-2 text-lg text-[#f7f7f4]">{item.label}</h3>
-            <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(item.detail)}</p>
-          </article>
-        ))}
-      </div>
-
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {taxonomy.map((item) => (
-          <article key={item.title} className="entry-study-card border border-white/14 bg-[#050505]/45 p-4">
-            <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>{item.kind}</div>
-            <h3 className="mt-2 text-lg text-[#f7f7f4]">{item.title}</h3>
-            <p className="mt-2 text-sm leading-6 text-[#b8b8b2]">{prettifyGermanText(item.detail)}</p>
-          </article>
-        ))}
-      </div>
-    </section>
+    </PublicSplitSection>
   );
 }
 
@@ -676,40 +667,33 @@ function ModelAnalysisSection({ entry, modelUrl, accent }: { entry: Entry; model
       : 'Modellaufbau offen';
 
   return (
-    <section id="model-analysis" className="border-t border-white/12 py-10">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.24em]" style={{ color: accent }}>3D-Referenzkern</div>
-          <h2 className="mt-2 max-w-3xl text-3xl leading-tight text-[#f7f7f4] sm:text-4xl">
-            Modellstruktur als lesbarer Gebäudekern
-          </h2>
-        </div>
-        <p className="max-w-md text-sm leading-6 text-[#b8b8b2]">
+    <section id="model-analysis">
+      <PublicSplitSection
+        accent={accent}
+        kicker="3D-Referenzkern"
+        title="Modellstruktur als lesbarer Gebäudekern"
+        body={(
+          <p>
           Dieser Bereich ist der spätere Importkern: Geometrie, Materialfilter, Tragwerk, Tektonik und Quellenbasis werden als eigene Modellgruppen lesbar und filterbar.
-        </p>
-      </div>
-      <div className="mb-4 flex flex-wrap gap-2">
-        <span className="border border-white/14 bg-[#050505]/50 px-3 py-2 text-[10px] uppercase tracking-[0.14em]" style={{ color: accent }}>
-          {modelStatusLabel}
-        </span>
-        <span className="border border-white/14 bg-[#050505]/50 px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">
-          {plannedModelCount} geplante Modellgruppen
-        </span>
-        <span className="border border-white/14 bg-[#050505]/50 px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-[#b8b8b2]">
-          Geprüfte Modellableitung
-        </span>
-      </div>
+          </p>
+        )}
+      >
+        <PublicCardGrid columns={3}>
+          <PublicMetricCard accent={accent} label="Modellstatus" value={publicPreviewReady ? 'bereit' : 'offen'} detail={<p>{modelStatusLabel}</p>} />
+          <PublicMetricCard accent={accent} label="Modellgruppen" value={plannedModelCount} detail={<p>Geplante oder vorhandene Gruppen im Dossier.</p>} />
+          <PublicMetricCard accent={accent} label="Freigabe" value="Gate" detail={<p>Geprüfte Modellableitung ohne private Rohpfade.</p>} />
+        </PublicCardGrid>
+      </PublicSplitSection>
 
       {modelUrl ? (
         <EntryModelViewer modelUrl={modelUrl} title={entry.title} accent={accent} />
       ) : (
-        <article className="border border-white/14 bg-[#071315]/55 p-5">
-          <div className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>Modellstatus: geplant</div>
-          <h3 className="mt-3 text-2xl text-[#f7f7f4]">Noch kein öffentliches 3D-Modell</h3>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-[#b8b8b2]">
-            Die Datenbank enthält hier Modellgruppen oder Analyseprofile, aber noch kein geprüftes 3D-Modell für den öffentlichen Viewer. Zuerst werden Quellenbasis, Plan-/Schnittlage, Modellstruktur und Rechte geprüft.
-          </p>
-        </article>
+        <PublicInfoCard
+          accent={accent}
+          kicker="Modellstatus: geplant"
+          title="Noch kein öffentliches 3D-Modell"
+          body={<p>Die Datenbank enthält hier Modellgruppen oder Analyseprofile, aber noch kein geprüftes 3D-Modell für den öffentlichen Viewer. Zuerst werden Quellenbasis, Plan-/Schnittlage, Modellstruktur und Rechte geprüft.</p>}
+        />
       )}
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
