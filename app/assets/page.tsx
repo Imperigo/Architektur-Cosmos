@@ -105,20 +105,22 @@ export default function AssetsPage() {
           </PublicCardGrid>
         </PublicSplitSection>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ordnung der Assetbibliothek</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Bilder und Pläne werden zu Architekturbausteinen</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#b9f06a"
+          kicker="Ordnung der Assetbibliothek"
+          title="Bilder und Pläne werden zu Architekturbausteinen"
+          body={(
+            <p>
               Der öffentliche Asset-Pilot bleibt in Prüfung, zeigt aber bereits die spätere Struktur: Bilder und Zeichnungen sind Quellenoberflächen, daraus entstehen filterbare Architekturbausteine.
             </p>
-          </div>
+          )}
+        >
           <div className="grid gap-3 sm:grid-cols-2">
             {taxonomy.map((item) => (
               <PublicInfoCard key={item.title} accent="#b9f06a" kicker={item.kind} title={item.title} body={<p>{item.detail}</p>} />
             ))}
           </div>
-        </section>
+        </PublicSplitSection>
 
         <section className="border-t border-white/12 py-8">
           <PublicCardGrid columns={4}>
@@ -128,36 +130,42 @@ export default function AssetsPage() {
           </PublicCardGrid>
         </section>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Ingenbohl Assetprüfung</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl liefert Struktur, Quellen bleiben geschützt</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#b9f06a"
+          kicker="Ingenbohl Assetprüfung"
+          title="Ingenbohl liefert Struktur, Quellen bleiben geschützt"
+          body={(
+            <>
+              <p>
               {ingenbohl.title} zeigt die nächste KosmoAsset-Brücke: geprüfte Analyse-, Material- und Strukturkandidaten
               sowie Modellstatus werden indexiert, aber Bilder, Pläne und private Quellen bleiben gesperrt.
-            </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {ingenbohlReadiness.map((item) => (
                 <PublicInfoCard key={item.label} accent="#b9f06a" kicker={item.status} title={item.label} body={<p>{item.detail}</p>} />
               ))}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
+        >
           <div className="grid gap-3 sm:grid-cols-2">
             {ingenbohlTaxonomy.map((item) => (
               <PublicInfoCard key={item.title} accent="#b9f06a" kicker={item.kind} title={item.title} body={<p>{item.detail}</p>} />
             ))}
           </div>
-        </section>
+        </PublicSplitSection>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Asset-Übernahme aus KosmoDraw</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Zeichnung und Modell liefern Kandidaten, keine Freigaben</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#b9f06a"
+          kicker="Asset-Übernahme aus KosmoDraw"
+          title="Zeichnung und Modell liefern Kandidaten, keine Freigaben"
+          body={(
+            <p>
               Der Prüfbericht sieht {kosmoDrawIntake.summary.asset_candidate_count} Kandidaten aus {kosmoDrawIntake.summary.bundle_count} Projektpaketen.
               Davon werden aktuell 0 automatisch öffentlich freigegeben.
             </p>
-          </div>
+          )}
+        >
           <div className="grid gap-3 sm:grid-cols-2">
             {kosmoDrawIntake.bundles.map((bundle) => (
               <PublicBundleCard
@@ -174,41 +182,45 @@ export default function AssetsPage() {
               />
             ))}
           </div>
-        </section>
+        </PublicSplitSection>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Mengenprüfung vor Assetübernahme</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Mengen sind noch keine Bauteile</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#b9f06a"
+          kicker="Mengenprüfung vor Assetübernahme"
+          title="Mengen sind noch keine Bauteile"
+          body={(
+            <p>
               Der Analyse-Check sieht {kosmoDrawDigitalization.aggregateCounts.rooms} aggregierte Räume,
               {kosmoDrawDigitalization.aggregateCounts.walls} Wände und {kosmoDrawDigitalization.aggregateCounts.volumeTotalM3} m3 Volumen.
               Für KosmoAsset fehlen aber noch elementweise Bauteile, Öffnungen und geprüfte Asset-Kandidaten.
             </p>
-          </div>
+          )}
+        >
           <div className="grid gap-3 sm:grid-cols-3">
             <PublicMetricCard accent="#b9f06a" label="Geschosse" value={kosmoDrawDigitalization.aggregateCounts.floors} />
             <PublicMetricCard accent="#b9f06a" label="NGF m2" value={kosmoDrawDigitalization.aggregateCounts.netFloorAreaM2} />
             <PublicMetricCard accent="#b9f06a" label="Öffentlich bereit" value={kosmoDrawDigitalization.publicReadyAfterIntake} />
           </div>
-        </section>
+        </PublicSplitSection>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b9f06a]">Planregister aus KosmoPublish</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Planstände werden als Register, nicht als Rohdatei gezeigt</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#b9f06a"
+          kicker="Planregister aus KosmoPublish"
+          title="Planstände werden als Register, nicht als Rohdatei gezeigt"
+          body={(
+            <p>
               Der Plankatalog ist als schreibgeschützte Metadaten-Vorstufe sichtbar: {kosmoPublishPlanCatalog.phaseCount} Phasen,
               {kosmoPublishPlanCatalog.outputFields.length} Felder und aktuell {kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} öffentlich freigegebene Plan-Assets.
               Zeichnungen werden erst nach Rechteprüfung und Owner-Freigabe in KosmoAsset sichtbar.
             </p>
-          </div>
+          )}
+        >
           <div className="grid gap-3 sm:grid-cols-3">
             <PublicMetricCard accent="#b9f06a" label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
             <PublicMetricCard accent="#b9f06a" label="Felder" value={kosmoPublishPlanCatalog.outputFields.length} />
             <PublicMetricCard accent="#b9f06a" label="Öffentliche Pläne" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
           </div>
-        </section>
+        </PublicSplitSection>
 
       </div>
     </main>

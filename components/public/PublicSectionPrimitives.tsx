@@ -35,6 +35,14 @@ type PublicHeroPreviewProps = PublicAccentProps & {
   children: ReactNode;
 };
 
+type PublicMediaCardProps = PublicAccentProps & {
+  kicker: string;
+  title: string;
+  badge?: string;
+  media: ReactNode;
+  caption?: ReactNode;
+};
+
 type PublicBundleMetric = {
   label: string;
   value: number | string;
@@ -112,6 +120,25 @@ export function PublicHeroPreview({ accent, kicker, caption, children }: PublicH
         <div className="public-card-body">{caption}</div>
       </div>
     </aside>
+  );
+}
+
+export function PublicMediaCard({ accent, kicker, title, badge, media, caption }: PublicMediaCardProps) {
+  return (
+    <article
+      className="public-media-card"
+      style={{ '--public-section-accent': accent } as CSSProperties}
+    >
+      <div className="public-media-card-head">
+        <div>
+          <div className="public-card-kicker">{kicker}</div>
+          <h3>{title}</h3>
+        </div>
+        {badge ? <span>{badge}</span> : null}
+      </div>
+      <div className="public-media-card-frame">{media}</div>
+      {caption ? <div className="public-card-body">{caption}</div> : null}
+    </article>
   );
 }
 

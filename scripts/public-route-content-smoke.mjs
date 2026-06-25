@@ -40,7 +40,7 @@ const routes = [
       'Mengenprüfung aus KosmoDraw',
       'Planregister aus KosmoPublish',
       'Was öffentlich sichtbar sein darf',
-      'Villa Savoye: fünf Punkte als Datenmodell',
+      'Villa Savoye als prüfbares Referenzdossier',
       'Aus Lesarten entstehen wiederverwendbare Bauteilgruppen',
       'Medienfreigabe',
       'Villa Savoye',

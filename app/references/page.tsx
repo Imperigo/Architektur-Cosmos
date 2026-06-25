@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
-import { PublicBundleCard, PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
+import { PublicBundleCard, PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMediaCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -106,12 +106,14 @@ export default function ReferencesPage() {
           </PublicCardGrid>
         </PublicSplitSection>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Villa Savoye / Pilotpaket</div>
-            <h2 className="mt-2 text-4xl font-semibold tracking-normal">Villa Savoye: fünf Punkte als Datenmodell</h2>
-            <p className="mt-5 text-base leading-8 text-[#cbd1cc]">{villa.full_description}</p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <PublicSplitSection
+          accent="#66e1d2"
+          kicker="Villa Savoye / Pilotpaket"
+          title="Villa Savoye als prüfbares Referenzdossier"
+          body={(
+            <>
+              <p>{villa.full_description}</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {villa.analysis_layers?.slice(0, 6).map((layer) => (
                 <PublicInfoCard
                   key={layer.analysis_type}
@@ -121,46 +123,50 @@ export default function ReferencesPage() {
                   body={<p>{layer.summary}</p>}
                 />
               ))}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
+        >
           <div className="grid gap-4">
             {[plan, section].filter(Boolean).map((media) => (
-              <div key={media?.type} className="border border-white/12 bg-[#f7f7f4] p-4 text-[#111514]">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#0b6b60]">{media?.type}</div>
-                    <h3 className="text-xl font-semibold">{media?.label}</h3>
-                  </div>
-                  <span className="border border-[#111514]/14 px-2 py-1 text-[10px] uppercase tracking-[0.12em]">diagrammatisch</span>
-                </div>
-                {publicProjectMediaUrl(villa, media) ? (
-                  <img src={publicProjectMediaUrl(villa, media) ?? ''} alt={media?.label ?? 'Plan'} className="max-h-[360px] w-full object-contain" />
+              <PublicMediaCard
+                key={media?.type}
+                accent="#66e1d2"
+                kicker={media?.type ?? 'Plan'}
+                title={media?.label ?? 'Planebene'}
+                badge="diagrammatisch"
+                media={publicProjectMediaUrl(villa, media) ? (
+                  <img src={publicProjectMediaUrl(villa, media) ?? ''} alt={media?.label ?? 'Plan'} />
                 ) : null}
-                <p className="mt-3 text-xs leading-5 text-[#4f5751]">{media?.credit}</p>
-              </div>
+                caption={<p>{media?.credit}</p>}
+              />
             ))}
           </div>
-        </section>
+        </PublicSplitSection>
 
         <section className="border-t border-white/12 py-8">
           <EntryModelViewer modelUrl={modelUrl} title={villa.title} accent="#66e1d2" />
         </section>
 
-        <section className="grid gap-6 border-t border-white/12 py-8 lg:grid-cols-[0.92fr_1.08fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Zweites Pilotprojekt</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Ingenbohl: Pflegebau, Klosterstruktur, Materiallogik</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#66e1d2"
+          kicker="Zweites Pilotprojekt"
+          title="Ingenbohl zeigt Struktur, ohne private Quellen zu öffnen"
+          body={(
+            <>
+              <p>
               Ingenbohl wird als zweiter Referenz-Prototyp sichtbar, aber bewusst anders als Villa Savoye:
               Medien aus der privaten Recherche bleiben gesperrt. Geprüfte Analysefelder und die öffentliche
               3D-Vorschau demonstrieren bereits die Struktur von KosmoReferences und KosmoAsset.
-            </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {ingenbohlReadiness.map((item) => (
                 <PublicInfoCard key={item.label} accent="#66e1d2" kicker={item.status} title={item.label} body={<p>{item.detail}</p>} />
               ))}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
+        >
           <div className="grid gap-4">
             {ingenbohlModelUrl ? <EntryModelViewer modelUrl={ingenbohlModelUrl} title={ingenbohl.title} accent="#66e1d2" /> : null}
             <div className="grid gap-3 sm:grid-cols-2">
@@ -169,22 +175,24 @@ export default function ReferencesPage() {
               ))}
             </div>
           </div>
-        </section>
+        </PublicSplitSection>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoAsset Brücke</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Aus Lesarten entstehen wiederverwendbare Bauteilgruppen</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#66e1d2"
+          kicker="KosmoAsset Brücke"
+          title="Aus Lesarten entstehen wiederverwendbare Bauteilgruppen"
+          body={(
+            <p>
               Der öffentliche Pilot zeigt nicht nur Medien, sondern extrahierbare Prinzipien: Struktur, Zirkulation, Materialsystem und Zeichnungslogik. Das ist die Brücke von KosmoReferences zu KosmoAsset.
             </p>
-          </div>
+          )}
+        >
           <div className="grid gap-3 sm:grid-cols-2">
             {taxonomy.map((item) => (
               <PublicInfoCard key={item.title} accent="#66e1d2" kicker={item.kind} title={item.title} body={<p>{item.detail}</p>} />
             ))}
           </div>
-        </section>
+        </PublicSplitSection>
 
         <section className="border-t border-white/12 py-8">
           <PublicCardGrid columns={4}>
@@ -195,20 +203,24 @@ export default function ReferencesPage() {
           </PublicCardGrid>
         </section>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">KosmoDraw Übernahme</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Plan- und Modellstände werden zuerst geprüft</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#66e1d2"
+          kicker="KosmoDraw Übernahme"
+          title="Plan- und Modellstände werden zuerst geprüft"
+          body={(
+            <>
+              <p>
               Der aktuelle Prüfbericht fasst KosmoDraw-Pakete als Metadaten zusammen. IFC-Pfade und lokale Artefakte
               werden nicht in den Bericht kopiert; öffentlich freigegeben bleiben nach der Übernahme {kosmoDrawIntake.summary.public_ready_after_intake}.
-            </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
               <PublicMetricCard accent="#66e1d2" label="Projektpakete" value={kosmoDrawIntake.summary.bundle_count} />
               <PublicMetricCard accent="#66e1d2" label="Öffnungen" value={kosmoDrawIntake.summary.opening_count} />
               <PublicMetricCard accent="#66e1d2" label="Unsichere Freigaben" value={kosmoDrawIntake.summary.unsafe_public_flag_count} />
-            </div>
-          </div>
+              </div>
+            </>
+          )}
+        >
           <div className="grid gap-3">
             {kosmoDrawIntake.bundles.map((bundle) => (
               <PublicBundleCard
@@ -227,42 +239,46 @@ export default function ReferencesPage() {
               />
             ))}
           </div>
-        </section>
+        </PublicSplitSection>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Mengenprüfung aus KosmoDraw</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Mengenwerte erklären noch kein Gebäude</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#66e1d2"
+          kicker="Mengenprüfung aus KosmoDraw"
+          title="Mengenwerte erklären noch kein Gebäude"
+          body={(
+            <p>
               Die Freigabeprüfung akzeptiert solche Berichte als interne Analysekandidaten. Öffentlich freigegeben bleiben {kosmoDrawDigitalization.publicReadyAfterIntake},
               bis elementweise Geometrie und Asset-Kandidaten im Projektpaket vorliegen.
             </p>
-          </div>
+          )}
+        >
           <div className="grid gap-3 sm:grid-cols-3">
             <PublicMetricCard accent="#66e1d2" label="Räume aggregiert" value={kosmoDrawDigitalization.aggregateCounts.rooms} />
             <PublicMetricCard accent="#66e1d2" label="Wände aggregiert" value={kosmoDrawDigitalization.aggregateCounts.walls} />
             <PublicMetricCard accent="#66e1d2" label="Fehlende Bundlefelder" value={kosmoDrawDigitalization.missingBundleFields.length} />
           </div>
-        </section>
+        </PublicSplitSection>
 
-        <section className="grid gap-5 border-t border-white/12 py-8 lg:grid-cols-[0.85fr_1.15fr]">
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#66e1d2]">Planregister aus KosmoPublish</div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#f7f7f4]">Zeichnungen bleiben nachvollziehbar versioniert</h2>
-            <p className="mt-4 text-sm leading-7 text-[#cbd1cc]">
+        <PublicSplitSection
+          accent="#66e1d2"
+          kicker="Planregister aus KosmoPublish"
+          title="Zeichnungen bleiben nachvollziehbar versioniert"
+          body={(
+            <>
+              <p>
               Der schreibgeschützte Plankatalog ist eine sichere Metadaten-Vorstufe. Er ordnet Planvorschauen über {kosmoPublishPlanCatalog.phaseCount} Phasen,
               veröffentlicht aber keine Plan-Assets automatisch.
-            </p>
-            <p className="mt-3 text-xs uppercase tracking-[0.14em] text-[#8f9994]">
-              Schema {kosmoPublishPlanCatalog.planNumberPattern}
-            </p>
-          </div>
+              </p>
+              <p>Schema {kosmoPublishPlanCatalog.planNumberPattern}</p>
+            </>
+          )}
+        >
           <div className="grid gap-3 sm:grid-cols-3">
             <PublicMetricCard accent="#66e1d2" label="Phasen" value={kosmoPublishPlanCatalog.phaseCount} />
             <PublicMetricCard accent="#66e1d2" label="Toolfelder" value={kosmoPublishPlanCatalog.outputFields.length} />
             <PublicMetricCard accent="#66e1d2" label="Öffentliche Assets" value={kosmoPublishPlanCatalog.publishesPlanAssetsNow ? 1 : 0} />
           </div>
-        </section>
+        </PublicSplitSection>
 
       </div>
     </main>
