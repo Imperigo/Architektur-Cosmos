@@ -1,0 +1,206 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-29T21:00:00.000Z",
+  "status": "vacation_autonomy_policy_active",
+  "mode": {
+    "name": "2026-07-vacation-autonomy",
+    "start_date": "2026-07-01",
+    "duration_weeks": 5,
+    "timezone": "Europe/Zurich",
+    "daily_window": {
+      "start": "08:00",
+      "end": "18:00",
+      "night_jobs_allowed": false
+    },
+    "autonomy_level": "aggressive_privacy_safe",
+    "owner_review_cadence_days": 3
+  },
+  "worker_model": {
+    "pattern": "2_plus_1",
+    "central_codex": {
+      "role": "architecture, integration, public gates, final handoffs",
+      "may_modify": [
+        "ArchitectureCosmos Codex-owned public website files",
+        "ArchitectureCosmos KosmoReferences/KosmoAsset review-only contracts",
+        "ArchitectureCosmos public gate and smoke scripts",
+        "KosmoOrbit Codex handoff and planning artifacts"
+      ]
+    },
+    "dispatch_worker": {
+      "role": "isolated execution package with explicit write scope",
+      "max_default_parallel_workers": 1,
+      "requires_disjoint_write_scope": true
+    },
+    "local_llm": {
+      "role": "review-only classification, extraction drafts, simple repetitive work",
+      "may_write_public_or_git_directly": false,
+      "output_status": "review_only"
+    }
+  },
+  "git_policy": {
+    "daily_private_push": true,
+    "public_deploy_without_owner_review": false,
+    "exact_staging_only": true,
+    "forbidden_commands": [
+      "git add .",
+      "git reset --hard",
+      "git checkout -- .",
+      "rm -rf on shared or unknown paths"
+    ],
+    "dirty_worktree_policy": "do_not_clean_or_revert_unrelated_worker_changes"
+  },
+  "public_private_boundary": {
+    "new_public_content_default": "review_only",
+    "public_display_allowed_default": false,
+    "forbidden_public_material": [
+      "private PDFs",
+      "OCR text from protected sources",
+      "raw scans",
+      "local source-root paths",
+      "archive or OneDrive paths",
+      "worker logs",
+      ".claude",
+      ".codex",
+      "_overseer",
+      "raw IFC paths",
+      "unreviewed KosmoDraw outputs"
+    ],
+    "promotion_rule": "Only owner-reviewed, public-safe, gate-passing fields may become visible on public routes."
+  },
+  "daily_loop": [
+    {
+      "time": "08:00-08:30",
+      "id": "morning_intake",
+      "required_actions": [
+        "read latest KosmoOrbit inbox handoffs",
+        "check git status in ArchitectureCosmos and KosmoOrbit",
+        "scan latest commits from Codex and Claude workers",
+        "select one main work package and one fallback package"
+      ]
+    },
+    {
+      "time": "08:30-12:00",
+      "id": "main_batch_1",
+      "preferred_lanes": [
+        "public website",
+        "KosmoReferences",
+        "KosmoAsset",
+        "public gates"
+      ]
+    },
+    {
+      "time": "12:00-13:00",
+      "id": "midday_check",
+      "required_actions": [
+        "run targeted tests for changed files",
+        "write short checkpoint if a worker handoff is needed",
+        "retask dispatch worker only with disjoint write scope"
+      ]
+    },
+    {
+      "time": "13:00-16:30",
+      "id": "main_batch_2",
+      "fallback_if_blocked": [
+        "gate hardening",
+        "review-only data contracts",
+        "handoff cleanup",
+        "test coverage",
+        "public UI consistency"
+      ]
+    },
+    {
+      "time": "16:30-18:00",
+      "id": "closeout",
+      "required_actions": [
+        "run gates or record why a gate could not run",
+        "exact-stage own files only",
+        "commit and private push stable changes",
+        "write daily handoff with next safe task"
+      ]
+    }
+  ],
+  "five_week_roadmap": [
+    {
+      "week": 1,
+      "theme": "Public website and control gates",
+      "deliverables": [
+        "Atlas dossier cleanup",
+        "public navigation and UI canon",
+        "public route and leak gates",
+        "KosmoDraw bundle review-only contract"
+      ]
+    },
+    {
+      "week": 2,
+      "theme": "KosmoReferences pilots",
+      "deliverables": [
+        "Villa Savoye review-only enrichment",
+        "Ingenbohl review-only enrichment",
+        "Sogn Benedetg review-only candidate package",
+        "source, provenance and asset fields"
+      ]
+    },
+    {
+      "week": 3,
+      "theme": "KosmoAsset database",
+      "deliverables": [
+        "asset taxonomy",
+        "material candidates",
+        "structure and building-element candidates",
+        "review-only import bridge from references"
+      ]
+    },
+    {
+      "week": 4,
+      "theme": "Local LLM and KosmoDraw bridge",
+      "deliverables": [
+        "worker output contracts",
+        "safe intake validators",
+        "review-only local LLM task packs",
+        "no automatic public promotion"
+      ]
+    },
+    {
+      "week": 5,
+      "theme": "Demo hardening and owner return packet",
+      "deliverables": [
+        "public database demo hardening",
+        "regression gates",
+        "three-day review history",
+        "owner return decision packet"
+      ]
+    }
+  ],
+  "test_policy": {
+    "architecture_cosmos_daily": [
+      "npm run lint",
+      "npm run public:kosmodraw-gate",
+      "npm run public:gate-check",
+      "npm run build"
+    ],
+    "kosmoorbit_when_changed": [
+      "npm test -- --run",
+      "npm run build"
+    ],
+    "three_day_review": [
+      "review packet completeness",
+      "public leak scan",
+      "sitemap and route smoke",
+      "handoff completeness",
+      "owner decision queue refresh"
+    ]
+  },
+  "stop_criteria": [
+    "privacy status of a source is unclear",
+    "public gate detects private or worker material",
+    "another worker has touched the same write scope and conflict is unclear",
+    "a destructive operation would be needed",
+    "credentials, admin rights or external paid services are required",
+    "new public release or deploy decision is needed"
+  ],
+  "handoff_refs": {
+    "control_pack": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/vacation/2026-07-autonomy-control-pack.md",
+    "work_queue": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/vacation/2026-07-autonomy-work-queue.md",
+    "review_template": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/vacation/2026-07-three-day-review-template.md"
+  }
+}
