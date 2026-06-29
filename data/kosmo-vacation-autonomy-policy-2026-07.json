@@ -67,6 +67,38 @@
     ],
     "promotion_rule": "Only owner-reviewed, public-safe, gate-passing fields may become visible on public routes."
   },
+  "cross_worker_intelligence": {
+    "daily_required": true,
+    "scan_window": "08:00-08:30",
+    "tracked_workers": [
+      "Claude Code KosmoDesign",
+      "Claude Code KosmoDraw",
+      "Claude Code KosmoOverseer",
+      "Codex dispatch workers",
+      "local LLM workers via Odysseus/Kosmo"
+    ],
+    "tracked_sources": [
+      "KosmoOrbit _overseer/intake/inbox handoffs",
+      "recent commits in ArchitectureCosmos",
+      "recent commits in KosmoOrbit",
+      "available Claude/KosmoDesign design concept files",
+      "KosmoDraw bundle or model-output handoffs",
+      "local worker review-only outputs"
+    ],
+    "daily_outputs": [
+      "cross-worker delta summary",
+      "new capability intake list",
+      "risks or collisions by worker",
+      "Codex adoption plan for useful tool capabilities",
+      "handoff notes when Codex changes or depends on another worker-owned artifact"
+    ],
+    "adoption_rules": [
+      "Adopt reusable design language, data contracts, validators, fixtures and public-safe outputs.",
+      "Do not modify Claude-owned KosmoDesign/KosmoDraw/KosmoOverseer code without explicit handoff or separate owner approval.",
+      "When a capability is useful but risky, create a review-only adapter or proposal before integrating.",
+      "If another worker changed the same write scope, stop that scope and write a coordination handoff."
+    ]
+  },
   "daily_loop": [
     {
       "time": "08:00-08:30",
@@ -75,6 +107,7 @@
         "read latest KosmoOrbit inbox handoffs",
         "check git status in ArchitectureCosmos and KosmoOrbit",
         "scan latest commits from Codex and Claude workers",
+        "scan Claude Code KosmoDesign, KosmoDraw, KosmoOverseer and local LLM worker progress for reusable capabilities",
         "select one main work package and one fallback package"
       ]
     },

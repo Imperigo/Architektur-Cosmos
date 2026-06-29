@@ -19,6 +19,7 @@ async function main() {
     ...checkWorkerModel(policy),
     ...checkGitPolicy(policy),
     ...checkPublicPrivateBoundary(policy),
+    ...checkCrossWorkerIntelligence(policy),
     ...checkDailyLoop(policy),
     ...checkRoadmap(policy),
     ...checkTestsAndStops(policy)
@@ -84,6 +85,29 @@ function checkPublicPrivateBoundary(policy) {
   return findings;
 }
 
+function checkCrossWorkerIntelligence(policy) {
+  const findings = [];
+  const intel = policy.cross_worker_intelligence || {};
+  const trackedWorkers = intel.tracked_workers || [];
+  const trackedSources = intel.tracked_sources || [];
+  const dailyOutputs = intel.daily_outputs || [];
+  const adoptionRules = intel.adoption_rules || [];
+  expect(intel.daily_required === true, findings, 'cross_worker_daily_required', 'Cross-worker intelligence must run daily.');
+  expect(intel.scan_window === '08:00-08:30', findings, 'cross_worker_scan_window', 'Cross-worker scan must run during morning intake.');
+  ['Claude Code KosmoDesign', 'Claude Code KosmoDraw', 'Claude Code KosmoOverseer', 'local LLM workers via Odysseus/Kosmo'].forEach((worker) => {
+    expect(trackedWorkers.includes(worker), findings, `tracked_worker:${worker}`, `Tracked workers must include ${worker}.`);
+  });
+  ['KosmoOrbit _overseer/intake/inbox handoffs', 'available Claude/KosmoDesign design concept files', 'KosmoDraw bundle or model-output handoffs'].forEach((source) => {
+    expect(trackedSources.includes(source), findings, `tracked_source:${source}`, `Tracked sources must include ${source}.`);
+  });
+  ['cross-worker delta summary', 'new capability intake list', 'Codex adoption plan for useful tool capabilities'].forEach((output) => {
+    expect(dailyOutputs.includes(output), findings, `daily_output:${output}`, `Daily outputs must include ${output}.`);
+  });
+  expect(adoptionRules.some((rule) => rule.includes('Do not modify Claude-owned')), findings, 'claude_owned_guard', 'Adoption rules must protect Claude-owned code.');
+  expect(adoptionRules.some((rule) => rule.includes('review-only adapter')), findings, 'review_only_adapter_rule', 'Adoption rules must prefer review-only adapters for risky capabilities.');
+  return findings;
+}
+
 function checkDailyLoop(policy) {
   const findings = [];
   const loop = policy.daily_loop || [];
@@ -91,6 +115,7 @@ function checkDailyLoop(policy) {
   ['morning_intake', 'main_batch_1', 'midday_check', 'main_batch_2', 'closeout'].forEach((id, index) => {
     expect(loop[index]?.id === id, findings, `daily_loop:${id}`, `Daily loop item ${index + 1} must be ${id}.`);
   });
+  expect((loop[0]?.required_actions || []).some((action) => action.includes('KosmoDesign')), findings, 'morning_cross_worker_action', 'Morning intake must include KosmoDesign/KosmoDraw/KosmoOverseer progress scan.');
   return findings;
 }
 
