@@ -82,6 +82,7 @@
       "recent commits in ArchitectureCosmos",
       "recent commits in KosmoOrbit",
       "available Claude/KosmoDesign design concept files",
+      "Notion AI tab notes and Obsidian memory",
       "KosmoDraw bundle or model-output handoffs",
       "local worker review-only outputs"
     ],
@@ -98,6 +99,41 @@
       "When a capability is useful but risky, create a review-only adapter or proposal before integrating.",
       "If another worker changed the same write scope, stop that scope and write a coordination handoff."
     ]
+  },
+  "notion_obsidian_memory_policy": {
+    "daily_required": true,
+    "notion_sources": [
+      {
+        "name": "AI (2)",
+        "url": "https://app.notion.com/p/366c5f77d5f78023843eec81d63ea890",
+        "purpose": "ArchitectureKosmos vision, KosmoDesign/KosmoDraw pipeline, AI scans and tool decisions"
+      },
+      {
+        "name": "Prepare-Scan pages",
+        "source": "linked from Notion AI (2)",
+        "purpose": "daily innovation and tool scouting context"
+      },
+      {
+        "name": "AI-Scan pages",
+        "source": "Notion search",
+        "purpose": "deduplicated innovation candidates and watchlist"
+      }
+    ],
+    "obsidian_vault": {
+      "path": "/mnt/data/ArchitekturKosmos",
+      "memory_folder": "09 Codex Memory",
+      "decisions_folder": "05 Decisions",
+      "inbox_folder": "00 Inbox",
+      "private_by_default": true
+    },
+    "daily_actions": [
+      "search and read relevant Notion AI tab notes before selecting major work packages",
+      "read new Obsidian memory and decision notes",
+      "write major Codex summaries, decisions and review packets into Obsidian",
+      "cross-check KosmoDesign/KosmoDraw/KosmoOverseer handoffs against Notion and Obsidian memory",
+      "do not promote Obsidian or Notion content to public without gates and owner approval"
+    ],
+    "first_synced_note": "/mnt/data/ArchitekturKosmos/09 Codex Memory/2026-06-29 Notion AI Tab und Ferienmodus.md"
   },
   "remote_access_energy_policy": {
     "daily_required": true,
@@ -152,6 +188,7 @@
         "check git status in ArchitectureCosmos and KosmoOrbit",
         "scan latest commits from Codex and Claude workers",
         "scan Claude Code KosmoDesign, KosmoDraw, KosmoOverseer and local LLM worker progress for reusable capabilities",
+        "read relevant Notion AI tab notes and Obsidian memory before selecting major work packages",
         "select one main work package and one fallback package"
       ]
     },

@@ -20,6 +20,7 @@ async function main() {
     ...checkGitPolicy(policy),
     ...checkPublicPrivateBoundary(policy),
     ...checkCrossWorkerIntelligence(policy),
+    ...checkNotionObsidianMemoryPolicy(policy),
     ...checkRemoteAccessEnergyPolicy(policy),
     ...checkDailyLoop(policy),
     ...checkRoadmap(policy),
@@ -98,7 +99,7 @@ function checkCrossWorkerIntelligence(policy) {
   ['Claude Code KosmoDesign', 'Claude Code KosmoDraw', 'Claude Code KosmoOverseer', 'local LLM workers via Odysseus/Kosmo'].forEach((worker) => {
     expect(trackedWorkers.includes(worker), findings, `tracked_worker:${worker}`, `Tracked workers must include ${worker}.`);
   });
-  ['KosmoOrbit _overseer/intake/inbox handoffs', 'available Claude/KosmoDesign design concept files', 'KosmoDraw bundle or model-output handoffs'].forEach((source) => {
+  ['KosmoOrbit _overseer/intake/inbox handoffs', 'available Claude/KosmoDesign design concept files', 'Notion AI tab notes and Obsidian memory', 'KosmoDraw bundle or model-output handoffs'].forEach((source) => {
     expect(trackedSources.includes(source), findings, `tracked_source:${source}`, `Tracked sources must include ${source}.`);
   });
   ['cross-worker delta summary', 'new capability intake list', 'Codex adoption plan for useful tool capabilities'].forEach((output) => {
@@ -106,6 +107,25 @@ function checkCrossWorkerIntelligence(policy) {
   });
   expect(adoptionRules.some((rule) => rule.includes('Do not modify Claude-owned')), findings, 'claude_owned_guard', 'Adoption rules must protect Claude-owned code.');
   expect(adoptionRules.some((rule) => rule.includes('review-only adapter')), findings, 'review_only_adapter_rule', 'Adoption rules must prefer review-only adapters for risky capabilities.');
+  return findings;
+}
+
+function checkNotionObsidianMemoryPolicy(policy) {
+  const findings = [];
+  const memory = policy.notion_obsidian_memory_policy || {};
+  const notionSources = memory.notion_sources || [];
+  const dailyActions = memory.daily_actions || [];
+  expect(memory.daily_required === true, findings, 'notion_obsidian_daily_required', 'Notion/Obsidian memory policy must run daily.');
+  expect(notionSources.some((source) => source.name === 'AI (2)' && source.url === 'https://app.notion.com/p/366c5f77d5f78023843eec81d63ea890'), findings, 'notion_ai2_source', 'Notion sources must include AI (2).');
+  expect(notionSources.some((source) => source.name === 'Prepare-Scan pages'), findings, 'notion_prepare_scan_source', 'Notion sources must include Prepare-Scan pages.');
+  expect(notionSources.some((source) => source.name === 'AI-Scan pages'), findings, 'notion_ai_scan_source', 'Notion sources must include AI-Scan pages.');
+  expect(memory.obsidian_vault?.path === '/mnt/data/ArchitekturKosmos', findings, 'obsidian_vault_path', 'Obsidian vault path must be /mnt/data/ArchitekturKosmos.');
+  expect(memory.obsidian_vault?.memory_folder === '09 Codex Memory', findings, 'obsidian_memory_folder', 'Obsidian memory folder must be 09 Codex Memory.');
+  expect(memory.obsidian_vault?.private_by_default === true, findings, 'obsidian_private_default', 'Obsidian must be private by default.');
+  ['search and read relevant Notion AI tab notes before selecting major work packages', 'read new Obsidian memory and decision notes', 'write major Codex summaries, decisions and review packets into Obsidian'].forEach((action) => {
+    expect(dailyActions.includes(action), findings, `notion_obsidian_action:${action}`, `Notion/Obsidian daily actions must include: ${action}.`);
+  });
+  expect(typeof memory.first_synced_note === 'string' && memory.first_synced_note.includes('Notion AI Tab'), findings, 'obsidian_first_synced_note', 'Policy must reference the first synced Obsidian note.');
   return findings;
 }
 
@@ -144,6 +164,7 @@ function checkDailyLoop(policy) {
     expect(loop[index]?.id === id, findings, `daily_loop:${id}`, `Daily loop item ${index + 1} must be ${id}.`);
   });
   expect((loop[0]?.required_actions || []).some((action) => action.includes('KosmoDesign')), findings, 'morning_cross_worker_action', 'Morning intake must include KosmoDesign/KosmoDraw/KosmoOverseer progress scan.');
+  expect((loop[0]?.required_actions || []).some((action) => action.includes('Notion AI tab')), findings, 'morning_notion_obsidian_action', 'Morning intake must include Notion AI tab and Obsidian memory scan.');
   expect((loop[4]?.required_actions || []).some((action) => action.includes('energy')), findings, 'closeout_energy_action', 'Closeout must include remote-ready energy state.');
   return findings;
 }
