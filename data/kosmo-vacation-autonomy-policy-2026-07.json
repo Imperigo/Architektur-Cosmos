@@ -99,6 +99,50 @@
       "If another worker changed the same write scope, stop that scope and write a coordination handoff."
     ]
   },
+  "remote_access_energy_policy": {
+    "daily_required": true,
+    "coordination_partner": "Claude Code KosmoDesign",
+    "coordination_time": "after_daily_closeout",
+    "goal": "Keep the home PC reachable 24/7 through Sunshine and Moonlight while reducing non-essential power draw after the workday.",
+    "must_never_stop": [
+      "Sunshine",
+      "Moonlight reachability path",
+      "VPN",
+      "network interfaces",
+      "active desktop/login session",
+      "SSH or remote admin path if configured"
+    ],
+    "forbidden_power_actions_without_owner": [
+      "shutdown",
+      "reboot",
+      "logout",
+      "sleep",
+      "suspend",
+      "hibernate",
+      "hybrid sleep",
+      "stop Sunshine",
+      "stop VPN",
+      "disable network"
+    ],
+    "allowed_after_work_reductions": [
+      "stop unused dev servers",
+      "pause or stop local LLM jobs",
+      "pause downloads or renders unless explicitly scheduled",
+      "close non-essential build/watch processes",
+      "switch OS power profile to balanced or power-saver if it does not break Sunshine/VPN",
+      "turn displays off while keeping the session unlocked and reachable",
+      "reduce GPU-heavy workloads after 18:00"
+    ],
+    "daily_outputs": [
+      "energy handoff with running heavy processes",
+      "Sunshine/VPN reachability status",
+      "what was stopped or left running",
+      "next-day resume notes",
+      "KosmoDesign coordination note"
+    ],
+    "safe_default": "remote_ready_idle",
+    "admin_changes_require_owner": true
+  },
   "daily_loop": [
     {
       "time": "08:00-08:30",
@@ -148,7 +192,8 @@
         "run gates or record why a gate could not run",
         "exact-stage own files only",
         "commit and private push stable changes",
-        "write daily handoff with next safe task"
+        "coordinate with KosmoDesign on remote-ready energy saving state",
+        "write daily handoff with next safe task and energy state"
       ]
     }
   ],

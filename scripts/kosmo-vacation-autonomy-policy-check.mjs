@@ -20,6 +20,7 @@ async function main() {
     ...checkGitPolicy(policy),
     ...checkPublicPrivateBoundary(policy),
     ...checkCrossWorkerIntelligence(policy),
+    ...checkRemoteAccessEnergyPolicy(policy),
     ...checkDailyLoop(policy),
     ...checkRoadmap(policy),
     ...checkTestsAndStops(policy)
@@ -108,6 +109,33 @@ function checkCrossWorkerIntelligence(policy) {
   return findings;
 }
 
+function checkRemoteAccessEnergyPolicy(policy) {
+  const findings = [];
+  const energy = policy.remote_access_energy_policy || {};
+  const mustNeverStop = energy.must_never_stop || [];
+  const forbidden = energy.forbidden_power_actions_without_owner || [];
+  const allowed = energy.allowed_after_work_reductions || [];
+  const outputs = energy.daily_outputs || [];
+  expect(energy.daily_required === true, findings, 'energy_daily_required', 'Remote access energy policy must run daily.');
+  expect(energy.coordination_partner === 'Claude Code KosmoDesign', findings, 'energy_kosmo_design_partner', 'Energy closeout must coordinate with KosmoDesign.');
+  expect(energy.coordination_time === 'after_daily_closeout', findings, 'energy_coordination_time', 'Energy coordination must happen after daily closeout.');
+  ['Sunshine', 'VPN', 'network interfaces', 'active desktop/login session'].forEach((service) => {
+    expect(mustNeverStop.includes(service), findings, `energy_must_never_stop:${service}`, `Energy policy must never stop ${service}.`);
+  });
+  ['shutdown', 'logout', 'sleep', 'suspend', 'hibernate', 'stop Sunshine', 'stop VPN', 'disable network'].forEach((action) => {
+    expect(forbidden.includes(action), findings, `energy_forbidden:${action}`, `Energy policy must forbid ${action} without owner approval.`);
+  });
+  ['stop unused dev servers', 'pause or stop local LLM jobs', 'reduce GPU-heavy workloads after 18:00'].forEach((action) => {
+    expect(allowed.includes(action), findings, `energy_allowed:${action}`, `Energy policy should allow ${action}.`);
+  });
+  ['energy handoff with running heavy processes', 'Sunshine/VPN reachability status', 'KosmoDesign coordination note'].forEach((output) => {
+    expect(outputs.includes(output), findings, `energy_output:${output}`, `Energy daily outputs must include ${output}.`);
+  });
+  expect(energy.safe_default === 'remote_ready_idle', findings, 'energy_safe_default', 'Energy safe default must be remote_ready_idle.');
+  expect(energy.admin_changes_require_owner === true, findings, 'energy_admin_requires_owner', 'Admin power changes must require owner approval.');
+  return findings;
+}
+
 function checkDailyLoop(policy) {
   const findings = [];
   const loop = policy.daily_loop || [];
@@ -116,6 +144,7 @@ function checkDailyLoop(policy) {
     expect(loop[index]?.id === id, findings, `daily_loop:${id}`, `Daily loop item ${index + 1} must be ${id}.`);
   });
   expect((loop[0]?.required_actions || []).some((action) => action.includes('KosmoDesign')), findings, 'morning_cross_worker_action', 'Morning intake must include KosmoDesign/KosmoDraw/KosmoOverseer progress scan.');
+  expect((loop[4]?.required_actions || []).some((action) => action.includes('energy')), findings, 'closeout_energy_action', 'Closeout must include remote-ready energy state.');
   return findings;
 }
 
