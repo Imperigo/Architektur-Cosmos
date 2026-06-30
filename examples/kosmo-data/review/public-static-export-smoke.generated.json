@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T12:52:38.457Z",
+  "generated_at": "2026-06-30T16:32:13.132Z",
   "generator": "public-static-export-smoke",
   "status": "public_static_export_smoke_passed",
   "out_dir": "out",
@@ -8,7 +8,7 @@
     "route_count": 11,
     "passed_routes": 11,
     "failed_routes": 0,
-    "check_count": 82,
+    "check_count": 99,
     "failed_checks": 0
   },
   "routes": [
@@ -114,6 +114,11 @@
           "id": "/orbit/:includes:Kosmo KI",
           "passed": true,
           "message": "Expected exported route /orbit/ to include \"Kosmo KI\"."
+        },
+        {
+          "id": "/orbit/:includes:Zwei Piloten zeigen den Weg vom Bau zum Wissen",
+          "passed": true,
+          "message": "Expected exported route /orbit/ to include \"Zwei Piloten zeigen den Weg vom Bau zum Wissen\"."
         },
         {
           "id": "/orbit/:referenced_static_assets_exist",
@@ -231,9 +236,39 @@
           "message": "Expected exported route /references/ to include \"Referenzdossiers im öffentlichen Bestand\"."
         },
         {
+          "id": "/references/:includes:KosmoDraw Übernahme",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"KosmoDraw Übernahme\"."
+        },
+        {
+          "id": "/references/:includes:Mengenprüfung aus KosmoDraw",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Mengenprüfung aus KosmoDraw\"."
+        },
+        {
+          "id": "/references/:includes:Planregister aus KosmoPublish",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Planregister aus KosmoPublish\"."
+        },
+        {
           "id": "/references/:includes:Was öffentlich sichtbar sein darf",
           "passed": true,
           "message": "Expected exported route /references/ to include \"Was öffentlich sichtbar sein darf\"."
+        },
+        {
+          "id": "/references/:includes:Villa Savoye als prüfbares Referenzdossier",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Villa Savoye als prüfbares Referenzdossier\"."
+        },
+        {
+          "id": "/references/:includes:Aus Lesarten entstehen wiederverwendbare Bauteilgruppen",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Aus Lesarten entstehen wiederverwendbare Bauteilgruppen\"."
+        },
+        {
+          "id": "/references/:includes:Medienfreigabe",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Medienfreigabe\"."
         },
         {
           "id": "/references/:includes:Villa Savoye",
@@ -291,9 +326,49 @@
           "message": "Expected exported route /assets/ to include \"Öffentliche Assets nach Projekt und Ebene\"."
         },
         {
+          "id": "/assets/:includes:Asset-Übernahme aus KosmoDraw",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Asset-Übernahme aus KosmoDraw\"."
+        },
+        {
+          "id": "/assets/:includes:Mengenprüfung vor Assetübernahme",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Mengenprüfung vor Assetübernahme\"."
+        },
+        {
+          "id": "/assets/:includes:Planregister aus KosmoPublish",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Planregister aus KosmoPublish\"."
+        },
+        {
           "id": "/assets/:includes:Erst die Rechteprüfung macht eine Datei zum Asset",
           "passed": true,
           "message": "Expected exported route /assets/ to include \"Erst die Rechteprüfung macht eine Datei zum Asset\"."
+        },
+        {
+          "id": "/assets/:includes:Bilder und Pläne werden zu Architekturbausteinen",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Bilder und Pläne werden zu Architekturbausteinen\"."
+        },
+        {
+          "id": "/assets/:includes:Alhambra: Raumordnung",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Alhambra: Raumordnung\"."
+        },
+        {
+          "id": "/assets/:includes:Metadaten ohne Rohdatei",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Metadaten ohne Rohdatei\"."
+        },
+        {
+          "id": "/assets/:includes:Villa Savoye",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Villa Savoye\"."
+        },
+        {
+          "id": "/assets/:includes:Ingenbohl Assetprüfung",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Ingenbohl Assetprüfung\"."
         },
         {
           "id": "/assets/:includes:Alterszentrum Kloster Ingenbohl",
@@ -351,6 +426,11 @@
           "message": "Expected exported route /atlas/villa-savoye/ to include \"Öffentliche 3D-Vorschau vorhanden\"."
         },
         {
+          "id": "/atlas/villa-savoye/:includes:Freigabestatus des Pilotprojekts",
+          "passed": true,
+          "message": "Expected exported route /atlas/villa-savoye/ to include \"Freigabestatus des Pilotprojekts\"."
+        },
+        {
           "id": "/atlas/villa-savoye/:referenced_static_assets_exist",
           "passed": true,
           "message": "Missing _next/static assets: none."
@@ -399,6 +479,11 @@
           "id": "/atlas/alterszentrum-kloster-ingenbohl/:includes:Öffentliche 3D-Vorschau vorhanden",
           "passed": true,
           "message": "Expected exported route /atlas/alterszentrum-kloster-ingenbohl/ to include \"Öffentliche 3D-Vorschau vorhanden\"."
+        },
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:includes:Freigabestatus des Pilotprojekts",
+          "passed": true,
+          "message": "Expected exported route /atlas/alterszentrum-kloster-ingenbohl/ to include \"Freigabestatus des Pilotprojekts\"."
         },
         {
           "id": "/atlas/alterszentrum-kloster-ingenbohl/:referenced_static_assets_exist",

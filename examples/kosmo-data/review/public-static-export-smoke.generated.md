@@ -1,6 +1,6 @@
 # Public Static Export Smoke
 
-Generated: 2026-06-30T12:52:38.457Z
+Generated: 2026-06-30T16:32:13.132Z
 Status: `public_static_export_smoke_passed`
 Out dir: `out`
 
@@ -9,7 +9,7 @@ Checks core public routes from the built static export without starting a server
 ## Summary
 
 - routes: 11/11 passed
-- checks: 82/82 passed
+- checks: 99/99 passed
 
 ## Routes
 

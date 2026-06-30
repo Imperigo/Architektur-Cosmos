@@ -4,98 +4,13 @@ import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
+import { publicRouteChecks as routes } from './public-route-manifest.mjs';
 
 const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const outRoot = resolve(root, args.out || 'out');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-data/review/public-static-export-smoke.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-data/review/public-static-export-smoke.generated.md');
-
-const routes = [
-  {
-    path: '/',
-    includes: ['Architekturkosmos', 'Status', 'Pilotprojekte', 'Alterszentrum Kloster Ingenbohl']
-  },
-  {
-    path: '/orbit/',
-    includes: [
-      'Wo der ArchitekturKosmos bereits arbeitet',
-      'Funktionen, die heute prüfbar sind',
-      'Öffentliche Referenzen',
-      'Öffentliche Assets',
-      'KosmoDraw',
-      'Kosmo KI'
-    ]
-  },
-  {
-    path: '/atlas/',
-    includes: ['Architektur Kosmos']
-  },
-  {
-    path: '/archive/',
-    includes: ['KosmoData Archiv']
-  },
-  {
-    path: '/references/',
-    includes: [
-      'KosmoReferences',
-      'Vom Bauwerk zum prüfbaren Dossier',
-      'Referenzdossiers im öffentlichen Bestand',
-      'Was öffentlich sichtbar sein darf',
-      'Villa Savoye',
-      'Alterszentrum Kloster Ingenbohl'
-    ]
-  },
-  {
-    path: '/assets/',
-    includes: [
-      'KosmoAsset',
-      'Bauteile aus geprüften Referenzen',
-      'Öffentliche Assets nach Projekt und Ebene',
-      'Erst die Rechteprüfung macht eine Datei zum Asset',
-      'Alterszentrum Kloster Ingenbohl'
-    ]
-  },
-  {
-    path: '/atlas/villa-savoye/',
-    includes: [
-      'Villa Savoye',
-      'Modellstruktur als lesbarer Gebäudekern',
-      'Prüfstatus, Modellspur und Asset-Brücke',
-      'Öffentliche 3D-Vorschau vorhanden'
-    ]
-  },
-  {
-    path: '/atlas/alterszentrum-kloster-ingenbohl/',
-    includes: [
-      'Alterszentrum Kloster Ingenbohl',
-      'Modellstruktur als lesbarer Gebäudekern',
-      'Prüfstatus, Modellspur und Asset-Brücke',
-      'Öffentliche 3D-Vorschau vorhanden'
-    ]
-  },
-  {
-    path: '/icon.svg',
-    rawIncludes: ['<svg', 'Architecture Cosmos'],
-    minBodyLength: 20
-  },
-  {
-    path: '/robots.txt',
-    rawIncludes: ['User-Agent: *', 'Allow: /', 'Sitemap: https://architekturkosmos.ch/sitemap.xml'],
-    minBodyLength: 20
-  },
-  {
-    path: '/sitemap.xml',
-    rawIncludes: [
-      '<urlset',
-      '<loc>https://architekturkosmos.ch/references/</loc>',
-      '<loc>https://architekturkosmos.ch/assets/</loc>',
-      '<loc>https://architekturkosmos.ch/orbit/</loc>',
-      '<loc>https://architekturkosmos.ch/atlas/alterszentrum-kloster-ingenbohl/</loc>'
-    ],
-    minBodyLength: 20
-  }
-];
 
 main().catch((error) => {
   console.error(error instanceof Error ? error.message : String(error));

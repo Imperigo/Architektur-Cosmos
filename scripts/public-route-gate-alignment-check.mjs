@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 
-import { readFileSync } from 'node:fs';
+import { publicRouteChecks, publicRoutes } from './public-route-manifest.mjs';
 
-const gateSource = readFileSync('scripts/public-demo-gate-check.mjs', 'utf8');
-const smokeSource = readFileSync('scripts/public-route-content-smoke.mjs', 'utf8');
-
-const gateRoutes = extractPublicRoutes(gateSource);
-const smokeRoutes = extractSmokeRoutes(smokeSource);
+const gateRoutes = publicRoutes;
+const smokeRoutes = publicRouteChecks.map((route) => route.path);
 
 const gateSet = new Set(gateRoutes);
 const smokeSet = new Set(smokeRoutes);
@@ -42,16 +39,6 @@ const summary = {
 
 console.log(JSON.stringify(summary, null, 2));
 if (failures.length > 0) process.exit(1);
-
-function extractPublicRoutes(source) {
-  const match = source.match(/const publicRoutes = \[([\s\S]*?)\n\];/);
-  if (!match) throw new Error('Could not find publicRoutes array in scripts/public-demo-gate-check.mjs.');
-  return [...match[1].matchAll(/'([^']+)'/g)].map((item) => item[1]);
-}
-
-function extractSmokeRoutes(source) {
-  return [...source.matchAll(/\bpath:\s*'([^']+)'/g)].map((item) => item[1]);
-}
 
 function findDuplicates(values) {
   const seen = new Set();

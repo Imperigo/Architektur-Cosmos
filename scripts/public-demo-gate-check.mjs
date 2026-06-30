@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
+import { publicRoutes } from './public-route-manifest.mjs';
 
 const entries = JSON.parse(fs.readFileSync('data/mock-entries.json', 'utf8'));
 const publicModelPreviews = JSON.parse(fs.readFileSync('data/public-model-previews.json', 'utf8'));
@@ -15,20 +16,6 @@ const allowedAssetRights = new Set(['public_domain', 'licensed', 'own_work']);
 const modelsBySlug = new Map(publicModelPreviews.models.map((model) => [model.slug, model]));
 const failures = [];
 const warnings = [];
-const publicRoutes = [
-  '/',
-  '/orbit/',
-  '/atlas/',
-  '/archive/',
-  '/references/',
-  '/assets/',
-  '/atlas/villa-savoye/',
-  '/atlas/alterszentrum-kloster-ingenbohl/',
-  '/icon.svg',
-  '/robots.txt',
-  '/sitemap.xml'
-];
-
 function argValue(name) {
   const index = process.argv.indexOf(name);
   return index >= 0 ? process.argv[index + 1] : null;
