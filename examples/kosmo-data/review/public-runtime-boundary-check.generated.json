@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T16:18:55.862Z",
+  "generator": "public-runtime-boundary-check",
+  "status": "public_runtime_boundary_check_passed",
+  "policy": {
+    "static_export_only": true,
+    "reads_private_content": false,
+    "writes_public_ready": false,
+    "starts_server": false
+  },
+  "summary": {
+    "scanned_files": 95,
+    "checked_roots": [
+      "app",
+      "components",
+      "lib"
+    ],
+    "failed_findings": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": []
+}
