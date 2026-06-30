@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T07:10:45.403Z",
-  "status": "owner_review_batch_resolution_ledger_needs_review",
+  "generated_at": "2026-06-30T11:08:40.586Z",
+  "status": "owner_review_batch_resolution_ledger_pending_owner_input",
   "policy": {
     "review_only": true,
     "records_reference_item_decisions": false,
@@ -29,7 +29,7 @@
     "items": 16,
     "resolved_items": 0,
     "owner_action_required": 5,
-    "failures": 11,
+    "failures": 0,
     "public_ready_after_ledger": 0
   },
   "resolutions": [
@@ -38,7 +38,7 @@
       "label": "Batch A: Villa Savoye Image Candidates",
       "owner_choice": null,
       "owner_note": "",
-      "resolution_status": "unresolved",
+      "resolution_status": "owner_pending",
       "item_count": 3,
       "resolved_item_count": 0,
       "public_ready_after_resolution": 0,
@@ -54,7 +54,7 @@
       "label": "Batch B: Villa Savoye Derived Files",
       "owner_choice": null,
       "owner_note": "",
-      "resolution_status": "unresolved",
+      "resolution_status": "owner_pending",
       "item_count": 4,
       "resolved_item_count": 0,
       "public_ready_after_resolution": 0,
@@ -70,7 +70,7 @@
       "label": "Batch C: Model Promotion Confirmation",
       "owner_choice": null,
       "owner_note": "",
-      "resolution_status": "unresolved",
+      "resolution_status": "owner_pending",
       "item_count": 2,
       "resolved_item_count": 0,
       "public_ready_after_resolution": 0,
@@ -86,7 +86,7 @@
       "label": "Batch D: Sogn Benedetg Source Gap",
       "owner_choice": null,
       "owner_note": "",
-      "resolution_status": "unresolved",
+      "resolution_status": "owner_pending",
       "item_count": 1,
       "resolved_item_count": 0,
       "public_ready_after_resolution": 0,
@@ -102,7 +102,7 @@
       "label": "Batch E: KosmoAsset Human Reviews",
       "owner_choice": null,
       "owner_note": "",
-      "resolution_status": "unresolved",
+      "resolution_status": "owner_pending",
       "item_count": 6,
       "resolved_item_count": 0,
       "public_ready_after_resolution": 0,
@@ -126,17 +126,5 @@
     "Do not OCR or extract private source text from this ledger.",
     "Do not run local LLMs on private file contents from this ledger."
   ],
-  "failures": [
-    "Intake check must have explicit answers: owner_answer_intake_guard_passed_pending_owner_input",
-    "Missing owner-card answer for batch: batch-a-villa-savoye-image-candidates",
-    "Owner choice not allowed for batch-a-villa-savoye-image-candidates: null",
-    "Missing owner-card answer for batch: batch-b-villa-savoye-derived-files",
-    "Owner choice not allowed for batch-b-villa-savoye-derived-files: null",
-    "Missing owner-card answer for batch: batch-c-model-promotion-confirmation",
-    "Owner choice not allowed for batch-c-model-promotion-confirmation: null",
-    "Missing owner-card answer for batch: batch-d-sogn-benedetg-source-gap",
-    "Owner choice not allowed for batch-d-sogn-benedetg-source-gap: null",
-    "Missing owner-card answer for batch: batch-e-kosmoasset-human-reviews",
-    "Owner choice not allowed for batch-e-kosmoasset-human-reviews: null"
-  ]
+  "failures": []
 }

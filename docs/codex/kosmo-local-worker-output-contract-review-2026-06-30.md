@@ -1,23 +1,23 @@
 # Kosmo Local Worker Output Contract Review
 
-Generated: 2026-06-30T06:52:37.454Z
-Status: `local_worker_output_contract_review_needs_review`
+Generated: 2026-06-30T11:08:58.468Z
+Status: `local_worker_output_contract_review_ready`
 
 ## Summary
 
 - Output review: local_worker_outputs_present_review_only
-- Conversion plan: local_worker_output_conversion_plan_blocked
+- Conversion plan: local_worker_output_conversion_plan_review_only
 - Runbook: local_worker_execution_runbook_idle_review_only
-- Runbook check: local_worker_execution_runbook_guard_failed
+- Runbook check: local_worker_execution_runbook_guard_passed
 - Contracts: 9
 - Present valid outputs: 9
 - Invalid JSON outputs: 0
 - High-risk hits: 0
-- Eligible for manual metadata review: 0
+- Eligible for manual metadata review: 9
 - Repo conversion allowed now: 0
 - Execute allowed now: 0
 - Blocked by private context: 1
-- Failures: 2
+- Failures: 0
 - Public-ready after review: 0
 
 ## Contracts
@@ -44,5 +44,4 @@ Status: `local_worker_output_contract_review_needs_review`
 
 ## Failures
 
-- Conversion plan not review-only: local_worker_output_conversion_plan_blocked
-- Runbook check not passed: local_worker_execution_runbook_guard_failed
+- None.

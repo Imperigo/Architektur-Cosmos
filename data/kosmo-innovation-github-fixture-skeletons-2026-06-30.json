@@ -1,0 +1,53 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T11:06:09.214Z",
+  "status": "innovation_github_fixture_skeletons_ready",
+  "policy": {
+    "skeletons_only": true,
+    "synthetic_fixture_only": true,
+    "github_repositories_are_source_refs_only": true,
+    "copies_github_code": false,
+    "copies_readme_text": false,
+    "clones_repositories_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_skeletons": 0,
+    "note": "Skeletons are generated from contract metadata only. They do not copy repository code, README prose, private sources or worker outputs."
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-fixture-contract-plan-2026-06-30.json",
+    "data/kosmo-innovation-github-promotion-matrix-2026-06-30.json"
+  ],
+  "summary": {
+    "contract_plans": 6,
+    "matrix_promotable": 6,
+    "directories": 6,
+    "files_written": 12,
+    "executable_now": 0,
+    "failures": 0,
+    "public_ready_after_skeletons": 0
+  },
+  "written_files": [
+    "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/fixture-manifest.json",
+    "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/README.md",
+    "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/fixture-manifest.json",
+    "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/README.md",
+    "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/fixture-manifest.json",
+    "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/README.md",
+    "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/fixture-manifest.json",
+    "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/README.md",
+    "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/fixture-manifest.json",
+    "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/README.md",
+    "examples/kosmo-innovation-fixtures/worker_integration-mikillio-bim-wiki-deps-signal-fixture/fixture-manifest.json",
+    "examples/kosmo-innovation-fixtures/worker_integration-mikillio-bim-wiki-deps-signal-fixture/README.md"
+  ],
+  "next_actions": [
+    "Generate synthetic payload JSON for at most one GitHub fixture per lane.",
+    "Keep all GitHub-derived fixtures source-free until an overseer reviews adapter value.",
+    "Do not clone, install, download or run discovered repositories from this skeleton batch."
+  ],
+  "failures": []
+}

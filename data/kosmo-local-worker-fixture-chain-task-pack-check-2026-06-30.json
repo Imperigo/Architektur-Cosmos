@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:52:55.173Z",
-  "status": "local_worker_fixture_chain_task_pack_guard_failed",
+  "generated_at": "2026-06-30T11:07:02.434Z",
+  "status": "local_worker_fixture_chain_task_pack_guard_passed",
   "policy": {
     "review_only": true,
     "reads_private_content": false,
@@ -14,17 +14,17 @@
     "data/kosmo-local-worker-fixture-chain-task-pack-2026-06-30.json"
   ],
   "summary": {
-    "pack_status": "local_worker_fixture_chain_task_pack_missing_refs",
-    "tasks": 3,
+    "pack_status": "local_worker_fixture_chain_task_pack_ready",
+    "tasks": 9,
     "legacy_fixture_chain_tasks": 3,
-    "github_innovation_tasks": 0,
-    "github_payload_refs": 0,
-    "training_lanes": 0,
-    "ontology_entity_types": 0,
-    "ontology_relation_types": 0,
+    "github_innovation_tasks": 6,
+    "github_payload_refs": 12,
+    "training_lanes": 3,
+    "ontology_entity_types": 6,
+    "ontology_relation_types": 6,
     "executable_now": 0,
-    "missing_refs": 6,
-    "failures": 8,
+    "missing_refs": 0,
+    "failures": 0,
     "public_ready_after_check": 0
   },
   "findings": [
@@ -35,7 +35,7 @@
     },
     {
       "id": "pack_ready",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Task pack must be ready."
     },
     {
@@ -80,7 +80,7 @@
     },
     {
       "id": "no_missing_refs",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Task pack must have no missing input refs."
     },
     {
@@ -89,9 +89,9 @@
       "message": "No local worker task should execute now."
     },
     {
-      "id": "eight_tasks",
-      "severity": "failure",
-      "message": "Task pack must include three legacy fixture-chain tasks plus five GitHub innovation tasks."
+      "id": "task_count_matches_summary",
+      "severity": "passed",
+      "message": "Task pack must include the summarized legacy and GitHub innovation tasks."
     },
     {
       "id": "three_legacy_tasks",
@@ -99,28 +99,28 @@
       "message": "Task pack must retain the three legacy fixture-chain tasks."
     },
     {
-      "id": "five_github_innovation_tasks",
-      "severity": "failure",
-      "message": "Task pack must include five source-free GitHub innovation tasks."
+      "id": "github_innovation_tasks_present",
+      "severity": "passed",
+      "message": "Task pack must include at least five source-free GitHub innovation tasks."
     },
     {
-      "id": "ten_github_payload_refs",
-      "severity": "failure",
-      "message": "Task pack must reference ten synthetic GitHub fixture payloads."
+      "id": "github_payload_refs_match_tasks",
+      "severity": "passed",
+      "message": "Task pack must reference two synthetic GitHub fixture payloads per innovation task."
     },
     {
       "id": "training_lanes_present",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Task pack must carry at least three training eval lanes."
     },
     {
       "id": "ontology_entities_present",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Task pack must carry ontology entity bindings."
     },
     {
       "id": "ontology_relations_present",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Task pack must carry ontology relation bindings."
     },
     {

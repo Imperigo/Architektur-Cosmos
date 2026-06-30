@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T07:11:01.386Z",
+  "generated_at": "2026-06-30T11:09:12.936Z",
   "status": "source_independent_work_queue_needs_review",
   "policy": {
     "queue_only": true,
@@ -33,16 +33,16 @@
     "data/kosmo-orbit-status-bridge-2026-06-30.json"
   ],
   "summary": {
-    "data_lane_status": "kosmodata_lane_sweep_failed",
-    "night_loop_status": "night_loop_needs_review",
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "night_loop_status": "night_loop_guarded_ready",
     "source_root_blocked": true,
     "private_inventory_blocked": true,
     "tasks": 9,
-    "completed_review_only": 5,
-    "codex_executable_now": 2,
+    "completed_review_only": 7,
+    "codex_executable_now": 0,
     "owner_actions": 2,
     "blocked_by_private_or_source_root": 0,
-    "failures": 3,
+    "failures": 1,
     "public_ready_after_queue": 0
   },
   "tasks": [
@@ -101,11 +101,11 @@
       "id": "codex_local_worker_output_contract_review",
       "lane": "local_worker",
       "actor": "codex",
-      "status": "ready",
+      "status": "completed_review_only",
       "action": "Review local worker runbook metadata and output-contract state without reading private output contents.",
       "command": "npm run kosmo:local-worker-output-contract-review && npm run kosmo:local-worker-output-contract-review-check",
-      "evidence": "outputs 9/9, executable 0",
-      "executable_now": true,
+      "evidence": "completed 9 contracts, guard 11/11",
+      "executable_now": false,
       "owner_action_required": false,
       "source_independent": true,
       "blocked_by_private_or_source_root": false,
@@ -152,11 +152,11 @@
       "id": "codex_local_worker_fixture_chain_task_pack",
       "lane": "local_worker",
       "actor": "codex",
-      "status": "ready",
+      "status": "completed_review_only",
       "action": "Keep the fixture-only local worker task pack defined but not executable by default.",
       "command": "npm run kosmo:local-worker-fixture-chain-task-pack && npm run kosmo:local-worker-fixture-chain-task-pack-check",
-      "evidence": "fixture-chain local worker task pack missing or guard not passed",
-      "executable_now": true,
+      "evidence": "completed 9 tasks, executable 0, failures 0",
+      "executable_now": false,
       "owner_action_required": false,
       "source_independent": true,
       "blocked_by_private_or_source_root": false,
@@ -189,7 +189,7 @@
       "status": "completed_review_only",
       "action": "Refresh Orbit status after source-independent queue changes and keep blockers visible.",
       "command": "npm run kosmo:orbit-status-bridge",
-      "evidence": "completed 85 cards, blockers 66, owner 25",
+      "evidence": "completed 85 cards, blockers 51, owner 26",
       "executable_now": false,
       "owner_action_required": false,
       "source_independent": true,
@@ -208,8 +208,6 @@
     "Do not set public-ready."
   ],
   "failures": [
-    "Data lane not passed: kosmodata_lane_sweep_failed",
-    "Night loop not guarded ready: night_loop_needs_review",
     "Choice matrix not ready: source_root_owner_choice_consequence_matrix_needs_review"
   ]
 }

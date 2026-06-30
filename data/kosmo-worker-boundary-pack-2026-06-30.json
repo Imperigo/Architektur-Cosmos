@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T07:11:00.915Z",
+  "generated_at": "2026-06-30T11:08:57.112Z",
   "status": "worker_boundary_pack_review_only_locked",
   "policy": {
     "metadata_only": true,
@@ -18,8 +18,8 @@
     "data/kosmo-source-root-activation-preflight-2026-06-30.json"
   ],
   "hard_state": {
-    "data_lane": "24/26",
-    "data_lane_status": "kosmodata_lane_sweep_failed",
+    "data_lane": "26/26",
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
     "source_root_blocker_status": "source_root_blocker_still_active",
     "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
     "source_root_activation_ready": false,

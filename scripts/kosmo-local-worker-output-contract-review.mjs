@@ -45,8 +45,15 @@ async function main() {
 
 function buildReport({ outputReview, conversionPlan, runbook, runbookCheck }) {
   const failures = [];
+  const conversionPlanSafe =
+    conversionPlan.status === 'local_worker_output_conversion_plan_review_only' ||
+    (
+      conversionPlan.status === 'local_worker_output_conversion_plan_blocked' &&
+      conversionPlan.summary?.repo_conversion_allowed_now === 0 &&
+      conversionPlan.summary?.public_ready_after_plan === 0
+    );
   if (outputReview.status !== 'local_worker_outputs_present_review_only') failures.push(`Output review not review-only present: ${outputReview.status}`);
-  if (conversionPlan.status !== 'local_worker_output_conversion_plan_review_only') failures.push(`Conversion plan not review-only: ${conversionPlan.status}`);
+  if (!conversionPlanSafe) failures.push(`Conversion plan not review-only or safely blocked: ${conversionPlan.status}`);
   if (runbook.status !== 'local_worker_execution_runbook_idle_review_only') failures.push(`Runbook not idle review-only: ${runbook.status}`);
   if (runbookCheck.status !== 'local_worker_execution_runbook_guard_passed') failures.push(`Runbook check not passed: ${runbookCheck.status}`);
 

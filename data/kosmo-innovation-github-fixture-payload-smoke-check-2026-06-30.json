@@ -1,0 +1,119 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T11:06:10.333Z",
+  "status": "innovation_github_fixture_payload_smoke_guard_passed",
+  "policy": {
+    "validates_smoke_only": true,
+    "copies_github_code": false,
+    "copies_readme_text": false,
+    "clones_repositories_now": false,
+    "installs_tools_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-30.json"
+  ],
+  "summary": {
+    "smoke_status": "innovation_github_fixture_payload_smoke_passed",
+    "payloads": 12,
+    "lanes": 3,
+    "content_types": 6,
+    "training_lanes": 3,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "schema_version",
+      "severity": "passed",
+      "message": "Smoke schema_version must be 0.1."
+    },
+    {
+      "id": "smoke_passed",
+      "severity": "passed",
+      "message": "Payload smoke must pass."
+    },
+    {
+      "id": "fixture_payloads_only",
+      "severity": "passed",
+      "message": "Smoke must read fixture payloads only."
+    },
+    {
+      "id": "synthetic_only",
+      "severity": "passed",
+      "message": "Smoke must be synthetic-fixture-only."
+    },
+    {
+      "id": "no_code_copy",
+      "severity": "passed",
+      "message": "Smoke must not copy GitHub code."
+    },
+    {
+      "id": "no_readme_copy",
+      "severity": "passed",
+      "message": "Smoke must not copy README text."
+    },
+    {
+      "id": "no_clone",
+      "severity": "passed",
+      "message": "Smoke must not clone repositories."
+    },
+    {
+      "id": "no_installs",
+      "severity": "passed",
+      "message": "Smoke must not install tools."
+    },
+    {
+      "id": "no_download",
+      "severity": "passed",
+      "message": "Smoke must not download models."
+    },
+    {
+      "id": "no_discovered_code_run",
+      "severity": "passed",
+      "message": "Smoke must not run discovered code."
+    },
+    {
+      "id": "no_private_reads",
+      "severity": "passed",
+      "message": "Smoke must not read private content."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Smoke must keep public-ready at 0."
+    },
+    {
+      "id": "payload_count",
+      "severity": "passed",
+      "message": "Smoke must cover at least 10 payloads."
+    },
+    {
+      "id": "lanes_complete",
+      "severity": "passed",
+      "message": "Smoke must cover all required lanes."
+    },
+    {
+      "id": "content_types_complete",
+      "severity": "passed",
+      "message": "Smoke must cover all required content types."
+    },
+    {
+      "id": "training_lanes_complete",
+      "severity": "passed",
+      "message": "Smoke must cover at least three training lanes."
+    },
+    {
+      "id": "smoke_failures_zero",
+      "severity": "passed",
+      "message": "Smoke failures must be 0."
+    }
+  ],
+  "next_actions": [
+    "Wire GitHub fixture skeleton/payload/smoke steps into the day-batch loop.",
+    "Keep repository adapter implementation as a later reviewed task."
+  ]
+}

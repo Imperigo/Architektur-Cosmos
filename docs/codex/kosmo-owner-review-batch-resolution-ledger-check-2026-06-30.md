@@ -1,17 +1,17 @@
 # Kosmo Owner Review Batch Resolution Ledger Check
 
-Generated: 2026-06-30T07:10:45.632Z
-Status: `owner_review_batch_resolution_ledger_guard_failed`
+Generated: 2026-06-30T11:08:40.806Z
+Status: `owner_review_batch_resolution_ledger_guard_passed`
 
 ## Summary
 
-- Checks: 13/17
-- Failures: 4
+- Checks: 16/16
+- Failures: 0
 - Public-ready after guard: 0
 
 ## Checks
 
-- failed: `status_ready` - owner_review_batch_resolution_ledger_needs_review
+- passed: `status_guarded` - owner_review_batch_resolution_ledger_pending_owner_input
 - passed: `policy_review_only` - true
 - passed: `no_reference_item_decisions` - false
 - passed: `no_asset_approvals` - false
@@ -20,9 +20,8 @@ Status: `owner_review_batch_resolution_ledger_guard_failed`
 - passed: `no_private_inventory_now` - false
 - passed: `no_public_writes` - false/false
 - passed: `public_ready_zero` - 0
-- failed: `all_batches_resolved` - 0/5
-- failed: `all_items_resolved` - 0/16
-- failed: `owner_action_zero` - 5
+- passed: `all_resolved_or_owner_pending` - owner_pending,owner_pending,owner_pending,owner_pending,owner_pending
+- passed: `owner_action_count_matches_unresolved` - 5/5
 - passed: `five_resolutions` - 5
 - passed: `resolution_public_ready_zero` - 0,0,0,0,0
 - passed: `hard_stop_public_ready` - do not convert this ledger into public-ready approvals. do not copy private files into git. do not ocr or extract private source text from this ledger. do not run local llms on private file contents from this ledger.

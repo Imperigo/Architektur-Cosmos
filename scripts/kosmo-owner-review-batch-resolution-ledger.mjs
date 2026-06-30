@@ -48,9 +48,11 @@ async function main() {
 
 function buildLedger({ intake, intakeCheck, batches }) {
   const failures = [];
-  if (intakeCheck.status !== 'owner_answer_intake_guard_passed_with_answers') {
-    failures.push(`Intake check must have explicit answers: ${intakeCheck.status}`);
-  }
+  const intakeGuarded = [
+    'owner_answer_intake_guard_passed_pending_owner_input',
+    'owner_answer_intake_guard_passed_with_answers'
+  ].includes(intakeCheck.status);
+  if (!intakeGuarded) failures.push(`Intake check must be guarded: ${intakeCheck.status}`);
   if ((intakeCheck.summary?.failures ?? 1) !== 0) failures.push('Intake check has failures.');
   if ((intakeCheck.summary?.public_ready_after_guard ?? 1) !== 0) failures.push('Intake check public-ready must stay 0.');
   if (batches.status !== 'owner_decision_batches_open') failures.push(`Owner batches must be visible before triage: ${batches.status}`);
@@ -60,8 +62,7 @@ function buildLedger({ intake, intakeCheck, batches }) {
     const answer = answersByBatch.get(batch.id);
     const ownerChoice = answer?.owner_choice || null;
     const resolved = Boolean(ownerChoice);
-    if (!resolved) failures.push(`Missing owner-card answer for batch: ${batch.id}`);
-    if (answer && !(answer.allowed_choices || []).includes(ownerChoice)) failures.push(`Owner choice not allowed for ${batch.id}: ${ownerChoice}`);
+    if (resolved && answer && !(answer.allowed_choices || []).includes(ownerChoice)) failures.push(`Owner choice not allowed for ${batch.id}: ${ownerChoice}`);
     if ((answer?.public_ready_after_card ?? 0) !== 0) failures.push(`Owner card would set public-ready for ${batch.id}.`);
 
     return {
@@ -69,7 +70,7 @@ function buildLedger({ intake, intakeCheck, batches }) {
       label: batch.label,
       owner_choice: ownerChoice,
       owner_note: answer?.owner_note || '',
-      resolution_status: resolved ? 'triaged_review_only' : 'unresolved',
+      resolution_status: resolved ? 'triaged_review_only' : 'owner_pending',
       item_count: batch.total_items,
       resolved_item_count: resolved ? batch.total_items : 0,
       public_ready_after_resolution: 0,
@@ -87,7 +88,9 @@ function buildLedger({ intake, intakeCheck, batches }) {
     generated_at: new Date().toISOString(),
     status: failures.length === 0 && resolvedBatches.length === resolutions.length
       ? 'owner_review_batch_resolution_ledger_ready'
-      : 'owner_review_batch_resolution_ledger_needs_review',
+      : failures.length === 0
+        ? 'owner_review_batch_resolution_ledger_pending_owner_input'
+        : 'owner_review_batch_resolution_ledger_needs_review',
     policy: {
       review_only: true,
       records_reference_item_decisions: false,

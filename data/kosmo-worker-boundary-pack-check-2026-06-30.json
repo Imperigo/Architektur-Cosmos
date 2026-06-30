@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T07:11:01.148Z",
-  "status": "worker_boundary_pack_guard_failed",
+  "generated_at": "2026-06-30T11:08:57.343Z",
+  "status": "worker_boundary_pack_guard_passed",
   "policy": {
     "records_decisions": false,
     "applies_decisions": false,
@@ -20,7 +20,7 @@
     "worker_count": 3,
     "allowed_commands": 22,
     "blocked_commands": 3,
-    "failures": 2,
+    "failures": 0,
     "warnings": 0,
     "public_ready_after_guard": 0
   },
@@ -62,12 +62,12 @@
     },
     {
       "id": "data_lane_complete",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Data lane must have all configured steps passed."
     },
     {
       "id": "data_lane_review_only_passed",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Data lane must be review-only passed."
     },
     {
@@ -217,7 +217,8 @@
     }
   ],
   "next_actions": [
-    "Fix worker boundary pack guard failures before handing tasks to local LLMs.",
-    "Rerun npm run kosmo:worker-boundary-pack and npm run kosmo:worker-boundary-pack-check."
+    "Use the worker boundary pack as first instruction context for local LLM and overseer handoffs.",
+    "Keep private reads, Git/cloud actions and public-ready flags blocked while the pack is review-only locked.",
+    "Rerun this guard after router, source-root or worker role changes."
   ]
 }

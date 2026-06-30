@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:46:56.008Z",
-  "status": "local_worker_output_conversion_plan_blocked",
+  "generated_at": "2026-06-30T11:08:57.798Z",
+  "status": "local_worker_output_conversion_plan_review_only",
   "policy": {
     "metadata_only": true,
     "reads_private_output_contents": false,
@@ -19,11 +19,11 @@
   ],
   "summary": {
     "tasks_total": 9,
-    "eligible_for_manual_metadata_review": 0,
+    "eligible_for_manual_metadata_review": 9,
     "repo_conversion_allowed_now": 0,
     "high_risk_hits": 0,
-    "guard_passed": false,
-    "launch_idle": false,
+    "guard_passed": true,
+    "launch_idle": true,
     "public_ready_after_plan": 0
   },
   "items": [
@@ -36,7 +36,7 @@
       "output_bytes": 4062,
       "json_status": "not_json",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",
@@ -54,7 +54,7 @@
       "output_bytes": 4111,
       "json_status": "valid",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",
@@ -72,7 +72,7 @@
       "output_bytes": 2884,
       "json_status": "not_json",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",
@@ -90,7 +90,7 @@
       "output_bytes": 2988,
       "json_status": "valid",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",
@@ -108,7 +108,7 @@
       "output_bytes": 2070,
       "json_status": "valid",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",
@@ -126,7 +126,7 @@
       "output_bytes": 9272,
       "json_status": "valid",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",
@@ -144,7 +144,7 @@
       "output_bytes": 4396,
       "json_status": "not_json",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",
@@ -162,7 +162,7 @@
       "output_bytes": 4020,
       "json_status": "not_json",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",
@@ -180,7 +180,7 @@
       "output_bytes": 2091,
       "json_status": "not_json",
       "high_risk_terms": [],
-      "conversion_status": "blocked_until_output_and_guard_pass",
+      "conversion_status": "eligible_for_manual_metadata_review",
       "repo_conversion_allowed_now": false,
       "required_review": [
         "human reads private output locally",

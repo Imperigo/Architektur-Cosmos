@@ -1,7 +1,7 @@
 # Kosmo Worker Boundary Pack Check
 
-Generated: 2026-06-30T07:11:01.148Z
-Status: `worker_boundary_pack_guard_failed`
+Generated: 2026-06-30T11:08:57.343Z
+Status: `worker_boundary_pack_guard_passed`
 
 ## Summary
 
@@ -9,7 +9,7 @@ Status: `worker_boundary_pack_guard_failed`
 - Workers: 3
 - Allowed commands: 22
 - Blocked commands: 3
-- Failures: 2
+- Failures: 0
 - Warnings: 0
 - Public-ready after guard: 0
 
@@ -22,8 +22,8 @@ Status: `worker_boundary_pack_guard_failed`
 - passed: `public_writes_false` - Pack must block public writes.
 - passed: `public_ready_false` - Pack must block public-ready flags.
 - passed: `local_worker_git_false` - Pack must block local-worker Git.
-- failure: `data_lane_complete` - Data lane must have all configured steps passed.
-- failure: `data_lane_review_only_passed` - Data lane must be review-only passed.
+- passed: `data_lane_complete` - Data lane must have all configured steps passed.
+- passed: `data_lane_review_only_passed` - Data lane must be review-only passed.
 - passed: `source_root_state_guarded` - Source-root must be blocked or activation preflight must be metadata-diagnostic ready.
 - passed: `probable_libraries_guarded` - Probable private libraries may only be nonzero after activation is ready.
 - passed: `selected_root_guarded` - Selected root may exist only after activation is ready.
@@ -56,5 +56,6 @@ Status: `worker_boundary_pack_guard_failed`
 
 ## Next Actions
 
-- Fix worker boundary pack guard failures before handing tasks to local LLMs.
-- Rerun npm run kosmo:worker-boundary-pack and npm run kosmo:worker-boundary-pack-check.
+- Use the worker boundary pack as first instruction context for local LLM and overseer handoffs.
+- Keep private reads, Git/cloud actions and public-ready flags blocked while the pack is review-only locked.
+- Rerun this guard after router, source-root or worker role changes.

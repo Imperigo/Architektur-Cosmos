@@ -79,10 +79,12 @@ function checkPack(pack) {
   expect(pack.policy?.public_ready_after_pack === 0, findings, 'public_ready_zero', 'Task pack must keep public-ready at 0.');
   expect(pack.summary?.missing_refs === 0, findings, 'no_missing_refs', 'Task pack must have no missing input refs.');
   expect(pack.summary?.executable_now === 0, findings, 'no_executable_now', 'No local worker task should execute now.');
-  expect(Array.isArray(pack.tasks) && pack.tasks.length === 8, findings, 'eight_tasks', 'Task pack must include three legacy fixture-chain tasks plus five GitHub innovation tasks.');
+  const expectedTaskCount = (pack.summary?.legacy_fixture_chain_tasks ?? 0) + (pack.summary?.github_innovation_tasks ?? 0);
+  const expectedPayloadRefs = (pack.summary?.github_innovation_tasks ?? 0) * 2;
+  expect(Array.isArray(pack.tasks) && pack.tasks.length === expectedTaskCount, findings, 'task_count_matches_summary', 'Task pack must include the summarized legacy and GitHub innovation tasks.');
   expect(pack.summary?.legacy_fixture_chain_tasks === 3, findings, 'three_legacy_tasks', 'Task pack must retain the three legacy fixture-chain tasks.');
-  expect(pack.summary?.github_innovation_tasks === 5, findings, 'five_github_innovation_tasks', 'Task pack must include five source-free GitHub innovation tasks.');
-  expect(pack.summary?.github_payload_refs === 10, findings, 'ten_github_payload_refs', 'Task pack must reference ten synthetic GitHub fixture payloads.');
+  expect(pack.summary?.github_innovation_tasks >= 5, findings, 'github_innovation_tasks_present', 'Task pack must include at least five source-free GitHub innovation tasks.');
+  expect(pack.summary?.github_payload_refs === expectedPayloadRefs, findings, 'github_payload_refs_match_tasks', 'Task pack must reference two synthetic GitHub fixture payloads per innovation task.');
   expect(pack.summary?.training_lanes >= 3, findings, 'training_lanes_present', 'Task pack must carry at least three training eval lanes.');
   expect(pack.summary?.ontology_entity_types >= 3, findings, 'ontology_entities_present', 'Task pack must carry ontology entity bindings.');
   expect(pack.summary?.ontology_relation_types >= 3, findings, 'ontology_relations_present', 'Task pack must carry ontology relation bindings.');

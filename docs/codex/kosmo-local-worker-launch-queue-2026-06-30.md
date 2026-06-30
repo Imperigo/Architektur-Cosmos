@@ -1,7 +1,7 @@
 # Kosmo Local Worker Launch Queue
 
-Generated: 2026-06-30T06:46:48.935Z
-Status: `local_worker_launch_queue_blocked`
+Generated: 2026-06-30T11:08:57.571Z
+Status: `local_worker_launch_queue_idle_outputs_present`
 
 ## Summary
 
@@ -9,7 +9,7 @@ Status: `local_worker_launch_queue_blocked`
 - Tasks present: 9/9
 - Tasks missing: 0
 - Launchable now: 0
-- Boundary guard passed: no
+- Boundary guard passed: yes
 - Private metadata inventory guard passed: no
 - Outputs complete: yes
 - Local worker Git blocked: yes

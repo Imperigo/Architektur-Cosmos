@@ -1,20 +1,20 @@
 # Kosmo Local Worker Fixture Chain Task Pack
 
-Generated: 2026-06-30T06:49:35.439Z
-Status: `local_worker_fixture_chain_task_pack_missing_refs`
+Generated: 2026-06-30T11:06:22.543Z
+Status: `local_worker_fixture_chain_task_pack_ready`
 
 ## Summary
 
-- Tasks: 3
+- Tasks: 9
 - Legacy fixture-chain tasks: 3
-- GitHub innovation tasks: 0
-- GitHub payload refs: 0
-- Training lanes: 0
-- Ontology entity types: 0
-- Ontology relation types: 0
-- Runner-safe tasks: 3
+- GitHub innovation tasks: 6
+- GitHub payload refs: 12
+- Training lanes: 3
+- Ontology entity types: 6
+- Ontology relation types: 6
+- Runner-safe tasks: 9
 - Executable now: 0
-- Missing refs: 6
+- Missing refs: 0
 - Public-ready after pack: 0
 
 ## Tasks
@@ -24,6 +24,12 @@ Status: `local_worker_fixture_chain_task_pack_missing_refs`
 | 1 | `fixture-chain-source-package-summary` | kosmoprepare-kosmoreferences | - | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/fixture-chain-source-package-summary.review.json` |
 | 2 | `fixture-chain-asset-candidate-review` | kosmoasset | - | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/fixture-chain-asset-candidate-review.review.json` |
 | 3 | `fixture-chain-orbit-card-brief` | kosmoorbit-overseer | - | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/fixture-chain-orbit-card-brief.review.json` |
+| 10 | `github-innovation-kosmo_prepare-sii-sc22mc-docfusion-signal-fixture` | kosmo_prepare | source_extraction_review | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture.review.json` |
+| 11 | `github-innovation-kosmo_asset-lee-agi-3d-model-base-signal-fixture` | kosmo_asset | asset_candidate_review | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_asset-lee-agi-3d-model-base-signal-fixture.review.json` |
+| 12 | `github-innovation-worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture` | worker_integration | worker_output_review | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture.review.json` |
+| 13 | `github-innovation-kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture` | kosmo_prepare | source_extraction_review | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture.review.json` |
+| 14 | `github-innovation-worker_integration-mac999-bim-llm-code-agent-signal-fixture` | worker_integration | worker_output_review | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/worker_integration-mac999-bim-llm-code-agent-signal-fixture.review.json` |
+| 15 | `github-innovation-worker_integration-mikillio-bim-wiki-deps-signal-fixture` | worker_integration | worker_output_review | no | `/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/github-innovation/worker_integration-mikillio-bim-wiki-deps-signal-fixture.review.json` |
 
 ## Forbidden Actions
 

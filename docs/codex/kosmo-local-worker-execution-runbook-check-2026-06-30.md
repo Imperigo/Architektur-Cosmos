@@ -1,7 +1,7 @@
 # Kosmo Local Worker Execution Runbook Check
 
-Generated: 2026-06-30T06:47:04.580Z
-Status: `local_worker_execution_runbook_guard_failed`
+Generated: 2026-06-30T11:08:58.247Z
+Status: `local_worker_execution_runbook_guard_passed`
 
 ## Summary
 
@@ -10,7 +10,7 @@ Status: `local_worker_execution_runbook_guard_failed`
 - Runner-safe tasks: 8
 - Executable now: 0
 - Blocked by private context: 1
-- Failures: 4
+- Failures: 0
 - Warnings: 0
 - Public-ready after check: 0
 
@@ -31,10 +31,10 @@ Status: `local_worker_execution_runbook_guard_failed`
 - passed: `private_context_count_matches` - Private-context blocker count must match task rows.
 - passed: `executable_count_matches` - Executable-now count must match task rows.
 - passed: `summary_public_ready_zero` - Summary public-ready after runbook must be 0.
-- failure: `launch_queue_state_valid` - Launch queue must be idle or explicitly launchable.
-- failure: `repo_conversion_zero` - Repo conversion must remain 0.
-- failure: `runner_check_passed` - HTTP runner check must pass.
-- failure: `runner_check_failures_zero` - HTTP runner check failures must be 0.
+- passed: `launch_queue_state_valid` - Launch queue must be idle, explicitly launchable, or safely blocked with no missing outputs.
+- passed: `repo_conversion_zero` - Repo conversion must remain 0.
+- passed: `runner_check_passed` - HTTP runner check must pass.
+- passed: `runner_check_failures_zero` - HTTP runner check failures must be 0.
 - passed: `task_id_present:kosmo-private-doctrine-summary` - Each task must have an id.
 - passed: `output_status_known:kosmo-private-doctrine-summary` - kosmo-private-doctrine-summary output status must be known.
 - passed: `blocked_has_blockers:kosmo-private-doctrine-summary` - kosmo-private-doctrine-summary must explain why it is blocked.
@@ -86,5 +86,6 @@ Status: `local_worker_execution_runbook_guard_failed`
 
 ## Next Actions
 
-- Fix execution runbook guard failures before using any --execute command.
-- Rerun npm run kosmo:local-worker-execution-runbook and this guard.
+- Use the execution runbook as the safe command map for future local worker runs.
+- Do not execute local worker tasks while executable_now is 0.
+- Rerun this guard after task-pack, launch queue, conversion plan or runner-check changes.

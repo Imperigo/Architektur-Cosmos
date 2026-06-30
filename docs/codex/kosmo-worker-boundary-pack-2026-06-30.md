@@ -1,11 +1,11 @@
 # Kosmo Worker Boundary Pack
 
-Generated: 2026-06-30T07:11:00.915Z
+Generated: 2026-06-30T11:08:57.112Z
 Status: `worker_boundary_pack_review_only_locked`
 
 ## Hard State
 
-- Data lane: 24/26 (kosmodata_lane_sweep_failed)
+- Data lane: 26/26 (kosmodata_lane_sweep_review_only_passed)
 - Source-root blocker: source_root_blocker_still_active
 - Source-root activation: source_root_activation_waiting_for_owner_storage_action
 - Source-root activation ready: no

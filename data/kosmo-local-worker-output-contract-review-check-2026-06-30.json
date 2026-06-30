@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T11:08:58.690Z",
+  "status": "local_worker_output_contract_review_guard_passed",
+  "policy": {
+    "review_only": true,
+    "reads_private_output_bodies": false,
+    "executes_local_workers": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-output-contract-review-2026-06-30.json"
+  ],
+  "summary": {
+    "checks": 11,
+    "passed": 11,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "local_worker_output_contract_review_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_body_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_body_copies",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_worker_execution",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "repo_conversion_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "execute_allowed_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "contracts_match_summary",
+      "status": "passed",
+      "evidence": "9/9"
+    },
+    {
+      "id": "contracts_have_next_gates",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "hard_stops_present",
+      "status": "passed",
+      "evidence": 5
+    }
+  ]
+}

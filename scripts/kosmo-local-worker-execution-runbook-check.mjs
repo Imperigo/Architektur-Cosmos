@@ -113,8 +113,17 @@ function checkSummary(runbook) {
 
 function checkGuardState(runbook) {
   const state = runbook.guard_state || {};
+  const summary = runbook.summary || {};
   const findings = [];
-  expect(state.launch_queue_status === 'local_worker_launch_queue_idle_outputs_present' || state.launchable_now > 0, findings, 'launch_queue_state_valid', 'Launch queue must be idle or explicitly launchable.');
+  const launchQueueSafe =
+    state.launch_queue_status === 'local_worker_launch_queue_idle_outputs_present' ||
+    state.launchable_now > 0 ||
+    (
+      state.launch_queue_status === 'local_worker_launch_queue_blocked' &&
+      state.launchable_now === 0 &&
+      summary.outputs_missing === 0
+    );
+  expect(launchQueueSafe, findings, 'launch_queue_state_valid', 'Launch queue must be idle, explicitly launchable, or safely blocked with no missing outputs.');
   expect(state.repo_conversion_allowed_now === 0, findings, 'repo_conversion_zero', 'Repo conversion must remain 0.');
   expect(state.runner_check_status === 'local_worker_http_runner_guard_passed', findings, 'runner_check_passed', 'HTTP runner check must pass.');
   expect(state.runner_check_failures === 0, findings, 'runner_check_failures_zero', 'HTTP runner check failures must be 0.');

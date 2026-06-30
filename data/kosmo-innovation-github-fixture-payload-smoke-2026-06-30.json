@@ -1,0 +1,91 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T11:06:10.114Z",
+  "status": "innovation_github_fixture_payload_smoke_passed",
+  "policy": {
+    "reads_fixture_payloads_only": true,
+    "synthetic_fixture_only": true,
+    "copies_github_code": false,
+    "copies_readme_text": false,
+    "clones_repositories_now": false,
+    "installs_tools_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content": false,
+    "writes_public_files": false,
+    "public_ready_after_smoke": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-fixture-payloads-2026-06-30.json"
+  ],
+  "summary": {
+    "payloads": 12,
+    "lanes": 3,
+    "required_lanes": 3,
+    "content_types": 6,
+    "required_content_types": 6,
+    "training_lanes": 3,
+    "failures": 0,
+    "public_ready_after_smoke": 0
+  },
+  "lane_counts": [
+    {
+      "lane": "kosmo_asset",
+      "count": 2
+    },
+    {
+      "lane": "kosmo_prepare",
+      "count": 4
+    },
+    {
+      "lane": "worker_integration",
+      "count": 6
+    }
+  ],
+  "content_type_counts": [
+    {
+      "type": "asset_similarity_query_fixture",
+      "count": 1
+    },
+    {
+      "type": "document_layout_expectation",
+      "count": 2
+    },
+    {
+      "type": "local_worker_command_boundary",
+      "count": 3
+    },
+    {
+      "type": "runtime_risk_matrix",
+      "count": 3
+    },
+    {
+      "type": "synthetic_architecture_document_manifest",
+      "count": 2
+    },
+    {
+      "type": "synthetic_asset_manifest",
+      "count": 1
+    }
+  ],
+  "training_lane_counts": [
+    {
+      "lane": "asset_candidate_review",
+      "count": 2
+    },
+    {
+      "lane": "source_extraction_review",
+      "count": 4
+    },
+    {
+      "lane": "worker_output_review",
+      "count": 6
+    }
+  ],
+  "failures": [],
+  "next_actions": [
+    "Wire this GitHub fixture payload chain into the day-batch loop.",
+    "Keep actual adapter execution behind dependency/install review gates.",
+    "Use the smoke report as the first review-only readiness signal for GitHub-inspired local worker contracts."
+  ]
+}

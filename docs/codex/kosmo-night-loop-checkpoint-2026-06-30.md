@@ -1,12 +1,12 @@
 # Kosmo Night Loop Checkpoint
 
-Generated: 2026-06-30T06:54:23.644Z
-Status: `night_loop_needs_review`
+Generated: 2026-06-30T11:09:06.714Z
+Status: `night_loop_guarded_ready`
 
 ## Summary
 
-- Data lane: 24/26 (kosmodata_lane_sweep_failed)
-- Duration: 22011ms
+- Data lane: 26/26 (kosmodata_lane_sweep_review_only_passed)
+- Duration: 15494ms
 - Router: worker_router_guarded_review_only
 - Owner brief: owner_next_review_brief_open
 - Owner open: 5 batches / 16 items

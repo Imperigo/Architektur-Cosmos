@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:52:37.454Z",
-  "status": "local_worker_output_contract_review_needs_review",
+  "generated_at": "2026-06-30T11:08:58.468Z",
+  "status": "local_worker_output_contract_review_ready",
   "policy": {
     "review_only": true,
     "reads_private_output_bodies": false,
@@ -20,18 +20,18 @@
   ],
   "summary": {
     "output_review_status": "local_worker_outputs_present_review_only",
-    "conversion_plan_status": "local_worker_output_conversion_plan_blocked",
+    "conversion_plan_status": "local_worker_output_conversion_plan_review_only",
     "runbook_status": "local_worker_execution_runbook_idle_review_only",
-    "runbook_check_status": "local_worker_execution_runbook_guard_failed",
+    "runbook_check_status": "local_worker_execution_runbook_guard_passed",
     "contracts": 9,
     "present_valid_outputs": 9,
     "invalid_json_outputs": 0,
     "high_risk_hits": 0,
-    "eligible_for_manual_metadata_review": 0,
+    "eligible_for_manual_metadata_review": 9,
     "repo_conversion_allowed_now": 0,
     "execute_allowed_now": 0,
     "blocked_by_private_context": 1,
-    "failures": 2,
+    "failures": 0,
     "public_ready_after_review": 0
   },
   "contracts": [
@@ -169,8 +169,5 @@
     "Do not set public-ready from local worker outputs.",
     "Keep manual metadata review as the next gate."
   ],
-  "failures": [
-    "Conversion plan not review-only: local_worker_output_conversion_plan_blocked",
-    "Runbook check not passed: local_worker_execution_runbook_guard_failed"
-  ]
+  "failures": []
 }

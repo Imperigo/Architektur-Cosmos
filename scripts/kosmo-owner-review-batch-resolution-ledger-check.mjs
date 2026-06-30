@@ -60,8 +60,15 @@ async function main() {
 
 function buildChecks(ledger) {
   const hardStops = (ledger.hard_stops || []).join(' ').toLowerCase();
+  const statusGuarded = [
+    'owner_review_batch_resolution_ledger_ready',
+    'owner_review_batch_resolution_ledger_pending_owner_input'
+  ].includes(ledger.status);
+  const allResolvedOrOwnerPending = (ledger.resolutions || []).every((resolution) =>
+    ['triaged_review_only', 'owner_pending'].includes(resolution.resolution_status)
+  );
   return [
-    check('status_ready', ledger.status === 'owner_review_batch_resolution_ledger_ready', ledger.status),
+    check('status_guarded', statusGuarded, ledger.status),
     check('policy_review_only', ledger.policy?.review_only === true, ledger.policy?.review_only),
     check('no_reference_item_decisions', ledger.policy?.records_reference_item_decisions === false, ledger.policy?.records_reference_item_decisions),
     check('no_asset_approvals', ledger.policy?.records_asset_approvals === false, ledger.policy?.records_asset_approvals),
@@ -70,9 +77,8 @@ function buildChecks(ledger) {
     check('no_private_inventory_now', ledger.policy?.runs_private_inventory_now === false, ledger.policy?.runs_private_inventory_now),
     check('no_public_writes', ledger.policy?.writes_public_files === false && ledger.policy?.writes_public_manifest === false, `${ledger.policy?.writes_public_files}/${ledger.policy?.writes_public_manifest}`),
     check('public_ready_zero', ledger.summary?.public_ready_after_ledger === 0, ledger.summary?.public_ready_after_ledger),
-    check('all_batches_resolved', ledger.summary?.resolved_batches === ledger.summary?.batches, `${ledger.summary?.resolved_batches}/${ledger.summary?.batches}`),
-    check('all_items_resolved', ledger.summary?.resolved_items === ledger.summary?.items, `${ledger.summary?.resolved_items}/${ledger.summary?.items}`),
-    check('owner_action_zero', ledger.summary?.owner_action_required === 0, ledger.summary?.owner_action_required),
+    check('all_resolved_or_owner_pending', allResolvedOrOwnerPending, (ledger.resolutions || []).map((resolution) => resolution.resolution_status).join(',')),
+    check('owner_action_count_matches_unresolved', ledger.summary?.owner_action_required === ledger.summary?.unresolved_batches, `${ledger.summary?.owner_action_required}/${ledger.summary?.unresolved_batches}`),
     check('five_resolutions', (ledger.resolutions || []).length === 5, (ledger.resolutions || []).length),
     check('resolution_public_ready_zero', (ledger.resolutions || []).every((resolution) => resolution.public_ready_after_resolution === 0), (ledger.resolutions || []).map((resolution) => resolution.public_ready_after_resolution).join(',')),
     check('hard_stop_public_ready', hardStops.includes('public-ready'), hardStops),

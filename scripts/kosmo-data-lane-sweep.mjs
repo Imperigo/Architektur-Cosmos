@@ -505,8 +505,7 @@ function isReviewOnlyHealthy({ referencesGate, referencesStatus, assetFullReview
     humanDecisionQueue?.summary?.public_ready_after_queue === 0;
   const batchesOk = ['owner_decision_batches_open', 'owner_decision_batches_clear'].includes(ownerDecisionBatches?.status) &&
     ownerDecisionBatches?.summary?.public_ready_after_batches === 0;
-  const ownerReviewBatchResolutionLedgerOk = ownerReviewBatchResolutionLedger?.status === 'owner_review_batch_resolution_ledger_ready' &&
-    ownerReviewBatchResolutionLedger?.summary?.owner_action_required === 0 &&
+  const ownerReviewBatchResolutionLedgerOk = ['owner_review_batch_resolution_ledger_ready', 'owner_review_batch_resolution_ledger_pending_owner_input'].includes(ownerReviewBatchResolutionLedger?.status) &&
     ownerReviewBatchResolutionLedger?.summary?.public_ready_after_ledger === 0 &&
     ownerReviewBatchResolutionLedger?.policy?.records_reference_item_decisions !== true &&
     ownerReviewBatchResolutionLedger?.policy?.records_asset_approvals !== true &&

@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:54:23.644Z",
-  "status": "night_loop_needs_review",
+  "generated_at": "2026-06-30T11:09:06.714Z",
+  "status": "night_loop_guarded_ready",
   "policy": {
     "review_only": true,
     "records_decisions": false,
@@ -15,9 +15,9 @@
     "data/kosmo-owner-next-review-brief-2026-06-30.json"
   ],
   "summary": {
-    "data_lane_status": "kosmodata_lane_sweep_failed",
-    "data_lane_steps": "24/26",
-    "data_lane_duration_ms": 22011,
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "data_lane_steps": "26/26",
+    "data_lane_duration_ms": 15494,
     "router_status": "worker_router_guarded_review_only",
     "owner_brief_status": "owner_next_review_brief_open",
     "owner_open_batches": 5,
