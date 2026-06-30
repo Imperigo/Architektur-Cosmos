@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
-import { publicRoutes } from './public-route-manifest.mjs';
+import { publicRouteChecks, publicRoutes } from './public-route-manifest.mjs';
 
 const entries = JSON.parse(fs.readFileSync('data/mock-entries.json', 'utf8'));
 const publicModelPreviews = JSON.parse(fs.readFileSync('data/public-model-previews.json', 'utf8'));
@@ -16,6 +16,15 @@ const allowedAssetRights = new Set(['public_domain', 'licensed', 'own_work']);
 const modelsBySlug = new Map(publicModelPreviews.models.map((model) => [model.slug, model]));
 const failures = [];
 const warnings = [];
+const requiredManifestRoutes = new Set([
+  '/',
+  '/atlas/',
+  '/references/',
+  '/assets/',
+  '/orbit/',
+  '/robots.txt',
+  '/sitemap.xml'
+]);
 function argValue(name) {
   const index = process.argv.indexOf(name);
   return index >= 0 ? process.argv[index + 1] : null;
@@ -111,6 +120,57 @@ function checkDataSurfaces() {
   }
 }
 
+function checkRouteManifestSurfaces() {
+  const routePaths = publicRouteChecks.map((route) => route.path);
+  const seen = new Set();
+
+  if (routePaths.length === 0) {
+    recordFailure('route-manifest:empty', 'public route manifest has no routes.');
+  }
+
+  for (const route of publicRouteChecks) {
+    if (!route?.path || typeof route.path !== 'string') {
+      recordFailure('route-manifest:path', 'public route manifest entry is missing a string path.');
+      continue;
+    }
+
+    if (seen.has(route.path)) {
+      recordFailure(`route-manifest:${route.path}:duplicate`, `duplicate public route path: ${route.path}`);
+    }
+    seen.add(route.path);
+
+    if (!route.path.startsWith('/')) {
+      recordFailure(`route-manifest:${route.path}:absolute`, `public route path must start with /: ${route.path}`);
+    }
+    if (route.path !== '/' && !/\.[a-z0-9]+$/i.test(route.path) && !route.path.endsWith('/')) {
+      recordFailure(`route-manifest:${route.path}:trailing-slash`, `HTML public route path must use a trailing slash: ${route.path}`);
+    }
+    if (hasPrivateLeak(route.path)) {
+      recordFailure(`route-manifest:${route.path}:path-leak`, `public route path leaks private/source pattern: ${route.path}`);
+    }
+    if (route.minBodyLength !== undefined && (!Number.isInteger(route.minBodyLength) || route.minBodyLength < 1)) {
+      recordFailure(`route-manifest:${route.path}:min-body-length`, `minBodyLength must be a positive integer for ${route.path}.`);
+    }
+
+    for (const expected of [...(route.includes ?? []), ...(route.rawIncludes ?? [])]) {
+      if (typeof expected !== 'string' || expected.trim().length === 0) {
+        recordFailure(`route-manifest:${route.path}:empty-sentinel`, `route ${route.path} has an empty include sentinel.`);
+      }
+      if (hasPrivateLeak(expected)) {
+        recordFailure(`route-manifest:${route.path}:sentinel-leak`, `route ${route.path} sentinel leaks private/source pattern: ${expected}`);
+      }
+    }
+  }
+
+  for (const requiredRoute of requiredManifestRoutes) {
+    if (!seen.has(requiredRoute)) {
+      recordFailure(`route-manifest:${requiredRoute}:required`, `required public route missing from manifest: ${requiredRoute}`);
+    }
+  }
+
+  return [...routePaths].sort();
+}
+
 async function checkRenderedRoutes(baseUrl) {
   if (!baseUrl) return [];
   const checkedRoutes = [];
@@ -144,12 +204,14 @@ async function checkRenderedRoutes(baseUrl) {
 
 async function main() {
   checkDataSurfaces();
+  const checkedRouteManifest = checkRouteManifestSurfaces();
   const checkedRoutes = await checkRenderedRoutes(argValue('--base-url') ?? process.env.PUBLIC_GATE_BASE_URL ?? null);
 
   const summary = {
     status: failures.length === 0 ? 'passed' : 'failed',
     checked_public_entries: entries.filter((entry) => entry.media.some((media) => publicProjectMediaUrl(entry, media)) || modelsBySlug.has(entry.slug)).length,
     checked_public_models: publicModelPreviews.models.length,
+    checked_route_manifest: checkedRouteManifest,
     checked_routes: checkedRoutes,
     failures,
     warnings
