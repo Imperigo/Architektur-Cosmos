@@ -32,6 +32,11 @@ type PublicAssetExplorerProps = {
 };
 
 const kindLabels: Record<PublicAsset['kind'], string> = publicAssetKindLabels;
+const assetDisplayLabel = publicAssetDisplayLabel;
+const assetLayerLabel = publicAssetLayerLabel;
+const assetProvenanceLabel = publicAssetProvenanceLabel;
+const assetRightsLabel = publicAssetRightsLabel;
+const assetStatusLabel = publicAssetStatusLabel;
 const assetPageSize = 24;
 const assetKindPreviewMeta: Record<PublicAsset['kind'], { Icon: LucideIcon; cue: string }> = {
   image: { Icon: FileImage, cue: 'Bildfläche' },
@@ -56,17 +61,17 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
     const matchesQuery = !normalizedQuery
       || [
         asset.label,
-        publicAssetDisplayLabel(asset.label),
+        assetDisplayLabel(asset.label),
         asset.project,
         asset.kind,
         asset.layer,
         asset.rights,
         asset.status,
         asset.provenance,
-        publicAssetProvenanceLabel(asset.provenance),
-        publicAssetLayerLabel(asset.layer),
-        publicAssetRightsLabel(asset.rights),
-        publicAssetStatusLabel(asset.status)
+        assetProvenanceLabel(asset.provenance),
+        assetLayerLabel(asset.layer),
+        assetRightsLabel(asset.rights),
+        assetStatusLabel(asset.status)
       ]
         .join(' ')
         .toLowerCase()
@@ -129,7 +134,7 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               onChange={(event) => setLayer(event.target.value)}
               className="ak-control public-filter-control"
             >
-              {layers.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Ebenen' : publicAssetLayerLabel(item)}</option>)}
+              {layers.map((item) => <option key={item} value={item}>{item === 'all' ? 'Alle Ebenen' : assetLayerLabel(item)}</option>)}
             </select>
           </label>
           <label className="public-filter-field">
@@ -197,15 +202,15 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
               <div className="p-4">
                 <div className="public-card-meta">
                   <span>{kindLabels[asset.kind]}</span>
-                  <span>{publicAssetLayerLabel(asset.layer)}</span>
+                  <span>{assetLayerLabel(asset.layer)}</span>
                 </div>
-                <h3 className="public-card-title public-card-title-compact">{publicAssetDisplayLabel(asset.label)}</h3>
+                <h3 className="public-card-title public-card-title-compact">{assetDisplayLabel(asset.label)}</h3>
                 <p className="public-card-summary public-card-summary-compact">{asset.project}</p>
                 <div className="public-card-chip-row mt-4">
-                  <span>{publicAssetRightsLabel(asset.rights)}</span>
-                  <span>{publicAssetStatusLabel(asset.status)}</span>
+                  <span>{assetRightsLabel(asset.rights)}</span>
+                  <span>{assetStatusLabel(asset.status)}</span>
                 </div>
-                <p className="public-card-provenance line-clamp-2">{publicAssetProvenanceLabel(asset.provenance)}</p>
+                <p className="public-card-provenance line-clamp-2">{assetProvenanceLabel(asset.provenance)}</p>
                 <div className="public-card-action-row">
                   <Link href={`/atlas/${asset.projectSlug}/`} className="public-card-action-link">
                     Dossier öffnen
@@ -234,12 +239,12 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             >
               <span className="public-index-accent public-index-accent-label">{kindLabels[asset.kind]}</span>
               <span>
-                <strong className="public-index-title public-index-title-compact">{publicAssetDisplayLabel(asset.label)}</strong>
-                <span className="public-index-muted line-clamp-1">{publicAssetProvenanceLabel(asset.provenance)}</span>
+                <strong className="public-index-title public-index-title-compact">{assetDisplayLabel(asset.label)}</strong>
+                <span className="public-index-muted line-clamp-1">{assetProvenanceLabel(asset.provenance)}</span>
               </span>
               <Link href={`/atlas/${asset.projectSlug}/`} className="public-index-body public-index-title-compact">{asset.project}</Link>
-              <span className="public-index-meta">{publicAssetLayerLabel(asset.layer)}</span>
-              <a href={asset.url} className="public-index-meta">{publicAssetRightsLabel(asset.rights)} / {publicAssetStatusLabel(asset.status)}</a>
+              <span className="public-index-meta">{assetLayerLabel(asset.layer)}</span>
+              <a href={asset.url} className="public-index-meta">{assetRightsLabel(asset.rights)} / {assetStatusLabel(asset.status)}</a>
             </div>
           ))}
         </div>
