@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T16:36:45.782Z",
+  "generator": "public-route-link-smoke",
+  "status": "public_route_link_smoke_passed",
+  "base_url": "http://127.0.0.1:3211",
+  "public_display_allowed": false,
+  "seed_route_count": 8,
+  "checked_target_count": 112,
+  "checkedPages": [
+    {
+      "path": "/",
+      "status": 200,
+      "anchor_count": 14,
+      "core_link_count": 5,
+      "private_pattern_count": 0
+    },
+    {
+      "path": "/orbit/",
+      "status": 200,
+      "anchor_count": 15,
+      "core_link_count": 5,
+      "private_pattern_count": 0
+    },
+    {
+      "path": "/atlas/",
+      "status": 200,
+      "anchor_count": 11,
+      "core_link_count": 5,
+      "private_pattern_count": 0
+    },
+    {
+      "path": "/archive/",
+      "status": 200,
+      "anchor_count": 143,
+      "core_link_count": 5,
+      "private_pattern_count": 0
+    },
+    {
+      "path": "/references/",
+      "status": 200,
+      "anchor_count": 23,
+      "core_link_count": 5,
+      "private_pattern_count": 0
+    },
+    {
+      "path": "/assets/",
+      "status": 200,
+      "anchor_count": 59,
+      "core_link_count": 5,
+      "private_pattern_count": 0
+    },
+    {
+      "path": "/atlas/villa-savoye/",
+      "status": 200,
+      "anchor_count": 28,
+      "core_link_count": 5,
+      "private_pattern_count": 0
+    },
+    {
+      "path": "/atlas/alterszentrum-kloster-ingenbohl/",
+      "status": 200,
+      "anchor_count": 18,
+      "core_link_count": 5,
+      "private_pattern_count": 0
+    }
+  ],
+  "failed_targets": [],
+  "skipped_external_links": 11,
+  "failed_findings": []
+}
