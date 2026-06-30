@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T07:09:03.232Z",
+  "generated_at": "2026-06-30T12:33:42.428Z",
   "status": "training_eval_rubric_pack_ready",
   "policy": {
     "rubric_only": true,
@@ -23,8 +23,8 @@
     "training_lanes": 4,
     "candidate_sources": 18,
     "pilot_worker_tasks": 12,
-    "roadmap_status": "vision_completion_roadmap_bootstrap_missing",
-    "roadmap_bootstrap_missing": true,
+    "roadmap_status": "vision_completion_roadmap_ready",
+    "roadmap_bootstrap_missing": false,
     "writes_training_data_now": 0,
     "writes_embeddings_now": 0,
     "runs_fine_tuning_now": 0,

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T07:09:04.870Z",
+  "generated_at": "2026-06-30T12:33:55.406Z",
   "status": "architecture_ontology_seed_guard_passed",
   "policy": {
     "validates_seed_only": true,
