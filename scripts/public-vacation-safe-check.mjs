@@ -33,6 +33,18 @@ const checks = [
     purpose: 'Rejects Next runtime features that would break the static export contract.'
   },
   {
+    id: 'review_only_publication_fence',
+    command: [
+      'node',
+      'scripts/kosmo-review-only-publication-fence.mjs',
+      '--out',
+      resolve(reportRoot, 'kosmo-review-only-publication-fence.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'kosmo-review-only-publication-fence.generated.md')
+    ],
+    purpose: 'Verifies owner-pending and review-only reports cannot promote public-ready state.'
+  },
+  {
     id: 'public_leak_pattern_negative_smoke',
     command: ['node', 'scripts/public-leak-pattern-negative-smoke.mjs'],
     purpose: 'Verifies public leak detector catches private path/source marker examples.'
