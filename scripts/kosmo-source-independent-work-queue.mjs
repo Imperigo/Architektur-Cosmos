@@ -98,12 +98,24 @@ function buildQueue({
     'source_root_owner_choice_consequence_matrix_ready',
     'source_root_owner_choice_consequence_matrix_satisfied_metadata_only'
   ].includes(choiceMatrix.status);
+  const choiceMatrixPendingOwner = choiceMatrix.status === 'source_root_owner_choice_consequence_matrix_needs_review' &&
+    choiceMatrix.policy?.reads_private_content === false &&
+    choiceMatrix.policy?.runs_private_inventory_now === false &&
+    choiceMatrix.policy?.public_ready_after_matrix === 0 &&
+    (choiceMatrix.summary?.choices ?? 0) > 0 &&
+    (choiceMatrix.summary?.unlock_choices ?? 0) >= 0 &&
+    (choiceMatrix.summary?.public_ready_after_matrix ?? 0) === 0 &&
+    (choiceMatrix.choices || []).every((choice) => choice.public_ready_after_choice === 0);
+  const ownerGateNotes = [];
   if (dataLaneSweep.status !== 'kosmodata_lane_sweep_review_only_passed') failures.push(`Data lane not passed: ${dataLaneSweep.status}`);
   if (nightLoop.status !== 'night_loop_guarded_ready') failures.push(`Night loop not guarded ready: ${nightLoop.status}`);
   if (localWorkerRunbook.status !== 'local_worker_execution_runbook_idle_review_only') failures.push(`Local worker runbook not idle review-only: ${localWorkerRunbook.status}`);
   if (assetSourceMap.status !== 'kosmoasset_source_candidate_map_review_only_ready') failures.push(`Asset source map not ready: ${assetSourceMap.status}`);
   if (pilotEvidence.status !== 'pilot_evidence_matrix_review_only') failures.push(`Pilot evidence matrix not review-only: ${pilotEvidence.status}`);
-  if (!choiceMatrixAccepted) failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
+  if (!choiceMatrixAccepted && !choiceMatrixPendingOwner) failures.push(`Choice matrix not safe for queue: ${choiceMatrix.status}`);
+  if (choiceMatrixPendingOwner) {
+    ownerGateNotes.push(`Choice matrix pending owner decision: ${choiceMatrix.status}`);
+  }
 
   const assetTaxonomyDone = assetCandidateTaxonomyReview?.status === 'kosmoasset_candidate_taxonomy_review_ready' &&
     assetCandidateTaxonomyReviewCheck?.status === 'kosmoasset_candidate_taxonomy_review_guard_passed';
@@ -142,9 +154,7 @@ function buildQueue({
       completed: sourceRootChoiceSatisfied,
       ownerAction: !sourceRootChoiceSatisfied,
       sourceIndependent: true,
-      command: sourceRootChoiceSatisfied
-        ? 'review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-16.md'
-        : 'review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.md',
+      command: `review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-${dateStamp}.md`,
       evidence: sourceRootChoiceSatisfied
         ? `recorded ${choiceMatrix.summary?.selected_decision ?? 'n/a'} at ${choiceMatrix.summary?.selected_root_path ?? 'n/a'}`
         : `choices ${choiceMatrix.summary?.choices ?? 0}, unlock ${choiceMatrix.summary?.unlock_choices ?? 0}`
@@ -300,6 +310,7 @@ function buildQueue({
       owner_actions: tasks.filter((item) => item.owner_action_required).length,
       blocked_by_private_or_source_root: tasks.filter((item) => item.blocked_by_private_or_source_root).length,
       failures: failures.length,
+      owner_gate_notes: ownerGateNotes.length,
       public_ready_after_queue: 0
     },
     tasks,
@@ -310,6 +321,7 @@ function buildQueue({
       'Do not execute local workers from this queue.',
       'Do not set public-ready.'
     ],
+    owner_gate_notes: ownerGateNotes,
     failures
   };
 }
@@ -365,6 +377,7 @@ function renderMarkdown(queue) {
   lines.push(`- Owner actions: ${queue.summary.owner_actions}`);
   lines.push(`- Blocked by private/source root: ${queue.summary.blocked_by_private_or_source_root}`);
   lines.push(`- Failures: ${queue.summary.failures}`);
+  lines.push(`- Owner gate notes: ${queue.summary.owner_gate_notes}`);
   lines.push(`- Public-ready after queue: ${queue.summary.public_ready_after_queue}`);
   lines.push('');
   lines.push('## Tasks');
@@ -378,6 +391,11 @@ function renderMarkdown(queue) {
   lines.push('## Hard Stops');
   lines.push('');
   queue.hard_stops.forEach((item) => lines.push(`- ${item}`));
+  lines.push('');
+  lines.push('## Owner Gate Notes');
+  lines.push('');
+  if (queue.owner_gate_notes.length > 0) queue.owner_gate_notes.forEach((note) => lines.push(`- ${note}`));
+  else lines.push('- None.');
   lines.push('');
   lines.push('## Failures');
   lines.push('');

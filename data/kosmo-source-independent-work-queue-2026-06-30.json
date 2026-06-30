@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T11:09:12.936Z",
-  "status": "source_independent_work_queue_needs_review",
+  "generated_at": "2026-06-30T11:48:04.825Z",
+  "status": "source_independent_work_queue_ready",
   "policy": {
     "queue_only": true,
     "source_root_required": false,
@@ -42,7 +42,8 @@
     "codex_executable_now": 0,
     "owner_actions": 2,
     "blocked_by_private_or_source_root": 0,
-    "failures": 1,
+    "failures": 0,
+    "owner_gate_notes": 1,
     "public_ready_after_queue": 0
   },
   "tasks": [
@@ -52,7 +53,7 @@
       "actor": "owner_or_overseer",
       "status": "owner_action_required",
       "action": "Review final decision brief and consequence matrix; choose keep_blocked, repair_onedrive_first or exact-root metadata diagnostic.",
-      "command": "review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-14.md",
+      "command": "review docs/codex/kosmo-source-root-owner-choice-consequence-matrix-2026-06-30.md",
       "evidence": "choices 3, unlock 1",
       "executable_now": false,
       "owner_action_required": true,
@@ -189,7 +190,7 @@
       "status": "completed_review_only",
       "action": "Refresh Orbit status after source-independent queue changes and keep blockers visible.",
       "command": "npm run kosmo:orbit-status-bridge",
-      "evidence": "completed 85 cards, blockers 51, owner 26",
+      "evidence": "completed 85 cards, blockers 41, owner 26",
       "executable_now": false,
       "owner_action_required": false,
       "source_independent": true,
@@ -207,7 +208,8 @@
     "Do not execute local workers from this queue.",
     "Do not set public-ready."
   ],
-  "failures": [
-    "Choice matrix not ready: source_root_owner_choice_consequence_matrix_needs_review"
-  ]
+  "owner_gate_notes": [
+    "Choice matrix pending owner decision: source_root_owner_choice_consequence_matrix_needs_review"
+  ],
+  "failures": []
 }
