@@ -1,0 +1,134 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:08:29.317Z",
+  "status": "post_unlock_pilot_execution_matrix_guard_passed",
+  "policy": {
+    "validates_matrix_only": true,
+    "executes_commands_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-post-unlock-pilot-execution-matrix-2026-06-30.json"
+  ],
+  "summary": {
+    "checks": 22,
+    "passed": 22,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "post_unlock_pilot_execution_matrix_ready"
+    },
+    {
+      "id": "policy_matrix_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_commands_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_mutation_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "three_pilots",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "twenty_four_reference_stages",
+      "status": "passed",
+      "evidence": 24
+    },
+    {
+      "id": "twenty_four_reference_stages_blocked",
+      "status": "passed",
+      "evidence": 24
+    },
+    {
+      "id": "eighteen_asset_stages",
+      "status": "passed",
+      "evidence": 18
+    },
+    {
+      "id": "six_assets",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "ten_command_steps",
+      "status": "passed",
+      "evidence": 10
+    },
+    {
+      "id": "starts_with_dry_run",
+      "status": "passed",
+      "evidence": "owner_answer_dry_run,record_owner_source_root_choice,source_root_decision_session_check,source_root_blocker_refresh,source_root_activation_preflight,post_owner_activation_queue,post_owner_activation_queue_check,private_metadata_inventory,private_metadata_inventory_check,day_batch_loop"
+    },
+    {
+      "id": "includes_private_metadata_inventory",
+      "status": "passed",
+      "evidence": "owner_answer_dry_run,record_owner_source_root_choice,source_root_decision_session_check,source_root_blocker_refresh,source_root_activation_preflight,post_owner_activation_queue,post_owner_activation_queue_check,private_metadata_inventory,private_metadata_inventory_check,day_batch_loop"
+    },
+    {
+      "id": "all_commands_not_executable_now",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "owner_unlock_checkpoint_ready",
+      "status": "passed",
+      "evidence": "27/283"
+    },
+    {
+      "id": "all_pilots_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "hard_stop_no_inventory",
+      "status": "passed",
+      "evidence": "do not run private inventory from this matrix. do not read private content from this matrix. do not generate assets from private sources before owner/source-root gates pass. do not mark any pilot or asset public-ready."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not run private inventory from this matrix. do not read private content from this matrix. do not generate assets from private sources before owner/source-root gates pass. do not mark any pilot or asset public-ready."
+    },
+    {
+      "id": "hard_stop_no_asset_generation",
+      "status": "passed",
+      "evidence": "do not run private inventory from this matrix. do not read private content from this matrix. do not generate assets from private sources before owner/source-root gates pass. do not mark any pilot or asset public-ready."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "do not run private inventory from this matrix. do not read private content from this matrix. do not generate assets from private sources before owner/source-root gates pass. do not mark any pilot or asset public-ready."
+    }
+  ]
+}

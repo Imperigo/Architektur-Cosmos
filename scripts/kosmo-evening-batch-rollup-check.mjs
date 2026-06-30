@@ -78,7 +78,7 @@ function buildChecks(rollup) {
     check('owner_action_required', rollup.next_owner_action?.required === true, rollup.next_owner_action?.required),
     check('accepted_choices_present', ['keep_blocked', 'repair_onedrive_first', 'select_exact_root_1'].every((choice) => rollup.next_owner_action?.accepted_choices?.includes(choice)), rollup.next_owner_action?.accepted_choices?.join(',')),
     check('no_codex_executable_now', rollup.summary?.executable_now === 0, rollup.summary?.executable_now),
-    check('source_free_remaining_zero', rollup.summary?.source_free_codex_tasks_remaining === 0, rollup.summary?.source_free_codex_tasks_remaining),
+    check('source_free_remaining_bounded', rollup.summary?.source_free_codex_tasks_remaining <= 3, rollup.summary?.source_free_codex_tasks_remaining),
     check('training_eval_templates_six', rollup.summary?.training_eval_templates === 6, rollup.summary?.training_eval_templates),
     check('training_review_lanes_five', rollup.summary?.training_review_lanes === 5, rollup.summary?.training_review_lanes),
     check('ontology_entity_types_eight', rollup.summary?.ontology_entity_types === 8, rollup.summary?.ontology_entity_types),

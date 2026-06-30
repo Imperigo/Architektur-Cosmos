@@ -1,13 +1,13 @@
 # Kosmo Orbit Status Bridge
 
-Generated: 2026-06-30T06:55:08.485Z
+Generated: 2026-06-30T07:11:01.631Z
 Status: `orbit_bridge_ready_with_blockers`
 
 ## Summary
 
 - Cards: 85
-- Blocking cards: 66
-- Owner action cards: 25
+- Blocking cards: 51
+- Owner action cards: 26
 - Source root blocked: yes
 - Day batch: day_batch_loop_needs_review
 - Source-root decision refresh: source_root_decision_session_refresh_not_needed, changed no, options 10, failures 0
@@ -29,9 +29,9 @@ Status: `orbit_bridge_ready_with_blockers`
 - Local worker HTTP runner: local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 5
 - Local worker execution runbook: local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_failed, executable now 0
 - Local worker output contracts: local_worker_output_contract_review_needs_review, contracts 9, present valid 9, repo conversion now 0, execute now 0, check null, failures -
-- Source-independent work queue: source_independent_work_queue_needs_review, tasks 9, completed 4, codex executable 3, owner actions 2, failures 3
+- Source-independent work queue: source_independent_work_queue_needs_review, tasks 9, completed 5, codex executable 2, owner actions 2, failures 3
 - Pilot gap label review: pilot_gap_label_review_ready, labels 12, hard blockers 7, owner decisions 7, check pilot_gap_label_review_guard_passed, failures 0
-- Asset bridge: null
+- Asset bridge: kosmoasset_reference_bridge_review_only_passed
 - Asset source candidate map: kosmoasset_source_candidate_map_review_only_ready, candidates 3
 - Asset candidate taxonomy review: kosmoasset_candidate_taxonomy_review_ready, candidates 10, reviewable 3, owner confirmations 3, check kosmoasset_candidate_taxonomy_review_guard_passed, failures 0
 - Prepare source package contract: prepare_phase1_source_package_contract_guard_passed, package kosmo-prepare-phase1-adapter-fixture-2026-06-30, failures 0
@@ -54,15 +54,15 @@ Status: `orbit_bridge_ready_with_blockers`
 - Terminal gate audit: null, blockers -, executable -, public-ready -, failures -
 - Worktree guard audit: null, entries -, staged -, untracked -, broad stage blocked, failures -
 - Cross-worker delta audit: null, repos -, latest handoff -, unmirrored -, foreign commits -, failures -
-- Training eval rubric: null, suites -, criteria -
-- Training eval row template: null, templates -
-- Training eval review queue: null, lanes -
-- Architecture ontology seed: null, entities -, relations -
-- Owner unlock fast reply card: null, broad intent -, applies now -
-- Owner unlock exact reply preview: null, validator -, patches -
-- Owner unlock Path A readiness: null, can start after exact reply -, applies now -
-- Owner unlock patch review bundle: null, operations -, applies now -
-- Owner unlock intake apply plan: null, field edits -, writes now -
+- Training eval rubric: training_eval_rubric_pack_ready, suites 6, criteria 24
+- Training eval row template: training_eval_row_template_ready, templates 6
+- Training eval review queue: training_eval_review_queue_plan_ready, lanes 5
+- Architecture ontology seed: architecture_ontology_seed_ready, entities 8, relations 10
+- Owner unlock fast reply card: owner_unlock_fast_reply_card_ready, broad intent false, applies now false
+- Owner unlock exact reply preview: owner_unlock_answer_dry_run_ready_for_review, validator owner_unlock_reply_valid, patches 6
+- Owner unlock Path A readiness: owner_unlock_path_a_readiness_certificate_ready, can start after exact reply true, applies now false
+- Owner unlock patch review bundle: owner_unlock_patch_review_bundle_ready, operations 6, applies now false
+- Owner unlock intake apply plan: owner_unlock_intake_apply_plan_ready, field edits 13, writes now false
 - Innovation smoke: innovation_smoke_passed_review_only
 - Public-ready after bridge: 0
 
@@ -82,27 +82,27 @@ Status: `orbit_bridge_ready_with_blockers`
 | `source-root-post-owner-activation-queue-check` Source Root Post-Owner Activation Queue Check | needs_review | no | 2 failures, 0 warnings |
 | `source-root-owner-final-decision-brief` Source Root Owner Final Decision Brief | needs_review | yes | 3 options, unlock 1, failures 1 |
 | `source-root-owner-choice-consequence-matrix` Source Root Owner Choice Consequence Matrix | needs_review | yes | 3 choices, unlock 1, blocked 2, failures 3 |
-| `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | needs_review | yes | missing fast reply card |
-| `owner-unlock-exact-reply-preview` Owner Unlock Exact Reply Preview | needs_review | yes | missing exact reply preview |
-| `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | needs_review | yes | missing Path A readiness certificate |
-| `owner-unlock-patch-review-bundle` Owner Unlock Patch Review Bundle | needs_review | yes | missing patch review bundle |
-| `owner-unlock-intake-apply-plan` Owner Unlock Intake Apply Plan | needs_review | yes | missing intake apply plan |
-| `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | needs_review | yes | missing session edit preview |
-| `owner-unlock-operational-start-card` Owner Unlock Operational Start Card | needs_review | yes | missing operational start card |
-| `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | needs_review | yes | missing execution runbook |
-| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | needs_review | yes | missing session apply guard |
-| `owner-unlock-session-apply-guard-smoke` Owner Unlock Session Apply Guard Smoke | needs_review | no | missing session apply guard smoke |
+| `owner-unlock-fast-reply-card` Owner Unlock Fast Reply Card | owner_action | yes | broad intent no, suggestions 2, applies now no, failures 0 |
+| `owner-unlock-exact-reply-preview` Owner Unlock Exact Reply Preview | review_only_ready | yes | validator owner_unlock_reply_valid, intake owner_unlock_reply_intake_map_ready_for_review, patches 6, failures 0 |
+| `owner-unlock-path-a-readiness` Owner Unlock Path A Readiness | owner_action | yes | can start after exact reply yes, applies now no, activation ready no, failures 0 |
+| `owner-unlock-patch-review-bundle` Owner Unlock Patch Review Bundle | review_only_ready | yes | 6 patches, source-root 1, owner cards 5, applies now no, failures 0 |
+| `owner-unlock-intake-apply-plan` Owner Unlock Intake Apply Plan | review_only_ready | yes | 13 field edits, target empty yes, root exists yes, writes now no, failures 0 |
+| `owner-unlock-session-edit-preview` Owner Unlock Session Edit Preview | review_only_ready | yes | 6 preview edits, session files 1, manual triage 5, writes now no, failures 0 |
+| `owner-unlock-operational-start-card` Owner Unlock Operational Start Card | owner_action | yes | 6/6 components, next 9, blocked 5, writes now no, failures 0 |
+| `owner-unlock-execution-runbook` Owner Unlock Execution Runbook | review_only_ready | yes | 8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json, queue executable 0, failures 0 |
+| `owner-unlock-session-apply-guard` Owner Unlock Session Apply Guard | review_only_ready | yes | waiting_for_manual_apply, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json, matches no, private diagnostic no, failures 0 |
+| `owner-unlock-session-apply-guard-smoke` Owner Unlock Session Apply Guard Smoke | review_only_ready | no | applied_matches_preview, matches yes, private diagnostic yes, checks 18/18, failures 0 |
 | `source-root-activation` Source Root Activation | blocked | yes | source_root_activation_waiting_for_owner_storage_action, safe commands 13, blocked 4 |
 | `local-models` Local Models | review_only_ready | no | 4/4 roles, 9 Ollama models, 75.1 GB |
 | `local-worker-http-runner` Local Worker HTTP Runner | review_only_ready | no | local_worker_http_runner_dry_run_ready, check local_worker_http_runner_guard_passed, safe inputs 5 |
 | `local-worker-execution-runbook` Local Worker Execution Runbook | needs_review | no | local_worker_execution_runbook_idle_review_only, check local_worker_execution_runbook_guard_failed, executable now 0 |
 | `local-worker-output-contracts` Local Worker Output Contracts | needs_review | no | 9 contracts, present 9, repo 0, execute 0, failures 0 |
-| `source-independent-work-queue` Source-Independent Work Queue | needs_review | yes | 9 tasks, completed 4, codex 3, owner 2, failures 3 |
+| `source-independent-work-queue` Source-Independent Work Queue | needs_review | yes | 9 tasks, completed 5, codex 2, owner 2, failures 3 |
 | `private-metadata-inventory` Private Metadata Inventory | blocked | yes | blocked until source-root activation; fixture 6 matches; guard private_metadata_inventory_guard_failed |
 | `pilot-references` Pilot References | needs_review | yes | 3 pilots, 12 evidence gaps |
 | `pilot-gap-labels` Pilot Gap Labels | review_only_ready | yes | 12 labels, 7 hard blockers, owner 7, failures 0 |
 | `kosmoasset` KosmoAsset | review_only | yes | 6 human reviews open, public-ready 0 |
-| `asset-reference-bridge` Asset Reference Bridge | needs_review | no | 0/0 pilot bridges, 0 assets, public-ready 0 |
+| `asset-reference-bridge` Asset Reference Bridge | review_only_ready | yes | 3/3 pilot bridges, 6 assets, public-ready 0 |
 | `asset-source-candidates` Asset Source Candidates | review_only_ready | yes | 3 asset-lane candidates, material 2, public-ready 0 |
 | `asset-candidate-taxonomy` Asset Candidate Taxonomy | review_only_ready | yes | 10 reviews, 3 reviewable, owner 3, failures 0 |
 | `prepare-references-asset-fixture-chain` Prepare References Asset Fixture Chain | review_only_ready | no | source package kosmo-prepare-phase1-adapter-fixture-2026-06-30, fixture assets 2, public-ready 0 |
@@ -147,10 +147,10 @@ Status: `orbit_bridge_ready_with_blockers`
 | `terminal-gate-audit` Terminal Gate Audit | needs_review | no | 0 terminal blockers, executable -, public-ready -, checks 0/0 |
 | `worktree-guard-audit` Worktree Guard Audit | needs_review | no | 0 dirty entries, staged 0, untracked 0, broad stage blocked, failures 0 |
 | `cross-worker-delta-audit` Cross-Worker Delta Audit | needs_review | no | 0/0 repos, latest handoff -, unmirrored -, foreign commits -, failures 0 |
-| `training-eval-rubric` Training Eval Rubric | needs_review | no | 0 suites, 0 criteria, eval items 0, failures 0 |
-| `training-eval-row-template` Training Eval Row Template | needs_review | no | 0 templates, 0 required fields, writes rows now 0, failures 0 |
-| `training-eval-review-queue` Training Eval Review Queue | needs_review | no | 0 lanes, 0 states, queue items now 0, failures 0 |
-| `architecture-ontology-seed` Architecture Ontology Seed | needs_review | no | 0 entities, 0 relations, 0 facet groups, failures 0 |
+| `training-eval-rubric` Training Eval Rubric | review_only_ready | no | 6 suites, 24 criteria, eval items 24, failures 0 |
+| `training-eval-row-template` Training Eval Row Template | review_only_ready | no | 6 templates, 10 required fields, writes rows now 0, failures 0 |
+| `training-eval-review-queue` Training Eval Review Queue | review_only_ready | no | 5 lanes, 6 states, queue items now 0, failures 0 |
+| `architecture-ontology-seed` Architecture Ontology Seed | review_only_ready | no | 8 entities, 10 relations, 6 facet groups, failures 0 |
 | `tomorrow-day-batch` Tomorrow Day Batch | ready | no | source_free_path_until_exact_owner_unlock, target 2026-07-01, failures 0 |
 | `worker-boundary` Worker Boundary | needs_review | no | 3 workers, 3 blocked command classes |
 | `innovation` Innovation Lanes | review_only_ready | no | 5/5 public-safe smoke checks passed |

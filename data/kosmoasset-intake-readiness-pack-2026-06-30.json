@@ -1,0 +1,558 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:05:42.119Z",
+  "status": "kosmoasset_intake_readiness_pack_ready",
+  "policy": {
+    "readiness_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory_now": false,
+    "generates_assets_now": false,
+    "executes_local_workers_now": false,
+    "uploads_allowed": false,
+    "public_ready_after_pack": 0
+  },
+  "source_refs": [
+    "data/kosmoasset-reference-bridge-check-2026-06-30.json",
+    "data/kosmoasset-candidate-taxonomy-review-2026-06-30.json",
+    "data/kosmoreferences-pilot-intake-readiness-pack-2026-06-30.json"
+  ],
+  "summary": {
+    "pilot_asset_groups": 3,
+    "pilot_assets": 6,
+    "library_candidates": 3,
+    "blocked_candidates": 7,
+    "total_stages": 36,
+    "executable_now": 0,
+    "open_human_review_count": 6,
+    "promotion_allowed": false,
+    "failures": 0,
+    "public_ready_after_pack": 0
+  },
+  "pilot_asset_groups": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "bridge_status": "pilot_asset_bridge_complete_review_only",
+      "asset_count": 2,
+      "asset_ids": [
+        "villa-savoye-concrete-frame-material-001",
+        "villa-savoye-five-points-diagram-001"
+      ],
+      "categories": [
+        "annotation",
+        "material"
+      ],
+      "export_targets": [
+        "archicad",
+        "blender",
+        "layout",
+        "svg",
+        "web"
+      ],
+      "public_use_allowed": 0,
+      "stages": [
+        {
+          "id": "source_basis_review",
+          "lane": "pilot_derived_asset",
+          "subject_id": "villa-savoye",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "rights_and_human_review",
+          "lane": "pilot_derived_asset",
+          "subject_id": "villa-savoye",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "asset_schema_normalization",
+          "lane": "pilot_derived_asset",
+          "subject_id": "villa-savoye",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "export_profile_planning",
+          "lane": "pilot_derived_asset",
+          "subject_id": "villa-savoye",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "local_worker_task_packet",
+          "lane": "pilot_derived_asset",
+          "subject_id": "villa-savoye",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "local worker output contract plus overseer review",
+          "owner": "local_llm_after_overseer_guard"
+        },
+        {
+          "id": "promotion_guard",
+          "lane": "pilot_derived_asset",
+          "subject_id": "villa-savoye",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:references-nightly-gate",
+          "owner": "codex_kosmoasset_lane"
+        }
+      ]
+    },
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "bridge_status": "pilot_asset_bridge_complete_review_only",
+      "asset_count": 2,
+      "asset_ids": [
+        "sogn-benedetg-wood-shingle-material-001",
+        "sogn-benedetg-light-band-detail-001"
+      ],
+      "categories": [
+        "material",
+        "opening"
+      ],
+      "export_targets": [
+        "archicad",
+        "blender",
+        "dxf",
+        "layout",
+        "svg",
+        "web"
+      ],
+      "public_use_allowed": 0,
+      "stages": [
+        {
+          "id": "source_basis_review",
+          "lane": "pilot_derived_asset",
+          "subject_id": "kapelle-sogn-benedetg",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "rights_and_human_review",
+          "lane": "pilot_derived_asset",
+          "subject_id": "kapelle-sogn-benedetg",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "asset_schema_normalization",
+          "lane": "pilot_derived_asset",
+          "subject_id": "kapelle-sogn-benedetg",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "export_profile_planning",
+          "lane": "pilot_derived_asset",
+          "subject_id": "kapelle-sogn-benedetg",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "local_worker_task_packet",
+          "lane": "pilot_derived_asset",
+          "subject_id": "kapelle-sogn-benedetg",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "local worker output contract plus overseer review",
+          "owner": "local_llm_after_overseer_guard"
+        },
+        {
+          "id": "promotion_guard",
+          "lane": "pilot_derived_asset",
+          "subject_id": "kapelle-sogn-benedetg",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:references-nightly-gate",
+          "owner": "codex_kosmoasset_lane"
+        }
+      ]
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "bridge_status": "pilot_asset_bridge_complete_review_only",
+      "asset_count": 2,
+      "asset_ids": [
+        "ingenbohl-mineral-pigment-material-001",
+        "ingenbohl-concrete-core-frame-study-001"
+      ],
+      "categories": [
+        "material",
+        "structure"
+      ],
+      "export_targets": [
+        "archicad",
+        "blender",
+        "glb",
+        "web"
+      ],
+      "public_use_allowed": 0,
+      "stages": [
+        {
+          "id": "source_basis_review",
+          "lane": "pilot_derived_asset",
+          "subject_id": "alterszentrum-kloster-ingenbohl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "rights_and_human_review",
+          "lane": "pilot_derived_asset",
+          "subject_id": "alterszentrum-kloster-ingenbohl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "asset_schema_normalization",
+          "lane": "pilot_derived_asset",
+          "subject_id": "alterszentrum-kloster-ingenbohl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "export_profile_planning",
+          "lane": "pilot_derived_asset",
+          "subject_id": "alterszentrum-kloster-ingenbohl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:asset-reference-bridge-check",
+          "owner": "codex_kosmoasset_lane"
+        },
+        {
+          "id": "local_worker_task_packet",
+          "lane": "pilot_derived_asset",
+          "subject_id": "alterszentrum-kloster-ingenbohl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "local worker output contract plus overseer review",
+          "owner": "local_llm_after_overseer_guard"
+        },
+        {
+          "id": "promotion_guard",
+          "lane": "pilot_derived_asset",
+          "subject_id": "alterszentrum-kloster-ingenbohl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:references-nightly-gate",
+          "owner": "codex_kosmoasset_lane"
+        }
+      ]
+    }
+  ],
+  "library_candidate_groups": [
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+      "review_lane": "material_rights_review",
+      "role_guess": "asset_material_library_candidate",
+      "owner_confirmation_required": true,
+      "asset_use_allowed_now": false,
+      "stages": [
+        {
+          "id": "owner_lane_confirmation",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "metadata_inventory_preflight",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "rights_and_license_review",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "asset_taxonomy_mapping",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "local_worker_packet_after_contract",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "local worker output contract plus overseer review",
+          "owner": "local_llm_after_overseer_guard"
+        },
+        {
+          "id": "promotion_guard",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:references-nightly-gate",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        }
+      ]
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+      "review_lane": "material_rights_review",
+      "role_guess": "asset_material_library_candidate",
+      "owner_confirmation_required": true,
+      "asset_use_allowed_now": false,
+      "stages": [
+        {
+          "id": "owner_lane_confirmation",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "metadata_inventory_preflight",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "rights_and_license_review",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "asset_taxonomy_mapping",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "local_worker_packet_after_contract",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "local worker output contract plus overseer review",
+          "owner": "local_llm_after_overseer_guard"
+        },
+        {
+          "id": "promotion_guard",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:references-nightly-gate",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        }
+      ]
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+      "review_lane": "project_asset_scope_review",
+      "role_guess": "archive_subtree_candidate",
+      "owner_confirmation_required": true,
+      "asset_use_allowed_now": false,
+      "stages": [
+        {
+          "id": "owner_lane_confirmation",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "metadata_inventory_preflight",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "rights_and_license_review",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "asset_taxonomy_mapping",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "owner confirmation plus metadata-only inventory preflight",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        },
+        {
+          "id": "local_worker_packet_after_contract",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "local worker output contract plus overseer review",
+          "owner": "local_llm_after_overseer_guard"
+        },
+        {
+          "id": "promotion_guard",
+          "lane": "private_asset_library_candidate",
+          "subject_id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+          "executable_now": false,
+          "reads_private_content_now": false,
+          "generates_assets_now": false,
+          "public_ready_after_stage": 0,
+          "guard": "npm run kosmo:references-nightly-gate",
+          "owner": "codex_kosmoasset_lane_plus_owner"
+        }
+      ]
+    }
+  ],
+  "blocked_candidate_ids": [
+    "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+    "possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow",
+    "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc",
+    "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+    "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+    "mount_archive_or_missing_root",
+    "repair_onedrive_first"
+  ],
+  "command_order_after_owner_and_source_guards": [
+    "npm run kosmo:asset-reference-bridge-check",
+    "npm run kosmo:asset-candidate-taxonomy-review",
+    "npm run kosmo:asset-candidate-taxonomy-review-check",
+    "npm run kosmo:asset-intake-readiness-pack",
+    "npm run kosmo:asset-intake-readiness-pack-check",
+    "npm run kosmo:data-lane-sweep",
+    "npm run kosmo:references-nightly-gate"
+  ],
+  "hard_stops": [
+    "Do not ingest private asset libraries before owner lane confirmation and rights review.",
+    "Do not generate, normalize or export assets from private contents in this pack.",
+    "Do not send private file contents to local LLM workers.",
+    "Do not upload or publish assets.",
+    "Keep pilot-derived assets review-only until human review and promotion guards pass.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

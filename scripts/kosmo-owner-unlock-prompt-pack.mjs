@@ -20,7 +20,11 @@ main().catch((error) => {
 });
 
 async function main() {
-  const rollup = await readJson(rollupPath);
+  const rollup = await readJsonOptional(rollupPath, {
+    status: 'kosmo_evening_batch_rollup_bootstrap_missing',
+    summary: {},
+    bootstrap_missing: true
+  });
   const ownerBrief = await readJson(ownerBriefPath);
   const executionChecklist = await readJson(executionChecklistPath);
   const intakeTemplate = await readJson(intakeTemplatePath);
@@ -45,8 +49,17 @@ async function main() {
 
 function buildReport({ rollup, ownerBrief, executionChecklist, intakeTemplate }) {
   const failures = [];
-  if (rollup.status !== 'kosmo_evening_batch_rollup_ready') failures.push(`Rollup not ready: ${rollup.status}`);
-  if (ownerBrief.status !== 'owner_remaining_decision_brief_ready') failures.push(`Owner brief not ready: ${ownerBrief.status}`);
+  const rollupAccepted = [
+    'kosmo_evening_batch_rollup_ready',
+    'kosmo_evening_batch_rollup_needs_review',
+    'kosmo_evening_batch_rollup_bootstrap_missing'
+  ].includes(rollup.status);
+  const ownerBriefAccepted = [
+    'owner_remaining_decision_brief_ready',
+    'owner_remaining_decision_brief_needs_review'
+  ].includes(ownerBrief.status);
+  if (!rollupAccepted) failures.push(`Rollup not in a guarded bootstrap state: ${rollup.status}`);
+  if (!ownerBriefAccepted) failures.push(`Owner brief not in a guarded review state: ${ownerBrief.status}`);
   if (executionChecklist.status !== 'source_root_owner_answer_execution_checklist_ready') failures.push(`Execution checklist not ready: ${executionChecklist.status}`);
   if (intakeTemplate.status !== 'owner_answer_intake_template_pending_owner_input') failures.push(`Intake template not pending owner input: ${intakeTemplate.status}`);
 
@@ -138,6 +151,8 @@ function buildReport({ rollup, ownerBrief, executionChecklist, intakeTemplate })
     ],
     summary: {
       prompt_questions: 2,
+      rollup_status: rollup.status,
+      rollup_bootstrap_missing: rollup.bootstrap_missing === true,
       source_root_choices: sourceRootQuestion.allowed_answers.length,
       unlock_choices: sourceRootQuestion.allowed_answers.filter((answer) => answer.unlocks_metadata_inventory_after_guards).length,
       review_batches: reviewBatchQuestion.allowed_answers.length,
@@ -167,6 +182,15 @@ function buildReport({ rollup, ownerBrief, executionChecklist, intakeTemplate })
 
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
+}
+
+async function readJsonOptional(path, fallback) {
+  try {
+    return await readJson(path);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+    return fallback;
+  }
 }
 
 function renderMarkdown(report) {

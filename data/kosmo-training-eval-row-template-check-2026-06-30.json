@@ -1,0 +1,135 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:09:03.926Z",
+  "status": "training_eval_row_template_guard_passed",
+  "policy": {
+    "validates_template_only": true,
+    "writes_eval_rows_now": false,
+    "writes_training_data_now": false,
+    "writes_embeddings_now": false,
+    "reads_private_content_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-training-eval-row-template-2026-06-30.json"
+  ],
+  "summary": {
+    "checks": 22,
+    "passed": 22,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "training_eval_row_template_ready"
+    },
+    {
+      "id": "policy_template_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_eval_rows_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_training_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_embeddings_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_fine_tuning_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_storage",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "six_templates",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "ten_required_fields",
+      "status": "passed",
+      "evidence": 10
+    },
+    {
+      "id": "rubric_suites_six",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "rubric_criteria_twenty_four",
+      "status": "passed",
+      "evidence": 24
+    },
+    {
+      "id": "all_templates_no_rows",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "all_templates_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "all_row_stubs_not_public_ready",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "forbidden_fields_present",
+      "status": "passed",
+      "evidence": "raw_private_text,worker_output_body"
+    },
+    {
+      "id": "hard_stop_no_private_text",
+      "status": "passed",
+      "evidence": "do not place private source text into eval rows. do not place ocr/pdf bodies into eval rows. do not place local worker output bodies into eval rows. do not create embeddings or fine-tunes from templates. keep public_ready false."
+    },
+    {
+      "id": "hard_stop_no_ocr_pdf",
+      "status": "passed",
+      "evidence": "do not place private source text into eval rows. do not place ocr/pdf bodies into eval rows. do not place local worker output bodies into eval rows. do not create embeddings or fine-tunes from templates. keep public_ready false."
+    },
+    {
+      "id": "hard_stop_no_worker_body",
+      "status": "passed",
+      "evidence": "do not place private source text into eval rows. do not place ocr/pdf bodies into eval rows. do not place local worker output bodies into eval rows. do not create embeddings or fine-tunes from templates. keep public_ready false."
+    },
+    {
+      "id": "hard_stop_no_embedding_finetune",
+      "status": "passed",
+      "evidence": "do not place private source text into eval rows. do not place ocr/pdf bodies into eval rows. do not place local worker output bodies into eval rows. do not create embeddings or fine-tunes from templates. keep public_ready false."
+    },
+    {
+      "id": "hard_stop_public_ready_false",
+      "status": "passed",
+      "evidence": "do not place private source text into eval rows. do not place ocr/pdf bodies into eval rows. do not place local worker output bodies into eval rows. do not create embeddings or fine-tunes from templates. keep public_ready false."
+    }
+  ]
+}

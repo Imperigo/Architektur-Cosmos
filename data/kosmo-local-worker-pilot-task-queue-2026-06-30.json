@@ -1,0 +1,287 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:08:29.552Z",
+  "status": "local_worker_pilot_task_queue_ready_blocked",
+  "policy": {
+    "queue_only": true,
+    "executes_local_worker_now": false,
+    "reads_private_content_now": false,
+    "writes_repo_now": false,
+    "requires_overseer_review": true,
+    "public_ready_after_queue": 0
+  },
+  "source_refs": [
+    "data/kosmo-post-unlock-pilot-execution-matrix-2026-06-30.json",
+    "data/kosmo-local-worker-output-contract-review-2026-06-30.json",
+    "data/kosmo-local-worker-execution-runbook-2026-06-30.json",
+    "data/kosmo-local-worker-launch-queue-2026-06-30.json"
+  ],
+  "summary": {
+    "pilots": 3,
+    "tasks": 12,
+    "tasks_per_pilot": 4,
+    "kosmoreferences_tasks": 9,
+    "kosmoasset_tasks": 3,
+    "worker_contracts": 9,
+    "runner_safe_tasks": 8,
+    "launchable_now": 0,
+    "writes_repo_now": 0,
+    "public_ready_after_queue": 0,
+    "failures": 0
+  },
+  "tasks": [
+    {
+      "id": "villa-savoye:metadata_match_candidates",
+      "pilot_id": "villa-savoye",
+      "pilot_title": "Villa Savoye",
+      "lane": "kosmoreferences",
+      "task_type": "metadata_match_candidates",
+      "expected_output": "candidate source-to-slot match table",
+      "allowed_input": "metadata inventory rows only after source-root guards pass",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "villa-savoye:provenance_gap_summary",
+      "pilot_id": "villa-savoye",
+      "pilot_title": "Villa Savoye",
+      "lane": "kosmoreferences",
+      "task_type": "provenance_gap_summary",
+      "expected_output": "review-only provenance gap summary",
+      "allowed_input": "file metadata and existing provenance labels only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "villa-savoye:analysis_layer_draft",
+      "pilot_id": "villa-savoye",
+      "pilot_title": "Villa Savoye",
+      "lane": "kosmoreferences",
+      "task_type": "analysis_layer_draft",
+      "expected_output": "typology/material/structure/space/construction draft fields",
+      "allowed_input": "approved metadata snippets and human-reviewed source notes only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "villa-savoye:asset_schema_draft",
+      "pilot_id": "villa-savoye",
+      "pilot_title": "Villa Savoye",
+      "lane": "kosmoasset",
+      "task_type": "asset_schema_draft",
+      "expected_output": "review-only asset schema draft",
+      "allowed_input": "reviewed reference signals and asset taxonomy only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "kapelle-sogn-benedetg:metadata_match_candidates",
+      "pilot_id": "kapelle-sogn-benedetg",
+      "pilot_title": "Kapelle Sogn Benedetg",
+      "lane": "kosmoreferences",
+      "task_type": "metadata_match_candidates",
+      "expected_output": "candidate source-to-slot match table",
+      "allowed_input": "metadata inventory rows only after source-root guards pass",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "kapelle-sogn-benedetg:provenance_gap_summary",
+      "pilot_id": "kapelle-sogn-benedetg",
+      "pilot_title": "Kapelle Sogn Benedetg",
+      "lane": "kosmoreferences",
+      "task_type": "provenance_gap_summary",
+      "expected_output": "review-only provenance gap summary",
+      "allowed_input": "file metadata and existing provenance labels only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "kapelle-sogn-benedetg:analysis_layer_draft",
+      "pilot_id": "kapelle-sogn-benedetg",
+      "pilot_title": "Kapelle Sogn Benedetg",
+      "lane": "kosmoreferences",
+      "task_type": "analysis_layer_draft",
+      "expected_output": "typology/material/structure/space/construction draft fields",
+      "allowed_input": "approved metadata snippets and human-reviewed source notes only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "kapelle-sogn-benedetg:asset_schema_draft",
+      "pilot_id": "kapelle-sogn-benedetg",
+      "pilot_title": "Kapelle Sogn Benedetg",
+      "lane": "kosmoasset",
+      "task_type": "asset_schema_draft",
+      "expected_output": "review-only asset schema draft",
+      "allowed_input": "reviewed reference signals and asset taxonomy only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl:metadata_match_candidates",
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "pilot_title": "Alterszentrum Kloster Ingenbohl",
+      "lane": "kosmoreferences",
+      "task_type": "metadata_match_candidates",
+      "expected_output": "candidate source-to-slot match table",
+      "allowed_input": "metadata inventory rows only after source-root guards pass",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl:provenance_gap_summary",
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "pilot_title": "Alterszentrum Kloster Ingenbohl",
+      "lane": "kosmoreferences",
+      "task_type": "provenance_gap_summary",
+      "expected_output": "review-only provenance gap summary",
+      "allowed_input": "file metadata and existing provenance labels only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl:analysis_layer_draft",
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "pilot_title": "Alterszentrum Kloster Ingenbohl",
+      "lane": "kosmoreferences",
+      "task_type": "analysis_layer_draft",
+      "expected_output": "typology/material/structure/space/construction draft fields",
+      "allowed_input": "approved metadata snippets and human-reviewed source notes only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl:asset_schema_draft",
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "pilot_title": "Alterszentrum Kloster Ingenbohl",
+      "lane": "kosmoasset",
+      "task_type": "asset_schema_draft",
+      "expected_output": "review-only asset schema draft",
+      "allowed_input": "reviewed reference signals and asset taxonomy only",
+      "target_worker": "kosmo-odysseus-local-llm",
+      "overseer": "codex_or_claude_review_required",
+      "executable_now": false,
+      "blocked_until": [
+        "owner_unlock_answer_dry_run_ready_for_review",
+        "reviewed_owner_answer_intake",
+        "source_root_activation_preflight_passed",
+        "pilot_scoped_metadata_inventory_passed"
+      ],
+      "writes_repo_now": false,
+      "public_ready_after_task": 0
+    }
+  ],
+  "next_actions_after_source_root": [
+    "Run pilot-scoped metadata inventory and guard first.",
+    "Materialize task inputs as minimal metadata snippets, not full private documents.",
+    "Run local worker tasks only through existing output contracts.",
+    "Require Codex/Claude review before any repo conversion."
+  ],
+  "hard_stops": [
+    "Do not launch local worker tasks from this queue now.",
+    "Do not pass full private documents to local workers.",
+    "Do not let local worker output write directly to repo.",
+    "Do not mark local worker output public-ready."
+  ],
+  "failures": []
+}

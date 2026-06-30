@@ -1,10 +1,10 @@
 {
   "schema_version": "0.2",
-  "checked_at": "2026-06-30T06:54:50.872Z",
+  "checked_at": "2026-06-30T07:10:40.976Z",
   "status": "passed",
   "endpoint": "http://127.0.0.1:11434/api/generate",
   "model": "kosmo-qwen3-coder:30b-a3b-q4km",
-  "duration_ms": 436,
+  "duration_ms": 2541,
   "checks": {
     "http_ok": true,
     "model_returned": true,
@@ -19,8 +19,8 @@
     "mentions_review_only": true,
     "mentions_no_public_promotion": true
   },
-  "response_length": 75,
-  "response_preview": "REVIEW_ONLY: Local worker smoke check passed - NO_PUBLIC_PROMOTION applied.",
+  "response_length": 180,
+  "response_preview": "REVIEW_ONLY and NO_PUBLIC_PROMOTION must be in uppercase.\n\nArchitectureKosmos local worker smoke check passed with REVIEW_ONLY flag enabled and NO_PUBLIC_PROMOTION policy enforced.",
   "json_capture": {
     "response_length": 114,
     "response_preview": "{\"status\":\"review_only\",\"public_ready_after_smoke\":0,\"private_content_sent\":false,\"notes\":[\"NO_PUBLIC_PROMOTION\"]}",

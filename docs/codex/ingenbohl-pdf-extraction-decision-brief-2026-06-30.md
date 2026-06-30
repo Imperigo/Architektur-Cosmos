@@ -1,6 +1,6 @@
 # Ingenbohl PDF Extraction Decision Brief
 
-Generated: 2026-06-30T06:54:56.444Z
+Generated: 2026-06-30T07:10:46.547Z
 Status: `ingenbohl_pdf_extraction_decision_needed`
 
 ## Summary

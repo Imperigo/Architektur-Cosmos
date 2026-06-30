@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:54:51.113Z",
+  "generated_at": "2026-06-30T07:10:41.218Z",
   "status": "passed_review_only",
   "policy": {
     "public_writes_allowed": false,
@@ -9,7 +9,7 @@
     "note": "Nightly gate orchestrates metadata/provenance/readiness checks only. It does not promote media, copy source content, or write public-ready manifests."
   },
   "summary": {
-    "duration_ms": 7235,
+    "duration_ms": 9231,
     "steps": 10,
     "passed_steps": 10,
     "failed_steps": 0,
@@ -95,8 +95,8 @@
       "id": "references-registry-check",
       "command": "npm run kosmo:references-registry-check",
       "required": true,
-      "started_at": "2026-06-30T06:54:43.879Z",
-      "duration_ms": 233,
+      "started_at": "2026-06-30T07:10:31.988Z",
+      "duration_ms": 237,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:references-registry-check\n> node scripts/kosmo-references-registry-check.mjs\n\nKosmoReferences registry check\nRegistry: data/kosmoreferences-registry.json\nStatus: passed\nSource packages: 5\nEntry drafts: 3\nAsset libraries: 2\nFailures: 0\nWarnings: 0\nWrote: out/kosmoreferences-registry/registry-check.generated.md"
@@ -105,8 +105,8 @@
       "id": "references-provenance-check",
       "command": "npm run kosmo:references-provenance-check",
       "required": true,
-      "started_at": "2026-06-30T06:54:44.112Z",
-      "duration_ms": 225,
+      "started_at": "2026-06-30T07:10:32.225Z",
+      "duration_ms": 231,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:references-provenance-check\n> node scripts/kosmo-reference-provenance-check.mjs\n\nKosmoReferences provenance check\nRegistry: data/kosmoreferences-registry.json\nStatus: passed\nEntry drafts: 3\nAsset libraries: 2\nPublic-ready assets: 0\nBlocked public promotions: 32\nFailures: 0\nWarnings: 0\nWrote: out/kosmo-reference-provenance/provenance-check.generated.md"
@@ -115,8 +115,8 @@
       "id": "source-package-link-check:alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13",
       "command": "npm run kosmo:source-package-link-check -- --package examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
       "required": true,
-      "started_at": "2026-06-30T06:54:44.337Z",
-      "duration_ms": 1290,
+      "started_at": "2026-06-30T07:10:32.456Z",
+      "duration_ms": 1272,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-package-link-check\n> node scripts/kosmo-source-package-link-check.mjs --package examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json\n\nKosmoReferences source package link check\nPackage: examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json\nStatus: passed\nLinks: 5\nReachable: 5\nWarnings: 0\nWrote: examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/review/source-package-link-check.generated.md"
@@ -125,8 +125,8 @@
       "id": "source-package-link-check:kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
       "command": "npm run kosmo:source-package-link-check -- --package examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
       "required": true,
-      "started_at": "2026-06-30T06:54:45.627Z",
-      "duration_ms": 1624,
+      "started_at": "2026-06-30T07:10:33.728Z",
+      "duration_ms": 1534,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-package-link-check\n> node scripts/kosmo-source-package-link-check.mjs --package examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json\n\nKosmoReferences source package link check\nPackage: examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json\nStatus: passed\nLinks: 4\nReachable: 4\nWarnings: 0\nWrote: examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/review/source-package-link-check.generated.md"
@@ -135,8 +135,8 @@
       "id": "source-package-link-check:villa-savoye-public-source-candidate-2026-06-13",
       "command": "npm run kosmo:source-package-link-check -- --package examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json",
       "required": true,
-      "started_at": "2026-06-30T06:54:47.251Z",
-      "duration_ms": 2170,
+      "started_at": "2026-06-30T07:10:35.262Z",
+      "duration_ms": 2158,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-package-link-check\n> node scripts/kosmo-source-package-link-check.mjs --package examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json\n\nKosmoReferences source package link check\nPackage: examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/source-package.json\nStatus: passed\nLinks: 5\nReachable: 5\nWarnings: 0\nWrote: examples/kosmo-references/source-packages/villa-savoye-public-source-candidate-2026-06-13/review/source-package-link-check.generated.md"
@@ -145,8 +145,8 @@
       "id": "owner-review-decision-check",
       "command": "npm run kosmo:owner-review-decision-check -- --out examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review",
       "required": true,
-      "started_at": "2026-06-30T06:54:49.421Z",
-      "duration_ms": 284,
+      "started_at": "2026-06-30T07:10:37.420Z",
+      "duration_ms": 289,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-review-decision-check\n> node scripts/kosmo-owner-review-decision-check.mjs --out examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review\n\nKosmoReferences owner review decision check\nPack: examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13.json\nStatus: passed\nDecision groups: 4\nDecision items: 10\nPublic-ready now: 0\nFailures: 0\nWarnings: 0\nWrote: examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.md"
@@ -155,8 +155,8 @@
       "id": "owner-decision-session-check",
       "command": "npm run kosmo:owner-decision-session-check",
       "required": true,
-      "started_at": "2026-06-30T06:54:49.705Z",
-      "duration_ms": 238,
+      "started_at": "2026-06-30T07:10:37.709Z",
+      "duration_ms": 239,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:owner-decision-session-check\n> node scripts/kosmo-owner-decision-session-check.mjs\n\nKosmoReferences owner decision session check\nSession: examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json\nStatus: passed_pending_owner_input\nDecision items: 10\nSelected decisions: 0\nPending decisions: 10\nPublic-ready after session: 0\nFailures: 0\nWarnings: 0\nWrote: examples/kosmo-references/provenance/owner-decision-session-check.generated.md"
@@ -165,8 +165,8 @@
       "id": "private-library-diagnostic",
       "command": "npm run kosmo:private-library-diagnostic",
       "required": true,
-      "started_at": "2026-06-30T06:54:49.943Z",
-      "duration_ms": 277,
+      "started_at": "2026-06-30T07:10:37.948Z",
+      "duration_ms": 270,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-library-diagnostic\n> node scripts/kosmo-private-library-diagnostic.mjs\n\nKosmoReferences private library diagnostic\nStatus: library_candidate_visible\nRoots: 5\nExisting roots: 5\nOwn mount roots: 1\nBook-like files: 168\nTarget filename matches: 37\nWrote: docs/codex/kosmoreferences-private-library-diagnostic-2026-06-13.md"
@@ -175,18 +175,18 @@
       "id": "local-worker-ollama-smoke",
       "command": "npm run kosmo:local-worker-ollama-smoke",
       "required": true,
-      "started_at": "2026-06-30T06:54:50.220Z",
-      "duration_ms": 661,
+      "started_at": "2026-06-30T07:10:38.218Z",
+      "duration_ms": 2767,
       "exit_code": 0,
       "status": "passed",
-      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:local-worker-ollama-smoke\n> node scripts/kosmo-local-worker-ollama-smoke.mjs\n\nKosmo local worker Ollama smoke\nStatus: passed\nModel: kosmo-qwen3-coder:30b-a3b-q4km\nDuration: 436ms\nJSON valid: true\nWrote: data/kosmo-local-worker-ollama-smoke-2026-06-30.json"
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:local-worker-ollama-smoke\n> node scripts/kosmo-local-worker-ollama-smoke.mjs\n\nKosmo local worker Ollama smoke\nStatus: passed\nModel: kosmo-qwen3-coder:30b-a3b-q4km\nDuration: 2541ms\nJSON valid: true\nWrote: data/kosmo-local-worker-ollama-smoke-2026-06-30.json"
     },
     {
       "id": "references-status-card",
       "command": "npm run kosmo:references-status-card",
       "required": true,
-      "started_at": "2026-06-30T06:54:50.881Z",
-      "duration_ms": 232,
+      "started_at": "2026-06-30T07:10:40.985Z",
+      "duration_ms": 233,
       "exit_code": 0,
       "status": "passed",
       "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:references-status-card\n> node scripts/kosmo-reference-status-card.mjs\n\nKosmoReferences data-lane status card\nRegistry: data/kosmoreferences-registry.json\nProvenance: examples/kosmo-references/provenance/review/provenance-check.generated.json\nStatus: passed_review_only\nPilots: 3\nSource packages: 5\nSource links: 14/14\nEntry drafts: 3\nPublic-ready assets: 0\nBlocked public promotions: 32\nOwner review: passed\nOwner decision session: passed_pending_owner_input\nPrivate library: library_candidate_visible\nLocal worker: passed\nWrote: data/kosmoreferences-data-lane-status.json"

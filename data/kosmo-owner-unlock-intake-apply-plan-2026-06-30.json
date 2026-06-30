@@ -1,0 +1,129 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:03:55.373Z",
+  "status": "owner_unlock_intake_apply_plan_ready",
+  "policy": {
+    "review_only": true,
+    "plan_only": true,
+    "writes_intake_now": false,
+    "records_decisions": false,
+    "mutates_session_files": false,
+    "runs_source_root_guards": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_plan": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-patch-review-bundle-2026-06-30.json",
+    "examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-30.json"
+  ],
+  "summary": {
+    "patch_bundle_status": "owner_unlock_patch_review_bundle_ready",
+    "intake_status": "owner_answer_intake_template_pending_owner_input",
+    "planned_field_edits": 13,
+    "source_root_field_edits": 3,
+    "owner_card_field_edits": 10,
+    "target_intake_currently_empty": true,
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "selected_root_exists": true,
+    "writes_intake_now": false,
+    "failures": 0,
+    "public_ready_after_plan": 0
+  },
+  "planned_field_edits": [
+    {
+      "path": "/source_root_answer/selected_decision",
+      "current_value": null,
+      "proposed_value": "select_existing_root_for_private_diagnostic",
+      "writes_now": false
+    },
+    {
+      "path": "/source_root_answer/selected_root_path",
+      "current_value": null,
+      "proposed_value": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "writes_now": false
+    },
+    {
+      "path": "/source_root_answer/owner_note",
+      "current_value": "",
+      "proposed_value": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/0/owner_choice",
+      "current_value": null,
+      "proposed_value": "needs_more_context",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/0/owner_note",
+      "current_value": "",
+      "proposed_value": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/1/owner_choice",
+      "current_value": null,
+      "proposed_value": "use_safe_default",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/1/owner_note",
+      "current_value": "",
+      "proposed_value": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/2/owner_choice",
+      "current_value": null,
+      "proposed_value": "use_safe_default",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/2/owner_note",
+      "current_value": "",
+      "proposed_value": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/3/owner_choice",
+      "current_value": null,
+      "proposed_value": "use_safe_default",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/3/owner_note",
+      "current_value": "",
+      "proposed_value": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/4/owner_choice",
+      "current_value": null,
+      "proposed_value": "keep_needs_review",
+      "writes_now": false
+    },
+    {
+      "path": "/owner_card_answers/4/owner_note",
+      "current_value": "",
+      "proposed_value": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false
+    }
+  ],
+  "after_manual_apply_commands": [
+    "npm run kosmo:owner-answer-intake-check",
+    "npm run kosmo:owner-answer-session-edit-plan",
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight"
+  ],
+  "hard_stops": [
+    "Do not apply this plan automatically.",
+    "Do not overwrite non-empty owner intake fields without a fresh review.",
+    "Do not mutate session files from this plan.",
+    "Do not run source-root guards from this plan.",
+    "Do not read private content.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

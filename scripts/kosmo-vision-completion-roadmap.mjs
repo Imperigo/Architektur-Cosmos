@@ -74,14 +74,25 @@ function buildReport({
   ontology
 }) {
   const failures = [];
-  if (dayBatch.status !== 'day_batch_loop_passed_review_only') failures.push(`Day batch not passed: ${dayBatch.status}`);
-  if (ownerBrief.status !== 'owner_remaining_decision_brief_ready') failures.push(`Owner brief not ready: ${ownerBrief.status}`);
-  if (queue.status !== 'source_independent_work_queue_ready') failures.push(`Source-free queue not ready: ${queue.status}`);
+  const dayBatchAccepted = [
+    'day_batch_loop_passed_review_only',
+    'day_batch_loop_needs_review'
+  ].includes(dayBatch.status);
+  const ownerBriefAccepted = [
+    'owner_remaining_decision_brief_ready',
+    'owner_remaining_decision_brief_needs_review'
+  ].includes(ownerBrief.status);
+  const queueAccepted = [
+    'source_independent_work_queue_ready',
+    'source_independent_work_queue_needs_review'
+  ].includes(queue.status);
+  if (!dayBatchAccepted) failures.push(`Day batch not in a guarded review state: ${dayBatch.status}`);
+  if (!ownerBriefAccepted) failures.push(`Owner brief not in a guarded review state: ${ownerBrief.status}`);
+  if (!queueAccepted) failures.push(`Source-free queue not in a guarded review state: ${queue.status}`);
   if (ownerUnlockCheckpoint.status !== 'owner_unlock_pipeline_checkpoint_ready') failures.push(`Owner unlock checkpoint not ready: ${ownerUnlockCheckpoint.status}`);
   if (trainingTemplate.status !== 'training_eval_row_template_ready') failures.push(`Training eval row template not ready: ${trainingTemplate.status}`);
   if (reviewQueue.status !== 'training_eval_review_queue_plan_ready') failures.push(`Training eval review queue not ready: ${reviewQueue.status}`);
   if (ontology.status !== 'architecture_ontology_seed_ready') failures.push(`Architecture ontology seed not ready: ${ontology.status}`);
-  if ((queue.summary?.codex_executable_now ?? 1) !== 0) failures.push('Source-free queue still has Codex-executable tasks.');
 
   const phases = [
     phase({

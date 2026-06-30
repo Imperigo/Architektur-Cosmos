@@ -1,12 +1,12 @@
 # Kosmo Source-Root Selection Brief
 
-Generated: 2026-06-30T06:54:57.380Z
+Generated: 2026-06-30T07:10:47.508Z
 Status: `source_root_owner_selection_needed`
 
 ## Summary
 
 - Locator status: source_root_candidates_need_owner_selection
-- Candidates: 1305
+- Candidates: 1307
 - Probable large private libraries: 0
 - Workflow/project mirrors: 71
 - OneDrive-like roots: 149

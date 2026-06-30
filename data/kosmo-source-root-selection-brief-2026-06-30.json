@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:54:57.380Z",
+  "generated_at": "2026-06-30T07:10:47.508Z",
   "status": "source_root_owner_selection_needed",
   "policy": {
     "review_only": true,
@@ -15,7 +15,7 @@
   ],
   "summary": {
     "locator_status": "source_root_candidates_need_owner_selection",
-    "candidates": 1305,
+    "candidates": 1307,
     "probable_large_private_libraries": 0,
     "workflow_or_project_mirrors": 71,
     "onedrive_like_roots": 149,

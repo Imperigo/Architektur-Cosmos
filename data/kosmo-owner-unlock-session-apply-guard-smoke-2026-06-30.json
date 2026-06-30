@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:03:56.912Z",
+  "status": "owner_unlock_session_apply_guard_smoke_passed",
+  "policy": {
+    "fixture_only": true,
+    "writes_real_session": false,
+    "records_decisions_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_smoke": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-session-edit-preview-2026-06-30.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json"
+  ],
+  "temp_refs": [
+    ".tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/source-root-decision-session-2026-06-30.json",
+    ".tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard.json",
+    ".tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard-check.json"
+  ],
+  "summary": {
+    "fixture_guard_status": "owner_unlock_session_apply_guard_passed_after_manual_apply",
+    "fixture_guard_check_status": "owner_unlock_session_apply_guard_check_passed",
+    "fixture_mode": "applied_matches_preview",
+    "fixture_matches_preview": true,
+    "fixture_private_diagnostic_allowed_after_apply": true,
+    "guard_checks": 18,
+    "guard_checks_passed": 18,
+    "failures": 0,
+    "public_ready_after_smoke": 0
+  },
+  "command_runs": [
+    {
+      "command": "/usr/bin/node scripts/kosmo-owner-unlock-session-apply-guard.mjs --preview /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/kosmo-owner-unlock-session-edit-preview-2026-06-30.json --session /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/source-root-decision-session-2026-06-30.json --allowFixtureSession true --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard.md",
+      "stdout_tail": "Status: owner_unlock_session_apply_guard_passed_after_manual_apply\nMode: applied_matches_preview\nTarget file: examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json\nMatches preview: yes\nPrivate diagnostic allowed after apply: yes\nFailures: 0\nPublic-ready after guard: 0\nWrote: .tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard.md",
+      "stderr_tail": ""
+    },
+    {
+      "command": "/usr/bin/node scripts/kosmo-owner-unlock-session-apply-guard-check.mjs --guard /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard.json --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard-check.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/.tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard-check.md",
+      "stdout_tail": "Kosmo owner unlock session apply guard check\nStatus: owner_unlock_session_apply_guard_check_passed\nGuard: owner_unlock_session_apply_guard_passed_after_manual_apply\nChecks: 18/18\nFailures: 0\nWrote: .tmp/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30/guard-check.md",
+      "stderr_tail": ""
+    }
+  ],
+  "failures": []
+}

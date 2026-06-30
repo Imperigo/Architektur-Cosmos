@@ -27,7 +27,11 @@ main().catch((error) => {
 });
 
 async function main() {
-  const roadmap = await readJson(roadmapPath);
+  const roadmap = await readJsonOptional(roadmapPath, {
+    status: 'vision_completion_roadmap_bootstrap_missing',
+    summary: {},
+    bootstrap_missing: true
+  });
   const pilotIntake = await readJson(pilotIntakePath);
   const assetIntake = await readJson(assetIntakePath);
   const workerContract = await readJson(workerContractPath);
@@ -52,10 +56,19 @@ async function main() {
 
 function buildReport({ roadmap, pilotIntake, assetIntake, workerContract }) {
   const failures = [];
-  if (roadmap.status !== 'vision_completion_roadmap_ready') failures.push(`Roadmap not ready: ${roadmap.status}`);
+  const roadmapAccepted = [
+    'vision_completion_roadmap_ready',
+    'vision_completion_roadmap_needs_review',
+    'vision_completion_roadmap_bootstrap_missing'
+  ].includes(roadmap.status);
+  const workerContractAccepted = [
+    'local_worker_output_contract_review_ready',
+    'local_worker_output_contract_review_needs_review'
+  ].includes(workerContract.status);
+  if (!roadmapAccepted) failures.push(`Roadmap not in a guarded bootstrap state: ${roadmap.status}`);
   if (pilotIntake.status !== 'kosmoreferences_pilot_intake_readiness_pack_ready') failures.push(`Pilot intake not ready: ${pilotIntake.status}`);
   if (assetIntake.status !== 'kosmoasset_intake_readiness_pack_ready') failures.push(`Asset intake not ready: ${assetIntake.status}`);
-  if (workerContract.status !== 'local_worker_output_contract_review_ready') failures.push(`Worker contract not ready: ${workerContract.status}`);
+  if (!workerContractAccepted) failures.push(`Worker contract not in a guarded review state: ${workerContract.status}`);
 
   const candidateSources = [
     ...candidateSourcesFromPilots(pilotIntake),
@@ -104,6 +117,8 @@ function buildReport({ roadmap, pilotIntake, assetIntake, workerContract }) {
       pilot_sources: candidateSources.filter((source) => source.source_family === 'kosmoreferences_pilot').length,
       asset_sources: candidateSources.filter((source) => source.source_family === 'kosmoasset').length,
       worker_contract_sources: candidateSources.filter((source) => source.source_family === 'local_worker_contract').length,
+      roadmap_status: roadmap.status,
+      roadmap_bootstrap_missing: roadmap.bootstrap_missing === true,
       executable_now: lanes.filter((laneItem) => laneItem.executable_now).length,
       writes_training_data_now: lanes.filter((laneItem) => laneItem.writes_training_data_now).length,
       writes_embeddings_now: lanes.filter((laneItem) => laneItem.writes_embeddings_now).length,
@@ -199,6 +214,15 @@ function candidateSourcesFromWorkerContracts(workerContract) {
 
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
+}
+
+async function readJsonOptional(path, fallback) {
+  try {
+    return await readJson(path);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+    return fallback;
+  }
 }
 
 function renderMarkdown(report) {

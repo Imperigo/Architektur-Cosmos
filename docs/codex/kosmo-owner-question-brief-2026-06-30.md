@@ -1,6 +1,6 @@
 # Kosmo Owner Question Brief
 
-Generated: 2026-06-30T06:55:00.172Z
+Generated: 2026-06-30T07:10:50.311Z
 Status: `owner_question_brief_ready`
 
 ## Guardrails

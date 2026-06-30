@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:55:08.485Z",
+  "generated_at": "2026-06-30T07:11:01.631Z",
   "status": "orbit_bridge_ready_with_blockers",
   "policy": {
     "dashboard_only": true,
@@ -166,8 +166,8 @@
   ],
   "summary": {
     "cards": 85,
-    "blocking_cards": 66,
-    "owner_action_cards": 25,
+    "blocking_cards": 51,
+    "owner_action_cards": 26,
     "source_root_blocked": true,
     "day_batch_status": "day_batch_loop_needs_review",
     "source_root_decision_refresh_status": "source_root_decision_session_refresh_not_needed",
@@ -232,8 +232,8 @@
     "local_worker_output_contract_review_check_failures": null,
     "source_independent_work_queue_status": "source_independent_work_queue_needs_review",
     "source_independent_work_queue_tasks": 9,
-    "source_independent_work_queue_completed_review_only": 4,
-    "source_independent_work_queue_codex_executable_now": 3,
+    "source_independent_work_queue_completed_review_only": 5,
+    "source_independent_work_queue_codex_executable_now": 2,
     "source_independent_work_queue_owner_actions": 2,
     "source_independent_work_queue_failures": 3,
     "pilot_gap_label_review_status": "pilot_gap_label_review_ready",
@@ -242,7 +242,7 @@
     "pilot_gap_label_review_owner_decisions": 7,
     "pilot_gap_label_review_check_status": "pilot_gap_label_review_guard_passed",
     "pilot_gap_label_review_check_failures": 0,
-    "asset_bridge_status": null,
+    "asset_bridge_status": "kosmoasset_reference_bridge_review_only_passed",
     "asset_source_candidate_map_status": "kosmoasset_source_candidate_map_review_only_ready",
     "asset_source_candidate_map_candidates": 3,
     "asset_candidate_taxonomy_review_status": "kosmoasset_candidate_taxonomy_review_ready",
@@ -409,31 +409,31 @@
     "github_worker_runtime_manifest_negative_fixtures_count": null,
     "github_worker_runtime_manifest_negative_fixtures_blocked": null,
     "github_worker_runtime_manifest_negative_fixtures_categories": null,
-    "training_eval_rubric_status": null,
-    "training_eval_rubric_suites": null,
-    "training_eval_rubric_criteria": null,
-    "training_eval_row_template_status": null,
-    "training_eval_row_template_templates": null,
-    "training_eval_review_queue_status": null,
-    "training_eval_review_queue_lanes": null,
-    "architecture_ontology_seed_status": null,
-    "architecture_ontology_entity_types": null,
-    "architecture_ontology_relation_types": null,
-    "owner_unlock_fast_reply_card_status": null,
-    "owner_unlock_fast_reply_card_broad_intent": null,
-    "owner_unlock_fast_reply_card_applies_now": null,
-    "owner_unlock_exact_reply_preview_status": null,
-    "owner_unlock_exact_reply_preview_validator_status": null,
-    "owner_unlock_exact_reply_preview_patch_operations": null,
-    "owner_unlock_path_a_readiness_status": null,
-    "owner_unlock_path_a_can_start_after_exact_reply": null,
-    "owner_unlock_path_a_applies_now": null,
-    "owner_unlock_patch_review_bundle_status": null,
-    "owner_unlock_patch_review_bundle_operations": null,
-    "owner_unlock_patch_review_bundle_applies_now": null,
-    "owner_unlock_intake_apply_plan_status": null,
-    "owner_unlock_intake_apply_plan_field_edits": null,
-    "owner_unlock_intake_apply_plan_writes_now": null,
+    "training_eval_rubric_status": "training_eval_rubric_pack_ready",
+    "training_eval_rubric_suites": 6,
+    "training_eval_rubric_criteria": 24,
+    "training_eval_row_template_status": "training_eval_row_template_ready",
+    "training_eval_row_template_templates": 6,
+    "training_eval_review_queue_status": "training_eval_review_queue_plan_ready",
+    "training_eval_review_queue_lanes": 5,
+    "architecture_ontology_seed_status": "architecture_ontology_seed_ready",
+    "architecture_ontology_entity_types": 8,
+    "architecture_ontology_relation_types": 10,
+    "owner_unlock_fast_reply_card_status": "owner_unlock_fast_reply_card_ready",
+    "owner_unlock_fast_reply_card_broad_intent": false,
+    "owner_unlock_fast_reply_card_applies_now": false,
+    "owner_unlock_exact_reply_preview_status": "owner_unlock_answer_dry_run_ready_for_review",
+    "owner_unlock_exact_reply_preview_validator_status": "owner_unlock_reply_valid",
+    "owner_unlock_exact_reply_preview_patch_operations": 6,
+    "owner_unlock_path_a_readiness_status": "owner_unlock_path_a_readiness_certificate_ready",
+    "owner_unlock_path_a_can_start_after_exact_reply": true,
+    "owner_unlock_path_a_applies_now": false,
+    "owner_unlock_patch_review_bundle_status": "owner_unlock_patch_review_bundle_ready",
+    "owner_unlock_patch_review_bundle_operations": 6,
+    "owner_unlock_patch_review_bundle_applies_now": false,
+    "owner_unlock_intake_apply_plan_status": "owner_unlock_intake_apply_plan_ready",
+    "owner_unlock_intake_apply_plan_field_edits": 13,
+    "owner_unlock_intake_apply_plan_writes_now": false,
     "tomorrow_day_batch_status": "tomorrow_day_batch_ready",
     "tomorrow_day_batch_target_date": "2026-07-01",
     "innovation_smoke_status": "innovation_smoke_passed_review_only",
@@ -551,8 +551,8 @@
     {
       "id": "owner-unlock-fast-reply-card",
       "title": "Owner Unlock Fast Reply Card",
-      "status": "needs_review",
-      "signal": "missing fast reply card",
+      "status": "owner_action",
+      "signal": "broad intent no, suggestions 2, applies now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Turn freeform owner intent into exact validator-ready reply text without applying it",
       "source_ref": "data/kosmo-owner-unlock-fast-reply-card-2026-06-30.json"
@@ -560,8 +560,8 @@
     {
       "id": "owner-unlock-exact-reply-preview",
       "title": "Owner Unlock Exact Reply Preview",
-      "status": "needs_review",
-      "signal": "missing exact reply preview",
+      "status": "review_only_ready",
+      "signal": "validator owner_unlock_reply_valid, intake owner_unlock_reply_intake_map_ready_for_review, patches 6, failures 0",
       "owner_action_required": true,
       "route_hint": "Proof that the exact reply block reaches dry-run review without applying a decision",
       "source_ref": "data/kosmo-owner-unlock-exact-reply-preview-2026-06-30.json"
@@ -569,8 +569,8 @@
     {
       "id": "owner-unlock-path-a-readiness",
       "title": "Owner Unlock Path A Readiness",
-      "status": "needs_review",
-      "signal": "missing Path A readiness certificate",
+      "status": "owner_action",
+      "signal": "can start after exact reply yes, applies now no, activation ready no, failures 0",
       "owner_action_required": true,
       "route_hint": "Certificate of the exact owner-reply path before any private activation",
       "source_ref": "data/kosmo-owner-unlock-path-a-readiness-certificate-2026-06-30.json"
@@ -578,8 +578,8 @@
     {
       "id": "owner-unlock-patch-review-bundle",
       "title": "Owner Unlock Patch Review Bundle",
-      "status": "needs_review",
-      "signal": "missing patch review bundle",
+      "status": "review_only_ready",
+      "signal": "6 patches, source-root 1, owner cards 5, applies now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Review exact intake patch operations before any template edit",
       "source_ref": "data/kosmo-owner-unlock-patch-review-bundle-2026-06-30.json"
@@ -587,8 +587,8 @@
     {
       "id": "owner-unlock-intake-apply-plan",
       "title": "Owner Unlock Intake Apply Plan",
-      "status": "needs_review",
-      "signal": "missing intake apply plan",
+      "status": "review_only_ready",
+      "signal": "13 field edits, target empty yes, root exists yes, writes now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Field-level apply plan for the owner intake template; review only",
       "source_ref": "data/kosmo-owner-unlock-intake-apply-plan-2026-06-30.json"
@@ -596,8 +596,8 @@
     {
       "id": "owner-unlock-session-edit-preview",
       "title": "Owner Unlock Session Edit Preview",
-      "status": "needs_review",
-      "signal": "missing session edit preview",
+      "status": "review_only_ready",
+      "signal": "6 preview edits, session files 1, manual triage 5, writes now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Preview which session files would change after exact owner unlock; review only",
       "source_ref": "data/kosmo-owner-unlock-session-edit-preview-2026-06-30.json"
@@ -605,8 +605,8 @@
     {
       "id": "owner-unlock-operational-start-card",
       "title": "Owner Unlock Operational Start Card",
-      "status": "needs_review",
-      "signal": "missing operational start card",
+      "status": "owner_action",
+      "signal": "6/6 components, next 9, blocked 5, writes now no, failures 0",
       "owner_action_required": true,
       "route_hint": "Single start card for the exact owner-unlock path; checklist only",
       "source_ref": "data/kosmo-owner-unlock-operational-start-card-2026-06-30.json"
@@ -614,8 +614,8 @@
     {
       "id": "owner-unlock-execution-runbook",
       "title": "Owner Unlock Execution Runbook",
-      "status": "needs_review",
-      "signal": "missing execution runbook",
+      "status": "review_only_ready",
+      "signal": "8 phases, 21 commands, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json, queue executable 0, failures 0",
       "owner_action_required": true,
       "route_hint": "Current guarded source-root unlock sequence; runbook only",
       "source_ref": "data/kosmo-owner-unlock-execution-runbook-2026-06-30.json"
@@ -623,8 +623,8 @@
     {
       "id": "owner-unlock-session-apply-guard",
       "title": "Owner Unlock Session Apply Guard",
-      "status": "needs_review",
-      "signal": "missing session apply guard",
+      "status": "review_only_ready",
+      "signal": "waiting_for_manual_apply, target examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json, matches no, private diagnostic no, failures 0",
       "owner_action_required": true,
       "route_hint": "Proves the manual session edit matches the reviewed preview before activation",
       "source_ref": "data/kosmo-owner-unlock-session-apply-guard-2026-06-30.json"
@@ -632,8 +632,8 @@
     {
       "id": "owner-unlock-session-apply-guard-smoke",
       "title": "Owner Unlock Session Apply Guard Smoke",
-      "status": "needs_review",
-      "signal": "missing session apply guard smoke",
+      "status": "review_only_ready",
+      "signal": "applied_matches_preview, matches yes, private diagnostic yes, checks 18/18, failures 0",
       "owner_action_required": false,
       "route_hint": "Fixture-only proof that the apply guard passes after the reviewed session edit",
       "source_ref": "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-06-30.json"
@@ -687,7 +687,7 @@
       "id": "source-independent-work-queue",
       "title": "Source-Independent Work Queue",
       "status": "needs_review",
-      "signal": "9 tasks, completed 4, codex 3, owner 2, failures 3",
+      "signal": "9 tasks, completed 5, codex 2, owner 2, failures 3",
       "owner_action_required": true,
       "route_hint": "Safe work that does not require private source-root activation",
       "source_ref": "data/kosmo-source-independent-work-queue-2026-06-30.json"
@@ -731,9 +731,9 @@
     {
       "id": "asset-reference-bridge",
       "title": "Asset Reference Bridge",
-      "status": "needs_review",
-      "signal": "0/0 pilot bridges, 0 assets, public-ready 0",
-      "owner_action_required": false,
+      "status": "review_only_ready",
+      "signal": "3/3 pilot bridges, 6 assets, public-ready 0",
+      "owner_action_required": true,
       "route_hint": "Villa/Sogn/Ingenbohl asset derivation gate",
       "source_ref": "data/kosmoasset-reference-bridge-check-2026-06-30.json"
     },
@@ -1136,8 +1136,8 @@
     {
       "id": "training-eval-rubric",
       "title": "Training Eval Rubric",
-      "status": "needs_review",
-      "signal": "0 suites, 0 criteria, eval items 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "6 suites, 24 criteria, eval items 24, failures 0",
       "owner_action_required": false,
       "route_hint": "Kosmo KI quality rubric before any private training rows exist",
       "source_ref": "data/kosmo-training-eval-rubric-pack-2026-06-30.json"
@@ -1145,8 +1145,8 @@
     {
       "id": "training-eval-row-template",
       "title": "Training Eval Row Template",
-      "status": "needs_review",
-      "signal": "0 templates, 0 required fields, writes rows now 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "6 templates, 10 required fields, writes rows now 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Source-free row schema for future reviewed eval examples",
       "source_ref": "data/kosmo-training-eval-row-template-2026-06-30.json"
@@ -1154,8 +1154,8 @@
     {
       "id": "training-eval-review-queue",
       "title": "Training Eval Review Queue",
-      "status": "needs_review",
-      "signal": "0 lanes, 0 states, queue items now 0, failures 0",
+      "status": "review_only_ready",
+      "signal": "5 lanes, 6 states, queue items now 0, failures 0",
       "owner_action_required": false,
       "route_hint": "Human/overseer review queue before training data promotion",
       "source_ref": "data/kosmo-training-eval-review-queue-plan-2026-06-30.json"
@@ -1163,8 +1163,8 @@
     {
       "id": "architecture-ontology-seed",
       "title": "Architecture Ontology Seed",
-      "status": "needs_review",
-      "signal": "0 entities, 0 relations, 0 facet groups, failures 0",
+      "status": "review_only_ready",
+      "signal": "8 entities, 10 relations, 6 facet groups, failures 0",
       "owner_action_required": false,
       "route_hint": "Architecture ontology seed for References, Assets and future Kosmo evals",
       "source_ref": "data/kosmo-architecture-ontology-seed-2026-06-30.json"

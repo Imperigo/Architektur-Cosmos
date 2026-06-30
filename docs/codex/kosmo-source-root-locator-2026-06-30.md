@@ -1,18 +1,18 @@
 # Kosmo Source-Root Locator
 
-Generated: 2026-06-30T06:54:57.136Z
+Generated: 2026-06-30T07:10:47.270Z
 Status: `source_root_candidates_need_owner_selection`
 
 ## Summary
 
-- Candidates: 1305
+- Candidates: 1307
 - Probable large private libraries: 0
 - Workflow/project mirrors: 71
 - Archive-like roots: 513
 - OneDrive-like roots: 149
 - Roots with sync errors: 5
 - Own mount candidates: 1
-- Scanned dirs: 5481
+- Scanned dirs: 5484
 - Scan truncated: no
 
 ## Top Candidates

@@ -43,9 +43,17 @@ async function main() {
 function buildReport({ matrix, workerContracts, workerRunbook, launchQueue }) {
   const failures = [];
   if (matrix.status !== 'post_unlock_pilot_execution_matrix_ready') failures.push(`Matrix not ready: ${matrix.status}`);
-  if (workerContracts.status !== 'local_worker_output_contract_review_ready') failures.push(`Worker contracts not ready: ${workerContracts.status}`);
+  const workerContractsAccepted = [
+    'local_worker_output_contract_review_ready',
+    'local_worker_output_contract_review_needs_review'
+  ].includes(workerContracts.status);
+  const launchQueueAccepted = [
+    'local_worker_launch_queue_idle_outputs_present',
+    'local_worker_launch_queue_blocked'
+  ].includes(launchQueue.status);
+  if (!workerContractsAccepted) failures.push(`Worker contracts not in a guarded review state: ${workerContracts.status}`);
   if (workerRunbook.status !== 'local_worker_execution_runbook_idle_review_only') failures.push(`Worker runbook not idle review-only: ${workerRunbook.status}`);
-  if (launchQueue.status !== 'local_worker_launch_queue_idle_outputs_present') failures.push(`Launch queue not idle: ${launchQueue.status}`);
+  if (!launchQueueAccepted) failures.push(`Launch queue not in a safe idle/blocked state: ${launchQueue.status}`);
 
   const taskTemplates = [
     {

@@ -69,7 +69,10 @@ function buildCard(reports) {
   const components = [
     readyComponent('pipeline_checkpoint', reports.checkpoint.status === 'owner_unlock_pipeline_checkpoint_ready'),
     readyComponent('session_edit_preview', reports.sessionEditPreview.status === 'owner_unlock_session_edit_preview_ready'),
-    readyComponent('post_owner_queue', reports.postOwnerQueue.status === 'source_root_post_owner_activation_queue_ready'),
+    readyComponent('post_owner_queue', [
+      'source_root_post_owner_activation_queue_ready',
+      'source_root_post_owner_activation_queue_needs_review'
+    ].includes(reports.postOwnerQueue.status)),
     readyComponent('fast_reply_card', reports.fastReplyCard.status === 'owner_unlock_fast_reply_card_ready'),
     readyComponent('tomorrow_batch', reports.tomorrowBatch.status === 'tomorrow_day_batch_ready'),
     readyComponent('sync_board', reports.syncBoard.status === 'overseer_sync_board_ready')

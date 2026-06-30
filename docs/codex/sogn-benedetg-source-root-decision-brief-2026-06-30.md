@@ -1,6 +1,6 @@
 # Sogn Benedetg Source-Root Decision Brief
 
-Generated: 2026-06-30T06:54:56.671Z
+Generated: 2026-06-30T07:10:46.779Z
 Status: `sogn_source_root_decision_needed`
 
 ## Summary

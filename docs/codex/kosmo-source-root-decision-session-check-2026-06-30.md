@@ -1,6 +1,6 @@
 # Kosmo Source-Root Decision Session Check
 
-Generated: 2026-06-30T06:54:57.611Z
+Generated: 2026-06-30T07:10:47.745Z
 Session: `examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json`
 Status: `passed_pending_owner_input`
 

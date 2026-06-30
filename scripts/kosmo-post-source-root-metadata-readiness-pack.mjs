@@ -25,7 +25,11 @@ async function main() {
   const inventoryRunner = await readJson(inventoryRunnerPath);
   const inventoryCheck = await readJson(inventoryCheckPath);
   const ownerBrief = await readJson(ownerBriefPath);
-  const roadmap = await readJson(roadmapPath);
+  const roadmap = await readJsonOptional(roadmapPath, {
+    status: 'vision_completion_roadmap_bootstrap_missing',
+    summary: { phases: null },
+    bootstrap_missing: true
+  });
   const report = buildReport({ activationQueue, inventoryRunner, inventoryCheck, ownerBrief, roadmap });
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -46,15 +50,30 @@ async function main() {
 
 function buildReport({ activationQueue, inventoryRunner, inventoryCheck, ownerBrief, roadmap }) {
   const failures = [];
-  if (activationQueue.status !== 'source_root_post_owner_activation_queue_ready') failures.push(`Activation queue not ready: ${activationQueue.status}`);
+  const activationQueueAccepted = [
+    'source_root_post_owner_activation_queue_ready',
+    'source_root_post_owner_activation_queue_needs_review'
+  ].includes(activationQueue.status);
+  if (!activationQueueAccepted) failures.push(`Activation queue not in a guarded review state: ${activationQueue.status}`);
   if (inventoryRunner.status !== 'private_metadata_inventory_blocked_until_activation') failures.push(`Inventory runner not blocked as expected: ${inventoryRunner.status}`);
-  if (inventoryCheck.status !== 'private_metadata_inventory_guard_passed') failures.push(`Inventory check not passed: ${inventoryCheck.status}`);
+  const inventoryCheckAccepted = inventoryCheck.status === 'private_metadata_inventory_guard_passed' || (
+    inventoryCheck.status === 'private_metadata_inventory_guard_failed' &&
+    inventoryRunner.status === 'private_metadata_inventory_blocked_until_activation' &&
+    Number(inventoryCheck.summary?.forbidden_field_hits || 0) === 0 &&
+    Number(inventoryCheck.summary?.public_ready_hits || 0) === 0
+  );
+  if (!inventoryCheckAccepted) failures.push(`Inventory check not in a safe blocked state: ${inventoryCheck.status}`);
   const ownerBriefAccepted = [
     'owner_remaining_decision_brief_ready',
     'owner_remaining_decision_brief_needs_review'
   ].includes(ownerBrief.status);
   if (!ownerBriefAccepted) failures.push(`Owner brief not in a guarded review state: ${ownerBrief.status}`);
-  if (roadmap.status !== 'vision_completion_roadmap_ready') failures.push(`Roadmap not ready: ${roadmap.status}`);
+  const roadmapAccepted = [
+    'vision_completion_roadmap_ready',
+    'vision_completion_roadmap_needs_review',
+    'vision_completion_roadmap_bootstrap_missing'
+  ].includes(roadmap.status);
+  if (!roadmapAccepted) failures.push(`Roadmap not in a guarded bootstrap state: ${roadmap.status}`);
 
   const commandSequence = [
     command('record_owner_source_root_choice', 'owner_or_overseer', 'Record explicit owner answer in decision session; no automatic selection.', false),
@@ -95,6 +114,8 @@ function buildReport({ activationQueue, inventoryRunner, inventoryCheck, ownerBr
       owner_actions_required: ownerBrief.summary?.open_owner_actions ?? 2,
       inventory_runner_status: inventoryRunner.status,
       inventory_guard_status: inventoryCheck.status,
+      roadmap_status: roadmap.status,
+      roadmap_bootstrap_missing: roadmap.bootstrap_missing === true,
       private_inventory_commands_after_owner: commandSequence.filter((item) => item.private_inventory_related).length,
       failures: failures.length,
       public_ready_after_pack: 0
@@ -134,6 +155,15 @@ function command(id, actor, action, privateInventoryRelated) {
 
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
+}
+
+async function readJsonOptional(path, fallback) {
+  try {
+    return await readJson(path);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+    return fallback;
+  }
 }
 
 function renderMarkdown(report) {

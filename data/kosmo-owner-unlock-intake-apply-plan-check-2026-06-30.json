@@ -1,0 +1,136 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:03:55.614Z",
+  "status": "owner_unlock_intake_apply_plan_guard_passed",
+  "policy": {
+    "review_only": true,
+    "validates_plan_only": true,
+    "writes_intake_now": false,
+    "records_decisions": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-intake-apply-plan-2026-06-30.json"
+  ],
+  "summary": {
+    "checks": 22,
+    "passed": 22,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_intake_apply_plan_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_plan_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_write_now",
+      "status": "passed",
+      "evidence": "false/false"
+    },
+    {
+      "id": "policy_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_source_root_guards_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "planned_field_count",
+      "status": "passed",
+      "evidence": 13
+    },
+    {
+      "id": "source_root_field_count",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "owner_card_field_count",
+      "status": "passed",
+      "evidence": 10
+    },
+    {
+      "id": "target_empty_before_apply",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "selected_root_exists",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "all_fields_write_false",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "after_apply_intake_check_first",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-answer-intake-check npm run kosmo:owner-answer-session-edit-plan npm run kosmo:source-root-decision-session-check npm run kosmo:source-root-blocker-refresh npm run kosmo:source-root-activation-preflight"
+    },
+    {
+      "id": "hard_stop_no_auto_apply",
+      "status": "passed",
+      "evidence": "do not apply this plan automatically. do not overwrite non-empty owner intake fields without a fresh review. do not mutate session files from this plan. do not run source-root guards from this plan. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_overwrite",
+      "status": "passed",
+      "evidence": "do not apply this plan automatically. do not overwrite non-empty owner intake fields without a fresh review. do not mutate session files from this plan. do not run source-root guards from this plan. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_session_mutation",
+      "status": "passed",
+      "evidence": "do not apply this plan automatically. do not overwrite non-empty owner intake fields without a fresh review. do not mutate session files from this plan. do not run source-root guards from this plan. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not apply this plan automatically. do not overwrite non-empty owner intake fields without a fresh review. do not mutate session files from this plan. do not run source-root guards from this plan. do not read private content. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_public_ready_zero",
+      "status": "passed",
+      "evidence": "do not apply this plan automatically. do not overwrite non-empty owner intake fields without a fresh review. do not mutate session files from this plan. do not run source-root guards from this plan. do not read private content. keep public-ready at 0."
+    }
+  ]
+}

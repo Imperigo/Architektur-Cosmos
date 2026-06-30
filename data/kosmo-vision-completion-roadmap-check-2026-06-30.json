@@ -1,0 +1,149 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:10:02.860Z",
+  "status": "vision_completion_roadmap_guard_passed",
+  "policy": {
+    "validates_roadmap_only": true,
+    "reads_private_content": false,
+    "records_owner_decisions": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-vision-completion-roadmap-2026-06-30.json"
+  ],
+  "summary": {
+    "checks": 25,
+    "passed": 25,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "vision_completion_roadmap_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_plan_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "six_phases",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "owner_unlock_checkpoint_components_ready",
+      "status": "passed",
+      "evidence": "27/27"
+    },
+    {
+      "id": "owner_unlock_checkpoint_guards_ready",
+      "status": "passed",
+      "evidence": "283/283"
+    },
+    {
+      "id": "owner_unlock_handoff_current",
+      "status": "passed",
+      "evidence": 352
+    },
+    {
+      "id": "source_free_tasks_bounded",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "phase_1_status_uses_dry_run",
+      "status": "passed",
+      "evidence": "dry_run_pipeline_ready_blocked_by_owner_reply"
+    },
+    {
+      "id": "phase_1_gate_dry_run",
+      "status": "passed",
+      "evidence": "owner_unlock_answer_dry_run,intake_map_review,source_root_choice,owner_open_review_batches"
+    },
+    {
+      "id": "phase_1_codex_now_mentions_dry_run",
+      "status": "passed",
+      "evidence": "Use checkpoint 27/27 components and 283/283 guards Run npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\" before any intake edit Keep source-root private diagnostics blocked until reviewed intake and source-root guards pass"
+    },
+    {
+      "id": "training_templates_ready",
+      "status": "passed",
+      "evidence": "6/10"
+    },
+    {
+      "id": "training_review_queue_ready",
+      "status": "passed",
+      "evidence": "5/6"
+    },
+    {
+      "id": "ontology_seed_ready",
+      "status": "passed",
+      "evidence": "8/10/6"
+    },
+    {
+      "id": "phase_6_status_training_scaffold",
+      "status": "passed",
+      "evidence": "training_scaffold_ready_blocked_by_verified_data"
+    },
+    {
+      "id": "phase_6_mentions_owner_training_gate",
+      "status": "passed",
+      "evidence": "verified provenance,rights classification,quality evals,owner training gate"
+    },
+    {
+      "id": "phase_6_blocks_queue_eval_embedding_finetune",
+      "status": "passed",
+      "evidence": "Do not train on unverified private content Use 6 eval row templates and 5 review lanes Bind future rows to ontology 8/10/6 Keep queue items, eval rows, embeddings and fine-tunes at 0 until verified data and owner training gate exist"
+    },
+    {
+      "id": "all_phases_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "tonight_batch_uses_unlock_prompt",
+      "status": "passed",
+      "evidence": "Publish this roadmap artifact and guard status. Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply. Keep Owner Unlock Prompt as the single next human decision surface. Keep the training scaffold as schema/review-only: no queue items, eval rows, embeddings or fine-tunes. Do not run private inventory, local worker execution or public promotion until owner gates pass."
+    },
+    {
+      "id": "tonight_batch_blocks_training_execution",
+      "status": "passed",
+      "evidence": "Publish this roadmap artifact and guard status. Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply. Keep Owner Unlock Prompt as the single next human decision surface. Keep the training scaffold as schema/review-only: no queue items, eval rows, embeddings or fine-tunes. Do not run private inventory, local worker execution or public promotion until owner gates pass."
+    },
+    {
+      "id": "tonight_batch_blocks_private_inventory",
+      "status": "passed",
+      "evidence": "Publish this roadmap artifact and guard status. Use Owner Unlock Answer Dry Run as the next machine entry point after owner reply. Keep Owner Unlock Prompt as the single next human decision surface. Keep the training scaffold as schema/review-only: no queue items, eval rows, embeddings or fine-tunes. Do not run private inventory, local worker execution or public promotion until owner gates pass."
+    }
+  ]
+}

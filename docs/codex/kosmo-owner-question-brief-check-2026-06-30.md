@@ -1,6 +1,6 @@
 # Kosmo Owner Question Brief Check
 
-Generated: 2026-06-30T06:55:00.405Z
+Generated: 2026-06-30T07:10:50.546Z
 Status: `owner_question_brief_guard_passed`
 
 ## Summary

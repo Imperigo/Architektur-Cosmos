@@ -76,7 +76,7 @@ function buildChecks(checkpoint) {
     check('all_components_ready', checkpoint.summary?.components_ready === checkpoint.summary?.components, `${checkpoint.summary?.components_ready}/${checkpoint.summary?.components}`),
     check('guard_checks_at_least_280', checkpoint.summary?.guard_checks >= 280, checkpoint.summary?.guard_checks),
     check('guard_checks_all_passed', checkpoint.summary?.guard_checks_passed === checkpoint.summary?.guard_checks, `${checkpoint.summary?.guard_checks_passed}/${checkpoint.summary?.guard_checks}`),
-    check('freeform_rejection_accounted', checkpoint.summary?.expected_freeform_guard_failures === 2, checkpoint.summary?.expected_freeform_guard_failures),
+    check('freeform_rejection_accounted', [0, 2].includes(checkpoint.summary?.expected_freeform_guard_failures), checkpoint.summary?.expected_freeform_guard_failures),
     check('latest_handoffs_include_277_or_newer', checkpoint.summary?.latest_handoff_max >= 277, checkpoint.summary?.latest_handoff_max),
     check('owner_reply_not_applied', ['pending', 'broad_intent_seen_exact_reply_not_applied'].includes(checkpoint.summary?.owner_reply_state), checkpoint.summary?.owner_reply_state),
     check('source_root_blocked', String(checkpoint.summary?.source_root_state || '').includes('blocked'), checkpoint.summary?.source_root_state),

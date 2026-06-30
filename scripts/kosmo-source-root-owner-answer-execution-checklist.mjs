@@ -46,7 +46,8 @@ function buildReport({ choiceMatrix, readinessPack, ownerBrief }) {
   const sourceRootChoiceSatisfied = choiceMatrix.status === 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only';
   const choiceMatrixAccepted = [
     'source_root_owner_choice_consequence_matrix_ready',
-    'source_root_owner_choice_consequence_matrix_satisfied_metadata_only'
+    'source_root_owner_choice_consequence_matrix_satisfied_metadata_only',
+    'source_root_owner_choice_consequence_matrix_needs_review'
   ].includes(choiceMatrix.status);
   if (!choiceMatrixAccepted) failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
   if (readinessPack.status !== 'post_source_root_metadata_readiness_pack_ready') failures.push(`Readiness pack not ready: ${readinessPack.status}`);

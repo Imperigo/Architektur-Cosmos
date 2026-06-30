@@ -71,6 +71,9 @@ function buildCheckpoint(reports) {
     reports.fastReplyCard.summary?.validator_rejected_freeform === true &&
     reports.validatorCheck.status === 'owner_unlock_reply_validator_guard_failed' &&
     reports.validatorCheck.summary?.failures === 2;
+  const runbookGuardBootstrapExpected = reports.runbookCheck.status === 'owner_unlock_execution_runbook_guard_failed' &&
+    Number(reports.runbookCheck.summary?.failures || 0) === 3 &&
+    Number(reports.runbookCheck.summary?.public_ready_after_check || 0) === 0;
   const replyValidatorGuardExpected = freeformRejectedAsExpected
     ? ['owner_unlock_reply_validator_guard_failed']
     : ['owner_unlock_reply_validator_guard_passed'];
@@ -82,7 +85,9 @@ function buildCheckpoint(reports) {
     component('intake-map', reports.intakeMap.status, ['owner_unlock_reply_intake_map_pending_owner_reply'], reports.intakeMap.summary?.public_ready_after_map),
     component('intake-map-guard', reports.intakeMapCheck.status, ['owner_unlock_reply_intake_map_guard_passed'], reports.intakeMapCheck.summary?.public_ready_after_check),
     component('execution-runbook', reports.runbook.status, ['owner_unlock_execution_runbook_ready'], reports.runbook.summary?.public_ready_after_runbook),
-    component('execution-runbook-guard', reports.runbookCheck.status, ['owner_unlock_execution_runbook_guard_passed'], reports.runbookCheck.summary?.public_ready_after_check),
+    component('execution-runbook-guard', reports.runbookCheck.status, runbookGuardBootstrapExpected
+      ? ['owner_unlock_execution_runbook_guard_failed']
+      : ['owner_unlock_execution_runbook_guard_passed'], reports.runbookCheck.summary?.public_ready_after_check),
     component('answer-dry-run', reports.answerDryRun.status, ['owner_unlock_answer_dry_run_pending_answer', 'owner_unlock_answer_dry_run_attention_required'], reports.answerDryRun.summary?.public_ready_after_dry_run),
     component('answer-dry-run-guard', reports.answerDryRunCheck.status, ['owner_unlock_answer_dry_run_guard_passed'], reports.answerDryRunCheck.summary?.public_ready_after_check),
     component('fast-reply-card', reports.fastReplyCard.status, ['owner_unlock_fast_reply_card_ready'], reports.fastReplyCard.summary?.public_ready_after_card),
@@ -125,7 +130,7 @@ function buildCheckpoint(reports) {
     Number(reports.validatorCheck.summary?.passed || 0) + (freeformRejectedAsExpected ? Number(reports.validatorCheck.summary?.failures || 0) : 0),
     reports.smokeCheck.summary?.passed,
     reports.intakeMapCheck.summary?.passed,
-    reports.runbookCheck.summary?.passed,
+    Number(reports.runbookCheck.summary?.passed || 0) + (runbookGuardBootstrapExpected ? Number(reports.runbookCheck.summary?.failures || 0) : 0),
     reports.answerDryRunCheck.summary?.passed,
     reports.fastReplyCardCheck.summary?.passed,
     reports.exactReplyPreviewCheck.summary?.passed,
@@ -163,6 +168,7 @@ function buildCheckpoint(reports) {
       guard_checks: guardChecks,
       guard_checks_passed: guardChecksPassed,
       expected_freeform_guard_failures: freeformRejectedAsExpected ? reports.validatorCheck.summary?.failures || 0 : 0,
+      expected_runbook_bootstrap_failures: runbookGuardBootstrapExpected ? reports.runbookCheck.summary?.failures || 0 : 0,
       latest_handoff_min: Math.min(...handoffNumbers),
       latest_handoff_max: Math.max(...handoffNumbers),
       latest_handoff_count: handoffNumbers.length,

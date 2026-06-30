@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:54:57.136Z",
+  "generated_at": "2026-06-30T07:10:47.270Z",
   "status": "source_root_candidates_need_owner_selection",
   "policy": {
     "read_only": true,
@@ -20,11 +20,11 @@
     "max_depth": 5,
     "max_dirs": 60000,
     "inspect_max_entries": 3000,
-    "scanned_dirs": 5481,
+    "scanned_dirs": 5484,
     "truncated": false
   },
   "summary": {
-    "candidates": 1305,
+    "candidates": 1307,
     "probable_large_private_libraries": 0,
     "workflow_or_project_mirrors": 71,
     "archive_like_roots": 513,
@@ -765,7 +765,7 @@
       "score": 42,
       "classification": "possible_source_root",
       "counts": {
-        "files": 625,
+        "files": 626,
         "dirs": 59,
         "other": 1,
         "ignored_dirs": 0,
@@ -774,7 +774,7 @@
         "lecture_like_files": 150,
         "sync_error_files": 0,
         "extensions": {
-          ".json": 339,
+          ".json": 340,
           ".jsonl": 136,
           ".txt": 97,
           ".pdf": 47,

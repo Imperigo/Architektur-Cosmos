@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:03:53.914Z",
+  "status": "owner_unlock_answer_dry_run_ready_for_review",
+  "policy": {
+    "dry_run_only": true,
+    "writes_isolated_reports_only": true,
+    "records_decisions": false,
+    "writes_intake_file": false,
+    "mutates_session_files": false,
+    "runs_source_root_guards": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_dry_run": 0
+  },
+  "source_refs": [
+    "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator.json",
+    "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator-check.json",
+    "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map.json",
+    "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map-check.json"
+  ],
+  "summary": {
+    "answer_present": true,
+    "validator_status": "owner_unlock_reply_valid",
+    "validator_guard_status": "owner_unlock_reply_validator_guard_passed",
+    "intake_map_status": "owner_unlock_reply_intake_map_ready_for_review",
+    "intake_map_guard_status": "owner_unlock_reply_intake_map_guard_passed",
+    "patch_operations": 6,
+    "owner_card_patches": 5,
+    "failures": 0,
+    "public_ready_after_dry_run": 0
+  },
+  "dry_run_outputs": {
+    "directory": "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30",
+    "validator": "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator.json",
+    "validator_check": "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator-check.json",
+    "intake_map": "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map.json",
+    "intake_map_check": "data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map-check.json"
+  },
+  "steps": [
+    {
+      "id": "validator",
+      "exit_code": 0,
+      "command": "/usr/bin/node scripts/kosmo-owner-unlock-reply-validator.mjs --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator.md --answer source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "stdout_tail": "Valid: yes\nFailures: 0\nPublic-ready after validation: 0\nWrote: data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "validator-check",
+      "exit_code": 0,
+      "command": "/usr/bin/node scripts/kosmo-owner-unlock-reply-validator-check.mjs --validator /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator.json --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator-check.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator-check.md",
+      "stdout_tail": "Status: owner_unlock_reply_validator_guard_passed\nChecks: 24/24\nFailures: 0\nWrote: data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator-check.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "intake-map",
+      "exit_code": 0,
+      "command": "/usr/bin/node scripts/kosmo-owner-unlock-reply-intake-map.mjs --validator /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/validator.json --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map.md",
+      "stdout_tail": "Patch ready: yes\nPatch operations: 6\nPublic-ready after map: 0\nWrote: data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map.md",
+      "stderr_tail": ""
+    },
+    {
+      "id": "intake-map-check",
+      "exit_code": 0,
+      "command": "/usr/bin/node scripts/kosmo-owner-unlock-reply-intake-map-check.mjs --map /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map.json --out /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map-check.json --markdown /mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map-check.md",
+      "stdout_tail": "Status: owner_unlock_reply_intake_map_guard_passed\nChecks: 20/20\nFailures: 0\nWrote: data/owner-unlock-dry-runs/exact-reply-preview-2026-06-30/intake-map-check.md",
+      "stderr_tail": ""
+    }
+  ],
+  "proposed_next_actions": [
+    "Review the generated intake map before editing any intake template.",
+    "If the map is accepted, apply only reviewed fields to the owner answer intake template.",
+    "After the intake edit, run owner-answer-intake-check before any session plan."
+  ],
+  "hard_stops": [
+    "Do not treat this dry-run as applied owner approval.",
+    "Do not run source-root guards from this dry-run.",
+    "Do not write the intake template from this dry-run.",
+    "Do not read private content.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

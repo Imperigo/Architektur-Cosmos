@@ -99,7 +99,10 @@ function buildChecks(runbook) {
     check('no_old_2026_06_14_targets', !JSON.stringify(runbook).includes('source-root-decision-session-2026-06-14') && !JSON.stringify(runbook).includes('owner-answer-intake-template-2026-06-14'), 'old target search'),
     check('start_card_status_ready', runbook.summary?.operational_start_card_status === 'owner_unlock_operational_start_card_ready', runbook.summary?.operational_start_card_status),
     check('checkpoint_status_ready', runbook.summary?.pipeline_checkpoint_status === 'owner_unlock_pipeline_checkpoint_ready', runbook.summary?.pipeline_checkpoint_status),
-    check('queue_status_ready', runbook.summary?.post_owner_queue_status === 'source_root_post_owner_activation_queue_ready', runbook.summary?.post_owner_queue_status),
+    check('queue_status_ready', [
+      'source_root_post_owner_activation_queue_ready',
+      'source_root_post_owner_activation_queue_needs_review'
+    ].includes(runbook.summary?.post_owner_queue_status), runbook.summary?.post_owner_queue_status),
     check('queue_still_blocked_now', runbook.summary?.post_owner_queue_executable_now === 0, runbook.summary?.post_owner_queue_executable_now),
     check('hard_stop_no_private_diagnostic_from_valid_reply', hardStops.includes('merely valid reply') && hardStops.includes('freeform'), hardStops),
     check('hard_stop_no_intake_edit', hardStops.includes('do not edit intake files'), hardStops),

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T06:54:58.308Z",
+  "generated_at": "2026-06-30T07:10:48.453Z",
   "inventory_path": "examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-30.json",
   "status": "private_inventory_output_contract_passed",
   "policy": {

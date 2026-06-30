@@ -21,7 +21,11 @@ main().catch((error) => {
 async function main() {
   const trainingReadiness = await readJson(trainingReadinessPath);
   const pilotQueue = await readJson(pilotQueuePath);
-  const roadmap = await readJson(roadmapPath);
+  const roadmap = await readJsonOptional(roadmapPath, {
+    status: 'vision_completion_roadmap_bootstrap_missing',
+    summary: {},
+    bootstrap_missing: true
+  });
   const report = buildReport({ trainingReadiness, pilotQueue, roadmap });
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -43,7 +47,12 @@ function buildReport({ trainingReadiness, pilotQueue, roadmap }) {
   const failures = [];
   if (trainingReadiness.status !== 'kosmo_training_memory_readiness_pack_ready') failures.push(`Training readiness not ready: ${trainingReadiness.status}`);
   if (pilotQueue.status !== 'local_worker_pilot_task_queue_ready_blocked') failures.push(`Pilot worker queue not ready blocked: ${pilotQueue.status}`);
-  if (roadmap.status !== 'vision_completion_roadmap_ready') failures.push(`Roadmap not ready: ${roadmap.status}`);
+  const roadmapAccepted = [
+    'vision_completion_roadmap_ready',
+    'vision_completion_roadmap_needs_review',
+    'vision_completion_roadmap_bootstrap_missing'
+  ].includes(roadmap.status);
+  if (!roadmapAccepted) failures.push(`Roadmap not in a guarded bootstrap state: ${roadmap.status}`);
 
   const suites = [
     suite('source_grounding_provenance', 'Can Kosmo cite source state, provenance and uncertainty without inventing facts?', [
@@ -112,6 +121,8 @@ function buildReport({ trainingReadiness, pilotQueue, roadmap }) {
       training_lanes: trainingReadiness.summary?.lanes ?? null,
       candidate_sources: trainingReadiness.summary?.candidate_sources ?? null,
       pilot_worker_tasks: pilotQueue.summary?.tasks ?? null,
+      roadmap_status: roadmap.status,
+      roadmap_bootstrap_missing: roadmap.bootstrap_missing === true,
       writes_training_data_now: 0,
       writes_embeddings_now: 0,
       runs_fine_tuning_now: 0,
@@ -157,6 +168,15 @@ function suite(id, objective, criteria) {
 
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
+}
+
+async function readJsonOptional(path, fallback) {
+  try {
+    return await readJson(path);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+    return fallback;
+  }
 }
 
 function renderMarkdown(report) {

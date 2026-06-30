@@ -1,0 +1,135 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:04:08.150Z",
+  "status": "overseer_sync_board_ready",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "applies_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_board": 0,
+    "note": "This board summarizes Codex/Claude/KosmoOverseer coordination state. It does not record owner answers or change data-lane decisions."
+  },
+  "source_refs": [
+    "data/kosmodata-lane-sweep-2026-06-30.json",
+    "data/kosmo-data-lane-command-router-2026-06-30.json",
+    "data/kosmo-night-loop-checkpoint-2026-06-30.json",
+    "data/kosmo-owner-review-session-brief-check-2026-06-30.json",
+    "data/kosmo-local-worker-output-review-2026-06-30.json"
+  ],
+  "handoff_inboxes": [
+    {
+      "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
+      "exists": true,
+      "files": 443
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
+      "exists": true,
+      "files": 269
+    }
+  ],
+  "summary": {
+    "data_lane_status": "kosmodata_lane_sweep_failed",
+    "data_lane_steps": "24/26",
+    "router_status": "worker_router_guarded_review_only",
+    "checkpoint_status": "night_loop_needs_review",
+    "next_loop": "prepare_owner_source_root_decision_and_batch_questions",
+    "session_brief_guard_status": "owner_review_session_brief_guard_failed",
+    "session_brief_failures": 1,
+    "local_worker_review_status": "local_worker_outputs_present_review_only",
+    "local_worker_outputs": "9/9",
+    "local_worker_high_risk_hits": 0,
+    "latest_handoffs": 8,
+    "latest_handoff_mirror_missing_files": 0,
+    "historical_handoff_mirror_missing_files": 330,
+    "public_ready_after_board": 0
+  },
+  "latest_handoffs": [
+    {
+      "filename": "2026-06-17-codex-synergiebericht-352-standard-kosmodraw-public-gate.md",
+      "title": "Codex Synergiebericht 352 — Standard KosmoDraw Public Gate",
+      "mirrored_inboxes": 2,
+      "bytes": 1491,
+      "modified_at": "2026-06-17T17:40:08.079Z"
+    },
+    {
+      "filename": "2026-06-17-codex-synergiebericht-351-intake-review-check.md",
+      "title": "Codex Synergiebericht 351 — Non-Mutating Intake Review Check",
+      "mirrored_inboxes": 2,
+      "bytes": 2126,
+      "modified_at": "2026-06-17T17:37:38.128Z"
+    },
+    {
+      "filename": "2026-06-17-codex-synergiebericht-350-bundle-negative-smoke.md",
+      "title": "Codex Synergiebericht 350 — Bundle Negative Smoke",
+      "mirrored_inboxes": 2,
+      "bytes": 2050,
+      "modified_at": "2026-06-17T17:34:18.400Z"
+    },
+    {
+      "filename": "2026-06-17-codex-synergiebericht-349-public-kosmodraw-intake-status.md",
+      "title": "Codex Synergiebericht 349 — Public KosmoDraw Intake Status",
+      "mirrored_inboxes": 2,
+      "bytes": 2572,
+      "modified_at": "2026-06-17T17:30:43.371Z"
+    },
+    {
+      "filename": "2026-06-17-codex-synergiebericht-348-kosmodraw-bundle-intake-review-generator.md",
+      "title": "Codex Synergiebericht 348 — KosmoDraw Bundle Intake Review Generator",
+      "mirrored_inboxes": 2,
+      "bytes": 2819,
+      "modified_at": "2026-06-17T17:27:33.010Z"
+    },
+    {
+      "filename": "2026-06-17-codex-synergiebericht-347-kosmodraw-openings-bundle-contract.md",
+      "title": "Codex Synergiebericht 347 — KosmoDraw Openings → Bundle Contract",
+      "mirrored_inboxes": 2,
+      "bytes": 3253,
+      "modified_at": "2026-06-17T17:23:53.586Z"
+    },
+    {
+      "filename": "2026-06-17-codex-synergiebericht-346-reference-bundle-ingenbohl-public-gate.md",
+      "title": "Codex Synergiebericht 346 — Reference Bundle, Ingenbohl Public Pilot, Public Gate 2",
+      "mirrored_inboxes": 2,
+      "bytes": 3398,
+      "modified_at": "2026-06-17T17:17:14.442Z"
+    },
+    {
+      "filename": "2026-06-17-codex-synergiebericht-345-kosmodraw-2d-3d-public-contract.md",
+      "title": "Codex Synergiebericht 345: KosmoDraw 2D/Bild -> 3D/BIM Public Contract",
+      "mirrored_inboxes": 2,
+      "bytes": 1991,
+      "modified_at": "2026-06-17T17:01:30.907Z"
+    }
+  ],
+  "blockers": [
+    {
+      "id": "source_root_pending",
+      "status": "blocked",
+      "evidence": "source_root_blocked=true"
+    },
+    {
+      "id": "private_inventory_pending",
+      "status": "blocked",
+      "evidence": "private_inventory_blocked=true"
+    },
+    {
+      "id": "owner_answers_pending",
+      "status": "blocked",
+      "evidence": "session_brief_failures=1, prior_signals_recordable_now=0"
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": "references_public_ready_assets=0"
+    }
+  ],
+  "next_actions": [
+    "Claude/KosmoOverseer reviews latest handoffs 345-352 before editing related files.",
+    "Use the owner review session brief as the next owner-facing entry point.",
+    "Keep local worker tasks review-only while source-root and owner answers are pending.",
+    "After any explicit owner answer, update intake first, then rerun guards and this sync board."
+  ]
+}

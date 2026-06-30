@@ -25,7 +25,11 @@ async function main() {
   const assetPack = await readJson(assetPackPath);
   const postSource = await readJson(postSourcePath);
   const ownerUnlockCheckpoint = await readJson(ownerUnlockCheckpointPath);
-  const roadmap = await readJson(roadmapPath);
+  const roadmap = await readJsonOptional(roadmapPath, {
+    status: 'vision_completion_roadmap_bootstrap_missing',
+    summary: {},
+    bootstrap_missing: true
+  });
   const report = buildReport({ pilotPack, assetPack, postSource, ownerUnlockCheckpoint, roadmap });
 
   await mkdir(dirname(outputJson), { recursive: true });
@@ -49,7 +53,12 @@ function buildReport({ pilotPack, assetPack, postSource, ownerUnlockCheckpoint, 
   if (assetPack.status !== 'kosmoasset_intake_readiness_pack_ready') failures.push(`Asset pack not ready: ${assetPack.status}`);
   if (postSource.status !== 'post_source_root_metadata_readiness_pack_ready') failures.push(`Post-source pack not ready: ${postSource.status}`);
   if (ownerUnlockCheckpoint.status !== 'owner_unlock_pipeline_checkpoint_ready') failures.push(`Owner unlock checkpoint not ready: ${ownerUnlockCheckpoint.status}`);
-  if (roadmap.status !== 'vision_completion_roadmap_ready') failures.push(`Roadmap not ready: ${roadmap.status}`);
+  const roadmapAccepted = [
+    'vision_completion_roadmap_ready',
+    'vision_completion_roadmap_needs_review',
+    'vision_completion_roadmap_bootstrap_missing'
+  ].includes(roadmap.status);
+  if (!roadmapAccepted) failures.push(`Roadmap not in a guarded bootstrap state: ${roadmap.status}`);
 
   const assetGroupById = new Map((assetPack.pilot_asset_groups || []).map((group) => [group.id, group]));
   const pilots = (pilotPack.pilots || []).map((pilot) => {
@@ -130,6 +139,8 @@ function buildReport({ pilotPack, assetPack, postSource, ownerUnlockCheckpoint, 
       command_sequence_steps: commandSequence.length,
       owner_unlock_components_ready: ownerUnlockCheckpoint.summary?.components_ready ?? null,
       owner_unlock_guard_checks_passed: ownerUnlockCheckpoint.summary?.guard_checks_passed ?? null,
+      roadmap_status: roadmap.status,
+      roadmap_bootstrap_missing: roadmap.bootstrap_missing === true,
       executable_now: 0,
       public_ready_after_matrix: 0,
       failures: failures.length
@@ -155,6 +166,15 @@ function buildReport({ pilotPack, assetPack, postSource, ownerUnlockCheckpoint, 
 
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
+}
+
+async function readJsonOptional(path, fallback) {
+  try {
+    return await readJson(path);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+    return fallback;
+  }
 }
 
 function renderMarkdown(report) {

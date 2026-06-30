@@ -1,0 +1,186 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:05:10.404Z",
+  "status": "owner_unlock_pipeline_checkpoint_guard_passed",
+  "policy": {
+    "validates_checkpoint_only": true,
+    "records_decisions": false,
+    "writes_intake_file_now": false,
+    "mutates_session_files_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-30.json"
+  ],
+  "summary": {
+    "checks": 32,
+    "passed": 32,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_pipeline_checkpoint_ready"
+    },
+    {
+      "id": "policy_checkpoint_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_commands_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "twenty_seven_components",
+      "status": "passed",
+      "evidence": 27
+    },
+    {
+      "id": "all_components_ready",
+      "status": "passed",
+      "evidence": "27/27"
+    },
+    {
+      "id": "guard_checks_at_least_280",
+      "status": "passed",
+      "evidence": 283
+    },
+    {
+      "id": "guard_checks_all_passed",
+      "status": "passed",
+      "evidence": "283/283"
+    },
+    {
+      "id": "freeform_rejection_accounted",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "latest_handoffs_include_277_or_newer",
+      "status": "passed",
+      "evidence": 352
+    },
+    {
+      "id": "owner_reply_not_applied",
+      "status": "passed",
+      "evidence": "pending"
+    },
+    {
+      "id": "source_root_blocked",
+      "status": "passed",
+      "evidence": "blocked_until_explicit_owner_reply_and_guards"
+    },
+    {
+      "id": "path_a_ready_after_exact_reply",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "selected_root_preview_exists",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "session_preview_no_writes_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "session_apply_guard_present",
+      "status": "passed",
+      "evidence": "waiting_for_manual_apply"
+    },
+    {
+      "id": "session_apply_waiting_blocks_private_diagnostic",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "session_apply_smoke_passed",
+      "status": "passed",
+      "evidence": "owner_unlock_session_apply_guard_smoke_passed"
+    },
+    {
+      "id": "session_apply_smoke_mode_applied",
+      "status": "passed",
+      "evidence": "applied_matches_preview"
+    },
+    {
+      "id": "session_apply_smoke_allows_private_diagnostic",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "session_apply_smoke_no_real_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "applies_decision_now_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "component_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "hard_stop_no_approval",
+      "status": "passed",
+      "evidence": "do not treat this checkpoint as owner approval. do not read private content from this checkpoint. do not run private inventory from this checkpoint. do not mark private-derived material public-ready."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not treat this checkpoint as owner approval. do not read private content from this checkpoint. do not run private inventory from this checkpoint. do not mark private-derived material public-ready."
+    },
+    {
+      "id": "hard_stop_no_inventory",
+      "status": "passed",
+      "evidence": "do not treat this checkpoint as owner approval. do not read private content from this checkpoint. do not run private inventory from this checkpoint. do not mark private-derived material public-ready."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "do not treat this checkpoint as owner approval. do not read private content from this checkpoint. do not run private inventory from this checkpoint. do not mark private-derived material public-ready."
+    }
+  ]
+}

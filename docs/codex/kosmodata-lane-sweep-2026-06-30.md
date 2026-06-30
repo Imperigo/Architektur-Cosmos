@@ -1,12 +1,12 @@
 # KosmoData Lane Sweep
 
-Generated: 2026-06-30T06:55:00.422Z
+Generated: 2026-06-30T07:10:50.560Z
 Status: `kosmodata_lane_sweep_failed`
 
 ## Summary
 
 - Steps passed: 24/26
-- Duration: 16772ms
+- Duration: 18810ms
 - KosmoReferences: passed_review_only (10/10)
 - References public-ready assets: 0
 - References owner pending: 10
@@ -45,7 +45,7 @@ Status: `kosmodata_lane_sweep_failed`
 - Sogn public links/local files: 4/0
 - Sogn public-ready after brief: 0
 - Source-root locator: source_root_candidates_need_owner_selection
-- Source-root locator probable/candidates: 0/1305
+- Source-root locator probable/candidates: 0/1307
 - Source-root locator mirrors/sync roots: 71/5
 - Source-root selection: source_root_owner_selection_needed
 - Source-root selection options: 10
@@ -113,32 +113,32 @@ Status: `kosmodata_lane_sweep_failed`
 
 | Step | Status | Duration | Report |
 | --- | --- | ---: | --- |
-| KosmoReferences Nightly Gate | passed | 7472ms | `data/kosmoreferences-nightly-gate-2026-06-30.json` |
-| KosmoAsset Seed Full Review | passed | 3483ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
-| Human Decision Queue | passed | 234ms | `data/kosmo-human-decision-queue-2026-06-30.json` |
-| Owner Decision Batches | passed | 223ms | `data/kosmo-human-decision-owner-batches-2026-06-30.json` |
-| Owner Review Batch Resolution Ledger | failed | 230ms | `data/kosmo-owner-review-batch-resolution-ledger-2026-06-30.json` |
+| KosmoReferences Nightly Gate | passed | 9477ms | `data/kosmoreferences-nightly-gate-2026-06-30.json` |
+| KosmoAsset Seed Full Review | passed | 3497ms | `examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json` |
+| Human Decision Queue | passed | 228ms | `data/kosmo-human-decision-queue-2026-06-30.json` |
+| Owner Decision Batches | passed | 231ms | `data/kosmo-human-decision-owner-batches-2026-06-30.json` |
+| Owner Review Batch Resolution Ledger | failed | 232ms | `data/kosmo-owner-review-batch-resolution-ledger-2026-06-30.json` |
 | Owner Review Batch Resolution Ledger Check | failed | 229ms | `data/kosmo-owner-review-batch-resolution-ledger-check-2026-06-30.json` |
-| Local Worker Output Review | passed | 235ms | `data/kosmo-local-worker-output-review-2026-06-30.json` |
-| Pilot Evidence Matrix | passed | 231ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-30.json` |
-| Villa Savoye Provenance Review Brief | passed | 231ms | `data/villa-savoye-provenance-review-brief-2026-06-30.json` |
-| Ingenbohl PDF Extraction Brief | passed | 237ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-30.json` |
-| Sogn Benedetg Source-Root Brief | passed | 228ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-30.json` |
-| Source Root Locator | passed | 469ms | `data/kosmo-source-root-locator-2026-06-30.json` |
-| Source Root Selection Brief | passed | 241ms | `data/kosmo-source-root-selection-brief-2026-06-30.json` |
-| Source Root Decision Session Check | passed | 231ms | `data/kosmo-source-root-decision-session-check-2026-06-30.json` |
-| Private Source Inventory Plan | passed | 232ms | `data/kosmo-private-source-inventory-plan-2026-06-30.json` |
-| Private Inventory Output Template | passed | 228ms | `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-30.json` |
-| Private Inventory Output Check | passed | 237ms | `data/kosmo-private-inventory-output-check-2026-06-30.json` |
-| Owner Next Review Brief | passed | 235ms | `data/kosmo-owner-next-review-brief-2026-06-30.json` |
-| Owner Review Card Set | passed | 227ms | `data/kosmo-owner-review-card-set-2026-06-30.json` |
-| Owner Answer Sheet | passed | 233ms | `data/kosmo-owner-answer-sheet-2026-06-30.json` |
-| Owner Answer Sheet Check | passed | 233ms | `data/kosmo-owner-answer-sheet-check-2026-06-30.json` |
-| Owner Answer Intake Template | passed | 232ms | `examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-30.json` |
-| Owner Answer Intake Check | passed | 239ms | `data/kosmo-owner-answer-intake-check-2026-06-30.json` |
+| Local Worker Output Review | passed | 229ms | `data/kosmo-local-worker-output-review-2026-06-30.json` |
+| Pilot Evidence Matrix | passed | 233ms | `data/kosmoreferences-pilot-evidence-matrix-2026-06-30.json` |
+| Villa Savoye Provenance Review Brief | passed | 224ms | `data/villa-savoye-provenance-review-brief-2026-06-30.json` |
+| Ingenbohl PDF Extraction Brief | passed | 228ms | `data/ingenbohl-pdf-extraction-decision-brief-2026-06-30.json` |
+| Sogn Benedetg Source-Root Brief | passed | 232ms | `data/sogn-benedetg-source-root-decision-brief-2026-06-30.json` |
+| Source Root Locator | passed | 496ms | `data/kosmo-source-root-locator-2026-06-30.json` |
+| Source Root Selection Brief | passed | 235ms | `data/kosmo-source-root-selection-brief-2026-06-30.json` |
+| Source Root Decision Session Check | passed | 240ms | `data/kosmo-source-root-decision-session-check-2026-06-30.json` |
+| Private Source Inventory Plan | passed | 237ms | `data/kosmo-private-source-inventory-plan-2026-06-30.json` |
+| Private Inventory Output Template | passed | 231ms | `examples/kosmo-references/private-inventory/private-inventory-output-template-2026-06-30.json` |
+| Private Inventory Output Check | passed | 236ms | `data/kosmo-private-inventory-output-check-2026-06-30.json` |
+| Owner Next Review Brief | passed | 233ms | `data/kosmo-owner-next-review-brief-2026-06-30.json` |
+| Owner Review Card Set | passed | 233ms | `data/kosmo-owner-review-card-set-2026-06-30.json` |
+| Owner Answer Sheet | passed | 236ms | `data/kosmo-owner-answer-sheet-2026-06-30.json` |
+| Owner Answer Sheet Check | passed | 229ms | `data/kosmo-owner-answer-sheet-check-2026-06-30.json` |
+| Owner Answer Intake Template | passed | 231ms | `examples/kosmo-references/provenance/owner-answer-intake-template-2026-06-30.json` |
+| Owner Answer Intake Check | passed | 235ms | `data/kosmo-owner-answer-intake-check-2026-06-30.json` |
 | Owner Answer Session Edit Plan | passed | 231ms | `data/kosmo-owner-answer-session-edit-plan-2026-06-30.json` |
-| Owner Question Brief | passed | 233ms | `data/kosmo-owner-question-brief-2026-06-30.json` |
-| Owner Question Brief Check | passed | 233ms | `data/kosmo-owner-question-brief-check-2026-06-30.json` |
+| Owner Question Brief | passed | 230ms | `data/kosmo-owner-question-brief-2026-06-30.json` |
+| Owner Question Brief Check | passed | 234ms | `data/kosmo-owner-question-brief-check-2026-06-30.json` |
 
 ## Next Actions
 

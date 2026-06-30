@@ -1,0 +1,135 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:03:56.084Z",
+  "status": "owner_unlock_session_edit_preview_guard_passed",
+  "policy": {
+    "review_only": true,
+    "validates_preview_only": true,
+    "writes_session_files_now": false,
+    "writes_intake_now": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-session-edit-preview-2026-06-30.json"
+  ],
+  "summary": {
+    "checks": 22,
+    "passed": 22,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_session_edit_preview_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_preview_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_session_write_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_write_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decision_apply_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_source_root_record_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_source_root_guards_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "preview_edit_count",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "session_file_edit_count",
+      "status": "passed",
+      "evidence": 1
+    },
+    {
+      "id": "manual_triage_count",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "selected_root_exists",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "all_preview_edits_write_false",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "after_apply_has_session_check",
+      "status": "passed",
+      "evidence": "Review this preview with Claude/KosmoOverseer. Apply the source-root session record only after exact owner reply is present in normal chat. Run npm run kosmo:source-root-decision-session-check. Run npm run kosmo:source-root-blocker-refresh. Run npm run kosmo:source-root-activation-preflight. Only then consider private metadata inventory, still review-only."
+    },
+    {
+      "id": "hard_stop_no_auto_apply",
+      "status": "passed",
+      "evidence": "do not apply this preview automatically. do not write session files from this preview. do not run private inventory from this preview. do not read private content. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_session_write",
+      "status": "passed",
+      "evidence": "do not apply this preview automatically. do not write session files from this preview. do not run private inventory from this preview. do not read private content. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_private_inventory",
+      "status": "passed",
+      "evidence": "do not apply this preview automatically. do not write session files from this preview. do not run private inventory from this preview. do not read private content. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not apply this preview automatically. do not write session files from this preview. do not run private inventory from this preview. do not read private content. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "do not apply this preview automatically. do not write session files from this preview. do not run private inventory from this preview. do not read private content. do not change public-ready state."
+    }
+  ]
+}

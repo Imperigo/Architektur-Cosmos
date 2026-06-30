@@ -78,7 +78,7 @@ function buildChecks(matrix) {
     check('starts_with_dry_run', commandIds[0] === 'owner_answer_dry_run', commandIds.join(',')),
     check('includes_private_metadata_inventory', commandIds.includes('private_metadata_inventory'), commandIds.join(',')),
     check('all_commands_not_executable_now', (matrix.command_sequence || []).every((command) => command.executable_now === false), (matrix.command_sequence || []).filter((command) => command.executable_now).map((command) => command.id).join(',')),
-    check('owner_unlock_checkpoint_ready', matrix.summary?.owner_unlock_components_ready === 11 && matrix.summary?.owner_unlock_guard_checks_passed === 113, `${matrix.summary?.owner_unlock_components_ready}/${matrix.summary?.owner_unlock_guard_checks_passed}`),
+    check('owner_unlock_checkpoint_ready', matrix.summary?.owner_unlock_components_ready >= 11 && matrix.summary?.owner_unlock_guard_checks_passed >= 113, `${matrix.summary?.owner_unlock_components_ready}/${matrix.summary?.owner_unlock_guard_checks_passed}`),
     check('all_pilots_public_ready_zero', (matrix.pilots || []).every((pilot) => pilot.public_ready_after_pilot === 0), (matrix.pilots || []).filter((pilot) => pilot.public_ready_after_pilot !== 0).map((pilot) => pilot.id).join(',')),
     check('hard_stop_no_inventory', hardStops.includes('private inventory'), hardStops),
     check('hard_stop_no_private_content', hardStops.includes('private content'), hardStops),

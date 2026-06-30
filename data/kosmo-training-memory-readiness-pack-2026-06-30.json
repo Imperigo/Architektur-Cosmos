@@ -1,0 +1,425 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T07:06:07.900Z",
+  "status": "kosmo_training_memory_readiness_pack_ready",
+  "policy": {
+    "readiness_only": true,
+    "writes_training_data_now": false,
+    "writes_embeddings_now": false,
+    "runs_fine_tuning_now": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "includes_raw_private_text": false,
+    "includes_worker_output_bodies": false,
+    "public_ready_after_pack": 0
+  },
+  "source_refs": [
+    "data/kosmo-vision-completion-roadmap-2026-06-30.json",
+    "data/kosmoreferences-pilot-intake-readiness-pack-2026-06-30.json",
+    "data/kosmoasset-intake-readiness-pack-2026-06-30.json",
+    "data/kosmo-local-worker-output-contract-review-2026-06-30.json"
+  ],
+  "summary": {
+    "lanes": 4,
+    "candidate_sources": 18,
+    "pilot_sources": 3,
+    "asset_sources": 6,
+    "worker_contract_sources": 9,
+    "roadmap_status": "vision_completion_roadmap_bootstrap_missing",
+    "roadmap_bootstrap_missing": true,
+    "executable_now": 0,
+    "writes_training_data_now": 0,
+    "writes_embeddings_now": 0,
+    "failures": 0,
+    "public_ready_after_pack": 0
+  },
+  "lanes": [
+    {
+      "id": "rag_corpus",
+      "description": "Verified reference and asset summaries for retrieval; no raw private source text.",
+      "required_gates": [
+        "verified_provenance",
+        "rights_classification",
+        "chunk_schema_review"
+      ],
+      "executable_now": false,
+      "writes_training_data_now": false,
+      "writes_embeddings_now": false,
+      "reads_private_content_now": false,
+      "public_ready_after_lane": 0,
+      "candidate_source_ids": [
+        "pilot:villa-savoye",
+        "pilot:kapelle-sogn-benedetg",
+        "pilot:alterszentrum-kloster-ingenbohl",
+        "asset-pilot:villa-savoye",
+        "asset-pilot:kapelle-sogn-benedetg",
+        "asset-pilot:alterszentrum-kloster-ingenbohl",
+        "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+        "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+        "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets"
+      ]
+    },
+    {
+      "id": "eval_set",
+      "description": "Architecture QA and classification evals derived from reviewed metadata and public-safe summaries.",
+      "required_gates": [
+        "answer_key_review",
+        "source_evidence_review",
+        "quality_rubric"
+      ],
+      "executable_now": false,
+      "writes_training_data_now": false,
+      "writes_embeddings_now": false,
+      "reads_private_content_now": false,
+      "public_ready_after_lane": 0,
+      "candidate_source_ids": [
+        "pilot:villa-savoye",
+        "pilot:kapelle-sogn-benedetg",
+        "pilot:alterszentrum-kloster-ingenbohl",
+        "asset-pilot:villa-savoye",
+        "asset-pilot:kapelle-sogn-benedetg",
+        "asset-pilot:alterszentrum-kloster-ingenbohl",
+        "worker-contract:kosmo-private-doctrine-summary",
+        "worker-contract:kosmo-reference-pilot-gap-map",
+        "worker-contract:kosmo-book-library-mount-questions",
+        "worker-contract:kosmo-asset-seed-candidates",
+        "worker-contract:kosmo-public-source-link-synthesis",
+        "worker-contract:kosmo-asset-source-candidate-triage",
+        "worker-contract:kosmo-human-decision-queue-triage",
+        "worker-contract:kosmo-owner-batch-review-questions",
+        "worker-contract:kosmo-owner-session-safe-next-tasks"
+      ]
+    },
+    {
+      "id": "fine_tune_candidates",
+      "description": "Future instruction examples from overseer-reviewed workflows only.",
+      "required_gates": [
+        "human_review",
+        "license_review",
+        "deduplication",
+        "quality_eval"
+      ],
+      "executable_now": false,
+      "writes_training_data_now": false,
+      "writes_embeddings_now": false,
+      "reads_private_content_now": false,
+      "public_ready_after_lane": 0,
+      "candidate_source_ids": []
+    },
+    {
+      "id": "embedding_manifest",
+      "description": "Embedding-ready manifest rows after RAG corpus gates; no embeddings generated now.",
+      "required_gates": [
+        "rag_corpus_ready",
+        "embedding_model_selection",
+        "privacy_guard"
+      ],
+      "executable_now": false,
+      "writes_training_data_now": false,
+      "writes_embeddings_now": false,
+      "reads_private_content_now": false,
+      "public_ready_after_lane": 0,
+      "candidate_source_ids": [
+        "pilot:villa-savoye",
+        "pilot:kapelle-sogn-benedetg",
+        "pilot:alterszentrum-kloster-ingenbohl",
+        "asset-pilot:villa-savoye",
+        "asset-pilot:kapelle-sogn-benedetg",
+        "asset-pilot:alterszentrum-kloster-ingenbohl",
+        "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+        "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+        "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets"
+      ]
+    }
+  ],
+  "candidate_sources": [
+    {
+      "id": "pilot:villa-savoye",
+      "title": "Villa Savoye",
+      "source_family": "kosmoreferences_pilot",
+      "review_state": "pilot_package_review_only_complete",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "eval_set",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "source_root_unlock",
+        "provenance_review",
+        "rights_classification"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "pilot:kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "source_family": "kosmoreferences_pilot",
+      "review_state": "pilot_package_review_only_complete",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "eval_set",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "source_root_unlock",
+        "provenance_review",
+        "rights_classification"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "pilot:alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "source_family": "kosmoreferences_pilot",
+      "review_state": "pilot_package_review_only_complete",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "eval_set",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "source_root_unlock",
+        "provenance_review",
+        "rights_classification"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "asset-pilot:villa-savoye",
+      "title": "Villa Savoye",
+      "source_family": "kosmoasset",
+      "review_state": "pilot_asset_bridge_complete_review_only",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "eval_set",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "human_asset_review",
+        "promotion_guard"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "asset-pilot:kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "source_family": "kosmoasset",
+      "review_state": "pilot_asset_bridge_complete_review_only",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "eval_set",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "human_asset_review",
+        "promotion_guard"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "asset-pilot:alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "source_family": "kosmoasset",
+      "review_state": "pilot_asset_bridge_complete_review_only",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "eval_set",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "human_asset_review",
+        "promotion_guard"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+      "title": "asset_material_library_candidate",
+      "source_family": "kosmoasset",
+      "review_state": "material_rights_review",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "owner_lane_confirmation",
+        "rights_and_license_review"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+      "title": "asset_material_library_candidate",
+      "source_family": "kosmoasset",
+      "review_state": "material_rights_review",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "owner_lane_confirmation",
+        "rights_and_license_review"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "asset-library:possible-source-root-mnt-archiv-architekturkosmos-assets",
+      "title": "archive_subtree_candidate",
+      "source_family": "kosmoasset",
+      "review_state": "project_asset_scope_review",
+      "allowed_future_lanes": [
+        "rag_corpus",
+        "embedding_manifest"
+      ],
+      "blocked_until": [
+        "owner_lane_confirmation",
+        "rights_and_license_review"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-private-doctrine-summary",
+      "title": "kosmo-private-doctrine-summary",
+      "source_family": "local_worker_contract",
+      "review_state": "blocked_by_contract",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-reference-pilot-gap-map",
+      "title": "kosmo-reference-pilot-gap-map",
+      "source_family": "local_worker_contract",
+      "review_state": "present_hold_manual_metadata_review",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-book-library-mount-questions",
+      "title": "kosmo-book-library-mount-questions",
+      "source_family": "local_worker_contract",
+      "review_state": "present_hold_manual_metadata_review",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-asset-seed-candidates",
+      "title": "kosmo-asset-seed-candidates",
+      "source_family": "local_worker_contract",
+      "review_state": "present_hold_manual_metadata_review",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-public-source-link-synthesis",
+      "title": "kosmo-public-source-link-synthesis",
+      "source_family": "local_worker_contract",
+      "review_state": "present_hold_manual_metadata_review",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-asset-source-candidate-triage",
+      "title": "kosmo-asset-source-candidate-triage",
+      "source_family": "local_worker_contract",
+      "review_state": "present_hold_manual_metadata_review",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-human-decision-queue-triage",
+      "title": "kosmo-human-decision-queue-triage",
+      "source_family": "local_worker_contract",
+      "review_state": "present_hold_manual_metadata_review",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-owner-batch-review-questions",
+      "title": "kosmo-owner-batch-review-questions",
+      "source_family": "local_worker_contract",
+      "review_state": "present_hold_manual_metadata_review",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    },
+    {
+      "id": "worker-contract:kosmo-owner-session-safe-next-tasks",
+      "title": "kosmo-owner-session-safe-next-tasks",
+      "source_family": "local_worker_contract",
+      "review_state": "present_hold_manual_metadata_review",
+      "allowed_future_lanes": [
+        "eval_set"
+      ],
+      "blocked_until": [
+        "manual_metadata_review_without_body_copy"
+      ],
+      "public_ready": false
+    }
+  ],
+  "output_contract": {
+    "future_output_root": "private/KosmoTrainingMemory",
+    "git_allowed_now": false,
+    "allowed_git_content_after_review": "schemas, manifests without raw private text, eval rubrics, public-safe examples",
+    "disallowed_git_content": [
+      "private PDF text",
+      "OCR text",
+      "private image/plan contents",
+      "worker output bodies",
+      "license-unknown asset files"
+    ]
+  },
+  "hard_stops": [
+    "Do not train or fine-tune on unverified private content.",
+    "Do not create embeddings from private source contents before source-root, rights and privacy guards pass.",
+    "Do not copy worker output bodies into training data.",
+    "Do not put private OCR/PDF text, scans, images, plans or assets into Git.",
+    "Prepare schemas and eval rubrics first; data rows come only after provenance and rights review.",
+    "Keep public-ready at 0."
+  ],
+  "next_actions": [
+    "Draft schema rows only after pilot and asset intake guards pass with reviewed metadata.",
+    "Use RAG before fine-tuning; keep eval rubrics mandatory for every training lane.",
+    "Let local LLMs propose summaries only inside private output contracts, then overseer reviews.",
+    "Use this pack as Phase 6 input once Phase 2-5 gates are actually passed."
+  ],
+  "failures": []
+}
