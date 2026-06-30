@@ -1,29 +1,32 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-02T14:43:07.648Z",
+  "generated_at": "2026-06-30T12:52:38.424Z",
   "generator": "kosmo-orbit-static-export-smoke",
   "status": "orbit_static_export_smoke_passed",
   "html_file": "out/orbit/index.html",
   "summary": {
-    "check_count": 82,
-    "passed_checks": 82,
+    "check_count": 17,
+    "passed_checks": 17,
     "failed_checks": 0,
-    "referenced_static_asset_count": 8,
-    "missing_static_asset_count": 0
+    "referenced_static_asset_count": 9,
+    "missing_static_asset_count": 0,
+    "private_leak_pattern_count": 0
   },
   "static_assets": {
     "referenced": [
+      "_next/static/chunks/239-e0a193b742b70f85.js",
       "_next/static/chunks/255-81ba70bd132d3eed.js",
       "_next/static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "_next/static/chunks/619-ba102abea3e3d0e4.js",
-      "_next/static/chunks/app/orbit/page-98e77b3b47da0b2e.js",
-      "_next/static/chunks/main-app-36e74dfd8b1eb57a.js",
+      "_next/static/chunks/app/orbit/page-37d88375725e534d.js",
+      "_next/static/chunks/main-app-4f7ed41d8108a811.js",
       "_next/static/chunks/polyfills-42372ed130431b0a.js",
-      "_next/static/chunks/webpack-81624dd509abd812.js",
-      "_next/static/css/c54327aad473751c.css"
+      "_next/static/chunks/webpack-94b40ae1aec43a3f.js",
+      "_next/static/css/21d64c7442c3cd29.css",
+      "_next/static/css/fc0c184200ee26bf.css"
     ],
     "missing": []
   },
+  "private_leak_patterns": [],
   "checks": [
     {
       "id": "html_exists",
@@ -41,393 +44,68 @@
       "status": "passed"
     },
     {
-      "id": "renders_hub_return",
-      "label": "Export renders safe return link to the Kosmo Hub.",
+      "id": "renders_public_context",
+      "label": "Export renders public development status context.",
       "status": "passed"
     },
     {
-      "id": "renders_demo_navigation",
-      "label": "Export renders compact demo navigation.",
+      "id": "renders_current_public_headline",
+      "label": "Export renders current public Orbit headline.",
       "status": "passed"
     },
     {
-      "id": "renders_grouped_demo_navigation",
-      "label": "Export renders grouped demo navigation lanes.",
+      "id": "renders_public_gate_notice",
+      "label": "Export renders public release and privacy notice.",
       "status": "passed"
     },
     {
-      "id": "renders_autonomy_status",
-      "label": "Export renders autonomy status.",
+      "id": "renders_public_metrics",
+      "label": "Export renders public metrics.",
       "status": "passed"
     },
     {
-      "id": "renders_office_routine",
-      "label": "Export renders office routine contract.",
+      "id": "renders_system_areas",
+      "label": "Export renders public system areas.",
       "status": "passed"
     },
     {
-      "id": "renders_tool_registry",
-      "label": "Export renders KosmoOrbit tool registry.",
+      "id": "renders_system_area_states",
+      "label": "Export renders current system area states.",
       "status": "passed"
     },
     {
-      "id": "renders_presenter_mode",
-      "label": "Export renders presenter mode.",
+      "id": "renders_public_pilot_section",
+      "label": "Export renders the two public pilot projects section.",
       "status": "passed"
     },
     {
-      "id": "renders_workflow_delta",
-      "label": "Export renders workflow delta.",
+      "id": "renders_villa_pilot_link",
+      "label": "Export renders Villa Savoye pilot link.",
       "status": "passed"
     },
     {
-      "id": "renders_pilot_measurement",
-      "label": "Export renders pilot measurement.",
+      "id": "renders_ingenbohl_pilot_link",
+      "label": "Export renders Ingenbohl pilot link.",
       "status": "passed"
     },
     {
-      "id": "renders_pilot_measurement_kit",
-      "label": "Export renders pilot measurement kit.",
+      "id": "renders_public_principles",
+      "label": "Export renders public safety principles.",
       "status": "passed"
     },
     {
-      "id": "renders_pilot_facilitator_checklist",
-      "label": "Export renders pilot facilitator checklist.",
+      "id": "keeps_private_sources_off_site",
+      "label": "Export states that private local sources are not delivered through the website.",
       "status": "passed"
     },
     {
-      "id": "renders_pilot_result_draft",
-      "label": "Export renders pilot result draft.",
+      "id": "keeps_public_orbit_static",
+      "label": "Export keeps Orbit as static public status page.",
       "status": "passed"
     },
     {
-      "id": "renders_pilot_runbook",
-      "label": "Export renders pilot runbook.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_pilot_session_template",
-      "label": "Export renders pilot session template.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_progress_map",
-      "label": "Export renders progress map.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_vision_bridge",
-      "label": "Export renders vision bridge.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_demo_readiness",
-      "label": "Export renders demo readiness.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_static_asset_readiness",
-      "label": "Export renders static CSS/JS asset readiness.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_publish_readiness",
-      "label": "Export renders publish readiness live gate.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_launch_decision_brief",
-      "label": "Export renders launch decision brief.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_push_readiness_report",
-      "label": "Export renders push readiness report summary.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_push_command_evidence",
-      "label": "Export renders push readiness command evidence.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_office_pilot_scene",
-      "label": "Export renders office pilot scene.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_project_dashboard",
-      "label": "Export renders project package dashboard.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_design_handoff_panel",
-      "label": "Export renders KosmoDesign handoff review console.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_design_pilot_path",
-      "label": "Export renders KosmoDesign pilot path.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_review_decision",
-      "label": "Export renders review decision draft.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_runtime_boundary",
-      "label": "Export renders MVP/runtime boundary.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_runtime_contract",
-      "label": "Export renders local runtime contract.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_runtime_adapter",
-      "label": "Export renders runtime adapter contract.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_installation_topology",
-      "label": "Export renders local office installation topology.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_health_readiness",
-      "label": "Export renders local health readiness contract.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_risk_register",
-      "label": "Export renders human approval risk register.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_command_contract",
-      "label": "Export renders static command contract.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_audit_trail",
-      "label": "Export renders static audit trail contract.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_quality_evidence",
-      "label": "Export renders quality evidence.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_workstation_priorities",
-      "label": "Export renders workstation priorities.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_workstation_profile_contract",
-      "label": "Export renders workstation profile contract.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_local_identity_contract",
-      "label": "Export renders local identity contract.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_data_governance_contract",
-      "label": "Export renders data governance contract.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_office_memory_readiness",
-      "label": "Export renders office memory readiness.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_local_storage_decision",
-      "label": "Export renders local storage decision draft.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_delete_export_restore_drill",
-      "label": "Export renders delete/export/restore drill.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_learning_mode",
-      "label": "Export renders education mode.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_permission_matrix",
-      "label": "Export renders permission matrix.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_role_switcher",
-      "label": "Export renders role switcher.",
-      "status": "passed"
-    },
-    {
-      "id": "renders_guided_review_path",
-      "label": "Export renders guided review path.",
-      "status": "passed"
-    },
-    {
-      "id": "anchors_core_sections",
-      "label": "Export contains section anchors.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_no_runtime_side_effects",
-      "label": "Export states that runtime side effects are off.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_runtime_contract_safe",
-      "label": "Export keeps runtime process/model/queue actions gated.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_runtime_adapter_safe",
-      "label": "Export keeps runtime adapters non-operational.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_workflow_delta_honest",
-      "label": "Export keeps workflow delta honest about savings.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_workstation_profile_review_only",
-      "label": "Export keeps workstation profiles non-operational.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_local_identity_review_only",
-      "label": "Export keeps local identity non-operational.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_data_governance_review_only",
-      "label": "Export keeps data governance storage, backup and sync actions blocked.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_office_memory_review_only",
-      "label": "Export keeps office memory writes, scans, embeddings, backup status, external sync and cloud vector stores blocked.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_local_storage_decision_review_only",
-      "label": "Export keeps storage writes, memory writes, indexing, embeddings, backup, restore and external sync blocked.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_delete_export_restore_review_only",
-      "label": "Export keeps delete, export, restore, customer data, backup restore and external archive sync blocked.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_pilot_measurement_safe",
-      "label": "Export keeps pilot measurement safe and local.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_pilot_measurement_kit_empty",
-      "label": "Export keeps pilot measurement kit empty before real pilot.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_pilot_facilitator_safe",
-      "label": "Export keeps pilot facilitator checklist safe and local.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_pilot_result_draft_empty",
-      "label": "Export keeps pilot result draft empty before real pilot.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_pilot_runbook_safe",
-      "label": "Export keeps pilot runbook safe and local.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_pilot_session_template_empty",
-      "label": "Export keeps pilot session measurements empty.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_publish_readiness_safe",
-      "label": "Export keeps publish readiness blocked without owner go.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_launch_decision_human_gated",
-      "label": "Export keeps launch decision human-gated.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_push_readiness_owner_gated",
-      "label": "Export keeps push readiness owner-gated.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_office_pilot_review_only",
-      "label": "Export keeps office pilot scene review-only and claim-safe.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_design_pilot_before_generation",
-      "label": "Export keeps KosmoDesign pilot review before generation.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_installation_topology_safe",
-      "label": "Export keeps installation topology non-operational.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_office_routine_safe",
-      "label": "Export keeps office routine non-operational.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_tool_registry_safe",
-      "label": "Export keeps tool registry non-operational.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_health_readiness_safe",
-      "label": "Export keeps health readiness non-operational.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_risk_register_human_gated",
-      "label": "Export keeps risk register human-gated.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_command_contract_static",
-      "label": "Export keeps command contract non-operational.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_audit_trail_static",
-      "label": "Export keeps audit trail non-writing.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_design_handoff_generation_blocked",
-      "label": "Export keeps KosmoDesign generation blocked.",
-      "status": "passed"
-    },
-    {
-      "id": "keeps_learning_mode_safe",
-      "label": "Export keeps learning mode read-safe.",
+      "id": "no_private_leak_patterns",
+      "label": "Export contains no blocked private/source leak patterns: none.",
       "status": "passed"
     },
     {

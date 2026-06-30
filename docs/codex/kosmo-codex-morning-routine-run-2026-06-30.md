@@ -1,6 +1,6 @@
 # Kosmo Codex Morning Routine Run
 
-Generated: 2026-06-30T06:39:32.131Z
+Generated: 2026-06-30T12:49:16.556Z
 Status: `codex_morning_routine_run_ready`
 
 ## Summary
@@ -11,21 +11,21 @@ Status: `codex_morning_routine_run_ready`
 - Dirty repos: 1
 - Latest handoff: 352
 - Latest mirrored handoff: 352
-- Source Root state: unknown
+- Source Root state: blocked_until_explicit_owner_reply_and_guards
 - Private processing allowed: no
-- Innovation candidates: 9
+- Innovation candidates: 34
 - Next batch mode: source_free_innovation_and_guarding
 - Public-ready after run: 0
 
 ## Repos
 
-- `architecture_cosmos`: branch main, behind 0, ahead 0, dirty 1327, fetch ok
+- `architecture_cosmos`: branch main, behind 0, ahead 0, dirty 1377, fetch ok
 - `kosmo_orbit`: branch main, behind 0, ahead 0, dirty 0, fetch ok
 
 ## Next Batch
 
 Mode: `source_free_innovation_and_guarding`
-Reason: Source Root is not unlocked.
+Reason: blocked_until_explicit_owner_reply_and_guards
 
 - `npm run kosmo:innovation-github-watchlist`
 - `npm run kosmo:innovation-github-watchlist-check`
