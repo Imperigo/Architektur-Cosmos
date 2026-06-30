@@ -1,0 +1,1824 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T16:55:20.120Z",
+  "generator": "public-static-route-inventory-check",
+  "status": "public_static_route_inventory_passed",
+  "policy": {
+    "source_free": true,
+    "reads_private_content": false,
+    "writes_public_ready": false,
+    "starts_server": false,
+    "scans_static_export_only": true
+  },
+  "inputs": {
+    "out_dir": "out",
+    "entries": "data/mock-entries.json"
+  },
+  "summary": {
+    "data_entry_count": 112,
+    "exported_atlas_entry_count": 112,
+    "scanned_route_file_count": 240,
+    "missing_atlas_routes": 0,
+    "stale_atlas_routes": 0,
+    "duplicate_data_slugs": 0,
+    "failed_route_file_checks": 0,
+    "failure_count": 0
+  },
+  "atlas_routes": [
+    "/atlas/25b-avenue-franklin/",
+    "/atlas/afasia-no-architecture-flower-house/",
+    "/atlas/agora-of-athens/",
+    "/atlas/alhambra/",
+    "/atlas/alterszentrum-kloster-ingenbohl/",
+    "/atlas/arc-et-senans/",
+    "/atlas/athens-charter/",
+    "/atlas/barcelona-extension/",
+    "/atlas/bauhaus-dessau/",
+    "/atlas/berlin-iba-1987/",
+    "/atlas/brasilia/",
+    "/atlas/broadacre-city/",
+    "/atlas/brunelleschi-dome/",
+    "/atlas/buerogebaeude-montecatini/",
+    "/atlas/catal-huyuk/",
+    "/atlas/catalan-atlas/",
+    "/atlas/central-park/",
+    "/atlas/centre-pompidou/",
+    "/atlas/chandigarh/",
+    "/atlas/cite-industrielle/",
+    "/atlas/city-in-layers/",
+    "/atlas/crystal-palace/",
+    "/atlas/delirious-new-york/",
+    "/atlas/dom-ino-house/",
+    "/atlas/dura-europos/",
+    "/atlas/elemental-quinta-monroy/",
+    "/atlas/emerald-necklace/",
+    "/atlas/eridu-and-susa/",
+    "/atlas/euralille-metropole/",
+    "/atlas/fagus-factory/",
+    "/atlas/familistere/",
+    "/atlas/fortezza-di-palmanova/",
+    "/atlas/forum-romanum/",
+    "/atlas/garden-cities-of-tomorrow/",
+    "/atlas/garden-of-tuileries/",
+    "/atlas/gas-works-park/",
+    "/atlas/gobekli-tepe/",
+    "/atlas/habitat-67/",
+    "/atlas/hafeninsel-saarbruecken/",
+    "/atlas/hagia-sophia/",
+    "/atlas/haus-tugendhat/",
+    "/atlas/hereford-mappa-mundi/",
+    "/atlas/high-line/",
+    "/atlas/hotel-tassel/",
+    "/atlas/hufeisensiedlung/",
+    "/atlas/ibm-cosham/",
+    "/atlas/immeuble-rue-des-amiraux/",
+    "/atlas/karl-marx-hof/",
+    "/atlas/klingenpark/",
+    "/atlas/kloster-st-gallen/",
+    "/atlas/landschaftspark-duisburg-nord/",
+    "/atlas/letchworth-garden-city/",
+    "/atlas/leutschenpark/",
+    "/atlas/linear-city/",
+    "/atlas/marc-antoine-laugier-primitive-hut/",
+    "/atlas/megara-hyblaea/",
+    "/atlas/mercator-world-atlas/",
+    "/atlas/mfo-park/",
+    "/atlas/milet/",
+    "/atlas/mohenjo-daro/",
+    "/atlas/narkomfin-housing/",
+    "/atlas/new-babylon/",
+    "/atlas/new-delhi/",
+    "/atlas/new-lanark-mills/",
+    "/atlas/nippur/",
+    "/atlas/oerliker-park/",
+    "/atlas/olynth/",
+    "/atlas/opfikerpark-glattpark/",
+    "/atlas/palazzo-medici-riccardi/",
+    "/atlas/palladio-four-books/",
+    "/atlas/panopticon/",
+    "/atlas/pantheon/",
+    "/atlas/parc-de-la-villette/",
+    "/atlas/parthenon/",
+    "/atlas/piazza-del-popolo/",
+    "/atlas/piazza-st-peters/",
+    "/atlas/pompeji/",
+    "/atlas/postsparkasse/",
+    "/atlas/priene/",
+    "/atlas/ptolemy-geographia/",
+    "/atlas/pyramids-of-giza/",
+    "/atlas/red-house/",
+    "/atlas/renaturierung-der-aire/",
+    "/atlas/royal-observatory-greenwich/",
+    "/atlas/rural-studio-20k-house/",
+    "/atlas/s-m-l-xl/",
+    "/atlas/schurenbach-halde/",
+    "/atlas/serpentine-pavilion-ishigami/",
+    "/atlas/sforzinda/",
+    "/atlas/shipyard-park/",
+    "/atlas/siena/",
+    "/atlas/sixtus-v-rome-plan/",
+    "/atlas/the-capitol/",
+    "/atlas/timgad/",
+    "/atlas/uferpark-attisholz-sued/",
+    "/atlas/unite-habitation/",
+    "/atlas/ur/",
+    "/atlas/uruk-city/",
+    "/atlas/venice-biennale-architecture-2012/",
+    "/atlas/versailles-gardens/",
+    "/atlas/villa-d-este/",
+    "/atlas/villa-lante/",
+    "/atlas/villa-medici-in-fiesole/",
+    "/atlas/villa-noailles/",
+    "/atlas/villa-savoye/",
+    "/atlas/ville-radieuse/",
+    "/atlas/vitruvius-de-architectura/",
+    "/atlas/voelkerbundspalast-competition/",
+    "/atlas/warenhaus-wertheim/",
+    "/atlas/welwyn-garden-city/",
+    "/atlas/wien-ringstrasse/",
+    "/atlas/willis-faber-and-dumas-office/"
+  ],
+  "route_files": [
+    {
+      "file": "out/.well-known/security.txt",
+      "status": "passed",
+      "bytes": 215,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/archive/index.html",
+      "status": "passed",
+      "bytes": 212964,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/archive/index.txt",
+      "status": "passed",
+      "bytes": 107932,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/assets/index.html",
+      "status": "passed",
+      "bytes": 191198,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/assets/index.txt",
+      "status": "passed",
+      "bytes": 110033,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/25b-avenue-franklin/index.html",
+      "status": "passed",
+      "bytes": 163539,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/25b-avenue-franklin/index.txt",
+      "status": "passed",
+      "bytes": 98532,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/afasia-no-architecture-flower-house/index.html",
+      "status": "passed",
+      "bytes": 164363,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/afasia-no-architecture-flower-house/index.txt",
+      "status": "passed",
+      "bytes": 98948,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/agora-of-athens/index.html",
+      "status": "passed",
+      "bytes": 153577,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/agora-of-athens/index.txt",
+      "status": "passed",
+      "bytes": 93080,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/alhambra/index.html",
+      "status": "passed",
+      "bytes": 177319,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/alhambra/index.txt",
+      "status": "passed",
+      "bytes": 105920,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/alterszentrum-kloster-ingenbohl/index.html",
+      "status": "passed",
+      "bytes": 207147,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/alterszentrum-kloster-ingenbohl/index.txt",
+      "status": "passed",
+      "bytes": 121904,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/arc-et-senans/index.html",
+      "status": "passed",
+      "bytes": 156459,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/arc-et-senans/index.txt",
+      "status": "passed",
+      "bytes": 94697,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/athens-charter/index.html",
+      "status": "passed",
+      "bytes": 169916,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/athens-charter/index.txt",
+      "status": "passed",
+      "bytes": 101946,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/barcelona-extension/index.html",
+      "status": "passed",
+      "bytes": 155405,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/barcelona-extension/index.txt",
+      "status": "passed",
+      "bytes": 94022,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/bauhaus-dessau/index.html",
+      "status": "passed",
+      "bytes": 166622,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/bauhaus-dessau/index.txt",
+      "status": "passed",
+      "bytes": 100365,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/berlin-iba-1987/index.html",
+      "status": "passed",
+      "bytes": 163057,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/berlin-iba-1987/index.txt",
+      "status": "passed",
+      "bytes": 98513,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/brasilia/index.html",
+      "status": "passed",
+      "bytes": 178586,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/brasilia/index.txt",
+      "status": "passed",
+      "bytes": 106576,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/broadacre-city/index.html",
+      "status": "passed",
+      "bytes": 161193,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/broadacre-city/index.txt",
+      "status": "passed",
+      "bytes": 97321,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/brunelleschi-dome/index.html",
+      "status": "passed",
+      "bytes": 165798,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/brunelleschi-dome/index.txt",
+      "status": "passed",
+      "bytes": 99813,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/buerogebaeude-montecatini/index.html",
+      "status": "passed",
+      "bytes": 162249,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/buerogebaeude-montecatini/index.txt",
+      "status": "passed",
+      "bytes": 97323,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/catal-huyuk/index.html",
+      "status": "passed",
+      "bytes": 155569,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/catal-huyuk/index.txt",
+      "status": "passed",
+      "bytes": 94209,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/catalan-atlas/index.html",
+      "status": "passed",
+      "bytes": 182961,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/catalan-atlas/index.txt",
+      "status": "passed",
+      "bytes": 109231,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/central-park/index.html",
+      "status": "passed",
+      "bytes": 156422,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/central-park/index.txt",
+      "status": "passed",
+      "bytes": 94595,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/centre-pompidou/index.html",
+      "status": "passed",
+      "bytes": 132902,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/centre-pompidou/index.txt",
+      "status": "passed",
+      "bytes": 81562,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/chandigarh/index.html",
+      "status": "passed",
+      "bytes": 182538,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/chandigarh/index.txt",
+      "status": "passed",
+      "bytes": 108830,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/cite-industrielle/index.html",
+      "status": "passed",
+      "bytes": 161954,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/cite-industrielle/index.txt",
+      "status": "passed",
+      "bytes": 97890,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/city-in-layers/index.html",
+      "status": "passed",
+      "bytes": 165107,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/city-in-layers/index.txt",
+      "status": "passed",
+      "bytes": 98838,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/crystal-palace/index.html",
+      "status": "passed",
+      "bytes": 169076,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/crystal-palace/index.txt",
+      "status": "passed",
+      "bytes": 101571,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/delirious-new-york/index.html",
+      "status": "passed",
+      "bytes": 162772,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/delirious-new-york/index.txt",
+      "status": "passed",
+      "bytes": 98130,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/dom-ino-house/index.html",
+      "status": "passed",
+      "bytes": 163142,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/dom-ino-house/index.txt",
+      "status": "passed",
+      "bytes": 98425,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/dura-europos/index.html",
+      "status": "passed",
+      "bytes": 152813,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/dura-europos/index.txt",
+      "status": "passed",
+      "bytes": 92706,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/elemental-quinta-monroy/index.html",
+      "status": "passed",
+      "bytes": 122993,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/elemental-quinta-monroy/index.txt",
+      "status": "passed",
+      "bytes": 76383,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/emerald-necklace/index.html",
+      "status": "passed",
+      "bytes": 156077,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/emerald-necklace/index.txt",
+      "status": "passed",
+      "bytes": 94379,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/eridu-and-susa/index.html",
+      "status": "passed",
+      "bytes": 151990,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/eridu-and-susa/index.txt",
+      "status": "passed",
+      "bytes": 92243,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/euralille-metropole/index.html",
+      "status": "passed",
+      "bytes": 165679,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/euralille-metropole/index.txt",
+      "status": "passed",
+      "bytes": 99146,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/fagus-factory/index.html",
+      "status": "passed",
+      "bytes": 162918,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/fagus-factory/index.txt",
+      "status": "passed",
+      "bytes": 98354,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/familistere/index.html",
+      "status": "passed",
+      "bytes": 157216,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/familistere/index.txt",
+      "status": "passed",
+      "bytes": 95083,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/fortezza-di-palmanova/index.html",
+      "status": "passed",
+      "bytes": 158999,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/fortezza-di-palmanova/index.txt",
+      "status": "passed",
+      "bytes": 96052,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/forum-romanum/index.html",
+      "status": "passed",
+      "bytes": 156688,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/forum-romanum/index.txt",
+      "status": "passed",
+      "bytes": 94793,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/garden-cities-of-tomorrow/index.html",
+      "status": "passed",
+      "bytes": 171593,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/garden-cities-of-tomorrow/index.txt",
+      "status": "passed",
+      "bytes": 102258,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/garden-of-tuileries/index.html",
+      "status": "passed",
+      "bytes": 157702,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/garden-of-tuileries/index.txt",
+      "status": "passed",
+      "bytes": 95295,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/gas-works-park/index.html",
+      "status": "passed",
+      "bytes": 182316,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/gas-works-park/index.txt",
+      "status": "passed",
+      "bytes": 108622,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/gobekli-tepe/index.html",
+      "status": "passed",
+      "bytes": 164226,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/gobekli-tepe/index.txt",
+      "status": "passed",
+      "bytes": 98912,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/habitat-67/index.html",
+      "status": "passed",
+      "bytes": 178047,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/habitat-67/index.txt",
+      "status": "passed",
+      "bytes": 105670,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hafeninsel-saarbruecken/index.html",
+      "status": "passed",
+      "bytes": 165357,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hafeninsel-saarbruecken/index.txt",
+      "status": "passed",
+      "bytes": 99375,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hagia-sophia/index.html",
+      "status": "passed",
+      "bytes": 169344,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hagia-sophia/index.txt",
+      "status": "passed",
+      "bytes": 101643,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/haus-tugendhat/index.html",
+      "status": "passed",
+      "bytes": 174394,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/haus-tugendhat/index.txt",
+      "status": "passed",
+      "bytes": 104209,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hereford-mappa-mundi/index.html",
+      "status": "passed",
+      "bytes": 178885,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hereford-mappa-mundi/index.txt",
+      "status": "passed",
+      "bytes": 106727,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/high-line/index.html",
+      "status": "passed",
+      "bytes": 170387,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/high-line/index.txt",
+      "status": "passed",
+      "bytes": 102328,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hotel-tassel/index.html",
+      "status": "passed",
+      "bytes": 155815,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hotel-tassel/index.txt",
+      "status": "passed",
+      "bytes": 94285,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hufeisensiedlung/index.html",
+      "status": "passed",
+      "bytes": 175193,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/hufeisensiedlung/index.txt",
+      "status": "passed",
+      "bytes": 104861,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/ibm-cosham/index.html",
+      "status": "passed",
+      "bytes": 160207,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/ibm-cosham/index.txt",
+      "status": "passed",
+      "bytes": 96484,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/immeuble-rue-des-amiraux/index.html",
+      "status": "passed",
+      "bytes": 157827,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/immeuble-rue-des-amiraux/index.txt",
+      "status": "passed",
+      "bytes": 95208,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/index.html",
+      "status": "passed",
+      "bytes": 1389992,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/index.txt",
+      "status": "passed",
+      "bytes": 1295359,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/karl-marx-hof/index.html",
+      "status": "passed",
+      "bytes": 153372,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/karl-marx-hof/index.txt",
+      "status": "passed",
+      "bytes": 93030,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/klingenpark/index.html",
+      "status": "passed",
+      "bytes": 157993,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/klingenpark/index.txt",
+      "status": "passed",
+      "bytes": 95402,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/kloster-st-gallen/index.html",
+      "status": "passed",
+      "bytes": 160870,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/kloster-st-gallen/index.txt",
+      "status": "passed",
+      "bytes": 97048,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/landschaftspark-duisburg-nord/index.html",
+      "status": "passed",
+      "bytes": 172412,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/landschaftspark-duisburg-nord/index.txt",
+      "status": "passed",
+      "bytes": 103570,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/letchworth-garden-city/index.html",
+      "status": "passed",
+      "bytes": 157449,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/letchworth-garden-city/index.txt",
+      "status": "passed",
+      "bytes": 95220,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/leutschenpark/index.html",
+      "status": "passed",
+      "bytes": 180181,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/leutschenpark/index.txt",
+      "status": "passed",
+      "bytes": 107451,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/linear-city/index.html",
+      "status": "passed",
+      "bytes": 152382,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/linear-city/index.txt",
+      "status": "passed",
+      "bytes": 92401,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/marc-antoine-laugier-primitive-hut/index.html",
+      "status": "passed",
+      "bytes": 129901,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/marc-antoine-laugier-primitive-hut/index.txt",
+      "status": "passed",
+      "bytes": 79992,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/megara-hyblaea/index.html",
+      "status": "passed",
+      "bytes": 152554,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/megara-hyblaea/index.txt",
+      "status": "passed",
+      "bytes": 92535,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/mercator-world-atlas/index.html",
+      "status": "passed",
+      "bytes": 154674,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/mercator-world-atlas/index.txt",
+      "status": "passed",
+      "bytes": 93692,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/mfo-park/index.html",
+      "status": "passed",
+      "bytes": 166060,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/mfo-park/index.txt",
+      "status": "passed",
+      "bytes": 100006,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/milet/index.html",
+      "status": "passed",
+      "bytes": 156940,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/milet/index.txt",
+      "status": "passed",
+      "bytes": 94921,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/mohenjo-daro/index.html",
+      "status": "passed",
+      "bytes": 155228,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/mohenjo-daro/index.txt",
+      "status": "passed",
+      "bytes": 93947,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/narkomfin-housing/index.html",
+      "status": "passed",
+      "bytes": 173940,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/narkomfin-housing/index.txt",
+      "status": "passed",
+      "bytes": 103411,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/new-babylon/index.html",
+      "status": "passed",
+      "bytes": 131944,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/new-babylon/index.txt",
+      "status": "passed",
+      "bytes": 81076,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/new-delhi/index.html",
+      "status": "passed",
+      "bytes": 154274,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/new-delhi/index.txt",
+      "status": "passed",
+      "bytes": 93458,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/new-lanark-mills/index.html",
+      "status": "passed",
+      "bytes": 158154,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/new-lanark-mills/index.txt",
+      "status": "passed",
+      "bytes": 95617,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/nippur/index.html",
+      "status": "passed",
+      "bytes": 156753,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/nippur/index.txt",
+      "status": "passed",
+      "bytes": 94799,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/oerliker-park/index.html",
+      "status": "passed",
+      "bytes": 160779,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/oerliker-park/index.txt",
+      "status": "passed",
+      "bytes": 96844,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/olynth/index.html",
+      "status": "passed",
+      "bytes": 158723,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/olynth/index.txt",
+      "status": "passed",
+      "bytes": 95866,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/opfikerpark-glattpark/index.html",
+      "status": "passed",
+      "bytes": 162691,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/opfikerpark-glattpark/index.txt",
+      "status": "passed",
+      "bytes": 97938,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/palazzo-medici-riccardi/index.html",
+      "status": "passed",
+      "bytes": 156955,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/palazzo-medici-riccardi/index.txt",
+      "status": "passed",
+      "bytes": 94973,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/palladio-four-books/index.html",
+      "status": "passed",
+      "bytes": 164206,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/palladio-four-books/index.txt",
+      "status": "passed",
+      "bytes": 99101,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/panopticon/index.html",
+      "status": "passed",
+      "bytes": 129505,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/panopticon/index.txt",
+      "status": "passed",
+      "bytes": 79779,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/pantheon/index.html",
+      "status": "passed",
+      "bytes": 164770,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/pantheon/index.txt",
+      "status": "passed",
+      "bytes": 99153,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/parc-de-la-villette/index.html",
+      "status": "passed",
+      "bytes": 162687,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/parc-de-la-villette/index.txt",
+      "status": "passed",
+      "bytes": 97893,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/parthenon/index.html",
+      "status": "passed",
+      "bytes": 161529,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/parthenon/index.txt",
+      "status": "passed",
+      "bytes": 97474,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/piazza-del-popolo/index.html",
+      "status": "passed",
+      "bytes": 158556,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/piazza-del-popolo/index.txt",
+      "status": "passed",
+      "bytes": 95823,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/piazza-st-peters/index.html",
+      "status": "passed",
+      "bytes": 156162,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/piazza-st-peters/index.txt",
+      "status": "passed",
+      "bytes": 94531,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/pompeji/index.html",
+      "status": "passed",
+      "bytes": 156341,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/pompeji/index.txt",
+      "status": "passed",
+      "bytes": 94591,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/postsparkasse/index.html",
+      "status": "passed",
+      "bytes": 164270,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/postsparkasse/index.txt",
+      "status": "passed",
+      "bytes": 98892,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/priene/index.html",
+      "status": "passed",
+      "bytes": 157188,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/priene/index.txt",
+      "status": "passed",
+      "bytes": 95034,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/ptolemy-geographia/index.html",
+      "status": "passed",
+      "bytes": 156447,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/ptolemy-geographia/index.txt",
+      "status": "passed",
+      "bytes": 94640,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/pyramids-of-giza/index.html",
+      "status": "passed",
+      "bytes": 163299,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/pyramids-of-giza/index.txt",
+      "status": "passed",
+      "bytes": 98306,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/red-house/index.html",
+      "status": "passed",
+      "bytes": 169804,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/red-house/index.txt",
+      "status": "passed",
+      "bytes": 102026,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/renaturierung-der-aire/index.html",
+      "status": "passed",
+      "bytes": 162707,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/renaturierung-der-aire/index.txt",
+      "status": "passed",
+      "bytes": 97930,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/royal-observatory-greenwich/index.html",
+      "status": "passed",
+      "bytes": 155773,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/royal-observatory-greenwich/index.txt",
+      "status": "passed",
+      "bytes": 94301,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/rural-studio-20k-house/index.html",
+      "status": "passed",
+      "bytes": 165825,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/rural-studio-20k-house/index.txt",
+      "status": "passed",
+      "bytes": 99790,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/s-m-l-xl/index.html",
+      "status": "passed",
+      "bytes": 123904,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/s-m-l-xl/index.txt",
+      "status": "passed",
+      "bytes": 76837,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/schurenbach-halde/index.html",
+      "status": "passed",
+      "bytes": 162284,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/schurenbach-halde/index.txt",
+      "status": "passed",
+      "bytes": 97680,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/serpentine-pavilion-ishigami/index.html",
+      "status": "passed",
+      "bytes": 162234,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/serpentine-pavilion-ishigami/index.txt",
+      "status": "passed",
+      "bytes": 98062,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/sforzinda/index.html",
+      "status": "passed",
+      "bytes": 156719,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/sforzinda/index.txt",
+      "status": "passed",
+      "bytes": 94782,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/shipyard-park/index.html",
+      "status": "passed",
+      "bytes": 162370,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/shipyard-park/index.txt",
+      "status": "passed",
+      "bytes": 97759,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/siena/index.html",
+      "status": "passed",
+      "bytes": 159505,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/siena/index.txt",
+      "status": "passed",
+      "bytes": 96253,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/sixtus-v-rome-plan/index.html",
+      "status": "passed",
+      "bytes": 163191,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/sixtus-v-rome-plan/index.txt",
+      "status": "passed",
+      "bytes": 98121,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/the-capitol/index.html",
+      "status": "passed",
+      "bytes": 160148,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/the-capitol/index.txt",
+      "status": "passed",
+      "bytes": 96504,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/timgad/index.html",
+      "status": "passed",
+      "bytes": 155180,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/timgad/index.txt",
+      "status": "passed",
+      "bytes": 93966,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/uferpark-attisholz-sued/index.html",
+      "status": "passed",
+      "bytes": 162592,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/uferpark-attisholz-sued/index.txt",
+      "status": "passed",
+      "bytes": 97911,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/unite-habitation/index.html",
+      "status": "passed",
+      "bytes": 171567,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/unite-habitation/index.txt",
+      "status": "passed",
+      "bytes": 102607,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/ur/index.html",
+      "status": "passed",
+      "bytes": 156130,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/ur/index.txt",
+      "status": "passed",
+      "bytes": 94450,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/uruk-city/index.html",
+      "status": "passed",
+      "bytes": 162304,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/uruk-city/index.txt",
+      "status": "passed",
+      "bytes": 97784,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/venice-biennale-architecture-2012/index.html",
+      "status": "passed",
+      "bytes": 166674,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/venice-biennale-architecture-2012/index.txt",
+      "status": "passed",
+      "bytes": 99656,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/versailles-gardens/index.html",
+      "status": "passed",
+      "bytes": 181195,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/versailles-gardens/index.txt",
+      "status": "passed",
+      "bytes": 108044,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-d-este/index.html",
+      "status": "passed",
+      "bytes": 154155,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-d-este/index.txt",
+      "status": "passed",
+      "bytes": 93364,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-lante/index.html",
+      "status": "passed",
+      "bytes": 153984,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-lante/index.txt",
+      "status": "passed",
+      "bytes": 93346,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-medici-in-fiesole/index.html",
+      "status": "passed",
+      "bytes": 153595,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-medici-in-fiesole/index.txt",
+      "status": "passed",
+      "bytes": 93152,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-noailles/index.html",
+      "status": "passed",
+      "bytes": 174583,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-noailles/index.txt",
+      "status": "passed",
+      "bytes": 104430,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-savoye/index.html",
+      "status": "passed",
+      "bytes": 210426,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/villa-savoye/index.txt",
+      "status": "passed",
+      "bytes": 123477,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/ville-radieuse/index.html",
+      "status": "passed",
+      "bytes": 161107,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/ville-radieuse/index.txt",
+      "status": "passed",
+      "bytes": 97071,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/vitruvius-de-architectura/index.html",
+      "status": "passed",
+      "bytes": 166252,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/vitruvius-de-architectura/index.txt",
+      "status": "passed",
+      "bytes": 99405,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/voelkerbundspalast-competition/index.html",
+      "status": "passed",
+      "bytes": 163618,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/voelkerbundspalast-competition/index.txt",
+      "status": "passed",
+      "bytes": 98352,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/warenhaus-wertheim/index.html",
+      "status": "passed",
+      "bytes": 163973,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/warenhaus-wertheim/index.txt",
+      "status": "passed",
+      "bytes": 98899,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/welwyn-garden-city/index.html",
+      "status": "passed",
+      "bytes": 154682,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/welwyn-garden-city/index.txt",
+      "status": "passed",
+      "bytes": 93704,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/wien-ringstrasse/index.html",
+      "status": "passed",
+      "bytes": 155193,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/wien-ringstrasse/index.txt",
+      "status": "passed",
+      "bytes": 93973,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/willis-faber-and-dumas-office/index.html",
+      "status": "passed",
+      "bytes": 165233,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/atlas/willis-faber-and-dumas-office/index.txt",
+      "status": "passed",
+      "bytes": 99286,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/icon.svg",
+      "status": "passed",
+      "bytes": 1132,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/index.html",
+      "status": "passed",
+      "bytes": 1391951,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/index.txt",
+      "status": "passed",
+      "bytes": 1294817,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/orbit/index.html",
+      "status": "passed",
+      "bytes": 51793,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/orbit/index.txt",
+      "status": "passed",
+      "bytes": 24134,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/references/index.html",
+      "status": "passed",
+      "bytes": 160746,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/references/index.txt",
+      "status": "passed",
+      "bytes": 89027,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/robots.txt",
+      "status": "passed",
+      "bytes": 74,
+      "leak_matches": [],
+      "failures": []
+    },
+    {
+      "file": "out/sitemap.xml",
+      "status": "passed",
+      "bytes": 21201,
+      "leak_matches": [],
+      "failures": []
+    }
+  ],
+  "failures": []
+}
