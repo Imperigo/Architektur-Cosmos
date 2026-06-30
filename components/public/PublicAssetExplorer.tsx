@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import Link from 'next/link';
 import { Box, FileImage, FileText, Grid3X3, Layers3, List, RotateCcw, Search, type LucideIcon } from 'lucide-react';
 import {
   publicAssetDisplayLabel,
@@ -14,6 +15,7 @@ import {
 
 export type PublicAsset = {
   id: string;
+  projectSlug: string;
   project: string;
   kind: 'image' | 'plan' | 'section' | 'model' | 'analysis';
   label: string;
@@ -181,32 +183,39 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
       ) : view === 'grid' ? (
         <div className="mt-6 grid gap-px bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
           {visible.map((asset) => (
-          <a
-            key={asset.id}
-            href={asset.url}
-            className="ak-card public-explorer-card group overflow-hidden"
-          >
-            <div className="public-asset-media-frame aspect-[4/3] overflow-hidden border-b border-white/10">
-              {asset.previewUrl ? (
-                <img src={asset.previewUrl} alt={asset.label} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" />
-              ) : (
-                <AssetPreviewPlaceholder asset={asset} />
-              )}
-            </div>
-            <div className="p-4">
-              <div className="public-card-meta">
-                <span>{kindLabels[asset.kind]}</span>
-                <span>{publicAssetLayerLabel(asset.layer)}</span>
+            <article
+              key={asset.id}
+              className="ak-card public-explorer-card group overflow-hidden"
+            >
+              <div className="public-asset-media-frame aspect-[4/3] overflow-hidden border-b border-white/10">
+                {asset.previewUrl ? (
+                  <img src={asset.previewUrl} alt={asset.label} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]" />
+                ) : (
+                  <AssetPreviewPlaceholder asset={asset} />
+                )}
               </div>
-              <h3 className="public-card-title public-card-title-compact">{publicAssetDisplayLabel(asset.label)}</h3>
-              <p className="public-card-summary public-card-summary-compact">{asset.project}</p>
-              <div className="public-card-chip-row mt-4">
-                <span>{publicAssetRightsLabel(asset.rights)}</span>
-                <span>{publicAssetStatusLabel(asset.status)}</span>
+              <div className="p-4">
+                <div className="public-card-meta">
+                  <span>{kindLabels[asset.kind]}</span>
+                  <span>{publicAssetLayerLabel(asset.layer)}</span>
+                </div>
+                <h3 className="public-card-title public-card-title-compact">{publicAssetDisplayLabel(asset.label)}</h3>
+                <p className="public-card-summary public-card-summary-compact">{asset.project}</p>
+                <div className="public-card-chip-row mt-4">
+                  <span>{publicAssetRightsLabel(asset.rights)}</span>
+                  <span>{publicAssetStatusLabel(asset.status)}</span>
+                </div>
+                <p className="public-card-provenance line-clamp-2">{publicAssetProvenanceLabel(asset.provenance)}</p>
+                <div className="public-card-action-row">
+                  <Link href={`/atlas/${asset.projectSlug}/`} className="public-card-action-link">
+                    Dossier öffnen
+                  </Link>
+                  <a href={asset.url} className="public-card-action-link public-card-action-link-secondary">
+                    Asset prüfen
+                  </a>
+                </div>
               </div>
-              <p className="public-card-provenance line-clamp-2">{publicAssetProvenanceLabel(asset.provenance)}</p>
-            </div>
-          </a>
+            </article>
           ))}
         </div>
       ) : (
@@ -219,9 +228,8 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
             <span>Status</span>
           </div>
           {visible.map((asset) => (
-            <a
+            <div
               key={asset.id}
-              href={asset.url}
               className="public-index-row grid gap-2 border-b border-white/10 px-3 py-4 md:grid-cols-[90px_minmax(220px,1.2fr)_minmax(180px,0.8fr)_150px_130px] md:items-center md:gap-4"
             >
               <span className="public-index-accent public-index-accent-label">{kindLabels[asset.kind]}</span>
@@ -229,10 +237,10 @@ export function PublicAssetExplorer({ assets }: PublicAssetExplorerProps) {
                 <strong className="public-index-title public-index-title-compact">{publicAssetDisplayLabel(asset.label)}</strong>
                 <span className="public-index-muted line-clamp-1">{publicAssetProvenanceLabel(asset.provenance)}</span>
               </span>
-              <span className="public-index-body">{asset.project}</span>
+              <Link href={`/atlas/${asset.projectSlug}/`} className="public-index-body public-index-title-compact">{asset.project}</Link>
               <span className="public-index-meta">{publicAssetLayerLabel(asset.layer)}</span>
-              <span className="public-index-meta">{publicAssetRightsLabel(asset.rights)} / {publicAssetStatusLabel(asset.status)}</span>
-            </a>
+              <a href={asset.url} className="public-index-meta">{publicAssetRightsLabel(asset.rights)} / {publicAssetStatusLabel(asset.status)}</a>
+            </div>
           ))}
         </div>
       )}

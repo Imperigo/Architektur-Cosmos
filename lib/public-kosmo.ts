@@ -253,6 +253,7 @@ export function publicAssets(): PublicAsset[] {
       const candidate = publicAssetCandidateForMedia(entry, media);
       assets.push({
         id: `${entry.slug}-${media.type}`,
+        projectSlug: entry.slug,
         project: entry.title,
         kind: media.type === 'plan' ? 'plan' : media.type === 'section' ? 'section' : 'image',
         label: media.label,
@@ -268,6 +269,7 @@ export function publicAssets(): PublicAsset[] {
     for (const layer of entry.analysis_layers ?? []) {
       assets.push({
         id: `${entry.slug}-analysis-${layer.analysis_type}`,
+        projectSlug: entry.slug,
         project: entry.title,
         kind: 'analysis',
         label: `${entry.title}: ${layer.analysis_type.replace(/_/g, ' ')}`,
@@ -283,6 +285,7 @@ export function publicAssets(): PublicAsset[] {
   for (const model of publicModels) {
     assets.push({
       id: `${model.slug}-model`,
+      projectSlug: model.slug,
       project: model.title,
       kind: 'model',
       label: `${model.title}: öffentliche 3D-Vorschau`,

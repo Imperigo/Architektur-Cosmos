@@ -395,14 +395,16 @@ function PublicPilotSection({ entry, accent }: { entry: Entry; accent: string })
 }
 
 function DossierNavigation({ entry, accent }: { entry: Entry; accent: string }) {
+  const hasModelAnalysis = Boolean(publicModelPreviewUrl(entry) || entry.analysis_layers?.length || entry.analysis_observations?.length);
+  const hasAnalysisLayers = Boolean(entry.analysis_layers?.length || entry.analysis_observations?.length);
   const items = [
-    { href: '#model-analysis', label: '3D / Layer', detail: 'Modell, Material, Tragwerk', Icon: Layers3 },
-    { href: '#media-gallery', label: 'Medien', detail: 'Bild, Plan, Schnitt', Icon: Images },
-    { href: '#analysis-layers', label: 'Analyse', detail: 'Struktur und Tektonik', Icon: Search },
+    hasModelAnalysis ? { href: '#model-analysis', label: '3D / Layer', detail: 'Modell, Material, Tragwerk', Icon: Layers3 } : null,
+    entry.media.length ? { href: '#media-gallery', label: 'Medien', detail: 'Bild, Plan, Schnitt', Icon: Images } : null,
+    hasAnalysisLayers ? { href: '#analysis-layers', label: 'Analyse', detail: 'Struktur und Tektonik', Icon: Search } : null,
     { href: '#entry-network', label: 'Netzwerk', detail: 'Relationen und Vergleich', Icon: Network },
     { href: '/references/', label: 'Referenzen', detail: 'öffentliche Dossiers', Icon: LibraryBig },
     { href: '/assets/', label: 'Assets', detail: 'Bauteile und Vorschauen', Icon: Boxes }
-  ];
+  ].filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   return (
     <nav

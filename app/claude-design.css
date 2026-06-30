@@ -685,6 +685,41 @@ textarea {
   white-space: nowrap;
 }
 
+.public-card-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.public-card-action-link {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--ak-accent) 36%, transparent);
+  border-radius: 999px;
+  padding: 0 10px;
+  color: var(--ak-text-primary);
+  font-family: var(--ak-font-mono);
+  font-size: 9px;
+  font-weight: 720;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.public-card-action-link:hover,
+.public-card-action-link:focus-visible {
+  border-color: color-mix(in srgb, var(--ak-accent) 70%, transparent);
+  color: color-mix(in srgb, var(--ak-accent) 82%, var(--ak-text-primary));
+}
+
+.public-card-action-link-secondary {
+  color: color-mix(in srgb, var(--ak-accent) 68%, var(--ak-text-secondary));
+}
+
 .public-card-meta {
   display: flex;
   min-width: 0;

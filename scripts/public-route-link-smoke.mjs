@@ -11,6 +11,7 @@ const seedRoutes = [
   '/',
   '/references/',
   '/assets/',
+  '/atlas/',
   '/orbit/',
   '/atlas/villa-savoye/',
   '/atlas/alterszentrum-kloster-ingenbohl/'
