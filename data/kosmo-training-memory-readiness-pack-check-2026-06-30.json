@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T07:06:08.136Z",
+  "generated_at": "2026-06-30T12:39:23.314Z",
   "status": "kosmo_training_memory_readiness_pack_guard_passed",
   "policy": {
     "validates_pack_only": true,
@@ -14,8 +14,8 @@
     "data/kosmo-training-memory-readiness-pack-2026-06-30.json"
   ],
   "summary": {
-    "checks": 20,
-    "passed": 20,
+    "checks": 21,
+    "passed": 21,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -103,6 +103,11 @@
     },
     {
       "id": "candidate_sources_public_false",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "candidate_sources_no_body_fields",
       "status": "passed",
       "evidence": ""
     },

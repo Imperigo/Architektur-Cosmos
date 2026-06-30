@@ -1,11 +1,11 @@
 # Kosmo Training Memory Readiness Pack Check
 
-Generated: 2026-06-30T07:06:08.136Z
+Generated: 2026-06-30T12:39:23.314Z
 Status: `kosmo_training_memory_readiness_pack_guard_passed`
 
 ## Summary
 
-- Checks: 20/20
+- Checks: 21/21
 - Failures: 0
 - Warnings: 0
 - Public-ready after check: 0
@@ -29,6 +29,7 @@ Status: `kosmo_training_memory_readiness_pack_guard_passed`
 - passed: `lane_public_ready_zero` - 
 - passed: `candidate_sources_present` - 18
 - passed: `candidate_sources_public_false` - 
+- passed: `candidate_sources_no_body_fields` - 
 - passed: `output_contract_no_git_now` - false
 - passed: `hard_stops_training_private_content` - do not train or fine-tune on unverified private content. do not create embeddings from private source contents before source-root, rights and privacy guards pass. do not copy worker output bodies into training data. do not put private ocr/pdf text, scans, images, plans or assets into git. prepare schemas and eval rubrics first; data rows come only after provenance and rights review. keep public-ready at 0.
 - passed: `hard_stops_public_ready` - do not train or fine-tune on unverified private content. do not create embeddings from private source contents before source-root, rights and privacy guards pass. do not copy worker output bodies into training data. do not put private ocr/pdf text, scans, images, plans or assets into git. prepare schemas and eval rubrics first; data rows come only after provenance and rights review. keep public-ready at 0.

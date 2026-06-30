@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T07:06:07.900Z",
+  "generated_at": "2026-06-30T12:39:19.766Z",
   "status": "kosmo_training_memory_readiness_pack_ready",
   "policy": {
     "readiness_only": true,
@@ -25,8 +25,8 @@
     "pilot_sources": 3,
     "asset_sources": 6,
     "worker_contract_sources": 9,
-    "roadmap_status": "vision_completion_roadmap_bootstrap_missing",
-    "roadmap_bootstrap_missing": true,
+    "roadmap_status": "vision_completion_roadmap_ready",
+    "roadmap_bootstrap_missing": false,
     "executable_now": 0,
     "writes_training_data_now": 0,
     "writes_embeddings_now": 0,

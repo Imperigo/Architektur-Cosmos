@@ -62,6 +62,7 @@ async function main() {
 function buildChecks(pack) {
   const lanes = pack.lanes || [];
   const candidateSources = pack.candidate_sources || [];
+  const disallowedCandidateSourceFields = candidateSources.flatMap((source) => findDisallowedContentFields(source));
   const hardStops = (pack.hard_stops || []).join(' ').toLowerCase();
   return [
     check('status_ready', pack.status === 'kosmo_training_memory_readiness_pack_ready', pack.status),
@@ -81,10 +82,42 @@ function buildChecks(pack) {
     check('lane_public_ready_zero', lanes.every((lane) => lane.public_ready_after_lane === 0), lanes.filter((lane) => lane.public_ready_after_lane !== 0).map((lane) => lane.id).join(',')),
     check('candidate_sources_present', candidateSources.length >= 18, candidateSources.length),
     check('candidate_sources_public_false', candidateSources.every((source) => source.public_ready === false), candidateSources.filter((source) => source.public_ready !== false).map((source) => source.id).join(',')),
+    check('candidate_sources_no_body_fields', disallowedCandidateSourceFields.length === 0, disallowedCandidateSourceFields.join(',')),
     check('output_contract_no_git_now', pack.output_contract?.git_allowed_now === false, pack.output_contract?.git_allowed_now),
     check('hard_stops_training_private_content', hardStops.includes('unverified private content') && hardStops.includes('embeddings') && hardStops.includes('worker output bodies'), hardStops),
     check('hard_stops_public_ready', hardStops.includes('public-ready'), hardStops)
   ];
+}
+
+function findDisallowedContentFields(value, path = 'candidate_source') {
+  if (!value || typeof value !== 'object') return [];
+  if (Array.isArray(value)) {
+    return value.flatMap((item, index) => findDisallowedContentFields(item, `${path}[${index}]`));
+  }
+
+  const disallowedFields = new Set([
+    'body',
+    'content',
+    'excerpt',
+    'full_text',
+    'ocr_text',
+    'pdf_text',
+    'private_text',
+    'quote',
+    'raw_content',
+    'raw_text',
+    'scan_text',
+    'text',
+    'transcript',
+    'worker_output_body'
+  ]);
+
+  return Object.entries(value).flatMap(([key, nestedValue]) => {
+    const normalizedKey = key.toLowerCase();
+    const keyPath = `${path}.${key}`;
+    const keyFailures = disallowedFields.has(normalizedKey) ? [keyPath] : [];
+    return [...keyFailures, ...findDisallowedContentFields(nestedValue, keyPath)];
+  });
 }
 
 function check(id, condition, evidence) {
