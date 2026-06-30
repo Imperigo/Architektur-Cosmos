@@ -1,0 +1,364 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T12:59:31.768Z",
+  "status": "kosmo_review_only_publication_fence_passed",
+  "policy": {
+    "validates_existing_reports_only": true,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers_now": false,
+    "writes_public_files_now": false,
+    "uploads_assets_now": false,
+    "promotes_public_ready_now": false,
+    "public_ready_after_fence": 0
+  },
+  "source_refs": [
+    "data/kosmo-source-independent-work-queue-2026-06-30.json",
+    "data/kosmodata-lane-sweep-2026-06-30.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-30.json",
+    "data/kosmo-human-decision-queue-2026-06-30.json",
+    "examples/kosmo-references/review/kosmodraw-bundle-intake-review.generated.json",
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-promotion-guard.generated.json",
+    "examples/kosmo-data/review/public-static-export-smoke.generated.json"
+  ],
+  "summary": {
+    "checks": 54,
+    "passed": 54,
+    "warnings": 0,
+    "failures": 0,
+    "source_independent_codex_executable_now": 0,
+    "owner_pending_items": 16,
+    "references_public_ready_assets": 0,
+    "asset_public_ready_count": 0,
+    "public_static_routes_passed": 11,
+    "public_ready_after_fence": 0
+  },
+  "checks": [
+    {
+      "id": "source_queue_ready",
+      "status": "passed",
+      "evidence": "source_independent_work_queue_ready"
+    },
+    {
+      "id": "source_queue_reads_private_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "source_queue_copies_private_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "source_queue_private_inventory_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "source_queue_local_worker_false",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "source_queue_public_writes_false",
+      "status": "passed",
+      "evidence": {
+        "queue_only": true,
+        "source_root_required": false,
+        "reads_private_content": false,
+        "copies_private_content": false,
+        "runs_private_inventory_now": false,
+        "executes_local_worker_now": false,
+        "writes_public_files": false,
+        "writes_public_manifest": false,
+        "public_ready_after_queue": 0,
+        "note": "This queue identifies safe source-independent work. It does not execute local workers or read private output contents."
+      }
+    },
+    {
+      "id": "source_queue_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "source_queue_no_codex_executable_tasks",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "lane_sweep_review_only_passed",
+      "status": "passed",
+      "evidence": "kosmodata_lane_sweep_review_only_passed"
+    },
+    {
+      "id": "lane_sweep_policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "lane_sweep_public_writes_blocked",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "lane_sweep_downloads_blocked",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "lane_sweep_references_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "lane_sweep_assets_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "lane_sweep_asset_promotion_blocked",
+      "status": "passed",
+      "evidence": "false/18"
+    },
+    {
+      "id": "lane_sweep_local_worker_public_blocked",
+      "status": "passed",
+      "evidence": "false/0"
+    },
+    {
+      "id": "lane_sweep_private_inventory_blocked",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "lane_sweep_source_root_diagnostic_blocked",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "lane_sweep_public_ready_after_briefs_zero",
+      "status": "passed",
+      "evidence": {
+        "villa": 0,
+        "ingenbohl": 0,
+        "sogn": 0,
+        "source_root_selection": 0,
+        "private_inventory_plan": 0
+      }
+    },
+    {
+      "id": "owner_checkpoint_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_pipeline_checkpoint_ready"
+    },
+    {
+      "id": "owner_checkpoint_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "owner_checkpoint_no_intake_write_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "owner_checkpoint_no_session_mutation_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "owner_checkpoint_no_private_reads_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "owner_checkpoint_no_private_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "owner_checkpoint_pending_owner",
+      "status": "passed",
+      "evidence": "pending"
+    },
+    {
+      "id": "owner_checkpoint_source_root_blocked",
+      "status": "passed",
+      "evidence": "blocked_until_explicit_owner_reply_and_guards"
+    },
+    {
+      "id": "owner_checkpoint_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "human_queue_open",
+      "status": "passed",
+      "evidence": "human_decision_queue_open"
+    },
+    {
+      "id": "human_queue_records_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "human_queue_public_writes_blocked",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "human_queue_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "human_queue_has_open_items",
+      "status": "passed",
+      "evidence": 16
+    },
+    {
+      "id": "references_intake_ready",
+      "status": "passed",
+      "evidence": "kosmodraw_bundle_intake_review_ready"
+    },
+    {
+      "id": "references_intake_review_only",
+      "status": "passed",
+      "evidence": {
+        "review_only": true,
+        "metadata_only": true,
+        "copies_ifc_paths_to_report": false,
+        "copies_private_paths_to_report": false,
+        "writes_public_data_now": false,
+        "writes_mock_entries_now": false,
+        "public_ready_after_intake": 0,
+        "owner_review_required_before_public_display": true
+      }
+    },
+    {
+      "id": "references_intake_public_writes_blocked",
+      "status": "passed",
+      "evidence": {
+        "review_only": true,
+        "metadata_only": true,
+        "copies_ifc_paths_to_report": false,
+        "copies_private_paths_to_report": false,
+        "writes_public_data_now": false,
+        "writes_mock_entries_now": false,
+        "public_ready_after_intake": 0,
+        "owner_review_required_before_public_display": true
+      }
+    },
+    {
+      "id": "references_intake_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "references_intake_no_private_path_copy",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "references_intake_bundle_public_ready_zero",
+      "status": "passed",
+      "evidence": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "references_intake_public_display_zero",
+      "status": "passed",
+      "evidence": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "references_intake_no_failures",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "asset_library_draft",
+      "status": "passed",
+      "evidence": "draft"
+    },
+    {
+      "id": "asset_library_public_use_false",
+      "status": "passed",
+      "evidence": "villa-savoye-concrete-frame-material-001:false,villa-savoye-five-points-diagram-001:false,sogn-benedetg-wood-shingle-material-001:false,sogn-benedetg-light-band-detail-001:false,ingenbohl-mineral-pigment-material-001:false,ingenbohl-concrete-core-frame-study-001:false"
+    },
+    {
+      "id": "asset_library_rights_need_review",
+      "status": "passed",
+      "evidence": "villa-savoye-concrete-frame-material-001:generated_needs_review/planned,villa-savoye-five-points-diagram-001:generated_needs_review/planned,sogn-benedetg-wood-shingle-material-001:generated_needs_review/needs_source,sogn-benedetg-light-band-detail-001:generated_needs_review/needs_source,ingenbohl-mineral-pigment-material-001:generated_needs_review/planned,ingenbohl-concrete-core-frame-study-001:generated_needs_review/needs_source"
+    },
+    {
+      "id": "asset_promotion_blocked",
+      "status": "passed",
+      "evidence": "asset_promotion_guard_blocked"
+    },
+    {
+      "id": "asset_promotion_no_uploads",
+      "status": "passed",
+      "evidence": {
+        "no_uploads": true,
+        "no_public_downloads": true,
+        "no_d1_writes": true,
+        "no_r2_writes": true,
+        "promotion_guard_does_not_promote_assets": true,
+        "public_promotion_requires_separate_owner_review": true,
+        "public_promotion_requires_public_rights_review": true
+      }
+    },
+    {
+      "id": "asset_promotion_not_promoting",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "asset_promotion_public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "asset_promotion_allowed_false",
+      "status": "passed",
+      "evidence": "false/18"
+    },
+    {
+      "id": "asset_promotion_unsafe_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "asset_promotion_rows_public_false",
+      "status": "passed",
+      "evidence": "villa-savoye-concrete-frame-material-001:false/false,villa-savoye-five-points-diagram-001:false/false,sogn-benedetg-wood-shingle-material-001:false/false,sogn-benedetg-light-band-detail-001:false/false,ingenbohl-mineral-pigment-material-001:false/false,ingenbohl-concrete-core-frame-study-001:false/false"
+    },
+    {
+      "id": "public_static_export_smoke_passed",
+      "status": "passed",
+      "evidence": "public_static_export_smoke_passed"
+    },
+    {
+      "id": "public_static_export_routes_passed",
+      "status": "passed",
+      "evidence": {
+        "route_count": 11,
+        "passed_routes": 11,
+        "failed_routes": 0,
+        "check_count": 82,
+        "failed_checks": 0
+      }
+    },
+    {
+      "id": "public_static_export_checks_passed",
+      "status": "passed",
+      "evidence": 0
+    }
+  ]
+}
