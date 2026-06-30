@@ -16,6 +16,23 @@ main().catch((error) => {
 });
 
 async function main() {
+  const robotsUrl = `${baseUrl}/robots.txt`;
+  const robotsResponse = await fetch(robotsUrl);
+  const robotsBody = await robotsResponse.text();
+  const robotsLeakMatches = publicLeakMatches(robotsBody);
+
+  check(robotsResponse.ok, 'robots:status', `Expected HTTP 2xx for ${robotsUrl}, got ${robotsResponse.status}.`);
+  check(
+    robotsLeakMatches.length === 0,
+    'robots:no_private_patterns',
+    `Blocked private/source patterns: ${robotsLeakMatches.join(', ') || 'none'}.`
+  );
+  check(
+    robotsBody.includes(`Sitemap: ${siteUrl}/sitemap.xml`),
+    'robots:sitemap_reference',
+    `Expected robots.txt to reference ${siteUrl}/sitemap.xml.`
+  );
+
   const sitemapUrl = `${baseUrl}/sitemap.xml`;
   const sitemapResponse = await fetch(sitemapUrl);
   const sitemapBody = await sitemapResponse.text();
@@ -58,6 +75,12 @@ async function main() {
     status: findings.every((finding) => finding.passed) ? 'passed' : 'failed',
     base_url: baseUrl,
     site_url: siteUrl,
+    checked_robots: {
+      status: robotsResponse.status,
+      body_length: robotsBody.length,
+      blocked_pattern_count: robotsLeakMatches.length,
+      sitemap_reference_present: robotsBody.includes(`Sitemap: ${siteUrl}/sitemap.xml`)
+    },
     checked_route_count: checkedRoutes.length,
     checkedRoutes: verbose || checkedRoutes.some((route) => route.blocked_pattern_count > 0)
       ? checkedRoutes
