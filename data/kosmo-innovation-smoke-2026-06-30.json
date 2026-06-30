@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:46:16.635Z",
+  "status": "innovation_smoke_passed_review_only",
+  "policy": {
+    "public_safe_fixtures_only": true,
+    "installs_tools": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_smoke": 0,
+    "note": "This smoke uses generated synthetic fixtures and local tool probes only. Missing optional tools are skipped, not installed."
+  },
+  "source_refs": [
+    "data/kosmo-innovation-lane-plan-2026-06-30.json"
+  ],
+  "fixture": {
+    "root": "examples/kosmo-innovation-smoke-2026-06-30",
+    "note": "examples/kosmo-innovation-smoke-2026-06-30/fixtures/public-safe-architecture-note.txt",
+    "manifest": "examples/kosmo-innovation-smoke-2026-06-30/fixtures/fixture-manifest.json"
+  },
+  "summary": {
+    "checks": 5,
+    "passed": 5,
+    "skipped": 0,
+    "failures": 0,
+    "public_ready_after_smoke": 0
+  },
+  "checks": [
+    {
+      "id": "markitdown_prepare_m2",
+      "status": "passed",
+      "evidence": "Converted synthetic fixture to examples/kosmo-innovation-smoke-2026-06-30/markitdown-output.md."
+    },
+    {
+      "id": "local_ocr_scanned_sources",
+      "status": "passed",
+      "evidence": "Recognized synthetic OCR fixture at confidence 0.992; wrote examples/kosmo-innovation-smoke-2026-06-30/ocr-contract.generated.json."
+    },
+    {
+      "id": "qwen_embedding_rag",
+      "status": "passed",
+      "evidence": "Wrote public-safe embedding contract examples/kosmo-innovation-smoke-2026-06-30/embedding-contract.generated.json."
+    },
+    {
+      "id": "ifcopenshell_geometry_lane",
+      "status": "passed",
+      "evidence": "Reviewed existing demo IFC with 13/13 checks; wrote examples/kosmo-innovation-smoke-2026-06-30/ifcopenshell-semantic-review.generated.json."
+    },
+    {
+      "id": "paper2poster_publish_lane",
+      "status": "passed",
+      "evidence": "Wrote public-safe layout contract examples/kosmo-innovation-smoke-2026-06-30/publish-layout-contract.generated.json."
+    }
+  ],
+  "next_actions": [
+    "Install missing tools only in isolated environments when owner confirms the lane.",
+    "Keep private source OCR, conversion and embeddings blocked until source-root gates pass.",
+    "Use the generated layout and embedding contracts as the next implementation targets for KosmoPrepare/KosmoPublish."
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-15T13:27:58.454Z",
+  "generated_at": "2026-06-30T06:48:03.513Z",
   "status": "prepare_phase1_adapter_fixture_ready",
   "policy": {
     "synthetic_fixture_only": true,

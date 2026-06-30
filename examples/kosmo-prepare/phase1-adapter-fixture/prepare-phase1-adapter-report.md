@@ -1,6 +1,6 @@
 # KosmoPrepare Phase 1 Adapter Fixture
 
-Generated: 2026-06-15T13:27:58.454Z
+Generated: 2026-06-30T06:48:03.513Z
 Status: `prepare_phase1_adapter_fixture_ready`
 
 ## Outputs

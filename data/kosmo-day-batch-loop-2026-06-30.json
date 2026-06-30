@@ -1,0 +1,591 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:41:20.586Z",
+  "status": "day_batch_loop_needs_review",
+  "policy": {
+    "review_only": true,
+    "records_decisions": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_loop": 0,
+    "note": "This loop runs review-only guards and handoff generators. It does not select source roots, read private source contents, promote assets or publish files."
+  },
+  "summary": {
+    "duration_ms": 12101,
+    "steps": 14,
+    "required_steps": 13,
+    "required_passed_steps": 12,
+    "allowed_failures": 0,
+    "skipped_steps": 0,
+    "core_sweep_status": null,
+    "router_status": null,
+    "worker_boundary_status": null,
+    "owner_handoff_status": "needs_review",
+    "innovation_smoke_status": null,
+    "github_discovery_status": "innovation_github_discovery_ready",
+    "github_discovery_candidates": 25,
+    "github_review_queue_status": "innovation_github_review_queue_ready",
+    "github_review_queue_items": 9,
+    "github_readme_signal_scan_status": "innovation_github_readme_signal_scan_ready",
+    "github_readme_signal_scan_items": 9,
+    "github_fixture_contract_plan_status": "innovation_github_fixture_contract_plan_ready",
+    "github_fixture_contract_plan_count": 6,
+    "github_fixture_skeletons_status": null,
+    "github_fixture_skeletons_files": null,
+    "github_fixture_payloads_status": null,
+    "github_fixture_payloads_written": null,
+    "github_fixture_payload_smoke_status": null,
+    "github_fixture_payload_smoke_payloads": null,
+    "github_fixture_payload_smoke_lanes": null,
+    "github_fixture_payload_smoke_content_types": null,
+    "orbit_bridge_status": null,
+    "source_root_blocker_status": "source_root_blocker_still_active",
+    "source_root_decision_session_refresh_status": "source_root_decision_session_refresh_not_needed",
+    "source_root_decision_session_refresh_changed": false,
+    "source_root_decision_session_refresh_options": 10,
+    "source_root_decision_session_refresh_failures": 0,
+    "source_root_candidate_integrity_status": "source_root_candidate_integrity_owner_review_ready",
+    "source_root_candidate_integrity_existing_paths": 8,
+    "source_root_candidate_integrity_exact_roots": 1,
+    "source_root_candidate_integrity_failures": 0,
+    "source_root_owner_action_status": "source_root_owner_action_required",
+    "source_root_owner_decision_packet_status": "source_root_owner_decision_packet_ready",
+    "source_root_owner_decision_packet_templates": 3,
+    "source_root_owner_decision_packet_exact_roots": 1,
+    "source_root_owner_decision_packet_failures": 0,
+    "source_root_owner_decision_packet_check_status": "source_root_owner_decision_packet_guard_passed",
+    "source_root_owner_decision_packet_check_failures": 0,
+    "source_root_owner_decision_packet_check_warnings": 0,
+    "source_root_decision_dry_run_status": null,
+    "source_root_decision_dry_run_scenarios": null,
+    "source_root_decision_dry_run_metadata_scenarios": null,
+    "source_root_decision_dry_run_failures": null,
+    "source_root_post_owner_activation_queue_status": null,
+    "source_root_post_owner_activation_queue_steps": null,
+    "source_root_post_owner_activation_queue_executable_now": null,
+    "source_root_post_owner_activation_queue_blocked_now": null,
+    "source_root_post_owner_activation_queue_failures": null,
+    "source_root_post_owner_activation_queue_check_status": null,
+    "source_root_post_owner_activation_queue_check_failures": null,
+    "source_root_post_owner_activation_queue_check_warnings": null,
+    "source_root_owner_final_decision_brief_status": null,
+    "source_root_owner_final_decision_brief_options": null,
+    "source_root_owner_final_decision_brief_unlock_options": null,
+    "source_root_owner_final_decision_brief_failures": null,
+    "source_root_owner_choice_consequence_matrix_status": null,
+    "source_root_owner_choice_consequence_matrix_choices": null,
+    "source_root_owner_choice_consequence_matrix_unlock_choices": null,
+    "source_root_owner_choice_consequence_matrix_blocked_choices": null,
+    "source_root_owner_choice_consequence_matrix_failures": null,
+    "pilot_gap_label_review_status": null,
+    "pilot_gap_label_review_labels": null,
+    "pilot_gap_label_review_hard_blockers": null,
+    "pilot_gap_label_review_owner_decisions": null,
+    "pilot_gap_label_review_local_worker_allowed_now": null,
+    "pilot_gap_label_review_failures": null,
+    "pilot_gap_label_review_check_status": null,
+    "pilot_gap_label_review_check_failures": null,
+    "asset_source_candidate_map_status": null,
+    "asset_source_candidate_map_candidates": null,
+    "asset_candidate_taxonomy_review_status": null,
+    "asset_candidate_taxonomy_review_candidates": null,
+    "asset_candidate_taxonomy_review_reviewable_lanes": null,
+    "asset_candidate_taxonomy_review_owner_confirmations": null,
+    "asset_candidate_taxonomy_review_failures": null,
+    "asset_candidate_taxonomy_review_check_status": null,
+    "asset_candidate_taxonomy_review_check_failures": null,
+    "source_root_activation_status": null,
+    "private_metadata_inventory_status": null,
+    "private_metadata_inventory_fixture_status": null,
+    "private_metadata_inventory_check_status": null,
+    "local_worker_http_runner_status": null,
+    "local_worker_http_runner_guard_passed": false,
+    "local_worker_http_runner_safe_inputs": null,
+    "local_worker_http_runner_execute_requested": false,
+    "local_worker_http_runner_check_status": null,
+    "local_worker_http_runner_check_failures": null,
+    "local_worker_execution_runbook_status": null,
+    "local_worker_execution_runbook_runner_safe_tasks": null,
+    "local_worker_execution_runbook_executable_now": null,
+    "local_worker_execution_runbook_check_status": null,
+    "local_worker_execution_runbook_check_failures": null,
+    "local_worker_output_contract_review_status": null,
+    "local_worker_output_contract_review_contracts": null,
+    "local_worker_output_contract_review_present_valid": null,
+    "local_worker_output_contract_review_repo_conversion_now": null,
+    "local_worker_output_contract_review_execute_allowed_now": null,
+    "local_worker_output_contract_review_failures": null,
+    "local_worker_output_contract_review_check_status": null,
+    "local_worker_output_contract_review_check_failures": null,
+    "source_independent_work_queue_status": null,
+    "source_independent_work_queue_tasks": null,
+    "source_independent_work_queue_completed_review_only": null,
+    "source_independent_work_queue_codex_executable_now": null,
+    "source_independent_work_queue_owner_actions": null,
+    "source_independent_work_queue_failures": null,
+    "private_diagnostic_allowed": false,
+    "night_loop_checkpoint_status": null,
+    "public_ready_after_loop": 0
+  },
+  "source_refs": [
+    "data/kosmodata-lane-sweep-2026-06-30.json",
+    "data/kosmo-data-lane-command-router-2026-06-30.json",
+    "data/kosmo-worker-boundary-pack-check-2026-06-30.json",
+    "data/kosmo-owner-review-packet-check-2026-06-30.json",
+    "data/kosmo-owner-review-session-brief-check-2026-06-30.json",
+    "data/kosmo-source-root-blocker-refresh-2026-06-30.json",
+    "data/kosmo-source-root-decision-session-refresh-2026-06-30.json",
+    "data/kosmo-source-root-candidate-integrity-check-2026-06-30.json",
+    "data/kosmo-source-root-owner-action-card-2026-06-30.json",
+    "data/kosmo-source-root-owner-decision-packet-2026-06-30.json",
+    "data/kosmo-source-root-owner-decision-packet-check-2026-06-30.json",
+    "data/kosmo-source-root-decision-dry-run-2026-06-30.json",
+    "data/kosmo-source-root-post-owner-activation-queue-2026-06-30.json",
+    "data/kosmo-source-root-post-owner-activation-queue-check-2026-06-30.json",
+    "data/kosmo-source-root-owner-final-decision-brief-2026-06-30.json",
+    "data/kosmo-source-root-owner-choice-consequence-matrix-2026-06-30.json",
+    "data/kosmoreferences-pilot-gap-label-review-2026-06-30.json",
+    "data/kosmoreferences-pilot-gap-label-review-check-2026-06-30.json",
+    "data/kosmoasset-source-candidate-map-2026-06-30.json",
+    "data/kosmoasset-candidate-taxonomy-review-2026-06-30.json",
+    "data/kosmoasset-candidate-taxonomy-review-check-2026-06-30.json",
+    "data/kosmo-source-root-activation-preflight-2026-06-30.json",
+    "data/kosmo-private-metadata-inventory-runner-2026-06-30.json",
+    "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-30.json",
+    "data/kosmo-private-metadata-inventory-check-2026-06-30.json",
+    "data/kosmo-local-worker-http-runner-2026-06-30.json",
+    "data/kosmo-local-worker-http-runner-check-2026-06-30.json",
+    "data/kosmo-local-worker-execution-runbook-2026-06-30.json",
+    "data/kosmo-local-worker-execution-runbook-check-2026-06-30.json",
+    "data/kosmo-local-worker-output-contract-review-2026-06-30.json",
+    "data/kosmo-local-worker-output-contract-review-check-2026-06-30.json",
+    "data/kosmo-night-loop-checkpoint-2026-06-30.json",
+    "data/kosmo-source-independent-work-queue-2026-06-30.json",
+    "data/kosmo-innovation-smoke-2026-06-30.json",
+    "data/kosmo-innovation-github-discovery-2026-06-30.json",
+    "data/kosmo-innovation-github-discovery-check-2026-06-30.json",
+    "data/kosmo-innovation-github-review-queue-2026-06-30.json",
+    "data/kosmo-innovation-github-review-queue-check-2026-06-30.json",
+    "data/kosmo-innovation-github-readme-signal-scan-2026-06-30.json",
+    "data/kosmo-innovation-github-readme-signal-scan-check-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-contract-plan-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-contract-plan-check-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-skeletons-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-skeletons-check-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payloads-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payloads-check-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-30.json",
+    "data/kosmo-orbit-status-bridge-2026-06-30.json"
+  ],
+  "invariants": [
+    {
+      "id": "required_steps_passed",
+      "status": "failed",
+      "evidence": "12/13"
+    },
+    {
+      "id": "core_sweep_review_only",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "router_guarded_review_only",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "worker_boundary_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "source_root_decision_session_refresh_safe",
+      "status": "passed",
+      "evidence": "source_root_decision_session_refresh_not_needed"
+    },
+    {
+      "id": "source_root_candidate_integrity_ready",
+      "status": "passed",
+      "evidence": "source_root_candidate_integrity_owner_review_ready"
+    },
+    {
+      "id": "source_root_owner_action_card_ready",
+      "status": "passed",
+      "evidence": "source_root_owner_action_required"
+    },
+    {
+      "id": "source_root_owner_decision_packet_ready",
+      "status": "passed",
+      "evidence": "source_root_owner_decision_packet_ready"
+    },
+    {
+      "id": "source_root_owner_decision_packet_guard_passed",
+      "status": "passed",
+      "evidence": "source_root_owner_decision_packet_guard_passed"
+    },
+    {
+      "id": "source_root_decision_dry_run_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "source_root_post_owner_activation_queue_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "source_root_post_owner_activation_queue_guard_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "source_root_owner_final_decision_brief_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "source_root_owner_choice_consequence_matrix_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "pilot_gap_label_review_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "pilot_gap_label_review_guard_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "asset_source_candidate_map_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "asset_candidate_taxonomy_review_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "asset_candidate_taxonomy_review_guard_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "owner_handoff_passed",
+      "status": "failed",
+      "evidence": "missing / missing / missing"
+    },
+    {
+      "id": "innovation_smoke_review_only",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "github_discovery_ready",
+      "status": "passed",
+      "evidence": "innovation_github_discovery_ready, execute=0"
+    },
+    {
+      "id": "github_discovery_guard_passed",
+      "status": "passed",
+      "evidence": "innovation_github_discovery_guard_passed"
+    },
+    {
+      "id": "github_review_queue_ready",
+      "status": "passed",
+      "evidence": "innovation_github_review_queue_ready, execute=0"
+    },
+    {
+      "id": "github_review_queue_guard_passed",
+      "status": "passed",
+      "evidence": "innovation_github_review_queue_guard_passed"
+    },
+    {
+      "id": "github_readme_signal_scan_ready",
+      "status": "passed",
+      "evidence": "innovation_github_readme_signal_scan_ready, execute=0"
+    },
+    {
+      "id": "github_readme_signal_scan_guard_passed",
+      "status": "passed",
+      "evidence": "innovation_github_readme_signal_scan_guard_passed"
+    },
+    {
+      "id": "github_fixture_contract_plan_ready",
+      "status": "passed",
+      "evidence": "innovation_github_fixture_contract_plan_ready, execute=0"
+    },
+    {
+      "id": "github_fixture_contract_plan_guard_passed",
+      "status": "passed",
+      "evidence": "innovation_github_fixture_contract_plan_guard_passed"
+    },
+    {
+      "id": "github_fixture_skeletons_ready",
+      "status": "failed",
+      "evidence": "undefined, execute=missing"
+    },
+    {
+      "id": "github_fixture_skeletons_guard_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "github_fixture_payloads_ready",
+      "status": "failed",
+      "evidence": "undefined, execute=missing"
+    },
+    {
+      "id": "github_fixture_payloads_guard_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "github_fixture_payload_smoke_passed",
+      "status": "failed",
+      "evidence": "undefined, failures=missing"
+    },
+    {
+      "id": "github_fixture_payload_smoke_guard_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "orbit_bridge_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "source_root_activation_guarded",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "private_metadata_inventory_guarded",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "private_metadata_inventory_fixture_smoke_passed",
+      "status": "failed",
+      "evidence": "undefined, matches=missing"
+    },
+    {
+      "id": "private_metadata_inventory_guard_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "local_worker_http_runner_guarded",
+      "status": "failed",
+      "evidence": "missing, guard=missing"
+    },
+    {
+      "id": "local_worker_http_runner_check_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "local_worker_execution_runbook_guarded",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "local_worker_execution_runbook_check_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "local_worker_output_contract_review_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "local_worker_output_contract_review_guard_passed",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "source_independent_work_queue_ready",
+      "status": "failed",
+      "evidence": "missing"
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": "public_ready=0"
+    },
+    {
+      "id": "private_source_guard_state_valid",
+      "status": "passed",
+      "evidence": "private_diagnostic_allowed=false, activation=undefined"
+    }
+  ],
+  "steps": [
+    {
+      "id": "onedrive_sync_errors",
+      "label": "OneDrive Sync Errors",
+      "command": "npm run kosmo:onedrive-sync-errors",
+      "required": true,
+      "started_at": "2026-06-30T06:41:08.485Z",
+      "duration_ms": 473,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:onedrive-sync-errors\n> node scripts/kosmo-onedrive-sync-error-summary.mjs\n\nKosmo OneDrive sync error summary\nStatus: onedrive_sync_errors_visible\nMarker files: 59\nLeaf markers: 58\nAggregate missing items: 58\nWrote: docs/codex/kosmo-onedrive-sync-error-summary-2026-06-30.md"
+    },
+    {
+      "id": "storage_mount_snapshot",
+      "label": "Storage Mount Snapshot",
+      "command": "npm run kosmo:storage-mount-snapshot",
+      "required": true,
+      "started_at": "2026-06-30T06:41:08.958Z",
+      "duration_ms": 247,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:storage-mount-snapshot\n> node scripts/kosmo-storage-mount-snapshot.mjs\n\nKosmo storage mount snapshot\nStatus: storage_snapshot_archive_mount_visible\nData mount: visible\nArchive mount: visible\nProject root exists: true\nWrote: docs/codex/kosmo-storage-mount-snapshot-2026-06-30.md"
+    },
+    {
+      "id": "source_root_locator",
+      "label": "Source Root Locator",
+      "command": "npm run kosmo:source-root-locator",
+      "required": true,
+      "started_at": "2026-06-30T06:41:09.205Z",
+      "duration_ms": 8477,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-locator\n> node scripts/kosmo-source-root-locator.mjs\n\nKosmo source-root locator\nStatus: source_root_candidates_need_owner_selection\nCandidates: 1298\nProbable libraries: 0\nWorkflow mirrors: 71\nWrote: docs/codex/kosmo-source-root-locator-2026-06-30.md"
+    },
+    {
+      "id": "source_root_selection_brief",
+      "label": "Source Root Selection Brief",
+      "command": "npm run kosmo:source-root-selection-brief",
+      "required": true,
+      "started_at": "2026-06-30T06:41:17.682Z",
+      "duration_ms": 276,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-selection-brief\n> node scripts/kosmo-source-root-selection-brief.mjs\n\nKosmo source-root selection brief\nStatus: source_root_owner_selection_needed\nOptions: 10\nWrote: docs/codex/kosmo-source-root-selection-brief-2026-06-30.md"
+    },
+    {
+      "id": "source_root_decision_session_create",
+      "label": "Source Root Decision Session Create",
+      "command": "npm run kosmo:source-root-decision-session-create",
+      "required": true,
+      "started_at": "2026-06-30T06:41:17.959Z",
+      "duration_ms": 227,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-decision-session-create\n> node scripts/kosmo-source-root-decision-session-create.mjs\n\nKosmo source-root decision session create\nStatus: source_root_decision_session_pending\nOptions: 10\nWrote: examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json\nWrote: docs/codex/kosmo-source-root-decision-session-2026-06-30.md"
+    },
+    {
+      "id": "source_root_decision_session_refresh",
+      "label": "Source Root Decision Session Refresh",
+      "command": "npm run kosmo:source-root-decision-session-refresh",
+      "required": false,
+      "started_at": "2026-06-30T06:41:18.186Z",
+      "duration_ms": 231,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-decision-session-refresh\n> node scripts/kosmo-source-root-decision-session-refresh.mjs\n\nKosmo source-root decision session refresh\nStatus: source_root_decision_session_refresh_not_needed\nChanged: false\nOptions: 10 -> 10\nFailures: 0\nWrote: docs/codex/kosmo-source-root-decision-session-refresh-2026-06-30.md"
+    },
+    {
+      "id": "source_root_decision_session_check",
+      "label": "Source Root Decision Session Check",
+      "command": "npm run kosmo:source-root-decision-session-check",
+      "required": true,
+      "started_at": "2026-06-30T06:41:18.417Z",
+      "duration_ms": 233,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-decision-session-check\n> node scripts/kosmo-source-root-decision-session-check.mjs\n\nKosmo source-root decision session check\nSession: examples/kosmo-references/provenance/source-root-decision-session-2026-06-30.json\nStatus: passed_pending_owner_input\nSelected decision: pending\nSelected root exists: false\nPrivate diagnostic allowed: false\nPublic-ready after session: 0\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-source-root-decision-session-check-2026-06-30.md"
+    },
+    {
+      "id": "source_root_candidate_integrity_check",
+      "label": "Source Root Candidate Integrity Check",
+      "command": "npm run kosmo:source-root-candidate-integrity-check",
+      "required": true,
+      "started_at": "2026-06-30T06:41:18.650Z",
+      "duration_ms": 237,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-candidate-integrity-check\n> node scripts/kosmo-source-root-candidate-integrity-check.mjs\n\nKosmo source-root candidate integrity check\nStatus: source_root_candidate_integrity_owner_review_ready\nExisting path options: 8/8\nOwner-confirmable exact roots: 1\nFailures: 0\nWrote: docs/codex/kosmo-source-root-candidate-integrity-check-2026-06-30.md"
+    },
+    {
+      "id": "private_library_diagnostic",
+      "label": "Private Library Diagnostic Metadata",
+      "command": "npm run kosmo:private-library-diagnostic -- --out data/kosmoreferences-private-library-diagnostic-2026-06-30.json --markdown docs/codex/kosmoreferences-private-library-diagnostic-2026-06-30.md",
+      "required": true,
+      "started_at": "2026-06-30T06:41:18.887Z",
+      "duration_ms": 521,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:private-library-diagnostic\n> node scripts/kosmo-private-library-diagnostic.mjs --out data/kosmoreferences-private-library-diagnostic-2026-06-30.json --markdown docs/codex/kosmoreferences-private-library-diagnostic-2026-06-30.md\n\nKosmoReferences private library diagnostic\nStatus: library_candidate_visible\nRoots: 5\nExisting roots: 5\nOwn mount roots: 1\nBook-like files: 168\nTarget filename matches: 37\nWrote: docs/codex/kosmoreferences-private-library-diagnostic-2026-06-30.md"
+    },
+    {
+      "id": "source_root_blocker_refresh",
+      "label": "Source Root Blocker Refresh",
+      "command": "npm run kosmo:source-root-blocker-refresh",
+      "required": true,
+      "started_at": "2026-06-30T06:41:19.408Z",
+      "duration_ms": 234,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-blocker-refresh\n> node scripts/kosmo-source-root-blocker-refresh.mjs\n\nKosmo source-root blocker refresh\nStatus: source_root_blocker_still_active\nOneDrive markers: 59\nProbable libraries: 0\nPrivate diagnostic allowed: false\nWrote: docs/codex/kosmo-source-root-blocker-refresh-2026-06-30.md"
+    },
+    {
+      "id": "source_root_owner_action_card",
+      "label": "Source Root Owner Action Card",
+      "command": "npm run kosmo:source-root-owner-action-card",
+      "required": true,
+      "started_at": "2026-06-30T06:41:19.642Z",
+      "duration_ms": 233,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-owner-action-card\n> node scripts/kosmo-source-root-owner-action-card.mjs\n\nKosmo source-root owner action card\nStatus: source_root_owner_action_required\nOwner action: yes\nRecommended decision: repair_onedrive_first_or_confirm_complete_non_onedrive_root\nCandidate roots: 8\nPublic-ready after card: 0\nWrote: docs/codex/kosmo-source-root-owner-action-card-2026-06-30.md"
+    },
+    {
+      "id": "source_root_owner_decision_packet",
+      "label": "Source Root Owner Decision Packet",
+      "command": "npm run kosmo:source-root-owner-decision-packet",
+      "required": true,
+      "started_at": "2026-06-30T06:41:19.875Z",
+      "duration_ms": 234,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-owner-decision-packet\n> node scripts/kosmo-source-root-owner-decision-packet.mjs\n\nKosmo source-root owner decision packet\nStatus: source_root_owner_decision_packet_ready\nDecision templates: 3\nExact root options: 1\nFailures: 0\nPublic-ready after packet: 0\nWrote: docs/codex/kosmo-source-root-owner-decision-packet-2026-06-30.md"
+    },
+    {
+      "id": "source_root_owner_decision_packet_check",
+      "label": "Source Root Owner Decision Packet Check",
+      "command": "npm run kosmo:source-root-owner-decision-packet-check",
+      "required": true,
+      "started_at": "2026-06-30T06:41:20.109Z",
+      "duration_ms": 239,
+      "exit_code": 0,
+      "status": "passed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-owner-decision-packet-check\n> node scripts/kosmo-source-root-owner-decision-packet-check.mjs\n\nKosmo source-root owner decision packet check\nStatus: source_root_owner_decision_packet_guard_passed\nTemplates: 3\nUnlocking templates: 1\nFailures: 0\nWarnings: 0\nWrote: docs/codex/kosmo-source-root-owner-decision-packet-check-2026-06-30.md"
+    },
+    {
+      "id": "source_root_decision_dry_run",
+      "label": "Source Root Decision Dry Run",
+      "command": "npm run kosmo:source-root-decision-dry-run",
+      "required": true,
+      "started_at": "2026-06-30T06:41:20.348Z",
+      "duration_ms": 234,
+      "exit_code": 1,
+      "status": "failed",
+      "output_excerpt": "> architecture-cosmos@0.1.0 kosmo:source-root-decision-dry-run\n> node scripts/kosmo-source-root-decision-dry-run.mjs\n\nError: ENOENT: no such file or directory, open '/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/kosmo-source-root-activation-preflight-2026-06-30.json'\n    at async open (node:internal/fs/promises:636:25)\n    at async readFile (node:internal/fs/promises:1235:14)\n    at async readJson (file:///mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/scripts/kosmo-source-root-decision-dry-run.mjs:192:21)\n    at async main (file:///mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/scripts/kosmo-source-root-decision-dry-run.mjs:28:31) {\n  errno: -2,\n  code: 'ENOENT',\n  syscall: 'open',\n  path: '/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/data/kosmo-source-root-activation-preflight-2026-06-30.json'\n}"
+    }
+  ],
+  "next_actions": [
+    "Use this script as the daily autonomous KosmoReferences/KosmoAsset review-only loop.",
+    "If source-root remains blocked, present the owner review packet and do not run private extraction.",
+    "After a real source root is recorded, rerun this loop before any pilot-first private inventory."
+  ]
+}

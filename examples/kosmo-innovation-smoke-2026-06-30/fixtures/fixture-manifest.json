@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:46:15.077Z",
+  "public_safe_fixture": true,
+  "private_content_included": false,
+  "copied_private_files": false,
+  "files": [
+    {
+      "path": "examples/kosmo-innovation-smoke-2026-06-30/fixtures/public-safe-architecture-note.txt",
+      "kind": "synthetic_text",
+      "allowed_uses": [
+        "tool_smoke",
+        "embedding_contract",
+        "layout_contract"
+      ]
+    }
+  ]
+}

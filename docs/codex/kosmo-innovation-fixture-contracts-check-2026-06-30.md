@@ -1,0 +1,144 @@
+# Kosmo Innovation Fixture Contracts Check
+
+Generated: 2026-06-30T06:47:31.014Z
+Status: `innovation_fixture_contracts_guard_passed`
+
+## Summary
+
+- Contracts status: innovation_fixture_contracts_ready
+- Contracts: 9
+- Failures: 0
+- Public-ready after check: 0
+
+## Findings
+
+- passed: `schema_version` - Contracts schema_version must be 0.1.
+- passed: `contracts_ready` - Contracts report must be ready.
+- passed: `fixture_contracts_only` - Report must be fixture-contracts-only.
+- passed: `no_installs` - Report must not install tools.
+- passed: `no_clones` - Report must not clone repositories.
+- passed: `no_private_reads` - Report must not read private content.
+- passed: `no_private_ocr` - Report must not run private OCR.
+- passed: `no_private_embeddings` - Report must not run private embeddings.
+- passed: `no_training` - Report must not run training.
+- passed: `public_ready_zero` - Report must keep public-ready at 0.
+- passed: `contract_count` - Report must include at least eight contracts.
+- passed: `required_contract:docling_public_pdf_fixture` - Required contract missing: docling_public_pdf_fixture.
+- passed: `required_contract:markitdown_office_fixture` - Required contract missing: markitdown_office_fixture.
+- passed: `required_contract:qwen3_retrieval_fixture` - Required contract missing: qwen3_retrieval_fixture.
+- passed: `required_contract:ifcopenshell_geometry_fixture` - Required contract missing: ifcopenshell_geometry_fixture.
+- passed: `scout_candidate_present:docling_public_pdf_fixture` - docling_public_pdf_fixture must map to a scout candidate.
+- passed: `install_now_false:docling_public_pdf_fixture` - docling_public_pdf_fixture must not install now.
+- passed: `private_content_false:docling_public_pdf_fixture` - docling_public_pdf_fixture must not allow private content now.
+- passed: `executable_false:docling_public_pdf_fixture` - docling_public_pdf_fixture must not be executable now.
+- passed: `public_ready_zero:docling_public_pdf_fixture` - docling_public_pdf_fixture must keep public-ready at 0.
+- passed: `output_root_safe:docling_public_pdf_fixture` - docling_public_pdf_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:docling_public_pdf_fixture` - docling_public_pdf_fixture must define at least two fixtures.
+- passed: `fixture_no_private:docling_public_pdf_fixture:public_pdf` - public_pdf must not use private content.
+- passed: `fixture_public_safe:docling_public_pdf_fixture:public_pdf` - public_pdf must be generated or public-safe.
+- passed: `fixture_no_private:docling_public_pdf_fixture:generated_scan_png` - generated_scan_png must not use private content.
+- passed: `fixture_public_safe:docling_public_pdf_fixture:generated_scan_png` - generated_scan_png must be generated or public-safe.
+- passed: `forbidden_private_roots:docling_public_pdf_fixture` - docling_public_pdf_fixture must explicitly forbid private roots.
+- passed: `scout_candidate_present:markitdown_office_fixture` - markitdown_office_fixture must map to a scout candidate.
+- passed: `install_now_false:markitdown_office_fixture` - markitdown_office_fixture must not install now.
+- passed: `private_content_false:markitdown_office_fixture` - markitdown_office_fixture must not allow private content now.
+- passed: `executable_false:markitdown_office_fixture` - markitdown_office_fixture must not be executable now.
+- passed: `public_ready_zero:markitdown_office_fixture` - markitdown_office_fixture must keep public-ready at 0.
+- passed: `output_root_safe:markitdown_office_fixture` - markitdown_office_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:markitdown_office_fixture` - markitdown_office_fixture must define at least two fixtures.
+- passed: `fixture_no_private:markitdown_office_fixture:generated_docx` - generated_docx must not use private content.
+- passed: `fixture_public_safe:markitdown_office_fixture:generated_docx` - generated_docx must be generated or public-safe.
+- passed: `fixture_no_private:markitdown_office_fixture:generated_html` - generated_html must not use private content.
+- passed: `fixture_public_safe:markitdown_office_fixture:generated_html` - generated_html must be generated or public-safe.
+- passed: `forbidden_private_roots:markitdown_office_fixture` - markitdown_office_fixture must explicitly forbid private roots.
+- passed: `scout_candidate_present:qwen3_retrieval_fixture` - qwen3_retrieval_fixture must map to a scout candidate.
+- passed: `install_now_false:qwen3_retrieval_fixture` - qwen3_retrieval_fixture must not install now.
+- passed: `private_content_false:qwen3_retrieval_fixture` - qwen3_retrieval_fixture must not allow private content now.
+- passed: `executable_false:qwen3_retrieval_fixture` - qwen3_retrieval_fixture must not be executable now.
+- passed: `public_ready_zero:qwen3_retrieval_fixture` - qwen3_retrieval_fixture must keep public-ready at 0.
+- passed: `output_root_safe:qwen3_retrieval_fixture` - qwen3_retrieval_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:qwen3_retrieval_fixture` - qwen3_retrieval_fixture must define at least two fixtures.
+- passed: `fixture_no_private:qwen3_retrieval_fixture:public_safe_reference_chunks` - public_safe_reference_chunks must not use private content.
+- passed: `fixture_public_safe:qwen3_retrieval_fixture:public_safe_reference_chunks` - public_safe_reference_chunks must be generated or public-safe.
+- passed: `fixture_no_private:qwen3_retrieval_fixture:query_set` - query_set must not use private content.
+- passed: `fixture_public_safe:qwen3_retrieval_fixture:query_set` - query_set must be generated or public-safe.
+- passed: `forbidden_private_roots:qwen3_retrieval_fixture` - qwen3_retrieval_fixture must explicitly forbid private roots.
+- passed: `scout_candidate_present:ifcopenshell_geometry_fixture` - ifcopenshell_geometry_fixture must map to a scout candidate.
+- passed: `install_now_false:ifcopenshell_geometry_fixture` - ifcopenshell_geometry_fixture must not install now.
+- passed: `private_content_false:ifcopenshell_geometry_fixture` - ifcopenshell_geometry_fixture must not allow private content now.
+- passed: `executable_false:ifcopenshell_geometry_fixture` - ifcopenshell_geometry_fixture must not be executable now.
+- passed: `public_ready_zero:ifcopenshell_geometry_fixture` - ifcopenshell_geometry_fixture must keep public-ready at 0.
+- passed: `output_root_safe:ifcopenshell_geometry_fixture` - ifcopenshell_geometry_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:ifcopenshell_geometry_fixture` - ifcopenshell_geometry_fixture must define at least two fixtures.
+- passed: `fixture_no_private:ifcopenshell_geometry_fixture:generated_ifc_stub` - generated_ifc_stub must not use private content.
+- passed: `fixture_public_safe:ifcopenshell_geometry_fixture:generated_ifc_stub` - generated_ifc_stub must be generated or public-safe.
+- passed: `fixture_no_private:ifcopenshell_geometry_fixture:expected_geometry_manifest` - expected_geometry_manifest must not use private content.
+- passed: `fixture_public_safe:ifcopenshell_geometry_fixture:expected_geometry_manifest` - expected_geometry_manifest must be generated or public-safe.
+- passed: `forbidden_private_roots:ifcopenshell_geometry_fixture` - ifcopenshell_geometry_fixture must explicitly forbid private roots.
+- passed: `scout_candidate_present:deepseek_ocr_public_scan_fixture` - deepseek_ocr_public_scan_fixture must map to a scout candidate.
+- passed: `install_now_false:deepseek_ocr_public_scan_fixture` - deepseek_ocr_public_scan_fixture must not install now.
+- passed: `private_content_false:deepseek_ocr_public_scan_fixture` - deepseek_ocr_public_scan_fixture must not allow private content now.
+- passed: `executable_false:deepseek_ocr_public_scan_fixture` - deepseek_ocr_public_scan_fixture must not be executable now.
+- passed: `public_ready_zero:deepseek_ocr_public_scan_fixture` - deepseek_ocr_public_scan_fixture must keep public-ready at 0.
+- passed: `output_root_safe:deepseek_ocr_public_scan_fixture` - deepseek_ocr_public_scan_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:deepseek_ocr_public_scan_fixture` - deepseek_ocr_public_scan_fixture must define at least two fixtures.
+- passed: `fixture_no_private:deepseek_ocr_public_scan_fixture:generated_plan_scan` - generated_plan_scan must not use private content.
+- passed: `fixture_public_safe:deepseek_ocr_public_scan_fixture:generated_plan_scan` - generated_plan_scan must be generated or public-safe.
+- passed: `fixture_no_private:deepseek_ocr_public_scan_fixture:expected_ocr_manifest` - expected_ocr_manifest must not use private content.
+- passed: `fixture_public_safe:deepseek_ocr_public_scan_fixture:expected_ocr_manifest` - expected_ocr_manifest must be generated or public-safe.
+- passed: `forbidden_private_roots:deepseek_ocr_public_scan_fixture` - deepseek_ocr_public_scan_fixture must explicitly forbid private roots.
+- passed: `scout_candidate_present:qwen3_vl_visual_retrieval_fixture` - qwen3_vl_visual_retrieval_fixture must map to a scout candidate.
+- passed: `install_now_false:qwen3_vl_visual_retrieval_fixture` - qwen3_vl_visual_retrieval_fixture must not install now.
+- passed: `private_content_false:qwen3_vl_visual_retrieval_fixture` - qwen3_vl_visual_retrieval_fixture must not allow private content now.
+- passed: `executable_false:qwen3_vl_visual_retrieval_fixture` - qwen3_vl_visual_retrieval_fixture must not be executable now.
+- passed: `public_ready_zero:qwen3_vl_visual_retrieval_fixture` - qwen3_vl_visual_retrieval_fixture must keep public-ready at 0.
+- passed: `output_root_safe:qwen3_vl_visual_retrieval_fixture` - qwen3_vl_visual_retrieval_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:qwen3_vl_visual_retrieval_fixture` - qwen3_vl_visual_retrieval_fixture must define at least two fixtures.
+- passed: `fixture_no_private:qwen3_vl_visual_retrieval_fixture:generated_facade_image_set` - generated_facade_image_set must not use private content.
+- passed: `fixture_public_safe:qwen3_vl_visual_retrieval_fixture:generated_facade_image_set` - generated_facade_image_set must be generated or public-safe.
+- passed: `fixture_no_private:qwen3_vl_visual_retrieval_fixture:visual_query_set` - visual_query_set must not use private content.
+- passed: `fixture_public_safe:qwen3_vl_visual_retrieval_fixture:visual_query_set` - visual_query_set must be generated or public-safe.
+- passed: `forbidden_private_roots:qwen3_vl_visual_retrieval_fixture` - qwen3_vl_visual_retrieval_fixture must explicitly forbid private roots.
+- passed: `scout_candidate_present:topologicpy_spatial_graph_fixture` - topologicpy_spatial_graph_fixture must map to a scout candidate.
+- passed: `install_now_false:topologicpy_spatial_graph_fixture` - topologicpy_spatial_graph_fixture must not install now.
+- passed: `private_content_false:topologicpy_spatial_graph_fixture` - topologicpy_spatial_graph_fixture must not allow private content now.
+- passed: `executable_false:topologicpy_spatial_graph_fixture` - topologicpy_spatial_graph_fixture must not be executable now.
+- passed: `public_ready_zero:topologicpy_spatial_graph_fixture` - topologicpy_spatial_graph_fixture must keep public-ready at 0.
+- passed: `output_root_safe:topologicpy_spatial_graph_fixture` - topologicpy_spatial_graph_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:topologicpy_spatial_graph_fixture` - topologicpy_spatial_graph_fixture must define at least two fixtures.
+- passed: `fixture_no_private:topologicpy_spatial_graph_fixture:synthetic_space_graph` - synthetic_space_graph must not use private content.
+- passed: `fixture_public_safe:topologicpy_spatial_graph_fixture:synthetic_space_graph` - synthetic_space_graph must be generated or public-safe.
+- passed: `fixture_no_private:topologicpy_spatial_graph_fixture:expected_topology_report` - expected_topology_report must not use private content.
+- passed: `fixture_public_safe:topologicpy_spatial_graph_fixture:expected_topology_report` - expected_topology_report must be generated or public-safe.
+- passed: `forbidden_private_roots:topologicpy_spatial_graph_fixture` - topologicpy_spatial_graph_fixture must explicitly forbid private roots.
+- passed: `scout_candidate_present:paper2poster_publish_layout_fixture` - paper2poster_publish_layout_fixture must map to a scout candidate.
+- passed: `install_now_false:paper2poster_publish_layout_fixture` - paper2poster_publish_layout_fixture must not install now.
+- passed: `private_content_false:paper2poster_publish_layout_fixture` - paper2poster_publish_layout_fixture must not allow private content now.
+- passed: `executable_false:paper2poster_publish_layout_fixture` - paper2poster_publish_layout_fixture must not be executable now.
+- passed: `public_ready_zero:paper2poster_publish_layout_fixture` - paper2poster_publish_layout_fixture must keep public-ready at 0.
+- passed: `output_root_safe:paper2poster_publish_layout_fixture` - paper2poster_publish_layout_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:paper2poster_publish_layout_fixture` - paper2poster_publish_layout_fixture must define at least two fixtures.
+- passed: `fixture_no_private:paper2poster_publish_layout_fixture:synthetic_reference_summary` - synthetic_reference_summary must not use private content.
+- passed: `fixture_public_safe:paper2poster_publish_layout_fixture:synthetic_reference_summary` - synthetic_reference_summary must be generated or public-safe.
+- passed: `fixture_no_private:paper2poster_publish_layout_fixture:layout_scoring_manifest` - layout_scoring_manifest must not use private content.
+- passed: `fixture_public_safe:paper2poster_publish_layout_fixture:layout_scoring_manifest` - layout_scoring_manifest must be generated or public-safe.
+- passed: `forbidden_private_roots:paper2poster_publish_layout_fixture` - paper2poster_publish_layout_fixture must explicitly forbid private roots.
+- passed: `scout_candidate_present:speckle_connector_boundary_fixture` - speckle_connector_boundary_fixture must map to a scout candidate.
+- passed: `install_now_false:speckle_connector_boundary_fixture` - speckle_connector_boundary_fixture must not install now.
+- passed: `private_content_false:speckle_connector_boundary_fixture` - speckle_connector_boundary_fixture must not allow private content now.
+- passed: `executable_false:speckle_connector_boundary_fixture` - speckle_connector_boundary_fixture must not be executable now.
+- passed: `public_ready_zero:speckle_connector_boundary_fixture` - speckle_connector_boundary_fixture must keep public-ready at 0.
+- passed: `output_root_safe:speckle_connector_boundary_fixture` - speckle_connector_boundary_fixture output root must stay under examples/kosmo-innovation-fixtures.
+- passed: `fixtures_min:speckle_connector_boundary_fixture` - speckle_connector_boundary_fixture must define at least two fixtures.
+- passed: `fixture_no_private:speckle_connector_boundary_fixture:connector_contract_stub` - connector_contract_stub must not use private content.
+- passed: `fixture_public_safe:speckle_connector_boundary_fixture:connector_contract_stub` - connector_contract_stub must be generated or public-safe.
+- passed: `fixture_no_private:speckle_connector_boundary_fixture:privacy_boundary_matrix` - privacy_boundary_matrix must not use private content.
+- passed: `fixture_public_safe:speckle_connector_boundary_fixture:privacy_boundary_matrix` - privacy_boundary_matrix must be generated or public-safe.
+- passed: `forbidden_private_roots:speckle_connector_boundary_fixture` - speckle_connector_boundary_fixture must explicitly forbid private roots.
+- passed: `summary_executable_zero` - Summary executable_now must be 0.
+
+## Next Actions
+
+- Create generated fixture skeletons for the highest-priority contracts.
+- Run tool-specific smoke only after dependency policy review.
+- Keep private source roots, OCR and embeddings blocked until explicit Source Root gates pass.

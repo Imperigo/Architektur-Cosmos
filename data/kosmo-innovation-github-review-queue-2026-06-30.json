@@ -1,0 +1,295 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:39:42.248Z",
+  "status": "innovation_github_review_queue_ready",
+  "policy": {
+    "review_queue_only": true,
+    "clones_repositories_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content": false,
+    "public_ready_after_queue": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-discovery-2026-06-30.json"
+  ],
+  "summary": {
+    "discovery_candidates": 25,
+    "review_items": 9,
+    "high_priority_items": 5,
+    "lanes": 4,
+    "execute_now": 0,
+    "public_ready_after_queue": 0
+  },
+  "review_items": [
+    {
+      "id": "github-review-01",
+      "repo": "SII-sc22mc/DocFusion",
+      "url": "https://github.com/SII-sc22mc/DocFusion",
+      "lane": "kosmo_prepare",
+      "description": "A Unified Framework for Document Parsing Tasks (Including Document Layout Analysis, OCR, Formula Recognition, and Table Recognition)",
+      "review_priority": "high",
+      "stars_observed": 15,
+      "updated_at_observed": "2026-03-19T09:29:34Z",
+      "source_discovery_query_id": "document_layout_analysis_ocr",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Summarize public README/API surface for a synthetic document-layout or OCR fixture contract.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-sii-sc22mc-docfusion/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-02",
+      "repo": "yanghairui/3DRetrieval",
+      "url": "https://github.com/yanghairui/3DRetrieval",
+      "lane": "kosmo_asset",
+      "description": "Sequential learning for sketch-based 3D model retrieval",
+      "review_priority": "high",
+      "stars_observed": 6,
+      "updated_at_observed": "2026-03-17T01:14:58Z",
+      "source_discovery_query_id": "3d_model_retrieval",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Extract public method categories for 3D similarity/retrieval taxonomy only.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-yanghairui-3dretrieval/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-03",
+      "repo": "lee-agi/3d_model_base",
+      "url": "https://github.com/lee-agi/3d_model_base",
+      "lane": "kosmo_asset",
+      "description": "3d model Retrieval Engine of BTBU",
+      "review_priority": "high",
+      "stars_observed": 4,
+      "updated_at_observed": "2026-02-08T17:47:43Z",
+      "source_discovery_query_id": "3d_model_retrieval",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Extract public method categories for 3D similarity/retrieval taxonomy only.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-lee-agi-3d-model-base/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-04",
+      "repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "lane": "ifc_reasoning",
+      "description": "IFC tools, HTTP MCP, and ADK agents Extend upstream Blender MCP with Bonsai/IfcOpenShell bim_* tools, streamable HTTP + Docker deployment, Google ADK multi-agent runner and workflow knowledge base.",
+      "review_priority": "high",
+      "stars_observed": 2,
+      "updated_at_observed": "2026-06-28T02:01:52Z",
+      "source_discovery_query_id": "ifcopenshell_bim",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Summarize public README command boundary for future IfcOpenShell/Bonsai worker adapter review.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-lfniederauer-blender-agentic-bonsai-sketcher-mcp/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-05",
+      "repo": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "url": "https://github.com/cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "lane": "kosmo_prepare",
+      "description": "A intelligence system for architectural specification documents. It supports image and PDF uploads, document layout analysis, OCR, table structure recognition, keyword extraction, structured database storage, and conditional search through a Web interface.",
+      "review_priority": "high",
+      "stars_observed": 0,
+      "updated_at_observed": "2026-06-05T10:38:56Z",
+      "source_discovery_query_id": "document_layout_analysis_ocr",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Summarize public README/API surface for a synthetic document-layout or OCR fixture contract.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-06",
+      "repo": "mac999/BIM_LLM_code_agent",
+      "url": "https://github.com/mac999/BIM_LLM_code_agent",
+      "lane": "bim_rag_workers",
+      "description": "BIM LLM Code Agent with Vector and Graph RAG",
+      "review_priority": "medium",
+      "stars_observed": 28,
+      "updated_at_observed": "2026-06-21T15:51:39Z",
+      "source_discovery_query_id": "bim_llm",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Extract public RAG/graph concepts for local worker task-spec inspiration only.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-mac999-bim-llm-code-agent/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-07",
+      "repo": "HamidKiavarz/BIM-LLM",
+      "url": "https://github.com/HamidKiavarz/BIM-LLM",
+      "lane": "bim_rag_workers",
+      "description": "",
+      "review_priority": "medium",
+      "stars_observed": 1,
+      "updated_at_observed": "2026-06-11T16:48:45Z",
+      "source_discovery_query_id": "bim_llm",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Extract public RAG/graph concepts for local worker task-spec inspiration only.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-hamidkiavarz-bim-llm/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-08",
+      "repo": "hwaniiidev/BIM-LLM",
+      "url": "https://github.com/hwaniiidev/BIM-LLM",
+      "lane": "bim_rag_workers",
+      "description": "",
+      "review_priority": "medium",
+      "stars_observed": 0,
+      "updated_at_observed": "2026-06-17T16:10:23Z",
+      "source_discovery_query_id": "bim_llm",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Extract public RAG/graph concepts for local worker task-spec inspiration only.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-hwaniiidev-bim-llm/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    },
+    {
+      "id": "github-review-09",
+      "repo": "Mikillio/bim-wiki-deps",
+      "url": "https://github.com/Mikillio/bim-wiki-deps",
+      "lane": "bim_rag_workers",
+      "description": "Zrkadlo a manifest doplnkov pre BIM LLM Wiki (on-demand: Whisper/Tesseract/...). Public zámerne.",
+      "review_priority": "medium",
+      "stars_observed": 0,
+      "updated_at_observed": "2026-06-27T18:23:08Z",
+      "source_discovery_query_id": "bim_llm",
+      "review_mode": "public_metadata_and_readme_only",
+      "next_safe_action": "Extract public RAG/graph concepts for local worker task-spec inspiration only.",
+      "fixture_path_after_review": "examples/kosmo-innovation-fixtures/github-review-mikillio-bim-wiki-deps/",
+      "allowed_now": {
+        "inspect_public_repo_metadata": true,
+        "inspect_public_readme": true,
+        "create_source_free_fixture_contract": true,
+        "clone_repository": false,
+        "install_dependencies": false,
+        "download_models": false,
+        "run_code": false,
+        "read_private_content": false,
+        "promote_to_public": false
+      },
+      "public_ready_after_item": 0
+    }
+  ],
+  "lane_review_order": [
+    {
+      "id": "kosmo_prepare",
+      "objective": "First inspect public README/API shape for document conversion, OCR and layout parsing fixture ideas.",
+      "execution_now": false
+    },
+    {
+      "id": "ifc_reasoning",
+      "objective": "Inspect public README only for Bonsai/IfcOpenShell/MCP command-boundary ideas.",
+      "execution_now": false
+    },
+    {
+      "id": "worker_integration",
+      "objective": "Keep any MCP/agent pattern behind local runtime and owner gates.",
+      "execution_now": false
+    },
+    {
+      "id": "kosmo_asset",
+      "objective": "Inspect retrieval repos for feature taxonomy and evaluation metrics, not implementation adoption.",
+      "execution_now": false
+    },
+    {
+      "id": "bim_rag_workers",
+      "objective": "Inspect RAG/graph ideas for future local worker task specs only.",
+      "execution_now": false
+    }
+  ],
+  "hard_stops": [
+    "Do not clone repositories during review queue generation.",
+    "Do not install dependencies or download models from discovered repositories.",
+    "Do not run discovered code.",
+    "Do not process private ArchitekturKosmos sources while evaluating public GitHub candidates.",
+    "Do not mark any candidate public-ready or production-ready without human/overseer review."
+  ]
+}

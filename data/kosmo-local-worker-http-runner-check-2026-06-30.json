@@ -1,0 +1,160 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:46:56.008Z",
+  "status": "local_worker_http_runner_guard_passed",
+  "policy": {
+    "validates_report_only": true,
+    "starts_model": false,
+    "reads_private_outputs": false,
+    "reads_private_sources": false,
+    "writes_worker_outputs": false,
+    "public_ready_after_check": 0,
+    "note": "This check validates the HTTP runner report only. It does not execute local models or read worker output contents."
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-http-runner-2026-06-30.json"
+  ],
+  "summary": {
+    "runner_status": "local_worker_http_runner_dry_run_ready",
+    "task_id": "kosmo-asset-source-candidate-triage",
+    "guard_passed": true,
+    "safe_inputs": 5,
+    "execute_requested": false,
+    "model_used": false,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "id": "runner_status_guarded",
+      "severity": "passed",
+      "message": "Runner status must be dry-run ready or executed review-only."
+    },
+    {
+      "id": "review_only_true",
+      "severity": "passed",
+      "message": "Runner must stay review-only."
+    },
+    {
+      "id": "private_context_paths_false",
+      "severity": "passed",
+      "message": "Runner must not read private_context_paths."
+    },
+    {
+      "id": "private_source_paths_false",
+      "severity": "passed",
+      "message": "Runner must not read private source paths."
+    },
+    {
+      "id": "writes_git_false",
+      "severity": "passed",
+      "message": "Runner must not write Git."
+    },
+    {
+      "id": "writes_cloud_false",
+      "severity": "passed",
+      "message": "Runner must not write cloud."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Runner must keep public-ready at 0."
+    },
+    {
+      "id": "task_id_present",
+      "severity": "passed",
+      "message": "Runner task id must be present."
+    },
+    {
+      "id": "output_path_worker_packets",
+      "severity": "passed",
+      "message": "Runner output must stay under KosmoZentrale worker_packets."
+    },
+    {
+      "id": "output_filename_private",
+      "severity": "passed",
+      "message": "Runner output filename must be private."
+    },
+    {
+      "id": "guard_passed",
+      "severity": "passed",
+      "message": "Runner guard must pass."
+    },
+    {
+      "id": "guard_failures_zero",
+      "severity": "passed",
+      "message": "Runner guard failures must be zero."
+    },
+    {
+      "id": "safe_inputs_present",
+      "severity": "passed",
+      "message": "Runner must enumerate safe input reports."
+    },
+    {
+      "id": "safe_input_root:data/kosmo-source-root-selection-brief-2026-06-30.json",
+      "severity": "passed",
+      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-source-root-selection-brief-2026-06-30.json"
+    },
+    {
+      "id": "safe_input_not_truncated:data/kosmo-source-root-selection-brief-2026-06-30.json",
+      "severity": "passed",
+      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-source-root-selection-brief-2026-06-30.json"
+    },
+    {
+      "id": "safe_input_root:docs/codex/kosmo-source-root-selection-brief-2026-06-30.md",
+      "severity": "passed",
+      "message": "Safe input must stay under data/, docs/ or examples/: docs/codex/kosmo-source-root-selection-brief-2026-06-30.md"
+    },
+    {
+      "id": "safe_input_not_truncated:docs/codex/kosmo-source-root-selection-brief-2026-06-30.md",
+      "severity": "passed",
+      "message": "Safe input should not be truncated for the default smoke task: docs/codex/kosmo-source-root-selection-brief-2026-06-30.md"
+    },
+    {
+      "id": "safe_input_root:data/kosmo-data-lane-command-router-2026-06-30.json",
+      "severity": "passed",
+      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-data-lane-command-router-2026-06-30.json"
+    },
+    {
+      "id": "safe_input_not_truncated:data/kosmo-data-lane-command-router-2026-06-30.json",
+      "severity": "passed",
+      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-data-lane-command-router-2026-06-30.json"
+    },
+    {
+      "id": "safe_input_root:docs/codex/kosmoasset-source-candidate-map-2026-06-30.md",
+      "severity": "passed",
+      "message": "Safe input must stay under data/, docs/ or examples/: docs/codex/kosmoasset-source-candidate-map-2026-06-30.md"
+    },
+    {
+      "id": "safe_input_not_truncated:docs/codex/kosmoasset-source-candidate-map-2026-06-30.md",
+      "severity": "passed",
+      "message": "Safe input should not be truncated for the default smoke task: docs/codex/kosmoasset-source-candidate-map-2026-06-30.md"
+    },
+    {
+      "id": "safe_input_root:data/kosmo-worker-boundary-pack-check-2026-06-30.json",
+      "severity": "passed",
+      "message": "Safe input must stay under data/, docs/ or examples/: data/kosmo-worker-boundary-pack-check-2026-06-30.json"
+    },
+    {
+      "id": "safe_input_not_truncated:data/kosmo-worker-boundary-pack-check-2026-06-30.json",
+      "severity": "passed",
+      "message": "Safe input should not be truncated for the default smoke task: data/kosmo-worker-boundary-pack-check-2026-06-30.json"
+    },
+    {
+      "id": "no_model_use_without_execute",
+      "severity": "passed",
+      "message": "Runner must not use a model unless execute is requested."
+    },
+    {
+      "id": "dry_run_model_unused",
+      "severity": "passed",
+      "message": "Dry-run runner must not start a model."
+    }
+  ],
+  "next_actions": [
+    "Treat the HTTP runner as safe for review-only dry-run visibility.",
+    "Use --execute only after an overseer deliberately requests a local model task run.",
+    "Rerun this check after any runner report, task-pack or output-path change."
+  ]
+}

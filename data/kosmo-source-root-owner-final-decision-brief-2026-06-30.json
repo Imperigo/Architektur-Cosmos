@@ -1,0 +1,185 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:52:11.590Z",
+  "status": "source_root_owner_final_decision_brief_needs_review",
+  "policy": {
+    "owner_brief_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory_now": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_brief": 0,
+    "note": "This brief presents the final owner decision choices. It does not apply any choice."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-selection-brief-2026-06-30.json",
+    "data/kosmo-source-root-owner-decision-packet-2026-06-30.json",
+    "data/kosmo-source-root-owner-decision-packet-check-2026-06-30.json",
+    "data/kosmo-source-root-decision-session-check-2026-06-30.json",
+    "data/kosmo-source-root-post-owner-activation-queue-check-2026-06-30.json"
+  ],
+  "summary": {
+    "selection_status": "source_root_owner_selection_needed",
+    "decision_packet_status": "source_root_owner_decision_packet_ready",
+    "decision_packet_guard_status": "source_root_owner_decision_packet_guard_passed",
+    "decision_session_status": "passed_pending_owner_input",
+    "activation_queue_guard_status": "source_root_post_owner_activation_queue_guard_failed",
+    "locator_candidates": 1300,
+    "probable_private_libraries": 0,
+    "workflow_or_project_mirrors": 71,
+    "onedrive_like_roots": 149,
+    "roots_with_sync_errors": 5,
+    "decision_options": 3,
+    "unlock_options": 1,
+    "recommended_default": "repair_onedrive_first_or_keep_blocked",
+    "selected_decision": null,
+    "private_diagnostic_allowed": false,
+    "failures": 1,
+    "public_ready_after_brief": 0
+  },
+  "owner_prompt": {
+    "question": "Welchen Source-Root-Entscheid soll Kosmo jetzt verwenden?",
+    "safe_default": "Wenn du nicht 100% sicher bist, waehle repair_onedrive_first oder keep_blocked.",
+    "exact_unlock_warning": "Die unlockende Option darf nur verwendet werden, wenn der angezeigte Pfad exakt die vollstaendige private Architekturquelle ist."
+  },
+  "answer_choices": [
+    {
+      "id": "keep_blocked",
+      "label": "Keep source-root blocked",
+      "selected_decision": "keep_blocked",
+      "selected_root_path": null,
+      "unlocks_private_metadata_diagnostic": false,
+      "when_to_use": "Owner is not ready to identify the complete private architecture library root.",
+      "caution": null
+    },
+    {
+      "id": "repair_onedrive_first",
+      "label": "Repair OneDrive first",
+      "selected_decision": "repair_onedrive_first",
+      "selected_root_path": null,
+      "unlocks_private_metadata_diagnostic": false,
+      "when_to_use": "Owner says the intended source root is a OneDrive mirror but sync markers/completeness are not resolved.",
+      "caution": null
+    },
+    {
+      "id": "select_exact_root_1",
+      "label": "Select visible exact root for metadata diagnostic",
+      "selected_decision": "select_existing_root_for_private_diagnostic",
+      "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "unlocks_private_metadata_diagnostic": true,
+      "when_to_use": "Owner/KosmoOverseer explicitly confirms this exact path is the complete private source root for metadata-only diagnostics.",
+      "caution": "Visible archive subtree; owner/overseer may confirm this exact path before diagnostics."
+    }
+  ],
+  "visible_source_root_candidates": [
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+      "classification": "possible_source_root",
+      "role_guess": "workflow_mirror_or_codex_context",
+      "score": 70,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+      "classification": "possible_source_root",
+      "role_guess": "asset_material_library_candidate",
+      "score": 60,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+      "classification": "possible_source_root",
+      "role_guess": "asset_material_library_candidate",
+      "score": 60,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow",
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+      "classification": "possible_source_root",
+      "role_guess": "workflow_mirror_or_codex_context",
+      "score": 52,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "classification": "possible_source_root",
+      "role_guess": "archive_subtree_candidate",
+      "score": 52,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Keep blocked unless owner/overseer confirms this exact path as the real source root."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+      "classification": "possible_source_root",
+      "role_guess": "onedrive_mirror_candidate",
+      "score": 48,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as OneDrive mirror candidate; confirm completeness and sync health before any private metadata inventory."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+      "classification": "possible_source_root",
+      "role_guess": "workflow_mirror_or_codex_context",
+      "score": 48,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+      "classification": "possible_source_root",
+      "role_guess": "workflow_mirror_or_codex_context",
+      "score": 48,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library."
+    },
+    {
+      "id": "mount_archive_or_missing_root",
+      "path": null,
+      "classification": "missing_or_unmounted_root",
+      "role_guess": "owner_storage_action",
+      "score": null,
+      "safe_default": "keep_blocked",
+      "recommended_action": "Mount or expose the real archive/OneDrive library root, then rerun locator and private-library diagnostic."
+    },
+    {
+      "id": "repair_onedrive_first",
+      "path": null,
+      "classification": "sync_repair_first",
+      "role_guess": "onedrive_integrity_gate",
+      "score": null,
+      "safe_default": "repair_before_inventory",
+      "recommended_action": "Resolve OneDrive sync error roots before using visible OneDrive mirrors for inventory."
+    }
+  ],
+  "post_decision_command_order": [
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:source-root-post-owner-activation-queue",
+    "npm run kosmo:source-root-post-owner-activation-queue-check"
+  ],
+  "hard_stops": [
+    "Do not edit the decision session from this brief without explicit owner confirmation.",
+    "Do not run private metadata inventory while private_diagnostic_allowed is false.",
+    "Do not run OCR/PDF extraction from private sources at this stage.",
+    "Do not set public-ready from this source-root decision."
+  ],
+  "failures": [
+    "Activation queue guard not passed: source_root_post_owner_activation_queue_guard_failed"
+  ]
+}

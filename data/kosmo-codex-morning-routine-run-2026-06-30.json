@@ -1,0 +1,148 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:39:32.131Z",
+  "status": "codex_morning_routine_run_ready",
+  "policy": {
+    "morning_execution_evidence": true,
+    "fetches_git_remotes": true,
+    "pulls_or_merges_now": false,
+    "resets_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "runs_ocr_now": false,
+    "creates_embeddings_now": false,
+    "installs_or_downloads_now": false,
+    "public_ready_after_run": 0
+  },
+  "source_refs": [
+    "data/kosmo-codex-daily-loop-routine-2026-06-30.json",
+    "data/kosmo-codex-daily-loop-routine-check-2026-06-30.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-06-30.json",
+    "data/kosmo-owner-unlock-session-apply-guard-2026-06-30.json",
+    "data/kosmo-innovation-github-watchlist-2026-06-30.json",
+    "data/kosmo-innovation-github-discovery-2026-06-30.json",
+    "data/kosmo-innovation-github-review-queue-2026-06-30.json",
+    "data/kosmo-overseer-sync-board-2026-06-30.json",
+    "data/kosmo-tomorrow-day-batch-2026-06-30.json"
+  ],
+  "summary": {
+    "repos_checked": 2,
+    "fetch_succeeded": 2,
+    "remote_behind_total": 0,
+    "dirty_repos": 1,
+    "latest_handoff": 352,
+    "latest_mirrored_handoff": 352,
+    "source_root_state": "unknown",
+    "source_root_blocked": false,
+    "private_processing_allowed": false,
+    "github_watchlist_candidates": 9,
+    "github_discovery_unique_candidates": null,
+    "github_review_queue_items": null,
+    "innovation_candidates": 9,
+    "next_batch_mode": "source_free_innovation_and_guarding",
+    "next_batch_commands": 9,
+    "public_ready_after_run": 0
+  },
+  "repos": [
+    {
+      "id": "architecture_cosmos",
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
+      "branch": "main",
+      "head": "d86b24487bebfba8abba5848813b5a24ee47336b",
+      "origin_main": "d86b24487bebfba8abba5848813b5a24ee47336b",
+      "fetch_attempted": true,
+      "fetch_succeeded": true,
+      "fetch_error": null,
+      "remote_behind_count": 0,
+      "remote_ahead_count": 0,
+      "dirty_count": 1327,
+      "dirty_sample": [
+        "M .github/workflows/ci.yml",
+        "M .github/workflows/live-security.yml",
+        "M .github/workflows/weekly-update-scout.yml",
+        "M .gitignore",
+        "M .nvmrc",
+        "M AGENTS.md",
+        "M DEPLOYMENT.md",
+        "M README.md",
+        "M SECURITY.md",
+        "M app/icon.svg",
+        "M app/orbit/OrbitAuditTrail.tsx",
+        "M app/orbit/OrbitAutonomousFireState.tsx",
+        "M app/orbit/OrbitAutonomousLoopLedger.tsx",
+        "M app/orbit/OrbitAutonomyStatus.tsx",
+        "M app/orbit/OrbitCommandContract.tsx",
+        "M app/orbit/OrbitDataGovernanceContract.tsx",
+        "M app/orbit/OrbitDeleteExportRestoreDrill.tsx",
+        "M app/orbit/OrbitDemoQuestions.tsx",
+        "M app/orbit/OrbitDemoReadiness.tsx",
+        "M app/orbit/OrbitDemoReviewPath.tsx",
+        "M app/orbit/OrbitDesignHandoffPanel.tsx",
+        "M app/orbit/OrbitDesignPilotPath.tsx",
+        "M app/orbit/OrbitFireCadenceGuard.tsx",
+        "M app/orbit/OrbitGitHubImperigoGate.tsx",
+        "M app/orbit/OrbitHealthReadiness.tsx"
+      ],
+      "pulls_or_merges_now": false,
+      "resets_now": false
+    },
+    {
+      "id": "kosmo_orbit",
+      "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
+      "branch": "main",
+      "head": "8bbafce6be79ebe4ff8493b3b2783603ca36359f",
+      "origin_main": "8bbafce6be79ebe4ff8493b3b2783603ca36359f",
+      "fetch_attempted": true,
+      "fetch_succeeded": true,
+      "fetch_error": null,
+      "remote_behind_count": 0,
+      "remote_ahead_count": 0,
+      "dirty_count": 0,
+      "dirty_sample": [],
+      "pulls_or_merges_now": false,
+      "resets_now": false
+    }
+  ],
+  "handoffs": {
+    "inboxes": [
+      {
+        "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
+        "exists": true,
+        "files": 351,
+        "latest_number": 352,
+        "latest_file": "2026-06-17-codex-synergiebericht-352-standard-kosmodraw-public-gate.md"
+      },
+      {
+        "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
+        "exists": true,
+        "files": 149,
+        "latest_number": 352,
+        "latest_file": "2026-06-17-codex-synergiebericht-352-standard-kosmodraw-public-gate.md"
+      }
+    ],
+    "latest_number": 352,
+    "latest_mirrored_number": 352,
+    "latest_mirrored_file": "2026-06-17-codex-synergiebericht-352-standard-kosmodraw-public-gate.md"
+  },
+  "next_batch": {
+    "mode": "source_free_innovation_and_guarding",
+    "reason": "Source Root is not unlocked.",
+    "commands": [
+      "npm run kosmo:innovation-github-watchlist",
+      "npm run kosmo:innovation-github-watchlist-check",
+      "npm run kosmo:innovation-github-discovery",
+      "npm run kosmo:innovation-github-discovery-check",
+      "npm run kosmo:innovation-github-review-queue",
+      "npm run kosmo:innovation-github-review-queue-check",
+      "npm run kosmo:codex-morning-routine-run",
+      "npm run kosmo:codex-morning-routine-run-check",
+      "npm run kosmo:orbit-status-bridge"
+    ]
+  },
+  "hard_stops": [
+    "Do not pull over dirty worktrees automatically.",
+    "Do not treat broad owner intent as Source Root unlock.",
+    "Do not read private architecture source content from this routine.",
+    "Do not install dependencies or download models from this routine."
+  ]
+}

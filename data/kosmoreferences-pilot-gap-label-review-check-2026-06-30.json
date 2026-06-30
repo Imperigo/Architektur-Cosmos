@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:52:55.145Z",
+  "status": "pilot_gap_label_review_guard_passed",
+  "policy": {
+    "review_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "extracts_pdf_or_media": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmoreferences-pilot-gap-label-review-2026-06-30.json"
+  ],
+  "summary": {
+    "checks": 11,
+    "passed": 11,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "pilot_gap_label_review_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_copies",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_pdf_or_media_extraction",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "labels_match_summary",
+      "status": "passed",
+      "evidence": "12/12"
+    },
+    {
+      "id": "all_labels_have_gates",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "owner_decision_count_matches",
+      "status": "passed",
+      "evidence": 7
+    },
+    {
+      "id": "hard_stops_present",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "pilot_priorities_present",
+      "status": "passed",
+      "evidence": 3
+    }
+  ]
+}

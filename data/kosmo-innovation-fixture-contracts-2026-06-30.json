@@ -1,0 +1,426 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:46:30.211Z",
+  "status": "innovation_fixture_contracts_ready",
+  "policy": {
+    "fixture_contracts_only": true,
+    "installs_tools_now": false,
+    "clones_repositories_now": false,
+    "reads_private_content": false,
+    "runs_private_ocr": false,
+    "runs_embeddings_on_private_content": false,
+    "runs_training": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_contracts": 0,
+    "note": "Contracts define future isolated public/synthetic fixture tests only. They do not install tools, run models or open private files."
+  },
+  "source_refs": [
+    "data/kosmo-daily-innovation-scout-2026-06-30.json"
+  ],
+  "summary": {
+    "contracts": 9,
+    "fixture_inputs": 18,
+    "install_now_count": 0,
+    "private_content_allowed_now_count": 0,
+    "executable_now": 0,
+    "failures": 0,
+    "public_ready_after_contracts": 0
+  },
+  "contracts": [
+    {
+      "id": "docling_public_pdf_fixture",
+      "candidate_id": "docling",
+      "lane": "kosmo_prepare",
+      "fixtures": [
+        {
+          "id": "public_pdf",
+          "description": "Tiny public-domain or generated architecture-style PDF with title, sections, table and image placeholder.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "generated_scan_png",
+          "description": "Generated non-private page image with simple labels for OCR/layout smoke.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "Markdown/JSON conversion preserves document hierarchy.",
+        "No private text, scans, books or plans are used.",
+        "Output records provenance and fixture-only status."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/docling-project/docling",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/docling_public_pdf_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    },
+    {
+      "id": "markitdown_office_fixture",
+      "candidate_id": "markitdown",
+      "lane": "kosmo_prepare",
+      "fixtures": [
+        {
+          "id": "generated_docx",
+          "description": "Synthetic brief with project metadata, material list and source table.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "generated_html",
+          "description": "Synthetic reference page with links and captions.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "Markdown output keeps headings, links and tables.",
+        "No OneDrive or archive files are read.",
+        "Conversion output is suitable for later KosmoReferences ingestion checks."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/microsoft/markitdown",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/markitdown_office_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    },
+    {
+      "id": "qwen3_retrieval_fixture",
+      "candidate_id": "qwen3_embedding_reranker",
+      "lane": "kosmo_rag",
+      "fixtures": [
+        {
+          "id": "public_safe_reference_chunks",
+          "description": "Small synthetic/public-safe chunks for Villa Savoye, Sogn Benedetg and Ingenbohl-style fields.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "query_set",
+          "description": "Architecture questions covering material, structure, typology and rights uncertainty.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "Embedding/rerank eval can run without private chunks.",
+        "Expected answers require grounded retrieved context.",
+        "No vector index is created from private content."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/QwenLM/Qwen3-Embedding",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/qwen3_retrieval_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    },
+    {
+      "id": "ifcopenshell_geometry_fixture",
+      "candidate_id": "ifcopenshell",
+      "lane": "kosmoasset_geometry",
+      "fixtures": [
+        {
+          "id": "generated_ifc_stub",
+          "description": "Minimal generated IFC with site, storey, wall, slab, opening and material names.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "expected_geometry_manifest",
+          "description": "Expected entities, counts, unit system and semantic labels.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "Parser extracts entity counts and basic relationships.",
+        "Geometry output is metadata-only unless fixture geometry is generated.",
+        "No private project IFC is opened."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/IfcOpenShell/IfcOpenShell",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/ifcopenshell_geometry_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    },
+    {
+      "id": "deepseek_ocr_public_scan_fixture",
+      "candidate_id": "deepseek_ocr",
+      "lane": "kosmo_prepare_ocr",
+      "fixtures": [
+        {
+          "id": "generated_plan_scan",
+          "description": "Synthetic plan-like raster with room labels, scale note and title block.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "expected_ocr_manifest",
+          "description": "Expected words, uncertainty rules and hallucination flags.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "OCR output includes confidence/uncertainty fields.",
+        "No OCR is run on private scans or books.",
+        "Output is never training-ready without human review."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/deepseek-ai/DeepSeek-OCR/",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/deepseek_ocr_public_scan_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    },
+    {
+      "id": "qwen3_vl_visual_retrieval_fixture",
+      "candidate_id": "qwen3_vl_embedding",
+      "lane": "kosmo_multimodal_rag",
+      "fixtures": [
+        {
+          "id": "generated_facade_image_set",
+          "description": "Synthetic/public-safe facade and material thumbnails.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "visual_query_set",
+          "description": "Queries for facade rhythm, material signal and plan-image distinction.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "Visual retrieval eval uses only generated/public-safe images.",
+        "Image provenance is explicit.",
+        "No private scan/photo embedding is generated."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/QwenLM/Qwen3-VL-Embedding",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/qwen3_vl_visual_retrieval_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    },
+    {
+      "id": "topologicpy_spatial_graph_fixture",
+      "candidate_id": "topologicpy",
+      "lane": "kosmo_spatial_reasoning",
+      "fixtures": [
+        {
+          "id": "synthetic_space_graph",
+          "description": "Tiny room-node/edge graph with circulation, structure and adjacency labels.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "expected_topology_report",
+          "description": "Expected graph metrics and architectural interpretation slots.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "Topology output maps to Kosmo ontology entity/relation fields.",
+        "No private plan geometry is inferred.",
+        "Graph fixtures stay source-free."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/wassimj/topologicpy",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/topologicpy_spatial_graph_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    },
+    {
+      "id": "paper2poster_publish_layout_fixture",
+      "candidate_id": "paper2poster",
+      "lane": "kosmopublish",
+      "fixtures": [
+        {
+          "id": "synthetic_reference_summary",
+          "description": "Public-safe project summary with images represented by placeholders.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "layout_scoring_manifest",
+          "description": "Expected poster zones, hierarchy and review criteria.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "Layout logic is captured as process pattern only.",
+        "No external publishing flow receives private content.",
+        "Output stays review-only."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/paper2poster/paper2poster",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/paper2poster_publish_layout_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    },
+    {
+      "id": "speckle_connector_boundary_fixture",
+      "candidate_id": "speckle",
+      "lane": "kosmo_interoperability",
+      "fixtures": [
+        {
+          "id": "connector_contract_stub",
+          "description": "Synthetic AEC object exchange schema with project, model and asset ids.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        },
+        {
+          "id": "privacy_boundary_matrix",
+          "description": "Allowed local-only and blocked cloud-sharing actions.",
+          "private_content": false,
+          "generated_or_public_safe": true
+        }
+      ],
+      "acceptance": [
+        "Connector contract separates local metadata from cloud write actions.",
+        "No account/cloud upload is enabled.",
+        "Private project exchange remains blocked until owner and tool policy review."
+      ],
+      "scout_candidate_present": true,
+      "source_url": "https://github.com/specklesystems",
+      "install_now": false,
+      "private_content_allowed_now": false,
+      "executable_now": false,
+      "output_root": "examples/kosmo-innovation-fixtures/speckle_connector_boundary_fixture",
+      "allowed_outputs": [
+        "fixture manifest JSON",
+        "fixture smoke report JSON/Markdown",
+        "generated public-safe fixture files"
+      ],
+      "forbidden_inputs": [
+        "/mnt/archiv private files",
+        "OneDrive private library files",
+        "private PDFs/books/scans/images",
+        "local worker private outputs",
+        "public-ready or rights-cleared claims"
+      ],
+      "public_ready_after_contract": 0
+    }
+  ],
+  "execution_sequence_after_manual_review": [
+    "Create synthetic/public fixture files under examples/kosmo-innovation-fixtures/.",
+    "Run each tool in an isolated local environment only after dependency policy review.",
+    "Write only generated fixture outputs and metadata reports to Git.",
+    "Keep all private library usage blocked until explicit Source Root and rights gates pass."
+  ],
+  "failures": []
+}

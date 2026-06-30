@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:49:10.690Z",
+  "status": "kosmoasset_prepare_phase1_fixture_contract_ready",
+  "policy": {
+    "synthetic_fixture_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "ingests_assets": false,
+    "uploads_allowed": false,
+    "public_assets_allowed": false,
+    "public_ready_after_contract": 0
+  },
+  "source_refs": [
+    "examples/kosmo-references/source-packages/kosmo-prepare-phase1-adapter-fixture-2026-06-30/source-package.json",
+    "examples/kosmo-prepare/phase1-adapter-fixture/converted.markitdown.md",
+    "examples/kosmo-prepare/phase1-adapter-fixture/ifcopenshell-entity-manifest.json"
+  ],
+  "outputs": {
+    "library": "examples/kosmo-assets/kosmo-prepare-phase1-fixture/library.json",
+    "material_profile": "examples/kosmo-assets/kosmo-prepare-phase1-fixture/assets/materials/timber-frame.material.json",
+    "component_profile": "examples/kosmo-assets/kosmo-prepare-phase1-fixture/assets/components/synthetic-primary-column.component.json"
+  },
+  "summary": {
+    "source_package_id": "kosmo-prepare-phase1-adapter-fixture-2026-06-30",
+    "assets": 2,
+    "public_use_allowed_assets": 0,
+    "uploads_allowed": false,
+    "public_ready_after_contract": 0
+  },
+  "next_actions": [
+    "Run npm run kosmo:asset-prepare-phase1-fixture-contract-check.",
+    "Use this only as a source-free KosmoAsset bridge fixture.",
+    "Do not promote synthetic fixture assets to public catalog entries."
+  ]
+}

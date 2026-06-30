@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:49:35.439Z",
+  "status": "local_worker_fixture_chain_task_pack_missing_refs",
+  "policy": {
+    "review_only": true,
+    "fixture_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "starts_models": false,
+    "executes_workers_now": false,
+    "writes_repo_outputs_from_workers": false,
+    "public_ready_after_pack": 0
+  },
+  "source_refs": [
+    "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.json",
+    "examples/kosmo-references/source-packages/kosmo-prepare-phase1-adapter-fixture-2026-06-30/source-package.json",
+    "data/kosmo-prepare-phase1-source-package-contract-check-2026-06-30.json",
+    "examples/kosmo-assets/kosmo-prepare-phase1-fixture/library.json",
+    "data/kosmo-asset-prepare-phase1-fixture-contract-check-2026-06-30.json",
+    "data/kosmo-orbit-status-bridge-2026-06-30.json",
+    "data/kosmo-worker-boundary-pack-check-2026-06-30.json",
+    "data/kosmo-innovation-github-promotion-matrix-2026-06-30.json",
+    "data/kosmo-innovation-github-promotion-matrix-check-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payloads-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payloads-check-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-30.json"
+  ],
+  "summary": {
+    "tasks": 3,
+    "legacy_fixture_chain_tasks": 3,
+    "github_innovation_tasks": 0,
+    "github_payload_refs": 0,
+    "training_lanes": 0,
+    "ontology_entity_types": 0,
+    "ontology_relation_types": 0,
+    "executable_now": 0,
+    "runner_safe_tasks": 3,
+    "missing_refs": 6,
+    "public_ready_after_pack": 0
+  },
+  "missing_refs": [
+    "data/kosmo-innovation-github-promotion-matrix-2026-06-30.json",
+    "data/kosmo-innovation-github-promotion-matrix-check-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payloads-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payloads-check-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-2026-06-30.json",
+    "data/kosmo-innovation-github-fixture-payload-smoke-check-2026-06-30.json"
+  ],
+  "tasks": [
+    {
+      "task_id": "fixture-chain-source-package-summary",
+      "priority": 1,
+      "lane": "kosmoprepare-kosmoreferences",
+      "runner_safe": true,
+      "execute_now": false,
+      "input_refs": [
+        "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.json",
+        "examples/kosmo-references/source-packages/kosmo-prepare-phase1-adapter-fixture-2026-06-30/source-package.json",
+        "data/kosmo-prepare-phase1-source-package-contract-check-2026-06-30.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-30.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/fixture-chain-source-package-summary.review.json",
+      "objective": "Summarize the synthetic KosmoPrepare source package for overseer review without adding new facts or reading private content.",
+      "acceptance": [
+        "Reports package_id, sources, artifacts, review gates and public-ready=0.",
+        "Flags any missing guard or non-review-only policy as blocker.",
+        "Does not quote or transform private content because no private inputs are present."
+      ]
+    },
+    {
+      "task_id": "fixture-chain-asset-candidate-review",
+      "priority": 2,
+      "lane": "kosmoasset",
+      "runner_safe": true,
+      "execute_now": false,
+      "input_refs": [
+        "examples/kosmo-assets/kosmo-prepare-phase1-fixture/library.json",
+        "data/kosmo-asset-prepare-phase1-fixture-contract-check-2026-06-30.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-30.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/fixture-chain-asset-candidate-review.review.json",
+      "objective": "Review the two synthetic KosmoAsset fixture candidates and propose metadata improvements only.",
+      "acceptance": [
+        "Keeps every asset local_only and public_use_allowed=false.",
+        "Separates material profile from structural component profile.",
+        "No texture generation, geometry generation, upload, public publication or rights promotion."
+      ]
+    },
+    {
+      "task_id": "fixture-chain-orbit-card-brief",
+      "priority": 3,
+      "lane": "kosmoorbit-overseer",
+      "runner_safe": true,
+      "execute_now": false,
+      "input_refs": [
+        "data/kosmo-orbit-status-bridge-2026-06-30.json",
+        "data/kosmo-prepare-phase1-source-package-contract-check-2026-06-30.json",
+        "data/kosmo-asset-prepare-phase1-fixture-contract-check-2026-06-30.json",
+        "data/kosmo-worker-boundary-pack-check-2026-06-30.json"
+      ],
+      "output_path": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15/fixture-chain-orbit-card-brief.review.json",
+      "objective": "Prepare a short local-worker-readable brief explaining the Orbit fixture-chain card and remaining blockers.",
+      "acceptance": [
+        "Mentions the card id prepare-references-asset-fixture-chain.",
+        "Keeps Source Root and owner gates blocked.",
+        "Does not recommend executing private ingestion, OCR, embeddings, training, Git or cloud writes."
+      ]
+    }
+  ],
+  "forbidden_actions": [
+    "Do not read private source folders, PDFs, scans, OCR text, OneDrive libraries or archive roots.",
+    "Do not generate embeddings or training data.",
+    "Do not run downloaded GitHub repositories, package installs, model calls or MCP tools from these fixtures.",
+    "Do not convert worker output into repo data automatically.",
+    "Do not mark assets or references public-ready.",
+    "Do not run Git or cloud writes from the local worker."
+  ],
+  "next_actions": [
+    "Use this task pack only after an overseer explicitly starts a local fixture-only worker run.",
+    "Review local worker outputs manually before any repo conversion.",
+    "Keep private Source Root work blocked until owner confirmation."
+  ]
+}

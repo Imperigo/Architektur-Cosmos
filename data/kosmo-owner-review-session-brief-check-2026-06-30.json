@@ -1,0 +1,309 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:54:33.501Z",
+  "status": "owner_review_session_brief_guard_failed",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "applies_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates the owner review session brief. It does not record answers or apply decisions."
+  },
+  "source_refs": [
+    "data/kosmo-owner-review-session-brief-2026-06-30.json",
+    "data/kosmo-owner-question-brief-2026-06-30.json"
+  ],
+  "summary": {
+    "brief_status": "owner_review_session_brief_ready",
+    "questions": 6,
+    "prior_signals": 5,
+    "prior_signals_recordable_now": 0,
+    "actionable_decisions_written": 0,
+    "failures": 1,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "findings": [
+    {
+      "id": "session_brief_ready",
+      "severity": "passed",
+      "message": "Session brief must be ready."
+    },
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Session brief must not record decisions."
+    },
+    {
+      "id": "writes_session_files_false",
+      "severity": "passed",
+      "message": "Session brief must not write session files."
+    },
+    {
+      "id": "applies_decisions_false",
+      "severity": "passed",
+      "message": "Session brief must not apply decisions."
+    },
+    {
+      "id": "writes_public_files_false",
+      "severity": "passed",
+      "message": "Session brief must not write public files."
+    },
+    {
+      "id": "writes_public_manifest_false",
+      "severity": "passed",
+      "message": "Session brief must not write public manifests."
+    },
+    {
+      "id": "public_ready_after_brief_zero",
+      "severity": "passed",
+      "message": "Session brief must keep public-ready after brief at 0."
+    },
+    {
+      "id": "packet_ready",
+      "severity": "passed",
+      "message": "Session brief must reference a ready owner review packet."
+    },
+    {
+      "id": "packet_guard_passed",
+      "severity": "failure",
+      "message": "Session brief must reference a passing packet guard."
+    },
+    {
+      "id": "router_guarded_review_only",
+      "severity": "passed",
+      "message": "Session brief must keep router guarded review-only or private-diagnostic ready."
+    },
+    {
+      "id": "question_count_six",
+      "severity": "passed",
+      "message": "Session brief must contain six owner questions."
+    },
+    {
+      "id": "prior_signal_count_five",
+      "severity": "passed",
+      "message": "Session brief must classify five prior owner signals."
+    },
+    {
+      "id": "prior_signals_recordable_zero",
+      "severity": "passed",
+      "message": "No prior signal may be recordable now."
+    },
+    {
+      "id": "required_answers_six",
+      "severity": "passed",
+      "message": "All six owner answers must remain required."
+    },
+    {
+      "id": "actionable_decisions_written_zero",
+      "severity": "passed",
+      "message": "Session brief must not write actionable decisions."
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "severity": "passed",
+      "message": "Session brief summary must keep public-ready at 0."
+    },
+    {
+      "id": "prior_signals_array_count",
+      "severity": "passed",
+      "message": "Prior owner signals array must contain five items."
+    },
+    {
+      "id": "prior_signal_not_recordable:pilot_reference_scope",
+      "severity": "passed",
+      "message": "Prior signal pilot_reference_scope must not be recordable now."
+    },
+    {
+      "id": "prior_signal_reason:pilot_reference_scope",
+      "severity": "passed",
+      "message": "Prior signal pilot_reference_scope must include a reason."
+    },
+    {
+      "id": "prior_signal_not_recordable:sample_depth",
+      "severity": "passed",
+      "message": "Prior signal sample_depth must not be recordable now."
+    },
+    {
+      "id": "prior_signal_reason:sample_depth",
+      "severity": "passed",
+      "message": "Prior signal sample_depth must include a reason."
+    },
+    {
+      "id": "prior_signal_not_recordable:local_first_onedrive_books_eth_hslu",
+      "severity": "passed",
+      "message": "Prior signal local_first_onedrive_books_eth_hslu must not be recordable now."
+    },
+    {
+      "id": "prior_signal_reason:local_first_onedrive_books_eth_hslu",
+      "severity": "passed",
+      "message": "Prior signal local_first_onedrive_books_eth_hslu must include a reason."
+    },
+    {
+      "id": "prior_signal_not_recordable:same_day_nightshift",
+      "severity": "passed",
+      "message": "Prior signal same_day_nightshift must not be recordable now."
+    },
+    {
+      "id": "prior_signal_reason:same_day_nightshift",
+      "severity": "passed",
+      "message": "Prior signal same_day_nightshift must include a reason."
+    },
+    {
+      "id": "prior_signal_not_recordable:autonomous_private_github_push",
+      "severity": "passed",
+      "message": "Prior signal autonomous_private_github_push must not be recordable now."
+    },
+    {
+      "id": "prior_signal_reason:autonomous_private_github_push",
+      "severity": "passed",
+      "message": "Prior signal autonomous_private_github_push must include a reason."
+    },
+    {
+      "id": "question_count_matches_source",
+      "severity": "passed",
+      "message": "Session question count must match owner question brief."
+    },
+    {
+      "id": "question_source_exists:source-root",
+      "severity": "passed",
+      "message": "Session question source-root must exist in owner question brief."
+    },
+    {
+      "id": "question_unanswered:source-root",
+      "severity": "passed",
+      "message": "Session question source-root must remain unanswered."
+    },
+    {
+      "id": "question_safe_default_match:source-root",
+      "severity": "passed",
+      "message": "Session question source-root safe default must match source."
+    },
+    {
+      "id": "question_allowed_answers_match:source-root",
+      "severity": "passed",
+      "message": "Session question source-root allowed answers must match source."
+    },
+    {
+      "id": "question_source_exists:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Session question batch-a-villa-savoye-image-candidates must exist in owner question brief."
+    },
+    {
+      "id": "question_unanswered:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Session question batch-a-villa-savoye-image-candidates must remain unanswered."
+    },
+    {
+      "id": "question_safe_default_match:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Session question batch-a-villa-savoye-image-candidates safe default must match source."
+    },
+    {
+      "id": "question_allowed_answers_match:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Session question batch-a-villa-savoye-image-candidates allowed answers must match source."
+    },
+    {
+      "id": "question_source_exists:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Session question batch-b-villa-savoye-derived-files must exist in owner question brief."
+    },
+    {
+      "id": "question_unanswered:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Session question batch-b-villa-savoye-derived-files must remain unanswered."
+    },
+    {
+      "id": "question_safe_default_match:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Session question batch-b-villa-savoye-derived-files safe default must match source."
+    },
+    {
+      "id": "question_allowed_answers_match:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Session question batch-b-villa-savoye-derived-files allowed answers must match source."
+    },
+    {
+      "id": "question_source_exists:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Session question batch-c-model-promotion-confirmation must exist in owner question brief."
+    },
+    {
+      "id": "question_unanswered:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Session question batch-c-model-promotion-confirmation must remain unanswered."
+    },
+    {
+      "id": "question_safe_default_match:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Session question batch-c-model-promotion-confirmation safe default must match source."
+    },
+    {
+      "id": "question_allowed_answers_match:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Session question batch-c-model-promotion-confirmation allowed answers must match source."
+    },
+    {
+      "id": "question_source_exists:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Session question batch-d-sogn-benedetg-source-gap must exist in owner question brief."
+    },
+    {
+      "id": "question_unanswered:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Session question batch-d-sogn-benedetg-source-gap must remain unanswered."
+    },
+    {
+      "id": "question_safe_default_match:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Session question batch-d-sogn-benedetg-source-gap safe default must match source."
+    },
+    {
+      "id": "question_allowed_answers_match:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Session question batch-d-sogn-benedetg-source-gap allowed answers must match source."
+    },
+    {
+      "id": "question_source_exists:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Session question batch-e-kosmoasset-human-reviews must exist in owner question brief."
+    },
+    {
+      "id": "question_unanswered:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Session question batch-e-kosmoasset-human-reviews must remain unanswered."
+    },
+    {
+      "id": "question_safe_default_match:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Session question batch-e-kosmoasset-human-reviews safe default must match source."
+    },
+    {
+      "id": "question_allowed_answers_match:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Session question batch-e-kosmoasset-human-reviews allowed answers must match source."
+    },
+    {
+      "id": "source_root_decision_pending",
+      "severity": "passed",
+      "message": "Source-root decision must remain pending or recorded metadata-only."
+    },
+    {
+      "id": "source_root_path_pending",
+      "severity": "passed",
+      "message": "Source-root path must remain pending or recorded metadata-only."
+    },
+    {
+      "id": "source_root_safe_default_keep_blocked",
+      "severity": "passed",
+      "message": "Source-root safe default must remain keep_blocked or metadata-only after recorded root."
+    }
+  ],
+  "next_actions": [
+    "Fix owner review session brief guard failures before presenting it.",
+    "Rerun npm run kosmo:owner-review-session-brief and npm run kosmo:owner-review-session-brief-check."
+  ]
+}

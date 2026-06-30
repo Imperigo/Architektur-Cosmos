@@ -1,0 +1,217 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:46:06.200Z",
+  "status": "innovation_lane_metadata_plan_ready",
+  "policy": {
+    "metadata_only": true,
+    "installs_tools": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_plan": 0,
+    "note": "This plan probes local tool availability and defines guarded innovation lanes. It does not install tools, read private sources or run OCR/extraction on private content."
+  },
+  "source_refs": [
+    "data/kosmo-day-batch-loop-2026-06-30.json",
+    "data/kosmo-source-root-blocker-refresh-2026-06-30.json"
+  ],
+  "summary": {
+    "day_batch_status": "day_batch_loop_needs_review",
+    "source_root_blocker_status": "source_root_blocker_still_active",
+    "private_diagnostic_allowed": false,
+    "lanes": 5,
+    "ready_now": 5,
+    "blocked_by_source_root": 3,
+    "public_ready_after_plan": 0
+  },
+  "probes": {
+    "python_cli": {
+      "command": "python3 --version",
+      "executable": "python3",
+      "args": [
+        "--version"
+      ],
+      "status": "available",
+      "exit_code": 0,
+      "output_excerpt": "Python 3.14.4"
+    },
+    "markitdown_cli": {
+      "command": "/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown --version",
+      "executable": "/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown",
+      "args": [
+        "--version"
+      ],
+      "status": "available",
+      "exit_code": 0,
+      "output_excerpt": "markitdown 0.1.5\n/mnt/data/ArchitekturKosmos/tools/markitdown-venv/lib/python3.12/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work\n  warn(\"Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work\", RuntimeWarning)",
+      "candidates": [
+        [
+          "markitdown",
+          [
+            "--version"
+          ]
+        ],
+        [
+          "/mnt/data/ArchitekturKosmos/tools/markitdown-venv/bin/markitdown",
+          [
+            "--version"
+          ]
+        ]
+      ]
+    },
+    "tesseract_cli": {
+      "command": "tesseract --version",
+      "executable": "tesseract",
+      "args": [
+        "--version"
+      ],
+      "status": "missing",
+      "exit_code": null,
+      "output_excerpt": ""
+    },
+    "rapidocr_python": {
+      "command": "/mnt/data/ArchitekturKosmos/tools/rapidocr-venv/bin/python -c import rapidocr_onnxruntime; print(\"rapidocr available\")",
+      "executable": "/mnt/data/ArchitekturKosmos/tools/rapidocr-venv/bin/python",
+      "args": [
+        "-c",
+        "import rapidocr_onnxruntime; print(\"rapidocr available\")"
+      ],
+      "status": "available",
+      "exit_code": 0,
+      "output_excerpt": "rapidocr available"
+    },
+    "ollama_list": {
+      "command": "ollama list",
+      "executable": "ollama",
+      "args": [
+        "list"
+      ],
+      "status": "available",
+      "exit_code": 0,
+      "output_excerpt": ""
+    },
+    "ifcopenshell_import": {
+      "command": "/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python -c import ifcopenshell; print(ifcopenshell.version)",
+      "executable": "/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python",
+      "args": [
+        "-c",
+        "import ifcopenshell; print(ifcopenshell.version)"
+      ],
+      "status": "available",
+      "exit_code": 0,
+      "output_excerpt": "0.8.5",
+      "candidates": [
+        [
+          "python3",
+          [
+            "-c",
+            "import ifcopenshell; print(ifcopenshell.version)"
+          ]
+        ],
+        [
+          "/mnt/data/ArchitekturKosmos/tools/ifcopenshell-venv/bin/python",
+          [
+            "-c",
+            "import ifcopenshell; print(ifcopenshell.version)"
+          ]
+        ]
+      ]
+    }
+  },
+  "lanes": [
+    {
+      "id": "markitdown_prepare_m2",
+      "name": "MarkItDown for KosmoPrepare M2",
+      "intent": "Convert allowed documents into Markdown for downstream metadata extraction and review packs.",
+      "tool_probe": "markitdown_cli",
+      "current_tool_state": "available",
+      "allowed_now": [
+        "run public/synthetic smoke conversions",
+        "draft Markdown field contract",
+        "compare output structure against KosmoPrepare package import expectations"
+      ],
+      "blocked_until": [
+        "real source root recorded before private book/PDF conversion"
+      ],
+      "first_smoke": "Create a tiny synthetic public-domain text/PDF fixture and verify Markdown output contains no private content.",
+      "promotion_gate": "No private Markdown enters Git; private outputs stay under KosmoZentrale private inventory paths."
+    },
+    {
+      "id": "local_ocr_scanned_sources",
+      "name": "Local OCR for Scanned Architecture Sources",
+      "intent": "Evaluate OCR fallback for scanned plans/books after source-root and rights gates.",
+      "tool_probe": "rapidocr_python",
+      "current_tool_state": "available",
+      "allowed_now": [
+        "document OCR contract and forbidden fields",
+        "run OCR only on synthetic/public fixture images",
+        "define confidence and redaction checks before any private use"
+      ],
+      "blocked_until": [
+        "source-root decision passes",
+        "owner authorizes private OCR scope",
+        "private output path outside Git exists"
+      ],
+      "first_smoke": "Use one generated/public image fixture with a short text label; write only metadata and confidence summary.",
+      "promotion_gate": "OCR text from private scans is never committed; only owner-approved summaries may enter review packs."
+    },
+    {
+      "id": "qwen_embedding_rag",
+      "name": "Qwen Embeddings/Reranking for KosmoReferences RAG",
+      "intent": "Prepare local semantic search over reviewed project metadata, not raw private PDFs.",
+      "tool_probe": "ollama_list",
+      "current_tool_state": "available",
+      "allowed_now": [
+        "index public/review-only metadata fields",
+        "define embedding manifest schema",
+        "benchmark retrieval on the three pilot package summaries"
+      ],
+      "blocked_until": [
+        "private source root and pilot metadata inventory pass"
+      ],
+      "first_smoke": "Embed only pilot IDs, titles and own-written summaries; verify no source excerpts are present.",
+      "promotion_gate": "Embedding corpus manifest must prove source class, rights state and no raw private text."
+    },
+    {
+      "id": "ifcopenshell_geometry_lane",
+      "name": "IfcOpenShell Geometry/Structure Lane",
+      "intent": "Use IFC parsing as the future bridge from reference/project packages to model-layer reasoning.",
+      "tool_probe": "ifcopenshell_import",
+      "current_tool_state": "available",
+      "allowed_now": [
+        "run existing IFC demo/project checks",
+        "define structure/material/level extraction targets",
+        "keep generated geometry review-only"
+      ],
+      "blocked_until": [
+        "private source-dependent geometry remains blocked until provenance is known"
+      ],
+      "first_smoke": "Run semantic proof on existing demo IFC only, then connect output to pilot evidence gaps.",
+      "promotion_gate": "No derived model asset becomes public-ready without file-level provenance and human review."
+    },
+    {
+      "id": "paper2poster_publish_lane",
+      "name": "Paper2Poster Logic for KosmoPublish",
+      "intent": "Borrow paper-to-poster planning as a layout reasoning pattern for architectural boards and review packs.",
+      "tool_probe": "python_cli",
+      "current_tool_state": "available",
+      "allowed_now": [
+        "draft layout-planner contract",
+        "map pilot reference evidence into poster sections",
+        "use summaries and placeholders only"
+      ],
+      "blocked_until": [
+        "actual image/plan placement waits for rights and provenance review"
+      ],
+      "first_smoke": "Generate a layout JSON skeleton for Villa/Sogn/Ingenbohl with empty media slots.",
+      "promotion_gate": "KosmoPublish exports remain review-only until media rights are resolved."
+    }
+  ],
+  "next_actions": [
+    "Run public/synthetic smoke tests only for MarkItDown, OCR and embeddings.",
+    "Use existing IFC demo assets for geometry experiments.",
+    "Keep private source-dependent innovation work blocked until source-root decision passes.",
+    "After smoke tests, add per-lane guards before any worker or local LLM can run the tools autonomously."
+  ]
+}

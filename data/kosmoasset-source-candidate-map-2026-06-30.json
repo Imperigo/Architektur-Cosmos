@@ -1,0 +1,204 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:46:38.917Z",
+  "status": "kosmoasset_source_candidate_map_review_only_ready",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "ingests_assets": false,
+    "generates_assets": false,
+    "uploads_allowed": false,
+    "public_ready_after_map": 0,
+    "note": "This map routes source-root candidate metadata into KosmoAsset review lanes. It does not inspect or copy private asset files."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-selection-brief-2026-06-30.json",
+    "data/kosmoasset-reference-bridge-check-2026-06-30.json"
+  ],
+  "summary": {
+    "selection_status": "source_root_owner_selection_needed",
+    "asset_bridge_status": null,
+    "source_candidates_seen": 10,
+    "asset_lane_candidates": 3,
+    "material_library_candidates": 2,
+    "project_asset_candidates": 1,
+    "blocked_reference_root_candidates": 10,
+    "public_ready_after_map": 0
+  },
+  "candidates": [
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+      "role_guess": "workflow_mirror_or_codex_context",
+      "classification": "possible_source_root",
+      "score": 70,
+      "book_like_files": 3,
+      "lecture_like_files": 107,
+      "sync_error_files": 0,
+      "asset_lane": "not_asset_lane",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "keep_blocked_for_asset_use",
+      "recommended_action": "Keep out of KosmoAsset ingestion; this looks like workflow/context material."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+      "role_guess": "asset_material_library_candidate",
+      "classification": "possible_source_root",
+      "score": 60,
+      "book_like_files": 1,
+      "lecture_like_files": 2,
+      "sync_error_files": 0,
+      "asset_lane": "material_texture_library",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "owner_confirms_kosmoasset_material_source_then_rights_review",
+      "recommended_action": "Route to KosmoAsset material/source candidate list, not to KosmoReferences main source root."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+      "role_guess": "asset_material_library_candidate",
+      "classification": "possible_source_root",
+      "score": 60,
+      "book_like_files": 2,
+      "lecture_like_files": 4,
+      "sync_error_files": 0,
+      "asset_lane": "material_texture_library",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "owner_confirms_kosmoasset_material_source_then_rights_review",
+      "recommended_action": "Route to KosmoAsset material/source candidate list, not to KosmoReferences main source root."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow",
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+      "role_guess": "workflow_mirror_or_codex_context",
+      "classification": "possible_source_root",
+      "score": 52,
+      "book_like_files": 3,
+      "lecture_like_files": 107,
+      "sync_error_files": 0,
+      "asset_lane": "not_asset_lane",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "keep_blocked_for_asset_use",
+      "recommended_action": "Keep out of KosmoAsset ingestion; this looks like workflow/context material."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "role_guess": "archive_subtree_candidate",
+      "classification": "possible_source_root",
+      "score": 52,
+      "book_like_files": 21,
+      "lecture_like_files": 110,
+      "sync_error_files": 0,
+      "asset_lane": "project_asset_library",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "owner_confirms_asset_scope_then_private_metadata_only_inventory",
+      "recommended_action": "Review as possible KosmoAsset project-asset source, with no copy or extraction before owner confirmation."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+      "role_guess": "onedrive_mirror_candidate",
+      "classification": "possible_source_root",
+      "score": 48,
+      "book_like_files": 3,
+      "lecture_like_files": 59,
+      "sync_error_files": 0,
+      "asset_lane": "not_asset_lane",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "keep_blocked_for_asset_use",
+      "recommended_action": "Keep blocked until owner/KosmoOverseer assigns a lane."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+      "role_guess": "workflow_mirror_or_codex_context",
+      "classification": "possible_source_root",
+      "score": 48,
+      "book_like_files": 2,
+      "lecture_like_files": 89,
+      "sync_error_files": 0,
+      "asset_lane": "not_asset_lane",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "keep_blocked_for_asset_use",
+      "recommended_action": "Keep out of KosmoAsset ingestion; this looks like workflow/context material."
+    },
+    {
+      "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+      "role_guess": "workflow_mirror_or_codex_context",
+      "classification": "possible_source_root",
+      "score": 48,
+      "book_like_files": 2,
+      "lecture_like_files": 2,
+      "sync_error_files": 0,
+      "asset_lane": "not_asset_lane",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "keep_blocked_for_asset_use",
+      "recommended_action": "Keep out of KosmoAsset ingestion; this looks like workflow/context material."
+    },
+    {
+      "id": "mount_archive_or_missing_root",
+      "path": null,
+      "role_guess": "owner_storage_action",
+      "classification": "missing_or_unmounted_root",
+      "score": null,
+      "book_like_files": null,
+      "lecture_like_files": null,
+      "sync_error_files": null,
+      "asset_lane": "not_asset_lane",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "keep_blocked_for_asset_use",
+      "recommended_action": "Keep blocked until owner/KosmoOverseer assigns a lane."
+    },
+    {
+      "id": "repair_onedrive_first",
+      "path": null,
+      "role_guess": "onedrive_integrity_gate",
+      "classification": "sync_repair_first",
+      "score": null,
+      "book_like_files": null,
+      "lecture_like_files": null,
+      "sync_error_files": 5,
+      "asset_lane": "not_asset_lane",
+      "reference_root_allowed": false,
+      "asset_use_allowed_now": false,
+      "required_confirmation": "keep_blocked_for_asset_use",
+      "recommended_action": "Keep blocked until owner/KosmoOverseer assigns a lane."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "source_root_owner_selection",
+      "active": true,
+      "message": "Owner/KosmoOverseer has not selected an exact private source root."
+    },
+    {
+      "id": "asset_bridge_review_only",
+      "active": true,
+      "message": "KosmoAsset reference bridge must stay review-only and passing before new candidate lanes are promoted."
+    },
+    {
+      "id": "public_ready_zero",
+      "active": true,
+      "message": "All source-derived KosmoAsset candidates stay public-ready=false until rights and human review gates pass."
+    }
+  ],
+  "next_actions": [
+    "Use material_texture_library candidates only as KosmoAsset review inputs after owner confirmation.",
+    "Do not treat KosmoAsset material libraries as the main KosmoReferences source root.",
+    "After owner selection, run private diagnostics on the exact selected path before any extraction.",
+    "Keep public-ready at 0 until rights, provenance and human review gates pass."
+  ]
+}

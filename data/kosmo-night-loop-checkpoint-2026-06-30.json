@@ -1,0 +1,105 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:54:23.644Z",
+  "status": "night_loop_needs_review",
+  "policy": {
+    "review_only": true,
+    "records_decisions": false,
+    "public_writes_allowed": false,
+    "public_ready_after_checkpoint": 0,
+    "note": "This checkpoint summarizes the current autonomous loop state. It does not run owner decisions, private extraction, public promotion or source copying."
+  },
+  "source_refs": [
+    "data/kosmodata-lane-sweep-2026-06-30.json",
+    "data/kosmo-data-lane-command-router-2026-06-30.json",
+    "data/kosmo-owner-next-review-brief-2026-06-30.json"
+  ],
+  "summary": {
+    "data_lane_status": "kosmodata_lane_sweep_failed",
+    "data_lane_steps": "24/26",
+    "data_lane_duration_ms": 22011,
+    "router_status": "worker_router_guarded_review_only",
+    "owner_brief_status": "owner_next_review_brief_open",
+    "owner_open_batches": 5,
+    "owner_open_items": 16,
+    "asset_open_reviews": 6,
+    "source_root_blocked": true,
+    "private_inventory_blocked": true,
+    "public_ready_assets": 0,
+    "private_inventory_output_contract": "private_inventory_output_contract_passed",
+    "local_worker_review": "local_worker_outputs_present_review_only",
+    "local_worker_risk_hits": 0
+  },
+  "next_loop": {
+    "primary_action": "prepare_owner_source_root_decision_and_batch_questions",
+    "owner_card_to_present_first": "batch-a-villa-savoye-image-candidates",
+    "allowed_commands": [
+      "npm run kosmo:data-lane-sweep",
+      "npm run kosmo:private-inventory-output-template",
+      "npm run kosmo:private-inventory-output-check",
+      "npm run kosmo:human-decision-owner-batches",
+      "npm run kosmo:source-root-blocker-refresh",
+      "npm run kosmo:source-root-unlock-runbook",
+      "npm run kosmo:source-root-owner-action-card",
+      "npm run kosmo:asset-source-candidate-map",
+      "npm run kosmo:orbit-status-bridge",
+      "npm run kosmo:local-worker-launch-queue",
+      "npm run kosmo:local-worker-output-conversion-plan",
+      "npm run kosmo:owner-decision-session-check",
+      "npm run kosmo:owner-review-packet-check",
+      "npm run kosmo:owner-review-session-brief",
+      "npm run kosmo:owner-review-session-brief-check",
+      "npm run kosmo:overseer-sync-board",
+      "npm run kosmo:overseer-sync-board-check",
+      "npm run kosmo:worker-boundary-pack",
+      "npm run kosmo:worker-boundary-pack-check"
+    ],
+    "blocked_commands": [
+      {
+        "command": "npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\"",
+        "reason": "Source-root decision session has not passed with private_diagnostic_allowed=true."
+      },
+      {
+        "command": "private inventory extraction or source-dependent asset authoring",
+        "reason": "Private source inventory plan is still blocked."
+      },
+      {
+        "command": "public promotion / public_ready=true / R2-D1 public writes",
+        "reason": "Separate owner, provenance and rights reviews are still required."
+      }
+    ],
+    "recommended_sequence": [
+      "npm run kosmo:data-lane-sweep",
+      "npm run kosmo:data-lane-command-router",
+      "npm run kosmo:owner-next-review-brief",
+      "npm run kosmo:owner-answer-sheet",
+      "npm run kosmo:owner-answer-sheet-check",
+      "npm run kosmo:owner-review-batch-resolution-ledger",
+      "npm run kosmo:owner-review-batch-resolution-ledger-check",
+      "Present one owner review card or record a confirmed source-root decision.",
+      "After any decision edit, rerun sweep/router/checkpoint."
+    ]
+  },
+  "invariants": [
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": "references_public_ready_assets=0"
+    },
+    {
+      "id": "local_worker_review_only",
+      "status": "passed",
+      "evidence": "public_ready_allowed=false, risk=0"
+    },
+    {
+      "id": "private_inventory_contract",
+      "status": "passed",
+      "evidence": "failures=0, public_ready_hits=0"
+    },
+    {
+      "id": "router_blocks_private_without_root",
+      "status": "passed",
+      "evidence": "private_diagnostic_allowed=false, private_inventory_allowed=false"
+    }
+  ]
+}

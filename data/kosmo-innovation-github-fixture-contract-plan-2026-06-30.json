@@ -1,0 +1,406 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:40:19.120Z",
+  "status": "innovation_github_fixture_contract_plan_ready",
+  "policy": {
+    "plan_only": true,
+    "synthetic_fixture_only": true,
+    "copies_github_code": false,
+    "stores_raw_readme_content": false,
+    "clones_repositories_now": false,
+    "installs_dependencies_now": false,
+    "downloads_models_now": false,
+    "runs_discovered_code_now": false,
+    "reads_private_content": false,
+    "public_ready_after_plan": 0
+  },
+  "source_refs": [
+    "data/kosmo-innovation-github-readme-signal-scan-2026-06-30.json"
+  ],
+  "summary": {
+    "scanned_items": 9,
+    "high_signal_items": 6,
+    "contract_plans": 6,
+    "kosmo_prepare_plans": 2,
+    "kosmo_asset_plans": 1,
+    "worker_integration_plans": 3,
+    "executable_now": 0,
+    "public_ready_after_plan": 0
+  },
+  "contract_plans": [
+    {
+      "id": "github-fixture-plan-01",
+      "source_repo": "SII-sc22mc/DocFusion",
+      "source_url": "https://github.com/SII-sc22mc/DocFusion",
+      "source_lane": "kosmo_prepare",
+      "target_lane": "kosmo_prepare",
+      "fixture_id": "kosmo_prepare-sii-sc22mc-docfusion-signal-fixture",
+      "proposed_fixture_root": "examples/kosmo-innovation-fixtures/kosmo_prepare-sii-sc22mc-docfusion-signal-fixture/",
+      "signal_score": 3,
+      "keyword_groups": [
+        {
+          "id": "document_processing",
+          "hits": [
+            "layout",
+            "table",
+            "document"
+          ]
+        },
+        {
+          "id": "worker_integration",
+          "hits": [
+            "http"
+          ]
+        },
+        {
+          "id": "runtime_risk",
+          "hits": [
+            "install",
+            "pip",
+            "conda"
+          ]
+        }
+      ],
+      "contract_goal": "Define a synthetic document/OCR/layout parsing fixture contract inspired by public metadata signals.",
+      "allowed_inputs": [
+        "synthetic_pdf_manifest",
+        "generated_scan_stub",
+        "expected_layout_schema"
+      ],
+      "expected_outputs": [
+        "markdown_or_layout_manifest",
+        "ocr_signal_matrix",
+        "review_gate_report"
+      ],
+      "guard_requirements": [
+        "synthetic inputs only",
+        "no GitHub code copied",
+        "no README text copied",
+        "no repository clone",
+        "no dependency install",
+        "no model download",
+        "no private content",
+        "human/overseer review before worker execution"
+      ],
+      "execute_now": false,
+      "public_ready_after_plan": 0
+    },
+    {
+      "id": "github-fixture-plan-02",
+      "source_repo": "lee-agi/3d_model_base",
+      "source_url": "https://github.com/lee-agi/3d_model_base",
+      "source_lane": "kosmo_asset",
+      "target_lane": "kosmo_asset",
+      "fixture_id": "kosmo_asset-lee-agi-3d-model-base-signal-fixture",
+      "proposed_fixture_root": "examples/kosmo-innovation-fixtures/kosmo_asset-lee-agi-3d-model-base-signal-fixture/",
+      "signal_score": 3,
+      "keyword_groups": [
+        {
+          "id": "document_processing",
+          "hits": [
+            "table"
+          ]
+        },
+        {
+          "id": "worker_integration",
+          "hits": [
+            "api"
+          ]
+        },
+        {
+          "id": "retrieval",
+          "hits": [
+            "retrieval"
+          ]
+        }
+      ],
+      "contract_goal": "Define a synthetic 3D retrieval or similarity-taxonomy fixture contract for KosmoAsset.",
+      "allowed_inputs": [
+        "synthetic_asset_manifest",
+        "generated_geometry_stub",
+        "similarity_query_schema"
+      ],
+      "expected_outputs": [
+        "asset_feature_taxonomy",
+        "retrieval_eval_stub",
+        "review_gate_report"
+      ],
+      "guard_requirements": [
+        "synthetic inputs only",
+        "no GitHub code copied",
+        "no README text copied",
+        "no repository clone",
+        "no dependency install",
+        "no model download",
+        "no private content",
+        "human/overseer review before worker execution"
+      ],
+      "execute_now": false,
+      "public_ready_after_plan": 0
+    },
+    {
+      "id": "github-fixture-plan-03",
+      "source_repo": "lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "source_url": "https://github.com/lfniederauer/blender-agentic-bonsai-sketcher-mcp",
+      "source_lane": "ifc_reasoning",
+      "target_lane": "worker_integration",
+      "fixture_id": "worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture",
+      "proposed_fixture_root": "examples/kosmo-innovation-fixtures/worker_integration-lfniederauer-blender-agentic-bonsai-sketcher-mcp-signal-fixture/",
+      "signal_score": 4,
+      "keyword_groups": [
+        {
+          "id": "document_processing",
+          "hits": [
+            "table",
+            "document"
+          ]
+        },
+        {
+          "id": "ifc_bim",
+          "hits": [
+            "ifc",
+            "ifcopenshell",
+            "bim",
+            "bonsai",
+            "blender"
+          ]
+        },
+        {
+          "id": "worker_integration",
+          "hits": [
+            "mcp",
+            "agent",
+            "api",
+            "http",
+            "docker"
+          ]
+        },
+        {
+          "id": "runtime_risk",
+          "hits": [
+            "install",
+            "pip"
+          ]
+        }
+      ],
+      "contract_goal": "Define a command-boundary fixture for BIM/IFC/RAG worker orchestration without runtime execution.",
+      "allowed_inputs": [
+        "synthetic_command_registry",
+        "worker_boundary_matrix",
+        "expected_json_output_schema"
+      ],
+      "expected_outputs": [
+        "command_contract",
+        "runtime_risk_matrix",
+        "review_gate_report"
+      ],
+      "guard_requirements": [
+        "synthetic inputs only",
+        "no GitHub code copied",
+        "no README text copied",
+        "no repository clone",
+        "no dependency install",
+        "no model download",
+        "no private content",
+        "human/overseer review before worker execution"
+      ],
+      "execute_now": false,
+      "public_ready_after_plan": 0
+    },
+    {
+      "id": "github-fixture-plan-04",
+      "source_repo": "cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "source_url": "https://github.com/cherry1113/OCR-NLP-Based-Architectural-Specification-Document-Key-Information-Retrieval-System",
+      "source_lane": "kosmo_prepare",
+      "target_lane": "kosmo_prepare",
+      "fixture_id": "kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture",
+      "proposed_fixture_root": "examples/kosmo-innovation-fixtures/kosmo_prepare-cherry1113-ocr-nlp-based-architectural-specification-document-key-information-retrieval-system-signal-fixture/",
+      "signal_score": 3,
+      "keyword_groups": [
+        {
+          "id": "document_processing",
+          "hits": [
+            "pdf",
+            "ocr",
+            "table"
+          ]
+        },
+        {
+          "id": "worker_integration",
+          "hits": [
+            "api",
+            "http"
+          ]
+        },
+        {
+          "id": "runtime_risk",
+          "hits": [
+            "install",
+            "pip"
+          ]
+        }
+      ],
+      "contract_goal": "Define a synthetic document/OCR/layout parsing fixture contract inspired by public metadata signals.",
+      "allowed_inputs": [
+        "synthetic_pdf_manifest",
+        "generated_scan_stub",
+        "expected_layout_schema"
+      ],
+      "expected_outputs": [
+        "markdown_or_layout_manifest",
+        "ocr_signal_matrix",
+        "review_gate_report"
+      ],
+      "guard_requirements": [
+        "synthetic inputs only",
+        "no GitHub code copied",
+        "no README text copied",
+        "no repository clone",
+        "no dependency install",
+        "no model download",
+        "no private content",
+        "human/overseer review before worker execution"
+      ],
+      "execute_now": false,
+      "public_ready_after_plan": 0
+    },
+    {
+      "id": "github-fixture-plan-05",
+      "source_repo": "mac999/BIM_LLM_code_agent",
+      "source_url": "https://github.com/mac999/BIM_LLM_code_agent",
+      "source_lane": "bim_rag_workers",
+      "target_lane": "worker_integration",
+      "fixture_id": "worker_integration-mac999-bim-llm-code-agent-signal-fixture",
+      "proposed_fixture_root": "examples/kosmo-innovation-fixtures/worker_integration-mac999-bim-llm-code-agent-signal-fixture/",
+      "signal_score": 5,
+      "keyword_groups": [
+        {
+          "id": "document_processing",
+          "hits": [
+            "pdf",
+            "table"
+          ]
+        },
+        {
+          "id": "ifc_bim",
+          "hits": [
+            "ifc",
+            "ifcopenshell",
+            "bim"
+          ]
+        },
+        {
+          "id": "worker_integration",
+          "hits": [
+            "agent",
+            "api",
+            "http"
+          ]
+        },
+        {
+          "id": "retrieval",
+          "hits": [
+            "rag",
+            "vector",
+            "graph",
+            "similarity"
+          ]
+        },
+        {
+          "id": "runtime_risk",
+          "hits": [
+            "install",
+            "pip"
+          ]
+        }
+      ],
+      "contract_goal": "Define a command-boundary fixture for BIM/IFC/RAG worker orchestration without runtime execution.",
+      "allowed_inputs": [
+        "synthetic_command_registry",
+        "worker_boundary_matrix",
+        "expected_json_output_schema"
+      ],
+      "expected_outputs": [
+        "command_contract",
+        "runtime_risk_matrix",
+        "review_gate_report"
+      ],
+      "guard_requirements": [
+        "synthetic inputs only",
+        "no GitHub code copied",
+        "no README text copied",
+        "no repository clone",
+        "no dependency install",
+        "no model download",
+        "no private content",
+        "human/overseer review before worker execution"
+      ],
+      "execute_now": false,
+      "public_ready_after_plan": 0
+    },
+    {
+      "id": "github-fixture-plan-06",
+      "source_repo": "Mikillio/bim-wiki-deps",
+      "source_url": "https://github.com/Mikillio/bim-wiki-deps",
+      "source_lane": "bim_rag_workers",
+      "target_lane": "worker_integration",
+      "fixture_id": "worker_integration-mikillio-bim-wiki-deps-signal-fixture",
+      "proposed_fixture_root": "examples/kosmo-innovation-fixtures/worker_integration-mikillio-bim-wiki-deps-signal-fixture/",
+      "signal_score": 4,
+      "keyword_groups": [
+        {
+          "id": "ifc_bim",
+          "hits": [
+            "bim"
+          ]
+        },
+        {
+          "id": "worker_integration",
+          "hits": [
+            "http"
+          ]
+        },
+        {
+          "id": "retrieval",
+          "hits": [
+            "embedding"
+          ]
+        },
+        {
+          "id": "runtime_risk",
+          "hits": [
+            "download"
+          ]
+        }
+      ],
+      "contract_goal": "Define a command-boundary fixture for BIM/IFC/RAG worker orchestration without runtime execution.",
+      "allowed_inputs": [
+        "synthetic_command_registry",
+        "worker_boundary_matrix",
+        "expected_json_output_schema"
+      ],
+      "expected_outputs": [
+        "command_contract",
+        "runtime_risk_matrix",
+        "review_gate_report"
+      ],
+      "guard_requirements": [
+        "synthetic inputs only",
+        "no GitHub code copied",
+        "no README text copied",
+        "no repository clone",
+        "no dependency install",
+        "no model download",
+        "no private content",
+        "human/overseer review before worker execution"
+      ],
+      "execute_now": false,
+      "public_ready_after_plan": 0
+    }
+  ],
+  "next_safe_actions": [
+    "Turn at most one contract plan per lane into a synthetic fixture skeleton in a separate review-only batch.",
+    "Keep GitHub repositories as inspiration/source URLs only; do not copy code, data, README text or assets.",
+    "Run fixture payload checks before connecting any plan to local workers."
+  ]
+}

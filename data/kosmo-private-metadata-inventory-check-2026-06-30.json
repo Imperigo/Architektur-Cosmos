@@ -1,0 +1,60 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T06:42:12.308Z",
+  "status": "private_metadata_inventory_guard_failed",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_check": 0,
+    "note": "This guard validates runner and fixture reports only. It does not scan private roots or inspect source file contents."
+  },
+  "source_refs": [
+    "data/kosmo-private-metadata-inventory-runner-2026-06-30.json",
+    "data/kosmo-private-metadata-inventory-fixture-smoke-2026-06-30.json"
+  ],
+  "summary": {
+    "runner_status": null,
+    "fixture_status": null,
+    "runner_files_scanned": null,
+    "fixture_files_scanned": null,
+    "fixture_candidate_matches": null,
+    "pilots": 0,
+    "failures": 2,
+    "warnings": 0,
+    "forbidden_field_hits": 0,
+    "public_ready_hits": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "severity": "failure",
+      "id": "runner_report_present",
+      "message": "Runner report must exist."
+    },
+    {
+      "severity": "failure",
+      "id": "fixture_report_present",
+      "message": "Fixture smoke report must exist."
+    }
+  ],
+  "failures": [
+    {
+      "severity": "failure",
+      "id": "runner_report_present",
+      "message": "Runner report must exist."
+    },
+    {
+      "severity": "failure",
+      "id": "fixture_report_present",
+      "message": "Fixture smoke report must exist."
+    }
+  ],
+  "warnings": [],
+  "next_actions": [
+    "Fix forbidden fields, public-ready flags or missing fixture coverage before assigning local worker inventory tasks.",
+    "Rerun private metadata inventory, fixture smoke and this guard."
+  ]
+}
