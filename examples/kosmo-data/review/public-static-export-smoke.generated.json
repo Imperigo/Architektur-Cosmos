@@ -1,0 +1,536 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-06-30T12:46:14.770Z",
+  "generator": "public-static-export-smoke",
+  "status": "public_static_export_smoke_passed",
+  "out_dir": "out",
+  "summary": {
+    "route_count": 11,
+    "passed_routes": 11,
+    "failed_routes": 0,
+    "check_count": 82,
+    "failed_checks": 0
+  },
+  "routes": [
+    {
+      "path": "/",
+      "file": "out/index.html",
+      "status": "passed",
+      "body_length": 1391951,
+      "referenced_static_asset_count": 11,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/index.html to exist."
+        },
+        {
+          "id": "/:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 500, got 1391951."
+        },
+        {
+          "id": "/:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/:includes:Architekturkosmos",
+          "passed": true,
+          "message": "Expected exported route / to include \"Architekturkosmos\"."
+        },
+        {
+          "id": "/:includes:Status",
+          "passed": true,
+          "message": "Expected exported route / to include \"Status\"."
+        },
+        {
+          "id": "/:includes:Pilotprojekte",
+          "passed": true,
+          "message": "Expected exported route / to include \"Pilotprojekte\"."
+        },
+        {
+          "id": "/:includes:Alterszentrum Kloster Ingenbohl",
+          "passed": true,
+          "message": "Expected exported route / to include \"Alterszentrum Kloster Ingenbohl\"."
+        },
+        {
+          "id": "/:referenced_static_assets_exist",
+          "passed": true,
+          "message": "Missing _next/static assets: none."
+        }
+      ]
+    },
+    {
+      "path": "/orbit/",
+      "file": "out/orbit/index.html",
+      "status": "passed",
+      "body_length": 51793,
+      "referenced_static_asset_count": 9,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/orbit/:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/orbit/index.html to exist."
+        },
+        {
+          "id": "/orbit/:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 500, got 51793."
+        },
+        {
+          "id": "/orbit/:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/orbit/:includes:Wo der ArchitekturKosmos bereits arbeitet",
+          "passed": true,
+          "message": "Expected exported route /orbit/ to include \"Wo der ArchitekturKosmos bereits arbeitet\"."
+        },
+        {
+          "id": "/orbit/:includes:Funktionen, die heute prüfbar sind",
+          "passed": true,
+          "message": "Expected exported route /orbit/ to include \"Funktionen, die heute prüfbar sind\"."
+        },
+        {
+          "id": "/orbit/:includes:Öffentliche Referenzen",
+          "passed": true,
+          "message": "Expected exported route /orbit/ to include \"Öffentliche Referenzen\"."
+        },
+        {
+          "id": "/orbit/:includes:Öffentliche Assets",
+          "passed": true,
+          "message": "Expected exported route /orbit/ to include \"Öffentliche Assets\"."
+        },
+        {
+          "id": "/orbit/:includes:KosmoDraw",
+          "passed": true,
+          "message": "Expected exported route /orbit/ to include \"KosmoDraw\"."
+        },
+        {
+          "id": "/orbit/:includes:Kosmo KI",
+          "passed": true,
+          "message": "Expected exported route /orbit/ to include \"Kosmo KI\"."
+        },
+        {
+          "id": "/orbit/:referenced_static_assets_exist",
+          "passed": true,
+          "message": "Missing _next/static assets: none."
+        }
+      ]
+    },
+    {
+      "path": "/atlas/",
+      "file": "out/atlas/index.html",
+      "status": "passed",
+      "body_length": 1389992,
+      "referenced_static_asset_count": 11,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/atlas/:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/atlas/index.html to exist."
+        },
+        {
+          "id": "/atlas/:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 500, got 1389992."
+        },
+        {
+          "id": "/atlas/:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/atlas/:includes:Architektur Kosmos",
+          "passed": true,
+          "message": "Expected exported route /atlas/ to include \"Architektur Kosmos\"."
+        },
+        {
+          "id": "/atlas/:referenced_static_assets_exist",
+          "passed": true,
+          "message": "Missing _next/static assets: none."
+        }
+      ]
+    },
+    {
+      "path": "/archive/",
+      "file": "out/archive/index.html",
+      "status": "passed",
+      "body_length": 212964,
+      "referenced_static_asset_count": 9,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/archive/:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/archive/index.html to exist."
+        },
+        {
+          "id": "/archive/:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 500, got 212964."
+        },
+        {
+          "id": "/archive/:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/archive/:includes:KosmoData Archiv",
+          "passed": true,
+          "message": "Expected exported route /archive/ to include \"KosmoData Archiv\"."
+        },
+        {
+          "id": "/archive/:referenced_static_assets_exist",
+          "passed": true,
+          "message": "Missing _next/static assets: none."
+        }
+      ]
+    },
+    {
+      "path": "/references/",
+      "file": "out/references/index.html",
+      "status": "passed",
+      "body_length": 160746,
+      "referenced_static_asset_count": 10,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/references/:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/references/index.html to exist."
+        },
+        {
+          "id": "/references/:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 500, got 160746."
+        },
+        {
+          "id": "/references/:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/references/:includes:KosmoReferences",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"KosmoReferences\"."
+        },
+        {
+          "id": "/references/:includes:Vom Bauwerk zum prüfbaren Dossier",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Vom Bauwerk zum prüfbaren Dossier\"."
+        },
+        {
+          "id": "/references/:includes:Referenzdossiers im öffentlichen Bestand",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Referenzdossiers im öffentlichen Bestand\"."
+        },
+        {
+          "id": "/references/:includes:Was öffentlich sichtbar sein darf",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Was öffentlich sichtbar sein darf\"."
+        },
+        {
+          "id": "/references/:includes:Villa Savoye",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Villa Savoye\"."
+        },
+        {
+          "id": "/references/:includes:Alterszentrum Kloster Ingenbohl",
+          "passed": true,
+          "message": "Expected exported route /references/ to include \"Alterszentrum Kloster Ingenbohl\"."
+        },
+        {
+          "id": "/references/:referenced_static_assets_exist",
+          "passed": true,
+          "message": "Missing _next/static assets: none."
+        }
+      ]
+    },
+    {
+      "path": "/assets/",
+      "file": "out/assets/index.html",
+      "status": "passed",
+      "body_length": 191198,
+      "referenced_static_asset_count": 9,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/assets/:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/assets/index.html to exist."
+        },
+        {
+          "id": "/assets/:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 500, got 191198."
+        },
+        {
+          "id": "/assets/:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/assets/:includes:KosmoAsset",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"KosmoAsset\"."
+        },
+        {
+          "id": "/assets/:includes:Bauteile aus geprüften Referenzen",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Bauteile aus geprüften Referenzen\"."
+        },
+        {
+          "id": "/assets/:includes:Öffentliche Assets nach Projekt und Ebene",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Öffentliche Assets nach Projekt und Ebene\"."
+        },
+        {
+          "id": "/assets/:includes:Erst die Rechteprüfung macht eine Datei zum Asset",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Erst die Rechteprüfung macht eine Datei zum Asset\"."
+        },
+        {
+          "id": "/assets/:includes:Alterszentrum Kloster Ingenbohl",
+          "passed": true,
+          "message": "Expected exported route /assets/ to include \"Alterszentrum Kloster Ingenbohl\"."
+        },
+        {
+          "id": "/assets/:referenced_static_assets_exist",
+          "passed": true,
+          "message": "Missing _next/static assets: none."
+        }
+      ]
+    },
+    {
+      "path": "/atlas/villa-savoye/",
+      "file": "out/atlas/villa-savoye/index.html",
+      "status": "passed",
+      "body_length": 210426,
+      "referenced_static_asset_count": 11,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/atlas/villa-savoye/:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/atlas/villa-savoye/index.html to exist."
+        },
+        {
+          "id": "/atlas/villa-savoye/:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 500, got 210426."
+        },
+        {
+          "id": "/atlas/villa-savoye/:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/atlas/villa-savoye/:includes:Villa Savoye",
+          "passed": true,
+          "message": "Expected exported route /atlas/villa-savoye/ to include \"Villa Savoye\"."
+        },
+        {
+          "id": "/atlas/villa-savoye/:includes:Modellstruktur als lesbarer Gebäudekern",
+          "passed": true,
+          "message": "Expected exported route /atlas/villa-savoye/ to include \"Modellstruktur als lesbarer Gebäudekern\"."
+        },
+        {
+          "id": "/atlas/villa-savoye/:includes:Prüfstatus, Modellspur und Asset-Brücke",
+          "passed": true,
+          "message": "Expected exported route /atlas/villa-savoye/ to include \"Prüfstatus, Modellspur und Asset-Brücke\"."
+        },
+        {
+          "id": "/atlas/villa-savoye/:includes:Öffentliche 3D-Vorschau vorhanden",
+          "passed": true,
+          "message": "Expected exported route /atlas/villa-savoye/ to include \"Öffentliche 3D-Vorschau vorhanden\"."
+        },
+        {
+          "id": "/atlas/villa-savoye/:referenced_static_assets_exist",
+          "passed": true,
+          "message": "Missing _next/static assets: none."
+        }
+      ]
+    },
+    {
+      "path": "/atlas/alterszentrum-kloster-ingenbohl/",
+      "file": "out/atlas/alterszentrum-kloster-ingenbohl/index.html",
+      "status": "passed",
+      "body_length": 207147,
+      "referenced_static_asset_count": 11,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/atlas/alterszentrum-kloster-ingenbohl/index.html to exist."
+        },
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 500, got 207147."
+        },
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:includes:Alterszentrum Kloster Ingenbohl",
+          "passed": true,
+          "message": "Expected exported route /atlas/alterszentrum-kloster-ingenbohl/ to include \"Alterszentrum Kloster Ingenbohl\"."
+        },
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:includes:Modellstruktur als lesbarer Gebäudekern",
+          "passed": true,
+          "message": "Expected exported route /atlas/alterszentrum-kloster-ingenbohl/ to include \"Modellstruktur als lesbarer Gebäudekern\"."
+        },
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:includes:Prüfstatus, Modellspur und Asset-Brücke",
+          "passed": true,
+          "message": "Expected exported route /atlas/alterszentrum-kloster-ingenbohl/ to include \"Prüfstatus, Modellspur und Asset-Brücke\"."
+        },
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:includes:Öffentliche 3D-Vorschau vorhanden",
+          "passed": true,
+          "message": "Expected exported route /atlas/alterszentrum-kloster-ingenbohl/ to include \"Öffentliche 3D-Vorschau vorhanden\"."
+        },
+        {
+          "id": "/atlas/alterszentrum-kloster-ingenbohl/:referenced_static_assets_exist",
+          "passed": true,
+          "message": "Missing _next/static assets: none."
+        }
+      ]
+    },
+    {
+      "path": "/icon.svg",
+      "file": "out/icon.svg",
+      "status": "passed",
+      "body_length": 1132,
+      "referenced_static_asset_count": 0,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/icon.svg:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/icon.svg to exist."
+        },
+        {
+          "id": "/icon.svg:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 20, got 1132."
+        },
+        {
+          "id": "/icon.svg:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/icon.svg:raw_includes:<svg",
+          "passed": true,
+          "message": "Expected exported route /icon.svg to include raw text \"<svg\"."
+        },
+        {
+          "id": "/icon.svg:raw_includes:Architecture Cosmos",
+          "passed": true,
+          "message": "Expected exported route /icon.svg to include raw text \"Architecture Cosmos\"."
+        }
+      ]
+    },
+    {
+      "path": "/robots.txt",
+      "file": "out/robots.txt",
+      "status": "passed",
+      "body_length": 74,
+      "referenced_static_asset_count": 0,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/robots.txt:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/robots.txt to exist."
+        },
+        {
+          "id": "/robots.txt:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 20, got 74."
+        },
+        {
+          "id": "/robots.txt:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/robots.txt:raw_includes:User-Agent: *",
+          "passed": true,
+          "message": "Expected exported route /robots.txt to include raw text \"User-Agent: *\"."
+        },
+        {
+          "id": "/robots.txt:raw_includes:Allow: /",
+          "passed": true,
+          "message": "Expected exported route /robots.txt to include raw text \"Allow: /\"."
+        },
+        {
+          "id": "/robots.txt:raw_includes:Sitemap: https://architekturkosmos.ch/sitemap.xml",
+          "passed": true,
+          "message": "Expected exported route /robots.txt to include raw text \"Sitemap: https://architekturkosmos.ch/sitemap.xml\"."
+        }
+      ]
+    },
+    {
+      "path": "/sitemap.xml",
+      "file": "out/sitemap.xml",
+      "status": "passed",
+      "body_length": 21201,
+      "referenced_static_asset_count": 0,
+      "missing_static_assets": [],
+      "checks": [
+        {
+          "id": "/sitemap.xml:file_exists",
+          "passed": true,
+          "message": "Expected exported file out/sitemap.xml to exist."
+        },
+        {
+          "id": "/sitemap.xml:min_body_length",
+          "passed": true,
+          "message": "Expected body length >= 20, got 21201."
+        },
+        {
+          "id": "/sitemap.xml:no_private_patterns",
+          "passed": true,
+          "message": "Blocked private/source patterns: none."
+        },
+        {
+          "id": "/sitemap.xml:raw_includes:<urlset",
+          "passed": true,
+          "message": "Expected exported route /sitemap.xml to include raw text \"<urlset\"."
+        },
+        {
+          "id": "/sitemap.xml:raw_includes:<loc>https://architekturkosmos.ch/references/</loc>",
+          "passed": true,
+          "message": "Expected exported route /sitemap.xml to include raw text \"<loc>https://architekturkosmos.ch/references/</loc>\"."
+        },
+        {
+          "id": "/sitemap.xml:raw_includes:<loc>https://architekturkosmos.ch/assets/</loc>",
+          "passed": true,
+          "message": "Expected exported route /sitemap.xml to include raw text \"<loc>https://architekturkosmos.ch/assets/</loc>\"."
+        },
+        {
+          "id": "/sitemap.xml:raw_includes:<loc>https://architekturkosmos.ch/orbit/</loc>",
+          "passed": true,
+          "message": "Expected exported route /sitemap.xml to include raw text \"<loc>https://architekturkosmos.ch/orbit/</loc>\"."
+        },
+        {
+          "id": "/sitemap.xml:raw_includes:<loc>https://architekturkosmos.ch/atlas/alterszentrum-kloster-ingenbohl/</loc>",
+          "passed": true,
+          "message": "Expected exported route /sitemap.xml to include raw text \"<loc>https://architekturkosmos.ch/atlas/alterszentrum-kloster-ingenbohl/</loc>\"."
+        }
+      ]
+    }
+  ]
+}
