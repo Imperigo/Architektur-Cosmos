@@ -150,8 +150,12 @@ function laneSweepChecks(sweep) {
 
 function ownerCheckpointChecks(checkpoint) {
   const summary = checkpoint.summary || {};
+  const guardedOwnerCheckpointStatus = [
+    'owner_unlock_pipeline_checkpoint_ready',
+    'owner_unlock_pipeline_checkpoint_attention_required'
+  ].includes(checkpoint.status);
   return [
-    check('owner_checkpoint_ready', checkpoint.status === 'owner_unlock_pipeline_checkpoint_ready', checkpoint.status),
+    check('owner_checkpoint_guarded_state', guardedOwnerCheckpointStatus, checkpoint.status),
     check('owner_checkpoint_no_decision_recording', checkpoint.policy?.records_decisions === false, checkpoint.policy?.records_decisions),
     check('owner_checkpoint_no_intake_write_now', checkpoint.policy?.writes_intake_file_now === false, checkpoint.policy?.writes_intake_file_now),
     check('owner_checkpoint_no_session_mutation_now', checkpoint.policy?.mutates_session_files_now === false, checkpoint.policy?.mutates_session_files_now),

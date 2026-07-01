@@ -1,0 +1,132 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:09:10.547Z",
+  "status": "post_source_root_metadata_readiness_pack_ready",
+  "policy": {
+    "readiness_only": true,
+    "records_decisions": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "writes_public_files": false,
+    "public_ready_after_pack": 0
+  },
+  "source_refs": [
+    "data/kosmo-source-root-post-owner-activation-queue-2026-07-01.json",
+    "data/kosmo-private-metadata-inventory-runner-2026-07-01.json",
+    "data/kosmo-private-metadata-inventory-check-2026-07-01.json",
+    "data/kosmo-owner-remaining-decision-brief-2026-07-01.json",
+    "data/kosmo-vision-completion-roadmap-2026-07-01.json"
+  ],
+  "summary": {
+    "command_sequence_steps": 9,
+    "blocked_now": 7,
+    "owner_actions_required": 2,
+    "inventory_runner_status": "private_metadata_inventory_blocked_until_activation",
+    "inventory_guard_status": "private_metadata_inventory_guard_passed",
+    "roadmap_status": "vision_completion_roadmap_bootstrap_missing",
+    "roadmap_bootstrap_missing": true,
+    "private_inventory_commands_after_owner": 2,
+    "failures": 0,
+    "public_ready_after_pack": 0
+  },
+  "command_sequence": [
+    {
+      "id": "record_owner_source_root_choice",
+      "actor": "owner_or_overseer",
+      "action": "Record explicit owner answer in decision session; no automatic selection.",
+      "private_inventory_related": false,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    },
+    {
+      "id": "source_root_decision_session_check",
+      "actor": "codex_or_claude",
+      "action": "npm run kosmo:source-root-decision-session-check",
+      "private_inventory_related": false,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    },
+    {
+      "id": "source_root_blocker_refresh",
+      "actor": "codex_or_claude",
+      "action": "npm run kosmo:source-root-blocker-refresh",
+      "private_inventory_related": false,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    },
+    {
+      "id": "source_root_activation_preflight",
+      "actor": "codex_or_claude",
+      "action": "npm run kosmo:source-root-activation-preflight",
+      "private_inventory_related": false,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    },
+    {
+      "id": "post_owner_activation_queue",
+      "actor": "codex_or_claude",
+      "action": "npm run kosmo:source-root-post-owner-activation-queue",
+      "private_inventory_related": false,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    },
+    {
+      "id": "post_owner_activation_queue_check",
+      "actor": "codex_or_claude",
+      "action": "npm run kosmo:source-root-post-owner-activation-queue-check",
+      "private_inventory_related": false,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    },
+    {
+      "id": "private_metadata_inventory",
+      "actor": "codex_or_claude_after_activation",
+      "action": "npm run kosmo:private-metadata-inventory",
+      "private_inventory_related": true,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    },
+    {
+      "id": "private_metadata_inventory_check",
+      "actor": "codex_or_claude_after_inventory",
+      "action": "npm run kosmo:private-metadata-inventory-check",
+      "private_inventory_related": true,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    },
+    {
+      "id": "day_batch_loop",
+      "actor": "codex_or_claude",
+      "action": "npm run kosmo:day-batch-loop",
+      "private_inventory_related": false,
+      "executable_now": false,
+      "requires_owner_source_root_answer": true,
+      "public_ready_after_command": 0
+    }
+  ],
+  "expected_private_inventory_output_contract": {
+    "output_root": "private_inventory_output_root_withheld",
+    "writes_to_git": false,
+    "contains_raw_paths": false,
+    "contains_file_contents": false,
+    "contains_ocr_text": false,
+    "contains_public_ready_true": false,
+    "required_guard": "npm run kosmo:private-metadata-inventory-check"
+  },
+  "hard_stops": [
+    "Do not run private metadata inventory before source-root activation preflight is ready.",
+    "Do not record owner decisions automatically.",
+    "Do not read private file contents or OCR/PDF text during metadata inventory.",
+    "Do not copy private inventory outputs into Git.",
+    "Do not set public-ready."
+  ],
+  "failures": []
+}

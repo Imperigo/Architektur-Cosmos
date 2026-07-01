@@ -122,7 +122,7 @@ function buildReport({ activationQueue, inventoryRunner, inventoryCheck, ownerBr
     },
     command_sequence: commandSequence,
     expected_private_inventory_output_contract: {
-      output_root: inventoryRunner.summary?.private_output_root ?? null,
+      output_root: sanitizePrivateOutputRoot(inventoryRunner.summary?.private_output_root),
       writes_to_git: false,
       contains_raw_paths: false,
       contains_file_contents: false,
@@ -151,6 +151,11 @@ function command(id, actor, action, privateInventoryRelated) {
     requires_owner_source_root_answer: true,
     public_ready_after_command: 0
   };
+}
+
+function sanitizePrivateOutputRoot(value) {
+  if (!value) return null;
+  return 'private_inventory_output_root_withheld';
 }
 
 async function readJson(path) {
