@@ -56,6 +56,18 @@ const checks = [
     purpose: 'Rejects Next runtime features that would break the static export contract.'
   },
   {
+    id: 'public_worker_boundary',
+    command: [
+      'node',
+      'scripts/public-worker-boundary-check.mjs',
+      '--output',
+      resolve(reportRoot, 'public-worker-boundary-check.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-worker-boundary-check.generated.md')
+    ],
+    purpose: 'Keeps the Cloudflare Worker in Static Assets mode with read-only public API routes and no live D1/R2/upload bindings.'
+  },
+  {
     id: 'public_static_route_inventory',
     command: [
       'node',
