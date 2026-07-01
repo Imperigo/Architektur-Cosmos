@@ -48,7 +48,7 @@ main().catch((error) => {
 async function main() {
   const reports = {};
   for (const [key, path] of Object.entries(paths)) {
-    reports[key] = await readJson(path);
+    reports[key] = await readJsonOptional(path, missingInput(key, path));
   }
 
   const checkpoint = buildCheckpoint(reports);
@@ -67,6 +67,7 @@ async function main() {
 }
 
 function buildCheckpoint(reports) {
+  const missingInputs = Object.values(reports).filter((report) => report.missing_input === true);
   const freeformRejectedAsExpected = reports.validator.status === 'owner_unlock_reply_invalid' &&
     reports.fastReplyCard.summary?.validator_rejected_freeform === true &&
     reports.validatorCheck.status === 'owner_unlock_reply_validator_guard_failed' &&
@@ -111,6 +112,8 @@ function buildCheckpoint(reports) {
   const handoffNumbers = (reports.syncBoard.latest_handoffs || [])
     .map((handoff) => Number((handoff.filename.match(/synergiebericht-(\d+)/) || [])[1]))
     .filter(Number.isFinite);
+  const latestHandoffMin = handoffNumbers.length ? Math.min(...handoffNumbers) : null;
+  const latestHandoffMax = handoffNumbers.length ? Math.max(...handoffNumbers) : null;
   const guardChecks = [
     reports.validatorCheck.summary?.checks,
     reports.smokeCheck.summary?.checks,
@@ -165,12 +168,14 @@ function buildCheckpoint(reports) {
     summary: {
       components: components.length,
       components_ready: components.filter((item) => item.ready).length,
+      missing_inputs: missingInputs.length,
+      missing_input_refs: missingInputs.map((report) => report.source_ref),
       guard_checks: guardChecks,
       guard_checks_passed: guardChecksPassed,
       expected_freeform_guard_failures: freeformRejectedAsExpected ? reports.validatorCheck.summary?.failures || 0 : 0,
       expected_runbook_bootstrap_failures: runbookGuardBootstrapExpected ? reports.runbookCheck.summary?.failures || 0 : 0,
-      latest_handoff_min: Math.min(...handoffNumbers),
-      latest_handoff_max: Math.max(...handoffNumbers),
+      latest_handoff_min: latestHandoffMin,
+      latest_handoff_max: latestHandoffMax,
       latest_handoff_count: handoffNumbers.length,
       owner_reply_state: reports.fastReplyCard.summary?.broad_unlock_intent
         ? 'broad_intent_seen_exact_reply_not_applied'
@@ -220,6 +225,40 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
+async function readJsonOptional(path, fallback) {
+  try {
+    return await readJson(path);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+    return fallback;
+  }
+}
+
+function missingInput(key, path) {
+  return {
+    schema_version: '0.1',
+    generated_at: new Date().toISOString(),
+    status: 'missing_input',
+    missing_input: true,
+    input_key: key,
+    source_ref: relative(root, path),
+    policy: {
+      placeholder_only: true,
+      records_decisions: false,
+      reads_private_content_now: false,
+      runs_private_inventory_now: false,
+      public_ready_after_placeholder: 0
+    },
+    summary: {
+      checks: 0,
+      passed: 0,
+      failures: 0,
+      public_ready_after_component: 0,
+      public_ready_after_check: 0
+    }
+  };
+}
+
 function renderMarkdown(report) {
   const lines = [];
   lines.push('# Kosmo Owner Unlock Pipeline Checkpoint');
@@ -230,6 +269,7 @@ function renderMarkdown(report) {
   lines.push('## Summary');
   lines.push('');
   lines.push(`- Components: ${report.summary.components_ready}/${report.summary.components}`);
+  lines.push(`- Missing inputs: ${report.summary.missing_inputs}`);
   lines.push(`- Guard checks: ${report.summary.guard_checks_passed}/${report.summary.guard_checks}`);
   lines.push(`- Latest handoffs: ${report.summary.latest_handoff_min}-${report.summary.latest_handoff_max}`);
   lines.push(`- Owner reply state: ${report.summary.owner_reply_state}`);
@@ -247,6 +287,12 @@ function renderMarkdown(report) {
   report.components.forEach((item) => {
     lines.push(`- ${item.ready ? 'ready' : 'attention'}: \`${item.id}\` -> \`${item.actual_status}\``);
   });
+  if (report.summary.missing_input_refs.length > 0) {
+    lines.push('');
+    lines.push('## Missing Inputs');
+    lines.push('');
+    report.summary.missing_input_refs.forEach((ref) => lines.push(`- \`${ref}\``));
+  }
   lines.push('');
   lines.push('## Next Actions');
   lines.push('');
