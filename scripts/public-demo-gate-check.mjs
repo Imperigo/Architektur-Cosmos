@@ -25,6 +25,17 @@ const requiredManifestRoutes = new Set([
   '/robots.txt',
   '/sitemap.xml'
 ]);
+const allowedManifestStaticExtensions = new Set(['.svg', '.txt', '.xml']);
+const blockedRoutePatterns = [
+  /(^|\/)admin(\/|$)/i,
+  /(^|\/)private(\/|$)/i,
+  /(^|\/)source-root(\/|$)/i,
+  /(^|\/)archive-intake(\/|$)/i,
+  /(^|\/)_overseer(\/|$)/i,
+  /(^|\/)worker[-_]?logs?(\/|$)/i,
+  /(^|\/)\.codex(\/|$)/i,
+  /(^|\/)\.claude(\/|$)/i
+];
 function argValue(name) {
   const index = process.argv.indexOf(name);
   return index >= 0 ? process.argv[index + 1] : null;
@@ -142,8 +153,18 @@ function checkRouteManifestSurfaces() {
     if (!route.path.startsWith('/')) {
       recordFailure(`route-manifest:${route.path}:absolute`, `public route path must start with /: ${route.path}`);
     }
-    if (route.path !== '/' && !/\.[a-z0-9]+$/i.test(route.path) && !route.path.endsWith('/')) {
+    if (route.path.includes('//')) {
+      recordFailure(`route-manifest:${route.path}:double-slash`, `public route path must not contain //: ${route.path}`);
+    }
+    if (route.path !== '/' && !hasKnownManifestStaticExtension(route.path) && !route.path.endsWith('/')) {
       recordFailure(`route-manifest:${route.path}:trailing-slash`, `HTML public route path must use a trailing slash: ${route.path}`);
+    }
+    const blockedPattern = blockedRoutePatterns.find((pattern) => pattern.test(route.path));
+    if (blockedPattern) {
+      recordFailure(
+        `route-manifest:${route.path}:blocked-surface`,
+        `public route manifest must not expose private/admin/source surfaces: ${blockedPattern}`
+      );
     }
     if (hasPrivateLeak(route.path)) {
       recordFailure(`route-manifest:${route.path}:path-leak`, `public route path leaks private/source pattern: ${route.path}`);
@@ -152,7 +173,17 @@ function checkRouteManifestSurfaces() {
       recordFailure(`route-manifest:${route.path}:min-body-length`, `minBodyLength must be a positive integer for ${route.path}.`);
     }
 
-    for (const expected of [...(route.includes ?? []), ...(route.rawIncludes ?? [])]) {
+    const includes = route.includes ?? [];
+    const rawIncludes = route.rawIncludes ?? [];
+    if (!Array.isArray(includes) || !Array.isArray(rawIncludes)) {
+      recordFailure(`route-manifest:${route.path}:sentinel-array`, `route sentinels must be arrays for ${route.path}.`);
+      continue;
+    }
+    if (includes.length + rawIncludes.length === 0) {
+      recordFailure(`route-manifest:${route.path}:sentinel-missing`, `route ${route.path} must declare at least one content sentinel.`);
+    }
+
+    for (const expected of [...includes, ...rawIncludes]) {
       if (typeof expected !== 'string' || expected.trim().length === 0) {
         recordFailure(`route-manifest:${route.path}:empty-sentinel`, `route ${route.path} has an empty include sentinel.`);
       }
@@ -169,6 +200,17 @@ function checkRouteManifestSurfaces() {
   }
 
   return [...routePaths].sort();
+}
+
+function hasKnownManifestStaticExtension(path) {
+  const match = path.match(/\.[a-z0-9]+$/i);
+  if (!match) return false;
+  if (allowedManifestStaticExtensions.has(match[0].toLowerCase())) return true;
+  warnings.push({
+    id: `route-manifest:${path}:static-extension`,
+    detail: `Route uses an unrecognized static extension: ${path}`
+  });
+  return true;
 }
 
 async function checkRenderedRoutes(baseUrl) {
