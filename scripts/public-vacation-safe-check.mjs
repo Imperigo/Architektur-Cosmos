@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 
 const root = process.cwd();
@@ -33,6 +33,19 @@ const checks = [
     purpose: 'Rejects Next runtime features that would break the static export contract.'
   },
   {
+    id: 'public_static_route_inventory',
+    command: [
+      'node',
+      'scripts/public-static-route-inventory-check.mjs',
+      '--output',
+      resolve(reportRoot, 'public-static-route-inventory.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-static-route-inventory.generated.md')
+    ],
+    requiresOut: true,
+    purpose: 'Checks an existing static export for missing or stale Atlas detail routes and private/source markers.'
+  },
+  {
     id: 'review_only_publication_fence',
     command: [
       'node',
@@ -59,7 +72,9 @@ function main() {
 
   const startedAt = new Date().toISOString();
   const results = checks.map(runCheck);
-  const failed = results.filter((result) => result.status !== 'passed');
+  const passed = results.filter((result) => result.status === 'passed');
+  const failed = results.filter((result) => result.status === 'failed');
+  const skipped = results.filter((result) => result.status === 'skipped');
   const summary = {
     schema_version: '0.1',
     generated_at: new Date().toISOString(),
@@ -75,8 +90,9 @@ function main() {
     started_at: startedAt,
     summary: {
       check_count: checks.length,
-      passed_checks: results.length - failed.length,
-      failed_checks: failed.length
+      passed_checks: passed.length,
+      failed_checks: failed.length,
+      skipped_checks: skipped.length
     },
     checks: results
   };
@@ -87,6 +103,21 @@ function main() {
 
 function runCheck(check) {
   const startedAt = new Date().toISOString();
+  if (check.requiresOut && !existsSync(resolve(root, 'out'))) {
+    const endedAt = new Date().toISOString();
+    return {
+      id: check.id,
+      purpose: check.purpose,
+      command: check.command.map(String),
+      status: 'skipped',
+      exit_code: null,
+      signal: null,
+      started_at: startedAt,
+      ended_at: endedAt,
+      output_excerpt: 'Skipped because out/ is absent. Run npm run build before this aggregate check to include static export route inventory coverage.'
+    };
+  }
+
   const result = spawnSync(check.command[0], check.command.slice(1), {
     cwd: root,
     encoding: 'utf8',
