@@ -26,6 +26,11 @@ const checks = [
     purpose: 'Rejects private/admin/source-style public route manifest entries and verifies each route has a matching app/public source before live or static route checks run.'
   },
   {
+    id: 'public_route_manifest_negative_smoke',
+    command: ['node', 'scripts/public-route-manifest-negative-smoke.mjs'],
+    purpose: 'Verifies the public route manifest guard rejects synthetic duplicate, private/source, missing-source and malformed route entries.'
+  },
+  {
     id: 'public_static_export_smoke',
     command: [
       'node',

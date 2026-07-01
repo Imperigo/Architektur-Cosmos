@@ -2,10 +2,12 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
-import { publicRouteChecks } from './public-route-manifest.mjs';
 
 const root = process.cwd();
+const args = parseArgs(process.argv.slice(2));
+const publicRouteChecks = await loadPublicRouteChecks(args.manifest || 'scripts/public-route-manifest.mjs');
 const entries = JSON.parse(readFileSync(resolve(root, 'data/mock-entries.json'), 'utf8'));
 const failures = [];
 const warnings = [];
@@ -57,6 +59,17 @@ const summary = {
 
 console.log(JSON.stringify(summary, null, 2));
 if (failures.length > 0) process.exit(1);
+
+async function loadPublicRouteChecks(manifestPath) {
+  const manifestUrl = manifestPath.startsWith('file:')
+    ? new URL(manifestPath)
+    : pathToFileURL(resolve(root, manifestPath));
+  const manifest = await import(manifestUrl.href);
+  if (!Array.isArray(manifest.publicRouteChecks)) {
+    throw new Error(`Manifest ${manifestUrl.href} must export publicRouteChecks as an array.`);
+  }
+  return manifest.publicRouteChecks;
+}
 
 function checkRoute(route) {
   if (!route || typeof route !== 'object') {
@@ -233,4 +246,21 @@ function hasKnownStaticExtension(path) {
     detail: `Route uses an unrecognized static extension: ${path}`
   });
   return true;
+}
+
+function parseArgs(argv) {
+  const parsed = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (!token.startsWith('--')) continue;
+    const key = token.slice(2);
+    const next = argv[index + 1];
+    if (next && !next.startsWith('--')) {
+      parsed[key] = next;
+      index += 1;
+    } else {
+      parsed[key] = true;
+    }
+  }
+  return parsed;
 }
