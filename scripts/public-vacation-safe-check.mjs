@@ -52,6 +52,11 @@ const checks = [
     purpose: 'Checks exported robots.txt and sitemap.xml against the public route allowlist and Atlas entry slugs.'
   },
   {
+    id: 'public_static_sitemap_negative_smoke',
+    command: ['node', 'scripts/public-static-sitemap-negative-smoke.mjs'],
+    purpose: 'Verifies the static sitemap guard rejects synthetic private/source paths and robots leaks.'
+  },
+  {
     id: 'public_copy_canon',
     command: ['node', 'scripts/public-copy-canon-check.mjs'],
     purpose: 'Rejects public UI copy that exposes internal workflow or implementation language.'

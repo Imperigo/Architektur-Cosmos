@@ -29,6 +29,7 @@
     "public:static-metadata-check": "node scripts/public-static-metadata-check.mjs",
     "public:static-route-inventory-check": "node scripts/public-static-route-inventory-check.mjs",
     "public:static-sitemap-check": "node scripts/public-static-sitemap-check.mjs",
+    "public:static-sitemap-negative-smoke": "node scripts/public-static-sitemap-negative-smoke.mjs",
     "public:navigation-canon-check": "node scripts/public-navigation-canon-check.mjs",
     "public:runtime-boundary-check": "node scripts/public-runtime-boundary-check.mjs",
     "public:worker-boundary-check": "node scripts/public-worker-boundary-check.mjs",
