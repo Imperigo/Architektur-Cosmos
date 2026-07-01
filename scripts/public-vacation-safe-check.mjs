@@ -107,6 +107,19 @@ const checks = [
     purpose: 'Checks exported public HTML pages for core navigation links and missing internal targets without starting a server.'
   },
   {
+    id: 'public_static_metadata_check',
+    command: [
+      'node',
+      'scripts/public-static-metadata-check.mjs',
+      '--output',
+      resolve(reportRoot, 'public-static-metadata-check.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-static-metadata-check.generated.md')
+    ],
+    requiresOut: true,
+    purpose: 'Checks exported public HTML pages for title, description, canonical metadata and private/source markers.'
+  },
+  {
     id: 'review_only_publication_fence',
     command: [
       'node',
