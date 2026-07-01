@@ -21,6 +21,11 @@ const checks = [
     purpose: 'Keeps public gate routes aligned with route-content smoke coverage.'
   },
   {
+    id: 'public_route_manifest',
+    command: ['node', 'scripts/public-route-manifest-check.mjs'],
+    purpose: 'Rejects private/admin/source-style public route manifest entries before live or static route checks run.'
+  },
+  {
     id: 'public_static_export_smoke',
     command: [
       'node',
