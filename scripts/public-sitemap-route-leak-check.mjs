@@ -7,17 +7,31 @@ const baseUrl = String(args['base-url'] || 'http://127.0.0.1:3000').replace(/\/$
 const siteUrl = String(args['site-url'] || 'https://architekturkosmos.ch').replace(/\/$/, '');
 const verbose = Boolean(args.verbose);
 const minBodyLength = Number(args['min-body-length'] || 500);
+const timeoutMs = Number(args['timeout-ms'] || 5000);
 
 const findings = [];
 
 main().catch((error) => {
-  console.error(error);
+  console.log(JSON.stringify({
+    status: 'failed',
+    base_url: baseUrl,
+    site_url: siteUrl,
+    checked_route_count: 0,
+    findings: [
+      {
+        id: 'runtime:fetch_failed',
+        passed: false,
+        message: error instanceof Error ? error.message : String(error)
+      }
+    ],
+    error: serializeError(error)
+  }, null, 2));
   process.exit(1);
 });
 
 async function main() {
   const robotsUrl = `${baseUrl}/robots.txt`;
-  const robotsResponse = await fetch(robotsUrl);
+  const robotsResponse = await fetchWithTimeout(robotsUrl);
   const robotsBody = await robotsResponse.text();
   const robotsLeakMatches = publicLeakMatches(robotsBody);
 
@@ -34,7 +48,7 @@ async function main() {
   );
 
   const sitemapUrl = `${baseUrl}/sitemap.xml`;
-  const sitemapResponse = await fetch(sitemapUrl);
+  const sitemapResponse = await fetchWithTimeout(sitemapUrl);
   const sitemapBody = await sitemapResponse.text();
 
   check(sitemapResponse.ok, 'sitemap:status', `Expected HTTP 2xx for ${sitemapUrl}, got ${sitemapResponse.status}.`);
@@ -50,7 +64,7 @@ async function main() {
 
   for (const path of paths) {
     const url = `${baseUrl}${path}`;
-    const response = await fetch(url);
+    const response = await fetchWithTimeout(url);
     const body = await response.text();
     const blockedMatches = publicLeakMatches(body);
 
@@ -94,6 +108,30 @@ async function main() {
 
 function check(passed, id, message) {
   findings.push({ id, passed: Boolean(passed), message });
+}
+
+async function fetchWithTimeout(url) {
+  try {
+    return await fetch(url, {
+      signal: AbortSignal.timeout(timeoutMs)
+    });
+  } catch (error) {
+    const detail = serializeError(error);
+    const suffix = detail.cause_code ? ` (${detail.cause_code})` : '';
+    throw new Error(`Unable to fetch ${url} within ${timeoutMs}ms${suffix}. Start the public demo server or pass --base-url to a reachable instance.`, {
+      cause: error
+    });
+  }
+}
+
+function serializeError(error) {
+  if (!(error instanceof Error)) return { message: String(error) };
+  return {
+    name: error.name,
+    message: error.message,
+    cause_code: error.cause && typeof error.cause === 'object' && 'code' in error.cause ? String(error.cause.code) : undefined,
+    cause_message: error.cause instanceof Error ? error.cause.message : undefined
+  };
 }
 
 function parseArgs(argv) {
