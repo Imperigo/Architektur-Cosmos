@@ -21,6 +21,19 @@ const checks = [
     purpose: 'Keeps public gate routes aligned with route-content smoke coverage.'
   },
   {
+    id: 'public_static_export_smoke',
+    command: [
+      'node',
+      'scripts/public-static-export-smoke.mjs',
+      '--output',
+      resolve(reportRoot, 'public-static-export-smoke.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-static-export-smoke.generated.md')
+    ],
+    requiresOut: true,
+    purpose: 'Checks existing exported public routes for content sentinels, private/source markers and missing _next/static assets.'
+  },
+  {
     id: 'public_copy_canon',
     command: ['node', 'scripts/public-copy-canon-check.mjs'],
     purpose: 'Rejects public UI copy that exposes internal workflow or implementation language.'
