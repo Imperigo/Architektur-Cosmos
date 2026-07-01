@@ -25,6 +25,7 @@
     "public:route-content-smoke": "node scripts/public-route-content-smoke.mjs",
     "public:route-link-smoke": "node scripts/public-route-link-smoke.mjs",
     "public:static-export-smoke": "node scripts/public-static-export-smoke.mjs",
+    "public:static-link-check": "node scripts/public-static-link-check.mjs",
     "public:static-route-inventory-check": "node scripts/public-static-route-inventory-check.mjs",
     "public:runtime-boundary-check": "node scripts/public-runtime-boundary-check.mjs",
     "public:worker-boundary-check": "node scripts/public-worker-boundary-check.mjs",

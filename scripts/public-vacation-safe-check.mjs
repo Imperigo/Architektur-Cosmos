@@ -81,6 +81,19 @@ const checks = [
     purpose: 'Checks an existing static export for missing or stale Atlas detail routes and private/source markers.'
   },
   {
+    id: 'public_static_link_check',
+    command: [
+      'node',
+      'scripts/public-static-link-check.mjs',
+      '--output',
+      resolve(reportRoot, 'public-static-link-check.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-static-link-check.generated.md')
+    ],
+    requiresOut: true,
+    purpose: 'Checks exported public HTML pages for core navigation links and missing internal targets without starting a server.'
+  },
+  {
     id: 'review_only_publication_fence',
     command: [
       'node',
