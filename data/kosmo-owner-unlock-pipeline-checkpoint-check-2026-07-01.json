@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-01T06:28:40.046Z",
+  "generated_at": "2026-07-01T11:37:57.298Z",
   "status": "owner_unlock_pipeline_checkpoint_guard_passed",
   "policy": {
     "validates_checkpoint_only": true,
@@ -15,8 +15,8 @@
     "data/kosmo-owner-unlock-pipeline-checkpoint-2026-07-01.json"
   ],
   "summary": {
-    "checks": 32,
-    "passed": 32,
+    "checks": 36,
+    "passed": 36,
     "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
@@ -68,24 +68,24 @@
       "evidence": 0
     },
     {
-      "id": "twenty_seven_components",
+      "id": "twenty_nine_components",
       "status": "passed",
-      "evidence": 27
+      "evidence": 29
     },
     {
       "id": "all_components_ready",
       "status": "passed",
-      "evidence": "27/27"
+      "evidence": "29/29"
     },
     {
-      "id": "guard_checks_at_least_280",
+      "id": "guard_checks_at_least_320",
       "status": "passed",
-      "evidence": 283
+      "evidence": 325
     },
     {
       "id": "guard_checks_all_passed",
       "status": "passed",
-      "evidence": "283/283"
+      "evidence": "325/325"
     },
     {
       "id": "freeform_rejection_accounted",
@@ -151,6 +151,26 @@
       "id": "session_apply_smoke_no_real_write",
       "status": "passed",
       "evidence": false
+    },
+    {
+      "id": "post_source_readiness_ready",
+      "status": "passed",
+      "evidence": "post_source_root_metadata_readiness_pack_ready"
+    },
+    {
+      "id": "post_source_readiness_guard_passed",
+      "status": "passed",
+      "evidence": "post_source_root_metadata_readiness_pack_guard_passed"
+    },
+    {
+      "id": "post_source_readiness_blocked_now_positive",
+      "status": "passed",
+      "evidence": 7
+    },
+    {
+      "id": "post_source_readiness_inventory_guard_safe",
+      "status": "passed",
+      "evidence": "private_metadata_inventory_guard_passed"
     },
     {
       "id": "applies_decision_now_false",

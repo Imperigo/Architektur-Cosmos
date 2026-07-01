@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-01T06:28:40.001Z",
+  "generated_at": "2026-07-01T11:37:57.061Z",
   "status": "owner_unlock_pipeline_checkpoint_ready",
   "policy": {
     "checkpoint_only": true,
@@ -39,15 +39,17 @@
     "data/kosmo-owner-unlock-session-apply-guard-check-2026-07-01.json",
     "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-07-01.json",
     "data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-07-01.json",
+    "data/kosmo-post-source-root-metadata-readiness-pack-2026-07-01.json",
+    "data/kosmo-post-source-root-metadata-readiness-pack-check-2026-07-01.json",
     "data/kosmo-overseer-sync-board-2026-07-01.json"
   ],
   "summary": {
-    "components": 27,
-    "components_ready": 27,
+    "components": 29,
+    "components_ready": 29,
     "missing_inputs": 0,
     "missing_input_refs": [],
-    "guard_checks": 283,
-    "guard_checks_passed": 283,
+    "guard_checks": 325,
+    "guard_checks_passed": 325,
     "expected_freeform_guard_failures": 0,
     "expected_runbook_bootstrap_failures": 0,
     "latest_handoff_min": 346,
@@ -66,6 +68,10 @@
     "session_apply_guard_smoke_mode": "applied_matches_preview",
     "session_apply_guard_smoke_private_diagnostic_allowed": true,
     "session_apply_guard_smoke_writes_real_session": false,
+    "post_source_readiness_status": "post_source_root_metadata_readiness_pack_ready",
+    "post_source_readiness_guard_status": "post_source_root_metadata_readiness_pack_guard_passed",
+    "post_source_readiness_blocked_now": 7,
+    "post_source_readiness_inventory_guard_status": "private_metadata_inventory_guard_passed",
     "applies_decision_now": false,
     "public_ready_after_checkpoint": 0
   },
@@ -303,6 +309,24 @@
       "actual_status": "owner_unlock_session_apply_guard_smoke_check_passed",
       "expected_statuses": [
         "owner_unlock_session_apply_guard_smoke_check_passed"
+      ],
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "post-source-root-metadata-readiness-pack",
+      "actual_status": "post_source_root_metadata_readiness_pack_ready",
+      "expected_statuses": [
+        "post_source_root_metadata_readiness_pack_ready"
+      ],
+      "ready": true,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "post-source-root-metadata-readiness-pack-check",
+      "actual_status": "post_source_root_metadata_readiness_pack_guard_passed",
+      "expected_statuses": [
+        "post_source_root_metadata_readiness_pack_guard_passed"
       ],
       "ready": true,
       "public_ready_after_component": 0

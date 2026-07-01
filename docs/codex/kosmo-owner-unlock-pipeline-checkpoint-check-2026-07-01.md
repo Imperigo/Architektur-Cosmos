@@ -1,11 +1,11 @@
 # Kosmo Owner Unlock Pipeline Checkpoint Check
 
-Generated: 2026-07-01T06:28:40.046Z
+Generated: 2026-07-01T11:37:57.298Z
 Status: `owner_unlock_pipeline_checkpoint_guard_passed`
 
 ## Summary
 
-- Checks: 32/32
+- Checks: 36/36
 - Failures: 0
 - Warnings: 0
 - Public-ready after check: 0
@@ -21,10 +21,10 @@ Status: `owner_unlock_pipeline_checkpoint_guard_passed`
 - passed: `policy_no_private_reads` - false
 - passed: `policy_no_inventory_now` - false
 - passed: `public_ready_zero` - 0
-- passed: `twenty_seven_components` - 27
-- passed: `all_components_ready` - 27/27
-- passed: `guard_checks_at_least_280` - 283
-- passed: `guard_checks_all_passed` - 283/283
+- passed: `twenty_nine_components` - 29
+- passed: `all_components_ready` - 29/29
+- passed: `guard_checks_at_least_320` - 325
+- passed: `guard_checks_all_passed` - 325/325
 - passed: `freeform_rejection_accounted` - 0
 - passed: `latest_handoffs_include_277_or_newer` - 353
 - passed: `owner_reply_not_applied` - pending
@@ -38,6 +38,10 @@ Status: `owner_unlock_pipeline_checkpoint_guard_passed`
 - passed: `session_apply_smoke_mode_applied` - applied_matches_preview
 - passed: `session_apply_smoke_allows_private_diagnostic` - true
 - passed: `session_apply_smoke_no_real_write` - false
+- passed: `post_source_readiness_ready` - post_source_root_metadata_readiness_pack_ready
+- passed: `post_source_readiness_guard_passed` - post_source_root_metadata_readiness_pack_guard_passed
+- passed: `post_source_readiness_blocked_now_positive` - 7
+- passed: `post_source_readiness_inventory_guard_safe` - private_metadata_inventory_guard_passed
 - passed: `applies_decision_now_false` - false
 - passed: `component_public_ready_zero` - 
 - passed: `hard_stop_no_approval` - do not treat this checkpoint as owner approval. do not read private content from this checkpoint. do not run private inventory from this checkpoint. do not mark private-derived material public-ready.

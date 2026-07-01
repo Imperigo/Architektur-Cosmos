@@ -1,13 +1,13 @@
 # Kosmo Owner Unlock Pipeline Checkpoint
 
-Generated: 2026-07-01T06:28:40.001Z
+Generated: 2026-07-01T11:37:57.061Z
 Status: `owner_unlock_pipeline_checkpoint_ready`
 
 ## Summary
 
-- Components: 27/27
+- Components: 29/29
 - Missing inputs: 0
-- Guard checks: 283/283
+- Guard checks: 325/325
 - Latest handoffs: 346-353
 - Owner reply state: pending
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
@@ -17,6 +17,8 @@ Status: `owner_unlock_pipeline_checkpoint_ready`
 - Session apply guard mode: waiting_for_manual_apply
 - Fixture apply smoke mode: applied_matches_preview
 - Fixture smoke writes real session: no
+- Post-source metadata readiness: post_source_root_metadata_readiness_pack_ready
+- Post-source metadata readiness guard: post_source_root_metadata_readiness_pack_guard_passed
 - Public-ready after checkpoint: 0
 
 ## Components
@@ -47,6 +49,8 @@ Status: `owner_unlock_pipeline_checkpoint_ready`
 - ready: `session-apply-guard-check` -> `owner_unlock_session_apply_guard_check_passed`
 - ready: `session-apply-guard-smoke` -> `owner_unlock_session_apply_guard_smoke_passed`
 - ready: `session-apply-guard-smoke-check` -> `owner_unlock_session_apply_guard_smoke_check_passed`
+- ready: `post-source-root-metadata-readiness-pack` -> `post_source_root_metadata_readiness_pack_ready`
+- ready: `post-source-root-metadata-readiness-pack-check` -> `post_source_root_metadata_readiness_pack_guard_passed`
 - ready: `overseer-sync-board` -> `overseer_sync_board_ready`
 
 ## Next Actions
