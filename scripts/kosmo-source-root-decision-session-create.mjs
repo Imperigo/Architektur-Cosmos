@@ -16,6 +16,16 @@ main().catch((error) => {
 });
 
 async function main() {
+  const existingSession = args.force ? null : await readOptionalJson(outputJson);
+  if (existingSession) {
+    console.log('Kosmo source-root decision session create');
+    console.log(`Status: ${existingSession.status || 'existing_session_reused'}`);
+    console.log(`Options: ${existingSession.selection_options?.length ?? 0}`);
+    console.log(`Existing session kept: ${relative(root, outputJson)}`);
+    console.log(`Run npm run kosmo:source-root-decision-session-refresh to update pending options safely.`);
+    return;
+  }
+
   const brief = JSON.parse(await readFile(briefPath, 'utf8'));
   const session = {
     schema_version: '0.1',
@@ -75,6 +85,14 @@ async function main() {
   console.log(`Options: ${session.selection_options.length}`);
   console.log(`Wrote: ${relative(root, outputJson)}`);
   console.log(`Wrote: ${relative(root, outputMd)}`);
+}
+
+async function readOptionalJson(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 function renderMarkdown(session) {

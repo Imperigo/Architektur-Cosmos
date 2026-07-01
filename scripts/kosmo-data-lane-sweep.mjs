@@ -45,25 +45,25 @@ const steps = [
     report: dataReport('kosmo-human-decision-owner-batches')
   },
   {
-    id: 'owner_review_batch_resolution_ledger',
-    label: 'Owner Review Batch Resolution Ledger',
+    id: 'owner_next_review_brief',
+    label: 'Owner Next Review Brief',
     command: 'npm',
-    args: ['run', 'kosmo:owner-review-batch-resolution-ledger'],
-    report: dataReport('kosmo-owner-review-batch-resolution-ledger')
+    args: ['run', 'kosmo:owner-next-review-brief'],
+    report: dataReport('kosmo-owner-next-review-brief')
   },
   {
-    id: 'owner_review_batch_resolution_ledger_check',
-    label: 'Owner Review Batch Resolution Ledger Check',
+    id: 'owner_review_card_set',
+    label: 'Owner Review Card Set',
     command: 'npm',
-    args: ['run', 'kosmo:owner-review-batch-resolution-ledger-check'],
-    report: dataReport('kosmo-owner-review-batch-resolution-ledger-check')
+    args: ['run', 'kosmo:owner-review-card-set'],
+    report: dataReport('kosmo-owner-review-card-set')
   },
   {
-    id: 'local_worker_output_review',
-    label: 'Local Worker Output Review',
+    id: 'local_worker_task_pack_refresh',
+    label: 'Local Worker Task Pack Refresh',
     command: 'npm',
-    args: ['run', 'kosmo:local-worker-output-review'],
-    report: dataReport('kosmo-local-worker-output-review')
+    args: ['run', 'kosmo:local-worker-task-pack-refresh'],
+    report: dataReport('kosmo-local-worker-task-pack')
   },
   {
     id: 'pilot_evidence_matrix',
@@ -108,6 +108,20 @@ const steps = [
     report: dataReport('kosmo-source-root-selection-brief')
   },
   {
+    id: 'source_root_decision_session_create',
+    label: 'Source Root Decision Session Create',
+    command: 'npm',
+    args: ['run', 'kosmo:source-root-decision-session-create'],
+    report: `examples/kosmo-references/provenance/source-root-decision-session-${dateStamp}.json`
+  },
+  {
+    id: 'source_root_decision_session_refresh',
+    label: 'Source Root Decision Session Refresh',
+    command: 'npm',
+    args: ['run', 'kosmo:source-root-decision-session-refresh'],
+    report: dataReport('kosmo-source-root-decision-session-refresh')
+  },
+  {
     id: 'source_root_decision_session_check',
     label: 'Source Root Decision Session Check',
     command: 'npm',
@@ -134,20 +148,6 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:private-inventory-output-check', '--', '--inventory', privateInventoryTemplate],
     report: dataReport('kosmo-private-inventory-output-check')
-  },
-  {
-    id: 'owner_next_review_brief',
-    label: 'Owner Next Review Brief',
-    command: 'npm',
-    args: ['run', 'kosmo:owner-next-review-brief'],
-    report: dataReport('kosmo-owner-next-review-brief')
-  },
-  {
-    id: 'owner_review_card_set',
-    label: 'Owner Review Card Set',
-    command: 'npm',
-    args: ['run', 'kosmo:owner-review-card-set'],
-    report: dataReport('kosmo-owner-review-card-set')
   },
   {
     id: 'owner_answer_sheet',
@@ -183,6 +183,27 @@ const steps = [
     command: 'npm',
     args: ['run', 'kosmo:owner-answer-session-edit-plan'],
     report: dataReport('kosmo-owner-answer-session-edit-plan')
+  },
+  {
+    id: 'owner_review_batch_resolution_ledger',
+    label: 'Owner Review Batch Resolution Ledger',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-review-batch-resolution-ledger'],
+    report: dataReport('kosmo-owner-review-batch-resolution-ledger')
+  },
+  {
+    id: 'owner_review_batch_resolution_ledger_check',
+    label: 'Owner Review Batch Resolution Ledger Check',
+    command: 'npm',
+    args: ['run', 'kosmo:owner-review-batch-resolution-ledger-check'],
+    report: dataReport('kosmo-owner-review-batch-resolution-ledger-check')
+  },
+  {
+    id: 'local_worker_output_review',
+    label: 'Local Worker Output Review',
+    command: 'npm',
+    args: ['run', 'kosmo:local-worker-output-review'],
+    report: dataReport('kosmo-local-worker-output-review')
   },
   {
     id: 'owner_question_brief',

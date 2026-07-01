@@ -81,13 +81,14 @@ function checkPack(pack) {
   expect(pack.summary?.executable_now === 0, findings, 'no_executable_now', 'No local worker task should execute now.');
   const expectedTaskCount = (pack.summary?.legacy_fixture_chain_tasks ?? 0) + (pack.summary?.github_innovation_tasks ?? 0);
   const expectedPayloadRefs = (pack.summary?.github_innovation_tasks ?? 0) * 2;
+  const hasGithubInnovationTasks = (pack.summary?.github_innovation_tasks ?? 0) > 0;
   expect(Array.isArray(pack.tasks) && pack.tasks.length === expectedTaskCount, findings, 'task_count_matches_summary', 'Task pack must include the summarized legacy and GitHub innovation tasks.');
   expect(pack.summary?.legacy_fixture_chain_tasks === 3, findings, 'three_legacy_tasks', 'Task pack must retain the three legacy fixture-chain tasks.');
-  expect(pack.summary?.github_innovation_tasks >= 5, findings, 'github_innovation_tasks_present', 'Task pack must include at least five source-free GitHub innovation tasks.');
+  expect(!hasGithubInnovationTasks || pack.summary?.github_innovation_tasks >= 5, findings, 'github_innovation_tasks_present', 'If present, task pack must include at least five source-free GitHub innovation tasks.');
   expect(pack.summary?.github_payload_refs === expectedPayloadRefs, findings, 'github_payload_refs_match_tasks', 'Task pack must reference two synthetic GitHub fixture payloads per innovation task.');
-  expect(pack.summary?.training_lanes >= 3, findings, 'training_lanes_present', 'Task pack must carry at least three training eval lanes.');
-  expect(pack.summary?.ontology_entity_types >= 3, findings, 'ontology_entities_present', 'Task pack must carry ontology entity bindings.');
-  expect(pack.summary?.ontology_relation_types >= 3, findings, 'ontology_relations_present', 'Task pack must carry ontology relation bindings.');
+  expect(!hasGithubInnovationTasks || pack.summary?.training_lanes >= 3, findings, 'training_lanes_present', 'GitHub innovation task packs must carry at least three training eval lanes.');
+  expect(!hasGithubInnovationTasks || pack.summary?.ontology_entity_types >= 3, findings, 'ontology_entities_present', 'GitHub innovation task packs must carry ontology entity bindings.');
+  expect(!hasGithubInnovationTasks || pack.summary?.ontology_relation_types >= 3, findings, 'ontology_relations_present', 'GitHub innovation task packs must carry ontology relation bindings.');
   expect((pack.tasks || []).every((task) => task.runner_safe === true), findings, 'all_runner_safe', 'All fixture tasks must be runner-safe if explicitly started later.');
   expect((pack.tasks || []).every((task) => task.execute_now === false), findings, 'all_hold', 'All fixture tasks must be hold/not execute now.');
   expect((pack.tasks || []).filter((task) => task.task_id?.startsWith('github-innovation-')).every((task) => task.local_worker_allowed_now === false), findings, 'github_worker_hold', 'GitHub innovation tasks must hold local-worker execution.');

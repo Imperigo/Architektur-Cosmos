@@ -19,7 +19,7 @@ main().catch((error) => {
 
 async function main() {
   const batches = JSON.parse(await readFile(batchesPath, 'utf8'));
-  const router = JSON.parse(await readFile(routerPath, 'utf8'));
+  const router = await readOptionalJson(routerPath);
   const resolutionLedger = await readOptionalJson(resolutionLedgerPath);
   const resolvedBatchIds = new Set((resolutionLedger?.resolutions || [])
     .filter((resolution) => resolution.resolution_status === 'triaged_review_only')
@@ -54,9 +54,9 @@ async function main() {
       resolved_batches_review_only: resolvedBatchIds.size,
       resolved_items_review_only: resolvedItems,
       resolution_ledger_status: resolutionLedger?.status || null,
-      router_status: router.status,
-      private_diagnostic_allowed: router.summary?.private_diagnostic_allowed === true,
-      private_inventory_allowed: router.summary?.private_inventory_allowed === true,
+      router_status: router?.status || 'missing_pending_sweep_router',
+      private_diagnostic_allowed: router?.summary?.private_diagnostic_allowed === true,
+      private_inventory_allowed: router?.summary?.private_inventory_allowed === true,
       public_ready_after_brief: 0
     },
     recommended_order: reviewCards.map((card) => card.batch_id),

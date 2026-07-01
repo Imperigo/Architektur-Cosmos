@@ -47,10 +47,17 @@ async function main() {
 function buildReport({ queue, choiceMatrix, answerSheet, pilotGapLabels, assetTaxonomy }) {
   const failures = [];
   const sourceRootChoiceSatisfied = choiceMatrix.status === 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only';
+  const choiceMatrixPendingOwner = choiceMatrix.status === 'source_root_owner_choice_consequence_matrix_needs_review' &&
+    choiceMatrix.policy?.reads_private_content === false &&
+    choiceMatrix.policy?.runs_private_inventory_now === false &&
+    choiceMatrix.policy?.public_ready_after_matrix === 0 &&
+    (choiceMatrix.summary?.choices ?? 0) > 0 &&
+    (choiceMatrix.summary?.public_ready_after_matrix ?? 0) === 0 &&
+    (choiceMatrix.choices || []).every((choice) => choice.public_ready_after_choice === 0);
   const choiceMatrixAccepted = [
     'source_root_owner_choice_consequence_matrix_ready',
     'source_root_owner_choice_consequence_matrix_satisfied_metadata_only'
-  ].includes(choiceMatrix.status);
+  ].includes(choiceMatrix.status) || choiceMatrixPendingOwner;
   if (queue.status !== 'source_independent_work_queue_ready') failures.push(`Queue not ready: ${queue.status}`);
   if ((queue.summary?.codex_executable_now ?? 1) !== 0) failures.push('Source-free Codex tasks are not complete.');
   if (!choiceMatrixAccepted) failures.push(`Choice matrix not ready: ${choiceMatrix.status}`);
@@ -82,7 +89,9 @@ function buildReport({ queue, choiceMatrix, answerSheet, pilotGapLabels, assetTa
       : null,
     safe_after_answer: sourceRootChoiceSatisfied
       ? 'Continue metadata-only diagnostics and review batches; do not OCR, extract private PDF text, copy private files to Git, run local LLMs on private contents, or set public-ready.'
-      : 'Run source-root decision checks and activation preflight before any private metadata inventory.'
+      : choiceMatrixPendingOwner
+        ? 'Resolve the listed source-root/storage guard failures first; keep private inventory, OCR, local LLM content tasks and public-ready promotion blocked.'
+        : 'Run source-root decision checks and activation preflight before any private metadata inventory.'
   };
 
   const reviewBatchDecision = {

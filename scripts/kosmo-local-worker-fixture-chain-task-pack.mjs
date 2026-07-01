@@ -55,7 +55,27 @@ function buildPack() {
   const payloadRefs = Array.isArray(fixturePayloads?.written_payloads)
     ? fixturePayloads.written_payloads
     : [];
-  const sourceRefs = [...Object.values(refs), ...payloadRefs];
+  const requiredRefs = [
+    refs.prepareAdapterReport,
+    refs.sourcePackage,
+    refs.sourcePackageCheck,
+    refs.assetLibrary,
+    refs.assetContractCheck,
+    refs.orbitBridge,
+    refs.workerBoundary
+  ];
+  const optionalGithubRefs = promotionMatrix
+    ? [
+        refs.githubPromotionMatrix,
+        refs.githubPromotionMatrixCheck,
+        refs.githubFixturePayloads,
+        refs.githubFixturePayloadsCheck,
+        refs.githubFixturePayloadSmoke,
+        refs.githubFixturePayloadSmokeCheck,
+        ...payloadRefs
+      ]
+    : [];
+  const sourceRefs = [...requiredRefs, ...optionalGithubRefs];
   const missingRefs = sourceRefs.filter((ref) => !existsSync(resolve(root, ref)));
   const outputRoot = '/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-fixture-chain-2026-06-15';
   const legacyTasks = [
