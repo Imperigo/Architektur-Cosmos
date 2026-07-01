@@ -1,0 +1,2086 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T11:08:49.131Z",
+  "generator": "public-static-sitemap-check",
+  "status": "public_static_sitemap_check_passed",
+  "policy": {
+    "source_free": true,
+    "reads_private_content": false,
+    "writes_public_ready": false,
+    "starts_server": false,
+    "scans_static_export_only": true
+  },
+  "inputs": {
+    "out_dir": "out",
+    "site_url": "https://architekturkosmos.ch",
+    "public_entry_count": 112
+  },
+  "summary": {
+    "expected_sitemap_paths": 118,
+    "actual_sitemap_paths": 118,
+    "duplicate_sitemap_paths": 0,
+    "failed_checks": 0
+  },
+  "expected_sitemap_paths": [
+    "/",
+    "/archive/",
+    "/assets/",
+    "/atlas/",
+    "/atlas/25b-avenue-franklin/",
+    "/atlas/afasia-no-architecture-flower-house/",
+    "/atlas/agora-of-athens/",
+    "/atlas/alhambra/",
+    "/atlas/alterszentrum-kloster-ingenbohl/",
+    "/atlas/arc-et-senans/",
+    "/atlas/athens-charter/",
+    "/atlas/barcelona-extension/",
+    "/atlas/bauhaus-dessau/",
+    "/atlas/berlin-iba-1987/",
+    "/atlas/brasilia/",
+    "/atlas/broadacre-city/",
+    "/atlas/brunelleschi-dome/",
+    "/atlas/buerogebaeude-montecatini/",
+    "/atlas/catal-huyuk/",
+    "/atlas/catalan-atlas/",
+    "/atlas/central-park/",
+    "/atlas/centre-pompidou/",
+    "/atlas/chandigarh/",
+    "/atlas/cite-industrielle/",
+    "/atlas/city-in-layers/",
+    "/atlas/crystal-palace/",
+    "/atlas/delirious-new-york/",
+    "/atlas/dom-ino-house/",
+    "/atlas/dura-europos/",
+    "/atlas/elemental-quinta-monroy/",
+    "/atlas/emerald-necklace/",
+    "/atlas/eridu-and-susa/",
+    "/atlas/euralille-metropole/",
+    "/atlas/fagus-factory/",
+    "/atlas/familistere/",
+    "/atlas/fortezza-di-palmanova/",
+    "/atlas/forum-romanum/",
+    "/atlas/garden-cities-of-tomorrow/",
+    "/atlas/garden-of-tuileries/",
+    "/atlas/gas-works-park/",
+    "/atlas/gobekli-tepe/",
+    "/atlas/habitat-67/",
+    "/atlas/hafeninsel-saarbruecken/",
+    "/atlas/hagia-sophia/",
+    "/atlas/haus-tugendhat/",
+    "/atlas/hereford-mappa-mundi/",
+    "/atlas/high-line/",
+    "/atlas/hotel-tassel/",
+    "/atlas/hufeisensiedlung/",
+    "/atlas/ibm-cosham/",
+    "/atlas/immeuble-rue-des-amiraux/",
+    "/atlas/karl-marx-hof/",
+    "/atlas/klingenpark/",
+    "/atlas/kloster-st-gallen/",
+    "/atlas/landschaftspark-duisburg-nord/",
+    "/atlas/letchworth-garden-city/",
+    "/atlas/leutschenpark/",
+    "/atlas/linear-city/",
+    "/atlas/marc-antoine-laugier-primitive-hut/",
+    "/atlas/megara-hyblaea/",
+    "/atlas/mercator-world-atlas/",
+    "/atlas/mfo-park/",
+    "/atlas/milet/",
+    "/atlas/mohenjo-daro/",
+    "/atlas/narkomfin-housing/",
+    "/atlas/new-babylon/",
+    "/atlas/new-delhi/",
+    "/atlas/new-lanark-mills/",
+    "/atlas/nippur/",
+    "/atlas/oerliker-park/",
+    "/atlas/olynth/",
+    "/atlas/opfikerpark-glattpark/",
+    "/atlas/palazzo-medici-riccardi/",
+    "/atlas/palladio-four-books/",
+    "/atlas/panopticon/",
+    "/atlas/pantheon/",
+    "/atlas/parc-de-la-villette/",
+    "/atlas/parthenon/",
+    "/atlas/piazza-del-popolo/",
+    "/atlas/piazza-st-peters/",
+    "/atlas/pompeji/",
+    "/atlas/postsparkasse/",
+    "/atlas/priene/",
+    "/atlas/ptolemy-geographia/",
+    "/atlas/pyramids-of-giza/",
+    "/atlas/red-house/",
+    "/atlas/renaturierung-der-aire/",
+    "/atlas/royal-observatory-greenwich/",
+    "/atlas/rural-studio-20k-house/",
+    "/atlas/s-m-l-xl/",
+    "/atlas/schurenbach-halde/",
+    "/atlas/serpentine-pavilion-ishigami/",
+    "/atlas/sforzinda/",
+    "/atlas/shipyard-park/",
+    "/atlas/siena/",
+    "/atlas/sixtus-v-rome-plan/",
+    "/atlas/the-capitol/",
+    "/atlas/timgad/",
+    "/atlas/uferpark-attisholz-sued/",
+    "/atlas/unite-habitation/",
+    "/atlas/ur/",
+    "/atlas/uruk-city/",
+    "/atlas/venice-biennale-architecture-2012/",
+    "/atlas/versailles-gardens/",
+    "/atlas/villa-d-este/",
+    "/atlas/villa-lante/",
+    "/atlas/villa-medici-in-fiesole/",
+    "/atlas/villa-noailles/",
+    "/atlas/villa-savoye/",
+    "/atlas/ville-radieuse/",
+    "/atlas/vitruvius-de-architectura/",
+    "/atlas/voelkerbundspalast-competition/",
+    "/atlas/warenhaus-wertheim/",
+    "/atlas/welwyn-garden-city/",
+    "/atlas/wien-ringstrasse/",
+    "/atlas/willis-faber-and-dumas-office/",
+    "/orbit/",
+    "/references/"
+  ],
+  "actual_sitemap_paths": [
+    "/",
+    "/archive/",
+    "/assets/",
+    "/atlas/",
+    "/atlas/25b-avenue-franklin/",
+    "/atlas/afasia-no-architecture-flower-house/",
+    "/atlas/agora-of-athens/",
+    "/atlas/alhambra/",
+    "/atlas/alterszentrum-kloster-ingenbohl/",
+    "/atlas/arc-et-senans/",
+    "/atlas/athens-charter/",
+    "/atlas/barcelona-extension/",
+    "/atlas/bauhaus-dessau/",
+    "/atlas/berlin-iba-1987/",
+    "/atlas/brasilia/",
+    "/atlas/broadacre-city/",
+    "/atlas/brunelleschi-dome/",
+    "/atlas/buerogebaeude-montecatini/",
+    "/atlas/catal-huyuk/",
+    "/atlas/catalan-atlas/",
+    "/atlas/central-park/",
+    "/atlas/centre-pompidou/",
+    "/atlas/chandigarh/",
+    "/atlas/cite-industrielle/",
+    "/atlas/city-in-layers/",
+    "/atlas/crystal-palace/",
+    "/atlas/delirious-new-york/",
+    "/atlas/dom-ino-house/",
+    "/atlas/dura-europos/",
+    "/atlas/elemental-quinta-monroy/",
+    "/atlas/emerald-necklace/",
+    "/atlas/eridu-and-susa/",
+    "/atlas/euralille-metropole/",
+    "/atlas/fagus-factory/",
+    "/atlas/familistere/",
+    "/atlas/fortezza-di-palmanova/",
+    "/atlas/forum-romanum/",
+    "/atlas/garden-cities-of-tomorrow/",
+    "/atlas/garden-of-tuileries/",
+    "/atlas/gas-works-park/",
+    "/atlas/gobekli-tepe/",
+    "/atlas/habitat-67/",
+    "/atlas/hafeninsel-saarbruecken/",
+    "/atlas/hagia-sophia/",
+    "/atlas/haus-tugendhat/",
+    "/atlas/hereford-mappa-mundi/",
+    "/atlas/high-line/",
+    "/atlas/hotel-tassel/",
+    "/atlas/hufeisensiedlung/",
+    "/atlas/ibm-cosham/",
+    "/atlas/immeuble-rue-des-amiraux/",
+    "/atlas/karl-marx-hof/",
+    "/atlas/klingenpark/",
+    "/atlas/kloster-st-gallen/",
+    "/atlas/landschaftspark-duisburg-nord/",
+    "/atlas/letchworth-garden-city/",
+    "/atlas/leutschenpark/",
+    "/atlas/linear-city/",
+    "/atlas/marc-antoine-laugier-primitive-hut/",
+    "/atlas/megara-hyblaea/",
+    "/atlas/mercator-world-atlas/",
+    "/atlas/mfo-park/",
+    "/atlas/milet/",
+    "/atlas/mohenjo-daro/",
+    "/atlas/narkomfin-housing/",
+    "/atlas/new-babylon/",
+    "/atlas/new-delhi/",
+    "/atlas/new-lanark-mills/",
+    "/atlas/nippur/",
+    "/atlas/oerliker-park/",
+    "/atlas/olynth/",
+    "/atlas/opfikerpark-glattpark/",
+    "/atlas/palazzo-medici-riccardi/",
+    "/atlas/palladio-four-books/",
+    "/atlas/panopticon/",
+    "/atlas/pantheon/",
+    "/atlas/parc-de-la-villette/",
+    "/atlas/parthenon/",
+    "/atlas/piazza-del-popolo/",
+    "/atlas/piazza-st-peters/",
+    "/atlas/pompeji/",
+    "/atlas/postsparkasse/",
+    "/atlas/priene/",
+    "/atlas/ptolemy-geographia/",
+    "/atlas/pyramids-of-giza/",
+    "/atlas/red-house/",
+    "/atlas/renaturierung-der-aire/",
+    "/atlas/royal-observatory-greenwich/",
+    "/atlas/rural-studio-20k-house/",
+    "/atlas/s-m-l-xl/",
+    "/atlas/schurenbach-halde/",
+    "/atlas/serpentine-pavilion-ishigami/",
+    "/atlas/sforzinda/",
+    "/atlas/shipyard-park/",
+    "/atlas/siena/",
+    "/atlas/sixtus-v-rome-plan/",
+    "/atlas/the-capitol/",
+    "/atlas/timgad/",
+    "/atlas/uferpark-attisholz-sued/",
+    "/atlas/unite-habitation/",
+    "/atlas/ur/",
+    "/atlas/uruk-city/",
+    "/atlas/venice-biennale-architecture-2012/",
+    "/atlas/versailles-gardens/",
+    "/atlas/villa-d-este/",
+    "/atlas/villa-lante/",
+    "/atlas/villa-medici-in-fiesole/",
+    "/atlas/villa-noailles/",
+    "/atlas/villa-savoye/",
+    "/atlas/ville-radieuse/",
+    "/atlas/vitruvius-de-architectura/",
+    "/atlas/voelkerbundspalast-competition/",
+    "/atlas/warenhaus-wertheim/",
+    "/atlas/welwyn-garden-city/",
+    "/atlas/wien-ringstrasse/",
+    "/atlas/willis-faber-and-dumas-office/",
+    "/orbit/",
+    "/references/"
+  ],
+  "checks": [
+    {
+      "id": "robots:file_exists",
+      "passed": true,
+      "message": "Expected out/robots.txt to exist."
+    },
+    {
+      "id": "robots:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "robots:allows_root",
+      "passed": true,
+      "message": "Expected robots.txt to allow /."
+    },
+    {
+      "id": "robots:sitemap_reference",
+      "passed": true,
+      "message": "Expected robots.txt to reference https://architekturkosmos.ch/sitemap.xml."
+    },
+    {
+      "id": "sitemap:file_exists",
+      "passed": true,
+      "message": "Expected out/sitemap.xml to exist."
+    },
+    {
+      "id": "sitemap:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:urlset_present",
+      "passed": true,
+      "message": "Expected sitemap.xml to include <urlset."
+    },
+    {
+      "id": "sitemap:urls_present",
+      "passed": true,
+      "message": "Expected sitemap.xml to contain at least one <loc>."
+    },
+    {
+      "id": "sitemap:all_urls_on_site",
+      "passed": true,
+      "message": "Expected every sitemap URL to start with https://architekturkosmos.ch/."
+    },
+    {
+      "id": "sitemap:no_duplicate_paths",
+      "passed": true,
+      "message": "Duplicate sitemap paths: none."
+    },
+    {
+      "id": "sitemap:expected:/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/."
+    },
+    {
+      "id": "sitemap:expected:/archive/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/archive/."
+    },
+    {
+      "id": "sitemap:expected:/assets/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/assets/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/25b-avenue-franklin/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/25b-avenue-franklin/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/afasia-no-architecture-flower-house/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/afasia-no-architecture-flower-house/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/agora-of-athens/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/agora-of-athens/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/alhambra/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/alhambra/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/alterszentrum-kloster-ingenbohl/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/alterszentrum-kloster-ingenbohl/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/arc-et-senans/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/arc-et-senans/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/athens-charter/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/athens-charter/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/barcelona-extension/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/barcelona-extension/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/bauhaus-dessau/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/bauhaus-dessau/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/berlin-iba-1987/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/berlin-iba-1987/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/brasilia/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/brasilia/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/broadacre-city/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/broadacre-city/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/brunelleschi-dome/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/brunelleschi-dome/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/buerogebaeude-montecatini/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/buerogebaeude-montecatini/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/catal-huyuk/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/catal-huyuk/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/catalan-atlas/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/catalan-atlas/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/central-park/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/central-park/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/centre-pompidou/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/centre-pompidou/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/chandigarh/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/chandigarh/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/cite-industrielle/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/cite-industrielle/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/city-in-layers/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/city-in-layers/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/crystal-palace/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/crystal-palace/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/delirious-new-york/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/delirious-new-york/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/dom-ino-house/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/dom-ino-house/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/dura-europos/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/dura-europos/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/elemental-quinta-monroy/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/elemental-quinta-monroy/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/emerald-necklace/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/emerald-necklace/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/eridu-and-susa/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/eridu-and-susa/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/euralille-metropole/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/euralille-metropole/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/fagus-factory/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/fagus-factory/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/familistere/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/familistere/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/fortezza-di-palmanova/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/fortezza-di-palmanova/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/forum-romanum/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/forum-romanum/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/garden-cities-of-tomorrow/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/garden-cities-of-tomorrow/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/garden-of-tuileries/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/garden-of-tuileries/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/gas-works-park/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/gas-works-park/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/gobekli-tepe/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/gobekli-tepe/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/habitat-67/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/habitat-67/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/hafeninsel-saarbruecken/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/hafeninsel-saarbruecken/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/hagia-sophia/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/hagia-sophia/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/haus-tugendhat/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/haus-tugendhat/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/hereford-mappa-mundi/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/hereford-mappa-mundi/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/high-line/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/high-line/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/hotel-tassel/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/hotel-tassel/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/hufeisensiedlung/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/hufeisensiedlung/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/ibm-cosham/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/ibm-cosham/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/immeuble-rue-des-amiraux/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/immeuble-rue-des-amiraux/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/karl-marx-hof/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/karl-marx-hof/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/klingenpark/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/klingenpark/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/kloster-st-gallen/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/kloster-st-gallen/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/landschaftspark-duisburg-nord/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/landschaftspark-duisburg-nord/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/letchworth-garden-city/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/letchworth-garden-city/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/leutschenpark/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/leutschenpark/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/linear-city/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/linear-city/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/marc-antoine-laugier-primitive-hut/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/marc-antoine-laugier-primitive-hut/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/megara-hyblaea/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/megara-hyblaea/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/mercator-world-atlas/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/mercator-world-atlas/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/mfo-park/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/mfo-park/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/milet/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/milet/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/mohenjo-daro/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/mohenjo-daro/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/narkomfin-housing/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/narkomfin-housing/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/new-babylon/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/new-babylon/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/new-delhi/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/new-delhi/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/new-lanark-mills/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/new-lanark-mills/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/nippur/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/nippur/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/oerliker-park/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/oerliker-park/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/olynth/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/olynth/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/opfikerpark-glattpark/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/opfikerpark-glattpark/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/palazzo-medici-riccardi/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/palazzo-medici-riccardi/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/palladio-four-books/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/palladio-four-books/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/panopticon/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/panopticon/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/pantheon/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/pantheon/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/parc-de-la-villette/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/parc-de-la-villette/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/parthenon/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/parthenon/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/piazza-del-popolo/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/piazza-del-popolo/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/piazza-st-peters/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/piazza-st-peters/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/pompeji/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/pompeji/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/postsparkasse/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/postsparkasse/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/priene/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/priene/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/ptolemy-geographia/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/ptolemy-geographia/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/pyramids-of-giza/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/pyramids-of-giza/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/red-house/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/red-house/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/renaturierung-der-aire/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/renaturierung-der-aire/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/royal-observatory-greenwich/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/royal-observatory-greenwich/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/rural-studio-20k-house/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/rural-studio-20k-house/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/s-m-l-xl/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/s-m-l-xl/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/schurenbach-halde/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/schurenbach-halde/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/serpentine-pavilion-ishigami/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/serpentine-pavilion-ishigami/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/sforzinda/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/sforzinda/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/shipyard-park/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/shipyard-park/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/siena/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/siena/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/sixtus-v-rome-plan/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/sixtus-v-rome-plan/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/the-capitol/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/the-capitol/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/timgad/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/timgad/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/uferpark-attisholz-sued/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/uferpark-attisholz-sued/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/unite-habitation/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/unite-habitation/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/ur/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/ur/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/uruk-city/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/uruk-city/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/venice-biennale-architecture-2012/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/venice-biennale-architecture-2012/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/versailles-gardens/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/versailles-gardens/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/villa-d-este/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/villa-d-este/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/villa-lante/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/villa-lante/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/villa-medici-in-fiesole/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/villa-medici-in-fiesole/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/villa-noailles/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/villa-noailles/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/villa-savoye/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/villa-savoye/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/ville-radieuse/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/ville-radieuse/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/vitruvius-de-architectura/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/vitruvius-de-architectura/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/voelkerbundspalast-competition/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/voelkerbundspalast-competition/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/warenhaus-wertheim/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/warenhaus-wertheim/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/welwyn-garden-city/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/welwyn-garden-city/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/wien-ringstrasse/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/wien-ringstrasse/."
+    },
+    {
+      "id": "sitemap:expected:/atlas/willis-faber-and-dumas-office/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/atlas/willis-faber-and-dumas-office/."
+    },
+    {
+      "id": "sitemap:expected:/orbit/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/orbit/."
+    },
+    {
+      "id": "sitemap:expected:/references/",
+      "passed": true,
+      "message": "Expected sitemap.xml to include https://architekturkosmos.ch/references/."
+    },
+    {
+      "id": "sitemap:path:/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /."
+    },
+    {
+      "id": "sitemap:path:/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/archive/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /archive/."
+    },
+    {
+      "id": "sitemap:path:/archive/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/assets/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /assets/."
+    },
+    {
+      "id": "sitemap:path:/assets/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/."
+    },
+    {
+      "id": "sitemap:path:/atlas/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/25b-avenue-franklin/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/25b-avenue-franklin/."
+    },
+    {
+      "id": "sitemap:path:/atlas/25b-avenue-franklin/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/afasia-no-architecture-flower-house/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/afasia-no-architecture-flower-house/."
+    },
+    {
+      "id": "sitemap:path:/atlas/afasia-no-architecture-flower-house/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/agora-of-athens/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/agora-of-athens/."
+    },
+    {
+      "id": "sitemap:path:/atlas/agora-of-athens/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/alhambra/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/alhambra/."
+    },
+    {
+      "id": "sitemap:path:/atlas/alhambra/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/alterszentrum-kloster-ingenbohl/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/alterszentrum-kloster-ingenbohl/."
+    },
+    {
+      "id": "sitemap:path:/atlas/alterszentrum-kloster-ingenbohl/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/arc-et-senans/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/arc-et-senans/."
+    },
+    {
+      "id": "sitemap:path:/atlas/arc-et-senans/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/athens-charter/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/athens-charter/."
+    },
+    {
+      "id": "sitemap:path:/atlas/athens-charter/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/barcelona-extension/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/barcelona-extension/."
+    },
+    {
+      "id": "sitemap:path:/atlas/barcelona-extension/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/bauhaus-dessau/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/bauhaus-dessau/."
+    },
+    {
+      "id": "sitemap:path:/atlas/bauhaus-dessau/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/berlin-iba-1987/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/berlin-iba-1987/."
+    },
+    {
+      "id": "sitemap:path:/atlas/berlin-iba-1987/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/brasilia/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/brasilia/."
+    },
+    {
+      "id": "sitemap:path:/atlas/brasilia/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/broadacre-city/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/broadacre-city/."
+    },
+    {
+      "id": "sitemap:path:/atlas/broadacre-city/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/brunelleschi-dome/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/brunelleschi-dome/."
+    },
+    {
+      "id": "sitemap:path:/atlas/brunelleschi-dome/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/buerogebaeude-montecatini/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/buerogebaeude-montecatini/."
+    },
+    {
+      "id": "sitemap:path:/atlas/buerogebaeude-montecatini/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/catal-huyuk/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/catal-huyuk/."
+    },
+    {
+      "id": "sitemap:path:/atlas/catal-huyuk/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/catalan-atlas/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/catalan-atlas/."
+    },
+    {
+      "id": "sitemap:path:/atlas/catalan-atlas/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/central-park/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/central-park/."
+    },
+    {
+      "id": "sitemap:path:/atlas/central-park/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/centre-pompidou/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/centre-pompidou/."
+    },
+    {
+      "id": "sitemap:path:/atlas/centre-pompidou/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/chandigarh/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/chandigarh/."
+    },
+    {
+      "id": "sitemap:path:/atlas/chandigarh/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/cite-industrielle/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/cite-industrielle/."
+    },
+    {
+      "id": "sitemap:path:/atlas/cite-industrielle/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/city-in-layers/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/city-in-layers/."
+    },
+    {
+      "id": "sitemap:path:/atlas/city-in-layers/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/crystal-palace/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/crystal-palace/."
+    },
+    {
+      "id": "sitemap:path:/atlas/crystal-palace/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/delirious-new-york/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/delirious-new-york/."
+    },
+    {
+      "id": "sitemap:path:/atlas/delirious-new-york/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/dom-ino-house/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/dom-ino-house/."
+    },
+    {
+      "id": "sitemap:path:/atlas/dom-ino-house/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/dura-europos/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/dura-europos/."
+    },
+    {
+      "id": "sitemap:path:/atlas/dura-europos/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/elemental-quinta-monroy/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/elemental-quinta-monroy/."
+    },
+    {
+      "id": "sitemap:path:/atlas/elemental-quinta-monroy/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/emerald-necklace/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/emerald-necklace/."
+    },
+    {
+      "id": "sitemap:path:/atlas/emerald-necklace/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/eridu-and-susa/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/eridu-and-susa/."
+    },
+    {
+      "id": "sitemap:path:/atlas/eridu-and-susa/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/euralille-metropole/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/euralille-metropole/."
+    },
+    {
+      "id": "sitemap:path:/atlas/euralille-metropole/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/fagus-factory/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/fagus-factory/."
+    },
+    {
+      "id": "sitemap:path:/atlas/fagus-factory/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/familistere/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/familistere/."
+    },
+    {
+      "id": "sitemap:path:/atlas/familistere/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/fortezza-di-palmanova/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/fortezza-di-palmanova/."
+    },
+    {
+      "id": "sitemap:path:/atlas/fortezza-di-palmanova/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/forum-romanum/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/forum-romanum/."
+    },
+    {
+      "id": "sitemap:path:/atlas/forum-romanum/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/garden-cities-of-tomorrow/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/garden-cities-of-tomorrow/."
+    },
+    {
+      "id": "sitemap:path:/atlas/garden-cities-of-tomorrow/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/garden-of-tuileries/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/garden-of-tuileries/."
+    },
+    {
+      "id": "sitemap:path:/atlas/garden-of-tuileries/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/gas-works-park/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/gas-works-park/."
+    },
+    {
+      "id": "sitemap:path:/atlas/gas-works-park/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/gobekli-tepe/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/gobekli-tepe/."
+    },
+    {
+      "id": "sitemap:path:/atlas/gobekli-tepe/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/habitat-67/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/habitat-67/."
+    },
+    {
+      "id": "sitemap:path:/atlas/habitat-67/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/hafeninsel-saarbruecken/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/hafeninsel-saarbruecken/."
+    },
+    {
+      "id": "sitemap:path:/atlas/hafeninsel-saarbruecken/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/hagia-sophia/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/hagia-sophia/."
+    },
+    {
+      "id": "sitemap:path:/atlas/hagia-sophia/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/haus-tugendhat/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/haus-tugendhat/."
+    },
+    {
+      "id": "sitemap:path:/atlas/haus-tugendhat/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/hereford-mappa-mundi/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/hereford-mappa-mundi/."
+    },
+    {
+      "id": "sitemap:path:/atlas/hereford-mappa-mundi/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/high-line/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/high-line/."
+    },
+    {
+      "id": "sitemap:path:/atlas/high-line/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/hotel-tassel/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/hotel-tassel/."
+    },
+    {
+      "id": "sitemap:path:/atlas/hotel-tassel/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/hufeisensiedlung/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/hufeisensiedlung/."
+    },
+    {
+      "id": "sitemap:path:/atlas/hufeisensiedlung/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/ibm-cosham/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/ibm-cosham/."
+    },
+    {
+      "id": "sitemap:path:/atlas/ibm-cosham/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/immeuble-rue-des-amiraux/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/immeuble-rue-des-amiraux/."
+    },
+    {
+      "id": "sitemap:path:/atlas/immeuble-rue-des-amiraux/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/karl-marx-hof/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/karl-marx-hof/."
+    },
+    {
+      "id": "sitemap:path:/atlas/karl-marx-hof/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/klingenpark/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/klingenpark/."
+    },
+    {
+      "id": "sitemap:path:/atlas/klingenpark/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/kloster-st-gallen/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/kloster-st-gallen/."
+    },
+    {
+      "id": "sitemap:path:/atlas/kloster-st-gallen/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/landschaftspark-duisburg-nord/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/landschaftspark-duisburg-nord/."
+    },
+    {
+      "id": "sitemap:path:/atlas/landschaftspark-duisburg-nord/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/letchworth-garden-city/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/letchworth-garden-city/."
+    },
+    {
+      "id": "sitemap:path:/atlas/letchworth-garden-city/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/leutschenpark/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/leutschenpark/."
+    },
+    {
+      "id": "sitemap:path:/atlas/leutschenpark/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/linear-city/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/linear-city/."
+    },
+    {
+      "id": "sitemap:path:/atlas/linear-city/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/marc-antoine-laugier-primitive-hut/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/marc-antoine-laugier-primitive-hut/."
+    },
+    {
+      "id": "sitemap:path:/atlas/marc-antoine-laugier-primitive-hut/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/megara-hyblaea/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/megara-hyblaea/."
+    },
+    {
+      "id": "sitemap:path:/atlas/megara-hyblaea/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/mercator-world-atlas/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/mercator-world-atlas/."
+    },
+    {
+      "id": "sitemap:path:/atlas/mercator-world-atlas/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/mfo-park/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/mfo-park/."
+    },
+    {
+      "id": "sitemap:path:/atlas/mfo-park/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/milet/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/milet/."
+    },
+    {
+      "id": "sitemap:path:/atlas/milet/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/mohenjo-daro/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/mohenjo-daro/."
+    },
+    {
+      "id": "sitemap:path:/atlas/mohenjo-daro/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/narkomfin-housing/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/narkomfin-housing/."
+    },
+    {
+      "id": "sitemap:path:/atlas/narkomfin-housing/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/new-babylon/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/new-babylon/."
+    },
+    {
+      "id": "sitemap:path:/atlas/new-babylon/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/new-delhi/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/new-delhi/."
+    },
+    {
+      "id": "sitemap:path:/atlas/new-delhi/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/new-lanark-mills/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/new-lanark-mills/."
+    },
+    {
+      "id": "sitemap:path:/atlas/new-lanark-mills/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/nippur/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/nippur/."
+    },
+    {
+      "id": "sitemap:path:/atlas/nippur/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/oerliker-park/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/oerliker-park/."
+    },
+    {
+      "id": "sitemap:path:/atlas/oerliker-park/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/olynth/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/olynth/."
+    },
+    {
+      "id": "sitemap:path:/atlas/olynth/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/opfikerpark-glattpark/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/opfikerpark-glattpark/."
+    },
+    {
+      "id": "sitemap:path:/atlas/opfikerpark-glattpark/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/palazzo-medici-riccardi/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/palazzo-medici-riccardi/."
+    },
+    {
+      "id": "sitemap:path:/atlas/palazzo-medici-riccardi/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/palladio-four-books/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/palladio-four-books/."
+    },
+    {
+      "id": "sitemap:path:/atlas/palladio-four-books/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/panopticon/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/panopticon/."
+    },
+    {
+      "id": "sitemap:path:/atlas/panopticon/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/pantheon/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/pantheon/."
+    },
+    {
+      "id": "sitemap:path:/atlas/pantheon/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/parc-de-la-villette/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/parc-de-la-villette/."
+    },
+    {
+      "id": "sitemap:path:/atlas/parc-de-la-villette/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/parthenon/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/parthenon/."
+    },
+    {
+      "id": "sitemap:path:/atlas/parthenon/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/piazza-del-popolo/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/piazza-del-popolo/."
+    },
+    {
+      "id": "sitemap:path:/atlas/piazza-del-popolo/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/piazza-st-peters/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/piazza-st-peters/."
+    },
+    {
+      "id": "sitemap:path:/atlas/piazza-st-peters/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/pompeji/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/pompeji/."
+    },
+    {
+      "id": "sitemap:path:/atlas/pompeji/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/postsparkasse/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/postsparkasse/."
+    },
+    {
+      "id": "sitemap:path:/atlas/postsparkasse/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/priene/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/priene/."
+    },
+    {
+      "id": "sitemap:path:/atlas/priene/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/ptolemy-geographia/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/ptolemy-geographia/."
+    },
+    {
+      "id": "sitemap:path:/atlas/ptolemy-geographia/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/pyramids-of-giza/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/pyramids-of-giza/."
+    },
+    {
+      "id": "sitemap:path:/atlas/pyramids-of-giza/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/red-house/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/red-house/."
+    },
+    {
+      "id": "sitemap:path:/atlas/red-house/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/renaturierung-der-aire/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/renaturierung-der-aire/."
+    },
+    {
+      "id": "sitemap:path:/atlas/renaturierung-der-aire/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/royal-observatory-greenwich/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/royal-observatory-greenwich/."
+    },
+    {
+      "id": "sitemap:path:/atlas/royal-observatory-greenwich/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/rural-studio-20k-house/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/rural-studio-20k-house/."
+    },
+    {
+      "id": "sitemap:path:/atlas/rural-studio-20k-house/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/s-m-l-xl/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/s-m-l-xl/."
+    },
+    {
+      "id": "sitemap:path:/atlas/s-m-l-xl/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/schurenbach-halde/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/schurenbach-halde/."
+    },
+    {
+      "id": "sitemap:path:/atlas/schurenbach-halde/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/serpentine-pavilion-ishigami/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/serpentine-pavilion-ishigami/."
+    },
+    {
+      "id": "sitemap:path:/atlas/serpentine-pavilion-ishigami/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/sforzinda/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/sforzinda/."
+    },
+    {
+      "id": "sitemap:path:/atlas/sforzinda/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/shipyard-park/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/shipyard-park/."
+    },
+    {
+      "id": "sitemap:path:/atlas/shipyard-park/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/siena/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/siena/."
+    },
+    {
+      "id": "sitemap:path:/atlas/siena/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/sixtus-v-rome-plan/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/sixtus-v-rome-plan/."
+    },
+    {
+      "id": "sitemap:path:/atlas/sixtus-v-rome-plan/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/the-capitol/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/the-capitol/."
+    },
+    {
+      "id": "sitemap:path:/atlas/the-capitol/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/timgad/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/timgad/."
+    },
+    {
+      "id": "sitemap:path:/atlas/timgad/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/uferpark-attisholz-sued/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/uferpark-attisholz-sued/."
+    },
+    {
+      "id": "sitemap:path:/atlas/uferpark-attisholz-sued/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/unite-habitation/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/unite-habitation/."
+    },
+    {
+      "id": "sitemap:path:/atlas/unite-habitation/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/ur/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/ur/."
+    },
+    {
+      "id": "sitemap:path:/atlas/ur/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/uruk-city/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/uruk-city/."
+    },
+    {
+      "id": "sitemap:path:/atlas/uruk-city/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/venice-biennale-architecture-2012/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/venice-biennale-architecture-2012/."
+    },
+    {
+      "id": "sitemap:path:/atlas/venice-biennale-architecture-2012/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/versailles-gardens/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/versailles-gardens/."
+    },
+    {
+      "id": "sitemap:path:/atlas/versailles-gardens/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-d-este/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/villa-d-este/."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-d-este/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-lante/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/villa-lante/."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-lante/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-medici-in-fiesole/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/villa-medici-in-fiesole/."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-medici-in-fiesole/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-noailles/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/villa-noailles/."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-noailles/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-savoye/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/villa-savoye/."
+    },
+    {
+      "id": "sitemap:path:/atlas/villa-savoye/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/ville-radieuse/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/ville-radieuse/."
+    },
+    {
+      "id": "sitemap:path:/atlas/ville-radieuse/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/vitruvius-de-architectura/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/vitruvius-de-architectura/."
+    },
+    {
+      "id": "sitemap:path:/atlas/vitruvius-de-architectura/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/voelkerbundspalast-competition/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/voelkerbundspalast-competition/."
+    },
+    {
+      "id": "sitemap:path:/atlas/voelkerbundspalast-competition/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/warenhaus-wertheim/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/warenhaus-wertheim/."
+    },
+    {
+      "id": "sitemap:path:/atlas/warenhaus-wertheim/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/welwyn-garden-city/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/welwyn-garden-city/."
+    },
+    {
+      "id": "sitemap:path:/atlas/welwyn-garden-city/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/wien-ringstrasse/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/wien-ringstrasse/."
+    },
+    {
+      "id": "sitemap:path:/atlas/wien-ringstrasse/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/atlas/willis-faber-and-dumas-office/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /atlas/willis-faber-and-dumas-office/."
+    },
+    {
+      "id": "sitemap:path:/atlas/willis-faber-and-dumas-office/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/orbit/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /orbit/."
+    },
+    {
+      "id": "sitemap:path:/orbit/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    },
+    {
+      "id": "sitemap:path:/references/:public_allowlist",
+      "passed": true,
+      "message": "Unexpected sitemap path: /references/."
+    },
+    {
+      "id": "sitemap:path:/references/:no_private_patterns",
+      "passed": true,
+      "message": "Blocked private/source patterns: none."
+    }
+  ]
+}

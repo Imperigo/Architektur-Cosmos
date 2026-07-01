@@ -39,6 +39,19 @@ const checks = [
     purpose: 'Checks existing exported public routes for content sentinels, private/source markers and missing _next/static assets.'
   },
   {
+    id: 'public_static_sitemap_check',
+    command: [
+      'node',
+      'scripts/public-static-sitemap-check.mjs',
+      '--output',
+      resolve(reportRoot, 'public-static-sitemap-check.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-static-sitemap-check.generated.md')
+    ],
+    requiresOut: true,
+    purpose: 'Checks exported robots.txt and sitemap.xml against the public route allowlist and Atlas entry slugs.'
+  },
+  {
     id: 'public_copy_canon',
     command: ['node', 'scripts/public-copy-canon-check.mjs'],
     purpose: 'Rejects public UI copy that exposes internal workflow or implementation language.'
