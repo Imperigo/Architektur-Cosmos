@@ -1,0 +1,146 @@
+{
+  "id": "kosmo-cross-lane-handoff-sync-2026-07-01",
+  "generated_at": "2026-07-01T17:59:25+02:00",
+  "mode": "review_only",
+  "public_display_allowed": false,
+  "source_free": true,
+  "private_content_processed": false,
+  "public_ready_after_sync": 0,
+  "inputs": [
+    {
+      "lane": "architecture_cosmos",
+      "path": "docs/codex/kosmo-source-independent-work-queue-2026-07-01.md",
+      "kind": "queue_status",
+      "summary": "Source-independent queue reports 0 Codex-executable tasks, 2 owner actions and public-ready 0."
+    },
+    {
+      "lane": "architecture_cosmos",
+      "path": "docs/codex/kosmodata-lane-sweep-2026-07-01.md",
+      "kind": "data_lane_status",
+      "summary": "KosmoReferences and KosmoAsset lanes pass review-only sweeps; owner decisions remain open."
+    },
+    {
+      "lane": "architecture_cosmos",
+      "path": "public:gate-check",
+      "kind": "public_gate",
+      "summary": "Public gate passed with 81 public entries, 5 public models and no warnings."
+    },
+    {
+      "lane": "kosmo_orbit",
+      "path": "KosmoOrbit/_overseer/worker-live-status.md",
+      "kind": "worker_status",
+      "summary": "No active worker sessions detected at the sampled time."
+    },
+    {
+      "lane": "kosmo_orbit",
+      "path": "KosmoOrbit/_overseer/worker-watch-latest.md",
+      "kind": "worker_watch",
+      "summary": "Mechanical watch shows recent file activity in KosmoDesign, KosmoPublish and KosmoVis."
+    },
+    {
+      "lane": "kosmo_design",
+      "path": "Code/KosmoDesign/HANDOFF.md",
+      "kind": "handoff",
+      "summary": "KosmoDesign owns product surfaces and review gates; cross-repo writes are not allowed without explicit notice."
+    },
+    {
+      "lane": "kosmo_draw",
+      "path": "Code/KosmoDraw/docs/HANDOFF_2026-06-26_KosmoDraw-KONSOLIDIERUNG_an_KosmoDesign.md",
+      "kind": "handoff",
+      "summary": "KosmoDraw is a mature engine lane now consolidated under KosmoDesign; remaining priority is the external capability atlas."
+    },
+    {
+      "lane": "kosmo_vis",
+      "path": "KosmoOrbit/_overseer/intake/inbox/2026-07-01-kosmovis-tag1-P0done-und-TKB-request.md",
+      "kind": "handoff",
+      "summary": "KosmoVis reports STOP-capability completion and requests TKB IFC re-materialization from the Publish lane."
+    },
+    {
+      "lane": "kosmo_zentrale",
+      "path": "KosmoZentrale/synergy/CODEX_KOSMOZENTRALE_SYNERGIE_2026-06-13.md",
+      "kind": "coordination_contract",
+      "summary": "Codex acts as technical integrator and owns KosmoReferences/KosmoAsset review-only scaffolding."
+    }
+  ],
+  "findings": [
+    {
+      "id": "source_free_queue_empty",
+      "severity": "info",
+      "status": "stable",
+      "summary": "The source-free queue remains at 0 executable Codex tasks; fallback work should stay in review-only integration, gates or public-safe UI/readability."
+    },
+    {
+      "id": "owner_gates_open",
+      "severity": "blocker",
+      "status": "owner_action_required",
+      "summary": "Source-root selection and open owner review batches remain the only unlock path for private inventory or public-ready promotion."
+    },
+    {
+      "id": "tkb_render_dependency",
+      "severity": "high",
+      "status": "cross_lane_dependency",
+      "summary": "KosmoVis can proceed to real TKB render QA only after KosmoPublish re-materializes the fixed geometry-bearing IFC."
+    },
+    {
+      "id": "kosmodesign_cross_write_boundary",
+      "severity": "medium",
+      "status": "guarded",
+      "summary": "KosmoDesign and KosmoDraw handoffs require Codex to consume contracts and write notices, not silently alter sibling lane code."
+    },
+    {
+      "id": "sensitive_literal_redaction",
+      "severity": "medium",
+      "status": "redacted",
+      "summary": "One read handoff contained sensitive operational literals; this sync intentionally does not repeat them."
+    }
+  ],
+  "recommended_next_actions": [
+    {
+      "owner": "codex",
+      "action": "Keep source-independent queue and public gates stable; do not set public-ready or run private inventory."
+    },
+    {
+      "owner": "overseer",
+      "action": "Route the TKB re-materialization request to KosmoPublish if not already tracked in its current lane queue."
+    },
+    {
+      "owner": "kosmo_design",
+      "action": "Treat KosmoDraw as the mature engine contract and focus new work on product surfaces, capability atlas and review gates."
+    },
+    {
+      "owner": "codex",
+      "action": "Continue KosmoReferences/KosmoAsset review-only readiness work while owner source-root and rights decisions remain open."
+    }
+  ],
+  "hard_stops_preserved": [
+    "No private PDFs, OCR text, scans, raw archive contents or worker logs were made public.",
+    "No private inventory or metadata worker was run.",
+    "No embeddings, fine-tunes, uploads, D1/R2 writes or public-ready promotions were performed.",
+    "No sibling-lane code was edited.",
+    "No sensitive operational literals were propagated into this artifact."
+  ],
+  "verification": {
+    "planned": [
+      "json_parse",
+      "targeted_redaction_scan",
+      "public_gate_check"
+    ],
+    "completed": [
+      {
+        "check": "json_parse",
+        "status": "passed",
+        "command": "node -e JSON.parse(...)"
+      },
+      {
+        "check": "targeted_redaction_scan",
+        "status": "passed",
+        "command": "targeted rg scan for PII and operational literals"
+      },
+      {
+        "check": "public_gate_check",
+        "status": "passed",
+        "command": "npm run public:gate-check"
+      }
+    ]
+  }
+}
