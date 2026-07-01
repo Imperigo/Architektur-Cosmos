@@ -21,6 +21,11 @@ const checks = [
     purpose: 'Keeps public gate routes aligned with route-content smoke coverage.'
   },
   {
+    id: 'public_copy_canon',
+    command: ['node', 'scripts/public-copy-canon-check.mjs'],
+    purpose: 'Rejects public UI copy that exposes internal workflow or implementation language.'
+  },
+  {
     id: 'public_runtime_boundary',
     command: [
       'node',
