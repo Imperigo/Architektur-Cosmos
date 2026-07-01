@@ -104,7 +104,7 @@ const checks = [
       resolve(reportRoot, 'public-static-link-check.generated.md')
     ],
     requiresOut: true,
-    purpose: 'Checks exported public HTML pages for core navigation links and missing internal targets without starting a server.'
+    purpose: 'Checks exported public HTML pages for core navigation links, missing internal targets and missing referenced static assets without starting a server.'
   },
   {
     id: 'public_static_metadata_check',

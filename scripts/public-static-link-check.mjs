@@ -33,10 +33,13 @@ async function main() {
   const seedRoutes = publicRouteChecks.filter((route) => isHtmlRoute(route.path));
   const pages = seedRoutes.map(checkPage);
   const targetPaths = [...new Set(pages.flatMap((page) => page.internal_targets))].sort();
+  const staticAssetPaths = collectStaticAssetPaths(pages);
   const targets = targetPaths.map(checkTarget);
+  const staticAssets = staticAssetPaths.map(checkStaticAsset);
   const failures = [
     ...pages.flatMap((page) => page.failures),
-    ...targets.flatMap((target) => target.failures)
+    ...targets.flatMap((target) => target.failures),
+    ...staticAssets.flatMap((asset) => asset.failures)
   ];
 
   const report = {
@@ -57,14 +60,17 @@ async function main() {
     summary: {
       checked_pages: pages.length,
       checked_internal_targets: targets.length,
+      checked_static_assets: staticAssets.length,
       skipped_external_links: pages.reduce((sum, page) => sum + page.skipped_external_links, 0),
       failed_pages: pages.filter((page) => page.status !== 'passed').length,
       failed_targets: targets.filter((target) => target.status !== 'passed').length,
+      failed_static_assets: staticAssets.filter((asset) => asset.status !== 'passed').length,
       failure_count: failures.length,
       public_ready_after_check: 0
     },
     pages,
     targets,
+    static_assets: staticAssets,
     failures
   };
 
@@ -79,6 +85,7 @@ async function main() {
   console.log(`Status: ${report.status}`);
   console.log(`Pages: ${pages.filter((page) => page.status === 'passed').length}/${pages.length}`);
   console.log(`Internal targets: ${targets.filter((target) => target.status === 'passed').length}/${targets.length}`);
+  console.log(`Static assets: ${staticAssets.filter((asset) => asset.status === 'passed').length}/${staticAssets.length}`);
   console.log(`Wrote: ${relative(root, outputMdPath)}`);
 
   if (failures.length > 0) process.exit(1);
@@ -100,6 +107,7 @@ function checkPage(route) {
       core_link_count: 0,
       private_pattern_count: 0,
       internal_targets: [],
+      static_assets: [],
       skipped_external_links: 0,
       failures
     };
@@ -112,6 +120,7 @@ function checkPage(route) {
     return publicLeakMatches(href).map((match) => ({ href, match }));
   });
   const normalizedLinks = hrefs.map(normalizeInternalHref).filter(Boolean);
+  const staticAssetRefs = extractStaticAssetRefs(body).map((href) => normalizeStaticAssetHref(href)).filter(Boolean);
   const linkSet = new Set(normalizedLinks);
   const externalLinks = hrefs.filter((href) => !normalizeInternalHref(href) && !isSkippedHref(href));
 
@@ -144,6 +153,7 @@ function checkPage(route) {
     core_link_count: requiredCoreLinks.filter((requiredPath) => linkSet.has(requiredPath)).length,
     private_pattern_count: bodyLeakMatches.length + hrefLeakMatches.length,
     internal_targets: [...new Set(normalizedLinks)].sort(),
+    static_assets: [...new Set(staticAssetRefs)].sort(),
     skipped_external_links: externalLinks.length,
     failures
   };
@@ -173,6 +183,30 @@ function checkTarget(path) {
   };
 }
 
+function checkStaticAsset(path) {
+  const filePath = routeFilePath(path);
+  const failures = [];
+  const pathLeakMatches = publicLeakMatches(path);
+  if (pathLeakMatches.length > 0) {
+    failures.push({
+      id: `${path}:static_asset_path_leak_patterns`,
+      detail: `Blocked private/source patterns: ${pathLeakMatches.join(', ')}`
+    });
+  }
+  if (!existsSync(filePath)) {
+    failures.push({
+      id: `${path}:static_asset_missing`,
+      detail: `Expected referenced static asset to exist in export: ${relative(root, filePath)}`
+    });
+  }
+  return {
+    path,
+    file: relative(root, filePath),
+    status: failures.length === 0 ? 'passed' : 'failed',
+    failures
+  };
+}
+
 function extractAnchorHrefs(html) {
   const hrefs = [];
   const anchorPattern = /<a\b[^>]*\bhref=(["'])(.*?)\1/gi;
@@ -181,6 +215,67 @@ function extractAnchorHrefs(html) {
     hrefs.push(decodeHtmlAttribute(match[2]));
   }
   return hrefs;
+}
+
+function collectStaticAssetPaths(pages) {
+  const htmlAssetPaths = [...new Set(pages.flatMap((page) => page.static_assets))].sort();
+  const cssAssetPaths = htmlAssetPaths
+    .filter((path) => path.toLowerCase().endsWith('.css'))
+    .flatMap((path) => extractCssStaticAssetRefs(path));
+  return [...new Set([...htmlAssetPaths, ...cssAssetPaths])].sort();
+}
+
+function extractStaticAssetRefs(html) {
+  const refs = [];
+  const tagPattern = /<(script|img|source|link|meta)\b[^>]*>/gi;
+  let tagMatch;
+  while ((tagMatch = tagPattern.exec(String(html))) !== null) {
+    const tag = tagMatch[0];
+    const tagName = tagMatch[1].toLowerCase();
+    if (tagName === 'meta') {
+      const content = attrValue(tag, 'content');
+      if (content && /\.(avif|gif|ico|jpe?g|png|svg|webp)([?#]|$)/i.test(content)) refs.push(content);
+      continue;
+    }
+
+    ['href', 'src', 'poster'].forEach((name) => {
+      const value = attrValue(tag, name);
+      if (value) refs.push(value);
+    });
+    ['imagesrcset', 'srcset'].forEach((name) => {
+      const value = attrValue(tag, name);
+      if (value) refs.push(...splitSrcSet(value));
+    });
+  }
+  return refs;
+}
+
+function extractCssStaticAssetRefs(cssAssetPath) {
+  const filePath = routeFilePath(cssAssetPath);
+  if (!existsSync(filePath)) return [];
+
+  const css = readFileSync(filePath, 'utf8');
+  const refs = [];
+  const pattern = /url\(\s*(["']?)(.*?)\1\s*\)/gi;
+  let match;
+  while ((match = pattern.exec(css)) !== null) {
+    const normalized = normalizeStaticAssetHref(match[2], cssAssetPath);
+    if (normalized) refs.push(normalized);
+  }
+  return refs;
+}
+
+function attrValue(tag, name) {
+  const pattern = new RegExp(`\\b${name}=("|')(.*?)\\1`, 'i');
+  const match = String(tag).match(pattern);
+  return match ? decodeHtmlAttribute(match[2]) : null;
+}
+
+function splitSrcSet(value) {
+  return String(value)
+    .split(',')
+    .map((candidate) => candidate.trim().split(/\s+/)[0])
+    .filter(Boolean);
 }
 
 function normalizeInternalHref(href) {
@@ -202,6 +297,28 @@ function normalizeInternalHref(href) {
   return pathname;
 }
 
+function normalizeStaticAssetHref(href, basePath = '/') {
+  const value = String(href || '').trim();
+  if (isSkippedHref(value)) return null;
+
+  let parsed;
+  try {
+    parsed = new URL(value, staticAssetBaseUrl(basePath));
+  } catch {
+    return null;
+  }
+  if (!siteOrigins.has(parsed.origin)) return null;
+  if (!extname(parsed.pathname)) return null;
+  return parsed.pathname;
+}
+
+function staticAssetBaseUrl(path) {
+  const normalized = String(path || '/');
+  if (normalized === '/' || normalized.endsWith('/')) return `https://architekturkosmos.ch${normalized}`;
+  const directory = dirname(normalized).replace(/\\/g, '/');
+  return `https://architekturkosmos.ch${directory === '/' ? '/' : `${directory}/`}`;
+}
+
 function isSkippedHref(href) {
   const value = String(href || '').trim();
   return !value
@@ -212,9 +329,17 @@ function isSkippedHref(href) {
 function routeFilePath(path) {
   const normalized = String(path || '/').split('?')[0].split('#')[0];
   if (normalized === '/') return resolve(outRoot, 'index.html');
-  const relativePath = normalized.replace(/^\/+/, '');
+  const relativePath = decodeUrlPath(normalized.replace(/^\/+/, ''));
   if (extname(relativePath)) return resolve(outRoot, relativePath);
   return resolve(outRoot, relativePath, 'index.html');
+}
+
+function decodeUrlPath(path) {
+  try {
+    return decodeURIComponent(path);
+  } catch {
+    return path;
+  }
 }
 
 function isHtmlRoute(path) {
@@ -236,24 +361,32 @@ function renderMarkdown(report) {
     `Generated: ${report.generated_at}`,
     `Status: \`${report.status}\``,
     '',
-    'Checks exported public HTML pages for core navigation links, private/source markers in anchors, and missing internal targets without starting a server or changing public-ready state.',
+    'Checks exported public HTML pages for core navigation links, private/source markers in anchors, missing internal targets and missing referenced static assets without starting a server or changing public-ready state.',
     '',
     '## Summary',
     '',
     `- pages: ${report.summary.checked_pages - report.summary.failed_pages}/${report.summary.checked_pages} passed`,
     `- internal targets: ${report.summary.checked_internal_targets - report.summary.failed_targets}/${report.summary.checked_internal_targets} passed`,
+    `- static assets: ${report.summary.checked_static_assets - report.summary.failed_static_assets}/${report.summary.checked_static_assets} passed`,
     `- skipped external links: ${report.summary.skipped_external_links}`,
     `- failures: ${report.summary.failure_count}`,
     `- public-ready after check: ${report.summary.public_ready_after_check}`,
     '',
     '## Pages',
     '',
-    '| Route | Status | Anchors | Core links | Internal targets |',
-    '| --- | --- | ---: | ---: | ---: |'
+    '| Route | Status | Anchors | Core links | Internal targets | Static assets |',
+    '| --- | --- | ---: | ---: | ---: | ---: |'
   ];
 
   report.pages.forEach((page) => {
-    lines.push(`| \`${page.path}\` | \`${page.status}\` | ${page.anchor_count} | ${page.core_link_count}/${requiredCoreLinks.length} | ${page.internal_targets.length} |`);
+    lines.push(`| \`${page.path}\` | \`${page.status}\` | ${page.anchor_count} | ${page.core_link_count}/${requiredCoreLinks.length} | ${page.internal_targets.length} | ${page.static_assets.length} |`);
+  });
+
+  lines.push('', '## Static Assets', '');
+  lines.push('| Path | Status |');
+  lines.push('| --- | --- |');
+  report.static_assets.forEach((asset) => {
+    lines.push(`| \`${asset.path}\` | \`${asset.status}\` |`);
   });
 
   if (report.failures.length > 0) {
