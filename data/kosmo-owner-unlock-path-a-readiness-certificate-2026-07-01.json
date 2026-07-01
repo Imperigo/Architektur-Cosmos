@@ -1,0 +1,72 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:26:08.254Z",
+  "status": "owner_unlock_path_a_readiness_certificate_ready",
+  "policy": {
+    "review_only": true,
+    "certificate_only": true,
+    "records_owner_decision": false,
+    "writes_intake_file": false,
+    "mutates_session_files": false,
+    "runs_source_root_guards": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_certificate": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-fast-reply-card-2026-07-01.json",
+    "data/kosmo-owner-unlock-fast-reply-card-check-2026-07-01.json",
+    "data/kosmo-owner-unlock-exact-reply-preview-2026-07-01.json",
+    "data/kosmo-owner-unlock-exact-reply-preview-check-2026-07-01.json",
+    "data/kosmo-source-root-activation-preflight-2026-07-01.json",
+    "data/kosmo-source-root-blocker-refresh-2026-07-01.json"
+  ],
+  "summary": {
+    "fast_reply_ready": true,
+    "broad_unlock_intent": false,
+    "exact_reply_preview_ready": true,
+    "validator_status": "owner_unlock_reply_valid",
+    "intake_map_status": "owner_unlock_reply_intake_map_ready_for_review",
+    "patch_operations": 6,
+    "owner_card_patches": 5,
+    "source_root_activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "activation_ready_now": false,
+    "source_root_still_blocked_now": true,
+    "path_a_can_start_after_exact_owner_reply": true,
+    "applies_decision_now": false,
+    "failures": 0,
+    "public_ready_after_certificate": 0
+  },
+  "exact_reply_required_before_path_a": [
+    "source_root_choice=select_exact_root_1",
+    "confirmed_exact_root=yes",
+    "review_batches=all_review_only",
+    "note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+  ],
+  "safe_default_reply": [
+    "source_root_choice=repair_onedrive_first",
+    "confirmed_exact_root=no",
+    "review_batches=none",
+    "note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist."
+  ],
+  "path_a_next_commands_after_owner_exact_reply": [
+    "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\"",
+    "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\"",
+    "review data/owner-unlock-dry-runs/<run>/intake-map.json",
+    "apply only reviewed owner-intake/session edits",
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:source-root-post-owner-activation-queue",
+    "npm run kosmo:source-root-post-owner-activation-queue-check"
+  ],
+  "hard_stops": [
+    "Do not treat this certificate as owner approval.",
+    "Do not apply the preview patch operations automatically.",
+    "Do not run source-root guards from this certificate.",
+    "Do not read private content.",
+    "Do not run private inventory.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

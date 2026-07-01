@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:26:05.760Z",
+  "status": "owner_unlock_reply_intake_map_pending_owner_reply",
+  "policy": {
+    "map_only": true,
+    "writes_intake_file": false,
+    "records_decisions": false,
+    "mutates_session_files": false,
+    "executes_commands": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_map": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-reply-validator-2026-07-01.json",
+    "data/kosmo-owner-unlock-prompt-pack-2026-07-01.json",
+    "examples/kosmo-references/provenance/owner-answer-intake-template-2026-07-01.json"
+  ],
+  "summary": {
+    "validator_status": "owner_unlock_reply_validator_pending_owner_reply",
+    "patch_ready": false,
+    "source_root_choice": null,
+    "review_batches": [
+      "none"
+    ],
+    "patch_operations": 0,
+    "owner_card_patches": 0,
+    "public_ready_after_map": 0
+  },
+  "proposed_intake_patch": {
+    "source_root_answer": null,
+    "owner_card_answers": [],
+    "reference_decision_answers": []
+  },
+  "patch_operations": [],
+  "next_actions": [
+    "Wait for a valid owner unlock reply validator report.",
+    "Do not edit intake or session files from this map."
+  ],
+  "hard_stops": [
+    "Do not apply this map automatically.",
+    "Do not write the intake file from this script.",
+    "Do not mutate session files.",
+    "Do not read private content.",
+    "Do not run private inventory.",
+    "Keep public-ready at 0."
+  ]
+}

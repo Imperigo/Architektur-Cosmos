@@ -1,0 +1,194 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:27:11.742Z",
+  "status": "source_root_owner_decision_packet_guard_passed",
+  "policy": {
+    "guard_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates the owner decision packet and its source-root templates. It does not apply owner decisions."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-owner-decision-packet-2026-07-01.json",
+    "data/kosmo-source-root-candidate-integrity-check-2026-07-01.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-07-01.json"
+  ],
+  "summary": {
+    "packet_status": "source_root_owner_decision_packet_ready",
+    "candidate_integrity_status": "source_root_candidate_integrity_owner_review_ready",
+    "decision_session_status": "source_root_decision_session_pending",
+    "decision_templates": 3,
+    "unlocking_templates": 1,
+    "owner_confirmable_exact_roots": 1,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "findings": [
+    {
+      "id": "packet_ready",
+      "severity": "passed",
+      "message": "Packet status must be ready."
+    },
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Packet must not record decisions."
+    },
+    {
+      "id": "mutates_decision_session_false",
+      "severity": "passed",
+      "message": "Packet must not mutate the decision session."
+    },
+    {
+      "id": "reads_private_content_false",
+      "severity": "passed",
+      "message": "Packet must not read private content."
+    },
+    {
+      "id": "copies_private_content_false",
+      "severity": "passed",
+      "message": "Packet must not copy private content."
+    },
+    {
+      "id": "writes_public_files_false",
+      "severity": "passed",
+      "message": "Packet must not write public files."
+    },
+    {
+      "id": "writes_public_manifest_false",
+      "severity": "passed",
+      "message": "Packet must not write public manifests."
+    },
+    {
+      "id": "packet_public_ready_zero",
+      "severity": "passed",
+      "message": "Packet must keep public-ready at 0."
+    },
+    {
+      "id": "private_diagnostic_not_allowed_yet",
+      "severity": "passed",
+      "message": "Pending packet must not allow private diagnostic yet."
+    },
+    {
+      "id": "selected_decision_null",
+      "severity": "passed",
+      "message": "Packet must not contain a selected decision."
+    },
+    {
+      "id": "selected_root_path_null",
+      "severity": "passed",
+      "message": "Packet must not contain a selected root path."
+    },
+    {
+      "id": "candidate_integrity_ready",
+      "severity": "passed",
+      "message": "Candidate integrity must be ready."
+    },
+    {
+      "id": "decision_session_pending",
+      "severity": "passed",
+      "message": "Decision session must remain pending."
+    },
+    {
+      "id": "session_selected_decision_empty",
+      "severity": "passed",
+      "message": "Decision session must not contain selected_decision."
+    },
+    {
+      "id": "session_selected_root_empty",
+      "severity": "passed",
+      "message": "Decision session must not contain selected_root_path."
+    },
+    {
+      "id": "templates_present",
+      "severity": "passed",
+      "message": "Packet must expose at least three decision templates."
+    },
+    {
+      "id": "template_keep_blocked_present",
+      "severity": "passed",
+      "message": "keep_blocked template must exist."
+    },
+    {
+      "id": "template_repair_onedrive_present",
+      "severity": "passed",
+      "message": "repair_onedrive_first template must exist."
+    },
+    {
+      "id": "unlocking_template_count_matches_exact_roots",
+      "severity": "passed",
+      "message": "Unlocking templates must match owner-confirmable exact roots."
+    },
+    {
+      "id": "unlocking_template_count_limited",
+      "severity": "passed",
+      "message": "Only one unlocking template is allowed before owner selection."
+    },
+    {
+      "id": "template:keep_blocked:recorded_status",
+      "severity": "passed",
+      "message": "Template must record the session only after owner confirmation."
+    },
+    {
+      "id": "template:keep_blocked:allowed_decision",
+      "severity": "passed",
+      "message": "Template selected_decision must be allowed: keep_blocked"
+    },
+    {
+      "id": "template:keep_blocked:no_root_for_blocked_decision",
+      "severity": "passed",
+      "message": "Non-unlocking templates must not include a root path."
+    },
+    {
+      "id": "template:repair_onedrive_first:recorded_status",
+      "severity": "passed",
+      "message": "Template must record the session only after owner confirmation."
+    },
+    {
+      "id": "template:repair_onedrive_first:allowed_decision",
+      "severity": "passed",
+      "message": "Template selected_decision must be allowed: repair_onedrive_first"
+    },
+    {
+      "id": "template:repair_onedrive_first:no_root_for_blocked_decision",
+      "severity": "passed",
+      "message": "Non-unlocking templates must not include a root path."
+    },
+    {
+      "id": "template:select_exact_root_1:recorded_status",
+      "severity": "passed",
+      "message": "Template must record the session only after owner confirmation."
+    },
+    {
+      "id": "template:select_exact_root_1:allowed_decision",
+      "severity": "passed",
+      "message": "Template selected_decision must be allowed: select_existing_root_for_private_diagnostic"
+    },
+    {
+      "id": "template:select_exact_root_1:unlock_decision",
+      "severity": "passed",
+      "message": "Unlocking template must use select_existing_root_for_private_diagnostic."
+    },
+    {
+      "id": "template:select_exact_root_1:absolute_root",
+      "severity": "passed",
+      "message": "Unlocking template must include an absolute selected_root_path."
+    },
+    {
+      "id": "template:select_exact_root_1:root_in_integrity",
+      "severity": "passed",
+      "message": "Unlocking template root must match an owner-confirmable exact root."
+    }
+  ],
+  "next_actions": [
+    "Use this guarded packet as the owner-facing source-root decision surface.",
+    "Record a decision only after explicit owner/KosmoOverseer confirmation.",
+    "Rerun source-root decision-session check and day batch after any recorded decision."
+  ]
+}

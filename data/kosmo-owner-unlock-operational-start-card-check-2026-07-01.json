@@ -1,0 +1,166 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:27:55.829Z",
+  "status": "owner_unlock_operational_start_card_guard_passed",
+  "policy": {
+    "validates_card_only": true,
+    "records_decisions": false,
+    "writes_intake_now": false,
+    "writes_session_files_now": false,
+    "executes_commands_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-operational-start-card-2026-07-01.json"
+  ],
+  "summary": {
+    "checks": 28,
+    "passed": 28,
+    "failures": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_operational_start_card_ready"
+    },
+    {
+      "id": "policy_card_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_execute_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_components_ready",
+      "status": "passed",
+      "evidence": "6/6"
+    },
+    {
+      "id": "checkpoint_green",
+      "status": "passed",
+      "evidence": "283/283"
+    },
+    {
+      "id": "owner_reply_not_applied",
+      "status": "passed",
+      "evidence": "pending"
+    },
+    {
+      "id": "source_root_blocked",
+      "status": "passed",
+      "evidence": "blocked_until_explicit_owner_reply_and_guards"
+    },
+    {
+      "id": "selected_root_exists_preview",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "current_session_file",
+      "status": "passed",
+      "evidence": "examples/kosmo-references/provenance/source-root-decision-session-2026-07-01.json"
+    },
+    {
+      "id": "queue_fully_blocked",
+      "status": "passed",
+      "evidence": "0/7/7"
+    },
+    {
+      "id": "exact_reply_has_root_choice",
+      "status": "passed",
+      "evidence": "source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+    },
+    {
+      "id": "exact_reply_has_confirmed_yes",
+      "status": "passed",
+      "evidence": "source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+    },
+    {
+      "id": "exact_reply_has_assets_path",
+      "status": "passed",
+      "evidence": "source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+    },
+    {
+      "id": "next_commands_start_validator",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\""
+    },
+    {
+      "id": "next_commands_include_dry_run",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-session-edit-preview npm run kosmo:owner-unlock-session-edit-preview-check npm run kosmo:source-root-decision-session-check npm run kosmo:source-root-blocker-refresh npm run kosmo:source-root-activation-preflight npm run kosmo:source-root-post-owner-activation-queue npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "next_commands_include_current_session_preview",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-session-edit-preview npm run kosmo:owner-unlock-session-edit-preview-check npm run kosmo:source-root-decision-session-check npm run kosmo:source-root-blocker-refresh npm run kosmo:source-root-activation-preflight npm run kosmo:source-root-post-owner-activation-queue npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "next_commands_include_post_owner_queue_check",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-answer-dry-run -- --answer \"source_root_choice=select_exact_root_1; confirmed_exact_root=yes; review_batches=all_review_only; note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.\" npm run kosmo:owner-unlock-session-edit-preview npm run kosmo:owner-unlock-session-edit-preview-check npm run kosmo:source-root-decision-session-check npm run kosmo:source-root-blocker-refresh npm run kosmo:source-root-activation-preflight npm run kosmo:source-root-post-owner-activation-queue npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "blocked_private_inventory",
+      "status": "passed",
+      "evidence": "npm run kosmo:private-metadata-inventory npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\" private ocr/pdf/book extraction local llm private-content task assignment public-ready promotion"
+    },
+    {
+      "id": "blocked_private_ocr",
+      "status": "passed",
+      "evidence": "npm run kosmo:private-metadata-inventory npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\" private ocr/pdf/book extraction local llm private-content task assignment public-ready promotion"
+    },
+    {
+      "id": "hard_stop_freeform_not_exact",
+      "status": "passed",
+      "evidence": "do not treat broad freeform approval as exact owner reply. do not write intake or session files from this card. do not run private inventory, ocr, embeddings or local llm private tasks from this card. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_writes",
+      "status": "passed",
+      "evidence": "do not treat broad freeform approval as exact owner reply. do not write intake or session files from this card. do not run private inventory, ocr, embeddings or local llm private tasks from this card. do not change public-ready state."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "do not treat broad freeform approval as exact owner reply. do not write intake or session files from this card. do not run private inventory, ocr, embeddings or local llm private tasks from this card. do not change public-ready state."
+    }
+  ]
+}

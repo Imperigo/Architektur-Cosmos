@@ -1,0 +1,130 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:26:08.493Z",
+  "status": "owner_unlock_path_a_readiness_certificate_guard_passed",
+  "policy": {
+    "review_only": true,
+    "validates_certificate_only": true,
+    "records_owner_decision": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-path-a-readiness-certificate-2026-07-01.json"
+  ],
+  "summary": {
+    "checks": 21,
+    "passed": 21,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_path_a_readiness_certificate_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_certificate_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_source_root_guards_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "fast_reply_ready",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "exact_preview_ready",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "validator_valid",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_valid"
+    },
+    {
+      "id": "intake_map_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_intake_map_ready_for_review"
+    },
+    {
+      "id": "patch_operations_present",
+      "status": "passed",
+      "evidence": 6
+    },
+    {
+      "id": "does_not_apply_decision",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "commands_keep_validator_first",
+      "status": "passed",
+      "evidence": "npm run kosmo:owner-unlock-reply-validator -- --answer \"<owner_reply>\" npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\" review data/owner-unlock-dry-runs/<run>/intake-map.json apply only reviewed owner-intake/session edits npm run kosmo:source-root-decision-session-check npm run kosmo:source-root-blocker-refresh npm run kosmo:source-root-activation-preflight npm run kosmo:source-root-post-owner-activation-queue npm run kosmo:source-root-post-owner-activation-queue-check"
+    },
+    {
+      "id": "hard_stop_no_approval",
+      "status": "passed",
+      "evidence": "do not treat this certificate as owner approval. do not apply the preview patch operations automatically. do not run source-root guards from this certificate. do not read private content. do not run private inventory. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_auto_patch",
+      "status": "passed",
+      "evidence": "do not treat this certificate as owner approval. do not apply the preview patch operations automatically. do not run source-root guards from this certificate. do not read private content. do not run private inventory. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not treat this certificate as owner approval. do not apply the preview patch operations automatically. do not run source-root guards from this certificate. do not read private content. do not run private inventory. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_public_ready_zero",
+      "status": "passed",
+      "evidence": "do not treat this certificate as owner approval. do not apply the preview patch operations automatically. do not run source-root guards from this certificate. do not read private content. do not run private inventory. keep public-ready at 0."
+    }
+  ]
+}

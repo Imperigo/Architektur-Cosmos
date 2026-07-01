@@ -1,0 +1,186 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:26:04.059Z",
+  "status": "owner_unlock_prompt_pack_ready",
+  "policy": {
+    "prompt_only": true,
+    "records_decisions": false,
+    "mutates_intake_template": false,
+    "executes_commands": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "writes_public_files": false,
+    "public_ready_after_pack": 0
+  },
+  "source_refs": [
+    "data/kosmo-evening-batch-rollup-2026-07-01.json",
+    "data/kosmo-owner-remaining-decision-brief-2026-07-01.json",
+    "data/kosmo-source-root-owner-answer-execution-checklist-2026-07-01.json",
+    "examples/kosmo-references/provenance/owner-answer-intake-template-2026-07-01.json"
+  ],
+  "summary": {
+    "prompt_questions": 2,
+    "rollup_status": "kosmo_evening_batch_rollup_bootstrap_missing",
+    "rollup_bootstrap_missing": true,
+    "source_root_choices": 3,
+    "unlock_choices": 1,
+    "review_batches": 5,
+    "review_items": 16,
+    "failures": 0,
+    "public_ready_after_pack": 0
+  },
+  "questions": [
+    {
+      "id": "source_root_choice",
+      "question": "Welche Source-Root-Antwort soll ich als naechstes explizit erfassen?",
+      "required": true,
+      "allowed_answers": [
+        {
+          "answer": "keep_blocked",
+          "label": "Keep source-root blocked",
+          "selected_decision_for_intake": "keep_blocked",
+          "selected_root_path_for_intake": null,
+          "unlocks_metadata_inventory_after_guards": false,
+          "public_ready_after_answer": 0,
+          "caution": "Owner is not ready to identify the complete private architecture library root."
+        },
+        {
+          "answer": "repair_onedrive_first",
+          "label": "Repair OneDrive first",
+          "selected_decision_for_intake": "repair_onedrive_first",
+          "selected_root_path_for_intake": null,
+          "unlocks_metadata_inventory_after_guards": false,
+          "public_ready_after_answer": 0,
+          "caution": "Owner says the intended source root is a OneDrive mirror but sync markers/completeness are not resolved."
+        },
+        {
+          "answer": "select_exact_root_1",
+          "label": "Select visible exact root for metadata diagnostic",
+          "selected_decision_for_intake": "select_existing_root_for_private_diagnostic",
+          "selected_root_path_for_intake": "/mnt/archiv/ArchitekturKosmos/Assets",
+          "unlocks_metadata_inventory_after_guards": true,
+          "public_ready_after_answer": 0,
+          "caution": "Visible archive subtree; owner/overseer may confirm this exact path before diagnostics."
+        }
+      ],
+      "safe_default": "repair_onedrive_first_or_keep_blocked",
+      "exact_text_owner_can_reply": "source_root_choice=<keep_blocked|repair_onedrive_first|select_exact_root_1>; confirmed_exact_root=<yes|no>; note=<optional>"
+    },
+    {
+      "id": "review_batch_scope",
+      "question": "Welche Review-Batches sollen als naechstes vorbereitet werden?",
+      "required": false,
+      "allowed_answers": [
+        {
+          "batch_id": "batch-a-villa-savoye-image-candidates",
+          "label": "Batch A: Villa Savoye Image Candidates",
+          "choices": [
+            "keep_all_blocked",
+            "open_one_source_credit_review",
+            "needs_more_context"
+          ],
+          "safe_default": "needs_more_source_context",
+          "items": 3,
+          "public_ready_after_card": 0
+        },
+        {
+          "batch_id": "batch-b-villa-savoye-derived-files",
+          "label": "Batch B: Villa Savoye Derived Files",
+          "choices": [
+            "use_safe_default",
+            "open_separate_review",
+            "needs_more_context"
+          ],
+          "safe_default": "keep_blocked",
+          "items": 4,
+          "public_ready_after_card": 0
+        },
+        {
+          "batch_id": "batch-c-model-promotion-confirmation",
+          "label": "Batch C: Model Promotion Confirmation",
+          "choices": [
+            "use_safe_default",
+            "open_separate_review",
+            "needs_more_context"
+          ],
+          "safe_default": "needs_more_source_context",
+          "items": 2,
+          "public_ready_after_card": 0
+        },
+        {
+          "batch_id": "batch-d-sogn-benedetg-source-gap",
+          "label": "Batch D: Sogn Benedetg Source Gap",
+          "choices": [
+            "use_safe_default",
+            "open_separate_review",
+            "needs_more_context"
+          ],
+          "safe_default": "needs_more_source_context",
+          "items": 1,
+          "public_ready_after_card": 0
+        },
+        {
+          "batch_id": "batch-e-kosmoasset-human-reviews",
+          "label": "Batch E: KosmoAsset Human Reviews",
+          "choices": [
+            "keep_needs_review",
+            "assign_named_human_review",
+            "block_public"
+          ],
+          "safe_default": "needs-review",
+          "items": 6,
+          "public_ready_after_card": 0
+        }
+      ],
+      "safe_default": "keep_all_review_only",
+      "exact_text_owner_can_reply": "review_batches=<none|batch-a|batch-b|batch-c|batch-d|batch-e|all_review_only>; batch_notes=<optional>"
+    }
+  ],
+  "prompt_blocks": [
+    {
+      "id": "short_owner_reply",
+      "title": "Kurzantwort fuer Andrin",
+      "lines": [
+        "source_root_choice=...",
+        "confirmed_exact_root=...",
+        "review_batches=...",
+        "note=..."
+      ]
+    },
+    {
+      "id": "safe_default_reply",
+      "title": "Sichere Default-Antwort",
+      "lines": [
+        "source_root_choice=repair_onedrive_first",
+        "confirmed_exact_root=no",
+        "review_batches=none",
+        "note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist."
+      ]
+    },
+    {
+      "id": "unlock_reply_only_if_true",
+      "title": "Unlock-Antwort nur bei exakter Bestaetigung",
+      "lines": [
+        "source_root_choice=select_exact_root_1",
+        "confirmed_exact_root=yes",
+        "review_batches=all_review_only",
+        "note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+      ]
+    }
+  ],
+  "after_owner_reply_pipeline": [
+    "Copy only explicit owner answers into the owner answer intake template.",
+    "Run owner answer intake check and session edit plan.",
+    "Run source-root decision session check and activation preflight.",
+    "Only after guards pass, follow the matching owner answer execution branch."
+  ],
+  "hard_stops": [
+    "Do not infer missing owner answers.",
+    "Do not auto-fill intake/session files from this prompt pack.",
+    "Do not run commands from the selected branch until the explicit answer is recorded.",
+    "Do not run private inventory unless the unlock branch is explicitly confirmed and guards pass.",
+    "Do not read, OCR, embed, train on or copy private source contents.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

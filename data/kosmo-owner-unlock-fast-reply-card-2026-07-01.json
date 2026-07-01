@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:26:06.949Z",
+  "status": "owner_unlock_fast_reply_card_ready",
+  "policy": {
+    "review_only": true,
+    "records_owner_decision": false,
+    "mutates_intake_files": false,
+    "runs_source_root_guards": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_card": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-prompt-pack-2026-07-01.json",
+    "data/kosmo-owner-unlock-reply-validator-2026-07-01.json"
+  ],
+  "summary": {
+    "answer_present": false,
+    "broad_unlock_intent": false,
+    "validator_status": "owner_unlock_reply_validator_pending_owner_reply",
+    "validator_rejected_freeform": false,
+    "suggested_replies": 2,
+    "applies_decision_now": false,
+    "failures": 0,
+    "public_ready_after_card": 0
+  },
+  "owner_context": {
+    "raw_answer": null,
+    "interpretation": "Owner intent is not specific enough to suggest unlock as the primary reply."
+  },
+  "recommended_reply_if_exact_root_is_true": [
+    "source_root_choice=select_exact_root_1",
+    "confirmed_exact_root=yes",
+    "review_batches=all_review_only",
+    "note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+  ],
+  "safe_default_reply": [
+    "source_root_choice=repair_onedrive_first",
+    "confirmed_exact_root=no",
+    "review_batches=none",
+    "note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist."
+  ],
+  "next_actions": [
+    "Owner can send exactly one of the reply blocks.",
+    "After an exact reply, rerun owner-unlock-reply-validator and owner-unlock-answer-dry-run.",
+    "Only after those pass may source-root activation preflight run."
+  ],
+  "hard_stops": [
+    "Do not treat this card as owner approval.",
+    "Do not rewrite the owner reply automatically.",
+    "Do not edit intake/session files from this card.",
+    "Do not read private content.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

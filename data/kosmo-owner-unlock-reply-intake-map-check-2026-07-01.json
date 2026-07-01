@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:26:05.998Z",
+  "status": "owner_unlock_reply_intake_map_guard_passed",
+  "policy": {
+    "validates_map_only": true,
+    "writes_intake_file": false,
+    "records_decisions": false,
+    "mutates_session_files": false,
+    "executes_commands": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-reply-intake-map-2026-07-01.json"
+  ],
+  "summary": {
+    "checks": 20,
+    "passed": 20,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_known",
+      "status": "passed",
+      "evidence": "owner_unlock_reply_intake_map_pending_owner_reply"
+    },
+    {
+      "id": "policy_map_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_intake_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_session_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_commands",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "pending_has_no_patch",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "invalid_has_no_patch",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "ready_has_source_root_patch",
+      "status": "passed"
+    },
+    {
+      "id": "owner_card_patches_template_allowed",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "reference_decisions_empty",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "hard_stop_no_auto_apply",
+      "status": "passed",
+      "evidence": "do not apply this map automatically. do not write the intake file from this script. do not mutate session files. do not read private content. do not run private inventory. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_intake_write",
+      "status": "passed",
+      "evidence": "do not apply this map automatically. do not write the intake file from this script. do not mutate session files. do not read private content. do not run private inventory. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_session_mutation",
+      "status": "passed",
+      "evidence": "do not apply this map automatically. do not write the intake file from this script. do not mutate session files. do not read private content. do not run private inventory. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_private_content",
+      "status": "passed",
+      "evidence": "do not apply this map automatically. do not write the intake file from this script. do not mutate session files. do not read private content. do not run private inventory. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_no_inventory",
+      "status": "passed",
+      "evidence": "do not apply this map automatically. do not write the intake file from this script. do not mutate session files. do not read private content. do not run private inventory. keep public-ready at 0."
+    },
+    {
+      "id": "hard_stop_public_ready_zero",
+      "status": "passed",
+      "evidence": "do not apply this map automatically. do not write the intake file from this script. do not mutate session files. do not read private content. do not run private inventory. keep public-ready at 0."
+    }
+  ]
+}

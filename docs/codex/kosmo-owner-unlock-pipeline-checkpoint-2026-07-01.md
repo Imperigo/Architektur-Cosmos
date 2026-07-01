@@ -1,83 +1,53 @@
 # Kosmo Owner Unlock Pipeline Checkpoint
 
-Generated: 2026-07-01T06:01:37.624Z
-Status: `owner_unlock_pipeline_checkpoint_attention_required`
+Generated: 2026-07-01T06:28:40.001Z
+Status: `owner_unlock_pipeline_checkpoint_ready`
 
 ## Summary
 
-- Components: 0/27
-- Missing inputs: 27
-- Guard checks: 0/0
-- Latest handoffs: null-null
+- Components: 27/27
+- Missing inputs: 0
+- Guard checks: 283/283
+- Latest handoffs: 346-353
 - Owner reply state: pending
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
-- Path A ready after exact owner reply: no
-- Selected root preview: -
+- Path A ready after exact owner reply: yes
+- Selected root preview: /mnt/archiv/ArchitekturKosmos/Assets
 - Session edit preview writes now: no
-- Session apply guard mode: -
-- Fixture apply smoke mode: -
+- Session apply guard mode: waiting_for_manual_apply
+- Fixture apply smoke mode: applied_matches_preview
 - Fixture smoke writes real session: no
 - Public-ready after checkpoint: 0
 
 ## Components
 
-- attention: `reply-validator` -> `missing_input`
-- attention: `reply-validator-guard` -> `missing_input`
-- attention: `reply-smoke` -> `missing_input`
-- attention: `reply-smoke-guard` -> `missing_input`
-- attention: `intake-map` -> `missing_input`
-- attention: `intake-map-guard` -> `missing_input`
-- attention: `execution-runbook` -> `missing_input`
-- attention: `execution-runbook-guard` -> `missing_input`
-- attention: `answer-dry-run` -> `missing_input`
-- attention: `answer-dry-run-guard` -> `missing_input`
-- attention: `fast-reply-card` -> `missing_input`
-- attention: `fast-reply-card-guard` -> `missing_input`
-- attention: `exact-reply-preview` -> `missing_input`
-- attention: `exact-reply-preview-guard` -> `missing_input`
-- attention: `path-a-readiness` -> `missing_input`
-- attention: `path-a-readiness-guard` -> `missing_input`
-- attention: `patch-review-bundle` -> `missing_input`
-- attention: `patch-review-bundle-guard` -> `missing_input`
-- attention: `intake-apply-plan` -> `missing_input`
-- attention: `intake-apply-plan-guard` -> `missing_input`
-- attention: `session-edit-preview` -> `missing_input`
-- attention: `session-edit-preview-guard` -> `missing_input`
-- attention: `session-apply-guard` -> `missing_input`
-- attention: `session-apply-guard-check` -> `missing_input`
-- attention: `session-apply-guard-smoke` -> `missing_input`
-- attention: `session-apply-guard-smoke-check` -> `missing_input`
-- attention: `overseer-sync-board` -> `missing_input`
-
-## Missing Inputs
-
-- `data/kosmo-owner-unlock-reply-validator-2026-07-01.json`
-- `data/kosmo-owner-unlock-reply-validator-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-reply-validator-smoke-2026-07-01.json`
-- `data/kosmo-owner-unlock-reply-validator-smoke-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-reply-intake-map-2026-07-01.json`
-- `data/kosmo-owner-unlock-reply-intake-map-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-execution-runbook-2026-07-01.json`
-- `data/kosmo-owner-unlock-execution-runbook-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-answer-dry-run-2026-07-01.json`
-- `data/kosmo-owner-unlock-answer-dry-run-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-fast-reply-card-2026-07-01.json`
-- `data/kosmo-owner-unlock-fast-reply-card-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-exact-reply-preview-2026-07-01.json`
-- `data/kosmo-owner-unlock-exact-reply-preview-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-path-a-readiness-certificate-2026-07-01.json`
-- `data/kosmo-owner-unlock-path-a-readiness-certificate-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-patch-review-bundle-2026-07-01.json`
-- `data/kosmo-owner-unlock-patch-review-bundle-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-intake-apply-plan-2026-07-01.json`
-- `data/kosmo-owner-unlock-intake-apply-plan-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-session-edit-preview-2026-07-01.json`
-- `data/kosmo-owner-unlock-session-edit-preview-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-session-apply-guard-2026-07-01.json`
-- `data/kosmo-owner-unlock-session-apply-guard-check-2026-07-01.json`
-- `data/kosmo-owner-unlock-session-apply-guard-smoke-2026-07-01.json`
-- `data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-07-01.json`
-- `data/kosmo-overseer-sync-board-2026-07-01.json`
+- ready: `reply-validator` -> `owner_unlock_reply_validator_pending_owner_reply`
+- ready: `reply-validator-guard` -> `owner_unlock_reply_validator_guard_passed`
+- ready: `reply-smoke` -> `owner_unlock_reply_validator_smoke_passed`
+- ready: `reply-smoke-guard` -> `owner_unlock_reply_validator_smoke_guard_passed`
+- ready: `intake-map` -> `owner_unlock_reply_intake_map_pending_owner_reply`
+- ready: `intake-map-guard` -> `owner_unlock_reply_intake_map_guard_passed`
+- ready: `execution-runbook` -> `owner_unlock_execution_runbook_ready`
+- ready: `execution-runbook-guard` -> `owner_unlock_execution_runbook_guard_passed`
+- ready: `answer-dry-run` -> `owner_unlock_answer_dry_run_pending_answer`
+- ready: `answer-dry-run-guard` -> `owner_unlock_answer_dry_run_guard_passed`
+- ready: `fast-reply-card` -> `owner_unlock_fast_reply_card_ready`
+- ready: `fast-reply-card-guard` -> `owner_unlock_fast_reply_card_guard_passed`
+- ready: `exact-reply-preview` -> `owner_unlock_answer_dry_run_ready_for_review`
+- ready: `exact-reply-preview-guard` -> `owner_unlock_answer_dry_run_guard_passed`
+- ready: `path-a-readiness` -> `owner_unlock_path_a_readiness_certificate_ready`
+- ready: `path-a-readiness-guard` -> `owner_unlock_path_a_readiness_certificate_guard_passed`
+- ready: `patch-review-bundle` -> `owner_unlock_patch_review_bundle_ready`
+- ready: `patch-review-bundle-guard` -> `owner_unlock_patch_review_bundle_guard_passed`
+- ready: `intake-apply-plan` -> `owner_unlock_intake_apply_plan_ready`
+- ready: `intake-apply-plan-guard` -> `owner_unlock_intake_apply_plan_guard_passed`
+- ready: `session-edit-preview` -> `owner_unlock_session_edit_preview_ready`
+- ready: `session-edit-preview-guard` -> `owner_unlock_session_edit_preview_guard_passed`
+- ready: `session-apply-guard` -> `owner_unlock_session_apply_guard_waiting_for_manual_apply`
+- ready: `session-apply-guard-check` -> `owner_unlock_session_apply_guard_check_passed`
+- ready: `session-apply-guard-smoke` -> `owner_unlock_session_apply_guard_smoke_passed`
+- ready: `session-apply-guard-smoke-check` -> `owner_unlock_session_apply_guard_smoke_check_passed`
+- ready: `overseer-sync-board` -> `overseer_sync_board_ready`
 
 ## Next Actions
 

@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:26:04.292Z",
+  "status": "owner_unlock_prompt_pack_guard_passed",
+  "policy": {
+    "validates_prompt_only": true,
+    "records_decisions": false,
+    "mutates_intake_template": false,
+    "executes_commands": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-prompt-pack-2026-07-01.json"
+  ],
+  "summary": {
+    "checks": 20,
+    "passed": 20,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "owner_unlock_prompt_pack_ready"
+    },
+    {
+      "id": "policy_prompt_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_decision_recording",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_intake_mutation",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_commands",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "two_questions",
+      "status": "passed",
+      "evidence": 2
+    },
+    {
+      "id": "source_root_required",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "review_batch_optional",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "three_source_root_choices",
+      "status": "passed",
+      "evidence": "keep_blocked,repair_onedrive_first,select_exact_root_1"
+    },
+    {
+      "id": "expected_source_root_choices",
+      "status": "passed",
+      "evidence": "keep_blocked,repair_onedrive_first,select_exact_root_1"
+    },
+    {
+      "id": "one_unlock_choice",
+      "status": "passed",
+      "evidence": "select_exact_root_1"
+    },
+    {
+      "id": "five_review_batches",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "sixteen_review_items",
+      "status": "passed",
+      "evidence": 16
+    },
+    {
+      "id": "prompt_has_safe_default",
+      "status": "passed",
+      "evidence": "source_root_choice=... confirmed_exact_root=... review_batches=... note=... source_root_choice=repair_onedrive_first confirmed_exact_root=no review_batches=none note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist. source_root_choice=select_exact_root_1 confirmed_exact_root=yes review_batches=all_review_only note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+    },
+    {
+      "id": "prompt_has_unlock_example_with_yes",
+      "status": "passed",
+      "evidence": "source_root_choice=... confirmed_exact_root=... review_batches=... note=... source_root_choice=repair_onedrive_first confirmed_exact_root=no review_batches=none note=Quelle bleibt blockiert, bis die vollstaendige private Architekturquelle bestaetigt ist. source_root_choice=select_exact_root_1 confirmed_exact_root=yes review_batches=all_review_only note=/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+    },
+    {
+      "id": "hard_stops_no_private_work",
+      "status": "passed",
+      "evidence": "do not infer missing owner answers. do not auto-fill intake/session files from this prompt pack. do not run commands from the selected branch until the explicit answer is recorded. do not run private inventory unless the unlock branch is explicitly confirmed and guards pass. do not read, ocr, embed, train on or copy private source contents. keep public-ready at 0."
+    },
+    {
+      "id": "pipeline_requires_recorded_answer",
+      "status": "passed",
+      "evidence": "Copy only explicit owner answers into the owner answer intake template. Run owner answer intake check and session edit plan. Run source-root decision session check and activation preflight. Only after guards pass, follow the matching owner answer execution branch."
+    }
+  ]
+}

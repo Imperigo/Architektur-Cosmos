@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-01T06:26:09.661Z",
+  "status": "owner_unlock_session_edit_preview_ready",
+  "policy": {
+    "review_only": true,
+    "preview_only": true,
+    "writes_session_files_now": false,
+    "writes_intake_now": false,
+    "applies_decisions_now": false,
+    "records_source_root_now": false,
+    "reads_private_content": false,
+    "runs_private_inventory_now": false,
+    "runs_source_root_guards_now": false,
+    "public_ready_after_preview": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-intake-apply-plan-2026-07-01.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-07-01.json",
+    "examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json"
+  ],
+  "summary": {
+    "intake_apply_plan_status": "owner_unlock_intake_apply_plan_ready",
+    "source_root_session_status": "source_root_decision_session_pending",
+    "owner_decision_session_status": "owner_decision_session_pending",
+    "preview_edits": 6,
+    "session_file_edits": 1,
+    "manual_triage_edits": 5,
+    "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+    "selected_root_exists": true,
+    "writes_now": false,
+    "failures": 0,
+    "public_ready_after_preview": 0
+  },
+  "preview_edits": [
+    {
+      "id": "source-root-session-record-preview",
+      "target_file": "examples/kosmo-references/provenance/source-root-decision-session-2026-07-01.json",
+      "edit_type": "source_root_decision_session_record",
+      "writes_now": false,
+      "current": {
+        "selected_decision": null,
+        "selected_root_path": null,
+        "owner_note": ""
+      },
+      "proposed": {
+        "selected_decision": "select_existing_root_for_private_diagnostic",
+        "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+        "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf."
+      },
+      "after_apply_required_commands": [
+        "npm run kosmo:source-root-decision-session-check",
+        "npm run kosmo:source-root-blocker-refresh",
+        "npm run kosmo:source-root-activation-preflight"
+      ],
+      "public_ready_after_edit": 0
+    },
+    {
+      "id": "owner-card-0-triage-preview",
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "owner_card_index": 0,
+      "owner_choice": "needs_more_context",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false,
+      "public_ready_after_edit": 0
+    },
+    {
+      "id": "owner-card-1-triage-preview",
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "owner_card_index": 1,
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false,
+      "public_ready_after_edit": 0
+    },
+    {
+      "id": "owner-card-2-triage-preview",
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "owner_card_index": 2,
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false,
+      "public_ready_after_edit": 0
+    },
+    {
+      "id": "owner-card-3-triage-preview",
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "owner_card_index": 3,
+      "owner_choice": "use_safe_default",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false,
+      "public_ready_after_edit": 0
+    },
+    {
+      "id": "owner-card-4-triage-preview",
+      "target_file": "manual-review-only",
+      "edit_type": "owner_card_triage_note",
+      "owner_card_index": 4,
+      "owner_choice": "keep_needs_review",
+      "owner_note": "/mnt/archiv/ArchitekturKosmos/Assets ist die vollstaendige private Architekturquelle fuer den naechsten Metadata-Diagnostic-Lauf.",
+      "writes_now": false,
+      "public_ready_after_edit": 0
+    }
+  ],
+  "after_manual_apply_sequence": [
+    "Review this preview with Claude/KosmoOverseer.",
+    "Apply the source-root session record only after exact owner reply is present in normal chat.",
+    "Run npm run kosmo:source-root-decision-session-check.",
+    "Run npm run kosmo:source-root-blocker-refresh.",
+    "Run npm run kosmo:source-root-activation-preflight.",
+    "Only then consider private metadata inventory, still review-only."
+  ],
+  "hard_stops": [
+    "Do not apply this preview automatically.",
+    "Do not write session files from this preview.",
+    "Do not run private inventory from this preview.",
+    "Do not read private content.",
+    "Do not change public-ready state."
+  ],
+  "failures": []
+}

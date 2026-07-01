@@ -72,9 +72,7 @@ function buildCheckpoint(reports) {
     reports.fastReplyCard.summary?.validator_rejected_freeform === true &&
     reports.validatorCheck.status === 'owner_unlock_reply_validator_guard_failed' &&
     reports.validatorCheck.summary?.failures === 2;
-  const runbookGuardBootstrapExpected = reports.runbookCheck.status === 'owner_unlock_execution_runbook_guard_failed' &&
-    Number(reports.runbookCheck.summary?.failures || 0) === 3 &&
-    Number(reports.runbookCheck.summary?.public_ready_after_check || 0) === 0;
+  const runbookGuardBootstrapExpected = expectedRunbookBootstrapGuardFailure(reports.runbookCheck);
   const replyValidatorGuardExpected = freeformRejectedAsExpected
     ? ['owner_unlock_reply_validator_guard_failed']
     : ['owner_unlock_reply_validator_guard_passed'];
@@ -219,6 +217,23 @@ function component(id, actual, expected, publicReady) {
     ready: expectedStatuses.includes(actual),
     public_ready_after_component: publicReady ?? 0
   };
+}
+
+function expectedRunbookBootstrapGuardFailure(report) {
+  if (report.status !== 'owner_unlock_execution_runbook_guard_failed') return false;
+  if (Number(report.summary?.public_ready_after_check || 0) !== 0) return false;
+
+  const failedIds = (report.checks || [])
+    .filter((check) => check.status === 'failed')
+    .map((check) => check.id)
+    .sort();
+  const expectedBootstrapIds = [
+    'checkpoint_status_ready',
+    'start_card_status_ready'
+  ];
+
+  return failedIds.length === expectedBootstrapIds.length &&
+    failedIds.every((id, index) => id === expectedBootstrapIds[index]);
 }
 
 async function readJson(path) {
