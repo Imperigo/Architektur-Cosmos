@@ -23,7 +23,7 @@ const checks = [
   {
     id: 'public_route_manifest',
     command: ['node', 'scripts/public-route-manifest-check.mjs'],
-    purpose: 'Rejects private/admin/source-style public route manifest entries before live or static route checks run.'
+    purpose: 'Rejects private/admin/source-style public route manifest entries and verifies each route has a matching app/public source before live or static route checks run.'
   },
   {
     id: 'public_static_export_smoke',

@@ -1,11 +1,17 @@
 #!/usr/bin/env node
 
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
 import { publicRouteChecks } from './public-route-manifest.mjs';
 
+const root = process.cwd();
+const entries = JSON.parse(readFileSync(resolve(root, 'data/mock-entries.json'), 'utf8'));
 const failures = [];
 const warnings = [];
 const seen = new Set();
+const sourceChecks = [];
+const atlasSlugs = new Set(entries.map((entry) => entry.slug));
 const requiredRoutes = new Set([
   '/',
   '/atlas/',
@@ -44,6 +50,7 @@ const summary = {
   status: failures.length === 0 ? 'passed' : 'failed',
   checked_route_count: publicRouteChecks.length,
   required_route_count: requiredRoutes.size,
+  source_checks: sourceChecks,
   failures,
   warnings
 };
@@ -99,6 +106,8 @@ function checkRoute(route) {
     });
   }
 
+  checkRouteSource(path);
+
   const includes = route.includes ?? [];
   const rawIncludes = route.rawIncludes ?? [];
   if (!Array.isArray(includes) || !Array.isArray(rawIncludes)) {
@@ -128,6 +137,73 @@ function checkRoute(route) {
       detail: `minBodyLength must be a positive integer for ${path}.`
     });
   }
+}
+
+function checkRouteSource(path) {
+  const result = sourceCandidatesForRoute(path);
+  sourceChecks.push({
+    path,
+    kind: result.kind,
+    candidates: result.candidates,
+    matched: result.matched,
+    atlas_slug: result.atlasSlug ?? null
+  });
+
+  if (result.atlasSlug && !atlasSlugs.has(result.atlasSlug)) {
+    failures.push({
+      id: `route:${path}:atlas-slug`,
+      detail: `Atlas detail route references a slug that is missing from data/mock-entries.json: ${result.atlasSlug}`
+    });
+  }
+
+  if (!result.matched) {
+    failures.push({
+      id: `route:${path}:source-missing`,
+      detail: `Public route manifest path has no matching app/public source file: ${path}`
+    });
+  }
+}
+
+function sourceCandidatesForRoute(path) {
+  if (path === '/') {
+    return routeSourceResult(path, 'app_route', ['app/page.tsx']);
+  }
+
+  if (path === '/robots.txt') {
+    return routeSourceResult(path, 'metadata_route', ['app/robots.ts', 'public/robots.txt']);
+  }
+
+  if (path === '/sitemap.xml') {
+    return routeSourceResult(path, 'metadata_route', ['app/sitemap.ts', 'public/sitemap.xml']);
+  }
+
+  if (path === '/icon.svg') {
+    return routeSourceResult(path, 'metadata_asset', ['app/icon.svg', 'public/icon.svg']);
+  }
+
+  const atlasMatch = path.match(/^\/atlas\/([^/]+)\/$/);
+  if (atlasMatch) {
+    return {
+      ...routeSourceResult(path, 'dynamic_atlas_route', ['app/atlas/[slug]/page.tsx']),
+      atlasSlug: atlasMatch[1]
+    };
+  }
+
+  if (path.endsWith('/')) {
+    const routePath = path.replace(/^\/+|\/+$/g, '');
+    return routeSourceResult(path, 'app_route', [`app/${routePath}/page.tsx`]);
+  }
+
+  return routeSourceResult(path, 'public_asset', [`public${path}`]);
+}
+
+function routeSourceResult(path, kind, candidates) {
+  return {
+    path,
+    kind,
+    candidates,
+    matched: candidates.some((candidate) => existsSync(resolve(root, candidate)))
+  };
 }
 
 function checkSentinel(path, kind, value) {
