@@ -57,6 +57,11 @@ const checks = [
     purpose: 'Rejects public UI copy that exposes internal workflow or implementation language.'
   },
   {
+    id: 'public_navigation_canon',
+    command: ['node', 'scripts/public-navigation-canon-check.mjs'],
+    purpose: 'Keeps the shared public header navigation aligned with the route manifest and private/source leak rules.'
+  },
+  {
     id: 'public_runtime_boundary',
     command: [
       'node',
