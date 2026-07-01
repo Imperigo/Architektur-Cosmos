@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 
 const root = process.cwd();
@@ -145,7 +145,9 @@ function main() {
   mkdirSync(reportRoot, { recursive: true });
 
   const startedAt = new Date().toISOString();
-  const results = checks.map(runCheck);
+  const executedResults = checks.map(runCheck);
+  const publicReadyInvariant = runPublicReadyInvariantCheck(reportRoot);
+  const results = [...executedResults, publicReadyInvariant];
   const passed = results.filter((result) => result.status === 'passed');
   const failed = results.filter((result) => result.status === 'failed');
   const skipped = results.filter((result) => result.status === 'skipped');
@@ -158,12 +160,15 @@ function main() {
       source_free: true,
       reads_private_content: false,
       writes_public_ready: false,
+      public_ready_invariant_enforced: true,
       starts_server: false,
       report_dir: relative(root, reportRoot)
     },
     started_at: startedAt,
     summary: {
-      check_count: checks.length,
+      check_count: results.length,
+      command_check_count: checks.length,
+      internal_check_count: results.length - checks.length,
       passed_checks: passed.length,
       failed_checks: failed.length,
       skipped_checks: skipped.length
@@ -211,6 +216,127 @@ function runCheck(check) {
     ended_at: endedAt,
     output_excerpt: tail(output, 4000)
   };
+}
+
+function runPublicReadyInvariantCheck(directory) {
+  const startedAt = new Date().toISOString();
+  const { files, signals, parseFailures } = collectPublicReadySignals(directory);
+  const unsafeSignals = signals.filter((signal) => !signal.safe);
+  const failures = [
+    ...parseFailures.map((failure) => ({
+      source: failure.source,
+      path: '$',
+      value: failure.error,
+      reason: 'invalid_json_report'
+    })),
+    ...unsafeSignals.map((signal) => ({
+      source: signal.source,
+      path: signal.path,
+      value: signal.value,
+      reason: 'public_ready_value_not_zero_or_false'
+    }))
+  ];
+  const endedAt = new Date().toISOString();
+
+  return {
+    id: 'public_ready_invariant',
+    purpose: 'Fails the aggregate gate if any generated JSON report promotes public-ready state above 0/false.',
+    command: ['internal', 'scan-generated-json-public-ready-fields'],
+    status: failures.length === 0 ? 'passed' : 'failed',
+    exit_code: failures.length === 0 ? 0 : 1,
+    signal: null,
+    started_at: startedAt,
+    ended_at: endedAt,
+    output_excerpt: JSON.stringify({
+      scanned_json_reports: files.length,
+      public_ready_signal_count: signals.length,
+      unsafe_signal_count: failures.length,
+      unsafe_signals: failures.slice(0, 20)
+    }, null, 2)
+  };
+}
+
+function collectPublicReadySignals(directory) {
+  const files = listJsonFiles(directory);
+  const signals = [];
+  const parseFailures = [];
+
+  for (const filePath of files) {
+    let value;
+    try {
+      value = JSON.parse(readFileSync(filePath, 'utf8'));
+    } catch (error) {
+      parseFailures.push({
+        source: relative(root, filePath),
+        error: error instanceof Error ? error.message : String(error)
+      });
+      continue;
+    }
+
+    collectSignalsFromValue(value, '$', relative(root, filePath), signals);
+  }
+
+  return { files, signals, parseFailures };
+}
+
+function collectSignalsFromValue(value, path, source, signals) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => collectSignalsFromValue(item, `${path}[${index}]`, source, signals));
+    return;
+  }
+
+  if (!value || typeof value !== 'object') return;
+
+  for (const [key, child] of Object.entries(value)) {
+    const childPath = `${path}.${key}`;
+    if (/public[-_]?ready/i.test(key)) {
+      signals.push({
+        source,
+        path: childPath,
+        value: child,
+        safe: isSafePublicReadyValue(child)
+      });
+    }
+    collectSignalsFromValue(child, childPath, source, signals);
+  }
+}
+
+function isSafePublicReadyValue(value) {
+  if (value === 0 || value === false || value === null) return true;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    return normalized === ''
+      || normalized === '0'
+      || normalized === 'false'
+      || normalized === 'no'
+      || normalized === 'none'
+      || normalized === 'null'
+      || normalized.includes('blocked')
+      || normalized.includes('not_allowed')
+      || normalized.includes('not allowed')
+      || normalized.includes('not_public')
+      || normalized.includes('review_only')
+      || normalized.includes('owner_required')
+      || normalized.includes('owner action required')
+      || normalized.includes('zero');
+  }
+  return false;
+}
+
+function listJsonFiles(directory) {
+  if (!existsSync(directory)) return [];
+
+  const found = [];
+  for (const item of readdirSync(directory)) {
+    const filePath = resolve(directory, item);
+    const stats = statSync(filePath);
+    if (stats.isDirectory()) {
+      found.push(...listJsonFiles(filePath));
+    } else if (stats.isFile() && filePath.endsWith('.json')) {
+      found.push(filePath);
+    }
+  }
+  return found.sort();
 }
 
 function tail(value, maxLength) {
