@@ -3,6 +3,7 @@ import { Badge, KButton, Measure, moduleHue } from '@kosmo/ui';
 import { formatLength, type Assembly, type Pt, type Storey } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { Viewport3D, type ViewportHandlers } from './Viewport3D';
+import { PlanView } from './PlanView';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -27,6 +28,7 @@ export function DesignWorkspace() {
   const setActiveStorey = useProject((s) => s.setActiveStorey);
 
   const [tool, setTool] = useState<ToolId>('wand');
+  const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split'>('split');
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
   const [points, setPoints] = useState<Pt[]>([]);
   const [cursor, setCursor] = useState<Pt | null>(null);
@@ -150,6 +152,24 @@ export function DesignWorkspace() {
           </select>
         )}
         <div style={{ flex: 1 }} />
+        {(
+          [
+            ['3d', '3D'],
+            ['split', '3D | Plan'],
+            ['2d', 'Grundriss'],
+          ] as const
+        ).map(([id, label]) => (
+          <KButton
+            key={id}
+            size="sm"
+            tone={viewMode === id ? 'accent' : 'ghost'}
+            onClick={() => setViewMode(id)}
+            data-testid={`view-${id}`}
+          >
+            {label}
+          </KButton>
+        ))}
+        <span style={{ width: 12 }} />
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
           ↩ Rückgängig
         </KButton>
@@ -158,9 +178,24 @@ export function DesignWorkspace() {
         </KButton>
       </div>
 
-      {/* Viewport */}
-      <div style={{ position: 'relative', flex: 1 }}>
-        <Viewport3D handlers={handlersRef} />
+      {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
+      <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
+        {viewMode !== '2d' && (
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Viewport3D handlers={handlersRef} />
+          </div>
+        )}
+        {viewMode !== '3d' && (
+          <div
+            style={{
+              position: 'relative',
+              flex: 1,
+              borderLeft: viewMode === 'split' ? '1px solid var(--k-line)' : 'none',
+            }}
+          >
+            <PlanView handlers={handlersRef} />
+          </div>
+        )}
 
         {/* Geschossleiste */}
         <div
