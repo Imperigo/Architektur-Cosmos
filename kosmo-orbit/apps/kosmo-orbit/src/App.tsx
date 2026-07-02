@@ -11,6 +11,7 @@ import {
   type ThemeName,
 } from '@kosmo/ui';
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
+import { KosmoPanel } from './shell/KosmoPanel';
 import { useProject } from './state/project-store';
 
 type Screen = 'home' | 'design';
@@ -26,6 +27,7 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
 export function App() {
   const [theme, setTheme] = useState<ThemeName>('paper');
   const [screen, setScreen] = useState<Screen>('home');
+  const [kosmoOpen, setKosmoOpen] = useState(true);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -69,14 +71,22 @@ export function App() {
           </>
         )}
         <div style={{ flex: 1 }} />
-        <Badge hue={moduleHue.kosmo}>Kosmo bereit</Badge>
+        <button
+          onClick={() => setKosmoOpen(!kosmoOpen)}
+          data-testid="kosmo-toggle"
+          style={{ all: 'unset', cursor: 'pointer' }}
+          aria-label="Kosmo öffnen/schliessen"
+        >
+          <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
+        </button>
         <Hairline vertical />
         <KButton tone="ghost" size="sm" onClick={() => setTheme(theme === 'paper' ? 'ink' : 'paper')}>
           {theme === 'paper' ? 'Tinte' : 'Papier'}
         </KButton>
       </header>
 
-      <main style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+      <main style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         {screen === 'design' ? (
           <DesignWorkspace />
         ) : (
@@ -128,6 +138,8 @@ export function App() {
             </div>
           </div>
         )}
+        </div>
+        {kosmoOpen && <KosmoPanel onClose={() => setKosmoOpen(false)} />}
       </main>
     </div>
   );

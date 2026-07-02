@@ -1,0 +1,25 @@
+{
+  "name": "@kosmo/ai",
+  "version": "1.0.0-v1",
+  "private": true,
+  "type": "module",
+  "description": "Kosmo — KI-Schicht: Provider (Ollama), Tool-Registry aus Kernel-Commands, Personas, gated Ausführung",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@kosmo/kernel": "*",
+    "jsonrepair": "^3.13.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}
