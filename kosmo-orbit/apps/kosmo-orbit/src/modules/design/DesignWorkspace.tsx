@@ -15,7 +15,7 @@ import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
  * Undo/Redo. Splitscreen mit 2D-Plänen folgt in M2.
  */
 
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'schnitt' | 'skizze';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'schnitt' | 'skizze';
 
 const SNAP = 250; // mm Rasterfang — später einstellbar/magnetisch
 
@@ -128,6 +128,22 @@ export function DesignWorkspace() {
           setPoints([]);
           setViewMode('quad');
         }
+      } else if (tool === 'treppe') {
+        if (points.length === 0) {
+          setPoints([p]);
+        } else {
+          try {
+            runCommand('design.treppeErstellen', {
+              storeyId: activeStoreyId,
+              a: points[0]!,
+              b: p,
+              width: 1200,
+            });
+          } catch (err) {
+            alert(err instanceof Error ? err.message : String(err));
+          }
+          setPoints([]);
+        }
       } else if (tool === 'volumen' || tool === 'zone' || tool === 'dach') {
         if (points.length >= 3 && Math.hypot(p.x - points[0]!.x, p.y - points[0]!.y) < SNAP) {
           if (tool === 'dach') {
@@ -194,6 +210,7 @@ export function DesignWorkspace() {
             ['volumen', 'Volumen'],
             ['zone', 'Zone'],
             ['dach', 'Dach'],
+            ['treppe', 'Treppe'],
             ['schnitt', 'Schnitt'],
             ['skizze', '✎ Skizze'],
           ] as const
@@ -389,6 +406,8 @@ export function DesignWorkspace() {
               ? 'Klick: Punkte setzen · Shift-Klick: Kette beenden · Esc: abbrechen'
               : tool === 'skizze'
                 ? 'Freihand zeichnen — Striche werden zu Wänden'
+                : tool === 'treppe'
+                ? 'Klick: Antritt, dann Austritt (Steigung wird berechnet)'
                 : tool === 'schnitt'
                 ? 'Klick: Anfang und Ende der Schnittlinie'
                 : tool === 'volumen'

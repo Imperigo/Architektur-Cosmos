@@ -57,7 +57,8 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     const isCore = r.classes.includes('tragend');
     const isDaemmung = r.classes.includes('daemmung');
     const isProjection = r.classes.includes('projection');
-    const fill = isCore ? 'url(#pbeton)' : isDaemmung ? 'url(#pdaemmung)' : isProjection ? 'none' : 'white';
+    // svg2pdf rendert SVG-Patterns nicht zuverlässig → solides Poché (SIA-Druckkonvention)
+    const fill = isCore ? '#c9c9c9' : isDaemmung ? '#efefef' : isProjection ? 'none' : 'white';
     // Stiftstärken in Papier-mm → Welt-mm skaliert (0.5 / 0.35 / 0.18)
     const sw = (isProjection ? 0.18 : isCore ? 0.5 : 0.35) * scale;
     const dash = r.classes.includes('volumen') ? ` stroke-dasharray="${2 * scale} ${scale}"` : '';

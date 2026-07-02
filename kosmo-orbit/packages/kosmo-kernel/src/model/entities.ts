@@ -121,6 +121,17 @@ export interface Zone extends Base {
   program?: string;
 }
 
+/** Gerade Lauftreppe — Achse a→b, Breite; Steigung aus Geschosshöhe. */
+export interface Stair extends Base {
+  kind: 'stair';
+  storeyId: string;
+  /** Antritt (unten). */
+  a: Pt;
+  /** Austritt (oben) — Länge bestimmt den Lauf. */
+  b: Pt;
+  width: Mm;
+}
+
 /** Walmdach — Grundriss-Polygon + Neigung; Geometrie via Straight Skeleton. */
 export interface Roof extends Base {
   kind: 'roof';
@@ -144,7 +155,7 @@ export interface MassBody extends Base {
   program?: string;
 }
 
-export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof;
+export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

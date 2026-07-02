@@ -1,4 +1,4 @@
-import type { Assembly, Opening, Storey, Wall } from '../model/entities';
+import type { Assembly, Opening, Stair, Storey, Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, union, type Poly } from '../geometry/clip';
 import {
@@ -158,6 +158,34 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       rings: groupRings(layer.polys.map((p) => [...p])),
       classes: ['cut', layer.fn, `material-${layer.material}`],
     });
+  }
+
+  // Treppen: Umriss + Stufenlinien + Lauflinie mit Pfeil
+  for (const st of doc.byKind<Stair>('stair')) {
+    if (st.storeyId !== storeyId) continue;
+    const len = Math.hypot(st.b.x - st.a.x, st.b.y - st.a.y);
+    if (len < 1) continue;
+    const d = { x: (st.b.x - st.a.x) / len, y: (st.b.y - st.a.y) / len };
+    const nn = { x: -d.y, y: d.x };
+    const half = st.width / 2;
+    const at = (s: number, off: number): Pt => ({
+      x: Math.round(st.a.x + d.x * s + nn.x * off),
+      y: Math.round(st.a.y + d.y * s + nn.y * off),
+    });
+    regions.push({
+      rings: [[at(0, half), at(len, half), at(len, -half), at(0, -half)]],
+      classes: ['projection', 'treppe'],
+    });
+    const storeyEnt = doc.get<Storey>(storeyId);
+    const steps = storeyEnt ? Math.max(3, Math.round(storeyEnt.height / 175)) : 16;
+    const going = len / (steps - 1);
+    for (let i = 1; i < steps - 1; i++) {
+      lines.push({ a: at(i * going, half), b: at(i * going, -half), classes: ['symbol', 'stufe'] });
+    }
+    // Lauflinie: Punkt am Antritt, Pfeil am Austritt
+    lines.push({ a: at(0, 0), b: at(len - 300, 0), classes: ['symbol', 'lauflinie'] });
+    lines.push({ a: at(len - 300, 0), b: at(len - 650, 160), classes: ['symbol', 'lauflinie'] });
+    lines.push({ a: at(len - 300, 0), b: at(len - 650, -160), classes: ['symbol', 'lauflinie'] });
   }
 
   // Volumen & Zonen als Projektion (feine Kontur)

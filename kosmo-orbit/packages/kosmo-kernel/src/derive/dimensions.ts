@@ -78,11 +78,12 @@ export function deriveDimensions(doc: KosmoDoc, storeyId: string): DimensionSet 
 
   if (xs.length >= 2) {
     chains.push({ axis: 'x', offset: minY - 1200, ticks: xs });
-    chains.push({ axis: 'x', offset: minY - 2000, ticks: [xs[0]!, xs[xs.length - 1]!] });
+    // Gesamtmass nur, wenn die Öffnungskette mehr als die Endpunkte hat
+    if (xs.length > 2) chains.push({ axis: 'x', offset: minY - 2000, ticks: [xs[0]!, xs[xs.length - 1]!] });
   }
   if (ys.length >= 2) {
     chains.push({ axis: 'y', offset: minX - 1200, ticks: ys });
-    chains.push({ axis: 'y', offset: minX - 2000, ticks: [ys[0]!, ys[ys.length - 1]!] });
+    if (ys.length > 2) chains.push({ axis: 'y', offset: minX - 2000, ticks: [ys[0]!, ys[ys.length - 1]!] });
   }
   return { chains };
 }

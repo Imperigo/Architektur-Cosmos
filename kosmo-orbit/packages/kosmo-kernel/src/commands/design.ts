@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Assembly, Opening, Slab, Storey, Wall, MassBody, Zone, Roof } from '../model/entities';
+import type { Assembly, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -400,3 +400,49 @@ export const setProperty = registerCommand({
     return [{ id: e.id, before: e, after }];
   },
 });
+
+export const createStair = registerCommand({
+  id: 'design.treppeErstellen',
+  title: 'Treppe erstellen',
+  description:
+    'Erstellt eine gerade Lauftreppe von a (Antritt) nach b (Austritt) im Geschoss. Steigung wird aus der Geschosshöhe berechnet (Schrittmassregel 2s+a ≈ 630 mm). width = Laufbreite in mm (Standard 1200, CH-Minimum 1000).',
+  params: z.object({
+    storeyId: z.string(),
+    a: PtSchema,
+    b: PtSchema,
+    width: z.number().int().min(800).default(1200),
+  }),
+  summarize: (p) => {
+    const len = Math.hypot(p.b.x - p.a.x, p.b.y - p.a.y);
+    return `Treppe ${formatLength(Math.round(len))} Lauf, ${p.width} mm breit`;
+  },
+  run: (doc, p) => {
+    const storey = require<Storey>(doc, p.storeyId, 'storey');
+    const len = Math.hypot(p.b.x - p.a.x, p.b.y - p.a.y);
+    if (len < 1000) throw new CommandError('Treppenlauf zu kurz (< 1 m)');
+    const spec = stairSpec(len, storey.height);
+    if (spec.riser > 200) {
+      throw new CommandError(
+        `Lauf zu kurz für ${formatLength(storey.height)} Geschosshöhe: Steigung wäre ${Math.round(spec.riser)} mm (max. 200). Mindestens ${formatLength(Math.round(spec.minRun))} Lauflänge nötig.`,
+      );
+    }
+    const stair: Stair = {
+      id: newId('treppe'),
+      kind: 'stair',
+      storeyId: p.storeyId,
+      a: p.a as Pt,
+      b: p.b as Pt,
+      width: p.width,
+    };
+    return [added(stair)];
+  },
+});
+
+/** Steigungsrechnung: n Steigungen à s (Ideal ~175, 2s+a≈630), Auftritte a. */
+export function stairSpec(runLength: number, floorHeight: number) {
+  const n = Math.max(3, Math.round(floorHeight / 175));
+  const riser = floorHeight / n;
+  const going = runLength / (n - 1); // Austritt liegt auf OK — letzter Tritt = Decke
+  const minRun = (Math.max(3, Math.ceil(floorHeight / 200)) - 1) * 230;
+  return { steps: n, riser, going, comfort: 2 * riser + going, minRun };
+}

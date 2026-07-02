@@ -1,7 +1,8 @@
-import type { Assembly, MassBody, Roof, Slab, Storey, Wall } from '../model/entities';
+import type { Assembly, MassBody, Roof, Slab, Stair, Storey, Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { dist } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
+import { stairSpec } from '../commands/design';
 import { extrudePolygon, extrudeWallWithOpenings, type GeometryArtifact } from './mesh';
 import { convexSkeleton } from '../geometry/skeleton';
 import { offsetPolygon } from '../geometry/clip';
@@ -25,6 +26,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
   else if (e.kind === 'slab') artifact = deriveSlab(doc, e);
   else if (e.kind === 'mass') artifact = deriveMass(doc, e);
   else if (e.kind === 'roof') artifact = deriveRoof(doc, e);
+  else if (e.kind === 'stair') artifact = deriveStair(doc, e);
 
   if (artifact) cache.set(id, { revision: doc.revision, artifact });
   return artifact;
@@ -33,7 +35,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
 export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
   const out: GeometryArtifact[] = [];
   for (const e of doc.entities.values()) {
-    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof') {
+    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair') {
       const a = deriveEntity(doc, e.id);
       if (a) out.push(a);
     }
@@ -155,6 +157,63 @@ function deriveRoof(doc: KosmoDoc, roof: Roof): GeometryArtifact | null {
   return {
     entityId: roof.id,
     materialKey: 'dach',
+    positions: new Float32Array(pos),
+    normals: new Float32Array(nor),
+    indices: new Uint32Array(idx),
+    edges: new Float32Array(edges),
+  };
+}
+
+function deriveStair(doc: KosmoDoc, stair: Stair): GeometryArtifact | null {
+  const storey = doc.get<Storey>(stair.storeyId);
+  if (!storey || storey.kind !== 'storey') return null;
+  const len = Math.hypot(stair.b.x - stair.a.x, stair.b.y - stair.a.y);
+  if (len < 1) return null;
+  const spec = stairSpec(len, storey.height);
+  const d = { x: (stair.b.x - stair.a.x) / len, y: (stair.b.y - stair.a.y) / len };
+  const n = { x: -d.y, y: d.x };
+  const half = stair.width / 2;
+  const z0 = storey.elevation;
+
+  const pos: number[] = [];
+  const nor: number[] = [];
+  const idx: number[] = [];
+  const edges: number[] = [];
+  const quad = (
+    a: readonly [number, number, number],
+    b: readonly [number, number, number],
+    c: readonly [number, number, number],
+    dd: readonly [number, number, number],
+    nx: number, ny: number, nz: number,
+  ) => {
+    const base = pos.length / 3;
+    for (const p of [a, b, c, dd]) { pos.push(...p); nor.push(nx, ny, nz); }
+    idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
+  };
+  const P = (s: number, off: number, z: number): [number, number, number] => [
+    stair.a.x + d.x * s + n.x * off,
+    stair.a.y + d.y * s + n.y * off,
+    z,
+  ];
+
+  for (let i = 0; i < spec.steps - 1; i++) {
+    const s0 = i * spec.going;
+    const s1 = (i + 1) * spec.going;
+    const zt = z0 + (i + 1) * spec.riser;
+    const zb = z0 + i * spec.riser;
+    // Trittfläche
+    quad(P(s0, half, zt), P(s1, half, zt), P(s1, -half, zt), P(s0, -half, zt), 0, 0, 1);
+    // Setzstufe
+    quad(P(s0, -half, zb), P(s0, -half, zt), P(s0, half, zt), P(s0, half, zb), -d.x, -d.y, 0);
+    // Wangen (Seiten)
+    quad(P(s0, half, zb), P(s0, half, zt), P(s1, half, zt), P(s1, half, zb), n.x, n.y, 0);
+    quad(P(s1, -half, zb), P(s1, -half, zt), P(s0, -half, zt), P(s0, -half, zb), -n.x, -n.y, 0);
+    // Trittkante
+    edges.push(...P(s0, half, zt), ...P(s0, -half, zt));
+  }
+  return {
+    entityId: stair.id,
+    materialKey: 'beton',
     positions: new Float32Array(pos),
     normals: new Float32Array(nor),
     indices: new Uint32Array(idx),
