@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
 import { publicRouteChecks, publicRoutes } from './public-route-manifest.mjs';
 
@@ -244,10 +245,85 @@ async function checkRenderedRoutes(baseUrl) {
   return checkedRoutes;
 }
 
+function checkStaticExportRoutes(outDir = 'out') {
+  const checkedRoutes = [];
+  const outRoot = path.resolve(outDir);
+
+  if (!fs.existsSync(outRoot)) {
+    return {
+      status: 'skipped_missing_out',
+      out_dir: outDir,
+      checked_routes: checkedRoutes
+    };
+  }
+
+  for (const route of publicRouteChecks) {
+    const filePath = staticFilePath(outRoot, route.path);
+    checkedRoutes.push(route.path);
+
+    if (!fs.existsSync(filePath)) {
+      recordFailure(`static-route:${route.path}:file`, `exported route file is missing: ${path.relative(process.cwd(), filePath)}`);
+      continue;
+    }
+
+    const body = fs.readFileSync(filePath, 'utf8');
+    const normalized = normalizeHtmlText(body);
+    const minBodyLength = route.minBodyLength ?? 500;
+    const leakMatches = publicLeakMatches(body);
+
+    if (body.length < minBodyLength) {
+      recordFailure(`static-route:${route.path}:min-body-length`, `exported route body is too short: ${body.length} < ${minBodyLength}`);
+    }
+
+    for (const expected of route.includes ?? []) {
+      if (!normalized.includes(expected)) {
+        recordFailure(`static-route:${route.path}:includes:${expected}`, `exported route is missing normalized sentinel: ${expected}`);
+      }
+    }
+
+    for (const expected of route.rawIncludes ?? []) {
+      if (!body.includes(expected)) {
+        recordFailure(`static-route:${route.path}:raw-includes:${expected}`, `exported route is missing raw sentinel: ${expected}`);
+      }
+    }
+
+    if (leakMatches.length > 0) {
+      recordFailure(`static-route:${route.path}:leak`, `exported route contains blocked private/source patterns: ${leakMatches.join(', ')}`);
+    }
+  }
+
+  return {
+    status: 'checked',
+    out_dir: outDir,
+    checked_routes: checkedRoutes
+  };
+}
+
+function staticFilePath(outRoot, routePath) {
+  if (routePath === '/') return path.join(outRoot, 'index.html');
+  const normalized = routePath.replace(/^\/+/, '');
+  if (/\.[a-z0-9]+$/i.test(normalized)) return path.join(outRoot, normalized);
+  return path.join(outRoot, normalized, 'index.html');
+}
+
+function normalizeHtmlText(value) {
+  return String(value)
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#x27;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 async function main() {
   checkDataSurfaces();
   const checkedRouteManifest = checkRouteManifestSurfaces();
   const checkedRoutes = await checkRenderedRoutes(argValue('--base-url') ?? process.env.PUBLIC_GATE_BASE_URL ?? null);
+  const staticExport = checkStaticExportRoutes(argValue('--static-out') ?? process.env.PUBLIC_GATE_STATIC_OUT ?? 'out');
 
   const summary = {
     status: failures.length === 0 ? 'passed' : 'failed',
@@ -255,6 +331,11 @@ async function main() {
     checked_public_models: publicModelPreviews.models.length,
     checked_route_manifest: checkedRouteManifest,
     checked_routes: checkedRoutes,
+    checked_static_routes: staticExport.checked_routes,
+    static_export: {
+      status: staticExport.status,
+      out_dir: staticExport.out_dir
+    },
     failures,
     warnings
   };
