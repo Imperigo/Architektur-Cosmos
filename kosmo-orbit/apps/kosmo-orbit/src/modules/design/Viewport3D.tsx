@@ -13,6 +13,14 @@ export function setContextMeshes(meshes: ContextMesh[]): void {
   contextRevision++;
 }
 
+// Splat-Kontext (Gaussian Splats der HomeStation: LingBot-Map/gsplat-Kette)
+let splatCloud: import('./splat-import').SplatCloud | null = null;
+let splatRevision = 0;
+export function setSplatCloud(cloud: import('./splat-import').SplatCloud | null): void {
+  splatCloud = cloud;
+  splatRevision++;
+}
+
 CameraControls.install({ THREE });
 
 /**
@@ -140,6 +148,54 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       }
     }
 
+    // Splat-Kontext: eigener Punkt-Renderer (größenrichtige, runde Punkte)
+    let splatPoints: THREE.Points | null = null;
+    const splatUniforms = { uFocal: { value: 600 } };
+    let lastSplatRevision = -1;
+    function syncSplats() {
+      if (splatRevision === lastSplatRevision) return;
+      lastSplatRevision = splatRevision;
+      if (splatPoints) {
+        splatPoints.removeFromParent();
+        splatPoints.geometry.dispose();
+        (splatPoints.material as THREE.Material).dispose();
+        splatPoints = null;
+      }
+      if (!splatCloud) return;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(splatCloud.positions, 3));
+      geo.setAttribute('splatColor', new THREE.BufferAttribute(splatCloud.colors, 4));
+      geo.setAttribute('splatSize', new THREE.BufferAttribute(splatCloud.sizes, 1));
+      const mat = new THREE.ShaderMaterial({
+        uniforms: splatUniforms,
+        transparent: true,
+        depthWrite: false,
+        vertexShader: `
+          attribute vec4 splatColor;
+          attribute float splatSize;
+          uniform float uFocal;
+          varying vec4 vColor;
+          void main() {
+            vColor = splatColor;
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            gl_PointSize = clamp(2.0 * splatSize * uFocal / max(-mv.z, 0.1), 1.0, 28.0);
+            gl_Position = projectionMatrix * mv;
+          }`,
+        fragmentShader: `
+          varying vec4 vColor;
+          void main() {
+            vec2 d = gl_PointCoord - 0.5;
+            float r2 = dot(d, d);
+            if (r2 > 0.25) discard;
+            gl_FragColor = vec4(vColor.rgb, vColor.a * smoothstep(0.25, 0.08, r2));
+          }`,
+      });
+      splatPoints = new THREE.Points(geo, mat);
+      splatPoints.frustumCulled = false;
+      scene.add(splatPoints);
+      console.info(`Splat-Kontext: ${splatCloud.count} Punkte`);
+    }
+
     const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x2a2620 });
     const previewMaterial = new THREE.LineBasicMaterial({ color: 0xa84b2b });
 
@@ -265,6 +321,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncModel();
       syncPreview();
       syncContext();
+      syncSplats();
       // Auswahl-Highlight (Kupfer-Glut)
       const sel = new Set(useProject.getState().selection);
       for (const child of model.children) {
@@ -276,6 +333,8 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         if ('emissiveIntensity' in mat) mat.emissiveIntensity = isSel ? 0.35 : 0;
       }
       controls.update(clock.getDelta());
+      // Punktgrösse der Splats folgt Brennweite × Pufferhöhe (perspektivisch korrekt)
+      splatUniforms.uFocal.value = 0.5 * renderer.domElement.height * camera.projectionMatrix.elements[5]!;
       renderer.render(scene, camera);
     };
     const loop = () => {

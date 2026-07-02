@@ -9,7 +9,7 @@ import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
 import { importIfc } from './ifc-import';
-import { setContextMeshes } from './Viewport3D';
+import { setContextMeshes, setSplatCloud } from './Viewport3D';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -299,6 +299,29 @@ export function DesignWorkspace() {
           }}
         >
           IFC laden
+        </KButton>
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="import-splat"
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.splat,.ply';
+            input.onchange = async () => {
+              const f = input.files?.[0];
+              if (!f) return;
+              try {
+                const { parseSplatCloud } = await import('./splat-import');
+                setSplatCloud(parseSplatCloud(f.name, await f.arrayBuffer()));
+              } catch (err) {
+                alert(`Splat-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
+              }
+            };
+            input.click();
+          }}
+        >
+          Splat laden
         </KButton>
         <span style={{ width: 12 }} />
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
