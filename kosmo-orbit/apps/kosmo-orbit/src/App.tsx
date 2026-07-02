@@ -13,15 +13,16 @@ import {
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
 import { VisWorkspace } from './modules/vis/VisWorkspace';
+import { DataWorkspace } from './modules/data/DataWorkspace';
 import { useProject } from './state/project-store';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 
-type Screen = 'home' | 'design' | 'vis';
+type Screen = 'home' | 'design' | 'vis' | 'data';
 
 const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string }[] = [
   { id: 'design', screen: 'design', name: 'KosmoDesign', desc: 'Entwerfen · Modellieren · Pläne' },
-  { id: 'data', screen: null, name: 'KosmoData', desc: 'Referenzen · Assets · Wissen' },
+  { id: 'data', screen: 'data', name: 'KosmoData', desc: 'Referenzen · Assets · Wissen' },
   { id: 'vis', screen: 'vis', name: 'KosmoVis', desc: 'Renderings · Varianten' },
   { id: 'publish', screen: null, name: 'KosmoPublish', desc: 'Plansätze · Layouts' },
   { id: 'prepare', screen: null, name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
@@ -70,8 +71,8 @@ export function App() {
         {screen !== 'home' && (
           <>
             <Hairline vertical />
-            <Badge hue={screen === 'vis' ? moduleHue.vis : moduleHue.design}>
-              {screen === 'vis' ? 'KosmoVis' : 'KosmoDesign'}
+            <Badge hue={screen === 'vis' ? moduleHue.vis : screen === 'data' ? moduleHue.data : moduleHue.design}>
+              {screen === 'vis' ? 'KosmoVis' : screen === 'data' ? 'KosmoData' : 'KosmoDesign'}
             </Badge>
           </>
         )}
@@ -117,6 +118,8 @@ export function App() {
           <DesignWorkspace />
         ) : screen === 'vis' ? (
           <VisWorkspace />
+        ) : screen === 'data' ? (
+          <DataWorkspace />
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
