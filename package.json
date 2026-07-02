@@ -36,6 +36,7 @@
     "public:runtime-boundary-check": "node scripts/public-runtime-boundary-check.mjs",
     "public:worker-boundary-check": "node scripts/public-worker-boundary-check.mjs",
     "public:leak-pattern-negative-smoke": "node scripts/public-leak-pattern-negative-smoke.mjs",
+    "public:vacation-safe-public-ready-negative-smoke": "node scripts/public-vacation-safe-public-ready-negative-smoke.mjs",
     "public:sitemap-route-leak-check": "node scripts/public-sitemap-route-leak-check.mjs",
     "public:vacation-safe-check": "node scripts/public-vacation-safe-check.mjs",
     "public:demo-live-check": "node scripts/public-demo-live-check.mjs",

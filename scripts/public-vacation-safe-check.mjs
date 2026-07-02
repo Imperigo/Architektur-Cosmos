@@ -156,8 +156,13 @@ const checks = [
     id: 'public_leak_pattern_negative_smoke',
     command: ['node', 'scripts/public-leak-pattern-negative-smoke.mjs'],
     purpose: 'Verifies public leak detector catches private path/source marker examples.'
+  },
+  {
+    id: 'public_ready_invariant_negative_smoke',
+    command: ['node', 'scripts/public-vacation-safe-public-ready-negative-smoke.mjs'],
+    purpose: 'Verifies the vacation-safe aggregate rejects synthetic generated reports that promote public-ready state.'
   }
-];
+].filter((check) => !(args['skip-public-ready-negative-smoke'] && check.id === 'public_ready_invariant_negative_smoke'));
 
 main();
 
