@@ -2,9 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Hairline, KButton, OrbitMark, moduleHue } from '@kosmo/ui';
 import {
   ChatSession,
+  LearningJournal,
   MockProvider,
   OllamaProvider,
   greeting,
+  localStorageMemory,
   personas,
   type ChatProvider,
   type Proposal,
@@ -22,7 +24,10 @@ interface Bubble {
   id: number;
   who: 'du' | 'kosmo';
   text: string;
+  feedback?: 'gut' | 'schlecht';
 }
+
+const journal = new LearningJournal(localStorageMemory());
 
 interface PendingCard extends Proposal {
   state: 'offen' | 'angewendet' | 'abgelehnt';
@@ -94,7 +99,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         },
         onError: (msg) => push('kosmo', `⚠ ${msg}`),
       },
-      personas.kosmo.systemPrompt,
+      personas.kosmo.systemPrompt + journal.toPromptBlock(),
       () => {
         const st = useProject.getState();
         const wallAssembly = st.doc
@@ -293,6 +298,31 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             }}
           >
             {b.text}
+            {b.who === 'kosmo' && !b.text.startsWith('⚠') && (
+              <div style={{ display: 'flex', gap: 6, marginTop: 6, opacity: b.feedback ? 1 : 0.55 }}>
+                {(['gut', 'schlecht'] as const).map((f) => (
+                  <button
+                    key={f}
+                    aria-label={f === 'gut' ? 'Hilfreich' : 'Nicht hilfreich'}
+                    data-testid={`fb-${f}`}
+                    onClick={() => {
+                      journal.add({ sentiment: f, context: b.text });
+                      setBubbles((all) => all.map((x) => (x.id === b.id ? { ...x, feedback: f } : x)));
+                    }}
+                    style={{
+                      all: 'unset',
+                      cursor: 'pointer',
+                      fontSize: 12,
+                      padding: '1px 6px',
+                      borderRadius: 6,
+                      background: b.feedback === f ? 'var(--k-accent-wash)' : 'transparent',
+                    }}
+                  >
+                    {f === 'gut' ? '👍' : '👎'}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ))}
 
