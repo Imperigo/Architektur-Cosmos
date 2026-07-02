@@ -27,6 +27,9 @@ export interface ViewportHandlers {
   onEscape?: () => void;
   /** Vorschau-Polylinie in Kern-mm (Werkzeug-Gummiband). */
   previewLine?: Pt[] | null;
+  /** KosmoSketch: Freihand-Overlay im Plan aktiv. */
+  sketchMode?: boolean;
+  onSketchAccept?: (segments: { a: Pt; b: Pt }[]) => void;
 }
 
 const materialPalette: Record<string, { color: number; roughness: number }> = {

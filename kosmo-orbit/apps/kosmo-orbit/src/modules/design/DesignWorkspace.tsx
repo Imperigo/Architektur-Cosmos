@@ -13,7 +13,7 @@ import { SectionView } from './SectionView';
  * Undo/Redo. Splitscreen mit 2D-Plänen folgt in M2.
  */
 
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'schnitt';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'schnitt' | 'skizze';
 
 const SNAP = 250; // mm Rasterfang — später einstellbar/magnetisch
 
@@ -70,6 +70,22 @@ export function DesignWorkspace() {
 
   const handlersRef = useRef<ViewportHandlers>({});
   handlersRef.current = {
+    sketchMode: tool === 'skizze',
+    onSketchAccept: (segments) => {
+      if (!activeStoreyId || !effectiveAssembly) return;
+      for (const seg of segments) {
+        try {
+          runCommand('design.wandZeichnen', {
+            storeyId: activeStoreyId,
+            a: seg.a,
+            b: seg.b,
+            assemblyId: effectiveAssembly,
+          });
+        } catch {
+          // degenerierte Segmente (Länge 0 nach Snap) still überspringen
+        }
+      }
+    },
     previewLine:
       points.length > 0 && cursor
         ? tool === 'volumen' || tool === 'zone'
@@ -162,6 +178,7 @@ export function DesignWorkspace() {
             ['volumen', 'Volumen'],
             ['zone', 'Zone'],
             ['schnitt', 'Schnitt'],
+            ['skizze', '✎ Skizze'],
           ] as const
         ).map(([id, label]) => (
           <KButton
@@ -342,7 +359,9 @@ export function DesignWorkspace() {
           <span style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}>
             {tool === 'wand'
               ? 'Klick: Punkte setzen · Shift-Klick: Kette beenden · Esc: abbrechen'
-              : tool === 'schnitt'
+              : tool === 'skizze'
+                ? 'Freihand zeichnen — Striche werden zu Wänden'
+                : tool === 'schnitt'
                 ? 'Klick: Anfang und Ende der Schnittlinie'
                 : tool === 'volumen'
                 ? 'Klick: Eckpunkte · Klick auf Start: schliessen'

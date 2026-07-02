@@ -19,6 +19,7 @@
     "@kosmo/kernel": "*",
     "@kosmo/ui": "*",
     "camera-controls": "^3.1.2",
+    "perfect-freehand": "^1.2.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "three": "^0.184.0",

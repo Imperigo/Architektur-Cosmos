@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { derivePlan, regionToPath, type Pt } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
+import { SketchOverlay } from './SketchOverlay';
 
 /**
  * PlanView — der lebende Grundriss als semantisches SVG.
@@ -183,6 +184,21 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
           )}
         </g>
       </svg>
+      {handlers.current?.sketchMode && handlers.current.onSketchAccept && (
+        <SketchOverlay
+          toWorld={(cx, cy) => toWorld(cx, cy)}
+          toScreen={(p) => {
+            const rect = svgRef.current?.getBoundingClientRect();
+            const w = rect?.width ?? 800;
+            const h = rect?.height ?? 600;
+            return {
+              x: (p.x - view.cx) * view.scale + w / 2,
+              y: (view.cy - p.y) * view.scale + h / 2,
+            };
+          }}
+          onAccept={handlers.current.onSketchAccept}
+        />
+      )}
     </div>
   );
 }
