@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { testhausMitQuertrakt, ansichtSvg } from './fixtures';
+import { deriveBerechnungsliste } from '../src/derive/berechnungsliste';
 import {
   KosmoDoc,
   History,
@@ -688,5 +689,64 @@ describe('Budget (R2): 500 Wände', () => {
     const tSection = performance.now() - t0;
     expect(g.projections.length).toBeGreaterThan(0);
     expect(tSection).toBeLessThan(5000); // lokal ~660 ms (Hidden-Line aktiv); CI-Reserve
+  });
+});
+
+describe('Berechnungsliste (Owner-Workflow Wettbewerb)', () => {
+  it('rechnet Soll/ausgezogen/Differenz, Δ Max und den Tie-out', () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.raumprogrammSetzen', {
+      posten: [
+        { typ: 'marktgerecht', hnfSoll: 100 },
+        { typ: 'preisguenstig', hnfSoll: 50 },
+      ],
+      programmFaktor: 1.22,
+      maxAgf: 200,
+    });
+    // 10×12m marktgerecht (120 m²) + 5×8m preisgünstig (40 m²) + 6×6m ohne Typ (36 m²)
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'W1', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 12000 }, { x: 0, y: 12000 }],
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'W2', sia: 'HNF', program: 'preisguenstig',
+      outline: [{ x: 12000, y: 0 }, { x: 17000, y: 0 }, { x: 17000, y: 8000 }, { x: 12000, y: 8000 }],
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Ohne', sia: 'NNF',
+      outline: [{ x: 20000, y: 0 }, { x: 26000, y: 0 }, { x: 26000, y: 6000 }, { x: 20000, y: 6000 }],
+    });
+    const b = deriveBerechnungsliste(doc);
+    const markt = b.zeilen.find((z) => z.typ === 'marktgerecht')!;
+    expect(markt.agfZiel).toBeCloseTo(122, 5); // 100 × 1.22
+    expect(markt.ausgezogen).toBeCloseTo(120, 5);
+    expect(markt.differenz).toBeCloseTo(-2, 5); // knapp unter Soll
+    const guenstig = b.zeilen.find((z) => z.typ === 'preisguenstig')!;
+    expect(guenstig.differenz).toBeCloseTo(40 - 61, 5);
+    expect(b.untypisiert).toBeCloseTo(36, 5); // Tie-out-Warnung: Fläche ohne Typ
+    expect(b.totalAgf).toBeCloseTo(196, 5); // 120 + 40 + 36
+    expect(b.deltaMax).toBeCloseTo(-4, 5); // unter dem Maximum = Reserve
+  });
+
+  it('Volumenkörper zählen als GF über abgeleitete Geschosse und ins «ausgezogen»', () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.raumprogrammSetzen', {
+      posten: [{ typ: 'vertical-cluster', hnfSoll: 100 }],
+    });
+    // 10×10m, 8.4m hoch → 3 Geschosse à 100 m² = 300 m² GF
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, program: 'vertical-cluster', height: 8400,
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 10000 }, { x: 0, y: 10000 }],
+    });
+    const b = deriveBerechnungsliste(doc);
+    expect(b.zeilen[0]!.ausgezogen).toBeCloseTo(300, 5);
+    expect(b.gfVolumen).toBeCloseTo(300, 5);
+    // Undo des Raumprogramms stellt die Settings wieder her
+    const h = new History();
+    const res = execute(doc, 'design.raumprogrammSetzen', { posten: [], maxAgf: 999 });
+    h.record(res.patches);
+    h.undo(doc);
+    expect(doc.settings.raumprogramm.length).toBe(1);
+    expect(doc.settings.maxAgf).toBe(null);
   });
 });

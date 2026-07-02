@@ -63,4 +63,18 @@ Kern-Prinzipien: int-mm-Koordinaten · Commands = einzige Schreiber (zod-Schema 
 21. ~~Ansichten aller vier Richtungen in KosmoPublish (N/O/S/W, Ansichts-Stift 0.35)~~ ✅ · ~~3D-T-Stösse (bündig an die nahe Fläche)~~ ✅ · ~~Dach-Gratkanten~~ ✅ · ~~Hidden-Line~~ ✅ (Beleg: `e2e/tools/hiddenline-beleg.mts`)
 22. ~~KosmoTrain (Q8): docs/KOSMOTRAIN.md (Unsloth-Rezept, GGUF→Ollama) + Journal-Export-Knopf (JSONL)~~ ✅ · ~~Tauri-iOS-CI-Experiment~~ ✅ — **Befund: init + Simulator-Build laufen durch** (3 min, Xcode-Projekt als Artefakt); fürs Gerät fehlt nur die Owner-Signierung
 23. ~~Projektverwaltung + Autosave (IndexedDB-Tresor, Wiederherstellung, Wechsel)~~ ✅ · ~~Golden-SVG-Test~~ ✅ · ~~Dach-Gratkanten~~ ✅ · ~~iPad-Touch: Pinch-Zoom + Zwei-Finger-Pan im Grundriss (ein Finger zeichnet, Gesten klicken nie)~~ ✅
-24. ~~Visuelle Gesamtrunde (Galerie an Owner; Nits gefixt: Grundriss-Einpassen beim Öffnen, Kupfer-Slider)~~ ✅ · ~~Hidden-Line im Schnitt (letzter Kür-Punkt)~~ ✅ — **damit ist die gesamte V1+Phase-2-Roadmap abgearbeitet.** Offen bleibt nur, was die HomeStation braucht (echte Renders, Whisper, Piper-Stimme, OneDrive-Tenant, LoRA-Zyklus) — wartet auf den Owner in ~3 Wochen.
+24. ~~Visuelle Gesamtrunde (Galerie an Owner; Nits gefixt: Grundriss-Einpassen beim Öffnen, Kupfer-Slider)~~ ✅ · ~~Hidden-Line im Schnitt (letzter Kür-Punkt)~~ ✅ — **damit ist die gesamte V1+Phase-2-Roadmap abgearbeitet.** V1 vom Owner abgenommen, PR #2 gemergt (02.07. abends, `c62a875`).
+
+## Phase 3 (Vision-Backlog aus Fable-Auftrag + Visions-Paper, Owner 02.07.: «ultra viel vor der HomeStation»)
+
+Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
+
+25. **Berechnungsliste Volumenstudien** (Owner-Excel 1:1 als lebende Ableitung): Raumprogramm HNF-Soll je Wohnungstyp → aGF-Ziel ×1.22, «ausgezogen» aus gezeichneten Zonen/Volumen, Differenz +/−, GF-Block je Geschoss, Δ Max, Tie-out-Kontrolle, Farbcodierung (marktgerecht rot · preisgünstig blau · alterswohnen violett · vertical-cluster hellgrün · quartierebene dunkelgrün) — Kern ✅ (deriveBerechnungsliste + design.raumprogrammSetzen, 34 Tests) · offen: Panel im Design-Modul, Varianten-Archiv, A4-quer-PDF-Export
+26. **Stützenraster-Assistent** (VSS 40 291): 90°-Parkierung (Parkfeld 2.50–2.80 m ↔ Fahrgasse 6.50–6.25 m) gegen OG-Wohnraster prüfen; Vorschläge + Konfliktanzeige
+27. **Geschosshöhen-/Typologie-Regeln in den Volumenstudien**: Wohnen 2.80 ok-ok, Gewerbe EG 4.00 / OG 3.50, Vertical-Cluster kompakt in Türmen; Spänner-Logik (Tiefe 14–18 m, Innenhof ≥13 m); 3h-Sonnen-Kriterium als Check (Nordwohnungen-No-go)
+28. **Axonometrie** als vierter Plantyp (Toolkit 4 komplett; Hidden-Line wiederverwenden) in Design + Publish
+29. **Toolkit 5 — Wettbewerbs-Plakat-Designer** in KosmoPublish: A0-Plakatlayouts, Text-Slots (Kosmo-Vorschläge, Demo-Modus), Plan-/Render-Platzhalter
+30. **KosmoPrepare Phase 0**: Wettbewerbsdossier strukturiert erfassen (Boundaries, Do's/Don'ts) + Baugesetz-Boundaries als unsichtbare 3D-Grenzen im Design-Modul mit Verletzungswarnung
+31. Laufend: Härtetest-Runden (Extremgeometrien, kaputte Importe), E2E-Ausbau (Sketch, .kosmo-Roundtrip, Tresor)
+
+**HomeStation-gebunden bleibt nur:** echte Renders (5090/ComfyUI), Whisper-/Piper-Qualität, OneDrive-Tenant-Login, LoRA-Zyklus, KosmoAR (Gerät), OS-Übernahme (V2, Q31).

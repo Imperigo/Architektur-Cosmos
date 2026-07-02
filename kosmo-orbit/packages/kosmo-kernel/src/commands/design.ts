@@ -446,3 +446,33 @@ export function stairSpec(runLength: number, floorHeight: number) {
   const minRun = (Math.max(3, Math.ceil(floorHeight / 200)) - 1) * 230;
   return { steps: n, riser, going, comfort: 2 * riser + going, minRun };
 }
+
+export const setRaumprogramm = registerCommand({
+  id: 'design.raumprogrammSetzen',
+  title: 'Raumprogramm setzen',
+  description:
+    'Setzt das Wettbewerbs-Raumprogramm für die Berechnungsliste: HNF-Soll je Wohnungstyp (marktgerecht, preisguenstig, alterswohnen, vertical-cluster, quartierebene), optional den aGF-Faktor (Standard 1.22) und das zulässige aGF-Maximum. Zonen/Volumen mit passendem program-Schlüssel zählen als «ausgezogen».',
+  params: z.object({
+    posten: z
+      .array(
+        z.object({
+          typ: z.string().describe('Wohnungstyp-Schlüssel, z.B. «marktgerecht»'),
+          hnfSoll: z.number().nonnegative().describe('HNF-Soll in m²'),
+        }),
+      )
+      .max(20),
+    programmFaktor: z.number().min(1).max(2).optional().describe('aGF-Ziel = HNF × Faktor'),
+    maxAgf: z.number().positive().nullable().optional().describe('zulässiges aGF-Maximum in m²'),
+  }),
+  summarize: (p) => `Raumprogramm: ${p.posten.length} Posten (×${p.programmFaktor ?? 'bisher'})`,
+  run: (doc, p) => {
+    const s = doc.settings;
+    const before = { raumprogramm: s.raumprogramm, programmFaktor: s.programmFaktor, maxAgf: s.maxAgf };
+    const after = {
+      raumprogramm: p.posten,
+      programmFaktor: p.programmFaktor ?? s.programmFaktor,
+      maxAgf: p.maxAgf === undefined ? s.maxAgf : p.maxAgf,
+    };
+    return [{ settings: true, before, after }];
+  },
+});

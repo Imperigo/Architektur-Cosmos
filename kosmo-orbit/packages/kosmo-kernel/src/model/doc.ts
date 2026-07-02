@@ -10,18 +10,33 @@ import type { Mm } from './units';
  * einzigen Schreiber; CRDT und Journal werden daraus abgeleitet).
  */
 
+/** Ein Posten des Wettbewerbs-Raumprogramms (HNF-Soll je Wohnungstyp, m²). */
+export interface RaumprogrammPosten {
+  typ: string;
+  hnfSoll: number;
+}
+
 export interface DocSettings {
   projectName: string;
   /** Faktor Raumprogramm→anrechenbare Geschossfläche (Owner-Wissen: 1.28 bzw. 1.22 je Büro). */
   agfFactor: number;
   /** Fassadenzuschlag auf aGF für GF-Volumenstudien (Owner: 10% Skelettbau). */
   facadeFactor: number;
+  /** Faktor der Berechnungsliste: aGF-Ziel = HNF-Soll × programmFaktor (Owner: 1.22). */
+  programmFaktor: number;
+  /** Zulässiges aGF-Maximum (m²) für Δ-Max der Berechnungsliste; null = keins gesetzt. */
+  maxAgf: number | null;
+  /** Wettbewerbs-Raumprogramm (Soll-Flächen je Wohnungstyp). */
+  raumprogramm: RaumprogrammPosten[];
 }
 
 export const defaultSettings: DocSettings = {
   projectName: 'Unbenannt',
   agfFactor: 1.28,
   facadeFactor: 1.1,
+  programmFaktor: 1.22,
+  maxAgf: null,
+  raumprogramm: [],
 };
 
 export interface Patch {
