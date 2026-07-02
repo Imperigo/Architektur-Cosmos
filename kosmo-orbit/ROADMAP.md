@@ -60,6 +60,6 @@ Kern-Prinzipien: int-mm-Koordinaten · Commands = einzige Schreiber (zod-Schema 
 
 19. Q12 komplett: ~~Schattenstudie (suncalc, Datum/Uhrzeit, Innerschweiz)~~ ✅ komplett ✅: ~~Schattenstudie~~ · ~~Grundriss-Checks~~ · ~~Volumenstudien-Generator (Teppich/Riegel/Turm/Zeilen/Winkel, Gruppen-Undo)~~ — Q12 «ALLE vier» erfüllt
 20. ~~KosmoAsset-Rest (Q14): Materialkatalog (PBR+SIA+Lambda aus einer Quelle) + Referenz-3D aus KosmoData als GLB-Kontext~~ ✅ (Texturen-Maps folgen mit der HomeStation)
-21. Hidden-Line im Schnitt/Ansicht, 3D-T-Stösse, Ansichten aller vier Richtungen in KosmoPublish
-22. KosmoTrain (Q8): LoRA-Trainings-Rezepte + Journal-Export dokumentieren; Tauri-iOS-CI-Experiment (Q3)
+21. ~~Ansichten aller vier Richtungen in KosmoPublish (N/O/S/W, Ansichts-Stift 0.35)~~ ✅ — offen (V2): Hidden-Line, 3D-T-Stösse, Dach-Gratkanten in der Ansicht
+22. ~~KosmoTrain (Q8): docs/KOSMOTRAIN.md (Unsloth-Rezept, GGUF→Ollama) + Journal-Export-Knopf (JSONL)~~ ✅ — offen: Tauri-iOS-CI-Experiment (Q3)
 23. Projektverwaltung (mehrere .kosmo, Autosave), iPad-/Touch-Feinschliff, Golden-SVG-Tests

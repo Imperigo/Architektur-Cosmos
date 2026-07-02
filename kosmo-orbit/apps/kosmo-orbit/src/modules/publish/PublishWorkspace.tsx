@@ -93,13 +93,14 @@ export function PublishWorkspace() {
     });
   }
 
-  function placeSchnitt() {
+  /** Schnitt durch die Mitte oder Ansicht von aussen (N/O/S/W). */
+  function placeSchnitt(richtung: 'schnitt' | 'nord' | 'ost' | 'sued' | 'west') {
     if (!sheet || !paper) return;
-    // Standard-Schnitt: horizontal durch die Modellmitte, Blick nach Norden
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     for (const e of doc.entities.values()) {
-      if (e.kind === 'wall') {
-        for (const p of [e.a, e.b]) {
+      if (e.kind === 'wall' || e.kind === 'mass') {
+        const pts = e.kind === 'wall' ? [e.a, e.b] : e.outline;
+        for (const p of pts) {
           minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
           minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
         }
@@ -107,14 +108,24 @@ export function PublishWorkspace() {
     }
     if (minX === Infinity) return;
     const midY = Math.round((minY + maxY) / 2);
+    // Blickrichtung = linke Normale der Linie a→b
+    const linien = {
+      schnitt: { a: { x: minX - 1000, y: midY }, b: { x: maxX + 1000, y: midY }, titel: 'Schnitt' },
+      sued: { a: { x: minX - 1000, y: minY - 2000 }, b: { x: maxX + 1000, y: minY - 2000 }, titel: 'Ansicht Süd' },
+      nord: { a: { x: maxX + 1000, y: maxY + 2000 }, b: { x: minX - 1000, y: maxY + 2000 }, titel: 'Ansicht Nord' },
+      ost: { a: { x: maxX + 2000, y: minY - 1000 }, b: { x: maxX + 2000, y: maxY + 1000 }, titel: 'Ansicht Ost' },
+      west: { a: { x: minX - 2000, y: maxY + 1000 }, b: { x: minX - 2000, y: minY - 1000 }, titel: 'Ansicht West' },
+    } as const;
+    const l = linien[richtung];
     runCommand('publish.ansichtPlatzieren', {
       sheetId: sheet.id,
       view: 'schnitt',
-      a: { x: minX - 1000, y: midY },
-      b: { x: maxX + 1000, y: midY },
+      a: l.a,
+      b: l.b,
       scale: placeScale,
       x: paper.width / 2,
       y: (paper.height - 30) / 2,
+      title: l.titel,
     });
   }
 
@@ -240,9 +251,29 @@ export function PublishWorkspace() {
           <KButton size="sm" tone="quiet" onClick={placeGrundriss} data-testid="place-plan" disabled={!sheet}>
             Grundriss
           </KButton>
-          <KButton size="sm" tone="quiet" onClick={placeSchnitt} data-testid="place-section" disabled={!sheet}>
+          <KButton size="sm" tone="quiet" onClick={() => placeSchnitt('schnitt')} data-testid="place-section" disabled={!sheet}>
             Schnitt
           </KButton>
+          <span style={{ color: 'var(--k-ink-faint)' }}>Ansicht:</span>
+          {(
+            [
+              ['nord', 'N'],
+              ['ost', 'O'],
+              ['sued', 'S'],
+              ['west', 'W'],
+            ] as const
+          ).map(([r, label]) => (
+            <KButton
+              key={r}
+              size="sm"
+              tone="quiet"
+              onClick={() => placeSchnitt(r)}
+              data-testid={`place-${r}`}
+              disabled={!sheet}
+            >
+              {label}
+            </KButton>
+          ))}
           {selectedPlacement && sheet && (
             <KButton
               size="sm"

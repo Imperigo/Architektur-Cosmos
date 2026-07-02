@@ -383,6 +383,25 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             />
             Antworten vorlesen (Stimme über die HomeStation-Bridge)
           </label>
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="journal-export"
+            onClick={() => {
+              const jsonl = journal.toJsonl();
+              if (!jsonl) return;
+              const url = URL.createObjectURL(new Blob([jsonl], { type: 'application/jsonl' }));
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `kosmo-lernjournal-${new Date().toISOString().slice(0, 10)}.jsonl`;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              setTimeout(() => URL.revokeObjectURL(url), 10_000);
+            }}
+          >
+            Lernjournal exportieren (JSONL fürs LoRA-Training)
+          </KButton>
           <Hairline />
           <DiagnosePanel />
         </div>

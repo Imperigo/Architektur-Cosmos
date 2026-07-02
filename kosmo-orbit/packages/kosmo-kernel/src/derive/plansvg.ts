@@ -111,13 +111,16 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
   return { inner: parts.join('\n'), bounds };
 }
 
-/** Schnitt-Inhalt in (s, −z): Schnittkanal schwer, Projektion fein. */
+/** Schnitt-Inhalt in (s, −z): Schnittkanal schwer, Projektion fein.
+ * Reine Ansichten (kein Schnittkanal) bekommen den mittleren Stift —
+ * sonst verschwindet die Fassade auf dem Blatt. */
 export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number): InnerSvg {
   const g = deriveSection(doc, spec);
   const parts: string[] = [];
+  const projStift = (g.cuts.length === 0 ? 0.35 : 0.18) * scale;
   for (const l of g.projections) {
     parts.push(
-      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="#444" stroke-width="${0.18 * scale}"/>`,
+      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${g.cuts.length === 0 ? '#111' : '#444'}" stroke-width="${projStift}"/>`,
     );
   }
   for (const l of g.cuts) {
