@@ -17,9 +17,9 @@ QA-Verdikt zurück → iPad synchron.
 | M2 2D-Pläne + Splitscreen | 🟢 80% | Grundriss+Schnitt+Ansicht live, 4er-View, Zonen+SIA-416-Kennzahlen; offen: Bemassung, Dach, Treppe |
 | M3 Kosmo-KI | 🟢 85% | Gated Loop + Personas + Begrüssung + Ollama/Mock; offen: Memory/RAG, Journal-Feedback-UI |
 | M4 KosmoData | ⚪ offen | |
-| M5 Vis/Publish/IFC + Bridge | 🟡 55% | GLB-Export + Bridge (FastAPI, --fake-worker) + Vis-Client mit QA-Verdikt LAUFEN end-to-end; offen: IFC, Publish |
-| M6 Sketch + Sprache + Prepare/OneDrive | ⚪ offen | |
-| M7 Sync + TKB-Demo + Packaging | ⚪ offen | |
+| M5 Vis/Publish/IFC + Bridge | 🟡 70% | Render-Loop end-to-end ✅, PDF/SVG-Plansatz-Export ✅; offen: IFC-Roundtrip, Blatt-Editor, DXF |
+| M6 Sketch + Sprache + Prepare/OneDrive | 🟡 50% | KosmoSketch ✅ (Freihand→Wände, gated), KosmoSpeak ✅ (Push-to-Talk→Bridge-STT); offen: Prepare, OneDrive |
+| M7 Sync + TKB-Demo + Packaging | 🟡 35% | .kosmo-Speichern/Öffnen ✅, TKB-Demo ✅ (NGF 2814 m² exakt); offen: Yjs-Live-Sync, Installer-Politur |
 
 ## Nächste Schritte (Reihenfolge = Hebel)
 
@@ -32,10 +32,10 @@ QA-Verdikt zurück → iPad synchron.
 7. IFC-Export (eigener SPF-Writer, Subset) + Import (web-ifc) — Validierung via Bridge
 8. ~~KosmoVis-Client + Bridge (--fake-worker) + GLB-Export~~ ✅ — offen: /tts (Chatterbox-Dienst), STT-UI in der App
 9. KosmoData: SQLite (D1-Port) + Sync architekturkosmos.ch/api + Reference-Browser + CH-Bauteilkatalog
-10. KosmoSketch (perfect-freehand → Wand-Achsen, gated) + KosmoSpeak (Push-to-Talk)
-11. KosmoPublish (Blatt-Editor, PDF via jsPDF+svg2pdf, DXF via @tarikjabiri/dxf)
+10. ~~KosmoSketch + KosmoSpeak~~ ✅
+11. KosmoPublish: ~~PDF/SVG-Einzelplan~~ ✅ — offen: Blatt-Editor, Plansätze, DXF; PDF-Schraffur-Pattern fixen
 12. Yjs-Sync (Hocuspocus+SQLite auf HomeStation) + .kosmo-Zip (fflate) + OneDrive (Graph, PWA: MSAL; Desktop: PKCE+Loopback)
-13. TKB-Hönggerberg-Demoprojekt (7 Geschosse, Σ2814 m²) + Onboarding + Politur-/Visualtest-Runde
+13. ~~TKB-Demoprojekt~~ ✅ — offen: Onboarding + Politur-/Visualtest-Runde
 
 ## Arbeitsregeln (Owner-Direktiven)
 

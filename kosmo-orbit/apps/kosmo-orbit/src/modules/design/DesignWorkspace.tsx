@@ -6,6 +6,7 @@ import { Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
 import { SectionView } from './SectionView';
+import { exportPlanPdf, exportPlanSvg } from './export-plan';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -230,6 +231,13 @@ export function DesignWorkspace() {
             {label}
           </KButton>
         ))}
+        <span style={{ width: 12 }} />
+        <KButton size="sm" tone="ghost" onClick={() => void exportPlanPdf()} data-testid="export-pdf">
+          PDF
+        </KButton>
+        <KButton size="sm" tone="ghost" onClick={exportPlanSvg}>
+          SVG
+        </KButton>
         <span style={{ width: 12 }} />
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
           ↩ Rückgängig

@@ -14,6 +14,8 @@ import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
 import { VisWorkspace } from './modules/vis/VisWorkspace';
 import { useProject } from './state/project-store';
+import { downloadProject, openProjectFile } from './state/project-io';
+import { loadTkbDemo } from './state/demo-tkb';
 
 type Screen = 'home' | 'design' | 'vis';
 
@@ -74,6 +76,27 @@ export function App() {
           </>
         )}
         <div style={{ flex: 1 }} />
+        <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
+          Speichern
+        </KButton>
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="open-project"
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.kosmo,application/zip';
+            input.onchange = () => {
+              const f = input.files?.[0];
+              if (f) void openProjectFile(f).then(() => setScreen('design'));
+            };
+            input.click();
+          }}
+        >
+          Öffnen
+        </KButton>
+        <Hairline vertical />
         <button
           onClick={() => setKosmoOpen(!kosmoOpen)}
           data-testid="kosmo-toggle"
@@ -103,6 +126,19 @@ export function App() {
                 </div>
                 <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
                   Womit beginnen wir? KosmoDesign ist bereit zum Zeichnen.
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <KButton
+                    size="sm"
+                    tone="quiet"
+                    data-testid="load-tkb"
+                    onClick={() => {
+                      loadTkbDemo();
+                      setScreen('design');
+                    }}
+                  >
+                    Beispielprojekt laden — TKB Bibliothek Hönggerberg
+                  </KButton>
                 </div>
               </div>
               <div

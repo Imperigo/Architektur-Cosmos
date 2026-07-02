@@ -131,6 +131,57 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     void session.send(text);
   };
 
+  // KosmoSpeak: Push-to-Talk → Bridge-Whisper (Schweizerdeutsch)
+  const [recording, setRecording] = useState(false);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+
+  const toggleMic = async () => {
+    if (recording) {
+      recorderRef.current?.stop();
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const rec = new MediaRecorder(stream);
+      const parts: Blob[] = [];
+      rec.ondataavailable = (e) => parts.push(e.data);
+      rec.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        setRecording(false);
+        const audio = new Blob(parts, { type: rec.mimeType });
+        const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+        try {
+          const form = new FormData();
+          form.append('audio', audio, 'aufnahme.webm');
+          const res = await fetch(`${bridge}/stt`, { method: 'POST', body: form });
+          if (!res.ok) throw new Error(`STT ${res.status}`);
+          const { text } = (await res.json()) as { text: string };
+          if (text) {
+            setBubbles((b) => [...b, { id: ++bubbleSeq.current, who: 'du', text: `🎙 ${text}` }]);
+            void session.send(text);
+          }
+        } catch (err) {
+          setBubbles((b) => [
+            ...b,
+            {
+              id: ++bubbleSeq.current,
+              who: 'kosmo',
+              text: `⚠ Speak-to-Kosmo braucht die Bridge (${bridge}/stt): ${err instanceof Error ? err.message : err}`,
+            },
+          ]);
+        }
+      };
+      recorderRef.current = rec;
+      rec.start();
+      setRecording(true);
+    } catch {
+      setBubbles((b) => [
+        ...b,
+        { id: ++bubbleSeq.current, who: 'kosmo', text: '⚠ Kein Mikrofonzugriff.' },
+      ]);
+    }
+  };
+
   const applyCard = (card: PendingCard) => {
     try {
       const result = runCommand(card.commandId, card.params, { actor: 'kosmo' });
@@ -283,6 +334,16 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       </div>
 
       <div style={{ padding: 12, borderTop: '1px solid var(--k-line)', display: 'flex', gap: 8 }}>
+        <KButton
+          size="sm"
+          tone={recording ? 'accent' : 'ghost'}
+          onClick={() => void toggleMic()}
+          aria-label="Speak to Kosmo"
+          data-testid="kosmo-mic"
+          style={recording ? { animation: 'none' } : undefined}
+        >
+          {recording ? '● Stopp' : '🎙'}
+        </KButton>
         <input
           data-testid="kosmo-input"
           value={input}
