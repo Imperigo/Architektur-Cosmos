@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { svg2pdf } from 'svg2pdf.js';
-import { A3_QUER, planToSvg } from '@kosmo/kernel';
+import { A3_QUER, exportIfc, planToSvg } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
 /** Grundriss des aktiven Geschosses als Vektor-PDF (A3 quer, 1:100). */
@@ -40,6 +40,18 @@ export function exportPlanSvg(): void {
   const a = document.createElement('a');
   a.href = url;
   a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-Grundriss.svg`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/** Modell als IFC4 (eigener SPF-Writer; via ifcopenshell verifiziert). */
+export function exportIfcFile(): void {
+  const { doc } = useProject.getState();
+  const ifc = exportIfc(doc);
+  const url = URL.createObjectURL(new Blob([ifc], { type: 'application/x-step' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}.ifc`;
   a.click();
   URL.revokeObjectURL(url);
 }

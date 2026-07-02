@@ -300,3 +300,23 @@ describe('GLB-Export', () => {
     expect(json.accessors[0].max[0]).toBeCloseTo(6, 3);
   });
 });
+
+describe('IFC4-Export (SPF)', () => {
+  it('erzeugt strukturell valides IFC4 mit Voids und Containment', async () => {
+    const { exportIfc } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, a: { x: 0, y: 0 }, b: { x: 7000, y: 0 }, assemblyId });
+    execute(doc, 'design.oeffnungSetzen', { wallId: (w.patches[0] as { id: string }).id, openingType: 'fenster', center: 3500, width: 1500, height: 1400, sill: 900 });
+    execute(doc, 'design.deckeZeichnen', { storeyId, outline: [{ x: 0, y: 0 }, { x: 7000, y: 0 }, { x: 7000, y: 5000 }, { x: 0, y: 5000 }], thickness: 250 });
+    const ifc = exportIfc(doc, 'Test');
+    expect(ifc).toContain("FILE_SCHEMA(('IFC4'))");
+    expect(ifc).toContain('IFCPROJECT');
+    expect(ifc).toContain('IFCBUILDINGSTOREY');
+    expect((ifc.match(/IFCWALL\(/g) ?? []).length).toBe(1);
+    expect((ifc.match(/IFCOPENINGELEMENT/g) ?? []).length).toBe(1);
+    expect(ifc).toContain('IFCRELVOIDSELEMENT');
+    expect(ifc).toContain('IFCRELCONTAINEDINSPATIALSTRUCTURE');
+    expect(ifc).toContain('IFCSLAB');
+    expect(ifc.trim().endsWith('END-ISO-10303-21;')).toBe(true);
+  });
+});
