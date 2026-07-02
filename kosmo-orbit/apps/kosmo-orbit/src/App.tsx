@@ -15,19 +15,20 @@ import { KosmoPanel } from './shell/KosmoPanel';
 import { VisWorkspace } from './modules/vis/VisWorkspace';
 import { DataWorkspace } from './modules/data/DataWorkspace';
 import { PublishWorkspace } from './modules/publish/PublishWorkspace';
+import { PrepareWorkspace } from './modules/prepare/PrepareWorkspace';
 import { useProject } from './state/project-store';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
 
-type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish';
+type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare';
 
 const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string }[] = [
   { id: 'design', screen: 'design', name: 'KosmoDesign', desc: 'Entwerfen · Modellieren · Pläne' },
   { id: 'data', screen: 'data', name: 'KosmoData', desc: 'Referenzen · Assets · Wissen' },
   { id: 'vis', screen: 'vis', name: 'KosmoVis', desc: 'Renderings · Varianten' },
   { id: 'publish', screen: 'publish', name: 'KosmoPublish', desc: 'Plansätze · Layouts' },
-  { id: 'prepare', screen: null, name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
+  { id: 'prepare', screen: 'prepare', name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
 ];
 
 export function App() {
@@ -85,24 +86,8 @@ export function App() {
         {screen !== 'home' && (
           <>
             <Hairline vertical />
-            <Badge
-              hue={
-                screen === 'vis'
-                  ? moduleHue.vis
-                  : screen === 'data'
-                    ? moduleHue.data
-                    : screen === 'publish'
-                      ? moduleHue.publish
-                      : moduleHue.design
-              }
-            >
-              {screen === 'vis'
-                ? 'KosmoVis'
-                : screen === 'data'
-                  ? 'KosmoData'
-                  : screen === 'publish'
-                    ? 'KosmoPublish'
-                    : 'KosmoDesign'}
+            <Badge hue={moduleHue[screen as ModuleId] ?? moduleHue.design}>
+              {modules.find((m) => m.screen === screen)?.name ?? 'KosmoDesign'}
             </Badge>
           </>
         )}
@@ -216,6 +201,8 @@ export function App() {
           <DataWorkspace />
         ) : screen === 'publish' ? (
           <PublishWorkspace />
+        ) : screen === 'prepare' ? (
+          <PrepareWorkspace />
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>

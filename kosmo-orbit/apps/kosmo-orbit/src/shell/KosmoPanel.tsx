@@ -14,6 +14,7 @@ import {
 import type { Assembly } from '@kosmo/kernel';
 import { useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
+import { searchKnowledge } from '../modules/prepare/knowledge';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -143,6 +144,29 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                   `- ${e.title} (${e.year_start ?? '?'}, ${[e.city, e.country].filter(Boolean).join(', ')}) — ${(e.authors ?? []).join(', ') || 'unbekannt'}; Themen: ${(e.themes ?? []).join(', ')}${e.one_sentence ? ` — ${e.one_sentence}` : ''}`,
               )
               .join('\n');
+          },
+        },
+        {
+          name: 'grundlagen_suchen',
+          description:
+            'Durchsucht die Wissensbasis des Projekts (in KosmoPrepare aufgenommene Grundlagen: Normen-Auszüge, Wettbewerbsprogramme, Baubeschriebe). Liefert die relevantesten Abschnitte mit Quellenangabe. Nutze es, wenn der Architekt nach Vorgaben, Programmen oder Bürowissen fragt.',
+          parameters: {
+            type: 'object',
+            properties: {
+              suchbegriff: { type: 'string', description: 'z.B. «Nutzfläche», «Brandschutz Treppenhaus», «Stützenraster»' },
+            },
+            required: ['suchbegriff'],
+            additionalProperties: false,
+          },
+          execute: async (args) => {
+            const q = String((args as { suchbegriff?: string })?.suchbegriff ?? '');
+            const hits = await searchKnowledge(q, 4);
+            if (hits.length === 0) {
+              return `Nichts zu «${q}» in der Wissensbasis. (Grundlagen werden in KosmoPrepare aufgenommen.)`;
+            }
+            return hits
+              .map((h) => `[${h.docName} · Abschnitt ${h.seq + 1}] ${h.text.slice(0, 600)}`)
+              .join('\n---\n');
           },
         },
       ],
