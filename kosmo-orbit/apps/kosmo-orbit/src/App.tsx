@@ -12,14 +12,15 @@ import {
 } from '@kosmo/ui';
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
+import { VisWorkspace } from './modules/vis/VisWorkspace';
 import { useProject } from './state/project-store';
 
-type Screen = 'home' | 'design';
+type Screen = 'home' | 'design' | 'vis';
 
 const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string }[] = [
   { id: 'design', screen: 'design', name: 'KosmoDesign', desc: 'Entwerfen · Modellieren · Pläne' },
   { id: 'data', screen: null, name: 'KosmoData', desc: 'Referenzen · Assets · Wissen' },
-  { id: 'vis', screen: null, name: 'KosmoVis', desc: 'Renderings · Varianten' },
+  { id: 'vis', screen: 'vis', name: 'KosmoVis', desc: 'Renderings · Varianten' },
   { id: 'publish', screen: null, name: 'KosmoPublish', desc: 'Plansätze · Layouts' },
   { id: 'prepare', screen: null, name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
 ];
@@ -67,7 +68,9 @@ export function App() {
         {screen !== 'home' && (
           <>
             <Hairline vertical />
-            <Badge hue={moduleHue.design}>KosmoDesign</Badge>
+            <Badge hue={screen === 'vis' ? moduleHue.vis : moduleHue.design}>
+              {screen === 'vis' ? 'KosmoVis' : 'KosmoDesign'}
+            </Badge>
           </>
         )}
         <div style={{ flex: 1 }} />
@@ -89,6 +92,8 @@ export function App() {
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         {screen === 'design' ? (
           <DesignWorkspace />
+        ) : screen === 'vis' ? (
+          <VisWorkspace />
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>

@@ -278,3 +278,25 @@ describe('SIA-416 Kennzahlen (Owner-Methodik)', () => {
     expect(r.gfVolumenNachProgramm['wohnen']).toBe(900);
   });
 });
+
+describe('GLB-Export', () => {
+  it('erzeugt einen validen GLB-Container mit Meshes', async () => {
+    const { exportGlb } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, a: { x: 0, y: 0 }, b: { x: 6000, y: 0 }, assemblyId });
+    execute(doc, 'design.oeffnungSetzen', { wallId: (w.patches[0] as { id: string }).id, openingType: 'fenster', center: 3000, width: 1500, height: 1400, sill: 900 });
+    const glb = exportGlb(doc);
+    const dv = new DataView(glb);
+    expect(dv.getUint32(0, true)).toBe(0x46546c67); // 'glTF'
+    expect(dv.getUint32(4, true)).toBe(2);
+    expect(dv.getUint32(8, true)).toBe(glb.byteLength);
+    const jsonLen = dv.getUint32(12, true);
+    expect(dv.getUint32(16, true)).toBe(0x4e4f534a); // 'JSON'
+    const json = JSON.parse(new TextDecoder().decode(new Uint8Array(glb, 20, jsonLen)));
+    expect(json.asset.version).toBe('2.0');
+    expect(json.meshes.length).toBe(1);
+    expect(json.accessors[0].type).toBe('VEC3');
+    // Bounding: 6m Wand → max.x ≈ 6
+    expect(json.accessors[0].max[0]).toBeCloseTo(6, 3);
+  });
+});

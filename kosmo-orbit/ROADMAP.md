@@ -14,23 +14,23 @@ QA-Verdikt zurück → iPad synchron.
 |---|---|---|
 | M0 Gerüst (Workspace, Aura, Shell) | 🟢 90% | CI/Tauri/PWA in Arbeit (dieser Block) |
 | M1 BIM-Kern + Viewport + Werkzeuge | 🟢 done (v1-Kern) | 11 Tests grün; Junction-Politur später |
-| M2 2D-Pläne + Splitscreen | 🟡 60% | Grundriss live (SIA-Schraffuren, Symbole); offen: Schnitt/Ansicht, Bemassung, Dach, Treppe, Zonen |
+| M2 2D-Pläne + Splitscreen | 🟢 80% | Grundriss+Schnitt+Ansicht live, 4er-View, Zonen+SIA-416-Kennzahlen; offen: Bemassung, Dach, Treppe |
 | M3 Kosmo-KI | 🟢 85% | Gated Loop + Personas + Begrüssung + Ollama/Mock; offen: Memory/RAG, Journal-Feedback-UI |
 | M4 KosmoData | ⚪ offen | |
-| M5 Vis/Publish/IFC + Bridge | ⚪ offen | Contracts fertig (@kosmo/contracts) |
+| M5 Vis/Publish/IFC + Bridge | 🟡 55% | GLB-Export + Bridge (FastAPI, --fake-worker) + Vis-Client mit QA-Verdikt LAUFEN end-to-end; offen: IFC, Publish |
 | M6 Sketch + Sprache + Prepare/OneDrive | ⚪ offen | |
 | M7 Sync + TKB-Demo + Packaging | ⚪ offen | |
 
 ## Nächste Schritte (Reihenfolge = Hebel)
 
-1. **[in Arbeit]** CI-Workflow (Lint/Typecheck/Tests/Playwright) + PWA-Manifest + Tauri-2-Scaffold + Desktop-Build-Workflow
-2. Zonen-Werkzeug + SIA-416-Flächenmathematik (`sia416.ts`) + Live-Kennzahlen-Panel (GF/aGF/HNF, Faktoren aus Doc-Settings — Owner: aGF=1.28×HNF bzw. 1.22, Fassade +10%)
-3. Schnitt/Ansicht-Ableitung (Mesh-Slice + Kanten-Projektion, three-edge-projection) + 4er-Splitscreen komplett
+1. ~~CI + PWA + Tauri~~ ✅
+2. ~~Zonen + SIA-416 + Kennzahlen-Panel~~ ✅
+3. ~~Schnitt/Ansicht + 4er-Splitscreen~~ ✅ (Politur: echte Hidden-Line via three-edge-projection später)
 4. Assoziative Bemassungsketten (Grundriss)
 5. Walmdach (eigener Straight Skeleton — ⚠ KEIN npm straight-skeleton v2/v3: CGAL-GPL-Falle!) + Treppe basic
 6. Kosmo-Memory (Journal→RAG, SQLite) + Feedback-Daumen im Panel
 7. IFC-Export (eigener SPF-Writer, Subset) + Import (web-ifc) — Validierung via Bridge
-8. KosmoVis-Client (JobComposer → render-scene/v1) + `tools/homestation-bridge` (FastAPI, --fake-worker) + `/stt` (faster-whisper + jayr23/whisper-large-v3-turbo-swiss-german-ct2) + `/tts` (Chatterbox)
+8. ~~KosmoVis-Client + Bridge (--fake-worker) + GLB-Export~~ ✅ — offen: /tts (Chatterbox-Dienst), STT-UI in der App
 9. KosmoData: SQLite (D1-Port) + Sync architekturkosmos.ch/api + Reference-Browser + CH-Bauteilkatalog
 10. KosmoSketch (perfect-freehand → Wand-Achsen, gated) + KosmoSpeak (Push-to-Talk)
 11. KosmoPublish (Blatt-Editor, PDF via jsPDF+svg2pdf, DXF via @tarikjabiri/dxf)
