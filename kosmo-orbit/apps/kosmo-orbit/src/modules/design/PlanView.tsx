@@ -21,6 +21,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
   const [view, setView] = useState({ cx: 5000, cy: 3000, scale: 0.05 });
   const [cursor, setCursor] = useState<Pt | null>(null);
   const panning = useRef<{ x: number; y: number; cx: number; cy: number } | null>(null);
+  // Touch (iPad): zwei Finger = Pinch-Zoom + Pan; ein Finger zeichnet wie die Maus
+  const touches = useRef(new Map<number, { x: number; y: number }>());
+  const pinch = useRef<{ d0: number; mid0: { x: number; y: number }; v0: { cx: number; cy: number; scale: number } } | null>(null);
+  const gestureAktiv = useRef(false);
 
   const plan = useMemo(
     () => (activeStoreyId ? derivePlan(doc, activeStoreyId) : null),
@@ -98,23 +102,71 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
         data-testid="planview"
         style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none' }}
         onPointerDown={(e) => {
+          if (e.pointerType === 'touch') {
+            touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            try {
+              (e.target as Element).setPointerCapture(e.pointerId);
+            } catch {
+              /* synthetische Events (Tests) haben keinen aktiven Pointer */
+            }
+            if (touches.current.size === 2) {
+              const [a, b] = [...touches.current.values()];
+              pinch.current = {
+                d0: Math.hypot(b!.x - a!.x, b!.y - a!.y) || 1,
+                mid0: { x: (a!.x + b!.x) / 2, y: (a!.y + b!.y) / 2 },
+                v0: { ...view },
+              };
+              gestureAktiv.current = true;
+              panning.current = null;
+            }
+            return;
+          }
           if (e.button === 1 || e.button === 2 || e.altKey) {
             panning.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy };
             (e.target as Element).setPointerCapture(e.pointerId);
           }
         }}
         onPointerMove={(e) => {
+          if (e.pointerType === 'touch' && touches.current.has(e.pointerId)) {
+            touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (pinch.current && touches.current.size >= 2) {
+              const [a, b] = [...touches.current.values()];
+              const d = Math.hypot(b!.x - a!.x, b!.y - a!.y) || 1;
+              const mid = { x: (a!.x + b!.x) / 2, y: (a!.y + b!.y) / 2 };
+              const { d0, mid0, v0 } = pinch.current;
+              const scale = Math.min(1, Math.max(0.005, v0.scale * (d / d0)));
+              setView({
+                scale,
+                cx: v0.cx - (mid.x - mid0.x) / scale,
+                cy: v0.cy + (mid.y - mid0.y) / scale,
+              });
+              return;
+            }
+          }
           if (panning.current) {
             const dx = (e.clientX - panning.current.x) / view.scale;
             const dy = (e.clientY - panning.current.y) / view.scale;
             setView((v) => ({ ...v, cx: panning.current!.cx - dx, cy: panning.current!.cy + dy }));
-          } else {
+          } else if (!gestureAktiv.current) {
             const p = toWorld(e.clientX, e.clientY);
             setCursor(p);
             handlers.current?.onGroundMove?.({ p, shiftKey: e.shiftKey });
           }
         }}
         onPointerUp={(e) => {
+          if (e.pointerType === 'touch') {
+            touches.current.delete(e.pointerId);
+            if (touches.current.size < 2) pinch.current = null;
+            if (touches.current.size === 0) {
+              // Zwei-Finger-Geste beendet? Dann diesen Lift nicht als Klick werten.
+              if (gestureAktiv.current) {
+                gestureAktiv.current = false;
+                return;
+              }
+            } else {
+              return;
+            }
+          }
           if (panning.current) {
             panning.current = null;
             return;
@@ -126,6 +178,13 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             return;
           }
           handlers.current?.onGroundClick?.({ p, shiftKey: e.shiftKey });
+        }}
+        onPointerCancel={(e) => {
+          if (e.pointerType === 'touch') {
+            touches.current.delete(e.pointerId);
+            if (touches.current.size < 2) pinch.current = null;
+            if (touches.current.size === 0) gestureAktiv.current = false;
+          }
         }}
         onContextMenu={(e) => e.preventDefault()}
       >
