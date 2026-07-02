@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   push:
     tags: ['kosmo-orbit-v*']
+    # Tag-Push und workflow_dispatch sind aus der Cloud-Session nicht möglich
+    # (Proxy erlaubt nur den Arbeitsbranch; dispatch braucht die Datei auf main).
+    # Build-Anforderung: kosmo-orbit/.desktop-build-request ändern und pushen.
+    branches: ['claude/kosmo-orbit-v1-build-pzxkbj']
+    paths: ['kosmo-orbit/.desktop-build-request']
 
 jobs:
   build:
