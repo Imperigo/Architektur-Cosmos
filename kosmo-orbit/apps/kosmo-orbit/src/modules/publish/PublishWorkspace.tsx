@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
+import { Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
 import {
   exportDxf,
   placementPaperBounds,
@@ -370,10 +370,11 @@ export function PublishWorkspace() {
               })}
             </div>
           ) : (
-            <div style={{ color: 'var(--k-ink-faint)', textAlign: 'center' }}>
-              <div style={{ fontSize: 15, fontWeight: 550, marginBottom: 6 }}>Noch kein Blatt im Plansatz.</div>
-              <div style={{ fontSize: 13 }}>Links Format wählen und «+ Blatt» — dann Grundrisse und Schnitte platzieren.</div>
-            </div>
+            <Messrahmen
+              height={280}
+              style={{ width: 520, maxWidth: '90%' }}
+              caption="Noch kein Blatt im Plansatz — links Format wählen und «+ Blatt», dann Grundrisse, Schnitte und Ansichten platzieren"
+            />
           )}
         </div>
       </div>

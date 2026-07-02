@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Badge, Hairline, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
 import { bauteilkatalog, gesamtdicke, uWert, type KatalogEintrag } from './bauteilkatalog';
 import { useProject } from '../../state/project-store';
 import { setGlbContext } from '../design/Viewport3D';
@@ -298,17 +298,19 @@ function BauteilkatalogView() {
     <div style={{ display: 'grid', gap: 18 }}>
       {kategorien.map((kat) => (
         <div key={kat} style={{ display: 'grid', gap: 8 }}>
-          <div style={{ fontWeight: 550, fontSize: 13.5 }}>{kat}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 10 }}>
+          <div className="k-titel" style={{ fontSize: 14 }}>{kat}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 10 }}>
             {bauteilkatalog
               .filter((e) => e.kategorie === kat)
               .map((e) => {
                 const dicke = gesamtdicke(e.layers);
                 const u = uWert(e.layers);
                 const schonDa = vorhandene.has(e.name);
+                const nr = bauteilkatalog.indexOf(e) + 1;
                 return (
-                  <Panel key={e.id} data-testid={`bauteil-${e.id}`} style={{ padding: '12px 14px', display: 'grid', gap: 8 }}>
-                    <div style={{ fontWeight: 550, fontSize: 13.5 }}>{e.name}</div>
+                  <Karteikarte key={e.id} nr={nr} data-testid={`bauteil-${e.id}`}>
+                   <div style={{ display: 'grid', gap: 8 }}>
+                    <div style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 13 }}>{e.name}</div>
                     <div style={{ fontSize: 12, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{e.beschrieb}</div>
                     {/* Schichtbalken (massstäblich) */}
                     <div style={{ display: 'flex', height: 14, borderRadius: 4, overflow: 'hidden', border: '1px solid var(--k-line)' }}>
@@ -343,7 +345,8 @@ function BauteilkatalogView() {
                         </KButton>
                       )}
                     </div>
-                  </Panel>
+                   </div>
+                  </Karteikarte>
                 );
               })}
           </div>

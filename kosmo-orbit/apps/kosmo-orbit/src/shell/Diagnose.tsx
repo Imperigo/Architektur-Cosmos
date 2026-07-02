@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, KButton } from '@kosmo/ui';
+import { Karteikarte, Badge, KButton } from '@kosmo/ui';
 import { allCommands, deriveAll } from '@kosmo/kernel';
 import { useProject } from '../state/project-store';
 import { listDocs } from '../modules/prepare/knowledge';
@@ -157,11 +157,13 @@ export function DiagnosePanel() {
           {laueft ? 'Prüfe …' : 'Prüfen'}
         </KButton>
       </div>
-      {befunde?.map((b) => (
-        <div key={b.bereich} data-testid={`befund-${b.bereich}`} style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 12.5 }}>
-          <Badge hue={statusHue[b.status]}>{b.bereich}</Badge>
-          <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{b.detail}</span>
-        </div>
+      {befunde?.map((b, i) => (
+        <Karteikarte key={b.bereich} nr={i + 1} data-testid={`befund-${b.bereich}`}>
+          <div style={{ display: 'grid', gap: 3, fontSize: 12.5 }}>
+            <Badge hue={statusHue[b.status]}>{b.bereich}</Badge>
+            <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{b.detail}</span>
+          </div>
+        </Karteikarte>
       ))}
     </div>
   );

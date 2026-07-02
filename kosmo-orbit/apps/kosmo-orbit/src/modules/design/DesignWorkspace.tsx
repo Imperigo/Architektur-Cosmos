@@ -108,6 +108,7 @@ export function DesignWorkspace() {
     };
     for (const w of walls) { if (w.kind === 'wall') { eat(w.a); eat(w.b); } }
     for (const m of masses) { if (m.kind === 'mass') for (const q of m.outline) eat(q); }
+    for (const sl of doc.byKind('slab')) { if (sl.kind === 'slab') for (const q of sl.outline) eat(q); }
     if (minX === Infinity) return null;
     return {
       a: { x: minX - 1000, y: minY - 1000 },

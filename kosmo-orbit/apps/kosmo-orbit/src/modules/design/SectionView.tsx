@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { deriveSection, type SectionSpec } from '@kosmo/kernel';
+import { Messrahmen } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -19,18 +20,18 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
 
   if (!spec || !graphic || !graphic.bounds) {
     return (
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'grid',
-          placeItems: 'center',
-          color: 'var(--k-ink-faint)',
-          fontSize: 12.5,
-          background: 'var(--k-plan-paper)',
-        }}
-      >
-        {spec ? 'Kein Modell im Schnittbereich.' : `${title}: Schnittlinie mit dem Werkzeug «Schnitt» setzen.`}
+      <div style={{ position: 'absolute', inset: 0, display: 'grid', background: 'var(--k-plan-paper)' }}>
+        <Messrahmen
+          height="100%"
+          style={{ height: '100%' }}
+          caption={
+            spec
+              ? 'Kein Modell im Schnittbereich'
+              : title.startsWith('Ansicht')
+                ? `${title} — erscheint, sobald das Modell Bauteile hat`
+                : `${title} — Schnittlinie mit dem Werkzeug «Schnitt» setzen`
+          }
+        />
       </div>
     );
   }

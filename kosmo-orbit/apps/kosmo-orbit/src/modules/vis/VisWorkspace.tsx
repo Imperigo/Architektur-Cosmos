@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
+import { Messrahmen, Badge, Hairline, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
 import { exportGlb } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
@@ -163,6 +163,12 @@ export function VisWorkspace() {
           {error && <div style={{ color: 'var(--k-danger)', fontSize: 12.5 }}>⚠ {error}</div>}
         </Panel>
 
+        {jobs.length === 0 && (
+          <Messrahmen
+            height={220}
+            caption="Noch keine Render-Jobs — das Ergebnis der HomeStation erscheint hier mit QA-Verdikt"
+          />
+        )}
         {jobs.map((j) => (
           <Panel key={j.job_id} style={{ display: 'grid', gap: 8 }} data-testid="render-job">
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>

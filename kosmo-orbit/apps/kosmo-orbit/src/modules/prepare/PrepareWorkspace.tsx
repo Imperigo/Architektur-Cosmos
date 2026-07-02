@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
+import { Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
 import {
   ingestFile,
   listDocs,
@@ -159,10 +159,10 @@ export function PrepareWorkspace() {
             Aufgenommen ({docs.length})
           </div>
           {docs.length === 0 && (
-            <div style={{ fontSize: 13, color: 'var(--k-ink-faint)' }}>
-              Noch keine Grundlagen. Sobald Dokumente da sind, beantwortet Kosmo Fragen daraus —
-              frag z.B. «Was sagt das Wettbewerbsprogramm zur Nutzfläche?»
-            </div>
+            <Messrahmen
+              height={180}
+              caption="Noch keine Grundlagen — sobald Dokumente da sind, beantwortet Kosmo Fragen daraus"
+            />
           )}
           {docs.map((d) => (
             <Panel
