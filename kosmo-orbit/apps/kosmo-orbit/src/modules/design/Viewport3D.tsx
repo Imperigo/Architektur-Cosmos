@@ -5,6 +5,7 @@ import * as SunCalc from 'suncalc';
 import { deriveAll, type GeometryArtifact, type Pt } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
+import { pbrPalette } from '../data/materialkatalog';
 
 // Kontext-Layer (IFC-Bestand): sessionweit, nicht synchronisiert
 let contextMeshes: ContextMesh[] = [];
@@ -12,6 +13,14 @@ let contextRevision = 0;
 export function setContextMeshes(meshes: ContextMesh[]): void {
   contextMeshes = meshes;
   contextRevision++;
+}
+
+// Referenz-3D (Q14): GLB aus KosmoData als studierbarer Kontext im Viewport
+let glbRequest: { url: string } | null = null;
+let glbRevision = 0;
+export function setGlbContext(url: string | null): void {
+  glbRequest = url ? { url } : null;
+  glbRevision++;
 }
 
 // Sonnenstand (Q12 Schattenstudie): echtes Datum/Uhrzeit statt Studio-Sonne
@@ -62,11 +71,11 @@ export interface ViewportHandlers {
   onPick?: (entityId: string | null) => void;
 }
 
-const materialPalette: Record<string, { color: number; roughness: number }> = {
-  beton: { color: 0xc9c5bc, roughness: 0.9 },
+// PBR aus dem Materialkatalog (Q14) + Derive-Sonderschlüssel
+const materialPalette: Record<string, { color: number; roughness: number; metalness?: number }> = {
+  ...pbrPalette,
   masse: { color: 0xd8cfc0, roughness: 0.95 },
   dach: { color: 0x6e5f52, roughness: 0.85 },
-  holz: { color: 0xb08d5e, roughness: 0.8 },
   default: { color: 0xcfccc4, roughness: 0.9 },
 };
 
@@ -227,6 +236,37 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       console.info(`Splat-Kontext: ${splatCloud.count} Punkte`);
     }
 
+    // Referenz-3D: GLB laden (Meter, y-oben — three-nativ), nicht wählbar
+    let glbGroup: THREE.Group | null = null;
+    let lastGlbRevision = -1;
+    function syncGlb() {
+      if (glbRevision === lastGlbRevision) return;
+      lastGlbRevision = glbRevision;
+      if (glbGroup) {
+        glbGroup.removeFromParent();
+        glbGroup = null;
+      }
+      const req = glbRequest;
+      if (!req) return;
+      void import('three/examples/jsm/loaders/GLTFLoader.js').then(({ GLTFLoader }) => {
+        new GLTFLoader().load(
+          req.url,
+          (gltf) => {
+            if (glbRequest !== req) return; // inzwischen ersetzt
+            glbGroup = gltf.scene;
+            glbGroup.traverse((o) => {
+              o.castShadow = true;
+              o.receiveShadow = true;
+            });
+            scene.add(glbGroup);
+            console.info('Referenz-3D geladen:', req.url);
+          },
+          undefined,
+          (err) => console.error('Referenz-3D fehlgeschlagen:', err),
+        );
+      });
+    }
+
     const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x2a2620 });
     const previewMaterial = new THREE.LineBasicMaterial({ color: 0xa84b2b });
 
@@ -250,7 +290,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       const spec = materialPalette[a.materialKey] ?? materialPalette['default']!;
       const mesh = new THREE.Mesh(
         geo,
-        new THREE.MeshStandardMaterial({ color: spec.color, roughness: spec.roughness }),
+        new THREE.MeshStandardMaterial({
+          color: spec.color,
+          roughness: spec.roughness,
+          metalness: spec.metalness ?? 0,
+        }),
       );
       mesh.castShadow = true;
       mesh.receiveShadow = true;
@@ -379,6 +423,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncPreview();
       syncContext();
       syncSplats();
+      syncGlb();
       syncSun();
       // Auswahl-Highlight (Kupfer-Glut)
       const sel = new Set(useProject.getState().selection);

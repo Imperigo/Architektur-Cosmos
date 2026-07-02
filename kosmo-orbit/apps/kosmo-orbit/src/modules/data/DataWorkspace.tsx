@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Badge, Hairline, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
 import { bauteilkatalog, gesamtdicke, uWert, type KatalogEintrag } from './bauteilkatalog';
 import { useProject } from '../../state/project-store';
+import { setGlbContext } from '../design/Viewport3D';
+import { materialkatalog } from './materialkatalog';
 
 /**
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
@@ -50,7 +52,7 @@ export function DataWorkspace() {
   const [sector, setSector] = useState<string | null>(null);
   const [selected, setSelected] = useState<RefEntry | null>(null);
   const [syncState, setSyncState] = useState<'seed' | 'synced' | 'fehler'>('seed');
-  const [tab, setTab] = useState<'referenzen' | 'bauteile'>('referenzen');
+  const [tab, setTab] = useState<'referenzen' | 'bauteile' | 'materialien'>('referenzen');
 
   useEffect(() => {
     void loadReferences().then(setEntries);
@@ -99,8 +101,15 @@ export function DataWorkspace() {
             <KButton size="sm" tone={tab === 'bauteile' ? 'accent' : 'ghost'} onClick={() => setTab('bauteile')} data-testid="tab-bauteile">
               Bauteilkatalog CH
             </KButton>
+            <KButton size="sm" tone={tab === 'materialien' ? 'accent' : 'ghost'} onClick={() => setTab('materialien')} data-testid="tab-materialien">
+              Materialien
+            </KButton>
             <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
-              {tab === 'referenzen' ? `${filtered.length} von ${entries.length} Referenzen` : `${bauteilkatalog.length} Aufbauten`}
+              {tab === 'referenzen'
+                ? `${filtered.length} von ${entries.length} Referenzen`
+                : tab === 'bauteile'
+                  ? `${bauteilkatalog.length} Aufbauten`
+                  : `${materialkatalog.length} Materialien`}
             </span>
             <div style={{ flex: 1 }} />
             <Badge hue={syncState === 'synced' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
@@ -112,6 +121,7 @@ export function DataWorkspace() {
           </div>
 
           {tab === 'bauteile' && <BauteilkatalogView />}
+          {tab === 'materialien' && <MaterialkatalogView />}
 
           {tab === 'referenzen' && (<>
           <input
@@ -240,6 +250,25 @@ export function DataWorkspace() {
               Material: {selected.materials.join(', ')}
             </div>
           )}
+          {selected.has_3d && (
+            <>
+              <Hairline />
+              <KButton
+                size="sm"
+                tone="accent"
+                data-testid="ref3d-laden"
+                onClick={() => {
+                  setGlbContext(`https://architekturkosmos.ch/archive-models/${selected.id}/low.glb`);
+                  (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('design');
+                }}
+              >
+                Referenz-3D ins Modell laden
+              </KButton>
+              <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+                Lädt das Studienmodell von architekturkosmos.ch als Kontext neben deinen Entwurf.
+              </span>
+            </>
+          )}
         </aside>
       )}
     </div>
@@ -326,6 +355,44 @@ function BauteilkatalogView() {
           Richtwerte (SIA-180-vereinfacht), kein Nachweis-Ersatz.
         </div>
       )}
+    </div>
+  );
+}
+
+/** Materialkatalog (Q14): ein Schlüssel — PBR fürs 3D, SIA-Schraffur, Lambda. */
+function MaterialkatalogView() {
+  const hex = (c: number) => `#${c.toString(16).padStart(6, '0')}`;
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 10 }}>
+      {materialkatalog.map((m) => (
+        <Panel key={m.key} data-testid={`material-${m.key}`} style={{ padding: '10px 12px', display: 'grid', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <span
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 8,
+                background: `linear-gradient(135deg, ${hex(m.pbr.color)}, color-mix(in srgb, ${hex(m.pbr.color)} ${Math.round((1 - m.pbr.roughness) * 60 + 40)}%, white))`,
+                border: '1px solid var(--k-line-strong)',
+                flexShrink: 0,
+              }}
+              title={`Rauheit ${m.pbr.roughness}${m.pbr.metalness ? ` · Metall ${m.pbr.metalness}` : ''}`}
+            />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 550, fontSize: 13 }}>{m.name}</div>
+              <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+                Schraffur: {m.sia}
+                {m.lambda !== undefined ? ` · λ ${m.lambda}` : ''}
+              </div>
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{m.beschrieb}</div>
+        </Panel>
+      ))}
+      <div style={{ gridColumn: '1 / -1', fontSize: 12, color: 'var(--k-ink-faint)' }}>
+        Dieselben Schlüssel tragen die Aufbauten des Bauteilkatalogs — 3D-Farbe, Plan-Schraffur
+        und U-Wert kommen aus einer Quelle. Texturen (PBR-Maps) folgen mit der HomeStation.
+      </div>
     </div>
   );
 }
