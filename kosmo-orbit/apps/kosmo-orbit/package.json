@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@kosmo/ai": "*",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
+    "@tauri-apps/cli": "^2.11.4",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/three": "^0.184.0",
@@ -33,6 +35,7 @@
     "playwright": "^1.61.1",
     "typescript": "^5.9.0",
     "vite": "^7.0.0",
+    "vite-plugin-pwa": "^1.3.0",
     "vitest": "^3.2.0"
   }
 }

@@ -1,0 +1,60 @@
+name: KosmoOrbit Desktop-Builds
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['kosmo-orbit-v*']
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: '--target universal-apple-darwin'
+          - platform: ubuntu-22.04
+            args: ''
+          - platform: windows-latest
+            args: ''
+    runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        working-directory: kosmo-orbit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: kosmo-orbit/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - name: Linux-Abhängigkeiten
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - run: npm ci
+      - name: Icon-Satz generieren
+        run: npx tauri icon apps/kosmo-orbit/public/icons/icon-512.png
+        working-directory: kosmo-orbit/apps/kosmo-orbit
+      - uses: tauri-apps/tauri-action@v0.6.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: kosmo-orbit/apps/kosmo-orbit
+          args: ${{ matrix.args }}
+      - name: Artefakte hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: kosmo-orbit-${{ matrix.platform }}
+          path: |
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.dmg
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.app.tar.gz
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.msi
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.exe
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.AppImage
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.deb
+          retention-days: 30
