@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, KButton, Measure, moduleHue } from '@kosmo/ui';
-import { formatLength, type Assembly, type Pt, type SectionSpec, type Storey } from '@kosmo/kernel';
+import {
+  areaReport,
+  formatLength,
+  generiereVolumenstudien,
+  type Assembly,
+  type Pt,
+  type SectionSpec,
+  type Storey,
+  type Zone,
+} from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { PlanView } from './PlanView';
@@ -40,6 +49,11 @@ export function DesignWorkspace() {
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
   const [points, setPoints] = useState<Pt[]>([]);
   const [cursor, setCursor] = useState<Pt | null>(null);
+  // Volumenstudien (Q12): letzte Zone = Parzelle, Varianten als Gruppe übernehmen
+  const [studieOffen, setStudieOffen] = useState(false);
+  const [zielGf, setZielGf] = useState<number | null>(null);
+  const [maxHoeheM, setMaxHoeheM] = useState(25);
+
   // Schattenstudie (Q12): Datum + Stunde (Viertelstunden), aus = Studio-Sonne
   const [sonneOffen, setSonneOffen] = useState(false);
   const [sonnenDatum, setSonnenDatum] = useState('2026-06-21');
@@ -227,7 +241,9 @@ export function DesignWorkspace() {
         style={{
           display: 'flex',
           alignItems: 'center',
+          flexWrap: 'wrap',
           gap: 8,
+          rowGap: 4,
           padding: '8px 14px',
           borderBottom: '1px solid var(--k-line)',
           background: 'var(--k-surface)',
@@ -362,6 +378,14 @@ export function DesignWorkspace() {
         >
           ☀ Sonne
         </KButton>
+        <KButton
+          size="sm"
+          tone={studieOffen ? 'accent' : 'ghost'}
+          data-testid="studie-toggle"
+          onClick={() => setStudieOffen(!studieOffen)}
+        >
+          Varianten
+        </KButton>
         <span style={{ width: 12 }} />
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
           ↩ Rückgängig
@@ -412,6 +436,15 @@ export function DesignWorkspace() {
 
       {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
       <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
+        {studieOffen && (
+          <StudienPanel
+            zielGf={zielGf}
+            setZielGf={setZielGf}
+            maxHoeheM={maxHoeheM}
+            setMaxHoeheM={setMaxHoeheM}
+            onClose={() => setStudieOffen(false)}
+          />
+        )}
         {viewMode === 'quad' ? (
           <div
             style={{
@@ -543,6 +576,162 @@ export function DesignWorkspace() {
           </span>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Q12 Volumenstudien: letzte Zone = Parzelle → Extremvarianten, Übernahme als eine Undo-Gruppe. */
+function StudienPanel({
+  zielGf,
+  setZielGf,
+  maxHoeheM,
+  setMaxHoeheM,
+  onClose,
+}: {
+  zielGf: number | null;
+  setZielGf: (v: number) => void;
+  maxHoeheM: number;
+  setMaxHoeheM: (v: number) => void;
+  onClose: () => void;
+}) {
+  const revision = useProject((s) => s.revision);
+  const runCommand = useProject((s) => s.runCommand);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+  const { doc, history } = useProject.getState();
+
+  const parzelle = useMemo(() => {
+    const zonen = doc.byKind<Zone>('zone').filter((z) => z.storeyId === activeStoreyId);
+    return zonen[zonen.length - 1] ?? null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revision, activeStoreyId]);
+
+  const zielEffektiv = zielGf ?? Math.max(Math.round(areaReport(doc).agfZiel) || 0, 500);
+
+  const varianten = useMemo(
+    () =>
+      parzelle
+        ? generiereVolumenstudien(parzelle.outline, { zielGf: zielEffektiv, maxHoehe: maxHoeheM * 1000 })
+        : [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [parzelle, zielEffektiv, maxHoeheM, revision],
+  );
+
+  const uebernehmen = (id: string) => {
+    const v = varianten.find((x) => x.id === id);
+    if (!v || !activeStoreyId) return;
+    history.beginGroup();
+    try {
+      for (const k of v.koerper) {
+        runCommand('design.volumenErstellen', {
+          storeyId: activeStoreyId,
+          outline: k.outline,
+          height: k.height,
+          program: k.program,
+        });
+      }
+    } finally {
+      history.endGroup();
+    }
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: 70,
+    padding: '3px 6px',
+    borderRadius: 6,
+    border: '1px solid var(--k-line-strong)',
+    background: 'var(--k-raised)',
+    fontSize: 12,
+  };
+
+  return (
+    <div
+      data-testid="studien-panel"
+      style={{
+        position: 'absolute',
+        left: 12,
+        top: 52,
+        width: 268,
+        zIndex: 4,
+        background: 'var(--k-surface)',
+        border: '1px solid var(--k-line)',
+        borderRadius: 'var(--k-radius-md)',
+        boxShadow: 'var(--k-shadow-raised)',
+        fontSize: 12.5,
+        padding: 12,
+        display: 'grid',
+        gap: 9,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Badge hue={moduleHue.design}>Volumenstudien</Badge>
+        <span style={{ flex: 1 }} />
+        <KButton size="sm" tone="ghost" onClick={onClose}>×</KButton>
+      </div>
+      {!parzelle ? (
+        <div style={{ color: 'var(--k-ink-faint)', lineHeight: 1.5 }}>
+          Zeichne zuerst die <b>Parzelle als Zone</b> (Werkzeug «Zone») — die zuletzt
+          gezeichnete Zone des Geschosses gilt als Baufeld.
+        </div>
+      ) : (
+        <>
+          <div style={{ color: 'var(--k-ink-faint)' }}>
+            Parzelle: «{parzelle.name}» · Grenzabstand 4 m
+          </div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <label style={{ display: 'flex', gap: 5, alignItems: 'center', color: 'var(--k-ink-soft)' }}>
+              GF-Ziel
+              <input
+                type="number"
+                value={zielEffektiv}
+                data-testid="studie-gf"
+                onChange={(e) => setZielGf(Number(e.target.value))}
+                style={inputStyle}
+              />
+              m²
+            </label>
+            <label style={{ display: 'flex', gap: 5, alignItems: 'center', color: 'var(--k-ink-soft)' }}>
+              max.
+              <input
+                type="number"
+                value={maxHoeheM}
+                onChange={(e) => setMaxHoeheM(Number(e.target.value))}
+                style={{ ...inputStyle, width: 44 }}
+              />
+              m
+            </label>
+          </div>
+          {varianten.map((v) => (
+            <div
+              key={v.id}
+              data-testid={`variante-${v.id}`}
+              style={{
+                border: '1px solid var(--k-line)',
+                borderRadius: 8,
+                padding: '8px 10px',
+                display: 'grid',
+                gap: 4,
+              }}
+            >
+              <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                <b>{v.name}</b>
+                <span style={{ color: 'var(--k-ink-faint)' }}>
+                  {v.geschosse} Gesch. · {(v.hoehe / 1000).toFixed(0)} m · GF {v.gf.toLocaleString('de-CH')} m²
+                </span>
+                {!v.passt && <Badge hue="var(--k-warning)">sprengt Höhe</Badge>}
+              </div>
+              <div style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>{v.beschrieb}</div>
+              <div>
+                <KButton size="sm" tone="quiet" data-testid={`uebernehmen-${v.id}`} onClick={() => uebernehmen(v.id)}>
+                  Übernehmen
+                </KButton>
+              </div>
+            </div>
+          ))}
+          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+            Anstoss, kein Entwurf — Übernahme ist ein Undo-Schritt.
+          </span>
+        </>
+      )}
     </div>
   );
 }

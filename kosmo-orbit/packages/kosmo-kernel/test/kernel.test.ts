@@ -516,3 +516,40 @@ describe('Grundriss-Checks (Q12)', () => {
     expect(pruefeGrundriss(doc, storeyId)).toEqual([]);
   });
 });
+
+describe('Volumenstudien-Generator (Q12)', () => {
+  const parzelle = [
+    { x: 0, y: 0 }, { x: 60000, y: 0 }, { x: 60000, y: 40000 }, { x: 0, y: 40000 },
+  ];
+
+  it('liefert Teppich/Riegel/Turm/Zeilen/Winkel, alle nahe am GF-Ziel', async () => {
+    const { generiereVolumenstudien } = await import('../src');
+    const v = generiereVolumenstudien(parzelle, { zielGf: 8000, maxHoehe: 30000 });
+    const ids = v.map((x) => x.id);
+    expect(ids).toEqual(expect.arrayContaining(['teppich', 'riegel', 'turm', 'zeilen', 'winkel']));
+    for (const x of v) {
+      expect(x.hoehe).toBeLessThanOrEqual(30000);
+      if (x.passt) expect(x.gf).toBeGreaterThanOrEqual(8000 * 0.95);
+      // Körper liegen in der Parzelle (Grenzabstand 4 m → BBox-Check reicht)
+      for (const k of x.koerper) {
+        for (const p of k.outline) {
+          expect(p.x).toBeGreaterThanOrEqual(3900);
+          expect(p.x).toBeLessThanOrEqual(56100);
+          expect(p.y).toBeGreaterThanOrEqual(3900);
+          expect(p.y).toBeLessThanOrEqual(36100);
+        }
+      }
+    }
+    const teppich = v.find((x) => x.id === 'teppich')!;
+    const turm = v.find((x) => x.id === 'turm')!;
+    expect(teppich.geschosse).toBeLessThan(turm.geschosse); // Extreme sind extrem
+  });
+
+  it('markiert ehrlich, wenn das Programm die Höhenvorgabe sprengt', async () => {
+    const { generiereVolumenstudien } = await import('../src');
+    const v = generiereVolumenstudien(parzelle, { zielGf: 60000, maxHoehe: 12000 });
+    const turm = v.find((x) => x.id === 'turm')!;
+    expect(turm.passt).toBe(false);
+    expect(turm.hoehe).toBeLessThanOrEqual(12000);
+  });
+});

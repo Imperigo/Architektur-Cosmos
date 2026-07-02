@@ -58,7 +58,7 @@ Kern-Prinzipien: int-mm-Koordinaten · Commands = einzige Schreiber (zod-Schema 
 
 ## Phase 2 (3 Wochen ohne HomeStation, Owner 02.07. abends)
 
-19. Q12 komplett: ~~Schattenstudie (suncalc, Datum/Uhrzeit, Innerschweiz)~~ ✅ · ~~Grundriss-Checks (Zimmer-/Tür-/Treppen-Regeln im Kennzahlen-Panel)~~ ✅ — offen: Volumenstudien-Generator (Varianten in Parzelle, gated)
+19. Q12 komplett: ~~Schattenstudie (suncalc, Datum/Uhrzeit, Innerschweiz)~~ ✅ komplett ✅: ~~Schattenstudie~~ · ~~Grundriss-Checks~~ · ~~Volumenstudien-Generator (Teppich/Riegel/Turm/Zeilen/Winkel, Gruppen-Undo)~~ — Q12 «ALLE vier» erfüllt
 20. KosmoAsset-Rest (Q14): PBR-Materialien mit SIA-Zuordnung, Referenz-3D aus KosmoData ins Modell
 21. Hidden-Line im Schnitt/Ansicht, 3D-T-Stösse, Ansichten aller vier Richtungen in KosmoPublish
 22. KosmoTrain (Q8): LoRA-Trainings-Rezepte + Journal-Export dokumentieren; Tauri-iOS-CI-Experiment (Q3)
