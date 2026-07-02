@@ -260,8 +260,9 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                 y1={-l.a.y}
                 x2={l.b.x}
                 y2={-l.b.y}
-                stroke="var(--k-ink)"
-                strokeWidth={l.classes.includes('fenster') ? 10 : 14}
+                stroke={l.classes.includes('baugrenze') ? 'var(--k-danger)' : 'var(--k-ink)'}
+                strokeWidth={l.classes.includes('fenster') ? 10 : l.classes.includes('baugrenze') ? 12 : 14}
+                strokeDasharray={l.classes.includes('baugrenze') ? '300 90 60 90' : undefined}
               />
             ))}
 

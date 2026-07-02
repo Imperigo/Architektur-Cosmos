@@ -743,7 +743,23 @@ function StudienPanel({
               m
             </label>
           </div>
-          <div style={{ display: 'flex', gap: 5 }}>
+          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+            <KButton
+              size="sm"
+              tone="quiet"
+              data-testid="als-baugrenze"
+              onClick={() => {
+                if (!parzelle || !activeStoreyId) return;
+                runCommand('design.baugrenzeSetzen', {
+                  storeyId: activeStoreyId,
+                  outline: parzelle.outline,
+                  maxHoehe: maxHoeheM * 1000,
+                  name: parzelle.name,
+                });
+              }}
+            >
+              Als Baugrenze (max. {maxHoeheM} m)
+            </KButton>
             <KButton size="sm" tone={nutzung === 'wohnen' ? 'accent' : 'ghost'} onClick={() => setNutzung('wohnen')}>
               Wohnen 2.80
             </KButton>

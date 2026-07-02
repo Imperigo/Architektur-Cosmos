@@ -145,6 +145,16 @@ export interface Roof extends Base {
   baseOffset: Mm;
 }
 
+/** Baugrenze (Phase 0): Polygon aus dem Baugesetz + optionale Höhenbeschränkung. */
+export interface Boundary extends Base {
+  kind: 'boundary';
+  storeyId: string;
+  outline: Pt[];
+  /** Maximale Gebäudehöhe über Projektnull (mm); null = keine. */
+  maxHoehe: Mm | null;
+  name: string;
+}
+
 /** Volumenkörper für Vorform-artige Volumenstudien. */
 export interface MassBody extends Base {
   kind: 'mass';
@@ -200,7 +210,7 @@ export interface Sheet extends Base {
   texte?: SheetText[];
 }
 
-export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet;
+export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

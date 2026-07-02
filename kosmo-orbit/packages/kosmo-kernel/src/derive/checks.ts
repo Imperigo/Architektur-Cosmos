@@ -1,5 +1,5 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Assembly, Opening, Stair, Storey, Wall, Zone } from '../model/entities';
+import type { Assembly, Boundary, MassBody, Opening, Roof, Stair, Storey, Wall, Zone } from '../model/entities';
 import { polygonArea } from '../model/units';
 import { stairSpec } from '../commands/design';
 
@@ -129,5 +129,53 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
   }
 
   const rang = { fehler: 0, warnung: 1, hinweis: 2 } as const;
+  // Baugrenzen (Phase 0): Lage + Höhenbeschränkung
+  const grenzen = doc.byKind<Boundary>('boundary').filter((g) => g.storeyId === storeyId);
+  for (const g of grenzen) {
+    const inPoly = (p: { x: number; y: number }): boolean => {
+      let inside = false;
+      const poly = g.outline;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const a = poly[i]!;
+        const b = poly[j]!;
+        if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) {
+          inside = !inside;
+        }
+      }
+      return inside;
+    };
+    const verletzt = (name: string, id: string, punkte: { x: number; y: number }[], top: number | null) => {
+      if (punkte.some((p) => !inPoly(p))) {
+        befunde.push({
+          schwere: 'fehler',
+          regel: 'Baugrenze',
+          text: `${name} ragt über die Baugrenze «${g.name}» hinaus`,
+          entityId: id,
+        });
+      }
+      if (g.maxHoehe !== null && top !== null && top > g.maxHoehe) {
+        befunde.push({
+          schwere: 'fehler',
+          regel: 'Baugrenze',
+          text: `${name} überschreitet die Höhenbeschränkung (${(top / 1000).toFixed(1)} m > ${(g.maxHoehe / 1000).toFixed(1)} m)`,
+          entityId: id,
+        });
+      }
+    };
+    for (const w of doc.byKind<Wall>('wall')) {
+      if (w.storeyId !== storeyId) continue;
+      const h = w.heightMode === 'fix' && w.height ? w.height : storey.height;
+      verletzt('Wand', w.id, [w.a, w.b], storey.elevation + w.baseOffset + h);
+    }
+    for (const m of doc.byKind<MassBody>('mass')) {
+      if (m.storeyId !== storeyId) continue;
+      verletzt('Volumen', m.id, m.outline, storey.elevation + m.height);
+    }
+    for (const r of doc.byKind<Roof>('roof')) {
+      if (r.storeyId !== storeyId) continue;
+      verletzt('Dach', r.id, r.outline, null);
+    }
+  }
+
   return befunde.sort((a, b) => rang[a.schwere] - rang[b.schwere]);
 }

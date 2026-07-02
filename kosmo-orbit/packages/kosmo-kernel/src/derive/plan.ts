@@ -1,4 +1,4 @@
-import type { Assembly, Opening, Stair, Storey, Wall } from '../model/entities';
+import type { Boundary, Assembly, Opening, Stair, Storey, Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, union, type Poly } from '../geometry/clip';
 import {
@@ -200,6 +200,16 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
         rings: [e.outline.map((p) => ({ ...p })), ...(e.holes ?? []).map((h) => h.map((p) => ({ ...p })))],
         classes: ['projection', 'decke'],
       });
+    }
+  }
+
+  // Baugrenze: geschlossener Linienzug (Stil via Klasse «baugrenze»)
+  for (const g of doc.byKind<Boundary>('boundary')) {
+    if (g.storeyId !== storeyId) continue;
+    for (let i = 0; i < g.outline.length; i++) {
+      const a = g.outline[i]!;
+      const b = g.outline[(i + 1) % g.outline.length]!;
+      lines.push({ a, b, classes: ['baugrenze'] });
     }
   }
 

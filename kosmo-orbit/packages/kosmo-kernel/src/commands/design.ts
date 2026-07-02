@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Assembly, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
+import type { Assembly, Boundary, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -474,5 +474,36 @@ export const setRaumprogramm = registerCommand({
       maxAgf: p.maxAgf === undefined ? s.maxAgf : p.maxAgf,
     };
     return [{ settings: true, before, after }];
+  },
+});
+
+export const setBoundary = registerCommand({
+  id: 'design.baugrenzeSetzen',
+  title: 'Baugrenze setzen',
+  description:
+    'Setzt die Baugrenze (Baugesetz) als Polygon mit optionaler Höhenbeschränkung. Es gibt pro Geschoss genau eine Baugrenze — erneutes Setzen ersetzt die alte. Bauteile ausserhalb oder darüber melden die Grundriss-Checks als Fehler.',
+  params: z.object({
+    storeyId: z.string(),
+    outline: z.array(PtSchema).min(3),
+    maxHoehe: z.number().int().positive().nullable().default(null).describe('max. Höhe über Projektnull in mm'),
+    name: z.string().default('Baugrenze'),
+  }),
+  summarize: (p) => `Baugrenze${p.maxHoehe ? ` (max. ${(p.maxHoehe / 1000).toFixed(1)} m)` : ''} setzen`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const patches: AnyPatch[] = [];
+    for (const alt of doc.byKind<Boundary>('boundary')) {
+      if (alt.storeyId === p.storeyId) patches.push({ id: alt.id, before: alt, after: null });
+    }
+    const grenze: Boundary = {
+      id: newId('baugrenze'),
+      kind: 'boundary',
+      storeyId: p.storeyId,
+      outline: p.outline as Pt[],
+      maxHoehe: p.maxHoehe,
+      name: p.name,
+    };
+    patches.push(added(grenze));
+    return patches;
   },
 });

@@ -177,3 +177,34 @@ test('Plakat-Designer: A0-Plakat mit Slots und editierbaren Texten', async ({ pa
   await konzept.blur();
   await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Zwei Höfe');
 });
+
+test('Baugrenze: setzen, im Grundriss sichtbar, Checks melden Verstoss', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const eg = k.state().activeStoreyId;
+    k.run('design.zoneErstellen', {
+      storeyId: eg, name: 'Parzelle', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 20000, y: 0 }, { x: 20000, y: 15000 }, { x: 0, y: 15000 }],
+    });
+  });
+  await page.click('[data-testid="studie-toggle"]');
+  await page.click('[data-testid="als-baugrenze"]');
+  // Grenze strichpunktiert im Grundriss
+  await page.click('text=Grundriss');
+  await expect(page.locator('svg .baugrenze').first()).toBeAttached();
+  // Wand ausserhalb → Check «Baugrenze» erscheint im Kennzahlen-Panel
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW')).id;
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: aw,
+      a: { x: 18000, y: 5000 }, b: { x: 30000, y: 5000 },
+    });
+  });
+  await expect(page.locator('[data-testid="checks"]')).toContainText('Baugrenze');
+});

@@ -905,3 +905,38 @@ describe('Blatt-Texte (Plakat)', () => {
     expect((doc.get(sheetId) as import('../src').Sheet).texte).toHaveLength(0);
   });
 });
+
+describe('Baugrenzen (Phase 0)', () => {
+  it('setzen ersetzt die alte Grenze; Checks melden Lage- und Höhenverstösse', async () => {
+    const { pruefeGrundriss, derivePlan } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.baugrenzeSetzen', {
+      storeyId, maxHoehe: 10000,
+      outline: [{ x: 0, y: 0 }, { x: 20000, y: 0 }, { x: 20000, y: 15000 }, { x: 0, y: 15000 }],
+    });
+    execute(doc, 'design.baugrenzeSetzen', {
+      storeyId, maxHoehe: 9000, name: 'Kernzone',
+      outline: [{ x: 0, y: 0 }, { x: 20000, y: 0 }, { x: 20000, y: 15000 }, { x: 0, y: 15000 }],
+    });
+    expect(doc.byKind('boundary')).toHaveLength(1); // ersetzt, nicht gestapelt
+
+    // Wand ragt hinaus; Volumen zu hoch; braves Volumen bleibt still
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 18000, y: 5000 }, b: { x: 26000, y: 5000 } });
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 12000,
+      outline: [{ x: 2000, y: 2000 }, { x: 8000, y: 2000 }, { x: 8000, y: 8000 }, { x: 2000, y: 8000 }],
+    });
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 6000,
+      outline: [{ x: 10000, y: 2000 }, { x: 14000, y: 2000 }, { x: 14000, y: 6000 }, { x: 10000, y: 6000 }],
+    });
+    const befunde = pruefeGrundriss(doc, storeyId).filter((b) => b.regel === 'Baugrenze');
+    expect(befunde.some((b) => b.text.includes('Wand') && b.text.includes('hinaus'))).toBe(true);
+    expect(befunde.some((b) => b.text.includes('Volumen') && b.text.includes('Höhenbeschränkung'))).toBe(true);
+    expect(befunde).toHaveLength(2); // das brave Volumen meldet nichts
+
+    // Grundriss zeichnet die Grenze strichpunktiert (Klasse baugrenze)
+    const plan = derivePlan(doc, storeyId);
+    expect(plan.lines.filter((l) => l.classes.includes('baugrenze'))).toHaveLength(4);
+  });
+});
