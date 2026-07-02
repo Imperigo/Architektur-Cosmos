@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, KButton, Measure, moduleHue } from '@kosmo/ui';
-import { formatLength, type Assembly, type Pt, type Storey } from '@kosmo/kernel';
+import { formatLength, type Assembly, type Pt, type SectionSpec, type Storey } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
+import { SectionView } from './SectionView';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -12,7 +13,7 @@ import { KennzahlenPanel } from './KennzahlenPanel';
  * Undo/Redo. Splitscreen mit 2D-Plänen folgt in M2.
  */
 
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'schnitt';
 
 const SNAP = 250; // mm Rasterfang — später einstellbar/magnetisch
 
@@ -29,7 +30,8 @@ export function DesignWorkspace() {
   const setActiveStorey = useProject((s) => s.setActiveStorey);
 
   const [tool, setTool] = useState<ToolId>('wand');
-  const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split'>('split');
+  const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split' | 'quad'>('split');
+  const [sectionSpec, setSectionSpec] = useState<SectionSpec | null>(null);
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
   const [points, setPoints] = useState<Pt[]>([]);
   const [cursor, setCursor] = useState<Pt | null>(null);
@@ -45,6 +47,26 @@ export function DesignWorkspace() {
     [doc, revision],
   );
   const effectiveAssembly = assemblyId ?? assemblies[0]?.id ?? null;
+
+  // Auto-Ansicht von Süden: Linie unter dem Modell, Blick nach Norden
+  const elevationSpec = useMemo<SectionSpec | null>(() => {
+    const walls = doc.byKind('wall');
+    const masses = doc.byKind('mass');
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    const eat = (q: Pt) => {
+      minX = Math.min(minX, q.x); maxX = Math.max(maxX, q.x);
+      minY = Math.min(minY, q.y); maxY = Math.max(maxY, q.y);
+    };
+    for (const w of walls) { if (w.kind === 'wall') { eat(w.a); eat(w.b); } }
+    for (const m of masses) { if (m.kind === 'mass') for (const q of m.outline) eat(q); }
+    if (minX === Infinity) return null;
+    return {
+      a: { x: minX - 1000, y: minY - 1000 },
+      b: { x: maxX + 1000, y: minY - 1000 },
+      depth: maxY - minY + 3000,
+      lookLeft: true,
+    };
+  }, [doc, revision]);
 
   const handlersRef = useRef<ViewportHandlers>({});
   handlersRef.current = {
@@ -76,6 +98,14 @@ export function DesignWorkspace() {
             // Kettenzeichnen: Endpunkt wird neuer Anfang; Shift beendet
             setPoints(e.shiftKey ? [] : [p]);
           }
+        }
+      } else if (tool === 'schnitt') {
+        if (points.length === 0) {
+          setPoints([p]);
+        } else {
+          setSectionSpec({ a: points[0]!, b: p, depth: 30000, lookLeft: true });
+          setPoints([]);
+          setViewMode('quad');
         }
       } else if (tool === 'volumen' || tool === 'zone') {
         if (points.length >= 3 && Math.hypot(p.x - points[0]!.x, p.y - points[0]!.y) < SNAP) {
@@ -131,6 +161,7 @@ export function DesignWorkspace() {
             ['wand', 'Wand'],
             ['volumen', 'Volumen'],
             ['zone', 'Zone'],
+            ['schnitt', 'Schnitt'],
           ] as const
         ).map(([id, label]) => (
           <KButton
@@ -168,6 +199,7 @@ export function DesignWorkspace() {
           [
             ['3d', '3D'],
             ['split', '3D | Plan'],
+            ['quad', '4er'],
             ['2d', 'Grundriss'],
           ] as const
         ).map(([id, label]) => (
@@ -192,21 +224,49 @@ export function DesignWorkspace() {
 
       {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
       <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
-        {viewMode !== '2d' && (
-          <div style={{ position: 'relative', flex: 1 }}>
-            <Viewport3D handlers={handlersRef} />
-          </div>
-        )}
-        {viewMode !== '3d' && (
+        {viewMode === 'quad' ? (
           <div
             style={{
-              position: 'relative',
               flex: 1,
-              borderLeft: viewMode === 'split' ? '1px solid var(--k-line)' : 'none',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gridTemplateRows: '1fr 1fr',
+              gap: 1,
+              background: 'var(--k-line)',
             }}
           >
-            <PlanView handlers={handlersRef} />
+            <div style={{ position: 'relative', background: 'var(--k-field)' }}>
+              <Viewport3D handlers={handlersRef} />
+            </div>
+            <div style={{ position: 'relative' }}>
+              <PlanView handlers={handlersRef} />
+            </div>
+            <div style={{ position: 'relative' }}>
+              <SectionView spec={sectionSpec} title="Schnitt" />
+            </div>
+            <div style={{ position: 'relative' }}>
+              <SectionView spec={elevationSpec} title="Ansicht Süd" />
+            </div>
           </div>
+        ) : (
+          <>
+            {viewMode !== '2d' && (
+              <div style={{ position: 'relative', flex: 1 }}>
+                <Viewport3D handlers={handlersRef} />
+              </div>
+            )}
+            {viewMode !== '3d' && (
+              <div
+                style={{
+                  position: 'relative',
+                  flex: 1,
+                  borderLeft: viewMode === 'split' ? '1px solid var(--k-line)' : 'none',
+                }}
+              >
+                <PlanView handlers={handlersRef} />
+              </div>
+            )}
+          </>
         )}
 
         <KennzahlenPanel />
@@ -282,7 +342,9 @@ export function DesignWorkspace() {
           <span style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}>
             {tool === 'wand'
               ? 'Klick: Punkte setzen · Shift-Klick: Kette beenden · Esc: abbrechen'
-              : tool === 'volumen'
+              : tool === 'schnitt'
+                ? 'Klick: Anfang und Ende der Schnittlinie'
+                : tool === 'volumen'
                 ? 'Klick: Eckpunkte · Klick auf Start: schliessen'
                 : 'Klick: auswählen'}
           </span>
