@@ -141,19 +141,20 @@ export class History {
     return this.redoStack.length > 0;
   }
 
-  undo(doc: KosmoDoc): boolean {
+  undo(doc: KosmoDoc): AnyPatch[] | null {
     const step = this.undoStack.pop();
-    if (!step) return false;
-    doc.apply(invertPatches(step));
+    if (!step) return null;
+    const inverted = invertPatches(step);
+    doc.apply(inverted);
     this.redoStack.push(step);
-    return true;
+    return inverted;
   }
 
-  redo(doc: KosmoDoc): boolean {
+  redo(doc: KosmoDoc): AnyPatch[] | null {
     const step = this.redoStack.pop();
-    if (!step) return false;
+    if (!step) return null;
     doc.apply(step);
     this.undoStack.push(step);
-    return true;
+    return step;
   }
 }

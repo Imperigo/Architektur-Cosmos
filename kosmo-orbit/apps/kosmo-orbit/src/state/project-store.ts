@@ -29,6 +29,12 @@ export interface ProjectState {
   select(ids: string[]): void;
 }
 
+/** Sync-Haken: wird nach jeder lokalen Mutation mit den Patches gerufen. */
+let patchListener: ((patches: readonly import('@kosmo/kernel').AnyPatch[]) => void) | null = null;
+export function setPatchListener(fn: typeof patchListener): void {
+  patchListener = fn;
+}
+
 export const useProject = create<ProjectState>((set, get) => {
   const doc = new KosmoDoc();
   const history = new History();
@@ -49,16 +55,25 @@ export const useProject = create<ProjectState>((set, get) => {
           revision: get().doc.revision,
           journal: [...s.journal, result.journal].slice(-500),
         }));
+        patchListener?.(result.patches);
       }
       return result;
     },
 
     undo() {
-      if (get().history.undo(get().doc)) set({ revision: get().doc.revision });
+      const patches = get().history.undo(get().doc);
+      if (patches) {
+        set({ revision: get().doc.revision });
+        patchListener?.(patches);
+      }
     },
 
     redo() {
-      if (get().history.redo(get().doc)) set({ revision: get().doc.revision });
+      const patches = get().history.redo(get().doc);
+      if (patches) {
+        set({ revision: get().doc.revision });
+        patchListener?.(patches);
+      }
     },
 
     setActiveStorey(id) {

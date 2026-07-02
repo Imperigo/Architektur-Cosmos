@@ -17,6 +17,7 @@ import { DataWorkspace } from './modules/data/DataWorkspace';
 import { useProject } from './state/project-store';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
+import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
 
 type Screen = 'home' | 'design' | 'vis' | 'data';
 
@@ -32,6 +33,18 @@ export function App() {
   const [theme, setTheme] = useState<ThemeName>('paper');
   const [screen, setScreen] = useState<Screen>('home');
   const [kosmoOpen, setKosmoOpen] = useState(true);
+  const [syncOpen, setSyncOpen] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('aus');
+  const [peers, setPeers] = useState(0);
+  const [syncUrl, setSyncUrl] = useState(localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700');
+  const [syncRoom, setSyncRoom] = useState(localStorage.getItem('kosmo.sync.room') ?? 'projekt-1');
+
+  useEffect(() => {
+    onSyncStatus((s, p) => {
+      setSyncStatus(s);
+      setPeers(p);
+    });
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -77,6 +90,24 @@ export function App() {
           </>
         )}
         <div style={{ flex: 1 }} />
+        <button
+          onClick={() => setSyncOpen(!syncOpen)}
+          data-testid="sync-toggle"
+          style={{ all: 'unset', cursor: 'pointer' }}
+        >
+          <Badge
+            hue={
+              syncStatus === 'live'
+                ? 'var(--k-success)'
+                : syncStatus === 'aus'
+                  ? 'var(--k-ink-faint)'
+                  : 'var(--k-warning)'
+            }
+          >
+            {syncStatus === 'live' ? `Sync live · ${peers}` : syncStatus === 'aus' ? 'Sync aus' : syncStatus}
+          </Badge>
+        </button>
+        <Hairline vertical />
         <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
           Speichern
         </KButton>
@@ -112,6 +143,52 @@ export function App() {
         </KButton>
       </header>
 
+      {syncOpen && (
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            padding: '8px 16px',
+            borderBottom: '1px solid var(--k-line)',
+            background: 'var(--k-surface)',
+            fontSize: 12.5,
+          }}
+        >
+          <span style={{ color: 'var(--k-ink-faint)' }}>Sync-Server (HomeStation)</span>
+          <input
+            value={syncUrl}
+            onChange={(e) => {
+              setSyncUrl(e.target.value);
+              localStorage.setItem('kosmo.sync.url', e.target.value);
+            }}
+            data-testid="sync-url"
+            style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 210 }}
+          />
+          <span style={{ color: 'var(--k-ink-faint)' }}>Raum</span>
+          <input
+            value={syncRoom}
+            onChange={(e) => {
+              setSyncRoom(e.target.value);
+              localStorage.setItem('kosmo.sync.room', e.target.value);
+            }}
+            data-testid="sync-room"
+            style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 130 }}
+          />
+          {syncStatus === 'aus' || syncStatus === 'getrennt' ? (
+            <KButton size="sm" tone="accent" data-testid="sync-connect" onClick={() => connectSync(syncUrl, syncRoom)}>
+              Verbinden
+            </KButton>
+          ) : (
+            <KButton size="sm" tone="quiet" onClick={disconnectSync}>
+              Trennen
+            </KButton>
+          )}
+          <span style={{ color: 'var(--k-ink-faint)' }}>
+            Desktop und iPad im selben Raum arbeiten live am selben Modell.
+          </span>
+        </div>
+      )}
       <main style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         {screen === 'design' ? (
