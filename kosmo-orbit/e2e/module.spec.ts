@@ -85,3 +85,33 @@ test('KosmoDraw: Modellbaum sichtbar, Mengenauszug mit IFC-Identität', async ({
   await expect(page.locator('[data-testid="mengen-tabelle"]')).toBeVisible();
   await expect(page.getByText('Decken/Bodenplatten')).toBeVisible();
 });
+
+test('Berechnungsliste: Raumprogramm → Zone zeichnen → ausgezogen + Δ Max leben', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="liste-toggle"]');
+  // Raumprogramm: Marktgerecht 100 m², Max 200
+  await page.fill('[data-testid="posten-hnf-0"]', '100');
+  await page.fill('[data-testid="liste-max"]', '200');
+  await page.click('[data-testid="liste-uebernehmen"]');
+  await expect(page.locator('[data-testid="liste-tabelle"]')).toBeVisible();
+  // Zone «marktgerecht» über den Command-Weg zeichnen (10×12 m = 120 m²)
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId,
+      name: 'W1',
+      sia: 'HNF',
+      program: 'marktgerecht',
+      outline: [
+        { x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 12000 }, { x: 0, y: 12000 },
+      ],
+    });
+  });
+  // ausgezogen 120, Ziel 122 → Differenz −2; Δ Max = 120 − 200 = −80
+  await expect(page.locator('[data-testid="liste-tabelle"]')).toContainText('120');
+  await expect(page.locator('[data-testid="liste-delta-max"]')).toContainText('-80');
+});
