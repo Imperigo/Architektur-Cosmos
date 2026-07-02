@@ -334,3 +334,69 @@ export const createRoof = registerCommand({
     return [added(roof)];
   },
 });
+
+const editableFields = [
+  'name',
+  'sia',
+  'program',
+  'pitch',
+  'overhang',
+  'height',
+  'thickness',
+  'assemblyId',
+  'alignment',
+  'center',
+  'width',
+  'sill',
+  'swing',
+  'openingType',
+] as const;
+
+export const setProperty = registerCommand({
+  id: 'design.eigenschaftSetzen',
+  title: 'Eigenschaft ändern',
+  description:
+    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType). Zahlen in mm (pitch in Grad).',
+  params: z.object({
+    entityId: z.string(),
+    feld: z.enum(editableFields),
+    wert: z.union([z.string(), z.number()]),
+  }),
+  summarize: (p) => `${p.feld} → ${p.wert}`,
+  run: (doc, p) => {
+    const e = doc.get(p.entityId);
+    if (!e) throw new CommandError(`Element «${p.entityId}» existiert nicht`);
+    const allowed: Record<string, readonly string[]> = {
+      zone: ['name', 'sia', 'program'],
+      roof: ['pitch', 'overhang'],
+      mass: ['height', 'program'],
+      slab: ['thickness'],
+      wall: ['assemblyId', 'alignment', 'height'],
+      opening: ['center', 'width', 'height', 'sill', 'swing', 'openingType'],
+      storey: ['name', 'height'],
+      assembly: ['name'],
+    };
+    const fields = allowed[e.kind] ?? [];
+    if (!fields.includes(p.feld)) {
+      throw new CommandError(
+        `«${p.feld}» ist bei ${e.kind} nicht änderbar (möglich: ${fields.join(', ') || 'nichts'})`,
+      );
+    }
+    const numeric = ['pitch', 'overhang', 'height', 'thickness', 'center', 'width', 'sill'];
+    let wert: string | number = p.wert;
+    if (numeric.includes(p.feld)) {
+      wert = typeof p.wert === 'number' ? p.wert : Number(p.wert);
+      if (!Number.isFinite(wert) || wert < 0) throw new CommandError(`«${p.wert}» ist keine gültige Zahl`);
+      if (p.feld !== 'pitch') wert = Math.round(wert);
+    }
+    if (p.feld === 'sia' && !['HNF', 'NNF', 'VF', 'FF', 'KF'].includes(String(wert))) {
+      throw new CommandError('sia muss HNF, NNF, VF, FF oder KF sein');
+    }
+    if (p.feld === 'assemblyId') require<Assembly>(doc, String(wert), 'assembly');
+    const after = { ...e, [p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' ? 'meta' : p.feld]:
+      p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone'
+        ? { ...e.meta, name: String(wert) }
+        : wert } as typeof e;
+    return [{ id: e.id, before: e, after }];
+  },
+});

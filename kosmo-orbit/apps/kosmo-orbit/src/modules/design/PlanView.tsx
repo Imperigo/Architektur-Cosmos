@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { derivePlan, deriveDimensions, dimensionLabel, regionToPath, type Pt } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, regionToPath, assemblyThickness, type Assembly, type Pt, type Wall } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
@@ -30,6 +30,41 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
     () => (activeStoreyId ? deriveDimensions(doc, activeStoreyId) : null),
     [doc, activeStoreyId, revision],
   );
+
+  const pickEntityAt = (p: Pt): string | null => {
+    if (!activeStoreyId) return null;
+    // Wände zuerst (Abstand zur Achse ≤ halbe Dicke + Toleranz)
+    for (const w of doc.byKind<Wall>('wall')) {
+      if (w.storeyId !== activeStoreyId) continue;
+      const asm = doc.get<Assembly>(w.assemblyId);
+      const half = asm && asm.kind === 'assembly' ? assemblyThickness(asm) / 2 : 150;
+      const dx = w.b.x - w.a.x;
+      const dy = w.b.y - w.a.y;
+      const len2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((p.x - w.a.x) * dx + (p.y - w.a.y) * dy) / len2));
+      const qx = w.a.x + t * dx;
+      const qy = w.a.y + t * dy;
+      if (Math.hypot(p.x - qx, p.y - qy) <= half + 120) return w.id;
+    }
+    // Dann flächige Elemente (Punkt-in-Polygon)
+    const inPoly = (poly: readonly Pt[]) => {
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const a = poly[i]!;
+        const b = poly[j]!;
+        if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) {
+          inside = !inside;
+        }
+      }
+      return inside;
+    };
+    for (const e of doc.inStorey(activeStoreyId)) {
+      if ((e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'slab') && inPoly(e.outline)) {
+        return e.id;
+      }
+    }
+    return null;
+  };
 
   const toWorld = (clientX: number, clientY: number): Pt => {
     const rect = svgRef.current!.getBoundingClientRect();
@@ -86,6 +121,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
           }
           if (e.button !== 0) return;
           const p = toWorld(e.clientX, e.clientY);
+          if (handlers.current?.pickMode) {
+            handlers.current.onPick?.(pickEntityAt(p));
+            return;
+          }
           handlers.current?.onGroundClick?.({ p, shiftKey: e.shiftKey });
         }}
         onContextMenu={(e) => e.preventDefault()}

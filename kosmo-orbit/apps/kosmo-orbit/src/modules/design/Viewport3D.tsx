@@ -30,6 +30,9 @@ export interface ViewportHandlers {
   /** KosmoSketch: Freihand-Overlay im Plan aktiv. */
   sketchMode?: boolean;
   onSketchAccept?: (segments: { a: Pt; b: Pt }[]) => void;
+  /** Auswahl-Werkzeug: Klick pickt Element statt zu zeichnen. */
+  pickMode?: boolean;
+  onPick?: (entityId: string | null) => void;
 }
 
 const materialPalette: Record<string, { color: number; roughness: number }> = {
@@ -192,6 +195,18 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       const moved = Math.hypot(ev.clientX - downPos.x, ev.clientY - downPos.y);
       downPos = null;
       if (moved > 4 || ev.button !== 0) return; // Drag = Kamerafahrt, kein Klick
+      if (handlers.current?.pickMode) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        ndc.set(
+          ((ev.clientX - rect.left) / rect.width) * 2 - 1,
+          -((ev.clientY - rect.top) / rect.height) * 2 + 1,
+        );
+        raycaster.setFromCamera(ndc, camera);
+        const hits = raycaster.intersectObjects(model.children, false);
+        const hit = hits.find((h) => (h.object as THREE.Mesh).isMesh && h.object.userData['entityId']);
+        handlers.current.onPick?.(hit ? (hit.object.userData['entityId'] as string) : null);
+        return;
+      }
       const p = groundPoint(ev);
       if (p) handlers.current?.onGroundClick?.({ p, shiftKey: ev.shiftKey });
     };
@@ -213,6 +228,16 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const renderFrame = () => {
       syncModel();
       syncPreview();
+      // Auswahl-Highlight (Kupfer-Glut)
+      const sel = new Set(useProject.getState().selection);
+      for (const child of model.children) {
+        const mesh = child as THREE.Mesh;
+        if (!mesh.isMesh) continue;
+        const mat = mesh.material as THREE.MeshStandardMaterial;
+        const isSel = sel.has(mesh.userData['entityId'] as string);
+        if (mat.emissive) mat.emissive.setHex(isSel ? 0xa84b2b : 0x000000);
+        if ('emissiveIntensity' in mat) mat.emissiveIntensity = isSel ? 0.35 : 0;
+      }
       controls.update(clock.getDelta());
       renderer.render(scene, camera);
     };

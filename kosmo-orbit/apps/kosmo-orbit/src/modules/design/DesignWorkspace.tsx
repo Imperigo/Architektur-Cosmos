@@ -5,6 +5,7 @@ import { bootstrapProject, useProject } from '../../state/project-store';
 import { Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
+import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
 
@@ -70,8 +71,11 @@ export function DesignWorkspace() {
   }, [doc, revision]);
 
   const handlersRef = useRef<ViewportHandlers>({});
+  const select = useProject((s) => s.select);
   handlersRef.current = {
     sketchMode: tool === 'skizze',
+    pickMode: tool === 'auswahl',
+    onPick: (id) => select(id ? [id] : []),
     onSketchAccept: (segments) => {
       if (!activeStoreyId || !effectiveAssembly) return;
       for (const seg of segments) {
@@ -310,6 +314,7 @@ export function DesignWorkspace() {
         )}
 
         <KennzahlenPanel />
+        <Inspector />
 
         {/* Geschossleiste */}
         <div
