@@ -8,6 +8,7 @@ const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const reportRoot = resolve(root, args['report-dir'] || '.tmp/public-vacation-safe-check');
 const keepReports = Boolean(args['keep-reports']);
+const requireStaticExport = Boolean(args['require-static-export']);
 
 const checks = [
   {
@@ -177,6 +178,7 @@ function main() {
       writes_public_ready: false,
       public_ready_invariant_enforced: true,
       starts_server: false,
+      require_static_export: requireStaticExport,
       report_dir: relative(root, reportRoot)
     },
     started_at: startedAt,
@@ -199,16 +201,19 @@ function runCheck(check) {
   const startedAt = new Date().toISOString();
   if (check.requiresOut && !existsSync(resolve(root, 'out'))) {
     const endedAt = new Date().toISOString();
+    const status = requireStaticExport ? 'failed' : 'skipped';
     return {
       id: check.id,
       purpose: check.purpose,
       command: check.command.map(String),
-      status: 'skipped',
+      status,
       exit_code: null,
       signal: null,
       started_at: startedAt,
       ended_at: endedAt,
-      output_excerpt: 'Skipped because out/ is absent. Run npm run build before this aggregate check to include static export route inventory coverage.'
+      output_excerpt: requireStaticExport
+        ? 'Failed because out/ is absent and --require-static-export was passed. Run npm run build before this aggregate check.'
+        : 'Skipped because out/ is absent. Run npm run build before this aggregate check to include static export route inventory coverage.'
     };
   }
 
