@@ -35,23 +35,32 @@ main().catch((error) => {
 });
 
 async function main() {
+  const requiredReports = await readRequiredReports({
+    dataLaneSweep: refs.dataLaneSweep,
+    nightLoop: refs.nightLoop,
+    localWorkerRunbook: refs.localWorkerRunbook,
+    assetSourceMap: refs.assetSourceMap,
+    pilotEvidence: refs.pilotEvidence,
+    choiceMatrix: refs.choiceMatrix
+  });
   const reports = {
-    dataLaneSweep: await readJson(refs.dataLaneSweep),
-    nightLoop: await readJson(refs.nightLoop),
-    localWorkerRunbook: await readJson(refs.localWorkerRunbook),
+    dataLaneSweep: requiredReports.reports.dataLaneSweep,
+    nightLoop: requiredReports.reports.nightLoop,
+    localWorkerRunbook: requiredReports.reports.localWorkerRunbook,
     localWorkerOutputContractReview: await readOptionalJson(refs.localWorkerOutputContractReview),
     localWorkerOutputContractReviewCheck: await readOptionalJson(refs.localWorkerOutputContractReviewCheck),
-    assetSourceMap: await readJson(refs.assetSourceMap),
+    assetSourceMap: requiredReports.reports.assetSourceMap,
     assetCandidateTaxonomyReview: await readOptionalJson(refs.assetCandidateTaxonomyReview),
     assetCandidateTaxonomyReviewCheck: await readOptionalJson(refs.assetCandidateTaxonomyReviewCheck),
-    pilotEvidence: await readJson(refs.pilotEvidence),
+    pilotEvidence: requiredReports.reports.pilotEvidence,
     pilotGapLabelReview: await readOptionalJson(refs.pilotGapLabelReview),
     pilotGapLabelReviewCheck: await readOptionalJson(refs.pilotGapLabelReviewCheck),
-    choiceMatrix: await readJson(refs.choiceMatrix),
+    choiceMatrix: requiredReports.reports.choiceMatrix,
     preparePhase1SourcePackageContractCheck: await readOptionalJson(refs.preparePhase1SourcePackageContractCheck),
     assetPreparePhase1FixtureContractCheck: await readOptionalJson(refs.assetPreparePhase1FixtureContractCheck),
     localWorkerFixtureChainTaskPackCheck: await readOptionalJson(refs.localWorkerFixtureChainTaskPackCheck),
-    orbitBridge: await readOptionalJson(refs.orbitBridge)
+    orbitBridge: await readOptionalJson(refs.orbitBridge),
+    prerequisiteFailures: requiredReports.failures
   };
   const queue = buildQueue(reports);
 
@@ -90,9 +99,10 @@ function buildQueue({
   preparePhase1SourcePackageContractCheck,
   assetPreparePhase1FixtureContractCheck,
   localWorkerFixtureChainTaskPackCheck,
-  orbitBridge
+  orbitBridge,
+  prerequisiteFailures = []
 }) {
-  const failures = [];
+  const failures = [...prerequisiteFailures];
   const sourceRootChoiceSatisfied = choiceMatrix.status === 'source_root_owner_choice_consequence_matrix_satisfied_metadata_only';
   const choiceMatrixAccepted = [
     'source_root_owner_choice_consequence_matrix_ready',
@@ -348,6 +358,33 @@ function task({ id, lane, actor, action, executableNow, completed = false, owner
 
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
+}
+
+async function readRequiredReports(requiredRefs) {
+  const reports = {};
+  const failures = [];
+
+  for (const [key, path] of Object.entries(requiredRefs)) {
+    try {
+      reports[key] = await readJson(path);
+    } catch (error) {
+      const relativePath = relative(root, path);
+      reports[key] = {
+        schema_version: '0.1',
+        generated_at: new Date().toISOString(),
+        status: 'missing_required_report',
+        summary: {},
+        missing_required_report: {
+          key,
+          path: relativePath,
+          error: error.code || error.message
+        }
+      };
+      failures.push(`Missing or unreadable required report ${key}: ${relativePath} (${error.code || error.message}).`);
+    }
+  }
+
+  return { reports, failures };
 }
 
 async function readOptionalJson(path) {

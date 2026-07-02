@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:00:48.247Z",
+  "status": "source_root_decision_session_refresh_not_needed",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "records_owner_decision": false,
+    "overwrites_owner_decision": false,
+    "public_ready_after_refresh": 0,
+    "note": "This refresh only updates pending selection options from the current source-root selection brief. It refuses to write if an owner decision is present."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-selection-brief-2026-07-02.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-07-02.json"
+  ],
+  "summary": {
+    "safe_to_refresh": true,
+    "changed": false,
+    "previous_options": 10,
+    "refreshed_options": 10,
+    "selection_brief_options": 10,
+    "archive_options_after_refresh": 8,
+    "selected_decision": null,
+    "selected_root_path": null,
+    "failures": 0,
+    "public_ready_after_refresh": 0
+  },
+  "failures": [],
+  "next_actions": [
+    "Run npm run kosmo:source-root-decision-session-check.",
+    "Use the refreshed pending session as the owner-facing source-root choice surface.",
+    "Keep private inventory blocked until a recorded decision passes."
+  ]
+}
