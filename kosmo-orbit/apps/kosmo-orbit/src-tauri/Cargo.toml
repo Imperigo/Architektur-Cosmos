@@ -1,0 +1,25 @@
+[package]
+name = "kosmo-orbit"
+version = "1.0.0"
+description = "KosmoOrbit — die Architektur-Designzentrale"
+authors = ["Imperigo"]
+edition = "2021"
+
+[lib]
+name = "kosmo_orbit_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1

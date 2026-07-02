@@ -1,0 +1,144 @@
+/* KosmoOrbit Aura — Theme-Variablen und Grundstimmung.
+   Papier (hell, primär) und Tinte (dunkel). Werte gespiegelt aus tokens.ts. */
+
+:root,
+[data-theme='paper'] {
+  --k-field: #f5f3ee;
+  --k-surface: #fbfaf6;
+  --k-raised: #ffffff;
+  --k-ink: #191713;
+  --k-ink-soft: #5c574d;
+  --k-ink-faint: #8f897b;
+  --k-line: #e4e0d6;
+  --k-line-strong: #c9c4b6;
+  --k-accent: #a84b2b;
+  --k-accent-hover: #c25e3a;
+  --k-accent-ink: #ffffff;
+  --k-accent-wash: rgba(194, 94, 58, 0.1);
+  --k-success: #6f8b6a;
+  --k-warning: #c79a3d;
+  --k-danger: #b5483c;
+  --k-info: #5d7489;
+  --k-shadow-raised: 0 1px 2px rgba(20, 16, 12, 0.06), 0 4px 16px rgba(20, 16, 12, 0.07);
+  --k-shadow-overlay: 0 2px 6px rgba(20, 16, 12, 0.1), 0 16px 48px rgba(20, 16, 12, 0.18);
+  --k-viewport-sky: #edeae2;
+  --k-plan-paper: #fdfcf9;
+  color-scheme: light;
+}
+
+[data-theme='ink'] {
+  --k-field: #0a0a08;
+  --k-surface: #131210;
+  --k-raised: #1b1a16;
+  --k-ink: #f7f6f1;
+  --k-ink-soft: #a7a296;
+  --k-ink-faint: #6e6a5f;
+  --k-line: #28261f;
+  --k-line-strong: #3b382f;
+  --k-accent: #d9743f;
+  --k-accent-hover: #e8854e;
+  --k-accent-ink: #14100c;
+  --k-accent-wash: rgba(217, 116, 63, 0.14);
+  --k-success: #7fa079;
+  --k-warning: #d4ab52;
+  --k-danger: #cc5f52;
+  --k-info: #7590a8;
+  --k-shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.45);
+  --k-shadow-overlay: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(0, 0, 0, 0.6);
+  --k-viewport-sky: #101012;
+  --k-plan-paper: #16150f;
+  color-scheme: dark;
+}
+
+/* Modul-Farbtöne (Zeichen, Badges, Aktiv-Ringe — nie flächig) */
+:root {
+  --k-mod-orbit: #8f897b;
+  --k-mod-design: #c25e3a;
+  --k-mod-draw: #4e4a42;
+  --k-mod-data: #46617a;
+  --k-mod-vis: #c79a3d;
+  --k-mod-publish: #6f8b6a;
+  --k-mod-prepare: #7d5e78;
+  --k-mod-kosmo: #b06a8c;
+  --k-font-ui: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    sans-serif;
+  --k-font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
+  --k-radius-sm: 6px;
+  --k-radius-md: 10px;
+  --k-radius-lg: 14px;
+  --k-motion-fast: 120ms cubic-bezier(0.3, 0, 0.2, 1);
+  --k-motion-base: 200ms cubic-bezier(0.3, 0, 0.2, 1);
+  --k-motion-settle: 320ms cubic-bezier(0.22, 0.9, 0.28, 1);
+}
+
+[data-theme='ink'] {
+  --k-mod-draw: #8d887d;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--k-field);
+  color: var(--k-ink);
+  font-family: var(--k-font-ui);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'tnum' 1; /* tabellarische Zahlen — Masse müssen fluchten */
+  overscroll-behavior: none;
+}
+
+#root {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--k-accent-wash);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Native Bedienelemente (Slider, Checkboxen, Datum) im Kupfer-Akzent statt Browser-Blau */
+input,
+progress {
+  accent-color: var(--k-accent);
+}
+
+/* Feine, ruhige Scrollbalken */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--k-line-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--k-line-strong);
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,21 @@
+[project]
+name = "kosmo-bridge"
+version = "1.0.0"
+description = "Kosmo-Bridge: HTTP-Naht zwischen KosmoOrbit und der HomeStation-Pipeline (KosmoVis-Job-Store, Whisper-STT, TTS, Ollama-Proxy)"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "python-multipart>=0.0.9",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+stt = ["faster-whisper>=1.0"]
+
+[project.scripts]
+kosmo-bridge = "kosmo_bridge.main:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

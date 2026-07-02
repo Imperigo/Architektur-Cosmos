@@ -1,0 +1,59 @@
+name: KosmoOrbit CI
+
+on:
+  push:
+    branches: ['claude/kosmo-orbit-v1-build-pzxkbj']
+    paths: ['kosmo-orbit/**', '.github/workflows/kosmo-orbit-ci.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: kosmo-orbit-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: kosmo-orbit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: kosmo-orbit/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run build
+      - name: Upload Web-Build (PWA)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kosmo-orbit-web
+          path: kosmo-orbit/apps/kosmo-orbit/dist
+          retention-days: 14
+
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: kosmo-orbit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: kosmo-orbit/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npx playwright test
+      - name: KosmoDoc-Berichte (Screenshots) hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kosmo-orbit-e2e
+          path: kosmo-orbit/e2e-results
+          retention-days: 14

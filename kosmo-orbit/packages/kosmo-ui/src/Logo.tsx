@@ -1,0 +1,103 @@
+import type { CSSProperties } from 'react';
+import { moduleHue, type ModuleId } from './tokens';
+
+/**
+ * KosmoOrbit — Orbital-Logo-System.
+ *
+ * Konstruktion: ein präziser Ring (die Umlaufbahn) mit einem Planetenpunkt und
+ * einer feinen Achslinie — gezeichnet wie mit dem Zirkel auf Transparentpapier.
+ * Jedes Modul erbt dieselbe Konstruktion und setzt seinen Punkt an eine andere
+ * Position der Bahn; der Farbton kommt aus moduleHue. Dadurch bleibt die ganze
+ * Familie erkennbar EIN System.
+ */
+
+const orbitAngle: Record<ModuleId, number> = {
+  orbit: -90,
+  design: -30,
+  draw: 30,
+  data: 90,
+  vis: 150,
+  publish: 210,
+  prepare: 270,
+  kosmo: -90,
+};
+
+export interface OrbitMarkProps {
+  module?: ModuleId;
+  size?: number;
+  /** Tintenfarbe des Rings; Standard erbt currentColor. */
+  stroke?: string;
+  style?: CSSProperties;
+  className?: string;
+  title?: string;
+}
+
+export function OrbitMark({
+  module = 'orbit',
+  size = 28,
+  stroke = 'currentColor',
+  style,
+  className,
+  title,
+}: OrbitMarkProps) {
+  const hue = moduleHue[module];
+  const a = (orbitAngle[module] * Math.PI) / 180;
+  const R = 11;
+  const cx = 16 + R * Math.cos(a);
+  const cy = 16 + R * Math.sin(a);
+  const isKosmo = module === 'kosmo';
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      fill="none"
+      role="img"
+      aria-label={title ?? `Kosmo ${module}`}
+      style={style}
+      className={className}
+    >
+      {title ? <title>{title}</title> : null}
+      <circle cx="16" cy="16" r={R} stroke={stroke} strokeWidth="1.4" />
+      {/* Achskreuz der Konstruktion — hauchfein, wie Vorzeichnung */}
+      <path d="M16 3.4v4.2M16 24.4v4.2M3.4 16h4.2M24.4 16h4.2" stroke={stroke} strokeWidth="0.7" opacity="0.45" />
+      {isKosmo ? (
+        // Kosmo: der Kern selbst pulsiert im Zentrum, kein Trabant
+        <>
+          <circle cx="16" cy="16" r="4.4" fill={hue} />
+          <circle cx="16" cy="16" r="6.8" stroke={hue} strokeWidth="0.8" opacity="0.5" />
+        </>
+      ) : (
+        <>
+          <circle cx="16" cy="16" r="1.6" fill={stroke} opacity="0.8" />
+          <circle cx={cx} cy={cy} r="3.1" fill={hue} />
+        </>
+      )}
+    </svg>
+  );
+}
+
+export interface WordmarkProps {
+  size?: number;
+  style?: CSSProperties;
+}
+
+/** Wortmarke «KosmoOrbit» — feine Grotesk, das V1 als Exponent. */
+export function Wordmark({ size = 18, style }: WordmarkProps) {
+  return (
+    <span
+      style={{
+        fontSize: size,
+        letterSpacing: '0.01em',
+        fontWeight: 550,
+        display: 'inline-flex',
+        alignItems: 'baseline',
+        gap: 6,
+        ...style,
+      }}
+    >
+      Kosmo<span style={{ fontWeight: 350 }}>Orbit</span>
+      <sup style={{ fontSize: size * 0.55, opacity: 0.55, fontWeight: 450 }}>V1</sup>
+    </span>
+  );
+}

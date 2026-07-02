@@ -1,0 +1,47 @@
+name: KosmoOrbit iOS-Experiment
+
+# Owner-Q3: Tauri-iOS als CI-Experiment. Ohne Apple-Zertifikate kann hier
+# nichts signiert werden — das Ziel ist der ehrliche Befund, wie weit
+# init + build kommen, plus das Xcode-Projekt als Artefakt (der Owner
+# signiert lokal). Auslösen: kosmo-orbit/.ios-build-request ändern+pushen.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/kosmo-orbit-v1-build-pzxkbj']
+    paths: ['kosmo-orbit/.ios-build-request']
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: kosmo-orbit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: kosmo-orbit/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim
+      - run: npm ci
+      - name: Icon-Satz generieren
+        run: npx tauri icon public/icons/icon-512.png
+        working-directory: kosmo-orbit/apps/kosmo-orbit
+      - name: iOS-Projekt initialisieren
+        run: npx tauri ios init
+        working-directory: kosmo-orbit/apps/kosmo-orbit
+      - name: iOS-Build (Simulator, unsigniert) — Experiment, darf scheitern
+        continue-on-error: true
+        run: npx tauri ios build --target aarch64-sim --debug || echo "::warning::iOS-Build gescheitert — Befund im Log"
+        working-directory: kosmo-orbit/apps/kosmo-orbit
+      - name: Xcode-Projekt als Artefakt (Owner signiert lokal)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kosmo-orbit-ios-projekt
+          path: kosmo-orbit/apps/kosmo-orbit/src-tauri/gen/apple
+          retention-days: 14
