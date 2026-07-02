@@ -171,17 +171,30 @@ export class MockProvider implements ChatProvider {
     // Nach einem Tool-Resultat: bestätigen statt denselben Vorschlag wiederholen
     if (lastMsg?.role === 'tool') {
       await new Promise((r) => setTimeout(r, 40));
-      yield {
-        type: 'text',
-        delta: lastMsg.content.startsWith('AUSGEFÜHRT')
-          ? 'Erledigt — die Wand steht. Soll ich gleich Fenster setzen?'
-          : 'Verstanden, ich lasse es.',
-      };
+      const delta =
+        lastMsg.toolName === 'referenzen_suchen'
+          ? lastMsg.content.startsWith('Keine')
+            ? lastMsg.content
+            : `Aus KosmoData passen diese Referenzen:\n${lastMsg.content}`
+          : lastMsg.content.startsWith('AUSGEFÜHRT')
+            ? 'Erledigt — die Wand steht. Soll ich gleich Fenster setzen?'
+            : 'Verstanden, ich lasse es.';
+      yield { type: 'text', delta };
       yield { type: 'done', stopReason: 'stop' };
       return;
     }
     const last = [...req.messages].reverse().find((m) => m.role === 'user');
     const text = last?.content.toLowerCase() ?? '';
+    const ref = text.match(/referenz\w*\s+(?:zu|für|mit)?\s*«?([\wäöü-]+)»?/);
+    if (ref) {
+      yield { type: 'text', delta: 'Ich schaue in KosmoData nach. ' };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_mock_ref', name: 'referenzen_suchen', arguments: { suchbegriff: ref[1] } },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
     const wall = text.match(
       /wand.*?von\s*\(?(-?\d+)[.,]?\s*(-?\d+)\)?\s*(?:nach|bis|zu)\s*\(?(-?\d+)[.,]?\s*(-?\d+)\)?/,
     );

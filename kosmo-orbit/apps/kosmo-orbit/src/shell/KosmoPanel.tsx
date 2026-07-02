@@ -13,6 +13,7 @@ import {
 } from '@kosmo/ai';
 import type { Assembly } from '@kosmo/kernel';
 import { useProject } from '../state/project-store';
+import { loadReferences } from '../modules/data/DataWorkspace';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -99,7 +100,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         },
         onError: (msg) => push('kosmo', `⚠ ${msg}`),
       },
-      personas.kosmo.systemPrompt + journal.toPromptBlock(),
+      personas.kosmo.systemPrompt,
       () => {
         const st = useProject.getState();
         const wallAssembly = st.doc
@@ -110,6 +111,42 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           ...(wallAssembly ? { assemblyId: wallAssembly.id } : {}),
         };
       },
+      [
+        {
+          name: 'referenzen_suchen',
+          description:
+            'Durchsucht KosmoData (Architektur-Referenzbibliothek, 112 kuratierte Bauwerke der Architekturgeschichte) nach Stichwort. Liefert Titel, Jahr, Ort, Architekten, Themen, Material. Nutze es, wenn der Architekt nach Referenzen, Vorbildern oder Vergleichen fragt.',
+          parameters: {
+            type: 'object',
+            properties: {
+              suchbegriff: { type: 'string', description: 'z.B. «Beton», «Moschee», «Le Corbusier», «Holz»' },
+            },
+            required: ['suchbegriff'],
+            additionalProperties: false,
+          },
+          execute: async (args) => {
+            const q = String((args as { suchbegriff?: string })?.suchbegriff ?? '').toLowerCase();
+            const refs = await loadReferences();
+            const hits = refs
+              .filter((e) => {
+                const hay = [e.title, e.city, e.country, e.style_sector, e.program, ...(e.authors ?? []), ...(e.themes ?? []), ...(e.materials ?? [])]
+                  .filter(Boolean)
+                  .join(' ')
+                  .toLowerCase();
+                return hay.includes(q);
+              })
+              .slice(0, 8);
+            if (hits.length === 0) return `Keine Referenz zu «${q}» in KosmoData.`;
+            return hits
+              .map(
+                (e) =>
+                  `- ${e.title} (${e.year_start ?? '?'}, ${[e.city, e.country].filter(Boolean).join(', ')}) — ${(e.authors ?? []).join(', ') || 'unbekannt'}; Themen: ${(e.themes ?? []).join(', ')}${e.one_sentence ? ` — ${e.one_sentence}` : ''}`,
+              )
+              .join('\n');
+          },
+        },
+      ],
+      journal.toPromptBlock(),
     );
     return s;
     // Session bewusst pro Provider-Konfiguration neu

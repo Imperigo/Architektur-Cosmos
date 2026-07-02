@@ -3,6 +3,11 @@ import type { ChatMessage, ChatProvider, ToolCall, ToolDefinition } from './prov
 import { commandTools, modelQueryTool, validateToolCall, type ValidatedCall } from './tools';
 import { routePersona } from './personas';
 
+/** Read-Only-Tool: läuft sofort (ungated), z.B. Referenzsuche in KosmoData. */
+export interface ReadTool extends ToolDefinition {
+  execute(args: unknown): string | Promise<string>;
+}
+
 /**
  * ChatSession — der Kosmo-Gesprächsloop mit gatetem Tool-Calling.
  *
@@ -31,6 +36,7 @@ export class ChatSession {
   private pending = new Map<string, ValidatedCall & { callId: string }>();
   private tools: ToolDefinition[];
   private queryTool: ReturnType<typeof modelQueryTool>;
+  private readTools: Map<string, ReadTool>;
 
   constructor(
     private provider: ChatProvider,
@@ -39,10 +45,15 @@ export class ChatSession {
     systemPrompt?: string,
     /** App-Kontext (aktives Geschoss, gewählter Aufbau): füllt fehlende Argumente. */
     private contextDefaults?: () => Record<string, unknown>,
+    extraReadTools: ReadTool[] = [],
+    /** Wird an jeden Persona-Systemprompt angehängt (z.B. Lernjournal). */
+    private systemSuffix = '',
   ) {
     this.queryTool = modelQueryTool(doc);
+    this.readTools = new Map(extraReadTools.map((t) => [t.name, t]));
     this.tools = [
       { name: this.queryTool.name, description: this.queryTool.description, parameters: this.queryTool.parameters },
+      ...extraReadTools.map((t) => ({ name: t.name, description: t.description, parameters: t.parameters })),
       ...commandTools(),
     ];
     if (systemPrompt) this.messages.push({ role: 'system', content: systemPrompt });
@@ -55,10 +66,11 @@ export class ChatSession {
   async send(userText: string): Promise<void> {
     const { persona, cleaned } = routePersona(userText);
     // Persona-Wechsel: Systemprompt der Runde austauschen (eine sichtbare Stimme)
+    const system = persona.systemPrompt + this.systemSuffix;
     if (this.messages[0]?.role === 'system') {
-      this.messages[0] = { role: 'system', content: persona.systemPrompt };
+      this.messages[0] = { role: 'system', content: system };
     } else {
-      this.messages.unshift({ role: 'system', content: persona.systemPrompt });
+      this.messages.unshift({ role: 'system', content: system });
     }
     this.messages.push({ role: 'user', content: cleaned });
     await this.turn();
@@ -101,6 +113,18 @@ export class ChatSession {
           toolName: call.name,
           content: this.queryTool.execute(),
         });
+        needsContinue = true;
+        continue;
+      }
+      const readTool = this.readTools.get(call.name);
+      if (readTool) {
+        let content: string;
+        try {
+          content = await readTool.execute(call.arguments);
+        } catch (err) {
+          content = `FEHLER: ${err instanceof Error ? err.message : String(err)}`;
+        }
+        this.messages.push({ role: 'tool', toolName: call.name, content });
         needsContinue = true;
         continue;
       }
