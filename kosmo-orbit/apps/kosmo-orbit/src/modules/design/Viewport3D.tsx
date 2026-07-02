@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
+import * as SunCalc from 'suncalc';
 import { deriveAll, type GeometryArtifact, type Pt } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
@@ -11,6 +12,15 @@ let contextRevision = 0;
 export function setContextMeshes(meshes: ContextMesh[]): void {
   contextMeshes = meshes;
   contextRevision++;
+}
+
+// Sonnenstand (Q12 Schattenstudie): echtes Datum/Uhrzeit statt Studio-Sonne
+let sunDate: Date | null = null;
+let sunRevision = 0;
+export const SONNE_STANDORT = { lat: 47.05, lng: 8.31 }; // Innerschweiz
+export function setSunDate(d: Date | null): void {
+  sunDate = d;
+  sunRevision++;
 }
 
 // Splat-Kontext (Gaussian Splats der HomeStation: LingBot-Map/gsplat-Kette)
@@ -94,6 +104,27 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     sun.shadow.bias = -0.0003;
     scene.add(sun);
     scene.add(new THREE.HemisphereLight(0xf2f4f8, 0xb8b0a2, 0.9));
+
+    // Sonnenstand (Q12): suncalc → Lichtrichtung; ohne Datum bleibt die Studio-Sonne
+    let lastSunRevision = -1;
+    function syncSun() {
+      if (sunRevision === lastSunRevision) return;
+      lastSunRevision = sunRevision;
+      if (!sunDate) {
+        sun.position.set(30, 42, 18);
+        sun.intensity = 2.6;
+        return;
+      }
+      const p = SunCalc.getPosition(sunDate, SONNE_STANDORT.lat, SONNE_STANDORT.lng);
+      // suncalc: azimuth 0 = Süd, +West; three: x Ost, y oben, z Süd
+      const d = 70;
+      const x = -Math.sin(p.azimuth) * Math.cos(p.altitude) * d;
+      const y = Math.max(Math.sin(p.altitude), 0.02) * d;
+      const z = Math.cos(p.azimuth) * Math.cos(p.altitude) * d;
+      sun.position.set(x, y, z);
+      // unter dem Horizont: fast dunkel, flache Sonne: warm gedimmt
+      sun.intensity = p.altitude <= 0 ? 0.15 : 1.2 + 1.6 * Math.min(Math.sin(p.altitude) * 2, 1);
+    }
 
     // Boden + Raster (1m fein, 10m stark)
     const ground = new THREE.Mesh(
@@ -348,6 +379,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncPreview();
       syncContext();
       syncSplats();
+      syncSun();
       // Auswahl-Highlight (Kupfer-Glut)
       const sel = new Set(useProject.getState().selection);
       for (const child of model.children) {

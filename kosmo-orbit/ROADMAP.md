@@ -55,3 +55,11 @@ QA-Verdikt zurück → iPad synchron.
 
 Workspace `kosmo-orbit/` (eigenständig, Root-Website unberührt): `packages/kosmo-{ui,contracts,kernel,ai}` + `apps/kosmo-orbit` (+ geplant: `kosmo-data`, `kosmo-sync`, `tools/homestation-bridge`, `tools/sync-server`).
 Kern-Prinzipien: int-mm-Koordinaten · Commands = einzige Schreiber (zod-Schema = LLM-Tool) · Patches invertierbar (Undo/Yjs/Journal) · Grundriss symbolisch aus Parametrik, Stile aus CSS-Stiftsätzen · Kern ohne DOM/three-Import (Worker-fähig, transferable Arrays).
+
+## Phase 2 (3 Wochen ohne HomeStation, Owner 02.07. abends)
+
+19. Q12 komplett: ~~Schattenstudie (suncalc, Datum/Uhrzeit, Innerschweiz)~~ ✅ — offen: Volumenstudien-Generator (Varianten in Parzelle, gated), Grundriss-Checks (Zimmer-/Türbreiten, Treppen-Komfort) als KosmoCheck-Panel
+20. KosmoAsset-Rest (Q14): PBR-Materialien mit SIA-Zuordnung, Referenz-3D aus KosmoData ins Modell
+21. Hidden-Line im Schnitt/Ansicht, 3D-T-Stösse, Ansichten aller vier Richtungen in KosmoPublish
+22. KosmoTrain (Q8): LoRA-Trainings-Rezepte + Journal-Export dokumentieren; Tauri-iOS-CI-Experiment (Q3)
+23. Projektverwaltung (mehrere .kosmo, Autosave), iPad-/Touch-Feinschliff, Golden-SVG-Tests

@@ -9,7 +9,7 @@ import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
 import { importIfc } from './ifc-import';
-import { setContextMeshes, setSplatCloud } from './Viewport3D';
+import { setContextMeshes, setSplatCloud, setSunDate } from './Viewport3D';
 import { registerActions } from '../../shell/palette';
 
 /**
@@ -40,6 +40,20 @@ export function DesignWorkspace() {
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
   const [points, setPoints] = useState<Pt[]>([]);
   const [cursor, setCursor] = useState<Pt | null>(null);
+  // Schattenstudie (Q12): Datum + Stunde (Viertelstunden), aus = Studio-Sonne
+  const [sonneOffen, setSonneOffen] = useState(false);
+  const [sonnenDatum, setSonnenDatum] = useState('2026-06-21');
+  const [sonnenStunde, setSonnenStunde] = useState(14);
+
+  useEffect(() => {
+    if (!sonneOffen) {
+      setSunDate(null);
+      return;
+    }
+    const d = new Date(`${sonnenDatum}T00:00:00`);
+    d.setMinutes(Math.round(sonnenStunde * 60));
+    setSunDate(d);
+  }, [sonneOffen, sonnenDatum, sonnenStunde]);
 
   useEffect(() => {
     bootstrapProject();
@@ -340,6 +354,14 @@ export function DesignWorkspace() {
         >
           Splat laden
         </KButton>
+        <KButton
+          size="sm"
+          tone={sonneOffen ? 'accent' : 'ghost'}
+          data-testid="sonne-toggle"
+          onClick={() => setSonneOffen(!sonneOffen)}
+        >
+          ☀ Sonne
+        </KButton>
         <span style={{ width: 12 }} />
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
           ↩ Rückgängig
@@ -348,6 +370,45 @@ export function DesignWorkspace() {
           ↪ Wiederholen
         </KButton>
       </div>
+
+      {sonneOffen && (
+        <div
+          style={{
+            display: 'flex',
+            gap: 12,
+            alignItems: 'center',
+            padding: '6px 12px',
+            borderBottom: '1px solid var(--k-line)',
+            background: 'var(--k-surface)',
+            fontSize: 12.5,
+          }}
+        >
+          <span style={{ color: 'var(--k-ink-faint)' }}>Schattenstudie · Innerschweiz</span>
+          <input
+            type="date"
+            value={sonnenDatum}
+            data-testid="sonne-datum"
+            onChange={(e) => setSonnenDatum(e.target.value)}
+            style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
+          />
+          <input
+            type="range"
+            min={5}
+            max={22}
+            step={0.25}
+            value={sonnenStunde}
+            data-testid="sonne-stunde"
+            onChange={(e) => setSonnenStunde(Number(e.target.value))}
+            style={{ width: 260 }}
+          />
+          <span style={{ fontFamily: 'var(--k-mono, monospace)', minWidth: 48 }}>
+            {String(Math.floor(sonnenStunde)).padStart(2, '0')}:{String(Math.round((sonnenStunde % 1) * 60)).padStart(2, '0')}
+          </span>
+          <span style={{ color: 'var(--k-ink-faint)' }}>
+            21.&nbsp;März/Sept. für den 2h-Nachweis, 21.&nbsp;Juni/Dez. für die Extreme.
+          </span>
+        </div>
+      )}
 
       {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
       <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
