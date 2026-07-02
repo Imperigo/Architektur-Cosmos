@@ -80,6 +80,21 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
     };
   };
 
+  // Beim Einhängen einmal auf den Modellinhalt einpassen (z.B. geladenes Projekt).
+  // Bewusst NUR beim Mount: während des Zeichnens darf die Ansicht nie springen.
+  useEffect(() => {
+    const b = plan?.bounds;
+    const svg = svgRef.current;
+    if (!b || !svg) return;
+    const rect = svg.getBoundingClientRect();
+    if (rect.width < 20 || rect.height < 20) return;
+    const w = Math.max(b.maxX - b.minX, 2000);
+    const h = Math.max(b.maxY - b.minY, 2000);
+    const scale = Math.min(1, Math.max(0.005, Math.min(rect.width / (w * 1.25), rect.height / (h * 1.25))));
+    setView({ cx: (b.minX + b.maxX) / 2, cy: (b.minY + b.maxY) / 2, scale });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;

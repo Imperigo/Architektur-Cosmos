@@ -111,6 +111,12 @@ textarea {
   color: inherit;
 }
 
+/* Native Bedienelemente (Slider, Checkboxen, Datum) im Kupfer-Akzent statt Browser-Blau */
+input,
+progress {
+  accent-color: var(--k-accent);
+}
+
 /* Feine, ruhige Scrollbalken */
 * {
   scrollbar-width: thin;
