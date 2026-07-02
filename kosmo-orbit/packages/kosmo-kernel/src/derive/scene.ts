@@ -1,6 +1,6 @@
 import type { Assembly, MassBody, Roof, Slab, Stair, Storey, Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
-import { dist } from '../model/units';
+import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
 import { stairSpec } from '../commands/design';
 import { extrudePolygon, extrudeWallWithOpenings, type GeometryArtifact } from './mesh';
@@ -64,7 +64,7 @@ function deriveWall(doc: KosmoDoc, wall: Wall): GeometryArtifact | null {
     z1: storey.elevation + r.z1,
   }));
   const core = assembly.layers.find((l) => l.function === 'tragend') ?? assembly.layers[0];
-  return extrudeWallWithOpenings(
+  const artifact = extrudeWallWithOpenings(
     wall.id,
     core?.material ?? 'beton',
     wall.a,
@@ -76,6 +76,72 @@ function deriveWall(doc: KosmoDoc, wall: Wall): GeometryArtifact | null {
     zTop,
     rects,
   );
+  if (artifact) miterWallEnds(artifact, doc, wall, length);
+  return artifact;
+}
+
+/**
+ * Wandknoten: Gehrung an Ecken. Treffen sich genau zwei Wandenden in einem
+ * Punkt, wird die Stirnfläche auf die Winkelhalbierende geschert — beide
+ * Körper teilen dieselbe Fugenebene (kein Überlappen, kein Loch, keine
+ * z-kämpfenden Deckflächen). Mehrfachknoten und T-Stösse bleiben stumpf.
+ */
+function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, length: number): void {
+  const d = axisDirection(wall);
+  const n = { x: -d.y, y: d.x };
+  const shearK: [number, number] = [0, 0];
+  const active: [boolean, boolean] = [false, false];
+
+  const ends: [Pt, Pt] = [wall.a, wall.b];
+  for (let endIdx = 0 as 0 | 1; endIdx <= 1; endIdx++) {
+    const P = ends[endIdx]!;
+    // Nachbarn: Wandenden desselben Geschosses am selben Punkt (±1 mm)
+    const outgoing: { x: number; y: number }[] = [];
+    for (const other of doc.byKind<Wall>('wall')) {
+      if (other.id === wall.id || other.storeyId !== wall.storeyId) continue;
+      for (const [Q, R] of [
+        [other.a, other.b],
+        [other.b, other.a],
+      ] as const) {
+        if (Math.abs(Q.x - P.x) <= 1 && Math.abs(Q.y - P.y) <= 1) {
+          const len = Math.hypot(R.x - Q.x, R.y - Q.y);
+          if (len > 0) outgoing.push({ x: (R.x - Q.x) / len, y: (R.y - Q.y) / len });
+        }
+      }
+    }
+    if (outgoing.length !== 1) continue;
+    const e = outgoing[0]!;
+    const dLoc = endIdx === 1 ? d : { x: -d.x, y: -d.y };
+    const bis = { x: -dLoc.x + e.x, y: -dLoc.y + e.y };
+    const bl = Math.hypot(bis.x, bis.y);
+    if (bl < 1e-6) continue; // durchlaufende Wand (180°)
+    const bn = (bis.x * n.x + bis.y * n.y) / bl;
+    const bd = (bis.x * dLoc.x + bis.y * dLoc.y) / bl;
+    if (Math.abs(bn) < 0.2) continue; // fast kolinear — keine Gehrung
+    const k = bd / bn;
+    if (Math.abs(k) > 3) continue; // spitzer Winkel — Gehrungs-Exzess vermeiden
+    shearK[endIdx] = k;
+    active[endIdx] = true;
+  }
+  if (!active[0] && !active[1]) return;
+
+  const shear = (arr: Float32Array) => {
+    for (let i = 0; i < arr.length; i += 3) {
+      const rx = arr[i]! - wall.a.x;
+      const ry = arr[i + 1]! - wall.a.y;
+      const s = rx * d.x + ry * d.y;
+      const o = rx * n.x + ry * n.y;
+      let t = 0;
+      if (active[0] && s < 1) t = -(o * shearK[0]);
+      else if (active[1] && s > length - 1) t = o * shearK[1];
+      if (t !== 0) {
+        arr[i] = arr[i]! + d.x * t;
+        arr[i + 1] = arr[i + 1]! + d.y * t;
+      }
+    }
+  };
+  shear(artifact.positions);
+  shear(artifact.edges);
 }
 
 function deriveSlab(doc: KosmoDoc, slab: Slab): GeometryArtifact | null {

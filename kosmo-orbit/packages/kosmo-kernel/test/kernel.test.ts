@@ -434,3 +434,38 @@ describe('KosmoPublish (Blätter, DXF)', () => {
     expect(dxf).toContain('EOF');
   });
 });
+
+describe('3D-Wandknoten (Gehrung)', () => {
+  it('L-Ecke: beide Wände enden auf der Winkelhalbierenden (kein Überlappen/Loch)', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    // AW Beton 36: 360 mm dick, zentriert → Offsets ±180
+    const w1 = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 },
+    });
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 9000, y: 0 }, b: { x: 9000, y: 6000 },
+    });
+    const art = deriveEntity(doc, (w1.patches[0] as { id: string }).id)!;
+    let hasOuter = false, hasInner = false, maxX = -Infinity;
+    for (let i = 0; i < art.positions.length; i += 3) {
+      const x = art.positions[i]!, y = art.positions[i + 1]!;
+      maxX = Math.max(maxX, x);
+      if (Math.abs(x - 9180) < 1 && Math.abs(y + 180) < 1) hasOuter = true;
+      if (Math.abs(x - 8820) < 1 && Math.abs(y - 180) < 1) hasInner = true;
+    }
+    expect(hasOuter).toBe(true);   // Aussenecke (9180, −180)
+    expect(hasInner).toBe(true);   // Innenecke (8820, +180)
+    expect(maxX).toBeLessThan(9181); // nichts ragt über die Gehrung hinaus
+  });
+
+  it('freies Wandende bleibt stumpf', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 5000, y: 0 },
+    });
+    const art = deriveEntity(doc, (w.patches[0] as { id: string }).id)!;
+    let maxX = -Infinity;
+    for (let i = 0; i < art.positions.length; i += 3) maxX = Math.max(maxX, art.positions[i]!);
+    expect(maxX).toBeCloseTo(5000, 0);
+  });
+});
