@@ -18,6 +18,15 @@ import { PublishWorkspace } from './modules/publish/PublishWorkspace';
 import { PrepareWorkspace } from './modules/prepare/PrepareWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
 import { registerActions } from './shell/palette';
+import {
+  aktivesProjektId,
+  initVault,
+  listeProjekte,
+  loescheProjekt,
+  neuesProjekt,
+  oeffneProjekt,
+  type VaultEintrag,
+} from './state/project-vault';
 import { useProject } from './state/project-store';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
@@ -58,6 +67,7 @@ export function App() {
       setSyncStatus(s);
       setPeers(p);
     });
+    void initVault();
   }, []);
 
   useEffect(() => {
@@ -313,6 +323,7 @@ export function App() {
                   </div>
                 </Panel>
               )}
+              <ProjektListe onOpen={() => setScreen('design')} />
               <div
                 style={{
                   display: 'grid',
@@ -355,6 +366,101 @@ export function App() {
         {kosmoOpen && <KosmoPanel onClose={() => setKosmoOpen(false)} />}
       </main>
       <CommandPalette />
+    </div>
+  );
+}
+
+/** Projektverwaltung: Autosave-Stände aus dem Tresor — öffnen, löschen, neu. */
+function ProjektListe({ onOpen }: { onOpen: () => void }) {
+  const [projekte, setProjekte] = useState<Omit<VaultEintrag, 'json'>[]>([]);
+  const [neuName, setNeuName] = useState('');
+  const refresh = () => void listeProjekte().then(setProjekte).catch(() => undefined);
+  useEffect(refresh, []);
+
+  return (
+    <div style={{ display: 'grid', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ fontWeight: 550, fontSize: 13.5 }}>Projekte</div>
+        <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+          Autosave — jede Änderung landet hier. .kosmo bleibt fürs Weitergeben.
+        </span>
+      </div>
+      {projekte.length === 0 && (
+        <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>
+          Noch keine gesicherten Stände — sobald du zeichnest, erscheint dein Projekt hier.
+        </div>
+      )}
+      <div style={{ display: 'grid', gap: 6 }}>
+        {projekte.map((p) => (
+          <Panel
+            key={p.id}
+            data-testid={`projekt-${p.id}`}
+            style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 10 }}
+          >
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <span style={{ fontWeight: 550, fontSize: 13 }}>{p.name}</span>
+              {p.id === aktivesProjektId() && (
+                <span style={{ marginLeft: 8 }}>
+                  <Badge hue="var(--k-success)">aktiv</Badge>
+                </span>
+              )}
+              <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+                {p.elemente} Elemente · {new Date(p.updatedAt).toLocaleString('de-CH')}
+              </div>
+            </div>
+            {p.id !== aktivesProjektId() && (
+              <KButton
+                size="sm"
+                tone="quiet"
+                data-testid={`projekt-oeffnen-${p.id}`}
+                onClick={() => void oeffneProjekt(p.id).then(onOpen)}
+              >
+                Öffnen
+              </KButton>
+            )}
+            <KButton
+              size="sm"
+              tone="ghost"
+              aria-label={`${p.name} löschen`}
+              onClick={() => {
+                if (confirm(`Projekt «${p.name}» endgültig löschen?`)) {
+                  void loescheProjekt(p.id).then(refresh);
+                }
+              }}
+            >
+              Löschen
+            </KButton>
+          </Panel>
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <input
+          value={neuName}
+          data-testid="projekt-neu-name"
+          onChange={(e) => setNeuName(e.target.value)}
+          placeholder="Neues Projekt — Name"
+          style={{
+            padding: '6px 10px',
+            borderRadius: 8,
+            border: '1px solid var(--k-line-strong)',
+            background: 'var(--k-raised)',
+            fontSize: 13,
+            width: 240,
+          }}
+        />
+        <KButton
+          size="sm"
+          tone="quiet"
+          data-testid="projekt-neu"
+          onClick={() => {
+            neuesProjekt(neuName.trim());
+            setNeuName('');
+            onOpen();
+          }}
+        >
+          + Neues Projekt
+        </KButton>
+      </div>
     </div>
   );
 }

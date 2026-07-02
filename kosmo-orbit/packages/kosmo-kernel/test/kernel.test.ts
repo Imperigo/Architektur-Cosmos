@@ -553,3 +553,37 @@ describe('Volumenstudien-Generator (Q12)', () => {
     expect(turm.hoehe).toBeLessThanOrEqual(12000);
   });
 });
+
+describe('Golden-SVG (Plan-Regression)', () => {
+  it('Testhaus-Grundriss ist byte-identisch zur committeten Referenz', async () => {
+    const { planToSvg, A3_QUER } = await import('../src');
+    const { readFileSync } = await import('node:fs');
+    const doc = new KosmoDoc();
+    doc.settings.projectName = 'Golden-Testhaus';
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const sid = (eg.patches[0] as { id: string }).id;
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW', target: 'wall',
+      layers: [
+        { material: 'putz', thickness: 20, function: 'bekleidung' },
+        { material: 'daemmung-mw', thickness: 160, function: 'daemmung' },
+        { material: 'beton', thickness: 180, function: 'tragend' },
+      ],
+    });
+    const aid = (au.patches[0] as { id: string }).id;
+    const W = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      execute(doc, 'design.wandZeichnen', { storeyId: sid, a, b, assemblyId: aid }).patches[0] as { id: string };
+    const w1 = W({ x: 0, y: 0 }, { x: 9000, y: 0 });
+    W({ x: 9000, y: 0 }, { x: 9000, y: 6000 });
+    W({ x: 9000, y: 6000 }, { x: 0, y: 6000 });
+    W({ x: 0, y: 6000 }, { x: 0, y: 0 });
+    execute(doc, 'design.oeffnungSetzen', { wallId: w1.id, openingType: 'fenster', center: 3000, width: 2000, height: 1500, sill: 900 });
+    execute(doc, 'design.oeffnungSetzen', { wallId: w1.id, openingType: 'tuer', center: 7000, width: 1000, height: 2200, sill: 0, swing: 'links' });
+    const svg = planToSvg(doc, sid, {
+      scale: 100, paper: A3_QUER, projectName: 'Golden-Testhaus', planTitle: 'Grundriss', date: '01.07.2026',
+    });
+    const golden = readFileSync(new URL('./golden/grundriss-testhaus.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
+    // Bewusste Plan-Änderungen: Golden neu erzeugen und im Diff begutachten.
+  });
+});

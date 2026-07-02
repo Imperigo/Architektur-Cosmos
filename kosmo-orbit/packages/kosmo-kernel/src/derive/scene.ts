@@ -207,12 +207,17 @@ function deriveRoof(doc: KosmoDoc, roof: Roof): GeometryArtifact | null {
       if (nz >= 0) idx.push(base, base + i, base + i + 1);
       else idx.push(base, base + i + 1, base + i);
     }
-    // Traufkante (o≈0) als Linie
+    // Traufkante (beide o≈0) und Grat (Traufe→First) als Linien;
+    // Firstkanten (beide o>0) kommen aus skel.ridges
     for (let i = 0; i < ring.length; i++) {
       const q1 = ring[i]!;
       const q2 = ring[(i + 1) % ring.length]!;
-      if (q1.o < 1e-6 && q2.o < 1e-6) {
+      const unten1 = q1.o < 1e-6;
+      const unten2 = q2.o < 1e-6;
+      if (unten1 && unten2) {
         edges.push(q1.x, q1.y, zBase, q2.x, q2.y, zBase);
+      } else if (unten1 !== unten2) {
+        edges.push(q1.x, q1.y, zBase + q1.o * tan, q2.x, q2.y, zBase + q2.o * tan);
       }
     }
   }
