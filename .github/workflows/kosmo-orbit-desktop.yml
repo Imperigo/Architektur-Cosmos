@@ -43,7 +43,9 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
       - run: npm ci
       - name: Icon-Satz generieren
-        run: npx tauri icon apps/kosmo-orbit/public/icons/icon-512.png
+        # Pfad relativ zum App-Verzeichnis — die tauri-CLI wechselt in den
+        # Projektordner, bevor sie relative Argumente auflöst
+        run: npx tauri icon public/icons/icon-512.png
         working-directory: kosmo-orbit/apps/kosmo-orbit
       - uses: tauri-apps/tauri-action@v0.6.2
         env:
@@ -58,6 +60,11 @@ jobs:
           path: |
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.dmg
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.app.tar.gz
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.AppImage
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.deb
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.rpm
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.msi
+            kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.exe
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.msi
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.exe
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.AppImage
