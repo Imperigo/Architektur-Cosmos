@@ -80,3 +80,21 @@ Alles Obige aus «Offen» ist inzwischen weitgehend abgearbeitet. Neu heute Nach
 **Stand:** 20 Commits, 33 Tests grün, alle fünf Module bedienbar. Offen laut ROADMAP:
 Embedding-RAG, KosmoDoc-Diagnosepanel, CH-Bauteilkatalog, Onboarding/cmdk-Politur,
 Desktop-Build-Verifikation via tauri-action.
+
+
+## Nachtrag Abend
+
+- **Desktop-Builds komplett:** macOS universal (.dmg), Linux (AppImage/deb/rpm),
+  Windows (MSI/EXE) bauen aus der CI — drei Fixes (Icon-Pfad, PostCSS-Isolation,
+  Icon-Satz). Auslösen: `kosmo-orbit/.desktop-build-request` ändern+pushen.
+- **Kosmo spricht (Q7):** Bridge `/tts` (Piper/Chatterbox) + «Antworten vorlesen»-
+  Schalter; End-to-End mit Fake-Stimme verifiziert. Bridge-Bug behoben
+  (FAKE_WORKER wurde nie gesetzt) und React-Batching-Falle beim Vorlesetext.
+- **Embedding-RAG (Q8):** Bridge `/embed` (bge-m3); Wissensbasis-Chunks werden
+  beim Aufnehmen eingebettet, Suche mischt Cosine + Stichworte, fällt ohne
+  Bridge sauber zurück.
+- **Onboarding (Q31):** zeitabhängiger Tagesgruss + Erste-Schritte-Karte.
+- **Web-Worker:** Ableitung grosser Modelle (>300 Elemente) off-thread,
+  404-Wände-Test bestanden; kleine Modelle bleiben synchron-deterministisch.
+- E2E-Suite (6 Tests) committet und in der CI; einziger offener ROADMAP-Punkt:
+  echte Hidden-Line im Schnitt (V2-Kür).
