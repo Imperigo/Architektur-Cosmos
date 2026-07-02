@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import { EntryModelViewer } from '@/components/atlas/EntryModelViewer';
 import { PublicReferenceExplorer } from '@/components/public/PublicReferenceExplorer';
-import { PublicBundleCard, PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMediaCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
+import { PublicBundleCard, PublicCardGrid, PublicGateSummaryStrip, PublicHeroPreview, PublicInfoCard, PublicMediaCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -78,6 +78,8 @@ export default function ReferencesPage() {
             ) : null}
           </PublicHeroPreview>
         </section>
+
+        <PublicGateSummaryStrip accent="#66e1d2" items={publicGateSummary} />
 
         <PublicReferenceExplorer references={references} />
 

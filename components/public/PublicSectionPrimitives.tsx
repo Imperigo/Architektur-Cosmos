@@ -48,6 +48,10 @@ type PublicBundleMetric = {
   value: number | string;
 };
 
+type PublicGateSummaryItem = PublicBundleMetric & {
+  detail: ReactNode;
+};
+
 type PublicBundleCardProps = PublicAccentProps & {
   kicker: string;
   title: string;
@@ -55,6 +59,10 @@ type PublicBundleCardProps = PublicAccentProps & {
   status?: string;
   metrics?: PublicBundleMetric[];
   chips?: string[];
+};
+
+type PublicGateSummaryStripProps = PublicAccentProps & {
+  items: PublicGateSummaryItem[];
 };
 
 export function PublicSplitSection({ accent, kicker, title, body, children, id }: PublicSplitSectionProps) {
@@ -105,6 +113,27 @@ export function PublicMetricCard({ accent, label, value, detail }: PublicMetricC
       <div className="public-card-kicker">{label}</div>
       {detail ? <div className="public-card-body">{detail}</div> : null}
     </article>
+  );
+}
+
+export function PublicGateSummaryStrip({ accent, items }: PublicGateSummaryStripProps) {
+  return (
+    <section
+      className="public-gate-summary-strip"
+      style={{ '--public-section-accent': accent } as CSSProperties}
+      aria-label="Public-Gate-Zusammenfassung"
+    >
+      <div className="public-gate-summary-label">Public Gate</div>
+      <div className="public-gate-summary-items">
+        {items.map((item) => (
+          <div key={item.label} className="public-gate-summary-item">
+            <strong>{item.value}</strong>
+            <span>{item.label}</span>
+            <div>{item.detail}</div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

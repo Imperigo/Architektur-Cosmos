@@ -1,0 +1,1964 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:00:47.582Z",
+  "status": "source_root_candidates_need_owner_selection",
+  "policy": {
+    "read_only": true,
+    "copied_private_content": false,
+    "file_content_read": false,
+    "note": "This locator reads directory entries and filesystem metadata only. It does not open books, PDFs, lecture documents, plans, images or private source files."
+  },
+  "scan": {
+    "start_roots": [
+      "/home/andrin-baumann",
+      "/mnt/data",
+      "/mnt/archiv",
+      "/mnt",
+      "/media",
+      "/run/media"
+    ],
+    "max_depth": 5,
+    "max_dirs": 60000,
+    "inspect_max_entries": 3000,
+    "scanned_dirs": 5815,
+    "truncated": false
+  },
+  "summary": {
+    "candidates": 1469,
+    "probable_large_private_libraries": 0,
+    "workflow_or_project_mirrors": 71,
+    "archive_like_roots": 603,
+    "onedrive_like_roots": 149,
+    "roots_with_sync_errors": 5,
+    "own_mount_candidates": 1,
+    "top_candidates": [
+      {
+        "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+        "classification": "possible_source_root",
+        "score": 70,
+        "book_like_files": 3,
+        "lecture_like_files": 107,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+        "classification": "possible_source_root",
+        "score": 60,
+        "book_like_files": 1,
+        "lecture_like_files": 2,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+        "classification": "possible_source_root",
+        "score": 60,
+        "book_like_files": 2,
+        "lecture_like_files": 4,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+        "classification": "possible_source_root",
+        "score": 52,
+        "book_like_files": 3,
+        "lecture_like_files": 107,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+        "classification": "possible_source_root",
+        "score": 52,
+        "book_like_files": 21,
+        "lecture_like_files": 110,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+        "classification": "possible_source_root",
+        "score": 48,
+        "book_like_files": 3,
+        "lecture_like_files": 59,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+        "classification": "possible_source_root",
+        "score": 48,
+        "book_like_files": 2,
+        "lecture_like_files": 89,
+        "sync_error_files": 0
+      },
+      {
+        "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+        "classification": "possible_source_root",
+        "score": 48,
+        "book_like_files": 2,
+        "lecture_like_files": 2,
+        "sync_error_files": 0
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+      "redacted_path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count",
+        "lecture_file_count"
+      ],
+      "score": 70,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 121,
+        "dirs": 10,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 3,
+        "lecture_like_files": 107,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 94,
+          ".txt": 10,
+          ".patch": 8,
+          ".pdf": 3,
+          ".json": 2,
+          ".mjs": 1,
+          ".js": 1,
+          ".jsonc": 1,
+          ".html": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+      "redacted_path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "library_named",
+        "small_book_count"
+      ],
+      "score": 60,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 8,
+        "dirs": 3,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 2,
+        "sync_error_files": 0,
+        "extensions": {
+          ".svg": 2,
+          ".html": 1,
+          ".md": 1,
+          ".json": 1,
+          ".pdf": 1,
+          ".ifc": 1,
+          ".dxf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+      "redacted_path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "library_named",
+        "small_book_count"
+      ],
+      "score": 60,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 144,
+        "dirs": 159,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 2,
+        "lecture_like_files": 4,
+        "sync_error_files": 0,
+        "extensions": {
+          ".jpg": 93,
+          ".png": 18,
+          ".tif": 11,
+          ".psd": 5,
+          ".exr": 5,
+          ".hdr": 2,
+          ".pdf": 2,
+          ".txt": 2,
+          ".zip": 1,
+          ".bmp": 1,
+          ".jfif": 1,
+          ".tga": 1,
+          ".inf": 1,
+          ".ico": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "small_book_count",
+        "lecture_file_count"
+      ],
+      "score": 52,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 121,
+        "dirs": 10,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 3,
+        "lecture_like_files": 107,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 94,
+          ".txt": 10,
+          ".patch": 8,
+          ".pdf": 3,
+          ".json": 2,
+          ".mjs": 1,
+          ".js": 1,
+          ".jsonc": 1,
+          ".html": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "redacted_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "depth": 2,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "small_book_count",
+        "lecture_file_count"
+      ],
+      "score": 52,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 300,
+        "dirs": 69,
+        "other": 0,
+        "ignored_dirs": 2,
+        "unreadable_dirs": 0,
+        "book_like_files": 21,
+        "lecture_like_files": 110,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 81,
+          ".py": 73,
+          ".png": 26,
+          ".pdf": 21,
+          ".command": 21,
+          ".json": 18,
+          ".svg": 18,
+          ".txt": 7,
+          ".html": 5,
+          ".ifc": 5,
+          ".blend": 4,
+          ".sh": 4,
+          ".blend1": 2,
+          ".gitignore": 2,
+          ".ts": 2
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+      "redacted_path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 150,
+        "dirs": 40,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 3,
+        "lecture_like_files": 59,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 42,
+          ".png": 33,
+          ".svg": 17,
+          ".txt": 14,
+          ".zip": 13,
+          ".json": 13,
+          ".jsonl": 3,
+          ".sh": 3,
+          ".pdf": 3,
+          ".sha256": 2,
+          ".ifc": 2,
+          ".bundle": 1,
+          ".mjs": 1,
+          ".js": 1,
+          ".jsonc": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+      "redacted_path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 95,
+        "dirs": 2,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 2,
+        "lecture_like_files": 89,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 86,
+          ".json": 2,
+          ".pdf": 2,
+          ".mjs": 1,
+          ".txt": 1,
+          ".js": 1,
+          ".jsonc": 1,
+          ".html": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+      "redacted_path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 2,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 2,
+        "lecture_like_files": 2,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 2
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/ZUG_Volumenstudien_2026-06-08",
+      "redacted_path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/ZUG_Volumenstudien_2026-06-08",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 13,
+        "dirs": 4,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 5,
+        "sync_error_files": 0,
+        "extensions": {
+          ".png": 6,
+          ".md": 4,
+          ".pdf": 1,
+          ".csv": 1,
+          ".json": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/ZUG_Volumenstudien_2026-06-08/01_Studie",
+      "redacted_path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/ZUG_Volumenstudien_2026-06-08/01_Studie",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 4,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 2,
+        "sync_error_files": 0,
+        "extensions": {
+          ".pdf": 1,
+          ".csv": 1,
+          ".json": 1,
+          ".md": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/onedrive-2026-06-09",
+      "redacted_path": "/mnt/archiv/FromSSD/onedrive-2026-06-09",
+      "depth": 2,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 300,
+        "dirs": 82,
+        "other": 0,
+        "ignored_dirs": 3,
+        "unreadable_dirs": 0,
+        "book_like_files": 7,
+        "lecture_like_files": 33,
+        "sync_error_files": 0,
+        "extensions": {
+          ".py": 239,
+          ".md": 25,
+          ".pdf": 7,
+          ".png": 7,
+          ".gitignore": 3,
+          ".toml": 3,
+          ".zip": 2,
+          ".yaml": 2,
+          ".bat": 1,
+          ".exe": 1,
+          ".msi": 1,
+          ".svg": 1,
+          ".xlsx": 1,
+          ".env": 1,
+          ".example": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter",
+      "redacted_path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 344,
+        "dirs": 122,
+        "other": 0,
+        "ignored_dirs": 7,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 92,
+        "sync_error_files": 0,
+        "extensions": {
+          ".sh": 114,
+          ".md": 83,
+          ".log": 29,
+          ".py": 19,
+          ".json": 12,
+          "<none>": 11,
+          ".txt": 8,
+          ".swift": 6,
+          ".gitignore": 5,
+          ".toml": 4,
+          ".pid": 4,
+          ".env": 3,
+          ".example": 3,
+          ".yml": 3,
+          ".kts": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/docs",
+      "redacted_path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/00 Architekturkosmos Zentrale/Architekturkosmos_Codex_Starter/docs",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 56,
+        "dirs": 18,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 55,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 54,
+          ".mmd": 1,
+          ".pdf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/KosmosPrepare",
+      "redacted_path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/KosmosPrepare",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 297,
+        "dirs": 143,
+        "other": 0,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 6,
+        "lecture_like_files": 48,
+        "sync_error_files": 0,
+        "extensions": {
+          ".py": 225,
+          ".md": 41,
+          ".pdf": 6,
+          ".png": 6,
+          ".json": 3,
+          ".so": 3,
+          ".blend": 2,
+          ".blend1": 2,
+          ".sh": 2,
+          ".xlsx": 1,
+          ".zip": 1,
+          ".gitignore": 1,
+          ".toml": 1,
+          ".txt": 1,
+          ".log": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/KosmosPrepare/_Archiv_Desktop-Tests_2026-05-31/kosmosprepare_test_20260528_1534",
+      "redacted_path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/KosmosPrepare/_Archiv_Desktop-Tests_2026-05-31/kosmosprepare_test_20260528_1534",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 42,
+        "dirs": 15,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 2,
+        "sync_error_files": 0,
+        "extensions": {
+          ".svg": 22,
+          ".png": 6,
+          ".html": 3,
+          ".json": 3,
+          ".dxf": 2,
+          ".blend": 1,
+          ".blend1": 1,
+          ".db": 1,
+          ".md": 1,
+          ".ifc": 1,
+          ".pdf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/KosmosPrepare/02_Sandbox",
+      "redacted_path": "/mnt/archiv/FromSSD/onedrive-2026-06-09/KosmosPrepare/02_Sandbox",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "onedrive_like",
+        "archive_like",
+        "small_book_count"
+      ],
+      "score": 48,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 7,
+        "dirs": 4,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 1,
+        "lecture_like_files": 3,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 2,
+          ".blend": 1,
+          ".blend1": 1,
+          ".db": 1,
+          ".html": 1,
+          ".pdf": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex",
+      "redacted_path": "/home/andrin-baumann/.claude/projects/-home-andrin-baumann-ArchitekturKosmos-Codex",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fs_type": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "signals": [
+        "medium_book_count",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "possible_source_root",
+      "counts": {
+        "files": 648,
+        "dirs": 59,
+        "other": 1,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 47,
+        "lecture_like_files": 153,
+        "sync_error_files": 0,
+        "extensions": {
+          ".json": 352,
+          ".jsonl": 143,
+          ".txt": 100,
+          ".pdf": 47,
+          ".md": 6
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt",
+      "depth": 1,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 571,
+        "dirs": 149,
+        "other": 7,
+        "ignored_dirs": 7,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 478,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 467,
+          ".png": 27,
+          ".svg": 17,
+          ".json": 14,
+          ".zip": 11,
+          ".txt": 11,
+          ".gitignore": 7,
+          "<none>": 7,
+          ".log": 7,
+          ".ifc": 2,
+          ".sha256": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots",
+      "depth": 2,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 1635,
+        "dirs": 216,
+        "other": 7,
+        "ignored_dirs": 7,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 1336,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 1329,
+          ".sh": 131,
+          ".json": 70,
+          ".py": 35,
+          ".css": 14,
+          ".jsonl": 14,
+          ".gitignore": 7,
+          ".txt": 7,
+          "<none>": 7,
+          ".log": 7,
+          ".env": 7,
+          ".ts": 7
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 606,
+        "dirs": 35,
+        "other": 1,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 548,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 547,
+          ".sh": 17,
+          ".json": 16,
+          ".gitkeep": 6,
+          ".py": 5,
+          ".keep": 5,
+          ".css": 2,
+          ".jsonl": 2,
+          ".gitignore": 1,
+          ".txt": 1,
+          "<none>": 1,
+          ".log": 1,
+          ".env": 1,
+          ".ts": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155/intake",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155/intake",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 506,
+        "dirs": 7,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 497,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 497,
+          ".keep": 5,
+          ".json": 4
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155/intake/archive",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155/intake/archive",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 211,
+        "dirs": 1,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 211,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 211
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155/intake/inbox",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155/intake/inbox",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 268,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 267,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 267,
+          ".keep": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155/jobs",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-17_2155/jobs",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 109,
+        "dirs": 10,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 102,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 90,
+          ".txt": 12,
+          ".py": 4,
+          ".gitkeep": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 622,
+        "dirs": 36,
+        "other": 1,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 560,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 559,
+          ".sh": 19,
+          ".json": 18,
+          ".gitkeep": 6,
+          ".py": 5,
+          ".keep": 5,
+          ".css": 2,
+          ".jsonl": 2,
+          ".gitignore": 1,
+          ".txt": 1,
+          "<none>": 1,
+          ".log": 1,
+          ".env": 1,
+          ".ts": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054/intake",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054/intake",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 507,
+        "dirs": 7,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 498,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 498,
+          ".keep": 5,
+          ".json": 4
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054/intake/archive",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054/intake/archive",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 211,
+        "dirs": 1,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 211,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 211
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054/intake/inbox",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054/intake/inbox",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 268,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 267,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 267,
+          ".keep": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054/jobs",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-18_2054/jobs",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 113,
+        "dirs": 10,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 106,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 94,
+          ".txt": 12,
+          ".py": 4,
+          ".gitkeep": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 633,
+        "dirs": 36,
+        "other": 1,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 571,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 570,
+          ".sh": 19,
+          ".json": 18,
+          ".gitkeep": 6,
+          ".py": 5,
+          ".keep": 5,
+          ".css": 2,
+          ".jsonl": 2,
+          ".gitignore": 1,
+          ".txt": 1,
+          "<none>": 1,
+          ".log": 1,
+          ".env": 1,
+          ".ts": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154/intake",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154/intake",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 509,
+        "dirs": 7,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 500,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 500,
+          ".keep": 5,
+          ".json": 4
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154/intake/archive",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154/intake/archive",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 211,
+        "dirs": 1,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 211,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 211
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154/intake/inbox",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154/intake/inbox",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 270,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 269,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 269,
+          ".keep": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154/jobs",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-25_2154/jobs",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 114,
+        "dirs": 10,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 107,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 95,
+          ".txt": 12,
+          ".py": 4,
+          ".gitkeep": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 636,
+        "dirs": 36,
+        "other": 1,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 574,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 573,
+          ".sh": 19,
+          ".json": 18,
+          ".gitkeep": 6,
+          ".py": 5,
+          ".keep": 5,
+          ".css": 2,
+          ".jsonl": 2,
+          ".gitignore": 1,
+          ".txt": 1,
+          "<none>": 1,
+          ".log": 1,
+          ".env": 1,
+          ".ts": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303/intake",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303/intake",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 509,
+        "dirs": 7,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 500,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 500,
+          ".keep": 5,
+          ".json": 4
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303/intake/archive",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303/intake/archive",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 211,
+        "dirs": 1,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 211,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 211
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303/intake/inbox",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303/intake/inbox",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 270,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 269,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 269,
+          ".keep": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303/jobs",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-29_2303/jobs",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 114,
+        "dirs": 10,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 107,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 95,
+          ".txt": 12,
+          ".py": 4,
+          ".gitkeep": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 650,
+        "dirs": 36,
+        "other": 1,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 588,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 587,
+          ".sh": 19,
+          ".json": 18,
+          ".gitkeep": 6,
+          ".py": 5,
+          ".keep": 5,
+          ".css": 2,
+          ".jsonl": 2,
+          ".gitignore": 1,
+          ".txt": 1,
+          "<none>": 1,
+          ".log": 1,
+          ".env": 1,
+          ".ts": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000/intake",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000/intake",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 522,
+        "dirs": 7,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 513,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 513,
+          ".keep": 5,
+          ".json": 4
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000/intake/archive",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000/intake/archive",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 211,
+        "dirs": 1,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 211,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 211
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000/intake/inbox",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000/intake/inbox",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 283,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 282,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 282,
+          ".keep": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000/jobs",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2000/jobs",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 114,
+        "dirs": 10,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 107,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 95,
+          ".txt": 12,
+          ".py": 4,
+          ".gitkeep": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 651,
+        "dirs": 36,
+        "other": 1,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 589,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 588,
+          ".sh": 19,
+          ".json": 18,
+          ".gitkeep": 6,
+          ".py": 5,
+          ".keep": 5,
+          ".css": 2,
+          ".jsonl": 2,
+          ".gitignore": 1,
+          ".txt": 1,
+          "<none>": 1,
+          ".log": 1,
+          ".env": 1,
+          ".ts": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215/intake",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215/intake",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 523,
+        "dirs": 7,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 514,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 514,
+          ".keep": 5,
+          ".json": 4
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215/intake/archive",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215/intake/archive",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 211,
+        "dirs": 1,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 211,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 211
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215/intake/inbox",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215/intake/inbox",
+      "depth": 5,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 284,
+        "dirs": 0,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 283,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 283,
+          ".keep": 1
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215/jobs",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-06-30_2215/jobs",
+      "depth": 4,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 114,
+        "dirs": 10,
+        "other": 0,
+        "ignored_dirs": 0,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 107,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 95,
+          ".txt": 12,
+          ".py": 4,
+          ".gitkeep": 3
+        }
+      },
+      "inspect_truncated": false
+    },
+    {
+      "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-07-01_2001",
+      "redacted_path": "/mnt/archiv/01 ArchitekturKosmos Projekt/_overseer-snapshots/2026-07-01_2001",
+      "depth": 3,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fs_type": "ext4",
+        "source": "/dev/sda"
+      },
+      "signals": [
+        "archive_like",
+        "lecture_file_count"
+      ],
+      "score": 42,
+      "classification": "weak_path_signal",
+      "counts": {
+        "files": 677,
+        "dirs": 36,
+        "other": 1,
+        "ignored_dirs": 1,
+        "unreadable_dirs": 0,
+        "book_like_files": 0,
+        "lecture_like_files": 615,
+        "sync_error_files": 0,
+        "extensions": {
+          ".md": 614,
+          ".sh": 19,
+          ".json": 18,
+          ".gitkeep": 6,
+          ".py": 5,
+          ".keep": 5,
+          ".css": 2,
+          ".jsonl": 2,
+          ".gitignore": 1,
+          ".txt": 1,
+          "<none>": 1,
+          ".log": 1,
+          ".env": 1,
+          ".ts": 1
+        }
+      },
+      "inspect_truncated": false
+    }
+  ],
+  "next_actions": [
+    "No strong large-library root was confirmed by metadata. Keep Sogn and source-dependent assets review-only.",
+    "Ask owner/Claude whether the archive HDD or OneDrive library is mounted under another path.",
+    "Resolve visible OneDrive sync error markers before treating any OneDrive candidate as complete.",
+    "Do not ingest or copy private files until a root is explicitly selected and a private metadata-only inventory task is opened."
+  ]
+}

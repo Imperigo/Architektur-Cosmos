@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-06-13T18:50:48.575Z",
+  "checked_at": "2026-07-02T06:19:34.478Z",
   "package_path": "examples/kosmo-references/source-packages/kapelle-sogn-benedetg-public-source-candidate-2026-06-13/source-package.json",
   "package_id": "kapelle-sogn-benedetg-public-source-candidate-2026-06-13",
   "title": "Kapelle Sogn Benedetg Public Source Candidate",
@@ -51,7 +51,7 @@
       "http_status": 200,
       "final_url": "https://www.graubuenden.ch/de/ausflugsziele/kapelle-s-benedetg",
       "content_type": "text/html; charset=UTF-8",
-      "content_length": "45908",
+      "content_length": "45853",
       "method": "HEAD"
     },
     {

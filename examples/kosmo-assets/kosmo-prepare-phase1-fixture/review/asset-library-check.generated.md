@@ -1,7 +1,7 @@
 # KosmoAsset Library Check
 
 Library: `kosmo-prepare-phase1-fixture`
-Generated: 2026-06-30T06:49:34.844Z
+Generated: 2026-07-02T06:03:41.269Z
 Status: `passed`
 
 This is a local review-only check. It does not upload assets, write D1/R2 or publish public downloads.

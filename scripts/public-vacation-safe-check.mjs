@@ -8,6 +8,7 @@ const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const reportRoot = resolve(root, args['report-dir'] || '.tmp/public-vacation-safe-check');
 const keepReports = Boolean(args['keep-reports']);
+const requireStaticExport = Boolean(args['require-static-export']);
 
 const checks = [
   {
@@ -122,6 +123,11 @@ const checks = [
     purpose: 'Checks exported public HTML pages for core navigation links, missing internal targets and missing referenced static assets without starting a server.'
   },
   {
+    id: 'public_static_link_negative_smoke',
+    command: ['node', 'scripts/public-static-link-negative-smoke.mjs'],
+    purpose: 'Verifies the static link guard rejects synthetic private/source hrefs and missing internal route targets.'
+  },
+  {
     id: 'public_static_metadata_check',
     command: [
       'node',
@@ -150,8 +156,13 @@ const checks = [
     id: 'public_leak_pattern_negative_smoke',
     command: ['node', 'scripts/public-leak-pattern-negative-smoke.mjs'],
     purpose: 'Verifies public leak detector catches private path/source marker examples.'
+  },
+  {
+    id: 'public_ready_invariant_negative_smoke',
+    command: ['node', 'scripts/public-vacation-safe-public-ready-negative-smoke.mjs'],
+    purpose: 'Verifies the vacation-safe aggregate rejects synthetic generated reports that promote public-ready state.'
   }
-];
+].filter((check) => !(args['skip-public-ready-negative-smoke'] && check.id === 'public_ready_invariant_negative_smoke'));
 
 main();
 
@@ -177,6 +188,7 @@ function main() {
       writes_public_ready: false,
       public_ready_invariant_enforced: true,
       starts_server: false,
+      require_static_export: requireStaticExport,
       report_dir: relative(root, reportRoot)
     },
     started_at: startedAt,
@@ -199,16 +211,19 @@ function runCheck(check) {
   const startedAt = new Date().toISOString();
   if (check.requiresOut && !existsSync(resolve(root, 'out'))) {
     const endedAt = new Date().toISOString();
+    const status = requireStaticExport ? 'failed' : 'skipped';
     return {
       id: check.id,
       purpose: check.purpose,
       command: check.command.map(String),
-      status: 'skipped',
+      status,
       exit_code: null,
       signal: null,
       started_at: startedAt,
       ended_at: endedAt,
-      output_excerpt: 'Skipped because out/ is absent. Run npm run build before this aggregate check to include static export route inventory coverage.'
+      output_excerpt: requireStaticExport
+        ? 'Failed because out/ is absent and --require-static-export was passed. Run npm run build before this aggregate check.'
+        : 'Skipped because out/ is absent. Run npm run build before this aggregate check to include static export route inventory coverage.'
     };
   }
 

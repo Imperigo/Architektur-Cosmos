@@ -1,0 +1,230 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:00:49.578Z",
+  "status": "owner_answer_sheet_guard_passed",
+  "policy": {
+    "reads_private_content": false,
+    "writes_session_files": false,
+    "records_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates the owner answer sheet contract only. It never records decisions or changes source/session files."
+  },
+  "source_refs": [
+    "data/kosmo-owner-answer-sheet-2026-07-02.json",
+    "data/kosmo-owner-review-card-set-2026-07-02.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-07-02.json",
+    "examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json"
+  ],
+  "summary": {
+    "answer_sheet_status": "owner_answer_sheet_ready",
+    "owner_cards": 5,
+    "answer_sheet_owner_cards": 5,
+    "answer_sheet_owner_card_items": 16,
+    "source_root_allowed_decisions": 5,
+    "answer_sheet_source_root_options": 10,
+    "owner_reference_decisions": 10,
+    "answer_sheet_reference_decisions": 10,
+    "public_ready_after_guard": 0,
+    "failures": 0,
+    "warnings": 0
+  },
+  "findings": [
+    {
+      "id": "answer_sheet_status",
+      "severity": "passed",
+      "message": "Answer sheet status must be owner_answer_sheet_ready."
+    },
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Answer sheet must not record decisions."
+    },
+    {
+      "id": "writes_session_files_false",
+      "severity": "passed",
+      "message": "Answer sheet must not write session files."
+    },
+    {
+      "id": "public_ready_zero",
+      "severity": "passed",
+      "message": "Answer sheet must keep public_ready_after_sheet at 0."
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "severity": "passed",
+      "message": "Answer sheet summary must keep public_ready_after_sheet at 0."
+    },
+    {
+      "id": "source_ref:examples/kosmo-references/provenance/source-root-decision-session-2026-07-02.json",
+      "severity": "passed",
+      "message": "Source ref present: examples/kosmo-references/provenance/source-root-decision-session-2026-07-02.json"
+    },
+    {
+      "id": "source_ref:data/kosmo-owner-review-card-set-2026-07-02.json",
+      "severity": "passed",
+      "message": "Source ref present: data/kosmo-owner-review-card-set-2026-07-02.json"
+    },
+    {
+      "id": "source_ref:examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json",
+      "severity": "passed",
+      "message": "Source ref present: examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json"
+    },
+    {
+      "id": "source_root_section_present",
+      "severity": "passed",
+      "message": "Source-root section must exist."
+    },
+    {
+      "id": "source_root_allowed_decisions_match",
+      "severity": "passed",
+      "message": "Source-root allowed decisions must match the decision session."
+    },
+    {
+      "id": "source_root_safe_default",
+      "severity": "passed",
+      "message": "Source-root safe default must stay keep_blocked."
+    },
+    {
+      "id": "source_root_selected_decision_reflects_session",
+      "severity": "passed",
+      "message": "Source-root selected decision must only reflect the session state."
+    },
+    {
+      "id": "source_root_selected_path_reflects_session",
+      "severity": "passed",
+      "message": "Source-root selected path must only reflect the session state."
+    },
+    {
+      "id": "source_root_option_count_match",
+      "severity": "passed",
+      "message": "Source-root option count must match the decision session."
+    },
+    {
+      "id": "summary_source_root_options_match",
+      "severity": "passed",
+      "message": "Answer sheet source-root option count must match session options."
+    },
+    {
+      "id": "owner_cards_section_present",
+      "severity": "passed",
+      "message": "Owner review card section must exist."
+    },
+    {
+      "id": "owner_card_count_match",
+      "severity": "passed",
+      "message": "Owner card count must match the card set."
+    },
+    {
+      "id": "summary_owner_cards_match",
+      "severity": "passed",
+      "message": "Answer sheet owner card summary must match section cards."
+    },
+    {
+      "id": "summary_owner_card_items_match",
+      "severity": "passed",
+      "message": "Answer sheet owner card item summary must match section cards."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-a-villa-savoye-image-candidates",
+      "severity": "passed",
+      "message": "Owner card batch-a-villa-savoye-image-candidates must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-b-villa-savoye-derived-files",
+      "severity": "passed",
+      "message": "Owner card batch-b-villa-savoye-derived-files must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-c-model-promotion-confirmation",
+      "severity": "passed",
+      "message": "Owner card batch-c-model-promotion-confirmation must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-d-sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Owner card batch-d-sogn-benedetg-source-gap must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "owner_card_public_ready_zero:batch-e-kosmoasset-human-reviews",
+      "severity": "passed",
+      "message": "Owner card batch-e-kosmoasset-human-reviews must keep public_ready_after_card at 0."
+    },
+    {
+      "id": "reference_decisions_section_present",
+      "severity": "passed",
+      "message": "Reference decision section must exist."
+    },
+    {
+      "id": "reference_allowed_decisions_match",
+      "severity": "passed",
+      "message": "Reference allowed decisions must match owner decision session."
+    },
+    {
+      "id": "reference_decision_count_match",
+      "severity": "passed",
+      "message": "Reference decision count must match owner decision session."
+    },
+    {
+      "id": "summary_reference_decisions_match",
+      "severity": "passed",
+      "message": "Answer sheet reference decision summary must match section decisions."
+    },
+    {
+      "id": "reference_public_ready_false:villa-savoye-exterior-savoye-3-cc0",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-exterior-savoye-3-cc0 must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:villa-savoye-exterior-loc-full",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-exterior-loc-full must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:villa-savoye-interior-chaise-cc-by-sa",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye-interior-chaise-cc-by-sa must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "severity": "passed",
+      "message": "Reference decision public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:public/archive-models/villa-savoye/low.glb",
+      "severity": "passed",
+      "message": "Reference decision public/archive-models/villa-savoye/low.glb must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:villa-savoye",
+      "severity": "passed",
+      "message": "Reference decision villa-savoye must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:alterszentrum-kloster-ingenbohl",
+      "severity": "passed",
+      "message": "Reference decision alterszentrum-kloster-ingenbohl must keep public_ready_after_decision false."
+    },
+    {
+      "id": "reference_public_ready_false:sogn-benedetg-source-gap",
+      "severity": "passed",
+      "message": "Reference decision sogn-benedetg-source-gap must keep public_ready_after_decision false."
+    }
+  ],
+  "next_actions": [
+    "Use docs/codex/kosmo-owner-answer-sheet-2026-06-13.md for owner capture only.",
+    "Do not copy answer fields into decision sessions until the owner explicitly confirms them.",
+    "After any explicit owner decision is recorded, rerun source-root/owner decision checks and the full data-lane sweep."
+  ]
+}

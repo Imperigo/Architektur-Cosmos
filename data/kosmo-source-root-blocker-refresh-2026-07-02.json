@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:17:17.328Z",
+  "status": "source_root_blocker_still_active",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_refresh": 0,
+    "note": "This refresh summarizes storage/source-root diagnostics only. It does not read private source contents, select a root or unlock inventory."
+  },
+  "source_refs": [
+    "data/kosmo-onedrive-sync-error-summary-2026-07-02.json",
+    "data/kosmoreferences-private-library-diagnostic-2026-07-02.json",
+    "data/kosmo-source-root-locator-2026-07-02.json",
+    "data/kosmo-source-root-selection-brief-2026-07-02.json",
+    "data/kosmo-source-root-decision-session-check-2026-07-02.json"
+  ],
+  "summary": {
+    "onedrive_status": "onedrive_sync_errors_visible",
+    "onedrive_marker_files": 59,
+    "onedrive_leaf_marker_files": 58,
+    "onedrive_aggregate_missing_items": 58,
+    "private_library_status": "library_candidate_visible",
+    "private_library_book_like_files": 169,
+    "private_library_target_matches": 66,
+    "private_library_own_mounts": 1,
+    "source_root_locator_status": "source_root_candidates_need_owner_selection",
+    "source_root_candidates": 1470,
+    "source_root_probable_libraries": 0,
+    "source_root_workflow_mirrors": 71,
+    "source_root_selection_status": "source_root_owner_selection_needed",
+    "source_root_selection_options": 10,
+    "decision_check_status": "passed_pending_owner_input",
+    "selected_decision": null,
+    "selected_root_exists": false,
+    "private_diagnostic_allowed": false,
+    "public_ready_after_refresh": 0
+  },
+  "blocked_until": [
+    "Owner/KosmoOverseer selects or mounts a real source root.",
+    "OneDrive sync markers are repaired or owner confirms a complete non-OneDrive source root.",
+    "Source-root decision session passes with private_diagnostic_allowed=true."
+  ],
+  "allowed_now": [
+    "Keep using owner review session brief for source-root question.",
+    "Keep local worker outputs metadata-only and review-only.",
+    "Rerun diagnostics after mount/sync changes."
+  ],
+  "forbidden_now": [
+    "Do not run private inventory extraction.",
+    "Do not download or OCR private PDFs.",
+    "Do not copy private books, plans, images or lecture contents into Git.",
+    "Do not mark Sogn, Ingenbohl or source-dependent assets public-ready."
+  ]
+}

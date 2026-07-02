@@ -22,20 +22,30 @@ async function main() {
     'No explanation, no translation, no markdown.'
   ].join(' ');
   const started = Date.now();
-  const textResult = await generate({
-    prompt: textPrompt,
-    options: { temperature: 0.1, num_predict: 80 }
-  });
-  const jsonResult = await generate({
-    prompt: [
-      'Return a single valid JSON object for an ArchitectureKosmos local worker JSON capture smoke.',
-      'Use this exact shape:',
-      '{"status":"review_only","public_ready_after_smoke":0,"private_content_sent":false,"notes":["NO_PUBLIC_PROMOTION"]}',
-      'Do not include markdown.'
-    ].join(' '),
-    format: 'json',
-    options: { temperature: 0, num_predict: 160 }
-  });
+  let textResult;
+  let jsonResult;
+  try {
+    textResult = await generate({
+      prompt: textPrompt,
+      options: { temperature: 0.1, num_predict: 80 }
+    });
+    jsonResult = await generate({
+      prompt: [
+        'Return a single valid JSON object for an ArchitectureKosmos local worker JSON capture smoke.',
+        'Use this exact shape:',
+        '{"status":"review_only","public_ready_after_smoke":0,"private_content_sent":false,"notes":["NO_PUBLIC_PROMOTION"]}',
+        'Do not include markdown.'
+      ].join(' '),
+      format: 'json',
+      options: { temperature: 0, num_predict: 160 }
+    });
+  } catch (error) {
+    if (isEndpointUnavailable(error)) {
+      await writeUnavailableReport({ error, started });
+      return;
+    }
+    throw error;
+  }
   const durationMs = Date.now() - started;
   const text = textResult.text;
   const parsedJson = parseJsonObject(jsonResult.text);
@@ -99,6 +109,63 @@ async function main() {
   console.log(`Wrote: ${relative(root, outputPath)}`);
 
   if (!passed) process.exitCode = 1;
+}
+
+async function writeUnavailableReport({ error, started }) {
+  const durationMs = Date.now() - started;
+  const report = {
+    schema_version: '0.2',
+    checked_at: new Date().toISOString(),
+    status: 'skipped_unavailable',
+    endpoint,
+    model,
+    duration_ms: durationMs,
+    checks: {
+      endpoint_reachable: false,
+      model_returned: false,
+      response_non_empty: false,
+      json_response_valid: false
+    },
+    advisory_checks: {
+      local_worker_available: false
+    },
+    skip_reason: {
+      code: error?.cause?.code ?? error?.code ?? 'fetch_failed',
+      message: error?.message ?? 'Local Ollama endpoint unavailable'
+    },
+    response_length: 0,
+    response_preview: '',
+    json_capture: {
+      response_length: 0,
+      response_preview: '',
+      parse_error: null,
+      parsed: null
+    },
+    policy: {
+      private_content_sent: false,
+      public_promotion: false,
+      starts_model: false,
+      stores_full_response: false,
+      note: 'Local Ollama endpoint was unavailable, so no model prompt was sent. This skip keeps review-only data gates from failing on local service availability.'
+    }
+  };
+
+  await mkdir(dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, `${JSON.stringify(report, null, 2)}\n`);
+  await writeFile(markdownPath, renderMarkdown(report));
+
+  console.log('Kosmo local worker Ollama smoke');
+  console.log(`Status: ${report.status}`);
+  console.log(`Model: ${model}`);
+  console.log(`Duration: ${durationMs}ms`);
+  console.log(`Endpoint reachable: false`);
+  console.log(`Wrote: ${relative(root, outputPath)}`);
+}
+
+function isEndpointUnavailable(error) {
+  const code = error?.cause?.code ?? error?.code;
+  return error?.message === 'fetch failed' &&
+    ['ECONNREFUSED', 'ECONNRESET', 'ENOTFOUND', 'EHOSTUNREACH', 'ETIMEDOUT'].includes(code);
 }
 
 async function generate({ prompt, format, options }) {

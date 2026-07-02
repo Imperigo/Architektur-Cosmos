@@ -1,0 +1,127 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:00:46.433Z",
+  "status": "pilot_evidence_matrix_review_only",
+  "policy": {
+    "review_only": true,
+    "public_ready_allowed": false,
+    "private_content_copied": false,
+    "note": "This matrix summarizes review gaps and gate states only. It does not copy private library contents, page text, plans, images or worker packet bodies."
+  },
+  "source_refs": [
+    "data/kosmoreferences-pilot-gap-map-2026-06-13.json",
+    "data/kosmodata-lane-sweep-2026-06-13.json",
+    "data/kosmo-local-worker-output-review-2026-06-13.json",
+    "data/kosmo-onedrive-sync-error-summary-2026-06-13.json"
+  ],
+  "summary": {
+    "pilots": 3,
+    "total_gap_count": 12,
+    "media_slots_blocked": 12,
+    "asset_candidates_blocked": 9,
+    "public_ready_assets": 0,
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "data_lane_steps": 26,
+    "data_lane_passed_steps": 26,
+    "local_worker_review_status": "local_worker_outputs_present_review_only",
+    "local_worker_outputs": "8/8",
+    "local_worker_high_risk_hits": 0,
+    "private_library_status": "small_workflow_mirror_visible",
+    "private_library_sync_errors": 30,
+    "onedrive_repair_marker_files": 59,
+    "onedrive_repair_leaf_markers": 58,
+    "onedrive_repair_missing_items": 58
+  },
+  "pilots": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "current_status": "review_only_draft",
+      "source_state": "public link package exists; local media/model assets exist but need file-level review",
+      "blocked_counts": {
+        "media": 4,
+        "asset_candidates": 3
+      },
+      "gap_count": 4,
+      "gap_status_counts": {
+        "blocking_public": 2,
+        "needs_review": 1,
+        "draft_ok_private": 1
+      },
+      "blocking_gap_types": [
+        "file_level_rights",
+        "plan_section_provenance"
+      ],
+      "recommended_workers": [
+        "codex-central-overseer",
+        "kosmo-local-llm",
+        "local-batch-workers"
+      ],
+      "next_action": "Run a Villa file-level asset provenance pass before any public media/model promotion.",
+      "public_ready_allowed": false
+    },
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "current_status": "review_only_draft",
+      "source_state": "public link package exists; no visible local book/lecture package yet",
+      "blocked_counts": {
+        "media": 4,
+        "asset_candidates": 3
+      },
+      "gap_count": 4,
+      "gap_status_counts": {
+        "needs_source": 1,
+        "needs_review": 1,
+        "needs_source_review": 1,
+        "draft_ok_private": 1
+      },
+      "blocking_gap_types": [
+        "local_library_source",
+        "timber_structure"
+      ],
+      "recommended_workers": [
+        "kosmo-local-llm",
+        "local-batch-workers",
+        "owner_plus_codex"
+      ],
+      "next_action": "Find the missing local library source first; otherwise keep Sogn geometry/material outputs clearly labeled as study hypotheses.",
+      "public_ready_allowed": false
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "current_status": "review_only_draft",
+      "source_state": "public link package exists, including study-commission PDF link; no copied PDF/media content in package",
+      "blocked_counts": {
+        "media": 4,
+        "asset_candidates": 3
+      },
+      "gap_count": 4,
+      "gap_status_counts": {
+        "needs_rights_review": 1,
+        "needs_source_review": 1,
+        "needs_review": 1,
+        "draft_ok_private": 1
+      },
+      "blocking_gap_types": [
+        "competition_pdf_extraction",
+        "structure_evidence"
+      ],
+      "recommended_workers": [
+        "codex-central-overseer",
+        "kosmo-local-llm",
+        "local-batch-workers"
+      ],
+      "next_action": "Decide whether the linked study-commission PDF can enter private extraction; then build structure/material gap evidence.",
+      "public_ready_allowed": false
+    }
+  ],
+  "next_actions": [
+    "Keep all three pilots review-only until owner decisions and file-level rights/provenance pass.",
+    "Use Villa Savoye for file-level media/model provenance first because local assets already exist.",
+    "Use Sogn Benedetg for private-library mount/source discovery; do not harden geometry before the source root is visible.",
+    "Use Ingenbohl for link-only PDF extraction decision and structure/material evidence planning.",
+    "Run npm run kosmo:data-lane-sweep after any pilot evidence update."
+  ]
+}

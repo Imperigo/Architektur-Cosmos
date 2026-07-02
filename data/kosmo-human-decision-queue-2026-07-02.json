@@ -1,0 +1,373 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:00:45.309Z",
+  "status": "human_decision_queue_open",
+  "policy": {
+    "records_decisions": false,
+    "public_writes_allowed": false,
+    "public_ready_after_queue": 0,
+    "note": "This queue consolidates pending human decisions only. It does not apply decisions, approve assets, promote media, upload files or write public manifests."
+  },
+  "source_paths": {
+    "references_session": "examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json",
+    "asset_session": "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-human-review-session.generated.json"
+  },
+  "summary": {
+    "total_items": 16,
+    "open_items": 16,
+    "reference_items": 10,
+    "asset_items": 6,
+    "public_ready_after_queue": 0,
+    "groups": {
+      "villa-savoye-public-image-candidates": 3,
+      "villa-savoye-blocked-derived-files": 4,
+      "model-promotion-owner-confirmation": 2,
+      "sogn-benedetg-source-gap": 1,
+      "material": 3,
+      "annotation": 1,
+      "opening": 1,
+      "structure": 1
+    },
+    "safe_defaults": {
+      "needs_more_source_context": 6,
+      "keep_blocked": 4,
+      "needs-review": 6
+    }
+  },
+  "items": [
+    {
+      "id": "reference:villa-savoye-public-image-candidates:villa-savoye-exterior-savoye-3-cc0",
+      "lane": "KosmoReferences",
+      "group": "villa-savoye-public-image-candidates",
+      "title": "villa-savoye-exterior-savoye-3-cc0",
+      "status": "open",
+      "prompt": "Approve public display or keep blocked?",
+      "source_path": "public/archive-media/villa-savoye/exterior/savoye-3-exterior-cc0.jpg",
+      "safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:villa-savoye-public-image-candidates:villa-savoye-exterior-loc-full",
+      "lane": "KosmoReferences",
+      "group": "villa-savoye-public-image-candidates",
+      "title": "villa-savoye-exterior-loc-full",
+      "status": "open",
+      "prompt": "Approve public display with LOC/credit review or keep blocked?",
+      "source_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior.jpg",
+      "safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:villa-savoye-public-image-candidates:villa-savoye-interior-chaise-cc-by-sa",
+      "lane": "KosmoReferences",
+      "group": "villa-savoye-public-image-candidates",
+      "title": "villa-savoye-interior-chaise-cc-by-sa",
+      "status": "open",
+      "prompt": "Approve only if attribution and ShareAlike obligations are accepted, or keep blocked?",
+      "source_path": "public/archive-media/villa-savoye/interior/villa-savoye-chaise-longue-interior-cc-by-sa-2.jpg",
+      "safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:villa-savoye-blocked-derived-files:public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "lane": "KosmoReferences",
+      "group": "villa-savoye-blocked-derived-files",
+      "title": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "status": "open",
+      "prompt": "Keep blocked or open a separate source-basis review?",
+      "source_path": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+      "safe_default": "keep_blocked",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:villa-savoye-blocked-derived-files:public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "lane": "KosmoReferences",
+      "group": "villa-savoye-blocked-derived-files",
+      "title": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "status": "open",
+      "prompt": "Keep blocked or open a separate plan/source-basis review?",
+      "source_path": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+      "safe_default": "keep_blocked",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:villa-savoye-blocked-derived-files:public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "lane": "KosmoReferences",
+      "group": "villa-savoye-blocked-derived-files",
+      "title": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "status": "open",
+      "prompt": "Keep blocked or open a separate section/source-basis review?",
+      "source_path": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+      "safe_default": "keep_blocked",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:villa-savoye-blocked-derived-files:public/archive-models/villa-savoye/low.glb",
+      "lane": "KosmoReferences",
+      "group": "villa-savoye-blocked-derived-files",
+      "title": "public/archive-models/villa-savoye/low.glb",
+      "status": "open",
+      "prompt": "Keep blocked or open a separate model/source-basis review?",
+      "source_path": "public/archive-models/villa-savoye/low.glb",
+      "safe_default": "keep_blocked",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:model-promotion-owner-confirmation:villa-savoye",
+      "lane": "KosmoReferences",
+      "group": "model-promotion-owner-confirmation",
+      "title": "villa-savoye",
+      "status": "open",
+      "prompt": "Confirm model promotion only after accepting diagrammatic, not-measured status?",
+      "source_path": "public/archive-models/villa-savoye/low.glb",
+      "safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:model-promotion-owner-confirmation:alterszentrum-kloster-ingenbohl",
+      "lane": "KosmoReferences",
+      "group": "model-promotion-owner-confirmation",
+      "title": "alterszentrum-kloster-ingenbohl",
+      "status": "open",
+      "prompt": "Confirm model promotion only after accepting diagrammatic, not-measured status?",
+      "source_path": "public/archive-models/alterszentrum-kloster-ingenbohl/low.glb",
+      "safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "reference:sogn-benedetg-source-gap:sogn-benedetg-source-gap",
+      "lane": "KosmoReferences",
+      "group": "sogn-benedetg-source-gap",
+      "title": "sogn-benedetg-source-gap",
+      "status": "open",
+      "prompt": "Find private library root or keep Sogn link-only with review-only study assets?",
+      "source_path": null,
+      "safe_default": "needs_more_source_context",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_decision": false,
+      "command_hint": "Edit owner-review-decision-session-2026-06-13.json, then run npm run kosmo:owner-decision-session-check."
+    },
+    {
+      "id": "asset:villa-savoye-concrete-frame-material-001:blender",
+      "lane": "KosmoAsset",
+      "group": "material",
+      "title": "Villa Savoye Concrete Frame Material Study",
+      "status": "open",
+      "prompt": "Complete human review for Villa Savoye Concrete Frame Material Study on route blender.",
+      "source_path": "villa-savoye-concrete-frame-material-001",
+      "safe_default": "needs-review",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "needs-review",
+        "approve-local",
+        "block-public",
+        "reject"
+      ],
+      "public_ready_after_decision": false,
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ],
+      "checklist_open": 6,
+      "command_hint": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset villa-savoye-concrete-frame-material-001 --route blender --decision needs-review"
+    },
+    {
+      "id": "asset:villa-savoye-five-points-diagram-001:web",
+      "lane": "KosmoAsset",
+      "group": "annotation",
+      "title": "Villa Savoye Five Points Diagram Kit",
+      "status": "open",
+      "prompt": "Complete human review for Villa Savoye Five Points Diagram Kit on route web.",
+      "source_path": "villa-savoye-five-points-diagram-001",
+      "safe_default": "needs-review",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "needs-review",
+        "approve-local",
+        "block-public",
+        "reject"
+      ],
+      "public_ready_after_decision": false,
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ],
+      "checklist_open": 6,
+      "command_hint": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset villa-savoye-five-points-diagram-001 --route web --decision needs-review"
+    },
+    {
+      "id": "asset:sogn-benedetg-wood-shingle-material-001:blender",
+      "lane": "KosmoAsset",
+      "group": "material",
+      "title": "Sogn Benedetg Wood Shingle Material Study",
+      "status": "open",
+      "prompt": "Complete human review for Sogn Benedetg Wood Shingle Material Study on route blender.",
+      "source_path": "sogn-benedetg-wood-shingle-material-001",
+      "safe_default": "needs-review",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "needs-review",
+        "approve-local",
+        "block-public",
+        "reject"
+      ],
+      "public_ready_after_decision": false,
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ],
+      "checklist_open": 6,
+      "command_hint": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset sogn-benedetg-wood-shingle-material-001 --route blender --decision needs-review"
+    },
+    {
+      "id": "asset:sogn-benedetg-light-band-detail-001:dxf",
+      "lane": "KosmoAsset",
+      "group": "opening",
+      "title": "Sogn Benedetg Light Band Detail Study",
+      "status": "open",
+      "prompt": "Complete human review for Sogn Benedetg Light Band Detail Study on route dxf.",
+      "source_path": "sogn-benedetg-light-band-detail-001",
+      "safe_default": "needs-review",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "needs-review",
+        "approve-local",
+        "block-public",
+        "reject"
+      ],
+      "public_ready_after_decision": false,
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ],
+      "checklist_open": 6,
+      "command_hint": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset sogn-benedetg-light-band-detail-001 --route dxf --decision needs-review"
+    },
+    {
+      "id": "asset:ingenbohl-mineral-pigment-material-001:blender",
+      "lane": "KosmoAsset",
+      "group": "material",
+      "title": "Ingenbohl Mineral Pigment Material Study",
+      "status": "open",
+      "prompt": "Complete human review for Ingenbohl Mineral Pigment Material Study on route blender.",
+      "source_path": "ingenbohl-mineral-pigment-material-001",
+      "safe_default": "needs-review",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "needs-review",
+        "approve-local",
+        "block-public",
+        "reject"
+      ],
+      "public_ready_after_decision": false,
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ],
+      "checklist_open": 6,
+      "command_hint": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset ingenbohl-mineral-pigment-material-001 --route blender --decision needs-review"
+    },
+    {
+      "id": "asset:ingenbohl-concrete-core-frame-study-001:blender",
+      "lane": "KosmoAsset",
+      "group": "structure",
+      "title": "Ingenbohl Concrete Core and Frame Study",
+      "status": "open",
+      "prompt": "Complete human review for Ingenbohl Concrete Core and Frame Study on route blender.",
+      "source_path": "ingenbohl-concrete-core-frame-study-001",
+      "safe_default": "needs-review",
+      "selected_decision": null,
+      "allowed_decisions": [
+        "needs-review",
+        "approve-local",
+        "block-public",
+        "reject"
+      ],
+      "public_ready_after_decision": false,
+      "blockers": [
+        "local_files_or_library_check_missing"
+      ],
+      "checklist_open": 6,
+      "command_hint": "npm run kosmo:asset-review-decision -- --library examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json --asset ingenbohl-concrete-core-frame-study-001 --route blender --decision needs-review"
+    }
+  ],
+  "next_actions": [
+    "Owner resolves reference decisions in the owner decision worksheet/session.",
+    "Human reviewer resolves asset reviews in asset-human-review-session.generated.md or records explicit local decisions.",
+    "Re-run the relevant session checks after any human decision edit.",
+    "Keep public-ready assets at 0 until separate promotion reviews pass."
+  ]
+}

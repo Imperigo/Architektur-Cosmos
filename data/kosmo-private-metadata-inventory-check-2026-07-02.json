@@ -1,0 +1,410 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:20:25.161Z",
+  "status": "private_metadata_inventory_guard_passed",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_check": 0,
+    "note": "This guard validates runner and fixture reports only. It does not scan private roots or inspect source file contents."
+  },
+  "source_refs": [
+    "data/kosmo-private-metadata-inventory-runner-2026-07-02.json",
+    "data/kosmo-private-metadata-inventory-fixture-smoke-2026-07-02.json"
+  ],
+  "summary": {
+    "runner_status": "private_metadata_inventory_blocked_until_activation",
+    "fixture_status": "private_metadata_inventory_fixture_passed",
+    "runner_files_scanned": 0,
+    "fixture_files_scanned": 6,
+    "fixture_candidate_matches": 6,
+    "pilots": 3,
+    "failures": 0,
+    "warnings": 0,
+    "forbidden_field_hits": 0,
+    "public_ready_hits": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": [
+    {
+      "severity": "passed",
+      "id": "runner_report_present",
+      "message": "Runner report must exist."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_report_present",
+      "message": "Fixture smoke report must exist."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_schema_version",
+      "message": "runner schema_version must be 0.1."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_metadata_only",
+      "message": "runner must be metadata-only."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_no_content_reads",
+      "message": "runner must declare no file-content reads."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_no_private_copy",
+      "message": "runner must not copy private content."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_no_public_writes",
+      "message": "runner must not write public files."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_public_ready_zero",
+      "message": "runner public-ready after run must be 0."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilots_array",
+      "message": "runner pilots must be an array."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_count",
+      "message": "runner must contain all expected pilots."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_expected:villa-savoye",
+      "message": "runner pilot must be expected: villa-savoye."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_rights:villa-savoye",
+      "message": "runner pilot villa-savoye must stay review_only."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_public_ready:villa-savoye",
+      "message": "runner pilot villa-savoye must keep public_ready=false."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_fingerprints_array:villa-savoye",
+      "message": "runner pilot villa-savoye fingerprints must be an array."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_expected:kapelle-sogn-benedetg",
+      "message": "runner pilot must be expected: kapelle-sogn-benedetg."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_rights:kapelle-sogn-benedetg",
+      "message": "runner pilot kapelle-sogn-benedetg must stay review_only."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_public_ready:kapelle-sogn-benedetg",
+      "message": "runner pilot kapelle-sogn-benedetg must keep public_ready=false."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_fingerprints_array:kapelle-sogn-benedetg",
+      "message": "runner pilot kapelle-sogn-benedetg fingerprints must be an array."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_expected:alterszentrum-kloster-ingenbohl",
+      "message": "runner pilot must be expected: alterszentrum-kloster-ingenbohl."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_rights:alterszentrum-kloster-ingenbohl",
+      "message": "runner pilot alterszentrum-kloster-ingenbohl must stay review_only."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_pilot_public_ready:alterszentrum-kloster-ingenbohl",
+      "message": "runner pilot alterszentrum-kloster-ingenbohl must keep public_ready=false."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_fingerprints_array:alterszentrum-kloster-ingenbohl",
+      "message": "runner pilot alterszentrum-kloster-ingenbohl fingerprints must be an array."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_status_guarded",
+      "message": "Runner status must be blocked or private-output-written."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_blocked_no_scan",
+      "message": "Blocked runner must not scan a root."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_blocked_zero_files",
+      "message": "Blocked runner must scan zero files."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_blocked_no_private_write",
+      "message": "Blocked runner must not write private inventory."
+    },
+    {
+      "severity": "passed",
+      "id": "runner_blocked_reason_present",
+      "message": "Blocked runner must include blocked_reason."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_schema_version",
+      "message": "fixture schema_version must be 0.1."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_metadata_only",
+      "message": "fixture must be metadata-only."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_no_content_reads",
+      "message": "fixture must declare no file-content reads."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_no_private_copy",
+      "message": "fixture must not copy private content."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_no_public_writes",
+      "message": "fixture must not write public files."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_public_ready_zero",
+      "message": "fixture public-ready after run must be 0."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilots_array",
+      "message": "fixture pilots must be an array."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_count",
+      "message": "fixture must contain all expected pilots."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_expected:villa-savoye",
+      "message": "fixture pilot must be expected: villa-savoye."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_rights:villa-savoye",
+      "message": "fixture pilot villa-savoye must stay review_only."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_public_ready:villa-savoye",
+      "message": "fixture pilot villa-savoye must keep public_ready=false."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprints_array:villa-savoye",
+      "message": "fixture pilot villa-savoye fingerprints must be an array."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_hash:villa-savoye",
+      "message": "fixture fingerprint must include path_hash."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_path:villa-savoye",
+      "message": "fixture fingerprint must not include raw path."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_content:villa-savoye",
+      "message": "fixture fingerprint must not include content."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_hash:villa-savoye",
+      "message": "fixture fingerprint must include path_hash."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_path:villa-savoye",
+      "message": "fixture fingerprint must not include raw path."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_content:villa-savoye",
+      "message": "fixture fingerprint must not include content."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_expected:kapelle-sogn-benedetg",
+      "message": "fixture pilot must be expected: kapelle-sogn-benedetg."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_rights:kapelle-sogn-benedetg",
+      "message": "fixture pilot kapelle-sogn-benedetg must stay review_only."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_public_ready:kapelle-sogn-benedetg",
+      "message": "fixture pilot kapelle-sogn-benedetg must keep public_ready=false."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprints_array:kapelle-sogn-benedetg",
+      "message": "fixture pilot kapelle-sogn-benedetg fingerprints must be an array."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_hash:kapelle-sogn-benedetg",
+      "message": "fixture fingerprint must include path_hash."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_path:kapelle-sogn-benedetg",
+      "message": "fixture fingerprint must not include raw path."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_content:kapelle-sogn-benedetg",
+      "message": "fixture fingerprint must not include content."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_hash:kapelle-sogn-benedetg",
+      "message": "fixture fingerprint must include path_hash."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_path:kapelle-sogn-benedetg",
+      "message": "fixture fingerprint must not include raw path."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_content:kapelle-sogn-benedetg",
+      "message": "fixture fingerprint must not include content."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_expected:alterszentrum-kloster-ingenbohl",
+      "message": "fixture pilot must be expected: alterszentrum-kloster-ingenbohl."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_rights:alterszentrum-kloster-ingenbohl",
+      "message": "fixture pilot alterszentrum-kloster-ingenbohl must stay review_only."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_public_ready:alterszentrum-kloster-ingenbohl",
+      "message": "fixture pilot alterszentrum-kloster-ingenbohl must keep public_ready=false."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprints_array:alterszentrum-kloster-ingenbohl",
+      "message": "fixture pilot alterszentrum-kloster-ingenbohl fingerprints must be an array."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_hash:alterszentrum-kloster-ingenbohl",
+      "message": "fixture fingerprint must include path_hash."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_path:alterszentrum-kloster-ingenbohl",
+      "message": "fixture fingerprint must not include raw path."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_content:alterszentrum-kloster-ingenbohl",
+      "message": "fixture fingerprint must not include content."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_hash:alterszentrum-kloster-ingenbohl",
+      "message": "fixture fingerprint must include path_hash."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_path:alterszentrum-kloster-ingenbohl",
+      "message": "fixture fingerprint must not include raw path."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_fingerprint_no_content:alterszentrum-kloster-ingenbohl",
+      "message": "fixture fingerprint must not include content."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_status_passed",
+      "message": "Fixture smoke must pass."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_public_safe_mode",
+      "message": "Fixture smoke must be public-safe mode."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_root_scanned",
+      "message": "Fixture smoke must exercise scan path."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_files_scanned",
+      "message": "Fixture smoke must scan at least six files."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_candidate_matches",
+      "message": "Fixture smoke must produce at least six candidate matches."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_no_private_write",
+      "message": "Fixture smoke must not write private inventory output."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_candidates:villa-savoye",
+      "message": "Fixture pilot villa-savoye must have at least two candidates."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_candidates:kapelle-sogn-benedetg",
+      "message": "Fixture pilot kapelle-sogn-benedetg must have at least two candidates."
+    },
+    {
+      "severity": "passed",
+      "id": "fixture_pilot_candidates:alterszentrum-kloster-ingenbohl",
+      "message": "Fixture pilot alterszentrum-kloster-ingenbohl must have at least two candidates."
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Keep private metadata inventory blocked until source-root activation passes.",
+    "Use fixture smoke as the public-safe regression test for scan-path changes.",
+    "After a real private metadata run, verify the private output with kosmo:private-inventory-output-check before handoff."
+  ]
+}
