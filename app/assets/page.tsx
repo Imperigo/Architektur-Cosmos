@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import { PublicAssetExplorer } from '@/components/public/PublicAssetExplorer';
-import { PublicBundleCard, PublicCardGrid, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
+import { PublicBundleCard, PublicCardGrid, PublicGateSummaryStrip, PublicHeroPreview, PublicInfoCard, PublicMetricCard, PublicSplitSection } from '@/components/public/PublicSectionPrimitives';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
 import {
   ingenbohlEntry,
@@ -76,6 +76,8 @@ export default function AssetsPage() {
             </div>
           </PublicHeroPreview>
         </section>
+
+        <PublicGateSummaryStrip accent="#b9f06a" items={publicGateSummary} />
 
         <PublicAssetExplorer assets={assets} />
 

@@ -1069,6 +1069,70 @@ textarea {
   letter-spacing: 0;
 }
 
+.public-gate-summary-strip {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 12px;
+  border-top: 1px solid var(--ak-border-subtle);
+  border-bottom: 1px solid var(--ak-border-subtle);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--public-section-accent) 9%, transparent), transparent 58%),
+    rgb(5 7 8 / 38%);
+  padding: 14px 0;
+}
+
+.public-gate-summary-label {
+  align-self: stretch;
+  border-right: 1px solid var(--ak-border-subtle);
+  color: var(--public-section-accent);
+  font-family: var(--ak-font-mono);
+  font-size: 10px;
+  font-weight: 760;
+  line-height: 1.25;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.public-gate-summary-items {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.public-gate-summary-item {
+  min-width: 0;
+  border-left: 1px solid color-mix(in srgb, var(--public-section-accent) 42%, transparent);
+  padding-left: 12px;
+}
+
+.public-gate-summary-item strong {
+  display: block;
+  color: var(--ak-text-primary);
+  font-size: 22px;
+  font-weight: 760;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.public-gate-summary-item span {
+  display: block;
+  margin-top: 5px;
+  color: var(--public-section-accent);
+  font-family: var(--ak-font-mono);
+  font-size: 9px;
+  font-weight: 720;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.public-gate-summary-item div {
+  margin-top: 7px;
+  color: var(--ak-text-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .public-media-card {
   min-width: 0;
   border: 1px solid var(--ak-border-subtle);
@@ -1792,9 +1856,16 @@ textarea {
   }
 
   .public-section-split,
+  .public-gate-summary-strip,
   .public-card-grid[data-columns="3"],
   .public-card-grid[data-columns="4"] {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .public-gate-summary-label {
+    border-right: 0;
+    border-bottom: 1px solid var(--ak-border-subtle);
+    padding-bottom: 10px;
   }
 
   .public-card-grid[data-columns="2"] {
@@ -1817,6 +1888,10 @@ textarea {
 
   .public-bundle-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .public-gate-summary-items {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
