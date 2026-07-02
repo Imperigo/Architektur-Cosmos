@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Assembly, Opening, Slab, Storey, Wall, MassBody } from '../model/entities';
+import type { Assembly, Opening, Slab, Storey, Wall, MassBody, Zone } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -273,5 +273,33 @@ export const deleteEntity = registerCommand({
     }
     patches.push({ id: e.id, before: e, after: null });
     return patches;
+  },
+});
+
+export const createZone = registerCommand({
+  id: 'design.zoneErstellen',
+  title: 'Zone/Raum erstellen',
+  description:
+    'Erstellt eine Zone (Raum) mit Polygon-Umriss und SIA-416-Klasse: HNF (Hauptnutzfläche), NNF (Nebennutzfläche), VF (Verkehrsfläche), FF (Funktionsfläche), KF (Konstruktionsfläche). Flächen fliessen live in die Kennzahlen.',
+  params: z.object({
+    storeyId: z.string(),
+    outline: z.array(PtSchema).min(3),
+    name: z.string().describe('Raumname, z.B. «Wohnen» oder «Treppenhaus»'),
+    sia: z.enum(['HNF', 'NNF', 'VF', 'FF', 'KF']).default('HNF'),
+    program: z.string().optional().describe('Raumprogramm-Kategorie, z.B. «marktgerecht»'),
+  }),
+  summarize: (p) => `Zone «${p.name}» (${p.sia})`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const zone: Zone = {
+      id: newId('zone'),
+      kind: 'zone',
+      storeyId: p.storeyId,
+      outline: p.outline as Pt[],
+      name: p.name,
+      sia: p.sia,
+      ...(p.program ? { program: p.program } : {}),
+    };
+    return [added(zone)];
   },
 });

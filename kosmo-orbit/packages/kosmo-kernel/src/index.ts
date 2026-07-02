@@ -9,3 +9,4 @@ export * from './geometry/wall';
 export * from './derive/mesh';
 export * from './derive/scene';
 export * from './derive/plan';
+export * from './derive/sia416';

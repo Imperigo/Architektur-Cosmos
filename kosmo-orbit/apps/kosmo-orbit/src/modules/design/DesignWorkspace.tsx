@@ -4,6 +4,7 @@ import { formatLength, type Assembly, type Pt, type Storey } from '@kosmo/kernel
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { PlanView } from './PlanView';
+import { KennzahlenPanel } from './KennzahlenPanel';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -11,7 +12,7 @@ import { PlanView } from './PlanView';
  * Undo/Redo. Splitscreen mit 2D-Plänen folgt in M2.
  */
 
-type ToolId = 'auswahl' | 'wand' | 'volumen';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone';
 
 const SNAP = 250; // mm Rasterfang — später einstellbar/magnetisch
 
@@ -49,7 +50,7 @@ export function DesignWorkspace() {
   handlersRef.current = {
     previewLine:
       points.length > 0 && cursor
-        ? tool === 'volumen'
+        ? tool === 'volumen' || tool === 'zone'
           ? [...points, cursor, points[0]!]
           : [...points, cursor]
         : null,
@@ -76,13 +77,23 @@ export function DesignWorkspace() {
             setPoints(e.shiftKey ? [] : [p]);
           }
         }
-      } else if (tool === 'volumen') {
+      } else if (tool === 'volumen' || tool === 'zone') {
         if (points.length >= 3 && Math.hypot(p.x - points[0]!.x, p.y - points[0]!.y) < SNAP) {
-          runCommand('design.volumenErstellen', {
-            storeyId: activeStoreyId,
-            outline: points,
-            height: 9000,
-          });
+          if (tool === 'volumen') {
+            runCommand('design.volumenErstellen', {
+              storeyId: activeStoreyId,
+              outline: points,
+              height: 9000,
+            });
+          } else {
+            const n = useProject.getState().doc.byKind('zone').length + 1;
+            runCommand('design.zoneErstellen', {
+              storeyId: activeStoreyId,
+              outline: points,
+              name: `Raum ${n}`,
+              sia: 'HNF',
+            });
+          }
           setPoints([]);
         } else {
           setPoints([...points, p]);
@@ -119,6 +130,7 @@ export function DesignWorkspace() {
             ['auswahl', 'Auswahl'],
             ['wand', 'Wand'],
             ['volumen', 'Volumen'],
+            ['zone', 'Zone'],
           ] as const
         ).map(([id, label]) => (
           <KButton
@@ -196,6 +208,8 @@ export function DesignWorkspace() {
             <PlanView handlers={handlersRef} />
           </div>
         )}
+
+        <KennzahlenPanel />
 
         {/* Geschossleiste */}
         <div

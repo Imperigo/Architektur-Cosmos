@@ -222,3 +222,59 @@ describe('Serialisierung', () => {
     expect(doc.storeyTop(storeys[1]!.id)).toBe(5800);
   });
 });
+
+describe('SIA-416 Kennzahlen (Owner-Methodik)', () => {
+  it('aGF-Ziel = HNF × Faktor; GF-Schätzung mit Fassadenzuschlag', async () => {
+    const { areaReport } = await import('../src');
+    const { doc, storeyId } = setupDoc();
+    // 10×10m HNF-Zone = 100 m²
+    execute(doc, 'design.zoneErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 10000, y: 0 },
+        { x: 10000, y: 10000 },
+        { x: 0, y: 10000 },
+      ],
+      name: 'Wohnen',
+      sia: 'HNF',
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId,
+      outline: [
+        { x: 12000, y: 0 },
+        { x: 16000, y: 0 },
+        { x: 16000, y: 5000 },
+        { x: 12000, y: 5000 },
+      ],
+      name: 'Treppenhaus',
+      sia: 'VF',
+    });
+    const r = areaReport(doc);
+    expect(r.total.HNF).toBe(100);
+    expect(r.total.VF).toBe(20);
+    expect(r.totalNgf).toBe(120);
+    expect(r.agfZiel).toBeCloseTo(128); // 100 × 1.28 (Default)
+    expect(r.gfSchaetzung).toBeCloseTo(140.8); // ×1.10 Fassade
+  });
+
+  it('Volumenkörper: GF = Grundfläche × abgeleitete Geschosse', async () => {
+    const { areaReport } = await import('../src');
+    const { doc, storeyId } = setupDoc();
+    // 20×15m, 9.5m hoch → 3 Geschosse à 300 m² = 900 m²
+    execute(doc, 'design.volumenErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 20000, y: 0 },
+        { x: 20000, y: 15000 },
+        { x: 0, y: 15000 },
+      ],
+      height: 9500,
+      program: 'wohnen',
+    });
+    const r = areaReport(doc);
+    expect(r.gfVolumen).toBe(900);
+    expect(r.gfVolumenNachProgramm['wohnen']).toBe(900);
+  });
+});
