@@ -469,3 +469,50 @@ describe('3D-Wandknoten (Gehrung)', () => {
     expect(maxX).toBeCloseTo(5000, 0);
   });
 });
+
+describe('Grundriss-Checks (Q12)', () => {
+  it('meldet schmale Zimmer, enge Türen und unbequeme Treppen — und sonst nichts', async () => {
+    const { pruefeGrundriss } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 },
+    });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (w.patches[0] as { id: string }).id,
+      openingType: 'tuer', center: 2000, width: 700, height: 2100, sill: 0,
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Kammer', sia: 'HNF',
+      outline: [{ x: 0, y: 0 }, { x: 2000, y: 0 }, { x: 2000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    execute(doc, 'design.treppeErstellen', {
+      storeyId, a: { x: 5000, y: 2000 }, b: { x: 5000, y: 4800 }, width: 900,
+    });
+    const befunde = pruefeGrundriss(doc, storeyId);
+    const regeln = befunde.map((b) => b.regel);
+    expect(regeln).toContain('Türbreite');
+    expect(regeln).toContain('Zimmerbreite');
+    expect(regeln).toContain('Zimmerfläche');
+    expect(regeln).toContain('Schrittmass');
+    expect(regeln).toContain('Laufbreite');
+    expect(regeln).not.toContain('Aufbau');
+    expect(befunde[0]!.schwere).not.toBe('hinweis'); // sortiert: Schweres zuerst
+  });
+
+  it('sauberer Grundriss ergibt keine Befunde', async () => {
+    const { pruefeGrundriss } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 },
+    });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (w.patches[0] as { id: string }).id,
+      openingType: 'tuer', center: 2000, width: 900, height: 2100, sill: 0,
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Wohnen', sia: 'HNF',
+      outline: [{ x: 0, y: 0 }, { x: 4200, y: 0 }, { x: 4200, y: 5200 }, { x: 0, y: 5200 }],
+    });
+    expect(pruefeGrundriss(doc, storeyId)).toEqual([]);
+  });
+});

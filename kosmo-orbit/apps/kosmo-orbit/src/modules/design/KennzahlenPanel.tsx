@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Badge, Hairline, Measure, moduleHue } from '@kosmo/ui';
-import { areaReport } from '@kosmo/kernel';
+import { areaReport, pruefeGrundriss } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -16,8 +16,13 @@ const fmt = (m2: number) =>
 export function KennzahlenPanel() {
   const revision = useProject((s) => s.revision);
   const doc = useProject.getState().doc;
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
   const [open, setOpen] = useState(true);
   const report = useMemo(() => areaReport(doc), [doc, revision]);
+  const befunde = useMemo(
+    () => (activeStoreyId ? pruefeGrundriss(doc, activeStoreyId) : []),
+    [doc, revision, activeStoreyId],
+  );
 
   const hasZones = report.totalNgf > 0;
   const hasMasses = report.gfVolumen > 0;
@@ -51,6 +56,11 @@ export function KennzahlenPanel() {
         }}
       >
         <Badge hue={moduleHue.design}>Kennzahlen</Badge>
+        {befunde.length > 0 && (
+          <Badge hue={befunde[0]!.schwere === 'fehler' ? 'var(--k-danger, #b3462e)' : 'var(--k-warning)'}>
+            {befunde.length} Check{befunde.length > 1 ? 's' : ''}
+          </Badge>
+        )}
         <span style={{ flex: 1 }} />
         <span style={{ color: 'var(--k-ink-faint)' }}>{open ? '−' : '+'}</span>
       </button>
@@ -89,6 +99,38 @@ export function KennzahlenPanel() {
               {Object.entries(report.gfVolumenNachProgramm).map(([prog, gf]) => (
                 <Row key={prog} label={`· ${prog}`} value={`${fmt(gf)} m²`} />
               ))}
+            </>
+          )}
+          {befunde.length > 0 && (
+            <>
+              <Hairline />
+              <div style={{ display: 'grid', gap: 5 }} data-testid="checks">
+                {befunde.slice(0, 6).map((b, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                    <span
+                      title={b.schwere}
+                      style={{
+                        color:
+                          b.schwere === 'fehler'
+                            ? 'var(--k-danger, #b3462e)'
+                            : b.schwere === 'warnung'
+                              ? 'var(--k-warning)'
+                              : 'var(--k-ink-faint)',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {b.schwere === 'hinweis' ? '·' : '!'}
+                    </span>
+                    <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>{b.text}</span>
+                  </div>
+                ))}
+                {befunde.length > 6 && (
+                  <span style={{ color: 'var(--k-ink-faint)' }}>… {befunde.length - 6} weitere</span>
+                )}
+                <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+                  Richtwerte-Checks — kein Normersatz.
+                </span>
+              </div>
             </>
           )}
         </div>

@@ -17,5 +17,6 @@ export * from './derive/plansvg';
 export * from './derive/sheet';
 export * from './derive/dxf';
 export * from './derive/dimensions';
+export * from './derive/checks';
 export * from './ifc/export';
 export * from './geometry/skeleton';
