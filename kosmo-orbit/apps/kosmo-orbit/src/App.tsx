@@ -3,7 +3,6 @@ import {
   Badge,
   Hairline,
   KButton,
-  Measure,
   OrbitMark,
   Panel,
   Wordmark,
@@ -11,21 +10,36 @@ import {
   type ModuleId,
   type ThemeName,
 } from '@kosmo/ui';
+import { DesignWorkspace } from './modules/design/DesignWorkspace';
+import { useProject } from './state/project-store';
 
-const modules: { id: ModuleId; name: string; desc: string; ready: boolean }[] = [
-  { id: 'design', name: 'KosmoDesign', desc: 'Entwerfen · Modellieren · Pläne', ready: false },
-  { id: 'data', name: 'KosmoData', desc: 'Referenzen · Assets · Wissen', ready: false },
-  { id: 'vis', name: 'KosmoVis', desc: 'Renderings · Varianten', ready: false },
-  { id: 'publish', name: 'KosmoPublish', desc: 'Plansätze · Layouts', ready: false },
-  { id: 'prepare', name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion', ready: false },
+type Screen = 'home' | 'design';
+
+const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string }[] = [
+  { id: 'design', screen: 'design', name: 'KosmoDesign', desc: 'Entwerfen · Modellieren · Pläne' },
+  { id: 'data', screen: null, name: 'KosmoData', desc: 'Referenzen · Assets · Wissen' },
+  { id: 'vis', screen: null, name: 'KosmoVis', desc: 'Renderings · Varianten' },
+  { id: 'publish', screen: null, name: 'KosmoPublish', desc: 'Plansätze · Layouts' },
+  { id: 'prepare', screen: null, name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
 ];
 
 export function App() {
   const [theme, setTheme] = useState<ThemeName>('paper');
+  const [screen, setScreen] = useState<Screen>('home');
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  // Test-Hook für Playwright/KosmoDoc: deterministische Modell-Aufbauten
+  useEffect(() => {
+    (window as never as Record<string, unknown>)['__kosmo'] = {
+      run: (commandId: string, params: unknown) =>
+        useProject.getState().runCommand(commandId, params),
+      state: () => useProject.getState(),
+      open: (s: Screen) => setScreen(s),
+    };
+  }, []);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -34,13 +48,26 @@ export function App() {
           display: 'flex',
           alignItems: 'center',
           gap: 14,
-          padding: '10px 18px',
+          padding: '8px 16px',
           borderBottom: '1px solid var(--k-line)',
           background: 'var(--k-surface)',
+          zIndex: 3,
         }}
       >
-        <OrbitMark module="orbit" size={26} />
-        <Wordmark />
+        <button
+          onClick={() => setScreen('home')}
+          style={{ all: 'unset', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}
+          aria-label="Zur Zentrale"
+        >
+          <OrbitMark module="orbit" size={24} />
+          <Wordmark size={16} />
+        </button>
+        {screen !== 'home' && (
+          <>
+            <Hairline vertical />
+            <Badge hue={moduleHue.design}>KosmoDesign</Badge>
+          </>
+        )}
         <div style={{ flex: 1 }} />
         <Badge hue={moduleHue.kosmo}>Kosmo bereit</Badge>
         <Hairline vertical />
@@ -49,79 +76,58 @@ export function App() {
         </KButton>
       </header>
 
-      <main style={{ flex: 1, overflow: 'auto', padding: '48px 24px' }}>
-        <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
-          <div>
-            <div style={{ fontSize: 28, fontWeight: 550, letterSpacing: '-0.01em' }}>
-              Guten Morgen.
-            </div>
-            <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
-              KosmoOrbit V1 ist im Aufbau — dies ist das lebende Gerüst. Jeder Stand wird laufend
-              auf Git gesichert.
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-              gap: 14,
-            }}
-          >
-            {modules.map((m) => (
-              <Panel
-                key={m.id}
+      <main style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        {screen === 'design' ? (
+          <DesignWorkspace />
+        ) : (
+          <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
+            <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
+              <div>
+                <div style={{ fontSize: 28, fontWeight: 550, letterSpacing: '-0.01em' }}>
+                  Guten Morgen.
+                </div>
+                <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
+                  Womit beginnen wir? KosmoDesign ist bereit zum Zeichnen.
+                </div>
+              </div>
+              <div
                 style={{
-                  display: 'flex',
-                  gap: 12,
-                  alignItems: 'center',
-                  opacity: m.ready ? 1 : 0.75,
-                  transition: 'border-color var(--k-motion-fast)',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                  gap: 14,
                 }}
               >
-                <OrbitMark module={m.id} size={34} />
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ fontWeight: 550 }}>{m.name}</div>
-                  <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>{m.desc}</div>
-                </div>
-              </Panel>
-            ))}
-          </div>
-
-          <Panel>
-            <Badge hue={moduleHue.design}>Aura — visueller Palettentest</Badge>
-            <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
-              {(
-                [
-                  ['Akzent', 'var(--k-accent)'],
-                  ['Erfolg', 'var(--k-success)'],
-                  ['Warnung', 'var(--k-warning)'],
-                  ['Gefahr', 'var(--k-danger)'],
-                  ['Info', 'var(--k-info)'],
-                ] as const
-              ).map(([name, c]) => (
-                <div key={name} style={{ textAlign: 'center', fontSize: 11 }}>
-                  <div
+                {modules.map((m) => (
+                  <Panel
+                    key={m.id}
+                    onClick={() => m.screen && setScreen(m.screen)}
+                    data-testid={`module-${m.id}`}
                     style={{
-                      width: 64,
-                      height: 40,
-                      borderRadius: 'var(--k-radius-sm)',
-                      background: c,
-                      border: '1px solid var(--k-line)',
+                      display: 'flex',
+                      gap: 12,
+                      alignItems: 'center',
+                      cursor: m.screen ? 'pointer' : 'default',
+                      opacity: m.screen ? 1 : 0.55,
+                      transition: 'border-color var(--k-motion-fast), box-shadow var(--k-motion-fast)',
                     }}
-                  />
-                  <div style={{ marginTop: 4, color: 'var(--k-ink-faint)' }}>{name}</div>
-                </div>
-              ))}
+                    onMouseEnter={(e) => {
+                      if (m.screen) (e.currentTarget as HTMLElement).style.borderColor = 'var(--k-accent)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = 'var(--k-line)';
+                    }}
+                  >
+                    <OrbitMark module={m.id} size={34} />
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontWeight: 550 }}>{m.name}</div>
+                      <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>{m.desc}</div>
+                    </div>
+                  </Panel>
+                ))}
+              </div>
             </div>
-            <div style={{ marginTop: 14, display: 'flex', gap: 8, alignItems: 'center' }}>
-              <KButton tone="accent">Primäraktion</KButton>
-              <KButton tone="quiet">Sekundär</KButton>
-              <KButton tone="ghost">Still</KButton>
-              <Measure>3.63 m · 10.90 m · aGF 2 814 m²</Measure>
-            </div>
-          </Panel>
-        </div>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -13,7 +13,10 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@kosmo/contracts": "*",
+    "@kosmo/kernel": "*",
     "@kosmo/ui": "*",
+    "camera-controls": "^3.1.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "three": "^0.184.0",
