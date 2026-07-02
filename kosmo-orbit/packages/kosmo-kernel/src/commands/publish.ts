@@ -49,10 +49,10 @@ export const placeView = registerCommand({
   id: 'publish.ansichtPlatzieren',
   title: 'Ansicht auf Blatt platzieren',
   description:
-    'Platziert einen Grundriss oder Schnitt auf einem Planblatt. view: grundriss (braucht storeyId) oder schnitt (braucht Schnittlinie a→b). scale: Massstab (100 = 1:100). x/y: Mittelpunkt der Zeichnung auf dem Blatt in Papier-mm.',
+    'Platziert einen Grundriss, Schnitt oder eine Axonometrie auf einem Planblatt. view: grundriss (braucht storeyId), schnitt (braucht Schnittlinie a→b) oder axo (Militärperspektive des ganzen Modells). scale: Massstab (100 = 1:100). x/y: Mittelpunkt der Zeichnung auf dem Blatt in Papier-mm.',
   params: z.object({
     sheetId: z.string(),
-    view: z.enum(['grundriss', 'schnitt']),
+    view: z.enum(['grundriss', 'schnitt', 'axo']),
     storeyId: z.string().optional().describe('Quell-Geschoss (bei grundriss)'),
     a: PtSchema.optional().describe('Schnittlinien-Anfang (bei schnitt, Welt-mm)'),
     b: PtSchema.optional().describe('Schnittlinien-Ende (bei schnitt, Welt-mm)'),
@@ -61,7 +61,8 @@ export const placeView = registerCommand({
     y: z.number().describe('Papier-mm ab oben'),
     title: z.string().optional(),
   }),
-  summarize: (p) => `${p.view === 'schnitt' ? 'Schnitt' : 'Grundriss'} 1:${p.scale} platzieren`,
+  summarize: (p) =>
+    `${p.view === 'schnitt' ? 'Schnitt' : p.view === 'axo' ? 'Axonometrie' : 'Grundriss'} 1:${p.scale} platzieren`,
   run: (doc, p) => {
     const sheet = requireSheet(doc, p.sheetId);
     const placement: SheetPlacement = {
@@ -80,6 +81,8 @@ export const placeView = registerCommand({
       }
       placement.storeyId = p.storeyId;
       if (!p.title) placement.title = `Grundriss ${storey.name}`;
+    } else if (p.view === 'axo') {
+      if (!p.title) placement.title = 'Axonometrie';
     } else {
       if (!p.a || !p.b) throw new CommandError('schnitt braucht a und b');
       placement.section = { a: p.a, b: p.b, depth: 30000, lookLeft: true };

@@ -3,6 +3,7 @@ import type { Storey } from '../model/entities';
 import { derivePlan, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabel } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
+import { deriveAxo, type AxoSpec } from './axo';
 
 /**
  * Plansatz-SVG — druckfähige Grundrisse/Schnitte mit SIA-Stiften.
@@ -130,6 +131,18 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
   }
   const b = g.bounds;
   const bounds = b ? { minX: b.minS, minY: -b.maxZ, maxX: b.maxS, maxY: -b.minZ } : null;
+  return { inner: parts.join('\n'), bounds };
+}
+
+export function axoInnerSvg(doc: KosmoDoc, spec: AxoSpec, scale: number): InnerSvg {
+  const g = deriveAxo(doc, spec);
+  const stift = 0.35 * scale;
+  const parts = g.lines.map(
+    (l) =>
+      `<line x1="${l.a.u}" y1="${-l.a.v}" x2="${l.b.u}" y2="${-l.b.v}" stroke="#111" stroke-width="${stift}"/>`,
+  );
+  const b = g.bounds;
+  const bounds = b ? { minX: b.minU, minY: -b.maxV, maxX: b.maxU, maxY: -b.minV } : null;
   return { inner: parts.join('\n'), bounds };
 }
 

@@ -141,3 +141,18 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
   await expect(page.getByText('4 Felder à 2.50 → Achse 10.50 m').first()).toBeVisible();
   await expect(page.locator('[data-testid="raster-varianten"]').getByText('ausgewogen').first()).toBeVisible();
 });
+
+test('Axonometrie: aufs Blatt platzieren, Linien erscheinen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="load-tkb"]');
+  await page.waitForSelector('text=KENNZAHLEN');
+  await page.evaluate(() => window.__kosmo.open('publish'));
+  await page.click('[data-testid="add-sheet"]');
+  await page.click('[data-testid="place-axo"]');
+  await expect(page.getByText('Axonometrie', { exact: false }).first()).toBeVisible();
+  // Die Platzierung enthält gezeichnete Linien
+  const linien = await page.locator('[data-testid="sheet-canvas"] line').count();
+  expect(linien).toBeGreaterThan(10);
+});

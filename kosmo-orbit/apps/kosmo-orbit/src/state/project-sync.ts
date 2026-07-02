@@ -74,7 +74,7 @@ export function connectSync(url: string, room: string): void {
         const current = useProject.getState().activeStoreyId;
         const valid = current && doc.entities.has(current) ? current : null;
         useProject.setState({
-          revision: doc.revision,
+          revision: useProject.getState().revision + 1,
           selection: [],
           activeStoreyId: valid ?? storeys.find((s) => s.index === 0)?.id ?? storeys[0]?.id ?? null,
         });
@@ -101,7 +101,7 @@ export function connectSync(url: string, room: string): void {
       }
     }
     doc.revision++;
-    useProject.setState({ revision: doc.revision });
+    useProject.setState((s) => ({ revision: s.revision + 1 }));
   });
 
   active = { ydoc, provider, entities };

@@ -74,7 +74,7 @@ export function loadTkbDemo(): void {
   useProject.setState({
     doc,
     journal: [],
-    revision: doc.revision + 1,
+    revision: useProject.getState().revision + 1,
     activeStoreyId: firstStoreyId,
     selection: [],
   });

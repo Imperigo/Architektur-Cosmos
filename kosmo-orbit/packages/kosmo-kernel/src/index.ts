@@ -14,6 +14,8 @@ export * from './derive/sia416';
 export * from './derive/berechnungsliste';
 export * from './derive/mengen';
 export * from './derive/stuetzenraster';
+export * from './derive/axo';
+export * from './derive/hiddenline';
 export * from './derive/section';
 export * from './derive/gltf';
 export * from './derive/plansvg';

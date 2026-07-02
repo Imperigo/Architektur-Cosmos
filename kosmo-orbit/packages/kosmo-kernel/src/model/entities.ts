@@ -161,7 +161,7 @@ export type SheetFormat = 'A0' | 'A1' | 'A2' | 'A3' | 'A4';
 /** Eine platzierte Ansicht auf einem Blatt — Position in Papier-mm. */
 export interface SheetPlacement {
   id: string;
-  view: 'grundriss' | 'schnitt';
+  view: 'grundriss' | 'schnitt' | 'axo';
   /** Grundriss: Quell-Geschoss. */
   storeyId?: string;
   /** Schnitt: Schnittlinie + Sichttiefe (Weltkoordinaten mm). */

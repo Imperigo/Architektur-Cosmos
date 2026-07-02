@@ -4,6 +4,7 @@ import { testhausMitQuertrakt, ansichtSvg } from './fixtures';
 import { deriveBerechnungsliste } from '../src/derive/berechnungsliste';
 import { deriveMengen } from '../src/derive/mengen';
 import { generiereStuetzenraster } from '../src/derive/stuetzenraster';
+import { deriveAxo } from '../src/derive/axo';
 import {
   KosmoDoc,
   History,
@@ -822,5 +823,23 @@ describe('Stützenraster-Assistent (VSS 40 291, Owner-Herleitung)', () => {
     const gross = v.find((x) => x.parkfelder === 3 && x.feldbreite === 2.5 && x.wohnachsen === 2)!;
     expect(gross.wohnraster).toBeCloseTo(4.0, 5);
     expect(gross.bewertung).toBe('grosszuegig');
+  });
+});
+
+describe('Axonometrie (Militärperspektive)', () => {
+  it('Quader: 9 sichtbare Kanten, die 3 verdeckten Rückkanten fehlen', () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 3000,
+      outline: [{ x: 0, y: 0 }, { x: 4000, y: 0 }, { x: 4000, y: 3000 }, { x: 0, y: 3000 }],
+    });
+    const mit = deriveAxo(doc, { winkelGrad: 30 });
+    const ohne = deriveAxo(doc, { winkelGrad: 30, hiddenLine: false });
+    expect(ohne.lines.length).toBe(12); // alle Quader-Kanten
+    expect(mit.lines.length).toBe(9); // 3 Rückkanten verdeckt
+    expect(mit.bounds).not.toBeNull();
+    // Grundriss unverzerrt: eine 4-m-Bodenkante bleibt 4 m lang im Bild
+    const laengen = mit.lines.map((l) => Math.hypot(l.b.u - l.a.u, l.b.v - l.a.v));
+    expect(laengen.some((l) => Math.abs(l - 4000) < 1)).toBe(true);
   });
 });

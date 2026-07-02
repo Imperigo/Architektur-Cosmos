@@ -93,6 +93,17 @@ export function PublishWorkspace() {
     });
   }
 
+  function placeAxo() {
+    if (!sheet || !paper) return;
+    runCommand('publish.ansichtPlatzieren', {
+      sheetId: sheet.id,
+      view: 'axo',
+      scale: placeScale * 2, // Axo grosszügiger skalieren (halb so gross wie 1:scale)
+      x: paper.width / 2,
+      y: (paper.height - 30) / 2,
+    });
+  }
+
   /** Schnitt durch die Mitte oder Ansicht von aussen (N/O/S/W). */
   function placeSchnitt(richtung: 'schnitt' | 'nord' | 'ost' | 'sued' | 'west') {
     if (!sheet || !paper) return;
@@ -250,6 +261,9 @@ export function PublishWorkspace() {
           </select>
           <KButton size="sm" tone="quiet" onClick={placeGrundriss} data-testid="place-plan" disabled={!sheet}>
             Grundriss
+          </KButton>
+          <KButton size="sm" tone="quiet" onClick={placeAxo} data-testid="place-axo" disabled={!sheet}>
+            Axo
           </KButton>
           <KButton size="sm" tone="quiet" onClick={() => placeSchnitt('schnitt')} data-testid="place-section" disabled={!sheet}>
             Schnitt

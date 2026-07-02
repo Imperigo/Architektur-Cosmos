@@ -62,7 +62,7 @@ export async function openProjectFile(file: File): Promise<void> {
   useProject.setState({
     doc,
     journal,
-    revision: doc.revision + 1,
+    revision: useProject.getState().revision + 1,
     activeStoreyId: storeys.find((s) => s.index === 0)?.id ?? storeys[0]?.id ?? null,
     selection: [],
     history: new History(), // Undo-Historie beginnt im geöffneten Projekt frisch

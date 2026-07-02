@@ -93,7 +93,7 @@ function ladeJson(json: DocJson): void {
   const storeys = doc.storeysOrdered();
   useProject.setState({
     doc,
-    revision: doc.revision + 1,
+    revision: useProject.getState().revision + 1,
     activeStoreyId: storeys.find((s) => s.index === 0)?.id ?? storeys[0]?.id ?? null,
     selection: [],
     history: new History(),

@@ -1,6 +1,6 @@
 import type { KosmoDoc } from '../model/doc';
 import type { Sheet, SheetFormat, SheetPlacement } from '../model/entities';
-import { escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
+import { axoInnerSvg, escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
 
 /**
  * Blatt-Komposition (KosmoPublish) — ein Sheet-Entity wird zum druckfähigen
@@ -28,6 +28,9 @@ export function sheetPaperSize(sheet: Pick<Sheet, 'format' | 'orientation'>): {
 function placementInner(doc: KosmoDoc, pl: SheetPlacement): InnerSvg {
   if (pl.view === 'grundriss' && pl.storeyId) {
     return planInnerSvg(doc, pl.storeyId, pl.scale);
+  }
+  if (pl.view === 'axo') {
+    return axoInnerSvg(doc, {}, pl.scale);
   }
   if (pl.view === 'schnitt' && pl.section) {
     return sectionInnerSvg(doc, pl.section, pl.scale);

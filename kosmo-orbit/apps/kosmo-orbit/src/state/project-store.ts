@@ -52,7 +52,7 @@ export const useProject = create<ProjectState>((set, get) => {
       if (!opts?.dryRun) {
         get().history.record(result.patches);
         set((s) => ({
-          revision: get().doc.revision,
+          revision: s.revision + 1,
           journal: [...s.journal, result.journal].slice(-500),
         }));
         patchListener?.(result.patches);
@@ -63,7 +63,7 @@ export const useProject = create<ProjectState>((set, get) => {
     undo() {
       const patches = get().history.undo(get().doc);
       if (patches) {
-        set({ revision: get().doc.revision });
+        set((s) => ({ revision: s.revision + 1 }));
         patchListener?.(patches);
       }
     },
@@ -71,7 +71,7 @@ export const useProject = create<ProjectState>((set, get) => {
     redo() {
       const patches = get().history.redo(get().doc);
       if (patches) {
-        set({ revision: get().doc.revision });
+        set((s) => ({ revision: s.revision + 1 }));
         patchListener?.(patches);
       }
     },
