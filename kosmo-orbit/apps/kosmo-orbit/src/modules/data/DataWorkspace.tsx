@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Badge, Hairline, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
+import { bauteilkatalog, gesamtdicke, uWert, type KatalogEintrag } from './bauteilkatalog';
+import { useProject } from '../../state/project-store';
 
 /**
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
@@ -48,6 +50,7 @@ export function DataWorkspace() {
   const [sector, setSector] = useState<string | null>(null);
   const [selected, setSelected] = useState<RefEntry | null>(null);
   const [syncState, setSyncState] = useState<'seed' | 'synced' | 'fehler'>('seed');
+  const [tab, setTab] = useState<'referenzen' | 'bauteile'>('referenzen');
 
   useEffect(() => {
     void loadReferences().then(setEntries);
@@ -90,8 +93,14 @@ export function DataWorkspace() {
         <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <Badge hue={moduleHue.data}>KosmoData</Badge>
+            <KButton size="sm" tone={tab === 'referenzen' ? 'accent' : 'ghost'} onClick={() => setTab('referenzen')} data-testid="tab-referenzen">
+              Referenzen
+            </KButton>
+            <KButton size="sm" tone={tab === 'bauteile' ? 'accent' : 'ghost'} onClick={() => setTab('bauteile')} data-testid="tab-bauteile">
+              Bauteilkatalog CH
+            </KButton>
             <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
-              {filtered.length} von {entries.length} Referenzen
+              {tab === 'referenzen' ? `${filtered.length} von ${entries.length} Referenzen` : `${bauteilkatalog.length} Aufbauten`}
             </span>
             <div style={{ flex: 1 }} />
             <Badge hue={syncState === 'synced' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
@@ -102,6 +111,9 @@ export function DataWorkspace() {
             </KButton>
           </div>
 
+          {tab === 'bauteile' && <BauteilkatalogView />}
+
+          {tab === 'referenzen' && (<>
           <input
             data-testid="data-search"
             placeholder="Suchen: Titel, Ort, Architekt, Thema, Material …"
@@ -175,6 +187,7 @@ export function DataWorkspace() {
               </Panel>
             ))}
           </div>
+          </>)}
         </div>
       </div>
 
@@ -228,6 +241,90 @@ export function DataWorkspace() {
             </div>
           )}
         </aside>
+      )}
+    </div>
+  );
+}
+
+/** CH-Bauteilkatalog (Q14): Aufbauten mit Schichten + U-Wert, per Klick ins Projekt. */
+function BauteilkatalogView() {
+  const runCommand = useProject((s) => s.runCommand);
+  const revision = useProject((s) => s.revision);
+  const { doc } = useProject.getState();
+  const vorhandene = useMemo(
+    () => new Set(doc.byKind<import('@kosmo/kernel').Assembly>('assembly').map((a) => a.name)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [revision],
+  );
+  const [uebernommen, setUebernommen] = useState<string | null>(null);
+
+  const kategorien: KatalogEintrag['kategorie'][] = ['Aussenwand', 'Innenwand', 'Decke', 'Dach'];
+
+  function uebernehmen(e: KatalogEintrag) {
+    runCommand('design.aufbauErstellen', { name: e.name, target: e.target, layers: e.layers });
+    setUebernommen(e.id);
+  }
+
+  return (
+    <div style={{ display: 'grid', gap: 18 }}>
+      {kategorien.map((kat) => (
+        <div key={kat} style={{ display: 'grid', gap: 8 }}>
+          <div style={{ fontWeight: 550, fontSize: 13.5 }}>{kat}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 10 }}>
+            {bauteilkatalog
+              .filter((e) => e.kategorie === kat)
+              .map((e) => {
+                const dicke = gesamtdicke(e.layers);
+                const u = uWert(e.layers);
+                const schonDa = vorhandene.has(e.name);
+                return (
+                  <Panel key={e.id} data-testid={`bauteil-${e.id}`} style={{ padding: '12px 14px', display: 'grid', gap: 8 }}>
+                    <div style={{ fontWeight: 550, fontSize: 13.5 }}>{e.name}</div>
+                    <div style={{ fontSize: 12, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{e.beschrieb}</div>
+                    {/* Schichtbalken (massstäblich) */}
+                    <div style={{ display: 'flex', height: 14, borderRadius: 4, overflow: 'hidden', border: '1px solid var(--k-line)' }}>
+                      {e.layers.map((l, i) => (
+                        <div
+                          key={i}
+                          title={`${l.material} ${l.thickness} mm (${l.function})`}
+                          style={{
+                            width: `${(l.thickness / dicke) * 100}%`,
+                            background:
+                              l.function === 'tragend'
+                                ? 'var(--k-ink-faint)'
+                                : l.function === 'daemmung'
+                                  ? 'var(--k-accent-wash)'
+                                  : l.function === 'hohlraum'
+                                    ? 'transparent'
+                                    : 'var(--k-line-strong)',
+                            borderRight: i < e.layers.length - 1 ? '1px solid var(--k-surface)' : 'none',
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: 'var(--k-ink-faint)' }}>
+                      <span>{dicke} mm</span>
+                      <span>U ≈ {u.toFixed(2)} W/m²K</span>
+                      <div style={{ flex: 1 }} />
+                      {schonDa ? (
+                        <Badge hue="var(--k-success)">Im Projekt</Badge>
+                      ) : (
+                        <KButton size="sm" tone="quiet" onClick={() => uebernehmen(e)} data-testid={`uebernehmen-${e.id}`}>
+                          Übernehmen
+                        </KButton>
+                      )}
+                    </div>
+                  </Panel>
+                );
+              })}
+          </div>
+        </div>
+      ))}
+      {uebernommen && (
+        <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+          Übernommen — ab sofort im Wand-/Decken-Werkzeug (KosmoDesign) wählbar. U-Werte sind
+          Richtwerte (SIA-180-vereinfacht), kein Nachweis-Ersatz.
+        </div>
       )}
     </div>
   );
