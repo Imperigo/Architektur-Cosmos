@@ -58,9 +58,32 @@ function loadSettings(): KosmoSettings {
   return defaultSettings;
 }
 
+/** Kosmo spricht (Owner-Q7): Text → Bridge-/tts → Audio. Still bei Fehlern. */
+async function speak(text: string): Promise<void> {
+  const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+  try {
+    const res = await fetch(`${bridge}/tts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text.slice(0, 600) }),
+    });
+    if (!res.ok) throw new Error(String(res.status));
+    const url = URL.createObjectURL(await res.blob());
+    const audio = new Audio(url);
+    audio.onended = () => URL.revokeObjectURL(url);
+    await audio.play();
+  } catch (err) {
+    console.info('Vorlesen nicht möglich (Bridge /tts):', err);
+  }
+}
+
 export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const [settings, setSettings] = useState<KosmoSettings>(loadSettings);
   const [showSettings, setShowSettings] = useState(false);
+  const [ttsOn, setTtsOn] = useState(localStorage.getItem('kosmo.tts') === '1');
+  const lastKosmoText = useRef('');
+  const ttsRef = useRef(ttsOn);
+  ttsRef.current = ttsOn;
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [cards, setCards] = useState<PendingCard[]>([]);
   const [input, setInput] = useState('');
@@ -86,6 +109,9 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       doc,
       {
         onText: (delta) => {
+          // Ausserhalb des Updaters akkumulieren — React batcht Updater,
+          // onBusy(false) käme sonst vor dem letzten Textstück
+          lastKosmoText.current += delta;
           setBubbles((b) => {
             const last = b[b.length - 1];
             if (last && last.who === 'kosmo' && last.id === currentKosmoBubble) {
@@ -98,7 +124,12 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         onProposal: (p) => setCards((c) => [...c, { ...p, state: 'offen' }]),
         onBusy: (v) => {
           setBusy(v);
-          if (v) currentKosmoBubble = -1;
+          if (v) {
+            currentKosmoBubble = -1;
+            lastKosmoText.current = '';
+          } else if (ttsRef.current && lastKosmoText.current.trim()) {
+            void speak(lastKosmoText.current);
+          }
         },
         onError: (msg) => push('kosmo', `⚠ ${msg}`),
       },
@@ -340,6 +371,18 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               </label>
             </>
           )}
+          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input
+              type="checkbox"
+              data-testid="tts-toggle"
+              checked={ttsOn}
+              onChange={(e) => {
+                setTtsOn(e.target.checked);
+                localStorage.setItem('kosmo.tts', e.target.checked ? '1' : '0');
+              }}
+            />
+            Antworten vorlesen (Stimme über die HomeStation-Bridge)
+          </label>
           <Hairline />
           <DiagnosePanel />
         </div>

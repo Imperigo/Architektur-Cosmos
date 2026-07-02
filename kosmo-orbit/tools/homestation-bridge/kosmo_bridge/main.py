@@ -77,9 +77,30 @@ async def health():
             "jobstore": STORE.exists(),
             "ollama": ollama_ok,
             "stt": _stt_available(),
-            "tts": False,
+            "tts": FAKE_WORKER or _tts_available(),
+            "embed": FAKE_WORKER or _embed_available(),
         },
     }
+
+
+def _tts_available() -> bool:
+    import shutil
+
+    if shutil.which("piper"):
+        return True
+    try:
+        import chatterbox  # type: ignore # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def _embed_available() -> bool:
+    try:
+        import sentence_transformers  # type: ignore # noqa: F401
+        return True
+    except ImportError:
+        return False
 
 
 # ---------- Render-Jobs (KosmoVis-Job-Store-Naht) ----------
@@ -183,6 +204,123 @@ async def stt(audio: UploadFile = File(...)):
         tmp.unlink(missing_ok=True)
 
 
+# ---------- TTS (Owner-Q7: Kosmo spricht — Chatterbox/Piper, Schalter in der App) ----------
+
+_tts_model = None
+
+
+def _wav_header(n_samples: int, rate: int = 22050) -> bytes:
+    import struct
+
+    data_len = n_samples * 2
+    return (
+        b"RIFF" + struct.pack("<I", 36 + data_len) + b"WAVEfmt " +
+        struct.pack("<IHHIIHH", 16, 1, 1, rate, rate * 2, 2, 16) +
+        b"data" + struct.pack("<I", data_len)
+    )
+
+
+def _fake_tts_wav(text: str) -> bytes:
+    """Deterministischer Prüfton (Länge folgt dem Text) — nur --fake-worker."""
+    import math
+    import struct
+
+    rate = 22050
+    seconds = min(0.3 + len(text) * 0.01, 2.0)
+    n = int(rate * seconds)
+    samples = bytearray()
+    for i in range(n):
+        v = int(12000 * math.sin(2 * math.pi * 440 * i / rate) * (1 - i / n))
+        samples += struct.pack("<h", v)
+    return _wav_header(n, rate) + bytes(samples)
+
+
+@app.post("/tts")
+async def tts(payload: dict):
+    global _tts_model
+    text = str(payload.get("text", "")).strip()[:800]
+    if not text:
+        raise HTTPException(400, "text fehlt")
+    if FAKE_WORKER:
+        return Response(content=_fake_tts_wav(text), media_type="audio/wav")
+
+    engine = os.environ.get("KOSMO_TTS_ENGINE", "piper")
+    if engine == "piper":
+        import shutil
+        import subprocess
+
+        if not shutil.which("piper"):
+            raise HTTPException(
+                501,
+                "piper fehlt: pip install piper-tts und deutsche Stimme laden "
+                "(KOSMO_PIPER_VOICE=/pfad/de_DE-thorsten-high.onnx)",
+            )
+        voice = os.environ.get("KOSMO_PIPER_VOICE", "de_DE-thorsten-high.onnx")
+        out = STORE / f"tts-{secrets.token_hex(4)}.wav"
+        try:
+            subprocess.run(
+                ["piper", "--model", voice, "--output_file", str(out)],
+                input=text.encode(), check=True, timeout=60,
+            )
+            return Response(content=out.read_bytes(), media_type="audio/wav")
+        finally:
+            out.unlink(missing_ok=True)
+
+    # Chatterbox (mehrsprachig, braucht GPU sinnvollerweise)
+    try:
+        from chatterbox.tts import ChatterboxTTS  # type: ignore
+    except ImportError:
+        raise HTTPException(501, "chatterbox fehlt: pip install chatterbox-tts")
+    import io
+
+    import torchaudio  # type: ignore
+
+    if _tts_model is None:
+        _tts_model = ChatterboxTTS.from_pretrained(device=os.environ.get("KOSMO_TTS_DEVICE", "cuda"))
+    wav = _tts_model.generate(text)
+    buf = io.BytesIO()
+    torchaudio.save(buf, wav, _tts_model.sr, format="wav")
+    return Response(content=buf.getvalue(), media_type="audio/wav")
+
+
+# ---------- Embeddings (Kosmo-RAG: bge-m3 auf der HomeStation) ----------
+
+_embed_model = None
+
+
+def _fake_embed(text: str, dim: int = 64) -> list[float]:
+    """Zeichen-Trigramm-Hashing, normalisiert — deterministisch, für Tests.
+    Ähnliche Texte teilen Trigramme und landen nahe beieinander."""
+    import hashlib
+    import math
+
+    vec = [0.0] * dim
+    t = f"  {text.lower()}  "
+    for i in range(len(t) - 2):
+        h = int.from_bytes(hashlib.blake2s(t[i : i + 3].encode(), digest_size=4).digest(), "little")
+        vec[h % dim] += 1.0 if (h >> 16) % 2 == 0 else -1.0
+    norm = math.sqrt(sum(v * v for v in vec)) or 1.0
+    return [v / norm for v in vec]
+
+
+@app.post("/embed")
+async def embed(payload: dict):
+    global _embed_model
+    texts = [str(t)[:4000] for t in payload.get("texts", [])][:256]
+    if not texts:
+        raise HTTPException(400, "texts fehlt")
+    if FAKE_WORKER:
+        return {"model": "fake-trigram-64", "vectors": [_fake_embed(t) for t in texts]}
+    try:
+        from sentence_transformers import SentenceTransformer  # type: ignore
+    except ImportError:
+        raise HTTPException(501, "sentence-transformers fehlt: pip install 'kosmo-bridge[embed]'")
+    if _embed_model is None:
+        _embed_model = SentenceTransformer(os.environ.get("KOSMO_EMBED_MODEL", "BAAI/bge-m3"))
+    vectors = _embed_model.encode(texts, normalize_embeddings=True).tolist()
+    return {"model": os.environ.get("KOSMO_EMBED_MODEL", "BAAI/bge-m3"), "vectors": vectors}
+
+
 # ---------- Ollama-Proxy (fürs iPad im Büronetz) ----------
 
 @app.api_route("/ollama/{path:path}", methods=["GET", "POST"])
@@ -273,8 +411,9 @@ def cli():
     STORE.mkdir(parents=True, exist_ok=True)
     OLLAMA = args.ollama
     if args.fake_worker:
+        FAKE_WORKER = True
         threading.Thread(target=_fake_worker_loop, daemon=True).start()
-        print("⚠ Fake-Worker aktiv — Render-Ergebnisse sind Platzhalter")
+        print("⚠ Fake-Worker aktiv — Render/TTS/Embeddings sind Platzhalter")
     if not TOKEN:
         print("Hinweis: KOSMO_BRIDGE_TOKEN nicht gesetzt — Bridge ist im Netz offen")
     uvicorn.run(app, host=args.host, port=args.port)

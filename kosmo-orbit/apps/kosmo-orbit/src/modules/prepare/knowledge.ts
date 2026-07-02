@@ -21,6 +21,37 @@ export interface KnowledgeChunk {
   docName: string;
   seq: number;
   text: string;
+  /** Embedding (bge-m3 via Bridge), wenn beim Aufnehmen erreichbar. */
+  vector?: number[];
+}
+
+/** Embeddings über die HomeStation-Bridge (bge-m3); null wenn nicht erreichbar. */
+export async function embedTexts(texts: string[]): Promise<number[][] | null> {
+  const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 6000);
+  try {
+    const res = await fetch(`${bridge}/embed`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texts }),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as { vectors: number[][] };
+    return json.vectors;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+function cosine(a: number[], b: number[]): number {
+  if (a.length !== b.length) return 0;
+  let s = 0;
+  for (let i = 0; i < a.length; i++) s += a[i]! * b[i]!;
+  return s;
 }
 
 const DB_NAME = 'kosmo-wissen';
@@ -128,12 +159,22 @@ export async function ingestFile(file: File, source: KnowledgeDoc['source'] = 'l
     chunkCount: chunks.length,
   };
 
+  // Embeddings, wenn die Bridge da ist — sonst bleibt die Stichwort-Suche
+  const vectors = await embedTexts(chunks);
+
   const db = await openDb();
   const tx = db.transaction(['docs', 'chunks'], 'readwrite');
   tx.objectStore('docs').put(doc);
   const store = tx.objectStore('chunks');
   chunks.forEach((c, i) =>
-    store.put({ id: `${docId}-${i}`, docId, docName: file.name, seq: i, text: c } satisfies KnowledgeChunk),
+    store.put({
+      id: `${docId}-${i}`,
+      docId,
+      docName: file.name,
+      seq: i,
+      text: c,
+      ...(vectors?.[i] ? { vector: vectors[i] } : {}),
+    } satisfies KnowledgeChunk),
   );
   await txDone(tx);
   db.close();
@@ -163,7 +204,11 @@ export interface KnowledgeHit extends KnowledgeChunk {
   score: number;
 }
 
-/** Stichwort-Suche über alle Chunks (Termfrequenz + Phrasen-Bonus). */
+/**
+ * Suche: semantisch (Cosine über Bridge-Embeddings), wo Vektoren vorliegen,
+ * plus Stichwort-Scoring (Termfrequenz + Phrasen-Bonus) als Grundierung —
+ * ohne Bridge oder für alt aufgenommene Chunks bleibt die Stichwort-Suche.
+ */
 export async function searchKnowledge(query: string, limit = 5): Promise<KnowledgeHit[]> {
   const terms = query
     .toLowerCase()
@@ -177,21 +222,27 @@ export async function searchKnowledge(query: string, limit = 5): Promise<Knowled
   const all = await reqResult(tx.objectStore('chunks').getAll() as IDBRequest<KnowledgeChunk[]>);
   db.close();
 
+  const hatVektoren = all.some((c) => c.vector);
+  const qv = hatVektoren ? (await embedTexts([query]))?.[0] ?? null : null;
+
   const hits: KnowledgeHit[] = [];
   for (const c of all) {
     const hay = c.text.toLowerCase();
-    let score = 0;
+    let kw = 0;
     for (const t of terms) {
       let i = hay.indexOf(t);
       while (i !== -1) {
-        score += 1;
+        kw += 1;
         i = hay.indexOf(t, i + t.length);
       }
     }
-    if (score === 0) continue;
-    if (phrase.length > 4 && hay.includes(phrase)) score += 5;
+    if (phrase.length > 4 && hay.includes(phrase)) kw += 5;
     // leichte Längen-Normalisierung, damit kurze prägnante Chunks gewinnen
-    hits.push({ ...c, score: score / Math.sqrt(c.text.length / 400 + 1) });
+    const kwNorm = kw / Math.sqrt(c.text.length / 400 + 1);
+    const sem = qv && c.vector ? cosine(qv, c.vector) : 0;
+    // Semantik führt (wo vorhanden), Stichworte grundieren und entscheiden Gleichstände
+    const score = qv ? sem + 0.05 * kwNorm : kwNorm;
+    if (score > (qv ? 0.12 : 0)) hits.push({ ...c, score });
   }
   return hits.sort((a, b) => b.score - a.score).slice(0, limit);
 }
