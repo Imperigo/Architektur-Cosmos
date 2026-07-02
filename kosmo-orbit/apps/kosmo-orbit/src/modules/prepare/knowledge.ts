@@ -105,7 +105,7 @@ async function pdfToText(data: ArrayBuffer): Promise<{ text: string; pages: numb
 }
 
 /** Datei aufnehmen: PDF/TXT/MD → Chunks → IndexedDB. */
-export async function ingestFile(file: File): Promise<KnowledgeDoc> {
+export async function ingestFile(file: File, source: KnowledgeDoc['source'] = 'lokal'): Promise<KnowledgeDoc> {
   let text: string;
   let pages: number | undefined;
   if (file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf') {
@@ -122,7 +122,7 @@ export async function ingestFile(file: File): Promise<KnowledgeDoc> {
   const doc: KnowledgeDoc = {
     id: docId,
     name: file.name,
-    source: 'lokal',
+    source,
     addedAt: new Date().toISOString(),
     ...(pages !== undefined ? { pages } : {}),
     chunkCount: chunks.length,

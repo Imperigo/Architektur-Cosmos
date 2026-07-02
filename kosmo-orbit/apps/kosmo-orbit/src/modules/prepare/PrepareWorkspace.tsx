@@ -8,6 +8,14 @@ import {
   type KnowledgeDoc,
   type KnowledgeHit,
 } from './knowledge';
+import {
+  downloadFile,
+  isIngestable,
+  listFolder,
+  signIn,
+  type DriveAccount,
+  type DriveItem,
+} from './onedrive';
 
 /**
  * KosmoPrepare — Grundlagen. Bürodokumente (Normen-Auszüge, Wettbewerbs-
@@ -183,12 +191,150 @@ export function PrepareWorkspace() {
           ))}
         </div>
 
-        <Panel style={{ padding: '12px 14px', fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
-          <b>OneDrive (Hochbauzeichner-Bibliothek):</b> Die Graph-Anbindung mit Microsoft-Login
-          kommt als nächster Ausbau dieses Moduls — aufgenommene Dokumente landen in derselben
-          Wissensbasis. Bis dahin: Ordner lokal syncen und hier hineinziehen.
-        </Panel>
+        <OneDriveSection onIngested={refresh} />
       </div>
     </div>
+  );
+}
+
+/** OneDrive-Browser: Anmelden (MSAL/PKCE) → Ordner durchsehen → aufnehmen. */
+function OneDriveSection({ onIngested }: { onIngested: () => void }) {
+  const [clientId, setClientId] = useState(localStorage.getItem('kosmo.graph.clientId') ?? '');
+  const [account, setAccount] = useState<DriveAccount | null>(null);
+  const [path, setPath] = useState<{ id: string | null; name: string }[]>([
+    { id: null, name: 'OneDrive' },
+  ]);
+  const [items, setItems] = useState<DriveItem[]>([]);
+  const [status, setStatus] = useState<string | null>(null);
+
+  async function browse(folder: { id: string | null; name: string }, pushPath: boolean) {
+    setStatus('Lade …');
+    try {
+      const list = await listFolder(clientId, folder.id);
+      setItems(list);
+      if (pushPath) setPath((p) => [...p, folder]);
+      setStatus(null);
+    } catch (err) {
+      setStatus(`⚠ ${err instanceof Error ? err.message : err}`);
+    }
+  }
+
+  async function connect() {
+    if (!clientId.trim()) {
+      setStatus('⚠ Zuerst die Azure-Client-ID eintragen (App-Registrierung, SPA, Files.Read).');
+      return;
+    }
+    setStatus('Anmeldung …');
+    try {
+      const acc = await signIn(clientId.trim());
+      setAccount(acc);
+      await browse({ id: null, name: 'OneDrive' }, false);
+    } catch (err) {
+      setStatus(`⚠ ${err instanceof Error ? err.message : err}`);
+    }
+  }
+
+  async function ingest(item: DriveItem) {
+    setStatus(`Nehme «${item.name}» auf …`);
+    try {
+      const file = await downloadFile(clientId, item.id, item.name);
+      await ingestFile(file, 'onedrive');
+      onIngested();
+      setStatus(`«${item.name}» aufgenommen.`);
+    } catch (err) {
+      setStatus(`⚠ ${err instanceof Error ? err.message : err}`);
+    }
+  }
+
+  return (
+    <Panel style={{ padding: '12px 14px', display: 'grid', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ fontWeight: 550, fontSize: 13.5 }}>OneDrive (Hochbauzeichner-Bibliothek)</div>
+        {account && (
+          <Badge hue="var(--k-success)">{account.name}</Badge>
+        )}
+      </div>
+      {!account ? (
+        <>
+          <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+            Einmalig: App-Registrierung im Azure-Portal (Typ SPA, Redirect-URI = App-Adresse,
+            Berechtigungen <code>Files.Read</code> + <code>User.Read</code>) — dann Client-ID hier
+            eintragen und anmelden. Es fliesst kein Geheimnis (PKCE).
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              value={clientId}
+              onChange={(e) => {
+                setClientId(e.target.value);
+                localStorage.setItem('kosmo.graph.clientId', e.target.value);
+              }}
+              placeholder="Azure Client-ID (GUID)"
+              data-testid="graph-client-id"
+              style={{
+                flex: 1,
+                padding: '7px 10px',
+                borderRadius: 8,
+                border: '1px solid var(--k-line-strong)',
+                background: 'var(--k-raised)',
+                fontSize: 13,
+              }}
+            />
+            <KButton size="sm" tone="accent" onClick={() => void connect()} data-testid="graph-signin">
+              Mit Microsoft anmelden
+            </KButton>
+          </div>
+        </>
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', fontSize: 12.5 }}>
+            {path.map((p, i) => (
+              <span key={`${p.id ?? 'root'}-${i}`}>
+                {i > 0 && <span style={{ color: 'var(--k-ink-faint)' }}> / </span>}
+                <button
+                  style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-accent)' }}
+                  onClick={() => {
+                    setPath(path.slice(0, i + 1));
+                    void browse(p, false);
+                  }}
+                >
+                  {p.name}
+                </button>
+              </span>
+            ))}
+          </div>
+          <div style={{ display: 'grid', gap: 4, maxHeight: 260, overflow: 'auto' }}>
+            {items.map((it) => (
+              <div
+                key={it.id}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, padding: '3px 2px' }}
+              >
+                <span>{it.isFolder ? '📁' : '📄'}</span>
+                {it.isFolder ? (
+                  <button
+                    style={{ all: 'unset', cursor: 'pointer', flex: 1 }}
+                    onClick={() => void browse({ id: it.id, name: it.name }, true)}
+                  >
+                    {it.name}
+                  </button>
+                ) : (
+                  <span style={{ flex: 1, color: isIngestable(it.name) ? 'inherit' : 'var(--k-ink-faint)' }}>
+                    {it.name}
+                  </span>
+                )}
+                {!it.isFolder && isIngestable(it.name) && (
+                  <KButton size="sm" tone="quiet" onClick={() => void ingest(it)}>
+                    Aufnehmen
+                  </KButton>
+                )}
+              </div>
+            ))}
+            {items.length === 0 && (
+              <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>Leerer Ordner.</div>
+            )}
+          </div>
+        </>
+      )}
+      {status && <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{status}</div>}
+    </Panel>
   );
 }
