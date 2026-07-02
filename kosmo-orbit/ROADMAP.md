@@ -40,7 +40,7 @@ QA-Verdikt zurück → iPad synchron.
 15. ~~3D-Wandknoten (Gehrung auf Winkelhalbierende)~~ ✅ (Mehrfachknoten/T-Stösse V2)
 16. ~~KosmoPrepare: Ingestion (PDF/TXT/MD→Wissensbasis) + grundlagen_suchen + OneDrive/Graph (MSAL/PKCE)~~ ✅ — offen: Embedding-RAG (bge-m3 via Bridge), KosmoDoc-Diagnosepanel
 17. Politur: ~~Befehlspalette (⌘K, eigene)~~ ✅ · ~~KosmoDoc-Diagnose~~ ✅ · ~~CH-Bauteilkatalog~~ ✅ · ~~E2E-Suite committet (6 Tests, CI-Job)~~ ✅ — offen: Onboarding-Feinschliff, Web-Worker für den Kern, Hidden-Line, Embedding-RAG
-18. Desktop-Builds via CI: **macOS universal ✅ + Linux (AppImage/deb/rpm) ✅ mit Artefakten**; Windows-Fix gepusht (PostCSS-Isolation), Lauf ausstehend. Auslösen: `kosmo-orbit/.desktop-build-request` ändern+pushen. PR #2 (auto-erstellt beim ersten Push) bleibt offen = der eine V1-PR; Titel/Body am Ende aktualisieren.
+18. ~~Desktop-Builds via CI~~ ✅ — **alle drei Plattformen bauen** (Lauf #4, 7da4329): macOS universal (.dmg), Linux (AppImage/deb/rpm), Windows (MSI/EXE) als Artefakte. Auslösen: `kosmo-orbit/.desktop-build-request` ändern+pushen. PR #2 (auto-erstellt beim ersten Push) bleibt offen = der eine V1-PR; Titel/Body am Ende aktualisieren.
     (Hinweis: Website-CI `ci.yml`/security:check ist auch auf main rot — vorbestehend, Website-Lane, hier nicht angefasst)
 
 ## Arbeitsregeln (Owner-Direktiven)
