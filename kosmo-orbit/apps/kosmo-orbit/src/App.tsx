@@ -25,6 +25,15 @@ import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './st
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare';
 
+function tagesgruss(): string {
+  const h = new Date().getHours();
+  if (h < 5) return 'Späte Stunde.';
+  if (h < 11) return 'Guten Morgen.';
+  if (h < 14) return 'Guten Tag.';
+  if (h < 18) return 'Guten Nachmittag.';
+  return 'Guten Abend.';
+}
+
 const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string }[] = [
   { id: 'design', screen: 'design', name: 'KosmoDesign', desc: 'Entwerfen · Modellieren · Pläne' },
   { id: 'data', screen: 'data', name: 'KosmoData', desc: 'Referenzen · Assets · Wissen' },
@@ -39,6 +48,7 @@ export function App() {
   const [kosmoOpen, setKosmoOpen] = useState(true);
   const [syncOpen, setSyncOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('aus');
+  const [onboarding, setOnboarding] = useState(localStorage.getItem('kosmo.onboarded') !== '1');
   const [peers, setPeers] = useState(0);
   const [syncUrl, setSyncUrl] = useState(localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700');
   const [syncRoom, setSyncRoom] = useState(localStorage.getItem('kosmo.sync.room') ?? 'projekt-1');
@@ -242,7 +252,7 @@ export function App() {
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
               <div>
                 <div style={{ fontSize: 28, fontWeight: 550, letterSpacing: '-0.01em' }}>
-                  Guten Morgen.
+                  {tagesgruss()}
                 </div>
                 <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
                   Womit beginnen wir? KosmoDesign ist bereit zum Zeichnen.
@@ -261,6 +271,48 @@ export function App() {
                   </KButton>
                 </div>
               </div>
+              {onboarding && (
+                <Panel data-testid="onboarding" style={{ padding: '16px 18px', display: 'grid', gap: 10 }}>
+                  <div style={{ fontWeight: 550 }}>Erste Schritte</div>
+                  <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7, color: 'var(--k-ink-soft)' }}>
+                    <li>
+                      <b>Zeichnen:</b> In KosmoDesign Wände klicken (Snap aufs Raster), Fenster und Türen in die
+                      Wand setzen — Grundriss, Schnitt und Kennzahlen laufen live mit.
+                    </li>
+                    <li>
+                      <b>Kosmo fragen:</b> Rechts im Panel, z.&nbsp;B. «Zeichne eine Wand von 0,0 nach 8,0» —
+                      Vorschläge wendest du per Karte an, Rückgängig gilt immer.
+                    </li>
+                    <li>
+                      <b>Schnell springen:</b> ⌘K/Ctrl+K öffnet die Befehlspalette (Module, Ansichten, Exporte).
+                    </li>
+                  </ol>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <KButton
+                      size="sm"
+                      tone="accent"
+                      data-testid="onboarding-start"
+                      onClick={() => {
+                        localStorage.setItem('kosmo.onboarded', '1');
+                        setOnboarding(false);
+                        setScreen('design');
+                      }}
+                    >
+                      Los geht's — KosmoDesign öffnen
+                    </KButton>
+                    <KButton
+                      size="sm"
+                      tone="ghost"
+                      onClick={() => {
+                        localStorage.setItem('kosmo.onboarded', '1');
+                        setOnboarding(false);
+                      }}
+                    >
+                      Ausblenden
+                    </KButton>
+                  </div>
+                </Panel>
+              )}
               <div
                 style={{
                   display: 'grid',
