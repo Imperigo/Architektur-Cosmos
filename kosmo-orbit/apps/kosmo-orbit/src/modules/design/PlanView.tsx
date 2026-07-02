@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { derivePlan, regionToPath, type Pt } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, regionToPath, type Pt } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
@@ -24,6 +24,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
 
   const plan = useMemo(
     () => (activeStoreyId ? derivePlan(doc, activeStoreyId) : null),
+    [doc, activeStoreyId, revision],
+  );
+  const dims = useMemo(
+    () => (activeStoreyId ? deriveDimensions(doc, activeStoreyId) : null),
     [doc, activeStoreyId, revision],
   );
 
@@ -163,6 +167,44 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                   strokeWidth={8}
                   strokeDasharray="60 40"
                 />
+              );
+            })}
+
+          {/* Assoziative Aussenbemassung */}
+          {dims &&
+            dims.chains.map((c, ci) => {
+              const t0 = c.ticks[0]!;
+              const t1 = c.ticks[c.ticks.length - 1]!;
+              const line =
+                c.axis === 'x'
+                  ? { x1: t0, y1: -c.offset, x2: t1, y2: -c.offset }
+                  : { x1: c.offset, y1: -t0, x2: c.offset, y2: -t1 };
+              return (
+                <g key={`dim${ci}`} stroke="var(--k-ink-soft)" fill="var(--k-ink-soft)">
+                  <line {...line} strokeWidth={8} />
+                  {c.ticks.map((t, i) => (
+                    <g key={i}>
+                      {c.axis === 'x' ? (
+                        <line x1={t - 60} y1={-c.offset + 60} x2={t + 60} y2={-c.offset - 60} strokeWidth={12} />
+                      ) : (
+                        <line x1={c.offset - 60} y1={-t - 60} x2={c.offset + 60} y2={-t + 60} strokeWidth={12} />
+                      )}
+                    </g>
+                  ))}
+                  {c.ticks.slice(0, -1).map((t, i) => {
+                    const next = c.ticks[i + 1]!;
+                    const mid = (t + next) / 2;
+                    return c.axis === 'x' ? (
+                      <text key={`t${i}`} x={mid} y={-c.offset - 120} textAnchor="middle" fontSize={280} stroke="none" fontFamily="var(--k-font-mono)">
+                        {dimensionLabel(t, next)}
+                      </text>
+                    ) : (
+                      <text key={`t${i}`} x={c.offset - 120} y={-mid} textAnchor="middle" fontSize={280} stroke="none" fontFamily="var(--k-font-mono)" transform={`rotate(-90 ${c.offset - 120} ${-mid})`}>
+                        {dimensionLabel(t, next)}
+                      </text>
+                    );
+                  })}
+                </g>
               );
             })}
 

@@ -1,6 +1,7 @@
 import type { KosmoDoc } from '../model/doc';
 import type { Storey } from '../model/entities';
 import { derivePlan, regionToPath } from './plan';
+import { deriveDimensions, dimensionLabel } from './dimensions';
 
 /**
  * Plansatz-SVG — eigenständiges, druckfähiges SVG eines Grundrisses mit
@@ -78,6 +79,36 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     parts.push(
       `<path d="M ${sx} ${-sy} A ${a.radius} ${a.radius} 0 0 0 ${ex} ${-ey}" fill="none" stroke="#555" stroke-width="${0.18 * scale}" stroke-dasharray="${scale} ${0.7 * scale}"/>`,
     );
+  }
+  // Aussenbemassung (zwei Ketten pro Seite)
+  const dims = deriveDimensions(doc, storeyId);
+  for (const c of dims.chains) {
+    const sw = 0.18 * scale;
+    const tickHalf = 0.8 * scale;
+    const fs = 2.6 * scale;
+    const t0 = c.ticks[0]!;
+    const t1 = c.ticks[c.ticks.length - 1]!;
+    parts.push('<g stroke="black" fill="black">');
+    if (c.axis === 'x') {
+      parts.push(`<line x1="${t0}" y1="${-c.offset}" x2="${t1}" y2="${-c.offset}" stroke-width="${sw}"/>`);
+      for (const t of c.ticks) {
+        parts.push(`<line x1="${t - tickHalf}" y1="${-c.offset + tickHalf}" x2="${t + tickHalf}" y2="${-c.offset - tickHalf}" stroke-width="${sw * 1.6}"/>`);
+      }
+      for (let i = 0; i < c.ticks.length - 1; i++) {
+        const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
+        parts.push(`<text x="${mid}" y="${-c.offset - 1.2 * scale}" text-anchor="middle" font-size="${fs}" stroke="none">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
+      }
+    } else {
+      parts.push(`<line x1="${c.offset}" y1="${-t0}" x2="${c.offset}" y2="${-t1}" stroke-width="${sw}"/>`);
+      for (const t of c.ticks) {
+        parts.push(`<line x1="${c.offset - tickHalf}" y1="${-t - tickHalf}" x2="${c.offset + tickHalf}" y2="${-t + tickHalf}" stroke-width="${sw * 1.6}"/>`);
+      }
+      for (let i = 0; i < c.ticks.length - 1; i++) {
+        const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
+        parts.push(`<text x="${c.offset - 1.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${fs}" stroke="none" transform="rotate(-90 ${c.offset - 1.2 * scale} ${-mid})">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
+      }
+    }
+    parts.push('</g>');
   }
   parts.push('</g>');
 
