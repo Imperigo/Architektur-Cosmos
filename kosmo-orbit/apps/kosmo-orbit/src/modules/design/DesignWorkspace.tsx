@@ -640,6 +640,7 @@ function StudienPanel({
   const runCommand = useProject((s) => s.runCommand);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const { doc, history } = useProject.getState();
+  const [nutzung, setNutzung] = useState<'wohnen' | 'gemischt'>('wohnen');
 
   const parzelle = useMemo(() => {
     const zonen = doc.byKind<Zone>('zone').filter((z) => z.storeyId === activeStoreyId);
@@ -652,10 +653,10 @@ function StudienPanel({
   const varianten = useMemo(
     () =>
       parzelle
-        ? generiereVolumenstudien(parzelle.outline, { zielGf: zielEffektiv, maxHoehe: maxHoeheM * 1000 })
+        ? generiereVolumenstudien(parzelle.outline, { zielGf: zielEffektiv, maxHoehe: maxHoeheM * 1000, nutzung })
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parzelle, zielEffektiv, maxHoeheM, revision],
+    [parzelle, zielEffektiv, maxHoeheM, nutzung, revision],
   );
 
   const uebernehmen = (id: string) => {
@@ -742,6 +743,19 @@ function StudienPanel({
               m
             </label>
           </div>
+          <div style={{ display: 'flex', gap: 5 }}>
+            <KButton size="sm" tone={nutzung === 'wohnen' ? 'accent' : 'ghost'} onClick={() => setNutzung('wohnen')}>
+              Wohnen 2.80
+            </KButton>
+            <KButton
+              size="sm"
+              tone={nutzung === 'gemischt' ? 'accent' : 'ghost'}
+              onClick={() => setNutzung('gemischt')}
+              data-testid="studie-gemischt"
+            >
+              Gewerbe-EG 4.00
+            </KButton>
+          </div>
           {varianten.map((v) => (
             <div
               key={v.id}
@@ -760,8 +774,19 @@ function StudienPanel({
                   {v.geschosse} Gesch. · {(v.hoehe / 1000).toFixed(0)} m · GF {v.gf.toLocaleString('de-CH')} m²
                 </span>
                 {!v.passt && <Badge hue="var(--k-warning)">sprengt Höhe</Badge>}
+                {v.tiefeOk === false && <Badge hue="var(--k-warning)">Tiefe</Badge>}
+                {v.besonnung && (
+                  <Badge hue={v.besonnung.ok ? 'var(--k-success)' : 'var(--k-danger)'}>
+                    3h {v.besonnung.ok ? 'ok' : 'verfehlt'}
+                  </Badge>
+                )}
               </div>
               <div style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>{v.beschrieb}</div>
+              {v.hinweise.length > 0 && (
+                <div style={{ color: 'var(--k-ink-faint)', fontSize: 11, lineHeight: 1.4 }}>
+                  {v.hinweise.join(' · ')}
+                </div>
+              )}
               <div>
                 <KButton size="sm" tone="quiet" data-testid={`uebernehmen-${v.id}`} onClick={() => uebernehmen(v.id)}>
                   Übernehmen

@@ -3,16 +3,30 @@ import { polygonArea } from '../model/units';
 import { offsetPolygon } from '../geometry/clip';
 
 /**
- * Volumenstudien-Generator (Q12, Vorform-Essenz) — Extremvarianten in der
- * Parzelle: Teppich, Riegel, Turm, Zeilen, Winkel. Jede Variante zielt aufs
- * GF-Programm; was die Höhenvorgabe sprengt, wird ehrlich markiert statt
- * versteckt. Entwurfs-Anstoss, kein Entwurfsersatz.
+ * Volumenstudien-Generator (Q12 + Phase 3.27, Vorform-Essenz) — Extrem-
+ * varianten in der Parzelle: Teppich, Riegel, Turm, Zeilen, Winkel,
+ * Blockrand. Jede Variante zielt aufs GF-Programm; was Regeln verletzt,
+ * wird ehrlich markiert statt versteckt. Entwurfs-Anstoss, kein Ersatz.
+ *
+ * Owner-Regeln (Wettbewerb Zug):
+ * - Geschosshöhen ok–ok: Wohnen 2.80 m; Quartierebene/Gewerbe-EG 4.00 m;
+ *   Gewerbe-OG (Vertical Cluster, im Turm) 3.50 m.
+ * - Spänner-Tiefen: 14–16 m, max. 18 m; Innenhof nie unter 13 m.
+ * - 3h-Sonnen-Kriterium (21. März, Innerschweiz ≈ 47° N): Näherung über
+ *   die Mittagsfenster-Schattenlänge — Sonnenhöhe ≥ ~35° während 3 h um
+ *   Mittag ⇒ Schatten ≤ 1.43 × Gebäudehöhe. Abstand ≥ 1.43 × h heisst:
+ *   die beschattete Südfassade dahinter bekommt ≥ 3 h Sonne. Näherung,
+ *   kein Ersatz für die Schattenstudie (☀ im Viewport).
  */
+
+export const SCHATTEN_FAKTOR_3H = 1.43;
 
 export interface StudienOptionen {
   /** GF-Ziel in m² (z.B. aGF-Ziel aus den Kennzahlen). */
   zielGf: number;
-  /** Geschosshöhe mm (Standard 3000). */
+  /** Nutzung: reines Wohnen oder gemischt (Gewerbe-EG 4 m, Turm als Cluster). */
+  nutzung?: 'wohnen' | 'gemischt';
+  /** Wohn-Geschosshöhe ok–ok in mm (Standard 2800, Owner-Regel). */
   geschosshoehe?: number;
   /** Maximale Gebäudehöhe mm (Zonenrecht), Standard 25 m. */
   maxHoehe?: number;
@@ -35,8 +49,16 @@ export interface StudienVariante {
   gf: number;
   geschosse: number;
   hoehe: number;
+  /** Geschosshöhen-Logik dieser Variante (ok–ok, mm). */
+  hoehen: { eg: number; og: number };
   /** false: braucht mehr Höhe als erlaubt, um das Programm zu fassen. */
   passt: boolean;
+  /** Gebäudetiefe in mm, wo die Spänner-Regel greift (14–18 m); sonst null. */
+  tiefe: number | null;
+  tiefeOk: boolean | null;
+  /** 3h-Kriterium (Näherung): nötiger vs. vorhandener Abstand (mm); null = frei besonnt. */
+  besonnung: { noetig: number; ist: number; ok: boolean } | null;
+  hinweise: string[];
 }
 
 interface BBox {
@@ -64,11 +86,15 @@ const R = (x: number, y: number, w: number, h: number): Pt[] => [
   { x: Math.round(x), y: Math.round(y + h) },
 ];
 
+const TIEFE_MIN = 14000;
+const TIEFE_MAX = 18000;
+const HOF_MIN = 13000;
+
 export function generiereVolumenstudien(parzelle: Pt[], opts: StudienOptionen): StudienVariante[] {
-  const gh = opts.geschosshoehe ?? 3000;
+  const wohnOg = opts.geschosshoehe ?? 2800;
+  const gemischt = opts.nutzung === 'gemischt';
   const maxH = opts.maxHoehe ?? 25000;
   const abstand = opts.grenzabstand ?? 4000;
-  const maxGeschosse = Math.max(Math.floor(maxH / gh), 1);
 
   const innen = offsetPolygon(parzelle, -abstand)[0];
   if (!innen || innen.length < 3) return [];
@@ -82,20 +108,52 @@ export function generiereVolumenstudien(parzelle: Pt[], opts: StudienOptionen): 
     name: string,
     beschrieb: string,
     footprints: Pt[][],
+    eig: { tiefe?: number; abstandFrei?: number; turm?: boolean } = {},
   ): StudienVariante | null => {
     const flaeche = footprints.reduce((s, f) => s + polygonArea(f), 0) / 1e6;
     if (flaeche < 40) return null;
+    // Höhenlogik: EG + n×OG (Owner: Wohnen 2.80; gemischt: EG 4.00; Turm-OG 3.50)
+    const eg = gemischt ? 4000 : wohnOg;
+    const og = gemischt && eig.turm ? 3500 : wohnOg;
+    const maxGeschosse = Math.max(1 + Math.floor((maxH - eg) / og), 1);
     const geschosse = Math.min(Math.max(Math.ceil(opts.zielGf / flaeche), 1), maxGeschosse);
+    const hoehe = eg + (geschosse - 1) * og;
     const passt = flaeche * maxGeschosse >= opts.zielGf * 0.98;
+
+    const hinweise: string[] = [];
+    const tiefe = eig.tiefe ?? null;
+    let tiefeOk: boolean | null = null;
+    if (tiefe !== null) {
+      tiefeOk = tiefe >= TIEFE_MIN && tiefe <= TIEFE_MAX;
+      if (tiefe < TIEFE_MIN) hinweise.push(`Tiefe ${(tiefe / 1000).toFixed(1)} m unter Spänner-Mass (14–18 m)`);
+      if (tiefe > TIEFE_MAX) hinweise.push(`Tiefe ${(tiefe / 1000).toFixed(1)} m über Spänner-Mass (max. 18 m)`);
+    }
+    let besonnung: StudienVariante['besonnung'] = null;
+    if (eig.abstandFrei !== undefined) {
+      const noetig = Math.round(hoehe * SCHATTEN_FAKTOR_3H);
+      besonnung = { noetig, ist: eig.abstandFrei, ok: eig.abstandFrei >= noetig };
+      if (!besonnung.ok) {
+        hinweise.push(
+          `3h-Kriterium (Näherung): Abstand ${(eig.abstandFrei / 1000).toFixed(1)} m < ${(noetig / 1000).toFixed(1)} m — Nordwohnungen wären ein No-go`,
+        );
+      }
+    }
+    if (gemischt) hinweise.push(eig.turm ? 'EG 4.00, OG 3.50 (Cluster im Turm)' : 'EG 4.00 (Quartierebene), OG 2.80 Wohnen');
+
     return {
       id,
       name,
       beschrieb,
-      koerper: footprints.map((f) => ({ outline: f, height: geschosse * gh, program: 'studie' })),
+      koerper: footprints.map((f) => ({ outline: f, height: hoehe, program: 'studie' })),
       gf: Math.round(flaeche * geschosse),
       geschosse,
-      hoehe: geschosse * gh,
+      hoehe,
+      hoehen: { eg, og },
       passt,
+      tiefe,
+      tiefeOk,
+      besonnung,
+      hinweise,
     };
   };
 
@@ -104,8 +162,8 @@ export function generiereVolumenstudien(parzelle: Pt[], opts: StudienOptionen): 
   // 1) Teppich: die ganze nutzbare Parzelle, so flach wie möglich
   out.push(variante('teppich', 'Teppich', 'Maximaler Fussabdruck, minimale Höhe — dichtes Flachnetz.', [innen]));
 
-  // 2) Riegel: ein Balken entlang der Längsachse
-  const riegelBreite = Math.min(14000, quer);
+  // 2) Riegel: ein Balken entlang der Längsachse (Spänner-Tiefe 14 m)
+  const riegelBreite = Math.min(TIEFE_MIN, quer);
   out.push(
     variante(
       'riegel',
@@ -116,30 +174,42 @@ export function generiereVolumenstudien(parzelle: Pt[], opts: StudienOptionen): 
           ? R(b.minX, b.minY + (b.h - riegelBreite) / 2, laengs, riegelBreite)
           : R(b.minX + (b.w - riegelBreite) / 2, b.minY, riegelBreite, laengs),
       ],
+      { tiefe: riegelBreite },
     ),
   );
 
-  // 3) Turm: kompakter Punkt, maximale Höhe
+  // 3) Turm: kompakter Punkt, maximale Höhe (gemischt: Vertical-Cluster)
   const seite = Math.min(quer, 24000);
   out.push(
-    variante('turm', 'Turm', 'Kleinster Fussabdruck, maximale Höhe — Fernwirkung, Boden bleibt frei.', [
-      R(b.minX + (b.w - seite) / 2, b.minY + (b.h - seite) / 2, seite, seite),
-    ]),
+    variante(
+      'turm',
+      'Turm',
+      'Kleinster Fussabdruck, maximale Höhe — Fernwirkung, Boden bleibt frei.',
+      [R(b.minX + (b.w - seite) / 2, b.minY + (b.h - seite) / 2, seite, seite)],
+      { turm: true },
+    ),
   );
 
-  // 4) Zeilen: zwei parallele Balken, wenn die Parzelle es hergibt
-  const zeilenBreite = 12000;
+  // 4) Zeilen: zwei parallele Balken; Tiefe nach Spänner-Regel, notfalls
+  //    schmaler (ehrlich markiert), Gasse fürs 3h-Kriterium
+  const zeilenBreite = Math.max(Math.min(TIEFE_MIN, (quer - 8000) / 2), 10000);
   if (quer >= zeilenBreite * 2 + 8000) {
     const gasse = quer - 2 * zeilenBreite;
     out.push(
-      variante('zeilen', 'Zeilen', 'Zwei parallele Zeilen mit besonnter Gasse dazwischen.', [
-        liegend
-          ? R(b.minX, b.minY, laengs, zeilenBreite)
-          : R(b.minX, b.minY, zeilenBreite, laengs),
-        liegend
-          ? R(b.minX, b.minY + zeilenBreite + gasse, laengs, zeilenBreite)
-          : R(b.minX + zeilenBreite + gasse, b.minY, zeilenBreite, laengs),
-      ]),
+      variante(
+        'zeilen',
+        'Zeilen',
+        'Zwei parallele Zeilen mit besonnter Gasse dazwischen.',
+        [
+          liegend
+            ? R(b.minX, b.minY, laengs, zeilenBreite)
+            : R(b.minX, b.minY, zeilenBreite, laengs),
+          liegend
+            ? R(b.minX, b.minY + zeilenBreite + gasse, laengs, zeilenBreite)
+            : R(b.minX + zeilenBreite + gasse, b.minY, zeilenBreite, laengs),
+        ],
+        { tiefe: zeilenBreite, abstandFrei: gasse },
+      ),
     );
   }
 
@@ -147,10 +217,34 @@ export function generiereVolumenstudien(parzelle: Pt[], opts: StudienOptionen): 
   const wb = Math.min(13000, quer / 2);
   if (b.w > wb * 2 && b.h > wb * 2) {
     out.push(
-      variante('winkel', 'Winkel', 'L-Form fasst einen geschützten Hof — Rücken zur Grenze.', [
-        R(b.minX, b.minY, b.w, wb),
-        R(b.minX, b.minY + wb, wb, b.h - wb),
-      ]),
+      variante(
+        'winkel',
+        'Winkel',
+        'L-Form fasst einen geschützten Hof — Rücken zur Grenze.',
+        [R(b.minX, b.minY, b.w, wb), R(b.minX, b.minY + wb, wb, b.h - wb)],
+        { tiefe: wb },
+      ),
+    );
+  }
+
+  // 6) Blockrand: umlaufendes Band mit Innenhof (Owner: Hof nie unter 13 m)
+  const band = TIEFE_MIN;
+  const hofW = b.w - 2 * band;
+  const hofH = b.h - 2 * band;
+  if (Math.min(hofW, hofH) >= HOF_MIN) {
+    out.push(
+      variante(
+        'blockrand',
+        'Blockrand',
+        'Geschlossener Rand fasst einen ruhigen Innenhof — städtische Kante.',
+        [
+          R(b.minX, b.minY, b.w, band),
+          R(b.minX, b.maxY - band, b.w, band),
+          R(b.minX, b.minY + band, band, b.h - 2 * band),
+          R(b.maxX - band, b.minY + band, band, b.h - 2 * band),
+        ],
+        { tiefe: band, abstandFrei: Math.min(hofW, hofH) },
+      ),
     );
   }
 

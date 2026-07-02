@@ -5,6 +5,7 @@ import { deriveBerechnungsliste } from '../src/derive/berechnungsliste';
 import { deriveMengen } from '../src/derive/mengen';
 import { generiereStuetzenraster } from '../src/derive/stuetzenraster';
 import { deriveAxo } from '../src/derive/axo';
+import { generiereVolumenstudien } from '../src/derive/volumenstudie';
 import {
   KosmoDoc,
   History,
@@ -841,5 +842,47 @@ describe('Axonometrie (Militärperspektive)', () => {
     // Grundriss unverzerrt: eine 4-m-Bodenkante bleibt 4 m lang im Bild
     const laengen = mit.lines.map((l) => Math.hypot(l.b.u - l.a.u, l.b.v - l.a.v));
     expect(laengen.some((l) => Math.abs(l - 4000) < 1)).toBe(true);
+  });
+});
+
+describe('Volumenstudien: Owner-Regeln (Höhen, Spänner, Hof, 3h)', () => {
+  const P = (w: number, h: number) => [
+    { x: 0, y: 0 }, { x: w, y: 0 }, { x: w, y: h }, { x: 0, y: h },
+  ];
+
+  it('gemischt: EG 4.00, Wohn-OG 2.80, Turm-OG 3.50 (Cluster)', () => {
+    const v = generiereVolumenstudien(P(80000, 60000), {
+      zielGf: 20000, nutzung: 'gemischt', maxHoehe: 25000,
+    });
+    const riegel = v.find((x) => x.id === 'riegel')!;
+    expect(riegel.hoehen).toEqual({ eg: 4000, og: 2800 });
+    expect(riegel.hoehe).toBe(4000 + (riegel.geschosse - 1) * 2800);
+    const turm = v.find((x) => x.id === 'turm')!;
+    expect(turm.hoehen).toEqual({ eg: 4000, og: 3500 });
+    // max: 4000 + n·3500 ≤ 25000 → n = 6 → 7 Geschosse Deckel
+    expect(turm.geschosse).toBeLessThanOrEqual(7);
+  });
+
+  it('Blockrand nur mit Innenhof ≥ 13 m; Hof zu klein → Variante fehlt', () => {
+    // 60×60 − 2×4 Abstand = 52 m innen − 2×14 Band = 24 m Hof ≥ 13 ✓
+    const gross = generiereVolumenstudien(P(60000, 60000), { zielGf: 8000 });
+    const blockrand = gross.find((x) => x.id === 'blockrand')!;
+    expect(blockrand.besonnung!.ist).toBe(24000);
+    // 46×46 − 8 = 38 innen − 28 = 10 m Hof < 13 → keine Blockrand-Variante
+    const klein = generiereVolumenstudien(P(46000, 46000), { zielGf: 8000 });
+    expect(klein.find((x) => x.id === 'blockrand')).toBeUndefined();
+  });
+
+  it('Zeilen: 3h-Näherung schlägt an, wenn die Gasse zu eng für die Höhe ist', () => {
+    // schmale Parzelle → Gasse 8 m; hohes Programm → Höhe weit über 8/1.43
+    const v = generiereVolumenstudien(P(90000, 44000), { zielGf: 30000 });
+    const zeilen = v.find((x) => x.id === 'zeilen')!;
+    expect(zeilen.besonnung).not.toBeNull();
+    expect(zeilen.besonnung!.noetig).toBe(Math.round(zeilen.hoehe * 1.43));
+    expect(zeilen.besonnung!.ok).toBe(false);
+    expect(zeilen.hinweise.some((h) => h.includes('3h-Kriterium'))).toBe(true);
+    // Spänner-Tiefe: 44−8=36 innen → (36−8)/2=14 m → tiefeOk
+    expect(zeilen.tiefe).toBe(14000);
+    expect(zeilen.tiefeOk).toBe(true);
   });
 });
