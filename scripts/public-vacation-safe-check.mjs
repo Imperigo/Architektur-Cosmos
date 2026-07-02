@@ -123,6 +123,11 @@ const checks = [
     purpose: 'Checks exported public HTML pages for core navigation links, missing internal targets and missing referenced static assets without starting a server.'
   },
   {
+    id: 'public_static_link_negative_smoke',
+    command: ['node', 'scripts/public-static-link-negative-smoke.mjs'],
+    purpose: 'Verifies the static link guard rejects synthetic private/source hrefs and missing internal route targets.'
+  },
+  {
     id: 'public_static_metadata_check',
     command: [
       'node',
