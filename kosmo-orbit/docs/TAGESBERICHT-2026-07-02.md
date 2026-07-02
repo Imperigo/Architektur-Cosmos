@@ -136,3 +136,19 @@ Desktop-Build-Verifikation via tauri-action.
   Stand-Spalte — die Anleitung für den Abnahme-Tag.
 - Installer-Neubau angestossen (Desktop alle drei Plattformen + iOS-Simulator)
   auf dem Endstand.
+
+
+## Nachtrag tief in der Nacht — Phase 3 rollt
+
+- **V1 abgenommen und gemergt** (PR #2 → main, c62a875); Branch neu ab main.
+- **Gestaltungskonzept «Werkplan»** nach den fünf Owner-Referenzbildern:
+  Skizzenpapier + Korn, Tusche-Standard, wählbare Akzente, Karteikarten,
+  Messrahmen-Leerzustände — Fundament + Rollout Runde 1 in allen Modulen.
+- **KosmoDraw sichtbar:** Modellbaum mit IFC-Identität + ehrlicher
+  Mengenauszug (deriveMengen, handgerechnete Tests).
+- **Berechnungsliste-Panel:** der Wettbewerbs-Excel-Workflow rechnet live
+  im Design-Modul (Raumprogramm, Typ-Farben, Δ Max, Tie-out, A4-PDF,
+  «Zeichnen als»-Typwahl).
+- **KosmoDoc als Modul:** Diagnose (Karteikarten-Befunde), Hilfe (Werkzeug-
+  Wissen), Berichte (Lernjournal live).
+- Suiten: 36 Kernel + 3 KI + 5 Contracts + 3 App + 9 E2E grün.

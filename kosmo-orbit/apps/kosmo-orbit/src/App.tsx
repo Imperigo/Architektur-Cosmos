@@ -16,6 +16,7 @@ import { VisWorkspace } from './modules/vis/VisWorkspace';
 import { DataWorkspace } from './modules/data/DataWorkspace';
 import { PublishWorkspace } from './modules/publish/PublishWorkspace';
 import { PrepareWorkspace } from './modules/prepare/PrepareWorkspace';
+import { DocWorkspace } from './modules/doc/DocWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
 import { registerActions } from './shell/palette';
 import {
@@ -32,7 +33,7 @@ import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
 
-type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare';
+type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc';
 
 function tagesgruss(): string {
   const h = new Date().getHours();
@@ -49,6 +50,7 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
   { id: 'vis', screen: 'vis', name: 'KosmoVis', desc: 'Renderings · Varianten' },
   { id: 'publish', screen: 'publish', name: 'KosmoPublish', desc: 'Plansätze · Layouts' },
   { id: 'prepare', screen: 'prepare', name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
+  { id: 'draw', screen: 'doc', name: 'KosmoDoc', desc: 'Diagnose · Hilfe · Berichte' },
 ];
 
 /** Wählbare Farbakzente (Gestaltungskonzept «Werkplan»): Standard = Tusche. */
@@ -164,7 +166,7 @@ export function App() {
         {screen !== 'home' && (
           <>
             <Hairline vertical />
-            <Badge hue={moduleHue[screen as ModuleId] ?? moduleHue.design}>
+            <Badge hue={moduleHue[modules.find((m) => m.screen === screen)?.id ?? 'design']}>
               {modules.find((m) => m.screen === screen)?.name ?? 'KosmoDesign'}
             </Badge>
           </>
@@ -304,6 +306,8 @@ export function App() {
           <PublishWorkspace />
         ) : screen === 'prepare' ? (
           <PrepareWorkspace />
+        ) : screen === 'doc' ? (
+          <DocWorkspace />
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>

@@ -115,3 +115,17 @@ test('Berechnungsliste: Raumprogramm → Zone zeichnen → ausgezogen + Δ Max l
   await expect(page.locator('[data-testid="liste-tabelle"]')).toContainText('120');
   await expect(page.locator('[data-testid="liste-delta-max"]')).toContainText('-80');
 });
+
+test('KosmoDoc-Modul: Diagnose läuft, Hilfe-Karten stehen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-draw"]');
+  await page.click('[data-testid="doc-tab-hilfe"]');
+  await expect(page.getByText('Zeichnen in KosmoDesign')).toBeVisible();
+  await page.click('[data-testid="doc-tab-diagnose"]');
+  await page.click('[data-testid="diagnose-run"]');
+  await expect(page.locator('[data-testid="befund-Kern"]')).toBeVisible({ timeout: 15_000 });
+  await page.click('[data-testid="doc-tab-berichte"]');
+  await expect(page.locator('[data-testid="doc-berichte"]')).toBeVisible();
+});
