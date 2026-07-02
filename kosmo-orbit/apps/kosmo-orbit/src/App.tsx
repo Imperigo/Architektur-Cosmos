@@ -51,8 +51,20 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
   { id: 'prepare', screen: 'prepare', name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
 ];
 
+/** Wählbare Farbakzente (Gestaltungskonzept «Werkplan»): Standard = Tusche. */
+const AKZENTE: { key: string; name: string; farbe: string | null }[] = [
+  { key: 'tusche', name: 'Tusche', farbe: null },
+  { key: 'kupfer', name: 'Kupfer', farbe: '#a84b2b' },
+  { key: 'signal', name: 'Signal', farbe: '#c8501e' },
+  { key: 'blau', name: 'Blau', farbe: '#2455a4' },
+  { key: 'gruen', name: 'Grün', farbe: '#1e6b47' },
+];
+
 export function App() {
-  const [theme, setTheme] = useState<ThemeName>('paper');
+  const [theme, setTheme] = useState<ThemeName>(
+    (localStorage.getItem('kosmo.thema') as ThemeName | null) ?? 'paper',
+  );
+  const [akzent, setAkzent] = useState(localStorage.getItem('kosmo.akzent') ?? 'tusche');
   const [screen, setScreen] = useState<Screen>('home');
   const [kosmoOpen, setKosmoOpen] = useState(true);
   const [syncOpen, setSyncOpen] = useState(false);
@@ -72,7 +84,13 @@ export function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
+    localStorage.setItem('kosmo.thema', theme);
   }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.dataset.akzent = akzent;
+    localStorage.setItem('kosmo.akzent', akzent);
+  }, [akzent]);
 
   // Globale Palette-Aktionen (⌘K)
   useEffect(() => {
@@ -92,6 +110,12 @@ export function App() {
         gruppe: 'Ansicht',
         run: () => setTheme((t) => (t === 'paper' ? 'ink' : 'paper')),
       },
+      ...AKZENTE.map((a) => ({
+        id: `akzent-${a.key}`,
+        titel: `Akzent: ${a.name}`,
+        gruppe: 'Ansicht',
+        run: () => setAkzent(a.key),
+      })),
       { id: 'kosmo', titel: 'Kosmo ein-/ausblenden', gruppe: 'Ansicht', run: () => setKosmoOpen((k) => !k) },
       { id: 'save', titel: 'Projekt speichern (.kosmo)', gruppe: 'Projekt', run: downloadProject },
       {
@@ -197,6 +221,29 @@ export function App() {
         <KButton tone="ghost" size="sm" onClick={() => setTheme(theme === 'paper' ? 'ink' : 'paper')}>
           {theme === 'paper' ? 'Tinte' : 'Papier'}
         </KButton>
+        <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center', marginLeft: 4 }}>
+          {AKZENTE.map((a) => (
+            <button
+              key={a.key}
+              onClick={() => setAkzent(a.key)}
+              title={`Akzent ${a.name}`}
+              aria-label={`Akzent ${a.name}`}
+              data-testid={`akzent-${a.key}`}
+              style={{
+                all: 'unset',
+                cursor: 'pointer',
+                width: 12,
+                height: 12,
+                borderRadius: 999,
+                background: a.farbe ?? 'var(--k-technik)',
+                boxShadow:
+                  akzent === a.key
+                    ? '0 0 0 1.5px var(--k-field), 0 0 0 3px var(--k-technik)'
+                    : '0 0 0 1px var(--k-line-strong)',
+              }}
+            />
+          ))}
+        </span>
       </header>
 
       {syncOpen && (
@@ -261,7 +308,7 @@ export function App() {
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
               <div>
-                <div style={{ fontSize: 28, fontWeight: 550, letterSpacing: '-0.01em' }}>
+                <div className="k-titel" style={{ fontSize: 34 }}>
                   {tagesgruss()}
                 </div>
                 <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
