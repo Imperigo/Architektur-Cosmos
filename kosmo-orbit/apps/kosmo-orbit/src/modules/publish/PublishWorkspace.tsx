@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
+import { Hairline, Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
 import {
   exportDxf,
   placementPaperBounds,
@@ -104,9 +104,8 @@ export function PublishWorkspace() {
     });
   }
 
-  /** Schnitt durch die Mitte oder Ansicht von aussen (N/O/S/W). */
-  function placeSchnitt(richtung: 'schnitt' | 'nord' | 'ost' | 'sued' | 'west') {
-    if (!sheet || !paper) return;
+  /** Schnitt-/Ansichtslinie aus der Modell-Bbox (Blick = linke Normale a→b). */
+  function schnittLinie(richtung: 'schnitt' | 'nord' | 'ost' | 'sued' | 'west') {
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     for (const e of doc.entities.values()) {
       if (e.kind === 'wall' || e.kind === 'mass') {
@@ -117,9 +116,8 @@ export function PublishWorkspace() {
         }
       }
     }
-    if (minX === Infinity) return;
+    if (minX === Infinity) return null;
     const midY = Math.round((minY + maxY) / 2);
-    // Blickrichtung = linke Normale der Linie a→b
     const linien = {
       schnitt: { a: { x: minX - 1000, y: midY }, b: { x: maxX + 1000, y: midY }, titel: 'Schnitt' },
       sued: { a: { x: minX - 1000, y: minY - 2000 }, b: { x: maxX + 1000, y: minY - 2000 }, titel: 'Ansicht Süd' },
@@ -127,7 +125,14 @@ export function PublishWorkspace() {
       ost: { a: { x: maxX + 2000, y: minY - 1000 }, b: { x: maxX + 2000, y: maxY + 1000 }, titel: 'Ansicht Ost' },
       west: { a: { x: minX - 2000, y: maxY + 1000 }, b: { x: minX - 2000, y: minY - 1000 }, titel: 'Ansicht West' },
     } as const;
-    const l = linien[richtung];
+    return linien[richtung];
+  }
+
+  /** Schnitt durch die Mitte oder Ansicht von aussen (N/O/S/W). */
+  function placeSchnitt(richtung: 'schnitt' | 'nord' | 'ost' | 'sued' | 'west') {
+    if (!sheet || !paper) return;
+    const l = schnittLinie(richtung);
+    if (!l) return;
     runCommand('publish.ansichtPlatzieren', {
       sheetId: sheet.id,
       view: 'schnitt',
@@ -138,6 +143,55 @@ export function PublishWorkspace() {
       y: (paper.height - 30) / 2,
       title: l.titel,
     });
+  }
+
+  /** Toolkit 5: A0-Wettbewerbsplakat mit vorplatzierten Slots — EIN Undo-Schritt. */
+  function erzeugePlakat(layout: 'klassisch' | 'spalte') {
+    const { history } = useProject.getState();
+    const name = doc.settings.projectName;
+    history.beginGroup();
+    try {
+      const res = runCommand('publish.blattErstellen', {
+        name: `Plakat ${sheets.filter((s) => s.name.startsWith('Plakat')).length + 1}`,
+        format: 'A0',
+        orientation: 'hoch',
+      });
+      const sheetId = (res.patches[0] as { id: string }).id;
+      // A0 hoch: 841 × 1189 mm
+      const titelX = layout === 'spalte' ? 60 : 60;
+      runCommand('publish.textSetzen', {
+        sheetId, x: titelX, y: 90, size: 34, titel: true,
+        text: name.toUpperCase(),
+      });
+      runCommand('publish.textSetzen', {
+        sheetId, x: titelX, y: 112, size: 8,
+        text: 'Projektwettbewerb · Beitrag «…»',
+      });
+      runCommand('publish.textSetzen', {
+        sheetId, x: titelX, y: layout === 'spalte' ? 200 : 1000, size: 5,
+        text: 'Konzept\nStädtebau, Setzung und Adresse — hier den\nProjekttext einsetzen (Klick links im Text-Feld).',
+      });
+      const slots =
+        layout === 'klassisch'
+          ? { axo: { x: 590, y: 320 }, plan: { x: 260, y: 560 }, ansicht: { x: 260, y: 900 }, schnitt: { x: 590, y: 900 } }
+          : { axo: { x: 560, y: 300 }, plan: { x: 560, y: 640 }, ansicht: { x: 560, y: 940 }, schnitt: { x: 260, y: 940 } };
+      runCommand('publish.ansichtPlatzieren', { sheetId, view: 'axo', scale: 400, x: slots.axo.x, y: slots.axo.y });
+      const storeyId = placeStoreyId ?? storeys[0]?.id;
+      if (storeyId) {
+        runCommand('publish.ansichtPlatzieren', { sheetId, view: 'grundriss', storeyId, scale: 200, x: slots.plan.x, y: slots.plan.y });
+      }
+      const sued = schnittLinie('sued');
+      if (sued) {
+        runCommand('publish.ansichtPlatzieren', { sheetId, view: 'schnitt', a: sued.a, b: sued.b, scale: 200, x: slots.ansicht.x, y: slots.ansicht.y, title: sued.titel });
+      }
+      const schnitt = schnittLinie('schnitt');
+      if (schnitt) {
+        runCommand('publish.ansichtPlatzieren', { sheetId, view: 'schnitt', a: schnitt.a, b: schnitt.b, scale: 200, x: slots.schnitt.x, y: slots.schnitt.y, title: schnitt.titel });
+      }
+      setActiveSheetId(sheetId);
+    } finally {
+      history.endGroup();
+    }
   }
 
   function exportSvg() {
@@ -216,6 +270,47 @@ export function PublishWorkspace() {
             + Blatt
           </KButton>
         </div>
+        <Hairline />
+        <div style={{ display: 'grid', gap: 5 }}>
+          <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+            A0-Plakat (Toolkit 5)
+          </span>
+          <div style={{ display: 'flex', gap: 5 }}>
+            <KButton size="sm" tone="quiet" onClick={() => erzeugePlakat('klassisch')} data-testid="plakat-klassisch">
+              Klassisch
+            </KButton>
+            <KButton size="sm" tone="quiet" onClick={() => erzeugePlakat('spalte')} data-testid="plakat-spalte">
+              Spalte
+            </KButton>
+          </div>
+        </div>
+        {sheet && (sheet.texte?.length ?? 0) > 0 && (
+          <div style={{ display: 'grid', gap: 6 }} data-testid="text-editor">
+            <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>Texte</span>
+            {sheet.texte!.map((t) => (
+              <textarea
+                key={t.id}
+                defaultValue={t.text}
+                rows={Math.min(t.text.split('\n').length + 1, 5)}
+                data-testid={`text-${t.id}`}
+                onBlur={(e) => {
+                  if (e.target.value !== t.text) {
+                    runCommand('publish.textSetzen', { sheetId: sheet.id, textId: t.id, text: e.target.value });
+                  }
+                }}
+                style={{
+                  padding: '5px 7px',
+                  borderRadius: 'var(--k-radius-sm)',
+                  border: '1px solid var(--k-line-strong)',
+                  background: 'var(--k-raised)',
+                  fontSize: 11.5,
+                  fontFamily: t.titel ? 'var(--k-font-titel)' : 'var(--k-font-ui)',
+                  resize: 'vertical',
+                }}
+              />
+            ))}
+          </div>
+        )}
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="accent" onClick={() => void exportSheetSetPdf()} data-testid="export-set">
           Plansatz PDF

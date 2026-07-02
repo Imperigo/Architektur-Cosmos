@@ -886,3 +886,22 @@ describe('Volumenstudien: Owner-Regeln (Höhen, Spänner, Hof, 3h)', () => {
     expect(zeilen.tiefeOk).toBe(true);
   });
 });
+
+describe('Blatt-Texte (Plakat)', () => {
+  it('Text setzen, ändern, entfernen — und im Blatt-SVG gerendert', async () => {
+    const { doc } = setupDoc();
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'Plakat', format: 'A0', orientation: 'hoch' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    execute(doc, 'publish.textSetzen', { sheetId, text: 'HAUS AM HANG', x: 60, y: 80, size: 30, titel: true });
+    const sheet = doc.get(sheetId) as import('../src').Sheet;
+    expect(sheet.texte).toHaveLength(1);
+    const textId = sheet.texte![0]!.id;
+    execute(doc, 'publish.textSetzen', { sheetId, textId, text: 'Haus am Hang\nWettbewerb 2026' });
+    const { sheetToSvg } = await import('../src');
+    const svg = sheetToSvg(doc, sheetId, { projectName: 'Test', date: '01.07.2026' });
+    expect(svg).toContain('Haus am Hang');
+    expect(svg).toContain('Wettbewerb 2026');
+    execute(doc, 'publish.textSetzen', { sheetId, textId, text: '' });
+    expect((doc.get(sheetId) as import('../src').Sheet).texte).toHaveLength(0);
+  });
+});

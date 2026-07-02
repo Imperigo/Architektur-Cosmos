@@ -91,6 +91,21 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     }
   }
 
+  // Freie Textblöcke (Plakat-Titel, Konzepttexte)
+  for (const t of sheet.texte ?? []) {
+    const zeilen = t.text.split('\n');
+    const stil = t.titel
+      ? `font-weight="bold" letter-spacing="${(t.size * 0.02).toFixed(2)}" font-family="'Archivo Narrow', 'Arial Narrow', Helvetica, sans-serif"`
+      : '';
+    parts.push(
+      `<text x="${t.x}" y="${t.y}" font-size="${t.size}" ${stil}>` +
+        zeilen
+          .map((z, i) => `<tspan x="${t.x}" dy="${i === 0 ? 0 : (t.size * 1.35).toFixed(2)}">${escapeXml(z)}</tspan>`)
+          .join('') +
+        `</text>`,
+    );
+  }
+
   // Plankopf unten rechts (SIA-angelehnt)
   const kw = 120;
   const kh = 26;

@@ -156,3 +156,24 @@ test('Axonometrie: aufs Blatt platzieren, Linien erscheinen', async ({ page }) =
   const linien = await page.locator('[data-testid="sheet-canvas"] line').count();
   expect(linien).toBeGreaterThan(10);
 });
+
+test('Plakat-Designer: A0-Plakat mit Slots und editierbaren Texten', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="load-tkb"]');
+  await page.waitForSelector('text=KENNZAHLEN');
+  await page.evaluate(() => window.__kosmo.open('publish'));
+  await page.click('[data-testid="plakat-klassisch"]');
+  // Blatt «Plakat 1» aktiv, Titeltext auf dem Blatt, Text-Editor links
+  await expect(page.getByText('Plakat 1').first()).toBeVisible();
+  await expect(page.locator('[data-testid="text-editor"] textarea')).toHaveCount(3);
+  // Titel steht als Text im Blatt-SVG
+  const titel = await page.locator('[data-testid="sheet-canvas"] text', { hasText: 'TKB' }).count();
+  expect(titel).toBeGreaterThan(0);
+  // Text editieren → landet im SVG
+  const konzept = page.locator('[data-testid="text-editor"] textarea').last();
+  await konzept.fill('Konzept\nZwei Höfe, ein Rücken.');
+  await konzept.blur();
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Zwei Höfe');
+});

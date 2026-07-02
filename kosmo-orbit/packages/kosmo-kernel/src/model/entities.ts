@@ -174,6 +174,20 @@ export interface SheetPlacement {
   title?: string;
 }
 
+/** Freier Textblock auf einem Blatt (Plakat-Titel, Konzepttexte). */
+export interface SheetText {
+  id: string;
+  /** Ankerpunkt (Papier-mm, Ursprung links oben; y = Basislinie erste Zeile). */
+  x: number;
+  y: number;
+  /** Inhalt; \n bricht Zeilen. */
+  text: string;
+  /** Schrifthöhe in Papier-mm. */
+  size: number;
+  /** Plakat-Titel-Stil (fett, gesperrt). */
+  titel?: boolean;
+}
+
 /** Planblatt (KosmoPublish) — Layout aus platzierten Ansichten. */
 export interface Sheet extends Base {
   kind: 'sheet';
@@ -183,6 +197,7 @@ export interface Sheet extends Base {
   /** Sortierung im Plansatz. */
   index: number;
   placements: SheetPlacement[];
+  texte?: SheetText[];
 }
 
 export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet;

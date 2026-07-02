@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Sheet, SheetPlacement, Storey } from '../model/entities';
+import type { Sheet, SheetPlacement, SheetText, Storey } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { CommandError, registerCommand } from './core';
 
@@ -136,5 +136,61 @@ export const removePlacement = registerCommand({
     };
     const patches: AnyPatch[] = [{ id: sheet.id, before: sheet, after }];
     return patches;
+  },
+});
+
+export const setText = registerCommand({
+  id: 'publish.textSetzen',
+  title: 'Text auf Blatt setzen',
+  description:
+    'Setzt einen freien Textblock auf ein Planblatt (Plakat-Titel, Konzepttext). Ohne textId wird ein neuer Block angelegt; mit textId wird er geändert; leerer text entfernt ihn. x/y in Papier-mm (y = Basislinie), size = Schrifthöhe in mm, titel = Plakat-Titel-Stil.',
+  params: z.object({
+    sheetId: z.string(),
+    textId: z.string().optional(),
+    x: z.number().optional(),
+    y: z.number().optional(),
+    text: z.string(),
+    size: z.number().min(1).max(120).optional(),
+    titel: z.boolean().optional(),
+  }),
+  summarize: (p) => (p.text.trim() === '' ? 'Text entfernen' : `Text «${p.text.slice(0, 24)}…» setzen`),
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const texte = sheet.texte ?? [];
+    let next: SheetText[];
+    if (p.textId) {
+      const alt = texte.find((t) => t.id === p.textId);
+      if (!alt) throw new CommandError(`Text «${p.textId}» existiert nicht`);
+      next =
+        p.text.trim() === ''
+          ? texte.filter((t) => t.id !== p.textId)
+          : texte.map((t) =>
+              t.id === p.textId
+                ? {
+                    ...t,
+                    text: p.text,
+                    x: p.x ?? t.x,
+                    y: p.y ?? t.y,
+                    size: p.size ?? t.size,
+                    ...(p.titel === undefined ? {} : { titel: p.titel }),
+                  }
+                : t,
+            );
+    } else {
+      if (p.text.trim() === '') throw new CommandError('Leerer Text ohne textId');
+      next = [
+        ...texte,
+        {
+          id: newId('text'),
+          x: p.x ?? 30,
+          y: p.y ?? 40,
+          text: p.text,
+          size: p.size ?? 5,
+          ...(p.titel ? { titel: true } : {}),
+        },
+      ];
+    }
+    const after: Sheet = { ...sheet, texte: next };
+    return [{ id: sheet.id, before: sheet, after }];
   },
 });
