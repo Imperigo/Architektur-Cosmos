@@ -375,3 +375,62 @@ describe('Walmdach (Straight Skeleton, eigener)', () => {
     ).toThrow(/konvex/);
   });
 });
+
+describe('KosmoPublish (Blätter, DXF)', () => {
+  function setupWithWalls() {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const W = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+    W({ x: 0, y: 0 }, { x: 9000, y: 0 });
+    W({ x: 9000, y: 0 }, { x: 9000, y: 6000 });
+    W({ x: 9000, y: 6000 }, { x: 0, y: 6000 });
+    W({ x: 0, y: 6000 }, { x: 0, y: 0 });
+    return { doc, storeyId };
+  }
+
+  it('Blatt erstellen, Grundriss + Schnitt platzieren, verschieben, entfernen', async () => {
+    const { sheetToSvg, sheetPaperSize } = await import('../src');
+    const { doc, storeyId } = setupWithWalls();
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'Grundrisse', format: 'A1' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    expect(sheetPaperSize({ format: 'A1', orientation: 'quer' })).toEqual({ width: 841, height: 594 });
+
+    execute(doc, 'publish.ansichtPlatzieren', {
+      sheetId, view: 'grundriss', storeyId, scale: 100, x: 200, y: 250,
+    });
+    execute(doc, 'publish.ansichtPlatzieren', {
+      sheetId, view: 'schnitt', a: { x: -1000, y: 3000 }, b: { x: 10000, y: 3000 }, scale: 100, x: 600, y: 250,
+    });
+    const sheet = doc.get<import('../src').Sheet>(sheetId)!;
+    expect(sheet.placements).toHaveLength(2);
+    expect(sheet.placements[0]!.title).toBe('Grundriss EG');
+
+    const svg = sheetToSvg(doc, sheetId, { projectName: 'Test', date: '01.07.2026' });
+    expect(svg).toContain('viewBox="0 0 841 594"');
+    expect(svg).toContain('Grundriss EG');
+    expect(svg).toContain('1:100');
+    expect(svg).toContain('Blatt 1 · A1');
+
+    const pid = sheet.placements[0]!.id;
+    execute(doc, 'publish.ansichtVerschieben', { sheetId, placementId: pid, x: 300, y: 300 });
+    expect(doc.get<import('../src').Sheet>(sheetId)!.placements[0]!.x).toBe(300);
+    execute(doc, 'publish.ansichtEntfernen', { sheetId, placementId: pid });
+    expect(doc.get<import('../src').Sheet>(sheetId)!.placements).toHaveLength(1);
+  });
+
+  it('DXF-Export: gültige Struktur, Layer, Polylinien und Bemassungstexte', async () => {
+    const { exportDxf } = await import('../src');
+    const { doc, storeyId } = setupWithWalls();
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: doc.byKind<Wall>('wall')[0]!.id,
+      openingType: 'fenster', center: 3000, width: 2000, height: 1500, sill: 900,
+    });
+    const dxf = exportDxf(doc, storeyId);
+    expect(dxf).toContain('SECTION');
+    expect(dxf).toContain('ENTITIES');
+    expect(dxf).toContain('KOSMO-WAND');
+    expect(dxf).toContain('KOSMO-BEMASSUNG');
+    expect(dxf).toContain('LWPOLYLINE');
+    expect(dxf).toContain('EOF');
+  });
+});

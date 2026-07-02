@@ -155,7 +155,37 @@ export interface MassBody extends Base {
   program?: string;
 }
 
-export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair;
+/** Papierformate (ISO 216) für Plansätze. */
+export type SheetFormat = 'A0' | 'A1' | 'A2' | 'A3' | 'A4';
+
+/** Eine platzierte Ansicht auf einem Blatt — Position in Papier-mm. */
+export interface SheetPlacement {
+  id: string;
+  view: 'grundriss' | 'schnitt';
+  /** Grundriss: Quell-Geschoss. */
+  storeyId?: string;
+  /** Schnitt: Schnittlinie + Sichttiefe (Weltkoordinaten mm). */
+  section?: { a: Pt; b: Pt; depth: Mm; lookLeft: boolean };
+  /** Massstab, z.B. 100 für 1:100. */
+  scale: number;
+  /** Mittelpunkt der Zeichnung auf dem Blatt (Papier-mm, Ursprung links oben). */
+  x: number;
+  y: number;
+  title?: string;
+}
+
+/** Planblatt (KosmoPublish) — Layout aus platzierten Ansichten. */
+export interface Sheet extends Base {
+  kind: 'sheet';
+  name: string;
+  format: SheetFormat;
+  orientation: 'quer' | 'hoch';
+  /** Sortierung im Plansatz. */
+  index: number;
+  placements: SheetPlacement[];
+}
+
+export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {
