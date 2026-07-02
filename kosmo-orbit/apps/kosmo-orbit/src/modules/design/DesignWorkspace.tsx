@@ -16,6 +16,7 @@ import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
 import { DrawPanel } from './DrawPanel';
 import { BerechnungslistePanel } from './BerechnungslistePanel';
+import { RasterPanel } from './RasterPanel';
 import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
@@ -55,6 +56,7 @@ export function DesignWorkspace() {
   const [studieOffen, setStudieOffen] = useState(false);
   const [drawOffen, setDrawOffen] = useState(false);
   const [listeOffen, setListeOffen] = useState(false);
+  const [rasterOffen, setRasterOffen] = useState(false);
   const [wohnungstyp, setWohnungstyp] = useState<string | null>(null);
   const [zielGf, setZielGf] = useState<number | null>(null);
   const [maxHoeheM, setMaxHoeheM] = useState(25);
@@ -409,6 +411,14 @@ export function DesignWorkspace() {
         >
           Liste
         </KButton>
+        <KButton
+          size="sm"
+          tone={rasterOffen ? 'accent' : 'ghost'}
+          data-testid="raster-toggle"
+          onClick={() => { setRasterOffen(!rasterOffen); if (!rasterOffen) setListeOffen(false); }}
+        >
+          Raster
+        </KButton>
         <span style={{ width: 12 }} />
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
           ↩ Rückgängig
@@ -460,6 +470,7 @@ export function DesignWorkspace() {
       {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
       <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
         {drawOffen && <DrawPanel />}
+        {rasterOffen && <RasterPanel onClose={() => setRasterOffen(false)} />}
         {listeOffen && (
           <BerechnungslistePanel
             wohnungstyp={wohnungstyp}

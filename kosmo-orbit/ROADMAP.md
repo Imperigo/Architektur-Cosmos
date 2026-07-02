@@ -70,7 +70,7 @@ Kern-Prinzipien: int-mm-Koordinaten · Commands = einzige Schreiber (zod-Schema 
 Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
 
 25. **Berechnungsliste Volumenstudien** (Owner-Excel 1:1 als lebende Ableitung): Raumprogramm HNF-Soll je Wohnungstyp → aGF-Ziel ×1.22, «ausgezogen» aus gezeichneten Zonen/Volumen, Differenz +/−, GF-Block je Geschoss, Δ Max, Tie-out-Kontrolle, Farbcodierung (marktgerecht rot · preisgünstig blau · alterswohnen violett · vertical-cluster hellgrün · quartierebene dunkelgrün) — Kern ✅ · Panel ✅ («Liste» im Design-Modul: Raumprogramm-Erfassung, lebende Tabelle mit Typ-Farben, Δ Max, Tie-out-Warnung, «Zeichnen als»-Typwahl fürs Zonen-Werkzeug, A4-quer-PDF) · offen: Varianten-Archiv (heute: Projekt-Tresor je Variante)
-26. **Stützenraster-Assistent** (VSS 40 291): 90°-Parkierung (Parkfeld 2.50–2.80 m ↔ Fahrgasse 6.50–6.25 m) gegen OG-Wohnraster prüfen; Vorschläge + Konfliktanzeige
+26. ~~**Stützenraster-Assistent** (VSS 40 291)~~ ✅ («Raster» im Design-Modul: Owner-Herleitung als Rechenwerk — Achsmass = Felder × Breite + 0.50 m, Wohnraster-Bewertung zu-eng/knapp/ausgewogen/grosszügig, Holzbau-Warnung >12 m, Parameter einstellbar; Owner-Excel-Zahlen als Kernel-Tests)
 27. **Geschosshöhen-/Typologie-Regeln in den Volumenstudien**: Wohnen 2.80 ok-ok, Gewerbe EG 4.00 / OG 3.50, Vertical-Cluster kompakt in Türmen; Spänner-Logik (Tiefe 14–18 m, Innenhof ≥13 m); 3h-Sonnen-Kriterium als Check (Nordwohnungen-No-go)
 28. **Axonometrie** als vierter Plantyp (Toolkit 4 komplett; Hidden-Line wiederverwenden) in Design + Publish
 29. **Toolkit 5 — Wettbewerbs-Plakat-Designer** in KosmoPublish: A0-Plakatlayouts, Text-Slots (Kosmo-Vorschläge, Demo-Modus), Plan-/Render-Platzhalter

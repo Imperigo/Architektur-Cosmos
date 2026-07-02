@@ -129,3 +129,15 @@ test('KosmoDoc-Modul: Diagnose läuft, Hilfe-Karten stehen', async ({ page }) =>
   await page.click('[data-testid="doc-tab-berichte"]');
   await expect(page.locator('[data-testid="doc-berichte"]')).toBeVisible();
 });
+
+test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="raster-toggle"]');
+  await expect(page.locator('[data-testid="raster-panel"]')).toBeVisible();
+  // Die Owner-Referenzvariante 4×2.50 → 10.50 m steht mit Bewertung da
+  await expect(page.getByText('4 Felder à 2.50 → Achse 10.50 m').first()).toBeVisible();
+  await expect(page.locator('[data-testid="raster-varianten"]').getByText('ausgewogen').first()).toBeVisible();
+});

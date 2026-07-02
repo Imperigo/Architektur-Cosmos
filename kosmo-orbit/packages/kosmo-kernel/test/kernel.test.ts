@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { testhausMitQuertrakt, ansichtSvg } from './fixtures';
 import { deriveBerechnungsliste } from '../src/derive/berechnungsliste';
 import { deriveMengen } from '../src/derive/mengen';
+import { generiereStuetzenraster } from '../src/derive/stuetzenraster';
 import {
   KosmoDoc,
   History,
@@ -791,5 +792,35 @@ describe('Mengenauszug (KosmoDraw)', () => {
     const hnf = m.positionen.find((p) => p.kind === 'zone:HNF')!;
     expect(hnf.ifcKlasse).toBe('IfcSpace');
     expect(hnf.flaeche).toBeCloseTo(24, 5);
+  });
+});
+
+describe('Stützenraster-Assistent (VSS 40 291, Owner-Herleitung)', () => {
+  it('reproduziert die Owner-Excel: 4×2.50 → 10.50 m / 3 Achsen = 3.50 m ausgewogen', () => {
+    const v = generiereStuetzenraster();
+    const beste = v.find((x) => x.parkfelder === 4 && x.feldbreite === 2.5 && x.wohnachsen === 3)!;
+    expect(beste.achsmass).toBeCloseTo(10.5, 5);
+    expect(beste.wohnraster).toBeCloseTo(3.5, 5);
+    expect(beste.bewertung).toBe('ausgewogen');
+    expect(beste.holzbauKritisch).toBe(false);
+    const robust = v.find((x) => x.parkfelder === 4 && x.feldbreite === 2.6 && x.wohnachsen === 3)!;
+    expect(robust.achsmass).toBeCloseTo(10.9, 5);
+    expect(robust.wohnraster).toBeCloseTo(10.9 / 3, 5);
+    expect(robust.fahrgasse).toBe(6.0);
+  });
+
+  it('markiert 2 Felder/2 Achsen als zu eng und 5×2.50/4 als Holzbau-kritisch', () => {
+    const v = generiereStuetzenraster();
+    const eng = v.find((x) => x.parkfelder === 2 && x.feldbreite === 2.5 && x.wohnachsen === 2)!;
+    expect(eng.achsmass).toBeCloseTo(5.5, 5);
+    expect(eng.bewertung).toBe('zu-eng'); // 2.75 m < 3.25 m
+    const dreizehn = v.find((x) => x.parkfelder === 5 && x.feldbreite === 2.5 && x.wohnachsen === 4)!;
+    expect(dreizehn.achsmass).toBeCloseTo(13.0, 5);
+    expect(dreizehn.wohnraster).toBeCloseTo(3.25, 5);
+    expect(dreizehn.holzbauKritisch).toBe(true);
+    // 3×2.50/2 = 4.00 m: grosszügig (Spezialbereiche)
+    const gross = v.find((x) => x.parkfelder === 3 && x.feldbreite === 2.5 && x.wohnachsen === 2)!;
+    expect(gross.wohnraster).toBeCloseTo(4.0, 5);
+    expect(gross.bewertung).toBe('grosszuegig');
   });
 });
