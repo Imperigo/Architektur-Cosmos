@@ -81,3 +81,10 @@ Lizenz-Politik: MIT/Apache/BSD/ISC/MPL-2.0/BSL-1.0 = bündelbar · LGPL = Grenzf
 
 - Tauri-2-iOS-Reife, iPadOS-PWA-Fähigkeiten (OPFS, Pencil-Pressure, Mikrofon), SQLite (tauri-plugin-sql vs. wa-sqlite/OPFS), MSAL/OneDrive in Tauri — Nachtrag folgt.
 - ArchiCAD/Vorform/Finch-Feature-Checklisten + Bonsai-Drawing-Patterns — Nachtrag folgt.
+
+## Nachtrag 2026-07-02 (Owner-Hinweis)
+
+| Baustein | Entscheid | Quelle | Lizenz |
+|---|---|---|---|
+| LingBot-Map (Robbyant) | **ADOPT (HomeStation)** — Streaming-3D-Rekonstruktion ~20 FPS, 10k+ Frames, ersetzt/ergänzt VGGT-Stufe der Splat-Kette (Handyvideo → Splats live). Für KosmoPrepare-Bestandsaufnahme; App-Seite: Splat-Viewer als Kontext-Layer im Viewport (eigener Block). | github.com/robbyant/lingbot-map | Apache-2.0 |
+| LingBot-World | WATCH — interaktives Weltmodell, kein V1-Bedarf | — | offen |

@@ -36,6 +36,7 @@ QA-Verdikt zurück → iPad synchron.
 11. KosmoPublish: ~~PDF/SVG-Einzelplan~~ ✅ — offen: Blatt-Editor, Plansätze, DXF; PDF-Schraffur-Pattern fixen
 12. Yjs-Sync (Hocuspocus+SQLite auf HomeStation) + .kosmo-Zip (fflate) + OneDrive (Graph, PWA: MSAL; Desktop: PKCE+Loopback)
 13. ~~TKB-Demoprojekt~~ ✅ — offen: Onboarding + Politur-/Visualtest-Runde
+14. Splat-Kontext-Layer: Gaussian-Splats (.ply/.splat aus LingBot-Map/gsplat-Kette der HomeStation) als Bestand-Layer im KosmoDesign-Viewport laden (Owner-Hinweis 02.07., Tech-Radar-Nachtrag)
 
 ## Arbeitsregeln (Owner-Direktiven)
 
