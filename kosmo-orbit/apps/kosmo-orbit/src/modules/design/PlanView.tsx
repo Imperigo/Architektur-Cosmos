@@ -181,6 +181,7 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             plan.lines.map((l, i) => (
               <line
                 key={`l${i}`}
+                className={l.classes.join(' ')}
                 x1={l.a.x}
                 y1={-l.a.y}
                 x2={l.b.x}

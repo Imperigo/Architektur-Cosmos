@@ -40,8 +40,10 @@ export function exportPlanSvg(): void {
   const a = document.createElement('a');
   a.href = url;
   a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-Grundriss.svg`;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
 /** Modell als IFC4 (eigener SPF-Writer; via ifcopenshell verifiziert). */
@@ -52,6 +54,8 @@ export function exportIfcFile(): void {
   const a = document.createElement('a');
   a.href = url;
   a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}.ifc`;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }

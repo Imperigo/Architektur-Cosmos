@@ -124,8 +124,10 @@ export function PublishWorkspace() {
     const a = document.createElement('a');
     a.href = url;
     a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-${sheet.name.replace(/\s+/g, '-')}.svg`;
-    a.click();
-    URL.revokeObjectURL(url);
+    document.body.appendChild(a);
+  a.click();
+  a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
   }
 
   function exportDxfFile() {
@@ -137,8 +139,10 @@ export function PublishWorkspace() {
     const a = document.createElement('a');
     a.href = url;
     a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-${storey?.name ?? 'Grundriss'}.dxf`;
-    a.click();
-    URL.revokeObjectURL(url);
+    document.body.appendChild(a);
+  a.click();
+  a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
   }
 
   return (
