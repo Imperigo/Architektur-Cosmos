@@ -119,3 +119,20 @@ Desktop-Build-Verifikation via tauri-action.
 - **Damit ist die gesamte V1+Phase-2-Roadmap abgearbeitet.** Offen ist nur noch
   HomeStation-Gebundenes (echte Renders, Whisper, Piper-Stimme, OneDrive-Tenant,
   LoRA-Zyklus) — wartet auf den Owner.
+
+## Nachtrag Nacht — Absicherung und Abnahme-Vorbereitung
+
+- CI grün auf dem Roadmap-Endstand (Unit + Golden + E2E).
+- **Golden-Ansicht:** die Hidden-Line-Ansicht des Testhauses ist jetzt als
+  byte-identische Golden-Datei im Kernel-Test verankert; Fixture und Generator
+  (`e2e/tools/golden-ansicht.mts`) teilen denselben Code.
+- **Budget-Test (Risiko R2):** 500 Wände mit echten Ecken/T-Stössen —
+  deriveAll lokal ~100 ms (Budget 2 s), Hidden-Line-Ansicht ~660 ms bei
+  24 Mio Kanten×Dreiecks-Paaren (Budget 5 s). 32 Kernel-Tests grün.
+- **In-App-Verifikation:** Publish-Blatt mit Ansicht Süd gegen den frischen
+  Build — die Verdeckungsrechnung wirkt auch im Blatteditor (Quertrakt
+  verschwindet hinterm Haus, Deckenstapel zeigen nur Vorderkanten).
+- **docs/ABNAHME-DREHBUCH.md:** der Q26-Loop Schritt für Schritt mit ehrlicher
+  Stand-Spalte — die Anleitung für den Abnahme-Tag.
+- Installer-Neubau angestossen (Desktop alle drei Plattformen + iOS-Simulator)
+  auf dem Endstand.
