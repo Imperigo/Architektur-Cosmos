@@ -14,6 +14,7 @@ import { bootstrapProject, useProject } from '../../state/project-store';
 import { Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
+import { DrawPanel } from './DrawPanel';
 import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
@@ -51,6 +52,7 @@ export function DesignWorkspace() {
   const [cursor, setCursor] = useState<Pt | null>(null);
   // Volumenstudien (Q12): letzte Zone = Parzelle, Varianten als Gruppe übernehmen
   const [studieOffen, setStudieOffen] = useState(false);
+  const [drawOffen, setDrawOffen] = useState(false);
   const [zielGf, setZielGf] = useState<number | null>(null);
   const [maxHoeheM, setMaxHoeheM] = useState(25);
 
@@ -387,6 +389,14 @@ export function DesignWorkspace() {
         >
           Varianten
         </KButton>
+        <KButton
+          size="sm"
+          tone={drawOffen ? 'accent' : 'ghost'}
+          data-testid="draw-toggle"
+          onClick={() => setDrawOffen(!drawOffen)}
+        >
+          Draw
+        </KButton>
         <span style={{ width: 12 }} />
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
           ↩ Rückgängig
@@ -437,6 +447,7 @@ export function DesignWorkspace() {
 
       {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
       <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
+        {drawOffen && <DrawPanel />}
         {studieOffen && (
           <StudienPanel
             zielGf={zielGf}

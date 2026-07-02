@@ -12,6 +12,7 @@ export * from './derive/scene';
 export * from './derive/plan';
 export * from './derive/sia416';
 export * from './derive/berechnungsliste';
+export * from './derive/mengen';
 export * from './derive/section';
 export * from './derive/gltf';
 export * from './derive/plansvg';

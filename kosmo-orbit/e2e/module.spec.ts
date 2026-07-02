@@ -70,3 +70,18 @@ test('Befehlspalette: ⌘K → Modulwechsel', async ({ page }) => {
   await page.keyboard.press('Enter');
   await expect(page.locator('[data-testid="tab-bauteile"]')).toBeVisible();
 });
+
+test('KosmoDraw: Modellbaum sichtbar, Mengenauszug mit IFC-Identität', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="load-tkb"]');
+  await page.click('[data-testid="draw-toggle"]');
+  await expect(page.locator('[data-testid="draw-panel"]')).toBeVisible();
+  // Modellbaum zeigt Geschosse mit Elementen
+  await expect(page.getByText('IfcSlab').first()).toBeAttached();
+  // Mengen-Tab: Tabelle mit Decken-Position
+  await page.click('[data-testid="draw-tab-mengen"]');
+  await expect(page.locator('[data-testid="mengen-tabelle"]')).toBeVisible();
+  await expect(page.getByText('Decken/Bodenplatten')).toBeVisible();
+});

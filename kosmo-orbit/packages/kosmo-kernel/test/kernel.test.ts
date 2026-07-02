@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { testhausMitQuertrakt, ansichtSvg } from './fixtures';
 import { deriveBerechnungsliste } from '../src/derive/berechnungsliste';
+import { deriveMengen } from '../src/derive/mengen';
 import {
   KosmoDoc,
   History,
@@ -748,5 +749,47 @@ describe('Berechnungsliste (Owner-Workflow Wettbewerb)', () => {
     h.undo(doc);
     expect(doc.settings.raumprogramm.length).toBe(1);
     expect(doc.settings.maxAgf).toBe(null);
+  });
+});
+
+describe('Mengenauszug (KosmoDraw)', () => {
+  it('Wände je Aufbau: Achslänge, Fläche netto (Öffnungen ab), Volumen', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    // 10m Wand, Geschoss 3000 → 30 m² brutto; Fenster 2×1.5 = 3 m² ab
+    const w = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 10000, y: 0 },
+    }).patches[0] as { id: string };
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: w.id, openingType: 'fenster', center: 3000, width: 2000, height: 1500, sill: 900,
+    });
+    const m = deriveMengen(doc);
+    const wand = m.positionen.find((p) => p.kind === 'wall')!;
+    expect(wand.ifcKlasse).toBe('IfcWall');
+    expect(wand.anzahl).toBe(1);
+    expect(wand.laenge).toBeCloseTo(10, 5);
+    expect(wand.flaeche).toBeCloseTo(27, 5); // 30 − 3
+    expect(wand.volumen).toBeCloseTo(27 * 0.36, 3); // AW 360 aus setupDoc
+    const fenster = m.positionen.find((p) => p.kind === 'opening:fenster')!;
+    expect(fenster.anzahl).toBe(1);
+    expect(fenster.flaeche).toBeCloseTo(3, 5);
+  });
+
+  it('Decken, Zonen und Volumen liefern Flächen/Volumen in m²/m³', () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.deckeZeichnen', {
+      storeyId, thickness: 250,
+      outline: [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 5000 }, { x: 0, y: 5000 }],
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Wohnen', sia: 'HNF',
+      outline: [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    const m = deriveMengen(doc);
+    const decke = m.positionen.find((p) => p.kind === 'slab')!;
+    expect(decke.flaeche).toBeCloseTo(40, 5);
+    expect(decke.volumen).toBeCloseTo(10, 5);
+    const hnf = m.positionen.find((p) => p.kind === 'zone:HNF')!;
+    expect(hnf.ifcKlasse).toBe('IfcSpace');
+    expect(hnf.flaeche).toBeCloseTo(24, 5);
   });
 });
