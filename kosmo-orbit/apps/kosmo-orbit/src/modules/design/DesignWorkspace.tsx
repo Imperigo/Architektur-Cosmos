@@ -10,6 +10,7 @@ import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud } from './Viewport3D';
+import { registerActions } from '../../shell/palette';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -42,6 +43,22 @@ export function DesignWorkspace() {
 
   useEffect(() => {
     bootstrapProject();
+  }, []);
+
+  // Palette-Aktionen (⌘K), nur solange KosmoDesign offen ist
+  useEffect(() => {
+    return registerActions('design', [
+      { id: 'view-3d', titel: '3D', gruppe: 'Ansicht', run: () => setViewMode('3d') },
+      { id: 'view-split', titel: '3D | Plan', gruppe: 'Ansicht', run: () => setViewMode('split') },
+      { id: 'view-quad', titel: '4er-Splitscreen', gruppe: 'Ansicht', run: () => setViewMode('quad') },
+      { id: 'view-2d', titel: 'Grundriss', gruppe: 'Ansicht', run: () => setViewMode('2d') },
+      { id: 'export-pdf', titel: 'Grundriss als PDF', gruppe: 'Export', run: () => void exportPlanPdf() },
+      { id: 'export-svg', titel: 'Grundriss als SVG', gruppe: 'Export', run: exportPlanSvg },
+      { id: 'export-ifc', titel: 'Modell als IFC', gruppe: 'Export', run: exportIfcFile },
+      { id: 'undo', titel: 'Rückgängig', gruppe: 'Bearbeiten', run: undo },
+      { id: 'redo', titel: 'Wiederholen', gruppe: 'Bearbeiten', run: redo },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const doc = useProject.getState().doc;
