@@ -14,7 +14,7 @@ import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
  * Undo/Redo. Splitscreen mit 2D-Plänen folgt in M2.
  */
 
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'schnitt' | 'skizze';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'schnitt' | 'skizze';
 
 const SNAP = 250; // mm Rasterfang — später einstellbar/magnetisch
 
@@ -89,7 +89,7 @@ export function DesignWorkspace() {
     },
     previewLine:
       points.length > 0 && cursor
-        ? tool === 'volumen' || tool === 'zone'
+        ? tool === 'volumen' || tool === 'zone' || tool === 'dach'
           ? [...points, cursor, points[0]!]
           : [...points, cursor]
         : null,
@@ -124,9 +124,20 @@ export function DesignWorkspace() {
           setPoints([]);
           setViewMode('quad');
         }
-      } else if (tool === 'volumen' || tool === 'zone') {
+      } else if (tool === 'volumen' || tool === 'zone' || tool === 'dach') {
         if (points.length >= 3 && Math.hypot(p.x - points[0]!.x, p.y - points[0]!.y) < SNAP) {
-          if (tool === 'volumen') {
+          if (tool === 'dach') {
+            try {
+              runCommand('design.dachErstellen', {
+                storeyId: activeStoreyId,
+                outline: points,
+                pitch: 35,
+                overhang: 500,
+              });
+            } catch (err) {
+              alert(err instanceof Error ? err.message : String(err));
+            }
+          } else if (tool === 'volumen') {
             runCommand('design.volumenErstellen', {
               storeyId: activeStoreyId,
               outline: points,
@@ -178,6 +189,7 @@ export function DesignWorkspace() {
             ['wand', 'Wand'],
             ['volumen', 'Volumen'],
             ['zone', 'Zone'],
+            ['dach', 'Dach'],
             ['schnitt', 'Schnitt'],
             ['skizze', '✎ Skizze'],
           ] as const

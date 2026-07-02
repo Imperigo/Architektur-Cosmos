@@ -15,3 +15,4 @@ export * from './derive/gltf';
 export * from './derive/plansvg';
 export * from './derive/dimensions';
 export * from './ifc/export';
+export * from './geometry/skeleton';

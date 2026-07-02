@@ -121,6 +121,19 @@ export interface Zone extends Base {
   program?: string;
 }
 
+/** Walmdach — Grundriss-Polygon + Neigung; Geometrie via Straight Skeleton. */
+export interface Roof extends Base {
+  kind: 'roof';
+  storeyId: string;
+  outline: Pt[];
+  /** Dachneigung in Grad. */
+  pitch: number;
+  /** Dachüberstand über den Umriss hinaus. */
+  overhang: Mm;
+  /** Fusspunkt (Traufe) über OK Boden des Geschosses. */
+  baseOffset: Mm;
+}
+
 /** Volumenkörper für Vorform-artige Volumenstudien. */
 export interface MassBody extends Base {
   kind: 'mass';
@@ -131,7 +144,7 @@ export interface MassBody extends Base {
   program?: string;
 }
 
-export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody;
+export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

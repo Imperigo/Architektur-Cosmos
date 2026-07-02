@@ -320,3 +320,58 @@ describe('IFC4-Export (SPF)', () => {
     expect(ifc.trim().endsWith('END-ISO-10303-21;')).toBe(true);
   });
 });
+
+describe('Walmdach (Straight Skeleton, eigener)', () => {
+  it('Rechteck 10×6m: First bei Offset 3m, Firstlänge 4m, 4 Dachflächen', async () => {
+    const { convexSkeleton } = await import('../src');
+    const skel = convexSkeleton([
+      { x: 0, y: 0 },
+      { x: 10000, y: 0 },
+      { x: 10000, y: 6000 },
+      { x: 0, y: 6000 },
+    ]);
+    expect(skel.maxOffset).toBeCloseTo(3000, 0);
+    expect(skel.ridges).toHaveLength(1);
+    const r = skel.ridges[0]!;
+    const len = Math.hypot(r.b.x - r.a.x, r.b.y - r.a.y);
+    expect(len).toBeCloseTo(4000, 0);
+    expect(skel.faces.length).toBe(4);
+  });
+
+  it('Dach-Derivation: 35°-Walmdach hat Firsthöhe zBase + 3m·tan(35°)', async () => {
+    const { deriveEntity } = await import('../src');
+    const { doc, storeyId } = setupDoc();
+    const res = execute(doc, 'design.dachErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 10000, y: 0 },
+        { x: 10000, y: 6000 },
+        { x: 0, y: 6000 },
+      ],
+      pitch: 35,
+      overhang: 0,
+    });
+    const artifact = deriveEntity(doc, (res.patches[0] as { id: string }).id)!;
+    let maxZ = -Infinity;
+    for (let i = 2; i < artifact.positions.length; i += 3) maxZ = Math.max(maxZ, artifact.positions[i]!);
+    // Geschoss EG: elevation 0, height 3000 → Traufe 3000; First 3000 + 3000·tan35 ≈ 5100.6
+    expect(maxZ).toBeCloseTo(3000 + 3000 * Math.tan((35 * Math.PI) / 180), 0);
+  });
+
+  it('verweigert nicht-konvexe Grundrisse mit klarer Meldung', () => {
+    const { doc, storeyId } = setupDoc();
+    expect(() =>
+      execute(doc, 'design.dachErstellen', {
+        storeyId,
+        outline: [
+          { x: 0, y: 0 },
+          { x: 8000, y: 0 },
+          { x: 8000, y: 6000 },
+          { x: 4000, y: 3000 }, // einspringende Ecke
+          { x: 0, y: 6000 },
+        ],
+      }),
+    ).toThrow(/konvex/);
+  });
+});

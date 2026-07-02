@@ -35,6 +35,7 @@ export interface ViewportHandlers {
 const materialPalette: Record<string, { color: number; roughness: number }> = {
   beton: { color: 0xc9c5bc, roughness: 0.9 },
   masse: { color: 0xd8cfc0, roughness: 0.95 },
+  dach: { color: 0x6e5f52, roughness: 0.85 },
   holz: { color: 0xb08d5e, roughness: 0.8 },
   default: { color: 0xcfccc4, roughness: 0.9 },
 };

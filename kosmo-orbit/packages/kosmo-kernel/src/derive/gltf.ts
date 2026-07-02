@@ -42,6 +42,7 @@ export function exportGlb(doc: KosmoDoc, name = 'KosmoOrbit-Modell'): ArrayBuffe
   const palette: Record<string, [number, number, number]> = {
     beton: [0.79, 0.77, 0.74],
     masse: [0.85, 0.81, 0.75],
+    dach: [0.43, 0.37, 0.32],
     holz: [0.69, 0.55, 0.37],
   };
 

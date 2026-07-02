@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Assembly, Opening, Slab, Storey, Wall, MassBody, Zone } from '../model/entities';
+import type { Assembly, Opening, Slab, Storey, Wall, MassBody, Zone, Roof } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
+import { isConvex } from '../geometry/skeleton';
 
 /**
  * Design-Commands — die täglichen Werkzeuge (ArchiCAD-Essenz).
@@ -301,5 +302,35 @@ export const createZone = registerCommand({
       ...(p.program ? { program: p.program } : {}),
     };
     return [added(zone)];
+  },
+});
+
+export const createRoof = registerCommand({
+  id: 'design.dachErstellen',
+  title: 'Walmdach erstellen',
+  description:
+    'Erstellt ein Walmdach über einem konvexen Polygon-Grundriss. pitch = Dachneigung in Grad (Standard 35), overhang = Dachüberstand in mm (Standard 500). Die Traufe liegt auf OK des Geschosses.',
+  params: z.object({
+    storeyId: z.string(),
+    outline: z.array(PtSchema).min(3),
+    pitch: z.number().min(5).max(75).default(35),
+    overhang: z.number().int().nonnegative().default(500),
+  }),
+  summarize: (p) => `Walmdach ${p.pitch}° über ${p.outline.length} Eckpunkten`,
+  run: (doc, p) => {
+    const storey = require<Storey>(doc, p.storeyId, 'storey');
+    if (!isConvex(p.outline as Pt[])) {
+      throw new CommandError('Walmdach V1 braucht einen konvexen Grundriss (keine einspringenden Ecken)');
+    }
+    const roof: Roof = {
+      id: newId('dach'),
+      kind: 'roof',
+      storeyId: p.storeyId,
+      outline: p.outline as Pt[],
+      pitch: p.pitch,
+      overhang: p.overhang,
+      baseOffset: storey.height,
+    };
+    return [added(roof)];
   },
 });
