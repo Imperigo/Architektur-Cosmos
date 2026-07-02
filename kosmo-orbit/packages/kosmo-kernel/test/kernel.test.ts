@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { testhausMitQuertrakt, ansichtSvg } from './fixtures';
 import {
   KosmoDoc,
   History,
@@ -651,5 +653,40 @@ describe('Hidden-Line im Schnitt', () => {
           Math.abs(Math.min(l.a.s, l.b.s) - 2000) < 1 && Math.abs(Math.max(l.a.s, l.b.s) - 6000) < 1,
       ),
     ).toBe(true);
+  });
+});
+
+describe('Golden-Ansicht (Hidden-Line)', () => {
+  it('Ansicht Süd des Testhauses ist byte-identisch zur Golden-Datei', () => {
+    const { doc, spec } = testhausMitQuertrakt();
+    const svg = ansichtSvg(doc, spec);
+    const golden = readFileSync(new URL('./golden/ansicht-sued-testhaus.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
+    // Bewusste Änderungen: `npx tsx e2e/tools/golden-ansicht.mts` und Diff begutachten.
+  });
+});
+
+describe('Budget (R2): 500 Wände', () => {
+  it('deriveAll und Hidden-Line-Ansicht bleiben im Zeitbudget', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    // 25 Reihen à 10 Zimmer (je 2 Wände) — echte Ecken und T-Stösse
+    for (let r = 0; r < 25; r++) {
+      const y = 20000 + r * 5000;
+      for (let i = 0; i < 10; i++) {
+        execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: i * 4000, y }, b: { x: (i + 1) * 4000, y } });
+        execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: i * 4000, y }, b: { x: i * 4000, y: y + 3500 } });
+      }
+    }
+    let t0 = performance.now();
+    const arts = deriveAll(doc);
+    const tDerive = performance.now() - t0;
+    expect(arts.length).toBeGreaterThanOrEqual(500);
+    expect(tDerive).toBeLessThan(2000); // lokal ~100 ms; CI-Reserve
+
+    t0 = performance.now();
+    const g = deriveSection(doc, { a: { x: -1000, y: 15000 }, b: { x: 45000, y: 15000 }, depth: 200000, lookLeft: true });
+    const tSection = performance.now() - t0;
+    expect(g.projections.length).toBeGreaterThan(0);
+    expect(tSection).toBeLessThan(5000); // lokal ~660 ms (Hidden-Line aktiv); CI-Reserve
   });
 });
