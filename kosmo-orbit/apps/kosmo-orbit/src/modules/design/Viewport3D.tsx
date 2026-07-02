@@ -238,15 +238,41 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       return [mesh, lines];
     }
 
+    // Ableitung: kleine Modelle synchron (deterministisch, auch für Tests),
+    // grosse im Worker — der Kern liefert transferable Arrays (kopiefrei).
+    const WORKER_AB = 300; // Elemente
     let lastRevision = -1;
+    let pendingRevision = -1;
+    let deriveWorker: Worker | null = null;
+
+    function applyArtifacts(artifacts: GeometryArtifact[]) {
+      model.clear();
+      for (const a of artifacts) {
+        for (const o of artifactToObjects(a)) model.add(o);
+      }
+    }
+
     function syncModel() {
       const { doc, revision } = useProject.getState();
       if (revision === lastRevision) return;
-      lastRevision = revision;
-      model.clear();
-      for (const a of deriveAll(doc)) {
-        for (const o of artifactToObjects(a)) model.add(o);
+      if (doc.entities.size < WORKER_AB) {
+        lastRevision = revision;
+        applyArtifacts(deriveAll(doc));
+        return;
       }
+      if (pendingRevision === revision) return; // Anfrage läuft bereits
+      pendingRevision = revision;
+      if (!deriveWorker) {
+        deriveWorker = new Worker(new URL('./derive.worker.ts', import.meta.url), { type: 'module' });
+        deriveWorker.onmessage = (e: MessageEvent<{ revision: number; artifacts: GeometryArtifact[] }>) => {
+          pendingRevision = -1;
+          // Veraltete Antworten verwerfen — der nächste Frame fragt den neuen Stand an
+          if (e.data.revision !== useProject.getState().revision) return;
+          lastRevision = e.data.revision;
+          applyArtifacts(e.data.artifacts);
+        };
+      }
+      deriveWorker.postMessage({ revision, json: doc.toJSON() });
     }
 
     function syncPreview() {
@@ -371,6 +397,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     };
 
     return () => {
+      deriveWorker?.terminate();
       cancelAnimationFrame(raf);
       ro.disconnect();
       renderer.domElement.removeEventListener('pointerdown', onPointerDown);
