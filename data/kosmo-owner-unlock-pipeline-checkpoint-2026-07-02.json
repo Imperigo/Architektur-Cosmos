@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-02T06:00:31.549Z",
+  "generated_at": "2026-07-02T06:22:07.163Z",
   "status": "owner_unlock_pipeline_checkpoint_attention_required",
   "policy": {
     "checkpoint_only": true,

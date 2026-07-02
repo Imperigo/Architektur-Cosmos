@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.2",
+  "checked_at": "2026-07-02T06:19:37.582Z",
+  "status": "skipped_unavailable",
+  "endpoint": "http://127.0.0.1:11434/api/generate",
+  "model": "kosmo-qwen3-coder:30b-a3b-q4km",
+  "duration_ms": 33,
+  "checks": {
+    "endpoint_reachable": false,
+    "model_returned": false,
+    "response_non_empty": false,
+    "json_response_valid": false
+  },
+  "advisory_checks": {
+    "local_worker_available": false
+  },
+  "skip_reason": {
+    "code": "ECONNREFUSED",
+    "message": "fetch failed"
+  },
+  "response_length": 0,
+  "response_preview": "",
+  "json_capture": {
+    "response_length": 0,
+    "response_preview": "",
+    "parse_error": null,
+    "parsed": null
+  },
+  "policy": {
+    "private_content_sent": false,
+    "public_promotion": false,
+    "starts_model": false,
+    "stores_full_response": false,
+    "note": "Local Ollama endpoint was unavailable, so no model prompt was sent. This skip keeps review-only data gates from failing on local service availability."
+  }
+}

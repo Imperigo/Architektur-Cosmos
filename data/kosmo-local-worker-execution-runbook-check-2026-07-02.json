@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-02T06:02:46.762Z",
-  "status": "local_worker_execution_runbook_guard_failed",
+  "generated_at": "2026-07-02T06:20:42.297Z",
+  "status": "local_worker_execution_runbook_guard_passed",
   "policy": {
     "validates_report_only": true,
     "starts_model": false,
@@ -22,7 +22,7 @@
     "runner_safe_tasks": 8,
     "executable_now": 0,
     "blocked_by_private_context": 1,
-    "failures": 4,
+    "failures": 0,
     "warnings": 0,
     "public_ready_after_check": 0
   },
@@ -104,22 +104,22 @@
     },
     {
       "id": "launch_queue_state_valid",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Launch queue must be idle, explicitly launchable, or safely blocked with no missing outputs."
     },
     {
       "id": "repo_conversion_zero",
-      "severity": "failure",
+      "severity": "passed",
       "message": "Repo conversion must remain 0."
     },
     {
       "id": "runner_check_passed",
-      "severity": "failure",
+      "severity": "passed",
       "message": "HTTP runner check must pass."
     },
     {
       "id": "runner_check_failures_zero",
-      "severity": "failure",
+      "severity": "passed",
       "message": "HTTP runner check failures must be 0."
     },
     {
@@ -364,7 +364,8 @@
     }
   ],
   "next_actions": [
-    "Fix execution runbook guard failures before using any --execute command.",
-    "Rerun npm run kosmo:local-worker-execution-runbook and this guard."
+    "Use the execution runbook as the safe command map for future local worker runs.",
+    "Do not execute local worker tasks while executable_now is 0.",
+    "Rerun this guard after task-pack, launch queue, conversion plan or runner-check changes."
   ]
 }

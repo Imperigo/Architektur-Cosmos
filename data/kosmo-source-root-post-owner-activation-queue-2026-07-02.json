@@ -1,0 +1,126 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:21:53.118Z",
+  "status": "source_root_post_owner_activation_queue_ready",
+  "policy": {
+    "queue_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory_now": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_queue": 0,
+    "note": "This queue defines the safe post-owner sequence. It does not run private inventory or record decisions."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-decision-dry-run-2026-07-02.json",
+    "data/kosmo-source-root-activation-preflight-2026-07-02.json",
+    "data/kosmo-private-metadata-inventory-runner-2026-07-02.json",
+    "data/kosmo-private-metadata-inventory-check-2026-07-02.json",
+    "data/kosmo-worker-boundary-pack-check-2026-07-02.json"
+  ],
+  "summary": {
+    "dry_run_status": "source_root_decision_dry_run_ready",
+    "activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "activation_ready": false,
+    "decision_still_pending": true,
+    "private_metadata_runner_status": "private_metadata_inventory_blocked_until_activation",
+    "private_metadata_guard_status": "private_metadata_inventory_guard_passed",
+    "worker_boundary_status": "worker_boundary_pack_guard_passed",
+    "queue_steps": 7,
+    "executable_now": 0,
+    "blocked_now": 7,
+    "failures": 0,
+    "public_ready_after_queue": 0
+  },
+  "queue_steps": [
+    {
+      "id": "record_owner_decision",
+      "phase": "owner",
+      "command": "edit examples/kosmo-references/provenance/source-root-decision-session-2026-07-02.json",
+      "purpose": "Record exactly one owner-confirmed source-root decision.",
+      "requires": [
+        "explicit owner/KosmoOverseer confirmation"
+      ],
+      "executable_now": false,
+      "blocked_reason": "human decision required"
+    },
+    {
+      "id": "decision_session_check",
+      "phase": "guard",
+      "command": "npm run kosmo:source-root-decision-session-check",
+      "purpose": "Verify recorded decision and selected root visibility.",
+      "requires": [
+        "record_owner_decision completed"
+      ],
+      "executable_now": false,
+      "blocked_reason": "no recorded decision yet"
+    },
+    {
+      "id": "blocker_refresh",
+      "phase": "guard",
+      "command": "npm run kosmo:source-root-blocker-refresh",
+      "purpose": "Refresh source-root blocker state after recorded decision.",
+      "requires": [
+        "decision_session_check passed"
+      ],
+      "executable_now": false,
+      "blocked_reason": "decision check pending"
+    },
+    {
+      "id": "activation_preflight",
+      "phase": "activation",
+      "command": "npm run kosmo:source-root-activation-preflight",
+      "purpose": "Confirm metadata diagnostic activation only.",
+      "requires": [
+        "blocker_refresh updated",
+        "worker boundary guard passed"
+      ],
+      "executable_now": false,
+      "blocked_reason": "source-root owner decision pending"
+    },
+    {
+      "id": "private_metadata_inventory",
+      "phase": "private_metadata",
+      "command": "npm run kosmo:private-metadata-inventory",
+      "purpose": "Run pilot-scoped metadata-only inventory to private output root.",
+      "requires": [
+        "activation_preflight reports ready"
+      ],
+      "executable_now": false,
+      "blocked_reason": "activation not ready"
+    },
+    {
+      "id": "private_metadata_inventory_check",
+      "phase": "private_metadata",
+      "command": "npm run kosmo:private-metadata-inventory-check",
+      "purpose": "Validate private metadata output contract and no public-ready leakage.",
+      "requires": [
+        "private_metadata_inventory completed"
+      ],
+      "executable_now": false,
+      "blocked_reason": "activation not ready"
+    },
+    {
+      "id": "day_batch_loop",
+      "phase": "review",
+      "command": "npm run kosmo:day-batch-loop",
+      "purpose": "Re-run full review-only guard chain after private metadata update.",
+      "requires": [
+        "private_metadata_inventory_check passed"
+      ],
+      "executable_now": false,
+      "blocked_reason": "private metadata guard sequence pending"
+    }
+  ],
+  "hard_stops": [
+    "Do not run private OCR/PDF/book text extraction from this queue.",
+    "Do not copy private source files into Git.",
+    "Do not assign local LLM tasks that read private contents before activation and output guards pass.",
+    "Do not set public-ready from metadata inventory results."
+  ],
+  "handoff_note": "After owner records a source-root decision, run this queue top-to-bottom and stop at the first failed guard.",
+  "failures": []
+}

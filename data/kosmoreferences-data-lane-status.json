@@ -1,17 +1,17 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-14T08:34:13.876Z",
+  "generated_at": "2026-07-02T06:19:37.802Z",
   "status": "passed_review_only",
   "source_paths": {
     "registry": "data/kosmoreferences-registry.json",
     "provenance": "examples/kosmo-references/provenance/review/provenance-check.generated.json",
     "source_packages_root": "examples/kosmo-references/source-packages",
-    "private_library": "data/kosmoreferences-private-library-diagnostic-2026-06-14.json",
+    "private_library": "data/kosmoreferences-private-library-diagnostic-2026-07-02.json",
     "model_bridge": "examples/kosmo-references/provenance/model-provenance-bridge-2026-06-13.json",
     "model_promotion": "examples/kosmo-references/provenance/model-promotion-dry-run-2026-06-13.json",
     "owner_review": "examples/kosmo-references/provenance/owner-review-decision-pack-2026-06-13-review/owner-review-decision-check.generated.json",
     "owner_decision_session": "examples/kosmo-references/provenance/owner-decision-session-check.generated.json",
-    "local_worker_smoke": "data/kosmo-local-worker-ollama-smoke-2026-06-14.json"
+    "local_worker_smoke": "data/kosmo-local-worker-ollama-smoke-2026-07-02.json"
   },
   "summary": {
     "pilots": 3,
@@ -24,8 +24,8 @@
     "library_assets": 11,
     "public_ready_assets": 0,
     "blocked_public_promotions": 32,
-    "private_library_status": "small_workflow_mirror_visible",
-    "private_library_book_like_files": 39,
+    "private_library_status": "library_candidate_visible",
+    "private_library_book_like_files": 169,
     "private_library_sync_error_files": 30,
     "model_review_average": 96,
     "owner_review_decision_items": 10,
@@ -33,9 +33,9 @@
     "owner_decision_session_status": "passed_pending_owner_input",
     "owner_decision_session_selected": 0,
     "owner_decision_session_pending": 10,
-    "local_worker_status": "passed",
+    "local_worker_status": "skipped_unavailable",
     "local_worker_model": "kosmo-qwen3-coder:30b-a3b-q4km",
-    "local_worker_duration_ms": 208
+    "local_worker_duration_ms": 33
   },
   "checks": {
     "registry": "passed",
@@ -54,14 +54,14 @@
       "copied_content": false
     },
     "private_library": {
-      "status": "small_workflow_mirror_visible",
+      "status": "library_candidate_visible",
       "roots": 5,
       "existing_roots": 5,
-      "own_mount_roots": 0,
-      "book_like_files": 39,
+      "own_mount_roots": 1,
+      "book_like_files": 169,
       "sync_error_files": 30,
-      "target_filename_matches": 0,
-      "archive_mount_visible": false,
+      "target_filename_matches": 66,
+      "archive_mount_visible": true,
       "copied_private_content": false
     },
     "model_review": {
@@ -99,9 +99,9 @@
       "warnings": 0
     },
     "local_worker": {
-      "status": "passed",
+      "status": "skipped_unavailable",
       "model": "kosmo-qwen3-coder:30b-a3b-q4km",
-      "duration_ms": 208,
+      "duration_ms": 33,
       "endpoint": "http://127.0.0.1:11434/api/generate",
       "private_content_sent": false,
       "public_promotion": false

@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-02T06:02:46.533Z",
+  "generated_at": "2026-07-02T06:20:42.050Z",
   "status": "local_worker_execution_runbook_idle_review_only",
   "policy": {
     "runbook_only": true,
@@ -20,12 +20,12 @@
     "data/kosmo-local-worker-http-runner-check-2026-07-02.json"
   ],
   "guard_state": {
-    "launch_queue_status": null,
-    "launchable_now": null,
-    "conversion_plan_status": null,
-    "repo_conversion_allowed_now": null,
-    "runner_check_status": null,
-    "runner_check_failures": null
+    "launch_queue_status": "local_worker_launch_queue_idle_outputs_present",
+    "launchable_now": 0,
+    "conversion_plan_status": "local_worker_output_conversion_plan_review_only",
+    "repo_conversion_allowed_now": 0,
+    "runner_check_status": "local_worker_http_runner_guard_passed",
+    "runner_check_failures": 0
   },
   "summary": {
     "tasks_total": 9,

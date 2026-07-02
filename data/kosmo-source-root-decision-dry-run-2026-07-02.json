@@ -1,0 +1,91 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:21:52.886Z",
+  "status": "source_root_decision_dry_run_ready",
+  "policy": {
+    "dry_run_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_dry_run": 0,
+    "note": "This report previews outcomes for owner decision templates. It does not record decisions or run private diagnostics."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-owner-decision-packet-2026-07-02.json",
+    "data/kosmo-source-root-owner-decision-packet-check-2026-07-02.json",
+    "data/kosmo-source-root-activation-preflight-2026-07-02.json",
+    "data/kosmo-private-metadata-inventory-check-2026-07-02.json"
+  ],
+  "summary": {
+    "packet_status": "source_root_owner_decision_packet_ready",
+    "packet_guard_status": "source_root_owner_decision_packet_guard_passed",
+    "activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "private_metadata_guard_status": "private_metadata_inventory_guard_passed",
+    "scenarios": 3,
+    "metadata_diagnostic_scenarios": 1,
+    "blocked_scenarios": 2,
+    "failures": 0,
+    "public_ready_after_dry_run": 0
+  },
+  "scenarios": [
+    {
+      "id": "keep_blocked",
+      "label": "Keep source-root blocked",
+      "selected_decision": "keep_blocked",
+      "selected_root_path": null,
+      "metadata_diagnostic_would_be_allowed_after_recorded_decision": false,
+      "private_work_remains_blocked": true,
+      "next_status_if_recorded": "source_root_remains_blocked",
+      "first_allowed_command_after_recording": "npm run kosmo:source-root-decision-session-check",
+      "later_allowed_only_if_guards_pass": [],
+      "caution": "Owner is not ready to identify the complete private architecture library root."
+    },
+    {
+      "id": "repair_onedrive_first",
+      "label": "Repair OneDrive first",
+      "selected_decision": "repair_onedrive_first",
+      "selected_root_path": null,
+      "metadata_diagnostic_would_be_allowed_after_recorded_decision": false,
+      "private_work_remains_blocked": true,
+      "next_status_if_recorded": "source_root_remains_blocked",
+      "first_allowed_command_after_recording": "npm run kosmo:source-root-decision-session-check",
+      "later_allowed_only_if_guards_pass": [],
+      "caution": "Owner says the intended source root is a OneDrive mirror but sync markers/completeness are not resolved."
+    },
+    {
+      "id": "select_exact_root_1",
+      "label": "Select visible exact root for metadata diagnostic",
+      "selected_decision": "select_existing_root_for_private_diagnostic",
+      "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "metadata_diagnostic_would_be_allowed_after_recorded_decision": true,
+      "private_work_remains_blocked": false,
+      "next_status_if_recorded": "source_root_activation_preflight_required",
+      "first_allowed_command_after_recording": "npm run kosmo:source-root-decision-session-check",
+      "later_allowed_only_if_guards_pass": [
+        "npm run kosmo:source-root-activation-preflight",
+        "npm run kosmo:private-metadata-inventory",
+        "npm run kosmo:private-metadata-inventory-check"
+      ],
+      "caution": "Visible archive subtree; owner/overseer may confirm this exact path before diagnostics."
+    }
+  ],
+  "still_forbidden_in_all_scenarios": [
+    "private OCR or PDF/book text extraction",
+    "copying private scans, plans, images or lecture material into Git",
+    "public-ready promotion for source-dependent references or assets",
+    "local LLM tasks that read private file contents before activation and output guards"
+  ],
+  "exact_commands_after_owner_records_decision": [
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:private-metadata-inventory",
+    "npm run kosmo:private-metadata-inventory-check",
+    "npm run kosmo:day-batch-loop"
+  ],
+  "failures": []
+}

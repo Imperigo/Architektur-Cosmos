@@ -1,6 +1,6 @@
 # Kosmo Local Worker Execution Runbook
 
-Generated: 2026-07-02T06:02:46.533Z
+Generated: 2026-07-02T06:20:42.050Z
 Status: `local_worker_execution_runbook_idle_review_only`
 
 ## Summary
@@ -15,9 +15,9 @@ Status: `local_worker_execution_runbook_idle_review_only`
 
 ## Guard State
 
-- Launch queue: null, launchable null
-- Conversion plan: null, repo now null
-- Runner check: null, failures null
+- Launch queue: local_worker_launch_queue_idle_outputs_present, launchable 0
+- Conversion plan: local_worker_output_conversion_plan_review_only, repo now 0
+- Runner check: local_worker_http_runner_guard_passed, failures 0
 
 ## Tasks
 

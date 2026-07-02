@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-02T06:03:22.627Z",
-  "status": "local_worker_fixture_chain_task_pack_missing_refs",
+  "generated_at": "2026-07-02T06:20:47.088Z",
+  "status": "local_worker_fixture_chain_task_pack_ready",
   "policy": {
     "review_only": true,
     "fixture_only": true,
@@ -31,15 +31,10 @@
     "ontology_relation_types": 0,
     "executable_now": 0,
     "runner_safe_tasks": 3,
-    "missing_refs": 4,
+    "missing_refs": 0,
     "public_ready_after_pack": 0
   },
-  "missing_refs": [
-    "data/kosmo-prepare-phase1-source-package-contract-check-2026-07-02.json",
-    "data/kosmo-asset-prepare-phase1-fixture-contract-check-2026-07-02.json",
-    "data/kosmo-orbit-status-bridge-2026-07-02.json",
-    "data/kosmo-worker-boundary-pack-check-2026-07-02.json"
-  ],
+  "missing_refs": [],
   "tasks": [
     {
       "task_id": "fixture-chain-source-package-summary",

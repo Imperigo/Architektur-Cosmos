@@ -1,7 +1,7 @@
 # Kosmo Local Worker Fixture Chain Task Pack
 
-Generated: 2026-07-02T06:03:22.627Z
-Status: `local_worker_fixture_chain_task_pack_missing_refs`
+Generated: 2026-07-02T06:20:47.088Z
+Status: `local_worker_fixture_chain_task_pack_ready`
 
 ## Summary
 
@@ -14,7 +14,7 @@ Status: `local_worker_fixture_chain_task_pack_missing_refs`
 - Ontology relation types: 0
 - Runner-safe tasks: 3
 - Executable now: 0
-- Missing refs: 4
+- Missing refs: 0
 - Public-ready after pack: 0
 
 ## Tasks

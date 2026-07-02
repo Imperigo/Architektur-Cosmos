@@ -1,6 +1,6 @@
 # KosmoReferences Data-Lane Status
 
-Generated: 2026-06-14T08:34:13.876Z
+Generated: 2026-07-02T06:19:37.802Z
 Status: `passed_review_only`
 
 ## Summary
@@ -13,12 +13,12 @@ Status: `passed_review_only`
 - Library assets: 11
 - Public-ready assets: 0
 - Blocked public promotions: 32
-- Private library: small_workflow_mirror_visible (39 book-like files visible, 30 sync errors)
+- Private library: library_candidate_visible (169 book-like files visible, 30 sync errors)
 - Model review average: 96
 - Owner-review decisions: 10
 - Owner-review public-ready now: 0
 - Owner decision session: passed_pending_owner_input (0 selected / 10 pending)
-- Local worker: passed (kosmo-qwen3-coder:30b-a3b-q4km, 208ms)
+- Local worker: skipped_unavailable (kosmo-qwen3-coder:30b-a3b-q4km, 33ms)
 
 ## Pilots
 

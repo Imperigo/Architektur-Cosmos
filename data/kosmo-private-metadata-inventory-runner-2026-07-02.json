@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-02T06:20:20.098Z",
+  "status": "private_metadata_inventory_blocked_until_activation",
+  "policy": {
+    "metadata_only": true,
+    "reads_file_contents": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_run": 0,
+    "note": "This runner uses directory and file metadata only. It never opens source files for content extraction."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-activation-preflight-2026-07-02.json"
+  ],
+  "summary": {
+    "mode": "private_guarded",
+    "activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "activation_ready": false,
+    "selected_root_path": null,
+    "scan_root": null,
+    "root_scanned": false,
+    "scan_truncated": false,
+    "files_scanned": 0,
+    "dirs_scanned": 0,
+    "total_candidate_matches": 0,
+    "pilots": 3,
+    "max_files": 25000,
+    "max_depth": 12,
+    "max_matches_per_pilot": 60,
+    "private_output_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-inventory",
+    "private_inventory_written": false,
+    "private_inventory_path": null,
+    "public_ready_after_run": 0
+  },
+  "pilots": [
+    {
+      "pilot_id": "villa-savoye",
+      "title": "Villa Savoye",
+      "candidate_files": 0,
+      "extensions": {},
+      "largest_file_bytes": 0,
+      "match_fingerprints": [],
+      "rights_status": "review_only",
+      "public_ready": false
+    },
+    {
+      "pilot_id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "candidate_files": 0,
+      "extensions": {},
+      "largest_file_bytes": 0,
+      "match_fingerprints": [],
+      "rights_status": "review_only",
+      "public_ready": false
+    },
+    {
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "candidate_files": 0,
+      "extensions": {},
+      "largest_file_bytes": 0,
+      "match_fingerprints": [],
+      "rights_status": "review_only",
+      "public_ready": false
+    }
+  ],
+  "blocked_reason": {
+    "activation_required": "source_root_activation_ready_for_private_metadata_diagnostic",
+    "current_activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "selected_root_present": false,
+    "message": "No private metadata inventory scan runs until source-root activation is ready."
+  },
+  "next_actions": [
+    "Keep metadata inventory blocked until source-root activation is ready.",
+    "After owner/overseer records a real source root, rerun source-root activation preflight.",
+    "Then run this command against the approved selected root only."
+  ]
+}
