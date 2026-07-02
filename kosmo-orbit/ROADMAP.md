@@ -14,10 +14,10 @@ QA-Verdikt zurück → iPad synchron.
 |---|---|---|
 | M0 Gerüst (Workspace, Aura, Shell) | 🟢 90% | CI/Tauri/PWA in Arbeit (dieser Block) |
 | M1 BIM-Kern + Viewport + Werkzeuge | 🟢 done (v1-Kern) | 11 Tests grün; Junction-Politur später |
-| M2 2D-Pläne + Splitscreen | 🟢 90% | + Bemassung ✅, Walmdach ✅ (eigener Skeleton), Auswahl+Inspector ✅; offen: Treppe |
+| M2 2D-Pläne + Splitscreen | 🟢 95% | + Bemassung ✅, Walmdach ✅ (eigener Skeleton), Auswahl+Inspector ✅, Treppe ✅ |
 | M3 Kosmo-KI | 🟢 85% | Gated Loop + Personas + Begrüssung + Ollama/Mock; offen: Memory/RAG, Journal-Feedback-UI |
-| M4 KosmoData | ⚪ offen | |
-| M5 Vis/Publish/IFC + Bridge | 🟡 70% | Render-Loop end-to-end ✅, PDF/SVG-Plansatz-Export ✅; offen: IFC-Roundtrip, Blatt-Editor, DXF |
+| M4 KosmoData | 🟡 60% | Offline-Seed + Browser + Kosmo-Tool ✅; offen: CH-Bauteilkatalog, Referenz-3D |
+| M5 Vis/Publish/IFC + Bridge | 🟢 90% | Render-Loop ✅, IFC-Roundtrip ✅ (Export ifcopenshell-verifiziert, Import als Kontext-Layer), KosmoPublish-Blatteditor ✅ (Plansatz-PDF A0–A4, DXF ezdxf-verifiziert) |
 | M6 Sketch + Sprache + Prepare/OneDrive | 🟡 50% | KosmoSketch ✅ (Freihand→Wände, gated), KosmoSpeak ✅ (Push-to-Talk→Bridge-STT); offen: Prepare, OneDrive |
 | M7 Sync + TKB-Demo + Packaging | 🟢 75% | .kosmo ✅, TKB-Demo ✅, Yjs-Live-Sync ✅ (2-Client-Test bestanden); offen: Installer-Politur, Onboarding |
 
@@ -27,16 +27,19 @@ QA-Verdikt zurück → iPad synchron.
 2. ~~Zonen + SIA-416 + Kennzahlen-Panel~~ ✅
 3. ~~Schnitt/Ansicht + 4er-Splitscreen~~ ✅ (Politur: echte Hidden-Line via three-edge-projection später)
 4. ~~Assoziative Bemassungsketten~~ ✅
-5. ~~Walmdach (eigener Skeleton)~~ ✅ — offen: Treppe basic
+5. ~~Walmdach (eigener Skeleton)~~ ✅ — ~~Treppe~~ ✅
 6. ~~Kosmo-Memory + Feedback-Daumen~~ ✅ (RAG-Ausbau später)
-7. IFC: ~~Export (ifcopenshell-verifiziert)~~ ✅ — offen: Import (web-ifc)
+7. IFC: ~~Export (ifcopenshell-verifiziert)~~ ✅ — ~~Import als Kontext-Layer (web-ifc)~~ ✅
 8. ~~KosmoVis-Client + Bridge (--fake-worker) + GLB-Export~~ ✅ — offen: /tts (Chatterbox-Dienst), STT-UI in der App
 9. KosmoData: ~~Offline-Seed + Browser + Kosmo-Tool~~ ✅ — offen: SQLite-Ausbau, CH-Bauteilkatalog, Referenz-3D
 10. ~~KosmoSketch + KosmoSpeak~~ ✅
-11. KosmoPublish: ~~PDF/SVG-Einzelplan~~ ✅ — offen: Blatt-Editor, Plansätze, DXF; PDF-Schraffur-Pattern fixen
+11. KosmoPublish: ~~PDF/SVG-Einzelplan~~ ✅ — ~~Blatt-Editor + Plansatz-PDF + DXF~~ ✅ (Sheet = Kernel-Entity; ezdxf 0 Fehler)
 12. ~~Yjs-Sync + .kosmo-Zip~~ ✅ — offen: OneDrive (Graph)
 13. ~~TKB-Demoprojekt~~ ✅ — offen: Onboarding + Politur-/Visualtest-Runde
 14. Splat-Kontext-Layer: Gaussian-Splats (.ply/.splat aus LingBot-Map/gsplat-Kette der HomeStation) als Bestand-Layer im KosmoDesign-Viewport laden (Owner-Hinweis 02.07., Tech-Radar-Nachtrag)
+15. 3D-Wandknoten (Union/Gehrung im Mesh) — Grundriss-Poché ist bereits vereinigt, offen ist nur 3D
+16. OneDrive/Graph-Login (KosmoPrepare) + Ingestion; Kosmo-RAG (bge-m3), KosmoDoc-Diagnosepanel
+17. Politur-Runde: Onboarding, cmdk-Palette, Web-Worker für den Kern, volle Visualtest-Suite, CI-Desktop-Build prüfen
 
 ## Arbeitsregeln (Owner-Direktiven)
 
