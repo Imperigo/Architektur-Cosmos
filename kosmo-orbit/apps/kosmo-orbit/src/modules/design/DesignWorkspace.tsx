@@ -8,6 +8,8 @@ import { KennzahlenPanel } from './KennzahlenPanel';
 import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
+import { importIfc } from './ifc-import';
+import { setContextMeshes } from './Viewport3D';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -273,6 +275,30 @@ export function DesignWorkspace() {
         </KButton>
         <KButton size="sm" tone="ghost" onClick={exportIfcFile} data-testid="export-ifc">
           IFC
+        </KButton>
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="import-ifc"
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.ifc';
+            input.onchange = async () => {
+              const f = input.files?.[0];
+              if (!f) return;
+              try {
+                const result = await importIfc(new Uint8Array(await f.arrayBuffer()));
+                setContextMeshes(result.meshes);
+                console.info(`IFC-Kontext: ${result.elementCount} Elemente (${result.schema})`);
+              } catch (err) {
+                alert(`IFC-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
+              }
+            };
+            input.click();
+          }}
+        >
+          IFC laden
         </KButton>
         <span style={{ width: 12 }} />
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">

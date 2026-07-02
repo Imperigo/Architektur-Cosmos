@@ -3,6 +3,15 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { deriveAll, type GeometryArtifact, type Pt } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
+import type { ContextMesh } from './ifc-import';
+
+// Kontext-Layer (IFC-Bestand): sessionweit, nicht synchronisiert
+let contextMeshes: ContextMesh[] = [];
+let contextRevision = 0;
+export function setContextMeshes(meshes: ContextMesh[]): void {
+  contextMeshes = meshes;
+  contextRevision++;
+}
 
 CameraControls.install({ THREE });
 
@@ -103,6 +112,33 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const previewGroup = new THREE.Group();
     previewGroup.scale.set(MM, MM, MM);
     scene.add(previewGroup);
+
+    // Kontext (IFC-Bestand): web-ifc liefert bereits Meter/y-oben → 1:1
+    const contextGroup = new THREE.Group();
+    scene.add(contextGroup);
+    let lastContextRevision = -1;
+    function syncContext() {
+      if (contextRevision === lastContextRevision) return;
+      lastContextRevision = contextRevision;
+      contextGroup.clear();
+      for (const cm of contextMeshes) {
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(cm.positions.slice(), 3));
+        geo.setIndex(new THREE.BufferAttribute(cm.indices, 1));
+        geo.computeVertexNormals();
+        const mesh = new THREE.Mesh(
+          geo,
+          new THREE.MeshStandardMaterial({
+            color: new THREE.Color(cm.color.r, cm.color.g, cm.color.b),
+            roughness: 0.95,
+            transparent: true,
+            opacity: 0.55,
+          }),
+        );
+        mesh.receiveShadow = true;
+        contextGroup.add(mesh);
+      }
+    }
 
     const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x2a2620 });
     const previewMaterial = new THREE.LineBasicMaterial({ color: 0xa84b2b });
@@ -228,6 +264,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const renderFrame = () => {
       syncModel();
       syncPreview();
+      syncContext();
       // Auswahl-Highlight (Kupfer-Glut)
       const sel = new Set(useProject.getState().selection);
       for (const child of model.children) {
