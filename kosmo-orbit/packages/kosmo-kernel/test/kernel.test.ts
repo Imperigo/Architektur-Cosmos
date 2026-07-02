@@ -587,3 +587,18 @@ describe('Golden-SVG (Plan-Regression)', () => {
     // Bewusste Plan-Änderungen: Golden neu erzeugen und im Diff begutachten.
   });
 });
+
+describe('3D-T-Stoss', () => {
+  it('Wandende in fremder Wandmitte stösst bündig an die nahe Fläche', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    // Zielwand entlang x (±180 dick), T-Wand von Norden bis zur Achse
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const t = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 4000, y: 3000 }, b: { x: 4000, y: 0 },
+    });
+    const art = deriveEntity(doc, (t.patches[0] as { id: string }).id)!;
+    let minY = Infinity;
+    for (let i = 1; i < art.positions.length; i += 3) minY = Math.min(minY, art.positions[i]!);
+    expect(minY).toBeCloseTo(180, 0); // nahe Fläche der Zielwand, keine Durchdringung
+  });
+});

@@ -60,6 +60,6 @@ Kern-Prinzipien: int-mm-Koordinaten · Commands = einzige Schreiber (zod-Schema 
 
 19. Q12 komplett: ~~Schattenstudie (suncalc, Datum/Uhrzeit, Innerschweiz)~~ ✅ komplett ✅: ~~Schattenstudie~~ · ~~Grundriss-Checks~~ · ~~Volumenstudien-Generator (Teppich/Riegel/Turm/Zeilen/Winkel, Gruppen-Undo)~~ — Q12 «ALLE vier» erfüllt
 20. ~~KosmoAsset-Rest (Q14): Materialkatalog (PBR+SIA+Lambda aus einer Quelle) + Referenz-3D aus KosmoData als GLB-Kontext~~ ✅ (Texturen-Maps folgen mit der HomeStation)
-21. ~~Ansichten aller vier Richtungen in KosmoPublish (N/O/S/W, Ansichts-Stift 0.35)~~ ✅ — offen (V2): Hidden-Line, 3D-T-Stösse, Dach-Gratkanten in der Ansicht
+21. ~~Ansichten aller vier Richtungen in KosmoPublish (N/O/S/W, Ansichts-Stift 0.35)~~ ✅ · ~~3D-T-Stösse (bündig an die nahe Fläche)~~ ✅ · ~~Dach-Gratkanten~~ ✅ — offen (V2): Hidden-Line
 22. ~~KosmoTrain (Q8): docs/KOSMOTRAIN.md (Unsloth-Rezept, GGUF→Ollama) + Journal-Export-Knopf (JSONL)~~ ✅ · ~~Tauri-iOS-CI-Experiment~~ ✅ — **Befund: init + Simulator-Build laufen durch** (3 min, Xcode-Projekt als Artefakt); fürs Gerät fehlt nur die Owner-Signierung
 23. ~~Projektverwaltung + Autosave (IndexedDB-Tresor, Wiederherstellung, Wechsel)~~ ✅ · ~~Golden-SVG-Test~~ ✅ · ~~Dach-Gratkanten~~ ✅ · ~~iPad-Touch: Pinch-Zoom + Zwei-Finger-Pan im Grundriss (ein Finger zeichnet, Gesten klicken nie)~~ ✅

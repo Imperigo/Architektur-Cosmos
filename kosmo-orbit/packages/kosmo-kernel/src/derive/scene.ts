@@ -84,12 +84,14 @@ function deriveWall(doc: KosmoDoc, wall: Wall): GeometryArtifact | null {
  * Wandknoten: Gehrung an Ecken. Treffen sich genau zwei Wandenden in einem
  * Punkt, wird die Stirnfläche auf die Winkelhalbierende geschert — beide
  * Körper teilen dieselbe Fugenebene (kein Überlappen, kein Loch, keine
- * z-kämpfenden Deckflächen). Mehrfachknoten und T-Stösse bleiben stumpf.
+ * z-kämpfenden Deckflächen). T-Stösse stossen bündig an die nahe Fläche
+ * der Zielwand; Mehrfachknoten bleiben stumpf.
  */
 function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, length: number): void {
   const d = axisDirection(wall);
   const n = { x: -d.y, y: d.x };
   const shearK: [number, number] = [0, 0];
+  const shiftS: [number, number] = [0, 0];
   const active: [boolean, boolean] = [false, false];
 
   const ends: [Pt, Pt] = [wall.a, wall.b];
@@ -108,6 +110,35 @@ function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, le
           if (len > 0) outgoing.push({ x: (R.x - Q.x) / len, y: (R.y - Q.y) / len });
         }
       }
+    }
+    if (outgoing.length === 0) {
+      // T-Stoss: Ende liegt im Inneren einer fremden Wandachse → bündig
+      // an deren nahe Fläche stossen statt hindurchdringen
+      const dLoc = endIdx === 1 ? d : { x: -d.x, y: -d.y };
+      for (const other of doc.byKind<Wall>('wall')) {
+        if (other.id === wall.id || other.storeyId !== wall.storeyId) continue;
+        const asm = doc.get<Assembly>(other.assemblyId);
+        if (!asm || asm.kind !== 'assembly') continue;
+        const ux = other.b.x - other.a.x;
+        const uy = other.b.y - other.a.y;
+        const ul = Math.hypot(ux, uy);
+        if (ul < 1) continue;
+        const t = ((P.x - other.a.x) * ux + (P.y - other.a.y) * uy) / (ul * ul);
+        if (t < 0.05 || t > 0.95) continue; // Endpunkt-Fälle macht die Gehrung
+        const m = { x: -uy / ul, y: ux / ul };
+        const a0 = (P.x - other.a.x) * m.x + (P.y - other.a.y) * m.y;
+        const { offsetLeft, offsetRight } = wallFrame(other, asm);
+        if (a0 > offsetLeft + 1 || a0 < -offsetRight - 1) continue; // liegt nicht im Körper
+        const dm = dLoc.x * m.x + dLoc.y * m.y;
+        if (Math.abs(dm) < 0.3) continue; // streifender Winkel — stumpf lassen
+        const ziel = dm < 0 ? offsetLeft : -offsetRight; // nahe Fläche auf unserer Seite
+        const w = (ziel - a0) / dm;
+        if (Math.abs(w) > Math.min(length * 0.9, 2000)) continue;
+        shiftS[endIdx] = endIdx === 1 ? w : -w;
+        active[endIdx] = true;
+        break;
+      }
+      continue;
     }
     if (outgoing.length !== 1) continue;
     const e = outgoing[0]!;
@@ -132,8 +163,8 @@ function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, le
       const s = rx * d.x + ry * d.y;
       const o = rx * n.x + ry * n.y;
       let t = 0;
-      if (active[0] && s < 1) t = -(o * shearK[0]);
-      else if (active[1] && s > length - 1) t = o * shearK[1];
+      if (active[0] && s < 1) t = -(o * shearK[0]) + shiftS[0];
+      else if (active[1] && s > length - 1) t = o * shearK[1] + shiftS[1];
       if (t !== 0) {
         arr[i] = arr[i]! + d.x * t;
         arr[i + 1] = arr[i + 1]! + d.y * t;
