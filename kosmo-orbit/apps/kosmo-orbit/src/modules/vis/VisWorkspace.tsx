@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { Messrahmen, Badge, Hairline, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
+import { Messrahmen, Badge, Hairline, Karteikarte, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
 import { exportGlb } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
 /**
- * KosmoVis — Render-Jobs an die HomeStation.
+ * KosmoVis — Render-Jobs an die HomeStation (Toolkit 2 der Vision).
  * Modell → GLB → Bridge (/jobs, render-scene/v1) → Job-Store → Scheduler
  * rendert im GPU-Leerlauf → Ergebnis mit Doppel-QA-Verdikt zurück.
+ * Varianten-Serien (drei Stimmungen auf einen Klick) für die visuelle
+ * Prüfung nebeneinander; Serien überleben den Neustart (localStorage).
  */
 
 interface JobRecord {
@@ -23,13 +25,39 @@ interface JobRecord {
   };
 }
 
+interface Serie {
+  id: string;
+  ts: string;
+  /** job_id → Stimmungs-Label */
+  jobs: Record<string, string>;
+}
+
+const STIMMUNGEN = [
+  { label: 'Morgenlicht', prompt: 'Morgenlicht, klare lange Schatten, frische kühle Luft' },
+  { label: 'Abendstimmung', prompt: 'Abendstimmung, warmes Licht, leuchtende Fenster' },
+  { label: 'Weissmodell', prompt: 'Weissmodell, neutrales Studiolicht, keine Materialien' },
+] as const;
+
 function loadBridgeUrl(): string {
   return localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600';
+}
+
+function loadSerien(): Serie[] {
+  try {
+    return JSON.parse(localStorage.getItem('kosmo.vis.serien') ?? '[]') as Serie[];
+  } catch {
+    return [];
+  }
+}
+
+function saveSerien(s: Serie[]): void {
+  localStorage.setItem('kosmo.vis.serien', JSON.stringify(s.slice(-12)));
 }
 
 export function VisWorkspace() {
   const [bridgeUrl, setBridgeUrl] = useState(loadBridgeUrl);
   const [jobs, setJobs] = useState<JobRecord[]>([]);
+  const [serien, setSerien] = useState<Serie[]>(loadSerien);
   const [health, setHealth] = useState<'unbekannt' | 'ok' | 'offline'>('unbekannt');
   const [faithful, setFaithful] = useState(0.8);
   const [prompt, setPrompt] = useState('');
@@ -43,7 +71,7 @@ export function VisWorkspace() {
     try {
       const list: JobRecord[] = await (await fetch(`${base}/jobs`)).json();
       const detailed = await Promise.all(
-        list.slice(0, 8).map(async (j) => {
+        list.slice(0, 16).map(async (j) => {
           try {
             return (await (await fetch(`${base}/jobs/${j.job_id}`)).json()) as JobRecord;
           } catch {
@@ -67,26 +95,31 @@ export function VisWorkspace() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bridgeUrl]);
 
+  const postJob = async (stylePrompt: string): Promise<JobRecord> => {
+    const { doc } = useProject.getState();
+    const glb = exportGlb(doc, doc.settings.projectName);
+    const scene = {
+      schema: 'kosmovis.render-scene/v1',
+      cameras: 'auto',
+      render: { resolution: [1600, 1000], samples: 128, faithful },
+      style: { mode: 'none', refs: [], prompt: stylePrompt },
+      vis: { skip: false, backbone: 'qwen', upscale: false },
+      out: '',
+      geometry: { path: '', format: 'glb' },
+    };
+    const form = new FormData();
+    form.append('scene', JSON.stringify(scene));
+    form.append('model', new Blob([glb], { type: 'model/gltf-binary' }), 'model.glb');
+    const res = await fetch(`${base}/jobs`, { method: 'POST', body: form });
+    if (!res.ok) throw new Error(`Bridge antwortet mit ${res.status}`);
+    return (await res.json()) as JobRecord;
+  };
+
   const submit = async () => {
     setSending(true);
     setError(null);
     try {
-      const { doc } = useProject.getState();
-      const glb = exportGlb(doc, doc.settings.projectName);
-      const scene = {
-        schema: 'kosmovis.render-scene/v1',
-        cameras: 'auto',
-        render: { resolution: [1600, 1000], samples: 128, faithful },
-        style: { mode: 'none', refs: [], prompt },
-        vis: { skip: false, backbone: 'qwen', upscale: false },
-        out: '',
-        geometry: { path: '', format: 'glb' },
-      };
-      const form = new FormData();
-      form.append('scene', JSON.stringify(scene));
-      form.append('model', new Blob([glb], { type: 'model/gltf-binary' }), 'model.glb');
-      const res = await fetch(`${base}/jobs`, { method: 'POST', body: form });
-      if (!res.ok) throw new Error(`Bridge antwortet mit ${res.status}`);
+      await postJob(prompt);
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -95,9 +128,46 @@ export function VisWorkspace() {
     }
   };
 
+  /** Drei Stimmungen auf einen Klick — für die visuelle Prüfung nebeneinander. */
+  const submitSerie = async () => {
+    setSending(true);
+    setError(null);
+    try {
+      const eintraege: Record<string, string> = {};
+      for (const s of STIMMUNGEN) {
+        const job = await postJob(prompt ? `${s.prompt} — ${prompt}` : s.prompt);
+        eintraege[job.job_id] = s.label;
+      }
+      const serie: Serie = {
+        id: Object.keys(eintraege)[0]!,
+        ts: new Date().toISOString(),
+        jobs: eintraege,
+      };
+      const next = [...serien, serie];
+      setSerien(next);
+      saveSerien(next);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const jobById = new Map(jobs.map((j) => [j.job_id, j]));
+  const inSerie = new Set(serien.flatMap((s) => Object.keys(s.jobs)));
+  const einzelJobs = jobs.filter((j) => !inSerie.has(j.job_id));
+
+  const inputStyle: React.CSSProperties = {
+    padding: '5px 9px',
+    borderRadius: 'var(--k-radius-sm)',
+    border: '1px solid var(--k-line-strong)',
+    background: 'var(--k-raised)',
+  };
+
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 20 }}>
-      <div style={{ maxWidth: 860, margin: '0 auto', display: 'grid', gap: 16 }}>
+      <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Badge hue={moduleHue.vis}>KosmoVis</Badge>
           <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
@@ -119,13 +189,7 @@ export function VisWorkspace() {
                   setBridgeUrl(e.target.value);
                   localStorage.setItem('kosmo.bridge', e.target.value);
                 }}
-                style={{
-                  padding: '5px 9px',
-                  borderRadius: 6,
-                  border: '1px solid var(--k-line-strong)',
-                  background: 'var(--k-raised)',
-                  width: 240,
-                }}
+                style={{ ...inputStyle, width: 240 }}
               />
             </label>
             <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
@@ -145,16 +209,14 @@ export function VisWorkspace() {
             placeholder="Stil-Prompt (optional), z.B. «Abendstimmung, Sichtbeton, warmes Licht»"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            style={{
-              padding: '7px 10px',
-              borderRadius: 6,
-              border: '1px solid var(--k-line-strong)',
-              background: 'var(--k-raised)',
-            }}
+            style={{ ...inputStyle, padding: '7px 10px' }}
           />
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <KButton tone="accent" onClick={() => void submit()} disabled={sending || health !== 'ok'} data-testid="send-render">
               {sending ? 'Sende …' : 'Render-Job senden'}
+            </KButton>
+            <KButton tone="quiet" onClick={() => void submitSerie()} disabled={sending || health !== 'ok'} data-testid="send-serie">
+              3 Varianten (Morgen · Abend · Weissmodell)
             </KButton>
             <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
               Modell wird als GLB exportiert; gerendert wird im GPU-Leerlauf-Fenster.
@@ -163,13 +225,67 @@ export function VisWorkspace() {
           {error && <div style={{ color: 'var(--k-danger)', fontSize: 12.5 }}>⚠ {error}</div>}
         </Panel>
 
-        {jobs.length === 0 && (
+        {/* Varianten-Serien: Stimmungen nebeneinander, QA je Karte */}
+        {[...serien].reverse().map((s) => (
+          <div key={s.id} style={{ display: 'grid', gap: 8 }} data-testid="varianten-serie">
+            <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
+              <span className="k-titel" style={{ fontSize: 13 }}>Varianten-Serie</span>
+              <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+                {new Date(s.ts).toLocaleString('de-CH')}
+              </span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
+              {Object.entries(s.jobs).map(([jobId, label], i) => {
+                const j = jobById.get(jobId);
+                return (
+                  <Karteikarte key={jobId} nr={i + 1}>
+                    <div style={{ display: 'grid', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <span style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 12.5 }}>{label}</span>
+                        <div style={{ flex: 1 }} />
+                        {j?.result ? (
+                          <Badge hue={j.result.qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)'}>
+                            QA {j.result.qa.verdict.passed ? 'ok' : 'verfehlt'}
+                          </Badge>
+                        ) : (
+                          <Badge hue="var(--k-warning)">{j?.status ?? 'offen'}</Badge>
+                        )}
+                      </div>
+                      {j?.result ? (
+                        <>
+                          <img
+                            src={`${base}/jobs/${jobId}/artifacts/${j.result.images[0]}`}
+                            alt={label}
+                            style={{ width: '100%', border: '1px solid var(--k-line)' }}
+                          />
+                          <div style={{ display: 'flex', gap: 12, fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+                            {j.result.qa.geometry && (
+                              <span>Geometrie <Measure>{j.result.qa.geometry.geometry_fidelity.toFixed(2)}</Measure></span>
+                            )}
+                            {j.result.qa.style && (
+                              <span>Stil <Measure>{j.result.qa.style.style_score.toFixed(2)}</Measure></span>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <Messrahmen height={120} caption={j ? `Rendert … (${j.status})` : 'Job nicht (mehr) im Store'} />
+                      )}
+                    </div>
+                  </Karteikarte>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+
+        {/* Einzeljobs / Historie */}
+        {einzelJobs.length === 0 && serien.length === 0 && (
           <Messrahmen
             height={220}
             caption="Noch keine Render-Jobs — das Ergebnis der HomeStation erscheint hier mit QA-Verdikt"
           />
         )}
-        {jobs.map((j) => (
+        {einzelJobs.map((j) => (
           <Panel key={j.job_id} style={{ display: 'grid', gap: 8 }} data-testid="render-job">
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
               <Measure>{j.job_id}</Measure>
@@ -200,7 +316,6 @@ export function VisWorkspace() {
                       alt={img}
                       style={{
                         width: 280,
-                        borderRadius: 8,
                         border: '1px solid var(--k-line)',
                       }}
                     />
