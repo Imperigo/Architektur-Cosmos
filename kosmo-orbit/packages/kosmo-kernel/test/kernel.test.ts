@@ -5,6 +5,7 @@ import {
   execute,
   invertPatches,
   deriveAll,
+  deriveSection,
   deriveEntity,
   union,
   thickenPolyline,
@@ -600,5 +601,55 @@ describe('3D-T-Stoss', () => {
     let minY = Infinity;
     for (let i = 1; i < art.positions.length; i += 3) minY = Math.min(minY, art.positions[i]!);
     expect(minY).toBeCloseTo(180, 0); // nahe Fläche der Zielwand, keine Durchdringung
+  });
+});
+
+describe('Hidden-Line im Schnitt', () => {
+  const aufbauen = () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    // Naher, hoher Riegel (verdeckt die Mitte) + ferner, breiter, flacher Riegel
+    execute(doc, 'design.volumenErstellen', {
+      storeyId,
+      outline: [{ x: 2000, y: 1000 }, { x: 6000, y: 1000 }, { x: 6000, y: 2000 }, { x: 2000, y: 2000 }],
+      height: 5000,
+    });
+    execute(doc, 'design.volumenErstellen', {
+      storeyId,
+      outline: [{ x: 0, y: 3000 }, { x: 10000, y: 3000 }, { x: 10000, y: 4000 }, { x: 0, y: 4000 }],
+      height: 3000,
+    });
+    return doc;
+  };
+  const spec = { a: { x: 0, y: 0 }, b: { x: 10000, y: 0 }, depth: 30000, lookLeft: true };
+  const oberkanten = (g: ReturnType<typeof deriveSection>) =>
+    g.projections.filter((l) => Math.abs(l.a.z - 3000) < 1 && Math.abs(l.b.z - 3000) < 1);
+
+  it('ohne Rechnung läuft die Oberkante des hinteren Riegels durch', () => {
+    const ohne = deriveSection(aufbauen(), { ...spec, hiddenLine: false });
+    expect(
+      oberkanten(ohne).some((l) => Math.min(l.a.s, l.b.s) < 100 && Math.max(l.a.s, l.b.s) > 9900),
+    ).toBe(true);
+  });
+
+  it('mit Rechnung bleiben nur die seitlich sichtbaren Teilstücke übrig', () => {
+    const mit = deriveSection(aufbauen(), spec);
+    const kanten = oberkanten(mit);
+    // Links sichtbar bis zur nahen Kiste (s≈2000), rechts ab s≈6000
+    expect(kanten.some((l) => Math.min(l.a.s, l.b.s) < 100 && Math.max(l.a.s, l.b.s) <= 2001)).toBe(true);
+    expect(kanten.some((l) => Math.min(l.a.s, l.b.s) >= 5999 && Math.max(l.a.s, l.b.s) > 9900)).toBe(true);
+    // Kein Teilstück auf z=3000 quert den verdeckten Bereich
+    for (const l of kanten) {
+      expect(Math.max(l.a.s, l.b.s) <= 2001 || Math.min(l.a.s, l.b.s) >= 5999).toBe(true);
+    }
+    // Die eigene Oberkante der nahen Kiste (z=5000) bleibt unangetastet sichtbar
+    expect(
+      mit.projections.some(
+        (l) =>
+          Math.abs(l.a.z - 5000) < 1 && Math.abs(l.b.z - 5000) < 1 &&
+          Math.abs(Math.min(l.a.s, l.b.s) - 2000) < 1 && Math.abs(Math.max(l.a.s, l.b.s) - 6000) < 1,
+      ),
+    ).toBe(true);
   });
 });

@@ -39,7 +39,7 @@ QA-Verdikt zurück → iPad synchron.
 14. ~~Splat-Kontext-Layer (.splat/.ply, eigener Punkt-Renderer)~~ ✅ (echtes Gaussian-Splatting bleibt HomeStation-Rendersache)
 15. ~~3D-Wandknoten (Gehrung auf Winkelhalbierende)~~ ✅ (Mehrfachknoten/T-Stösse V2)
 16. ~~KosmoPrepare: Ingestion (PDF/TXT/MD→Wissensbasis) + grundlagen_suchen + OneDrive/Graph (MSAL/PKCE)~~ ✅ — offen: Embedding-RAG (bge-m3 via Bridge), KosmoDoc-Diagnosepanel
-17. Politur: ~~Befehlspalette (⌘K, eigene)~~ ✅ · ~~KosmoDoc-Diagnose~~ ✅ · ~~CH-Bauteilkatalog~~ ✅ · ~~E2E-Suite committet (6 Tests, CI-Job)~~ ✅ · ~~TTS «Vorlesen» (Bridge /tts: Piper/Chatterbox, Q7)~~ ✅ · ~~Embedding-RAG (Bridge /embed: bge-m3; Cosine+Stichwort-Mischung)~~ ✅ · ~~Onboarding + Tagesgruss~~ ✅ · ~~Web-Worker-Ableitung (>300 Elemente)~~ ✅ — offen: Hidden-Line (V2-Kür)
+17. Politur: ~~Befehlspalette (⌘K, eigene)~~ ✅ · ~~KosmoDoc-Diagnose~~ ✅ · ~~CH-Bauteilkatalog~~ ✅ · ~~E2E-Suite committet (6 Tests, CI-Job)~~ ✅ · ~~TTS «Vorlesen» (Bridge /tts: Piper/Chatterbox, Q7)~~ ✅ · ~~Embedding-RAG (Bridge /embed: bge-m3; Cosine+Stichwort-Mischung)~~ ✅ · ~~Onboarding + Tagesgruss~~ ✅ · ~~Web-Worker-Ableitung (>300 Elemente)~~ ✅ · ~~Hidden-Line im Schnitt/Ansicht (eigene Verdeckungsrechnung: Kanten-Intervalle gegen davorliegende Dreiecke; Fallback ab 40 Mio Paaren)~~ ✅
 18. ~~Desktop-Builds via CI~~ ✅ — **alle drei Plattformen bauen** (Lauf #4, 7da4329): macOS universal (.dmg), Linux (AppImage/deb/rpm), Windows (MSI/EXE) als Artefakte. Auslösen: `kosmo-orbit/.desktop-build-request` ändern+pushen. PR #2 (auto-erstellt beim ersten Push) bleibt offen = der eine V1-PR; Titel/Body am Ende aktualisieren.
     (Hinweis: Website-CI `ci.yml`/security:check ist auch auf main rot — vorbestehend, Website-Lane, hier nicht angefasst)
 
@@ -60,6 +60,7 @@ Kern-Prinzipien: int-mm-Koordinaten · Commands = einzige Schreiber (zod-Schema 
 
 19. Q12 komplett: ~~Schattenstudie (suncalc, Datum/Uhrzeit, Innerschweiz)~~ ✅ komplett ✅: ~~Schattenstudie~~ · ~~Grundriss-Checks~~ · ~~Volumenstudien-Generator (Teppich/Riegel/Turm/Zeilen/Winkel, Gruppen-Undo)~~ — Q12 «ALLE vier» erfüllt
 20. ~~KosmoAsset-Rest (Q14): Materialkatalog (PBR+SIA+Lambda aus einer Quelle) + Referenz-3D aus KosmoData als GLB-Kontext~~ ✅ (Texturen-Maps folgen mit der HomeStation)
-21. ~~Ansichten aller vier Richtungen in KosmoPublish (N/O/S/W, Ansichts-Stift 0.35)~~ ✅ · ~~3D-T-Stösse (bündig an die nahe Fläche)~~ ✅ · ~~Dach-Gratkanten~~ ✅ — offen (V2): Hidden-Line
+21. ~~Ansichten aller vier Richtungen in KosmoPublish (N/O/S/W, Ansichts-Stift 0.35)~~ ✅ · ~~3D-T-Stösse (bündig an die nahe Fläche)~~ ✅ · ~~Dach-Gratkanten~~ ✅ · ~~Hidden-Line~~ ✅ (Beleg: `e2e/tools/hiddenline-beleg.mts`)
 22. ~~KosmoTrain (Q8): docs/KOSMOTRAIN.md (Unsloth-Rezept, GGUF→Ollama) + Journal-Export-Knopf (JSONL)~~ ✅ · ~~Tauri-iOS-CI-Experiment~~ ✅ — **Befund: init + Simulator-Build laufen durch** (3 min, Xcode-Projekt als Artefakt); fürs Gerät fehlt nur die Owner-Signierung
 23. ~~Projektverwaltung + Autosave (IndexedDB-Tresor, Wiederherstellung, Wechsel)~~ ✅ · ~~Golden-SVG-Test~~ ✅ · ~~Dach-Gratkanten~~ ✅ · ~~iPad-Touch: Pinch-Zoom + Zwei-Finger-Pan im Grundriss (ein Finger zeichnet, Gesten klicken nie)~~ ✅
+24. ~~Visuelle Gesamtrunde (Galerie an Owner; Nits gefixt: Grundriss-Einpassen beim Öffnen, Kupfer-Slider)~~ ✅ · ~~Hidden-Line im Schnitt (letzter Kür-Punkt)~~ ✅ — **damit ist die gesamte V1+Phase-2-Roadmap abgearbeitet.** Offen bleibt nur, was die HomeStation braucht (echte Renders, Whisper, Piper-Stimme, OneDrive-Tenant, LoRA-Zyklus) — wartet auf den Owner in ~3 Wochen.

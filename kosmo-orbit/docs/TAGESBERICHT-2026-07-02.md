@@ -98,3 +98,24 @@ Desktop-Build-Verifikation via tauri-action.
   404-Wände-Test bestanden; kleine Modelle bleiben synchron-deterministisch.
 - E2E-Suite (6 Tests) committet und in der CI; einziger offener ROADMAP-Punkt:
   echte Hidden-Line im Schnitt (V2-Kür).
+
+## Nachtrag Spätabend — Roadmap fertig
+
+- **Visuelle Gesamtrunde:** 10 frische Screenshots aller fünf Module + Zentrale
+  (Papier und Tinte) als Galerie an den Owner. Zwei Nits daraus sofort gefixt:
+  der Grundriss passt sich beim Öffnen jetzt einmal auf den Modellinhalt ein
+  (geladene Projekte wirkten vorher «leer»), und native Slider/Checkboxen laufen
+  im Kupfer-Akzent statt Browser-Blau. Reproduzierbar: `e2e/tools/galerie.mjs`.
+- **Hidden-Line im Schnitt (letzter Kür-Punkt):** eigene Verdeckungsrechnung im
+  Kern — jede Projektionskante wird als Intervall parametrisiert und die von
+  davorliegenden Dreiecken abgedeckten Teilintervalle werden abgezogen (alle
+  Bedingungen linear in u: drei Kantenseiten, Sichthalbraum, Tiefenvergleich
+  mit 5-mm-Epsilon gegen die eigene Fläche). Bounding-Box-Frühverwerfung;
+  ehrlicher Fallback auf ungerechnete Kanten ab 40 Mio Kanten×Dreiecks-Paaren.
+  Zwei Kernel-Tests + Vorher/Nachher-Beleg (`e2e/tools/hiddenline-beleg.mts`):
+  der Quertrakt hinterm Walmdach-Haus verschwindet korrekt, doppelte
+  Wand-Rückkanten sind weg. KosmoPublish-Ansichten profitieren automatisch.
+- Suiten: 30 Kernel + 3 KI + 5 Contracts + 3 App + 6 E2E grün; Typecheck sauber.
+- **Damit ist die gesamte V1+Phase-2-Roadmap abgearbeitet.** Offen ist nur noch
+  HomeStation-Gebundenes (echte Renders, Whisper, Piper-Stimme, OneDrive-Tenant,
+  LoRA-Zyklus) — wartet auf den Owner.
