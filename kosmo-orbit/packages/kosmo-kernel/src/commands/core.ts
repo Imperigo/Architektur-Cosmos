@@ -137,6 +137,11 @@ export class History {
     return this.undoStack.length > 0;
   }
 
+  /** Anzahl rückgängig machbarer Schritte (Diagnose/Anzeige). */
+  get depth(): number {
+    return this.undoStack.length;
+  }
+
   get canRedo(): boolean {
     return this.redoStack.length > 0;
   }

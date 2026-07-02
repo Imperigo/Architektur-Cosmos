@@ -15,6 +15,7 @@ import type { Assembly } from '@kosmo/kernel';
 import { useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { searchKnowledge } from '../modules/prepare/knowledge';
+import { DiagnosePanel } from './Diagnose';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -339,6 +340,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               </label>
             </>
           )}
+          <Hairline />
+          <DiagnosePanel />
         </div>
       )}
 
