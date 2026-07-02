@@ -36,10 +36,11 @@ QA-Verdikt zurück → iPad synchron.
 11. KosmoPublish: ~~PDF/SVG-Einzelplan~~ ✅ — ~~Blatt-Editor + Plansatz-PDF + DXF~~ ✅ (Sheet = Kernel-Entity; ezdxf 0 Fehler)
 12. ~~Yjs-Sync + .kosmo-Zip~~ ✅ — offen: OneDrive (Graph)
 13. ~~TKB-Demoprojekt~~ ✅ — offen: Onboarding + Politur-/Visualtest-Runde
-14. Splat-Kontext-Layer: Gaussian-Splats (.ply/.splat aus LingBot-Map/gsplat-Kette der HomeStation) als Bestand-Layer im KosmoDesign-Viewport laden (Owner-Hinweis 02.07., Tech-Radar-Nachtrag)
-15. 3D-Wandknoten (Union/Gehrung im Mesh) — Grundriss-Poché ist bereits vereinigt, offen ist nur 3D
-16. OneDrive/Graph-Login (KosmoPrepare) + Ingestion; Kosmo-RAG (bge-m3), KosmoDoc-Diagnosepanel
+14. ~~Splat-Kontext-Layer (.splat/.ply, eigener Punkt-Renderer)~~ ✅ (echtes Gaussian-Splatting bleibt HomeStation-Rendersache)
+15. ~~3D-Wandknoten (Gehrung auf Winkelhalbierende)~~ ✅ (Mehrfachknoten/T-Stösse V2)
+16. ~~KosmoPrepare: Ingestion (PDF/TXT/MD→Wissensbasis) + grundlagen_suchen + OneDrive/Graph (MSAL/PKCE)~~ ✅ — offen: Embedding-RAG (bge-m3 via Bridge), KosmoDoc-Diagnosepanel
 17. Politur-Runde: Onboarding, cmdk-Palette, Web-Worker für den Kern, volle Visualtest-Suite, CI-Desktop-Build prüfen
+    (Hinweis: Website-CI `ci.yml`/security:check ist auch auf main rot — vorbestehend, Website-Lane, hier nicht angefasst)
 
 ## Arbeitsregeln (Owner-Direktiven)
 

@@ -47,3 +47,36 @@
 
 Bemassungsketten → Kosmo-Memory + Feedback-Daumen → IFC-Export → KosmoData-Sync →
 Yjs-Sync → Politur-/Visualtestrunde. Reihenfolge in ROADMAP.md, dynamisch.
+
+---
+
+## Nachtrag Nachmittag (gleiche Session, langer Block)
+
+Alles Obige aus «Offen» ist inzwischen weitgehend abgearbeitet. Neu heute Nachmittag:
+
+1. **IFC-Roundtrip geschlossen** — Import via web-ifc als grauer Kontext-Layer
+   (Bestand = Referenz, nicht editierbar). Dabei ernsten Bug gefunden und behoben:
+   web-ifc tesselliert bereits in Meter/y-oben — die mm-Annahme liess den Bestand
+   auf 9 mm kollabieren.
+2. **KosmoPublish fertig (Q30)** — Blatteditor: Sheet als Kernel-Entity (Undo/Sync/.kosmo
+   inklusive), Grundriss + Schnitt platzieren/ziehen, Plansatz-PDF mehrseitig im echten
+   Blattformat (A0–A4), Blatt-SVG, **DXF-Export** (ezdxf-Orakel: 0 Fehler, semantische Layer).
+3. **KosmoPrepare lebt (Q28)** — Grundlagen-Ingestion (PDF/Text/MD → Wissensbasis in
+   IndexedDB, alles lokal), Suche mit Quellenangabe, Kosmo-Tool «grundlagen_suchen»,
+   **OneDrive/Graph-Login** (MSAL/PKCE; Owner trägt nur die Azure-Client-ID ein —
+   gegen echten Tenant hier nicht testbar, Fehlerpfade geprüft). Alle 5 Module aktiv.
+4. **3D-Wandknoten** — Ecken auf Gehrung (Winkelhalbierende, exakt); Tests decken
+   L-Ecke und freies Ende.
+5. **Splat-Kontext-Layer** — .splat/.ply (LingBot-Map/gsplat-Kette) als Punktwolke im
+   Viewport; eigener leichter Renderer (iPad-tauglich), echtes Gaussian-Splatting bleibt
+   auf der 5090. Fertige Bibliothek evaluiert und verworfen (Renderer-Kollision, GPL-frei).
+6. **Treppe** (gerade Lauftreppe, Schrittmassregel, Grundriss-Symbol mit Lauflinie) —
+   bereits am Mittag committet.
+7. **CI** — KosmoOrbit-CI grün (Typecheck + 33 Tests + Build). Ehrlichkeit: der
+   Website-CI (`ci.yml`, security:check) ist **auch auf main rot** (vorbestehend,
+   docs/codex-Altlasten) — Website-Lane, von mir bewusst nicht angefasst; main wurde
+   in den Branch gemergt, kosmo-orbit/ blieb unberührt.
+
+**Stand:** 20 Commits, 33 Tests grün, alle fünf Module bedienbar. Offen laut ROADMAP:
+Embedding-RAG, KosmoDoc-Diagnosepanel, CH-Bauteilkatalog, Onboarding/cmdk-Politur,
+Desktop-Build-Verifikation via tauri-action.
