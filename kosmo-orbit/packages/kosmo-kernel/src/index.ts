@@ -34,4 +34,5 @@ export * from './model/zonenregeln';
 export * from './model/regelpresets';
 export * from './derive/variantenmatrix';
 export * from './derive/segmentierer';
+export * from './derive/raumtypcopilot';
 export * from './geometry/skeleton';

@@ -911,3 +911,27 @@ test('Custom-Kennzahlen (V2-F9): Formel erscheint im Kennzahlen-Panel', async ({
   await expect(panel).toContainText('Erstellungskosten');
   await expect(panel).toContainText('CHF');
 });
+
+test('Raumtyp-Copilot (V2-F10): Vorschlag-Chip → Übernehmen setzt den Raumtyp', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  const zoneId = await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const r = k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Flur', sia: 'VF',
+      outline: [{ x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 1800 }, { x: 0, y: 1800 }],
+    });
+    const id = r.patches[0].id;
+    k.state().select([id]);
+    return id;
+  });
+  await page.click('[data-testid="draw-toggle"]');
+  const chip = page.locator('[data-testid="raumtyp-vorschlag"]');
+  await expect(chip).toContainText('korridor');
+  await page.click('[data-testid="raumtyp-uebernehmen"]');
+  await expect(chip).toHaveCount(0);
+  expect(await page.evaluate((id) => window.__kosmo.state().doc.get(id).raumTyp, zoneId)).toBe('korridor');
+});

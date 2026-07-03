@@ -12,6 +12,7 @@ import { ZONENREGEL_KATALOG } from '../src/model/zonenregeln';
 import { variantenMatrix } from '../src/derive/variantenmatrix';
 import { segmentiere, sollMix } from '../src/derive/segmentierer';
 import { kennzahlenAuswerten } from '../src/derive/sia416';
+import { raumTypVorschlag } from '../src/derive/raumtypcopilot';
 import { polygonArea } from '../src/model/units';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
@@ -1934,5 +1935,29 @@ describe('Custom-Kennzahlen (V2-F9)', () => {
     expect(kennzahlenAuswerten(doc)).toHaveLength(0);
     doc.apply(invertPatches(r.patches));
     expect(kennzahlenAuswerten(doc)).toHaveLength(2);
+  });
+});
+
+describe('Raumtyp-Copilot (V2-F10)', () => {
+  it('schlägt korridor (Form), bad/zimmer/wohnen (Fläche) und treppenhaus (Treppe) vor', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const zone = (outline: { x: number; y: number }[]) => {
+      const r = execute(doc, 'design.zoneErstellen', { storeyId, name: 'Z', sia: 'HNF', outline });
+      return doc.get((r.patches[0] as { id: string }).id) as import('../src').Zone;
+    };
+    const flur = zone([{ x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 1800 }, { x: 0, y: 1800 }]);
+    expect(raumTypVorschlag(doc, flur)?.raumTyp).toBe('korridor');
+    const bad = zone([{ x: 0, y: 5000 }, { x: 2200, y: 5000 }, { x: 2200, y: 7000 }, { x: 0, y: 7000 }]);
+    expect(raumTypVorschlag(doc, bad)?.raumTyp).toBe('bad');
+    const wohnen = zone([{ x: 0, y: 10000 }, { x: 6000, y: 10000 }, { x: 6000, y: 14000 }, { x: 0, y: 14000 }]);
+    expect(raumTypVorschlag(doc, wohnen)?.raumTyp).toBe('wohnen');
+    const th = zone([{ x: 20000, y: 0 }, { x: 24000, y: 0 }, { x: 24000, y: 4000 }, { x: 20000, y: 4000 }]);
+    execute(doc, 'design.treppeErstellen', { storeyId, a: { x: 21000, y: 1000 }, b: { x: 23000, y: 1000 }, width: 1200 });
+    expect(raumTypVorschlag(doc, th)?.raumTyp).toBe('treppenhaus');
+    // Zone MIT Raumtyp: kein Vorschlag
+    execute(doc, 'design.raumTypSetzen', { zoneId: flur.id, raumTyp: 'korridor' });
+    expect(raumTypVorschlag(doc, doc.get(flur.id) as import('../src').Zone)).toBeNull();
   });
 });

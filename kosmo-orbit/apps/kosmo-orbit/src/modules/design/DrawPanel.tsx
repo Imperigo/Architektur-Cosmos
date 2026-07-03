@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { deriveMengen, type Entity, type MassBody, type Roof, type Slab, type Stair, type Wall, type Zone, type Assembly } from '@kosmo/kernel';
+import { deriveMengen, raumTypVorschlag, type Entity, type MassBody, type Roof, type Slab, type Stair, type Wall, type Zone, type Assembly } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
@@ -46,6 +46,39 @@ const IFC: Record<string, string> = {
   opening: 'IfcOpeningElement',
 };
 
+function RaumTypCopilot() {
+  const revision = useProject((s) => s.revision);
+  const selection = useProject((s) => s.selection);
+  const runCommand = useProject((s) => s.runCommand);
+  const doc = useProject.getState().doc;
+  void revision;
+  if (selection.length !== 1) return null;
+  const e = doc.get(selection[0]!);
+  if (!e || e.kind !== 'zone') return null;
+  const zone = e as Zone;
+  const v = raumTypVorschlag(doc, zone);
+  if (!v) return null;
+  return (
+    <div
+      data-testid="raumtyp-vorschlag"
+      style={{ display: 'flex', gap: 6, alignItems: 'center', padding: '4px 8px', fontSize: 11.5, borderBottom: '1px solid var(--k-line)' }}
+    >
+      <span style={{ color: 'var(--k-ink-soft)' }}>
+        Raumtyp? Kosmo meint «{v.raumTyp}» ({v.grund})
+      </span>
+      <div style={{ flex: 1 }} />
+      <KButton
+        size="sm"
+        tone="quiet"
+        data-testid="raumtyp-uebernehmen"
+        onClick={() => runCommand('design.raumTypSetzen', { zoneId: zone.id, raumTyp: v.raumTyp })}
+      >
+        Übernehmen
+      </KButton>
+    </div>
+  );
+}
+
 export function DrawPanel() {
   const revision = useProject((s) => s.revision);
   const selection = useProject((s) => s.selection);
@@ -81,6 +114,7 @@ export function DrawPanel() {
         boxShadow: 'var(--k-shadow-overlay)',
       }}
     >
+      <RaumTypCopilot />
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px' }}>
         <Badge hue="var(--k-mod-draw)">KosmoDraw</Badge>
         <div style={{ flex: 1 }} />
