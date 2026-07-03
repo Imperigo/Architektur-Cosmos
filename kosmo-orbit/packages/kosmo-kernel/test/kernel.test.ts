@@ -962,3 +962,80 @@ describe('Blatt-Pflege (anpassen, entfernen)', () => {
     expect((doc.get(sheetId) as import('../src').Sheet).placements[0]!.scale).toBe(50);
   });
 });
+
+describe('Mehrfach-Wandknoten (V2-A1)', () => {
+  const wandbau = () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a, b });
+    return { doc, storeyId, wand };
+  };
+  const artefaktVon = (arts: ReturnType<typeof deriveAll>, prefix: string) =>
+    arts.filter((a) => a.entityId.startsWith(prefix));
+
+  it('Plus-Knoten (4×90°): Wände ziehen sich auf ±180 zurück, Knotenstück füllt das Quadrat', () => {
+    const { doc, wand } = wandbau();
+    wand({ x: -5000, y: 0 }, { x: 0, y: 0 });
+    wand({ x: 0, y: 0 }, { x: 5000, y: 0 });
+    wand({ x: 0, y: 0 }, { x: 0, y: 5000 });
+    wand({ x: 0, y: 0 }, { x: 0, y: -5000 });
+    const arts = deriveAll(doc);
+    const knoten = artefaktVon(arts, 'knoten:');
+    expect(knoten).toHaveLength(1);
+    // Knotenstück = Quadrat ±180 (Aufbau 360)
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    const kp = knoten[0]!.positions;
+    for (let i = 0; i < kp.length; i += 3) {
+      minX = Math.min(minX, kp[i]!); maxX = Math.max(maxX, kp[i]!);
+      minY = Math.min(minY, kp[i + 1]!); maxY = Math.max(maxY, kp[i + 1]!);
+    }
+    expect(minX).toBeCloseTo(-180, 0);
+    expect(maxX).toBeCloseTo(180, 0);
+    expect(minY).toBeCloseTo(-180, 0);
+    expect(maxY).toBeCloseTo(180, 0);
+    // Westwand endet exakt an der Fuge x=−180 (kein Loch, kein Überstand)
+    const west = arts.find((a) => a.entityId === (doc.byKind('wall')[0] as { id: string }).id)!;
+    let wMaxX = -Infinity;
+    for (let i = 0; i < west.positions.length; i += 3) wMaxX = Math.max(wMaxX, west.positions[i]!);
+    expect(wMaxX).toBeCloseTo(-180, 0);
+  });
+
+  it('T aus drei Endpunkten: durchlaufende Fuge bleibt bündig, Abzweig stösst an', () => {
+    const { doc, wand } = wandbau();
+    wand({ x: -5000, y: 0 }, { x: 0, y: 0 });
+    wand({ x: 0, y: 0 }, { x: 5000, y: 0 });
+    wand({ x: 0, y: 0 }, { x: 0, y: 4000 });
+    const arts = deriveAll(doc);
+    expect(artefaktVon(arts, 'knoten:')).toHaveLength(1);
+    // Südfuge der Ost-Wand läuft bis zum Knoten (Ecke bei s=0),
+    // die Nordecke zieht sich auf x=+180 zurück
+    const ost = arts.find((a) => a.entityId === (doc.byKind('wall')[1] as { id: string }).id)!;
+    let minXanSued = Infinity;
+    let minXanNord = Infinity;
+    for (let i = 0; i < ost.positions.length; i += 3) {
+      const x = ost.positions[i]!;
+      const y = ost.positions[i + 1]!;
+      if (Math.abs(y - -180) < 1) minXanSued = Math.min(minXanSued, x);
+      if (Math.abs(y - 180) < 1) minXanNord = Math.min(minXanNord, x);
+    }
+    expect(minXanSued).toBeCloseTo(0, 0);
+    expect(minXanNord).toBeCloseTo(180, 0);
+    // Keine NaN in irgendeinem Artefakt
+    for (const a of arts) {
+      for (let i = 0; i < a.positions.length; i++) expect(Number.isFinite(a.positions[i]!)).toBe(true);
+    }
+  });
+
+  it('Fünf Wände am Stern: Knotenstück existiert, nichts explodiert', () => {
+    const { doc, wand } = wandbau();
+    for (let i = 0; i < 5; i++) {
+      const a = (i * 2 * Math.PI) / 5;
+      wand({ x: 0, y: 0 }, { x: Math.round(4000 * Math.cos(a)), y: Math.round(4000 * Math.sin(a)) });
+    }
+    const arts = deriveAll(doc);
+    expect(artefaktVon(arts, 'knoten:')).toHaveLength(1);
+    for (const a of arts) {
+      for (let i = 0; i < a.positions.length; i++) expect(Number.isFinite(a.positions[i]!)).toBe(true);
+    }
+  });
+});

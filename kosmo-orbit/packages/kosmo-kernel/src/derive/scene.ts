@@ -40,6 +40,56 @@ export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
       if (a) out.push(a);
     }
   }
+  out.push(...deriveKnotenstuecke(doc));
+  return out;
+}
+
+/**
+ * Knotenstücke: an Mehrfachknoten (3+ Wandenden) ziehen sich die Wände auf
+ * ihre Fugenecken zurück (miterWallEnds) — das Eckenpolygon dazwischen wird
+ * hier als eigener Körper gefüllt: kein Loch, kein Überlappen, saubere
+ * Kanten in Plan, Schnitt und Axo (gleiche Ableitung überall).
+ */
+function deriveKnotenstuecke(doc: KosmoDoc): GeometryArtifact[] {
+  const out: GeometryArtifact[] = [];
+  const gesehen = new Set<string>();
+  for (const w of doc.byKind<Wall>('wall')) {
+    for (const P of [w.a, w.b]) {
+      const key = `${w.storeyId}:${Math.round(P.x)}:${Math.round(P.y)}`;
+      if (gesehen.has(key)) continue;
+      gesehen.add(key);
+      const glieder = knotenGlieder(doc, w.storeyId, P);
+      if (glieder.length < 3) continue;
+      const ecken = knotenEcken(glieder, P);
+      if (!ecken || ecken.ecken.length < 3) continue;
+      // Höhe: gemeinsamer Bereich aller beteiligten Wände
+      let zBase = -Infinity;
+      let zTop = Infinity;
+      let material = 'beton';
+      for (const g of glieder) {
+        const storey = doc.get<Storey>(g.wall.storeyId);
+        const asm = doc.get<Assembly>(g.wall.assemblyId);
+        if (!storey || storey.kind !== 'storey' || !asm || asm.kind !== 'assembly') continue;
+        const h = wallHeights(doc, g.wall, storey);
+        zBase = Math.max(zBase, h.zBase);
+        zTop = Math.min(zTop, h.zTop);
+        const core = asm.layers.find((l) => l.function === 'tragend') ?? asm.layers[0];
+        if (core) material = core.material;
+      }
+      if (!Number.isFinite(zBase) || zTop <= zBase) continue;
+      // Polygon CCW ausrichten (extrudePolygon erwartet positive Fläche)
+      let flaeche = 0;
+      const e = ecken.ecken;
+      for (let i = 0; i < e.length; i++) {
+        const a = e[i]!;
+        const b = e[(i + 1) % e.length]!;
+        flaeche += a.x * b.y - b.x * a.y;
+      }
+      const poly = flaeche >= 0 ? e : [...e].reverse();
+      const art = extrudePolygon(`knoten:${key}`, material, poly, [], zBase, zTop);
+      if (art) out.push(art);
+    }
+  }
   return out;
 }
 
@@ -80,18 +130,114 @@ function deriveWall(doc: KosmoDoc, wall: Wall): GeometryArtifact | null {
   return artifact;
 }
 
+/** Wandende an einem Knoten: Richtung in den Körper + Fugenabstände beidseits. */
+interface KnotenGlied {
+  wall: Wall;
+  endIdx: 0 | 1;
+  /** Richtung vom Knoten in den Wandkörper (Einheitsvektor). */
+  v: { x: number; y: number };
+  /** Fugenabstand der Fläche links von v (CCW-Seite). */
+  ccwDist: number;
+  /** Fugenabstand der Fläche rechts von v (CW-Seite). */
+  cwDist: number;
+}
+
+function knotenGlieder(doc: KosmoDoc, storeyId: string, P: Pt): KnotenGlied[] {
+  const out: KnotenGlied[] = [];
+  for (const w of doc.byKind<Wall>('wall')) {
+    if (w.storeyId !== storeyId) continue;
+    const asm = doc.get<Assembly>(w.assemblyId);
+    if (!asm || asm.kind !== 'assembly') continue;
+    const d = axisDirection(w);
+    const { offsetLeft, offsetRight } = wallFrame(w, asm);
+    for (const endIdx of [0, 1] as const) {
+      const Q = endIdx === 0 ? w.a : w.b;
+      if (Math.abs(Q.x - P.x) > 1 || Math.abs(Q.y - P.y) > 1) continue;
+      const v = endIdx === 0 ? d : { x: -d.x, y: -d.y };
+      // left(v): Ende a → n, Ende b → −n ⇒ CCW-Abstand wechselt die Seite
+      out.push({
+        wall: w,
+        endIdx,
+        v,
+        ccwDist: endIdx === 0 ? offsetLeft : offsetRight,
+        cwDist: endIdx === 0 ? offsetRight : offsetLeft,
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * Ecken eines Mehrfachknotens: Glieder CCW sortieren; zwischen Nachbar i
+ * (seine CCW-Fläche) und i+1 (seine CW-Fläche) liegt genau eine Ecke —
+ * der Schnittpunkt der beiden Fugenlinien. sI/uI sind die Achsabstände
+ * der Ecke vom Knoten (für Rückzug und Kappung).
+ */
+function knotenEcken(
+  glieder: KnotenGlied[],
+  P: Pt,
+): { ecken: Pt[]; s: number[]; u: number[] } | null {
+  const KAPPE = 2000;
+  const sortiert = [...glieder].sort(
+    (a, b) => Math.atan2(a.v.y, a.v.x) - Math.atan2(b.v.y, b.v.x),
+  );
+  const N = sortiert.length;
+  const ecken: Pt[] = [];
+  const sArr: number[] = [];
+  const uArr: number[] = [];
+  for (let i = 0; i < N; i++) {
+    const gi = sortiert[i]!;
+    const gj = sortiert[(i + 1) % N]!;
+    const Li = { x: -gi.v.y, y: gi.v.x };
+    const Lj = { x: -gj.v.y, y: gj.v.x };
+    // P + s·vi + ccwDist_i·Li  =  P + u·vj − cwDist_j·Lj
+    const rx = -gi.ccwDist * Li.x - gj.cwDist * Lj.x;
+    const ry = -gi.ccwDist * Li.y - gj.cwDist * Lj.y;
+    const det = gj.v.x * gi.v.y - gi.v.x * gj.v.y;
+    if (Math.abs(det) < 1e-6) {
+      // Gegenläufig kolinear (durchlaufende Wand mit Abzweig): fallen die
+      // beiden Fugen zusammen, liegt die Ecke auf dem Fusspunkt (s = u = 0);
+      // sonst (verschiedene Dicken) bleibt der Knoten stumpf.
+      const diff =
+        (-gj.cwDist * Lj.x - gi.ccwDist * Li.x) * Li.x +
+        (-gj.cwDist * Lj.y - gi.ccwDist * Li.y) * Li.y;
+      if (Math.abs(diff) > 1) return null;
+      ecken.push({ x: P.x + gi.ccwDist * Li.x, y: P.y + gi.ccwDist * Li.y });
+      sArr.push(0);
+      uArr.push(0);
+      continue;
+    }
+    const sI = (rx * -gj.v.y - -gj.v.x * ry) / det;
+    const uI = (gi.v.x * ry - rx * gi.v.y) / det;
+    if (Math.abs(sI) > KAPPE || Math.abs(uI) > KAPPE) return null;
+    ecken.push({
+      x: P.x + sI * gi.v.x + gi.ccwDist * Li.x,
+      y: P.y + sI * gi.v.y + gi.ccwDist * Li.y,
+    });
+    sArr.push(sI);
+    uArr.push(uI);
+  }
+  // Glieder-Reihenfolge der Sortierung zurückgeben (Index-Zuordnung via Referenz)
+  glieder.length = 0;
+  glieder.push(...sortiert);
+  return { ecken, s: sArr, u: uArr };
+}
+
 /**
  * Wandknoten: Gehrung an Ecken. Treffen sich genau zwei Wandenden in einem
  * Punkt, wird die Stirnfläche auf die Winkelhalbierende geschert — beide
  * Körper teilen dieselbe Fugenebene (kein Überlappen, kein Loch, keine
  * z-kämpfenden Deckflächen). T-Stösse stossen bündig an die nahe Fläche
- * der Zielwand; Mehrfachknoten bleiben stumpf.
+ * der Zielwand. Mehrfachknoten (3+): jede Wand zieht sich auf ihre beiden
+ * Fugenecken zurück; das verbleibende Knotenpolygon füllt deriveAll als
+ * eigenes Knotenstück.
  */
 function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, length: number): void {
   const d = axisDirection(wall);
   const n = { x: -d.y, y: d.x };
-  const shearK: [number, number] = [0, 0];
-  const shiftS: [number, number] = [0, 0];
+  // Längsversatz je Ende als affine Funktion des Querabstands: t(o) = A + B·o
+  const tA: [number, number] = [0, 0];
+  const tB: [number, number] = [0, 0];
   const active: [boolean, boolean] = [false, false];
 
   const ends: [Pt, Pt] = [wall.a, wall.b];
@@ -134,10 +280,34 @@ function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, le
         const ziel = dm < 0 ? offsetLeft : -offsetRight; // nahe Fläche auf unserer Seite
         const w = (ziel - a0) / dm;
         if (Math.abs(w) > Math.min(length * 0.9, 2000)) continue;
-        shiftS[endIdx] = endIdx === 1 ? w : -w;
+        tA[endIdx] = endIdx === 1 ? w : -w;
         active[endIdx] = true;
         break;
       }
+      continue;
+    }
+    if (outgoing.length > 1) {
+      // Mehrfachknoten: Rückzug auf die beiden Fugenecken (affiner Versatz)
+      const glieder = knotenGlieder(doc, wall.storeyId, P);
+      if (glieder.length < 3) continue;
+      const ecken = knotenEcken(glieder, P);
+      if (!ecken) continue; // degeneriert — stumpf wie bisher
+      const idx = glieder.findIndex((g) => g.wall.id === wall.id && g.endIdx === endIdx);
+      if (idx < 0) continue;
+      const prev = (idx - 1 + glieder.length) % glieder.length;
+      // t entlang dLoc (über den Knoten hinaus positiv): Ecke bei Achsabstand s ⇒ t = −s
+      // t entlang dLoc; die Scherung arbeitet entlang +d → Ende a spiegeln
+      const f = endIdx === 1 ? 1 : -1;
+      const tCcw = f * -ecken.s[idx]!;
+      const tCw = f * -ecken.u[prev]!;
+      const g = glieder[idx]!;
+      // Quer-Offsets der beiden Seiten im Wand-Frame (o entlang n)
+      const oCcw = endIdx === 0 ? g.ccwDist : -g.ccwDist;
+      const oCw = endIdx === 0 ? -g.cwDist : g.cwDist;
+      if (Math.abs(oCcw - oCw) < 1e-6) continue;
+      tB[endIdx] = (tCcw - tCw) / (oCcw - oCw);
+      tA[endIdx] = tCcw - tB[endIdx]! * oCcw;
+      active[endIdx] = true;
       continue;
     }
     if (outgoing.length !== 1) continue;
@@ -151,7 +321,7 @@ function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, le
     if (Math.abs(bn) < 0.2) continue; // fast kolinear — keine Gehrung
     const k = bd / bn;
     if (Math.abs(k) > 3) continue; // spitzer Winkel — Gehrungs-Exzess vermeiden
-    shearK[endIdx] = k;
+    tB[endIdx] = endIdx === 1 ? k : -k;
     active[endIdx] = true;
   }
   if (!active[0] && !active[1]) return;
@@ -163,8 +333,8 @@ function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, le
       const s = rx * d.x + ry * d.y;
       const o = rx * n.x + ry * n.y;
       let t = 0;
-      if (active[0] && s < 1) t = -(o * shearK[0]) + shiftS[0];
-      else if (active[1] && s > length - 1) t = o * shearK[1] + shiftS[1];
+      if (active[0] && s < 1) t = tB[0] * o + tA[0];
+      else if (active[1] && s > length - 1) t = tB[1] * o + tA[1];
       if (t !== 0) {
         arr[i] = arr[i]! + d.x * t;
         arr[i + 1] = arr[i + 1]! + d.y * t;
