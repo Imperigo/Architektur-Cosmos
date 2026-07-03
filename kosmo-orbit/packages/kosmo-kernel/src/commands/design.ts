@@ -586,15 +586,20 @@ export const generateFloorplan = registerCommand({
     }
     // Plan-Library (Finch-Prinzip): passt eine gespeicherte Vorlage, gewinnt
     // sie gegen das Rezept — Name enthält den Wohnungstyp, Stretch moderat.
-    // v1 nur für Korridor unten/oben (links/rechts = Spiegel-Kapitel).
-    if ((seite === 'unten' || seite === 'oben') && wohnung.program) {
+    // Vorlagen sind mit Korridor UNTEN gespeichert (u = der Kante entlang,
+    // v = von ihr weg); für die anderen Seiten wird transformiert. Spiegel-
+    // Seiten (oben/links) drehen die Wicklung zurück; Möbel-Rotationen
+    // folgen der Abbildung (unten r, oben 180−r, links 270−r, rechts 90+r).
+    if (wohnung.program) {
       let bbMinX = Infinity, bbMaxX = -Infinity, bbMinY = Infinity, bbMaxY = -Infinity;
       for (const pt of wohnung.outline) {
         bbMinX = Math.min(bbMinX, pt.x); bbMaxX = Math.max(bbMaxX, pt.x);
         bbMinY = Math.min(bbMinY, pt.y); bbMaxY = Math.max(bbMaxY, pt.y);
       }
-      const wb = bbMaxX - bbMinX;
-      const wt = bbMaxY - bbMinY;
+      // Breite = der Korridorkante entlang, Tiefe = von ihr weg
+      const vertikalSeite = seite === 'links' || seite === 'rechts';
+      const wb = vertikalSeite ? bbMaxY - bbMinY : bbMaxX - bbMinX;
+      const wt = vertikalSeite ? bbMaxX - bbMinX : bbMaxY - bbMinY;
       const passend = doc.settings.vorlagen
         .filter((v) => v.name.toLowerCase().includes(wohnung.program!.toLowerCase()))
         .map((v) => ({ v, sx: wb / v.breite, sy: wt / v.hoehe }))
@@ -602,14 +607,30 @@ export const generateFloorplan = registerCommand({
         .sort((a, b) => Math.abs(a.sx * a.sy - 1) - Math.abs(b.sx * b.sy - 1))[0];
       if (passend) {
         const { v, sx, sy } = passend;
-        const tx = (u: number, w: number) => ({
-          x: Math.round(bbMinX + u * sx),
-          y: seite === 'unten' ? Math.round(bbMinY + w * sy) : Math.round(bbMaxY - w * sy),
-        });
+        const tx = (u: number, w: number) => {
+          const su = u * sx;
+          const sw = w * sy;
+          switch (seite) {
+            case 'unten': return { x: Math.round(bbMinX + su), y: Math.round(bbMinY + sw) };
+            case 'oben': return { x: Math.round(bbMinX + su), y: Math.round(bbMaxY - sw) };
+            case 'links': return { x: Math.round(bbMinX + sw), y: Math.round(bbMinY + su) };
+            case 'rechts': return { x: Math.round(bbMaxX - sw), y: Math.round(bbMinY + su) };
+          }
+        };
+        // Spiegel-Seiten (Determinante −1) drehen die Wicklung um
+        const gespiegelt = seite === 'oben' || seite === 'links';
+        const moebelRot = (r: number) => {
+          switch (seite) {
+            case 'unten': return r;
+            case 'oben': return ((180 - r) % 360 + 360) % 360;
+            case 'links': return ((270 - r) % 360 + 360) % 360;
+            case 'rechts': return (90 + r) % 360;
+          }
+        };
         const patches: AnyPatch[] = [];
         for (const vz of v.zonen) {
           const outline = vz.outline.map((pt) => tx(pt.x, pt.y));
-          if (seite === 'oben') outline.reverse(); // Spiegel → Wicklung zurückdrehen
+          if (gespiegelt) outline.reverse();
           patches.push(added({
             id: newId('zone'), kind: 'zone' as const, storeyId: wohnung.storeyId,
             outline, name: vz.name, sia: vz.sia as Zone['sia'],
@@ -619,8 +640,7 @@ export const generateFloorplan = registerCommand({
         for (const m of v.moebel ?? []) {
           patches.push(added({
             id: newId('moebel'), kind: 'furniture' as const, storeyId: wohnung.storeyId,
-            typ: m.typ, at: tx(m.at.x, m.at.y),
-            rotationGrad: seite === 'unten' ? m.rotationGrad : (m.rotationGrad + 180) % 360,
+            typ: m.typ, at: tx(m.at.x, m.at.y), rotationGrad: moebelRot(m.rotationGrad),
           }));
         }
         return patches;
@@ -719,33 +739,39 @@ export const placeTemplate = registerCommand({
     at: z.object({ x: z.number(), y: z.number() }),
     breite: z.number().positive().nullable().default(null),
     hoehe: z.number().positive().nullable().default(null),
+    /** true = an der senkrechten Mittelachse gespiegelt (Ost↔West). */
+    spiegeln: z.boolean().default(false),
   }),
-  summarize: (p) => `Vorlage «${p.name}» absetzen`,
+  summarize: (p) => `Vorlage «${p.name}» absetzen${p.spiegeln ? ' (gespiegelt)' : ''}`,
   run: (doc, p) => {
     require<Storey>(doc, p.storeyId, 'storey');
     const vorlage = doc.settings.vorlagen.find((v) => v.name === p.name);
     if (!vorlage) throw new CommandError(`Vorlage «${p.name}» existiert nicht`);
     const sx = p.breite ? p.breite / vorlage.breite : 1;
     const sy = p.hoehe ? p.hoehe / vorlage.hoehe : 1;
-    const patches: AnyPatch[] = vorlage.zonen.map((vz) =>
-      added({
+    // Spiegelung an der senkrechten Mittelachse: u → Breite − u
+    const u = (x: number) => (p.spiegeln ? vorlage.breite - x : x);
+    const patches: AnyPatch[] = vorlage.zonen.map((vz) => {
+      const outline = vz.outline.map((pt) => ({
+        x: Math.round(p.at.x + u(pt.x) * sx),
+        y: Math.round(p.at.y + pt.y * sy),
+      }));
+      if (p.spiegeln) outline.reverse();
+      return added({
         id: newId('zone'),
         kind: 'zone' as const,
         storeyId: p.storeyId,
         name: vz.name,
         sia: vz.sia as Zone['sia'],
         ...(vz.raumTyp ? { raumTyp: vz.raumTyp } : {}),
-        outline: vz.outline.map((pt) => ({
-          x: Math.round(p.at.x + pt.x * sx),
-          y: Math.round(p.at.y + pt.y * sy),
-        })),
-      }),
-    );
+        outline,
+      });
+    });
     for (const m of vorlage.moebel ?? []) {
       patches.push(added({
         id: newId('moebel'), kind: 'furniture' as const, storeyId: p.storeyId,
-        typ: m.typ, at: { x: Math.round(p.at.x + m.at.x * sx), y: Math.round(p.at.y + m.at.y * sy) },
-        rotationGrad: m.rotationGrad,
+        typ: m.typ, at: { x: Math.round(p.at.x + u(m.at.x) * sx), y: Math.round(p.at.y + m.at.y * sy) },
+        rotationGrad: p.spiegeln ? ((360 - m.rotationGrad) % 360) : m.rotationGrad,
       }));
     }
     return patches;

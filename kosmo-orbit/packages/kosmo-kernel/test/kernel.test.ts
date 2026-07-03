@@ -2270,3 +2270,50 @@ describe('Plan-Library v2 (Vorlagen speisen den Generator)', () => {
     expect(doc.byKind<Zone>('zone').some((z) => z.name === 'Diele')).toBe(true);
   });
 });
+
+describe('Spiegel-Geometrie der Plan-Library', () => {
+  const bauMuster = (doc: KosmoDoc, storeyId: string) => {
+    const z = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Master', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+    // Bett links unten, Rückkante an der Korridorwand (rot 0)
+    execute(doc, 'design.moebelSetzen', { storeyId, typ: 'bett-doppel', at: { x: 2000, y: 100 }, rotationGrad: 0 });
+    execute(doc, 'design.vorlageSpeichern', { name: '2.5zi marktgerecht', zoneIds: [(z.patches[0] as { id: string }).id] });
+  };
+
+  it('Korridor links: Vorlage wird gedreht (Breite↔Höhe), Wicklung bleibt positiv', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    bauMuster(doc, storeyId);
+    // Wohnung hochkant: Korridorkante links → u läuft in y, v in x
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg L', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 20000, y: 0 }, { x: 28000, y: 0 }, { x: 28000, y: 10000 }, { x: 20000, y: 10000 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'links' });
+    const master = doc.byKind<Zone>('zone').find((z) => z.name === 'Master' && z.outline[0]!.x >= 20000)!;
+    expect(polygonArea(master.outline)).toBeGreaterThan(0); // Wicklung korrigiert
+    const xs = master.outline.map((p) => p.x);
+    const ys = master.outline.map((p) => p.y);
+    expect(Math.max(...xs) - Math.min(...xs)).toBe(8000); // Tiefe in x
+    expect(Math.max(...ys) - Math.min(...ys)).toBe(10000); // Breite in y
+    const bett = doc.byKind<import('../src').Furniture>('furniture').find((f) => f.at.x >= 20000)!;
+    expect(bett.rotationGrad).toBe(270); // 270 − 0
+  });
+
+  it('vorlageSetzen spiegeln: Ost↔West, Möbel-x klappt um, Fläche bleibt positiv', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    bauMuster(doc, storeyId);
+    execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: '2.5zi marktgerecht', at: { x: 40000, y: 0 }, breite: null, hoehe: null, spiegeln: true,
+    });
+    const master = doc.byKind<Zone>('zone').find((z) => z.name === 'Master' && z.outline[0]!.x >= 40000)!;
+    expect(polygonArea(master.outline)).toBeGreaterThan(0);
+    const bett = doc.byKind<import('../src').Furniture>('furniture').find((f) => f.at.x >= 40000)!;
+    expect(bett.at.x).toBe(40000 + (10000 - 2000)); // u gespiegelt
+  });
+});
