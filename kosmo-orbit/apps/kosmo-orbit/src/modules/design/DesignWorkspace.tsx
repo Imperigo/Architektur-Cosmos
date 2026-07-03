@@ -7,6 +7,7 @@ import {
   generiereVolumenstudien,
   geschossZu,
   variantenMatrix,
+  parzelleZuOutline,
   fassadenModule,
   moduleAlsCsv,
   magnetFang,
@@ -643,7 +644,10 @@ export function DesignWorkspace() {
             fontSize: 12.5,
           }}
         >
-          <span style={{ color: 'var(--k-ink-faint)' }}>Schattenstudie · Innerschweiz</span>
+          <span style={{ color: 'var(--k-ink-faint)' }} data-testid="sonne-standort-label">
+            Schattenstudie · {useProject.getState().doc.settings.standort?.label ?? 'Innerschweiz (Standard)'}
+          </span>
+          <StandortSuche />
           <input
             type="date"
             value={sonnenDatum}
@@ -1178,5 +1182,117 @@ function FassadenModulSektion() {
         Eckenregel: Module ab Ecke, Passstück am Kantenende — Vorfabrikation lebt von der Wiederholung.
       </span>
     </div>
+  );
+}
+
+
+/** V4: CH-Standort — Adresssuche (geo.admin.ch), Parzellen-Import, alles im Doc. */
+function StandortSuche() {
+  const runCommand = useProject((s) => s.runCommand);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+  const [text, setText] = useState('');
+  const [treffer, setTreffer] = useState<{ label: string; lat: number; lon: number; e: number; n: number }[]>([]);
+  const [meldung, setMeldung] = useState<string | null>(null);
+
+  const suchen = async () => {
+    if (text.trim().length < 3) return;
+    setMeldung(null);
+    try {
+      const res = await fetch(
+        `https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=${encodeURIComponent(text)}&type=locations&origins=address,parcel,gg25&limit=4&sr=2056`,
+      );
+      const json = (await res.json()) as { results?: { attrs: { label: string; lat: number; lon: number; y: number; x: number } }[] };
+      const liste = (json.results ?? []).map((r) => ({
+        label: r.attrs.label.replace(/<[^>]+>/g, ''),
+        lat: r.attrs.lat,
+        lon: r.attrs.lon,
+        e: r.attrs.y, // geo.admin: y = Ost, x = Nord (LV95)
+        n: r.attrs.x,
+      }));
+      setTreffer(liste);
+      if (liste.length === 0) setMeldung('Nichts gefunden.');
+    } catch {
+      setMeldung('Kein Netz — Standortsuche nicht verfügbar (Rest der App unberührt).');
+    }
+  };
+
+  const parzelleImportieren = async () => {
+    const { doc } = useProject.getState();
+    const standort = doc.settings.standort;
+    if (!standort || !activeStoreyId) return;
+    setMeldung(null);
+    try {
+      const g = `${standort.e},${standort.n}`;
+      const ext = `${standort.e - 500},${standort.n - 500},${standort.e + 500},${standort.n + 500}`;
+      const res = await fetch(
+        `https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometry=${g}&geometryType=esriGeometryPoint&layers=all:ch.kantone.cadastralwebmap-farbe&mapExtent=${ext}&imageDisplay=100,100,96&tolerance=0&returnGeometry=true&sr=2056`,
+      );
+      const json = (await res.json()) as { results?: { geometry?: { rings?: number[][][] } }[] };
+      const rings = (json.results ?? []).flatMap((r) => r.geometry?.rings ?? []);
+      const imp = parzelleZuOutline(rings);
+      if (!imp) {
+        setMeldung('Keine Parzellengeometrie an diesem Punkt.');
+        return;
+      }
+      if (imp.flaeche > 100000) {
+        setMeldung(`Getroffene Fläche ist ${Math.round(imp.flaeche / 1000)}k m² — das ist eher eine Gemeinde als eine Parzelle. Adresse präziser wählen.`);
+        return;
+      }
+      runCommand('design.zoneErstellen', {
+        storeyId: activeStoreyId,
+        outline: imp.outline,
+        name: `Parzelle ${standort.label}`,
+        sia: 'KF',
+      });
+      setMeldung(`Parzelle importiert (${imp.flaeche.toLocaleString('de-CH')} m², Nord = +y).`);
+    } catch {
+      setMeldung('Kein Netz — Parzellen-Import nicht verfügbar.');
+    }
+  };
+
+  const standortGesetzt = !!useProject.getState().doc.settings.standort;
+  return (
+    <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center', position: 'relative' }}>
+      <input
+        placeholder="Adresse / Parzelle …"
+        value={text}
+        data-testid="standort-suche"
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && void suchen()}
+        style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 170 }}
+      />
+      <KButton size="sm" tone="quiet" data-testid="standort-suchen" onClick={() => void suchen()}>
+        Suchen
+      </KButton>
+      {standortGesetzt && (
+        <KButton size="sm" tone="quiet" data-testid="parzelle-import" onClick={() => void parzelleImportieren()}>
+          Parzelle importieren
+        </KButton>
+      )}
+      {treffer.length > 0 && (
+        <div
+          style={{
+            position: 'absolute', top: '110%', left: 0, zIndex: 40, minWidth: 260,
+            background: 'var(--k-raised)', border: '1px solid var(--k-line-strong)', borderRadius: 8,
+            boxShadow: 'var(--k-shadow, 0 6px 18px rgba(0,0,0,0.18))', display: 'grid',
+          }}
+          data-testid="standort-treffer"
+        >
+          {treffer.map((t, i) => (
+            <button
+              key={i}
+              style={{ textAlign: 'left', padding: '6px 10px', background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
+              onClick={() => {
+                runCommand('design.standortSetzen', { label: t.label, lat: t.lat, lon: t.lon, e: t.e, n: t.n });
+                setTreffer([]);
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {meldung && <span style={{ color: 'var(--k-ink-faint)', maxWidth: 340 }} data-testid="standort-meldung">{meldung}</span>}
+    </span>
   );
 }

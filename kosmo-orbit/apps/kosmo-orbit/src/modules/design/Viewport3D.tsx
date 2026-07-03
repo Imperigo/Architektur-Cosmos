@@ -26,7 +26,8 @@ export function setGlbContext(url: string | null): void {
 // Sonnenstand (Q12 Schattenstudie): echtes Datum/Uhrzeit statt Studio-Sonne
 let sunDate: Date | null = null;
 let sunRevision = 0;
-export const SONNE_STANDORT = { lat: 47.05, lng: 8.31 }; // Innerschweiz
+// Fallback Innerschweiz; mit gesetztem Projektstandort (V4) gewinnt das Doc
+export const SONNE_STANDORT = { lat: 47.05, lng: 8.31 };
 export function setSunDate(d: Date | null): void {
   sunDate = d;
   sunRevision++;
@@ -133,7 +134,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         sun.intensity = 2.6;
         return;
       }
-      const p = SunCalc.getPosition(sunDate, SONNE_STANDORT.lat, SONNE_STANDORT.lng);
+      const standort = useProject.getState().doc.settings.standort;
+      const p = SunCalc.getPosition(
+        sunDate,
+        standort?.lat ?? SONNE_STANDORT.lat,
+        standort?.lon ?? SONNE_STANDORT.lng,
+      );
       // suncalc: azimuth 0 = Süd, +West; three: x Ost, y oben, z Süd
       const d = 70;
       const x = -Math.sin(p.azimuth) * Math.cos(p.altitude) * d;

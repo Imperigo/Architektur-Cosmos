@@ -16,6 +16,7 @@ import { raumTypVorschlag } from '../src/derive/raumtypcopilot';
 import { finalerRenderPrompt, renderPromptBausteine } from '../src/derive/renderprompt';
 import { moebelGeometrie } from '../src/derive/moebel';
 import { fassadenModule, moduleAlsCsv } from '../src/derive/fassadenmodule';
+import { parzelleZuOutline } from '../src/derive/standort';
 import { polygonArea } from '../src/model/units';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
@@ -2140,5 +2141,29 @@ describe('Zonen-Vorlagen (V2-F7)', () => {
         storeyId: (eg.patches[0] as { id: string }).id, name: 'gibtsnicht', at: { x: 0, y: 0 }, breite: null, hoehe: null,
       }),
     ).toThrow(/existiert nicht/);
+  });
+});
+
+describe('CH-Standort (V2-V4)', () => {
+  it('standortSetzen speichert im Doc (offline beim zweiten Öffnen)', () => {
+    const doc = new KosmoDoc();
+    execute(doc, 'design.standortSetzen', { label: 'Zug', lat: 47.17, lon: 8.52, e: 2681500, n: 1224500 });
+    const json = doc.toJSON();
+    const wieder = KosmoDoc.fromJSON(json);
+    expect(wieder.settings.standort?.label).toBe('Zug');
+    expect(wieder.settings.standort?.lat).toBeCloseTo(47.17);
+  });
+
+  it('parzelleZuOutline: kleinster Ring gewinnt, LV95-m → lokale mm, Nord = +y', () => {
+    const gemeinde = [[2680000, 1220000], [2690000, 1220000], [2690000, 1230000], [2680000, 1230000], [2680000, 1220000]];
+    const parzelle = [[2681500, 1224500], [2681530, 1224500], [2681530, 1224520], [2681500, 1224520], [2681500, 1224500]];
+    const imp = parzelleZuOutline([gemeinde, parzelle])!;
+    expect(imp.flaeche).toBe(600); // 30 × 20 m
+    expect(imp.outline).toHaveLength(4); // Schlusspunkt weg
+    const xs = imp.outline.map((p) => p.x);
+    expect(Math.max(...xs) - Math.min(...xs)).toBe(30000); // 30 m in mm
+    // Nordkante (N grösser) hat grössere y-Werte
+    const nordPunkt = imp.outline.find((p) => p.y > 0)!;
+    expect(nordPunkt).toBeDefined();
   });
 });

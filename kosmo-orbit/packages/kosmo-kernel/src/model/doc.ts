@@ -72,8 +72,20 @@ export interface DocSettings {
   kennzahlFormeln: KennzahlFormel[];
   /** Zonen-Vorlagen (V2-F7): Layouts, achsweise streckbar wieder absetzbar. */
   vorlagen: ZonenVorlage[];
+  /** Projektstandort CH (V2-V4): einmal geholt, im Doc = offline verfügbar. */
+  standort: ProjektStandort | null;
   /** Parzellenfläche in m² (für AZ → zulässige aGF). */
   parzellenFlaeche: number | null;
+}
+
+/** Projektstandort (V2-V4): WGS84 für die Sonne, LV95 fürs Vermessen. */
+export interface ProjektStandort {
+  label: string;
+  lat: number;
+  lon: number;
+  /** LV95 Ost/Nord (m). */
+  e: number;
+  n: number;
 }
 
 /** Zonen-Vorlage (V2-F7): Zonen relativ zur BBox-Ecke, Grösse fürs Strecken. */
@@ -140,6 +152,7 @@ export const defaultSettings: DocSettings = {
   raumRegeln: [],
   kennzahlFormeln: [],
   vorlagen: [],
+  standort: null,
 };
 
 export interface Patch {

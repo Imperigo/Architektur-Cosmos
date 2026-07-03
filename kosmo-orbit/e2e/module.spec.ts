@@ -1042,3 +1042,35 @@ test('Direktzeichnen (V2-V6): Live-m²-Label beim Volumen-Ziehen', async ({ page
   await expect(label).toBeVisible();
   await expect(label).toContainText('GF ~');
 });
+
+test('CH-Standort (V2-V4): Suche (gemockt) → Standort gesetzt → Parzelle als Zone', async ({ page }) => {
+  await page.route('**/rest/services/api/SearchServer**', (route) =>
+    route.fulfill({
+      json: { results: [{ attrs: { label: '<b>Baarerstrasse 1 Zug</b>', lat: 47.17, lon: 8.52, y: 2681500, x: 1224500 } }] },
+    }),
+  );
+  await page.route('**/rest/services/api/MapServer/identify**', (route) =>
+    route.fulfill({
+      json: {
+        results: [{ geometry: { rings: [
+          [[2681500, 1224500], [2681530, 1224500], [2681530, 1224520], [2681500, 1224520], [2681500, 1224500]],
+        ] } }],
+      },
+    }),
+  );
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="sonne-toggle"]');
+  await page.fill('[data-testid="standort-suche"]', 'Baarerstrasse 1');
+  await page.click('[data-testid="standort-suchen"]');
+  await page.click('[data-testid="standort-treffer"] button');
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.settings.standort?.label))
+    .toContain('Baarerstrasse');
+  await page.click('[data-testid="parzelle-import"]');
+  await expect(page.locator('[data-testid="standort-meldung"]')).toContainText('Parzelle importiert (600 m²');
+  const zone = await page.evaluate(() => window.__kosmo.state().doc.byKind('zone')[0]);
+  expect(zone.name).toContain('Parzelle');
+});

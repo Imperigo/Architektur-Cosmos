@@ -545,6 +545,28 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const setLocation = registerCommand({
+  id: 'design.standortSetzen',
+  title: 'Projektstandort setzen',
+  description:
+    'Setzt den CH-Projektstandort (label, WGS84 lat/lon für die Schattenstudie, LV95 e/n in Metern für Parzellen-Import). Wird im Projekt gespeichert — beim zweiten Öffnen auch offline da. null-Label löscht.',
+  params: z.object({
+    label: z.string().min(1),
+    lat: z.number().min(45).max(48),
+    lon: z.number().min(5).max(11),
+    e: z.number(),
+    n: z.number(),
+  }),
+  summarize: (p) => `Standort «${p.label}»`,
+  run: (doc, p) => [
+    {
+      settings: true as const,
+      before: doc.settings,
+      after: { ...doc.settings, standort: { label: p.label, lat: p.lat, lon: p.lon, e: p.e, n: p.n } },
+    },
+  ],
+});
+
 export const saveTemplate = registerCommand({
   id: 'design.vorlageSpeichern',
   title: 'Zonen-Vorlage speichern',
