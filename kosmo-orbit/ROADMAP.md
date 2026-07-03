@@ -81,6 +81,7 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
 
 **HomeStation-gebunden bleibt nur:** echte Renders (5090/ComfyUI), Whisper-/Piper-Qualität, OneDrive-Tenant-Login, LoRA-Zyklus, KosmoAR (Gerät), OS-Übernahme (V2, Q31).
 
+34a. **Härtetest-Runde 2** ✅ (03.07.): Tool-Call-Fuzzing (Markdown-Zäune werden jetzt geschält — der häufigste lokale-LLM-Fehler; jsonrepair, präzise zod-Meldungen, __proto__-sicher — 5 neue KI-Tests) · Sync-Konflikttest mit zwei echten Clients gegen den Hocuspocus-Server (Verschieben-gegen-Löschen konvergiert; Suite überspringt sich ehrlich ohne Server)
 34. **Publish-Vertiefung** ✅ (03.07.): Auswahl-Werkzeuge auf dem Blatt — Massstab wechseln + Titel umbenennen (publish.ansichtAnpassen), Blatt löschen (publish.blattEntfernen, undo-fähig), Texte direkt auf dem Blatt verschieben (Drag-Overlays → publish.textSetzen)
 
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.

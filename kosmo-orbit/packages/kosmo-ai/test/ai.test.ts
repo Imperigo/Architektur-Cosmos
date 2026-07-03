@@ -86,3 +86,57 @@ describe('ChatSession (Mock-Provider, gated)', () => {
     expect(text.length).toBeGreaterThan(0);
   });
 });
+
+describe('Härte: Tool-Call-Fuzzing (lokale LLMs liefern Müll)', () => {
+  const wandArgs = { storeyId: 's1', a: { x: 0, y: 0 }, b: { x: 5000, y: 0 }, assemblyId: 'a1' };
+
+  it('Markdown-Zäune um die Argumente werden geschält', () => {
+    const r = validateToolCall({
+      id: '1', name: 'design_wandZeichnen',
+      arguments: '```json\n' + JSON.stringify(wandArgs) + '\n```',
+    });
+    expect(r.ok).toBe(true);
+  });
+
+  it('einfache Anführungszeichen + Trailing-Comma werden repariert', () => {
+    const r = validateToolCall({
+      id: '2', name: 'design_wandZeichnen',
+      arguments: "{'storeyId': 's1', 'a': {'x': 0, 'y': 0}, 'b': {'x': 5000, 'y': 0}, 'assemblyId': 'a1',}",
+    });
+    expect(r.ok).toBe(true);
+  });
+
+  it('falsche Typen und fehlende Felder → präzise Meldung, kein Wurf', () => {
+    const r = validateToolCall({
+      id: '3', name: 'design_wandZeichnen',
+      arguments: JSON.stringify({ storeyId: 's1', a: { x: 'links', y: 0 } }),
+    });
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.error).toContain('a.x');
+      expect(r.error).toContain('b');
+    }
+  });
+
+  it('unbekanntes Werkzeug, kompletter Schrott, Extremwerte → saubere Fehler', () => {
+    expect(validateToolCall({ id: '4', name: 'design_hausBauen', arguments: '{}' }).ok).toBe(false);
+    expect(validateToolCall({ id: '5', name: 'design_wandZeichnen', arguments: '<xml>nein</xml>' }).ok).toBe(false);
+    const pitch = validateToolCall({
+      id: '6', name: 'design_dachErstellen',
+      arguments: JSON.stringify({ storeyId: 's1', outline: [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }], pitch: 89 }),
+    });
+    expect(pitch.ok).toBe(false);
+  });
+
+  it('Fremdschlüssel (__proto__ etc.) landen nicht in den geparsten Params', () => {
+    const r = validateToolCall({
+      id: '7', name: 'design_wandZeichnen',
+      arguments: JSON.stringify({ ...wandArgs, __proto__: { boese: true }, extra: 'weg' }),
+    });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect('extra' in (r.params as Record<string, unknown>)).toBe(false);
+      expect(({} as Record<string, unknown>)['boese']).toBeUndefined();
+    }
+  });
+});

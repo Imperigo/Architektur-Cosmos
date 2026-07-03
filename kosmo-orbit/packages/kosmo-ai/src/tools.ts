@@ -112,7 +112,12 @@ export function validateToolCall(call: ToolCall): ValidatedCall | FailedCall {
 
   let args: unknown = call.arguments;
   if (typeof args === 'string') {
-    const raw: string = args;
+    // Lokale Modelle packen JSON gern in Markdown-Zäune — vor dem Parsen schälen
+    const raw: string = args
+      .trim()
+      .replace(/^```(?:json)?\s*/i, '')
+      .replace(/```\s*$/, '')
+      .trim();
     try {
       args = JSON.parse(raw);
     } catch {
