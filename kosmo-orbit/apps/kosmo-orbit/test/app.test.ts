@@ -23,3 +23,22 @@ describe('KosmoPrepare Chunking', () => {
     expect(chunkText('   \n\n  ')).toEqual([]);
   });
 });
+
+describe('TKB-Demo v2 (Abendbatch C1)', () => {
+  it('lädt Bibliothek + Wohnhof-Kette: Wände, Fenster, Treppenhaus, keine Fluchtweg-Fehler', async () => {
+    const { loadTkbDemo } = await import('../src/state/demo-tkb');
+    const { useProject } = await import('../src/state/project-store');
+    const { pruefeGrundriss } = await import('@kosmo/kernel');
+    loadTkbDemo();
+    const { doc, activeStoreyId } = useProject.getState();
+    expect(doc.settings.projectName).toContain('TKB');
+    expect(doc.byKind('wall').length).toBeGreaterThan(10);
+    const fenster = doc.byKind('opening').filter((o) => (o as { openingType: string }).openingType === 'fenster');
+    expect(fenster.length).toBeGreaterThanOrEqual(8);
+    expect(doc.byKind('zone').filter((z) => (z as { raumTyp?: string }).raumTyp === 'treppenhaus')).toHaveLength(1);
+    expect(doc.byKind('stair')).toHaveLength(1);
+    // Fluchtweg: kein Fehler-Befund auf dem EG
+    const befunde = pruefeGrundriss(doc, activeStoreyId!);
+    expect(befunde.filter((b) => b.regel === 'Fluchtweg' && b.schwere === 'fehler')).toHaveLength(0);
+  });
+});

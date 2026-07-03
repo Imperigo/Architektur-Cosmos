@@ -60,8 +60,14 @@ test('Voller Entwurfs-Loop: TKB → Wand → Pläne → Kennzahlen → IFC', asy
   // Fenstersymbol (zwei Glaslinien) ist im abgeleiteten Grundriss-SVG
   await expect(page.locator('svg .fenster').first()).toBeAttached();
 
-  // 4) Kennzahlen leben (TKB: NGF 2814 m²)
-  await expect(page.getByText(/2.?814/).first()).toBeVisible();
+  // 4) Kennzahlen leben — Demo v2: Bibliothek (NGF 2814) + Wohnhof-Kette
+  await expect(page.getByText(/NGF/).first()).toBeVisible();
+  const demoStand = await page.evaluate(() => {
+    const doc = window.__kosmo.state().doc;
+    return { zonen: doc.byKind('zone').length, waende: doc.byKind('wall').length };
+  });
+  expect(demoStand.zonen).toBeGreaterThan(10); // 7 Bibliothek + Wohnhof-Räume
+  expect(demoStand.waende).toBeGreaterThan(10); // gebaute Kette
 
   // 5) IFC-Export liefert echtes SPF (Umlaut-Dateinamen sanitisiert Chromium — Inhalt zählt)
   const [download] = await Promise.all([
