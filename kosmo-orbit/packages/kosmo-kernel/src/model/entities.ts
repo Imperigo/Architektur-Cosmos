@@ -266,8 +266,16 @@ export interface Furniture extends Base {
   rotationGrad: number;
 }
 
+/** Tür zwischen Zonen (ohne Wand): Punkt auf der gemeinsamen Kante. */
+export interface ZonenTuer extends Base {
+  kind: 'zonentuer';
+  storeyId: string;
+  at: Pt;
+  breite: Mm;
+}
+
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

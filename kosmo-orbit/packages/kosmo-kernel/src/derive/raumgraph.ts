@@ -1,5 +1,5 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Opening, Stair, Wall, Zone } from '../model/entities';
+import type { ZonenTuer, Opening, Stair, Wall, Zone } from '../model/entities';
 import { polygonArea, type Pt } from '../model/units';
 import { axisDirection } from '../geometry/wall';
 
@@ -134,6 +134,28 @@ export function raumGraph(doc: KosmoDoc, storeyId: string): RaumGraph {
     const zone = zonen.find((z) => imPolygon(mitte, z.outline));
     if (zone) treppen.set(zone.id, [...(treppen.get(zone.id) ?? []), st]);
   }
+  // Zonentüren (V2): eine Tür auf der gemeinsamen Kante macht aus «offen»
+  // eine ehrliche «tuer»-Verbindung — bzw. stiftet sie, wo keine offene
+  // Kante erkannt wurde (Punktprobe beidseits der Tür).
+  for (const t of doc.byKind<ZonenTuer>('zonentuer')) {
+    if (t.storeyId !== storeyId) continue;
+    const treffer = zonen.filter((z) =>
+      [{ x: 300, y: 0 }, { x: -300, y: 0 }, { x: 0, y: 300 }, { x: 0, y: -300 }].some((d) =>
+        imPolygon({ x: t.at.x + d.x, y: t.at.y + d.y }, z.outline),
+      ),
+    );
+    if (treffer.length < 2) continue;
+    const [za, zb] = [treffer[0]!, treffer[1]!];
+    const alt2 = kanten.findIndex(
+      (k) => (k.a === za.id && k.b === zb.id) || (k.a === zb.id && k.b === za.id),
+    );
+    if (alt2 >= 0) {
+      kanten[alt2] = { a: za.id, b: zb.id, art: 'tuer', punkt: t.at, openingId: t.id };
+    } else {
+      kanten.push({ a: za.id, b: zb.id, art: 'tuer', punkt: t.at, openingId: t.id });
+    }
+  }
+
 
   return { zonen, kanten, treppen };
 }

@@ -546,6 +546,23 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const placeZoneDoor = registerCommand({
+  id: 'design.tuerSetzen',
+  title: 'Zonentür setzen',
+  description:
+    'Setzt eine Tür zwischen zwei Zonen (ohne Wand): at = Punkt auf der gemeinsamen Kante (mm), breite Standard 900. Der Raumgraph wertet die Verbindung dann als «tuer» statt «offen» — Fluchtweg und Topologie werden ehrlich.',
+  params: z.object({
+    storeyId: z.string(),
+    at: z.object({ x: z.number(), y: z.number() }),
+    breite: z.number().int().positive().default(900),
+  }),
+  summarize: () => 'Zonentür',
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    return [added({ id: newId('tuer'), kind: 'zonentuer' as const, storeyId: p.storeyId, at: p.at, breite: p.breite })];
+  },
+});
+
 export const generateFloorplan = registerCommand({
   id: 'design.grundrissGenerieren',
   title: 'Grundriss generieren',
@@ -659,6 +676,12 @@ export const generateFloorplan = registerCommand({
       patches.push(added({
         id: newId('moebel'), kind: 'furniture' as const, storeyId: wohnung.storeyId,
         typ: m.typ, at: m.at, rotationGrad: m.rotationGrad,
+      }));
+    }
+    for (const t of g.tueren) {
+      patches.push(added({
+        id: newId('tuer'), kind: 'zonentuer' as const, storeyId: wohnung.storeyId,
+        at: t.at, breite: t.breite,
       }));
     }
     return patches;

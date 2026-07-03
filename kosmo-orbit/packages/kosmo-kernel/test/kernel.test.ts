@@ -2317,3 +2317,32 @@ describe('Spiegel-Geometrie der Plan-Library', () => {
     expect(bett.at.x).toBe(40000 + (10000 - 2000)); // u gespiegelt
   });
 });
+
+describe('Zonentüren (Graph wird ehrlich)', () => {
+  it('Tür auf gemeinsamer Kante: offen → tuer; Generator setzt 3 Türen je Wohnung', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const a = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'A', sia: 'HNF', raumTyp: 'wohnen',
+      outline: [{ x: 0, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 5000 }, { x: 0, y: 5000 }],
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'B', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 5000, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 5000 }, { x: 5000, y: 5000 }],
+    });
+    let g = raumGraph(doc, storeyId);
+    expect(g.kanten.find((k) => k.art === 'offen')).toBeDefined();
+    execute(doc, 'design.tuerSetzen', { storeyId, at: { x: 5000, y: 2500 }, breite: 900 });
+    g = raumGraph(doc, storeyId);
+    const kante = g.kanten.find((k) => k.a === (a.patches[0] as { id: string }).id || k.b === (a.patches[0] as { id: string }).id)!;
+    expect(kante.art).toBe('tuer');
+    // Generator (Rezept): Wohnungstür + Bad + Wohnen
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg', sia: 'HNF', program: 'preisguenstig',
+      outline: [{ x: 20000, y: 0 }, { x: 29000, y: 0 }, { x: 29000, y: 8000 }, { x: 20000, y: 8000 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    expect(doc.byKind('zonentuer')).toHaveLength(1 + 3);
+  });
+});

@@ -26,13 +26,21 @@ export interface GeneriertesMoebel {
   rotationGrad: number;
 }
 
+export interface GenerierteTuer {
+  at: Pt;
+  breite: number;
+}
+
 export interface GenerierterGrundriss {
   raeume: GenerierterRaum[];
   moebel: GeneriertesMoebel[];
+  tueren: GenerierteTuer[];
   diagnose: string[];
 }
 
 const EINGANG_TIEFE = 2400;
+
+const rund = (p: Pt): Pt => ({ x: Math.round(p.x), y: Math.round(p.y) });
 const MIN_ZIMMER = 3000;
 
 /**
@@ -73,7 +81,7 @@ export function generiereGrundriss(
 
   const diagnose: string[] = [];
   if (breite < 6000 || tiefe < 6000) {
-    return { raeume: [], moebel: [], diagnose: [`Wohnung ${(breite / 1000).toFixed(1)} × ${(tiefe / 1000).toFixed(1)} m — unter 6 × 6 m generiere ich nicht (von Hand besser).`] };
+    return { raeume: [], moebel: [], tueren: [], diagnose: [`Wohnung ${(breite / 1000).toFixed(1)} × ${(tiefe / 1000).toFixed(1)} m — unter 6 × 6 m generiere ich nicht (von Hand besser).`] };
   }
 
   const raeume: GenerierterRaum[] = [];
@@ -89,6 +97,12 @@ export function generiereGrundriss(
   raeume.push({ outline: rect(0, 0, dieleB, EINGANG_TIEFE), name: 'Diele', raumTyp: 'korridor', sia: 'VF' });
   raeume.push({ outline: rect(dieleB, 0, dieleB + badB, EINGANG_TIEFE), name: 'Bad', raumTyp: 'bad', sia: 'HNF' });
   raeume.push({ outline: rect(dieleB + badB, 0, breite, EINGANG_TIEFE), name: 'Küche', raumTyp: 'kueche', sia: 'HNF' });
+  // Türen: Wohnungstür (Korridor→Diele), Diele→Bad, Diele→Wohnen
+  const tueren: GenerierteTuer[] = [
+    { at: rund(welt(dieleB / 2, 0)), breite: 900 },
+    { at: rund(welt(dieleB, EINGANG_TIEFE / 2)), breite: 800 },
+    { at: rund(welt(dieleB / 2, EINGANG_TIEFE)), breite: 900 },
+  ];
   const badMitte = welt(dieleB + badB / 2, 400);
   moebel.push({ typ: 'wc', at: { x: Math.round(badMitte.x), y: Math.round(badMitte.y) }, rotationGrad: rot });
   const kuecheMitte = welt(dieleB + badB + kuecheB / 2, 300);
@@ -116,5 +130,5 @@ export function generiereGrundriss(
   }
   if (zimmerZahl === 0) diagnose.push('Zu schmal für separate Zimmer — nur Wohnen/Essen generiert.');
   diagnose.push(`${2.5 + zimmerZahl - 0.5}-Zimmer-Rezept: Eingangsband ${(EINGANG_TIEFE / 1000).toFixed(1)} m, ${zimmerZahl} Zimmer à ${(zimmerB / 1000).toFixed(1)} m.`);
-  return { raeume, moebel, diagnose };
+  return { raeume, moebel, tueren, diagnose };
 }

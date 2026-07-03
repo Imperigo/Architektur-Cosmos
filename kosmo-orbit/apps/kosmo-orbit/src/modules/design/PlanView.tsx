@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, assemblyThickness, type Assembly, type Furniture, type Pt, type Wall, type Zone } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, assemblyThickness, type Assembly, type Furniture, type Pt, type Wall, type Zone, type ZonenTuer } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
@@ -312,6 +312,39 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                 <g key={f.id} data-testid="moebel">
                   <path d={d(g.korpus)} fill="none" stroke="var(--k-ink-soft)" strokeWidth={10} />
                   <path d={d(g.bewegung)} fill="none" stroke="var(--k-ink-faint)" strokeWidth={6} strokeDasharray="60 40" />
+                </g>
+              );
+            })}
+          {/* Zonentüren: Öffnungslücke quer zur Kante + Flügel */}
+          {doc
+            .byKind<ZonenTuer>('zonentuer')
+            .filter((t) => t.storeyId === activeStoreyId)
+            .map((t) => {
+              // Kantenrichtung: Zonenwechsel in x → Kante vertikal, sonst horizontal
+              const zonen = doc.byKind<Zone>('zone').filter((z) => z.storeyId === activeStoreyId && z.raumTyp);
+              const inZone = (p: Pt) => zonen.find((z) => {
+                let inside = false;
+                for (let i = 0, j = z.outline.length - 1; i < z.outline.length; j = i++) {
+                  const a = z.outline[i]!;
+                  const b = z.outline[j]!;
+                  if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+                }
+                return inside;
+              })?.id;
+              const vertikal = inZone({ x: t.at.x - 300, y: t.at.y }) !== inZone({ x: t.at.x + 300, y: t.at.y });
+              const h = t.breite / 2;
+              const [x1, y1, x2, y2] = vertikal
+                ? [t.at.x, -(t.at.y - h), t.at.x, -(t.at.y + h)]
+                : [t.at.x - h, -t.at.y, t.at.x + h, -t.at.y];
+              return (
+                <g key={t.id} data-testid="zonentuer">
+                  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--k-surface)" strokeWidth={120} />
+                  <line
+                    x1={x1} y1={y1}
+                    x2={vertikal ? t.at.x + t.breite : x1 + 0}
+                    y2={vertikal ? y1 : -(t.at.y + t.breite)}
+                    stroke="var(--k-ink)" strokeWidth={12}
+                  />
                 </g>
               );
             })}

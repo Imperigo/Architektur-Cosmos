@@ -1160,3 +1160,26 @@ test('Raumgraph-Overlay (Plan-Library v2): Toggle zeigt Knoten und Kanten im Pla
   await page.click('[data-testid="graph-toggle"]');
   await expect(overlay).toHaveCount(0);
 });
+
+test('Zonentüren: Generator setzt Türen, Symbol im Plan, Graph zeigt tuer-Kanten', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Korridor', sia: 'VF', raumTyp: 'korridor',
+      outline: [{ x: 0, y: -2000 }, { x: 12000, y: -2000 }, { x: 12000, y: 0 }, { x: 0, y: 0 }],
+    });
+    const w = k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+    k.run('design.grundrissGenerieren', { zoneId: w.patches[0].id, korridorSeite: 'auto' });
+  });
+  await expect(page.locator('[data-testid="zonentuer"]').first()).toBeVisible();
+  expect(await page.locator('[data-testid="zonentuer"]').count()).toBe(3);
+});
