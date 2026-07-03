@@ -999,3 +999,28 @@ test('Möblierung (V2-F8): Möbel im Plan sichtbar, SIA-500-Kollision im Check',
   await expect(page.locator('[data-testid="moebel"]')).toHaveCount(1);
   await expect(page.locator('[data-testid="checks"]')).toContainText('Doppelbett');
 });
+
+test('Fassaden-Module (V2-V7): Bilanz erscheint und reagiert auf Modulbreite', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Parzelle', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 40000, y: 0 }, { x: 40000, y: 30000 }, { x: 0, y: 30000 }],
+    });
+    k.run('design.volumenErstellen', {
+      storeyId: st.activeStoreyId, height: 9000,
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 6500 }, { x: 0, y: 6500 }],
+    });
+  });
+  await page.click('[data-testid="studie-toggle"]');
+  const bilanz = page.locator('[data-testid="module-bilanz"]');
+  await expect(bilanz).toContainText('Standardmodule');
+  const vorher = await bilanz.innerText();
+  await page.fill('[data-testid="modul-b"]', '2000');
+  await expect.poll(() => bilanz.innerText()).not.toBe(vorher);
+});

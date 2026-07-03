@@ -37,4 +37,5 @@ export * from './derive/segmentierer';
 export * from './derive/raumtypcopilot';
 export * from './derive/renderprompt';
 export * from './derive/moebel';
+export * from './derive/fassadenmodule';
 export * from './geometry/skeleton';

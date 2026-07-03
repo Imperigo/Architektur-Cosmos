@@ -7,6 +7,8 @@ import {
   generiereVolumenstudien,
   geschossZu,
   variantenMatrix,
+  fassadenModule,
+  moduleAlsCsv,
   magnetFang,
   type Assembly,
   type ErkannteDecke,
@@ -1045,6 +1047,7 @@ function StudienPanel({
           <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
             Anstoss, kein Entwurf — Übernahme ist ein Undo-Schritt.
           </span>
+          <FassadenModulSektion />
         </>
       )}
     </div>
@@ -1108,6 +1111,55 @@ function VariantenMatrixSvg({
           );
         })}
       </svg>
+    </div>
+  );
+}
+
+
+/** V7: Fassaden-Modulraster über die Volumenkörper des aktiven Geschosses. */
+function FassadenModulSektion() {
+  const revision = useProject((s) => s.revision);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+  const [modB, setModB] = useState(2500);
+  const [modH, setModH] = useState(3000);
+  const doc = useProject.getState().doc;
+  const studie = useMemo(
+    () => (activeStoreyId ? fassadenModule(doc, activeStoreyId, modB, modH) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [revision, activeStoreyId, modB, modH],
+  );
+  if (!studie || studie.zeilen.length === 0) return null;
+  const csvLaden = () => {
+    const blob = new Blob([moduleAlsCsv(studie, modB, modH)], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'fassadenmodule.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  return (
+    <div style={{ display: 'grid', gap: 5, borderTop: '1px solid var(--k-line)', paddingTop: 8 }} data-testid="fassadenmodule">
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <span style={{ fontWeight: 600, fontSize: 12 }}>Fassaden-Module</span>
+        <div style={{ flex: 1 }} />
+        <KButton size="sm" tone="quiet" data-testid="module-csv" onClick={csvLaden}>
+          CSV
+        </KButton>
+      </div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11.5 }}>
+        <span style={{ color: 'var(--k-ink-soft)' }}>Modul</span>
+        <input type="number" value={modB} step={50} onChange={(e) => setModB(Number(e.target.value) || 2500)} style={{ width: 64 }} data-testid="modul-b" />
+        <span>×</span>
+        <input type="number" value={modH} step={50} onChange={(e) => setModH(Number(e.target.value) || 3000)} style={{ width: 64 }} />
+        <span style={{ color: 'var(--k-ink-faint)' }}>mm</span>
+      </div>
+      <div style={{ fontSize: 11.5 }} data-testid="module-bilanz">
+        {studie.totalModule} Standardmodule · {studie.totalPassstuecke} Passstücke · Wiederholung{' '}
+        {(studie.wiederholung * 100).toFixed(0)}%
+      </div>
+      <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+        Eckenregel: Module ab Ecke, Passstück am Kantenende — Vorfabrikation lebt von der Wiederholung.
+      </span>
     </div>
   );
 }

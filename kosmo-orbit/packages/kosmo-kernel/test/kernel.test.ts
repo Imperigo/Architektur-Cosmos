@@ -15,6 +15,7 @@ import { kennzahlenAuswerten } from '../src/derive/sia416';
 import { raumTypVorschlag } from '../src/derive/raumtypcopilot';
 import { finalerRenderPrompt, renderPromptBausteine } from '../src/derive/renderprompt';
 import { moebelGeometrie } from '../src/derive/moebel';
+import { fassadenModule, moduleAlsCsv } from '../src/derive/fassadenmodule';
 import { polygonArea } from '../src/model/units';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
@@ -2047,5 +2048,32 @@ describe('Möblierung (V2-F8)', () => {
     } as import('../src').Furniture)!;
     // Bei 90° zeigt +y-Lokal nach -x-Welt
     expect(Math.min(...g.bewegung.map((p) => p.x))).toBeLessThan(-2000);
+  });
+});
+
+describe('Fassaden-Module (V2-V7)', () => {
+  it('rastert Kanten mit Eckenregel, weist Passstücke ehrlich aus', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    // 10.0 × 6.5 m Körper, 9 m hoch; Modul 2.5 × 3.0 m
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 9000,
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 6500 }, { x: 0, y: 6500 }],
+    });
+    const st = fassadenModule(doc, storeyId, 2500, 3000);
+    expect(st.zeilen).toHaveLength(4);
+    const lang = st.zeilen.find((z) => z.laenge === 10000)!;
+    expect(lang.spalten).toBe(4);
+    expect(lang.zeilen).toBe(3);
+    expect(lang.rest).toBe(0);
+    const kurz = st.zeilen.find((z) => z.laenge === 6500)!;
+    expect(kurz.spalten).toBe(2);
+    expect(kurz.rest).toBe(1500);
+    expect(st.totalModule).toBe(2 * 12 + 2 * 6);
+    expect(st.totalPassstuecke).toBe(2 * 3);
+    const csv = moduleAlsCsv(st, 2500, 3000);
+    expect(csv).toContain('Modul 2.50 x 3.00 m');
+    expect(csv.split('\n')).toHaveLength(2 + 4 + 1);
   });
 });
