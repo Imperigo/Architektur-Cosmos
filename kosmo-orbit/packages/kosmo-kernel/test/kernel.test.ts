@@ -2604,3 +2604,69 @@ describe('Geschoss stapeln (Abendbatch B1)', () => {
     expect(doc.byKind('wall')).toHaveLength(waende1);
   });
 });
+
+describe('Härte (Abendbatch D)', () => {
+  it('D1: Voll-Doc mit allen neuen Ständen überlebt toJSON→fromJSON→toJSON tief-gleich', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    // Settings-Vollausbau
+    execute(doc, 'design.zonenRegelSetzen', {
+      name: 'W2b (Richtwert ZG)', az: 0.5, maxHoehe: 10000, maxVollgeschosse: 2,
+      grenzabstandKlein: 4000, grenzabstandGross: 8000, parzellenFlaeche: 1200,
+    });
+    execute(doc, 'design.regelnSetzen', { preset: 'ch-wohnbau' });
+    execute(doc, 'design.kennzahlFormelnSetzen', {
+      formeln: [{ name: 'Kosten', wert: 3200, basis: 'agf', einheit: 'CHF' }],
+    });
+    execute(doc, 'design.standortSetzen', { label: 'Zug', lat: 47.17, lon: 8.52, e: 2681500, n: 1224500 });
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Band', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 400, y: 900, b: 1700, h: 1600, typ: 'fenster' }],
+    });
+    // Entities-Vollausbau: Kette + Vorlage mit Möbeln + Modul-Zuweisung
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    const z1 = doc.byKind<Zone>('zone').find((z) => z.name === 'Zimmer 1')!;
+    execute(doc, 'design.vorlageSpeichern', { name: 'muster marktgerecht', zoneIds: [z1.id] });
+    const mass = execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 9000,
+      outline: [{ x: 30000, y: 0 }, { x: 40000, y: 0 }, { x: 40000, y: 6500 }, { x: 30000, y: 6500 }],
+    });
+    execute(doc, 'design.fassadenModulZuweisen', { massId: (mass.patches[0] as { id: string }).id, kante: 1, modul: 'Band' });
+    execute(doc, 'design.waendeAusZonen', { storeyId });
+    execute(doc, 'design.fensterAusModulen', { storeyId, modul: 'Band' });
+    // Roundtrip
+    const json1 = doc.toJSON();
+    const wieder = KosmoDoc.fromJSON(json1);
+    const json2 = wieder.toJSON();
+    expect(JSON.parse(JSON.stringify(json2))).toEqual(JSON.parse(JSON.stringify(json1)));
+  });
+
+  it('D2: IFC der generierten Kette zählt Wände/Öffnungen/Spaces korrekt', async () => {
+    const { exportIfc } = await import('../src');
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Band', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 400, y: 900, b: 1700, h: 1600, typ: 'fenster' }],
+    });
+    execute(doc, 'design.waendeAusZonen', { storeyId });
+    execute(doc, 'design.fensterAusModulen', { storeyId, modul: null });
+    const spf = exportIfc(doc, 'Kette');
+    const zaehl = (t: string) => (spf.match(new RegExp(`=\\s*${t}\\(`, 'g')) ?? []).length;
+    expect(zaehl('IFCWALL')).toBe(doc.byKind('wall').length);
+    expect(zaehl('IFCOPENINGELEMENT')).toBe(doc.byKind('opening').length);
+    expect(zaehl('IFCSPACE')).toBe(doc.byKind('zone').length);
+    expect(zaehl('IFCRELVOIDSELEMENT')).toBe(doc.byKind('opening').length);
+  });
+});
