@@ -1,5 +1,8 @@
 import { KosmoDoc } from '../src/model/doc';
 import { execute } from '../src/commands/core';
+// Commands registrieren — die Fixtures laufen auch ausserhalb der Test-Suite (Golden-Generatoren)
+import '../src/commands/design';
+import '../src/commands/publish';
 import { sectionInnerSvg } from '../src/derive/plansvg';
 import type { SectionSpec } from '../src/derive/section';
 

@@ -141,15 +141,20 @@ export const createSlab = registerCommand({
   id: 'design.deckeZeichnen',
   title: 'Decke zeichnen',
   description:
-    'Erstellt eine Decke/Bodenplatte mit Polygon-Umriss im Geschoss. Die Oberkante liegt auf OK Boden des Geschosses (topOffset 0), Dicke nach unten.',
+    'Erstellt eine Decke/Bodenplatte mit Polygon-Umriss im Geschoss. Die Oberkante liegt auf OK Boden des Geschosses (topOffset 0), Dicke nach unten. Optional assemblyId eines Decken-Aufbaus (target slab) — die Schichten über der tragenden ergeben das roh/fertig-Delta der Höhenkoten.',
   params: z.object({
     storeyId: z.string(),
     outline: z.array(PtSchema).min(3),
     thickness: z.number().int().positive().default(250).describe('mm'),
+    assemblyId: z.string().optional().describe('Decken-Aufbau (target slab)'),
   }),
   summarize: (p) => `Decke mit ${p.outline.length} Eckpunkten, d = ${p.thickness} mm`,
   run: (doc, p) => {
     require<Storey>(doc, p.storeyId, 'storey');
+    if (p.assemblyId) {
+      const asm = require<Assembly>(doc, p.assemblyId, 'assembly');
+      if (asm.target !== 'slab') throw new CommandError(`Aufbau «${asm.name}» ist kein Decken-Aufbau (target slab)`);
+    }
     const slab: Slab = {
       id: newId('decke'),
       kind: 'slab',
@@ -157,6 +162,7 @@ export const createSlab = registerCommand({
       outline: p.outline as Pt[],
       thickness: p.thickness,
       topOffset: 0,
+      ...(p.assemblyId ? { assemblyId: p.assemblyId } : {}),
     };
     return [added(slab)];
   },
@@ -1047,20 +1053,27 @@ export const setLocation = registerCommand({
   id: 'design.standortSetzen',
   title: 'Projektstandort setzen',
   description:
-    'Setzt den CH-Projektstandort (label, WGS84 lat/lon für die Schattenstudie, LV95 e/n in Metern für Parzellen-Import). Wird im Projekt gespeichert — beim zweiten Öffnen auch offline da. null-Label löscht.',
+    'Setzt den CH-Projektstandort (label, WGS84 lat/lon für die Schattenstudie, LV95 e/n in Metern für Parzellen-Import, hoeheM = Absolutbezug ±0.00 in m ü.M. für die EG-Kote). Wird im Projekt gespeichert — beim zweiten Öffnen auch offline da. null-Label löscht.',
   params: z.object({
     label: z.string().min(1),
     lat: z.number().min(45).max(48),
     lon: z.number().min(5).max(11),
     e: z.number(),
     n: z.number(),
+    hoeheM: z.number().min(190).max(4700).optional().describe('±0.00 in m ü.M.'),
   }),
-  summarize: (p) => `Standort «${p.label}»`,
+  summarize: (p) => `Standort «${p.label}»${p.hoeheM !== undefined ? ` (±0.00 = ${p.hoeheM.toFixed(2)} m ü.M.)` : ''}`,
   run: (doc, p) => [
     {
       settings: true as const,
       before: doc.settings,
-      after: { ...doc.settings, standort: { label: p.label, lat: p.lat, lon: p.lon, e: p.e, n: p.n } },
+      after: {
+        ...doc.settings,
+        standort: {
+          label: p.label, lat: p.lat, lon: p.lon, e: p.e, n: p.n,
+          ...(p.hoeheM !== undefined ? { hoeheM: p.hoeheM } : {}),
+        },
+      },
     },
   ],
 });

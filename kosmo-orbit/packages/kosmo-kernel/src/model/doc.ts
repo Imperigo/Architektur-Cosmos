@@ -108,6 +108,8 @@ export interface ProjektStandort {
   /** LV95 Ost/Nord (m). */
   e: number;
   n: number;
+  /** Absolutbezug ±0.00 in m ü.M. (B2: erscheint an der EG-Kote). */
+  hoeheM?: number;
 }
 
 /** Zonen-Vorlage (V2-F7): Zonen relativ zur BBox-Ecke, Grösse fürs Strecken. */

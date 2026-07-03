@@ -1704,6 +1704,43 @@ describe('Masslinienordnung (Vision B1)', () => {
   });
 });
 
+describe('Koten roh/fertig + Absolutbezug (Vision B2)', () => {
+  it('fertig gefüllt, roh offen (Bodenaufbau-Delta), EG-Kote trägt m ü.M.', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const spec = { a: { x: 4500, y: -2000 }, b: { x: 4500, y: 2000 }, depth: 5000, lookLeft: true } as const;
+    // Ohne Decken-Aufbau: nur die gefüllte fertig-Kote, keine roh-Kote
+    let svg = sectionInnerSvg(doc, spec, 100).inner;
+    expect(svg).toContain('Z" fill="black" stroke="black"'); // gefülltes Dreieck
+    expect(svg).not.toContain(' roh<');
+    // Decken-Aufbau: Belag 10 + Unterlagsboden 70 + Trittschall 20 ÜBER tragend 240
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'Decke UB', target: 'slab',
+      layers: [
+        { material: 'belag', thickness: 10, function: 'bekleidung' },
+        { material: 'unterlagsboden', thickness: 70, function: 'bekleidung' },
+        { material: 'trittschall', thickness: 20, function: 'daemmung' },
+        { material: 'beton', thickness: 240, function: 'tragend' },
+      ],
+    });
+    execute(doc, 'design.deckeZeichnen', {
+      storeyId, thickness: 240, assemblyId: (au.patches[0] as { id: string }).id,
+      outline: [{ x: 0, y: 0 }, { x: 9000, y: 0 }, { x: 9000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    execute(doc, 'design.standortSetzen', { label: 'Zug', lat: 47.17, lon: 8.52, e: 2681800, n: 1224700, hoeheM: 425.5 });
+    svg = sectionInnerSvg(doc, spec, 100).inner;
+    expect(svg).toContain('−0.10 roh'); // 0 − (10+70+20) = −100 mm
+    expect(svg).toContain('±0.00 = 425.50 m ü.M.');
+    // falscher Aufbau-Typ wird abgewiesen
+    expect(() =>
+      execute(doc, 'design.deckeZeichnen', {
+        storeyId, assemblyId,
+        outline: [{ x: 0, y: 0 }, { x: 1000, y: 0 }, { x: 1000, y: 1000 }],
+      }),
+    ).toThrow(CommandError);
+  });
+});
+
 describe('Treppen-Ausbau (V2-A2)', () => {
   const basis = () => {
     const { doc, storeyId } = setupDoc(); // EG, 3000 hoch

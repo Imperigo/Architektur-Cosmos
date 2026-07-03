@@ -1,5 +1,5 @@
 import { phaseLabel, type KosmoDoc } from '../model/doc';
-import type { Furniture, Storey } from '../model/entities';
+import type { Assembly, Furniture, Slab, Storey } from '../model/entities';
 import { moebelGeometrie, moebelTyp } from './moebel';
 import { derivePlan, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabel } from './dimensions';
@@ -248,16 +248,41 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
         }
       }
     }
-    // Höhenkoten je Geschoss (OK fertig Boden), SIA-Lesart: Dreieck + Meter-Kote
+    // Höhenkoten je Geschoss (B2): OK fertig = GEFÜLLTES Dreieck, OK roh =
+    // offenes Dreieck darunter (Delta = Bodenaufbau über der tragenden
+    // Schicht des Decken-Aufbaus); EG-Kote trägt den Absolutbezug m ü.M.
     if (doc.settings.bemassung.hoehenKoten) {
       const s0 = bounds.minX - 800;
       const dreieck = 1.6 * scale;
+      const absolut = doc.settings.standort?.hoeheM;
+      const bodenAufbauVon = (storeyId: string): number => {
+        for (const slab of doc.byKind<Slab>('slab')) {
+          if (slab.storeyId !== storeyId || !slab.assemblyId) continue;
+          const asm = doc.get<Assembly>(slab.assemblyId);
+          if (!asm || asm.kind !== 'assembly') continue;
+          let sum = 0;
+          for (const layer of asm.layers) {
+            if (layer.function === 'tragend') return sum;
+            sum += layer.thickness;
+          }
+        }
+        return 0;
+      };
       for (const st of doc.storeysOrdered()) {
         const z = st.elevation;
+        const zusatz = z === 0 && absolut !== undefined ? ` = ${absolut.toFixed(2)} m ü.M.` : '';
         parts.push(
-          `<path d="M ${s0} ${-z} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="none" stroke="black" stroke-width="${0.18 * scale}"/>`,
-          `<text x="${s0 - dreieck}" y="${-z - dreieck * 1.2}" text-anchor="end" font-size="${2.6 * scale}" font-family="monospace">${koteLabel(z)}</text>`,
+          `<path d="M ${s0} ${-z} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="black" stroke="black" stroke-width="${0.18 * scale}"/>`,
+          `<text x="${s0 - dreieck}" y="${-z - dreieck * 1.2}" text-anchor="end" font-size="${2.6 * scale}" font-family="monospace">${koteLabel(z)}${zusatz}</text>`,
         );
+        const delta = bodenAufbauVon(st.id);
+        if (delta > 0) {
+          const zRoh = z - delta;
+          parts.push(
+            `<path d="M ${s0} ${-zRoh} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="none" stroke="black" stroke-width="${0.18 * scale}"/>`,
+            `<text x="${s0 - dreieck}" y="${-zRoh + dreieck * 1.6}" text-anchor="end" font-size="${2.2 * scale}" font-family="monospace">${koteLabel(zRoh)} roh</text>`,
+          );
+        }
       }
       bounds = { ...bounds, minX: bounds.minX - 800 - 14 * scale };
     }
