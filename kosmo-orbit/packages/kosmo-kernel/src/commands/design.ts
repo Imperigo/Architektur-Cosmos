@@ -508,6 +508,20 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const setPhase = registerCommand({
+  id: 'design.phaseSetzen',
+  title: 'SIA-Phase setzen',
+  description:
+    'Stellt den Detaillierungsgrad der Pläne nach SIA-Phase ein: vorprojekt (Wände als einfaches Poché, Öffnungen als Aussparung, 1:200), bauprojekt (Schichten sichtbar, Symbole, ohne feine Materialschraffuren, 1:100), werkplan (volle Detaillierung mit SIA-Materialschraffuren, 1:50). Wirkt auf Grundriss, Schnitt, Druck und Plankopf.',
+  params: z.object({
+    phase: z.enum(['vorprojekt', 'bauprojekt', 'werkplan']),
+  }),
+  summarize: (p) => `Phase: ${p.phase}`,
+  run: (doc, p) => {
+    return [{ settings: true, before: { phase: doc.settings.phase }, after: { phase: p.phase } }];
+  },
+});
+
 export const setDimensionStyle = registerCommand({
   id: 'design.bemassungSetzen',
   title: 'Bemassungs-Stil setzen',

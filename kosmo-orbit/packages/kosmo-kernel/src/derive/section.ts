@@ -101,12 +101,18 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       }
     }
     // Schnittflächen: Segmente zu Loops verketten, Wände nach Schichten teilen
+    // (Vorprojekt: EIN Poché je Bauteil — Schichten erst ab Bauprojekt)
     if (artSegs.length) {
       const loops = stitchLoops(artSegs);
       if (loops.length) {
         const wall = doc.get<Wall>(artifact.entityId);
         const assembly = wall?.kind === 'wall' ? doc.get<Assembly>(wall.assemblyId) : undefined;
-        if (wall?.kind === 'wall' && assembly?.kind === 'assembly' && assembly.layers.length > 0) {
+        if (
+          doc.settings.phase !== 'vorprojekt' &&
+          wall?.kind === 'wall' &&
+          assembly?.kind === 'assembly' &&
+          assembly.layers.length > 0
+        ) {
           faces.push(...wallLayerFaces(wall, assembly, loops, spec.a, d));
         } else {
           faces.push({ loops, material: artifact.materialKey, classes: ['cut-face', artifact.materialKey] });

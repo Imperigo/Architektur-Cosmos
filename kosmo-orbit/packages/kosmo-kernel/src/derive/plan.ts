@@ -6,6 +6,7 @@ import {
   openingRects,
   wallFrame,
   wallLayerOutlines,
+  wallOutline,
   pointOnAxis,
 } from '../geometry/wall';
 import { dist, type Pt } from '../model/units';
@@ -88,6 +89,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   const coreByMaterial = new Map<string, Poly[]>();
   const otherLayers: { material: string; fn: string; polys: Poly[] }[] = [];
 
+  const phase = doc.settings.phase;
   for (const wall of walls) {
     const assembly = doc.get<Assembly>(wall.assemblyId);
     if (!assembly || assembly.kind !== 'assembly') continue;
@@ -97,16 +99,25 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     );
     const strips = rects.map((r) => openingStrip(wall, assembly, r.s0, r.s1));
 
-    for (const layer of wallLayerOutlines(wall, assembly)) {
-      const meta = assembly.layers.find((l) => l.material === layer.material);
-      const cutPolys: Poly[] =
-        strips.length > 0 ? difference([layer.outline], strips) : [layer.outline];
-      if (meta?.function === 'tragend') {
-        const arr = coreByMaterial.get(layer.material) ?? [];
-        arr.push(...cutPolys);
-        coreByMaterial.set(layer.material, arr);
-      } else if (meta) {
-        otherLayers.push({ material: layer.material, fn: meta.function, polys: cutPolys });
+    if (phase === 'vorprojekt') {
+      // Vorprojekt (SIA 31): Wand als EIN Poché über die Gesamtdicke — keine Schichten
+      const outline = wallOutline(wall, assembly);
+      const cutPolys: Poly[] = strips.length > 0 ? difference([outline], strips) : [outline];
+      const arr = coreByMaterial.get('masse') ?? [];
+      arr.push(...cutPolys);
+      coreByMaterial.set('masse', arr);
+    } else {
+      for (const layer of wallLayerOutlines(wall, assembly)) {
+        const meta = assembly.layers.find((l) => l.material === layer.material);
+        const cutPolys: Poly[] =
+          strips.length > 0 ? difference([layer.outline], strips) : [layer.outline];
+        if (meta?.function === 'tragend') {
+          const arr = coreByMaterial.get(layer.material) ?? [];
+          arr.push(...cutPolys);
+          coreByMaterial.set(layer.material, arr);
+        } else if (meta) {
+          otherLayers.push({ material: layer.material, fn: meta.function, polys: cutPolys });
+        }
       }
     }
 
@@ -125,7 +136,13 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       // Leibungslinien quer zur Wand
       lines.push({ a: at(r.s0, L), b: at(r.s0, R), classes: ['symbol', 'leibung'] });
       lines.push({ a: at(r.s1, L), b: at(r.s1, R), classes: ['symbol', 'leibung'] });
-      if (o.openingType === 'fenster') {
+      if (phase === 'vorprojekt') {
+        // Vorprojekt: Öffnung als Aussparung — Fenster mit EINER Glaslinie, Tür ohne Symbol
+        if (o.openingType === 'fenster') {
+          const mid = (L + R) / 2;
+          lines.push({ a: at(r.s0, mid), b: at(r.s1, mid), classes: ['symbol', 'fenster'] });
+        }
+      } else if (o.openingType === 'fenster') {
         // Fenstersymbol: zwei feine Linien (Glasebene) in Wandmitte
         const mid = (L + R) / 2;
         lines.push({ a: at(r.s0, mid - 25), b: at(r.s1, mid - 25), classes: ['symbol', 'fenster'] });

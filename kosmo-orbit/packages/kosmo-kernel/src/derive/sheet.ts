@@ -1,4 +1,4 @@
-import type { KosmoDoc } from '../model/doc';
+import { phaseLabel, type KosmoDoc } from '../model/doc';
 import type { ImageAsset, Sheet, SheetFormat, SheetImage, SheetPlacement } from '../model/entities';
 import { axoInnerSvg, escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
 
@@ -161,7 +161,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     `<line x1="${kx}" y1="${ky + 9}" x2="${kx + kw}" y2="${ky + 9}" stroke="black" stroke-width="0.18"/>`,
     `<text x="${kx + 3}" y="${ky + 6}" font-weight="bold" font-size="4">${escapeXml(opts.projectName)}</text>`,
     `<text x="${kx + 3}" y="${ky + 15}">${escapeXml(sheet.name)}</text>`,
-    `<text x="${kx + 3}" y="${ky + 22}" fill="#444">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · KosmoOrbit V1</text>`,
+    `<text x="${kx + 3}" y="${ky + 22}" fill="#444">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
     `<text x="${kx + kw - 3}" y="${ky + 15}" text-anchor="end">${scaleText}</text>`,
     `<text x="${kx + kw - 3}" y="${ky + 22}" text-anchor="end" fill="#444">Blatt ${sheet.index + 1} · ${sheet.format}</text>`,
     `</g>`,

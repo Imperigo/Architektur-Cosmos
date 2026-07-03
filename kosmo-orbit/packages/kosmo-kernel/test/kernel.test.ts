@@ -1373,3 +1373,63 @@ describe('Bemassungs-Stile (V2-A5)', () => {
     void storeyId;
   });
 });
+
+describe('SIA-Phasen-Detaillierung (Owner 03.07.)', () => {
+  const haus = () => {
+    const { doc, storeyId, assemblyId } = setupDoc(); // 3-Schicht-AW
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (w.patches[0] as { id: string }).id,
+      openingType: 'tuer', center: 3000, width: 900, height: 2200, sill: 0,
+    });
+    return { doc, storeyId };
+  };
+
+  it('Vorprojekt: Wand als EIN Poché, Tür ohne Schwenkbogen; Werkplan-Default zeigt Schichten', () => {
+    const { doc, storeyId } = haus();
+    // Default werkplan: Schichten (tragend + daemmung) + Türbogen
+    let plan = derivePlan(doc, storeyId);
+    expect(plan.regions.some((r) => r.classes.includes('daemmung'))).toBe(true);
+    expect(plan.arcs.length).toBeGreaterThan(0);
+    // Vorprojekt: eine Masse-Region, keine Dämmschicht, kein Bogen
+    execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
+    plan = derivePlan(doc, storeyId);
+    expect(plan.regions.some((r) => r.classes.includes('daemmung'))).toBe(false);
+    expect(plan.regions.some((r) => r.classes.includes('material-masse'))).toBe(true);
+    expect(plan.arcs).toHaveLength(0);
+  });
+
+  it('Schnitt: Vorprojekt EIN Face je Bauteil, Bauprojekt Bänder ohne Schraffur, Werkplan mit', () => {
+    const { doc, storeyId } = haus();
+    void storeyId;
+    const spec = { a: { x: 4500, y: -3000 }, b: { x: 4500, y: 3000 }, depth: 5000, lookLeft: true } as const;
+    // werkplan (Default): 3 Schichtbänder + Schraffur-Polylinien im Druck
+    expect(deriveSection(doc, spec).faces).toHaveLength(3);
+    expect(sectionInnerSvg(doc, spec, 100).inner).toContain('<polyline');
+    // bauprojekt: Bänder ja, Strichschraffur nein
+    execute(doc, 'design.phaseSetzen', { phase: 'bauprojekt' });
+    expect(deriveSection(doc, spec).faces).toHaveLength(3);
+    expect(sectionInnerSvg(doc, spec, 100).inner).not.toContain('<polyline');
+    // vorprojekt: ein Face, einheitliches Grau
+    execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
+    expect(deriveSection(doc, spec).faces).toHaveLength(1);
+    expect(sectionInnerSvg(doc, spec, 100).inner).toContain('#d7d4ce');
+  });
+
+  it('Phase steht im Plankopf; Command ist undo-fähig; Altbestand fällt auf werkplan', () => {
+    const { doc } = haus();
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'B', format: 'A3', orientation: 'quer' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    expect(sheetToSvg(doc, sheetId, { projectName: 'T', date: '03.07.2026' })).toContain('Werkplan (SIA 51)');
+    const res = execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
+    expect(sheetToSvg(doc, sheetId, { projectName: 'T', date: '03.07.2026' })).toContain('Vorprojekt (SIA 31)');
+    doc.apply(invertPatches(res.patches));
+    expect(doc.settings.phase).toBe('werkplan');
+    const alt = KosmoDoc.fromJSON({
+      schema: 'kosmo.model/v1',
+      settings: { projectName: 'Alt', agfFactor: 1.28, facadeFactor: 1.1 } as never,
+      entities: [],
+    });
+    expect(alt.settings.phase).toBe('werkplan');
+  });
+});

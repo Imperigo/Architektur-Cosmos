@@ -22,6 +22,21 @@ export interface RaumprogrammPosten {
   hnfSoll: number;
 }
 
+/**
+ * SIA-Bauphase (Owner-Auftrag 03.07.) — steuert den Detaillierungsgrad der
+ * Pläne. Regelwerk: docs/PLAN-DETAILLIERUNG.md (Hochbauzeichner-Konvention,
+ * Abgleich mit den Lehrheften folgt über KosmoPrepare).
+ */
+export type BauPhase = 'vorprojekt' | 'bauprojekt' | 'werkplan';
+
+export function phaseLabel(phase: BauPhase): string {
+  return phase === 'vorprojekt'
+    ? 'Vorprojekt (SIA 31)'
+    : phase === 'bauprojekt'
+      ? 'Bauprojekt (SIA 32/33)'
+      : 'Werkplan (SIA 51)';
+}
+
 /** Bemassungs-Stil (V2-A5) — projektweit, wirkt in App-Plan, Druck und DXF. */
 export interface BemassungsStil {
   /** Aussenketten: beide (Öffnungen + Gesamtmass), nur Gesamtmass, oder keine. */
@@ -47,6 +62,8 @@ export interface DocSettings {
   /** Wettbewerbsdossier (Phase 0): Do's, Don'ts, Fakten — fliesst in Kosmos Systemprompt. */
   dossier: DossierEintrag[];
   bemassung: BemassungsStil;
+  /** Detaillierungsgrad der Pläne nach SIA-Phase. */
+  phase: BauPhase;
 }
 
 export const defaultSettings: DocSettings = {
@@ -59,6 +76,8 @@ export const defaultSettings: DocSettings = {
   dossier: [],
   // Grundriss-Default = Bestandsverhalten; Koten an (Schnitt/Ansicht gewinnen)
   bemassung: { aussenKetten: 'beide', innenKetten: false, hoehenKoten: true },
+  // Default = volle Detaillierung (Bestandsverhalten); Vorprojekt reduziert
+  phase: 'werkplan',
 };
 
 export interface Patch {

@@ -580,3 +580,32 @@ test('Bemassungs-Stile: Werkplan zeigt Innenkette + Höhenkoten, Wettbewerb nich
   await expect(page.locator('[data-testid="dim-kette-oeffnung"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="dim-kette-gesamt"]').first()).toBeVisible();
 });
+
+test('SIA-Phase: Vorprojekt reduziert die Darstellung, Werkplan detailliert voll', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    const wand = k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 }, assemblyId: aw.id,
+    }) as { patches: { id: string }[] };
+    k.run('design.oeffnungSetzen', {
+      wallId: wand.patches[0]!.id, openingType: 'tuer', center: 4500, width: 1000, height: 2200, sill: 0,
+    });
+  });
+  const planview = page.locator('[data-testid="planview"]');
+  // Default Werkplan: Dämmschicht als eigene Region (Schraffur-Füllung)
+  await expect(planview.locator('path[fill="url(#hatch-daemmung)"]').first()).toBeAttached();
+  // Vorprojekt: EIN Poché, keine Dämmschicht, kein Türbogen; Bemassung koppelt auf «Wettbewerb»
+  await page.selectOption('[data-testid="phase-stil"]', 'vorprojekt');
+  await expect(planview.locator('path[fill="url(#hatch-daemmung)"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="bemassung-stil"]')).toHaveValue('wettbewerb');
+  // EIN Undo stellt Phase + Bemassung zusammen zurück
+  await page.click('[data-testid="undo"]');
+  await expect(planview.locator('path[fill="url(#hatch-daemmung)"]').first()).toBeAttached();
+  await expect(page.locator('[data-testid="phase-stil"]')).toHaveValue('werkplan');
+});

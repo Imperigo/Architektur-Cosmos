@@ -1,4 +1,4 @@
-import type { KosmoDoc } from '../model/doc';
+import { phaseLabel, type KosmoDoc } from '../model/doc';
 import type { Storey } from '../model/entities';
 import { derivePlan, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabel } from './dimensions';
@@ -141,17 +141,22 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
 export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number): InnerSvg {
   const g = deriveSection(doc, spec);
   const parts: string[] = [];
-  // Material-Poché zuerst (unter allen Stiften): Tint-Fläche + Schraffurlinien
+  // Material-Poché zuerst (unter allen Stiften): Detaillierung nach SIA-Phase —
+  // Vorprojekt einheitlich grau, Bauprojekt Material-Tönung, Werkplan + Schraffur
+  const phase = doc.settings.phase;
   for (const f of g.faces) {
     const spec2 = schraffurFuer(f.material, f.functionKey);
     const d = f.loops
       .map((loop) => `M ${loop.map((p) => `${p.s} ${-p.z}`).join(' L ')} Z`)
       .join(' ');
-    if (spec2.tint) parts.push(`<path d="${d}" fill-rule="evenodd" fill="${spec2.tint}" stroke="none"/>`);
-    for (const linie of schraffurLinien(f.loops, spec2, scale)) {
-      parts.push(
-        `<polyline points="${linie.map((p) => `${p.s},${-p.z}`).join(' ')}" fill="none" stroke="#333" stroke-width="${0.18 * scale}"/>`,
-      );
+    const fill = phase === 'vorprojekt' ? '#d7d4ce' : spec2.tint;
+    if (fill) parts.push(`<path d="${d}" fill-rule="evenodd" fill="${fill}" stroke="none"/>`);
+    if (phase === 'werkplan') {
+      for (const linie of schraffurLinien(f.loops, spec2, scale)) {
+        parts.push(
+          `<polyline points="${linie.map((p) => `${p.s},${-p.z}`).join(' ')}" fill="none" stroke="#333" stroke-width="${0.18 * scale}"/>`,
+        );
+      }
     }
   }
   const projStift = (g.cuts.length === 0 ? 0.35 : 0.18) * scale;
@@ -239,7 +244,7 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     `<text x="10" y="${y0 + 6}" font-weight="bold" font-size="4.2">${escapeXml(opts.projectName)}</text>`,
     `<text x="10" y="${y0 + 11.5}">${escapeXml(opts.planTitle)} · ${escapeXml(storey?.name ?? '')}</text>`,
     `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end">1:${scale}</text>`,
-    `<text x="${paper.width - 10}" y="${y0 + 11.5}" text-anchor="end">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · KosmoOrbit V1</text>`,
+    `<text x="${paper.width - 10}" y="${y0 + 11.5}" text-anchor="end">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
     `</g>`,
     '</svg>',
   );

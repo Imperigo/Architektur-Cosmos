@@ -60,24 +60,27 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
           strokeWidth={10}
           strokeDasharray="200 120"
         />
-        {/* Material-Poché: Tint + SIA-Schraffur unter allen Stiften (Bildmassstab ~1:50) */}
+        {/* Material-Poché nach SIA-Phase: Vorprojekt grau, Bauprojekt Tönung, Werkplan + Schraffur */}
         {graphic.faces.map((f, i) => {
+          const phase = doc.settings.phase;
           const s = schraffurFuer(f.material, f.functionKey);
           const d = f.loops
             .map((loop) => `M ${loop.map((p) => `${p.s} ${-p.z}`).join(' L ')} Z`)
             .join(' ');
+          const fill = phase === 'vorprojekt' ? 'var(--k-line)' : s.tint;
           return (
             <g key={`f${i}`}>
-              {s.tint && <path d={d} fillRule="evenodd" fill={s.tint} stroke="none" />}
-              {schraffurLinien(f.loops, s, 50).map((linie, j) => (
-                <polyline
-                  key={j}
-                  points={linie.map((p) => `${p.s},${-p.z}`).join(' ')}
-                  fill="none"
-                  stroke="var(--k-ink-soft)"
-                  strokeWidth={9}
-                />
-              ))}
+              {fill && <path d={d} fillRule="evenodd" fill={fill} stroke="none" />}
+              {phase === 'werkplan' &&
+                schraffurLinien(f.loops, s, 50).map((linie, j) => (
+                  <polyline
+                    key={j}
+                    points={linie.map((p) => `${p.s},${-p.z}`).join(' ')}
+                    fill="none"
+                    stroke="var(--k-ink-soft)"
+                    strokeWidth={9}
+                  />
+                ))}
             </g>
           );
         })}

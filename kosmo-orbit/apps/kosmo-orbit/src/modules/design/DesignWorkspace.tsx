@@ -445,6 +445,35 @@ export function DesignWorkspace() {
           Raster
         </KButton>
         <span style={{ width: 12 }} />
+        {/* SIA-Phase (Owner 03.07.): Detaillierungsgrad der Pläne; koppelt den passenden Bemassungs-Stil */}
+        <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+          Phase
+          <select
+            value={doc.settings.phase}
+            data-testid="phase-stil"
+            onChange={(e) => {
+              const phase = e.target.value as 'vorprojekt' | 'bauprojekt' | 'werkplan';
+              const bemassung = {
+                vorprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
+                bauprojekt: { aussenKetten: 'beide' as const, innenKetten: false, hoehenKoten: true },
+                werkplan: { aussenKetten: 'beide' as const, innenKetten: true, hoehenKoten: true },
+              }[phase];
+              const { history } = useProject.getState();
+              history.beginGroup();
+              try {
+                runCommand('design.phaseSetzen', { phase });
+                runCommand('design.bemassungSetzen', bemassung);
+              } finally {
+                history.endGroup();
+              }
+            }}
+            style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+          >
+            <option value="vorprojekt">Vorprojekt</option>
+            <option value="bauprojekt">Bauprojekt</option>
+            <option value="werkplan">Werkplan</option>
+          </select>
+        </label>
         {/* Bemassungs-Stil (V2-A5): Presets als Projekteinstellung, undo-fähig */}
         <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
           Masse
