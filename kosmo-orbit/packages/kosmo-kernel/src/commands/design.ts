@@ -550,7 +550,7 @@ export const generateFloorplan = registerCommand({
   id: 'design.grundrissGenerieren',
   title: 'Grundriss generieren',
   description:
-    'Füllt eine rechteckige Wohnungs-Zone nach dem CH-Rezept mit Zimmern und Möbeln: Eingangsband (Diele/Bad/Küche) an der Korridorseite, Wohnen + Zimmer an der Fassade. korridorSeite «auto» sucht die nächste Korridor-Zone. Ein Undo-Schritt; Anstoss, kein Entwurf.',
+    'Füllt eine rechteckige Wohnungs-Zone mit Zimmern und Möbeln. Zuerst prüft die Plan-Library: eine gespeicherte Vorlage, deren Name den Wohnungstyp enthält und die mit moderatem Stretch (0.7–1.4) passt, gewinnt — sonst CH-Rezept (Eingangsband Diele/Bad/Küche am Korridor, Wohnen + Zimmer an der Fassade). korridorSeite «auto» sucht die nächste Korridor-Zone. Ein Undo-Schritt; Anstoss, kein Entwurf.',
   params: z.object({
     zoneId: z.string(),
     korridorSeite: z.enum(['auto', 'unten', 'oben', 'links', 'rechts']).default('auto'),
@@ -582,6 +582,48 @@ export const generateFloorplan = registerCommand({
         seite = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'rechts' : 'links') : (dy > 0 ? 'oben' : 'unten');
       } else {
         seite = 'unten';
+      }
+    }
+    // Plan-Library (Finch-Prinzip): passt eine gespeicherte Vorlage, gewinnt
+    // sie gegen das Rezept — Name enthält den Wohnungstyp, Stretch moderat.
+    // v1 nur für Korridor unten/oben (links/rechts = Spiegel-Kapitel).
+    if ((seite === 'unten' || seite === 'oben') && wohnung.program) {
+      let bbMinX = Infinity, bbMaxX = -Infinity, bbMinY = Infinity, bbMaxY = -Infinity;
+      for (const pt of wohnung.outline) {
+        bbMinX = Math.min(bbMinX, pt.x); bbMaxX = Math.max(bbMaxX, pt.x);
+        bbMinY = Math.min(bbMinY, pt.y); bbMaxY = Math.max(bbMaxY, pt.y);
+      }
+      const wb = bbMaxX - bbMinX;
+      const wt = bbMaxY - bbMinY;
+      const passend = doc.settings.vorlagen
+        .filter((v) => v.name.toLowerCase().includes(wohnung.program!.toLowerCase()))
+        .map((v) => ({ v, sx: wb / v.breite, sy: wt / v.hoehe }))
+        .filter(({ sx, sy }) => sx >= 0.7 && sx <= 1.4 && sy >= 0.7 && sy <= 1.4)
+        .sort((a, b) => Math.abs(a.sx * a.sy - 1) - Math.abs(b.sx * b.sy - 1))[0];
+      if (passend) {
+        const { v, sx, sy } = passend;
+        const tx = (u: number, w: number) => ({
+          x: Math.round(bbMinX + u * sx),
+          y: seite === 'unten' ? Math.round(bbMinY + w * sy) : Math.round(bbMaxY - w * sy),
+        });
+        const patches: AnyPatch[] = [];
+        for (const vz of v.zonen) {
+          const outline = vz.outline.map((pt) => tx(pt.x, pt.y));
+          if (seite === 'oben') outline.reverse(); // Spiegel → Wicklung zurückdrehen
+          patches.push(added({
+            id: newId('zone'), kind: 'zone' as const, storeyId: wohnung.storeyId,
+            outline, name: vz.name, sia: vz.sia as Zone['sia'],
+            ...(vz.raumTyp ? { raumTyp: vz.raumTyp } : {}),
+          }));
+        }
+        for (const m of v.moebel ?? []) {
+          patches.push(added({
+            id: newId('moebel'), kind: 'furniture' as const, storeyId: wohnung.storeyId,
+            typ: m.typ, at: tx(m.at.x, m.at.y),
+            rotationGrad: seite === 'unten' ? m.rotationGrad : (m.rotationGrad + 180) % 360,
+          }));
+        }
+        return patches;
       }
     }
     const g = generiereGrundriss(wohnung.outline, seite);
@@ -641,6 +683,11 @@ export const saveTemplate = registerCommand({
         maxX = Math.max(maxX, pt.x); maxY = Math.max(maxY, pt.y);
       }
     }
+    const storeyId = zonen[0]!.storeyId;
+    const moebel = doc
+      .byKind<Furniture>('furniture')
+      .filter((f) => f.storeyId === storeyId && f.at.x >= minX && f.at.x <= maxX && f.at.y >= minY && f.at.y <= maxY)
+      .map((f) => ({ typ: f.typ, at: { x: f.at.x - minX, y: f.at.y - minY }, rotationGrad: f.rotationGrad }));
     const vorlage = {
       name: p.name,
       breite: maxX - minX,
@@ -651,6 +698,7 @@ export const saveTemplate = registerCommand({
         sia: z.sia,
         ...(z.raumTyp ? { raumTyp: z.raumTyp } : {}),
       })),
+      ...(moebel.length > 0 ? { moebel } : {}),
     };
     const after = {
       ...doc.settings,
@@ -679,7 +727,7 @@ export const placeTemplate = registerCommand({
     if (!vorlage) throw new CommandError(`Vorlage «${p.name}» existiert nicht`);
     const sx = p.breite ? p.breite / vorlage.breite : 1;
     const sy = p.hoehe ? p.hoehe / vorlage.hoehe : 1;
-    return vorlage.zonen.map((vz) =>
+    const patches: AnyPatch[] = vorlage.zonen.map((vz) =>
       added({
         id: newId('zone'),
         kind: 'zone' as const,
@@ -693,6 +741,14 @@ export const placeTemplate = registerCommand({
         })),
       }),
     );
+    for (const m of vorlage.moebel ?? []) {
+      patches.push(added({
+        id: newId('moebel'), kind: 'furniture' as const, storeyId: p.storeyId,
+        typ: m.typ, at: { x: Math.round(p.at.x + m.at.x * sx), y: Math.round(p.at.y + m.at.y * sy) },
+        rotationGrad: m.rotationGrad,
+      }));
+    }
+    return patches;
   },
 });
 

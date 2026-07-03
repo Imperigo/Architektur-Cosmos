@@ -1133,3 +1133,30 @@ test('Grundriss-Generator (Finch-Kern): schneiden → füllen → Zimmer + Möbe
   await page.click('[data-testid="undo"]');
   expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('zone').length)).toBe(vorher);
 });
+
+test('Raumgraph-Overlay (Plan-Library v2): Toggle zeigt Knoten und Kanten im Plan', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    // Zwei angrenzende Räume → offene Kante im Graph
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Wohnen', sia: 'HNF', raumTyp: 'wohnen',
+      outline: [{ x: 0, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 5000 }, { x: 0, y: 5000 }],
+    });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 5000, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 5000 }, { x: 5000, y: 5000 }],
+    });
+  });
+  await page.click('[data-testid="graph-toggle"]');
+  const overlay = page.locator('[data-testid="raumgraph-overlay"]');
+  await expect(overlay).toBeVisible();
+  expect(await overlay.locator('circle').count()).toBeGreaterThanOrEqual(2);
+  await page.click('[data-testid="graph-toggle"]');
+  await expect(overlay).toHaveCount(0);
+});

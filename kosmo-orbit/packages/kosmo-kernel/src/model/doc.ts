@@ -100,6 +100,8 @@ export interface ZonenVorlage {
     sia: string;
     raumTyp?: string;
   }[];
+  /** Möbel relativ zur BBox-Ecke (beim Speichern in der BBox eingesammelt). */
+  moebel?: { typ: string; at: { x: number; y: number }; rotationGrad: number }[];
 }
 
 /** Custom-Kennzahl (V2-F9): name = «Erstellungskosten», wert 3200, basis 'agf', einheit 'CHF'. */

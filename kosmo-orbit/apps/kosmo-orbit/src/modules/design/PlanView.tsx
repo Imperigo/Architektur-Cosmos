@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, regionToPath, assemblyThickness, type Assembly, type Furniture, type Pt, type Wall, type Zone } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, assemblyThickness, type Assembly, type Furniture, type Pt, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
@@ -15,6 +15,21 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const doc = useProject.getState().doc;
+  // Raumgraph-Overlay (Finch-Clip): Knoten auf Raumzentren, Kanten an Übergängen
+  const [graphAn, setGraphAn] = useState(false);
+  const graph = useMemo(() => {
+    if (!graphAn || !activeStoreyId) return null;
+    const g = raumGraph(doc, activeStoreyId);
+    const zentrum = (z: Zone) => {
+      let x = 0, y = 0;
+      for (const p of z.outline) { x += p.x; y += p.y; }
+      return { x: x / z.outline.length, y: y / z.outline.length };
+    };
+    const zentren = new Map(g.zonen.map((z) => [z.id, zentrum(z)]));
+    return { zentren, kanten: g.kanten };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graphAn, doc, activeStoreyId, revision]);
+
   // F3: Zonen mit Check-Befunden (Regeln/Fluchtweg) im Plan tönen
   const verletzteZonen = useMemo(() => {
     if (!activeStoreyId) return [];
@@ -131,6 +146,18 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--k-plan-paper)' }}>
+      <button
+        data-testid="graph-toggle"
+        onClick={() => setGraphAn(!graphAn)}
+        style={{
+          position: 'absolute', top: 8, right: 8, zIndex: 5, padding: '3px 10px',
+          borderRadius: 6, border: '1px solid var(--k-line-strong)', cursor: 'pointer',
+          background: graphAn ? '#2455a4' : 'var(--k-raised)', color: graphAn ? 'white' : 'inherit',
+          font: 'inherit', fontSize: 11.5,
+        }}
+      >
+        Graph
+      </button>
       <svg
         ref={svgRef}
         data-testid="planview"
@@ -297,6 +324,27 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                 strokeWidth={16}
               />
             ))}
+          {graph && (
+            <g data-testid="raumgraph-overlay">
+              {graph.kanten.map((k, i) => {
+                const a = graph.zentren.get(k.a);
+                const b = graph.zentren.get(k.b);
+                if (!a || !b) return null;
+                return (
+                  <g key={i}>
+                    <path
+                      d={`M ${a.x} ${-a.y} L ${k.punkt.x} ${-k.punkt.y} L ${b.x} ${-b.y}`}
+                      fill="none" stroke="#2455a4" strokeWidth={30} opacity={0.55}
+                    />
+                    <circle cx={k.punkt.x} cy={-k.punkt.y} r={90} fill="#2455a4" opacity={0.8} />
+                  </g>
+                );
+              })}
+              {[...graph.zentren.values()].map((z, i) => (
+                <circle key={`n${i}`} cx={z.x} cy={-z.y} r={200} fill="#2455a4" opacity={0.9} />
+              ))}
+            </g>
+          )}
           {plan &&
             plan.lines.map((l, i) => (
               <line

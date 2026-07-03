@@ -2229,3 +2229,44 @@ describe('Grundriss-Generator (Finch-Kern, Schritt 2)', () => {
     ).toThrow(/6 × 6/);
   });
 });
+
+describe('Plan-Library v2 (Vorlagen speisen den Generator)', () => {
+  it('Vorlage mit Möbeln gespeichert → Generator setzt sie gestreckt statt Rezept', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    // Muster-Wohnung 10×8 zeichnen: 1 Raum + 1 Bett, als Vorlage sichern
+    const z = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Master-Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+    execute(doc, 'design.moebelSetzen', { storeyId, typ: 'bett-doppel', at: { x: 5000, y: 7000 }, rotationGrad: 180 });
+    execute(doc, 'design.vorlageSpeichern', { name: '3.5zi marktgerecht Ost', zoneIds: [(z.patches[0] as { id: string }).id] });
+    expect(doc.settings.vorlagen[0]!.moebel).toHaveLength(1);
+    // Wohnung 12×8 (Stretch 1.2 in x) mit passendem Typ → Vorlage gewinnt
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg A', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 20000, y: 0 }, { x: 32000, y: 0 }, { x: 32000, y: 8000 }, { x: 20000, y: 8000 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    const master = doc.byKind<Zone>('zone').find((zz) => zz.name === 'Master-Zimmer' && zz.outline[0]!.x >= 20000);
+    expect(master).toBeDefined(); // Vorlagen-Raum, nicht Rezept-«Diele»
+    const xs = master!.outline.map((p) => p.x);
+    expect(Math.max(...xs) - Math.min(...xs)).toBe(12000); // ×1.2 gestreckt
+    const bett = doc.byKind<import('../src').Furniture>('furniture').find((f) => f.at.x >= 20000);
+    expect(bett).toBeDefined();
+    expect(bett!.at.x).toBe(20000 + 6000); // 5000 × 1.2
+  });
+
+  it('kein Namens-Match oder Stretch zu grob → Rezept-Fallback (Diele entsteht)', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg B', sia: 'HNF', program: 'alterswohnen',
+      outline: [{ x: 0, y: 0 }, { x: 9000, y: 0 }, { x: 9000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    expect(doc.byKind<Zone>('zone').some((z) => z.name === 'Diele')).toBe(true);
+  });
+});
