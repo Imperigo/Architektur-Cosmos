@@ -773,3 +773,21 @@ test('Materialkarten (V2-C2): Textur-Umschalter wirkt und bleibt gemerkt', async
   await page.click('[data-testid="textur-toggle"]');
   expect(await page.evaluate(() => localStorage.getItem('kosmo.texturen'))).toBe('1');
 });
+
+test('Bauwissen-Basis (Wissens-Andockung): Lehrhefte laden → Suche zitierfähig', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-prepare"]');
+  await expect(page.locator('[data-testid="basis-sektion"]')).toBeVisible();
+  await expect(page.locator('[data-testid="basis-lehrhefte"]')).toContainText('24 Quellen');
+  await page.click('[data-testid="basis-laden-lehrhefte"]');
+  await expect(page.locator('[data-testid="basis-lehrhefte"]')).toContainText('geladen', {
+    timeout: 30_000,
+  });
+  // Die Lehrheft-Inhalte sind jetzt Teil der Wissensbasis: Fachbegriff-Suche trifft
+  await page.fill('[data-testid="knowledge-search"]', 'Schrittmass Steigung');
+  await expect(page.locator('[data-testid="knowledge-hit"]').first()).toContainText('Treppen', {
+    timeout: 15_000,
+  });
+});

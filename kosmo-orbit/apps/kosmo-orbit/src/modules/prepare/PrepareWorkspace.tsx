@@ -2,11 +2,15 @@ import { useProject } from '../../state/project-store';
 import { useEffect, useRef, useState } from 'react';
 import { Karteikarte, Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
 import {
+  basisIndex,
+  geladeneSammlungen,
   getChunk,
+  importiereBasis,
   ingestFile,
   listDocs,
   removeDoc,
   searchKnowledge,
+  type BasisSammlung,
   type KnowledgeDoc,
   type KnowledgeHit,
 } from './knowledge';
@@ -187,18 +191,20 @@ export function PrepareWorkspace() {
           )}
         </div>
 
-        {/* Dokumente */}
+        <BasisSection onGeladen={refresh} />
+
+        {/* Dokumente (Basis-Sammlungen erscheinen kompakt oben, nicht als Einzelzeilen) */}
         <div style={{ display: 'grid', gap: 8 }}>
           <div style={{ fontWeight: 550, fontSize: 13.5 }}>
-            Aufgenommen ({docs.length})
+            Aufgenommen ({docs.filter((d) => d.source !== 'basis').length})
           </div>
-          {docs.length === 0 && (
+          {docs.filter((d) => d.source !== 'basis').length === 0 && (
             <Messrahmen
               height={180}
               caption="Noch keine Grundlagen — sobald Dokumente da sind, beantwortet Kosmo Fragen daraus"
             />
           )}
-          {docs.map((d) => (
+          {docs.filter((d) => d.source !== 'basis').map((d) => (
             <Panel
               key={d.id}
               data-testid={`doc-${d.id}`}
@@ -376,6 +382,62 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
 
 
 /** Phase 0: Wettbewerbsdossier — Do's, Don'ts, Fakten. Kosmo beachtet sie bindend. */
+/** Bauwissen-Basis: wissen/-Korpora aus dem Kosmos-Repo, je Sammlung ladbar. */
+function BasisSection({ onGeladen }: { onGeladen: () => void }) {
+  const [sammlungen, setSammlungen] = useState<BasisSammlung[]>([]);
+  const [geladen, setGeladen] = useState<Set<string>>(new Set());
+  const [laufend, setLaufend] = useState<string | null>(null);
+  const [fehler, setFehler] = useState<string | null>(null);
+  useEffect(() => {
+    void basisIndex().then(setSammlungen);
+    void geladeneSammlungen().then(setGeladen);
+  }, []);
+  if (sammlungen.length === 0) return null;
+  return (
+    <div style={{ display: 'grid', gap: 8 }} data-testid="basis-sektion">
+      <div style={{ fontWeight: 550, fontSize: 13.5 }}>Bauwissen-Basis (Kosmos-Bibliothek)</div>
+      {sammlungen.map((sa) => (
+        <Panel
+          key={sa.sammlung}
+          data-testid={`basis-${sa.sammlung}`}
+          style={{ padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 12 }}
+        >
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontWeight: 550, fontSize: 13.5 }}>{sa.label}</div>
+            <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+              {sa.quellen} Quellen · {sa.chunks} Abschnitte · {(sa.kb / 1024).toFixed(1)} MB
+            </div>
+          </div>
+          {geladen.has(sa.sammlung) ? (
+            <Badge hue={moduleHue.prepare}>geladen</Badge>
+          ) : (
+            <KButton
+              size="sm"
+              tone="accent"
+              data-testid={`basis-laden-${sa.sammlung}`}
+              disabled={laufend !== null}
+              onClick={() => {
+                setLaufend(sa.sammlung);
+                setFehler(null);
+                importiereBasis(sa.sammlung)
+                  .then(() => {
+                    setGeladen((g) => new Set([...g, sa.sammlung]));
+                    onGeladen();
+                  })
+                  .catch((err) => setFehler(err instanceof Error ? err.message : String(err)))
+                  .finally(() => setLaufend(null));
+              }}
+            >
+              {laufend === sa.sammlung ? 'Lade …' : 'Laden'}
+            </KButton>
+          )}
+        </Panel>
+      ))}
+      {fehler && <div style={{ fontSize: 12.5, color: 'var(--k-danger, #b3462e)' }}>⚠ {fehler}</div>}
+    </div>
+  );
+}
+
 function DossierSection() {
   const revision = useProject((s) => s.revision);
   const runCommand = useProject((s) => s.runCommand);

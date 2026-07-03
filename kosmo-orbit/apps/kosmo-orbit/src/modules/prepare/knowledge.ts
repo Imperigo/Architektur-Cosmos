@@ -9,7 +9,7 @@
 export interface KnowledgeDoc {
   id: string;
   name: string;
-  source: 'lokal' | 'onedrive';
+  source: 'lokal' | 'onedrive' | 'basis';
   addedAt: string;
   pages?: number;
   chunkCount: number;
@@ -209,6 +209,101 @@ export async function removeDoc(docId: string): Promise<void> {
   for (const k of keys) tx.objectStore('chunks').delete(k);
   await txDone(tx);
   db.close();
+}
+
+// ————— Bauwissen-Basis (wissen/-Korpora aus dem Kosmos-Repo) —————
+// Statische JSON-Bündel unter public/wissen/, erzeugt von
+// wissen/tools/export-webbasis.py. Laden ist idempotent (stabile doc-Ids).
+
+export interface BasisSammlung {
+  sammlung: string;
+  label: string;
+  quellen: number;
+  chunks: number;
+  kb: number;
+}
+
+function basisUrl(datei: string): string {
+  return `${import.meta.env.BASE_URL ?? '/'}wissen/${datei}`;
+}
+
+/** Verfügbare Sammlungen (leer, wenn das Bündel nicht ausgeliefert ist). */
+export async function basisIndex(): Promise<BasisSammlung[]> {
+  try {
+    const res = await fetch(basisUrl('index.json'), { cache: 'no-store' });
+    if (!res.ok) return [];
+    return (await res.json()) as BasisSammlung[];
+  } catch {
+    return [];
+  }
+}
+
+function basisDocId(sammlung: string, quelle: string): string {
+  const slug = quelle
+    .toLowerCase()
+    .replace(/[äöü]/g, (c) => ({ ä: 'ae', ö: 'oe', ü: 'ue' })[c]!)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+  return `basis-${sammlung}-${slug}`;
+}
+
+/** Bereits geladene Sammlungen (anhand der stabilen doc-Id-Präfixe). */
+export async function geladeneSammlungen(): Promise<Set<string>> {
+  const docs = await listDocs();
+  const raus = new Set<string>();
+  for (const d of docs) {
+    const m = d.id.match(/^basis-([a-z0-9-]+?)-/);
+    if (d.source === 'basis' && m) raus.add(m[1]!);
+  }
+  return raus;
+}
+
+/** Sammlung in die lokale Wissensbasis laden; je Quelle EIN Dokument. */
+export async function importiereBasis(
+  sammlung: string,
+): Promise<{ quellen: number; chunks: number }> {
+  const res = await fetch(basisUrl(`${sammlung}.json`), { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Sammlung «${sammlung}» nicht erreichbar (${res.status})`);
+  const daten = (await res.json()) as {
+    quellen: { name: string; chunks: { text: string; seite?: number }[] }[];
+  };
+  const db = await openDb();
+  const vorhandene = new Set(
+    (await reqResult(
+      db.transaction('docs', 'readonly').objectStore('docs').getAllKeys(),
+    )) as string[],
+  );
+  let quellen = 0;
+  let chunks = 0;
+  // Quellenweise Transaktionen: abbruchsicher, Fortschritt bleibt erhalten
+  for (const q of daten.quellen) {
+    const docId = basisDocId(sammlung, q.name);
+    if (vorhandene.has(docId)) continue;
+    const tx = db.transaction(['docs', 'chunks'], 'readwrite');
+    tx.objectStore('docs').put({
+      id: docId,
+      name: q.name,
+      source: 'basis',
+      addedAt: new Date().toISOString(),
+      chunkCount: q.chunks.length,
+    } satisfies KnowledgeDoc);
+    const store = tx.objectStore('chunks');
+    q.chunks.forEach((c, i) =>
+      store.put({
+        id: `${docId}-${i}`,
+        docId,
+        docName: q.name,
+        seq: i,
+        text: c.seite ? `[S. ${c.seite}] ${c.text}` : c.text,
+      } satisfies KnowledgeChunk),
+    );
+    await txDone(tx);
+    quellen++;
+    chunks += q.chunks.length;
+  }
+  db.close();
+  return { quellen, chunks };
 }
 
 export interface KnowledgeHit extends KnowledgeChunk {
