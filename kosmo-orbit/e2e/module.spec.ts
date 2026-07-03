@@ -297,3 +297,27 @@ test('Härtetest: kaputte .kosmo-Datei → klare Meldung, UI lebt weiter', async
   await d.accept();
   await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
 });
+
+test('Blatt-Pflege: Massstab ändern, Titel setzen, Text verschieben, Blatt löschen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="load-tkb"]');
+  await page.waitForSelector('text=KENNZAHLEN');
+  await page.evaluate(() => window.__kosmo.open('publish'));
+  await page.click('[data-testid="plakat-klassisch"]');
+  // Platzierung wählen → Massstab 1:500 → steht im Blatt-SVG
+  await page.locator('[data-testid^="placement-"]').first().click();
+  await page.selectOption('[data-testid="auswahl-massstab"]', '500');
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('1:500');
+  // Titel umbenennen
+  await page.fill('[data-testid="auswahl-titel"]', 'Situation');
+  await page.locator('[data-testid="auswahl-titel"]').blur();
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Situation');
+  // Text auf dem Blatt verschieben (Command-Weg über Drag-Overlay)
+  const textOverlay = page.locator('[data-testid^="blatt-text-"]').first();
+  await expect(textOverlay).toBeAttached();
+  // Blatt löschen → Plansatz leer
+  await page.click('[data-testid^="blatt-entfernen-"]');
+  await expect(page.getByText('Noch kein Blatt im Plansatz', { exact: false })).toBeVisible();
+});

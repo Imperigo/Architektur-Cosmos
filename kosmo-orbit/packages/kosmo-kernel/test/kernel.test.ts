@@ -940,3 +940,25 @@ describe('Baugrenzen (Phase 0)', () => {
     expect(plan.lines.filter((l) => l.classes.includes('baugrenze'))).toHaveLength(4);
   });
 });
+
+describe('Blatt-Pflege (anpassen, entfernen)', () => {
+  it('Massstab/Titel ändern und Blatt entfernen — beides undo-fähig', () => {
+    const { doc, storeyId } = setupDoc();
+    const h = new History();
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'B1', format: 'A1', orientation: 'quer' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId, view: 'grundriss', storeyId, scale: 100, x: 200, y: 200 });
+    let sheet = doc.get(sheetId) as import('../src').Sheet;
+    const plId = sheet.placements[0]!.id;
+    execute(doc, 'publish.ansichtAnpassen', { sheetId, placementId: plId, scale: 50, title: 'EG neu' });
+    sheet = doc.get(sheetId) as import('../src').Sheet;
+    expect(sheet.placements[0]!.scale).toBe(50);
+    expect(sheet.placements[0]!.title).toBe('EG neu');
+    const weg = execute(doc, 'publish.blattEntfernen', { sheetId });
+    h.record(weg.patches);
+    expect(doc.byKind('sheet')).toHaveLength(0);
+    h.undo(doc);
+    expect(doc.byKind('sheet')).toHaveLength(1);
+    expect((doc.get(sheetId) as import('../src').Sheet).placements[0]!.scale).toBe(50);
+  });
+});

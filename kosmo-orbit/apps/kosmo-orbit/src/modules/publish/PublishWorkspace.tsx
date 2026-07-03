@@ -45,6 +45,7 @@ export function PublishWorkspace() {
   const [placeScale, setPlaceScale] = useState(100);
   const [selectedPlacement, setSelectedPlacement] = useState<string | null>(null);
   const [drag, setDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
+  const [textDrag, setTextDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
   const svgHostRef = useRef<HTMLDivElement>(null);
 
   const sheet = sheets.find((s) => s.id === activeSheetId) ?? sheets[0] ?? null;
@@ -250,7 +251,21 @@ export function PublishWorkspace() {
               borderColor: sheet?.id === s.id ? 'var(--k-accent)' : 'var(--k-line)',
             }}
           >
-            <div style={{ fontWeight: 550, fontSize: 13 }}>{s.name}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ fontWeight: 550, fontSize: 13, flex: 1 }}>{s.name}</div>
+              <button
+                aria-label="Blatt entfernen"
+                data-testid={`blatt-entfernen-${s.index}`}
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  runCommand('publish.blattEntfernen', { sheetId: s.id });
+                  if (activeSheetId === s.id) setActiveSheetId(null);
+                }}
+                style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 12, padding: '0 2px' }}
+              >
+                ✕
+              </button>
+            </div>
             <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
               {s.format} {s.orientation} · {s.placements.length} Ansichten
             </div>
@@ -383,18 +398,54 @@ export function PublishWorkspace() {
               {label}
             </KButton>
           ))}
-          {selectedPlacement && sheet && (
-            <KButton
-              size="sm"
-              tone="ghost"
-              onClick={() => {
-                runCommand('publish.ansichtEntfernen', { sheetId: sheet.id, placementId: selectedPlacement });
-                setSelectedPlacement(null);
-              }}
-            >
-              Ansicht entfernen
-            </KButton>
-          )}
+          {selectedPlacement && sheet && (() => {
+            const pl = sheet.placements.find((x) => x.id === selectedPlacement);
+            if (!pl) return null;
+            return (
+              <>
+                <span style={{ color: 'var(--k-ink-faint)' }}>Auswahl:</span>
+                <select
+                  value={pl.scale}
+                  data-testid="auswahl-massstab"
+                  onChange={(e) =>
+                    runCommand('publish.ansichtAnpassen', {
+                      sheetId: sheet.id,
+                      placementId: pl.id,
+                      scale: Number(e.target.value),
+                    })
+                  }
+                  style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
+                >
+                  {(SCALES.includes(pl.scale) ? SCALES : [pl.scale, ...SCALES]).map((sc) => (
+                    <option key={sc} value={sc}>1:{sc}</option>
+                  ))}
+                </select>
+                <input
+                  defaultValue={pl.title ?? ''}
+                  key={pl.id}
+                  placeholder="Titel"
+                  data-testid="auswahl-titel"
+                  onBlur={(e) => {
+                    if (e.target.value !== (pl.title ?? '')) {
+                      runCommand('publish.ansichtAnpassen', { sheetId: sheet.id, placementId: pl.id, title: e.target.value });
+                    }
+                  }}
+                  style={{ width: 130, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+                />
+                <KButton
+                  size="sm"
+                  tone="ghost"
+                  data-testid="auswahl-entfernen"
+                  onClick={() => {
+                    runCommand('publish.ansichtEntfernen', { sheetId: sheet.id, placementId: selectedPlacement });
+                    setSelectedPlacement(null);
+                  }}
+                >
+                  Entfernen
+                </KButton>
+              </>
+            );
+          })()}
           <div style={{ flex: 1 }} />
           <KButton size="sm" tone="ghost" onClick={undo}>↩ Rückgängig</KButton>
         </div>
@@ -420,12 +471,30 @@ export function PublishWorkspace() {
                 boxShadow: 'var(--k-shadow, 0 8px 30px rgba(0,0,0,0.12))',
               }}
               onPointerMove={(e) => {
+                if (textDrag) {
+                  const p = toPaper(e);
+                  if (p) setTextDrag({ ...textDrag, dx: p.x, dy: p.y });
+                  return;
+                }
                 if (!drag) return;
                 const p = toPaper(e);
                 if (!p) return;
                 setDrag({ ...drag, dx: p.x, dy: p.y });
               }}
               onPointerUp={() => {
+                if (textDrag && sheet) {
+                  const t = sheet.texte?.find((x) => x.id === textDrag.id);
+                  if (t) {
+                    runCommand('publish.textSetzen', {
+                      sheetId: sheet.id,
+                      textId: t.id,
+                      text: t.text,
+                      x: Math.round(textDrag.dx),
+                      y: Math.round(textDrag.dy),
+                    });
+                  }
+                  setTextDrag(null);
+                }
                 if (drag && sheet) {
                   runCommand('publish.ansichtVerschieben', {
                     sheetId: sheet.id,
@@ -473,6 +542,41 @@ export function PublishWorkspace() {
                     }}
                     onMouseLeave={(e) => {
                       if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed transparent';
+                    }}
+                  />
+                );
+              })}
+              {/* Text-Overlays: Titel/Konzepttexte direkt auf dem Blatt verschieben */}
+              {(sheet.texte ?? []).map((t) => {
+                const zeilen = t.text.split('\n');
+                const wMm = Math.max(...zeilen.map((z) => z.length)) * t.size * 0.55;
+                const hMm = zeilen.length * t.size * 1.35;
+                const tx = textDrag?.id === t.id ? textDrag.dx : t.x;
+                const ty = (textDrag?.id === t.id ? textDrag.dy : t.y) - t.size;
+                return (
+                  <div
+                    key={t.id}
+                    data-testid={`blatt-text-${t.id}`}
+                    title="Text verschieben — Inhalt links bearbeiten"
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      setSelectedPlacement(null);
+                      setTextDrag({ id: t.id, dx: t.x, dy: t.y });
+                    }}
+                    style={{
+                      position: 'absolute',
+                      left: `${(tx / paper.width) * 100}%`,
+                      top: `${(ty / paper.height) * 100}%`,
+                      width: `${(Math.max(wMm, 20) / paper.width) * 100}%`,
+                      height: `${(Math.max(hMm, 8) / paper.height) * 100}%`,
+                      border: textDrag?.id === t.id ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
+                      cursor: 'move',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (textDrag?.id !== t.id) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (textDrag?.id !== t.id) (e.currentTarget as HTMLElement).style.border = '1px dashed transparent';
                     }}
                   />
                 );

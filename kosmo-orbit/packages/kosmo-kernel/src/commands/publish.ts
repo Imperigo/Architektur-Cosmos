@@ -194,3 +194,48 @@ export const setText = registerCommand({
     return [{ id: sheet.id, before: sheet, after }];
   },
 });
+
+export const adjustPlacement = registerCommand({
+  id: 'publish.ansichtAnpassen',
+  title: 'Ansicht anpassen',
+  description:
+    'Ändert Massstab und/oder Titel einer platzierten Ansicht auf einem Planblatt.',
+  params: z.object({
+    sheetId: z.string(),
+    placementId: z.string(),
+    scale: z.number().int().min(1).max(2000).optional(),
+    title: z.string().optional(),
+  }),
+  summarize: (p) => `Ansicht anpassen${p.scale ? ` (1:${p.scale})` : ''}`,
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    if (!sheet.placements.some((pl) => pl.id === p.placementId)) {
+      throw new CommandError(`Platzierung «${p.placementId}» existiert nicht`);
+    }
+    const after: Sheet = {
+      ...sheet,
+      placements: sheet.placements.map((pl) =>
+        pl.id === p.placementId
+          ? {
+              ...pl,
+              scale: p.scale ?? pl.scale,
+              ...(p.title === undefined ? {} : { title: p.title }),
+            }
+          : pl,
+      ),
+    };
+    return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
+export const removeSheet = registerCommand({
+  id: 'publish.blattEntfernen',
+  title: 'Blatt entfernen',
+  description: 'Entfernt ein Planblatt samt allen Platzierungen und Texten aus dem Plansatz.',
+  params: z.object({ sheetId: z.string() }),
+  summarize: () => 'Blatt entfernen',
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    return [{ id: sheet.id, before: sheet, after: null }];
+  },
+});
