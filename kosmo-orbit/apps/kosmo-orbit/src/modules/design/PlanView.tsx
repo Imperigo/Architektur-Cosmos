@@ -266,6 +266,42 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               />
             ))}
 
+          {/* Stützenraster: Achsen strichpunktiert + Achskopf an beiden Enden */}
+          {plan &&
+            plan.axes.map((ax, i) => {
+              const haupt = ax.typ === 'haupt';
+              return (
+                <g key={`gx${i}`} data-testid="grid-achse">
+                  <line
+                    x1={ax.a.x}
+                    y1={-ax.a.y}
+                    x2={ax.b.x}
+                    y2={-ax.b.y}
+                    stroke="var(--k-ink-faint)"
+                    strokeWidth={haupt ? 9 : 5}
+                    strokeDasharray={haupt ? '300 90 60 90' : '120 90'}
+                  />
+                  {haupt &&
+                    ax.label &&
+                    [ax.a, ax.b].map((p, k) => (
+                      <g key={k}>
+                        <circle cx={p.x} cy={-p.y} r={280} fill="var(--k-surface)" stroke="var(--k-ink-soft)" strokeWidth={9} />
+                        <text
+                          x={p.x}
+                          y={-p.y + 100}
+                          textAnchor="middle"
+                          fontSize={300}
+                          fill="var(--k-ink-soft)"
+                          fontFamily="var(--k-font-mono)"
+                        >
+                          {ax.label}
+                        </text>
+                      </g>
+                    ))}
+                </g>
+              );
+            })}
+
           {plan &&
             plan.arcs.map((a, i) => {
               const sx = a.center.x + a.radius * Math.cos(a.startAngle);

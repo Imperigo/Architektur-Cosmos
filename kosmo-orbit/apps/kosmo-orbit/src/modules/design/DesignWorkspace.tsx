@@ -2,9 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, KButton, Measure, moduleHue } from '@kosmo/ui';
 import {
   areaReport,
+  fangKandidaten,
   formatLength,
   generiereVolumenstudien,
+  magnetFang,
   type Assembly,
+  type FangKandidaten,
   type Pt,
   type SectionSpec,
   type Storey,
@@ -32,9 +35,14 @@ import { registerActions } from '../../shell/palette';
 
 type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'schnitt' | 'skizze';
 
-const SNAP = 250; // mm Rasterfang — später einstellbar/magnetisch
+const SNAP = 250; // mm Rasterfang, wenn keine Achse in Reichweite
 
-function snap(p: Pt): Pt {
+/** Magnet aufs Stützenraster (Kreuzung > Achslinie), sonst 250er-Raster. */
+function snap(p: Pt, magnet?: FangKandidaten): Pt {
+  if (magnet) {
+    const treffer = magnetFang(p, magnet);
+    if (treffer) return treffer;
+  }
   return { x: Math.round(p.x / SNAP) * SNAP, y: Math.round(p.y / SNAP) * SNAP };
 }
 
@@ -45,6 +53,13 @@ export function DesignWorkspace() {
   const undo = useProject((s) => s.undo);
   const redo = useProject((s) => s.redo);
   const setActiveStorey = useProject((s) => s.setActiveStorey);
+
+  // Achsen-Magnet: Kandidaten des aktiven Geschosses, revision-abhängig
+  const magnet = useMemo(
+    () => (activeStoreyId ? fangKandidaten(useProject.getState().doc, activeStoreyId) : undefined),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [revision, activeStoreyId],
+  );
 
   const [tool, setTool] = useState<ToolId>('wand');
   const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split' | 'quad'>('split');
@@ -152,11 +167,11 @@ export function DesignWorkspace() {
           ? [...points, cursor, points[0]!]
           : [...points, cursor]
         : null,
-    onGroundMove: (e) => setCursor(snap(e.p)),
+    onGroundMove: (e) => setCursor(snap(e.p, magnet)),
     onEscape: () => setPoints([]),
     onGroundClick: (e) => {
       if (!activeStoreyId) return;
-      const p = snap(e.p);
+      const p = snap(e.p, magnet);
       if (tool === 'wand') {
         if (points.length === 0) {
           setPoints([p]);

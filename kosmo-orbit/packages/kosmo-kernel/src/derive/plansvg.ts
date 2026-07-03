@@ -52,10 +52,31 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
     );
   }
   for (const l of plan.lines) {
+    const baugrenze = l.classes.includes('baugrenze');
     const sw = (l.classes.includes('fenster') ? 0.18 : 0.25) * scale;
+    // Baugrenze strichpunktiert auch im Druck (wie am Bildschirm)
+    const dash = baugrenze ? ` stroke-dasharray="${3 * scale} ${0.9 * scale} ${0.6 * scale} ${0.9 * scale}"` : '';
     parts.push(
-      `<line x1="${l.a.x}" y1="${-l.a.y}" x2="${l.b.x}" y2="${-l.b.y}" stroke="black" stroke-width="${sw}"/>`,
+      `<line x1="${l.a.x}" y1="${-l.a.y}" x2="${l.b.x}" y2="${-l.b.y}" stroke="black" stroke-width="${sw}"${dash}/>`,
     );
+  }
+  // Stützenraster: Achsen strichpunktiert, Achsköpfe an beiden Enden
+  for (const ax of plan.axes) {
+    const haupt = ax.typ === 'haupt';
+    const dash = haupt
+      ? `${3 * scale} ${0.9 * scale} ${0.6 * scale} ${0.9 * scale}`
+      : `${1.2 * scale} ${0.9 * scale}`;
+    parts.push(
+      `<line x1="${ax.a.x}" y1="${-ax.a.y}" x2="${ax.b.x}" y2="${-ax.b.y}" stroke="#555" stroke-width="${0.18 * scale}" stroke-dasharray="${dash}"/>`,
+    );
+    if (haupt && ax.label) {
+      for (const p of [ax.a, ax.b]) {
+        parts.push(
+          `<circle cx="${p.x}" cy="${-p.y}" r="${2.8 * scale}" fill="white" stroke="black" stroke-width="${0.18 * scale}"/>`,
+          `<text x="${p.x}" y="${-p.y + scale}" text-anchor="middle" font-size="${3 * scale}" font-family="monospace">${escapeXml(ax.label)}</text>`,
+        );
+      }
+    }
   }
   for (const a of plan.arcs) {
     const sx = a.center.x + a.radius * Math.cos(a.startAngle);

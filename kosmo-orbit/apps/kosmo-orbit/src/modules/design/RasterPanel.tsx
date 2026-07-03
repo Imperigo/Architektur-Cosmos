@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
-import { generiereStuetzenraster } from '@kosmo/kernel';
+import { generiereStuetzenraster, type RasterVariante } from '@kosmo/kernel';
 import { Badge, Hairline, Karteikarte, KButton, Measure } from '@kosmo/ui';
+import { useProject } from '../../state/project-store';
 
 /**
- * Stützenraster-Assistent (Phase 3.26) — Holz-Hybrid-Wohnraster über
+ * Stützenraster-Assistent (Phase 3.26, V2-A3) — Holz-Hybrid-Wohnraster über
  * 90°-Tiefgaragen-Parkierung, nach der Owner-Herleitung (VSS 40 291 als
- * Entwurfsreferenz). Reines Rechenwerk: Parameter oben, Varianten unten.
+ * Entwurfsreferenz). Rechenwerk oben, Varianten unten — und «Achsen ins
+ * Modell» macht die Variante zu echten Rasterachsen mit Zeichnungs-Fang.
  */
 
 const BEWERTUNG_HUE: Record<string, string> = {
@@ -20,6 +22,22 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
   const [abstandCm, setAbstandCm] = useState(10);
   const [zimmerLicht, setZimmerLicht] = useState(3.0);
   const [struktur, setStruktur] = useState(0.25);
+  // Achsen ins Modell (V2-A3)
+  const [anzahl, setAnzahl] = useState(5);
+  const [querAnzahl, setQuerAnzahl] = useState(4);
+  const runCommand = useProject((s) => s.runCommand);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+
+  const achsenInsModell = (v: RasterVariante) => {
+    if (!activeStoreyId) return;
+    runCommand('design.rasterSetzen', {
+      storeyId: activeStoreyId,
+      achsmass: Math.round(v.achsmass * 1000),
+      anzahl,
+      querAnzahl,
+      wohnraster: Math.round(v.wohnraster * 1000),
+    });
+  };
 
   const varianten = useMemo(
     () =>
@@ -98,6 +116,19 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
 
       <Hairline />
 
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+        <span style={{ color: 'var(--k-ink-soft)', fontSize: 11.5 }}>Achsen ins Modell:</span>
+        <label>
+          Hauptachsen{' '}
+          <input type="number" min={2} max={40} value={anzahl} onChange={(e) => setAnzahl(Math.max(2, Number(e.target.value) || 5))} style={inputStyle} data-testid="raster-anzahl" />
+        </label>
+        <label>
+          Querachsen{' '}
+          <input type="number" min={2} max={40} value={querAnzahl} onChange={(e) => setQuerAnzahl(Math.max(2, Number(e.target.value) || 4))} style={inputStyle} />
+        </label>
+        <span style={{ color: 'var(--k-ink-faint)', fontSize: 10.5 }}>ersetzt das Raster des Geschosses · Zeichnen fängt auf Achsen</span>
+      </div>
+
       <div style={{ display: 'grid', gap: 6 }} data-testid="raster-varianten">
         {varianten.map((v, i) => (
           <Karteikarte key={`${v.parkfelder}-${v.feldbreite}-${v.wohnachsen}`} nr={i + 1}>
@@ -109,6 +140,9 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
                 <div style={{ flex: 1 }} />
                 <Badge hue={BEWERTUNG_HUE[v.bewertung] ?? 'var(--k-ink-faint)'}>{v.bewertung}</Badge>
                 {v.holzbauKritisch && <Badge hue="var(--k-warning)">Holzbau</Badge>}
+                <KButton size="sm" tone="quiet" data-testid="raster-achsen" onClick={() => achsenInsModell(v)}>
+                  Achsen ins Modell
+                </KButton>
               </div>
               <div style={{ display: 'flex', gap: 14, color: 'var(--k-ink-soft)', fontSize: 11.5, flexWrap: 'wrap' }}>
                 <span>

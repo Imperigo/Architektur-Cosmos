@@ -37,9 +37,12 @@ export interface Storey extends Base {
 /** Rasterachse (Stützenraster, z.B. A/B/C × 1/2/3). */
 export interface GridAxis extends Base {
   kind: 'grid';
+  storeyId: string;
   label: string;
   a: Pt;
   b: Pt;
+  /** haupt = Tragachse mit Achskopf; wohn = feine Wohnraster-Zwischenachse. */
+  typ?: 'haupt' | 'wohn';
 }
 
 export type LayerFunction = 'tragend' | 'daemmung' | 'bekleidung' | 'dichtung' | 'hohlraum';

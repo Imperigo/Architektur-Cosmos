@@ -140,6 +140,56 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
   // Die Owner-Referenzvariante 4×2.50 → 10.50 m steht mit Bewertung da
   await expect(page.getByText('4 Felder à 2.50 → Achse 10.50 m').first()).toBeVisible();
   await expect(page.locator('[data-testid="raster-varianten"]').getByText('ausgewogen').first()).toBeVisible();
+
+  // V2-A3: Achsen ins Modell → Grid-Entities + Achsköpfe im Plan
+  await page.locator('[data-testid="raster-achsen"]').first().click();
+  const raster = await page.evaluate(() => {
+    const achsen = window.__kosmo.state().doc.byKind('grid') as unknown as {
+      label: string;
+      typ?: string;
+      a: { x: number; y: number };
+    }[];
+    return {
+      gesamt: achsen.length,
+      haupt: achsen.filter((a) => a.typ === 'haupt').length,
+      achsmass: achsen.find((a) => a.label === '2')!.a.x,
+      quermass: achsen.find((a) => a.label === 'B')!.a.y,
+    };
+  });
+  expect(raster.haupt).toBe(9); // 5 Hauptachsen + 4 Querachsen
+  await expect(page.locator('[data-testid="grid-achse"]').first()).toBeVisible();
+  await page.click('[data-testid="raster-toggle"]'); // Panel zu — es liegt über dem Plan
+
+  // Fang: Klicks NEBEN der Kreuzung rasten exakt auf die Achskreuzung ein.
+  // Bildschirm-Koordinaten der HAUPT-Achsen aus dem gerenderten DOM (inkl. Transformation);
+  // Wohnraster-Achsen (feines Strichmuster) werden ausgefiltert.
+  const koord = await page.evaluate((achsmass) => {
+    const linien = [...document.querySelectorAll('[data-testid="grid-achse"] line')]
+      .filter((el) => el.getAttribute('stroke-dasharray') === '300 90 60 90')
+      .map((el) => el.getBoundingClientRect());
+    const senkrecht = linien.filter((r) => r.width < r.height);
+    const waagrecht = linien.filter((r) => r.width >= r.height);
+    const xs = senkrecht.map((r) => (r.left + r.right) / 2).sort((a, b) => a - b);
+    // Bildschirm-y wächst nach unten; Quer-Achse A (Welt-y 0) liegt zuunterst
+    const ys = waagrecht.map((r) => (r.top + r.bottom) / 2).sort((a, b) => b - a);
+    const pxProMm = (xs[1]! - xs[0]!) / achsmass;
+    return { x1: xs[0]!, yA: ys[0]!, yB: ys[1]!, versatz: 300 * pxProMm };
+  }, raster.achsmass);
+  // 300 mm neben der Kreuzung: Magnet (Radius 400) zieht auf die Achse,
+  // der 250er-Rasterfang würde daneben landen — das unterscheidet die Wege.
+  // Wand entlang Achse 1 (Kreuzungen 1/A und 1/B sind beide im Sichtfeld).
+  await page.mouse.click(koord.x1 + koord.versatz, koord.yA - 2);
+  await page.mouse.click(koord.x1 + koord.versatz, koord.yB + 2);
+  const wand = await page.evaluate(() => {
+    const w = window.__kosmo.state().doc.byKind('wall')[0] as unknown as {
+      a: { x: number; y: number };
+      b: { x: number; y: number };
+    };
+    return w ? { a: w.a, b: w.b } : null;
+  });
+  expect(wand).not.toBeNull();
+  expect(wand!.a).toEqual({ x: 0, y: 0 });
+  expect(wand!.b).toEqual({ x: 0, y: raster.quermass });
 });
 
 test('Axonometrie: aufs Blatt platzieren, Linien erscheinen', async ({ page }) => {

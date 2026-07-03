@@ -22,6 +22,9 @@ import {
   schraffurLinien,
   sheetToSvg,
   CommandError,
+  fangKandidaten,
+  magnetFang,
+  derivePlan,
   type Storey,
   type Wall,
   type Assembly,
@@ -1226,5 +1229,61 @@ describe('Plakat-Bildslots (V2-C1)', () => {
     expect(svg).toContain('Render folgt — HomeStation');
     const pdfSvg = sheetToSvg(doc, sheetId, { projectName: 'Test', ohneRaster: true });
     expect(pdfSvg).not.toContain('<image ');
+  });
+});
+
+describe('Stützenraster ins Modell (V2-A3)', () => {
+  it('rasterSetzen erzeugt Haupt-, Quer- und Wohnachsen mit Labels; Ersetzen statt Stapeln', () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.rasterSetzen', {
+      storeyId, achsmass: 10_500, anzahl: 5, querAnzahl: 4, wohnraster: 2_625,
+    });
+    const achsen = doc.byKind<import('../src').GridAxis>('grid');
+    // 5 Hauptachsen + 4 Querachsen + 4 Felder × 3 Zwischenachsen (10500/2625 = 4 Teilungen)
+    expect(achsen.filter((a) => a.typ === 'haupt')).toHaveLength(9);
+    expect(achsen.filter((a) => a.typ === 'wohn')).toHaveLength(12);
+    const labels = achsen.filter((a) => a.typ === 'haupt').map((a) => a.label).sort();
+    expect(labels).toContain('1');
+    expect(labels).toContain('5');
+    expect(labels).toContain('A');
+    expect(labels).toContain('D');
+    // Zweites Setzen ERSETZT
+    execute(doc, 'design.rasterSetzen', { storeyId, achsmass: 8_000, anzahl: 3, querAnzahl: 2 });
+    const neu = doc.byKind<import('../src').GridAxis>('grid');
+    expect(neu).toHaveLength(5); // 3 + 2, keine Wohnachsen
+    // Entfernen leert; zweites Entfernen meldet klar
+    execute(doc, 'design.rasterEntfernen', { storeyId });
+    expect(doc.byKind('grid')).toHaveLength(0);
+    expect(() => execute(doc, 'design.rasterEntfernen', { storeyId })).toThrow(CommandError);
+  });
+
+  it('derivePlan trägt die Achsen als eigenen Kanal mit Typ und Label', () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.rasterSetzen', { storeyId, achsmass: 10_000, anzahl: 3, querAnzahl: 2 });
+    const plan = derivePlan(doc, storeyId);
+    expect(plan.axes).toHaveLength(5);
+    expect(plan.axes.filter((a) => a.typ === 'haupt')).toHaveLength(5);
+    expect(plan.axes.find((a) => a.label === '2')).toBeDefined();
+    expect(plan.bounds).not.toBeNull(); // Achsen tragen die Bounds auch ohne Wände
+    // Achse 2 liegt bei x = 10 m
+    const a2 = plan.axes.find((a) => a.label === '2')!;
+    expect(a2.a.x).toBe(10_000);
+    expect(a2.b.x).toBe(10_000);
+  });
+
+  it('Magnetfang: Kreuzung gewinnt vor Achslinie, Radius wird respektiert', () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.rasterSetzen', { storeyId, achsmass: 10_000, anzahl: 3, querAnzahl: 3, querAchsmass: 6_000 });
+    const kandidaten = fangKandidaten(doc, storeyId);
+    expect(kandidaten.kreuzungen).toHaveLength(9);
+    // nahe der Kreuzung (10000, 6000): Kreuzung gewinnt
+    expect(magnetFang({ x: 10_200, y: 6_300 }, kandidaten)).toEqual({ x: 10_000, y: 6_000 });
+    // nahe der Achse, weit weg von Kreuzungen: Fusspunkt auf der Achse
+    expect(magnetFang({ x: 10_250, y: 3_000 }, kandidaten)).toEqual({ x: 10_000, y: 3_000 });
+    // ausser Reichweite: null → App fällt auf den 250er-Raster zurück
+    expect(magnetFang({ x: 4_800, y: 3_000 }, kandidaten)).toBeNull();
+    // leeres Raster
+    execute(doc, 'design.rasterEntfernen', { storeyId });
+    expect(magnetFang({ x: 10_000, y: 6_000 }, fangKandidaten(doc, storeyId))).toBeNull();
   });
 });

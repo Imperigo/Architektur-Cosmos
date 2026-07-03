@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Assembly, Boundary, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
+import type { Assembly, Boundary, GridAxis, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -504,6 +504,82 @@ export const setBoundary = registerCommand({
       name: p.name,
     };
     patches.push(added(grenze));
+    return patches;
+  },
+});
+
+export const setGrid = registerCommand({
+  id: 'design.rasterSetzen',
+  title: 'Stützenraster setzen',
+  description:
+    'Erzeugt das Stützenraster als Achsen im Geschoss: anzahl Hauptachsen (Labels 1…N) quer zur X-Richtung im Abstand achsmass, querAnzahl Querachsen (Labels A…) im Abstand querAchsmass (Standard achsmass). Mit wohnraster entstehen feine Wohnraster-Zwischenachsen. Ersetzt das bisherige Raster des Geschosses — ein Undo-Schritt.',
+  params: z.object({
+    storeyId: z.string(),
+    origin: PtSchema.default({ x: 0, y: 0 }).describe('Nullpunkt Achse 1/A'),
+    achsmass: z.number().int().min(1000).describe('Hauptachs-Abstand in mm (z.B. 10500)'),
+    anzahl: z.number().int().min(2).max(40).describe('Anzahl Hauptachsen (1…N)'),
+    querAchsmass: z.number().int().min(1000).optional().describe('Querachs-Abstand in mm (Standard: achsmass)'),
+    querAnzahl: z.number().int().min(2).max(40).default(4).describe('Anzahl Querachsen (A…)'),
+    wohnraster: z.number().int().min(500).optional().describe('Wohnraster in mm → feine Zwischenachsen'),
+  }),
+  summarize: (p) => `Raster ${p.anzahl}×${p.querAnzahl ?? 4} (Achse ${(p.achsmass / 1000).toFixed(2)} m)`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const patches: AnyPatch[] = [];
+    for (const alt of doc.byKind<GridAxis>('grid')) {
+      if (alt.storeyId === p.storeyId) patches.push({ id: alt.id, before: alt, after: null });
+    }
+    const quer = p.querAchsmass ?? p.achsmass;
+    const UEBERSTAND = 1500;
+    const breite = (p.anzahl - 1) * p.achsmass;
+    const tiefe = (p.querAnzahl - 1) * quer;
+    const achse = (label: string, a: Pt, b: Pt, typ: 'haupt' | 'wohn'): void => {
+      patches.push(
+        added({ id: newId('achse'), kind: 'grid', storeyId: p.storeyId, label, a, b, typ } satisfies GridAxis),
+      );
+    };
+    // Hauptachsen 1…N (senkrecht, im Abstand achsmass entlang X)
+    for (let i = 0; i < p.anzahl; i++) {
+      const x = p.origin.x + i * p.achsmass;
+      achse(String(i + 1), { x, y: p.origin.y - UEBERSTAND }, { x, y: p.origin.y + tiefe + UEBERSTAND }, 'haupt');
+    }
+    // Querachsen A… (waagrecht)
+    for (let j = 0; j < p.querAnzahl; j++) {
+      const y = p.origin.y + j * quer;
+      achse(
+        String.fromCharCode(65 + (j % 26)),
+        { x: p.origin.x - UEBERSTAND, y },
+        { x: p.origin.x + breite + UEBERSTAND, y },
+        'haupt',
+      );
+    }
+    // Wohnraster: feine Zwischenachsen innerhalb jedes Hauptfelds
+    if (p.wohnraster && p.wohnraster < p.achsmass) {
+      const teilungen = Math.round(p.achsmass / p.wohnraster);
+      for (let i = 0; i < p.anzahl - 1; i++) {
+        for (let k = 1; k < teilungen; k++) {
+          const x = p.origin.x + i * p.achsmass + Math.round((k * p.achsmass) / teilungen);
+          achse('', { x, y: p.origin.y }, { x, y: p.origin.y + tiefe }, 'wohn');
+        }
+      }
+    }
+    return patches;
+  },
+});
+
+export const removeGrid = registerCommand({
+  id: 'design.rasterEntfernen',
+  title: 'Stützenraster entfernen',
+  description: 'Entfernt alle Rasterachsen des Geschosses.',
+  params: z.object({ storeyId: z.string() }),
+  summarize: () => 'Raster entfernen',
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const patches: AnyPatch[] = doc
+      .byKind<GridAxis>('grid')
+      .filter((g) => g.storeyId === p.storeyId)
+      .map((g) => ({ id: g.id, before: g, after: null }));
+    if (patches.length === 0) throw new CommandError('Kein Raster in diesem Geschoss');
     return patches;
   },
 });

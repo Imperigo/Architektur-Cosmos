@@ -1,4 +1,4 @@
-import type { Boundary, Assembly, Opening, Stair, Storey, Wall } from '../model/entities';
+import type { Boundary, Assembly, GridAxis, Opening, Stair, Storey, Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, union, type Poly } from '../geometry/clip';
 import {
@@ -39,11 +39,20 @@ export interface PlanArc {
   classes: string[];
 }
 
+/** Rasterachse im Grundriss: strichpunktiert, Achskopf mit Label an beiden Enden. */
+export interface PlanAxis {
+  a: Pt;
+  b: Pt;
+  label: string;
+  typ: 'haupt' | 'wohn';
+}
+
 export interface PlanGraphic {
   storeyId: string;
   regions: PlanRegion[];
   lines: PlanLine[];
   arcs: PlanArc[];
+  axes: PlanAxis[];
   /** Bounding-Box in mm (für viewBox). */
   bounds: { minX: number; minY: number; maxX: number; maxY: number } | null;
 }
@@ -66,8 +75,9 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   const regions: PlanRegion[] = [];
   const lines: PlanLine[] = [];
   const arcs: PlanArc[] = [];
+  const axes: PlanAxis[] = [];
   if (!storey || storey.kind !== 'storey') {
-    return { storeyId, regions, lines, arcs, bounds: null };
+    return { storeyId, regions, lines, arcs, axes, bounds: null };
   }
 
   const walls = doc
@@ -213,7 +223,34 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     }
   }
 
-  return { storeyId, regions, lines, arcs, bounds: computeBounds(regions, lines) };
+  // Stützenraster: Achsen des Geschosses (Stil/Achskopf machen die Renderer)
+  for (const g of doc.byKind<GridAxis>('grid')) {
+    if (g.storeyId !== storeyId) continue;
+    axes.push({ a: g.a, b: g.b, label: g.label, typ: g.typ ?? 'haupt' });
+  }
+
+  const bounds = computeBounds(regions, lines);
+  for (const ax of axes) {
+    if (!bounds) break;
+    for (const p of [ax.a, ax.b]) {
+      bounds.minX = Math.min(bounds.minX, p.x);
+      bounds.minY = Math.min(bounds.minY, p.y);
+      bounds.maxX = Math.max(bounds.maxX, p.x);
+      bounds.maxY = Math.max(bounds.maxY, p.y);
+    }
+  }
+  return { storeyId, regions, lines, arcs, axes, bounds: bounds ?? axesBounds(axes) };
+}
+
+function axesBounds(axes: PlanAxis[]) {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const ax of axes) {
+    for (const p of [ax.a, ax.b]) {
+      minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
+      maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
+    }
+  }
+  return minX === Infinity ? null : { minX, minY, maxX, maxY };
 }
 
 /** Clipper liefert flache Ring-Listen; Löcher haben umgekehrte Orientierung. */

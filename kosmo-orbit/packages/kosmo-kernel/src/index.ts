@@ -18,6 +18,7 @@ export * from './derive/axo';
 export * from './derive/hiddenline';
 export * from './derive/section';
 export * from './derive/schraffur';
+export * from './derive/fang';
 export * from './derive/gltf';
 export * from './derive/plansvg';
 export * from './derive/sheet';
