@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, assemblyThickness, type Assembly, type Furniture, type Pt, type Wall, type Zone, type ZonenTuer } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, assemblyThickness, type Assembly, type Furniture, type Pt, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
@@ -324,39 +324,8 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                 </g>
               );
             })}
-          {/* Zonentüren: Öffnungslücke quer zur Kante + Flügel */}
-          {doc
-            .byKind<ZonenTuer>('zonentuer')
-            .filter((t) => t.storeyId === activeStoreyId)
-            .map((t) => {
-              // Kantenrichtung: Zonenwechsel in x → Kante vertikal, sonst horizontal
-              const zonen = doc.byKind<Zone>('zone').filter((z) => z.storeyId === activeStoreyId && z.raumTyp);
-              const inZone = (p: Pt) => zonen.find((z) => {
-                let inside = false;
-                for (let i = 0, j = z.outline.length - 1; i < z.outline.length; j = i++) {
-                  const a = z.outline[i]!;
-                  const b = z.outline[j]!;
-                  if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
-                }
-                return inside;
-              })?.id;
-              const vertikal = inZone({ x: t.at.x - 300, y: t.at.y }) !== inZone({ x: t.at.x + 300, y: t.at.y });
-              const h = t.breite / 2;
-              const [x1, y1, x2, y2] = vertikal
-                ? [t.at.x, -(t.at.y - h), t.at.x, -(t.at.y + h)]
-                : [t.at.x - h, -t.at.y, t.at.x + h, -t.at.y];
-              return (
-                <g key={t.id} data-testid="zonentuer">
-                  <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--k-surface)" strokeWidth={120} />
-                  <line
-                    x1={x1} y1={y1}
-                    x2={vertikal ? t.at.x + t.breite : x1 + 0}
-                    y2={vertikal ? y1 : -(t.at.y + t.breite)}
-                    stroke="var(--k-ink)" strokeWidth={12}
-                  />
-                </g>
-              );
-            })}
+          {/* Zonentüren kommen seit A4 als Linien-Klassen aus derivePlan
+              (zonentuer-luecke/-fluegel) — der Druck erbt dasselbe Symbol. */}
           {plan &&
             /* F3: verletzte Zonen live tönen (nur Bildschirm, nicht Druck) */
             verletzteZonen.map((v) => (
@@ -391,27 +360,34 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             </g>
           )}
           {plan &&
-            plan.lines.map((l, i) => (
-              <line
-                key={`l${i}`}
-                className={l.classes.join(' ')}
-                x1={l.a.x}
-                y1={-l.a.y}
-                x2={l.b.x}
-                y2={-l.b.y}
-                stroke={
-                  l.classes.includes('baugrenze')
-                    ? 'var(--k-danger)'
-                    : l.classes.includes('renovation-neu')
-                      ? '#b3261e'
-                      : l.classes.includes('renovation-abbruch')
-                        ? '#8a7500'
-                        : 'var(--k-ink)'
-                }
-                strokeWidth={l.classes.includes('fenster') ? 10 : l.classes.includes('baugrenze') ? 12 : 14}
-                strokeDasharray={l.classes.includes('baugrenze') ? '300 90 60 90' : undefined}
-              />
-            ))}
+            plan.lines.map((l, i) => {
+              const luecke = l.classes.includes('zonentuer-luecke');
+              const fluegel = l.classes.includes('zonentuer-fluegel');
+              return (
+                <line
+                  key={`l${i}`}
+                  className={l.classes.join(' ')}
+                  data-testid={fluegel ? 'zonentuer' : undefined}
+                  x1={l.a.x}
+                  y1={-l.a.y}
+                  x2={l.b.x}
+                  y2={-l.b.y}
+                  stroke={
+                    luecke
+                      ? 'var(--k-surface)'
+                      : l.classes.includes('baugrenze')
+                        ? 'var(--k-danger)'
+                        : l.classes.includes('renovation-neu')
+                          ? '#b3261e'
+                          : l.classes.includes('renovation-abbruch')
+                            ? '#8a7500'
+                            : 'var(--k-ink)'
+                  }
+                  strokeWidth={luecke ? 120 : fluegel ? 12 : l.classes.includes('fenster') ? 10 : l.classes.includes('baugrenze') ? 12 : 14}
+                  strokeDasharray={l.classes.includes('baugrenze') ? '300 90 60 90' : undefined}
+                />
+              );
+            })}
 
           {/* Plan-Beschriftungen (A3: Aussparungs-Koten «D 300×300») */}
           {plan &&

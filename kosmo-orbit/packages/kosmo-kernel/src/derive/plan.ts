@@ -1,4 +1,4 @@
-import type { Aussparung, Boundary, Assembly, GridAxis, Opening, Stair, Storey, Wall } from '../model/entities';
+import type { Aussparung, Boundary, Assembly, GridAxis, Opening, Stair, Storey, Wall, Zone, ZonenTuer } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, union, type Poly } from '../geometry/clip';
 import {
@@ -305,6 +305,25 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     }
   }
 
+  // Zonentüren (A4): Öffnungslücke + Flügel im Derive — der Druck erbt das
+  // Symbol (bisher zeichnete es nur die Bildschirm-2D). Richtung über die
+  // Zonen-Punktprobe: Zonenwechsel quer zur Kante bestimmt die Türlage.
+  const raumZonen = doc.byKind<Zone>('zone').filter((z) => z.storeyId === storeyId && z.raumTyp);
+  const zoneAt = (p: Pt): string | undefined =>
+    raumZonen.find((z) => punktInPoly(p, z.outline))?.id;
+  for (const t of doc.byKind<ZonenTuer>('zonentuer')) {
+    if (t.storeyId !== storeyId) continue;
+    const vertikal = zoneAt({ x: t.at.x - 300, y: t.at.y }) !== zoneAt({ x: t.at.x + 300, y: t.at.y });
+    const h = t.breite / 2;
+    if (vertikal) {
+      lines.push({ a: { x: t.at.x, y: t.at.y - h }, b: { x: t.at.x, y: t.at.y + h }, classes: ['symbol', 'zonentuer-luecke'] });
+      lines.push({ a: { x: t.at.x, y: t.at.y - h }, b: { x: t.at.x + t.breite, y: t.at.y - h }, classes: ['symbol', 'zonentuer-fluegel'] });
+    } else {
+      lines.push({ a: { x: t.at.x - h, y: t.at.y }, b: { x: t.at.x + h, y: t.at.y }, classes: ['symbol', 'zonentuer-luecke'] });
+      lines.push({ a: { x: t.at.x - h, y: t.at.y }, b: { x: t.at.x - h, y: t.at.y + t.breite }, classes: ['symbol', 'zonentuer-fluegel'] });
+    }
+  }
+
   // Aussparungen/Durchbrüche (A3): nur im Werkplan — Kreuz + Kote, KEIN
   // Geometrieschnitt (Symbolik nach Hochbauzeichner-Konvention)
   if (phase === 'werkplan') {
@@ -382,6 +401,17 @@ function axesBounds(axes: PlanAxis[]) {
 /** Clipper liefert flache Ring-Listen; Löcher haben umgekehrte Orientierung. */
 function groupRings(paths: Pt[][]): Pt[][] {
   return paths.map((p) => p.map((q) => ({ ...q })));
+}
+
+/** Punkt-im-Polygon (Ray-Casting) für die Zonentür-Richtungsprobe. */
+function punktInPoly(p: Pt, poly: readonly Pt[]): boolean {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[i]!;
+    const b = poly[j]!;
+    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+  }
+  return inside;
 }
 
 function computeBounds(regions: PlanRegion[], lines: PlanLine[]) {

@@ -18,17 +18,20 @@ export interface MoebelTyp {
   /** Bewegungsfläche vor dem Möbel b × t (mm), SIA-500-Richtwert. */
   bwB: number;
   bwT: number;
+  /** Ab welcher SIA-Phase das Symbol gedruckt wird (A4): feste Einbauten
+   * (Sanitär/Küche) ab Bauprojekt, lose Möblierung erst im Werkplan. */
+  abPhase: 'bauprojekt' | 'werkplan';
 }
 
 export const MOEBEL_KATALOG: MoebelTyp[] = [
-  { key: 'bett-doppel', name: 'Doppelbett', b: 1800, t: 2000, bwB: 1800, bwT: 1200 },
-  { key: 'bett-einzel', name: 'Einzelbett', b: 900, t: 2000, bwB: 900, bwT: 1200 },
-  { key: 'kuechenzeile', name: 'Küchenzeile', b: 3000, t: 600, bwB: 3000, bwT: 1200 },
-  { key: 'wc', name: 'WC', b: 400, t: 700, bwB: 1400, bwT: 1400 },
-  { key: 'lavabo', name: 'Lavabo', b: 600, t: 500, bwB: 1400, bwT: 1400 },
-  { key: 'dusche', name: 'Dusche', b: 1200, t: 1200, bwB: 1200, bwT: 1200 },
-  { key: 'esstisch', name: 'Esstisch 6P', b: 2000, t: 900, bwB: 2000, bwT: 900 },
-  { key: 'schrank', name: 'Schrank', b: 1800, t: 600, bwB: 1800, bwT: 900 },
+  { key: 'bett-doppel', name: 'Doppelbett', b: 1800, t: 2000, bwB: 1800, bwT: 1200, abPhase: 'werkplan' },
+  { key: 'bett-einzel', name: 'Einzelbett', b: 900, t: 2000, bwB: 900, bwT: 1200, abPhase: 'werkplan' },
+  { key: 'kuechenzeile', name: 'Küchenzeile', b: 3000, t: 600, bwB: 3000, bwT: 1200, abPhase: 'bauprojekt' },
+  { key: 'wc', name: 'WC', b: 400, t: 700, bwB: 1400, bwT: 1400, abPhase: 'bauprojekt' },
+  { key: 'lavabo', name: 'Lavabo', b: 600, t: 500, bwB: 1400, bwT: 1400, abPhase: 'bauprojekt' },
+  { key: 'dusche', name: 'Dusche', b: 1200, t: 1200, bwB: 1200, bwT: 1200, abPhase: 'bauprojekt' },
+  { key: 'esstisch', name: 'Esstisch 6P', b: 2000, t: 900, bwB: 2000, bwT: 900, abPhase: 'werkplan' },
+  { key: 'schrank', name: 'Schrank', b: 1800, t: 600, bwB: 1800, bwT: 900, abPhase: 'werkplan' },
 ];
 
 export function moebelTyp(key: string): MoebelTyp | undefined {

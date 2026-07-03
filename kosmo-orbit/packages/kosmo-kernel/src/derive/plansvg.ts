@@ -1,6 +1,6 @@
 import { phaseLabel, type KosmoDoc } from '../model/doc';
 import type { Furniture, Storey } from '../model/entities';
-import { moebelGeometrie } from './moebel';
+import { moebelGeometrie, moebelTyp } from './moebel';
 import { derivePlan, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabel } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
@@ -73,8 +73,10 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
     const baugrenze = l.classes.includes('baugrenze');
     const neu = l.classes.includes('renovation-neu');
     const abbruch = l.classes.includes('renovation-abbruch');
-    const sw = (l.classes.includes('fenster') ? 0.18 : 0.25) * scale;
-    const stroke = neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : 'black';
+    // Zonentür-Lücke (A4): radiert die Zonenkontur weiss aus, der Flügel folgt fein
+    const luecke = l.classes.includes('zonentuer-luecke');
+    const sw = luecke ? 120 : (l.classes.includes('fenster') ? 0.18 : 0.25) * scale;
+    const stroke = luecke ? 'white' : neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : 'black';
     // Baugrenze strichpunktiert auch im Druck (wie am Bildschirm)
     const dash = baugrenze ? ` stroke-dasharray="${3 * scale} ${0.9 * scale} ${0.6 * scale} ${0.9 * scale}"` : '';
     parts.push(
@@ -114,11 +116,13 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       `<path d="M ${sx} ${-sy} A ${a.radius} ${a.radius} 0 0 0 ${ex} ${-ey}" fill="none" stroke="#555" stroke-width="${0.18 * scale}" stroke-dasharray="${scale} ${0.7 * scale}"/>`,
     );
   }
-  // Möblierung (V2-F8): nur im Werkplan, feiner Stift 0.18, ohne
+  // Möblierung (V2-F8/A4): feste Einbauten (Sanitär/Küche) ab Bauprojekt,
+  // lose Möblierung erst im Werkplan — feiner Stift 0.18, ohne
   // Bewegungsflächen (die sind Arbeitshilfe am Bildschirm, kein Planinhalt)
-  if (doc.settings.phase === 'werkplan') {
+  if (doc.settings.phase !== 'vorprojekt') {
     for (const f of doc.byKind<Furniture>('furniture')) {
       if (f.storeyId !== storeyId) continue;
+      if (doc.settings.phase === 'bauprojekt' && moebelTyp(f.typ)?.abPhase !== 'bauprojekt') continue;
       const g = moebelGeometrie(f);
       if (!g) continue;
       parts.push(

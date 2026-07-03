@@ -1616,6 +1616,46 @@ describe('Aussparungen/Durchbrüche (Vision A3)', () => {
   });
 });
 
+describe('Zonentür-Drucksymbol + Möbel-Phasen (Vision A4)', () => {
+  it('Zonentür wird im Derive zu Lücke + Flügel — der Druck erbt (weisse Radierlinie)', async () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Flur', sia: 'VF', raumTyp: 'korridor',
+      outline: [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 1500 }, { x: 0, y: 1500 }],
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 1500 }, { x: 6000, y: 1500 }, { x: 6000, y: 5000 }, { x: 0, y: 5000 }],
+    });
+    execute(doc, 'design.tuerSetzen', { storeyId, at: { x: 3000, y: 1500 }, breite: 900 });
+    const plan = derivePlan(doc, storeyId);
+    const luecke = plan.lines.filter((l) => l.classes.includes('zonentuer-luecke'));
+    const fluegel = plan.lines.filter((l) => l.classes.includes('zonentuer-fluegel'));
+    expect(luecke).toHaveLength(1);
+    expect(fluegel).toHaveLength(1);
+    // Kante horizontal (Zonenwechsel in y) → Lücke läuft in x, Flügel steht in y
+    expect(luecke[0]!.a).toEqual({ x: 2550, y: 1500 });
+    expect(luecke[0]!.b).toEqual({ x: 3450, y: 1500 });
+    expect(fluegel[0]!.b).toEqual({ x: 2550, y: 2400 });
+    const { planInnerSvg } = await import('../src');
+    const svg = planInnerSvg(doc, storeyId, 50).inner;
+    expect(svg).toContain('stroke="white" stroke-width="120"'); // Radier-Lücke im Druck
+  });
+
+  it('Möbel-Phasen: Sanitär/Küche ab Bauprojekt, lose Möbel erst im Werkplan', async () => {
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.moebelSetzen', { storeyId, typ: 'wc', at: { x: 1000, y: 1000 }, rotationGrad: 0 });
+    execute(doc, 'design.moebelSetzen', { storeyId, typ: 'bett-doppel', at: { x: 4000, y: 4000 }, rotationGrad: 0 });
+    const { planInnerSvg } = await import('../src');
+    const zaehle = () => (planInnerSvg(doc, storeyId, 50).inner.match(/fill="none" stroke="black" stroke-width="9"/g) ?? []).length;
+    expect(zaehle()).toBe(2); // werkplan (Default): beide
+    execute(doc, 'design.phaseSetzen', { phase: 'bauprojekt' });
+    expect(zaehle()).toBe(1); // nur WC (fester Einbau)
+    execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
+    expect(zaehle()).toBe(0);
+  });
+});
+
 describe('Treppen-Ausbau (V2-A2)', () => {
   const basis = () => {
     const { doc, storeyId } = setupDoc(); // EG, 3000 hoch
