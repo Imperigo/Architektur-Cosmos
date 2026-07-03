@@ -575,7 +575,8 @@ export function DesignWorkspace() {
               const phase = e.target.value as 'vorprojekt' | 'bauprojekt' | 'werkplan';
               const bemassung = {
                 vorprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
-                bauprojekt: { aussenKetten: 'beide' as const, innenKetten: false, hoehenKoten: true },
+                // SIA 400 C.2.2 (Lehrheft-Abgleich): Bauprojekt nur Haupt-/Gesamtmasse
+                bauprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
                 werkplan: { aussenKetten: 'beide' as const, innenKetten: true, hoehenKoten: true },
               }[phase];
               const { history } = useProject.getState();
