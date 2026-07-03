@@ -7,7 +7,7 @@ zurück — digitale PDFs (Normen, Vorlesungen, Bücher) laufen so in Sekunden.
 
 Nutzung:
   python3 ingest.py <quell-ordner> <sammlung> [--quelle "Label"] [--tags a,b]
-                    [--ohne-ocr] [--max-seiten N]
+                    [--ohne-ocr] [--max-seiten N] [--ausschluss=teil1,teil2]
 
 Ergebnis:
   wissen/vault/<sammlung>/<Name>.md      (eine Sektion pro Seite)
@@ -157,6 +157,7 @@ def main():
     tags = 'bauwissen'
     ohne_ocr = False
     max_seiten = 0
+    ausschluss: list[str] = []
     for arg in sys.argv[3:]:
         if arg.startswith('--quelle='):
             quelle = arg.split('=', 1)[1]
@@ -166,9 +167,13 @@ def main():
             ohne_ocr = True
         elif arg.startswith('--max-seiten='):
             max_seiten = int(arg.split('=', 1)[1])
+        elif arg.startswith('--ausschluss='):
+            ausschluss = arg.split('=', 1)[1].split(',')
     gesamt = 0
     pdfs = []
     for wurzel, _, dateien in os.walk(quell_ordner):
+        if any(a and a in wurzel for a in ausschluss):
+            continue
         for d in sorted(dateien):
             if d.lower().endswith('.pdf'):
                 pdfs.append(os.path.join(wurzel, d))
