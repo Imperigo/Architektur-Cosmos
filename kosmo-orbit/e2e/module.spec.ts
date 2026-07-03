@@ -1371,3 +1371,30 @@ test('Geschoss stapeln (B1): ⧉ kopiert das aktive Geschoss samt Inhalt', async
   expect(neu.zonen).toBeGreaterThanOrEqual(6);
   await expect(page.locator(`[data-testid="storey-${neu.name}"]`)).toBeVisible();
 });
+
+test('Kosmo fährt die Kette per Sprache: stapeln über den Chat (Mock-Provider)', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const w = k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    k.run('design.grundrissGenerieren', { zoneId: w.patches[0].id, korridorSeite: 'unten' });
+  });
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.storeysOrdered().length);
+  await page.fill('[data-testid="kosmo-input"]', 'Staple das Geschoss 2 mal');
+  await page.click('[data-testid="kosmo-send"]');
+  // Diff-Karte erscheint (gated) → anwenden
+  await page.click('[data-testid="apply-proposal"]', { timeout: 15_000 });
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.storeysOrdered().length))
+    .toBe(vorher + 2);
+});

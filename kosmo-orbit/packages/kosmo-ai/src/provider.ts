@@ -241,6 +241,35 @@ export class MockProvider implements ChatProvider {
       yield { type: 'done', stopReason: 'tool_calls' };
       return;
     }
+    const stapel = text.match(/stap\w*.*?(\d+)|(\d+).*?stap\w*/);
+    if (text.includes('stapel') || text.includes('staple')) {
+      const anzahl = Math.min(20, Math.max(1, Number(stapel?.[1] ?? stapel?.[2] ?? 1)));
+      yield { type: 'text', delta: `Ich staple das Geschoss ${anzahl}×. ` };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_stapel', name: 'design_geschossKopieren', arguments: { anzahl } },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
+    if (text.includes('fenster') && text.includes('stanz')) {
+      yield { type: 'text', delta: 'Ich stanze die Fenster aus dem Fassadenmodul. ' };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_stanzen', name: 'design_fensterAusModulen', arguments: { modul: null } },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
+    if (text.includes('wände') && text.includes('bau')) {
+      yield { type: 'text', delta: 'Ich baue die Wände aus den Räumen. ' };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_waende', name: 'design_waendeAusZonen', arguments: {} },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
     if (text.includes('haus')) {
       yield { type: 'text', delta: 'Gerne — ich schlage ein 8×12-Haus mit Walmdach als ein Paket vor. ' };
       const W = (i: number, a: { x: number; y: number }, b: { x: number; y: number }) => ({
