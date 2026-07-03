@@ -25,8 +25,11 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
       for (const p of z.outline) { x += p.x; y += p.y; }
       return { x: x / z.outline.length, y: y / z.outline.length };
     };
-    const zentren = new Map(g.zonen.map((z) => [z.id, zentrum(z)]));
-    return { zentren, kanten: g.kanten };
+    // Nur echte Räume (mit Raumtyp) — Container wie Geschoss/Wohnungs-Umriss
+    // haben keinen und würden den Graph zum Spinnennetz machen
+    const raeume = g.zonen.filter((z) => z.raumTyp);
+    const zentren = new Map(raeume.map((z) => [z.id, zentrum(z)]));
+    return { zentren, kanten: g.kanten.filter((k) => zentren.has(k.a) && zentren.has(k.b)) };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphAn, doc, activeStoreyId, revision]);
 
