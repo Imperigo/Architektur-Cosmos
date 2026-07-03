@@ -684,3 +684,69 @@ test('Kosmo-Einstellungen (V2-B3): Anthropic-Felder erscheinen, Schlüssel bleib
   expect(gespeichert.provider).toBe('anthropic');
   expect(gespeichert.anthropicKey).toBe('sk-ant-test');
 });
+
+test('IFC-Bestand (V2-A4): Export → Re-Import → «Übernehmen» macht Wände editierbar', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  // Zwei Wände zeichnen (Kernel-Commands direkt — deterministisch)
+  await page.evaluate(() => {
+    const k = window.__kosmo as unknown as {
+      run: (id: string, p: unknown) => unknown;
+      state: () => {
+        doc: { byKind: (kind: string) => { id: string }[] };
+        activeStoreyId: string;
+      };
+    };
+    const st = k.state();
+    const aufbau = st.doc.byKind('assembly')[0]!;
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId,
+      a: { x: 0, y: 0 },
+      b: { x: 6000, y: 0 },
+      assemblyId: aufbau.id,
+    });
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId,
+      a: { x: 6000, y: 0 },
+      b: { x: 6000, y: 4000 },
+      assemblyId: aufbau.id,
+    });
+  });
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length);
+  expect(vorher).toBe(2);
+  const geschosseVorher = await page.evaluate(
+    () => window.__kosmo.state().doc.byKind('storey').length,
+  );
+
+  // Export als IFC …
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('[data-testid="export-ifc"]'),
+  ]);
+  const pfad = await download.path();
+  const { readFileSync } = await import('node:fs');
+  const ifcInhalt = readFileSync(pfad!);
+
+  // … und Re-Import: Erkennung bietet die Übernahme an
+  const [chooser] = await Promise.all([
+    page.waitForEvent('filechooser'),
+    page.click('[data-testid="import-ifc"]'),
+  ]);
+  await chooser.setFiles({ name: 'bestand.ifc', mimeType: 'application/octet-stream', buffer: ifcInhalt });
+  await expect(page.locator('[data-testid="bestand-angebot"]')).toContainText('2 Wände', {
+    timeout: 20_000,
+  });
+  await page.click('[data-testid="bestand-uebernehmen"]');
+  // 2 gezeichnete + 2 übernommene; Geschoss EG wurde wiederverwendet
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length))
+    .toBe(4);
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('storey').length)).toBe(
+    geschosseVorher,
+  );
+  // EIN Undo räumt die ganze Übernahme ab
+  await page.click('[data-testid="undo"]');
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBe(2);
+});

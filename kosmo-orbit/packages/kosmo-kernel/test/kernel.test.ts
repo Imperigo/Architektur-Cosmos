@@ -6,6 +6,7 @@ import { deriveMengen } from '../src/derive/mengen';
 import { generiereStuetzenraster } from '../src/derive/stuetzenraster';
 import { deriveAxo } from '../src/derive/axo';
 import { generiereVolumenstudien } from '../src/derive/volumenstudie';
+import { erkenneDecke, erkenneWand, geschossZu } from '../src/derive/bestand';
 import {
   KosmoDoc,
   History,
@@ -1521,5 +1522,76 @@ describe('Treppen-Ausbau (V2-A2)', () => {
     execute(doc, 'design.treppeErstellen', { storeyId: hallenId, a: { x: 0, y: 0 }, b: { x: 3500, y: 0 }, width: 1200, form: 'u' });
     befunde = pruefeGrundriss(doc, hallenId);
     expect(befunde.some((b) => b.regel === 'Podest')).toBe(false);
+  });
+});
+
+// ————— V2-A4: Bestand-Erkennung (IFC → Entities) —————
+
+describe('Bestand-Erkennung (V2-A4)', () => {
+  /** Quader als Vertex-Tripel (mm, z-oben): Achse a→b, Dicke d, Höhe h ab z0. */
+  function quader(a: { x: number; y: number }, b: { x: number; y: number }, d: number, h: number, z0 = 0): number[] {
+    const len = Math.hypot(b.x - a.x, b.y - a.y);
+    const dir = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
+    const n = { x: -dir.y, y: dir.x };
+    const ecken = [
+      { x: a.x + n.x * (d / 2), y: a.y + n.y * (d / 2) },
+      { x: b.x + n.x * (d / 2), y: b.y + n.y * (d / 2) },
+      { x: b.x - n.x * (d / 2), y: b.y - n.y * (d / 2) },
+      { x: a.x - n.x * (d / 2), y: a.y - n.y * (d / 2) },
+    ];
+    const raus: number[] = [];
+    for (const z of [z0, z0 + h]) for (const e of ecken) raus.push(e.x, e.y, z);
+    return raus;
+  }
+
+  it('achsparalleler Quader → Wandachse, Dicke, Höhe, z0', () => {
+    const wand = erkenneWand(quader({ x: 0, y: 0 }, { x: 6000, y: 0 }, 300, 2800, 0));
+    expect(wand).not.toBeNull();
+    expect(wand!.dicke).toBe(300);
+    expect(wand!.hoehe).toBe(2800);
+    expect(wand!.z0).toBe(0);
+    const laenge = Math.hypot(wand!.b.x - wand!.a.x, wand!.b.y - wand!.a.y);
+    expect(Math.round(laenge)).toBe(6000);
+    expect(Math.abs(wand!.a.y)).toBeLessThanOrEqual(1);
+    expect(Math.abs(wand!.b.y)).toBeLessThanOrEqual(1);
+  });
+
+  it('um 30° gedrehter Quader wird mit gleicher Achse erkannt', () => {
+    const b = { x: Math.round(5000 * Math.cos(Math.PI / 6)), y: Math.round(5000 * Math.sin(Math.PI / 6)) };
+    const wand = erkenneWand(quader({ x: 1000, y: 2000 }, { x: 1000 + b.x, y: 2000 + b.y }, 240, 3000, 3000));
+    expect(wand).not.toBeNull();
+    expect(wand!.dicke).toBeGreaterThanOrEqual(239);
+    expect(wand!.dicke).toBeLessThanOrEqual(241);
+    expect(wand!.z0).toBe(3000);
+    const laenge = Math.hypot(wand!.b.x - wand!.a.x, wand!.b.y - wand!.a.y);
+    expect(Math.abs(laenge - 5000)).toBeLessThanOrEqual(3);
+  });
+
+  it('L-förmiger Footprint und Nicht-Wand-Masse werden abgelehnt', () => {
+    // zwei Schenkel als EIN Element → Füllgrad der Hülle zu klein
+    const l = [
+      ...quader({ x: 0, y: 0 }, { x: 6000, y: 0 }, 300, 2800),
+      ...quader({ x: 0, y: 0 }, { x: 0, y: 6000 }, 300, 2800),
+    ];
+    expect(erkenneWand(l)).toBeNull();
+    // zu dick (Stützenblock 2×2 m) und zu flach (Brüstung 60 cm)
+    expect(erkenneWand(quader({ x: 0, y: 0 }, { x: 2000, y: 0 }, 2000, 2800))).toBeNull();
+    expect(erkenneWand(quader({ x: 0, y: 0 }, { x: 6000, y: 0 }, 300, 600))).toBeNull();
+  });
+
+  it('flache Platte → Decke mit Umriss und Oberkante; hochkant bleibt Wand-Sache', () => {
+    const platte = quader({ x: 0, y: 4000 }, { x: 8000, y: 4000 }, 8000, 250, -250);
+    const decke = erkenneDecke(platte);
+    expect(decke).not.toBeNull();
+    expect(decke!.dicke).toBe(250);
+    expect(decke!.zOben).toBe(0);
+    expect(decke!.outline.length).toBeGreaterThanOrEqual(4);
+    expect(erkenneDecke(quader({ x: 0, y: 0 }, { x: 6000, y: 0 }, 300, 2800))).toBeNull();
+  });
+
+  it('geschossZu findet das nächstliegende Geschoss innerhalb der Toleranz', () => {
+    expect(geschossZu([0, 3000, 6000], 2950)).toBe(1);
+    expect(geschossZu([0, 3000], 1500)).toBe(-1);
+    expect(geschossZu([], 0)).toBe(-1);
   });
 });

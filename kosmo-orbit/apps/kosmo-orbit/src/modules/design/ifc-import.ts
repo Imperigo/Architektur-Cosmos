@@ -1,4 +1,5 @@
 import * as WebIFC from 'web-ifc';
+import { erkenneDecke, erkenneWand, type ErkannteDecke, type ErkannteWand } from '@kosmo/kernel';
 
 /**
  * IFC-Import (Bestand/Kontext) — web-ifc (MPL-2.0, unverändert als Bibliothek).
@@ -29,6 +30,19 @@ export interface IfcImportResult {
   meshes: ContextMesh[];
   elementCount: number;
   schema: string;
+  /** A4: erkannte Bauteile (Kernel-mm, z-oben) — Angebot «Bestand übernehmen». */
+  erkannt: { waende: ErkannteWand[]; decken: ErkannteDecke[] };
+}
+
+/** three-Raum (Meter, y-oben) → Kernel (mm, z-oben): x, −z, y — Umkehrung des Viewports. */
+function zuKernelMm(positions: Float32Array): number[] {
+  const raus: number[] = new Array(positions.length);
+  for (let i = 0; i + 2 < positions.length; i += 3) {
+    raus[i] = positions[i]! * 1000;
+    raus[i + 1] = -positions[i + 2]! * 1000;
+    raus[i + 2] = positions[i + 1]! * 1000;
+  }
+  return raus;
 }
 
 export async function importIfc(data: Uint8Array): Promise<IfcImportResult> {
@@ -37,11 +51,25 @@ export async function importIfc(data: Uint8Array): Promise<IfcImportResult> {
   try {
     const schema = ifc.GetModelSchema(modelId) ?? 'IFC4';
 
+    // Erkennungs-Kandidaten: Wände und Decken nach IFC-Typ einsammeln
+    const wandIds = new Set<number>();
+    const deckenIds = new Set<number>();
+    for (const typ of [WebIFC.IFCWALL, WebIFC.IFCWALLSTANDARDCASE]) {
+      const ids = ifc.GetLineIDsWithType(modelId, typ);
+      for (let i = 0; i < ids.size(); i++) wandIds.add(ids.get(i));
+    }
+    const slabIds = ifc.GetLineIDsWithType(modelId, WebIFC.IFCSLAB);
+    for (let i = 0; i < slabIds.size(); i++) deckenIds.add(slabIds.get(i));
+
     const meshes: ContextMesh[] = [];
+    const waende: ErkannteWand[] = [];
+    const decken: ErkannteDecke[] = [];
     let elementCount = 0;
     ifc.StreamAllMeshes(modelId, (mesh: WebIFC.FlatMesh) => {
       elementCount++;
       const geometries = mesh.geometries;
+      // alle Teilgeometrien EINES Elements zusammen betrachten (Erkennung)
+      const elementPositionen: number[] = [];
       for (let i = 0; i < geometries.size(); i++) {
         const placed = geometries.get(i);
         const geometry = ifc.GetGeometry(modelId, placed.geometryExpressID);
@@ -69,10 +97,21 @@ export async function importIfc(data: Uint8Array): Promise<IfcImportResult> {
           indices: new Uint32Array(idx),
           color: c ? { r: c.x, g: c.y, b: c.z, a: c.w } : { r: 0.72, g: 0.7, b: 0.66, a: 1 },
         });
+        if (wandIds.has(mesh.expressID) || deckenIds.has(mesh.expressID)) {
+          const k = zuKernelMm(positions);
+          for (const v of k) elementPositionen.push(v);
+        }
         geometry.delete();
       }
+      if (wandIds.has(mesh.expressID)) {
+        const wand = erkenneWand(elementPositionen);
+        if (wand) waende.push(wand);
+      } else if (deckenIds.has(mesh.expressID)) {
+        const decke = erkenneDecke(elementPositionen);
+        if (decke) decken.push(decke);
+      }
     });
-    return { meshes, elementCount, schema: String(schema) };
+    return { meshes, elementCount, schema: String(schema), erkannt: { waende, decken } };
   } finally {
     ifc.CloseModel(modelId);
   }

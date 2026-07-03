@@ -5,8 +5,11 @@ import {
   fangKandidaten,
   formatLength,
   generiereVolumenstudien,
+  geschossZu,
   magnetFang,
   type Assembly,
+  type ErkannteDecke,
+  type ErkannteWand,
   type FangKandidaten,
   type Pt,
   type SectionSpec,
@@ -53,6 +56,8 @@ export function DesignWorkspace() {
   const undo = useProject((s) => s.undo);
   const redo = useProject((s) => s.redo);
   const setActiveStorey = useProject((s) => s.setActiveStorey);
+  // A4: nach IFC-Import erkannte Bauteile als Übernahme-Angebot (gated)
+  const [bestand, setBestand] = useState<{ waende: ErkannteWand[]; decken: ErkannteDecke[] } | null>(null);
 
   // Achsen-Magnet: Kandidaten des aktiven Geschosses, revision-abhängig
   const magnet = useMemo(
@@ -274,6 +279,80 @@ export function DesignWorkspace() {
   const journal = useProject((s) => s.journal);
   const lastEntry = journal[journal.length - 1];
 
+  // A4: erkannte IFC-Bauteile in EINEM Undo-Schritt als Entities übernehmen.
+  // Geschosse aus Wand-Unterkanten geclustert, Aufbauten je Wandstärke.
+  const bestandUebernehmen = () => {
+    if (!bestand) return;
+    const { history } = useProject.getState();
+    const doc = () => useProject.getState().doc;
+    history.beginGroup();
+    try {
+      const cluster: { z: number; hoehen: number[] }[] = [];
+      for (const w of bestand.waende) {
+        const c = cluster.find((k) => Math.abs(k.z - w.z0) <= 300);
+        if (c) c.hoehen.push(w.hoehe);
+        else cluster.push({ z: w.z0, hoehen: [w.hoehe] });
+      }
+      cluster.sort((a, b) => a.z - b.z);
+      let maxIndex = (doc().storeysOrdered() as Storey[]).reduce((m, st) => Math.max(m, st.index), -1);
+      cluster.forEach((c, i) => {
+        const elevationen = (doc().storeysOrdered() as Storey[]).map((st) => st.elevation);
+        if (geschossZu(elevationen, c.z, 300) >= 0) return; // Geschoss existiert
+        const hoehen = [...c.hoehen].sort((x, y) => x - y);
+        runCommand('design.geschossErstellen', {
+          name: `Bestand ${i + 1}`,
+          index: ++maxIndex,
+          elevation: Math.round(c.z),
+          height: Math.max(2200, Math.round(hoehen[Math.floor(hoehen.length / 2)]!)),
+        });
+      });
+      const aufbauFuer = (dicke: number): string => {
+        const d = Math.max(50, Math.round(dicke / 5) * 5);
+        const summe = (a: Assembly) => a.layers.reduce((s2, l) => s2 + l.thickness, 0);
+        const passt = doc()
+          .byKind<Assembly>('assembly')
+          .find((a) => a.target === 'wall' && Math.abs(summe(a) - d) <= 10);
+        if (passt) return passt.id;
+        runCommand('design.aufbauErstellen', {
+          name: `Bestand ${d} mm`,
+          target: 'wall',
+          layers: [{ material: 'mauerwerk', thickness: d, function: 'tragend' }],
+        });
+        return doc()
+          .byKind<Assembly>('assembly')
+          .find((a) => a.name === `Bestand ${d} mm`)!.id;
+      };
+      const storeyFuer = (z: number): string | null => {
+        const geordnet = doc().storeysOrdered() as Storey[];
+        const i = geschossZu(geordnet.map((st) => st.elevation), z, 600);
+        return i >= 0 ? geordnet[i]!.id : null;
+      };
+      for (const w of bestand.waende) {
+        const storeyId = storeyFuer(w.z0);
+        if (!storeyId) continue;
+        runCommand('design.wandZeichnen', {
+          storeyId,
+          a: w.a,
+          b: w.b,
+          assemblyId: aufbauFuer(w.dicke),
+        });
+      }
+      for (const d of bestand.decken) {
+        const storeyId = storeyFuer(d.zOben);
+        if (!storeyId) continue;
+        runCommand('design.deckeZeichnen', {
+          storeyId,
+          outline: d.outline,
+          thickness: Math.min(600, Math.max(60, Math.round(d.dicke))),
+        });
+      }
+    } finally {
+      history.endGroup();
+    }
+    setBestand(null);
+    setContextMeshes([]); // Kontext-Layer weicht dem editierbaren Modell
+  };
+
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
       {/* Werkzeugleiste */}
@@ -378,6 +457,11 @@ export function DesignWorkspace() {
                 const result = await importIfc(new Uint8Array(await f.arrayBuffer()));
                 setContextMeshes(result.meshes);
                 console.info(`IFC-Kontext: ${result.elementCount} Elemente (${result.schema})`);
+                setBestand(
+                  result.erkannt.waende.length + result.erkannt.decken.length > 0
+                    ? result.erkannt
+                    : null,
+                );
               } catch (err) {
                 alert(`IFC-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
               }
@@ -569,6 +653,34 @@ export function DesignWorkspace() {
         </div>
       )}
 
+      {bestand && (
+        <div
+          data-testid="bestand-angebot"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '6px 14px',
+            borderBottom: '1px solid var(--k-line)',
+            background: 'var(--k-raised)',
+            fontSize: 12.5,
+            zIndex: 2,
+          }}
+        >
+          <Badge hue={moduleHue.design}>Bestand</Badge>
+          <span>
+            Im IFC erkannt: {bestand.waende.length} Wände, {bestand.decken.length} Decken — als
+            editierbare Bauteile übernehmen? (ein Undo-Schritt; Rest bleibt Kontext)
+          </span>
+          <div style={{ flex: 1 }} />
+          <KButton size="sm" tone="accent" data-testid="bestand-uebernehmen" onClick={bestandUebernehmen}>
+            Übernehmen
+          </KButton>
+          <KButton size="sm" tone="ghost" data-testid="bestand-verwerfen" onClick={() => setBestand(null)}>
+            Nur als Kontext behalten
+          </KButton>
+        </div>
+      )}
       {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
       <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
         {drawOffen && <DrawPanel />}
