@@ -17,6 +17,7 @@ Wiederaufnehmbar: vorhandene Vault-Dateien werden übersprungen, JSONL wird
 je Dokument sofort angehängt.
 """
 import concurrent.futures as cf
+import fcntl
 import json
 import os
 import re
@@ -142,8 +143,11 @@ def verarbeite(pfad, sammlung, quelle, tags, ohne_ocr, max_seiten):
                 continue
             eintraege.append({'text': c, 'quelle': f'{quelle}: {titel}', 'seite': i + 1})
     with open(os.path.join(BASIS, 'training', f'{sammlung}.jsonl'), 'a') as f:
+        # flock: parallele Läufe dürfen keine Zeilen zerreissen
+        fcntl.flock(f, fcntl.LOCK_EX)
         for e in eintraege:
             f.write(json.dumps(e, ensure_ascii=False) + '\n')
+        fcntl.flock(f, fcntl.LOCK_UN)
     print(f'  → vault/{sammlung}/{os.path.basename(md_pfad)} + {len(eintraege)} Chunks', flush=True)
     return len(eintraege)
 
