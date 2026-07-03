@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import 'fake-indexeddb/auto';
 import { chunkText } from '../src/modules/prepare/knowledge';
 
 describe('KosmoPrepare Chunking', () => {
@@ -21,6 +22,38 @@ describe('KosmoPrepare Chunking', () => {
 
   it('leerer Text ergibt keine Chunks', () => {
     expect(chunkText('   \n\n  ')).toEqual([]);
+  });
+});
+
+describe('Varianten-Archiv (Vision A5)', () => {
+  it('archiviert den Stand mit Kennzahlen + Thumb und listet neuste zuerst', async () => {
+    const { loadTkbDemo } = await import('../src/state/demo-tkb');
+    const { archiviereVariante, listeVarianten, loescheVariante } = await import('../src/state/variant-archive');
+    loadTkbDemo();
+    const v1 = await archiviereVariante('Stand A');
+    expect(v1.kennzahlen.find((k) => k.label === 'NGF')?.wert).toMatch(/m²/);
+    expect(v1.thumbSvg).toContain('<svg');
+    const v2 = await archiviereVariante('Stand B');
+    const liste = await listeVarianten();
+    expect(liste.length).toBeGreaterThanOrEqual(2);
+    expect(liste.findIndex((v) => v.id === v2.id)).toBeLessThan(liste.findIndex((v) => v.id === v1.id));
+    await loescheVariante(v1.id);
+    await loescheVariante(v2.id);
+  });
+
+  it('öffnet eine Variante als NEUES Projekt — Original bleibt eingefroren', async () => {
+    const { loadTkbDemo } = await import('../src/state/demo-tkb');
+    const { useProject } = await import('../src/state/project-store');
+    const { aktivesProjektId } = await import('../src/state/project-vault');
+    const { archiviereVariante, oeffneVariante, listeVarianten, loescheVariante } = await import('../src/state/variant-archive');
+    loadTkbDemo();
+    const vorherElemente = useProject.getState().doc.entities.size;
+    const v = await archiviereVariante('Einfrieren');
+    const vorherId = aktivesProjektId();
+    await oeffneVariante(v.id);
+    expect(aktivesProjektId()).not.toBe(vorherId); // frische Projekt-ID
+    expect(useProject.getState().doc.entities.size).toBe(vorherElemente); // Inhalt identisch geladen
+    for (const rest of await listeVarianten()) await loescheVariante(rest.id);
   });
 });
 

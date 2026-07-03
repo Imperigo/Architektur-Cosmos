@@ -1485,3 +1485,25 @@ test('Aussparung (Vision A3): Inspector-Knopf setzt Durchbruch → Kreuz + Kote 
   await expect(page.locator('line.aussparung')).toHaveCount(6); // 4 Kanten + Kreuz
   await expect(page.locator('text.aussparung')).toHaveText('D 300×300 UK 1100');
 });
+
+test('Varianten-Archiv (Vision A5): archivieren → Zentrale vergleicht → als Projekt öffnen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="load-tkb"]');
+  await page.click('[data-testid="liste-toggle"]');
+  await page.click('[data-testid="variante-archivieren"]');
+  await expect(page.locator('[data-testid="berechnungsliste-panel"]')).toContainText('archiviert');
+  // Zweite Variante mit verändertem Stand (Wand weg via Undo wäre leer — einfach nochmal)
+  await page.click('[data-testid="variante-archivieren"]');
+  await page.click('header button[aria-label="Zur Zentrale"]');
+  const karten = page.locator('[data-testid="variante-karte"]');
+  await expect(karten.first()).toBeVisible();
+  expect(await karten.count()).toBeGreaterThanOrEqual(2);
+  await expect(karten.first()).toContainText('NGF');
+  await page.locator('[data-testid="variante-oeffnen"]').first().click();
+  // Öffnet als NEUES Projekt direkt in KosmoDesign
+  await expect(page.locator('[data-testid="inspector"], [data-testid="viewport"], canvas').first()).toBeVisible();
+  const stand = await page.evaluate(() => window.__kosmo.state().doc.entities.size);
+  expect(stand).toBeGreaterThan(10);
+});

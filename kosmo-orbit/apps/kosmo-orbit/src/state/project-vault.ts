@@ -17,14 +17,20 @@ export interface VaultEintrag {
 }
 
 const DB = 'kosmo-projekte';
+// v2 (Vision A5): zweiter Store «varianten» fürs Varianten-Archiv.
+// keyPath-Stores sind additiv — bestehende Tresore migrieren verlustfrei.
+const DB_VERSION = 2;
 const AKTIV_KEY = 'kosmo.projekt.aktiv';
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 1);
+    const req = indexedDB.open(DB, DB_VERSION);
     req.onupgradeneeded = () => {
       if (!req.result.objectStoreNames.contains('projekte')) {
         req.result.createObjectStore('projekte', { keyPath: 'id' });
+      }
+      if (!req.result.objectStoreNames.contains('varianten')) {
+        req.result.createObjectStore('varianten', { keyPath: 'id' });
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -32,12 +38,17 @@ function openDb(): Promise<IDBDatabase> {
   });
 }
 
-function tx<T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+/** Generische Transaktion auf einem Tresor-Store (auch fürs Varianten-Archiv). */
+export function vaultTx<T>(
+  store: 'projekte' | 'varianten',
+  mode: IDBTransactionMode,
+  fn: (store: IDBObjectStore) => IDBRequest<T>,
+): Promise<T> {
   return openDb().then(
     (db) =>
       new Promise<T>((resolve, reject) => {
-        const t = db.transaction('projekte', mode);
-        const req = fn(t.objectStore('projekte'));
+        const t = db.transaction(store, mode);
+        const req = fn(t.objectStore(store));
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
         t.oncomplete = () => db.close();
@@ -45,7 +56,13 @@ function tx<T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore) => IDBReque
   );
 }
 
-let aktivId = localStorage.getItem(AKTIV_KEY) ?? `projekt-${Date.now().toString(36)}`;
+function tx<T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+  return vaultTx('projekte', mode, fn);
+}
+
+// localStorage fehlt im Node-Testlauf (vitest) — defensiv zugreifen
+const speicher = typeof localStorage !== 'undefined' ? localStorage : null;
+let aktivId = speicher?.getItem(AKTIV_KEY) ?? `projekt-${Date.now().toString(36)}`;
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 export function aktivesProjektId(): string {
@@ -61,7 +78,7 @@ async function sichern(): Promise<void> {
     elemente: doc.entities.size,
     json: doc.toJSON(),
   };
-  localStorage.setItem(AKTIV_KEY, aktivId);
+  speicher?.setItem(AKTIV_KEY, aktivId);
   await tx('readwrite', (s) => s.put(eintrag));
 }
 
@@ -111,7 +128,7 @@ export async function oeffneProjekt(id: string): Promise<void> {
   const rec = await tx<VaultEintrag | undefined>('readonly', (s) => s.get(id));
   if (!rec) throw new Error('Projekt nicht gefunden');
   aktivId = id;
-  localStorage.setItem(AKTIV_KEY, id);
+  speicher?.setItem(AKTIV_KEY, id);
   ladeJson(rec.json);
 }
 
@@ -119,10 +136,17 @@ export async function loescheProjekt(id: string): Promise<void> {
   await tx('readwrite', (s) => s.delete(id));
 }
 
+/** Doc-JSON als NEUES Projekt öffnen (A5: Variante aus dem Archiv holen). */
+export function oeffneJsonAlsNeuesProjekt(json: DocJson): void {
+  aktivId = `projekt-${Date.now().toString(36)}`;
+  speicher?.setItem(AKTIV_KEY, aktivId);
+  ladeJson(json);
+}
+
 /** Neues, leeres Projekt (Bootstrap macht die Werkstatt beim Öffnen). */
 export function neuesProjekt(name: string): void {
   aktivId = `projekt-${Date.now().toString(36)}`;
-  localStorage.setItem(AKTIV_KEY, aktivId);
+  speicher?.setItem(AKTIV_KEY, aktivId);
   const doc = new KosmoDoc();
   doc.settings = { ...doc.settings, projectName: name || 'Unbenannt' };
   useProject.setState({

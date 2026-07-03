@@ -141,6 +141,21 @@ export function BerechnungslistePanel({
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <Badge hue="var(--k-mod-design)">Berechnungsliste</Badge>
         <div style={{ flex: 1 }} />
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="variante-archivieren"
+          title="Stand samt Kennzahlen und Mini-Plan ins Varianten-Archiv einfrieren (Zentrale)"
+          onClick={() => {
+            void import('../../state/variant-archive').then(({ archiviereVariante }) =>
+              archiviereVariante(`${doc.settings.projectName} — ${new Date().toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' })}`)
+                .then((v) => setImportMeldung(`Variante «${v.name}» archiviert — Vergleich in der Zentrale.`))
+                .catch((e: unknown) => setImportMeldung(e instanceof Error ? e.message : String(e))),
+            );
+          }}
+        >
+          ⧉ Variante
+        </KButton>
         <KButton size="sm" tone="ghost" onClick={() => void exportPdf()} data-testid="liste-pdf">
           A4-PDF
         </KButton>

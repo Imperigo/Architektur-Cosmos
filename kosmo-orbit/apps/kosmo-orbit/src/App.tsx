@@ -29,6 +29,12 @@ import {
   oeffneProjekt,
   type VaultEintrag,
 } from './state/project-vault';
+import {
+  listeVarianten,
+  loescheVariante,
+  oeffneVariante,
+  type VariantenEintrag,
+} from './state/variant-archive';
 import { useProject } from './state/project-store';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
@@ -454,6 +460,7 @@ export function App() {
                 </Panel>
               )}
               <ProjektListe onOpen={() => setScreen('design')} />
+              <VariantenArchiv onOpen={() => setScreen('design')} />
               <div
                 style={{
                   display: 'grid',
@@ -496,6 +503,79 @@ export function App() {
         {kosmoOpen && <KosmoPanel onClose={() => setKosmoOpen(false)} />}
       </main>
       <CommandPalette />
+    </div>
+  );
+}
+
+/** Varianten-Archiv (Vision A5): eingefrorene Stände nebeneinander vergleichen. */
+function VariantenArchiv({ onOpen }: { onOpen: () => void }) {
+  const [varianten, setVarianten] = useState<VariantenEintrag[]>([]);
+  const refresh = () => void listeVarianten().then(setVarianten).catch(() => undefined);
+  useEffect(refresh, []);
+  if (varianten.length === 0) return null;
+
+  return (
+    <div style={{ display: 'grid', gap: 8 }} data-testid="varianten-archiv">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ fontWeight: 550, fontSize: 13.5 }}>Varianten-Archiv</div>
+        <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+          Eingefrorene Stände («⧉ Variante» in der Berechnungsliste) — Kennzahlen im Direktvergleich.
+        </span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 10 }}>
+        {varianten.map((v) => (
+          <Panel key={v.id} data-testid="variante-karte" style={{ padding: 10, display: 'grid', gap: 8 }}>
+            {v.thumbSvg ? (
+              <div
+                style={{ height: 110, overflow: 'hidden', background: 'var(--k-plan-paper)', borderRadius: 6 }}
+                dangerouslySetInnerHTML={{ __html: v.thumbSvg.replace('<svg ', '<svg style="width:100%;height:100%" ') }}
+              />
+            ) : (
+              <div style={{ height: 110, display: 'grid', placeItems: 'center', color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+                kein Plan
+              </div>
+            )}
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 550, fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {v.name}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+                {new Date(v.createdAt).toLocaleString('de-CH')}
+              </div>
+            </div>
+            <div style={{ display: 'grid', gap: 2, fontSize: 11.5, fontFamily: 'var(--k-font-mono)' }}>
+              {v.kennzahlen.slice(0, 5).map((k, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+                  <span style={{ color: 'var(--k-ink-faint)' }}>{k.label}</span>
+                  <span>{k.wert}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <KButton
+                size="sm"
+                tone="quiet"
+                data-testid="variante-oeffnen"
+                onClick={() => void oeffneVariante(v.id).then(onOpen)}
+              >
+                Als Projekt öffnen
+              </KButton>
+              <KButton
+                size="sm"
+                tone="ghost"
+                aria-label={`Variante ${v.name} löschen`}
+                onClick={() => {
+                  if (confirm(`Variante «${v.name}» endgültig löschen?`)) {
+                    void loescheVariante(v.id).then(refresh);
+                  }
+                }}
+              >
+                ✕
+              </KButton>
+            </div>
+          </Panel>
+        ))}
+      </div>
     </div>
   );
 }
