@@ -2372,3 +2372,17 @@ describe('Modul-Editor (vorform-Kern)', () => {
     expect(wieder.settings.fassadenModule).toBeDefined();
   });
 });
+
+describe('Module im Render-Prompt', () => {
+  it('gezeichnetes Modul → Raster-Phrase mit Fensteranteil', () => {
+    const doc = new KosmoDoc();
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Band', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 200, y: 1100, b: 2100, h: 1600, typ: 'fenster' }],
+    });
+    const bausteine = renderPromptBausteine(doc);
+    const phrase = bausteine.find((b) => b.includes('Fassadenraster'))!;
+    expect(phrase).toContain('2.5 × 3.0 m');
+    expect(phrase).toContain('~45%'); // 2100×1600 / 2500×3000
+  });
+});

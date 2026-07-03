@@ -32,6 +32,17 @@ export function renderPromptBausteine(doc: KosmoDoc): string[] {
       }
     }
   }
+  // Gezeichnete Fassadenmodule (Modul-Editor): Rastermass + Fensteranteil
+  const modul = doc.settings.fassadenModule[0];
+  if (modul && modul.elemente.length > 0) {
+    const fensterFlaeche = modul.elemente
+      .filter((e) => e.typ === 'fenster')
+      .reduce((sum, e) => sum + e.b * e.h, 0);
+    const anteil = Math.round((fensterFlaeche / (modul.breite * modul.hoehe)) * 100);
+    bausteine.push(
+      `regelmässiges Fassadenraster ${(modul.breite / 1000).toFixed(1)} × ${(modul.hoehe / 1000).toFixed(1)} m${anteil > 0 ? `, Fensteranteil ~${anteil}%` : ''}`,
+    );
+  }
   return bausteine;
 }
 
