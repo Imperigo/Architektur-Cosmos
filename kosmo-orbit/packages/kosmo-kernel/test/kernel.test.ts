@@ -2077,3 +2077,19 @@ describe('Fassaden-Module (V2-V7)', () => {
     expect(csv.split('\n')).toHaveLength(2 + 4 + 1);
   });
 });
+
+describe('Möblierungsplan im Druck (V2-F8-Nachzug)', () => {
+  it('Werkplan zeichnet den Möbel-Korpus, Vorprojekt nicht; Bewegungsfläche nie', async () => {
+    const { planToSvg, A3_QUER } = await import('../src');
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.moebelSetzen', { storeyId, typ: 'esstisch', at: { x: 1000, y: 1000 }, rotationGrad: 0 });
+    const werkplan = planToSvg(doc, storeyId, { scale: 50, paper: A3_QUER, projectName: 'T', planTitle: 'G', date: '01.07.2026' });
+    // Esstisch-Korpus: 2000 breit ab Rückkante y=1000 → Kante bei x=0..2000, y=-1000
+    expect(werkplan).toContain('M 0 -1000 L 2000 -1000');
+    execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
+    const vorprojekt = planToSvg(doc, storeyId, { scale: 50, paper: A3_QUER, projectName: 'T', planTitle: 'G', date: '01.07.2026' });
+    expect(vorprojekt).not.toContain('M 0 -1000 L 2000 -1000');
+  });
+});

@@ -72,3 +72,16 @@ In KosmoOrbit dann einfach Modell `kosmo-buero` in den Kosmo-Einstellungen eintr
   könnte abgelehnte Antworten automatisch umschreiben lassen und Paare bilden).
 - Dieses Rezept ist hier nicht gegen die 5090 getestet (Cloud-Container ohne GPU) —
   erster Trainingslauf gemeinsam mit dem Owner.
+
+## 5) HomeStation-Backlog (Stand 03.07.2026)
+
+Der Bauwissen-Korpus (`wissen/training/*.jsonl`, ~43'000 Chunks aus 7
+Sammlungen — Lehrhefte, Normen, Persona, 567 Vorlesungsquellen, 147 Bücher)
+ist als LoRA-Grundfutter bereit. Was BEWUSST auf die 5090 wartet, weil es im
+Cloud-Container zu teuer/gross war:
+
+| Posten | Umfang | Werkzeug |
+|---|---|---|
+| 7 Über-250-MB-Scans (Baustoff-/Glasbau-/Stahlbau-/Sanierung-Atlas, «Eine Muster Sprache», Löfgren, FS-08-Reader) | ~3.8 GB | `wissen/tools/ingest.py <Ordner> buecher` nach lokalem OneDrive-Pull |
+| GoodNotes-Handschrift-Zusammenfassungen (HSLU/ETH) | ~60 PDFs | Vision-OCR (Qwen-VL auf der 5090) — tesseract scheitert an Handschrift |
+| DPO-Paare aus Daumen-runter-Journal | wächst | siehe Ehrlichkeiten oben |

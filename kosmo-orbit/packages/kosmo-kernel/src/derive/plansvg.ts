@@ -1,5 +1,6 @@
 import { phaseLabel, type KosmoDoc } from '../model/doc';
-import type { Storey } from '../model/entities';
+import type { Furniture, Storey } from '../model/entities';
+import { moebelGeometrie } from './moebel';
 import { derivePlan, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabel } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
@@ -87,6 +88,19 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       `<path d="M ${sx} ${-sy} A ${a.radius} ${a.radius} 0 0 0 ${ex} ${-ey}" fill="none" stroke="#555" stroke-width="${0.18 * scale}" stroke-dasharray="${scale} ${0.7 * scale}"/>`,
     );
   }
+  // Möblierung (V2-F8): nur im Werkplan, feiner Stift 0.18, ohne
+  // Bewegungsflächen (die sind Arbeitshilfe am Bildschirm, kein Planinhalt)
+  if (doc.settings.phase === 'werkplan') {
+    for (const f of doc.byKind<Furniture>('furniture')) {
+      if (f.storeyId !== storeyId) continue;
+      const g = moebelGeometrie(f);
+      if (!g) continue;
+      parts.push(
+        `<path d="M ${g.korpus.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z" fill="none" stroke="black" stroke-width="${0.18 * scale}"/>`,
+      );
+    }
+  }
+
   // Assoziative Bemassung: Aussenketten + Innenketten je nach Stil
   const dims = deriveDimensions(doc, storeyId);
   let dimMinX = Infinity;
