@@ -1,0 +1,9 @@
+# Quell-PDFs über der GitHub-Grenze (100 MB hart, 50 MB Warnung):
+# bleiben in OneDrive; ihr Volltext liegt im Vault/Trainings-Korpus.
+*.teil
+/normen/NOR_Normen/Neufert/Neufert 3 Edition.pdf
+/normen/NOR_Normen/SIA Normen/sia05/CD_v9_04/261_f.pdf
+# SIA-CD 2005 (397 veraltete Norm-PDFs in 3 Sprachen, 588 MB): bleibt in OneDrive
+/normen/NOR_Normen/SIA Normen/sia05/
+/normen/NOR_Normen/SIA Normen/271 2021 Abdichtungen von Hochbauten.pdf
+/normen/SIA 2028_2010.pdf
