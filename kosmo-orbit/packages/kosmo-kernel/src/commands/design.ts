@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Assembly, Boundary, GridAxis, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
+import type { Furniture, Assembly, Boundary, GridAxis, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -542,6 +542,32 @@ export const setBoundary = registerCommand({
     };
     patches.push(added(grenze));
     return patches;
+  },
+});
+
+export const placeFurniture = registerCommand({
+  id: 'design.moebelSetzen',
+  title: 'Möbel setzen',
+  description:
+    'Setzt ein Möbel aus dem Katalog (bett-doppel, bett-einzel, kuechenzeile, wc, lavabo, dusche, esstisch, schrank) an Position at (mm, Mitte der Rückkante) mit rotationGrad. Jedes Möbel bringt seine SIA-500-Bewegungsfläche mit; Kollisionen mit Wänden meldet der Grundriss-Check.',
+  params: z.object({
+    storeyId: z.string(),
+    typ: z.enum(['bett-doppel', 'bett-einzel', 'kuechenzeile', 'wc', 'lavabo', 'dusche', 'esstisch', 'schrank']),
+    at: z.object({ x: z.number(), y: z.number() }),
+    rotationGrad: z.number().default(0),
+  }),
+  summarize: (p) => `Möbel «${p.typ}»`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const moebel: Furniture = {
+      id: newId('moebel'),
+      kind: 'furniture',
+      storeyId: p.storeyId,
+      typ: p.typ,
+      at: p.at,
+      rotationGrad: p.rotationGrad,
+    };
+    return [added(moebel)];
   },
 });
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { derivePlan, deriveDimensions, dimensionLabel, pruefeGrundriss, regionToPath, assemblyThickness, type Assembly, type Pt, type Wall, type Zone } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, regionToPath, assemblyThickness, type Assembly, type Furniture, type Pt, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
@@ -270,6 +270,21 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               );
             })}
 
+          {/* F8: Möbel — Korpus fein, Bewegungsfläche gestrichelt (Bildschirm) */}
+          {doc
+            .byKind<Furniture>('furniture')
+            .filter((f) => f.storeyId === activeStoreyId)
+            .map((f) => {
+              const g = moebelGeometrie(f);
+              if (!g) return null;
+              const d = (poly: Pt[]) => `M ${poly.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z`;
+              return (
+                <g key={f.id} data-testid="moebel">
+                  <path d={d(g.korpus)} fill="none" stroke="var(--k-ink-soft)" strokeWidth={10} />
+                  <path d={d(g.bewegung)} fill="none" stroke="var(--k-ink-faint)" strokeWidth={6} strokeDasharray="60 40" />
+                </g>
+              );
+            })}
           {plan &&
             /* F3: verletzte Zonen live tönen (nur Bildschirm, nicht Druck) */
             verletzteZonen.map((v) => (

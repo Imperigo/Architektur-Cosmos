@@ -977,3 +977,25 @@ test('Render-Prompt (V2-V8): Material-Baustein erscheint im finalen Prompt, Tipp
   await feld.fill('mein eigener Prompt');
   await expect(feld).toHaveValue('mein eigener Prompt');
 });
+
+test('Möblierung (V2-F8): Möbel im Plan sichtbar, SIA-500-Kollision im Check', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const au = k.run('design.aufbauErstellen', {
+      name: 'AW', target: 'wall', layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: au.patches[0].id,
+      a: { x: -3000, y: 2500 }, b: { x: 3000, y: 2500 },
+    });
+    k.run('design.moebelSetzen', { storeyId: st.activeStoreyId, typ: 'bett-doppel', at: { x: 0, y: 0 }, rotationGrad: 0 });
+  });
+  await expect(page.locator('[data-testid="moebel"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="checks"]')).toContainText('Doppelbett');
+});

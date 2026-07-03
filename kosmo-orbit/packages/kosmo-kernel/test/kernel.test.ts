@@ -14,6 +14,7 @@ import { segmentiere, sollMix } from '../src/derive/segmentierer';
 import { kennzahlenAuswerten } from '../src/derive/sia416';
 import { raumTypVorschlag } from '../src/derive/raumtypcopilot';
 import { finalerRenderPrompt, renderPromptBausteine } from '../src/derive/renderprompt';
+import { moebelGeometrie } from '../src/derive/moebel';
 import { polygonArea } from '../src/model/units';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
@@ -2011,5 +2012,40 @@ describe('Render-Prompt-Transparenz (V2-V8)', () => {
     expect(bausteine).toContain('Sichtbeton-Fassade');
     expect(finalerRenderPrompt('Abendstimmung', '', bausteine)).toBe('Abendstimmung, Sichtbeton-Fassade');
     expect(finalerRenderPrompt('', '', [])).toBe('');
+  });
+});
+
+describe('Möblierung (V2-F8)', () => {
+  it('moebelSetzen legt Möbel an; Bewegungsfläche an der Wand → SIA-500-Warnung', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW', target: 'wall', layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId: (au.patches[0] as { id: string }).id,
+      a: { x: -3000, y: 2500 }, b: { x: 3000, y: 2500 },
+    });
+    // WC: Rückkante bei y=0, Korpus 700 tief, Bewegungsfläche 1400×1400 ab y=700 → bis 2100 < 2500 ok
+    const r = execute(doc, 'design.moebelSetzen', { storeyId, typ: 'wc', at: { x: 0, y: 0 }, rotationGrad: 0 });
+    expect(doc.byKind('furniture')).toHaveLength(1);
+    expect(pruefeGrundriss(doc, storeyId).filter((b) => b.regel === 'SIA 500')).toHaveLength(0);
+    // Doppelbett: Korpus bis y=2000, Bewegungsfläche bis 3200 → schneidet die Wand bei 2500
+    execute(doc, 'design.moebelSetzen', { storeyId, typ: 'bett-doppel', at: { x: 0, y: 0 }, rotationGrad: 0 });
+    const warnungen = pruefeGrundriss(doc, storeyId).filter((b) => b.regel === 'SIA 500');
+    expect(warnungen).toHaveLength(1);
+    expect(warnungen[0]!.text).toContain('Doppelbett');
+    // Undo räumt auf
+    doc.apply(invertPatches(r.patches));
+    expect(doc.byKind('furniture')).toHaveLength(1);
+  });
+
+  it('moebelGeometrie rotiert: 90° dreht die Bewegungsfläche nach -x', () => {
+    const g = moebelGeometrie({
+      id: 'f1', kind: 'furniture', storeyId: 's', typ: 'wc', at: { x: 0, y: 0 }, rotationGrad: 90,
+    } as import('../src').Furniture)!;
+    // Bei 90° zeigt +y-Lokal nach -x-Welt
+    expect(Math.min(...g.bewegung.map((p) => p.x))).toBeLessThan(-2000);
   });
 });

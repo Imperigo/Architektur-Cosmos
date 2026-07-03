@@ -3,6 +3,7 @@ import type { Assembly, Boundary, MassBody, Opening, Roof, Stair, Storey, Wall, 
 import { polygonArea } from '../model/units';
 import { treppenTeile } from './treppe';
 import { fluchtwege } from './raumgraph';
+import { pruefeBewegungsflaechen } from './moebel';
 
 /**
  * Grundriss-Checks (Q12, Finch-Essenz) — Regeln laufen live auf der
@@ -265,6 +266,11 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
         zuHoch('Volumen', m.id, storey.elevation + m.baseOffset + m.height);
       }
     }
+  }
+
+  // Möblierung (V2-F8): SIA-500-Bewegungsflächen gegen Wände
+  for (const m of pruefeBewegungsflaechen(doc, storeyId)) {
+    befunde.push({ schwere: 'warnung', regel: 'SIA 500', text: m.text, entityId: m.furnitureId });
   }
 
   const rang = { fehler: 0, warnung: 1, hinweis: 2 } as const;

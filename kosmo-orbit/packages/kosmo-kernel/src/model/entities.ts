@@ -254,8 +254,20 @@ export interface ImageAsset extends Base {
   height?: number;
 }
 
+/** Möbel (V2-F8): parametrisches Symbol + SIA-500-Bewegungsfläche. */
+export interface Furniture extends Base {
+  kind: 'furniture';
+  storeyId: string;
+  /** Katalogschlüssel, z.B. 'bett-doppel', 'wc', 'kuechenzeile'. */
+  typ: string;
+  /** Referenzpunkt (Mitte der Rückkante). */
+  at: Pt;
+  /** Rotation in Grad (0 = Bewegungsfläche zeigt +y). */
+  rotationGrad: number;
+}
+
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {
