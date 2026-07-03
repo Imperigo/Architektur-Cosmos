@@ -77,14 +77,28 @@ export function App() {
   const [peers, setPeers] = useState(0);
   const [syncUrl, setSyncUrl] = useState(localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700');
   const [syncRoom, setSyncRoom] = useState(localStorage.getItem('kosmo.sync.room') ?? 'projekt-1');
+  const [syncToken, setSyncToken] = useState(localStorage.getItem('kosmo.sync.token') ?? '');
+  const [wartend, setWartend] = useState(0);
+  const [raeume, setRaeume] = useState<{ name: string; verbindungen: number }[] | null>(null);
 
   useEffect(() => {
-    onSyncStatus((s, p) => {
+    onSyncStatus((s, p, w) => {
       setSyncStatus(s);
       setPeers(p);
+      setWartend(w ?? 0);
     });
     void initVault();
   }, []);
+
+  // Raum-Verwaltung: aktive Räume des Servers anzeigen (D4)
+  useEffect(() => {
+    if (!syncOpen) return;
+    const httpUrl = syncUrl.replace(/^ws/, 'http').replace(/\/$/, '');
+    fetch(`${httpUrl}/raeume`, { signal: AbortSignal.timeout(2500) })
+      .then((r) => r.json())
+      .then((j: { raeume: { name: string; verbindungen: number }[] }) => setRaeume(j.raeume))
+      .catch(() => setRaeume(null));
+  }, [syncOpen, syncUrl, syncStatus]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -288,8 +302,25 @@ export function App() {
             data-testid="sync-room"
             style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 130 }}
           />
-          {syncStatus === 'aus' || syncStatus === 'getrennt' ? (
-            <KButton size="sm" tone="accent" data-testid="sync-connect" onClick={() => connectSync(syncUrl, syncRoom)}>
+          <span style={{ color: 'var(--k-ink-faint)' }}>Token</span>
+          <input
+            value={syncToken}
+            type="password"
+            onChange={(e) => {
+              setSyncToken(e.target.value);
+              localStorage.setItem('kosmo.sync.token', e.target.value);
+            }}
+            placeholder="optional"
+            data-testid="sync-token"
+            style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 110 }}
+          />
+          {syncStatus === 'aus' || syncStatus === 'getrennt' || syncStatus === 'abgelehnt' ? (
+            <KButton
+              size="sm"
+              tone="accent"
+              data-testid="sync-connect"
+              onClick={() => connectSync(syncUrl, syncRoom, syncToken.trim() || undefined)}
+            >
               Verbinden
             </KButton>
           ) : (
@@ -297,9 +328,47 @@ export function App() {
               Trennen
             </KButton>
           )}
-          <span style={{ color: 'var(--k-ink-faint)' }}>
-            Desktop und iPad im selben Raum arbeiten live am selben Modell.
-          </span>
+          {syncStatus === 'abgelehnt' && (
+            <span style={{ color: 'var(--k-danger)' }} data-testid="sync-abgelehnt">
+              Token abgelehnt — der Server verlangt den Büro-Token.
+            </span>
+          )}
+          {syncStatus === 'getrennt' && wartend > 0 && (
+            <span style={{ color: 'var(--k-warning)' }} data-testid="sync-wartend">
+              getrennt · {wartend} Änderung{wartend === 1 ? '' : 'en'} warten — fliessen beim Reconnect nach
+            </span>
+          )}
+          {raeume && raeume.length > 0 && (
+            <span style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }} data-testid="sync-raeume">
+              <span style={{ color: 'var(--k-ink-faint)' }}>Aktive Räume:</span>
+              {raeume.slice(0, 6).map((r) => (
+                <button
+                  key={r.name}
+                  onClick={() => {
+                    setSyncRoom(r.name);
+                    localStorage.setItem('kosmo.sync.room', r.name);
+                  }}
+                  style={{
+                    all: 'unset',
+                    cursor: 'pointer',
+                    padding: '2px 8px',
+                    borderRadius: 'var(--k-radius-sm)',
+                    border: '1px solid var(--k-line-strong)',
+                    background: r.name === syncRoom ? 'var(--k-accent-wash)' : 'var(--k-surface)',
+                    fontFamily: 'var(--k-font-mono)',
+                    fontSize: 11.5,
+                  }}
+                >
+                  {r.name} · {r.verbindungen}
+                </button>
+              ))}
+            </span>
+          )}
+          {(!raeume || raeume.length === 0) && (
+            <span style={{ color: 'var(--k-ink-faint)' }}>
+              Desktop und iPad im selben Raum arbeiten live am selben Modell.
+            </span>
+          )}
         </div>
       )}
       <main style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>

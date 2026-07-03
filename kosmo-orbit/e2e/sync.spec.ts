@@ -88,4 +88,12 @@ test('Zwei Clients konvergieren — auch bei Verschieben-gegen-Löschen', async 
   const standA = await stand(a);
   const standB = await stand(b);
   expect(standA).toEqual(standB);
+
+  // Raum-Verwaltung (D4): der Server meldet den aktiven Raum mit 2 Teilnehmern
+  const liste = (await (await fetch('http://localhost:8700/raeume')).json()) as {
+    raeume: { name: string; verbindungen: number }[];
+  };
+  const eintrag = liste.raeume.find((r) => r.name === raum);
+  expect(eintrag).toBeDefined();
+  expect(eintrag!.verbindungen).toBe(2);
 });

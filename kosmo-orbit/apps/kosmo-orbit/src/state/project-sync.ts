@@ -1,5 +1,6 @@
 import * as Y from 'yjs';
 import { HocuspocusProvider } from '@hocuspocus/provider';
+import { IndexeddbPersistence } from 'y-indexeddb';
 import type { AnyPatch, Entity } from '@kosmo/kernel';
 import { isSettingsPatch } from '@kosmo/kernel';
 import { setPatchListener, useProject } from './project-store';
@@ -12,20 +13,27 @@ import { setPatchListener, useProject } from './project-store';
  * die Patches in einer Y-Transaktion (origin 'lokal') gespiegelt; Remote-
  * Transaktionen fliessen direkt in den KosmoDoc (ohne Undo-History — fremde
  * Arbeit ist nicht rückgängig zu machen).
+ *
+ * Betriebshärte (D4): optionaler Token (Server prüft), Offline-Warteschlange
+ * über y-indexeddb — Änderungen ohne Verbindung landen im lokal persistierten
+ * Y.Doc und fliessen beim Reconnect als CRDT-Merge nach (auch nach Neustart).
  */
 
-export type SyncStatus = 'aus' | 'verbinde' | 'live' | 'getrennt';
+export type SyncStatus = 'aus' | 'verbinde' | 'live' | 'getrennt' | 'abgelehnt';
 
 interface SyncState {
   ydoc: Y.Doc;
   provider: HocuspocusProvider;
   entities: Y.Map<Entity>;
+  persistence: IndexeddbPersistence;
+  verbunden: boolean;
+  wartend: number;
 }
 
 let active: SyncState | null = null;
-let statusListener: ((s: SyncStatus, peers: number) => void) | null = null;
+let statusListener: ((s: SyncStatus, peers: number, wartend?: number) => void) | null = null;
 
-export function onSyncStatus(cb: (s: SyncStatus, peers: number) => void): void {
+export function onSyncStatus(cb: (s: SyncStatus, peers: number, wartend?: number) => void): void {
   statusListener = cb;
 }
 
@@ -44,19 +52,30 @@ export function pushPatches(patches: readonly AnyPatch[]): void {
       else entities.set(p.id, p.after);
     }
   }, 'lokal');
+  // Offline: Änderung sitzt sicher im persistierten Y.Doc — zählen und melden
+  if (!active.verbunden) {
+    active.wartend++;
+    statusListener?.('getrennt', 0, active.wartend);
+  }
 }
 
-export function connectSync(url: string, room: string): void {
+export function connectSync(url: string, room: string, token?: string): void {
   disconnectSync();
   setPatchListener(pushPatches);
   const ydoc = new Y.Doc();
   const entities = ydoc.getMap<Entity>('entities');
+  // Offline-Warteschlange: Raum-Stand lokal persistieren (IndexedDB)
+  const persistence = new IndexeddbPersistence(`kosmo-sync-${room}`, ydoc);
   statusListener?.('verbinde', 0);
 
   const provider = new HocuspocusProvider({
     url,
     name: room,
     document: ydoc,
+    ...(token ? { token } : {}),
+    onAuthenticationFailed: () => {
+      statusListener?.('abgelehnt', 0);
+    },
     onSynced: () => {
       const { doc } = useProject.getState();
       if (entities.size === 0) {
@@ -79,10 +98,18 @@ export function connectSync(url: string, room: string): void {
           activeStoreyId: valid ?? storeys.find((s) => s.index === 0)?.id ?? storeys[0]?.id ?? null,
         });
       }
+      if (active) {
+        active.verbunden = true;
+        active.wartend = 0;
+      }
       statusListener?.('live', provider.awareness?.getStates().size ?? 1);
     },
     onStatus: ({ status }) => {
-      if (status === 'disconnected') statusListener?.('getrennt', 0);
+      if (status === 'connected' && active) active.verbunden = true;
+      if (status === 'disconnected') {
+        if (active) active.verbunden = false;
+        statusListener?.('getrennt', 0, active?.wartend ?? 0);
+      }
     },
     onAwarenessUpdate: ({ states }) => {
       statusListener?.('live', states.length);
@@ -104,13 +131,14 @@ export function connectSync(url: string, room: string): void {
     useProject.setState((s) => ({ revision: s.revision + 1 }));
   });
 
-  active = { ydoc, provider, entities };
+  active = { ydoc, provider, entities, persistence, verbunden: false, wartend: 0 };
 }
 
 export function disconnectSync(): void {
   setPatchListener(null);
   if (!active) return;
   active.provider.destroy();
+  void active.persistence.destroy();
   active.ydoc.destroy();
   active = null;
   statusListener?.('aus', 0);

@@ -14,6 +14,9 @@ import { SQLite } from '@hocuspocus/extension-sqlite';
 const port = Number(process.env.KOSMO_SYNC_PORT ?? 8700);
 const token = process.env.KOSMO_SYNC_TOKEN ?? '';
 
+// Raum-Verwaltung: aktive Räume mit Teilnehmerzahl (D4-Betriebshärte)
+const raeume = new Map();
+
 const server = new Server({
   port,
   extensions: [
@@ -24,8 +27,29 @@ const server = new Server({
       throw new Error('Token falsch');
     }
   },
-  async onConnect() {
-    // still — Verbindungslog nur bei Bedarf
+  async onConnect({ documentName }) {
+    raeume.set(documentName, (raeume.get(documentName) ?? 0) + 1);
+  },
+  async onDisconnect({ documentName }) {
+    const n = (raeume.get(documentName) ?? 1) - 1;
+    if (n <= 0) raeume.delete(documentName);
+    else raeume.set(documentName, n);
+  },
+  async onRequest({ request, response }) {
+    // GET /raeume — aktive Räume fürs Beitreten aus der App
+    if (request.url === '/raeume') {
+      response.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      });
+      response.end(
+        JSON.stringify({
+          raeume: [...raeume.entries()].map(([name, verbindungen]) => ({ name, verbindungen })),
+          tokenPflicht: token !== '',
+        }),
+      );
+      return Promise.reject(null); // beantwortet — Hocuspocus übernimmt nicht
+    }
   },
 });
 
