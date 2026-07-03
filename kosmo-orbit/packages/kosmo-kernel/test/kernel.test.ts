@@ -18,6 +18,10 @@ import {
   thickenPolyline,
   wallOutline,
   polygonArea,
+  schraffurFuer,
+  schraffurLinien,
+  sheetToSvg,
+  CommandError,
   type Storey,
   type Wall,
   type Assembly,
@@ -1037,5 +1041,190 @@ describe('Mehrfach-Wandknoten (V2-A1)', () => {
     for (const a of arts) {
       for (let i = 0; i < a.positions.length; i++) expect(Number.isFinite(a.positions[i]!)).toBe(true);
     }
+  });
+});
+
+describe('Schnittflächen + SIA-Schraffuren (V2-C4)', () => {
+  const loopFlaeche = (loop: { s: number; z: number }[]) => {
+    let f = 0;
+    for (let i = 0; i < loop.length; i++) {
+      const a = loop[i]!;
+      const b = loop[(i + 1) % loop.length]!;
+      f += a.s * b.z - b.s * a.z;
+    }
+    return Math.abs(f / 2);
+  };
+
+  it('einschichtige Wand quer geschnitten: EIN geschlossenes Face, Fläche = Dicke × Höhe', () => {
+    const { doc, storeyId } = setupDoc();
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'Beton 20',
+      target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    execute(doc, 'design.wandZeichnen', {
+      storeyId,
+      assemblyId: (au.patches[0] as { id: string }).id,
+      a: { x: 0, y: 0 },
+      b: { x: 5000, y: 0 },
+    });
+    const g = deriveSection(doc, {
+      a: { x: 2500, y: -3000 },
+      b: { x: 2500, y: 3000 },
+      depth: 5000,
+      lookLeft: true,
+    });
+    expect(g.faces).toHaveLength(1);
+    const f = g.faces[0]!;
+    expect(f.material).toBe('beton');
+    expect(f.functionKey).toBe('tragend');
+    expect(f.loops).toHaveLength(1);
+    expect(loopFlaeche(f.loops[0]!)).toBeCloseTo(200 * 3000, -2);
+  });
+
+  it('3-Schicht-Aufbau quer geschnitten: drei Bänder mit Schichtdicken-Breiten', () => {
+    const { doc, storeyId, assemblyId } = setupDoc(); // putz 20 / daemmung-mw 160 / beton 180
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 5000, y: 0 } });
+    const g = deriveSection(doc, {
+      a: { x: 2500, y: -3000 },
+      b: { x: 2500, y: 3000 },
+      depth: 5000,
+      lookLeft: true,
+    });
+    expect(g.faces).toHaveLength(3);
+    const nachMaterial = new Map(g.faces.map((f) => [f.material, f]));
+    for (const [material, dicke, funktion] of [
+      ['putz', 20, 'bekleidung'],
+      ['daemmung-mw', 160, 'daemmung'],
+      ['beton', 180, 'tragend'],
+    ] as const) {
+      const f = nachMaterial.get(material)!;
+      expect(f, material).toBeDefined();
+      expect(f.functionKey).toBe(funktion);
+      const flaeche = f.loops.reduce((s, l) => s + loopFlaeche(l), 0);
+      expect(flaeche).toBeCloseTo(dicke * 3000, -2);
+    }
+  });
+
+  it('Längsschnitt durch die Wand mit Fenster: Loch als eigener Loop (evenodd)', () => {
+    const { doc, storeyId } = setupDoc();
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'Beton 20',
+      target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    const w = execute(doc, 'design.wandZeichnen', {
+      storeyId,
+      assemblyId: (au.patches[0] as { id: string }).id,
+      a: { x: 0, y: 0 },
+      b: { x: 5000, y: 0 },
+    });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (w.patches[0] as { id: string }).id,
+      openingType: 'fenster',
+      center: 2500,
+      width: 1000,
+      height: 1200,
+      sill: 900,
+    });
+    const g = deriveSection(doc, {
+      a: { x: -1000, y: 0 },
+      b: { x: 6000, y: 0 },
+      depth: 5000,
+      lookLeft: true,
+    });
+    expect(g.faces).toHaveLength(1);
+    const f = g.faces[0]!;
+    expect(f.loops).toHaveLength(2);
+    const flaechen = f.loops.map(loopFlaeche).sort((a, b) => a - b);
+    expect(flaechen[0]!).toBeCloseTo(1000 * 1200, -2); // Fensterloch
+    expect(flaechen[1]!).toBeCloseTo(5000 * 3000, -2); // Wandumriss
+  });
+
+  it('Schraffurlinien bleiben im Polygon; Katalog fällt ehrlich zurück', () => {
+    const rect = [[
+      { s: 0, z: 0 },
+      { s: 2000, z: 0 },
+      { s: 2000, z: 1000 },
+      { s: 0, z: 1000 },
+    ]];
+    for (const spec of [schraffurFuer('beton'), schraffurFuer('daemmung-mw'), schraffurFuer('holz')]) {
+      const linien = schraffurLinien(rect, spec, 50);
+      expect(linien.length).toBeGreaterThan(0);
+      for (const l of linien) {
+        for (const p of l) {
+          expect(p.s).toBeGreaterThanOrEqual(-1);
+          expect(p.s).toBeLessThanOrEqual(2001);
+          expect(p.z).toBeGreaterThanOrEqual(-30); // Wellen-Amplitude bleibt klein
+          expect(p.z).toBeLessThanOrEqual(1030);
+        }
+      }
+    }
+    expect(schraffurFuer('daemmung-mw').muster).toBe('wellen');
+    expect(schraffurFuer('irgendwas', 'daemmung').muster).toBe('wellen');
+    expect(schraffurFuer('völlig-unbekannt').muster).toBe('voll');
+    expect(schraffurLinien(rect, schraffurFuer('völlig-unbekannt'), 50)).toEqual([]);
+  });
+});
+
+describe('Plakat-Bildslots (V2-C1)', () => {
+  // 1×1-PNG — kleinstes echtes Bild fürs Einbetten
+  const PNG_1x1 =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+  const blattMitSlot = () => {
+    const doc = new KosmoDoc();
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'Plakat', format: 'A0', orientation: 'hoch' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    return { doc, sheetId };
+  };
+
+  it('leerer Slot → füllen → entfernen: Asset lebt und stirbt mit dem Verweis', () => {
+    const { doc, sheetId } = blattMitSlot();
+    execute(doc, 'publish.bildPlatzieren', { sheetId, x: 90, y: 160, w: 380, title: 'Visualisierung' });
+    let sheet = doc.get<import('../src').Sheet>(sheetId)!;
+    expect(sheet.bilder).toHaveLength(1);
+    expect(sheet.bilder![0]!.assetId).toBeNull();
+    expect(doc.byKind('imageasset')).toHaveLength(0);
+
+    execute(doc, 'publish.bildFuellen', { sheetId, bildId: sheet.bilder![0]!.id, dataUrl: PNG_1x1 });
+    sheet = doc.get<import('../src').Sheet>(sheetId)!;
+    const assets = doc.byKind<import('../src').ImageAsset>('imageasset');
+    expect(assets).toHaveLength(1);
+    expect(sheet.bilder![0]!.assetId).toBe(assets[0]!.id);
+    expect(assets[0]!.mime).toBe('image/png');
+    expect(assets[0]!.width).toBe(1); // PNG-IHDR gelesen
+    expect(assets[0]!.height).toBe(1);
+
+    execute(doc, 'publish.bildEntfernen', { sheetId, bildId: sheet.bilder![0]!.id });
+    expect(doc.get<import('../src').Sheet>(sheetId)!.bilder).toHaveLength(0);
+    expect(doc.byKind('imageasset')).toHaveLength(0); // verwaistes Asset mitgelöscht
+  });
+
+  it('Undo macht Platzieren-mit-Bild vollständig rückgängig (Asset + Slot)', () => {
+    const { doc, sheetId } = blattMitSlot();
+    const res = execute(doc, 'publish.bildPlatzieren', { sheetId, x: 40, y: 40, w: 160, dataUrl: PNG_1x1 });
+    expect(doc.byKind('imageasset')).toHaveLength(1);
+    doc.apply(invertPatches(res.patches));
+    expect(doc.byKind('imageasset')).toHaveLength(0);
+    expect(doc.get<import('../src').Sheet>(sheetId)!.bilder ?? []).toHaveLength(0);
+  });
+
+  it('kaputte dataUrl wird klar abgelehnt', () => {
+    const { doc, sheetId } = blattMitSlot();
+    expect(() =>
+      execute(doc, 'publish.bildPlatzieren', { sheetId, x: 0, y: 0, w: 100, dataUrl: 'http://böse.example/bild.png' }),
+    ).toThrow(CommandError);
+  });
+
+  it('Blatt-SVG: gefüllter Slot bettet ein <image> ein, ohneRaster lässt es weg, leerer Slot zeigt den Platzhalter', () => {
+    const { doc, sheetId } = blattMitSlot();
+    execute(doc, 'publish.bildPlatzieren', { sheetId, x: 90, y: 160, w: 380, dataUrl: PNG_1x1, title: 'Render' });
+    execute(doc, 'publish.bildPlatzieren', { sheetId, x: 90, y: 620, w: 200 });
+    const svg = sheetToSvg(doc, sheetId, { projectName: 'Test' });
+    expect(svg).toContain('<image ');
+    expect(svg).toContain('data:image/png;base64,');
+    expect(svg).toContain('Render folgt — HomeStation');
+    const pdfSvg = sheetToSvg(doc, sheetId, { projectName: 'Test', ohneRaster: true });
+    expect(pdfSvg).not.toContain('<image ');
   });
 });

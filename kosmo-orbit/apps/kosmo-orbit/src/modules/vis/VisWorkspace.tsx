@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Messrahmen, Badge, Hairline, Karteikarte, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
-import { exportGlb } from '@kosmo/kernel';
+import { exportGlb, type Sheet } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -63,6 +63,7 @@ export function VisWorkspace() {
   const [prompt, setPrompt] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hinweis, setHinweis] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const base = bridgeUrl.replace(/\/$/, '');
@@ -94,6 +95,47 @@ export function VisWorkspace() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bridgeUrl]);
+
+  /**
+   * Render aufs Plakat (C1): Bild von der Bridge holen und als Blatt-Bürger
+   * einbetten. Ein leerer Bild-Slot (Plakat-Designer) wird zuerst gefüllt;
+   * sonst neuer Slot; ohne Blatt entsteht eines — alles EIN Undo-Schritt.
+   */
+  const aufsBlatt = async (jobId: string, imageName: string, titel: string) => {
+    setError(null);
+    try {
+      // no-store: die <img>-Tags cachen die Antwort ohne CORS-Header (no-cors) —
+      // ein normaler fetch träfe den vergifteten Cache-Eintrag und scheiterte.
+      const blob = await (await fetch(`${base}/jobs/${jobId}/artifacts/${imageName}`, { cache: 'no-store' })).blob();
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result));
+        r.onerror = () => reject(r.error ?? new Error('Bild nicht lesbar'));
+        r.readAsDataURL(blob);
+      });
+      const { doc, runCommand, history } = useProject.getState();
+      history.beginGroup();
+      try {
+        const sheets = doc.byKind<Sheet>('sheet').sort((a, b) => a.index - b.index);
+        let sheet = sheets.find((s) => (s.bilder ?? []).some((b) => !b.assetId)) ?? sheets[0];
+        if (!sheet) {
+          const res = runCommand('publish.blattErstellen', { name: 'Renderblatt', format: 'A1', orientation: 'quer' });
+          sheet = doc.get<Sheet>((res.patches[0] as { id: string }).id)!;
+        }
+        const leer = (sheet.bilder ?? []).find((b) => !b.assetId);
+        if (leer) {
+          runCommand('publish.bildFuellen', { sheetId: sheet.id, bildId: leer.id, dataUrl });
+        } else {
+          runCommand('publish.bildPlatzieren', { sheetId: sheet.id, x: 40, y: 40, w: 160, dataUrl, title: titel });
+        }
+        setHinweis(`Render liegt auf «${sheet.name}» — im KosmoPublish weiterschieben`);
+      } finally {
+        history.endGroup();
+      }
+    } catch (e) {
+      setError(`Aufs Blatt fehlgeschlagen: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  };
 
   const postJob = async (stylePrompt: string): Promise<JobRecord> => {
     const { doc } = useProject.getState();
@@ -223,6 +265,7 @@ export function VisWorkspace() {
             </span>
           </div>
           {error && <div style={{ color: 'var(--k-danger)', fontSize: 12.5 }}>⚠ {error}</div>}
+          {hinweis && <div style={{ color: 'var(--k-success)', fontSize: 12.5 }} data-testid="vis-hinweis">✓ {hinweis}</div>}
         </Panel>
 
         {/* Varianten-Serien: Stimmungen nebeneinander, QA je Karte */}
@@ -258,13 +301,22 @@ export function VisWorkspace() {
                             alt={label}
                             style={{ width: '100%', border: '1px solid var(--k-line)' }}
                           />
-                          <div style={{ display: 'flex', gap: 12, fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+                          <div style={{ display: 'flex', gap: 12, alignItems: 'center', fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
                             {j.result.qa.geometry && (
                               <span>Geometrie <Measure>{j.result.qa.geometry.geometry_fidelity.toFixed(2)}</Measure></span>
                             )}
                             {j.result.qa.style && (
                               <span>Stil <Measure>{j.result.qa.style.style_score.toFixed(2)}</Measure></span>
                             )}
+                            <div style={{ flex: 1 }} />
+                            <KButton
+                              size="sm"
+                              tone="quiet"
+                              data-testid="aufs-blatt"
+                              onClick={() => void aufsBlatt(jobId, j.result!.images[0]!, label)}
+                            >
+                              Aufs Blatt
+                            </KButton>
                           </div>
                         </>
                       ) : (
@@ -324,6 +376,13 @@ export function VisWorkspace() {
                     <Badge hue={j.result.qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)'}>
                       QA {j.result.qa.verdict.passed ? 'bestanden' : 'verfehlt'}
                     </Badge>
+                    <KButton
+                      size="sm"
+                      tone="quiet"
+                      onClick={() => void aufsBlatt(j.job_id, j.result!.images[0]!, 'Visualisierung')}
+                    >
+                      Aufs Blatt
+                    </KButton>
                     {j.result.qa.geometry && (
                       <span>
                         Geometrie-Treue{' '}

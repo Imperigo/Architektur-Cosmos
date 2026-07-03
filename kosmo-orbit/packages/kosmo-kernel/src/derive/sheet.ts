@@ -1,5 +1,5 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Sheet, SheetFormat, SheetPlacement } from '../model/entities';
+import type { ImageAsset, Sheet, SheetFormat, SheetImage, SheetPlacement } from '../model/entities';
 import { axoInnerSvg, escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
 
 /**
@@ -51,11 +51,26 @@ export function placementPaperBounds(
   return { x: pl.x - w / 2, y: pl.y - h / 2, width: w, height: h };
 }
 
+/** Papier-Bounds eines Bild-Slots — Höhe folgt dem Bild-Seitenverhältnis (leer 3:2). */
+export function imagePaperBounds(
+  doc: KosmoDoc,
+  bild: SheetImage,
+): { x: number; y: number; width: number; height: number } {
+  const asset = bild.assetId ? doc.get<ImageAsset>(bild.assetId) : undefined;
+  const ratio = asset?.width && asset?.height ? asset.width / asset.height : 1.5;
+  return { x: bild.x, y: bild.y, width: bild.w, height: bild.w / ratio };
+}
+
 export interface SheetSvgOptions {
   projectName: string;
   date?: string;
   /** Papier-Hintergrund zeichnen (Editor: true; PDF-Seite füllt selbst). */
   paperFill?: string;
+  /**
+   * Rasterbilder NICHT ins SVG einbetten (PDF-Export: svg2pdf rendert
+   * <image> unzuverlässig — die Bilder setzt jsPDF.addImage danach exakt).
+   */
+  ohneRaster?: boolean;
 }
 
 export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions): string {
@@ -87,6 +102,34 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
       const labelY = pl.y + ((bounds.maxY - bounds.minY) / 2) * f + 6;
       parts.push(
         `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(pl.title)}  <tspan font-weight="normal" fill="#444">1:${pl.scale}</tspan></text>`,
+      );
+    }
+  }
+
+  // Bild-Slots (Renders aufs Plakat); leere Slots als Messrahmen-Platzhalter
+  for (const b of sheet.bilder ?? []) {
+    const r = imagePaperBounds(doc, b);
+    const asset = b.assetId ? doc.get<ImageAsset>(b.assetId) : undefined;
+    if (asset && !opts.ohneRaster) {
+      parts.push(
+        `<image x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" href="data:${asset.mime};base64,${asset.data}" preserveAspectRatio="xMidYMid slice"/>`,
+      );
+    }
+    if (asset) {
+      parts.push(
+        `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="none" stroke="black" stroke-width="0.25"/>`,
+      );
+    } else {
+      parts.push(
+        `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="none" stroke="#666" stroke-width="0.25" stroke-dasharray="2.5 1.4"/>`,
+        `<line x1="${r.x}" y1="${r.y}" x2="${r.x + r.width}" y2="${r.y + r.height}" stroke="#bbb" stroke-width="0.18"/>`,
+        `<line x1="${r.x + r.width}" y1="${r.y}" x2="${r.x}" y2="${r.y + r.height}" stroke="#bbb" stroke-width="0.18"/>`,
+        `<text x="${r.x + r.width / 2}" y="${r.y + r.height / 2}" text-anchor="middle" font-size="3.2" fill="#666">Render folgt — HomeStation</text>`,
+      );
+    }
+    if (b.title) {
+      parts.push(
+        `<text x="${r.x + r.width / 2}" y="${(r.y + r.height + 5).toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(b.title)}</text>`,
       );
     }
   }

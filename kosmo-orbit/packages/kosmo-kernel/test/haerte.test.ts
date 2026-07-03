@@ -147,11 +147,21 @@ describe('Härte: Serialisierung trägt alle neuen Bürger', () => {
     });
     execute(doc, 'design.dossierSetzen', { eintraege: [{ typ: 'dont', text: 'Nordwohnungen' }] });
     execute(doc, 'design.raumprogrammSetzen', { posten: [{ typ: 'marktgerecht', hnfSoll: 100 }], maxAgf: 200 });
+    execute(doc, 'publish.bildPlatzieren', {
+      sheetId: (blatt.patches[0] as { id: string }).id,
+      x: 90, y: 160, w: 380,
+      dataUrl:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+    });
 
     const wieder = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));
     expect(wieder.byKind('boundary')).toHaveLength(1);
     const sheet = wieder.byKind('sheet')[0] as import('../src').Sheet;
     expect(sheet.texte).toHaveLength(1);
+    expect(sheet.bilder).toHaveLength(1);
+    const asset = wieder.byKind('imageasset')[0] as import('../src').ImageAsset;
+    expect(asset.data.length).toBeGreaterThan(0);
+    expect(sheet.bilder![0]!.assetId).toBe(asset.id);
     expect(wieder.settings.dossier).toEqual([{ typ: 'dont', text: 'Nordwohnungen' }]);
     expect(wieder.settings.raumprogramm).toEqual([{ typ: 'marktgerecht', hnfSoll: 100 }]);
     expect(wieder.settings.maxAgf).toBe(200);

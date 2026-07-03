@@ -3,6 +3,7 @@ import type { Storey } from '../model/entities';
 import { derivePlan, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabel } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
+import { schraffurFuer, schraffurLinien } from './schraffur';
 import { deriveAxo, type AxoSpec } from './axo';
 
 /**
@@ -118,6 +119,19 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
 export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number): InnerSvg {
   const g = deriveSection(doc, spec);
   const parts: string[] = [];
+  // Material-Poché zuerst (unter allen Stiften): Tint-Fläche + Schraffurlinien
+  for (const f of g.faces) {
+    const spec2 = schraffurFuer(f.material, f.functionKey);
+    const d = f.loops
+      .map((loop) => `M ${loop.map((p) => `${p.s} ${-p.z}`).join(' L ')} Z`)
+      .join(' ');
+    if (spec2.tint) parts.push(`<path d="${d}" fill-rule="evenodd" fill="${spec2.tint}" stroke="none"/>`);
+    for (const linie of schraffurLinien(f.loops, spec2, scale)) {
+      parts.push(
+        `<polyline points="${linie.map((p) => `${p.s},${-p.z}`).join(' ')}" fill="none" stroke="#333" stroke-width="${0.18 * scale}"/>`,
+      );
+    }
+  }
   const projStift = (g.cuts.length === 0 ? 0.35 : 0.18) * scale;
   for (const l of g.projections) {
     parts.push(

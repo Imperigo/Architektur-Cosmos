@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { deriveSection, type SectionSpec } from '@kosmo/kernel';
+import { deriveSection, schraffurFuer, schraffurLinien, type SectionSpec } from '@kosmo/kernel';
 import { Messrahmen } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
@@ -58,6 +58,27 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
           strokeWidth={10}
           strokeDasharray="200 120"
         />
+        {/* Material-Poché: Tint + SIA-Schraffur unter allen Stiften (Bildmassstab ~1:50) */}
+        {graphic.faces.map((f, i) => {
+          const s = schraffurFuer(f.material, f.functionKey);
+          const d = f.loops
+            .map((loop) => `M ${loop.map((p) => `${p.s} ${-p.z}`).join(' L ')} Z`)
+            .join(' ');
+          return (
+            <g key={`f${i}`}>
+              {s.tint && <path d={d} fillRule="evenodd" fill={s.tint} stroke="none" />}
+              {schraffurLinien(f.loops, s, 50).map((linie, j) => (
+                <polyline
+                  key={j}
+                  points={linie.map((p) => `${p.s},${-p.z}`).join(' ')}
+                  fill="none"
+                  stroke="var(--k-ink-soft)"
+                  strokeWidth={9}
+                />
+              ))}
+            </g>
+          );
+        })}
         {graphic.projections.map((l, i) => (
           <line
             key={`p${i}`}

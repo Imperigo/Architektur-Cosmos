@@ -198,6 +198,21 @@ export interface SheetText {
   titel?: boolean;
 }
 
+/**
+ * Bild-Slot auf einem Blatt (Render aufs Plakat). assetId=null ist ein
+ * LEERER Slot — er hält den Platz, bis die HomeStation echte Renders liefert.
+ */
+export interface SheetImage {
+  id: string;
+  /** Linke obere Ecke (Papier-mm). */
+  x: number;
+  y: number;
+  /** Breite in Papier-mm; Höhe folgt dem Bild-Seitenverhältnis (leer: 3:2). */
+  w: number;
+  assetId: string | null;
+  title?: string;
+}
+
 /** Planblatt (KosmoPublish) — Layout aus platzierten Ansichten. */
 export interface Sheet extends Base {
   kind: 'sheet';
@@ -208,9 +223,26 @@ export interface Sheet extends Base {
   index: number;
   placements: SheetPlacement[];
   texte?: SheetText[];
+  bilder?: SheetImage[];
 }
 
-export type Entity = Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary;
+/**
+ * Eingebettetes Rasterbild (KosmoVis-Render, Foto). Base64 im Modell ist ein
+ * bewusster Trade-off: so erben Undo, Yjs-Sync und .kosmo das Bild gratis —
+ * gedacht für einige Plakat-Renders, nicht als Foto-Archiv.
+ */
+export interface ImageAsset extends Base {
+  kind: 'imageasset';
+  name: string;
+  mime: string;
+  /** Base64-Rohdaten (ohne data:-Präfix). */
+  data: string;
+  width?: number;
+  height?: number;
+}
+
+export type Entity =
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

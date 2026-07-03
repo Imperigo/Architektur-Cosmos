@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Sheet, SheetPlacement, SheetText, Storey } from '../model/entities';
+import type { ImageAsset, Sheet, SheetImage, SheetPlacement, SheetText, Storey } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { CommandError, registerCommand } from './core';
 
@@ -225,6 +225,185 @@ export const adjustPlacement = registerCommand({
       ),
     };
     return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
+/** data:-URL in ein ImageAsset zerlegen (base64-Pflicht — Renders kommen so). */
+function assetAusDataUrl(name: string, dataUrl: string): ImageAsset {
+  const m = /^data:(image\/[a-z+.-]+);base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl);
+  if (!m) throw new CommandError('dataUrl muss eine base64-kodierte data:image/…-URL sein');
+  const groesse = m[1] === 'image/png' ? pngGroesse(m[2]!) : null;
+  return {
+    id: newId('bild'),
+    kind: 'imageasset',
+    name,
+    mime: m[1]!,
+    data: m[2]!,
+    ...(groesse ?? {}),
+  };
+}
+
+/** PNG-Abmessungen aus dem IHDR-Chunk (Bytes 16–23) — ohne DOM, läuft auch im Worker/Node. */
+function pngGroesse(base64: string): { width: number; height: number } | null {
+  const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  const bytes: number[] = [];
+  for (let i = 0; i + 3 < base64.length && bytes.length < 24; i += 4) {
+    const v =
+      (B64.indexOf(base64[i]!) << 18) |
+      (B64.indexOf(base64[i + 1]!) << 12) |
+      (B64.indexOf(base64[i + 2]!) << 6) |
+      B64.indexOf(base64[i + 3]!);
+    bytes.push((v >> 16) & 255, (v >> 8) & 255, v & 255);
+  }
+  if (bytes.length < 24 || bytes[0] !== 0x89 || bytes[1] !== 0x50) return null;
+  const width = (bytes[16]! << 24) | (bytes[17]! << 16) | (bytes[18]! << 8) | bytes[19]!;
+  const height = (bytes[20]! << 24) | (bytes[21]! << 16) | (bytes[22]! << 8) | bytes[23]!;
+  return width > 0 && height > 0 ? { width, height } : null;
+}
+
+/** Referenziert irgendein Blatt (ausser optional einem Slot) dieses Asset noch? */
+function assetNochReferenziert(doc: KosmoDoc, assetId: string, ausser: { sheetId: string; bildId: string }): boolean {
+  for (const s of doc.byKind<Sheet>('sheet')) {
+    for (const b of s.bilder ?? []) {
+      if (b.assetId === assetId && !(s.id === ausser.sheetId && b.id === ausser.bildId)) return true;
+    }
+  }
+  return false;
+}
+
+export const placeImage = registerCommand({
+  id: 'publish.bildPlatzieren',
+  title: 'Bild auf Blatt platzieren',
+  description:
+    'Platziert einen Bild-Slot auf einem Planblatt (Render aufs Plakat). Mit dataUrl wird das Bild eingebettet; ohne entsteht ein leerer Slot als Platzhalter für kommende Renders. x/y: linke obere Ecke in Papier-mm, w: Breite in Papier-mm.',
+  params: z.object({
+    sheetId: z.string(),
+    x: z.number(),
+    y: z.number(),
+    w: z.number().min(10).max(1200),
+    title: z.string().optional(),
+    dataUrl: z.string().optional().describe('data:image/…;base64,… — leer lassen für einen leeren Slot'),
+  }),
+  summarize: (p) => (p.dataUrl ? 'Bild aufs Blatt setzen' : 'Leeren Bild-Slot platzieren'),
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const patches: AnyPatch[] = [];
+    let assetId: string | null = null;
+    if (p.dataUrl) {
+      const asset = assetAusDataUrl(p.title ?? 'Render', p.dataUrl);
+      patches.push({ id: asset.id, before: null, after: asset });
+      assetId = asset.id;
+    }
+    const bild: SheetImage = {
+      id: newId('slot'),
+      x: p.x,
+      y: p.y,
+      w: p.w,
+      assetId,
+      ...(p.title ? { title: p.title } : {}),
+    };
+    patches.push({ id: sheet.id, before: sheet, after: { ...sheet, bilder: [...(sheet.bilder ?? []), bild] } });
+    return patches;
+  },
+});
+
+function requireBild(sheet: Sheet, bildId: string): SheetImage {
+  const bild = (sheet.bilder ?? []).find((b) => b.id === bildId);
+  if (!bild) throw new CommandError(`Bild «${bildId}» liegt nicht auf diesem Blatt`);
+  return bild;
+}
+
+export const fillImage = registerCommand({
+  id: 'publish.bildFuellen',
+  title: 'Bild-Slot füllen',
+  description: 'Füllt einen (leeren) Bild-Slot mit einem Bild oder ersetzt das vorhandene.',
+  params: z.object({
+    sheetId: z.string(),
+    bildId: z.string(),
+    dataUrl: z.string().describe('data:image/…;base64,…'),
+  }),
+  summarize: () => 'Bild-Slot füllen',
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const bild = requireBild(sheet, p.bildId);
+    const asset = assetAusDataUrl(bild.title ?? 'Render', p.dataUrl);
+    const patches: AnyPatch[] = [{ id: asset.id, before: null, after: asset }];
+    if (bild.assetId && !assetNochReferenziert(doc, bild.assetId, { sheetId: sheet.id, bildId: bild.id })) {
+      const alt = doc.get<ImageAsset>(bild.assetId);
+      if (alt) patches.push({ id: alt.id, before: alt, after: null });
+    }
+    patches.push({
+      id: sheet.id,
+      before: sheet,
+      after: {
+        ...sheet,
+        bilder: (sheet.bilder ?? []).map((b) => (b.id === p.bildId ? { ...b, assetId: asset.id } : b)),
+      },
+    });
+    return patches;
+  },
+});
+
+export const moveImage = registerCommand({
+  id: 'publish.bildVerschieben',
+  title: 'Bild auf Blatt verschieben',
+  description: 'Verschiebt einen Bild-Slot an eine neue Position (Papier-mm, linke obere Ecke).',
+  params: z.object({ sheetId: z.string(), bildId: z.string(), x: z.number(), y: z.number() }),
+  summarize: (p) => `Bild → ${Math.round(p.x)}/${Math.round(p.y)} mm`,
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    requireBild(sheet, p.bildId);
+    const after: Sheet = {
+      ...sheet,
+      bilder: (sheet.bilder ?? []).map((b) => (b.id === p.bildId ? { ...b, x: p.x, y: p.y } : b)),
+    };
+    return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
+export const adjustImage = registerCommand({
+  id: 'publish.bildAnpassen',
+  title: 'Bild anpassen',
+  description: 'Ändert Breite und/oder Titel eines Bild-Slots auf einem Planblatt.',
+  params: z.object({
+    sheetId: z.string(),
+    bildId: z.string(),
+    w: z.number().min(10).max(1200).optional(),
+    title: z.string().optional(),
+  }),
+  summarize: () => 'Bild anpassen',
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    requireBild(sheet, p.bildId);
+    const after: Sheet = {
+      ...sheet,
+      bilder: (sheet.bilder ?? []).map((b) =>
+        b.id === p.bildId
+          ? { ...b, w: p.w ?? b.w, ...(p.title === undefined ? {} : { title: p.title }) }
+          : b,
+      ),
+    };
+    return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
+export const removeImage = registerCommand({
+  id: 'publish.bildEntfernen',
+  title: 'Bild vom Blatt entfernen',
+  description: 'Entfernt einen Bild-Slot; das eingebettete Bild wird mitgelöscht, wenn kein anderes Blatt es nutzt.',
+  params: z.object({ sheetId: z.string(), bildId: z.string() }),
+  summarize: () => 'Bild entfernen',
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const bild = requireBild(sheet, p.bildId);
+    const patches: AnyPatch[] = [
+      { id: sheet.id, before: sheet, after: { ...sheet, bilder: (sheet.bilder ?? []).filter((b) => b.id !== p.bildId) } },
+    ];
+    if (bild.assetId && !assetNochReferenziert(doc, bild.assetId, { sheetId: sheet.id, bildId: bild.id })) {
+      const asset = doc.get<ImageAsset>(bild.assetId);
+      if (asset) patches.push({ id: asset.id, before: asset, after: null });
+    }
+    return patches;
   },
 });
 

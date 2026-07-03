@@ -347,3 +347,92 @@ test('Aktionskette: «Haus» → EIN Paket → alle anwenden → EIN Undo', asyn
   expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBe(0);
   expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('roof').length)).toBe(0);
 });
+
+test('Bild-Slots: Plakat trägt leeren Render-Slot, Bild einbetten, PDF exportiert', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]'); // bootstrappt das Projekt
+  await page.evaluate(() => window.__kosmo.open('publish'));
+  await page.click('[data-testid="plakat-klassisch"]');
+  // Plakat-Designer platziert einen leeren Render-Slot
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Render folgt — HomeStation');
+  // Slot füllen (derselbe Command wie Datei-Picker und Vis-«Aufs Blatt»)
+  await page.evaluate(() => {
+    const k = window.__kosmo as unknown as {
+      run: (id: string, p: unknown) => unknown;
+      state: () => { doc: { byKind: (kind: string) => { id: string; bilder?: { id: string; assetId: string | null }[] }[] } };
+    };
+    const sheet = k.state().doc.byKind('sheet')[0]!;
+    const slot = sheet.bilder!.find((b) => !b.assetId)!;
+    k.run('publish.bildFuellen', {
+      sheetId: sheet.id,
+      bildId: slot.id,
+      dataUrl:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+    });
+  });
+  // Bild ist Blatt-Bürger: <image> im Druck-SVG, Platzhalter weg
+  await expect(page.locator('[data-testid="sheet-canvas"] svg image')).toHaveCount(1);
+  await expect(page.locator('[data-testid="sheet-canvas"]')).not.toContainText('Render folgt');
+  // Bild-Werkzeuge: Overlay wählen → Breite/Titel/Entfernen verfügbar
+  await page.locator('[data-testid^="blatt-bild-"]').first().click();
+  await expect(page.locator('[data-testid="bild-breite"]')).toBeVisible();
+  // PDF-Export läuft (addImage-Pfad wirft nicht)
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('[data-testid="export-set"]'),
+  ]);
+  expect(download.suggestedFilename()).toMatch(/Plansatz\.pdf$/);
+});
+
+test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async ({ page }) => {
+  // Ehrlicher Skip ohne laufende Bridge (CI startet keine)
+  let bridgeLebt = false;
+  try {
+    bridgeLebt = (await fetch('http://localhost:8600/jobs', { signal: AbortSignal.timeout(1500) })).ok;
+  } catch {
+    /* offline */
+  }
+  test.skip(!bridgeLebt, 'Fake-Bridge auf :8600 läuft nicht');
+  test.setTimeout(90_000);
+
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.bridge', 'http://localhost:8600');
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  // Minimales Modell, damit der GLB-Export etwas trägt
+  await page.evaluate(() => {
+    const k = window.__kosmo as unknown as {
+      run: (id: string, p: unknown) => unknown;
+      state: () => { activeStoreyId: string | null; doc: { byKind: (kind: string) => { id: string; name?: string }[] } };
+      open: (s: string) => void;
+    };
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 0, y: 0 }, b: { x: 8000, y: 0 }, assemblyId: aw.id });
+    k.open('vis');
+  });
+  await page.click('[data-testid="send-render"]');
+  // Fake-Worker rendert das Kupfer-PNG → «Aufs Blatt» erscheint
+  await page.locator('[data-testid="render-job"]').first().getByText('Aufs Blatt').click({ timeout: 30_000 });
+  await expect(page.locator('[data-testid="vis-hinweis"]')).toBeVisible();
+  // Blatt trägt das Bild als Bürger
+  const stand = await page.evaluate(() => {
+    const k = window.__kosmo as unknown as {
+      state: () => { doc: { byKind: (kind: string) => { bilder?: { assetId: string | null }[] }[] } };
+    };
+    const sheets = k.state().doc.byKind('sheet');
+    return {
+      blaetter: sheets.length,
+      bilder: sheets.flatMap((s) => s.bilder ?? []).filter((b) => b.assetId).length,
+      assets: k.state().doc.byKind('imageasset').length,
+    };
+  });
+  expect(stand.blaetter).toBeGreaterThanOrEqual(1);
+  expect(stand.bilder).toBe(1);
+  expect(stand.assets).toBe(1);
+});

@@ -1,5 +1,7 @@
 import type { KosmoDoc } from '../model/doc';
-import { dir, type Pt } from '../model/units';
+import type { Assembly, LayerFunction, Wall } from '../model/entities';
+import { dir, normal, type Pt } from '../model/units';
+import { wallFrame } from '../geometry/wall';
 import { deriveAll } from './scene';
 import { clipEdges, type HlEdge, type HlTriInput } from './hiddenline';
 
@@ -20,9 +22,19 @@ export interface SectionLine2D {
   classes: string[];
 }
 
+/** Geschlossene Schnittfläche eines Bauteils (Loops evenodd; Loch = eigener Loop). */
+export interface SectionFace {
+  loops: { s: number; z: number }[][];
+  material: string;
+  functionKey?: LayerFunction;
+  classes: string[];
+}
+
 export interface SectionGraphic {
   cuts: SectionLine2D[];
   projections: SectionLine2D[];
+  /** Schnittflächen für Material-Poché (SIA-Schraffuren). */
+  faces: SectionFace[];
   bounds: { minS: number; maxS: number; minZ: number; maxZ: number } | null;
 }
 
@@ -49,10 +61,12 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
 
   const edges: HlEdge[] = [];
   const tris: HlTriInput[] = [];
+  const faces: SectionFace[] = [];
 
   for (const artifact of deriveAll(doc)) {
     const pos = artifact.positions;
     const idx = artifact.indices;
+    const artSegs: Seg[] = [];
     // Cut: Dreiecke gegen t=0 schneiden
     for (let i = 0; i < idx.length; i += 3) {
       const pts: { s: number; t: number; z: number }[] = [];
@@ -74,6 +88,7 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       }
       if (hits.length === 2) {
         cuts.push({ a: hits[0]!, b: hits[1]!, classes: ['cut', artifact.materialKey] });
+        artSegs.push({ a: hits[0]!, b: hits[1]! });
       }
       // Verdecker: Dreiecke, die (teilweise) vor der Ebene liegen — w = −t
       const [pa, pb, pc] = [pts[0]!, pts[1]!, pts[2]!];
@@ -83,6 +98,19 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
           bu: pb.s, bv: pb.z, bw: -pb.t,
           cu: pc.s, cv: pc.z, cw: -pc.t,
         });
+      }
+    }
+    // Schnittflächen: Segmente zu Loops verketten, Wände nach Schichten teilen
+    if (artSegs.length) {
+      const loops = stitchLoops(artSegs);
+      if (loops.length) {
+        const wall = doc.get<Wall>(artifact.entityId);
+        const assembly = wall?.kind === 'wall' ? doc.get<Assembly>(wall.assemblyId) : undefined;
+        if (wall?.kind === 'wall' && assembly?.kind === 'assembly' && assembly.layers.length > 0) {
+          faces.push(...wallLayerFaces(wall, assembly, loops, spec.a, d));
+        } else {
+          faces.push({ loops, material: artifact.materialKey, classes: ['cut-face', artifact.materialKey] });
+        }
       }
     }
     // Projektion: Kanten vollständig im Tiefenbereich (0 < t ≤ depth)
@@ -124,5 +152,151 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       bounds.maxZ = Math.max(bounds.maxZ, p.z);
     }
   }
-  return { cuts, projections, bounds };
+  return { cuts, projections, faces, bounds };
+}
+
+// ---------------------------------------------------------------------------
+// Schnittflächen — aus den Cut-Segmenten eines Artefakts
+
+interface Seg {
+  a: { s: number; z: number };
+  b: { s: number; z: number };
+}
+
+const STITCH_EPS = 0.5; // mm — Endpunkte auf diesem Raster verschmelzen
+
+function stitchKey(p: { s: number; z: number }): string {
+  return `${Math.round(p.s / STITCH_EPS)}:${Math.round(p.z / STITCH_EPS)}`;
+}
+
+/**
+ * Segmente zu geschlossenen Loops verketten. Wasserdichte Meshes liefern an
+ * jeder Schnittkante genau zwei Segment-Enden; offene Reste (degenerierte
+ * Dreiecke, tangentiale Berührungen) werden ehrlich verworfen statt geflickt.
+ */
+function stitchLoops(segs: Seg[]): { s: number; z: number }[][] {
+  const brauchbar = segs.filter((s) => Math.hypot(s.a.s - s.b.s, s.a.z - s.b.z) > STITCH_EPS);
+  const anEnde = new Map<string, { seg: number; ende: 0 | 1 }[]>();
+  for (let i = 0; i < brauchbar.length; i++) {
+    for (const ende of [0, 1] as const) {
+      const k = stitchKey(ende === 0 ? brauchbar[i]!.a : brauchbar[i]!.b);
+      const list = anEnde.get(k) ?? [];
+      list.push({ seg: i, ende });
+      anEnde.set(k, list);
+    }
+  }
+  const benutzt = new Array<boolean>(brauchbar.length).fill(false);
+  const loops: { s: number; z: number }[][] = [];
+  for (let start = 0; start < brauchbar.length; start++) {
+    if (benutzt[start]) continue;
+    benutzt[start] = true;
+    const s0 = brauchbar[start]!;
+    const loop = [s0.a, s0.b];
+    const startKey = stitchKey(s0.a);
+    let cursorKey = stitchKey(s0.b);
+    let geschlossen = false;
+    for (let schritt = 0; schritt < brauchbar.length; schritt++) {
+      if (cursorKey === startKey) {
+        geschlossen = true;
+        break;
+      }
+      const next = (anEnde.get(cursorKey) ?? []).find((e) => !benutzt[e.seg]);
+      if (!next) break;
+      benutzt[next.seg] = true;
+      const seg = brauchbar[next.seg]!;
+      const weiter = next.ende === 0 ? seg.b : seg.a;
+      loop.push(weiter);
+      cursorKey = stitchKey(weiter);
+    }
+    if (geschlossen && loop.length >= 4) {
+      loop.pop(); // Schlusspunkt = Startpunkt — nicht doppelt führen
+      loops.push(loop);
+    }
+  }
+  return loops;
+}
+
+/**
+ * Wand-Schnittfläche nach Schichten teilen. Schichtgrenzen sind Ebenen
+ * parallel zur Wandachse; ihr Schnitt mit der Schnittebene ist im (s,z)-Bild
+ * eine SENKRECHTE Linie s = const — die Fläche wird exakt in s-Bänder
+ * zerlegt. Der Versatz quer zur Wand ist affin in s: o(s) = o0 + k·s.
+ */
+function wallLayerFaces(
+  wall: Wall,
+  assembly: Assembly,
+  loops: { s: number; z: number }[][],
+  secA: Pt,
+  secDir: { x: number; y: number },
+): SectionFace[] {
+  const nw = normal(wall.a, wall.b);
+  const o0 = (secA.x - wall.a.x) * nw.x + (secA.y - wall.a.y) * nw.y;
+  const k = secDir.x * nw.x + secDir.y * nw.y;
+  const { offsetLeft } = wallFrame(wall, assembly);
+
+  const einFace = (l: typeof loops, layer?: Assembly['layers'][number]): SectionFace => ({
+    loops: l,
+    material: layer?.material ?? assembly.layers[0]!.material,
+    ...(layer ? { functionKey: layer.function } : {}),
+    classes: ['cut-face', layer?.material ?? assembly.layers[0]!.material],
+  });
+
+  // Schnittlinie (fast) parallel zur Wand: die ganze Fläche liegt in EINER
+  // Schicht — der Versatz o ist konstant; die Schicht darüber bestimmen.
+  if (Math.abs(k) < 1e-6) {
+    let cursor = offsetLeft;
+    for (const layer of assembly.layers) {
+      const lo = cursor - layer.thickness;
+      if (o0 <= cursor + STITCH_EPS && o0 >= lo - STITCH_EPS) return [einFace(loops, layer)];
+      cursor = lo;
+    }
+    return [einFace(loops)];
+  }
+
+  const out: SectionFace[] = [];
+  let cursor = offsetLeft;
+  for (const layer of assembly.layers) {
+    const lo = cursor - layer.thickness;
+    // o-Band [lo, cursor] → s-Intervall
+    const s1 = (cursor - o0) / k;
+    const s2 = (lo - o0) / k;
+    const sMin = Math.min(s1, s2);
+    const sMax = Math.max(s1, s2);
+    const geclippt = loops
+      .map((loop) => clipLoopSBand(loop, sMin, sMax))
+      .filter((l) => l.length >= 3 && Math.abs(loopFlaeche(l)) > STITCH_EPS * STITCH_EPS);
+    if (geclippt.length) out.push(einFace(geclippt, layer));
+    cursor = lo;
+  }
+  return out;
+}
+
+function loopFlaeche(loop: { s: number; z: number }[]): number {
+  let f = 0;
+  for (let i = 0; i < loop.length; i++) {
+    const a = loop[i]!;
+    const b = loop[(i + 1) % loop.length]!;
+    f += a.s * b.z - b.s * a.z;
+  }
+  return f / 2;
+}
+
+/** Sutherland–Hodgman gegen das senkrechte Band sMin ≤ s ≤ sMax (konvex ⇒ Loop bleibt Loop). */
+function clipLoopSBand(loop: { s: number; z: number }[], sMin: number, sMax: number): { s: number; z: number }[] {
+  const halb = (pts: { s: number; z: number }[], innen: (p: { s: number; z: number }) => number) => {
+    const out: { s: number; z: number }[] = [];
+    for (let i = 0; i < pts.length; i++) {
+      const p = pts[i]!;
+      const q = pts[(i + 1) % pts.length]!;
+      const dp = innen(p);
+      const dq = innen(q);
+      if (dp >= 0) out.push(p);
+      if ((dp < 0) !== (dq < 0)) {
+        const f = dp / (dp - dq);
+        out.push({ s: p.s + (q.s - p.s) * f, z: p.z + (q.z - p.z) * f });
+      }
+    }
+    return out;
+  };
+  return halb(halb(loop, (p) => p.s - sMin), (p) => sMax - p.s);
 }

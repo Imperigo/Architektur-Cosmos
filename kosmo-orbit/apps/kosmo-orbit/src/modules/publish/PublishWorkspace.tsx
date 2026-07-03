@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Hairline, Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
 import {
   exportDxf,
+  imagePaperBounds,
   placementPaperBounds,
   sheetPaperSize,
   sheetToSvg,
@@ -44,9 +45,12 @@ export function PublishWorkspace() {
   const [placeStoreyId, setPlaceStoreyId] = useState<string | null>(null);
   const [placeScale, setPlaceScale] = useState(100);
   const [selectedPlacement, setSelectedPlacement] = useState<string | null>(null);
+  const [selectedBild, setSelectedBild] = useState<string | null>(null);
   const [drag, setDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
   const [textDrag, setTextDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
+  const [bildDrag, setBildDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
   const svgHostRef = useRef<HTMLDivElement>(null);
+  const bildDateiRef = useRef<HTMLInputElement>(null);
 
   const sheet = sheets.find((s) => s.id === activeSheetId) ?? sheets[0] ?? null;
   const paper = sheet ? sheetPaperSize(sheet) : null;
@@ -146,6 +150,28 @@ export function PublishWorkspace() {
     });
   }
 
+  /** Leerer Bild-Slot in Blattmitte — Platzhalter, bis Renders (KosmoVis) da sind. */
+  function placeBildSlot() {
+    if (!sheet || !paper) return;
+    const w = Math.min(120, paper.width * 0.35);
+    runCommand('publish.bildPlatzieren', {
+      sheetId: sheet.id,
+      x: Math.round(paper.width / 2 - w / 2),
+      y: Math.round((paper.height - 30) / 2 - w / 3),
+      w: Math.round(w),
+    });
+  }
+
+  /** Datei-Picker: gewähltes Bild in den ausgewählten Slot einbetten. */
+  function bildDateiGewaehlt(file: File | undefined) {
+    if (!file || !sheet || !selectedBild) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      runCommand('publish.bildFuellen', { sheetId: sheet.id, bildId: selectedBild, dataUrl: String(reader.result) });
+    };
+    reader.readAsDataURL(file);
+  }
+
   /** Toolkit 5: A0-Wettbewerbsplakat mit vorplatzierten Slots — EIN Undo-Schritt. */
   function erzeugePlakat(layout: 'klassisch' | 'spalte') {
     const { history } = useProject.getState();
@@ -189,6 +215,9 @@ export function PublishWorkspace() {
       if (schnitt) {
         runCommand('publish.ansichtPlatzieren', { sheetId, view: 'schnitt', a: schnitt.a, b: schnitt.b, scale: 200, x: slots.schnitt.x, y: slots.schnitt.y, title: schnitt.titel });
       }
+      // Render-Slot: leer platziert, gefüllt sobald KosmoVis liefert («Aufs Blatt»)
+      const bildSlot = layout === 'klassisch' ? { x: 90, y: 160, w: 380 } : { x: 60, y: 300, w: 380 };
+      runCommand('publish.bildPlatzieren', { sheetId, ...bildSlot, title: 'Visualisierung' });
       setActiveSheetId(sheetId);
     } finally {
       history.endGroup();
@@ -268,6 +297,7 @@ export function PublishWorkspace() {
             </div>
             <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
               {s.format} {s.orientation} · {s.placements.length} Ansichten
+              {(s.bilder?.length ?? 0) > 0 ? ` · ${s.bilder!.length} ${s.bilder!.length === 1 ? 'Bild' : 'Bilder'}` : ''}
             </div>
           </Panel>
         ))}
@@ -378,6 +408,9 @@ export function PublishWorkspace() {
           <KButton size="sm" tone="quiet" onClick={() => placeSchnitt('schnitt')} data-testid="place-section" disabled={!sheet}>
             Schnitt
           </KButton>
+          <KButton size="sm" tone="quiet" onClick={placeBildSlot} data-testid="place-bildslot" disabled={!sheet}>
+            Bild-Slot
+          </KButton>
           <span style={{ color: 'var(--k-ink-faint)' }}>Ansicht:</span>
           {(
             [
@@ -446,6 +479,65 @@ export function PublishWorkspace() {
               </>
             );
           })()}
+          {selectedBild && sheet && (() => {
+            const b = (sheet.bilder ?? []).find((x) => x.id === selectedBild);
+            if (!b) return null;
+            return (
+              <>
+                <span style={{ color: 'var(--k-ink-faint)' }}>Bild:</span>
+                <input
+                  type="number"
+                  defaultValue={Math.round(b.w)}
+                  key={`w-${b.id}-${b.w}`}
+                  data-testid="bild-breite"
+                  title="Breite in Papier-mm"
+                  onBlur={(e) => {
+                    const w = Number(e.target.value);
+                    if (Number.isFinite(w) && w >= 10 && w !== b.w) {
+                      runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: b.id, w });
+                    }
+                  }}
+                  style={{ width: 62, padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+                />
+                <input
+                  defaultValue={b.title ?? ''}
+                  key={`t-${b.id}`}
+                  placeholder="Bildtitel"
+                  data-testid="bild-titel"
+                  onBlur={(e) => {
+                    if (e.target.value !== (b.title ?? '')) {
+                      runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: b.id, title: e.target.value });
+                    }
+                  }}
+                  style={{ width: 110, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+                />
+                <KButton size="sm" tone="quiet" data-testid="bild-laden" onClick={() => bildDateiRef.current?.click()}>
+                  Bild laden…
+                </KButton>
+                <KButton
+                  size="sm"
+                  tone="ghost"
+                  data-testid="bild-entfernen"
+                  onClick={() => {
+                    runCommand('publish.bildEntfernen', { sheetId: sheet.id, bildId: b.id });
+                    setSelectedBild(null);
+                  }}
+                >
+                  Entfernen
+                </KButton>
+              </>
+            );
+          })()}
+          <input
+            ref={bildDateiRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              bildDateiGewaehlt(e.target.files?.[0]);
+              e.target.value = '';
+            }}
+          />
           <div style={{ flex: 1 }} />
           <KButton size="sm" tone="ghost" onClick={undo}>↩ Rückgängig</KButton>
         </div>
@@ -476,12 +568,30 @@ export function PublishWorkspace() {
                   if (p) setTextDrag({ ...textDrag, dx: p.x, dy: p.y });
                   return;
                 }
+                if (bildDrag) {
+                  const p = toPaper(e);
+                  if (p) setBildDrag({ ...bildDrag, dx: p.x, dy: p.y });
+                  return;
+                }
                 if (!drag) return;
                 const p = toPaper(e);
                 if (!p) return;
                 setDrag({ ...drag, dx: p.x, dy: p.y });
               }}
               onPointerUp={() => {
+                if (bildDrag && sheet) {
+                  const b = (sheet.bilder ?? []).find((x) => x.id === bildDrag.id);
+                  if (b) {
+                    const r = imagePaperBounds(doc, b);
+                    runCommand('publish.bildVerschieben', {
+                      sheetId: sheet.id,
+                      bildId: b.id,
+                      x: Math.round(bildDrag.dx - r.width / 2),
+                      y: Math.round(bildDrag.dy - r.height / 2),
+                    });
+                  }
+                  setBildDrag(null);
+                }
                 if (textDrag && sheet) {
                   const t = sheet.texte?.find((x) => x.id === textDrag.id);
                   if (t) {
@@ -533,6 +643,41 @@ export function PublishWorkspace() {
                       top: `${(y / paper.height) * 100}%`,
                       width: `${(b.width / paper.width) * 100}%`,
                       height: `${(b.height / paper.height) * 100}%`,
+                      border: sel ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
+                      cursor: 'move',
+                      borderRadius: 2,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed transparent';
+                    }}
+                  />
+                );
+              })}
+              {/* Bild-Overlays: Slots auswählen + verschieben */}
+              {(sheet.bilder ?? []).map((b) => {
+                const r = imagePaperBounds(doc, b);
+                const x = bildDrag?.id === b.id ? bildDrag.dx - r.width / 2 : r.x;
+                const y = bildDrag?.id === b.id ? bildDrag.dy - r.height / 2 : r.y;
+                const sel = selectedBild === b.id;
+                return (
+                  <div
+                    key={b.id}
+                    data-testid={`blatt-bild-${b.id}`}
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      setSelectedPlacement(null);
+                      setSelectedBild(b.id);
+                      setBildDrag({ id: b.id, dx: r.x + r.width / 2, dy: r.y + r.height / 2 });
+                    }}
+                    style={{
+                      position: 'absolute',
+                      left: `${(x / paper.width) * 100}%`,
+                      top: `${(y / paper.height) * 100}%`,
+                      width: `${(r.width / paper.width) * 100}%`,
+                      height: `${(r.height / paper.height) * 100}%`,
                       border: sel ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
                       cursor: 'move',
                       borderRadius: 2,
