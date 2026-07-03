@@ -1024,3 +1024,21 @@ test('Fassaden-Module (V2-V7): Bilanz erscheint und reagiert auf Modulbreite', a
   await page.fill('[data-testid="modul-b"]', '2000');
   await expect.poll(() => bilanz.innerText()).not.toBe(vorher);
 });
+
+test('Direktzeichnen (V2-V6): Live-m²-Label beim Volumen-Ziehen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="tool-volumen"]');
+  const canvas = page.locator('canvas').first();
+  const box = (await canvas.boundingBox())!;
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  await page.mouse.click(cx - 100, cy - 60);
+  await page.mouse.click(cx + 100, cy - 60);
+  await page.mouse.move(cx + 100, cy + 60);
+  const label = page.locator('[data-testid="live-flaeche"]');
+  await expect(label).toBeVisible();
+  await expect(label).toContainText('GF ~');
+});

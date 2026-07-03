@@ -847,6 +847,23 @@ export function DesignWorkspace() {
                 ? 'Klick: Eckpunkte · Klick auf Start: schliessen'
                 : 'Klick: auswählen'}
           </span>
+          {/* V6: die Vorform-Essenz als Handgefühl — Fläche wächst unterm Cursor */}
+          {(tool === 'volumen' || tool === 'zone') && points.length >= 2 && cursor && (() => {
+            const poly = [...points, cursor];
+            let a2 = 0;
+            for (let i = 0; i < poly.length; i++) {
+              const p1 = poly[i]!;
+              const p2 = poly[(i + 1) % poly.length]!;
+              a2 += p1.x * p2.y - p2.x * p1.y;
+            }
+            const m2 = Math.abs(a2) / 2 / 1e6;
+            const geschosse = Math.max(1, Math.floor(9000 / 3000));
+            return (
+              <span data-testid="live-flaeche" style={{ fontWeight: 700, color: 'var(--k-accent)' }}>
+                {m2.toFixed(0)} m²{tool === 'volumen' ? ` · GF ~${(m2 * geschosse).toFixed(0)} m²` : ''}
+              </span>
+            );
+          })()}
         </div>
       </div>
     </div>
