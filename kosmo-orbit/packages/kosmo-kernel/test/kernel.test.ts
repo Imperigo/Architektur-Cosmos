@@ -1704,6 +1704,28 @@ describe('Masslinienordnung (Vision B1)', () => {
   });
 });
 
+describe('Treppe an der Schnitthöhe gekappt (Vision B3)', () => {
+  it('gerader Lauf: unten ausgezogen, oben strichpunktiert, Bruchlinie am Schnitt', async () => {
+    const { doc, storeyId } = setupDoc(); // 3000 hoch, cutHeight 1100
+    execute(doc, 'design.treppeErstellen', { storeyId, a: { x: 0, y: 0 }, b: { x: 6000, y: 0 }, width: 1200 });
+    const st = doc.byKind<import('../src').Stair>('stair')[0]!;
+    const lauf = treppenTeile(st, 3000, 0).laeufe[0]!;
+    const erwarteUnten = Array.from({ length: lauf.steigungen - 1 }, (_, k) => k + 1)
+      .filter((i) => lauf.z0 + i * lauf.riser <= 1100).length;
+    const plan = derivePlan(doc, storeyId);
+    const treppe = plan.regions.filter((r) => r.classes.includes('treppe'));
+    expect(treppe).toHaveLength(2); // unter + über dem Schnitt
+    expect(treppe.filter((r) => r.classes.includes('ueber-schnitt'))).toHaveLength(1);
+    expect(plan.lines.filter((l) => l.classes.includes('bruchlinie'))).toHaveLength(1);
+    const stufen = plan.lines.filter((l) => l.classes.includes('stufe'));
+    expect(stufen.filter((l) => !l.classes.includes('ueber-schnitt'))).toHaveLength(erwarteUnten);
+    expect(stufen.filter((l) => l.classes.includes('ueber-schnitt'))).toHaveLength(lauf.steigungen - 1 - erwarteUnten);
+    // Druck: strichpunktierter Stift für den oberen Teil
+    const { planInnerSvg } = await import('../src');
+    expect(planInnerSvg(doc, storeyId, 50).inner).toContain('stroke-dasharray="75 30 15 30"');
+  });
+});
+
 describe('Koten roh/fertig + Absolutbezug (Vision B2)', () => {
   it('fertig gefüllt, roh offen (Bodenaufbau-Delta), EG-Kote trägt m ü.M.', () => {
     const { doc, storeyId, assemblyId } = setupDoc();
@@ -1780,10 +1802,11 @@ describe('Treppen-Ausbau (V2-A2)', () => {
     expect(teile.podeste).toHaveLength(1);
     // Podest liegt zwischen den Läufen auf der Achse
     expect(teile.laeufe[0]!.b.x).toBeLessThan(teile.laeufe[1]!.a.x);
-    // Plansymbol: zwei Lauf-Rechtecke + Podest-Region, Stufen in beiden Läufen
+    // Plansymbol: Lauf 1 wird an der Schnitthöhe gekappt (B3) → 2 Teile,
+    // Lauf 2 liegt ganz darüber, dazu das Podest = 4 Treppen-Regionen
     const plan = derivePlan(doc, storeyId);
     const treppenRegionen = plan.regions.filter((r) => r.classes.includes('treppe'));
-    expect(treppenRegionen).toHaveLength(3); // 2 Läufe + Podest
+    expect(treppenRegionen).toHaveLength(4);
     expect(plan.regions.some((r) => r.classes.includes('podest'))).toBe(true);
     expect(plan.lines.filter((l) => l.classes.includes('stufe')).length).toBeGreaterThan(10);
   });

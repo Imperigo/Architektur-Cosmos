@@ -302,7 +302,13 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                   stroke={neu ? '#b3261e' : abbruch ? '#8a7500' : 'var(--k-ink)'}
                   strokeWidth={isProjection ? 8 : isCore ? 24 : 12}
                   strokeDasharray={
-                    r.classes.includes('volumen') ? '120 60' : abbruch ? '150 80' : undefined
+                    r.classes.includes('volumen')
+                      ? '120 60'
+                      : abbruch
+                        ? '150 80'
+                        : r.classes.includes('ueber-schnitt')
+                          ? '150 60 30 60'
+                          : undefined
                   }
                   opacity={r.classes.includes('decke') ? 0.5 : 1}
                 />
@@ -384,7 +390,13 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                             : 'var(--k-ink)'
                   }
                   strokeWidth={luecke ? 120 : fluegel ? 12 : l.classes.includes('fenster') ? 10 : l.classes.includes('baugrenze') ? 12 : 14}
-                  strokeDasharray={l.classes.includes('baugrenze') ? '300 90 60 90' : undefined}
+                  strokeDasharray={
+                    l.classes.includes('baugrenze')
+                      ? '300 90 60 90'
+                      : l.classes.includes('ueber-schnitt')
+                        ? '150 60 30 60'
+                        : undefined
+                  }
                 />
               );
             })}

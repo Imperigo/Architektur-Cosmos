@@ -234,7 +234,11 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     });
   }
 
-  // Treppen (V2-A2): Läufe mit Stufenlinien, Podeste, durchgehende Lauflinie
+  // Treppen (V2-A2/B3): Läufe mit Stufenlinien, Podeste, durchgehende
+  // Lauflinie. B3: Der Grundriss schneidet die Treppe auf der Schnitthöhe —
+  // unterhalb ausgezogen, oberhalb strichpunktiert («ueber-schnitt»), am
+  // Schnitt eine Bruchlinie (Hochbauzeichner-Konvention).
+  const cutZ = storey.elevation + storey.cutHeight;
   for (const st of doc.byKind<Stair>('stair')) {
     if (st.storeyId !== storeyId) continue;
     if (Math.hypot(st.b.x - st.a.x, st.b.y - st.a.y) < 1) continue;
@@ -251,18 +255,37 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
         x: Math.round(lauf.a.x + d.x * s + nn.x * off),
         y: Math.round(lauf.a.y + d.y * s + nn.y * off),
       });
-      regions.push({
-        rings: [[at(0, half), at(len, half), at(len, -half), at(0, -half)]],
-        classes: ['projection', 'treppe'],
-      });
+      // Kapp-Stelle: erste Steigung, deren Oberkante über der Schnitthöhe liegt
+      const iCut = Math.ceil((cutZ - lauf.z0) / lauf.riser);
+      const sCut = Math.min(Math.max(iCut * lauf.going, 0), len);
+      const laufRect = (s0: number, s1: number, extra: string[]) =>
+        regions.push({
+          rings: [[at(s0, half), at(s1, half), at(s1, -half), at(s0, -half)]],
+          classes: ['projection', 'treppe', ...extra],
+        });
+      if (sCut >= len - 1) {
+        laufRect(0, len, []); // ganzer Lauf unter dem Schnitt
+      } else if (sCut <= 1) {
+        laufRect(0, len, ['ueber-schnitt']); // ganzer Lauf darüber
+      } else {
+        laufRect(0, sCut, []);
+        laufRect(sCut, len, ['ueber-schnitt']);
+        // Bruchlinie: Diagonale quer über die Laufbreite an der Kapp-Stelle
+        lines.push({ a: at(sCut - 150, half), b: at(sCut + 150, -half), classes: ['symbol', 'bruchlinie'] });
+      }
       for (let i = 1; i < lauf.steigungen; i++) {
         const s = Math.min(i * lauf.going, len);
-        lines.push({ a: at(s, half), b: at(s, -half), classes: ['symbol', 'stufe'] });
+        const oben = lauf.z0 + i * lauf.riser > cutZ;
+        lines.push({ a: at(s, half), b: at(s, -half), classes: ['symbol', 'stufe', ...(oben ? ['ueber-schnitt'] : [])] });
       }
       lauflinie.push(at(0, 0), at(len, 0));
     }
     for (const podest of teile.podeste) {
-      regions.push({ rings: [podest.outline.map((p) => ({ ...p }))], classes: ['projection', 'treppe', 'podest'] });
+      const oben = podest.z > cutZ;
+      regions.push({
+        rings: [podest.outline.map((p) => ({ ...p }))],
+        classes: ['projection', 'treppe', 'podest', ...(oben ? ['ueber-schnitt'] : [])],
+      });
     }
     // Lauflinie: Antritt → Podestmitten → Austritt, Pfeil am Ende
     for (let i = 0; i + 1 < lauflinie.length; i++) {
