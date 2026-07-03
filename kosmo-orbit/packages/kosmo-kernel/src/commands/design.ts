@@ -547,6 +547,51 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const windowsFromModules = registerCommand({
+  id: 'design.fensterAusModulen',
+  title: 'Fenster aus Modulen stanzen',
+  description:
+    'Stanzt Fenster-Öffnungen in alle Aussenwände eines Geschosses nach dem Fassadenmodul: das Modul wird je Wand ab der Ecke gerastert (Eckenregel), jedes Fenster-Element wird eine echte Öffnung (Breite/Höhe/Brüstung aus dem Element). modul = Name aus dem Modul-Editor, sonst das erste gespeicherte. Ein Undo — danach sind die Tageslicht-Checks ehrlich prüfbar.',
+  params: z.object({
+    storeyId: z.string(),
+    modul: z.string().nullable().default(null),
+  }),
+  summarize: (p) => `Fenster stanzen${p.modul ? ` («${p.modul}»)` : ''}`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const modul = p.modul
+      ? doc.settings.fassadenModule.find((m) => m.name === p.modul)
+      : doc.settings.fassadenModule[0];
+    if (!modul) {
+      throw new CommandError(
+        p.modul ? `Modul «${p.modul}» existiert nicht` : 'Kein Fassadenmodul gezeichnet — zuerst der Modul-Editor',
+      );
+    }
+    const fenster = modul.elemente.filter((e) => e.typ === 'fenster');
+    if (fenster.length === 0) throw new CommandError(`Modul «${modul.name}» hat keine Fenster-Elemente`);
+    const patches: AnyPatch[] = [];
+    for (const w of doc.byKind<Wall>('wall')) {
+      if (w.storeyId !== p.storeyId) continue;
+      const asm = doc.get<Assembly>(w.assemblyId);
+      if (asm?.kind !== 'assembly' || !asm.name.toUpperCase().startsWith('AW')) continue;
+      const laenge = Math.hypot(w.b.x - w.a.x, w.b.y - w.a.y);
+      const spalten = Math.floor(laenge / modul.breite);
+      for (let c = 0; c < spalten; c++) {
+        for (const el of fenster) {
+          patches.push(added({
+            id: newId('oeffnung'), kind: 'opening' as const, wallId: w.id,
+            openingType: 'fenster' as const,
+            center: Math.round(c * modul.breite + el.x + el.b / 2),
+            width: el.b, height: el.h, sill: el.y,
+          }));
+        }
+      }
+    }
+    if (patches.length === 0) throw new CommandError('Keine Aussenwand (Aufbau «AW…») auf dem Geschoss');
+    return patches;
+  },
+});
+
 export const wallsFromZones = registerCommand({
   id: 'design.waendeAusZonen',
   title: 'Wände aus Räumen bauen',

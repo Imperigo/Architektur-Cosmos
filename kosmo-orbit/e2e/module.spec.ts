@@ -1279,3 +1279,32 @@ test('Wände aus Räumen: generieren → bauen → echte Wände + Türöffnungen
   await page.click('[data-testid="undo"]');
   expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBe(0);
 });
+
+test('Fenster stanzen (A1): Kette → Tageslicht-Befund verschwindet', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const w = k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    k.run('design.grundrissGenerieren', { zoneId: w.patches[0].id, korridorSeite: 'unten' });
+    k.run('design.regelnSetzen', { preset: 'ch-wohnbau' });
+    k.run('design.modulSpeichern', {
+      name: 'Band', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 400, y: 900, b: 1700, h: 1600, typ: 'fenster' }],
+    });
+  });
+  await page.click('[data-testid="liste-toggle"]');
+  await page.click('[data-testid="waende-bauen"]');
+  await page.click('[data-testid="fenster-stanzen"]');
+  await expect(page.locator('[data-testid="segmentierer"]')).toContainText('Fenster gestanzt');
+  const anzahlFenster = await page.evaluate(() =>
+    window.__kosmo.state().doc.byKind('opening').filter((o) => o.openingType === 'fenster').length,
+  );
+  expect(anzahlFenster).toBeGreaterThanOrEqual(8);
+});

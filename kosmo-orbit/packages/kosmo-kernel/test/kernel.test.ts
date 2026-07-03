@@ -2475,3 +2475,52 @@ describe('Wände aus Zonen (Schlussstein)', () => {
     expect(doc.byKind('zonentuer')).toHaveLength(7);
   });
 });
+
+describe('Fenster aus Modulen (Abendbatch A1)', () => {
+  it('rastert nur Aussenwände, Masse aus dem Element, Tageslicht wird grün, 1 Undo', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    execute(doc, 'design.waendeAusZonen', { storeyId });
+    execute(doc, 'design.regelnSetzen', { preset: 'ch-wohnbau' });
+    // Vor dem Stanzen: Tageslicht-Warnungen vorhanden
+    expect(pruefeGrundriss(doc, storeyId).some((b) => b.text.includes('Tageslicht'))).toBe(true);
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Band', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 400, y: 900, b: 1700, h: 1600, typ: 'fenster' }],
+    });
+    const tuerenVorher = doc.byKind<import('../src').Opening>('opening').filter((o) => o.openingType === 'tuer').length;
+    const r = execute(doc, 'design.fensterAusModulen', { storeyId, modul: null });
+    const fenster = doc.byKind<import('../src').Opening>('opening').filter((o) => o.openingType === 'fenster');
+    expect(fenster.length).toBeGreaterThanOrEqual(8); // Umfang 43 m → ≥ 8 Zellen à 2.5 m auf AW
+    expect(fenster[0]!.width).toBe(1700);
+    expect(fenster[0]!.sill).toBe(900);
+    // Türen unangetastet, Innenwände ohne Fenster
+    expect(doc.byKind<import('../src').Opening>('opening').filter((o) => o.openingType === 'tuer')).toHaveLength(tuerenVorher);
+    const innenWaende = doc.byKind<Wall>('wall').filter((w2) => {
+      const asm = doc.get<import('../src').Assembly>(w2.assemblyId);
+      return asm?.kind === 'assembly' && !asm.name.startsWith('AW');
+    });
+    for (const iw of innenWaende) {
+      expect(doc.openingsOf(iw.id).filter((o) => (o as import('../src').Opening).openingType === 'fenster')).toHaveLength(0);
+    }
+    // Tageslicht-Warnungen der Fassadenräume verschwinden
+    const tageslicht = pruefeGrundriss(doc, storeyId).filter((b) => b.text.includes('Tageslicht'));
+    expect(tageslicht.filter((b) => b.text.includes('Wohnen') || b.text.includes('Zimmer'))).toHaveLength(0);
+    doc.apply(invertPatches(r.patches));
+    expect(doc.byKind<import('../src').Opening>('opening').filter((o) => o.openingType === 'fenster')).toHaveLength(0);
+  });
+
+  it('ohne Modul → ehrlicher Fehler', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    expect(() =>
+      execute(doc, 'design.fensterAusModulen', { storeyId: (eg.patches[0] as { id: string }).id, modul: null }),
+    ).toThrow(/Kein Fassadenmodul/);
+  });
+});

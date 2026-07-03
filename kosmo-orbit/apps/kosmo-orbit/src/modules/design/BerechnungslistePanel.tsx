@@ -524,6 +524,21 @@ function SegmentiererSektion() {
         >
           Wände bauen
         </KButton>
+        <KButton
+          size="sm"
+          tone="quiet"
+          data-testid="fenster-stanzen"
+          onClick={() => {
+            try {
+              const r = runCommand('design.fensterAusModulen', { storeyId: activeStoreyId, modul: null });
+              setHinweis(`${r.patches.length} Fenster gestanzt (1 Undo) — Tageslicht-Checks sind jetzt ehrlich.`);
+            } catch (err) {
+              setHinweis(err instanceof Error ? err.message : String(err));
+            }
+          }}
+        >
+          Fenster stanzen
+        </KButton>
       </div>
       {hinweis && <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>{hinweis}</div>}
       {ergebnis && (
