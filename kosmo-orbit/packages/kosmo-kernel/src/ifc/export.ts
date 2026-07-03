@@ -1,5 +1,6 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Assembly, MassBody, Slab, Storey, Wall, Zone } from '../model/entities';
+import type { Assembly, Furniture, MassBody, Slab, Storey, Wall, Zone } from '../model/entities';
+import { moebelGeometrie, moebelTyp } from '../derive/moebel';
 import { dist } from '../model/units';
 import { axisDirection, assemblyThickness, openingRects, wallFrame } from '../geometry/wall';
 
@@ -239,6 +240,20 @@ export function exportIfc(doc: KosmoDoc, projectName?: string): string {
       `'${newGuid()}',$,${str(mass.program ?? 'Volumen')},$,$,${place},${bodyShape(solid)},$,$`,
     );
     storey.elements.push(proxy);
+  }
+
+  // Möbel als IFCFURNISHINGELEMENT (Korpus-Extrusion 750 mm, Bonus-Block)
+  for (const f of doc.byKind<Furniture>('furniture')) {
+    const storey = storeyIfc.get(f.storeyId);
+    const g = moebelGeometrie(f);
+    if (!storey || !g) continue;
+    const place = w.add('IFCLOCALPLACEMENT', `${storey.placement},${worldPlace3d}`);
+    const solid = extrudedSolid(profileOf(g.korpus), 0, 750);
+    const el = w.add(
+      'IFCFURNISHINGELEMENT',
+      `'${newGuid()}',$,${str(moebelTyp(f.typ)?.name ?? f.typ)},$,$,${place},${bodyShape(solid)},$`,
+    );
+    storey.elements.push(el);
   }
 
   // Enthaltensein pro Geschoss

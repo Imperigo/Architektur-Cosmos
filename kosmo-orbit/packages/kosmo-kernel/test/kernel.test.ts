@@ -2668,5 +2668,6 @@ describe('Härte (Abendbatch D)', () => {
     expect(zaehl('IFCOPENINGELEMENT')).toBe(doc.byKind('opening').length);
     expect(zaehl('IFCSPACE')).toBe(doc.byKind('zone').length);
     expect(zaehl('IFCRELVOIDSELEMENT')).toBe(doc.byKind('opening').length);
+    expect(zaehl('IFCFURNISHINGELEMENT')).toBe(doc.byKind('furniture').length);
   });
 });

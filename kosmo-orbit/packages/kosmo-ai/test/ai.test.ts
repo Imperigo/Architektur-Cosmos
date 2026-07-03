@@ -361,3 +361,26 @@ describe('OpenAiKompatibelProvider / LM Studio (V2-B3)', () => {
     expect(done.error).toContain('LM Studio');
   });
 });
+
+describe('Tool-Vollständigkeit (Bonus-Block)', () => {
+  it('alle heutigen Commands sind als Kosmo-Tools mit validem Schema exponiert', async () => {
+    const { commandTools, commandIdFor } = await import('../src/tools');
+    await import('@kosmo/kernel'); // registriert alle Commands
+    const tools = commandTools();
+    const namen = new Set(tools.map((t) => commandIdFor(t.name)));
+    for (const id of [
+      'design.zonenRegelSetzen', 'design.regelnSetzen', 'design.kennzahlFormelnSetzen',
+      'design.standortSetzen', 'design.raumTypSetzen', 'design.moebelSetzen',
+      'design.tuerSetzen', 'design.vorlageSpeichern', 'design.vorlageSetzen',
+      'design.grundrissGenerieren', 'design.waendeAusZonen', 'design.fensterAusModulen',
+      'design.modulSpeichern', 'design.fassadenModulZuweisen', 'design.geschossKopieren',
+    ]) {
+      expect(namen.has(id), `${id} fehlt als Tool`).toBe(true);
+    }
+    // Jedes Tool hat Beschreibung + JSON-Schema mit properties
+    for (const t of tools) {
+      expect(t.description.length, `${t.name} ohne Beschreibung`).toBeGreaterThan(20);
+      expect(t.parameters && typeof t.parameters === 'object').toBe(true);
+    }
+  });
+});
