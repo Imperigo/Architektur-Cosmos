@@ -510,6 +510,15 @@ export const setBoundary = registerCommand({
     outline: z.array(PtSchema).min(3),
     maxHoehe: z.number().int().positive().nullable().default(null).describe('max. Höhe über Projektnull in mm'),
     name: z.string().default('Baugrenze'),
+    grenzabstand: z
+      .number()
+      .int()
+      .positive()
+      .nullable()
+      .default(null)
+      .describe('Grenzabstand in mm: Bauteile bleiben so weit innerhalb der Linie (z.B. 4000)'),
+    mehrHoehenAb: z.number().int().positive().optional().describe('Freigrenze Fassadenhöhe in mm (z.B. 12000)'),
+    mehrHoehenAnteil: z.number().min(0).max(2).optional().describe('Zuschlag als Anteil der Mehrhöhe (z.B. 0.5)'),
   }),
   summarize: (p) => `Baugrenze${p.maxHoehe ? ` (max. ${(p.maxHoehe / 1000).toFixed(1)} m)` : ''} setzen`,
   run: (doc, p) => {
@@ -525,6 +534,10 @@ export const setBoundary = registerCommand({
       outline: p.outline as Pt[],
       maxHoehe: p.maxHoehe,
       name: p.name,
+      grenzabstand: p.grenzabstand,
+      ...(p.mehrHoehenAb && p.mehrHoehenAnteil !== undefined
+        ? { mehrHoehen: { abHoehe: p.mehrHoehenAb, anteil: p.mehrHoehenAnteil } }
+        : {}),
     };
     patches.push(added(grenze));
     return patches;

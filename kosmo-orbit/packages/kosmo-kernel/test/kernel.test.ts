@@ -1699,3 +1699,47 @@ describe('Raumgraph + Fluchtweg (V2-F1/F2)', () => {
     expect(graph2.kanten.filter((k) => k.art === 'offen')).toHaveLength(0);
   });
 });
+
+describe('Grenzabstand (V2-Vorform)', () => {
+  function setup(grenzabstand: number, mehr?: { ab: number; anteil: number }) {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.baugrenzeSetzen', {
+      storeyId,
+      outline: [{ x: 0, y: 0 }, { x: 20000, y: 0 }, { x: 20000, y: 20000 }, { x: 0, y: 20000 }],
+      grenzabstand,
+      ...(mehr ? { mehrHoehenAb: mehr.ab, mehrHoehenAnteil: mehr.anteil } : {}),
+    });
+    return { doc, storeyId };
+  }
+
+  it('Volumen zu nah an der Grenze → Fehler mit Ist/Soll', () => {
+    const { doc, storeyId } = setup(4000);
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 6000,
+      outline: [{ x: 2000, y: 2000 }, { x: 10000, y: 2000 }, { x: 10000, y: 10000 }, { x: 2000, y: 10000 }],
+    });
+    const b = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Grenzabstand');
+    expect(b).toHaveLength(1);
+    expect(b[0]!.text).toContain('2.0 m');
+    expect(b[0]!.text).toContain('4.0 m');
+  });
+
+  it('genug Abstand → kein Befund; Mehrhöhenzuschlag staffelt', () => {
+    const { doc, storeyId } = setup(4000, { ab: 12000, anteil: 0.5 });
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 11000,
+      outline: [{ x: 5000, y: 5000 }, { x: 15000, y: 5000 }, { x: 15000, y: 15000 }, { x: 5000, y: 15000 }],
+    });
+    expect(pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Grenzabstand')).toHaveLength(0);
+    // 20 m hoch → Zuschlag (20−12)/2 = 4 m → Soll 8 m > Ist 5 m
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 20000,
+      outline: [{ x: 5000, y: 5000 }, { x: 15000, y: 5000 }, { x: 15000, y: 15000 }, { x: 5000, y: 15000 }],
+    });
+    const b = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Grenzabstand');
+    expect(b).toHaveLength(1);
+    expect(b[0]!.text).toContain('Mehrhöhenzuschlag');
+  });
+});

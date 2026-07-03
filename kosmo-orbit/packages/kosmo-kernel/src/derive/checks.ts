@@ -188,7 +188,44 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       }
       return inside;
     };
+    // Grenzabstand (V2): Punkt muss mindestens «abstand» von der Grenzlinie
+    // entfernt IM Polygon liegen; gestaffelt um den Mehrhöhenzuschlag.
+    const abstandZurLinie = (p: { x: number; y: number }): number => {
+      let min = Infinity;
+      const poly = g.outline;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const a = poly[j]!;
+        const b = poly[i]!;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const len2 = dx * dx + dy * dy || 1;
+        const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
+        min = Math.min(min, Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy)));
+      }
+      return min;
+    };
+    const grenzVerletzt = (name: string, id: string, punkte: { x: number; y: number }[], top: number | null) => {
+      if (!g.grenzabstand) return;
+      let soll = g.grenzabstand;
+      if (g.mehrHoehen && top !== null && top > g.mehrHoehen.abHoehe) {
+        soll += Math.round((top - g.mehrHoehen.abHoehe) * g.mehrHoehen.anteil);
+      }
+      for (const p of punkte) {
+        if (!inPoly(p)) continue; // Lage ausserhalb meldet schon die Baugrenze
+        const ist = abstandZurLinie(p);
+        if (ist < soll) {
+          befunde.push({
+            schwere: 'fehler',
+            regel: 'Grenzabstand',
+            text: `${name}: ${(ist / 1000).toFixed(1)} m zur Grenze «${g.name}» — verlangt ${(soll / 1000).toFixed(1)} m${g.mehrHoehen && top !== null && top > g.mehrHoehen.abHoehe ? ' (inkl. Mehrhöhenzuschlag)' : ''}`,
+            entityId: id,
+          });
+          return; // ein Befund je Bauteil reicht
+        }
+      }
+    };
     const verletzt = (name: string, id: string, punkte: { x: number; y: number }[], top: number | null) => {
+      grenzVerletzt(name, id, punkte, top);
       if (punkte.some((p) => !inPoly(p))) {
         befunde.push({
           schwere: 'fehler',

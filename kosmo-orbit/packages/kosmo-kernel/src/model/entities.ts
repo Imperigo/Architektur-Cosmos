@@ -162,6 +162,10 @@ export interface Boundary extends Base {
   /** Maximale Gebäudehöhe über Projektnull (mm); null = keine. */
   maxHoehe: Mm | null;
   name: string;
+  /** Grenzabstand (V2-Vorform): Bauteile müssen so weit INNERHALB der Linie bleiben (mm). */
+  grenzabstand?: Mm | null;
+  /** Mehrhöhenzuschlag: Anteil der Fassadenhöhe über der Freigrenze (z.B. 0.5 ab 12 m). */
+  mehrHoehen?: { abHoehe: Mm; anteil: number } | null;
 }
 
 /** Volumenkörper für Vorform-artige Volumenstudien. */
