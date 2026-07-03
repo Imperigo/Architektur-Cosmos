@@ -120,7 +120,12 @@ export function deriveDimensions(doc: KosmoDoc, storeyId: string): DimensionSet 
 }
 
 /** Masszahl zwischen zwei Ticks — Zentimeter-Konvention des Hochbaus (z.B. 361.5). */
+const HOCH = '\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077\u2078\u2079';
+
+/** Masszahl in cm, mm-Rest hochgestellt: 3615 mm → «361⁵» (SIA 400 B.5.2). */
 export function dimensionLabel(a: Mm, b: Mm): string {
-  const cm = Math.abs(b - a) / 10;
-  return Number.isInteger(cm) ? String(cm) : cm.toFixed(1);
+  const mm = Math.round(Math.abs(b - a));
+  const cm = Math.floor(mm / 10);
+  const rest = mm % 10;
+  return rest === 0 ? String(cm) : `${cm}${HOCH[rest]!}`;
 }

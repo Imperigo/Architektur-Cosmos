@@ -1327,7 +1327,7 @@ describe('Bemassungs-Stile (V2-A5)', () => {
   };
 
   it('dimensionLabel: Zentimeter-Konvention des Hochbaus', () => {
-    expect(dimensionLabel(0, 3615)).toBe('361.5');
+    expect(dimensionLabel(0, 3615)).toBe('361\u2075'); // mm hochgestellt, SIA 400 B.5.2
     expect(dimensionLabel(0, 9000)).toBe('900');
     expect(dimensionLabel(9000, 0)).toBe('900');
   });

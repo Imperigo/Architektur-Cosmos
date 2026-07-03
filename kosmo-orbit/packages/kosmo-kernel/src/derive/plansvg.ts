@@ -103,7 +103,7 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       dimMinY = Math.min(dimMinY, c.offset);
       parts.push(`<line x1="${t0}" y1="${-c.offset}" x2="${t1}" y2="${-c.offset}" stroke-width="${sw}"/>`);
       for (const t of c.ticks) {
-        parts.push(`<line x1="${t - tickHalf}" y1="${-c.offset + tickHalf}" x2="${t + tickHalf}" y2="${-c.offset - tickHalf}" stroke-width="${sw * 1.6}"/>`);
+        parts.push(`<line x1="${t - tickHalf}" y1="${-c.offset + tickHalf}" x2="${t + tickHalf}" y2="${-c.offset - tickHalf}" stroke-width="${sw * 2}"/>`);
       }
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
@@ -113,7 +113,7 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       dimMinX = Math.min(dimMinX, c.offset);
       parts.push(`<line x1="${c.offset}" y1="${-t0}" x2="${c.offset}" y2="${-t1}" stroke-width="${sw}"/>`);
       for (const t of c.ticks) {
-        parts.push(`<line x1="${c.offset - tickHalf}" y1="${-t - tickHalf}" x2="${c.offset + tickHalf}" y2="${-t + tickHalf}" stroke-width="${sw * 1.6}"/>`);
+        parts.push(`<line x1="${c.offset - tickHalf}" y1="${-t - tickHalf}" x2="${c.offset + tickHalf}" y2="${-t + tickHalf}" stroke-width="${sw * 2}"/>`);
       }
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
@@ -236,6 +236,16 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     '</g>',
   );
 
+  // Nordpfeil oben rechts (SIA 400 C.2.1: Grundriss mit Nordrichtung)
+  const nx = paper.width - 16;
+  parts.push(
+    `<g stroke="black" fill="none" stroke-width="0.35">`,
+    `<circle cx="${nx}" cy="16" r="4"/>`,
+    `<path d="M ${nx} 19 L ${nx} 13 M ${nx - 1.4} 14.6 L ${nx} 13 L ${nx + 1.4} 14.6" />`,
+    `<text x="${nx}" y="26" text-anchor="middle" font-size="3" stroke="none" fill="black">N</text>`,
+    `</g>`,
+  );
+
   // Plankopf (SIA-angelehnt, schlicht)
   const y0 = paper.height - 18;
   parts.push(
@@ -243,7 +253,7 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     `<line x1="10" y1="${y0}" x2="${paper.width - 10}" y2="${y0}" stroke="black" stroke-width="0.35"/>`,
     `<text x="10" y="${y0 + 6}" font-weight="bold" font-size="4.2">${escapeXml(opts.projectName)}</text>`,
     `<text x="10" y="${y0 + 11.5}">${escapeXml(opts.planTitle)} · ${escapeXml(storey?.name ?? '')}</text>`,
-    `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end">1:${scale}</text>`,
+    `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end">1:${scale} \u00b7 Masse in cm/m</text>`,
     `<text x="${paper.width - 10}" y="${y0 + 11.5}" text-anchor="end">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
     `</g>`,
     '</svg>',
