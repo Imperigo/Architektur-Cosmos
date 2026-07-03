@@ -750,3 +750,26 @@ test('IFC-Bestand (V2-A4): Export → Re-Import → «Übernehmen» macht Wände
   await page.click('[data-testid="undo"]');
   expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBe(2);
 });
+
+test('Materialkarten (V2-C2): Textur-Umschalter wirkt und bleibt gemerkt', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId,
+      a: { x: 0, y: 0 },
+      b: { x: 6000, y: 0 },
+      assemblyId: st.doc.byKind('assembly')[0]!.id,
+    });
+  });
+  // Standard: Texturen an
+  expect(await page.evaluate(() => localStorage.getItem('kosmo.texturen'))).not.toBe('0');
+  await page.click('[data-testid="textur-toggle"]');
+  expect(await page.evaluate(() => localStorage.getItem('kosmo.texturen'))).toBe('0');
+  await page.click('[data-testid="textur-toggle"]');
+  expect(await page.evaluate(() => localStorage.getItem('kosmo.texturen'))).toBe('1');
+});

@@ -71,6 +71,15 @@ export interface ViewportHandlers {
   onPick?: (entityId: string | null) => void;
 }
 
+import { materialKarten, texturenAktiv } from './texturen';
+
+// C2: Textur-Umschalter — Rebuild des Modells beim Wechsel
+let texturRevision = 0;
+export function setTexturModus(an: boolean): void {
+  localStorage.setItem('kosmo.texturen', an ? '1' : '0');
+  texturRevision++;
+}
+
 // PBR aus dem Materialkatalog (Q14) + Derive-Sonderschlüssel
 const materialPalette: Record<string, { color: number; roughness: number; metalness?: number }> = {
   ...pbrPalette,
@@ -288,12 +297,40 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       geo.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
       geo.setIndex(new THREE.BufferAttribute(a.indices, 1));
       const spec = materialPalette[a.materialKey] ?? materialPalette['default']!;
+      // C2: metrische UVs über die dominante Normalenachse (1 UV = 1 m).
+      // Seiten-/Deckelflächen haben eigene Vertices — Nähte fallen auf Kanten.
+      const karten = texturenAktiv() ? materialKarten(a.materialKey) : null;
+      if (karten) {
+        const uv = new Float32Array(n * 2);
+        for (let i = 0; i < n; i++) {
+          const px = a.positions[i * 3]! / 1000;
+          const py = a.positions[i * 3 + 1]! / 1000;
+          const pz = a.positions[i * 3 + 2]! / 1000;
+          const ax = Math.abs(a.normals[i * 3]!);
+          const ay = Math.abs(a.normals[i * 3 + 1]!);
+          const az = Math.abs(a.normals[i * 3 + 2]!);
+          if (az >= ax && az >= ay) {
+            uv[i * 2] = px;
+            uv[i * 2 + 1] = py;
+          } else if (ax >= ay) {
+            uv[i * 2] = py;
+            uv[i * 2 + 1] = pz;
+          } else {
+            uv[i * 2] = px;
+            uv[i * 2 + 1] = pz;
+          }
+        }
+        geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      }
       const mesh = new THREE.Mesh(
         geo,
         new THREE.MeshStandardMaterial({
-          color: spec.color,
+          color: karten ? 0xffffff : spec.color,
           roughness: spec.roughness,
           metalness: spec.metalness ?? 0,
+          ...(karten
+            ? { map: karten.map, bumpMap: karten.bumpMap, bumpScale: karten.bumpScale }
+            : {}),
         }),
       );
       mesh.castShadow = true;
@@ -319,6 +356,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     let lastRevision = -1;
     let pendingRevision = -1;
     let deriveWorker: Worker | null = null;
+    let lastTexturRevision = texturRevision;
 
     function applyArtifacts(artifacts: GeometryArtifact[]) {
       model.clear();
@@ -329,6 +367,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
     function syncModel() {
       const { doc, revision } = useProject.getState();
+      if (texturRevision !== lastTexturRevision) {
+        lastTexturRevision = texturRevision;
+        lastRevision = -1; // Material-Rebuild erzwingen
+      }
       if (revision === lastRevision) return;
       if (doc.entities.size < WORKER_AB) {
         lastRevision = revision;

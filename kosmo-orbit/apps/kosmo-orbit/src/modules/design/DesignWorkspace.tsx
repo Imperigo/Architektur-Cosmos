@@ -27,7 +27,7 @@ import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
 import { importIfc } from './ifc-import';
-import { setContextMeshes, setSplatCloud, setSunDate } from './Viewport3D';
+import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
 import { registerActions } from '../../shell/palette';
 
 /**
@@ -82,6 +82,8 @@ export function DesignWorkspace() {
   const [zielGf, setZielGf] = useState<number | null>(null);
   const [maxHoeheM, setMaxHoeheM] = useState(25);
 
+  // C2: Materialkarten im Viewport (prozedurale PBR-Kacheln)
+  const [texturen, setTexturen] = useState(localStorage.getItem('kosmo.texturen') !== '0');
   // Schattenstudie (Q12): Datum + Stunde (Viertelstunden), aus = Studio-Sonne
   const [sonneOffen, setSonneOffen] = useState(false);
   const [sonnenDatum, setSonnenDatum] = useState('2026-06-21');
@@ -493,6 +495,17 @@ export function DesignWorkspace() {
           }}
         >
           Splat laden
+        </KButton>
+        <KButton
+          size="sm"
+          tone={texturen ? 'accent' : 'ghost'}
+          data-testid="textur-toggle"
+          onClick={() => {
+            setTexturModus(!texturen);
+            setTexturen(!texturen);
+          }}
+        >
+          Textur
         </KButton>
         <KButton
           size="sm"
