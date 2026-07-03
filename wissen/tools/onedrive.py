@@ -55,7 +55,7 @@ def _anfrage(url, roh=False, _retry=True):
             if e.code == 401 and _retry:
                 _erneuere_token()
                 return _anfrage(url, roh=roh, _retry=False)
-            if e.code in (429, 503) and versuch < 3:
+            if (e.code == 429 or e.code >= 500) and versuch < 3:
                 time.sleep(2 ** (versuch + 1))
                 continue
             raise
@@ -81,12 +81,12 @@ def kinder(pfad):
 def lade_datei(pfad, ziel):
     # /content leitet auf eine vorsignierte URL um, die KEINEN Bearer-Header
     # verträgt (401) — darum downloadUrl holen und ohne Auth laden.
-    meta = _anfrage(f"{GRAPH}/me/drive/root:/{urllib.parse.quote(pfad)}")
-    url = meta['@microsoft.graph.downloadUrl']
     os.makedirs(os.path.dirname(ziel), exist_ok=True)
     for versuch in range(4):
         try:
-            antwort = urllib.request.urlopen(url, timeout=600)
+            # downloadUrl je Versuch neu holen — vorsignierte URLs laufen ab
+            meta = _anfrage(f"{GRAPH}/me/drive/root:/{urllib.parse.quote(pfad)}")
+            antwort = urllib.request.urlopen(meta['@microsoft.graph.downloadUrl'], timeout=600)
             with open(ziel + '.teil', 'wb') as f:
                 while True:
                     block = antwort.read(1 << 20)
@@ -95,7 +95,7 @@ def lade_datei(pfad, ziel):
                     f.write(block)
             os.replace(ziel + '.teil', ziel)
             return
-        except urllib.error.URLError:
+        except urllib.error.URLError:  # deckt HTTPError (5xx) mit ab
             if versuch < 3:
                 time.sleep(2 ** (versuch + 1))
                 continue
