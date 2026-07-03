@@ -953,3 +953,27 @@ test('Raumprogramm-CSV (V2-V5): Import setzt Posten, %-Spalte erscheint', async 
     .toBe(2);
   await expect(page.locator('[data-testid="erfuellung-marktgerecht"]')).toContainText('0');
 });
+
+test('Render-Prompt (V2-V8): Material-Baustein erscheint im finalen Prompt, Tippen überschreibt', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const au = k.run('design.aufbauErstellen', {
+      name: 'AW Sichtbeton', target: 'wall',
+      layers: [{ material: 'sichtbeton', thickness: 180, function: 'tragend' }],
+    });
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: au.patches[0].id,
+      a: { x: 0, y: 0 }, b: { x: 5000, y: 0 },
+    });
+    k.open('vis');
+  });
+  const feld = page.locator('[data-testid="finaler-prompt"]');
+  await expect(feld).toHaveValue(/Sichtbeton-Fassade/);
+  await feld.fill('mein eigener Prompt');
+  await expect(feld).toHaveValue('mein eigener Prompt');
+});

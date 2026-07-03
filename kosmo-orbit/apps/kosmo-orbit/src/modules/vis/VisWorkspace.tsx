@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Messrahmen, Badge, Hairline, Karteikarte, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
-import { exportGlb, type Sheet } from '@kosmo/kernel';
+import { finalerRenderPrompt, renderPromptBausteine, exportGlb, type Sheet } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -61,6 +61,8 @@ export function VisWorkspace() {
   const [health, setHealth] = useState<'unbekannt' | 'ok' | 'offline'>('unbekannt');
   const [faithful, setFaithful] = useState(0.8);
   const [prompt, setPrompt] = useState('');
+  // V8: Transparenz statt Blackbox — finaler Prompt sichtbar, überschreibbar
+  const [promptOverride, setPromptOverride] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hinweis, setHinweis] = useState<string | null>(null);
@@ -144,7 +146,7 @@ export function VisWorkspace() {
       schema: 'kosmovis.render-scene/v1',
       cameras: 'auto',
       render: { resolution: [1600, 1000], samples: 128, faithful },
-      style: { mode: 'none', refs: [], prompt: stylePrompt },
+      style: { mode: 'none', refs: [], prompt: promptOverride ?? finalerRenderPrompt('', stylePrompt, renderPromptBausteine(doc)) },
       vis: { skip: false, backbone: 'qwen', upscale: false },
       out: '',
       geometry: { path: '', format: 'glb' },
@@ -250,9 +252,23 @@ export function VisWorkspace() {
           <input
             placeholder="Stil-Prompt (optional), z.B. «Abendstimmung, Sichtbeton, warmes Licht»"
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={(e) => {
+              setPrompt(e.target.value);
+              setPromptOverride(null);
+            }}
             style={{ ...inputStyle, padding: '7px 10px' }}
           />
+          {/* V8: finaler Prompt — Modell-Materialien sprechen mit, alles überschreibbar */}
+          <textarea
+            data-testid="finaler-prompt"
+            value={promptOverride ?? finalerRenderPrompt('', prompt, renderPromptBausteine(useProject.getState().doc))}
+            onChange={(e) => setPromptOverride(e.target.value)}
+            rows={2}
+            style={{ ...inputStyle, padding: '7px 10px', fontFamily: 'inherit', fontSize: 12, color: 'var(--k-ink-soft)' }}
+          />
+          <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+            Finaler Prompt (geht so an die Bridge) — Material-Bausteine kommen aus den Wandaufbauten; Tippen überschreibt.
+          </span>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <KButton tone="accent" onClick={() => void submit()} disabled={sending || health !== 'ok'} data-testid="send-render">
               {sending ? 'Sende …' : 'Render-Job senden'}

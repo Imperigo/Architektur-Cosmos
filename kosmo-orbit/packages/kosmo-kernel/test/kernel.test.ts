@@ -13,6 +13,7 @@ import { variantenMatrix } from '../src/derive/variantenmatrix';
 import { segmentiere, sollMix } from '../src/derive/segmentierer';
 import { kennzahlenAuswerten } from '../src/derive/sia416';
 import { raumTypVorschlag } from '../src/derive/raumtypcopilot';
+import { finalerRenderPrompt, renderPromptBausteine } from '../src/derive/renderprompt';
 import { polygonArea } from '../src/model/units';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
@@ -1987,5 +1988,28 @@ describe('Raumprogramm-CSV-Import (V2-V5)', () => {
   it('doppelte Typzeilen summieren sich', () => {
     const erg = parseRaumprogrammCsv('markt;100\nmarktgerecht;50');
     expect(erg.posten).toEqual([{ typ: 'marktgerecht', hnfSoll: 150 }]);
+  });
+});
+
+describe('Render-Prompt-Transparenz (V2-V8)', () => {
+  it('Wandaufbauten werden zu Prompt-Bausteinen; finalerRenderPrompt fügt sauber', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW Sichtbeton', target: 'wall',
+      layers: [
+        { material: 'sichtbeton', thickness: 180, function: 'tragend' },
+        { material: 'daemmung-mw', thickness: 160, function: 'daemmung' },
+      ],
+    });
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId: (au.patches[0] as { id: string }).id,
+      a: { x: 0, y: 0 }, b: { x: 5000, y: 0 },
+    });
+    const bausteine = renderPromptBausteine(doc);
+    expect(bausteine).toContain('Sichtbeton-Fassade');
+    expect(finalerRenderPrompt('Abendstimmung', '', bausteine)).toBe('Abendstimmung, Sichtbeton-Fassade');
+    expect(finalerRenderPrompt('', '', [])).toBe('');
   });
 });
