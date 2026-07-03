@@ -1181,7 +1181,7 @@ test('Zonentüren: Generator setzt Türen, Symbol im Plan, Graph zeigt tuer-Kant
     k.run('design.grundrissGenerieren', { zoneId: w.patches[0].id, korridorSeite: 'auto' });
   });
   await expect(page.locator('[data-testid="zonentuer"]').first()).toBeVisible();
-  expect(await page.locator('[data-testid="zonentuer"]').count()).toBe(3);
+  expect(await page.locator('[data-testid="zonentuer"]').count()).toBe(7); // v2: Flur erschliesst alle Räume
 });
 
 test('Modul-Editor: Element aufziehen → speichern → Auswahl im Panel → 3D rendert', async ({ page }) => {

@@ -2417,3 +2417,30 @@ describe('Module je Fassade', () => {
     expect(fassadenModule(doc, storeyId, 2500, 3000).zeilen.find((z) => z.kante === 1)!.modul).toBeNull();
   });
 });
+
+describe('Rezept v2: interner Flur', () => {
+  it('ab 2 Zimmern: Flur erschliesst alle Räume, 7 Türen, kein Durchgangszimmer', () => {
+    const g = generiereGrundriss(
+      [{ x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 8000 }, { x: 0, y: 8000 }],
+      'unten',
+    );
+    const flur = g.raeume.find((r) => r.name === 'Flur')!;
+    expect(flur).toBeDefined();
+    expect(flur.raumTyp).toBe('korridor');
+    // Zimmer beginnen erst hinter dem Flur (v = 3600)
+    const z1 = g.raeume.find((r) => r.name === 'Zimmer 1')!;
+    expect(Math.min(...z1.outline.map((p) => p.y))).toBe(3600);
+    // Türen: Wohnungstür, Bad, Diele→Flur, Flur→Küche, Flur→Wohnen, 2× Flur→Zimmer
+    expect(g.tueren).toHaveLength(7);
+    expect(g.diagnose.some((d) => d.includes('keine Durchgangszimmer'))).toBe(true);
+  });
+
+  it('zu flach für den Flur → v1-Fallback mit ehrlicher Diagnose', () => {
+    const g = generiereGrundriss(
+      [{ x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 6400 }, { x: 0, y: 6400 }],
+      'unten',
+    );
+    expect(g.raeume.some((r) => r.name === 'Flur')).toBe(false);
+    expect(g.diagnose.some((d) => d.includes('Durchgangszimmer'))).toBe(true);
+  });
+});

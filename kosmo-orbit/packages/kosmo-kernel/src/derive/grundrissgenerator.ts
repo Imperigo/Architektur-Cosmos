@@ -6,7 +6,12 @@ import type { Pt } from '../model/units';
  * CH-Wohnbau-Rezept in Zimmer geteilt und möbliert — zwei Bänder:
  *
  *   Korridorseite → Eingangsband (2.4 m tief): Diele | Bad | Küche
+ *   ab 2 Zimmern  → Flurstreifen (1.2 m):      erschliesst alle Räume
  *   Fassadenseite → Wohnband (Rest):           Wohnen | Zimmer …
+ *
+ * v2: Der interne Flur eliminiert Durchgangszimmer — jeder Raum hat seine
+ * Tür am Flur. Reicht die Tiefe nicht (Zimmer < 3 m), fällt das Rezept
+ * ehrlich auf v1 ohne Flur zurück (Diagnose sagt es).
  *
  * Ehrlich klein geschnitten: Rezept statt Suche (Finch generiert aus einer
  * Plan-Library — unsere Vorlagen (F7) sind die Library, das Rezept ist der
@@ -39,6 +44,7 @@ export interface GenerierterGrundriss {
 }
 
 const EINGANG_TIEFE = 2400;
+const FLUR_TIEFE = 1200;
 
 const rund = (p: Pt): Pt => ({ x: Math.round(p.x), y: Math.round(p.y) });
 const MIN_ZIMMER = 3000;
@@ -108,18 +114,34 @@ export function generiereGrundriss(
   const kuecheMitte = welt(dieleB + badB + kuecheB / 2, 300);
   moebel.push({ typ: 'kuechenzeile', at: { x: Math.round(kuecheMitte.x), y: Math.round(kuecheMitte.y) }, rotationGrad: rot });
 
-  // ── Wohnband: Wohnen + Zimmer (Zahl aus der Restbreite) ───────────
-  const wohnTiefe = tiefe - EINGANG_TIEFE;
+  // ── Wohnband: Wohnen + Zimmer, ab 2 Zimmern mit internem Flur ─────
   const wohnenB = Math.max(3600, Math.round(breite * 0.4 / 100) * 100);
   const zimmerZone = breite - wohnenB;
   const zimmerZahl = Math.max(0, Math.floor(zimmerZone / MIN_ZIMMER));
   const zimmerB = zimmerZahl > 0 ? zimmerZone / zimmerZahl : 0;
-  raeume.push({ outline: rect(0, EINGANG_TIEFE, wohnenB, tiefe), name: 'Wohnen/Essen', raumTyp: 'wohnen', sia: 'HNF' });
-  const tischAt = welt(wohnenB / 2, EINGANG_TIEFE + wohnTiefe / 2 - 450);
+  // Interner Flur (1.2 m) nur, wenn er sich lohnt UND die Zimmer tief genug bleiben
+  const mitFlur = zimmerZahl >= 2 && tiefe - EINGANG_TIEFE - FLUR_TIEFE >= MIN_ZIMMER;
+  const wohnbandV = mitFlur ? EINGANG_TIEFE + FLUR_TIEFE : EINGANG_TIEFE;
+
+  if (mitFlur) {
+    raeume.push({ outline: rect(0, EINGANG_TIEFE, breite, wohnbandV), name: 'Flur', raumTyp: 'korridor', sia: 'VF' });
+    // Türen: Diele→Flur ersetzt Diele→Wohnen; Flur erschliesst Küche + Wohnen
+    tueren.pop(); // Diele→Wohnen aus dem Eingangsband raus
+    tueren.push({ at: rund(welt(dieleB / 2, EINGANG_TIEFE)), breite: 900 }); // Diele→Flur
+    tueren.push({ at: rund(welt(dieleB + badB + kuecheB / 2, EINGANG_TIEFE)), breite: 900 }); // Flur→Küche
+    tueren.push({ at: rund(welt(wohnenB / 2, wohnbandV)), breite: 900 }); // Flur→Wohnen
+    diagnose.push(`Interner Flur ${(FLUR_TIEFE / 1000).toFixed(1)} m × ${(breite / 1000).toFixed(1)} m — keine Durchgangszimmer.`);
+  }
+
+  raeume.push({ outline: rect(0, wohnbandV, wohnenB, tiefe), name: 'Wohnen/Essen', raumTyp: 'wohnen', sia: 'HNF' });
+  const tischAt = welt(wohnenB / 2, wohnbandV + (tiefe - wohnbandV) / 2 - 450);
   moebel.push({ typ: 'esstisch', at: { x: Math.round(tischAt.x), y: Math.round(tischAt.y) }, rotationGrad: rot });
   for (let i = 0; i < zimmerZahl; i++) {
     const u0 = wohnenB + i * zimmerB;
-    raeume.push({ outline: rect(u0, EINGANG_TIEFE, u0 + zimmerB, tiefe), name: `Zimmer ${i + 1}`, raumTyp: 'zimmer', sia: 'HNF' });
+    raeume.push({ outline: rect(u0, wohnbandV, u0 + zimmerB, tiefe), name: `Zimmer ${i + 1}`, raumTyp: 'zimmer', sia: 'HNF' });
+    if (mitFlur) {
+      tueren.push({ at: rund(welt(u0 + zimmerB / 2, wohnbandV)), breite: 800 }); // Flur→Zimmer
+    }
     // Bett an der Fassadenwand (Rückkante aussen, Bewegungsfläche zum Raum)
     const bettAt = welt(u0 + zimmerB / 2, tiefe - 100);
     moebel.push({
@@ -129,6 +151,9 @@ export function generiereGrundriss(
     });
   }
   if (zimmerZahl === 0) diagnose.push('Zu schmal für separate Zimmer — nur Wohnen/Essen generiert.');
+  if (zimmerZahl >= 2 && !mitFlur) {
+    diagnose.push('Zu flach für einen internen Flur — v1-Rezept, Zimmer 2+ als Durchgangszimmer.');
+  }
   diagnose.push(`${2.5 + zimmerZahl - 0.5}-Zimmer-Rezept: Eingangsband ${(EINGANG_TIEFE / 1000).toFixed(1)} m, ${zimmerZahl} Zimmer à ${(zimmerB / 1000).toFixed(1)} m.`);
   return { raeume, moebel, tueren, diagnose };
 }
