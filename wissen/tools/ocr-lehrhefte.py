@@ -28,11 +28,16 @@ def ocr_seite(args):
         pix.save(f.name)
         tmp = f.name
     try:
+        # OMP_THREAD_LIMIT=1: 6 Prozesse × N Threads übersubskribieren sonst die CPU
         out = subprocess.run(
             ['tesseract', tmp, '-', '-l', 'deu', '--psm', '3'],
-            capture_output=True, text=True, timeout=120,
+            capture_output=True, text=True, timeout=180,
+            env={**os.environ, 'OMP_THREAD_LIMIT': '1'},
         )
         return seite, out.stdout
+    except Exception as e:  # eine kaputte Seite darf den Lauf nicht reissen
+        print(f'  ! Seite {seite + 1} übersprungen: {e}', flush=True)
+        return seite, ''
     finally:
         os.unlink(tmp)
 
