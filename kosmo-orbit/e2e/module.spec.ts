@@ -890,3 +890,24 @@ test('Segmentierer-Dialog (V2-F6): Slider rechnet den Vorschlag sofort neu', asy
   await page.locator('[data-testid="segmentierer-groesse"]').fill('0.8');
   await expect.poll(async () => page.locator('[data-testid="segmentierer-ergebnis"]').innerText()).not.toBe(vorher);
 });
+
+test('Custom-Kennzahlen (V2-F9): Formel erscheint im Kennzahlen-Panel', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Wohnen', sia: 'HNF',
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 10000 }, { x: 0, y: 10000 }],
+    });
+    k.run('design.kennzahlFormelnSetzen', {
+      formeln: [{ name: 'Erstellungskosten', wert: 3200, basis: 'agf', einheit: 'CHF' }],
+    });
+  });
+  const panel = page.locator('[data-testid="custom-kennzahlen"]');
+  await expect(panel).toContainText('Erstellungskosten');
+  await expect(panel).toContainText('CHF');
+});

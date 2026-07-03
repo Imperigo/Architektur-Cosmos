@@ -11,6 +11,7 @@ import { fluchtwege, raumGraph } from '../src/derive/raumgraph';
 import { ZONENREGEL_KATALOG } from '../src/model/zonenregeln';
 import { variantenMatrix } from '../src/derive/variantenmatrix';
 import { segmentiere, sollMix } from '../src/derive/segmentierer';
+import { kennzahlenAuswerten } from '../src/derive/sia416';
 import { polygonArea } from '../src/model/units';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
@@ -1904,5 +1905,34 @@ describe('Segmentierer-Politur: Wicklung + Check-Ausnahme', () => {
     });
     const b = pruefeGrundriss(doc, storeyId).filter((x) => x.text.includes('Whg 1'));
     expect(b).toHaveLength(0);
+  });
+});
+
+describe('Custom-Kennzahlen (V2-F9)', () => {
+  it('Formeln gegen den AreaReport: CHF/m² aGF und CO2e/m² NGF', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    // 100 m² HNF → aGF-Ziel = 128 (×1.28), NGF = 100
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Wohnen', sia: 'HNF',
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 10000 }, { x: 0, y: 10000 }],
+    });
+    execute(doc, 'design.kennzahlFormelnSetzen', {
+      formeln: [
+        { name: 'Erstellungskosten', wert: 3200, basis: 'agf', einheit: 'CHF' },
+        { name: 'Graue Energie', wert: 450, basis: 'ngf', einheit: 'kg CO2e' },
+      ],
+    });
+    const erg = kennzahlenAuswerten(doc);
+    expect(erg).toHaveLength(2);
+    expect(erg[0]!.betrag).toBe(Math.round(3200 * 128));
+    expect(erg[0]!.einheit).toBe('CHF');
+    expect(erg[1]!.betrag).toBe(450 * 100);
+    // Undo räumt die Formeln weg
+    const r = execute(doc, 'design.kennzahlFormelnSetzen', { formeln: [] });
+    expect(kennzahlenAuswerten(doc)).toHaveLength(0);
+    doc.apply(invertPatches(r.patches));
+    expect(kennzahlenAuswerten(doc)).toHaveLength(2);
   });
 });

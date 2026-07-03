@@ -68,8 +68,20 @@ export interface DocSettings {
   zonenRegel: ZonenRegel | null;
   /** Raumtyp-Regeln (V2-F3, Finch Graph-Rules): leer = eingebaute Richtwerte. */
   raumRegeln: RaumRegel[];
+  /** Custom-Kennzahlen (V2-F9): Wert × Flächenbasis, z.B. CHF/m² aGF. */
+  kennzahlFormeln: KennzahlFormel[];
   /** Parzellenfläche in m² (für AZ → zulässige aGF). */
   parzellenFlaeche: number | null;
+}
+
+/** Custom-Kennzahl (V2-F9): name = «Erstellungskosten», wert 3200, basis 'agf', einheit 'CHF'. */
+export interface KennzahlFormel {
+  name: string;
+  /** Multiplikator pro m² der Basis. */
+  wert: number;
+  basis: 'gf' | 'agf' | 'hnf' | 'ngf';
+  /** Ergebnis-Einheit, z.B. «CHF» oder «kg CO2e». */
+  einheit: string;
 }
 
 /** Raumtyp-Regel (V2-F3): Grenzwerte je Raumtyp, dreistufig gemeldet. */
@@ -110,6 +122,7 @@ export const defaultSettings: DocSettings = {
   zonenRegel: null,
   parzellenFlaeche: null,
   raumRegeln: [],
+  kennzahlFormeln: [],
 };
 
 export interface Patch {

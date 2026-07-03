@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Badge, Hairline, Measure, moduleHue } from '@kosmo/ui';
-import { areaReport, pruefeGrundriss } from '@kosmo/kernel';
+import { areaReport, kennzahlenAuswerten, pruefeGrundriss } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -99,6 +99,21 @@ export function KennzahlenPanel() {
               {Object.entries(report.gfVolumenNachProgramm).map(([prog, gf]) => (
                 <Row key={prog} label={`· ${prog}`} value={`${fmt(gf)} m²`} />
               ))}
+            </>
+          )}
+          {kennzahlenAuswerten(doc, report).length > 0 && (
+            <>
+              <Hairline />
+              <div style={{ display: 'grid', gap: 3 }} data-testid="custom-kennzahlen">
+                {kennzahlenAuswerten(doc, report).map((k) => (
+                  <Row
+                    key={k.name}
+                    label={`${k.name} (${k.basis})`}
+                    value={`${k.betrag.toLocaleString('de-CH')} ${k.einheit}`}
+                    strong
+                  />
+                ))}
+              </div>
             </>
           )}
           {befunde.length > 0 && (

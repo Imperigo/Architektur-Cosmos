@@ -90,3 +90,42 @@ export function areaReport(doc: KosmoDoc): AreaReport {
     gfVolumenNachProgramm,
   };
 }
+
+
+/** Custom-Kennzahlen (V2-F9): Formeln gegen den AreaReport auswerten. */
+export interface KennzahlErgebnis {
+  name: string;
+  betrag: number;
+  einheit: string;
+  /** Basiswert in m², für Transparenz («3200 CHF/m² × 480 m² aGF»). */
+  basisFlaeche: number;
+  basis: string;
+}
+
+export function kennzahlenAuswerten(doc: KosmoDoc, report?: AreaReport): KennzahlErgebnis[] {
+  const r = report ?? areaReport(doc);
+  const basisWert = (basis: string): number => {
+    switch (basis) {
+      case 'gf':
+        return r.gfVolumen > 0.5 ? r.gfVolumen : r.gfSchaetzung;
+      case 'agf':
+        return r.agfZiel;
+      case 'hnf':
+        return r.total.HNF ?? 0;
+      case 'ngf':
+        return r.totalNgf;
+      default:
+        return 0;
+    }
+  };
+  return doc.settings.kennzahlFormeln.map((f) => {
+    const flaeche = basisWert(f.basis);
+    return {
+      name: f.name,
+      betrag: Math.round(f.wert * flaeche),
+      einheit: f.einheit,
+      basisFlaeche: Math.round(flaeche * 10) / 10,
+      basis: f.basis.toUpperCase(),
+    };
+  });
+}

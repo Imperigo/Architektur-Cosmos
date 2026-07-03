@@ -545,6 +545,29 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const setKpiFormulas = registerCommand({
+  id: 'design.kennzahlFormelnSetzen',
+  title: 'Kennzahl-Formeln setzen',
+  description:
+    'Setzt Custom-Kennzahlen fürs Kennzahlen-Panel: je Formel name, wert (Multiplikator pro m²), basis (gf/agf/hnf/ngf) und einheit — z.B. Erstellungskosten 3200 CHF/m² aGF oder Ökobilanz-Proxy 450 kg CO2e/m² GF. Leeres Array löscht alle.',
+  params: z.object({
+    formeln: z
+      .array(
+        z.object({
+          name: z.string().min(1),
+          wert: z.number().nonnegative(),
+          basis: z.enum(['gf', 'agf', 'hnf', 'ngf']),
+          einheit: z.string().min(1),
+        }),
+      )
+      .max(12),
+  }),
+  summarize: (p) => `${p.formeln.length} Kennzahl-Formel(n)`,
+  run: (doc, p) => [
+    { settings: true as const, before: doc.settings, after: { ...doc.settings, kennzahlFormeln: p.formeln } },
+  ],
+});
+
 export const setZoneRule = registerCommand({
   id: 'design.zonenRegelSetzen',
   title: 'Zonenregel setzen',
