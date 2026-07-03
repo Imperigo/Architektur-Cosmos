@@ -39,26 +39,46 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
   const plan = derivePlan(doc, storeyId);
   const parts: string[] = [];
 
+  // Umbau-Farbcode (SIA 400 B.8.11): Bestand schwarz/grau, Neubau rot, Abbruch gelb
+  const NEU_STIFT = '#b3261e';
+  const ABBRUCH_STIFT = '#8a7500';
   for (const r of plan.regions) {
     const isCore = r.classes.includes('tragend');
     const isDaemmung = r.classes.includes('daemmung');
     const isProjection = r.classes.includes('projection');
+    const neu = r.classes.includes('renovation-neu');
+    const abbruch = r.classes.includes('renovation-abbruch');
     // svg2pdf rendert SVG-Patterns nicht zuverlässig → solides Poché (SIA-Druckkonvention)
-    const fill = isCore ? '#c9c9c9' : isDaemmung ? '#efefef' : isProjection ? 'none' : 'white';
+    let fill = isCore ? '#c9c9c9' : isDaemmung ? '#efefef' : isProjection ? 'none' : 'white';
+    let stroke = 'black';
+    if (neu) {
+      fill = isProjection ? 'none' : '#e9c8c5';
+      stroke = NEU_STIFT;
+    } else if (abbruch) {
+      fill = '#f3e29b';
+      stroke = ABBRUCH_STIFT;
+    }
     // Stiftstärken in Papier-mm → Welt-mm skaliert (0.5 / 0.35 / 0.18)
     const sw = (isProjection ? 0.18 : isCore ? 0.5 : 0.35) * scale;
-    const dash = r.classes.includes('volumen') ? ` stroke-dasharray="${2 * scale} ${scale}"` : '';
+    const dash = r.classes.includes('volumen')
+      ? ` stroke-dasharray="${2 * scale} ${scale}"`
+      : abbruch
+        ? ` stroke-dasharray="${1.5 * scale} ${0.8 * scale}"`
+        : '';
     parts.push(
-      `<path d="${regionToPath(r)}" fill-rule="evenodd" fill="${fill}" stroke="black" stroke-width="${sw}"${dash}/>`,
+      `<path d="${regionToPath(r)}" fill-rule="evenodd" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash}/>`,
     );
   }
   for (const l of plan.lines) {
     const baugrenze = l.classes.includes('baugrenze');
+    const neu = l.classes.includes('renovation-neu');
+    const abbruch = l.classes.includes('renovation-abbruch');
     const sw = (l.classes.includes('fenster') ? 0.18 : 0.25) * scale;
+    const stroke = neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : 'black';
     // Baugrenze strichpunktiert auch im Druck (wie am Bildschirm)
     const dash = baugrenze ? ` stroke-dasharray="${3 * scale} ${0.9 * scale} ${0.6 * scale} ${0.9 * scale}"` : '';
     parts.push(
-      `<line x1="${l.a.x}" y1="${-l.a.y}" x2="${l.b.x}" y2="${-l.b.y}" stroke="black" stroke-width="${sw}"${dash}/>`,
+      `<line x1="${l.a.x}" y1="${-l.a.y}" x2="${l.b.x}" y2="${-l.b.y}" stroke="${stroke}" stroke-width="${sw}"${dash}/>`,
     );
   }
   // Stützenraster: Achsen strichpunktiert, Achsköpfe an beiden Enden

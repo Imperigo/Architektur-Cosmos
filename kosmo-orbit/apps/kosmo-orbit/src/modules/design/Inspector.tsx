@@ -166,6 +166,31 @@ export function Inspector() {
         </Row>
       )}
 
+      {entity.kind !== 'storey' && entity.kind !== 'assembly' && entity.kind !== 'sheet' && (
+        <Row label="Umbau">
+          <select
+            value={entity.meta?.renovation ?? ''}
+            onChange={(e) => {
+              try {
+                runCommand('design.renovationSetzen', {
+                  ids: [entity.id],
+                  ...(e.target.value ? { status: e.target.value } : {}),
+                });
+              } catch (err) {
+                alert(err instanceof Error ? err.message : String(err));
+              }
+            }}
+            style={inputStyle}
+            data-testid="inspector-renovation"
+          >
+            <option value="">—</option>
+            <option value="bestand">Bestand</option>
+            <option value="neu">Neubau (rot)</option>
+            <option value="abbruch">Abbruch (gelb)</option>
+          </select>
+        </Row>
+      )}
+
       <Hairline />
       <KButton
         size="sm"

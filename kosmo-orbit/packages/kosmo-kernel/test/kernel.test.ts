@@ -1450,6 +1450,73 @@ describe('SIA-Phasen-Detaillierung (Owner 03.07.)', () => {
   });
 });
 
+describe('Umbau-Status (Vision A1)', () => {
+  const haus = () => {
+    const { doc, storeyId, assemblyId } = setupDoc(); // 3-Schicht-AW
+    const w1 = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 4000, y: 0 } });
+    const w2 = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 4000, y: 0 }, b: { x: 9000, y: 0 } });
+    return {
+      doc, storeyId,
+      wall1: (w1.patches[0] as { id: string }).id,
+      wall2: (w2.patches[0] as { id: string }).id,
+    };
+  };
+
+  it('renovationSetzen trennt den Poché-Join nach Status; Undo räumt auf', () => {
+    const { doc, storeyId, wall2 } = haus();
+    // Beide Wände Bestand-los: EIN vereinigter Beton-Kern
+    expect(derivePlan(doc, storeyId).regions.filter((r) => r.classes.includes('material-beton'))).toHaveLength(1);
+    const res = execute(doc, 'design.renovationSetzen', { ids: [wall2], status: 'neu' });
+    const plan = derivePlan(doc, storeyId);
+    const betonKerne = plan.regions.filter((r) => r.classes.includes('material-beton'));
+    expect(betonKerne).toHaveLength(2); // neu vereinigt sich nicht mit normal
+    expect(betonKerne.filter((r) => r.classes.includes('renovation-neu'))).toHaveLength(1);
+    doc.apply(invertPatches(res.patches));
+    expect(derivePlan(doc, storeyId).regions.filter((r) => r.classes.includes('material-beton'))).toHaveLength(1);
+    expect((doc.get<Wall>(wall2)!.meta ?? {}).renovation).toBeUndefined();
+  });
+
+  it('Abbruch: EIN Poché über die Gesamtdicke, Kreuz je Teilfläche, gelb/gestrichelt im Druck', async () => {
+    const { doc, storeyId, wall1 } = haus();
+    execute(doc, 'design.oeffnungSetzen', { wallId: wall1, openingType: 'tuer', center: 2000, width: 900, height: 2200, sill: 0 });
+    execute(doc, 'design.renovationSetzen', { ids: [wall1], status: 'abbruch' });
+    const plan = derivePlan(doc, storeyId);
+    const abbruch = plan.regions.filter((r) => r.classes.includes('renovation-abbruch'));
+    expect(abbruch).toHaveLength(1);
+    // Keine Dämm-Schicht mehr für die Abbruchwand (Gesamtdicke), Wand 2 behält ihre
+    expect(plan.regions.filter((r) => r.classes.includes('daemmung'))).toHaveLength(1);
+    // Tür-Strip teilt die Wand in 2 Teilflächen → 2 Kreuze à 2 Linien
+    expect(plan.lines.filter((l) => l.classes.includes('abbruch-kreuz'))).toHaveLength(4);
+    const { planInnerSvg } = await import('../src');
+    const svg = planInnerSvg(doc, storeyId, 50).inner;
+    expect(svg).toContain('#f3e29b'); // Abbruch-Gelb
+    expect(svg).toContain('#8a7500'); // Abbruch-Stift
+  });
+
+  it('Neu färbt den Druck rot; Öffnungssymbole erben den Status der Wand', async () => {
+    const { doc, storeyId, wall2 } = haus();
+    execute(doc, 'design.oeffnungSetzen', { wallId: wall2, openingType: 'fenster', center: 2000, width: 1200, height: 1400, sill: 900 });
+    execute(doc, 'design.renovationSetzen', { ids: [wall2], status: 'neu' });
+    const plan = derivePlan(doc, storeyId);
+    expect(plan.lines.some((l) => l.classes.includes('fenster') && l.classes.includes('renovation-neu'))).toBe(true);
+    const { planInnerSvg } = await import('../src');
+    expect(planInnerSvg(doc, storeyId, 50).inner).toContain('#b3261e'); // Neubau-Rot
+    // Ohne Status bleibt der Druck frei von Umbau-Farben (Golden-Verträglichkeit)
+    execute(doc, 'design.renovationSetzen', { ids: [wall2] });
+    expect(planInnerSvg(doc, storeyId, 50).inner).not.toContain('#b3261e');
+  });
+
+  it('IFC trägt Pset_KosmoUmbau; storey/assembly werden abgewiesen', async () => {
+    const { doc, storeyId, wall1 } = haus();
+    execute(doc, 'design.renovationSetzen', { ids: [wall1], status: 'neu' });
+    const { exportIfc } = await import('../src');
+    const ifc = exportIfc(doc, 'Umbau');
+    expect(ifc).toContain('Pset_KosmoUmbau');
+    expect(ifc).toContain("IFCLABEL('neu')");
+    expect(() => execute(doc, 'design.renovationSetzen', { ids: [storeyId], status: 'neu' })).toThrow(CommandError);
+  });
+});
+
 describe('Treppen-Ausbau (V2-A2)', () => {
   const basis = () => {
     const { doc, storeyId } = setupDoc(); // EG, 3000 hoch

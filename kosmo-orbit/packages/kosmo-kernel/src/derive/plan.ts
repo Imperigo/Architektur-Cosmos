@@ -86,9 +86,12 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     .byKind<Wall>('wall')
     .filter((w) => w.storeyId === storeyId);
 
-  // Schichten sammeln: tragend gruppiert nach Material (Join), Rest pro Wand
+  // Schichten sammeln: tragend gruppiert nach Material (Join), Rest pro Wand.
+  // Join-Schlüssel enthält den Umbau-Status: Neu vereinigt sich nur mit Neu,
+  // Bestand mit Bestand — Abbruch bleibt pro Wand (Kreuz je Bauteil).
   const coreByMaterial = new Map<string, Poly[]>();
-  const otherLayers: { material: string; fn: string; polys: Poly[] }[] = [];
+  const otherLayers: { material: string; fn: string; ren?: string; polys: Poly[] }[] = [];
+  const renClasses = (ren?: string): string[] => (ren ? [`renovation-${ren}`] : []);
 
   const phase = doc.settings.phase;
   for (const wall of walls) {
@@ -99,25 +102,56 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       (r) => r.z0 < storey.cutHeight && r.z1 > storey.cutHeight,
     );
     const strips = rects.map((r) => openingStrip(wall, assembly, r.s0, r.s1));
+    const ren = wall.meta?.renovation;
 
-    if (phase === 'vorprojekt') {
+    if (ren === 'abbruch') {
+      // Abbruch (SIA-Umbau-Lesart): EIN Poché über die Gesamtdicke — die
+      // Schichten sind egal, es kommt weg. Nicht vereinigt, Kreuz je Teilfläche.
+      const outline = wallOutline(wall, assembly);
+      const cutPolys: Poly[] = strips.length > 0 ? difference([outline], strips) : [outline];
+      const material = assembly.layers.find((l) => l.function === 'tragend')?.material ?? 'masse';
+      if (cutPolys.length > 0) {
+        regions.push({
+          rings: groupRings(cutPolys.map((p) => [...p])),
+          classes: ['cut', 'tragend', `material-${material}`, 'renovation-abbruch'],
+        });
+      }
+      for (const ring of cutPolys) {
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        for (const p of ring) {
+          x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y);
+          x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y);
+        }
+        if (x0 === Infinity) continue;
+        const kreuz = ['symbol', 'abbruch-kreuz', 'renovation-abbruch'];
+        lines.push({ a: { x: x0, y: y0 }, b: { x: x1, y: y1 }, classes: kreuz });
+        lines.push({ a: { x: x0, y: y1 }, b: { x: x1, y: y0 }, classes: kreuz });
+      }
+    } else if (phase === 'vorprojekt') {
       // Vorprojekt (SIA 31): Wand als EIN Poché über die Gesamtdicke — keine Schichten
       const outline = wallOutline(wall, assembly);
       const cutPolys: Poly[] = strips.length > 0 ? difference([outline], strips) : [outline];
-      const arr = coreByMaterial.get('masse') ?? [];
+      const key = `masse|${ren ?? ''}`;
+      const arr = coreByMaterial.get(key) ?? [];
       arr.push(...cutPolys);
-      coreByMaterial.set('masse', arr);
+      coreByMaterial.set(key, arr);
     } else {
       for (const layer of wallLayerOutlines(wall, assembly)) {
         const meta = assembly.layers.find((l) => l.material === layer.material);
         const cutPolys: Poly[] =
           strips.length > 0 ? difference([layer.outline], strips) : [layer.outline];
         if (meta?.function === 'tragend') {
-          const arr = coreByMaterial.get(layer.material) ?? [];
+          const key = `${layer.material}|${ren ?? ''}`;
+          const arr = coreByMaterial.get(key) ?? [];
           arr.push(...cutPolys);
-          coreByMaterial.set(layer.material, arr);
+          coreByMaterial.set(key, arr);
         } else if (meta) {
-          otherLayers.push({ material: layer.material, fn: meta.function, polys: cutPolys });
+          otherLayers.push({
+            material: layer.material,
+            fn: meta.function,
+            ...(ren ? { ren } : {}),
+            polys: cutPolys,
+          });
         }
       }
     }
@@ -134,20 +168,22 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       });
       const L = assemblyD.offsetLeft;
       const R = -assemblyD.offsetRight;
+      // Öffnungs-Symbole erben den Umbau-Status ihrer Wand oder tragen ihren eigenen
+      const oRen = renClasses(o.meta?.renovation ?? ren);
       // Leibungslinien quer zur Wand
-      lines.push({ a: at(r.s0, L), b: at(r.s0, R), classes: ['symbol', 'leibung'] });
-      lines.push({ a: at(r.s1, L), b: at(r.s1, R), classes: ['symbol', 'leibung'] });
+      lines.push({ a: at(r.s0, L), b: at(r.s0, R), classes: ['symbol', 'leibung', ...oRen] });
+      lines.push({ a: at(r.s1, L), b: at(r.s1, R), classes: ['symbol', 'leibung', ...oRen] });
       if (phase === 'vorprojekt') {
         // Vorprojekt: Öffnung als Aussparung — Fenster mit EINER Glaslinie, Tür ohne Symbol
         if (o.openingType === 'fenster') {
           const mid = (L + R) / 2;
-          lines.push({ a: at(r.s0, mid), b: at(r.s1, mid), classes: ['symbol', 'fenster'] });
+          lines.push({ a: at(r.s0, mid), b: at(r.s1, mid), classes: ['symbol', 'fenster', ...oRen] });
         }
       } else if (o.openingType === 'fenster') {
         // Fenstersymbol: zwei feine Linien (Glasebene) in Wandmitte
         const mid = (L + R) / 2;
-        lines.push({ a: at(r.s0, mid - 25), b: at(r.s1, mid - 25), classes: ['symbol', 'fenster'] });
-        lines.push({ a: at(r.s0, mid + 25), b: at(r.s1, mid + 25), classes: ['symbol', 'fenster'] });
+        lines.push({ a: at(r.s0, mid - 25), b: at(r.s1, mid - 25), classes: ['symbol', 'fenster', ...oRen] });
+        lines.push({ a: at(r.s0, mid + 25), b: at(r.s1, mid + 25), classes: ['symbol', 'fenster', ...oRen] });
       } else {
         // Türsymbol: Flügel senkrecht zur Wand + 90°-Schwenkbogen
         const width = r.s1 - r.s0;
@@ -157,7 +193,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
           x: Math.round(hingePt.x + n.x * width),
           y: Math.round(hingePt.y + n.y * width),
         };
-        lines.push({ a: hingePt, b: leafEnd, classes: ['symbol', 'tuer'] });
+        lines.push({ a: hingePt, b: leafEnd, classes: ['symbol', 'tuer', ...oRen] });
         const normalAngle = Math.atan2(n.y, n.x);
         const towardOpening = o.swing === 'rechts' ? Math.atan2(-d.y, -d.x) : Math.atan2(d.y, d.x);
         arcs.push({
@@ -165,26 +201,27 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
           radius: width,
           startAngle: Math.min(normalAngle, towardOpening),
           endAngle: Math.max(normalAngle, towardOpening),
-          classes: ['symbol', 'tuer-bogen'],
+          classes: ['symbol', 'tuer-bogen', ...oRen],
         });
       }
     }
   }
 
-  // Join: tragende Schichten gleichen Materials vereinigen
-  for (const [material, polys] of coreByMaterial) {
+  // Join: tragende Schichten gleichen Materials UND gleichen Umbau-Status vereinigen
+  for (const [key, polys] of coreByMaterial) {
     const merged = union(polys as Poly[]);
     if (merged.length === 0) continue;
+    const [material, ren] = key.split('|');
     regions.push({
       rings: groupRings(merged),
-      classes: ['cut', 'tragend', `material-${material}`],
+      classes: ['cut', 'tragend', `material-${material}`, ...renClasses(ren || undefined)],
     });
   }
   for (const layer of otherLayers) {
     if (layer.polys.length === 0) continue;
     regions.push({
       rings: groupRings(layer.polys.map((p) => [...p])),
-      classes: ['cut', layer.fn, `material-${layer.material}`],
+      classes: ['cut', layer.fn, `material-${layer.material}`, ...renClasses(layer.ren)],
     });
   }
 

@@ -428,6 +428,36 @@ export const setProperty = registerCommand({
   },
 });
 
+export const setRenovation = registerCommand({
+  id: 'design.renovationSetzen',
+  title: 'Umbau-Status setzen',
+  description:
+    'Setzt den Umbau-Status auf Elemente (Umbau-Pläne nach SIA 400: Bestand schwarz, Neubau rot, Abbruch gelb mit Kreuz). status weglassen = Status entfernen (Element gilt wieder als normal).',
+  params: z.object({
+    ids: z.array(z.string()).min(1).describe('Element-IDs'),
+    status: z.enum(['bestand', 'neu', 'abbruch']).optional(),
+  }),
+  summarize: (p) =>
+    p.status
+      ? `${p.ids.length} Element(e) → ${p.status}`
+      : `Umbau-Status entfernt (${p.ids.length} Element(e))`,
+  run: (doc, p) => {
+    const patches: AnyPatch[] = [];
+    for (const id of p.ids) {
+      const e = doc.get(id);
+      if (!e) throw new CommandError(`Element «${id}» existiert nicht`);
+      if (e.kind === 'storey' || e.kind === 'assembly' || e.kind === 'sheet') {
+        throw new CommandError(`Umbau-Status gilt für Bauteile, nicht für ${e.kind}`);
+      }
+      const meta = { ...e.meta };
+      if (p.status) meta.renovation = p.status;
+      else delete meta.renovation;
+      patches.push({ id: e.id, before: e, after: { ...e, meta } as typeof e });
+    }
+    return patches;
+  },
+});
+
 export const createStair = registerCommand({
   id: 'design.treppeErstellen',
   title: 'Treppe erstellen',

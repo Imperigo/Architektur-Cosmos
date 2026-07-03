@@ -1398,3 +1398,31 @@ test('Kosmo fährt die Kette per Sprache: stapeln über den Chat (Mock-Provider)
     .poll(() => page.evaluate(() => window.__kosmo.state().doc.storeysOrdered().length))
     .toBe(vorher + 2);
 });
+
+test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb mit Kreuz', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aufbau = k.run('design.aufbauErstellen', {
+      name: 'AW Umbau', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    const w = k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: aufbau.patches[0].id,
+      a: { x: 0, y: 0 }, b: { x: 6000, y: 0 },
+    });
+    st.select([w.patches[0].id]);
+  });
+  await page.selectOption('[data-testid="inspector-renovation"]', 'abbruch');
+  await expect(page.locator('path.renovation-abbruch')).toHaveCount(1);
+  await expect(page.locator('line.abbruch-kreuz')).toHaveCount(2);
+  // Umschalten auf Neubau: Kreuz weg, rote Region da
+  await page.selectOption('[data-testid="inspector-renovation"]', 'neu');
+  await expect(page.locator('line.abbruch-kreuz')).toHaveCount(0);
+  await expect(page.locator('path.renovation-neu')).toHaveCount(1);
+});

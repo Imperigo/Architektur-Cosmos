@@ -136,6 +136,14 @@ export function exportIfc(doc: KosmoDoc, projectName?: string): string {
     return m;
   };
 
+  // Umbau-Status als PropertySet (SIA-Umbau: Bestand/Neu/Abbruch)
+  const renovationPset = (elementId: string, ren?: string): void => {
+    if (!ren) return;
+    const prop = w.add('IFCPROPERTYSINGLEVALUE', `'Renovation',$,IFCLABEL(${str(ren)}),$`);
+    const pset = w.add('IFCPROPERTYSET', `'${newGuid()}',$,'Pset_KosmoUmbau',$,${list([prop])}`);
+    w.add('IFCRELDEFINESBYPROPERTIES', `'${newGuid()}',$,$,$,${list([elementId])},${pset}`);
+  };
+
   // Wände (+ Öffnungs-Voids)
   for (const wall of doc.byKind<Wall>('wall')) {
     const storey = storeyIfc.get(wall.storeyId);
@@ -173,6 +181,7 @@ export function exportIfc(doc: KosmoDoc, projectName?: string): string {
       `'${newGuid()}',$,${str(wall.meta?.name ?? 'Wand')},$,$,${place},${bodyShape(solid)},$,.SOLIDWALL.`,
     );
     storey.elements.push(wallId);
+    renovationPset(wallId, wall.meta?.renovation);
 
     const core = assembly.layers.find((l) => l.function === 'tragend') ?? assembly.layers[0];
     if (core) {
@@ -199,6 +208,7 @@ export function exportIfc(doc: KosmoDoc, projectName?: string): string {
         `'${newGuid()}',$,${str(r.opening.openingType === 'tuer' ? 'Tür' : 'Fenster')},$,$,${oPlace},${bodyShape(oSolid)},$,.OPENING.`,
       );
       w.add('IFCRELVOIDSELEMENT', `'${newGuid()}',$,$,$,${wallId},${opening}`);
+      renovationPset(opening, r.opening.meta?.renovation);
     }
   }
 
@@ -213,6 +223,7 @@ export function exportIfc(doc: KosmoDoc, projectName?: string): string {
       `'${newGuid()}',$,${str(slab.meta?.name ?? 'Decke')},$,$,${place},${bodyShape(solid)},$,.FLOOR.`,
     );
     storey.elements.push(slabId);
+    renovationPset(slabId, slab.meta?.renovation);
   }
 
   // Zonen als IfcSpace
