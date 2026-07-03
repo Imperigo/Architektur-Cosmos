@@ -35,6 +35,24 @@ python3 wissen/tools/ocr-lehrhefte.py <Dateiname-Teil>
 python3 wissen/tools/projektwissen.py
 ```
 
+## Korpora-Bilanz (03.07.2026)
+
+| Sammlung | Quellen | Chunks | Herkunft |
+|---|---|---|---|
+| lehrhefte | 24 | 1'256 | Hochbauzeichner-Lehrmittel (OCR) |
+| normen | 141 | 5'809 | SIA/bfu/eBKP-Bibliothek (OneDrive Paket 1) |
+| persona | 17 | 124 | Golden Rules Andrin (Paket 2) |
+| vorlesungen | 567 | 12'731 | HSLU Theorie + ETH (Paket 3, Textlayer; Handschrift-ZFs ohne OCR) |
+| buecher | 147 | 22'883 | Digitale Bibliothek (Paket 4, Streaming: laden→extrahieren→löschen) |
+| briefings | 8 | 172 | KosmoDraw-Briefings |
+| projektwissen | 11 | 68 | kosmo-orbit/docs + ROADMAP |
+
+**Bewusst ausgelassen (HomeStation-Backlog):** 7 Über-250-MB-Scans (Baustoff-,
+Glasbau-, Stahlbau-, Sanierung-Atlas, Eine Muster Sprache, Löfgren, FS-08-Reader)
+und die GoodNotes-Handschrift-Zusammenfassungen — beides braucht OCR-Zeit auf
+der 5090, Auftrag in `kosmo-orbit/docs/HOMESTATION-AUFTRAG.md` festhalten.
+Quell-PDFs bleiben in OneDrive; ins Git wandern nur Vault-Markdown + JSONL.
+
 ## Ehrliche Grenzen
 
 - Die Hefte sind **gescannt und relativ alt** (Owner: «besser als nix») —
