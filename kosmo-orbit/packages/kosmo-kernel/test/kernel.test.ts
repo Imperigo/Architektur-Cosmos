@@ -2343,7 +2343,8 @@ describe('Zonentüren (Graph wird ehrlich)', () => {
       outline: [{ x: 20000, y: 0 }, { x: 29000, y: 0 }, { x: 29000, y: 8000 }, { x: 20000, y: 8000 }],
     });
     execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
-    expect(doc.byKind('zonentuer')).toHaveLength(1 + 3);
+    // v1 ohne Flur: Wohnungstür, Bad, Wohnen + Zimmer-Tür (Review-Fix 3)
+    expect(doc.byKind('zonentuer')).toHaveLength(1 + 4);
   });
 });
 
@@ -2669,5 +2670,83 @@ describe('Härte (Abendbatch D)', () => {
     expect(zaehl('IFCSPACE')).toBe(doc.byKind('zone').length);
     expect(zaehl('IFCRELVOIDSELEMENT')).toBe(doc.byKind('opening').length);
     expect(zaehl('IFCFURNISHINGELEMENT')).toBe(doc.byKind('furniture').length);
+  });
+});
+
+describe('Review-Fixes (Adversarial-Runde)', () => {
+  it('Fix 2: Stapeln landet auf der obersten Kante, nicht auf bestehenden OGs', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    execute(doc, 'design.geschossErstellen', { name: '1.OG', index: 1, elevation: 3000, height: 2800 });
+    execute(doc, 'design.geschossKopieren', { storeyId: (eg.patches[0] as { id: string }).id, anzahl: 1 });
+    const oben = (doc.storeysOrdered() as Storey[])[2]!;
+    expect(oben.elevation).toBe(5800); // 3000 + 2800, NICHT 3000
+  });
+
+  it('Fix 3: v1 ohne Flur — kein Raum türlos (6×6-Minimalwohnung)', () => {
+    const g = generiereGrundriss(
+      [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 6000 }, { x: 0, y: 6000 }],
+      'unten',
+    );
+    // Wohnungstür, Bad, Wohnen + Küchen-Anschluss oder ehrliche Diagnose
+    expect(g.tueren.length >= 4 || g.diagnose.some((d) => d.includes('Küche ohne Türanschluss'))).toBe(true);
+  });
+
+  it('Fix 4: Fenster stanzen respektiert Türen und Wandränder; Modul-Elemente validiert', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    execute(doc, 'design.waendeAusZonen', { storeyId });
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Eng', breite: 1500, hoehe: 3000,
+      elemente: [{ x: 150, y: 900, b: 1200, h: 1600, typ: 'fenster' }],
+    });
+    execute(doc, 'design.fensterAusModulen', { storeyId, modul: null });
+    // Keine zwei Öffnungen derselben Wand überlappen sich
+    for (const wand of doc.byKind<Wall>('wall')) {
+      const oeffnungen = doc.openingsOf(wand.id) as import('../src').Opening[];
+      const intervalle = oeffnungen.map((o) => [o.center - o.width / 2, o.center + o.width / 2]).sort((a, b) => a[0]! - b[0]!);
+      for (let i = 1; i < intervalle.length; i++) {
+        expect(intervalle[i]![0]!).toBeGreaterThanOrEqual(intervalle[i - 1]![1]!);
+      }
+    }
+    expect(() =>
+      execute(doc, 'design.modulSpeichern', {
+        name: 'Kaputt', breite: 1000, hoehe: 3000,
+        elemente: [{ x: 500, y: 0, b: 800, h: 1000, typ: 'fenster' }],
+      }),
+    ).toThrow(/ragt aus dem Modul/);
+  });
+
+  it('Fix 5+8: exakt passende letzte Wohnung wird geschnitten; Vorlage nimmt Türen mit', () => {
+    // Fix 5
+    const erg = segmentiere(
+      [{ x: 0, y: 0 }, { x: 9000, y: 0 }, { x: 9000, y: 14000 }, { x: 0, y: 14000 }],
+      [{ x: 0, y: 6000 }, { x: 9000, y: 6000 }, { x: 9000, y: 8000 }, { x: 0, y: 8000 }],
+      [{ typ: 'alterswohnen', groesse: 36, anzahl: 2 }],
+      { minBreite: 4500 },
+    );
+    expect(erg.wohnungen.filter((w) => w.typ === 'alterswohnen').length).toBeGreaterThanOrEqual(2);
+    // Fix 8
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    const raumIds = doc.byKind<Zone>('zone').filter((z) => z.raumTyp).map((z) => z.id);
+    execute(doc, 'design.vorlageSpeichern', { name: '3.5zi preisguenstig', zoneIds: raumIds });
+    expect(doc.settings.vorlagen[0]!.tueren!.length).toBeGreaterThanOrEqual(7);
+    execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: '3.5zi preisguenstig', at: { x: 30000, y: 0 }, breite: null, hoehe: null, spiegeln: false,
+    });
+    expect(doc.byKind<import('../src').ZonenTuer>('zonentuer').filter((t) => t.at.x >= 30000).length).toBeGreaterThanOrEqual(7);
   });
 });

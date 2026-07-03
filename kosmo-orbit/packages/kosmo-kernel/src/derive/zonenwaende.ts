@@ -102,9 +102,10 @@ export function zonenZuWaenden(doc: KosmoDoc, storeyId: string): ZonenWaende {
     const alle = segmente(zonen, horizontal, horizontal ? diagnose : []);
     const proLage = new Map<number, Seg[]>();
     for (const s of alle) {
-      const liste = proLage.get(s.fix) ?? [];
-      liste.push(s);
-      proLage.set(s.fix, liste);
+      const lage = Math.round(s.fix); // 1-ULP-Zwillinge derselben Achslage vereinen
+      const liste = proLage.get(lage) ?? [];
+      liste.push({ ...s, fix: lage });
+      proLage.set(lage, liste);
     }
     for (const [fix, segs] of proLage) {
       for (const run of laeufe(segs)) {

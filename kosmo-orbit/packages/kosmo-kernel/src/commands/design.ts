@@ -560,13 +560,17 @@ export const copyStorey = registerCommand({
   run: (doc, p) => {
     const quelle = require<Storey>(doc, p.storeyId, 'storey');
     const patches: AnyPatch[] = [];
-    const maxIndex = Math.max(...(doc.storeysOrdered() as Storey[]).map((s2) => s2.index));
+    const alleGeschosse = doc.storeysOrdered() as Storey[];
+    const maxIndex = Math.max(...alleGeschosse.map((s2) => s2.index));
+    // Auf der OBERSTEN Kante stapeln — nicht relativ zur Quelle (sonst
+    // kollidieren Kopien mit bestehenden Obergeschossen)
+    const maxTop = Math.max(...alleGeschosse.map((s2) => s2.elevation + s2.height));
     for (let n = 1; n <= p.anzahl; n++) {
       const index = maxIndex + n;
       const storey: Storey = {
         id: newId('geschoss'), kind: 'storey',
         name: `${index}.OG`, index,
-        elevation: quelle.elevation + n * quelle.height,
+        elevation: maxTop + (n - 1) * quelle.height,
         height: quelle.height, cutHeight: quelle.cutHeight,
       };
       patches.push(added(storey));
@@ -623,13 +627,25 @@ export const windowsFromModules = registerCommand({
       if (asm?.kind !== 'assembly' || !asm.name.toUpperCase().startsWith('AW')) continue;
       const laenge = Math.hypot(w.b.x - w.a.x, w.b.y - w.a.y);
       const spalten = Math.floor(laenge / modul.breite);
+      // Bestehende Öffnungen (z.B. Wohnungstüren) blockieren ihr Intervall
+      const belegt: [number, number][] = doc
+        .openingsOf(w.id)
+        .map((o) => {
+          const op = o as import('../model/entities').Opening;
+          return [op.center - op.width / 2, op.center + op.width / 2] as [number, number];
+        });
       for (let c = 0; c < spalten; c++) {
         for (const el of fenster) {
+          const center = Math.round(c * modul.breite + el.x + el.b / 2);
+          const von = center - el.b / 2;
+          const bis = center + el.b / 2;
+          if (von < 0 || bis > laenge) continue;
+          if (belegt.some(([a2, b2]) => von < b2 && bis > a2)) continue; // Tür o.ä. im Weg
+          belegt.push([von, bis]);
           patches.push(added({
             id: newId('oeffnung'), kind: 'opening' as const, wallId: w.id,
             openingType: 'fenster' as const,
-            center: Math.round(c * modul.breite + el.x + el.b / 2),
-            width: el.b, height: el.h, sill: el.y,
+            center, width: el.b, height: el.h, sill: el.y,
           }));
         }
       }
@@ -750,6 +766,13 @@ export const saveFacadeModule = registerCommand({
   }),
   summarize: (p) => `Modul «${p.name}» (${p.elemente.length} Elemente)`,
   run: (doc, p) => {
+    for (const e of p.elemente) {
+      if (e.x < 0 || e.y < 0 || e.x + e.b > p.breite || e.y + e.h > p.hoehe) {
+        throw new CommandError(
+          `Element (${e.x}/${e.y}, ${e.b}×${e.h}) ragt aus dem Modul ${p.breite}×${p.hoehe}`,
+        );
+      }
+    }
     const rest = doc.settings.fassadenModule.filter((m) => m.name !== p.name);
     const neu2 = p.elemente.length > 0 || !doc.settings.fassadenModule.some((m) => m.name === p.name)
       ? [...rest, { name: p.name, breite: p.breite, hoehe: p.hoehe, elemente: p.elemente }]
@@ -872,6 +895,12 @@ export const generateFloorplan = registerCommand({
             typ: m.typ, at: tx(m.at.x, m.at.y), rotationGrad: moebelRot(m.rotationGrad),
           }));
         }
+        for (const t of v.tueren ?? []) {
+          patches.push(added({
+            id: newId('tuer'), kind: 'zonentuer' as const, storeyId: wohnung.storeyId,
+            at: tx(t.at.x, t.at.y), breite: t.breite,
+          }));
+        }
         return patches;
       }
     }
@@ -943,6 +972,10 @@ export const saveTemplate = registerCommand({
       .byKind<Furniture>('furniture')
       .filter((f) => f.storeyId === storeyId && f.at.x >= minX && f.at.x <= maxX && f.at.y >= minY && f.at.y <= maxY)
       .map((f) => ({ typ: f.typ, at: { x: f.at.x - minX, y: f.at.y - minY }, rotationGrad: f.rotationGrad }));
+    const tueren = doc
+      .byKind<import('../model/entities').ZonenTuer>('zonentuer')
+      .filter((t) => t.storeyId === storeyId && t.at.x >= minX && t.at.x <= maxX && t.at.y >= minY && t.at.y <= maxY)
+      .map((t) => ({ at: { x: t.at.x - minX, y: t.at.y - minY }, breite: t.breite }));
     const vorlage = {
       name: p.name,
       breite: maxX - minX,
@@ -954,6 +987,7 @@ export const saveTemplate = registerCommand({
         ...(z.raumTyp ? { raumTyp: z.raumTyp } : {}),
       })),
       ...(moebel.length > 0 ? { moebel } : {}),
+      ...(tueren.length > 0 ? { tueren } : {}),
     };
     const after = {
       ...doc.settings,
@@ -1007,6 +1041,13 @@ export const placeTemplate = registerCommand({
         id: newId('moebel'), kind: 'furniture' as const, storeyId: p.storeyId,
         typ: m.typ, at: { x: Math.round(p.at.x + u(m.at.x) * sx), y: Math.round(p.at.y + m.at.y * sy) },
         rotationGrad: p.spiegeln ? ((360 - m.rotationGrad) % 360) : m.rotationGrad,
+      }));
+    }
+    for (const t of vorlage.tueren ?? []) {
+      patches.push(added({
+        id: newId('tuer'), kind: 'zonentuer' as const, storeyId: p.storeyId,
+        at: { x: Math.round(p.at.x + u(t.at.x) * sx), y: Math.round(p.at.y + t.at.y * sy) },
+        breite: t.breite,
       }));
     }
     return patches;

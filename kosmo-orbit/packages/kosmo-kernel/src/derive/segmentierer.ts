@@ -147,7 +147,7 @@ function schneideBand(
   // Greedy nach offenem Bedarf: der Typ mit den meisten fehlenden Wohnungen
   // zuerst (Gleichstand → grössere Wohnung) — verteilt den Mix über die
   // Bänder, statt dass ein Typ das erste Band füllt.
-  while (s < band.laenge - minBreite && kandidaten.some((k) => offenerBedarf.get(k.typ)!.rest > 0)) {
+  while (s + minBreite <= band.laenge && kandidaten.some((k) => offenerBedarf.get(k.typ)!.rest > 0)) {
     let bester: { typ: string; breite: number; groesse: number } | null = null;
     for (const k of kandidaten) {
       if (offenerBedarf.get(k.typ)!.rest <= 0) continue;

@@ -49,10 +49,9 @@ export function fassadenModule(doc: KosmoDoc, storeyId: string, modB: number, mo
         : undefined;
       const b2 = gezeichnet?.breite ?? modB;
       const h2 = gezeichnet?.hoehe ?? modH;
-      if (laenge < b2) continue;
-      const rows = Math.max(1, Math.floor(m.height / h2));
+      const rows = Math.floor(m.height / h2);
       const spalten = Math.floor(laenge / b2);
-      const rest = laenge - spalten * b2;
+      const rest = laenge - spalten * b2; // kurze Kante: 0 Module, alles Passstück
       zeilen.push({
         koerper: name,
         massId: m.id,

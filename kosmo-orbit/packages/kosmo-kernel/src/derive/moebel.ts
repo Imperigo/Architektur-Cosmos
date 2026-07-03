@@ -85,8 +85,19 @@ export function pruefeBewegungsflaechen(doc: KosmoDoc, storeyId: string): Moebel
     const g = moebelGeometrie(f);
     if (!g) continue;
     const poly = g.bewegung;
-    const getroffen = waende.some((w) =>
-      poly.some((p, i) => schneidet(p, poly[(i + 1) % poly.length]!, w.a, w.b)),
+    const drin = (p: Pt): boolean => {
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const a = poly[i]!;
+        const b = poly[j]!;
+        if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+      }
+      return inside;
+    };
+    const getroffen = waende.some(
+      (w) =>
+        poly.some((p, i) => schneidet(p, poly[(i + 1) % poly.length]!, w.a, w.b)) ||
+        drin(w.a) || drin(w.b) || drin({ x: (w.a.x + w.b.x) / 2, y: (w.a.y + w.b.y) / 2 }),
     );
     if (getroffen) {
       const t = moebelTyp(f.typ)!;

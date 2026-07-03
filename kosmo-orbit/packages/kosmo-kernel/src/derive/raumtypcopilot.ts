@@ -24,9 +24,17 @@ export function raumTypVorschlag(doc: KosmoDoc, zone: Zone): RaumTypVorschlag | 
   const kurz = Math.min(maxX - minX, maxY - minY);
   const lang = Math.max(maxX - minX, maxY - minY);
 
-  // Treppe in der Zone → Treppenhaus
-  const inZone = (p: { x: number; y: number }) =>
-    p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY;
+  // Treppe in der Zone → Treppenhaus (Polygon-Test, nicht BBox)
+  const inZone = (p: { x: number; y: number }): boolean => {
+    let inside = false;
+    const poly = zone.outline;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[i]!;
+      const b = poly[j]!;
+      if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+    }
+    return inside;
+  };
   for (const t of doc.byKind<Stair>('stair')) {
     if (t.storeyId === zone.storeyId && (inZone(t.a) || inZone(t.b))) {
       return { raumTyp: 'treppenhaus', grund: 'Treppe liegt in der Zone' };

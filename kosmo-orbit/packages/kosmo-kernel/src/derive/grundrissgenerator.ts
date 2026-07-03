@@ -75,7 +75,7 @@ export function generiereGrundriss(
     }
   };
   const rect = (u0: number, v0: number, u1: number, v1: number): Pt[] => {
-    const poly = [welt(u0, v0), welt(u1, v0), welt(u1, v1), welt(u0, v1)];
+    const poly = [welt(u0, v0), welt(u1, v0), welt(u1, v1), welt(u0, v1)].map(rund);
     let s = 0;
     for (let i = 0; i < poly.length; i++) {
       const a = poly[i]!;
@@ -150,9 +150,27 @@ export function generiereGrundriss(
       rotationGrad: gegenRot,
     });
   }
+  if (!mitFlur) {
+    // v1 ohne Flur: kein Raum darf türlos bleiben (Review-Befund 3)
+    const kuecheUeberlapp = Math.min(breite, wohnenB) - (dieleB + badB);
+    if (kuecheUeberlapp >= 900) {
+      // Küche ↔ Wohnen über die gemeinsame Kante v = EINGANG_TIEFE
+      tueren.push({ at: rund(welt(dieleB + badB + kuecheUeberlapp / 2, EINGANG_TIEFE)), breite: 900 });
+    } else {
+      diagnose.push('Küche ohne Türanschluss (Wohnen überlappt < 90 cm) — von Hand nachführen.');
+    }
+    if (zimmerZahl >= 1) {
+      // Wohnen → Zimmer 1, dann Kette Zimmer_i → Zimmer_{i+1} (Durchgangszimmer, ehrlich mit Tür)
+      const vMitte = wohnbandV + (tiefe - wohnbandV) / 2;
+      tueren.push({ at: rund(welt(wohnenB, vMitte)), breite: 800 });
+      for (let i = 1; i < zimmerZahl; i++) {
+        tueren.push({ at: rund(welt(wohnenB + i * zimmerB, vMitte)), breite: 800 });
+      }
+    }
+  }
   if (zimmerZahl === 0) diagnose.push('Zu schmal für separate Zimmer — nur Wohnen/Essen generiert.');
   if (zimmerZahl >= 2 && !mitFlur) {
-    diagnose.push('Zu flach für einen internen Flur — v1-Rezept, Zimmer 2+ als Durchgangszimmer.');
+    diagnose.push('Zu flach für einen internen Flur — v1-Rezept, Zimmer 2+ als Durchgangszimmer (mit Türen).');
   }
   diagnose.push(`${2.5 + zimmerZahl - 0.5}-Zimmer-Rezept: Eingangsband ${(EINGANG_TIEFE / 1000).toFixed(1)} m, ${zimmerZahl} Zimmer à ${(zimmerB / 1000).toFixed(1)} m.`);
   return { raeume, moebel, tueren, diagnose };

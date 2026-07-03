@@ -144,13 +144,23 @@ export function raumGraph(doc: KosmoDoc, storeyId: string): RaumGraph {
   // Kante erkannt wurde (Punktprobe beidseits der Tür).
   for (const t of doc.byKind<ZonenTuer>('zonentuer')) {
     if (t.storeyId !== storeyId) continue;
-    const treffer = zonen.filter((z) =>
-      [{ x: 300, y: 0 }, { x: -300, y: 0 }, { x: 0, y: 300 }, { x: 0, y: -300 }].some((d) =>
-        imPolygon({ x: t.at.x + d.x, y: t.at.y + d.y }, z.outline),
-      ),
-    );
-    if (treffer.length < 2) continue;
-    const [za, zb] = [treffer[0]!, treffer[1]!];
+    // Räume (mit Raumtyp) haben Vorrang vor Containern; die zwei Zonen
+    // müssen auf GEGENÜBERLIEGENDEN Seiten der Tür liegen
+    const findeZone = (p2: Pt): Zone | undefined =>
+      zonen.find((z) => z.raumTyp && imPolygon(p2, z.outline)) ??
+      zonen.find((z) => imPolygon(p2, z.outline));
+    let za: Zone | undefined;
+    let zb: Zone | undefined;
+    for (const d of [{ x: 300, y: 0 }, { x: 0, y: 300 }]) {
+      const plus = findeZone({ x: t.at.x + d.x, y: t.at.y + d.y });
+      const minus = findeZone({ x: t.at.x - d.x, y: t.at.y - d.y });
+      if (plus && minus && plus.id !== minus.id) {
+        za = plus;
+        zb = minus;
+        break;
+      }
+    }
+    if (!za || !zb) continue;
     const alt2 = kanten.findIndex(
       (k) => (k.a === za.id && k.b === zb.id) || (k.a === zb.id && k.b === za.id),
     );

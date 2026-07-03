@@ -122,6 +122,8 @@ export interface ZonenVorlage {
   }[];
   /** Möbel relativ zur BBox-Ecke (beim Speichern in der BBox eingesammelt). */
   moebel?: { typ: string; at: { x: number; y: number }; rotationGrad: number }[];
+  /** Zonentüren relativ zur BBox-Ecke (Review-Fix 8). */
+  tueren?: { at: { x: number; y: number }; breite: number }[];
 }
 
 /** Custom-Kennzahl (V2-F9): name = «Erstellungskosten», wert 3200, basis 'agf', einheit 'CHF'. */
