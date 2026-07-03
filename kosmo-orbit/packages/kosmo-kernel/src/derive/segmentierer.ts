@@ -56,6 +56,17 @@ export function sollMix(doc: KosmoDoc): WohnungsTypSoll[] {
 
 const RASTER = 250; // mm Schnittstations-Raster
 
+/** Wicklung normalisieren: signed area < 0 (cw) → umdrehen, sonst sind Flächen negativ. */
+function ccw(outline: Pt[]): Pt[] {
+  let s = 0;
+  for (let i = 0; i < outline.length; i++) {
+    const a = outline[i]!;
+    const b = outline[(i + 1) % outline.length]!;
+    s += a.x * b.y - b.x * a.y;
+  }
+  return s < 0 ? [...outline].reverse() : outline;
+}
+
 export interface SegmentierOptionen {
   /** Minimale Wohnungsbreite am Korridor (mm). */
   minBreite?: number;
@@ -157,7 +168,7 @@ function schneideBand(
     ].map((p) => ({ x: Math.round(p.x), y: Math.round(p.y) }));
     const flaeche = (bester.breite * tiefe) / 1e6;
     wohnungen.push({
-      outline,
+      outline: ccw(outline),
       flaeche: Math.round(flaeche * 10) / 10,
       typ: bester.typ,
       abweichung: Math.round((flaeche - bester.groesse) * 10) / 10,
@@ -177,7 +188,7 @@ function schneideBand(
       { x: a.x + band.n.x * tiefe, y: a.y + band.n.y * tiefe },
     ].map((p) => ({ x: Math.round(p.x), y: Math.round(p.y) }));
     wohnungen.push({
-      outline,
+      outline: ccw(outline),
       flaeche: Math.round(((band.laenge - s) * tiefe) / 1e5) / 10,
       typ: null,
       abweichung: null,

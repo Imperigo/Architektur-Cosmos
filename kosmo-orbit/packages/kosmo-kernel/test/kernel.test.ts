@@ -11,6 +11,7 @@ import { fluchtwege, raumGraph } from '../src/derive/raumgraph';
 import { ZONENREGEL_KATALOG } from '../src/model/zonenregeln';
 import { variantenMatrix } from '../src/derive/variantenmatrix';
 import { segmentiere, sollMix } from '../src/derive/segmentierer';
+import { polygonArea } from '../src/model/units';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
   KosmoDoc,
@@ -1878,5 +1879,30 @@ describe('Wohnungs-Segmentierer (V2-F5)', () => {
       posten: [{ typ: 'marktgerecht', hnfSoll: 285 }],
     });
     expect(sollMix(doc)).toEqual([{ typ: 'marktgerecht', groesse: 95, anzahl: 3 }]);
+  });
+});
+
+describe('Segmentierer-Politur: Wicklung + Check-Ausnahme', () => {
+  it('geschnittene Outlines sind gegen den Uhrzeigersinn (positive Fläche)', () => {
+    const erg = segmentiere(
+      [{ x: 0, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 14000 }, { x: 0, y: 14000 }],
+      [{ x: 0, y: 6000 }, { x: 30000, y: 6000 }, { x: 30000, y: 8000 }, { x: 0, y: 8000 }],
+      [{ typ: 'preisguenstig', groesse: 75, anzahl: 4 }],
+    );
+    for (const w of erg.wohnungen) {
+      expect(polygonArea(w.outline)).toBeGreaterThan(0);
+    }
+  });
+
+  it('Zonen mit program (Wohnungen) lösen keine Zimmer-Richtwerte aus', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg 1', sia: 'HNF', program: 'preisguenstig',
+      outline: [{ x: 0, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 1800 }, { x: 0, y: 1800 }],
+    });
+    const b = pruefeGrundriss(doc, storeyId).filter((x) => x.text.includes('Whg 1'));
+    expect(b).toHaveLength(0);
   });
 });

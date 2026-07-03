@@ -64,6 +64,9 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (z.storeyId !== storeyId) continue;
     const b = minBreite(z.outline);
     const flaeche = polygonArea(z.outline) / 1e6;
+    // Programm-Zonen (Wohnungs-Aggregate aus Liste/Segmentierer) sind keine
+    // Zimmer — Richtwerte gelten für Räume, nicht für ganze Wohnungen
+    if (z.program) continue;
     const regel = z.raumTyp ? regeln.find((r) => r.raumTyp === z.raumTyp) : undefined;
     if (regel) {
       if (regel.minBreite !== null && b < regel.minBreite) {
