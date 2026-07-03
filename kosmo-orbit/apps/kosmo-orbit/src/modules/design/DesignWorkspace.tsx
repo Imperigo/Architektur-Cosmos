@@ -21,7 +21,7 @@ import {
   type Zone,
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
-import { Viewport3D, type ViewportHandlers } from './Viewport3D';
+import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
 import { DrawPanel } from './DrawPanel';
@@ -1143,6 +1143,11 @@ function FassadenModulSektion() {
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const [modB, setModB] = useState(2500);
   const [modH, setModH] = useState(3000);
+  const [im3d, setIm3d] = useState(false);
+  useEffect(() => {
+    setModulRaster(im3d ? { b: modB, h: modH } : null);
+    return () => setModulRaster(null);
+  }, [im3d, modB, modH]);
   const doc = useProject.getState().doc;
   const studie = useMemo(
     () => (activeStoreyId ? fassadenModule(doc, activeStoreyId, modB, modH) : null),
@@ -1163,6 +1168,9 @@ function FassadenModulSektion() {
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <span style={{ fontWeight: 600, fontSize: 12 }}>Fassaden-Module</span>
         <div style={{ flex: 1 }} />
+        <KButton size="sm" tone={im3d ? 'accent' : 'quiet'} data-testid="module-3d" onClick={() => setIm3d(!im3d)}>
+          Im 3D
+        </KButton>
         <KButton size="sm" tone="quiet" data-testid="module-csv" onClick={csvLaden}>
           CSV
         </KButton>

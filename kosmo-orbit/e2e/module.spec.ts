@@ -1074,3 +1074,29 @@ test('CH-Standort (V2-V4): Suche (gemockt) → Standort gesetzt → Parzelle als
   const zone = await page.evaluate(() => window.__kosmo.state().doc.byKind('zone')[0]);
   expect(zone.name).toContain('Parzelle');
 });
+
+test('Modulraster im 3D (V7-Ausbau): Toggle aktiviert das Fassaden-Overlay', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Parzelle', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 40000, y: 0 }, { x: 40000, y: 30000 }, { x: 0, y: 30000 }],
+    });
+    k.run('design.volumenErstellen', {
+      storeyId: st.activeStoreyId, height: 12000,
+      outline: [{ x: 0, y: 0 }, { x: 20000, y: 0 }, { x: 20000, y: 12000 }, { x: 0, y: 12000 }],
+    });
+  });
+  await page.click('[data-testid="studie-toggle"]');
+  await page.click('[data-testid="module-3d"]');
+  // Overlay rendert ohne Fehler; Ausschalten räumt auf
+  await page.evaluate(() => window.__kosmoViewport.renderOnce());
+  await page.click('[data-testid="module-3d"]');
+  await page.evaluate(() => window.__kosmoViewport.renderOnce());
+  await expect(page.locator('[data-testid="module-bilanz"]')).toContainText('Wiederholung');
+});

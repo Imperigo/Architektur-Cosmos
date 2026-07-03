@@ -33,6 +33,14 @@ export function setSunDate(d: Date | null): void {
   sunRevision++;
 }
 
+// Fassaden-Modulraster (V7-Ausbau): sichtbar auf den MassBody-Fassaden
+let modulRaster: { b: number; h: number } | null = null;
+let modulRevision = 0;
+export function setModulRaster(r: { b: number; h: number } | null): void {
+  modulRaster = r;
+  modulRevision++;
+}
+
 // Splat-Kontext (Gaussian Splats der HomeStation: LingBot-Map/gsplat-Kette)
 let splatCloud: import('./splat-import').SplatCloud | null = null;
 let splatRevision = 0;
@@ -171,6 +179,50 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const model = new THREE.Group();
     model.scale.set(MM, MM, MM);
     scene.add(model);
+
+    const modulGroup = new THREE.Group();
+    scene.add(modulGroup);
+    let gezeichneteModulRevision = -1;
+    let modulDocRevision = -1;
+    function syncModulRaster() {
+      const { revision: rev, doc: d } = useProject.getState();
+      if (gezeichneteModulRevision === modulRevision && modulDocRevision === rev) return;
+      gezeichneteModulRevision = modulRevision;
+      modulDocRevision = rev;
+      modulGroup.clear();
+      if (!modulRaster) return;
+      const punkte: THREE.Vector3[] = [];
+      for (const m of d.byKind('mass') as import('@kosmo/kernel').MassBody[]) {
+        const st = d.get(m.storeyId);
+        const z0 = (st && st.kind === 'storey' ? st.elevation : 0) + m.baseOffset;
+        for (let i = 0; i < m.outline.length; i++) {
+          const a = m.outline[i]!;
+          const b = m.outline[(i + 1) % m.outline.length]!;
+          const len = Math.hypot(b.x - a.x, b.y - a.y);
+          if (len < modulRaster.b) continue;
+          const dx = (b.x - a.x) / len;
+          const dy = (b.y - a.y) / len;
+          // Vertikale Fugen ab Ecke (Eckenregel), horizontale je Modulhöhe
+          for (let sMm = modulRaster.b; sMm < len; sMm += modulRaster.b) {
+            const x = a.x + dx * sMm;
+            const y = a.y + dy * sMm;
+            punkte.push(new THREE.Vector3(x * MM, z0 * MM, -y * MM), new THREE.Vector3(x * MM, (z0 + m.height) * MM, -y * MM));
+          }
+          for (let hMm = modulRaster.h; hMm < m.height; hMm += modulRaster.h) {
+            punkte.push(
+              new THREE.Vector3(a.x * MM, (z0 + hMm) * MM, -a.y * MM),
+              new THREE.Vector3(b.x * MM, (z0 + hMm) * MM, -b.y * MM),
+            );
+          }
+        }
+      }
+      if (punkte.length > 0) {
+        const g = new THREE.BufferGeometry().setFromPoints(punkte);
+        modulGroup.add(
+          new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0x9a7b2d, transparent: true, opacity: 0.85 })),
+        );
+      }
+    }
 
     const previewGroup = new THREE.Group();
     previewGroup.scale.set(MM, MM, MM);
@@ -469,6 +521,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const renderFrame = () => {
       syncModel();
       syncPreview();
+      syncModulRaster();
       syncContext();
       syncSplats();
       syncGlb();
