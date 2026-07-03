@@ -321,3 +321,29 @@ test('Blatt-Pflege: Massstab ändern, Titel setzen, Text verschieben, Blatt lös
   await page.click('[data-testid^="blatt-entfernen-"]');
   await expect(page.getByText('Noch kein Blatt im Plansatz', { exact: false })).toBeVisible();
 });
+
+test('Aktionskette: «Haus» → EIN Paket → alle anwenden → EIN Undo', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.fill('[data-testid="kosmo-input"]', 'Bau mir ein kleines Haus');
+  await page.click('[data-testid="kosmo-send"]');
+  // EIN Paket mit 6 Schritten statt sechs Karten
+  await expect(page.locator('[data-testid="paket-card"]')).toHaveCount(1, { timeout: 15_000 });
+  await expect(page.locator('[data-testid="paket-card"] li')).toHaveCount(6);
+  await page.click('[data-testid="apply-paket"]');
+  // 4 Wände + Fenster (via $neu:0) + Dach stehen
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length))
+    .toBe(4);
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('opening').length)).toBe(1);
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('roof').length)).toBe(1);
+  // EIN Undo räumt das ganze Paket ab
+  await page.click('[data-testid="undo"]');
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBe(0);
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('roof').length)).toBe(0);
+});

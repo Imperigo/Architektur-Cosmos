@@ -195,6 +195,40 @@ export class MockProvider implements ChatProvider {
       yield { type: 'done', stopReason: 'tool_calls' };
       return;
     }
+    if (text.includes('haus')) {
+      yield { type: 'text', delta: 'Gerne — ich schlage ein 8×12-Haus mit Walmdach als ein Paket vor. ' };
+      const W = (i: number, a: { x: number; y: number }, b: { x: number; y: number }) => ({
+        type: 'tool_call' as const,
+        call: { id: `call_haus_${i}`, name: 'design_wandZeichnen', arguments: { a, b } },
+      });
+      yield W(0, { x: 0, y: 0 }, { x: 8000, y: 0 });
+      yield W(1, { x: 8000, y: 0 }, { x: 8000, y: 12000 });
+      yield W(2, { x: 8000, y: 12000 }, { x: 0, y: 12000 });
+      yield W(3, { x: 0, y: 12000 }, { x: 0, y: 0 });
+      yield {
+        type: 'tool_call',
+        call: {
+          id: 'call_haus_4',
+          name: 'design_oeffnungSetzen',
+          arguments: { wallId: '$neu:0', openingType: 'fenster', center: 4000, width: 1800, height: 1400, sill: 900 },
+        },
+      };
+      yield {
+        type: 'tool_call',
+        call: {
+          id: 'call_haus_5',
+          name: 'design_dachErstellen',
+          arguments: {
+            outline: [
+              { x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 12000 }, { x: 0, y: 12000 },
+            ],
+            pitch: 35,
+          },
+        },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
     const wall = text.match(
       /wand.*?von\s*\(?(-?\d+)[.,]?\s*(-?\d+)\)?\s*(?:nach|bis|zu)\s*\(?(-?\d+)[.,]?\s*(-?\d+)\)?/,
     );

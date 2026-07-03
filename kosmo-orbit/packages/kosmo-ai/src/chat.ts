@@ -22,6 +22,8 @@ export interface Proposal {
   commandId: string;
   params: unknown;
   summary: string;
+  /** Aktionskette: mehrere Schritte eines Zugs = EIN Paket (eine Karte, ein Undo). */
+  paket?: { id: string; index: number; groesse: number };
 }
 
 export interface SessionEvents {
@@ -105,6 +107,7 @@ export class ChatSession {
     if (toolCalls.length === 0) return;
 
     let needsContinue = false;
+    const schreibend: { callId: string; commandId: string; params: unknown; summary: string }[] = [];
     for (const call of toolCalls) {
       if (call.name === this.queryTool.name) {
         // Lesend → sofort ausführen
@@ -139,13 +142,21 @@ export class ChatSession {
         needsContinue = true;
         continue;
       }
-      // Schreibend → Vorschlag (gated)
-      this.pending.set(call.id, { ...validated, callId: call.id });
-      this.events.onProposal({
+      // Schreibend → Vorschlag (gated); mehrere im selben Zug = Aktionskette
+      schreibend.push({
         callId: call.id,
         commandId: validated.commandId,
         params: validated.params,
         summary: validated.summary,
+      });
+    }
+    const paketId = schreibend.length > 1 ? schreibend[0]!.callId : null;
+    for (let i = 0; i < schreibend.length; i++) {
+      const v = schreibend[i]!;
+      this.pending.set(v.callId, { commandId: v.commandId, params: v.params, summary: v.summary, ok: true, callId: v.callId });
+      this.events.onProposal({
+        ...v,
+        ...(paketId ? { paket: { id: paketId, index: i, groesse: schreibend.length } } : {}),
       });
     }
 

@@ -311,6 +311,64 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     void session.resolveRejected(card.callId);
   };
 
+  /** «$neu:N» in den Parametern durch die Id des N-ten Paket-Schritts ersetzen. */
+  const ersetzeNeuIds = (params: unknown, neuIds: string[]): unknown => {
+    if (typeof params === 'string') {
+      const m = params.match(/^\$neu:(\d+)$/);
+      return m ? (neuIds[Number(m[1])] ?? params) : params;
+    }
+    if (Array.isArray(params)) return params.map((x) => ersetzeNeuIds(x, neuIds));
+    if (params && typeof params === 'object') {
+      const out: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(params)) out[k] = ersetzeNeuIds(v, neuIds);
+      return out;
+    }
+    return params;
+  };
+
+  /** Aktionskette: alle Schritte in EINER Undo-Gruppe; Teilfehler rollen zurück. */
+  const applyPaket = async (paketId: string) => {
+    const schritte = cards
+      .filter((c) => c.paket?.id === paketId && c.state === 'offen')
+      .sort((a, b) => (a.paket!.index ?? 0) - (b.paket!.index ?? 0));
+    if (schritte.length === 0) return;
+    const { history, undo } = useProject.getState();
+    const neuIds: string[] = [];
+    const ergebnisse: string[] = [];
+    history.beginGroup();
+    let fehler: string | null = null;
+    try {
+      for (const schritt of schritte) {
+        const params = ersetzeNeuIds(schritt.params, neuIds);
+        const result = runCommand(schritt.commandId, params, { actor: 'kosmo' });
+        neuIds.push((result.patches[0] as { id?: string } | undefined)?.id ?? '');
+        ergebnisse.push(result.summary);
+      }
+    } catch (err) {
+      fehler = err instanceof Error ? err.message : String(err);
+    } finally {
+      history.endGroup();
+    }
+    if (fehler) {
+      undo(); // Teilstand zurückrollen — Paket ist atomar
+      setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'abgelehnt' } : x)));
+      for (const schritt of schritte) {
+        await session.resolveRejected(schritt.callId, `Paket abgebrochen: ${fehler}`);
+      }
+      return;
+    }
+    setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'angewendet' } : x)));
+    for (let i = 0; i < schritte.length; i++) {
+      await session.resolveApplied(schritte[i]!.callId, ergebnisse[i]!);
+    }
+  };
+
+  const rejectPaket = async (paketId: string) => {
+    const schritte = cards.filter((c) => c.paket?.id === paketId && c.state === 'offen');
+    setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'abgelehnt' } : x)));
+    for (const schritt of schritte) await session.resolveRejected(schritt.callId);
+  };
+
   return (
     <aside
       data-testid="kosmo-panel"
@@ -464,8 +522,52 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           </div>
         ))}
 
+        {/* Aktionsketten: ein Paket = eine Karte */}
+        {[...new Set(cards.filter((c) => c.paket && c.state !== 'abgelehnt').map((c) => c.paket!.id))].map((pid) => {
+          const schritte = cards
+            .filter((c) => c.paket?.id === pid && c.state !== 'abgelehnt')
+            .sort((a, b) => a.paket!.index - b.paket!.index);
+          if (schritte.length === 0) return null;
+          const offen = schritte.some((c) => c.state === 'offen');
+          return (
+            <div
+              key={pid}
+              data-testid="paket-card"
+              style={{
+                border: `1px solid ${offen ? 'var(--k-accent)' : 'var(--k-success)'}`,
+                borderRadius: 10,
+                padding: 10,
+                display: 'grid',
+                gap: 8,
+                background: 'var(--k-raised)',
+              }}
+            >
+              <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Aktionskette — {schritte.length} Schritte
+              </div>
+              <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 3, fontSize: 12.5 }}>
+                {schritte.map((c) => (
+                  <li key={c.callId}>{c.summary}</li>
+                ))}
+              </ol>
+              {offen ? (
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <KButton size="sm" tone="accent" onClick={() => void applyPaket(pid)} data-testid="apply-paket">
+                    Alle {schritte.length} anwenden
+                  </KButton>
+                  <KButton size="sm" tone="ghost" onClick={() => void rejectPaket(pid)}>
+                    Ablehnen
+                  </KButton>
+                </div>
+              ) : (
+                <Badge hue="var(--k-success)">Angewendet — EIN ↩ macht alles rückgängig</Badge>
+              )}
+            </div>
+          );
+        })}
+
         {cards
-          .filter((c) => c.state !== 'abgelehnt')
+          .filter((c) => c.state !== 'abgelehnt' && !c.paket)
           .map((c) => (
             <div
               key={c.callId}
