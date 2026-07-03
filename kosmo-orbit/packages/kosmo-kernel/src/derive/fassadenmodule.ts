@@ -11,6 +11,9 @@ import type { MassBody } from '../model/entities';
 
 export interface FassadenZeile {
   koerper: string;
+  massId: string;
+  /** Zugewiesenes Modul dieser Kante (sonst freie Masse). */
+  modul: string | null;
   kante: number;
   laenge: number; // mm
   spalten: number;
@@ -35,16 +38,25 @@ export function fassadenModule(doc: KosmoDoc, storeyId: string, modB: number, mo
     if (m.storeyId !== storeyId) continue;
     nr++;
     const name = m.program ? `Körper ${nr} (${m.program})` : `Körper ${nr}`;
-    const rows = Math.max(1, Math.floor(m.height / modH));
     for (let i = 0; i < m.outline.length; i++) {
       const a = m.outline[i]!;
       const b = m.outline[(i + 1) % m.outline.length]!;
       const laenge = Math.round(Math.hypot(b.x - a.x, b.y - a.y));
-      if (laenge < modB) continue;
-      const spalten = Math.floor(laenge / modB);
-      const rest = laenge - spalten * modB;
+      // Zugewiesenes Modul übersteuert die freien Masse dieser Kante
+      const zuweisung = m.module?.find((z) => z.kante === i + 1);
+      const gezeichnet = zuweisung
+        ? doc.settings.fassadenModule.find((fm) => fm.name === zuweisung.modul)
+        : undefined;
+      const b2 = gezeichnet?.breite ?? modB;
+      const h2 = gezeichnet?.hoehe ?? modH;
+      if (laenge < b2) continue;
+      const rows = Math.max(1, Math.floor(m.height / h2));
+      const spalten = Math.floor(laenge / b2);
+      const rest = laenge - spalten * b2;
       zeilen.push({
         koerper: name,
+        massId: m.id,
+        modul: gezeichnet?.name ?? null,
         kante: i + 1,
         laenge,
         spalten,

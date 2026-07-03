@@ -176,6 +176,8 @@ export interface MassBody extends Base {
   height: Mm;
   baseOffset: Mm;
   program?: string;
+  /** Fassadenmodul je Kante (1-basiert), Name aus settings.fassadenModule. */
+  module?: { kante: number; modul: string }[];
 }
 
 /** Papierformate (ISO 216) für Plansätze. */

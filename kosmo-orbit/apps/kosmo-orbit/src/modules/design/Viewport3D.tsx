@@ -202,31 +202,39 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           const a = m.outline[i]!;
           const b = m.outline[(i + 1) % m.outline.length]!;
           const len = Math.hypot(b.x - a.x, b.y - a.y);
-          if (len < modulRaster.b) continue;
+          // Kanten-Zuweisung übersteuert das globale Modul
+          const zuweisung = m.module?.find((z) => z.kante === i + 1);
+          const gezeichnet = zuweisung
+            ? d.settings.fassadenModule.find((fm) => fm.name === zuweisung.modul)
+            : undefined;
+          const zellB = gezeichnet?.breite ?? modulRaster.b;
+          const zellH = gezeichnet?.hoehe ?? modulRaster.h;
+          const zellElemente = gezeichnet?.elemente ?? modulRaster.elemente ?? [];
+          if (len < zellB) continue;
           const dx = (b.x - a.x) / len;
           const dy = (b.y - a.y) / len;
           // Vertikale Fugen ab Ecke (Eckenregel), horizontale je Modulhöhe
-          for (let sMm = modulRaster.b; sMm < len; sMm += modulRaster.b) {
+          for (let sMm = zellB; sMm < len; sMm += zellB) {
             const x = a.x + dx * sMm;
             const y = a.y + dy * sMm;
             punkte.push(new THREE.Vector3(x * MM, z0 * MM, -y * MM), new THREE.Vector3(x * MM, (z0 + m.height) * MM, -y * MM));
           }
-          for (let hMm = modulRaster.h; hMm < m.height; hMm += modulRaster.h) {
+          for (let hMm = zellH; hMm < m.height; hMm += zellH) {
             punkte.push(
               new THREE.Vector3(a.x * MM, (z0 + hMm) * MM, -a.y * MM),
               new THREE.Vector3(b.x * MM, (z0 + hMm) * MM, -b.y * MM),
             );
           }
           // Gezeichnete Modul-Elemente in jede Zelle (Fenster blau, Paneel Kontur)
-          const elemente = modulRaster.elemente ?? [];
+          const elemente = zellElemente;
           if (elemente.length > 0) {
-            const spalten = Math.floor(len / modulRaster.b);
-            const zeilenZ = Math.floor(m.height / modulRaster.h);
+            const spalten = Math.floor(len / zellB);
+            const zeilenZ = Math.floor(m.height / zellH);
             for (let c = 0; c < spalten; c++) {
               for (let r2 = 0; r2 < zeilenZ; r2++) {
                 for (const el of elemente) {
-                  const u0 = c * modulRaster.b + el.x;
-                  const z1 = z0 + r2 * modulRaster.h + el.y;
+                  const u0 = c * zellB + el.x;
+                  const z1 = z0 + r2 * zellH + el.y;
                   const ecken = [
                     [u0, z1], [u0 + el.b, z1], [u0 + el.b, z1 + el.h], [u0, z1 + el.h],
                   ].map(([u, zz]) => new THREE.Vector3((a.x + dx * u!) * MM, zz! * MM, -(a.y + dy * u!) * MM));

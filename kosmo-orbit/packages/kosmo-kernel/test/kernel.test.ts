@@ -2386,3 +2386,34 @@ describe('Module im Render-Prompt', () => {
     expect(phrase).toContain('~45%'); // 2100×1600 / 2500×3000
   });
 });
+
+describe('Module je Fassade', () => {
+  it('Kanten-Zuweisung übersteuert die freien Masse in der Bilanz; entfernen geht', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const mass = execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 9000,
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 6500 }, { x: 0, y: 6500 }],
+    });
+    const massId = (mass.patches[0] as { id: string }).id;
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Schmal', breite: 1250, hoehe: 3000,
+      elemente: [{ x: 100, y: 900, b: 1050, h: 1600, typ: 'fenster' }],
+    });
+    execute(doc, 'design.fassadenModulZuweisen', { massId, kante: 1, modul: 'Schmal' });
+    const st = fassadenModule(doc, storeyId, 2500, 3000);
+    const k1 = st.zeilen.find((z) => z.kante === 1)!;
+    expect(k1.modul).toBe('Schmal');
+    expect(k1.spalten).toBe(8); // 10 m / 1.25 m
+    const k3 = st.zeilen.find((z) => z.kante === 3)!;
+    expect(k3.modul).toBeNull();
+    expect(k3.spalten).toBe(4); // frei: 2.5 m
+    // unbekanntes Modul → ehrlicher Fehler; entfernen → wieder frei
+    expect(() =>
+      execute(doc, 'design.fassadenModulZuweisen', { massId, kante: 2, modul: 'gibtsnicht' }),
+    ).toThrow(/existiert nicht/);
+    execute(doc, 'design.fassadenModulZuweisen', { massId, kante: 1, modul: null });
+    expect(fassadenModule(doc, storeyId, 2500, 3000).zeilen.find((z) => z.kante === 1)!.modul).toBeNull();
+  });
+});

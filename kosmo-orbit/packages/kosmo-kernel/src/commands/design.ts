@@ -546,6 +546,34 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const assignFacadeModule = registerCommand({
+  id: 'design.fassadenModulZuweisen',
+  title: 'Fassadenmodul zuweisen',
+  description:
+    'Weist einer Fassadenkante eines Volumenkörpers ein gezeichnetes Modul zu (kante 1-basiert = Reihenfolge der Umriss-Kanten, modul = Name aus dem Modul-Editor; null entfernt). Süd kriegt das Fensterband, Nord das geschlossene Modul — 3D-Raster und Elementbilanz folgen je Kante.',
+  params: z.object({
+    massId: z.string(),
+    kante: z.number().int().positive(),
+    modul: z.string().nullable(),
+  }),
+  summarize: (p) => (p.modul ? `Kante ${p.kante} → «${p.modul}»` : `Kante ${p.kante}: Modul entfernt`),
+  run: (doc, p) => {
+    const mass = require<MassBody>(doc, p.massId, 'mass');
+    if (p.modul && !doc.settings.fassadenModule.some((m) => m.name === p.modul)) {
+      throw new CommandError(`Modul «${p.modul}» existiert nicht — zuerst im Modul-Editor zeichnen`);
+    }
+    if (p.kante > mass.outline.length) {
+      throw new CommandError(`Kante ${p.kante} — der Körper hat nur ${mass.outline.length}`);
+    }
+    const rest = (mass.module ?? []).filter((z2) => z2.kante !== p.kante);
+    const module = p.modul ? [...rest, { kante: p.kante, modul: p.modul }] : rest;
+    const { module: _weg, ...ohne } = mass;
+    void _weg;
+    const after: MassBody = module.length > 0 ? { ...ohne, module } : (ohne as MassBody);
+    return [{ id: mass.id, before: mass, after }];
+  },
+});
+
 export const saveFacadeModule = registerCommand({
   id: 'design.modulSpeichern',
   title: 'Fassadenmodul speichern',

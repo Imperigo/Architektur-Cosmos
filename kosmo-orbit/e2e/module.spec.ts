@@ -1220,3 +1220,33 @@ test('Modul-Editor: Element aufziehen → speichern → Auswahl im Panel → 3D 
   await page.evaluate(() => window.__kosmoViewport.renderOnce());
   expect(await page.evaluate(() => window.__kosmo.state().doc.settings.fassadenModule.length)).toBe(1);
 });
+
+test('Module je Fassade: Dropdown weist zu, Bilanz zieht nach', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'P', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 40000, y: 0 }, { x: 40000, y: 30000 }, { x: 0, y: 30000 }],
+    });
+    k.run('design.volumenErstellen', {
+      storeyId: st.activeStoreyId, height: 9000,
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 6500 }, { x: 0, y: 6500 }],
+    });
+    k.run('design.modulSpeichern', {
+      name: 'Schmal', breite: 1250, hoehe: 3000,
+      elemente: [{ x: 100, y: 900, b: 1050, h: 1600, typ: 'fenster' }],
+    });
+  });
+  await page.click('[data-testid="studie-toggle"]');
+  const vorher = await page.locator('[data-testid="module-bilanz"]').innerText();
+  await page.selectOption('[data-testid="zuweisung-1"]', 'Schmal');
+  await expect.poll(() => page.locator('[data-testid="module-bilanz"]').innerText()).not.toBe(vorher);
+  expect(
+    await page.evaluate(() => window.__kosmo.state().doc.byKind('mass')[0].module),
+  ).toEqual([{ kante: 1, modul: 'Schmal' }]);
+});

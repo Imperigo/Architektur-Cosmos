@@ -1215,6 +1215,34 @@ function FassadenModulSektion() {
         {studie.totalModule} Standardmodule · {studie.totalPassstuecke} Passstücke · Wiederholung{' '}
         {(studie.wiederholung * 100).toFixed(0)}%
       </div>
+      {module.length > 0 && (
+        <div style={{ display: 'grid', gap: 3, fontSize: 11, maxHeight: 120, overflowY: 'auto' }} data-testid="fassaden-zuweisung">
+          {studie.zeilen.map((z) => (
+            <div key={`${z.massId}-${z.kante}`} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              <span style={{ color: 'var(--k-ink-soft)', width: 120 }}>
+                {z.koerper} · K{z.kante} ({(z.laenge / 1000).toFixed(1)} m)
+              </span>
+              <select
+                value={z.modul ?? ''}
+                data-testid={`zuweisung-${z.kante}`}
+                onChange={(e) =>
+                  useProject.getState().runCommand('design.fassadenModulZuweisen', {
+                    massId: z.massId,
+                    kante: z.kante,
+                    modul: e.target.value || null,
+                  })
+                }
+                style={{ padding: '1px 4px', flex: 1 }}
+              >
+                <option value="">frei</option>
+                {module.map((m) => (
+                  <option key={m.name} value={m.name}>{m.name}</option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+      )}
       <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
         Eckenregel: Module ab Ecke, Passstück am Kantenende — Vorfabrikation lebt von der Wiederholung.
       </span>
