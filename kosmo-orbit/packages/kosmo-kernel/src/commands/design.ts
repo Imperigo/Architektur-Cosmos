@@ -625,10 +625,19 @@ export const wallsFromZones = registerCommand({
       };
       patches.push(added(iw));
     }
+    let tw = aufbauten.find((a2) => a2.name.toUpperCase().startsWith('TW'));
+    if (!tw && plan.waende.some((w2) => w2.typ === 'trennwand')) {
+      tw = {
+        id: newId('aufbau'), kind: 'assembly', name: 'TW KS 20', target: 'wall',
+        layers: [{ material: 'kalksandstein', thickness: 200, function: 'tragend' }],
+      };
+      patches.push(added(tw));
+    }
     for (const w of plan.waende) {
       const wand: Wall = {
         id: newId('wand'), kind: 'wall', storeyId: p.storeyId,
-        a: w.a, b: w.b, assemblyId: (w.innen ? iw : aw).id,
+        a: w.a, b: w.b,
+        assemblyId: (w.typ === 'trennwand' ? tw! : w.typ === 'innen' ? iw : aw).id,
         alignment: 'zentrum', baseOffset: 0, heightMode: 'geschoss',
       };
       patches.push(added(wand));

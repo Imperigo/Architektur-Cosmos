@@ -2524,3 +2524,32 @@ describe('Fenster aus Modulen (Abendbatch A1)', () => {
     ).toThrow(/Kein Fassadenmodul/);
   });
 });
+
+describe('Wohnungstrennwände (Abendbatch A2)', () => {
+  it('gemeinsame Kante zweier Wohnungen → EINE Wand mit TW-Aufbau', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    for (const [x0, name] of [[0, 'Whg A'], [9000, 'Whg B']] as const) {
+      const w = execute(doc, 'design.zoneErstellen', {
+        storeyId, name, sia: 'HNF', program: 'preisguenstig',
+        outline: [{ x: x0, y: 0 }, { x: x0 + 9000, y: 0 }, { x: x0 + 9000, y: 8000 }, { x: x0, y: 8000 }],
+      });
+      execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    }
+    execute(doc, 'design.waendeAusZonen', { storeyId });
+    const twAufbau = doc.byKind<Assembly>('assembly').find((a) => a.name.startsWith('TW'))!;
+    expect(twAufbau).toBeDefined();
+    expect(twAufbau.layers[0]!.thickness).toBe(200);
+    // Trennwände liegen auf x=9000 und decken die Wohnungsgrenze
+    const trennwaende = doc.byKind<Wall>('wall').filter((w) => w.assemblyId === twAufbau.id);
+    expect(trennwaende.length).toBeGreaterThanOrEqual(1);
+    for (const t of trennwaende) {
+      expect(t.a.x).toBe(9000);
+      expect(t.b.x).toBe(9000);
+    }
+    // Wohnungs-INTERNE Innenwände bleiben IW
+    const iwAufbau = doc.byKind<Assembly>('assembly').find((a) => a.name.startsWith('IW'))!;
+    expect(doc.byKind<Wall>('wall').filter((w) => w.assemblyId === iwAufbau.id).length).toBeGreaterThan(4);
+  });
+});

@@ -14,7 +14,7 @@ import type { Pt } from '../model/units';
 export interface WandVorschlag {
   a: Pt;
   b: Pt;
-  innen: boolean;
+  typ: 'aussen' | 'innen' | 'trennwand';
   /** Zonentüren, die auf dieser Achse liegen (center = mm ab a). */
   tueren: { center: number; breite: number; tuerId: string }[];
 }
@@ -72,6 +72,16 @@ function laeufe(segs: Seg[]): { von: number; bis: number; anzahl: number }[] {
   return runs;
 }
 
+function imPoly(p: Pt, poly: readonly Pt[]): boolean {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[i]!;
+    const b = poly[j]!;
+    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+  }
+  return inside;
+}
+
 export function zonenZuWaenden(doc: KosmoDoc, storeyId: string): ZonenWaende {
   const diagnose: string[] = [];
   const zonen = doc
@@ -80,6 +90,11 @@ export function zonenZuWaenden(doc: KosmoDoc, storeyId: string): ZonenWaende {
   if (zonen.length === 0) {
     return { waende: [], diagnose: ['Keine Räume (Zonen mit Raumtyp) auf dem Geschoss.'] };
   }
+  // Wohnungs-Container (Zonen mit program) für die Trennwand-Erkennung
+  const wohnungen = doc
+    .byKind<Zone>('zone')
+    .filter((z) => z.storeyId === storeyId && z.program && !z.raumTyp);
+  const wohnungVon = (p: Pt): string | null => wohnungen.find((w) => imPoly(p, w.outline))?.id ?? null;
   const tueren = doc.byKind<ZonenTuer>('zonentuer').filter((t) => t.storeyId === storeyId);
   const waende: WandVorschlag[] = [];
 
@@ -107,12 +122,21 @@ export function zonenZuWaenden(doc: KosmoDoc, storeyId: string): ZonenWaende {
             breite: t.breite,
             tuerId: t.id,
           }));
-        waende.push({ a, b, innen: run.anzahl >= 2, tueren: wandTueren });
+        let typ: 'aussen' | 'innen' | 'trennwand' = run.anzahl >= 2 ? 'innen' : 'aussen';
+        if (typ === 'innen') {
+          // Räume beidseits der Laufmitte in VERSCHIEDENEN Wohnungen → Trennwand
+          const mitte = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+          const n = horizontal ? { x: 0, y: 1 } : { x: 1, y: 0 };
+          const w1 = wohnungVon({ x: mitte.x + n.x * 300, y: mitte.y + n.y * 300 });
+          const w2 = wohnungVon({ x: mitte.x - n.x * 300, y: mitte.y - n.y * 300 });
+          if (w1 && w2 && w1 !== w2) typ = 'trennwand';
+        }
+        waende.push({ a, b, typ, tueren: wandTueren });
       }
     }
   }
   diagnose.push(
-    `${waende.filter((w) => !w.innen).length} Aussen-, ${waende.filter((w) => w.innen).length} Innenwände, ${waende.reduce((s2, w) => s2 + w.tueren.length, 0)} Türen übernommen. Wohnungs-Trennwände zählen v1 als Innenwände (Schallschutz-Aufbau ist dein Zug).`,
+    `${waende.filter((w) => w.typ === 'aussen').length} Aussen-, ${waende.filter((w) => w.typ === 'innen').length} Innen-, ${waende.filter((w) => w.typ === 'trennwand').length} Trennwände (Schallschutz), ${waende.reduce((s2, w) => s2 + w.tueren.length, 0)} Türen übernommen.`,
   );
   return { waende, diagnose };
 }
