@@ -101,8 +101,13 @@ export function raumGraph(doc: KosmoDoc, storeyId: string): RaumGraph {
       if (o.openingType !== 'tuer') continue;
       const mitte = { x: w.a.x + d.x * o.center, y: w.a.y + d.y * o.center };
       const AUS = 400; // halber Wandbereich + Spielraum
-      const links = zonen.find((z) => imPolygon({ x: mitte.x + n.x * AUS, y: mitte.y + n.y * AUS }, z.outline));
-      const rechts = zonen.find((z) => imPolygon({ x: mitte.x - n.x * AUS, y: mitte.y - n.y * AUS }, z.outline));
+      // Räume (mit Raumtyp) haben Vorrang — sonst gewinnt beidseits der
+      // Wohnungs-Container und die Kante fällt weg
+      const treffer = (p2: { x: number; y: number }) =>
+        zonen.find((z) => z.raumTyp && imPolygon(p2, z.outline)) ??
+        zonen.find((z) => imPolygon(p2, z.outline));
+      const links = treffer({ x: mitte.x + n.x * AUS, y: mitte.y + n.y * AUS });
+      const rechts = treffer({ x: mitte.x - n.x * AUS, y: mitte.y - n.y * AUS });
       if (links && rechts && links.id !== rechts.id) {
         kanten.push({ a: links.id, b: rechts.id, art: 'tuer', punkt: mitte, openingId: o.id });
       }

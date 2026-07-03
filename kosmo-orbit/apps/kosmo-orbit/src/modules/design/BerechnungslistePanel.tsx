@@ -509,6 +509,21 @@ function SegmentiererSektion() {
         <KButton size="sm" tone="quiet" data-testid="grundrisse-fuellen" onClick={grundrisseFuellen}>
           Grundrisse füllen
         </KButton>
+        <KButton
+          size="sm"
+          tone="quiet"
+          data-testid="waende-bauen"
+          onClick={() => {
+            try {
+              const r = runCommand('design.waendeAusZonen', { storeyId: activeStoreyId });
+              setHinweis(`${r.patches.filter((p2) => 'after' in p2 && p2.after && (p2.after as { kind?: string }).kind === 'wall').length} Wände gebaut (1 Undo) — Grundriss ist jetzt werkplan-/IFC-fähig.`);
+            } catch (err) {
+              setHinweis(err instanceof Error ? err.message : String(err));
+            }
+          }}
+        >
+          Wände bauen
+        </KButton>
       </div>
       {hinweis && <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>{hinweis}</div>}
       {ergebnis && (

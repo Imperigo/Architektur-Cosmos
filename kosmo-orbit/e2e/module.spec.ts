@@ -1250,3 +1250,32 @@ test('Module je Fassade: Dropdown weist zu, Bilanz zieht nach', async ({ page })
     await page.evaluate(() => window.__kosmo.state().doc.byKind('mass')[0].module),
   ).toEqual([{ kante: 1, modul: 'Schmal' }]);
 });
+
+test('Wände aus Räumen: generieren → bauen → echte Wände + Türöffnungen, 1 Undo', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const w = k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    k.run('design.grundrissGenerieren', { zoneId: w.patches[0].id, korridorSeite: 'unten' });
+  });
+  await page.click('[data-testid="liste-toggle"]');
+  await page.click('[data-testid="waende-bauen"]');
+  await expect(page.locator('[data-testid="segmentierer"]')).toContainText('werkplan-/IFC-fähig');
+  const stand = await page.evaluate(() => {
+    const doc = window.__kosmo.state().doc;
+    return { waende: doc.byKind('wall').length, oeffnungen: doc.byKind('opening').length, zt: doc.byKind('zonentuer').length };
+  });
+  expect(stand.waende).toBeGreaterThanOrEqual(10);
+  expect(stand.oeffnungen).toBe(7);
+  expect(stand.zt).toBe(0);
+  await page.click('[data-testid="undo"]');
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBe(0);
+});

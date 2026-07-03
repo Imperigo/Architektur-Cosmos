@@ -2444,3 +2444,34 @@ describe('Rezept v2: interner Flur', () => {
     expect(g.diagnose.some((d) => d.includes('Durchgangszimmer'))).toBe(true);
   });
 });
+
+describe('Wände aus Zonen (Schlussstein)', () => {
+  it('3.5-Zi generieren → Wände: gemeinsame Kanten dedupliziert, Türen als Öffnungen, 1 Undo', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    const tuerenVorher = doc.byKind('zonentuer').length;
+    expect(tuerenVorher).toBe(7);
+    const r = execute(doc, 'design.waendeAusZonen', { storeyId });
+    const waende = doc.byKind<Wall>('wall');
+    expect(waende.length).toBeGreaterThanOrEqual(10);
+    // Türen sind jetzt echte Öffnungen, Zonentüren weg
+    expect(doc.byKind('opening')).toHaveLength(7);
+    expect(doc.byKind('zonentuer')).toHaveLength(0);
+    // Dedup: auf der Flur-Oberkante (y=3600) existiert je x-Lage nur EINE Wand
+    const y3600 = waende.filter((w2) => w2.a.y === 3600 && w2.b.y === 3600);
+    const abdeckung = y3600.reduce((s2, w2) => s2 + Math.abs(w2.b.x - w2.a.x), 0);
+    expect(abdeckung).toBeLessThanOrEqual(13000); // keine Doppelwand
+    // Raumgraph: Türen laufen jetzt über die Wand-Öffnungen
+    const g = raumGraph(doc, storeyId);
+    expect(g.kanten.filter((k) => k.art === 'tuer').length).toBeGreaterThanOrEqual(6);
+    doc.apply(invertPatches(r.patches));
+    expect(doc.byKind('wall')).toHaveLength(0);
+    expect(doc.byKind('zonentuer')).toHaveLength(7);
+  });
+});

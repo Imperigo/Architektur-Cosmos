@@ -8,6 +8,7 @@ import { isConvex } from '../geometry/skeleton';
 import { stairSpec, treppenTeile } from '../derive/treppe';
 import { REGEL_PRESETS } from '../model/regelpresets';
 import { generiereGrundriss } from '../derive/grundrissgenerator';
+import { zonenZuWaenden } from '../derive/zonenwaende';
 
 export { stairSpec } from '../derive/treppe';
 
@@ -542,6 +543,59 @@ export const setBoundary = registerCommand({
         : {}),
     };
     patches.push(added(grenze));
+    return patches;
+  },
+});
+
+export const wallsFromZones = registerCommand({
+  id: 'design.waendeAusZonen',
+  title: 'Wände aus Räumen bauen',
+  description:
+    'Baut aus den Räumen (Zonen mit Raumtyp) eines Geschosses echte Wände: gemeinsame Kanten werden EINE Innenwand (IW KS 10), Randkanten Aussenwände (bestehender AW-Aufbau oder Beton 18 + Dämmung 16). Zonentüren werden zu echten Türöffnungen und dabei ersetzt. Ein Undo-Schritt — danach ist der generierte Grundriss werkplan- und IFC-fähig.',
+  params: z.object({ storeyId: z.string() }),
+  summarize: () => 'Wände aus Räumen',
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const plan = zonenZuWaenden(doc, p.storeyId);
+    if (plan.waende.length === 0) throw new CommandError(plan.diagnose[0] ?? 'Nichts zu bauen');
+    const patches: AnyPatch[] = [];
+    // Aufbauten: bestehende wiederverwenden, sonst anlegen
+    const aufbauten = doc.byKind<Assembly>('assembly').filter((a2) => a2.target === 'wall');
+    let aw = aufbauten.find((a2) => a2.name.toUpperCase().startsWith('AW'));
+    let iw = aufbauten.find((a2) => a2.name.toUpperCase().startsWith('IW'));
+    if (!aw) {
+      aw = {
+        id: newId('aufbau'), kind: 'assembly', name: 'AW Beton 34', target: 'wall',
+        layers: [
+          { material: 'daemmung-mw', thickness: 160, function: 'daemmung' },
+          { material: 'beton', thickness: 180, function: 'tragend' },
+        ],
+      };
+      patches.push(added(aw));
+    }
+    if (!iw) {
+      iw = {
+        id: newId('aufbau'), kind: 'assembly', name: 'IW KS 10', target: 'wall',
+        layers: [{ material: 'kalksandstein', thickness: 100, function: 'tragend' }],
+      };
+      patches.push(added(iw));
+    }
+    for (const w of plan.waende) {
+      const wand: Wall = {
+        id: newId('wand'), kind: 'wall', storeyId: p.storeyId,
+        a: w.a, b: w.b, assemblyId: (w.innen ? iw : aw).id,
+        alignment: 'zentrum', baseOffset: 0, heightMode: 'geschoss',
+      };
+      patches.push(added(wand));
+      for (const t of w.tueren) {
+        patches.push(added({
+          id: newId('oeffnung'), kind: 'opening' as const, wallId: wand.id,
+          openingType: 'tuer' as const, center: t.center, width: t.breite, height: 2100, sill: 0,
+        }));
+        const alt2 = doc.get(t.tuerId);
+        if (alt2) patches.push({ id: t.tuerId, before: alt2, after: null });
+      }
+    }
     return patches;
   },
 });
