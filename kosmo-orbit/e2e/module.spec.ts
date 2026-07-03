@@ -609,3 +609,25 @@ test('SIA-Phase: Vorprojekt reduziert die Darstellung, Werkplan detailliert voll
   await expect(planview.locator('path[fill="url(#hatch-daemmung)"]').first()).toBeAttached();
   await expect(page.locator('[data-testid="phase-stil"]')).toHaveValue('werkplan');
 });
+
+test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('button:text-is("Treppe")');
+  await page.selectOption('[data-testid="treppen-form"]', 'u');
+  // Zwei Klicks im Plan (rechte Hälfte, auto-zentriert um 5000/3000)
+  await page.mouse.click(680, 480);
+  await page.mouse.click(950, 480);
+  const stand = await page.evaluate(() => {
+    const st = window.__kosmo.state().doc.byKind('stair')[0] as unknown as { form?: string } | undefined;
+    return st ? { form: st.form } : null;
+  });
+  expect(stand).not.toBeNull();
+  expect(stand!.form).toBe('u');
+  // Plansymbol: Stufenlinien beider Läufe + durchgehende Lauflinie
+  const planview = page.locator('[data-testid="planview"]');
+  expect(await planview.locator('line.symbol.stufe').count()).toBeGreaterThan(10);
+  expect(await planview.locator('line.symbol.lauflinie').count()).toBeGreaterThanOrEqual(4);
+});

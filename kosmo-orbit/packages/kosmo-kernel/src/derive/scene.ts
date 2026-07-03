@@ -2,7 +2,7 @@ import type { Assembly, MassBody, Roof, Slab, Stair, Storey, Wall } from '../mod
 import type { KosmoDoc } from '../model/doc';
 import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
-import { stairSpec } from '../commands/design';
+import { treppenTeile } from './treppe';
 import { extrudePolygon, extrudeWallWithOpenings, type GeometryArtifact } from './mesh';
 import { convexSkeleton } from '../geometry/skeleton';
 import { offsetPolygon } from '../geometry/clip';
@@ -439,13 +439,9 @@ function deriveRoof(doc: KosmoDoc, roof: Roof): GeometryArtifact | null {
 function deriveStair(doc: KosmoDoc, stair: Stair): GeometryArtifact | null {
   const storey = doc.get<Storey>(stair.storeyId);
   if (!storey || storey.kind !== 'storey') return null;
-  const len = Math.hypot(stair.b.x - stair.a.x, stair.b.y - stair.a.y);
-  if (len < 1) return null;
-  const spec = stairSpec(len, storey.height);
-  const d = { x: (stair.b.x - stair.a.x) / len, y: (stair.b.y - stair.a.y) / len };
-  const n = { x: -d.y, y: d.x };
+  if (Math.hypot(stair.b.x - stair.a.x, stair.b.y - stair.a.y) < 1) return null;
+  const teile = treppenTeile(stair, storey.height, storey.elevation);
   const half = stair.width / 2;
-  const z0 = storey.elevation;
 
   const pos: number[] = [];
   const nor: number[] = [];
@@ -462,27 +458,63 @@ function deriveStair(doc: KosmoDoc, stair: Stair): GeometryArtifact | null {
     for (const p of [a, b, c, dd]) { pos.push(...p); nor.push(nx, ny, nz); }
     idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
   };
-  const P = (s: number, off: number, z: number): [number, number, number] => [
-    stair.a.x + d.x * s + n.x * off,
-    stair.a.y + d.y * s + n.y * off,
-    z,
-  ];
 
-  for (let i = 0; i < spec.steps - 1; i++) {
-    const s0 = i * spec.going;
-    const s1 = (i + 1) * spec.going;
-    const zt = z0 + (i + 1) * spec.riser;
-    const zb = z0 + i * spec.riser;
-    // Trittfläche
-    quad(P(s0, half, zt), P(s1, half, zt), P(s1, -half, zt), P(s0, -half, zt), 0, 0, 1);
-    // Setzstufe
-    quad(P(s0, -half, zb), P(s0, -half, zt), P(s0, half, zt), P(s0, half, zb), -d.x, -d.y, 0);
-    // Wangen (Seiten)
-    quad(P(s0, half, zb), P(s0, half, zt), P(s1, half, zt), P(s1, half, zb), n.x, n.y, 0);
-    quad(P(s1, -half, zb), P(s1, -half, zt), P(s0, -half, zt), P(s0, -half, zb), -n.x, -n.y, 0);
-    // Trittkante
-    edges.push(...P(s0, half, zt), ...P(s0, -half, zt));
+  // Läufe: Stufenpakete je Lauf (letzte Steigung des letzten Laufs = OK Decke)
+  for (const lauf of teile.laeufe) {
+    const len = Math.hypot(lauf.b.x - lauf.a.x, lauf.b.y - lauf.a.y);
+    if (len < 1) continue;
+    const d = { x: (lauf.b.x - lauf.a.x) / len, y: (lauf.b.y - lauf.a.y) / len };
+    const n = { x: -d.y, y: d.x };
+    const P = (s: number, off: number, z: number): [number, number, number] => [
+      lauf.a.x + d.x * s + n.x * off,
+      lauf.a.y + d.y * s + n.y * off,
+      z,
+    ];
+    for (let i = 0; i < lauf.steigungen - 1; i++) {
+      const s0 = Math.min(i * lauf.going, len);
+      const s1 = Math.min((i + 1) * lauf.going, len);
+      if (s1 - s0 < 1) continue;
+      const zt = lauf.z0 + (i + 1) * lauf.riser;
+      const zb = lauf.z0 + i * lauf.riser;
+      // Trittfläche
+      quad(P(s0, half, zt), P(s1, half, zt), P(s1, -half, zt), P(s0, -half, zt), 0, 0, 1);
+      // Setzstufe
+      quad(P(s0, -half, zb), P(s0, -half, zt), P(s0, half, zt), P(s0, half, zb), -d.x, -d.y, 0);
+      // Wangen (Seiten)
+      quad(P(s0, half, zb), P(s0, half, zt), P(s1, half, zt), P(s1, half, zb), n.x, n.y, 0);
+      quad(P(s1, -half, zb), P(s1, -half, zt), P(s0, -half, zt), P(s0, -half, zb), -n.x, -n.y, 0);
+      // Trittkante
+      edges.push(...P(s0, half, zt), ...P(s0, -half, zt));
+    }
   }
+
+  // Podeste: flache Platten (Oberkante auf Zwischenhöhe, 200 mm stark)
+  for (const podest of teile.podeste) {
+    const o = podest.outline;
+    if (o.length < 3) continue;
+    const zt = podest.z;
+    const zb = podest.z - 200;
+    const top = o.map((p) => [p.x, p.y, zt] as const);
+    const bot = o.map((p) => [p.x, p.y, zb] as const);
+    // Deck- und Bodenfläche als Fächer (Podeste sind konvex)
+    for (let i = 1; i + 1 < o.length; i++) {
+      const base = pos.length / 3;
+      for (const p of [top[0]!, top[i]!, top[i + 1]!]) { pos.push(...p); nor.push(0, 0, 1); }
+      idx.push(base, base + 1, base + 2);
+      const base2 = pos.length / 3;
+      for (const p of [bot[0]!, bot[i + 1]!, bot[i]!]) { pos.push(...p); nor.push(0, 0, -1); }
+      idx.push(base2, base2 + 1, base2 + 2);
+    }
+    for (let i = 0; i < o.length; i++) {
+      const j = (i + 1) % o.length;
+      const nx = o[j]!.y - o[i]!.y;
+      const ny = -(o[j]!.x - o[i]!.x);
+      const l = Math.hypot(nx, ny) || 1;
+      quad(bot[i]!, bot[j]!, top[j]!, top[i]!, nx / l, ny / l, 0);
+      edges.push(...top[i]!, ...top[j]!);
+    }
+  }
+
   return {
     entityId: stair.id,
     materialKey: 'beton',

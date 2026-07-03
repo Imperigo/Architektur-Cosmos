@@ -26,6 +26,8 @@ import {
   magnetFang,
   derivePlan,
   deriveDimensions,
+  treppenTeile,
+  pruefeGrundriss,
   dimensionLabel,
   sectionInnerSvg,
   type Storey,
@@ -1431,5 +1433,93 @@ describe('SIA-Phasen-Detaillierung (Owner 03.07.)', () => {
       entities: [],
     });
     expect(alt.settings.phase).toBe('werkplan');
+  });
+});
+
+describe('Treppen-Ausbau (V2-A2)', () => {
+  const basis = () => {
+    const { doc, storeyId } = setupDoc(); // EG, 3000 hoch
+    return { doc, storeyId };
+  };
+  const treppe = (doc: KosmoDoc, storeyId: string, p: Record<string, unknown>) =>
+    execute(doc, 'design.treppeErstellen', { storeyId, width: 1200, ...p });
+
+  it('U-Lauf: zwei Läufe + Wendepodest auf halber Höhe, Austritt neben dem Antritt', () => {
+    const { doc, storeyId } = basis();
+    treppe(doc, storeyId, { a: { x: 0, y: 0 }, b: { x: 3000, y: 0 }, form: 'u' });
+    const st = doc.byKind<import('../src').Stair>('stair')[0]!;
+    const teile = treppenTeile(st, 3000, 0);
+    expect(teile.laeufe).toHaveLength(2);
+    expect(teile.podeste).toHaveLength(1);
+    // Podest auf Zwischenhöhe (~1500 bei 17 Steigungen: 9·176.5 ≈ 1588)
+    expect(teile.podeste[0]!.z).toBeGreaterThan(1200);
+    expect(teile.podeste[0]!.z).toBeLessThan(1900);
+    // Lauf 2 läuft zurück, parallel versetzt um die Laufbreite
+    expect(teile.laeufe[1]!.a.y).toBe(1200);
+    expect(teile.laeufe[1]!.b.x).toBe(0);
+    // Gesamtlauflänge = 2 Läufe
+    expect(teile.gesamtLauflaenge).toBe(6000);
+    // 3D: Mesh erreicht die Geschosshöhe nicht ganz (letzter Tritt = Decke), Podest liegt drin
+    const art = deriveAll(doc).find((a) => a.entityId === st.id)!;
+    let maxZ = 0;
+    for (let i = 2; i < art.positions.length; i += 3) maxZ = Math.max(maxZ, art.positions[i]!);
+    expect(maxZ).toBeGreaterThan(2500);
+  });
+
+  it('Zwischenpodest: gerader Lauf zerfällt in zwei Läufe mit flacher Platte', () => {
+    const { doc, storeyId } = basis();
+    treppe(doc, storeyId, { a: { x: 0, y: 0 }, b: { x: 6000, y: 0 }, form: 'podest' });
+    const st = doc.byKind<import('../src').Stair>('stair')[0]!;
+    const teile = treppenTeile(st, 3000, 0);
+    expect(teile.laeufe).toHaveLength(2);
+    expect(teile.podeste).toHaveLength(1);
+    // Podest liegt zwischen den Läufen auf der Achse
+    expect(teile.laeufe[0]!.b.x).toBeLessThan(teile.laeufe[1]!.a.x);
+    // Plansymbol: zwei Lauf-Rechtecke + Podest-Region, Stufen in beiden Läufen
+    const plan = derivePlan(doc, storeyId);
+    const treppenRegionen = plan.regions.filter((r) => r.classes.includes('treppe'));
+    expect(treppenRegionen).toHaveLength(3); // 2 Läufe + Podest
+    expect(plan.regions.some((r) => r.classes.includes('podest'))).toBe(true);
+    expect(plan.lines.filter((l) => l.classes.includes('stufe')).length).toBeGreaterThan(10);
+  });
+
+  it('L-Lauf braucht die Ecke; mit Ecke entsteht das Eckpodest am Knick', () => {
+    const { doc, storeyId } = basis();
+    expect(() => treppe(doc, storeyId, { a: { x: 0, y: 0 }, b: { x: 3000, y: 3000 }, form: 'l' })).toThrow(
+      CommandError,
+    );
+    treppe(doc, storeyId, { a: { x: 0, y: 0 }, b: { x: 3000, y: 3000 }, form: 'l', ecke: { x: 3000, y: 0 } });
+    const st = doc.byKind<import('../src').Stair>('stair')[0]!;
+    const teile = treppenTeile(st, 3000, 0);
+    expect(teile.laeufe).toHaveLength(2);
+    expect(teile.podeste[0]!.outline.length).toBeGreaterThanOrEqual(3);
+    // Eckpodest liegt am Knick (um die Ecke herum)
+    const cx = teile.podeste[0]!.outline.reduce((s, p) => s + p.x, 0) / teile.podeste[0]!.outline.length;
+    expect(Math.abs(cx - 3000)).toBeLessThan(1200);
+  });
+
+  it('gerade Treppe bleibt exakt beim Bestandsverhalten (ein Lauf, kein Podest)', () => {
+    const { doc, storeyId } = basis();
+    treppe(doc, storeyId, { a: { x: 0, y: 0 }, b: { x: 4500, y: 0 } });
+    const st = doc.byKind<import('../src').Stair>('stair')[0]!;
+    expect(st.form).toBeUndefined();
+    const teile = treppenTeile(st, 3000, 0);
+    expect(teile.laeufe).toHaveLength(1);
+    expect(teile.podeste).toHaveLength(0);
+    expect(teile.spec.steps).toBe(Math.round(3000 / 175));
+  });
+
+  it('Checks: viele Steigungen ohne Podest → Podest-Hinweis; U-Lauf rechnet über den Gesamtlauf', () => {
+    const { doc } = setupDoc();
+    const og = execute(doc, 'design.geschossErstellen', { name: 'Halle', index: 1, elevation: 3000, height: 4200 });
+    const hallenId = (og.patches[0] as { id: string }).id;
+    // 4.2 m Geschoss → 24 Steigungen: gerade = Hinweis, U-Lauf = keiner
+    execute(doc, 'design.treppeErstellen', { storeyId: hallenId, a: { x: 0, y: 0 }, b: { x: 7000, y: 0 }, width: 1200 });
+    let befunde = pruefeGrundriss(doc, hallenId);
+    expect(befunde.some((b) => b.regel === 'Podest')).toBe(true);
+    execute(doc, 'design.loeschen', { entityId: doc.byKind('stair')[0]!.id });
+    execute(doc, 'design.treppeErstellen', { storeyId: hallenId, a: { x: 0, y: 0 }, b: { x: 3500, y: 0 }, width: 1200, form: 'u' });
+    befunde = pruefeGrundriss(doc, hallenId);
+    expect(befunde.some((b) => b.regel === 'Podest')).toBe(false);
   });
 });

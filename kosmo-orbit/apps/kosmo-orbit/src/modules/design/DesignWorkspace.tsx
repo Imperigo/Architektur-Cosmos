@@ -62,6 +62,7 @@ export function DesignWorkspace() {
   );
 
   const [tool, setTool] = useState<ToolId>('wand');
+  const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
   const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split' | 'quad'>('split');
   const [sectionSpec, setSectionSpec] = useState<SectionSpec | null>(null);
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
@@ -211,6 +212,9 @@ export function DesignWorkspace() {
       } else if (tool === 'treppe') {
         if (points.length === 0) {
           setPoints([p]);
+        } else if (treppenForm === 'l' && points.length === 1) {
+          // L-Lauf: dritter Klick folgt (a → ecke → b)
+          setPoints([points[0]!, p]);
         } else {
           try {
             runCommand('design.treppeErstellen', {
@@ -218,6 +222,8 @@ export function DesignWorkspace() {
               a: points[0]!,
               b: p,
               width: 1200,
+              form: treppenForm,
+              ...(treppenForm === 'l' ? { ecke: points[1]! } : {}),
             });
           } catch (err) {
             alert(err instanceof Error ? err.message : String(err));
@@ -444,6 +450,23 @@ export function DesignWorkspace() {
         >
           Raster
         </KButton>
+        {tool === 'treppe' && (
+          <select
+            value={treppenForm}
+            data-testid="treppen-form"
+            onChange={(e) => {
+              setTreppenForm(e.target.value as 'gerade' | 'podest' | 'u' | 'l');
+              setPoints([]);
+            }}
+            title="Treppenform — L-Lauf: Antritt, Ecke, Austritt klicken"
+            style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+          >
+            <option value="gerade">gerade</option>
+            <option value="podest">mit Podest</option>
+            <option value="u">U-Lauf</option>
+            <option value="l">L-Lauf</option>
+          </select>
+        )}
         <span style={{ width: 12 }} />
         {/* SIA-Phase (Owner 03.07.): Detaillierungsgrad der Pläne; koppelt den passenden Bemassungs-Stil */}
         <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>

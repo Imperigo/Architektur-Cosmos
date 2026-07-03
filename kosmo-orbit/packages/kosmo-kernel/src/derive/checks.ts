@@ -1,7 +1,7 @@
 import type { KosmoDoc } from '../model/doc';
 import type { Assembly, Boundary, MassBody, Opening, Roof, Stair, Storey, Wall, Zone } from '../model/entities';
 import { polygonArea } from '../model/units';
-import { stairSpec } from '../commands/design';
+import { treppenTeile } from './treppe';
 
 /**
  * Grundriss-Checks (Q12, Finch-Essenz) — Regeln laufen live auf der
@@ -87,11 +87,19 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     }
   }
 
-  // Treppen: Schrittmass + Steigung
+  // Treppen: Schrittmass + Steigung über die Gesamtlauflänge der Form
   for (const st of doc.byKind<Stair>('stair')) {
     if (st.storeyId !== storeyId) continue;
-    const len = Math.hypot(st.b.x - st.a.x, st.b.y - st.a.y);
-    const spec = stairSpec(len, storey.height);
+    const teile = treppenTeile(st, storey.height, storey.elevation);
+    const spec = teile.spec;
+    if ((st.form ?? 'gerade') === 'gerade' && spec.steps > 18) {
+      befunde.push({
+        schwere: 'hinweis',
+        regel: 'Podest',
+        text: `Treppe: ${spec.steps} Steigungen ohne Podest (üblich max. 18) — Form «podest» oder «u» erwägen`,
+        entityId: st.id,
+      });
+    }
     if (spec.comfort < 590 || spec.comfort > 650) {
       befunde.push({
         schwere: 'warnung',

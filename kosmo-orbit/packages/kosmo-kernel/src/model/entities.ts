@@ -124,15 +124,19 @@ export interface Zone extends Base {
   program?: string;
 }
 
-/** Gerade Lauftreppe — Achse a→b, Breite; Steigung aus Geschosshöhe. */
+/** Treppe — Achse a→b, Breite; Steigung aus Geschosshöhe. Formen: V2-A2. */
 export interface Stair extends Base {
   kind: 'stair';
   storeyId: string;
   /** Antritt (unten). */
   a: Pt;
-  /** Austritt (oben) — Länge bestimmt den Lauf. */
+  /** Austritt (oben) — bei «u» Ende des ersten Laufs (Wendepodest dahinter). */
   b: Pt;
   width: Mm;
+  /** gerade (Default) · podest (Zwischenpodest) · u (Wendepodest) · l (Eckpodest). */
+  form?: 'gerade' | 'podest' | 'u' | 'l';
+  /** Eckpunkt des L-Laufs (nur form 'l'). */
+  ecke?: Pt;
 }
 
 /** Walmdach — Grundriss-Polygon + Neigung; Geometrie via Straight Skeleton. */

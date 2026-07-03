@@ -10,6 +10,7 @@ import {
   pointOnAxis,
 } from '../geometry/wall';
 import { dist, type Pt } from '../model/units';
+import { treppenTeile } from './treppe';
 
 /**
  * Grundriss-Derivation — symbolisch aus der Parametrik (nie aus dem Mesh).
@@ -187,32 +188,50 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     });
   }
 
-  // Treppen: Umriss + Stufenlinien + Lauflinie mit Pfeil
+  // Treppen (V2-A2): Läufe mit Stufenlinien, Podeste, durchgehende Lauflinie
   for (const st of doc.byKind<Stair>('stair')) {
     if (st.storeyId !== storeyId) continue;
-    const len = Math.hypot(st.b.x - st.a.x, st.b.y - st.a.y);
-    if (len < 1) continue;
-    const d = { x: (st.b.x - st.a.x) / len, y: (st.b.y - st.a.y) / len };
-    const nn = { x: -d.y, y: d.x };
+    if (Math.hypot(st.b.x - st.a.x, st.b.y - st.a.y) < 1) continue;
+    const teile = treppenTeile(st, storey.height, storey.elevation);
     const half = st.width / 2;
-    const at = (s: number, off: number): Pt => ({
-      x: Math.round(st.a.x + d.x * s + nn.x * off),
-      y: Math.round(st.a.y + d.y * s + nn.y * off),
-    });
-    regions.push({
-      rings: [[at(0, half), at(len, half), at(len, -half), at(0, -half)]],
-      classes: ['projection', 'treppe'],
-    });
-    const storeyEnt = doc.get<Storey>(storeyId);
-    const steps = storeyEnt ? Math.max(3, Math.round(storeyEnt.height / 175)) : 16;
-    const going = len / (steps - 1);
-    for (let i = 1; i < steps - 1; i++) {
-      lines.push({ a: at(i * going, half), b: at(i * going, -half), classes: ['symbol', 'stufe'] });
+    const lauflinie: Pt[] = [];
+
+    for (const lauf of teile.laeufe) {
+      const len = Math.hypot(lauf.b.x - lauf.a.x, lauf.b.y - lauf.a.y);
+      if (len < 1) continue;
+      const d = { x: (lauf.b.x - lauf.a.x) / len, y: (lauf.b.y - lauf.a.y) / len };
+      const nn = { x: -d.y, y: d.x };
+      const at = (s: number, off: number): Pt => ({
+        x: Math.round(lauf.a.x + d.x * s + nn.x * off),
+        y: Math.round(lauf.a.y + d.y * s + nn.y * off),
+      });
+      regions.push({
+        rings: [[at(0, half), at(len, half), at(len, -half), at(0, -half)]],
+        classes: ['projection', 'treppe'],
+      });
+      for (let i = 1; i < lauf.steigungen; i++) {
+        const s = Math.min(i * lauf.going, len);
+        lines.push({ a: at(s, half), b: at(s, -half), classes: ['symbol', 'stufe'] });
+      }
+      lauflinie.push(at(0, 0), at(len, 0));
     }
-    // Lauflinie: Punkt am Antritt, Pfeil am Austritt
-    lines.push({ a: at(0, 0), b: at(len - 300, 0), classes: ['symbol', 'lauflinie'] });
-    lines.push({ a: at(len - 300, 0), b: at(len - 650, 160), classes: ['symbol', 'lauflinie'] });
-    lines.push({ a: at(len - 300, 0), b: at(len - 650, -160), classes: ['symbol', 'lauflinie'] });
+    for (const podest of teile.podeste) {
+      regions.push({ rings: [podest.outline.map((p) => ({ ...p }))], classes: ['projection', 'treppe', 'podest'] });
+    }
+    // Lauflinie: Antritt → Podestmitten → Austritt, Pfeil am Ende
+    for (let i = 0; i + 1 < lauflinie.length; i++) {
+      lines.push({ a: lauflinie[i]!, b: lauflinie[i + 1]!, classes: ['symbol', 'lauflinie'] });
+    }
+    const ende = lauflinie[lauflinie.length - 1];
+    const vor = lauflinie[lauflinie.length - 2];
+    if (ende && vor) {
+      const l = Math.hypot(ende.x - vor.x, ende.y - vor.y) || 1;
+      const d = { x: (ende.x - vor.x) / l, y: (ende.y - vor.y) / l };
+      const nn = { x: -d.y, y: d.x };
+      const spitze: Pt = { x: Math.round(ende.x - d.x * 300), y: Math.round(ende.y - d.y * 300) };
+      lines.push({ a: ende, b: { x: Math.round(spitze.x - d.x * 350 + nn.x * 160), y: Math.round(spitze.y - d.y * 350 + nn.y * 160) }, classes: ['symbol', 'lauflinie'] });
+      lines.push({ a: ende, b: { x: Math.round(spitze.x - d.x * 350 - nn.x * 160), y: Math.round(spitze.y - d.y * 350 - nn.y * 160) }, classes: ['symbol', 'lauflinie'] });
+    }
   }
 
   // Volumen & Zonen als Projektion (feine Kontur)
