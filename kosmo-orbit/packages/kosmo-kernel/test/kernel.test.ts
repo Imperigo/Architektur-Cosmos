@@ -9,6 +9,7 @@ import { generiereVolumenstudien } from '../src/derive/volumenstudie';
 import { erkenneDecke, erkenneWand, geschossZu } from '../src/derive/bestand';
 import { fluchtwege, raumGraph } from '../src/derive/raumgraph';
 import { ZONENREGEL_KATALOG } from '../src/model/zonenregeln';
+import { variantenMatrix } from '../src/derive/variantenmatrix';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
   KosmoDoc,
@@ -1823,5 +1824,20 @@ describe('Regel-Sätze (V2-F3)', () => {
     execute(doc, 'design.regelnSetzen', { preset: 'ch-wohnbau' });
     execute(doc, 'design.regelnSetzen', { preset: 'aus' });
     expect(doc.settings.raumRegeln).toHaveLength(0);
+  });
+});
+
+describe('Varianten-Matrix (V2-V3/F4)', () => {
+  it('liefert Achsen, Zeilen und Bereiche; Δ-Achse nur mit Ziel', () => {
+    const parzelle = [{ x: 0, y: 0 }, { x: 40000, y: 0 }, { x: 40000, y: 30000 }, { x: 0, y: 30000 }];
+    const varianten = generiereVolumenstudien(parzelle, { zielGf: 2000, maxHoehe: 14000, nutzung: 'wohnen' });
+    expect(varianten.length).toBeGreaterThanOrEqual(2);
+    const mitZiel = variantenMatrix(varianten, 2000);
+    expect(mitZiel.achsen.some((a) => a.key === 'delta')).toBe(true);
+    expect(mitZiel.zeilen).toHaveLength(varianten.length);
+    for (const z of mitZiel.zeilen) expect(z.werte).toHaveLength(mitZiel.achsen.length);
+    for (const b of mitZiel.bereiche) expect(b.max).toBeGreaterThan(b.min);
+    const ohneZiel = variantenMatrix(varianten, null);
+    expect(ohneZiel.achsen.some((a) => a.key === 'delta')).toBe(false);
   });
 });

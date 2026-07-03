@@ -809,3 +809,23 @@ test('Regel-Sätze (V2-F3): Preset per Kernel → verletzte Zone im Plan getönt
   });
   await expect(page.locator('[data-testid="zone-verletzt"]')).toHaveCount(1, { timeout: 10_000 });
 });
+
+test('Varianten-Matrix (V2-V3/F4): Parallel-Axis-Vergleich erscheint im Studien-Panel', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    // letzte Zone = Parzelle für den Studien-Generator
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Parzelle', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 40000, y: 0 }, { x: 40000, y: 30000 }, { x: 0, y: 30000 }],
+    });
+  });
+  await page.click('[data-testid="studie-toggle"]');
+  await expect(page.locator('[data-testid="varianten-matrix"]')).toBeVisible({ timeout: 10_000 });
+  const linien = await page.locator('[data-testid="matrix-linie"]').count();
+  expect(linien).toBeGreaterThanOrEqual(2);
+});

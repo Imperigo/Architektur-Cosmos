@@ -6,6 +6,7 @@ import {
   formatLength,
   generiereVolumenstudien,
   geschossZu,
+  variantenMatrix,
   magnetFang,
   type Assembly,
   type ErkannteDecke,
@@ -1038,11 +1039,75 @@ function StudienPanel({
               </div>
             </div>
           ))}
+          {varianten.length >= 2 && (
+            <VariantenMatrixSvg varianten={varianten} zielGf={zielEffektiv} />
+          )}
           <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
             Anstoss, kein Entwurf — Übernahme ist ein Undo-Schritt.
           </span>
         </>
       )}
+    </div>
+  );
+}
+
+
+/** V3/F4: Parallel-Axis-Vergleich der Volumenstudien-Varianten. */
+function VariantenMatrixSvg({
+  varianten,
+  zielGf,
+}: {
+  varianten: import('@kosmo/kernel').StudienVariante[];
+  zielGf: number | null;
+}) {
+  const [aktiv, setAktiv] = useState<string | null>(null);
+  const matrix = useMemo(() => variantenMatrix(varianten, zielGf), [varianten, zielGf]);
+  const W = 280;
+  const H = 130;
+  const RAND = 14;
+  const n = matrix.achsen.length;
+  const x = (i: number) => RAND + (i * (W - 2 * RAND)) / (n - 1);
+  const y = (i: number, wert: number | null): number | null => {
+    if (wert === null) return null;
+    const { min, max } = matrix.bereiche[i]!;
+    let t = (wert - min) / (max - min);
+    if (matrix.achsen[i]!.kleinerBesser) t = 1 - t;
+    return H - RAND - t * (H - 2 * RAND);
+  };
+  return (
+    <div data-testid="varianten-matrix" style={{ display: 'grid', gap: 2 }}>
+      <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+        Vergleich (oben = besser){aktiv ? ` — ${matrix.zeilen.find((z) => z.id === aktiv)?.name}` : ''}
+      </div>
+      <svg viewBox={`0 0 ${W} ${H + 14}`} style={{ width: '100%' }}>
+        {matrix.achsen.map((a, i) => (
+          <g key={a.key}>
+            <line x1={x(i)} y1={RAND} x2={x(i)} y2={H - RAND} stroke="var(--k-line-strong)" strokeWidth={1} pointerEvents="none" />
+            <text x={x(i)} y={H + 8} textAnchor="middle" fontSize={7} fill="var(--k-ink-faint)">
+              {a.label}
+            </text>
+          </g>
+        ))}
+        {matrix.zeilen.map((z) => {
+          const punkte = z.werte
+            .map((w, i) => ({ x: x(i), y: y(i, w) }))
+            .filter((p): p is { x: number; y: number } => p.y !== null);
+          return (
+            <polyline
+              key={z.id}
+              data-testid="matrix-linie"
+              points={punkte.map((p) => `${p.x},${p.y}`).join(' ')}
+              fill="none"
+              stroke={aktiv === z.id ? 'var(--k-accent)' : z.passt ? 'var(--k-ink-soft)' : 'var(--k-danger)'}
+              strokeWidth={aktiv === z.id ? 2.4 : 1.3}
+              opacity={aktiv && aktiv !== z.id ? 0.35 : 0.9}
+              style={{ cursor: 'pointer' }}
+              onMouseEnter={() => setAktiv(z.id)}
+              onMouseLeave={() => setAktiv(null)}
+            />
+          );
+        })}
+      </svg>
     </div>
   );
 }
