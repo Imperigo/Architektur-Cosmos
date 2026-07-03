@@ -64,6 +64,22 @@ export interface DocSettings {
   bemassung: BemassungsStil;
   /** Detaillierungsgrad der Pläne nach SIA-Phase. */
   phase: BauPhase;
+  /** Aktive Zonenregel (V2-Vorform V1): speist Δ-Max, Höhen-/Geschoss-Checks. */
+  zonenRegel: ZonenRegel | null;
+  /** Parzellenfläche in m² (für AZ → zulässige aGF). */
+  parzellenFlaeche: number | null;
+}
+
+/** CH-Zonenregel — Richtwerte je Bauzone, editierbar; kein Ersatz fürs Baureglement. */
+export interface ZonenRegel {
+  name: string;
+  /** Ausnützungsziffer aGF/Parzellenfläche; null = keine. */
+  az: number | null;
+  /** Max. Gebäudehöhe über Projektnull (mm). */
+  maxHoehe: number | null;
+  maxVollgeschosse: number | null;
+  grenzabstandKlein: number | null;
+  grenzabstandGross: number | null;
 }
 
 export const defaultSettings: DocSettings = {
@@ -78,6 +94,8 @@ export const defaultSettings: DocSettings = {
   bemassung: { aussenKetten: 'beide', innenKetten: false, hoehenKoten: true },
   // Default = volle Detaillierung (Bestandsverhalten); Vorprojekt reduziert
   phase: 'werkplan',
+  zonenRegel: null,
+  parzellenFlaeche: null,
 };
 
 export interface Patch {

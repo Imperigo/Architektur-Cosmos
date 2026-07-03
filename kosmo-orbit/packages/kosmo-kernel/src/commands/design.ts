@@ -544,6 +544,43 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const setZoneRule = registerCommand({
+  id: 'design.zonenRegelSetzen',
+  title: 'Zonenregel setzen',
+  description:
+    'Setzt die aktive CH-Zonenregel (Richtwerte, kein Ersatz fürs Baureglement): Ausnützungsziffer az, maxHoehe (mm über Projektnull), maxVollgeschosse, Grenzabstände klein/gross (mm). Mit parzellenFlaeche (m²) wird das zulässige aGF-Maximum (az × Fläche) automatisch in die Berechnungsliste übernommen. null löscht die Regel.',
+  params: z.object({
+    name: z.string().describe('z.B. «W2b (Richtwert ZG)»'),
+    az: z.number().positive().max(3).nullable().default(null),
+    maxHoehe: z.number().int().positive().nullable().default(null),
+    maxVollgeschosse: z.number().int().positive().nullable().default(null),
+    grenzabstandKlein: z.number().int().positive().nullable().default(null),
+    grenzabstandGross: z.number().int().positive().nullable().default(null),
+    parzellenFlaeche: z.number().positive().nullable().default(null).describe('m²'),
+  }),
+  summarize: (p) =>
+    `Zonenregel «${p.name}»${p.az ? ` (AZ ${p.az})` : ''}${p.parzellenFlaeche ? ` auf ${p.parzellenFlaeche} m²` : ''}`,
+  run: (doc, p) => {
+    const regel = {
+      name: p.name,
+      az: p.az,
+      maxHoehe: p.maxHoehe,
+      maxVollgeschosse: p.maxVollgeschosse,
+      grenzabstandKlein: p.grenzabstandKlein,
+      grenzabstandGross: p.grenzabstandGross,
+    };
+    const parzelle = p.parzellenFlaeche ?? doc.settings.parzellenFlaeche;
+    const after = {
+      ...doc.settings,
+      zonenRegel: regel,
+      parzellenFlaeche: parzelle,
+      // AZ × Parzellenfläche speist Δ-Max der Berechnungsliste
+      maxAgf: p.az && parzelle ? Math.round(p.az * parzelle) : doc.settings.maxAgf,
+    };
+    return [{ settings: true as const, before: doc.settings, after }];
+  },
+});
+
 export const setPhase = registerCommand({
   id: 'design.phaseSetzen',
   title: 'SIA-Phase setzen',

@@ -8,6 +8,7 @@ import { deriveAxo } from '../src/derive/axo';
 import { generiereVolumenstudien } from '../src/derive/volumenstudie';
 import { erkenneDecke, erkenneWand, geschossZu } from '../src/derive/bestand';
 import { fluchtwege, raumGraph } from '../src/derive/raumgraph';
+import { ZONENREGEL_KATALOG } from '../src/model/zonenregeln';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
   KosmoDoc,
@@ -1741,5 +1742,47 @@ describe('Grenzabstand (V2-Vorform)', () => {
     const b = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Grenzabstand');
     expect(b).toHaveLength(1);
     expect(b[0]!.text).toContain('Mehrhöhenzuschlag');
+  });
+});
+
+describe('Zonenregel-Katalog (V2-Vorform V1)', () => {
+  it('zonenRegelSetzen koppelt AZ × Parzellenfläche an maxAgf (undo-fähig)', () => {
+    const doc = new KosmoDoc();
+    const r = execute(doc, 'design.zonenRegelSetzen', {
+      name: 'W2b (Richtwert ZG)', az: 0.5, maxHoehe: 10000, maxVollgeschosse: 2,
+      grenzabstandKlein: 4000, grenzabstandGross: 8000, parzellenFlaeche: 1200,
+    });
+    expect(doc.settings.maxAgf).toBe(600);
+    expect(doc.settings.zonenRegel?.name).toContain('W2b');
+    doc.apply(invertPatches(r.patches));
+    expect(doc.settings.maxAgf).toBeNull();
+    expect(doc.settings.zonenRegel).toBeNull();
+  });
+
+  it('Höhe und Vollgeschosse über der Regel → Zonenregel-Befunde', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.geschossErstellen', { name: '1.OG', index: 1, elevation: 3000, height: 3000 });
+    execute(doc, 'design.geschossErstellen', { name: '2.OG', index: 2, elevation: 6000, height: 3000 });
+    execute(doc, 'design.zonenRegelSetzen', {
+      name: 'W2 (Richtwert ZG)', az: 0.4, maxHoehe: 8500, maxVollgeschosse: 2,
+      grenzabstandKlein: 4000, grenzabstandGross: 8000, parzellenFlaeche: null,
+    });
+    execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 12000,
+      outline: [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+    const b = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Zonenregel');
+    expect(b.some((x) => x.text.includes('Vollgeschosse'))).toBe(true);
+    expect(b.some((x) => x.text.includes('12.0 m'))).toBe(true);
+  });
+
+  it('Katalog liefert plausible Richtwerte', () => {
+    expect(ZONENREGEL_KATALOG.length).toBeGreaterThanOrEqual(5);
+    for (const z of ZONENREGEL_KATALOG) {
+      expect(z.name.length).toBeGreaterThan(1);
+      if (z.az !== null) expect(z.az).toBeGreaterThan(0);
+    }
   });
 });

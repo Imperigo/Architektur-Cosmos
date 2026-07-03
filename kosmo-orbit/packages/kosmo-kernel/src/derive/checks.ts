@@ -172,6 +172,43 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     });
   }
 
+  // Zonenregel (V2-Vorform V1): Höhe + Vollgeschosse gegen die aktive Regel
+  const regel = doc.settings.zonenRegel;
+  if (regel) {
+    const alle = doc.storeysOrdered() as Storey[];
+    if (regel.maxVollgeschosse !== null) {
+      const voll = alle.filter((st) => st.index >= 0).length;
+      if (voll > regel.maxVollgeschosse) {
+        befunde.push({
+          schwere: 'fehler',
+          regel: 'Zonenregel',
+          text: `${voll} Vollgeschosse — Zone «${regel.name}» erlaubt ${regel.maxVollgeschosse} (Richtwert)`,
+        });
+      }
+    }
+    if (regel.maxHoehe !== null) {
+      const zuHoch = (name: string, id: string, top: number) => {
+        if (top > regel.maxHoehe!) {
+          befunde.push({
+            schwere: 'fehler',
+            regel: 'Zonenregel',
+            text: `${name}: ${(top / 1000).toFixed(1)} m über Projektnull — Zone «${regel.name}» erlaubt ${(regel.maxHoehe! / 1000).toFixed(1)} m (Richtwert)`,
+            entityId: id,
+          });
+        }
+      };
+      for (const w of doc.byKind<Wall>('wall')) {
+        if (w.storeyId !== storeyId) continue;
+        const h = w.heightMode === 'fix' && w.height ? w.height : storey.height;
+        zuHoch('Wand', w.id, storey.elevation + w.baseOffset + h);
+      }
+      for (const m of doc.byKind<MassBody>('mass')) {
+        if (m.storeyId !== storeyId) continue;
+        zuHoch('Volumen', m.id, storey.elevation + m.baseOffset + m.height);
+      }
+    }
+  }
+
   const rang = { fehler: 0, warnung: 1, hinweis: 2 } as const;
   // Baugrenzen (Phase 0): Lage + Höhenbeschränkung
   const grenzen = doc.byKind<Boundary>('boundary').filter((g) => g.storeyId === storeyId);

@@ -30,4 +30,5 @@ export * from './derive/volumenstudie';
 export * from './ifc/export';
 export * from './derive/bestand';
 export * from './derive/raumgraph';
+export * from './model/zonenregeln';
 export * from './geometry/skeleton';
