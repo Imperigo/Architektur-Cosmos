@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { derivePlan, deriveDimensions, dimensionLabel, regionToPath, assemblyThickness, type Assembly, type Pt, type Wall } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, pruefeGrundriss, regionToPath, assemblyThickness, type Assembly, type Pt, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
@@ -15,6 +15,25 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const doc = useProject.getState().doc;
+  // F3: Zonen mit Check-Befunden (Regeln/Fluchtweg) im Plan tönen
+  const verletzteZonen = useMemo(() => {
+    if (!activeStoreyId) return [];
+    const befunde = pruefeGrundriss(doc, activeStoreyId);
+    const proZone = new Map<string, 'fehler' | 'warnung'>();
+    for (const b of befunde) {
+      if (!b.entityId || b.schwere === 'hinweis') continue;
+      const e = doc.get(b.entityId);
+      if (!e || e.kind !== 'zone') continue;
+      if (b.schwere === 'fehler' || !proZone.has(b.entityId)) {
+        proZone.set(b.entityId, b.schwere);
+      }
+    }
+    return [...proZone.entries()].map(([id, schwere]) => ({
+      zone: doc.get(id) as Zone,
+      schwere,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc, activeStoreyId, revision]);
   const svgRef = useRef<SVGSVGElement>(null);
 
   // Ansicht: Zentrum (mm) + Massstab (px pro mm)
@@ -251,6 +270,18 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               );
             })}
 
+          {plan &&
+            /* F3: verletzte Zonen live tönen (nur Bildschirm, nicht Druck) */
+            verletzteZonen.map((v) => (
+              <path
+                key={`verletzt-${v.zone.id}`}
+                data-testid="zone-verletzt"
+                d={`M ${v.zone.outline.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z`}
+                fill={v.schwere === 'fehler' ? 'rgba(179, 70, 46, 0.28)' : 'rgba(198, 134, 34, 0.22)'}
+                stroke={v.schwere === 'fehler' ? 'var(--k-danger)' : '#c68622'}
+                strokeWidth={16}
+              />
+            ))}
           {plan &&
             plan.lines.map((l, i) => (
               <line

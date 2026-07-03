@@ -6,6 +6,7 @@ import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
 import { isConvex } from '../geometry/skeleton';
 import { stairSpec, treppenTeile } from '../derive/treppe';
+import { REGEL_PRESETS } from '../model/regelpresets';
 
 export { stairSpec } from '../derive/treppe';
 
@@ -578,6 +579,31 @@ export const setZoneRule = registerCommand({
       maxAgf: p.az && parzelle ? Math.round(p.az * parzelle) : doc.settings.maxAgf,
     };
     return [{ settings: true as const, before: doc.settings, after }];
+  },
+});
+
+export const setRoomRules = registerCommand({
+  id: 'design.regelnSetzen',
+  title: 'Raumregeln setzen',
+  description:
+    'Setzt die Raumtyp-Regeln der Grundriss-Checks: preset «ch-wohnbau» (Richtwerte Zimmer/Wohnen/Küche/Bad/Korridor), «wettbewerb» (lockerer) oder «aus»; alternativ eigene Regeln (raumTyp, minFlaeche m², minBreite mm, tageslicht). Verletzte Zonen erscheinen in den Checks und werden im Plan getönt.',
+  params: z.object({
+    preset: z.enum(['ch-wohnbau', 'wettbewerb', 'aus']).optional(),
+    regeln: z
+      .array(
+        z.object({
+          raumTyp: z.string(),
+          minFlaeche: z.number().positive().nullable().default(null),
+          minBreite: z.number().int().positive().nullable().default(null),
+          tageslicht: z.boolean().default(false),
+        }),
+      )
+      .optional(),
+  }),
+  summarize: (p) => `Raumregeln ${p.preset ?? `(${p.regeln?.length ?? 0} eigene)`}`,
+  run: (doc, p) => {
+    const regeln = p.regeln ?? (p.preset && p.preset !== 'aus' ? REGEL_PRESETS[p.preset] : []);
+    return [{ settings: true as const, before: doc.settings, after: { ...doc.settings, raumRegeln: regeln } }];
   },
 });
 

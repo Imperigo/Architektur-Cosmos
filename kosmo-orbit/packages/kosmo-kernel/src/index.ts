@@ -31,4 +31,5 @@ export * from './ifc/export';
 export * from './derive/bestand';
 export * from './derive/raumgraph';
 export * from './model/zonenregeln';
+export * from './model/regelpresets';
 export * from './geometry/skeleton';

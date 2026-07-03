@@ -32,11 +32,66 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
   const storey = doc.get<Storey>(storeyId);
   if (!storey || storey.kind !== 'storey') return befunde;
 
-  // Zonen: Zimmerbreite + Mindestfläche (HNF)
+  // Fenster je Wand (für Tageslicht-Regel): Fenstermittelpunkte im Grundriss
+  const fensterPunkte: { x: number; y: number }[] = [];
+  for (const w of doc.byKind<Wall>('wall')) {
+    if (w.storeyId !== storeyId) continue;
+    const len = Math.hypot(w.b.x - w.a.x, w.b.y - w.a.y) || 1;
+    const d = { x: (w.b.x - w.a.x) / len, y: (w.b.y - w.a.y) / len };
+    for (const o of doc.openingsOf(w.id) as Opening[]) {
+      if (o.openingType === 'fenster') {
+        fensterPunkte.push({ x: w.a.x + d.x * o.center, y: w.a.y + d.y * o.center });
+      }
+    }
+  }
+  const nahAmUmriss = (p: { x: number; y: number }, poly: { x: number; y: number }[]): boolean => {
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[j]!;
+      const b = poly[i]!;
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const len2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2));
+      if (Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy)) < 300) return true;
+    }
+    return false;
+  };
+
+  // Zonen: Regel-Sätze (V2-F3) haben Vorrang; ohne Regel greifen die
+  // eingebauten HNF-Richtwerte (Bestandsverhalten)
+  const regeln = doc.settings.raumRegeln;
   for (const z of doc.byKind<Zone>('zone')) {
     if (z.storeyId !== storeyId) continue;
     const b = minBreite(z.outline);
     const flaeche = polygonArea(z.outline) / 1e6;
+    const regel = z.raumTyp ? regeln.find((r) => r.raumTyp === z.raumTyp) : undefined;
+    if (regel) {
+      if (regel.minBreite !== null && b < regel.minBreite) {
+        befunde.push({
+          schwere: 'warnung',
+          regel: `Regel ${z.raumTyp}`,
+          text: `«${z.name}» ist ${(b / 1000).toFixed(2)} m breit — Regel «${z.raumTyp}» verlangt ≥ ${(regel.minBreite / 1000).toFixed(2)} m`,
+          entityId: z.id,
+        });
+      }
+      if (regel.minFlaeche !== null && flaeche < regel.minFlaeche) {
+        befunde.push({
+          schwere: 'warnung',
+          regel: `Regel ${z.raumTyp}`,
+          text: `«${z.name}» hat ${flaeche.toFixed(1)} m² — Regel «${z.raumTyp}» verlangt ≥ ${regel.minFlaeche} m²`,
+          entityId: z.id,
+        });
+      }
+      if (regel.tageslicht && !fensterPunkte.some((f) => nahAmUmriss(f, z.outline))) {
+        befunde.push({
+          schwere: 'warnung',
+          regel: `Regel ${z.raumTyp}`,
+          text: `«${z.name}» hat kein Fenster am Raum — Regel «${z.raumTyp}» verlangt Tageslicht`,
+          entityId: z.id,
+        });
+      }
+      continue;
+    }
     if (z.sia === 'HNF' && b < 2400) {
       befunde.push({
         schwere: 'warnung',

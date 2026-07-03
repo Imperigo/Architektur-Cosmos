@@ -791,3 +791,21 @@ test('Bauwissen-Basis (Wissens-Andockung): Lehrhefte laden → Suche zitierfähi
     timeout: 15_000,
   });
 });
+
+test('Regel-Sätze (V2-F3): Preset per Kernel → verletzte Zone im Plan getönt', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.regelnSetzen', { preset: 'ch-wohnbau' });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Kind', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 2000 }, { x: 0, y: 2000 }],
+    });
+  });
+  await expect(page.locator('[data-testid="zone-verletzt"]')).toHaveCount(1, { timeout: 10_000 });
+});

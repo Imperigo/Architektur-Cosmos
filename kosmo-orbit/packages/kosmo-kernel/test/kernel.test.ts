@@ -1786,3 +1786,42 @@ describe('Zonenregel-Katalog (V2-Vorform V1)', () => {
     }
   });
 });
+
+describe('Regel-Sätze (V2-F3)', () => {
+  it('Preset setzen → zu schmales Zimmer und fehlendes Tageslicht werden gemeldet', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.regelnSetzen', { preset: 'ch-wohnbau' });
+    expect(doc.settings.raumRegeln.length).toBeGreaterThanOrEqual(5);
+    // 2.0 m breites Zimmer ohne Fenster
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Kind', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 2000 }, { x: 0, y: 2000 }],
+    });
+    const b = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Regel zimmer');
+    expect(b.some((x) => x.text.includes('2.00 m breit') || x.text.includes('2.40'))).toBe(true);
+    expect(b.some((x) => x.text.includes('Tageslicht'))).toBe(true);
+    // Fenster an der Zonenkante → Tageslicht-Befund verschwindet
+    const aufbau = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW', target: 'wall', layers: [{ material: 'beton', thickness: 250, function: 'tragend' }],
+    });
+    const wand = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId: (aufbau.patches[0] as { id: string }).id,
+      a: { x: 0, y: 0 }, b: { x: 5000, y: 0 },
+    });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (wand.patches[0] as { id: string }).id,
+      openingType: 'fenster', center: 2500, width: 1600, height: 1400, sill: 900,
+    });
+    const b2 = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Regel zimmer');
+    expect(b2.some((x) => x.text.includes('Tageslicht'))).toBe(false);
+  });
+
+  it('preset «aus» leert die Regeln; Zone ohne raumTyp fällt auf HNF-Richtwerte zurück', () => {
+    const doc = new KosmoDoc();
+    execute(doc, 'design.regelnSetzen', { preset: 'ch-wohnbau' });
+    execute(doc, 'design.regelnSetzen', { preset: 'aus' });
+    expect(doc.settings.raumRegeln).toHaveLength(0);
+  });
+});

@@ -66,8 +66,21 @@ export interface DocSettings {
   phase: BauPhase;
   /** Aktive Zonenregel (V2-Vorform V1): speist Δ-Max, Höhen-/Geschoss-Checks. */
   zonenRegel: ZonenRegel | null;
+  /** Raumtyp-Regeln (V2-F3, Finch Graph-Rules): leer = eingebaute Richtwerte. */
+  raumRegeln: RaumRegel[];
   /** Parzellenfläche in m² (für AZ → zulässige aGF). */
   parzellenFlaeche: number | null;
+}
+
+/** Raumtyp-Regel (V2-F3): Grenzwerte je Raumtyp, dreistufig gemeldet. */
+export interface RaumRegel {
+  raumTyp: string;
+  /** Mindestfläche m²; null = keine. */
+  minFlaeche: number | null;
+  /** Mindest-Lichtbreite mm (BBox-Näherung); null = keine. */
+  minBreite: number | null;
+  /** Raum braucht ein Fenster (Tageslicht). */
+  tageslicht: boolean;
 }
 
 /** CH-Zonenregel — Richtwerte je Bauzone, editierbar; kein Ersatz fürs Baureglement. */
@@ -96,6 +109,7 @@ export const defaultSettings: DocSettings = {
   phase: 'werkplan',
   zonenRegel: null,
   parzellenFlaeche: null,
+  raumRegeln: [],
 };
 
 export interface Patch {
