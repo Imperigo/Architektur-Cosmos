@@ -545,6 +545,77 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const saveTemplate = registerCommand({
+  id: 'design.vorlageSpeichern',
+  title: 'Zonen-Vorlage speichern',
+  description:
+    'Speichert die angegebenen Zonen als benannte Vorlage (Wohnungs-Layout): Umrisse relativ zur linken unteren Ecke, mit Name/SIA/Raumtyp. Mit design.vorlageSetzen wieder absetzbar — auch gestreckt.',
+  params: z.object({ name: z.string().min(1), zoneIds: z.array(z.string()).min(1).max(40) }),
+  summarize: (p) => `Vorlage «${p.name}» (${p.zoneIds.length} Zonen)`,
+  run: (doc, p) => {
+    const zonen = p.zoneIds.map((id) => require<Zone>(doc, id, 'zone'));
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const z of zonen) {
+      for (const pt of z.outline) {
+        minX = Math.min(minX, pt.x); minY = Math.min(minY, pt.y);
+        maxX = Math.max(maxX, pt.x); maxY = Math.max(maxY, pt.y);
+      }
+    }
+    const vorlage = {
+      name: p.name,
+      breite: maxX - minX,
+      hoehe: maxY - minY,
+      zonen: zonen.map((z) => ({
+        outline: z.outline.map((pt) => ({ x: pt.x - minX, y: pt.y - minY })),
+        name: z.name,
+        sia: z.sia,
+        ...(z.raumTyp ? { raumTyp: z.raumTyp } : {}),
+      })),
+    };
+    const after = {
+      ...doc.settings,
+      vorlagen: [...doc.settings.vorlagen.filter((v) => v.name !== p.name), vorlage],
+    };
+    return [{ settings: true as const, before: doc.settings, after }];
+  },
+});
+
+export const placeTemplate = registerCommand({
+  id: 'design.vorlageSetzen',
+  title: 'Zonen-Vorlage absetzen',
+  description:
+    'Setzt eine gespeicherte Zonen-Vorlage ab: at = linke untere Ecke (mm). Optional breite/hoehe (mm) strecken das Layout ACHSWEISE linear (alle Zonen skalieren mit — Verhältnis bleibt je Achse). Ein Undo-Schritt.',
+  params: z.object({
+    storeyId: z.string(),
+    name: z.string(),
+    at: z.object({ x: z.number(), y: z.number() }),
+    breite: z.number().positive().nullable().default(null),
+    hoehe: z.number().positive().nullable().default(null),
+  }),
+  summarize: (p) => `Vorlage «${p.name}» absetzen`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const vorlage = doc.settings.vorlagen.find((v) => v.name === p.name);
+    if (!vorlage) throw new CommandError(`Vorlage «${p.name}» existiert nicht`);
+    const sx = p.breite ? p.breite / vorlage.breite : 1;
+    const sy = p.hoehe ? p.hoehe / vorlage.hoehe : 1;
+    return vorlage.zonen.map((vz) =>
+      added({
+        id: newId('zone'),
+        kind: 'zone' as const,
+        storeyId: p.storeyId,
+        name: vz.name,
+        sia: vz.sia as Zone['sia'],
+        ...(vz.raumTyp ? { raumTyp: vz.raumTyp } : {}),
+        outline: vz.outline.map((pt) => ({
+          x: Math.round(p.at.x + pt.x * sx),
+          y: Math.round(p.at.y + pt.y * sy),
+        })),
+      }),
+    );
+  },
+});
+
 export const placeFurniture = registerCommand({
   id: 'design.moebelSetzen',
   title: 'Möbel setzen',

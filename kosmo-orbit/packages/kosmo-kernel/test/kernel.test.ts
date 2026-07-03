@@ -2093,3 +2093,52 @@ describe('Möblierungsplan im Druck (V2-F8-Nachzug)', () => {
     expect(vorprojekt).not.toContain('M 0 -1000 L 2000 -1000');
   });
 });
+
+describe('Zonen-Vorlagen (V2-F7)', () => {
+  it('speichern → gestreckt absetzen: Achs-Stretch skaliert linear, ein Undo', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const z1 = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 1000, y: 1000 }, { x: 4000, y: 1000 }, { x: 4000, y: 4000 }, { x: 1000, y: 4000 }],
+    });
+    const z2 = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Bad', sia: 'HNF', raumTyp: 'bad',
+      outline: [{ x: 4000, y: 1000 }, { x: 6000, y: 1000 }, { x: 6000, y: 3000 }, { x: 4000, y: 3000 }],
+    });
+    execute(doc, 'design.vorlageSpeichern', {
+      name: '2.5-Zi-Ost',
+      zoneIds: [(z1.patches[0] as { id: string }).id, (z2.patches[0] as { id: string }).id],
+    });
+    const v = doc.settings.vorlagen[0]!;
+    expect(v.breite).toBe(5000);
+    expect(v.hoehe).toBe(3000);
+    // Absetzen bei (10000, 10000), auf 10 m Breite gestreckt (Faktor 2 in x)
+    const r = execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: '2.5-Zi-Ost', at: { x: 10000, y: 10000 }, breite: 10000, hoehe: null,
+    });
+    const neu = doc.byKind<Zone>('zone').filter((z) => z.outline[0]!.x >= 10000);
+    expect(neu).toHaveLength(2);
+    const zimmer = neu.find((z) => z.name === 'Zimmer')!;
+    // x-Ausdehnung 3000 → 6000 (×2), y bleibt 3000
+    const xs = zimmer.outline.map((p) => p.x);
+    const ys = zimmer.outline.map((p) => p.y);
+    expect(Math.max(...xs) - Math.min(...xs)).toBe(6000);
+    expect(Math.max(...ys) - Math.min(...ys)).toBe(3000);
+    expect(zimmer.raumTyp).toBe('zimmer');
+    // Ein Undo entfernt beide Zonen
+    doc.apply(invertPatches(r.patches));
+    expect(doc.byKind('zone')).toHaveLength(2);
+  });
+
+  it('unbekannte Vorlage → ehrlicher Fehler', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    expect(() =>
+      execute(doc, 'design.vorlageSetzen', {
+        storeyId: (eg.patches[0] as { id: string }).id, name: 'gibtsnicht', at: { x: 0, y: 0 }, breite: null, hoehe: null,
+      }),
+    ).toThrow(/existiert nicht/);
+  });
+});

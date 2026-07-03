@@ -70,8 +70,24 @@ export interface DocSettings {
   raumRegeln: RaumRegel[];
   /** Custom-Kennzahlen (V2-F9): Wert × Flächenbasis, z.B. CHF/m² aGF. */
   kennzahlFormeln: KennzahlFormel[];
+  /** Zonen-Vorlagen (V2-F7): Layouts, achsweise streckbar wieder absetzbar. */
+  vorlagen: ZonenVorlage[];
   /** Parzellenfläche in m² (für AZ → zulässige aGF). */
   parzellenFlaeche: number | null;
+}
+
+/** Zonen-Vorlage (V2-F7): Zonen relativ zur BBox-Ecke, Grösse fürs Strecken. */
+export interface ZonenVorlage {
+  name: string;
+  /** BBox der Vorlage (mm) — Referenz für den achsweisen Stretch. */
+  breite: number;
+  hoehe: number;
+  zonen: {
+    outline: { x: number; y: number }[];
+    name: string;
+    sia: string;
+    raumTyp?: string;
+  }[];
 }
 
 /** Custom-Kennzahl (V2-F9): name = «Erstellungskosten», wert 3200, basis 'agf', einheit 'CHF'. */
@@ -123,6 +139,7 @@ export const defaultSettings: DocSettings = {
   parzellenFlaeche: null,
   raumRegeln: [],
   kennzahlFormeln: [],
+  vorlagen: [],
 };
 
 export interface Patch {
