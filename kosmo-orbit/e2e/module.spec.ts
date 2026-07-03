@@ -1308,3 +1308,37 @@ test('Fenster stanzen (A1): Kette → Tageslicht-Befund verschwindet', async ({ 
   );
   expect(anzahlFenster).toBeGreaterThanOrEqual(8);
 });
+
+test('Erschliessungskern (A3): Kette mit Kern → kein Fluchtweg-Fehler', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.raumprogrammSetzen', { posten: [{ typ: 'preisguenstig', hnfSoll: 300 }] });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Geschoss', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 14000 }, { x: 0, y: 14000 }],
+    });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Korridor', sia: 'VF', raumTyp: 'korridor',
+      outline: [{ x: 0, y: 6000 }, { x: 30000, y: 6000 }, { x: 30000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+  });
+  await page.click('[data-testid="liste-toggle"]');
+  await page.check('[data-testid="segmentierer-kern"]');
+  await page.click('[data-testid="segmentierer-lauf"]');
+  await page.click('[data-testid="segmentierer-uebernehmen"]');
+  await page.click('[data-testid="grundrisse-fuellen"]');
+  const stand = await page.evaluate(() => {
+    const doc = window.__kosmo.state().doc;
+    return {
+      treppenhaus: doc.byKind('zone').filter((z) => z.raumTyp === 'treppenhaus').length,
+      treppen: doc.byKind('stair').length,
+    };
+  });
+  expect(stand.treppenhaus).toBe(1);
+  expect(stand.treppen).toBe(1);
+});

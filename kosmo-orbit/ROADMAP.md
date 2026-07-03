@@ -174,4 +174,6 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
 
 79. **A2 — Wohnungstrennwände** ✅ (Abendbatch 2/7): `zonenZuWaenden` unterscheidet jetzt drei Wandtypen — die Punktprobe beidseits der Laufmitte ordnet die Räume ihren Wohnungs-Containern (Zonen mit program) zu; verschiedene Wohnungen → **Trennwand** mit eigenem Schallschutz-Aufbau «TW KS 20» (KS 200, Richtwert, wird angelegt falls fehlt). Wohnungs-interne Wände bleiben IW KS 10. Diagnose zählt alle drei Typen. 1 Kernel-Test (zwei generierte Nachbar-Wohnungen → Trennwand exakt auf der Wohnungsgrenze). Suiten: 133 Kernel + 54 E2E.
 
+80. **A3 — Erschliessungskern** ✅ (Abendbatch 3/7): Segmentierer-Option `kern` (opt-in, Checkbox «Kern») reserviert die ersten 3.0 m des ersten Bands; die Übernahme erzeugt Zone «Treppenhaus» (raumTyp treppenhaus, VF) + geraden Treppenlauf mittig + Zonentür zum Korridor — alles in derselben Undo-Gruppe. Damit hat der Fluchtweg-Check erstmals ein echtes Ziel im generierten Geschoss. Band zu kurz → ehrliche Diagnose statt Zwangs-Kern. 1 Kernel-Test + 1 E2E. Suiten: 134 Kernel + 55 E2E (volle Suite grün).
+
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.

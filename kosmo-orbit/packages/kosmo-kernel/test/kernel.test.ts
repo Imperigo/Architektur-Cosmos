@@ -2553,3 +2553,22 @@ describe('Wohnungstrennwände (Abendbatch A2)', () => {
     expect(doc.byKind<Wall>('wall').filter((w) => w.assemblyId === iwAufbau.id).length).toBeGreaterThan(4);
   });
 });
+
+describe('Erschliessungskern (Abendbatch A3)', () => {
+  it('kern: true reserviert 3.0 m am ersten Band, Wohnungen rücken nach', () => {
+    const footprint = [{ x: 0, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 14000 }, { x: 0, y: 14000 }];
+    const korridor = [{ x: 0, y: 6000 }, { x: 30000, y: 6000 }, { x: 30000, y: 8000 }, { x: 0, y: 8000 }];
+    const mix = [{ typ: 'preisguenstig', groesse: 75, anzahl: 4 }];
+    const ohne = segmentiere(footprint, korridor, mix);
+    expect(ohne.kern).toBeNull();
+    const mit = segmentiere(footprint, korridor, mix, { kern: true });
+    expect(mit.kern).not.toBeNull();
+    const kxs = mit.kern!.outline.map((p) => p.x);
+    expect(Math.max(...kxs) - Math.min(...kxs)).toBe(3000);
+    expect(polygonArea(mit.kern!.outline)).toBeGreaterThan(0);
+    // Erste Wohnung des ersten Bands beginnt hinter dem Kern
+    const ersteX = Math.min(...mit.wohnungen[0]!.outline.map((p) => p.x));
+    expect(ersteX).toBe(3000);
+    expect(mit.diagnose.some((d) => d.includes('Erschliessungskern'))).toBe(true);
+  });
+});

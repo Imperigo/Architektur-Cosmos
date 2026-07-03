@@ -32,6 +32,8 @@ export interface SegmentierungsErgebnis {
   wohnungen: GeschnitteneWohnung[];
   /** Erfüllung je Typ: gewünscht vs. geschnitten. */
   mix: { typ: string; soll: number; ist: number }[];
+  /** Reservierter Erschliessungskern (Treppenhaus), wenn Option kern an. */
+  kern: { outline: Pt[] } | null;
   diagnose: string[];
 }
 
@@ -72,6 +74,8 @@ export interface SegmentierOptionen {
   minBreite?: number;
   /** Typgrössen-Override (m²) — F6-Slider. */
   groessen?: Record<string, number>;
+  /** Erschliessungskern: reserviert 3.0 m am Anfang des ersten Bands. */
+  kern?: boolean;
 }
 
 interface Band {
@@ -215,7 +219,30 @@ export function segmentiere(
   const baender = bilderBaender(footprint, korridor);
   if (baender.length === 0) {
     diagnose.push('Kein Band ≥ 3 m Tiefe neben dem Korridor — Korridorlage prüfen.');
-    return { wohnungen: [], mix: mix.map((m) => ({ typ: m.typ, soll: m.anzahl, ist: 0 })), diagnose };
+    return { wohnungen: [], mix: mix.map((m) => ({ typ: m.typ, soll: m.anzahl, ist: 0 })), kern: null, diagnose };
+  }
+  // Erschliessungskern: erste 3.0 m des ersten Bands reservieren
+  let kern: { outline: Pt[] } | null = null;
+  if (opts.kern) {
+    const b0 = baender[0]!;
+    const KERN = 3000;
+    if (b0.laenge > KERN + 4500) {
+      const o = b0.o;
+      const p1 = { x: o.x, y: o.y };
+      const p2 = { x: o.x + b0.d.x * KERN, y: o.y + b0.d.y * KERN };
+      kern = {
+        outline: ccw([
+          p1, p2,
+          { x: p2.x + b0.n.x * b0.tiefe, y: p2.y + b0.n.y * b0.tiefe },
+          { x: p1.x + b0.n.x * b0.tiefe, y: p1.y + b0.n.y * b0.tiefe },
+        ].map((p) => ({ x: Math.round(p.x), y: Math.round(p.y) }))),
+      };
+      b0.o = { x: o.x + b0.d.x * KERN, y: o.y + b0.d.y * KERN };
+      b0.laenge -= KERN;
+      diagnose.push('Erschliessungskern 3.0 m am Bandanfang reserviert (Treppenhaus).');
+    } else {
+      diagnose.push('Band zu kurz für den Kern — ohne Treppenhaus geschnitten.');
+    }
   }
   const bedarf = new Map(mix.map((m) => [m.typ, { groesse: m.groesse, rest: m.anzahl }]));
   const wohnungen: GeschnitteneWohnung[] = [];
@@ -238,5 +265,5 @@ export function segmentiere(
       `Restfläche ${rest.reduce((s2, w) => s2 + w.flaeche, 0).toFixed(1)} m² — als «Opfer-Wohnung» zusammenfassen oder Schnitt verschieben.`,
     );
   }
-  return { wohnungen, mix: mixErfuellung, diagnose };
+  return { wohnungen, mix: mixErfuellung, kern, diagnose };
 }

@@ -399,6 +399,7 @@ function SegmentiererSektion() {
   // F6: Dialog statt Batch — Parameter ändern rechnet sofort neu
   const [minBreite, setMinBreite] = useState(4500);
   const [groessenFaktor, setGroessenFaktor] = useState(1);
+  const [mitKern, setMitKern] = useState(false);
   void revision;
 
   const schneiden = () => {
@@ -422,14 +423,14 @@ function SegmentiererSektion() {
     }
     setHinweis(null);
     const groessen = Object.fromEntries(mix.map((m) => [m.typ, Math.round(m.groesse * groessenFaktor)]));
-    setErgebnis(segmentiere(footprint.outline, korridor.outline, mix, { minBreite, groessen }));
+    setErgebnis(segmentiere(footprint.outline, korridor.outline, mix, { minBreite, groessen, kern: mitKern }));
   };
 
   // F6: Anytime-Gefühl — Sliderbewegung rechnet den Vorschlag sofort neu
   useEffect(() => {
     if (ergebnis) schneiden();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [minBreite, groessenFaktor]);
+  }, [minBreite, groessenFaktor, mitKern]);
 
   const flaeche = (outline: { x: number; y: number }[]) => {
     let s2 = 0;
@@ -487,6 +488,37 @@ function SegmentiererSektion() {
           ...(w.typ ? { program: w.typ } : {}),
         });
       }
+      if (ergebnis.kern) {
+        runCommand('design.zoneErstellen', {
+          storeyId: activeStoreyId,
+          outline: ergebnis.kern.outline,
+          name: 'Treppenhaus',
+          sia: 'VF',
+          raumTyp: 'treppenhaus',
+        });
+        // Gerader Lauf mittig im Kern + Tür zum Korridor
+        const xs = ergebnis.kern.outline.map((p) => p.x);
+        const ys = ergebnis.kern.outline.map((p) => p.y);
+        const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+        const y0 = Math.min(...ys);
+        const y1 = Math.max(...ys);
+        const hoch = y1 - y0 >= Math.max(...xs) - Math.min(...xs);
+        runCommand('design.treppeErstellen', {
+          storeyId: activeStoreyId,
+          a: hoch ? { x: cx, y: y0 + 600 } : { x: Math.min(...xs) + 600, y: (y0 + y1) / 2 },
+          b: hoch ? { x: cx, y: y1 - 600 } : { x: Math.max(...xs) - 600, y: (y0 + y1) / 2 },
+          width: 1200,
+        });
+        // Tür an der Kante zum Korridor (Kern grenzt bandseitig an den Korridor)
+        const korridor = useProject.getState().doc
+          .byKind<Zone>('zone')
+          .find((z) => z.storeyId === activeStoreyId && z.raumTyp === 'korridor');
+        if (korridor) {
+          const ky = korridor.outline.map((p) => p.y);
+          const grenzY = Math.abs(Math.min(...ky) - y1) < Math.abs(Math.max(...ky) - y0) ? y1 : y0;
+          runCommand('design.tuerSetzen', { storeyId: activeStoreyId, at: { x: Math.round(cx), y: grenzY }, breite: 1000 });
+        }
+      }
     } finally {
       history.endGroup();
     }
@@ -498,6 +530,10 @@ function SegmentiererSektion() {
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <span style={{ fontWeight: 600, fontSize: 12 }}>Wohnungen schneiden</span>
         <div style={{ flex: 1 }} />
+        <label style={{ display: 'flex', gap: 4, alignItems: 'center', fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+          <input type="checkbox" checked={mitKern} data-testid="segmentierer-kern" onChange={(e) => setMitKern(e.target.checked)} />
+          Kern
+        </label>
         <KButton size="sm" tone="quiet" data-testid="segmentierer-lauf" onClick={schneiden}>
           Vorschlag
         </KButton>
