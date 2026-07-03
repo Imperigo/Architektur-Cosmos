@@ -3,8 +3,10 @@ import { Badge, Hairline, KButton, OrbitMark, moduleHue } from '@kosmo/ui';
 import {
   ChatSession,
   LearningJournal,
+  AnthropicProvider,
   MockProvider,
   OllamaProvider,
+  OpenAiKompatibelProvider,
   greeting,
   localStorageMemory,
   personas,
@@ -49,15 +51,25 @@ interface PendingCard extends Proposal {
 }
 
 interface KosmoSettings {
-  provider: 'ollama' | 'mock';
+  provider: 'ollama' | 'lmstudio' | 'anthropic' | 'mock';
   baseUrl: string;
   model: string;
+  /** LM Studio: eigene Basis-URL + Modell (getrennt von Ollama gemerkt). */
+  lmBaseUrl: string;
+  lmModel: string;
+  /** Anthropic: Schlüssel bleibt in localStorage auf diesem Gerät. */
+  anthropicKey: string;
+  anthropicModel: string;
 }
 
 const defaultSettings: KosmoSettings = {
   provider: 'ollama',
   baseUrl: 'http://localhost:11434',
   model: 'qwen3-coder:30b',
+  lmBaseUrl: 'http://localhost:1234/v1',
+  lmModel: 'qwen/qwen3-30b-a3b',
+  anthropicKey: '',
+  anthropicModel: 'claude-sonnet-5',
 };
 
 function loadSettings(): KosmoSettings {
@@ -91,6 +103,10 @@ async function speak(text: string): Promise<void> {
 
 export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const [settings, setSettings] = useState<KosmoSettings>(loadSettings);
+  const speichere = (s: KosmoSettings) => {
+    setSettings(s);
+    localStorage.setItem('kosmo.llm', JSON.stringify(s));
+  };
   const [showSettings, setShowSettings] = useState(false);
   const [ttsOn, setTtsOn] = useState(localStorage.getItem('kosmo.tts') === '1');
   const lastKosmoText = useRef('');
@@ -111,7 +127,11 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     const provider: ChatProvider =
       settings.provider === 'mock'
         ? new MockProvider()
-        : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
+        : settings.provider === 'anthropic'
+          ? new AnthropicProvider({ apiKey: settings.anthropicKey, model: settings.anthropicModel })
+          : settings.provider === 'lmstudio'
+            ? new OpenAiKompatibelProvider({ baseUrl: settings.lmBaseUrl, model: settings.lmModel })
+            : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
     const { doc } = useProject.getState();
     let currentKosmoBubble = -1;
     const push = (who: Bubble['who'], text: string) => {
@@ -394,7 +414,13 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         <OrbitMark module="kosmo" size={24} />
         <div style={{ fontWeight: 550 }}>Kosmo</div>
         <Badge hue={settings.provider === 'mock' ? 'var(--k-warning)' : moduleHue.kosmo}>
-          {settings.provider === 'mock' ? 'Demo' : settings.model}
+          {settings.provider === 'mock'
+            ? 'Demo'
+            : settings.provider === 'anthropic'
+              ? settings.anthropicModel
+              : settings.provider === 'lmstudio'
+                ? settings.lmModel
+                : settings.model}
         </Badge>
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="ghost" onClick={() => setShowSettings(!showSettings)} aria-label="Einstellungen">
@@ -420,35 +446,52 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               style={selectStyle}
             >
               <option value="ollama">Ollama (HomeStation)</option>
+              <option value="lmstudio">LM Studio (HomeStation)</option>
+              <option value="anthropic">Anthropic (Claude, Cloud)</option>
               <option value="mock">Demo-Modus (ohne LLM)</option>
             </select>
           </label>
           {settings.provider === 'ollama' && (
             <>
-              <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
-                Ollama-URL
-                <input
-                  value={settings.baseUrl}
-                  onChange={(e) => {
-                    const s = { ...settings, baseUrl: e.target.value };
-                    setSettings(s);
-                    localStorage.setItem('kosmo.llm', JSON.stringify(s));
-                  }}
-                  style={inputStyle}
-                />
-              </label>
-              <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
-                Modell
-                <input
-                  value={settings.model}
-                  onChange={(e) => {
-                    const s = { ...settings, model: e.target.value };
-                    setSettings(s);
-                    localStorage.setItem('kosmo.llm', JSON.stringify(s));
-                  }}
-                  style={inputStyle}
-                />
-              </label>
+              <SettingsFeld
+                label="Ollama-URL"
+                value={settings.baseUrl}
+                onChange={(v) => speichere({ ...settings, baseUrl: v })}
+              />
+              <SettingsFeld
+                label="Modell"
+                value={settings.model}
+                onChange={(v) => speichere({ ...settings, model: v })}
+              />
+            </>
+          )}
+          {settings.provider === 'lmstudio' && (
+            <>
+              <SettingsFeld
+                label="LM-Studio-URL"
+                value={settings.lmBaseUrl}
+                onChange={(v) => speichere({ ...settings, lmBaseUrl: v })}
+              />
+              <SettingsFeld
+                label="Modell"
+                value={settings.lmModel}
+                onChange={(v) => speichere({ ...settings, lmModel: v })}
+              />
+            </>
+          )}
+          {settings.provider === 'anthropic' && (
+            <>
+              <SettingsFeld
+                label="API-Schlüssel (bleibt auf diesem Gerät)"
+                value={settings.anthropicKey}
+                typ="password"
+                onChange={(v) => speichere({ ...settings, anthropicKey: v })}
+              />
+              <SettingsFeld
+                label="Modell"
+                value={settings.anthropicModel}
+                onChange={(v) => speichere({ ...settings, anthropicModel: v })}
+              />
             </>
           )}
           <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -679,6 +722,30 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         </KButton>
       </div>
     </aside>
+  );
+}
+
+function SettingsFeld({
+  label,
+  value,
+  onChange,
+  typ,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  typ?: string;
+}) {
+  return (
+    <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+      {label}
+      <input
+        type={typ ?? 'text'}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={inputStyle}
+      />
+    </label>
   );
 }
 

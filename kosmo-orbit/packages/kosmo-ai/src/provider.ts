@@ -43,6 +43,32 @@ export interface ChatProvider {
   chat(req: ChatRequest): AsyncIterable<StreamEvent>;
 }
 
+/**
+ * Anthropic/OpenAI verlangen, dass ein Tool-Resultat die id des auslösenden
+ * Tool-Aufrufs referenziert. Unser Verlauf führt nur toolName — die Zuordnung
+ * wird hier aus der Reihenfolge rekonstruiert: je tool-Nachricht der erste
+ * noch freie Aufruf der letzten assistant-Nachricht, Namensgleichheit zuerst
+ * (Vorschläge können in anderer Reihenfolge freigegeben werden als gestellt).
+ */
+export function verknuepfeToolIds(messages: ChatMessage[]): Map<number, string> {
+  const zuordnung = new Map<number, string>();
+  let offen: { id: string; name: string; belegt: boolean }[] = [];
+  messages.forEach((m, i) => {
+    if (m.role === 'assistant') {
+      offen = (m.toolCalls ?? []).map((c) => ({ id: c.id, name: c.name, belegt: false }));
+      return;
+    }
+    if (m.role !== 'tool') return;
+    const passend =
+      offen.find((c) => !c.belegt && c.name === m.toolName) ?? offen.find((c) => !c.belegt);
+    if (passend) {
+      passend.belegt = true;
+      zuordnung.set(i, passend.id);
+    }
+  });
+  return zuordnung;
+}
+
 export interface OllamaConfig {
   /** z.B. http://homestation:11434 oder via Bridge-Proxy http://bridge:8600/ollama */
   baseUrl: string;

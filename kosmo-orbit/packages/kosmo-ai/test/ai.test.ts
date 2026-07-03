@@ -1,6 +1,18 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { KosmoDoc, execute } from '@kosmo/kernel';
-import { ChatSession, MockProvider, commandTools, validateToolCall, type StreamEvent } from '../src';
+import {
+  AnthropicProvider,
+  ChatSession,
+  MockProvider,
+  OpenAiKompatibelProvider,
+  commandTools,
+  validateToolCall,
+  verknuepfeToolIds,
+  zuAnthropicNachrichten,
+  zuOpenAiNachrichten,
+  type ChatMessage,
+  type StreamEvent,
+} from '../src';
 
 function demoDoc() {
   const doc = new KosmoDoc();
@@ -176,5 +188,176 @@ describe('Belegte Antworten (V2-B1, Mock)', () => {
       .map((e) => e.delta)
       .join('');
     expect(text).toContain('[Q1]');
+  });
+});
+
+// ————— V2-B3: Cloud-/LM-Studio-Provider —————
+
+/** SSE-Response aus Zeilen bauen — simuliert fetch mit ReadableStream. */
+function sseResponse(zeilen: string[]): Response {
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const z of zeilen) controller.enqueue(encoder.encode(z + '\n'));
+      controller.close();
+    },
+  });
+  return new Response(stream, { status: 200, headers: { 'Content-Type': 'text/event-stream' } });
+}
+
+async function sammle(provider: { chat(req: { messages: ChatMessage[]; tools?: unknown[] }): AsyncIterable<StreamEvent> }, messages: ChatMessage[]) {
+  const events: StreamEvent[] = [];
+  for await (const ev of provider.chat({ messages })) events.push(ev);
+  return events;
+}
+
+describe('Tool-Id-Verknüpfung (Verlauf → API-Format)', () => {
+  const verlauf: ChatMessage[] = [
+    { role: 'system', content: 'Du bist Kosmo.' },
+    { role: 'user', content: 'Zeichne zwei Wände.' },
+    {
+      role: 'assistant',
+      content: 'Gerne.',
+      toolCalls: [
+        { id: 'c1', name: 'design_wandZeichnen', arguments: { a: 1 } },
+        { id: 'c2', name: 'design_wandZeichnen', arguments: { a: 2 } },
+      ],
+    },
+    { role: 'tool', toolName: 'design_wandZeichnen', content: 'AUSGEFÜHRT: Wand 1' },
+    { role: 'tool', toolName: 'design_wandZeichnen', content: 'AUSGEFÜHRT: Wand 2' },
+  ];
+
+  it('ordnet Tool-Resultate den Aufruf-Ids in Reihenfolge zu', () => {
+    const ids = verknuepfeToolIds(verlauf);
+    expect(ids.get(3)).toBe('c1');
+    expect(ids.get(4)).toBe('c2');
+  });
+
+  it('Anthropic: system separat, tool_use + tool_result Blöcke, Rollen gebündelt', () => {
+    const { system, messages } = zuAnthropicNachrichten(verlauf);
+    expect(system).toBe('Du bist Kosmo.');
+    expect(messages.map((m) => m.role)).toEqual(['user', 'assistant', 'user']);
+    const assistant = messages[1]!;
+    expect(assistant.content.filter((b) => b.type === 'tool_use')).toHaveLength(2);
+    const resultate = messages[2]!.content;
+    expect(resultate).toEqual([
+      { type: 'tool_result', tool_use_id: 'c1', content: 'AUSGEFÜHRT: Wand 1' },
+      { type: 'tool_result', tool_use_id: 'c2', content: 'AUSGEFÜHRT: Wand 2' },
+    ]);
+  });
+
+  it('OpenAI-kompatibel: tool_calls mit JSON-String-Argumenten, tool_call_id am Resultat', () => {
+    const raus = zuOpenAiNachrichten(verlauf);
+    const assistant = raus[2]!;
+    expect(assistant.tool_calls?.[0]).toEqual({
+      id: 'c1',
+      type: 'function',
+      function: { name: 'design_wandZeichnen', arguments: '{"a":1}' },
+    });
+    expect(raus[3]).toEqual({ role: 'tool', content: 'AUSGEFÜHRT: Wand 1', tool_call_id: 'c1' });
+    expect(raus[4]!.tool_call_id).toBe('c2');
+  });
+});
+
+describe('AnthropicProvider (V2-B3)', () => {
+  const originalFetch = globalThis.fetch;
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it('streamt Text-Deltas und schliesst mit stop', async () => {
+    globalThis.fetch = async () =>
+      sseResponse([
+        'event: message_start',
+        'data: {"type":"message_start"}',
+        'data: {"type":"content_block_start","content_block":{"type":"text"}}',
+        'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"Grüezi "}}',
+        'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"Andrin"}}',
+        'data: {"type":"content_block_stop"}',
+        'data: {"type":"message_stop"}',
+      ]);
+    const p = new AnthropicProvider({ apiKey: 'sk-test', model: 'claude-sonnet-5' });
+    const events = await sammle(p, [{ role: 'user', content: 'Hallo' }]);
+    const text = events.filter((e) => e.type === 'text').map((e) => (e as { delta: string }).delta).join('');
+    expect(text).toBe('Grüezi Andrin');
+    expect(events[events.length - 1]).toEqual({ type: 'done', stopReason: 'stop' });
+  });
+
+  it('setzt tool_use aus input_json_delta-Fragmenten zusammen', async () => {
+    globalThis.fetch = async () =>
+      sseResponse([
+        'data: {"type":"content_block_start","content_block":{"type":"tool_use","id":"toolu_1","name":"design_wandZeichnen"}}',
+        'data: {"type":"content_block_delta","delta":{"type":"input_json_delta","partial_json":"{\\"a\\":{\\"x\\":0,"}}',
+        'data: {"type":"content_block_delta","delta":{"type":"input_json_delta","partial_json":"\\"y\\":0}}"}}',
+        'data: {"type":"content_block_stop"}',
+        'data: {"type":"message_delta","delta":{"stop_reason":"tool_use"}}',
+        'data: {"type":"message_stop"}',
+      ]);
+    const p = new AnthropicProvider({ apiKey: 'sk-test', model: 'claude-sonnet-5' });
+    const events = await sammle(p, [{ role: 'user', content: 'Wand bitte' }]);
+    const call = events.find((e) => e.type === 'tool_call') as { call: { id: string; name: string; arguments: unknown } };
+    expect(call.call.id).toBe('toolu_1');
+    expect(call.call.name).toBe('design_wandZeichnen');
+    expect(call.call.arguments).toEqual({ a: { x: 0, y: 0 } });
+    expect(events[events.length - 1]).toEqual({ type: 'done', stopReason: 'tool_calls' });
+  });
+
+  it('401 → verständlicher Fehler statt Absturz', async () => {
+    globalThis.fetch = async () => new Response('{"error":{"message":"invalid x-api-key"}}', { status: 401 });
+    const p = new AnthropicProvider({ apiKey: 'kaputt', model: 'claude-sonnet-5' });
+    const events = await sammle(p, [{ role: 'user', content: 'Hallo' }]);
+    const done = events[events.length - 1] as { stopReason: string; error?: string };
+    expect(done.stopReason).toBe('error');
+    expect(done.error).toContain('401');
+    expect(done.error).toContain('Schlüssel');
+  });
+});
+
+describe('OpenAiKompatibelProvider / LM Studio (V2-B3)', () => {
+  const originalFetch = globalThis.fetch;
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it('streamt Text und endet auf [DONE]', async () => {
+    globalThis.fetch = async () =>
+      sseResponse([
+        'data: {"choices":[{"delta":{"content":"Sali "}}]}',
+        'data: {"choices":[{"delta":{"content":"zäme"}}]}',
+        'data: {"choices":[{"delta":{},"finish_reason":"stop"}]}',
+        'data: [DONE]',
+      ]);
+    const p = new OpenAiKompatibelProvider({ baseUrl: 'http://localhost:1234/v1', model: 'test' });
+    const events = await sammle(p, [{ role: 'user', content: 'Hallo' }]);
+    const text = events.filter((e) => e.type === 'text').map((e) => (e as { delta: string }).delta).join('');
+    expect(text).toBe('Sali zäme');
+    expect(events[events.length - 1]).toEqual({ type: 'done', stopReason: 'stop' });
+  });
+
+  it('sammelt tool_calls-Fragmente je Index und parst die Argumente', async () => {
+    globalThis.fetch = async () =>
+      sseResponse([
+        'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call_9","function":{"name":"design_wandZeichnen","arguments":"{\\"a\\""}}]}}]}',
+        'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":":{\\"x\\":0,\\"y\\":0}}"}}]}}]}',
+        'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}',
+        'data: [DONE]',
+      ]);
+    const p = new OpenAiKompatibelProvider({ baseUrl: 'http://localhost:1234/v1', model: 'test' });
+    const events = await sammle(p, [{ role: 'user', content: 'Wand' }]);
+    const call = events.find((e) => e.type === 'tool_call') as { call: { id: string; name: string; arguments: unknown } };
+    expect(call.call.id).toBe('call_9');
+    expect(call.call.arguments).toEqual({ a: { x: 0, y: 0 } });
+    expect(events[events.length - 1]).toEqual({ type: 'done', stopReason: 'tool_calls' });
+  });
+
+  it('Server nicht erreichbar → Fehler-Event mit Hinweis', async () => {
+    globalThis.fetch = async () => {
+      throw new TypeError('fetch failed');
+    };
+    const p = new OpenAiKompatibelProvider({ baseUrl: 'http://localhost:1234/v1', model: 'test' });
+    const events = await sammle(p, [{ role: 'user', content: 'Hallo' }]);
+    const done = events[events.length - 1] as { stopReason: string; error?: string };
+    expect(done.stopReason).toBe('error');
+    expect(done.error).toContain('LM Studio');
   });
 });

@@ -631,3 +631,56 @@ test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ pa
   expect(await planview.locator('line.symbol.stufe').count()).toBeGreaterThan(10);
   expect(await planview.locator('line.symbol.lauflinie').count()).toBeGreaterThanOrEqual(4);
 });
+
+test('LM-Studio-Provider (V2-B3): SSE-Tool-Call → Vorschlagskarte → Wand steht', async ({ page }) => {
+  // LM Studio wird per Route-Mock simuliert — der echte Provider-Code (SSE-
+  // Parsing, Fragment-Zusammenbau, Gate) läuft dabei komplett im Browser.
+  await page.route('**/v1/chat/completions', async (route) => {
+    const body = [
+      'data: {"choices":[{"delta":{"content":"Ich zeichne die Wand. "}}]}',
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call_e2e","function":{"name":"design_wandZeichnen","arguments":"{\\"a\\":{\\"x\\":0,\\"y\\":0},"}}]}}]}',
+      'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\\"b\\":{\\"x\\":5000,\\"y\\":0}}"}}]}}]}',
+      'data: {"choices":[{"delta":{},"finish_reason":"tool_calls"}]}',
+      'data: [DONE]',
+      '',
+    ].join('\n');
+    await route.fulfill({ status: 200, contentType: 'text/event-stream', body });
+  });
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem(
+      'kosmo.llm',
+      JSON.stringify({ provider: 'lmstudio', lmBaseUrl: 'http://localhost:1234/v1', lmModel: 'test-modell' }),
+    );
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  // Badge zeigt das LM-Studio-Modell
+  await expect(page.getByText('test-modell')).toBeVisible();
+  await page.fill('[data-testid="kosmo-input"]', 'Zeichne eine Wand');
+  await page.click('[data-testid="kosmo-send"]');
+  await page.click('[data-testid="apply-proposal"]', { timeout: 15_000 });
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length))
+    .toBe(1);
+});
+
+test('Kosmo-Einstellungen (V2-B3): Anthropic-Felder erscheinen, Schlüssel bleibt lokal', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[aria-label="Einstellungen"]');
+  // Das Verbindungs-Select eindeutig ansteuern (Toolbar hat weitere Selects)
+  const verbindung = page.locator('select', { has: page.locator('option[value="anthropic"]') });
+  await verbindung.selectOption('anthropic');
+  const schluessel = page.locator('input[type="password"]');
+  await expect(schluessel).toBeVisible();
+  await schluessel.fill('sk-ant-test');
+  // Persistiert in localStorage, Badge zeigt das Claude-Modell
+  await expect(page.getByText('claude-sonnet-5')).toBeVisible();
+  const gespeichert = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(gespeichert.provider).toBe('anthropic');
+  expect(gespeichert.anthropicKey).toBe('sk-ant-test');
+});
