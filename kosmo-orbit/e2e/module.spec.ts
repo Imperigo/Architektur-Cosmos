@@ -935,3 +935,21 @@ test('Raumtyp-Copilot (V2-F10): Vorschlag-Chip → Übernehmen setzt den Raumtyp
   await expect(chip).toHaveCount(0);
   expect(await page.evaluate((id) => window.__kosmo.state().doc.get(id).raumTyp, zoneId)).toBe('korridor');
 });
+
+test('Raumprogramm-CSV (V2-V5): Import setzt Posten, %-Spalte erscheint', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="liste-toggle"]');
+  await page.setInputFiles('[data-testid="csv-import-input"]', {
+    name: 'raumprogramm.csv',
+    mimeType: 'text/csv',
+    buffer: Buffer.from("Wohnungstyp;HNF Soll\nMarktgerecht;1'250\nPreisgünstig;830\nTotal;2080\n"),
+  });
+  await expect(page.locator('[data-testid="csv-import-meldung"]')).toContainText('2 Typen übernommen');
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.settings.raumprogramm.length))
+    .toBe(2);
+  await expect(page.locator('[data-testid="erfuellung-marktgerecht"]')).toContainText('0');
+});

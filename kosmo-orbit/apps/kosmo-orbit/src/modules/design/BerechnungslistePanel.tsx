@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   deriveBerechnungsliste,
+  parseRaumprogrammCsv,
   segmentiere,
   sollMix,
   typFarbe,
@@ -45,6 +46,7 @@ export function BerechnungslistePanel({
       ? [...doc.settings.raumprogramm]
       : [{ typ: 'marktgerecht', hnfSoll: 0 }],
   );
+  const [importMeldung, setImportMeldung] = useState<string | null>(null);
   const [faktor, setFaktor] = useState(String(doc.settings.programmFaktor));
   const [maxAgf, setMaxAgf] = useState(doc.settings.maxAgf === null ? '' : String(doc.settings.maxAgf));
 
@@ -149,9 +151,44 @@ export function BerechnungslistePanel({
 
       {/* Raumprogramm-Erfassung */}
       <div style={{ display: 'grid', gap: 6 }}>
-        <div className="k-titel" style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
-          Raumprogramm (HNF-Soll)
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="k-titel" style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+            Raumprogramm (HNF-Soll)
+          </div>
+          <div style={{ flex: 1 }} />
+          {/* V5: Wettbewerbs-Soll als CSV — nie mehr abtippen */}
+          <label style={{ cursor: 'pointer' }}>
+            <span className="k-btn k-btn-sm k-btn-quiet" data-testid="csv-import" style={{ fontSize: 11 }}>
+              CSV importieren
+            </span>
+            <input
+              type="file"
+              accept=".csv,text/csv,text/plain"
+              style={{ display: 'none' }}
+              data-testid="csv-import-input"
+              onChange={async (e) => {
+                const datei = e.target.files?.[0];
+                if (!datei) return;
+                const erg = parseRaumprogrammCsv(await datei.text());
+                if (erg.posten.length > 0) {
+                  runCommand('design.raumprogrammSetzen', { posten: erg.posten });
+                  setEntwurf(erg.posten);
+                }
+                setImportMeldung(
+                  erg.posten.length === 0
+                    ? 'Keine Wohnungstyp-Zeilen erkannt — erwartet «Typ;HNF m²».'
+                    : `${erg.posten.length} Typen übernommen${erg.uebersprungen.length ? `, ${erg.uebersprungen.length} Zeilen unzuordenbar (z.B. «${erg.uebersprungen[0]!.slice(0, 40)}»)` : ''}.`,
+                );
+                e.target.value = '';
+              }}
+            />
+          </label>
         </div>
+        {importMeldung && (
+          <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }} data-testid="csv-import-meldung">
+            {importMeldung}
+          </div>
+        )}
         {entwurf.map((p, i) => (
           <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             <select
@@ -235,6 +272,7 @@ export function BerechnungslistePanel({
               <th style={{ fontWeight: 500, padding: '2px 4px' }}>Ziel ×{liste.programmFaktor}</th>
               <th style={{ fontWeight: 500, padding: '2px 4px' }}>ausgezogen</th>
               <th style={{ fontWeight: 500, padding: '2px 4px' }}>+/−</th>
+              <th style={{ fontWeight: 500, padding: '2px 4px' }}>%</th>
             </tr>
           </thead>
           <tbody>
@@ -255,6 +293,9 @@ export function BerechnungslistePanel({
                   }}
                 >
                   <Measure>{`${z.differenz >= 0 ? '+' : ''}${fmt(z.differenz)}`}</Measure>
+                </td>
+                <td style={{ padding: '3px 4px', textAlign: 'right', color: 'var(--k-ink-soft)' }} data-testid={`erfuellung-${z.typ}`}>
+                  <Measure>{z.agfZiel > 0 ? `${Math.round((z.ausgezogen / z.agfZiel) * 100)}` : '–'}</Measure>
                 </td>
               </tr>
             ))}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { testhausMitQuertrakt, ansichtSvg } from './fixtures';
-import { deriveBerechnungsliste } from '../src/derive/berechnungsliste';
+import { deriveBerechnungsliste, parseRaumprogrammCsv } from '../src/derive/berechnungsliste';
 import { deriveMengen } from '../src/derive/mengen';
 import { generiereStuetzenraster } from '../src/derive/stuetzenraster';
 import { deriveAxo } from '../src/derive/axo';
@@ -1959,5 +1959,33 @@ describe('Raumtyp-Copilot (V2-F10)', () => {
     // Zone MIT Raumtyp: kein Vorschlag
     execute(doc, 'design.raumTypSetzen', { zoneId: flur.id, raumTyp: 'korridor' });
     expect(raumTypVorschlag(doc, doc.get(flur.id) as import('../src').Zone)).toBeNull();
+  });
+});
+
+describe('Raumprogramm-CSV-Import (V2-V5)', () => {
+  it('toleriert Trennzeichen, CH-Zahlen, Aliase und meldet Unzuordenbares', () => {
+    const csv = [
+      'Wohnungstyp;HNF Soll m²',
+      "Marktgerechte Wohnungen;1'250.5",
+      'Preisgünstig,830',
+      'Alterswohnen\t415',
+      'Vertical Cluster;220',
+      'Total;2715.5',
+      'Gewerbefläche EG;300',
+      '',
+    ].join('\n');
+    const erg = parseRaumprogrammCsv(csv);
+    expect(erg.posten).toContainEqual({ typ: 'marktgerecht', hnfSoll: 1250.5 });
+    expect(erg.posten).toContainEqual({ typ: 'preisguenstig', hnfSoll: 830 });
+    expect(erg.posten).toContainEqual({ typ: 'alterswohnen', hnfSoll: 415 });
+    expect(erg.posten).toContainEqual({ typ: 'vertical-cluster', hnfSoll: 220 });
+    expect(erg.posten).toHaveLength(4);
+    // Total- und Gewerbezeile werden gemeldet, nicht verschluckt
+    expect(erg.uebersprungen.some((z) => z.includes('Gewerbe'))).toBe(true);
+  });
+
+  it('doppelte Typzeilen summieren sich', () => {
+    const erg = parseRaumprogrammCsv('markt;100\nmarktgerecht;50');
+    expect(erg.posten).toEqual([{ typ: 'marktgerecht', hnfSoll: 150 }]);
   });
 });

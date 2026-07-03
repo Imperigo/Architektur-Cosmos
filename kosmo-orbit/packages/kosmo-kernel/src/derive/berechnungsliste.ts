@@ -130,3 +130,70 @@ export function deriveBerechnungsliste(doc: KosmoDoc): Berechnungsliste {
     maxAgf,
   };
 }
+
+
+/**
+ * Raumprogramm-CSV-Import (V2-V5): Wettbewerbs-Soll kommt als Datei — nie
+ * mehr abtippen. Tolerant gegenüber Trennzeichen (; , Tab), CH-Zahlen
+ * (1'234.5), deutschen Typnamen und Summen-/Leerzeilen. Nicht zuordenbare
+ * Zeilen werden gemeldet statt verschluckt.
+ */
+export interface CsvImportErgebnis {
+  posten: { typ: string; hnfSoll: number }[];
+  uebersprungen: string[];
+}
+
+const TYP_ALIASE: Record<string, string> = {
+  marktgerecht: 'marktgerecht',
+  markt: 'marktgerecht',
+  preisguenstig: 'preisguenstig',
+  preisgunstig: 'preisguenstig',
+  guenstig: 'preisguenstig',
+  alterswohnen: 'alterswohnen',
+  alter: 'alterswohnen',
+  senioren: 'alterswohnen',
+  verticalcluster: 'vertical-cluster',
+  cluster: 'vertical-cluster',
+  quartierebene: 'quartierebene',
+  quartier: 'quartierebene',
+};
+
+export function parseRaumprogrammCsv(text: string): CsvImportErgebnis {
+  const posten = new Map<string, number>();
+  const uebersprungen: string[] = [];
+  for (const roh of text.split(/\r?\n/)) {
+    const zeile = roh.trim();
+    if (!zeile) continue;
+    const felder = zeile.split(/[;,\t]/).map((f) => f.trim());
+    if (felder.length < 2) {
+      uebersprungen.push(zeile);
+      continue;
+    }
+    // Typ: erstes Feld normalisieren (klein, ohne Umlaute/Sonderzeichen)
+    const norm = felder[0]!
+      .toLowerCase()
+      .replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u')
+      .replace(/[^a-z]/g, '');
+    const typ = TYP_ALIASE[norm] ?? Object.entries(TYP_ALIASE).find(([k]) => norm.includes(k))?.[1];
+    // Zahl: letztes numerische Feld (CH-Format toleriert)
+    let wert: number | null = null;
+    for (let i = felder.length - 1; i >= 1; i--) {
+      const roh2 = felder[i]!.replace(/['\u2019\s]/g, '').replace(',', '.');
+      const n = Number(roh2);
+      if (roh2 && Number.isFinite(n)) {
+        wert = n;
+        break;
+      }
+    }
+    if (!typ || wert === null || wert <= 0) {
+      // Kopf-/Summenzeilen still tolerieren, echte Datenzeilen melden
+      if (typ || /\d/.test(zeile)) uebersprungen.push(zeile);
+      continue;
+    }
+    posten.set(typ, (posten.get(typ) ?? 0) + wert);
+  }
+  return {
+    posten: [...posten.entries()].map(([typ, hnfSoll]) => ({ typ, hnfSoll: Math.round(hnfSoll * 10) / 10 })),
+    uebersprungen,
+  };
+}
