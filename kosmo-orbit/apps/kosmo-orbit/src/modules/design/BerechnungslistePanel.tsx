@@ -1,9 +1,13 @@
 import { useMemo, useState } from 'react';
 import {
   deriveBerechnungsliste,
-  WOHNUNGSTYPEN,
+  segmentiere,
+  sollMix,
   typFarbe,
+  WOHNUNGSTYPEN,
   type RaumprogrammPosten,
+  type SegmentierungsErgebnis,
+  type Zone,
 } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
@@ -337,6 +341,112 @@ export function BerechnungslistePanel({
           <Measure>{fmt(liste.totalGf)} m²</Measure>
         </div>
       </div>
+
+      <Hairline />
+      <SegmentiererSektion />
+    </div>
+  );
+}
+
+/** F5: Soll-Mix → Wohnungen am Korridor schneiden (gated Übernahme). */
+function SegmentiererSektion() {
+  const revision = useProject((s) => s.revision);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+  const runCommand = useProject((s) => s.runCommand);
+  const [ergebnis, setErgebnis] = useState<SegmentierungsErgebnis | null>(null);
+  const [hinweis, setHinweis] = useState<string | null>(null);
+  void revision;
+
+  const schneiden = () => {
+    const { doc } = useProject.getState();
+    const mix = sollMix(doc);
+    if (mix.length === 0) {
+      setHinweis('Zuerst das Raumprogramm erfassen — daraus entsteht der Soll-Mix.');
+      return;
+    }
+    const zonen = doc.byKind<Zone>('zone').filter((z) => z.storeyId === activeStoreyId);
+    const korridor = zonen.find((z) => z.raumTyp === 'korridor');
+    if (!korridor) {
+      setHinweis('Eine Zone mit Raumtyp «korridor» zeichnen — daran werden die Wohnungen geschnitten.');
+      return;
+    }
+    const rest = zonen.filter((z) => z.id !== korridor.id);
+    const footprint = rest.sort((a, b) => flaeche(b.outline) - flaeche(a.outline))[0];
+    if (!footprint) {
+      setHinweis('Eine Footprint-Zone (Geschossfläche) zeichnen — sie wird geteilt.');
+      return;
+    }
+    setHinweis(null);
+    setErgebnis(segmentiere(footprint.outline, korridor.outline, mix));
+  };
+
+  const flaeche = (outline: { x: number; y: number }[]) => {
+    let s2 = 0;
+    for (let i = 0; i < outline.length; i++) {
+      const p = outline[i]!;
+      const q = outline[(i + 1) % outline.length]!;
+      s2 += p.x * q.y - q.x * p.y;
+    }
+    return Math.abs(s2) / 2;
+  };
+
+  const uebernehmen = () => {
+    if (!ergebnis || !activeStoreyId) return;
+    const { history } = useProject.getState();
+    history.beginGroup();
+    try {
+      let i = 0;
+      for (const w of ergebnis.wohnungen) {
+        i++;
+        runCommand('design.zoneErstellen', {
+          storeyId: activeStoreyId,
+          outline: w.outline,
+          name: w.typ ? `Whg ${i} (${w.typ})` : 'Restfläche',
+          sia: 'HNF',
+          ...(w.typ ? { program: w.typ } : {}),
+        });
+      }
+    } finally {
+      history.endGroup();
+    }
+    setErgebnis(null);
+  };
+
+  return (
+    <div style={{ display: 'grid', gap: 6 }} data-testid="segmentierer">
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <span style={{ fontWeight: 600, fontSize: 12 }}>Wohnungen schneiden</span>
+        <div style={{ flex: 1 }} />
+        <KButton size="sm" tone="quiet" data-testid="segmentierer-lauf" onClick={schneiden}>
+          Vorschlag
+        </KButton>
+        {ergebnis && ergebnis.wohnungen.length > 0 && (
+          <KButton size="sm" tone="accent" data-testid="segmentierer-uebernehmen" onClick={uebernehmen}>
+            Übernehmen
+          </KButton>
+        )}
+      </div>
+      {hinweis && <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>{hinweis}</div>}
+      {ergebnis && (
+        <div style={{ display: 'grid', gap: 3, fontSize: 11.5 }} data-testid="segmentierer-ergebnis">
+          {ergebnis.mix.map((m) => (
+            <div key={m.typ} style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: typFarbe(m.typ) ?? 'var(--k-ink-soft)' }}>{m.typ}</span>
+              <Measure>
+                {m.ist}/{m.soll}
+              </Measure>
+            </div>
+          ))}
+          {ergebnis.diagnose.map((d, i) => (
+            <div key={i} style={{ color: 'var(--k-warning)', lineHeight: 1.4 }}>
+              {d}
+            </div>
+          ))}
+          <span style={{ color: 'var(--k-ink-faint)' }}>
+            Übernahme legt Zonen an — ein Undo-Schritt.
+          </span>
+        </div>
+      )}
     </div>
   );
 }

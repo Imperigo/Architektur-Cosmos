@@ -33,4 +33,5 @@ export * from './derive/raumgraph';
 export * from './model/zonenregeln';
 export * from './model/regelpresets';
 export * from './derive/variantenmatrix';
+export * from './derive/segmentierer';
 export * from './geometry/skeleton';

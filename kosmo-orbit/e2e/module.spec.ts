@@ -829,3 +829,38 @@ test('Varianten-Matrix (V2-V3/F4): Parallel-Axis-Vergleich erscheint im Studien-
   const linien = await page.locator('[data-testid="matrix-linie"]').count();
   expect(linien).toBeGreaterThanOrEqual(2);
 });
+
+test('Wohnungs-Segmentierer (V2-F5): Soll-Mix → Vorschlag → Übernehmen → Zonen, 1 Undo', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.raumprogrammSetzen', {
+      posten: [
+        { typ: 'marktgerecht', hnfSoll: 190 },
+        { typ: 'preisguenstig', hnfSoll: 150 },
+      ],
+    });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Geschoss', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 14000 }, { x: 0, y: 14000 }],
+    });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Korridor', sia: 'VF', raumTyp: 'korridor',
+      outline: [{ x: 0, y: 6000 }, { x: 30000, y: 6000 }, { x: 30000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+  });
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('zone').length);
+  await page.click('[data-testid="liste-toggle"]');
+  await page.click('[data-testid="segmentierer-lauf"]');
+  await expect(page.locator('[data-testid="segmentierer-ergebnis"]')).toContainText('marktgerecht');
+  await page.click('[data-testid="segmentierer-uebernehmen"]');
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('zone').length))
+    .toBeGreaterThanOrEqual(vorher + 4);
+  await page.click('[data-testid="undo"]');
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('zone').length)).toBe(vorher);
+});

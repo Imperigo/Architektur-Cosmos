@@ -10,6 +10,7 @@ import { erkenneDecke, erkenneWand, geschossZu } from '../src/derive/bestand';
 import { fluchtwege, raumGraph } from '../src/derive/raumgraph';
 import { ZONENREGEL_KATALOG } from '../src/model/zonenregeln';
 import { variantenMatrix } from '../src/derive/variantenmatrix';
+import { segmentiere, sollMix } from '../src/derive/segmentierer';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
   KosmoDoc,
@@ -1839,5 +1840,43 @@ describe('Varianten-Matrix (V2-V3/F4)', () => {
     for (const b of mitZiel.bereiche) expect(b.max).toBeGreaterThan(b.min);
     const ohneZiel = variantenMatrix(varianten, null);
     expect(ohneZiel.achsen.some((a) => a.key === 'delta')).toBe(false);
+  });
+});
+
+describe('Wohnungs-Segmentierer (V2-F5)', () => {
+  const footprint = [{ x: 0, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 14000 }, { x: 0, y: 14000 }];
+  const korridor = [{ x: 0, y: 6000 }, { x: 30000, y: 6000 }, { x: 30000, y: 8000 }, { x: 0, y: 8000 }];
+
+  it('schneidet Wohnungen beidseits des Korridors nahe der Zielgrösse', () => {
+    const erg = segmentiere(footprint, korridor, [
+      { typ: 'marktgerecht', groesse: 95, anzahl: 2 },
+      { typ: 'preisguenstig', groesse: 75, anzahl: 2 },
+    ]);
+    const geschnitten = erg.wohnungen.filter((w) => w.typ !== null);
+    expect(geschnitten.length).toBeGreaterThanOrEqual(4);
+    for (const w of geschnitten) {
+      expect(Math.abs(w.abweichung!)).toBeLessThan(20); // ±20 m² zur Zielgrösse
+      // Jede Wohnung liegt am Korridor (eine Kante auf y=6000 oder y=8000)
+      const amKorridor = w.outline.some((p) => p.y === 6000) || w.outline.some((p) => p.y === 8000);
+      expect(amKorridor).toBe(true);
+    }
+    expect(erg.mix.find((m) => m.typ === 'marktgerecht')!.ist).toBe(2);
+  });
+
+  it('unerfüllbarer Mix → ehrliche Diagnose statt Zwang', () => {
+    const erg = segmentiere(footprint, korridor, [{ typ: 'vertical-cluster', groesse: 110, anzahl: 20 }]);
+    expect(erg.mix[0]!.ist).toBeLessThan(20);
+    expect(erg.diagnose.some((d) => d.includes('vertical-cluster'))).toBe(true);
+  });
+
+  it('Korridor am Rand → nur ein Band; sollMix rundet aus dem Raumprogramm', () => {
+    const randKorridor = [{ x: 0, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 2000 }, { x: 0, y: 2000 }];
+    const erg = segmentiere(footprint, randKorridor, [{ typ: 'alterswohnen', groesse: 65, anzahl: 3 }]);
+    expect(erg.wohnungen.filter((w) => w.typ !== null).length).toBeGreaterThanOrEqual(3);
+    const doc = new KosmoDoc();
+    execute(doc, 'design.raumprogrammSetzen', {
+      posten: [{ typ: 'marktgerecht', hnfSoll: 285 }],
+    });
+    expect(sollMix(doc)).toEqual([{ typ: 'marktgerecht', groesse: 95, anzahl: 3 }]);
   });
 });
