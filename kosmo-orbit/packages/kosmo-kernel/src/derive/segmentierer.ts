@@ -55,7 +55,13 @@ export function sollMix(doc: KosmoDoc): WohnungsTypSoll[] {
 }
 
 const RASTER = 250; // mm Schnittstations-Raster
-const MIN_BREITE = 4500; // mm minimale Wohnungsbreite am Korridor
+
+export interface SegmentierOptionen {
+  /** Minimale Wohnungsbreite am Korridor (mm). */
+  minBreite?: number;
+  /** Typgrössen-Override (m²) — F6-Slider. */
+  groessen?: Record<string, number>;
+}
 
 interface Band {
   /** Ursprung (Bandanfang an der Korridorachse). */
@@ -110,6 +116,7 @@ function bilderBaender(footprint: Pt[], korridor: Pt[]): Band[] {
 function schneideBand(
   band: Band,
   offenerBedarf: Map<string, { groesse: number; rest: number }>,
+  minBreite: number,
 ): GeschnitteneWohnung[] {
   const tiefe = band.tiefe;
   // Kandidat-Breiten je Typ (mm), auf Raster gerundet
@@ -117,7 +124,7 @@ function schneideBand(
     .filter(([, b]) => b.rest > 0)
     .map(([typ, b]) => ({
       typ,
-      breite: Math.max(MIN_BREITE, Math.round((b.groesse * 1e6) / tiefe / RASTER) * RASTER),
+      breite: Math.max(minBreite, Math.round((b.groesse * 1e6) / tiefe / RASTER) * RASTER),
       groesse: b.groesse,
     }));
   const wohnungen: GeschnitteneWohnung[] = [];
@@ -125,7 +132,7 @@ function schneideBand(
   // Greedy nach offenem Bedarf: der Typ mit den meisten fehlenden Wohnungen
   // zuerst (Gleichstand → grössere Wohnung) — verteilt den Mix über die
   // Bänder, statt dass ein Typ das erste Band füllt.
-  while (s < band.laenge - MIN_BREITE && kandidaten.some((k) => offenerBedarf.get(k.typ)!.rest > 0)) {
+  while (s < band.laenge - minBreite && kandidaten.some((k) => offenerBedarf.get(k.typ)!.rest > 0)) {
     let bester: { typ: string; breite: number; groesse: number } | null = null;
     for (const k of kandidaten) {
       if (offenerBedarf.get(k.typ)!.rest <= 0) continue;
@@ -187,7 +194,12 @@ export function segmentiere(
   footprint: Pt[],
   korridor: Pt[],
   mix: WohnungsTypSoll[],
+  opts: SegmentierOptionen = {},
 ): SegmentierungsErgebnis {
+  const minBreite = opts.minBreite ?? 4500;
+  if (opts.groessen) {
+    mix = mix.map((m) => (opts.groessen![m.typ] ? { ...m, groesse: opts.groessen![m.typ]! } : m));
+  }
   const diagnose: string[] = [];
   const baender = bilderBaender(footprint, korridor);
   if (baender.length === 0) {
@@ -197,7 +209,7 @@ export function segmentiere(
   const bedarf = new Map(mix.map((m) => [m.typ, { groesse: m.groesse, rest: m.anzahl }]));
   const wohnungen: GeschnitteneWohnung[] = [];
   for (const band of baender) {
-    wohnungen.push(...schneideBand(band, bedarf));
+    wohnungen.push(...schneideBand(band, bedarf, minBreite));
   }
   const ist = new Map<string, number>();
   for (const w of wohnungen) {

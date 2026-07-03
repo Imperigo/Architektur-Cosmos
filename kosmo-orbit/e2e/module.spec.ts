@@ -864,3 +864,29 @@ test('Wohnungs-Segmentierer (V2-F5): Soll-Mix → Vorschlag → Übernehmen → 
   await page.click('[data-testid="undo"]');
   expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('zone').length)).toBe(vorher);
 });
+
+test('Segmentierer-Dialog (V2-F6): Slider rechnet den Vorschlag sofort neu', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.raumprogrammSetzen', { posten: [{ typ: 'preisguenstig', hnfSoll: 300 }] });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Geschoss', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 14000 }, { x: 0, y: 14000 }],
+    });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Korridor', sia: 'VF', raumTyp: 'korridor',
+      outline: [{ x: 0, y: 6000 }, { x: 30000, y: 6000 }, { x: 30000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+  });
+  await page.click('[data-testid="liste-toggle"]');
+  await page.click('[data-testid="segmentierer-lauf"]');
+  const vorher = await page.locator('[data-testid="segmentierer-ergebnis"]').innerText();
+  // Wohnungsgrösse ×0.8 → mehr Wohnungen passen
+  await page.locator('[data-testid="segmentierer-groesse"]').fill('0.8');
+  await expect.poll(async () => page.locator('[data-testid="segmentierer-ergebnis"]').innerText()).not.toBe(vorher);
+});

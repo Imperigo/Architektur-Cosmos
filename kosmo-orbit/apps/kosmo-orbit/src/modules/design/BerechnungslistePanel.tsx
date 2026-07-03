@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   deriveBerechnungsliste,
   segmentiere,
@@ -355,6 +355,9 @@ function SegmentiererSektion() {
   const runCommand = useProject((s) => s.runCommand);
   const [ergebnis, setErgebnis] = useState<SegmentierungsErgebnis | null>(null);
   const [hinweis, setHinweis] = useState<string | null>(null);
+  // F6: Dialog statt Batch — Parameter ändern rechnet sofort neu
+  const [minBreite, setMinBreite] = useState(4500);
+  const [groessenFaktor, setGroessenFaktor] = useState(1);
   void revision;
 
   const schneiden = () => {
@@ -377,8 +380,15 @@ function SegmentiererSektion() {
       return;
     }
     setHinweis(null);
-    setErgebnis(segmentiere(footprint.outline, korridor.outline, mix));
+    const groessen = Object.fromEntries(mix.map((m) => [m.typ, Math.round(m.groesse * groessenFaktor)]));
+    setErgebnis(segmentiere(footprint.outline, korridor.outline, mix, { minBreite, groessen }));
   };
+
+  // F6: Anytime-Gefühl — Sliderbewegung rechnet den Vorschlag sofort neu
+  useEffect(() => {
+    if (ergebnis) schneiden();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [minBreite, groessenFaktor]);
 
   const flaeche = (outline: { x: number; y: number }[]) => {
     let s2 = 0;
@@ -427,6 +437,30 @@ function SegmentiererSektion() {
         )}
       </div>
       {hinweis && <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>{hinweis}</div>}
+      {ergebnis && (
+        <div style={{ display: 'grid', gap: 4, fontSize: 11.5 }}>
+          <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span style={{ width: 92, color: 'var(--k-ink-soft)' }}>Min-Breite</span>
+            <input
+              type="range" min={3500} max={7000} step={250} value={minBreite}
+              data-testid="segmentierer-minbreite"
+              onChange={(e) => setMinBreite(Number(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <Measure>{(minBreite / 1000).toFixed(2)} m</Measure>
+          </label>
+          <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span style={{ width: 92, color: 'var(--k-ink-soft)' }}>Wohnungsgrösse</span>
+            <input
+              type="range" min={0.8} max={1.2} step={0.05} value={groessenFaktor}
+              data-testid="segmentierer-groesse"
+              onChange={(e) => setGroessenFaktor(Number(e.target.value))}
+              style={{ flex: 1 }}
+            />
+            <Measure>×{groessenFaktor.toFixed(2)}</Measure>
+          </label>
+        </div>
+      )}
       {ergebnis && (
         <div style={{ display: 'grid', gap: 3, fontSize: 11.5 }} data-testid="segmentierer-ergebnis">
           {ergebnis.mix.map((m) => (
