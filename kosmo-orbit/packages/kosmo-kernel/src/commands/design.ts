@@ -546,6 +546,35 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const saveFacadeModule = registerCommand({
+  id: 'design.modulSpeichern',
+  title: 'Fassadenmodul speichern',
+  description:
+    'Speichert ein gezeichnetes Fassadenmodul: breite × hoehe (mm) und Elemente (Rechtecke mit typ fenster/paneel in Modul-Koordinaten, Ursprung unten links). Gleicher Name überschreibt; leere elemente + vorhandener Name löscht.',
+  params: z.object({
+    name: z.string().min(1),
+    breite: z.number().int().positive(),
+    hoehe: z.number().int().positive(),
+    elemente: z
+      .array(
+        z.object({
+          x: z.number(), y: z.number(),
+          b: z.number().positive(), h: z.number().positive(),
+          typ: z.enum(['fenster', 'paneel']),
+        }),
+      )
+      .max(40),
+  }),
+  summarize: (p) => `Modul «${p.name}» (${p.elemente.length} Elemente)`,
+  run: (doc, p) => {
+    const rest = doc.settings.fassadenModule.filter((m) => m.name !== p.name);
+    const neu2 = p.elemente.length > 0 || !doc.settings.fassadenModule.some((m) => m.name === p.name)
+      ? [...rest, { name: p.name, breite: p.breite, hoehe: p.hoehe, elemente: p.elemente }]
+      : rest;
+    return [{ settings: true as const, before: doc.settings, after: { ...doc.settings, fassadenModule: neu2 } }];
+  },
+});
+
 export const placeZoneDoor = registerCommand({
   id: 'design.tuerSetzen',
   title: 'Zonentür setzen',

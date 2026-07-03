@@ -34,9 +34,9 @@ export function setSunDate(d: Date | null): void {
 }
 
 // Fassaden-Modulraster (V7-Ausbau): sichtbar auf den MassBody-Fassaden
-let modulRaster: { b: number; h: number } | null = null;
+let modulRaster: { b: number; h: number; elemente?: import('@kosmo/kernel').ModulElement[] } | null = null;
 let modulRevision = 0;
-export function setModulRaster(r: { b: number; h: number } | null): void {
+export function setModulRaster(r: typeof modulRaster): void {
   modulRaster = r;
   modulRevision++;
 }
@@ -182,6 +182,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
     const modulGroup = new THREE.Group();
     scene.add(modulGroup);
+    const fensterMaterial = new THREE.MeshBasicMaterial({
+      color: 0x4a7bc0, transparent: true, opacity: 0.45, side: THREE.DoubleSide,
+    });
     let gezeichneteModulRevision = -1;
     let modulDocRevision = -1;
     function syncModulRaster() {
@@ -213,6 +216,32 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
               new THREE.Vector3(a.x * MM, (z0 + hMm) * MM, -a.y * MM),
               new THREE.Vector3(b.x * MM, (z0 + hMm) * MM, -b.y * MM),
             );
+          }
+          // Gezeichnete Modul-Elemente in jede Zelle (Fenster blau, Paneel Kontur)
+          const elemente = modulRaster.elemente ?? [];
+          if (elemente.length > 0) {
+            const spalten = Math.floor(len / modulRaster.b);
+            const zeilenZ = Math.floor(m.height / modulRaster.h);
+            for (let c = 0; c < spalten; c++) {
+              for (let r2 = 0; r2 < zeilenZ; r2++) {
+                for (const el of elemente) {
+                  const u0 = c * modulRaster.b + el.x;
+                  const z1 = z0 + r2 * modulRaster.h + el.y;
+                  const ecken = [
+                    [u0, z1], [u0 + el.b, z1], [u0 + el.b, z1 + el.h], [u0, z1 + el.h],
+                  ].map(([u, zz]) => new THREE.Vector3((a.x + dx * u!) * MM, zz! * MM, -(a.y + dy * u!) * MM));
+                  for (let e2 = 0; e2 < 4; e2++) {
+                    punkte.push(ecken[e2]!, ecken[(e2 + 1) % 4]!);
+                  }
+                  if (el.typ === 'fenster') {
+                    const g2 = new THREE.BufferGeometry();
+                    g2.setFromPoints([ecken[0]!, ecken[1]!, ecken[2]!, ecken[0]!, ecken[2]!, ecken[3]!]);
+                    g2.computeVertexNormals();
+                    modulGroup.add(new THREE.Mesh(g2, fensterMaterial));
+                  }
+                }
+              }
+            }
           }
         }
       }

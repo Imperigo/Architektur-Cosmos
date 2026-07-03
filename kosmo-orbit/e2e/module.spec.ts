@@ -1183,3 +1183,40 @@ test('Zonentüren: Generator setzt Türen, Symbol im Plan, Graph zeigt tuer-Kant
   await expect(page.locator('[data-testid="zonentuer"]').first()).toBeVisible();
   expect(await page.locator('[data-testid="zonentuer"]').count()).toBe(3);
 });
+
+test('Modul-Editor: Element aufziehen → speichern → Auswahl im Panel → 3D rendert', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Parzelle', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 40000, y: 0 }, { x: 40000, y: 30000 }, { x: 0, y: 30000 }],
+    });
+    k.run('design.volumenErstellen', {
+      storeyId: st.activeStoreyId, height: 9000,
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 6500 }, { x: 0, y: 6500 }],
+    });
+  });
+  await page.click('[data-testid="studie-toggle"]');
+  await page.click('[data-testid="modul-editor-toggle"]');
+  // Fenster-Element aufziehen (Mitte der Fläche)
+  const flaeche = page.locator('[data-testid="modul-flaeche"]');
+  const box = (await flaeche.boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.2, box.y + box.height * 0.6);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.8, box.y + box.height * 0.2, { steps: 4 });
+  await page.mouse.up();
+  await expect(page.locator('[data-testid="modul-element"]')).toHaveCount(1);
+  await page.fill('[data-testid="modul-name"]', 'Testmodul');
+  await page.click('[data-testid="modul-speichern"]');
+  await expect(page.locator('[data-testid="modul-editor"]')).toHaveCount(0);
+  // Im Panel wählbar, 3D rendert ohne Fehler
+  await page.selectOption('[data-testid="modul-wahl"]', 'Testmodul');
+  await page.click('[data-testid="module-3d"]');
+  await page.evaluate(() => window.__kosmoViewport.renderOnce());
+  expect(await page.evaluate(() => window.__kosmo.state().doc.settings.fassadenModule.length)).toBe(1);
+});

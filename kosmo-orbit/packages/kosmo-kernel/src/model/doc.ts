@@ -74,8 +74,28 @@ export interface DocSettings {
   vorlagen: ZonenVorlage[];
   /** Projektstandort CH (V2-V4): einmal geholt, im Doc = offline verfügbar. */
   standort: ProjektStandort | null;
+  /** Fassadenmodule (Modul-Editor): gezeichnete Module für die Rasterung. */
+  fassadenModule: FassadenModul[];
   /** Parzellenfläche in m² (für AZ → zulässige aGF). */
   parzellenFlaeche: number | null;
+}
+
+/** Fassadenmodul (Modul-Editor, vorform-Kern): Elemente in Modul-Koordinaten. */
+export interface FassadenModul {
+  name: string;
+  /** Modulmass b × h (mm). */
+  breite: number;
+  hoehe: number;
+  elemente: ModulElement[];
+}
+
+export interface ModulElement {
+  /** Rechteck in Modul-Koordinaten (mm, Ursprung unten links). */
+  x: number;
+  y: number;
+  b: number;
+  h: number;
+  typ: 'fenster' | 'paneel';
 }
 
 /** Projektstandort (V2-V4): WGS84 für die Sonne, LV95 fürs Vermessen. */
@@ -155,6 +175,7 @@ export const defaultSettings: DocSettings = {
   kennzahlFormeln: [],
   vorlagen: [],
   standort: null,
+  fassadenModule: [],
 };
 
 export interface Patch {

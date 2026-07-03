@@ -22,6 +22,7 @@ import {
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
+import { ModulEditor } from './ModulEditor';
 import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
 import { DrawPanel } from './DrawPanel';
@@ -1144,10 +1145,18 @@ function FassadenModulSektion() {
   const [modB, setModB] = useState(2500);
   const [modH, setModH] = useState(3000);
   const [im3d, setIm3d] = useState(false);
+  const [editorOffen, setEditorOffen] = useState(false);
+  const [modulName, setModulName] = useState<string | null>(null);
+  const module = useProject.getState().doc.settings.fassadenModule;
+  const gewaehlt = module.find((m) => m.name === modulName) ?? null;
   useEffect(() => {
-    setModulRaster(im3d ? { b: modB, h: modH } : null);
+    // Gewähltes gezeichnetes Modul übersteuert die freien Masse
+    const b = gewaehlt?.breite ?? modB;
+    const h = gewaehlt?.hoehe ?? modH;
+    setModulRaster(im3d ? { b, h, elemente: gewaehlt?.elemente ?? [] } : null);
     return () => setModulRaster(null);
-  }, [im3d, modB, modH]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [im3d, modB, modH, modulName, revision]);
   const doc = useProject.getState().doc;
   const studie = useMemo(
     () => (activeStoreyId ? fassadenModule(doc, activeStoreyId, modB, modH) : null),
@@ -1168,6 +1177,9 @@ function FassadenModulSektion() {
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <span style={{ fontWeight: 600, fontSize: 12 }}>Fassaden-Module</span>
         <div style={{ flex: 1 }} />
+        <KButton size="sm" tone="quiet" data-testid="modul-editor-toggle" onClick={() => setEditorOffen(true)}>
+          Editor
+        </KButton>
         <KButton size="sm" tone={im3d ? 'accent' : 'quiet'} data-testid="module-3d" onClick={() => setIm3d(!im3d)}>
           Im 3D
         </KButton>
@@ -1175,6 +1187,23 @@ function FassadenModulSektion() {
           CSV
         </KButton>
       </div>
+      {module.length > 0 && (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 11.5 }}>
+          <span style={{ color: 'var(--k-ink-soft)' }}>Gezeichnet</span>
+          <select
+            value={modulName ?? ''}
+            data-testid="modul-wahl"
+            onChange={(e) => setModulName(e.target.value || null)}
+            style={{ padding: '2px 6px', flex: 1 }}
+          >
+            <option value="">— freie Masse —</option>
+            {module.map((m) => (
+              <option key={m.name} value={m.name}>{m.name} ({(m.breite / 1000).toFixed(2)} × {(m.hoehe / 1000).toFixed(2)})</option>
+            ))}
+          </select>
+        </div>
+      )}
+      {editorOffen && <ModulEditor onClose={() => setEditorOffen(false)} />}
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11.5 }}>
         <span style={{ color: 'var(--k-ink-soft)' }}>Modul</span>
         <input type="number" value={modB} step={50} onChange={(e) => setModB(Number(e.target.value) || 2500)} style={{ width: 64 }} data-testid="modul-b" />

@@ -2346,3 +2346,29 @@ describe('Zonentüren (Graph wird ehrlich)', () => {
     expect(doc.byKind('zonentuer')).toHaveLength(1 + 3);
   });
 });
+
+describe('Modul-Editor (vorform-Kern)', () => {
+  it('modulSpeichern: anlegen, überschreiben, leeres Update löscht; undo-fähig', () => {
+    const doc = new KosmoDoc();
+    const r = execute(doc, 'design.modulSpeichern', {
+      name: 'Modul A', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 400, y: 900, b: 1600, h: 1600, typ: 'fenster' }],
+    });
+    expect(doc.settings.fassadenModule).toHaveLength(1);
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Modul A', breite: 2500, hoehe: 3000,
+      elemente: [
+        { x: 400, y: 900, b: 1600, h: 1600, typ: 'fenster' },
+        { x: 0, y: 0, b: 2500, h: 900, typ: 'paneel' },
+      ],
+    });
+    expect(doc.settings.fassadenModule).toHaveLength(1);
+    expect(doc.settings.fassadenModule[0]!.elemente).toHaveLength(2);
+    execute(doc, 'design.modulSpeichern', { name: 'Modul A', breite: 2500, hoehe: 3000, elemente: [] });
+    expect(doc.settings.fassadenModule).toHaveLength(0);
+    doc.apply(invertPatches(r.patches));
+    // Serialisierung überlebt
+    const wieder = KosmoDoc.fromJSON(doc.toJSON());
+    expect(wieder.settings.fassadenModule).toBeDefined();
+  });
+});
