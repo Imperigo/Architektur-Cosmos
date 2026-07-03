@@ -1297,17 +1297,19 @@ export const setDimensionStyle = registerCommand({
   id: 'design.bemassungSetzen',
   title: 'Bemassungs-Stil setzen',
   description:
-    'Stellt den Bemassungs-Stil des Projekts ein (wirkt in Grundriss, Schnitt, Druck und DXF). aussenKetten: beide (Öffnungen + Gesamtmass), gesamt (nur Gesamtmass) oder keine. innenKetten: Ketten auf den Achsen der Innenwände (Werkplan). hoehenKoten: Geschoss-Koten in Schnitt und Ansicht. Nur genannte Felder werden geändert.',
+    'Stellt den Bemassungs-Stil des Projekts ein (wirkt in Grundriss, Schnitt, Druck und DXF). aussenKetten: beide (Öffnungen + Gesamtmass), gesamt (nur Gesamtmass) oder keine. innenKetten: Ketten auf den Achsen der Innenwände (Werkplan). hoehenKoten: Geschoss-Koten in Schnitt und Ansicht. rohKette: Rohkonstruktions-Kette (Kanten der tragenden Schicht als 3. Kette, Werkplan). Nur genannte Felder werden geändert.',
   params: z.object({
     aussenKetten: z.enum(['beide', 'gesamt', 'keine']).optional(),
     innenKetten: z.boolean().optional(),
     hoehenKoten: z.boolean().optional(),
+    rohKette: z.boolean().optional(),
   }),
   summarize: (p) =>
     `Bemassung: ${[
       p.aussenKetten !== undefined ? `aussen ${p.aussenKetten}` : null,
       p.innenKetten !== undefined ? `innen ${p.innenKetten ? 'an' : 'aus'}` : null,
       p.hoehenKoten !== undefined ? `Koten ${p.hoehenKoten ? 'an' : 'aus'}` : null,
+      p.rohKette !== undefined ? `Rohkette ${p.rohKette ? 'an' : 'aus'}` : null,
     ]
       .filter(Boolean)
       .join(' · ') || 'unverändert'}`,
@@ -1317,6 +1319,7 @@ export const setDimensionStyle = registerCommand({
       aussenKetten: p.aussenKetten ?? alt.aussenKetten,
       innenKetten: p.innenKetten ?? alt.innenKetten,
       hoehenKoten: p.hoehenKoten ?? alt.hoehenKoten,
+      rohKette: p.rohKette ?? alt.rohKette ?? false,
     };
     return [{ settings: true, before: { bemassung: alt }, after: { bemassung: neu } }];
   },

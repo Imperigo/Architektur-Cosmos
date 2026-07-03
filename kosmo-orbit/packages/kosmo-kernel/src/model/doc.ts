@@ -45,6 +45,8 @@ export interface BemassungsStil {
   innenKetten: boolean;
   /** Höhenkoten je Geschoss in Schnitt und Ansicht. */
   hoehenKoten: boolean;
+  /** Rohkonstruktions-Kette (B1): Kanten der tragenden Schicht als 3. Kette. */
+  rohKette?: boolean;
 }
 
 export interface DocSettings {

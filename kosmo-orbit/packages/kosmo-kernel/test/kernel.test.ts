@@ -1656,6 +1656,54 @@ describe('Zonentür-Drucksymbol + Möbel-Phasen (Vision A4)', () => {
   });
 });
 
+describe('Masslinienordnung (Vision B1)', () => {
+  const eck = () => {
+    const { doc, storeyId, assemblyId } = setupDoc(); // 3-Schicht-AW, Kern beton 180
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 0, y: 6000 } });
+    return { doc, storeyId };
+  };
+
+  it('Öffnungs-Höhenmass «h/BH» hängt als Zweitzeile am richtigen Segment', async () => {
+    const { doc, storeyId } = eck();
+    const w = doc.byKind<Wall>('wall').find((x) => x.b.x === 9000)!;
+    execute(doc, 'design.oeffnungSetzen', { wallId: w.id, openingType: 'fenster', center: 3000, width: 1200, height: 1400, sill: 900 });
+    const oeffnung = deriveDimensions(doc, storeyId).chains.find((c) => c.axis === 'x' && c.role === 'oeffnung')!;
+    expect(oeffnung.zusatz).toBeDefined();
+    const i = oeffnung.ticks.indexOf(2400);
+    expect(oeffnung.zusatz![i]).toBe('140/90'); // Sturz/Brüstung in cm
+    expect(oeffnung.zusatz!.filter(Boolean)).toHaveLength(1);
+    // Tür (sill 0): nur Höhe, keine Brüstung
+    execute(doc, 'design.oeffnungSetzen', { wallId: w.id, openingType: 'tuer', center: 6000, width: 900, height: 2100, sill: 0 });
+    const o2 = deriveDimensions(doc, storeyId).chains.find((c) => c.axis === 'x' && c.role === 'oeffnung')!;
+    expect(o2.zusatz).toContain('210');
+    const { planInnerSvg } = await import('../src');
+    expect(planInnerSvg(doc, storeyId, 50).inner).toContain('140/90'); // Druck zeigt die Zweitzeile
+  });
+
+  it('Achskette erscheint nur mit Stützenraster, Rohkette nur opt-in — Ordnung von innen nach aussen', () => {
+    const { doc, storeyId } = eck();
+    let rollen = deriveDimensions(doc, storeyId).chains.filter((c) => c.axis === 'x').map((c) => c.role);
+    expect(rollen).not.toContain('achse');
+    expect(rollen).not.toContain('roh');
+    execute(doc, 'design.rasterSetzen', { storeyId, achsmass: 4500, anzahl: 3, querAnzahl: 2 });
+    execute(doc, 'design.bemassungSetzen', { rohKette: true });
+    const x = deriveDimensions(doc, storeyId).chains.filter((c) => c.axis === 'x');
+    rollen = x.map((c) => c.role);
+    expect(rollen).toContain('achse');
+    expect(rollen).toContain('roh');
+    const achse = x.find((c) => c.role === 'achse')!;
+    expect(achse.ticks).toEqual([0, 4500, 9000]);
+    // Rohkette: Kanten der tragenden Schicht der Westwand (Kern 180 mm)
+    const roh = x.find((c) => c.role === 'roh')!;
+    expect(roh.ticks.length).toBeGreaterThanOrEqual(2);
+    expect(Math.abs(roh.ticks[1]! - roh.ticks[0]!)).toBe(180);
+    // Ordnung: Öffnungen zuoberst (nächst am Plan), dann Achse, Roh, Gesamt zuunterst
+    const nachLage = [...x].sort((a, b) => b.offset - a.offset).map((c) => c.role);
+    expect(nachLage).toEqual(['oeffnung', 'achse', 'roh', 'gesamt']);
+  });
+});
+
 describe('Treppen-Ausbau (V2-A2)', () => {
   const basis = () => {
     const { doc, storeyId } = setupDoc(); // EG, 3000 hoch

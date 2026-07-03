@@ -152,6 +152,11 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
         parts.push(`<text x="${mid}" y="${-c.offset - 1.2 * scale}" text-anchor="middle" font-size="${fs}" stroke="none">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
+        // B1: Öffnungs-Höhenmass «h/BH» als Zweitzeile unter der Masslinie
+        const z = c.zusatz?.[i];
+        if (z) {
+          parts.push(`<text x="${mid}" y="${-c.offset + 2.2 * scale}" text-anchor="middle" font-size="${2.0 * scale}" stroke="none">${escapeXml(z)}</text>`);
+        }
       }
     } else {
       dimMinX = Math.min(dimMinX, c.offset);
@@ -162,6 +167,10 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
         parts.push(`<text x="${c.offset - 1.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${fs}" stroke="none" transform="rotate(-90 ${c.offset - 1.2 * scale} ${-mid})">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
+        const z = c.zusatz?.[i];
+        if (z) {
+          parts.push(`<text x="${c.offset + 2.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${2.0 * scale}" stroke="none" transform="rotate(-90 ${c.offset + 2.2 * scale} ${-mid})">${escapeXml(z)}</text>`);
+        }
       }
     }
     parts.push('</g>');

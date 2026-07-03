@@ -1,13 +1,16 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Wall } from '../model/entities';
-import type { Mm } from '../model/units';
-import { openingRects } from '../geometry/wall';
+import type { Assembly, GridAxis, Wall } from '../model/entities';
+import { normal, type Mm } from '../model/units';
+import { openingRects, wallFrame } from '../geometry/wall';
 
 /**
  * Assoziative Aussenbemassung — automatisch aus der Parametrik.
- * Zwei Ketten pro Seite (ArchiCAD-Konvention): innen die Öffnungskette
- * (Wandenden + Leibungen), aussen das Gesamtmass. Ändert sich das Modell,
- * ändern sich die Ketten — sie sind abgeleitet, nie gezeichnet.
+ * Werkplan-Masslinienordnung (Hochbauzeichner-Konvention, B1):
+ *   1. Kette Öffnungen (mit Höhenmass h/BH als Zweitzeile),
+ *   2. Kette Achsmasse (wenn ein Stützenraster gesetzt ist),
+ *   3. Kette Rohkonstruktion (opt-in «rohKette»: tragende Schichtkanten),
+ *   äusserste Kette Gesamtmass.
+ * Ändert sich das Modell, ändern sich die Ketten — abgeleitet, nie gezeichnet.
  */
 
 export interface DimensionChain {
@@ -17,8 +20,10 @@ export interface DimensionChain {
   offset: Mm;
   /** Tick-Positionen entlang der Achse, sortiert. */
   ticks: Mm[];
-  /** Öffnungskette / Gesamtmass (aussen) oder Innenkette auf der Wandachse. */
-  role: 'oeffnung' | 'gesamt' | 'innen';
+  /** Kettenrolle in der Masslinienordnung (aussen) oder Innenkette auf der Wandachse. */
+  role: 'oeffnung' | 'achse' | 'roh' | 'gesamt' | 'innen';
+  /** Zweitzeile je Segment (B1: Öffnungs-Höhenmasse «h/BH»), null = keine. */
+  zusatz?: (string | null)[];
 }
 
 export interface DimensionSet {
@@ -26,6 +31,12 @@ export interface DimensionSet {
 }
 
 const AXIS_TOL = 300; // Wand gilt als achsparallel, wenn Achsabweichung klein
+
+interface OeffSeg {
+  p0: Mm;
+  p1: Mm;
+  label: string;
+}
 
 export function deriveDimensions(doc: KosmoDoc, storeyId: string): DimensionSet {
   const walls = doc.byKind<Wall>('wall').filter((w) => w.storeyId === storeyId);
@@ -57,38 +68,123 @@ export function deriveDimensions(doc: KosmoDoc, storeyId: string): DimensionSet 
     }
     return [...ticks].sort((a, b) => a - b);
   };
+  // Öffnungs-Segmente einer Wand: Leibung→Leibung + Höhenmass-Label (h/BH)
+  const wandOeffSegs = (w: Wall, achse: 'x' | 'y'): OeffSeg[] => {
+    const raus: OeffSeg[] = [];
+    const sign = w.b[achse] >= w.a[achse] ? 1 : -1;
+    for (const r of openingRects(w, doc.openingsOf(w.id))) {
+      const q0 = Math.round(w.a[achse] + sign * r.s0);
+      const q1 = Math.round(w.a[achse] + sign * r.s1);
+      const o = r.opening;
+      const label =
+        o.sill > 0
+          ? `${dimensionLabel(0, o.height)}/${dimensionLabel(0, o.sill)}`
+          : dimensionLabel(0, o.height);
+      raus.push({ p0: Math.min(q0, q1), p1: Math.max(q0, q1), label });
+    }
+    return raus;
+  };
   const dedupe = (arr: Mm[]) => arr.filter((v, i) => i === 0 || v - arr[i - 1]! > 10);
+  const zusatzFuer = (ticks: Mm[], segs: OeffSeg[]): (string | null)[] | undefined => {
+    if (segs.length === 0) return undefined;
+    const z = ticks
+      .slice(0, -1)
+      .map((t, i) => segs.find((s) => Math.abs(s.p0 - t) <= 10 && Math.abs(s.p1 - ticks[i + 1]!) <= 10)?.label ?? null);
+    return z.some(Boolean) ? z : undefined;
+  };
 
   // Aussenketten: horizontale Wände nahe der Südkante → x-Kette; vertikale nahe Westkante → y-Kette
   if (stil.aussenKetten !== 'keine') {
     const xTicks = new Set<Mm>();
     const yTicks = new Set<Mm>();
+    const xSegs: OeffSeg[] = [];
+    const ySegs: OeffSeg[] = [];
     for (const w of walls) {
       const horizontal = Math.abs(w.a.y - w.b.y) <= AXIS_TOL;
       const vertical = Math.abs(w.a.x - w.b.x) <= AXIS_TOL;
       if (horizontal && Math.min(w.a.y, w.b.y) <= minY + AXIS_TOL) {
         for (const t of wandTicks(w, 'x')) xTicks.add(t);
+        xSegs.push(...wandOeffSegs(w, 'x'));
       }
       if (vertical && Math.min(w.a.x, w.b.x) <= minX + AXIS_TOL) {
         for (const t of wandTicks(w, 'y')) yTicks.add(t);
+        ySegs.push(...wandOeffSegs(w, 'y'));
       }
     }
+    // 2. Kette: Achsmasse aus dem Stützenraster (nur wenn Achsen existieren)
+    const grids = doc.byKind<GridAxis>('grid').filter((g) => g.storeyId === storeyId);
+    const achsX = dedupe(
+      [...new Set(grids.filter((g) => Math.abs(g.a.x - g.b.x) <= AXIS_TOL).map((g) => Math.round((g.a.x + g.b.x) / 2)))].sort((a, b) => a - b),
+    );
+    const achsY = dedupe(
+      [...new Set(grids.filter((g) => Math.abs(g.a.y - g.b.y) <= AXIS_TOL).map((g) => Math.round((g.a.y + g.b.y) / 2)))].sort((a, b) => a - b),
+    );
+    // 3. Kette: Rohkonstruktion (opt-in) — Kanten der tragenden Schicht QUER zur Kette
+    const rohX: Mm[] = [];
+    const rohY: Mm[] = [];
+    if (stil.rohKette) {
+      for (const w of walls) {
+        const asm = doc.get<Assembly>(w.assemblyId);
+        if (!asm || asm.kind !== 'assembly') continue;
+        const frame = wallFrame(w, asm);
+        const n = normal(w.a, w.b);
+        const faces: Mm[] = [];
+        let cursor = frame.offsetLeft;
+        for (const layer of asm.layers) {
+          const lo = cursor - layer.thickness;
+          if (layer.function === 'tragend') faces.push(cursor, lo);
+          cursor = lo;
+        }
+        if (faces.length === 0) faces.push(frame.offsetLeft, -frame.offsetRight);
+        const vertical = Math.abs(w.a.x - w.b.x) <= AXIS_TOL;
+        const horizontal = Math.abs(w.a.y - w.b.y) <= AXIS_TOL;
+        for (const off of faces) {
+          if (vertical) rohX.push(Math.round(w.a.x + n.x * off));
+          if (horizontal) rohY.push(Math.round(w.a.y + n.y * off));
+        }
+      }
+    }
+
     const xs = dedupe([...xTicks].sort((a, b) => a - b));
     const ys = dedupe([...yTicks].sort((a, b) => a - b));
     const beide = stil.aussenKetten === 'beide';
-    if (xs.length >= 2) {
-      if (beide) chains.push({ axis: 'x', offset: minY - 1200, ticks: xs, role: 'oeffnung' });
-      // Gesamtmass nur, wenn die Öffnungskette mehr als die Endpunkte hat (bzw. immer bei «gesamt»)
-      if (!beide || xs.length > 2) {
-        chains.push({ axis: 'x', offset: minY - (beide ? 2000 : 1200), ticks: [xs[0]!, xs[xs.length - 1]!], role: 'gesamt' });
+    const kette = (
+      axis: 'x' | 'y',
+      basis: Mm,
+      ticks: Mm[],
+      segs: OeffSeg[],
+      achsen: Mm[],
+      roh: Mm[],
+    ) => {
+      if (ticks.length < 2) return;
+      // Masslinienordnung von der Zeichnung weg: Öffnungen, Achsen, Roh, Gesamt
+      let lage = basis - 1200;
+      const schritt = 800;
+      let zwischenKetten = 0;
+      if (beide) {
+        const z = zusatzFuer(ticks, segs);
+        chains.push({ axis, offset: lage, ticks, role: 'oeffnung', ...(z ? { zusatz: z } : {}) });
+        lage -= schritt;
+        if (achsen.length >= 2) {
+          chains.push({ axis, offset: lage, ticks: achsen, role: 'achse' });
+          lage -= schritt;
+          zwischenKetten++;
+        }
+        const rohTicks = dedupe([...new Set(roh)].sort((a, b) => a - b));
+        if (rohTicks.length >= 2) {
+          chains.push({ axis, offset: lage, ticks: rohTicks, role: 'roh' });
+          lage -= schritt;
+          zwischenKetten++;
+        }
       }
-    }
-    if (ys.length >= 2) {
-      if (beide) chains.push({ axis: 'y', offset: minX - 1200, ticks: ys, role: 'oeffnung' });
-      if (!beide || ys.length > 2) {
-        chains.push({ axis: 'y', offset: minX - (beide ? 2000 : 1200), ticks: [ys[0]!, ys[ys.length - 1]!], role: 'gesamt' });
+      // Gesamtmass als äusserste Kette — entfällt nur, wenn es die Öffnungs-
+      // kette exakt doppeln würde (Endpunkte, keine Zwischenketten)
+      if (!beide || ticks.length > 2 || zwischenKetten > 0) {
+        chains.push({ axis, offset: lage, ticks: [ticks[0]!, ticks[ticks.length - 1]!], role: 'gesamt' });
       }
-    }
+    };
+    kette('x', minY, xs, xSegs, achsX, rohX);
+    kette('y', minX, ys, ySegs, achsY, rohY);
   }
 
   // Innenketten (Werkplan): jede Innenwand bemasst sich auf ihrer eigenen Achse
@@ -120,7 +216,7 @@ export function deriveDimensions(doc: KosmoDoc, storeyId: string): DimensionSet 
 }
 
 /** Masszahl zwischen zwei Ticks — Zentimeter-Konvention des Hochbaus (z.B. 361.5). */
-const HOCH = '\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077\u2078\u2079';
+const HOCH = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 
 /** Masszahl in cm, mm-Rest hochgestellt: 3615 mm → «361⁵» (SIA 400 B.5.2). */
 export function dimensionLabel(a: Mm, b: Mm): string {
