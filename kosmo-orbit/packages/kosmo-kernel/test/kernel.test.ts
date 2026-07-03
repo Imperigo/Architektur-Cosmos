@@ -1575,6 +1575,47 @@ describe('Terrain-Entity (Vision A2)', () => {
   });
 });
 
+describe('Aussparungen/Durchbrüche (Vision A3)', () => {
+  it('Wand-Durchbruch: Werkplan zeigt Kreuz + Kote, Vorprojekt nicht; Validierung ehrlich', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const wallId = (w.patches[0] as { id: string }).id;
+    execute(doc, 'design.aussparungSetzen', { hostId: wallId, center: 4500, breite: 300, hoehe: 300, sill: 1200 });
+    const plan = derivePlan(doc, storeyId);
+    // 4 Kanten + 2 Diagonalen (volles Kreuz beim Durchbruch)
+    expect(plan.lines.filter((l) => l.classes.includes('aussparung'))).toHaveLength(6);
+    expect(plan.texte).toHaveLength(1);
+    expect(plan.texte[0]!.text).toBe('D 300×300 UK 1200');
+    execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
+    const vor = derivePlan(doc, storeyId);
+    expect(vor.lines.filter((l) => l.classes.includes('aussparung'))).toHaveLength(0);
+    expect(vor.texte).toHaveLength(0);
+    // Validierung: über die Wand hinaus / fehlender center
+    expect(() => execute(doc, 'design.aussparungSetzen', { hostId: wallId, center: 8950, breite: 300, hoehe: 300 })).toThrow(CommandError);
+    expect(() => execute(doc, 'design.aussparungSetzen', { hostId: wallId, breite: 300, hoehe: 300 })).toThrow(CommandError);
+    expect(() => execute(doc, 'design.aussparungSetzen', { hostId: storeyId, center: 100, breite: 300, hoehe: 300 })).toThrow(CommandError);
+  });
+
+  it('Decken-Schlitz: Symbol + Mengenposition; Wirt-Löschung räumt mit', () => {
+    const { doc, storeyId } = setupDoc();
+    const s = execute(doc, 'design.deckeZeichnen', {
+      storeyId, thickness: 250,
+      outline: [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 6000 }, { x: 0, y: 6000 }],
+    });
+    const slabId = (s.patches[0] as { id: string }).id;
+    execute(doc, 'design.aussparungSetzen', { hostId: slabId, typ: 'schlitz', at: { x: 3000, y: 3000 }, breite: 400, hoehe: 800 });
+    const plan = derivePlan(doc, storeyId);
+    // 4 Kanten + 1 Diagonale (Schlitz)
+    expect(plan.lines.filter((l) => l.classes.includes('aussparung'))).toHaveLength(5);
+    expect(plan.texte[0]!.text).toBe('S 400×800');
+    const pos = deriveMengen(doc).positionen.find((p) => p.kind === 'aussparung:schlitz');
+    expect(pos?.anzahl).toBe(1);
+    expect(pos?.flaeche).toBeCloseTo(0.32, 5);
+    execute(doc, 'design.loeschen', { entityId: slabId });
+    expect(doc.byKind('aussparung')).toHaveLength(0);
+  });
+});
+
 describe('Treppen-Ausbau (V2-A2)', () => {
   const basis = () => {
     const { doc, storeyId } = setupDoc(); // EG, 3000 hoch

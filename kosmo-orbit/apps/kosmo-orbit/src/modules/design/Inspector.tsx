@@ -111,6 +111,30 @@ export function Inspector() {
           <Row label="Öffnungen">
             <span>{doc.openingsOf(entity.id).length}</span>
           </Row>
+          <Row label="Durchbruch">
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="inspector-aussparung"
+              onClick={() => {
+                try {
+                  // Default 300×300 in Wandmitte, UK 1100 — via Kosmo präzise setzbar
+                  runCommand('design.aussparungSetzen', {
+                    hostId: entity.id,
+                    typ: 'durchbruch',
+                    center: Math.round(dist(entity.a, entity.b) / 2),
+                    breite: 300,
+                    hoehe: 300,
+                    sill: 1100,
+                  });
+                } catch (err) {
+                  alert(err instanceof Error ? err.message : String(err));
+                }
+              }}
+            >
+              ⌗ 30×30 setzen
+            </KButton>
+          </Row>
         </>
       )}
 

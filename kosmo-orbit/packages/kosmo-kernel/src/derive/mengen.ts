@@ -1,5 +1,6 @@
 import type {
   Assembly,
+  Aussparung,
   MassBody,
   Opening,
   Roof,
@@ -97,6 +98,20 @@ export function deriveMengen(doc: KosmoDoc): Mengenauszug {
       bezeichnung: typ === 'fenster' ? 'Fenster' : 'Türen',
       anzahl: group.length,
       flaeche: group.reduce((a, o) => a + o.width * o.height, 0) / M2,
+    });
+  }
+
+  // Aussparungen/Durchbrüche (A3) — Position fürs Vorausmass (IfcOpeningElement)
+  const aussparungen = doc.byKind<Aussparung>('aussparung');
+  for (const typ of ['durchbruch', 'schlitz'] as const) {
+    const group = aussparungen.filter((a) => a.typ === typ);
+    if (group.length === 0) continue;
+    positionen.push({
+      kind: `aussparung:${typ}`,
+      ifcKlasse: 'IfcOpeningElement',
+      bezeichnung: typ === 'durchbruch' ? 'Durchbrüche' : 'Schlitze',
+      anzahl: group.length,
+      flaeche: group.reduce((a, x) => a + x.breite * x.hoehe, 0) / M2,
     });
   }
 

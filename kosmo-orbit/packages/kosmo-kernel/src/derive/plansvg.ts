@@ -99,6 +99,12 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       }
     }
   }
+  // Plan-Beschriftungen (A3: Aussparungs-Koten), feiner Text mittig
+  for (const t of plan.texte) {
+    parts.push(
+      `<text x="${t.at.x}" y="${-t.at.y}" text-anchor="middle" font-size="${2.2 * scale}" font-family="monospace">${escapeXml(t.text)}</text>`,
+    );
+  }
   for (const a of plan.arcs) {
     const sx = a.center.x + a.radius * Math.cos(a.startAngle);
     const sy = a.center.y + a.radius * Math.sin(a.startAngle);

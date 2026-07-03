@@ -1461,3 +1461,27 @@ test('Terrain (Vision A2): Profil gesetzt → Ansicht zeigt gewachsen gestrichel
   await expect(neu).toHaveAttribute('points', /,0 .*,0$/); // beide Stützpunkte auf z = 0
   await expect(neu).not.toHaveAttribute('stroke-dasharray', /.*/);
 });
+
+test('Aussparung (Vision A3): Inspector-Knopf setzt Durchbruch → Kreuz + Kote im Werkplan', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aufbau = k.run('design.aufbauErstellen', {
+      name: 'AW A', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    const w = k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: aufbau.patches[0].id,
+      a: { x: 0, y: 0 }, b: { x: 6000, y: 0 },
+    });
+    st.select([w.patches[0].id]);
+  });
+  await page.click('[data-testid="inspector-aussparung"]');
+  await expect(page.locator('line.aussparung')).toHaveCount(6); // 4 Kanten + Kreuz
+  await expect(page.locator('text.aussparung')).toHaveText('D 300×300 UK 1100');
+});

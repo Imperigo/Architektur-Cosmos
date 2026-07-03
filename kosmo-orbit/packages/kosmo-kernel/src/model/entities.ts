@@ -289,8 +289,31 @@ export interface Terrain extends Base {
   punkte: { x: Mm; y: Mm; z: Mm }[];
 }
 
+/**
+ * Aussparung/Durchbruch (Vision A3): Symbol + Menge am Wirt (Wand oder Decke)
+ * — bewusst OHNE Geometrieschnitt. Der Werkplan zeigt Kreuz + Kote
+ * (Hochbauzeichner-Konvention, Lehrheft Deckenkonstruktionen); Statik und
+ * Haustechnik führen die Öffnung nach.
+ */
+export interface Aussparung extends Base {
+  kind: 'aussparung';
+  storeyId: string;
+  /** Wirt-Element: Wand oder Decke. */
+  hostId: string;
+  typ: 'durchbruch' | 'schlitz';
+  /** Wand-Wirt: Mitte in mm entlang der Achse ab Punkt a. */
+  center?: Mm;
+  /** Decken-Wirt: Mittelpunkt in Welt-mm. */
+  at?: Pt;
+  /** Öffnungsmass b × h (Wand: h vertikal; Decke: h = zweite Grundriss-Richtung). */
+  breite: Mm;
+  hoehe: Mm;
+  /** Wand: Unterkante über OK Boden — erscheint in der Kote. */
+  sill?: Mm;
+}
+
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

@@ -413,6 +413,23 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               />
             ))}
 
+          {/* Plan-Beschriftungen (A3: Aussparungs-Koten «D 300×300») */}
+          {plan &&
+            plan.texte.map((t, i) => (
+              <text
+                key={`t${i}`}
+                className={t.classes.join(' ')}
+                x={t.at.x}
+                y={-t.at.y}
+                textAnchor="middle"
+                fontSize={220}
+                fontFamily="ui-monospace, monospace"
+                fill="var(--k-ink)"
+              >
+                {t.text}
+              </text>
+            ))}
+
           {/* Stützenraster: Achsen strichpunktiert + Achskopf an beiden Enden */}
           {plan &&
             plan.axes.map((ax, i) => {

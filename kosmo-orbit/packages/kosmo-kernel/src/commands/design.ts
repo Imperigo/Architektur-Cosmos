@@ -294,6 +294,11 @@ export const deleteEntity = registerCommand({
     if (e.kind === 'wall') {
       for (const o of doc.openingsOf(e.id)) patches.push({ id: o.id, before: o, after: null });
     }
+    if (e.kind === 'wall' || e.kind === 'slab') {
+      for (const a of doc.byKind<import('../model/entities').Aussparung>('aussparung')) {
+        if (a.hostId === e.id) patches.push({ id: a.id, before: a, after: null });
+      }
+    }
     patches.push({ id: e.id, before: e, after: null });
     return patches;
   },
@@ -459,6 +464,51 @@ export const setTerrain = registerCommand({
       punkte: p.punkte,
     };
     return [added(terrain)];
+  },
+});
+
+export const setAussparung = registerCommand({
+  id: 'design.aussparungSetzen',
+  title: 'Aussparung/Durchbruch setzen',
+  description:
+    'Setzt eine Aussparung (Durchbruch oder Schlitz) an einer Wand oder Decke — als Werkplan-Symbol mit Kote (Kreuz + «D/S b×h»), OHNE die Geometrie zu schneiden. Wand: center = Mitte in mm entlang der Achse, sill = Unterkante über OK Boden. Decke: at = Mittelpunkt in Welt-mm. breite × hoehe = Öffnungsmass in mm.',
+  params: z.object({
+    hostId: z.string().describe('Wand- oder Decken-ID'),
+    typ: z.enum(['durchbruch', 'schlitz']).default('durchbruch'),
+    center: z.number().int().optional().describe('Wand: Mitte entlang der Achse, mm ab a'),
+    at: PtSchema.optional().describe('Decke: Mittelpunkt in Welt-mm'),
+    breite: z.number().int().positive(),
+    hoehe: z.number().int().positive(),
+    sill: z.number().int().optional().describe('Wand: Unterkante über OK Boden, mm'),
+  }),
+  summarize: (p) => `${p.typ === 'schlitz' ? 'Schlitz' : 'Durchbruch'} ${p.breite}×${p.hoehe}`,
+  run: (doc, p) => {
+    const host = doc.get(p.hostId);
+    if (!host || (host.kind !== 'wall' && host.kind !== 'slab')) {
+      throw new CommandError('Aussparungen brauchen eine Wand oder Decke als Wirt');
+    }
+    if (host.kind === 'wall') {
+      if (p.center === undefined) throw new CommandError('Wand-Aussparung braucht «center» (mm entlang der Achse)');
+      const len = Math.hypot(host.b.x - host.a.x, host.b.y - host.a.y);
+      if (p.center - p.breite / 2 < 0 || p.center + p.breite / 2 > len) {
+        throw new CommandError(`Aussparung ragt über die Wand hinaus (Achse 0–${Math.round(len)} mm)`);
+      }
+    } else if (!p.at) {
+      throw new CommandError('Decken-Aussparung braucht «at» (Mittelpunkt in Welt-mm)');
+    }
+    const aussparung: import('../model/entities').Aussparung = {
+      id: newId('aussparung'),
+      kind: 'aussparung',
+      storeyId: host.storeyId,
+      hostId: p.hostId,
+      typ: p.typ,
+      breite: p.breite,
+      hoehe: p.hoehe,
+      ...(p.center !== undefined ? { center: p.center } : {}),
+      ...(p.at ? { at: p.at as Pt } : {}),
+      ...(p.sill !== undefined ? { sill: p.sill } : {}),
+    };
+    return [added(aussparung)];
   },
 });
 

@@ -1,4 +1,4 @@
-import type { Boundary, Assembly, GridAxis, Opening, Stair, Storey, Wall } from '../model/entities';
+import type { Aussparung, Boundary, Assembly, GridAxis, Opening, Stair, Storey, Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, union, type Poly } from '../geometry/clip';
 import {
@@ -49,12 +49,20 @@ export interface PlanAxis {
   typ: 'haupt' | 'wohn';
 }
 
+/** Beschriftung im Plan (A3: Aussparungs-Koten «D 300×300 UK 1200»). */
+export interface PlanText {
+  at: Pt;
+  text: string;
+  classes: string[];
+}
+
 export interface PlanGraphic {
   storeyId: string;
   regions: PlanRegion[];
   lines: PlanLine[];
   arcs: PlanArc[];
   axes: PlanAxis[];
+  texte: PlanText[];
   /** Bounding-Box in mm (für viewBox). */
   bounds: { minX: number; minY: number; maxX: number; maxY: number } | null;
 }
@@ -78,8 +86,9 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   const lines: PlanLine[] = [];
   const arcs: PlanArc[] = [];
   const axes: PlanAxis[] = [];
+  const texte: PlanText[] = [];
   if (!storey || storey.kind !== 'storey') {
-    return { storeyId, regions, lines, arcs, axes, bounds: null };
+    return { storeyId, regions, lines, arcs, axes, texte, bounds: null };
   }
 
   const walls = doc
@@ -296,6 +305,50 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     }
   }
 
+  // Aussparungen/Durchbrüche (A3): nur im Werkplan — Kreuz + Kote, KEIN
+  // Geometrieschnitt (Symbolik nach Hochbauzeichner-Konvention)
+  if (phase === 'werkplan') {
+    for (const a of doc.byKind<Aussparung>('aussparung')) {
+      if (a.storeyId !== storeyId) continue;
+      const host = doc.get(a.hostId);
+      let ecken: Pt[] | null = null;
+      let labelAt: Pt | null = null;
+      if (host?.kind === 'wall' && a.center !== undefined) {
+        const assembly = doc.get<Assembly>(host.assemblyId);
+        if (!assembly || assembly.kind !== 'assembly') continue;
+        const frame = wallFrame(host, assembly);
+        const d = axisDirection(host);
+        const n = { x: -d.y, y: d.x };
+        const at = (s: number, off: number): Pt => ({
+          x: Math.round(host.a.x + d.x * s + n.x * off),
+          y: Math.round(host.a.y + d.y * s + n.y * off),
+        });
+        const s0 = a.center - a.breite / 2;
+        const s1 = a.center + a.breite / 2;
+        ecken = [at(s0, frame.offsetLeft), at(s1, frame.offsetLeft), at(s1, -frame.offsetRight), at(s0, -frame.offsetRight)];
+        labelAt = at(a.center, frame.offsetLeft + 260);
+      } else if (host?.kind === 'slab' && a.at) {
+        const bh = a.breite / 2;
+        const hh = a.hoehe / 2;
+        ecken = [
+          { x: a.at.x - bh, y: a.at.y - hh }, { x: a.at.x + bh, y: a.at.y - hh },
+          { x: a.at.x + bh, y: a.at.y + hh }, { x: a.at.x - bh, y: a.at.y + hh },
+        ];
+        labelAt = { x: a.at.x, y: a.at.y + hh + 260 };
+      }
+      if (!ecken || !labelAt) continue;
+      const cls = ['symbol', 'aussparung'];
+      for (let i = 0; i < 4; i++) lines.push({ a: ecken[i]!, b: ecken[(i + 1) % 4]!, classes: cls });
+      lines.push({ a: ecken[0]!, b: ecken[2]!, classes: cls }); // Diagonale (Schlitz)
+      if (a.typ === 'durchbruch') lines.push({ a: ecken[1]!, b: ecken[3]!, classes: cls }); // volles Kreuz
+      texte.push({
+        at: labelAt,
+        text: `${a.typ === 'schlitz' ? 'S' : 'D'} ${a.breite}×${a.hoehe}${a.sill !== undefined ? ` UK ${a.sill}` : ''}`,
+        classes: ['aussparung'],
+      });
+    }
+  }
+
   // Stützenraster: Achsen des Geschosses (Stil/Achskopf machen die Renderer)
   for (const g of doc.byKind<GridAxis>('grid')) {
     if (g.storeyId !== storeyId) continue;
@@ -312,7 +365,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       bounds.maxY = Math.max(bounds.maxY, p.y);
     }
   }
-  return { storeyId, regions, lines, arcs, axes, bounds: bounds ?? axesBounds(axes) };
+  return { storeyId, regions, lines, arcs, axes, texte, bounds: bounds ?? axesBounds(axes) };
 }
 
 function axesBounds(axes: PlanAxis[]) {
