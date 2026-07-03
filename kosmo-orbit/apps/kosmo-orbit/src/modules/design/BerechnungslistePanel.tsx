@@ -45,10 +45,12 @@ export function BerechnungslistePanel({
   const [maxAgf, setMaxAgf] = useState(doc.settings.maxAgf === null ? '' : String(doc.settings.maxAgf));
 
   const uebernehmen = () => {
+    const maxWert = Number(maxAgf);
     runCommand('design.raumprogrammSetzen', {
       posten: entwurf.filter((p) => p.hnfSoll > 0),
       programmFaktor: Number(faktor) || 1.22,
-      maxAgf: maxAgf.trim() === '' ? null : Number(maxAgf),
+      // Unlesbares oder ≤0 zählt ehrlich als «kein Maximum» statt still zu scheitern
+      maxAgf: maxAgf.trim() === '' || !Number.isFinite(maxWert) || maxWert <= 0 ? null : maxWert,
     });
   };
 

@@ -205,7 +205,13 @@ export function App() {
             input.accept = '.kosmo,application/zip';
             input.onchange = () => {
               const f = input.files?.[0];
-              if (f) void openProjectFile(f).then(() => setScreen('design'));
+              if (f) {
+                void openProjectFile(f)
+                  .then(() => setScreen('design'))
+                  .catch((err) => {
+                    alert(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`);
+                  });
+              }
             };
             input.click();
           }}

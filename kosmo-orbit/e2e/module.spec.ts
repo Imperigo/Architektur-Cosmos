@@ -243,3 +243,57 @@ test('Referenz-Sammlung: Stern setzen, Filter zeigt nur Gemerkte', async ({ page
   await page.click('[data-testid="filter-sammlung"]');
   await expect(page.locator('[data-testid="ref-card"]')).toHaveCount(1);
 });
+
+test('Härtetest: 600 Wände — UI bleibt bedienbar, Mengen bleiben endlich', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW')).id;
+    for (let r = 0; r < 30; r++) {
+      for (let i = 0; i < 10; i++) {
+        k.run('design.wandZeichnen', {
+          storeyId: st.activeStoreyId, assemblyId: aw,
+          a: { x: i * 4000, y: r * 5000 }, b: { x: (i + 1) * 4000, y: r * 5000 },
+        });
+        k.run('design.wandZeichnen', {
+          storeyId: st.activeStoreyId, assemblyId: aw,
+          a: { x: i * 4000, y: r * 5000 }, b: { x: i * 4000, y: r * 5000 + 3500 },
+        });
+      }
+    }
+  });
+  // Kennzahlen leben, Draw-Panel rechnet, Undo greift
+  await page.click('[data-testid="draw-toggle"]');
+  await page.click('[data-testid="draw-tab-mengen"]');
+  await expect(page.locator('[data-testid="mengen-tabelle"]')).toContainText('IfcWall');
+  const anzahl = await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length);
+  expect(anzahl).toBe(600);
+  await page.click('[data-testid="undo"]');
+  const nachUndo = await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length);
+  expect(nachUndo).toBe(599);
+});
+
+test('Härtetest: kaputte .kosmo-Datei → klare Meldung, UI lebt weiter', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  const [chooser] = await Promise.all([
+    page.waitForEvent('filechooser'),
+    page.click('[data-testid="open-project"]'),
+  ]);
+  const dialog = page.waitForEvent('dialog');
+  await chooser.setFiles({
+    name: 'kaputt.kosmo',
+    mimeType: 'application/zip',
+    buffer: Buffer.from('DAS IST KEIN ZIP'),
+  });
+  const d = await dialog;
+  expect(d.message()).toContain('Projekt konnte nicht geöffnet werden');
+  await d.accept();
+  await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
+});
