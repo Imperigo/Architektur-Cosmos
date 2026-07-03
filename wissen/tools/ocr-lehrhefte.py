@@ -66,9 +66,13 @@ def chunks(text: str, ziel=1200):
 def main():
     nur = sys.argv[1] if len(sys.argv) > 1 else None
     jsonl_pfad = os.path.join(BASIS, 'training', 'lehrhefte.jsonl')
-    eintraege = []
     for datei, titel in sorted(HEFTE.items()):
         if nur and nur not in datei:
+            continue
+        eintraege = []
+        name = datei.replace('.pdf', '.md')
+        if os.path.exists(os.path.join(BASIS, 'vault', name)):
+            print(f'{titel}: schon da — übersprungen', flush=True)
             continue
         pfad = os.path.join(BASIS, 'lehrhefte', datei)
         doc = fitz.open(pfad)
@@ -99,7 +103,6 @@ def main():
             md.append('')
             md.append(seiten[i])
             md.append('')
-        name = datei.replace('.pdf', '.md')
         with open(os.path.join(BASIS, 'vault', name), 'w') as f:
             f.write('\n'.join(md))
         for i in range(n):
@@ -107,12 +110,12 @@ def main():
                 if len(c) < 80:
                     continue  # Bildunterschrift-Schnipsel ohne Substanz
                 eintraege.append({'text': c, 'quelle': f'Lehrheft {titel}', 'seite': i + 1})
-        print(f'  → vault/{name}', flush=True)
-    modus = 'w' if not nur else 'a'
-    with open(jsonl_pfad, modus) as f:
-        for e in eintraege:
-            f.write(json.dumps(e, ensure_ascii=False) + '\n')
-    print(f'{len(eintraege)} Trainings-Chunks → training/lehrhefte.jsonl')
+        # je Heft sofort anhängen — der Lauf ist damit jederzeit wiederaufnehmbar
+        with open(jsonl_pfad, 'a') as f:
+            for e in eintraege:
+                f.write(json.dumps(e, ensure_ascii=False) + '\n')
+        print(f'  → vault/{name} + {len(eintraege)} Chunks', flush=True)
+    print('FERTIG: alle Hefte verarbeitet')
 
 
 if __name__ == '__main__':
