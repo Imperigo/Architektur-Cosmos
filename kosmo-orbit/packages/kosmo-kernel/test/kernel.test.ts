@@ -7,6 +7,8 @@ import { generiereStuetzenraster } from '../src/derive/stuetzenraster';
 import { deriveAxo } from '../src/derive/axo';
 import { generiereVolumenstudien } from '../src/derive/volumenstudie';
 import { erkenneDecke, erkenneWand, geschossZu } from '../src/derive/bestand';
+import { fluchtwege, raumGraph } from '../src/derive/raumgraph';
+import { pruefeGrundriss } from '../src/derive/checks';
 import {
   KosmoDoc,
   History,
@@ -1593,5 +1595,107 @@ describe('Bestand-Erkennung (V2-A4)', () => {
     expect(geschossZu([0, 3000, 6000], 2950)).toBe(1);
     expect(geschossZu([0, 3000], 1500)).toBe(-1);
     expect(geschossZu([], 0)).toBe(-1);
+  });
+});
+
+// ————— V2-F1/F2: Raumgraph + Fluchtweg —————
+
+describe('Raumgraph + Fluchtweg (V2-F1/F2)', () => {
+  /** Korridor verbindet Zimmer (Tür) und Treppenhaus (offener Übergang). */
+  function grundriss() {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const aufbau = execute(doc, 'design.aufbauErstellen', {
+      name: 'IW 15', target: 'wall', layers: [{ material: 'kalksandstein', thickness: 150, function: 'tragend' }],
+    });
+    const assemblyId = (aufbau.patches[0] as { id: string }).id;
+    // Zimmer 0..5m | Wand bei y=4000 mit Tür | Korridor 4..6m | offen | Treppenhaus 6..9m
+    const zimmer = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    const wand = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 0, y: 4000 }, b: { x: 5000, y: 4000 },
+    });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (wand.patches[0] as { id: string }).id,
+      openingType: 'tuer', center: 2500, width: 900, height: 2100, sill: 0,
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Korridor', sia: 'VF', raumTyp: 'korridor',
+      outline: [{ x: 0, y: 4000 }, { x: 5000, y: 4000 }, { x: 5000, y: 6000 }, { x: 0, y: 6000 }],
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Treppenhaus', sia: 'VF', raumTyp: 'treppenhaus',
+      outline: [{ x: 0, y: 6000 }, { x: 5000, y: 6000 }, { x: 5000, y: 9000 }, { x: 0, y: 9000 }],
+    });
+    return { doc, storeyId, zimmerId: (zimmer.patches[0] as { id: string }).id };
+  }
+
+  it('Tür- und Offen-Kanten entstehen; Treppenhaus ist Fluchtziel', () => {
+    const { doc, storeyId, zimmerId } = grundriss();
+    const graph = raumGraph(doc, storeyId);
+    expect(graph.zonen).toHaveLength(3);
+    expect(graph.kanten.filter((k) => k.art === 'tuer')).toHaveLength(1);
+    expect(graph.kanten.filter((k) => k.art === 'offen')).toHaveLength(1);
+    const wege = fluchtwege(doc, storeyId);
+    const zimmer = wege.find((w) => w.zoneId === zimmerId)!;
+    expect(zimmer.distanz).toBeGreaterThan(4000); // Ecke→Tür mindestens
+    expect(zimmer.distanz).toBeLessThan(15000);
+    expect(zimmer.pfad.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('ohne Tür keine Verbindung → Befund «Fluchtweg»', () => {
+    const { doc, storeyId } = grundriss();
+    // Tür entfernen: einzige Öffnung suchen und Wand samt Öffnung ersetzen wäre teuer —
+    // stattdessen frisches Setup ohne Tür
+    const doc2 = new KosmoDoc();
+    const eg = execute(doc2, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const sid = (eg.patches[0] as { id: string }).id;
+    const aufbau = execute(doc2, 'design.aufbauErstellen', {
+      name: 'IW 15', target: 'wall', layers: [{ material: 'kalksandstein', thickness: 150, function: 'tragend' }],
+    });
+    execute(doc2, 'design.wandZeichnen', {
+      storeyId: sid, assemblyId: (aufbau.patches[0] as { id: string }).id,
+      a: { x: 0, y: 4000 }, b: { x: 5000, y: 4000 },
+    });
+    execute(doc2, 'design.zoneErstellen', {
+      storeyId: sid, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    execute(doc2, 'design.zoneErstellen', {
+      storeyId: sid, name: 'Treppenhaus', sia: 'VF', raumTyp: 'treppenhaus',
+      outline: [{ x: 0, y: 4000 }, { x: 5000, y: 4000 }, { x: 5000, y: 7000 }, { x: 0, y: 7000 }],
+    });
+    const befunde = pruefeGrundriss(doc2, sid);
+    expect(befunde.some((b) => b.regel === 'Fluchtweg' && b.text.includes('keine Verbindung'))).toBe(true);
+    void storeyId;
+    void doc;
+  });
+
+  it('raumTypSetzen ist undo-fähig und macht eine Zone zum Fluchtziel', () => {
+    const { doc, storeyId } = grundriss();
+    const zone = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Lager', sia: 'NNF',
+      outline: [{ x: 6000, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 2000 }, { x: 6000, y: 2000 }],
+    });
+    const zoneId = (zone.patches[0] as { id: string }).id;
+    const r = execute(doc, 'design.raumTypSetzen', { zoneId, raumTyp: 'treppenhaus' });
+    expect((doc.get(zoneId) as { raumTyp?: string }).raumTyp).toBe('treppenhaus');
+    doc.apply(invertPatches(r.patches));
+    expect((doc.get(zoneId) as { raumTyp?: string }).raumTyp).toBeUndefined();
+  });
+
+  it('Wand zwischen den Zonen unterdrückt den offenen Übergang', () => {
+    const { doc, storeyId } = grundriss();
+    const graph1 = raumGraph(doc, storeyId);
+    expect(graph1.kanten.filter((k) => k.art === 'offen')).toHaveLength(1);
+    const aufbau = doc.byKind<{ id: string; kind: string }>('assembly' as never)[0]!;
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId: aufbau.id, a: { x: 0, y: 6000 }, b: { x: 5000, y: 6000 },
+    });
+    const graph2 = raumGraph(doc, storeyId);
+    expect(graph2.kanten.filter((k) => k.art === 'offen')).toHaveLength(0);
   });
 });

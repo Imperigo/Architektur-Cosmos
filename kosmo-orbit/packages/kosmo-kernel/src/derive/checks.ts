@@ -2,6 +2,7 @@ import type { KosmoDoc } from '../model/doc';
 import type { Assembly, Boundary, MassBody, Opening, Roof, Stair, Storey, Wall, Zone } from '../model/entities';
 import { polygonArea } from '../model/units';
 import { treppenTeile } from './treppe';
+import { fluchtwege } from './raumgraph';
 
 /**
  * Grundriss-Checks (Q12, Finch-Essenz) — Regeln laufen live auf der
@@ -123,6 +124,41 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
         text: `Treppenlauf ${st.width} mm (CH-üblich ≥ 1000 mm, Fluchtweg ≥ 1200 mm)`,
         entityId: st.id,
       });
+    }
+  }
+
+  // Fluchtweg (V2-F2): Distanz zum nächsten Treppenhaus (VKF-Richtwert 35 m).
+  // Nur prüfen, wenn ein Fluchtziel existiert — sonst wäre jeder Entwurf rot.
+  const wege = fluchtwege(doc, storeyId);
+  const MAX_FLUCHT = 35000;
+  const zielVorhanden = wege.some((w) => w.distanz === 0);
+  if (zielVorhanden) {
+    for (const weg of wege) {
+      const zone = doc.get<Zone>(weg.zoneId);
+      if (!zone || zone.kind !== 'zone' || weg.distanz === 0) continue;
+      if (zone.raumTyp === 'balkon') continue;
+      if (weg.distanz === Infinity) {
+        befunde.push({
+          schwere: 'warnung',
+          regel: 'Fluchtweg',
+          text: `«${zone.name}» hat keine Verbindung zum Treppenhaus (Tür fehlt?)`,
+          entityId: zone.id,
+        });
+      } else if (weg.distanz > MAX_FLUCHT) {
+        befunde.push({
+          schwere: 'fehler',
+          regel: 'Fluchtweg',
+          text: `«${zone.name}»: Fluchtweg ${(weg.distanz / 1000).toFixed(1)} m > 35 m (VKF-Richtwert)`,
+          entityId: zone.id,
+        });
+      } else if (weg.distanz > MAX_FLUCHT * 0.8) {
+        befunde.push({
+          schwere: 'hinweis',
+          regel: 'Fluchtweg',
+          text: `«${zone.name}»: Fluchtweg ${(weg.distanz / 1000).toFixed(1)} m — nah am 35-m-Richtwert`,
+          entityId: zone.id,
+        });
+      }
     }
   }
 

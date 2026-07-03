@@ -29,4 +29,5 @@ export * from './derive/checks';
 export * from './derive/volumenstudie';
 export * from './ifc/export';
 export * from './derive/bestand';
+export * from './derive/raumgraph';
 export * from './geometry/skeleton';

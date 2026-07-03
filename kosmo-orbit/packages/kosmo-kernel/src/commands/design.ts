@@ -159,6 +159,22 @@ export const createSlab = registerCommand({
   },
 });
 
+export const setRoomType = registerCommand({
+  id: 'design.raumTypSetzen',
+  title: 'Raumtyp setzen',
+  description:
+    'Setzt den Raumtyp einer Zone (zimmer, wohnen, kueche, bad, korridor, treppenhaus, abstellraum, balkon, technik, gewerbe). Der Raumtyp steuert Raumgraph und Fluchtweg-Check: Fluchtziel ist «treppenhaus» oder eine Zone mit Treppe.',
+  params: z.object({
+    zoneId: z.string(),
+    raumTyp: z.enum(['zimmer', 'wohnen', 'kueche', 'bad', 'korridor', 'treppenhaus', 'abstellraum', 'balkon', 'technik', 'gewerbe']),
+  }),
+  summarize: (p) => `Raumtyp «${p.raumTyp}»`,
+  run: (doc, p) => {
+    const zone = require<Zone>(doc, p.zoneId, 'zone');
+    return [{ id: zone.id, before: zone, after: { ...zone, raumTyp: p.raumTyp } }];
+  },
+});
+
 export const addOpening = registerCommand({
   id: 'design.oeffnungSetzen',
   title: 'Fenster/Tür setzen',
@@ -291,6 +307,10 @@ export const createZone = registerCommand({
     name: z.string().describe('Raumname, z.B. «Wohnen» oder «Treppenhaus»'),
     sia: z.enum(['HNF', 'NNF', 'VF', 'FF', 'KF']).default('HNF'),
     program: z.string().optional().describe('Raumprogramm-Kategorie, z.B. «marktgerecht»'),
+    raumTyp: z
+      .enum(['zimmer', 'wohnen', 'kueche', 'bad', 'korridor', 'treppenhaus', 'abstellraum', 'balkon', 'technik', 'gewerbe'])
+      .optional()
+      .describe('Raumtyp für Raumgraph und Fluchtweg-Check'),
   }),
   summarize: (p) => `Zone «${p.name}» (${p.sia})`,
   run: (doc, p) => {
@@ -302,6 +322,7 @@ export const createZone = registerCommand({
       outline: p.outline as Pt[],
       name: p.name,
       sia: p.sia,
+      ...(p.raumTyp ? { raumTyp: p.raumTyp } : {}),
       ...(p.program ? { program: p.program } : {}),
     };
     return [added(zone)];

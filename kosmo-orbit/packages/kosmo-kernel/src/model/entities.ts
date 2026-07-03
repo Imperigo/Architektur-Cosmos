@@ -122,6 +122,8 @@ export interface Zone extends Base {
   sia: Sia416Class;
   /** Nutzungstyp fürs Raumprogramm (z.B. 'marktgerecht', 'gewerbe'). */
   program?: string;
+  /** Raumtyp für Raumgraph/Checks (V2-F1), z.B. 'korridor', 'treppenhaus'. */
+  raumTyp?: string;
 }
 
 /** Treppe — Achse a→b, Breite; Steigung aus Geschosshöhe. Formen: V2-A2. */
