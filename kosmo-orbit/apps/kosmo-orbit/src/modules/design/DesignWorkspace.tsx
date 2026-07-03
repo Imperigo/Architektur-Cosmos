@@ -798,6 +798,22 @@ export function DesignWorkspace() {
               {s.name}
             </KButton>
           ))}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="geschoss-stapeln"
+            title="Aktives Geschoss samt Inhalt nach oben kopieren"
+            onClick={() => {
+              if (!activeStoreyId) return;
+              try {
+                runCommand('design.geschossKopieren', { storeyId: activeStoreyId, anzahl: 1 });
+              } catch (err) {
+                alert(err instanceof Error ? err.message : String(err));
+              }
+            }}
+          >
+            ⧉
+          </KButton>
         </div>
 
         {/* Statuszeile */}

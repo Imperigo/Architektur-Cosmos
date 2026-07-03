@@ -547,6 +547,53 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const copyStorey = registerCommand({
+  id: 'design.geschossKopieren',
+  title: 'Geschoss stapeln',
+  description:
+    'Kopiert ein Geschoss samt Inhalt (Zonen, Möbel, Zonentüren, Wände mit Öffnungen, Decken, Treppen) anzahl-mal nach oben — Index und Höhenlage laufen fort, das Treppenhaus liegt automatisch deckungsgleich (vertical alignment). Kennzahlen und Berechnungsliste wachsen mit. Ein Undo-Schritt.',
+  params: z.object({
+    storeyId: z.string(),
+    anzahl: z.number().int().min(1).max(20).default(1),
+  }),
+  summarize: (p) => `Geschoss ×${p.anzahl} stapeln`,
+  run: (doc, p) => {
+    const quelle = require<Storey>(doc, p.storeyId, 'storey');
+    const patches: AnyPatch[] = [];
+    const maxIndex = Math.max(...(doc.storeysOrdered() as Storey[]).map((s2) => s2.index));
+    for (let n = 1; n <= p.anzahl; n++) {
+      const index = maxIndex + n;
+      const storey: Storey = {
+        id: newId('geschoss'), kind: 'storey',
+        name: `${index}.OG`, index,
+        elevation: quelle.elevation + n * quelle.height,
+        height: quelle.height, cutHeight: quelle.cutHeight,
+      };
+      patches.push(added(storey));
+      const idMap = new Map<string, string>();
+      const kopiere = <T extends { id: string; storeyId: string }>(e: T): T => {
+        const neuId = newId(e.id.split('-')[0] ?? 'e');
+        idMap.set(e.id, neuId);
+        return { ...e, id: neuId, storeyId: storey.id };
+      };
+      for (const z2 of doc.byKind<Zone>('zone')) if (z2.storeyId === quelle.id) patches.push(added(kopiere(z2)));
+      for (const f of doc.byKind<Furniture>('furniture')) if (f.storeyId === quelle.id) patches.push(added(kopiere(f)));
+      for (const t of doc.byKind<import('../model/entities').ZonenTuer>('zonentuer')) if (t.storeyId === quelle.id) patches.push(added(kopiere(t)));
+      for (const sl of doc.byKind<import('../model/entities').Slab>('slab')) if (sl.storeyId === quelle.id) patches.push(added(kopiere(sl)));
+      for (const st of doc.byKind<import('../model/entities').Stair>('stair')) if (st.storeyId === quelle.id) patches.push(added(kopiere(st)));
+      for (const w of doc.byKind<Wall>('wall')) {
+        if (w.storeyId !== quelle.id) continue;
+        const kopie = kopiere(w);
+        patches.push(added(kopie));
+        for (const o of doc.openingsOf(w.id)) {
+          patches.push(added({ ...(o as import('../model/entities').Opening), id: newId('oeffnung'), wallId: kopie.id }));
+        }
+      }
+    }
+    return patches;
+  },
+});
+
 export const windowsFromModules = registerCommand({
   id: 'design.fensterAusModulen',
   title: 'Fenster aus Modulen stanzen',

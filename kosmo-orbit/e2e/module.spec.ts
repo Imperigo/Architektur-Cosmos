@@ -1342,3 +1342,32 @@ test('Erschliessungskern (A3): Kette mit Kern → kein Fluchtweg-Fehler', async 
   expect(stand.treppenhaus).toBe(1);
   expect(stand.treppen).toBe(1);
 });
+
+test('Geschoss stapeln (B1): ⧉ kopiert das aktive Geschoss samt Inhalt', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const w = k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    k.run('design.grundrissGenerieren', { zoneId: w.patches[0].id, korridorSeite: 'unten' });
+  });
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.storeysOrdered().length);
+  await page.click('[data-testid="geschoss-stapeln"]');
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.storeysOrdered().length))
+    .toBe(vorher + 1);
+  // Neues Geschoss taucht im Umschalter auf und trägt die Räume
+  const neu = await page.evaluate(() => {
+    const doc = window.__kosmo.state().doc;
+    const letztes = doc.storeysOrdered()[doc.storeysOrdered().length - 1];
+    return { name: letztes.name, zonen: doc.byKind('zone').filter((z) => z.storeyId === letztes.id).length };
+  });
+  expect(neu.zonen).toBeGreaterThanOrEqual(6);
+  await expect(page.locator(`[data-testid="storey-${neu.name}"]`)).toBeVisible();
+});

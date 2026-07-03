@@ -11,7 +11,7 @@ import { fluchtwege, raumGraph } from '../src/derive/raumgraph';
 import { ZONENREGEL_KATALOG } from '../src/model/zonenregeln';
 import { variantenMatrix } from '../src/derive/variantenmatrix';
 import { segmentiere, sollMix } from '../src/derive/segmentierer';
-import { kennzahlenAuswerten } from '../src/derive/sia416';
+import { areaReport, kennzahlenAuswerten } from '../src/derive/sia416';
 import { raumTypVorschlag } from '../src/derive/raumtypcopilot';
 import { finalerRenderPrompt, renderPromptBausteine } from '../src/derive/renderprompt';
 import { moebelGeometrie } from '../src/derive/moebel';
@@ -2570,5 +2570,37 @@ describe('Erschliessungskern (Abendbatch A3)', () => {
     const ersteX = Math.min(...mit.wohnungen[0]!.outline.map((p) => p.x));
     expect(ersteX).toBe(3000);
     expect(mit.diagnose.some((d) => d.includes('Erschliessungskern'))).toBe(true);
+  });
+});
+
+describe('Geschoss stapeln (Abendbatch B1)', () => {
+  it('×3: alle Entities kopiert, Elevation-Kette, NGF ×4, wallId-Remap, 1 Undo', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 13000, y: 0 }, { x: 13000, y: 8500 }, { x: 0, y: 8500 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    execute(doc, 'design.waendeAusZonen', { storeyId });
+    const ngf1 = areaReport(doc).totalNgf;
+    const waende1 = doc.byKind('wall').length;
+    const oeffnungen1 = doc.byKind('opening').length;
+    const r = execute(doc, 'design.geschossKopieren', { storeyId, anzahl: 3 });
+    const storeys = doc.storeysOrdered() as Storey[];
+    expect(storeys).toHaveLength(4);
+    expect(storeys[3]!.elevation).toBe(9000);
+    expect(storeys[3]!.name).toBe('3.OG');
+    expect(doc.byKind('wall')).toHaveLength(waende1 * 4);
+    expect(doc.byKind('opening')).toHaveLength(oeffnungen1 * 4);
+    expect(areaReport(doc).totalNgf).toBeCloseTo(ngf1 * 4, 0);
+    // Öffnungen der Kopien hängen an den KOPIERTEN Wänden (Remap)
+    const og3Waende = new Set(doc.byKind<Wall>('wall').filter((w2) => w2.storeyId === storeys[3]!.id).map((w2) => w2.id));
+    const og3Oeffnungen = doc.byKind<import('../src').Opening>('opening').filter((o) => og3Waende.has(o.wallId));
+    expect(og3Oeffnungen).toHaveLength(oeffnungen1);
+    doc.apply(invertPatches(r.patches));
+    expect(doc.storeysOrdered()).toHaveLength(1);
+    expect(doc.byKind('wall')).toHaveLength(waende1);
   });
 });
