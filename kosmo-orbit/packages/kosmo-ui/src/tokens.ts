@@ -63,6 +63,7 @@ export const moduleHue = {
   publish: '#6F8B6A', // Salbei — das fertige Blatt
   prepare: '#7D5E78', // Pflaume — die Grundlagen
   kosmo: '#B06A8C', // Kosmo selbst: warmes Karmin-Rosé, die Stimme im Raum
+  train: '#8C6D3F', // Ocker — das Lernen, Schicht um Schicht
 } as const;
 
 export type ModuleId = keyof typeof moduleHue;

@@ -53,6 +53,18 @@ export class LearningJournal {
     return this.entries;
   }
 
+  /** Kuration: Eintrag entfernen (vor dem Training aussortieren). */
+  entfernen(ts: string): void {
+    this.entries = this.entries.filter((e) => e.ts !== ts);
+    this.store.save(this.entries);
+  }
+
+  /** Kuration: Notiz nachschärfen — die Notiz ist der Trainings-Kern. */
+  notieren(ts: string, note: string): void {
+    this.entries = this.entries.map((e) => (e.ts === ts ? { ...e, note } : e));
+    this.store.save(this.entries);
+  }
+
   /**
    * Kompakter Prompt-Block der jüngsten Lehren — bewusst klein (lokale
    * Modelle!): maximal 8 Einträge, Kritik zuerst.

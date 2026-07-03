@@ -32,6 +32,18 @@ interface Bubble {
 
 const journal = new LearningJournal(localStorageMemory());
 
+/** Wettbewerbsdossier (Phase 0) als harter Prompt-Block — Do's/Don'ts zuerst. */
+function dossierPromptBlock(): string {
+  const dossier = useProject.getState().doc.settings.dossier;
+  if (!dossier || dossier.length === 0) return '';
+  const zeile = (t: { typ: string; text: string }) =>
+    t.typ === 'dont' ? `- NO-GO: ${t.text}` : t.typ === 'do' ? `- GEFORDERT: ${t.text}` : `- FAKT: ${t.text}`;
+  const sortiert = [...dossier].sort(
+    (a, b) => (a.typ === 'dont' ? 0 : a.typ === 'do' ? 1 : 2) - (b.typ === 'dont' ? 0 : b.typ === 'do' ? 1 : 2),
+  );
+  return `\n\nWettbewerbsdossier dieses Projekts (bindend):\n${sortiert.slice(0, 20).map(zeile).join('\n')}`;
+}
+
 interface PendingCard extends Proposal {
   state: 'offen' | 'angewendet' | 'abgelehnt';
 }
@@ -202,7 +214,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           },
         },
       ],
-      journal.toPromptBlock(),
+      journal.toPromptBlock() + dossierPromptBlock(),
     );
     return s;
     // Session bewusst pro Provider-Konfiguration neu

@@ -10,6 +10,12 @@ import type { Mm } from './units';
  * einzigen Schreiber; CRDT und Journal werden daraus abgeleitet).
  */
 
+/** Dossier-Eintrag (Phase 0): harte Regel oder Fakt aus dem Wettbewerbsprogramm. */
+export interface DossierEintrag {
+  typ: 'do' | 'dont' | 'fakt';
+  text: string;
+}
+
 /** Ein Posten des Wettbewerbs-Raumprogramms (HNF-Soll je Wohnungstyp, m²). */
 export interface RaumprogrammPosten {
   typ: string;
@@ -28,6 +34,8 @@ export interface DocSettings {
   maxAgf: number | null;
   /** Wettbewerbs-Raumprogramm (Soll-Flächen je Wohnungstyp). */
   raumprogramm: RaumprogrammPosten[];
+  /** Wettbewerbsdossier (Phase 0): Do's, Don'ts, Fakten — fliesst in Kosmos Systemprompt. */
+  dossier: DossierEintrag[];
 }
 
 export const defaultSettings: DocSettings = {
@@ -37,6 +45,7 @@ export const defaultSettings: DocSettings = {
   programmFaktor: 1.22,
   maxAgf: null,
   raumprogramm: [],
+  dossier: [],
 };
 
 export interface Patch {

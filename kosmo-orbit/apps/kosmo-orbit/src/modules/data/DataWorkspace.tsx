@@ -53,6 +53,23 @@ export function DataWorkspace() {
   const [selected, setSelected] = useState<RefEntry | null>(null);
   const [syncState, setSyncState] = useState<'seed' | 'synced' | 'fehler'>('seed');
   const [tab, setTab] = useState<'referenzen' | 'bauteile' | 'materialien'>('referenzen');
+  const [nurSammlung, setNurSammlung] = useState(false);
+  const [sammlung, setSammlung] = useState<Set<string>>(() => {
+    try {
+      return new Set(JSON.parse(localStorage.getItem('kosmo.sammlung') ?? '[]') as string[]);
+    } catch {
+      return new Set();
+    }
+  });
+  const toggleSammlung = (id: string) => {
+    setSammlung((alt) => {
+      const next = new Set(alt);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      localStorage.setItem('kosmo.sammlung', JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   useEffect(() => {
     void loadReferences().then(setEntries);
@@ -69,6 +86,7 @@ export function DataWorkspace() {
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
     return entries.filter((e) => {
+      if (nurSammlung && !sammlung.has(e.id)) return false;
       if (sector && e.style_sector !== sector) return false;
       if (!q) return true;
       const hay = [e.title, e.city, e.country, ...(e.authors ?? []), ...(e.themes ?? []), ...(e.materials ?? [])]
@@ -77,7 +95,7 @@ export function DataWorkspace() {
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [entries, query, sector]);
+  }, [entries, query, sector, nurSammlung, sammlung]);
 
   const syncLive = async () => {
     try {
@@ -139,6 +157,14 @@ export function DataWorkspace() {
           />
 
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <KButton
+              size="sm"
+              tone={nurSammlung ? 'accent' : 'quiet'}
+              data-testid="filter-sammlung"
+              onClick={() => setNurSammlung(!nurSammlung)}
+            >
+              ★ Sammlung ({sammlung.size})
+            </KButton>
             {sectors.map(([s, n]) => (
               <KButton
                 key={s}
@@ -164,8 +190,29 @@ export function DataWorkspace() {
                 pad={false}
                 data-testid="ref-card"
                 onClick={() => setSelected(e)}
-                style={{ cursor: 'pointer', overflow: 'hidden' }}
+                style={{ cursor: 'pointer', overflow: 'hidden', position: 'relative' }}
               >
+                <button
+                  aria-label="Zur Sammlung"
+                  data-testid={`stern-${e.id}`}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    toggleSammlung(e.id);
+                  }}
+                  style={{
+                    all: 'unset',
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    top: 6,
+                    right: 8,
+                    zIndex: 2,
+                    fontSize: 15,
+                    color: sammlung.has(e.id) ? 'var(--k-warning)' : 'var(--k-ink-faint)',
+                    textShadow: '0 0 3px var(--k-raised)',
+                  }}
+                >
+                  {sammlung.has(e.id) ? '★' : '☆'}
+                </button>
                 <div
                   style={{
                     height: 110,

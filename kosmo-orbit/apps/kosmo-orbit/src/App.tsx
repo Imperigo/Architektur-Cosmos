@@ -17,6 +17,7 @@ import { DataWorkspace } from './modules/data/DataWorkspace';
 import { PublishWorkspace } from './modules/publish/PublishWorkspace';
 import { PrepareWorkspace } from './modules/prepare/PrepareWorkspace';
 import { DocWorkspace } from './modules/doc/DocWorkspace';
+import { TrainWorkspace } from './modules/train/TrainWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
 import { registerActions } from './shell/palette';
 import {
@@ -33,7 +34,7 @@ import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
 
-type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc';
+type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train';
 
 function tagesgruss(): string {
   const h = new Date().getHours();
@@ -51,6 +52,7 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
   { id: 'publish', screen: 'publish', name: 'KosmoPublish', desc: 'Plansätze · Layouts' },
   { id: 'prepare', screen: 'prepare', name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
   { id: 'draw', screen: 'doc', name: 'KosmoDoc', desc: 'Diagnose · Hilfe · Berichte' },
+  { id: 'train', screen: 'train', name: 'KosmoTrain', desc: 'Lernstand · Kuration · Training' },
 ];
 
 /** Wählbare Farbakzente (Gestaltungskonzept «Werkplan»): Standard = Tusche. */
@@ -308,6 +310,8 @@ export function App() {
           <PrepareWorkspace />
         ) : screen === 'doc' ? (
           <DocWorkspace />
+        ) : screen === 'train' ? (
+          <TrainWorkspace />
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>

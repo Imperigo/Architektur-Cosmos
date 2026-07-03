@@ -1,5 +1,6 @@
+import { useProject } from '../../state/project-store';
 import { useEffect, useRef, useState } from 'react';
-import { Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
+import { Karteikarte, Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
 import {
   ingestFile,
   listDocs,
@@ -191,6 +192,7 @@ export function PrepareWorkspace() {
           ))}
         </div>
 
+        <DossierSection />
         <OneDriveSection onIngested={refresh} />
       </div>
     </div>
@@ -336,5 +338,100 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
       )}
       {status && <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{status}</div>}
     </Panel>
+  );
+}
+
+
+/** Phase 0: Wettbewerbsdossier — Do's, Don'ts, Fakten. Kosmo beachtet sie bindend. */
+function DossierSection() {
+  const revision = useProject((s) => s.revision);
+  const runCommand = useProject((s) => s.runCommand);
+  const doc = useProject.getState().doc;
+  // Entwurf lokal, «Übernehmen» = ein Undo-Schritt
+  const [entwurf, setEntwurf] = useState<{ typ: 'do' | 'dont' | 'fakt'; text: string }[]>(() =>
+    doc.settings.dossier.length > 0 ? [...doc.settings.dossier] : [{ typ: 'dont', text: '' }],
+  );
+  void revision;
+
+  const TYPEN = [
+    { key: 'do', label: 'Gefordert' },
+    { key: 'dont', label: 'No-go' },
+    { key: 'fakt', label: 'Fakt' },
+  ] as const;
+
+  return (
+    <div style={{ display: 'grid', gap: 8 }} data-testid="dossier">
+      <div className="k-titel" style={{ fontSize: 13 }}>Phase 0 — Wettbewerbsdossier</div>
+      <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+        Harte Regeln und Fakten aus dem Programm. Kosmo behandelt sie in jeder Antwort als bindend.
+      </span>
+      {entwurf.map((e, i) => (
+        <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <select
+            value={e.typ}
+            data-testid={`dossier-typ-${i}`}
+            onChange={(ev) => {
+              const next = [...entwurf];
+              next[i] = { ...e, typ: ev.target.value as 'do' | 'dont' | 'fakt' };
+              setEntwurf(next);
+            }}
+            style={{ padding: '4px 6px', borderRadius: 'var(--k-radius-sm)', border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+          >
+            {TYPEN.map((t) => (
+              <option key={t.key} value={t.key}>{t.label}</option>
+            ))}
+          </select>
+          <input
+            value={e.text}
+            data-testid={`dossier-text-${i}`}
+            placeholder="z.B. «Nordwohnungen ohne Direktsonne sind ein No-go»"
+            onChange={(ev) => {
+              const next = [...entwurf];
+              next[i] = { ...e, text: ev.target.value };
+              setEntwurf(next);
+            }}
+            style={{ flex: 1, padding: '5px 8px', borderRadius: 'var(--k-radius-sm)', border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12.5 }}
+          />
+          <KButton size="sm" tone="ghost" onClick={() => setEntwurf(entwurf.filter((_, j) => j !== i))} aria-label="Eintrag entfernen">
+            −
+          </KButton>
+        </div>
+      ))}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <KButton size="sm" tone="ghost" onClick={() => setEntwurf([...entwurf, { typ: 'do', text: '' }])}>
+          + Eintrag
+        </KButton>
+        <div style={{ flex: 1 }} />
+        <KButton
+          size="sm"
+          tone="accent"
+          data-testid="dossier-uebernehmen"
+          onClick={() => runCommand('design.dossierSetzen', { eintraege: entwurf.filter((e) => e.text.trim().length > 0) })}
+        >
+          Übernehmen
+        </KButton>
+      </div>
+      {doc.settings.dossier.length > 0 && (
+        <div style={{ display: 'grid', gap: 5 }}>
+          {doc.settings.dossier.map((e, i) => (
+            <Karteikarte key={i} nr={i + 1}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 12.5 }}>
+                <span
+                  style={{
+                    fontFamily: 'var(--k-font-mono)',
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    color: e.typ === 'dont' ? 'var(--k-danger)' : e.typ === 'do' ? 'var(--k-success)' : 'var(--k-ink-faint)',
+                  }}
+                >
+                  {e.typ === 'dont' ? 'NO-GO' : e.typ === 'do' ? 'GEFORDERT' : 'FAKT'}
+                </span>
+                <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{e.text}</span>
+              </div>
+            </Karteikarte>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

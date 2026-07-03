@@ -507,3 +507,30 @@ export const setBoundary = registerCommand({
     return patches;
   },
 });
+
+export const setDossier = registerCommand({
+  id: 'design.dossierSetzen',
+  title: 'Wettbewerbsdossier setzen',
+  description:
+    'Erfasst das Wettbewerbsdossier (Phase 0): Do\u2019s (gefordert), Don\u2019ts (No-gos) und Fakten aus dem Programm. Ersetzt die bisherige Liste. Kosmo beachtet das Dossier in jeder Antwort.',
+  params: z.object({
+    eintraege: z
+      .array(
+        z.object({
+          typ: z.enum(['do', 'dont', 'fakt']),
+          text: z.string().min(1).max(300),
+        }),
+      )
+      .max(40),
+  }),
+  summarize: (p) => `Dossier: ${p.eintraege.length} Einträge`,
+  run: (doc, p) => {
+    return [
+      {
+        settings: true,
+        before: { dossier: doc.settings.dossier },
+        after: { dossier: p.eintraege },
+      },
+    ];
+  },
+});

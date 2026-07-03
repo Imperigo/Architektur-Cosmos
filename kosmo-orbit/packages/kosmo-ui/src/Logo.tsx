@@ -20,6 +20,7 @@ const orbitAngle: Record<ModuleId, number> = {
   publish: 210,
   prepare: 270,
   kosmo: -90,
+  train: 330,
 };
 
 export interface OrbitMarkProps {
