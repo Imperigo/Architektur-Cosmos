@@ -436,3 +436,60 @@ test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async (
   expect(stand.bilder).toBe(1);
   expect(stand.assets).toBe(1);
 });
+
+test('Belegte Antwort: Kosmo zitiert [Q1] → Chip → Quellensprung in die Grundlagen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
+  });
+  await page.reload();
+  // Grundlage aufnehmen
+  await page.click('[data-testid="module-prepare"]');
+  const [chooser] = await Promise.all([
+    page.waitForEvent('filechooser'),
+    page.click('[data-testid="pick-files"]'),
+  ]);
+  await chooser.setFiles({
+    name: 'wettbewerbsprogramm.md',
+    mimeType: 'text/markdown',
+    buffer: Buffer.from(
+      '# Programm\n\nDie Hauptnutzfläche (Nutzfläche HNF) beträgt mindestens 2814 m² über sieben Geschosse.\n\nDas Stützenraster folgt VSS 40 291.',
+    ),
+  });
+  await page.waitForSelector('[data-testid^="doc-"]');
+  // Frage an Kosmo → Mock ruft quellen_suchen und zitiert [Qn]
+  await page.evaluate(() => window.__kosmo.open('design'));
+  await page.fill('[data-testid="kosmo-input"]', 'Was sagt das Programm zur Nutzfläche?');
+  await page.click('[data-testid="kosmo-send"]');
+  const chip = page.locator('[data-testid="quelle-chip"]').first();
+  await expect(chip).toBeVisible({ timeout: 15_000 });
+  await expect(chip).toContainText('wettbewerbsprogramm.md');
+  // Quellensprung: Chip → KosmoPrepare zeigt den zitierten Abschnitt
+  await chip.click();
+  await expect(page.locator('[data-testid="quelle-sprung"]')).toBeVisible();
+  await expect(page.locator('[data-testid="quelle-sprung"]')).toContainText('2814');
+});
+
+test('Belegte Antwort: Dossier-Regel wird zitiert und angesprungen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]'); // bootstrappt das Projekt
+  await page.evaluate(() =>
+    window.__kosmo.run('design.dossierSetzen', {
+      eintraege: [{ typ: 'dont', text: 'Attikageschoss über 12 m Gesamthöhe ist ein No-go.' }],
+    }),
+  );
+  await page.fill('[data-testid="kosmo-input"]', 'Was sagt das Dossier zum Attikageschoss?');
+  await page.click('[data-testid="kosmo-send"]');
+  const chip = page.locator('[data-testid="quelle-chip"]').first();
+  await expect(chip).toBeVisible({ timeout: 15_000 });
+  await expect(chip).toContainText('Dossier NO-GO');
+  await chip.click();
+  await expect(page.locator('[data-testid="quelle-sprung-dossier"]')).toBeVisible();
+  await expect(page.locator('[data-testid="quelle-sprung-dossier"]')).toContainText('Attikageschoss');
+});

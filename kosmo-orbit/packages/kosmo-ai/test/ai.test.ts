@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { KosmoDoc, execute } from '@kosmo/kernel';
-import { ChatSession, MockProvider, commandTools, validateToolCall } from '../src';
+import { ChatSession, MockProvider, commandTools, validateToolCall, type StreamEvent } from '../src';
 
 function demoDoc() {
   const doc = new KosmoDoc();
@@ -138,5 +138,43 @@ describe('Härte: Tool-Call-Fuzzing (lokale LLMs liefern Müll)', () => {
       expect('extra' in (r.params as Record<string, unknown>)).toBe(false);
       expect(({} as Record<string, unknown>)['boese']).toBeUndefined();
     }
+  });
+});
+
+describe('Belegte Antworten (V2-B1, Mock)', () => {
+  it('Wissensfrage → quellen_suchen → Antwort zitiert die Marke [Qn]', async () => {
+    const provider = new MockProvider();
+    // Zug 1: Frage → Tool-Call
+    const events1: StreamEvent[] = [];
+    for await (const ev of provider.chat({
+      messages: [{ role: 'user', content: 'Was sagt das Programm zur Nutzfläche?' }],
+    })) {
+      events1.push(ev);
+    }
+    const call = events1.find((e) => e.type === 'tool_call');
+    expect(call).toBeDefined();
+    expect((call as { call: { name: string; arguments: unknown } }).call.name).toBe('quellen_suchen');
+    expect((call as { call: { arguments: { suchbegriff: string } } }).call.arguments.suchbegriff).toBe('nutzfläche');
+
+    // Zug 2: Tool-Resultat mit Belegen → Antwort zitiert [Q1]
+    const events2: StreamEvent[] = [];
+    for await (const ev of provider.chat({
+      messages: [
+        { role: 'user', content: 'Was sagt das Programm zur Nutzfläche?' },
+        {
+          role: 'tool',
+          toolName: 'quellen_suchen',
+          content:
+            '[Q1] (Programm.pdf · Abschnitt 2) Die Hauptnutzfläche beträgt mindestens 2814 m².\n\nZitiere die Belege mit ihrer Marke.',
+        },
+      ],
+    })) {
+      events2.push(ev);
+    }
+    const text = events2
+      .filter((e): e is Extract<StreamEvent, { type: 'text' }> => e.type === 'text')
+      .map((e) => e.delta)
+      .join('');
+    expect(text).toContain('[Q1]');
   });
 });

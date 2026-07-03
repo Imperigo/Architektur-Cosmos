@@ -2,7 +2,7 @@
  * Wissensbasis (KosmoPrepare, Owner-Q28) — Grundlagen-Ingestion.
  *
  * PDF/Text/Markdown → Text → Abschnitts-Chunks → IndexedDB. Kosmo liest über
- * das Read-Only-Tool «grundlagen_suchen» (Stichwort-Scoring V1; Embedding-RAG
+ * den Abruf-Index (state/quellen.ts, Tool «quellen_suchen»; Embedding-RAG
  * via Bridge/bge-m3 folgt). Alles lokal — Bürodokumente verlassen das Gerät nie.
  */
 
@@ -179,6 +179,17 @@ export async function ingestFile(file: File, source: KnowledgeDoc['source'] = 'l
   await txDone(tx);
   db.close();
   return doc;
+}
+
+/** Einzelnen Abschnitt lesen (Quellensprung aus einer Kosmo-Antwort). */
+export async function getChunk(docId: string, seq: number): Promise<KnowledgeChunk | null> {
+  const db = await openDb();
+  const tx = db.transaction('chunks', 'readonly');
+  const chunk = await reqResult(
+    tx.objectStore('chunks').get(`${docId}-${seq}`) as IDBRequest<KnowledgeChunk | undefined>,
+  );
+  db.close();
+  return chunk ?? null;
 }
 
 export async function listDocs(): Promise<KnowledgeDoc[]> {

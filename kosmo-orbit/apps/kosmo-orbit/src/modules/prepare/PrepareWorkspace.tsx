@@ -2,6 +2,7 @@ import { useProject } from '../../state/project-store';
 import { useEffect, useRef, useState } from 'react';
 import { Karteikarte, Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
 import {
+  getChunk,
   ingestFile,
   listDocs,
   removeDoc,
@@ -9,6 +10,7 @@ import {
   type KnowledgeDoc,
   type KnowledgeHit,
 } from './knowledge';
+import { useQuellen } from '../../state/quellen';
 import {
   downloadFile,
   isIngestable,
@@ -21,7 +23,7 @@ import {
 /**
  * KosmoPrepare — Grundlagen. Bürodokumente (Normen-Auszüge, Wettbewerbs-
  * programme, Hochbauzeichner-Bibliothek) werden lokal aufgenommen; Kosmo
- * zitiert daraus über «grundlagen_suchen». OneDrive-Anbindung (Graph-Login)
+ * zitiert daraus über «quellen_suchen» mit [Qn]-Belegen. OneDrive-Anbindung (Graph-Login)
  * folgt — die Wissensbasis ist dieselbe.
  */
 
@@ -36,6 +38,20 @@ export function PrepareWorkspace() {
 
   const refresh = () => void listDocs().then(setDocs);
   useEffect(refresh, []);
+
+  // Quellensprung aus einer Kosmo-Antwort: zitierten Abschnitt zeigen
+  const ziel = useQuellen((s) => s.ziel);
+  const zielSeq = useQuellen((s) => s.zielSeq);
+  const [sprung, setSprung] = useState<{ titel: string; text: string } | null>(null);
+  const sprungRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!ziel || ziel.typ !== 'wissen' || ziel.docId === undefined || ziel.seq === undefined) return;
+    void getChunk(ziel.docId, ziel.seq).then((c) => {
+      setSprung({ titel: ziel.titel, text: c?.text ?? ziel.text });
+      setTimeout(() => sprungRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 60);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zielSeq]);
 
   useEffect(() => {
     const q = query.trim();
@@ -81,6 +97,23 @@ export function PrepareWorkspace() {
             Lokal aufgenommen — Dokumente verlassen das Gerät nie. Kosmo zitiert daraus.
           </span>
         </div>
+
+        {/* Quellensprung: der von Kosmo zitierte Abschnitt, hervorgehoben */}
+        {sprung && (
+          <div ref={sprungRef}>
+            <Panel data-testid="quelle-sprung" style={{ padding: '12px 14px', borderColor: 'var(--k-accent)', display: 'grid', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-accent)' }}>Quellensprung</span>
+                <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>{sprung.titel}</span>
+                <div style={{ flex: 1 }} />
+                <KButton size="sm" tone="ghost" onClick={() => setSprung(null)} aria-label="Quellensprung schliessen">
+                  ✕
+                </KButton>
+              </div>
+              <div style={{ fontSize: 13, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>{sprung.text}</div>
+            </Panel>
+          </div>
+        )}
 
         {/* Aufnahme-Zone */}
         <Panel
@@ -347,6 +380,16 @@ function DossierSection() {
   const revision = useProject((s) => s.revision);
   const runCommand = useProject((s) => s.runCommand);
   const doc = useProject.getState().doc;
+  // Quellensprung: zitierten Dossier-Eintrag markieren
+  const ziel = useQuellen((s) => s.ziel);
+  const zielSeq = useQuellen((s) => s.zielSeq);
+  const dossierSprungRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ziel?.typ === 'dossier') {
+      setTimeout(() => dossierSprungRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 60);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zielSeq]);
   // Entwurf lokal, «Übernehmen» = ein Undo-Schritt
   const [entwurf, setEntwurf] = useState<{ typ: 'do' | 'dont' | 'fakt'; text: string }[]>(() =>
     doc.settings.dossier.length > 0 ? [...doc.settings.dossier] : [{ typ: 'dont', text: '' }],
@@ -413,23 +456,33 @@ function DossierSection() {
       </div>
       {doc.settings.dossier.length > 0 && (
         <div style={{ display: 'grid', gap: 5 }}>
-          {doc.settings.dossier.map((e, i) => (
-            <Karteikarte key={i} nr={i + 1}>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 12.5 }}>
-                <span
-                  style={{
-                    fontFamily: 'var(--k-font-mono)',
-                    fontSize: 10.5,
-                    fontWeight: 700,
-                    color: e.typ === 'dont' ? 'var(--k-danger)' : e.typ === 'do' ? 'var(--k-success)' : 'var(--k-ink-faint)',
-                  }}
-                >
-                  {e.typ === 'dont' ? 'NO-GO' : e.typ === 'do' ? 'GEFORDERT' : 'FAKT'}
-                </span>
-                <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{e.text}</span>
-              </div>
-            </Karteikarte>
-          ))}
+          {doc.settings.dossier.map((e, i) => {
+            const zitiert = ziel?.typ === 'dossier' && ziel.index === i;
+            return (
+            <div
+              key={i}
+              ref={zitiert ? dossierSprungRef : undefined}
+              {...(zitiert ? { 'data-testid': 'quelle-sprung-dossier' } : {})}
+              style={zitiert ? { outline: '2px solid var(--k-accent)', borderRadius: 'var(--k-radius-sm)' } : undefined}
+            >
+              <Karteikarte nr={i + 1}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 12.5 }}>
+                  <span
+                    style={{
+                      fontFamily: 'var(--k-font-mono)',
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                      color: e.typ === 'dont' ? 'var(--k-danger)' : e.typ === 'do' ? 'var(--k-success)' : 'var(--k-ink-faint)',
+                    }}
+                  >
+                    {e.typ === 'dont' ? 'NO-GO' : e.typ === 'do' ? 'GEFORDERT' : 'FAKT'}
+                  </span>
+                  <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{e.text}</span>
+                </div>
+              </Karteikarte>
+            </div>
+            );
+          })}
         </div>
       )}
     </div>

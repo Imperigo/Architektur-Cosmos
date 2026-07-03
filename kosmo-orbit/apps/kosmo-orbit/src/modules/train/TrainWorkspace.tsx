@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { LearningJournal, localStorageMemory, type Learning } from '@kosmo/ai';
 import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, moduleHue } from '@kosmo/ui';
 import { listDocs } from '../prepare/knowledge';
+import { useQuellen } from '../../state/quellen';
 
 /**
  * KosmoTrain — das Lernprogramm als Oberfläche (Q8, Vision Persona 4):
@@ -19,6 +20,17 @@ export function TrainWorkspace() {
   useEffect(() => {
     void listDocs().then((d) => setWissen({ docs: d.length }));
   }, []);
+
+  // Quellensprung: von Kosmo zitierten Journal-Eintrag markieren
+  const ziel = useQuellen((s) => s.ziel);
+  const zielSeq = useQuellen((s) => s.zielSeq);
+  const sprungRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ziel?.typ === 'journal') {
+      setTimeout(() => sprungRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 60);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zielSeq]);
 
   const gut = eintraege.filter((e) => e.sentiment === 'gut').length;
   const refresh = () => setEintraege([...journal.all]);
@@ -74,8 +86,16 @@ export function TrainWorkspace() {
           />
         ) : (
           <div style={{ display: 'grid', gap: 6 }} data-testid="train-kuration">
-            {[...eintraege].reverse().map((e) => (
-              <Karteikarte key={e.ts}>
+            {[...eintraege].reverse().map((e) => {
+              const zitiert = ziel?.typ === 'journal' && ziel.ts === e.ts;
+              return (
+              <div
+                key={e.ts}
+                ref={zitiert ? sprungRef : undefined}
+                {...(zitiert ? { 'data-testid': 'quelle-sprung-journal' } : {})}
+                style={zitiert ? { outline: '2px solid var(--k-accent)', borderRadius: 'var(--k-radius-sm)' } : undefined}
+              >
+              <Karteikarte>
                 <div style={{ display: 'grid', gap: 5, fontSize: 12.5 }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
                     <span>{e.sentiment === 'gut' ? '👍' : '👎'}</span>
@@ -114,7 +134,9 @@ export function TrainWorkspace() {
                   />
                 </div>
               </Karteikarte>
-            ))}
+              </div>
+              );
+            })}
           </div>
         )}
 

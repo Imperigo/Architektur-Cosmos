@@ -171,20 +171,40 @@ export class MockProvider implements ChatProvider {
     // Nach einem Tool-Resultat: bestätigen statt denselben Vorschlag wiederholen
     if (lastMsg?.role === 'tool') {
       await new Promise((r) => setTimeout(r, 40));
-      const delta =
-        lastMsg.toolName === 'referenzen_suchen'
-          ? lastMsg.content.startsWith('Keine')
-            ? lastMsg.content
-            : `Aus KosmoData passen diese Referenzen:\n${lastMsg.content}`
-          : lastMsg.content.startsWith('AUSGEFÜHRT')
-            ? 'Erledigt — die Wand steht. Soll ich gleich Fenster setzen?'
-            : 'Verstanden, ich lasse es.';
+      let delta: string;
+      if (lastMsg.toolName === 'quellen_suchen') {
+        // Belegt antworten wie das echte Modell: erste Marke zitieren
+        const marke = lastMsg.content.match(/\[Q\d+\]/)?.[0];
+        delta = marke
+          ? `Dazu gibt es eine klare Grundlage: ${lastMsg.content.match(/\)\s*([^\n]{0,160})/)?.[1]?.trim() ?? 'siehe Beleg'} ${marke}`
+          : lastMsg.content.split('\n')[0]!;
+      } else if (lastMsg.toolName === 'referenzen_suchen') {
+        delta = lastMsg.content.startsWith('Keine')
+          ? lastMsg.content
+          : `Aus KosmoData passen diese Referenzen:\n${lastMsg.content}`;
+      } else {
+        delta = lastMsg.content.startsWith('AUSGEFÜHRT')
+          ? 'Erledigt — die Wand steht. Soll ich gleich Fenster setzen?'
+          : 'Verstanden, ich lasse es.';
+      }
       yield { type: 'text', delta };
       yield { type: 'done', stopReason: 'stop' };
       return;
     }
     const last = [...req.messages].reverse().find((m) => m.role === 'user');
     const text = last?.content.toLowerCase() ?? '';
+    // Wissensfrage → Quellensuche über den Abruf-Index (Wissen+Dossier+Journal)
+    const frage = text.match(/was\s+sag\w*.*?\b(?:zur?|zum|über)\s+«?([\wäöüß-]+)»?|grundlagen?\s+zur?\s+«?([\wäöüß-]+)»?/);
+    if (frage) {
+      const begriff = frage[1] ?? frage[2]!;
+      yield { type: 'text', delta: 'Ich schaue in den Grundlagen nach. ' };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_mock_quellen', name: 'quellen_suchen', arguments: { suchbegriff: begriff } },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
     const ref = text.match(/referenz\w*\s+(?:zu|für|mit)?\s*«?([\wäöü-]+)»?/);
     if (ref) {
       yield { type: 'text', delta: 'Ich schaue in KosmoData nach. ' };

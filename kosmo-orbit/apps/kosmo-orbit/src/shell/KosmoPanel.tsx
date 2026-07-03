@@ -14,7 +14,7 @@ import {
 import type { Assembly } from '@kosmo/kernel';
 import { useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
-import { searchKnowledge } from '../modules/prepare/knowledge';
+import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
 import { DiagnosePanel } from './Diagnose';
 
 /**
@@ -103,6 +103,9 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const bubbleSeq = useRef(0);
   const runCommand = useProject((s) => s.runCommand);
+  // Belege des Gesprächs: [Qn] im Antworttext → Quelle (Chip mit Quellensprung)
+  const quellenMap = useRef(new Map<number, QuellenRef>());
+  const quellenZaehler = useRef(0);
 
   const session = useMemo(() => {
     const provider: ChatProvider =
@@ -191,9 +194,9 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           },
         },
         {
-          name: 'grundlagen_suchen',
+          name: 'quellen_suchen',
           description:
-            'Durchsucht die Wissensbasis des Projekts (in KosmoPrepare aufgenommene Grundlagen: Normen-Auszüge, Wettbewerbsprogramme, Baubeschriebe). Liefert die relevantesten Abschnitte mit Quellenangabe. Nutze es, wenn der Architekt nach Vorgaben, Programmen oder Bürowissen fragt.',
+            'Durchsucht ALLE Projektquellen in einem Zug: die Wissensbasis (in KosmoPrepare aufgenommene Grundlagen wie Normen-Auszüge, Wettbewerbsprogramme, Baubeschriebe), das Wettbewerbsdossier und das Lernjournal des Büros. Liefert belegte Abschnitte mit Marken [Qn]. Nutze es bei Fragen nach Vorgaben, Programmen, Normen oder Bürowissen — und zitiere die Marken im Antworttext.',
           parameters: {
             type: 'object',
             properties: {
@@ -204,13 +207,20 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           },
           execute: async (args) => {
             const q = String((args as { suchbegriff?: string })?.suchbegriff ?? '');
-            const hits = await searchKnowledge(q, 4);
-            if (hits.length === 0) {
-              return `Nichts zu «${q}» in der Wissensbasis. (Grundlagen werden in KosmoPrepare aufgenommen.)`;
+            const treffer = await sucheQuellen(q, {
+              journal: journal.all,
+              dossier: useProject.getState().doc.settings.dossier,
+            });
+            if (treffer.length === 0) {
+              return `Nichts zu «${q}» in Wissensbasis, Dossier oder Journal. (Grundlagen nimmt KosmoPrepare auf.)`;
             }
-            return hits
-              .map((h) => `[${h.docName} · Abschnitt ${h.seq + 1}] ${h.text.slice(0, 600)}`)
-              .join('\n---\n');
+            const zeilen = treffer.map((t) => {
+              const nr = ++quellenZaehler.current;
+              quellenMap.current.set(nr, { ...t, nr });
+              return `[Q${nr}] (${t.titel}) ${t.text.slice(0, 500)}`;
+            });
+            const erste = quellenZaehler.current - treffer.length + 1;
+            return `${zeilen.join('\n---\n')}\n\nAntworte gestützt auf diese Belege und zitiere sie im Text mit ihrer Marke, z.B. [Q${erste}]. Erfinde keine Marken.`;
           },
         },
       ],
@@ -478,7 +488,15 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       )}
 
       <div ref={scrollRef} style={{ flex: 1, overflow: 'auto', padding: 14, display: 'grid', gap: 10, alignContent: 'start' }}>
-        {bubbles.map((b) => (
+        {bubbles.map((b) => {
+          // Zitierte Belege dieser Antwort → Chips mit Quellensprung
+          const marken =
+            b.who === 'kosmo'
+              ? [...new Set([...b.text.matchAll(/\[Q(\d+)\]/g)].map((m) => Number(m[1])))].filter((n) =>
+                  quellenMap.current.has(n),
+                )
+              : [];
+          return (
           <div
             key={b.id}
             style={{
@@ -494,6 +512,39 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             }}
           >
             {b.text}
+            {marken.length > 0 && (
+              <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                {marken.map((n) => {
+                  const ref = quellenMap.current.get(n)!;
+                  return (
+                    <button
+                      key={n}
+                      data-testid="quelle-chip"
+                      title={`${ref.text.slice(0, 180)}${ref.text.length > 180 ? ' …' : ''}`}
+                      onClick={() => {
+                        useQuellen.getState().springe(ref);
+                        (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open(
+                          ref.typ === 'journal' ? 'train' : 'prepare',
+                        );
+                      }}
+                      style={{
+                        all: 'unset',
+                        cursor: 'pointer',
+                        fontSize: 11,
+                        fontFamily: 'var(--k-font-mono)',
+                        padding: '2px 8px',
+                        borderRadius: 'var(--k-radius-sm)',
+                        border: '1px solid var(--k-line-strong)',
+                        background: 'var(--k-surface)',
+                        color: 'var(--k-ink-soft)',
+                      }}
+                    >
+                      Q{n} · {ref.titel}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             {b.who === 'kosmo' && !b.text.startsWith('⚠') && (
               <div style={{ display: 'flex', gap: 6, marginTop: 6, opacity: b.feedback ? 1 : 0.55 }}>
                 {(['gut', 'schlecht'] as const).map((f) => (
@@ -520,7 +571,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               </div>
             )}
           </div>
-        ))}
+          );
+        })}
 
         {/* Aktionsketten: ein Paket = eine Karte */}
         {[...new Set(cards.filter((c) => c.paket && c.state !== 'abgelehnt').map((c) => c.paket!.id))].map((pid) => {
