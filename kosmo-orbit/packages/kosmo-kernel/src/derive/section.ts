@@ -1,5 +1,5 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Assembly, LayerFunction, Wall } from '../model/entities';
+import type { Assembly, LayerFunction, Terrain, Wall } from '../model/entities';
 import { dir, normal, type Pt } from '../model/units';
 import { wallFrame } from '../geometry/wall';
 import { deriveAll } from './scene';
@@ -35,6 +35,9 @@ export interface SectionGraphic {
   projections: SectionLine2D[];
   /** Schnittflächen für Material-Poché (SIA-Schraffuren). */
   faces: SectionFace[];
+  /** Terrainprofile (A2), auf die Schnittebene projiziert — leer = kein Terrain
+   * gesetzt, die Renderer zeichnen dann die flache Linie bei z = 0. */
+  terrain: { typ: 'gewachsen' | 'neu'; pts: { s: number; z: number }[] }[];
   bounds: { minS: number; maxS: number; minZ: number; maxZ: number } | null;
 }
 
@@ -146,6 +149,12 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
     });
   }
 
+  // Terrainprofile: Stützpunkte auf die Ebene projizieren (Reihenfolge bleibt)
+  const terrain: SectionGraphic['terrain'] = doc
+    .byKind<Terrain>('terrain')
+    .filter((t) => t.punkte.length >= 2)
+    .map((t) => ({ typ: t.typ, pts: t.punkte.map((p) => ({ s: toS(p.x, p.y), z: p.z })) }));
+
   let bounds: SectionGraphic['bounds'] = null;
   for (const l of [...cuts, ...projections]) {
     if (!bounds) {
@@ -158,7 +167,7 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       bounds.maxZ = Math.max(bounds.maxZ, p.z);
     }
   }
-  return { cuts, projections, faces, bounds };
+  return { cuts, projections, faces, terrain, bounds };
 }
 
 // ---------------------------------------------------------------------------

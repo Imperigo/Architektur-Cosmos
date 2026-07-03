@@ -50,16 +50,31 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
         preserveAspectRatio="xMidYMid meet"
         style={{ width: '100%', height: '100%', display: 'block' }}
       >
-        {/* Terrainlinie auf Höhe 0 */}
-        <line
-          x1={b.minS - pad}
-          y1={0}
-          x2={b.maxS + pad}
-          y2={0}
-          stroke="var(--k-ink-faint)"
-          strokeWidth={10}
-          strokeDasharray="200 120"
-        />
+        {/* Terrain: ohne Profil flache Linie bei z=0, sonst die gesetzten
+            Profile — gewachsen gestrichelt, neu ausgezogen (SIA 400 C.2.1) */}
+        {graphic.terrain.length === 0 ? (
+          <line
+            x1={b.minS - pad}
+            y1={0}
+            x2={b.maxS + pad}
+            y2={0}
+            stroke="var(--k-ink-faint)"
+            strokeWidth={10}
+            strokeDasharray="200 120"
+          />
+        ) : (
+          graphic.terrain.map((t, i) => (
+            <polyline
+              key={`terr${i}`}
+              data-testid={`terrain-${t.typ}`}
+              points={t.pts.map((p) => `${p.s},${-p.z}`).join(' ')}
+              fill="none"
+              stroke={t.typ === 'neu' ? 'var(--k-ink)' : 'var(--k-ink-faint)'}
+              strokeWidth={t.typ === 'neu' ? 16 : 10}
+              strokeDasharray={t.typ === 'gewachsen' ? '200 120' : undefined}
+            />
+          ))
+        )}
         {/* Material-Poché nach SIA-Phase: Vorprojekt grau, Bauprojekt Tönung, Werkplan + Schraffur */}
         {graphic.faces.map((f, i) => {
           const phase = doc.settings.phase;

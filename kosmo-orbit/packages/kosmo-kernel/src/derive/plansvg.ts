@@ -207,10 +207,28 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
   const b = g.bounds;
   let bounds = b ? { minX: b.minS, minY: -b.maxZ, maxX: b.maxS, maxY: -b.minZ } : null;
   if (bounds) {
-    // Terrainlinie (z = 0) auch im Druck — am Bildschirm gab es sie längst
-    parts.push(
-      `<line x1="${bounds.minX - 800}" y1="0" x2="${bounds.maxX + 800}" y2="0" stroke="#777" stroke-width="${0.18 * scale}" stroke-dasharray="${2 * scale} ${1.2 * scale}"/>`,
-    );
+    if (g.terrain.length === 0) {
+      // Ohne Terrainprofil: flache Linie bei z = 0 (Bestandsverhalten)
+      parts.push(
+        `<line x1="${bounds.minX - 800}" y1="0" x2="${bounds.maxX + 800}" y2="0" stroke="#777" stroke-width="${0.18 * scale}" stroke-dasharray="${2 * scale} ${1.2 * scale}"/>`,
+      );
+    } else {
+      // Terrainprofile (A2): gewachsen gestrichelt, neu ausgezogen (SIA 400 C.2.1)
+      for (const t of g.terrain) {
+        const dash = t.typ === 'gewachsen' ? ` stroke-dasharray="${2 * scale} ${1.2 * scale}"` : '';
+        const sw = (t.typ === 'neu' ? 0.35 : 0.18) * scale;
+        const stroke = t.typ === 'neu' ? '#333' : '#777';
+        parts.push(
+          `<polyline points="${t.pts.map((p) => `${p.s},${-p.z}`).join(' ')}" fill="none" stroke="${stroke}" stroke-width="${sw}"${dash}/>`,
+        );
+        for (const p of t.pts) {
+          bounds.minX = Math.min(bounds.minX, p.s);
+          bounds.maxX = Math.max(bounds.maxX, p.s);
+          bounds.minY = Math.min(bounds.minY, -p.z);
+          bounds.maxY = Math.max(bounds.maxY, -p.z);
+        }
+      }
+    }
     // Höhenkoten je Geschoss (OK fertig Boden), SIA-Lesart: Dreieck + Meter-Kote
     if (doc.settings.bemassung.hoehenKoten) {
       const s0 = bounds.minX - 800;

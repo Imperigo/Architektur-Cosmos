@@ -1517,6 +1517,64 @@ describe('Umbau-Status (Vision A1)', () => {
   });
 });
 
+describe('Terrain-Entity (Vision A2)', () => {
+  const spec = { a: { x: 0, y: 0 }, b: { x: 10000, y: 0 }, depth: 5000, lookLeft: true } as const;
+
+  it('terrainSetzen projiziert aufs Schnittbild; erneutes Setzen ersetzt das Profil (1 Entity, Undo)', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    execute(doc, 'design.terrainSetzen', {
+      typ: 'gewachsen',
+      punkte: [{ x: -2000, y: 0, z: 800 }, { x: 5000, y: 0, z: -300 }, { x: 12000, y: 0, z: 200 }],
+    });
+    const g = deriveSection(doc, spec);
+    expect(g.terrain).toHaveLength(1);
+    // Schnitt läuft entlang +x ab (0,0): s = x der Stützpunkte, z bleibt
+    expect(g.terrain[0]!.pts).toEqual([
+      { s: -2000, z: 800 }, { s: 5000, z: -300 }, { s: 12000, z: 200 },
+    ]);
+    const res = execute(doc, 'design.terrainSetzen', {
+      typ: 'gewachsen',
+      punkte: [{ x: 0, y: 0, z: 0 }, { x: 9000, y: 0, z: 500 }],
+    });
+    expect(doc.byKind('terrain')).toHaveLength(1); // ersetzt, nicht dupliziert
+    expect(deriveSection(doc, spec).terrain[0]!.pts).toHaveLength(2);
+    doc.apply(invertPatches(res.patches));
+    expect(deriveSection(doc, spec).terrain[0]!.pts).toHaveLength(3);
+    // Zweiter Typ «neu» lebt daneben
+    execute(doc, 'design.terrainSetzen', { typ: 'neu', punkte: [{ x: 0, y: 0, z: 0 }, { x: 9000, y: 0, z: 0 }] });
+    expect(doc.byKind('terrain')).toHaveLength(2);
+  });
+
+  it('Druck: ohne Terrain flache z0-Linie (Bestand), mit Terrain Polylinien nach Typ', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const ohne = sectionInnerSvg(doc, spec, 100).inner;
+    // flache Terrainlinie bei z=0: von bounds.minX−800 bis maxX+800
+    expect(ohne).toContain('x1="-800" y1="0" x2="9800" y2="0"');
+    expect(ohne).not.toContain('points="-1000,');
+    execute(doc, 'design.terrainSetzen', { typ: 'gewachsen', punkte: [{ x: -1000, y: 0, z: 600 }, { x: 10000, y: 0, z: -400 }] });
+    execute(doc, 'design.terrainSetzen', { typ: 'neu', punkte: [{ x: -1000, y: 0, z: 0 }, { x: 10000, y: 0, z: 0 }] });
+    const mit = sectionInnerSvg(doc, spec, 100).inner;
+    expect(mit).toContain('-1000,-600'); // gewachsen: erster Stützpunkt (y = −z)
+    expect(mit).not.toContain('x1="-800" y1="0" x2="9800" y2="0"'); // alte flache Linie ersetzt
+    // gewachsen gestrichelt, neu ausgezogen: genau EINE Terrain-Polylinie mit Dash
+    const polys = mit.match(/<polyline points="-1000,[^/]*\/>/g) ?? [];
+    expect(polys).toHaveLength(2);
+    expect(polys.filter((p) => p.includes('stroke-dasharray'))).toHaveLength(1);
+  });
+
+  it('Roundtrip: Terrain überlebt toJSON → fromJSON', () => {
+    const { doc } = setupDoc();
+    execute(doc, 'design.terrainSetzen', { typ: 'neu', punkte: [{ x: 0, y: 0, z: 100 }, { x: 5000, y: 2000, z: 300 }] });
+    const wieder = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));
+    const t = wieder.byKind<import('../src').Terrain>('terrain');
+    expect(t).toHaveLength(1);
+    expect(t[0]!.typ).toBe('neu');
+    expect(t[0]!.punkte[1]).toEqual({ x: 5000, y: 2000, z: 300 });
+  });
+});
+
 describe('Treppen-Ausbau (V2-A2)', () => {
   const basis = () => {
     const { doc, storeyId } = setupDoc(); // EG, 3000 hoch

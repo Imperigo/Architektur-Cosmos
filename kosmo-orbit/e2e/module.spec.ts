@@ -1426,3 +1426,38 @@ test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb mit
   await expect(page.locator('line.abbruch-kreuz')).toHaveCount(0);
   await expect(page.locator('path.renovation-neu')).toHaveCount(1);
 });
+
+test('Terrain (Vision A2): Profil gesetzt → Ansicht zeigt gewachsen gestrichelt + neu ausgezogen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aufbau = k.run('design.aufbauErstellen', {
+      name: 'AW T', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: aufbau.patches[0].id,
+      a: { x: 0, y: 0 }, b: { x: 8000, y: 0 },
+    });
+    k.run('design.terrainSetzen', {
+      typ: 'gewachsen',
+      punkte: [{ x: -2000, y: 0, z: 900 }, { x: 10000, y: 0, z: -500 }],
+    });
+    k.run('design.terrainSetzen', {
+      typ: 'neu',
+      punkte: [{ x: -2000, y: 0, z: 0 }, { x: 10000, y: 0, z: 0 }],
+    });
+  });
+  await page.click('[data-testid="view-quad"]');
+  const gewachsen = page.locator('[data-testid="terrain-gewachsen"]').first();
+  await expect(gewachsen).toBeVisible();
+  await expect(gewachsen).toHaveAttribute('stroke-dasharray', '200 120');
+  // Flaches Neu-Profil hat Bounding-Höhe 0 → für Playwright nie «visible»: Attribute prüfen
+  const neu = page.locator('[data-testid="terrain-neu"]').first();
+  await expect(neu).toHaveAttribute('points', /,0 .*,0$/); // beide Stützpunkte auf z = 0
+  await expect(neu).not.toHaveAttribute('stroke-dasharray', /.*/);
+});

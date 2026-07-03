@@ -428,6 +428,40 @@ export const setProperty = registerCommand({
   },
 });
 
+export const setTerrain = registerCommand({
+  id: 'design.terrainSetzen',
+  title: 'Terrain setzen',
+  description:
+    'Setzt das Terrainprofil (3D-Polylinie übers Grundstück, z über Projektnull in mm). typ «gewachsen» (im Schnitt gestrichelt) oder «neu» (ausgezogen, SIA 400). Pro Typ existiert EIN Profil — erneutes Setzen ersetzt es. Löschen über design.loeschen.',
+  params: z.object({
+    typ: z.enum(['gewachsen', 'neu']).default('gewachsen'),
+    punkte: z
+      .array(z.object({
+        x: z.number().int().describe('X in mm'),
+        y: z.number().int().describe('Y in mm'),
+        z: z.number().int().describe('Höhe über Projektnull in mm'),
+      }))
+      .min(2)
+      .describe('Stützpunkte, linear interpoliert'),
+  }),
+  summarize: (p) => `Terrain ${p.typ}: ${p.punkte.length} Stützpunkte`,
+  run: (doc, p) => {
+    const bestehend = doc
+      .byKind<import('../model/entities').Terrain>('terrain')
+      .find((t) => t.typ === p.typ);
+    if (bestehend) {
+      return [{ id: bestehend.id, before: bestehend, after: { ...bestehend, punkte: p.punkte } }];
+    }
+    const terrain: import('../model/entities').Terrain = {
+      id: newId('terrain'),
+      kind: 'terrain',
+      typ: p.typ,
+      punkte: p.punkte,
+    };
+    return [added(terrain)];
+  },
+});
+
 export const setRenovation = registerCommand({
   id: 'design.renovationSetzen',
   title: 'Umbau-Status setzen',

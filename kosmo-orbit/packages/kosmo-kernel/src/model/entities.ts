@@ -276,8 +276,21 @@ export interface ZonenTuer extends Base {
   breite: Mm;
 }
 
+/**
+ * Terrainprofil (Vision A2): 3D-Polylinie übers Grundstück, projektglobal
+ * (kein Geschoss). Der Schnitt projiziert die Stützpunkte auf seine Ebene —
+ * gewachsen gestrichelt, neu ausgezogen (SIA 400 C.2.1). Kein DGM: ein
+ * handgesetztes Profil je Zustand; swisstopo-Höhen sind HomeStation-Ausbau.
+ */
+export interface Terrain extends Base {
+  kind: 'terrain';
+  typ: 'gewachsen' | 'neu';
+  /** Stützpunkte in Welt-mm, z über Projektnull; linear interpoliert. */
+  punkte: { x: Mm; y: Mm; z: Mm }[];
+}
+
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {
