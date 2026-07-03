@@ -115,6 +115,12 @@ export function loadTkbDemo(): void {
         b: { x: (Math.min(...kxs) + Math.max(...kxs)) / 2, y: Math.max(...kys) - 600 },
         width: 1200,
       });
+      // Tür Korridor→Treppenhaus (der Kern grenzt oben an den Korridor)
+      run('design.tuerSetzen', {
+        storeyId: sid,
+        at: { x: Math.round((Math.min(...kxs) + Math.max(...kxs)) / 2), y: Math.max(...kys) },
+        breite: 1000,
+      });
     }
     for (const id of wohnungIds) {
       try {
