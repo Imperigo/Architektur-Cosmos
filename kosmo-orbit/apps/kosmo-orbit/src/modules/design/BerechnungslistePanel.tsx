@@ -441,6 +441,36 @@ function SegmentiererSektion() {
     return Math.abs(s2) / 2;
   };
 
+  // Finch-Moment: alle Wohnungs-Zonen des Geschosses mit Zimmern + Möbeln füllen
+  const grundrisseFuellen = () => {
+    const { doc, history } = useProject.getState();
+    const wohnungen = doc
+      .byKind<Zone>('zone')
+      .filter((z) => z.storeyId === activeStoreyId && z.program && z.raumTyp !== 'korridor');
+    if (wohnungen.length === 0) {
+      setHinweis('Keine Wohnungs-Zonen (mit Typ) auf dem Geschoss — zuerst schneiden oder zeichnen.');
+      return;
+    }
+    let ok = 0;
+    const gruende: string[] = [];
+    history.beginGroup();
+    try {
+      for (const w of wohnungen) {
+        try {
+          runCommand('design.grundrissGenerieren', { zoneId: w.id, korridorSeite: 'auto' });
+          ok++;
+        } catch (err) {
+          gruende.push(`${w.name}: ${err instanceof Error ? err.message : err}`);
+        }
+      }
+    } finally {
+      history.endGroup();
+    }
+    setHinweis(
+      `${ok}/${wohnungen.length} Wohnungen gefüllt (1 Undo-Schritt).${gruende.length ? ` Ausgelassen — ${gruende[0]}` : ''}`,
+    );
+  };
+
   const uebernehmen = () => {
     if (!ergebnis || !activeStoreyId) return;
     const { history } = useProject.getState();
@@ -476,6 +506,9 @@ function SegmentiererSektion() {
             Übernehmen
           </KButton>
         )}
+        <KButton size="sm" tone="quiet" data-testid="grundrisse-fuellen" onClick={grundrisseFuellen}>
+          Grundrisse füllen
+        </KButton>
       </div>
       {hinweis && <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>{hinweis}</div>}
       {ergebnis && (

@@ -7,6 +7,7 @@ import { CommandError, registerCommand } from './core';
 import { isConvex } from '../geometry/skeleton';
 import { stairSpec, treppenTeile } from '../derive/treppe';
 import { REGEL_PRESETS } from '../model/regelpresets';
+import { generiereGrundriss } from '../derive/grundrissgenerator';
 
 export { stairSpec } from '../derive/treppe';
 
@@ -541,6 +542,63 @@ export const setBoundary = registerCommand({
         : {}),
     };
     patches.push(added(grenze));
+    return patches;
+  },
+});
+
+export const generateFloorplan = registerCommand({
+  id: 'design.grundrissGenerieren',
+  title: 'Grundriss generieren',
+  description:
+    'Füllt eine rechteckige Wohnungs-Zone nach dem CH-Rezept mit Zimmern und Möbeln: Eingangsband (Diele/Bad/Küche) an der Korridorseite, Wohnen + Zimmer an der Fassade. korridorSeite «auto» sucht die nächste Korridor-Zone. Ein Undo-Schritt; Anstoss, kein Entwurf.',
+  params: z.object({
+    zoneId: z.string(),
+    korridorSeite: z.enum(['auto', 'unten', 'oben', 'links', 'rechts']).default('auto'),
+  }),
+  summarize: () => 'Grundriss generieren',
+  run: (doc, p) => {
+    const wohnung = require<Zone>(doc, p.zoneId, 'zone');
+    let seite: 'unten' | 'oben' | 'links' | 'rechts';
+    if (p.korridorSeite !== 'auto') {
+      seite = p.korridorSeite;
+    } else {
+      // nächste Korridor-Zone entscheidet, sonst unten
+      const bb = (o: { x: number; y: number }[]) => {
+        let x = 0, y = 0;
+        for (const q of o) { x += q.x; y += q.y; }
+        return { x: x / o.length, y: y / o.length };
+      };
+      const wz = bb(wohnung.outline);
+      const korridor = doc
+        .byKind<Zone>('zone')
+        .filter((z) => z.storeyId === wohnung.storeyId && z.raumTyp === 'korridor');
+      if (korridor.length > 0) {
+        const kz = bb(korridor.sort((a, b) => {
+          const az = bb(a.outline); const bz = bb(b.outline);
+          return Math.hypot(az.x - wz.x, az.y - wz.y) - Math.hypot(bz.x - wz.x, bz.y - wz.y);
+        })[0]!.outline);
+        const dx = kz.x - wz.x;
+        const dy = kz.y - wz.y;
+        seite = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'rechts' : 'links') : (dy > 0 ? 'oben' : 'unten');
+      } else {
+        seite = 'unten';
+      }
+    }
+    const g = generiereGrundriss(wohnung.outline, seite);
+    if (g.raeume.length === 0) throw new CommandError(g.diagnose[0] ?? 'Wohnung zu klein');
+    const patches: AnyPatch[] = [];
+    for (const r of g.raeume) {
+      patches.push(added({
+        id: newId('zone'), kind: 'zone' as const, storeyId: wohnung.storeyId,
+        outline: r.outline, name: r.name, sia: r.sia as Zone['sia'], raumTyp: r.raumTyp,
+      }));
+    }
+    for (const m of g.moebel) {
+      patches.push(added({
+        id: newId('moebel'), kind: 'furniture' as const, storeyId: wohnung.storeyId,
+        typ: m.typ, at: m.at, rotationGrad: m.rotationGrad,
+      }));
+    }
     return patches;
   },
 });

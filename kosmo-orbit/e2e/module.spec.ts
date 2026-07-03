@@ -1100,3 +1100,36 @@ test('Modulraster im 3D (V7-Ausbau): Toggle aktiviert das Fassaden-Overlay', asy
   await page.evaluate(() => window.__kosmoViewport.renderOnce());
   await expect(page.locator('[data-testid="module-bilanz"]')).toContainText('Wiederholung');
 });
+
+test('Grundriss-Generator (Finch-Kern): schneiden → füllen → Zimmer + Möbel im Plan, 1 Undo', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    k.run('design.raumprogrammSetzen', { posten: [{ typ: 'marktgerecht', hnfSoll: 190 }] });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Geschoss', sia: 'KF',
+      outline: [{ x: 0, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 14000 }, { x: 0, y: 14000 }],
+    });
+    k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId, name: 'Korridor', sia: 'VF', raumTyp: 'korridor',
+      outline: [{ x: 0, y: 6000 }, { x: 30000, y: 6000 }, { x: 30000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+  });
+  await page.click('[data-testid="liste-toggle"]');
+  await page.click('[data-testid="segmentierer-lauf"]');
+  await page.click('[data-testid="segmentierer-uebernehmen"]');
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('zone').length);
+  await page.click('[data-testid="grundrisse-fuellen"]');
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('zone').length))
+    .toBeGreaterThan(vorher + 5);
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('furniture').length)).toBeGreaterThanOrEqual(4);
+  await expect(page.locator('[data-testid="moebel"]').first()).toBeVisible();
+  await page.click('[data-testid="undo"]');
+  expect(await page.evaluate(() => window.__kosmo.state().doc.byKind('zone').length)).toBe(vorher);
+});

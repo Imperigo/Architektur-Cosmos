@@ -39,4 +39,5 @@ export * from './derive/renderprompt';
 export * from './derive/moebel';
 export * from './derive/fassadenmodule';
 export * from './derive/standort';
+export * from './derive/grundrissgenerator';
 export * from './geometry/skeleton';

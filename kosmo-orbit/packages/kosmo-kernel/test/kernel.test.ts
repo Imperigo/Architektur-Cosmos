@@ -17,6 +17,7 @@ import { finalerRenderPrompt, renderPromptBausteine } from '../src/derive/render
 import { moebelGeometrie } from '../src/derive/moebel';
 import { fassadenModule, moduleAlsCsv } from '../src/derive/fassadenmodule';
 import { parzelleZuOutline } from '../src/derive/standort';
+import { generiereGrundriss } from '../src/derive/grundrissgenerator';
 import { polygonArea } from '../src/model/units';
 import { pruefeGrundriss } from '../src/derive/checks';
 import {
@@ -2165,5 +2166,66 @@ describe('CH-Standort (V2-V4)', () => {
     // Nordkante (N grösser) hat grössere y-Werte
     const nordPunkt = imp.outline.find((p) => p.y > 0)!;
     expect(nordPunkt).toBeDefined();
+  });
+});
+
+describe('Grundriss-Generator (Finch-Kern, Schritt 2)', () => {
+  it('12×8-m-Wohnung, Korridor unten: Bänder decken alles, Möbel sitzen', () => {
+    const g = generiereGrundriss(
+      [{ x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 8000 }, { x: 0, y: 8000 }],
+      'unten',
+    );
+    // Flächensumme = Wohnungsfläche (Bänder ohne Lücke/Überlappung)
+    const summe = g.raeume.reduce((s, r) => s + Math.abs(polygonArea(r.outline)), 0) / 1e6;
+    expect(summe).toBeCloseTo(96, 0);
+    expect(g.raeume.map((r) => r.raumTyp)).toEqual(
+      expect.arrayContaining(['korridor', 'bad', 'kueche', 'wohnen', 'zimmer']),
+    );
+    // Küche kriegt Zeile, erstes Zimmer Doppelbett, Wohnen Esstisch
+    expect(g.moebel.map((m) => m.typ)).toEqual(
+      expect.arrayContaining(['wc', 'kuechenzeile', 'esstisch', 'bett-doppel']),
+    );
+    // Eingangsband liegt an y=0..2400
+    const bad = g.raeume.find((r) => r.name === 'Bad')!;
+    expect(Math.max(...bad.outline.map((p) => p.y))).toBe(2400);
+  });
+
+  it('Korridor rechts: Eingangsband an der rechten Kante', () => {
+    const g = generiereGrundriss(
+      [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 12000 }, { x: 0, y: 12000 }],
+      'rechts',
+    );
+    const bad = g.raeume.find((r) => r.name === 'Bad')!;
+    expect(Math.min(...bad.outline.map((p) => p.x))).toBe(8000 - 2400);
+  });
+
+  it('Command: Wohnung + Korridor-Zone → auto-Seite, Räume + Möbel, 1 Undo; zu klein → Fehler', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Korridor', sia: 'VF', raumTyp: 'korridor',
+      outline: [{ x: 0, y: -2000 }, { x: 12000, y: -2000 }, { x: 12000, y: 0 }, { x: 0, y: 0 }],
+    });
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg 1', sia: 'HNF', program: 'marktgerecht',
+      outline: [{ x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+    const vorherZonen = doc.byKind('zone').length;
+    const r = execute(doc, 'design.grundrissGenerieren', {
+      zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'auto',
+    });
+    expect(doc.byKind('zone').length).toBeGreaterThan(vorherZonen);
+    expect(doc.byKind('furniture').length).toBeGreaterThanOrEqual(4);
+    doc.apply(invertPatches(r.patches));
+    expect(doc.byKind('zone').length).toBe(vorherZonen);
+    expect(doc.byKind('furniture')).toHaveLength(0);
+    const klein = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Mini', sia: 'HNF',
+      outline: [{ x: 20000, y: 0 }, { x: 24000, y: 0 }, { x: 24000, y: 4000 }, { x: 20000, y: 4000 }],
+    });
+    expect(() =>
+      execute(doc, 'design.grundrissGenerieren', { zoneId: (klein.patches[0] as { id: string }).id, korridorSeite: 'unten' }),
+    ).toThrow(/6 × 6/);
   });
 });
