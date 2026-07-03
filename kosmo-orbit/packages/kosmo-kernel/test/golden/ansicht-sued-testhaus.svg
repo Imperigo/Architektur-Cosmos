@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="500 -6234.49951171875 20000 6734.49951171875">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-496 -6234.49951171875 20996 6734.49951171875">
 <line x1="5795" y1="0" x2="15205" y2="0" stroke="#111" stroke-width="4.8999999999999995"/>
 <line x1="5795" y1="0" x2="5795" y2="-3000" stroke="#111" stroke-width="4.8999999999999995"/>
 <line x1="15205" y1="0" x2="15205" y2="-3000" stroke="#111" stroke-width="4.8999999999999995"/>
@@ -20,4 +20,7 @@
 <line x1="1000" y1="0" x2="5795" y2="0" stroke="#111" stroke-width="4.8999999999999995"/>
 <line x1="15205" y1="0" x2="20000" y2="0" stroke="#111" stroke-width="4.8999999999999995"/>
 <line x1="20000" y1="0" x2="20000" y2="-4500" stroke="#111" stroke-width="4.8999999999999995"/>
+<line x1="200" y1="0" x2="20800" y2="0" stroke="#777" stroke-width="2.52" stroke-dasharray="28 16.8"/>
+<path d="M 200 0 l -11.200000000000001 -22.400000000000002 h 22.400000000000002 Z" fill="none" stroke="black" stroke-width="2.52"/>
+<text x="177.6" y="-26.880000000000003" text-anchor="end" font-size="36.4" font-family="monospace">±0.00</text>
 </svg>

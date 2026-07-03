@@ -113,6 +113,16 @@ export function DesignWorkspace() {
 
   const doc = useProject.getState().doc;
   const storeys = useMemo(() => doc.storeysOrdered(), [doc, revision]);
+  // Aktives Bemassungs-Preset aus den Settings ableiten (Anzeige im Select)
+  const bemassungPreset = useMemo(() => {
+    const b = doc.settings.bemassung;
+    if (b.aussenKetten === 'beide' && !b.innenKetten && b.hoehenKoten) return 'standard';
+    if (b.aussenKetten === 'gesamt' && !b.innenKetten && b.hoehenKoten) return 'wettbewerb';
+    if (b.aussenKetten === 'beide' && b.innenKetten && b.hoehenKoten) return 'werkplan';
+    if (b.aussenKetten === 'keine' && !b.innenKetten && !b.hoehenKoten) return 'aus';
+    return 'eigen';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revision]);
   const assemblies = useMemo(
     () => doc.byKind<Assembly>('assembly').filter((a) => a.target === 'wall'),
     [doc, revision],
@@ -435,6 +445,31 @@ export function DesignWorkspace() {
           Raster
         </KButton>
         <span style={{ width: 12 }} />
+        {/* Bemassungs-Stil (V2-A5): Presets als Projekteinstellung, undo-fähig */}
+        <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+          Masse
+          <select
+            value={bemassungPreset}
+            data-testid="bemassung-stil"
+            onChange={(e) => {
+              const presets: Record<string, { aussenKetten: 'beide' | 'gesamt' | 'keine'; innenKetten: boolean; hoehenKoten: boolean }> = {
+                wettbewerb: { aussenKetten: 'gesamt', innenKetten: false, hoehenKoten: true },
+                werkplan: { aussenKetten: 'beide', innenKetten: true, hoehenKoten: true },
+                aus: { aussenKetten: 'keine', innenKetten: false, hoehenKoten: false },
+                standard: { aussenKetten: 'beide', innenKetten: false, hoehenKoten: true },
+              };
+              const p = presets[e.target.value];
+              if (p) runCommand('design.bemassungSetzen', p);
+            }}
+            style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+          >
+            <option value="standard">Standard</option>
+            <option value="wettbewerb">Wettbewerb</option>
+            <option value="werkplan">Werkplan</option>
+            <option value="aus">Aus</option>
+            {bemassungPreset === 'eigen' && <option value="eigen">eigen</option>}
+          </select>
+        </label>
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
           ↩ Rückgängig
         </KButton>

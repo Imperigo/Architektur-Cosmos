@@ -87,14 +87,15 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       `<path d="M ${sx} ${-sy} A ${a.radius} ${a.radius} 0 0 0 ${ex} ${-ey}" fill="none" stroke="#555" stroke-width="${0.18 * scale}" stroke-dasharray="${scale} ${0.7 * scale}"/>`,
     );
   }
-  // Aussenbemassung (zwei Ketten pro Seite)
+  // Assoziative Bemassung: Aussenketten + Innenketten je nach Stil
   const dims = deriveDimensions(doc, storeyId);
   let dimMinX = Infinity;
   let dimMinY = Infinity;
   for (const c of dims.chains) {
-    const sw = 0.18 * scale;
-    const tickHalf = 0.8 * scale;
-    const fs = 2.6 * scale;
+    const innen = c.role === 'innen';
+    const sw = (innen ? 0.13 : 0.18) * scale;
+    const tickHalf = (innen ? 0.6 : 0.8) * scale;
+    const fs = (innen ? 2.2 : 2.6) * scale;
     const t0 = c.ticks[0]!;
     const t1 = c.ticks[c.ticks.length - 1]!;
     parts.push('<g stroke="black" fill="black">');
@@ -165,8 +166,33 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
     );
   }
   const b = g.bounds;
-  const bounds = b ? { minX: b.minS, minY: -b.maxZ, maxX: b.maxS, maxY: -b.minZ } : null;
+  let bounds = b ? { minX: b.minS, minY: -b.maxZ, maxX: b.maxS, maxY: -b.minZ } : null;
+  if (bounds) {
+    // Terrainlinie (z = 0) auch im Druck — am Bildschirm gab es sie längst
+    parts.push(
+      `<line x1="${bounds.minX - 800}" y1="0" x2="${bounds.maxX + 800}" y2="0" stroke="#777" stroke-width="${0.18 * scale}" stroke-dasharray="${2 * scale} ${1.2 * scale}"/>`,
+    );
+    // Höhenkoten je Geschoss (OK fertig Boden), SIA-Lesart: Dreieck + Meter-Kote
+    if (doc.settings.bemassung.hoehenKoten) {
+      const s0 = bounds.minX - 800;
+      const dreieck = 1.6 * scale;
+      for (const st of doc.storeysOrdered()) {
+        const z = st.elevation;
+        parts.push(
+          `<path d="M ${s0} ${-z} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="none" stroke="black" stroke-width="${0.18 * scale}"/>`,
+          `<text x="${s0 - dreieck}" y="${-z - dreieck * 1.2}" text-anchor="end" font-size="${2.6 * scale}" font-family="monospace">${koteLabel(z)}</text>`,
+        );
+      }
+      bounds = { ...bounds, minX: bounds.minX - 800 - 14 * scale };
+    }
+  }
   return { inner: parts.join('\n'), bounds };
+}
+
+/** Meter-Kote mit Vorzeichen: ±0.00, +3.00, −2.50. */
+export function koteLabel(z: number): string {
+  if (z === 0) return '±0.00';
+  return `${z > 0 ? '+' : '−'}${Math.abs(z / 1000).toFixed(2)}`;
 }
 
 export function axoInnerSvg(doc: KosmoDoc, spec: AxoSpec, scale: number): InnerSvg {

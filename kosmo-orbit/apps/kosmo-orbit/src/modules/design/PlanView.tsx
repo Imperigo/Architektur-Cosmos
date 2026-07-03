@@ -321,9 +321,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               );
             })}
 
-          {/* Assoziative Aussenbemassung */}
+          {/* Assoziative Bemassung — Aussen- und Innenketten je nach Stil */}
           {dims &&
             dims.chains.map((c, ci) => {
+              const innen = c.role === 'innen';
               const t0 = c.ticks[0]!;
               const t1 = c.ticks[c.ticks.length - 1]!;
               const line =
@@ -331,26 +332,32 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                   ? { x1: t0, y1: -c.offset, x2: t1, y2: -c.offset }
                   : { x1: c.offset, y1: -t0, x2: c.offset, y2: -t1 };
               return (
-                <g key={`dim${ci}`} stroke="var(--k-ink-soft)" fill="var(--k-ink-soft)">
-                  <line {...line} strokeWidth={8} />
+                <g
+                  key={`dim${ci}`}
+                  data-testid={`dim-kette-${c.role}`}
+                  stroke="var(--k-ink-soft)"
+                  fill="var(--k-ink-soft)"
+                >
+                  <line {...line} strokeWidth={innen ? 6 : 8} />
                   {c.ticks.map((t, i) => (
                     <g key={i}>
                       {c.axis === 'x' ? (
-                        <line x1={t - 60} y1={-c.offset + 60} x2={t + 60} y2={-c.offset - 60} strokeWidth={12} />
+                        <line x1={t - 60} y1={-c.offset + 60} x2={t + 60} y2={-c.offset - 60} strokeWidth={innen ? 9 : 12} />
                       ) : (
-                        <line x1={c.offset - 60} y1={-t - 60} x2={c.offset + 60} y2={-t + 60} strokeWidth={12} />
+                        <line x1={c.offset - 60} y1={-t - 60} x2={c.offset + 60} y2={-t + 60} strokeWidth={innen ? 9 : 12} />
                       )}
                     </g>
                   ))}
                   {c.ticks.slice(0, -1).map((t, i) => {
                     const next = c.ticks[i + 1]!;
                     const mid = (t + next) / 2;
+                    const fs = innen ? 240 : 280;
                     return c.axis === 'x' ? (
-                      <text key={`t${i}`} x={mid} y={-c.offset - 120} textAnchor="middle" fontSize={280} stroke="none" fontFamily="var(--k-font-mono)">
+                      <text key={`t${i}`} x={mid} y={-c.offset - 120} textAnchor="middle" fontSize={fs} stroke="none" fontFamily="var(--k-font-mono)">
                         {dimensionLabel(t, next)}
                       </text>
                     ) : (
-                      <text key={`t${i}`} x={c.offset - 120} y={-mid} textAnchor="middle" fontSize={280} stroke="none" fontFamily="var(--k-font-mono)" transform={`rotate(-90 ${c.offset - 120} ${-mid})`}>
+                      <text key={`t${i}`} x={c.offset - 120} y={-mid} textAnchor="middle" fontSize={fs} stroke="none" fontFamily="var(--k-font-mono)" transform={`rotate(-90 ${c.offset - 120} ${-mid})`}>
                         {dimensionLabel(t, next)}
                       </text>
                     );

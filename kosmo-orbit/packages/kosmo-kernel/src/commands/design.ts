@@ -508,6 +508,35 @@ export const setBoundary = registerCommand({
   },
 });
 
+export const setDimensionStyle = registerCommand({
+  id: 'design.bemassungSetzen',
+  title: 'Bemassungs-Stil setzen',
+  description:
+    'Stellt den Bemassungs-Stil des Projekts ein (wirkt in Grundriss, Schnitt, Druck und DXF). aussenKetten: beide (Öffnungen + Gesamtmass), gesamt (nur Gesamtmass) oder keine. innenKetten: Ketten auf den Achsen der Innenwände (Werkplan). hoehenKoten: Geschoss-Koten in Schnitt und Ansicht. Nur genannte Felder werden geändert.',
+  params: z.object({
+    aussenKetten: z.enum(['beide', 'gesamt', 'keine']).optional(),
+    innenKetten: z.boolean().optional(),
+    hoehenKoten: z.boolean().optional(),
+  }),
+  summarize: (p) =>
+    `Bemassung: ${[
+      p.aussenKetten !== undefined ? `aussen ${p.aussenKetten}` : null,
+      p.innenKetten !== undefined ? `innen ${p.innenKetten ? 'an' : 'aus'}` : null,
+      p.hoehenKoten !== undefined ? `Koten ${p.hoehenKoten ? 'an' : 'aus'}` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ') || 'unverändert'}`,
+  run: (doc, p) => {
+    const alt = doc.settings.bemassung;
+    const neu = {
+      aussenKetten: p.aussenKetten ?? alt.aussenKetten,
+      innenKetten: p.innenKetten ?? alt.innenKetten,
+      hoehenKoten: p.hoehenKoten ?? alt.hoehenKoten,
+    };
+    return [{ settings: true, before: { bemassung: alt }, after: { bemassung: neu } }];
+  },
+});
+
 export const setGrid = registerCommand({
   id: 'design.rasterSetzen',
   title: 'Stützenraster setzen',

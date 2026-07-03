@@ -22,6 +22,16 @@ export interface RaumprogrammPosten {
   hnfSoll: number;
 }
 
+/** Bemassungs-Stil (V2-A5) — projektweit, wirkt in App-Plan, Druck und DXF. */
+export interface BemassungsStil {
+  /** Aussenketten: beide (Öffnungen + Gesamtmass), nur Gesamtmass, oder keine. */
+  aussenKetten: 'beide' | 'gesamt' | 'keine';
+  /** Innenketten auf den Achsen der Innenwände (Werkplan). */
+  innenKetten: boolean;
+  /** Höhenkoten je Geschoss in Schnitt und Ansicht. */
+  hoehenKoten: boolean;
+}
+
 export interface DocSettings {
   projectName: string;
   /** Faktor Raumprogramm→anrechenbare Geschossfläche (Owner-Wissen: 1.28 bzw. 1.22 je Büro). */
@@ -36,6 +46,7 @@ export interface DocSettings {
   raumprogramm: RaumprogrammPosten[];
   /** Wettbewerbsdossier (Phase 0): Do's, Don'ts, Fakten — fliesst in Kosmos Systemprompt. */
   dossier: DossierEintrag[];
+  bemassung: BemassungsStil;
 }
 
 export const defaultSettings: DocSettings = {
@@ -46,6 +57,8 @@ export const defaultSettings: DocSettings = {
   maxAgf: null,
   raumprogramm: [],
   dossier: [],
+  // Grundriss-Default = Bestandsverhalten; Koten an (Schnitt/Ansicht gewinnen)
+  bemassung: { aussenKetten: 'beide', innenKetten: false, hoehenKoten: true },
 };
 
 export interface Patch {

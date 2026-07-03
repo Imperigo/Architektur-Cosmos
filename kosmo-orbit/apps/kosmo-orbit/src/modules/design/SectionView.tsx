@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { deriveSection, schraffurFuer, schraffurLinien, type SectionSpec } from '@kosmo/kernel';
+import { deriveSection, koteLabel, schraffurFuer, schraffurLinien, type SectionSpec } from '@kosmo/kernel';
 import { Messrahmen } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
@@ -38,7 +38,9 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
 
   const b = graphic.bounds;
   const pad = Math.max((b.maxS - b.minS) * 0.08, 500);
-  const vb = `${b.minS - pad} ${-(b.maxZ + pad)} ${b.maxS - b.minS + 2 * pad} ${b.maxZ - b.minZ + 2 * pad}`;
+  // Links Raum für die Höhenkoten lassen (Dreieck + Meter-Label)
+  const kotenRand = doc.settings.bemassung.hoehenKoten ? 1800 : 0;
+  const vb = `${b.minS - pad - kotenRand} ${-(b.maxZ + pad)} ${b.maxS - b.minS + 2 * pad + kotenRand} ${b.maxZ - b.minZ + 2 * pad}`;
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--k-plan-paper)' }}>
@@ -102,6 +104,27 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
             strokeLinecap="square"
           />
         ))}
+        {/* Höhenkoten je Geschoss (OK fertig Boden) — Stil-Einstellung «hoehenKoten» */}
+        {doc.settings.bemassung.hoehenKoten &&
+          doc.storeysOrdered().map((st) => (
+            <g key={st.id} data-testid="hoehenkote" stroke="var(--k-ink-soft)" fill="var(--k-ink-soft)">
+              <path
+                d={`M ${b.minS - 400} ${-st.elevation} l -80 -160 h 160 Z`}
+                fill="none"
+                strokeWidth={9}
+              />
+              <text
+                x={b.minS - 560}
+                y={-st.elevation - 220}
+                textAnchor="end"
+                fontSize={260}
+                stroke="none"
+                fontFamily="var(--k-font-mono)"
+              >
+                {koteLabel(st.elevation)}
+              </text>
+            </g>
+          ))}
       </svg>
       <div
         style={{

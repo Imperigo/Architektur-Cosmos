@@ -543,3 +543,40 @@ test('Belegte Antwort: Dossier-Regel wird zitiert und angesprungen', async ({ pa
   await expect(page.locator('[data-testid="quelle-sprung-dossier"]')).toBeVisible();
   await expect(page.locator('[data-testid="quelle-sprung-dossier"]')).toContainText('Attikageschoss');
 });
+
+test('Bemassungs-Stile: Werkplan zeigt Innenkette + Höhenkoten, Wettbewerb nicht', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    const W = (a: unknown, b: unknown) =>
+      k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a, b, assemblyId: aw.id });
+    W({ x: 0, y: 0 }, { x: 9000, y: 0 });
+    W({ x: 9000, y: 0 }, { x: 9000, y: 6000 });
+    W({ x: 9000, y: 6000 }, { x: 0, y: 6000 });
+    W({ x: 0, y: 6000 }, { x: 0, y: 0 });
+    const innen = W({ x: 4500, y: 0 }, { x: 4500, y: 6000 }) as { patches: { id: string }[] };
+    k.run('design.oeffnungSetzen', {
+      wallId: innen.patches[0]!.id,
+      openingType: 'tuer', center: 3000, width: 900, height: 2200, sill: 0,
+    });
+  });
+  // Standard: Aussenketten ja, Innenkette nein
+  await expect(page.locator('[data-testid="dim-kette-oeffnung"]').first()).toBeVisible();
+  await expect(page.locator('[data-testid="dim-kette-innen"]')).toHaveCount(0);
+  // Werkplan-Preset → Innenkette erscheint
+  await page.selectOption('[data-testid="bemassung-stil"]', 'werkplan');
+  await expect(page.locator('[data-testid="dim-kette-innen"]').first()).toBeVisible();
+  // Höhenkoten in der Ansicht (4er-Splitscreen, Ansicht Süd)
+  await page.click('text=4er');
+  await expect(page.locator('[data-testid="hoehenkote"]').first()).toBeVisible();
+  // Wettbewerb → nur Gesamtmass, keine Innenkette
+  await page.selectOption('[data-testid="bemassung-stil"]', 'wettbewerb');
+  await expect(page.locator('[data-testid="dim-kette-innen"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="dim-kette-oeffnung"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="dim-kette-gesamt"]').first()).toBeVisible();
+});

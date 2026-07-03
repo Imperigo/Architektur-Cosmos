@@ -25,6 +25,9 @@ import {
   fangKandidaten,
   magnetFang,
   derivePlan,
+  deriveDimensions,
+  dimensionLabel,
+  sectionInnerSvg,
   type Storey,
   type Wall,
   type Assembly,
@@ -1285,5 +1288,88 @@ describe('Stützenraster ins Modell (V2-A3)', () => {
     // leeres Raster
     execute(doc, 'design.rasterEntfernen', { storeyId });
     expect(magnetFang({ x: 10_000, y: 6_000 }, fangKandidaten(doc, storeyId))).toBeNull();
+  });
+});
+
+describe('Bemassungs-Stile (V2-A5)', () => {
+  const haus = () => {
+    const { doc, storeyId } = setupDoc();
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'Beton 20', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    const assemblyId = (au.patches[0] as { id: string }).id;
+    const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a, b });
+    const sued = wand({ x: 0, y: 0 }, { x: 9000, y: 0 });
+    wand({ x: 9000, y: 0 }, { x: 9000, y: 6000 });
+    wand({ x: 9000, y: 6000 }, { x: 0, y: 6000 });
+    wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+    const innen = wand({ x: 4500, y: 0 }, { x: 4500, y: 6000 });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (sued.patches[0] as { id: string }).id,
+      openingType: 'fenster', center: 2000, width: 1200, height: 1400, sill: 900,
+    });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (innen.patches[0] as { id: string }).id,
+      openingType: 'tuer', center: 3000, width: 900, height: 2200, sill: 0,
+    });
+    return { doc, storeyId };
+  };
+
+  it('dimensionLabel: Zentimeter-Konvention des Hochbaus', () => {
+    expect(dimensionLabel(0, 3615)).toBe('361.5');
+    expect(dimensionLabel(0, 9000)).toBe('900');
+    expect(dimensionLabel(9000, 0)).toBe('900');
+  });
+
+  it('Default «beide»: Öffnungs- und Gesamtkette je Seite, mit Rollen und Leibungs-Ticks', () => {
+    const { doc, storeyId } = haus();
+    const dims = deriveDimensions(doc, storeyId);
+    const x = dims.chains.filter((c) => c.axis === 'x');
+    expect(x.map((c) => c.role).sort()).toEqual(['gesamt', 'oeffnung']);
+    const oeffnung = x.find((c) => c.role === 'oeffnung')!;
+    expect(oeffnung.ticks).toContain(1400); // Leibung links (2000 − 600)
+    expect(oeffnung.ticks).toContain(2600); // Leibung rechts
+    expect(x.find((c) => c.role === 'gesamt')!.ticks).toEqual([0, 9000]);
+    expect(dims.chains.some((c) => c.role === 'innen')).toBe(false); // Default ohne Innenketten
+  });
+
+  it('«gesamt» reduziert auf die Endpunkt-Kette; «keine» leert; Command ist undo-fähig', () => {
+    const { doc, storeyId } = haus();
+    const res = execute(doc, 'design.bemassungSetzen', { aussenKetten: 'gesamt' });
+    let x = deriveDimensions(doc, storeyId).chains.filter((c) => c.axis === 'x');
+    expect(x).toHaveLength(1);
+    expect(x[0]!.role).toBe('gesamt');
+    doc.apply(invertPatches(res.patches));
+    x = deriveDimensions(doc, storeyId).chains.filter((c) => c.axis === 'x');
+    expect(x).toHaveLength(2);
+    execute(doc, 'design.bemassungSetzen', { aussenKetten: 'keine' });
+    expect(deriveDimensions(doc, storeyId).chains).toHaveLength(0);
+  });
+
+  it('Innenketten: die Innenwand bemasst sich auf ihrer Achse mit Türleibungen', () => {
+    const { doc, storeyId } = haus();
+    execute(doc, 'design.bemassungSetzen', { innenKetten: true });
+    const innen = deriveDimensions(doc, storeyId).chains.filter((c) => c.role === 'innen');
+    expect(innen).toHaveLength(1);
+    expect(innen[0]!.axis).toBe('y'); // vertikale Innenwand → y-Kette
+    expect(innen[0]!.offset).toBe(4500); // auf der Wandachse
+    expect(innen[0]!.ticks).toContain(2550); // Türleibung (3000 − 450)
+    expect(innen[0]!.ticks).toContain(3450);
+  });
+
+  it('Höhenkoten: Schnitt-Druck trägt ±0.00 und +3.00; abschaltbar; Terrainlinie im Druck', () => {
+    const { doc, storeyId } = haus();
+    execute(doc, 'design.geschossErstellen', { name: 'OG', index: 1, elevation: 3000, height: 3000 });
+    const spec = { a: { x: 4500, y: -2000 }, b: { x: 4500, y: 8000 }, depth: 10000, lookLeft: true } as const;
+    const svg = sectionInnerSvg(doc, spec, 100).inner;
+    expect(svg).toContain('±0.00');
+    expect(svg).toContain('+3.00');
+    expect(svg).toContain('stroke-dasharray="200 120"'); // Terrainlinie
+    execute(doc, 'design.bemassungSetzen', { hoehenKoten: false });
+    const ohne = sectionInnerSvg(doc, spec, 100).inner;
+    expect(ohne).not.toContain('±0.00');
+    void storeyId;
   });
 });

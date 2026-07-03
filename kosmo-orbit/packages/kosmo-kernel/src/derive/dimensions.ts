@@ -17,6 +17,8 @@ export interface DimensionChain {
   offset: Mm;
   /** Tick-Positionen entlang der Achse, sortiert. */
   ticks: Mm[];
+  /** Öffnungskette / Gesamtmass (aussen) oder Innenkette auf der Wandachse. */
+  role: 'oeffnung' | 'gesamt' | 'innen';
 }
 
 export interface DimensionSet {
@@ -42,49 +44,78 @@ export function deriveDimensions(doc: KosmoDoc, storeyId: string): DimensionSet 
     }
   }
 
-  // Kandidaten: horizontale Wände nahe der Südkante → x-Kette; vertikale nahe Westkante → y-Kette
-  const xTicks = new Set<Mm>();
-  const yTicks = new Set<Mm>();
-
-  for (const w of walls) {
-    const horizontal = Math.abs(w.a.y - w.b.y) <= AXIS_TOL;
-    const vertical = Math.abs(w.a.x - w.b.x) <= AXIS_TOL;
-    const rects = openingRects(w, doc.openingsOf(w.id));
-
-    if (horizontal && Math.min(w.a.y, w.b.y) <= minY + AXIS_TOL) {
-      xTicks.add(w.a.x);
-      xTicks.add(w.b.x);
-      const sign = w.b.x >= w.a.x ? 1 : -1;
-      for (const r of rects) {
-        // s zählt ab Punkt a entlang der Achse
-        xTicks.add(Math.round(w.a.x + sign * r.s0));
-        xTicks.add(Math.round(w.a.x + sign * r.s1));
-      }
-    }
-    if (vertical && Math.min(w.a.x, w.b.x) <= minX + AXIS_TOL) {
-      yTicks.add(w.a.y);
-      yTicks.add(w.b.y);
-      const sign = w.b.y >= w.a.y ? 1 : -1;
-      for (const r of rects) {
-        yTicks.add(Math.round(w.a.y + sign * r.s0));
-        yTicks.add(Math.round(w.a.y + sign * r.s1));
-      }
-    }
-  }
-
+  const stil = doc.settings.bemassung;
   const chains: DimensionChain[] = [];
-  const xs = [...xTicks].sort((a, b) => a - b).filter((v, i, arr) => i === 0 || v - arr[i - 1]! > 10);
-  const ys = [...yTicks].sort((a, b) => a - b).filter((v, i, arr) => i === 0 || v - arr[i - 1]! > 10);
 
-  if (xs.length >= 2) {
-    chains.push({ axis: 'x', offset: minY - 1200, ticks: xs });
-    // Gesamtmass nur, wenn die Öffnungskette mehr als die Endpunkte hat
-    if (xs.length > 2) chains.push({ axis: 'x', offset: minY - 2000, ticks: [xs[0]!, xs[xs.length - 1]!] });
+  // Ticks einer Wand entlang ihrer Achse: Enden + Öffnungs-Leibungen
+  const wandTicks = (w: Wall, achse: 'x' | 'y'): Mm[] => {
+    const ticks = new Set<Mm>([w.a[achse], w.b[achse]]);
+    const sign = w.b[achse] >= w.a[achse] ? 1 : -1;
+    for (const r of openingRects(w, doc.openingsOf(w.id))) {
+      ticks.add(Math.round(w.a[achse] + sign * r.s0));
+      ticks.add(Math.round(w.a[achse] + sign * r.s1));
+    }
+    return [...ticks].sort((a, b) => a - b);
+  };
+  const dedupe = (arr: Mm[]) => arr.filter((v, i) => i === 0 || v - arr[i - 1]! > 10);
+
+  // Aussenketten: horizontale Wände nahe der Südkante → x-Kette; vertikale nahe Westkante → y-Kette
+  if (stil.aussenKetten !== 'keine') {
+    const xTicks = new Set<Mm>();
+    const yTicks = new Set<Mm>();
+    for (const w of walls) {
+      const horizontal = Math.abs(w.a.y - w.b.y) <= AXIS_TOL;
+      const vertical = Math.abs(w.a.x - w.b.x) <= AXIS_TOL;
+      if (horizontal && Math.min(w.a.y, w.b.y) <= minY + AXIS_TOL) {
+        for (const t of wandTicks(w, 'x')) xTicks.add(t);
+      }
+      if (vertical && Math.min(w.a.x, w.b.x) <= minX + AXIS_TOL) {
+        for (const t of wandTicks(w, 'y')) yTicks.add(t);
+      }
+    }
+    const xs = dedupe([...xTicks].sort((a, b) => a - b));
+    const ys = dedupe([...yTicks].sort((a, b) => a - b));
+    const beide = stil.aussenKetten === 'beide';
+    if (xs.length >= 2) {
+      if (beide) chains.push({ axis: 'x', offset: minY - 1200, ticks: xs, role: 'oeffnung' });
+      // Gesamtmass nur, wenn die Öffnungskette mehr als die Endpunkte hat (bzw. immer bei «gesamt»)
+      if (!beide || xs.length > 2) {
+        chains.push({ axis: 'x', offset: minY - (beide ? 2000 : 1200), ticks: [xs[0]!, xs[xs.length - 1]!], role: 'gesamt' });
+      }
+    }
+    if (ys.length >= 2) {
+      if (beide) chains.push({ axis: 'y', offset: minX - 1200, ticks: ys, role: 'oeffnung' });
+      if (!beide || ys.length > 2) {
+        chains.push({ axis: 'y', offset: minX - (beide ? 2000 : 1200), ticks: [ys[0]!, ys[ys.length - 1]!], role: 'gesamt' });
+      }
+    }
   }
-  if (ys.length >= 2) {
-    chains.push({ axis: 'y', offset: minX - 1200, ticks: ys });
-    if (ys.length > 2) chains.push({ axis: 'y', offset: minX - 2000, ticks: [ys[0]!, ys[ys.length - 1]!] });
+
+  // Innenketten (Werkplan): jede Innenwand bemasst sich auf ihrer eigenen Achse
+  if (stil.innenKetten) {
+    for (const w of walls) {
+      const horizontal = Math.abs(w.a.y - w.b.y) <= AXIS_TOL;
+      const vertical = Math.abs(w.a.x - w.b.x) <= AXIS_TOL;
+      // «innen» = nicht an einer Bbox-Kante (weder Süd/West noch Nord/Ost)
+      if (
+        horizontal &&
+        Math.min(w.a.y, w.b.y) > minY + AXIS_TOL &&
+        Math.max(w.a.y, w.b.y) < maxY - AXIS_TOL
+      ) {
+        const ticks = dedupe(wandTicks(w, 'x'));
+        if (ticks.length >= 2) chains.push({ axis: 'x', offset: Math.round((w.a.y + w.b.y) / 2), ticks, role: 'innen' });
+      }
+      if (
+        vertical &&
+        Math.min(w.a.x, w.b.x) > minX + AXIS_TOL &&
+        Math.max(w.a.x, w.b.x) < maxX - AXIS_TOL
+      ) {
+        const ticks = dedupe(wandTicks(w, 'y'));
+        if (ticks.length >= 2) chains.push({ axis: 'y', offset: Math.round((w.a.x + w.b.x) / 2), ticks, role: 'innen' });
+      }
+    }
   }
+
   return { chains };
 }
 
