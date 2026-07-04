@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, melde, meldeFehler, moduleHue, OrbitMark } from '@kosmo/ui';
+import { Badge, Hairline, KButton, bestaetigen, melde, meldeFehler, moduleHue, OrbitMark } from '@kosmo/ui';
 import {
   ChatSession,
   LearningJournal,
@@ -7,8 +7,10 @@ import {
   MockProvider,
   OllamaProvider,
   OpenAiKompatibelProvider,
+  betriebKonfig,
   greeting,
   personas,
+  type Betriebsart,
   type ChatProvider,
   type Proposal,
 } from '@kosmo/ai';
@@ -64,6 +66,10 @@ interface PendingCard extends Proposal {
 }
 
 interface KosmoSettings {
+  /** Betriebsart (Owner «drei Versionen»): HomePC / VPN-Client / Cloud. */
+  betriebsart: Betriebsart;
+  /** Remote: VPN-Adresse des HomePC (IP oder Name). */
+  remoteHost: string;
   provider: 'ollama' | 'lmstudio' | 'anthropic' | 'mock';
   baseUrl: string;
   model: string;
@@ -76,13 +82,15 @@ interface KosmoSettings {
 }
 
 const defaultSettings: KosmoSettings = {
+  betriebsart: 'standard',
+  remoteHost: '',
   provider: 'ollama',
   baseUrl: 'http://localhost:11434',
   model: 'qwen3-coder:30b',
   lmBaseUrl: 'http://localhost:1234/v1',
   lmModel: 'qwen/qwen3-30b-a3b',
   anthropicKey: '',
-  anthropicModel: 'claude-sonnet-5',
+  anthropicModel: 'claude-opus-4-8',
 };
 
 function loadSettings(): KosmoSettings {
@@ -165,10 +173,18 @@ async function bridgeErreichbar(bridge: string): Promise<boolean> {
 
 export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const [settings, setSettings] = useState<KosmoSettings>(loadSettings);
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
   const speichere = (s: KosmoSettings) => {
     setSettings(s);
     localStorage.setItem('kosmo.llm', JSON.stringify(s));
   };
+  // Cloud-Fallback: ein offenes Angebot aufs Mal; Text zum Nachsenden nach dem
+  // Provider-Wechsel (die Session wird via useMemo auf [settings] neu gebaut).
+  const cloudWechselLaeuft = useRef(false);
+  const nachSendText = useRef('');
+  const zuletztGefragt = useRef('');
+  const cloudAnRef = useRef<(text: string) => void>(() => {});
   const [showSettings, setShowSettings] = useState(false);
   const [ttsOn, setTtsOn] = useState(localStorage.getItem('kosmo.tts') === '1');
   const lastKosmoText = useRef('');
@@ -228,7 +244,14 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             void speak(lastKosmoText.current);
           }
         },
-        onError: (msg) => push('kosmo', `⚠ ${msg}`),
+        onError: (msg) => {
+          push('kosmo', `⚠ ${msg}`);
+          // HomeStation (lokales LLM) nicht erreichbar → direkt Cloud anbieten.
+          const p = settingsRef.current.provider;
+          if ((p === 'ollama' || p === 'lmstudio') && settingsRef.current.betriebsart !== 'cloud') {
+            cloudAnRef.current(zuletztGefragt.current);
+          }
+        },
       },
       personas.kosmo.systemPrompt,
       () => {
@@ -347,10 +370,85 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [bubbles, cards]);
 
+  /**
+   * Betriebsart wechseln (Owner «drei Versionen»): setzt Provider + alle
+   * Dienst-Adressen (LLM/Bridge/Sync) kohärent. Standard=HomePC localhost,
+   * Remote=VPN-Host, Cloud=Claude (mind. Opus 4.8, keine lokalen Dienste).
+   */
+  const wechsleBetriebsart = (art: Betriebsart, host?: string) => {
+    const remoteHost = host ?? settings.remoteHost;
+    const k = betriebKonfig({ betriebsart: art, remoteHost, cloudModell: settings.anthropicModel });
+    const neu: KosmoSettings = {
+      ...settings,
+      betriebsart: art,
+      remoteHost,
+      provider: k.provider,
+      ...(art !== 'cloud' ? { baseUrl: k.llmBaseUrl } : {}),
+      ...(art === 'cloud' ? { anthropicModel: k.cloudModell } : {}),
+    };
+    speichere(neu);
+    if (art !== 'cloud') {
+      // Bridge (Render/STT/TTS) + Sync folgen dem HomePC-Host mit.
+      localStorage.setItem('kosmo.bridge', k.bridgeUrl);
+      localStorage.setItem('kosmo.sync.url', k.syncUrl);
+    }
+  };
+
+  /**
+   * Cloud-Fallback: HomeStation nicht erreichbar → «Mit Claude (Opus 4.8)
+   * weiterarbeiten?». Mit Schlüssel sofort umschalten + die letzte Frage
+   * nachsenden; ohne Schlüssel in die Einstellungen führen (kein alert).
+   */
+  const bieteCloudAn = async (text: string) => {
+    if (cloudWechselLaeuft.current) return;
+    cloudWechselLaeuft.current = true;
+    try {
+      const ok = await bestaetigen({
+        titel: 'HomeStation nicht erreichbar',
+        text: 'Kosmo erreicht das lokale Modell gerade nicht. Mit Claude Cloud (Opus 4.8) weiterarbeiten? Der Schlüssel bleibt auf diesem Gerät.',
+        bestaetigen: 'Zu Claude wechseln',
+      });
+      if (!ok) return;
+      const modell = betriebKonfig({ betriebsart: 'cloud', cloudModell: settingsRef.current.anthropicModel }).cloudModell;
+      const neu: KosmoSettings = {
+        ...settingsRef.current,
+        betriebsart: 'cloud',
+        provider: 'anthropic',
+        anthropicModel: modell,
+      };
+      speichere(neu);
+      if (settingsRef.current.anthropicKey.trim()) {
+        if (text.trim()) nachSendText.current = text; // nach Session-Rebuild senden
+        melde(`Auf Claude Cloud (${modell}) gewechselt.`, { ton: 'erfolg' });
+      } else {
+        setShowSettings(true);
+        melde('Claude-Schlüssel in den Einstellungen eintragen, dann läuft Kosmo in der Cloud.', {
+          ton: 'info',
+          dauerMs: 7000,
+        });
+      }
+    } finally {
+      cloudWechselLaeuft.current = false;
+    }
+  };
+  cloudAnRef.current = (text: string) => void bieteCloudAn(text);
+
+  // Nach dem Cloud-Wechsel die letzte Frage auf der neuen Session nachsenden.
+  useEffect(() => {
+    if (!nachSendText.current) return;
+    const t = nachSendText.current;
+    nachSendText.current = '';
+    setBubbles((b) => [...b, { id: ++bubbleSeq.current, who: 'du', text: t }]);
+    void session.send(t);
+  }, [session]);
+
   const send = () => {
     const text = input.trim();
     if (!text || busy) return;
     setInput('');
+    // Letzte Frage merken: schlägt das lokale Modell fehl, wird genau sie nach
+    // dem Cloud-Wechsel erneut gesendet.
+    zuletztGefragt.current = text;
     setBubbles((b) => [...b, { id: ++bubbleSeq.current, who: 'du', text }]);
     void session.send(text);
   };
@@ -581,6 +679,40 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
 
       {showSettings && (
         <div style={{ padding: 14, display: 'grid', gap: 8, borderBottom: '1px solid var(--k-line)' }}>
+          <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>Betriebsart</div>
+          <div data-testid="betriebsart" style={{ display: 'flex', gap: 4 }}>
+            {([
+              ['standard', 'Standard', 'HomePC — volle Leistung, alle Werkzeuge lokal'],
+              ['remote', 'Remote', 'VPN-Client auf den HomePC'],
+              ['cloud', 'Cloud', 'Claude (Opus 4.8), wenn der HomePC aus ist'],
+            ] as [Betriebsart, string, string][]).map(([art, label, titel]) => (
+              <KButton
+                key={art}
+                size="sm"
+                tone={settings.betriebsart === art ? 'accent' : 'ghost'}
+                data-testid={`betriebsart-${art}`}
+                title={titel}
+                onClick={() => wechsleBetriebsart(art)}
+                style={{ flex: 1 }}
+              >
+                {label}
+              </KButton>
+            ))}
+          </div>
+          {settings.betriebsart === 'remote' && (
+            <SettingsFeld
+              label="HomePC-Adresse (VPN, IP oder Name)"
+              value={settings.remoteHost}
+              onChange={(v) => wechsleBetriebsart('remote', v)}
+            />
+          )}
+          {settings.betriebsart === 'cloud' && (
+            <div style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+              Voll über Claude (mind. Opus 4.8). Renders/Whisper laufen als
+              Browser-Fallback — die HomeStation-Qualität kommt erst am HomePC.
+            </div>
+          )}
+          <Hairline />
           <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
             Verbindung
             <select

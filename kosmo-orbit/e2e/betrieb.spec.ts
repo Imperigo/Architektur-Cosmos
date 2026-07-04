@@ -1,0 +1,85 @@
+import { expect, test } from '@playwright/test';
+
+/**
+ * V2-B1: Betriebsarten (Standard/Remote/Cloud) + Cloud-Fallback.
+ * Der Owner wollte drei Versionen — HomePC, VPN-Client, Cloud — und dass die
+ * App, wenn die HomeStation nicht erreichbar ist, direkt Claude (Opus 4.8)
+ * anbietet. Beides ohne echten Server prüfbar: der Wechsel schreibt kohärente
+ * Adressen, der Fallback zeigt den Bestätigungsdialog.
+ */
+
+async function oeffneEinstellungen(page: import('@playwright/test').Page) {
+  await page.click('[data-testid="module-design"]');
+  await page.click('[aria-label="Einstellungen"]');
+  await expect(page.locator('[data-testid="betriebsart"]')).toBeVisible();
+}
+
+test('Betriebsart Cloud stellt auf Claude Opus 4.8, Standard führt zum HomePC zurück', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await oeffneEinstellungen(page);
+
+  await page.click('[data-testid="betriebsart-cloud"]');
+  await expect(page.locator('[data-testid="kosmo-panel"]')).toContainText('claude-opus-4-8');
+  const cloud = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(cloud.provider).toBe('anthropic');
+  expect(cloud.anthropicModel).toBe('claude-opus-4-8');
+  expect(cloud.betriebsart).toBe('cloud');
+
+  await page.click('[data-testid="betriebsart-standard"]');
+  const stand = await page.evaluate(() => ({
+    llm: JSON.parse(localStorage.getItem('kosmo.llm')!),
+    bridge: localStorage.getItem('kosmo.bridge'),
+    sync: localStorage.getItem('kosmo.sync.url'),
+  }));
+  expect(stand.llm.provider).toBe('ollama');
+  expect(stand.llm.baseUrl).toBe('http://localhost:11434');
+  expect(stand.bridge).toBe('http://localhost:8600');
+  expect(stand.sync).toBe('ws://localhost:8700');
+});
+
+test('Betriebsart Remote leitet Bridge + Sync auf den VPN-Host', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await oeffneEinstellungen(page);
+
+  await page.click('[data-testid="betriebsart-remote"]');
+  await page.getByLabel('HomePC-Adresse (VPN, IP oder Name)').fill('100.87.3.2');
+  const s = await page.evaluate(() => ({
+    llm: JSON.parse(localStorage.getItem('kosmo.llm')!),
+    bridge: localStorage.getItem('kosmo.bridge'),
+    sync: localStorage.getItem('kosmo.sync.url'),
+  }));
+  expect(s.llm.provider).toBe('ollama');
+  expect(s.llm.baseUrl).toBe('http://100.87.3.2:11434');
+  expect(s.bridge).toBe('http://100.87.3.2:8600');
+  expect(s.sync).toBe('ws://100.87.3.2:8700');
+});
+
+test('HomeStation nicht erreichbar → Cloud-Fallback (Opus 4.8) wird angeboten', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Standard/HomePC, aber auf eine garantiert tote Adresse gezeigt.
+    localStorage.setItem(
+      'kosmo.llm',
+      JSON.stringify({ betriebsart: 'standard', provider: 'ollama', baseUrl: 'http://127.0.0.1:1', model: 'x' }),
+    );
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+
+  await page.fill('[data-testid="kosmo-input"]', 'Zeichne eine Wand von 0,0 bis 6,0');
+  await page.click('[data-testid="kosmo-send"]');
+
+  // Der Bestätigungsdialog erscheint, sobald das lokale Modell nicht antwortet.
+  await expect(page.getByText('HomeStation nicht erreichbar')).toBeVisible({ timeout: 15_000 });
+  await page.click('[data-testid="bestaetigung-ja"]'); // «Zu Claude wechseln»
+
+  // Ohne Schlüssel: Betriebsart cloud gesetzt, Einstellungen offen zum Eintragen.
+  await expect(page.locator('[data-testid="betriebsart"]')).toBeVisible();
+  const s = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(s.provider).toBe('anthropic');
+  expect(s.betriebsart).toBe('cloud');
+  expect(s.anthropicModel).toBe('claude-opus-4-8');
+});
