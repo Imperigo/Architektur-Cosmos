@@ -89,6 +89,28 @@ export interface DocSettings {
   /** Publikations-Sets (RE-ARCHICAD A4): benannte Blattauswahl + Namensregel
    * — ein Klick exportiert den ganzen Plansatz («Publisher ohne Baum»). */
   publikationsSets?: PublikationsSet[];
+  /** Themenpläne (RE-ARCHICAD A5, grafische Überschreibungen): Regeln
+   * Kriterium→Farbe, je Blatt-Platzierung aktivierbar — Brandschutz-,
+   * Schallschutz- oder Materialplan aus demselben Modell. */
+  themen?: ThemenPlan[];
+}
+
+/** Eine Override-Regel: WAS wird WIE getönt (erste Treffer-Regel gewinnt). */
+export interface ThemenRegel {
+  /** raumTyp (Zonen), material (Schichten/Stützen) oder klasse (Plan-Klasse
+   * wie «treppe», «decke», «stuetze»). */
+  kriterium: 'raumTyp' | 'material' | 'klasse';
+  wert: string;
+  /** Füllfarbe (Hex), im Druck solid mit erhaltenem Stift. */
+  farbe: string;
+  /** Legenden-Text; fehlt = wert. */
+  label?: string;
+}
+
+/** Benannter Themenplan (RE-ARCHICAD A5). */
+export interface ThemenPlan {
+  name: string;
+  regeln: ThemenRegel[];
 }
 
 /** Benanntes Export-Set (RE-ARCHICAD A4). namensregel-Platzhalter:

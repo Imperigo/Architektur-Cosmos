@@ -34,10 +34,25 @@ export interface InnerSvg {
   bounds: { minX: number; minY: number; maxX: number; maxY: number } | null;
 }
 
-/** Grundriss-Inhalt (Regionen, Symbole, Bemassung) in Welt-mm. */
-export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): InnerSvg {
+/** Grundriss-Inhalt (Regionen, Symbole, Bemassung) in Welt-mm.
+ * opts.thema (A5): Themenplan-Regeln tönen passende Regionen — erste
+ * Treffer-Regel gewinnt, der Stift bleibt. */
+export function planInnerSvg(
+  doc: KosmoDoc,
+  storeyId: string,
+  scale: number,
+  opts?: { thema?: import('../model/doc').ThemenPlan },
+): InnerSvg {
   const plan = derivePlan(doc, storeyId);
   const parts: string[] = [];
+  const themaFuer = (classes: string[]): string | null => {
+    for (const r of opts?.thema?.regeln ?? []) {
+      const klasse =
+        r.kriterium === 'material' ? `material-${r.wert}` : r.kriterium === 'raumTyp' ? `raumtyp-${r.wert}` : r.wert;
+      if (classes.includes(klasse)) return r.farbe;
+    }
+    return null;
+  };
 
   // Umbau-Farbcode (SIA 400 B.8.11): Bestand schwarz/grau, Neubau rot, Abbruch gelb
   const NEU_STIFT = '#b3261e';
@@ -59,6 +74,9 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
       fill = '#f3e29b';
       stroke = ABBRUCH_STIFT;
     }
+    // Themenplan (A5): Regel-Farbe übersteuert die Füllung, der Stift bleibt
+    const themaFarbe = themaFuer(r.classes);
+    if (themaFarbe) fill = themaFarbe;
     // Stiftstärken in Papier-mm → Welt-mm skaliert (0.5 / 0.35 / 0.18)
     const sw = (isProjection ? 0.18 : isCore ? 0.5 : 0.35) * scale;
     const dash = r.classes.includes('volumen')

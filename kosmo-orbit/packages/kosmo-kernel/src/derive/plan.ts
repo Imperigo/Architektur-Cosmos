@@ -367,12 +367,17 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     lines.push({ a: P(bm.b, h), b: P(bm.b, -h), classes: cls });
   }
 
-  // Volumen & Zonen als Projektion (feine Kontur)
+  // Volumen & Zonen als Projektion (feine Kontur); Zonen tragen ihren
+  // raumTyp als Klasse (A5: Themenplan-Kriterium)
   for (const e of doc.inStorey(storeyId)) {
     if (e.kind === 'mass' || e.kind === 'zone') {
       regions.push({
         rings: [e.outline.map((p) => ({ ...p }))],
-        classes: ['projection', e.kind === 'mass' ? 'volumen' : 'zone'],
+        classes: [
+          'projection',
+          e.kind === 'mass' ? 'volumen' : 'zone',
+          ...(e.kind === 'zone' && e.raumTyp ? [`raumtyp-${e.raumTyp}`] : []),
+        ],
       });
     } else if (e.kind === 'slab') {
       regions.push({

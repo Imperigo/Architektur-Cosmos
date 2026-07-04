@@ -251,19 +251,24 @@ export const adjustPlacement = registerCommand({
   id: 'publish.ansichtAnpassen',
   title: 'Ansicht anpassen',
   description:
-    'Ändert Massstab, Titel und/oder Umbau-Filter einer platzierten Ansicht auf einem Planblatt. umbau: abbruch = Abbruchplan, neu = Neubauplan, bestand = nur Bestand, null = kombiniert (Filter entfernen).',
+    'Ändert Massstab, Titel, Umbau-Filter und/oder Themenplan einer platzierten Ansicht auf einem Planblatt. umbau: abbruch = Abbruchplan, neu = Neubauplan, bestand = nur Bestand, null = kombiniert. thema: Name eines Themenplans aus design.themenPlanSpeichern, null = normaler Plan.',
   params: z.object({
     sheetId: z.string(),
     placementId: z.string(),
     scale: z.number().int().min(1).max(2000).optional(),
     title: z.string().optional(),
     umbau: z.enum(['bestand', 'abbruch', 'neu']).nullable().optional(),
+    thema: z.string().nullable().optional(),
   }),
-  summarize: (p) => `Ansicht anpassen${p.scale ? ` (1:${p.scale})` : ''}${p.umbau ? ` · ${p.umbau}` : ''}`,
+  summarize: (p) =>
+    `Ansicht anpassen${p.scale ? ` (1:${p.scale})` : ''}${p.umbau ? ` · ${p.umbau}` : ''}${p.thema ? ` · ${p.thema}` : ''}`,
   run: (doc, p) => {
     const sheet = requireSheet(doc, p.sheetId);
     if (!sheet.placements.some((pl) => pl.id === p.placementId)) {
       throw new CommandError(`Platzierung «${p.placementId}» existiert nicht`);
+    }
+    if (p.thema && !(doc.settings.themen ?? []).some((t) => t.name === p.thema)) {
+      throw new CommandError(`Themenplan «${p.thema}» existiert nicht — zuerst design.themenPlanSpeichern`);
     }
     const after: Sheet = {
       ...sheet,
@@ -274,8 +279,10 @@ export const adjustPlacement = registerCommand({
           scale: p.scale ?? pl.scale,
           ...(p.title === undefined ? {} : { title: p.title }),
           ...(p.umbau ? { umbau: p.umbau } : {}),
+          ...(p.thema ? { thema: p.thema } : {}),
         };
         if (p.umbau === null) delete neu.umbau; // Filter entfernen = kombiniert
+        if (p.thema === null) delete neu.thema; // Thema entfernen = normaler Plan
         return neu;
       }),
     };

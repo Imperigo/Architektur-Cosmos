@@ -3605,6 +3605,54 @@ describe('Katalog-Transfer (RE-ARCHICAD A8)', () => {
   });
 });
 
+describe('Themenplan-Overrides (RE-ARCHICAD A5)', () => {
+  it('Brandschutzplan aus demselben Modell: Regeln tönen, Legende erscheint, Thema abschaltbar', async () => {
+    const { sheetToSvg } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Treppenhaus', sia: 'VF', raumTyp: 'treppenhaus',
+      outline: [{ x: 0, y: 1000 }, { x: 3000, y: 1000 }, { x: 3000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    // Thema muss existieren, bevor es aktiviert wird
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'Brandschutz', format: 'A2' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId, view: 'grundriss', storeyId, scale: 100, x: 200, y: 200 });
+    const pid = doc.get<import('../src').Sheet>(sheetId)!.placements[0]!.id;
+    expect(() =>
+      execute(doc, 'publish.ansichtAnpassen', { sheetId, placementId: pid, thema: 'Brandschutz' }),
+    ).toThrow(CommandError);
+    execute(doc, 'design.themenPlanSpeichern', {
+      name: 'Brandschutz',
+      regeln: [
+        { kriterium: 'raumTyp', wert: 'treppenhaus', farbe: '#d94040', label: 'Fluchtweg vertikal' },
+        { kriterium: 'material', wert: 'beton', farbe: '#9aa7b6', label: 'REI 60' },
+      ],
+    });
+    execute(doc, 'publish.ansichtAnpassen', { sheetId, placementId: pid, thema: 'Brandschutz' });
+    const svg = sheetToSvg(doc, sheetId, { projectName: 'T' });
+    expect(svg).toContain('#d94040'); // Treppenhaus-Zone getönt (sonst fill none)
+    expect(svg).toContain('#9aa7b6'); // Beton-Kern übersteuert (statt #c9c9c9)
+    expect(svg).not.toContain('#c9c9c9');
+    expect(svg).toContain('Fluchtweg vertikal'); // Legende mit Label
+    expect(svg).toContain('· Brandschutz'); // Titel-Zusatz
+    // Thema abschalten: normaler Plan, keine Themen-Farben mehr
+    execute(doc, 'publish.ansichtAnpassen', { sheetId, placementId: pid, thema: null });
+    const normal = sheetToSvg(doc, sheetId, { projectName: 'T' });
+    expect(normal).toContain('#c9c9c9');
+    expect(normal).not.toContain('#d94040');
+    expect(normal).not.toContain('Fluchtweg vertikal');
+    // Gleicher Name ersetzt; Entfernen validiert
+    execute(doc, 'design.themenPlanSpeichern', {
+      name: 'Brandschutz', regeln: [{ kriterium: 'klasse', wert: 'treppe', farbe: '#00aa00' }],
+    });
+    expect(doc.settings.themen).toHaveLength(1);
+    expect(doc.settings.themen![0]!.regeln).toHaveLength(1);
+    execute(doc, 'design.themenPlanEntfernen', { name: 'Brandschutz' });
+    expect(() => execute(doc, 'design.themenPlanEntfernen', { name: 'Brandschutz' })).toThrow(CommandError);
+  });
+});
+
 describe('Härtetest-Runde 3 (Vision F1)', () => {
   const spec = { a: { x: 0, y: 0 }, b: { x: 9000, y: 0 }, depth: 5000, lookLeft: true } as const;
 

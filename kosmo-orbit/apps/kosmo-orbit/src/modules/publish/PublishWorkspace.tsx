@@ -530,6 +530,26 @@ export function PublishWorkspace() {
                   <option value="abbruch">Abbruchplan</option>
                   <option value="neu">Neubauplan</option>
                 </select>
+                {(doc.settings.themen ?? []).length > 0 && (
+                  <select
+                    value={pl.thema ?? ''}
+                    data-testid="auswahl-thema"
+                    title="Themenplan: Regeln aus design.themenPlanSpeichern tönen die Platzierung"
+                    onChange={(e) =>
+                      runCommand('publish.ansichtAnpassen', {
+                        sheetId: sheet.id,
+                        placementId: pl.id,
+                        thema: e.target.value === '' ? null : e.target.value,
+                      })
+                    }
+                    style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
+                  >
+                    <option value="">Kein Thema</option>
+                    {(doc.settings.themen ?? []).map((t) => (
+                      <option key={t.name} value={t.name}>{t.name}</option>
+                    ))}
+                  </select>
+                )}
                 <input
                   defaultValue={pl.title ?? ''}
                   key={pl.id}

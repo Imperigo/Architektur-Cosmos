@@ -258,6 +258,9 @@ export interface SheetPlacement {
    * Bestand. So entstehen die getrennten SIA-Umbau-Planläufe aus EINEM Modell.
    */
   umbau?: 'bestand' | 'abbruch' | 'neu';
+  /** Themenplan-Name (RE-ARCHICAD A5): tönt die Platzierung nach den Regeln
+   * aus settings.themen + zeichnet eine Legende. Fehlend = normaler Plan. */
+  thema?: string;
 }
 
 /** Freier Textblock auf einem Blatt (Plakat-Titel, Konzepttexte). */

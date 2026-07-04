@@ -142,7 +142,7 @@ Status je Zeile: **●** KosmoOrbit hat es · **◐** teilweise (ein Satz, was f
 
 | Feature | ArchiCAD | KosmoOrbit-Ist | Status |
 |---|---|---|---|
-| Override-Regeln (Kriterium → Stil) | Regel-Sets je Ausschnitt: «alle Elemente mit Eigenschaft X → Füllung Y» — Themenpläne (Brandschutz, Bauteilkataloge) ohne Modelländerung [C-Overrides, K] | fest verdrahtete Überschreibungen dort, wo die Norm sie verlangt: Umbau-Farben (SIA 400), Check-Verletzungen rot/amber im Plan (ROADMAP 52), Phasen-Darstellung (ROADMAP 41) | ◐ — die drei wichtigsten «Themen» sind eingebaut; ein freies Regel-System für Themenpläne (Brandschutz! Schallschutz-Klassen!) fehlt → Lücke A5 |
+| Override-Regeln (Kriterium → Stil) | Regel-Sets je Ausschnitt: «alle Elemente mit Eigenschaft X → Füllung Y» — Themenpläne (Brandschutz, Bauteilkataloge) ohne Modelländerung [C-Overrides, K] | fest verdrahtete Überschreibungen dort, wo die Norm sie verlangt: Umbau-Farben (SIA 400), Check-Verletzungen rot/amber im Plan (ROADMAP 52), Phasen-Darstellung (ROADMAP 41) | ● — **Themenpläne gebaut (A5, ROADMAP 116)**: `design.themenPlanSpeichern` (Regeln raumTyp/material/klasse → Farbe), je Blatt-Platzierung aktivierbar (`publish.ansichtAnpassen` thema), Legende + Titel-Zusatz aufs Blatt — Brandschutz-/Schallschutz-/Materialplan aus demselben Modell; dazu weiter die fest verdrahteten Umbau-/Check-/Phasen-Darstellungen |
 
 ### 2.11 Geländemodell (Mesh) + Grundriss-Schnitt-Ebene
 

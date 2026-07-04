@@ -528,6 +528,65 @@ export const importKatalog = registerCommand({
   },
 });
 
+export const saveThemenPlan = registerCommand({
+  id: 'design.themenPlanSpeichern',
+  title: 'Themenplan speichern',
+  description:
+    'Speichert einen Themenplan (RE-ARCHICAD A5, grafische Überschreibungen): Regeln Kriterium→Farbe, die eine Blatt-Platzierung tönen — z.B. Brandschutzplan (raumTyp treppenhaus → rot) oder Materialplan (material beton → grau). Gleicher Name ersetzt. Aktivieren je Blatt via publish.ansichtAnpassen (thema).',
+  params: z.object({
+    name: z.string().min(1),
+    regeln: z
+      .array(z.object({
+        kriterium: z.enum(['raumTyp', 'material', 'klasse']),
+        wert: z.string().min(1).describe('z.B. treppenhaus, beton, treppe'),
+        farbe: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Hex-Farbe wie #cc3322'),
+        label: z.string().optional().describe('Legenden-Text; fehlt = wert'),
+      }))
+      .min(1),
+  }),
+  summarize: (p) => `Themenplan «${p.name}» (${p.regeln.length} Regeln)`,
+  run: (doc, p) => {
+    const vorher = doc.settings.themen ?? [];
+    const plan = {
+      name: p.name,
+      regeln: p.regeln.map((r) => ({
+        kriterium: r.kriterium,
+        wert: r.wert,
+        farbe: r.farbe,
+        ...(r.label !== undefined ? { label: r.label } : {}),
+      })),
+    };
+    return [
+      {
+        settings: true as const,
+        before: { themen: vorher },
+        after: { themen: [...vorher.filter((t) => t.name !== p.name), plan] },
+      },
+    ];
+  },
+});
+
+export const removeThemenPlan = registerCommand({
+  id: 'design.themenPlanEntfernen',
+  title: 'Themenplan entfernen',
+  description: 'Entfernt einen Themenplan — Platzierungen mit diesem Thema zeigen wieder den normalen Plan.',
+  params: z.object({ name: z.string().min(1) }),
+  summarize: (p) => `Themenplan «${p.name}» entfernen`,
+  run: (doc, p) => {
+    const vorher = doc.settings.themen ?? [];
+    if (!vorher.some((t) => t.name === p.name)) {
+      throw new CommandError(`Themenplan «${p.name}» existiert nicht`);
+    }
+    return [
+      {
+        settings: true as const,
+        before: { themen: vorher },
+        after: { themen: vorher.filter((t) => t.name !== p.name) },
+      },
+    ];
+  },
+});
+
 export const setPrioritaet = registerCommand({
   id: 'design.prioritaetSetzen',
   title: 'Verschneidungspriorität setzen',

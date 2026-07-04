@@ -30,7 +30,9 @@ function placementInner(doc: KosmoDoc, pl: SheetPlacement): InnerSvg {
   // Umbau-Filter je Platzierung (A2): gefilterte Sicht, dieselbe Ableitung
   const sicht = docFuerUmbau(doc, pl.umbau);
   if (pl.view === 'grundriss' && pl.storeyId) {
-    return planInnerSvg(sicht, pl.storeyId, pl.scale);
+    // Themenplan (A5): Regeln aus settings.themen tönen die Platzierung
+    const thema = pl.thema ? (doc.settings.themen ?? []).find((t) => t.name === pl.thema) : undefined;
+    return planInnerSvg(sicht, pl.storeyId, pl.scale, thema ? { thema } : undefined);
   }
   if (pl.view === 'axo') {
     return axoInnerSvg(sicht, {}, pl.scale);
@@ -104,9 +106,24 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     if (pl.title) {
       const labelY = pl.y + ((bounds.maxY - bounds.minY) / 2) * f + 6;
       const umbauZusatz = pl.umbau ? ` · ${UMBAU_LABEL[pl.umbau]}` : '';
+      const themaZusatz = pl.thema ? ` · ${pl.thema}` : '';
       parts.push(
-        `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(pl.title)}  <tspan font-weight="normal" fill="#444">1:${pl.scale}${umbauZusatz}</tspan></text>`,
+        `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(pl.title)}  <tspan font-weight="normal" fill="#444">1:${pl.scale}${umbauZusatz}${escapeXml(themaZusatz)}</tspan></text>`,
       );
+      // Themenplan-Legende (A5): Farbkästchen + Label unter dem Titel
+      const thema = pl.thema ? (doc.settings.themen ?? []).find((t) => t.name === pl.thema) : undefined;
+      if (thema) {
+        let lx = pl.x - ((bounds.maxX - bounds.minX) / 2) * f;
+        const ly = labelY + 6;
+        for (const r of thema.regeln) {
+          const label = r.label ?? r.wert;
+          parts.push(
+            `<rect x="${lx.toFixed(2)}" y="${(ly - 3).toFixed(2)}" width="4" height="3" fill="${r.farbe}" stroke="black" stroke-width="0.18"/>`,
+            `<text x="${(lx + 5.5).toFixed(2)}" y="${ly.toFixed(2)}" font-size="2.8">${escapeXml(label)}</text>`,
+          );
+          lx += 5.5 + label.length * 1.7 + 6;
+        }
+      }
     }
   }
 
