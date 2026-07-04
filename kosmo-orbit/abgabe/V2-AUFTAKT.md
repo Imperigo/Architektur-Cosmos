@@ -1,0 +1,79 @@
+# V2-Auftakt — Übergabe an den neuen Worker (HomeStation Linux)
+
+Diese Datei ist die Brücke von V1 (fertig, 04.07.2026) zu V2. Sie enthält den
+fertigen **Erst-Prompt** für den neuen Worker, die **Prioritätenliste** und die
+**Nahtstellen**, an denen V2 andockt. Alles kam per git (Repo) und Obsidian
+(`wissen/vault/`) an — nichts liegt nur im Kopf.
+
+---
+
+## Teil 1 — Der Erst-Prompt (so an den neuen Worker geben)
+
+> Du übernimmst KosmoOrbit, die Architektur-Designzentrale des Baubüros Andrin,
+> für die V2-Entwicklung auf der HomeStation (Linux, RTX 5090). V1 ist fertig
+> und grün. **Lies zuerst `kosmo-orbit/CLAUDE.md`** (Setup, Architektur,
+> Eigenheiten), **dann `kosmo-orbit/ROADMAP.md` von unten** (die jüngsten 40
+> Einträge sind der V1-Finish), **dann diese Datei ab Teil 2**.
+>
+> Arbeitsweise wie dein Vorgänger: je Block Feature → Tests (+E2E) →
+> ROADMAP-Eintrag → deutscher Commit mit Trailern → Push auf einen
+> Feature-Branch. Volle Suiten je Batch. **Ehrlichkeit vor Politur**: was ein
+> Konto/Schlüssel/die GPU braucht, wird im UI offen benannt. Golden-Tests
+> byte-stabil halten. exactOptionalPropertyTypes ist an.
+>
+> Deine ersten drei Handgriffe: (1) `npm install && npm run build && npm test`
+> muss grün sein. (2) Die echte HomeStation-Kette scharf schalten — den
+> Fake-Worker in `tools/homestation-bridge` durch ComfyUI/Cycles ersetzen
+> (Schnittstelle `packages/kosmo-contracts` render-scene/v1 bleibt). (3) Danach
+> nach Prioritätenliste (Teil 2) arbeiten. Frag den Owner, wenn eine Entscheidung
+> architektonisch bedeutsam ist.
+
+---
+
+## Teil 2 — Prioritätenliste V2
+
+Reihenfolge = Nutzen × Owner-Wunsch. Aufwand grob (S/M/L).
+
+1. **HomeStation-Kette scharf (L)** — Fake-Worker → echt: ComfyUI-KI-Renders und
+   Cycles über render-scene/v1; Whisper (de-CH) an `/stt`, echte Stimme an `/tts`;
+   Embeddings (bge-m3) für KosmoPrepare statt Trigramm-Fallback. Nahtstelle:
+   `tools/homestation-bridge/kosmo_bridge/main.py` (`_fake_worker_loop` ersetzen).
+2. **Blender als Worker (M)** — headless Cycles-Render + Wind-/Sonnen-/
+   Gebäudesimulation als Job-Typen. **Kein Fork** (Begründung TECH-RADAR
+   04.07.). GLB-Export trägt schon lesbare Namen + Material-Slots in Metern.
+3. **Selbst-entwickelnd: Auftragsbuch → Ausführung (M)** — KosmoDev sammelt heute
+   Aufträge und exportiert die Fable-Workorder (`state/auftragsbuch.ts`). V2
+   schliesst den Kreis: der Worker liest `docs/auftraege/*.md` und arbeitet sie
+   ab (der Owner spricht die Verbesserung, zeigt wo, KosmoDev/ein Fable-Worker
+   setzt sie um).
+4. **FreeMesh-Modellieren Stufe 3 (L, Owner-Q9)** — freies Mesh im Viewport;
+   bis dahin ist Blender die externe Werkbank (GLB-Roundtrip via KosmoAsset).
+5. **Signierte Builds + Auto-Update (S/M)** — mit Apple-Konto und Tauri-Updater-
+   Schlüsseln; heute «Update = neuer Installer» (INSTALL.md).
+6. **LoRA-Training aus dem Lernjournal (M)** — KosmoTrain exportiert JSONL; die
+   HomeStation trainiert die Büro-LoRA. «Das System lernt DICH.»
+7. **Journal in SQLite (S)** — heute localStorage + IndexedDB-Spiegel; auf Tauri
+   nativ SQLite (Kommentar in `state/journal-store.ts`).
+8. **Wand↔Decke-Verschneidung im Schnitt (M)** — im Plan gelöst (Prioritäten
+   0–999), im Schnitt offen (RE-ARCHICAD ◐).
+
+## Teil 3 — Nahtstellen, an denen V2 andockt (bereits vorbereitet in V1)
+
+| V2-Thema | V1-Nahtstelle |
+| --- | --- |
+| Echte Renders | `packages/kosmo-contracts/src/render-scene.ts` (v1, unverändert) |
+| Node-Graph → Job | `apps/kosmo-orbit/src/modules/vis/vis-jobs.ts` |
+| Blender/Cycles | `tools/homestation-bridge` `_fake_worker_loop`; GLB `derive/gltf.ts` |
+| Verbesserungs-Pipeline | `state/auftragsbuch.ts` → `docs/auftraege/YYYY-MM-DD.md` |
+| Sprache (Whisper) | `shell/KosmoPanel.tsx` `toggleMic` (Bridge-Weg + Browser-Fallback) |
+| Trainingsdaten | KosmoTrain JSONL-Export; `packages/kosmo-ai/src/memory.ts` |
+| OneDrive-Ablage | `wissen/tools/onedrive.py push` (Files.ReadWrite.All-Token nötig) |
+
+## Teil 4 — Wie die Infos zum neuen Worker kommen
+
+- **git**: das ganze Repo (Code, ROADMAP, docs/, abgabe/) — der primäre Kanal.
+- **Obsidian** (`wissen/vault/`): das Bau-Fachwissen + die Landing-Notiz
+  `KosmoOrbit.md`, die Vault und Software verknüpft. Der Vault ist zugleich
+  Kosmos Trainingskorpus.
+- **Abgabeordner** (`kosmo-orbit/abgabe/`): Handbuch-PDF, INSTALL, Übergaben,
+  Galerie, CI-Artefakt-Links — die menschenlesbare Zusammenfassung.

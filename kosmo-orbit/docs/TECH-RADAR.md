@@ -88,3 +88,19 @@ Lizenz-Politik: MIT/Apache/BSD/ISC/MPL-2.0/BSL-1.0 = bündelbar · LGPL = Grenzf
 |---|---|---|---|
 | LingBot-Map (Robbyant) | **ADOPT (HomeStation)** — Streaming-3D-Rekonstruktion ~20 FPS, 10k+ Frames, ersetzt/ergänzt VGGT-Stufe der Splat-Kette (Handyvideo → Splats live). Für KosmoPrepare-Bestandsaufnahme; App-Seite: Splat-Viewer als Kontext-Layer im Viewport (eigener Block). | github.com/robbyant/lingbot-map | Apache-2.0 |
 | LingBot-World | WATCH — interaktives Weltmodell, kein V1-Bedarf | — | offen |
+
+## Nachtrag 2026-07-04 — Blender-Fork-Entscheid (Owner-Frage, V1-Finish)
+
+**Blender-Fork als Grundlage: HOLD (nie).** Vier Gründe: (1) **GPL** — ein Fork
+zwingt die gesamte Software unter GPL; KosmoOrbit wäre als Büro-Software nicht
+mehr frei verwertbar. (2) **Architektur** — der Wert von KosmoOrbit ist der
+TS-Kernel mit Command-Pattern (jedes zod-Schema = Kosmo-LLM-Tool, gated
+Proposals, Undo, Yjs); auf einer C/C++-Basis verliert Kosmo als steuernde
+Intelligenz die typisierte Command-Ebene. (3) **Wartung** — ein Fork heisst
+Blenders Release-Tempo ewig nachpflegen; das trägt kein Ein-Büro-Projekt.
+(4) **Das Beste holen wir trotzdem**: Blender ist **Werkbank + Worker**, nicht
+Grundlage — GLB-Roundtrip poliert (lesbare Objektnamen «Wand AW … · EG»,
+deutsche Material-Slots, Meter), Modellieren via GLB-Import/Export als externes
+Werkzeug (FreeMesh selbst bleibt bewusst V2, Owner-Q9 Stufe 3), Rendern/Physik
+(Cycles, Wind-/Gebäudesimulation) als **Blender-headless-Worker an der
+Bridge-Nahtstelle** — HomeStation-Punkt, siehe HOMESTATION-AUFTRAG.md.

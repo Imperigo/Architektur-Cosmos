@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<title>KosmoOrbit V1 — Handbuch</title>
+<style>
+  :root {
+    --ink: #1a1815; --soft: #4e4a42; --faint: #8a857a;
+    --line: #d8d3c6; --accent: #a84b2b; --paper: #f5f3ee;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font: 13px/1.65 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink); background: white; counter-reset: kapitel;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  .mono { font-family: "SF Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+  .versal { text-transform: uppercase; letter-spacing: 0.08em; font-size: 10.5px; color: var(--faint); }
+
+  /* Titelseite */
+  .titel { height: 96vh; display: flex; flex-direction: column; justify-content: center; page-break-after: always; }
+  .titel h1 { font-size: 44px; letter-spacing: 0.02em; line-height: 1.15; }
+  .titel .strich { width: 64px; border-top: 3px solid var(--ink); margin: 26px 0; }
+  .titel p { color: var(--soft); font-size: 15px; max-width: 480px; }
+  .titel .meta { margin-top: auto; color: var(--faint); font-size: 11.5px; }
+
+  /* Inhalt */
+  nav { page-break-after: always; padding-top: 40px; }
+  nav h2 { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px; }
+  nav ol { list-style: none; }
+  nav li { display: flex; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  nav li .nr { min-width: 26px; color: var(--accent); font-weight: 600; }
+
+  h2.kapitel {
+    counter-increment: kapitel; page-break-before: always; padding-top: 46px;
+    font-size: 26px; margin-bottom: 6px;
+  }
+  h2.kapitel::before { content: counter(kapitel) " · "; color: var(--accent); }
+  .lead { color: var(--soft); font-size: 14px; margin-bottom: 22px; max-width: 620px; }
+  h3 { font-size: 15px; margin: 26px 0 8px; }
+  p { margin: 8px 0; max-width: 660px; }
+  figure { margin: 18px 0 6px; page-break-inside: avoid; }
+  figure img { width: 100%; border: 1px solid var(--line); display: block; }
+  figcaption { font-size: 10.5px; color: var(--faint); padding-top: 5px; font-family: Menlo, monospace; }
+  .block { margin: 10px 0 18px; padding-left: 12px; border-left: 2px solid var(--line); }
+  .block b.tag { display: block; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
+  .grenze .tag { color: #8a6d3b; }
+  ul { margin: 8px 0 8px 20px; }
+  li { margin: 3px 0; }
+  code { font-family: Menlo, Consolas, monospace; font-size: 11.5px; background: var(--paper); padding: 1px 5px; border-radius: 3px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 12px; }
+  th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--faint); }
+  @page { size: A4; margin: 16mm 15mm 18mm; }
+  @media print { body { font-size: 12px; } }
+</style>
+</head>
+<body>
+<main>
+
+<div class="titel">
+  <div class="versal">ArchitekturKosmos · Baubüro Andrin</div>
+  <h1>KosmoOrbit<br>Das Handbuch</h1>
+  <div class="strich"></div>
+  <p>Die Architektur-Designzentrale: Entwerfen, Rechnen, Pläne, Visualisierung,
+  Wissen und eine KI, die das Büro kennt — lokal-first, auf iPad, MacBook,
+  Linux und Windows.</p>
+  <div class="meta mono">Version 1.0 · Stand 04.07.2026 · erstellt aus dem laufenden System (alle Abbildungen sind echte Full-HD-Bildschirmfotos)</div>
+</div>
+
+<nav>
+  <h2>Inhalt</h2>
+  <ol>
+    <li><span class="nr">1</span> Die Idee: ein Kosmos, zehn Stationen, eine Intelligenz</li>
+    <li><span class="nr">2</span> Die Zentrale — ankommen, Projekt wählen, losspringen</li>
+    <li><span class="nr">3</span> KosmoDesign — Modell, Werkplan, Ansichten</li>
+    <li><span class="nr">4</span> Rechnen &amp; Prüfen — Kennzahlen, Checks, Raster, Sonne</li>
+    <li><span class="nr">5</span> Kosmo — die Intelligenz mit Vorschlagskarten</li>
+    <li><span class="nr">6</span> KosmoVis — der Render-Graph (Node-Tree)</li>
+    <li><span class="nr">7</span> KosmoPublish — Blätter, Plansätze, Publikations-Sets</li>
+    <li><span class="nr">8</span> KosmoData — Referenzen, Bauteile, Materialien</li>
+    <li><span class="nr">9</span> KosmoAsset — die Bibliothek der Dinge</li>
+    <li><span class="nr">10</span> KosmoDev — Verbesserungen sprechen, Workorder geben</li>
+    <li><span class="nr">11</span> KosmoDraw &amp; KosmoSketch — Mengen und Freihand</li>
+    <li><span class="nr">12</span> KosmoPrepare, KosmoDoc, KosmoTrain — Wissen und Lernen</li>
+    <li><span class="nr">13</span> Der Umbau-Werkplan — drei Pläne aus einem Modell</li>
+    <li><span class="nr">14</span> Zusammenarbeit — iPad koppeln wie Continuity</li>
+    <li><span class="nr">15</span> Installation auf allen Geräten</li>
+    <li><span class="nr">16</span> Ehrliche Grenzen &amp; der erste Abend an der HomeStation</li>
+    <li><span class="nr">A</span> Anhang: Kurzbefehle</li>
+  </ol>
+</nav>
+
+<!-- ══════════════ 1 ══════════════ -->
+<h2 class="kapitel">Die Idee: ein Kosmos, zehn Stationen, eine Intelligenz</h2>
+<p class="lead">KosmoOrbit ist kein Zeichenprogramm mit angehängter KI — es ist
+ein Büro-Betriebssystem für Architektur, in dem jede Änderung denselben Weg
+geht, egal ob sie von Hand, per Tastatur oder von Kosmo kommt.</p>
+
+<h3>Das eine Prinzip: Commands</h3>
+<p>Jede Änderung am Projekt ist ein <em>Command</em> — «Wand zeichnen»,
+«Geschoss kopieren», «Revision erfassen», «Node verbinden». Daraus folgt
+alles, was die Software verlässlich macht:</p>
+<ul>
+  <li><b>Rückgängig gilt immer.</b> Auch für alles, was Kosmo tut — ein
+  ⌘Z, und der Vorschlag ist zurückgenommen.</li>
+  <li><b>Kosmo kann alles, was du kannst.</b> Jeder Command ist automatisch
+  ein Werkzeug der KI. Über 60 Commands — vom Wandaufbau bis zum
+  Render-Graphen — sind für Kosmo «sprechbar».</li>
+  <li><b>Nichts passiert ungefragt.</b> Schreibende Vorschläge von Kosmo
+  erscheinen als Karten; erst «Anwenden» führt aus.</li>
+  <li><b>Alles synchronisiert.</b> Desktop und iPad im selben Raum arbeiten
+  live am selben Modell (CRDT über Yjs) — offline erfasste Änderungen
+  fliessen beim Reconnect nach.</li>
+</ul>
+
+<h3>Lokal-first, ehrlich beschriftet</h3>
+<p>Projekte liegen im Geräte-Tresor (Autosave nach jeder Änderung), als
+<code>.kosmo</code>-Paket zum Weitergeben und optional gespiegelt über den
+Büro-Sync-Server. Es gibt keine Cloud-Pflicht und keine Blackbox: Wo eine
+Funktion die HomeStation (RTX 5090) braucht — echte KI-Renderings,
+Whisper-Spracherkennung in Schweizerdeutsch, LoRA-Training — sagt die
+Oberfläche das offen, statt etwas vorzutäuschen.</p>
+
+<h3>Die Werkplan-Ästhetik</h3>
+<p>Die Gestaltung folgt dem Plan, nicht dem Trend: Papier- und Tinte-Thema,
+Monospace-Ziffern, VERSAL-Etiketten, 1-Pixel-Linien, Karteikarten mit
+geschnittener Ecke, Messrahmen als Leerzustände. Animationen sind bewusst
+minimal («Papier flattert nicht») und respektieren die
+Reduced-Motion-Einstellung des Systems.</p>
+
+<!-- ══════════════ 2 ══════════════ -->
+<h2 class="kapitel">Die Zentrale — ankommen, Projekt wählen, losspringen</h2>
+<p class="lead">Die Zentrale ist der Bahnhofsplatz: Tagesgruss, Projekte aus
+dem Tresor, das Varianten-Archiv und die zwölf Stationen-Kacheln.</p>
+
+<figure><img src="bilder/01-zentrale.png" alt="Zentrale"><figcaption>01 · Die Zentrale mit geladenem Beispielprojekt «TKB Bibliothek Hönggerberg»</figcaption></figure>
+<div class="block"><b class="tag">Was sehe ich</b>
+Oben die Kopfleiste (Sync-Status, Speichern/Öffnen, Kosmo-Panel, Thema und
+Farbakzent). Darunter Projekte mit Autosave-Stand, das Feld für neue Projekte
+und die Stationen. Jede Kachel trägt das Orbit-Zeichen mit ihrem eigenen
+Planeten-Winkel und Farbton. Unten die Versionszeile.</div>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Klick auf eine Kachel öffnet die Station — oder Ziffer 1–9 auf der Tastatur
+(Reihenfolge wie die Kacheln), 0 führt zurück. Die «Rolle» (Entwurf /
+Ausführung / Administration) sortiert die Kacheln nach deiner täglichen
+Arbeit und schärft Kosmos Blick. ⌘K öffnet die Befehlspalette, die alles
+findet, was gerade möglich ist.</div>
+
+<figure><img src="bilder/02-zentrale-ink.png" alt="Zentrale im Tinte-Thema"><figcaption>02 · Dieselbe Zentrale im Tinte-Thema (dunkel) — ein Klick in der Kopfleiste</figcaption></figure>
+<figure><img src="bilder/03-kurzbefehle.png" alt="Kurzbefehle"><figcaption>03 · Die Taste «?» zeigt die Kurzbefehl-Übersicht — sie greift nie in Eingabefelder</figcaption></figure>
+
+<!-- ══════════════ 3 ══════════════ -->
+<h2 class="kapitel">KosmoDesign — Modell, Werkplan, Ansichten</h2>
+<p class="lead">Das Herzstück: ein BIM-Modell mit Wänden, Decken, Dächern,
+Zonen, Treppen, Stützen und Unterzügen — und daraus abgeleitet Grundriss,
+Schnitt, Ansicht und Axonometrie, live und ohne «Generieren»-Knopf.</p>
+
+<figure><img src="bilder/04-design-3d.png" alt="3D-Ansicht"><figcaption>04 · Die TKB-Bibliothek im 3D-Viewport (echtzeit, WebGL)</figcaption></figure>
+<div class="block"><b class="tag">Was sehe ich</b>
+Links die Geschossleiste (EG bis Dach), oben die Werkzeuge (Auswahl, Wand,
+Volumen, Zone, Dach, Treppe, Stütze, Schnitt, Skizze) und der aktive
+Wandaufbau, rechts Kennzahlen und Checks. Der Viewport zeigt das Modell mit
+Materialfarben; «Textur» schaltet PBR-Materialkarten zu.</div>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Wand wählen, Aufbau bestimmen (z.&nbsp;B. «AW Beton 40»), im Viewport oder
+Plan klicken — der Fang rastet auf Raster, Achsen und bestehende Bauteile.
+Shift beendet die Kette, Esc bricht ab. Der Inspector (rechts unten bei
+Auswahl) ändert Aufbau, Achslage, Umbau-Status; «Durchbruch» und
+«Etikett» sitzen gleich daneben.</div>
+
+<figure><img src="bilder/05-design-werkplan.png" alt="Werkplan"><figcaption>05 · Der abgeleitete Grundriss in Werkplan-Detaillierung (SIA-Schraffuren, Bemassung, Koten)</figcaption></figure>
+<div class="block"><b class="tag">Was sehe ich</b>
+Der 2D-Plan ist kein zweites Dokument, sondern eine Ableitung: Poché mit
+Material-Verschneidungsprioritäten (Beton stösst durch, Dämmung weicht),
+Öffnungen mit Anschlag, Treppen mit Lauflinie und Kappung, Bemassungsketten,
+Höhenkoten (roh/fertig, m&nbsp;ü.&nbsp;M.), Möblierung ab Bauprojekt-Phase.
+Die «Phase» (Vorprojekt / Bauprojekt / Werkplan) steuert den
+Detaillierungsgrad wie beim Massstabswechsel im Büro.</div>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Zeichnen funktioniert im Plan wie im 3D — gleiche Werkzeuge, gleicher Fang.
+«Trace» unterlegt ein anderes Geschoss blass (OG über EG zeichnen), der
+Graph-Knopf zeigt den Raumgraph mit Türverbindungen. Zwei Finger schwenken
+und zoomen (iPad), Alt/Mittelklick schwenkt am Desktop.</div>
+
+<figure><img src="bilder/06-design-split.png" alt="3D und Plan"><figcaption>06 · 3D | Plan — Modell und Werkplan nebeneinander, beide live</figcaption></figure>
+<figure><img src="bilder/07-design-4er.png" alt="Viererfenster"><figcaption>07 · Das 4er-Fenster: Grundriss, Schnitt, Ansicht, Axonometrie gleichzeitig</figcaption></figure>
+<div class="block grenze"><b class="tag">Ehrliche Grenze</b>
+Freies Mesh-Modellieren (Blender-artig) ist bewusst V2 — bis dahin ist
+Blender die externe Werkbank: GLB raus, dort formen, GLB zurück in die
+KosmoAsset-Bibliothek. Die Wand↔Decken-Verschneidung im <em>Schnitt</em>
+folgt als nächster Kernel-Schritt (im Plan ist sie gelöst).</div>
+
+<!-- ══════════════ 4 ══════════════ -->
+<h2 class="kapitel">Rechnen &amp; Prüfen — Kennzahlen, Checks, Raster, Sonne</h2>
+<p class="lead">Der Entwurf rechnet mit: SIA-416-Flächen, Programm-Erfüllung,
+Grundriss-Checks, Fluchtwege, Stützenraster und Schattenwurf — alles live,
+alles aus demselben Modell.</p>
+
+<figure><img src="bilder/08-raster-assistent.png" alt="Stützenraster"><figcaption>08 · Der Stützenraster-Assistent: Parkierung unten, Holzbau-Wohnraster oben</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Stützenmass und Abstand eingeben — der Assistent rechnet Varianten von
+Achsmass, Wohnraster und Fahrgasse (VSS-Referenz) und bewertet sie ehrlich
+(«ausgewogen», «knapp», «Holzbau kritisch»). «Achsen ins Modell» macht die
+Variante zu echten Rasterachsen mit Zeichnungs-Fang; «Stützen auf
+Kreuzungen» stellt die Tragstruktur mit einem Klick.</div>
+
+<figure><img src="bilder/09-sonnenstudie.png" alt="Sonnenstudie"><figcaption>09 · Sonnenstudie mit echten Schweizer Koordinaten — Datum und Uhrzeit am Regler</figcaption></figure>
+<div class="block"><b class="tag">Was sehe ich</b>
+Der Schattenwurf folgt dem echten Sonnenstand (Standort aus der
+CH-Adresssuche, Datum/Zeit am Regler). Rechts laufen die Kennzahlen mit:
+HNF/NNF/VF nach SIA 416, NGF, aGF-Ziel mit Faktor, GF-Schätzung — und die
+Checks melden zu schmale Zimmer, fehlende Treppenhaus-Anbindung oder
+Fluchtweg-Probleme mit konkretem Raumbezug.</div>
+
+<!-- ══════════════ 5 ══════════════ -->
+<h2 class="kapitel">Kosmo — die Intelligenz mit Vorschlagskarten</h2>
+<p class="lead">Kosmo ist immer da (rechtes Panel) und kennt drei Dinge: dein
+Projekt, dein Büro-Wissen und deine Vorlieben aus dem Lernjournal.</p>
+
+<figure><img src="bilder/10-kosmo-vorschlag.png" alt="Vorschlagskarte"><figcaption>10 · «Zeichne eine Wand von 0,0 nach 8,0» — Kosmos Vorschlag wartet als Karte auf «Anwenden»</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Tippen oder sprechen (🎙 — mit Bridge in Schweizerdeutsch via Whisper, ohne
+Bridge über die Browser-Erkennung, ehrlich gekennzeichnet). Liest Kosmo nur,
+antwortet er direkt — mit Belegen [Q1] aus Wissensbasis, Wettbewerbsdossier
+und Journal, anklickbar bis zur Quelle. Will Kosmo schreiben, erscheint die
+Karte: Zusammenfassung, «Anwenden», «Ablehnen». Angewendetes ist EIN
+Undo-Schritt. Das ⚑ daneben macht aus dem Eingabetext einen
+Verbesserungsauftrag für KosmoDev (Kapitel 10).</div>
+<div class="block"><b class="tag">Personas</b>
+<code>@kosmodoc</code> erklärt die Software, <code>@kosmodev</code> nimmt
+Verbesserungswünsche strukturiert ins Auftragsbuch, <code>@kosmotrain</code>
+kuratiert das Lernen. Daumen hoch/runter an jeder Antwort füttern das
+Lernjournal — es fliesst in künftige Antworten ein und ist zugleich der
+Trainingsdatensatz für die LoRA-Rezepte der HomeStation.</div>
+<div class="block grenze"><b class="tag">Ehrliche Grenze</b>
+Die Modellqualität hängt am gewählten Provider (lokal Ollama/LM&nbsp;Studio,
+optional Anthropic). Im Auslieferungszustand antwortet ein Mock — der
+Screenshot oben zeigt genau diesen deterministischen Modus.</div>
+
+<!-- ══════════════ 6 ══════════════ -->
+<h2 class="kapitel">KosmoVis — der Render-Graph (Node-Tree)</h2>
+<p class="lead">Visualisierung als Schaltplan, wie in Blender: Nodes für
+Modell, Stimmung, Prompt, Regler und Render — verbunden mit typisierten
+Drähten. Der Graph ist Teil des Projekts: Undo, Sync und Kosmo können ihn.</p>
+
+<figure><img src="bilder/11-vis-nodetree.png" alt="Node-Tree"><figcaption>11 · «Drei Stimmungen»: Modell + Material speisen drei Kombinierer und Render-Nodes; ein Bild ist ausgeführt</figcaption></figure>
+<div class="block"><b class="tag">Was sehe ich</b>
+Zehn Node-Typen decken den ganzen Weg: <b>Modell</b> (die GLB-Szene des
+Projekts), <b>Material-Bausteine</b> (die äussersten Wandschichten als
+Prompt-Phrasen), <b>Prompt</b> und <b>Stimmung</b> (Morgen/Abend/Weissmodell),
+der <b>Prompt-Kombinierer</b> mit dem finalen Prompt LIVE am Node
+(Transparenz statt Blackbox), <b>Zahl</b>-Regler für Geometrie-Treue und
+Samples, <b>Render</b> mit Status und Bild, <b>Bildvergleich</b> mit
+QA-Verdikt, <b>Aufs Blatt</b> und <b>Bild-Referenz</b>. Portfarben zeigen den
+Typ; nur passende Ports verbinden sich.</div>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+«Drei Stimmungen» stellt den fertigen Teilgraph (ein Undo-Schritt). Von
+einem Ausgangs-Port ziehen und auf einem Eingang loslassen verbindet; ein
+belegter Eingang wird ersetzt (wie in Blender), Zyklen lehnt die Software
+mit klarer Meldung ab. Nodes am Kopf packen und schieben; Parameter ändern
+committet beim Verlassen des Felds. Gerendert wird NUR auf «Ausführen» —
+nie automatisch. Das fertige Bild hängt am Node; «Aufs Blatt» legt es als
+Blatt-Bürger nach KosmoPublish. Die bisherige lineare Ansicht bleibt als
+Tab «Einfach» vollständig erhalten.</div>
+<figure><img src="bilder/12-vis-einfach.png" alt="Einfach-Ansicht"><figcaption>12 · Tab «Einfach»: Prompt, Geometrie-Treue, Serien — der schnelle Weg ohne Graph</figcaption></figure>
+<div class="block grenze"><b class="tag">Ehrliche Grenze</b>
+Die Bilder hier stammen vom Fake-Worker (Platzhalter mit realistischem
+QA-Verdikt). Fotoreale Renderings rechnet die HomeStation (RTX 5090 /
+ComfyUI) über exakt dieselbe Schnittstelle — am Graphen ändert sich nichts.</div>
+
+<!-- ══════════════ 7 ══════════════ -->
+<h2 class="kapitel">KosmoPublish — Blätter, Plansätze, Publikations-Sets</h2>
+<p class="lead">Vom Modell zum Plansatz: Blätter sind Entities (Undo, Sync,
+Paket), Ansichten sind Platzierungen mit Massstab, Phase, Umbau-Filter und
+Themenplan.</p>
+
+<figure><img src="bilder/13-publish-blatt.png" alt="Blatteditor"><figcaption>13 · A1-Blatt mit platziertem EG-Grundriss 1:100 — Plankopf mit Massstab und Nordpfeil</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Format wählen, «+ Blatt», dann Grundriss/Schnitt/Axo/Ansicht platzieren —
+der Massstab bestimmt die Detaillierung automatisch. Je Platzierung wählbar:
+Umbau-Filter (Bestand/Abbruch/Neubau aus EINEM Modell) und Themenplan
+(z.&nbsp;B. Brandschutz-Färbung mit Legende). Revisionen erfasst du am
+Blatt; Änderungswolken mit Index erscheinen im Plan, das
+Revisionsverzeichnis über dem Plankopf, die Transmittal-CSV begleitet den
+Versand.</div>
+<figure><img src="bilder/14-publish-sets.png" alt="Publikations-Sets"><figcaption>14 · Publikations-Set «Wettbewerb»: Blattauswahl + Namensregel, Export mit einem Klick</figcaption></figure>
+<div class="block"><b class="tag">Was sehe ich</b>
+Ein Set friert Blattauswahl und Reihenfolge ein und exportiert nach
+Namensregel (<code>P-{nr}_{blatt}_{massstab}</code> →
+<code>P-01_Grundriss_EG_1-50.pdf</code>). PDF für den Satz, SVG je Blatt,
+DXF für den Grundriss — Abgabetage werden ein Klick. Das A0-Plakat
+(Toolkit&nbsp;5) mit Render-Slots liegt gleich daneben.</div>
+
+<!-- ══════════════ 8 ══════════════ -->
+<h2 class="kapitel">KosmoData — Referenzen, Bauteile, Materialien</h2>
+<p class="lead">Das Wissen des Büros in einer Station: 112 kuratierte
+Referenzbauten der Architekturgeschichte, der CH-Bauteilkatalog und die
+Materialkarten.</p>
+
+<figure><img src="bilder/15-data-referenzen.png" alt="Referenzen"><figcaption>15 · Die Referenzbibliothek (Keim von architekturkosmos.ch) — Suche, Facetten, Sammlung</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Suchen nach Titel, Ort, Architekt, Thema oder Material; Facetten filtern;
+der Stern legt Referenzen in die persönliche Sammlung. «Sync» holt den
+Live-Stand der Website (read-only, mit ehrlichem Badge Live/Cache/Seed —
+offline bleibt der Seed). Referenzen mit 3D-Modell lassen sich als
+Kontext in den Design-Viewport laden. Auch Kosmo durchsucht die Bibliothek
+(<code>referenzen_suchen</code>) — «zeig mir Referenzen zu Sichtbeton».</div>
+<figure><img src="bilder/16-data-bauteile.png" alt="Bauteilkatalog"><figcaption>16 · CH-Bauteilkatalog: Aufbauten mit Schichten, U-Wert und «Übernehmen» ins Projekt</figcaption></figure>
+
+<!-- ══════════════ 9 ══════════════ -->
+<h2 class="kapitel">KosmoAsset — die Bibliothek der Dinge</h2>
+<p class="lead">Materialien, Bauteile und GLB-Objekte projektübergreifend an
+einem Ort — die Werkbank-Schnittstelle zu Blender.</p>
+
+<figure><img src="bilder/17-asset-materialien.png" alt="Materialkarten"><figcaption>17 · Materialkarten mit PBR-Werten, SIA-Klasse und Lambda — dieselben Daten färben 3D und Poché</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Im Tab «Objekte (GLB)» importierst du Möbel, Bäume oder Kontextbauten als
+GLB (Blender exportiert das direkt); jede Karte zeigt eine 3D-Vorschau.
+«Ins Modell» legt das Objekt als studierbaren Referenz-Kontext in den
+Design-Viewport — bewusst nicht in die Planableitung. Der umgekehrte Weg:
+KosmoOrbits GLB-Export trägt lesbare Objektnamen («Wand AW Beton 40 · EG»)
+und deutsche Material-Slots in Metern — in Blender sofort brauchbar.</div>
+
+<!-- ══════════════ 10 ══════════════ -->
+<h2 class="kapitel">KosmoDev — Verbesserungen sprechen, Workorder geben</h2>
+<p class="lead">Die Software verbessert sich mit dir: Jeder Wunsch («das
+sollte…», «hier fehlt…») wird ein Auftrag im Buch — und das Buch wird die
+Workorder für den nächsten Entwicklungs-Worker.</p>
+
+<figure><img src="bilder/18-dev-auftragsbuch.png" alt="Auftragsbuch"><figcaption>18 · Das Auftragsbuch: Aufträge mit Station, Quelle (gesprochen/getippt/via Kosmo) und Status</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Drei Wege ins Buch: (1) das ⚑ im Kosmo-Panel macht den Eingabetext zum
+Auftrag, (2) die Eingabezeile hier, (3) <code>@kosmodev</code> sagen, was
+besser werden soll — Kosmo strukturiert Gesprochenes selbst als klaren,
+umsetzbaren Auftrag samt Ortsangabe. Jeder Auftrag merkt sich die Station,
+in der er entstand. «⇥ Fable-Workorder» exportiert alle offenen Aufträge
+als datierte Markdown-Datei (nach Station gruppiert, mit Checkboxen) für
+<code>docs/auftraege/</code> — die Datei ist der Auftrag an den Worker;
+exportierte Einträge wandern auf «an-worker».</div>
+
+<!-- ══════════════ 11 ══════════════ -->
+<h2 class="kapitel">KosmoDraw &amp; KosmoSketch — Mengen und Freihand</h2>
+<p class="lead">Zwei Blickwinkel auf dasselbe Modell: der Werkstatt-Blick mit
+Modellbaum und Mengen — und der Stift, der Skizzen zu Wänden macht.</p>
+
+<figure><img src="bilder/23-draw.png" alt="KosmoDraw"><figcaption>23 · KosmoDraw: Modellbaum, Mengengerüst je Material, NPK-Ausmass mit Herleitung und CSV</figcaption></figure>
+<div class="block"><b class="tag">Was sehe ich</b>
+Der Modellbaum listet jedes Bauteil (klickbar zur Auswahl), das Mengengerüst
+rechnet m²/m³/Stück je Material und Bauteilklasse, das NPK-Ausmass führt
+die Herleitung Position für Position auf — als CSV exportierbar, Excel-fest
+(RFC-4180). Custom-Kennzahlen (eigene Formeln Wert × Basis × Einheit)
+rechnen daneben.</div>
+<figure><img src="bilder/24-sketch.png" alt="KosmoSketch"><figcaption>24 · KosmoSketch: Freihand zeichnen (Pencil, 240 Hz) — erkannte Züge werden echte Wände</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Mit Stift oder Maus skizzieren; gerade Züge werden als Wandachsen erkannt
+und mit dem aktiven Aufbau als echte Wände gesetzt — natürlich als Command,
+also mit Undo. Auf dem iPad zeichnet der Pencil mit 240-Hz-Abtastung.</div>
+
+<!-- ══════════════ 12 ══════════════ -->
+<h2 class="kapitel">KosmoPrepare, KosmoDoc, KosmoTrain — Wissen und Lernen</h2>
+<p class="lead">Drei stille Stationen, die alles andere tragen: Grundlagen
+aufnehmen, Betrieb diagnostizieren, Lernen kuratieren.</p>
+
+<figure><img src="bilder/19-prepare.png" alt="KosmoPrepare"><figcaption>19 · KosmoPrepare: Grundlagen (Normen-Auszüge, Programme, Baubeschriebe) aufnehmen und durchsuchbar machen</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Dateien (Markdown, Text, PDF-Auszüge) aufnehmen — sie werden zerlegt,
+indexiert (BM25 + Embeddings über die Bridge, mit ehrlichem Fallback) und
+stehen Kosmo als belegbare Quellen zur Verfügung: Antworten zitieren [Qn],
+der Klick springt zur Fundstelle. Auch das Wettbewerbsdossier (Do's,
+No-Gos, Fakten) lebt hier und bindet Kosmo hart.</div>
+<figure><img src="bilder/20-doc.png" alt="KosmoDoc"><figcaption>20 · KosmoDoc: Diagnose, Berichte, Journal-Blick — die Werkstatt-Tafel des Systems</figcaption></figure>
+<figure><img src="bilder/21-train.png" alt="KosmoTrain"><figcaption>21 · KosmoTrain: Lernstand und Kuration — das Journal wird zum Trainingsdatensatz</figcaption></figure>
+<div class="block"><b class="tag">Was sehe ich</b>
+KosmoTrain zeigt jedes Feedback (👍/👎 mit Kontext), erlaubt Kuration und
+exportiert das Lernjournal als JSONL — das ist der Datensatz, aus dem die
+HomeStation die Büro-LoRA trainiert. Das Journal überlebt im
+IndexedDB-Spiegel auch Browser-Aufräumaktionen.</div>
+
+<!-- ══════════════ 13 ══════════════ -->
+<h2 class="kapitel">Der Umbau-Werkplan — drei Pläne aus einem Modell</h2>
+<p class="lead">Bestand, Abbruch, Neubau: In KosmoOrbit ist das kein
+Dreifach-Modell, sondern ein Status am Bauteil — die Pläne folgen.</p>
+
+<figure><img src="bilder/25-umbau-werkplan.png" alt="Umbauplan"><figcaption>25 · Umbau-Status im Werkplan: Bestand schwarz, Abbruch gelb gestrichelt, Neubau rot (SIA-Konvention)</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+Im Inspector (oder über Kosmo) bekommt jedes Bauteil seinen Umbau-Status.
+Der Plan färbt nach SIA-Konvention; in KosmoPublish erzeugt der
+Umbau-Filter je Blatt den reinen Abbruch- oder Neubauplan — aus demselben
+Modell, ohne Kopie. Terrain (gewachsen gestrichelt / neu ausgezogen)
+erscheint im Schnitt; Durchbrüche tragen Kreuz und Kote nach
+Hochbauzeichner-Konvention.</div>
+
+<!-- ══════════════ 14 ══════════════ -->
+<h2 class="kapitel">Zusammenarbeit — iPad koppeln wie Continuity</h2>
+<p class="lead">Desktop und iPad am selben Modell, live. Das Koppeln ist ein
+Kamerablick — kein Formular.</p>
+
+<figure><img src="bilder/22-ipad-koppeln.png" alt="iPad koppeln"><figcaption>22 · «iPad koppeln»: QR scannen — die App verbindet automatisch mit dem richtigen Raum</figcaption></figure>
+<div class="block"><b class="tag">Wie arbeite ich</b>
+In der Kopfleiste Sync öffnen → «iPad koppeln». Den QR mit der iPad-Kamera
+scannen (kein In-App-Scanner nötig): KosmoOrbit öffnet sich und verbindet
+automatisch — Server, Raum und Token stecken im URL-Fragment und landen nie
+in Server-Logs. Aktive Räume erscheinen als Chips; ein Klick tritt bei.
+Offline weiterarbeiten ist normal: Die Warteschlange zählt mit, beim
+Reconnect fliesst alles nach (CRDT, konfliktfrei bis aufs Bauteil).</div>
+<div class="block grenze"><b class="tag">Ehrliche Grenze</b>
+Ein fremder Server im Pairing-Link wird nie stumm übernommen — die App
+fragt nach. Automatische Geräte-Erkennung ohne QR (Bonjour/mDNS) kann eine
+Browser-App nicht hören; der QR-Weg ist der ehrliche Continuity-Ersatz.</div>
+
+<!-- ══════════════ 15 ══════════════ -->
+<h2 class="kapitel">Installation auf allen Geräten</h2>
+<p class="lead">Die Installer entstehen in der CI — für Linux, macOS und
+Windows als Tauri-App, fürs iPad als PWA oder native App.</p>
+<table>
+  <tr><th>Gerät</th><th>Weg</th><th>Hinweis</th></tr>
+  <tr><td>Linux (Ubuntu)</td><td class="mono">.AppImage / .deb / .rpm</td><td>AppImage läuft ohne Installation: <code>chmod +x</code>, starten</td></tr>
+  <tr><td>MacBook</td><td class="mono">.dmg</td><td>Unsigniert: Rechtsklick → Öffnen (Apple-Konto ist Erster-Abend-Punkt)</td></tr>
+  <tr><td>Windows</td><td class="mono">.exe (NSIS) / .msi</td><td>SmartScreen: «Trotzdem ausführen»</td></tr>
+  <tr><td>iPad</td><td>PWA «Zum Home-Bildschirm»</td><td>voll offlinefähig; nativ via Xcode-Artefakt + TestFlight</td></tr>
+</table>
+<p>Details, Fundorte der CI-Artefakte und der Koppel-Ablauf stehen in
+<code>docs/INSTALL.md</code>. Updates sind ehrlich: ohne Signatur-Schlüssel
+kein Auto-Update — Update = neuen Installer laden; Projekte bleiben, sie
+liegen im Geräte-Tresor, nicht in der App.</p>
+
+<!-- ══════════════ 16 ══════════════ -->
+<h2 class="kapitel">Ehrliche Grenzen &amp; der erste Abend an der HomeStation</h2>
+<p class="lead">V1 ist vollständig für alles, was ohne den Home-PC geht. Was
+die RTX 5090, Konten oder Schlüssel braucht, ist vorbereitet und dokumentiert
+— nicht vorgetäuscht.</p>
+<table>
+  <tr><th>Wartet auf</th><th>Was dann passiert</th></tr>
+  <tr><td>RTX 5090 / ComfyUI</td><td>fotoreale Renderings über dieselbe render-scene-Schnittstelle; der Fake-Worker macht heute den Ablauf erlebbar</td></tr>
+  <tr><td>Whisper (Bridge)</td><td>Schweizerdeutsch-Spracherkennung; bis dahin Browser-Erkennung mit ehrlichem Hinweis</td></tr>
+  <tr><td>Blender headless</td><td>Cycles-Renders und Wind-/Gebäudesimulation als Worker-Jobs (kein Fork — Entscheid siehe TECH-RADAR)</td></tr>
+  <tr><td>LoRA-Training</td><td>aus dem exportierten Lernjournal (KosmoTrain) — «das System lernt DICH»</td></tr>
+  <tr><td>Apple-Konto</td><td>signierte macOS-Builds + TestFlight fürs iPad</td></tr>
+  <tr><td>Updater-Schlüssel</td><td>Tauri-Auto-Update statt «neuer Installer»</td></tr>
+  <tr><td>OneDrive-Token</td><td><code>onedrive.py push</code> legt Abgabe + Software in «11 AI Workflow» ab</td></tr>
+</table>
+<p>Die Schritt-für-Schritt-Liste für den ersten Abend steht in
+<code>docs/HOMESTATION-AUFTRAG.md</code>; der fertige Erst-Prompt für den
+V2-Worker in <code>docs/V2-AUFTAKT.md</code>.</p>
+
+<!-- ══════════════ Anhang ══════════════ -->
+<h2 class="kapitel">Anhang: Kurzbefehle</h2>
+<table>
+  <tr><th>Taste</th><th>Wirkung</th></tr>
+  <tr><td class="mono">⌘K / Ctrl+K</td><td>Befehlspalette — alles suchen und ausführen</td></tr>
+  <tr><td class="mono">1–9</td><td>Station öffnen (Kachel-Reihenfolge der Rolle)</td></tr>
+  <tr><td class="mono">0</td><td>zur Zentrale</td></tr>
+  <tr><td class="mono">⌘Z / ⌘⇧Z</td><td>Rückgängig / Wiederherstellen — gilt für jede Änderung, auch von Kosmo</td></tr>
+  <tr><td class="mono">Esc</td><td>Werkzeug oder Dialog verlassen</td></tr>
+  <tr><td class="mono">?</td><td>Kurzbefehl-Übersicht</td></tr>
+  <tr><td class="mono">Shift+Klick</td><td>Wandkette beenden</td></tr>
+</table>
+<p class="versal" style="margin-top:40px">KosmoOrbit V1 · Handbuch · ArchitekturKosmos — erstellt am 04.07.2026 aus dem laufenden System</p>
+
+</main>
+</body>
+</html>

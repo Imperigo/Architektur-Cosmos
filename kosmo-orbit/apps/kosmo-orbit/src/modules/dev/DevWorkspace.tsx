@@ -65,11 +65,15 @@ export function DevWorkspace() {
     a.download = `${datum}.md`;
     a.click();
     URL.revokeObjectURL(url);
-    // Exportierte Aufträge wandern auf «an-worker»
+    // Exportierte Aufträge wandern auf «an-worker» — Toast erst nach dem Schreiben
     void Promise.all(
       (auftraege ?? []).filter((x) => x.status === 'offen').map((x) => setzeAuftragStatus(x.id, 'an-worker')),
-    ).then(laden);
-    melde('Workorder exportiert — Datei nach docs/auftraege/ legen und dem Worker geben', { ton: 'erfolg' });
+    )
+      .then(() => {
+        laden();
+        melde('Workorder exportiert — Datei nach docs/auftraege/ legen und dem Worker geben', { ton: 'erfolg' });
+      })
+      .catch((err) => meldeFehler(err));
   };
 
   const offene = (auftraege ?? []).filter((a) => a.status === 'offen').length;

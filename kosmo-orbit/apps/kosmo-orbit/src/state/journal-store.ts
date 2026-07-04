@@ -23,9 +23,21 @@ export function journalStore(): MemoryStore {
     save(entries) {
       const kurz = entries.slice(-200);
       localStorage.setItem(KEY, JSON.stringify(kurz));
-      void vaultTx('lernjournal', 'readwrite', (s) => s.put({ id: 'journal', entries: kurz })).catch(
-        () => undefined,
-      );
+      // Spiegel-Schutz: NIE einen kleineren Stand über einen grösseren
+      // schreiben (Startet die App mit leerem localStorage, bevor die
+      // Hydration durch ist, darf ein erster 👍 das Journal nicht löschen) —
+      // stattdessen mergen (ts+context als Schlüssel) und neu schreiben.
+      void (async () => {
+        const alt = await vaultTx<{ id: string; entries: Learning[] } | undefined>(
+          'lernjournal',
+          'readonly',
+          (s) => s.get('journal') as IDBRequest<{ id: string; entries: Learning[] } | undefined>,
+        );
+        const bekannt = new Set(kurz.map((e) => `${e.ts}|${e.context}`));
+        const nurAlt = (alt?.entries ?? []).filter((e) => !bekannt.has(`${e.ts}|${e.context}`));
+        const gemischt = [...nurAlt, ...kurz].slice(-400);
+        await vaultTx('lernjournal', 'readwrite', (s) => s.put({ id: 'journal', entries: gemischt }));
+      })().catch(() => undefined);
     },
   };
 }

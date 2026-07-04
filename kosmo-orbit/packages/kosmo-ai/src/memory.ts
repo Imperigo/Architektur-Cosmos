@@ -44,6 +44,11 @@ export class LearningJournal {
     this.entries = store.load();
   }
 
+  /** Nach asynchroner Hydration (IndexedDB-Spiegel) neu einlesen. */
+  reload(): void {
+    this.entries = this.store.load();
+  }
+
   add(l: Omit<Learning, 'ts'>): void {
     this.entries.push({ ...l, ts: new Date().toISOString() });
     this.store.save(this.entries);

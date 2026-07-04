@@ -1,0 +1,9 @@
+{
+  "collapse-color-groups": false,
+  "colorGroups": [
+    { "query": "path:KosmoOrbit", "color": { "a": 1, "rgb": 11033899 } },
+    { "query": "tag:#norm", "color": { "a": 1, "rgb": 4620090 } }
+  ],
+  "showTags": true,
+  "showAttachments": false
+}

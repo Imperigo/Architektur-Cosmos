@@ -74,6 +74,9 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [view, setView] = useState({ cx: 560, cy: 300, scale: 1 });
+  // P6-Review #6: Containergrösse als State (ResizeObserver) — die viewBox
+  // aus getBoundingClientRect wäre beim Mount und nach Resize stale
+  const [flaeche, setFlaeche] = useState({ w: 1200, h: 700 });
   const panning = useRef<{ x: number; y: number; cx: number; cy: number } | null>(null);
   // Node-Drag: lokal bewegen, EIN Command bei pointerup
   const [drag, setDrag] = useState<{ nodeId: string; dx: number; dy: number; x: number; y: number } | null>(null);
@@ -96,8 +99,12 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
         ([, l]) => l.jobId && (l.status === 'gesendet' || l.status === 'rendert'),
       );
       for (const [nodeId, lauf] of offen) {
-        void holeJob(lauf.jobId!)
+        const jobId = lauf.jobId!;
+        void holeJob(jobId)
           .then((j) => {
+            // P6-Review #7: eine verspätete Antwort darf einen NEUEN Lauf
+            // (anderer/kein jobId) nie als «fertig» markieren
+            if (useVisRuntime.getState().laeufe[nodeId]?.jobId !== jobId) return;
             if (j.result) {
               patchLauf(nodeId, { status: 'fertig', bild: j.result.images[0] ?? '', qa: j.result.qa });
             } else if (j.status === 'error') {
@@ -111,6 +118,17 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
     }, 2500);
     return () => clearInterval(t);
   }, [patchLauf]);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const ro = new ResizeObserver((eintraege) => {
+      const r = eintraege[0]?.contentRect;
+      if (r && r.width > 0) setFlaeche({ w: r.width, h: r.height });
+    });
+    ro.observe(svg);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -181,9 +199,8 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
       data-testid="node-canvas"
       style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none', background: 'var(--k-plan-paper)' }}
       viewBox={(() => {
-        const r = svgRef.current?.getBoundingClientRect();
-        const w = (r?.width ?? 1200) / view.scale;
-        const h = (r?.height ?? 700) / view.scale;
+        const w = flaeche.w / view.scale;
+        const h = flaeche.h / view.scale;
         return `${view.cx - w / 2} ${view.cy - h / 2} ${w} ${h}`;
       })()}
       onPointerDown={(e) => {
@@ -515,6 +532,7 @@ function NodeKoerper({
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }} onPointerDown={(e) => e.stopPropagation()}>
           <input
             type="range"
+            key={String(node.params['wert'] ?? 0)}
             min={min}
             max={max}
             step={schritt}

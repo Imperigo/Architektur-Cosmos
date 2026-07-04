@@ -69,3 +69,13 @@
 Nicht empfohlen jetzt: A6 (NPK) und C3 (Splatting) — grosser Aufwand, Nutzen
 erst nach dem Praxis-Testlauf beurteilbar; E1–E3 bleiben Vision, bis V2-Kern
 im Büro gelebt hat.
+
+
+## Nachtrag V1-Finish (04.07.2026): Blender-Integration V2
+
+Entschieden (Owner-Frage «Fork als Grundlage?»): **kein Fork** — Blender wird
+Werkbank + Worker (TECH-RADAR 04.07.). Für V2 zu entscheiden bleibt nur die
+Ausbaustufe des Workers: (a) Cycles-Render statt/neben ComfyUI-KI-Renders,
+(b) Wind-/Gebäudesim als Job-Typ (Owner-Wunsch), (c) bidirektionaler
+Modellier-Roundtrip (GLB→Blender→GLB→FreeMesh-Import). Aufwandsschätzung und
+Nutzenreihenfolge gehören in den V2-Auftakt.

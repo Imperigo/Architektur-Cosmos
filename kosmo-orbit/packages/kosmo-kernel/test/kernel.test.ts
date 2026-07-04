@@ -45,6 +45,8 @@ import {
   sectionInnerSvg,
   evaluiereGraph,
   topoReihenfolge,
+  hatZyklus,
+  exportGlb,
   type Storey,
   type Wall,
   type Assembly,
@@ -4106,5 +4108,77 @@ describe('Render-Graph (vis.*)', () => {
     expect(doc.get<VisGraph>(graphId)!.nodes.find((n) => n.id === stil)!.params['text']).toBe('Neuer Text');
     doc.apply(invertPatches(res.patches));
     expect(doc.get<VisGraph>(graphId)!.nodes.find((n) => n.id === stil)!.params['text']).toBe('Blick vom Quai');
+  });
+});
+
+// ── Härtetest-Runde 4 (V1-Finish P6) ─────────────────────────────────
+
+describe('Härtetest-Runde 4', () => {
+  it('H4a: hängende Kante (Sync-Merge löschte den Node) — Topologie und Evaluation stürzen nie', () => {
+    const doc = new KosmoDoc();
+    const g = execute(doc, 'vis.graphErstellen', { name: 'Merge-Opfer' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    execute(doc, 'vis.nodeSetzen', { graphId, typ: 'prompt', x: 0, y: 0, params: { text: 'bleibt' } });
+    const graph = doc.get<VisGraph>(graphId)!;
+    const prompt = graph.nodes[0]!.id;
+    // Kaputten Stand direkt einspielen (wie ein feindlicher Merge): Kante zu einem Geist-Node
+    const kaputt: VisGraph = {
+      ...graph,
+      edges: [{ id: 'geist', from: prompt, fromPort: 'prompt', to: 'gibt-es-nicht', toPort: 'stil' }],
+    };
+    doc.apply([{ id: graphId, before: graph, after: kaputt }]);
+    const folge = topoReihenfolge(doc.get<VisGraph>(graphId)!);
+    expect(folge.map((n) => n.id)).toEqual([prompt]);
+    const auswertung = evaluiereGraph(doc, doc.get<VisGraph>(graphId)!);
+    expect(auswertung.werte.get(prompt)!['prompt']).toBe('bleibt');
+  });
+
+  it('H4b: Zyklus in Fremddaten (geladene Datei umgeht die Commands) — Evaluation terminiert', () => {
+    const doc = new KosmoDoc();
+    const g = execute(doc, 'vis.graphErstellen', { name: 'Zyklus-Datei' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    execute(doc, 'vis.nodeSetzen', { graphId, typ: 'kombinierer', x: 0, y: 0 });
+    execute(doc, 'vis.nodeSetzen', { graphId, typ: 'kombinierer', x: 0, y: 0 });
+    execute(doc, 'vis.nodeSetzen', { graphId, typ: 'prompt', x: 0, y: 0, params: { text: 'sauber' } });
+    const graph = doc.get<VisGraph>(graphId)!;
+    const [k1, k2, prompt] = graph.nodes.map((n) => n.id) as [string, string, string];
+    const kaputt: VisGraph = {
+      ...graph,
+      edges: [
+        { id: 'z1', from: k1, fromPort: 'prompt', to: k2, toPort: 'stimmung' },
+        { id: 'z2', from: k2, fromPort: 'prompt', to: k1, toPort: 'stimmung' },
+      ],
+    };
+    doc.apply([{ id: graphId, before: graph, after: kaputt }]);
+    const geladen = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));
+    // terminiert, Zyklus-Nodes fallen aus der Folge, der saubere Node rechnet
+    const folge = topoReihenfolge(geladen.get<VisGraph>(graphId)!);
+    expect(folge.map((n) => n.id)).toEqual([prompt]);
+    const auswertung = evaluiereGraph(geladen, geladen.get<VisGraph>(graphId)!);
+    expect(auswertung.werte.get(prompt)!['prompt']).toBe('sauber');
+    expect(hatZyklus(kaputt.nodes, kaputt.edges)).toBe(true);
+  });
+});
+
+// ── Blender-Interop (P6): GLB spricht Blenderisch ────────────────────
+
+describe('GLB-Export Blender-Interop', () => {
+  it('Objektnamen lesbar (Bauteil + Aufbau + Geschoss), Material-Slots benannt, Masse in Metern', () => {
+    const { doc } = testhausMitQuertrakt();
+    const glb = exportGlb(doc, 'Testhaus');
+    const dv = new DataView(glb);
+    expect(dv.getUint32(0, true)).toBe(0x46546c67); // glTF-Magic
+    const jsonLen = dv.getUint32(12, true);
+    const json = JSON.parse(new TextDecoder().decode(new Uint8Array(glb, 20, jsonLen)));
+    // Blender-Outliner: «Wand AW … · EG [xxxxxx]» statt roher Id
+    const namen = (json.nodes as { name: string }[]).map((n) => n.name);
+    expect(namen.some((n) => n.startsWith('Wand ') && n.includes('· EG'))).toBe(true);
+    // Material-Slots deutsch benannt
+    const matNamen = (json.materials as { name: string }[]).map((m) => m.name);
+    expect(matNamen).toContain('Beton');
+    // Meter-Einheiten: kein Punkt weiter als 1 km draussen (mm hätte 8000+)
+    for (const acc of json.accessors as { max?: number[] }[]) {
+      if (acc.max) for (const v of acc.max) expect(Math.abs(v)).toBeLessThan(1000);
+    }
   });
 });

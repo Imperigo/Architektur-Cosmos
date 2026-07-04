@@ -56,9 +56,24 @@ export function vaultTx<T>(
       new Promise<T>((resolve, reject) => {
         const t = db.transaction(store, mode);
         const req = fn(t.objectStore(store));
-        req.onsuccess = () => resolve(req.result);
+        // P6-Review #8: Schreib-Erfolg erst melden, wenn die Transaktion
+        // wirklich committet ist — ein Quota-Abort nach onsuccess wäre
+        // sonst stiller Datenverlust. Die Verbindung schliesst in jedem Pfad.
         req.onerror = () => reject(req.error);
-        t.oncomplete = () => db.close();
+        if (mode === 'readwrite') {
+          t.oncomplete = () => {
+            db.close();
+            resolve(req.result);
+          };
+        } else {
+          req.onsuccess = () => resolve(req.result);
+          t.oncomplete = () => db.close();
+        }
+        t.onabort = () => {
+          db.close();
+          reject(t.error ?? new Error('Tresor-Transaktion abgebrochen (Speicherplatz?)'));
+        };
+        t.onerror = () => db.close();
       }),
   );
 }

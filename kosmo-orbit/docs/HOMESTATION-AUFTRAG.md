@@ -27,6 +27,17 @@
 | **GoodNotes-Handschrift (~60 PDFs)** | tesseract scheitert an Handschrift — Vision-OCR (Qwen-VL lokal) am Home-PC; danach normaler `ingest.py`-Weg in `wissen/vault`. |
 | **Handschrift-ZFs der 567 Vorlesungsquellen** | dito Vision-OCR; die Vorlesungs-Sammlung selbst ist bereits in der Webbasis. |
 
+## 2b. Blender als Worker (Entscheid V1-Finish, 04.07.2026)
+
+- **Blender headless an der Bridge-Nahtstelle** (`_fake_worker_loop` ersetzen):
+  Cycles-Render des GLB (der Export trägt lesbare Objektnamen + deutsche
+  Material-Slots in Metern), danach Wind-/Sonnen-/Gebäudesimulationen als
+  eigene Job-Typen. Kein Fork — Blender bleibt Werkbank + Worker
+  (Begründung: TECH-RADAR Nachtrag 04.07.).
+- Modellier-Roundtrip: GLB aus KosmoOrbit → Blender bearbeiten → GLB in die
+  KosmoAsset-Bibliothek («Ins Modell» als Referenz-Kontext). FreeMesh nativ
+  bleibt V2 (Owner-Q9 Stufe 3).
+
 ## 3. Netz-/Konto-gebunden (Owner)
 
 | Auftrag | Übergabepunkt |

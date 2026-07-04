@@ -17,7 +17,7 @@ import { useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
 import { DiagnosePanel } from './Diagnose';
-import { journalStore } from '../state/journal-store';
+import { hydriereJournal, journalStore } from '../state/journal-store';
 import { auftragErfassen } from '../state/auftragsbuch';
 
 /**
@@ -333,6 +333,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   }, [settings]);
 
   useEffect(() => {
+    // Journal-Spiegel kann nach dem Modul-Import angekommen sein (P6-Review #1)
+    void hydriereJournal().then(() => journal.reload());
     const { doc } = useProject.getState();
     const text = greeting(new Date(), doc.settings.projectName, {
       walls: doc.byKind('wall').length,
@@ -360,6 +362,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const erkennungRef = useRef<BrowserSpeechRecognition | null>(null);
   const fallbackNotiert = useRef(false);
+  // Doppelklick-Schutz: während der /health-Probe darf kein zweiter Start laufen
+  const startetGerade = useRef(false);
 
   const starteBrowserStt = () => {
     const rec = browserSpeechRecognition();
@@ -413,8 +417,11 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       erkennungRef.current?.stop();
       return;
     }
+    if (startetGerade.current) return;
+    startetGerade.current = true;
     const bridgeUrl = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
     if (!(await bridgeErreichbar(bridgeUrl))) {
+      startetGerade.current = false;
       starteBrowserStt();
       return;
     }
@@ -457,6 +464,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         ...b,
         { id: ++bubbleSeq.current, who: 'kosmo', text: '⚠ Kein Mikrofonzugriff.' },
       ]);
+    } finally {
+      startetGerade.current = false;
     }
   };
 

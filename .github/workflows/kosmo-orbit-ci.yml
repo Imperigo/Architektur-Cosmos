@@ -49,6 +49,20 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
+      # Helferserver für die E2E: Fake-Render-Bridge (:8600) + Yjs-Sync (:8700).
+      # Ohne sie überspringen sich die sync-abhängigen Tests ehrlich; MIT ihnen
+      # läuft die volle Kette (Render aufs Blatt, Pairing, Zwei-Client-Sync).
+      - name: Python-Bridge (fake-worker) starten
+        run: |
+          python3 -m pip install --quiet fastapi uvicorn python-multipart httpx
+          nohup python3 tools/homestation-bridge/kosmo_bridge/main.py --fake-worker --port 8600 > /tmp/bridge.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:8600/health && break || sleep 1; done
+      - name: Sync-Server starten
+        working-directory: kosmo-orbit/tools/sync-server
+        run: |
+          npm install --silent
+          nohup node src/server.mjs > /tmp/sync.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://localhost:8700/raeume && break || sleep 1; done
       - run: npx playwright test
       - name: KosmoDoc-Berichte (Screenshots) hochladen
         if: always()

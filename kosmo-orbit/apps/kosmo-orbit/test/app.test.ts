@@ -281,3 +281,40 @@ describe('QR-Encoder (P4)', () => {
     expect(svg).toContain('crispEdges');
   });
 });
+
+// ── Härtetest-Runde 4 (P6): Tresor-Migration v2 → v3 ─────────────────
+
+describe('Tresor-Migration (H4c)', () => {
+  it('alter v2-Tresor (nur projekte/varianten) migriert verlustfrei auf v3', async () => {
+    // Frisch beginnen — andere Tests haben den Tresor evtl. schon auf v3 geöffnet
+    await new Promise<void>((resolve, reject) => {
+      const del = indexedDB.deleteDatabase('kosmo-projekte');
+      del.onsuccess = () => resolve();
+      del.onerror = () => reject(del.error);
+    });
+    // Alten Stand von Hand anlegen — wie ein Gerät, das seit Vision A5 nicht mehr auf war
+    await new Promise<void>((resolve, reject) => {
+      const req = indexedDB.open('kosmo-projekte', 2);
+      req.onupgradeneeded = () => {
+        req.result.createObjectStore('projekte', { keyPath: 'id' });
+        req.result.createObjectStore('varianten', { keyPath: 'id' });
+      };
+      req.onsuccess = () => {
+        const t = req.result.transaction('projekte', 'readwrite');
+        t.objectStore('projekte').put({ id: 'alt-1', name: 'Altbestand', updatedAt: '2026-07-01', elemente: 3, json: { entities: [], settings: {} } });
+        t.oncomplete = () => {
+          req.result.close();
+          resolve();
+        };
+        t.onerror = () => reject(t.error);
+      };
+      req.onerror = () => reject(req.error);
+    });
+    // Erster Zugriff über den Tresor löst das Upgrade aus
+    const { vaultTx } = await import('../src/state/project-vault');
+    const auftraege = await vaultTx('auftraege', 'readonly', (s) => s.count());
+    expect(auftraege).toBe(0); // neuer Store existiert
+    const projekte = await vaultTx<{ id: string; name: string }[]>('projekte', 'readonly', (s) => s.getAll() as IDBRequest<{ id: string; name: string }[]>);
+    expect(projekte.some((p) => p.id === 'alt-1' && p.name === 'Altbestand')).toBe(true); // alte Daten intakt
+  });
+});

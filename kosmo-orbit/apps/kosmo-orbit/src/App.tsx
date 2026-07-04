@@ -160,16 +160,39 @@ export function App() {
     const url = p.get('sync');
     const raum = p.get('raum');
     if (!url || !raum) return;
+    // Injektion abwehren: nur echte WebSocket-Adressen aus dem QR akzeptieren
+    if (!/^wss?:\/\//.test(url)) {
+      meldeFehler(`Pairing-Link abgelehnt — «${url.slice(0, 40)}» ist keine ws://-Adresse`);
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      return;
+    }
     const token = p.get('token') ?? '';
-    setSyncUrl(url);
-    setSyncRoom(raum);
-    setSyncToken(token);
-    localStorage.setItem('kosmo.sync.url', url);
-    localStorage.setItem('kosmo.sync.room', raum);
-    if (token) localStorage.setItem('kosmo.sync.token', token);
     window.history.replaceState(null, '', window.location.pathname + window.location.search);
-    connectSync(url, raum, token || undefined);
-    melde(`Mit dem Büro verbunden — Raum «${raum}»`, { ton: 'erfolg' });
+    const verbinde = () => {
+      setSyncUrl(url);
+      setSyncRoom(raum);
+      setSyncToken(token);
+      localStorage.setItem('kosmo.sync.url', url);
+      localStorage.setItem('kosmo.sync.room', raum);
+      if (token) localStorage.setItem('kosmo.sync.token', token);
+      connectSync(url, raum, token || undefined);
+      melde(`Mit dem Büro verbunden — Raum «${raum}»`, { ton: 'erfolg' });
+    };
+    // Exfiltrations-Schutz (P6-Review #2): ein FREMDER Server ersetzt nie
+    // stumm die gespeicherte Verbindung — der Owner bestätigt Host + Raum.
+    const bekannt = localStorage.getItem('kosmo.sync.url');
+    if (bekannt && bekannt !== url) {
+      void bestaetigen({
+        titel: 'Mit fremdem Sync-Server verbinden?',
+        text: `Der Pairing-Link zeigt auf «${url}» (Raum «${raum}») — gespeichert ist «${bekannt}». Das Projekt wird an diesen Server repliziert.`,
+        bestaetigen: 'Verbinden',
+        gefaehrlich: true,
+      }).then((ok) => {
+        if (ok) verbinde();
+      });
+    } else {
+      verbinde();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -469,14 +492,27 @@ export function App() {
               data-testid="koppeln-karte"
               style={{ flexBasis: '100%', display: 'flex', gap: 14, alignItems: 'center', paddingTop: 8 }}
             >
-              <div
-                style={{ width: 164, height: 164, flexShrink: 0, border: '1px solid var(--k-line)' }}
-                dangerouslySetInnerHTML={{
-                  __html: qrSvg(
+              {(() => {
+                // P6-Review #3: qrEncode wirft bei Überlänge (>271 Bytes) —
+                // ein langer Token darf nie die App-Wurzel abreissen
+                try {
+                  const svg = qrSvg(
                     `${window.location.origin}${window.location.pathname}#sync=${encodeURIComponent(syncUrl)}&raum=${encodeURIComponent(syncRoom)}${syncToken.trim() ? `&token=${encodeURIComponent(syncToken.trim())}` : ''}`,
-                  ),
-                }}
-              />
+                  );
+                  return (
+                    <div
+                      style={{ width: 164, height: 164, flexShrink: 0, border: '1px solid var(--k-line)' }}
+                      dangerouslySetInnerHTML={{ __html: svg }}
+                    />
+                  );
+                } catch {
+                  return (
+                    <div style={{ width: 164, flexShrink: 0, fontSize: 11.5, color: 'var(--k-danger)' }}>
+                      Adresse + Raum + Token sind zu lang für einen QR — Token kürzen oder /raeume-Beitritt nutzen.
+                    </div>
+                  );
+                }
+              })()}
               <span style={{ fontSize: 12, color: 'var(--k-ink-soft)', maxWidth: 420, lineHeight: 1.5 }}>
                 Mit der iPad-Kamera scannen — KosmoOrbit öffnet sich und verbindet automatisch
                 mit Raum «{syncRoom}» (die Verbindung steckt im URL-Fragment, nie in Server-Logs).

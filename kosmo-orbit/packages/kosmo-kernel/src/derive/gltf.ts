@@ -1,4 +1,5 @@
 import type { KosmoDoc } from '../model/doc';
+import type { Assembly, Entity, Storey } from '../model/entities';
 import { deriveAll } from './scene';
 
 /**
@@ -8,6 +9,47 @@ import { deriveAll } from './scene';
  */
 
 const MM = 1 / 1000;
+
+/** Blender-Slot-Namen je Material-Klasse (P6: Interop-Politur). */
+const MATERIAL_NAME: Record<string, string> = {
+  beton: 'Beton',
+  masse: 'Volumen',
+  dach: 'Dach',
+  holz: 'Holz',
+};
+
+const KIND_LABEL: Record<string, string> = {
+  wall: 'Wand',
+  slab: 'Decke',
+  roof: 'Dach',
+  mass: 'Volumen',
+  stair: 'Treppe',
+  column: 'Stuetze',
+  beam: 'Unterzug',
+  furniture: 'Moebel',
+  zone: 'Zone',
+};
+
+/**
+ * Lesbarer Objektname für den Blender-Outliner: «Wand AW Beton 40 · EG»
+ * statt roher Entity-Id. Die Id bleibt als Suffix — der Rückweg (welches
+ * Bauteil war das?) geht nie verloren.
+ */
+function objektName(doc: KosmoDoc, entityId: string): string {
+  const e = doc.get<Entity>(entityId);
+  if (!e) return entityId;
+  const teile: string[] = [KIND_LABEL[e.kind] ?? e.kind];
+  if ('name' in e && typeof e.name === 'string' && e.name) teile.push(e.name);
+  else if ('assemblyId' in e && typeof e.assemblyId === 'string') {
+    const asm = doc.get<Assembly>(e.assemblyId);
+    if (asm?.kind === 'assembly') teile.push(asm.name);
+  } else if ('typ' in e && typeof e.typ === 'string') teile.push(e.typ);
+  if ('storeyId' in e && typeof e.storeyId === 'string') {
+    const st = doc.get<Storey>(e.storeyId);
+    if (st?.kind === 'storey') teile.push(`· ${st.name}`);
+  }
+  return `${teile.join(' ')} [${entityId.slice(-6)}]`;
+}
 
 interface BufferSlice {
   byteOffset: number;
@@ -52,7 +94,7 @@ export function exportGlb(doc: KosmoDoc, name = 'KosmoOrbit-Modell'): ArrayBuffe
     const rgb = palette[key] ?? [0.8, 0.79, 0.77];
     const idx = materials.length;
     materials.push({
-      name: key,
+      name: MATERIAL_NAME[key] ?? key,
       pbrMetallicRoughness: {
         baseColorFactor: [...rgb, 1],
         metallicFactor: 0,
@@ -111,8 +153,9 @@ export function exportGlb(doc: KosmoDoc, name = 'KosmoOrbit-Modell'): ArrayBuffe
     });
 
     const meshIdx = meshes.length;
+    const label = objektName(doc, a.entityId);
     meshes.push({
-      name: a.entityId,
+      name: label,
       primitives: [
         {
           attributes: { POSITION: posAcc, NORMAL: norAcc },
@@ -121,7 +164,7 @@ export function exportGlb(doc: KosmoDoc, name = 'KosmoOrbit-Modell'): ArrayBuffe
         },
       ],
     });
-    nodes.push({ name: a.entityId, mesh: meshIdx });
+    nodes.push({ name: label, mesh: meshIdx });
   }
 
   const gltf = {

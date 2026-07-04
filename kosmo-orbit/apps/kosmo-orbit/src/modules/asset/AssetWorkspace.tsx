@@ -138,15 +138,22 @@ function GlbVorschau({ objekt }: { objekt: GlbObjekt }) {
     let verworfen = false;
     let url = '';
     void (async () => {
+      // P6-Review #4: WebGL-Kontexte sind knapp (~8–16 pro Browser). Der
+      // Renderer lebt nur für EIN Standbild auf einem Wegwerf-Canvas, das
+      // Ergebnis wandert per drawImage in den sichtbaren 2D-Canvas, und der
+      // Kontext wird im finally HART freigegeben (forceContextLoss).
+      let renderer: import('three').WebGLRenderer | null = null;
       try {
         const [THREE, { GLTFLoader }] = await Promise.all([
           import('three'),
           import('three/examples/jsm/loaders/GLTFLoader.js'),
         ]);
         if (verworfen || !ref.current) return;
-        const canvas = ref.current;
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(canvas.clientWidth || 208, 120, false);
+        const ziel = ref.current;
+        const breite = ziel.clientWidth || 208;
+        const offscreen = document.createElement('canvas');
+        renderer = new THREE.WebGLRenderer({ canvas: offscreen, antialias: true, alpha: true });
+        renderer.setSize(breite, 120, false);
         const scene = new THREE.Scene();
         scene.add(new THREE.AmbientLight(0xffffff, 1.1));
         const sonne = new THREE.DirectionalLight(0xffffff, 1.4);
@@ -160,14 +167,20 @@ function GlbVorschau({ objekt }: { objekt: GlbObjekt }) {
         const box = new THREE.Box3().setFromObject(gltf.scene);
         const mitte = box.getCenter(new THREE.Vector3());
         const groesse = Math.max(box.getSize(new THREE.Vector3()).length(), 0.001);
-        const camera = new THREE.PerspectiveCamera(40, (canvas.clientWidth || 208) / 120, groesse / 100, groesse * 10);
+        const camera = new THREE.PerspectiveCamera(40, breite / 120, groesse / 100, groesse * 10);
         camera.position.set(mitte.x + groesse * 0.7, mitte.y + groesse * 0.5, mitte.z + groesse * 0.7);
         camera.lookAt(mitte);
         renderer.render(scene, camera);
-        renderer.dispose();
+        ziel.width = breite;
+        ziel.height = 120;
+        ziel.getContext('2d')?.drawImage(offscreen, 0, 0);
       } catch {
         if (!verworfen) setFehler(true);
       } finally {
+        if (renderer) {
+          renderer.forceContextLoss();
+          renderer.dispose();
+        }
         if (url) URL.revokeObjectURL(url);
       }
     })();

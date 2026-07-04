@@ -155,17 +155,23 @@ export function hatZyklus(nodes: VisNode[], edges: VisEdge[], extra?: Pick<VisEd
   return nodes.some((n) => besuch(n.id));
 }
 
-/** Topologische Reihenfolge (Kahn); Zyklen dürfen hier nie ankommen. */
+/**
+ * Topologische Reihenfolge (Kahn). Robust gegen kaputte Stände: hängende
+ * Kanten (Sync-Merge löschte einen Node) werden ignoriert, und bei einem
+ * Zyklus in Fremddaten fallen nur die Zyklus-Nodes aus der Folge —
+ * nie ein Absturz, nie eine Endlosschleife.
+ */
 export function topoReihenfolge(graph: VisGraph): VisNode[] {
+  const byId = new Map(graph.nodes.map((n) => [n.id, n]));
+  const kanten = graph.edges.filter((e) => byId.has(e.from) && byId.has(e.to));
   const eingang = new Map<string, number>(graph.nodes.map((n) => [n.id, 0]));
-  for (const e of graph.edges) eingang.set(e.to, (eingang.get(e.to) ?? 0) + 1);
+  for (const e of kanten) eingang.set(e.to, (eingang.get(e.to) ?? 0) + 1);
   const frei = graph.nodes.filter((n) => (eingang.get(n.id) ?? 0) === 0);
   const folge: VisNode[] = [];
-  const byId = new Map(graph.nodes.map((n) => [n.id, n]));
   while (frei.length > 0) {
     const n = frei.shift()!;
     folge.push(n);
-    for (const e of graph.edges.filter((e) => e.from === n.id)) {
+    for (const e of kanten.filter((e) => e.from === n.id)) {
       const rest = (eingang.get(e.to) ?? 0) - 1;
       eingang.set(e.to, rest);
       if (rest === 0) frei.push(byId.get(e.to)!);
