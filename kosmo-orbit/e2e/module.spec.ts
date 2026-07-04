@@ -1634,3 +1634,41 @@ test('Stütze + Unterzug (RE-ARCHICAD A3): Raster-Knopf setzt Stützen auf Kreuz
   await expect(page.locator('path.stuetze').first()).toBeVisible();
   await expect(page.locator('line.unterzug')).toHaveCount(4);
 });
+
+test('Publikations-Sets (RE-ARCHICAD A4): Set speichern → SVGs nach Namensregel', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aufbau = k.run('design.aufbauErstellen', {
+      name: 'AW P', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: aufbau.patches[0].id,
+      a: { x: 0, y: 0 }, b: { x: 8000, y: 0 },
+    });
+    k.open('publish');
+  });
+  await page.click('[data-testid="add-sheet"]');
+  await page.click('[data-testid="place-plan"]');
+  await page.fill('[data-testid="pubset-name"]', 'Wettbewerb');
+  await page.click('[data-testid="pubset-speichern"]');
+  await expect(page.locator('[data-testid="pubset-karte"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="pubset-karte"]')).toContainText('Wettbewerb');
+  // SVG-Export benennt die Datei nach der Namensregel: P-01_<Blatt>_1-<Massstab>.svg
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('[data-testid="pubset-svg"]'),
+  ]);
+  expect(download.suggestedFilename()).toMatch(/^P-01_.+_1-\d+\.svg$/);
+  // Set-PDF trägt den Set-Namen
+  const [pdf] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('[data-testid="pubset-pdf"]'),
+  ]);
+  expect(pdf.suggestedFilename()).toMatch(/-Wettbewerb\.pdf$/);
+});

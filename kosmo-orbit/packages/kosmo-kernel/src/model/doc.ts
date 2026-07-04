@@ -86,6 +86,17 @@ export interface DocSettings {
   /** Verschneidungsprioritäten-Overrides je Material (RE-ARCHICAD A1,
    * 0–999); fehlend = Katalog-Default aus MATERIAL_PRIORITAET. */
   materialPrioritaeten?: Record<string, number>;
+  /** Publikations-Sets (RE-ARCHICAD A4): benannte Blattauswahl + Namensregel
+   * — ein Klick exportiert den ganzen Plansatz («Publisher ohne Baum»). */
+  publikationsSets?: PublikationsSet[];
+}
+
+/** Benanntes Export-Set (RE-ARCHICAD A4). namensregel-Platzhalter:
+ * {nr} (2-stellig), {blatt}, {projekt}, {massstab} (1-50), {format} (A1-quer). */
+export interface PublikationsSet {
+  name: string;
+  sheetIds: string[];
+  namensregel?: string;
 }
 
 /** Fassadenmodul (Modul-Editor, vorform-Kern): Elemente in Modul-Koordinaten. */

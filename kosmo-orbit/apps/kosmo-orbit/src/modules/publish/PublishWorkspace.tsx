@@ -11,7 +11,7 @@ import {
   type Storey,
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
-import { exportSheetSetPdf } from './export-sheets';
+import { exportSetSvgs, exportSheetSetPdf } from './export-sheets';
 
 /**
  * KosmoPublish — Blatteditor. Blätter sind Kernel-Entities (Undo/Sync/.kosmo
@@ -42,6 +42,7 @@ export function PublishWorkspace() {
 
   const [activeSheetId, setActiveSheetId] = useState<string | null>(null);
   const [newFormat, setNewFormat] = useState<SheetFormat>('A1');
+  const [neuesSetName, setNeuesSetName] = useState('');
   const [placeStoreyId, setPlaceStoreyId] = useState<string | null>(null);
   const [placeScale, setPlaceScale] = useState(100);
   const [selectedPlacement, setSelectedPlacement] = useState<string | null>(null);
@@ -356,6 +357,64 @@ export function PublishWorkspace() {
             ))}
           </div>
         )}
+        <Hairline />
+        <div style={{ display: 'grid', gap: 6 }} data-testid="pubsets">
+          <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+            Publikations-Sets
+          </span>
+          {(doc.settings.publikationsSets ?? []).map((set) => (
+            <div
+              key={set.name}
+              data-testid="pubset-karte"
+              style={{ display: 'flex', gap: 5, alignItems: 'center', fontSize: 12 }}
+            >
+              <span style={{ flex: 1, fontWeight: 550 }}>
+                {set.name}{' '}
+                <span style={{ color: 'var(--k-ink-faint)', fontWeight: 400 }}>
+                  · {set.sheetIds.length} Blätter
+                </span>
+              </span>
+              <KButton size="sm" tone="quiet" data-testid="pubset-pdf" onClick={() => void exportSheetSetPdf(set)}>
+                PDF
+              </KButton>
+              <KButton size="sm" tone="ghost" data-testid="pubset-svg" onClick={() => exportSetSvgs(set)}>
+                SVGs
+              </KButton>
+              <button
+                aria-label={`Set ${set.name} entfernen`}
+                onClick={() => runCommand('publish.setEntfernen', { name: set.name })}
+                style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 12, padding: '0 2px' }}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <div style={{ display: 'flex', gap: 5 }}>
+            <input
+              value={neuesSetName}
+              onChange={(e) => setNeuesSetName(e.target.value)}
+              placeholder="Set-Name (z.B. Wettbewerb)"
+              data-testid="pubset-name"
+              style={{ flex: 1, minWidth: 0, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+            />
+            <KButton
+              size="sm"
+              tone="quiet"
+              data-testid="pubset-speichern"
+              title="Speichert die aktuellen Blätter in Reihenfolge als benanntes Set — Dateinamen nach «P-{nr}_{blatt}_{massstab}»"
+              onClick={() => {
+                if (!neuesSetName.trim() || sheets.length === 0) return;
+                runCommand('publish.setSpeichern', {
+                  name: neuesSetName.trim(),
+                  sheetIds: sheets.map((s) => s.id),
+                });
+                setNeuesSetName('');
+              }}
+            >
+              Set speichern
+            </KButton>
+          </div>
+        </div>
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="accent" onClick={() => void exportSheetSetPdf()} data-testid="export-set">
           Plansatz PDF

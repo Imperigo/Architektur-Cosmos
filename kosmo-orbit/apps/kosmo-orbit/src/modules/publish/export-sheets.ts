@@ -1,12 +1,23 @@
 import { jsPDF } from 'jspdf';
 import { svg2pdf } from 'svg2pdf.js';
-import { imagePaperBounds, sheetPaperSize, sheetToSvg, type ImageAsset, type Sheet } from '@kosmo/kernel';
+import {
+  imagePaperBounds,
+  setBlaetter,
+  setDateiname,
+  sheetPaperSize,
+  sheetToSvg,
+  type ImageAsset,
+  type PublikationsSet,
+  type Sheet,
+} from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
-/** Ganzer Plansatz als mehrseitiges Vektor-PDF — jede Seite im Blattformat. */
-export async function exportSheetSetPdf(): Promise<void> {
+/** Ganzer Plansatz (oder ein Publikations-Set, A4) als mehrseitiges Vektor-PDF. */
+export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
   const { doc } = useProject.getState();
-  const sheets = doc.byKind<Sheet>('sheet').sort((a, b) => a.index - b.index);
+  const sheets = set
+    ? setBlaetter(doc, set)
+    : doc.byKind<Sheet>('sheet').sort((a, b) => a.index - b.index);
   if (sheets.length === 0) return;
 
   let pdf: jsPDF | null = null;
@@ -39,5 +50,29 @@ export async function exportSheetSetPdf(): Promise<void> {
       pdf.addImage(`data:${asset.mime};base64,${asset.data}`, typ, r.x, r.y, r.width, r.height);
     }
   }
-  pdf!.save(`${doc.settings.projectName.replace(/\s+/g, '-')}-Plansatz.pdf`);
+  const stamm = doc.settings.projectName.replace(/\s+/g, '-');
+  pdf!.save(`${stamm}-${set ? set.name.replace(/\s+/g, '-') : 'Plansatz'}.pdf`);
+}
+
+/** Publikations-Set als Einzel-SVGs — jede Datei nach der Namensregel
+ * benannt («P-01_Grundriss_EG_1-50.svg», RE-ARCHICAD A4). */
+export function exportSetSvgs(set: PublikationsSet): void {
+  const { doc } = useProject.getState();
+  const sheets = setBlaetter(doc, set);
+  sheets.forEach((sheet, i) => {
+    const markup = sheetToSvg(doc, sheet.id, { projectName: doc.settings.projectName });
+    const name = setDateiname(set.namensregel, {
+      nr: i + 1,
+      blatt: sheet.name,
+      projekt: doc.settings.projectName,
+      massstab: sheet.placements[0]?.scale ?? null,
+      format: `${sheet.format}-${sheet.orientation}`,
+    });
+    const url = URL.createObjectURL(new Blob([markup], { type: 'image/svg+xml' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
 }

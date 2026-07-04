@@ -3511,6 +3511,52 @@ describe('Verschneidungsprioritäten (RE-ARCHICAD A1)', () => {
   });
 });
 
+describe('Publikations-Sets (RE-ARCHICAD A4)', () => {
+  it('setDateiname: Platzhalter, Sanitisierung, leere Werte ohne Doppel-Trenner', async () => {
+    const { setDateiname, NAMENSREGEL_DEFAULT } = await import('../src');
+    expect(NAMENSREGEL_DEFAULT).toBe('P-{nr}_{blatt}_{massstab}');
+    expect(
+      setDateiname(undefined, { nr: 1, blatt: 'Grundriss EG', projekt: 'TKB', massstab: 50 }),
+    ).toBe('P-01_Grundriss_EG_1-50');
+    // Ohne Massstab verschwindet der Platzhalter samt Doppel-Trenner
+    expect(
+      setDateiname(undefined, { nr: 12, blatt: 'Plakat', projekt: 'TKB', massstab: null }),
+    ).toBe('P-12_Plakat');
+    // Eigene Regel + pfad-unsichere Zeichen
+    expect(
+      setDateiname('{projekt}/{format} {blatt}', { nr: 3, blatt: 'Schnitt A:A', projekt: 'Haus Meier', format: 'A1-quer' }),
+    ).toBe('Haus_Meier-A1-quer_Schnitt_A-A');
+    expect(setDateiname('{massstab}', { nr: 1, blatt: 'X', projekt: 'P', massstab: null })).toBe('Blatt');
+  });
+
+  it('setSpeichern ersetzt gleichen Namen, validiert Blätter; setEntfernen + gelöschte Blätter fallen raus', async () => {
+    const { setBlaetter } = await import('../src');
+    const { doc, storeyId } = setupDoc();
+    const b1 = (execute(doc, 'publish.blattErstellen', { name: 'Grundriss EG', format: 'A1' }).patches[0] as { id: string }).id;
+    const b2 = (execute(doc, 'publish.blattErstellen', { name: 'Schnitt', format: 'A2' }).patches[0] as { id: string }).id;
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId: b1, view: 'grundriss', storeyId, scale: 50, x: 200, y: 200 });
+    execute(doc, 'publish.setSpeichern', { name: 'Wettbewerb', sheetIds: [b2, b1] });
+    expect(doc.settings.publikationsSets).toHaveLength(1);
+    // Reihenfolge = Set-Reihenfolge, nicht Blatt-Index
+    expect(setBlaetter(doc, doc.settings.publikationsSets![0]!).map((s) => s.id)).toEqual([b2, b1]);
+    // Gleicher Name ersetzt; Namensregel wird mitgenommen
+    execute(doc, 'publish.setSpeichern', { name: 'Wettbewerb', sheetIds: [b1], namensregel: 'W-{nr}' });
+    expect(doc.settings.publikationsSets).toHaveLength(1);
+    expect(doc.settings.publikationsSets![0]!.namensregel).toBe('W-{nr}');
+    // Validierung + Entfernen + Roundtrip
+    expect(() => execute(doc, 'publish.setSpeichern', { name: 'X', sheetIds: ['gibt-es-nicht'] })).toThrow(CommandError);
+    const wieder = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));
+    expect(wieder.settings.publikationsSets![0]!.name).toBe('Wettbewerb');
+    // Gelöschtes Blatt bricht den Export nicht — es fällt ehrlich raus
+    execute(doc, 'publish.setSpeichern', { name: 'Wettbewerb', sheetIds: [b2, b1] });
+    execute(doc, 'publish.blattEntfernen', { sheetId: b2 });
+    expect(setBlaetter(doc, doc.settings.publikationsSets![0]!).map((s) => s.id)).toEqual([b1]);
+    execute(doc, 'publish.setEntfernen', { name: 'Wettbewerb' });
+    expect(doc.settings.publikationsSets).toHaveLength(0);
+    expect(() => execute(doc, 'publish.setEntfernen', { name: 'Wettbewerb' })).toThrow(CommandError);
+  });
+});
+
 describe('Härtetest-Runde 3 (Vision F1)', () => {
   const spec = { a: { x: 0, y: 0 }, b: { x: 9000, y: 0 }, depth: 5000, lookLeft: true } as const;
 

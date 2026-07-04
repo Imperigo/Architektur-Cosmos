@@ -20,6 +20,53 @@ function requireSheet(doc: KosmoDoc, id: string): Sheet {
   return e;
 }
 
+export const saveSet = registerCommand({
+  id: 'publish.setSpeichern',
+  title: 'Publikations-Set speichern',
+  description:
+    'Speichert ein benanntes Publikations-Set (RE-ARCHICAD A4): eine Blattauswahl in Reihenfolge + Namensregel für die Exportdateien. Gleicher Name ersetzt das Set. Platzhalter der Namensregel: {nr}, {blatt}, {projekt}, {massstab}, {format} — Default «P-{nr}_{blatt}_{massstab}».',
+  params: z.object({
+    name: z.string().min(1),
+    sheetIds: z.array(z.string()).min(1).describe('Blätter in Export-Reihenfolge'),
+    namensregel: z.string().optional(),
+  }),
+  summarize: (p) => `Set «${p.name}» (${p.sheetIds.length} Blätter)`,
+  run: (doc, p) => {
+    for (const id of p.sheetIds) requireSheet(doc, id);
+    const vorher = doc.settings.publikationsSets ?? [];
+    const set = {
+      name: p.name,
+      sheetIds: p.sheetIds,
+      ...(p.namensregel ? { namensregel: p.namensregel } : {}),
+    };
+    const nachher = [...vorher.filter((s) => s.name !== p.name), set];
+    return [
+      { settings: true as const, before: { publikationsSets: vorher }, after: { publikationsSets: nachher } },
+    ];
+  },
+});
+
+export const removeSet = registerCommand({
+  id: 'publish.setEntfernen',
+  title: 'Publikations-Set entfernen',
+  description: 'Entfernt ein Publikations-Set — die Blätter selbst bleiben unberührt.',
+  params: z.object({ name: z.string().min(1) }),
+  summarize: (p) => `Set «${p.name}» entfernen`,
+  run: (doc, p) => {
+    const vorher = doc.settings.publikationsSets ?? [];
+    if (!vorher.some((s) => s.name === p.name)) {
+      throw new CommandError(`Set «${p.name}» existiert nicht`);
+    }
+    return [
+      {
+        settings: true as const,
+        before: { publikationsSets: vorher },
+        after: { publikationsSets: vorher.filter((s) => s.name !== p.name) },
+      },
+    ];
+  },
+});
+
 export const createSheet = registerCommand({
   id: 'publish.blattErstellen',
   title: 'Planblatt erstellen',

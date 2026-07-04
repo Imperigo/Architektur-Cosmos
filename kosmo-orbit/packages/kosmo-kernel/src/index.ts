@@ -26,6 +26,7 @@ export * from './derive/plansvg';
 export * from './derive/sheet';
 export * from './derive/umbau';
 export * from './model/prioritaet';
+export * from './derive/publikation';
 export * from './derive/dxf';
 export * from './derive/dimensions';
 export * from './derive/checks';
