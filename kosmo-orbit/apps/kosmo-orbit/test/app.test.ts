@@ -57,6 +57,32 @@ describe('Varianten-Archiv (Vision A5)', () => {
   });
 });
 
+describe('BM25-Relevanz (Vision E3)', () => {
+  it('IDF drückt Allerweltswörter, Phrase gewinnt, Länge normalisiert', async () => {
+    const { bm25Scores } = await import('../src/modules/prepare/knowledge');
+    const texte = [
+      'Beton Beton Beton Beton Beton Beton und nochmals Beton überall im Rohbau.',
+      'Beton mit Trittschalldämmung unter dem Unterlagsboden nach SIA 251.',
+      'Holzbau mit Brettsperrholz, ganz ohne das graue Material.',
+      'Beton und Trittschalldämmung: die Trittschalldämmung liegt auf der Rohdecke.',
+    ];
+    const scores = bm25Scores(texte, 'Beton Trittschalldämmung');
+    // Der seltene Term (Trittschalldämmung, idf hoch) schlägt das Beton-Spam-Chunk
+    expect(scores[3]).toBeGreaterThan(scores[0]!);
+    expect(scores[1]).toBeGreaterThan(scores[0]!);
+    expect(scores[2]).toBe(0); // kein Query-Term ≥ 3 Zeichen enthalten
+    // Sättigung: 7× «Beton» bringt nicht 7× den Score eines 1×-Chunks
+    const nurBeton = bm25Scores(texte, 'Beton');
+    expect(nurBeton[0]!).toBeLessThan(nurBeton[1]! * 3);
+    // Exakte Phrase gewinnt gegen verstreute Terme
+    const phrase = bm25Scores(
+      ['die Dämmung liegt wo anders, Rohdecke gibt es', 'die Trittschalldämmung liegt auf der Rohdecke'],
+      'Trittschalldämmung liegt auf der Rohdecke',
+    );
+    expect(phrase[1]!).toBeGreaterThan(phrase[0]!);
+  });
+});
+
 describe('KosmoData Live-Sync (Vision E2)', () => {
   it('Live füllt den Cache; fällt das Netz, kommt der letzte gute Stand', async () => {
     const { ladeReferenzenLive } = await import('@kosmo/data');

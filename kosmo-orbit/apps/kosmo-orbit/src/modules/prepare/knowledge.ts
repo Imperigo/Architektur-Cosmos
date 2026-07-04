@@ -311,43 +311,71 @@ export interface KnowledgeHit extends KnowledgeChunk {
 }
 
 /**
- * Suche: semantisch (Cosine über Bridge-Embeddings), wo Vektoren vorliegen,
- * plus Stichwort-Scoring (Termfrequenz + Phrasen-Bonus) als Grundierung —
- * ohne Bridge oder für alt aufgenommene Chunks bleibt die Stichwort-Suche.
+ * BM25 über eine Chunk-Menge (E3): IDF drückt Allerweltswörter («beton»,
+ * «wand» stehen in tausenden Chunks), Sättigung (k1) verhindert, dass reines
+ * Wiederholen gewinnt, Längen-Normalisierung (b) lässt prägnante Chunks vorn.
+ * Pur und exportiert — testbar ohne IndexedDB.
  */
-export async function searchKnowledge(query: string, limit = 5): Promise<KnowledgeHit[]> {
+export function bm25Scores(texte: string[], query: string): number[] {
   const terms = query
     .toLowerCase()
     .split(/[^a-z0-9äöüéèàç]+/i)
     .filter((t) => t.length >= 3);
-  if (terms.length === 0) return [];
+  if (terms.length === 0) return texte.map(() => 0);
   const phrase = query.toLowerCase().trim();
+  const K1 = 1.2;
+  const B = 0.75;
+  const lower = texte.map((t) => t.toLowerCase());
+  const avgLen = lower.reduce((s, t) => s + t.length, 0) / (lower.length || 1);
+  // Dokumentfrequenz je Term (Chunk enthält den Term mindestens einmal)
+  const idf = new Map<string, number>();
+  for (const t of terms) {
+    const df = lower.reduce((s, hay) => s + (hay.includes(t) ? 1 : 0), 0);
+    idf.set(t, Math.log(1 + (lower.length - df + 0.5) / (df + 0.5)));
+  }
+  return lower.map((hay) => {
+    let score = 0;
+    for (const t of terms) {
+      let tf = 0;
+      let i = hay.indexOf(t);
+      while (i !== -1) {
+        tf++;
+        i = hay.indexOf(t, i + t.length);
+      }
+      if (tf === 0) continue;
+      score += idf.get(t)! * ((tf * (K1 + 1)) / (tf + K1 * (1 - B + (B * hay.length) / avgLen)));
+    }
+    if (phrase.length > 4 && hay.includes(phrase)) score *= 1.5; // exakte Phrase gewinnt
+    return score;
+  });
+}
 
+/**
+ * Suche: semantisch (Cosine über Bridge-Embeddings), wo Vektoren vorliegen,
+ * plus BM25 als Grundierung — ohne Bridge oder für alt aufgenommene Chunks
+ * trägt BM25 allein.
+ */
+export async function searchKnowledge(query: string, limit = 5): Promise<KnowledgeHit[]> {
   const db = await openDb();
   const tx = db.transaction('chunks', 'readonly');
   const all = await reqResult(tx.objectStore('chunks').getAll() as IDBRequest<KnowledgeChunk[]>);
   db.close();
+  if (all.length === 0) return [];
+
+  const kw = bm25Scores(all.map((c) => c.text), query);
+  if (kw.every((s) => s === 0)) return [];
+  const kwMax = Math.max(...kw);
 
   const hatVektoren = all.some((c) => c.vector);
   const qv = hatVektoren ? (await embedTexts([query]))?.[0] ?? null : null;
 
   const hits: KnowledgeHit[] = [];
-  for (const c of all) {
-    const hay = c.text.toLowerCase();
-    let kw = 0;
-    for (const t of terms) {
-      let i = hay.indexOf(t);
-      while (i !== -1) {
-        kw += 1;
-        i = hay.indexOf(t, i + t.length);
-      }
-    }
-    if (phrase.length > 4 && hay.includes(phrase)) kw += 5;
-    // leichte Längen-Normalisierung, damit kurze prägnante Chunks gewinnen
-    const kwNorm = kw / Math.sqrt(c.text.length / 400 + 1);
+  for (let i = 0; i < all.length; i++) {
+    const c = all[i]!;
+    const kwNorm = kwMax > 0 ? kw[i]! / kwMax : 0;
     const sem = qv && c.vector ? cosine(qv, c.vector) : 0;
-    // Semantik führt (wo vorhanden), Stichworte grundieren und entscheiden Gleichstände
-    const score = qv ? sem + 0.05 * kwNorm : kwNorm;
+    // Semantik führt (wo vorhanden), BM25 grundiert und entscheidet Gleichstände
+    const score = qv ? sem + 0.1 * kwNorm : kw[i]!;
     if (score > (qv ? 0.12 : 0)) hits.push({ ...c, score });
   }
   return hits.sort((a, b) => b.score - a.score).slice(0, limit);

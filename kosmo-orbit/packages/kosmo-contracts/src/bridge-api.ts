@@ -50,6 +50,18 @@ export const IfcValidationResult = z.object({
 });
 export type IfcValidationResult = z.infer<typeof IfcValidationResult>;
 
+/** Embedding (bge-m3) — der RAG-Pfad von KosmoPrepare (E3). */
+export const EmbedRequest = z.object({
+  texts: z.array(z.string().min(1)).min(1).max(256),
+});
+export type EmbedRequest = z.infer<typeof EmbedRequest>;
+
+export const EmbedResponse = z.object({
+  vectors: z.array(z.array(z.number())).min(1),
+  model: z.string().optional(),
+});
+export type EmbedResponse = z.infer<typeof EmbedResponse>;
+
 /** Pfade der Bridge-Endpoints — eine Quelle für Client UND Server-Tests. */
 export const bridgeRoutes = {
   health: '/health',
@@ -60,4 +72,5 @@ export const bridgeRoutes = {
   tts: '/tts',
   ollama: '/ollama',
   validateIfc: '/validate-ifc',
+  embed: '/embed',
 } as const;

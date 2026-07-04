@@ -76,3 +76,15 @@ describe('kosmo.project/v1', () => {
     expect(m.contents.model).toBe('model/model.json');
   });
 });
+
+describe('bridge embed (E3)', () => {
+  it('validiert Request/Response und weist Leeres ab', async () => {
+    const { EmbedRequest, EmbedResponse, bridgeRoutes } = await import('../src');
+    expect(bridgeRoutes.embed).toBe('/embed');
+    expect(EmbedRequest.parse({ texts: ['Beton nach SIA'] }).texts).toHaveLength(1);
+    expect(() => EmbedRequest.parse({ texts: [] })).toThrow();
+    const res = EmbedResponse.parse({ vectors: [[0.1, 0.2]], model: 'bge-m3' });
+    expect(res.vectors[0]).toHaveLength(2);
+    expect(() => EmbedResponse.parse({ vectors: [] })).toThrow();
+  });
+});
