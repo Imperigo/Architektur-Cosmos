@@ -1732,3 +1732,42 @@ test('Etiketten (RE-ARCHICAD A6): Inspector-Knopf setzt Aufbau-Etikett mit Leade
   await expect(page.locator('text.etikett').first()).toHaveText('AW E');
   await expect(page.locator('line.etikett')).toHaveCount(1);
 });
+
+test('Plan-Revisionen (RE-ARCHICAD A7): Verzeichnis im Blatt, Transmittal-CSV', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aufbau = k.run('design.aufbauErstellen', {
+      name: 'AW R', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: aufbau.patches[0].id,
+      a: { x: 0, y: 0 }, b: { x: 8000, y: 0 },
+    });
+    k.open('publish');
+  });
+  await page.click('[data-testid="add-sheet"]');
+  await page.click('[data-testid="place-plan"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const sheet = k.state().doc.byKind('sheet')[0];
+    k.run('publish.revisionErfassen', { sheetId: sheet.id, text: 'Fenster Küche angepasst', datum: '04.07.2026' });
+    k.run('publish.wolkeSetzen', { sheetId: sheet.id, x: 120, y: 120, w: 80, h: 50 });
+  });
+  // Verzeichnis + Wolke erscheinen im Blatteditor (echtes Druck-SVG)
+  await expect(page.locator('[data-teil="revisionen"]')).toHaveCount(1);
+  await expect(page.locator('[data-teil="revisionen"]')).toContainText('Fenster Küche angepasst');
+  // Transmittal über das Publikations-Set
+  await page.fill('[data-testid="pubset-name"]', 'Versand');
+  await page.click('[data-testid="pubset-speichern"]');
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('[data-testid="pubset-transmittal"]'),
+  ]);
+  expect(download.suggestedFilename()).toBe('Versand-Transmittal.csv');
+});

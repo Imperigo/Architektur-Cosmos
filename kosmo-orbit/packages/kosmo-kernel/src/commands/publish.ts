@@ -67,6 +67,82 @@ export const removeSet = registerCommand({
   },
 });
 
+export const recordRevision = registerCommand({
+  id: 'publish.revisionErfassen',
+  title: 'Revision erfassen',
+  description:
+    'Erfasst eine Plan-Revision auf einem Blatt (RE-ARCHICAD A7): vergibt den nächsten freien Index (A, B, C …), der Eintrag erscheint im Revisionsverzeichnis des Plankopfs. Änderungswolken via publish.wolkeSetzen.',
+  params: z.object({
+    sheetId: z.string(),
+    text: z.string().min(1).describe('Was hat geändert, z.B. «Fenster Küche 1.20 → 1.40»'),
+    datum: z.string().min(1).describe('Datum als Text, z.B. 04.07.2026'),
+  }),
+  summarize: (p) => `Revision: ${p.text.slice(0, 50)}`,
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const vorher = sheet.revisionen ?? [];
+    // Nächster freier Index: A, B, … Z, AA, AB …
+    const nr = vorher.length;
+    let index = '';
+    for (let n = nr; ; n = Math.floor(n / 26) - 1) {
+      index = String.fromCharCode(65 + (n % 26)) + index;
+      if (n < 26) break;
+    }
+    const after: Sheet = {
+      ...sheet,
+      revisionen: [...vorher, { index, text: p.text, datum: p.datum }],
+    };
+    return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
+export const setWolke = registerCommand({
+  id: 'publish.wolkeSetzen',
+  title: 'Änderungswolke setzen',
+  description:
+    'Setzt eine Änderungswolke auf ein Blatt (Papier-mm, x/y = linke obere Ecke): markiert den geänderten Bereich und trägt den Revisions-Index als Marker. revision weglassen = letzte erfasste Revision.',
+  params: z.object({
+    sheetId: z.string(),
+    x: z.number(),
+    y: z.number(),
+    w: z.number().positive(),
+    h: z.number().positive(),
+    revision: z.string().optional().describe('Revisions-Index, z.B. B; weglassen = letzte'),
+  }),
+  summarize: (p) => `Wolke ${p.revision ?? '(letzte Revision)'}`,
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const revisionen = sheet.revisionen ?? [];
+    const revision = p.revision ?? revisionen[revisionen.length - 1]?.index;
+    if (!revision || !revisionen.some((r) => r.index === revision)) {
+      throw new CommandError(
+        p.revision
+          ? `Revision «${p.revision}» existiert nicht auf diesem Blatt`
+          : 'Noch keine Revision erfasst — zuerst publish.revisionErfassen',
+      );
+    }
+    const wolke = { id: newId('wolke'), x: p.x, y: p.y, w: p.w, h: p.h, revision };
+    const after: Sheet = { ...sheet, wolken: [...(sheet.wolken ?? []), wolke] };
+    return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
+export const removeWolke = registerCommand({
+  id: 'publish.wolkeEntfernen',
+  title: 'Änderungswolke entfernen',
+  description: 'Entfernt eine Änderungswolke — das Revisionsverzeichnis bleibt.',
+  params: z.object({ sheetId: z.string(), wolkeId: z.string() }),
+  summarize: () => 'Wolke entfernen',
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    if (!(sheet.wolken ?? []).some((w) => w.id === p.wolkeId)) {
+      throw new CommandError(`Wolke «${p.wolkeId}» existiert nicht`);
+    }
+    const after: Sheet = { ...sheet, wolken: (sheet.wolken ?? []).filter((w) => w.id !== p.wolkeId) };
+    return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
 export const createSheet = registerCommand({
   id: 'publish.blattErstellen',
   title: 'Planblatt erstellen',

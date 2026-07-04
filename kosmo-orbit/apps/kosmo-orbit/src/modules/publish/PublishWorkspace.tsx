@@ -6,6 +6,7 @@ import {
   placementPaperBounds,
   sheetPaperSize,
   sheetToSvg,
+  transmittalCsv,
   type Sheet,
   type SheetFormat,
   type Storey,
@@ -379,6 +380,23 @@ export function PublishWorkspace() {
               </KButton>
               <KButton size="sm" tone="ghost" data-testid="pubset-svg" onClick={() => exportSetSvgs(set)}>
                 SVGs
+              </KButton>
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="pubset-transmittal"
+                title="Transmittal-Liste (Begleitliste zum Planversand): Blatt, Format, Massstab, Revision"
+                onClick={() => {
+                  const csv = transmittalCsv(useProject.getState().doc, set);
+                  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${set.name.replace(/\s+/g, '-')}-Transmittal.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                ⇥
               </KButton>
               <button
                 aria-label={`Set ${set.name} entfernen`}

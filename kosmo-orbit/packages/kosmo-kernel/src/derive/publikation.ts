@@ -1,5 +1,6 @@
 import type { KosmoDoc, PublikationsSet } from '../model/doc';
 import type { Sheet } from '../model/entities';
+import { sheetPaperSize } from './sheet';
 
 /**
  * Publikations-Sets (RE-ARCHICAD A4) — die Publisher-Essenz ohne
@@ -41,4 +42,33 @@ export function setBlaetter(doc: KosmoDoc, set: PublikationsSet): Sheet[] {
     if (s && s.kind === 'sheet') out.push(s);
   }
   return out;
+}
+
+/**
+ * Transmittal-Liste (RE-ARCHICAD A7): je Blatt eine Zeile mit Format,
+ * Massstäben und letztem Revisions-Stand — die Begleitliste zum Planversand
+ * an Unternehmer. Semikolon/Excel-CH, RFC-4180-gequotet. Ohne Set = alle
+ * Blätter in Plansatz-Reihenfolge.
+ */
+export function transmittalCsv(doc: KosmoDoc, set?: PublikationsSet): string {
+  const feld = (s: string) => (/[";\n]/.test(s) ? `"${s.replaceAll('"', '""')}"` : s);
+  const sheets = set
+    ? setBlaetter(doc, set)
+    : doc.byKind<Sheet>('sheet').sort((a, b) => a.index - b.index);
+  const zeilen = sheets.map((s, i) => {
+    const paper = sheetPaperSize(s);
+    const massstaebe = [...new Set(s.placements.map((p) => p.scale))]
+      .sort((a, b) => a - b)
+      .map((m) => `1:${m}`)
+      .join(' · ');
+    const rev = (s.revisionen ?? [])[s.revisionen ? s.revisionen.length - 1 : 0];
+    return [
+      String(i + 1),
+      feld(s.name),
+      `${s.format} ${s.orientation} (${paper.width}×${paper.height})`,
+      feld(massstaebe || '—'),
+      rev ? feld(`${rev.index} · ${rev.datum}`) : '—',
+    ].join(';');
+  });
+  return ['Nr;Blatt;Format;Massstab;Revision', ...zeilen].join('\n');
 }

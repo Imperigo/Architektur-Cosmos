@@ -78,6 +78,23 @@ export interface SheetSvgOptions {
   ohneRaster?: boolean;
 }
 
+/** Bogenkette einer Änderungswolke ums Rechteck (Papier-mm, «revision cloud»). */
+function wolkenPfad(x: number, y: number, w: number, h: number): string {
+  const r = 3;
+  const seg: string[] = [`M ${x} ${y}`];
+  const bogen = (tx: number, ty: number) => seg.push(`A ${r} ${r} 0 0 1 ${tx.toFixed(2)} ${ty.toFixed(2)}`);
+  const kante = (x0: number, y0: number, x1: number, y1: number) => {
+    const len = Math.hypot(x1 - x0, y1 - y0);
+    const n = Math.max(1, Math.round(len / (2 * r)));
+    for (let i = 1; i <= n; i++) bogen(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n);
+  };
+  kante(x, y, x + w, y);
+  kante(x + w, y, x + w, y + h);
+  kante(x + w, y + h, x, y + h);
+  kante(x, y + h, x, y);
+  return seg.join(' ');
+}
+
 export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions): string {
   const sheet = doc.get<Sheet>(sheetId);
   if (!sheet || sheet.kind !== 'sheet') return '<svg xmlns="http://www.w3.org/2000/svg"/>';
@@ -191,11 +208,43 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     );
   }
 
+  // Änderungswolken (A7): Bogenkette ums Rechteck + Revisions-Marker
+  for (const wo of sheet.wolken ?? []) {
+    parts.push(
+      `<path d="${wolkenPfad(wo.x, wo.y, wo.w, wo.h)}" fill="none" stroke="#b3261e" stroke-width="0.35"/>`,
+      `<circle cx="${wo.x + wo.w}" cy="${wo.y}" r="3" fill="white" stroke="#b3261e" stroke-width="0.35"/>`,
+      `<text x="${wo.x + wo.w}" y="${wo.y + 1.1}" text-anchor="middle" font-size="3" fill="#b3261e" font-weight="bold">${escapeXml(wo.revision)}</text>`,
+    );
+  }
+
   // Plankopf unten rechts (SIA-angelehnt)
   const kw = 120;
   const kh = 26;
   const kx = paper.width - 10 - kw;
   const ky = paper.height - 10 - kh;
+
+  // Revisionsverzeichnis (A7): Tabelle über dem Plankopf, neueste zuoberst —
+  // nur wenn Revisionen erfasst sind (Goldens bleiben unverändert)
+  if ((sheet.revisionen ?? []).length > 0) {
+    const rows = [...sheet.revisionen!].reverse();
+    const rh = 4.5;
+    const th = rows.length * rh + 5;
+    const ty = ky - 2 - th;
+    parts.push(
+      `<g font-size="2.8" data-teil="revisionen">`,
+      `<rect x="${kx}" y="${ty}" width="${kw}" height="${th}" fill="white" stroke="black" stroke-width="0.25"/>`,
+      `<text x="${kx + 3}" y="${ty + 4}" font-weight="bold">Revisionen</text>`,
+    );
+    rows.forEach((r, i) => {
+      const yy = ty + 5 + (i + 1) * rh - 1.2;
+      parts.push(
+        `<text x="${kx + 3}" y="${yy}" font-weight="bold">${escapeXml(r.index)}</text>`,
+        `<text x="${kx + 10}" y="${yy}" fill="#444">${escapeXml(r.datum)}</text>`,
+        `<text x="${kx + 28}" y="${yy}">${escapeXml(r.text)}</text>`,
+      );
+    });
+    parts.push('</g>');
+  }
   const scaleText = [...scales].sort((a, b) => a - b).map((s) => `1:${s}`).join(' · ') || '—';
   parts.push(
     `<g font-size="3">`,

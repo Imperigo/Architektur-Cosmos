@@ -309,6 +309,25 @@ export interface SheetImage {
   title?: string;
 }
 
+/** Revisions-Eintrag eines Blatts (RE-ARCHICAD A7): Index A, B, C … */
+export interface SheetRevision {
+  index: string;
+  text: string;
+  /** Datum als Text (de-CH), z.B. «04.07.2026». */
+  datum: string;
+}
+
+/** Änderungswolke (A7): markiert den geänderten Bereich in Papier-mm,
+ * gebunden an einen Revisions-Index. */
+export interface SheetWolke {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  revision: string;
+}
+
 /** Planblatt (KosmoPublish) — Layout aus platzierten Ansichten. */
 export interface Sheet extends Base {
   kind: 'sheet';
@@ -320,6 +339,10 @@ export interface Sheet extends Base {
   placements: SheetPlacement[];
   texte?: SheetText[];
   bilder?: SheetImage[];
+  /** Plan-Revisionen (A7): Einträge fürs Revisionsverzeichnis im Plankopf. */
+  revisionen?: SheetRevision[];
+  /** Änderungswolken (A7), je an einen Revisions-Index gebunden. */
+  wolken?: SheetWolke[];
 }
 
 /**

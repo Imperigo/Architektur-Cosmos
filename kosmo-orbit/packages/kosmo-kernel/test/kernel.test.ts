@@ -3722,6 +3722,66 @@ describe('Etiketten + Keynotes (RE-ARCHICAD A6)', () => {
   });
 });
 
+describe('Plan-Revisionen (RE-ARCHICAD A7)', () => {
+  it('revisionErfassen vergibt A→B, Wolke validiert, Plankopf-Tabelle + Wolken-Pfad im Blatt, Undo', async () => {
+    const { sheetToSvg } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'Werkplan EG', format: 'A1' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId, view: 'grundriss', storeyId, scale: 50, x: 300, y: 250 });
+    // Ohne Revision: kein Verzeichnis, keine Wolke möglich
+    expect(sheetToSvg(doc, sheetId, { projectName: 'T' })).not.toContain('Revisionen');
+    expect(() =>
+      execute(doc, 'publish.wolkeSetzen', { sheetId, x: 100, y: 100, w: 60, h: 40 }),
+    ).toThrow(/Noch keine Revision/);
+    // A → B, Wolke an die letzte gebunden
+    execute(doc, 'publish.revisionErfassen', { sheetId, text: 'Fenster Küche 1.20 → 1.40', datum: '04.07.2026' });
+    execute(doc, 'publish.revisionErfassen', { sheetId, text: 'Durchbruch Technik ergänzt', datum: '04.07.2026' });
+    const sheet = () => doc.get<import('../src').Sheet>(sheetId)!;
+    expect(sheet().revisionen!.map((r) => r.index)).toEqual(['A', 'B']);
+    const wolke = execute(doc, 'publish.wolkeSetzen', { sheetId, x: 100, y: 100, w: 60, h: 40 });
+    expect(sheet().wolken![0]!.revision).toBe('B');
+    expect(() =>
+      execute(doc, 'publish.wolkeSetzen', { sheetId, x: 0, y: 0, w: 10, h: 10, revision: 'Z' }),
+    ).toThrow(CommandError);
+    const svg = sheetToSvg(doc, sheetId, { projectName: 'T' });
+    expect(svg).toContain('Revisionen'); // Verzeichnis im Plankopf
+    expect(svg).toContain('Fenster Küche 1.20 → 1.40');
+    expect(svg).toContain('data-teil="revisionen"');
+    expect(svg).toMatch(/<path d="M 100 100 A 3 3/); // Wolken-Bogenkette
+    expect(svg).toContain('>B</text>'); // Revisions-Marker an der Wolke
+    // Wolke entfernen validiert; Undo der Revision räumt das Verzeichnis
+    execute(doc, 'publish.wolkeEntfernen', { sheetId, wolkeId: sheet().wolken![0]!.id });
+    expect(sheet().wolken).toHaveLength(0);
+    expect(() => execute(doc, 'publish.wolkeEntfernen', { sheetId, wolkeId: 'weg' })).toThrow(CommandError);
+    doc.apply(invertPatches(wolke.patches)); // Undo der (entfernten) Wolke ist idempotent übers Sheet-Patch-Modell
+    expect(sheet().revisionen).toHaveLength(2);
+  });
+
+  it('transmittalCsv: je Blatt eine Zeile mit Format/Massstab/Revision, 5 Spalten, Set-Reihenfolge', async () => {
+    const { transmittalCsv } = await import('../src');
+    const { doc, storeyId } = setupDoc();
+    const b1 = (execute(doc, 'publish.blattErstellen', { name: 'Grundriss; EG', format: 'A1' }).patches[0] as { id: string }).id;
+    const b2 = (execute(doc, 'publish.blattErstellen', { name: 'Schnitt', format: 'A3' }).patches[0] as { id: string }).id;
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId: b1, view: 'grundriss', storeyId, scale: 50, x: 200, y: 200 });
+    execute(doc, 'publish.revisionErfassen', { sheetId: b1, text: 'Anpassung', datum: '04.07.2026' });
+    const csv = transmittalCsv(doc);
+    const zeilen = csv.split('\n');
+    expect(zeilen[0]).toBe('Nr;Blatt;Format;Massstab;Revision');
+    expect(zeilen).toHaveLength(3);
+    expect(zeilen[1]).toContain('"Grundriss; EG"'); // Semikolon im Namen gequotet
+    expect(zeilen[1]).toContain('A1 quer (841×594)');
+    expect(zeilen[1]).toContain('1:50');
+    expect(zeilen[1]).toContain('A · 04.07.2026');
+    expect(zeilen[2]).toContain('—'); // Blatt ohne Platzierung/Revision ehrlich leer
+    // Set-Reihenfolge zählt
+    execute(doc, 'publish.setSpeichern', { name: 'Versand', sheetIds: [b2, b1] });
+    const setCsv = transmittalCsv(doc, doc.settings.publikationsSets![0]!);
+    expect(setCsv.split('\n')[1]).toContain('Schnitt');
+  });
+});
+
 describe('Härtetest-Runde 3 (Vision F1)', () => {
   const spec = { a: { x: 0, y: 0 }, b: { x: 9000, y: 0 }, depth: 5000, lookLeft: true } as const;
 

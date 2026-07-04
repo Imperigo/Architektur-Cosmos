@@ -155,7 +155,7 @@ Status je Zeile: **●** KosmoOrbit hat es · **◐** teilweise (ein Satz, was f
 
 | Feature | ArchiCAD | KosmoOrbit-Ist | Status |
 |---|---|---|---|
-| Revisions-Management | Änderungen (Change-Tool) mit ID, Revisionen je Layout, Revisionsverlauf im Plankopf, Transmittal-Sets [H-Revision] | ○ — es gibt Undo-Journal und Varianten-Archiv, aber keine **Änderungswolken/Revisionsindizes auf dem Plan** | ○ — ab Bauprojekt-Planläufen unverzichtbar → Lücke A7 |
+| Revisions-Management | Änderungen (Change-Tool) mit ID, Revisionen je Layout, Revisionsverlauf im Plankopf, Transmittal-Sets [H-Revision] | **Plan-Revisionen gebaut (A7, ROADMAP 118)**: `publish.revisionErfassen` (Index A→B→…), Änderungswolken (`publish.wolkeSetzen`, Bogenkette + Index-Marker), Revisionsverzeichnis über dem Plankopf, `transmittalCsv` als Versand-Begleitliste (auch je Publikations-Set) | ● |
 | Design Options (AC27) | Options-Sets IM Modell: Varianten parallel führen, je View eine Kombination zeigen [AT, AV] | Varianten-**Archiv**: eingefrorene Snapshots mit Kennzahlen + Mini-Plan im Projekt-Tresor, Vergleichsraster in der Zentrale, «Als Projekt öffnen» (`app/state/variant-archive.ts`, ROADMAP 92); Parallel-Axis-Vergleich (`derive/variantenmatrix.ts`, ROADMAP 53) | ◐ — Vergleich/Archiv stark (Parallel-Axis hat ArchiCAD nicht); **Optionen im lebenden Modell** (Wettbewerbs-Variante A/B im selben Grundriss) fehlen |
 | Änderungs-Nachvollzug | Teamwork-Änderungsliste, Element-Historie [K] | invertierbare Patches (Undo-Gruppen), Lernjournal, Yjs-Historie | ◐ — technisch alles da, aber keine Nutzer-Ansicht «wer hat was wann geändert» |
 
@@ -198,6 +198,13 @@ Alltagsgewinne dazwischen; (4) **A6 → A7** zusammen als «Werkplan-Beschriftun
 Kapitel», sobald der erste echte Planlauf ansteht; A5 wenn der erste Brandschutz-
 Nachweis kommt. Bewusst NICHT bauen: GDL-Kompatibilität, Ebenen-System,
 Translator-Konfiguration, MEP, Morph/Schale vor der FreeMesh-Stufe (Q9).
+
+**Stand 04.07.2026: alle 8 Container-Lücken sind gebaut** — A1 Verschneidungs-
+prioritäten (ROADMAP 113, Grundriss; Schnitt-Faces offen), A2 Umbau-Filter je
+Blatt (111), A3 Stütze/Unterzug (112), A4 Publikations-Sets (114), A5
+Themenpläne (116), A6 Etiketten/Keynotes (117), A7 Plan-Revisionen (118),
+A8 Trace + Katalog-Transfer (115). Die verbleibenden ◐/○ in Abschnitt 2 sind
+bewusste Architektur-Entscheide oder V2-/HomeStation-Stufen.
 
 ---
 
