@@ -274,7 +274,8 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
           {plan &&
             plan.regions.map((r, i) => {
               const cls = r.classes.join(' ');
-              const isCore = r.classes.includes('tragend');
+              // A3: Stützen sind immer geschnitten → Poché wie tragend
+              const isCore = r.classes.includes('tragend') || r.classes.includes('stuetze');
               const isDaemmung = r.classes.includes('daemmung');
               const isProjection = r.classes.includes('projection');
               // Umbau-Farbcode (SIA 400): Neubau rot, Abbruch gelb, Bestand normal
@@ -389,13 +390,15 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                             ? '#8a7500'
                             : 'var(--k-ink)'
                   }
-                  strokeWidth={luecke ? 120 : fluegel ? 12 : l.classes.includes('fenster') ? 10 : l.classes.includes('baugrenze') ? 12 : 14}
+                  strokeWidth={luecke ? 120 : fluegel ? 12 : l.classes.includes('fenster') || l.classes.includes('unterzug') ? 10 : l.classes.includes('baugrenze') ? 12 : 14}
                   strokeDasharray={
                     l.classes.includes('baugrenze')
                       ? '300 90 60 90'
                       : l.classes.includes('ueber-schnitt')
                         ? '150 60 30 60'
-                        : undefined
+                        : l.classes.includes('unterzug')
+                          ? '120 70'
+                          : undefined
                   }
                 />
               );

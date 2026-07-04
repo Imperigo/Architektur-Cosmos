@@ -1,14 +1,17 @@
-import type {
-  Assembly,
-  Aussparung,
-  MassBody,
-  Opening,
-  Roof,
-  Slab,
-  Stair,
-  Storey,
-  Wall,
-  Zone,
+import {
+  columnOutline,
+  type Assembly,
+  type Aussparung,
+  type Beam,
+  type Column,
+  type MassBody,
+  type Opening,
+  type Roof,
+  type Slab,
+  type Stair,
+  type Storey,
+  type Wall,
+  type Zone,
 } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { assemblyThickness } from '../geometry/wall';
@@ -150,6 +153,40 @@ export function deriveMengen(doc: KosmoDoc): Mengenauszug {
       bezeichnung: 'Treppen',
       anzahl: stairs.length,
       laenge: stairs.reduce((a, s) => a + Math.hypot(s.b.x - s.a.x, s.b.y - s.a.y), 0) / M,
+    });
+  }
+
+  // Stützen (A3) — je Material eine Position, Volumen = Profilfläche × Geschosshöhe
+  const columns = doc.byKind<Column>('column');
+  for (const material of [...new Set(columns.map((c) => c.material))]) {
+    const group = columns.filter((c) => c.material === material);
+    positionen.push({
+      kind: `column:${material}`,
+      ifcKlasse: 'IfcColumn',
+      bezeichnung: `Stützen ${material}`,
+      anzahl: group.length,
+      volumen: group.reduce((a, c) => {
+        const s = doc.get<Storey>(c.storeyId);
+        return a + (areaOf(columnOutline(c)) * ((s?.height ?? 3000) / M));
+      }, 0),
+    });
+  }
+
+  // Unterzüge (A3) — Achslänge + Volumen
+  const beams = doc.byKind<Beam>('beam');
+  for (const material of [...new Set(beams.map((b) => b.material))]) {
+    const group = beams.filter((b) => b.material === material);
+    const laenge = group.reduce((a, b) => a + Math.hypot(b.b.x - b.a.x, b.b.y - b.a.y), 0);
+    positionen.push({
+      kind: `beam:${material}`,
+      ifcKlasse: 'IfcBeam',
+      bezeichnung: `Unterzüge ${material}`,
+      anzahl: group.length,
+      laenge: laenge / M,
+      volumen: group.reduce(
+        (a, b) => a + (Math.hypot(b.b.x - b.a.x, b.b.y - b.a.y) * b.breite * b.hoehe) / M3,
+        0,
+      ),
     });
   }
 

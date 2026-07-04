@@ -1,5 +1,5 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Assembly, Furniture, MassBody, Slab, Storey, Wall, Zone } from '../model/entities';
+import { columnOutline, type Assembly, type Beam, type Column, type Furniture, type MassBody, type Slab, type Storey, type Wall, type Zone } from '../model/entities';
 import { moebelGeometrie, moebelTyp } from '../derive/moebel';
 import { dist } from '../model/units';
 import { axisDirection, assemblyThickness, openingRects, wallFrame } from '../geometry/wall';
@@ -224,6 +224,50 @@ export function exportIfc(doc: KosmoDoc, projectName?: string): string {
     );
     storey.elements.push(slabId);
     renovationPset(slabId, slab.meta?.renovation);
+  }
+
+  // Stützen + Unterzüge (A3): echte IFC-Klassen für den Skelettbau
+  for (const c of doc.byKind<Column>('column')) {
+    const storey = storeyIfc.get(c.storeyId);
+    const storeyEnt = doc.get<Storey>(c.storeyId);
+    if (!storey || !storeyEnt) continue;
+    const place = w.add('IFCLOCALPLACEMENT', `${storey.placement},${worldPlace3d}`);
+    const solid = extrudedSolid(profileOf(columnOutline(c)), 0, storeyEnt.height);
+    const colId = w.add(
+      'IFCCOLUMN',
+      `'${newGuid()}',$,${str(c.meta?.name ?? 'Stütze')},$,$,${place},${bodyShape(solid)},$,.COLUMN.`,
+    );
+    storey.elements.push(colId);
+    renovationPset(colId, c.meta?.renovation);
+    w.add('IFCRELASSOCIATESMATERIAL', `'${newGuid()}',$,$,$,${list([colId])},${materialOf(c.material)}`);
+  }
+  for (const bm of doc.byKind<Beam>('beam')) {
+    const storey = storeyIfc.get(bm.storeyId);
+    const storeyEnt = doc.get<Storey>(bm.storeyId);
+    if (!storey || !storeyEnt) continue;
+    const len = dist(bm.a, bm.b);
+    if (len < 1) continue;
+    const d = { x: (bm.b.x - bm.a.x) / len, y: (bm.b.y - bm.a.y) / len };
+    const n = { x: -d.y, y: d.x };
+    const h = bm.breite / 2;
+    const place = w.add('IFCLOCALPLACEMENT', `${storey.placement},${worldPlace3d}`);
+    const solid = extrudedSolid(
+      profileOf([
+        { x: bm.a.x - n.x * h, y: bm.a.y - n.y * h },
+        { x: bm.b.x - n.x * h, y: bm.b.y - n.y * h },
+        { x: bm.b.x + n.x * h, y: bm.b.y + n.y * h },
+        { x: bm.a.x + n.x * h, y: bm.a.y + n.y * h },
+      ]),
+      storeyEnt.height - bm.hoehe,
+      bm.hoehe,
+    );
+    const beamId = w.add(
+      'IFCBEAM',
+      `'${newGuid()}',$,${str(bm.meta?.name ?? 'Unterzug')},$,$,${place},${bodyShape(solid)},$,.BEAM.`,
+    );
+    storey.elements.push(beamId);
+    renovationPset(beamId, bm.meta?.renovation);
+    w.add('IFCRELASSOCIATESMATERIAL', `'${newGuid()}',$,$,$,${list([beamId])},${materialOf(bm.material)}`);
   }
 
   // Zonen als IfcSpace

@@ -1606,3 +1606,31 @@ test('Umbau-Filter je Blatt (RE-ARCHICAD A2): Abbruchplan blendet Neubau aus', a
   );
   expect(umbau).toBe('abbruch');
 });
+
+test('Stütze + Unterzug (RE-ARCHICAD A3): Raster-Knopf setzt Stützen auf Kreuzungen', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  // Werkzeugkasten kennt die Stütze
+  await expect(page.locator('[data-testid="tool-stuetze"]')).toBeVisible();
+  // Achsen ins Modell, dann Stützen auf alle Kreuzungen
+  await page.click('button:has-text("Raster")');
+  await page.click('[data-testid="raster-achsen"]', { strict: false });
+  await page.click('[data-testid="raster-stuetzen"]');
+  const stand = await page.evaluate(() => {
+    const st = window.__kosmo.state();
+    return {
+      stuetzen: st.doc.byKind('column').length,
+      unterzug: window.__kosmo.run('design.unterzugZeichnen', {
+        storeyId: st.activeStoreyId, a: { x: 0, y: 0 }, b: { x: 5000, y: 0 }, breite: 300, hoehe: 500,
+      }).patches.length,
+    };
+  });
+  expect(stand.stuetzen).toBeGreaterThanOrEqual(4);
+  expect(stand.unterzug).toBe(1);
+  // Plan zeigt Stützen-Poché und gestrichelte Unterzug-Flanken
+  await expect(page.locator('path.stuetze').first()).toBeVisible();
+  await expect(page.locator('line.unterzug')).toHaveCount(4);
+});

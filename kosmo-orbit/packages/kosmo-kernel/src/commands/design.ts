@@ -492,6 +492,137 @@ export const setTerrain = registerCommand({
   },
 });
 
+export const setColumn = registerCommand({
+  id: 'design.stuetzeSetzen',
+  title: 'Stütze setzen',
+  description:
+    'Setzt eine geschosshohe Stütze (Skelettbau). profil rechteck (b×t, rotationGrad) oder rund (b = Durchmesser). Material aus dem Katalog (beton, holz-bsh, stahl …).',
+  params: z.object({
+    storeyId: z.string(),
+    at: PtSchema,
+    profil: z.enum(['rechteck', 'rund']).default('rechteck'),
+    b: z.number().int().min(80).max(2000).default(300).describe('Breite bzw. Durchmesser in mm'),
+    t: z.number().int().min(80).max(2000).optional().describe('Tiefe in mm (rechteck; fehlt = quadratisch)'),
+    material: z.string().default('beton'),
+    rotationGrad: z.number().optional(),
+  }),
+  summarize: (p) =>
+    `Stütze ${p.profil === 'rund' ? `Ø ${p.b}` : `${p.b}×${p.t ?? p.b}`} mm (${p.material})`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const column: import('../model/entities').Column = {
+      id: newId('stuetze'),
+      kind: 'column',
+      storeyId: p.storeyId,
+      at: p.at as Pt,
+      profil: p.profil,
+      b: p.b,
+      material: p.material,
+      ...(p.t !== undefined ? { t: p.t } : {}),
+      ...(p.rotationGrad !== undefined ? { rotationGrad: p.rotationGrad } : {}),
+    };
+    return [added(column)];
+  },
+});
+
+export const drawBeam = registerCommand({
+  id: 'design.unterzugZeichnen',
+  title: 'Unterzug zeichnen',
+  description:
+    'Zeichnet einen Unterzug von a nach b — Oberkante = OK Geschoss, der Balken hängt unter der Decke (breite × hoehe in mm).',
+  params: z.object({
+    storeyId: z.string(),
+    a: PtSchema,
+    b: PtSchema,
+    breite: z.number().int().min(80).max(2000).default(300),
+    hoehe: z.number().int().min(100).max(3000).default(400),
+    material: z.string().default('beton'),
+  }),
+  summarize: (p) => {
+    const len = Math.hypot(p.b.x - p.a.x, p.b.y - p.a.y);
+    return `Unterzug ${p.breite}×${p.hoehe} mm, ${formatLength(Math.round(len))}`;
+  },
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    if (Math.hypot(p.b.x - p.a.x, p.b.y - p.a.y) < 100) {
+      throw new CommandError('Unterzug braucht eine Achse von mindestens 10 cm');
+    }
+    const beam: import('../model/entities').Beam = {
+      id: newId('unterzug'),
+      kind: 'beam',
+      storeyId: p.storeyId,
+      a: p.a as Pt,
+      b: p.b as Pt,
+      breite: p.breite,
+      hoehe: p.hoehe,
+      material: p.material,
+    };
+    return [added(beam)];
+  },
+});
+
+export const columnsFromGrid = registerCommand({
+  id: 'design.stuetzenAusRaster',
+  title: 'Stützen auf Rasterkreuzungen',
+  description:
+    'Setzt auf jede Kreuzung der Haupt-Tragachsen (Stützenraster) eine Stütze — besetzte Kreuzungen bleiben, es entstehen keine Doppel.',
+  params: z.object({
+    storeyId: z.string(),
+    profil: z.enum(['rechteck', 'rund']).default('rechteck'),
+    b: z.number().int().min(80).max(2000).default(300),
+    material: z.string().default('beton'),
+  }),
+  summarize: (p) => `Stützen ${p.profil === 'rund' ? `Ø ${p.b}` : `${p.b}×${p.b}`} auf alle Rasterkreuzungen`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const achsen = doc
+      .byKind<GridAxis>('grid')
+      .filter((g) => g.storeyId === p.storeyId && (g.typ ?? 'haupt') === 'haupt');
+    if (achsen.length < 2) {
+      throw new CommandError('Kein Stützenraster im Geschoss — zuerst design.rasterSetzen');
+    }
+    // Segment-Schnittpunkte aller Achsenpaare, dedupliziert auf 1 mm
+    const kreuzungen = new Map<string, Pt>();
+    for (let i = 0; i < achsen.length; i++) {
+      for (let j = i + 1; j < achsen.length; j++) {
+        const g1 = achsen[i]!;
+        const g2 = achsen[j]!;
+        const d1 = { x: g1.b.x - g1.a.x, y: g1.b.y - g1.a.y };
+        const d2 = { x: g2.b.x - g2.a.x, y: g2.b.y - g2.a.y };
+        const det = d1.x * d2.y - d1.y * d2.x;
+        if (Math.abs(det) < 1e-9) continue; // parallel
+        const t = ((g2.a.x - g1.a.x) * d2.y - (g2.a.y - g1.a.y) * d2.x) / det;
+        const u = ((g2.a.x - g1.a.x) * d1.y - (g2.a.y - g1.a.y) * d1.x) / det;
+        if (t < -1e-6 || t > 1 + 1e-6 || u < -1e-6 || u > 1 + 1e-6) continue;
+        const s = { x: Math.round(g1.a.x + d1.x * t), y: Math.round(g1.a.y + d1.y * t) };
+        kreuzungen.set(`${s.x}:${s.y}`, s);
+      }
+    }
+    if (kreuzungen.size === 0) throw new CommandError('Die Achsen kreuzen sich nirgends');
+    const bestehende = doc
+      .byKind<import('../model/entities').Column>('column')
+      .filter((c) => c.storeyId === p.storeyId);
+    const patches: AnyPatch[] = [];
+    for (const at of kreuzungen.values()) {
+      if (bestehende.some((c) => Math.hypot(c.at.x - at.x, c.at.y - at.y) < 50)) continue;
+      const column: import('../model/entities').Column = {
+        id: newId('stuetze'),
+        kind: 'column',
+        storeyId: p.storeyId,
+        at,
+        profil: p.profil,
+        b: p.b,
+        material: p.material,
+      };
+      patches.push(added(column));
+    }
+    if (patches.length === 0) {
+      throw new CommandError('Alle Kreuzungen sind schon besetzt — nichts zu tun');
+    }
+    return patches;
+  },
+});
+
 export const setAussparung = registerCommand({
   id: 'design.aussparungSetzen',
   title: 'Aussparung/Durchbruch setzen',

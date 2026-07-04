@@ -42,7 +42,7 @@ import { registerActions } from '../../shell/palette';
  * Undo/Redo. Splitscreen mit 2D-Plänen folgt in M2.
  */
 
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'schnitt' | 'skizze';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze';
 
 const SNAP = 250; // mm Rasterfang, wenn keine Achse in Reichweite
 
@@ -224,6 +224,13 @@ export function DesignWorkspace() {
             setPoints(e.shiftKey ? [] : [p]);
           }
         }
+      } else if (tool === 'stuetze') {
+        // A3: ein Klick = eine Stütze (Default 30er Beton, Eigenschaften via Kosmo)
+        try {
+          runCommand('design.stuetzeSetzen', { storeyId: activeStoreyId, at: p });
+        } catch (err) {
+          alert(err instanceof Error ? err.message : String(err));
+        }
       } else if (tool === 'schnitt') {
         if (points.length === 0) {
           setPoints([p]);
@@ -397,6 +404,7 @@ export function DesignWorkspace() {
             ['zone', 'Zone'],
             ['dach', 'Dach'],
             ['treppe', 'Treppe'],
+            ['stuetze', 'Stütze'],
             ['schnitt', 'Schnitt'],
             ['skizze', '✎ Skizze'],
           ] as const

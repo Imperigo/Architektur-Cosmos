@@ -43,7 +43,8 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
   const NEU_STIFT = '#b3261e';
   const ABBRUCH_STIFT = '#8a7500';
   for (const r of plan.regions) {
-    const isCore = r.classes.includes('tragend');
+    // A3: Stützen sind immer geschnitten → schwerer Stift + Poché wie tragend
+    const isCore = r.classes.includes('tragend') || r.classes.includes('stuetze');
     const isDaemmung = r.classes.includes('daemmung');
     const isProjection = r.classes.includes('projection');
     const neu = r.classes.includes('renovation-neu');
@@ -77,15 +78,19 @@ export function planInnerSvg(doc: KosmoDoc, storeyId: string, scale: number): In
     const abbruch = l.classes.includes('renovation-abbruch');
     // Zonentür-Lücke (A4): radiert die Zonenkontur weiss aus, der Flügel folgt fein
     const luecke = l.classes.includes('zonentuer-luecke');
-    const sw = luecke ? 120 : (l.classes.includes('fenster') || l.classes.includes('bruchlinie') ? 0.18 : 0.25) * scale;
+    const unterzug = l.classes.includes('unterzug');
+    const sw = luecke ? 120 : (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug ? 0.18 : 0.25) * scale;
     const stroke = luecke ? 'white' : neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : 'black';
     // Baugrenze strichpunktiert auch im Druck (wie am Bildschirm); B3: über dem
-    // Schnitt liegende Treppenteile strichpunktiert
+    // Schnitt liegende Treppenteile strichpunktiert; A3: Unterzüge verdeckt
+    // gestrichelt (über der Schnittebene)
     const dash = baugrenze
       ? ` stroke-dasharray="${3 * scale} ${0.9 * scale} ${0.6 * scale} ${0.9 * scale}"`
       : l.classes.includes('ueber-schnitt')
         ? ` stroke-dasharray="${1.5 * scale} ${0.6 * scale} ${0.3 * scale} ${0.6 * scale}"`
-        : '';
+        : unterzug
+          ? ` stroke-dasharray="${1.2 * scale} ${0.7 * scale}"`
+          : '';
     parts.push(
       `<line x1="${l.a.x}" y1="${-l.a.y}" x2="${l.b.x}" y2="${-l.b.y}" stroke="${stroke}" stroke-width="${sw}"${dash}/>`,
     );

@@ -127,6 +127,22 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
           <input type="number" min={2} max={40} value={querAnzahl} onChange={(e) => setQuerAnzahl(Math.max(2, Number(e.target.value) || 4))} style={inputStyle} />
         </label>
         <span style={{ color: 'var(--k-ink-faint)', fontSize: 10.5 }}>ersetzt das Raster des Geschosses · Zeichnen fängt auf Achsen</span>
+        <KButton
+          size="sm"
+          tone="quiet"
+          data-testid="raster-stuetzen"
+          title="Setzt auf jede Kreuzung der Hauptachsen eine Stütze (30er Beton) — keine Doppel"
+          onClick={() => {
+            if (!activeStoreyId) return;
+            try {
+              runCommand('design.stuetzenAusRaster', { storeyId: activeStoreyId });
+            } catch (err) {
+              alert(err instanceof Error ? err.message : String(err));
+            }
+          }}
+        >
+          Stützen auf Kreuzungen
+        </KButton>
       </div>
 
       <div style={{ display: 'grid', gap: 6 }} data-testid="raster-varianten">

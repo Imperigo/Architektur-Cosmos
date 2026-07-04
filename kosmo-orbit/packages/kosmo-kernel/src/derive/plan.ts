@@ -1,4 +1,4 @@
-import type { Aussparung, Boundary, Assembly, GridAxis, Opening, Stair, Storey, Wall, Zone, ZonenTuer } from '../model/entities';
+import { columnOutline, type Aussparung, type Beam, type Boundary, type Assembly, type Column, type GridAxis, type Opening, type Stair, type Storey, type Wall, type Zone, type ZonenTuer } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, union, type Poly } from '../geometry/clip';
 import {
@@ -308,6 +308,35 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       lines.push({ a: ende, b: { x: Math.round(spitze.x - d.x * 350 + nn.x * 160), y: Math.round(spitze.y - d.y * 350 + nn.y * 160) }, classes: ['symbol', 'lauflinie'] });
       lines.push({ a: ende, b: { x: Math.round(spitze.x - d.x * 350 - nn.x * 160), y: Math.round(spitze.y - d.y * 350 - nn.y * 160) }, classes: ['symbol', 'lauflinie'] });
     }
+  }
+
+  // Stützen (A3): geschosshoch → immer geschnitten, Material-Poché wie Wände
+  for (const c of doc.byKind<Column>('column')) {
+    if (c.storeyId !== storeyId) continue;
+    regions.push({
+      rings: [columnOutline(c)],
+      classes: ['cut', 'stuetze', `material-${c.material}`, ...renClasses(c.meta?.renovation)],
+    });
+  }
+
+  // Unterzüge (A3): über der Schnittebene → verdeckt gestrichelt (zwei
+  // Flanken + Stirnkanten), Klasse «unterzug»
+  for (const bm of doc.byKind<Beam>('beam')) {
+    if (bm.storeyId !== storeyId) continue;
+    const len = dist(bm.a, bm.b);
+    if (len < 1) continue;
+    const d = { x: (bm.b.x - bm.a.x) / len, y: (bm.b.y - bm.a.y) / len };
+    const n = { x: -d.y, y: d.x };
+    const h = bm.breite / 2;
+    const P = (p: Pt, off: number): Pt => ({
+      x: Math.round(p.x + n.x * off),
+      y: Math.round(p.y + n.y * off),
+    });
+    const cls = ['symbol', 'unterzug', ...renClasses(bm.meta?.renovation)];
+    lines.push({ a: P(bm.a, h), b: P(bm.b, h), classes: cls });
+    lines.push({ a: P(bm.a, -h), b: P(bm.b, -h), classes: cls });
+    lines.push({ a: P(bm.a, h), b: P(bm.a, -h), classes: cls });
+    lines.push({ a: P(bm.b, h), b: P(bm.b, -h), classes: cls });
   }
 
   // Volumen & Zonen als Projektion (feine Kontur)

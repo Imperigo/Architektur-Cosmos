@@ -1,4 +1,4 @@
-import type { Assembly, MassBody, Roof, Slab, Stair, Storey, Wall } from '../model/entities';
+import { columnOutline, type Assembly, type Beam, type Column, type MassBody, type Roof, type Slab, type Stair, type Storey, type Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
@@ -27,6 +27,8 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
   else if (e.kind === 'mass') artifact = deriveMass(doc, e);
   else if (e.kind === 'roof') artifact = deriveRoof(doc, e);
   else if (e.kind === 'stair') artifact = deriveStair(doc, e);
+  else if (e.kind === 'column') artifact = deriveColumn(doc, e);
+  else if (e.kind === 'beam') artifact = deriveBeam(doc, e);
 
   if (artifact) cache.set(id, { revision: doc.revision, artifact });
   return artifact;
@@ -35,7 +37,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
 export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
   const out: GeometryArtifact[] = [];
   for (const e of doc.entities.values()) {
-    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair') {
+    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair' || e.kind === 'column' || e.kind === 'beam') {
       const a = deriveEntity(doc, e.id);
       if (a) out.push(a);
     }
@@ -343,6 +345,41 @@ function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, le
   };
   shear(artifact.positions);
   shear(artifact.edges);
+}
+
+/** Stütze: Profil-Extrusion vom Geschossboden bis OK Geschoss (A3). */
+function deriveColumn(doc: KosmoDoc, column: Column): GeometryArtifact | null {
+  const storey = doc.get<Storey>(column.storeyId);
+  if (!storey || storey.kind !== 'storey') return null;
+  return extrudePolygon(
+    column.id,
+    column.material,
+    columnOutline(column), // CCW = positive Fläche
+    [],
+    storey.elevation,
+    storey.elevation + storey.height,
+  );
+}
+
+/** Unterzug: Balken unter der Decke — Oberkante = OK Geschoss (A3). */
+function deriveBeam(doc: KosmoDoc, beam: Beam): GeometryArtifact | null {
+  const storey = doc.get<Storey>(beam.storeyId);
+  if (!storey || storey.kind !== 'storey') return null;
+  const len = dist(beam.a, beam.b);
+  if (len < 1) return null;
+  const d = { x: (beam.b.x - beam.a.x) / len, y: (beam.b.y - beam.a.y) / len };
+  const n = { x: -d.y, y: d.x };
+  const h = beam.breite / 2;
+  const P = (p: Pt, off: number): Pt => ({ x: p.x + n.x * off, y: p.y + n.y * off });
+  const zTop = storey.elevation + storey.height;
+  return extrudePolygon(
+    beam.id,
+    beam.material,
+    [P(beam.a, -h), P(beam.b, -h), P(beam.b, h), P(beam.a, h)],
+    [],
+    zTop - beam.hoehe,
+    zTop,
+  );
 }
 
 function deriveSlab(doc: KosmoDoc, slab: Slab): GeometryArtifact | null {

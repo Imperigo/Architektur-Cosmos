@@ -45,6 +45,57 @@ export interface GridAxis extends Base {
   typ?: 'haupt' | 'wohn';
 }
 
+/**
+ * Stütze (RE-ARCHICAD A3): Rechteck- oder Rundprofil, geschosshoch —
+ * Skelettbau wird modellierbar. b = Breite bzw. Durchmesser, t = Tiefe
+ * (nur rechteck, fehlt = quadratisch), rotationGrad dreht ums Zentrum.
+ */
+export interface Column extends Base {
+  kind: 'column';
+  storeyId: string;
+  at: Pt;
+  profil: 'rechteck' | 'rund';
+  b: Mm;
+  t?: Mm;
+  material: string;
+  rotationGrad?: number;
+}
+
+/** Unterzug (RE-ARCHICAD A3): Balken unter der Decke, OK = OK Geschoss. */
+export interface Beam extends Base {
+  kind: 'beam';
+  storeyId: string;
+  a: Pt;
+  b: Pt;
+  breite: Mm;
+  hoehe: Mm;
+  material: string;
+}
+
+/** Grundriss-Polygon einer Stütze (rund als 16-Eck), CCW = positive Fläche. */
+export function columnOutline(c: Column): Pt[] {
+  if (c.profil === 'rund') {
+    const r = c.b / 2;
+    const pts: Pt[] = [];
+    for (let i = 0; i < 16; i++) {
+      const w = (i / 16) * 2 * Math.PI;
+      pts.push({ x: Math.round(c.at.x + r * Math.cos(w)), y: Math.round(c.at.y + r * Math.sin(w)) });
+    }
+    return pts;
+  }
+  const hb = c.b / 2;
+  const ht = (c.t ?? c.b) / 2;
+  const w = ((c.rotationGrad ?? 0) * Math.PI) / 180;
+  const cos = Math.cos(w);
+  const sin = Math.sin(w);
+  return [
+    { x: -hb, y: -ht }, { x: hb, y: -ht }, { x: hb, y: ht }, { x: -hb, y: ht },
+  ].map((p) => ({
+    x: Math.round(c.at.x + p.x * cos - p.y * sin),
+    y: Math.round(c.at.y + p.x * sin + p.y * cos),
+  }));
+}
+
 export type LayerFunction = 'tragend' | 'daemmung' | 'bekleidung' | 'dichtung' | 'hohlraum';
 
 export interface AssemblyLayer {
@@ -323,7 +374,7 @@ export interface Aussparung extends Base {
 }
 
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

@@ -3379,6 +3379,77 @@ describe('Review-Fixes (Adversarial-Runde)', () => {
   });
 });
 
+describe('Stütze + Unterzug (RE-ARCHICAD A3)', () => {
+  it('stuetzeSetzen/unterzugZeichnen: 3D geschosshoch bzw. unter der Decke, Plan-Poché + gestrichelte Flanken', async () => {
+    const { doc, storeyId } = setupDoc();
+    const c = execute(doc, 'design.stuetzeSetzen', { storeyId, at: { x: 2000, y: 2000 }, b: 300 });
+    const colId = (c.patches[0] as { id: string }).id;
+    execute(doc, 'design.stuetzeSetzen', { storeyId, at: { x: 6000, y: 2000 }, profil: 'rund', b: 400, material: 'holz-bsh' });
+    execute(doc, 'design.unterzugZeichnen', { storeyId, a: { x: 2000, y: 2000 }, b: { x: 6000, y: 2000 }, breite: 300, hoehe: 500 });
+    // 3D: Stütze geschosshoch (0..3000), Unterzug hängt unter der Decke (2500..3000)
+    const col3d = deriveEntity(doc, colId)!;
+    let minZ = Infinity, maxZ = -Infinity;
+    for (let i = 2; i < col3d.positions.length; i += 3) {
+      minZ = Math.min(minZ, col3d.positions[i]!);
+      maxZ = Math.max(maxZ, col3d.positions[i]!);
+    }
+    expect(minZ).toBe(0);
+    expect(maxZ).toBe(3000);
+    const beam = doc.byKind<import('../src').Beam>('beam')[0]!;
+    const beam3d = deriveEntity(doc, beam.id)!;
+    let bMinZ = Infinity;
+    for (let i = 2; i < beam3d.positions.length; i += 3) bMinZ = Math.min(bMinZ, beam3d.positions[i]!);
+    expect(bMinZ).toBe(2500);
+    expect(beam3d.materialKey).toBe('beton');
+    // Plan: 2 Stützen-Regionen mit Material-Poché, 4 gestrichelte Unterzug-Linien
+    const plan = derivePlan(doc, storeyId);
+    const stuetzen = plan.regions.filter((r) => r.classes.includes('stuetze'));
+    expect(stuetzen).toHaveLength(2);
+    expect(stuetzen[0]!.classes).toContain('material-beton');
+    expect(stuetzen[1]!.classes).toContain('material-holz-bsh');
+    expect(stuetzen[1]!.rings[0]).toHaveLength(16); // rund = 16-Eck
+    expect(plan.lines.filter((l) => l.classes.includes('unterzug'))).toHaveLength(4);
+    const { planInnerSvg } = await import('../src');
+    const svg = planInnerSvg(doc, storeyId, 50).inner;
+    expect(svg).toContain('#c9c9c9'); // Stützen-Poché wie tragend (schwerer Stift)
+    expect(svg).toContain('stroke-dasharray="60 35"'); // Unterzug gestrichelt (1.2/0.7 × 50)
+    // Validierung: zu kurzer Unterzug ehrlich abgelehnt
+    expect(() =>
+      execute(doc, 'design.unterzugZeichnen', { storeyId, a: { x: 0, y: 0 }, b: { x: 50, y: 0 } }),
+    ).toThrow(CommandError);
+  });
+
+  it('Mengen + IFC: IfcColumn/IfcBeam mit Volumen und Material', async () => {
+    const { doc, storeyId } = setupDoc(); // Geschoss 3000
+    execute(doc, 'design.stuetzeSetzen', { storeyId, at: { x: 0, y: 0 }, b: 300 }); // 0.3×0.3×3 = 0.27 m³
+    execute(doc, 'design.stuetzeSetzen', { storeyId, at: { x: 5000, y: 0 }, b: 300 });
+    execute(doc, 'design.unterzugZeichnen', { storeyId, a: { x: 0, y: 0 }, b: { x: 5000, y: 0 }, breite: 300, hoehe: 500 });
+    const mengen = deriveMengen(doc);
+    const st = mengen.positionen.find((p) => p.kind === 'column:beton')!;
+    expect(st.anzahl).toBe(2);
+    expect(st.ifcKlasse).toBe('IfcColumn');
+    expect(st.volumen).toBeCloseTo(2 * 0.27, 5);
+    const uz = mengen.positionen.find((p) => p.kind === 'beam:beton')!;
+    expect(uz.laenge).toBeCloseTo(5, 5);
+    expect(uz.volumen).toBeCloseTo(5 * 0.3 * 0.5, 5);
+    const { exportIfc } = await import('../src');
+    const ifc = exportIfc(doc, 'Skelett');
+    expect((ifc.match(/=\s*IFCCOLUMN\(/g) ?? []).length).toBe(2);
+    expect((ifc.match(/=\s*IFCBEAM\(/g) ?? []).length).toBe(1);
+  });
+
+  it('stuetzenAusRaster: Stützen auf alle Hauptachsen-Kreuzungen, keine Doppel, ehrliche Fehler', () => {
+    const { doc, storeyId } = setupDoc();
+    expect(() => execute(doc, 'design.stuetzenAusRaster', { storeyId })).toThrow(/Kein Stützenraster/);
+    execute(doc, 'design.rasterSetzen', { storeyId, achsmass: 5000, anzahl: 3, querAnzahl: 2, wohnraster: 2500 });
+    execute(doc, 'design.stuetzenAusRaster', { storeyId });
+    expect(doc.byKind('column')).toHaveLength(6); // 3 × 2 Kreuzungen
+    // Nochmal: alles besetzt → ehrlicher CommandError, keine Doppel
+    expect(() => execute(doc, 'design.stuetzenAusRaster', { storeyId })).toThrow(/besetzt/);
+    expect(doc.byKind('column')).toHaveLength(6);
+  });
+});
+
 describe('Härtetest-Runde 3 (Vision F1)', () => {
   const spec = { a: { x: 0, y: 0 }, b: { x: 9000, y: 0 }, depth: 5000, lookLeft: true } as const;
 
