@@ -1704,6 +1704,23 @@ describe('Masslinienordnung (Vision B1)', () => {
   });
 });
 
+describe('Rollen-Vorstufe (Vision D2)', () => {
+  it('rolleSetzen ist eine undo-fähige Projekteinstellung; weglassen = neutral', () => {
+    const { doc } = setupDoc();
+    expect(doc.settings.rolle).toBeNull();
+    const res = execute(doc, 'design.rolleSetzen', { rolle: 'ausfuehrung' });
+    expect(doc.settings.rolle).toBe('ausfuehrung');
+    doc.apply(invertPatches(res.patches));
+    expect(doc.settings.rolle).toBeNull();
+    execute(doc, 'design.rolleSetzen', { rolle: 'entwurf' });
+    execute(doc, 'design.rolleSetzen', {});
+    expect(doc.settings.rolle).toBeNull();
+    // Roundtrip: Rolle überlebt toJSON → fromJSON
+    execute(doc, 'design.rolleSetzen', { rolle: 'admin' });
+    expect(KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON()))).settings.rolle).toBe('admin');
+  });
+});
+
 describe('Generator L-Formen (Vision C4)', () => {
   it('zerlegeRektilinear: L → Hauptteil + Flügel (grösster Hauptteil gewinnt), Rechteck/U ehrlich', async () => {
     const { zerlegeRektilinear } = await import('../src');

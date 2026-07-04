@@ -46,6 +46,18 @@ function dossierPromptBlock(): string {
   return `\n\nWettbewerbsdossier dieses Projekts (bindend):\n${sortiert.slice(0, 20).map(zeile).join('\n')}`;
 }
 
+/** D2: Rollen-Vorstufe — die gewählte Arbeitsrolle färbt Kosmos Blick. */
+function rollePromptBlock(): string {
+  const rolle = useProject.getState().doc.settings.rolle;
+  if (!rolle) return '';
+  const fokus = {
+    entwurf: 'Volumen, Grundrisse, Kennzahlen, Varianten und Referenzen zuerst.',
+    ausfuehrung: 'Werkpläne, Details, Mengen/Ausmass und Umbau-Status zuerst.',
+    admin: 'Projektstand, Diagnose, Datenpflege und Exporte zuerst.',
+  }[rolle];
+  return `\n\nArbeitsrolle des Menschen: ${rolle} — ${fokus}`;
+}
+
 interface PendingCard extends Proposal {
   state: 'offen' | 'angewendet' | 'abgelehnt';
 }
@@ -244,7 +256,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           },
         },
       ],
-      journal.toPromptBlock() + dossierPromptBlock(),
+      journal.toPromptBlock() + dossierPromptBlock() + rollePromptBlock(),
     );
     return s;
     // Session bewusst pro Provider-Konfiguration neu

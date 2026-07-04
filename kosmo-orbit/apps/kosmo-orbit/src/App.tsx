@@ -67,6 +67,13 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
   { id: 'train', screen: 'train', name: 'KosmoTrain', desc: 'Lernstand · Kuration · Training' },
 ];
 
+/** D2: Kachel-Reihenfolge je Rolle — die tägliche Arbeit rückt nach vorn. */
+const ROLLEN_REIHENFOLGE: Record<'entwurf' | 'ausfuehrung' | 'admin', ModuleId[]> = {
+  entwurf: ['design', 'sketch', 'vis', 'draw', 'data', 'publish', 'prepare', 'speak', 'doc', 'train'],
+  ausfuehrung: ['publish', 'draw', 'design', 'doc', 'data', 'prepare', 'sketch', 'vis', 'speak', 'train'],
+  admin: ['doc', 'train', 'data', 'prepare', 'publish', 'design', 'draw', 'sketch', 'vis', 'speak'],
+};
+
 /** Wählbare Farbakzente (Gestaltungskonzept «Werkplan»): Standard = Tusche. */
 const AKZENTE: { key: string; name: string; farbe: string | null }[] = [
   { key: 'tusche', name: 'Tusche', farbe: null },
@@ -92,6 +99,15 @@ export function App() {
   const [syncToken, setSyncToken] = useState(localStorage.getItem('kosmo.sync.token') ?? '');
   const [wartend, setWartend] = useState(0);
   const [raeume, setRaeume] = useState<{ name: string; verbindungen: number }[] | null>(null);
+  // D2: Rolle aus den Projekteinstellungen (Revision hält die Zentrale frisch)
+  const revision = useProject((s) => s.revision);
+  void revision;
+  const rolle = useProject.getState().doc.settings.rolle;
+  const sortierteModule = (() => {
+    if (!rolle) return modules;
+    const prio = ROLLEN_REIHENFOLGE[rolle];
+    return [...modules].sort((a, b) => prio.indexOf(a.id) - prio.indexOf(b.id));
+  })();
 
   useEffect(() => {
     onSyncStatus((s, p, w) => {
@@ -403,8 +419,28 @@ export function App() {
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
               <div>
-                <div className="k-titel" style={{ fontSize: 34 }}>
-                  {tagesgruss()}
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
+                  <div className="k-titel" style={{ fontSize: 34 }}>
+                    {tagesgruss()}
+                  </div>
+                  <div style={{ flex: 1 }} />
+                  {/* D2: Rollen-Vorstufe — ordnet die Kacheln, färbt Kosmos Blick */}
+                  <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    Rolle
+                    <select
+                      value={rolle ?? ''}
+                      data-testid="rolle-select"
+                      onChange={(e) =>
+                        useProject.getState().runCommand('design.rolleSetzen', e.target.value ? { rolle: e.target.value } : {})
+                      }
+                      style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+                    >
+                      <option value="">neutral</option>
+                      <option value="entwurf">Entwurf</option>
+                      <option value="ausfuehrung">Ausführung</option>
+                      <option value="admin">Administration</option>
+                    </select>
+                  </label>
                 </div>
                 <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
                   Womit beginnen wir? KosmoDesign ist bereit zum Zeichnen.
@@ -474,7 +510,7 @@ export function App() {
                   gap: 14,
                 }}
               >
-                {modules.map((m) => (
+                {sortierteModule.map((m) => (
                   <Panel
                     key={m.id}
                     onClick={() => {

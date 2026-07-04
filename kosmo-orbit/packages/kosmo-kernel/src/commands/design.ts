@@ -440,6 +440,24 @@ export const setProperty = registerCommand({
   },
 });
 
+export const setRole = registerCommand({
+  id: 'design.rolleSetzen',
+  title: 'Rolle setzen',
+  description:
+    'Setzt die Arbeitsrolle des Menschen im Büro (Vision «rollengerecht bereitstellen», Vorstufe): entwurf (Volumen, Grundrisse, Kennzahlen), ausfuehrung (Werkpläne, Mengen, Umbau) oder admin (Projektstand, Diagnose, Daten). Ordnet die Zentrale und färbt Kosmos Blick — KEINE Rechteverwaltung. Weglassen = neutral.',
+  params: z.object({
+    rolle: z.enum(['entwurf', 'ausfuehrung', 'admin']).optional(),
+  }),
+  summarize: (p) => (p.rolle ? `Rolle → ${p.rolle}` : 'Rolle neutral'),
+  run: (doc, p) => [
+    {
+      settings: true as const,
+      before: { rolle: doc.settings.rolle },
+      after: { rolle: p.rolle ?? null },
+    },
+  ],
+});
+
 export const setTerrain = registerCommand({
   id: 'design.terrainSetzen',
   title: 'Terrain setzen',

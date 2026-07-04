@@ -1553,3 +1553,15 @@ test('Stationen-Kacheln (Vision D1): Doc/Draw/Sketch/Speak führen an den richti
   await page.click('[data-testid="module-speak"]');
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 });
+
+test('Rollen-Vorstufe (Vision D2): Rolle «Ausführung» rückt KosmoPublish nach vorn', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  const ersteKachel = page.locator('[data-testid^="module-"]').first();
+  await expect(ersteKachel).toHaveAttribute('data-testid', 'module-design');
+  await page.selectOption('[data-testid="rolle-select"]', 'ausfuehrung');
+  await expect(ersteKachel).toHaveAttribute('data-testid', 'module-publish');
+  await page.selectOption('[data-testid="rolle-select"]', '');
+  await expect(ersteKachel).toHaveAttribute('data-testid', 'module-design');
+});

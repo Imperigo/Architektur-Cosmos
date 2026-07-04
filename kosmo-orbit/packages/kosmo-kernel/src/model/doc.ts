@@ -80,6 +80,9 @@ export interface DocSettings {
   fassadenModule: FassadenModul[];
   /** Parzellenfläche in m² (für AZ → zulässige aGF). */
   parzellenFlaeche: number | null;
+  /** Rollen-Vorstufe (Vision D2): ordnet die Zentrale und färbt Kosmos Blick.
+   * Bewusst KEINE Rechteverwaltung — Ansichts-Filter, mehr nicht. */
+  rolle: 'entwurf' | 'ausfuehrung' | 'admin' | null;
 }
 
 /** Fassadenmodul (Modul-Editor, vorform-Kern): Elemente in Modul-Koordinaten. */
@@ -182,6 +185,7 @@ export const defaultSettings: DocSettings = {
   vorlagen: [],
   standort: null,
   fassadenModule: [],
+  rolle: null,
 };
 
 export interface Patch {
