@@ -80,7 +80,7 @@ Lizenz-Politik: MIT/Apache/BSD/ISC/MPL-2.0/BSL-1.0 = bündelbar · LGPL = Grenzf
 ## Offen (Reports ausstehend)
 
 - Tauri-2-iOS-Reife, iPadOS-PWA-Fähigkeiten (OPFS, Pencil-Pressure, Mikrofon), SQLite (tauri-plugin-sql vs. wa-sqlite/OPFS), MSAL/OneDrive in Tauri — Nachtrag folgt.
-- ArchiCAD/Vorform/Finch-Feature-Checklisten + Bonsai-Drawing-Patterns — Nachtrag folgt.
+- ~~ArchiCAD/Vorform/Finch-Feature-Checklisten~~ ✅ erledigt: `RE-FINCH.md`, `RE-VORFORM.md` (Blöcke F1–F10/V1–V8 gebaut, ROADMAP 49–74) und `RE-ARCHICAD.md` (Feature-Abgleich AC27/28, Lücken A1–A8). Offen bleibt nur: Bonsai-Drawing-Patterns — Nachtrag folgt.
 
 ## Nachtrag 2026-07-02 (Owner-Hinweis)
 
