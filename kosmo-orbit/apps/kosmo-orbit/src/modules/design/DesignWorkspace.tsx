@@ -31,6 +31,7 @@ import { RasterPanel } from './RasterPanel';
 import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg, PHASEN_MASSSTAB } from './export-plan';
+import { consumeDeepLink } from '../../state/deep-link';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
 import { registerActions } from '../../shell/palette';
@@ -88,6 +89,14 @@ export function DesignWorkspace() {
   const [wohnungstyp, setWohnungstyp] = useState<string | null>(null);
   const [zielGf, setZielGf] = useState<number | null>(null);
   const [maxHoeheM, setMaxHoeheM] = useState(25);
+
+  // D1: Deep-Links der Zentrale — KosmoDraw/KosmoSketch öffnen die Werkstatt
+  // mit dem passenden Panel bzw. Werkzeug (einmaliger Merker)
+  useEffect(() => {
+    const ziel = consumeDeepLink();
+    if (ziel === 'draw') setDrawOffen(true);
+    if (ziel === 'sketch') setTool('skizze');
+  }, []);
 
   // C2: Materialkarten im Viewport (prozedurale PBR-Kacheln)
   const [texturen, setTexturen] = useState(localStorage.getItem('kosmo.texturen') !== '0');

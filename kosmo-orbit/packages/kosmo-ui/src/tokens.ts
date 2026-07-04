@@ -64,6 +64,9 @@ export const moduleHue = {
   prepare: '#7D5E78', // Pflaume — die Grundlagen
   kosmo: '#B06A8C', // Kosmo selbst: warmes Karmin-Rosé, die Stimme im Raum
   train: '#8C6D3F', // Ocker — das Lernen, Schicht um Schicht
+  doc: '#5D7489', // Schiefer — Diagnose und Berichte
+  sketch: '#96604A', // Sienna — der Stift auf Papier
+  speak: '#4F7A7A', // Petrol — die Stimme im Raum
 } as const;
 
 export type ModuleId = keyof typeof moduleHue;

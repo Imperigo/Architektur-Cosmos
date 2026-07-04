@@ -120,7 +120,7 @@ test('KosmoDoc-Modul: Diagnose läuft, Hilfe-Karten stehen', async ({ page }) =>
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
-  await page.click('[data-testid="module-draw"]');
+  await page.click('[data-testid="module-doc"]'); // D1: eigene Kachel (vorher fälschlich id «draw»)
   await page.click('[data-testid="doc-tab-hilfe"]');
   await expect(page.getByText('Zeichnen in KosmoDesign')).toBeVisible();
   await page.click('[data-testid="doc-tab-diagnose"]');
@@ -1531,4 +1531,25 @@ test('NPK-Ausmass (Vision C1): Draw-Panel zeigt Positionen mit Herleitung + CSV-
   await expect(page.locator('[data-testid="ausmass-tabelle"]')).toContainText('brutto');
   await expect(page.locator('[data-testid="ausmass-tabelle"]')).toContainText('Leibungen');
   await expect(page.locator('[data-testid="ausmass-csv"]')).toBeVisible();
+});
+
+test('Stationen-Kacheln (Vision D1): Doc/Draw/Sketch/Speak führen an den richtigen Ort', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  // KosmoDoc: die eigene Kachel (Bugfix: hiess vorher id «draw»)
+  await page.click('[data-testid="module-doc"]');
+  await expect(page.locator('[data-testid="doc-tab-diagnose"]')).toBeVisible();
+  await page.click('header button[aria-label="Zur Zentrale"]');
+  // KosmoDraw: Deep-Link öffnet Design MIT Draw-Panel
+  await page.click('[data-testid="module-draw"]');
+  await expect(page.locator('[data-testid="draw-panel"]')).toBeVisible();
+  await page.click('header button[aria-label="Zur Zentrale"]');
+  // KosmoSketch: Deep-Link aktiviert das Skizze-Werkzeug
+  await page.click('[data-testid="module-sketch"]');
+  await expect(page.locator('[data-testid="tool-skizze"]')).toBeVisible();
+  await page.click('header button[aria-label="Zur Zentrale"]');
+  // KosmoSpeak: öffnet das Kosmo-Panel (Push-to-Talk lebt dort)
+  await page.click('[data-testid="module-speak"]');
+  await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 });

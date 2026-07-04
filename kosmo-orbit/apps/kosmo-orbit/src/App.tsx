@@ -39,6 +39,7 @@ import { useProject } from './state/project-store';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
+import { setDeepLink } from './state/deep-link';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train';
 
@@ -51,13 +52,18 @@ function tagesgruss(): string {
   return 'Guten Abend.';
 }
 
-const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string }[] = [
+// D1: Jede Station der Vision hat ihre Kachel — Draw/Sketch sind Deep-Links
+// in KosmoDesign (kein Code-Duplikat), Speak öffnet das Kosmo-Panel.
+const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string; deepLink?: 'draw' | 'sketch' | 'speak' }[] = [
   { id: 'design', screen: 'design', name: 'KosmoDesign', desc: 'Entwerfen · Modellieren · Pläne' },
+  { id: 'draw', screen: 'design', name: 'KosmoDraw', desc: 'Modellbaum · Mengen · Ausmass', deepLink: 'draw' },
+  { id: 'sketch', screen: 'design', name: 'KosmoSketch', desc: 'Freihand → Wände (Pencil)', deepLink: 'sketch' },
   { id: 'data', screen: 'data', name: 'KosmoData', desc: 'Referenzen · Assets · Wissen' },
   { id: 'vis', screen: 'vis', name: 'KosmoVis', desc: 'Renderings · Varianten' },
   { id: 'publish', screen: 'publish', name: 'KosmoPublish', desc: 'Plansätze · Layouts' },
   { id: 'prepare', screen: 'prepare', name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
-  { id: 'draw', screen: 'doc', name: 'KosmoDoc', desc: 'Diagnose · Hilfe · Berichte' },
+  { id: 'speak', screen: null, name: 'KosmoSpeak', desc: 'Sprechen mit Kosmo · braucht Bridge', deepLink: 'speak' },
+  { id: 'doc', screen: 'doc', name: 'KosmoDoc', desc: 'Diagnose · Hilfe · Berichte' },
   { id: 'train', screen: 'train', name: 'KosmoTrain', desc: 'Lernstand · Kuration · Training' },
 ];
 
@@ -471,18 +477,25 @@ export function App() {
                 {modules.map((m) => (
                   <Panel
                     key={m.id}
-                    onClick={() => m.screen && setScreen(m.screen)}
+                    onClick={() => {
+                      if (m.deepLink === 'speak') {
+                        setKosmoOpen(true);
+                        return;
+                      }
+                      if (m.deepLink === 'draw' || m.deepLink === 'sketch') setDeepLink(m.deepLink);
+                      if (m.screen) setScreen(m.screen);
+                    }}
                     data-testid={`module-${m.id}`}
                     style={{
                       display: 'flex',
                       gap: 12,
                       alignItems: 'center',
-                      cursor: m.screen ? 'pointer' : 'default',
-                      opacity: m.screen ? 1 : 0.55,
+                      cursor: m.screen || m.deepLink ? 'pointer' : 'default',
+                      opacity: m.screen || m.deepLink ? 1 : 0.55,
                       transition: 'border-color var(--k-motion-fast), box-shadow var(--k-motion-fast)',
                     }}
                     onMouseEnter={(e) => {
-                      if (m.screen) (e.currentTarget as HTMLElement).style.borderColor = 'var(--k-accent)';
+                      if (m.screen || m.deepLink) (e.currentTarget as HTMLElement).style.borderColor = 'var(--k-accent)';
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLElement).style.borderColor = 'var(--k-line)';
