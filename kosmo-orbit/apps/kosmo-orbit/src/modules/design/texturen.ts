@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { materialkatalog } from '../data/materialkatalog';
+import { materialkatalog } from '@kosmo/data';
 
 /**
  * Prozedurale Materialkarten (V2-C2) — PBR-Texturen ohne Assets: je

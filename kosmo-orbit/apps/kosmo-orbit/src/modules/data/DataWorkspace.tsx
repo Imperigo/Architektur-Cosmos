@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, Panel, moduleHue } from '@kosmo/ui';
-import { bauteilkatalog, gesamtdicke, uWert, type KatalogEintrag } from './bauteilkatalog';
+import { bauteilkatalog, gesamtdicke, ladeReferenzenLive, materialkatalog, uWert, type KatalogEintrag } from '@kosmo/data';
 import { useProject } from '../../state/project-store';
 import { setGlbContext } from '../design/Viewport3D';
-import { materialkatalog } from './materialkatalog';
 
 /**
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
@@ -97,14 +96,17 @@ export function DataWorkspace() {
     });
   }, [entries, query, sector, nurSammlung, sammlung]);
 
+  // E2: Live-Sync read-only — Live → Cache (letzter guter Stand) → Seed
+  const [quelle, setQuelle] = useState<'seed' | 'live' | 'cache'>('seed');
   const syncLive = async () => {
-    try {
-      const res = await fetch('https://architekturkosmos.ch/api/entries.json', { mode: 'cors' });
-      if (!res.ok) throw new Error(String(res.status));
-      setSyncState('synced');
-    } catch {
+    const ergebnis = await ladeReferenzenLive();
+    if (!ergebnis) {
       setSyncState('fehler');
+      return;
     }
+    setEntries(ergebnis.eintraege as RefEntry[]);
+    setQuelle(ergebnis.quelle);
+    setSyncState('synced');
   };
 
   return (
@@ -130,10 +132,16 @@ export function DataWorkspace() {
                   : `${materialkatalog.length} Materialien`}
             </span>
             <div style={{ flex: 1 }} />
-            <Badge hue={syncState === 'synced' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
-              {syncState === 'seed' ? 'Offline-Seed' : syncState === 'synced' ? 'Live' : 'Site nicht erreichbar'}
+            <Badge hue={syncState === 'synced' && quelle === 'live' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
+              {syncState === 'seed'
+                ? 'Offline-Seed'
+                : syncState === 'fehler'
+                  ? 'Site nicht erreichbar — Seed bleibt'
+                  : quelle === 'live'
+                    ? `Live · ${entries.length}`
+                    : `Cache (letzter Stand) · ${entries.length}`}
             </Badge>
-            <KButton size="sm" tone="ghost" onClick={() => void syncLive()}>
+            <KButton size="sm" tone="ghost" onClick={() => void syncLive()} data-testid="data-sync">
               Sync
             </KButton>
           </div>

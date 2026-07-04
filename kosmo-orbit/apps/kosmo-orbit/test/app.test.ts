@@ -57,6 +57,24 @@ describe('Varianten-Archiv (Vision A5)', () => {
   });
 });
 
+describe('KosmoData Live-Sync (Vision E2)', () => {
+  it('Live füllt den Cache; fällt das Netz, kommt der letzte gute Stand', async () => {
+    const { ladeReferenzenLive } = await import('@kosmo/data');
+    const daten = [{ id: 'x', title: 'Testhaus' }];
+    const okFetch = (async () => ({ ok: true, json: async () => daten })) as unknown as typeof fetch;
+    const failFetch = (async () => {
+      throw new Error('offline');
+    }) as unknown as typeof fetch;
+    const live = await ladeReferenzenLive(okFetch);
+    expect(live?.quelle).toBe('live');
+    expect(live?.eintraege[0]?.title).toBe('Testhaus');
+    const cache = await ladeReferenzenLive(failFetch);
+    expect(cache?.quelle).toBe('cache');
+    expect(cache?.eintraege).toHaveLength(1);
+    expect(cache?.stand).toBe(live?.stand);
+  });
+});
+
 describe('TKB-Demo v2 (Abendbatch C1)', () => {
   it('lädt Bibliothek + Wohnhof-Kette: Wände, Fenster, Treppenhaus, keine Fluchtweg-Fehler', async () => {
     const { loadTkbDemo } = await import('../src/state/demo-tkb');

@@ -5,7 +5,7 @@ import * as SunCalc from 'suncalc';
 import { deriveAll, type GeometryArtifact, type Pt } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
-import { pbrPalette } from '../data/materialkatalog';
+import { pbrPalette } from '@kosmo/data';
 
 // Kontext-Layer (IFC-Bestand): sessionweit, nicht synchronisiert
 let contextMeshes: ContextMesh[] = [];

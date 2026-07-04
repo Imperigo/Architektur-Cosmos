@@ -1,0 +1,18 @@
+{
+  "name": "@kosmo/sync",
+  "version": "1.0.0-v1",
+  "private": true,
+  "type": "module",
+  "description": "KosmoSync — Yjs-CRDT-Client (Entity-genaues LWW, Offline-Warteschlange), host-agnostisch",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc --noEmit" },
+  "dependencies": {
+    "@hocuspocus/provider": "^4.3.0",
+    "@kosmo/kernel": "*",
+    "y-indexeddb": "^9.0.12",
+    "yjs": "^13.6.31"
+  },
+  "devDependencies": { "typescript": "^5.9.0" }
+}
