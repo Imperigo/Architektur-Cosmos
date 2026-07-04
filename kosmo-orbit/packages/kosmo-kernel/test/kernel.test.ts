@@ -1704,6 +1704,37 @@ describe('Masslinienordnung (Vision B1)', () => {
   });
 });
 
+describe('Schallschutz-Hinweis (Vision C2)', () => {
+  it('TW-Wände: Massengesetz gegen SIA 181 — KS 200 grün, Backstein 150 warnt, Leichtwand unbewertbar', async () => {
+    const { doc, storeyId } = setupDoc();
+    const tw = (name: string, material: string, dicke: number) =>
+      (execute(doc, 'design.aufbauErstellen', {
+        name, target: 'wall',
+        layers: [{ material, thickness: dicke, function: 'tragend' }],
+      }).patches[0] as { id: string }).id;
+    const wand = (assemblyId: string, y: number) =>
+      execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y }, b: { x: 6000, y } });
+    wand(tw('TW KS 20', 'kalksandstein', 200), 0); // 360 kg/m² → Rw ≈ 57 dB
+    wand(tw('TW Backstein 15', 'backstein', 150), 3000); // 165 kg/m² → Rw ≈ 46 dB
+    wand(tw('TW Leicht', 'gips', 50), 6000); // 45 kg/m² → nicht anwendbar
+    wand(tw('AW Normal', 'beton', 200), 9000); // keine TW → kein Befund
+    const befunde = pruefeGrundriss(doc, storeyId).filter((b) => b.regel === 'Schallschutz');
+    expect(befunde).toHaveLength(3);
+    const ks = befunde.find((b) => b.text.includes('TW KS 20'))!;
+    expect(ks.schwere).toBe('hinweis');
+    expect(ks.text).toContain('Rw ≈ 57 dB ≥ 52 dB');
+    expect(ks.text).toContain('kein Nachweis');
+    const backstein = befunde.find((b) => b.text.includes('Backstein'))!;
+    expect(backstein.schwere).toBe('warnung');
+    expect(backstein.text).toContain('< 52 dB');
+    const leicht = befunde.find((b) => b.text.includes('TW Leicht'))!;
+    expect(leicht.schwere).toBe('warnung');
+    expect(leicht.text).toContain('Massengesetz nicht anwendbar');
+    const { flaechenmasse } = await import('../src');
+    expect(flaechenmasse(doc.byKind<Assembly>('assembly').find((a) => a.name === 'TW KS 20')!)).toBeCloseTo(360, 5);
+  });
+});
+
 describe('NPK-nahes Ausmass (Vision C1)', () => {
   it('Wände: Abzug nur > 0.5 m², Leibungen als eigene Position — Handrechnung', async () => {
     const { doc, storeyId, assemblyId } = setupDoc(); // AW 360 dick, Geschoss 3000

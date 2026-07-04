@@ -359,5 +359,61 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     }
   }
 
+  // ── Schallschutz-Hinweis (Vision C2): Wohnungstrennwände ──────────
+  // Rw-Abschätzung nach dem Massengesetz (DIN 4109-32-Kurve für massive
+  // einschalige Bauteile, gültig ab ~150 kg/m²) gegen die SIA-181-
+  // Mindestanforderung zwischen Nutzungseinheiten. Ausdrücklich ein
+  // HINWEIS, kein Nachweis — Flankenwege/Anschlüsse rechnet keiner hier.
+  for (const w of doc.byKind<Wall>('wall')) {
+    if (w.storeyId !== storeyId) continue;
+    const assembly = doc.get<Assembly>(w.assemblyId);
+    if (!assembly || assembly.kind !== 'assembly') continue;
+    if (!assembly.name.startsWith('TW')) continue; // Trennwand-Konvention (waendeAusZonen)
+    const m2Masse = flaechenmasse(assembly);
+    if (m2Masse < 150) {
+      befunde.push({
+        schwere: 'warnung',
+        regel: 'Schallschutz',
+        text: `TW «${assembly.name}»: nur ~${Math.round(m2Masse)} kg/m² — Massengesetz nicht anwendbar (< 150 kg/m²), Aufbau prüfen`,
+        entityId: w.id,
+      });
+      continue;
+    }
+    const rw = 30.9 * Math.log10(m2Masse) - 22.2;
+    const erfuellt = rw >= SIA181_TRENNWAND_DB;
+    befunde.push({
+      schwere: erfuellt ? 'hinweis' : 'warnung',
+      regel: 'Schallschutz',
+      text: `TW «${assembly.name}»: Rw ≈ ${Math.round(rw)} dB ${erfuellt ? '≥' : '<'} ${SIA181_TRENNWAND_DB} dB (SIA 181 Mindestanforderung, ~${Math.round(m2Masse)} kg/m²) — Hinweis, kein Nachweis`,
+      entityId: w.id,
+    });
+  }
+
   return befunde.sort((a, b) => rang[a.schwere] - rang[b.schwere]);
+}
+
+/** SIA 181: Mindestanforderung Luftschall zwischen Nutzungseinheiten (dB). */
+export const SIA181_TRENNWAND_DB = 52;
+
+/** Rohdichten kg/m³ (Richtwerte Hochbau) für die Flächenmasse des Aufbaus. */
+export const MATERIAL_DICHTE: Record<string, number> = {
+  beton: 2400,
+  ks: 1800,
+  kalksandstein: 1800,
+  backstein: 1100,
+  putz: 1800,
+  holz: 500,
+  'daemmung-mw': 100,
+  daemmung: 100,
+  gips: 900,
+};
+
+/** Flächenmasse eines Aufbaus in kg/m² (unbekannte Materialien zählen 0). */
+export function flaechenmasse(assembly: Assembly): number {
+  let masse = 0;
+  for (const layer of assembly.layers) {
+    const dichte = MATERIAL_DICHTE[layer.material] ?? 0;
+    masse += (layer.thickness / 1000) * dichte;
+  }
+  return masse;
 }
