@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Badge, Hairline, Karteikarte, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, Panel, moduleHue } from '@kosmo/ui';
 import { bauteilkatalog, gesamtdicke, uWert, type KatalogEintrag } from './bauteilkatalog';
 import { useProject } from '../../state/project-store';
 import { setGlbContext } from '../design/Viewport3D';
@@ -177,6 +177,13 @@ export function DataWorkspace() {
             ))}
           </div>
 
+          {/* D3: Leerzustand als Bauzeichnung (Gestaltungskonzept) */}
+          {filtered.length === 0 && (
+            <Messrahmen
+              height={220}
+              caption="Keine Referenz passt zur Suche — Begriff lockern oder Filter lösen"
+            />
+          )}
           <div
             style={{
               display: 'grid',
