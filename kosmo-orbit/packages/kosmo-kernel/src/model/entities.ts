@@ -416,8 +416,44 @@ export interface Aussparung extends Base {
   sill?: Mm;
 }
 
+/** Port-Typen im Render-Graphen (V1-P2): nur gleiche Typen verbinden sich. */
+export type VisPortTyp = 'szene' | 'bild' | 'prompt' | 'zahl' | 'material';
+
+/** Ein Node im Render-Graphen. Typ-Katalog: derive/visgraph.ts. */
+export interface VisNode {
+  id: string;
+  typ: string;
+  /** Canvas-Position (freie Einheiten, kein Weltmass). */
+  x: number;
+  y: number;
+  params: Record<string, string | number | boolean>;
+  collapsed?: boolean;
+}
+
+/** Gerichtete Kante: fromPort (Ausgang) → toPort (Eingang). */
+export interface VisEdge {
+  id: string;
+  from: string;
+  fromPort: string;
+  to: string;
+  toPort: string;
+}
+
+/**
+ * Render-Graph (V1-Finish P2) — der Blender-artige Node-Tree von KosmoVis.
+ * NUR die Graph-Beschreibung lebt im Modell (Undo, Yjs, .kosmo); Job-Status
+ * und Render-Bilder bleiben im Laufzeit-Store der App — nie Base64 durch
+ * den Sync. Zyklen werden beim Verbinden abgelehnt (vis.verbinden).
+ */
+export interface VisGraph extends Base {
+  kind: 'visgraph';
+  name: string;
+  nodes: VisNode[];
+  edges: VisEdge[];
+}
+
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

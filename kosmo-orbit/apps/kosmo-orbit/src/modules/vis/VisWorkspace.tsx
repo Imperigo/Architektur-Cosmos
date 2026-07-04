@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Messrahmen, Badge, Hairline, Karteikarte, KButton, Measure, Panel, moduleHue } from '@kosmo/ui';
-import { finalerRenderPrompt, renderPromptBausteine, exportGlb, type Sheet } from '@kosmo/kernel';
+import { Messrahmen, Badge, Hairline, Karteikarte, KButton, Measure, Panel, meldeFehler, moduleHue } from '@kosmo/ui';
+import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, type Sheet, type VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
+import { NodeCanvas } from './NodeCanvas';
 
 /**
  * KosmoVis — Render-Jobs an die HomeStation (Toolkit 2 der Vision).
@@ -54,7 +55,185 @@ function saveSerien(s: Serie[]): void {
   localStorage.setItem('kosmo.vis.serien', JSON.stringify(s.slice(-12)));
 }
 
+/**
+ * KosmoVis-Station: der Node-Tree ist die Hauptansicht (Vertiefungsarbeit),
+ * die bisherige lineare Ansicht bleibt als «Einfach»-Tab — kein Funktionsverlust.
+ */
 export function VisWorkspace() {
+  const [tab, setTab] = useState<'graph' | 'einfach'>('graph');
+  const revision = useProject((s) => s.revision);
+  void revision;
+  const runCommand = useProject((s) => s.runCommand);
+  const doc = useProject.getState().doc;
+  const graphen = doc.byKind<VisGraph>('visgraph');
+  const [aktiverGraph, setAktiverGraph] = useState<string>('');
+  const graphId = graphen.some((g) => g.id === aktiverGraph) ? aktiverGraph : (graphen[0]?.id ?? '');
+
+  const neuerGraph = () => {
+    try {
+      const res = runCommand('vis.graphErstellen', { name: `Graph ${graphen.length + 1}` });
+      setAktiverGraph((res.patches[0] as { id: string }).id);
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  /** «Drei Stimmungen» — die heutige Serie als fertiger Teilgraph, EIN Undo-Schritt. */
+  const dreiStimmungen = () => {
+    const { history } = useProject.getState();
+    try {
+      history.beginGroup();
+      try {
+        let gid = graphId;
+        if (!gid) {
+          const res = runCommand('vis.graphErstellen', { name: 'Drei Stimmungen' });
+          gid = (res.patches[0] as { id: string }).id;
+          setAktiverGraph(gid);
+        }
+        const setze = (typ: string, x: number, y: number, params?: Record<string, string | number | boolean>) => {
+          runCommand('vis.nodeSetzen', { graphId: gid, typ, x, y, ...(params ? { params } : {}) });
+          const g = doc.get<VisGraph>(gid)!;
+          return g.nodes[g.nodes.length - 1]!.id;
+        };
+        const verbinde = (from: string, fromPort: string, to: string, toPort: string) =>
+          runCommand('vis.verbinden', { graphId: gid, from, fromPort, to, toPort });
+        const modell = setze('modell', 40, 260);
+        const material = setze('material', 40, 420);
+        const vergleich = setze('vergleich', 1120, 300);
+        (['morgen', 'abend', 'weiss'] as const).forEach((preset, i) => {
+          const y = 40 + i * 230;
+          const stimmung = setze('stimmung', 320, y, { preset });
+          const komb = setze('kombinierer', 580, y);
+          const render = setze('render', 840, y);
+          verbinde(stimmung, 'prompt', komb, 'stimmung');
+          verbinde(material, 'material', komb, 'material');
+          verbinde(modell, 'szene', render, 'szene');
+          verbinde(komb, 'prompt', render, 'prompt');
+          verbinde(render, 'bild', vergleich, `bild${i + 1}`);
+        });
+      } finally {
+        history.endGroup();
+      }
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  const nodeHinzu = (typ: string) => {
+    if (!graphId) return;
+    try {
+      const anzahl = doc.get<VisGraph>(graphId)?.nodes.length ?? 0;
+      // Raster-Platzierung ohne Überlappung — schieben kann man immer noch
+      runCommand('vis.nodeSetzen', { graphId, typ, x: 100 + (anzahl % 4) * 250, y: 60 + Math.floor(anzahl / 4) * 280 });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  if (tab === 'einfach') {
+    return (
+      <div style={{ position: 'absolute', inset: 0 }}>
+        <VisTabs tab={tab} setTab={setTab} />
+        <div style={{ position: 'absolute', inset: 0, top: 44 }}>
+          <EinfachAnsicht />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      <VisTabs tab={tab} setTab={setTab}>
+        <select
+          value={graphId}
+          data-testid="graph-select"
+          onChange={(e) => setAktiverGraph(e.target.value)}
+          style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+        >
+          {graphen.length === 0 && <option value="">— kein Graph —</option>}
+          {graphen.map((g) => (
+            <option key={g.id} value={g.id}>{g.name}</option>
+          ))}
+        </select>
+        <KButton size="sm" tone="quiet" data-testid="graph-neu" onClick={neuerGraph}>
+          + Graph
+        </KButton>
+        <select
+          value=""
+          data-testid="node-hinzu"
+          disabled={!graphId}
+          onChange={(e) => e.target.value && nodeHinzu(e.target.value)}
+          style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+        >
+          <option value="">+ Node …</option>
+          {Object.values(VIS_NODE_KATALOG).map((t) => (
+            <option key={t.typ} value={t.typ}>{t.label}</option>
+          ))}
+        </select>
+        <KButton size="sm" tone="accent" data-testid="drei-stimmungen" onClick={dreiStimmungen}>
+          Drei Stimmungen
+        </KButton>
+      </VisTabs>
+      <div style={{ position: 'absolute', inset: 0, top: 44 }}>
+        {graphId ? (
+          <NodeCanvas key={graphId} graphId={graphId} />
+        ) : (
+          <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Messrahmen
+              height={200}
+              caption="Noch kein Render-Graph — «+ Graph» beginnt leer, «Drei Stimmungen» setzt den fertigen Teilgraph"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function VisTabs({
+  tab,
+  setTab,
+  children,
+}: {
+  tab: 'graph' | 'einfach';
+  setTab: (t: 'graph' | 'einfach') => void;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 44,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '0 14px',
+        borderBottom: '1px solid var(--k-line)',
+        background: 'var(--k-surface)',
+        zIndex: 4,
+      }}
+    >
+      <Badge hue={moduleHue.vis}>KosmoVis</Badge>
+      <KButton size="sm" tone={tab === 'graph' ? 'accent' : 'ghost'} data-testid="tab-graph" onClick={() => setTab('graph')}>
+        Node-Tree
+      </KButton>
+      <KButton size="sm" tone={tab === 'einfach' ? 'accent' : 'ghost'} data-testid="tab-einfach" onClick={() => setTab('einfach')}>
+        Einfach
+      </KButton>
+      <Hairline vertical />
+      {children}
+      <div style={{ flex: 1 }} />
+      <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+        Render nur auf «Ausführen» — der Graph ist Teil des Projekts (Undo, Sync)
+      </span>
+    </div>
+  );
+}
+
+function EinfachAnsicht() {
   const [bridgeUrl, setBridgeUrl] = useState(loadBridgeUrl);
   const [jobs, setJobs] = useState<JobRecord[]>([]);
   const [serien, setSerien] = useState<Serie[]>(loadSerien);

@@ -43,10 +43,13 @@ import {
   pruefeGrundriss,
   dimensionLabel,
   sectionInnerSvg,
+  evaluiereGraph,
+  topoReihenfolge,
   type Storey,
   type Wall,
   type Assembly,
   type Zone,
+  type VisGraph,
 } from '../src';
 
 function setupDoc() {
@@ -3965,5 +3968,143 @@ describe('Härtetest-Runde 3 (Vision F1)', () => {
       execute(doc, 'design.renovationSetzen', { ids: [wallId, 'gibt-es-nicht'], status: 'neu' }),
     ).toThrow(CommandError);
     expect((doc.get<Wall>(wallId)!.meta ?? {}).renovation).toBeUndefined();
+  });
+});
+
+// ── V1-Finish P2: Render-Graph (KosmoVis Node-Tree) ──────────────────
+
+describe('Render-Graph (vis.*)', () => {
+  const grundGraph = () => {
+    const doc = new KosmoDoc();
+    const g = execute(doc, 'vis.graphErstellen', { name: 'Test' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    const node = (typ: string, params?: Record<string, string | number | boolean>) => {
+      const r = execute(doc, 'vis.nodeSetzen', { graphId, typ, x: 0, y: 0, ...(params ? { params } : {}) });
+      const graph = doc.get<VisGraph>(graphId)!;
+      void r;
+      return graph.nodes[graph.nodes.length - 1]!.id;
+    };
+    return { doc, graphId, node };
+  };
+
+  it('Verbinden validiert: Typen, Ports, Selbstbezug, Zyklen — belegter Eingang wird ersetzt', () => {
+    const { doc, graphId, node } = grundGraph();
+    const prompt = node('prompt', { text: 'Sichtbeton' });
+    const stimmung = node('stimmung', { preset: 'abend' });
+    const komb = node('kombinierer');
+    const zahl = node('zahl', { wert: 0.6 });
+    const render = node('render');
+
+    // unbekannter Typ ehrlich abgelehnt
+    expect(() => execute(doc, 'vis.nodeSetzen', { graphId, typ: 'quatsch', x: 0, y: 0 })).toThrow(/Unbekannter Node-Typ/);
+    // falscher Port
+    expect(() =>
+      execute(doc, 'vis.verbinden', { graphId, from: prompt, fromPort: 'nix', to: komb, toPort: 'stil' }),
+    ).toThrow(/keinen Ausgang/);
+    // Typ-Mismatch: zahl → prompt-Eingang
+    expect(() =>
+      execute(doc, 'vis.verbinden', { graphId, from: zahl, fromPort: 'zahl', to: komb, toPort: 'stil' }),
+    ).toThrow(/Port-Typen passen nicht/);
+    // Selbstbezug
+    expect(() =>
+      execute(doc, 'vis.verbinden', { graphId, from: komb, fromPort: 'prompt', to: komb, toPort: 'stil' }),
+    ).toThrow(/sich selbst/);
+
+    execute(doc, 'vis.verbinden', { graphId, from: prompt, fromPort: 'prompt', to: komb, toPort: 'stil' });
+    execute(doc, 'vis.verbinden', { graphId, from: komb, fromPort: 'prompt', to: render, toPort: 'prompt' });
+    // belegten Eingang ersetzen: stimmung → stil verdrängt prompt → stil
+    execute(doc, 'vis.verbinden', { graphId, from: stimmung, fromPort: 'prompt', to: komb, toPort: 'stil' });
+    let graph = doc.get<VisGraph>(graphId)!;
+    const stilKanten = graph.edges.filter((e) => e.to === komb && e.toPort === 'stil');
+    expect(stilKanten).toHaveLength(1);
+    expect(stilKanten[0]!.from).toBe(stimmung);
+
+    // Zyklus ehrlich abgelehnt: render.bild → vergleich wäre ok, aber komb → komb-Vorfahre nicht.
+    // Baue prompt → komb.stimmung, dann versuche komb → prompt (unmöglich, prompt hat keinen Eingang)
+    // → nimm zwei Kombinierer für den echten Kreis:
+    const komb2 = node('kombinierer');
+    execute(doc, 'vis.verbinden', { graphId, from: komb, fromPort: 'prompt', to: komb2, toPort: 'stimmung' });
+    expect(() =>
+      execute(doc, 'vis.verbinden', { graphId, from: komb2, fromPort: 'prompt', to: komb, toPort: 'stimmung' }),
+    ).toThrow(/Zyklus/);
+
+    // Node löschen räumt seine Kanten mit
+    execute(doc, 'vis.nodeLoeschen', { graphId, nodeId: komb });
+    graph = doc.get<VisGraph>(graphId)!;
+    expect(graph.nodes.some((n) => n.id === komb)).toBe(false);
+    expect(graph.edges.some((e) => e.from === komb || e.to === komb)).toBe(false);
+  });
+
+  it('Evaluation: Prompt-Komposition wie V8, Zahlen fliessen, ehrliche Defaults, Roundtrip + Undo', () => {
+    const { doc: leer } = (() => ({ doc: new KosmoDoc() }))();
+    void leer;
+    // Modell mit Sichtbeton-Wand, damit Material-Bausteine sprechen
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const asm = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW Beton',
+      target: 'wall',
+      layers: [{ material: 'Sichtbeton', thickness: 250, function: 'tragend' }],
+    });
+    const assemblyId = (asm.patches[0] as { id: string }).id;
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 5000, y: 0 } });
+
+    const g = execute(doc, 'vis.graphErstellen', { name: 'Abendbild' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    const setze = (typ: string, params?: Record<string, string | number | boolean>) => {
+      execute(doc, 'vis.nodeSetzen', { graphId, typ, x: 0, y: 0, ...(params ? { params } : {}) });
+      const graph = doc.get<VisGraph>(graphId)!;
+      return graph.nodes[graph.nodes.length - 1]!.id;
+    };
+    const modell = setze('modell');
+    const stimmung = setze('stimmung', { preset: 'abend' });
+    const stil = setze('prompt', { text: 'Blick vom Quai' });
+    const material = setze('material');
+    const komb = setze('kombinierer');
+    const treue = setze('zahl', { wert: 0.55 });
+    const render = setze('render');
+    const verbinde = (from: string, fromPort: string, to: string, toPort: string) =>
+      execute(doc, 'vis.verbinden', { graphId, from, fromPort, to, toPort });
+    verbinde(stimmung, 'prompt', komb, 'stimmung');
+    verbinde(stil, 'prompt', komb, 'stil');
+    verbinde(material, 'material', komb, 'material');
+    verbinde(komb, 'prompt', render, 'prompt');
+    verbinde(treue, 'zahl', render, 'treue');
+    verbinde(modell, 'szene', render, 'szene');
+
+    const graph = doc.get<VisGraph>(graphId)!;
+    const auswertung = evaluiereGraph(doc, graph);
+    // Komposition = finalerRenderPrompt(stimmung, stil, bausteine) — Wortlaut identisch zur Einfach-Ansicht
+    const erwartet = finalerRenderPrompt(
+      'Abendstimmung, warmes Licht, leuchtende Fenster',
+      'Blick vom Quai',
+      renderPromptBausteine(doc),
+    );
+    expect(auswertung.werte.get(komb)!['prompt']).toBe(erwartet);
+    expect(erwartet).toContain('Sichtbeton-Fassade');
+    const auftrag = auswertung.renderAuftraege.get(render)!;
+    expect(auftrag.prompt).toBe(erwartet);
+    expect(auftrag.faithful).toBe(0.55);
+    expect(auftrag.samples).toBe(128); // unverbunden → ehrlicher Default
+    expect(auftrag.hatSzene).toBe(true);
+
+    // Topologie liefert Quellen vor Senken
+    const folge = topoReihenfolge(graph).map((n) => n.id);
+    expect(folge.indexOf(komb)).toBeGreaterThan(folge.indexOf(stimmung));
+    expect(folge.indexOf(render)).toBeGreaterThan(folge.indexOf(komb));
+
+    // Roundtrip: Graph überlebt .kosmo/Sync-Serialisierung
+    const wieder = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));
+    const graphWieder = wieder.get<VisGraph>(graphId)!;
+    expect(graphWieder.nodes).toHaveLength(7);
+    expect(graphWieder.edges).toHaveLength(6);
+    expect(evaluiereGraph(wieder, graphWieder).werte.get(komb)!['prompt']).toBe(erwartet);
+
+    // Undo: Parametrieren rückgängig
+    const res = execute(doc, 'vis.nodeParametrieren', { graphId, nodeId: stil, params: { text: 'Neuer Text' } });
+    expect(doc.get<VisGraph>(graphId)!.nodes.find((n) => n.id === stil)!.params['text']).toBe('Neuer Text');
+    doc.apply(invertPatches(res.patches));
+    expect(doc.get<VisGraph>(graphId)!.nodes.find((n) => n.id === stil)!.params['text']).toBe('Blick vom Quai');
   });
 });

@@ -1,0 +1,240 @@
+import type { KosmoDoc } from '../model/doc';
+import type { VisEdge, VisGraph, VisNode, VisPortTyp } from '../model/entities';
+import { finalerRenderPrompt, renderPromptBausteine } from './renderprompt';
+
+/**
+ * Render-Graph-Maschine (V1-Finish P2) — das Herz des KosmoVis-Node-Trees.
+ * Pull-basierte, topologische Auswertung: pure Nodes (Prompt, Stimmung,
+ * Kombinierer, Zahl, Material) rechnen hier synchron; Render bleibt ein
+ * expliziter Auftrag (die App schickt ihn an die Bridge, nie automatisch).
+ * Bild-Werte existieren nur zur Laufzeit — der Graph kennt sie als Typ,
+ * aber nie als Daten.
+ */
+
+export interface VisPort {
+  name: string;
+  typ: VisPortTyp;
+  label: string;
+}
+
+export interface VisNodeTyp {
+  typ: string;
+  label: string;
+  /** Kurzbeschrieb für Palette + Kosmo. */
+  hilfe: string;
+  inputs: VisPort[];
+  outputs: VisPort[];
+  /** Default-Parameter beim Setzen. */
+  defaults: Record<string, string | number | boolean>;
+}
+
+/** Die Stimmungs-Presets — identisch mit der bisherigen Serien-Logik. */
+export const VIS_STIMMUNGEN: Record<string, { label: string; prompt: string }> = {
+  morgen: { label: 'Morgenlicht', prompt: 'Morgenlicht, klare lange Schatten, frische kühle Luft' },
+  abend: { label: 'Abendstimmung', prompt: 'Abendstimmung, warmes Licht, leuchtende Fenster' },
+  weiss: { label: 'Weissmodell', prompt: 'Weissmodell, neutrales Studiolicht, keine Materialien' },
+};
+
+/** Katalog der 10 Node-Typen — deckt alle heutigen KosmoVis-Fähigkeiten. */
+export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
+  modell: {
+    typ: 'modell',
+    label: 'Modell',
+    hilfe: 'Das aktuelle Projekt als GLB-Szene — der Startpunkt jedes Renders.',
+    inputs: [],
+    outputs: [{ name: 'szene', typ: 'szene', label: 'Szene' }],
+    defaults: {},
+  },
+  material: {
+    typ: 'material',
+    label: 'Material-Bausteine',
+    hilfe: 'Liest die äussersten Wandschichten + Fassadenmodule als Prompt-Phrasen (V8).',
+    inputs: [],
+    outputs: [{ name: 'material', typ: 'material', label: 'Material' }],
+    defaults: {},
+  },
+  prompt: {
+    typ: 'prompt',
+    label: 'Prompt',
+    hilfe: 'Freier Stil-Text, z.B. «Sichtbeton, warmes Licht».',
+    inputs: [],
+    outputs: [{ name: 'prompt', typ: 'prompt', label: 'Prompt' }],
+    defaults: { text: '' },
+  },
+  stimmung: {
+    typ: 'stimmung',
+    label: 'Stimmung',
+    hilfe: 'Preset Morgenlicht / Abendstimmung / Weissmodell.',
+    inputs: [],
+    outputs: [{ name: 'prompt', typ: 'prompt', label: 'Prompt' }],
+    defaults: { preset: 'morgen' },
+  },
+  kombinierer: {
+    typ: 'kombinierer',
+    label: 'Prompt-Kombinierer',
+    hilfe: 'Fügt Stimmung + Stil + Material zum finalen Prompt — live sichtbar am Node.',
+    inputs: [
+      { name: 'stimmung', typ: 'prompt', label: 'Stimmung' },
+      { name: 'stil', typ: 'prompt', label: 'Stil' },
+      { name: 'material', typ: 'material', label: 'Material' },
+    ],
+    outputs: [{ name: 'prompt', typ: 'prompt', label: 'Finaler Prompt' }],
+    defaults: {},
+  },
+  zahl: {
+    typ: 'zahl',
+    label: 'Zahl',
+    hilfe: 'Regler-Wert, z.B. Geometrie-Treue 0–1 oder Samples.',
+    inputs: [],
+    outputs: [{ name: 'zahl', typ: 'zahl', label: 'Wert' }],
+    defaults: { wert: 0.8, min: 0, max: 1, schritt: 0.05 },
+  },
+  render: {
+    typ: 'render',
+    label: 'Render',
+    hilfe: 'Schickt Szene + Prompt an die HomeStation — nur auf «Ausführen», nie automatisch.',
+    inputs: [
+      { name: 'szene', typ: 'szene', label: 'Szene' },
+      { name: 'prompt', typ: 'prompt', label: 'Prompt' },
+      { name: 'treue', typ: 'zahl', label: 'Geometrie-Treue' },
+      { name: 'samples', typ: 'zahl', label: 'Samples' },
+    ],
+    outputs: [{ name: 'bild', typ: 'bild', label: 'Bild' }],
+    defaults: {},
+  },
+  vergleich: {
+    typ: 'vergleich',
+    label: 'Bildvergleich',
+    hilfe: 'Bilder nebeneinander mit QA-Verdikt — die heutige Varianten-Serie als Node.',
+    inputs: [
+      { name: 'bild1', typ: 'bild', label: 'Bild 1' },
+      { name: 'bild2', typ: 'bild', label: 'Bild 2' },
+      { name: 'bild3', typ: 'bild', label: 'Bild 3' },
+    ],
+    outputs: [],
+    defaults: {},
+  },
+  blatt: {
+    typ: 'blatt',
+    label: 'Aufs Blatt',
+    hilfe: 'Legt das Bild als Blatt-Bürger in KosmoPublish ab (ein Undo-Schritt).',
+    inputs: [{ name: 'bild', typ: 'bild', label: 'Bild' }],
+    outputs: [],
+    defaults: { titel: 'Visualisierung' },
+  },
+  referenz: {
+    typ: 'referenz',
+    label: 'Bild-Referenz',
+    hilfe: 'Referenzbild oder Splat-Ansicht als Bild-Quelle (Stil-Referenz, Vergleich).',
+    inputs: [],
+    outputs: [{ name: 'bild', typ: 'bild', label: 'Bild' }],
+    defaults: { url: '' },
+  },
+};
+
+export function visPort(typ: string, port: string, richtung: 'in' | 'out'): VisPort | undefined {
+  const kat = VIS_NODE_KATALOG[typ];
+  if (!kat) return undefined;
+  return (richtung === 'in' ? kat.inputs : kat.outputs).find((p) => p.name === port);
+}
+
+/** Prüft, ob der Graph (optional mit einer Zusatzkante) einen Zyklus hätte. */
+export function hatZyklus(nodes: VisNode[], edges: VisEdge[], extra?: Pick<VisEdge, 'from' | 'to'>): boolean {
+  const alle = extra ? [...edges, { ...extra, id: '', fromPort: '', toPort: '' }] : edges;
+  const nach = new Map<string, string[]>();
+  for (const e of alle) nach.set(e.from, [...(nach.get(e.from) ?? []), e.to]);
+  const farbe = new Map<string, 1 | 2>(); // 1 = auf dem Pfad, 2 = fertig
+  const besuch = (id: string): boolean => {
+    if (farbe.get(id) === 1) return true;
+    if (farbe.get(id) === 2) return false;
+    farbe.set(id, 1);
+    for (const n of nach.get(id) ?? []) if (besuch(n)) return true;
+    farbe.set(id, 2);
+    return false;
+  };
+  return nodes.some((n) => besuch(n.id));
+}
+
+/** Topologische Reihenfolge (Kahn); Zyklen dürfen hier nie ankommen. */
+export function topoReihenfolge(graph: VisGraph): VisNode[] {
+  const eingang = new Map<string, number>(graph.nodes.map((n) => [n.id, 0]));
+  for (const e of graph.edges) eingang.set(e.to, (eingang.get(e.to) ?? 0) + 1);
+  const frei = graph.nodes.filter((n) => (eingang.get(n.id) ?? 0) === 0);
+  const folge: VisNode[] = [];
+  const byId = new Map(graph.nodes.map((n) => [n.id, n]));
+  while (frei.length > 0) {
+    const n = frei.shift()!;
+    folge.push(n);
+    for (const e of graph.edges.filter((e) => e.from === n.id)) {
+      const rest = (eingang.get(e.to) ?? 0) - 1;
+      eingang.set(e.to, rest);
+      if (rest === 0) frei.push(byId.get(e.to)!);
+    }
+  }
+  return folge;
+}
+
+/** Auswertungs-Ergebnis je Node: Ausgangswerte der puren Ports. */
+export interface VisAuswertung {
+  /** nodeId → Portname → Wert (string für prompt/material, number für zahl). */
+  werte: Map<string, Record<string, string | number>>;
+  /** Für Render-Nodes: die fertig zusammengezogenen Job-Parameter. */
+  renderAuftraege: Map<string, { prompt: string; faithful: number; samples: number; hatSzene: boolean }>;
+}
+
+/**
+ * Pull-basierte Auswertung der puren Nodes. Bild-Ports tragen keine Werte
+ * (Laufzeit-Sache der App); Render-Nodes bekommen ihre Auftragsparameter
+ * mit ehrlichen Defaults (treue 0.8, samples 128), wenn nichts verbunden ist.
+ */
+export function evaluiereGraph(doc: KosmoDoc, graph: VisGraph): VisAuswertung {
+  const werte = new Map<string, Record<string, string | number>>();
+  const renderAuftraege = new Map<string, { prompt: string; faithful: number; samples: number; hatSzene: boolean }>();
+  const eingangsWert = (nodeId: string, port: string): string | number | undefined => {
+    const e = graph.edges.find((e) => e.to === nodeId && e.toPort === port);
+    if (!e) return undefined;
+    return werte.get(e.from)?.[e.fromPort];
+  };
+  for (const n of topoReihenfolge(graph)) {
+    switch (n.typ) {
+      case 'prompt':
+        werte.set(n.id, { prompt: String(n.params['text'] ?? '') });
+        break;
+      case 'stimmung': {
+        const preset = VIS_STIMMUNGEN[String(n.params['preset'] ?? 'morgen')];
+        werte.set(n.id, { prompt: preset?.prompt ?? '' });
+        break;
+      }
+      case 'material':
+        werte.set(n.id, { material: renderPromptBausteine(doc).join(', ') });
+        break;
+      case 'zahl':
+        werte.set(n.id, { zahl: Number(n.params['wert'] ?? 0) });
+        break;
+      case 'kombinierer': {
+        const stimmung = String(eingangsWert(n.id, 'stimmung') ?? '');
+        const stil = String(eingangsWert(n.id, 'stil') ?? '');
+        const material = String(eingangsWert(n.id, 'material') ?? '');
+        const prompt = finalerRenderPrompt(stimmung, stil, material ? [material] : []);
+        werte.set(n.id, { prompt });
+        break;
+      }
+      case 'render': {
+        const prompt = String(eingangsWert(n.id, 'prompt') ?? '');
+        const treue = eingangsWert(n.id, 'treue');
+        const samples = eingangsWert(n.id, 'samples');
+        renderAuftraege.set(n.id, {
+          prompt,
+          faithful: typeof treue === 'number' ? Math.min(1, Math.max(0, treue)) : 0.8,
+          samples: typeof samples === 'number' ? Math.max(1, Math.round(samples)) : 128,
+          hatSzene: graph.edges.some((e) => e.to === n.id && e.toPort === 'szene'),
+        });
+        break;
+      }
+      default:
+        // modell / vergleich / blatt / referenz: keine puren Ausgangswerte
+        break;
+    }
+  }
+  return { werte, renderAuftraege };
+}

@@ -465,6 +465,7 @@ test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async (
     k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 0, y: 0 }, b: { x: 8000, y: 0 }, assemblyId: aw.id });
     k.open('vis');
   });
+  await page.click('[data-testid="tab-einfach"]');
   await page.click('[data-testid="send-render"]');
   // Fake-Worker rendert das Kupfer-PNG → «Aufs Blatt» erscheint
   await page.locator('[data-testid="render-job"]').first().getByText('Aufs Blatt').click({ timeout: 30_000 });
@@ -971,6 +972,7 @@ test('Render-Prompt (V2-V8): Material-Baustein erscheint im finalen Prompt, Tipp
     });
     k.open('vis');
   });
+  await page.click('[data-testid="tab-einfach"]');
   const feld = page.locator('[data-testid="finaler-prompt"]');
   await expect(feld).toHaveValue(/Sichtbeton-Fassade/);
   await feld.fill('mein eigener Prompt');
