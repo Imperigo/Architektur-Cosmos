@@ -10,6 +10,7 @@ import {
   Panel,
   Wordmark,
   bestaetigen,
+  melde,
   meldeFehler,
   moduleHue,
   type ModuleId,
@@ -51,6 +52,7 @@ import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './st
 import { setDeepLink } from './state/deep-link';
 import { setzeAktuelleStation } from './state/auftragsbuch';
 import { hydriereJournal } from './state/journal-store';
+import { qrSvg } from './state/qr';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
 
@@ -112,6 +114,7 @@ export function App() {
   const [syncToken, setSyncToken] = useState(localStorage.getItem('kosmo.sync.token') ?? '');
   const [wartend, setWartend] = useState(0);
   const [raeume, setRaeume] = useState<{ name: string; verbindungen: number }[] | null>(null);
+  const [koppelnOffen, setKoppelnOffen] = useState(false);
   // D2: Rolle aus den Projekteinstellungen (Revision hält die Zentrale frisch)
   const revision = useProject((s) => s.revision);
   void revision;
@@ -148,6 +151,28 @@ export function App() {
     void hydriereJournal();
   }, []);
 
+  // P4: QR-Pairing — die gescannte URL trägt die Verbindung im FRAGMENT
+  // (nie in Server-Logs). Auto-Connect, Hash sofort löschen, ehrlicher Toast.
+  useEffect(() => {
+    const h = window.location.hash;
+    if (!h.includes('sync=')) return;
+    const p = new URLSearchParams(h.slice(1));
+    const url = p.get('sync');
+    const raum = p.get('raum');
+    if (!url || !raum) return;
+    const token = p.get('token') ?? '';
+    setSyncUrl(url);
+    setSyncRoom(raum);
+    setSyncToken(token);
+    localStorage.setItem('kosmo.sync.url', url);
+    localStorage.setItem('kosmo.sync.room', raum);
+    if (token) localStorage.setItem('kosmo.sync.token', token);
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    connectSync(url, raum, token || undefined);
+    melde(`Mit dem Büro verbunden — Raum «${raum}»`, { ton: 'erfolg' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Kontext-Pin fürs Auftragsbuch: wo ist der Owner gerade?
   useEffect(() => {
     setzeAktuelleStation(
@@ -162,7 +187,8 @@ export function App() {
     fetch(`${httpUrl}/raeume`, { signal: AbortSignal.timeout(2500) })
       .then((r) => r.json())
       .then((j: { raeume: { name: string; verbindungen: number }[] }) => setRaeume(j.raeume))
-      .catch(() => setRaeume(null));
+      // transienter Fehler: letzte bekannte Liste behalten (kein Chip-Flackern)
+      .catch(() => setRaeume((alt) => alt));
   }, [syncOpen, syncUrl, syncStatus]);
 
   useEffect(() => {
@@ -412,6 +438,7 @@ export function App() {
                   onClick={() => {
                     setSyncRoom(r.name);
                     localStorage.setItem('kosmo.sync.room', r.name);
+                    connectSync(syncUrl, r.name, syncToken.trim() || undefined);
                   }}
                   style={{
                     all: 'unset',
@@ -433,6 +460,29 @@ export function App() {
             <span style={{ color: 'var(--k-ink-faint)' }}>
               Desktop und iPad im selben Raum arbeiten live am selben Modell.
             </span>
+          )}
+          <KButton size="sm" tone={koppelnOffen ? 'accent' : 'quiet'} data-testid="ipad-koppeln" onClick={() => setKoppelnOffen(!koppelnOffen)}>
+            iPad koppeln
+          </KButton>
+          {koppelnOffen && (
+            <div
+              data-testid="koppeln-karte"
+              style={{ flexBasis: '100%', display: 'flex', gap: 14, alignItems: 'center', paddingTop: 8 }}
+            >
+              <div
+                style={{ width: 164, height: 164, flexShrink: 0, border: '1px solid var(--k-line)' }}
+                dangerouslySetInnerHTML={{
+                  __html: qrSvg(
+                    `${window.location.origin}${window.location.pathname}#sync=${encodeURIComponent(syncUrl)}&raum=${encodeURIComponent(syncRoom)}${syncToken.trim() ? `&token=${encodeURIComponent(syncToken.trim())}` : ''}`,
+                  ),
+                }}
+              />
+              <span style={{ fontSize: 12, color: 'var(--k-ink-soft)', maxWidth: 420, lineHeight: 1.5 }}>
+                Mit der iPad-Kamera scannen — KosmoOrbit öffnet sich und verbindet automatisch
+                mit Raum «{syncRoom}» (die Verbindung steckt im URL-Fragment, nie in Server-Logs).
+                Beide Geräte müssen den Sync-Server erreichen.
+              </span>
+            </div>
           )}
         </div>
       )}
@@ -607,6 +657,9 @@ export function App() {
                     </div>
                   </Panel>
                 ))}
+              </div>
+              <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)' }} data-testid="about-zeile">
+                KosmoOrbit V1.0 · lokal-first · Installation: docs/INSTALL.md · Update = neuer Installer (Signierung folgt zuhause)
               </div>
             </div>
           </div>

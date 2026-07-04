@@ -237,3 +237,47 @@ describe('Auftragsbuch (P3)', () => {
     expect(md).toContain('2 offene Aufträge');
   });
 });
+
+// ── V1-Finish P4: QR-Encoder — jsQR als Testorakel ───────────────────
+
+describe('QR-Encoder (P4)', () => {
+  it('Round-Trip: jsQR liest die Pairing-URL exakt zurück (alle Versionsstufen)', async () => {
+    const { qrEncode } = await import('../src/state/qr');
+    const jsQR = (await import('jsqr')).default;
+    const texte = [
+      'kurz',
+      'https://kosmo.local/#sync=ws%3A%2F%2F192.168.1.20%3A8700&raum=projekt-1&token=geheim',
+      'https://kosmo-orbit.example.ch/app/#sync=wss%3A%2F%2Fbuero.example.ch%3A8700&raum=wettbewerb-tkb-bibliothek&token=' + 'a'.repeat(64),
+      'x'.repeat(250), // zwingt in die hohen Versionen
+    ];
+    for (const text of texte) {
+      const { matrix, groesse } = qrEncode(text);
+      // Matrix → Pixel (Skalierung 4, Ruhezone 4 Module) für jsQR
+      const skala = 4;
+      const rand = 4 * skala;
+      const kante = groesse * skala + 2 * rand;
+      const pixel = new Uint8ClampedArray(kante * kante * 4).fill(255);
+      for (let y = 0; y < groesse; y++) {
+        for (let x = 0; x < groesse; x++) {
+          if (!matrix[y]![x]) continue;
+          for (let dy = 0; dy < skala; dy++) {
+            for (let dx = 0; dx < skala; dx++) {
+              const i = ((y * skala + dy + rand) * kante + x * skala + dx + rand) * 4;
+              pixel[i] = 0; pixel[i + 1] = 0; pixel[i + 2] = 0;
+            }
+          }
+        }
+      }
+      const gelesen = jsQR(pixel, kante, kante);
+      expect(gelesen?.data, `Text (${text.length} Zeichen) nicht dekodierbar`).toBe(text);
+    }
+  });
+
+  it('lehnt zu lange Texte ehrlich ab und liefert SVG mit Ruhezone', async () => {
+    const { qrEncode, qrSvg } = await import('../src/state/qr');
+    expect(() => qrEncode('x'.repeat(400))).toThrow(/zu lang/);
+    const svg = qrSvg('https://kosmo.local/#raum=1');
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('crispEdges');
+  });
+});
