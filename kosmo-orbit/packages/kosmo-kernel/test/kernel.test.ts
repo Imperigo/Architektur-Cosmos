@@ -1726,6 +1726,47 @@ describe('Treppe an der Schnitthöhe gekappt (Vision B3)', () => {
   });
 });
 
+describe('Fenster-Anschlag + Rohboden-Linie (Vision B4)', () => {
+  it('Werkplan zeigt den Blockanschlag in der Leibung, Tiefe folgt Opening.anschlag', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const o = execute(doc, 'design.oeffnungSetzen', {
+      wallId: (w.patches[0] as { id: string }).id,
+      openingType: 'fenster', center: 3000, width: 1200, height: 1400, sill: 900,
+    });
+    const anschlaege = () => derivePlan(doc, storeyId).lines.filter((l) => l.classes.includes('anschlag'));
+    expect(anschlaege()).toHaveLength(2); // Default-Tiefe 40 an beiden Leibungen
+    expect(anschlaege()[0]!.a.x).toBe(2440); // s0 (2400) + 40
+    execute(doc, 'design.eigenschaftSetzen', { entityId: (o.patches[0] as { id: string }).id, feld: 'anschlag', wert: 80 });
+    expect(anschlaege()[0]!.a.x).toBe(2480);
+    execute(doc, 'design.phaseSetzen', { phase: 'bauprojekt' });
+    expect(anschlaege()).toHaveLength(0); // Werkplan-Detail
+  });
+
+  it('Rohboden-Linie im Schnitt: Decken mit Aufbau zeigen die Belagsgrenze, Vorprojekt nicht', () => {
+    const { doc, storeyId } = setupDoc();
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'Decke UB', target: 'slab',
+      layers: [
+        { material: 'unterlagsboden', thickness: 80, function: 'bekleidung' },
+        { material: 'trittschall', thickness: 20, function: 'daemmung' },
+        { material: 'beton', thickness: 240, function: 'tragend' },
+      ],
+    });
+    execute(doc, 'design.deckeZeichnen', {
+      storeyId, thickness: 240, assemblyId: (au.patches[0] as { id: string }).id,
+      outline: [{ x: 0, y: 0 }, { x: 9000, y: 0 }, { x: 9000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    const spec = { a: { x: 4500, y: -2000 }, b: { x: 4500, y: 2000 }, depth: 8000, lookLeft: true } as const;
+    const svg = sectionInnerSvg(doc, spec, 100).inner;
+    // z = 0 − (80+20) = −100; Schnittgerade x=4500 kreuzt die Decke bei s 2000…6000
+    expect(svg).toContain('<line x1="2000" y1="100" x2="6000" y2="100"');
+    expect(svg).toContain('class="rohboden"');
+    execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
+    expect(sectionInnerSvg(doc, spec, 100).inner).not.toContain('rohboden');
+  });
+});
+
 describe('Koten roh/fertig + Absolutbezug (Vision B2)', () => {
   it('fertig gefüllt, roh offen (Bodenaufbau-Delta), EG-Kote trägt m ü.M.', () => {
     const { doc, storeyId, assemblyId } = setupDoc();

@@ -388,6 +388,7 @@ const editableFields = [
   'sill',
   'swing',
   'openingType',
+  'anschlag',
 ] as const;
 
 export const setProperty = registerCommand({
@@ -410,7 +411,7 @@ export const setProperty = registerCommand({
       mass: ['height', 'program'],
       slab: ['thickness'],
       wall: ['assemblyId', 'alignment', 'height'],
-      opening: ['center', 'width', 'height', 'sill', 'swing', 'openingType'],
+      opening: ['center', 'width', 'height', 'sill', 'swing', 'openingType', 'anschlag'],
       storey: ['name', 'height'],
       assembly: ['name'],
     };
@@ -420,7 +421,7 @@ export const setProperty = registerCommand({
         `«${p.feld}» ist bei ${e.kind} nicht änderbar (möglich: ${fields.join(', ') || 'nichts'})`,
       );
     }
-    const numeric = ['pitch', 'overhang', 'height', 'thickness', 'center', 'width', 'sill'];
+    const numeric = ['pitch', 'overhang', 'height', 'thickness', 'center', 'width', 'sill', 'anschlag'];
     let wert: string | number = p.wert;
     if (numeric.includes(p.feld)) {
       wert = typeof p.wert === 'number' ? p.wert : Number(p.wert);

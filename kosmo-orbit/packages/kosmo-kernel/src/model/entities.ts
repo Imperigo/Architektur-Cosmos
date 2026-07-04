@@ -107,6 +107,8 @@ export interface Opening extends Base {
   sill: Mm;
   /** Anschlagrichtung für Türsymbol im Grundriss. */
   swing?: 'links' | 'rechts';
+  /** Fensteranschlag-Tiefe in der Leibung (B4, Werkplan-Detail; Default 40). */
+  anschlag?: Mm;
   typeId?: string;
 }
 

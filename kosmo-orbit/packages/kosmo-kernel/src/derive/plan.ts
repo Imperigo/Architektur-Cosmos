@@ -193,6 +193,13 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
         const mid = (L + R) / 2;
         lines.push({ a: at(r.s0, mid - 25), b: at(r.s1, mid - 25), classes: ['symbol', 'fenster', ...oRen] });
         lines.push({ a: at(r.s0, mid + 25), b: at(r.s1, mid + 25), classes: ['symbol', 'fenster', ...oRen] });
+        if (phase === 'werkplan') {
+          // B4: Blockanschlag in der Leibung — Absatz von der Aussenkante (L)
+          // bis zur Glasebene, Tiefe aus Opening.anschlag (Default 40 mm)
+          const tiefe = o.anschlag ?? 40;
+          lines.push({ a: at(r.s0 + tiefe, L), b: at(r.s0 + tiefe, mid + 25), classes: ['symbol', 'anschlag', ...oRen] });
+          lines.push({ a: at(r.s1 - tiefe, L), b: at(r.s1 - tiefe, mid + 25), classes: ['symbol', 'anschlag', ...oRen] });
+        }
       } else {
         // Türsymbol: Flügel senkrecht zur Wand + 90°-Schwenkbogen
         const width = r.s1 - r.s0;

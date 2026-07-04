@@ -14,6 +14,8 @@
 <line x1="4000" y1="-180" x2="4000" y2="180" stroke="black" stroke-width="25"/>
 <line x1="2000" y1="25" x2="4000" y2="25" stroke="black" stroke-width="18"/>
 <line x1="2000" y1="-25" x2="4000" y2="-25" stroke="black" stroke-width="18"/>
+<line x1="2040" y1="-180" x2="2040" y2="-25" stroke="black" stroke-width="25"/>
+<line x1="3960" y1="-180" x2="3960" y2="-25" stroke="black" stroke-width="25"/>
 <line x1="6500" y1="-180" x2="6500" y2="180" stroke="black" stroke-width="25"/>
 <line x1="7500" y1="-180" x2="7500" y2="180" stroke="black" stroke-width="25"/>
 <line x1="6500" y1="-180" x2="6500" y2="-1180" stroke="black" stroke-width="25"/>

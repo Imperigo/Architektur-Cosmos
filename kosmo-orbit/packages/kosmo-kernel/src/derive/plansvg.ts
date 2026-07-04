@@ -219,6 +219,49 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
       }
     }
   }
+  // B4: Rohboden-Linie — Decken mit Aufbau zeigen die Kante zwischen
+  // Bodenaufbau und Rohdecke als feine Linie (Beläge getrennt, ab Bauprojekt)
+  if (doc.settings.phase !== 'vorprojekt') {
+    const len = Math.hypot(spec.b.x - spec.a.x, spec.b.y - spec.a.y) || 1;
+    const dRicht = { x: (spec.b.x - spec.a.x) / len, y: (spec.b.y - spec.a.y) / len };
+    for (const slab of doc.byKind<import('../model/entities').Slab>('slab')) {
+      if (!slab.assemblyId || slab.outline.length < 3) continue;
+      const asm = doc.get<Assembly>(slab.assemblyId);
+      if (!asm || asm.kind !== 'assembly') continue;
+      let delta = 0;
+      for (const layer of asm.layers) {
+        if (layer.function === 'tragend') break;
+        delta += layer.thickness;
+      }
+      if (delta <= 0) continue;
+      const st = doc.get<Storey>(slab.storeyId);
+      if (!st || st.kind !== 'storey') continue;
+      const z = st.elevation + slab.topOffset - delta;
+      // Schnittgerade a + s·d gegen die Polygon-Kanten: s-Paare = innen
+      const sWerte: number[] = [];
+      for (let i = 0; i < slab.outline.length; i++) {
+        const p = slab.outline[i]!;
+        const q = slab.outline[(i + 1) % slab.outline.length]!;
+        // Kante quer zur Geraden? Löse a + s·d = p + u·(q−p), 0 ≤ u < 1
+        const ex = q.x - p.x;
+        const ey = q.y - p.y;
+        const det = dRicht.x * -ey - dRicht.y * -ex;
+        if (Math.abs(det) < 1e-9) continue;
+        const rx = p.x - spec.a.x;
+        const ry = p.y - spec.a.y;
+        const s = (rx * -ey - ry * -ex) / det;
+        const u = (dRicht.x * ry - dRicht.y * rx) / det;
+        if (u >= 0 && u < 1) sWerte.push(s);
+      }
+      sWerte.sort((a2, b2) => a2 - b2);
+      for (let i = 0; i + 1 < sWerte.length; i += 2) {
+        parts.push(
+          `<line x1="${Math.round(sWerte[i]!)}" y1="${-z}" x2="${Math.round(sWerte[i + 1]!)}" y2="${-z}" stroke="#444" stroke-width="${0.18 * scale}" class="rohboden"/>`,
+        );
+      }
+    }
+  }
+
   const projStift = (g.cuts.length === 0 ? 0.35 : 0.18) * scale;
   for (const l of g.projections) {
     parts.push(
