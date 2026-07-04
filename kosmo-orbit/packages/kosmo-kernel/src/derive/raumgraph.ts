@@ -267,10 +267,13 @@ export interface GebaeudeFluchtweg {
 
 /**
  * Gebäude-Fluchtweg (Vision C3): verkettet die Geschoss-Graphen über die
- * Treppen. Ausgangsebene = Geschoss mit Index 0 (sonst das unterste);
- * jedes Zwischengeschoss trägt die Lauflänge seiner kürzesten Treppe bei.
- * V1-Annahme ehrlich: das Treppenhaus ist durchgehend gestapelt — fehlt
- * einem Zwischengeschoss die Treppe, wird der Weg Infinity.
+ * Treppen. Ausgangsebene = Geschoss mit Index 0 (sonst das unterste).
+ * Treppen gehören ihrem BASIS-Geschoss (treppenTeile steigt ab elevation
+ * nach oben) — der Abstieg aus dem i-ten Geschoss benutzt also die Treppen
+ * der Geschosse DARUNTER (i−1 … Ausgang), der Aufstieg aus dem UG die
+ * eigenen (i … Ausgang−1). V1-Annahme ehrlich: das Treppenhaus ist
+ * durchgehend gestapelt — fehlt einer Ebene die Treppe, wird der Weg
+ * Infinity.
  * Das bestehende `fluchtwege()` (pro Geschoss) bleibt unverändert.
  */
 export function fluchtwegeGebaeude(doc: KosmoDoc): GebaeudeFluchtweg[] {
@@ -295,7 +298,8 @@ export function fluchtwegeGebaeude(doc: KosmoDoc): GebaeudeFluchtweg[] {
     const st = storeys[i]!;
     let vertikal = 0;
     if (i > ausgangIdx) {
-      for (let k = i; k > ausgangIdx; k--) vertikal += lauf.get(storeys[k]!.id) ?? Infinity;
+      // Abstieg über die Treppen der DARUNTERLIEGENDEN Geschosse (Basis-Konvention)
+      for (let k = i - 1; k >= ausgangIdx; k--) vertikal += lauf.get(storeys[k]!.id) ?? Infinity;
     } else if (i < ausgangIdx) {
       // Untergeschosse steigen über ihre eigene Treppe auf
       for (let k = i; k < ausgangIdx; k++) vertikal += lauf.get(storeys[k]!.id) ?? Infinity;

@@ -101,6 +101,55 @@ describe('KosmoData Live-Sync (Vision E2)', () => {
   });
 });
 
+describe('searchKnowledge-Mischung (Review-Fixes Vision F1)', () => {
+  it('Semantik findet ohne wörtlichen Treffer; vektorlose Alt-Chunks bleiben per BM25 auffindbar', async () => {
+    // Umgebung: localStorage + Bridge-Fetch stubben (Query-Embedding = [1, 0])
+    const g = globalThis as Record<string, unknown>;
+    g['localStorage'] ??= { getItem: () => null, setItem: () => undefined, removeItem: () => undefined };
+    const origFetch = globalThis.fetch;
+    g['fetch'] = (async (_url: unknown, init?: { body?: string }) => ({
+      ok: true,
+      json: async () => ({ vectors: (JSON.parse(init?.body ?? '{}').texts as string[]).map(() => [1, 0]) }),
+    })) as unknown as typeof fetch;
+    try {
+      // Wissensbasis säen: 1 Chunk MIT Vektor, 1 alt aufgenommener OHNE
+      await new Promise<void>((res, rej) => {
+        const req = indexedDB.open('kosmo-wissen', 1);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('docs')) db.createObjectStore('docs', { keyPath: 'id' });
+          if (!db.objectStoreNames.contains('chunks')) {
+            db.createObjectStore('chunks', { keyPath: 'id' }).createIndex('docId', 'docId');
+          }
+        };
+        req.onsuccess = () => {
+          const tx = req.result.transaction('chunks', 'readwrite');
+          tx.objectStore('chunks').put({
+            id: 'neu-0', docId: 'neu', seq: 0, vector: [1, 0],
+            text: 'Schallschutz von Wohnungstrennwänden nach SIA 181.',
+          });
+          tx.objectStore('chunks').put({
+            id: 'alt-0', docId: 'alt', seq: 0,
+            text: 'Die Trittschalldämmung liegt auf der Rohdecke.',
+          });
+          tx.oncomplete = () => { req.result.close(); res(); };
+          tx.onerror = () => rej(tx.error);
+        };
+        req.onerror = () => rej(req.error);
+      });
+      const { searchKnowledge } = await import('../src/modules/prepare/knowledge');
+      // Befund 4: kein Query-Wort steht wörtlich in einem Chunk — Semantik muss trotzdem finden
+      const synonym = await searchKnowledge('Lärmdämmung Trennbauteil');
+      expect(synonym.map((h) => h.id)).toContain('neu-0');
+      // Befund 3: wörtlicher Treffer liegt NUR im vektorlosen Alt-Chunk — BM25-Pfad trägt ihn
+      const alt = await searchKnowledge('Trittschalldämmung Rohdecke');
+      expect(alt.map((h) => h.id)).toContain('alt-0');
+    } finally {
+      g['fetch'] = origFetch;
+    }
+  });
+});
+
 describe('Tresor-Migration v1→v2 (Vision F1)', () => {
   it('voller v1-Tresor überlebt das Upgrade; der varianten-Store kommt verlustfrei dazu', async () => {
     // Sauber starten, dann einen ECHTEN v1-Tresor bauen (nur Store «projekte»)

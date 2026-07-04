@@ -179,11 +179,14 @@ export function deriveAusmass(doc: KosmoDoc): Ausmass {
   return { positionen, hinweise };
 }
 
-/** CSV (Semikolon, Excel-CH) — Muster der Fassaden-Elementliste. */
+/** CSV (Semikolon, Excel-CH) — Muster der Fassaden-Elementliste.
+ * Felder mit Semikolon/Anführungszeichen/Zeilenumbruch werden RFC-4180-artig
+ * gequotet — Herleitungen enthalten Semikolons (Review-Fund F1). */
 export function ausmassAlsCsv(a: Ausmass): string {
+  const feld = (s: string) => (/[";\n]/.test(s) ? `"${s.replaceAll('"', '""')}"` : s);
   const kopf = 'Kapitel;Position;Einheit;Menge;Herleitung';
   const zeilen = a.positionen.map(
-    (p) => `${p.kapitel};${p.position};${p.einheit};${p.menge.toFixed(2)};${p.herleitung}`,
+    (p) => `${feld(p.kapitel)};${feld(p.position)};${feld(p.einheit)};${p.menge.toFixed(2)};${feld(p.herleitung)}`,
   );
-  return [kopf, ...zeilen, ...a.hinweise.map((h) => `;;;;${h}`)].join('\n');
+  return [kopf, ...zeilen, ...a.hinweise.map((h) => `;;;;${feld(h)}`)].join('\n');
 }

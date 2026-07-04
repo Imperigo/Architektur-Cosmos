@@ -363,20 +363,25 @@ export async function searchKnowledge(query: string, limit = 5): Promise<Knowled
   if (all.length === 0) return [];
 
   const kw = bm25Scores(all.map((c) => c.text), query);
-  if (kw.every((s) => s === 0)) return [];
-  const kwMax = Math.max(...kw);
-
   const hatVektoren = all.some((c) => c.vector);
   const qv = hatVektoren ? (await embedTexts([query]))?.[0] ?? null : null;
+  // Ohne Semantik entscheidet BM25 allein — nichts wörtlich getroffen = leer.
+  // MIT Semantik darf die Query auch ohne wörtlichen Treffer finden (Synonyme).
+  if (!qv && kw.every((s) => s === 0)) return [];
+  const kwMax = Math.max(...kw);
 
   const hits: KnowledgeHit[] = [];
   for (let i = 0; i < all.length; i++) {
     const c = all[i]!;
     const kwNorm = kwMax > 0 ? kw[i]! / kwMax : 0;
-    const sem = qv && c.vector ? cosine(qv, c.vector) : 0;
-    // Semantik führt (wo vorhanden), BM25 grundiert und entscheidet Gleichstände
-    const score = qv ? sem + 0.1 * kwNorm : kw[i]!;
-    if (score > (qv ? 0.12 : 0)) hits.push({ ...c, score });
+    // Semantik führt, wo Chunk UND Query Vektoren haben; vektorlose Chunks
+    // (alt aufgenommen / Bridge weg) leben weiter vom reinen BM25-Pfad
+    if (qv && c.vector) {
+      const score = cosine(qv, c.vector) + 0.1 * kwNorm;
+      if (score > 0.12) hits.push({ ...c, score });
+    } else if (kw[i]! > 0) {
+      hits.push({ ...c, score: kwNorm });
+    }
   }
   return hits.sort((a, b) => b.score - a.score).slice(0, limit);
 }

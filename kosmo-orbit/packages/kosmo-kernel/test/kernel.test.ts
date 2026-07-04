@@ -1837,12 +1837,28 @@ describe('Gebäude-Fluchtweg (Vision C3)', () => {
     expect(befunde).toHaveLength(1);
     expect(befunde[0]!.text).toContain('Übersichtswert über dem 35-m-Richtwert');
     expect(befunde[0]!.text).toContain('1.8 m Treppenläufe');
-    // Treppe im OG löschen → Kette unterbrochen
-    const treppeOg = doc.byKind<import('../src').Stair>('stair').find((s) => s.storeyId === storeyIds[1]!)!;
-    execute(doc, 'design.loeschen', { entityId: treppeOg.id });
+    // EG-Treppe löschen → Kette unterbrochen (der Abstieg braucht die Treppe
+    // des Basis-Geschosses; die OG-Treppe führte physisch ins Dach)
+    const treppeEg = doc.byKind<import('../src').Stair>('stair').find((s) => s.storeyId === storeyIds[0]!)!;
+    execute(doc, 'design.loeschen', { entityId: treppeEg.id });
     const kette = pruefeGrundriss(doc, storeyIds[1]!).filter((b) => b.regel === 'Fluchtweg Gebäude');
     expect(kette).toHaveLength(1);
     expect(kette[0]!.text).toContain('kein durchgehendes Treppenhaus');
+  });
+
+  it('Review-Fix: oberstes Geschoss ohne eigene Treppe steigt über die EG-Treppe ab', async () => {
+    const { doc, storeyIds } = turm(2);
+    // Die OG-Treppe (führte ins Dach) weg — der Abstieg lebt von der EG-Treppe
+    const treppeOg = doc.byKind<import('../src').Stair>('stair').find((s) => s.storeyId === storeyIds[1]!)!;
+    execute(doc, 'design.loeschen', { entityId: treppeOg.id });
+    const { fluchtwegeGebaeude } = await import('../src');
+    const og = fluchtwegeGebaeude(doc).filter((w) => w.storeyId === storeyIds[1]!);
+    expect(og.length).toBeGreaterThan(0);
+    for (const w of og) {
+      expect(w.vertikal).toBe(1800); // Lauflänge der EG-Treppe
+      expect(Number.isFinite(w.distanz)).toBe(true);
+    }
+    expect(pruefeGrundriss(doc, storeyIds[1]!).filter((b) => b.regel === 'Fluchtweg Gebäude')).toHaveLength(0);
   });
 });
 
@@ -1925,6 +1941,39 @@ describe('NPK-nahes Ausmass (Vision C1)', () => {
     expect(csv).toContain('Kapitel;Position;Einheit;Menge;Herleitung');
     expect(csv).toContain('Decken/Bodenplatten;m2;35.00');
     expect(csv).toContain('kein Ersatz für ein CRB-Devis');
+  });
+
+  it('Review-Fix: CSV quotet Felder mit Semikolon — jede Zeile hat exakt 5 Spalten', async () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const wallId = (w.patches[0] as { id: string }).id;
+    // grosse UND kleine Öffnung → Herleitung «… > 0.5 m²; … bleiben im Mass» enthält ein Semikolon
+    execute(doc, 'design.oeffnungSetzen', { wallId, openingType: 'fenster', center: 2000, width: 1200, height: 1400, sill: 900 });
+    execute(doc, 'design.oeffnungSetzen', { wallId, openingType: 'fenster', center: 6000, width: 600, height: 700, sill: 1400 });
+    const { deriveAusmass, ausmassAlsCsv } = await import('../src');
+    const csv = ausmassAlsCsv(deriveAusmass(doc));
+    // RFC-4180-bewusster Feld-Splitter
+    const felder = (zeile: string) => {
+      const out: string[] = [];
+      let cur = '';
+      let inQ = false;
+      for (let i = 0; i < zeile.length; i++) {
+        const ch = zeile[i]!;
+        if (inQ) {
+          if (ch === '"') {
+            if (zeile[i + 1] === '"') { cur += '"'; i++; } else inQ = false;
+          } else cur += ch;
+        } else if (ch === '"') inQ = true;
+        else if (ch === ';') { out.push(cur); cur = ''; }
+        else cur += ch;
+      }
+      out.push(cur);
+      return out;
+    };
+    for (const zeile of csv.split('\n')) expect(felder(zeile)).toHaveLength(5);
+    // Die Semikolon-Herleitung überlebt die Quotierung wörtlich
+    const wandZeile = csv.split('\n').find((z) => z.includes('Wände AW Beton 36;'))!;
+    expect(felder(wandZeile)[4]).toContain('> 0.5 m²; 1 kleine bleiben im Mass');
   });
 });
 
