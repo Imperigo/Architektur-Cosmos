@@ -8,7 +8,9 @@ import {
   OllamaProvider,
   OpenAiKompatibelProvider,
   betriebKonfig,
+  editionBetriebsart,
   greeting,
+  leseEdition,
   personas,
   type Betriebsart,
   type ChatProvider,
@@ -19,6 +21,7 @@ import { useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
 import { DiagnosePanel } from './Diagnose';
+import { WerkzeugSetup } from './WerkzeugSetup';
 import { hydriereJournal, journalStore } from '../state/journal-store';
 import { auftragErfassen } from '../state/auftragsbuch';
 
@@ -100,7 +103,10 @@ function loadSettings(): KosmoSettings {
   } catch {
     /* leer */
   }
-  return defaultSettings;
+  // Erststart: Betriebsart aus der Installer-Edition vorwählen.
+  const art = editionBetriebsart(leseEdition(import.meta.env.VITE_KOSMO_EDITION));
+  const k = betriebKonfig({ betriebsart: art, cloudModell: defaultSettings.anthropicModel });
+  return { ...defaultSettings, betriebsart: art, provider: k.provider };
 }
 
 /**
@@ -186,6 +192,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const zuletztGefragt = useRef('');
   const cloudAnRef = useRef<(text: string) => void>(() => {});
   const [showSettings, setShowSettings] = useState(false);
+  const [showSetup, setShowSetup] = useState(false);
   const [ttsOn, setTtsOn] = useState(localStorage.getItem('kosmo.tts') === '1');
   const lastKosmoText = useRef('');
   const ttsRef = useRef(ttsOn);
@@ -655,6 +662,9 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         background: 'var(--k-surface)',
       }}
     >
+      {showSetup && (
+        <WerkzeugSetup betriebsart={settings.betriebsart} onClose={() => setShowSetup(false)} />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px' }}>
         <OrbitMark module="kosmo" size={24} />
         <div style={{ fontWeight: 550 }}>Kosmo</div>
@@ -712,6 +722,14 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               Browser-Fallback — die HomeStation-Qualität kommt erst am HomePC.
             </div>
           )}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="werkzeuge-oeffnen"
+            onClick={() => setShowSetup(true)}
+          >
+            Werkzeuge einrichten …
+          </KButton>
           <Hairline />
           <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
             Verbindung

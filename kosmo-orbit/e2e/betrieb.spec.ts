@@ -56,6 +56,26 @@ test('Betriebsart Remote leitet Bridge + Sync auf den VPN-Host', async ({ page }
   expect(s.sync).toBe('ws://100.87.3.2:8700');
 });
 
+test('Setup-Assistent zeigt die Werkzeuge der Betriebsart (Standard vs. Cloud)', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await oeffneEinstellungen(page);
+
+  // Standard: Ollama + Modell + Bridge als Kern, kein VPN/Claude-Schlüssel.
+  await page.click('[data-testid="werkzeuge-oeffnen"]');
+  await expect(page.locator('[data-testid="werkzeug-setup"]')).toBeVisible();
+  await expect(page.locator('[data-testid="werkzeug-ollama"]')).toBeVisible();
+  await expect(page.locator('[data-testid="werkzeug-bridge"]')).toBeVisible();
+  await expect(page.locator('[data-testid="werkzeug-claude-key"]')).toHaveCount(0);
+  await page.locator('[data-testid="werkzeug-setup"]').getByRole('button', { name: 'Schliessen' }).click();
+
+  // Cloud: nur der Claude-Schlüssel.
+  await page.click('[data-testid="betriebsart-cloud"]');
+  await page.click('[data-testid="werkzeuge-oeffnen"]');
+  await expect(page.locator('[data-testid="werkzeug-claude-key"]')).toBeVisible();
+  await expect(page.locator('[data-testid="werkzeug-ollama"]')).toHaveCount(0);
+});
+
 test('HomeStation nicht erreichbar → Cloud-Fallback (Opus 4.8) wird angeboten', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {

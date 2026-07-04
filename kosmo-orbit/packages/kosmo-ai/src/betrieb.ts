@@ -19,6 +19,52 @@ export type Betriebsart = 'standard' | 'remote' | 'cloud';
 /** Minimum-Cloud-Modell — der Owner verlangt mindestens Opus 4.8. */
 export const CLOUD_MODELL_MIN = 'claude-opus-4-8';
 
+/**
+ * Installer-Edition (der Build weiss, als was er ausgeliefert wurde).
+ * Bestimmt nur die Vorauswahl beim allerersten Start — der Nutzer kann die
+ * Betriebsart danach jederzeit umstellen.
+ */
+export type Edition = 'standard' | 'remote' | 'cloud';
+
+export interface EditionInfo {
+  edition: Edition;
+  titel: string;
+  kurz: string;
+  betriebsart: Betriebsart;
+}
+
+export const EDITIONEN: Record<Edition, EditionInfo> = {
+  standard: {
+    edition: 'standard',
+    titel: 'KosmoOrbit — HomePC',
+    kurz: 'Volle Leistung am Heim-PC: lokales LLM + alle Werkzeuge.',
+    betriebsart: 'standard',
+  },
+  remote: {
+    edition: 'remote',
+    titel: 'KosmoOrbit — Remote (VPN)',
+    kurz: 'Dünner Client, greift per VPN auf die Leistung des HomePC.',
+    betriebsart: 'remote',
+  },
+  cloud: {
+    edition: 'cloud',
+    titel: 'KosmoOrbit — Cloud',
+    kurz: 'Voll über Claude (mind. Opus 4.8), ohne Heim-PC.',
+    betriebsart: 'cloud',
+  },
+};
+
+/** Roher Editions-String (aus `VITE_KOSMO_EDITION`) → sichere Edition. */
+export function leseEdition(roh: string | undefined): Edition {
+  const e = (roh ?? '').trim().toLowerCase();
+  return e === 'remote' || e === 'cloud' ? e : 'standard';
+}
+
+/** Edition → Betriebsart für den Erststart. */
+export function editionBetriebsart(edition: Edition): Betriebsart {
+  return EDITIONEN[edition].betriebsart;
+}
+
 export interface BetriebEingabe {
   betriebsart: Betriebsart;
   /** Remote: VPN-Host des HomePC (IP oder Name), z.B. «100.87.3.2» oder «kosmo». */

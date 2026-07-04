@@ -1,6 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import 'fake-indexeddb/auto';
 import { chunkText } from '../src/modules/prepare/knowledge';
+import { werkzeugeFuer, WERKZEUGE } from '../src/state/werkzeuge';
+
+describe('Werkzeug-Manifest (Setup-Assistent)', () => {
+  it('Standard braucht Ollama + Modell + Bridge als Kern, VPN/Claude nicht', () => {
+    const ids = werkzeugeFuer('standard').map((w) => w.id);
+    expect(ids).toContain('ollama');
+    expect(ids).toContain('llm-modell');
+    expect(ids).toContain('bridge');
+    expect(ids).not.toContain('vpn');
+    expect(ids).not.toContain('claude-key');
+  });
+  it('Remote enthält zusätzlich das VPN, als Pflicht', () => {
+    const vpn = werkzeugeFuer('remote').find((w) => w.id === 'vpn');
+    expect(vpn?.pflicht).toBe(true);
+  });
+  it('Cloud braucht nur den Claude-Schlüssel, keine lokalen Dienste', () => {
+    const ids = werkzeugeFuer('cloud').map((w) => w.id);
+    expect(ids).toEqual(['claude-key']);
+  });
+  it('Pflicht-Werkzeuge stehen vor den optionalen', () => {
+    const liste = werkzeugeFuer('standard');
+    const ersterOptional = liste.findIndex((w) => !w.pflicht);
+    const letzterPflicht = liste.map((w) => w.pflicht).lastIndexOf(true);
+    expect(letzterPflicht).toBeLessThan(ersterOptional);
+  });
+  it('jedes Werkzeug trägt einen Hol-Hinweis', () => {
+    for (const w of WERKZEUGE) expect(w.holen.length).toBeGreaterThan(4);
+  });
+});
 
 describe('KosmoPrepare Chunking', () => {
   it('teilt an Absatzgrenzen um die Zielgrösse', () => {

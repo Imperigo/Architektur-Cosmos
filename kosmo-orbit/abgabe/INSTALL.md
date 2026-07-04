@@ -4,6 +4,28 @@ Die Installer entstehen in der CI (GitHub Actions) — Binärdateien liegen nie 
 Artefakte: GitHub → Actions → Workflow **«KosmoOrbit Desktop-Builds»** (neuester grüner
 Lauf) → Abschnitt *Artifacts*. Für iPad zusätzlich **«KosmoOrbit iOS-Experiment»**.
 
+## Drei Betriebsarten (welche Version wähle ich?)
+
+Jede Plattform wird in **drei Editionen** gebaut — sie unterscheiden sich nur in
+der *Erststart-Voreinstellung*; die Betriebsart lässt sich in Kosmo (⚙) jederzeit
+umstellen. Artefaktname: `kosmo-orbit-<edition>-<plattform>`.
+
+| Edition | Für wen | Kosmos Gehirn | Werkzeuge |
+| --- | --- | --- | --- |
+| **standard** | am Heim-PC selbst | lokales LLM (Ollama), volle Leistung | alle lokal |
+| **remote** | Laptop/MacBook unterwegs | greift per VPN auf den Heim-PC | laufen am Heim-PC |
+| **cloud** | wenn der Heim-PC aus ist | **Claude, mind. Opus 4.8** | Browser-Fallbacks |
+
+**Cloud-Fallback:** Ist die HomeStation nicht erreichbar, fragt Kosmo direkt
+«Mit Claude Cloud (Opus 4.8) weiterarbeiten?» und schaltet auf Wunsch um.
+
+**Werkzeuge einrichten:** Kosmo (⚙) → *Werkzeuge einrichten …* zeigt für die
+gewählte Betriebsart alle nötigen Tools, prüft die laufenden live und liefert für
+den Rest den copy-fertigen Hol-Befehl. Details: `../docs/BETRIEBSARTEN.md`.
+
+Wer nur *einen* Installer will: nimm **standard** — die Betriebsart ist im Programm
+umstellbar, ein Binary trägt alle drei.
+
 ## Linux (Ubuntu — der Entwicklungsrechner)
 
 Artefakt `kosmoorbit-linux` herunterladen und entpacken. Drei Wege, einer reicht:

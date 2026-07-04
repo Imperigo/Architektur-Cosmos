@@ -14,7 +14,12 @@ jobs:
   build:
     strategy:
       fail-fast: false
+      # Drei Editionen (Owner «drei Versionen») × drei Plattformen. Die Edition
+      # backt nur die Erststart-Betriebsart ein (VITE_KOSMO_EDITION) — das
+      # Binary bleibt sonst identisch, die Betriebsart ist jederzeit umstellbar.
       matrix:
+        edition: [standard, remote, cloud]
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
         include:
           - platform: macos-latest
             args: '--target universal-apple-darwin'
@@ -50,13 +55,15 @@ jobs:
       - uses: tauri-apps/tauri-action@v0.6.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Erststart-Betriebsart in den Build backen (Standard/Remote/Cloud).
+          VITE_KOSMO_EDITION: ${{ matrix.edition }}
         with:
           projectPath: kosmo-orbit/apps/kosmo-orbit
           args: ${{ matrix.args }}
       - name: Artefakte hochladen
         uses: actions/upload-artifact@v4
         with:
-          name: kosmo-orbit-${{ matrix.platform }}
+          name: kosmo-orbit-${{ matrix.edition }}-${{ matrix.platform }}
           path: |
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.dmg
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*.app.tar.gz

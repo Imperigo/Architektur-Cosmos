@@ -678,8 +678,8 @@ test('Kosmo-Einstellungen (V2-B3): Anthropic-Felder erscheinen, Schlüssel bleib
   const schluessel = page.locator('input[type="password"]');
   await expect(schluessel).toBeVisible();
   await schluessel.fill('sk-ant-test');
-  // Persistiert in localStorage, Badge zeigt das Claude-Modell
-  await expect(page.getByText('claude-sonnet-5')).toBeVisible();
+  // Persistiert in localStorage, Badge zeigt das Claude-Modell (Default Opus 4.8)
+  await expect(page.getByText('claude-opus-4-8')).toBeVisible();
   const gespeichert = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
   expect(gespeichert.provider).toBe('anthropic');
   expect(gespeichert.anthropicKey).toBe('sk-ant-test');

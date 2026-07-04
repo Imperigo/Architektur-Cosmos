@@ -3,6 +3,8 @@ import {
   CLOUD_MODELL_MIN,
   bereinigeHost,
   betriebKonfig,
+  editionBetriebsart,
+  leseEdition,
   mindestensOpus,
 } from '../src';
 
@@ -59,6 +61,22 @@ describe('bereinigeHost', () => {
   });
   it('leere Eingabe bleibt leer', () => {
     expect(bereinigeHost('')).toBe('');
+  });
+});
+
+describe('Edition', () => {
+  it('liest den rohen Build-String robust, Default = standard', () => {
+    expect(leseEdition('remote')).toBe('remote');
+    expect(leseEdition('CLOUD')).toBe('cloud');
+    expect(leseEdition('  standard ')).toBe('standard');
+    expect(leseEdition('')).toBe('standard');
+    expect(leseEdition(undefined)).toBe('standard');
+    expect(leseEdition('quatsch')).toBe('standard');
+  });
+  it('Edition → Erststart-Betriebsart', () => {
+    expect(editionBetriebsart('standard')).toBe('standard');
+    expect(editionBetriebsart('remote')).toBe('remote');
+    expect(editionBetriebsart('cloud')).toBe('cloud');
   });
 });
 
