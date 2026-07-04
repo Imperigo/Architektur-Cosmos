@@ -64,12 +64,18 @@ export type Zerlegung =
  * bei Schrägen aufs bisherige BBox-Verhalten zurück).
  */
 export function zerlegeRektilinear(outline: Pt[]): Zerlegung {
+  // Doppelte aufeinanderfolgende Punkte zuerst raus — sonst hätten BEIDE
+  // Duplikate Kreuzprodukt 0 und die echte Ecke ginge verloren (F1-Fund)
+  const pts = outline.filter((p, i) => {
+    const prev = outline[(i - 1 + outline.length) % outline.length]!;
+    return p.x !== prev.x || p.y !== prev.y;
+  });
   // Kollineare Zwischenpunkte entfernen (Ecken zählen, nicht Stützpunkte)
   const ecken: Pt[] = [];
-  for (let i = 0; i < outline.length; i++) {
-    const vor = outline[(i - 1 + outline.length) % outline.length]!;
-    const p = outline[i]!;
-    const nach = outline[(i + 1) % outline.length]!;
+  for (let i = 0; i < pts.length; i++) {
+    const vor = pts[(i - 1 + pts.length) % pts.length]!;
+    const p = pts[i]!;
+    const nach = pts[(i + 1) % pts.length]!;
     const kreuz = (p.x - vor.x) * (nach.y - p.y) - (p.y - vor.y) * (nach.x - p.x);
     if (kreuz !== 0) ecken.push(p);
   }

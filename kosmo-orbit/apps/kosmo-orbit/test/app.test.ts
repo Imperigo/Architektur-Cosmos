@@ -101,6 +101,51 @@ describe('KosmoData Live-Sync (Vision E2)', () => {
   });
 });
 
+describe('Tresor-Migration v1→v2 (Vision F1)', () => {
+  it('voller v1-Tresor überlebt das Upgrade; der varianten-Store kommt verlustfrei dazu', async () => {
+    // Sauber starten, dann einen ECHTEN v1-Tresor bauen (nur Store «projekte»)
+    await new Promise<void>((res, rej) => {
+      const req = indexedDB.deleteDatabase('kosmo-projekte');
+      req.onsuccess = () => res();
+      req.onerror = () => rej(req.error);
+    });
+    const dbV1 = await new Promise<IDBDatabase>((res, rej) => {
+      const req = indexedDB.open('kosmo-projekte', 1);
+      req.onupgradeneeded = () => req.result.createObjectStore('projekte', { keyPath: 'id' });
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => rej(req.error);
+    });
+    expect(Array.from(dbV1.objectStoreNames)).toEqual(['projekte']);
+    const eintraege = ['Altbau A', 'Altbau B', 'Altbau C'].map((name, i) => ({
+      id: `alt-${i}`,
+      name,
+      updatedAt: new Date(2026, 0, i + 1).toISOString(),
+      elemente: i * 10,
+      json: { schema: 'kosmo.model/v1', settings: { projectName: name }, entities: [] },
+    }));
+    await new Promise<void>((res, rej) => {
+      const t = dbV1.transaction('projekte', 'readwrite');
+      for (const e of eintraege) t.objectStore('projekte').put(e);
+      t.oncomplete = () => res();
+      t.onerror = () => rej(t.error);
+    });
+    dbV1.close();
+    // Erster Zugriff über den Tresor öffnet v2 → onupgradeneeded ergänzt «varianten»
+    const { listeProjekte, vaultTx } = await import('../src/state/project-vault');
+    const liste = await listeProjekte();
+    expect(liste.map((p) => p.name)).toEqual(['Altbau C', 'Altbau B', 'Altbau A']); // neuste zuerst, nichts verloren
+    // Der neue Store funktioniert im migrierten Tresor
+    const { loadTkbDemo } = await import('../src/state/demo-tkb');
+    const { archiviereVariante, listeVarianten, loescheVariante } = await import('../src/state/variant-archive');
+    loadTkbDemo();
+    const v = await archiviereVariante('Nach Migration');
+    expect((await listeVarianten()).some((x) => x.id === v.id)).toBe(true);
+    await loescheVariante(v.id);
+    // Alte Projekte sind nach der Varianten-Nutzung weiterhin da (kein Store-Reset)
+    expect((await vaultTx<unknown[]>('projekte', 'readonly', (s) => s.getAll() as IDBRequest<unknown[]>)).length).toBe(3);
+  });
+});
+
 describe('TKB-Demo v2 (Abendbatch C1)', () => {
   it('lädt Bibliothek + Wohnhof-Kette: Wände, Fenster, Treppenhaus, keine Fluchtweg-Fehler', async () => {
     const { loadTkbDemo } = await import('../src/state/demo-tkb');

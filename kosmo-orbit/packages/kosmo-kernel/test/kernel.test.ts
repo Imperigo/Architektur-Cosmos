@@ -3329,3 +3329,125 @@ describe('Review-Fixes (Adversarial-Runde)', () => {
     expect(doc.byKind<import('../src').ZonenTuer>('zonentuer').filter((t) => t.at.x >= 30000).length).toBeGreaterThanOrEqual(7);
   });
 });
+
+describe('Härtetest-Runde 3 (Vision F1)', () => {
+  const spec = { a: { x: 0, y: 0 }, b: { x: 9000, y: 0 }, depth: 5000, lookLeft: true } as const;
+
+  it('F1a: Voll-Roundtrip der neuen Bürger — terrain/aussparung/renovation/rolle tief-gleich, Derive lebt danach', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const wallId = (w.patches[0] as { id: string }).id;
+    execute(doc, 'design.renovationSetzen', { ids: [wallId], status: 'abbruch' });
+    execute(doc, 'design.terrainSetzen', { typ: 'gewachsen', punkte: [{ x: -1000, y: 0, z: 600 }, { x: 10000, y: 0, z: -400 }] });
+    execute(doc, 'design.terrainSetzen', { typ: 'neu', punkte: [{ x: -1000, y: 0, z: 0 }, { x: 10000, y: 0, z: 0 }] });
+    execute(doc, 'design.aussparungSetzen', { hostId: wallId, center: 4500, breite: 300, hoehe: 300, sill: 1200 });
+    const s = execute(doc, 'design.deckeZeichnen', {
+      storeyId, thickness: 250,
+      outline: [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 6000 }, { x: 0, y: 6000 }],
+    });
+    execute(doc, 'design.aussparungSetzen', {
+      hostId: (s.patches[0] as { id: string }).id, typ: 'schlitz', at: { x: 3000, y: 3000 }, breite: 400, hoehe: 800,
+    });
+    execute(doc, 'design.rolleSetzen', { rolle: 'ausfuehrung' });
+    const json1 = JSON.parse(JSON.stringify(doc.toJSON()));
+    const wieder = KosmoDoc.fromJSON(json1);
+    expect(JSON.parse(JSON.stringify(wieder.toJSON()))).toEqual(json1);
+    // Derive nach dem Roundtrip: Umbau-Poché, Aussparungs-Symbolik, Terrainprofile, Rolle
+    const plan = derivePlan(wieder, storeyId);
+    expect(plan.regions.some((r) => r.classes.includes('renovation-abbruch'))).toBe(true);
+    expect(plan.lines.filter((l) => l.classes.includes('aussparung')).length).toBeGreaterThanOrEqual(11);
+    expect(plan.texte).toHaveLength(2);
+    expect(deriveSection(wieder, spec).terrain).toHaveLength(2);
+    expect(wieder.settings.rolle).toBe('ausfuehrung');
+  });
+
+  it('F1b: alter .kosmo-Stand (vor Vision A–E) lädt sauber — Defaults greifen, keine Umbau-Spuren', async () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (w.patches[0] as { id: string }).id, openingType: 'fenster', center: 3000, width: 1200, height: 1400, sill: 900,
+    });
+    // Alte Datei simulieren: neue Settings-Schlüssel + neue Felder fehlen
+    const alt = JSON.parse(JSON.stringify(doc.toJSON()));
+    delete alt.settings.rolle;
+    if (alt.settings.bemassung) delete alt.settings.bemassung.rohKette;
+    for (const e of alt.entities) {
+      if (e.meta) delete e.meta.renovation;
+      delete e.anschlag;
+    }
+    const wieder = KosmoDoc.fromJSON(alt);
+    expect(wieder.settings.rolle).toBeNull(); // Default gemerged
+    const plan = derivePlan(wieder, storeyId);
+    expect(plan.regions.some((r) => r.classes.some((c) => c.startsWith('renovation-')))).toBe(false);
+    const { planInnerSvg } = await import('../src');
+    const svg = planInnerSvg(wieder, storeyId, 50).inner;
+    expect(svg).not.toContain('#b3261e'); // kein Neubau-Rot
+    expect(svg).not.toContain('#f3e29b'); // kein Abbruch-Gelb
+    // Ohne Terrain bleibt die flache z0-Linie (Bestandsverhalten = Golden-Verträglichkeit)
+    expect(sectionInnerSvg(wieder, spec, 100).inner).toContain('x1="-800" y1="0" x2="9800" y2="0"');
+  });
+
+  it('F1c: degenerierte Terrainprofile — identische Punkte, quer zur Schnittspur, zu wenig Punkte ehrlich abgelehnt', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    // 2 identische Stützpunkte: kein Absturz, Polylinie degeneriert zum Punkt
+    execute(doc, 'design.terrainSetzen', { typ: 'gewachsen', punkte: [{ x: 5000, y: 0, z: 300 }, { x: 5000, y: 0, z: 300 }] });
+    expect(deriveSection(doc, spec).terrain[0]!.pts).toEqual([{ s: 5000, z: 300 }, { s: 5000, z: 300 }]);
+    expect(() => sectionInnerSvg(doc, spec, 100)).not.toThrow();
+    // Profil quer zur Schnittspur: alle Punkte projizieren auf dasselbe s (senkrechte Linie), kein Absturz
+    execute(doc, 'design.terrainSetzen', {
+      typ: 'gewachsen', punkte: [{ x: 2000, y: -3000, z: 100 }, { x: 2000, y: 4000, z: 500 }],
+    });
+    const quer = deriveSection(doc, spec).terrain.find((t) => t.typ === 'gewachsen')!;
+    expect(quer.pts.map((p) => p.s)).toEqual([2000, 2000]);
+    expect(() => sectionInnerSvg(doc, spec, 100)).not.toThrow();
+    // Weniger als 2 Punkte / nicht-ganzzahlig: CommandError statt kaputtem Entity
+    expect(() => execute(doc, 'design.terrainSetzen', { typ: 'neu', punkte: [{ x: 0, y: 0, z: 0 }] })).toThrow(CommandError);
+    expect(() => execute(doc, 'design.terrainSetzen', { typ: 'neu', punkte: [] })).toThrow(CommandError);
+    expect(doc.byKind('terrain')).toHaveLength(1); // nur das (ersetzte) gewachsene Profil
+  });
+
+  it('F1d: L-Zerlegung verdaut kollineare Stützpunkte, Doppelpunkte und entartete Umrisse', async () => {
+    const { zerlegeRektilinear } = await import('../src');
+    const bb = (p: { x: number; y: number }[]) => ({
+      w: Math.max(...p.map((q) => q.x)) - Math.min(...p.map((q) => q.x)),
+      h: Math.max(...p.map((q) => q.y)) - Math.min(...p.map((q) => q.y)),
+    });
+    // L mit kollinearen Zwischenpunkten auf zwei Kanten → immer noch dasselbe L
+    const L = [
+      { x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 5000 },
+      { x: 7000, y: 5000 }, { x: 7000, y: 7000 }, { x: 7000, y: 9000 }, { x: 0, y: 9000 },
+    ];
+    const z = zerlegeRektilinear(L);
+    expect(z.typ).toBe('l');
+    if (z.typ !== 'l') throw new Error('unreachable');
+    expect(bb(z.haupt)).toEqual({ w: 7000, h: 9000 });
+    expect(bb(z.fluegel)).toEqual({ w: 5000, h: 5000 });
+    // Doppelpunkt an einer echten Ecke: die Ecke darf NICHT verloren gehen (F1-Fix)
+    const rechteckDoppelt = [
+      { x: 0, y: 0 }, { x: 9000, y: 0 }, { x: 9000, y: 0 }, { x: 9000, y: 6000 }, { x: 0, y: 6000 },
+    ];
+    expect(zerlegeRektilinear(rechteckDoppelt).typ).toBe('rechteck');
+    const lDoppelt = [
+      { x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 5000 }, { x: 12000, y: 5000 },
+      { x: 7000, y: 5000 }, { x: 7000, y: 9000 }, { x: 0, y: 9000 },
+    ];
+    expect(zerlegeRektilinear(lDoppelt).typ).toBe('l');
+    // Alle Punkte kollinear: ehrlich unregelmässig, kein Absturz
+    expect(zerlegeRektilinear([{ x: 0, y: 0 }, { x: 1000, y: 0 }, { x: 2000, y: 0 }, { x: 3000, y: 0 }]).typ).toBe('unregelmaessig');
+  });
+
+  it('F1e: renovationSetzen ist atomar — ein ungültiges Ziel in der Liste, kein halber Patch', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const wallId = (w.patches[0] as { id: string }).id;
+    expect(() =>
+      execute(doc, 'design.renovationSetzen', { ids: [wallId, storeyId], status: 'neu' }),
+    ).toThrow(CommandError);
+    expect((doc.get<Wall>(wallId)!.meta ?? {}).renovation).toBeUndefined(); // Wand blieb unangetastet
+    expect(() =>
+      execute(doc, 'design.renovationSetzen', { ids: [wallId, 'gibt-es-nicht'], status: 'neu' }),
+    ).toThrow(CommandError);
+    expect((doc.get<Wall>(wallId)!.meta ?? {}).renovation).toBeUndefined();
+  });
+});
