@@ -93,6 +93,9 @@ export interface DocSettings {
    * Kriterium→Farbe, je Blatt-Platzierung aktivierbar — Brandschutz-,
    * Schallschutz- oder Materialplan aus demselben Modell. */
   themen?: ThemenPlan[];
+  /** Keynotes (RE-ARCHICAD A6): zentrale Notizliste nr→Text — Etiketten
+   * verweisen mit der Nummer, die Blatt-Legende schreibt den Text aus. */
+  keynotes?: { nr: string; text: string }[];
 }
 
 /** Eine Override-Regel: WAS wird WIE getönt (erste Treffer-Regel gewinnt). */

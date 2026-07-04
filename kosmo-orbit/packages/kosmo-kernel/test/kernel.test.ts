@@ -3653,6 +3653,75 @@ describe('Themenplan-Overrides (RE-ARCHICAD A5)', () => {
   });
 });
 
+describe('Etiketten + Keynotes (RE-ARCHICAD A6)', () => {
+  it('Aufbau-Etikett liest LIVE: Leader + 2 Zeilen, Aufbau ändern zieht nach, Vorprojekt blendet aus, Wirt-Löschung räumt', () => {
+    const { doc, storeyId, assemblyId } = setupDoc(); // AW Beton 36: 20|160|180
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const wallId = (w.patches[0] as { id: string }).id;
+    const et = execute(doc, 'design.etikettSetzen', { targetId: wallId, at: { x: 4500, y: 2000 } });
+    const plan = derivePlan(doc, storeyId);
+    expect(plan.lines.filter((l) => l.classes.includes('etikett'))).toHaveLength(1);
+    const texte = plan.texte.filter((t) => t.classes.includes('etikett'));
+    expect(texte.map((t) => t.text)).toEqual(['AW Beton 36', '20 / 160 / 180 mm']);
+    expect(texte[1]!.zeile).toBe(1);
+    // Leader zeigt zur Wandmitte
+    expect(plan.lines.find((l) => l.classes.includes('etikett'))!.b).toEqual({ x: 4500, y: 0 });
+    // Assoziativ: Aufbau umbenennen + Schichtdicke ändern → Etikett folgt, ohne Anfassen
+    const asm = doc.get<Assembly>(assemblyId)!;
+    doc.apply([{
+      id: assemblyId, before: asm,
+      after: { ...asm, name: 'AW Beton 40', layers: asm.layers.map((l) => (l.function === 'tragend' ? { ...l, thickness: 220 } : l)) },
+    }]);
+    const neu = derivePlan(doc, storeyId).texte.filter((t) => t.classes.includes('etikett'));
+    expect(neu.map((t) => t.text)).toEqual(['AW Beton 40', '20 / 160 / 220 mm']);
+    // Vorprojekt: Werkplan-Beschriftung weg
+    execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
+    expect(derivePlan(doc, storeyId).texte.filter((t) => t.classes.includes('etikett'))).toHaveLength(0);
+    execute(doc, 'design.phaseSetzen', { phase: 'werkplan' });
+    // Wirt löschen räumt das Etikett mit; Undo bringt beides zurück
+    const del = execute(doc, 'design.loeschen', { entityId: wallId });
+    expect(doc.byKind('etikett')).toHaveLength(0);
+    doc.apply(invertPatches(del.patches));
+    expect(doc.byKind('etikett')).toHaveLength(1);
+    // Ziel-Validierung: Zone/Geschoss sind keine Etiketten-Ziele
+    expect(() => execute(doc, 'design.etikettSetzen', { targetId: storeyId, at: { x: 0, y: 0 } })).toThrow(CommandError);
+    void et;
+  });
+
+  it('Keynotes: zentrale Liste, Etikett validiert, Blatt-Legende schreibt aus, Roundtrip', async () => {
+    const { sheetToSvg } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const wallId = (w.patches[0] as { id: string }).id;
+    // Etikett ohne existierende Keynote → ehrlicher Fehler
+    expect(() =>
+      execute(doc, 'design.etikettSetzen', { targetId: wallId, at: { x: 2000, y: 2000 }, inhalt: 'keynote', keynote: 'K1' }),
+    ).toThrow(CommandError);
+    execute(doc, 'design.keynoteSetzen', { nr: 'K1', text: 'Sockelleiste Eiche geölt' });
+    execute(doc, 'design.keynoteSetzen', { nr: 'K10', text: 'Trittschalldämmung 20 mm' });
+    execute(doc, 'design.keynoteSetzen', { nr: 'K2', text: 'PROVISORISCH' });
+    execute(doc, 'design.keynoteSetzen', { nr: 'K2', text: 'Fensterbank Alu eloxiert' }); // ersetzt
+    // numerisch sortiert: K1, K2, K10
+    expect(doc.settings.keynotes!.map((k) => k.nr)).toEqual(['K1', 'K2', 'K10']);
+    execute(doc, 'design.etikettSetzen', { targetId: wallId, at: { x: 2000, y: 2000 }, inhalt: 'keynote', keynote: 'K1' });
+    // Blatt: Marker am Plan + Legende schreibt den Text aus
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'Details', format: 'A2' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId, view: 'grundriss', storeyId, scale: 50, x: 200, y: 200 });
+    const svg = sheetToSvg(doc, sheetId, { projectName: 'T' });
+    expect(svg).toContain('>K1</text>'); // Marker im Plan
+    expect(svg).toContain('Sockelleiste Eiche geölt'); // Legende
+    expect(svg).not.toContain('Fensterbank'); // unbenutzte Keynote bleibt weg
+    // Löschen validiert; Roundtrip nimmt Keynotes mit
+    execute(doc, 'design.keynoteSetzen', { nr: 'K10' });
+    expect(doc.settings.keynotes!.map((k) => k.nr)).toEqual(['K1', 'K2']);
+    expect(() => execute(doc, 'design.keynoteSetzen', { nr: 'K99' })).toThrow(CommandError);
+    const wieder = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));
+    expect(wieder.settings.keynotes).toHaveLength(2);
+    expect(wieder.byKind('etikett')).toHaveLength(1);
+  });
+});
+
 describe('Härtetest-Runde 3 (Vision F1)', () => {
   const spec = { a: { x: 0, y: 0 }, b: { x: 9000, y: 0 }, depth: 5000, lookLeft: true } as const;
 

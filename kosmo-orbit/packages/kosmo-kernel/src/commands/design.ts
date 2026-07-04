@@ -305,6 +305,10 @@ export const deleteEntity = registerCommand({
         if (a.hostId === e.id) patches.push({ id: a.id, before: a, after: null });
       }
     }
+    // Etiketten des Bauteils räumen mit (A6)
+    for (const et of doc.byKind<import('../model/entities').Etikett>('etikett')) {
+      if (et.targetId === e.id) patches.push({ id: et.id, before: et, after: null });
+    }
     patches.push({ id: e.id, before: e, after: null });
     return patches;
   },
@@ -525,6 +529,64 @@ export const importKatalog = registerCommand({
       throw new CommandError('Nichts zu importieren — alles ist schon im Projekt');
     }
     return patches;
+  },
+});
+
+export const setEtikett = registerCommand({
+  id: 'design.etikettSetzen',
+  title: 'Etikett setzen',
+  description:
+    'Setzt eine assoziative Etikette an ein Bauteil (Wand, Decke, Stütze, Unterzug): inhalt «aufbau» beschriftet Aufbau/Querschnitt LIVE aus der Parametrik, «keynote» verweist auf eine Nummer aus design.keynoteSetzen — die Blatt-Legende schreibt den Text aus. at = Text-Anker in Welt-mm, der Leader zeigt zum Bauteil. Sichtbar ab Bauprojekt.',
+  params: z.object({
+    targetId: z.string(),
+    at: PtSchema,
+    inhalt: z.enum(['aufbau', 'keynote']).default('aufbau'),
+    keynote: z.string().optional().describe('Keynote-Nummer, z.B. K3 (nur inhalt keynote)'),
+  }),
+  summarize: (p) => (p.inhalt === 'keynote' ? `Etikett ${p.keynote ?? '?'}` : 'Aufbau-Etikett'),
+  run: (doc, p) => {
+    const target = doc.get(p.targetId);
+    if (!target || !['wall', 'slab', 'column', 'beam'].includes(target.kind)) {
+      throw new CommandError('Etiketten gehören an Wand, Decke, Stütze oder Unterzug');
+    }
+    if (p.inhalt === 'keynote') {
+      if (!p.keynote) throw new CommandError('inhalt «keynote» braucht eine Keynote-Nummer');
+      if (!(doc.settings.keynotes ?? []).some((k) => k.nr === p.keynote)) {
+        throw new CommandError(`Keynote «${p.keynote}» existiert nicht — zuerst design.keynoteSetzen`);
+      }
+    }
+    const etikett: import('../model/entities').Etikett = {
+      id: newId('etikett'),
+      kind: 'etikett',
+      storeyId: (target as { storeyId: string }).storeyId,
+      targetId: p.targetId,
+      at: p.at as Pt,
+      inhalt: p.inhalt,
+      ...(p.keynote ? { keynote: p.keynote } : {}),
+    };
+    return [added(etikett)];
+  },
+});
+
+export const setKeynote = registerCommand({
+  id: 'design.keynoteSetzen',
+  title: 'Keynote setzen',
+  description:
+    'Pflegt die zentrale Notizliste (RE-ARCHICAD A6): nr + text legt an oder ersetzt, text weglassen löscht die Nummer. Etiketten verweisen mit der Nummer, die Blatt-Legende schreibt den Text aus.',
+  params: z.object({
+    nr: z.string().min(1).describe('Nummer, z.B. K1'),
+    text: z.string().optional().describe('Notiztext; weglassen = Keynote löschen'),
+  }),
+  summarize: (p) => (p.text ? `Keynote ${p.nr}: ${p.text.slice(0, 40)}` : `Keynote ${p.nr} löschen`),
+  run: (doc, p) => {
+    const vorher = doc.settings.keynotes ?? [];
+    if (p.text === undefined && !vorher.some((k) => k.nr === p.nr)) {
+      throw new CommandError(`Keynote «${p.nr}» existiert nicht`);
+    }
+    const rest = vorher.filter((k) => k.nr !== p.nr);
+    const nachher = p.text === undefined ? rest : [...rest, { nr: p.nr, text: p.text }];
+    nachher.sort((a, b) => a.nr.localeCompare(b.nr, 'de-CH', { numeric: true }));
+    return [{ settings: true as const, before: { keynotes: vorher }, after: { keynotes: nachher } }];
   },
 });
 

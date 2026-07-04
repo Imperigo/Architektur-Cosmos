@@ -135,6 +135,27 @@ export function Inspector() {
               ⌗ 30×30 setzen
             </KButton>
           </Row>
+          <Row label="Etikett">
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="inspector-etikett"
+              onClick={() => {
+                try {
+                  // Aufbau-Etikett neben der Wandmitte — assoziativ, liest live
+                  const mitte = {
+                    x: Math.round((entity.a.x + entity.b.x) / 2),
+                    y: Math.round((entity.a.y + entity.b.y) / 2) + 800,
+                  };
+                  runCommand('design.etikettSetzen', { targetId: entity.id, at: mitte, inhalt: 'aufbau' });
+                } catch (err) {
+                  alert(err instanceof Error ? err.message : String(err));
+                }
+              }}
+            >
+              🏷 Aufbau
+            </KButton>
+          </Row>
         </>
       )}
 

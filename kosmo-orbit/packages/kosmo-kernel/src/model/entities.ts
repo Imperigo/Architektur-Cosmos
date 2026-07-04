@@ -72,6 +72,23 @@ export interface Beam extends Base {
   material: string;
 }
 
+/**
+ * Assoziative Etikette (RE-ARCHICAD A6): liest ihr Bauteil LIVE aus der
+ * Parametrik — Aufbau umbenennen ändert alle Etiketten mit. inhalt 'aufbau'
+ * beschriftet Aufbau/Querschnitt, 'keynote' verweist auf settings.keynotes
+ * (die Legende aufs Blatt macht sheetToSvg).
+ */
+export interface Etikett extends Base {
+  kind: 'etikett';
+  storeyId: string;
+  targetId: string;
+  /** Text-Anker in Welt-mm; der Leader zeigt zum Bauteil. */
+  at: Pt;
+  inhalt: 'aufbau' | 'keynote';
+  /** Keynote-Nummer (nur inhalt 'keynote'), z.B. «K3». */
+  keynote?: string;
+}
+
 /** Grundriss-Polygon einer Stütze (rund als 16-Eck), CCW = positive Fläche. */
 export function columnOutline(c: Column): Pt[] {
   if (c.profil === 'rund') {
@@ -377,7 +394,7 @@ export interface Aussparung extends Base {
 }
 
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

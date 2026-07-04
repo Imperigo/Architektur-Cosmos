@@ -55,6 +55,9 @@ export interface PlanText {
   at: Pt;
   text: string;
   classes: string[];
+  /** Zeilen-Index für mehrzeilige Beschriftungen (A6) — der Renderer
+   * versetzt um zeile × Zeilenhöhe (massstabsabhängig); fehlt = 0. */
+  zeile?: number;
 }
 
 export interface PlanGraphic {
@@ -335,6 +338,45 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       const spitze: Pt = { x: Math.round(ende.x - d.x * 300), y: Math.round(ende.y - d.y * 300) };
       lines.push({ a: ende, b: { x: Math.round(spitze.x - d.x * 350 + nn.x * 160), y: Math.round(spitze.y - d.y * 350 + nn.y * 160) }, classes: ['symbol', 'lauflinie'] });
       lines.push({ a: ende, b: { x: Math.round(spitze.x - d.x * 350 - nn.x * 160), y: Math.round(spitze.y - d.y * 350 - nn.y * 160) }, classes: ['symbol', 'lauflinie'] });
+    }
+  }
+
+  // Etiketten (A6): assoziativ — der Text kommt LIVE aus der Parametrik.
+  // Werkplan-Beschriftung: sichtbar ab Bauprojekt.
+  if (phase !== 'vorprojekt') {
+    for (const et of doc.byKind<import('../model/entities').Etikett>('etikett')) {
+      if (et.storeyId !== storeyId) continue;
+      const target = doc.get(et.targetId);
+      if (!target) continue;
+      let anker: Pt | null = null;
+      let zeilen: string[] = [];
+      if (target.kind === 'wall') {
+        anker = { x: Math.round((target.a.x + target.b.x) / 2), y: Math.round((target.a.y + target.b.y) / 2) };
+        const asm = doc.get<Assembly>(target.assemblyId);
+        if (asm && asm.kind === 'assembly') {
+          zeilen = [asm.name, `${asm.layers.map((l) => l.thickness).join(' / ')} mm`];
+        }
+      } else if (target.kind === 'slab') {
+        const o = target.outline;
+        anker = {
+          x: Math.round(o.reduce((a, q) => a + q.x, 0) / o.length),
+          y: Math.round(o.reduce((a, q) => a + q.y, 0) / o.length),
+        };
+        zeilen = [`Decke ${target.thickness} mm`];
+      } else if (target.kind === 'column') {
+        anker = target.at;
+        zeilen = [target.profil === 'rund' ? `Stütze Ø ${target.b} ${target.material}` : `Stütze ${target.b}×${target.t ?? target.b} ${target.material}`];
+      } else if (target.kind === 'beam') {
+        anker = { x: Math.round((target.a.x + target.b.x) / 2), y: Math.round((target.a.y + target.b.y) / 2) };
+        zeilen = [`UZ ${target.breite}×${target.hoehe} ${target.material}`];
+      }
+      if (!anker) continue;
+      if (et.inhalt === 'keynote') zeilen = [et.keynote ?? '?'];
+      if (zeilen.length === 0) continue;
+      lines.push({ a: et.at, b: anker, classes: ['symbol', 'etikett'] });
+      zeilen.forEach((text, i) =>
+        texte.push({ at: et.at, text, classes: ['etikett'], ...(i > 0 ? { zeile: i } : {}) }),
+      );
     }
   }
 

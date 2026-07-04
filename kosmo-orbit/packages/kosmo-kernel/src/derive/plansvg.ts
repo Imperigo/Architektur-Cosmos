@@ -131,10 +131,12 @@ export function planInnerSvg(
       }
     }
   }
-  // Plan-Beschriftungen (A3: Aussparungs-Koten), feiner Text mittig
+  // Plan-Beschriftungen (A3: Aussparungs-Koten, A6: Etiketten), feiner Text
+  // mittig; zeile versetzt mehrzeilige Etiketten massstabsgerecht
   for (const t of plan.texte) {
+    const y = -t.at.y + (t.zeile ?? 0) * 3 * scale;
     parts.push(
-      `<text x="${t.at.x}" y="${-t.at.y}" text-anchor="middle" font-size="${2.2 * scale}" font-family="monospace">${escapeXml(t.text)}</text>`,
+      `<text x="${t.at.x}" y="${y}" text-anchor="middle" font-size="${2.2 * scale}" font-family="monospace">${escapeXml(t.text)}</text>`,
     );
   }
   for (const a of plan.arcs) {

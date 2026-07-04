@@ -1706,3 +1706,29 @@ test('Trace + Katalog (RE-ARCHICAD A8): Geschoss unterlegen, Katalog-Download', 
   ]);
   expect(download.suggestedFilename()).toMatch(/-Katalog\.json$/);
 });
+
+test('Etiketten (RE-ARCHICAD A6): Inspector-Knopf setzt Aufbau-Etikett mit Leader', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aufbau = k.run('design.aufbauErstellen', {
+      name: 'AW E', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    const w = k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: aufbau.patches[0].id,
+      a: { x: 0, y: 0 }, b: { x: 8000, y: 0 },
+    });
+    st.select([w.patches[0].id]);
+  });
+  await page.click('[data-testid="inspector-etikett"]');
+  // 2 Textzeilen (Aufbau-Name + Schichtkette) + Leader-Linie
+  await expect(page.locator('text.etikett')).toHaveCount(2);
+  await expect(page.locator('text.etikett').first()).toHaveText('AW E');
+  await expect(page.locator('line.etikett')).toHaveCount(1);
+});

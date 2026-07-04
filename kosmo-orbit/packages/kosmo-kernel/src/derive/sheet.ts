@@ -112,16 +112,37 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
       );
       // Themenplan-Legende (A5): Farbkästchen + Label unter dem Titel
       const thema = pl.thema ? (doc.settings.themen ?? []).find((t) => t.name === pl.thema) : undefined;
+      let legendeY = labelY + 6;
       if (thema) {
         let lx = pl.x - ((bounds.maxX - bounds.minX) / 2) * f;
-        const ly = labelY + 6;
         for (const r of thema.regeln) {
           const label = r.label ?? r.wert;
           parts.push(
-            `<rect x="${lx.toFixed(2)}" y="${(ly - 3).toFixed(2)}" width="4" height="3" fill="${r.farbe}" stroke="black" stroke-width="0.18"/>`,
-            `<text x="${(lx + 5.5).toFixed(2)}" y="${ly.toFixed(2)}" font-size="2.8">${escapeXml(label)}</text>`,
+            `<rect x="${lx.toFixed(2)}" y="${(legendeY - 3).toFixed(2)}" width="4" height="3" fill="${r.farbe}" stroke="black" stroke-width="0.18"/>`,
+            `<text x="${(lx + 5.5).toFixed(2)}" y="${legendeY.toFixed(2)}" font-size="2.8">${escapeXml(label)}</text>`,
           );
           lx += 5.5 + label.length * 1.7 + 6;
+        }
+        legendeY += 5;
+      }
+      // Keynote-Legende (A6): verwendete Nummern des Geschosses ausschreiben
+      if (pl.view === 'grundriss' && pl.storeyId) {
+        const nrs = [
+          ...new Set(
+            doc
+              .byKind<import('../model/entities').Etikett>('etikett')
+              .filter((e) => e.storeyId === pl.storeyId && e.inhalt === 'keynote' && e.keynote)
+              .map((e) => e.keynote!),
+          ),
+        ].sort((a, b) => a.localeCompare(b, 'de-CH', { numeric: true }));
+        const lx = pl.x - ((bounds.maxX - bounds.minX) / 2) * f;
+        for (const nr of nrs) {
+          const eintrag = (doc.settings.keynotes ?? []).find((k) => k.nr === nr);
+          if (!eintrag) continue;
+          parts.push(
+            `<text x="${lx.toFixed(2)}" y="${legendeY.toFixed(2)}" font-size="2.8"><tspan font-weight="bold">${escapeXml(nr)}</tspan>  ${escapeXml(eintrag.text)}</text>`,
+          );
+          legendeY += 4;
         }
       }
     }
