@@ -3557,6 +3557,54 @@ describe('Publikations-Sets (RE-ARCHICAD A4)', () => {
   });
 });
 
+describe('Katalog-Transfer (RE-ARCHICAD A8)', () => {
+  it('katalogExport → katalogImportieren: Projekt 2 startet mit dem Wissen von Projekt 1, nichts wird überschrieben', async () => {
+    const { katalogExport } = await import('../src');
+    // Projekt 1: Aufbau + Vorlage + Modul + Formel + Prioritäts-Override
+    const p1 = setupDoc(); // AW Beton 36
+    execute(p1.doc, 'design.modulSpeichern', {
+      name: 'Band', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 400, y: 900, b: 1700, h: 1600, typ: 'fenster' }],
+    });
+    execute(p1.doc, 'design.kennzahlFormelnSetzen', {
+      formeln: [{ name: 'Kosten', wert: 3200, basis: 'agf', einheit: 'CHF' }],
+    });
+    execute(p1.doc, 'design.prioritaetSetzen', { material: 'kalksandstein', prioritaet: 950 });
+    const z = execute(p1.doc, 'design.zoneErstellen', {
+      storeyId: p1.storeyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 4000, y: 0 }, { x: 4000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    execute(p1.doc, 'design.vorlageSpeichern', { name: 'Zimmer-Muster', zoneIds: [(z.patches[0] as { id: string }).id] });
+    const katalog = JSON.parse(JSON.stringify(katalogExport(p1.doc)));
+    expect(katalog.schema).toBe('kosmo.katalog/v1');
+    expect(katalog.aufbauten).toHaveLength(1);
+    expect(katalog.aufbauten[0].id).toBeUndefined(); // keine Entity-IDs im Katalog
+
+    // Projekt 2: eigener Aufbau GLEICHEN Namens (bleibt), Rest kommt dazu
+    const p2 = setupDoc();
+    const eigeneId = p2.assemblyId;
+    delete katalog.schema;
+    execute(p2.doc, 'design.katalogImportieren', katalog);
+    const aufbauten = p2.doc.byKind<Assembly>('assembly');
+    expect(aufbauten).toHaveLength(1); // Namens-Dublette NICHT importiert
+    expect(aufbauten[0]!.id).toBe(eigeneId); // das eigene blieb unangetastet
+    expect(p2.doc.settings.vorlagen.map((v) => v.name)).toContain('Zimmer-Muster');
+    expect(p2.doc.settings.fassadenModule.map((m) => m.name)).toContain('Band');
+    expect(p2.doc.settings.kennzahlFormeln.map((f) => f.name)).toContain('Kosten');
+    expect(p2.doc.settings.materialPrioritaeten?.['kalksandstein']).toBe(950);
+    // Zweiter Import derselben Datei: ehrlich «nichts zu tun»
+    expect(() => execute(p2.doc, 'design.katalogImportieren', katalog)).toThrow(/Nichts zu importieren/);
+    // Undo räumt alles zurück
+    const p3 = setupDoc();
+    const neuAufbau = { ...katalog, aufbauten: [{ name: 'IW KS 15', target: 'wall', layers: [{ material: 'kalksandstein', thickness: 150, function: 'tragend' }] }] };
+    const res = execute(p3.doc, 'design.katalogImportieren', neuAufbau);
+    expect(p3.doc.byKind('assembly')).toHaveLength(2);
+    p3.doc.apply(invertPatches(res.patches));
+    expect(p3.doc.byKind('assembly')).toHaveLength(1);
+    expect(p3.doc.settings.fassadenModule).toHaveLength(0);
+  });
+});
+
 describe('Härtetest-Runde 3 (Vision F1)', () => {
   const spec = { a: { x: 0, y: 0 }, b: { x: 9000, y: 0 }, depth: 5000, lookLeft: true } as const;
 

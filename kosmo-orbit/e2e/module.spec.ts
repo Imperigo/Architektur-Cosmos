@@ -1672,3 +1672,37 @@ test('Publikations-Sets (RE-ARCHICAD A4): Set speichern → SVGs nach Namensrege
   ]);
   expect(pdf.suggestedFilename()).toMatch(/-Wettbewerb\.pdf$/);
 });
+
+test('Trace + Katalog (RE-ARCHICAD A8): Geschoss unterlegen, Katalog-Download', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]'); // bootstrappt EG + 1.OG
+  await page.click('[data-testid="view-2d"]');
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aufbau = k.run('design.aufbauErstellen', {
+      name: 'AW T', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId, assemblyId: aufbau.patches[0].id,
+      a: { x: 0, y: 0 }, b: { x: 8000, y: 0 },
+    });
+  });
+  // Trace: anderes Geschoss wählen → blasser Layer erscheint (EG-Wand liegt im EG,
+  // aktiv ist das EG — also ins OG wechseln und das EG unterlegen)
+  await expect(page.locator('[data-testid="trace-layer"]')).toHaveCount(0);
+  const egId = await page.evaluate(() => window.__kosmo.state().activeStoreyId);
+  await page.click('button:text-is("1.OG")');
+  await page.selectOption('[data-testid="trace-select"]', egId!);
+  await expect(page.locator('[data-testid="trace-layer"] path').first()).toBeVisible();
+  // Katalog-Export lädt eine .json mit dem Aufbau
+  await page.click('header button[aria-label="Zur Zentrale"]');
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('[data-testid="katalog-export"]'),
+  ]);
+  expect(download.suggestedFilename()).toMatch(/-Katalog\.json$/);
+});

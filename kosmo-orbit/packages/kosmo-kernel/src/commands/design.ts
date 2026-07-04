@@ -458,6 +458,76 @@ export const setRole = registerCommand({
   ],
 });
 
+export const importKatalog = registerCommand({
+  id: 'design.katalogImportieren',
+  title: 'Katalog importieren',
+  description:
+    'Übernimmt einen exportierten Projekt-Katalog (kosmo.katalog/v1): Aufbauten, Zonen-Vorlagen, Fassadenmodule, Kennzahl-Formeln und Prioritäts-Overrides. Bestehendes gleichen Namens bleibt unangetastet (kein Überschreiben) — Projekt 2 startet mit dem Wissen von Projekt 1.',
+  params: z.object({
+    aufbauten: z
+      .array(z.object({
+        name: z.string().min(1),
+        target: z.enum(['wall', 'slab', 'roof']).default('wall'),
+        layers: z
+          .array(z.object({
+            material: z.string().min(1),
+            thickness: z.number().int().positive(),
+            function: z.enum(['tragend', 'daemmung', 'bekleidung', 'dichtung', 'hohlraum']),
+          }))
+          .min(1),
+      }))
+      .optional(),
+    vorlagen: z.array(z.unknown()).optional(),
+    fassadenModule: z.array(z.unknown()).optional(),
+    kennzahlFormeln: z.array(z.unknown()).optional(),
+    materialPrioritaeten: z.record(z.string(), z.number().int().min(0).max(999)).optional(),
+  }),
+  summarize: (p) =>
+    `Katalog importieren (${p.aufbauten?.length ?? 0} Aufbauten, ${p.vorlagen?.length ?? 0} Vorlagen, ${p.fassadenModule?.length ?? 0} Module)`,
+  run: (doc, p) => {
+    const patches: AnyPatch[] = [];
+    const habenAufbau = new Set(doc.byKind<Assembly>('assembly').map((a) => a.name));
+    for (const a of p.aufbauten ?? []) {
+      if (habenAufbau.has(a.name)) continue;
+      habenAufbau.add(a.name);
+      patches.push(
+        added({ id: newId('assembly'), kind: 'assembly', name: a.name, target: a.target, layers: a.layers }),
+      );
+    }
+    // Settings-Sammlungen: nach Name deduplizieren, nie überschreiben
+    const benannt = (x: unknown): x is { name: string } =>
+      typeof x === 'object' && x !== null && typeof (x as { name?: unknown }).name === 'string';
+    const mische = <T extends { name: string }>(alt: T[], neu: unknown[] | undefined): T[] | null => {
+      const haben = new Set(alt.map((v) => v.name));
+      const dazu = (neu ?? []).filter(benannt).filter((v) => !haben.has(v.name)) as T[];
+      return dazu.length > 0 ? [...alt, ...dazu] : null;
+    };
+    const before: Record<string, unknown> = {};
+    const after: Record<string, unknown> = {};
+    const vorlagen = mische(doc.settings.vorlagen, p.vorlagen);
+    if (vorlagen) { before['vorlagen'] = doc.settings.vorlagen; after['vorlagen'] = vorlagen; }
+    const module = mische(doc.settings.fassadenModule, p.fassadenModule);
+    if (module) { before['fassadenModule'] = doc.settings.fassadenModule; after['fassadenModule'] = module; }
+    const formeln = mische(doc.settings.kennzahlFormeln, p.kennzahlFormeln);
+    if (formeln) { before['kennzahlFormeln'] = doc.settings.kennzahlFormeln; after['kennzahlFormeln'] = formeln; }
+    if (p.materialPrioritaeten) {
+      const alt = doc.settings.materialPrioritaeten ?? {};
+      const neu = { ...p.materialPrioritaeten, ...alt }; // Bestehendes gewinnt
+      if (Object.keys(neu).length > Object.keys(alt).length) {
+        before['materialPrioritaeten'] = alt;
+        after['materialPrioritaeten'] = neu;
+      }
+    }
+    if (Object.keys(after).length > 0) {
+      patches.push({ settings: true as const, before, after } as AnyPatch);
+    }
+    if (patches.length === 0) {
+      throw new CommandError('Nichts zu importieren — alles ist schon im Projekt');
+    }
+    return patches;
+  },
+});
+
 export const setPrioritaet = registerCommand({
   id: 'design.prioritaetSetzen',
   title: 'Verschneidungspriorität setzen',

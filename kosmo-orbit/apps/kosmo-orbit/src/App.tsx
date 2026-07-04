@@ -36,6 +36,7 @@ import {
   type VariantenEintrag,
 } from './state/variant-archive';
 import { useProject } from './state/project-store';
+import { katalogExport } from '@kosmo/kernel';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
@@ -638,11 +639,56 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
 
   return (
     <div style={{ display: 'grid', gap: 8 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         <div style={{ fontWeight: 550, fontSize: 13.5 }}>Projekte</div>
         <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
           Autosave — jede Änderung landet hier. .kosmo bleibt fürs Weitergeben.
         </span>
+        <div style={{ flex: 1 }} />
+        {/* Katalog-Transfer (A8): Aufbauten/Vorlagen/Module/Formeln ins nächste Projekt */}
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="katalog-export"
+          title="Aufbauten, Vorlagen, Module, Formeln und Prioritäten als .json — fürs nächste Projekt"
+          onClick={() => {
+            const { doc } = useProject.getState();
+            const blob = new Blob([JSON.stringify(katalogExport(doc), null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-Katalog.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+        >
+          Katalog ↓
+        </KButton>
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="katalog-import"
+          title="Katalog-Datei (.json) ins aktuelle Projekt übernehmen — nichts wird überschrieben"
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'application/json,.json';
+            input.onchange = async () => {
+              const file = input.files?.[0];
+              if (!file) return;
+              try {
+                const roh = JSON.parse(await file.text()) as Record<string, unknown>;
+                delete roh['schema'];
+                useProject.getState().runCommand('design.katalogImportieren', roh);
+              } catch (err) {
+                alert(err instanceof Error ? err.message : String(err));
+              }
+            };
+            input.click();
+          }}
+        >
+          Katalog ↑
+        </KButton>
       </div>
       {projekte.length === 0 && (
         <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>

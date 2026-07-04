@@ -17,6 +17,9 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
   const doc = useProject.getState().doc;
   // Raumgraph-Overlay (Finch-Clip): Knoten auf Raumzentren, Kanten an Übergängen
   const [graphAn, setGraphAn] = useState(false);
+  // Trace (RE-ARCHICAD A8): anderes Geschoss blass unterlegen — reine
+  // Arbeitshilfe am Bildschirm, nie Planinhalt
+  const [traceId, setTraceId] = useState<string>('');
   const graph = useMemo(() => {
     if (!graphAn || !activeStoreyId) return null;
     const g = raumGraph(doc, activeStoreyId);
@@ -66,6 +69,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
   const plan = useMemo(
     () => (activeStoreyId ? derivePlan(doc, activeStoreyId) : null),
     [doc, activeStoreyId, revision],
+  );
+  const tracePlan = useMemo(
+    () => (traceId && traceId !== activeStoreyId && doc.get(traceId) ? derivePlan(doc, traceId) : null),
+    [doc, traceId, activeStoreyId, revision],
   );
   const dims = useMemo(
     () => (activeStoreyId ? deriveDimensions(doc, activeStoreyId) : null),
@@ -149,6 +156,23 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--k-plan-paper)' }}>
+      <select
+        data-testid="trace-select"
+        value={traceId}
+        onChange={(e) => setTraceId(e.target.value)}
+        title="Trace: anderes Geschoss blass unterlegen (nur Bildschirm)"
+        style={{
+          position: 'absolute', top: 8, right: 70, zIndex: 5, padding: '3px 6px',
+          borderRadius: 6, border: '1px solid var(--k-line-strong)', cursor: 'pointer',
+          background: traceId ? '#7a5c9e' : 'var(--k-raised)', color: traceId ? 'white' : 'inherit',
+          font: 'inherit', fontSize: 11.5,
+        }}
+      >
+        <option value="">Trace</option>
+        {doc.storeysOrdered().filter((s) => s.id !== activeStoreyId).map((s) => (
+          <option key={s.id} value={s.id}>{s.name}</option>
+        ))}
+      </select>
       <button
         data-testid="graph-toggle"
         onClick={() => setGraphAn(!graphAn)}
@@ -270,6 +294,25 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
         >
           {/* Raster: 1m-Punkte */}
           <PlanGrid cx={view.cx} cy={view.cy} scale={view.scale} />
+
+          {/* Trace (A8): anderes Geschoss blass darunter — einfarbig, gedämpft */}
+          {tracePlan && (
+            <g data-testid="trace-layer" opacity={0.25} pointerEvents="none">
+              {tracePlan.regions.map((r, i) => (
+                <path
+                  key={`t${i}`}
+                  d={regionToPath(r)}
+                  fillRule="evenodd"
+                  fill={r.classes.includes('projection') ? 'none' : 'var(--k-ink-faint)'}
+                  stroke="var(--k-ink-soft)"
+                  strokeWidth={10}
+                />
+              ))}
+              {tracePlan.lines.map((l, i) => (
+                <line key={`tl${i}`} x1={l.a.x} y1={-l.a.y} x2={l.b.x} y2={-l.b.y} stroke="var(--k-ink-soft)" strokeWidth={8} />
+              ))}
+            </g>
+          )}
 
           {plan &&
             plan.regions.map((r, i) => {
