@@ -20,6 +20,7 @@ Kosmo — eine KI, die jedes Command als Werkzeug hat und nie ungefragt schreibt
 - **Handbuch:** `kosmo-orbit/abgabe/HANDBUCH-KOSMOORBIT-V1.pdf` (28 Seiten, echte Screenshots).
 - **Installation:** `kosmo-orbit/docs/INSTALL.md` (Linux/macOS/Windows/iPad).
 - **Weiterentwicklung V2:** `kosmo-orbit/docs/V2-AUFTAKT.md` (Erst-Prompt für den neuen Worker).
+- **⚑ Nächster Auftrag (ab 06.07.2026, Fable 5):** `kosmo-orbit/docs/AUFTRAG-FABLE-2026-07-06.md` — Übernahme der Codex-Aufgabe: KosmoReference + KosmoAsset fertig bauen (wie KosmoData) plus Website www.architekturkosmos.ch, in zwei Tagen.
 
 ## Wie der Vault mit der Software spricht
 

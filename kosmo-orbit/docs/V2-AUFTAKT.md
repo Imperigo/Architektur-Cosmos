@@ -1,5 +1,10 @@
 # V2-Auftakt — Übergabe an den neuen Worker (HomeStation Linux)
 
+> **⚑ Aktueller Auftrag (04.07.2026): siehe `docs/AUFTRAG-FABLE-2026-07-06.md`.**
+> Fable 5 übernimmt ab 06.07. die Codex-Aufgabe: KosmoReference + KosmoAsset
+> fertig bauen (wie KosmoData) **plus** die Website www.architekturkosmos.ch,
+> in zwei Tagen. Opus hat nur notiert — Fable legt den Plan aus.
+
 Diese Datei ist die Brücke von V1 (fertig, 04.07.2026) zu V2. Sie enthält den
 fertigen **Erst-Prompt** für den neuen Worker, die **Prioritätenliste** und die
 **Nahtstellen**, an denen V2 andockt. Alles kam per git (Repo) und Obsidian
