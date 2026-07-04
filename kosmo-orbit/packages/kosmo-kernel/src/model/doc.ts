@@ -83,6 +83,9 @@ export interface DocSettings {
   /** Rollen-Vorstufe (Vision D2): ordnet die Zentrale und färbt Kosmos Blick.
    * Bewusst KEINE Rechteverwaltung — Ansichts-Filter, mehr nicht. */
   rolle: 'entwurf' | 'ausfuehrung' | 'admin' | null;
+  /** Verschneidungsprioritäten-Overrides je Material (RE-ARCHICAD A1,
+   * 0–999); fehlend = Katalog-Default aus MATERIAL_PRIORITAET. */
+  materialPrioritaeten?: Record<string, number>;
 }
 
 /** Fassadenmodul (Modul-Editor, vorform-Kern): Elemente in Modul-Koordinaten. */

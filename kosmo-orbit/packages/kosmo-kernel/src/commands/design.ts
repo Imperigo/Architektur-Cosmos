@@ -458,6 +458,34 @@ export const setRole = registerCommand({
   ],
 });
 
+export const setPrioritaet = registerCommand({
+  id: 'design.prioritaetSetzen',
+  title: 'Verschneidungspriorität setzen',
+  description:
+    'Setzt die Verschneidungspriorität eines Materials (0–999, ArchiCAD-Modell): beim Poché-Join schneidet die höhere Priorität die niedrigere (Beton stösst durch, Dämmung weicht). prioritaet weglassen = zurück auf den Katalog-Default.',
+  params: z.object({
+    material: z.string().min(1).describe('Material-Schlüssel, z.B. beton, kalksandstein, daemmung-mw'),
+    prioritaet: z.number().int().min(0).max(999).optional(),
+  }),
+  summarize: (p) =>
+    p.prioritaet === undefined
+      ? `Priorität ${p.material} → Katalog-Default`
+      : `Priorität ${p.material} → ${p.prioritaet}`,
+  run: (doc, p) => {
+    const vorher = doc.settings.materialPrioritaeten ?? {};
+    const nachher = { ...vorher };
+    if (p.prioritaet === undefined) delete nachher[p.material];
+    else nachher[p.material] = p.prioritaet;
+    return [
+      {
+        settings: true as const,
+        before: { materialPrioritaeten: vorher },
+        after: { materialPrioritaeten: nachher },
+      },
+    ];
+  },
+});
+
 export const setTerrain = registerCommand({
   id: 'design.terrainSetzen',
   title: 'Terrain setzen',

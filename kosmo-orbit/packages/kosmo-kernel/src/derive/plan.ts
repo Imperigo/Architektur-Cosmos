@@ -1,6 +1,7 @@
 import { columnOutline, type Aussparung, type Beam, type Boundary, type Assembly, type Column, type GridAxis, type Opening, type Stair, type Storey, type Wall, type Zone, type ZonenTuer } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
-import { difference, union, type Poly } from '../geometry/clip';
+import { difference, intersect, union, type Poly } from '../geometry/clip';
+import { materialPrioritaet } from '../model/prioritaet';
 import {
   axisDirection,
   openingRects,
@@ -9,7 +10,7 @@ import {
   wallOutline,
   pointOnAxis,
 } from '../geometry/wall';
-import { dist, type Pt } from '../model/units';
+import { dist, polygonArea, type Pt } from '../model/units';
 import { treppenTeile } from './treppe';
 
 /**
@@ -224,21 +225,48 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   }
 
   // Join: tragende Schichten gleichen Materials UND gleichen Umbau-Status vereinigen
+  const joinGruppen: { polys: Pt[][]; prio: number; classes: string[] }[] = [];
   for (const [key, polys] of coreByMaterial) {
     const merged = union(polys as Poly[]);
     if (merged.length === 0) continue;
     const [material, ren] = key.split('|');
-    regions.push({
-      rings: groupRings(merged),
+    joinGruppen.push({
+      polys: merged,
+      prio: materialPrioritaet(doc, material!),
       classes: ['cut', 'tragend', `material-${material}`, ...renClasses(ren || undefined)],
     });
   }
   for (const layer of otherLayers) {
     if (layer.polys.length === 0) continue;
-    regions.push({
-      rings: groupRings(layer.polys.map((p) => [...p])),
+    joinGruppen.push({
+      polys: layer.polys.map((p) => [...p]),
+      prio: materialPrioritaet(doc, layer.material),
       classes: ['cut', layer.fn, `material-${layer.material}`, ...renClasses(layer.ren)],
     });
+  }
+  // Verschneidungsprioritäten (RE-ARCHICAD A1): die höhere Priorität schneidet
+  // die niedrigere — Beton stösst durch, Dämmung weicht. Geschnitten wird nur
+  // bei ECHTER Überlappung (> 0.01 m², Fugen-Slivers zählen nicht); blosses
+  // Anstossen lässt die Polygone byte-identisch (Golden-Verträglichkeit).
+  // Geschnitten wird mit den UNGESCHNITTENEN Flächen der höheren Gruppen
+  // (ArchiCAD-Semantik: die Geometrie der höheren gewinnt überall).
+  const MIN_UEBERLAPP_MM2 = 10_000;
+  const original = joinGruppen.map((g) => g.polys);
+  for (let i = 0; i < joinGruppen.length; i++) {
+    const g = joinGruppen[i]!;
+    const hoeher: Pt[][] = [];
+    for (let j = 0; j < joinGruppen.length; j++) {
+      if (joinGruppen[j]!.prio > g.prio) hoeher.push(...original[j]!);
+    }
+    if (hoeher.length === 0) continue;
+    const ueberlapp = intersect(g.polys, hoeher);
+    const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
+    if (flaeche < MIN_UEBERLAPP_MM2) continue;
+    g.polys = difference(g.polys, hoeher);
+  }
+  for (const g of joinGruppen) {
+    if (g.polys.length === 0) continue;
+    regions.push({ rings: groupRings(g.polys), classes: g.classes });
   }
 
   // Treppen (V2-A2/B3): Läufe mit Stufenlinien, Podeste, durchgehende

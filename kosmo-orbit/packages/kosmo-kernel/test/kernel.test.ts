@@ -29,6 +29,7 @@ import {
   deriveSection,
   deriveEntity,
   union,
+  intersect,
   thickenPolyline,
   wallOutline,
   polygonArea,
@@ -3447,6 +3448,66 @@ describe('Stütze + Unterzug (RE-ARCHICAD A3)', () => {
     // Nochmal: alles besetzt → ehrlicher CommandError, keine Doppel
     expect(() => execute(doc, 'design.stuetzenAusRaster', { storeyId })).toThrow(/besetzt/);
     expect(doc.byKind('column')).toHaveLength(6);
+  });
+});
+
+describe('Verschneidungsprioritäten (RE-ARCHICAD A1)', () => {
+  // AW (putz|daemmung|beton) waagrecht, KS-IW senkrecht mitten hindurch —
+  // an der Kreuzung überlappen sich alle Schichtbänder mit dem KS-Kern
+  const kreuz = () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const ks = execute(doc, 'design.aufbauErstellen', {
+      name: 'IW KS 15', target: 'wall',
+      layers: [{ material: 'kalksandstein', thickness: 150, function: 'tragend' }],
+    });
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId: (ks.patches[0] as { id: string }).id,
+      a: { x: 4500, y: -3000 }, b: { x: 4500, y: 3000 },
+    });
+    return { doc, storeyId };
+  };
+  const nettoFlaeche = (doc: KosmoDoc, storeyId: string, cls: string) => {
+    let a = 0;
+    for (const r of derivePlan(doc, storeyId).regions) {
+      if (!r.classes.includes(cls)) continue;
+      for (const ring of r.rings) a += polygonArea(ring);
+    }
+    return Math.abs(a);
+  };
+
+  it('Beton (900) stösst durch, KS (820) und Dämmung (300) weichen — Handrechnung', () => {
+    const { doc, storeyId } = kreuz();
+    // Beton bleibt voll: 9000 × 180; KS verliert die Beton-Kreuzung 180 × 150;
+    // Dämmung verliert die KS-Kreuzung 160 × 150
+    expect(nettoFlaeche(doc, storeyId, 'material-beton')).toBeCloseTo(9000 * 180, 0);
+    expect(nettoFlaeche(doc, storeyId, 'material-kalksandstein')).toBeCloseTo(6000 * 150 - 180 * 150, 0);
+    expect(nettoFlaeche(doc, storeyId, 'daemmung')).toBeCloseTo(9000 * 160 - 160 * 150, 0);
+    // Kein Doppel-Poché mehr: Beton- und KS-Flächen überschneiden sich nicht
+    const plan = derivePlan(doc, storeyId);
+    const polys = (cls: string) =>
+      plan.regions.filter((r) => r.classes.includes(cls)).flatMap((r) => r.rings);
+    const ueberlapp = intersect(polys('material-beton'), polys('material-kalksandstein'));
+    expect(ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0)).toBeLessThan(100);
+  });
+
+  it('prioritaetSetzen dreht die Rangfolge projektweit — und Undo stellt sie zurück', () => {
+    const { doc, storeyId } = kreuz();
+    const res = execute(doc, 'design.prioritaetSetzen', { material: 'kalksandstein', prioritaet: 950 });
+    // Jetzt gewinnt KS: voll 6000 × 150, Beton verliert die Kreuzung
+    expect(nettoFlaeche(doc, storeyId, 'material-kalksandstein')).toBeCloseTo(6000 * 150, 0);
+    expect(nettoFlaeche(doc, storeyId, 'material-beton')).toBeCloseTo(9000 * 180 - 180 * 150, 0);
+    doc.apply(invertPatches(res.patches));
+    expect(nettoFlaeche(doc, storeyId, 'material-beton')).toBeCloseTo(9000 * 180, 0);
+    // Zurücksetzen auf Katalog-Default räumt den Override-Eintrag
+    execute(doc, 'design.prioritaetSetzen', { material: 'kalksandstein', prioritaet: 950 });
+    execute(doc, 'design.prioritaetSetzen', { material: 'kalksandstein' });
+    expect(doc.settings.materialPrioritaeten?.['kalksandstein']).toBeUndefined();
+    expect(nettoFlaeche(doc, storeyId, 'material-beton')).toBeCloseTo(9000 * 180, 0);
+    // Roundtrip nimmt die Overrides mit
+    execute(doc, 'design.prioritaetSetzen', { material: 'putz', prioritaet: 42 });
+    const wieder = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));
+    expect(wieder.settings.materialPrioritaeten?.['putz']).toBe(42);
   });
 });
 
