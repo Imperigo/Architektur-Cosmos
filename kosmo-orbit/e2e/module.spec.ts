@@ -1507,3 +1507,16 @@ test('Varianten-Archiv (Vision A5): archivieren → Zentrale vergleicht → als 
   const stand = await page.evaluate(() => window.__kosmo.state().doc.entities.size);
   expect(stand).toBeGreaterThan(10);
 });
+
+test('Massstabs-Automatik (Vision B5): Phasenwechsel schlägt SIA-Massstab vor', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.selectOption('[data-testid="phase-stil"]', 'vorprojekt');
+  await expect(page.locator('[data-testid="massstab-hinweis"]')).toContainText('1:200');
+  await page.selectOption('[data-testid="phase-stil"]', 'werkplan');
+  await expect(page.locator('[data-testid="massstab-hinweis"]')).toContainText('1:50');
+  await page.click('[data-testid="massstab-ok"]');
+  await expect(page.locator('[data-testid="massstab-hinweis"]')).toHaveCount(0);
+});

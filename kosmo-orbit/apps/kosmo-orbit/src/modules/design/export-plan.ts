@@ -1,14 +1,22 @@
 import { jsPDF } from 'jspdf';
 import { svg2pdf } from 'svg2pdf.js';
-import { A3_QUER, exportIfc, planToSvg } from '@kosmo/kernel';
+import { A3_QUER, exportIfc, planToSvg, type BauPhase } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
-/** Grundriss des aktiven Geschosses als Vektor-PDF (A3 quer, 1:100). */
+/** SIA-Massstabsempfehlung je Phase (B5, PLAN-DETAILLIERUNG Fig. 4) —
+ * Vorschlag, kein Zwang: der Blatt-Editor (KosmoPublish) wählt frei. */
+export const PHASEN_MASSSTAB: Record<BauPhase, number> = {
+  vorprojekt: 200,
+  bauprojekt: 100,
+  werkplan: 50,
+};
+
+/** Grundriss des aktiven Geschosses als Vektor-PDF (A3 quer, Massstab folgt der Phase). */
 export async function exportPlanPdf(): Promise<void> {
   const { doc, activeStoreyId } = useProject.getState();
   if (!activeStoreyId) return;
   const svgMarkup = planToSvg(doc, activeStoreyId, {
-    scale: 100,
+    scale: PHASEN_MASSSTAB[doc.settings.phase],
     paper: A3_QUER,
     projectName: doc.settings.projectName,
     planTitle: 'Grundriss',
@@ -31,7 +39,7 @@ export function exportPlanSvg(): void {
   const { doc, activeStoreyId } = useProject.getState();
   if (!activeStoreyId) return;
   const svgMarkup = planToSvg(doc, activeStoreyId, {
-    scale: 100,
+    scale: PHASEN_MASSSTAB[doc.settings.phase],
     paper: A3_QUER,
     projectName: doc.settings.projectName,
     planTitle: 'Grundriss',

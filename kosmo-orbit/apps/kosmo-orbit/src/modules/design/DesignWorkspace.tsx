@@ -30,7 +30,7 @@ import { BerechnungslistePanel } from './BerechnungslistePanel';
 import { RasterPanel } from './RasterPanel';
 import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
-import { exportIfcFile, exportPlanPdf, exportPlanSvg } from './export-plan';
+import { exportIfcFile, exportPlanPdf, exportPlanSvg, PHASEN_MASSSTAB } from './export-plan';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
 import { registerActions } from '../../shell/palette';
@@ -74,6 +74,8 @@ export function DesignWorkspace() {
   const [tool, setTool] = useState<ToolId>('wand');
   const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
   const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split' | 'quad'>('split');
+  // B5: Massstabs-Automatik — bestätigbarer Hinweis nach dem Phasenwechsel
+  const [massstabHinweis, setMassstabHinweis] = useState<string | null>(null);
   const [sectionSpec, setSectionSpec] = useState<SectionSpec | null>(null);
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
   const [points, setPoints] = useState<Pt[]>([]);
@@ -592,6 +594,9 @@ export function DesignWorkspace() {
               } finally {
                 history.endGroup();
               }
+              // B5: Massstabs-Automatik — Vorschlag, kein Zwang (Publish wählt frei)
+              const label = { vorprojekt: 'Vorprojekt', bauprojekt: 'Bauprojekt', werkplan: 'Werkplan' }[phase];
+              setMassstabHinweis(`${label}: Plan-Export neu 1:${PHASEN_MASSSTAB[phase]} (SIA-Empfehlung).`);
             }}
             style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
           >
@@ -700,6 +705,28 @@ export function DesignWorkspace() {
           </KButton>
           <KButton size="sm" tone="ghost" data-testid="bestand-verwerfen" onClick={() => setBestand(null)}>
             Nur als Kontext behalten
+          </KButton>
+        </div>
+      )}
+      {massstabHinweis && (
+        <div
+          data-testid="massstab-hinweis"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '5px 14px',
+            borderBottom: '1px solid var(--k-line)',
+            background: 'var(--k-raised)',
+            fontSize: 12.5,
+            zIndex: 2,
+          }}
+        >
+          <Badge hue={moduleHue.design}>Massstab</Badge>
+          <span>{massstabHinweis} Der Blatt-Editor (KosmoPublish) wählt weiterhin frei.</span>
+          <div style={{ flex: 1 }} />
+          <KButton size="sm" tone="ghost" data-testid="massstab-ok" onClick={() => setMassstabHinweis(null)}>
+            Verstanden
           </KButton>
         </div>
       )}
