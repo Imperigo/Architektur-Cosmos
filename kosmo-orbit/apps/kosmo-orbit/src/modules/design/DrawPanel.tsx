@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { deriveMengen, raumTypVorschlag, type Entity, type MassBody, type Roof, type Slab, type Stair, type Wall, type Zone, type Assembly } from '@kosmo/kernel';
+import { ausmassAlsCsv, deriveAusmass, deriveMengen, raumTypVorschlag, type Entity, type MassBody, type Roof, type Slab, type Stair, type Wall, type Zone, type Assembly } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
@@ -85,13 +85,28 @@ export function DrawPanel() {
   const select = useProject((s) => s.select);
   const setActiveStorey = useProject((s) => s.setActiveStorey);
   const doc = useProject.getState().doc;
-  const [tab, setTab] = useState<'baum' | 'mengen'>('baum');
+  const [tab, setTab] = useState<'baum' | 'mengen' | 'ausmass'>('baum');
 
   const mengen = useMemo(
     () => deriveMengen(doc),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [revision],
   );
+  const ausmass = useMemo(
+    () => deriveAusmass(doc),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [revision],
+  );
+  const ausmassCsv = () => {
+    const url = URL.createObjectURL(new Blob([ausmassAlsCsv(ausmass)], { type: 'text/csv' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-Ausmass.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  };
   const storeys = doc.storeysOrdered();
 
   const fmt = (v: number | undefined, einheit: string) =>
@@ -123,6 +138,9 @@ export function DrawPanel() {
         </KButton>
         <KButton size="sm" tone={tab === 'mengen' ? 'accent' : 'ghost'} onClick={() => setTab('mengen')} data-testid="draw-tab-mengen">
           Mengen
+        </KButton>
+        <KButton size="sm" tone={tab === 'ausmass' ? 'accent' : 'ghost'} onClick={() => setTab('ausmass')} data-testid="draw-tab-ausmass">
+          Ausmass
         </KButton>
       </div>
       <Hairline />
@@ -168,6 +186,46 @@ export function DrawPanel() {
                 </div>
               );
             })
+          )
+        ) : tab === 'ausmass' ? (
+          ausmass.positionen.length === 0 ? (
+            <span style={{ color: 'var(--k-ink-faint)' }}>Noch keine Bauteile im Modell.</span>
+          ) : (
+            <>
+              <table style={{ borderCollapse: 'collapse', width: '100%' }} data-testid="ausmass-tabelle">
+                <thead>
+                  <tr style={{ textAlign: 'left', color: 'var(--k-ink-faint)', fontSize: 11 }}>
+                    <th style={{ fontWeight: 500, padding: '2px 4px' }}>Position</th>
+                    <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'right' }}>Menge</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ausmass.positionen.map((p, i) => (
+                    <tr key={i} style={{ borderTop: '1px solid var(--k-line)' }}>
+                      <td style={{ padding: '3px 4px' }}>
+                        {p.position}
+                        <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-ink-faint)' }}>
+                          {p.kapitel} · {p.herleitung}
+                        </div>
+                      </td>
+                      <td style={{ padding: '3px 4px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                        <Measure>
+                          {p.menge.toLocaleString('de-CH', { maximumFractionDigits: 2 })} {p.einheit === 'm2' ? 'm²' : p.einheit === 'm3' ? 'm³' : p.einheit}
+                        </Measure>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <KButton size="sm" tone="quiet" onClick={ausmassCsv} data-testid="ausmass-csv">
+                  CSV (Excel-CH)
+                </KButton>
+                <span style={{ color: 'var(--k-ink-faint)', fontSize: 10.5, flex: 1 }}>
+                  {ausmass.hinweise[ausmass.hinweise.length - 1]}
+                </span>
+              </div>
+            </>
           )
         ) : mengen.positionen.length === 0 ? (
           <span style={{ color: 'var(--k-ink-faint)' }}>Noch keine Bauteile im Modell.</span>

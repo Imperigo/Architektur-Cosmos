@@ -1704,6 +1704,57 @@ describe('Masslinienordnung (Vision B1)', () => {
   });
 });
 
+describe('NPK-nahes Ausmass (Vision C1)', () => {
+  it('Wände: Abzug nur > 0.5 m², Leibungen als eigene Position — Handrechnung', async () => {
+    const { doc, storeyId, assemblyId } = setupDoc(); // AW 360 dick, Geschoss 3000
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
+    const wallId = (w.patches[0] as { id: string }).id;
+    execute(doc, 'design.oeffnungSetzen', { wallId, openingType: 'fenster', center: 2000, width: 1200, height: 1400, sill: 900 }); // 1.68 m² > 0.5 → Abzug
+    execute(doc, 'design.oeffnungSetzen', { wallId, openingType: 'fenster', center: 6000, width: 600, height: 700, sill: 1400 }); // 0.42 m² ≤ 0.5 → bleibt
+    const { deriveAusmass, NPK_ABZUG_SCHWELLE_M2 } = await import('../src');
+    expect(NPK_ABZUG_SCHWELLE_M2).toBe(0.5);
+    const a = deriveAusmass(doc);
+    const wand = a.positionen.find((p) => p.position === 'Wände AW Beton 36')!;
+    expect(wand.menge).toBeCloseTo(9 * 3 - 1.68, 5); // 25.32 m²
+    expect(wand.herleitung).toContain('1 Öffnungen > 0.5');
+    expect(wand.herleitung).toContain('1 kleine bleiben im Mass');
+    const volumen = a.positionen.find((p) => p.position.includes('Volumen') && p.position.includes('AW'))!;
+    expect(volumen.menge).toBeCloseTo(25.32 * 0.36, 5);
+    const leibungen = a.positionen.find((p) => p.position.startsWith('Leibungen'))!;
+    expect(leibungen.menge).toBeCloseTo((2 * 2.6 + 2 * 1.3) * 0.36, 5); // 2.808 m²
+    // Fenster als Stück-Position mit Lichtfläche
+    const fenster = a.positionen.find((p) => p.kapitel.includes('371'))!;
+    expect(fenster.menge).toBe(2);
+    expect(fenster.herleitung).toContain('2.10 m²');
+  });
+
+  it('Decken: Aussparungen > 0.5 m² abgezogen; Wand-Durchbrüche als Stück; CSV', async () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const s = execute(doc, 'design.deckeZeichnen', {
+      storeyId, thickness: 250,
+      outline: [{ x: 0, y: 0 }, { x: 6000, y: 0 }, { x: 6000, y: 6000 }, { x: 0, y: 6000 }],
+    });
+    const slabId = (s.patches[0] as { id: string }).id;
+    execute(doc, 'design.aussparungSetzen', { hostId: slabId, at: { x: 2000, y: 2000 }, breite: 1000, hoehe: 1000 }); // 1.0 m² → Abzug
+    execute(doc, 'design.aussparungSetzen', { hostId: slabId, typ: 'schlitz', at: { x: 4000, y: 4000 }, breite: 400, hoehe: 800 }); // 0.32 m² → bleibt
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 6000, y: 0 } });
+    execute(doc, 'design.aussparungSetzen', { hostId: (w.patches[0] as { id: string }).id, center: 3000, breite: 300, hoehe: 300, sill: 1100 });
+    const { deriveAusmass, ausmassAlsCsv } = await import('../src');
+    const a = deriveAusmass(doc);
+    const decke = a.positionen.find((p) => p.position === 'Decken/Bodenplatten')!;
+    expect(decke.menge).toBeCloseTo(36 - 1, 5);
+    const deckenVolumen = a.positionen.find((p) => p.position === 'Decken/Bodenplatten — Volumen')!;
+    expect(deckenVolumen.menge).toBeCloseTo(35 * 0.25, 5);
+    const bohrungen = a.positionen.find((p) => p.position.startsWith('Kernbohrungen'))!;
+    expect(bohrungen.menge).toBe(1);
+    expect(bohrungen.einheit).toBe('Stk');
+    const csv = ausmassAlsCsv(a);
+    expect(csv).toContain('Kapitel;Position;Einheit;Menge;Herleitung');
+    expect(csv).toContain('Decken/Bodenplatten;m2;35.00');
+    expect(csv).toContain('kein Ersatz für ein CRB-Devis');
+  });
+});
+
 describe('Treppe an der Schnitthöhe gekappt (Vision B3)', () => {
   it('gerader Lauf: unten ausgezogen, oben strichpunktiert, Bruchlinie am Schnitt', async () => {
     const { doc, storeyId } = setupDoc(); // 3000 hoch, cutHeight 1100

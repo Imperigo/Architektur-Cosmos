@@ -13,6 +13,7 @@ export * from './derive/plan';
 export * from './derive/sia416';
 export * from './derive/berechnungsliste';
 export * from './derive/mengen';
+export * from './derive/ausmass';
 export * from './derive/stuetzenraster';
 export * from './derive/axo';
 export * from './derive/hiddenline';

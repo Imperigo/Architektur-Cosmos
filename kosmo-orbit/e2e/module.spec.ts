@@ -1520,3 +1520,15 @@ test('Massstabs-Automatik (Vision B5): Phasenwechsel schlägt SIA-Massstab vor',
   await page.click('[data-testid="massstab-ok"]');
   await expect(page.locator('[data-testid="massstab-hinweis"]')).toHaveCount(0);
 });
+
+test('NPK-Ausmass (Vision C1): Draw-Panel zeigt Positionen mit Herleitung + CSV-Knopf', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="load-tkb"]');
+  await page.click('[data-testid="draw-toggle"]');
+  await page.click('[data-testid="draw-tab-ausmass"]');
+  await expect(page.locator('[data-testid="ausmass-tabelle"]')).toContainText('brutto');
+  await expect(page.locator('[data-testid="ausmass-tabelle"]')).toContainText('Leibungen');
+  await expect(page.locator('[data-testid="ausmass-csv"]')).toBeVisible();
+});
