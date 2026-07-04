@@ -71,11 +71,14 @@ oder EG mit **⧉** stapeln.
 - **KosmoVis**: der finale Render-Prompt zeigt Materialien + Fassadenraster
   und ist überschreibbar.
 
-## Ehrliche Grenzen (Stand heute)
+## Ehrliche Grenzen (Stand 04.07.2026, nach Vision-Batch C)
 
-- Generator kann nur **achsparallele Rechteck-Wohnungen**; Schrägen werden
-  gemeldet und übersprungen.
+- Generator kann Rechtecke und **L-Wohnungen** (Hauptteil-Rezept +
+  Flügelzimmer an der Naht); U/T-Formen lehnen ehrlich ab, Schrägen
+  fallen auf die BBox zurück und werden gemeldet.
 - Zonen bleiben als Flächen liegen (SIA-Zahlen kommen aus den Zonen, nicht
   aus den Wandachsen) — bewusst, damit Kennzahlen stabil bleiben.
-- Wohnungs-Trennwand «TW KS 20» ist ein Richtwert-Aufbau, kein Nachweis.
-- Fluchtweg ist pro Geschoss gerechnet (keine vertikale Verkettung).
+- Trennwände werden rechnerisch bewertet (Massengesetz vs. SIA 181) —
+  ein **Hinweis, kein Nachweis** (Flankenwege rechnet niemand hier).
+- Fluchtweg: pro Geschoss normativ (35 m), übers Gebäude als
+  **Übersichtswert** vertikal über die Treppenläufe verkettet.

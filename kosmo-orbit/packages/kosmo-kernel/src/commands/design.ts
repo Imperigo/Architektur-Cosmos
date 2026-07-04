@@ -7,7 +7,7 @@ import { CommandError, registerCommand } from './core';
 import { isConvex } from '../geometry/skeleton';
 import { stairSpec, treppenTeile } from '../derive/treppe';
 import { REGEL_PRESETS } from '../model/regelpresets';
-import { generiereGrundriss } from '../derive/grundrissgenerator';
+import { generiereGrundriss, generiereGrundrissL, zerlegeRektilinear } from '../derive/grundrissgenerator';
 import { zonenZuWaenden } from '../derive/zonenwaende';
 
 export { stairSpec } from '../derive/treppe';
@@ -1025,7 +1025,17 @@ export const generateFloorplan = registerCommand({
         return patches;
       }
     }
-    const g = generiereGrundriss(wohnung.outline, seite);
+    // C4: L-Wohnungen werden zerlegt (Hauptteil-Rezept + Flügelzimmer);
+    // rektilineare U/T-Formen lehnen ehrlich ab, Schrägen fallen wie bisher
+    // auf die BBox zurück (der Generator meldet das in der Diagnose).
+    const zerlegung = zerlegeRektilinear(wohnung.outline);
+    if (zerlegung.typ === 'unregelmaessig' && !zerlegung.grund.includes('schräge')) {
+      throw new CommandError(`Grundriss-Generator: ${zerlegung.grund}`);
+    }
+    const g =
+      zerlegung.typ === 'l'
+        ? generiereGrundrissL(zerlegung.haupt, zerlegung.fluegel, seite)
+        : generiereGrundriss(wohnung.outline, seite);
     if (g.raeume.length === 0) throw new CommandError(g.diagnose[0] ?? 'Wohnung zu klein');
     const patches: AnyPatch[] = [];
     for (const r of g.raeume) {

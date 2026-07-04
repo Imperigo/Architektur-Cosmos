@@ -49,6 +49,163 @@ const FLUR_TIEFE = 1200;
 const rund = (p: Pt): Pt => ({ x: Math.round(p.x), y: Math.round(p.y) });
 const MIN_ZIMMER = 3000;
 
+// ── L-Zerlegung (Vision C4) ─────────────────────────────────────────
+
+export type Zerlegung =
+  | { typ: 'rechteck' }
+  | { typ: 'l'; haupt: Pt[]; fluegel: Pt[] }
+  | { typ: 'unregelmaessig'; grund: string };
+
+/**
+ * Rektilineares Polygon klassieren: Rechteck, L (genau EINE Innenecke →
+ * Guillotine-Schnitt in Hauptteil + Flügel, der grössere wird Hauptteil,
+ * gewählt wird der Schnitt mit dem grösseren Hauptteil) oder ehrlich
+ * «unregelmässig» (U/T/Z und Schrägen — der Generator lehnt ab bzw. fällt
+ * bei Schrägen aufs bisherige BBox-Verhalten zurück).
+ */
+export function zerlegeRektilinear(outline: Pt[]): Zerlegung {
+  // Kollineare Zwischenpunkte entfernen (Ecken zählen, nicht Stützpunkte)
+  const ecken: Pt[] = [];
+  for (let i = 0; i < outline.length; i++) {
+    const vor = outline[(i - 1 + outline.length) % outline.length]!;
+    const p = outline[i]!;
+    const nach = outline[(i + 1) % outline.length]!;
+    const kreuz = (p.x - vor.x) * (nach.y - p.y) - (p.y - vor.y) * (nach.x - p.x);
+    if (kreuz !== 0) ecken.push(p);
+  }
+  for (let i = 0; i < ecken.length; i++) {
+    const a = ecken[i]!;
+    const b = ecken[(i + 1) % ecken.length]!;
+    if (a.x !== b.x && a.y !== b.y) {
+      return { typ: 'unregelmaessig', grund: 'Umriss hat schräge Kanten (v1 kann nur achsparallel)' };
+    }
+  }
+  if (ecken.length === 4) return { typ: 'rechteck' };
+  if (ecken.length !== 6) {
+    return { typ: 'unregelmaessig', grund: `${ecken.length} Ecken — mehr als eine Innenecke (U/T-Form), von Hand teilen` };
+  }
+  // Orientierung + Innenecke (Kreuzprodukt gegen die Wicklung)
+  let flaeche2 = 0;
+  for (let i = 0; i < ecken.length; i++) {
+    const a = ecken[i]!;
+    const b = ecken[(i + 1) % ecken.length]!;
+    flaeche2 += a.x * b.y - b.x * a.y;
+  }
+  const orient = Math.sign(flaeche2);
+  const reflex: Pt[] = [];
+  for (let i = 0; i < ecken.length; i++) {
+    const vor = ecken[(i - 1 + ecken.length) % ecken.length]!;
+    const p = ecken[i]!;
+    const nach = ecken[(i + 1) % ecken.length]!;
+    const kreuz = (p.x - vor.x) * (nach.y - p.y) - (p.y - vor.y) * (nach.x - p.x);
+    if (Math.sign(kreuz) === -orient) reflex.push(p);
+  }
+  if (reflex.length !== 1) {
+    return { typ: 'unregelmaessig', grund: `${reflex.length} Innenecken — von Hand teilen` };
+  }
+  const r = reflex[0]!;
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const p of ecken) {
+    minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+  }
+  // Fehlende BBox-Ecke = die «ausgestanzte» Ecke; die Kerbe spannt M ↔ R
+  const istEcke = (x: number, y: number) => ecken.some((p) => p.x === x && p.y === y);
+  const fehlend = [
+    { x: minX, y: minY }, { x: maxX, y: minY }, { x: maxX, y: maxY }, { x: minX, y: maxY },
+  ].find((k) => !istEcke(k.x, k.y));
+  if (!fehlend) return { typ: 'unregelmaessig', grund: 'Innenecke ohne Kerbe — von Hand teilen' };
+  const rect = (x0: number, y0: number, x1: number, y1: number): Pt[] => [
+    { x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 },
+  ];
+  const area = (p: Pt[]) => Math.abs((p[1]!.x - p[0]!.x) * (p[3]!.y - p[0]!.y));
+  const mx = fehlend.x === minX; // Kerbe auf der linken Seite?
+  const my = fehlend.y === minY; // Kerbe unten?
+  // Zwei Guillotine-Schnitte durch die Innenecke: senkrecht (x = r.x) und
+  // waagrecht (y = r.y) — der Streifen ohne Kerbe bleibt ein volles Rechteck
+  const senkrecht: [Pt[], Pt[]] = [
+    mx ? rect(r.x, minY, maxX, maxY) : rect(minX, minY, r.x, maxY),
+    mx
+      ? rect(minX, my ? r.y : minY, r.x, my ? maxY : r.y)
+      : rect(r.x, my ? r.y : minY, maxX, my ? maxY : r.y),
+  ];
+  const waagrecht: [Pt[], Pt[]] = [
+    my ? rect(minX, r.y, maxX, maxY) : rect(minX, minY, maxX, r.y),
+    my
+      ? rect(mx ? r.x : minX, minY, mx ? maxX : r.x, r.y)
+      : rect(mx ? r.x : minX, r.y, mx ? maxX : r.x, maxY),
+  ];
+  const beste = [senkrecht, waagrecht].sort(
+    (a, b) => Math.max(area(b[0]), area(b[1])) - Math.max(area(a[0]), area(a[1])),
+  )[0]!;
+  const [haupt, fluegel] = area(beste[0]) >= area(beste[1]) ? [beste[0], beste[1]] : [beste[1], beste[0]];
+  return { typ: 'l', haupt, fluegel };
+}
+
+/**
+ * L-Wohnung (C4): Der Hauptteil bekommt das volle Rezept, der Flügel wird
+ * in Zimmer geschnitten, die sich über Türen an der Naht zum Hauptteil
+ * erschliessen — ehrlich als Anstoss diagnostiziert.
+ */
+export function generiereGrundrissL(
+  haupt: Pt[],
+  fluegel: Pt[],
+  korridorKante: 'unten' | 'oben' | 'links' | 'rechts',
+): GenerierterGrundriss {
+  const g = generiereGrundriss(haupt, korridorKante);
+  if (g.raeume.length === 0) return g;
+  const bb = (poly: Pt[]) => {
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (const p of poly) {
+      x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x);
+      y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y);
+    }
+    return { x0, x1, y0, y1 };
+  };
+  const H = bb(haupt);
+  const F = bb(fluegel);
+  // Naht: die gemeinsame Kante (senkrecht bei x-Kontakt, sonst waagrecht)
+  const senkrechteNaht = F.x1 === H.x0 || F.x0 === H.x1;
+  const nahtFix = senkrechteNaht ? (F.x1 === H.x0 ? F.x1 : F.x0) : (F.y1 === H.y0 ? F.y1 : F.y0);
+  const von = senkrechteNaht ? Math.max(F.y0, H.y0) : Math.max(F.x0, H.x0);
+  const bis = senkrechteNaht ? Math.min(F.y1, H.y1) : Math.min(F.x1, H.x1);
+  const nahtLen = bis - von;
+  if (nahtLen < 900) {
+    g.diagnose.push('Flügel-Naht unter 90 cm — Flügel ausgelassen, von Hand anbinden.');
+    return g;
+  }
+  const anzahl = Math.max(1, Math.floor(nahtLen / 3500));
+  const schritt = nahtLen / anzahl;
+  const tiefeVon = senkrechteNaht ? F.x0 : F.y0;
+  const tiefeBis = senkrechteNaht ? F.x1 : F.y1;
+  for (let i = 0; i < anzahl; i++) {
+    const s0 = Math.round(von + i * schritt);
+    const s1 = Math.round(von + (i + 1) * schritt);
+    const outline = senkrechteNaht
+      ? [{ x: tiefeVon, y: s0 }, { x: tiefeBis, y: s0 }, { x: tiefeBis, y: s1 }, { x: tiefeVon, y: s1 }]
+      : [{ x: s0, y: tiefeVon }, { x: s1, y: tiefeVon }, { x: s1, y: tiefeBis }, { x: s0, y: tiefeBis }];
+    g.raeume.push({ outline, name: `Zimmer Flügel ${i + 1}`, raumTyp: 'zimmer', sia: 'HNF' });
+    const mitteS = Math.round((s0 + s1) / 2);
+    g.tueren.push({
+      at: senkrechteNaht ? { x: nahtFix, y: mitteS } : { x: mitteS, y: nahtFix },
+      breite: 800,
+    });
+    // Bett an der nahtfernen Flügelseite, Bewegungsfläche zeigt zur Naht
+    const fern = senkrechteNaht
+      ? (nahtFix === F.x1 ? F.x0 + 100 : F.x1 - 100)
+      : (nahtFix === F.y1 ? F.y0 + 100 : F.y1 - 100);
+    g.moebel.push({
+      typ: i === 0 && anzahl > 1 ? 'bett-doppel' : 'bett-einzel',
+      at: senkrechteNaht ? { x: fern, y: mitteS } : { x: mitteS, y: fern },
+      rotationGrad: senkrechteNaht ? (nahtFix === F.x1 ? 270 : 90) : (nahtFix === F.y1 ? 0 : 180),
+    });
+  }
+  g.diagnose.push(
+    `L-Wohnung: Hauptteil per Rezept, ${anzahl} Flügelzimmer über Türen an der Naht — Anstoss, von Hand verfeinern.`,
+  );
+  return g;
+}
+
 /**
  * wohnung: achsparalleles Rechteck (BBox wird verwendet).
  * korridorKante: 'unten' | 'oben' | 'links' | 'rechts' — wo der Zugang liegt.

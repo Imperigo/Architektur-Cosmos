@@ -1704,6 +1704,74 @@ describe('Masslinienordnung (Vision B1)', () => {
   });
 });
 
+describe('Generator L-Formen (Vision C4)', () => {
+  it('zerlegeRektilinear: L → Hauptteil + Flügel (grösster Hauptteil gewinnt), Rechteck/U ehrlich', async () => {
+    const { zerlegeRektilinear } = await import('../src');
+    // L: BBox 12×9, Kerbe oben rechts ab (7000, 5000)
+    const L = [
+      { x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 5000 },
+      { x: 7000, y: 5000 }, { x: 7000, y: 9000 }, { x: 0, y: 9000 },
+    ];
+    const z = zerlegeRektilinear(L);
+    expect(z.typ).toBe('l');
+    if (z.typ !== 'l') throw new Error('unreachable');
+    // Senkrechter Schnitt bei x=7000 gibt den grössten Hauptteil (7×9 = 63 m² > 12×5)
+    const bb = (p: { x: number; y: number }[]) => ({
+      w: Math.max(...p.map((q) => q.x)) - Math.min(...p.map((q) => q.x)),
+      h: Math.max(...p.map((q) => q.y)) - Math.min(...p.map((q) => q.y)),
+    });
+    expect(bb(z.haupt)).toEqual({ w: 7000, h: 9000 });
+    expect(bb(z.fluegel)).toEqual({ w: 5000, h: 5000 });
+    expect(zerlegeRektilinear([{ x: 0, y: 0 }, { x: 9000, y: 0 }, { x: 9000, y: 6000 }, { x: 0, y: 6000 }]).typ).toBe('rechteck');
+    // U-Form: 8 Ecken → unregelmässig
+    const U = [
+      { x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 8000 }, { x: 9000, y: 8000 },
+      { x: 9000, y: 3000 }, { x: 3000, y: 3000 }, { x: 3000, y: 8000 }, { x: 0, y: 8000 },
+    ];
+    expect(zerlegeRektilinear(U).typ).toBe('unregelmaessig');
+  });
+
+  it('grundrissGenerieren füllt die L-Wohnung: Rezept im Hauptteil + Flügelzimmer mit Türen an der Naht', () => {
+    const { doc, storeyId } = setupDoc();
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg L', sia: 'HNF', program: 'marktgerecht',
+      outline: [
+        { x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 6000 },
+        { x: 7000, y: 6000 }, { x: 7000, y: 10000 }, { x: 0, y: 10000 },
+      ],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    const zonen = doc.byKind<Zone>('zone');
+    const fluegelZimmer = zonen.filter((z) => z.name.startsWith('Zimmer Flügel'));
+    expect(fluegelZimmer.length).toBeGreaterThanOrEqual(1);
+    expect(zonen.some((z) => z.name === 'Diele')).toBe(true); // Rezept im Hauptteil
+    // Flügelzimmer liegen im Flügel (x < 7000, y > 6000)
+    for (const z of fluegelZimmer) {
+      expect(Math.max(...z.outline.map((p) => p.x))).toBeLessThanOrEqual(7000);
+      expect(Math.min(...z.outline.map((p) => p.y))).toBeGreaterThanOrEqual(6000);
+    }
+    // Türen an der Naht y = 6000
+    const tueren = doc.byKind<import('../src').ZonenTuer>('zonentuer').filter((t) => t.at.y === 6000 && t.at.x < 7000);
+    expect(tueren.length).toBe(fluegelZimmer.length);
+  });
+
+  it('U-Wohnung wird ehrlich abgelehnt (CommandError, keine halben Zonen)', () => {
+    const { doc, storeyId } = setupDoc();
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg U', sia: 'HNF', program: 'marktgerecht',
+      outline: [
+        { x: 0, y: 0 }, { x: 12000, y: 0 }, { x: 12000, y: 8000 }, { x: 9000, y: 8000 },
+        { x: 9000, y: 3000 }, { x: 3000, y: 3000 }, { x: 3000, y: 8000 }, { x: 0, y: 8000 },
+      ],
+    });
+    const vorher = doc.entities.size;
+    expect(() =>
+      execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' }),
+    ).toThrow(CommandError);
+    expect(doc.entities.size).toBe(vorher);
+  });
+});
+
 describe('Gebäude-Fluchtweg (Vision C3)', () => {
   // Turm: je Geschoss Treppenhaus (mit Treppe) + Zimmer, verbunden per Zonentür
   const turm = (geschosse: number, zimmerBreite = 6000) => {
