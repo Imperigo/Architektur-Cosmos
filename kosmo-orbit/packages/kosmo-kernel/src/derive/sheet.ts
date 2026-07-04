@@ -1,6 +1,7 @@
 import { phaseLabel, type KosmoDoc } from '../model/doc';
 import type { ImageAsset, Sheet, SheetFormat, SheetImage, SheetPlacement } from '../model/entities';
 import { axoInnerSvg, escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
+import { docFuerUmbau, UMBAU_LABEL } from './umbau';
 
 /**
  * Blatt-Komposition (KosmoPublish) — ein Sheet-Entity wird zum druckfähigen
@@ -26,14 +27,16 @@ export function sheetPaperSize(sheet: Pick<Sheet, 'format' | 'orientation'>): {
 }
 
 function placementInner(doc: KosmoDoc, pl: SheetPlacement): InnerSvg {
+  // Umbau-Filter je Platzierung (A2): gefilterte Sicht, dieselbe Ableitung
+  const sicht = docFuerUmbau(doc, pl.umbau);
   if (pl.view === 'grundriss' && pl.storeyId) {
-    return planInnerSvg(doc, pl.storeyId, pl.scale);
+    return planInnerSvg(sicht, pl.storeyId, pl.scale);
   }
   if (pl.view === 'axo') {
-    return axoInnerSvg(doc, {}, pl.scale);
+    return axoInnerSvg(sicht, {}, pl.scale);
   }
   if (pl.view === 'schnitt' && pl.section) {
-    return sectionInnerSvg(doc, pl.section, pl.scale);
+    return sectionInnerSvg(sicht, pl.section, pl.scale);
   }
   return { inner: '', bounds: null };
 }
@@ -100,8 +103,9 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     );
     if (pl.title) {
       const labelY = pl.y + ((bounds.maxY - bounds.minY) / 2) * f + 6;
+      const umbauZusatz = pl.umbau ? ` · ${UMBAU_LABEL[pl.umbau]}` : '';
       parts.push(
-        `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(pl.title)}  <tspan font-weight="normal" fill="#444">1:${pl.scale}</tspan></text>`,
+        `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(pl.title)}  <tspan font-weight="normal" fill="#444">1:${pl.scale}${umbauZusatz}</tspan></text>`,
       );
     }
   }

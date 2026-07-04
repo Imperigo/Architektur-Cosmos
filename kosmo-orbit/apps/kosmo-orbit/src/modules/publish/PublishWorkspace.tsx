@@ -453,6 +453,24 @@ export function PublishWorkspace() {
                     <option key={sc} value={sc}>1:{sc}</option>
                   ))}
                 </select>
+                <select
+                  value={pl.umbau ?? ''}
+                  data-testid="auswahl-umbau"
+                  title="Umbau-Filter: Abbruch- und Neubauplan aus einem Modell"
+                  onChange={(e) =>
+                    runCommand('publish.ansichtAnpassen', {
+                      sheetId: sheet.id,
+                      placementId: pl.id,
+                      umbau: e.target.value === '' ? null : e.target.value,
+                    })
+                  }
+                  style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
+                >
+                  <option value="">Kombiniert</option>
+                  <option value="bestand">Bestand</option>
+                  <option value="abbruch">Abbruchplan</option>
+                  <option value="neu">Neubauplan</option>
+                </select>
                 <input
                   defaultValue={pl.title ?? ''}
                   key={pl.id}

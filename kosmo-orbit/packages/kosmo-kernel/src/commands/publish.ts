@@ -60,6 +60,10 @@ export const placeView = registerCommand({
     x: z.number().describe('Papier-mm ab links'),
     y: z.number().describe('Papier-mm ab oben'),
     title: z.string().optional(),
+    umbau: z
+      .enum(['bestand', 'abbruch', 'neu'])
+      .optional()
+      .describe('Umbau-Filter: abbruch = Abbruchplan (Neubau weg), neu = Neubauplan (Abbruch weg), bestand = nur Bestand; weglassen = kombiniert'),
   }),
   summarize: (p) =>
     `${p.view === 'schnitt' ? 'Schnitt' : p.view === 'axo' ? 'Axonometrie' : 'Grundriss'} 1:${p.scale} platzieren`,
@@ -72,6 +76,7 @@ export const placeView = registerCommand({
       x: p.x,
       y: p.y,
       ...(p.title ? { title: p.title } : {}),
+      ...(p.umbau ? { umbau: p.umbau } : {}),
     };
     if (p.view === 'grundriss') {
       if (!p.storeyId) throw new CommandError('grundriss braucht storeyId');
@@ -199,14 +204,15 @@ export const adjustPlacement = registerCommand({
   id: 'publish.ansichtAnpassen',
   title: 'Ansicht anpassen',
   description:
-    'Ändert Massstab und/oder Titel einer platzierten Ansicht auf einem Planblatt.',
+    'Ändert Massstab, Titel und/oder Umbau-Filter einer platzierten Ansicht auf einem Planblatt. umbau: abbruch = Abbruchplan, neu = Neubauplan, bestand = nur Bestand, null = kombiniert (Filter entfernen).',
   params: z.object({
     sheetId: z.string(),
     placementId: z.string(),
     scale: z.number().int().min(1).max(2000).optional(),
     title: z.string().optional(),
+    umbau: z.enum(['bestand', 'abbruch', 'neu']).nullable().optional(),
   }),
-  summarize: (p) => `Ansicht anpassen${p.scale ? ` (1:${p.scale})` : ''}`,
+  summarize: (p) => `Ansicht anpassen${p.scale ? ` (1:${p.scale})` : ''}${p.umbau ? ` · ${p.umbau}` : ''}`,
   run: (doc, p) => {
     const sheet = requireSheet(doc, p.sheetId);
     if (!sheet.placements.some((pl) => pl.id === p.placementId)) {
@@ -214,15 +220,17 @@ export const adjustPlacement = registerCommand({
     }
     const after: Sheet = {
       ...sheet,
-      placements: sheet.placements.map((pl) =>
-        pl.id === p.placementId
-          ? {
-              ...pl,
-              scale: p.scale ?? pl.scale,
-              ...(p.title === undefined ? {} : { title: p.title }),
-            }
-          : pl,
-      ),
+      placements: sheet.placements.map((pl) => {
+        if (pl.id !== p.placementId) return pl;
+        const neu = {
+          ...pl,
+          scale: p.scale ?? pl.scale,
+          ...(p.title === undefined ? {} : { title: p.title }),
+          ...(p.umbau ? { umbau: p.umbau } : {}),
+        };
+        if (p.umbau === null) delete neu.umbau; // Filter entfernen = kombiniert
+        return neu;
+      }),
     };
     return [{ id: sheet.id, before: sheet, after }];
   },

@@ -199,6 +199,14 @@ export interface SheetPlacement {
   x: number;
   y: number;
   title?: string;
+  /**
+   * Umbau-Filter je Platzierung (ArchiCAD-Renofilter, RE-ARCHICAD A2):
+   * fehlend = kombinierter Plan (heutiges Verhalten). 'abbruch' =
+   * Abbruchplan (Bestand + Abbruch, Neubau ausgeblendet), 'neu' =
+   * Neubauplan (Bestand + Neu, Abbruch ausgeblendet), 'bestand' = nur
+   * Bestand. So entstehen die getrennten SIA-Umbau-Planläufe aus EINEM Modell.
+   */
+  umbau?: 'bestand' | 'abbruch' | 'neu';
 }
 
 /** Freier Textblock auf einem Blatt (Plakat-Titel, Konzepttexte). */

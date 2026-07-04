@@ -1565,3 +1565,44 @@ test('Rollen-Vorstufe (Vision D2): Rolle «Ausführung» rückt KosmoPublish nac
   await page.selectOption('[data-testid="rolle-select"]', '');
   await expect(ersteKachel).toHaveAttribute('data-testid', 'module-design');
 });
+
+test('Umbau-Filter je Blatt (RE-ARCHICAD A2): Abbruchplan blendet Neubau aus', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aufbau = k.run('design.aufbauErstellen', {
+      name: 'AW U', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    const W = (a, b) =>
+      k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, assemblyId: aufbau.patches[0].id, a, b }).patches[0].id;
+    W({ x: 0, y: 0 }, { x: 8000, y: 0 });
+    k.run('design.renovationSetzen', { ids: [W({ x: 0, y: 0 }, { x: 0, y: 5000 })], status: 'abbruch' });
+    k.run('design.renovationSetzen', { ids: [W({ x: 0, y: 5000 }, { x: 8000, y: 5000 })], status: 'neu' });
+    k.open('publish');
+  });
+  await page.click('[data-testid="add-sheet"]');
+  await page.click('[data-testid="place-plan"]');
+  // Kombiniert: der Blatteditor zeigt Neubau-Rot UND Abbruch-Stift
+  const farben = () =>
+    page.evaluate(() => {
+      const html = document.body.innerHTML;
+      return { rot: html.includes('#b3261e'), gelb: html.includes('#8a7500') };
+    });
+  expect(await farben()).toEqual({ rot: true, gelb: true });
+  // Platzierung wählen → Abbruchplan: Neubau verschwindet, Status im Modell
+  await page.locator('[data-testid^="placement-"]').first().click();
+  await page.selectOption('[data-testid="auswahl-umbau"]', 'abbruch');
+  await expect
+    .poll(async () => (await farben()).rot, { message: 'Neubau-Rot muss aus dem Abbruchplan verschwinden' })
+    .toBe(false);
+  expect((await farben()).gelb).toBe(true);
+  const umbau = await page.evaluate(
+    () => window.__kosmo.state().doc.byKind('sheet')[0].placements[0].umbau,
+  );
+  expect(umbau).toBe('abbruch');
+});

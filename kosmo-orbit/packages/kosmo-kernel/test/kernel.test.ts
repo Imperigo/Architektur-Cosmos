@@ -3486,6 +3486,71 @@ describe('Härtetest-Runde 3 (Vision F1)', () => {
     expect(zerlegeRektilinear([{ x: 0, y: 0 }, { x: 1000, y: 0 }, { x: 2000, y: 0 }, { x: 3000, y: 0 }]).typ).toBe('unregelmaessig');
   });
 
+  it('A2: docFuerUmbau filtert Status + Kinder; Original bleibt unangetastet', async () => {
+    const { docFuerUmbau } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const W = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      (execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a, b }).patches[0] as { id: string }).id;
+    const bestand = W({ x: 0, y: 0 }, { x: 9000, y: 0 });
+    const abbruch = W({ x: 0, y: 0 }, { x: 0, y: 6000 });
+    const neu = W({ x: 0, y: 6000 }, { x: 9000, y: 6000 });
+    execute(doc, 'design.oeffnungSetzen', { wallId: abbruch, openingType: 'tuer', center: 3000, width: 900, height: 2200, sill: 0 });
+    execute(doc, 'design.oeffnungSetzen', { wallId: neu, openingType: 'fenster', center: 4000, width: 1200, height: 1400, sill: 900 });
+    execute(doc, 'design.aussparungSetzen', { hostId: neu, center: 2000, breite: 300, hoehe: 300, sill: 1200 });
+    execute(doc, 'design.renovationSetzen', { ids: [bestand], status: 'bestand' });
+    execute(doc, 'design.renovationSetzen', { ids: [abbruch], status: 'abbruch' });
+    execute(doc, 'design.renovationSetzen', { ids: [neu], status: 'neu' });
+    const vorher = doc.entities.size;
+    // Abbruchplan: Neubau-Wand samt Fenster + Aussparung weg, Tür bleibt
+    const abPlan = docFuerUmbau(doc, 'abbruch');
+    expect(abPlan.byKind('wall').map((w) => w.id).sort()).toEqual([abbruch, bestand].sort());
+    expect(abPlan.byKind('opening').map((o) => (o as { openingType: string }).openingType)).toEqual(['tuer']);
+    expect(abPlan.byKind('aussparung')).toHaveLength(0);
+    // Neubauplan: Abbruch-Wand samt Tür weg, Fenster + Aussparung bleiben
+    const neuPlan = docFuerUmbau(doc, 'neu');
+    expect(neuPlan.byKind('wall').map((w) => w.id).sort()).toEqual([bestand, neu].sort());
+    expect(neuPlan.byKind('opening').map((o) => (o as { openingType: string }).openingType)).toEqual(['fenster']);
+    expect(neuPlan.byKind('aussparung')).toHaveLength(1);
+    // Bestandsplan: nur die Bestand-Wand
+    expect(docFuerUmbau(doc, 'bestand').byKind('wall').map((w) => w.id)).toEqual([bestand]);
+    // Ohne Filter: identisches Objekt (keine Kopie); Original unverändert
+    expect(docFuerUmbau(doc)).toBe(doc);
+    expect(doc.entities.size).toBe(vorher);
+  });
+
+  it('A2: Blatt-Platzierung mit Umbau-Filter — Abbruchplan ohne Neubau-Rot, Titel-Suffix, Filter entfernbar', async () => {
+    const { sheetToSvg } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const W = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      (execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a, b }).patches[0] as { id: string }).id;
+    W({ x: 0, y: 0 }, { x: 9000, y: 0 });
+    execute(doc, 'design.renovationSetzen', { ids: [W({ x: 0, y: 0 }, { x: 0, y: 6000 })], status: 'abbruch' });
+    execute(doc, 'design.renovationSetzen', { ids: [W({ x: 0, y: 6000 }, { x: 9000, y: 6000 })], status: 'neu' });
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'Umbau', format: 'A2' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    execute(doc, 'publish.ansichtPlatzieren', {
+      sheetId, view: 'grundriss', storeyId, scale: 100, x: 200, y: 200, umbau: 'abbruch',
+    });
+    const pid = doc.get<import('../src').Sheet>(sheetId)!.placements[0]!.id;
+    const abSvg = sheetToSvg(doc, sheetId, { projectName: 'T' });
+    expect(abSvg).toContain('#8a7500'); // Abbruch-Stift da
+    expect(abSvg).not.toContain('#b3261e'); // Neubau-Rot ausgeblendet
+    expect(abSvg).toContain('· Abbruch');
+    // Umschalten auf Neubauplan
+    execute(doc, 'publish.ansichtAnpassen', { sheetId, placementId: pid, umbau: 'neu' });
+    const neuSvg = sheetToSvg(doc, sheetId, { projectName: 'T' });
+    expect(neuSvg).toContain('#b3261e');
+    expect(neuSvg).not.toContain('#8a7500');
+    expect(neuSvg).toContain('· Neubau');
+    // Filter entfernen = kombiniert: beide Farben, kein Suffix
+    execute(doc, 'publish.ansichtAnpassen', { sheetId, placementId: pid, umbau: null });
+    expect(doc.get<import('../src').Sheet>(sheetId)!.placements[0]!.umbau).toBeUndefined();
+    const kombi = sheetToSvg(doc, sheetId, { projectName: 'T' });
+    expect(kombi).toContain('#b3261e');
+    expect(kombi).toContain('#8a7500');
+    expect(kombi).not.toContain('· Abbruch');
+  });
+
   it('F1e: renovationSetzen ist atomar — ein ungültiges Ziel in der Liste, kein halber Patch', () => {
     const { doc, storeyId, assemblyId } = setupDoc();
     const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 } });
