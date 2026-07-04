@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, KButton, Measure, moduleHue } from '@kosmo/ui';
+import { Badge, KButton, Measure, meldeFehler, moduleHue } from '@kosmo/ui';
 import {
   areaReport,
   fangKandidaten,
@@ -229,7 +229,7 @@ export function DesignWorkspace() {
         try {
           runCommand('design.stuetzeSetzen', { storeyId: activeStoreyId, at: p });
         } catch (err) {
-          alert(err instanceof Error ? err.message : String(err));
+          meldeFehler(err);
         }
       } else if (tool === 'schnitt') {
         if (points.length === 0) {
@@ -256,7 +256,7 @@ export function DesignWorkspace() {
               ...(treppenForm === 'l' ? { ecke: points[1]! } : {}),
             });
           } catch (err) {
-            alert(err instanceof Error ? err.message : String(err));
+            meldeFehler(err);
           }
           setPoints([]);
         }
@@ -271,7 +271,7 @@ export function DesignWorkspace() {
                 overhang: 500,
               });
             } catch (err) {
-              alert(err instanceof Error ? err.message : String(err));
+              meldeFehler(err);
             }
           } else if (tool === 'volumen') {
             runCommand('design.volumenErstellen', {
@@ -489,7 +489,7 @@ export function DesignWorkspace() {
                     : null,
                 );
               } catch (err) {
-                alert(`IFC-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
+                meldeFehler(`IFC-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
               }
             };
             input.click();
@@ -512,7 +512,7 @@ export function DesignWorkspace() {
                 const { parseSplatCloud } = await import('./splat-import');
                 setSplatCloud(parseSplatCloud(f.name, await f.arrayBuffer()));
               } catch (err) {
-                alert(`Splat-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
+                meldeFehler(`Splat-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
               }
             };
             input.click();
@@ -852,7 +852,7 @@ export function DesignWorkspace() {
               try {
                 runCommand('design.geschossKopieren', { storeyId: activeStoreyId, anzahl: 1 });
               } catch (err) {
-                alert(err instanceof Error ? err.message : String(err));
+                meldeFehler(err);
               }
             }}
           >

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, Panel, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KButton, KLade, Measure, Messrahmen, Panel, moduleHue } from '@kosmo/ui';
 import { bauteilkatalog, gesamtdicke, ladeReferenzenLive, materialkatalog, uWert, type KatalogEintrag } from '@kosmo/data';
 import { useProject } from '../../state/project-store';
 import { setGlbContext } from '../design/Viewport3D';
@@ -47,6 +47,7 @@ function formatYear(e: RefEntry): string {
 
 export function DataWorkspace() {
   const [entries, setEntries] = useState<RefEntry[]>([]);
+  const [geladen, setGeladen] = useState(false);
   const [query, setQuery] = useState('');
   const [sector, setSector] = useState<string | null>(null);
   const [selected, setSelected] = useState<RefEntry | null>(null);
@@ -71,7 +72,9 @@ export function DataWorkspace() {
   };
 
   useEffect(() => {
-    void loadReferences().then(setEntries);
+    void loadReferences()
+      .then(setEntries)
+      .finally(() => setGeladen(true));
   }, []);
 
   const sectors = useMemo(() => {
@@ -192,6 +195,7 @@ export function DataWorkspace() {
               caption="Keine Referenz passt zur Suche — Begriff lockern oder Filter lösen"
             />
           )}
+          {!geladen && <KLade text="Referenzen laden …" height={200} />}
           <div
             style={{
               display: 'grid',

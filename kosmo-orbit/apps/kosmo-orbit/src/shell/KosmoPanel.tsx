@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, OrbitMark, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, melde, moduleHue, OrbitMark } from '@kosmo/ui';
 import {
   ChatSession,
   LearningJournal,
@@ -94,22 +94,71 @@ function loadSettings(): KosmoSettings {
   return defaultSettings;
 }
 
-/** Kosmo spricht (Owner-Q7): Text → Bridge-/tts → Audio. Still bei Fehlern. */
+/**
+ * Kosmo spricht (Owner-Q7): Text → Bridge-/tts → Audio.
+ * Ohne Bridge fällt die Stimme auf `speechSynthesis` des Browsers zurück
+ * (de-CH wenn vorhanden) — die Bridge-Stimme bleibt der Qualitätsweg.
+ */
 async function speak(text: string): Promise<void> {
   const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+  const kurz = text.slice(0, 600);
   try {
     const res = await fetch(`${bridge}/tts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text.slice(0, 600) }),
+      body: JSON.stringify({ text: kurz }),
     });
     if (!res.ok) throw new Error(String(res.status));
     const url = URL.createObjectURL(await res.blob());
     const audio = new Audio(url);
     audio.onended = () => URL.revokeObjectURL(url);
     await audio.play();
-  } catch (err) {
-    console.info('Vorlesen nicht möglich (Bridge /tts):', err);
+  } catch {
+    try {
+      const u = new SpeechSynthesisUtterance(kurz);
+      const stimmen = speechSynthesis.getVoices();
+      const stimme = stimmen.find((v) => v.lang === 'de-CH') ?? stimmen.find((v) => v.lang.startsWith('de'));
+      if (stimme) u.voice = stimme;
+      u.lang = stimme?.lang ?? 'de-CH';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    } catch (err) {
+      console.info('Vorlesen nicht möglich (weder Bridge /tts noch speechSynthesis):', err);
+    }
+  }
+}
+
+// Web Speech API — minimale Typen (nicht in lib.dom für alle Targets)
+interface BrowserSpeechRecognition {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onend: (() => void) | null;
+  onerror: ((e: { error?: string }) => void) | null;
+  start(): void;
+  stop(): void;
+}
+
+function browserSpeechRecognition(): BrowserSpeechRecognition | null {
+  const w = window as unknown as {
+    SpeechRecognition?: new () => BrowserSpeechRecognition;
+    webkitSpeechRecognition?: new () => BrowserSpeechRecognition;
+  };
+  const Ctor = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+  return Ctor ? new Ctor() : null;
+}
+
+/** Kurzer /health-Ping — entscheidet Bridge-Whisper vs. Browser-Erkennung. */
+async function bridgeErreichbar(bridge: string): Promise<boolean> {
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 1200);
+    const res = await fetch(`${bridge}/health`, { signal: ctl.signal });
+    clearTimeout(t);
+    return res.ok;
+  } catch {
+    return false;
   }
 }
 
@@ -283,13 +332,69 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     void session.send(text);
   };
 
-  // KosmoSpeak: Push-to-Talk → Bridge-Whisper (Schweizerdeutsch)
+  // KosmoSpeak: Push-to-Talk → Bridge-Whisper (Schweizerdeutsch);
+  // ohne Bridge übernimmt die Browser-Spracherkennung (de-CH) — ehrlich
+  // gekennzeichnet, die Whisper-Qualität kommt erst mit der HomeStation.
   const [recording, setRecording] = useState(false);
   const recorderRef = useRef<MediaRecorder | null>(null);
+  const erkennungRef = useRef<BrowserSpeechRecognition | null>(null);
+  const fallbackNotiert = useRef(false);
+
+  const starteBrowserStt = () => {
+    const rec = browserSpeechRecognition();
+    if (!rec) {
+      setBubbles((b) => [
+        ...b,
+        {
+          id: ++bubbleSeq.current,
+          who: 'kosmo',
+          text: '⚠ Keine Bridge erreichbar und dieser Browser kennt keine Spracherkennung — Speak-to-Kosmo braucht eines von beidem.',
+        },
+      ]);
+      return;
+    }
+    rec.lang = 'de-CH';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    rec.onresult = (e) => {
+      const text = Array.from({ length: e.results.length }, (_, i) => e.results[i]?.[0]?.transcript ?? '')
+        .join(' ')
+        .trim();
+      if (text) {
+        setBubbles((b) => [...b, { id: ++bubbleSeq.current, who: 'du', text: `🎙 ${text}` }]);
+        void session.send(text);
+      }
+    };
+    rec.onend = () => {
+      setRecording(false);
+      erkennungRef.current = null;
+    };
+    rec.onerror = (e) => {
+      if (e.error && e.error !== 'no-speech' && e.error !== 'aborted') {
+        setBubbles((b) => [
+          ...b,
+          { id: ++bubbleSeq.current, who: 'kosmo', text: `⚠ Browser-Spracherkennung: ${e.error}` },
+        ]);
+      }
+    };
+    erkennungRef.current = rec;
+    rec.start();
+    setRecording(true);
+    if (!fallbackNotiert.current) {
+      fallbackNotiert.current = true;
+      melde('Browser-Spracherkennung aktiv — die Schweizerdeutsch-Qualität kommt über die HomeStation-Bridge.', { ton: 'info' });
+    }
+  };
 
   const toggleMic = async () => {
     if (recording) {
       recorderRef.current?.stop();
+      erkennungRef.current?.stop();
+      return;
+    }
+    const bridgeUrl = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+    if (!(await bridgeErreichbar(bridgeUrl))) {
+      starteBrowserStt();
       return;
     }
     try {

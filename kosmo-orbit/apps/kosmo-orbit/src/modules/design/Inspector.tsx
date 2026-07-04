@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Badge, Hairline, KButton, Measure, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, Measure, meldeFehler, moduleHue } from '@kosmo/ui';
 import {
   areaOf,
   assemblyThickness,
@@ -43,7 +43,7 @@ export function Inspector() {
     try {
       runCommand('design.eigenschaftSetzen', { entityId: entity.id, feld, wert });
     } catch (err) {
-      alert(err instanceof Error ? err.message : String(err));
+      meldeFehler(err);
     }
   };
 
@@ -128,7 +128,7 @@ export function Inspector() {
                     sill: 1100,
                   });
                 } catch (err) {
-                  alert(err instanceof Error ? err.message : String(err));
+                  meldeFehler(err);
                 }
               }}
             >
@@ -149,7 +149,7 @@ export function Inspector() {
                   };
                   runCommand('design.etikettSetzen', { targetId: entity.id, at: mitte, inhalt: 'aufbau' });
                 } catch (err) {
-                  alert(err instanceof Error ? err.message : String(err));
+                  meldeFehler(err);
                 }
               }}
             >
@@ -222,7 +222,7 @@ export function Inspector() {
                   ...(e.target.value ? { status: e.target.value } : {}),
                 });
               } catch (err) {
-                alert(err instanceof Error ? err.message : String(err));
+                meldeFehler(err);
               }
             }}
             style={inputStyle}

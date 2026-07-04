@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { generiereStuetzenraster, type RasterVariante } from '@kosmo/kernel';
-import { Badge, Hairline, Karteikarte, KButton, Measure } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KButton, Measure, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -137,7 +137,7 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
             try {
               runCommand('design.stuetzenAusRaster', { storeyId: activeStoreyId });
             } catch (err) {
-              alert(err instanceof Error ? err.message : String(err));
+              meldeFehler(err);
             }
           }}
         >

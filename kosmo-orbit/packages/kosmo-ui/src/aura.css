@@ -240,3 +240,28 @@ progress {
   border-radius: 0;
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
 }
+
+/* Meldungen + Ladezustand (V1-Finish P1) — ruhig, präzise, reduced-motion-fest */
+.k-meldung {
+  animation: k-meldung-ein var(--k-motion-settle) both;
+}
+@keyframes k-meldung-ein {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.k-lade-punkt {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--k-technik);
+  animation: k-lade-puls 1.2s ease-in-out infinite;
+}
+@keyframes k-lade-puls {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+/* Tastatur-Fokus: sichtbarer Technik-Ring, nur bei Tastaturbedienung */
+:focus-visible {
+  outline: 2px solid var(--k-accent);
+  outline-offset: 2px;
+}

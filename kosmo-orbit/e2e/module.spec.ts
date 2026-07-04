@@ -336,15 +336,14 @@ test('Härtetest: kaputte .kosmo-Datei → klare Meldung, UI lebt weiter', async
     page.waitForEvent('filechooser'),
     page.click('[data-testid="open-project"]'),
   ]);
-  const dialog = page.waitForEvent('dialog');
   await chooser.setFiles({
     name: 'kaputt.kosmo',
     mimeType: 'application/zip',
     buffer: Buffer.from('DAS IST KEIN ZIP'),
   });
-  const d = await dialog;
-  expect(d.message()).toContain('Projekt konnte nicht geöffnet werden');
-  await d.accept();
+  // P1: statt alert() kommt der Fehler-Toast — und die UI lebt weiter
+  const toast = page.locator('[data-testid="meldung-fehler"]');
+  await expect(toast).toContainText('Projekt konnte nicht geöffnet werden');
   await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
 });
 
@@ -1770,4 +1769,86 @@ test('Plan-Revisionen (RE-ARCHICAD A7): Verzeichnis im Blatt, Transmittal-CSV', 
     page.click('[data-testid="pubset-transmittal"]'),
   ]);
   expect(download.suggestedFilename()).toBe('Versand-Transmittal.csv');
+});
+
+/** V1-Finish P1: Fehlerzone, Meldungen/Bestätigung, Kurzbefehle. */
+
+test('Fehlerzone (P1): Modul-Crash zeigt Fehlerkarte statt weisser App, «Neu laden» stellt die Station her', async ({ page }) => {
+  await page.goto('/');
+  await page.click('[data-testid="module-design"]');
+  await expect(page.locator('[data-testid="export-pdf"]')).toBeVisible();
+  await page.evaluate(() => window.dispatchEvent(new Event('kosmo:absturztest')));
+  const karte = page.locator('[data-testid="fehlerzone"]');
+  await expect(karte).toBeVisible();
+  await expect(karte).toContainText('KosmoDesign');
+  await expect(karte).toContainText('Absturztest');
+  // Die App drumherum lebt weiter (Header, Kosmo-Panel)
+  await expect(page.locator('[data-testid="kosmo-toggle"]')).toBeVisible();
+  await page.click('[data-testid="fehlerzone-neuladen"]');
+  await expect(karte).toHaveCount(0);
+  await expect(page.locator('[data-testid="export-pdf"]')).toBeVisible();
+});
+
+test('Meldungen (P1): kaputtes .kosmo zeigt Fehler-Toast statt alert, ✕ schliesst', async ({ page }) => {
+  await page.goto('/');
+  const [chooser] = await Promise.all([
+    page.waitForEvent('filechooser'),
+    page.click('[data-testid="open-project"]'),
+  ]);
+  await chooser.setFiles({ name: 'kaputt.kosmo', mimeType: 'application/zip', buffer: Buffer.from('kein zip') });
+  const toast = page.locator('[data-testid="meldung-fehler"]');
+  await expect(toast).toBeVisible();
+  await expect(toast).toContainText('Projekt konnte nicht geöffnet werden');
+  await toast.getByRole('button', { name: 'Meldung schliessen' }).click();
+  await expect(toast).toHaveCount(0);
+});
+
+test('Bestätigung (P1): Projekt löschen fragt nach — Abbrechen behält, Löschen entfernt', async ({ page }) => {
+  await page.goto('/');
+  await page.fill('[data-testid="projekt-neu-name"]', 'Wegwerf-Test');
+  await page.click('[data-testid="projekt-neu"]');
+  // Ins Modell zeichnen — der Tresor sichert 1,2 s nach der Änderung
+  await expect(page.locator('[data-testid="export-pdf"]')).toBeVisible();
+  await page.evaluate(() => {
+    const k = window.__kosmo as {
+      run: (id: string, p: unknown) => unknown;
+      state: () => { activeStoreyId: string | null; doc: { byKind: (k: string) => { id: string; name?: string }[] } };
+    };
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 0, y: 0 }, b: { x: 4000, y: 0 }, assemblyId: aw.id });
+  });
+  await page.waitForTimeout(1800);
+  await page.click('[aria-label="Zur Zentrale"]');
+  const karte = page.locator('[data-testid^="projekt-"]', { hasText: 'Wegwerf-Test' }).first();
+  await expect(karte).toBeVisible();
+  await karte.getByRole('button', { name: 'Wegwerf-Test löschen' }).click();
+  const dialog = page.locator('[data-testid="bestaetigung"]');
+  await expect(dialog).toContainText('Wegwerf-Test');
+  await page.click('[data-testid="bestaetigung-nein"]');
+  await expect(dialog).toHaveCount(0);
+  await expect(karte).toBeVisible();
+  await karte.getByRole('button', { name: 'Wegwerf-Test löschen' }).click();
+  await page.click('[data-testid="bestaetigung-ja"]');
+  await expect(page.locator('[data-testid^="projekt-"]', { hasText: 'Wegwerf-Test' })).toHaveCount(0);
+});
+
+test('Kurzbefehle (P1): «?» zeigt die Übersicht, Ziffern springen zu den Stationen, Kacheln sind tastaturbedienbar', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
+  await page.keyboard.press('?');
+  const overlay = page.locator('[data-testid="kurzbefehle"]');
+  await expect(overlay).toBeVisible();
+  await expect(overlay).toContainText('Befehlspalette');
+  await page.keyboard.press('Escape');
+  await expect(overlay).toHaveCount(0);
+  // Ziffer 4 = KosmoData (neutrale Rolle), 0 = zurück zur Zentrale
+  await page.keyboard.press('4');
+  await expect(page.locator('[data-testid="tab-referenzen"]')).toBeVisible();
+  await page.keyboard.press('0');
+  await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
+  // Kachel per Tastatur: fokussieren + Enter
+  await page.focus('[data-testid="module-data"]');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('[data-testid="tab-referenzen"]')).toBeVisible();
 });

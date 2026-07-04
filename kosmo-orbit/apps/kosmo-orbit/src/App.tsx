@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Badge,
   Hairline,
+  KBestaetigung,
   KButton,
+  KFehlerzone,
+  KMeldungen,
   OrbitMark,
   Panel,
   Wordmark,
+  bestaetigen,
+  meldeFehler,
   moduleHue,
   type ModuleId,
   type ThemeName,
@@ -20,6 +25,7 @@ import { DocWorkspace } from './modules/doc/DocWorkspace';
 import { TrainWorkspace } from './modules/train/TrainWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
 import { registerActions } from './shell/palette';
+import { Kurzbefehle } from './shell/Kurzbefehle';
 import {
   aktivesProjektId,
   initVault,
@@ -109,6 +115,22 @@ export function App() {
     const prio = ROLLEN_REIHENFOLGE[rolle];
     return [...modules].sort((a, b) => prio.indexOf(a.id) - prio.indexOf(b.id));
   })();
+
+  // Ein Weg für Kachel-Klick, Tastatur und Ziffern-Kurzbefehl
+  const oeffneModul = (m: (typeof modules)[number]) => {
+    if (m.deepLink === 'speak') {
+      setKosmoOpen(true);
+      return;
+    }
+    if (m.deepLink === 'draw' || m.deepLink === 'sketch') setDeepLink(m.deepLink);
+    if (m.screen) setScreen(m.screen);
+  };
+  const stationen = useMemo(
+    () => sortierteModule.map((m) => ({ name: m.name, oeffne: () => oeffneModul(m) })),
+    // Reihenfolge hängt nur an der Rolle
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rolle],
+  );
 
   useEffect(() => {
     onSyncStatus((s, p, w) => {
@@ -252,7 +274,7 @@ export function App() {
                 void openProjectFile(f)
                   .then(() => setScreen('design'))
                   .catch((err) => {
-                    alert(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`);
+                    meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`);
                   });
               }
             };
@@ -402,20 +424,36 @@ export function App() {
       )}
       <main style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        {/* P1: jede Station in ihrer Fehlerzone — ein Crash reisst nie die App */}
         {screen === 'design' ? (
-          <DesignWorkspace />
+          <KFehlerzone bereich="KosmoDesign" onDiagnose={() => setScreen('doc')}>
+            <Absturztest />
+            <DesignWorkspace />
+          </KFehlerzone>
         ) : screen === 'vis' ? (
-          <VisWorkspace />
+          <KFehlerzone bereich="KosmoVis" onDiagnose={() => setScreen('doc')}>
+            <VisWorkspace />
+          </KFehlerzone>
         ) : screen === 'data' ? (
-          <DataWorkspace />
+          <KFehlerzone bereich="KosmoData" onDiagnose={() => setScreen('doc')}>
+            <DataWorkspace />
+          </KFehlerzone>
         ) : screen === 'publish' ? (
-          <PublishWorkspace />
+          <KFehlerzone bereich="KosmoPublish" onDiagnose={() => setScreen('doc')}>
+            <PublishWorkspace />
+          </KFehlerzone>
         ) : screen === 'prepare' ? (
-          <PrepareWorkspace />
+          <KFehlerzone bereich="KosmoPrepare" onDiagnose={() => setScreen('doc')}>
+            <PrepareWorkspace />
+          </KFehlerzone>
         ) : screen === 'doc' ? (
-          <DocWorkspace />
+          <KFehlerzone bereich="KosmoDoc">
+            <DocWorkspace />
+          </KFehlerzone>
         ) : screen === 'train' ? (
-          <TrainWorkspace />
+          <KFehlerzone bereich="KosmoTrain" onDiagnose={() => setScreen('doc')}>
+            <TrainWorkspace />
+          </KFehlerzone>
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
@@ -514,13 +552,15 @@ export function App() {
                 {sortierteModule.map((m) => (
                   <Panel
                     key={m.id}
-                    onClick={() => {
-                      if (m.deepLink === 'speak') {
-                        setKosmoOpen(true);
-                        return;
+                    onClick={() => oeffneModul(m)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${m.name} öffnen`}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        oeffneModul(m);
                       }
-                      if (m.deepLink === 'draw' || m.deepLink === 'sketch') setDeepLink(m.deepLink);
-                      if (m.screen) setScreen(m.screen);
                     }}
                     data-testid={`module-${m.id}`}
                     style={{
@@ -553,6 +593,9 @@ export function App() {
         {kosmoOpen && <KosmoPanel onClose={() => setKosmoOpen(false)} />}
       </main>
       <CommandPalette />
+      <Kurzbefehle stationen={stationen} zurZentrale={() => setScreen('home')} />
+      <KMeldungen />
+      <KBestaetigung />
     </div>
   );
 }
@@ -615,9 +658,12 @@ function VariantenArchiv({ onOpen }: { onOpen: () => void }) {
                 tone="ghost"
                 aria-label={`Variante ${v.name} löschen`}
                 onClick={() => {
-                  if (confirm(`Variante «${v.name}» endgültig löschen?`)) {
-                    void loescheVariante(v.id).then(refresh);
-                  }
+                  void bestaetigen({
+                    titel: `Variante «${v.name}» löschen?`,
+                    text: 'Der eingefrorene Stand wird endgültig entfernt — das laufende Projekt bleibt unberührt.',
+                    bestaetigen: 'Löschen',
+                    gefaehrlich: true,
+                  }).then((ok) => ok && loescheVariante(v.id).then(refresh));
                 }}
               >
                 ✕
@@ -681,7 +727,7 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
                 delete roh['schema'];
                 useProject.getState().runCommand('design.katalogImportieren', roh);
               } catch (err) {
-                alert(err instanceof Error ? err.message : String(err));
+                meldeFehler(err);
               }
             };
             input.click();
@@ -728,9 +774,12 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
               tone="ghost"
               aria-label={`${p.name} löschen`}
               onClick={() => {
-                if (confirm(`Projekt «${p.name}» endgültig löschen?`)) {
-                  void loescheProjekt(p.id).then(refresh);
-                }
+                void bestaetigen({
+                  titel: `Projekt «${p.name}» löschen?`,
+                  text: 'Der Autosave-Stand wird endgültig aus dem Tresor entfernt.',
+                  bestaetigen: 'Löschen',
+                  gefaehrlich: true,
+                }).then((ok) => ok && loescheProjekt(p.id).then(refresh));
               }}
             >
               Löschen
@@ -768,4 +817,20 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
       </div>
     </div>
   );
+}
+
+/**
+ * Absturztest — nur für den Fehlerzonen-Beweis (E2E): das Event
+ * `kosmo:absturztest` lässt diese Komponente beim nächsten Render werfen.
+ * Nach «Neu laden» remountet die Zone und der Zustand ist wieder sauber.
+ */
+function Absturztest() {
+  const [kaputt, setKaputt] = useState(false);
+  useEffect(() => {
+    const h = () => setKaputt(true);
+    window.addEventListener('kosmo:absturztest', h);
+    return () => window.removeEventListener('kosmo:absturztest', h);
+  }, []);
+  if (kaputt) throw new Error('Absturztest — absichtlich ausgelöst');
+  return null;
 }

@@ -18,8 +18,6 @@ import { moebelGeometrie } from '../src/derive/moebel';
 import { fassadenModule, moduleAlsCsv } from '../src/derive/fassadenmodule';
 import { parzelleZuOutline } from '../src/derive/standort';
 import { generiereGrundriss } from '../src/derive/grundrissgenerator';
-import { polygonArea } from '../src/model/units';
-import { pruefeGrundriss } from '../src/derive/checks';
 import {
   KosmoDoc,
   History,
@@ -48,6 +46,7 @@ import {
   type Storey,
   type Wall,
   type Assembly,
+  type Zone,
 } from '../src';
 
 function setupDoc() {
@@ -2331,7 +2330,7 @@ describe('Raumgraph + Fluchtweg (V2-F1/F2)', () => {
     const { doc, storeyId } = grundriss();
     const graph1 = raumGraph(doc, storeyId);
     expect(graph1.kanten.filter((k) => k.art === 'offen')).toHaveLength(1);
-    const aufbau = doc.byKind<{ id: string; kind: string }>('assembly' as never)[0]!;
+    const aufbau = doc.byKind<Assembly>('assembly')[0]!;
     execute(doc, 'design.wandZeichnen', {
       storeyId, assemblyId: aufbau.id, a: { x: 0, y: 6000 }, b: { x: 5000, y: 6000 },
     });

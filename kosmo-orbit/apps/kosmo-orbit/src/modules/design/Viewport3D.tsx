@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as SunCalc from 'suncalc';
 import { deriveAll, type GeometryArtifact, type Pt } from '@kosmo/kernel';
+import { meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
 import { pbrPalette } from '@kosmo/data';
@@ -366,7 +367,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             console.info('Referenz-3D geladen:', req.url);
           },
           undefined,
-          (err) => console.error('Referenz-3D fehlgeschlagen:', err),
+          (err) => meldeFehler(`Referenz-3D fehlgeschlagen: ${err instanceof Error ? err.message : err}`),
         );
       });
     }
