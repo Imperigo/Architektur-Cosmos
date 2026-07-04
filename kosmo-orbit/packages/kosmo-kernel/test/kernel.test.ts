@@ -1704,6 +1704,63 @@ describe('Masslinienordnung (Vision B1)', () => {
   });
 });
 
+describe('Gebäude-Fluchtweg (Vision C3)', () => {
+  // Turm: je Geschoss Treppenhaus (mit Treppe) + Zimmer, verbunden per Zonentür
+  const turm = (geschosse: number, zimmerBreite = 6000) => {
+    const doc = new KosmoDoc();
+    const storeyIds: string[] = [];
+    for (let i = 0; i < geschosse; i++) {
+      const g = execute(doc, 'design.geschossErstellen', { name: i === 0 ? 'EG' : `${i}.OG`, index: i, elevation: i * 3000, height: 3000 });
+      const sid = (g.patches[0] as { id: string }).id;
+      storeyIds.push(sid);
+      execute(doc, 'design.zoneErstellen', {
+        storeyId: sid, name: 'Treppenhaus', sia: 'VF', raumTyp: 'treppenhaus',
+        outline: [{ x: 0, y: 0 }, { x: 3000, y: 0 }, { x: 3000, y: 3000 }, { x: 0, y: 3000 }],
+      });
+      execute(doc, 'design.zoneErstellen', {
+        storeyId: sid, name: `Zimmer ${i}`, sia: 'HNF', raumTyp: 'zimmer',
+        outline: [{ x: 3000, y: 0 }, { x: 3000 + zimmerBreite, y: 0 }, { x: 3000 + zimmerBreite, y: 3000 }, { x: 3000, y: 3000 }],
+      });
+      execute(doc, 'design.tuerSetzen', { storeyId: sid, at: { x: 3000, y: 1500 }, breite: 900 });
+      execute(doc, 'design.treppeErstellen', { storeyId: sid, a: { x: 1500, y: 600 }, b: { x: 1500, y: 2400 }, width: 1200 });
+    }
+    return { doc, storeyIds };
+  };
+
+  it('verkettet die Geschosse über die Treppenläufe; EG bleibt ohne Vertikalanteil', async () => {
+    const { doc, storeyIds } = turm(3);
+    const { fluchtwegeGebaeude } = await import('../src');
+    const wege = fluchtwegeGebaeude(doc);
+    const zimmer = (sid: string) =>
+      wege.find((w) => w.storeyId === sid && (doc.get<Zone>(w.zoneId) as Zone).raumTyp === 'zimmer')!;
+    expect(zimmer(storeyIds[0]!).vertikal).toBe(0);
+    expect(zimmer(storeyIds[1]!).vertikal).toBe(1800); // Lauflänge der geraden Treppe
+    expect(zimmer(storeyIds[2]!).vertikal).toBe(3600); // zwei Geschosse
+    expect(zimmer(storeyIds[2]!).distanz).toBeGreaterThan(zimmer(storeyIds[0]!).distanz + 3599);
+    expect(Number.isFinite(zimmer(storeyIds[2]!).distanz)).toBe(true);
+    // Bestehendes fluchtwege() bleibt unangetastet: pro Geschoss identisch
+    const proGeschoss = fluchtwege(doc, storeyIds[2]!);
+    expect(zimmer(storeyIds[2]!).distanz - 3600).toBeCloseTo(
+      proGeschoss.find((w) => w.zoneId === zimmer(storeyIds[2]!).zoneId)!.distanz, 5,
+    );
+  });
+
+  it('Checks: Übersichtswert > 35 m warnt; unterbrochene Treppenkette wird gemeldet', () => {
+    // Zimmer 32 m breit: pro Geschoss ~33.5 m (unter 35), + 1.8 m Treppe → drüber
+    const { doc, storeyIds } = turm(2, 32000);
+    const befunde = pruefeGrundriss(doc, storeyIds[1]!).filter((b) => b.regel === 'Fluchtweg Gebäude');
+    expect(befunde).toHaveLength(1);
+    expect(befunde[0]!.text).toContain('Übersichtswert über dem 35-m-Richtwert');
+    expect(befunde[0]!.text).toContain('1.8 m Treppenläufe');
+    // Treppe im OG löschen → Kette unterbrochen
+    const treppeOg = doc.byKind<import('../src').Stair>('stair').find((s) => s.storeyId === storeyIds[1]!)!;
+    execute(doc, 'design.loeschen', { entityId: treppeOg.id });
+    const kette = pruefeGrundriss(doc, storeyIds[1]!).filter((b) => b.regel === 'Fluchtweg Gebäude');
+    expect(kette).toHaveLength(1);
+    expect(kette[0]!.text).toContain('kein durchgehendes Treppenhaus');
+  });
+});
+
 describe('Schallschutz-Hinweis (Vision C2)', () => {
   it('TW-Wände: Massengesetz gegen SIA 181 — KS 200 grün, Backstein 150 warnt, Leichtwand unbewertbar', async () => {
     const { doc, storeyId } = setupDoc();

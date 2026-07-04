@@ -2,7 +2,7 @@ import type { KosmoDoc } from '../model/doc';
 import type { Assembly, Boundary, MassBody, Opening, Roof, Stair, Storey, Wall, Zone } from '../model/entities';
 import { polygonArea } from '../model/units';
 import { treppenTeile } from './treppe';
-import { fluchtwege } from './raumgraph';
+import { fluchtwege, fluchtwegeGebaeude } from './raumgraph';
 import { pruefeBewegungsflaechen } from './moebel';
 
 /**
@@ -217,6 +217,34 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
           text: `«${zone.name}»: Fluchtweg ${(weg.distanz / 1000).toFixed(1)} m — nah am 35-m-Richtwert`,
           entityId: zone.id,
         });
+      }
+    }
+  }
+
+  // Gebäude-Fluchtweg (Vision C3): vertikal über die Treppen verkettet —
+  // Übersichtswert (der normative 35-m-Check bleibt der Geschoss-Check oben).
+  if (zielVorhanden && storey.index !== 0) {
+    const gebaeude = fluchtwegeGebaeude(doc).filter((w) => w.storeyId === storeyId);
+    if (gebaeude.some((w) => w.vertikal === Infinity)) {
+      befunde.push({
+        schwere: 'warnung',
+        regel: 'Fluchtweg Gebäude',
+        text: `${storey.name}: kein durchgehendes Treppenhaus bis zur Ausgangsebene (Zwischengeschoss ohne Treppe)`,
+        entityId: storey.id,
+      });
+    } else {
+      for (const weg of gebaeude) {
+        const zone = doc.get<Zone>(weg.zoneId);
+        if (!zone || zone.kind !== 'zone' || zone.raumTyp === 'balkon') continue;
+        if (!Number.isFinite(weg.distanz) || weg.vertikal <= 0) continue;
+        if (weg.distanz > MAX_FLUCHT) {
+          befunde.push({
+            schwere: 'warnung',
+            regel: 'Fluchtweg Gebäude',
+            text: `«${zone.name}»: bis zur Ausgangsebene ${(weg.distanz / 1000).toFixed(1)} m (davon ${(weg.vertikal / 1000).toFixed(1)} m Treppenläufe) — Übersichtswert über dem 35-m-Richtwert`,
+            entityId: zone.id,
+          });
+        }
       }
     }
   }

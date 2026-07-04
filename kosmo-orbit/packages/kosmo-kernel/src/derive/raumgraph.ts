@@ -2,6 +2,7 @@ import type { KosmoDoc } from '../model/doc';
 import type { ZonenTuer, Opening, Stair, Wall, Zone } from '../model/entities';
 import { polygonArea, type Pt } from '../model/units';
 import { axisDirection } from '../geometry/wall';
+import { treppenTeile } from './treppe';
 
 /**
  * Raumgraph (V2-F1, Finch-Essenz) + Fluchtweg (V2-F2).
@@ -251,6 +252,57 @@ export function fluchtwege(doc: KosmoDoc, storeyId: string): Fluchtweg[] {
     const pfad: Pt[] = [];
     for (let i = start; i >= 0; i = vor[i]!) pfad.push(portale[i]!.punkt);
     raus.push({ zoneId: z.id, distanz: beste, pfad });
+  }
+  return raus;
+}
+
+export interface GebaeudeFluchtweg {
+  zoneId: string;
+  storeyId: string;
+  /** Gesamtweg in mm bis zur Ausgangsebene (inkl. Treppenläufe); Infinity = keiner. */
+  distanz: number;
+  /** Vertikaler Anteil (Summe der Treppen-Lauflängen). */
+  vertikal: number;
+}
+
+/**
+ * Gebäude-Fluchtweg (Vision C3): verkettet die Geschoss-Graphen über die
+ * Treppen. Ausgangsebene = Geschoss mit Index 0 (sonst das unterste);
+ * jedes Zwischengeschoss trägt die Lauflänge seiner kürzesten Treppe bei.
+ * V1-Annahme ehrlich: das Treppenhaus ist durchgehend gestapelt — fehlt
+ * einem Zwischengeschoss die Treppe, wird der Weg Infinity.
+ * Das bestehende `fluchtwege()` (pro Geschoss) bleibt unverändert.
+ */
+export function fluchtwegeGebaeude(doc: KosmoDoc): GebaeudeFluchtweg[] {
+  const storeys = doc.storeysOrdered();
+  if (storeys.length === 0) return [];
+  const ausgangIdx = Math.max(0, storeys.findIndex((s) => s.index === 0));
+
+  // Abstieg je Geschoss: Lauflänge der kürzesten Treppe dieses Geschosses
+  const lauf = new Map<string, number>();
+  for (const st of storeys) {
+    let best = Infinity;
+    for (const t of doc.byKind<Stair>('stair')) {
+      if (t.storeyId !== st.id) continue;
+      if (Math.hypot(t.b.x - t.a.x, t.b.y - t.a.y) < 1) continue;
+      best = Math.min(best, treppenTeile(t, st.height, st.elevation).gesamtLauflaenge);
+    }
+    lauf.set(st.id, best);
+  }
+
+  const raus: GebaeudeFluchtweg[] = [];
+  for (let i = 0; i < storeys.length; i++) {
+    const st = storeys[i]!;
+    let vertikal = 0;
+    if (i > ausgangIdx) {
+      for (let k = i; k > ausgangIdx; k--) vertikal += lauf.get(storeys[k]!.id) ?? Infinity;
+    } else if (i < ausgangIdx) {
+      // Untergeschosse steigen über ihre eigene Treppe auf
+      for (let k = i; k < ausgangIdx; k++) vertikal += lauf.get(storeys[k]!.id) ?? Infinity;
+    }
+    for (const f of fluchtwege(doc, st.id)) {
+      raus.push({ zoneId: f.zoneId, storeyId: st.id, distanz: f.distanz + vertikal, vertikal });
+    }
   }
   return raus;
 }
