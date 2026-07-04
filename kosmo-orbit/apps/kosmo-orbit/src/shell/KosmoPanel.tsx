@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, melde, moduleHue, OrbitMark } from '@kosmo/ui';
+import { Badge, Hairline, KButton, melde, meldeFehler, moduleHue, OrbitMark } from '@kosmo/ui';
 import {
   ChatSession,
   LearningJournal,
@@ -8,7 +8,6 @@ import {
   OllamaProvider,
   OpenAiKompatibelProvider,
   greeting,
-  localStorageMemory,
   personas,
   type ChatProvider,
   type Proposal,
@@ -18,6 +17,8 @@ import { useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
 import { DiagnosePanel } from './Diagnose';
+import { journalStore } from '../state/journal-store';
+import { auftragErfassen } from '../state/auftragsbuch';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -32,7 +33,7 @@ interface Bubble {
   feedback?: 'gut' | 'schlecht';
 }
 
-const journal = new LearningJournal(localStorageMemory());
+const journal = new LearningJournal(journalStore());
 
 /** Wettbewerbsdossier (Phase 0) als harter Prompt-Block — Do's/Don'ts zuerst. */
 function dossierPromptBlock(): string {
@@ -302,6 +303,26 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             });
             const erste = quellenZaehler.current - treffer.length + 1;
             return `${zeilen.join('\n---\n')}\n\nAntworte gestützt auf diese Belege und zitiere sie im Text mit ihrer Marke, z.B. [Q${erste}]. Erfinde keine Marken.`;
+          },
+        },
+        {
+          name: 'auftrag_erfassen',
+          description:
+            'Erfasst einen Verbesserungsauftrag im KosmoDev-Auftragsbuch. Nutze es, wenn der Architekt sagt, was an der SOFTWARE besser werden soll («das sollte…», «ich möchte, dass…», «hier fehlt…») — formuliere den Wunsch als klaren, umsetzbaren Auftrag. ort: wo genau in der Oberfläche (falls genannt). Die Aufträge gehen als Workorder an den Entwicklungs-Worker.',
+          parameters: {
+            type: 'object',
+            properties: {
+              text: { type: 'string', description: 'Der Auftrag, klar und umsetzbar formuliert' },
+              ort: { type: 'string', description: 'Wo in der Oberfläche, z.B. «Werkzeugleiste KosmoDesign»' },
+            },
+            required: ['text'],
+            additionalProperties: false,
+          },
+          execute: async (args) => {
+            const a = args as { text?: string; ort?: string };
+            if (!a?.text?.trim()) return 'Kein Auftragstext — nichts erfasst.';
+            const auftrag = await auftragErfassen(a.text, 'kosmo', a.ort?.trim() || undefined);
+            return `Auftrag im Buch (${auftrag.station}): «${auftrag.text}» — der Architekt sieht ihn in KosmoDev und exportiert dort die Workorder.`;
           },
         },
       ],
@@ -825,6 +846,28 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           style={recording ? { animation: 'none' } : undefined}
         >
           {recording ? '● Stopp' : '🎙'}
+        </KButton>
+        <KButton
+          size="sm"
+          tone="ghost"
+          aria-label="Verbesserung erfassen"
+          title="Verbesserung ins KosmoDev-Auftragsbuch (Text im Eingabefeld wird zum Auftrag)"
+          data-testid="kosmo-flagge"
+          onClick={() => {
+            const text = input.trim();
+            if (!text) {
+              melde('Erst den Wunsch ins Eingabefeld tippen — ⚑ macht daraus einen Auftrag im KosmoDev-Buch.');
+              return;
+            }
+            void auftragErfassen(text, 'getippt')
+              .then(() => {
+                setInput('');
+                melde('Auftrag im KosmoDev-Buch', { ton: 'erfolg' });
+              })
+              .catch((err) => meldeFehler(err));
+          }}
+        >
+          ⚑
         </KButton>
         <input
           data-testid="kosmo-input"

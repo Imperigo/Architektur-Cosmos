@@ -67,6 +67,8 @@ export const moduleHue = {
   doc: '#5D7489', // Schiefer — Diagnose und Berichte
   sketch: '#96604A', // Sienna — der Stift auf Papier
   speak: '#4F7A7A', // Petrol — die Stimme im Raum
+  asset: '#7A6A55', // Nussbaum — die Bibliothek der Dinge
+  dev: '#5E6B52', // Tannengrün — die Werkstatt an der Software
 } as const;
 
 export type ModuleId = keyof typeof moduleHue;

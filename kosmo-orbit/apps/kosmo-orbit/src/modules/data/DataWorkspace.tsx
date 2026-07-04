@@ -342,7 +342,7 @@ export function DataWorkspace() {
 }
 
 /** CH-Bauteilkatalog (Q14): Aufbauten mit Schichten + U-Wert, per Klick ins Projekt. */
-function BauteilkatalogView() {
+export function BauteilkatalogView() {
   const runCommand = useProject((s) => s.runCommand);
   const revision = useProject((s) => s.revision);
   const { doc } = useProject.getState();
@@ -429,7 +429,7 @@ function BauteilkatalogView() {
 }
 
 /** Materialkatalog (Q14): ein Schlüssel — PBR fürs 3D, SIA-Schraffur, Lambda. */
-function MaterialkatalogView() {
+export function MaterialkatalogView() {
   const hex = (c: number) => `#${c.toString(16).padStart(6, '0')}`;
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 10 }}>

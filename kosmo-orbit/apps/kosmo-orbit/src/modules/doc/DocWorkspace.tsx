@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { LearningJournal, localStorageMemory } from '@kosmo/ai';
+import { LearningJournal } from '@kosmo/ai';
 import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, moduleHue } from '@kosmo/ui';
 import { DiagnosePanel } from '../../shell/Diagnose';
+import { journalStore } from '../../state/journal-store';
 
 /**
  * KosmoDoc — der Projektdoktor als eigenes Modul (Owner-Q24, Vision Persona 3):
@@ -65,7 +66,7 @@ const HILFE: HilfeThema[] = [
 
 export function DocWorkspace() {
   const [tab, setTab] = useState<Tab>('diagnose');
-  const journal = useMemo(() => new LearningJournal(localStorageMemory()), []);
+  const journal = useMemo(() => new LearningJournal(journalStore()), []);
   const eintraege = journal.all;
   const gut = eintraege.filter((e) => e.sentiment === 'gut').length;
 

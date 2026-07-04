@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { LearningJournal, localStorageMemory, type Learning } from '@kosmo/ai';
+import { LearningJournal, type Learning } from '@kosmo/ai';
 import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, moduleHue } from '@kosmo/ui';
 import { listDocs } from '../prepare/knowledge';
 import { useQuellen } from '../../state/quellen';
+import { journalStore } from '../../state/journal-store';
 
 /**
  * KosmoTrain — das Lernprogramm als Oberfläche (Q8, Vision Persona 4):
@@ -13,7 +14,7 @@ import { useQuellen } from '../../state/quellen';
  */
 
 export function TrainWorkspace() {
-  const journal = useMemo(() => new LearningJournal(localStorageMemory()), []);
+  const journal = useMemo(() => new LearningJournal(journalStore()), []);
   const [eintraege, setEintraege] = useState<readonly Learning[]>(journal.all);
   const [wissen, setWissen] = useState<{ docs: number } | null>(null);
 

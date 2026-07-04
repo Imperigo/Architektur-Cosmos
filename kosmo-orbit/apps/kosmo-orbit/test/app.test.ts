@@ -213,3 +213,27 @@ describe('TKB-Demo v2 (Abendbatch C1)', () => {
     expect(befunde.filter((b) => b.regel === 'Fluchtweg' && b.schwere === 'fehler')).toHaveLength(0);
   });
 });
+
+// ── V1-Finish P3: Auftragsbuch — Workorder-Export ────────────────────
+
+describe('Auftragsbuch (P3)', () => {
+  it('alsWorkorderMd gruppiert offene Aufträge nach Station und lässt erledigte weg', async () => {
+    const { alsWorkorderMd } = await import('../src/state/auftragsbuch');
+    const md = alsWorkorderMd(
+      [
+        { id: '1', ts: '2026-07-04T10:00:00Z', text: 'Türanschlag wählbar machen', quelle: 'gesprochen', station: 'KosmoDesign', ort: 'Werkzeugleiste', status: 'offen' },
+        { id: '2', ts: '2026-07-04T11:00:00Z', text: 'Blattliste sortierbar', quelle: 'kosmo', station: 'KosmoPublish', status: 'offen' },
+        { id: '3', ts: '2026-07-04T12:00:00Z', text: 'Schon gemacht', quelle: 'getippt', station: 'KosmoDesign', status: 'erledigt' },
+      ],
+      '2026-07-04',
+      'TKB',
+    );
+    expect(md).toContain('# Verbesserungsaufträge — 2026-07-04');
+    expect(md).toContain('## KosmoDesign');
+    expect(md).toContain('## KosmoPublish');
+    expect(md).toContain('- [ ] Türanschlag wählbar machen — _wo: Werkzeugleiste_');
+    expect(md).toContain('via Kosmo strukturiert');
+    expect(md).not.toContain('Schon gemacht');
+    expect(md).toContain('2 offene Aufträge');
+  });
+});

@@ -23,6 +23,8 @@ import { PublishWorkspace } from './modules/publish/PublishWorkspace';
 import { PrepareWorkspace } from './modules/prepare/PrepareWorkspace';
 import { DocWorkspace } from './modules/doc/DocWorkspace';
 import { TrainWorkspace } from './modules/train/TrainWorkspace';
+import { AssetWorkspace } from './modules/asset/AssetWorkspace';
+import { DevWorkspace } from './modules/dev/DevWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
 import { registerActions } from './shell/palette';
 import { Kurzbefehle } from './shell/Kurzbefehle';
@@ -47,8 +49,10 @@ import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
 import { setDeepLink } from './state/deep-link';
+import { setzeAktuelleStation } from './state/auftragsbuch';
+import { hydriereJournal } from './state/journal-store';
 
-type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train';
+type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
 
 function tagesgruss(): string {
   const h = new Date().getHours();
@@ -69,6 +73,8 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
   { id: 'vis', screen: 'vis', name: 'KosmoVis', desc: 'Renderings · Varianten' },
   { id: 'publish', screen: 'publish', name: 'KosmoPublish', desc: 'Plansätze · Layouts' },
   { id: 'prepare', screen: 'prepare', name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
+  { id: 'asset', screen: 'asset', name: 'KosmoAsset', desc: 'Materialien · Bauteile · Objekte' },
+  { id: 'dev', screen: 'dev', name: 'KosmoDev', desc: 'Auftragsbuch · Verbesserungen' },
   { id: 'speak', screen: null, name: 'KosmoSpeak', desc: 'Sprechen mit Kosmo · braucht Bridge', deepLink: 'speak' },
   { id: 'doc', screen: 'doc', name: 'KosmoDoc', desc: 'Diagnose · Hilfe · Berichte' },
   { id: 'train', screen: 'train', name: 'KosmoTrain', desc: 'Lernstand · Kuration · Training' },
@@ -76,9 +82,9 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
 
 /** D2: Kachel-Reihenfolge je Rolle — die tägliche Arbeit rückt nach vorn. */
 const ROLLEN_REIHENFOLGE: Record<'entwurf' | 'ausfuehrung' | 'admin', ModuleId[]> = {
-  entwurf: ['design', 'sketch', 'vis', 'draw', 'data', 'publish', 'prepare', 'speak', 'doc', 'train'],
-  ausfuehrung: ['publish', 'draw', 'design', 'doc', 'data', 'prepare', 'sketch', 'vis', 'speak', 'train'],
-  admin: ['doc', 'train', 'data', 'prepare', 'publish', 'design', 'draw', 'sketch', 'vis', 'speak'],
+  entwurf: ['design', 'sketch', 'vis', 'draw', 'data', 'asset', 'publish', 'prepare', 'speak', 'dev', 'doc', 'train'],
+  ausfuehrung: ['publish', 'draw', 'design', 'doc', 'data', 'asset', 'prepare', 'sketch', 'vis', 'speak', 'dev', 'train'],
+  admin: ['doc', 'train', 'dev', 'data', 'prepare', 'asset', 'publish', 'design', 'draw', 'sketch', 'vis', 'speak'],
 };
 
 /** Wählbare Farbakzente (Gestaltungskonzept «Werkplan»): Standard = Tusche. */
@@ -139,7 +145,15 @@ export function App() {
       setWartend(w ?? 0);
     });
     void initVault();
+    void hydriereJournal();
   }, []);
+
+  // Kontext-Pin fürs Auftragsbuch: wo ist der Owner gerade?
+  useEffect(() => {
+    setzeAktuelleStation(
+      screen === 'home' ? 'Zentrale' : (modules.find((m) => m.screen === screen)?.name ?? screen),
+    );
+  }, [screen]);
 
   // Raum-Verwaltung: aktive Räume des Servers anzeigen (D4)
   useEffect(() => {
@@ -453,6 +467,14 @@ export function App() {
         ) : screen === 'train' ? (
           <KFehlerzone bereich="KosmoTrain" onDiagnose={() => setScreen('doc')}>
             <TrainWorkspace />
+          </KFehlerzone>
+        ) : screen === 'asset' ? (
+          <KFehlerzone bereich="KosmoAsset" onDiagnose={() => setScreen('doc')}>
+            <AssetWorkspace />
+          </KFehlerzone>
+        ) : screen === 'dev' ? (
+          <KFehlerzone bereich="KosmoDev" onDiagnose={() => setScreen('doc')}>
+            <DevWorkspace />
           </KFehlerzone>
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>

@@ -18,8 +18,10 @@ export interface VaultEintrag {
 
 const DB = 'kosmo-projekte';
 // v2 (Vision A5): zweiter Store «varianten» fürs Varianten-Archiv.
-// keyPath-Stores sind additiv — bestehende Tresore migrieren verlustfrei.
-const DB_VERSION = 2;
+// v3 (V1-P3): «auftraege» (KosmoDev-Auftragsbuch), «objekte» (GLB-Bibliothek),
+// «lernjournal» (Journal-Spiegel). keyPath-Stores sind additiv —
+// bestehende Tresore migrieren verlustfrei.
+const DB_VERSION = 3;
 const AKTIV_KEY = 'kosmo.projekt.aktiv';
 
 function openDb(): Promise<IDBDatabase> {
@@ -32,6 +34,11 @@ function openDb(): Promise<IDBDatabase> {
       if (!req.result.objectStoreNames.contains('varianten')) {
         req.result.createObjectStore('varianten', { keyPath: 'id' });
       }
+      for (const store of ['auftraege', 'objekte', 'lernjournal'] as const) {
+        if (!req.result.objectStoreNames.contains(store)) {
+          req.result.createObjectStore(store, { keyPath: 'id' });
+        }
+      }
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -40,7 +47,7 @@ function openDb(): Promise<IDBDatabase> {
 
 /** Generische Transaktion auf einem Tresor-Store (auch fürs Varianten-Archiv). */
 export function vaultTx<T>(
-  store: 'projekte' | 'varianten',
+  store: 'projekte' | 'varianten' | 'auftraege' | 'objekte' | 'lernjournal',
   mode: IDBTransactionMode,
   fn: (store: IDBObjectStore) => IDBRequest<T>,
 ): Promise<T> {
