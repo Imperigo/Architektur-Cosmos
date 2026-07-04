@@ -528,7 +528,7 @@ export function App() {
           </KFehlerzone>
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
-            <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
+            <div className="k-einblenden" style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
                   <div className="k-titel" style={{ fontSize: 34 }}>
@@ -635,19 +635,13 @@ export function App() {
                       }
                     }}
                     data-testid={`module-${m.id}`}
+                    className="k-kachel"
                     style={{
                       display: 'flex',
                       gap: 12,
                       alignItems: 'center',
                       cursor: m.screen || m.deepLink ? 'pointer' : 'default',
                       opacity: m.screen || m.deepLink ? 1 : 0.55,
-                      transition: 'border-color var(--k-motion-fast), box-shadow var(--k-motion-fast)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (m.screen || m.deepLink) (e.currentTarget as HTMLElement).style.borderColor = 'var(--k-accent)';
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.borderColor = 'var(--k-line)';
                     }}
                   >
                     <OrbitMark module={m.id} size={34} />

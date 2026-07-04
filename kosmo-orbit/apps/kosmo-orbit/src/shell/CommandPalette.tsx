@@ -67,6 +67,7 @@ export function CommandPalette() {
       <div
         onClick={(e) => e.stopPropagation()}
         data-testid="command-palette"
+        className="k-skalieren-ein"
         style={{
           width: 480,
           maxWidth: '92vw',

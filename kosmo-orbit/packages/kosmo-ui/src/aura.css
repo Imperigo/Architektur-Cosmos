@@ -265,3 +265,40 @@ progress {
   outline: 2px solid var(--k-accent);
   outline-offset: 2px;
 }
+
+/* Motion-Rollout (V1-Finish P5) — Regel «Papier flattert nicht»:
+   kurz, klein, einmalig; reduced-motion killt alles global (oben). */
+.k-einblenden {
+  animation: k-einblenden var(--k-motion-settle) both;
+}
+@keyframes k-einblenden {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.k-skalieren-ein {
+  animation: k-skalieren-ein var(--k-motion-base) both;
+}
+@keyframes k-skalieren-ein {
+  from { opacity: 0; transform: scale(0.985); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* Einmaliger Bestätigungs-Puls (Diff-Karte angewendet, Snap-Fang) */
+.k-puls {
+  animation: k-puls var(--k-motion-settle) both;
+}
+@keyframes k-puls {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--k-success) 45%, transparent); }
+  to { box-shadow: 0 0 0 9px transparent; }
+}
+/* Kacheln der Zentrale: Hairline-Akzent + leiser Lift */
+.k-kachel {
+  transition:
+    border-color var(--k-motion-fast),
+    box-shadow var(--k-motion-fast),
+    transform var(--k-motion-fast);
+}
+.k-kachel:hover {
+  border-color: var(--k-accent);
+  box-shadow: var(--k-shadow-raised);
+  transform: translateY(-1px);
+}

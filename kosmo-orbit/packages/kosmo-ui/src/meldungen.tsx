@@ -187,7 +187,7 @@ export function KBestaetigung() {
       onClick={() => schliesse(false)}
     >
       <div
-        className="k-karte"
+        className="k-karte k-skalieren-ein"
         onClick={(e) => e.stopPropagation()}
         style={{ background: 'var(--k-raised)', padding: '16px 18px', width: 'min(420px, calc(100vw - 48px))', display: 'grid', gap: 10 }}
       >

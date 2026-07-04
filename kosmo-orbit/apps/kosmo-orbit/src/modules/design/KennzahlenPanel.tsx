@@ -33,7 +33,8 @@ export function KennzahlenPanel() {
       style={{
         position: 'absolute',
         right: 12,
-        top: 12,
+        // unter den Trace/Graph-Knöpfen des Plans (keine Überlappung im Split)
+        top: 44,
         width: 240,
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',

@@ -44,7 +44,7 @@ export function AssetWorkspace() {
   };
 
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 20 }}>
+    <div className="k-einblenden" style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 20 }}>
       <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <Badge hue={moduleHue.asset}>KosmoAsset</Badge>

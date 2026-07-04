@@ -680,6 +680,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           return (
           <div
             key={b.id}
+            className="k-einblenden"
             style={{
               justifySelf: b.who === 'du' ? 'end' : 'start',
               maxWidth: '88%',
@@ -805,6 +806,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             <div
               key={c.callId}
               data-testid="proposal-card"
+              className={c.state === 'angewendet' ? 'k-puls' : 'k-einblenden'}
               style={{
                 border: `1px solid ${c.state === 'angewendet' ? 'var(--k-success)' : 'var(--k-accent)'}`,
                 borderRadius: 10,

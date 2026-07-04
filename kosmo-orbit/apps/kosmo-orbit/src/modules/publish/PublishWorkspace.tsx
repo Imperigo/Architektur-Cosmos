@@ -407,7 +407,7 @@ export function PublishWorkspace() {
               </button>
             </div>
           ))}
-          <div style={{ display: 'flex', gap: 5 }}>
+          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
             <input
               value={neuesSetName}
               onChange={(e) => setNeuesSetName(e.target.value)}

@@ -90,7 +90,7 @@ export function Kurzbefehle({
       }}
     >
       <div
-        className="k-karte"
+        className="k-karte k-skalieren-ein"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--k-raised)',
