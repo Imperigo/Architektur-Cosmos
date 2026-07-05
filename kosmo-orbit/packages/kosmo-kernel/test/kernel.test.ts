@@ -728,6 +728,12 @@ describe('Budget (R2): 500 Wände', () => {
 });
 
 describe('Berechnungsliste (Owner-Workflow Wettbewerb)', () => {
+  it('T6: frisches Dokument hat KEIN Raumprogramm als Default (kein Wettbewerb fest verdrahtet)', () => {
+    const { doc } = setupDoc();
+    expect(doc.settings.raumprogramm).toEqual([]);
+    expect(deriveBerechnungsliste(doc).zeilen).toEqual([]);
+  });
+
   it('rechnet Soll/ausgezogen/Differenz, Δ Max und den Tie-out', () => {
     const { doc, storeyId } = setupDoc();
     execute(doc, 'design.raumprogrammSetzen', {

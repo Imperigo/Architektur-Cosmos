@@ -92,6 +92,10 @@ test('Berechnungsliste: Raumprogramm → Zone zeichnen → ausgezogen + Δ Max l
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="liste-toggle"]');
+  // T6: frisches Projekt hat KEIN Wettbewerbsprogramm als Default — Posten manuell anlegen
+  await expect(page.locator('[data-testid="kein-raumprogramm"]')).toBeVisible();
+  await page.click('[data-testid="posten-hinzufuegen"]');
+  await page.selectOption('[data-testid="posten-typ-0"]', 'marktgerecht');
   // Raumprogramm: Marktgerecht 100 m², Max 200
   await page.fill('[data-testid="posten-hnf-0"]', '100');
   await page.fill('[data-testid="liste-max"]', '200');

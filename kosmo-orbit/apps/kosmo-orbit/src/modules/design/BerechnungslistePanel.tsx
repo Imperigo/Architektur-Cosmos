@@ -12,6 +12,7 @@ import {
 } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import { anfangsEntwurf } from './berechnungsliste-entwurf';
 
 /**
  * Berechnungsliste Volumenstudien — der Owner-Excel-Workflow als lebendes
@@ -41,10 +42,10 @@ export function BerechnungslistePanel({
   );
 
   // Entwurf des Raumprogramms (lokal, bis «Übernehmen» — dann EIN Undo-Schritt)
-  const [entwurf, setEntwurf] = useState<RaumprogrammPosten[]>(
-    doc.settings.raumprogramm.length > 0
-      ? [...doc.settings.raumprogramm]
-      : [{ typ: 'marktgerecht', hnfSoll: 0 }],
+  // T6: Default ist LEER — kein wettbewerbsspezifisches Raumprogramm fest
+  // verdrahtet. Zeilen kommen nur, wenn das Projekt selbst eins mitbringt.
+  const [entwurf, setEntwurf] = useState<RaumprogrammPosten[]>(() =>
+    anfangsEntwurf(doc.settings.raumprogramm),
   );
   const [importMeldung, setImportMeldung] = useState<string | null>(null);
   const [faktor, setFaktor] = useState(String(doc.settings.programmFaktor));
@@ -204,6 +205,12 @@ export function BerechnungslistePanel({
             {importMeldung}
           </div>
         )}
+        {entwurf.length === 0 && (
+          <div style={{ color: 'var(--k-ink-faint)', fontSize: 11 }} data-testid="kein-raumprogramm">
+            Kein Wettbewerbs-Raumprogramm geladen — über KosmoData/Import ein Projekt laden oder
+            manuell Typen hinzufügen.
+          </div>
+        )}
         {entwurf.map((p, i) => (
           <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             <select
@@ -250,6 +257,7 @@ export function BerechnungslistePanel({
           <KButton
             size="sm"
             tone="ghost"
+            data-testid="posten-hinzufuegen"
             onClick={() => setEntwurf([...entwurf, { typ: 'preisguenstig', hnfSoll: 0 }])}
           >
             + Posten

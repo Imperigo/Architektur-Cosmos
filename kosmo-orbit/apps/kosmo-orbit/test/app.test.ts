@@ -243,6 +243,37 @@ describe('TKB-Demo v2 (Abendbatch C1)', () => {
   });
 });
 
+// ── T6: Berechnungsliste-Default entkoppelt (Owner-Laptop-Befund) ───
+
+describe('Berechnungsliste-Entwurf (T6): kein Wettbewerbsprogramm als Default', () => {
+  it('frisches/leeres Projekt → leerer Entwurf, keine «marktgerecht»-Zeile fest verdrahtet', async () => {
+    const { anfangsEntwurf } = await import('../src/modules/design/berechnungsliste-entwurf');
+    expect(anfangsEntwurf([])).toEqual([]);
+  });
+
+  it('Projekt mit gesetztem Raumprogramm (wie das TKB-Demoprojekt) → Zeilen kommen durch', async () => {
+    const { anfangsEntwurf } = await import('../src/modules/design/berechnungsliste-entwurf');
+    const programm = [
+      { typ: 'marktgerecht', hnfSoll: 190 },
+      { typ: 'preisguenstig', hnfSoll: 150 },
+    ];
+    expect(anfangsEntwurf(programm)).toEqual(programm);
+    // Kopie, keine Referenz — der Entwurf darf das Doc-Settings-Array nie mutieren
+    expect(anfangsEntwurf(programm)).not.toBe(programm);
+  });
+
+  it('das TKB-Demoprojekt bringt sein Raumprogramm tatsächlich mit (Regressionsanker)', async () => {
+    const { loadTkbDemo } = await import('../src/state/demo-tkb');
+    const { useProject } = await import('../src/state/project-store');
+    loadTkbDemo();
+    const { doc } = useProject.getState();
+    expect(doc.settings.raumprogramm.length).toBeGreaterThan(0);
+    expect(doc.settings.raumprogramm.map((p) => p.typ)).toEqual(
+      expect.arrayContaining(['marktgerecht', 'preisguenstig']),
+    );
+  });
+});
+
 // ── V1-Finish P3: Auftragsbuch — Workorder-Export ────────────────────
 
 describe('Auftragsbuch (P3)', () => {
