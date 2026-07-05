@@ -10,6 +10,10 @@ on:
     branches: ['claude/kosmo-orbit-v1-build-pzxkbj']
     paths: ['kosmo-orbit/.desktop-build-request']
 
+# Für die Release-Veröffentlichung (saubere Ein-Klick-Download-Links).
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -77,3 +81,36 @@ jobs:
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.AppImage
             kosmo-orbit/apps/kosmo-orbit/src-tauri/target/release/bundle/**/*.deb
           retention-days: 30
+
+      # ── Release: die Installer als saubere Ein-Klick-Dateien anhängen ──
+      # Stabile Namen (ohne Version) → dauerhafte Links, immer der neueste Build.
+      - name: Installer für Release sammeln
+        shell: bash
+        run: |
+          set -e
+          mkdir -p dist-release
+          E="${{ matrix.edition }}"
+          shopt -s globstar nullglob
+          for f in apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*; do
+            case "$f" in
+              *.exe) cp "$f" "dist-release/KosmoOrbit-$E-windows-setup.exe" ;;
+              *.msi) cp "$f" "dist-release/KosmoOrbit-$E-windows.msi" ;;
+              *.dmg) cp "$f" "dist-release/KosmoOrbit-$E-macos.dmg" ;;
+              *.AppImage) cp "$f" "dist-release/KosmoOrbit-$E-linux.AppImage" ;;
+              *.deb) cp "$f" "dist-release/KosmoOrbit-$E-linux.deb" ;;
+              *.rpm) cp "$f" "dist-release/KosmoOrbit-$E-linux.rpm" ;;
+            esac
+          done
+          ls -la dist-release/
+      - name: Als Release veröffentlichen
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: desktop-latest
+          name: KosmoOrbit — Desktop-Installer (neuester Build)
+          body: |
+            Automatisch gebaut aus dem Entwicklungsbranch. Drei Editionen je
+            Plattform: **standard** (HomePC) · **remote** (VPN) · **cloud** (Claude).
+            Unsigniert — SmartScreen (Windows) bzw. Gatekeeper (macOS) einmal
+            bestätigen. Cloud-Edition startet direkt im Claude-Modus (Opus 4.8),
+            Schlüssel in Kosmo ⚙ eintragen.
+          files: kosmo-orbit/dist-release/*
