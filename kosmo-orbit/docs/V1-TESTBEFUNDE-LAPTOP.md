@@ -67,9 +67,16 @@ Oberflächen-Systematik.
       einem **Claude-Abo** (Pro/Max, OAuth) nutzbar sein, nicht nur mit
       API-Schlüssel. → Technische Abklärung (OAuth-Anmeldeweg) + ehrliche
       Umsetzung.
-- [ ] **Splat aus Video**: Splat laden geht — ist der **Video→Splat-Generator**
-      integriert (also „Video laden")? Falls GPU/HomeStation nötig: ehrlich
-      benennen + UI-Weg vorbereiten.
+- [ ] **Splat aus Video** (Owner-Korrektur 05.07.): NICHT HomeStation-exklusiv.
+      Zwei Stufen sauber trennen:
+      1. **Konvertieren/aufbereiten/anzeigen** (`.ply` ↔ `.splat`/`.ksplat`,
+         komprimieren, zuschneiden) — läuft **komplett lokal im Browser** (wie
+         PlayCanvas SuperSplat, kein GPU-Training). → voll lokal bauen.
+      2. **Video → Splat erzeugen** (SfM + Splat-Optimierung) — rechenintensiv,
+         aber machbar: lokal (Laptop langsam, 5090 schnell) und/oder Anbindung
+         an einen Web-Konverter. Unterschied ist **Tempo**, nicht «geht nur
+         zuhause» — also echten In-App-Weg bauen, ehrlich nach Geschwindigkeit
+         beschriftet, NICHT auf die HomeStation gaten.
 
 ## Prinzip
 Ehrlichkeit vor Politur: Was echte GPU/HomeStation/ein Konto braucht (Splat aus
