@@ -18,6 +18,32 @@ Modellgebrauch aus `KI-MODELL-GUIDELINE.md` (Opus orchestriert, Sonnet baut).
   (Architekturprojekte) + **KosmoAsset** (Assets). Assets hängen via
   `kosmodata_refs` an Referenzprojekten.
 
+## KosmoData = Wissensarchiv · Gedächtnis · Trainingsbasis (Owner-Erweiterung 05.07.)
+
+**Wichtig:** KosmoData ist **nicht nur Projekte + Assets**, sondern das
+**ganze Wissens-, Gedächtnis- und Trainingsarchiv** von KosmoOrbit. Am HomePC
+ist das faktisch **alles, was auf der HDD liegt** — die eine Architektur-
+Datenbank plus die gesamte Ausbildung von Kosmo. KosmoData ist das **Dach**;
+KosmoPrepare (Aufnahme/RAG) und KosmoTrain (Training/LoRA) sind **Werkzeuge/
+Ansichten** darauf, keine getrennten Silos.
+
+Typisierte Sammlungen unter dem Dach KosmoData:
+
+1. **Referenzen** — Architekturprojekte (Batch 1–2 ✅).
+2. **Assets** — Bauteile/Objekte/Materialien (Batch 3–5 ✅).
+3. **Wissen** — die Architektur-Wissensbasis: SIA/bfu/eBKP-Normen, Bücher,
+   HSLU/ETH-Vorlesungen, Theorie (heute `wissen/` + KosmoPrepare-RAG).
+4. **Training** — Trainingsdaten für Kosmo, **zwei Achsen**:
+   (a) über **Architektur** (Fachwissen, Bürostil/Golden Rules),
+   (b) über die **Software selbst** (KosmoOrbit-Doku, Commands, ROADMAP,
+   Nutzung) — damit Kosmo die Software bedienen, erklären und verbessern kann.
+5. **Gedächtnis** — Kosmos Erinnerung: Lernjournal, Memory (heute
+   `@kosmo/ai` journal + KosmoTrain-JSONL für die LoRA).
+
+Alles davon ist **lokal/privat am HomePC** (Master). Die Website veröffentlicht
+nur die freigegebene Teilmenge — und **nur** aus Referenzen/Assets; Wissen,
+Training und Gedächtnis bleiben privat.
+
 ## Datenrichtung
 
 - **Master = KosmoOrbit** (Superset: privat + öffentlich).
@@ -60,6 +86,25 @@ Modellgebrauch aus `KI-MODELL-GUIDELINE.md` (Opus orchestriert, Sonnet baut).
 6. **Website parallel halten + Aufräumen + Gates + Tests + Doku:** Website baut
    weiter (nichts kaputt), Wissen-Duplikat klären, relevante `public:*`-Gates
    grün, Vitest/E2E, ROADMAP.
+
+## Nächste Serie — KosmoData als Wissens-/Gedächtnis-/Trainings-Dach (Serie D)
+
+Nach Batch 6 (Codex-Übernahme abgeschlossen) folgt die Erweiterung aus dem
+Owner-Auftrag oben. Grober Zuschnitt (Detailplan bei Start):
+
+- **D1 — KosmoData-Dach-Modell:** ein gemeinsames Datenmodell/Index über die
+  fünf Sammlungen (Referenzen · Assets · Wissen · Training · Gedächtnis) mit
+  Herkunft, Rechte/`visibility`, Tags. KosmoData wird die Startseite/Übersicht
+  über den gesamten Bestand.
+- **D2 — Wissen unter das Dach:** `wissen/`-Korpora + KosmoPrepare-RAG als
+  KosmoData-Sammlung sichtbar/durchsuchbar (nicht mehr nur RAG-intern).
+- **D3 — Training sichtbar & pflegbar:** Trainingsdaten (Architektur **und**
+  Software-Selbstwissen) als Sammlung — Kuration, Export-JSONL für die LoRA
+  (KosmoTrain), inkl. Aufnahme von KosmoOrbit-Doku/Commands als Software-Korpus.
+- **D4 — Gedächtnis:** Lernjournal/Memory als KosmoData-Sammlung, verknüpft mit
+  Projekten/Wissen.
+- **D5 — HomePC-Archiv:** Ablage-/Import-Weg für „alles auf der HDD" (grosse
+  lokale Bestände) — bewusst lokal/privat, nie in die Website.
 
 ## Grenzen (ehrlich)
 
