@@ -1,36 +1,172 @@
 import { vaultTx } from './project-vault';
 
 /**
- * GLB-Objekt-Bibliothek (V1-Finish P3, Owner-Q14) — projektübergreifend in
- * IndexedDB, BEWUSST nicht als Doc-Entity: GLB-Binärdaten (oft Megabytes)
- * gehören nie durch Undo/Yjs. «Ins Modell» lädt das Objekt als Referenz-
- * Kontext in den Design-Viewport (setGlbContext) — studierbar, nicht Teil
- * der Planableitung.
+ * KosmoAsset-Bibliothek (V1-Finish P3, Owner-Q14 → Codex-Übernahme Batch 3)
+ * — projektübergreifend in IndexedDB, BEWUSST nicht als Doc-Entity: das
+ * Binärteil (`daten: ArrayBuffer`, oft Megabytes) gehört nie durch Undo/Yjs.
+ * «Ins Modell» lädt das Objekt als Referenz-Kontext in den Design-Viewport
+ * (setGlbContext) — studierbar, nicht Teil der Planableitung.
+ *
+ * Batch 3 hebt das Datenmodell auf eine lokale Teilmenge des kanonischen
+ * KosmoAsset-Manifests (`schema/kosmo-asset-library.schema.json`): Titel,
+ * Typ, Kategorie, Tags, Formate, Rechte-Status, Sichtbarkeit. Nur das
+ * Datenmodell + Migration — Suche/Facetten/Detail kommen Batch 4.
  */
 
-export interface GlbObjekt {
-  id: string;
-  name: string;
-  createdAt: string;
+export type AssetType =
+  | '2d_symbol'
+  | 'vector_plan_component'
+  | 'texture'
+  | 'material'
+  | 'glb_model'
+  | 'blender_collection'
+  | 'archicad_layer'
+  | 'detail'
+  | 'component'
+  | 'landscape'
+  | 'lighting'
+  | 'render_preset';
+
+// Lokale Teilmenge der kanonischen Kategorien + «component» als sinnvoller
+// Default für generische, noch nicht einsortierte Objekte (Batch 4 sortiert
+// nach).
+export type AssetCategory =
+  | 'structure'
+  | 'facade'
+  | 'opening'
+  | 'stair'
+  | 'roof'
+  | 'ground'
+  | 'landscape'
+  | 'material'
+  | 'furniture'
+  | 'annotation'
+  | 'site'
+  | 'atmosphere'
+  | 'utility'
+  | 'component';
+
+export type RightsStatus =
+  | 'unknown'
+  | 'needs_permission'
+  | 'private_research'
+  | 'licensed'
+  | 'public_domain'
+  | 'own_work'
+  | 'generated_needs_review';
+
+/** Lokal-first-Sichtbarkeit — Büro-Objekte sind standardmässig NICHT geteilt. */
+export type AssetVisibility = 'public' | 'private';
+
+export type AssetFormatKind =
+  | 'svg'
+  | 'dxf'
+  | 'glb'
+  | 'blend'
+  | 'gsm'
+  | 'ifc'
+  | 'webp'
+  | 'png'
+  | 'jpg'
+  | 'json'
+  | 'material_json';
+
+export type AssetFormatStatus = 'ready' | 'missing' | 'blocked';
+
+export interface AssetFormatEntry {
+  format: AssetFormatKind;
   bytes: number;
+  status: AssetFormatStatus;
+}
+
+export type AssetPreviewKind = 'axis_marker' | 'material_swatch' | 'wireframe_component';
+
+export interface AssetPreview {
+  kind: AssetPreviewKind;
+}
+
+export interface AssetDimensions {
+  width_m?: number;
+  depth_m?: number;
+  height_m?: number;
+  scale?: string;
+}
+
+export type KosmodataRefKind = 'reference_entry' | 'source_entry' | 'project_context' | 'material_context' | 'typology_context';
+export type KosmodataRefRelation = 'taxonomy_hint' | 'material_context' | 'model_context' | 'typology_context' | 'source_trail';
+export type KosmodataRefUsagePolicy = 'context_only' | 'source_trail_only' | 'derived_asset_review_required';
+export type KosmodataRefReviewStatus = 'context_only' | 'needs_human_review' | 'accepted_as_context' | 'blocked';
+
+export interface KosmodataRef {
+  kind: KosmodataRefKind;
+  entry_id: string;
+  relation: KosmodataRefRelation;
+  usage_policy: KosmodataRefUsagePolicy;
+  review_status: KosmodataRefReviewStatus;
+  notes?: string;
+}
+
+/**
+ * Reiches Asset-Manifest — lokale Teilmenge von
+ * `schema/kosmo-asset-library.schema.json`. `daten` ist der Laufzeit-Blob:
+ * er liegt IM SELBEN IndexedDB-Record (der Vault-Store `objekte` ist ohnehin
+ * ausserhalb des Doc/Yjs-Pfads), geht aber nie durch Undo oder Sync.
+ */
+export interface KosmoAsset {
+  id: string;
+  title: string;
+  asset_type: AssetType;
+  category: AssetCategory;
+  tags: string[];
+  formats: AssetFormatEntry[];
+  preview?: AssetPreview;
+  rights_status: RightsStatus;
+  public_use_allowed: boolean;
+  visibility: AssetVisibility;
+  kosmodata_refs: KosmodataRef[];
+  dimensions?: AssetDimensions;
+  createdAt: string;
   daten: ArrayBuffer;
 }
 
-export async function speichereGlb(file: File): Promise<GlbObjekt> {
-  const daten = await file.arrayBuffer();
-  const objekt: GlbObjekt = {
-    id: `glb-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
-    name: file.name.replace(/\.(glb|gltf)$/i, ''),
-    createdAt: new Date().toISOString(),
-    bytes: daten.byteLength,
-    daten,
-  };
-  await vaultTx('objekte', 'readwrite', (s) => s.put(objekt));
-  return objekt;
+/** Rückwärtskompatibler Name (V1-Finish P3 hiess der Typ `GlbObjekt`). */
+export type GlbObjekt = KosmoAsset;
+
+export interface SpeichereGlbOptionen {
+  title?: string;
+  asset_type?: AssetType;
+  category?: AssetCategory;
+  tags?: string[];
 }
 
-export async function listeGlb(): Promise<GlbObjekt[]> {
-  const alle = await vaultTx<GlbObjekt[]>('objekte', 'readonly', (s) => s.getAll() as IDBRequest<GlbObjekt[]>);
+/** Primäre Byte-Grösse eines Assets (erstes GLB-Format, sonst erstes Format). */
+export function assetBytes(asset: KosmoAsset): number {
+  return asset.formats.find((f) => f.format === 'glb')?.bytes ?? asset.formats[0]?.bytes ?? 0;
+}
+
+export async function speichereGlb(file: File, optionen: SpeichereGlbOptionen = {}): Promise<KosmoAsset> {
+  const daten = await file.arrayBuffer();
+  const titel = optionen.title ?? file.name.replace(/\.(glb|gltf)$/i, '');
+  const asset: KosmoAsset = {
+    id: `glb-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    title: titel,
+    asset_type: optionen.asset_type ?? 'glb_model',
+    category: optionen.category ?? 'component',
+    tags: optionen.tags ?? [],
+    formats: [{ format: 'glb', bytes: daten.byteLength, status: 'ready' }],
+    rights_status: 'generated_needs_review',
+    public_use_allowed: false,
+    visibility: 'private',
+    kosmodata_refs: [],
+    createdAt: new Date().toISOString(),
+    daten,
+  };
+  await vaultTx('objekte', 'readwrite', (s) => s.put(asset));
+  return asset;
+}
+
+export async function listeGlb(): Promise<KosmoAsset[]> {
+  const alle = await vaultTx<KosmoAsset[]>('objekte', 'readonly', (s) => s.getAll() as IDBRequest<KosmoAsset[]>);
   return alle.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 

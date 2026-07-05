@@ -347,3 +347,101 @@ describe('Tresor-Migration (H4c)', () => {
     expect(projekte.some((p) => p.id === 'alt-1' && p.name === 'Altbestand')).toBe(true); // alte Daten intakt
   });
 });
+
+// ── Codex-Übernahme Batch 3: KosmoAsset-Datenmodell + Migration v3 → v4 ──
+
+describe('KosmoAsset-Bibliothek (Batch 3): Datenmodell + Tresor-Migration v3 → v4', () => {
+  it('alter GLB-Record (v3-Shape) migriert verlustfrei auf das reiche KosmoAsset-Manifest — Blob bleibt erhalten', async () => {
+    // Frisch beginnen — andere Tests haben den Tresor evtl. schon auf die aktuelle Version geöffnet
+    await new Promise<void>((resolve, reject) => {
+      const del = indexedDB.deleteDatabase('kosmo-projekte');
+      del.onsuccess = () => resolve();
+      del.onerror = () => reject(del.error);
+    });
+    // Alten v3-Tresor von Hand anlegen: «objekte» im reinen GLB-Blob-Format
+    const altesBlob = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]).buffer;
+    await new Promise<void>((resolve, reject) => {
+      const req = indexedDB.open('kosmo-projekte', 3);
+      req.onupgradeneeded = () => {
+        req.result.createObjectStore('projekte', { keyPath: 'id' });
+        req.result.createObjectStore('varianten', { keyPath: 'id' });
+        req.result.createObjectStore('auftraege', { keyPath: 'id' });
+        req.result.createObjectStore('objekte', { keyPath: 'id' });
+        req.result.createObjectStore('lernjournal', { keyPath: 'id' });
+      };
+      req.onsuccess = () => {
+        const t = req.result.transaction('objekte', 'readwrite');
+        t.objectStore('objekte').put({
+          id: 'glb-alt-1',
+          name: 'Alter Baum',
+          createdAt: '2026-01-01T00:00:00.000Z',
+          bytes: 8,
+          daten: altesBlob,
+        });
+        t.oncomplete = () => {
+          req.result.close();
+          resolve();
+        };
+        t.onerror = () => reject(t.error);
+      };
+      req.onerror = () => reject(req.error);
+    });
+    // Erster Zugriff über die Bibliothek löst das v3→v4-Upgrade aus
+    const { listeGlb } = await import('../src/state/asset-bibliothek');
+    const alle = await listeGlb();
+    expect(alle).toHaveLength(1);
+    const migriert = alle[0]!;
+    expect(migriert.id).toBe('glb-alt-1');
+    expect(migriert.title).toBe('Alter Baum'); // name → title
+    expect(migriert.asset_type).toBe('glb_model');
+    expect(migriert.category).toBe('component');
+    expect(migriert.tags).toEqual([]);
+    expect(migriert.formats).toEqual([{ format: 'glb', bytes: 8, status: 'ready' }]);
+    expect(migriert.rights_status).toBe('generated_needs_review');
+    expect(migriert.public_use_allowed).toBe(false);
+    expect(migriert.visibility).toBe('private');
+    expect(migriert.kosmodata_refs).toEqual([]);
+    expect(migriert.createdAt).toBe('2026-01-01T00:00:00.000Z');
+    // Blob verlustfrei — byteweise identisch mit dem Original
+    expect(new Uint8Array(migriert.daten)).toEqual(new Uint8Array(altesBlob));
+  });
+
+  it('neuer Asset-Import: round-trip über speichereGlb/listeGlb/loescheGlb', async () => {
+    const { speichereGlb, listeGlb, loescheGlb } = await import('../src/state/asset-bibliothek');
+    const bytes = new Uint8Array([9, 9, 9, 9]);
+    const datei = new File([bytes], 'stuetze.glb', { type: 'model/gltf-binary' });
+    const gespeichert = await speichereGlb(datei);
+    expect(gespeichert.title).toBe('stuetze'); // Default-Titel aus Dateiname, ohne Endung
+    expect(gespeichert.formats[0]).toEqual({ format: 'glb', bytes: 4, status: 'ready' });
+
+    const liste = await listeGlb();
+    const gefunden = liste.find((a) => a.id === gespeichert.id);
+    expect(gefunden).toBeDefined();
+    expect(new Uint8Array(gefunden!.daten)).toEqual(bytes);
+
+    await loescheGlb(gespeichert.id);
+    expect((await listeGlb()).some((a) => a.id === gespeichert.id)).toBe(false);
+  });
+
+  it('Default-Werte: private Sichtbarkeit + generated_needs_review, optionale Metadaten übersteuern den Default', async () => {
+    const { speichereGlb, loescheGlb } = await import('../src/state/asset-bibliothek');
+    const standard = await speichereGlb(new File([new Uint8Array([1])], 'ohne-titel.glb'));
+    expect(standard.visibility).toBe('private');
+    expect(standard.rights_status).toBe('generated_needs_review');
+    expect(standard.public_use_allowed).toBe(false);
+    expect(standard.asset_type).toBe('glb_model');
+    expect(standard.category).toBe('component');
+
+    const benannt = await speichereGlb(new File([new Uint8Array([1])], 'ignoriert.glb'), {
+      title: 'Sitzbank Eiche',
+      category: 'furniture',
+      tags: ['möbel', 'sitzbank'],
+    });
+    expect(benannt.title).toBe('Sitzbank Eiche');
+    expect(benannt.category).toBe('furniture');
+    expect(benannt.tags).toEqual(['möbel', 'sitzbank']);
+
+    await loescheGlb(standard.id);
+    await loescheGlb(benannt.id);
+  });
+});

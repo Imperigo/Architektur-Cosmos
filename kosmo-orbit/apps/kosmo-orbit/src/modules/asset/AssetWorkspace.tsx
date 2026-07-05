@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Badge, Hairline, Karteikarte, KButton, KLade, Measure, Messrahmen, bestaetigen, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { BauteilkatalogView, MaterialkatalogView } from '../data/DataWorkspace';
 import { setGlbContext } from '../design/Viewport3D';
-import { listeGlb, loescheGlb, speichereGlb, type GlbObjekt } from '../../state/asset-bibliothek';
+import { assetBytes, listeGlb, loescheGlb, speichereGlb, type KosmoAsset } from '../../state/asset-bibliothek';
 
 /**
  * KosmoAsset (V1-Finish P3, Owner-Q14) — die Bibliothek der Dinge:
@@ -14,7 +14,7 @@ import { listeGlb, loescheGlb, speichereGlb, type GlbObjekt } from '../../state/
 
 export function AssetWorkspace() {
   const [tab, setTab] = useState<'objekte' | 'bauteile' | 'materialien'>('objekte');
-  const [objekte, setObjekte] = useState<GlbObjekt[] | null>(null);
+  const [objekte, setObjekte] = useState<KosmoAsset[] | null>(null);
 
   const laden = () => {
     void listeGlb()
@@ -86,9 +86,9 @@ export function AssetWorkspace() {
                   <div style={{ display: 'grid', gap: 6 }} data-testid="glb-karte">
                     <GlbVorschau objekt={o} />
                     <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-                      <span style={{ fontWeight: 600, fontSize: 12.5, overflowWrap: 'anywhere' }}>{o.name}</span>
+                      <span style={{ fontWeight: 600, fontSize: 12.5, overflowWrap: 'anywhere' }}>{o.title}</span>
                       <div style={{ flex: 1 }} />
-                      <Measure>{(o.bytes / 1024).toFixed(0)} KB</Measure>
+                      <Measure>{(assetBytes(o) / 1024).toFixed(0)} KB</Measure>
                     </div>
                     <div style={{ display: 'flex', gap: 6 }}>
                       <KButton
@@ -98,7 +98,7 @@ export function AssetWorkspace() {
                         onClick={() => {
                           const url = URL.createObjectURL(new Blob([o.daten], { type: 'model/gltf-binary' }));
                           setGlbContext(url);
-                          melde(`«${o.name}» liegt als Referenz-Kontext im Design-Viewport`, { ton: 'erfolg' });
+                          melde(`«${o.title}» liegt als Referenz-Kontext im Design-Viewport`, { ton: 'erfolg' });
                         }}
                       >
                         Ins Modell
@@ -106,10 +106,10 @@ export function AssetWorkspace() {
                       <KButton
                         size="sm"
                         tone="ghost"
-                        aria-label={`${o.name} löschen`}
+                        aria-label={`${o.title} löschen`}
                         onClick={() => {
                           void bestaetigen({
-                            titel: `Objekt «${o.name}» löschen?`,
+                            titel: `Objekt «${o.title}» löschen?`,
                             gefaehrlich: true,
                             bestaetigen: 'Löschen',
                           }).then((ok) => { if (ok) void loescheGlb(o.id).then(laden); });
@@ -130,7 +130,7 @@ export function AssetWorkspace() {
 }
 
 /** Kleine statische three-Vorschau — lädt das GLB einmal und rendert ein Standbild. */
-function GlbVorschau({ objekt }: { objekt: GlbObjekt }) {
+function GlbVorschau({ objekt }: { objekt: KosmoAsset }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const [fehler, setFehler] = useState(false);
 
