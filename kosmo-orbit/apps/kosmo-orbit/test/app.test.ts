@@ -785,3 +785,109 @@ describe('D2 (KosmoData-Dach): Wissen-Treffer springen in den KosmoData-Wissen-T
     }
   });
 });
+
+// ── D3: Training sichtbar & pflegbar — zwei Achsen (Architektur/Software) ──
+
+describe('D3 (KosmoData-Dach): Trainings-Korpus, Achse Software — Kernel-Commands', () => {
+  it('softwareKorpusCommands() liefert ein Beispiel je registriertem Command, alle achse="software"', async () => {
+    // Registrierung geschieht als Import-Seiteneffekt — genau wie die App
+    // (`@kosmo/kernel` bindet commands/design.ts, .../publish.ts, .../vis.ts ein).
+    await import('@kosmo/kernel');
+    const { softwareKorpusCommands } = await import('../src/state/training-korpus');
+    const beispiele = softwareKorpusCommands();
+    expect(beispiele.length).toBeGreaterThan(0);
+    for (const b of beispiele) {
+      expect(b.achse).toBe('software');
+      expect(b.quelle.startsWith('command:')).toBe(true);
+    }
+    const geschoss = beispiele.find((b) => b.quelle === 'command:design.geschossErstellen');
+    expect(geschoss).toBeDefined();
+    expect(geschoss?.frage).toContain('design.geschossErstellen');
+    expect(geschoss?.antwort.length).toBeGreaterThan(0);
+    // Stabil sortiert nach cmd.id.
+    const ids = beispiele.map((b) => b.quelle.replace('command:', ''));
+    expect(ids).toEqual([...ids].sort((a, b) => a.localeCompare(b)));
+  });
+});
+
+describe('D3 (KosmoData-Dach): Trainings-Korpus, Achse Architektur — kuratierte Lehren', () => {
+  it('nimmt einen Journal-Eintrag MIT Notiz auf, ignoriert einen OHNE Notiz', async () => {
+    const { LearningJournal } = await import('@kosmo/ai');
+    const journal = new LearningJournal({
+      load: () => [
+        { ts: '2026-07-01T10:00:00.000Z', sentiment: 'schlecht' as const, context: 'Fenster zu tief vorgeschlagen', note: 'Nie Fenster unter 900 Brüstung vorschlagen' },
+        { ts: '2026-07-02T10:00:00.000Z', sentiment: 'gut' as const, context: 'Ohne Notiz — bleibt Gedächtnis' },
+      ],
+      save: () => undefined,
+    });
+    const { architekturKorpus } = await import('../src/state/training-korpus');
+    const beispiele = architekturKorpus(journal);
+    expect(beispiele).toHaveLength(1);
+    expect(beispiele[0]?.achse).toBe('architektur');
+    expect(beispiele[0]?.antwort).toBe('Nie Fenster unter 900 Brüstung vorschlagen');
+    expect(beispiele[0]?.quelle).toBe('journal:2026-07-01T10:00:00.000Z');
+  });
+});
+
+describe('D3 (KosmoData-Dach): exportTrainingJsonl — LoRA-taugliches JSONL', () => {
+  it('erzeugt pro Beispiel eine JSON.parse-bare Zeile mit user/assistant-Nachrichten; beide Achsen in meta.achse', async () => {
+    const { exportTrainingJsonl } = await import('../src/state/training-korpus');
+    const beispiele = [
+      { achse: 'architektur' as const, id: 'a-1', frage: 'Wie hoch die Brüstung?', antwort: 'Mindestens 900 mm', quelle: 'journal:x', herkunft: 'KosmoTrain · Kuration' },
+      { achse: 'software' as const, id: 's-1', frage: 'Was macht design.wandZeichnen?', antwort: 'Zeichnet eine Wand.', quelle: 'command:design.wandZeichnen', herkunft: 'KosmoOrbit · Commands' },
+    ];
+    const jsonl = exportTrainingJsonl(beispiele);
+    const zeilen = jsonl.split('\n');
+    expect(zeilen).toHaveLength(2);
+    const geparst = zeilen.map((z) => JSON.parse(z) as { messages: { role: string; content: string }[]; meta: { achse: string } });
+    for (const g of geparst) {
+      expect(g.messages[0]?.role).toBe('user');
+      expect(g.messages[1]?.role).toBe('assistant');
+    }
+    const achsen = new Set(geparst.map((g) => g.meta.achse));
+    expect(achsen.has('architektur')).toBe(true);
+    expect(achsen.has('software')).toBe(true);
+  });
+});
+
+describe('D3 (KosmoData-Dach): sucheDach springt für Training in den KosmoData-Tab, für Gedächtnis in KosmoTrain', () => {
+  it('ein Training-Treffer (Notiz gesetzt) liefert sprung={screen:"training"}, ein Gedächtnis-Treffer (ohne Notiz) sprung={screen:"train"}', async () => {
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async (url: unknown) => {
+      if (String(url).includes('kosmodata-seed.json')) {
+        return { ok: true, json: async () => ({ entries: [] }) };
+      }
+      throw new Error(`unerwarteter Fetch im Test: ${String(url)}`);
+    }) as unknown as typeof fetch;
+
+    const g = globalThis as Record<string, unknown>;
+    const backupLocalStorage = g['localStorage'];
+    const laden: Record<string, string> = {};
+    g['localStorage'] = {
+      getItem: (k: string) => laden[k] ?? null,
+      setItem: (k: string, v: string) => {
+        laden[k] = v;
+      },
+      removeItem: (k: string) => {
+        delete laden[k];
+      },
+    };
+    try {
+      const { journalStore } = await import('../src/state/journal-store');
+      const { LearningJournal } = await import('@kosmo/ai');
+      const journal = new LearningJournal(journalStore());
+      journal.add({ sentiment: 'schlecht', context: 'D3-Sprungtest-Training xyloforschung', note: 'D3-Sprungtest-Notiz xyloforschung' });
+      journal.add({ sentiment: 'gut', context: 'D3-Sprungtest-Gedaechtnis xyloforschung' });
+
+      const { sucheDach } = await import('../src/state/kosmodata-dach');
+      const treffer = await sucheDach('xyloforschung');
+      const trainingTreffer = treffer.find((t) => t.sammlung === 'training');
+      const gedaechtnisTreffer = treffer.find((t) => t.sammlung === 'gedaechtnis');
+      expect(trainingTreffer?.sprung).toEqual({ screen: 'training' });
+      expect(gedaechtnisTreffer?.sprung).toEqual({ screen: 'train' });
+    } finally {
+      globalThis.fetch = origFetch;
+      g['localStorage'] = backupLocalStorage;
+    }
+  });
+});

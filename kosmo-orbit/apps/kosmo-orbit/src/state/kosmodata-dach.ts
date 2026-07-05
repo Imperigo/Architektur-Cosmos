@@ -29,6 +29,7 @@ export type KosmoDataSprung =
   | { screen: 'data'; refId: string }
   | { screen: 'asset'; assetId: string }
   | { screen: 'wissen' }
+  | { screen: 'training' }
   | { screen: 'train' };
 
 export interface KosmoDataEintrag {
@@ -225,7 +226,9 @@ export async function sucheDach(query: string, limit = 20): Promise<KosmoDataEin
         visibility: l.visibility ?? 'private',
         tags: [],
         score,
-        sprung: { screen: 'train' },
+        // D3: Training-Treffer bleiben in KosmoData (eigener Tab); Gedächtnis
+        // springt weiterhin auf die KosmoTrain-Station (D4 folgt).
+        sprung: training ? { screen: 'training' } : { screen: 'train' },
       });
     }
   } catch {

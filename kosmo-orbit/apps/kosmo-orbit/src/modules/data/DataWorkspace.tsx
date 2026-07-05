@@ -48,6 +48,15 @@ import {
   type KnowledgeDoc,
   type KnowledgeHit,
 } from '../prepare/knowledge';
+import { LearningJournal } from '@kosmo/ai';
+import { journalStore } from '../../state/journal-store';
+import {
+  architekturKorpus,
+  exportTrainingJsonl,
+  softwareKorpus,
+  zaehleAchsen,
+  type TrainBeispiel,
+} from '../../state/training-korpus';
 
 /**
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
@@ -210,7 +219,7 @@ function oeffneInKosmoAsset(assetId: string) {
   (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('asset');
 }
 
-type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen';
+type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training';
 
 export function DataWorkspace() {
   const [entries, setEntries] = useState<RefEntry[]>([]);
@@ -336,6 +345,9 @@ export function DataWorkspace() {
             <KButton size="sm" tone={tab === 'wissen' ? 'accent' : 'ghost'} onClick={() => setTab('wissen')} data-testid="tab-wissen">
               Wissen
             </KButton>
+            <KButton size="sm" tone={tab === 'training' ? 'accent' : 'ghost'} onClick={() => setTab('training')} data-testid="tab-training">
+              Training
+            </KButton>
             <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
               {tab === 'uebersicht'
                 ? 'Fünf Sammlungen unter einem Dach'
@@ -345,7 +357,9 @@ export function DataWorkspace() {
                     ? `${bauteilkatalog.length} Aufbauten`
                     : tab === 'materialien'
                       ? `${materialkatalog.length} Materialien`
-                      : 'Wissensbasis — durchsuchen, laden, freigeben'}
+                      : tab === 'wissen'
+                        ? 'Wissensbasis — durchsuchen, laden, freigeben'
+                        : 'Trainings-Korpus — Architektur & Software-Selbstwissen'}
             </span>
             <div style={{ flex: 1 }} />
             <Badge hue={syncState === 'synced' && quelle === 'live' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
@@ -368,6 +382,7 @@ export function DataWorkspace() {
           {tab === 'bauteile' && <BauteilkatalogView />}
           {tab === 'materialien' && <MaterialkatalogView />}
           {tab === 'wissen' && <KosmoWissenView />}
+          {tab === 'training' && <KosmoTrainingView />}
 
           {tab === 'referenzen' && (<>
           <input
@@ -744,6 +759,10 @@ function KosmoDataUebersicht({
     }
     if (sprung.screen === 'wissen') {
       setTab('wissen');
+      return;
+    }
+    if (sprung.screen === 'training') {
+      setTab('training');
       return;
     }
     (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open(sprung.screen);
@@ -1157,6 +1176,160 @@ export function KosmoWissenView() {
               ))}
             </div>
           )}
+        </>
+      )}
+    </div>
+  );
+}
+
+/** Kurzer Ausschnitt aus Frage/Antwort für die Vorschau-Zeile. */
+function kuerzeText(t: string, max = 140): string {
+  return t.length > max ? `${t.slice(0, max)} …` : t;
+}
+
+function oeffneKosmoTrain() {
+  (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('train');
+}
+
+/**
+ * D3 (KosmoData-Dach) — der Training-Tab: der Trainings-Korpus über zwei
+ * Achsen (`docs/EIN-SYSTEM-KOSMODATA.md`) — Architektur (kuratierte Lehren
+ * aus dem Lernjournal, Notiz gesetzt) und Software-Selbstwissen (jedes
+ * registrierte Kernel-Command + der gebündelte Doku-Korpus). Die tiefe
+ * Kuration (Notizen schärfen, Einträge löschen) bleibt in der KosmoTrain-
+ * Station — dieser Tab ist die Sammlungs-/Übersichts-/Export-Ebene für die
+ * kombinierte LoRA-JSONL.
+ */
+export function KosmoTrainingView() {
+  const [architektur, setArchitektur] = useState<TrainBeispiel[]>([]);
+  const [software, setSoftware] = useState<TrainBeispiel[]>([]);
+  const [geladen, setGeladen] = useState(false);
+
+  useEffect(() => {
+    let verworfen = false;
+    setGeladen(false);
+    const journal = new LearningJournal(journalStore());
+    void softwareKorpus()
+      .then((sw) => {
+        if (verworfen) return;
+        setArchitektur(architekturKorpus(journal));
+        setSoftware(sw);
+      })
+      .finally(() => {
+        if (!verworfen) setGeladen(true);
+      });
+    return () => {
+      verworfen = true;
+    };
+  }, []);
+
+  const commandsCount = software.filter((b) => b.quelle.startsWith('command:')).length;
+  const dokuCount = software.filter((b) => b.quelle.startsWith('doku:')).length;
+  const { architektur: architekturCount, software: softwareCount } = zaehleAchsen([...architektur, ...software]);
+  const leer = geladen && architektur.length === 0 && software.length === 0;
+
+  function exportieren() {
+    const beispiele = [...architektur, ...software];
+    try {
+      const url = URL.createObjectURL(
+        new Blob([exportTrainingJsonl(beispiele)], { type: 'application/jsonl' }),
+      );
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'kosmo-training.jsonl';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      melde(`${beispiele.length} Beispiele exportiert — auf die HomeStation für die LoRA`, { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  }
+
+  return (
+    <div data-testid="kosmodata-training" style={{ display: 'grid', gap: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
+          Zwei Achsen — Architektur (Bürostil) und Software (KosmoOrbit selbst) —, kombiniert exportierbar für die LoRA.
+        </span>
+        <div style={{ flex: 1 }} />
+        <KButton
+          size="sm"
+          tone="accent"
+          data-testid="training-export"
+          disabled={!geladen || (architekturCount + softwareCount === 0)}
+          onClick={exportieren}
+        >
+          JSONL exportieren
+        </KButton>
+      </div>
+
+      {!geladen && <KLade text="Trainings-Korpus laden …" height={160} />}
+
+      {leer && (
+        <div data-testid="training-leer">
+          <Messrahmen
+            height={200}
+            caption="Noch kein Trainings-Korpus — Kosmo-Commands sollten immer da sein; sonst 👍/👎 + Notiz in KosmoTrain sammeln"
+          />
+        </div>
+      )}
+
+      {geladen && !leer && (
+        <>
+          <Panel data-testid="training-achse-architektur" style={{ padding: '12px 14px', display: 'grid', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Badge hue={moduleHue.train}>Architektur — Bürostil &amp; Fachwissen</Badge>
+              <Measure>{architektur.length}</Measure>
+              <div style={{ flex: 1 }} />
+              <KButton size="sm" tone="ghost" onClick={oeffneKosmoTrain}>
+                Zur KosmoTrain-Station
+              </KButton>
+            </div>
+            {architektur.length === 0 ? (
+              <span style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>
+                Unter Kosmo-Antworten mit 👍/👎 + Notiz sammelst du Architektur-Training — in der
+                KosmoTrain-Station kuratierst du die Notizen (sie sind der Trainings-Kern).
+              </span>
+            ) : (
+              <div style={{ display: 'grid', gap: 6 }}>
+                {architektur.slice(0, 8).map((b) => (
+                  <div key={b.id} data-testid="training-beispiel" style={{ fontSize: 12, display: 'grid', gap: 2 }}>
+                    <div style={{ fontWeight: 550 }}>{kuerzeText(b.frage, 100)}</div>
+                    <div style={{ color: 'var(--k-ink-soft)' }}>{kuerzeText(b.antwort)}</div>
+                  </div>
+                ))}
+                {architektur.length > 8 && (
+                  <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+                    … und {architektur.length - 8} weitere
+                  </span>
+                )}
+              </div>
+            )}
+          </Panel>
+
+          <Panel data-testid="training-achse-software" style={{ padding: '12px 14px', display: 'grid', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Badge hue={moduleHue.data}>Software — KosmoOrbit selbst</Badge>
+              <Measure>
+                {commandsCount} Commands · {dokuCount} Doku
+              </Measure>
+            </div>
+            <div style={{ display: 'grid', gap: 6 }}>
+              {software.slice(0, 8).map((b) => (
+                <div key={b.id} data-testid="training-beispiel" style={{ fontSize: 12, display: 'grid', gap: 2 }}>
+                  <div style={{ fontWeight: 550 }}>{kuerzeText(b.frage, 100)}</div>
+                  <div style={{ color: 'var(--k-ink-soft)' }}>{kuerzeText(b.antwort)}</div>
+                </div>
+              ))}
+              {software.length > 8 && (
+                <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+                  … und {software.length - 8} weitere
+                </span>
+              )}
+            </div>
+          </Panel>
         </>
       )}
     </div>
