@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 
 /**
  * D1 (Serie D, KosmoData-Dach) — der leichtgewichtige Übersichts-Tab in
- * KosmoData: fünf Sammlungen (Referenzen · Assets · Wissen · Training ·
- * Gedächtnis) mit Zähler und eine gemeinsame Suche (`sucheDach`) darüber.
- * Kein Datenumzug — nur ein Adapter über die bestehenden Speicher.
+ * KosmoData: sechs Sammlungen (Referenzen · Assets · Wissen · Training ·
+ * Gedächtnis · Archiv, D5) mit Zähler und eine gemeinsame Suche (`sucheDach`)
+ * darüber. Kein Datenumzug — nur ein Adapter über die bestehenden Speicher.
  */
 
 /** Minimal gültiges GLB: nur ein JSON-Chunk mit leerer Szene (wie ref-asset-verknuepfung.spec.ts). */
@@ -22,7 +22,7 @@ function miniGlb(): Buffer {
   return Buffer.concat([header, chunkHeader, jsonChunk]);
 }
 
-test('KosmoData-Dach: Übersichts-Tab zeigt fünf Sammlungen mit Zähler und findet Treffer über mehrere Sammlungen', async ({ page }) => {
+test('KosmoData-Dach: Übersichts-Tab zeigt sechs Sammlungen mit Zähler und findet Treffer über mehrere Sammlungen', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
@@ -46,14 +46,15 @@ test('KosmoData-Dach: Übersichts-Tab zeigt fünf Sammlungen mit Zähler und fin
   const dach = page.locator('[data-testid="kosmodata-dach"]');
   await expect(dach).toBeVisible();
 
-  // Die fünf Sammlungskacheln mit Zähler — Referenzen zeigt den Offline-Seed (112).
+  // Die sechs Sammlungskacheln mit Zähler — Referenzen zeigt den Offline-Seed (112).
   await expect(page.locator('[data-testid="dach-zahl-referenz"]')).toContainText('112');
   await expect(page.locator('[data-testid="dach-zahl-asset"]')).toBeVisible();
   await expect(page.locator('[data-testid="dach-zahl-wissen"]')).toBeVisible();
   await expect(page.locator('[data-testid="dach-zahl-training"]')).toBeVisible();
   await expect(page.locator('[data-testid="dach-zahl-gedaechtnis"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dach-zahl-archiv"]')).toBeVisible();
 
-  // Suche über alle fünf Sammlungen: «Beton» trifft sowohl Referenzen als auch das Asset.
+  // Suche über alle sechs Sammlungen: «Beton» trifft sowohl Referenzen als auch das Asset.
   await page.fill('[data-testid="dach-suche"]', 'Beton');
   await expect(page.locator('[data-testid="dach-treffer"]').first()).toBeVisible();
   const treffer = page.locator('[data-testid="dach-treffer"]');

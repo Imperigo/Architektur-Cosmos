@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import {
   Badge,
   bestaetigen,
@@ -37,6 +37,15 @@ import {
   type KosmoDataSammlung,
   type KosmoDataZahlen,
 } from '../../state/kosmodata-dach';
+import {
+  entferneArchiv,
+  formatGroesse,
+  listeArchiv,
+  speichereArchiv,
+  sucheArchiv,
+  type ArchivEintrag,
+  type ArchivKategorie,
+} from '../../state/archiv';
 import {
   basisIndex,
   geladeneSammlungen,
@@ -220,7 +229,7 @@ function oeffneInKosmoAsset(assetId: string) {
   (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('asset');
 }
 
-type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training' | 'gedaechtnis';
+type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training' | 'gedaechtnis' | 'archiv';
 
 export function DataWorkspace() {
   const [entries, setEntries] = useState<RefEntry[]>([]);
@@ -352,9 +361,12 @@ export function DataWorkspace() {
             <KButton size="sm" tone={tab === 'gedaechtnis' ? 'accent' : 'ghost'} onClick={() => setTab('gedaechtnis')} data-testid="tab-gedaechtnis">
               Gedächtnis
             </KButton>
+            <KButton size="sm" tone={tab === 'archiv' ? 'accent' : 'ghost'} onClick={() => setTab('archiv')} data-testid="tab-archiv">
+              Archiv
+            </KButton>
             <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
               {tab === 'uebersicht'
-                ? 'Fünf Sammlungen unter einem Dach'
+                ? 'Sechs Sammlungen unter einem Dach'
                 : tab === 'referenzen'
                   ? `${filtered.length} von ${entries.length} Referenzen`
                   : tab === 'bauteile'
@@ -365,7 +377,9 @@ export function DataWorkspace() {
                         ? 'Wissensbasis — durchsuchen, laden, freigeben'
                         : tab === 'training'
                           ? 'Trainings-Korpus — Architektur & Software-Selbstwissen'
-                          : 'Lernjournal — Gedächtnis, verknüpft mit Wissen und Training'}
+                          : tab === 'gedaechtnis'
+                            ? 'Lernjournal — Gedächtnis, verknüpft mit Wissen und Training'
+                            : 'HomePC-Archiv — Manifest für die HDD, lokal & privat'}
             </span>
             <div style={{ flex: 1 }} />
             <Badge hue={syncState === 'synced' && quelle === 'live' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
@@ -390,6 +404,7 @@ export function DataWorkspace() {
           {tab === 'wissen' && <KosmoWissenView />}
           {tab === 'training' && <KosmoTrainingView />}
           {tab === 'gedaechtnis' && <KosmoGedaechtnisView />}
+          {tab === 'archiv' && <KosmoArchivView />}
 
           {tab === 'referenzen' && (<>
           <input
@@ -703,6 +718,7 @@ const sammlungLabel: Record<KosmoDataSammlung, string> = {
   wissen: 'Wissen',
   training: 'Training',
   gedaechtnis: 'Gedächtnis',
+  archiv: 'Archiv',
 };
 
 const sammlungHue: Record<KosmoDataSammlung, string> = {
@@ -711,16 +727,17 @@ const sammlungHue: Record<KosmoDataSammlung, string> = {
   wissen: moduleHue.prepare,
   training: moduleHue.train,
   gedaechtnis: moduleHue.train,
+  archiv: moduleHue.doc,
 };
 
 /**
- * D1 (KosmoData-Dach) — der Übersichts-Tab: fünf Sammlungen mit Zähler
- * (`sammlungen()`) und eine Suche über alle fünf (`sucheDach`). Ein Klick
- * springt in die passende Station: Referenz, Wissen, Training UND Gedächtnis
- * bleiben alle in KosmoData (reiner Tab-Wechsel — D2: Wissen, D3: Training,
- * D4: Gedächtnis leben jetzt als erstklassige Tabs hier, nicht mehr nur in
- * KosmoPrepare/KosmoTrain), nur Asset wechselt per sessionStorage-Brücke in
- * die eigene KosmoAsset-Station.
+ * D1 (KosmoData-Dach) — der Übersichts-Tab: sechs Sammlungen mit Zähler
+ * (`sammlungen()`) und eine Suche über alle sechs (`sucheDach`). Ein Klick
+ * springt in die passende Station: Referenz, Wissen, Training, Gedächtnis
+ * UND Archiv bleiben alle in KosmoData (reiner Tab-Wechsel — D2: Wissen, D3:
+ * Training, D4: Gedächtnis, D5: Archiv leben jetzt als erstklassige Tabs
+ * hier, nicht mehr nur in KosmoPrepare/KosmoTrain), nur Asset wechselt per
+ * sessionStorage-Brücke in die eigene KosmoAsset-Station.
  */
 function KosmoDataUebersicht({
   entries,
@@ -777,9 +794,13 @@ function KosmoDataUebersicht({
       setTab('gedaechtnis');
       return;
     }
+    if (sprung.screen === 'archiv') {
+      setTab('archiv');
+      return;
+    }
   };
 
-  const sammlungIds: KosmoDataSammlung[] = ['referenz', 'asset', 'wissen', 'training', 'gedaechtnis'];
+  const sammlungIds: KosmoDataSammlung[] = ['referenz', 'asset', 'wissen', 'training', 'gedaechtnis', 'archiv'];
 
   return (
     <div data-testid="kosmodata-dach" style={{ display: 'grid', gap: 14 }}>
@@ -796,7 +817,7 @@ function KosmoDataUebersicht({
 
       <input
         data-testid="dach-suche"
-        placeholder="Über alle fünf Sammlungen suchen: Referenzen, Assets, Wissen, Training, Gedächtnis …"
+        placeholder="Über alle sechs Sammlungen suchen: Referenzen, Assets, Wissen, Training, Gedächtnis, Archiv …"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         style={{
@@ -809,7 +830,7 @@ function KosmoDataUebersicht({
       />
 
       {query.trim().length >= 2 && treffer.length === 0 && (
-        <Messrahmen height={140} caption="Kein Treffer über die fünf Sammlungen — Begriff lockern" />
+        <Messrahmen height={140} caption="Kein Treffer über die sechs Sammlungen — Begriff lockern" />
       )}
 
       <div style={{ display: 'grid', gap: 8 }}>
@@ -1602,6 +1623,286 @@ export function KosmoGedaechtnisView() {
             </Panel>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+const archivKategorieLabel: Record<ArchivKategorie, string> = {
+  projekte: 'Projekte',
+  referenzen: 'Referenzen',
+  assets: 'Assets',
+  wissen: 'Wissen',
+  fotos: 'Fotos',
+  sonstiges: 'Sonstiges',
+};
+
+const ARCHIV_KATEGORIEN: ArchivKategorie[] = ['projekte', 'referenzen', 'assets', 'wissen', 'fotos', 'sonstiges'];
+
+const archivQuelleLabel: Record<ArchivEintrag['quelle'], string> = {
+  manuell: 'Manuell erfasst',
+  ordner: 'Ordner-Register',
+};
+
+const inputStyle: CSSProperties = {
+  padding: '8px 10px',
+  borderRadius: 'var(--k-radius-sm)',
+  border: '1px solid var(--k-line-strong)',
+  background: 'var(--k-surface)',
+  fontSize: 13,
+};
+
+/**
+ * D5 (KosmoData-Dach) — der Archiv-Tab: das Manifest für «alles auf der HDD»
+ * am HomePC (Owner-Mandat, `docs/EIN-SYSTEM-KOSMODATA.md` D5). Bewusst KEIN
+ * Datenumzug: die grossen Bestände bleiben auf der HDD, KosmoOrbit führt nur
+ * das Verzeichnis (IndexedDB `kosmo-archiv`, `state/archiv.ts`) — Name, Pfad,
+ * Kategorie, geschätzte Grösse, Notiz. Jeder Eintrag ist `visibility:
+ * 'private'`, nie in die Website. Das echte Voll-Indexieren/Einbetten der HDD
+ * ist ein HomeStation-Auftrag (`docs/HOMESTATION-AUFTRAG.md`) — die Bridge
+ * hat heute keinen HDD-Endpunkt (nur `/health`, `/jobs`, `/stt`, `/tts`,
+ * `/embed`).
+ */
+export function KosmoArchivView() {
+  const [eintraege, setEintraege] = useState<ArchivEintrag[]>([]);
+  const [geladen, setGeladen] = useState(false);
+  const [query, setQuery] = useState('');
+
+  const [name, setName] = useState('');
+  const [pfad, setPfad] = useState('');
+  const [kategorie, setKategorie] = useState<ArchivKategorie>('sonstiges');
+  const [groesse, setGroesse] = useState('');
+  const [notiz, setNotiz] = useState('');
+
+  const ordnerInputRef = useRef<HTMLInputElement | null>(null);
+  const ordnerUnterstuetzt =
+    typeof HTMLInputElement !== 'undefined' && 'webkitdirectory' in HTMLInputElement.prototype;
+
+  const refresh = () => {
+    void listeArchiv()
+      .then(setEintraege)
+      .finally(() => setGeladen(true));
+  };
+  useEffect(refresh, []);
+
+  async function hinzufuegen() {
+    if (!name.trim() || !pfad.trim()) {
+      meldeFehler(new Error('Name und Pfad sind Pflichtfelder'));
+      return;
+    }
+    const groesseZahl = groesse.trim() ? Number(groesse.trim()) : undefined;
+    try {
+      await speichereArchiv({
+        name: name.trim(),
+        pfad: pfad.trim(),
+        kategorie,
+        ...(groesseZahl !== undefined && !Number.isNaN(groesseZahl) ? { groesseBytes: groesseZahl } : {}),
+        ...(notiz.trim() ? { notiz: notiz.trim() } : {}),
+        quelle: 'manuell',
+      });
+      setName('');
+      setPfad('');
+      setGroesse('');
+      setNotiz('');
+      setKategorie('sonstiges');
+      refresh();
+      melde('Bestand im Archiv erfasst', { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  }
+
+  async function ordnerErfasst(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const liste = Array.from(files);
+    const gesamtGroesse = liste.reduce((s, f) => s + f.size, 0);
+    const erster = liste[0]!;
+    const relPfad = (erster as File & { webkitRelativePath?: string }).webkitRelativePath;
+    const wurzel = (relPfad ? relPfad.split('/')[0] : '') || erster.name;
+    try {
+      const eintrag = await speichereArchiv({
+        name: wurzel,
+        pfad: wurzel,
+        kategorie: 'sonstiges',
+        groesseBytes: gesamtGroesse,
+        dateien: liste.length,
+        quelle: 'ordner',
+      });
+      refresh();
+      melde(
+        `«${eintrag.name}» registriert — ${liste.length} ${liste.length === 1 ? 'Datei' : 'Dateien'}, ${formatGroesse(gesamtGroesse)}`,
+        { ton: 'erfolg' },
+      );
+    } catch (err) {
+      meldeFehler(err);
+    } finally {
+      if (ordnerInputRef.current) ordnerInputRef.current.value = '';
+    }
+  }
+
+  async function entfernen(e: ArchivEintrag) {
+    const ok = await bestaetigen({
+      titel: `«${e.name}» aus dem Archiv-Verzeichnis entfernen?`,
+      text: 'Nur der Manifest-Eintrag verschwindet — die Bestände auf der HDD bleiben unberührt.',
+      bestaetigen: 'Entfernen',
+      gefaehrlich: true,
+    });
+    if (!ok) return;
+    await entferneArchiv(e.id);
+    refresh();
+  }
+
+  const gefiltert = useMemo(() => sucheArchiv(eintraege, query), [eintraege, query]);
+  const leer = geladen && eintraege.length === 0;
+
+  return (
+    <div data-testid="kosmodata-archiv" style={{ display: 'grid', gap: 14 }}>
+      <div
+        data-testid="archiv-hinweis"
+        style={{
+          fontSize: 12.5,
+          color: 'var(--k-ink-soft)',
+          lineHeight: 1.5,
+          padding: '10px 12px',
+          borderRadius: 'var(--k-radius-sm)',
+          border: '1px solid var(--k-line)',
+          background: 'var(--k-raised)',
+        }}
+      >
+        Lokal &amp; privat — nie in die Website. Grosse Bestände bleiben auf der HDD; KosmoOrbit
+        führt nur das Verzeichnis (Manifest). Voll-Indexieren der HDD folgt über die HomeStation.
+      </div>
+
+      <Panel data-testid="archiv-form" style={{ padding: '12px 14px', display: 'grid', gap: 8 }}>
+        <div className="k-titel" style={{ fontSize: 13 }}>Bestand manuell erfassen</div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <input
+            data-testid="archiv-feld-name"
+            placeholder="Name (z.B. «Projekte 2010–2020»)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{ ...inputStyle, flex: '1 1 200px' }}
+          />
+          <input
+            data-testid="archiv-feld-pfad"
+            placeholder="HDD-Pfad (z.B. D:\Archiv\Projekte 2010-2020)"
+            value={pfad}
+            onChange={(e) => setPfad(e.target.value)}
+            style={{ ...inputStyle, flex: '1 1 260px', fontFamily: 'var(--k-font-mono)' }}
+          />
+          <select
+            data-testid="archiv-feld-kategorie"
+            value={kategorie}
+            onChange={(e) => setKategorie(e.target.value as ArchivKategorie)}
+            style={inputStyle}
+          >
+            {ARCHIV_KATEGORIEN.map((k) => (
+              <option key={k} value={k}>
+                {archivKategorieLabel[k]}
+              </option>
+            ))}
+          </select>
+          <input
+            data-testid="archiv-feld-groesse"
+            placeholder="Grösse in Bytes (optional)"
+            value={groesse}
+            onChange={(e) => setGroesse(e.target.value)}
+            inputMode="numeric"
+            style={{ ...inputStyle, flex: '0 1 170px' }}
+          />
+          <input
+            data-testid="archiv-feld-notiz"
+            placeholder="Notiz (optional)"
+            value={notiz}
+            onChange={(e) => setNotiz(e.target.value)}
+            style={{ ...inputStyle, flex: '1 1 200px' }}
+          />
+        </div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <KButton size="sm" tone="accent" data-testid="archiv-hinzu" onClick={() => void hinzufuegen()}>
+            Hinzufügen
+          </KButton>
+          <div style={{ flex: 1 }} />
+          <input
+            data-testid="archiv-ordner-input"
+            ref={(el) => {
+              ordnerInputRef.current = el;
+              if (el) {
+                el.setAttribute('webkitdirectory', '');
+                el.setAttribute('directory', '');
+              }
+            }}
+            type="file"
+            multiple
+            style={{ display: 'none' }}
+            onChange={(e) => void ordnerErfasst(e.currentTarget.files)}
+          />
+          <KButton size="sm" tone="ghost" data-testid="archiv-ordner" onClick={() => ordnerInputRef.current?.click()}>
+            Ordner erfassen
+          </KButton>
+          {!ordnerUnterstuetzt && (
+            <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+              Ordner-Auswahl braucht einen Chromium-Browser (Desktop/iPad-App)
+            </span>
+          )}
+        </div>
+      </Panel>
+
+      <input
+        data-testid="archiv-search"
+        placeholder="Archiv durchsuchen: Name, Pfad, Kategorie, Notiz …"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        style={{
+          padding: '9px 12px',
+          borderRadius: 'var(--k-radius-sm)',
+          border: '1px solid var(--k-line-strong)',
+          background: 'var(--k-raised)',
+          fontSize: 14,
+        }}
+      />
+
+      {!geladen && <KLade text="Archiv laden …" height={160} />}
+
+      {leer && (
+        <div data-testid="archiv-leer">
+          <Messrahmen
+            height={200}
+            caption="Noch nichts im HomePC-Archiv — Bestand erfassen oder Ordner registrieren"
+          />
+        </div>
+      )}
+
+      {geladen && !leer && gefiltert.length === 0 && (
+        <Messrahmen height={140} caption="Kein Bestand passt zur Suche — Begriff lockern" />
+      )}
+
+      <div style={{ display: 'grid', gap: 8 }}>
+        {gefiltert.map((e) => (
+          <Panel key={e.id} data-testid="archiv-eintrag" style={{ padding: '10px 12px', display: 'grid', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <span style={{ fontWeight: 550, fontSize: 13.5 }}>{e.name}</span>
+              <Badge hue={moduleHue.doc}>{archivKategorieLabel[e.kategorie]}</Badge>
+              <Badge hue={e.quelle === 'ordner' ? moduleHue.asset : 'var(--k-ink-faint)'}>
+                {archivQuelleLabel[e.quelle]}
+              </Badge>
+              <div style={{ flex: 1 }} />
+              <KButton size="sm" tone="ghost" data-testid="archiv-entfernen" onClick={() => void entfernen(e)}>
+                Entfernen
+              </KButton>
+            </div>
+            <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 12, color: 'var(--k-ink-soft)' }}>{e.pfad}</div>
+            <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <span>{formatGroesse(e.groesseBytes)}</span>
+              {e.dateien !== undefined && (
+                <span>
+                  {e.dateien} {e.dateien === 1 ? 'Datei' : 'Dateien'}
+                </span>
+              )}
+            </div>
+            {e.notiz && <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--k-ink-faint)' }}>{e.notiz}</div>}
+          </Panel>
+        ))}
       </div>
     </div>
   );

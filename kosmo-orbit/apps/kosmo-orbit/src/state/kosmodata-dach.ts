@@ -3,16 +3,19 @@ import { LearningJournal, type Learning } from '@kosmo/ai';
 import { listeGlb } from './asset-bibliothek';
 import { journalStore } from './journal-store';
 import { listDocs, searchKnowledge } from '../modules/prepare/knowledge';
+import { listeArchiv } from './archiv';
 
 /**
  * KosmoData-Dach (D1) — der leichtgewichtige, vereinheitlichte Adapter über
- * die fünf Sammlungen: Referenzen · Assets · Wissen · Training · Gedächtnis.
+ * die sechs Sammlungen: Referenzen · Assets · Wissen · Training · Gedächtnis ·
+ * Archiv (D5 — HomePC-Archiv, `state/archiv.ts`).
  *
  * KEIN Datenumzug: jede Sammlung bleibt in ihrem eigenen Speicher (Seed-JSON,
  * IndexedDB-Vault `kosmo-projekte`, IndexedDB `kosmo-wissen`, Lernjournal in
- * localStorage/Vault). Dieses Modul liest nur darüber und liefert eine
- * gemeinsame Übersicht (`sammlungen`) + Suche (`sucheDach`). Tiefe Ausbauten
- * je Sammlung (Facetten, Kuration, echte Zusammenführung) folgen in D2–D4.
+ * localStorage/Vault, IndexedDB `kosmo-archiv`). Dieses Modul liest nur
+ * darüber und liefert eine gemeinsame Übersicht (`sammlungen`) + Suche
+ * (`sucheDach`). Tiefe Ausbauten je Sammlung (Facetten, Kuration, echte
+ * Zusammenführung) folgen in D2–D5.
  *
  * Bewusst KEIN Import aus `modules/data/DataWorkspace.tsx`: jene Datei bindet
  * diesen Adapter für den neuen Übersichts-Tab ein — ein Import in die
@@ -21,7 +24,7 @@ import { listDocs, searchKnowledge } from '../modules/prepare/knowledge';
  * für D1 kein Problem; D2 kann das bei Bedarf entkoppeln).
  */
 
-export type KosmoDataSammlung = 'referenz' | 'asset' | 'wissen' | 'training' | 'gedaechtnis';
+export type KosmoDataSammlung = 'referenz' | 'asset' | 'wissen' | 'training' | 'gedaechtnis' | 'archiv';
 export type KosmoDataVisibility = 'public' | 'private';
 
 /** Sprungziel für einen Treffer-Klick — die UI (DataWorkspace) führt den eigentlichen Sprung aus. */
@@ -30,7 +33,8 @@ export type KosmoDataSprung =
   | { screen: 'asset'; assetId: string }
   | { screen: 'wissen' }
   | { screen: 'training' }
-  | { screen: 'gedaechtnis' };
+  | { screen: 'gedaechtnis' }
+  | { screen: 'archiv' };
 
 export interface KosmoDataEintrag {
   id: string;
@@ -50,6 +54,7 @@ export interface KosmoDataZahlen {
   wissen: number;
   training: number;
   gedaechtnis: number;
+  archiv: number;
 }
 
 let refCache: RefEntry[] | null = null;
@@ -98,7 +103,7 @@ export function istTraining(l: Learning): boolean {
 
 /** Zähler je Sammlung — für die Übersichtskacheln. Defensiv: eine tote Quelle liefert 0, kein Absturz. */
 export async function sammlungen(): Promise<KosmoDataZahlen> {
-  const [referenz, asset, wissen] = await Promise.all([
+  const [referenz, asset, wissen, archiv] = await Promise.all([
     ladeReferenzenFuerDach()
       .then((r) => r.length)
       .catch(() => 0),
@@ -107,6 +112,9 @@ export async function sammlungen(): Promise<KosmoDataZahlen> {
       .catch(() => 0),
     listDocs()
       .then((d) => d.length)
+      .catch(() => 0),
+    listeArchiv()
+      .then((a) => a.length)
       .catch(() => 0),
   ]);
   let training = 0;
@@ -119,11 +127,11 @@ export async function sammlungen(): Promise<KosmoDataZahlen> {
   } catch {
     /* Journal defensiv — leere Zahlen statt Absturz */
   }
-  return { referenz, asset, wissen, training, gedaechtnis };
+  return { referenz, asset, wissen, training, gedaechtnis, archiv };
 }
 
 /**
- * Sucht über ALLE fünf Sammlungen und liefert eine gemeinsam nach Score
+ * Sucht über ALLE sechs Sammlungen und liefert eine gemeinsam nach Score
  * sortierte Trefferliste. Baut defensiv: fehlt/wirft eine Quelle (kein Netz,
  * kein IndexedDB, keine Bridge), wird nur SIE übersprungen — der Rest der
  * Suche läuft weiter.
@@ -233,6 +241,28 @@ export async function sucheDach(query: string, limit = 20): Promise<KosmoDataEin
     }
   } catch {
     /* Journal nicht erreichbar — Sammlung übersprungen */
+  }
+
+  // Archiv (D5): nur das Manifest wird durchsucht, nie HDD-Inhalte selbst — immer 'private'.
+  try {
+    for (const e of await listeArchiv()) {
+      const hay = [e.name, e.pfad, e.kategorie, e.notiz].filter(Boolean).join(' ');
+      const score = stichwortScore(q, hay);
+      if (score <= 0) continue;
+      treffer.push({
+        id: `archiv-${e.id}`,
+        sammlung: 'archiv',
+        titel: e.name,
+        kurztext: `${e.kategorie} · ${e.pfad}`,
+        herkunft: 'KosmoData · HomePC-Archiv',
+        visibility: 'private',
+        tags: [],
+        score,
+        sprung: { screen: 'archiv' },
+      });
+    }
+  } catch {
+    /* Archiv-Manifest nicht erreichbar — Sammlung übersprungen */
   }
 
   return treffer.sort((a, b) => (b.score ?? 0) - (a.score ?? 0)).slice(0, limit);

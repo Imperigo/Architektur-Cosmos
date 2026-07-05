@@ -16,6 +16,7 @@
 | **Foto-Texturmaps** (V2-C2) | Parametrische PBR-Kacheln stehen (`design/texturen.ts`, Materialkatalog in `@kosmo/data`) — Foto-Maps ersetzen nur die Prozeduren. |
 | **Whisper/Piper scharf** (KosmoSpeak) | Bridge-Endpoints `/stt` (faster-whisper) und `/tts` sind real implementiert; Ablauf + UI (Push-to-Talk im Kosmo-Panel) fertig. Am Home-PC: Modelle laden, Qualität hören, Wortliste CH-Deutsch nachziehen. |
 | **Embedding-RAG bge-m3** (KosmoPrepare) | `/embed` ist real in der Bridge, der Client-Pfad (`prepare/knowledge.ts: embedTexts`) und der Contract (`EmbedRequest/Response` in `@kosmo/contracts`) stehen; ohne Bridge trägt BM25. Am Home-PC: bge-m3 in die Bridge, fertig. |
+| **HDD-Voll-Index** (KosmoData-Archiv, V2-D5) | Bridge-Endpunkt `/archiv` (Ordner scannen, Grössen/Dateilisten, später Einbetten via bge-m3) — heute nur Manifest im Client (`state/archiv.ts`, IndexedDB `kosmo-archiv`); das echte Scannen/Indexieren der HDD läuft auf der HomeStation. Die Bridge hat heute keinen HDD-Endpunkt, nur `/health`, `/jobs`, `/stt`, `/tts`, `/embed`. |
 
 ## 2. Training / Wissen (KOSMOTRAIN.md §5)
 

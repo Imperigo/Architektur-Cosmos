@@ -507,7 +507,7 @@ describe('Ref↔Asset-Verknüpfung (Batch 5)', () => {
   });
 });
 
-// ── D1: KosmoData-Dach — vereinheitlichter Adapter über die fünf Sammlungen ──
+// ── D1: KosmoData-Dach — vereinheitlichter Adapter über die sechs Sammlungen ──
 
 describe('visibility-Default (D1): Alt-Daten ohne Feld gelten beim Lesen als "private"', () => {
   it('KnowledgeDoc ohne visibility wird von listDocs() als "private" normalisiert', async () => {
@@ -578,7 +578,7 @@ describe('visibility-Default (D1): Alt-Daten ohne Feld gelten beim Lesen als "pr
   });
 });
 
-describe('KosmoData-Dach (D1): vereinheitlichter Adapter über die fünf Sammlungen', () => {
+describe('KosmoData-Dach (D1): vereinheitlichter Adapter über die sechs Sammlungen', () => {
   it('sammlungen() zählt defensiv — eine tote Quelle (kein Netz) liefert 0 statt Absturz', async () => {
     const origFetch = globalThis.fetch;
     globalThis.fetch = (async () => {
@@ -592,6 +592,7 @@ describe('KosmoData-Dach (D1): vereinheitlichter Adapter über die fünf Sammlun
       expect(typeof zahlen.wissen).toBe('number');
       expect(typeof zahlen.training).toBe('number');
       expect(typeof zahlen.gedaechtnis).toBe('number');
+      expect(typeof zahlen.archiv).toBe('number'); // D5: sechste Sammlung, ebenfalls defensiv
     } finally {
       globalThis.fetch = origFetch;
     }
@@ -924,5 +925,148 @@ describe('D4 (KosmoData-Dach): gedaechtnisZeilen — reine Sortier-/Filterlogik 
     ];
     expect(gedaechtnisZeilen(eintraege, 'alle', 'kuratiert').map((e) => e.context)).toEqual(['kuratiert']);
     expect(gedaechtnisZeilen(eintraege, 'alle', 'roh').map((e) => e.context).sort()).toEqual(['leere-notiz', 'roh']);
+  });
+});
+
+// ── D5: HomePC-Archiv — die sechste Sammlung, ein Manifest, nie die Bytes ──
+
+describe('D5 (KosmoData-Dach): state/archiv.ts — speichereArchiv/listeArchiv/entferneArchiv', () => {
+  it('speichereArchiv + listeArchiv: Roundtrip, visibility immer "private", addedAt gesetzt', async () => {
+    const { speichereArchiv, listeArchiv } = await import('../src/state/archiv');
+    const eintrag = await speichereArchiv({
+      name: 'Projekte 2010-2020',
+      pfad: 'D:\\Archiv\\Projekte 2010-2020',
+      kategorie: 'projekte',
+      groesseBytes: 12_345,
+      dateien: 42,
+      notiz: 'Alte Wettbewerbe, ungesichtet',
+      quelle: 'manuell',
+    });
+    expect(eintrag.id.length).toBeGreaterThan(0);
+    expect(eintrag.visibility).toBe('private');
+    expect(eintrag.addedAt.length).toBeGreaterThan(0);
+
+    const liste = await listeArchiv();
+    const geladen = liste.find((e) => e.id === eintrag.id);
+    expect(geladen).toBeDefined();
+    expect(geladen?.name).toBe('Projekte 2010-2020');
+    expect(geladen?.kategorie).toBe('projekte');
+    expect(geladen?.groesseBytes).toBe(12_345);
+    expect(geladen?.dateien).toBe(42);
+    expect(geladen?.visibility).toBe('private');
+  });
+
+  it('speichereArchiv upsertet über id — behält das ursprüngliche addedAt', async () => {
+    const { speichereArchiv } = await import('../src/state/archiv');
+    const erster = await speichereArchiv({
+      name: 'Fotos Baustelle',
+      pfad: 'D:\\Archiv\\Fotos',
+      kategorie: 'fotos',
+      quelle: 'manuell',
+    });
+    const aktualisiert = await speichereArchiv({
+      id: erster.id,
+      name: 'Fotos Baustelle (umbenannt)',
+      pfad: erster.pfad,
+      kategorie: 'fotos',
+      quelle: 'manuell',
+    });
+    expect(aktualisiert.id).toBe(erster.id);
+    expect(aktualisiert.addedAt).toBe(erster.addedAt);
+    expect(aktualisiert.name).toBe('Fotos Baustelle (umbenannt)');
+  });
+
+  it('listeArchiv sortiert neueste zuerst (addedAt absteigend)', async () => {
+    const { speichereArchiv, listeArchiv } = await import('../src/state/archiv');
+    const a = await speichereArchiv({ name: 'Bestand A', pfad: 'D:\\A', kategorie: 'sonstiges', quelle: 'manuell' });
+    await new Promise((r) => setTimeout(r, 5));
+    const b = await speichereArchiv({ name: 'Bestand B', pfad: 'D:\\B', kategorie: 'sonstiges', quelle: 'manuell' });
+    const liste = await listeArchiv();
+    const idxA = liste.findIndex((e) => e.id === a.id);
+    const idxB = liste.findIndex((e) => e.id === b.id);
+    expect(idxB).toBeLessThan(idxA); // b ist neuer -> steht weiter vorn
+  });
+
+  it('entferneArchiv löscht den Eintrag endgültig', async () => {
+    const { speichereArchiv, entferneArchiv, listeArchiv } = await import('../src/state/archiv');
+    const eintrag = await speichereArchiv({ name: 'Zu löschen', pfad: 'D:\\Weg', kategorie: 'sonstiges', quelle: 'manuell' });
+    expect((await listeArchiv()).some((e) => e.id === eintrag.id)).toBe(true);
+    await entferneArchiv(eintrag.id);
+    expect((await listeArchiv()).some((e) => e.id === eintrag.id)).toBe(false);
+  });
+});
+
+describe('D5 (KosmoData-Dach): sucheArchiv — reine Stichwortsuche über name/pfad/kategorie/notiz', () => {
+  it('findet über Name, Pfad, Kategorie und Notiz; liefert leer, wenn nichts passt', async () => {
+    const { sucheArchiv } = await import('../src/state/archiv');
+    const eintraege = [
+      {
+        id: '1',
+        name: 'Terrassenhaus-Wettbewerb',
+        pfad: 'D:\\Archiv\\Projekte\\Terrassenhaus',
+        kategorie: 'projekte' as const,
+        notiz: 'Nie eingereicht',
+        quelle: 'manuell' as const,
+        visibility: 'private' as const,
+        addedAt: '2026-01-01T00:00:00.000Z',
+      },
+      {
+        id: '2',
+        name: 'Materialfotos Beton',
+        pfad: 'D:\\Archiv\\Fotos\\Beton',
+        kategorie: 'fotos' as const,
+        quelle: 'manuell' as const,
+        visibility: 'private' as const,
+        addedAt: '2026-01-02T00:00:00.000Z',
+      },
+    ];
+    expect(sucheArchiv(eintraege, 'terrassenhaus').map((e) => e.id)).toEqual(['1']);
+    expect(sucheArchiv(eintraege, 'beton').map((e) => e.id)).toEqual(['2']);
+    expect(sucheArchiv(eintraege, 'fotos').map((e) => e.id)).toEqual(['2']);
+    expect(sucheArchiv(eintraege, 'nie eingereicht').map((e) => e.id)).toEqual(['1']);
+    expect(sucheArchiv(eintraege, 'xyz-kein-treffer')).toEqual([]);
+    expect(sucheArchiv(eintraege, '')).toHaveLength(2); // leere Query -> alles
+  });
+});
+
+describe('D5 (KosmoData-Dach): formatGroesse — B/KB/MB/GB, "—" wenn unbekannt', () => {
+  it('formatiert je Grössenordnung und behandelt undefined als "—"', async () => {
+    const { formatGroesse } = await import('../src/state/archiv');
+    expect(formatGroesse(undefined)).toBe('—');
+    expect(formatGroesse(0)).toBe('0 B');
+    expect(formatGroesse(512)).toBe('512 B');
+    expect(formatGroesse(2048)).toBe('2.0 KB');
+    expect(formatGroesse(5 * 1024 * 1024)).toBe('5.0 MB');
+    expect(formatGroesse(3 * 1024 * 1024 * 1024)).toBe('3.0 GB');
+  });
+});
+
+describe('D5 (KosmoData-Dach): sucheDach durchsucht das Archiv-Manifest als sechste Quelle', () => {
+  it('ein Archiv-Eintrag liefert einen Treffer mit sammlung="archiv", visibility="private" und sprung={screen:"archiv"}', async () => {
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async (url: unknown) => {
+      if (String(url).includes('kosmodata-seed.json')) {
+        return { ok: true, json: async () => ({ entries: [] }) };
+      }
+      throw new Error(`unerwarteter Fetch im Test: ${String(url)}`);
+    }) as unknown as typeof fetch;
+    try {
+      const { speichereArchiv } = await import('../src/state/archiv');
+      await speichereArchiv({
+        name: 'Xylobestand-D5-Sprungtest',
+        pfad: 'D:\\Archiv\\Xylobestand',
+        kategorie: 'sonstiges',
+        quelle: 'manuell',
+      });
+
+      const { sucheDach } = await import('../src/state/kosmodata-dach');
+      const treffer = await sucheDach('xylobestand');
+      const archivTreffer = treffer.find((t) => t.sammlung === 'archiv');
+      expect(archivTreffer).toBeDefined();
+      expect(archivTreffer?.visibility).toBe('private');
+      expect(archivTreffer?.sprung).toEqual({ screen: 'archiv' });
+    } finally {
+      globalThis.fetch = origFetch;
+    }
   });
 });
