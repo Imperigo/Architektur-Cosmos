@@ -81,6 +81,12 @@ export class LearningJournal {
     this.store.save(this.entries);
   }
 
+  /** Kuration/Dach: Sichtbarkeit eines Eintrags umschalten (Default beim Lesen bleibt 'private'). */
+  setzeVisibility(ts: string, visibility: LearningVisibility): void {
+    this.entries = this.entries.map((e) => (e.ts === ts ? { ...e, visibility } : e));
+    this.store.save(this.entries);
+  }
+
   /**
    * Kompakter Prompt-Block der jüngsten Lehren — bewusst klein (lokale
    * Modelle!): maximal 8 Einträge, Kritik zuerst.

@@ -850,8 +850,8 @@ describe('D3 (KosmoData-Dach): exportTrainingJsonl — LoRA-taugliches JSONL', (
   });
 });
 
-describe('D3 (KosmoData-Dach): sucheDach springt für Training in den KosmoData-Tab, für Gedächtnis in KosmoTrain', () => {
-  it('ein Training-Treffer (Notiz gesetzt) liefert sprung={screen:"training"}, ein Gedächtnis-Treffer (ohne Notiz) sprung={screen:"train"}', async () => {
+describe('D4 (KosmoData-Dach): sucheDach springt für Training UND Gedächtnis in eigene KosmoData-Tabs', () => {
+  it('ein Training-Treffer (Notiz gesetzt) liefert sprung={screen:"training"}, ein Gedächtnis-Treffer (ohne Notiz) sprung={screen:"gedaechtnis"}', async () => {
     const origFetch = globalThis.fetch;
     globalThis.fetch = (async (url: unknown) => {
       if (String(url).includes('kosmodata-seed.json')) {
@@ -884,10 +884,45 @@ describe('D3 (KosmoData-Dach): sucheDach springt für Training in den KosmoData-
       const trainingTreffer = treffer.find((t) => t.sammlung === 'training');
       const gedaechtnisTreffer = treffer.find((t) => t.sammlung === 'gedaechtnis');
       expect(trainingTreffer?.sprung).toEqual({ screen: 'training' });
-      expect(gedaechtnisTreffer?.sprung).toEqual({ screen: 'train' });
+      expect(gedaechtnisTreffer?.sprung).toEqual({ screen: 'gedaechtnis' });
     } finally {
       globalThis.fetch = origFetch;
       g['localStorage'] = backupLocalStorage;
     }
+  });
+});
+
+describe('D4 (KosmoData-Dach): gedaechtnisZeilen — reine Sortier-/Filterlogik der Memory-Timeline', () => {
+  it('sortiert absteigend nach ts (neueste zuerst)', async () => {
+    const { gedaechtnisZeilen } = await import('../src/modules/data/DataWorkspace');
+    const eintraege = [
+      { ts: '2026-07-01T08:00:00.000Z', sentiment: 'gut' as const, context: 'älter' },
+      { ts: '2026-07-03T08:00:00.000Z', sentiment: 'gut' as const, context: 'neuer' },
+      { ts: '2026-07-02T08:00:00.000Z', sentiment: 'gut' as const, context: 'mitte' },
+    ];
+    const zeilen = gedaechtnisZeilen(eintraege, 'alle', 'alle');
+    expect(zeilen.map((e) => e.context)).toEqual(['neuer', 'mitte', 'älter']);
+  });
+
+  it('filtert nach Sentiment', async () => {
+    const { gedaechtnisZeilen } = await import('../src/modules/data/DataWorkspace');
+    const eintraege = [
+      { ts: '2026-07-01T08:00:00.000Z', sentiment: 'gut' as const, context: 'a' },
+      { ts: '2026-07-02T08:00:00.000Z', sentiment: 'schlecht' as const, context: 'b' },
+    ];
+    expect(gedaechtnisZeilen(eintraege, 'gut', 'alle').map((e) => e.context)).toEqual(['a']);
+    expect(gedaechtnisZeilen(eintraege, 'schlecht', 'alle').map((e) => e.context)).toEqual(['b']);
+    expect(gedaechtnisZeilen(eintraege, 'alle', 'alle')).toHaveLength(2);
+  });
+
+  it('filtert nach Kurationsstatus über die istTraining-Achse (Notiz gesetzt = kuratiert)', async () => {
+    const { gedaechtnisZeilen } = await import('../src/modules/data/DataWorkspace');
+    const eintraege = [
+      { ts: '2026-07-01T08:00:00.000Z', sentiment: 'gut' as const, context: 'roh' },
+      { ts: '2026-07-02T08:00:00.000Z', sentiment: 'gut' as const, context: 'kuratiert', note: 'Notiz' },
+      { ts: '2026-07-03T08:00:00.000Z', sentiment: 'gut' as const, context: 'leere-notiz', note: '   ' },
+    ];
+    expect(gedaechtnisZeilen(eintraege, 'alle', 'kuratiert').map((e) => e.context)).toEqual(['kuratiert']);
+    expect(gedaechtnisZeilen(eintraege, 'alle', 'roh').map((e) => e.context).sort()).toEqual(['leere-notiz', 'roh']);
   });
 });

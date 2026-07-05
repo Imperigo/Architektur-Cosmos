@@ -30,6 +30,7 @@ import { useProject } from '../../state/project-store';
 import { setGlbContext } from '../design/Viewport3D';
 import { listeGlb, type KosmoAsset } from '../../state/asset-bibliothek';
 import {
+  istTraining,
   sammlungen,
   sucheDach,
   type KosmoDataEintrag,
@@ -48,7 +49,7 @@ import {
   type KnowledgeDoc,
   type KnowledgeHit,
 } from '../prepare/knowledge';
-import { LearningJournal } from '@kosmo/ai';
+import { LearningJournal, type Learning } from '@kosmo/ai';
 import { journalStore } from '../../state/journal-store';
 import {
   architekturKorpus,
@@ -219,7 +220,7 @@ function oeffneInKosmoAsset(assetId: string) {
   (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('asset');
 }
 
-type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training';
+type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training' | 'gedaechtnis';
 
 export function DataWorkspace() {
   const [entries, setEntries] = useState<RefEntry[]>([]);
@@ -348,6 +349,9 @@ export function DataWorkspace() {
             <KButton size="sm" tone={tab === 'training' ? 'accent' : 'ghost'} onClick={() => setTab('training')} data-testid="tab-training">
               Training
             </KButton>
+            <KButton size="sm" tone={tab === 'gedaechtnis' ? 'accent' : 'ghost'} onClick={() => setTab('gedaechtnis')} data-testid="tab-gedaechtnis">
+              Gedächtnis
+            </KButton>
             <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
               {tab === 'uebersicht'
                 ? 'Fünf Sammlungen unter einem Dach'
@@ -359,7 +363,9 @@ export function DataWorkspace() {
                       ? `${materialkatalog.length} Materialien`
                       : tab === 'wissen'
                         ? 'Wissensbasis — durchsuchen, laden, freigeben'
-                        : 'Trainings-Korpus — Architektur & Software-Selbstwissen'}
+                        : tab === 'training'
+                          ? 'Trainings-Korpus — Architektur & Software-Selbstwissen'
+                          : 'Lernjournal — Gedächtnis, verknüpft mit Wissen und Training'}
             </span>
             <div style={{ flex: 1 }} />
             <Badge hue={syncState === 'synced' && quelle === 'live' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
@@ -383,6 +389,7 @@ export function DataWorkspace() {
           {tab === 'materialien' && <MaterialkatalogView />}
           {tab === 'wissen' && <KosmoWissenView />}
           {tab === 'training' && <KosmoTrainingView />}
+          {tab === 'gedaechtnis' && <KosmoGedaechtnisView />}
 
           {tab === 'referenzen' && (<>
           <input
@@ -709,10 +716,11 @@ const sammlungHue: Record<KosmoDataSammlung, string> = {
 /**
  * D1 (KosmoData-Dach) — der Übersichts-Tab: fünf Sammlungen mit Zähler
  * (`sammlungen()`) und eine Suche über alle fünf (`sucheDach`). Ein Klick
- * springt in die passende Station: Referenz UND Wissen bleiben in KosmoData
- * (Tab-Wechsel — D2: Wissen lebt jetzt als erstklassiger Tab hier, nicht
- * mehr nur in KosmoPrepare), Asset wechselt per sessionStorage-Brücke,
- * Training/Gedächtnis wechseln die Station über den reinen Stationswechsel.
+ * springt in die passende Station: Referenz, Wissen, Training UND Gedächtnis
+ * bleiben alle in KosmoData (reiner Tab-Wechsel — D2: Wissen, D3: Training,
+ * D4: Gedächtnis leben jetzt als erstklassige Tabs hier, nicht mehr nur in
+ * KosmoPrepare/KosmoTrain), nur Asset wechselt per sessionStorage-Brücke in
+ * die eigene KosmoAsset-Station.
  */
 function KosmoDataUebersicht({
   entries,
@@ -765,7 +773,10 @@ function KosmoDataUebersicht({
       setTab('training');
       return;
     }
-    (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open(sprung.screen);
+    if (sprung.screen === 'gedaechtnis') {
+      setTab('gedaechtnis');
+      return;
+    }
   };
 
   const sammlungIds: KosmoDataSammlung[] = ['referenz', 'asset', 'wissen', 'training', 'gedaechtnis'];
@@ -1332,6 +1343,266 @@ export function KosmoTrainingView() {
           </Panel>
         </>
       )}
+    </div>
+  );
+}
+
+export type GedaechtnisSentimentFilter = 'alle' | 'gut' | 'schlecht';
+export type GedaechtnisKurationFilter = 'alle' | 'roh' | 'kuratiert';
+
+/**
+ * Reine Sortier-/Filterlogik der Memory-Timeline — extrahiert für den
+ * App-Unit-Test (kein DOM nötig). Neueste zuerst (`ts` absteigend); der
+ * Kurationsstatus folgt derselben Achse wie das KosmoData-Dach
+ * (`istTraining` aus `state/kosmodata-dach.ts` — Notiz gesetzt = kuratiert).
+ */
+export function gedaechtnisZeilen(
+  eintraege: readonly Learning[],
+  sentiment: GedaechtnisSentimentFilter,
+  kuration: GedaechtnisKurationFilter,
+): Learning[] {
+  return [...eintraege]
+    .filter((e) => sentiment === 'alle' || e.sentiment === sentiment)
+    .filter((e) => {
+      if (kuration === 'alle') return true;
+      return kuration === 'kuratiert' ? istTraining(e) : !istTraining(e);
+    })
+    .sort((a, b) => b.ts.localeCompare(a.ts));
+}
+
+/**
+ * D4 (KosmoData-Dach) — der Gedächtnis-Tab: die Memory-Timeline des
+ * gesamten Lernjournals (`@kosmo/ai` `LearningJournal`, dasselbe Journal wie
+ * KosmoTrain/D3) als erstklassige, pflegbare Sammlung. Zeigt ALLE Einträge,
+ * hebt aber hervor, welche schon kuratiert sind (Notiz → Training, D3) und
+ * welche noch roh sind. Verknüpfung mit Wissen: pro Eintrag on-demand eine
+ * BM25-Suche (`searchKnowledge`) über den Kontext — schlank, nicht für alle
+ * Einträge gleichzeitig geladen.
+ */
+export function KosmoGedaechtnisView() {
+  const journal = useMemo(() => new LearningJournal(journalStore()), []);
+  const [eintraege, setEintraege] = useState<readonly Learning[]>([]);
+  const [geladen, setGeladen] = useState(false);
+  const [sentimentFilter, setSentimentFilter] = useState<GedaechtnisSentimentFilter>('alle');
+  const [kurationFilter, setKurationFilter] = useState<GedaechtnisKurationFilter>('alle');
+  const [aufgeklappt, setAufgeklappt] = useState<string | null>(null);
+  const [wissenTreffer, setWissenTreffer] = useState<Record<string, KnowledgeHit[]>>({});
+  const [ladeWissen, setLadeWissen] = useState<string | null>(null);
+  const [befoerdern, setBefoerdern] = useState<string | null>(null);
+
+  const refresh = () => {
+    journal.reload();
+    setEintraege(journal.all);
+  };
+
+  useEffect(() => {
+    refresh();
+    setGeladen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function toggleVisibility(e: Learning) {
+    try {
+      const naechste = (e.visibility ?? 'private') === 'public' ? 'private' : 'public';
+      journal.setzeVisibility(e.ts, naechste);
+      refresh();
+    } catch (err) {
+      meldeFehler(err);
+    }
+  }
+
+  async function entfernen(e: Learning) {
+    const ok = await bestaetigen({
+      titel: 'Gedächtnis-Eintrag entfernen?',
+      text: 'Der Eintrag wird endgültig aus dem Lernjournal gelöscht.',
+      bestaetigen: 'Entfernen',
+      gefaehrlich: true,
+    });
+    if (!ok) return;
+    journal.entfernen(e.ts);
+    refresh();
+  }
+
+  function befoerdernAbschliessen(e: Learning, note: string) {
+    const kern = note.trim();
+    setBefoerdern(null);
+    if (!kern) return;
+    journal.notieren(e.ts, kern);
+    refresh();
+    melde('In die Trainings-Sammlung übernommen', { ton: 'erfolg' });
+  }
+
+  async function ladeVerwandtesWissen(e: Learning) {
+    if (aufgeklappt === e.ts) {
+      setAufgeklappt(null);
+      return;
+    }
+    setAufgeklappt(e.ts);
+    if (wissenTreffer[e.ts]) return;
+    setLadeWissen(e.ts);
+    try {
+      const treffer = await searchKnowledge(e.context, 3);
+      setWissenTreffer((alt) => ({ ...alt, [e.ts]: treffer }));
+    } catch {
+      setWissenTreffer((alt) => ({ ...alt, [e.ts]: [] }));
+    } finally {
+      setLadeWissen(null);
+    }
+  }
+
+  const zeilen = gedaechtnisZeilen(eintraege, sentimentFilter, kurationFilter);
+  const leer = geladen && eintraege.length === 0;
+
+  const sentimentLabel: Record<GedaechtnisSentimentFilter, string> = {
+    alle: 'Alle',
+    gut: '👍 Gut',
+    schlecht: '👎 Schlecht',
+  };
+  const kurationLabel: Record<GedaechtnisKurationFilter, string> = {
+    alle: 'Alle',
+    roh: 'Roh',
+    kuratiert: 'Kuratiert',
+  };
+
+  return (
+    <div data-testid="kosmodata-gedaechtnis" style={{ display: 'grid', gap: 14 }}>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        {(['alle', 'gut', 'schlecht'] as const).map((f) => (
+          <KButton
+            key={f}
+            size="sm"
+            tone={sentimentFilter === f ? 'accent' : 'quiet'}
+            data-testid={`gedaechtnis-filter-sentiment-${f}`}
+            onClick={() => setSentimentFilter(f)}
+          >
+            {sentimentLabel[f]}
+          </KButton>
+        ))}
+        <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--k-line)' }} />
+        {(['alle', 'roh', 'kuratiert'] as const).map((f) => (
+          <KButton
+            key={f}
+            size="sm"
+            tone={kurationFilter === f ? 'accent' : 'quiet'}
+            data-testid={`gedaechtnis-filter-kuration-${f}`}
+            onClick={() => setKurationFilter(f)}
+          >
+            {kurationLabel[f]}
+          </KButton>
+        ))}
+      </div>
+
+      {!geladen && <KLade text="Gedächtnis laden …" height={160} />}
+
+      {leer && (
+        <div data-testid="gedaechtnis-leer">
+          <Messrahmen
+            height={200}
+            caption="Noch kein Gedächtnis — 👍/👎 unter Kosmo-Antworten füllt es"
+          />
+        </div>
+      )}
+
+      {geladen && !leer && zeilen.length === 0 && (
+        <Messrahmen height={140} caption="Kein Eintrag passt zum Filter — Filter lockern" />
+      )}
+
+      <div style={{ display: 'grid', gap: 8 }}>
+        {zeilen.map((e) => {
+          const kuratiert = istTraining(e);
+          const oeffentlich = (e.visibility ?? 'private') === 'public';
+          const wirdBefoerdert = befoerdern === e.ts;
+          const treffer = wissenTreffer[e.ts];
+          return (
+            <Panel key={e.ts} data-testid="gedaechtnis-eintrag" style={{ padding: '10px 12px', display: 'grid', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <Badge hue={e.sentiment === 'gut' ? 'var(--k-success)' : 'var(--k-warning)'}>
+                  {e.sentiment === 'gut' ? '👍 BEIBEHALTEN' : '👎 VERMEIDEN'}
+                </Badge>
+                <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-faint)' }}>
+                  {e.ts.slice(0, 16).replace('T', ' ')}
+                </span>
+                <div style={{ flex: 1 }} />
+                {kuratiert && (
+                  <span data-testid="gedaechtnis-kuratiert">
+                    <Badge hue={moduleHue.train}>kuratiert → Training</Badge>
+                  </span>
+                )}
+                <span data-testid="gedaechtnis-visibility">
+                  <Badge hue={oeffentlich ? 'var(--k-success)' : 'var(--k-warning)'}>
+                    {oeffentlich ? 'Öffentlich' : 'Privat'}
+                  </Badge>
+                </span>
+              </div>
+
+              <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{kuerzeText(e.context, 180)}</div>
+              {e.note && (
+                <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--k-ink-faint)' }}>Notiz: {kuerzeText(e.note, 160)}</div>
+              )}
+
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                <KButton size="sm" tone="ghost" data-testid="gedaechtnis-visibility-toggle" onClick={() => toggleVisibility(e)}>
+                  {oeffentlich ? 'Privat machen' : 'Öffentlich machen'}
+                </KButton>
+                {!kuratiert &&
+                  (wirdBefoerdert ? (
+                    <input
+                      data-testid="gedaechtnis-befördern-notiz"
+                      autoFocus
+                      defaultValue=""
+                      placeholder="Notiz — sie ist der Trainings-Kern (z.B. «nie Fenster unter 900 Brüstung vorschlagen»)"
+                      onBlur={(ev) => befoerdernAbschliessen(e, ev.target.value)}
+                      onKeyDown={(ev) => {
+                        if (ev.key === 'Enter') (ev.target as HTMLInputElement).blur();
+                        if (ev.key === 'Escape') setBefoerdern(null);
+                      }}
+                      style={{
+                        flex: 1,
+                        minWidth: 180,
+                        padding: '4px 8px',
+                        borderRadius: 'var(--k-radius-sm)',
+                        border: '1px solid var(--k-line)',
+                        background: 'var(--k-surface)',
+                        fontSize: 12,
+                      }}
+                    />
+                  ) : (
+                    <KButton size="sm" tone="ghost" data-testid="gedaechtnis-befördern" onClick={() => setBefoerdern(e.ts)}>
+                      Zu Training befördern
+                    </KButton>
+                  ))}
+                <KButton
+                  size="sm"
+                  tone="ghost"
+                  data-testid="gedaechtnis-verwandtes-wissen"
+                  onClick={() => void ladeVerwandtesWissen(e)}
+                >
+                  Verwandtes Wissen
+                </KButton>
+                <KButton size="sm" tone="ghost" data-testid="gedaechtnis-entfernen" onClick={() => void entfernen(e)}>
+                  Entfernen
+                </KButton>
+              </div>
+
+              {aufgeklappt === e.ts && (
+                <div data-testid="gedaechtnis-wissen-treffer" style={{ display: 'grid', gap: 4 }}>
+                  {ladeWissen === e.ts && (
+                    <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>Suche …</span>
+                  )}
+                  {treffer && treffer.length === 0 && (
+                    <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>Kein verwandtes Wissen gefunden</span>
+                  )}
+                  {treffer?.map((h) => (
+                    <span key={h.id} style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+                      {h.docName} · Abschnitt {h.seq + 1}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </Panel>
+          );
+        })}
+      </div>
     </div>
   );
 }

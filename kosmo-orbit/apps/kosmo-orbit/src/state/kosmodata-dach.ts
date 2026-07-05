@@ -30,7 +30,7 @@ export type KosmoDataSprung =
   | { screen: 'asset'; assetId: string }
   | { screen: 'wissen' }
   | { screen: 'training' }
-  | { screen: 'train' };
+  | { screen: 'gedaechtnis' };
 
 export interface KosmoDataEintrag {
   id: string;
@@ -92,7 +92,7 @@ function neuesJournal(): LearningJournal {
  * des Lernjournals (roher Bürolernstand). Dasselbe Journal, zwei Sichten —
  * ein zweiter Speicher wäre für D1 verfrüht.
  */
-function istTraining(l: Learning): boolean {
+export function istTraining(l: Learning): boolean {
   return Boolean(l.note?.trim());
 }
 
@@ -226,9 +226,9 @@ export async function sucheDach(query: string, limit = 20): Promise<KosmoDataEin
         visibility: l.visibility ?? 'private',
         tags: [],
         score,
-        // D3: Training-Treffer bleiben in KosmoData (eigener Tab); Gedächtnis
-        // springt weiterhin auf die KosmoTrain-Station (D4 folgt).
-        sprung: training ? { screen: 'training' } : { screen: 'train' },
+        // D3/D4: Training- UND Gedächtnis-Treffer bleiben beide in KosmoData
+        // (eigene Tabs) — kein Sprung mehr auf die separate KosmoTrain-Station.
+        sprung: training ? { screen: 'training' } : { screen: 'gedaechtnis' },
       });
     }
   } catch {
