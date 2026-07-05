@@ -1,0 +1,464 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://architekturkosmos.ch/schema/kosmo-reference.schema.json",
+  "title": "KosmoReference",
+  "description": "Kanonischer Vertrag einer Architektur-Referenz zwischen der Website (architekturkosmos.ch, veröffentlichte Teilmenge) und KosmoOrbit (Master/voller Bestand). Treu abgeleitet aus lib/types.ts (Entry) und dem realen Inhalt von data/mock-entries.json (Batch 1, Codex-Übernahme). Pflichtfelder sind die Felder, die lib/types.ts als nicht-optional führt UND die real in jedem der 112 Einträge vorkommen. Alles andere ist optional, damit sowohl schlanke Live-Website-Einträge als auch reiche Master-Einträge (inkl. später private Einträge) valid bleiben.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "id",
+    "slug",
+    "title",
+    "entry_type",
+    "year_start",
+    "authors",
+    "style_sector",
+    "themes",
+    "short_description",
+    "one_sentence",
+    "full_description",
+    "media",
+    "source_quality"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "description": "Stabiler Schlüssel, in der Praxis identisch mit slug." },
+    "slug": { "type": "string", "minLength": 1, "description": "URL-/Dateisystem-sicherer Schlüssel (kebab-case)." },
+    "title": { "type": "string", "minLength": 1 },
+    "entry_type": { "$ref": "#/$defs/entryType" },
+    "year_start": { "type": "integer", "description": "Kann negativ sein (v. Chr.)." },
+    "year_end": { "type": ["integer", "null"], "description": "Optional; real in mock-entries.json kommt auch explizit null vor (laufendes/offenes Projekt) statt weggelassenem Feld." },
+    "authors": { "type": "array", "items": { "type": "string" } },
+    "city": { "type": ["string", "null"] },
+    "country": { "type": ["string", "null"] },
+    "style_sector": { "$ref": "#/$defs/styleSectorId" },
+    "lecture_cluster": { "type": "array", "items": { "type": "string" } },
+    "themes": { "type": "array", "items": { "type": "string" } },
+    "short_description": { "type": "string" },
+    "one_sentence": { "type": "string" },
+    "full_description": { "type": "string" },
+    "media": { "type": "array", "items": { "$ref": "#/$defs/entryMedia" } },
+    "source_quality": { "type": "string" },
+    "source_documents": { "type": "array", "items": { "type": "string" } },
+    "source_url": { "type": "string" },
+    "source_assets": { "type": "array", "items": { "$ref": "#/$defs/entrySourceAsset" } },
+    "geo": { "$ref": "#/$defs/entryGeo" },
+    "materials": { "$ref": "#/$defs/entryMaterials" },
+    "program": { "$ref": "#/$defs/entryProgram" },
+    "context": { "$ref": "#/$defs/entryContext" },
+    "architecture_text": { "$ref": "#/$defs/entryArchitectureText" },
+    "model_3d": { "$ref": "#/$defs/entryModel3D" },
+    "vibes": { "type": "array", "items": { "type": "string" } },
+    "source_candidates": { "type": "array", "items": { "$ref": "#/$defs/sourceCandidate" } },
+    "asset_candidates": { "type": "array", "items": { "$ref": "#/$defs/assetCandidate" } },
+    "model_assets": { "type": "array", "items": { "$ref": "#/$defs/entryModelAsset" } },
+    "model_packages": { "type": "array", "items": { "$ref": "#/$defs/modelPackage" } },
+    "splat_assets": { "type": "array", "items": { "$ref": "#/$defs/entrySplatAsset" } },
+    "analysis_layers": { "type": "array", "items": { "$ref": "#/$defs/entryAnalysisLayer" } },
+    "analysis_observations": { "type": "array", "items": { "$ref": "#/$defs/analysisObservation" } },
+    "ingestion_status": { "$ref": "#/$defs/ingestionStatus" },
+    "database_tags": { "type": "array", "items": { "type": "string" } },
+    "database_profile": { "$ref": "#/$defs/entryDatabaseProfile" },
+    "atlas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["year", "ring", "angle", "radius", "cluster"],
+      "properties": {
+        "year": { "type": "number" },
+        "ring": { "type": "string" },
+        "angle": { "type": "number" },
+        "radius": { "type": "number" },
+        "cluster": { "type": "string" }
+      }
+    },
+    "visibility": {
+      "$ref": "#/$defs/visibility",
+      "default": "public",
+      "description": "Sichtbarkeits-Konzept (neu in Batch 1): 'public' darf auf die Website und in gebündelte App-Seeds; 'private' bleibt ausschliesslich im KosmoOrbit-Master (Owner-Notizen, ungeklärte Rechte, Rohquellen). Fehlt das Feld, gilt 'public' als Default (Rückwärtskompatibilität mit der bisherigen Website-Datenbasis, die keine private Kategorie kannte)."
+    }
+  },
+  "$defs": {
+    "visibility": { "type": "string", "enum": ["public", "private"] },
+    "entryType": {
+      "type": "string",
+      "enum": ["building", "urban_plan", "landscape_project", "text", "theory", "map", "infrastructure", "object", "event"]
+    },
+    "styleSectorId": {
+      "type": "string",
+      "enum": [
+        "classical_architecture",
+        "pre_modern_architecture",
+        "modern_architecture",
+        "postwar_modern_architecture",
+        "sustainable_architecture",
+        "vernacular_architecture"
+      ]
+    },
+    "relationType": {
+      "type": "string",
+      "enum": [
+        "influences",
+        "responds_to",
+        "shares_theme",
+        "same_author",
+        "same_place",
+        "typological_reference",
+        "structural_reference",
+        "material_reference",
+        "source_connection",
+        "context"
+      ]
+    },
+    "entryMediaType": { "type": "string", "enum": ["exterior", "interior", "section", "plan"] },
+    "mediaLicense": {
+      "type": "string",
+      "enum": ["personal_only", "cc_by", "cc_by_sa", "all_rights_reserved", "public_domain", "own_work", "cc0"]
+    },
+    "reviewStatus": { "type": "string", "enum": ["draft", "reviewed", "verified", "needs_source"] },
+    "reviewStatusWithPlanned": { "type": "string", "enum": ["planned", "draft", "reviewed", "verified", "needs_source"] },
+    "rightsStatus": {
+      "type": "string",
+      "enum": ["unknown", "needs_permission", "private_research", "licensed", "public_domain", "own_work"]
+    },
+    "entryMedia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "label", "placeholder"],
+      "properties": {
+        "type": { "$ref": "#/$defs/entryMediaType" },
+        "label": { "type": "string" },
+        "placeholder": { "type": "string" },
+        "url": { "type": "string" },
+        "credit": { "type": "string" },
+        "source_url": { "type": "string" },
+        "license": { "$ref": "#/$defs/mediaLicense" }
+      }
+    },
+    "entrySourceAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "label", "url"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["image", "drawing", "plan", "section", "model", "analysis"] },
+        "label": { "type": "string" },
+        "url": { "type": "string" },
+        "credit": { "type": "string" },
+        "source_url": { "type": "string" }
+      }
+    },
+    "entryModelAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_type", "title", "r2_key", "format", "lod_level", "source_basis", "generation_method", "review_status"],
+      "properties": {
+        "model_type": {
+          "type": "string",
+          "enum": ["full_model", "low_poly_model", "structure_model", "tectonic_model", "site_model", "mass_model"]
+        },
+        "title": { "type": "string" },
+        "r2_key": { "type": "string" },
+        "format": { "type": "string", "enum": ["glb", "gltf", "usdz", "obj", "fbx", "json"] },
+        "lod_level": {
+          "type": "string",
+          "enum": ["preview", "low", "medium", "high", "source", "study"],
+          "description": "'study' ist real in mock-entries.json vorhanden, aber nicht im lib/types.ts-Union deklariert (Datendrift der Website selbst)."
+        },
+        "source_basis": { "type": "string" },
+        "generation_method": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "manual",
+            "ai_assisted",
+            "procedural",
+            "photogrammetry",
+            "survey_derived",
+            "source_reconstruction",
+            "diagrammatic_reconstruction"
+          ],
+          "description": "'diagrammatic_reconstruction' ist real in mock-entries.json vorhanden, aber nicht im lib/types.ts-Union deklariert (Datendrift der Website selbst)."
+        },
+        "review_status": { "$ref": "#/$defs/reviewStatus" },
+        "confidence_score": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "entryAnalysisLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysis_type", "summary", "review_status"],
+      "properties": {
+        "analysis_type": {
+          "type": "string",
+          "enum": [
+            "structure",
+            "tectonics",
+            "spatial_order",
+            "material_system",
+            "circulation",
+            "typology",
+            "urban_context",
+            "landscape_system",
+            "filter_classification",
+            "source_reconstruction"
+          ]
+        },
+        "summary": { "type": "string" },
+        "data": { "type": "object" },
+        "r2_key": { "type": "string" },
+        "review_status": { "$ref": "#/$defs/reviewStatus" }
+      }
+    },
+    "ingestionStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "source_status", "asset_status", "model_status"],
+      "properties": {
+        "stage": { "type": "string", "enum": ["not_started", "captured", "needs_review", "ready_for_wormhole", "published"] },
+        "source_status": { "type": "string", "enum": ["none", "candidate", "attached", "reviewed"] },
+        "asset_status": { "type": "string", "enum": ["none", "candidate", "rights_blocked", "ready"] },
+        "model_status": { "type": "string", "enum": ["none", "planned", "manual_ready", "generated_draft", "reviewed"] },
+        "local_storage_bytes": { "type": "number" },
+        "local_storage_limit_bytes": { "type": "number" },
+        "updated_at": { "type": "string" }
+      }
+    },
+    "sourceCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_type", "title", "reliability_level", "rights_status"],
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "description": "In lib/types.ts als geschlossenes Union deklariert, real in mock-entries.json aber ein sehr breites offenes Vokabular (über 90 beobachtete Werte, z.B. 'official_monument_record', 'museum_collection', 'course_page'). Als offener String modelliert, um die realen 112 Einträge treu abzubilden."
+        },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "local_path": { "type": "string" },
+        "reliability_level": {
+          "type": "string",
+          "description": "In lib/types.ts als geschlossenes Union deklariert (unverified/lecture_reference/secondary_source/primary_source/verified), real in mock-entries.json aber ein offenes Vokabular (u.a. 'high', 'medium', 'existing_entry_source', 'primary_institutional_source', 'academic_context'). Als offener String modelliert, um die realen 112 Einträge treu abzubilden."
+        },
+        "rights_status": {
+          "type": "string",
+          "description": "In lib/types.ts als geschlossenes Union deklariert, real in mock-entries.json aber ein offenes Vokabular (u.a. 'link_only', 'citation_only', 'public_metadata_only', 'record_level_license_required'). Als offener String modelliert."
+        },
+        "notes": { "type": "string" },
+        "project_specific": { "type": "boolean", "description": "Real in mock-entries.json vorkommendes Flag (Quelle bezieht sich spezifisch auf dieses Projekt statt allgemein auf den Ort/Architekten), nicht in lib/types.ts deklariert." }
+      }
+    },
+    "assetCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "title", "rights_status", "public_display_allowed"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["image", "drawing", "plan", "section", "pdf", "model", "analysis", "other"] },
+        "media_slot": { "$ref": "#/$defs/entryMediaType" },
+        "title": { "type": "string" },
+        "local_path": { "type": "string" },
+        "planned_r2_key": { "type": "string" },
+        "rights_status": { "$ref": "#/$defs/rightsStatus" },
+        "public_display_allowed": { "type": "boolean" },
+        "bytes": { "type": "number" }
+      }
+    },
+    "modelPackage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_type", "status", "planned_paths"],
+      "properties": {
+        "package_type": {
+          "type": "string",
+          "enum": ["reference_model", "analysis_model", "blender_package", "archicad_package"]
+        },
+        "status": { "type": "string", "enum": ["planned", "manual_ready", "generated_draft", "reviewed"] },
+        "planned_paths": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      }
+    },
+    "entrySplatAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["splat_type", "title", "r2_key", "source_basis", "generation_method", "review_status"],
+      "properties": {
+        "splat_type": { "type": "string", "enum": ["reality_layer", "survey_layer", "atmosphere_layer"] },
+        "title": { "type": "string" },
+        "r2_key": { "type": "string" },
+        "alternate_r2_key": { "type": "string" },
+        "source_basis": { "type": "string" },
+        "generation_method": {
+          "type": "string",
+          "enum": ["gaussian_splatting_planned", "gaussian_splatting", "photogrammetry", "video_capture", "manual"]
+        },
+        "review_status": { "$ref": "#/$defs/reviewStatusWithPlanned" },
+        "use_case": { "type": "string" }
+      }
+    },
+    "analysisObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysis_type", "label", "source"],
+      "properties": {
+        "analysis_type": {
+          "type": "string",
+          "enum": [
+            "structure",
+            "tectonics",
+            "spatial_order",
+            "material_system",
+            "circulation",
+            "typology",
+            "urban_context",
+            "landscape_system",
+            "filter_classification",
+            "source_reconstruction",
+            "roof_form",
+            "material_tag",
+            "blender_query"
+          ]
+        },
+        "label": { "type": "string" },
+        "confidence_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "type": "string", "enum": ["manual", "ai_assisted", "source_inferred", "model_analysis"] }
+      }
+    },
+    "entryDatabaseProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "r2_prefix", "source_count", "media_count", "model_count", "analysis_count", "tag_count"],
+      "properties": {
+        "status": { "type": "string", "enum": ["draft", "reviewed", "published", "needs_sources"] },
+        "r2_prefix": { "type": "string" },
+        "source_count": { "type": "integer" },
+        "media_count": { "type": "integer" },
+        "model_count": { "type": "integer" },
+        "analysis_count": { "type": "integer" },
+        "tag_count": { "type": "integer" },
+        "rights_summary": { "type": "string", "description": "Real in mock-entries.json vorkommende Freitext-Zusammenfassung der Rechtelage, nicht in lib/types.ts deklariert." },
+        "updated_at": { "type": "string" }
+      }
+    },
+    "entryGeo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lat": { "type": "number" },
+        "lon": { "type": "number" },
+        "latitude": { "type": "number", "description": "Real in mock-entries.json vorkommendes Duplikat von lat (Datendrift der Website selbst)." },
+        "longitude": { "type": "number", "description": "Real in mock-entries.json vorkommendes Duplikat von lon (Datendrift der Website selbst)." },
+        "city": { "type": "string" },
+        "country_code": { "type": "string" },
+        "canton": { "type": "string" },
+        "region": { "type": "string" },
+        "precision": {
+          "type": "string",
+          "description": "In lib/types.ts als geschlossenes Union deklariert (exact/site/city/region/approximate/unknown), real in mock-entries.json aber oft ein beschreibender freier Text (u.a. 'monument_on_acropolis_plateau', 'palace_city_world_heritage_landscape'). Als offener String modelliert, um die realen 112 Einträge treu abzubilden."
+        }
+      }
+    },
+    "entryMaterials": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary": { "type": "array", "items": { "type": "string" } },
+        "stone_type": { "type": "array", "items": { "type": "string" } },
+        "secondary": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      }
+    },
+    "entryProgram": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string" },
+        "subtype": { "type": "string" },
+        "public_access": {
+          "type": "string",
+          "description": "In lib/types.ts als geschlossenes Union deklariert (public/semi_public/private/restricted/unknown), real in mock-entries.json aber oft ein beschreibender freier Text (u.a. 'active_mosque_and_managed_heritage_visit', 'working_office_limited_public_access_grade_i_heritage'). Als offener String modelliert, um die realen 112 Einträge treu abzubilden."
+        },
+        "components": { "type": "array", "items": { "type": "string" }, "description": "Real in mock-entries.json vorkommende Liste von Programmbestandteilen (z.B. einzelne Bauten eines Ensembles), nicht in lib/types.ts deklariert." }
+      }
+    },
+    "entryContext": {
+      "type": "object",
+      "additionalProperties": { "description": "entry.context ist real in mock-entries.json ein offenes, pro Eintrag gewachsenes Beschreibungsbündel — über 14 weitere Schlüssel (u.a. landscape_relations, urban_context, construction_logic, worldview_relations, knowledge_context, climate_response, design_logic) kommen real vor, ohne in lib/types.ts deklariert zu sein. additionalProperties bleibt deshalb offen (string oder array of string), statt jeden Einzelfall zu erzwingen." },
+      "properties": {
+        "topography": { "type": "string" },
+        "setting": { "type": "string" },
+        "heritage_context": { "type": "array", "items": { "type": "string" } },
+        "climate": { "type": "string" },
+        "landscape_relation": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "entryModel3DPart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string", "enum": ["full", "structure", "facade", "interior", "site", "material", "mass", "low"] },
+        "glb_url": { "type": "string" },
+        "r2_key": { "type": "string" },
+        "material_tag": { "type": "string" },
+        "license": { "$ref": "#/$defs/mediaLicense" },
+        "review_status": { "$ref": "#/$defs/reviewStatusWithPlanned" }
+      }
+    },
+    "entryModel3D": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "glb_url": { "type": "string" },
+        "parts": { "type": "array", "items": { "$ref": "#/$defs/entryModel3DPart" } },
+        "splat_url": { "type": "string" },
+        "splat_capture_year": { "type": "integer" },
+        "analytical_dataset_year": { "type": "integer" },
+        "license": { "$ref": "#/$defs/mediaLicense" },
+        "source_basis": { "type": "string" }
+      }
+    },
+    "entryArchitectureTextChapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "text"],
+      "properties": {
+        "title": { "type": "string" },
+        "text": { "type": "string" },
+        "source_basis": { "type": "string" },
+        "review_status": {
+          "type": "string",
+          "description": "In lib/types.ts als geschlossenes Union deklariert (draft_review/reviewed/verified/needs_source_review), real in mock-entries.json aber ein breiteres Owner-Redaktions-Vokabular (u.a. 'owner_source_primary', 'source_enriched_review'). Als offener String modelliert, um die realen 112 Einträge treu abzubilden."
+        }
+      }
+    },
+    "entryArchitectureText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "overview", "chapters"],
+      "properties": {
+        "headline": { "type": "string" },
+        "overview": { "type": "string" },
+        "chapters": { "type": "array", "items": { "$ref": "#/$defs/entryArchitectureTextChapter" } },
+        "language": { "type": "string", "enum": ["de", "en", "mixed"] },
+        "generator": { "type": "string" },
+        "generated_at": { "type": "string" },
+        "review_status": {
+          "type": "string",
+          "description": "In lib/types.ts als geschlossenes Union deklariert, real in mock-entries.json aber ein breiteres Owner-Redaktions-Vokabular (u.a. 'needs_owner_review', 'owner_source_primary', 'source_enriched_review'). Als offener String modelliert, um die realen 112 Einträge treu abzubilden."
+        },
+        "source_basis": { "type": "array", "items": { "type": "object" } },
+        "public_use_allowed": { "type": "boolean", "description": "Real in mock-entries.json vorkommendes Owner-Flag, nicht in lib/types.ts deklariert." },
+        "source_priority": { "type": "string", "description": "Real in mock-entries.json vorkommender Owner-Hinweis auf die führende Quelle (z.B. 'owner_eth_pdf_primary'), nicht in lib/types.ts deklariert." }
+      }
+    },
+    "entryRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source_entry_id", "target_entry_id", "relation_type", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_entry_id": { "type": "string" },
+        "target_entry_id": { "type": "string" },
+        "relation_type": { "$ref": "#/$defs/relationType" },
+        "description": { "type": "string" }
+      }
+    }
+  }
+}
