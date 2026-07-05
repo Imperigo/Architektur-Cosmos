@@ -75,6 +75,15 @@ Render-Graph entstehen aus dem Doc, nie umgekehrt.
   anfasst und pusht (Workflows `.github/workflows/kosmo-orbit-desktop.yml` /
   `-ios.yml`). Keine Signing-Keys — Update = neuer Installer.
 
+## Modellgebrauch (Owner-Guideline — verbindlich)
+
+`docs/KI-MODELL-GUIDELINE.md` regelt, **welches Modell welche Arbeit macht** —
+für dieses Repo, für Kosmos Claude-Nutzung und für Kosmos lokale LLMs:
+**Fable = Urteil (härteste 10–15 %), Opus = Orchestrierung, Sonnet = Ausführung
+(inkl. Design gegen Spec).** Opus orchestriert und **delegiert Ausführung an
+Sonnet-Subagenten**; das Spitzenmodell ist nie der Orchestrator. Lokal spiegelt
+Kosmo das als **Kosmo-Meister / Kosmo-Leiter / Kosmo-Zeichner**.
+
 ## Arbeitsmuster (Owner-Mandat)
 
 Je Block: Feature → Tests (+ E2E) → **ROADMAP-Eintrag** (vor dem Phase-3-Marker)

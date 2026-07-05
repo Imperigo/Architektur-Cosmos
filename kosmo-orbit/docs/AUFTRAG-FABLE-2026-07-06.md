@@ -4,6 +4,11 @@
 Dies ist **kein Plan**, sondern die Auftragsnotiz. **Fable legt übermorzen den
 Plan aus** (erst erkunden, dann Plan, dann bauen — Owner-Muster).
 
+> **Modellgebrauch:** Nach `docs/KI-MODELL-GUIDELINE.md` — Fable legt den Plan/
+> Entwurf (Urteil), Opus orchestriert die Batches, **Sonnet baut** (Ausführung
+> inkl. Design). Zusätzlicher V2-Bauauftrag daraus: Kosmos lokale LLM-Staffelung
+> **Kosmo-Meister / Kosmo-Leiter / Kosmo-Zeichner** (Teil C der Guideline).
+
 ## Was übernommen wird (bisher beim Codex-Worker)
 
 Der Owner zieht die Entwicklung vom **Codex-Worker** zu sich (Opus/Fable). Neu in
