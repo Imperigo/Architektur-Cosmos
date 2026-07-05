@@ -6,6 +6,9 @@
  * auf der HomeStation.
  */
 
+/** D1 (KosmoData-Dach): Sichtbarkeits-Konzept wie bei Referenzen/Assets — Bürodaten bleiben privat. */
+export type LearningVisibility = 'public' | 'private';
+
 export interface Learning {
   ts: string;
   /** 'gut' = so weitermachen, 'schlecht' = vermeiden. */
@@ -14,6 +17,13 @@ export interface Learning {
   context: string;
   /** Optionale Notiz des Architekten. */
   note?: string;
+  /**
+   * D1 (KosmoData-Dach): 'public' darf über die Dach-Suche/Übersicht hinaus
+   * geteilt werden, 'private' bleibt Büro-intern. Alteinträge ohne dieses
+   * Feld gelten beim Lesen (`LearningJournal.all`) als 'private' — keine
+   * Migration nötig, der Default greift beim Zugriff.
+   */
+  visibility?: LearningVisibility;
 }
 
 export interface MemoryStore {
@@ -54,8 +64,9 @@ export class LearningJournal {
     this.store.save(this.entries);
   }
 
+  /** Alteinträge ohne `visibility` erscheinen hier als 'private' (Default beim Lesen, keine Migration). */
   get all(): readonly Learning[] {
-    return this.entries;
+    return this.entries.map((e) => (e.visibility === undefined ? { ...e, visibility: 'private' } : e));
   }
 
   /** Kuration: Eintrag entfernen (vor dem Training aussortieren). */

@@ -308,7 +308,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         {
           name: 'quellen_suchen',
           description:
-            'Durchsucht ALLE Projektquellen in einem Zug: die Wissensbasis (in KosmoPrepare aufgenommene Grundlagen wie Normen-Auszüge, Wettbewerbsprogramme, Baubeschriebe), das Wettbewerbsdossier und das Lernjournal des Büros. Liefert belegte Abschnitte mit Marken [Qn]. Nutze es bei Fragen nach Vorgaben, Programmen, Normen oder Bürowissen — und zitiere die Marken im Antworttext.',
+            'Durchsucht ALLE Projektquellen in einem Zug: die Wissensbasis (in KosmoPrepare aufgenommene Grundlagen wie Normen-Auszüge, Wettbewerbsprogramme, Baubeschriebe), das Wettbewerbsdossier, das Lernjournal des Büros, die KosmoData-Referenzbibliothek und die KosmoAsset-Objektbibliothek. Liefert belegte Abschnitte mit Marken [Qn]. Nutze es bei Fragen nach Vorgaben, Programmen, Normen, Referenzen, Objekten oder Bürowissen — und zitiere die Marken im Antworttext.',
           parameters: {
             type: 'object',
             properties: {
@@ -864,9 +864,25 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                       title={`${ref.text.slice(0, 180)}${ref.text.length > 180 ? ' …' : ''}`}
                       onClick={() => {
                         useQuellen.getState().springe(ref);
-                        (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open(
-                          ref.typ === 'journal' ? 'train' : 'prepare',
-                        );
+                        // D1 (KosmoData-Dach): Referenz/Asset springen über die bestehenden
+                        // sessionStorage-Brücken (wie DataWorkspace/AssetWorkspace es auch
+                        // untereinander tun), Wissen/Journal/Dossier über den Quellen-Store.
+                        if (ref.typ === 'referenz' && ref.docId) {
+                          try {
+                            sessionStorage.setItem('kosmo.data.openRef', ref.docId);
+                          } catch {
+                            /* privates Fenster — kein Sprung, kein Absturz */
+                          }
+                        } else if (ref.typ === 'asset' && ref.docId) {
+                          try {
+                            sessionStorage.setItem('kosmo.asset.openId', ref.docId);
+                          } catch {
+                            /* privates Fenster — kein Sprung, kein Absturz */
+                          }
+                        }
+                        const ziel =
+                          ref.typ === 'journal' ? 'train' : ref.typ === 'referenz' ? 'data' : ref.typ === 'asset' ? 'asset' : 'prepare';
+                        (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open(ziel);
                       }}
                       style={{
                         all: 'unset',

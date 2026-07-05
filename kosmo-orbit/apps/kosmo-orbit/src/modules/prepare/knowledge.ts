@@ -6,6 +6,9 @@
  * via Bridge/bge-m3 folgt). Alles lokal — Bürodokumente verlassen das Gerät nie.
  */
 
+/** D1 (KosmoData-Dach): Sichtbarkeits-Konzept wie bei Referenzen/Assets — Bürodaten bleiben privat. */
+export type KnowledgeVisibility = 'public' | 'private';
+
 export interface KnowledgeDoc {
   id: string;
   name: string;
@@ -13,6 +16,13 @@ export interface KnowledgeDoc {
   addedAt: string;
   pages?: number;
   chunkCount: number;
+  /**
+   * D1 (KosmoData-Dach): Default 'private' — Bürodokumente bleiben privat.
+   * Alt-Dokumente ohne dieses Feld werden beim Lesen (`listDocs`) als
+   * 'private' normalisiert; IndexedDB ist per-Record schemalos, es braucht
+   * keine Versionsmigration.
+   */
+  visibility?: KnowledgeVisibility;
 }
 
 export interface KnowledgeChunk {
@@ -157,6 +167,7 @@ export async function ingestFile(file: File, source: KnowledgeDoc['source'] = 'l
     addedAt: new Date().toISOString(),
     ...(pages !== undefined ? { pages } : {}),
     chunkCount: chunks.length,
+    visibility: 'private',
   };
 
   // Embeddings, wenn die Bridge da ist — sonst bleibt die Stichwort-Suche
@@ -197,7 +208,10 @@ export async function listDocs(): Promise<KnowledgeDoc[]> {
   const tx = db.transaction('docs', 'readonly');
   const all = await reqResult(tx.objectStore('docs').getAll() as IDBRequest<KnowledgeDoc[]>);
   db.close();
-  return all.sort((a, b) => b.addedAt.localeCompare(a.addedAt));
+  // D1: Alt-Dokumente ohne `visibility` gelten beim Lesen als 'private' — keine DB-Migration nötig.
+  return all
+    .map((d) => (d.visibility === undefined ? { ...d, visibility: 'private' as const } : d))
+    .sort((a, b) => b.addedAt.localeCompare(a.addedAt));
 }
 
 export async function removeDoc(docId: string): Promise<void> {
@@ -287,6 +301,7 @@ export async function importiereBasis(
       source: 'basis',
       addedAt: new Date().toISOString(),
       chunkCount: q.chunks.length,
+      visibility: 'private',
     } satisfies KnowledgeDoc);
     const store = tx.objectStore('chunks');
     q.chunks.forEach((c, i) =>

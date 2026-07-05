@@ -2,15 +2,19 @@ import { create } from 'zustand';
 import type { Learning } from '@kosmo/ai';
 import type { DossierEintrag } from '@kosmo/kernel';
 import { searchKnowledge } from '../modules/prepare/knowledge';
+import { loadReferences } from '../modules/data/DataWorkspace';
+import { listeGlb } from './asset-bibliothek';
 
 /**
- * Abruf-Index (V2-B1) — EINE Quellensuche über alles, was das Büro weiss:
- * Wissensbasis (KosmoPrepare), Lernjournal (Feedback) und Wettbewerbsdossier.
- * Kosmo zitiert Treffer als [Qn]; die Chips unter der Antwort springen über
- * diesen Store zur Quelle (Prepare-Highlight bzw. Train-Kuration).
+ * Abruf-Index (V2-B1, D1 KosmoData-Dach) — EINE Quellensuche über alles,
+ * was das Büro weiss: Wissensbasis (KosmoPrepare), Lernjournal (Feedback),
+ * Wettbewerbsdossier — UND (D1) die Referenzbibliothek (KosmoData) und die
+ * Objekt-Bibliothek (KosmoAsset). Kosmo zitiert Treffer als [Qn]; die Chips
+ * unter der Antwort springen über diesen Store bzw. die bestehenden
+ * sessionStorage-Brücken zur Quelle.
  */
 
-export type QuellenTyp = 'wissen' | 'journal' | 'dossier';
+export type QuellenTyp = 'wissen' | 'journal' | 'dossier' | 'referenz' | 'asset';
 
 export interface QuellenRef {
   /** Laufende Beleg-Nummer im Gespräch ([Q1], [Q2] …). */
@@ -60,9 +64,13 @@ function kwScore(query: string, text: string): number {
 }
 
 /**
- * Alle drei Quellen abfragen und mischen. Dossier-Treffer werden leicht
+ * Alle fünf Quellen abfragen und mischen (D1: KosmoData-Dach erweitert die
+ * ursprünglichen drei um Referenzen + Assets). Dossier-Treffer werden leicht
  * bevorzugt (bindende Regeln), Wissensbasis liefert die Substanz, das
- * Journal die Büro-Lehren. Rückgabe OHNE Nummern — die vergibt die Session.
+ * Journal die Büro-Lehren, Referenzen/Assets den gebauten/gesammelten
+ * Bestand. Rückgabe OHNE Nummern — die vergibt die Session. Baut defensiv:
+ * eine tote Quelle (kein Seed, kein Vault) wird übersprungen, nicht die
+ * ganze Suche zu Fall gebracht.
  */
 export async function sucheQuellen(
   query: string,
@@ -106,6 +114,56 @@ export async function sucheQuellen(
       });
     }
   });
+
+  // D1 (KosmoData-Dach): Referenzen — dieselbe Bibliothek wie das
+  // `referenzen_suchen`-Tool, aber jetzt auch mit [Qn]-Beleg zitierbar.
+  try {
+    for (const r of await loadReferences()) {
+      const hay = [
+        r.title,
+        r.city,
+        r.country,
+        ...(r.authors ?? []),
+        ...(r.themes ?? []),
+        ...(r.materials ?? []),
+        r.one_sentence,
+        r.short_description,
+      ]
+        .filter(Boolean)
+        .join(' ');
+      const score = kwScore(query, hay);
+      if (score > 0) {
+        treffer.push({
+          typ: 'referenz',
+          titel: `Referenz · ${r.title}`,
+          text: r.one_sentence ?? r.short_description ?? hay.slice(0, 300),
+          score,
+          docId: r.id,
+        });
+      }
+    }
+  } catch {
+    /* Referenz-Seed nicht erreichbar — Sammlung übersprungen */
+  }
+
+  // D1 (KosmoData-Dach): Assets — die Objekt-Bibliothek (KosmoAsset).
+  try {
+    for (const a of await listeGlb()) {
+      const hay = [a.title, a.asset_type, a.category, ...a.tags].filter(Boolean).join(' ');
+      const score = kwScore(query, hay);
+      if (score > 0) {
+        treffer.push({
+          typ: 'asset',
+          titel: `Asset · ${a.title}`,
+          text: `${a.asset_type} · ${a.category}${a.tags.length ? ` · ${a.tags.join(', ')}` : ''}`,
+          score,
+          docId: a.id,
+        });
+      }
+    }
+  } catch {
+    /* Objekt-Vault nicht erreichbar — Sammlung übersprungen */
+  }
 
   return treffer.sort((a, b) => b.score - a.score).slice(0, limit);
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Hairline, Karteikarte, KButton, KLade, Measure, Messrahmen, Panel, moduleHue } from '@kosmo/ui';
 import {
   bauteilkatalog,
@@ -16,6 +16,13 @@ import {
 import { useProject } from '../../state/project-store';
 import { setGlbContext } from '../design/Viewport3D';
 import { listeGlb, type KosmoAsset } from '../../state/asset-bibliothek';
+import {
+  sammlungen,
+  sucheDach,
+  type KosmoDataEintrag,
+  type KosmoDataSammlung,
+  type KosmoDataZahlen,
+} from '../../state/kosmodata-dach';
 
 /**
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
@@ -178,6 +185,8 @@ function oeffneInKosmoAsset(assetId: string) {
   (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('asset');
 }
 
+type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien';
+
 export function DataWorkspace() {
   const [entries, setEntries] = useState<RefEntry[]>([]);
   const [geladen, setGeladen] = useState(false);
@@ -185,7 +194,7 @@ export function DataWorkspace() {
   const [sector, setSector] = useState<string | null>(null);
   const [selected, setSelected] = useState<RefEntry | null>(null);
   const [syncState, setSyncState] = useState<'seed' | 'synced' | 'fehler'>('seed');
-  const [tab, setTab] = useState<'referenzen' | 'bauteile' | 'materialien'>('referenzen');
+  const [tab, setTab] = useState<DataTab>('referenzen');
   const [nurSammlung, setNurSammlung] = useState(false);
   const [sammlung, setSammlung] = useState<Set<string>>(() => {
     try {
@@ -287,6 +296,9 @@ export function DataWorkspace() {
         <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <Badge hue={moduleHue.data}>KosmoData</Badge>
+            <KButton size="sm" tone={tab === 'uebersicht' ? 'accent' : 'ghost'} onClick={() => setTab('uebersicht')} data-testid="tab-uebersicht">
+              Übersicht
+            </KButton>
             <KButton size="sm" tone={tab === 'referenzen' ? 'accent' : 'ghost'} onClick={() => setTab('referenzen')} data-testid="tab-referenzen">
               Referenzen
             </KButton>
@@ -297,11 +309,13 @@ export function DataWorkspace() {
               Materialien
             </KButton>
             <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
-              {tab === 'referenzen'
-                ? `${filtered.length} von ${entries.length} Referenzen`
-                : tab === 'bauteile'
-                  ? `${bauteilkatalog.length} Aufbauten`
-                  : `${materialkatalog.length} Materialien`}
+              {tab === 'uebersicht'
+                ? 'Fünf Sammlungen unter einem Dach'
+                : tab === 'referenzen'
+                  ? `${filtered.length} von ${entries.length} Referenzen`
+                  : tab === 'bauteile'
+                    ? `${bauteilkatalog.length} Aufbauten`
+                    : `${materialkatalog.length} Materialien`}
             </span>
             <div style={{ flex: 1 }} />
             <Badge hue={syncState === 'synced' && quelle === 'live' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
@@ -318,6 +332,9 @@ export function DataWorkspace() {
             </KButton>
           </div>
 
+          {tab === 'uebersicht' && (
+            <KosmoDataUebersicht entries={entries} setTab={setTab} setSelected={setSelected} />
+          )}
           {tab === 'bauteile' && <BauteilkatalogView />}
           {tab === 'materialien' && <MaterialkatalogView />}
 
@@ -623,6 +640,144 @@ export function DataWorkspace() {
           )}
         </aside>
       )}
+    </div>
+  );
+}
+
+const sammlungLabel: Record<KosmoDataSammlung, string> = {
+  referenz: 'Referenzen',
+  asset: 'Assets',
+  wissen: 'Wissen',
+  training: 'Training',
+  gedaechtnis: 'Gedächtnis',
+};
+
+const sammlungHue: Record<KosmoDataSammlung, string> = {
+  referenz: moduleHue.data,
+  asset: moduleHue.asset,
+  wissen: moduleHue.prepare,
+  training: moduleHue.train,
+  gedaechtnis: moduleHue.train,
+};
+
+/**
+ * D1 (KosmoData-Dach) — der Übersichts-Tab: fünf Sammlungen mit Zähler
+ * (`sammlungen()`) und eine Suche über alle fünf (`sucheDach`). Ein Klick
+ * springt in die passende Station: Referenz bleibt in KosmoData (Tab-Wechsel
+ * + Dossier), Asset/Wissen/Training/Gedächtnis wechseln die Station über die
+ * bestehenden Sprung-Wege (sessionStorage-Brücke bzw. reiner Stationswechsel).
+ */
+function KosmoDataUebersicht({
+  entries,
+  setTab,
+  setSelected,
+}: {
+  entries: RefEntry[];
+  setTab: (t: DataTab) => void;
+  setSelected: (e: RefEntry | null) => void;
+}) {
+  const [zahlen, setZahlen] = useState<KosmoDataZahlen | null>(null);
+  const [query, setQuery] = useState('');
+  const [treffer, setTreffer] = useState<KosmoDataEintrag[]>([]);
+  const suchSeq = useRef(0);
+
+  useEffect(() => {
+    void sammlungen().then(setZahlen);
+  }, []);
+
+  useEffect(() => {
+    const q = query.trim();
+    const seq = ++suchSeq.current;
+    if (q.length < 2) {
+      setTreffer([]);
+      return;
+    }
+    void sucheDach(q).then((t) => {
+      if (suchSeq.current === seq) setTreffer(t);
+    });
+  }, [query]);
+
+  const springeZuTreffer = (eintrag: KosmoDataEintrag) => {
+    const sprung = eintrag.sprung;
+    if (!sprung) return;
+    if (sprung.screen === 'data') {
+      setTab('referenzen');
+      const treffer2 = entries.find((e) => e.id === sprung.refId);
+      if (treffer2) setSelected(treffer2);
+      return;
+    }
+    if (sprung.screen === 'asset') {
+      oeffneInKosmoAsset(sprung.assetId);
+      return;
+    }
+    (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open(sprung.screen);
+  };
+
+  const sammlungIds: KosmoDataSammlung[] = ['referenz', 'asset', 'wissen', 'training', 'gedaechtnis'];
+
+  return (
+    <div data-testid="kosmodata-dach" style={{ display: 'grid', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 }}>
+        {zahlen
+          ? sammlungIds.map((s) => (
+              <Panel key={s} data-testid={`dach-zahl-${s}`} style={{ padding: '10px 12px', display: 'grid', gap: 6 }}>
+                <Badge hue={sammlungHue[s]}>{sammlungLabel[s]}</Badge>
+                <span style={{ fontSize: 22, fontWeight: 650 }}>{zahlen[s]}</span>
+              </Panel>
+            ))
+          : <KLade text="Sammlungen laden …" height={80} />}
+      </div>
+
+      <input
+        data-testid="dach-suche"
+        placeholder="Über alle fünf Sammlungen suchen: Referenzen, Assets, Wissen, Training, Gedächtnis …"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        style={{
+          padding: '9px 12px',
+          borderRadius: 'var(--k-radius-sm)',
+          border: '1px solid var(--k-line-strong)',
+          background: 'var(--k-raised)',
+          fontSize: 14,
+        }}
+      />
+
+      {query.trim().length >= 2 && treffer.length === 0 && (
+        <Messrahmen height={140} caption="Kein Treffer über die fünf Sammlungen — Begriff lockern" />
+      )}
+
+      <div style={{ display: 'grid', gap: 8 }}>
+        {treffer.map((t) => (
+          <Panel
+            key={t.id}
+            pad={false}
+            data-testid="dach-treffer"
+            onClick={() => springeZuTreffer(t)}
+            style={{ cursor: 'pointer', padding: '9px 12px', display: 'flex', alignItems: 'center', gap: 10 }}
+          >
+            <Badge hue={sammlungHue[t.sammlung]}>{sammlungLabel[t.sammlung]}</Badge>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 550 }}>{t.titel}</div>
+              <div
+                style={{
+                  fontSize: 11.5,
+                  color: 'var(--k-ink-faint)',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {t.kurztext}
+              </div>
+            </div>
+            <span data-testid="dach-treffer-visibility">
+              <Badge hue={t.visibility === 'public' ? 'var(--k-success)' : 'var(--k-warning)'}>
+                {t.visibility === 'public' ? 'Öffentlich' : 'Privat'}
+              </Badge>
+            </span>
+          </Panel>
+        ))}
+      </div>
     </div>
   );
 }

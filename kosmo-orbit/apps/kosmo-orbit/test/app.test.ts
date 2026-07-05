@@ -506,3 +506,193 @@ describe('Ref↔Asset-Verknüpfung (Batch 5)', () => {
     await loescheGlb(asset.id);
   });
 });
+
+// ── D1: KosmoData-Dach — vereinheitlichter Adapter über die fünf Sammlungen ──
+
+describe('visibility-Default (D1): Alt-Daten ohne Feld gelten beim Lesen als "private"', () => {
+  it('KnowledgeDoc ohne visibility wird von listDocs() als "private" normalisiert', async () => {
+    await new Promise<void>((resolve, reject) => {
+      const req = indexedDB.open('kosmo-wissen', 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains('docs')) db.createObjectStore('docs', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('chunks')) {
+          db.createObjectStore('chunks', { keyPath: 'id' }).createIndex('docId', 'docId');
+        }
+      };
+      req.onsuccess = () => {
+        const tx = req.result.transaction('docs', 'readwrite');
+        tx.objectStore('docs').put({
+          id: 'doc-alt-ohne-visibility',
+          name: 'Altes Normen-PDF.pdf',
+          source: 'lokal',
+          addedAt: '2020-01-01T00:00:00.000Z',
+          chunkCount: 0,
+        });
+        tx.oncomplete = () => {
+          req.result.close();
+          resolve();
+        };
+        tx.onerror = () => reject(tx.error);
+      };
+      req.onerror = () => reject(req.error);
+    });
+    const { listDocs } = await import('../src/modules/prepare/knowledge');
+    const alt = (await listDocs()).find((d) => d.id === 'doc-alt-ohne-visibility');
+    expect(alt?.visibility).toBe('private');
+  });
+
+  it('ingestFile setzt visibility="private" direkt auf dem neuen Dokument', async () => {
+    const origFetch = globalThis.fetch;
+    // Bridge/Embeddings deterministisch aus — nur die Chunk-/Doc-Erzeugung wird geprüft.
+    globalThis.fetch = (async () => {
+      throw new Error('keine Bridge im Test');
+    }) as unknown as typeof fetch;
+    try {
+      const { ingestFile, listDocs } = await import('../src/modules/prepare/knowledge');
+      const datei = new File(['Ein frisch aufgenommenes Dokument mit genug Fliesstext.'], 'neu.txt', {
+        type: 'text/plain',
+      });
+      const doc = await ingestFile(datei);
+      expect(doc.visibility).toBe('private');
+      const geladen = (await listDocs()).find((d) => d.id === doc.id);
+      expect(geladen?.visibility).toBe('private');
+    } finally {
+      globalThis.fetch = origFetch;
+    }
+  });
+
+  it('Learning ohne visibility wird von LearningJournal.all als "private" behandelt', async () => {
+    const { LearningJournal } = await import('@kosmo/ai');
+    const altbestand = [
+      { ts: '2020-01-01T00:00:00.000Z', sentiment: 'gut' as const, context: 'Alter Eintrag ohne Sichtbarkeitsfeld' },
+    ];
+    const journal = new LearningJournal({ load: () => altbestand, save: () => undefined });
+    expect(journal.all[0]?.visibility).toBe('private');
+    // Neue, EXPLIZIT öffentlich markierte Einträge bleiben unangetastet.
+    const oeffentlich = new LearningJournal({
+      load: () => [{ ts: '2026-01-01T00:00:00.000Z', sentiment: 'gut' as const, context: 'Bewusst geteilt', visibility: 'public' as const }],
+      save: () => undefined,
+    });
+    expect(oeffentlich.all[0]?.visibility).toBe('public');
+  });
+});
+
+describe('KosmoData-Dach (D1): vereinheitlichter Adapter über die fünf Sammlungen', () => {
+  it('sammlungen() zählt defensiv — eine tote Quelle (kein Netz) liefert 0 statt Absturz', async () => {
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      throw new Error('kein Netz — Referenz-Seed nicht erreichbar');
+    }) as unknown as typeof fetch;
+    try {
+      const { sammlungen } = await import('../src/state/kosmodata-dach');
+      const zahlen = await sammlungen();
+      expect(zahlen.referenz).toBe(0); // Quelle tot -> defensiv 0, kein Crash
+      expect(typeof zahlen.asset).toBe('number');
+      expect(typeof zahlen.wissen).toBe('number');
+      expect(typeof zahlen.training).toBe('number');
+      expect(typeof zahlen.gedaechtnis).toBe('number');
+    } finally {
+      globalThis.fetch = origFetch;
+    }
+  });
+
+  it('sucheDach findet über mehrere Sammlungen (Referenz, Asset, Wissen, Training/Gedächtnis) und sortiert nach Score', async () => {
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async (url: unknown) => {
+      if (String(url).includes('kosmodata-seed.json')) {
+        return {
+          ok: true,
+          json: async () => ({
+            entries: [
+              { id: 'ref-beton-tkb', title: 'Terrassenhaus Bruchtobel', themes: ['Beton'], one_sentence: 'Ein Betonhaus am Hang.' },
+            ],
+          }),
+        };
+      }
+      throw new Error(`unerwarteter Fetch im Test: ${String(url)}`);
+    }) as unknown as typeof fetch;
+
+    // Assets: ein GLB mit passendem Tag.
+    const { speichereGlb, loescheGlb } = await import('../src/state/asset-bibliothek');
+    const asset = await speichereGlb(new File([new Uint8Array([1])], 'betonstuetze.glb'), { tags: ['beton'] });
+
+    // Wissen: ein Chunk direkt in kosmo-wissen seeden (wie im BM25-Mischungstest oben).
+    await new Promise<void>((resolve, reject) => {
+      const req = indexedDB.open('kosmo-wissen', 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains('docs')) db.createObjectStore('docs', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('chunks')) {
+          db.createObjectStore('chunks', { keyPath: 'id' }).createIndex('docId', 'docId');
+        }
+      };
+      req.onsuccess = () => {
+        const tx = req.result.transaction(['docs', 'chunks'], 'readwrite');
+        tx.objectStore('docs').put({
+          id: 'doc-betonnorm',
+          name: 'Betonnorm.pdf',
+          source: 'lokal',
+          addedAt: '2026-01-01T00:00:00.000Z',
+          chunkCount: 1,
+        });
+        tx.objectStore('chunks').put({
+          id: 'doc-betonnorm-0',
+          docId: 'doc-betonnorm',
+          docName: 'Betonnorm.pdf',
+          seq: 0,
+          text: 'Beton nach SIA 262 braucht eine Expositionsklasse.',
+        });
+        tx.oncomplete = () => {
+          req.result.close();
+          resolve();
+        };
+        tx.onerror = () => reject(tx.error);
+      };
+      req.onerror = () => reject(req.error);
+    });
+
+    // Training + Gedächtnis: dasselbe Lernjournal, per Notiz unterschieden — localStorage
+    // braucht dafür einen ECHTEN (nicht nur no-op) Fake, sonst sieht sucheDach()s eigene
+    // Journal-Instanz die eben hinzugefügten Einträge nicht.
+    const g = globalThis as Record<string, unknown>;
+    const backupLocalStorage = g['localStorage'];
+    const laden: Record<string, string> = {};
+    g['localStorage'] = {
+      getItem: (k: string) => laden[k] ?? null,
+      setItem: (k: string, v: string) => {
+        laden[k] = v;
+      },
+      removeItem: (k: string) => {
+        delete laden[k];
+      },
+    };
+    const { journalStore } = await import('../src/state/journal-store');
+    const { LearningJournal } = await import('@kosmo/ai');
+    const journal = new LearningJournal(journalStore());
+    journal.add({ sentiment: 'schlecht', context: 'Beton-Detail falsch vorgeschlagen', note: 'Beton nie ohne Gefälle vorschlagen' });
+    journal.add({ sentiment: 'gut', context: 'Beton-Sichtbeton sauber ausgeführt' });
+
+    try {
+      const { sucheDach } = await import('../src/state/kosmodata-dach');
+      const treffer = await sucheDach('beton');
+      const sammlungen = new Set(treffer.map((t) => t.sammlung));
+      expect(sammlungen.has('referenz')).toBe(true);
+      expect(sammlungen.has('asset')).toBe(true);
+      expect(sammlungen.has('wissen')).toBe(true);
+      expect(sammlungen.has('training')).toBe(true);
+      expect(sammlungen.has('gedaechtnis')).toBe(true);
+      // Der Wissens-Treffer trägt die Default-Sichtbarkeit 'private' (Alt-Doc ohne Feld).
+      const wissenTreffer = treffer.find((t) => t.sammlung === 'wissen');
+      expect(wissenTreffer?.visibility).toBe('private');
+      // Sortiert nach Score, absteigend.
+      for (let i = 1; i < treffer.length; i++) {
+        expect(treffer[i - 1]!.score ?? 0).toBeGreaterThanOrEqual(treffer[i]!.score ?? 0);
+      }
+    } finally {
+      globalThis.fetch = origFetch;
+      g['localStorage'] = backupLocalStorage;
+      await loescheGlb(asset.id);
+    }
+  });
+});
