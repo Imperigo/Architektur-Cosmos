@@ -1,6 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Badge, Hairline, Karteikarte, KButton, KLade, Measure, Messrahmen, Panel, moduleHue } from '@kosmo/ui';
-import { bauteilkatalog, gesamtdicke, ladeReferenzenLive, materialkatalog, uWert, type KatalogEintrag } from '@kosmo/data';
+import {
+  bauteilkatalog,
+  gesamtdicke,
+  ladeReferenzenLive,
+  materialkatalog,
+  uWert,
+  type KatalogEintrag,
+  type RefEntry,
+  type RefEntryAnalysisLayer,
+  type RefEntryMedia,
+  type RefEntryMediaType,
+  type RefReviewStatus,
+} from '@kosmo/data';
 import { useProject } from '../../state/project-store';
 import { setGlbContext } from '../design/Viewport3D';
 
@@ -8,25 +20,15 @@ import { setGlbContext } from '../design/Viewport3D';
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
  * Offline-Seed (112 kuratierte Einträge aus dem Repo) + Live-Sync von der
  * Website, Suche + Facetten. Referenz-3D-Import folgt (Q14).
+ *
+ * Batch 2 der Codex-Übernahme: das Detail-Dossier zeigt zusätzlich die
+ * reichen Felder aus dem Master-Datenmodell (`packages/kosmo-data/src/reference.ts`) —
+ * Medien-Galerie, Analyse-Ebenen, Geo, Materialprofil, Datenbankstatus und
+ * Sichtbarkeit. `RefEntry` selbst kommt jetzt aus `@kosmo/data` (Superset,
+ * strukturell rückwärtskompatibel zum bisherigen schlanken Typ hier).
  */
 
-export interface RefEntry {
-  id: string;
-  title: string;
-  year_start?: number | null;
-  year_end?: number | null;
-  authors: string[];
-  city?: string | null;
-  country?: string | null;
-  style_sector?: string | null;
-  themes: string[];
-  materials: string[];
-  program?: string | null;
-  one_sentence?: string | null;
-  short_description?: string | null;
-  hero?: string | null;
-  has_3d: boolean;
-}
+export type { RefEntry };
 
 let cache: RefEntry[] | null = null;
 
@@ -43,6 +45,122 @@ function formatYear(e: RefEntry): string {
   if (y == null) return '—';
   if (y < 0) return `${Math.abs(y)} v. Chr.`;
   return String(y);
+}
+
+/** D6 (Batch 2): kurze deutsche Beschriftungen fürs Dossier — kein Fremd-Vokabular im UI. */
+const reviewStatusLabel: Record<RefReviewStatus, string> = {
+  draft: 'Entwurf',
+  reviewed: 'Geprüft',
+  verified: 'Verifiziert',
+  needs_source: 'Quelle fehlt',
+};
+
+const reviewStatusHue: Record<RefReviewStatus, string> = {
+  draft: 'var(--k-ink-faint)',
+  reviewed: 'var(--k-info)',
+  verified: 'var(--k-success)',
+  needs_source: 'var(--k-warning)',
+};
+
+const dbStatusLabel: Record<string, string> = {
+  draft: 'Entwurf',
+  reviewed: 'Geprüft',
+  published: 'Veröffentlicht',
+  needs_sources: 'Quellen fehlen',
+};
+
+const mediaTypeLabel: Record<RefEntryMediaType, string> = {
+  exterior: 'Aussen',
+  interior: 'Innen',
+  section: 'Schnitt',
+  plan: 'Plan',
+};
+
+const analysisTypeLabel: Record<RefEntryAnalysisLayer['analysis_type'], string> = {
+  structure: 'Tragwerk',
+  tectonics: 'Tektonik',
+  spatial_order: 'Raumordnung',
+  material_system: 'Materialsystem',
+  circulation: 'Erschliessung',
+  typology: 'Typologie',
+  urban_context: 'Städtebau',
+  landscape_system: 'Landschaft',
+  filter_classification: 'Filterklassifikation',
+  source_reconstruction: 'Quellen-Rekonstruktion',
+};
+
+const entryTypeLabel: Record<string, string> = {
+  building: 'Gebäude',
+  urban_plan: 'Städtebau',
+  landscape_project: 'Landschaft',
+  text: 'Text',
+  theory: 'Theorie',
+  map: 'Karte',
+  infrastructure: 'Infrastruktur',
+  object: 'Objekt',
+  event: 'Ereignis',
+};
+
+/** Medien-Kachel: Bild mit Fallback auf Platzhalter-Label (kein Fremd-CSS, nur @kosmo/ui-Variablen). */
+function MediaThumb({ media }: { media: RefEntryMedia }) {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        height: 84,
+        borderRadius: 'var(--k-radius-sm)',
+        border: '1px solid var(--k-line)',
+        background: 'var(--k-field)',
+        overflow: 'hidden',
+      }}
+    >
+      <span
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'grid',
+          placeItems: 'center',
+          padding: '0 6px',
+          textAlign: 'center',
+          fontSize: 10,
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+          color: 'var(--k-ink-faint)',
+        }}
+      >
+        {mediaTypeLabel[media.type]}
+        {!media.url && ' · gesperrt'}
+      </span>
+      {media.url && (
+        <img
+          src={media.url}
+          alt={media.label}
+          loading="lazy"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={(ev) => ((ev.target as HTMLImageElement).style.display = 'none')}
+        />
+      )}
+      {media.credit && (
+        <span
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            fontSize: 8.5,
+            padding: '2px 4px',
+            background: 'color-mix(in srgb, var(--k-surface) 70%, transparent)',
+            color: 'var(--k-ink-faint)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {media.credit}
+        </span>
+      )}
+    </div>
+  );
 }
 
 export function DataWorkspace() {
@@ -269,8 +387,9 @@ export function DataWorkspace() {
 
       {selected && (
         <aside
+          data-testid="ref-detail-dossier"
           style={{
-            width: 330,
+            width: 420,
             borderLeft: '1px solid var(--k-line)',
             background: 'var(--k-surface)',
             overflow: 'auto',
@@ -294,28 +413,122 @@ export function DataWorkspace() {
           <Measure>
             {[formatYear(selected), selected.city, selected.country].filter(Boolean).join(' · ')}
           </Measure>
-          {selected.authors.length > 0 && (
-            <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{selected.authors.join(', ')}</div>
+          {(selected.authors ?? []).length > 0 && (
+            <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{(selected.authors ?? []).join(', ')}</div>
           )}
+
+          {/* D6 (Batch 2): Status- und Sichtbarkeitschips aus dem reichen Master-Modell. */}
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {selected.entry_type && <Badge hue={moduleHue.data}>{entryTypeLabel[selected.entry_type] ?? selected.entry_type}</Badge>}
+            {selected.database_profile && (
+              <Badge hue="var(--k-info)">Datenbank {dbStatusLabel[selected.database_profile.status] ?? selected.database_profile.status}</Badge>
+            )}
+            {selected.source_quality && <Badge hue="var(--k-ink-faint)">Quelle {selected.source_quality.replace(/_/g, ' ')}</Badge>}
+            <span data-testid="ref-visibility">
+              <Badge hue={(selected.visibility ?? 'public') === 'public' ? 'var(--k-success)' : 'var(--k-warning)'}>
+                {(selected.visibility ?? 'public') === 'public' ? 'Öffentlich' : 'Privat'}
+              </Badge>
+            </span>
+          </div>
+
           <Hairline />
           {selected.one_sentence && <div style={{ fontSize: 13, fontStyle: 'italic' }}>{selected.one_sentence}</div>}
-          {selected.short_description && (
-            <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', lineHeight: 1.55 }}>{selected.short_description}</div>
+          {(selected.full_description ?? selected.short_description) && (
+            <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', lineHeight: 1.55 }}>
+              {selected.full_description ?? selected.short_description}
+            </div>
           )}
-          {selected.themes.length > 0 && (
+          {(selected.themes ?? []).length > 0 && (
             <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-              {selected.themes.map((t) => (
+              {(selected.themes ?? []).map((t) => (
                 <span key={t} style={{ fontSize: 11, padding: '2px 8px', borderRadius: 999, background: 'var(--k-accent-wash)' }}>
                   {t}
                 </span>
               ))}
             </div>
           )}
-          {selected.materials.length > 0 && (
-            <div style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
-              Material: {selected.materials.join(', ')}
+
+          {/* Materialprofil: strukturiert (materials_detail) falls vorhanden, sonst die schlanke Tag-Liste. */}
+          {selected.materials_detail ? (
+            <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'grid', gap: 3 }}>
+              {(selected.materials_detail.primary ?? []).length > 0 && (
+                <div>Primär: {(selected.materials_detail.primary ?? []).join(', ')}</div>
+              )}
+              {(selected.materials_detail.stone_type ?? []).length > 0 && (
+                <div>Gestein: {(selected.materials_detail.stone_type ?? []).join(', ')}</div>
+              )}
+              {(selected.materials_detail.secondary ?? []).length > 0 && (
+                <div>Sekundär: {(selected.materials_detail.secondary ?? []).join(', ')}</div>
+              )}
+              {selected.materials_detail.notes && (
+                <div style={{ fontStyle: 'italic' }}>{selected.materials_detail.notes}</div>
+              )}
             </div>
+          ) : (
+            (selected.materials ?? []).length > 0 && (
+              <div style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+                Material: {(selected.materials ?? []).join(', ')}
+              </div>
+            )
           )}
+
+          {/* Geo: Koordinaten + Region/Kanton/Land als Text — keine Karten-Lib (Offline/CORS). */}
+          {selected.geo && (selected.geo.lat != null || selected.geo.region || selected.geo.canton) && (
+            <>
+              <Hairline />
+              <div data-testid="ref-geo" style={{ display: 'grid', gap: 3 }}>
+                <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+                  Geo
+                </div>
+                {selected.geo.lat != null && selected.geo.lon != null && (
+                  <Measure>
+                    {selected.geo.lat.toFixed(4)}°, {selected.geo.lon.toFixed(4)}°
+                  </Measure>
+                )}
+                <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+                  {[selected.geo.region, selected.geo.canton, selected.country].filter(Boolean).join(' · ')}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Medien-Galerie: Bilder mit öffentlicher URL als Thumbnail, sonst gesperrte Platzhalterkachel. */}
+          {(selected.media ?? []).length > 0 && (
+            <>
+              <Hairline />
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+                Medien
+              </div>
+              <div data-testid="ref-media" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+                {(selected.media ?? []).map((m, i) => (
+                  <MediaThumb key={`${m.type}-${i}`} media={m} />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Analyse-Ebenen: Typ + Zusammenfassung + Prüfstatus-Chip. */}
+          {(selected.analysis_layers ?? []).length > 0 && (
+            <>
+              <Hairline />
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+                Analyse
+              </div>
+              <div data-testid="ref-analyse" style={{ display: 'grid', gap: 8 }}>
+                {(selected.analysis_layers ?? []).map((layer, i) => (
+                  <div key={`${layer.analysis_type}-${i}`} style={{ display: 'grid', gap: 2 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ fontSize: 12.5, fontWeight: 600 }}>{analysisTypeLabel[layer.analysis_type] ?? layer.analysis_type}</span>
+                      <div style={{ flex: 1 }} />
+                      <Badge hue={reviewStatusHue[layer.review_status]}>{reviewStatusLabel[layer.review_status]}</Badge>
+                    </div>
+                    <div style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{layer.summary}</div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
           {selected.has_3d && (
             <>
               <Hairline />
