@@ -1,8 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
-import { Badge, Hairline, Karteikarte, KButton, KLade, Measure, Messrahmen, bestaetigen, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Badge, Hairline, KButton, KLade, Measure, Messrahmen, Panel, bestaetigen, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { BauteilkatalogView, MaterialkatalogView } from '../data/DataWorkspace';
 import { setGlbContext } from '../design/Viewport3D';
-import { assetBytes, listeGlb, loescheGlb, speichereGlb, type KosmoAsset } from '../../state/asset-bibliothek';
+import {
+  assetBytes,
+  listeGlb,
+  loescheGlb,
+  speichereGlb,
+  type AssetCategory,
+  type AssetFormatStatus,
+  type AssetType,
+  type KosmoAsset,
+  type KosmodataRefKind,
+  type RightsStatus,
+} from '../../state/asset-bibliothek';
 
 /**
  * KosmoAsset (V1-Finish P3, Owner-Q14) — die Bibliothek der Dinge:
@@ -10,11 +21,109 @@ import { assetBytes, listeGlb, loescheGlb, speichereGlb, type KosmoAsset } from 
  * GLB-Objekt-Bibliothek. Objekte liegen projektübergreifend in IndexedDB
  * (nie Megabytes durch Undo/Yjs); «Ins Modell» lädt sie als studierbaren
  * Referenz-Kontext in den Design-Viewport.
+ *
+ * Batch 4 der Codex-Übernahme hebt die Objekt-Bibliothek (Tab «Objekte») auf
+ * das UX-Niveau von KosmoData: Suche, Facetten (asset_type), Sammlung
+ * (Stern + localStorage) und ein Detail-Aside, das das reiche
+ * KosmoAsset-Manifest aus Batch 3 zeigt (Formate, Rechte, Sichtbarkeit,
+ * Masse, KosmoData-Bezüge). Bauteil-/Materialkatalog-Tabs bleiben unverändert.
  */
+
+const assetTypeLabel: Record<AssetType, string> = {
+  '2d_symbol': '2D-Symbol',
+  vector_plan_component: 'Vektor-Planteil',
+  texture: 'Textur',
+  material: 'Material',
+  glb_model: 'GLB-Objekt',
+  blender_collection: 'Blender-Sammlung',
+  archicad_layer: 'ArchiCAD-Layer',
+  detail: 'Detail',
+  component: 'Bauteil',
+  landscape: 'Landschaft',
+  lighting: 'Licht',
+  render_preset: 'Render-Preset',
+};
+
+const categoryLabel: Record<AssetCategory, string> = {
+  structure: 'Tragwerk',
+  facade: 'Fassade',
+  opening: 'Öffnung',
+  stair: 'Treppe',
+  roof: 'Dach',
+  ground: 'Boden',
+  landscape: 'Landschaft',
+  material: 'Material',
+  furniture: 'Möbel',
+  annotation: 'Annotation',
+  site: 'Situation',
+  atmosphere: 'Atmosphäre',
+  utility: 'Haustechnik',
+  component: 'Bauteil',
+};
+
+const rightsStatusLabel: Record<RightsStatus, string> = {
+  unknown: 'Unbekannt',
+  needs_permission: 'Erlaubnis nötig',
+  private_research: 'Privat/Recherche',
+  licensed: 'Lizenziert',
+  public_domain: 'Gemeinfrei',
+  own_work: 'Eigene Arbeit',
+  generated_needs_review: 'Generiert — Prüfung nötig',
+};
+
+const formatStatusLabel: Record<AssetFormatStatus, string> = {
+  ready: 'Bereit',
+  missing: 'Fehlt',
+  blocked: 'Gesperrt',
+};
+
+const formatStatusHue: Record<AssetFormatStatus, string> = {
+  ready: 'var(--k-success)',
+  missing: 'var(--k-ink-faint)',
+  blocked: 'var(--k-warning)',
+};
+
+const kosmodataRefKindLabel: Record<KosmodataRefKind, string> = {
+  reference_entry: 'Referenz-Eintrag',
+  source_entry: 'Quell-Eintrag',
+  project_context: 'Projekt-Kontext',
+  material_context: 'Material-Kontext',
+  typology_context: 'Typologie-Kontext',
+};
+
+/** Springt zu KosmoData und merkt den Bezug für die Vorauswahl im Dossier (sessionStorage-Brücke). */
+function oeffneInKosmoData(entryId: string) {
+  try {
+    sessionStorage.setItem('kosmo.data.openRef', entryId);
+  } catch {
+    /* privates Fenster — Klick zeigt nur den Bezug an, kein Sprung */
+  }
+  (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('data');
+}
 
 export function AssetWorkspace() {
   const [tab, setTab] = useState<'objekte' | 'bauteile' | 'materialien'>('objekte');
   const [objekte, setObjekte] = useState<KosmoAsset[] | null>(null);
+  const [query, setQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState<AssetType | null>(null);
+  const [selected, setSelected] = useState<KosmoAsset | null>(null);
+  const [nurSammlung, setNurSammlung] = useState(false);
+  const [sammlung, setSammlung] = useState<Set<string>>(() => {
+    try {
+      return new Set(JSON.parse(localStorage.getItem('kosmo.asset-sammlung') ?? '[]') as string[]);
+    } catch {
+      return new Set();
+    }
+  });
+  const toggleSammlung = (id: string) => {
+    setSammlung((alt) => {
+      const next = new Set(alt);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      localStorage.setItem('kosmo.asset-sammlung', JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   const laden = () => {
     void listeGlb()
@@ -25,6 +134,23 @@ export function AssetWorkspace() {
       });
   };
   useEffect(laden, []);
+
+  const typeCounts = useMemo(() => {
+    const counts = new Map<AssetType, number>();
+    for (const o of objekte ?? []) counts.set(o.asset_type, (counts.get(o.asset_type) ?? 0) + 1);
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+  }, [objekte]);
+
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    return (objekte ?? []).filter((o) => {
+      if (nurSammlung && !sammlung.has(o.id)) return false;
+      if (typeFilter && o.asset_type !== typeFilter) return false;
+      if (!q) return true;
+      const hay = [o.title, o.asset_type, o.category, ...o.tags].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }, [objekte, query, typeFilter, nurSammlung, sammlung]);
 
   const importieren = () => {
     const input = document.createElement('input');
@@ -43,88 +169,385 @@ export function AssetWorkspace() {
     input.click();
   };
 
+  const insModell = (o: KosmoAsset) => {
+    const url = URL.createObjectURL(new Blob([o.daten], { type: 'model/gltf-binary' }));
+    setGlbContext(url);
+    melde(`«${o.title}» liegt als Referenz-Kontext im Design-Viewport`, { ton: 'erfolg' });
+  };
+
+  const loeschen = (o: KosmoAsset) => {
+    void bestaetigen({
+      titel: `Objekt «${o.title}» löschen?`,
+      gefaehrlich: true,
+      bestaetigen: 'Löschen',
+    }).then((ok) => {
+      if (!ok) return;
+      void loescheGlb(o.id).then(() => {
+        if (selected?.id === o.id) setSelected(null);
+        laden();
+      });
+    });
+  };
+
   return (
-    <div className="k-einblenden" style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 20 }}>
-      <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <Badge hue={moduleHue.asset}>KosmoAsset</Badge>
-          <KButton size="sm" tone={tab === 'objekte' ? 'accent' : 'ghost'} onClick={() => setTab('objekte')} data-testid="tab-objekte">
-            Objekte (GLB)
-          </KButton>
-          <KButton size="sm" tone={tab === 'bauteile' ? 'accent' : 'ghost'} onClick={() => setTab('bauteile')} data-testid="asset-tab-bauteile">
-            Bauteilkatalog CH
-          </KButton>
-          <KButton size="sm" tone={tab === 'materialien' ? 'accent' : 'ghost'} onClick={() => setTab('materialien')} data-testid="asset-tab-materialien">
-            Materialien
-          </KButton>
-          <div style={{ flex: 1 }} />
-          {tab === 'objekte' && (
-            <KButton size="sm" tone="accent" onClick={importieren} data-testid="glb-import">
-              + GLB importieren
+    <div className="k-einblenden" style={{ position: 'absolute', inset: 0, display: 'flex' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
+        <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <Badge hue={moduleHue.asset}>KosmoAsset</Badge>
+            <KButton size="sm" tone={tab === 'objekte' ? 'accent' : 'ghost'} onClick={() => setTab('objekte')} data-testid="tab-objekte">
+              Objekte (GLB)
             </KButton>
+            <KButton size="sm" tone={tab === 'bauteile' ? 'accent' : 'ghost'} onClick={() => setTab('bauteile')} data-testid="asset-tab-bauteile">
+              Bauteilkatalog CH
+            </KButton>
+            <KButton size="sm" tone={tab === 'materialien' ? 'accent' : 'ghost'} onClick={() => setTab('materialien')} data-testid="asset-tab-materialien">
+              Materialien
+            </KButton>
+            {tab === 'objekte' && objekte !== null && (
+              <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
+                {filtered.length} von {objekte.length} Objekten
+              </span>
+            )}
+            <div style={{ flex: 1 }} />
+            {tab === 'objekte' && (
+              <KButton size="sm" tone="accent" onClick={importieren} data-testid="glb-import">
+                + GLB importieren
+              </KButton>
+            )}
+          </div>
+          <Hairline />
+
+          {tab === 'bauteile' && <BauteilkatalogView />}
+          {tab === 'materialien' && <MaterialkatalogView />}
+
+          {tab === 'objekte' && (
+            <>
+              <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+                Projektübergreifende Objekt-Bibliothek — Möbel, Bäume, Kontextbauten als GLB.
+                «Ins Modell» legt das Objekt als Referenz-Kontext in den Design-Viewport
+                (studierbar, nicht Teil der Pläne). Blender exportiert GLB direkt.
+              </span>
+
+              <input
+                data-testid="asset-search"
+                placeholder="Suchen: Titel, Typ, Kategorie, Tag …"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                style={{
+                  padding: '9px 12px',
+                  borderRadius: 'var(--k-radius-sm)',
+                  border: '1px solid var(--k-line-strong)',
+                  background: 'var(--k-raised)',
+                  fontSize: 14,
+                }}
+              />
+
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <KButton
+                  size="sm"
+                  tone={nurSammlung ? 'accent' : 'quiet'}
+                  data-testid="asset-sammlung"
+                  onClick={() => setNurSammlung(!nurSammlung)}
+                >
+                  ★ Sammlung ({sammlung.size})
+                </KButton>
+                {typeCounts.map(([t, n]) => (
+                  <KButton
+                    key={t}
+                    size="sm"
+                    tone={typeFilter === t ? 'accent' : 'quiet'}
+                    data-testid={`asset-facet-${t}`}
+                    onClick={() => setTypeFilter(typeFilter === t ? null : t)}
+                  >
+                    {assetTypeLabel[t] ?? t} · {n}
+                  </KButton>
+                ))}
+              </div>
+
+              {objekte === null && <KLade text="Bibliothek laden …" height={160} />}
+              {objekte !== null && objekte.length === 0 && (
+                <Messrahmen height={220} caption="Noch keine Objekte — «+ GLB importieren» füllt die Bibliothek" />
+              )}
+              {objekte !== null && objekte.length > 0 && filtered.length === 0 && (
+                <Messrahmen height={220} caption="Kein Objekt passt zur Suche — Begriff lockern oder Filter lösen" />
+              )}
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+                {filtered.map((o) => (
+                  <Panel
+                    key={o.id}
+                    pad={false}
+                    data-testid="asset-card"
+                    onClick={() => setSelected(o)}
+                    style={{ cursor: 'pointer', overflow: 'hidden', position: 'relative' }}
+                  >
+                    <button
+                      aria-label="Zur Sammlung"
+                      data-testid={`asset-stern-${o.id}`}
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        toggleSammlung(o.id);
+                      }}
+                      style={{
+                        all: 'unset',
+                        cursor: 'pointer',
+                        position: 'absolute',
+                        top: 6,
+                        right: 8,
+                        zIndex: 2,
+                        fontSize: 15,
+                        color: sammlung.has(o.id) ? 'var(--k-warning)' : 'var(--k-ink-faint)',
+                        textShadow: '0 0 3px var(--k-raised)',
+                      }}
+                    >
+                      {sammlung.has(o.id) ? '★' : '☆'}
+                    </button>
+                    <div data-testid="glb-karte" style={{ display: 'grid', gap: 6, padding: 10 }}>
+                      <AssetPreviewView asset={o} />
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
+                        <span style={{ fontWeight: 600, fontSize: 12.5, overflowWrap: 'anywhere' }}>{o.title}</span>
+                        <div style={{ flex: 1 }} />
+                        <Measure>{(assetBytes(o) / 1024).toFixed(0)} KB</Measure>
+                      </div>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        <Badge hue={moduleHue.asset}>{assetTypeLabel[o.asset_type] ?? o.asset_type}</Badge>
+                        <Badge hue="var(--k-ink-faint)">{categoryLabel[o.category] ?? o.category}</Badge>
+                      </div>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        {o.asset_type === 'glb_model' && (
+                          <KButton
+                            size="sm"
+                            tone="quiet"
+                            data-testid="glb-ins-modell"
+                            onClick={(ev) => {
+                              ev.stopPropagation();
+                              insModell(o);
+                            }}
+                          >
+                            Ins Modell
+                          </KButton>
+                        )}
+                        <KButton
+                          size="sm"
+                          tone="ghost"
+                          aria-label={`${o.title} löschen`}
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            loeschen(o);
+                          }}
+                        >
+                          Löschen
+                        </KButton>
+                      </div>
+                    </div>
+                  </Panel>
+                ))}
+              </div>
+            </>
           )}
         </div>
-        <Hairline />
+      </div>
 
-        {tab === 'bauteile' && <BauteilkatalogView />}
-        {tab === 'materialien' && <MaterialkatalogView />}
+      {tab === 'objekte' && selected && (
+        <aside
+          data-testid="asset-detail"
+          style={{
+            width: 420,
+            borderLeft: '1px solid var(--k-line)',
+            background: 'var(--k-surface)',
+            overflow: 'auto',
+            padding: 16,
+            display: 'grid',
+            gap: 10,
+            alignContent: 'start',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Badge hue={moduleHue.asset}>Objekt</Badge>
+            <div style={{ flex: 1 }} />
+            <KButton size="sm" tone="ghost" onClick={() => setSelected(null)}>
+              ×
+            </KButton>
+          </div>
 
-        {tab === 'objekte' && (
-          <>
-            <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
-              Projektübergreifende Objekt-Bibliothek — Möbel, Bäume, Kontextbauten als GLB.
-              «Ins Modell» legt das Objekt als Referenz-Kontext in den Design-Viewport
-              (studierbar, nicht Teil der Pläne). Blender exportiert GLB direkt.
+          <AssetPreviewView asset={selected} />
+
+          <div style={{ fontSize: 17, fontWeight: 600, overflowWrap: 'anywhere' }}>{selected.title}</div>
+
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <Badge hue={moduleHue.asset}>{assetTypeLabel[selected.asset_type] ?? selected.asset_type}</Badge>
+            <Badge hue="var(--k-ink-faint)">{categoryLabel[selected.category] ?? selected.category}</Badge>
+            <span data-testid="asset-visibility">
+              <Badge hue={selected.visibility === 'public' ? 'var(--k-success)' : 'var(--k-warning)'}>
+                {selected.visibility === 'public' ? 'Öffentlich' : 'Privat'}
+              </Badge>
             </span>
-            {objekte === null && <KLade text="Bibliothek laden …" height={160} />}
-            {objekte !== null && objekte.length === 0 && (
-              <Messrahmen height={220} caption="Noch keine Objekte — «+ GLB importieren» füllt die Bibliothek" />
-            )}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
-              {(objekte ?? []).map((o, i) => (
-                <Karteikarte key={o.id} nr={i + 1}>
-                  <div style={{ display: 'grid', gap: 6 }} data-testid="glb-karte">
-                    <GlbVorschau objekt={o} />
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-                      <span style={{ fontWeight: 600, fontSize: 12.5, overflowWrap: 'anywhere' }}>{o.title}</span>
-                      <div style={{ flex: 1 }} />
-                      <Measure>{(assetBytes(o) / 1024).toFixed(0)} KB</Measure>
-                    </div>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      <KButton
-                        size="sm"
-                        tone="quiet"
-                        data-testid="glb-ins-modell"
-                        onClick={() => {
-                          const url = URL.createObjectURL(new Blob([o.daten], { type: 'model/gltf-binary' }));
-                          setGlbContext(url);
-                          melde(`«${o.title}» liegt als Referenz-Kontext im Design-Viewport`, { ton: 'erfolg' });
-                        }}
-                      >
-                        Ins Modell
-                      </KButton>
+          </div>
+
+          {selected.tags.length > 0 && (
+            <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+              {selected.tags.map((t) => (
+                <span key={t} style={{ fontSize: 11, padding: '2px 8px', borderRadius: 999, background: 'var(--k-accent-wash)' }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <Hairline />
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+            Formate
+          </div>
+          <div data-testid="asset-formats" style={{ display: 'grid', gap: 4 }}>
+            {selected.formats.map((f, i) => (
+              <div key={`${f.format}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5 }}>
+                <Measure>{f.format.toUpperCase()}</Measure>
+                <span style={{ color: 'var(--k-ink-soft)' }}>{(f.bytes / 1024).toFixed(0)} KB</span>
+                <div style={{ flex: 1 }} />
+                <Badge hue={formatStatusHue[f.status]}>{formatStatusLabel[f.status]}</Badge>
+              </div>
+            ))}
+          </div>
+
+          <Hairline />
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+            Rechte
+          </div>
+          <div data-testid="asset-rights" style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'grid', gap: 3 }}>
+            <div>Status: {rightsStatusLabel[selected.rights_status] ?? selected.rights_status}</div>
+            <div>Öffentliche Nutzung: {selected.public_use_allowed ? 'Erlaubt' : 'Nicht erlaubt'}</div>
+          </div>
+
+          {selected.dimensions && (
+            <>
+              <Hairline />
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+                Masse
+              </div>
+              <div data-testid="asset-dimensions">
+                <Measure>
+                  {[
+                    selected.dimensions.width_m != null ? `B ${selected.dimensions.width_m} m` : null,
+                    selected.dimensions.depth_m != null ? `T ${selected.dimensions.depth_m} m` : null,
+                    selected.dimensions.height_m != null ? `H ${selected.dimensions.height_m} m` : null,
+                    selected.dimensions.scale ? `M ${selected.dimensions.scale}` : null,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </Measure>
+              </div>
+            </>
+          )}
+
+          {selected.kosmodata_refs.length > 0 && (
+            <>
+              <Hairline />
+              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+                KosmoData-Bezüge
+              </div>
+              <div data-testid="asset-refs" style={{ display: 'grid', gap: 6 }}>
+                {selected.kosmodata_refs.map((r, i) => (
+                  <div key={`${r.entry_id}-${i}`} style={{ display: 'grid', gap: 2, fontSize: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                       <KButton
                         size="sm"
                         tone="ghost"
-                        aria-label={`${o.title} löschen`}
-                        onClick={() => {
-                          void bestaetigen({
-                            titel: `Objekt «${o.title}» löschen?`,
-                            gefaehrlich: true,
-                            bestaetigen: 'Löschen',
-                          }).then((ok) => { if (ok) void loescheGlb(o.id).then(laden); });
-                        }}
+                        onClick={() => oeffneInKosmoData(r.entry_id)}
+                        data-testid={`asset-ref-oeffnen-${r.entry_id}`}
+                        title="In KosmoData öffnen (falls dort vorhanden)"
                       >
-                        Löschen
+                        {r.entry_id}
                       </KButton>
+                      <Badge hue="var(--k-info)">{r.relation.replace(/_/g, ' ')}</Badge>
                     </div>
+                    <div style={{ color: 'var(--k-ink-faint)' }}>
+                      {kosmodataRefKindLabel[r.kind] ?? r.kind} · {r.review_status.replace(/_/g, ' ')}
+                    </div>
+                    {r.notes && <div style={{ fontStyle: 'italic', color: 'var(--k-ink-soft)' }}>{r.notes}</div>}
                   </div>
-                </Karteikarte>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <Hairline />
+          <Measure>{new Date(selected.createdAt).toLocaleString('de-CH')}</Measure>
+
+          <Hairline />
+          <div style={{ display: 'flex', gap: 6 }}>
+            {selected.asset_type === 'glb_model' && (
+              <KButton size="sm" tone="accent" data-testid="asset-detail-ins-modell" onClick={() => insModell(selected)}>
+                Ins Modell
+              </KButton>
+            )}
+            <KButton size="sm" tone="ghost" onClick={() => loeschen(selected)}>
+              Löschen
+            </KButton>
+          </div>
+        </aside>
+      )}
+    </div>
+  );
+}
+
+/** Wählt den passenden Vorschau-Renderer je Asset — glb_model ist der Hauptfall
+ * (importierte GLBs), Swatch/Wireframe sind für spätere Material-/Komponenten-
+ * Assets vorbereitet (`preview.kind` aus dem Batch-3-Manifest). */
+function AssetPreviewView({ asset }: { asset: KosmoAsset }) {
+  if (asset.asset_type === 'glb_model') return <GlbVorschau objekt={asset} />;
+  const kind = asset.preview?.kind;
+  if (kind === 'material_swatch') return <MaterialSwatchVorschau asset={asset} />;
+  if (kind === 'axis_marker' || kind === 'wireframe_component') return <WireframeVorschau kind={kind} />;
+  return <Messrahmen height={120} caption={assetTypeLabel[asset.asset_type] ?? asset.asset_type} />;
+}
+
+/** Stabiler Hash → Farbton, solange kein PBR-Farbwert im Manifest steht. */
+function hashHue(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h % 360;
+}
+
+function MaterialSwatchVorschau({ asset }: { asset: KosmoAsset }) {
+  const hue = hashHue(asset.id);
+  return (
+    <div
+      data-testid="asset-preview-swatch"
+      title="Material-Swatch (Platzhalter — Farbwert folgt mit PBR-Daten)"
+      style={{
+        height: 120,
+        borderRadius: 'var(--k-radius-sm)',
+        border: '1px solid var(--k-line)',
+        background: `linear-gradient(135deg, hsl(${hue} 35% 55%), hsl(${hue} 35% 72%))`,
+      }}
+    />
+  );
+}
+
+function WireframeVorschau({ kind }: { kind: 'axis_marker' | 'wireframe_component' }) {
+  return (
+    <div
+      data-testid="asset-preview-wireframe"
+      style={{
+        height: 120,
+        display: 'grid',
+        placeItems: 'center',
+        gap: 4,
+        border: '1px dashed var(--k-line-strong)',
+        borderRadius: 'var(--k-radius-sm)',
+        background: 'var(--k-plan-paper)',
+      }}
+    >
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden>
+        <polygon points="20,4 36,12 36,28 20,36 4,28 4,12" fill="none" stroke="var(--k-technik)" strokeWidth="1" />
+        <line x1="4" y1="12" x2="20" y2="20" stroke="var(--k-technik)" strokeWidth="1" />
+        <line x1="36" y1="12" x2="20" y2="20" stroke="var(--k-technik)" strokeWidth="1" />
+        <line x1="20" y1="20" x2="20" y2="36" stroke="var(--k-technik)" strokeWidth="1" />
+      </svg>
+      <span style={{ fontSize: 10, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        {kind === 'axis_marker' ? 'Achsmarker' : 'Wireframe'}
+      </span>
     </div>
   );
 }

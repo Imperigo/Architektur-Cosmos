@@ -191,7 +191,22 @@ export function DataWorkspace() {
 
   useEffect(() => {
     void loadReferences()
-      .then(setEntries)
+      .then((es) => {
+        setEntries(es);
+        // Batch 4: KosmoAsset kann per kosmodata_refs auf eine Referenz zeigen —
+        // die Brücke ist sessionStorage, weil `__kosmo.open()` nur den Screen
+        // wechselt und keine Nutzlast transportiert.
+        try {
+          const pendingId = sessionStorage.getItem('kosmo.data.openRef');
+          if (pendingId) {
+            sessionStorage.removeItem('kosmo.data.openRef');
+            const treffer = es.find((e) => e.id === pendingId);
+            if (treffer) setSelected(treffer);
+          }
+        } catch {
+          /* privates Fenster — kein Sprung, kein Absturz */
+        }
+      })
       .finally(() => setGeladen(true));
   }, []);
 
