@@ -28,7 +28,7 @@ export type KosmoDataVisibility = 'public' | 'private';
 export type KosmoDataSprung =
   | { screen: 'data'; refId: string }
   | { screen: 'asset'; assetId: string }
-  | { screen: 'prepare' }
+  | { screen: 'wissen' }
   | { screen: 'train' };
 
 export interface KosmoDataEintrag {
@@ -198,11 +198,11 @@ export async function sucheDach(query: string, limit = 20): Promise<KosmoDataEin
         sammlung: 'wissen',
         titel: `${h.docName} · Abschnitt ${h.seq + 1}`,
         kurztext: h.text.slice(0, 220),
-        herkunft: 'KosmoPrepare · Wissensbasis',
+        herkunft: 'KosmoData · Wissen',
         visibility: doc?.visibility ?? 'private',
         tags: [],
         score: h.score,
-        sprung: { screen: 'prepare' },
+        sprung: { screen: 'wissen' },
       });
     }
   } catch {

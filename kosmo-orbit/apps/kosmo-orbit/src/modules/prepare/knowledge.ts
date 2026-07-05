@@ -214,6 +214,25 @@ export async function listDocs(): Promise<KnowledgeDoc[]> {
     .sort((a, b) => b.addedAt.localeCompare(a.addedAt));
 }
 
+/**
+ * D2 (KosmoData-Dach): Sichtbarkeit eines vorhandenen Dokuments umschalten —
+ * bislang wurde `visibility` nur beim Aufnehmen gesetzt (immer 'private').
+ * Wirft, wenn das Dokument nicht (mehr) existiert.
+ */
+export async function setzeDocVisibility(docId: string, visibility: KnowledgeVisibility): Promise<void> {
+  const db = await openDb();
+  const tx = db.transaction('docs', 'readwrite');
+  const store = tx.objectStore('docs');
+  const doc = await reqResult(store.get(docId) as IDBRequest<KnowledgeDoc | undefined>);
+  if (!doc) {
+    db.close();
+    throw new Error(`Dokument «${docId}» existiert nicht`);
+  }
+  store.put({ ...doc, visibility } satisfies KnowledgeDoc);
+  await txDone(tx);
+  db.close();
+}
+
 export async function removeDoc(docId: string): Promise<void> {
   const db = await openDb();
   const tx = db.transaction(['docs', 'chunks'], 'readwrite');

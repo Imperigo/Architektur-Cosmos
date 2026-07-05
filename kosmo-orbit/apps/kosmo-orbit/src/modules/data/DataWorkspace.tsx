@@ -1,5 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Hairline, Karteikarte, KButton, KLade, Measure, Messrahmen, Panel, moduleHue } from '@kosmo/ui';
+import {
+  Badge,
+  bestaetigen,
+  Hairline,
+  Karteikarte,
+  KButton,
+  KLade,
+  melde,
+  meldeFehler,
+  Measure,
+  Messrahmen,
+  Panel,
+  moduleHue,
+} from '@kosmo/ui';
 import {
   bauteilkatalog,
   gesamtdicke,
@@ -23,6 +36,18 @@ import {
   type KosmoDataSammlung,
   type KosmoDataZahlen,
 } from '../../state/kosmodata-dach';
+import {
+  basisIndex,
+  geladeneSammlungen,
+  importiereBasis,
+  listDocs,
+  removeDoc,
+  searchKnowledge,
+  setzeDocVisibility,
+  type BasisSammlung,
+  type KnowledgeDoc,
+  type KnowledgeHit,
+} from '../prepare/knowledge';
 
 /**
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
@@ -185,7 +210,7 @@ function oeffneInKosmoAsset(assetId: string) {
   (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('asset');
 }
 
-type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien';
+type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen';
 
 export function DataWorkspace() {
   const [entries, setEntries] = useState<RefEntry[]>([]);
@@ -308,6 +333,9 @@ export function DataWorkspace() {
             <KButton size="sm" tone={tab === 'materialien' ? 'accent' : 'ghost'} onClick={() => setTab('materialien')} data-testid="tab-materialien">
               Materialien
             </KButton>
+            <KButton size="sm" tone={tab === 'wissen' ? 'accent' : 'ghost'} onClick={() => setTab('wissen')} data-testid="tab-wissen">
+              Wissen
+            </KButton>
             <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
               {tab === 'uebersicht'
                 ? 'Fünf Sammlungen unter einem Dach'
@@ -315,7 +343,9 @@ export function DataWorkspace() {
                   ? `${filtered.length} von ${entries.length} Referenzen`
                   : tab === 'bauteile'
                     ? `${bauteilkatalog.length} Aufbauten`
-                    : `${materialkatalog.length} Materialien`}
+                    : tab === 'materialien'
+                      ? `${materialkatalog.length} Materialien`
+                      : 'Wissensbasis — durchsuchen, laden, freigeben'}
             </span>
             <div style={{ flex: 1 }} />
             <Badge hue={syncState === 'synced' && quelle === 'live' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
@@ -337,6 +367,7 @@ export function DataWorkspace() {
           )}
           {tab === 'bauteile' && <BauteilkatalogView />}
           {tab === 'materialien' && <MaterialkatalogView />}
+          {tab === 'wissen' && <KosmoWissenView />}
 
           {tab === 'referenzen' && (<>
           <input
@@ -663,9 +694,10 @@ const sammlungHue: Record<KosmoDataSammlung, string> = {
 /**
  * D1 (KosmoData-Dach) — der Übersichts-Tab: fünf Sammlungen mit Zähler
  * (`sammlungen()`) und eine Suche über alle fünf (`sucheDach`). Ein Klick
- * springt in die passende Station: Referenz bleibt in KosmoData (Tab-Wechsel
- * + Dossier), Asset/Wissen/Training/Gedächtnis wechseln die Station über die
- * bestehenden Sprung-Wege (sessionStorage-Brücke bzw. reiner Stationswechsel).
+ * springt in die passende Station: Referenz UND Wissen bleiben in KosmoData
+ * (Tab-Wechsel — D2: Wissen lebt jetzt als erstklassiger Tab hier, nicht
+ * mehr nur in KosmoPrepare), Asset wechselt per sessionStorage-Brücke,
+ * Training/Gedächtnis wechseln die Station über den reinen Stationswechsel.
  */
 function KosmoDataUebersicht({
   entries,
@@ -708,6 +740,10 @@ function KosmoDataUebersicht({
     }
     if (sprung.screen === 'asset') {
       oeffneInKosmoAsset(sprung.assetId);
+      return;
+    }
+    if (sprung.screen === 'wissen') {
+      setTab('wissen');
       return;
     }
     (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open(sprung.screen);
@@ -903,6 +939,226 @@ export function MaterialkatalogView() {
         Dieselben Schlüssel tragen die Aufbauten des Bauteilkatalogs — 3D-Farbe, Plan-Schraffur
         und U-Wert kommen aus einer Quelle. Texturen (PBR-Maps) folgen mit der HomeStation.
       </div>
+    </div>
+  );
+}
+
+/**
+ * D2 (KosmoData-Dach) — der Wissen-Tab: die Wissensbasis aus KosmoPrepare
+ * (`modules/prepare/knowledge.ts`, unverändert wiederverwendet) als
+ * erstklassige, durchsuchbare und pflegbare Ansicht in KosmoData. Suche,
+ * Dokumentliste mit Sichtbarkeits-Umschalter und die Bauwissen-Basis-Korpora
+ * (`wissen/`-Bündel) — alles was vorher nur in KosmoPrepare lebte.
+ */
+export function KosmoWissenView() {
+  const [docs, setDocs] = useState<KnowledgeDoc[]>([]);
+  const [basis, setBasis] = useState<BasisSammlung[]>([]);
+  const [geladeneBasis, setGeladeneBasis] = useState<Set<string>>(new Set());
+  const [ladeBasis, setLadeBasis] = useState<string | null>(null);
+  const [geladen, setGeladen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [hits, setHits] = useState<KnowledgeHit[]>([]);
+  const searchSeq = useRef(0);
+
+  const refresh = () => {
+    void Promise.all([
+      listDocs().catch(() => []),
+      basisIndex().catch(() => []),
+      geladeneSammlungen().catch(() => new Set<string>()),
+    ]).then(([d, b, g]) => {
+      setDocs(d);
+      setBasis(b);
+      setGeladeneBasis(g);
+      setGeladen(true);
+    });
+  };
+  useEffect(refresh, []);
+
+  useEffect(() => {
+    const q = query.trim();
+    const seq = ++searchSeq.current;
+    if (q.length < 2) {
+      setHits([]);
+      return;
+    }
+    void searchKnowledge(q, 12).then((h) => {
+      if (searchSeq.current === seq) setHits(h);
+    });
+  }, [query]);
+
+  async function toggleVisibility(d: KnowledgeDoc) {
+    const naechste = (d.visibility ?? 'private') === 'public' ? 'private' : 'public';
+    try {
+      await setzeDocVisibility(d.id, naechste);
+      refresh();
+    } catch (err) {
+      meldeFehler(err);
+    }
+  }
+
+  async function entfernen(d: KnowledgeDoc) {
+    const ok = await bestaetigen({
+      titel: `«${d.name}» entfernen?`,
+      text: 'Das Dokument und seine Abschnitte werden aus der Wissensbasis gelöscht.',
+      bestaetigen: 'Entfernen',
+      gefaehrlich: true,
+    });
+    if (!ok) return;
+    await removeDoc(d.id);
+    refresh();
+  }
+
+  async function ladeSammlung(sa: BasisSammlung) {
+    setLadeBasis(sa.sammlung);
+    try {
+      const { quellen, chunks } = await importiereBasis(sa.sammlung);
+      refresh();
+      melde(`${sa.label}: ${quellen} Quellen · ${chunks} Abschnitte geladen`, { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    } finally {
+      setLadeBasis(null);
+    }
+  }
+
+  const zeigtSuche = query.trim().length >= 2;
+  const leer = geladen && docs.length === 0 && basis.length === 0;
+
+  return (
+    <div data-testid="kosmodata-wissen" style={{ display: 'grid', gap: 14 }}>
+      <input
+        data-testid="wissen-search"
+        placeholder="Wissensbasis durchsuchen … (z.B. «Brandschutz Treppenhaus»)"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        style={{
+          padding: '9px 12px',
+          borderRadius: 'var(--k-radius-sm)',
+          border: '1px solid var(--k-line-strong)',
+          background: 'var(--k-raised)',
+          fontSize: 14,
+        }}
+      />
+
+      {!geladen && <KLade text="Wissensbasis laden …" height={140} />}
+
+      {geladen && leer && (
+        <div data-testid="wissen-leer">
+          <Messrahmen
+            height={200}
+            caption="Noch kein Wissen — Bauwissen-Basis laden oder in KosmoPrepare Dokumente aufnehmen"
+          />
+        </div>
+      )}
+
+      {zeigtSuche ? (
+        <div style={{ display: 'grid', gap: 8 }}>
+          {hits.length === 0 && (
+            <Messrahmen height={140} caption="Kein Treffer in der Wissensbasis — Begriff lockern" />
+          )}
+          {hits.map((h) => (
+            <Panel key={h.id} data-testid="wissen-hit" style={{ padding: '10px 12px', display: 'grid', gap: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 550 }}>
+                  {h.docName} · Abschnitt {h.seq + 1}
+                </span>
+                <div style={{ flex: 1 }} />
+                <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 11, color: 'var(--k-ink-faint)' }}>
+                  {h.score.toFixed(2)}
+                </span>
+              </div>
+              <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--k-ink-soft)' }}>
+                {h.text.length > 220 ? `${h.text.slice(0, 220)} …` : h.text}
+              </div>
+            </Panel>
+          ))}
+        </div>
+      ) : (
+        <>
+          {docs.length > 0 && (
+            <div style={{ display: 'grid', gap: 8 }}>
+              <div className="k-titel" style={{ fontSize: 13 }}>Dokumente ({docs.length})</div>
+              {docs.map((d) => {
+                const oeffentlich = (d.visibility ?? 'private') === 'public';
+                return (
+                  <Panel
+                    key={d.id}
+                    data-testid="wissen-doc"
+                    style={{ padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10 }}
+                  >
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div
+                        style={{
+                          fontWeight: 550,
+                          fontSize: 13.5,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {d.name}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                        <Badge hue={d.source === 'basis' ? moduleHue.prepare : 'var(--k-ink-faint)'}>{d.source}</Badge>
+                        <span>{d.chunkCount} Abschnitte</span>
+                        {d.pages !== undefined && <span>· {d.pages} {d.pages === 1 ? 'Seite' : 'Seiten'}</span>}
+                      </div>
+                    </div>
+                    <Badge hue={oeffentlich ? 'var(--k-success)' : 'var(--k-warning)'}>
+                      {oeffentlich ? 'Öffentlich' : 'Privat'}
+                    </Badge>
+                    <KButton
+                      size="sm"
+                      tone="ghost"
+                      data-testid="wissen-visibility-toggle"
+                      onClick={() => void toggleVisibility(d)}
+                    >
+                      {oeffentlich ? 'Privat machen' : 'Öffentlich machen'}
+                    </KButton>
+                    {d.source === 'lokal' && (
+                      <KButton size="sm" tone="ghost" onClick={() => void entfernen(d)} aria-label={`${d.name} entfernen`}>
+                        Entfernen
+                      </KButton>
+                    )}
+                  </Panel>
+                );
+              })}
+            </div>
+          )}
+
+          {basis.length > 0 && (
+            <div style={{ display: 'grid', gap: 8 }} data-testid="wissen-basis">
+              <div className="k-titel" style={{ fontSize: 13 }}>Bauwissen-Basis (Kosmos-Bibliothek)</div>
+              {basis.map((sa) => (
+                <Panel
+                  key={sa.sammlung}
+                  style={{ padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 12 }}
+                >
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontWeight: 550, fontSize: 13.5 }}>{sa.label}</div>
+                    <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+                      {sa.quellen} Quellen · {sa.chunks} Abschnitte · {(sa.kb / 1024).toFixed(1)} MB
+                    </div>
+                  </div>
+                  {geladeneBasis.has(sa.sammlung) ? (
+                    <Badge hue={moduleHue.prepare}>geladen</Badge>
+                  ) : (
+                    <KButton
+                      size="sm"
+                      tone="accent"
+                      data-testid="wissen-basis-laden"
+                      disabled={ladeBasis !== null}
+                      onClick={() => void ladeSammlung(sa)}
+                    >
+                      {ladeBasis === sa.sammlung ? 'Lade …' : 'Laden'}
+                    </KButton>
+                  )}
+                </Panel>
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -696,3 +696,92 @@ describe('KosmoData-Dach (D1): vereinheitlichter Adapter über die fünf Sammlun
     }
   });
 });
+
+// ── D2: Wissen unter das KosmoData-Dach — erstklassiger Tab statt nur RAG-intern ──
+
+describe('D2 (KosmoData-Dach): setzeDocVisibility — Sichtbarkeit eines vorhandenen Dokuments umschalten', () => {
+  it('schaltet ein aufgenommenes Dokument von "private" auf "public" und zurück', async () => {
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      throw new Error('keine Bridge im Test');
+    }) as unknown as typeof fetch;
+    try {
+      const { ingestFile, listDocs, setzeDocVisibility } = await import('../src/modules/prepare/knowledge');
+      const datei = new File(['Ein Dokument, dessen Sichtbarkeit D2 umschaltbar macht.'], 'sichtbarkeit-d2.txt', {
+        type: 'text/plain',
+      });
+      const doc = await ingestFile(datei);
+      expect(doc.visibility).toBe('private');
+
+      await setzeDocVisibility(doc.id, 'public');
+      expect((await listDocs()).find((d) => d.id === doc.id)?.visibility).toBe('public');
+
+      await setzeDocVisibility(doc.id, 'private');
+      expect((await listDocs()).find((d) => d.id === doc.id)?.visibility).toBe('private');
+    } finally {
+      globalThis.fetch = origFetch;
+    }
+  });
+
+  it('wirft, wenn das Dokument nicht (mehr) existiert', async () => {
+    const { setzeDocVisibility } = await import('../src/modules/prepare/knowledge');
+    await expect(setzeDocVisibility('doc-d2-existiert-nicht', 'public')).rejects.toThrow();
+  });
+});
+
+describe('D2 (KosmoData-Dach): Wissen-Treffer springen in den KosmoData-Wissen-Tab, nicht mehr nach KosmoPrepare', () => {
+  it('sucheDach liefert für einen Wissen-Treffer sprung = { screen: "wissen" }', async () => {
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async (url: unknown) => {
+      if (String(url).includes('kosmodata-seed.json')) {
+        return { ok: true, json: async () => ({ entries: [] }) };
+      }
+      throw new Error(`unerwarteter Fetch im Test: ${String(url)}`);
+    }) as unknown as typeof fetch;
+
+    // Ein eindeutiger Chunk direkt in kosmo-wissen geseedet (wie im D1-Mischungstest oben).
+    await new Promise<void>((resolve, reject) => {
+      const req = indexedDB.open('kosmo-wissen', 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains('docs')) db.createObjectStore('docs', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('chunks')) {
+          db.createObjectStore('chunks', { keyPath: 'id' }).createIndex('docId', 'docId');
+        }
+      };
+      req.onsuccess = () => {
+        const tx = req.result.transaction(['docs', 'chunks'], 'readwrite');
+        tx.objectStore('docs').put({
+          id: 'doc-d2-sprungtest',
+          name: 'D2-Sprungtest.pdf',
+          source: 'lokal',
+          addedAt: '2026-01-01T00:00:00.000Z',
+          chunkCount: 1,
+        });
+        tx.objectStore('chunks').put({
+          id: 'doc-d2-sprungtest-0',
+          docId: 'doc-d2-sprungtest',
+          docName: 'D2-Sprungtest.pdf',
+          seq: 0,
+          text: 'Xyloforschungsbegriff für den D2-Sprungtest, einzigartig genug für einen Treffer.',
+        });
+        tx.oncomplete = () => {
+          req.result.close();
+          resolve();
+        };
+        tx.onerror = () => reject(tx.error);
+      };
+      req.onerror = () => reject(req.error);
+    });
+
+    try {
+      const { sucheDach } = await import('../src/state/kosmodata-dach');
+      const treffer = await sucheDach('xyloforschungsbegriff');
+      const wissenTreffer = treffer.find((t) => t.sammlung === 'wissen');
+      expect(wissenTreffer).toBeDefined();
+      expect(wissenTreffer?.sprung).toEqual({ screen: 'wissen' });
+    } finally {
+      globalThis.fetch = origFetch;
+    }
+  });
+});
