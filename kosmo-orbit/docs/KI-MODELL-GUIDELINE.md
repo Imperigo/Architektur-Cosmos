@@ -70,8 +70,8 @@ exakt richtig.
 ## Teil C — Kosmo mit eigenen lokalen LLMs (das lokale «Fable/Opus/Sonnet»)
 
 Kosmo bekommt lokal **dieselbe Drei-Stufen-Staffelung** wie bei Claude, mit
-**Kosmo-eigenen Namen, die zur Funktion passen** (Vorschlag — Owner darf
-umbenennen). Metapher: das Architekturbüro.
+**Kosmo-eigenen Namen, die zur Funktion passen** — vom Owner bestätigt
+(05.07.2026). Metapher: das Architekturbüro.
 
 | Kosmo-Stufe | Rolle (= Claude) | Aufgabe | Lokales Modell (Vorschlag, RTX 5090) |
 | --- | --- | --- | --- |
