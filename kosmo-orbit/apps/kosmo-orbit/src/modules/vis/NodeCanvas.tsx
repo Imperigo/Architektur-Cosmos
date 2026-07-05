@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   evaluiereGraph,
   VIS_NODE_KATALOG,
@@ -119,12 +119,22 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
     return () => clearInterval(t);
   }, [patchLauf]);
 
-  useEffect(() => {
+  // Batch 6: useLayoutEffect statt useEffect — die Erstmessung muss VOR dem
+  // ersten Browser-Paint sitzen. ResizeObserver feuert seinen ersten Callback
+  // erst einen Tick später; bis dahin stand die viewBox auf dem 1200×700-
+  // Platzhalter. Ein Klick/Drag, der in genau diesem Fenster startet (z.B.
+  // E2E-Port-Drag), traf noch die Platzhalter-Koordinaten — der folgende
+  // Resize-Snap auf die echte Grösse verschob Ports unter dem Zeiger weg,
+  // der Down landete dadurch auf dem leeren Canvas statt auf dem Port und
+  // startete Pan statt Pending-Edge (die eigentliche Ursache der Flakiness).
+  useLayoutEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
+    const r = svg.getBoundingClientRect();
+    if (r.width > 0) setFlaeche({ w: r.width, h: r.height });
     const ro = new ResizeObserver((eintraege) => {
-      const r = eintraege[0]?.contentRect;
-      if (r && r.width > 0) setFlaeche({ w: r.width, h: r.height });
+      const rect = eintraege[0]?.contentRect;
+      if (rect && rect.width > 0) setFlaeche({ w: rect.width, h: rect.height });
     });
     ro.observe(svg);
     return () => ro.disconnect();
