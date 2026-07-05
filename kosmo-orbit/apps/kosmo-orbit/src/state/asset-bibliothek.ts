@@ -173,3 +173,43 @@ export async function listeGlb(): Promise<KosmoAsset[]> {
 export async function loescheGlb(id: string): Promise<void> {
   await vaultTx('objekte', 'readwrite', (s) => s.delete(id));
 }
+
+/** Optionale Übersteuerung der Default-Felder beim Verknüpfen (Batch 5). */
+export type VerknuepfeReferenzMeta = Partial<Omit<KosmodataRef, 'entry_id'>>;
+
+/**
+ * Batch 5 (Codex-Übernahme) — «ein System»: verknüpft ein Asset mit einem
+ * KosmoData-Referenzprojekt. Idempotent (kein Duplikat je `entryId`), Defaults
+ * sind die konservativste Einstufung (Kontext lesen, nicht automatisch als
+ * Quelle/Vorlage übernehmen) — Owner-Mandat «ehrlich vor Politur».
+ */
+export async function verknuepfeAssetMitReferenz(
+  assetId: string,
+  referenzId: string,
+  meta: VerknuepfeReferenzMeta = {},
+): Promise<KosmoAsset> {
+  const asset = await vaultTx<KosmoAsset | undefined>('objekte', 'readonly', (s) => s.get(assetId));
+  if (!asset) throw new Error(`Objekt «${assetId}» nicht gefunden`);
+  if (!asset.kosmodata_refs.some((r) => r.entry_id === referenzId)) {
+    const ref: KosmodataRef = {
+      kind: meta.kind ?? 'reference_entry',
+      entry_id: referenzId,
+      relation: meta.relation ?? 'model_context',
+      usage_policy: meta.usage_policy ?? 'context_only',
+      review_status: meta.review_status ?? 'context_only',
+      ...(meta.notes !== undefined ? { notes: meta.notes } : {}),
+    };
+    asset.kosmodata_refs = [...asset.kosmodata_refs, ref];
+    await vaultTx('objekte', 'readwrite', (s) => s.put(asset));
+  }
+  return asset;
+}
+
+/** Entfernt die Verknüpfung (falls vorhanden) — kein Fehler, wenn schon gelöst. */
+export async function entferneAssetReferenz(assetId: string, referenzId: string): Promise<KosmoAsset> {
+  const asset = await vaultTx<KosmoAsset | undefined>('objekte', 'readonly', (s) => s.get(assetId));
+  if (!asset) throw new Error(`Objekt «${assetId}» nicht gefunden`);
+  asset.kosmodata_refs = asset.kosmodata_refs.filter((r) => r.entry_id !== referenzId);
+  await vaultTx('objekte', 'readwrite', (s) => s.put(asset));
+  return asset;
+}

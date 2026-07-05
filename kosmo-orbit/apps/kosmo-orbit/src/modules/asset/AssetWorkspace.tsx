@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Hairline, KButton, KLade, Measure, Messrahmen, Panel, bestaetigen, melde, meldeFehler, moduleHue } from '@kosmo/ui';
-import { BauteilkatalogView, MaterialkatalogView } from '../data/DataWorkspace';
+import { BauteilkatalogView, loadReferences, MaterialkatalogView, type RefEntry } from '../data/DataWorkspace';
 import { setGlbContext } from '../design/Viewport3D';
 import {
   assetBytes,
+  entferneAssetReferenz,
   listeGlb,
   loescheGlb,
   speichereGlb,
+  verknuepfeAssetMitReferenz,
   type AssetCategory,
   type AssetFormatStatus,
   type AssetType,
@@ -127,13 +129,95 @@ export function AssetWorkspace() {
 
   const laden = () => {
     void listeGlb()
-      .then(setObjekte)
+      .then((liste) => {
+        setObjekte(liste);
+        // Batch 5: KosmoData kann per Klick auf «Assets dieses Projekts» hierher
+        // springen — die Brücke ist sessionStorage (analog `kosmo.data.openRef`),
+        // weil `__kosmo.open()` nur den Screen wechselt, keine Nutzlast trägt.
+        try {
+          const pendingId = sessionStorage.getItem('kosmo.asset.openId');
+          if (pendingId) {
+            sessionStorage.removeItem('kosmo.asset.openId');
+            const treffer = liste.find((o) => o.id === pendingId);
+            if (treffer) {
+              setTab('objekte');
+              setSelected(treffer);
+            }
+          }
+        } catch {
+          /* privates Fenster — kein Sprung, kein Absturz */
+        }
+      })
       .catch((err) => {
         setObjekte([]);
         meldeFehler(err);
       });
   };
   useEffect(laden, []);
+
+  // Batch 5: Ref↔Asset-Verknüpfung — Picker für «Mit Referenzprojekt verknüpfen».
+  const [refs, setRefs] = useState<RefEntry[] | null>(null);
+  const [refPickerOffen, setRefPickerOffen] = useState(false);
+  const [refQuery, setRefQuery] = useState('');
+
+  const aktualisiereAsset = async (assetId: string) => {
+    const liste = await listeGlb();
+    setObjekte(liste);
+    const treffer = liste.find((a) => a.id === assetId);
+    if (treffer) setSelected(treffer);
+  };
+
+  const oeffneRefPicker = () => {
+    setRefPickerOffen(true);
+    if (refs === null) {
+      void loadReferences()
+        .then(setRefs)
+        .catch((err) => {
+          setRefs([]);
+          meldeFehler(err);
+        });
+    }
+  };
+
+  const refTreffer = useMemo(() => {
+    if (!selected) return [];
+    const bereits = new Set(selected.kosmodata_refs.map((r) => r.entry_id));
+    const q = refQuery.toLowerCase().trim();
+    return (refs ?? [])
+      .filter((e) => !bereits.has(e.id))
+      .filter((e) => !q || [e.title, e.city, e.country].filter(Boolean).join(' ').toLowerCase().includes(q))
+      .slice(0, 30);
+  }, [refs, refQuery, selected]);
+
+  const verknuepfen = async (entry: RefEntry) => {
+    if (!selected) return;
+    try {
+      await verknuepfeAssetMitReferenz(selected.id, entry.id);
+      await aktualisiereAsset(selected.id);
+      setRefPickerOffen(false);
+      setRefQuery('');
+      melde(`«${selected.title}» mit «${entry.title}» verknüpft`, { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  const entferneRef = async (referenzId: string) => {
+    if (!selected) return;
+    try {
+      await entferneAssetReferenz(selected.id, referenzId);
+      await aktualisiereAsset(selected.id);
+      melde('Verknüpfung entfernt', { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  // Picker schliesst sich, sobald ein anderes/kein Objekt gewählt ist.
+  useEffect(() => {
+    setRefPickerOffen(false);
+    setRefQuery('');
+  }, [selected?.id]);
 
   const typeCounts = useMemo(() => {
     const counts = new Map<AssetType, number>();
@@ -440,35 +524,101 @@ export function AssetWorkspace() {
             </>
           )}
 
+          <Hairline />
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+            KosmoData-Bezüge
+          </div>
+          {selected.kosmodata_refs.length === 0 && (
+            <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>Noch keine Referenz verknüpft</span>
+          )}
           {selected.kosmodata_refs.length > 0 && (
-            <>
-              <Hairline />
-              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
-                KosmoData-Bezüge
-              </div>
-              <div data-testid="asset-refs" style={{ display: 'grid', gap: 6 }}>
-                {selected.kosmodata_refs.map((r, i) => (
-                  <div key={`${r.entry_id}-${i}`} style={{ display: 'grid', gap: 2, fontSize: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                      <KButton
-                        size="sm"
-                        tone="ghost"
-                        onClick={() => oeffneInKosmoData(r.entry_id)}
-                        data-testid={`asset-ref-oeffnen-${r.entry_id}`}
-                        title="In KosmoData öffnen (falls dort vorhanden)"
-                      >
-                        {r.entry_id}
-                      </KButton>
-                      <Badge hue="var(--k-info)">{r.relation.replace(/_/g, ' ')}</Badge>
-                    </div>
-                    <div style={{ color: 'var(--k-ink-faint)' }}>
-                      {kosmodataRefKindLabel[r.kind] ?? r.kind} · {r.review_status.replace(/_/g, ' ')}
-                    </div>
-                    {r.notes && <div style={{ fontStyle: 'italic', color: 'var(--k-ink-soft)' }}>{r.notes}</div>}
+            <div data-testid="asset-refs" style={{ display: 'grid', gap: 6 }}>
+              {selected.kosmodata_refs.map((r, i) => (
+                <div key={`${r.entry_id}-${i}`} style={{ display: 'grid', gap: 2, fontSize: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                    <KButton
+                      size="sm"
+                      tone="ghost"
+                      onClick={() => oeffneInKosmoData(r.entry_id)}
+                      data-testid={`asset-ref-oeffnen-${r.entry_id}`}
+                      title="In KosmoData öffnen (falls dort vorhanden)"
+                    >
+                      {r.entry_id}
+                    </KButton>
+                    <Badge hue="var(--k-info)">{r.relation.replace(/_/g, ' ')}</Badge>
+                    <div style={{ flex: 1 }} />
+                    <button
+                      aria-label="Verknüpfung entfernen"
+                      data-testid={`asset-ref-entfernen-${r.entry_id}`}
+                      onClick={() => void entferneRef(r.entry_id)}
+                      style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 14, padding: '0 4px' }}
+                    >
+                      ×
+                    </button>
                   </div>
-                ))}
-              </div>
-            </>
+                  <div style={{ color: 'var(--k-ink-faint)' }}>
+                    {kosmodataRefKindLabel[r.kind] ?? r.kind} · {r.review_status.replace(/_/g, ' ')}
+                  </div>
+                  {r.notes && <div style={{ fontStyle: 'italic', color: 'var(--k-ink-soft)' }}>{r.notes}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <KButton
+            size="sm"
+            tone={refPickerOffen ? 'accent' : 'quiet'}
+            data-testid="asset-ref-verknuepfen"
+            onClick={() => (refPickerOffen ? setRefPickerOffen(false) : oeffneRefPicker())}
+          >
+            {refPickerOffen ? 'Picker schliessen' : '+ Mit Referenzprojekt verknüpfen'}
+          </KButton>
+
+          {refPickerOffen && (
+            <div data-testid="asset-ref-picker" style={{ display: 'grid', gap: 6 }}>
+              <input
+                data-testid="asset-ref-picker-suche"
+                placeholder="Referenz suchen: Titel, Ort …"
+                value={refQuery}
+                onChange={(e) => setRefQuery(e.target.value)}
+                style={{
+                  padding: '7px 10px',
+                  borderRadius: 'var(--k-radius-sm)',
+                  border: '1px solid var(--k-line-strong)',
+                  background: 'var(--k-raised)',
+                  fontSize: 13,
+                }}
+              />
+              {refs === null && <KLade text="Referenzen laden …" height={60} />}
+              {refs !== null && refTreffer.length === 0 && (
+                <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>Kein Treffer</span>
+              )}
+              {refTreffer.length > 0 && (
+                <div style={{ display: 'grid', gap: 4, maxHeight: 220, overflow: 'auto' }}>
+                  {refTreffer.map((entry) => (
+                    <button
+                      key={entry.id}
+                      data-testid={`asset-ref-treffer-${entry.id}`}
+                      onClick={() => void verknuepfen(entry)}
+                      style={{
+                        all: 'unset',
+                        cursor: 'pointer',
+                        padding: '6px 8px',
+                        borderRadius: 'var(--k-radius-sm)',
+                        border: '1px solid var(--k-line)',
+                        fontSize: 12.5,
+                      }}
+                    >
+                      {entry.title}
+                      <span style={{ color: 'var(--k-ink-faint)' }}>
+                        {' '}
+                        · {[entry.city, entry.country].filter(Boolean).join(', ')}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
 
           <Hairline />

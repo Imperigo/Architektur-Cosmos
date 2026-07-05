@@ -15,6 +15,7 @@ import {
 } from '@kosmo/data';
 import { useProject } from '../../state/project-store';
 import { setGlbContext } from '../design/Viewport3D';
+import { listeGlb, type KosmoAsset } from '../../state/asset-bibliothek';
 
 /**
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
@@ -163,6 +164,20 @@ function MediaThumb({ media }: { media: RefEntryMedia }) {
   );
 }
 
+/**
+ * Batch 5 (Codex-Übernahme) — Rückrichtung der Ref↔Asset-Verknüpfung: springt
+ * zu KosmoAsset und merkt das Objekt für die Vorauswahl dort (sessionStorage-
+ * Brücke, analog `kosmo.data.openRef` in AssetWorkspace.tsx).
+ */
+function oeffneInKosmoAsset(assetId: string) {
+  try {
+    sessionStorage.setItem('kosmo.asset.openId', assetId);
+  } catch {
+    /* privates Fenster — kein Sprung, kein Absturz */
+  }
+  (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('asset');
+}
+
 export function DataWorkspace() {
   const [entries, setEntries] = useState<RefEntry[]>([]);
   const [geladen, setGeladen] = useState(false);
@@ -209,6 +224,27 @@ export function DataWorkspace() {
       })
       .finally(() => setGeladen(true));
   }, []);
+
+  // Batch 5: Ref↔Asset-Verknüpfung — «Assets dieses Projekts» im Dossier.
+  const [refAssets, setRefAssets] = useState<KosmoAsset[]>([]);
+  useEffect(() => {
+    if (!selected) {
+      setRefAssets([]);
+      return;
+    }
+    let verworfen = false;
+    void listeGlb()
+      .then((alle) => {
+        if (verworfen) return;
+        setRefAssets(alle.filter((a) => a.kosmodata_refs.some((r) => r.entry_id === selected.id)));
+      })
+      .catch(() => {
+        if (!verworfen) setRefAssets([]);
+      });
+    return () => {
+      verworfen = true;
+    };
+  }, [selected]);
 
   const sectors = useMemo(() => {
     const counts = new Map<string, number>();
@@ -543,6 +579,28 @@ export function DataWorkspace() {
               </div>
             </>
           )}
+
+          {/* Assets dieses Projekts (Batch 5): Rückrichtung zu KosmoAsset per kosmodata_refs. */}
+          <Hairline />
+          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+            Assets dieses Projekts
+          </div>
+          <div data-testid="ref-assets" style={{ display: 'grid', gap: 6 }}>
+            {refAssets.length === 0 && (
+              <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>Noch keine Assets verknüpft</span>
+            )}
+            {refAssets.map((a) => (
+              <KButton
+                key={a.id}
+                size="sm"
+                tone="ghost"
+                data-testid={`ref-asset-${a.id}`}
+                onClick={() => oeffneInKosmoAsset(a.id)}
+              >
+                {a.title}
+              </KButton>
+            ))}
+          </div>
 
           {selected.has_3d && (
             <>

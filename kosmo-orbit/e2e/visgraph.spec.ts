@@ -67,14 +67,27 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
   await page.selectOption('[data-testid="node-hinzu"]', 'prompt');
   await page.selectOption('[data-testid="node-hinzu"]', 'kombinierer');
 
-  // Port-Drag: prompt.prompt → kombinierer.stil
-  const aus = await page.locator('[data-testid="vis-node-prompt"] [data-testid="port-out-prompt"]').boundingBox();
-  const ein = await page.locator('[data-testid="vis-node-kombinierer"] [data-testid="port-in-stil"]').boundingBox();
-  await page.mouse.move(aus!.x + aus!.width / 2, aus!.y + aus!.height / 2);
+  // Erst warten, bis beide Nodes wirklich gelayoutet sind — sonst liefert
+  // boundingBox() Vor-Layout-Koordinaten und der Drag verfehlt den Port (flaky).
+  const promptNode = page.locator('[data-testid="vis-node-prompt"]');
+  const kombNode = page.locator('[data-testid="vis-node-kombinierer"]');
+  await expect(promptNode).toBeVisible();
+  await expect(kombNode).toBeVisible();
+  const ausPort = promptNode.locator('[data-testid="port-out-prompt"]');
+  const einPort = kombNode.locator('[data-testid="port-in-stil"]');
+  await expect(ausPort).toBeVisible();
+  await expect(einPort).toBeVisible();
+
+  // Port-Drag: prompt.prompt → kombinierer.stil (mit Zwischenschritt, damit die
+  // Pending-Edge dem Pointer folgt und sauber am Ziel-Port einrastet).
+  const aus = (await ausPort.boundingBox())!;
+  const ein = (await einPort.boundingBox())!;
+  await page.mouse.move(aus.x + aus.width / 2, aus.y + aus.height / 2);
   await page.mouse.down();
-  await page.mouse.move(ein!.x + ein!.width / 2, ein!.y + ein!.height / 2, { steps: 8 });
+  await page.mouse.move((aus.x + ein.x) / 2, (aus.y + ein.y) / 2, { steps: 6 });
+  await page.mouse.move(ein.x + ein.width / 2, ein.y + ein.height / 2, { steps: 8 });
   await page.mouse.up();
-  await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(1, { timeout: 5000 });
 
   // Prompt tippen → Kombinierer zeigt ihn live
   await page.locator('[data-testid="prompt-text"]').fill('Blick vom Quai');
@@ -82,22 +95,26 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
   await expect(page.locator('[data-testid="kombinierer-prompt"]')).toContainText('Blick vom Quai');
 
   // Node-Drag: Kopfzeile ziehen — die Position landet als EIN vis.nodeSchieben im Modell
-  const vorher = await page.evaluate(
-    () => window.__kosmo.state().doc.byKind('visgraph')[0]!.nodes!.find((n) => n.typ === 'prompt')!.x,
+  const vorherY = await page.evaluate(
+    () => window.__kosmo.state().doc.byKind('visgraph')[0]!.nodes!.find((n) => n.typ === 'prompt')!.y,
   );
-  const node = await page.locator('[data-testid="vis-node-prompt"]').boundingBox();
-  await page.mouse.move(node!.x + 70, node!.y + 12);
+  const node = (await promptNode.boundingBox())!;
+  await page.mouse.move(node.x + 70, node.y + 12);
   await page.mouse.down();
-  await page.mouse.move(node!.x + 70, node!.y + 180, { steps: 6 });
+  await page.mouse.move(node.x + 70, node.y + 90, { steps: 4 });
+  await page.mouse.move(node.x + 70, node.y + 180, { steps: 6 });
   await page.mouse.up();
-  const nachher = await page.evaluate(
-    () => window.__kosmo.state().doc.byKind('visgraph')[0]!.nodes!.find((n) => n.typ === 'prompt')!,
-  );
-  expect(nachher.y).not.toBe(vorher);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => window.__kosmo.state().doc.byKind('visgraph')[0]!.nodes!.find((n) => n.typ === 'prompt')!.y,
+      ),
+    )
+    .not.toBe(vorherY);
 
   // Kante wählen und trennen
   await page.locator('[data-testid="vis-edge"] path').first().click({ force: true });
   await page.locator('[data-testid="edge-trennen"]').click({ force: true });
-  await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(0, { timeout: 5000 });
   await page.screenshot({ path: 'e2e-results/visgraph-handwerk.png' });
 });

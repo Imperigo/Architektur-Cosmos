@@ -445,3 +445,64 @@ describe('KosmoAsset-Bibliothek (Batch 3): Datenmodell + Tresor-Migration v3 →
     await loescheGlb(benannt.id);
   });
 });
+
+// ── Codex-Übernahme Batch 5: Ref↔Asset-Verknüpfung («ein System») ────
+
+describe('Ref↔Asset-Verknüpfung (Batch 5)', () => {
+  it('verknuepfeAssetMitReferenz persistiert idempotent (kein Duplikat bei zweitem Aufruf)', async () => {
+    const { speichereGlb, verknuepfeAssetMitReferenz, listeGlb, loescheGlb } = await import('../src/state/asset-bibliothek');
+    const asset = await speichereGlb(new File([new Uint8Array([1, 2])], 'baum.glb'));
+    expect(asset.kosmodata_refs).toEqual([]);
+
+    const einmal = await verknuepfeAssetMitReferenz(asset.id, 'ref-villa-savoye');
+    expect(einmal.kosmodata_refs).toHaveLength(1);
+    expect(einmal.kosmodata_refs[0]).toMatchObject({
+      entry_id: 'ref-villa-savoye',
+      kind: 'reference_entry',
+      relation: 'model_context',
+      usage_policy: 'context_only',
+      review_status: 'context_only',
+    });
+
+    // Zweiter Aufruf mit derselben Referenz-ID darf nichts verdoppeln.
+    const zweimal = await verknuepfeAssetMitReferenz(asset.id, 'ref-villa-savoye');
+    expect(zweimal.kosmodata_refs).toHaveLength(1);
+
+    // Persistiert wirklich — Neuladen aus dem Tresor zeigt dieselbe Verknüpfung.
+    const geladen = (await listeGlb()).find((a) => a.id === asset.id);
+    expect(geladen?.kosmodata_refs).toHaveLength(1);
+
+    // Meta-Override respektiert (z.B. eine strengere Prüf-Einstufung).
+    const zweiteRef = await verknuepfeAssetMitReferenz(asset.id, 'ref-farnsworth', {
+      relation: 'material_context',
+      review_status: 'needs_human_review',
+      notes: 'Fassadenmaterial als Vorbild',
+    });
+    expect(zweiteRef.kosmodata_refs).toHaveLength(2);
+    const farnsworth = zweiteRef.kosmodata_refs.find((r) => r.entry_id === 'ref-farnsworth');
+    expect(farnsworth).toMatchObject({ relation: 'material_context', review_status: 'needs_human_review', notes: 'Fassadenmaterial als Vorbild' });
+
+    await loescheGlb(asset.id);
+  });
+
+  it('entferneAssetReferenz löst nur die genannte Verknüpfung, lässt andere unberührt', async () => {
+    const { speichereGlb, verknuepfeAssetMitReferenz, entferneAssetReferenz, listeGlb, loescheGlb } = await import(
+      '../src/state/asset-bibliothek'
+    );
+    const asset = await speichereGlb(new File([new Uint8Array([3])], 'stuhl.glb'));
+    await verknuepfeAssetMitReferenz(asset.id, 'ref-a');
+    await verknuepfeAssetMitReferenz(asset.id, 'ref-b');
+
+    const nachEntfernen = await entferneAssetReferenz(asset.id, 'ref-a');
+    expect(nachEntfernen.kosmodata_refs.map((r) => r.entry_id)).toEqual(['ref-b']);
+
+    // Entfernen einer nicht (mehr) vorhandenen Referenz ist kein Fehler (idempotent).
+    const nochmal = await entferneAssetReferenz(asset.id, 'ref-a');
+    expect(nochmal.kosmodata_refs.map((r) => r.entry_id)).toEqual(['ref-b']);
+
+    const geladen = (await listeGlb()).find((a) => a.id === asset.id);
+    expect(geladen?.kosmodata_refs.map((r) => r.entry_id)).toEqual(['ref-b']);
+
+    await loescheGlb(asset.id);
+  });
+});
