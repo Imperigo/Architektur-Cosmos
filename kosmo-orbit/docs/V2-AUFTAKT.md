@@ -82,9 +82,19 @@ Reihenfolge = Nutzen × Owner-Wunsch. Aufwand grob (S/M/L).
     bedeutet im Raycast-Weg daher «alles ausser Wand», nicht buchstäblich Hang-
     Geometrie. Ein Terrain-Mesh im Viewport (eigener, kleinerer Folgeauftrag)
     würde denselben Weg automatisch mitbedienen.
+13. **Serie J — Intuitive Bedienung & adaptive Oberfläche (L, Owner 06.07.)** —
+    intuitive **Touch-/Gestensteuerung im 3D** (iPad/Screen: 1-Finger Orbit,
+    2-Finger Pan+Pinch+Rotate, Trägheit), intuitiver **Maus-Umgang im 3D**
+    (mittlere Taste Orbit/Pan, Rad = Zoom-zum-Cursor, Kontextcursor/Hover), und
+    eine **dynamisch adaptive Zeichnungsoberfläche**, die sich nach Tätigkeit und
+    Nutzer neu ordnet (baut auf T7-Fokus-Konzept `state/fokus.ts` + T3-Nav auf).
+    Fable legt zuerst das Interaktions-Konzept, dann Sonnet-Batches J1/J2/J3.
+    Konzept: `docs/SERIE-J-INTUITIVE-BEDIENUNG.md`.
 
 > Reihenfolge-Hinweis Owner (06.07.): ab 6 Uhr mit Fable **erst Serie H + Serie I
-> als Konzept** (liegen vor), dann bauen.
+> als Konzept** (liegen vor), dann bauen. **Serie J** reiht sich als nächster
+> grosser UX-Block ein (nach den technischen V2-Blöcken 1–7); wegen der Tiefe in
+> jede Oberfläche zuerst Fable-Interaktionskonzept, dann Bau.
 
 ## Teil 3 — Nahtstellen, an denen V2 andockt (bereits vorbereitet in V1)
 

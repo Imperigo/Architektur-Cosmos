@@ -53,6 +53,12 @@ Kosmo — eine KI, die jedes Command als Werkzeug hat und nie ungefragt schreibt
   drei Profile), Serie F (Rollenprofile + neue Abteilungen, Erfahrungsstufen
   simple/ausgewogen/experte), **Serie G (Kosmo als Benutzer-Guide** — führt vom
   Erstkontakt bis zum Experten, `kosmo-orbit/docs/SERIE-G-KOSMO-ALS-BENUTZERGUIDE.md`).
+- **V2-Konzepte für den 6-Uhr-Fable-Start:** **Serie H** (Vollständige
+  Benutzersimulation, `docs/SERIE-H-VOLLSIMULATION.md`), **Serie I** (Cybersecurity/
+  Anti-Copy/Firewall, `docs/SERIE-I-SICHERHEIT.md`), **Serie J** (Intuitive
+  Bedienung & adaptive Oberfläche — Touch/Gesten + Maus im 3D + adaptive
+  Zeichnungsoberfläche, `docs/SERIE-J-INTUITIVE-BEDIENUNG.md`). Reihung:
+  Fable = Chefdenker/Urteil, Opus = Orchestrierung, Sonnet = Ausführung.
 
 ## Wie der Vault mit der Software spricht
 
