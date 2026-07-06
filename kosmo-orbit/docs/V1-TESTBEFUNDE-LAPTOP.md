@@ -15,13 +15,14 @@ Oberflächen-Systematik.
 - [x] **Doppelklick zum Absetzen** — `onDoubleClick` (2D) + `onGroundDoubleClick`
       (3D) ergänzt.
 
-## Batch T2 — Render-Bugs 3D & 2D ⏳
-- [ ] **3D-Wände verbuggt**: nur innenliegende Textur sichtbar, Rest transparent
-      (Material einseitig / Backface / Normalen).
-- [ ] **Treppe** ebenfalls: Textur transparent/verbuggt in 3D.
-- [ ] **Grundriss: Wände verbinden sich nicht sauber** — komische Ecke
-      (Poché-Join/Verschneidung an der Kante).
-- [ ] **Betontextur im Grundriss falsch** (Schraffur/Material stimmt nicht).
+## Batch T2 — Render-Bugs 3D & 2D ✅ (ROADMAP 141)
+- [x] **3D-Wände** — invertierte Dreieckswindung (FrontSide-Culling cullte die
+      Aussenfläche) korrigiert.
+- [x] **Treppe** — gleicher Windungsfehler + Podest-Outline CCW korrigiert.
+- [x] **Grundriss-Wandecke** — Poché-Flächenschwelle korrigiert (Putz wird an
+      der Ecke sauber von der Dämmung beschnitten). Golden neu erzeugt.
+      *(Rest-Grenze: echte 2D-Eck-Miter bleibt separater Auftrag.)*
+- [x] **Betontextur** — SIA-Betontönung statt Papierfarbe, feineres Raster.
 
 ## Batch T3 — ArchiCAD-Zeichenhilfen & Navigation ⏳
 - [ ] Zeichnungs-**Hilfslinien** + **Shift = Achse fixieren** (ortho/winkel).
