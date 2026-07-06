@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as SunCalc from 'suncalc';
@@ -7,6 +7,8 @@ import { meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
 import { pbrPalette } from '@kosmo/data';
+import type { Fluchtlinie } from './zeichenhilfen';
+import { NavLeiste } from './NavLeiste';
 
 // Kontext-Layer (IFC-Bestand): sessionweit, nicht synchronisiert
 let contextMeshes: ContextMesh[] = [];
@@ -87,6 +89,10 @@ export interface ViewportHandlers {
   onMoveEnd?: (p: Pt) => void;
   /** Lebende Zieh-Vorschau (Kern-mm), während `onMoveStart…onMoveEnd` läuft. */
   moveOffset?: { id: string; dx: number; dy: number } | null;
+  /** T3-Zeichenhilfen: sichtbare Fluchtlinien (Ausrichtung an bestehenden Punkten) — nur 2D-Overlay (PlanView). */
+  fluchtlinien?: Fluchtlinie[];
+  /** T3: Shift hat den Winkel zum letzten Punkt auf 45°-Vielfache fixiert. */
+  orthoAktiv?: boolean;
 }
 
 import { materialKarten, texturenAktiv } from './texturen';
@@ -106,8 +112,28 @@ const materialPalette: Record<string, { color: number; roughness: number; metaln
   default: { color: 0xcfccc4, roughness: 0.9 },
 };
 
+// T3: Orbit/Pan/Zoom-Modus fürs linke Mausdrücken — rechte Maustaste/Mittel-
+// taste/Rad bleiben IMMER Pan/Zoom (camera-controls-Default, unverändert),
+// die Knöpfe geben zusätzlich dem linken Klick eine explizite Bedeutung (v.a.
+// hilfreich am Trackpad ohne Mitteltaste).
+type MausAktion = CameraControls['mouseButtons']['left'];
+const NAV_ACTION: Record<'orbit' | 'pan' | 'zoom', MausAktion> = {
+  orbit: CameraControls.ACTION.ROTATE,
+  pan: CameraControls.ACTION.TRUCK,
+  zoom: CameraControls.ACTION.DOLLY,
+};
+
 export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHandlers> }) {
   const mountRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<CameraControls | null>(null);
+  const modelRef = useRef<THREE.Group | null>(null);
+  const [navModus, setNavModus] = useState<'orbit' | 'pan' | 'zoom'>('orbit');
+
+  // Linker Klick übernimmt den gewählten Modus; Rechtsklick/Mitteltaste/Rad
+  // bleiben von camera-controls unangetastet (kein Funktionsverlust).
+  useEffect(() => {
+    if (controlsRef.current) controlsRef.current.mouseButtons.left = NAV_ACTION[navModus];
+  }, [navModus]);
 
   useEffect(() => {
     const mount = mountRef.current!;
@@ -127,6 +153,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     controls.setLookAt(18, 14, 18, 4, 0, -4, false);
     controls.dollyToCursor = true;
     controls.smoothTime = 0.12;
+    controls.mouseButtons.left = NAV_ACTION[navModus];
+    controls.saveState(); // Home-Punkt für die «Einpassen»-Taste (reset())
+    controlsRef.current = controls;
 
     // Licht: warme Sonne + weiches Himmelslicht
     const sun = new THREE.DirectionalLight(0xfff3e0, 2.6);
@@ -188,6 +217,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const model = new THREE.Group();
     model.scale.set(MM, MM, MM);
     scene.add(model);
+    modelRef.current = model;
 
     const modulGroup = new THREE.Group();
     scene.add(modulGroup);
@@ -631,8 +661,39 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       controls.dispose();
       renderer.dispose();
       mount.removeChild(renderer.domElement);
+      controlsRef.current = null;
+      modelRef.current = null;
     };
+    // navModus wird über den separaten Sync-Effekt oben nachgezogen (controlsRef) —
+    // hier zählt nur der Startwert beim Aufbau der Szene.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handlers]);
 
-  return <div ref={mountRef} style={{ position: 'absolute', inset: 0 }} data-testid="viewport3d" />;
+  // T3: Home/Fit — passt die Kamera auf den Modellinhalt ein, sonst zurück
+  // zur gespeicherten Ausgangslage (saveState() beim Szenenaufbau).
+  const einpassen = () => {
+    const controls = controlsRef.current;
+    const model = modelRef.current;
+    if (!controls) return;
+    if (model && model.children.length > 0) {
+      void controls.fitToBox(model, true, { paddingLeft: 0.15, paddingRight: 0.15, paddingTop: 0.15, paddingBottom: 0.15 });
+    } else {
+      void controls.reset(true);
+    }
+  };
+
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      <div ref={mountRef} style={{ position: 'absolute', inset: 0 }} data-testid="viewport3d" />
+      <NavLeiste
+        testid="nav-3d"
+        aktionen={[
+          { id: 'orbit', icon: '⟳', titel: 'Orbit — linke Maustaste dreht die Kamera um das Modell', aktiv: navModus === 'orbit', onClick: () => setNavModus('orbit') },
+          { id: 'pan', icon: '✋', titel: 'Pan — linke Maustaste verschiebt die Ansicht (sonst: rechte Maustaste)', aktiv: navModus === 'pan', onClick: () => setNavModus('pan') },
+          { id: 'zoom', icon: '🔍', titel: 'Zoom — linke Maustaste zieht näher/weiter (sonst: Mausrad/Mitteltaste)', aktiv: navModus === 'zoom', onClick: () => setNavModus('zoom') },
+          { id: 'fit', icon: '⌂', titel: 'Einpassen — Modell ins Bild holen (ohne Modell: Ausgangslage)', onClick: einpassen },
+        ]}
+      />
+    </div>
+  );
 }

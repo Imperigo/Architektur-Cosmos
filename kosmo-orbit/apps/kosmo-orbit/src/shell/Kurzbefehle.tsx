@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Badge, Hairline } from '@kosmo/ui';
+import { ZEICHEN_KURZBEFEHLE } from '../modules/design/zeichen-shortcuts';
 
 /**
  * Globales Kurzbefehl-Schema (V1-Finish P1): Ziffern 1–9 springen zu den
@@ -72,6 +73,13 @@ export function Kurzbefehle({
     { taste: '?', text: 'Diese Übersicht ein-/ausblenden' },
   ];
 
+  // T3: Zeichen-Kurzbefehle — nur in KosmoDesign aktiv (an ArchiCAD angelehnt),
+  // aus derselben Registry wie der keydown-Handler dort (zeichen-shortcuts.ts).
+  const zeichenZeilen = ZEICHEN_KURZBEFEHLE.map((k) => ({
+    taste: k.taste.toUpperCase(),
+    text: `Werkzeug «${k.beschrieb}» (in KosmoDesign)`,
+  }));
+
   return (
     <div
       role="dialog"
@@ -101,28 +109,13 @@ export function Kurzbefehle({
           <Badge hue="var(--k-ink-faint)">?</Badge>
         </div>
         <Hairline />
+        <div style={{ display: 'grid', gap: 7 }}>{zeilen.map((z) => <Kurzbefehlzeile key={z.taste} {...z} />)}</div>
+        <Hairline />
+        <div style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--k-ink-soft)' }}>
+          Zeichnen (KosmoDesign, an ArchiCAD angelehnt)
+        </div>
         <div style={{ display: 'grid', gap: 7 }}>
-          {zeilen.map((z) => (
-            <div
-              key={z.taste}
-              style={{ display: 'grid', gridTemplateColumns: '76px 1fr', gap: 12, alignItems: 'baseline' }}
-            >
-              <kbd
-                style={{
-                  fontFamily: 'var(--k-font-mono)',
-                  fontSize: 11.5,
-                  padding: '2px 6px',
-                  border: '1px solid var(--k-line-strong)',
-                  borderRadius: 'var(--k-radius-sm)',
-                  background: 'var(--k-surface)',
-                  textAlign: 'center',
-                }}
-              >
-                {z.taste}
-              </kbd>
-              <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{z.text}</span>
-            </div>
-          ))}
+          {zeichenZeilen.map((z) => <Kurzbefehlzeile key={z.taste} {...z} />)}
         </div>
         <Hairline />
         <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
@@ -130,6 +123,27 @@ export function Kurzbefehle({
           {stationen.slice(0, 9).map((s, i) => `${i + 1} ${s.name.replace(/^Kosmo/, '')}`).join(' · ')}
         </div>
       </div>
+    </div>
+  );
+}
+
+function Kurzbefehlzeile({ taste, text }: { taste: string; text: string }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '76px 1fr', gap: 12, alignItems: 'baseline' }}>
+      <kbd
+        style={{
+          fontFamily: 'var(--k-font-mono)',
+          fontSize: 11.5,
+          padding: '2px 6px',
+          border: '1px solid var(--k-line-strong)',
+          borderRadius: 'var(--k-radius-sm)',
+          background: 'var(--k-surface)',
+          textAlign: 'center',
+        }}
+      >
+        {taste}
+      </kbd>
+      <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{text}</span>
     </div>
   );
 }

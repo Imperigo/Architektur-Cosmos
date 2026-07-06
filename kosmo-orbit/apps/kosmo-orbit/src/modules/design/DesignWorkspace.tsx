@@ -12,16 +12,21 @@ import {
   moduleAlsCsv,
   magnetFang,
   type Assembly,
+  type Column,
   type ErkannteDecke,
   type ErkannteWand,
   type FangKandidaten,
   type Pt,
   type SectionSpec,
+  type Stair,
   type Storey,
+  type Wall,
   type Zone,
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { VERSCHIEBBAR } from './plan-hit-test';
+import { zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
+import { werkzeugFuerTaste } from './zeichen-shortcuts';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { ModulEditor } from './ModulEditor';
 import { PlanView } from './PlanView';
@@ -56,6 +61,12 @@ function snap(p: Pt, magnet?: FangKandidaten): Pt {
   return { x: Math.round(p.x / SNAP) * SNAP, y: Math.round(p.y / SNAP) * SNAP };
 }
 
+// T3: Werkzeuge, die eine Punktkette setzen — bekommen Ortho-Sperre (Shift)
+// und Fluchtlinien an bestehenden Punkten. Auswahl/Skizze bleiben unverändert
+// (Skizze hat ihr eigenes Freihand-Overlay, Auswahl darf T1 nicht anfassen).
+const ZEICHEN_WERKZEUGE = new Set<ToolId>(['wand', 'volumen', 'zone', 'dach', 'treppe', 'schnitt', 'stuetze']);
+const FLUCHT_TOLERANZ = 150; // mm — grosszügig wie der bestehende Trefferzonen-Zuschlag
+
 export function DesignWorkspace() {
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
@@ -73,6 +84,23 @@ export function DesignWorkspace() {
     [revision, activeStoreyId],
   );
 
+  // T3-Zeichenhilfen: bestehende Eckpunkte des Geschosses für Fluchtlinien
+  // (Ausrichtung an Wandecken/Stützen/Zonen-Ecken) — reine Anzeige+Fang,
+  // unabhängig vom Stützenraster-Magnet oben.
+  const alignPunkte = useMemo(() => {
+    if (!activeStoreyId) return [] as Pt[];
+    const d = useProject.getState().doc;
+    const pts: Pt[] = [];
+    for (const w of d.byKind<Wall>('wall')) if (w.storeyId === activeStoreyId) pts.push(w.a, w.b);
+    for (const s of d.byKind<Stair>('stair')) if (s.storeyId === activeStoreyId) pts.push(s.a, s.b);
+    for (const c of d.byKind<Column>('column')) if (c.storeyId === activeStoreyId) pts.push(c.at);
+    for (const e of d.inStorey(activeStoreyId)) {
+      if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'slab') pts.push(...e.outline);
+    }
+    return pts;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revision, activeStoreyId]);
+
   // ArchiCAD-Gefühl: die Arbeitsfläche öffnet im Auswahl-Werkzeug (Pfeil), nicht
   // schon zeichnend — sonst baut der erste Klick versehentlich eine Wand.
   const [tool, setTool] = useState<ToolId>('auswahl');
@@ -84,6 +112,9 @@ export function DesignWorkspace() {
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
   const [points, setPoints] = useState<Pt[]>([]);
   const [cursor, setCursor] = useState<Pt | null>(null);
+  // T3-Zeichenhilfen: sichtbare Fluchtlinien + Ortho-Status fürs Overlay (PlanView)
+  const [fluchtlinien, setFluchtlinien] = useState<Fluchtlinie[]>([]);
+  const [orthoAktiv, setOrthoAktiv] = useState(false);
   // Ziehen im Plan (Auswahl-Werkzeug): Startpunkt gemerkt, aktuelle Position
   // folgt der Maus als reine Vorschau — erst bei pointerup EIN design.verschieben
   const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt } | null>(null);
@@ -142,6 +173,35 @@ export function DesignWorkspace() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // T3: Zeichen-Kurzbefehle (W/Z/V/D/T/C/S/F, Esc → Auswahl) — an ArchiCAD
+  // angelehnt, nur solange KosmoDesign offen ist. Dieselbe Eingabefeld-/
+  // Dialog-Wache wie shell/Kurzbefehle.tsx, damit Tippen nie ein Werkzeug wechselt.
+  useEffect(() => {
+    const inEingabe = (target: EventTarget | null): boolean => {
+      const el = target as HTMLElement | null;
+      if (!el) return false;
+      const tag = el.tagName;
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.repeat || inEingabe(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (document.querySelector('[role="dialog"]')) return; // Palette/Bestätigung/Kurzbefehle behalten die Tastatur
+      if (e.key === 'Escape') {
+        // ArchiCAD-Reflex: Esc bricht die laufende Kette ab UND geht zur Auswahl zurück
+        setTool('auswahl');
+        setPoints([]);
+        return;
+      }
+      const werkzeug = werkzeugFuerTaste(e.key);
+      if (werkzeug) {
+        e.preventDefault();
+        setTool(werkzeug as ToolId);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const doc = useProject.getState().doc;
   const storeys = useMemo(() => doc.storeysOrdered(), [doc, revision]);
   // Aktives Bemassungs-Preset aus den Settings ableiten (Anzeige im Select)
@@ -181,9 +241,28 @@ export function DesignWorkspace() {
     };
   }, [doc, revision]);
 
+  // T3-Zeichenhilfen: Shift-Ortho + Fluchtlinien VOR dem gewohnten Stützenraster-/
+  // 250er-Snap — nur für die Zeichenwerkzeuge, Auswahl/Skizze bleiben unberührt
+  // (T1-Interaktion darf sich nicht ändern). Referenzpunkt der Ortho-Sperre ist
+  // der letzte gesetzte Punkt der laufenden Kette (Wand-Anfang, Polygon-Ecke…).
+  const zielPunkt = (rawP: Pt, shiftKey: boolean): Pt => {
+    if (!ZEICHEN_WERKZEUGE.has(tool)) {
+      setFluchtlinien([]);
+      setOrthoAktiv(false);
+      return snap(rawP, magnet);
+    }
+    const ref = points.length > 0 ? points[points.length - 1]! : null;
+    const erg = zeichenSnap(rawP, ref, shiftKey, magnet, alignPunkte, FLUCHT_TOLERANZ, (p) => snap(p, magnet));
+    setFluchtlinien(erg.fluchtlinien);
+    setOrthoAktiv(erg.orthoAktiv);
+    return erg.p;
+  };
+
   const handlersRef = useRef<ViewportHandlers>({});
   const select = useProject((s) => s.select);
   handlersRef.current = {
+    fluchtlinien,
+    orthoAktiv,
     sketchMode: tool === 'skizze',
     pickMode: tool === 'auswahl',
     onPick: (id) => select(id ? [id] : []),
@@ -226,7 +305,7 @@ export function DesignWorkspace() {
     onGroundDoubleClick: (e) => {
       // ArchiCAD-Geste: Doppelklick schliesst/setzt die laufende Platzierung ab
       if (!activeStoreyId) return;
-      const p = snap(e.p, magnet);
+      const p = zielPunkt(e.p, e.shiftKey);
       if (tool === 'volumen' || tool === 'zone' || tool === 'dach') {
         // Der zweite Klick der Doppelklick-Geste liegt am selben Ort wie der
         // erste — der ist evtl. schon als (Duplikat-)Punkt angehängt worden.
@@ -283,11 +362,11 @@ export function DesignWorkspace() {
           ? [...points, cursor, points[0]!]
           : [...points, cursor]
         : null,
-    onGroundMove: (e) => setCursor(snap(e.p, magnet)),
+    onGroundMove: (e) => setCursor(zielPunkt(e.p, e.shiftKey)),
     onEscape: () => setPoints([]),
     onGroundClick: (e) => {
       if (!activeStoreyId) return;
-      const p = snap(e.p, magnet);
+      const p = zielPunkt(e.p, e.shiftKey);
       if (tool === 'wand') {
         if (points.length === 0) {
           setPoints([p]);
@@ -967,6 +1046,15 @@ export function DesignWorkspace() {
               L = {formatLength(Math.round(Math.hypot(cursor.x - points[points.length - 1]!.x, cursor.y - points[points.length - 1]!.y)))}
             </Measure>
           )}
+          {/* T3: Ortho-Sperre (Shift) sichtbar in der Statuszeile, nicht nur im Plan-Overlay */}
+          {orthoAktiv && ZEICHEN_WERKZEUGE.has(tool) && (
+            <span
+              data-testid="ortho-badge"
+              style={{ background: 'var(--k-accent)', color: 'white', padding: '3px 8px', borderRadius: 6, fontWeight: 600 }}
+            >
+              ⊥ Ortho
+            </span>
+          )}
           {lastEntry && (
             <span
               style={{
@@ -983,15 +1071,15 @@ export function DesignWorkspace() {
           <span style={{ flex: 1 }} />
           <span style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}>
             {tool === 'wand'
-              ? 'Klick: Punkte setzen · Shift-Klick: Kette beenden · Esc: abbrechen'
+              ? 'Klick: Punkte setzen · Shift halten: Winkel einrasten (0/45/90°) · Shift-Klick: Kette beenden · Esc: abbrechen'
               : tool === 'skizze'
                 ? 'Freihand zeichnen — Striche werden zu Wänden'
                 : tool === 'treppe'
-                ? 'Klick: Antritt, dann Austritt (Steigung wird berechnet)'
+                ? 'Klick: Antritt, dann Austritt (Steigung wird berechnet) · Shift: Winkel einrasten'
                 : tool === 'schnitt'
-                ? 'Klick: Anfang und Ende der Schnittlinie'
-                : tool === 'volumen'
-                ? 'Klick: Eckpunkte · Klick auf Start: schliessen'
+                ? 'Klick: Anfang und Ende der Schnittlinie · Shift: Winkel einrasten'
+                : tool === 'volumen' || tool === 'zone' || tool === 'dach'
+                ? 'Klick: Eckpunkte · Shift: Winkel einrasten · Klick auf Start: schliessen'
                 : 'Klick: auswählen'}
           </span>
           {/* V6: die Vorform-Essenz als Handgefühl — Fläche wächst unterm Cursor */}

@@ -147,6 +147,10 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
 
   // V2-A3: Achsen ins Modell → Grid-Entities + Achsköpfe im Plan
   await page.locator('[data-testid="raster-achsen"]').first().click();
+  // T3: die Konstruktionsachse ist standardmässig ausgeblendet (nur das
+  // Bauteil, nicht die Zeichenachse) — für diesen Test bewusst wieder
+  // einblenden, um die Achsköpfe/den Magnetfang unten zu prüfen.
+  await page.click('[data-testid="achsen-toggle"]');
   const raster = await page.evaluate(() => {
     const achsen = window.__kosmo.state().doc.byKind('grid') as unknown as {
       label: string;

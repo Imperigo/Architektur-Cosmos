@@ -1,0 +1,105 @@
+import { magnetFang, type FangKandidaten, type Pt } from '@kosmo/kernel';
+
+/**
+ * Zeichenhilfen (T3): ArchiCAD-Gefühl beim Setzen von Punkten (Wand, Zone,
+ * Volumen, Polygon) — reine Funktionen, unabhängig von React/SVG/three.js,
+ * damit sie unit-testbar sind. Die Overlays (Hilfslinien-Kreuz, Fluchtlinien)
+ * malen PlanView/Viewport3D aus `fluchtlinien`/`orthoAktiv`.
+ *
+ * Rangfolge (höchste zuerst):
+ *  1. Shift fixiert den Winkel zum letzten Punkt auf ein 45°-Vielfaches
+ *     (ortho45) — die Distanz bleibt frei, wie in ArchiCAD/Blender.
+ *  2. Der bestehende Stützenraster-Magnet (Kreuzung > Achslinie, derive/fang.ts)
+ *     bleibt danach vorrangig — das Tragwerk gewinnt vor einer Hilfslinie.
+ *  3. Eine Fluchtlinie an einem bestehenden Punkt (gleiches x oder y, z.B.
+ *     Wandecke) zieht die Koordinate exakt heran.
+ *  4. Sonst das gewöhnliche 250-mm-Raster (Fallback der aufrufenden Stelle).
+ */
+
+export interface Fluchtlinie {
+  achse: 'x' | 'y';
+  wert: number;
+}
+
+export interface ZeichenErgebnis {
+  p: Pt;
+  /** Sichtbare Führungslinien fürs Overlay — leer, wenn Ortho oder Stützenraster gewonnen haben. */
+  fluchtlinien: Fluchtlinie[];
+  /** Shift hat den Winkel zum letzten Punkt fixiert (fürs Overlay/Statuszeile). */
+  orthoAktiv: boolean;
+}
+
+const WINKEL_SCHRITT = (45 * Math.PI) / 180;
+
+/**
+ * ArchiCAD/Blender-Geste: Shift fixiert den Winkel zum Referenzpunkt (letzter
+ * gesetzter Punkt der Kette) auf ein Vielfaches von 45° — horizontal, vertikal
+ * oder diagonal exakt. Die Distanz zum Cursor bleibt frei.
+ */
+export function ortho45(ref: Pt, p: Pt): Pt {
+  const dx = p.x - ref.x;
+  const dy = p.y - ref.y;
+  const dist = Math.hypot(dx, dy);
+  if (dist < 1e-6) return { x: ref.x, y: ref.y };
+  const winkel = Math.round(Math.atan2(dy, dx) / WINKEL_SCHRITT) * WINKEL_SCHRITT;
+  return {
+    x: Math.round(ref.x + Math.cos(winkel) * dist),
+    y: Math.round(ref.y + Math.sin(winkel) * dist),
+  };
+}
+
+/**
+ * Ausrichtung an bestehenden Punkten (Wandecken, Stützen, Zonen-Eckpunkte):
+ * liegt eine Kandidaten-Koordinate innerhalb der Toleranz, zieht sie die
+ * jeweilige Achse exakt heran und liefert die Fluchtlinie fürs Overlay.
+ * Bei mehreren Treffern gewinnt der nächstliegende je Achse (x und y getrennt).
+ */
+export function fluchtFang(
+  p: Pt,
+  kandidaten: readonly Pt[],
+  toleranzMm: number,
+): { p: Pt; fluchtlinien: Fluchtlinie[] } {
+  let bestX: { d: number; wert: number } | null = null;
+  let bestY: { d: number; wert: number } | null = null;
+  for (const k of kandidaten) {
+    const dx = Math.abs(k.x - p.x);
+    if (dx <= toleranzMm && (!bestX || dx < bestX.d)) bestX = { d: dx, wert: k.x };
+    const dy = Math.abs(k.y - p.y);
+    if (dy <= toleranzMm && (!bestY || dy < bestY.d)) bestY = { d: dy, wert: k.y };
+  }
+  const fluchtlinien: Fluchtlinie[] = [];
+  if (bestX) fluchtlinien.push({ achse: 'x', wert: bestX.wert });
+  if (bestY) fluchtlinien.push({ achse: 'y', wert: bestY.wert });
+  return { p: { x: bestX ? bestX.wert : p.x, y: bestY ? bestY.wert : p.y }, fluchtlinien };
+}
+
+/**
+ * Zeichen-Snap fürs Werkzeug-Gummiband: komponiert Ortho-Sperre, Stützenraster-
+ * Magnet und Fluchtlinien zu EINEM Zielpunkt. `rasterRunden` ist der bestehende
+ * Fallback (250-mm-Raster) der aufrufenden Stelle — bleibt unverändert, nur der
+ * Weg dorthin bekommt die neuen Hilfen vorgeschaltet.
+ */
+export function zeichenSnap(
+  rawP: Pt,
+  ref: Pt | null,
+  shiftKey: boolean,
+  magnet: FangKandidaten | undefined,
+  kandidaten: readonly Pt[],
+  toleranzMm: number,
+  rasterRunden: (p: Pt) => Pt,
+): ZeichenErgebnis {
+  const orthoAktiv = !!(ref && shiftKey);
+  const nachOrtho = orthoAktiv ? ortho45(ref!, rawP) : rawP;
+
+  const magnetTreffer = magnet ? magnetFang(nachOrtho, magnet) : null;
+  if (magnetTreffer) return { p: magnetTreffer, fluchtlinien: [], orthoAktiv };
+
+  if (!orthoAktiv) {
+    const flucht = fluchtFang(nachOrtho, kandidaten, toleranzMm);
+    if (flucht.fluchtlinien.length > 0) {
+      return { p: flucht.p, fluchtlinien: flucht.fluchtlinien, orthoAktiv };
+    }
+  }
+
+  return { p: rasterRunden(nachOrtho), fluchtlinien: [], orthoAktiv };
+}

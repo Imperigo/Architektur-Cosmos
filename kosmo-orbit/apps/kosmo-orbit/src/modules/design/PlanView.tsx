@@ -4,6 +4,7 @@ import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
 import { outlineOf, pickEntityAt } from './plan-hit-test';
+import { NavLeiste } from './NavLeiste';
 
 /**
  * PlanView — der lebende Grundriss als semantisches SVG.
@@ -21,6 +22,14 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
   // Trace (RE-ARCHICAD A8): anderes Geschoss blass unterlegen — reine
   // Arbeitshilfe am Bildschirm, nie Planinhalt
   const [traceId, setTraceId] = useState<string>('');
+  // T3: Stützenraster-Achsen (Konstruktionslinien des Tragrasters) standard-
+  // mässig aus — nur das Bauteil, nicht die Zeichen-Achse. Über den Umschalter
+  // wieder einblendbar (Druck/Export bleibt unverändert, siehe derive/plan.ts).
+  const [achsenAn, setAchsenAn] = useState(false);
+  // T3: Navigations-Modus fürs linke Mausdrücken (Trackpad-Komfort) — Rad,
+  // Mitteltaste, Rechtsklick/Alt-Klick bleiben unverändert Pan/Zoom.
+  const [navModus2d, setNavModus2d] = useState<'werkzeug' | 'pan' | 'zoom'>('werkzeug');
+  const zoomDrag = useRef<{ y: number; scale: number } | null>(null);
   const graph = useMemo(() => {
     if (!graphAn || !activeStoreyId) return null;
     const g = raumGraph(doc, activeStoreyId);
@@ -97,18 +106,28 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
     };
   };
 
-  // Beim Einhängen einmal auf den Modellinhalt einpassen (z.B. geladenes Projekt).
-  // Bewusst NUR beim Mount: während des Zeichnens darf die Ansicht nie springen.
-  useEffect(() => {
+  // T3: «Einpassen» — auf den Modellinhalt zoomen (Home/Fit-Knopf UND einmalig
+  // beim Einhängen, z.B. geladenes Projekt). Ohne Inhalt: neutraler Startwert,
+  // kein Sprung ins Leere.
+  const einpassen = () => {
     const b = plan?.bounds;
     const svg = svgRef.current;
-    if (!b || !svg) return;
+    if (!svg) return;
     const rect = svg.getBoundingClientRect();
     if (rect.width < 20 || rect.height < 20) return;
+    if (!b) {
+      setView({ cx: 5000, cy: 3000, scale: 0.05 });
+      return;
+    }
     const w = Math.max(b.maxX - b.minX, 2000);
     const h = Math.max(b.maxY - b.minY, 2000);
     const scale = Math.min(1, Math.max(0.005, Math.min(rect.width / (w * 1.25), rect.height / (h * 1.25))));
     setView({ cx: (b.minX + b.maxX) / 2, cy: (b.minY + b.maxY) / 2, scale });
+  };
+
+  // Bewusst NUR beim Mount: während des Zeichnens darf die Ansicht nie springen.
+  useEffect(() => {
+    einpassen();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -158,6 +177,19 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
       >
         Graph
       </button>
+      <button
+        data-testid="achsen-toggle"
+        onClick={() => setAchsenAn(!achsenAn)}
+        title="Stützenraster-Achsen (Konstruktionslinien) ein-/ausblenden — nur Bildschirm, Druck/Export unverändert"
+        style={{
+          position: 'absolute', top: 8, right: 140, zIndex: 5, padding: '3px 10px',
+          borderRadius: 6, border: '1px solid var(--k-line-strong)', cursor: 'pointer',
+          background: achsenAn ? '#2455a4' : 'var(--k-raised)', color: achsenAn ? 'white' : 'inherit',
+          font: 'inherit', fontSize: 11.5,
+        }}
+      >
+        Achsen
+      </button>
       <svg
         ref={svgRef}
         data-testid="planview"
@@ -182,8 +214,14 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             }
             return;
           }
-          if (e.button === 1 || e.button === 2 || e.altKey) {
+          // T3: Pan-/Zoom-Modus (Nav-Leiste) gibt dem linken Klick zusätzlich
+          // die Bedeutung des gewählten Knopfs — Mitteltaste/Rechtsklick/Alt
+          // bleiben unabhängig davon IMMER Pan (kein Funktionsverlust).
+          if (e.button === 1 || e.button === 2 || e.altKey || (e.button === 0 && navModus2d === 'pan')) {
             panning.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy };
+            (e.target as Element).setPointerCapture(e.pointerId);
+          } else if (e.button === 0 && navModus2d === 'zoom') {
+            zoomDrag.current = { y: e.clientY, scale: view.scale };
             (e.target as Element).setPointerCapture(e.pointerId);
           } else if (e.button === 0 && handlers.current?.pickMode && activeStoreyId) {
             // Auswahl-Werkzeug: Treffer auf einem Bauteil startet gleich die
@@ -213,6 +251,14 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               return;
             }
           }
+          if (zoomDrag.current) {
+            // Nach oben ziehen = näher ran (ArchiCAD-Zoom-Werkzeug), Distanz→Faktor
+            // wie beim Mausrad-Handler oben, nur pixelbasiert statt deltaY-basiert.
+            const dy = e.clientY - zoomDrag.current.y;
+            const factor = Math.exp(-dy * 0.004);
+            setView((v) => ({ ...v, scale: Math.min(1, Math.max(0.005, zoomDrag.current!.scale * factor)) }));
+            return;
+          }
           if (panning.current) {
             const dx = (e.clientX - panning.current.x) / view.scale;
             const dy = (e.clientY - panning.current.y) / view.scale;
@@ -238,6 +284,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             } else {
               return;
             }
+          }
+          if (zoomDrag.current) {
+            zoomDrag.current = null;
+            return;
           }
           if (panning.current) {
             panning.current = null;
@@ -269,6 +319,7 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             if (touches.current.size === 0) gestureAktiv.current = false;
           }
           moveActive.current = false;
+          zoomDrag.current = null;
         }}
         onContextMenu={(e) => e.preventDefault()}
       >
@@ -467,8 +518,12 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               </text>
             ))}
 
-          {/* Stützenraster: Achsen strichpunktiert + Achskopf an beiden Enden */}
-          {plan &&
+          {/* Stützenraster: Achsen strichpunktiert + Achskopf an beiden Enden.
+              T3: standardmässig aus (nur das Bauteil, nicht die Konstruktions-
+              achse) — per «Achsen»-Knopf wieder einblendbar. Reine App-Schicht
+              (PlanView), derive/plan.ts und der Druck-Pfad (plansvg.ts) bleiben
+              unverändert — Goldens sind davon nicht betroffen. */}
+          {achsenAn && plan &&
             plan.axes.map((ax, i) => {
               const haupt = ax.typ === 'haupt';
               return (
@@ -591,20 +646,81 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             );
           })}
 
+          {/* T3-Zeichenhilfen: Fluchtlinien an bestehenden Punkten — durchlaufend
+              über den ganzen sichtbaren Plan, damit die Ausrichtung sofort
+              erkennbar ist (reine Bildschirm-Hilfe, kein Planinhalt). */}
+          {handlers.current?.fluchtlinien?.map((f, i) =>
+            f.achse === 'x' ? (
+              <line
+                key={`fx${i}`}
+                data-testid="fluchtlinie"
+                x1={f.wert}
+                y1={-2_000_000}
+                x2={f.wert}
+                y2={2_000_000}
+                stroke="var(--k-accent)"
+                strokeWidth={4}
+                strokeDasharray="6 14"
+                opacity={0.55}
+                pointerEvents="none"
+              />
+            ) : (
+              <line
+                key={`fy${i}`}
+                data-testid="fluchtlinie"
+                x1={-2_000_000}
+                y1={-f.wert}
+                x2={2_000_000}
+                y2={-f.wert}
+                stroke="var(--k-accent)"
+                strokeWidth={4}
+                strokeDasharray="6 14"
+                opacity={0.55}
+                pointerEvents="none"
+              />
+            ),
+          )}
+
           {/* Werkzeug-Vorschau */}
           {handlers.current?.previewLine && handlers.current.previewLine.length >= 2 && (
             <polyline
               points={handlers.current.previewLine.map((p) => `${p.x},${-p.y}`).join(' ')}
               fill="none"
-              stroke="var(--k-accent)"
+              stroke={handlers.current.orthoAktiv ? 'var(--k-success, #2e7d32)' : 'var(--k-accent)'}
               strokeWidth={20}
               strokeDasharray="80 50"
             />
           )}
           {cursor && (
             <g>
-              <line x1={cursor.x - 300} y1={-cursor.y} x2={cursor.x + 300} y2={-cursor.y} stroke="var(--k-accent)" strokeWidth={8} />
-              <line x1={cursor.x} y1={-cursor.y - 300} x2={cursor.x} y2={-cursor.y + 300} stroke="var(--k-accent)" strokeWidth={8} />
+              <line
+                x1={cursor.x - 300}
+                y1={-cursor.y}
+                x2={cursor.x + 300}
+                y2={-cursor.y}
+                stroke={handlers.current?.orthoAktiv ? 'var(--k-success, #2e7d32)' : 'var(--k-accent)'}
+                strokeWidth={8}
+              />
+              <line
+                x1={cursor.x}
+                y1={-cursor.y - 300}
+                x2={cursor.x}
+                y2={-cursor.y + 300}
+                stroke={handlers.current?.orthoAktiv ? 'var(--k-success, #2e7d32)' : 'var(--k-accent)'}
+                strokeWidth={8}
+              />
+              {handlers.current?.orthoAktiv && (
+                <text
+                  data-testid="ortho-hinweis"
+                  x={cursor.x + 340}
+                  y={-cursor.y - 340}
+                  fontSize={200}
+                  fill="var(--k-success, #2e7d32)"
+                  fontFamily="var(--k-font-mono)"
+                >
+                  ⊥ 45°
+                </text>
+              )}
             </g>
           )}
         </g>
@@ -624,6 +740,15 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
           onAccept={handlers.current.onSketchAccept}
         />
       )}
+      <NavLeiste
+        testid="nav-2d"
+        aktionen={[
+          { id: 'werkzeug', icon: '◇', titel: 'Werkzeug — linke Maustaste zeichnet/wählt (Standard)', aktiv: navModus2d === 'werkzeug', onClick: () => setNavModus2d('werkzeug') },
+          { id: 'pan', icon: '✋', titel: 'Pan — linke Maustaste verschiebt die Ansicht (sonst: Mitteltaste/Rechtsklick/Alt-Klick)', aktiv: navModus2d === 'pan', onClick: () => setNavModus2d('pan') },
+          { id: 'zoom', icon: '🔍', titel: 'Zoom — linke Maustaste ziehen zoomt (sonst: Mausrad/Pinch)', aktiv: navModus2d === 'zoom', onClick: () => setNavModus2d('zoom') },
+          { id: 'fit', icon: '⌂', titel: 'Einpassen — Grundriss ins Bild holen', onClick: einpassen },
+        ]}
+      />
     </div>
   );
 }
