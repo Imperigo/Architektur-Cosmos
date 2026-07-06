@@ -676,6 +676,24 @@ describe('A3: Echte 2D-Eck-Miter im Grundriss-Poché (ROADMAP 149)', () => {
     expect(treffer).toBe(true);
   });
 
+  it('inkonsistent gewickelte Nachbarwand (verkehrt gezeichnet): Wicklungs-Guard fällt auf stumpfe Ecke zurück', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    // Wand 2 trifft dieselbe Ecke (2000,0) wie im ersten Test, ist aber VERKEHRT
+    // gezeichnet (endet statt beginnt dort — a/b vertauscht). Ihre asymmetrischen
+    // Schichten liegen dadurch auf der Innenseite; eine blinde Gehrung würde die
+    // Umrisse verbinden und die Beton-Schicht ins Gebäudeinnere ziehen. Der
+    // Wicklungs-Guard (sideA·sideB < 0) erkennt das und lässt die Ecke stumpf.
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 2000, y: 0 } });
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 2000, y: 2000 }, b: { x: 2000, y: 0 } });
+    // Der korrekt gewickelte Fall (erster Test) trägt exakt die Aussen-Miterspitze
+    // (2180,-180); hier darf sie NICHT entstehen — sonst hätte die Gehrung
+    // falsch (nach innen) gemitert.
+    const hatMiterSpitze = beton(derivePlan(doc, storeyId)).some((r) =>
+      r.rings.some((ring) => ring.some((p) => p.x === 2180 && p.y === -180)),
+    );
+    expect(hatMiterSpitze).toBe(false);
+  });
+
   it('entartete Spitze (~3°): kein Miter — Fläche bleibt plausibel statt ins Unendliche zu schiessen', () => {
     const { doc, storeyId, assemblyId } = setupDoc();
     const lenA = 2000;

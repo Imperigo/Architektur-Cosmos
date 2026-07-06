@@ -151,6 +151,23 @@ function detectEndMiters(doc: KosmoDoc, walls: readonly Wall[]): Map<string, End
 
     const perpA = normal(wallA.a, wallA.b);
     const perpB = normal(wallB.a, wallB.b);
+    // Wicklungs-Konsistenz: die «linke» Offset-Seite (+perp = offsetLeft) beider
+    // Wände muss geometrisch dieselbe Gebäudeseite meinen. Eine Nachbarwand, die
+    // «verkehrt» gezeichnet wurde (a/b vertauscht), trägt ihre asymmetrischen
+    // Schichten schon in `wallOutline` auf der falschen Seite; die Gehrung würde
+    // die beiden Umrisse dann zwar verbinden, aber die Schicht ins Gebäude-Innere
+    // legen. Prüfung: die Away-Achse der jeweils ANDEREN Wand (vom Eckpunkt weg)
+    // muss auf konsistenter Seite der eigenen +perp-Richtung liegen. Ist das
+    // Produkt negativ (inkonsistent gewickelt), bleibt die Ecke ehrlich stumpf.
+    const cornerA = ea.end === 'a' ? wallA.a : wallA.b;
+    const cornerB = eb.end === 'a' ? wallB.a : wallB.b;
+    const awayA = ea.end === 'a' ? wallA.b : wallA.a; // A's fernes Ende
+    const awayB = eb.end === 'a' ? wallB.b : wallB.a; // B's fernes Ende
+    const uA = { x: awayA.x - cornerA.x, y: awayA.y - cornerA.y };
+    const uB = { x: awayB.x - cornerB.x, y: awayB.y - cornerB.y };
+    const sideA = perpA.x * uB.x + perpA.y * uB.y;
+    const sideB = perpB.x * uA.x + perpB.y * uA.y;
+    if (sideA * sideB < 0) continue; // inkonsistente Wicklung → stumpfe Ecke
     const rhsX = perpB.x - perpA.x;
     const rhsY = perpB.y - perpA.y;
     const det = -cross;
