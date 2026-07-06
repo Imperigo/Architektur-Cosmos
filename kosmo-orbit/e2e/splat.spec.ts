@@ -102,8 +102,13 @@ test('Video → Splat: lokale Frame-Extraktion + ehrliche Bridge-Übergabe (kein
   await expect(page.locator('[data-testid="video-frames-extract"]')).toContainText('noch keine Frames');
   await expect(page.locator('[data-testid="video-splat-status"]')).toContainText('Noch nicht gestartet');
 
-  // TODO (Opus, mit echter Kamera-Testdatei unter e2e/fixtures/):
-  // chooser.setFiles(...) mit echtem kurzen .mp4 → Frames extrahieren →
-  // «An Splat-Konverter übergeben» → mit --fake-Bridge muss der Status
-  // "kein-sfm-worker" + Frame-Anzahl zeigen, NIE ein Splat-Ergebnis vortäuschen.
+  // Ehrliche Toolchain-Grenze (A2b): der echte Frame-Extraktions-Ende-zu-Ende-Weg
+  // (mit `.mp4`/`.webm`-Kamera-Testdatei → Frames → «An Splat-Konverter übergeben»
+  // → --fake-Bridge-Status "kein-sfm-worker" + Frame-Anzahl) braucht eine im
+  // Browser DEKODIERBARE Video-Datei. Die Cloud-Session hat kein ffmpeg, und
+  // headless-Chromium dekodiert weder H.264 (proprietär) noch ein handgebautes
+  // Mini-Video zuverlässig — eine echte Fixture liesse sich hier nur vortäuschen.
+  // Darum bleibt dieser Test bewusst auf dem ehrlichen Leerzustand; der Video-Weg
+  // wird auf einer Maschine mit Video-Toolchain (HomeStation) gefahren. Die reine
+  // Extraktions-/Übergabelogik ist separat unit-getestet (`video-splat.test.ts`).
 });
