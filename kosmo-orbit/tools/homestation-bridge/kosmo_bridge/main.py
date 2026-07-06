@@ -17,6 +17,9 @@ Endpoints (Vertrag: @kosmo/contracts bridge-api.ts):
 Start:   kosmo-bridge --store /mnt/data/ArchitekturKosmos/render-jobs
 Test:    kosmo-bridge --store /tmp/kosmo-jobs --fake-worker
 Sicherheit: KOSMO_BRIDGE_TOKEN setzen → Header X-Kosmo-Token wird verlangt.
+  Ohne Token bleibt die Bridge im erreichbaren Netz offen (ehrlich benannt,
+  kein Vortäuschen von Schutz, siehe Startlog). --host 0.0.0.0 und
+  KOSMO_BRIDGE_ORIGIN=* sind bewusste Büronetz-Optionen, keine Defaults.
 """
 
 from __future__ import annotations
@@ -38,10 +41,26 @@ from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 
+
+def _cors_origins() -> list[str]:
+    """CORS-Allowlist aus Env, Default eng (nur lokale Dev-/Preview-Ports der
+    App). `KOSMO_BRIDGE_ORIGIN=*` ist eine bewusste Büronetz-Option (Owner
+    setzt sie aktiv, z.B. für ein iPad im selben Netz) — kein Default, sonst
+    wäre jede beliebige Website im Browser des Nutzers ein potenzieller
+    Bridge-Client."""
+    raw = os.environ.get(
+        "KOSMO_BRIDGE_ORIGIN",
+        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5183,http://127.0.0.1:5183",
+    )
+    if raw.strip() == "*":
+        return ["*"]
+    return [o.strip() for o in raw.split(",") if o.strip()]
+
+
 app = FastAPI(title="Kosmo-Bridge", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Büronetz; Zugriff wird über Token gesteuert
+    allow_origins=_cors_origins(),
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -50,6 +69,16 @@ STORE = Path(os.environ.get("KOSMO_JOB_STORE", "/tmp/kosmo-jobs"))
 OLLAMA = os.environ.get("KOSMO_OLLAMA_URL", "http://127.0.0.1:11434")
 TOKEN = os.environ.get("KOSMO_BRIDGE_TOKEN", "")
 FAKE_WORKER = False
+
+# Upload-Grössen-Deckel (Env-überschreibbar) — schützt vor Platten-DoS über
+# unbegrenzte multipart-Uploads. Defaults sind grosszügig für echte
+# Render-Modelle/Audiodateien, aber weit unter "unbegrenzt".
+MAX_UPLOAD_MODEL_BYTES = int(os.environ.get("KOSMO_BRIDGE_MAX_UPLOAD_MODEL", str(200 * 1024 * 1024)))  # ~200 MB
+MAX_UPLOAD_AUDIO_BYTES = int(os.environ.get("KOSMO_BRIDGE_MAX_UPLOAD_AUDIO", str(50 * 1024 * 1024)))  # ~50 MB
+# Für einen künftigen Frame-Upload-Weg (z.B. Video→Splat) vorgesehen, damit ein
+# einzelner Env-Namensraum reicht — aktuell von keinem Endpoint genutzt.
+MAX_UPLOAD_FRAME_BYTES = int(os.environ.get("KOSMO_BRIDGE_MAX_UPLOAD_FRAME", str(500 * 1024)))  # ~500 KB
+MAX_FRAME_COUNT = int(os.environ.get("KOSMO_BRIDGE_MAX_FRAMES", "400"))
 
 _whisper_model = None
 
@@ -61,9 +90,52 @@ def _now() -> str:
 @app.middleware("http")
 async def token_guard(request: Request, call_next):
     if TOKEN and request.url.path != "/health":
-        if request.headers.get("x-kosmo-token") != TOKEN:
+        supplied = request.headers.get("x-kosmo-token", "")
+        # secrets.compare_digest statt `!=`: konstante Laufzeit, kein
+        # Byte-für-Byte-Timing-Seitenkanal auf den Token-Vergleich.
+        if not secrets.compare_digest(supplied, TOKEN):
             return Response(status_code=401, content="Token fehlt oder falsch")
     return await call_next(request)
+
+
+async def _read_capped(upload: UploadFile, max_bytes: int, label: str) -> bytes:
+    """Liest einen Upload in Blöcken und bricht mit 413 ab, sobald der Deckel
+    überschritten ist — statt die Datei erst unbegrenzt auf Platte/in den
+    Speicher zu lesen und danach zu prüfen."""
+    chunks: list[bytes] = []
+    total = 0
+    chunk_size = 1024 * 1024
+    while True:
+        chunk = await upload.read(chunk_size)
+        if not chunk:
+            break
+        total += len(chunk)
+        if total > max_bytes:
+            raise HTTPException(413, f"{label} überschreitet Deckel von {max_bytes} Bytes")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+def _safe_store_path(*segments: str) -> Path:
+    """Baut einen Pfad unterhalb von STORE und weist Ausbruchsversuche ab.
+
+    Zwei Schutzschichten: (1) jedes Segment wird gegen "/", "\\" und ".."
+    geprüft — kein Verstecken eines Fremdpfads in job_id/name; (2) das
+    Ergebnis muss nach resolve() ein echtes Kind von STORE sein
+    (`relative_to`, try/except ValueError) — schliesst den Nachbarordner-Trick
+    (z.B. `/tmp/kosmo-jobs-evil` neben `/tmp/kosmo-jobs`), den ein reines
+    `startswith()`-Präfixvergleich durchlässt, weil er keine Trenner-Grenze
+    kennt.
+    """
+    for seg in segments:
+        if not seg or "/" in seg or "\\" in seg or ".." in seg:
+            raise HTTPException(400, "ungültiger Pfad-Teil (job_id/name)")
+    candidate = STORE.joinpath(*segments)
+    try:
+        candidate.resolve().relative_to(STORE.resolve())
+    except ValueError:
+        raise HTTPException(404, "Pfad ausserhalb des Job-Stores")
+    return candidate
 
 
 @app.get("/health")
@@ -121,11 +193,15 @@ async def create_job(scene: str = Form(...), model: UploadFile = File(...)):
     job_dir = STORE / job_id
     job_dir.mkdir(parents=True, exist_ok=True)
 
+    model_bytes = await _read_capped(model, MAX_UPLOAD_MODEL_BYTES, "model.glb")
     model_path = job_dir / "model.glb"
-    model_path.write_bytes(await model.read())
-    scene_obj.setdefault("geometry", {})
+    model_path.write_bytes(model_bytes)
     scene_obj["geometry"] = {"path": str(model_path), "format": "glb"}
-    scene_obj.setdefault("out", str(job_dir / "out"))
+    # Schreibziel IMMER serverseitig erzwingen — ein vom Client geliefertes
+    # `out` (z.B. "/etc/…" oder ein anderer Job-Ordner) wird verworfen statt
+    # per setdefault() durchgelassen. Das schliesst die Schreibziel-Injektion
+    # aus dem Bauplan-Befund (R4).
+    scene_obj["out"] = str(job_dir / "out")
     (job_dir / "render-scene.json").write_text(json.dumps(scene_obj, indent=2))
 
     record = {
@@ -153,7 +229,7 @@ async def list_jobs():
 
 @app.get("/jobs/{job_id}")
 async def get_job(job_id: str):
-    job_dir = STORE / job_id
+    job_dir = _safe_store_path(job_id)
     f = job_dir / "job.json"
     if not f.exists():
         raise HTTPException(404, "Job unbekannt")
@@ -166,8 +242,8 @@ async def get_job(job_id: str):
 
 @app.get("/jobs/{job_id}/artifacts/{name}")
 async def get_artifact(job_id: str, name: str):
-    p = (STORE / job_id / name).resolve()
-    if not str(p).startswith(str(STORE.resolve())) or not p.exists():
+    p = _safe_store_path(job_id, name)
+    if not p.exists():
         raise HTTPException(404, "Artefakt unbekannt")
     return FileResponse(p)
 
@@ -227,6 +303,10 @@ def _stt_available() -> bool:
 @app.post("/stt")
 async def stt(audio: UploadFile = File(...)):
     global _whisper_model
+    # Deckel zuerst prüfen, unabhängig davon, ob faster-whisper installiert
+    # ist — sonst liesse sich die Bridge über grosse Audio-Uploads schon vor
+    # der 501-Antwort zum unbegrenzten Plattenschreiben zwingen.
+    audio_bytes = await _read_capped(audio, MAX_UPLOAD_AUDIO_BYTES, "audio")
     if not _stt_available():
         raise HTTPException(
             501,
@@ -242,7 +322,7 @@ async def stt(audio: UploadFile = File(...)):
         _whisper_model = WhisperModel(model_id, device="auto", compute_type="auto")
 
     tmp = STORE / f"stt-{secrets.token_hex(4)}.audio"
-    tmp.write_bytes(await audio.read())
+    tmp.write_bytes(audio_bytes)
     try:
         segments, info = _whisper_model.transcribe(str(tmp), language="de", vad_filter=True)
         text = " ".join(s.text.strip() for s in segments).strip()
@@ -463,7 +543,10 @@ def cli():
     ap = argparse.ArgumentParser(description="Kosmo-Bridge")
     ap.add_argument("--store", default=str(STORE), help="Job-Store-Verzeichnis")
     ap.add_argument("--ollama", default=OLLAMA, help="Ollama-URL")
-    ap.add_argument("--host", default="0.0.0.0")
+    # Default eng: nur lokal erreichbar. 0.0.0.0 (alle Interfaces, inkl.
+    # Büronetz/LAN) ist eine bewusste Owner-Option — muss explizit gesetzt
+    # werden, damit die Bridge nicht aus Versehen netzweit offen startet.
+    ap.add_argument("--host", default="127.0.0.1", help="0.0.0.0 nur bewusst fürs Büronetz setzen")
     ap.add_argument("--port", type=int, default=8600)
     ap.add_argument("--fake-worker", action="store_true", help="Jobs ohne GPU beantworten (Demo/CI)")
     args = ap.parse_args()
@@ -476,6 +559,8 @@ def cli():
         print("⚠ Fake-Worker aktiv — Render/TTS/Embeddings sind Platzhalter")
     if not TOKEN:
         print("Hinweis: KOSMO_BRIDGE_TOKEN nicht gesetzt — Bridge ist im Netz offen")
+    if args.host not in ("127.0.0.1", "localhost"):
+        print(f"⚠ Bind an {args.host} — bewusste Büronetz-Option, im LAN erreichbar")
     uvicorn.run(app, host=args.host, port=args.port)
 
 
