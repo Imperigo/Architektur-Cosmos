@@ -1,7 +1,9 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Assembly, LayerFunction, Terrain, Wall } from '../model/entities';
-import { dir, normal, type Pt } from '../model/units';
+import type { Assembly, LayerFunction, Slab, Terrain, Wall } from '../model/entities';
+import { dir, normal, polygonArea, type Pt } from '../model/units';
 import { wallFrame } from '../geometry/wall';
+import { difference, intersect } from '../geometry/clip';
+import { materialPrioritaet } from '../model/prioritaet';
 import { deriveAll } from './scene';
 import { clipEdges, type HlEdge, type HlTriInput } from './hiddenline';
 
@@ -28,6 +30,15 @@ export interface SectionFace {
   material: string;
   functionKey?: LayerFunction;
   classes: string[];
+}
+
+/**
+ * SectionFace + Bauteil-Art — nur intern für die Wand↔Decke-Verschneidung
+ * unten (A5); die Art bestimmt, welche Flächen gegeneinander geschnitten
+ * werden, ohne dass sie Teil der öffentlichen SectionFace-Form wird.
+ */
+interface RawFace extends SectionFace {
+  entityKind: 'wall' | 'slab' | 'other';
 }
 
 export interface SectionGraphic {
@@ -64,7 +75,7 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
 
   const edges: HlEdge[] = [];
   const tris: HlTriInput[] = [];
-  const faces: SectionFace[] = [];
+  const rawFaces: RawFace[] = [];
 
   for (const artifact of deriveAll(doc)) {
     const pos = artifact.positions;
@@ -110,15 +121,17 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       if (loops.length) {
         const wall = doc.get<Wall>(artifact.entityId);
         const assembly = wall?.kind === 'wall' ? doc.get<Assembly>(wall.assemblyId) : undefined;
+        const entityKind: RawFace['entityKind'] =
+          wall?.kind === 'wall' ? 'wall' : doc.get<Slab>(artifact.entityId)?.kind === 'slab' ? 'slab' : 'other';
         if (
           doc.settings.phase !== 'vorprojekt' &&
           wall?.kind === 'wall' &&
           assembly?.kind === 'assembly' &&
           assembly.layers.length > 0
         ) {
-          faces.push(...wallLayerFaces(wall, assembly, loops, spec.a, d));
+          for (const f of wallLayerFaces(wall, assembly, loops, spec.a, d)) rawFaces.push({ ...f, entityKind });
         } else {
-          faces.push({ loops, material: artifact.materialKey, classes: ['cut-face', artifact.materialKey] });
+          rawFaces.push({ loops, material: artifact.materialKey, classes: ['cut-face', artifact.materialKey], entityKind });
         }
       }
     }
@@ -135,6 +148,8 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       }
     }
   }
+
+  const faces = wandDeckeVerschneiden(doc, rawFaces);
 
   const segments = clipEdges(edges, tris, {
     // Verdecker nur im sichtbaren Halbraum (w ≤ 0 ⇔ t ≥ 0 — weggeschnittenes zählt nicht)
@@ -314,4 +329,93 @@ function clipLoopSBand(loop: { s: number; z: number }[], sMin: number, sMax: num
     return out;
   };
   return halb(halb(loop, (p) => p.s - sMin), (p) => sMax - p.s);
+}
+
+// ---------------------------------------------------------------------------
+// Wand↔Decke-Verschneidung im Schnitt (V2-A5)
+//
+// Wände laufen per Default über die volle Geschosshöhe (wallHeights in
+// derive/scene.ts), Decken liegen mit ihrer Oberkante auf OK Boden IHRES
+// Geschosses (topOffset 0) und ragen mit ihrer Dicke nach unten. Steht eine
+// Decke im Geschoss darüber, fällt ihr unterstes Band exakt in das oberste
+// Band der Wand darunter — dieselbe (s,z)-Fläche gehört dann zu ZWEI
+// Bauteilen gleichzeitig (Wandschicht UND Deckenkörper). Ohne Verschneidung
+// überlagern sich Schnittfläche und Schraffur dort einfach.
+//
+// Löst dasselbe Problem wie der Grundriss-Poché-Join (RE-ARCHICAD A1,
+// derive/plan.ts): das Material mit der HÖHEREN Priorität gewinnt die Ecke,
+// das andere weicht zurück — dieselbe Prioritätstabelle (materialPrioritaet),
+// nicht neu erfunden. Geschnitten wird mit der UNGESCHNITTENEN Form der
+// jeweils anderen Seite (ArchiCAD-Semantik) und nur bei echter Überlappung —
+// eine feste Flächenschwelle lässt reines Berühren (der häufige Normalfall:
+// Wand und Decke stossen exakt an derselben Kote an, ohne Überlapp) byte-
+// identisch. Gleiche Priorität (z.B. Beton-Wand trifft Beton-Decke) bleibt
+// bewusst ungeschnitten — wie im Grundriss-Join.
+const SZ_FUGE_FLAECHE_MM2 = 25; // 5×5 mm — Rundungsrauschen aus der (s,z)-Projektion bleibt liegen
+
+function loopsToXY(loops: { s: number; z: number }[][]): Pt[][] {
+  // Clipper2 ist int64-exakt; s ist eine Gleitkomma-Projektion (dir() liefert
+  // Einheitsvektoren, keine ganzen mm) — auf den ganzen mm runden wie beim
+  // Loop-Stitching oben (STITCH_EPS-Raster).
+  return loops.map((loop) => loop.map((p) => ({ x: Math.round(p.s), y: Math.round(p.z) })));
+}
+
+function xyToLoops(polys: readonly (readonly Pt[])[]): { s: number; z: number }[][] {
+  return polys.map((poly) => poly.map((p) => ({ s: p.x, z: p.y })));
+}
+
+/**
+ * Schneidet bei ECHTER Überlappung die Flächen der niedriger priorisierten
+ * Seite an der jeweils höher priorisierten zurück (beidseitig: eine Wand-
+ * schicht kann eine Decke zurückschneiden UND umgekehrt, je nach Material).
+ */
+function wandDeckeVerschneiden(doc: KosmoDoc, rawFaces: RawFace[]): SectionFace[] {
+  const wandFaces = rawFaces.filter((f) => f.entityKind === 'wall');
+  const deckeFaces = rawFaces.filter((f) => f.entityKind === 'slab');
+  if (wandFaces.length > 0 && deckeFaces.length > 0) {
+    // Ungeschnittene Ausgangsform sichern — die Verschneidung schneidet immer
+    // gegen die ORIGINAL-Geometrie der anderen Seite, nie gegen eine bereits
+    // zurückgeschnittene (Reihenfolge-Unabhängigkeit, wie im Grundriss-Join).
+    const wandOrig = wandFaces.map((f) => loopsToXY(f.loops));
+    const deckeOrig = deckeFaces.map((f) => loopsToXY(f.loops));
+    for (let i = 0; i < wandFaces.length; i++) {
+      const w = wandFaces[i]!;
+      const prio = materialPrioritaet(doc, w.material);
+      const hoeher: Pt[][] = [];
+      for (let j = 0; j < deckeFaces.length; j++) {
+        if (materialPrioritaet(doc, deckeFaces[j]!.material) > prio) hoeher.push(...deckeOrig[j]!);
+      }
+      if (hoeher.length === 0) continue;
+      const polys = loopsToXY(w.loops);
+      const ueberlapp = intersect(polys, hoeher);
+      const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
+      if (flaeche < SZ_FUGE_FLAECHE_MM2) continue;
+      w.loops = xyToLoops(difference(polys, hoeher));
+    }
+    for (let j = 0; j < deckeFaces.length; j++) {
+      const s = deckeFaces[j]!;
+      const prio = materialPrioritaet(doc, s.material);
+      const hoeher: Pt[][] = [];
+      for (let i = 0; i < wandFaces.length; i++) {
+        if (materialPrioritaet(doc, wandFaces[i]!.material) > prio) hoeher.push(...wandOrig[i]!);
+      }
+      if (hoeher.length === 0) continue;
+      const polys = loopsToXY(s.loops);
+      const ueberlapp = intersect(polys, hoeher);
+      const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
+      if (flaeche < SZ_FUGE_FLAECHE_MM2) continue;
+      s.loops = xyToLoops(difference(polys, hoeher));
+    }
+  }
+  const faces: SectionFace[] = [];
+  for (const raw of rawFaces) {
+    if (raw.loops.length === 0) continue;
+    faces.push({
+      loops: raw.loops,
+      material: raw.material,
+      ...(raw.functionKey !== undefined ? { functionKey: raw.functionKey } : {}),
+      classes: raw.classes,
+    });
+  }
+  return faces;
 }

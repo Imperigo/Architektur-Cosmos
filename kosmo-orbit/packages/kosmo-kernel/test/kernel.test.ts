@@ -1198,6 +1198,88 @@ describe('Schnittflächen + SIA-Schraffuren (V2-C4)', () => {
     expect(schraffurFuer('völlig-unbekannt').muster).toBe('voll');
     expect(schraffurLinien(rect, schraffurFuer('völlig-unbekannt'), 50)).toEqual([]);
   });
+
+  const flaeche = (f: { loops: { s: number; z: number }[][] }) =>
+    f.loops.reduce((sum, l) => sum + loopFlaeche(l), 0);
+
+  it('Wand↔Decke-Verschneidung (V2-A5): die Decke des Obergeschosses schneidet die niedriger priorisierte Wandschicht zurück, die gleich priorisierte Wandschicht bleibt unberührt', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const egId = (eg.patches[0] as { id: string }).id;
+    const og = execute(doc, 'design.geschossErstellen', { name: 'OG', index: 1, elevation: 3000, height: 3000 });
+    const ogId = (og.patches[0] as { id: string }).id;
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW Daemmung+Beton',
+      target: 'wall',
+      layers: [
+        { material: 'daemmung', thickness: 100, function: 'daemmung' },
+        { material: 'beton', thickness: 200, function: 'tragend' },
+      ],
+    });
+    execute(doc, 'design.wandZeichnen', {
+      storeyId: egId,
+      assemblyId: (au.patches[0] as { id: string }).id,
+      a: { x: 0, y: 0 },
+      b: { x: 5000, y: 0 },
+    });
+    // Decke im OG: topOffset ist immer 0 (OK Boden OG) — ihre Dicke ragt exakt
+    // in das oberste Band der EG-Wand darunter (beide reichen bis Kote 3000).
+    execute(doc, 'design.deckeZeichnen', {
+      storeyId: ogId,
+      outline: [{ x: -1000, y: -1000 }, { x: 6000, y: -1000 }, { x: 6000, y: 1000 }, { x: -1000, y: 1000 }],
+      thickness: 250,
+    });
+    const g = deriveSection(doc, {
+      a: { x: 2500, y: -3000 },
+      b: { x: 2500, y: 3000 },
+      depth: 5000,
+      lookLeft: true,
+    });
+    expect(g.faces).toHaveLength(3);
+    const daemmungFace = g.faces.find((f) => f.material === 'daemmung')!;
+    const wandBetonFace = g.faces.find((f) => f.material === 'beton' && f.functionKey === 'tragend')!;
+    const deckeFace = g.faces.find((f) => f.material === 'beton' && f.functionKey === undefined)!;
+    expect(daemmungFace, 'Dämmschicht').toBeDefined();
+    expect(wandBetonFace, 'Wand-Beton').toBeDefined();
+    expect(deckeFace, 'Decke').toBeDefined();
+
+    // Dämmung (Prio 300) weicht der Decke (Beton, Prio 900) im Überlapp-Band
+    // (100 mm Wanddicke × 250 mm Deckendicke) zurück.
+    expect(flaeche(daemmungFace)).toBeCloseTo(100 * 3000 - 100 * 250, -2);
+    expect(Math.max(...daemmungFace.loops.flat().map((p) => p.z))).toBeLessThanOrEqual(2751);
+
+    // Wand-Beton (Prio 900) trifft auf Decken-Beton (Prio 900) — gleiche
+    // Priorität schneidet nicht (wie im Grundriss-Join), volle Fläche bleibt.
+    expect(flaeche(wandBetonFace)).toBeCloseTo(200 * 3000, -2);
+    expect(Math.max(...wandBetonFace.loops.flat().map((p) => p.z))).toBe(3000);
+
+    // Die Decke selbst wird von KEINER Wandschicht geschnitten (keine Schicht
+    // hat eine höhere Priorität als Beton) — volle Fläche bleibt.
+    expect(flaeche(deckeFace)).toBeCloseTo(2000 * 250, -2);
+  });
+
+  it('Wand auf eigener Bodendecke: reines Berühren ohne Überlapp bleibt unverändert (Fugen-Schwelle)', () => {
+    const { doc, storeyId, assemblyId } = setupDoc(); // putz 20 / daemmung-mw 160 / beton 180
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 5000, y: 0 } });
+    // Bodendecke im GLEICHEN Geschoss: topOffset 0 → Deckenoberkante = OK Boden
+    // = Wand-Unterkante — beide berühren sich exakt bei z = 0, ohne Überlapp.
+    execute(doc, 'design.deckeZeichnen', {
+      storeyId,
+      outline: [{ x: -1000, y: -1000 }, { x: 6000, y: -1000 }, { x: 6000, y: 1000 }, { x: -1000, y: 1000 }],
+      thickness: 250,
+    });
+    const g = deriveSection(doc, {
+      a: { x: 2500, y: -3000 },
+      b: { x: 2500, y: 3000 },
+      depth: 5000,
+      lookLeft: true,
+    });
+    expect(g.faces).toHaveLength(4); // putz, daemmung-mw, beton (Wand), beton (Decke)
+    const wandBetonFace = g.faces.find((f) => f.material === 'beton' && f.functionKey === 'tragend')!;
+    const deckeFace = g.faces.find((f) => f.material === 'beton' && f.functionKey === undefined)!;
+    expect(flaeche(wandBetonFace)).toBeCloseTo(180 * 3000, -2);
+    expect(flaeche(deckeFace)).toBeCloseTo(2000 * 250, -2);
+  });
 });
 
 describe('Plakat-Bildslots (V2-C1)', () => {
