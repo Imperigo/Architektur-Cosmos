@@ -14,6 +14,7 @@ import {
   personas,
   type Betriebsart,
   type ChatProvider,
+  type CloudAuthArt,
   type Proposal,
 } from '@kosmo/ai';
 import type { Assembly } from '@kosmo/kernel';
@@ -24,6 +25,7 @@ import { DiagnosePanel } from './Diagnose';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { hydriereJournal, journalStore } from '../state/journal-store';
 import { auftragErfassen } from '../state/auftragsbuch';
+import { claudeAboAnmeldung, istTauriDesktop } from './cloud-login';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -82,6 +84,14 @@ interface KosmoSettings {
   /** Anthropic: Schlüssel bleibt in localStorage auf diesem Gerät. */
   anthropicKey: string;
   anthropicModel: string;
+  /**
+   * Cloud-Login mit Abo («Mit Claude anmelden», Desktop-OAuth): das
+   * kurzlebige Access-Token aus der lokalen Anthropic-Anmeldung. Bleibt wie
+   * der Schlüssel nur auf diesem Gerät.
+   */
+  anthropicOauthToken: string;
+  /** Welche der beiden Cloud-Anmeldearten aktiv ist. */
+  cloudAuth: CloudAuthArt;
 }
 
 const defaultSettings: KosmoSettings = {
@@ -94,6 +104,8 @@ const defaultSettings: KosmoSettings = {
   lmModel: 'qwen/qwen3-30b-a3b',
   anthropicKey: '',
   anthropicModel: 'claude-opus-4-8',
+  anthropicOauthToken: '',
+  cloudAuth: 'schluessel',
 };
 
 function loadSettings(): KosmoSettings {
@@ -213,7 +225,11 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       settings.provider === 'mock'
         ? new MockProvider()
         : settings.provider === 'anthropic'
-          ? new AnthropicProvider({ apiKey: settings.anthropicKey, model: settings.anthropicModel })
+          ? new AnthropicProvider(
+              settings.cloudAuth === 'abo'
+                ? { oauthToken: settings.anthropicOauthToken, model: settings.anthropicModel }
+                : { apiKey: settings.anthropicKey, model: settings.anthropicModel },
+            )
           : settings.provider === 'lmstudio'
             ? new OpenAiKompatibelProvider({ baseUrl: settings.lmBaseUrl, model: settings.lmModel })
             : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
@@ -424,7 +440,12 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         anthropicModel: modell,
       };
       speichere(neu);
-      if (settingsRef.current.anthropicKey.trim()) {
+      // Angemeldet gilt sowohl mit Abo (OAuth-Token) als auch mit Schlüssel.
+      const angemeldet =
+        settingsRef.current.cloudAuth === 'abo'
+          ? !!settingsRef.current.anthropicOauthToken.trim()
+          : !!settingsRef.current.anthropicKey.trim();
+      if (angemeldet) {
         if (text.trim()) nachSendText.current = text; // nach Session-Rebuild senden
         melde(`Auf Claude Cloud (${modell}) gewechselt.`, { ton: 'erfolg' });
       } else {
@@ -439,6 +460,23 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     }
   };
   cloudAnRef.current = (text: string) => void bieteCloudAn(text);
+
+  /**
+   * «Mit Claude-Abo anmelden» (Owner-Auftrag Cloud-Login): ruft den
+   * Desktop-Anmelde-Helfer (Tauri-Command `claude_login`) auf und hinterlegt
+   * das zurückgegebene OAuth-Token. Im Web/PWA wirft `claudeAboAnmeldung`
+   * bereits einen ehrlichen Fehler — hier landet er in `meldeFehler`, nie in
+   * `alert`.
+   */
+  const mitClaudeAnmelden = async () => {
+    try {
+      const token = await claudeAboAnmeldung();
+      speichere({ ...settingsRef.current, anthropicOauthToken: token, cloudAuth: 'abo' });
+      melde('Mit dem Claude-Abo angemeldet.', { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
 
   // Nach dem Cloud-Wechsel die letzte Frage auf der neuen Session nachsenden.
   useEffect(() => {
@@ -778,11 +816,38 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           )}
           {settings.provider === 'anthropic' && (
             <>
+              <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+                Cloud-Anmeldung —{' '}
+                <span data-testid="cloud-login-status" style={{ color: 'var(--k-ink)' }}>
+                  {settings.cloudAuth === 'abo' && settings.anthropicOauthToken.trim()
+                    ? 'angemeldet als Abo'
+                    : settings.anthropicKey.trim()
+                      ? 'API-Schlüssel hinterlegt'
+                      : 'nicht angemeldet'}
+                </span>
+              </div>
+              {istTauriDesktop() ? (
+                <KButton
+                  size="sm"
+                  tone={settings.cloudAuth === 'abo' ? 'accent' : 'ghost'}
+                  data-testid="cloud-login-abo"
+                  onClick={() => void mitClaudeAnmelden()}
+                >
+                  Mit Claude-Abo anmelden
+                </KButton>
+              ) : (
+                <div
+                  data-testid="cloud-login-hinweis"
+                  style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}
+                >
+                  Mit-Claude-Anmeldung nur in der Desktop-App — im Browser bitte API-Schlüssel.
+                </div>
+              )}
               <SettingsFeld
                 label="API-Schlüssel (bleibt auf diesem Gerät)"
                 value={settings.anthropicKey}
                 typ="password"
-                onChange={(v) => speichere({ ...settings, anthropicKey: v })}
+                onChange={(v) => speichere({ ...settings, anthropicKey: v, cloudAuth: 'schluessel' })}
               />
               <SettingsFeld
                 label="Modell"

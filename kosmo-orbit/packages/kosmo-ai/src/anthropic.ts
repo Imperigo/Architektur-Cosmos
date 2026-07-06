@@ -8,11 +8,34 @@ import type { ChatProvider, ChatRequest, StreamEvent, ChatMessage } from './prov
 import { verknuepfeToolIds } from './provider';
 
 export interface AnthropicConfig {
-  apiKey: string;
+  /** Klassischer Weg: eingetippter API-Schlüssel → `x-api-key`. */
+  apiKey?: string;
+  /**
+   * Cloud-Login mit Abo («Mit Claude anmelden», Desktop-OAuth): kurzlebiges
+   * Access-Token aus der lokalen Anthropic-Anmeldung → `Authorization: Bearer`
+   * + `anthropic-beta: oauth-2025-04-20`. Ist `oauthToken` gesetzt, hat er
+   * Vorrang vor `apiKey` — die API akzeptiert nicht beide Header gleichzeitig.
+   */
+  oauthToken?: string;
   model: string;
   /** Überschreibbar für Tests oder ein eigenes Gateway. */
   baseUrl?: string;
   maxTokens?: number;
+}
+
+/**
+ * Auth-Header für die Anthropic-Messages-API — rein und testbar.
+ * `oauthToken` (Claude-Abo per Browser-Login) hat Vorrang: dann Bearer +
+ * das Beta-Merkmal, ohne `x-api-key`. Sonst der klassische `x-api-key`.
+ */
+export function anthropicAuthHeader(cfg: Pick<AnthropicConfig, 'apiKey' | 'oauthToken'>): Record<string, string> {
+  if (cfg.oauthToken) {
+    return {
+      Authorization: `Bearer ${cfg.oauthToken}`,
+      'anthropic-beta': 'oauth-2025-04-20',
+    };
+  }
+  return { 'x-api-key': cfg.apiKey ?? '' };
 }
 
 type InhaltsBlock =
@@ -70,7 +93,7 @@ export class AnthropicProvider implements ChatProvider {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': this.cfg.apiKey,
+            ...anthropicAuthHeader(this.cfg),
             'anthropic-version': '2023-06-01',
             'anthropic-dangerous-direct-browser-access': 'true',
           },

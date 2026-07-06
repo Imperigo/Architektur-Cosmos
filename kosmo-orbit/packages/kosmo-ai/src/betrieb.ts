@@ -16,6 +16,18 @@
 
 export type Betriebsart = 'standard' | 'remote' | 'cloud';
 
+/**
+ * Cloud-Anmeldeart (Owner: «Mit Claude anmelden» — auch mit einem Claude-Abo
+ * per Browser-Login, nicht nur mit eingetipptem API-Schlüssel).
+ * - **schluessel** — klassischer API-Schlüssel, `x-api-key`.
+ * - **abo**        — OAuth-Bearer-Token aus der lokalen Anthropic-Anmeldung
+ *   (Desktop-only, siehe `docs/CLOUD-LOGIN-ABO.md`); Web/PWA bleibt beim
+ *   Schlüssel, weil sie den lokalen Anmelde-Helfer nicht starten kann.
+ * Rein additiv — ändert `betriebKonfig()` nicht, nur das Vokabular, das
+ * KosmoPanel für die Anmeldeart-Auswahl teilt.
+ */
+export type CloudAuthArt = 'schluessel' | 'abo';
+
 /** Minimum-Cloud-Modell — der Owner verlangt mindestens Opus 4.8. */
 export const CLOUD_MODELL_MIN = 'claude-opus-4-8';
 

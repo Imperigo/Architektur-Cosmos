@@ -16,6 +16,7 @@
   "dependencies": {
     "@azure/msal-browser": "^5.16.0",
     "@hocuspocus/provider": "^4.3.0",
+    "@tauri-apps/api": "^2.9.0",
     "@kosmo/ai": "*",
     "@kosmo/contracts": "*",
     "@kosmo/data": "*",
