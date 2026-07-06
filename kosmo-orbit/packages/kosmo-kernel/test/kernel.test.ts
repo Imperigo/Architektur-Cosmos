@@ -627,6 +627,78 @@ describe('Golden-SVG (Plan-Regression)', () => {
   });
 });
 
+describe('A3: Echte 2D-Eck-Miter im Grundriss-Poché (ROADMAP 149)', () => {
+  const beton = (plan: ReturnType<typeof derivePlan>) =>
+    plan.regions.filter((r) => r.classes.includes('tragend') && r.classes.includes('material-beton'));
+
+  it('rechtwinklige Aussenecke: die tragende Schicht verschmilzt zu EINEM Ring mit gefülltem Eck-Knotenstück', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    // Zwei Wände treffen im rechten Winkel bei (2000,0) zusammen — ohne Miter
+    // überlappen sich die Rechtecke dort nur in einem Viertel des
+    // 180×180-Knotenstücks, der Rest (die äussere Ecke) bleibt Lücke.
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 2000, y: 0 } });
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 2000, y: 0 }, b: { x: 2000, y: 2000 } });
+    const plan = derivePlan(doc, storeyId);
+    const regions = beton(plan);
+    expect(regions).toHaveLength(1);
+    // Ohne Miter bliebe das ein L aus zwei nur punktuell berührenden
+    // Rechtecken (zwei Ringe); mit Miter EIN zusammenhängender Ring.
+    expect(regions[0]!.rings).toHaveLength(1);
+    // Die äussere Eckspitze: Achsenschnittpunkt (2000,0) + Aussenversatz
+    // (offsetRight=180) in beide Richtungen — das neue Knotenstück.
+    const ring = regions[0]!.rings[0]!;
+    expect(ring.some((p) => p.x === 2180 && p.y === -180)).toBe(true);
+  });
+
+  it('schräger Winkel (45°): Gehrung folgt der Winkelhalbierenden statt eines rechten Winkels', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 2000, y: 0 } });
+    // Zweite Wand exakt 45° zur ersten (dx=dy) — kein rechter Winkel.
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 2000, y: 0 }, b: { x: 3000, y: 1000 } });
+    const plan = derivePlan(doc, storeyId);
+    const regions = beton(plan);
+    expect(regions).toHaveLength(1);
+    expect(regions[0]!.rings).toHaveLength(1);
+
+    // Unabhängige Gegenrechnung über die Standard-Gehrungsformel
+    // (Δ = Versatz / tan(φ/2), φ = Winkel zwischen den Verlängerungsrichtungen)
+    // statt der Implementierung selbst — Kreuzprobe, kein Zirkelschluss.
+    const extA = { x: 1, y: 0 }; // Wand 1 endet bei b → verlängert in a→b-Richtung
+    const dirB = { x: Math.SQRT1_2, y: Math.SQRT1_2 };
+    const extB = { x: -dirB.x, y: -dirB.y }; // Wand 2 beginnt bei a → verlängert entgegen a→b
+    const phi = Math.acos(extA.x * extB.x + extA.y * extB.y);
+    const offsetRight = 180; // Beton-Schicht-Aussenversatz (letzte Schicht, kern-aussen-Seite)
+    const delta = offsetRight / Math.tan(phi / 2);
+    const perpA = { x: 0, y: 1 }; // Linke Normale von Wand 1
+    const oc = { x: Math.round(2000 + extA.x * delta + perpA.x * -offsetRight), y: Math.round(0 + extA.y * delta + perpA.y * -offsetRight) };
+    const ring = regions[0]!.rings[0]!;
+    const treffer = ring.some((p) => Math.abs(p.x - oc.x) <= 2 && Math.abs(p.y - oc.y) <= 2);
+    expect(treffer).toBe(true);
+  });
+
+  it('entartete Spitze (~3°): kein Miter — Fläche bleibt plausibel statt ins Unendliche zu schiessen', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const lenA = 2000;
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: lenA, y: 0 } });
+    // Zweite Wand fast entgegengesetzt zur ersten (nur ~2.9° Öffnungswinkel
+    // zwischen den Wandkörpern) — eine echte Gehrung würde hier auf ein
+    // Vielfaches der Wanddicke hinausschiessen. Ehrlicher Rückfall: alte
+    // stumpfe Ecke, keine Extrapolation.
+    const wallB = { x: 0, y: 100 };
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: lenA, y: 0 }, b: wallB });
+    const lenB = Math.hypot(wallB.x - lenA, wallB.y - 0);
+    const plan = derivePlan(doc, storeyId);
+    const regions = beton(plan);
+    expect(regions).toHaveLength(1);
+    const flaeche = regions[0]!.rings.reduce((s, ring) => s + Math.abs(polygonArea(ring)), 0);
+    // Nominalfläche der reinen Beton-Schicht (180 mm dick) beider Wände,
+    // ohne jede Verlängerung; eine entartete Gehrung würde um Grössenordnungen
+    // darüber liegen (Δ = 180/tan(1.4°) ≈ 7350 mm Extra-Auskragung je Wand).
+    const nominal = (lenA + lenB) * 180;
+    expect(flaeche).toBeLessThan(nominal * 1.5);
+  });
+});
+
 describe('3D-T-Stoss', () => {
   it('Wandende in fremder Wandmitte stösst bündig an die nahe Fläche', () => {
     const { doc, storeyId, assemblyId } = setupDoc();

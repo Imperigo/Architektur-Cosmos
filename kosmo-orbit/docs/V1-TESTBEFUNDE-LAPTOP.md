@@ -21,7 +21,9 @@ Oberflächen-Systematik.
 - [x] **Treppe** — gleicher Windungsfehler + Podest-Outline CCW korrigiert.
 - [x] **Grundriss-Wandecke** — Poché-Flächenschwelle korrigiert (Putz wird an
       der Ecke sauber von der Dämmung beschnitten). Golden neu erzeugt.
-      *(Rest-Grenze: echte 2D-Eck-Miter bleibt separater Auftrag.)*
+      *(Rest-Grenze «echte 2D-Eck-Miter»: erledigt, siehe ROADMAP 149 — Eck-
+      Knotenstück wird jetzt über eine echte Gehrungsverlängerung je Wandende
+      geschlossen, statt an der Ecke flach zu enden.)*
 - [x] **Betontextur** — SIA-Betontönung statt Papierfarbe, feineres Raster.
 
 ## Batch T3 — ArchiCAD-Zeichenhilfen & Navigation ✅ (ROADMAP 143)

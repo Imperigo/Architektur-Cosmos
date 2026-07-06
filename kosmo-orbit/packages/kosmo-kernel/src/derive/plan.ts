@@ -6,11 +6,9 @@ import {
   axisDirection,
   openingRects,
   wallFrame,
-  wallLayerOutlines,
-  wallOutline,
   pointOnAxis,
 } from '../geometry/wall';
-import { dist, polygonArea, type Pt } from '../model/units';
+import { dist, normal, polygonArea, pt, type Pt } from '../model/units';
 import { treppenTeile } from './treppe';
 
 /**
@@ -84,6 +82,153 @@ function openingStrip(wall: Wall, assembly: Assembly, s0: number, s1: number): P
   return [P(s0, offsetLeft + 2), P(s1, offsetLeft + 2), P(s1, -offsetRight - 2), P(s0, -offsetRight - 2)];
 }
 
+/**
+ * A3/ROADMAP 149 — echte 2D-Eck-Miter im Grundriss-Poché.
+ *
+ * Ohne Miter endet jede Wandschicht flach am Achsendpunkt: an einer
+ * Aussenecke überlappen sich die Rechtecke zweier Wände nur in einem Viertel
+ * des Wanddicke×Wanddicke-Knotenstücks, der Rest bleibt Lücke (ROADMAP 141 T2
+ * / docs/V1-TESTBEFUNDE-LAPTOP.md). Die Lösung: an jedem Wandende, das exakt
+ * eine zweite Wand trifft, wird die flache Stirnkante durch den echten
+ * Gehrungsschnitt ersetzt — den Schnittpunkt der verlängerten Schichtgrenzen
+ * beider Wände. Für jede Schichtgrenze im Abstand o von der Wandachse gilt:
+ * neuer Eckpunkt = Achsenpunkt + Verlängerungsrichtung·(k·o) + Normale·o,
+ * wobei k aus dem 2×2-Gleichungssystem der beiden Wandrichtungen folgt (siehe
+ * detectEndMiters) — linear in o, weil die Achsen sich immer bei o=0 treffen.
+ *
+ * Nur bei EXAKT zwei Wänden am selben Endpunkt, GLEICHEM Aufbau (assemblyId)
+ * und GLEICHER Ausrichtung lösbar (die Versatz-Werte müssen für beide Wände
+ * identisch sein) — sonst bleibt die Ecke ehrlich stumpf wie zuvor. Entartete
+ * Winkel (nahe 0°/180°, oder eine Verlängerung, die unplausibel weit über die
+ * Wandlänge hinausschiesst) fallen ebenfalls auf die alte flache Ecke zurück.
+ */
+interface EndMiter {
+  /** Richtung, in der sich die Wand über den Achsenpunkt hinaus verlängert. */
+  extDir: { x: number; y: number };
+  /** Verlängerung Δ(o) = k·o entlang extDir, je Schichtgrenze im Abstand o. */
+  k: number;
+}
+
+function endMiterKey(wallId: string, end: 'a' | 'b'): string {
+  return `${wallId}:${end}`;
+}
+
+function detectEndMiters(doc: KosmoDoc, walls: readonly Wall[]): Map<string, EndMiter> {
+  const result = new Map<string, EndMiter>();
+  const byPoint = new Map<string, { wall: Wall; end: 'a' | 'b' }[]>();
+  const keyOf = (p: Pt) => `${p.x},${p.y}`;
+  for (const w of walls) {
+    if (dist(w.a, w.b) < 1) continue; // entartete Wand ohne Länge
+    for (const end of ['a', 'b'] as const) {
+      const p = end === 'a' ? w.a : w.b;
+      const k = keyOf(p);
+      const arr = byPoint.get(k) ?? [];
+      arr.push({ wall: w, end });
+      byPoint.set(k, arr);
+    }
+  }
+  for (const entries of byPoint.values()) {
+    // Nur echte 2-Wand-Ecken — T-Stösse/Mehrfachknoten bleiben stumpf (kein
+    // eindeutiger Gehrungspartner).
+    if (entries.length !== 2) continue;
+    const [ea, eb] = entries as [{ wall: Wall; end: 'a' | 'b' }, { wall: Wall; end: 'a' | 'b' }];
+    if (ea.wall.id === eb.wall.id) continue;
+    const wallA = ea.wall;
+    const wallB = eb.wall;
+    if (wallA.assemblyId !== wallB.assemblyId || wallA.alignment !== wallB.alignment) continue;
+    const assembly = doc.get<Assembly>(wallA.assemblyId);
+    if (!assembly || assembly.kind !== 'assembly' || assembly.layers.length === 0) continue;
+
+    const dirA = axisDirection(wallA);
+    const dirB = axisDirection(wallB);
+    // Verlängerungsrichtung: über das Wandende hinaus, in die Ecke hinein.
+    const extDirA = ea.end === 'b' ? dirA : { x: -dirA.x, y: -dirA.y };
+    const extDirB = eb.end === 'b' ? dirB : { x: -dirB.x, y: -dirB.y };
+    const cross = extDirA.x * extDirB.y - extDirA.y * extDirB.x;
+    // |cross| < 0.08 ≈ Winkel < 4.6° oder > 175.4° — entartete Spitze bzw.
+    // gerade Durchlauf-Fuge (dort ist die Ecke ohnehin schon lückenlos).
+    if (Math.abs(cross) < 0.08) continue;
+
+    const perpA = normal(wallA.a, wallA.b);
+    const perpB = normal(wallB.a, wallB.b);
+    const rhsX = perpB.x - perpA.x;
+    const rhsY = perpB.y - perpA.y;
+    const det = -cross;
+    const kA = (rhsX * -extDirB.y - -extDirB.x * rhsY) / det;
+    const kB = (extDirA.x * rhsY - rhsX * extDirA.y) / det;
+    if (!Number.isFinite(kA) || !Number.isFinite(kB)) continue;
+
+    const frame = wallFrame(wallA, assembly);
+    const maxOffset = Math.max(frame.offsetLeft, frame.offsetRight, 1);
+    const totalThickness = frame.offsetLeft + frame.offsetRight;
+    const cap = Math.max(2000, 20 * totalThickness);
+    const deltaA = Math.abs(kA) * maxOffset;
+    const deltaB = Math.abs(kB) * maxOffset;
+    const lenA = dist(wallA.a, wallA.b);
+    const lenB = dist(wallB.a, wallB.b);
+    // Ehrlicher Rückfall: eine Verlängerung, die die Kappungsgrenze oder gar
+    // 90 % der eigenen Wandlänge übersteigt, ist kein plausibler Eckstoss
+    // mehr (sehr spitzer Winkel) — dann bleibt die alte stumpfe Ecke.
+    if (deltaA > cap || deltaB > cap || deltaA > lenA * 0.9 || deltaB > lenB * 0.9) continue;
+
+    result.set(endMiterKey(wallA.id, ea.end), { extDir: extDirA, k: kA });
+    result.set(endMiterKey(wallB.id, eb.end), { extDir: extDirB, k: kB });
+  }
+  return result;
+}
+
+/** Eckpunkt einer Schichtgrenze (Abstand o von der Achse) an einem Wandende —
+ * mit Miter, falls `endMiters` einen Eintrag für dieses Ende trägt, sonst
+ * exakt der alte flache Punkt (byte-identisch zu vorher). */
+function miteredCorner(wall: Wall, end: 'a' | 'b', o: number, endMiters: Map<string, EndMiter>): Pt {
+  const base = end === 'a' ? wall.a : wall.b;
+  const perp = normal(wall.a, wall.b);
+  const miter = endMiters.get(endMiterKey(wall.id, end));
+  if (!miter) return pt(base.x + perp.x * o, base.y + perp.y * o);
+  const delta = miter.k * o;
+  return pt(
+    base.x + miter.extDir.x * delta + perp.x * o,
+    base.y + miter.extDir.y * delta + perp.y * o,
+  );
+}
+
+/** Wie `wallOutline` (geometry/wall.ts), aber mit Eck-Miter an erkannten Wandenden. */
+function wallOutlineMitered(wall: Wall, assembly: Assembly, endMiters: Map<string, EndMiter>): Pt[] {
+  const { offsetLeft, offsetRight } = wallFrame(wall, assembly);
+  return [
+    miteredCorner(wall, 'a', offsetLeft, endMiters),
+    miteredCorner(wall, 'b', offsetLeft, endMiters),
+    miteredCorner(wall, 'b', -offsetRight, endMiters),
+    miteredCorner(wall, 'a', -offsetRight, endMiters),
+  ];
+}
+
+/** Wie `wallLayerOutlines` (geometry/wall.ts), aber mit Eck-Miter an erkannten Wandenden. */
+function wallLayerOutlinesMitered(
+  wall: Wall,
+  assembly: Assembly,
+  endMiters: Map<string, EndMiter>,
+): { material: string; outline: Pt[] }[] {
+  const { offsetLeft } = wallFrame(wall, assembly);
+  const out: { material: string; outline: Pt[] }[] = [];
+  let cursor = offsetLeft;
+  for (const layer of assembly.layers) {
+    const o1 = cursor;
+    const o2 = cursor - layer.thickness;
+    out.push({
+      material: layer.material,
+      outline: [
+        miteredCorner(wall, 'a', o1, endMiters),
+        miteredCorner(wall, 'b', o1, endMiters),
+        miteredCorner(wall, 'b', o2, endMiters),
+        miteredCorner(wall, 'a', o2, endMiters),
+      ],
+    });
+    cursor = o2;
+  }
+  return out;
+}
+
 export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   const storey = doc.get<Storey>(storeyId);
   const regions: PlanRegion[] = [];
@@ -98,6 +243,11 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   const walls = doc
     .byKind<Wall>('wall')
     .filter((w) => w.storeyId === storeyId);
+
+  // A3/ROADMAP 149: echte 2D-Eck-Miter — je Wandende, das exakt eine zweite
+  // Wand mit gleichem Aufbau trifft, ersetzt die Verlängerungsrechnung die
+  // flache Stirnkante (siehe detectEndMiters oben).
+  const endMiters = detectEndMiters(doc, walls);
 
   // Schichten sammeln: tragend gruppiert nach Material (Join), Rest pro Wand.
   // Join-Schlüssel enthält den Umbau-Status: Neu vereinigt sich nur mit Neu,
@@ -124,7 +274,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     if (ren === 'abbruch') {
       // Abbruch (SIA-Umbau-Lesart): EIN Poché über die Gesamtdicke — die
       // Schichten sind egal, es kommt weg. Nicht vereinigt, Kreuz je Teilfläche.
-      const outline = wallOutline(wall, assembly);
+      const outline = wallOutlineMitered(wall, assembly, endMiters);
       const cutPolys: Poly[] = strips.length > 0 ? difference([outline], strips) : [outline];
       const material = assembly.layers.find((l) => l.function === 'tragend')?.material ?? 'masse';
       if (cutPolys.length > 0) {
@@ -146,7 +296,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       }
     } else if (phase === 'vorprojekt') {
       // Vorprojekt (SIA 31): Wand als EIN Poché über die Gesamtdicke — keine Schichten
-      const outline = wallOutline(wall, assembly);
+      const outline = wallOutlineMitered(wall, assembly, endMiters);
       const cutPolys: Poly[] = strips.length > 0 ? difference([outline], strips) : [outline];
       const key = `masse|${ren ?? ''}`;
       const arr = coreByMaterial.get(key) ?? [];
@@ -155,7 +305,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       const dicke = assembly.layers.reduce((s, l) => s + l.thickness, 0);
       coreDicke.set(key, Math.min(coreDicke.get(key) ?? Infinity, dicke));
     } else {
-      for (const layer of wallLayerOutlines(wall, assembly)) {
+      for (const layer of wallLayerOutlinesMitered(wall, assembly, endMiters)) {
         const meta = assembly.layers.find((l) => l.material === layer.material);
         const cutPolys: Poly[] =
           strips.length > 0 ? difference([layer.outline], strips) : [layer.outline];
