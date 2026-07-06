@@ -7,12 +7,13 @@ Vertrauens-/Nutzenwirkung: erst die «du hast gesagt es sei nachgebaut, ist aber
 nicht da»-Kern-Interaktion, dann Render-Bugs, dann Features, dann die grosse
 Oberflächen-Systematik.
 
-## Batch T1 — 2D-Plan-Interaktion (ArchiCAD-Kern) ⏳
-- [ ] **Elemente anwählen** geht nicht — muss gehen wie ArchiCAD (Klick wählt,
-      Mehrfachauswahl, Inspector reagiert).
-- [ ] **Im Grundriss verschieben** geht nicht (ausgewähltes Element ziehen →
-      EIN Command).
-- [ ] **Doppelklick zum Absetzen** funktioniert nicht (ArchiCAD-Verhalten).
+## Batch T1 — 2D-Plan-Interaktion (ArchiCAD-Kern) ✅ (ROADMAP 138)
+- [x] **Elemente anwählen** — Default-Werkzeug jetzt `auswahl`, Klick wählt,
+      Auswahl-Highlight im 2D sichtbar, Inspector reagiert.
+- [x] **Im Grundriss verschieben** — Klick-und-Ziehen = EIN `design.verschieben`
+      (Undo-fähig); Command um Stütze/Treppe/Dach erweitert.
+- [x] **Doppelklick zum Absetzen** — `onDoubleClick` (2D) + `onGroundDoubleClick`
+      (3D) ergänzt.
 
 ## Batch T2 — Render-Bugs 3D & 2D ⏳
 - [ ] **3D-Wände verbuggt**: nur innenliegende Textur sichtbar, Rest transparent
@@ -44,11 +45,10 @@ Oberflächen-Systematik.
 - [ ] Stift wirkt **zu dick** → dünner/feiner.
 - [ ] **Im 3D skizzieren** geht nicht → ermöglichen.
 
-## Batch T6 — Berechnungsliste: projektabhängige Kennzahlen ⏳
-- [ ] Die Kennzahlen «marktgerecht / preisgünstig …» stammen aus EINEM
-      Zug-Wettbewerb. Das ist je Wettbewerb/Programm anders. **Default: keine
-      solchen Spalten**; sie erscheinen nur, wenn ein Wettbewerbsprojekt (mit
-      diesen Vorgaben) geladen wird.
+## Batch T6 — Berechnungsliste: projektabhängige Kennzahlen ✅ (ROADMAP 139)
+- [x] Default hat **keine** wettbewerbsspezifischen Zeilen mehr (leerer Zustand
+      + Hinweis); «marktgerecht/preisgünstig …» erscheinen nur, wenn ein Projekt
+      ein Raumprogramm setzt (TKB-Demo, `design.raumprogrammSetzen`).
 
 ## Batch T7 — Oberflächen-Systematik (gross) ⏳
 - [ ] **Hauptmenü gruppieren** statt flach: KosmoDraw/Sketch/Vis gehören unter
