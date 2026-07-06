@@ -57,8 +57,12 @@ Oberflächen-Systematik.
 - [x] **Im 3D skizzieren** ermöglicht — Freihand-Overlay im Viewport3D, projiziert
       auf die Bodenebene der aktiven Geschossebene (reine Geometrie in
       `sketch-3d.ts`), derselbe Batch-Fluss + derselbe `onSketchAccept`-Weg wie
-      im 2D. *(Rest-Grenze: nur die horizontale Bodenebene, keine schrägen
-      Flächen/Wände — separater, grösserer Auftrag.)*
+      im 2D. *(Rest-Grenze «nur die horizontale Bodenebene, keine schrägen
+      Flächen/Wände»: geschlossen, siehe ROADMAP 155 (A4) — der Raycast trifft
+      jetzt jede Szene-Fläche; eine Wandfläche ergibt eine Öffnung, alles
+      andere weiterhin einen Wand-Zug, jetzt auf die echte Fläche projiziert.
+      Ein echtes Terrain-Mesh existiert im Viewport weiterhin nicht — «Boden»
+      bleibt die generische Nicht-Wand-Klasse, siehe dortige Restgrenze.)*
 
 ## Batch T6 — Berechnungsliste: projektabhängige Kennzahlen ✅ (ROADMAP 139)
 - [x] Default hat **keine** wettbewerbsspezifischen Zeilen mehr (leerer Zustand

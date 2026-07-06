@@ -391,6 +391,23 @@ export function DesignWorkspace() {
         history.endGroup();
       }
     },
+    // A4 (ROADMAP 155): ein auf eine Wandfläche gezeichneter Strich ergibt
+    // eine Öffnung statt eines Wand-Zugs — EIN `design.oeffnungSetzen`-Aufruf
+    // (ein Undo-Schritt), derselbe Command-Weg wie jedes andere Werkzeug.
+    onSketchWandOeffnung: (o) => {
+      try {
+        runCommand('design.oeffnungSetzen', {
+          wallId: o.wallId,
+          openingType: o.openingType,
+          center: o.center,
+          width: o.width,
+          height: o.height,
+          sill: o.sill,
+        });
+      } catch (err) {
+        meldeFehler(err);
+      }
+    },
     previewLine:
       points.length > 0 && cursor
         ? tool === 'volumen' || tool === 'zone' || tool === 'dach'

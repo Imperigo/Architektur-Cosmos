@@ -71,9 +71,17 @@ Reihenfolge = Nutzen × Owner-Wunsch. Aufwand grob (S/M/L).
 11. **Serie E/F/G (geparkt)** — Erlebnis/Animationen (E), Rollenprofile/Abteilungen
     (F, `docs/SERIE-F-ROLLENPROFILE-ABTEILUNGEN.md`), Kosmo als Benutzer-Guide
     (G, `docs/SERIE-G-KOSMO-ALS-BENUTZERGUIDE.md`).
-12. **A4 — 3D-Skizze auf jede Fläche (M/L, Owner-Entscheid «Beides/Raycast»)** —
-    Strich per Raycast auf jede getroffene Fläche: Terrain/Hang → Wand entlang des
-    Hangs, Wandfläche → Öffnung/Annotation. Erweitert T5 (heute nur Bodenebene).
+12. **A4 — 3D-Skizze auf jede Fläche (M/L, Owner-Entscheid «Beides/Raycast»)** ✅
+    erledigt, mit ehrlich benannter Restgrenze (ROADMAP 155): Raycast trifft jede
+    Szene-Fläche; eine Wandfläche ergibt eine Öffnung (`design.oeffnungSetzen`,
+    Fenster/Tür nach Brüstungshöhe), alles andere (Boden/Decke/Volumen/Dach/
+    Treppe) weiterhin einen Wand-Zug, jetzt auf die echte Fläche projiziert statt
+    nur die flache Ebene. **Offen bleibt**: ein echtes Terrain-Mesh (schräge
+    Geländefläche) existiert im 3D-Viewport nicht — `Terrain`-Entities fliessen
+    bisher nur in Schnitt/Plan, nicht in `derive/scene.ts`; «Boden/Terrain»
+    bedeutet im Raycast-Weg daher «alles ausser Wand», nicht buchstäblich Hang-
+    Geometrie. Ein Terrain-Mesh im Viewport (eigener, kleinerer Folgeauftrag)
+    würde denselben Weg automatisch mitbedienen.
 
 > Reihenfolge-Hinweis Owner (06.07.): ab 6 Uhr mit Fable **erst Serie H + Serie I
 > als Konzept** (liegen vor), dann bauen.

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as SunCalc from 'suncalc';
-import { deriveAll, type GeometryArtifact, type Pt } from '@kosmo/kernel';
+import { deriveAll, type GeometryArtifact, type Pt, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
@@ -10,7 +10,17 @@ import { pbrPalette } from '@kosmo/data';
 import type { Fluchtlinie } from './zeichenhilfen';
 import { NavLeiste } from './NavLeiste';
 import { fitStrokes, type FittedSegment, type Stroke } from './sketch';
-import { rayToPlanPt } from './sketch-3d';
+import {
+  achsAbstand,
+  groundHitToPlanPt,
+  klassifiziereSketchTreffer,
+  rayToPlanPt,
+  wandTrefferZuOeffnung,
+  type WandTrefferPunkt,
+} from './sketch-3d';
+
+/** A4 (ROADMAP 155): Brüstung unter dieser Schwelle gilt als Boden-Anschlag → Tür statt Fenster. */
+const SKETCH_TUER_SCHWELLE_MM = 150;
 
 // Kontext-Layer (IFC-Bestand): sessionweit, nicht synchronisiert
 let contextMeshes: ContextMesh[] = [];
@@ -105,6 +115,19 @@ export interface ViewportHandlers {
   /** KosmoSketch: Freihand-Overlay im Plan aktiv. */
   sketchMode?: boolean;
   onSketchAccept?: (segments: { a: Pt; b: Pt }[]) => void;
+  /**
+   * A4 (ROADMAP 155): ein im 3D-Viewport auf eine Wandfläche gezeichneter
+   * Strich ergibt eine Öffnung statt eines Wand-Zugs — ein Aufruf pro Strich,
+   * läuft beim Aufrufer über `design.oeffnungSetzen` (ein Undo-Schritt).
+   */
+  onSketchWandOeffnung?: (o: {
+    wallId: string;
+    openingType: 'fenster' | 'tuer';
+    center: number;
+    width: number;
+    height: number;
+    sill: number;
+  }) => void;
   /** Auswahl-Werkzeug: Klick pickt Element statt zu zeichnen. */
   pickMode?: boolean;
   onPick?: (entityId: string | null) => void;
@@ -154,12 +177,19 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   const modelRef = useRef<THREE.Group | null>(null);
   const [navModus, setNavModus] = useState<'orbit' | 'pan' | 'zoom'>('orbit');
 
-  // T5 (Owner-Laptoptest, Punkt 3): Freihand-Skizzieren im 3D-Viewport —
-  // Bildschirm-Striche werden auf die Bodenebene der aktiven Geschossebene
-  // projiziert (sketch-3d.ts, reine Geometrie) und laufen danach durch
-  // denselben Batch-Fit/Übergabe-Weg wie das 2D-Overlay (sketch.ts,
-  // `onSketchAccept`). Nur die horizontale Ebene ist abgedeckt — Skizzieren
-  // auf schrägen Flächen/Wänden ist (noch) nicht möglich.
+  // T5 (Owner-Laptoptest, Punkt 3) + A4-Erweiterung (ROADMAP 155, Owner-
+  // Entscheid «Beides/Raycast»): Freihand-Skizzieren im 3D-Viewport — der
+  // Bildschirm-Strahl trifft jetzt per Raycast die tatsächliche Fläche
+  // (Wand/Decke/Volumen/Dach/Bodenraster, sketch-3d.ts reine Geometrie), die
+  // Bedeutung hängt vom getroffenen Bauteil ab: Wandfläche → EIN Strich = EINE
+  // Öffnung (`onSketchWandOeffnung`, sofort bei Strichende, ohne den Batch-
+  // Review-Weg); alles andere (Boden/Terrain/Decke/Volumen/Dach — «boden»)
+  // bleibt der bestehende Wand-Zug über denselben Batch-Fit/Übergabe-Weg wie
+  // das 2D-Overlay (sketch.ts, `onSketchAccept`), jetzt auf die real
+  // getroffene Fläche projiziert statt nur die flache Geschossebene. Fällt
+  // der Strahl ins Leere (kein Mesh getroffen), bleibt die alte flache Ebene
+  // der aktiven Geschossebene der Fallback. Die Art wird beim Strichbeginn
+  // festgelegt und für den ganzen Strich beibehalten.
   const [sketchModeAn, setSketchModeAn] = useState(false);
   const [sketchStrokes, setSketchStrokes] = useState<Stroke[]>([]);
   const [sketchPending, setSketchPending] = useState<FittedSegment[] | null>(null);
@@ -362,9 +392,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     previewGroup.scale.set(MM, MM, MM);
     scene.add(previewGroup);
 
-    // T5, Punkt 3: KosmoSketch im 3D-Viewport — Roh-Striche (dünn, gedämpft),
-    // der aktuell gezogene Strich (Akzentfarbe) und die gefittete Vorschau
-    // (nach «Übergeben»), alle auf der Bodenebene der aktiven Geschossebene.
+    // T5, Punkt 3 + A4 (ROADMAP 155): KosmoSketch im 3D-Viewport — Roh-
+    // Striche (dünn, gedämpft), der aktuell gezogene Strich (Akzentfarbe)
+    // und die gefittete Vorschau (nach «Übergeben»). Boden/Terrain-Striche
+    // liegen auf der real getroffenen Fläche (Fallback: flache Ebene der
+    // aktiven Geschossebene); ein Wand-Strich liegt auf der Wandfläche
+    // selbst (Weltkoordinaten der Treffer, nicht plan-projiziert).
     const sketchGroup = new THREE.Group();
     sketchGroup.scale.set(MM, MM, MM);
     scene.add(sketchGroup);
@@ -375,15 +408,52 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     let sketchDrawing = false;
     let sketchLive: Pt[] = [];
 
+    // A4: Bauteil-Art des laufenden Strichs (beim Strichbeginn festgelegt und
+    // für den ganzen Strich beibehalten) + bei 'wand' die gelockte Wand samt
+    // ihrem Mesh (fürs gezielte Nach-Raycasten während der Zug-Geste).
+    let sketchArt: 'wand' | 'boden' | null = null;
+    let sketchWandInfo: {
+      wallId: string;
+      a: Pt;
+      b: Pt;
+      laenge: number;
+      storeyElevMm: number;
+      maxHoeheMm: number;
+      obj: THREE.Object3D;
+    } | null = null;
+    let sketchWandTreffer: WandTrefferPunkt[] = [];
+    // Weltkoordinaten (Meter) der Wand-Treffer, nur fürs Live-Rendern der Vorschau.
+    let sketchWandWelt: { x: number; y: number; z: number }[] = [];
+
     function aktiveElevation(): number {
       const { doc, activeStoreyId } = useProject.getState();
       const storey = activeStoreyId ? doc.get(activeStoreyId) : null;
       return storey && storey.kind === 'storey' ? storey.elevation : 0;
     }
 
-    // Bildschirmpunkt → Bodenebene der aktiven Geschossebene → Plan-mm.
-    // Reine Geometrie in sketch-3d.ts, hier nur der Kamerastrahl dazu.
-    function sketchPunktVonEvent(ev: PointerEvent): Pt | null {
+    // Bildschirmpunkt → nächster Raycast-Treffer über allen Modell-Meshes
+    // + Bodenraster (nur Mesh-Treffer zählen — Kanten-/LineSegments-Objekte
+    // im Modell werden übersprungen, dasselbe Muster wie beim Element-Pick
+    // weiter unten). `null`, wenn der Strahl nichts trifft (Blick über den
+    // Horizont) — der Aufrufer fällt dann auf die flache Ebene zurück.
+    function sketchRaycastNaechster(
+      ev: PointerEvent,
+    ): { point: { x: number; y: number; z: number }; obj: THREE.Object3D } | null {
+      const rect = renderer.domElement.getBoundingClientRect();
+      ndc.set(
+        ((ev.clientX - rect.left) / rect.width) * 2 - 1,
+        -((ev.clientY - rect.top) / rect.height) * 2 + 1,
+      );
+      raycaster.setFromCamera(ndc, camera);
+      const hits = raycaster.intersectObjects([...model.children, ground], false);
+      const hit = hits.find((h) => (h.object as THREE.Mesh).isMesh);
+      if (!hit) return null;
+      return { point: { x: hit.point.x, y: hit.point.y, z: hit.point.z }, obj: hit.object };
+    }
+
+    // Bildschirmpunkt → flache Ebene der aktiven Geschossebene → Plan-mm.
+    // Reine Geometrie in sketch-3d.ts. Fallback, wenn der Raycast nichts trifft.
+    function sketchFlachEbenePunkt(ev: PointerEvent): Pt | null {
       const rect = renderer.domElement.getBoundingClientRect();
       ndc.set(
         ((ev.clientX - rect.left) / rect.width) * 2 - 1,
@@ -398,22 +468,102 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       );
     }
 
+    // Boden/Terrain-Abtastung: die real getroffene Fläche (jede Mesh-Art
+    // ausser Wand — Decke/Volumen/Dach/Treppe/Bodenraster), sonst die flache
+    // Ebene. Horizontale Projektion (x/z) gilt unabhängig von der Trefferhöhe.
+    function sketchBodenPunktVonEvent(ev: PointerEvent): Pt | null {
+      const treffer = sketchRaycastNaechster(ev);
+      if (treffer) return groundHitToPlanPt({ x: treffer.point.x, z: treffer.point.z });
+      return sketchFlachEbenePunkt(ev);
+    }
+
     const onSketchPointerDown = (ev: PointerEvent) => {
       if (sketchPendingRef.current) return;
-      const p = sketchPunktVonEvent(ev);
+      const treffer = sketchRaycastNaechster(ev);
+      const { doc } = useProject.getState();
+      const entityId = treffer ? (treffer.obj.userData['entityId'] as string | undefined) : undefined;
+      const entityKind = entityId ? doc.get(entityId)?.kind : undefined;
+      const art = klassifiziereSketchTreffer(entityKind);
+      if (art === 'wand' && entityId && treffer) {
+        const wall = doc.get<Wall>(entityId);
+        const storey = wall ? doc.get(wall.storeyId) : undefined;
+        if (wall && wall.kind === 'wall' && storey && storey.kind === 'storey') {
+          const zBase = storey.elevation + wall.baseOffset;
+          const zTop =
+            wall.heightMode === 'fix' && wall.height ? zBase + wall.height : storey.elevation + storey.height;
+          sketchArt = 'wand';
+          sketchWandInfo = {
+            wallId: entityId,
+            a: wall.a,
+            b: wall.b,
+            laenge: Math.round(Math.hypot(wall.b.x - wall.a.x, wall.b.y - wall.a.y)),
+            storeyElevMm: storey.elevation,
+            maxHoeheMm: zTop - storey.elevation,
+            obj: treffer.obj,
+          };
+          const planPt = groundHitToPlanPt({ x: treffer.point.x, z: treffer.point.z });
+          sketchWandTreffer = [
+            {
+              s: achsAbstand(wall.a, wall.b, planPt),
+              hoehe: treffer.point.y * 1000 - storey.elevation,
+            },
+          ];
+          sketchWandWelt = [treffer.point];
+          (renderer.domElement as Element).setPointerCapture(ev.pointerId);
+          sketchDrawing = true;
+          return;
+        }
+      }
+      // Boden/Terrain (oder kein Treffer): wie bisher ein Wand-Zug, jetzt auf
+      // die real getroffene Fläche projiziert statt nur auf die flache Ebene.
+      const p = treffer ? groundHitToPlanPt({ x: treffer.point.x, z: treffer.point.z }) : sketchFlachEbenePunkt(ev);
       if (!p) return;
+      sketchArt = 'boden';
+      sketchWandInfo = null;
       (renderer.domElement as Element).setPointerCapture(ev.pointerId);
       sketchDrawing = true;
       sketchLive = [p];
     };
     const onSketchPointerMove = (ev: PointerEvent) => {
       if (!sketchDrawing) return;
-      const p = sketchPunktVonEvent(ev);
+      if (sketchArt === 'wand' && sketchWandInfo) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        ndc.set(
+          ((ev.clientX - rect.left) / rect.width) * 2 - 1,
+          -((ev.clientY - rect.top) / rect.height) * 2 + 1,
+        );
+        raycaster.setFromCamera(ndc, camera);
+        const hit = raycaster.intersectObject(sketchWandInfo.obj, false)[0];
+        if (hit) {
+          const planPt = groundHitToPlanPt({ x: hit.point.x, z: hit.point.z });
+          sketchWandTreffer.push({
+            s: achsAbstand(sketchWandInfo.a, sketchWandInfo.b, planPt),
+            hoehe: hit.point.y * 1000 - sketchWandInfo.storeyElevMm,
+          });
+          sketchWandWelt.push({ x: hit.point.x, y: hit.point.y, z: hit.point.z });
+        }
+        return;
+      }
+      const p = sketchBodenPunktVonEvent(ev);
       if (p) sketchLive.push(p);
     };
     const onSketchPointerUp = () => {
       if (!sketchDrawing) return;
       sketchDrawing = false;
+      if (sketchArt === 'wand' && sketchWandInfo) {
+        const info = sketchWandInfo;
+        const vorschlag = wandTrefferZuOeffnung(sketchWandTreffer, info.laenge, info.maxHoeheMm);
+        sketchWandTreffer = [];
+        sketchWandWelt = [];
+        sketchArt = null;
+        sketchWandInfo = null;
+        if (vorschlag) {
+          const openingType: 'fenster' | 'tuer' = vorschlag.sill <= SKETCH_TUER_SCHWELLE_MM ? 'tuer' : 'fenster';
+          handlers.current?.onSketchWandOeffnung?.({ wallId: info.wallId, openingType, ...vorschlag });
+        }
+        return;
+      }
+      sketchArt = null;
       if (sketchLive.length >= 2) {
         const points = sketchLive.map((p) => ({ ...p, pressure: 0.5 }));
         setSketchStrokes((s) => [...s, { points }]);
@@ -431,6 +581,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (!an) {
         sketchDrawing = false;
         sketchLive = [];
+        sketchArt = null;
+        sketchWandInfo = null;
+        sketchWandTreffer = [];
+        sketchWandWelt = [];
         setSketchStrokes([]);
         setSketchPending(null);
       }
@@ -446,7 +600,13 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         const g = new THREE.BufferGeometry().setFromPoints(stroke.points.map(toVec));
         sketchGroup.add(new THREE.Line(g, sketchRohMaterial));
       }
-      if (sketchLive.length >= 2) {
+      if (sketchArt === 'wand' && sketchWandWelt.length >= 2) {
+        // Weltkoordinaten (Meter) → sketchGroup-Lokalraum (mm, MM-skaliert).
+        const g = new THREE.BufferGeometry().setFromPoints(
+          sketchWandWelt.map((w) => new THREE.Vector3(w.x * 1000, w.y * 1000, w.z * 1000)),
+        );
+        sketchGroup.add(new THREE.Line(g, sketchLiveMaterial));
+      } else if (sketchLive.length >= 2) {
         const g = new THREE.BufferGeometry().setFromPoints(sketchLive.map(toVec));
         sketchGroup.add(new THREE.Line(g, sketchLiveMaterial));
       }
@@ -888,7 +1048,8 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             boxShadow: 'var(--k-shadow-overlay)',
           }}
         >
-          Klicken + ziehen zeichnet auf der Bodenebene des Geschosses — Kamera steht still, bis das Werkzeug wechselt.
+          Klicken + ziehen zeichnet auf der getroffenen Fläche — auf einer Wand ergibt der Strich eine Öffnung, sonst
+          eine Wand. Kamera steht still, bis das Werkzeug wechselt.
         </div>
       )}
       {!sketchPending && sketchStrokes.length > 0 && (
