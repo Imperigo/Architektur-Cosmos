@@ -1054,7 +1054,7 @@ export const copyStorey = registerCommand({
   id: 'design.geschossKopieren',
   title: 'Geschoss stapeln',
   description:
-    'Kopiert ein Geschoss samt Inhalt (Zonen, Möbel, Zonentüren, Wände mit Öffnungen, Decken, Treppen) anzahl-mal nach oben — Index und Höhenlage laufen fort, das Treppenhaus liegt automatisch deckungsgleich (vertical alignment). Kennzahlen und Berechnungsliste wachsen mit. Ein Undo-Schritt.',
+    'Kopiert ein Geschoss samt Inhalt (Zonen, Möbel, Zonentüren, Wände mit Öffnungen, Decken, Treppen, Stützen, Unterzüge) anzahl-mal nach oben — Index und Höhenlage laufen fort, das Treppenhaus liegt automatisch deckungsgleich (vertical alignment). Kennzahlen und Berechnungsliste wachsen mit. Ein Undo-Schritt.',
   params: z.object({
     storeyId: z.string(),
     anzahl: z.number().int().min(1).max(20).default(1),
@@ -1088,6 +1088,10 @@ export const copyStorey = registerCommand({
       for (const t of doc.byKind<import('../model/entities').ZonenTuer>('zonentuer')) if (t.storeyId === quelle.id) patches.push(added(kopiere(t)));
       for (const sl of doc.byKind<import('../model/entities').Slab>('slab')) if (sl.storeyId === quelle.id) patches.push(added(kopiere(sl)));
       for (const st of doc.byKind<import('../model/entities').Stair>('stair')) if (st.storeyId === quelle.id) patches.push(added(kopiere(st)));
+      // Tragstruktur mitstapeln — sonst verliert ein Skelettbau in jedem
+      // gestapelten Obergeschoss seine Stützen/Unterzüge (Testlauf-Befund).
+      for (const c of doc.byKind<import('../model/entities').Column>('column')) if (c.storeyId === quelle.id) patches.push(added(kopiere(c)));
+      for (const bm of doc.byKind<import('../model/entities').Beam>('beam')) if (bm.storeyId === quelle.id) patches.push(added(kopiere(bm)));
       for (const w of doc.byKind<Wall>('wall')) {
         if (w.storeyId !== quelle.id) continue;
         const kopie = kopiere(w);
@@ -1766,11 +1770,22 @@ export const setGrid = registerCommand({
       const x = p.origin.x + i * p.achsmass;
       achse(String(i + 1), { x, y: p.origin.y - UEBERSTAND }, { x, y: p.origin.y + tiefe + UEBERSTAND }, 'haupt');
     }
-    // Querachsen A… (waagrecht)
+    // Querachsen A… (waagrecht). Bijektive Basis-26-Beschriftung (A…Z, AA, AB, …)
+    // statt `j % 26` — sonst tragen Achse 1 und 27 beide «A» (querAnzahl bis 40).
+    const querLabel = (j: number): string => {
+      let s = '';
+      let n = j + 1;
+      while (n > 0) {
+        const r = (n - 1) % 26;
+        s = String.fromCharCode(65 + r) + s;
+        n = Math.floor((n - 1) / 26);
+      }
+      return s;
+    };
     for (let j = 0; j < p.querAnzahl; j++) {
       const y = p.origin.y + j * quer;
       achse(
-        String.fromCharCode(65 + (j % 26)),
+        querLabel(j),
         { x: p.origin.x - UEBERSTAND, y },
         { x: p.origin.x + breite + UEBERSTAND, y },
         'haupt',

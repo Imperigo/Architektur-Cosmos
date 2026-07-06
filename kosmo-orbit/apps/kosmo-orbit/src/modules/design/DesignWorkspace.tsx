@@ -1088,6 +1088,10 @@ export function DesignWorkspace() {
             borderRadius: 'var(--k-radius-md)',
             padding: 6,
             boxShadow: 'var(--k-shadow-raised)',
+            // Testlauf-Befund: bei Hochhäusern (20+ Geschossen) lief die Liste
+            // sonst unten aus dem Viewport — Höhe deckeln, dann scrollt sie.
+            maxHeight: 'calc(100% - 24px)',
+            overflowY: 'auto',
           }}
         >
           {storeys.map((s: Storey) => (

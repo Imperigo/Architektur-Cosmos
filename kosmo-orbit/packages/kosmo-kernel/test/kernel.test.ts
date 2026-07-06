@@ -1459,6 +1459,21 @@ describe('Stützenraster ins Modell (V2-A3)', () => {
     expect(() => execute(doc, 'design.rasterEntfernen', { storeyId })).toThrow(CommandError);
   });
 
+  it('Testlauf-Befund: Querachsen-Labels laufen bijektiv weiter (A…Z, AA, AB) statt bei Z umzuschlagen', () => {
+    const { doc, storeyId } = setupDoc();
+    // 28 Querachsen — vorher (Bug) trugen Achse 1 und 27 beide «A» (j % 26).
+    execute(doc, 'design.rasterSetzen', { storeyId, achsmass: 8_000, anzahl: 2, querAnzahl: 28, querAchsmass: 3_000 });
+    const querLabels = doc
+      .byKind<import('../src').GridAxis>('grid')
+      .filter((a) => a.typ === 'haupt' && /^[A-Z]+$/.test(a.label))
+      .map((a) => a.label);
+    expect(querLabels).toContain('Z'); // 26.
+    expect(querLabels).toContain('AA'); // 27.
+    expect(querLabels).toContain('AB'); // 28.
+    expect(querLabels.filter((l) => l === 'A')).toHaveLength(1); // keine Dublette mehr
+    expect(new Set(querLabels).size).toBe(querLabels.length); // alle eindeutig
+  });
+
   it('derivePlan trägt die Achsen als eigenen Kanal mit Typ und Label', () => {
     const { doc, storeyId } = setupDoc();
     execute(doc, 'design.rasterSetzen', { storeyId, achsmass: 10_000, anzahl: 3, querAnzahl: 2 });
@@ -3414,6 +3429,25 @@ describe('Geschoss stapeln (Abendbatch B1)', () => {
     doc.apply(invertPatches(r.patches));
     expect(doc.storeysOrdered()).toHaveLength(1);
     expect(doc.byKind('wall')).toHaveLength(waende1);
+  });
+
+  it('Testlauf-Befund: Tragstruktur (Stützen + Unterzüge) wird mitgestapelt', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.stuetzeSetzen', { storeyId, at: { x: 0, y: 0 }, b: 300, material: 'beton' });
+    execute(doc, 'design.stuetzeSetzen', { storeyId, at: { x: 6000, y: 0 }, b: 300, material: 'beton' });
+    execute(doc, 'design.unterzugZeichnen', { storeyId, a: { x: 0, y: 0 }, b: { x: 6000, y: 0 }, breite: 300, hoehe: 500 });
+    expect(doc.byKind('column')).toHaveLength(2);
+    expect(doc.byKind('beam')).toHaveLength(1);
+    execute(doc, 'design.geschossKopieren', { storeyId, anzahl: 3 });
+    // Vorher (Bug): Stützen/Unterzüge verschwanden in jedem gestapelten OG.
+    expect(doc.byKind('column')).toHaveLength(2 * 4);
+    expect(doc.byKind('beam')).toHaveLength(1 * 4);
+    const storeys = doc.storeysOrdered() as Storey[];
+    const og3 = storeys[3]!.id;
+    expect(doc.byKind<import('../src').Column>('column').filter((c) => c.storeyId === og3)).toHaveLength(2);
+    expect(doc.byKind<import('../src').Beam>('beam').filter((b) => b.storeyId === og3)).toHaveLength(1);
   });
 });
 
