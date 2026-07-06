@@ -55,9 +55,21 @@ Produktfehler.
   Auftrag.
 
 **Modellierungs-/Feature-Lücken → V2:**
-- **Grenzabstand wird nie geprüft** (EFH): `zonenRegelSetzen` speichert
-  `grenzabstandKlein/Gross`, `pruefeGrundriss()` liest nur `maxHoehe`/
-  `maxVollgeschosse`. Braucht Parzellengrenz-Geometrie → V2.
+- **Grenzabstand — teilerledigt (ROADMAP 153).** Klarstellung zu diesem
+  Befund: `Boundary.grenzabstand` (Polygonkante, Punkt-Kante-Distanz,
+  Mehrhöhenzuschlag) war schon **vor** diesem Testlauf in `pruefeGrundriss()`
+  aktiv durchgesetzt. Die tatsächliche Lücke war die **zweite** Quelle:
+  `zonenRegelSetzen` speichert `grenzabstandKlein/Gross`
+  (`doc.settings.zonenRegel`), `pruefeGrundriss()` las davon bislang nur
+  `maxHoehe`/`maxVollgeschosse`. **Jetzt geschlossen**: trägt eine `Boundary`
+  keinen eigenen `grenzabstand`, greift ersatzweise `grenzabstandKlein` der
+  aktiven Zonenregel als konservatives Minimum (Befundtext benennt die
+  Zonenregel als Quelle). **Ehrlich offen bleibt**: `grenzabstandGross`
+  (seitenabhängig, für die «grosse» Fassadenseite) wird nicht geprüft — das
+  Modell kennt keine Zuordnung, welche Boundary-Kante «klein»/«gross» ist
+  (bräuchte eine Kanten-Klassierung im `Boundary`-Entity); ohne jede
+  `Boundary`-Geometrie auf dem Geschoss bleibt der Zonenregel-Grenzabstand
+  ebenfalls ungeprüft (keine Parzellenlinie zum Messen). Beides → V2.
 - **Kein eigener Parzellen-/Site-Zonentyp** (EFH): Parzellen werden als
   `sia:'KF'`-Zonen behelfsmässig modelliert und verunreinigen dann SIA-416-NGF
   und Δ Max mit ihrer Fläche. Braucht einen Site/Boundary-Zonentyp ohne

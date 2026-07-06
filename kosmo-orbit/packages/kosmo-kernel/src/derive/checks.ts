@@ -333,9 +333,16 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       }
       return min;
     };
+    // Ohne eigenen Baugrenze-Grenzabstand greift ersatzweise die aktive
+    // Zonenregel: «grenzabstandKlein» als konservatives Minimum. Der grössere,
+    // seitenabhängige «grenzabstandGross» bräuchte eine Zuordnung, welche
+    // Fassade «klein»/«gross» ist — das kennt das Modell (noch) nicht, siehe
+    // docs/V1-TESTLAUF-BEFUNDE.md (ehrliche Restgrenze).
+    const zonenFallback = !g.grenzabstand && regel?.grenzabstandKlein ? regel.grenzabstandKlein : null;
     const grenzVerletzt = (name: string, id: string, punkte: { x: number; y: number }[], top: number | null) => {
-      if (!g.grenzabstand) return;
-      let soll = g.grenzabstand;
+      const basis = g.grenzabstand ?? zonenFallback;
+      if (!basis) return;
+      let soll = basis;
       if (g.mehrHoehen && top !== null && top > g.mehrHoehen.abHoehe) {
         soll += Math.round((top - g.mehrHoehen.abHoehe) * g.mehrHoehen.anteil);
       }
@@ -346,7 +353,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
           befunde.push({
             schwere: 'fehler',
             regel: 'Grenzabstand',
-            text: `${name}: ${(ist / 1000).toFixed(1)} m zur Grenze «${g.name}» — verlangt ${(soll / 1000).toFixed(1)} m${g.mehrHoehen && top !== null && top > g.mehrHoehen.abHoehe ? ' (inkl. Mehrhöhenzuschlag)' : ''}`,
+            text: `${name}: ${(ist / 1000).toFixed(1)} m zur Grenze «${g.name}» — verlangt ${(soll / 1000).toFixed(1)} m${g.mehrHoehen && top !== null && top > g.mehrHoehen.abHoehe ? ' (inkl. Mehrhöhenzuschlag)' : ''}${zonenFallback ? ` (Zonenregel «${regel!.name}» grenzabstandKlein — Richtwert ohne Seiten-Zuordnung; Baugrenze mit eigenem Grenzabstand setzen für die genaue Prüfung)` : ''}`,
             entityId: id,
           });
           return; // ein Befund je Bauteil reicht

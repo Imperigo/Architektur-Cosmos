@@ -2579,6 +2579,71 @@ describe('Grenzabstand (V2-Vorform)', () => {
     expect(b).toHaveLength(1);
     expect(b[0]!.text).toContain('Mehrhöhenzuschlag');
   });
+
+  function setupMitAufbau(grenzabstand: number | null) {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW', target: 'wall',
+      layers: [{ material: 'beton', thickness: 200, function: 'tragend' }],
+    });
+    const assemblyId = (au.patches[0] as { id: string }).id;
+    execute(doc, 'design.baugrenzeSetzen', {
+      storeyId,
+      outline: [{ x: 0, y: 0 }, { x: 20000, y: 0 }, { x: 20000, y: 20000 }, { x: 0, y: 20000 }],
+      grenzabstand,
+    });
+    return { doc, storeyId, assemblyId };
+  }
+
+  it('Wand knapp innerhalb des Grenzabstands → kein Befund', () => {
+    const { doc, storeyId, assemblyId } = setupMitAufbau(4000);
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 5000, y: 5000 }, b: { x: 15000, y: 5000 },
+    });
+    expect(pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Grenzabstand')).toHaveLength(0);
+  });
+
+  it('Wand zu nah an der Grenze → Fehler mit Ist/Soll', () => {
+    const { doc, storeyId, assemblyId } = setupMitAufbau(4000);
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 2000, y: 5000 }, b: { x: 15000, y: 5000 },
+    });
+    const b = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Grenzabstand');
+    expect(b).toHaveLength(1);
+    expect(b[0]!.text).toContain('Wand');
+    expect(b[0]!.text).toContain('2.0 m');
+    expect(b[0]!.text).toContain('4.0 m');
+  });
+
+  it('ohne eigenen Baugrenze-Grenzabstand greift die Zonenregel «grenzabstandKlein» als Minimum', () => {
+    const { doc, storeyId, assemblyId } = setupMitAufbau(null);
+    execute(doc, 'design.zonenRegelSetzen', {
+      name: 'W2 (Richtwert ZG)', az: 0.4, maxHoehe: 8500, maxVollgeschosse: 2,
+      grenzabstandKlein: 4000, grenzabstandGross: 8000, parzellenFlaeche: null,
+    });
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 2000, y: 5000 }, b: { x: 15000, y: 5000 },
+    });
+    const b = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Grenzabstand');
+    expect(b).toHaveLength(1);
+    expect(b[0]!.text).toContain('2.0 m');
+    expect(b[0]!.text).toContain('4.0 m');
+    expect(b[0]!.text).toContain('grenzabstandKlein');
+  });
+
+  it('Zonenregel-Fallback bleibt aus, wenn die Baugrenze einen eigenen Grenzabstand trägt', () => {
+    const { doc, storeyId, assemblyId } = setupMitAufbau(1000); // eigener, kleinerer Grenzabstand
+    execute(doc, 'design.zonenRegelSetzen', {
+      name: 'W2 (Richtwert ZG)', az: 0.4, maxHoehe: 8500, maxVollgeschosse: 2,
+      grenzabstandKlein: 4000, grenzabstandGross: 8000, parzellenFlaeche: null,
+    });
+    execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 2000, y: 5000 }, b: { x: 15000, y: 5000 },
+    }); // 2.0 m ≥ eigener Grenzabstand 1.0 m → kein Befund trotz strengerer Zonenregel
+    expect(pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Grenzabstand')).toHaveLength(0);
+  });
 });
 
 describe('Zonenregel-Katalog (V2-Vorform V1)', () => {
