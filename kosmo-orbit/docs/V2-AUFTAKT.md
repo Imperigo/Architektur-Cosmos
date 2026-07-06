@@ -59,8 +59,24 @@ Reihenfolge = Nutzen × Owner-Wunsch. Aufwand grob (S/M/L).
    HomeStation trainiert die Büro-LoRA. «Das System lernt DICH.»
 7. **Journal in SQLite (S)** — heute localStorage + IndexedDB-Spiegel; auf Tauri
    nativ SQLite (Kommentar in `state/journal-store.ts`).
-8. **Wand↔Decke-Verschneidung im Schnitt (M)** — im Plan gelöst (Prioritäten
-   0–999), im Schnitt offen (RE-ARCHICAD ◐).
+8. **Wand↔Decke-Verschneidung im Schnitt** ✅ erledigt (ROADMAP 150).
+9. **Serie H — Vollständige Benutzersimulation (L, Owner 06.07.)** — Testprogramm,
+   das je SIA-Phase ein ganzes Projekt über viele Haustypen durchspielt, jedes Tool
+   von Anfang bis Ende, lokale KI/AI-Imaging mitsimuliert. Konzept + Saat:
+   `docs/SERIE-H-VOLLSIMULATION.md` (grüne Saat `e2e/sim-umbau/-mfh.spec.ts`,
+   Befunde in `docs/V1-TESTLAUF-BEFUNDE.md`).
+10. **Serie I — Cybersecurity / Anti-Copy / Firewall (L, Owner 06.07., ultracode)** —
+    Bedrohungsmodell → Härtung → Lizenz/Anti-Copy → Firewall/Netz → Betrieb/Notfall.
+    Ehrlich «so hart wie sinnvoll», rein defensiv. Konzept: `docs/SERIE-I-SICHERHEIT.md`.
+11. **Serie E/F/G (geparkt)** — Erlebnis/Animationen (E), Rollenprofile/Abteilungen
+    (F, `docs/SERIE-F-ROLLENPROFILE-ABTEILUNGEN.md`), Kosmo als Benutzer-Guide
+    (G, `docs/SERIE-G-KOSMO-ALS-BENUTZERGUIDE.md`).
+12. **A4 — 3D-Skizze auf jede Fläche (M/L, Owner-Entscheid «Beides/Raycast»)** —
+    Strich per Raycast auf jede getroffene Fläche: Terrain/Hang → Wand entlang des
+    Hangs, Wandfläche → Öffnung/Annotation. Erweitert T5 (heute nur Bodenebene).
+
+> Reihenfolge-Hinweis Owner (06.07.): ab 6 Uhr mit Fable **erst Serie H + Serie I
+> als Konzept** (liegen vor), dann bauen.
 
 ## Teil 3 — Nahtstellen, an denen V2 andockt (bereits vorbereitet in V1)
 
