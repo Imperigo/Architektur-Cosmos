@@ -16,7 +16,7 @@ zehn Stationen (Design, Vis, Data, Asset, Dev, Publish, Prepare, Doc, Train,
 plus Draw/Sketch/Speak als Deep-Links), ein BIM-Kern mit Command-Pattern, und
 Kosmo — eine KI, die jedes Command als Werkzeug hat und nie ungefragt schreibt.
 
-- **Stand:** V1 fertig (04.07.2026), **V2 läuft** — siehe `kosmo-orbit/ROADMAP.md` (bis Eintrag 136).
+- **Stand:** V1 fertig (04.07.2026), **V2 läuft** — siehe `kosmo-orbit/ROADMAP.md` (bis Eintrag 148).
 - **Handbuch:** `kosmo-orbit/abgabe/HANDBUCH-KOSMOORBIT-V1.pdf` (28 Seiten, echte Screenshots).
 - **Installation:** `kosmo-orbit/docs/INSTALL.md` (Linux/macOS/Windows/iPad).
 - **⬇ Windows herunterladen (Cloud-Edition, Claude/Opus 4.8):**
@@ -39,6 +39,16 @@ Kosmo — eine KI, die jedes Command als Werkzeug hat und nie ungefragt schreibt
   Software-Selbstwissen, LoRA-JSONL-Export) ✅ · D4 **Gedächtnis** als
   Memory-Timeline ✅ · D5 **HomePC-HDD-Archiv** (sechste Sammlung) — läuft.
   → Jede Sammlung hat jetzt einen eigenen KosmoData-Tab.
+- **Laptop-Test-Befunde abgearbeitet** ✅ (ROADMAP 138–148,
+  `kosmo-orbit/docs/V1-TESTBEFUNDE-LAPTOP.md`): 2D-Plan-Interaktion
+  (Anwählen/Verschieben/Doppelklick), Render-Bugs (3D-Wände/Treppe/Wandecke/
+  Betontextur), ArchiCAD-Zeichenhilfen (Ortho/Fluchtlinien/Nav-Leiste/
+  Shortcuts), KosmoVis-Crash + Publikations-Set, Pop-up-Überlauf, Referenz-3D-
+  Import, projektabhängige Berechnungsliste, **Oberflächen-Systematik**
+  (drei Familien + Fokus-Konzept + Projekt-Menü), **freies Skizzieren**
+  (Batch-Commit, feiner Stift, im 3D), **Cloud-Abo-Login** («Mit Claude
+  anmelden», Desktop), **Splat aus Video** (lokal konvertieren/anzeigen +
+  ehrlicher Video→Splat-Weg nach Tempo). Alles grün (103 E2E), gepusht.
 - **Geparkt für V2-Endprodukt:** Serie E (Erlebnis-/Animationskonzept,
   drei Profile), Serie F (Rollenprofile + neue Abteilungen, Erfahrungsstufen
   simple/ausgewogen/experte), **Serie G (Kosmo als Benutzer-Guide** — führt vom
