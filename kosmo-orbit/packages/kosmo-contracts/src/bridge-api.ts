@@ -68,6 +68,9 @@ export const bridgeRoutes = {
   jobs: '/jobs',
   job: (id: string) => `/jobs/${id}`,
   jobArtifact: (id: string, name: string) => `/jobs/${id}/artifacts/${name}`,
+  /** Video→Splat: ehrliche Übergabe der lokal extrahierten Frames — keine
+   * SfM-Optimierung in der Bridge selbst (siehe kosmo_bridge/main.py). */
+  jobsVideoSplat: '/jobs/video-splat',
   stt: '/stt',
   tts: '/tts',
   ollama: '/ollama',

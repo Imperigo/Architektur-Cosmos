@@ -105,6 +105,98 @@ export function parseSplatCloud(name: string, buffer: ArrayBuffer): SplatCloud {
   return name.toLowerCase().endsWith('.ply') ? parsePlyGaussian(buffer) : parseSplatFile(buffer);
 }
 
+/**
+ * Konvertieren/Aufbereiten/Zuschneiden — läuft komplett lokal im Browser
+ * (kein GPU-Training, wie PlayCanvas SuperSplat). Owner-Korrektur 05.07.:
+ * Gaussian-Splats sind NICHT HomeStation-exklusiv für diesen Teil — nur die
+ * Video→Splat-Erzeugung (SfM) ist rechenintensiv (siehe video-splat.ts).
+ */
+
+/** antimatter15 .splat zurückschreiben — der lokale Weg für `.ply → .splat`.
+ * Ehrlich: SplatCloud hält nur die isotrope Mittel-Grösse und keine Rotation
+ * (parseSplatFile liest deren Bytes gar nicht erst ein) — das Zurückschreiben
+ * setzt darum scale_x=scale_y=scale_z=size und eine feste Platzhalter-
+ * Rotation. Lage/Farbe/Grösse sind darum rundtrip-stabil, eine ursprünglich
+ * anisotrope Form/Rotation ist es nicht — das ist keine verlustfreie
+ * Quell-Kopie, sondern ein Export der (bereits vereinfachten) SplatCloud. */
+export function writeSplatFile(cloud: SplatCloud): ArrayBuffer {
+  const buffer = new ArrayBuffer(cloud.count * 32);
+  const view = new DataView(buffer);
+  for (let i = 0; i < cloud.count; i++) {
+    const o = i * 32;
+    view.setFloat32(o, cloud.positions[i * 3]!, true);
+    view.setFloat32(o + 4, cloud.positions[i * 3 + 1]!, true);
+    view.setFloat32(o + 8, cloud.positions[i * 3 + 2]!, true);
+    const s = cloud.sizes[i]!;
+    view.setFloat32(o + 12, s, true);
+    view.setFloat32(o + 16, s, true);
+    view.setFloat32(o + 20, s, true);
+    view.setUint8(o + 24, Math.round(clamp01(cloud.colors[i * 4]!) * 255));
+    view.setUint8(o + 25, Math.round(clamp01(cloud.colors[i * 4 + 1]!) * 255));
+    view.setUint8(o + 26, Math.round(clamp01(cloud.colors[i * 4 + 2]!) * 255));
+    view.setUint8(o + 27, Math.round(clamp01(cloud.colors[i * 4 + 3]!) * 255));
+    // Platzhalter-Rotation (keine Quelle dafür in SplatCloud) — parseSplatFile
+    // liest diese 4 Bytes nicht ein, daher wirkungslos fürs Rundtrip.
+    view.setUint8(o + 28, 128);
+    view.setUint8(o + 29, 128);
+    view.setUint8(o + 30, 128);
+    view.setUint8(o + 31, 255);
+  }
+  return buffer;
+}
+
+export interface SplatBox {
+  min: [number, number, number];
+  max: [number, number, number];
+}
+
+/** Zuschneiden: Punkte ausserhalb der Box werden verworfen (reine Funktion). */
+export function cropSplat(cloud: SplatCloud, box: SplatBox): SplatCloud {
+  const indices: number[] = [];
+  for (let i = 0; i < cloud.count; i++) {
+    const x = cloud.positions[i * 3]!;
+    const y = cloud.positions[i * 3 + 1]!;
+    const z = cloud.positions[i * 3 + 2]!;
+    if (
+      x >= box.min[0] && x <= box.max[0] &&
+      y >= box.min[1] && y <= box.max[1] &&
+      z >= box.min[2] && z <= box.max[2]
+    ) {
+      indices.push(i);
+    }
+  }
+  return selectIndices(cloud, indices);
+}
+
+/** Ausdünnen fürs flüssige Anzeigen — KEINE verlustfreie Kompression, nur
+ * jeder `faktor`-te Punkt bleibt. `faktor <= 1` gibt die Wolke unverändert
+ * zurück (nichts zu tun). */
+export function decimateSplat(cloud: SplatCloud, faktor: number): SplatCloud {
+  const stride = Math.max(1, Math.round(faktor));
+  if (stride <= 1) return cloud;
+  const indices: number[] = [];
+  for (let i = 0; i < cloud.count; i += stride) indices.push(i);
+  return selectIndices(cloud, indices);
+}
+
+function selectIndices(cloud: SplatCloud, indices: number[]): SplatCloud {
+  const count = indices.length;
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 4);
+  const sizes = new Float32Array(count);
+  indices.forEach((srcI, i) => {
+    positions[i * 3] = cloud.positions[srcI * 3]!;
+    positions[i * 3 + 1] = cloud.positions[srcI * 3 + 1]!;
+    positions[i * 3 + 2] = cloud.positions[srcI * 3 + 2]!;
+    colors[i * 4] = cloud.colors[srcI * 4]!;
+    colors[i * 4 + 1] = cloud.colors[srcI * 4 + 1]!;
+    colors[i * 4 + 2] = cloud.colors[srcI * 4 + 2]!;
+    colors[i * 4 + 3] = cloud.colors[srcI * 4 + 3]!;
+    sizes[i] = cloud.sizes[srcI]!;
+  });
+  return { positions, colors, sizes, count };
+}
+
 function clamp01(v: number): number {
   return v < 0 ? 0 : v > 1 ? 1 : v;
 }

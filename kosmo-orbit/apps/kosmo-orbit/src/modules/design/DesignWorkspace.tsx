@@ -34,6 +34,8 @@ import { KennzahlenPanel } from './KennzahlenPanel';
 import { DrawPanel } from './DrawPanel';
 import { BerechnungslistePanel } from './BerechnungslistePanel';
 import { RasterPanel } from './RasterPanel';
+import { SplatPanel } from './SplatPanel';
+import type { SplatCloud } from './splat-import';
 import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanPdf, exportPlanSvg, PHASEN_MASSSTAB } from './export-plan';
@@ -140,6 +142,10 @@ export function DesignWorkspace() {
   const [drawOffen, setDrawOffen] = useState(false);
   const [listeOffen, setListeOffen] = useState(false);
   const [rasterOffen, setRasterOffen] = useState(false);
+  // Splat-Werkzeug (Owner-Korrektur 05.07.: NICHT HomeStation-exklusiv) —
+  // Crop/Ausdünnen/Export laufen lokal, siehe SplatPanel.tsx.
+  const [splatPanelOffen, setSplatPanelOffen] = useState(false);
+  const [splatCloud, setSplatCloudState] = useState<SplatCloud | null>(null);
   // T7: Projekt-Lebenszyklus — Phase/Bemassungsstil sind projektspezifisch und
   // wechseln über Jahre selten; sie stehen nicht mehr dauerhaft in der Werk-
   // zeugzeile, sondern im Projekt-Menü (Fokus-Stufe «selten»).
@@ -702,7 +708,10 @@ export function DesignWorkspace() {
               if (!f) return;
               try {
                 const { parseSplatCloud } = await import('./splat-import');
-                setSplatCloud(parseSplatCloud(f.name, await f.arrayBuffer()));
+                const cloud = parseSplatCloud(f.name, await f.arrayBuffer());
+                setSplatCloud(cloud);
+                setSplatCloudState(cloud);
+                setSplatPanelOffen(true);
               } catch (err) {
                 meldeFehler(`Splat-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
               }
@@ -711,6 +720,14 @@ export function DesignWorkspace() {
           }}
         >
           Splat laden
+        </KButton>
+        <KButton
+          size="sm"
+          tone={splatPanelOffen ? 'accent' : 'ghost'}
+          data-testid="splat-werkzeug-toggle"
+          onClick={() => setSplatPanelOffen(!splatPanelOffen)}
+        >
+          Splat-Werkzeug
         </KButton>
         <Trennlabel>Ebenen</Trennlabel>
         <KButton
@@ -983,6 +1000,16 @@ export function DesignWorkspace() {
       <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
         {drawOffen && <DrawPanel />}
         {rasterOffen && <RasterPanel onClose={() => setRasterOffen(false)} />}
+        {splatPanelOffen && (
+          <SplatPanel
+            cloud={splatCloud}
+            onCloud={(cloud) => {
+              setSplatCloudState(cloud);
+              setSplatCloud(cloud);
+            }}
+            onClose={() => setSplatPanelOffen(false)}
+          />
+        )}
         {listeOffen && (
           <BerechnungslistePanel
             wohnungstyp={wohnungstyp}

@@ -6,6 +6,11 @@ Endpoints (Vertrag: @kosmo/contracts bridge-api.ts):
   GET  /jobs                       Jobliste
   GET  /jobs/{id}                  Job-Record + render-result.json falls fertig
   GET  /jobs/{id}/artifacts/{name} Artefakt (Bild, glb, ...)
+  POST /jobs/video-splat           Video→Splat-Job (multipart: frames[] + meta) —
+                                    ehrliche Übergabe; braucht einen echten SfM-
+                                    Worker (HomeStation/Web-Konverter), sonst
+                                    meldet der Status "kein-sfm-worker" statt
+                                    ein Splat-Ergebnis vorzutäuschen.
   POST /stt                        Audio → Text (faster-whisper, Schweizerdeutsch-Modell)
   POST /ollama/...                 Reverse-Proxy zur lokalen Ollama-Instanz
 
@@ -165,6 +170,48 @@ async def get_artifact(job_id: str, name: str):
     if not str(p).startswith(str(STORE.resolve())) or not p.exists():
         raise HTTPException(404, "Artefakt unbekannt")
     return FileResponse(p)
+
+
+# ---------- Video→Splat-Jobs (ehrliche Übergabe, keine SfM hier) ----------
+#
+# Owner-Korrektur 05.07.: Gaussian-Splats sind NICHT HomeStation-exklusiv.
+# Konvertieren/Zuschneiden/Anzeigen läuft lokal im Browser (siehe
+# apps/kosmo-orbit .../splat-import.ts); nur die Video→Splat-Erzeugung (SfM +
+# Splat-Optimierung) ist rechenintensiv. Dieser Endpoint nimmt die lokal
+# extrahierten Frames entgegen und legt einen echten Job an — er täuscht aber
+# KEIN Splat-Ergebnis vor: ohne angeschlossenen SfM-Worker (COLMAP/nerfstudio
+# o.ä. auf der HomeStation/5090 oder ein Web-Konverter) bleibt der Job ehrlich
+# als "kein-sfm-worker" bzw. "queued" stehen.
+
+@app.post("/jobs/video-splat")
+async def create_video_splat_job(frames: list[UploadFile] = File(...), meta: str = Form("{}")):
+    try:
+        meta_obj = json.loads(meta)
+    except json.JSONDecodeError as e:
+        raise HTTPException(400, f"meta ist kein JSON: {e}")
+    if not frames:
+        raise HTTPException(400, "keine Frames übergeben")
+
+    job_id = f"vsplat-{int(time.time())}-{secrets.token_hex(3)}"
+    job_dir = STORE / job_id
+    job_dir.mkdir(parents=True, exist_ok=True)
+
+    frame_names = []
+    for i, fr in enumerate(frames):
+        p = job_dir / f"frame-{i:04d}.jpg"
+        p.write_bytes(await fr.read())
+        frame_names.append(p.name)
+
+    record = {
+        "job_id": job_id,
+        "kind": "video-splat",
+        "status": "queued",
+        "frame_count": len(frame_names),
+        "meta": meta_obj,
+        "created_at": _now(),
+    }
+    (job_dir / "job.json").write_text(json.dumps(record, indent=2))
+    return record
 
 
 # ---------- STT (Speak-to-Kosmo) ----------
@@ -368,6 +415,19 @@ def _fake_worker_loop():
                 continue
             record = json.loads(f.read_text())
             if record.get("status") != "queued":
+                continue
+            if record.get("kind") == "video-splat":
+                # Ehrlich statt gefälscht: der Fake-Worker hat keinen SfM/
+                # Splat-Optimierer (COLMAP/nerfstudio) — kein Platzhalter-
+                # Splat, sondern ein klarer Status + Grund.
+                record["status"] = "kein-sfm-worker"
+                record["message"] = (
+                    "Frames liegen bereit — diese Bridge hat keinen SfM/"
+                    "Splat-Worker angeschlossen. Braucht die HomeStation "
+                    "(5090) oder einen Web-Konverter."
+                )
+                record["updated_at"] = _now()
+                f.write_text(json.dumps(record, indent=2))
                 continue
             record["status"] = "running"
             f.write_text(json.dumps(record, indent=2))

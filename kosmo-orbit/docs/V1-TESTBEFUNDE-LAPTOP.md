@@ -85,16 +85,22 @@ Oberflächen-Systematik.
       oauth-2025-04-20` statt `x-api-key`, Token über die lokale `ant`-CLI. Im
       Web/PWA ehrlicher Hinweis (Desktop nötig), API-Schlüssel-Weg bleibt. Voll
       grün (101 E2E). Rest zuhause: `ant`-CLI + echtes Abo am Owner-Konto.
-- [ ] **Splat aus Video** (Owner-Korrektur 05.07.): NICHT HomeStation-exklusiv.
-      Zwei Stufen sauber trennen:
-      1. **Konvertieren/aufbereiten/anzeigen** (`.ply` ↔ `.splat`/`.ksplat`,
-         komprimieren, zuschneiden) — läuft **komplett lokal im Browser** (wie
-         PlayCanvas SuperSplat, kein GPU-Training). → voll lokal bauen.
-      2. **Video → Splat erzeugen** (SfM + Splat-Optimierung) — rechenintensiv,
-         aber machbar: lokal (Laptop langsam, 5090 schnell) und/oder Anbindung
-         an einen Web-Konverter. Unterschied ist **Tempo**, nicht «geht nur
-         zuhause» — also echten In-App-Weg bauen, ehrlich nach Geschwindigkeit
-         beschriftet, NICHT auf die HomeStation gaten.
+- [x] **Splat aus Video** (Owner-Korrektur 05.07., ROADMAP 148): NICHT
+      HomeStation-exklusiv. Zwei Stufen sauber getrennt gebaut:
+      1. **Konvertieren/aufbereiten/anzeigen** — `writeSplatFile`/`cropSplat`/
+         `decimateSplat` in `splat-import.ts` + neues `SplatPanel.tsx` laufen
+         **komplett lokal im Browser** (kein GPU-Training): Import → Zuschneiden
+         → Ausdünnen → «Als .splat exportieren». Voll lokal, wie versprochen.
+      2. **Video → Splat erzeugen** — `video-splat.ts`: lokale Frame-Extraktion
+         (`<video>`+`<canvas>`, echt) + ehrliche Übergabe an einen neuen Bridge-
+         Endpoint `POST /jobs/video-splat`. Beschriftet ausdrücklich als
+         Tempo-Frage («lokal (langsam) · HomeStation-5090 (schnell) ·
+         Web-Konverter»), NICHT als Ortssperre. Die reale SfM-Optimierung
+         selbst ist noch nirgends implementiert (weder lokal noch Bridge) —
+         der Fake-Worker meldet das ehrlich als `"kein-sfm-worker"` statt ein
+         Splat-Ergebnis vorzutäuschen. Rest-Grenze bleibt: echter SfM-Worker
+         (COLMAP/nerfstudio o.ä.) an Laptop/5090/Web-Konverter anschliessen —
+         eine Tempo-Entscheidung für einen künftigen Batch.
 
 ## Prinzip
 Ehrlichkeit vor Politur: Was echte GPU/HomeStation/ein Konto braucht (Splat aus
