@@ -37,8 +37,8 @@ Oberflächen-Systematik.
 - [ ] **Publikations-Set „speichern" passiert nichts** — Persistenz/Feedback.
 - [ ] **KosmoReference**: Projekt mit 3D-Skizze lässt sich **nicht ins
       Environment ziehen** — Fehlermeldung.
-- [ ] **Pop-up-Boxen**: Text läuft über; Pop-ups sollen **nicht scrollbar** sein
-      → Layout reorganisieren, dass es aufgeht.
+- [x] **Pop-up-Boxen** (T4b, ROADMAP 142): zentrale `.k-dialog`-Regeln (Textumbruch + Höhen-Deckel),
+      Werkzeug-Setup/Stützenraster als Mehrspalten-Grid — kein Überlauf, keine Scrollbar mehr.
 
 ## Batch T5 — Freies Skizzieren ⏳
 - [ ] **Frei zeichnen** statt Auto-Korrektur je Strich: alles zusammen zeichnen,
