@@ -67,10 +67,11 @@ Oberflächen-Systematik.
       danach die Oberfläche systematisch gestalten. (Kombiniert mit Serie E/F.)
 
 ## Sonderpunkte (eigene Abklärung/Batch) ⏳
-- [ ] **Cloud-Anmeldung mit Abo** statt nur API-Key: Kosmo-Cloud soll auch mit
-      einem **Claude-Abo** (Pro/Max, OAuth) nutzbar sein, nicht nur mit
-      API-Schlüssel. → Technische Abklärung (OAuth-Anmeldeweg) + ehrliche
-      Umsetzung.
+- [x] **Cloud-Anmeldung mit Abo** (ROADMAP 146): «Mit Claude anmelden» (OAuth) in
+      den Desktop-Editionen — `Authorization: Bearer` + `anthropic-beta:
+      oauth-2025-04-20` statt `x-api-key`, Token über die lokale `ant`-CLI. Im
+      Web/PWA ehrlicher Hinweis (Desktop nötig), API-Schlüssel-Weg bleibt. Voll
+      grün (101 E2E). Rest zuhause: `ant`-CLI + echtes Abo am Owner-Konto.
 - [ ] **Splat aus Video** (Owner-Korrektur 05.07.): NICHT HomeStation-exklusiv.
       Zwei Stufen sauber trennen:
       1. **Konvertieren/aufbereiten/anzeigen** (`.ply` ↔ `.splat`/`.ksplat`,
