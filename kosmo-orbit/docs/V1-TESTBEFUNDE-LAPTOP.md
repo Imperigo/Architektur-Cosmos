@@ -47,28 +47,37 @@ Oberflächen-Systematik.
       + Erfolgsmeldung. Ohne lokale Quelle verspricht der Knopf kein Laden
       mehr, sondern zeigt eine ehrliche Meldung statt eines Fehler-Toasts.
 
-## Batch T5 — Freies Skizzieren ⏳
-- [ ] **Frei zeichnen** statt Auto-Korrektur je Strich: alles zusammen zeichnen,
-      dann gemeinsam übergeben (Batch-Commit).
-- [ ] Stift wirkt **zu dick** → dünner/feiner.
-- [ ] **Im 3D skizzieren** geht nicht → ermöglichen.
+## Batch T5 — Freies Skizzieren ✅ (ROADMAP 147)
+- [x] **Frei zeichnen** statt Auto-Korrektur je Strich: beliebig viele Striche
+      bleiben als Roh-Skizze liegen, erst «Übergeben» fittet alle gemeinsam
+      (`fitStrokes()`), «Übernehmen» committet sie als EINE Undo-Gruppe.
+- [x] Stift **dünner** — `getStroke`-Grösse 7→2.5, wirkt wie ein Fineliner.
+- [x] **Im 3D skizzieren** ermöglicht — Freihand-Overlay im Viewport3D, projiziert
+      auf die Bodenebene der aktiven Geschossebene (reine Geometrie in
+      `sketch-3d.ts`), derselbe Batch-Fluss + derselbe `onSketchAccept`-Weg wie
+      im 2D. *(Rest-Grenze: nur die horizontale Bodenebene, keine schrägen
+      Flächen/Wände — separater, grösserer Auftrag.)*
 
 ## Batch T6 — Berechnungsliste: projektabhängige Kennzahlen ✅ (ROADMAP 139)
 - [x] Default hat **keine** wettbewerbsspezifischen Zeilen mehr (leerer Zustand
       + Hinweis); «marktgerecht/preisgünstig …» erscheinen nur, wenn ein Projekt
       ein Raumprogramm setzt (TKB-Demo, `design.raumprogrammSetzen`).
 
-## Batch T7 — Oberflächen-Systematik (gross) ⏳
-- [ ] **Hauptmenü gruppieren** statt flach: KosmoDraw/Sketch/Vis gehören unter
-      **KosmoDesign**; ebenso **KosmoData**-Gruppe; **Platzhalter** für die neuen
-      V2-Abteilungen.
-- [ ] **Werkzeugleisten** wie **Blender & ArchiCAD** einrichten
-      (kontextbezogen, andockbar).
-- [ ] **Projekt-Lebenszyklus**: eine Projektdatei lebt Jahre — Tabs wie „Phase"
-      und „Wettbewerb" müssen **nicht dauernd oben** präsent sein.
-- [ ] **Hierarchie-/Wichtigkeits-/Fokus-Konzept** für die GESAMTE Oberfläche:
-      je Tool/Taste/Dropdown entscheiden, wie wichtig & wie oft gebraucht →
-      danach die Oberfläche systematisch gestalten. (Kombiniert mit Serie E/F.)
+## Batch T7 — Oberflächen-Systematik (gross) ✅ (ROADMAP 145)
+- [x] **Hauptmenü gruppiert** statt flach: Stationen in drei Familien —
+      **KosmoDesign** (Design/Draw/Sketch/Vis/Publish/Asset), **KosmoData**
+      (Data/Prepare/Train), **KosmoBüro** (Dev/Doc); Kosmo/Speak eigenständig
+      davor; vier **V2-Platzhalter** (ausgegraut). `state/stationen.ts`.
+- [~] **Werkzeugleisten** — erste Ausbaustufe: dezente Sektions-Labels
+      («Ansicht»/«Export»/«Ebenen») gruppieren die Werkzeuge lesbar. Ein voll
+      andockbares Multi-Panel-System (Blender-Niveau) bleibt V2-Notiz.
+- [x] **Projekt-Lebenszyklus**: SIA-Phase + Bemassungsstil aus der Werkzeugzeile
+      ins **Projekt-Menü** (`projekt-menu-toggle`, Fokus-Stufe «selten»)
+      umgehängt — nicht mehr dauernd oben, gleiche Commands/`data-testid`s.
+- [x] **Hierarchie-/Fokus-Konzept**: drei Stufen primär/sekundär/selten
+      (`state/fokus.ts`, `.k-primaer`/`.k-sekundaer`/`.k-selten`,
+      `docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md`), angewandt auf Kopfleiste +
+      Zentrale. Weitere Verfeinerung läuft mit Serie E/F weiter.
 
 ## Sonderpunkte (eigene Abklärung/Batch) ⏳
 - [x] **Cloud-Anmeldung mit Abo** (ROADMAP 146): «Mit Claude anmelden» (OAuth) in

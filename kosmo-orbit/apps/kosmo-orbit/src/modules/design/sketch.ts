@@ -96,3 +96,19 @@ export function fitStroke(
   }
   return segments;
 }
+
+/**
+ * T5: Batch-Commit — mehrere frei gezeichnete Striche (nacheinander, ohne
+ * Zwischen-Korrektur je Strich) werden ERST auf expliziten Wunsch («Übergeben»)
+ * gemeinsam gefittet. Jeder Strich wird für sich gefittet (die
+ * Schliess-Heuristik pro Strich bleibt sinnvoll — ein Strich ist ein
+ * zusammenhängender Zug), die Ergebnisse werden nur aneinandergereiht.
+ * So bleibt EIN `onAccept`-Aufruf mit allen Segmenten möglich — EINE
+ * Undo-Gruppe für die ganze Skizzier-Sitzung.
+ */
+export function fitStrokes(
+  strokes: Stroke[],
+  opts: { tolerance?: number; grid?: number; minLength?: number } = {},
+): FittedSegment[] {
+  return strokes.flatMap((s) => fitStroke(s, opts));
+}

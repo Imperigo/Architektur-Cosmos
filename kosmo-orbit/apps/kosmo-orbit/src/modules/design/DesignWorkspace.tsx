@@ -363,17 +363,26 @@ export function DesignWorkspace() {
     },
     onSketchAccept: (segments) => {
       if (!activeStoreyId || !effectiveAssembly) return;
-      for (const seg of segments) {
-        try {
-          runCommand('design.wandZeichnen', {
-            storeyId: activeStoreyId,
-            a: seg.a,
-            b: seg.b,
-            assemblyId: effectiveAssembly,
-          });
-        } catch {
-          // degenerierte Segmente (Länge 0 nach Snap) still überspringen
+      // T5: alle Segmente (evtl. aus mehreren frei gezeichneten Strichen)
+      // als EINE Undo-Gruppe — ein «Rückgängig» hebt die ganze Skizzier-
+      // Sitzung auf, nicht Wand für Wand.
+      const { history } = useProject.getState();
+      history.beginGroup();
+      try {
+        for (const seg of segments) {
+          try {
+            runCommand('design.wandZeichnen', {
+              storeyId: activeStoreyId,
+              a: seg.a,
+              b: seg.b,
+              assemblyId: effectiveAssembly,
+            });
+          } catch {
+            // degenerierte Segmente (Länge 0 nach Snap) still überspringen
+          }
         }
+      } finally {
+        history.endGroup();
       }
     },
     previewLine:
@@ -1135,7 +1144,7 @@ export function DesignWorkspace() {
             {tool === 'wand'
               ? 'Klick: Punkte setzen · Shift halten: Winkel einrasten (0/45/90°) · Shift-Klick: Kette beenden · Esc: abbrechen'
               : tool === 'skizze'
-                ? 'Freihand zeichnen — Striche werden zu Wänden'
+                ? 'Freihand zeichnen — beliebig viele Striche, dann «Übergeben»: fasst alles zu Wänden zusammen'
                 : tool === 'treppe'
                 ? 'Klick: Antritt, dann Austritt (Steigung wird berechnet) · Shift: Winkel einrasten'
                 : tool === 'schnitt'

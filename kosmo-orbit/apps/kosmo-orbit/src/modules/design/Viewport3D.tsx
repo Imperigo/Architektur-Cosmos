@@ -3,12 +3,14 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import * as SunCalc from 'suncalc';
 import { deriveAll, type GeometryArtifact, type Pt } from '@kosmo/kernel';
-import { meldeFehler } from '@kosmo/ui';
+import { Badge, KButton, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
 import { pbrPalette } from '@kosmo/data';
 import type { Fluchtlinie } from './zeichenhilfen';
 import { NavLeiste } from './NavLeiste';
+import { fitStrokes, type FittedSegment, type Stroke } from './sketch';
+import { rayToPlanPt } from './sketch-3d';
 
 // Kontext-Layer (IFC-Bestand): sessionweit, nicht synchronisiert
 let contextMeshes: ContextMesh[] = [];
@@ -151,6 +153,39 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   const controlsRef = useRef<CameraControls | null>(null);
   const modelRef = useRef<THREE.Group | null>(null);
   const [navModus, setNavModus] = useState<'orbit' | 'pan' | 'zoom'>('orbit');
+
+  // T5 (Owner-Laptoptest, Punkt 3): Freihand-Skizzieren im 3D-Viewport —
+  // Bildschirm-Striche werden auf die Bodenebene der aktiven Geschossebene
+  // projiziert (sketch-3d.ts, reine Geometrie) und laufen danach durch
+  // denselben Batch-Fit/Übergabe-Weg wie das 2D-Overlay (sketch.ts,
+  // `onSketchAccept`). Nur die horizontale Ebene ist abgedeckt — Skizzieren
+  // auf schrägen Flächen/Wänden ist (noch) nicht möglich.
+  const [sketchModeAn, setSketchModeAn] = useState(false);
+  const [sketchStrokes, setSketchStrokes] = useState<Stroke[]>([]);
+  const [sketchPending, setSketchPending] = useState<FittedSegment[] | null>(null);
+  const sketchStrokesRef = useRef<Stroke[]>([]);
+  const sketchPendingRef = useRef<FittedSegment[] | null>(null);
+  useEffect(() => {
+    sketchStrokesRef.current = sketchStrokes;
+  }, [sketchStrokes]);
+  useEffect(() => {
+    sketchPendingRef.current = sketchPending;
+  }, [sketchPending]);
+
+  const sketchUebergeben = () => {
+    const segments = fitStrokes(sketchStrokesRef.current);
+    if (segments.length > 0) setSketchPending(segments);
+  };
+  const sketchUebernehmen = () => {
+    if (!sketchPending) return;
+    handlers.current?.onSketchAccept?.(sketchPending);
+    setSketchPending(null);
+    setSketchStrokes([]);
+  };
+  const sketchAllesVerwerfen = () => {
+    setSketchStrokes([]);
+    setSketchPending(null);
+  };
 
   // Linker Klick übernimmt den gewählten Modus; Rechtsklick/Mitteltaste/Rad
   // bleiben von camera-controls unangetastet (kein Funktionsverlust).
@@ -326,6 +361,102 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const previewGroup = new THREE.Group();
     previewGroup.scale.set(MM, MM, MM);
     scene.add(previewGroup);
+
+    // T5, Punkt 3: KosmoSketch im 3D-Viewport — Roh-Striche (dünn, gedämpft),
+    // der aktuell gezogene Strich (Akzentfarbe) und die gefittete Vorschau
+    // (nach «Übergeben»), alle auf der Bodenebene der aktiven Geschossebene.
+    const sketchGroup = new THREE.Group();
+    sketchGroup.scale.set(MM, MM, MM);
+    scene.add(sketchGroup);
+    const sketchRohMaterial = new THREE.LineBasicMaterial({ color: 0x9a9484, transparent: true, opacity: 0.6 });
+    const sketchLiveMaterial = new THREE.LineBasicMaterial({ color: 0xa84b2b });
+    const sketchPendingMaterial = new THREE.LineBasicMaterial({ color: 0xa84b2b });
+
+    let sketchDrawing = false;
+    let sketchLive: Pt[] = [];
+
+    function aktiveElevation(): number {
+      const { doc, activeStoreyId } = useProject.getState();
+      const storey = activeStoreyId ? doc.get(activeStoreyId) : null;
+      return storey && storey.kind === 'storey' ? storey.elevation : 0;
+    }
+
+    // Bildschirmpunkt → Bodenebene der aktiven Geschossebene → Plan-mm.
+    // Reine Geometrie in sketch-3d.ts, hier nur der Kamerastrahl dazu.
+    function sketchPunktVonEvent(ev: PointerEvent): Pt | null {
+      const rect = renderer.domElement.getBoundingClientRect();
+      ndc.set(
+        ((ev.clientX - rect.left) / rect.width) * 2 - 1,
+        -((ev.clientY - rect.top) / rect.height) * 2 + 1,
+      );
+      raycaster.setFromCamera(ndc, camera);
+      const o = raycaster.ray.origin;
+      const d = raycaster.ray.direction;
+      return rayToPlanPt(
+        { origin: { x: o.x, y: o.y, z: o.z }, dir: { x: d.x, y: d.y, z: d.z } },
+        aktiveElevation() * MM,
+      );
+    }
+
+    const onSketchPointerDown = (ev: PointerEvent) => {
+      if (sketchPendingRef.current) return;
+      const p = sketchPunktVonEvent(ev);
+      if (!p) return;
+      (renderer.domElement as Element).setPointerCapture(ev.pointerId);
+      sketchDrawing = true;
+      sketchLive = [p];
+    };
+    const onSketchPointerMove = (ev: PointerEvent) => {
+      if (!sketchDrawing) return;
+      const p = sketchPunktVonEvent(ev);
+      if (p) sketchLive.push(p);
+    };
+    const onSketchPointerUp = () => {
+      if (!sketchDrawing) return;
+      sketchDrawing = false;
+      if (sketchLive.length >= 2) {
+        const points = sketchLive.map((p) => ({ ...p, pressure: 0.5 }));
+        setSketchStrokes((s) => [...s, { points }]);
+      }
+      sketchLive = [];
+    };
+
+    let sketchModeZuletzt = false;
+    function syncSketchModus() {
+      const an = !!handlers.current?.sketchMode;
+      controls.enabled = !an;
+      if (an === sketchModeZuletzt) return;
+      sketchModeZuletzt = an;
+      setSketchModeAn(an);
+      if (!an) {
+        sketchDrawing = false;
+        sketchLive = [];
+        setSketchStrokes([]);
+        setSketchPending(null);
+      }
+    }
+
+    function syncSketchDrawing() {
+      sketchGroup.clear();
+      if (!handlers.current?.sketchMode) return;
+      const z = aktiveElevation() + 20;
+      const toVec = (p: Pt) => new THREE.Vector3(p.x, z, -p.y);
+      for (const stroke of sketchStrokesRef.current) {
+        if (stroke.points.length < 2) continue;
+        const g = new THREE.BufferGeometry().setFromPoints(stroke.points.map(toVec));
+        sketchGroup.add(new THREE.Line(g, sketchRohMaterial));
+      }
+      if (sketchLive.length >= 2) {
+        const g = new THREE.BufferGeometry().setFromPoints(sketchLive.map(toVec));
+        sketchGroup.add(new THREE.Line(g, sketchLiveMaterial));
+      }
+      if (sketchPendingRef.current) {
+        for (const seg of sketchPendingRef.current) {
+          const g = new THREE.BufferGeometry().setFromPoints([toVec(seg.a), toVec(seg.b)]);
+          sketchGroup.add(new THREE.Line(g, sketchPendingMaterial));
+        }
+      }
+    }
 
     // Kontext (IFC-Bestand): web-ifc liefert bereits Meter/y-oben → 1:1
     const contextGroup = new THREE.Group();
@@ -590,9 +721,17 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
     let downPos: { x: number; y: number } | null = null;
     const onPointerDown = (ev: PointerEvent) => {
+      if (handlers.current?.sketchMode) {
+        onSketchPointerDown(ev);
+        return;
+      }
       downPos = { x: ev.clientX, y: ev.clientY };
     };
     const onPointerUp = (ev: PointerEvent) => {
+      if (handlers.current?.sketchMode) {
+        onSketchPointerUp();
+        return;
+      }
       if (!downPos) return;
       const moved = Math.hypot(ev.clientX - downPos.x, ev.clientY - downPos.y);
       downPos = null;
@@ -613,6 +752,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (p) handlers.current?.onGroundClick?.({ p, shiftKey: ev.shiftKey });
     };
     const onPointerMove = (ev: PointerEvent) => {
+      if (handlers.current?.sketchMode) {
+        onSketchPointerMove(ev);
+        return;
+      }
       const p = groundPoint(ev);
       if (p) handlers.current?.onGroundMove?.({ p, shiftKey: ev.shiftKey });
     };
@@ -635,6 +778,8 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncSplats();
       syncGlb();
       syncSun();
+      syncSketchModus();
+      syncSketchDrawing();
       // Auswahl-Highlight (Kupfer-Glut)
       const sel = new Set(useProject.getState().selection);
       for (const child of model.children) {
@@ -727,6 +872,81 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           { id: 'fit', icon: '⌂', titel: 'Einpassen — Modell ins Bild holen (ohne Modell: Ausgangslage)', onClick: einpassen },
         ]}
       />
+      {sketchModeAn && sketchStrokes.length === 0 && !sketchPending && (
+        <div
+          data-testid="sketch3d-hinweis"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: 18,
+            transform: 'translateX(-50%)',
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-md)',
+            padding: '6px 12px',
+            fontSize: 13,
+            boxShadow: 'var(--k-shadow-overlay)',
+          }}
+        >
+          Klicken + ziehen zeichnet auf der Bodenebene des Geschosses — Kamera steht still, bis das Werkzeug wechselt.
+        </div>
+      )}
+      {!sketchPending && sketchStrokes.length > 0 && (
+        <div
+          data-testid="sketch3d-batch"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: 18,
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-md)',
+            padding: '8px 12px',
+            boxShadow: 'var(--k-shadow-overlay)',
+          }}
+        >
+          <Badge hue={moduleHue.design}>Frei skizziert</Badge>
+          <span style={{ fontSize: 13 }}>{sketchStrokes.length} Strich{sketchStrokes.length === 1 ? '' : 'e'}</span>
+          <KButton size="sm" tone="accent" data-testid="sketch3d-uebergeben" onClick={sketchUebergeben}>
+            Übergeben
+          </KButton>
+          <KButton size="sm" tone="ghost" data-testid="sketch3d-verwerfen-alle" onClick={sketchAllesVerwerfen}>
+            Alles verwerfen
+          </KButton>
+        </div>
+      )}
+      {sketchPending && (
+        <div
+          data-testid="sketch3d-proposal"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: 18,
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-accent)',
+            borderRadius: 'var(--k-radius-md)',
+            padding: '8px 12px',
+            boxShadow: 'var(--k-shadow-overlay)',
+          }}
+        >
+          <Badge hue={moduleHue.design}>Skizze erkannt</Badge>
+          <span style={{ fontSize: 13 }}>{sketchPending.length} Wände</span>
+          <KButton size="sm" tone="accent" data-testid="sketch3d-accept" onClick={sketchUebernehmen}>
+            Übernehmen
+          </KButton>
+          <KButton size="sm" tone="ghost" onClick={() => setSketchPending(null)}>
+            Verwerfen
+          </KButton>
+        </div>
+      )}
     </div>
   );
 }

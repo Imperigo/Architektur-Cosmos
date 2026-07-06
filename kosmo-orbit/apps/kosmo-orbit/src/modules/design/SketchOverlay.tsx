@@ -2,12 +2,14 @@ import { useRef, useState } from 'react';
 import { getStroke } from 'perfect-freehand';
 import { Badge, KButton, moduleHue } from '@kosmo/ui';
 import type { Pt } from '@kosmo/kernel';
-import { fitStroke, type FittedSegment, type Stroke } from './sketch';
+import { fitStrokes, type FittedSegment, type Stroke } from './sketch';
 
 /**
  * KosmoSketch-Overlay — liegt über dem Plan: Freihand zeichnen (Apple Pencil:
- * Druckstufen via PointerEvents), beim Absetzen werden Wandachsen erkannt und
- * als Vorschlag gezeigt. Übernehmen = normale Commands (Undo inklusive).
+ * Druckstufen via PointerEvents). T5 (Owner-Laptoptest): mehrere Striche
+ * hintereinander frei zeichnen, OHNE dass jeder einzelne sofort «korrigiert»
+ * wird — erst «Übergeben» fittet ALLE gesammelten Striche gemeinsam zu einem
+ * Vorschlag, «Übernehmen» committet sie als EINEN Aufruf (eine Undo-Gruppe).
  */
 
 export interface SketchOverlayProps {
@@ -17,37 +19,56 @@ export interface SketchOverlayProps {
   onAccept: (segments: FittedSegment[]) => void;
 }
 
-export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProps) {
-  const [live, setLive] = useState<{ x: number; y: number; pressure: number }[]>([]);
-  const [pending, setPending] = useState<{ stroke: Stroke; segments: FittedSegment[] } | null>(
-    null,
+type LivePt = { x: number; y: number; pressure: number };
+
+// T5: dünner Stift — fein wie ein Fineliner statt ein dicker Marker.
+const STIFT_ROH = { size: 2.5, thinning: 0.5, smoothing: 0.6, streamline: 0.4, simulatePressure: false };
+
+function strichPfad(pts: LivePt[], toScreen: (p: Pt) => { x: number; y: number }): string {
+  const outline = getStroke(
+    pts.map((p) => {
+      const s = toScreen({ x: p.x, y: p.y });
+      return [s.x, s.y, p.pressure];
+    }),
+    STIFT_ROH,
   );
+  return outline.length > 1
+    ? `M ${outline.map(([x, y]) => `${x!.toFixed(1)} ${y!.toFixed(1)}`).join(' L ')} Z`
+    : '';
+}
+
+export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProps) {
+  const [live, setLive] = useState<LivePt[]>([]);
+  const [strokes, setStrokes] = useState<Stroke[]>([]);
+  const [pending, setPending] = useState<FittedSegment[] | null>(null);
   const drawing = useRef(false);
 
   const finish = () => {
     drawing.current = false;
-    if (live.length < 4) {
-      setLive([]);
-      return;
-    }
-    const stroke: Stroke = { points: live };
-    const segments = fitStroke(stroke);
-    setLive([]);
-    if (segments.length > 0) setPending({ stroke, segments });
+    setLive((l) => {
+      if (l.length >= 4) setStrokes((s) => [...s, { points: l }]);
+      return [];
+    });
   };
 
-  // Bildschirm-Pfad des lebenden Strichs (perfect-freehand: Druck → Breite)
-  const outline = getStroke(
-    live.map((p) => {
-      const s = toScreen({ x: p.x, y: p.y });
-      return [s.x, s.y, p.pressure];
-    }),
-    { size: 7, thinning: 0.6, smoothing: 0.6, streamline: 0.4, simulatePressure: false },
-  );
-  const pathData =
-    outline.length > 1
-      ? `M ${outline.map(([x, y]) => `${x!.toFixed(1)} ${y!.toFixed(1)}`).join(' L ')} Z`
-      : '';
+  const uebergeben = () => {
+    const segments = fitStrokes(strokes);
+    if (segments.length > 0) setPending(segments);
+  };
+
+  const uebernehmen = () => {
+    if (!pending) return;
+    onAccept(pending);
+    setPending(null);
+    setStrokes([]);
+  };
+
+  const allesVerwerfen = () => {
+    setStrokes([]);
+    setPending(null);
+  };
+
+  const livePfad = strichPfad(live, toScreen);
 
   return (
     <div
@@ -79,9 +100,15 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
       onPointerCancel={finish}
     >
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-        {pathData && <path d={pathData} fill="var(--k-accent)" opacity={0.85} />}
+        {/* Roh-Skizze: fertige, noch nicht gefittete Striche — dezent, grau */}
+        {!pending &&
+          strokes.map((s, i) => {
+            const d = strichPfad(s.points, toScreen);
+            return d ? <path key={i} d={d} fill="var(--k-ink-faint)" opacity={0.55} /> : null;
+          })}
+        {!pending && livePfad && <path d={livePfad} fill="var(--k-accent)" opacity={0.85} />}
         {pending &&
-          pending.segments.map((s, i) => {
+          pending.map((s, i) => {
             const a = toScreen(s.a);
             const b = toScreen(s.b);
             return (
@@ -93,6 +120,35 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
             );
           })}
       </svg>
+
+      {!pending && strokes.length > 0 && (
+        <div
+          data-testid="sketch-batch"
+          style={{
+            position: 'absolute',
+            left: '50%',
+            bottom: 18,
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-md)',
+            padding: '8px 12px',
+            boxShadow: 'var(--k-shadow-overlay)',
+          }}
+        >
+          <Badge hue={moduleHue.design}>Frei skizziert</Badge>
+          <span style={{ fontSize: 13 }}>{strokes.length} Strich{strokes.length === 1 ? '' : 'e'}</span>
+          <KButton size="sm" tone="accent" data-testid="sketch-uebergeben" onClick={uebergeben}>
+            Übergeben
+          </KButton>
+          <KButton size="sm" tone="ghost" data-testid="sketch-verwerfen-alle" onClick={allesVerwerfen}>
+            Alles verwerfen
+          </KButton>
+        </div>
+      )}
 
       {pending && (
         <div
@@ -113,16 +169,8 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
           }}
         >
           <Badge hue={moduleHue.design}>Skizze erkannt</Badge>
-          <span style={{ fontSize: 13 }}>{pending.segments.length} Wände</span>
-          <KButton
-            size="sm"
-            tone="accent"
-            data-testid="sketch-accept"
-            onClick={() => {
-              onAccept(pending.segments);
-              setPending(null);
-            }}
-          >
+          <span style={{ fontSize: 13 }}>{pending.length} Wände</span>
+          <KButton size="sm" tone="accent" data-testid="sketch-accept" onClick={uebernehmen}>
             Übernehmen
           </KButton>
           <KButton size="sm" tone="ghost" onClick={() => setPending(null)}>
