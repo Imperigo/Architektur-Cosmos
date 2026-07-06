@@ -90,8 +90,10 @@ jobs:
           set -e
           mkdir -p dist-release
           E="${{ matrix.edition }}"
-          shopt -s globstar nullglob
-          for f in apps/kosmo-orbit/src-tauri/target/**/release/bundle/**/*; do
+          # find statt shopt globstar: macOS-Runner haben Bash 3.2, das
+          # `shopt -s globstar` nicht kennt (bricht unter `set -e` ab) — find
+          # ist auf allen drei Runner-OS portabel.
+          while IFS= read -r f; do
             case "$f" in
               *.exe) cp "$f" "dist-release/KosmoOrbit-$E-windows-setup.exe" ;;
               *.msi) cp "$f" "dist-release/KosmoOrbit-$E-windows.msi" ;;
@@ -100,7 +102,7 @@ jobs:
               *.deb) cp "$f" "dist-release/KosmoOrbit-$E-linux.deb" ;;
               *.rpm) cp "$f" "dist-release/KosmoOrbit-$E-linux.rpm" ;;
             esac
-          done
+          done < <(find apps/kosmo-orbit/src-tauri/target -type f -path '*/release/bundle/*' 2>/dev/null || true)
           ls -la dist-release/
       - name: Als Release veröffentlichen
         uses: softprops/action-gh-release@v2
