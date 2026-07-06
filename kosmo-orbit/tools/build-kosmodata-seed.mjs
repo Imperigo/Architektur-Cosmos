@@ -41,7 +41,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const kosmoOrbitRoot = path.resolve(here, '..');
@@ -53,7 +53,7 @@ const SEED_SCHEMA = 'kosmodata-seed/v2';
 const SEED_SOURCE = 'architekturkosmos.ch';
 
 // Dieselben Muster wie lib/public-kosmo.ts#publicSafeText (Website).
-const PRIVATE_TEXT_PATTERNS = [
+export const PRIVATE_TEXT_PATTERNS = [
   [/archive-intake\/[^\s,;)]*/gi, 'interner Prüfpfad'],
   [/\/mnt\/[^\s,;)]*/gi, 'private storage path'],
   [/\/home\/[^\s,;)]*/gi, 'private home path'],
@@ -63,7 +63,7 @@ const PRIVATE_TEXT_PATTERNS = [
   [/private-library/gi, 'private library'],
 ];
 
-function publicSafeText(value) {
+export function publicSafeText(value) {
   if (typeof value !== 'string' || value.length === 0) return value;
   let out = value;
   for (const [pattern, replacement] of PRIVATE_TEXT_PATTERNS) out = out.replace(pattern, replacement);
@@ -71,7 +71,7 @@ function publicSafeText(value) {
 }
 
 /** Sicherheitsnetz: rekursiver Scrub über jeden verbliebenen String im Baum. */
-function scrubDeep(value) {
+export function scrubDeep(value) {
   if (typeof value === 'string') return publicSafeText(value);
   if (Array.isArray(value)) return value.map(scrubDeep);
   if (value && typeof value === 'object') {
@@ -223,7 +223,7 @@ function primaryHero(media) {
   return any ? any.url : null;
 }
 
-function buildSeedEntry(entry) {
+export function buildSeedEntry(entry) {
   const media = redactMedia(entry);
 
   const richEntry = {
@@ -302,7 +302,14 @@ async function main() {
   console.log(`  Schema: ${SEED_SCHEMA}`);
 }
 
-main().catch((error) => {
-  console.error(error.stack || error.message);
-  process.exit(1);
-});
+// Nur ausführen, wenn direkt als Skript gestartet (`node build-kosmodata-seed.mjs`)
+// — nicht beim Import aus Tests (siehe
+// packages/kosmo-data/test/privatspur-leak-gate.test.ts), die
+// scrubDeep/buildSeedEntry ohne den Datei-Schreibeffekt wiederverwenden.
+const isDirectRun = process.argv[1] !== undefined && pathToFileURL(process.argv[1]).href === import.meta.url;
+if (isDirectRun) {
+  main().catch((error) => {
+    console.error(error.stack || error.message);
+    process.exit(1);
+  });
+}
