@@ -3,6 +3,7 @@ import {
   columnOutline,
   wallOutline,
   type Assembly,
+  type Aussparung,
   type Column,
   type KosmoDoc,
   type Pt,
@@ -44,12 +45,78 @@ export function distToSegment(p: Pt, a: Pt, b: Pt): number {
 /** mm Toleranz zusätzlich zur halben Bauteildicke — grosszügig genug für Maus/Touch. */
 const TOLERANZ = 120;
 
+/** mm Toleranz fürs enge Aussparungs-Kästchen — bewusst klein, sonst gewinnt sie vor der Wand. */
+const AUSSPARUNG_TOLERANZ = 40;
+
 /**
- * Trefferzone am Klickpunkt: Linien-/Punktelemente zuerst (Wand, Stütze,
- * Treppe — Achse ± halbe Dicke + Toleranz), dann flächige Elemente
- * (Punkt-in-Polygon). Liefert die erste passende Entity-Id, sonst null.
+ * Weltposition einer Aussparung am Wirt: Wand → Mitte auf der Achse a→b
+ * (`center` mm ab a), Decke → `at` direkt. Fehlt der Wirt oder das nötige
+ * Feld (kein Geometrieschnitt im Modell, siehe kosmo-kernel/model/entities.ts),
+ * liefert die Funktion null statt zu raten.
+ */
+export function aussparungWeltpos(doc: KosmoDoc, a: Aussparung): Pt | null {
+  const host = doc.get(a.hostId);
+  if (!host) return null;
+  if (host.kind === 'wall' && a.center !== undefined) {
+    const dx = host.b.x - host.a.x;
+    const dy = host.b.y - host.a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    return { x: host.a.x + (dx / len) * a.center, y: host.a.y + (dy / len) * a.center };
+  }
+  if (host.kind === 'slab' && a.at) return a.at;
+  return null;
+}
+
+/** Achsrichtung des Wirts als Einheitsvektor (Wand: a→b; Decke: Welt-x — keine Vorzugsrichtung). */
+function aussparungAchse(doc: KosmoDoc, a: Aussparung): Pt {
+  const host = doc.get(a.hostId);
+  if (host && host.kind === 'wall') {
+    const dx = host.b.x - host.a.x;
+    const dy = host.b.y - host.a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    return { x: dx / len, y: dy / len };
+  }
+  return { x: 1, y: 0 };
+}
+
+/** Symbol-Rechteck breite×hoehe um die Weltposition, an der Wirt-Achse ausgerichtet. */
+function aussparungRect(doc: KosmoDoc, a: Aussparung, pos: Pt): Pt[] {
+  const dir = aussparungAchse(doc, a);
+  const nx = -dir.y;
+  const ny = dir.x;
+  const hb = a.breite / 2;
+  const hh = a.hoehe / 2;
+  return [
+    { x: pos.x - dir.x * hb - nx * hh, y: pos.y - dir.y * hb - ny * hh },
+    { x: pos.x + dir.x * hb - nx * hh, y: pos.y + dir.y * hb - ny * hh },
+    { x: pos.x + dir.x * hb + nx * hh, y: pos.y + dir.y * hb + ny * hh },
+    { x: pos.x - dir.x * hb + nx * hh, y: pos.y - dir.y * hb + ny * hh },
+  ];
+}
+
+/**
+ * Trifft der Klickpunkt die Aussparung? Enges, achsparalleles Kästchen um die
+ * Weltposition (halbe grösste Kante + kleine Toleranz) — bewusst NICHT die
+ * grosse Wand-Toleranz, sonst verdeckt jede Aussparung ihre Wand grossflächig.
+ */
+export function aussparungTreffer(doc: KosmoDoc, a: Aussparung, p: Pt): boolean {
+  const pos = aussparungWeltpos(doc, a);
+  if (!pos) return false;
+  const half = Math.max(a.breite, a.hoehe) / 2 + AUSSPARUNG_TOLERANZ;
+  return Math.abs(p.x - pos.x) <= half && Math.abs(p.y - pos.y) <= half;
+}
+
+/**
+ * Trefferzone am Klickpunkt: Aussparungen zuerst (enges Kästchen — sie sitzen
+ * auf ihrem Wirt und würden sonst nie gewählt), dann Linien-/Punktelemente
+ * (Wand, Stütze, Treppe — Achse ± halbe Dicke + Toleranz), dann flächige
+ * Elemente (Punkt-in-Polygon). Liefert die erste passende Entity-Id, sonst null.
  */
 export function pickEntityAt(doc: KosmoDoc, storeyId: string, p: Pt): string | null {
+  for (const a of doc.byKind<Aussparung>('aussparung')) {
+    if (a.storeyId !== storeyId) continue;
+    if (aussparungTreffer(doc, a, p)) return a.id;
+  }
   for (const w of doc.byKind<Wall>('wall')) {
     if (w.storeyId !== storeyId) continue;
     const asm = doc.get<Assembly>(w.assemblyId);
@@ -111,6 +178,10 @@ export function outlineOf(doc: KosmoDoc, id: string): Pt[] | null {
       return columnOutline(e);
     case 'stair':
       return stairRect(e);
+    case 'aussparung': {
+      const pos = aussparungWeltpos(doc, e);
+      return pos ? aussparungRect(doc, e, pos) : null;
+    }
     default:
       return null;
   }

@@ -41,14 +41,22 @@ Produktfehler.
    Basis-26-Beschriftung (A…Z, AA, AB …), +1 Kernel-Test.
 3. **Geschossleiste lief bei vielen Geschossen aus dem Viewport** (Hochhaus).
    Fix: `maxHeight` + `overflowY:auto` (`DesignWorkspace.tsx`).
+4. **Aussparung/Durchbruch im Plan war nicht anwählbar** (Umbau): `plan-hit-test.ts`
+   kannte keinen `aussparung`-Fall — platzierbar (`inspector-aussparung`), aber
+   danach nicht mehr anklickbar/verschiebbar/löschbar. Fix: eigene Weltpositions-
+   Berechnung je Wirt (Wand: `a + dir·center`; Decke: `at` direkt,
+   `aussparungWeltpos`), Aussparungen werden in `pickEntityAt` VOR den Wänden
+   geprüft, aber mit engem Kästchen (halbe grösste Kante + 40 mm Toleranz —
+   bewusst klein, nicht die grosse Wand-Toleranz von 120 mm), damit ein Klick
+   daneben weiterhin die Wand wählt. `outlineOf` liefert das Symbol-Rechteck
+   (breite×hoehe, an der Wirt-Achse ausgerichtet) fürs Auswahl-Highlight.
+   Löschen lief bereits generisch über `design.loeschen` (kein Fix nötig,
+   nur Selektierbarkeit fehlte). Verschieben bewusst nicht Teil dieses Fixes.
+   +7 Tests (`apps/kosmo-orbit/test/plan-hit-test.test.ts`).
 
 ## Offen / bewusst nicht in diesem Batch
 
 **Behebbar, aber Regressionsrisiko oder grösser — als eigener Auftrag:**
-- **Aussparung/Durchbruch im Plan nicht anwählbar** (Umbau): `plan-hit-test.ts`
-  kennt keinen `aussparung`-Fall — platzierbar, aber nicht mehr anklickbar/
-  löschbar. Fix berührt den Kern-Hittest (T1-Nachbarschaft) → sorgfältiger
-  eigener Batch mit E2E, nicht im Schnelldurchlauf.
 - **Fassaden-Zuweisung ≠ gestanzte Fenster** (Hochhaus): `fassadenModulZuweisen`
   (Süd/Nord am MassBody) und `fensterAusModulen` (nimmt immer das erste Modul für
   alle Aussenwände) sind zwei unverbundene Systeme. Vereinheitlichung = grösserer

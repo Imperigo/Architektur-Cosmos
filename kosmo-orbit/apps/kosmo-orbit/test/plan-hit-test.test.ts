@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { KosmoDoc, execute } from '@kosmo/kernel';
-import { distToSegment, outlineOf, pickEntityAt, pointInPolygon, VERSCHIEBBAR } from '../src/modules/design/plan-hit-test';
+import {
+  aussparungTreffer,
+  aussparungWeltpos,
+  distToSegment,
+  outlineOf,
+  pickEntityAt,
+  pointInPolygon,
+  VERSCHIEBBAR,
+} from '../src/modules/design/plan-hit-test';
 
 /**
  * plan-hit-test.ts trägt die reine Geometrie hinter «Anwählen» und «Ziehen»
@@ -105,6 +113,97 @@ describe('pickEntityAt — Trefferzonen im Grundriss (T1: Anwählen)', () => {
     const { doc, storeyId } = setupDoc();
     expect(pickEntityAt(doc, storeyId, { x: -5000, y: -5000 })).toBeNull();
   });
+
+  it('wählt eine gesetzte Aussparung vor der Wand, aber nur im engen Kästchen (V1-Testlauf-Befund)', () => {
+    const { doc, storeyId, wallId } = setupDoc();
+    // Wand a=(0,0) b=(6000,0), Mitte bei center=3000 → Weltposition (3000, 0)
+    const aussparungId = (
+      execute(doc, 'design.aussparungSetzen', {
+        hostId: wallId,
+        typ: 'durchbruch',
+        center: 3000,
+        breite: 300,
+        hoehe: 300,
+        sill: 1100,
+      }).patches[0] as { id: string }
+    ).id;
+
+    // Treffer mitten in der Öffnung
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: 0 })).toBe(aussparungId);
+    // Treffer noch im engen Kästchen (halbe Kante 150 + Toleranz 40 = 190)
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: 185 })).toBe(aussparungId);
+    // Ausserhalb des Kästchens, aber innerhalb der (grossen) Wand-Trefferzone →
+    // die Wand bleibt weiterhin wählbar, die Aussparung verdeckt sie nicht grossflächig
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: 210 })).toBe(wallId);
+    // Weit weg auf der Wandachse: unverändert die Wand
+    expect(pickEntityAt(doc, storeyId, { x: 500, y: 0 })).toBe(wallId);
+  });
+});
+
+describe('aussparungWeltpos / aussparungTreffer — Aussparung/Durchbruch (kein Geometrieschnitt im Modell)', () => {
+  it('berechnet die Weltposition am Wand-Wirt aus a + dir·center', () => {
+    const { doc, wallId } = setupDoc();
+    const aussparungId = (
+      execute(doc, 'design.aussparungSetzen', {
+        hostId: wallId,
+        typ: 'durchbruch',
+        center: 1500,
+        breite: 300,
+        hoehe: 300,
+      }).patches[0] as { id: string }
+    ).id;
+    const a = doc.get(aussparungId) as import('@kosmo/kernel').Aussparung;
+    expect(aussparungWeltpos(doc, a)).toEqual({ x: 1500, y: 0 });
+  });
+
+  it('berechnet die Weltposition am Decken-Wirt aus `at`', () => {
+    const doc = new KosmoDoc();
+    const storeyId = (
+      execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 }).patches[0] as {
+        id: string;
+      }
+    ).id;
+    const slabId = (
+      execute(doc, 'design.deckeZeichnen', {
+        storeyId,
+        outline: [
+          { x: 0, y: 0 },
+          { x: 4000, y: 0 },
+          { x: 4000, y: 4000 },
+          { x: 0, y: 4000 },
+        ],
+      }).patches[0] as { id: string }
+    ).id;
+    const aussparungId = (
+      execute(doc, 'design.aussparungSetzen', {
+        hostId: slabId,
+        typ: 'durchbruch',
+        at: { x: 2000, y: 2500 },
+        breite: 400,
+        hoehe: 400,
+      }).patches[0] as { id: string }
+    ).id;
+    const a = doc.get(aussparungId) as import('@kosmo/kernel').Aussparung;
+    expect(aussparungWeltpos(doc, a)).toEqual({ x: 2000, y: 2500 });
+    expect(pickEntityAt(doc, storeyId, { x: 2000, y: 2500 })).toBe(aussparungId);
+    // Innerhalb der Decke, aber weit weg von der Öffnung → nicht die Aussparung
+    expect(pickEntityAt(doc, storeyId, { x: 500, y: 500 })).toBe(slabId);
+  });
+
+  it('liefert null, wenn der Wirt fehlt oder das nötige Feld fehlt', () => {
+    const { doc } = setupDoc();
+    const verwaist: import('@kosmo/kernel').Aussparung = {
+      id: 'aussparung-verwaist',
+      kind: 'aussparung',
+      storeyId: 'eg',
+      hostId: 'existiert-nicht',
+      typ: 'durchbruch',
+      breite: 300,
+      hoehe: 300,
+    };
+    expect(aussparungWeltpos(doc, verwaist)).toBeNull();
+    expect(aussparungTreffer(doc, verwaist, { x: 0, y: 0 })).toBe(false);
+  });
 });
 
 describe('outlineOf — Anzeige-Umriss für Auswahl-Highlight/Zieh-Vorschau', () => {
@@ -136,6 +235,26 @@ describe('outlineOf — Anzeige-Umriss für Auswahl-Highlight/Zieh-Vorschau', ()
   it('liefert null für eine unbekannte Id', () => {
     const { doc } = setupDoc();
     expect(outlineOf(doc, 'nichts-da')).toBeNull();
+  });
+
+  it('liefert für die Aussparung ihr Symbol-Rechteck (breite×hoehe, an der Wandachse ausgerichtet)', () => {
+    const { doc, wallId } = setupDoc();
+    const aussparungId = (
+      execute(doc, 'design.aussparungSetzen', {
+        hostId: wallId,
+        typ: 'durchbruch',
+        center: 3000,
+        breite: 300,
+        hoehe: 300,
+      }).patches[0] as { id: string }
+    ).id;
+    const outline = outlineOf(doc, aussparungId)!;
+    expect(outline).not.toBeNull();
+    expect(outline).toHaveLength(4);
+    const xs = outline.map((p) => p.x);
+    const ys = outline.map((p) => p.y);
+    expect(Math.max(...xs) - Math.min(...xs)).toBe(300); // Wand horizontal → breite entlang x
+    expect(Math.max(...ys) - Math.min(...ys)).toBe(300);
   });
 });
 
