@@ -57,10 +57,19 @@ Produktfehler.
 ## Offen / bewusst nicht in diesem Batch
 
 **Behebbar, aber Regressionsrisiko oder grösser — als eigener Auftrag:**
-- **Fassaden-Zuweisung ≠ gestanzte Fenster** (Hochhaus): `fassadenModulZuweisen`
-  (Süd/Nord am MassBody) und `fensterAusModulen` (nimmt immer das erste Modul für
-  alle Aussenwände) sind zwei unverbundene Systeme. Vereinheitlichung = grösserer
-  Auftrag.
+- ~~**Fassaden-Zuweisung ≠ gestanzte Fenster** (Hochhaus)~~ — **behoben (ROADMAP
+  154)**: `fassadenModulZuweisen` (Süd/Nord-Modul je Kante am MassBody) und
+  `fensterAusModulen` sind jetzt über die Fassadenseite verbunden — `derive/
+  fassadenmodule.ts::richtungsModule()`/`kantenRichtung()` übersetzen die
+  Kanten-Zuweisung in eine Süd/Nord/West/Ost-Zuordnung (Bbox-Konvention wie
+  `derive/dimensions.ts`), `fensterAusModulen` (`commands/design.ts`) stanzt je
+  Aussenwand das zur eigenen Fassadenseite passende Modul statt pauschal das
+  erste; ohne Zuweisung exakt das alte Verhalten. **Ehrliche Restgrenze**: die
+  Verbindung läuft kompass-artig über die Bbox, nicht über eine geometrisch
+  exakte Kante↔Wand-Identität — schräge/nicht-rechteckige Aussenwände bleiben
+  unklassifiziert (Fallback auf die Vorgabe), und widersprüchliche Zuweisungen
+  derselben Seite über mehrere Volumenkörper im selben Geschoss werden nicht
+  diagnostiziert.
 
 **Modellierungs-/Feature-Lücken → V2:**
 - **Grenzabstand — teilerledigt (ROADMAP 153).** Klarstellung zu diesem

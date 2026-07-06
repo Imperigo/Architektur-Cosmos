@@ -9,6 +9,7 @@ import { stairSpec, treppenTeile } from '../derive/treppe';
 import { REGEL_PRESETS } from '../model/regelpresets';
 import { generiereGrundriss, generiereGrundrissL, zerlegeRektilinear } from '../derive/grundrissgenerator';
 import { zonenZuWaenden } from '../derive/zonenwaende';
+import { boundingBox, kantenRichtung, richtungsModule } from '../derive/fassadenmodule';
 
 export { stairSpec } from '../derive/treppe';
 
@@ -1109,7 +1110,7 @@ export const windowsFromModules = registerCommand({
   id: 'design.fensterAusModulen',
   title: 'Fenster aus Modulen stanzen',
   description:
-    'Stanzt Fenster-Öffnungen in alle Aussenwände eines Geschosses nach dem Fassadenmodul: das Modul wird je Wand ab der Ecke gerastert (Eckenregel), jedes Fenster-Element wird eine echte Öffnung (Breite/Höhe/Brüstung aus dem Element). modul = Name aus dem Modul-Editor, sonst das erste gespeicherte. Ein Undo — danach sind die Tageslicht-Checks ehrlich prüfbar.',
+    'Stanzt Fenster-Öffnungen in alle Aussenwände eines Geschosses nach dem Fassadenmodul: das Modul wird je Wand ab der Ecke gerastert (Eckenregel), jedes Fenster-Element wird eine echte Öffnung (Breite/Höhe/Brüstung aus dem Element). modul = Name aus dem Modul-Editor, sonst das erste gespeicherte — das gilt als Vorgabe für alle Seiten, ausser eine Fassadenseite hat über design.fassadenModulZuweisen (Kante an einem Volumenkörper desselben Geschosses) ein eigenes Modul erhalten: dann stanzt genau diese Aussenwand ihr zugewiesenes Modul. Ein Undo — danach sind die Tageslicht-Checks ehrlich prüfbar.',
   params: z.object({
     storeyId: z.string(),
     modul: z.string().nullable().default(null),
@@ -1117,21 +1118,38 @@ export const windowsFromModules = registerCommand({
   summarize: (p) => `Fenster stanzen${p.modul ? ` («${p.modul}»)` : ''}`,
   run: (doc, p) => {
     require<Storey>(doc, p.storeyId, 'storey');
-    const modul = p.modul
+    const vorgabe = p.modul
       ? doc.settings.fassadenModule.find((m) => m.name === p.modul)
       : doc.settings.fassadenModule[0];
-    if (!modul) {
+    if (!vorgabe) {
       throw new CommandError(
         p.modul ? `Modul «${p.modul}» existiert nicht` : 'Kein Fassadenmodul gezeichnet — zuerst der Modul-Editor',
       );
     }
-    const fenster = modul.elemente.filter((e) => e.typ === 'fenster');
-    if (fenster.length === 0) throw new CommandError(`Modul «${modul.name}» hat keine Fenster-Elemente`);
+    const vorgabeFenster = vorgabe.elemente.filter((e) => e.typ === 'fenster');
+    if (vorgabeFenster.length === 0) throw new CommandError(`Modul «${vorgabe.name}» hat keine Fenster-Elemente`);
+    // Kanten-Zuweisung (design.fassadenModulZuweisen) je Fassadenseite → Modulname,
+    // über die Wandrichtung mit den echten Aussenwänden verbunden (Testlauf-Befund:
+    // die zwei Fassaden-Systeme waren unverbunden, Süd/Nord wirkten sich nie auf
+    // die gestanzten Fenster aus).
+    const richtungModul = richtungsModule(doc, p.storeyId);
+    const alleWaende = doc.byKind<Wall>('wall').filter((w) => w.storeyId === p.storeyId);
+    const wandBbox = richtungModul.size > 0 ? boundingBox(alleWaende.flatMap((w) => [w.a, w.b])) : null;
     const patches: AnyPatch[] = [];
-    for (const w of doc.byKind<Wall>('wall')) {
-      if (w.storeyId !== p.storeyId) continue;
+    for (const w of alleWaende) {
       const asm = doc.get<Assembly>(w.assemblyId);
       if (asm?.kind !== 'assembly' || !asm.name.toUpperCase().startsWith('AW')) continue;
+      // Passendes Modul für diese Aussenwand: ihre Fassadenseite (Süd/Nord/West/
+      // Ost) nachschlagen und, falls zugewiesen und mit Fenster-Elementen
+      // versehen, statt der Vorgabe verwenden — sonst unverändertes Verhalten.
+      const richtung = wandBbox ? kantenRichtung(w.a, w.b, wandBbox) : null;
+      const zugewiesenerName = richtung ? richtungModul.get(richtung) : undefined;
+      const zugewiesen = zugewiesenerName
+        ? doc.settings.fassadenModule.find((m) => m.name === zugewiesenerName)
+        : undefined;
+      const zugewiesenFenster = zugewiesen?.elemente.filter((e) => e.typ === 'fenster') ?? [];
+      const modul = zugewiesenFenster.length > 0 ? zugewiesen! : vorgabe;
+      const fenster = zugewiesenFenster.length > 0 ? zugewiesenFenster : vorgabeFenster;
       const laenge = Math.hypot(w.b.x - w.a.x, w.b.y - w.a.y);
       const spalten = Math.floor(laenge / modul.breite);
       // Bestehende Öffnungen (z.B. Wohnungstüren) blockieren ihr Intervall

@@ -3417,6 +3417,76 @@ describe('Fenster aus Modulen (Abendbatch A1)', () => {
   });
 });
 
+describe('Fassaden-Zuweisung steuert gestanzte Fenster (V1-Testlauf-Befund geschlossen)', () => {
+  function rechteckMitAw(doc: KosmoDoc, storeyId: string) {
+    const aufbau = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW Beton 30', target: 'wall',
+      layers: [{ material: 'beton', thickness: 300, function: 'tragend' }],
+    });
+    const assemblyId = (aufbau.patches[0] as { id: string }).id;
+    const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+    wand({ x: 0, y: 0 }, { x: 9000, y: 0 }); // Süd
+    wand({ x: 9000, y: 0 }, { x: 9000, y: 6000 }); // Ost
+    wand({ x: 9000, y: 6000 }, { x: 0, y: 6000 }); // Nord
+    wand({ x: 0, y: 6000 }, { x: 0, y: 0 }); // West
+  }
+
+  it('ohne Kanten-Zuweisung: unverändertes Verhalten — ein Modul für alle Aussenwände', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    rechteckMitAw(doc, storeyId);
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Standard', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 400, y: 900, b: 1500, h: 1600, typ: 'fenster' }],
+    });
+    execute(doc, 'design.fensterAusModulen', { storeyId, modul: null });
+    const fenster = doc.byKind<import('../src').Opening>('opening').filter((o) => o.openingType === 'fenster');
+    // Je Wand einzeln gerastert (Eckenregel): Süd/Nord (9 m / 2.5 m → 3) + Ost/West (6 m / 2.5 m → 2) = 10
+    expect(fenster).toHaveLength(10);
+    expect(fenster.every((f) => f.width === 1500)).toBe(true);
+  });
+
+  it('mit Kanten-Zuweisung (Süd ≠ Nord): Süd-Wand stanzt das Süd-Modul, Nord-Wand das Nord-Modul', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    rechteckMitAw(doc, storeyId);
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Fensterband Süd', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 200, y: 900, b: 2100, h: 1600, typ: 'fenster' }],
+    });
+    execute(doc, 'design.modulSpeichern', {
+      name: 'Geschlossen Nord', breite: 2500, hoehe: 3000,
+      elemente: [{ x: 900, y: 900, b: 700, h: 1200, typ: 'fenster' }],
+    });
+    // Volumenkörper mit demselben Umriss wie die Wände — Kante 1 = Süd, Kante 3 = Nord
+    const mass = execute(doc, 'design.volumenErstellen', {
+      storeyId, height: 3000,
+      outline: [{ x: 0, y: 0 }, { x: 9000, y: 0 }, { x: 9000, y: 6000 }, { x: 0, y: 6000 }],
+    });
+    const massId = (mass.patches[0] as { id: string }).id;
+    execute(doc, 'design.fassadenModulZuweisen', { massId, kante: 1, modul: 'Fensterband Süd' });
+    execute(doc, 'design.fassadenModulZuweisen', { massId, kante: 3, modul: 'Geschlossen Nord' });
+    const r = execute(doc, 'design.fensterAusModulen', { storeyId, modul: null });
+    const waende = doc.byKind<Wall>('wall');
+    const suedWand = waende.find((w) => w.a.y === 0 && w.b.y === 0)!;
+    const nordWand = waende.find((w) => w.a.y === 6000 && w.b.y === 6000)!;
+    const oeff = (wallId: string) =>
+      doc.openingsOf(wallId).filter((o) => (o as import('../src').Opening).openingType === 'fenster') as import('../src').Opening[];
+    const suedFenster = oeff(suedWand.id);
+    const nordFenster = oeff(nordWand.id);
+    expect(suedFenster.length).toBeGreaterThan(0);
+    expect(nordFenster.length).toBeGreaterThan(0);
+    expect(suedFenster.every((f) => f.width === 2100)).toBe(true);
+    expect(nordFenster.every((f) => f.width === 700)).toBe(true);
+    // Undo hebt beide Seiten wieder auf
+    doc.apply(invertPatches(r.patches));
+    expect(doc.byKind('opening').filter((o) => (o as import('../src').Opening).openingType === 'fenster')).toHaveLength(0);
+  });
+});
+
 describe('Wohnungstrennwände (Abendbatch A2)', () => {
   it('gemeinsame Kante zweier Wohnungen → EINE Wand mit TW-Aufbau', () => {
     const doc = new KosmoDoc();
