@@ -27,7 +27,7 @@ import {
   type RefReviewStatus,
 } from '@kosmo/data';
 import { useProject } from '../../state/project-store';
-import { setGlbContext } from '../design/Viewport3D';
+import { setGlbContext, subscribeGlbStatus } from '../design/Viewport3D';
 import { listeGlb, type KosmoAsset } from '../../state/asset-bibliothek';
 import {
   istTraining,
@@ -229,6 +229,25 @@ function oeffneInKosmoAsset(assetId: string) {
   (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('asset');
 }
 
+/**
+ * T4c (Owner-Befund): «Referenz-3D ins Modell laden» rief bisher immer eine
+ * hartcodierte Remote-URL (architekturkosmos.ch/archive-models/…) auf, die
+ * für die Seed-Einträge nie existiert — jeder Klick endete im Fehler-Toast
+ * aus Viewport3D. Ehrlicher Weg: bevorzugt die per KosmoAsset verknüpfte
+ * lokale GLB (Serie-D-Verknüpfung, `kosmodata_refs`) — offline, ohne
+ * CORS/Netz-Abhängigkeit. Reine Funktion (kein IndexedDB-Zugriff hier):
+ * wählt aus bereits geladenen Assets, damit sie ohne Fake-IndexedDB-Wiring
+ * testbar bleibt.
+ */
+export function lokaleRef3dQuelle(refId: string, assets: KosmoAsset[]): Blob | undefined {
+  for (const asset of assets) {
+    if (!asset.kosmodata_refs.some((r) => r.entry_id === refId)) continue;
+    const hatGlb = asset.formats.some((f) => f.format === 'glb' && f.status === 'ready');
+    if (hatGlb) return new Blob([asset.daten], { type: 'model/gltf-binary' });
+  }
+  return undefined;
+}
+
 type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training' | 'gedaechtnis' | 'archiv';
 
 export function DataWorkspace() {
@@ -298,6 +317,36 @@ export function DataWorkspace() {
       verworfen = true;
     };
   }, [selected]);
+
+  // T4c: lokale GLB-Quelle für «Referenz-3D ins Modell laden» — bevorzugt vor
+  // der (für Seed-Einträge nicht existenten) Remote-URL; Ladezustand am Knopf.
+  const ref3dQuelle = useMemo(
+    () => (selected ? lokaleRef3dQuelle(selected.id, refAssets) : undefined),
+    [selected, refAssets],
+  );
+  const [ref3dLaden, setRef3dLaden] = useState(false);
+  const ref3dMounted = useRef(true);
+  useEffect(
+    () => () => {
+      ref3dMounted.current = false;
+    },
+    [],
+  );
+
+  function ladeRef3d(entry: RefEntry, blob: Blob): void {
+    setRef3dLaden(true);
+    const url = URL.createObjectURL(blob);
+    const beende = subscribeGlbStatus((ev) => {
+      if (ev.url !== url || ev.status === 'loading') return;
+      beende();
+      if (ref3dMounted.current) setRef3dLaden(false);
+      if (ev.status === 'loaded') {
+        melde(`«${entry.title}» liegt als Referenz-Kontext im Design-Viewport.`, { ton: 'erfolg' });
+      }
+    });
+    setGlbContext(url, { revoke: true });
+    (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('design');
+  }
 
   const sectors = useMemo(() => {
     const counts = new Map<string, number>();
@@ -690,20 +739,27 @@ export function DataWorkspace() {
           {selected.has_3d && (
             <>
               <Hairline />
-              <KButton
-                size="sm"
-                tone="accent"
-                data-testid="ref3d-laden"
-                onClick={() => {
-                  setGlbContext(`https://architekturkosmos.ch/archive-models/${selected.id}/low.glb`);
-                  (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('design');
-                }}
-              >
-                Referenz-3D ins Modell laden
-              </KButton>
-              <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
-                Lädt das Studienmodell von architekturkosmos.ch als Kontext neben deinen Entwurf.
-              </span>
+              {ref3dQuelle ? (
+                <>
+                  <KButton
+                    size="sm"
+                    tone="accent"
+                    data-testid="ref3d-laden"
+                    disabled={ref3dLaden}
+                    onClick={() => ladeRef3d(selected, ref3dQuelle)}
+                  >
+                    {ref3dLaden ? 'Lädt …' : 'Referenz-3D ins Modell laden'}
+                  </KButton>
+                  <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+                    Lädt das verknüpfte 3D-Objekt aus KosmoAsset als Kontext neben deinen Entwurf.
+                  </span>
+                </>
+              ) : (
+                <span data-testid="ref3d-kein-lokal" style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+                  Studienmodell noch nicht lokal verfügbar — verknüpfe in KosmoAsset ein 3D-Objekt
+                  mit dieser Referenz oder importiere die GLB dort.
+                </span>
+              )}
             </>
           )}
         </aside>

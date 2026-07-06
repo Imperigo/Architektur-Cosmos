@@ -52,8 +52,9 @@ test('KosmoData-Dossier: Villa Savoye zeigt Medien, Analyse-Ebenen, Geo und Sich
   await expect(geo).toContainText('48.9243');
   await expect(geo).toContainText('Ile-de-France');
 
-  // Bestehendes bleibt intakt: die 3D-Übernahme ist weiterhin da (has_3d: true).
-  await expect(page.locator('[data-testid="ref3d-laden"]')).toBeVisible();
+  // has_3d: true, aber ohne lokal verknüpftes 3D-Objekt zeigt das Dossier seit
+  // T4c den ehrlichen Hinweis statt eines Lade-Knopfes, der ins Leere lief.
+  await expect(page.locator('[data-testid="ref3d-kein-lokal"]')).toBeVisible();
 
   await page.screenshot({ path: 'e2e-results/kosmodata-dossier.png' });
 });

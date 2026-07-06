@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import 'fake-indexeddb/auto';
 import { chunkText } from '../src/modules/prepare/knowledge';
 import { werkzeugeFuer, WERKZEUGE } from '../src/state/werkzeuge';
+import type { KosmoAsset } from '../src/state/asset-bibliothek';
 
 describe('Werkzeug-Manifest (Setup-Assistent)', () => {
   it('Standard braucht Ollama + Modell + Bridge als Kern, VPN/Claude nicht', () => {
@@ -1173,5 +1174,96 @@ describe('T4a-Bug1 (KosmoVis): kaputter/leerer Render-Graph wirft nicht mehr', (
     doc.apply([{ id: graphId, before: graph, after: kaputt }]);
     expect(() => evaluiereGraph(doc, doc.get<Loses>(graphId)! as never)).not.toThrow();
     expect(evaluiereGraph(doc, doc.get<Loses>(graphId)! as never).werte.get(graph.nodes[0]!.id)).toEqual({ prompt: '' });
+  });
+});
+
+// ── T4c (Owner-Befund): «Referenz-3D ins Modell laden» warf immer einen
+// Fehler-Toast, weil der Knopf hartcodiert eine Remote-URL rief, die für die
+// Seed-Einträge nie existiert. Fix: lokale, per KosmoAsset verknüpfte GLB
+// bevorzugen — `lokaleRef3dQuelle` ist die reine Auswahlfunktion dahinter. ──
+
+describe('T4c (KosmoData): lokaleRef3dQuelle — wählt die lokale GLB-Quelle für ein Referenzprojekt', () => {
+  function asset(overrides: Partial<KosmoAsset> = {}): KosmoAsset {
+    return {
+      id: 'glb-1',
+      title: 'Testobjekt',
+      asset_type: 'glb_model',
+      category: 'component',
+      tags: [],
+      formats: [{ format: 'glb', bytes: 4, status: 'ready' }],
+      rights_status: 'generated_needs_review',
+      public_use_allowed: false,
+      visibility: 'private',
+      kosmodata_refs: [],
+      createdAt: '2026-01-01T00:00:00.000Z',
+      daten: new Uint8Array([1, 2, 3, 4]).buffer,
+      ...overrides,
+    };
+  }
+
+  it('liefert undefined, wenn kein Asset mit dieser Referenz verknüpft ist', async () => {
+    const { lokaleRef3dQuelle } = await import('../src/modules/data/DataWorkspace');
+    expect(lokaleRef3dQuelle('ref-villa-savoye', [])).toBeUndefined();
+    const unverknuepft = asset({ kosmodata_refs: [] });
+    expect(lokaleRef3dQuelle('ref-villa-savoye', [unverknuepft])).toBeUndefined();
+  });
+
+  it('liefert einen Blob, wenn ein verknüpftes Asset ein "ready"-GLB trägt', async () => {
+    const { lokaleRef3dQuelle } = await import('../src/modules/data/DataWorkspace');
+    const verknuepft = asset({
+      kosmodata_refs: [
+        { kind: 'reference_entry', entry_id: 'ref-villa-savoye', relation: 'model_context', usage_policy: 'context_only', review_status: 'context_only' },
+      ],
+    });
+    const blob = lokaleRef3dQuelle('ref-villa-savoye', [verknuepft]);
+    expect(blob).toBeInstanceOf(Blob);
+    expect(blob?.size).toBe(4);
+  });
+
+  it('ignoriert ein verknüpftes Asset ohne "ready"-GLB (z.B. nur ein blockiertes Format)', async () => {
+    const { lokaleRef3dQuelle } = await import('../src/modules/data/DataWorkspace');
+    const ohneGlb = asset({
+      formats: [{ format: 'glb', bytes: 4, status: 'blocked' }],
+      kosmodata_refs: [
+        { kind: 'reference_entry', entry_id: 'ref-farnsworth', relation: 'model_context', usage_policy: 'context_only', review_status: 'context_only' },
+      ],
+    });
+    expect(lokaleRef3dQuelle('ref-farnsworth', [ohneGlb])).toBeUndefined();
+  });
+
+  it('findet die richtige Referenz unter mehreren verknüpften Assets', async () => {
+    const { lokaleRef3dQuelle } = await import('../src/modules/data/DataWorkspace');
+    const a = asset({
+      id: 'glb-a',
+      kosmodata_refs: [{ kind: 'reference_entry', entry_id: 'ref-a', relation: 'model_context', usage_policy: 'context_only', review_status: 'context_only' }],
+    });
+    const b = asset({
+      id: 'glb-b',
+      kosmodata_refs: [{ kind: 'reference_entry', entry_id: 'ref-b', relation: 'model_context', usage_policy: 'context_only', review_status: 'context_only' }],
+    });
+    expect(lokaleRef3dQuelle('ref-b', [a, b])?.size).toBe(4);
+    expect(lokaleRef3dQuelle('ref-nirgends', [a, b])).toBeUndefined();
+  });
+});
+
+describe('T4c (Viewport3D): setGlbContext/subscribeGlbStatus — Status-Events fürs Ladezustand-UI', () => {
+  it('meldet "loading" synchron beim Setzen einer URL', async () => {
+    const { setGlbContext, subscribeGlbStatus } = await import('../src/modules/design/Viewport3D');
+    const events: string[] = [];
+    const stop = subscribeGlbStatus((ev) => events.push(ev.status));
+    setGlbContext('blob:test-url-1');
+    expect(events).toEqual(['loading']);
+    stop();
+    setGlbContext(null);
+  });
+
+  it('subscribeGlbStatus liefert eine Abbestell-Funktion — nach dem Abmelden kommen keine Events mehr', async () => {
+    const { setGlbContext, subscribeGlbStatus } = await import('../src/modules/design/Viewport3D');
+    const events: string[] = [];
+    const stop = subscribeGlbStatus((ev) => events.push(ev.status));
+    stop();
+    setGlbContext('blob:test-url-2');
+    expect(events).toEqual([]);
+    setGlbContext(null);
   });
 });

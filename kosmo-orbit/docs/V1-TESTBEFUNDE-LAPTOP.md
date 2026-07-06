@@ -34,10 +34,14 @@ Oberflächen-Systematik.
 ## Batch T4 — Konkrete Feature-Bugs ⏳
 - [ ] **KosmoVis** läuft auf einen Fehler (Crash) — Ursache finden + fixen.
 - [ ] **Publikations-Set „speichern" passiert nichts** — Persistenz/Feedback.
-- [ ] **KosmoReference**: Projekt mit 3D-Skizze lässt sich **nicht ins
-      Environment ziehen** — Fehlermeldung.
 - [x] **Pop-up-Boxen** (T4b, ROADMAP 142): zentrale `.k-dialog`-Regeln (Textumbruch + Höhen-Deckel),
       Werkzeug-Setup/Stützenraster als Mehrspalten-Grid — kein Überlauf, keine Scrollbar mehr.
+- [x] **KosmoReference** (T4c, ROADMAP 144): «Projekt mit 3D-Skizze lässt sich
+      nicht ins Environment ziehen — Fehlermeldung» behoben. Ursache war eine
+      hartcodierte, nie existierende Remote-URL; jetzt bevorzugt eine per
+      KosmoAsset verknüpfte lokale GLB (offline, ohne CORS), mit Ladezustand
+      + Erfolgsmeldung. Ohne lokale Quelle verspricht der Knopf kein Laden
+      mehr, sondern zeigt eine ehrliche Meldung statt eines Fehler-Toasts.
 
 ## Batch T5 — Freies Skizzieren ⏳
 - [ ] **Frei zeichnen** statt Auto-Korrektur je Strich: alles zusammen zeichnen,

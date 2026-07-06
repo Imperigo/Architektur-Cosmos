@@ -18,12 +18,35 @@ export function setContextMeshes(meshes: ContextMesh[]): void {
   contextRevision++;
 }
 
-// Referenz-3D (Q14): GLB aus KosmoData als studierbarer Kontext im Viewport
-let glbRequest: { url: string } | null = null;
+// Referenz-3D (Q14, T4c-Härtung): GLB aus KosmoData/KosmoAsset als studierbarer
+// Kontext im Viewport. `revoke` markiert eine selbst erzeugte Blob-URL
+// (URL.createObjectURL) — sie wird ERST nach Gebrauch (Erfolg oder Fehler in
+// `syncGlb`) wieder freigegeben, nie vorher (ein laufender GLTFLoader-Fetch
+// darf nicht reissen). Status-Events lassen Aufrufer (DataWorkspace) einen
+// Ladezustand zeigen statt blind auf einen Erfolg zu hoffen.
+export type GlbLoadStatus = 'loading' | 'loaded' | 'error';
+export interface GlbStatusEvent {
+  status: GlbLoadStatus;
+  url: string;
+  message?: string;
+}
+let glbRequest: { url: string; revoke: boolean } | null = null;
 let glbRevision = 0;
-export function setGlbContext(url: string | null): void {
-  glbRequest = url ? { url } : null;
+const glbStatusListeners = new Set<(ev: GlbStatusEvent) => void>();
+function emitGlbStatus(ev: GlbStatusEvent): void {
+  for (const cb of glbStatusListeners) cb(ev);
+}
+/** Abonniert Lade-Status (loading/loaded/error) des Referenz-3D-Kontexts. */
+export function subscribeGlbStatus(cb: (ev: GlbStatusEvent) => void): () => void {
+  glbStatusListeners.add(cb);
+  return () => {
+    glbStatusListeners.delete(cb);
+  };
+}
+export function setGlbContext(url: string | null, opts?: { revoke?: boolean }): void {
+  glbRequest = url ? { url, revoke: opts?.revoke ?? false } : null;
   glbRevision++;
+  if (url) emitGlbStatus({ status: 'loading', url });
 }
 
 // Sonnenstand (Q12 Schattenstudie): echtes Datum/Uhrzeit statt Studio-Sonne
@@ -395,6 +418,8 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         new GLTFLoader().load(
           req.url,
           (gltf) => {
+            if (req.revoke) URL.revokeObjectURL(req.url);
+            emitGlbStatus({ status: 'loaded', url: req.url });
             if (glbRequest !== req) return; // inzwischen ersetzt
             glbGroup = gltf.scene;
             glbGroup.traverse((o) => {
@@ -405,7 +430,15 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             console.info('Referenz-3D geladen:', req.url);
           },
           undefined,
-          (err) => meldeFehler(`Referenz-3D fehlgeschlagen: ${err instanceof Error ? err.message : err}`),
+          (err) => {
+            if (req.revoke) URL.revokeObjectURL(req.url);
+            const message = err instanceof Error ? err.message : String(err);
+            emitGlbStatus({ status: 'error', url: req.url, message });
+            // Ruhige Formulierung: DataWorkspace filtert den Normalfall (keine
+            // lokale Quelle) schon vorher heraus — hier landet nur ein echter
+            // Ladefehler einer tatsächlich versuchten, ladbaren Quelle.
+            meldeFehler(`Referenz-3D liess sich nicht laden: ${message}`);
+          },
         );
       });
     }
