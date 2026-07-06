@@ -495,6 +495,11 @@ function NodeKoerper({
     fontSize: 11,
     fontFamily: 'inherit',
   };
+  // Bug T4a: ein Node OHNE `params` (Hand-Edit/Fremd-Import/Yjs-Merge von
+  // einem anderen Stand) darf die Station nie abstürzen lassen — fehlende
+  // Parameter zählen wie leere/Default-Werte (Wurzel-Fix in derive/visgraph.ts
+  // spiegelt sich hier, weil der Node-Körper dieselben Felder direkt liest).
+  const params = node.params ?? {};
 
   switch (node.typ) {
     case 'modell': {
@@ -510,12 +515,12 @@ function NodeKoerper({
     case 'prompt':
       return (
         <textarea
-          defaultValue={String(node.params['text'] ?? '')}
-          key={String(node.params['text'] ?? '')}
+          defaultValue={String(params['text'] ?? '')}
+          key={String(params['text'] ?? '')}
           placeholder="Stil-Text …"
           rows={3}
           data-testid="prompt-text"
-          onBlur={(e) => e.target.value !== node.params['text'] && param('text', e.target.value)}
+          onBlur={(e) => e.target.value !== params['text'] && param('text', e.target.value)}
           onPointerDown={(e) => e.stopPropagation()}
           style={{ ...feld, resize: 'none' }}
         />
@@ -523,7 +528,7 @@ function NodeKoerper({
     case 'stimmung':
       return (
         <select
-          value={String(node.params['preset'] ?? 'morgen')}
+          value={String(params['preset'] ?? 'morgen')}
           data-testid="stimmung-preset"
           onChange={(e) => param('preset', e.target.value)}
           onPointerDown={(e) => e.stopPropagation()}
@@ -535,23 +540,23 @@ function NodeKoerper({
         </select>
       );
     case 'zahl': {
-      const min = Number(node.params['min'] ?? 0);
-      const max = Number(node.params['max'] ?? 1);
-      const schritt = Number(node.params['schritt'] ?? 0.05);
+      const min = Number(params['min'] ?? 0);
+      const max = Number(params['max'] ?? 1);
+      const schritt = Number(params['schritt'] ?? 0.05);
       return (
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }} onPointerDown={(e) => e.stopPropagation()}>
           <input
             type="range"
-            key={String(node.params['wert'] ?? 0)}
+            key={String(params['wert'] ?? 0)}
             min={min}
             max={max}
             step={schritt}
-            defaultValue={Number(node.params['wert'] ?? 0)}
+            defaultValue={Number(params['wert'] ?? 0)}
             data-testid="zahl-regler"
             onPointerUp={(e) => param('wert', Number((e.target as HTMLInputElement).value))}
             style={{ flex: 1 }}
           />
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5 }}>{Number(node.params['wert'] ?? 0)}</span>
+          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5 }}>{Number(params['wert'] ?? 0)}</span>
         </div>
       );
     }
@@ -623,7 +628,7 @@ function NodeKoerper({
             disabled={!quelle}
             onClick={() => {
               if (!quelle) return;
-              void bildAufsBlatt(quelle.jobId, quelle.bild, String(node.params['titel'] ?? 'Visualisierung'))
+              void bildAufsBlatt(quelle.jobId, quelle.bild, String(params['titel'] ?? 'Visualisierung'))
                 .then((name) => melde(`Render liegt auf «${name}» — im KosmoPublish weiterschieben`, { ton: 'erfolg' }))
                 .catch((err) => meldeFehler(err));
             }}
@@ -634,7 +639,7 @@ function NodeKoerper({
       );
     }
     case 'referenz': {
-      const url = String(node.params['url'] ?? '');
+      const url = String(params['url'] ?? '');
       return (
         <div style={{ display: 'grid', gap: 4 }} onPointerDown={(e) => e.stopPropagation()}>
           <input

@@ -86,7 +86,9 @@ export const setNodeParams = registerCommand({
     const node = requireNode(graph, p.nodeId);
     const after: VisGraph = {
       ...graph,
-      nodes: graph.nodes.map((n) => (n.id === node.id ? { ...n, params: { ...n.params, ...p.params } } : n)),
+      // ?? {} statt n.params direkt: ein Node ohne params (Alt-Stand/Import)
+      // darf hier nicht in einen halbkaputten Zustand gemischt werden.
+      nodes: graph.nodes.map((n) => (n.id === node.id ? { ...n, params: { ...(n.params ?? {}), ...p.params } } : n)),
     };
     return [{ id: graph.id, before: graph, after }];
   },

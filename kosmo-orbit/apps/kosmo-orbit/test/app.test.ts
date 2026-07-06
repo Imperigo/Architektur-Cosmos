@@ -1101,3 +1101,77 @@ describe('D5 (KosmoData-Dach): sucheDach durchsucht das Archiv-Manifest als sech
     }
   });
 });
+
+// ── T4a (Owner-Laptop-Befund, Batch T4): zwei Feature-Bugs ───────────
+
+describe('T4a-Bug2 (KosmoPublish): «Set speichern» persistiert dort, wo die Liste liest', () => {
+  it('publish.setSpeichern landet in doc.settings.publikationsSets und ist danach wieder lesbar', async () => {
+    const { KosmoDoc } = await import('@kosmo/kernel');
+    const { useProject } = await import('../src/state/project-store');
+    useProject.setState({ doc: new KosmoDoc(), journal: [], revision: 0, activeStoreyId: null, selection: [] });
+    const { runCommand } = useProject.getState();
+    const b1 = runCommand('publish.blattErstellen', { name: 'Blatt 1', format: 'A1', orientation: 'quer' });
+    const b2 = runCommand('publish.blattErstellen', { name: 'Blatt 2', format: 'A1', orientation: 'quer' });
+    const sheetIds = [(b1.patches[0] as { id: string }).id, (b2.patches[0] as { id: string }).id];
+
+    // Exakt der Weg des «Set speichern»-Knopfs in PublishWorkspace.tsx.
+    runCommand('publish.setSpeichern', { name: 'Wettbewerb TKB', sheetIds });
+
+    // «Wieder lesbar» = an genau der Stelle, die die Sets-Liste im UI liest.
+    const { doc } = useProject.getState();
+    const set = (doc.settings.publikationsSets ?? []).find((s) => s.name === 'Wettbewerb TKB');
+    expect(set).toBeDefined();
+    expect(set?.sheetIds).toEqual(sheetIds);
+
+    // Undo macht den Schreibvorgang wieder rückgängig (Command-Weg, kein Nebengleis).
+    useProject.getState().undo();
+    expect((useProject.getState().doc.settings.publikationsSets ?? []).some((s) => s.name === 'Wettbewerb TKB')).toBe(false);
+  });
+
+  it('leerer Name oder leerer Plansatz speichert NICHTS (kein Karteikarten-Geist ohne Namen/Inhalt)', async () => {
+    const { KosmoDoc, CommandError } = await import('@kosmo/kernel');
+    const { useProject } = await import('../src/state/project-store');
+    useProject.setState({ doc: new KosmoDoc(), journal: [], revision: 0, activeStoreyId: null, selection: [] });
+    const { runCommand } = useProject.getState();
+    // Ohne Blatt lehnt der Command eine leere sheetIds-Liste ab (min(1)) —
+    // die UI fängt den Fall vorher ab und meldet ihn statt den Command zu rufen.
+    expect(() => runCommand('publish.setSpeichern', { name: 'X', sheetIds: [] })).toThrow(CommandError);
+    expect(useProject.getState().doc.settings.publikationsSets ?? []).toEqual([]);
+  });
+});
+
+describe('T4a-Bug1 (KosmoVis): kaputter/leerer Render-Graph wirft nicht mehr', () => {
+  it('evaluiereGraph mit leerem Graphen (0 Nodes) wirft nicht und liefert leere Auswertung', async () => {
+    const { KosmoDoc, execute, evaluiereGraph } = await import('@kosmo/kernel');
+    const doc = new KosmoDoc();
+    const g = execute(doc, 'vis.graphErstellen', { name: 'Leer' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    const graph = doc.get(graphId) as { id: string; kind: string; name: string; nodes: unknown[]; edges: unknown[] };
+    expect(() => evaluiereGraph(doc, graph as never)).not.toThrow();
+    const auswertung = evaluiereGraph(doc, graph as never);
+    expect(auswertung.werte.size).toBe(0);
+    expect(auswertung.renderAuftraege.size).toBe(0);
+  });
+
+  it('Node OHNE `params` (Hand-Edit/Fremd-Import/Yjs-Merge) — genau der reproduzierte NodeCanvas-Crash — wirft nicht mehr', async () => {
+    // Exakter Weg der App: derselbe project-store, dieselbe evaluiereGraph-Instanz,
+    // die NodeCanvas.tsx via useMemo bei jedem Render aufruft. Vor dem Fix warf
+    // dies «Cannot read properties of undefined (reading 'text')» und riss die
+    // GANZE KosmoVis-Station ab (nur die KFehlerzone-Boundary fing es auf).
+    const { KosmoDoc, evaluiereGraph } = await import('@kosmo/kernel');
+    const { useProject } = await import('../src/state/project-store');
+    useProject.setState({ doc: new KosmoDoc(), journal: [], revision: 0, activeStoreyId: null, selection: [] });
+    const { runCommand, doc } = useProject.getState();
+    const g = runCommand('vis.graphErstellen', { name: 'Kaputt' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    runCommand('vis.nodeSetzen', { graphId, typ: 'prompt', x: 0, y: 0, params: { text: 'bleibt nicht' } });
+    type Loses = { id: string; kind: string; name: string; nodes: { id: string; typ: string; x: number; y: number; params?: unknown }[]; edges: unknown[] };
+    const graph = doc.get<Loses>(graphId)!;
+    // Wie ein hand-editiertes/Fremd-Tool-.kosmo oder ein Yjs-Merge von einem
+    // anderen App-Stand: der Node verliert `params` komplett (nicht nur leer).
+    const kaputt: Loses = { ...graph, nodes: graph.nodes.map((n) => ({ id: n.id, typ: n.typ, x: n.x, y: n.y })) };
+    doc.apply([{ id: graphId, before: graph, after: kaputt }]);
+    expect(() => evaluiereGraph(doc, doc.get<Loses>(graphId)! as never)).not.toThrow();
+    expect(evaluiereGraph(doc, doc.get<Loses>(graphId)! as never).werte.get(graph.nodes[0]!.id)).toEqual({ prompt: '' });
+  });
+});

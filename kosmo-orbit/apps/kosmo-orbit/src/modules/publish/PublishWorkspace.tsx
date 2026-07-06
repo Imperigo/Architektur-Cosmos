@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Hairline, Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
+import { Hairline, Messrahmen, Badge, KButton, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
 import {
   exportDxf,
   imagePaperBounds,
@@ -84,6 +84,35 @@ export function PublishWorkspace() {
       orientation: 'quer',
     });
     setActiveSheetId((res.patches[0] as { id: string }).id);
+  }
+
+  /**
+   * T4a-Bug2: «Set speichern» tat bislang scheinbar nichts — kein Feedback bei
+   * Erfolg, kein Feedback beim stillen No-op (leerer Name/kein Blatt), kein
+   * try/catch um den Command. Jetzt: klare Meldung in JEDEM Fall, Set landet
+   * über `publish.setSpeichern` im Doc (dort, wo die Liste unten liest) und
+   * taucht sofort in der Sets-Liste auf (Undo/Sync/.kosmo inklusive).
+   */
+  function setSpeichern() {
+    const name = neuesSetName.trim();
+    if (!name) {
+      melde('Erst einen Set-Namen eingeben.', { ton: 'fehler' });
+      return;
+    }
+    if (sheets.length === 0) {
+      melde('Kein Blatt im Plansatz — erst «+ Blatt» oder ein Plakat anlegen.', { ton: 'fehler' });
+      return;
+    }
+    try {
+      runCommand('publish.setSpeichern', {
+        name,
+        sheetIds: sheets.map((s) => s.id),
+      });
+      setNeuesSetName('');
+      melde(`Set «${name}» gespeichert (${sheets.length} ${sheets.length === 1 ? 'Blatt' : 'Blätter'})`, { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
   }
 
   function placeGrundriss() {
@@ -420,14 +449,7 @@ export function PublishWorkspace() {
               tone="quiet"
               data-testid="pubset-speichern"
               title="Speichert die aktuellen Blätter in Reihenfolge als benanntes Set — Dateinamen nach «P-{nr}_{blatt}_{massstab}»"
-              onClick={() => {
-                if (!neuesSetName.trim() || sheets.length === 0) return;
-                runCommand('publish.setSpeichern', {
-                  name: neuesSetName.trim(),
-                  sheetIds: sheets.map((s) => s.id),
-                });
-                setNeuesSetName('');
-              }}
+              onClick={setSpeichern}
             >
               Set speichern
             </KButton>

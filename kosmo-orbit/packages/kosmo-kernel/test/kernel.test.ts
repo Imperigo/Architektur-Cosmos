@@ -4164,6 +4164,39 @@ describe('Härtetest-Runde 4', () => {
     expect(auswertung.werte.get(prompt)!['prompt']).toBe('sauber');
     expect(hatZyklus(kaputt.nodes, kaputt.edges)).toBe(true);
   });
+
+  it('H4c (T4a-Bug1): Node OHNE `params` (Hand-Edit/Fremd-Tool-Import) — Evaluation stürzt nie', () => {
+    // Genau der Owner-Laptop-Befund: ein Node, der die Undo/Sync/Command-Schiene
+    // umgeht (Hand-editiertes .kosmo, Fremd-Tool-Export, Yjs-Merge von einem
+    // anderen App-Stand) kann ganz ohne `params`-Feld ankommen. Vor dem Fix warf
+    // evaluiereGraph hier «Cannot read properties of undefined (reading 'text')»
+    // — ein einziger solcher Node riss die GANZE KosmoVis-Auswertung ab.
+    const doc = new KosmoDoc();
+    const g = execute(doc, 'vis.graphErstellen', { name: 'Params-los' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    for (const typ of ['prompt', 'stimmung', 'zahl'] as const) {
+      execute(doc, 'vis.nodeSetzen', { graphId, typ, x: 0, y: 0 });
+    }
+    const graph = doc.get<VisGraph>(graphId)!;
+    const [prompt, stimmung, zahl] = graph.nodes.map((n) => n.id) as [string, string, string];
+    const kaputt: VisGraph = {
+      ...graph,
+      // Jeder Node verliert sein `params`-Feld komplett (nicht nur leer: WEG).
+      nodes: graph.nodes.map((n) => ({ id: n.id, typ: n.typ, x: n.x, y: n.y }) as unknown as (typeof graph.nodes)[number]),
+    };
+    doc.apply([{ id: graphId, before: graph, after: kaputt }]);
+    expect(() => evaluiereGraph(doc, doc.get<VisGraph>(graphId)!)).not.toThrow();
+    const auswertung = evaluiereGraph(doc, doc.get<VisGraph>(graphId)!);
+    // Fehlende Parameter zählen wie leere/Default-Werte, nicht wie ein Absturz.
+    expect(auswertung.werte.get(prompt)).toEqual({ prompt: '' });
+    expect(auswertung.werte.get(stimmung)).toEqual({ prompt: 'Morgenlicht, klare lange Schatten, frische kühle Luft' });
+    expect(auswertung.werte.get(zahl)).toEqual({ zahl: 0 });
+    // vis.nodeParametrieren auf einem params-losen Node darf ebenfalls nicht werfen
+    // und setzt den neuen Wert sauber, statt an `...undefined` zu scheitern.
+    expect(() => execute(doc, 'vis.nodeParametrieren', { graphId, nodeId: prompt, params: { text: 'geflickt' } })).not.toThrow();
+    const geflickt = doc.get<VisGraph>(graphId)!.nodes.find((n) => n.id === prompt)!;
+    expect(geflickt.params['text']).toBe('geflickt');
+  });
 });
 
 // ── Blender-Interop (P6): GLB spricht Blenderisch ────────────────────

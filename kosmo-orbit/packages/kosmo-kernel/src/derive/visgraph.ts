@@ -202,12 +202,16 @@ export function evaluiereGraph(doc: KosmoDoc, graph: VisGraph): VisAuswertung {
     return werte.get(e.from)?.[e.fromPort];
   };
   for (const n of topoReihenfolge(graph)) {
+    // Härtetest H4c: ein Node OHNE `params` (Hand-Edit/Fremd-Tool-Import,
+    // Yjs-Merge von einem anderen Stand) darf die Auswertung nie reissen —
+    // fehlende Parameter zählen wie leere/Default-Werte.
+    const params = n.params ?? {};
     switch (n.typ) {
       case 'prompt':
-        werte.set(n.id, { prompt: String(n.params['text'] ?? '') });
+        werte.set(n.id, { prompt: String(params['text'] ?? '') });
         break;
       case 'stimmung': {
-        const preset = VIS_STIMMUNGEN[String(n.params['preset'] ?? 'morgen')];
+        const preset = VIS_STIMMUNGEN[String(params['preset'] ?? 'morgen')];
         werte.set(n.id, { prompt: preset?.prompt ?? '' });
         break;
       }
@@ -215,7 +219,7 @@ export function evaluiereGraph(doc: KosmoDoc, graph: VisGraph): VisAuswertung {
         werte.set(n.id, { material: renderPromptBausteine(doc).join(', ') });
         break;
       case 'zahl':
-        werte.set(n.id, { zahl: Number(n.params['wert'] ?? 0) });
+        werte.set(n.id, { zahl: Number(params['wert'] ?? 0) });
         break;
       case 'kombinierer': {
         const stimmung = String(eingangsWert(n.id, 'stimmung') ?? '');
