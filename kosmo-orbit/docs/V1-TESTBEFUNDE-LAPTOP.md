@@ -24,13 +24,12 @@ Oberflächen-Systematik.
       *(Rest-Grenze: echte 2D-Eck-Miter bleibt separater Auftrag.)*
 - [x] **Betontextur** — SIA-Betontönung statt Papierfarbe, feineres Raster.
 
-## Batch T3 — ArchiCAD-Zeichenhilfen & Navigation ⏳
-- [ ] Zeichnungs-**Hilfslinien** + **Shift = Achse fixieren** (ortho/winkel).
-- [ ] **Pan/Orbit** wie ArchiCAD/Blender, mit **Hover-Symbolen** (drüberfahren
-      zeigt, was es tut).
-- [ ] **Achslinie der Wand unsichtbar** machen (2D & 3D — nur Bauteil, nicht die
-      Konstruktionsachse zeigen).
-- [ ] ArchiCAD-**Tastenkürzel** fürs Zeichnen nachbauen.
+## Batch T3 — ArchiCAD-Zeichenhilfen & Navigation ✅ (ROADMAP 143)
+- [x] **Hilfslinien + Shift=Ortho** (0/45/90°) + Fluchtlinien an bestehenden Punkten.
+- [x] **Pan/Orbit + Nav-Leiste mit Hover-Tooltips** (Orbit/Pan/Zoom/Einpassen), 2D & 3D.
+- [x] **Konstruktionsachse ausblendbar** (Stützenraster-Achse, Umschalter, Default aus).
+      *(Einzige Achse im Code; falls andere gemeint — gegenprüfen.)*
+- [x] **Zeichen-Shortcuts** W/Z/V/D/T/C/S/F/Esc im `?`-Overlay.
 
 ## Batch T4 — Konkrete Feature-Bugs ⏳
 - [ ] **KosmoVis** läuft auf einen Fehler (Crash) — Ursache finden + fixen.
