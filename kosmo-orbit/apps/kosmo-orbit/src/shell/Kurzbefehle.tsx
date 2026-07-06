@@ -78,19 +78,12 @@ export function Kurzbefehle({
       aria-modal
       aria-label="Kurzbefehle"
       data-testid="kurzbefehle"
+      className="k-dialog-scrim"
       onClick={() => setOffen(false)}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 205,
-        background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      style={{ zIndex: 205, background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)' }}
     >
       <div
-        className="k-karte k-skalieren-ein"
+        className="k-karte k-skalieren-ein k-dialog"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--k-raised)',

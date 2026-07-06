@@ -244,6 +244,8 @@ progress {
 /* Meldungen + Ladezustand (V1-Finish P1) — ruhig, präzise, reduced-motion-fest */
 .k-meldung {
   animation: k-meldung-ein var(--k-motion-settle) both;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 @keyframes k-meldung-ein {
   from { opacity: 0; transform: translateY(6px); }
@@ -290,6 +292,26 @@ progress {
   from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--k-success) 45%, transparent); }
   to { box-shadow: 0 0 0 9px transparent; }
 }
+/* Popups/Dialoge (T4b) — das eine Muster für alle modalen Overlays
+   (Bestätigung, Kurzbefehle, Werkzeuge-Setup): Der Scrim zentriert die Box
+   und bleibt selbst immer im Viewport. Die Box (zusätzlich zur je Dialog
+   gesetzten max-width) wächst nie über den Viewport hinaus, Text bricht um
+   — sie scrollt nicht, sie wird stattdessen so reorganisiert (Padding,
+   Spalten, Kurzform), dass der Inhalt aufgeht. */
+.k-dialog-scrim {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.k-dialog {
+  max-height: calc(100vh - 48px);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 /* Kacheln der Zentrale: Hairline-Akzent + leiser Lift */
 .k-kachel {
   transition:

@@ -72,36 +72,41 @@ async function pruefe(art: Pruefung): Promise<Status> {
 
 function WerkzeugZeile({ w, status }: { w: Werkzeug; status: Status }) {
   return (
-    <div data-testid={`werkzeug-${w.id}`} style={{ display: 'grid', gap: 4, padding: '8px 0' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <div style={{ fontWeight: 550, fontSize: 13.5 }}>{w.name}</div>
+    <div
+      data-testid={`werkzeug-${w.id}`}
+      style={{ display: 'grid', gap: 4, padding: '7px 0', borderBottom: '1px solid var(--k-line)' }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <div style={{ fontWeight: 550, fontSize: 13, overflowWrap: 'anywhere' }}>{w.name}</div>
         {w.pflicht ? (
           <Badge hue={moduleHue.kosmo}>Kern</Badge>
         ) : (
           <Badge hue="var(--k-ink-soft)">optional</Badge>
         )}
         <div style={{ flex: 1 }} />
-        <span data-testid={`werkzeug-status-${w.id}`} style={{ fontSize: 12, color: STATUS_FARBE[status] }}>
+        <span data-testid={`werkzeug-status-${w.id}`} style={{ fontSize: 11.5, color: STATUS_FARBE[status] }}>
           ● {STATUS_TEXT[status]}
         </span>
       </div>
-      <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{w.zweck}</div>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div style={{ fontSize: 12, color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>{w.zweck}</div>
+      <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         <code
           style={{
-            flex: 1,
-            fontSize: 11.5,
+            flex: '1 1 160px',
+            fontSize: 11,
             background: 'var(--k-surface)',
             border: '1px solid var(--k-line)',
             borderRadius: 4,
             padding: '4px 7px',
-            overflowX: 'auto',
-            whiteSpace: 'nowrap',
+            overflowWrap: 'anywhere',
+            whiteSpace: 'pre-wrap',
           }}
         >
           {w.holen}
         </code>
-        <span style={{ fontSize: 11, color: 'var(--k-ink-soft)', whiteSpace: 'nowrap' }}>{w.groesse}</span>
+        <span style={{ fontSize: 11, color: 'var(--k-ink-soft)', whiteSpace: 'nowrap', alignSelf: 'center' }}>
+          {w.groesse}
+        </span>
         <KButton
           size="sm"
           tone="ghost"
@@ -142,31 +147,22 @@ export function WerkzeugSetup({ betriebsart, onClose }: { betriebsart: Betriebsa
       data-testid="werkzeug-setup"
       role="dialog"
       aria-label="Werkzeuge einrichten"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 220,
-        background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      className="k-dialog-scrim"
+      style={{ zIndex: 220, background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)' }}
       onClick={onClose}
     >
       <div
-        className="k-karte k-skalieren-ein"
+        className="k-karte k-skalieren-ein k-dialog"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--k-raised)',
-          padding: '18px 20px',
-          width: 'min(620px, calc(100vw - 48px))',
-          maxHeight: 'calc(100vh - 64px)',
-          overflowY: 'auto',
+          padding: '16px 20px',
+          width: 'min(780px, calc(100vw - 48px))',
           display: 'grid',
           gap: 6,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <div className="k-titel" style={{ fontSize: 14, fontWeight: 650 }}>
             Werkzeuge einrichten
           </div>
@@ -189,9 +185,13 @@ export function WerkzeugSetup({ betriebsart, onClose }: { betriebsart: Betriebsa
               : `Noch ${nochOffen} Kern-Werkzeug${nochOffen === 1 ? '' : 'e'} einzurichten. Befehl kopieren, ausführen, «Neu prüfen».`}
         </div>
         <Hairline />
-        {werkzeuge.map((w) => (
-          <WerkzeugZeile key={w.id} w={w} status={status[w.id] ?? 'pruefe'} />
-        ))}
+        {/* Zweispaltig ab genug Breite (T4b) — hält die Liste kompakt, damit
+            das Popup ohne Scrollen aufgeht, auch bei allen Werkzeugen. */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', columnGap: 22 }}>
+          {werkzeuge.map((w) => (
+            <WerkzeugZeile key={w.id} w={w} status={status[w.id] ?? 'pruefe'} />
+          ))}
+        </div>
       </div>
     </div>
   );

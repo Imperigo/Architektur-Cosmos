@@ -1084,11 +1084,13 @@ function StudienPanel({
   return (
     <div
       data-testid="studien-panel"
+      className="k-dialog"
       style={{
         position: 'absolute',
         left: 12,
         top: 52,
         width: 268,
+        maxHeight: 'calc(100% - 64px)',
         zIndex: 4,
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',

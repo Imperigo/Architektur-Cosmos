@@ -63,14 +63,14 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
   return (
     <div
       data-testid="raster-panel"
+      className="k-dialog"
       style={{
         position: 'absolute',
         left: 90,
         top: 52,
         zIndex: 20,
-        width: 460,
+        width: 'min(900px, calc(100vw - 122px))',
         maxHeight: 'calc(100% - 90px)',
-        overflow: 'auto',
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
         boxShadow: 'var(--k-shadow-overlay)',
@@ -145,7 +145,12 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
         </KButton>
       </div>
 
-      <div style={{ display: 'grid', gap: 6 }} data-testid="raster-varianten">
+      {/* Zwei-/dreispaltig ab genug Breite (T4b) — bis zu 24 Varianten
+          gehen so ohne Scrollen auf, statt eine lange Einerkolonne zu sein. */}
+      <div
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 6 }}
+        data-testid="raster-varianten"
+      >
         {varianten.map((v, i) => (
           <Karteikarte key={`${v.parkfelder}-${v.feldbreite}-${v.wohnachsen}`} nr={i + 1}>
             <div style={{ display: 'grid', gap: 4 }}>

@@ -63,7 +63,7 @@ const TON_FARBE: Record<Meldung['ton'], string> = {
 
 /** Host — einmal in der Shell mounten. */
 export function KMeldungen() {
-  const liste = useSyncExternalStore(abonniere, () => meldungen);
+  const liste = useSyncExternalStore(abonniere, () => meldungen, () => meldungen);
   if (liste.length === 0) return null;
   return (
     <div
@@ -161,7 +161,7 @@ function dialogAbonniere(cb: () => void): () => void {
 
 /** Host — einmal in der Shell mounten. Esc = abbrechen. */
 export function KBestaetigung() {
-  const offen = useSyncExternalStore(dialogAbonniere, () => anfrage);
+  const offen = useSyncExternalStore(dialogAbonniere, () => anfrage, () => anfrage);
   if (!offen) return null;
   const schliesse = (ok: boolean) => {
     offen.resolve(ok);
@@ -174,25 +174,26 @@ export function KBestaetigung() {
       aria-modal
       aria-label={offen.titel}
       data-testid="bestaetigung"
+      className="k-dialog-scrim"
       onKeyDown={(e) => e.key === 'Escape' && schliesse(false)}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 210,
-        background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      style={{ zIndex: 210, background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)' }}
       onClick={() => schliesse(false)}
     >
       <div
-        className="k-karte k-skalieren-ein"
+        className="k-karte k-skalieren-ein k-dialog"
         onClick={(e) => e.stopPropagation()}
-        style={{ background: 'var(--k-raised)', padding: '16px 18px', width: 'min(420px, calc(100vw - 48px))', display: 'grid', gap: 10 }}
+        style={{
+          background: 'var(--k-raised)',
+          padding: '16px 18px',
+          width: 'min(420px, calc(100vw - 48px))',
+          display: 'grid',
+          gap: 10,
+        }}
       >
         <div className="k-titel" style={{ fontSize: 13, fontWeight: 650 }}>{offen.titel}</div>
-        {offen.text && <div style={{ fontSize: 13, color: 'var(--k-ink-soft)' }}>{offen.text}</div>}
+        {offen.text && (
+          <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{offen.text}</div>
+        )}
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
           <KButton size="sm" tone="ghost" data-testid="bestaetigung-nein" onClick={() => schliesse(false)}>
             Abbrechen
