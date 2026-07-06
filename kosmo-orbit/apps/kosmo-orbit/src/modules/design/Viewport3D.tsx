@@ -70,6 +70,8 @@ export interface GroundEvent {
 export interface ViewportHandlers {
   onGroundClick?: (e: GroundEvent) => void;
   onGroundMove?: (e: GroundEvent) => void;
+  /** ArchiCAD-Geste: Doppelklick schliesst/setzt die laufende Platzierung ab. */
+  onGroundDoubleClick?: (e: GroundEvent) => void;
   onEscape?: () => void;
   /** Vorschau-Polylinie in Kern-mm (Werkzeug-Gummiband). */
   previewLine?: Pt[] | null;
@@ -79,6 +81,12 @@ export interface ViewportHandlers {
   /** Auswahl-Werkzeug: Klick pickt Element statt zu zeichnen. */
   pickMode?: boolean;
   onPick?: (entityId: string | null) => void;
+  /** 2D-Verschieben: Geste beginnt auf einem getroffenen Element (liefert false = kein Ziehen). */
+  onMoveStart?: (entityId: string, p: Pt) => boolean;
+  onMoveDrag?: (p: Pt) => void;
+  onMoveEnd?: (p: Pt) => void;
+  /** Lebende Zieh-Vorschau (Kern-mm), während `onMoveStart…onMoveEnd` läuft. */
+  moveOffset?: { id: string; dx: number; dy: number } | null;
 }
 
 import { materialKarten, texturenAktiv } from './texturen';

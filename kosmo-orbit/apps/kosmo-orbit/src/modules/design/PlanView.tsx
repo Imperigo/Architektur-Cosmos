@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, assemblyThickness, type Assembly, type Furniture, type Pt, type Wall, type Zone } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, type Furniture, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
+import { outlineOf, pickEntityAt } from './plan-hit-test';
 
 /**
  * PlanView — der lebende Grundriss als semantisches SVG.
@@ -79,40 +80,12 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
     [doc, activeStoreyId, revision],
   );
 
-  const pickEntityAt = (p: Pt): string | null => {
-    if (!activeStoreyId) return null;
-    // Wände zuerst (Abstand zur Achse ≤ halbe Dicke + Toleranz)
-    for (const w of doc.byKind<Wall>('wall')) {
-      if (w.storeyId !== activeStoreyId) continue;
-      const asm = doc.get<Assembly>(w.assemblyId);
-      const half = asm && asm.kind === 'assembly' ? assemblyThickness(asm) / 2 : 150;
-      const dx = w.b.x - w.a.x;
-      const dy = w.b.y - w.a.y;
-      const len2 = dx * dx + dy * dy || 1;
-      const t = Math.max(0, Math.min(1, ((p.x - w.a.x) * dx + (p.y - w.a.y) * dy) / len2));
-      const qx = w.a.x + t * dx;
-      const qy = w.a.y + t * dy;
-      if (Math.hypot(p.x - qx, p.y - qy) <= half + 120) return w.id;
-    }
-    // Dann flächige Elemente (Punkt-in-Polygon)
-    const inPoly = (poly: readonly Pt[]) => {
-      let inside = false;
-      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-        const a = poly[i]!;
-        const b = poly[j]!;
-        if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) {
-          inside = !inside;
-        }
-      }
-      return inside;
-    };
-    for (const e of doc.inStorey(activeStoreyId)) {
-      if ((e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'slab') && inPoly(e.outline)) {
-        return e.id;
-      }
-    }
-    return null;
-  };
+  // Trefferzone + Umriss leben in plan-hit-test.ts (eigener Unit-Test, unabhängig
+  // von derivePlan/den Poché-Regionen — die Goldens bleiben unberührt).
+  const pickAt = (p: Pt): string | null => (activeStoreyId ? pickEntityAt(doc, activeStoreyId, p) : null);
+  // Ziehen im Plan: EIN design.verschieben bei pointerup, kein Patch pro Move
+  const moveActive = useRef(false);
+  const selection = useProject((s) => s.selection);
 
   const toWorld = (clientX: number, clientY: number): Pt => {
     const rect = svgRef.current!.getBoundingClientRect();
@@ -212,6 +185,15 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
           if (e.button === 1 || e.button === 2 || e.altKey) {
             panning.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy };
             (e.target as Element).setPointerCapture(e.pointerId);
+          } else if (e.button === 0 && handlers.current?.pickMode && activeStoreyId) {
+            // Auswahl-Werkzeug: Treffer auf einem Bauteil startet gleich die
+            // Zieh-Geste (Klick ohne Bewegung = reine Auswahl, dx/dy bleiben 0).
+            const p = toWorld(e.clientX, e.clientY);
+            const hit = pickEntityAt(doc, activeStoreyId, p);
+            if (hit && handlers.current.onMoveStart?.(hit, p)) {
+              moveActive.current = true;
+              (e.target as Element).setPointerCapture(e.pointerId);
+            }
           }
         }}
         onPointerMove={(e) => {
@@ -235,6 +217,8 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             const dx = (e.clientX - panning.current.x) / view.scale;
             const dy = (e.clientY - panning.current.y) / view.scale;
             setView((v) => ({ ...v, cx: panning.current!.cx - dx, cy: panning.current!.cy + dy }));
+          } else if (moveActive.current) {
+            handlers.current?.onMoveDrag?.(toWorld(e.clientX, e.clientY));
           } else if (!gestureAktiv.current) {
             const p = toWorld(e.clientX, e.clientY);
             setCursor(p);
@@ -259,13 +243,24 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             panning.current = null;
             return;
           }
+          if (moveActive.current) {
+            moveActive.current = false;
+            handlers.current?.onMoveEnd?.(toWorld(e.clientX, e.clientY));
+            return;
+          }
           if (e.button !== 0) return;
           const p = toWorld(e.clientX, e.clientY);
           if (handlers.current?.pickMode) {
-            handlers.current.onPick?.(pickEntityAt(p));
+            handlers.current.onPick?.(pickAt(p));
             return;
           }
           handlers.current?.onGroundClick?.({ p, shiftKey: e.shiftKey });
+        }}
+        onDoubleClick={(e) => {
+          // ArchiCAD-Geste: Doppelklick schliesst/setzt die laufende Platzierung ab
+          if (moveActive.current || handlers.current?.pickMode) return;
+          const p = toWorld(e.clientX, e.clientY);
+          handlers.current?.onGroundDoubleClick?.({ p, shiftKey: e.shiftKey });
         }}
         onPointerCancel={(e) => {
           if (e.pointerType === 'touch') {
@@ -273,6 +268,7 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             if (touches.current.size < 2) pinch.current = null;
             if (touches.current.size === 0) gestureAktiv.current = false;
           }
+          moveActive.current = false;
         }}
         onContextMenu={(e) => e.preventDefault()}
       >
@@ -563,6 +559,30 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                 </g>
               );
             })}
+
+          {/* Auswahl-Highlight (Anwählen) + Zieh-Vorschau (Verschieben) — reine
+              Bildschirmdarstellung aus der Entity-Geometrie, unabhängig von
+              derivePlan/den Poché-Regionen. */}
+          {selection.map((id) => {
+            const outline = outlineOf(doc, id);
+            if (!outline || outline.length < 2) return null;
+            const off = handlers.current?.moveOffset;
+            const ziehend = off && off.id === id;
+            const pts = ziehend ? outline.map((q) => ({ x: q.x + off.dx, y: q.y + off.dy })) : outline;
+            return (
+              <path
+                key={`sel-${id}`}
+                data-testid="auswahl-highlight"
+                d={`M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`}
+                fill="none"
+                stroke="var(--k-accent)"
+                strokeWidth={ziehend ? 30 : 22}
+                strokeDasharray={ziehend ? '90 50' : undefined}
+                opacity={ziehend ? 0.85 : 1}
+                pointerEvents="none"
+              />
+            );
+          })}
 
           {/* Werkzeug-Vorschau */}
           {handlers.current?.previewLine && handlers.current.previewLine.length >= 2 && (

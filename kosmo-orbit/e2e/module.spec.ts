@@ -160,6 +160,10 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
   await expect(page.locator('[data-testid="grid-achse"]').first()).toBeVisible();
   await page.click('[data-testid="raster-toggle"]'); // Panel zu — es liegt über dem Plan
 
+  // T1: Standard-Werkzeug ist jetzt «Auswahl» (ArchiCAD-Gefühl) — zum
+  // Zeichnen muss das Wand-Werkzeug explizit angewählt werden.
+  await page.click('[data-testid="tool-wand"]');
+
   // Fang: Klicks NEBEN der Kreuzung rasten exakt auf die Achskreuzung ein.
   // Bildschirm-Koordinaten der HAUPT-Achsen aus dem gerenderten DOM (inkl. Transformation);
   // Wohnraster-Achsen (feines Strichmuster) werden ausgefiltert.

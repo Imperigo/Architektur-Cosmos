@@ -21,6 +21,7 @@ import {
   type Zone,
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
+import { VERSCHIEBBAR } from './plan-hit-test';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
 import { ModulEditor } from './ModulEditor';
 import { PlanView } from './PlanView';
@@ -72,7 +73,9 @@ export function DesignWorkspace() {
     [revision, activeStoreyId],
   );
 
-  const [tool, setTool] = useState<ToolId>('wand');
+  // ArchiCAD-Gefühl: die Arbeitsfläche öffnet im Auswahl-Werkzeug (Pfeil), nicht
+  // schon zeichnend — sonst baut der erste Klick versehentlich eine Wand.
+  const [tool, setTool] = useState<ToolId>('auswahl');
   const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
   const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split' | 'quad'>('split');
   // B5: Massstabs-Automatik — bestätigbarer Hinweis nach dem Phasenwechsel
@@ -81,6 +84,10 @@ export function DesignWorkspace() {
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
   const [points, setPoints] = useState<Pt[]>([]);
   const [cursor, setCursor] = useState<Pt | null>(null);
+  // Ziehen im Plan (Auswahl-Werkzeug): Startpunkt gemerkt, aktuelle Position
+  // folgt der Maus als reine Vorschau — erst bei pointerup EIN design.verschieben
+  const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt } | null>(null);
+  const [dragCursor, setDragCursor] = useState<Pt | null>(null);
   // Volumenstudien (Q12): letzte Zone = Parzelle, Varianten als Gruppe übernehmen
   const [studieOffen, setStudieOffen] = useState(false);
   const [drawOffen, setDrawOffen] = useState(false);
@@ -180,6 +187,81 @@ export function DesignWorkspace() {
     sketchMode: tool === 'skizze',
     pickMode: tool === 'auswahl',
     onPick: (id) => select(id ? [id] : []),
+    // Verschieben (Auswahl-Werkzeug): pointerdown auf einem Treffer wählt es an
+    // und merkt den Startpunkt; pointerup committet EIN design.verschieben
+    // (bleibt der Cursor am Startpunkt, ist dx/dy = 0 → reine Auswahl, kein Command).
+    onMoveStart: (id, p) => {
+      const e = doc.get(id);
+      if (!e || !VERSCHIEBBAR.has(e.kind)) {
+        select([id]);
+        return false;
+      }
+      select([id]);
+      setDragEntity({ id, start: snap(p, magnet) });
+      setDragCursor(p);
+      return true;
+    },
+    onMoveDrag: (p) => setDragCursor(p),
+    onMoveEnd: (p) => {
+      if (!dragEntity) return;
+      const ziel = snap(p, magnet);
+      const dx = ziel.x - dragEntity.start.x;
+      const dy = ziel.y - dragEntity.start.y;
+      setDragEntity(null);
+      setDragCursor(null);
+      if (dx === 0 && dy === 0) return;
+      try {
+        runCommand('design.verschieben', { entityId: dragEntity.id, dx, dy });
+      } catch (err) {
+        meldeFehler(err);
+      }
+    },
+    moveOffset:
+      dragEntity && dragCursor
+        ? (() => {
+            const ziel = snap(dragCursor, magnet);
+            return { id: dragEntity.id, dx: ziel.x - dragEntity.start.x, dy: ziel.y - dragEntity.start.y };
+          })()
+        : null,
+    onGroundDoubleClick: (e) => {
+      // ArchiCAD-Geste: Doppelklick schliesst/setzt die laufende Platzierung ab
+      if (!activeStoreyId) return;
+      const p = snap(e.p, magnet);
+      if (tool === 'volumen' || tool === 'zone' || tool === 'dach') {
+        // Der zweite Klick der Doppelklick-Geste liegt am selben Ort wie der
+        // erste — der ist evtl. schon als (Duplikat-)Punkt angehängt worden.
+        let outline = points;
+        const letzter = outline[outline.length - 1];
+        if (letzter && letzter.x === p.x && letzter.y === p.y) outline = outline.slice(0, -1);
+        if (outline.length >= 3) {
+          if (tool === 'dach') {
+            try {
+              runCommand('design.dachErstellen', {
+                storeyId: activeStoreyId,
+                outline,
+                pitch: 35,
+                overhang: 500,
+              });
+            } catch (err) {
+              meldeFehler(err);
+            }
+          } else if (tool === 'volumen') {
+            runCommand('design.volumenErstellen', { storeyId: activeStoreyId, outline, height: 9000 });
+          } else {
+            const n = useProject.getState().doc.byKind('zone').length + 1;
+            runCommand('design.zoneErstellen', {
+              storeyId: activeStoreyId,
+              outline,
+              name: `Raum ${n}`,
+              sia: 'HNF',
+              ...(wohnungstyp ? { program: wohnungstyp } : {}),
+            });
+          }
+        }
+      }
+      // Wand/Treppe/Schnitt: Kette bzw. Antritt/Austritt-Eingabe abschliessen
+      setPoints([]);
+    },
     onSketchAccept: (segments) => {
       if (!activeStoreyId || !effectiveAssembly) return;
       for (const seg of segments) {

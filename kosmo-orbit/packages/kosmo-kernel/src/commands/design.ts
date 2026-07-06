@@ -254,7 +254,8 @@ export const createMass = registerCommand({
 export const moveEntity = registerCommand({
   id: 'design.verschieben',
   title: 'Element verschieben',
-  description: 'Verschiebt ein Element um dx/dy in mm (Wände, Decken, Volumen, Zonen).',
+  description:
+    'Verschiebt ein Element um dx/dy in mm (Wände, Decken, Volumen, Zonen, Stützen, Treppen, Dächer).',
   params: z.object({
     entityId: z.string(),
     dx: z.number().int(),
@@ -265,10 +266,11 @@ export const moveEntity = registerCommand({
     const e = doc.get(p.entityId);
     if (!e) throw new CommandError(`Element «${p.entityId}» existiert nicht`);
     const shift = (pts: readonly Pt[]) => pts.map((q) => ({ x: q.x + p.dx, y: q.y + p.dy }));
+    const shiftPt = (q: Pt) => ({ x: q.x + p.dx, y: q.y + p.dy });
     let after: import('../model/entities').Entity;
     switch (e.kind) {
       case 'wall':
-        after = { ...e, a: { x: e.a.x + p.dx, y: e.a.y + p.dy }, b: { x: e.b.x + p.dx, y: e.b.y + p.dy } };
+        after = { ...e, a: shiftPt(e.a), b: shiftPt(e.b) };
         break;
       case 'slab':
         after = e.holes
@@ -277,7 +279,19 @@ export const moveEntity = registerCommand({
         break;
       case 'mass':
       case 'zone':
+      case 'roof':
         after = { ...e, outline: shift(e.outline) };
+        break;
+      case 'column':
+        after = { ...e, at: shiftPt(e.at) };
+        break;
+      case 'stair':
+        after = {
+          ...e,
+          a: shiftPt(e.a),
+          b: shiftPt(e.b),
+          ...(e.ecke ? { ecke: shiftPt(e.ecke) } : {}),
+        };
         break;
       default:
         throw new CommandError(`«${e.kind}» kann nicht verschoben werden`);
