@@ -119,3 +119,84 @@ test('Offline-Warteschlange: Änderungen ohne Server fliessen beim Reconnect nac
     .toBe(3);
   server.kill();
 });
+
+/**
+ * Serie I / Batch B3 (R2, höchstes Risiko): Sync-Server-Härtung.
+ * (a) `/raeume` verrät bei Token-Pflicht keine Raumnamen ohne gültigen Token.
+ * (b) eine übergrosse Nachricht sprengt den `maxPayload`-Deckel — die
+ *     Verbindung wird verworfen statt den Server mit Speicher zu fluten.
+ */
+test('Räume-Schutz: /raeume ohne Token wird bei Token-Pflicht abgewiesen, mit Token beantwortet', async () => {
+  test.skip(!depsDa, 'tools/sync-server nicht installiert');
+  test.setTimeout(30_000);
+  const server = await startServer(8703, 'raeume-geheim');
+  try {
+    const ohneToken = await fetch('http://localhost:8703/raeume');
+    expect(ohneToken.status).toBe(401);
+
+    const falscherToken = await fetch('http://localhost:8703/raeume', {
+      headers: { Authorization: 'Bearer falsch' },
+    });
+    expect(falscherToken.status).toBe(401);
+
+    const mitToken = await fetch('http://localhost:8703/raeume', {
+      headers: { Authorization: 'Bearer raeume-geheim' },
+    });
+    expect(mitToken.status).toBe(200);
+    const json = (await mitToken.json()) as { raeume: unknown[]; tokenPflicht: boolean };
+    expect(json.tokenPflicht).toBe(true);
+    expect(Array.isArray(json.raeume)).toBe(true);
+  } finally {
+    server.kill();
+  }
+});
+
+test('Grössendeckel: eine übergrosse Nachricht wird verworfen, die Verbindung getrennt', async () => {
+  test.skip(!depsDa, 'tools/sync-server nicht installiert');
+  test.setTimeout(30_000);
+  const port = 8704;
+  const db = join(mkdtempSync(join(tmpdir(), 'kosmo-sync-')), 'test.sqlite');
+  const child = spawn('node', [SERVER], {
+    env: {
+      ...process.env,
+      KOSMO_SYNC_PORT: String(port),
+      KOSMO_SYNC_DB: db,
+      KOSMO_SYNC_MAX_BYTES: '2048', // kleiner Test-Deckel, damit die Probe eindeutig darüberliegt
+    },
+    stdio: 'ignore',
+  });
+  try {
+    const t0 = Date.now();
+    for (;;) {
+      try {
+        await fetch(`http://localhost:${port}/raeume`, { signal: AbortSignal.timeout(500) });
+        break;
+      } catch {
+        if (Date.now() - t0 > 10_000) throw new Error('Server startet nicht');
+        await new Promise((r) => setTimeout(r, 250));
+      }
+    }
+
+    const beendet = await new Promise<boolean>((resolve, reject) => {
+      const ws = new WebSocket(`ws://localhost:${port}/uebergross-test`);
+      const timeout = setTimeout(
+        () => reject(new Error('Verbindung bleibt offen — Grössendeckel griff nicht')),
+        10_000,
+      );
+      ws.addEventListener('open', () => {
+        ws.send(new Uint8Array(200_000)); // deutlich über dem 2048-Byte-Testdeckel
+      });
+      ws.addEventListener('close', () => {
+        clearTimeout(timeout);
+        resolve(true);
+      });
+      ws.addEventListener('error', () => {
+        clearTimeout(timeout);
+        resolve(true);
+      });
+    });
+    expect(beendet).toBe(true);
+  } finally {
+    child.kill();
+  }
+});
