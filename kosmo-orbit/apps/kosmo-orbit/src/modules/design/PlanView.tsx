@@ -273,10 +273,17 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
         onContextMenu={(e) => e.preventDefault()}
       >
         <defs>
-          {/* SIA-Schraffuren */}
-          <pattern id="hatch-beton" patternUnits="userSpaceOnUse" width="140" height="140" patternTransform="rotate(45)">
-            <rect width="140" height="140" fill="var(--k-plan-paper)" />
-            <line x1="0" y1="0" x2="0" y2="140" stroke="var(--k-ink)" strokeWidth="18" />
+          {/* SIA-Schraffuren — Beton: Tönung + Diagonale wie im Schnitt
+              (derive/schraffur.ts KATALOG.beton: abstand 1.8 Papier-mm,
+              tint #dad7d1). Die alte 140-mm-Kachel mit reinem Papierhintergrund
+              zeigte je nach Wanddicke fast keine Linie und keine Tönung —
+              «Beton» war optisch kaum von leerer Fläche zu unterscheiden.
+              Jetzt: feste Betontönung (Print-Konvention, nicht Theme-abhängig,
+              wie schon die Schnitt-Schraffur) + engere 40-mm-Kachel, damit auch
+              dünne Wände mehrere Linien zeigen. */}
+          <pattern id="hatch-beton" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(45)">
+            <rect width="40" height="40" fill="#dad7d1" />
+            <line x1="0" y1="0" x2="0" y2="40" stroke="#333" strokeWidth="5" />
           </pattern>
           <pattern id="hatch-daemmung" patternUnits="userSpaceOnUse" width="220" height="220" patternTransform="rotate(-45)">
             <rect width="220" height="220" fill="var(--k-plan-paper)" />

@@ -103,7 +103,11 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   // Join-Schlüssel enthält den Umbau-Status: Neu vereinigt sich nur mit Neu,
   // Bestand mit Bestand — Abbruch bleibt pro Wand (Kreuz je Bauteil).
   const coreByMaterial = new Map<string, Poly[]>();
-  const otherLayers: { material: string; fn: string; ren?: string; polys: Poly[] }[] = [];
+  // Dünnste beitragende Schichtdicke je Join-Schlüssel — die Verschneidungs-
+  // schwelle unten skaliert damit (dünne Bekleidung braucht wenig Überlappungs-
+  // länge, um an einer echten Ecke zu greifen).
+  const coreDicke = new Map<string, number>();
+  const otherLayers: { material: string; fn: string; ren?: string; polys: Poly[]; dicke: number }[] = [];
   const renClasses = (ren?: string): string[] => (ren ? [`renovation-${ren}`] : []);
 
   const phase = doc.settings.phase;
@@ -148,6 +152,8 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       const arr = coreByMaterial.get(key) ?? [];
       arr.push(...cutPolys);
       coreByMaterial.set(key, arr);
+      const dicke = assembly.layers.reduce((s, l) => s + l.thickness, 0);
+      coreDicke.set(key, Math.min(coreDicke.get(key) ?? Infinity, dicke));
     } else {
       for (const layer of wallLayerOutlines(wall, assembly)) {
         const meta = assembly.layers.find((l) => l.material === layer.material);
@@ -158,12 +164,14 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
           const arr = coreByMaterial.get(key) ?? [];
           arr.push(...cutPolys);
           coreByMaterial.set(key, arr);
+          coreDicke.set(key, Math.min(coreDicke.get(key) ?? Infinity, meta.thickness));
         } else if (meta) {
           otherLayers.push({
             material: layer.material,
             fn: meta.function,
             ...(ren ? { ren } : {}),
             polys: cutPolys,
+            dicke: meta.thickness,
           });
         }
       }
@@ -228,7 +236,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   }
 
   // Join: tragende Schichten gleichen Materials UND gleichen Umbau-Status vereinigen
-  const joinGruppen: { polys: Pt[][]; prio: number; classes: string[] }[] = [];
+  const joinGruppen: { polys: Pt[][]; prio: number; classes: string[]; dicke: number }[] = [];
   for (const [key, polys] of coreByMaterial) {
     const merged = union(polys as Poly[]);
     if (merged.length === 0) continue;
@@ -237,6 +245,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       polys: merged,
       prio: materialPrioritaet(doc, material!),
       classes: ['cut', 'tragend', `material-${material}`, ...renClasses(ren || undefined)],
+      dicke: coreDicke.get(key) ?? 100,
     });
   }
   for (const layer of otherLayers) {
@@ -245,15 +254,23 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       polys: layer.polys.map((p) => [...p]),
       prio: materialPrioritaet(doc, layer.material),
       classes: ['cut', layer.fn, `material-${layer.material}`, ...renClasses(layer.ren)],
+      dicke: layer.dicke,
     });
   }
   // Verschneidungsprioritäten (RE-ARCHICAD A1): die höhere Priorität schneidet
   // die niedrigere — Beton stösst durch, Dämmung weicht. Geschnitten wird nur
-  // bei ECHTER Überlappung (> 0.01 m², Fugen-Slivers zählen nicht); blosses
-  // Anstossen lässt die Polygone byte-identisch (Golden-Verträglichkeit).
+  // bei ECHTER Überlappung, Fugen-Slivers zählen nicht; blosses Anstossen lässt
+  // die Polygone byte-identisch (Golden-Verträglichkeit). Die Schwelle skaliert
+  // mit der EIGENEN Schichtdicke (mm-Länge × Dicke) statt einer festen
+  // Flächenzahl: eine feste 0.01-m²-Schwelle verlangt bei einer 15–20-mm-
+  // Bekleidung (Putz) eine Überlappungslänge von 500–650 mm, damit blieb sie an
+  // echten Aussenecken unbeschnitten und ragte sichtbar in die Nachbarwand
+  // hinein («komische Ecke» — Putz/Dämmung eines Bauteils überlagerte den
+  // Körper des anschliessenden). Mit der Dicke skaliert genügt schon wenige mm
+  // Länge, um zu greifen — deutlich über jedem realistischen Rundungsrauschen.
   // Geschnitten wird mit den UNGESCHNITTENEN Flächen der höheren Gruppen
   // (ArchiCAD-Semantik: die Geometrie der höheren gewinnt überall).
-  const MIN_UEBERLAPP_MM2 = 10_000;
+  const FUGE_LAENGE_MM = 5;
   const original = joinGruppen.map((g) => g.polys);
   for (let i = 0; i < joinGruppen.length; i++) {
     const g = joinGruppen[i]!;
@@ -264,7 +281,8 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     if (hoeher.length === 0) continue;
     const ueberlapp = intersect(g.polys, hoeher);
     const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
-    if (flaeche < MIN_UEBERLAPP_MM2) continue;
+    const schwelle = Math.max(g.dicke, 1) * FUGE_LAENGE_MM;
+    if (flaeche < schwelle) continue;
     g.polys = difference(g.polys, hoeher);
   }
   for (const g of joinGruppen) {

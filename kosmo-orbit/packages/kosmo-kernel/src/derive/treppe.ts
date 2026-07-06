@@ -103,7 +103,9 @@ export function treppenTeile(stair: Stair, floorHeight: number, elevation: numbe
         { a: m2, b: stair.b, z0: zMid, steigungen: n2, riser: spec.riser, going: laufLen / n2 },
       ],
       podeste: [
-        { outline: [plus(m1, nl, w / 2), plus(m2, nl, w / 2), plus(m2, nl, -w / 2), plus(m1, nl, -w / 2)], z: zMid },
+        // CCW (positive Fläche) wie die anderen Formen — sonst kippt die
+        // Deckfläche des Podests (deriveStair-Fächer nimmt CCW an).
+        { outline: [plus(m1, nl, -w / 2), plus(m2, nl, -w / 2), plus(m2, nl, w / 2), plus(m1, nl, w / 2)], z: zMid },
       ],
       gesamtLauflaenge: laufLen * 2,
       spec,

@@ -2,13 +2,13 @@
 <rect width="420" height="297" fill="white"/>
 <g transform="translate(171.60, 156.90) scale(0.01)">
 <path d="M 9000 -6000 L 9000 -6180 L 0 -6180 L 0 -6000 Z M 9180 0 L 9180 -6000 L 9000 -6000 L 9000 0 Z M 0 0 L 0 -6000 L -180 -6000 L -180 0 Z M 9000 0 L 7500 0 L 7500 180 L 9000 180 Z M 6500 0 L 4000 0 L 4000 180 L 6500 180 Z M 2000 0 L 0 0 L 0 180 L 2000 180 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="black" stroke-width="50"/>
-<path d="M 9000 -160 L 9000 -180 L 7500 -180 L 7500 -160 Z M 6500 -160 L 6500 -180 L 4000 -180 L 4000 -160 Z M 2000 -160 L 2000 -180 L 0 -180 L 0 -160 Z" fill-rule="evenodd" fill="white" stroke="black" stroke-width="35"/>
+<path d="M 8840 -180 L 7500 -180 L 7500 -160 L 8840 -160 Z M 6500 -180 L 4000 -180 L 4000 -160 L 6500 -160 Z M 2000 -180 L 160 -180 L 160 -160 L 2000 -160 Z" fill-rule="evenodd" fill="white" stroke="black" stroke-width="35"/>
 <path d="M 9000 0 L 9000 -160 L 7500 -160 L 7500 0 Z M 6500 0 L 6500 -160 L 4000 -160 L 4000 0 Z M 2000 0 L 2000 -160 L 0 -160 L 0 0 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
-<path d="M 8820 0 L 8820 -6000 L 8840 -6000 L 8840 0 Z" fill-rule="evenodd" fill="white" stroke="black" stroke-width="35"/>
+<path d="M 8840 -5840 L 8820 -5840 L 8820 -160 L 8840 -160 Z" fill-rule="evenodd" fill="white" stroke="black" stroke-width="35"/>
 <path d="M 8840 0 L 8840 -6000 L 9000 -6000 L 9000 0 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
-<path d="M 9000 -5820 L 0 -5820 L 0 -5840 L 9000 -5840 Z" fill-rule="evenodd" fill="white" stroke="black" stroke-width="35"/>
+<path d="M 8840 -5820 L 8840 -5840 L 160 -5840 L 160 -5820 Z" fill-rule="evenodd" fill="white" stroke="black" stroke-width="35"/>
 <path d="M 9000 -5840 L 0 -5840 L 0 -6000 L 9000 -6000 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
-<path d="M 180 -6000 L 180 0 L 160 0 L 160 -6000 Z" fill-rule="evenodd" fill="white" stroke="black" stroke-width="35"/>
+<path d="M 180 -5840 L 160 -5840 L 160 -160 L 180 -160 Z" fill-rule="evenodd" fill="white" stroke="black" stroke-width="35"/>
 <path d="M 160 -6000 L 160 0 L 0 0 L 0 -6000 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
 <line x1="2000" y1="-180" x2="2000" y2="180" stroke="black" stroke-width="25"/>
 <line x1="4000" y1="-180" x2="4000" y2="180" stroke="black" stroke-width="25"/>

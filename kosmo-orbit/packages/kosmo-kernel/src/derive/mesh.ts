@@ -163,10 +163,15 @@ export function extrudeWallWithOpenings(
   const tris = earcut(flat, holeIdx.length ? holeIdx : undefined, 2);
   const nPts = flat.length / 2;
 
-  // Zwei Wandflächen (links off=+offsetLeft, rechts off=−offsetRight)
+  // Zwei Wandflächen (links off=+offsetLeft, rechts off=−offsetRight).
+  // Achtung: die Profil-Ebene (s,z) liegt gespiegelt in der rechten Fläche
+  // (Blick von aussen kehrt die s-Achse um) — die earcut-Rohwindung passt
+  // daher nur nach Flip zur deklarierten Normalen; ungeflippt zeigt die
+  // Dreieckswindung nach innen und die Fläche wird von aussen weggeculled
+  // (nur die Innenseite blieb sichtbar — der gemeldete Wand-Bug).
   for (const side of [
-    { off: offsetLeft, n: [nx, ny, 0] as const, flip: false },
-    { off: -offsetRight, n: [-nx, -ny, 0] as const, flip: true },
+    { off: offsetLeft, n: [nx, ny, 0] as const, flip: true },
+    { off: -offsetRight, n: [-nx, -ny, 0] as const, flip: false },
   ]) {
     const base = b.pos.length / 3;
     for (let i = 0; i < nPts; i++) {
@@ -205,8 +210,10 @@ export function extrudeWallWithOpenings(
   for (const o of clamped) {
     quad(P(o.s0, offsetLeft, o.z0), P(o.s0, -offsetRight, o.z0), P(o.s1, -offsetRight, o.z0), P(o.s1, offsetLeft, o.z0), [0, 0, 1]); // Sturz unten? nein: Brüstung oben
     quad(P(o.s0, offsetLeft, o.z1), P(o.s1, offsetLeft, o.z1), P(o.s1, -offsetRight, o.z1), P(o.s0, -offsetRight, o.z1), [0, 0, -1]); // Sturz
-    quad(P(o.s0, offsetLeft, o.z0), P(o.s0, offsetLeft, o.z1), P(o.s0, -offsetRight, o.z1), P(o.s0, -offsetRight, o.z0), [-dirX.x, -dirX.y, 0]);
-    quad(P(o.s1, -offsetRight, o.z0), P(o.s1, -offsetRight, o.z1), P(o.s1, offsetLeft, o.z1), P(o.s1, offsetLeft, o.z0), [dirX.x, dirX.y, 0]);
+    // Leibungswindung war invertiert (gleicher Ursache wie oben) — reihenfolge
+    // gedreht, damit die Dreiecksnormale zur deklarierten Normalen passt.
+    quad(P(o.s0, offsetLeft, o.z0), P(o.s0, -offsetRight, o.z0), P(o.s0, -offsetRight, o.z1), P(o.s0, offsetLeft, o.z1), [-dirX.x, -dirX.y, 0]);
+    quad(P(o.s1, -offsetRight, o.z0), P(o.s1, offsetLeft, o.z0), P(o.s1, offsetLeft, o.z1), P(o.s1, -offsetRight, o.z1), [dirX.x, dirX.y, 0]);
     // Öffnungskanten für das Linien-Overlay
     b.edgeLine(...P(o.s0, offsetLeft, o.z0), ...P(o.s1, offsetLeft, o.z0));
     b.edgeLine(...P(o.s1, offsetLeft, o.z0), ...P(o.s1, offsetLeft, o.z1));

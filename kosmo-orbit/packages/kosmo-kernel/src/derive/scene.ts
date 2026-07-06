@@ -513,8 +513,9 @@ function deriveStair(doc: KosmoDoc, stair: Stair): GeometryArtifact | null {
       if (s1 - s0 < 1) continue;
       const zt = lauf.z0 + (i + 1) * lauf.riser;
       const zb = lauf.z0 + i * lauf.riser;
-      // Trittfläche
-      quad(P(s0, half, zt), P(s1, half, zt), P(s1, -half, zt), P(s0, -half, zt), 0, 0, 1);
+      // Trittfläche (Windung war invertiert: die begehbare Oberseite culled
+      // sich von oben weg, nur die Unterseite blieb sichtbar)
+      quad(P(s0, half, zt), P(s0, -half, zt), P(s1, -half, zt), P(s1, half, zt), 0, 0, 1);
       // Setzstufe
       quad(P(s0, -half, zb), P(s0, -half, zt), P(s0, half, zt), P(s0, half, zb), -d.x, -d.y, 0);
       // Wangen (Seiten)
