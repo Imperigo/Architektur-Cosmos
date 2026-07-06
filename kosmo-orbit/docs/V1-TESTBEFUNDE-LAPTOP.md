@@ -31,9 +31,13 @@ Oberflächen-Systematik.
       *(Einzige Achse im Code; falls andere gemeint — gegenprüfen.)*
 - [x] **Zeichen-Shortcuts** W/Z/V/D/T/C/S/F/Esc im `?`-Overlay.
 
-## Batch T4 — Konkrete Feature-Bugs ⏳
-- [ ] **KosmoVis** läuft auf einen Fehler (Crash) — Ursache finden + fixen.
-- [ ] **Publikations-Set „speichern" passiert nichts** — Persistenz/Feedback.
+## Batch T4 — Konkrete Feature-Bugs ✅
+- [x] **KosmoVis** läuft auf einen Fehler (Crash) — Ursache gefunden + gefixt
+      (T4a, ROADMAP 140): `evaluiereGraph()` griff unbedingt auf `n.params[...]`
+      zu; ein `VisNode` ohne `params` (fremder `.kosmo`-Import) liess die Station
+      abstürzen. Jetzt defensiver Zugriff.
+- [x] **Publikations-Set „speichern"** (T4a, ROADMAP 140): persistiert jetzt +
+      Erfolgsmeldung statt stiller No-Op.
 - [x] **Pop-up-Boxen** (T4b, ROADMAP 142): zentrale `.k-dialog`-Regeln (Textumbruch + Höhen-Deckel),
       Werkzeug-Setup/Stützenraster als Mehrspalten-Grid — kein Überlauf, keine Scrollbar mehr.
 - [x] **KosmoReference** (T4c, ROADMAP 144): «Projekt mit 3D-Skizze lässt sich
