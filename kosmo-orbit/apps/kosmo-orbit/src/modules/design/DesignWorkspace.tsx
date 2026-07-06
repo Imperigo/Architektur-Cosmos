@@ -61,6 +61,22 @@ function snap(p: Pt, magnet?: FangKandidaten): Pt {
   return { x: Math.round(p.x / SNAP) * SNAP, y: Math.round(p.y / SNAP) * SNAP };
 }
 
+/**
+ * T7 (Fokus-Systematik): dezente Sektions-Beschriftung innerhalb der
+ * Werkzeugleiste — «selten»-Stufe, macht die Gruppierung lesbar, ohne
+ * eigenes Gewicht zu beanspruchen (docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md).
+ */
+function Trennlabel({ children }: { children: string }) {
+  return (
+    <span
+      className="k-selten"
+      style={{ textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--k-ink-faint)', padding: '0 2px' }}
+    >
+      {children}
+    </span>
+  );
+}
+
 // T3: Werkzeuge, die eine Punktkette setzen — bekommen Ortho-Sperre (Shift)
 // und Fluchtlinien an bestehenden Punkten. Auswahl/Skizze bleiben unverändert
 // (Skizze hat ihr eigenes Freihand-Overlay, Auswahl darf T1 nicht anfassen).
@@ -124,6 +140,10 @@ export function DesignWorkspace() {
   const [drawOffen, setDrawOffen] = useState(false);
   const [listeOffen, setListeOffen] = useState(false);
   const [rasterOffen, setRasterOffen] = useState(false);
+  // T7: Projekt-Lebenszyklus — Phase/Bemassungsstil sind projektspezifisch und
+  // wechseln über Jahre selten; sie stehen nicht mehr dauerhaft in der Werk-
+  // zeugzeile, sondern im Projekt-Menü (Fokus-Stufe «selten»).
+  const [projektMenuOffen, setProjektMenuOffen] = useState(false);
   const [wohnungstyp, setWohnungstyp] = useState<string | null>(null);
   const [zielGf, setZielGf] = useState<number | null>(null);
   const [maxHoeheM, setMaxHoeheM] = useState(25);
@@ -601,6 +621,7 @@ export function DesignWorkspace() {
           </select>
         )}
         <div style={{ flex: 1 }} />
+        <Trennlabel>Ansicht</Trennlabel>
         {(
           [
             ['3d', '3D'],
@@ -620,6 +641,7 @@ export function DesignWorkspace() {
           </KButton>
         ))}
         <span style={{ width: 12 }} />
+        <Trennlabel>Export</Trennlabel>
         <KButton size="sm" tone="ghost" onClick={() => void exportPlanPdf()} data-testid="export-pdf">
           PDF
         </KButton>
@@ -681,6 +703,7 @@ export function DesignWorkspace() {
         >
           Splat laden
         </KButton>
+        <Trennlabel>Ebenen</Trennlabel>
         <KButton
           size="sm"
           tone={texturen ? 'accent' : 'ghost'}
@@ -750,64 +773,22 @@ export function DesignWorkspace() {
           </select>
         )}
         <span style={{ width: 12 }} />
-        {/* SIA-Phase (Owner 03.07.): Detaillierungsgrad der Pläne; koppelt den passenden Bemassungs-Stil */}
-        <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
-          Phase
-          <select
-            value={doc.settings.phase}
-            data-testid="phase-stil"
-            onChange={(e) => {
-              const phase = e.target.value as 'vorprojekt' | 'bauprojekt' | 'werkplan';
-              const bemassung = {
-                vorprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
-                // SIA 400 C.2.2 (Lehrheft-Abgleich): Bauprojekt nur Haupt-/Gesamtmasse
-                bauprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
-                werkplan: { aussenKetten: 'beide' as const, innenKetten: true, hoehenKoten: true },
-              }[phase];
-              const { history } = useProject.getState();
-              history.beginGroup();
-              try {
-                runCommand('design.phaseSetzen', { phase });
-                runCommand('design.bemassungSetzen', bemassung);
-              } finally {
-                history.endGroup();
-              }
-              // B5: Massstabs-Automatik — Vorschlag, kein Zwang (Publish wählt frei)
-              const label = { vorprojekt: 'Vorprojekt', bauprojekt: 'Bauprojekt', werkplan: 'Werkplan' }[phase];
-              setMassstabHinweis(`${label}: Plan-Export neu 1:${PHASEN_MASSSTAB[phase]} (SIA-Empfehlung).`);
-            }}
-            style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+        {/* T7 (Projekt-Lebenszyklus): Phase/Bemassungsstil sind projektspezifisch
+            und wechseln über Jahre selten — sie stehen nicht mehr dauerhaft in
+            der Werkzeugzeile, sondern hinter diesem Umschalter (Fokus-Stufe
+            «selten», docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md). Nichts entfernt:
+            dieselben Commands, dieselben data-testids, nur der Ort ist neu. */}
+        <span className="k-selten" style={{ display: 'inline-flex' }}>
+          <KButton
+            size="sm"
+            tone={projektMenuOffen ? 'accent' : 'ghost'}
+            data-testid="projekt-menu-toggle"
+            title="Projekt-Einstellungen — SIA-Phase, Bemassungsstil (selten geändert)"
+            onClick={() => setProjektMenuOffen((o) => !o)}
           >
-            <option value="vorprojekt">Vorprojekt</option>
-            <option value="bauprojekt">Bauprojekt</option>
-            <option value="werkplan">Werkplan</option>
-          </select>
-        </label>
-        {/* Bemassungs-Stil (V2-A5): Presets als Projekteinstellung, undo-fähig */}
-        <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
-          Masse
-          <select
-            value={bemassungPreset}
-            data-testid="bemassung-stil"
-            onChange={(e) => {
-              const presets: Record<string, { aussenKetten: 'beide' | 'gesamt' | 'keine'; innenKetten: boolean; hoehenKoten: boolean }> = {
-                wettbewerb: { aussenKetten: 'gesamt', innenKetten: false, hoehenKoten: true },
-                werkplan: { aussenKetten: 'beide', innenKetten: true, hoehenKoten: true },
-                aus: { aussenKetten: 'keine', innenKetten: false, hoehenKoten: false },
-                standard: { aussenKetten: 'beide', innenKetten: false, hoehenKoten: true },
-              };
-              const p = presets[e.target.value];
-              if (p) runCommand('design.bemassungSetzen', p);
-            }}
-            style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
-          >
-            <option value="standard">Standard</option>
-            <option value="wettbewerb">Wettbewerb</option>
-            <option value="werkplan">Werkplan</option>
-            <option value="aus">Aus</option>
-            {bemassungPreset === 'eigen' && <option value="eigen">eigen</option>}
-          </select>
-        </label>
+            Projekt ▾
+          </KButton>
+        </span>
         <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
           ↩ Rückgängig
         </KButton>
@@ -815,6 +796,87 @@ export function DesignWorkspace() {
           ↪ Wiederholen
         </KButton>
       </div>
+
+      {projektMenuOffen && (
+        <div
+          data-testid="projekt-menu"
+          style={{
+            display: 'flex',
+            gap: 16,
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            padding: '8px 14px',
+            borderBottom: '1px solid var(--k-line)',
+            background: 'var(--k-surface)',
+            fontSize: 12.5,
+          }}
+        >
+          <span className="k-sekundaer" style={{ textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Projekt-Einstellungen
+          </span>
+          {/* SIA-Phase (Owner 03.07.): Detaillierungsgrad der Pläne; koppelt den passenden Bemassungs-Stil */}
+          <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+            Phase
+            <select
+              value={doc.settings.phase}
+              data-testid="phase-stil"
+              onChange={(e) => {
+                const phase = e.target.value as 'vorprojekt' | 'bauprojekt' | 'werkplan';
+                const bemassung = {
+                  vorprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
+                  // SIA 400 C.2.2 (Lehrheft-Abgleich): Bauprojekt nur Haupt-/Gesamtmasse
+                  bauprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
+                  werkplan: { aussenKetten: 'beide' as const, innenKetten: true, hoehenKoten: true },
+                }[phase];
+                const { history } = useProject.getState();
+                history.beginGroup();
+                try {
+                  runCommand('design.phaseSetzen', { phase });
+                  runCommand('design.bemassungSetzen', bemassung);
+                } finally {
+                  history.endGroup();
+                }
+                // B5: Massstabs-Automatik — Vorschlag, kein Zwang (Publish wählt frei)
+                const label = { vorprojekt: 'Vorprojekt', bauprojekt: 'Bauprojekt', werkplan: 'Werkplan' }[phase];
+                setMassstabHinweis(`${label}: Plan-Export neu 1:${PHASEN_MASSSTAB[phase]} (SIA-Empfehlung).`);
+              }}
+              style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+            >
+              <option value="vorprojekt">Vorprojekt</option>
+              <option value="bauprojekt">Bauprojekt</option>
+              <option value="werkplan">Werkplan</option>
+            </select>
+          </label>
+          {/* Bemassungs-Stil (V2-A5): Presets als Projekteinstellung, undo-fähig */}
+          <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+            Masse
+            <select
+              value={bemassungPreset}
+              data-testid="bemassung-stil"
+              onChange={(e) => {
+                const presets: Record<string, { aussenKetten: 'beide' | 'gesamt' | 'keine'; innenKetten: boolean; hoehenKoten: boolean }> = {
+                  wettbewerb: { aussenKetten: 'gesamt', innenKetten: false, hoehenKoten: true },
+                  werkplan: { aussenKetten: 'beide', innenKetten: true, hoehenKoten: true },
+                  aus: { aussenKetten: 'keine', innenKetten: false, hoehenKoten: false },
+                  standard: { aussenKetten: 'beide', innenKetten: false, hoehenKoten: true },
+                };
+                const p = presets[e.target.value];
+                if (p) runCommand('design.bemassungSetzen', p);
+              }}
+              style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+            >
+              <option value="standard">Standard</option>
+              <option value="wettbewerb">Wettbewerb</option>
+              <option value="werkplan">Werkplan</option>
+              <option value="aus">Aus</option>
+              {bemassungPreset === 'eigen' && <option value="eigen">eigen</option>}
+            </select>
+          </label>
+          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+            Ändert sich mit der SIA-Phase des Projekts — bleibt über Jahre stabil, gehört nicht in die Dauerleiste.
+          </span>
+        </div>
+      )}
 
       {sonneOffen && (
         <div

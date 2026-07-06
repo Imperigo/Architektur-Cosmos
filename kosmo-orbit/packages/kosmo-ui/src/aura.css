@@ -312,6 +312,35 @@ progress {
   word-break: break-word;
 }
 
+/* Fokus-/Wichtigkeits-Systematik (T7, docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md):
+   drei Stufen ordnen jedes Element nach Häufigkeit/Zentralität. Auf Text-
+   knoten, die wir selbst ohne kollidierende Inline-Styles setzen (Familien-
+   Titel, Projekt-Menü, V2-Platzhalter), bestimmt die Klasse auch Grösse/
+   Gewicht; auf bestehenden Komponenten (KButton/Badge setzen Grösse/Deckkraft
+   bereits inline) wirkt sie über die Deckkraft der ganzen Gruppe — das
+   überschreibt kein Inline-Attribut eines Kindes, sondern dimmt den
+   gerenderten Teilbaum als Ganzes (das Kind selbst bleibt bei opacity:1). */
+.k-primaer {
+  opacity: 1;
+  font-size: 14px;
+  font-weight: 620;
+}
+.k-sekundaer {
+  opacity: 0.92;
+  font-size: 12.5px;
+  font-weight: 520;
+}
+.k-selten {
+  opacity: 0.6;
+  font-size: 11.5px;
+  font-weight: 500;
+  transition: opacity var(--k-motion-fast);
+}
+.k-selten:hover,
+.k-selten:focus-within {
+  opacity: 1;
+}
+
 /* Kacheln der Zentrale: Hairline-Akzent + leiser Lift */
 .k-kachel {
   transition:

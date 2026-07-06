@@ -53,6 +53,8 @@ import { setDeepLink } from './state/deep-link';
 import { setzeAktuelleStation } from './state/auftragsbuch';
 import { hydriereJournal } from './state/journal-store';
 import { qrSvg } from './state/qr';
+import { STATION_FAMILIEN, V2_PLATZHALTER, stationFamilie } from './state/stationen';
+import { fokusKlasse, fokusStufe } from './state/fokus';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
 
@@ -302,85 +304,97 @@ export function App() {
           </>
         )}
         <div style={{ flex: 1 }} />
-        <button
-          onClick={() => setSyncOpen(!syncOpen)}
-          data-testid="sync-toggle"
-          style={{ all: 'unset', cursor: 'pointer' }}
-        >
-          <Badge
-            hue={
-              syncStatus === 'live'
-                ? 'var(--k-success)'
-                : syncStatus === 'aus'
-                  ? 'var(--k-ink-faint)'
-                  : 'var(--k-warning)'
-            }
+        {/* Fokus-Systematik (docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md): die Stufe
+            sitzt am umschliessenden Element — opacity wirkt so auf die ganze
+            Gruppe, ohne die eigenen Inline-Styles der Kinder zu überschreiben. */}
+        <span className={fokusKlasse(fokusStufe('sync'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <button
+            onClick={() => setSyncOpen(!syncOpen)}
+            data-testid="sync-toggle"
+            style={{ all: 'unset', cursor: 'pointer' }}
           >
-            {syncStatus === 'live' ? `Sync live · ${peers}` : syncStatus === 'aus' ? 'Sync aus' : syncStatus}
-          </Badge>
-        </button>
-        <Hairline vertical />
-        <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
-          Speichern
-        </KButton>
-        <KButton
-          size="sm"
-          tone="ghost"
-          data-testid="open-project"
-          onClick={() => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.kosmo,application/zip';
-            input.onchange = () => {
-              const f = input.files?.[0];
-              if (f) {
-                void openProjectFile(f)
-                  .then(() => setScreen('design'))
-                  .catch((err) => {
-                    meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`);
-                  });
+            <Badge
+              hue={
+                syncStatus === 'live'
+                  ? 'var(--k-success)'
+                  : syncStatus === 'aus'
+                    ? 'var(--k-ink-faint)'
+                    : 'var(--k-warning)'
               }
-            };
-            input.click();
-          }}
-        >
-          Öffnen
-        </KButton>
+            >
+              {syncStatus === 'live' ? `Sync live · ${peers}` : syncStatus === 'aus' ? 'Sync aus' : syncStatus}
+            </Badge>
+          </button>
+        </span>
         <Hairline vertical />
-        <button
-          onClick={() => setKosmoOpen(!kosmoOpen)}
-          data-testid="kosmo-toggle"
-          style={{ all: 'unset', cursor: 'pointer' }}
-          aria-label="Kosmo öffnen/schliessen"
-        >
-          <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
-        </button>
+        <span className={fokusKlasse(fokusStufe('speichern'))} style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+          <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
+            Speichern
+          </KButton>
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="open-project"
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = '.kosmo,application/zip';
+              input.onchange = () => {
+                const f = input.files?.[0];
+                if (f) {
+                  void openProjectFile(f)
+                    .then(() => setScreen('design'))
+                    .catch((err) => {
+                      meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`);
+                    });
+                }
+              };
+              input.click();
+            }}
+          >
+            Öffnen
+          </KButton>
+        </span>
         <Hairline vertical />
-        <KButton tone="ghost" size="sm" onClick={() => setTheme(theme === 'paper' ? 'ink' : 'paper')}>
-          {theme === 'paper' ? 'Tinte' : 'Papier'}
-        </KButton>
-        <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center', marginLeft: 4 }}>
-          {AKZENTE.map((a) => (
-            <button
-              key={a.key}
-              onClick={() => setAkzent(a.key)}
-              title={`Akzent ${a.name}`}
-              aria-label={`Akzent ${a.name}`}
-              data-testid={`akzent-${a.key}`}
-              style={{
-                all: 'unset',
-                cursor: 'pointer',
-                width: 12,
-                height: 12,
-                borderRadius: 999,
-                background: a.farbe ?? 'var(--k-technik)',
-                boxShadow:
-                  akzent === a.key
-                    ? '0 0 0 1.5px var(--k-field), 0 0 0 3px var(--k-technik)'
-                    : '0 0 0 1px var(--k-line-strong)',
-              }}
-            />
-          ))}
+        <span className={fokusKlasse(fokusStufe('kosmo'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <button
+            onClick={() => setKosmoOpen(!kosmoOpen)}
+            data-testid="kosmo-toggle"
+            style={{ all: 'unset', cursor: 'pointer' }}
+            aria-label="Kosmo öffnen/schliessen"
+          >
+            <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
+          </button>
+        </span>
+        <Hairline vertical />
+        {/* Selten: Thema + Akzent ändern sich fast nie — gedimmt, bis Hover/Fokus */}
+        <span className={fokusKlasse(fokusStufe('thema'))} style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+          <KButton tone="ghost" size="sm" onClick={() => setTheme(theme === 'paper' ? 'ink' : 'paper')}>
+            {theme === 'paper' ? 'Tinte' : 'Papier'}
+          </KButton>
+          <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center', marginLeft: 4 }}>
+            {AKZENTE.map((a) => (
+              <button
+                key={a.key}
+                onClick={() => setAkzent(a.key)}
+                title={`Akzent ${a.name}`}
+                aria-label={`Akzent ${a.name}`}
+                data-testid={`akzent-${a.key}`}
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  width: 12,
+                  height: 12,
+                  borderRadius: 999,
+                  background: a.farbe ?? 'var(--k-technik)',
+                  boxShadow:
+                    akzent === a.key
+                      ? '0 0 0 1.5px var(--k-field), 0 0 0 3px var(--k-technik)'
+                      : '0 0 0 1px var(--k-line-strong)',
+                }}
+              />
+            ))}
+          </span>
         </span>
       </header>
 
@@ -650,44 +664,104 @@ export function App() {
               )}
               <ProjektListe onOpen={() => setScreen('design')} />
               <VariantenArchiv onOpen={() => setScreen('design')} />
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                  gap: 14,
-                }}
-              >
-                {sortierteModule.map((m) => (
-                  <Panel
-                    key={m.id}
-                    onClick={() => oeffneModul(m)}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`${m.name} öffnen`}
-                    onKeyDown={(e: React.KeyboardEvent) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        oeffneModul(m);
-                      }
-                    }}
-                    data-testid={`module-${m.id}`}
-                    className="k-kachel"
+              {/* T7: Stations-Hierarchie — Kosmo bleibt eigenständig VOR den
+                  Familien (übergeordnete Intelligenz, keine Kachel-Familie),
+                  danach Design → Data → Büro, dann die dezenten V2-Platzhalter.
+                  Jede Kachel behält data-testid="module-<id>" + oeffneModul()
+                  unverändert — nur die Anordnung ist neu (docs/OBERFLAECHE-
+                  FOKUS-SYSTEMATIK.md). */}
+              {(() => {
+                const kosmoKachel = sortierteModule.find((m) => stationFamilie(m.id) === 'kosmo');
+                const kachelGrid = (mods: typeof sortierteModule) => (
+                  <div
                     style={{
-                      display: 'flex',
-                      gap: 12,
-                      alignItems: 'center',
-                      cursor: m.screen || m.deepLink ? 'pointer' : 'default',
-                      opacity: m.screen || m.deepLink ? 1 : 0.55,
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                      gap: 14,
                     }}
                   >
-                    <OrbitMark module={m.id} size={34} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontWeight: 550 }}>{m.name}</div>
-                      <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>{m.desc}</div>
+                    {mods.map((m) => (
+                      <Panel
+                        key={m.id}
+                        onClick={() => oeffneModul(m)}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`${m.name} öffnen`}
+                        onKeyDown={(e: React.KeyboardEvent) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            oeffneModul(m);
+                          }
+                        }}
+                        data-testid={`module-${m.id}`}
+                        className="k-kachel"
+                        style={{
+                          display: 'flex',
+                          gap: 12,
+                          alignItems: 'center',
+                          cursor: m.screen || m.deepLink ? 'pointer' : 'default',
+                          opacity: m.screen || m.deepLink ? 1 : 0.55,
+                        }}
+                      >
+                        <OrbitMark module={m.id} size={34} />
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontWeight: 550 }}>{m.name}</div>
+                          <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>{m.desc}</div>
+                        </div>
+                      </Panel>
+                    ))}
+                  </div>
+                );
+                return (
+                  <div style={{ display: 'grid', gap: 26 }}>
+                    {kosmoKachel && (
+                      <div data-testid="familie-kosmo" style={{ display: 'grid', gap: 10 }}>
+                        <div className="k-primaer">Kosmo — die steuernde Intelligenz, immer erreichbar</div>
+                        <div style={{ maxWidth: 340 }}>{kachelGrid([kosmoKachel])}</div>
+                      </div>
+                    )}
+                    {STATION_FAMILIEN.map((familie) => {
+                      const mods = sortierteModule.filter((m) => stationFamilie(m.id) === familie.id);
+                      if (mods.length === 0) return null;
+                      return (
+                        <div key={familie.id} data-testid={`familie-${familie.id}`} style={{ display: 'grid', gap: 10 }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+                            <span className="k-primaer">{familie.titel}</span>
+                            <span className="k-sekundaer" style={{ color: 'var(--k-ink-faint)' }}>
+                              — {familie.untertitel}
+                            </span>
+                          </div>
+                          {kachelGrid(mods)}
+                        </div>
+                      );
+                    })}
+                    <div data-testid="familie-v2" style={{ display: 'grid', gap: 10 }}>
+                      <span className="k-selten">V2 — geplante Abteilungen, bald</span>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                          gap: 14,
+                        }}
+                      >
+                        {V2_PLATZHALTER.map((p) => (
+                          <Panel
+                            key={p.id}
+                            data-testid={`v2-platzhalter-${p.id}`}
+                            className="k-selten"
+                            style={{ display: 'flex', gap: 12, alignItems: 'center', cursor: 'default' }}
+                          >
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontWeight: 550 }}>{p.name} · bald</div>
+                              <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>{p.kurzbeschrieb}</div>
+                            </div>
+                          </Panel>
+                        ))}
+                      </div>
                     </div>
-                  </Panel>
-                ))}
-              </div>
+                  </div>
+                );
+              })()}
               <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)' }} data-testid="about-zeile">
                 KosmoOrbit V1.0 · lokal-first · Installation: docs/INSTALL.md · Update = neuer Installer (Signierung folgt zuhause)
               </div>

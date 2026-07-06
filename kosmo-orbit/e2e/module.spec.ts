@@ -577,6 +577,9 @@ test('Bemassungs-Stile: Werkplan zeigt Innenkette + Höhenkoten, Wettbewerb nich
       openingType: 'tuer', center: 3000, width: 900, height: 2200, sill: 0,
     });
   });
+  // T7: Phase/Bemassung sitzen jetzt im Projekt-Menü (selten geändert,
+  // docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md) — einmal öffnen, bleibt für den Test offen.
+  await page.click('[data-testid="projekt-menu-toggle"]');
   // Standard: Aussenketten ja, Innenkette nein
   await expect(page.locator('[data-testid="dim-kette-oeffnung"]').first()).toBeVisible();
   await expect(page.locator('[data-testid="dim-kette-innen"]')).toHaveCount(0);
@@ -609,6 +612,9 @@ test('SIA-Phase: Vorprojekt reduziert die Darstellung, Werkplan detailliert voll
       wallId: wand.patches[0]!.id, openingType: 'tuer', center: 4500, width: 1000, height: 2200, sill: 0,
     });
   });
+  // T7: Phase/Bemassung sitzen jetzt im Projekt-Menü (selten geändert,
+  // docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md) — einmal öffnen, bleibt für den Test offen.
+  await page.click('[data-testid="projekt-menu-toggle"]');
   const planview = page.locator('[data-testid="planview"]');
   // Default Werkplan: Dämmschicht als eigene Region (Schraffur-Füllung)
   await expect(planview.locator('path[fill="url(#hatch-daemmung)"]').first()).toBeAttached();
@@ -1526,6 +1532,8 @@ test('Massstabs-Automatik (Vision B5): Phasenwechsel schlägt SIA-Massstab vor',
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
   await page.click('[data-testid="module-design"]');
+  // T7: Phase sitzt jetzt im Projekt-Menü (selten geändert) statt in der Dauerleiste.
+  await page.click('[data-testid="projekt-menu-toggle"]');
   await page.selectOption('[data-testid="phase-stil"]', 'vorprojekt');
   await expect(page.locator('[data-testid="massstab-hinweis"]')).toContainText('1:200');
   await page.selectOption('[data-testid="phase-stil"]', 'werkplan');
@@ -1571,7 +1579,12 @@ test('Rollen-Vorstufe (Vision D2): Rolle «Ausführung» rückt KosmoPublish nac
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
-  const ersteKachel = page.locator('[data-testid^="module-"]').first();
+  // T7: die Zentrale gruppiert die Kacheln jetzt nach Familien, mit Kosmo
+  // (module-speak) bewusst VOR den Familien (übergeordnete Intelligenz,
+  // docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md) — «erste Kachel der ganzen Seite»
+  // wäre darum immer Kosmo, unabhängig von der Rolle. Die Rollen-Priorität
+  // wirkt weiterhin, aber INNERHALB der KosmoDesign-Familie — dort scopen wir.
+  const ersteKachel = page.locator('[data-testid="familie-design"] [data-testid^="module-"]').first();
   await expect(ersteKachel).toHaveAttribute('data-testid', 'module-design');
   await page.selectOption('[data-testid="rolle-select"]', 'ausfuehrung');
   await expect(ersteKachel).toHaveAttribute('data-testid', 'module-publish');
