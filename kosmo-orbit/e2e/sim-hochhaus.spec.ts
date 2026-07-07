@@ -163,11 +163,14 @@ test('Vollsimulation Hochhaus: Tragwerk aus Raster → Fassadenmodule N/S/W/O �
 
   // ---------------------------------------------------------------------
   // 5) Kern trägt die Erschliessung (Leitidee): eine zentrale
-  //    Treppenhaus-Zone in der Mitte des Grundrisses (nicht an der Fassade —
-  //    ein echtes Punkthochhaus-Merkmal), eine gerade Treppe darin, eine
-  //    Regelgeschoss-Zone über den ganzen Fussabdruck (Zonen dürfen sich
-  //    überlappen — der Raumgraph bevorzugt die Zone MIT Raumtyp bei der
-  //    Punktprobe) und eine Zonentür an der Kerngrenze für den Fluchtweg.
+  //    Treppenhaus-Zone (raumTyp=treppenhaus) im Grundriss, eine gerade
+  //    Treppe darin, und eine Regelgeschoss-Zone im Nordband, die die
+  //    Nordkante des Kerns TEILT (adjazent, nicht überlappend). Der
+  //    Raumgraph bildet aus einer gemeinsamen, kollinearen Umriss-Kante ohne
+  //    Wand dazwischen automatisch einen «offenen» Übergang (raumgraph.ts
+  //    `offeneKante`) — das ist der Fluchtweg-Portal zwischen Wohnraum und
+  //    Treppenhaus. (Eine NESTED/überlappende Zone teilt keine Kante → kein
+  //    Portal → «keine Verbindung»; Lehre in SIM-BEFUNDE H-13.)
   // ---------------------------------------------------------------------
   const kernMitteX = breite / 2;
   const kernMitteY = tiefe / 2;
@@ -194,14 +197,16 @@ test('Vollsimulation Hochhaus: Tragwerk aus Raster → Fassadenmodule N/S/W/O �
           { x: kern.minX, y: kern.maxY },
         ],
       }); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.zoneErstellen' Z.333-363]
+      // Regelgeschoss NORDBAND: teilt die Nordkante des Kerns (y=kern.maxY,
+      // x∈[kern.minX,kern.maxX]) → «offener» Übergang im Raumgraph, ohne Wand.
       k.run('design.zoneErstellen', {
         storeyId,
         name: 'Regelgeschoss',
         sia: 'HNF',
         program: 'marktgerecht',
         outline: [
-          { x: 0, y: 0 },
-          { x: breite, y: 0 },
+          { x: 0, y: kern.maxY },
+          { x: breite, y: kern.maxY },
           { x: breite, y: tiefe },
           { x: 0, y: tiefe },
         ],
@@ -211,7 +216,6 @@ test('Vollsimulation Hochhaus: Tragwerk aus Raster → Fassadenmodule N/S/W/O �
         a: { x: kern.minX + 2000, y: (kern.minY + kern.maxY) / 2 },
         b: { x: kern.minX + 5000, y: (kern.minY + kern.maxY) / 2 },
       }); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.treppeErstellen' Z.936-971]
-      k.run('design.tuerSetzen', { storeyId, at: { x: kern.maxX, y: (kern.minY + kern.maxY) / 2 } }); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.tuerSetzen' Z.1309-1324]
     },
     { storeyId, breite, tiefe, kern },
   );
@@ -247,15 +251,23 @@ test('Vollsimulation Hochhaus: Tragwerk aus Raster → Fassadenmodule N/S/W/O �
   await B.geschosseStapeln(page, 1, { minZonenOberstes: 0, minMoebelOberstes: 0 });
 
   // ---------------------------------------------------------------------
-  // 7) Fluchtweg-Check (Baustein 11): die Regelgeschoss-Zone liegt exzentrisch
-  //    zum Kern — die Fluchtweg-Länge muss lesbar in Metern erscheinen (kein
-  //    Platzhalter-Status), unabhängig davon, ob der 35-m-Richtwert
-  //    eingehalten wird.
+  // 7) Fluchtweg-Check (Baustein 11): das Regelgeschoss ist über den offenen
+  //    Übergang mit dem zentralen Treppenhaus VERBUNDEN — der Egress-Check
+  //    darf KEINE «keine Verbindung zum Treppenhaus»-Warnung melden (das wäre
+  //    ein topologischer Fehler). Ein kompakter, konformer Punkt-Turm mit
+  //    kurzem Weg zum zentralen Kern meldet BEWUSST keine Längen-Warnung —
+  //    checks.ts Z.213 gibt erst > 0.8×35 m eine Meldung aus. Darum: keine
+  //    fixe «≥1 Längen-Meldung», sondern (a) Egress verdrahtet, (b) jede
+  //    GEMELDETE Länge ist in Metern lesbar (>0). Numerische Egress-Längen
+  //    beweist die MFH-Journey (dort liegen die Wohnungen weit genug).
+  //    Lehre: SIM-BEFUNDE H-13 (spec-korrigiert).
   // ---------------------------------------------------------------------
   const befund = await B.checksLesen(page);
   expect(befund, 'Checks-Panel liefert keinen Befund').not.toBeNull();
   if (befund) {
-    expect(befund.fluchtwegLaengenM.length, `Kein lesbarer Fluchtweg-Befund:\n${befund.text}`).toBeGreaterThan(0);
+    expect(befund.text, `Regelgeschoss ist nicht ans Treppenhaus angebunden:\n${befund.text}`).not.toContain(
+      'keine Verbindung zum Treppenhaus',
+    );
     for (const laenge of befund.fluchtwegLaengenM) {
       expect(laenge).toBeGreaterThan(0);
     }

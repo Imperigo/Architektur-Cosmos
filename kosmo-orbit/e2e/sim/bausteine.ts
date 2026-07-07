@@ -921,7 +921,13 @@ export async function terrainSetzen(page: Page, profil: TerrainProfil): Promise<
   await page.click('[data-testid="view-quad"]'); // [Quelle: sim-umbau.spec.ts Z.109]
 
   const gewachsen = page.locator('[data-testid="terrain-gewachsen"]').first(); // [Quelle: sim-umbau.spec.ts Z.110]
-  await expect(gewachsen).toBeVisible();
+  // Regel R4 (Fable-Review-1-Nachzug / SIM-BEFUNDE H-12): ein Terrain-Profil,
+  // das nur entlang der schnitt-senkrechten Achse variiert (EFH: gewachsen
+  // 15 % Süd → in «Ansicht Süd» eine deckungsgleiche, 0 px breite Linie),
+  // ist für Playwright nie «visible» — auf `toBeAttached` + Attribut prüfen,
+  // nicht `toBeVisible`. Für nicht-degenerierte Profile (Umbau) bleibt das
+  // Element ohnehin attached; die Dash-Signatur ist die eigentliche Aussage.
+  await expect(gewachsen).toBeAttached();
   await expect(gewachsen).toHaveAttribute('stroke-dasharray', '200 120'); // [Quelle: sim-umbau.spec.ts Z.112]
 
   const neu = page.locator('[data-testid="terrain-neu"]').first(); // [Quelle: sim-umbau.spec.ts Z.114]

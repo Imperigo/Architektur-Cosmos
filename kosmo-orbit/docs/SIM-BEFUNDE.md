@@ -278,4 +278,60 @@ achten; überschreitet sie das Timeout, ist die erste Triage-Frage, ob
 `test.setTimeout` erhöht oder die Geschossanzahl/Stützendichte in
 `SZENARIEN.hochhaus.geometrie` reduziert werden muss (Fable-Entscheid, da
 `szenarien.ts` nicht mehr angefasst werden darf ohne Koordination).
-Status:      offen
+Status:      spec-korrigiert — beim ersten seriellen Merge-Lauf (Opus)
+gemessen: die Hochhaus-Journey läuft in **8.2 s** (weit unter dem
+180-s-Timeout), inkl. 12+1 Stapeln, Plan-Rendering und Publikations-Set-
+Export. Das Laufzeitrisiko hat sich NICHT materialisiert; keine Reduktion
+von `SZENARIEN.hochhaus.geometrie` nötig. Beleg: E2E-Lauf 07.07.2026.
+
+### H-12 — Baustein 18 `terrainSetzen`: `toBeVisible` scheitert an degeneriertem Terrain-Profil (07.07.2026, Journey efh, Schritt 5)
+Beobachtung: Die EFH-Journey setzte das gewachsene Hang-Terrain
+(`SZENARIEN.efh.geometrie.terrain.gewachsen`, 15 % Süd — variiert NUR entlang
+der Tiefe/y-Achse). In der «Ansicht Süd» projiziert dieses Profil auf eine
+deckungsgleiche, **0 px breite** Polylinie (`points="-4000,-1500 -4000,1500"`).
+Baustein 18 prüfte `await expect(gewachsen).toBeVisible()` — Playwright meldet
+ein Element mit Bounding-Breite 0 als «hidden», der Test schlug fehl.
+Triage:      zu-strikte-assertion (Baustein verletzt die eigene Regel R4)
+Beleg:       `e2e/sim/bausteine.ts` Baustein 18 (`terrainSetzen`), Zeile mit
+`toBeVisible()` auf `[data-testid="terrain-gewachsen"]`; das Terrain IST korrekt
+gerendert (Polylinie vorhanden, `stroke-dasharray="200 120"` korrekt) — nur der
+Sichtbarkeits-Check ist für ein achsen-degeneriertes Profil falsch (Regel R4:
+«Unsichtbar ≠ falsch» — Attribute prüfen, nicht `toBeVisible`).
+Entscheid:   Opus (serieller Orchestrator, kein Parallel-Batch in Flug) korrigiert
+Baustein 18: `toBeVisible()` → `toBeAttached()`; die eigentliche Aussage bleibt
+die Dash-Signatur (`stroke-dasharray '200 120'`) + `points`-Attribut. Für
+nicht-degenerierte Profile (Umbau) bleibt das Element ohnehin attached & visible —
+keine Abschwächung der Umbau-Journey. Kein Produktfehler (das Terrain rendert
+korrekt); reine Test-Robustheit.
+Status:      spec-korrigiert
+
+### H-13 — Fluchtweg-Egress: verschachtelte Zone hat keinen Raumgraph-Portal zum Kern (07.07.2026, Journey hochhaus, Schritt 5/7)
+Beobachtung: Die Hochhaus-Journey modellierte zunächst die Regelgeschoss-Zone
+über den GANZEN Fussabdruck, mit dem zentralen Treppenhaus-Kern DARIN
+verschachtelt (überlappend). Der Raumgraph (`derive/raumgraph.ts`) bildet
+Fluchtweg-Portale aber nur aus (a) Tür-Öffnungen in einer Wand zwischen zwei
+Zonen oder (b) einer **gemeinsamen, kollinearen Umriss-Kante** ohne Wand
+(`offeneKante`). Eine verschachtelte Zone TEILT keine Kante mit dem Kern →
+kein Portal → `distanz = Infinity` → der Egress-Check meldete «keine Verbindung
+zum Treppenhaus» statt einer Länge. Zusätzlich zeigte sich: ein kompakter,
+konformer Punkt-Turm (kurzer Weg zum zentralen Kern, ≤ 0.8×35 m) meldet
+BEWUSST GAR KEINE Fluchtweg-Länge (`checks.ts` Z.213 gibt erst über dem
+Richtwert-Anteil eine Meldung aus) — die ursprüngliche Assertion «≥ 1 lesbare
+Länge» war darum doppelt zu strikt.
+Triage:      zu-strikte-assertion / Modell-Topologie-Fehler in der Journey
+(kein Produktfehler — der Egress-Check verhält sich korrekt)
+Beleg:       `packages/kosmo-kernel/src/derive/raumgraph.ts` `raumGraph`
+(Tür-Kanten aus `openingsOf`, offene Übergänge aus `offeneKante` Z.60-77) und
+`fluchtwege` (Dijkstra, `distanz=Infinity` ohne Portal); `checks.ts` Z.189-222
+(Meldung erst > 0.8×MAX_FLUCHT). `e2e/sim-hochhaus.spec.ts` Schritt 5/7.
+Entscheid:   Opus korrigiert die Journey (serielle Integration): (1) das
+Regelgeschoss wird ins NORDBAND gelegt, das die Nordkante des Kerns TEILT
+(adjazent, nicht überlappend) → automatischer «offener» Übergang = Egress-
+Portal; (2) die Assertion prüft jetzt (a) der Egress ist verdrahtet (keine
+«keine Verbindung»-Warnung) und (b) jede GEMELDETE Länge ist in Metern lesbar
+(>0) — statt fix «≥1 Länge» zu fordern. Numerische Egress-Längen beweist die
+MFH-Journey (dort liegen die Wohnungen weit genug vom Kern). Lehre für 1.4:
+Egress-Journeys müssen Zonen ADJAZENT (kantenteilend) zum Treppenhaus
+modellieren, nicht verschachtelt; ein konformer kompakter Grundriss meldet
+keine Fluchtweg-Länge — das ist korrektes, nicht fehlendes Verhalten.
+Status:      spec-korrigiert
