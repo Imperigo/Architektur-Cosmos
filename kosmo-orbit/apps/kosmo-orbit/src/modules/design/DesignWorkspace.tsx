@@ -46,12 +46,18 @@ import { registerActions } from '../../shell/palette';
 import { fokusKlasse } from '../../state/fokus';
 import {
   adaptionAktiv,
+  adaptionZuruecksetzen,
   adaptiveFokusStufe,
   darfUmordnen,
+  elementFokusStufe,
+  gehobenesElementDerGruppe,
   istUnterBasis,
   LEISTEN_BASIS,
   leiteTaetigkeitsKontextAb,
+  nutzungMelden,
   nutzungsProfil,
+  opazitaetsWert,
+  setAdaptionAktiv,
   ZEICHEN_WERKZEUG_IDS,
   type LeistenGruppe,
   type NutzungsProfil,
@@ -253,6 +259,9 @@ export function DesignWorkspace() {
       if (werkzeug) {
         e.preventDefault();
         setTool(werkzeug as ToolId);
+        // Serie J / J3c: Shortcut-Weg zählt genauso wie ein Leisten-Klick
+        // (SERIE-J-BUILDPLAN.md Abschnitt 3, J3c-Schritte).
+        nutzungMelden(`zeichnen:${werkzeug}`);
       }
     };
     window.addEventListener('keydown', onKey);
@@ -622,6 +631,11 @@ export function DesignWorkspace() {
     setContextMeshes([]); // Kontext-Layer weicht dem editierbaren Modell
   };
 
+  // Fable-Review-2-Auflage J3c-0b: irgendein Ebenen-Panel offen? Die Ebenen-
+  // Gruppe wird dann nie gedimmt (weder Sonne/Draw/Liste/Raster/Splat/Studie
+  // selbst noch ihre Geschwister-Buttons in derselben Gruppe).
+  const ebenenPanelOffen = sonneOffen || drawOffen || listeOffen || rasterOffen || splatPanelOffen || studieOffen;
+
   // Serie J / Batch J3b (SERIE-J-BUILDPLAN.md Abschnitt 2/3): die Werkzeug-
   // leisten-Gruppen leben — ihre Fokus-Stufe kommt aus `adaptiveFokusStufe`
   // statt fest aus T7. `aktionLaeuft` = Punktkette offen ODER 2D-Drag aktiv
@@ -634,8 +648,9 @@ export function DesignWorkspace() {
         phase: doc.settings.phase,
         punkteOffen: points.length > 0,
         ziehtElement: dragEntity !== null,
+        panelOffen: ebenenPanelOffen,
       }),
-    [tool, doc.settings.phase, points.length, dragEntity],
+    [tool, doc.settings.phase, points.length, dragEntity, ebenenPanelOffen],
   );
 
   // Regel 2.3.2 (Anti-Nerv): solange `darfUmordnen` false ist (Aktion läuft),
@@ -646,6 +661,14 @@ export function DesignWorkspace() {
   // `aktionLaeuft`) greifen dagegen sofort (kein künstliches Warten beim
   // simplen Werkzeugwechsel).
   const [stabilerKontext, setStabilerKontext] = useState<TaetigkeitsKontext>(taetigkeitsKontext);
+  // Fable-Review-2-Auflage J3c-4: das gelernte Nutzungsprofil wird zusammen
+  // mit `stabilerKontext` snapshottet, NICHT frisch bei jedem Render aus dem
+  // Store gelesen — sonst könnte ein Klick mitten in einer offenen Punktkette
+  // die Top-3-Schwelle reissen und am Debounce vorbei umstufen. Aufgefrischt
+  // wird nur an genau den Stellen, an denen auch `stabilerKontext` weiter-
+  // rückt (`darfUmordnen` gilt) — das behebt zugleich J3c-5 (kein Store-Read
+  // mehr pro Render/Mousemove).
+  const [nutzungSnapshot, setNutzungSnapshot] = useState<NutzungsProfil>(() => nutzungsProfil());
   const adaptionFreezeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!darfUmordnen(taetigkeitsKontext)) {
@@ -657,18 +680,39 @@ export function DesignWorkspace() {
       return;
     }
     if (stabilerKontext.aktionLaeuft) {
-      adaptionFreezeTimer.current = setTimeout(() => setStabilerKontext(taetigkeitsKontext), ADAPTION_DEBOUNCE_MS);
+      adaptionFreezeTimer.current = setTimeout(() => {
+        setStabilerKontext(taetigkeitsKontext);
+        setNutzungSnapshot(nutzungsProfil());
+      }, ADAPTION_DEBOUNCE_MS);
       return () => {
         if (adaptionFreezeTimer.current) clearTimeout(adaptionFreezeTimer.current);
       };
     }
     setStabilerKontext(taetigkeitsKontext);
+    setNutzungSnapshot(nutzungsProfil());
     return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taetigkeitsKontext]);
 
-  const adaptionIstAn = adaptionAktiv();
-  const nutzung = adaptionIstAn ? nutzungsProfil() : LEERES_NUTZUNGSPROFIL;
+  // Fable-Review-2-Auflage J3c-1/J3c-5: expliziter React-State für den
+  // Opt-out-Schalter (Projekt-Menü) — ein Umschalten wirkt sofort, ohne
+  // Reload und ohne auf einen zufälligen Re-Render angewiesen zu sein; der
+  // Store selbst wird dabei nur EINMAL beim Schreiben angefasst, nicht mehr
+  // pro Render gelesen.
+  const [adaptionIstAn, setAdaptionIstAnState] = useState(() => adaptionAktiv());
+  const adaptionUmschalten = (aktiv: boolean) => {
+    setAdaptionAktiv(aktiv);
+    setAdaptionIstAnState(aktiv);
+  };
+  // `adaption-reset` (2.3.4): löscht NUR das gelernte Profil, der Schalter
+  // bleibt unangetastet (siehe `adaptionZuruecksetzen` in
+  // oberflaeche-adaption.ts, Fable-Review-2-Auflage J3c-1).
+  const adaptionZuruecksetzenUndAuffrischen = () => {
+    adaptionZuruecksetzen();
+    setNutzungSnapshot(nutzungsProfil());
+  };
+
+  const nutzung = adaptionIstAn ? nutzungSnapshot : LEERES_NUTZUNGSPROFIL;
   const stufeFuerGruppe = (gruppe: LeistenGruppe) => {
     const basis = LEISTEN_BASIS[gruppe];
     return adaptionIstAn ? adaptiveFokusStufe(gruppe, basis, stabilerKontext, nutzung) : basis;
@@ -680,6 +724,40 @@ export function DesignWorkspace() {
   const adaptionHinweisTitel = adaptionHinweisSichtbar
     ? `${gedaempfteGruppen.map((g) => GRUPPEN_LABEL[g]).join('/')} zurückgestellt — du zeichnest gerade`
     : '';
+
+  // Fable-Review-2-Auflage J3c-2 (Element-Hebung): pro Gruppe höchstens ein
+  // "gehobenes" Element (oft genutzt, Top-3, s. oberflaeche-adaption.ts).
+  // NUR wenn eines existiert, wird die Dimmung dieser Gruppe pro Kind
+  // angewandt — sonst unverändert wie in J3b (der Gruppen-Wrapper trägt die
+  // Opazität für alle Kinder gemeinsam, kein unnötiger Zusatzaufwand).
+  const gehobenNachGruppe = Object.fromEntries(
+    (Object.keys(LEISTEN_BASIS) as LeistenGruppe[]).map((g) => [
+      g,
+      adaptionIstAn ? gehobenesElementDerGruppe(g, nutzung) : undefined,
+    ]),
+  ) as Record<LeistenGruppe, string | undefined>;
+
+  /**
+   * style für EIN Werkzeugleisten-Element (`gruppe:name`). Ohne gehobenes
+   * Element in der Gruppe: kein Zusatz (Wrapper dimmt wie gewohnt, keine
+   * unnötige Extra-Arbeit). MIT gehobenem Element: numerischer Opazitätswert
+   * (`opazitaetsWert`, NIE font-size/font-weight, 2.3.1) als `style.opacity`
+   * — `KButton` setzt selbst immer eine Inline-`opacity` (0.45/1), die eine
+   * className NICHT überschreiben könnte (CSS-Kaskade: Inline schlägt jede
+   * nicht-`!important`-Klasse). Die multiplikative CSS-opacity-Falle
+   * (J3c-2) wird dadurch umgangen, dass der Gruppen-Wrapper seine eigene
+   * Opazität in diesem Fall auf 1 neutralisiert (s. `style={{ opacity: 1 }}`
+   * an den Gruppen-Spans unten) und jedes Kind seine Opazität stattdessen
+   * selbst trägt — bestehende `opacity var(--k-motion-fast)`-Transition aus
+   * `buttonBase` (kosmo-ui) dämpft den Wechsel weiterhin, ungefragt entfernt
+   * wird hier nichts.
+   */
+  function elementStil(gruppe: LeistenGruppe, name: string): { style?: React.CSSProperties } {
+    const gehoben = gehobenNachGruppe[gruppe];
+    if (!gehoben) return {};
+    const stufe = elementFokusStufe(`${gruppe}:${name}`, stufeFuerGruppe(gruppe), gehoben);
+    return { style: { opacity: opazitaetsWert(stufe) } };
+  }
 
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
@@ -703,7 +781,14 @@ export function DesignWorkspace() {
         <span
           data-testid="leiste-gruppe-zeichnen"
           className={fokusKlasse(stufeFuerGruppe('zeichnen'))}
-          style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, rowGap: 4, alignItems: 'center' }}
+          style={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            gap: 8,
+            rowGap: 4,
+            alignItems: 'center',
+            ...(gehobenNachGruppe.zeichnen ? { opacity: 1 } : {}),
+          }}
         >
           {(
             [
@@ -722,8 +807,12 @@ export function DesignWorkspace() {
               key={id}
               size="sm"
               tone={tool === id ? 'accent' : 'quiet'}
-              onClick={() => setTool(id)}
+              onClick={() => {
+                setTool(id);
+                nutzungMelden(`zeichnen:${id}`);
+              }}
               data-testid={`tool-${id}`}
+              {...elementStil('zeichnen', id)}
             >
               {label}
             </KButton>
@@ -754,7 +843,14 @@ export function DesignWorkspace() {
         <span
           data-testid="leiste-gruppe-ansicht"
           className={fokusKlasse(stufeFuerGruppe('ansicht'))}
-          style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, rowGap: 4, alignItems: 'center' }}
+          style={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            gap: 8,
+            rowGap: 4,
+            alignItems: 'center',
+            ...(gehobenNachGruppe.ansicht ? { opacity: 1 } : {}),
+          }}
         >
           {(
             [
@@ -768,8 +864,12 @@ export function DesignWorkspace() {
               key={id}
               size="sm"
               tone={viewMode === id ? 'accent' : 'ghost'}
-              onClick={() => setViewMode(id)}
+              onClick={() => {
+                setViewMode(id);
+                nutzungMelden(`ansicht:${id}`);
+              }}
               data-testid={`view-${id}`}
+              {...elementStil('ansicht', id)}
             >
               {label}
             </KButton>
@@ -780,15 +880,48 @@ export function DesignWorkspace() {
         <span
           data-testid="leiste-gruppe-export"
           className={fokusKlasse(stufeFuerGruppe('export'))}
-          style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, rowGap: 4, alignItems: 'center' }}
+          style={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            gap: 8,
+            rowGap: 4,
+            alignItems: 'center',
+            ...(gehobenNachGruppe.export ? { opacity: 1 } : {}),
+          }}
         >
-          <KButton size="sm" tone="ghost" onClick={() => void exportPlanPdf()} data-testid="export-pdf">
+          <KButton
+            size="sm"
+            tone="ghost"
+            onClick={() => {
+              void exportPlanPdf();
+              nutzungMelden('export:pdf');
+            }}
+            data-testid="export-pdf"
+            {...elementStil('export', 'pdf')}
+          >
             PDF
           </KButton>
-          <KButton size="sm" tone="ghost" onClick={exportPlanSvg}>
+          <KButton
+            size="sm"
+            tone="ghost"
+            onClick={() => {
+              exportPlanSvg();
+              nutzungMelden('export:svg');
+            }}
+            {...elementStil('export', 'svg')}
+          >
             SVG
           </KButton>
-          <KButton size="sm" tone="ghost" onClick={exportIfcFile} data-testid="export-ifc">
+          <KButton
+            size="sm"
+            tone="ghost"
+            onClick={() => {
+              exportIfcFile();
+              nutzungMelden('export:ifc');
+            }}
+            data-testid="export-ifc"
+            {...elementStil('export', 'ifc')}
+          >
             IFC
           </KButton>
           <KButton
@@ -796,6 +929,7 @@ export function DesignWorkspace() {
             tone="ghost"
             data-testid="import-ifc"
             onClick={() => {
+              nutzungMelden('export:import-ifc');
               const input = document.createElement('input');
               input.type = 'file';
               input.accept = '.ifc';
@@ -817,6 +951,7 @@ export function DesignWorkspace() {
               };
               input.click();
             }}
+            {...elementStil('export', 'import-ifc')}
           >
             IFC laden
           </KButton>
@@ -825,6 +960,7 @@ export function DesignWorkspace() {
             tone="ghost"
             data-testid="import-splat"
             onClick={() => {
+              nutzungMelden('export:import-splat');
               const input = document.createElement('input');
               input.type = 'file';
               input.accept = '.splat,.ply';
@@ -843,6 +979,7 @@ export function DesignWorkspace() {
               };
               input.click();
             }}
+            {...elementStil('export', 'import-splat')}
           >
             Splat laden
           </KButton>
@@ -850,7 +987,11 @@ export function DesignWorkspace() {
             size="sm"
             tone={splatPanelOffen ? 'accent' : 'ghost'}
             data-testid="splat-werkzeug-toggle"
-            onClick={() => setSplatPanelOffen(!splatPanelOffen)}
+            onClick={() => {
+              setSplatPanelOffen(!splatPanelOffen);
+              nutzungMelden('export:splat-werkzeug');
+            }}
+            {...elementStil('export', 'splat-werkzeug')}
           >
             Splat-Werkzeug
           </KButton>
@@ -859,7 +1000,14 @@ export function DesignWorkspace() {
         <span
           data-testid="leiste-gruppe-ebenen"
           className={fokusKlasse(stufeFuerGruppe('ebenen'))}
-          style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, rowGap: 4, alignItems: 'center' }}
+          style={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            gap: 8,
+            rowGap: 4,
+            alignItems: 'center',
+            ...(gehobenNachGruppe.ebenen ? { opacity: 1 } : {}),
+          }}
         >
           <KButton
             size="sm"
@@ -868,7 +1016,9 @@ export function DesignWorkspace() {
             onClick={() => {
               setTexturModus(!texturen);
               setTexturen(!texturen);
+              nutzungMelden('ebenen:textur');
             }}
+            {...elementStil('ebenen', 'textur')}
           >
             Textur
           </KButton>
@@ -876,7 +1026,11 @@ export function DesignWorkspace() {
             size="sm"
             tone={sonneOffen ? 'accent' : 'ghost'}
             data-testid="sonne-toggle"
-            onClick={() => setSonneOffen(!sonneOffen)}
+            onClick={() => {
+              setSonneOffen(!sonneOffen);
+              nutzungMelden('ebenen:sonne');
+            }}
+            {...elementStil('ebenen', 'sonne')}
           >
             ☀ Sonne
           </KButton>
@@ -884,7 +1038,11 @@ export function DesignWorkspace() {
             size="sm"
             tone={studieOffen ? 'accent' : 'ghost'}
             data-testid="studie-toggle"
-            onClick={() => setStudieOffen(!studieOffen)}
+            onClick={() => {
+              setStudieOffen(!studieOffen);
+              nutzungMelden('ebenen:studie');
+            }}
+            {...elementStil('ebenen', 'studie')}
           >
             Varianten
           </KButton>
@@ -892,7 +1050,11 @@ export function DesignWorkspace() {
             size="sm"
             tone={drawOffen ? 'accent' : 'ghost'}
             data-testid="draw-toggle"
-            onClick={() => setDrawOffen(!drawOffen)}
+            onClick={() => {
+              setDrawOffen(!drawOffen);
+              nutzungMelden('ebenen:draw');
+            }}
+            {...elementStil('ebenen', 'draw')}
           >
             Draw
           </KButton>
@@ -900,7 +1062,11 @@ export function DesignWorkspace() {
             size="sm"
             tone={listeOffen ? 'accent' : 'ghost'}
             data-testid="liste-toggle"
-            onClick={() => setListeOffen(!listeOffen)}
+            onClick={() => {
+              setListeOffen(!listeOffen);
+              nutzungMelden('ebenen:liste');
+            }}
+            {...elementStil('ebenen', 'liste')}
           >
             Liste
           </KButton>
@@ -908,7 +1074,12 @@ export function DesignWorkspace() {
             size="sm"
             tone={rasterOffen ? 'accent' : 'ghost'}
             data-testid="raster-toggle"
-            onClick={() => { setRasterOffen(!rasterOffen); if (!rasterOffen) setListeOffen(false); }}
+            onClick={() => {
+              setRasterOffen(!rasterOffen);
+              if (!rasterOffen) setListeOffen(false);
+              nutzungMelden('ebenen:raster');
+            }}
+            {...elementStil('ebenen', 'raster')}
           >
             Raster
           </KButton>
@@ -939,46 +1110,69 @@ export function DesignWorkspace() {
         <span
           data-testid="leiste-gruppe-projekt"
           className={fokusKlasse(stufeFuerGruppe('projekt'))}
-          style={{ display: 'inline-flex' }}
+          style={{ display: 'inline-flex', ...(gehobenNachGruppe.projekt ? { opacity: 1 } : {}) }}
         >
           <KButton
             size="sm"
             tone={projektMenuOffen ? 'accent' : 'ghost'}
             data-testid="projekt-menu-toggle"
             title="Projekt-Einstellungen — SIA-Phase, Bemassungsstil (selten geändert)"
-            onClick={() => setProjektMenuOffen((o) => !o)}
+            onClick={() => {
+              setProjektMenuOffen((o) => !o);
+              nutzungMelden('projekt:menu');
+            }}
+            {...elementStil('projekt', 'menu')}
           >
             Projekt ▾
           </KButton>
         </span>
         {/* Regel 2.3.5 (Transparenz): solange die Matrix eine Gruppe unter ihre
             T7-Basis zurückstellt, zeigt dieser dezente Hinweis warum — anschluss-
-            fähig an Serie G (Kosmo erklärt), hier nur der Text im title. */}
-        {adaptionHinweisSichtbar && (
-          <span
-            data-testid="adaption-hinweis"
-            className="k-selten"
-            title={adaptionHinweisTitel}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              fontSize: 11,
-              color: 'var(--k-ink-faint)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            ⓘ angepasst
-          </span>
-        )}
+            fähig an Serie G (Kosmo erklärt), hier nur der Text im title.
+            Fable-Review-2-Auflage J3c-0a: IMMER gemountet (nicht conditional),
+            Sichtbarkeit über `visibility` — der Platz bleibt reserviert, kein
+            Layout-Ruck, wenn der Hinweis erscheint/verschwindet. */}
+        <span
+          data-testid="adaption-hinweis"
+          className="k-selten"
+          title={adaptionHinweisTitel}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            fontSize: 11,
+            color: 'var(--k-ink-faint)',
+            whiteSpace: 'nowrap',
+            visibility: adaptionHinweisSichtbar ? 'visible' : 'hidden',
+          }}
+        >
+          ⓘ angepasst
+        </span>
         <span
           data-testid="leiste-gruppe-verlauf"
           className={fokusKlasse(stufeFuerGruppe('verlauf'))}
-          style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}
+          style={{ display: 'inline-flex', gap: 8, alignItems: 'center', ...(gehobenNachGruppe.verlauf ? { opacity: 1 } : {}) }}
         >
-          <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
+          <KButton
+            size="sm"
+            tone="ghost"
+            onClick={() => {
+              undo();
+              nutzungMelden('verlauf:undo');
+            }}
+            data-testid="undo"
+            {...elementStil('verlauf', 'undo')}
+          >
             ↩ Rückgängig
           </KButton>
-          <KButton size="sm" tone="ghost" onClick={redo}>
+          <KButton
+            size="sm"
+            tone="ghost"
+            onClick={() => {
+              redo();
+              nutzungMelden('verlauf:redo');
+            }}
+            {...elementStil('verlauf', 'redo')}
+          >
             ↪ Wiederholen
           </KButton>
         </span>
@@ -1062,6 +1256,30 @@ export function DesignWorkspace() {
           <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
             Ändert sich mit der SIA-Phase des Projekts — bleibt über Jahre stabil, gehört nicht in die Dauerleiste.
           </span>
+          {/* Serie J / J3c (Regel 2.3.4): Opt-out + Reset für die adaptive
+              Werkzeugleiste. Der Schalter setzt NUR `aktiv` (setAdaptionAktiv,
+              Fable-Review-2-Auflage J3c-1) — Reset löscht NUR das gelernte
+              Profil, der Schalter bleibt in beiden Richtungen unangetastet. */}
+          <label
+            style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <input
+              type="checkbox"
+              data-testid="adaption-schalter"
+              checked={adaptionIstAn}
+              onChange={(e) => adaptionUmschalten(e.target.checked)}
+            />
+            Oberfläche passt sich an
+          </label>
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="adaption-reset"
+            title="Gelerntes Nutzungsprofil löschen — Werkzeugleiste fällt auf die Basis-Stufen zurück. Der Schalter bleibt unverändert."
+            onClick={adaptionZuruecksetzenUndAuffrischen}
+          >
+            Oberfläche zurücksetzen
+          </KButton>
         </div>
       )}
 

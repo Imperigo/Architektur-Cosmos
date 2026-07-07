@@ -46,6 +46,15 @@ export interface TaetigkeitsKontext {
   phase: 'vorprojekt' | 'bauprojekt' | 'werkplan';
   /** Punktkette offen, Pointer unten, Sketch pending — Anti-Nerv-Wache. */
   aktionLaeuft: boolean;
+  /**
+   * Fable-Review-2-Auflage (J3c-0b): irgendein Ebenen-Panel offen (Sonne/
+   * Draw/Liste/Raster/Splat/Studie in DesignWorkspace — `sonneOffen ||
+   * drawOffen || listeOffen || rasterOffen || splatPanelOffen ||
+   * studieOffen`). Ein offenes Panel ist eine laufende Tätigkeit wie
+   * `aktionLaeuft`, nur auf die Ebenen-Gruppe bezogen: sie wird NIE gedimmt,
+   * solange eines ihrer Panels offen ist.
+   */
+  panelOffen: boolean;
 }
 
 export interface NutzungsProfil {
@@ -164,11 +173,13 @@ function gruppeIstOftGenutzt(gruppe: LeistenGruppe, nutzung: NutzungsProfil): bo
  *
  * Reihenfolge: (1) Tätigkeits-Matrix (Werkzeug demotet export/ebenen beim
  * Zeichnen) → (2) Anti-Dimm-Floor (`aktionLaeuft` hebt nie unter die
- * Basis-Stufe — "ein aktives Element/Panel wird nie gedimmt") → (3)
- * Werkplan-Phase hebt eine zurückgestellte Export-Stufe einmal an, gedeckelt
- * auf die Basis-Stufe → (4) Nutzer-Adaption: oft genutzte Top-3-Elemente
- * heben die Gruppe maximal eine Stufe (selten→sekundär), nie über primär,
- * nie unter das bisherige Ergebnis (die Hebung ist rein additiv).
+ * Basis-Stufe — "ein aktives Element/Panel wird nie gedimmt") → (2b)
+ * dieselbe Anti-Dimm-Floor für ein offenes Ebenen-Panel (`panelOffen`,
+ * Fable-Review-2-Auflage J3c-0b) → (3) Werkplan-Phase hebt eine
+ * zurückgestellte Export-Stufe einmal an, gedeckelt auf die Basis-Stufe →
+ * (4) Nutzer-Adaption: oft genutzte Top-3-Elemente heben die Gruppe maximal
+ * eine Stufe (selten→sekundär), nie über primär, nie unter das bisherige
+ * Ergebnis (die Hebung ist rein additiv).
  */
 export function adaptiveFokusStufe(
   gruppe: LeistenGruppe,
@@ -183,6 +194,11 @@ export function adaptiveFokusStufe(
 
   if (kontext.aktionLaeuft) {
     // Anti-Nerv-Wache: ein gerade aktives Element/Panel wird nie gedimmt.
+    stufe = stufeMax(stufe, basis);
+  } else if (gruppe === 'ebenen' && kontext.panelOffen) {
+    // Fable-Review-2-Auflage J3c-0b: ein offenes Ebenen-Panel (Sonne/Draw/
+    // Liste/Raster/Splat/Studie) wird nie gedimmt — die Gruppe bleibt auf
+    // Basis, unabhängig von der Zeichnen-Demotion oben.
     stufe = stufeMax(stufe, basis);
   } else if (gruppe === 'export' && stufe === 'selten' && kontext.phase === 'werkplan') {
     // Werkplan braucht Export laufend — hebt die Zeichnen-Demotion einmal an.
@@ -199,6 +215,87 @@ export function adaptiveFokusStufe(
 /** Anti-Nerv-Wache: bei laufender Aktion wird NIE neu berechnet. */
 export function darfUmordnen(kontext: TaetigkeitsKontext): boolean {
   return !kontext.aktionLaeuft;
+}
+
+// ---------------------------------------------------------------------------
+// Element-Hebung (J3c, 2.2 Schlussabsatz) — Fable-Review-2-Auflage J3c-2.
+//
+// CSS-`opacity` ist multiplikativ: ein Kind mit `k-sekundaer` (0.92) innerhalb
+// einer `k-selten`-Gruppe (0.6) erscheint effektiv bei 0.6*0.92 ≈ 0.55 —
+// DUNKLER als die Gruppe selbst, nie heller. Eine Hebung "aufs Kind" ist also
+// wirkungslos (schlimmer: kontraproduktiv), solange die GRUPPE als Ganzes
+// dimmt. Die Lösung: die Dimmung wird — nur für Gruppen mit einem gehobenen
+// Element — pro Kind angewandt (`opazitaetsWert`/`opazitaetsKlasse`, s.u.),
+// nicht mehr am Gruppen-Wrapper; DesignWorkspace neutralisiert dafür dessen
+// eigene Opacity (`style={{ opacity: 1 }}`, die `fokusKlasse`-Klasse bleibt
+// für Tests/Font-Neutralität unangetastet). Beide Hebungs-Helfer setzen NUR
+// `opacity` — nie `font-size`/`font-weight` (2.3.1: kein Layout-Shift durch
+// die Hebung). `KButton` (kosmo-ui) setzt selbst immer eine Inline-`opacity`
+// — darum braucht DesignWorkspace dort den NUMERISCHEN Wert (`opazitaetsWert`,
+// als `style.opacity`), eine CSS-Klasse (`opazitaetsKlasse`) würde von
+// KButtons eigener Inline-Eigenschaft überschattet und wäre wirkungslos.
+// ---------------------------------------------------------------------------
+
+/** Reine Opazitäts-Klasse ohne Font-Kopplung (aura.css `.k-opazitaet-*`) —
+ *  Gegenstück zu `fokusKlasse` (state/fokus.ts), aber garantiert ohne
+ *  font-size/font-weight, für die Pro-Kind-Anwendung der Element-Hebung auf
+ *  Elementen, die NICHT schon selbst eine konkurrierende Inline-`opacity`
+ *  setzen (s. `opazitaetsWert` für den Gegenfall, z.B. `KButton`). */
+export function opazitaetsKlasse(stufe: FokusStufe): string {
+  return `k-opazitaet-${stufe}`;
+}
+
+const OPAZITAET_WERT: Record<FokusStufe, number> = { primaer: 1, sekundaer: 0.92, selten: 0.6 };
+
+/**
+ * Numerischer Opazitätswert einer Stufe (spiegelt `aura.css` `.k-primaer`/
+ * `.k-sekundaer`/`.k-selten`) — für die Pro-Kind-Hebung auf Komponenten wie
+ * `KButton` (`packages/kosmo-ui/src/components.tsx`), die selbst IMMER eine
+ * explizite Inline-`opacity` setzen (`opacity: disabled ? 0.45 : 1`). Eine
+ * externe CSS-Klasse (auch `opazitaetsKlasse`) kann diese bereits gesetzte
+ * Inline-Eigenschaft NIE überschreiben — die CSS-Kaskade lässt Inline-Styles
+ * grundsätzlich vor jeder nicht-`!important`-Stylesheet-Regel gewinnen. Der
+ * numerische Wert muss darum selbst als `style.opacity` durchgereicht werden
+ * (DesignWorkspace tut das über `elementStil`), nicht als className.
+ */
+export function opazitaetsWert(stufe: FokusStufe): number {
+  return OPAZITAET_WERT[stufe];
+}
+
+function topElementeDerGruppe(gruppe: LeistenGruppe, nutzung: NutzungsProfil, n: number): [string, number][] {
+  return Object.entries(nutzung.zaehler)
+    .filter(([id]) => gruppeVonElement(id) === gruppe)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, n);
+}
+
+/**
+ * Welches Element (falls eines) ist in `gruppe` unter den Top-3 UND oft genug
+ * genutzt (>= NUTZUNG_SCHWELLE), um SICH SELBST — nicht die ganze Gruppe —
+ * eine Stufe über die aktuelle Gruppen-Stufe zu heben? Liefert höchstens EIN
+ * Element (das meistgenutzte, das die Schwelle erreicht); "ein oft genutztes
+ * Element" (2.2, Schlussabsatz) ist bewusst Einzahl — bei einem Gleichstand
+ * gewinnt das zuerst in `Object.entries`-Reihenfolge gefundene, was für
+ * `Record`-Einträge stabil die Einfügereihenfolge ist. Rein, kennt keinen
+ * Store.
+ */
+export function gehobenesElementDerGruppe(gruppe: LeistenGruppe, nutzung: NutzungsProfil): string | undefined {
+  const top = topElementeDerGruppe(gruppe, nutzung, TOP_N);
+  return top.find(([, anzahl]) => anzahl >= NUTZUNG_SCHWELLE)?.[0];
+}
+
+/**
+ * Element-Fokus-Stufe: ist `elementId` das gehobene Element seiner Gruppe
+ * (`gehobenesElement`, aus `gehobenesElementDerGruppe`)? → eine Stufe über
+ * `gruppenStufe` (gedeckelt auf primär, `stufeAnheben`). Sonst unverändert —
+ * bleibt exakt auf der Gruppen-Stufe. Rein, testbar.
+ */
+export function elementFokusStufe(
+  elementId: string,
+  gruppenStufe: FokusStufe,
+  gehobenesElement: string | undefined,
+): FokusStufe {
+  return elementId === gehobenesElement ? stufeAnheben(gruppenStufe) : gruppenStufe;
 }
 
 /**
@@ -219,11 +316,14 @@ export function leiteTaetigkeitsKontextAb(params: {
   phase: 'vorprojekt' | 'bauprojekt' | 'werkplan';
   punkteOffen: boolean;
   ziehtElement: boolean;
+  /** Fable-Review-2-Auflage (J3c-0b): irgendein Ebenen-Panel gerade offen. */
+  panelOffen: boolean;
 }): TaetigkeitsKontext {
   return {
     tool: params.tool,
     phase: params.phase,
     aktionLaeuft: params.punkteOffen || params.ziehtElement,
+    panelOffen: params.panelOffen,
   };
 }
 
@@ -340,16 +440,21 @@ function schreibeSpeicher(speicher: AdaptionSpeicher): void {
   }
 }
 
+/** Verfall unter dieser Zeitspanne ist bedeutungslos (7-Tage-Halbwertszeit)
+ *  und würde nur Fliesskomma-Rauschen einführen, wenn zwei `nutzungMelden`-
+ *  Aufrufe innerhalb derselben Sekunde landen (z.B. zwei schnelle Klicks). */
+const VERFALL_MINDESTABSTAND_MS = 1000;
+
 /** Lädt den Speicher und wendet den Nutzungs-Verfall (Halbwertszeit 7 Tage)
  *  gemäss der seit `gespeichertAm` verstrichenen Zeit an. */
 function ladeUndVerfalle(): AdaptionSpeicher {
   const speicher = ladeSpeicherRoh();
   const jetzt = Date.now();
-  const tage = (jetzt - speicher.gespeichertAm) / MS_PRO_TAG;
-  if (tage <= 0) return speicher;
+  const deltaMs = jetzt - speicher.gespeichertAm;
+  if (deltaMs < VERFALL_MINDESTABSTAND_MS) return speicher;
   return {
     ...speicher,
-    profil: nutzungVerfallen(speicher.profil, tage),
+    profil: nutzungVerfallen(speicher.profil, deltaMs / MS_PRO_TAG),
     gespeichertAm: jetzt,
   };
 }
@@ -378,20 +483,36 @@ export function nutzungVerfallen(profil: NutzungsProfil, tage: number): Nutzungs
   return { zaehler, zuletzt: profil.zuletzt };
 }
 
-/** Löscht `kosmo.adaption.v1` — Oberfläche fällt auf den Basiszustand zurück. */
+/**
+ * Setzt NUR das gelernte Nutzungsprofil zurück (Häufigkeit + Zuletzt) —
+ * Oberfläche fällt auf die Tätigkeits-Matrix (2.2) ohne Nutzer-Adaption
+ * zurück. Der Opt-out-Schalter (`aktiv`) bleibt UNANGETASTET.
+ *
+ * Fable-Review-2-Auflage J3c-1: früher löschte dies den kompletten
+ * `kosmo.adaption.v1`-Eintrag inklusive `aktiv` — ein Reset hätte damit ein
+ * zuvor gesetztes Opt-out (Schalter aus) heimlich rückgängig gemacht. Die
+ * Semantik ist jetzt getrennt: `adaptionZuruecksetzen()` rührt nie `aktiv`
+ * an, `setAdaptionAktiv()` rührt nie `profil` an.
+ */
 export function adaptionZuruecksetzen(): void {
-  const storage = holeStorage();
-  if (!storage) return;
-  try {
-    storage.removeItem(STORAGE_KEY);
-  } catch {
-    // ignorieren — ohne Speicher gibt es nichts zurückzusetzen
-  }
+  const speicher = ladeUndVerfalle();
+  schreibeSpeicher({ ...speicher, profil: leeresProfil(), gespeichertAm: Date.now() });
 }
 
 /** Opt-out-Schalter (Default an). Kaputter/fehlender Eintrag → an. */
 export function adaptionAktiv(): boolean {
   return ladeSpeicherRoh().aktiv;
+}
+
+/**
+ * Setzt NUR den Opt-out-Schalter — schreibt nie das gelernte Profil (auch
+ * nicht implizit über einen Basiszustand-Fallback). Damit ein Reset (s.o.)
+ * nie versehentlich ein Opt-out zurücknimmt und umgekehrt ein Umschalten
+ * nie das Profil wischt (Fable-Review-2-Auflage J3c-1).
+ */
+export function setAdaptionAktiv(aktiv: boolean): void {
+  const speicher = ladeUndVerfalle();
+  schreibeSpeicher({ ...speicher, aktiv, gespeichertAm: Date.now() });
 }
 
 /**

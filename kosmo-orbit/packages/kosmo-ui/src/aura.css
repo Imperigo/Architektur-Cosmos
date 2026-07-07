@@ -348,6 +348,33 @@ progress {
   opacity: 1;
 }
 
+/* Serie J / J3c (Element-Hebung, Fable-Review-2-Auflage J3c-2): CSS-opacity
+   ist multiplikativ — ein Kind mit `.k-sekundaer` (0.92) innerhalb einer
+   `.k-selten`-Gruppe (0.6) kann NIE heller als 0.6 erscheinen (0.6 × 0.92 <
+   0.6), die Hebung "aufs Kind" wäre also wirkungslos, solange die Gruppe als
+   Ganzes dimmt. Diese Varianten setzen NUR `opacity` (nie font-size/
+   font-weight, 2.3.1 — keine Layout-Verschiebung durch die Hebung) und
+   werden pro Kind angewandt, während der Gruppen-Wrapper seine eigene
+   Opazität in diesem Fall auf 1 neutralisiert (DesignWorkspace.tsx) — so
+   bleibt ein gehobenes Element tatsächlich eine Stufe heller als seine
+   Geschwister, statt von der Gruppe verschluckt zu werden. */
+.k-opazitaet-primaer {
+  opacity: 1;
+  transition: opacity var(--k-motion-base);
+}
+.k-opazitaet-sekundaer {
+  opacity: 0.92;
+  transition: opacity var(--k-motion-base);
+}
+.k-opazitaet-selten {
+  opacity: 0.6;
+  transition: opacity var(--k-motion-fast);
+}
+.k-opazitaet-selten:hover,
+.k-opazitaet-selten:focus-within {
+  opacity: 1;
+}
+
 /* Kacheln der Zentrale: Hairline-Akzent + leiser Lift */
 .k-kachel {
   transition:

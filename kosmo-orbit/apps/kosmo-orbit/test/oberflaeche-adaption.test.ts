@@ -4,12 +4,17 @@ import {
   adaptionZuruecksetzen,
   adaptiveFokusStufe,
   darfUmordnen,
+  elementFokusStufe,
+  gehobenesElementDerGruppe,
   istUnterBasis,
   LEISTEN_BASIS,
   leiteTaetigkeitsKontextAb,
   nutzungMelden,
   nutzungsProfil,
   nutzungVerfallen,
+  opazitaetsKlasse,
+  opazitaetsWert,
+  setAdaptionAktiv,
   ZEICHEN_WERKZEUG_IDS,
   type NutzungsProfil,
   type TaetigkeitsKontext,
@@ -27,7 +32,7 @@ import {
 const STORAGE_KEY = 'kosmo.adaption.v1';
 
 function kontext(partial: Partial<TaetigkeitsKontext> = {}): TaetigkeitsKontext {
-  return { tool: 'auswahl', phase: 'bauprojekt', aktionLaeuft: false, ...partial };
+  return { tool: 'auswahl', phase: 'bauprojekt', aktionLaeuft: false, panelOffen: false, ...partial };
 }
 
 function leeresProfil(): NutzungsProfil {
@@ -115,6 +120,26 @@ describe('adaptiveFokusStufe — Tätigkeits-Matrix (2.2), jede Zeile/Spalte', (
       leeresProfil(),
     );
     expect(stufe).toBe('sekundaer');
+  });
+
+  it('ebenen: ein offenes Ebenen-Panel (panelOffen) hält die Gruppe auf Basis — auch OHNE laufende Aktion (Fable-Review-2-Auflage J3c-0b)', () => {
+    const stufe = adaptiveFokusStufe(
+      'ebenen',
+      'sekundaer',
+      kontext({ tool: 'wand', aktionLaeuft: false, panelOffen: true }),
+      leeresProfil(),
+    );
+    expect(stufe).toBe('sekundaer');
+  });
+
+  it('ebenen: panelOffen wirkt sich NICHT auf andere Gruppen aus (nur die Ebenen-Gruppe bleibt auf Basis)', () => {
+    const stufe = adaptiveFokusStufe(
+      'export',
+      'sekundaer',
+      kontext({ tool: 'wand', aktionLaeuft: false, panelOffen: true }),
+      leeresProfil(),
+    );
+    expect(stufe).toBe('selten'); // export demotet trotz offenem Ebenen-Panel weiter
   });
 
   it('ebenen: Phase ändert nichts an der Demotion (anders als bei export) — beide Phasen gleich', () => {
@@ -278,12 +303,31 @@ describe('Laufzeit-Store — localStorage kosmo.adaption.v1 (Laufzeit ≠ Modell
     expect(roh.profil.zuletzt['ebenen:sonne']).toBeGreaterThan(0);
   });
 
-  it('adaptionZuruecksetzen() löscht den kompletten Eintrag (Reset auf Basiszustand)', () => {
+  it('adaptionZuruecksetzen() löscht NUR das gelernte Profil, nicht den kompletten Eintrag (Fable-Review-2-Auflage J3c-1)', () => {
     nutzungMelden('export:pdf');
-    expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull();
+    expect(nutzungsProfil().zaehler['export:pdf']).toBe(1);
     adaptionZuruecksetzen();
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    expect(nutzungsProfil()).toEqual({ zaehler: {}, zuletzt: {} });
     expect(adaptionAktiv()).toBe(true);
+  });
+
+  it('adaptionZuruecksetzen() lässt einen zuvor gesetzten Opt-out (Schalter aus) unangetastet — Reset darf ein Opt-out nicht heimlich rückgängig machen', () => {
+    setAdaptionAktiv(false);
+    nutzungMelden('export:pdf');
+    adaptionZuruecksetzen();
+    expect(adaptionAktiv()).toBe(false); // Schalter bleibt aus
+    expect(nutzungsProfil()).toEqual({ zaehler: {}, zuletzt: {} }); // Profil trotzdem geleert
+  });
+
+  it('setAdaptionAktiv() schreibt NUR den Schalter — wischt nie ein vorhandenes gelerntes Profil', () => {
+    nutzungMelden('export:pdf');
+    nutzungMelden('export:pdf');
+    setAdaptionAktiv(false);
+    expect(adaptionAktiv()).toBe(false);
+    expect(nutzungsProfil().zaehler['export:pdf']).toBe(2); // Profil unangetastet
+    setAdaptionAktiv(true);
+    expect(adaptionAktiv()).toBe(true);
+    expect(nutzungsProfil().zaehler['export:pdf']).toBe(2); // immer noch unangetastet
   });
 
   it('nutzungsProfil() liest exakt das per nutzungMelden gespeicherte Profil zurück', () => {
@@ -338,19 +382,26 @@ describe('istUnterBasis — Vergleichshilfe für den Adaptions-Hinweis (2.3.5)',
   });
 });
 
-describe('leiteTaetigkeitsKontextAb — Kontext-Ableitung aus DesignWorkspace-State (J3b)', () => {
+describe('leiteTaetigkeitsKontextAb — Kontext-Ableitung aus DesignWorkspace-State (J3b/J3c-0b)', () => {
   it('aktionLaeuft ist falsch, wenn weder eine Punktkette offen ist noch gezogen wird', () => {
     const k = leiteTaetigkeitsKontextAb({
       tool: 'auswahl',
       phase: 'bauprojekt',
       punkteOffen: false,
       ziehtElement: false,
+      panelOffen: false,
     });
-    expect(k).toEqual({ tool: 'auswahl', phase: 'bauprojekt', aktionLaeuft: false });
+    expect(k).toEqual({ tool: 'auswahl', phase: 'bauprojekt', aktionLaeuft: false, panelOffen: false });
   });
 
   it('aktionLaeuft ist wahr, solange eine Punktkette offen ist (points.length>0)', () => {
-    const k = leiteTaetigkeitsKontextAb({ tool: 'wand', phase: 'bauprojekt', punkteOffen: true, ziehtElement: false });
+    const k = leiteTaetigkeitsKontextAb({
+      tool: 'wand',
+      phase: 'bauprojekt',
+      punkteOffen: true,
+      ziehtElement: false,
+      panelOffen: false,
+    });
     expect(k.aktionLaeuft).toBe(true);
   });
 
@@ -360,12 +411,19 @@ describe('leiteTaetigkeitsKontextAb — Kontext-Ableitung aus DesignWorkspace-St
       phase: 'bauprojekt',
       punkteOffen: false,
       ziehtElement: true,
+      panelOffen: false,
     });
     expect(k.aktionLaeuft).toBe(true);
   });
 
   it('aktionLaeuft bleibt wahr, wenn beides gleichzeitig zutrifft', () => {
-    const k = leiteTaetigkeitsKontextAb({ tool: 'wand', phase: 'werkplan', punkteOffen: true, ziehtElement: true });
+    const k = leiteTaetigkeitsKontextAb({
+      tool: 'wand',
+      phase: 'werkplan',
+      punkteOffen: true,
+      ziehtElement: true,
+      panelOffen: false,
+    });
     expect(k.aktionLaeuft).toBe(true);
   });
 
@@ -375,8 +433,94 @@ describe('leiteTaetigkeitsKontextAb — Kontext-Ableitung aus DesignWorkspace-St
       phase: 'vorprojekt',
       punkteOffen: false,
       ziehtElement: false,
+      panelOffen: false,
     });
     expect(k.tool).toBe('skizze');
     expect(k.phase).toBe('vorprojekt');
+  });
+
+  it('panelOffen wird unverändert durchgereicht (Fable-Review-2-Auflage J3c-0b: sonneOffen||drawOffen||…)', () => {
+    const offen = leiteTaetigkeitsKontextAb({
+      tool: 'wand',
+      phase: 'bauprojekt',
+      punkteOffen: false,
+      ziehtElement: false,
+      panelOffen: true,
+    });
+    expect(offen.panelOffen).toBe(true);
+    const zu = leiteTaetigkeitsKontextAb({
+      tool: 'wand',
+      phase: 'bauprojekt',
+      punkteOffen: false,
+      ziehtElement: false,
+      panelOffen: false,
+    });
+    expect(zu.panelOffen).toBe(false);
+  });
+});
+
+describe('Element-Hebung (2.2 Schlussabsatz, Fable-Review-2-Auflage J3c-2)', () => {
+  it('gehobenesElementDerGruppe liefert undefined ohne Nutzung', () => {
+    expect(gehobenesElementDerGruppe('ebenen', leeresProfil())).toBeUndefined();
+  });
+
+  it('gehobenesElementDerGruppe liefert das oft genutzte Element (>= Schwelle), wenn es in den Top-3 der Gruppe ist', () => {
+    const nutzung = profilMit('ebenen:sonne', 5);
+    expect(gehobenesElementDerGruppe('ebenen', nutzung)).toBe('ebenen:sonne');
+  });
+
+  it('gehobenesElementDerGruppe ignoriert Elemente unter der Schwelle', () => {
+    const nutzung = profilMit('ebenen:sonne', 1);
+    expect(gehobenesElementDerGruppe('ebenen', nutzung)).toBeUndefined();
+  });
+
+  it('gehobenesElementDerGruppe ignoriert Elemente ANDERER Gruppen', () => {
+    const nutzung = profilMit('export:pdf', 5);
+    expect(gehobenesElementDerGruppe('ebenen', nutzung)).toBeUndefined();
+  });
+
+  it('elementFokusStufe hebt das gehobene Element eine Stufe über die Gruppen-Stufe (selten→sekundär)', () => {
+    expect(elementFokusStufe('ebenen:sonne', 'selten', 'ebenen:sonne')).toBe('sekundaer');
+  });
+
+  it('elementFokusStufe hebt nie über primär hinaus (gedeckelt)', () => {
+    expect(elementFokusStufe('zeichnen:wand', 'primaer', 'zeichnen:wand')).toBe('primaer');
+  });
+
+  it('elementFokusStufe lässt ein NICHT gehobenes Element exakt auf der Gruppen-Stufe (kein Layout-Shift für Geschwister)', () => {
+    expect(elementFokusStufe('ebenen:textur', 'selten', 'ebenen:sonne')).toBe('selten');
+  });
+
+  it('elementFokusStufe bleibt auf Gruppen-Stufe, wenn kein Element gehoben ist (gehobenesElement===undefined)', () => {
+    expect(elementFokusStufe('ebenen:sonne', 'sekundaer', undefined)).toBe('sekundaer');
+  });
+
+  it('opazitaetsKlasse liefert die reine k-opazitaet-* Klasse (kein font-size/font-weight — 2.3.1)', () => {
+    expect(opazitaetsKlasse('primaer')).toBe('k-opazitaet-primaer');
+    expect(opazitaetsKlasse('sekundaer')).toBe('k-opazitaet-sekundaer');
+    expect(opazitaetsKlasse('selten')).toBe('k-opazitaet-selten');
+  });
+
+  it('opazitaetsWert spiegelt exakt die aura.css-Werte von .k-primaer/.k-sekundaer/.k-selten', () => {
+    expect(opazitaetsWert('primaer')).toBe(1);
+    expect(opazitaetsWert('sekundaer')).toBe(0.92);
+    expect(opazitaetsWert('selten')).toBe(0.6);
+  });
+
+  it('Praxisfall: ein oft genutztes Ebenen-Element bleibt eine Stufe höher als seine (aktuelle) Gruppen-Stufe, Geschwister bleiben auf der Gruppen-Stufe', () => {
+    // "Sonne" ist oft genutzt (>= Schwelle) — dieselbe Nutzung hebt hier
+    // BEIDES: die Gruppe selbst (2.2, Schlussabsatz: Top-3 hebt selten→
+    // sekundär) UND, obendrauf, "Sonne" nochmals eine Stufe über die
+    // (bereits gehobene) Gruppe (J3c-2: Element-Hebung ist additiv zur
+    // Gruppen-Hebung, nicht deren Ersatz). Ein NICHT gehobenes Geschwister
+    // (Textur) bleibt exakt auf der Gruppen-Stufe.
+    const nutzung = profilMit('ebenen:sonne', 5);
+    const gruppenStufe = adaptiveFokusStufe('ebenen', 'sekundaer', kontext({ tool: 'wand' }), nutzung);
+    expect(gruppenStufe).toBe('sekundaer'); // von selten (Zeichnen-Demotion) auf sekundär gehoben
+    const gehoben = gehobenesElementDerGruppe('ebenen', nutzung);
+    const sonneStufe = elementFokusStufe('ebenen:sonne', gruppenStufe, gehoben);
+    const texturStufe = elementFokusStufe('ebenen:textur', gruppenStufe, gehoben);
+    expect(sonneStufe).toBe('primaer'); // eine Stufe höher als die (bereits gehobene) Gruppe
+    expect(texturStufe).toBe(gruppenStufe); // Geschwister bleiben auf der Gruppen-Stufe
   });
 });
