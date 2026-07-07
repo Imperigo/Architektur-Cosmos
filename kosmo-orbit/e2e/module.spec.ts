@@ -479,8 +479,18 @@ test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async (
   });
   await page.click('[data-testid="tab-einfach"]');
   await page.click('[data-testid="send-render"]');
-  // Fake-Worker rendert das Kupfer-PNG → «Aufs Blatt» erscheint
-  await page.locator('[data-testid="render-job"]').first().getByText('Aufs Blatt').click({ timeout: 30_000 });
+  // Fake-Worker rendert das Kupfer-PNG → «Aufs Blatt» erscheint. Robust gegen
+  // Jobstore-Akkumulation (parallele Specs füllen die geteilte Fake-Bridge):
+  // NICHT das erste Job-Panel abwarten (`.first()` traf sonst einen fremden
+  // error/cancelled-Job OHNE «Aufs Blatt» → 30-s-Timeout-Flake unter Last),
+  // sondern den ersten «Aufs Blatt»-Knopf über ALLE Jobs — sobald IRGENDEIN
+  // Render fertig ist. Der Timeout ist grosszügig unter dem 90-s-Testbudget,
+  // weil der 2.5-s-Poll unter Volllast mehrere Zyklen bis «fertig» braucht.
+  await page
+    .locator('[data-testid="render-job"]')
+    .getByText('Aufs Blatt')
+    .first()
+    .click({ timeout: 60_000 });
   await expect(page.locator('[data-testid="vis-hinweis"]')).toBeVisible();
   // Blatt trägt das Bild als Bürger
   const stand = await page.evaluate(() => {

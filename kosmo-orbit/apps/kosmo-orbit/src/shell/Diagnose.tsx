@@ -27,6 +27,27 @@ async function fetchWithTimeout(url: string, ms: number): Promise<Response> {
   }
 }
 
+/**
+ * Erkennt eine Bridge-URL, die von der CSP-`connect-src`-Allowlist NICHT
+ * gedeckt ist (KLEIN 9). Erlaubt sind nur `localhost` und `127.0.0.1` — eine
+ * LAN-IP (z. B. `192.168.x.x` für ein iPad im Büronetz) wird still geblockt und
+ * sieht dann wie «offline» aus. Die CSP kann keine CIDR-/Oktett-Wildcards, ohne
+ * sie mit `http://*:*` weit aufzureissen; darum wird sie NICHT geschwächt,
+ * sondern der Fall ehrlich benannt. Ein Hostname (kein reines IP-Muster) wird
+ * NICHT als geblockt gemeldet — er könnte lokal auflösbar/erlaubt sein.
+ */
+function istWahrscheinlichCspGeblockt(bridgeUrl: string): boolean {
+  try {
+    const host = new URL(bridgeUrl).hostname;
+    if (host === 'localhost' || host === '127.0.0.1') return false;
+    // Nur echte IPv4-Adressen sicher als geblockt markieren (Hostnamen könnten
+    // per /etc/hosts o. Ä. auf einen erlaubten Ursprung zeigen).
+    return /^\d{1,3}(\.\d{1,3}){3}$/.test(host);
+  } catch {
+    return false;
+  }
+}
+
 export async function diagnose(): Promise<Befund[]> {
   const befunde: Befund[] = [];
   const { doc, history } = useProject.getState();
@@ -84,8 +105,8 @@ export async function diagnose(): Promise<Befund[]> {
   // 4) HomeStation-Bridge — inkl. Worker-/GPU-Zeile aus /health (HS3): die
   // Kette sagt selbst, ob ein GPU-Leerlauf-Fenster gemeldet wird. Ohne echte
   // GPU-Abfrage fehlt das Feld ehrlich (nie vorgetäuscht).
+  const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
   try {
-    const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
     const res = await fetchWithTimeout(`${bridge}/health`, 3000);
     const roh = (await res.json()) as unknown;
     const geprueft = BridgeHealth.safeParse(roh);
@@ -105,10 +126,16 @@ export async function diagnose(): Promise<Befund[]> {
     }
     befunde.push({ bereich: 'Bridge', status: res.ok ? 'ok' : 'warnung', detail });
   } catch {
+    // KLEIN 9: Eine LAN-IP-Bridge (iPad/anderer Rechner im Büronetz) wird von
+    // der CSP still geblockt und sieht dann wie «offline» aus — der Hinweis
+    // trennt «Firewall/Prozess tot» von «CSP deckt diese Adresse nicht».
+    const cspHinweis = istWahrscheinlichCspGeblockt(bridge)
+      ? ` — Achtung: die Adresse ${bridge} ist eine LAN-IP, die die CSP (connect-src) nicht erlaubt; nur localhost/127.0.0.1 sind gedeckt. Am selben Gerät die Bridge über localhost ansprechen oder die Produktions-CSP am Hosting um diesen Ursprung erweitern.`
+      : '';
     befunde.push({
       bereich: 'Bridge',
       status: 'warnung',
-      detail: 'nicht erreichbar — Rendern/Speak-to-Kosmo brauchen die HomeStation',
+      detail: `nicht erreichbar — Rendern/Speak-to-Kosmo brauchen die HomeStation${cspHinweis}`,
     });
   }
 

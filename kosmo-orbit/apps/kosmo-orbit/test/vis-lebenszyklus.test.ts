@@ -1,11 +1,16 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   istZeitUeberschritten,
   memoKey,
   RENDER_TIMEOUT_MS_DEFAULT,
   type NodeLauf,
 } from '../src/modules/vis/vis-runtime';
-import { mappeJobStatus } from '../src/modules/vis/vis-jobs';
+import {
+  BridgeHttpError,
+  bridgeVermutlichCspGeblockt,
+  istAuthFehler,
+  mappeJobStatus,
+} from '../src/modules/vis/vis-jobs';
 
 /**
  * V2-Technik Block 1 / HS3 — die reinen Bausteine der Client-Zustandsmaschine
@@ -57,6 +62,64 @@ describe('mappeJobStatus (HS3 Bridge→Client-Mapper)', () => {
 
   it('unbekannter Status fällt auf einen Wartezustand (nie stiller Fertig, nie vorgetäuschtes «läuft»)', () => {
     expect(mappeJobStatus({ status: 'irgendwas-neues' })).toBe('wartetGpu');
+  });
+});
+
+describe('istAuthFehler (KLEIN 8 — 401/403 nicht mehr still verschlucken)', () => {
+  it('erkennt einen 401/403 als Auth-Fehler', () => {
+    expect(istAuthFehler(new BridgeHttpError(401, 'Job x'))).toBe(true);
+    expect(istAuthFehler(new BridgeHttpError(403, 'Job x'))).toBe(true);
+  });
+
+  it('lässt andere HTTP-Fehler (404/500) NICHT als Auth durchgehen', () => {
+    expect(istAuthFehler(new BridgeHttpError(404, 'Job x'))).toBe(false);
+    expect(istAuthFehler(new BridgeHttpError(500, 'Job x'))).toBe(false);
+  });
+
+  it('behandelt transiente Netzfehler (TypeError) nicht als Auth', () => {
+    expect(istAuthFehler(new TypeError('Failed to fetch'))).toBe(false);
+    expect(istAuthFehler(new Error('irgendwas'))).toBe(false);
+  });
+
+  it('trägt den Status-Code für ehrliche Meldungen', () => {
+    expect(new BridgeHttpError(401, 'Job x').status).toBe(401);
+    expect(new BridgeHttpError(401, 'Job x').message).toContain('401');
+  });
+});
+
+describe('bridgeVermutlichCspGeblockt (KLEIN 9 — LAN-IP ehrlich benennen)', () => {
+  const setzeBridge = (url: string | null) => {
+    const store: Record<string, string> = url === null ? {} : { 'kosmo.bridge': url };
+    vi.stubGlobal('localStorage', {
+      getItem: (k: string) => store[k] ?? null,
+      setItem: () => undefined,
+      removeItem: () => undefined,
+    });
+  };
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('meldet eine LAN-IPv4-Bridge als (vermutlich) CSP-geblockt', () => {
+    setzeBridge('http://192.168.1.20:8600');
+    expect(bridgeVermutlichCspGeblockt()).toBe(true);
+    setzeBridge('http://10.0.0.5:8600');
+    expect(bridgeVermutlichCspGeblockt()).toBe(true);
+  });
+
+  it('lässt localhost/127.0.0.1 in Ruhe (die CSP deckt sie)', () => {
+    setzeBridge('http://localhost:8600');
+    expect(bridgeVermutlichCspGeblockt()).toBe(false);
+    setzeBridge('http://127.0.0.1:8600');
+    expect(bridgeVermutlichCspGeblockt()).toBe(false);
+  });
+
+  it('markiert Hostnamen NICHT vorschnell (könnten lokal auflösbar sein)', () => {
+    setzeBridge('http://homestation.local:8600');
+    expect(bridgeVermutlichCspGeblockt()).toBe(false);
+  });
+
+  it('fällt beim Default (localhost) sauber auf false', () => {
+    setzeBridge(null);
+    expect(bridgeVermutlichCspGeblockt()).toBe(false);
   });
 });
 

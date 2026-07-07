@@ -13,8 +13,10 @@ import {
   abbrechenJob,
   bildAufsBlatt,
   bridgeBase,
+  bridgeVermutlichCspGeblockt,
   freigebenJob,
   holeJob,
+  istAuthFehler,
   mappeJobStatus,
   postRenderJob,
 } from './vis-jobs';
@@ -152,7 +154,21 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
               patchLauf(nodeId, { ...marker, status: mappeJobStatus(j) });
             }
           })
-          .catch(() => undefined);
+          .catch((err) => {
+            // KLEIN 8: Ein Auth-Fehler (401/403) heisst falscher/fehlender
+            // Token — der wurde früher still verschluckt und tauchte erst nach
+            // 10 min als Zeitüberschreitung auf. Jetzt sofort ehrlich am Node.
+            // (Wieder gegen den aktuellen jobId prüfen — kein Fremd-Lauf.)
+            if (useVisRuntime.getState().laeufe[nodeId]?.jobId !== jobId) return;
+            if (istAuthFehler(err)) {
+              patchLauf(nodeId, {
+                status: 'fehler',
+                fehler: 'Bridge lehnt ab — Token fehlt oder ist falsch (KosmoVis-Einstellungen).',
+              });
+            }
+            // Transiente Netzfehler NICHT hochziehen: der nächste Poll fasst
+            // nach — ein einmaliger Aussetzer soll den Lauf nicht töten.
+          });
       }
     }, 2500);
     return () => clearInterval(t);
@@ -231,15 +247,20 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
       )
       .catch((err) => {
         // TypeError = fetch-Netzfehler → ehrliche Offline-Meldung (§2.1.5),
-        // nicht der kryptische «Failed to fetch»-Rohtext.
+        // nicht der kryptische «Failed to fetch»-Rohtext. KLEIN 9: Ist die
+        // Bridge-URL eine LAN-IP, ist der «Netzfehler» in Wahrheit oft die CSP
+        // — das wird benannt, damit niemand vergeblich die Firewall sucht.
         const offline = err instanceof TypeError;
+        const cspGeblockt = offline && bridgeVermutlichCspGeblockt();
         patchLauf(nodeId, {
           status: 'fehler',
-          fehler: offline
-            ? 'Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)'
-            : err instanceof Error
-              ? err.message
-              : String(err),
+          fehler: cspGeblockt
+            ? 'Bridge-Adresse ist eine LAN-IP, die die CSP nicht erlaubt (nur localhost/127.0.0.1) — am selben Gerät über localhost ansprechen. (Offline)'
+            : offline
+              ? 'Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)'
+              : err instanceof Error
+                ? err.message
+                : String(err),
         });
         meldeFehler(err);
       });
