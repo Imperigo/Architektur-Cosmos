@@ -4747,7 +4747,7 @@ describe('FreeMesh Stufe 3 / FM1 — Kernel-Fundament (Block 3, Owner-Q9)', () =
     expect(mesh.positions[2]).toBe(0);
   });
 
-  it('Golden-Guard (E5): ein FreeMesh ändert den Grundriss-SVG in FM1 NICHT (2D-Slice kommt in FM2)', async () => {
+  it('Golden-Guard (E5): ein FreeMesh UNTER der Schnitthöhe lässt den Grundriss-SVG byte-identisch', async () => {
     const { planInnerSvg } = await import('../src');
     const { doc, storeyId } = setupMeshDoc();
     execute(doc, 'design.wandZeichnen', {
@@ -4759,10 +4759,86 @@ describe('FreeMesh Stufe 3 / FM1 — Kernel-Fundament (Block 3, Owner-Q9)', () =
       }).patches[0] as { id: string }).id,
     });
     const vorher = planInnerSvg(doc, storeyId, 50).inner;
+    // 800 mm hoch — unter der 1-m-Schnitthöhe: keine Schnittfigur, SVG
+    // byte-identisch (die ehrliche Stufe-3-Grenze aus FM2; die Goldens der
+    // Suite beweisen dasselbe für meshlose Fixtures).
     execute(doc, 'design.meshErstellen', {
-      form: 'quader', storeyId, at: { x: 1000, y: 1000 }, breite: 2000, laenge: 2000, hoehe: 1500,
+      form: 'quader', storeyId, at: { x: 1000, y: 1000 }, breite: 2000, laenge: 2000, hoehe: 800,
     });
     const nachher = planInnerSvg(doc, storeyId, 50).inner;
     expect(nachher).toBe(vorher);
+  });
+});
+
+describe('FreeMesh Stufe 3 / FM2 — 2D-Schnittfigur (Tri-Slice, Buildplan E5)', () => {
+  const setupMeshDoc = () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    return { doc, storeyId: (eg.patches[0] as { id: string }).id };
+  };
+
+  it('meshSchnittRinge: Quader bei z=500 liefert EINEN geschlossenen Ring mit exakter Grundfläche', async () => {
+    const { quaderMesh, meshSchnittRinge } = await import('../src');
+    const q = quaderMesh({ x: 0, y: 0 }, 2000, 3000, 1500);
+    const ringe = meshSchnittRinge(q.positions, q.faces, 500);
+    expect(ringe).toHaveLength(1);
+    expect(Math.abs(polygonArea(ringe[0]!))).toBeCloseTo(2000 * 3000, 0);
+    // Ebene über dem Körper: ehrlich leer
+    expect(meshSchnittRinge(q.positions, q.faces, 2000)).toHaveLength(0);
+  });
+
+  it('derivePlan: FreeMesh über Schnitthöhe zeigt die Schnittfigur, darunter ehrlich nichts', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 1000, y: 1000 }, breite: 2000, laenge: 2000, hoehe: 1500,
+    });
+    const plan = derivePlan(doc, storeyId);
+    const figuren = plan.regions.filter((r) => r.classes.includes('freemesh'));
+    expect(figuren).toHaveLength(1);
+    expect(Math.abs(polygonArea(figuren[0]!.rings[0]!))).toBeCloseTo(2000 * 2000, 0);
+
+    const { doc: doc2, storeyId: sid2 } = setupMeshDoc();
+    execute(doc2, 'design.meshErstellen', {
+      form: 'quader', storeyId: sid2, at: { x: 1000, y: 1000 }, breite: 2000, laenge: 2000, hoehe: 800,
+    });
+    expect(derivePlan(doc2, sid2).regions.some((r) => r.classes.includes('freemesh'))).toBe(false);
+  });
+
+  it('derivePlan: nach Flächen-Extrude wächst die Schnittfigur ehrlich mit', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    const res = execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 0, y: 0 }, breite: 2000, laenge: 2000, hoehe: 1500,
+    });
+    const id = (res.patches[0] as { id: string }).id;
+    // Seitenfläche (+x, Dreiecke 6/7) um 1 m auswärts extrudieren →
+    // die Schnittfigur bei 1 m wird um 2000×1000 grösser.
+    execute(doc, 'design.meshFlaecheExtrudieren', { entityId: id, face: 6, distanz: 1000 });
+    const plan = derivePlan(doc, storeyId);
+    const figuren = plan.regions.filter((r) => r.classes.includes('freemesh'));
+    const flaeche = figuren.reduce((s, r) => s + Math.abs(polygonArea(r.rings[0]!)), 0);
+    expect(flaeche).toBeCloseTo(2000 * 2000 + 2000 * 1000, 0);
+  });
+
+  it('deriveSection schneidet FreeMesh automatisch (deriveAll-Pfad seit FM1)', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    const spec = { a: { x: -1000, y: 1000 }, b: { x: 5000, y: 1000 }, depth: 4000, lookLeft: true };
+    const ohne = deriveSection(doc, spec).cuts.length;
+    execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 0, y: 0 }, breite: 2000, laenge: 2000, hoehe: 1500,
+    });
+    const mit = deriveSection(doc, spec).cuts.length;
+    expect(ohne).toBe(0);
+    expect(mit).toBeGreaterThan(0);
+  });
+
+  it('Kennzahlen bleiben ehrlich unberührt: FreeMesh zählt NICHT in SIA-416/Mengen (E5)', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    const reportVorher = JSON.stringify(areaReport(doc));
+    const mengenVorher = JSON.stringify(deriveMengen(doc));
+    execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 0, y: 0 }, breite: 4000, laenge: 4000, hoehe: 3000,
+    });
+    expect(JSON.stringify(areaReport(doc))).toBe(reportVorher);
+    expect(JSON.stringify(deriveMengen(doc))).toBe(mengenVorher);
   });
 });

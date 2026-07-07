@@ -289,6 +289,71 @@ export function featureKanten(positions: number[], faces: number[], winkelGrad =
   return out;
 }
 
+/**
+ * Horizontale Schnittfigur des Meshes bei z = zCut (FM2, Buildplan E5):
+ * Dreieck∩Ebene-Segmente, zu geschlossenen Ringen verkettet. Intern wird bei
+ * zCut+0.5 geschnitten — Positionen sind ganzzahlige mm, also liegt NIE ein
+ * Vertex exakt auf der Ebene (keine Degenerations-Sonderfälle), und 0.5 mm
+ * sind zeichnerisch bedeutungslos. Offene Ketten (nicht wasserdichte Meshes)
+ * werden ehrlich verworfen statt falsch geschlossen.
+ */
+export function meshSchnittRinge(positions: number[], faces: number[], zCut: number): Pt[][] {
+  const zc = zCut + 0.5;
+  const segs: { a: Pt; b: Pt }[] = [];
+  for (let f = 0; f * 3 < faces.length; f++) {
+    const punkte: Pt[] = [];
+    for (let k = 0; k < 3; k++) {
+      const v1 = faces[f * 3 + k]! * 3;
+      const v2 = faces[f * 3 + ((k + 1) % 3)]! * 3;
+      const z1 = positions[v1 + 2]!;
+      const z2 = positions[v2 + 2]!;
+      if ((z1 < zc) === (z2 < zc)) continue; // Kante kreuzt die Ebene nicht
+      const t = (zc - z1) / (z2 - z1);
+      punkte.push({
+        x: positions[v1]! + t * (positions[v2]! - positions[v1]!),
+        y: positions[v1 + 1]! + t * (positions[v2 + 1]! - positions[v1 + 1]!),
+      });
+    }
+    if (punkte.length === 2) segs.push({ a: punkte[0]!, b: punkte[1]! });
+  }
+  if (segs.length === 0) return [];
+
+  // Segmente zu Ringen verketten (Punkt-Schlüssel auf 0.01 mm gerundet).
+  const key = (p: Pt) => `${Math.round(p.x * 100)},${Math.round(p.y * 100)}`;
+  const anPunkt = new Map<string, number[]>();
+  segs.forEach((s, i) => {
+    for (const p of [s.a, s.b]) {
+      const liste = anPunkt.get(key(p));
+      if (liste) liste.push(i);
+      else anPunkt.set(key(p), [i]);
+    }
+  });
+  const benutzt = new Set<number>();
+  const ringe: Pt[][] = [];
+  for (let start = 0; start < segs.length; start++) {
+    if (benutzt.has(start)) continue;
+    benutzt.add(start);
+    const ring: Pt[] = [segs[start]!.a, segs[start]!.b];
+    let geschlossen = false;
+    for (;;) {
+      const ende = ring[ring.length - 1]!;
+      const kandidaten = (anPunkt.get(key(ende)) ?? []).filter((i) => !benutzt.has(i));
+      const nächster = kandidaten[0];
+      if (nächster === undefined) break;
+      benutzt.add(nächster);
+      const s = segs[nächster]!;
+      const weiter = key(s.a) === key(ende) ? s.b : s.a;
+      if (key(weiter) === key(ring[0]!)) {
+        geschlossen = true;
+        break;
+      }
+      ring.push(weiter);
+    }
+    if (geschlossen && ring.length >= 3) ringe.push(ring);
+  }
+  return ringe;
+}
+
 /** Signiertes Volumen (Divergenzsatz, mm³) — der ehrliche Geometrie-Beweis
  * in Tests: ein Quader misst exakt b·l·h, eine Extrusion vergrössert exakt
  * um Regionsfläche·Distanz (bei ganzzahliger Normale). */

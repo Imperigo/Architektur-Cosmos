@@ -10,6 +10,11 @@ import {
 } from '../geometry/wall';
 import { dist, normal, polygonArea, pt, type Pt } from '../model/units';
 import { treppenTeile } from './treppe';
+import { meshSchnittRinge } from './mesh-topo';
+
+/** Standard-Schnitthöhe des Grundrisses über Geschoss-OK (SIA-üblich 1 m) —
+ * die Ebene, auf der FreeMesh-Körper ihre ehrliche Schnittfigur zeigen. */
+export const PLAN_SCHNITTHOEHE = 1000;
 
 /**
  * Grundriss-Derivation — symbolisch aus der Parametrik (nie aus dem Mesh).
@@ -611,6 +616,16 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
         rings: [e.outline.map((p) => ({ ...p })), ...(e.holes ?? []).map((h) => h.map((p) => ({ ...p })))],
         classes: ['projection', 'decke'],
       });
+    } else if (e.kind === 'freemesh') {
+      // FreeMesh (Block 3 / FM2, Buildplan E5): die ehrliche SCHNITTFIGUR bei
+      // der Standard-Schnitthöhe 1 m über Geschoss-OK (Tri-Slice), NICHT eine
+      // erfundene Footprint-Projektion. Ein Mesh, das die Schnitthöhe nicht
+      // erreicht, erscheint im Grundriss nicht (Stufe-3-Grenze, dokumentiert)
+      // — der Daten-Guard hält zugleich die Goldens byte-identisch (die
+      // Fixtures enthalten keine Meshes).
+      for (const ring of meshSchnittRinge(e.positions, e.faces, PLAN_SCHNITTHOEHE)) {
+        regions.push({ rings: [ring], classes: ['projection', 'freemesh'] });
+      }
     }
   }
 
