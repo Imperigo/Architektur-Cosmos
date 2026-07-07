@@ -19,7 +19,9 @@
     "lint": "npm run lint --workspaces --if-present",
     "e2e": "playwright test",
     "security:secrets": "node tools/secret-scan.mjs",
-    "test:secret-scan": "node tools/secret-scan.test.mjs"
+    "test:secret-scan": "node tools/secret-scan.test.mjs",
+    "netz-check": "node tools/netz-check.mjs",
+    "test:netz-check": "node tools/netz-check.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1"

@@ -49,6 +49,55 @@ describe('Betriebsart → Konfiguration', () => {
   });
 });
 
+describe('Betriebsart → Konfiguration (Default unverändert, B8-Regressionsschutz)', () => {
+  it('standard bleibt ws/http, auch wenn remoteTls gesetzt würde (Standard ignoriert das Flag)', () => {
+    const k = betriebKonfig({ betriebsart: 'standard', remoteTls: true });
+    expect(k.llmBaseUrl).toBe('http://localhost:11434');
+    expect(k.bridgeUrl).toBe('http://localhost:8600');
+    expect(k.syncUrl).toBe('ws://localhost:8700');
+    expect(k.remoteTls).toBeUndefined();
+  });
+
+  it('remote ohne remoteTls (Default) bleibt ws/http wie bisher', () => {
+    const k = betriebKonfig({ betriebsart: 'remote', remoteHost: '100.87.3.2' });
+    expect(k.llmBaseUrl).toBe('http://100.87.3.2:11434');
+    expect(k.bridgeUrl).toBe('http://100.87.3.2:8600');
+    expect(k.syncUrl).toBe('ws://100.87.3.2:8700');
+    expect(k.remoteTls).toBeUndefined();
+  });
+
+  it('remote mit remoteTls: false bleibt ws/http (kein remoteTls-Feld im Ergebnis)', () => {
+    const k = betriebKonfig({ betriebsart: 'remote', remoteHost: '100.87.3.2', remoteTls: false });
+    expect(k.llmBaseUrl).toBe('http://100.87.3.2:11434');
+    expect(k.syncUrl).toBe('ws://100.87.3.2:8700');
+    expect(k.remoteTls).toBeUndefined();
+  });
+
+  it('remote mit remoteTls: true baut https/wss statt http/ws', () => {
+    const k = betriebKonfig({ betriebsart: 'remote', remoteHost: '100.87.3.2', remoteTls: true });
+    expect(k.provider).toBe('ollama');
+    expect(k.llmBaseUrl).toBe('https://100.87.3.2:11434');
+    expect(k.bridgeUrl).toBe('https://100.87.3.2:8600');
+    expect(k.syncUrl).toBe('wss://100.87.3.2:8700');
+    expect(k.cloud).toBe(false);
+    expect(k.remoteTls).toBe(true);
+  });
+
+  it('remote mit remoteTls: true und leerem Host fällt weiterhin sicher auf localhost zurück, aber mit TLS-Schema', () => {
+    const k = betriebKonfig({ betriebsart: 'remote', remoteHost: '', remoteTls: true });
+    expect(k.llmBaseUrl).toBe('https://localhost:11434');
+    expect(k.syncUrl).toBe('wss://localhost:8700');
+  });
+
+  it('cloud ignoriert remoteTls (bleibt leer, kein http/https-Bezug)', () => {
+    const k = betriebKonfig({ betriebsart: 'cloud', remoteTls: true });
+    expect(k.llmBaseUrl).toBe('');
+    expect(k.bridgeUrl).toBe('');
+    expect(k.syncUrl).toBe('');
+    expect(k.remoteTls).toBeUndefined();
+  });
+});
+
 describe('bereinigeHost', () => {
   it('nimmt blossen Host, Name oder IP unverändert', () => {
     expect(bereinigeHost('kosmo.local')).toBe('kosmo.local');

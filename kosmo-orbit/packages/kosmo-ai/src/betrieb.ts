@@ -12,6 +12,11 @@
  * - **cloud**   — voll Claude-abhängig (Owner: «mind. Opus 4.8»): kein lokales
  *   Modell, keine HomeStation-Werkzeuge; die Browser-Fallbacks (Web-Speech,
  *   Fake-Render) tragen, was Cycles/Whisper zuhause tun würden.
+ *
+ * Netz/Firewall (Serie I / Batch B8, R10, siehe `docs/FIREWALL-KONZEPT.md`):
+ * Remote kann optional `remoteTls: true` setzen, wenn ein WireGuard-Gateway
+ * oder Reverse-Proxy TLS terminiert — dann werden `https`/`wss` statt
+ * `http`/`ws` gebaut. Ohne das Flag (Default) bleibt alles wie bisher.
  */
 
 export type Betriebsart = 'standard' | 'remote' | 'cloud';
@@ -83,6 +88,15 @@ export interface BetriebEingabe {
   remoteHost?: string;
   /** Cloud: gewünschtes Claude-Modell; unter Opus 4.8 wird auf Opus angehoben. */
   cloudModell?: string;
+  /**
+   * Remote: TLS-Terminierung vorhanden (WireGuard-Gateway/Reverse-Proxy mit
+   * `wss`/mTLS, siehe `docs/FIREWALL-KONZEPT.md`, Batch B8/R10) → Adressen
+   * werden mit `https://`/`wss://` statt `http://`/`ws://` gebaut. Wirkt nur
+   * im Remote-Modus; Standard bleibt bewusst immer beim Klartext-Schema im
+   * vertrauenswürdigen Büro-LAN. Default (`undefined`/`false`) ändert am
+   * bisherigen Verhalten nichts.
+   */
+  remoteTls?: boolean;
 }
 
 export interface BetriebKonfig {
@@ -97,6 +111,12 @@ export interface BetriebKonfig {
   /** Cloud-Modell, immer mindestens Opus 4.8. */
   cloudModell: string;
   cloud: boolean;
+  /**
+   * Nur vorhanden (und `true`) wenn die Adressen mit `https`/`wss` gebaut
+   * wurden (Remote + `remoteTls: true`). Fehlt sonst ganz — kein
+   * `remoteTls: false`-Rauschen (`exactOptionalPropertyTypes`).
+   */
+  remoteTls?: boolean;
 }
 
 /**
@@ -137,13 +157,20 @@ export function betriebKonfig(ein: BetriebEingabe): BetriebKonfig {
     };
   }
   const host = ein.betriebsart === 'remote' ? bereinigeHost(ein.remoteHost ?? '') || 'localhost' : 'localhost';
+  // TLS nur relevant/erlaubt im Remote-Modus (WireGuard-Gateway/Reverse-Proxy
+  // terminiert `wss`/`https`, siehe FIREWALL-KONZEPT.md); Standard bleibt
+  // immer beim bisherigen Klartext-Schema im Büro-LAN.
+  const tls = ein.betriebsart === 'remote' && ein.remoteTls === true;
+  const httpSchema = tls ? 'https' : 'http';
+  const wsSchema = tls ? 'wss' : 'ws';
   return {
     betriebsart: ein.betriebsart,
     provider: 'ollama',
-    llmBaseUrl: `http://${host}:11434`,
-    bridgeUrl: `http://${host}:8600`,
-    syncUrl: `ws://${host}:8700`,
+    llmBaseUrl: `${httpSchema}://${host}:11434`,
+    bridgeUrl: `${httpSchema}://${host}:8600`,
+    syncUrl: `${wsSchema}://${host}:8700`,
     cloudModell: mindestensOpus(ein.cloudModell),
     cloud: false,
+    ...(tls ? { remoteTls: true } : {}),
   };
 }
