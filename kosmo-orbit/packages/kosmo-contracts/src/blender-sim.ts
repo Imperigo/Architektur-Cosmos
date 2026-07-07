@@ -46,6 +46,9 @@ export type BlenderSimJobStatus = z.infer<typeof BlenderSimJobStatus>;
 export const BlenderSimJob = z.object({
   job_id: z.string().regex(/^bsim-\d+-[0-9a-f]{6}$/),
   status: BlenderSimJobStatus,
+  /** Job-Art-Marker; der Fake-Worker dispatcht über `kind` (Symmetrie zu
+   * VideoSplatJob, Fable-Review-1). */
+  kind: z.literal('blender-sim').default('blender-sim'),
   art: BlenderSimArt,
   scene: z.string().describe('Pfad zur blender-sim.json'),
   created_at: z.string(),

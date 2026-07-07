@@ -105,6 +105,39 @@ describe('V2-Technik Block 1 — Job-Lebenszyklus (additiv, kein Breaking Change
     expect(heute.requested_engine).toBeUndefined();
   });
 
+  it('parst einen done-Record MIT eingebettetem Ergebnis (GET /jobs/{id})', () => {
+    // Form des Fake-Workers (main.py: record + eingebettetes render-result.json):
+    const done = RenderJob.parse({
+      job_id: 'vis-1783414811-ab095c',
+      status: 'done',
+      scene: 's.json',
+      created_at: '2026-07-07T08:00:00Z',
+      updated_at: '2026-07-07T08:00:03Z',
+      worker: 'fake-worker',
+      result: {
+        schema: 'kosmovis.render-result/v2',
+        job_id: 'vis-1783414811-ab095c',
+        images: ['cam-01.png'],
+        ai_variant: 'cam-01.png',
+        qa: {
+          style: { style_score: 0.42, threshold: 0.3, passed: true, method: 'dinov3' },
+          geometry: {
+            geometry_fidelity: 0.87,
+            spearman: 0.93,
+            geom_iou: 0.81,
+            threshold: 0.65,
+            passed: true,
+            method: 'fake-worker',
+          },
+          verdict: { passed: true, reason: 'Fake-Worker (Demo ohne GPU)' },
+        },
+      },
+    });
+    // Ohne das `result`-Feld hätte zod es stumm gestrippt (Fable-Review-1):
+    expect(done.result?.qa.verdict.passed).toBe(true);
+    expect(done.result?.qa.geometry?.method).toBe('fake-worker');
+  });
+
   it('nimmt die neuen Lebenszyklus-Felder an (worker/progress/requested_engine/message)', () => {
     const job = RenderJob.parse({
       job_id: 'vis-1783414811-ab095c',

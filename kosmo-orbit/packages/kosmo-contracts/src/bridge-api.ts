@@ -92,6 +92,9 @@ export const VideoSplatJob = z.object({
   kind: z.literal('video-splat').default('video-splat'),
   created_at: z.string(),
   updated_at: z.string().optional(),
+  /** Zahl der lokal extrahierten Frames — die Bridge schreibt es, der Client
+   * zeigt es, `sim-ki-imaging` assertet es (Fable-Review-1). */
+  frame_count: z.number().int().optional(),
   /** Ehrliche Begründung, v. a. bei `kein-sfm-worker`. */
   message: z.string().optional(),
   worker: z.string().optional(),

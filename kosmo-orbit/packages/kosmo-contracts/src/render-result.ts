@@ -80,6 +80,10 @@ export const RenderJob = z.object({
   requested_engine: z.enum(['cycles', 'ki']).optional(),
   /** Menschlicher Zusatztext (z. B. Abbruch-/Wartegrund), UI-lesbar. */
   message: z.string().optional(),
+  /** Das eingebettete Ergebnis, sobald `done` — `GET /jobs/{id}` liefert es
+   * mit (die Bridge bettet `render-result.json` in den Record ein). Ohne
+   * dieses Feld würde `RenderJob.parse()` es stumm strippen (Fable-Review-1). */
+  result: RenderResult.optional(),
 });
 
 export type RenderJob = z.infer<typeof RenderJob>;
