@@ -1,26 +1,63 @@
 import { exportGlb, type Sheet } from '@kosmo/kernel';
+import { RenderJob, bridgeRoutes } from '@kosmo/contracts';
 import { useProject } from '../../state/project-store';
+import type { NodeLaufStatus } from './vis-runtime';
 
 /**
- * Bridge-Jobs für KosmoVis (P2) — ein Weg für Graph und Einfach-Ansicht:
+ * Bridge-Jobs für KosmoVis (P2/HS3) — ein Weg für Graph UND Einfach-Ansicht:
  * Modell als GLB an /jobs (render-scene/v1), Status holen, Bild aufs Blatt.
+ * Alle Antworten laufen durch den `@kosmo/contracts`-Vertrag (`safeParse` statt
+ * blindem `as`-Cast); jeder Bridge-Fetch trägt den Token konditional.
  */
 
-export interface JobQa {
-  style?: { style_score: number; passed: boolean };
-  geometry?: { geometry_fidelity: number; passed: boolean };
-  verdict: { passed: boolean; reason?: string };
-}
-
-export interface JobRecord {
-  job_id: string;
-  status: string;
-  created_at: string;
-  result?: { images: string[]; qa: JobQa };
-}
+export type JobQa = NonNullable<RenderJob['result']>['qa'];
+/** Der validierte Job-Record — der Vertrag ist die EINE Wahrheit (HS1). */
+export type JobRecord = RenderJob;
 
 export function bridgeBase(): string {
   return (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+}
+
+/**
+ * Bridge-Token aus dem lokalen Speicher (`kosmo.bridge.token`). Ist die Bridge
+ * token-geschützt und der Client sendet keinen Header, sperrt sie die eigene
+ * App aus (HS1-Befund) — darum hängt `bridgeFetch` ihn an JEDEN Aufruf.
+ */
+export function bridgeToken(): string {
+  return (localStorage.getItem('kosmo.bridge.token') ?? '').trim();
+}
+
+/** Ein Fetch mit konditionalem `X-Kosmo-Token`-Header — die einzige Naht. */
+export function bridgeFetch(pfad: string, init?: RequestInit): Promise<Response> {
+  const token = bridgeToken();
+  const headers = new Headers(init?.headers);
+  if (token) headers.set('X-Kosmo-Token', token);
+  return fetch(`${bridgeBase()}${pfad}`, { ...init, headers });
+}
+
+/**
+ * EIN gemeinsamer Status-Mapper (HS3) für beide Poll-Stellen — die frühere
+ * Doppelung in NodeCanvas und VisWorkspace stirbt hier. Übersetzt den
+ * Bridge-Job-Zustand ehrlich in den Client-Lebenszyklus.
+ */
+export function mappeJobStatus(record: { status: string; result?: unknown }): NodeLaufStatus {
+  if (record.result) return 'fertig';
+  switch (record.status) {
+    case 'awaiting_approval':
+      return 'wartetFreigabe';
+    case 'queued':
+      return 'wartetGpu';
+    case 'running':
+      return 'rendert';
+    case 'done':
+      return 'fertig';
+    case 'error':
+      return 'fehler';
+    case 'cancelled':
+      return 'abgebrochen';
+    default:
+      return 'rendert';
+  }
 }
 
 /** Render-Job senden — Szene kommt aus dem Graphen (Prompt, Treue, Samples). */
@@ -43,19 +80,47 @@ export async function postRenderJob(params: {
   const form = new FormData();
   form.append('scene', JSON.stringify(scene));
   form.append('model', new Blob([glb], { type: 'model/gltf-binary' }), 'model.glb');
-  const res = await fetch(`${bridgeBase()}/jobs`, { method: 'POST', body: form });
+  const res = await bridgeFetch(bridgeRoutes.jobs, { method: 'POST', body: form });
   if (!res.ok) throw new Error(`Bridge antwortet mit ${res.status}`);
-  return (await res.json()) as JobRecord;
+  return parseJob(await res.json());
 }
 
 export async function holeJob(jobId: string): Promise<JobRecord> {
-  const res = await fetch(`${bridgeBase()}/jobs/${jobId}`);
+  const res = await bridgeFetch(bridgeRoutes.job(jobId));
   if (!res.ok) throw new Error(`Job ${jobId}: ${res.status}`);
-  return (await res.json()) as JobRecord;
+  return parseJob(await res.json());
+}
+
+/** Wartenden Job freigeben (nur bei aktiver Freigabe-Pflicht) — braucht den
+ * approval_token aus dem Create-Response. */
+export async function freigebenJob(jobId: string, approvalToken: string): Promise<JobRecord> {
+  const res = await bridgeFetch(bridgeRoutes.jobApprove(jobId), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ approval_token: approvalToken }),
+  });
+  if (!res.ok) throw new Error(`Freigabe ${jobId}: ${res.status}`);
+  return parseJob(await res.json());
+}
+
+/** Kooperativer Abbruch — awaiting_approval/queued/running → cancelled. */
+export async function abbrechenJob(jobId: string): Promise<JobRecord> {
+  const res = await bridgeFetch(bridgeRoutes.jobCancel(jobId), { method: 'POST' });
+  if (!res.ok) throw new Error(`Abbruch ${jobId}: ${res.status}`);
+  return parseJob(await res.json());
+}
+
+/** Validiert eine Bridge-Antwort gegen den Vertrag; `safeParse` statt `as`. */
+function parseJob(raw: unknown): JobRecord {
+  const geprueft = RenderJob.safeParse(raw);
+  if (!geprueft.success) {
+    throw new Error('Bridge-Antwort passt nicht zum Render-Job-Vertrag');
+  }
+  return geprueft.data;
 }
 
 export function bildUrl(jobId: string, imageName: string): string {
-  return `${bridgeBase()}/jobs/${jobId}/artifacts/${imageName}`;
+  return `${bridgeBase()}${bridgeRoutes.jobArtifact(jobId, imageName)}`;
 }
 
 /**

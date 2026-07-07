@@ -9,8 +9,23 @@ import {
 } from '@kosmo/kernel';
 import { KButton, melde, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
-import { bildAufsBlatt, bildUrl, holeJob, postRenderJob } from './vis-jobs';
-import { memoKey, useVisRuntime } from './vis-runtime';
+import {
+  abbrechenJob,
+  bildAufsBlatt,
+  bildUrl,
+  bridgeBase,
+  freigebenJob,
+  holeJob,
+  mappeJobStatus,
+  postRenderJob,
+} from './vis-jobs';
+import {
+  istZeitUeberschritten,
+  memoKey,
+  OFFENE_LAUF_STATUS,
+  RENDER_TIMEOUT_MS_DEFAULT,
+  useVisRuntime,
+} from './vis-runtime';
 
 /**
  * NodeCanvas (V1-Finish P2) — der Blender-artige Node-Editor von KosmoVis.
@@ -92,13 +107,26 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
     [doc, graph, revision],
   );
 
-  // Ein Poll für alle offenen Render-Jobs (2.5 s — wie die Einfach-Ansicht)
+  // Ein Poll für alle offenen Render-Jobs (2.5 s — wie die Einfach-Ansicht).
+  // HS3: die Wartezustände (Freigabe/GPU-Leerlauf) zählen als offen; ein
+  // lokaler Wächter schlägt bei Zeitüberschreitung ehrlich an, statt ewig
+  // «rendert» zu zeigen.
   useEffect(() => {
     const t = setInterval(() => {
+      const jetzt = Date.now();
+      const limitMs =
+        Number(localStorage.getItem('kosmo.render.timeoutMs')) || RENDER_TIMEOUT_MS_DEFAULT;
       const offen = Object.entries(useVisRuntime.getState().laeufe).filter(
-        ([, l]) => l.jobId && (l.status === 'gesendet' || l.status === 'rendert'),
+        ([, l]) => l.jobId && (OFFENE_LAUF_STATUS as readonly string[]).includes(l.status),
       );
       for (const [nodeId, lauf] of offen) {
+        if (istZeitUeberschritten(lauf, jetzt, limitMs)) {
+          patchLauf(nodeId, {
+            status: 'zeitueberschreitung',
+            fehler: 'Zeitüberschreitung — Bridge/GPU meldet sich nicht.',
+          });
+          continue;
+        }
         const jobId = lauf.jobId!;
         void holeJob(jobId)
           .then((j) => {
@@ -110,7 +138,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
             } else if (j.status === 'error') {
               patchLauf(nodeId, { status: 'fehler', fehler: 'Render fehlgeschlagen' });
             } else {
-              patchLauf(nodeId, { status: 'rendert' });
+              patchLauf(nodeId, { status: mappeJobStatus(j) });
             }
           })
           .catch(() => undefined);
@@ -181,13 +209,47 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
       return;
     }
     const key = memoKey(auftrag);
-    setzeLauf(nodeId, { status: 'gesendet', memoKey: key });
+    setzeLauf(nodeId, { status: 'gesendet', memoKey: key, gestartetUm: Date.now() });
     void postRenderJob(auftrag)
-      .then((j) => patchLauf(nodeId, { jobId: j.job_id }))
+      .then((j) =>
+        patchLauf(nodeId, {
+          jobId: j.job_id,
+          status: mappeJobStatus(j),
+          ...(j.approval_token !== undefined ? { approvalToken: j.approval_token } : {}),
+        }),
+      )
       .catch((err) => {
-        patchLauf(nodeId, { status: 'fehler', fehler: err instanceof Error ? err.message : String(err) });
+        // TypeError = fetch-Netzfehler → ehrliche Offline-Meldung (§2.1.5),
+        // nicht der kryptische «Failed to fetch»-Rohtext.
+        const offline = err instanceof TypeError;
+        patchLauf(nodeId, {
+          status: 'fehler',
+          fehler: offline
+            ? 'Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)'
+            : err instanceof Error
+              ? err.message
+              : String(err),
+        });
         meldeFehler(err);
       });
+  };
+
+  /** Wartenden Job freigeben (nur bei aktiver Freigabe-Pflicht). */
+  const freigeben = (nodeId: string) => {
+    const lauf = useVisRuntime.getState().laeufe[nodeId];
+    if (!lauf?.jobId || !lauf.approvalToken) return;
+    void freigebenJob(lauf.jobId, lauf.approvalToken)
+      .then((j) => patchLauf(nodeId, { status: mappeJobStatus(j) }))
+      .catch(meldeFehler);
+  };
+
+  /** Kooperativer Abbruch eines wartenden/laufenden Jobs. */
+  const abbrechen = (nodeId: string) => {
+    const lauf = useVisRuntime.getState().laeufe[nodeId];
+    if (!lauf?.jobId) return;
+    void abbrechenJob(lauf.jobId)
+      .then((j) => patchLauf(nodeId, { status: mappeJobStatus(j) }))
+      .catch(meldeFehler);
   };
 
   /** Bild-Quelle eines Eingangs-Ports: der Lauf des verbundenen Render-Nodes. */
@@ -447,6 +509,9 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                 lauf={lauf}
                 veraltet={!!veraltet}
                 onAusfuehren={() => ausfuehren(n.id)}
+                onFreigeben={() => freigeben(n.id)}
+                onAbbrechen={() => abbrechen(n.id)}
+                cloudLeer={bridgeBase() === ''}
                 bildQuelle={bildQuelle}
               />
             </foreignObject>
@@ -466,6 +531,9 @@ function NodeKoerper({
   lauf,
   veraltet,
   onAusfuehren,
+  onFreigeben,
+  onAbbrechen,
+  cloudLeer,
   bildQuelle,
 }: {
   graphId: string;
@@ -475,6 +543,9 @@ function NodeKoerper({
   lauf: { status: string; jobId?: string; bild?: string; qa?: { verdict: { passed: boolean } } | undefined; fehler?: string } | undefined;
   veraltet: boolean;
   onAusfuehren: () => void;
+  onFreigeben: () => void;
+  onAbbrechen: () => void;
+  cloudLeer: boolean;
   bildQuelle: (nodeId: string, port: string) => { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | null;
 }) {
   const runCommand = useProject((s) => s.runCommand);
@@ -570,24 +641,77 @@ function NodeKoerper({
         </div>
       );
     case 'render': {
-      const status = veraltet && lauf?.status === 'fertig' ? 'veraltet' : (lauf?.status ?? 'bereit');
-      const statusFarbe =
-        status === 'fertig' ? 'var(--k-success)' : status === 'fehler' ? 'var(--k-danger)' : status === 'bereit' ? 'var(--k-ink-faint)' : 'var(--k-warning)';
+      const roh = lauf?.status ?? 'bereit';
+      const status = veraltet && roh === 'fertig' ? 'veraltet' : roh;
+      // Menschliche Beschriftung — der Poll/Status-Enum bleibt intern, hier
+      // steht, was der Architekt lesen soll (E2E prüft genau diese Texte).
+      const STATUS_LABEL: Record<string, string> = {
+        bereit: 'bereit',
+        gesendet: 'gesendet',
+        wartetFreigabe: 'wartet auf Freigabe',
+        wartetGpu: 'wartet auf GPU-Leerlauf',
+        rendert: 'rendert',
+        fertig: 'fertig',
+        fehler: 'fehler',
+        abgebrochen: 'abgebrochen',
+        zeitueberschreitung: 'Zeitüberschreitung',
+        veraltet: 'veraltet',
+      };
+      const gruen = status === 'fertig';
+      const rot = status === 'fehler' || status === 'zeitueberschreitung';
+      const grau = status === 'bereit' || status === 'abgebrochen';
+      const statusFarbe = gruen
+        ? 'var(--k-success)'
+        : rot
+          ? 'var(--k-danger)'
+          : grau
+            ? 'var(--k-ink-faint)'
+            : 'var(--k-warning)';
+      const laeuftNoch = ['gesendet', 'wartetFreigabe', 'wartetGpu', 'rendert'].includes(status);
       return (
         <div style={{ display: 'grid', gap: 5 }} onPointerDown={(e) => e.stopPropagation()}>
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            <KButton size="sm" tone="accent" data-testid="render-ausfuehren" onClick={onAusfuehren} disabled={lauf?.status === 'gesendet' || lauf?.status === 'rendert'}>
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+            <KButton
+              size="sm"
+              tone="accent"
+              data-testid="render-ausfuehren"
+              onClick={onAusfuehren}
+              disabled={laeuftNoch || cloudLeer}
+              title={cloudLeer ? 'Kein HomeStation-Server verbunden — im Cloud-Betrieb rendert die Kette nicht lokal.' : undefined}
+            >
               Ausführen
             </KButton>
+            {status === 'wartetFreigabe' && (
+              <KButton size="sm" tone="quiet" data-testid="render-freigeben" onClick={onFreigeben}>
+                Freigeben
+              </KButton>
+            )}
+            {laeuftNoch && (
+              <KButton size="sm" tone="ghost" data-testid="render-abbrechen" onClick={onAbbrechen}>
+                Abbrechen
+              </KButton>
+            )}
             <span data-testid="render-status" style={{ fontSize: 10, fontFamily: 'var(--k-font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', color: statusFarbe }}>
-              {status}
+              {STATUS_LABEL[status] ?? status}
             </span>
           </div>
-          {lauf?.status === 'fertig' && lauf.jobId && lauf.bild ? (
+          {status === 'fertig' && lauf?.jobId && lauf.bild ? (
             <img src={bildUrl(lauf.jobId, lauf.bild)} alt="Render" data-testid="render-bild" style={{ width: '100%', border: '1px solid var(--k-line)' }} />
           ) : (
-            <div style={{ height: 110, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--k-ink-faint)' }}>
-              {lauf?.status === 'fehler' ? lauf.fehler : lauf ? 'rendert im GPU-Leerlauf …' : 'Bild erscheint hier'}
+            <div style={{ height: 110, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 6, fontSize: 10, color: rot ? 'var(--k-danger)' : 'var(--k-ink-faint)' }}>
+              {rot
+                ? (lauf?.fehler ?? 'Render fehlgeschlagen')
+                : status === 'wartetFreigabe'
+                  ? 'wartet auf Freigabe — «Freigeben» startet den Render'
+                  : status === 'wartetGpu'
+                    ? 'wartet auf GPU-Leerlauf …'
+                    : status === 'abgebrochen'
+                      ? 'abgebrochen'
+                      : lauf
+                        ? 'rendert im GPU-Leerlauf …'
+                        : cloudLeer
+                          ? 'Cloud-Betrieb: kein lokaler Render'
+                          : 'Bild erscheint hier'}
             </div>
           )}
         </div>

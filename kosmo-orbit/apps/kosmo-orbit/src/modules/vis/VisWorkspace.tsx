@@ -3,6 +3,17 @@ import { Messrahmen, Badge, Hairline, Karteikarte, KButton, Measure, Panel, meld
 import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, type Sheet, type VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { NodeCanvas } from './NodeCanvas';
+import { bridgeToken } from './vis-jobs';
+
+/**
+ * HS3: jeder Bridge-Fetch trägt den Token (falls gesetzt) — sonst sperrt eine
+ * token-geschützte Bridge die eigene App aus (HS1-Befund). Leerer Token →
+ * kein Header → byte-gleiches Verhalten wie bisher.
+ */
+function authKopf(): HeadersInit {
+  const t = bridgeToken();
+  return t ? { 'X-Kosmo-Token': t } : {};
+}
 
 /**
  * KosmoVis — Render-Jobs an die HomeStation (Toolkit 2 der Vision).
@@ -251,11 +262,11 @@ function EinfachAnsicht() {
 
   const refresh = async () => {
     try {
-      const list: JobRecord[] = await (await fetch(`${base}/jobs`)).json();
+      const list: JobRecord[] = await (await fetch(`${base}/jobs`, { headers: authKopf() })).json();
       const detailed = await Promise.all(
         list.slice(0, 16).map(async (j) => {
           try {
-            return (await (await fetch(`${base}/jobs/${j.job_id}`)).json()) as JobRecord;
+            return (await (await fetch(`${base}/jobs/${j.job_id}`, { headers: authKopf() })).json()) as JobRecord;
           } catch {
             return j;
           }
@@ -287,7 +298,7 @@ function EinfachAnsicht() {
     try {
       // no-store: die <img>-Tags cachen die Antwort ohne CORS-Header (no-cors) —
       // ein normaler fetch träfe den vergifteten Cache-Eintrag und scheiterte.
-      const blob = await (await fetch(`${base}/jobs/${jobId}/artifacts/${imageName}`, { cache: 'no-store' })).blob();
+      const blob = await (await fetch(`${base}/jobs/${jobId}/artifacts/${imageName}`, { cache: 'no-store', headers: authKopf() })).blob();
       const dataUrl = await new Promise<string>((resolve, reject) => {
         const r = new FileReader();
         r.onload = () => resolve(String(r.result));
@@ -333,7 +344,7 @@ function EinfachAnsicht() {
     const form = new FormData();
     form.append('scene', JSON.stringify(scene));
     form.append('model', new Blob([glb], { type: 'model/gltf-binary' }), 'model.glb');
-    const res = await fetch(`${base}/jobs`, { method: 'POST', body: form });
+    const res = await fetch(`${base}/jobs`, { method: 'POST', body: form, headers: authKopf() });
     if (!res.ok) throw new Error(`Bridge antwortet mit ${res.status}`);
     return (await res.json()) as JobRecord;
   };

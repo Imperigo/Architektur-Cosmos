@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Karteikarte, Badge, KButton } from '@kosmo/ui';
 import { allCommands, deriveAll } from '@kosmo/kernel';
+import { BridgeHealth } from '@kosmo/contracts';
 import { useProject } from '../state/project-store';
 import { listDocs } from '../modules/prepare/knowledge';
 
@@ -80,16 +81,29 @@ export async function diagnose(): Promise<Befund[]> {
     });
   }
 
-  // 4) HomeStation-Bridge
+  // 4) HomeStation-Bridge — inkl. Worker-/GPU-Zeile aus /health (HS3): die
+  // Kette sagt selbst, ob ein GPU-Leerlauf-Fenster gemeldet wird. Ohne echte
+  // GPU-Abfrage fehlt das Feld ehrlich (nie vorgetäuscht).
   try {
     const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
     const res = await fetchWithTimeout(`${bridge}/health`, 3000);
-    const json = (await res.json()) as { status?: string; whisper?: boolean };
-    befunde.push({
-      bereich: 'Bridge',
-      status: res.ok ? 'ok' : 'warnung',
-      detail: `erreichbar · ${JSON.stringify(json).slice(0, 80)}`,
-    });
+    const roh = (await res.json()) as unknown;
+    const geprueft = BridgeHealth.safeParse(roh);
+    let detail: string;
+    if (geprueft.success) {
+      const h = geprueft.data;
+      const dienste = Object.entries(h.services)
+        .filter(([, an]) => an)
+        .map(([name]) => name)
+        .join(', ');
+      const gpu = h.gpu
+        ? ` · GPU: ${h.gpu.name ?? 'unbenannt'}${h.gpu.idle === undefined ? '' : h.gpu.idle ? ' (Leerlauf)' : ' (belegt)'}`
+        : ' · kein GPU-/Worker-Status gemeldet';
+      detail = `erreichbar · Dienste: ${dienste || '—'}${gpu}`;
+    } else {
+      detail = `erreichbar · ${JSON.stringify(roh).slice(0, 80)}`;
+    }
+    befunde.push({ bereich: 'Bridge', status: res.ok ? 'ok' : 'warnung', detail });
   } catch {
     befunde.push({
       bereich: 'Bridge',
