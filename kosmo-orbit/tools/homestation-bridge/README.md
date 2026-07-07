@@ -109,3 +109,60 @@ Prüfung ist immer umgehbar, die Server-Bindung hier nicht.
   | `KOSMO_BRIDGE_LIZENZ_PUBKEY` | — | Öffentlicher Ed25519-Schlüssel (32 Rohbytes, base64) — kein Secret. |
   | `KOSMO_BRIDGE_LIZENZ_WIDERRUF` | — | Komma-Liste widerrufener Lizenz-IDs. |
   | `KOSMO_BRIDGE_LIZENZ_WIDERRUF_DATEI` | — | Zusätzliche Datei mit Lizenz-IDs. |
+
+## Job-Lebenszyklus (V2-Technik Block 1 / HS2)
+
+Der Job-Store ist die einzige Naht zwischen KosmoOrbit und dem GPU-Worker. Die
+Bridge legt Jobs an und pflegt ihren Zustand; ein **Worker** (der Fake-Worker
+im Container oder dein echter `render_scheduler.py` auf der 5090) übernimmt sie.
+**Additiv — der Default-Pfad ist unverändert**: ohne die zwei neuen Env-Schalter
+startet ein Job wie bisher direkt `queued`.
+
+- **Zustände** (`status` im `job.json`): `awaiting_approval` → `queued` →
+  `running` → `done` | `error` | `cancelled`. Video→Splat-Jobs enden ehrlich
+  als `kein-sfm-worker`, Blender-Simulationen als `kein-blender-worker`, wenn
+  kein passender Worker angeschlossen ist (Physik/Splats werden nie gefälscht).
+- **Freigabe-Pflicht** (`KOSMO_BRIDGE_APPROVAL_PFLICHT=1`, Default aus): ein
+  neuer Job startet in `awaiting_approval` und rechnet erst nach
+  `POST /jobs/{id}/approve` mit `{"approval_token": "CONFIRMED_RENDER_…"}` aus
+  dem Create-Response. Falscher Token → `403` (timing-sicher, protokolliert).
+  So läuft kein teurer/bezahlter Render ungefragt an.
+- **Abbruch**: `POST /jobs/{id}/cancel` setzt `awaiting_approval`/`queued`/
+  `running` sofort auf `cancelled`. Kooperativ: ein laufender Worker sieht den
+  Abbruch **vor** dem nächsten teuren Schritt und schreibt kein Ergebnis mehr.
+- **Fortschritt/Worker**: der Worker trägt `worker` (wer den Job hält) und
+  `progress: {phase, pct}` (0..1) in den Record; der Client zeigt Phase +
+  Prozent am Node. `requested_engine` (`cycles` | `ki`) hält fest, was
+  **bestellt** wurde (Cycles-only vs. KI-Veredelung) — nicht was gerendert wird.
+- **Idle-Fenster** (`KOSMO_BRIDGE_GPU_IDLE`, Default `1`): steht die GPU auf
+  belegt (`0`), lässt der Fake-Worker Render-Jobs in `queued` liegen, statt sie
+  sofort zu rechnen — spiegelt das „nur im GPU-Leerlauf rendern" deines echten
+  Schedulers. `GET /health` meldet im Fake-Modus ehrlich
+  `gpu: {name: "fake-gpu (Simulation)", idle}`; ohne echte GPU-Abfrage fehlt das
+  Feld ganz (nie vorgetäuscht).
+
+  | Variable | Standard | Bedeutung |
+  |---|---|---|
+  | `KOSMO_BRIDGE_APPROVAL_PFLICHT` | aus | `1`/`true`/`ja` → neuer Job startet `awaiting_approval`, braucht `/approve`. |
+  | `KOSMO_BRIDGE_GPU_IDLE` | `1` | `0` = GPU belegt → Render-Jobs bleiben `queued` (Idle-Gate). |
+
+### Worker andocken (normatives Protokoll)
+
+Ein echter Worker überwacht den `--store`-Ordner und bewegt jeden Job durch
+denselben Zustandsautomaten wie der Fake-Worker (`kosmo_bridge/main.py`,
+`_fake_worker_step`):
+
+1. `queued`-Job holen — aber **nur wenn die GPU idle ist** (dein bestehendes
+   Leerlauf-Fenster). `render-scene.json` + `model.glb` liegen im Job-Ordner.
+2. Auf `running` setzen und `worker` + `progress` schreiben; `progress.pct`
+   während des Renderns aktualisieren (der Client zeigt es live).
+3. Vor dem Schreiben des Ergebnisses den Record **frisch lesen**: steht dort
+   `cancelled`, abbrechen ohne `render-result.json` zu schreiben (kooperativer
+   Abbruch).
+4. `render-result.json` (Vertrag `kosmovis.render-result/v2`, Doppel-QA) neben
+   das `job.json` legen, dann `status: done` + `progress.pct: 1.0` setzen.
+   `GET /jobs/{id}` bettet `render-result.json` in den Record ein.
+
+Kein Ergebnis vortäuschen: fehlt die Fähigkeit (kein Blender, kein SfM),
+gehört der Job auf einen ehrlichen `kein-…-worker`-Status mit Begründung, nicht
+auf `done`.

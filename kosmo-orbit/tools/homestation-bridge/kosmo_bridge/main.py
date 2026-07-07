@@ -48,7 +48,7 @@ from pathlib import Path
 
 import httpx
 import uvicorn
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import Body, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 
@@ -107,6 +107,18 @@ MAX_UPLOAD_AUDIO_BYTES = int(os.environ.get("KOSMO_BRIDGE_MAX_UPLOAD_AUDIO", str
 # einzelner Env-Namensraum reicht — aktuell von keinem Endpoint genutzt.
 MAX_UPLOAD_FRAME_BYTES = int(os.environ.get("KOSMO_BRIDGE_MAX_UPLOAD_FRAME", str(500 * 1024)))  # ~500 KB
 MAX_FRAME_COUNT = int(os.environ.get("KOSMO_BRIDGE_MAX_FRAMES", "400"))
+
+# V2-Technik Block 1 / HS2 — Job-Lebenszyklus.
+# Freigabe-Pflicht: additiv, Default AUS. Bleibt sie aus, wird ein neuer Job
+# wie bisher direkt "queued" angelegt (Anker der bestehenden E2E-/Contract-
+# Fläche). Erst wenn der Owner sie einschaltet, landet ein Job zuerst in
+# "awaiting_approval" und wartet auf einen expliziten /approve mit dem
+# approval_token — kein teurer Render läuft dann ungefragt an.
+APPROVAL_PFLICHT = os.environ.get("KOSMO_BRIDGE_APPROVAL_PFLICHT", "").strip().lower() in ("1", "true", "ja")
+# Idle-Fenster (simuliert im Container): steht die GPU auf "belegt"
+# (KOSMO_BRIDGE_GPU_IDLE=0), lässt der Fake-Worker "queued"-Render-Jobs liegen,
+# statt sie sofort zu rechnen — spiegelt das echte "nur im Leerlauf rendern".
+GPU_IDLE = os.environ.get("KOSMO_BRIDGE_GPU_IDLE", "1").strip() != "0"
 
 _whisper_model = None
 
@@ -212,7 +224,7 @@ async def health():
             ollama_ok = r.status_code == 200
     except Exception:
         pass
-    return {
+    health = {
         "ok": True,
         "version": "1.0.0",
         "services": {
@@ -223,6 +235,12 @@ async def health():
             "embed": FAKE_WORKER or _embed_available(),
         },
     }
+    # GPU-Status NUR im Fake-Modus ehrlich als Simulation melden. Ohne echte
+    # GPU-Abfrage (nvidia-smi auf der HomeStation) fehlt das Feld ganz — nie
+    # vorgetäuscht (Ehrlichkeit vor Politur).
+    if FAKE_WORKER:
+        health["gpu"] = {"name": "fake-gpu (Simulation)", "idle": GPU_IDLE}
+    return health
 
 
 def _tts_available() -> bool:
@@ -269,15 +287,69 @@ async def create_job(scene: str = Form(...), model: UploadFile = File(...)):
     scene_obj["out"] = str(job_dir / "out")
     (job_dir / "render-scene.json").write_text(json.dumps(scene_obj, indent=2))
 
+    # requested_engine: was BESTELLT wurde, nicht was gerendert wird. `vis.skip`
+    # im Szenen-Vertrag heisst „reines Cycles, keine KI-Veredelung“ — der Client
+    # zeigt es am Node, der Contract kennt beide Werte (render-result.ts).
+    requested_engine = "cycles" if (scene_obj.get("vis") or {}).get("skip") else "ki"
+    # Status-Anker: Default (Pflicht AUS) bleibt "queued" — exakt das heutige
+    # Verhalten, auf das die E2E-/Contract-Fläche pinnt. Nur mit Pflicht AN
+    # startet der Job in "awaiting_approval".
     record = {
         "job_id": job_id,
-        "status": "queued",
+        "status": "awaiting_approval" if APPROVAL_PFLICHT else "queued",
         "scene": str(job_dir / "render-scene.json"),
         "approval_token": f"CONFIRMED_RENDER_{secrets.token_hex(4)}",
         "idle_window_only": True,
+        "requested_engine": requested_engine,
         "created_at": _now(),
     }
     (job_dir / "job.json").write_text(json.dumps(record, indent=2))
+    return record
+
+
+@app.post("/jobs/{job_id}/approve")
+async def approve_job(job_id: str, payload: dict = Body(default={})):
+    """Gibt einen wartenden Job frei — nur bei aktiver Freigabe-Pflicht sinnvoll.
+    Verlangt den `approval_token` aus dem Create-Response; falscher Token wird
+    mit 403 (konstante Laufzeit) abgewiesen und protokolliert. Ein Job, der gar
+    nicht auf Freigabe wartet, bleibt unverändert (kein stiller Zustandssprung)."""
+    job_dir = _safe_store_path(job_id)
+    f = job_dir / "job.json"
+    if not f.exists():
+        raise HTTPException(404, "Job unbekannt")
+    record = json.loads(f.read_text())
+    supplied = str(payload.get("approval_token", ""))
+    expected = str(record.get("approval_token", ""))
+    if not expected or not secrets.compare_digest(supplied, expected):
+        protokolliere_sicherheitsereignis(
+            "freigabe_fehlgeschlagen", f"bridge:/jobs/{job_id}/approve", "approval_token fehlt oder falsch"
+        )
+        raise HTTPException(403, "approval_token fehlt oder falsch")
+    if record.get("status") != "awaiting_approval":
+        # Idempotent/ehrlich: nur ein wartender Job wird freigegeben.
+        return record
+    record["status"] = "queued"
+    record["updated_at"] = _now()
+    f.write_text(json.dumps(record, indent=2))
+    return record
+
+
+@app.post("/jobs/{job_id}/cancel")
+async def cancel_job(job_id: str):
+    """Kooperativer Abbruch. awaiting_approval/queued werden sofort abgebrochen;
+    ein bereits laufender Job wird als "cancelled" markiert — der Worker sieht
+    das vor dem nächsten teuren Schritt und schreibt kein Ergebnis mehr. done/
+    error/cancelled bleiben unverändert (Endzustände)."""
+    job_dir = _safe_store_path(job_id)
+    f = job_dir / "job.json"
+    if not f.exists():
+        raise HTTPException(404, "Job unbekannt")
+    record = json.loads(f.read_text())
+    if record.get("status") in ("awaiting_approval", "queued", "running"):
+        record["status"] = "cancelled"
+        record["updated_at"] = _now()
+        record["message"] = "Vom Nutzer abgebrochen."
+        f.write_text(json.dumps(record, indent=2))
     return record
 
 
@@ -549,58 +621,92 @@ def _placeholder_png(width: int = 640, height: int = 400) -> bytes:
     )
 
 
+def _fake_worker_step(job_dir: Path) -> None:
+    """Bringt EINEN Job-Ordner um höchstens einen Zustand weiter — die
+    testbare Einheit des Fake-Workers (HS2). Ein Schritt je Aufruf hält den
+    `running`-Zustand (mit worker/progress) für einen Poll sichtbar und macht
+    Idle-Gate + kooperativen Abbruch deterministisch prüfbar."""
+    f = job_dir / "job.json"
+    if not f.exists():
+        return
+    record = json.loads(f.read_text())
+    status = record.get("status")
+
+    if status == "queued" and record.get("kind") == "video-splat":
+        # Ehrlich statt gefälscht: der Fake-Worker hat keinen SfM/Splat-
+        # Optimierer (COLMAP/nerfstudio) — kein Platzhalter-Splat, sondern ein
+        # klarer Status + Grund. (Nicht idle-gated: hier wird nichts gerechnet.)
+        record["status"] = "kein-sfm-worker"
+        record["message"] = (
+            "Frames liegen bereit — diese Bridge hat keinen SfM/"
+            "Splat-Worker angeschlossen. Braucht die HomeStation "
+            "(5090) oder einen Web-Konverter."
+        )
+        record["updated_at"] = _now()
+        f.write_text(json.dumps(record, indent=2))
+        return
+
+    if status == "queued":
+        # Idle-Fenster: steht die GPU auf "belegt", lassen wir Render-Jobs in
+        # "queued" liegen (spiegelt "nur im Leerlauf rendern"). Kein
+        # Zustandssprung — der Job wird beim nächsten Idle-Durchlauf geholt.
+        if not GPU_IDLE:
+            return
+        record["status"] = "running"
+        record["worker"] = "fake-worker"
+        record["progress"] = {"phase": "rendern", "pct": 0.5}
+        record["updated_at"] = _now()
+        f.write_text(json.dumps(record, indent=2))
+        return
+
+    if status == "running":
+        # Kooperativer Abbruch wird als eigener Zustand ("cancelled") vom
+        # /cancel-Endpoint gesetzt; ein laufender Job, der nicht abgebrochen
+        # wurde, rechnet hier fertig. Da Abbruch einen anderen Status schreibt,
+        # kommen wir bei "cancelled" gar nicht erst hierher — kein Ergebnis.
+        img = job_dir / "cam-01.png"
+        img.write_bytes(_placeholder_png())
+        result = {
+            "schema": "kosmovis.render-result/v2",
+            "job_id": record["job_id"],
+            "images": [img.name],
+            "ai_variant": img.name,
+            "qa": {
+                "style": {"style_score": 0.42, "threshold": 0.3, "passed": True, "method": "dinov3"},
+                "geometry": {
+                    "geometry_fidelity": 0.87,
+                    "spearman": 0.93,
+                    "geom_iou": 0.81,
+                    "threshold": 0.65,
+                    "passed": True,
+                    "method": "fake-worker",
+                },
+                "verdict": {"passed": True, "reason": "Fake-Worker (Demo ohne GPU)"},
+            },
+        }
+        (job_dir / "render-result.json").write_text(json.dumps(result, indent=2))
+        record["status"] = "done"
+        record["progress"] = {"phase": "fertig", "pct": 1.0}
+        record["updated_at"] = _now()
+        f.write_text(json.dumps(record, indent=2))
+
+
+def _fake_worker_pass() -> None:
+    """Ein Durchlauf über alle Job-Ordner (jeder um höchstens einen Schritt)."""
+    if not STORE.exists():
+        return
+    for d in STORE.iterdir():
+        try:
+            _fake_worker_step(d)
+        except Exception:
+            # Ein einzelner kaputter Job-Ordner darf den Worker nicht anhalten.
+            continue
+
+
 def _fake_worker_loop():
     while True:
-        time.sleep(1.5)
-        if not STORE.exists():
-            continue
-        for d in STORE.iterdir():
-            f = d / "job.json"
-            if not f.exists():
-                continue
-            record = json.loads(f.read_text())
-            if record.get("status") != "queued":
-                continue
-            if record.get("kind") == "video-splat":
-                # Ehrlich statt gefälscht: der Fake-Worker hat keinen SfM/
-                # Splat-Optimierer (COLMAP/nerfstudio) — kein Platzhalter-
-                # Splat, sondern ein klarer Status + Grund.
-                record["status"] = "kein-sfm-worker"
-                record["message"] = (
-                    "Frames liegen bereit — diese Bridge hat keinen SfM/"
-                    "Splat-Worker angeschlossen. Braucht die HomeStation "
-                    "(5090) oder einen Web-Konverter."
-                )
-                record["updated_at"] = _now()
-                f.write_text(json.dumps(record, indent=2))
-                continue
-            record["status"] = "running"
-            f.write_text(json.dumps(record, indent=2))
-            time.sleep(1.0)
-            img = d / "cam-01.png"
-            img.write_bytes(_placeholder_png())
-            result = {
-                "schema": "kosmovis.render-result/v2",
-                "job_id": record["job_id"],
-                "images": [img.name],
-                "ai_variant": img.name,
-                "qa": {
-                    "style": {"style_score": 0.42, "threshold": 0.3, "passed": True, "method": "dinov3"},
-                    "geometry": {
-                        "geometry_fidelity": 0.87,
-                        "spearman": 0.93,
-                        "geom_iou": 0.81,
-                        "threshold": 0.65,
-                        "passed": True,
-                        "method": "fake-worker",
-                    },
-                    "verdict": {"passed": True, "reason": "Fake-Worker (Demo ohne GPU)"},
-                },
-            }
-            (d / "render-result.json").write_text(json.dumps(result, indent=2))
-            record["status"] = "done"
-            record["updated_at"] = _now()
-            f.write_text(json.dumps(record, indent=2))
+        time.sleep(1.0)
+        _fake_worker_pass()
 
 
 def cli():

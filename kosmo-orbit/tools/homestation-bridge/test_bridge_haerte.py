@@ -340,6 +340,146 @@ importlib.reload(bridge)
 bridge.STORE = TMP_STORE
 
 # ---------------------------------------------------------------------------
+# 6) Job-Lebenszyklus (V2-Technik Block 1 / HS2): Freigabe-Pflicht, Idle-Gate,
+#    kooperativer Abbruch, Fortschritts-/Worker-Marker. Additiv — der
+#    Default-Pfad (keine Freigabe-Pflicht, GPU idle) MUSS byte-kompatibel
+#    bleiben: ein neuer Job startet weiter in "queued" (Anker der bestehenden
+#    E2E-/Contract-Fläche). Die Zustandsfelder-Verträge (worker/progress/
+#    requested_engine, approve/cancel-Routen) prüft die TS-Suite
+#    packages/kosmo-contracts/test/contracts.test.ts — hier das Verhalten.
+# ---------------------------------------------------------------------------
+hs2_stores: list[Path] = []
+
+
+def _hs2_store() -> Path:
+    p = Path(tempfile.mkdtemp(prefix="kosmo-hs2-"))
+    hs2_stores.append(p)
+    return p
+
+
+def _hs2_reload(store: Path):
+    importlib.reload(bridge)
+    store.mkdir(parents=True, exist_ok=True)
+    bridge.STORE = store
+    return TestClient(bridge.app)
+
+
+def _hs2_render_job(cl, vis_skip: bool = False):
+    scene = {"schema": "kosmovis.render-scene/v1", "geometry": {"path": "x", "format": "glb"}, "out": "x"}
+    if vis_skip:
+        scene["vis"] = {"skip": True}
+    return cl.post(
+        "/jobs",
+        data={"scene": json.dumps(scene)},
+        files={"model": ("model.glb", b"glb-daten", "model/gltf-binary")},
+    )
+
+
+# --- (a) Default (Pflicht AUS, GPU idle): "queued" bleibt der Anker ---
+for _k in ("KOSMO_BRIDGE_APPROVAL_PFLICHT", "KOSMO_BRIDGE_GPU_IDLE"):
+    os.environ.pop(_k, None)
+store_default = _hs2_store()
+cl = _hs2_reload(store_default)
+
+res = _hs2_render_job(cl)
+check("HS2 Default-Create: Status bleibt 'queued' (Anker)", res.status_code == 200 and res.json().get("status") == "queued")
+check("HS2 Default-Create: requested_engine 'ki' (KI-Veredelung)", res.json().get("requested_engine") == "ki")
+
+res_cyc = _hs2_render_job(cl, vis_skip=True)
+check("HS2 vis.skip → requested_engine 'cycles'", res_cyc.json().get("requested_engine") == "cycles")
+
+# --- (b) Health meldet GPU NUR im Fake-Modus, ehrlich als Simulation ---
+bridge.FAKE_WORKER = True
+gpu = cl.get("/health").json().get("gpu", {})
+check("HS2 Health (Fake): gpu.name als Simulation benannt", gpu.get("name") == "fake-gpu (Simulation)")
+check("HS2 Health (Fake): gpu.idle spiegelt GPU_IDLE (True)", gpu.get("idle") is True)
+bridge.FAKE_WORKER = False
+check("HS2 Health ohne Fake-Worker: KEIN gpu-Feld (nichts vorgetäuscht)", "gpu" not in cl.get("/health").json())
+
+# --- (c) Fortschritt: queued → running (worker/progress) → done (pct 1.0) ---
+res = _hs2_render_job(cl)
+jid = res.json()["job_id"]
+bridge._fake_worker_pass()
+rec = json.loads((store_default / jid / "job.json").read_text())
+check(
+    "HS2 Fake-Worker Schritt 1: queued → running mit worker + progress 0.5",
+    rec.get("status") == "running" and rec.get("worker") == "fake-worker" and rec.get("progress", {}).get("pct") == 0.5,
+)
+bridge._fake_worker_pass()
+rec = json.loads((store_default / jid / "job.json").read_text())
+check("HS2 Fake-Worker Schritt 2: running → done, progress pct 1.0", rec.get("status") == "done" and rec.get("progress", {}).get("pct") == 1.0)
+check("HS2 done bettet render-result ein (GET /jobs/{id})", cl.get(f"/jobs/{jid}").json().get("result", {}).get("job_id") == jid)
+
+# --- (d) Freigabe-Pflicht AN: awaiting_approval + approve richtig/falsch ---
+store_pflicht = _hs2_store()
+os.environ["KOSMO_BRIDGE_APPROVAL_PFLICHT"] = "1"
+clp = _hs2_reload(store_pflicht)
+res = _hs2_render_job(clp)
+rec = res.json()
+jid = rec["job_id"]
+tok = rec.get("approval_token", "")
+check("HS2 Pflicht AN: neuer Job startet 'awaiting_approval'", rec.get("status") == "awaiting_approval")
+
+res_bad = clp.post(f"/jobs/{jid}/approve", json={"approval_token": "CONFIRMED_RENDER_falsch99"})
+check("HS2 approve mit FALSCHEM Token → 403", res_bad.status_code == 403)
+check("HS2 nach falscher Freigabe bleibt 'awaiting_approval'", clp.get(f"/jobs/{jid}").json().get("status") == "awaiting_approval")
+
+res_ok = clp.post(f"/jobs/{jid}/approve", json={"approval_token": tok})
+check("HS2 approve mit RICHTIGEM Token → 200 + 'queued'", res_ok.status_code == 200 and res_ok.json().get("status") == "queued")
+
+check("HS2 approve unbekannter Job → 404", clp.post("/jobs/vis-1-abcdef/approve", json={"approval_token": "x"}).status_code == 404)
+
+# --- (e) Idle-Gate: GPU belegt (GPU_IDLE=0) hält Render-Jobs in 'queued' ---
+store_idle = _hs2_store()
+os.environ.pop("KOSMO_BRIDGE_APPROVAL_PFLICHT", None)
+os.environ["KOSMO_BRIDGE_GPU_IDLE"] = "0"
+cli_i = _hs2_reload(store_idle)
+res = _hs2_render_job(cli_i)
+jid = res.json()["job_id"]
+check("HS2 Idle 0: Job startet 'queued'", res.json().get("status") == "queued")
+bridge._fake_worker_pass()
+rec = json.loads((store_idle / jid / "job.json").read_text())
+check("HS2 Idle 0 hält Job in 'queued' (GPU belegt, kein Render)", rec.get("status") == "queued")
+os.environ.pop("KOSMO_BRIDGE_GPU_IDLE", None)
+
+# --- (f) Abbruch aus jedem Zustand + kooperativer Abbruch im Lauf ---
+store_cancel = _hs2_store()
+os.environ["KOSMO_BRIDGE_APPROVAL_PFLICHT"] = "1"
+clc = _hs2_reload(store_cancel)
+
+res = _hs2_render_job(clc)  # awaiting_approval
+jid = res.json()["job_id"]
+res_x = clc.post(f"/jobs/{jid}/cancel")
+check("HS2 cancel aus 'awaiting_approval' → 'cancelled'", res_x.status_code == 200 and res_x.json().get("status") == "cancelled")
+
+os.environ.pop("KOSMO_BRIDGE_APPROVAL_PFLICHT", None)
+clc = _hs2_reload(store_cancel)
+
+res = _hs2_render_job(clc)  # queued
+jid = res.json()["job_id"]
+check("HS2 cancel aus 'queued' → 'cancelled'", clc.post(f"/jobs/{jid}/cancel").json().get("status") == "cancelled")
+check("HS2 cancel unbekannter Job → 404", clc.post("/jobs/vis-1-abcdef/cancel").status_code == 404)
+
+# kooperativer Abbruch: running → cancel → nächster Pass schreibt KEIN Ergebnis
+res = _hs2_render_job(clc)
+jid = res.json()["job_id"]
+bridge._fake_worker_pass()  # queued → running
+check("HS2 kooperativer Abbruch: Job ist vor Abbruch 'running'", json.loads((store_cancel / jid / "job.json").read_text()).get("status") == "running")
+check("HS2 cancel aus 'running' → 'cancelled'", clc.post(f"/jobs/{jid}/cancel").json().get("status") == "cancelled")
+bridge._fake_worker_pass()  # darf nichts mehr rechnen
+rec = json.loads((store_cancel / jid / "job.json").read_text())
+check("HS2 nach Abbruch bleibt 'cancelled' (kein Zustandssprung)", rec.get("status") == "cancelled")
+check("HS2 kooperativer Abbruch schreibt KEIN render-result.json", not (store_cancel / jid / "render-result.json").exists())
+
+# zurück auf einen sauberen Default-Zustand
+for _k in ("KOSMO_BRIDGE_APPROVAL_PFLICHT", "KOSMO_BRIDGE_GPU_IDLE"):
+    os.environ.pop(_k, None)
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+for _s in hs2_stores:
+    shutil.rmtree(_s, ignore_errors=True)
+
+# ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis
 # ---------------------------------------------------------------------------
 shutil.rmtree(TMP_STORE, ignore_errors=True)
