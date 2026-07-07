@@ -5,6 +5,7 @@ import {
   betriebKonfig,
   editionBetriebsart,
   leseEdition,
+  lizenzHinweis,
   mindestensOpus,
 } from '../src';
 
@@ -126,6 +127,39 @@ describe('Edition', () => {
     expect(editionBetriebsart('standard')).toBe('standard');
     expect(editionBetriebsart('remote')).toBe('remote');
     expect(editionBetriebsart('cloud')).toBe('cloud');
+  });
+});
+
+describe('lizenzHinweis (Serie I / Batch B6 — additiv, Default unverändert)', () => {
+  it('ohne konfigurierten Public Key: keine Pflicht, kein Hinweistext (Default vor B6)', () => {
+    const h = lizenzHinweis(false, null);
+    expect(h.status).toBe('keine-pflicht');
+    expect(h.text).toBe('');
+    // Selbst ein (theoretisch) vorhandenes Ergebnis ändert daran nichts —
+    // ohne Public Key im Build/Env greift die Pflicht gar nicht erst.
+    expect(lizenzHinweis(false, { gueltig: false, grund: 'abgelaufen' }).status).toBe('keine-pflicht');
+  });
+
+  it('Public Key konfiguriert, keine Lizenz gespeichert: fehlt, lokale Arbeit bleibt möglich', () => {
+    const h = lizenzHinweis(true, null);
+    expect(h.status).toBe('fehlt');
+    expect(h.text).toContain('lokale Arbeit bleibt möglich');
+  });
+
+  it('gültige Lizenz', () => {
+    const h = lizenzHinweis(true, { gueltig: true });
+    expect(h.status).toBe('gueltig');
+  });
+
+  it('abgelaufene Lizenz', () => {
+    const h = lizenzHinweis(true, { gueltig: false, grund: 'abgelaufen' });
+    expect(h.status).toBe('abgelaufen');
+    expect(h.text).toContain('lokale Arbeit bleibt möglich');
+  });
+
+  it('sonstige Ungültigkeit (Signatur/Format/Widerruf)', () => {
+    expect(lizenzHinweis(true, { gueltig: false, grund: 'signatur_ungueltig' }).status).toBe('ungueltig');
+    expect(lizenzHinweis(true, { gueltig: false, grund: 'lizenz_widerrufen' }).status).toBe('ungueltig');
   });
 });
 

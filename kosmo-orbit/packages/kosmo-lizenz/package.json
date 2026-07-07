@@ -1,0 +1,21 @@
+{
+  "name": "@kosmo/lizenz",
+  "version": "1.0.0-v1",
+  "private": true,
+  "type": "module",
+  "description": "Signierte Lizenz — reine Ed25519-Verify-Funktion (Web Crypto, keine npm-Dep). Serie I / Batch B6: die Server-Bindung (Sync/Bridge) ist der einzige wirklich harte Anti-Copy-Hebel, siehe docs/SERIE-I-BUILDPLAN.md §3.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./verify": "./src/lizenz.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

@@ -20,6 +20,12 @@ Sicherheit: KOSMO_BRIDGE_TOKEN setzen → Header X-Kosmo-Token wird verlangt.
   Ohne Token bleibt die Bridge im erreichbaren Netz offen (ehrlich benannt,
   kein Vortäuschen von Schutz, siehe Startlog). --host 0.0.0.0 und
   KOSMO_BRIDGE_ORIGIN=* sind bewusste Büronetz-Optionen, keine Defaults.
+
+Serie I / Batch B6 (Server-Bindung, der wirksame Anti-Copy-Hebel — siehe
+  docs/SERIE-I-BUILDPLAN.md §3): KOSMO_BRIDGE_LIZENZ_PFLICHT schaltet
+  zusätzlich zum Token eine signierte Lizenz scharf (Header X-Kosmo-Lizenz,
+  öffentlicher Schlüssel KOSMO_BRIDGE_LIZENZ_PUBKEY). Default AUS — ohne die
+  Env-Variable verhält sich die Bridge exakt wie in B4 (nur Token zählt).
 """
 
 from __future__ import annotations
@@ -40,6 +46,8 @@ import uvicorn
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
+
+from kosmo_bridge.lizenz import ED25519_LIB, ist_widerrufen, lade_widerrufsliste, lizenz_pruefen
 
 
 def _cors_origins() -> list[str]:
@@ -70,6 +78,13 @@ OLLAMA = os.environ.get("KOSMO_OLLAMA_URL", "http://127.0.0.1:11434")
 TOKEN = os.environ.get("KOSMO_BRIDGE_TOKEN", "")
 FAKE_WORKER = False
 
+# Lizenz-Pflicht (Serie I / Batch B6) — additiv, Default AUS. Erst wenn der
+# Owner sie per Env einschaltet, verlangt die Bridge zusätzlich zum Token
+# eine gültige, nicht widerrufene signierte Lizenz.
+LIZENZ_PFLICHT = os.environ.get("KOSMO_BRIDGE_LIZENZ_PFLICHT", "").strip().lower() in ("1", "true", "ja")
+LIZENZ_PUBKEY = os.environ.get("KOSMO_BRIDGE_LIZENZ_PUBKEY", "")
+LIZENZ_WIDERRUFSLISTE = lade_widerrufsliste(os.environ)
+
 # Upload-Grössen-Deckel (Env-überschreibbar) — schützt vor Platten-DoS über
 # unbegrenzte multipart-Uploads. Defaults sind grosszügig für echte
 # Render-Modelle/Audiodateien, aber weit unter "unbegrenzt".
@@ -95,6 +110,24 @@ async def token_guard(request: Request, call_next):
         # Byte-für-Byte-Timing-Seitenkanal auf den Token-Vergleich.
         if not secrets.compare_digest(supplied, TOKEN):
             return Response(status_code=401, content="Token fehlt oder falsch")
+
+    # Lizenz-Pflicht (Serie I / Batch B6) — additiv, NUR wenn per Env aktiv.
+    # Default (LIZENZ_PFLICHT=False): dieser Block tut nichts, exakt B4-Verhalten.
+    if LIZENZ_PFLICHT and request.url.path != "/health":
+        if not LIZENZ_PUBKEY:
+            # Pflicht an, aber kein Public Key konfiguriert — ehrlich ablehnen
+            # (fail closed) statt eine Prüfung vorzutäuschen, die nicht laufen kann.
+            return Response(status_code=503, content="Lizenzpruefung nicht konfiguriert (KOSMO_BRIDGE_LIZENZ_PUBKEY fehlt)")
+        lizenz_text = request.headers.get("x-kosmo-lizenz", "")
+        if not lizenz_text:
+            return Response(status_code=401, content="Lizenz fehlt")
+        ergebnis = lizenz_pruefen(lizenz_text, LIZENZ_PUBKEY, datetime.now(timezone.utc))
+        if not ergebnis["gueltig"]:
+            return Response(status_code=401, content=f"Lizenz abgelehnt: {ergebnis['grund']}")
+        lizenz_id = (ergebnis["lizenz"] or {}).get("lizenzId", "")
+        if ist_widerrufen(lizenz_id, LIZENZ_WIDERRUFSLISTE):
+            return Response(status_code=401, content="Lizenz widerrufen")
+
     return await call_next(request)
 
 
@@ -561,6 +594,17 @@ def cli():
         print("Hinweis: KOSMO_BRIDGE_TOKEN nicht gesetzt — Bridge ist im Netz offen")
     if args.host not in ("127.0.0.1", "localhost"):
         print(f"⚠ Bind an {args.host} — bewusste Büronetz-Option, im LAN erreichbar")
+    if LIZENZ_PFLICHT and ED25519_LIB is None:
+        print(
+            "⚠ KOSMO_BRIDGE_LIZENZ_PFLICHT gesetzt, aber weder 'cryptography' noch 'pynacl' "
+            "installiert — JEDE Anfrage wird abgelehnt (fail closed). 'pip install cryptography' nachholen."
+        )
+    elif LIZENZ_PFLICHT and not LIZENZ_PUBKEY:
+        print("⚠ KOSMO_BRIDGE_LIZENZ_PFLICHT gesetzt, aber KOSMO_BRIDGE_LIZENZ_PUBKEY fehlt — JEDE Anfrage wird abgelehnt (fail closed)")
+    elif LIZENZ_PFLICHT:
+        print(f"Lizenz-Pflicht aktiv (Serie I / B6, Ed25519 via {ED25519_LIB}) — {len(LIZENZ_WIDERRUFSLISTE)} widerrufene Lizenz-ID(s) geladen.")
+    else:
+        print("Lizenz-Pflicht aus (Default) — nur der Token entscheidet, wie in B4.")
     uvicorn.run(app, host=args.host, port=args.port)
 
 

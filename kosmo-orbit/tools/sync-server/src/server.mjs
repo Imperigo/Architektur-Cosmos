@@ -16,17 +16,34 @@
  * muss auf einem Reverse-Proxy/der HomeStation terminieren (WireGuard/mTLS).
  * Ohne TLS ist ein gesetzter Token im LAN im Klartext abhörbar — das ist
  * Reibung, kein Ersatz für Netzwerk-Härtung (siehe README.md).
+ *
+ * Serie I / Batch B6 (Server-Bindung, der wirksame Anti-Copy-Hebel — siehe
+ * docs/SERIE-I-BUILDPLAN.md §3): zusätzlich zum geteilten Token akzeptiert
+ * `onAuthenticate` optional eine signierte Lizenz (`@kosmo/lizenz`), wenn
+ * `KOSMO_SYNC_LIZENZ_PFLICHT` gesetzt ist. Der Browser-`WebSocket` erlaubt
+ * keine eigenen Header — die Lizenz reist deshalb als Query-Parameter
+ * (`?lizenz=...`) auf der Verbindungs-URL und kommt über Hocuspocus'
+ * `requestParameters` an. **Default (kein `KOSMO_SYNC_LIZENZ_PFLICHT`):
+ * unverändertes B3-Verhalten — nur der geteilte Token zählt.**
  */
 
 import { timingSafeEqual } from 'node:crypto';
 import { Server } from '@hocuspocus/server';
 import { SQLite } from '@hocuspocus/extension-sqlite';
+import { ladeWiderrufsliste, pruefeZugang } from './lizenz-auth.mjs';
 
 const port = Number(process.env.KOSMO_SYNC_PORT ?? 8700);
 const token = process.env.KOSMO_SYNC_TOKEN ?? '';
 const konfigurierterOrigin = process.env.KOSMO_SYNC_ORIGIN ?? '';
 const maxBytes = Number(process.env.KOSMO_SYNC_MAX_BYTES ?? 8 * 1024 * 1024);
 const ratenLimitProSekunde = Number(process.env.KOSMO_SYNC_RATE_LIMIT ?? 20);
+
+// Lizenz-Pflicht (B6) — additiv, Default AUS. Erst wenn der Owner sie explizit
+// einschaltet, verlangt der Server zusätzlich zum Token eine gültige, nicht
+// widerrufene Lizenz.
+const lizenzPflicht = /^(1|true|ja)$/i.test(process.env.KOSMO_SYNC_LIZENZ_PFLICHT ?? '');
+const lizenzPublicKey = process.env.KOSMO_SYNC_LIZENZ_PUBKEY ?? '';
+const lizenzWiderrufsliste = ladeWiderrufsliste();
 
 // Raum-Verwaltung: aktive Räume mit Teilnehmerzahl (D4-Betriebshärte)
 const raeume = new Map();
@@ -123,9 +140,20 @@ const server = new Server({
     },
   },
   extensions: [new SQLite({ database: process.env.KOSMO_SYNC_DB ?? './kosmo-sync.sqlite' })],
-  async onAuthenticate({ token: clientToken }) {
-    if (token && !tokenGleich(clientToken, token)) {
-      throw new Error('Token falsch');
+  async onAuthenticate({ token: clientToken, requestParameters }) {
+    const lizenzText = requestParameters?.get('lizenz') ?? '';
+    const ergebnis = await pruefeZugang({
+      clientToken,
+      sharedToken: token,
+      tokenGleich,
+      lizenzPflicht,
+      lizenzText,
+      lizenzPublicKeyBase64: lizenzPublicKey,
+      widerrufsliste: lizenzWiderrufsliste,
+      jetzt: new Date(),
+    });
+    if (!ergebnis.ok) {
+      throw new Error(ergebnis.grund === 'token_falsch' ? 'Token falsch' : `Lizenz abgelehnt: ${ergebnis.grund}`);
     }
   },
   async onConnect({ documentName }) {
@@ -177,4 +205,16 @@ server.listen().then(() => {
     'TLS-Hinweis: dieser Prozess spricht nur ws/http (LAN-ehrlich). Remote-Betrieb ' +
       'NUR hinter wss://-Terminierung (Reverse-Proxy/HomeStation) — sonst ist der Token im Klartext abhörbar.',
   );
+  if (lizenzPflicht && !lizenzPublicKey) {
+    console.log(
+      '⚠ KOSMO_SYNC_LIZENZ_PFLICHT ist gesetzt, aber KOSMO_SYNC_LIZENZ_PUBKEY fehlt — ' +
+        'JEDE Verbindung wird abgelehnt (fail closed), statt eine Prüfung vorzutäuschen, die nicht laufen kann.',
+    );
+  } else if (lizenzPflicht) {
+    console.log(
+      `Lizenz-Pflicht aktiv (Serie I / B6) — ${lizenzWiderrufsliste.length} widerrufene Lizenz-ID(s) geladen.`,
+    );
+  } else {
+    console.log('Lizenz-Pflicht aus (Default) — nur der geteilte Token entscheidet, wie in B3.');
+  }
 });

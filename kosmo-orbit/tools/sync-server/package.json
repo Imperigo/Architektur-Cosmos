@@ -5,10 +5,12 @@
   "type": "module",
   "description": "Kosmo-Sync-Server — Hocuspocus + SQLite für die HomeStation: Desktop und iPad editieren dasselbe Projekt live",
   "scripts": {
-    "start": "node src/server.mjs"
+    "start": "node src/server.mjs",
+    "test": "node --test"
   },
   "dependencies": {
     "@hocuspocus/server": "^4.3.0",
-    "@hocuspocus/extension-sqlite": "^4.3.0"
+    "@hocuspocus/extension-sqlite": "^4.3.0",
+    "@kosmo/lizenz": "file:../../packages/kosmo-lizenz"
   }
 }

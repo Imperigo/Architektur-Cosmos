@@ -174,3 +174,42 @@ export function betriebKonfig(ein: BetriebEingabe): BetriebKonfig {
     ...(tls ? { remoteTls: true } : {}),
   };
 }
+
+/**
+ * Lizenz-Hinweis (Serie I / Batch B6 — Anti-Copy Stufe 2, siehe
+ * `docs/SERIE-I-BUILDPLAN.md` §3 und `docs/LIZENZ.md`): reine Klassifikation
+ * eines `@kosmo/lizenz`-Verify-Ergebnisses in einen UI-Zustand. Der
+ * eigentliche Web-Crypto-Aufruf (`verifiziereLizenz`) lebt bewusst in
+ * `KosmoPanel.tsx` (App-Schicht) — diese Funktion bleibt reine Logik, ohne
+ * Crypto/Storage, und ist deshalb ohne DOM testbar.
+ *
+ * **Ehrlich, nie hart aussperrend**: egal welcher Status — die lokale Arbeit
+ * bleibt IMMER möglich. Nur Cloud/Sync/Render verlangen serverseitig
+ * (Server-Bindung, der einzige harte Hebel) eine gültige Lizenz.
+ *
+ * `pubKeyKonfiguriert=false` (kein Public Key im Build/Env) ist der Default:
+ * dann bleibt alles wie vor B6 — `status: 'keine-pflicht'`, kein Hinweistext.
+ */
+export type LizenzStatus = 'keine-pflicht' | 'fehlt' | 'gueltig' | 'abgelaufen' | 'ungueltig';
+
+export interface LizenzHinweis {
+  status: LizenzStatus;
+  /** Leer bei `keine-pflicht` — sonst ein UI-tauglicher, ehrlicher Hinweistext. */
+  text: string;
+}
+
+const LIZENZ_HINWEIS_SUFFIX =
+  'Cloud/Sync/Render brauchen eine gültige Lizenz; lokale Arbeit bleibt möglich.';
+
+export function lizenzHinweis(
+  pubKeyKonfiguriert: boolean,
+  ergebnis: { gueltig: boolean; grund?: string } | null,
+): LizenzHinweis {
+  if (!pubKeyKonfiguriert) return { status: 'keine-pflicht', text: '' };
+  if (!ergebnis) return { status: 'fehlt', text: `Lizenz fehlt — ${LIZENZ_HINWEIS_SUFFIX}` };
+  if (ergebnis.gueltig) return { status: 'gueltig', text: 'Lizenz gültig.' };
+  if (ergebnis.grund === 'abgelaufen') {
+    return { status: 'abgelaufen', text: `Lizenz abgelaufen — ${LIZENZ_HINWEIS_SUFFIX}` };
+  }
+  return { status: 'ungueltig', text: `Lizenz ungültig — ${LIZENZ_HINWEIS_SUFFIX}` };
+}

@@ -11,12 +11,14 @@ import {
   editionBetriebsart,
   greeting,
   leseEdition,
+  lizenzHinweis,
   personas,
   type Betriebsart,
   type ChatProvider,
   type CloudAuthArt,
   type Proposal,
 } from '@kosmo/ai';
+import { verifiziereLizenz } from '@kosmo/lizenz';
 import type { Assembly } from '@kosmo/kernel';
 import { useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
@@ -92,6 +94,15 @@ interface KosmoSettings {
   anthropicOauthToken: string;
   /** Welche der beiden Cloud-Anmeldearten aktiv ist. */
   cloudAuth: CloudAuthArt;
+  /**
+   * Signierte Lizenz (Serie I / Batch B6, opaker base64-Text) — bleibt wie
+   * Schlüssel/Token nur auf diesem Gerät. Fehlt/ungültig führt NICHT zum
+   * harten Aussperren lokaler Arbeit, sondern zu einem ehrlichen Hinweis;
+   * server-seitig (Sync/Bridge) ist die Lizenz der einzige harte Anti-Copy-
+   * Hebel. Ohne konfigurierten Public Key (`VITE_KOSMO_LIZENZ_PUBKEY`) bleibt
+   * dieses Feld wirkungslos — dann verhält sich alles wie vor B6.
+   */
+  lizenzText: string;
 }
 
 const defaultSettings: KosmoSettings = {
@@ -106,7 +117,19 @@ const defaultSettings: KosmoSettings = {
   anthropicModel: 'claude-opus-4-8',
   anthropicOauthToken: '',
   cloudAuth: 'schluessel',
+  lizenzText: '',
 };
+
+/**
+ * Öffentlicher Lizenz-Schlüssel aus dem Build (`VITE_KOSMO_LIZENZ_PUBKEY`,
+ * 32 Rohbytes base64 — kein Secret, darf im Bundle stehen). Leer = keine
+ * Lizenz-Pflicht: die App verhält sich exakt wie vor B6, es erscheint kein
+ * Lizenz-Hinweis und kein Eingabefeld. Der einzige harte Hebel ist ohnehin
+ * die Server-Bindung (Sync/Bridge), nicht dieser clientseitige Check.
+ */
+function lizenzPublicKey(): string {
+  return (import.meta.env.VITE_KOSMO_LIZENZ_PUBKEY ?? '').trim();
+}
 
 function loadSettings(): KosmoSettings {
   try {
@@ -205,6 +228,10 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const cloudAnRef = useRef<(text: string) => void>(() => {});
   const [showSettings, setShowSettings] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
+  // Lizenz-Hinweis (Serie I / Batch B6): rein informativ, sperrt NIE die
+  // lokale Arbeit. Ohne konfigurierten Public Key ist der Status dauerhaft
+  // 'keine-pflicht' (kein Badge, kein Feld) — Default-Verhalten wie vor B6.
+  const [lizenz, setLizenz] = useState<ReturnType<typeof lizenzHinweis>>({ status: 'keine-pflicht', text: '' });
   const [ttsOn, setTtsOn] = useState(localStorage.getItem('kosmo.tts') === '1');
   const lastKosmoText = useRef('');
   const ttsRef = useRef(ttsOn);
@@ -392,6 +419,27 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [bubbles, cards]);
+
+  // Lizenz prüfen (Serie I / Batch B6): beim Start und bei jeder Änderung des
+  // Lizenztextes. Läuft NUR, wenn ein Public Key im Build steckt — sonst
+  // dauerhaft 'keine-pflicht'. Das Ergebnis ist ein reiner Hinweis; die
+  // lokale Arbeit bleibt in jedem Fall möglich (kein hartes Aussperren).
+  useEffect(() => {
+    const pubKey = lizenzPublicKey();
+    if (!pubKey) {
+      setLizenz({ status: 'keine-pflicht', text: '' });
+      return;
+    }
+    let abgebrochen = false;
+    const text = settings.lizenzText.trim();
+    void (async () => {
+      const ergebnis = text ? await verifiziereLizenz(text, pubKey, new Date()) : null;
+      if (!abgebrochen) setLizenz(lizenzHinweis(true, ergebnis));
+    })();
+    return () => {
+      abgebrochen = true;
+    };
+  }, [settings.lizenzText]);
 
   /**
    * Betriebsart wechseln (Owner «drei Versionen»): setzt Provider + alle
@@ -715,6 +763,13 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                 ? settings.lmModel
                 : settings.model}
         </Badge>
+        {(lizenz.status === 'fehlt' || lizenz.status === 'abgelaufen' || lizenz.status === 'ungueltig') && (
+          <span data-testid="lizenz-badge" title={lizenz.text}>
+            <Badge hue="var(--k-warning)">
+              {lizenz.status === 'abgelaufen' ? 'Lizenz abgelaufen' : lizenz.status === 'ungueltig' ? 'Lizenz ungültig' : 'Lizenz fehlt'}
+            </Badge>
+          </span>
+        )}
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="ghost" onClick={() => setShowSettings(!showSettings)} aria-label="Einstellungen">
           ⚙
@@ -887,6 +942,33 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           >
             Lernjournal exportieren (JSONL fürs LoRA-Training)
           </KButton>
+          {lizenzPublicKey() && (
+            <>
+              <Hairline />
+              <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+                Lizenz —{' '}
+                <span data-testid="lizenz-status" style={{ color: 'var(--k-ink)' }}>
+                  {lizenz.status === 'gueltig'
+                    ? 'gültig'
+                    : lizenz.status === 'abgelaufen'
+                      ? 'abgelaufen'
+                      : lizenz.status === 'ungueltig'
+                        ? 'ungültig'
+                        : 'fehlt'}
+                </span>
+              </div>
+              <div style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+                {lizenz.status === 'gueltig'
+                  ? 'Cloud/Sync/Render sind freigeschaltet.'
+                  : 'Cloud/Sync/Render brauchen eine gültige Lizenz — die lokale Arbeit bleibt in jedem Fall möglich.'}
+              </div>
+              <SettingsFeld
+                label="Lizenz-Text (bleibt auf diesem Gerät)"
+                value={settings.lizenzText}
+                onChange={(v) => speichere({ ...settings, lizenzText: v.trim() })}
+              />
+            </>
+          )}
           <Hairline />
           <DiagnosePanel />
         </div>

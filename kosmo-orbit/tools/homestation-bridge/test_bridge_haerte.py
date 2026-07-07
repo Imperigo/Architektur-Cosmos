@@ -159,6 +159,117 @@ res = client.post("/stt", files={"audio": ("audio.wav", big_audio, "audio/wav")}
 check("STT-Upload über Audio-Deckel liefert 413", res.status_code == 413)
 
 # ---------------------------------------------------------------------------
+# 4) Signierte Lizenz + Server-Bindung (Serie I / Batch B6)
+#    (a) die reine Verify-Funktion (gültig/abgelaufen/manipuliert/widerrufen);
+#    (b) `token_guard` mit aktivierter Lizenz-Pflicht (Modul-Reload mit neuen
+#        Env-Werten — main.py liest sie als Modul-Konstanten beim Import);
+#    (c) Default (keine Pflicht) bleibt danach unverändert offen wie in B4.
+# ---------------------------------------------------------------------------
+import base64  # noqa: E402
+import importlib  # noqa: E402
+from datetime import datetime, timezone  # noqa: E402
+
+from kosmo_bridge.lizenz import ist_widerrufen, kanonische_lizenznachricht, lizenz_pruefen  # noqa: E402
+
+
+def _lizenz_testkeypaar():
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+    priv = Ed25519PrivateKey.generate()
+    pub = priv.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
+    return priv, base64.b64encode(pub).decode("ascii")
+
+
+def _signiere_test_lizenz(priv, daten: dict) -> str:
+    nachricht = kanonische_lizenznachricht(daten)
+    sig = priv.sign(nachricht)
+    paket = {"daten": daten, "signatur": base64.b64encode(sig).decode("ascii")}
+    return base64.b64encode(json.dumps(paket).encode("utf-8")).decode("ascii")
+
+
+if bridge.ED25519_LIB is None:
+    check("Ed25519-Lib (cryptography/pynacl) verfügbar für Lizenztests", False)
+else:
+    priv, pub_b64 = _lizenz_testkeypaar()
+    lizenz_daten = {
+        "inhaber": "Baubüro Andrin",
+        "edition": "standard",
+        "gueltigBis": "2026-12-31",
+        "ausgestelltAm": "2026-01-01T00:00:00.000Z",
+        "lizenzId": "lz-bridge-test-0001",
+    }
+    lizenz_text = _signiere_test_lizenz(priv, lizenz_daten)
+
+    # --- (a) reine Verify-Funktion ---
+    r = lizenz_pruefen(lizenz_text, pub_b64, datetime(2026, 6, 1, tzinfo=timezone.utc))
+    check("lizenz_pruefen: gültige Lizenz wird akzeptiert", r["gueltig"] is True)
+
+    r_abgelaufen = lizenz_pruefen(lizenz_text, pub_b64, datetime(2027, 3, 1, tzinfo=timezone.utc))
+    check(
+        "lizenz_pruefen: abgelaufene Lizenz wird abgelehnt",
+        r_abgelaufen["gueltig"] is False and r_abgelaufen["grund"] == "abgelaufen",
+    )
+
+    priv_fremd, _ = _lizenz_testkeypaar()
+    lizenz_text_fremd_signiert = _signiere_test_lizenz(priv_fremd, lizenz_daten)
+    r_manipuliert = lizenz_pruefen(lizenz_text_fremd_signiert, pub_b64, datetime(2026, 6, 1, tzinfo=timezone.utc))
+    check(
+        "lizenz_pruefen: mit fremdem Key signierte Lizenz wird abgelehnt",
+        r_manipuliert["gueltig"] is False and r_manipuliert["grund"] == "signatur_ungueltig",
+    )
+
+    r_kaputt = lizenz_pruefen("***kein-base64***", pub_b64, datetime.now(timezone.utc))
+    check("lizenz_pruefen: kaputter Text wird ehrlich abgewiesen (kein Crash)", r_kaputt["grund"] == "lizenztext_ungueltig")
+
+    check("ist_widerrufen erkennt eine gelistete Lizenz-ID", ist_widerrufen("lz-bridge-test-0001", ["lz-bridge-test-0001"]) is True)
+    check("ist_widerrufen: nicht gelistete ID bleibt False", ist_widerrufen("lz-andere", ["lz-bridge-test-0001"]) is False)
+
+    # --- (b) Integration über token_guard: Lizenz-Pflicht per Env aktivieren ---
+    os.environ["KOSMO_BRIDGE_LIZENZ_PFLICHT"] = "1"
+    os.environ["KOSMO_BRIDGE_LIZENZ_PUBKEY"] = pub_b64
+    importlib.reload(bridge)
+    bridge.STORE = TMP_STORE
+    lizenz_client = TestClient(bridge.app)
+
+    res = lizenz_client.get("/jobs")
+    check("Lizenz-Pflicht aktiv, kein Lizenz-Header: 401", res.status_code == 401)
+
+    res = lizenz_client.get("/jobs", headers={"x-kosmo-lizenz": lizenz_text})
+    check("Lizenz-Pflicht aktiv, gültige Lizenz im Header: 200", res.status_code == 200)
+
+    res = lizenz_client.get("/jobs", headers={"x-kosmo-lizenz": lizenz_text_fremd_signiert})
+    check("Lizenz-Pflicht aktiv, fremd signierte Lizenz im Header: 401", res.status_code == 401)
+
+    res = lizenz_client.get("/health")
+    check("/health bleibt auch bei Lizenz-Pflicht ohne Header erreichbar", res.status_code == 200)
+
+    # Widerruf: dieselbe (sonst gültige) Lizenz-ID auf die Widerrufsliste setzen
+    os.environ["KOSMO_BRIDGE_LIZENZ_WIDERRUF"] = lizenz_daten["lizenzId"]
+    importlib.reload(bridge)
+    bridge.STORE = TMP_STORE
+    widerruf_client = TestClient(bridge.app)
+    res = widerruf_client.get("/jobs", headers={"x-kosmo-lizenz": lizenz_text})
+    check("Widerrufene Lizenz-ID wird trotz gültiger Signatur abgelehnt", res.status_code == 401)
+    os.environ.pop("KOSMO_BRIDGE_LIZENZ_WIDERRUF", None)
+
+    # Pflicht an, aber kein Public Key konfiguriert → fail closed statt offen
+    os.environ.pop("KOSMO_BRIDGE_LIZENZ_PUBKEY", None)
+    importlib.reload(bridge)
+    bridge.STORE = TMP_STORE
+    fail_closed_client = TestClient(bridge.app)
+    res = fail_closed_client.get("/jobs", headers={"x-kosmo-lizenz": lizenz_text})
+    check("Pflicht an ohne Public Key: fail closed (kein 200)", res.status_code != 200)
+
+    # --- (c) zurück auf Default: KEINE Lizenz-Pflicht verhält sich wie B4 ---
+    os.environ.pop("KOSMO_BRIDGE_LIZENZ_PFLICHT", None)
+    importlib.reload(bridge)
+    bridge.STORE = TMP_STORE
+    default_client = TestClient(bridge.app)
+    res = default_client.get("/jobs")
+    check("Default (keine Lizenz-Pflicht): Zugriff bleibt offen wie in B4", res.status_code == 200)
+
+# ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis
 # ---------------------------------------------------------------------------
 shutil.rmtree(TMP_STORE, ignore_errors=True)

@@ -73,4 +73,39 @@ Internet. **Ehrlich benannt, keine "unhackbar"-Behauptung:**
 
 Prüfskript: `python3 tools/homestation-bridge/test_bridge_haerte.py` (siehe
 unten) deckt die drei kritischsten Fälle ab (client-`out` ignoriert,
-Nachbarordner-Trick abgewiesen, Upload über Deckel → 413) ohne pytest.
+Nachbarordner-Trick abgewiesen, Upload über Deckel → 413) sowie die
+Lizenzprüfung (siehe unten) ohne pytest.
+
+## Signierte Lizenz + Server-Bindung (Serie I / Batch B6)
+
+Der **einzige wirklich harte Anti-Copy-Hebel** (siehe
+`docs/SERIE-I-BUILDPLAN.md` §3 und `docs/LIZENZ.md`) — eine rein clientseitige
+Prüfung ist immer umgehbar, die Server-Bindung hier nicht.
+
+- **Additiv, Default unverändert.** Ohne `KOSMO_BRIDGE_LIZENZ_PFLICHT`
+  verhält sich `token_guard` exakt wie in B4 — nur der Token (falls gesetzt)
+  zählt.
+- Aktiviert (`KOSMO_BRIDGE_LIZENZ_PFLICHT=1`), verlangt jede Anfrage
+  (ausser `/health`) zusätzlich zum Token einen gültigen, nicht widerrufenen
+  Header `X-Kosmo-Lizenz: <lizenzText>` (Ed25519-signiert, siehe
+  `@kosmo/lizenz`/`docs/LIZENZ.md`), geprüft gegen den öffentlichen Schlüssel
+  `KOSMO_BRIDGE_LIZENZ_PUBKEY`.
+- **Ed25519-Bibliothek**: `kosmo_bridge/lizenz.py` nutzt `cryptography`
+  (bevorzugt) oder `PyNaCl`, je nachdem was installiert ist —
+  `pip install -e ".[lizenz]"` (cryptography) oder `".[lizenz-pynacl]"`
+  (PyNaCl). Ist **keine** der beiden Bibliotheken installiert, bleibt
+  `KOSMO_BRIDGE_LIZENZ_PFLICHT` ehrlich wirkungslos in dem Sinn, dass sie
+  **fail closed** greift: jede Anfrage wird abgelehnt (Startlog warnt
+  explizit), statt eine Prüfung vorzutäuschen, die technisch nicht laufen kann.
+- **Widerrufsliste**: `KOSMO_BRIDGE_LIZENZ_WIDERRUF` (Komma-Liste) und/oder
+  `KOSMO_BRIDGE_LIZENZ_WIDERRUF_DATEI` (eine Lizenz-ID pro Zeile oder
+  JSON-Array) — zusammengeführt, fehlende/kaputte Datei wird ignoriert statt
+  die Bridge crashen zu lassen.
+- Env-Übersicht:
+
+  | Variable | Standard | Bedeutung |
+  |---|---|---|
+  | `KOSMO_BRIDGE_LIZENZ_PFLICHT` | aus | `1`/`true`/`ja` schaltet die Lizenzprüfung scharf. |
+  | `KOSMO_BRIDGE_LIZENZ_PUBKEY` | — | Öffentlicher Ed25519-Schlüssel (32 Rohbytes, base64) — kein Secret. |
+  | `KOSMO_BRIDGE_LIZENZ_WIDERRUF` | — | Komma-Liste widerrufener Lizenz-IDs. |
+  | `KOSMO_BRIDGE_LIZENZ_WIDERRUF_DATEI` | — | Zusätzliche Datei mit Lizenz-IDs. |

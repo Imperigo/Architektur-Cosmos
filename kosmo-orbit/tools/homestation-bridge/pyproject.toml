@@ -12,6 +12,14 @@ dependencies = [
 
 [project.optional-dependencies]
 stt = ["faster-whisper>=1.0"]
+# Serie I / Batch B6 (Server-Bindung): Ed25519-Verify für die signierte
+# Lizenz. `cryptography` bevorzugt; `pynacl` ist die Alternative, falls
+# `cryptography` auf einem Zielsystem nicht baubar ist (main.py probiert
+# beide der Reihe nach, siehe kosmo_bridge/lizenz.py). Ohne eine der beiden
+# bleibt KOSMO_BRIDGE_LIZENZ_PFLICHT ehrlich wirkungslos (fail closed, siehe
+# Startlog) statt eine Prüfung vorzutäuschen.
+lizenz = ["cryptography>=41"]
+lizenz-pynacl = ["pynacl>=1.5"]
 
 [project.scripts]
 kosmo-bridge = "kosmo_bridge.main:cli"

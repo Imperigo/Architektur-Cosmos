@@ -21,6 +21,7 @@
     "@kosmo/contracts": "*",
     "@kosmo/data": "*",
     "@kosmo/kernel": "*",
+    "@kosmo/lizenz": "*",
     "@kosmo/sync": "*",
     "@kosmo/ui": "*",
     "camera-controls": "^3.1.2",
