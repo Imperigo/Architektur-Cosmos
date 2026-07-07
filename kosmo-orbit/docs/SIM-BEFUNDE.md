@@ -486,3 +486,33 @@ explizit auf KosmoDesign-2D zurück (`__kosmo.open('design')` + `view-2d` +
 H-Fix; Journal-Vollständigkeit (Abschnitt 5, Punkt 1) — der Fix stand vorher
 nur in ROADMAP-174-Prosa.
 Status:      spec-korrigiert
+
+### H-20 — `/stt`: faster-whisper ist im H3a-Build-Sandbox importierbar, `_stt_available()` weicht vom Buildplan-Normalfall ab (07.07.2026, Journey ki-imaging, Schritt 2)
+Beobachtung: Der Buildplan (Abschnitt 3) geht davon aus, dass im Container
+`faster-whisper` fehlt und `/stt` darum immer ehrlich mit 501 antwortet. Im
+Build-Sandbox dieses H3a-Batches ist `faster-whisper==1.2.1` jedoch
+pip-installiert und importierbar (`python3 -c "import faster_whisper"` →
+Exit 0; `GET /health` gegen die laufende `--fake`-Bridge → `services.stt:
+true`). Ein `POST /stt` mit einem 64-Byte-Zufalls-„Audio" traf darum NICHT
+den 501-Pfad, sondern den echten Whisper-Zweig und endete in einem
+unbehandelten **500 Internal Server Error** (main.py Z.381-396 lädt/
+transkribiert echt, kein try/except um `WhisperModel(...)`/`transcribe(...)`).
+Triage:      kein-bug (Umgebungsabweichung, kein Kosmo-Bridge-Defekt — der
+Code verhält sich exakt wie geschrieben: 501 NUR wenn `_stt_available()`
+False ist; dass dieser Build-Container `faster-whisper` installiert hat, ist
+keine main.py-Verantwortung). Kleine Coverage-Lücke bleibt: ein echter
+Whisper-Aufruf mit Garbage-Bytes crasht ungefangen (500 statt einer sauberen
+4xx-Meldung) — kandidiert als V2-Härtungspunkt, kein Blocker.
+Beleg:       `python3 -c "import faster_whisper"` (Exit 0) im H3a-Sandbox;
+`curl -F audio=@mini.wav http://127.0.0.1:8600/stt` → `500 Internal Server
+Error` gegen die laufende `--fake`-Bridge (Prozess `python3 tools/
+homestation-bridge/kosmo_bridge/main.py --fake --port 8600`); main.py
+Z.360-396 `_stt_available()`/`stt()`.
+Entscheid:   `e2e/sim-ki-imaging.spec.ts` fragt vor der 501-Assertion selbst
+`GET /health` ab und überspringt die STT-Assertion ehrlich (mit Begründung im
+Skip-Text, kein stiller Pass), wenn `services.stt === true` — robust gegen
+beide Umgebungen, ohne den Buildplan-Normalfall (fehlendes faster-whisper)
+als Annahme aus dem Test zu streichen. Kein H-Fix nötig; die optionale
+V2-Härtung (try/except um den Whisper-Aufruf, sauberer 4xx-Ersatz statt 500)
+geht an den Owner, nicht Teil dieses Serie-H-Batches (kein Produktcode hier).
+Status:      doku (V2)
