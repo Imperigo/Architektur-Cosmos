@@ -1,9 +1,10 @@
-import { columnOutline, type Assembly, type Beam, type Column, type MassBody, type Roof, type Slab, type Stair, type Storey, type Wall } from '../model/entities';
+import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type MassBody, type Roof, type Slab, type Stair, type Storey, type Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
 import { treppenTeile } from './treppe';
 import { extrudePolygon, extrudeWallWithOpenings, type GeometryArtifact } from './mesh';
+import { featureKanten, flaechenNormale } from './mesh-topo';
 import { convexSkeleton } from '../geometry/skeleton';
 import { offsetPolygon } from '../geometry/clip';
 
@@ -29,6 +30,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
   else if (e.kind === 'stair') artifact = deriveStair(doc, e);
   else if (e.kind === 'column') artifact = deriveColumn(doc, e);
   else if (e.kind === 'beam') artifact = deriveBeam(doc, e);
+  else if (e.kind === 'freemesh') artifact = deriveFreeMesh(doc, e);
 
   if (artifact) cache.set(id, { revision: doc.revision, artifact });
   return artifact;
@@ -37,7 +39,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
 export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
   const out: GeometryArtifact[] = [];
   for (const e of doc.entities.values()) {
-    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair' || e.kind === 'column' || e.kind === 'beam') {
+    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair' || e.kind === 'column' || e.kind === 'beam' || e.kind === 'freemesh') {
       const a = deriveEntity(doc, e.id);
       if (a) out.push(a);
     }
@@ -401,6 +403,45 @@ function deriveMass(doc: KosmoDoc, mass: MassBody): GeometryArtifact | null {
   if (!storey || storey.kind !== 'storey' || mass.outline.length < 3) return null;
   const z0 = storey.elevation + mass.baseOffset;
   return extrudePolygon(mass.id, 'masse', mass.outline, [], z0, z0 + mass.height);
+}
+
+/**
+ * FreeMesh → GeometryArtifact (Block 3 / FM1, Buildplan E5): Dreiecke werden
+ * für Flat-Shading «explodiert» (jedes Dreieck eigene Vertices mit
+ * Flächennormale), Linien-Overlay aus den Feature-Kanten (Knick > 25° oder
+ * offener Rand). z ist storey-relativ — hier kommt die Geschosshöhe dazu.
+ * Daten-Guard: ohne gültige Dreiecke entsteht KEIN Artefakt (Golden-Gesetz).
+ */
+function deriveFreeMesh(doc: KosmoDoc, m: FreeMesh): GeometryArtifact | null {
+  const storey = doc.get<Storey>(m.storeyId);
+  if (!storey || storey.kind !== 'storey' || m.faces.length < 3) return null;
+  const zOff = storey.elevation;
+  const faceCount = m.faces.length / 3;
+  const pos = new Float32Array(faceCount * 9);
+  const nor = new Float32Array(faceCount * 9);
+  const idx = new Uint32Array(faceCount * 3);
+  for (let f = 0; f < faceCount; f++) {
+    const n = flaechenNormale(m.positions, m.faces, f);
+    for (let k = 0; k < 3; k++) {
+      const v = m.faces[f * 3 + k]! * 3;
+      const o = f * 9 + k * 3;
+      pos[o] = m.positions[v]!;
+      pos[o + 1] = m.positions[v + 1]!;
+      pos[o + 2] = m.positions[v + 2]! + zOff;
+      nor[o] = n[0];
+      nor[o + 1] = n[1];
+      nor[o + 2] = n[2];
+      idx[f * 3 + k] = f * 3 + k;
+    }
+  }
+  const kanten = featureKanten(m.positions, m.faces);
+  const edges = new Float32Array(kanten.length);
+  for (let i = 0; i < kanten.length; i += 3) {
+    edges[i] = kanten[i]!;
+    edges[i + 1] = kanten[i + 1]!;
+    edges[i + 2] = kanten[i + 2]! + zOff;
+  }
+  return { entityId: m.id, materialKey: 'masse', positions: pos, normals: nor, indices: idx, edges };
 }
 
 function deriveRoof(doc: KosmoDoc, roof: Roof): GeometryArtifact | null {

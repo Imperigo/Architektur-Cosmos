@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Boundary, GridAxis, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
+import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
+import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
+import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -252,6 +254,124 @@ export const createMass = registerCommand({
   },
 });
 
+/** Budget-Wächter (Block 3 / E1): Commands weisen Überschreitung ehrlich ab —
+ * FreeMesh ist Entwurfsgeometrie, kein Scan-Container. */
+function pruefeMeshBudget(positions: number[], faces: number[]): void {
+  const vertices = positions.length / 3;
+  const faceCount = faces.length / 3;
+  if (vertices > FREEMESH_MAX_VERTICES || faceCount > FREEMESH_MAX_FACES) {
+    throw new CommandError(
+      `FreeMesh-Budget überschritten (${vertices} Vertices / ${faceCount} Flächen — ` +
+        `Deckel ${FREEMESH_MAX_VERTICES}/${FREEMESH_MAX_FACES}). Grosse Meshes bleiben ` +
+        `Referenz-Kontext (KosmoAsset), nicht editierbares FreeMesh.`,
+    );
+  }
+}
+
+export const createFreeMesh = registerCommand({
+  id: 'design.meshErstellen',
+  title: 'FreeMesh erstellen',
+  description:
+    'Erstellt ein frei editierbares Mesh (FreeMesh, dritte Werkzeugstufe): form «quader» braucht storeyId + at + breite/laenge/hoehe (mm); form «ausVolumen» braucht massId und wandelt den Volumenkörper in ein Mesh um (der Volumenkörper verschwindet — ein Undo-Schritt stellt ihn zurück). Danach: design.meshVertexSchieben / design.meshFlaecheExtrudieren.',
+  params: z.object({
+    form: z.enum(['quader', 'ausVolumen']),
+    storeyId: z.string().optional().describe('Geschoss (Pflicht bei quader)'),
+    at: PtSchema.optional().describe('Ecke des Quaders mit minimalem x/y'),
+    breite: z.number().int().positive().optional().describe('mm (quader, x-Richtung)'),
+    laenge: z.number().int().positive().optional().describe('mm (quader, y-Richtung)'),
+    hoehe: z.number().int().positive().optional().describe('mm (quader)'),
+    massId: z.string().optional().describe('Volumenkörper (Pflicht bei ausVolumen)'),
+    name: z.string().optional(),
+  }),
+  summarize: (p) => (p.form === 'quader' ? 'FreeMesh-Quader erstellen' : 'Volumen in FreeMesh umwandeln'),
+  run: (doc, p) => {
+    if (p.form === 'quader') {
+      if (!p.storeyId || !p.at || !p.breite || !p.laenge || !p.hoehe) {
+        throw new CommandError('form «quader» braucht storeyId, at, breite, laenge und hoehe');
+      }
+      require<Storey>(doc, p.storeyId, 'storey');
+      const daten = quaderMesh(p.at as Pt, p.breite, p.laenge, p.hoehe);
+      pruefeMeshBudget(daten.positions, daten.faces);
+      const mesh: FreeMesh = {
+        id: newId('mesh'),
+        kind: 'freemesh',
+        storeyId: p.storeyId,
+        positions: daten.positions,
+        faces: daten.faces,
+        ...(p.name ? { name: p.name } : {}),
+      };
+      return [added(mesh)];
+    }
+    // ausVolumen: MassBody → identisches Prisma als Mesh, EIN Undo-Schritt.
+    if (!p.massId) throw new CommandError('form «ausVolumen» braucht massId');
+    const mass = require<MassBody>(doc, p.massId, 'mass');
+    const daten = prismaMesh(mass.outline, mass.baseOffset, mass.baseOffset + mass.height);
+    pruefeMeshBudget(daten.positions, daten.faces);
+    const mesh: FreeMesh = {
+      id: newId('mesh'),
+      kind: 'freemesh',
+      storeyId: mass.storeyId,
+      positions: daten.positions,
+      faces: daten.faces,
+      ...(p.name ? { name: p.name } : mass.program ? { name: mass.program } : {}),
+    };
+    return [added(mesh), { id: mass.id, before: mass, after: null }];
+  },
+});
+
+export const meshMoveVertices = registerCommand({
+  id: 'design.meshVertexSchieben',
+  title: 'Mesh-Vertices schieben',
+  description:
+    'Verschiebt Vertices eines FreeMesh um dx/dy/dz in mm. indices sind Vertex-Indizes (deckungsgleiche Ecken zusammen schieben — die Verschweissung liefert derive/mesh-topo gleichePositionen).',
+  params: z.object({
+    entityId: z.string(),
+    indices: z.array(z.number().int().min(0)).min(1),
+    dx: z.number().int(),
+    dy: z.number().int(),
+    dz: z.number().int(),
+  }),
+  summarize: (p) => `${p.indices.length} Vertex(e) um ${p.dx}/${p.dy}/${p.dz} mm`,
+  run: (doc, p) => {
+    const e = require<FreeMesh>(doc, p.entityId, 'freemesh');
+    const vertexCount = e.positions.length / 3;
+    for (const i of p.indices) {
+      if (i >= vertexCount) throw new CommandError(`Vertex-Index ${i} ausserhalb (0–${vertexCount - 1})`);
+    }
+    if (p.dx === 0 && p.dy === 0 && p.dz === 0) throw new CommandError('Verschiebung um 0/0/0 ist keine Änderung');
+    const ziel = new Set(p.indices);
+    const positions = e.positions.map((wert, idx) => {
+      const vertex = Math.floor(idx / 3);
+      if (!ziel.has(vertex)) return wert;
+      return idx % 3 === 0 ? wert + p.dx : idx % 3 === 1 ? wert + p.dy : wert + p.dz;
+    });
+    return [{ id: e.id, before: e, after: { ...e, positions } }];
+  },
+});
+
+export const meshExtrudeFace = registerCommand({
+  id: 'design.meshFlaecheExtrudieren',
+  title: 'Mesh-Fläche extrudieren',
+  description:
+    'Extrudiert die planare Region um das Dreieck «face» eines FreeMesh entlang ihrer Normalen um distanz mm (negativ = einwärts). Die Region flutet über gleich orientierte Nachbardreiecke — das Morph-Handgefühl, ein Undo-Schritt.',
+  params: z.object({
+    entityId: z.string(),
+    face: z.number().int().min(0).describe('Dreiecks-Index (Seed der planaren Region)'),
+    distanz: z.number().int().describe('mm, negativ = einwärts'),
+  }),
+  summarize: (p) => `Fläche ${p.face} um ${formatLength(Math.abs(p.distanz))} ${p.distanz < 0 ? 'einwärts' : 'auswärts'}`,
+  run: (doc, p) => {
+    const e = require<FreeMesh>(doc, p.entityId, 'freemesh');
+    const faceCount = e.faces.length / 3;
+    if (p.face >= faceCount) throw new CommandError(`Flächen-Index ${p.face} ausserhalb (0–${faceCount - 1})`);
+    if (p.distanz === 0) throw new CommandError('Distanz 0 ist keine Änderung');
+    const region = planareRegion(e.positions, e.faces, p.face);
+    const daten = extrudiereRegion({ positions: e.positions, faces: e.faces }, region, p.distanz);
+    pruefeMeshBudget(daten.positions, daten.faces);
+    return [{ id: e.id, before: e, after: { ...e, positions: daten.positions, faces: daten.faces } }];
+  },
+});
+
 export const moveEntity = registerCommand({
   id: 'design.verschieben',
   title: 'Element verschieben',
@@ -283,6 +403,14 @@ export const moveEntity = registerCommand({
       case 'roof':
         after = { ...e, outline: shift(e.outline) };
         break;
+      case 'freemesh': {
+        // Flache [x,y,z]-Tripel: dx/dy auf jede Position, z bleibt (Block 3).
+        const positions = e.positions.map((wert, i) =>
+          i % 3 === 0 ? wert + p.dx : i % 3 === 1 ? wert + p.dy : wert,
+        );
+        after = { ...e, positions };
+        break;
+      }
       case 'column':
         after = { ...e, at: shiftPt(e.at) };
         break;
@@ -433,6 +561,7 @@ export const setProperty = registerCommand({
       opening: ['center', 'width', 'height', 'sill', 'swing', 'openingType', 'anschlag'],
       storey: ['name', 'height'],
       assembly: ['name'],
+      freemesh: ['name'],
     };
     const fields = allowed[e.kind] ?? [];
     if (!fields.includes(p.feld)) {

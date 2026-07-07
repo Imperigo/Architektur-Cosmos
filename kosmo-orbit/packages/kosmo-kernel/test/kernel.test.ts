@@ -4585,3 +4585,184 @@ describe('GLB-Export Blender-Interop', () => {
     }
   });
 });
+
+describe('FreeMesh Stufe 3 / FM1 — Kernel-Fundament (Block 3, Owner-Q9)', () => {
+  const setupMeshDoc = () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    return { doc, storeyId: (eg.patches[0] as { id: string }).id };
+  };
+
+  it('mesh-topo: Quader ist wasserdicht und misst exakt b·l·h', async () => {
+    const { quaderMesh, kantenZaehlung, meshVolumen } = await import('../src');
+    const q = quaderMesh({ x: 0, y: 0 }, 2000, 3000, 1500);
+    expect(q.positions.length / 3).toBe(8);
+    expect(q.faces.length / 3).toBe(12);
+    for (const [, anzahl] of kantenZaehlung(q.positions, q.faces)) expect(anzahl).toBe(2);
+    expect(meshVolumen(q.positions, q.faces)).toBe(2000 * 3000 * 1500);
+  });
+
+  it('mesh-topo: Prisma aus L-Polygon ist wasserdicht, Volumen = Fläche·Höhe, CW wird normalisiert', async () => {
+    const { prismaMesh, kantenZaehlung, meshVolumen } = await import('../src');
+    // L-Form 4×4 m minus 2×2-m-Ecke = 12 m² Grundfläche, CCW
+    const L = [
+      { x: 0, y: 0 }, { x: 4000, y: 0 }, { x: 4000, y: 2000 },
+      { x: 2000, y: 2000 }, { x: 2000, y: 4000 }, { x: 0, y: 4000 },
+    ];
+    const p = prismaMesh(L, 0, 1000);
+    expect(p.positions.length / 3).toBe(12);
+    for (const [, anzahl] of kantenZaehlung(p.positions, p.faces)) expect(anzahl).toBe(2);
+    expect(meshVolumen(p.positions, p.faces)).toBe(12_000_000 * 1000);
+    // CW-Eingabe (verkehrt) liefert dieselbe auswärts orientierte Form
+    const cw = prismaMesh([...L].reverse(), 0, 1000);
+    expect(meshVolumen(cw.positions, cw.faces)).toBe(12_000_000 * 1000);
+  });
+
+  it('mesh-topo: planare Region flutet den Quader-Deckel (genau 2 Dreiecke), Extrusion bleibt wasserdicht', async () => {
+    const { quaderMesh, planareRegion, extrudiereRegion, kantenZaehlung, meshVolumen } = await import('../src');
+    const q = quaderMesh({ x: 0, y: 0 }, 2000, 2000, 1000);
+    // Deckel-Dreiecke sind Index 2 und 3 (Bauplan quaderMesh)
+    const region = planareRegion(q.positions, q.faces, 2);
+    expect(region).toEqual([2, 3]);
+    const ex = extrudiereRegion(q, region, 500);
+    expect(ex.positions.length / 3).toBe(12); // 8 + 4 verschobene Deckel-Ecken
+    expect(ex.faces.length / 3).toBe(20); // 12 − 2 + 2 + 4 Kanten·2
+    for (const [, anzahl] of kantenZaehlung(ex.positions, ex.faces)) expect(anzahl).toBe(2);
+    // Math.round: der Divergenzsatz teilt durch 6 — IEEE-Rauschen ~1e-6 mm³
+    expect(Math.round(meshVolumen(ex.positions, ex.faces))).toBe(2000 * 2000 * 1500);
+  });
+
+  it('mesh-topo: gleichePositionen verschweisst deckungsgleiche Vertices', async () => {
+    const { gleichePositionen } = await import('../src');
+    const positions = [0, 0, 0, 100, 0, 0, 0, 0, 0, 100, 0, 0, 50, 50, 50];
+    expect(gleichePositionen(positions, 0)).toEqual([0, 2]);
+    expect(gleichePositionen(positions, 3)).toEqual([1, 3]);
+    expect(gleichePositionen(positions, 4)).toEqual([4]);
+  });
+
+  it('meshErstellen «quader» legt das Entity an und die 3D-Ableitung liefert ein Artefakt', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    const res = execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 1000, y: 1000 }, breite: 2000, laenge: 2000, hoehe: 1500,
+    });
+    const id = (res.patches[0] as { id: string }).id;
+    const mesh = doc.get(id)!;
+    expect(mesh.kind).toBe('freemesh');
+    const artifact = deriveEntity(doc, id)!;
+    expect(artifact).not.toBeNull();
+    expect(artifact.entityId).toBe(id);
+    // exploded Flat-Shading: 12 Dreiecke × 3 Vertices × 3 Koordinaten
+    expect(artifact.positions.length).toBe(12 * 9);
+    expect(deriveAll(doc).some((a) => a.entityId === id)).toBe(true);
+  });
+
+  it('meshErstellen «quader» ohne Masse wird ehrlich abgewiesen', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    expect(() => execute(doc, 'design.meshErstellen', { form: 'quader', storeyId })).toThrow(CommandError);
+  });
+
+  it('meshErstellen «ausVolumen» wandelt den MassBody in EINEM Undo-Schritt um (Volumen identisch)', async () => {
+    const { meshVolumen } = await import('../src');
+    const { doc, storeyId } = setupMeshDoc();
+    const mv = execute(doc, 'design.volumenErstellen', {
+      storeyId,
+      outline: [{ x: 0, y: 0 }, { x: 4000, y: 0 }, { x: 4000, y: 2000 }, { x: 2000, y: 2000 }, { x: 2000, y: 4000 }, { x: 0, y: 4000 }],
+      height: 3000, program: 'atelier',
+    });
+    const massId = (mv.patches[0] as { id: string }).id;
+    const res = execute(doc, 'design.meshErstellen', { form: 'ausVolumen', massId });
+    // EIN Command, zwei Patches: Mesh hinzu + Volumen weg (atomare Undo-Gruppe)
+    expect(res.patches).toHaveLength(2);
+    expect((res.patches[1] as { after: unknown }).after).toBeNull();
+    expect(doc.get(massId)).toBeUndefined();
+    const mesh = doc.get<import('../src').FreeMesh>((res.patches[0] as { id: string }).id)!;
+    expect(mesh.name).toBe('atelier');
+    expect(meshVolumen(mesh.positions, mesh.faces)).toBe(12_000_000 * 3000);
+  });
+
+  it('meshVertexSchieben verschiebt genau die verschweissten Ecken (und wehrt Unsinn ab)', async () => {
+    const { gleichePositionen } = await import('../src');
+    const { doc, storeyId } = setupMeshDoc();
+    const res = execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 0, y: 0 }, breite: 1000, laenge: 1000, hoehe: 1000,
+    });
+    const id = (res.patches[0] as { id: string }).id;
+    const vorher = doc.get<import('../src').FreeMesh>(id)!;
+    const ecke = gleichePositionen(vorher.positions, 4); // eine Deckel-Ecke
+    execute(doc, 'design.meshVertexSchieben', { entityId: id, indices: ecke, dx: 0, dy: 0, dz: 300 });
+    const nachher = doc.get<import('../src').FreeMesh>(id)!;
+    for (const i of ecke) expect(nachher.positions[i * 3 + 2]).toBe(vorher.positions[i * 3 + 2]! + 300);
+    // unveränderte Boden-Ecke bleibt
+    expect(nachher.positions[0 * 3 + 2]).toBe(vorher.positions[0 * 3 + 2]);
+    expect(() =>
+      execute(doc, 'design.meshVertexSchieben', { entityId: id, indices: [999], dx: 1, dy: 0, dz: 0 }),
+    ).toThrow(CommandError);
+    expect(() =>
+      execute(doc, 'design.meshVertexSchieben', { entityId: id, indices: [0], dx: 0, dy: 0, dz: 0 }),
+    ).toThrow(CommandError);
+  });
+
+  it('meshFlaecheExtrudieren wirkt als EIN Undo-Schritt und vergrössert das Volumen exakt', async () => {
+    const { meshVolumen, kantenZaehlung } = await import('../src');
+    const { doc, storeyId } = setupMeshDoc();
+    const res = execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 0, y: 0 }, breite: 2000, laenge: 2000, hoehe: 1000,
+    });
+    const id = (res.patches[0] as { id: string }).id;
+    const ex = execute(doc, 'design.meshFlaecheExtrudieren', { entityId: id, face: 2, distanz: 500 });
+    expect(ex.patches).toHaveLength(1);
+    const mesh = doc.get<import('../src').FreeMesh>(id)!;
+    expect(mesh.faces.length / 3).toBe(20);
+    for (const [, anzahl] of kantenZaehlung(mesh.positions, mesh.faces)) expect(anzahl).toBe(2);
+    expect(Math.round(meshVolumen(mesh.positions, mesh.faces))).toBe(2000 * 2000 * 1500);
+    expect(() =>
+      execute(doc, 'design.meshFlaecheExtrudieren', { entityId: id, face: 999, distanz: 100 }),
+    ).toThrow(CommandError);
+  });
+
+  it('Budget-Wächter (E1): ein zu feines Volumen wird ehrlich abgewiesen statt still gestutzt', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    // Kreis mit 2100 Punkten → Prisma hätte 4200 Vertices > 4096 (Deckel)
+    const outline = Array.from({ length: 2100 }, (_, i) => ({
+      x: Math.round(Math.cos((i / 2100) * 2 * Math.PI) * 5000),
+      y: Math.round(Math.sin((i / 2100) * 2 * Math.PI) * 5000),
+    }));
+    const mv = execute(doc, 'design.volumenErstellen', { storeyId, outline, height: 1000 });
+    const massId = (mv.patches[0] as { id: string }).id;
+    expect(() => execute(doc, 'design.meshErstellen', { form: 'ausVolumen', massId })).toThrow(/Budget/);
+    // Der MassBody bleibt unangetastet (kein halber Zustand)
+    expect(doc.get(massId)).toBeDefined();
+  });
+
+  it('design.verschieben kennt FreeMesh (dx/dy auf alle Positionen, z bleibt)', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    const res = execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 0, y: 0 }, breite: 1000, laenge: 1000, hoehe: 1000,
+    });
+    const id = (res.patches[0] as { id: string }).id;
+    execute(doc, 'design.verschieben', { entityId: id, dx: 500, dy: -200 });
+    const mesh = doc.get<import('../src').FreeMesh>(id)!;
+    expect(mesh.positions[0]).toBe(500);
+    expect(mesh.positions[1]).toBe(-200);
+    expect(mesh.positions[2]).toBe(0);
+  });
+
+  it('Golden-Guard (E5): ein FreeMesh ändert den Grundriss-SVG in FM1 NICHT (2D-Slice kommt in FM2)', async () => {
+    const { planInnerSvg } = await import('../src');
+    const { doc, storeyId } = setupMeshDoc();
+    execute(doc, 'design.wandZeichnen', {
+      storeyId,
+      a: { x: 0, y: 0 }, b: { x: 5000, y: 0 },
+      assemblyId: (execute(doc, 'design.aufbauErstellen', {
+        name: 'AW', target: 'wall',
+        layers: [{ material: 'beton', thickness: 180, function: 'tragend' }],
+      }).patches[0] as { id: string }).id,
+    });
+    const vorher = planInnerSvg(doc, storeyId, 50).inner;
+    execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 1000, y: 1000 }, breite: 2000, laenge: 2000, hoehe: 1500,
+    });
+    const nachher = planInnerSvg(doc, storeyId, 50).inner;
+    expect(nachher).toBe(vorher);
+  });
+});

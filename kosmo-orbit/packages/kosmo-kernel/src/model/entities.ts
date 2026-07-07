@@ -250,6 +250,30 @@ export interface MassBody extends Base {
   module?: { kante: number; modul: string }[];
 }
 
+/**
+ * FreeMesh (V2-Technik Block 3, Owner-Q9 Stufe 3) — frei editierbare
+ * ENTWURFSGEOMETRIE (Schalen, skulpturale Dächer, Sonderformen). Bewusst im
+ * Doc (selektier-/editier-/undo-/sync-fähig), aber mit HARTEM Budget: das
+ * löst den Konflikt mit «Laufzeit ≠ Modell» — Scans/Bibliotheks-GLBs bleiben
+ * Laufzeit-Referenz (asset-bibliothek), nie Doc-Last (Buildplan Block 3, E1).
+ * Topologie (Verschweissung, planare Regionen) wird NIE gespeichert, sondern
+ * zur Laufzeit abgeleitet (derive/mesh-topo.ts, E2).
+ */
+export interface FreeMesh extends Base {
+  kind: 'freemesh';
+  storeyId: string;
+  /** Vertex-Positionen, flach [x0,y0,z0, x1,…] in mm (ganzzahlig);
+   * z relativ zur Geschoss-OK (die Ableitung addiert storey.elevation). */
+  positions: number[];
+  /** Dreiecks-Indizes, flach [a0,b0,c0, a1,…] — Winding auswärts (CCW). */
+  faces: number[];
+  name?: string;
+}
+
+/** Hartes FreeMesh-Budget (E1) — Commands weisen Überschreitung ehrlich ab. */
+export const FREEMESH_MAX_VERTICES = 4096;
+export const FREEMESH_MAX_FACES = 8192;
+
 /** Papierformate (ISO 216) für Plansätze. */
 export type SheetFormat = 'A0' | 'A1' | 'A2' | 'A3' | 'A4';
 
@@ -453,7 +477,7 @@ export interface VisGraph extends Base {
 }
 
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {
