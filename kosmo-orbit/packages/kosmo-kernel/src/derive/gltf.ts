@@ -28,6 +28,7 @@ const KIND_LABEL: Record<string, string> = {
   beam: 'Unterzug',
   furniture: 'Moebel',
   zone: 'Zone',
+  freemesh: 'FreeMesh',
 };
 
 /**

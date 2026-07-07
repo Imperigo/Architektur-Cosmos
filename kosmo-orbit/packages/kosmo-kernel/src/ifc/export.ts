@@ -1,5 +1,5 @@
 import type { KosmoDoc } from '../model/doc';
-import { columnOutline, type Assembly, type Beam, type Column, type Furniture, type MassBody, type Slab, type Storey, type Wall, type Zone } from '../model/entities';
+import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type Furniture, type MassBody, type Slab, type Storey, type Wall, type Zone } from '../model/entities';
 import { moebelGeometrie, moebelTyp } from '../derive/moebel';
 import { dist } from '../model/units';
 import { axisDirection, assemblyThickness, openingRects, wallFrame } from '../geometry/wall';
@@ -293,6 +293,45 @@ export function exportIfc(doc: KosmoDoc, projectName?: string): string {
     const proxy = w.add(
       'IFCBUILDINGELEMENTPROXY',
       `'${newGuid()}',$,${str(mass.program ?? 'Volumen')},$,$,${place},${bodyShape(solid)},$,$`,
+    );
+    storey.elements.push(proxy);
+  }
+
+  // FreeMesh als IFCFACETEDBREP (Block 3 / FM5, Buildplan E7): die freie
+  // Geometrie geht als echter B-Rep in den IFC — jedes Dreieck eine IFCFACE,
+  // alle im IFCCLOSEDSHELL (die mesh-topo-Tests beweisen Wasserdichtheit).
+  // Punkte in mm, z geschoss-relativ — die Platzierung hängt am Geschoss,
+  // exakt wie bei den MassBody-Extrusionen oben. Live gegen ifcopenshell
+  // validiert (FM5) — keine still gelassene Export-Lücke.
+  for (const m of doc.byKind<FreeMesh>('freemesh')) {
+    const storey = storeyIfc.get(m.storeyId);
+    if (!storey || m.faces.length < 3) continue;
+    const place = w.add('IFCLOCALPLACEMENT', `${storey.placement},${worldPlace3d}`);
+    const punkte: string[] = [];
+    for (let i = 0; i * 3 < m.positions.length; i++) {
+      punkte.push(
+        w.add(
+          'IFCCARTESIANPOINT',
+          list([num(m.positions[i * 3]!), num(m.positions[i * 3 + 1]!), num(m.positions[i * 3 + 2]!)]),
+        ),
+      );
+    }
+    const flaechen: string[] = [];
+    for (let f = 0; f * 3 < m.faces.length; f++) {
+      const loop = w.add(
+        'IFCPOLYLOOP',
+        list([punkte[m.faces[f * 3]!]!, punkte[m.faces[f * 3 + 1]!]!, punkte[m.faces[f * 3 + 2]!]!]),
+      );
+      const bound = w.add('IFCFACEOUTERBOUND', `${loop},.T.`);
+      flaechen.push(w.add('IFCFACE', list([bound])));
+    }
+    const shell = w.add('IFCCLOSEDSHELL', list(flaechen));
+    const brep = w.add('IFCFACETEDBREP', shell);
+    const rep = w.add('IFCSHAPEREPRESENTATION', `${bodyContext},'Body','Brep',${list([brep])}`);
+    const shape = w.add('IFCPRODUCTDEFINITIONSHAPE', `$,$,${list([rep])}`);
+    const proxy = w.add(
+      'IFCBUILDINGELEMENTPROXY',
+      `'${newGuid()}',$,${str(m.name ?? 'FreeMesh')},$,$,${place},${shape},$,$`,
     );
     storey.elements.push(proxy);
   }

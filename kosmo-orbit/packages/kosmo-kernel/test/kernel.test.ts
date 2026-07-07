@@ -4656,6 +4656,25 @@ describe('FreeMesh Stufe 3 / FM1 — Kernel-Fundament (Block 3, Owner-Q9)', () =
     expect(deriveAll(doc).some((a) => a.entityId === id)).toBe(true);
   });
 
+  it('meshErstellen «daten» nimmt rohe Geometrie an und bewacht Budget/Indizes (E6, GLB-Übernahme)', () => {
+    const { doc, storeyId } = setupMeshDoc();
+    // Tetraeder: 4 Vertices, 4 Dreiecke
+    const positions = [0, 0, 0, 2000, 0, 0, 0, 2000, 0, 0, 0, 2000];
+    const faces = [0, 2, 1, 0, 1, 3, 1, 2, 3, 0, 3, 2];
+    const res = execute(doc, 'design.meshErstellen', { form: 'daten', storeyId, positions, faces, name: 'Import' });
+    const mesh = doc.get<import('../src').FreeMesh>((res.patches[0] as { id: string }).id)!;
+    expect(mesh.faces.length / 3).toBe(4);
+    expect(mesh.name).toBe('Import');
+    // kaputter Index → ehrliche Abweisung
+    expect(() =>
+      execute(doc, 'design.meshErstellen', { form: 'daten', storeyId, positions, faces: [0, 1, 9] }),
+    ).toThrow(CommandError);
+    // unvollständiges Tripel → ehrliche Abweisung
+    expect(() =>
+      execute(doc, 'design.meshErstellen', { form: 'daten', storeyId, positions: [0, 0], faces: [0, 1, 2] }),
+    ).toThrow(CommandError);
+  });
+
   it('meshErstellen «quader» ohne Masse wird ehrlich abgewiesen', () => {
     const { doc, storeyId } = setupMeshDoc();
     expect(() => execute(doc, 'design.meshErstellen', { form: 'quader', storeyId })).toThrow(CommandError);
@@ -4767,6 +4786,43 @@ describe('FreeMesh Stufe 3 / FM1 — Kernel-Fundament (Block 3, Owner-Q9)', () =
     });
     const nachher = planInnerSvg(doc, storeyId, 50).inner;
     expect(nachher).toBe(vorher);
+  });
+});
+
+describe('FreeMesh Stufe 3 / FM5 — IFC (IfcFacetedBrep) + GLB-Name (Buildplan E7)', () => {
+  const setupMeshDoc = () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    return { doc, storeyId: (eg.patches[0] as { id: string }).id };
+  };
+
+  it('exportIfc trägt das FreeMesh als IFCFACETEDBREP mit geschlossener Schale (12 Faces je Quader)', async () => {
+    const { exportIfc } = await import('../src');
+    const { doc, storeyId } = setupMeshDoc();
+    execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 0, y: 0 }, breite: 2000, laenge: 2000, hoehe: 1500, name: 'Schale Nord',
+    });
+    const ifc = exportIfc(doc, 'FreeMesh-Test');
+    expect(ifc).toContain('IFCFACETEDBREP');
+    expect(ifc).toContain('IFCCLOSEDSHELL');
+    expect((ifc.match(/IFCFACE\(/g) ?? []).length).toBe(12);
+    expect(ifc).toContain("'Schale Nord'");
+    expect(ifc).toContain("'Body','Brep'");
+    // Ohne FreeMesh: kein Brep — der Daten-Guard hält den Export unberührt.
+    const { doc: doc2 } = setupMeshDoc();
+    expect(exportIfc(doc2, 'Leer')).not.toContain('IFCFACETEDBREP');
+  });
+
+  it('exportGlb benennt das FreeMesh lesbar (Blender-Outliner)', async () => {
+    const { exportGlb } = await import('../src');
+    const { doc, storeyId } = setupMeshDoc();
+    execute(doc, 'design.meshErstellen', {
+      form: 'quader', storeyId, at: { x: 0, y: 0 }, breite: 1000, laenge: 1000, hoehe: 1000, name: 'Pavillon',
+    });
+    const glb = exportGlb(doc, 'Test');
+    const jsonLen = new DataView(glb, 12, 4).getUint32(0, true);
+    const json = new TextDecoder().decode(new Uint8Array(glb, 20, jsonLen));
+    expect(json).toContain('FreeMesh Pavillon');
   });
 });
 

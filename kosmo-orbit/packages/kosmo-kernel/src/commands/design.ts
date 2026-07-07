@@ -274,13 +274,16 @@ export const createFreeMesh = registerCommand({
   description:
     'Erstellt ein frei editierbares Mesh (FreeMesh, dritte Werkzeugstufe): form «quader» braucht storeyId + at + breite/laenge/hoehe (mm); form «ausVolumen» braucht massId und wandelt den Volumenkörper in ein Mesh um (der Volumenkörper verschwindet — ein Undo-Schritt stellt ihn zurück). Danach: design.meshVertexSchieben / design.meshFlaecheExtrudieren.',
   params: z.object({
-    form: z.enum(['quader', 'ausVolumen']),
-    storeyId: z.string().optional().describe('Geschoss (Pflicht bei quader)'),
+    form: z.enum(['quader', 'ausVolumen', 'daten']),
+    storeyId: z.string().optional().describe('Geschoss (Pflicht bei quader/daten)'),
     at: PtSchema.optional().describe('Ecke des Quaders mit minimalem x/y'),
     breite: z.number().int().positive().optional().describe('mm (quader, x-Richtung)'),
     laenge: z.number().int().positive().optional().describe('mm (quader, y-Richtung)'),
     hoehe: z.number().int().positive().optional().describe('mm (quader)'),
     massId: z.string().optional().describe('Volumenkörper (Pflicht bei ausVolumen)'),
+    /** form «daten» (E6, GLB-Übernahme): rohe Geometrie in ganzzahligen mm. */
+    positions: z.array(z.number().int()).optional().describe('flach [x,y,z,…] in mm (daten)'),
+    faces: z.array(z.number().int().min(0)).optional().describe('flache Dreiecks-Indizes (daten)'),
     name: z.string().optional(),
   }),
   summarize: (p) => (p.form === 'quader' ? 'FreeMesh-Quader erstellen' : 'Volumen in FreeMesh umwandeln'),
@@ -298,6 +301,32 @@ export const createFreeMesh = registerCommand({
         storeyId: p.storeyId,
         positions: daten.positions,
         faces: daten.faces,
+        ...(p.name ? { name: p.name } : {}),
+      };
+      return [added(mesh)];
+    }
+    if (p.form === 'daten') {
+      // GLB-Übernahme (Buildplan E6): der Client hat die Geometrie schon in
+      // Kern-Konvention gebracht (mm, z geschoss-relativ) — hier zählen nur
+      // die Wächter: Budget, Index-Gültigkeit, Dreiecks-Vollständigkeit.
+      if (!p.storeyId || !p.positions || !p.faces) {
+        throw new CommandError('form «daten» braucht storeyId, positions und faces');
+      }
+      require<Storey>(doc, p.storeyId, 'storey');
+      if (p.positions.length % 3 !== 0 || p.faces.length % 3 !== 0 || p.faces.length === 0) {
+        throw new CommandError('positions/faces müssen vollständige Tripel sein (Dreiecke)');
+      }
+      const vertexCount = p.positions.length / 3;
+      for (const i of p.faces) {
+        if (i >= vertexCount) throw new CommandError(`Flächen-Index ${i} ausserhalb (0–${vertexCount - 1})`);
+      }
+      pruefeMeshBudget(p.positions, p.faces);
+      const mesh: FreeMesh = {
+        id: newId('mesh'),
+        kind: 'freemesh',
+        storeyId: p.storeyId,
+        positions: [...p.positions],
+        faces: [...p.faces],
         ...(p.name ? { name: p.name } : {}),
       };
       return [added(mesh)];
