@@ -229,4 +229,53 @@ Entscheid:   Ein Command-Weg für den Schnittlinien-Zug (z. B.
 (reine UI-Bequemlichkeit + Testbarkeit) — kein H-Fix-Batch ohne
 Owner-Priorisierung, da keine falsche Berechnung vorliegt, nur ein fehlender
 programmatischer Zugriff.
+Status:      doku (V2)
+
+### H-10 — RasterPanel-Querachsen-Lücke (H-5) bestätigt in der Hochhaus-Journey (07.07.2026, Journey hochhaus, Schritt 2)
+Beobachtung: `e2e/sim/bausteine.ts` Baustein 7 (`tragwerkAusRaster`, H2b)
+setzt das 5×28-Achsenraster ausschliesslich über `__kosmo.run('design.rasterSetzen', …)`
+und `__kosmo.run('design.stuetzenAusRaster', …)`; ein UI-Weg über das
+RasterPanel für die Querachsenzahl (28, bewusst > 26 für den
+Basis-26-Regressionstest) existiert weiterhin nicht — bestätigt H-5.
+Triage:      kein-bug
+Beleg:       `apps/kosmo-orbit/src/modules/design/RasterPanel.tsx` (kein
+`data-testid` auf dem Querachsen-Feld, nur auf den Hauptachsen); Baustein 7
+in `e2e/sim/bausteine.ts` (Kommentar «RasterPanel-Querachsen haben kein
+eigenes Testid im UI»); die Achslabel-Bijektivität wird stattdessen über die
+gerenderten `grid-achse`-Texte im Plan verifiziert (`achsen-toggle`-Knopf,
+`PlanView.tsx` Z.180-192/526-559) — der Rechenweg ist damit voll geprüft,
+nur der Dateneingabepfad im RasterPanel bleibt UI-seitig ungetestet.
+Entscheid:   H2b entscheidet sich für den reinen Command-Weg (keine
+Attribut-Testid-Ergänzung im RasterPanel) — die Journey braucht keinen
+UI-Eingabepfad, um den Kernel-Algorithmus (Basis-26-Achslabels,
+Kreuzungs-Stützen) scharf zu testen. Bleibt offen als Coverage-Lücke für
+einen künftigen UI-Härtungs-Batch (kein Owner-Auftrag in Serie H).
+Status:      offen
+
+### H-11 — Grosse Skelett-Wiederholung beim Stapeln: Laufzeitrisiko unklar (07.07.2026, Journey hochhaus, Schritt 6)
+Beobachtung: `design.geschossKopieren` (Kernel) kopiert bei jedem Aufruf ALLE
+Stützen/Unterzüge/Zonen/Treppe des Quellgeschosses vollständig auf das neue
+Geschoss. Bei `SZENARIEN.hochhaus` (140 Stützen + 5 Unterzüge je Geschoss)
+plus 12 direkten `design.geschossKopieren`-Aufrufen in EINER
+`__kosmo.run`-Schleife und einem 13. Stapel-Klick über die UI wächst das Doc
+auf rund 1'960 Stützen + 70 Unterzüge über 15 Geschosse. Ob das den
+`test.setTimeout(180_000)`-Rahmen der Journey sprengt (insbesondere beim
+IFC/PDF-Export, der potenziell alle Geschosse serialisiert), wurde in H2b
+NICHT empirisch geprüft — Playwright wird laut Auftrag erst nach dem Merge
+vom Opus-Orchestrator gefahren.
+Triage:      zu-strikte-assertion (Verdacht, unbestätigt — kein Befund, nur
+ein Laufzeitrisiko für die Erstausführung)
+Beleg:       `packages/kosmo-kernel/src/commands/design.ts`
+'design.geschossKopieren' Z.1055-1107 (kopiert `column`/`beam` je Aufruf
+vollständig); `e2e/sim-hochhaus.spec.ts` Abschnitt 6 (12er-Schleife + 1
+UI-Klick); `packages/kosmo-kernel/test/kernel.test.ts` „Budget (R2): 500
+Wände > deriveAll…" (1196 ms) zeigt, dass grosse Modelle im Kernel selbst
+günstig bleiben — ungeprüft bleibt nur der End-to-End-Pfad (Plan-Rendering
+pro Geschoss, PDF-Export über den ganzen Plansatz).
+Entscheid:   Kein Fix-Batch ohne empirischen Befund. Der Opus-Orchestrator
+sollte beim ersten seriellen Lauf explizit auf die Laufzeit dieser Journey
+achten; überschreitet sie das Timeout, ist die erste Triage-Frage, ob
+`test.setTimeout` erhöht oder die Geschossanzahl/Stützendichte in
+`SZENARIEN.hochhaus.geometrie` reduziert werden muss (Fable-Entscheid, da
+`szenarien.ts` nicht mehr angefasst werden darf ohne Koordination).
 Status:      offen

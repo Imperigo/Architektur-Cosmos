@@ -13,9 +13,9 @@ import type { SimSzenario } from './szenarien';
  * die Bridge-/KI-Bausteine 14–15 (`renderUeberBridge`, `bridgeVerfuegbar`)
  * und friert danach die API ein (ab H2 nur noch append-only — neue Bausteine
  * werden nur ANGEHÄNGT, bestehende nie geändert). H2a ergänzt Baustein 5
- * (Dach) und 6 (Treppe), erster Nutzer `sim-efh.spec.ts`. Bausteine 7–8
- * (Raster, Fassade) kommen mit ihren ersten Nutzern in H2b/H2c — bis dahin
- * bleiben sie als TODO deklariert (kein toter «getesteter» Code).
+ * (Dach) + 6 (Treppe, erster Nutzer `sim-efh.spec.ts`), H2b Baustein 7
+ * (`tragwerkAusRaster`) + 8 (`fassade`, erster Nutzer `sim-hochhaus.spec.ts`).
+ * Damit sind die Bausteine 1–18 alle implementiert.
  *
  * ── Robustheits-Regeln (1.4) — die Lehren aus den entfernten EFH-/
  *    Hochhaus-Specs, hart für JEDEN neuen Baustein ───────────────────────
@@ -370,14 +370,181 @@ export async function treppeSetzen(page: Page, params: TreppeParams): Promise<st
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Bausteine 7–8 — TODO, kommen mit ihren ersten Nutzern in H2b/H2c
+// Baustein 7 — tragwerkAusRaster (H2b)
 // ─────────────────────────────────────────────────────────────────────────
-// TODO (H2b): tragwerkAusRaster(page, raster) — design.rasterSetzen +
-//   design.stuetzenAusRaster; Assert Stützenzahl = Achsen-Produkt und
-//   Achslabels bijektiv (Regressions-Anker Befund 2, «AA» bei Achse 27).
-// TODO (H2b/H2c): fassade(page, module) — design.modulSpeichern,
-//   fassadenModulZuweisen, fensterAusModulen; Assert Öffnungszahl > 0 und
-//   Süd-/Nordwand tragen unterschiedliche Module (Regressions-Anker 154).
+export interface RasterParams {
+  /** Hauptachs-Abstand in mm (SZENARIEN.hochhaus.geometrie.raster). */
+  raster: number;
+  /** Anzahl Hauptachsen (1…N). */
+  anzahl: number;
+  /** Anzahl Querachsen (A…) — bewusst > 26 (Regressions-Anker Befund 2). */
+  querAnzahl: number;
+  /** Querachs-Abstand in mm. */
+  querAchsmass: number;
+}
+
+/**
+ * Stützenraster (`design.rasterSetzen`) + eine Stütze auf jede Kreuzung
+ * (`design.stuetzenAusRaster`) — das RasterPanel selbst hat für die
+ * Querachsen-Eingabe kein eigenes Testid (Coverage-Lücke H-5, siehe
+ * SIM-BEFUNDE): dieser Baustein bleibt darum command-getrieben und macht das
+ * Ergebnis über den `achsen-toggle`-Knopf im Plan sichtbar. Assertet:
+ * Stützenzahl = Achsen-Produkt (jede Haupt×Quer-Kreuzung erhält GENAU eine
+ * Stütze, `design.stuetzenAusRaster` schneidet alle typ==='haupt'-Achsenpaare
+ * paarweise — parallele Paare liefern keinen Schnittpunkt) UND die
+ * Achslabels sind bijektiv — Regressions-Anker Befund 2: die 27. Querachse
+ * (0-indexiert j=26) MUSS «AA» heissen (bijektive Basis-26-Beschriftung
+ * `querLabel()` in `design.rasterSetzen`, statt des früheren naiven `j % 26`,
+ * das Achse 1 und Achse 27 beide «A» nennen liess).
+ */
+export async function tragwerkAusRaster(page: Page, raster: RasterParams): Promise<void> {
+  const storeyId = await page.evaluate(() => window.__kosmo.state().activeStoreyId);
+  await page.evaluate(
+    ({ storeyId, raster }) => {
+      const k = window.__kosmo;
+      k.run('design.rasterSetzen', {
+        storeyId,
+        achsmass: raster.raster,
+        anzahl: raster.anzahl,
+        querAchsmass: raster.querAchsmass,
+        querAnzahl: raster.querAnzahl,
+      }); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.rasterSetzen' Z.1756-1824]
+      k.run('design.stuetzenAusRaster', { storeyId }); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.stuetzenAusRaster' Z.798-858]
+    },
+    { storeyId, raster },
+  );
+
+  // Stützenzahl = Achsen-Produkt (Regel R3: Doc pollen statt DOM).
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('column').length))
+    .toBe(raster.anzahl * raster.querAnzahl);
+
+  // Achslabels bijektiv (Regressions-Anker Befund 2): sichtbar über den
+  // Achsen-Knopf im Plan, ausgelesen über die `grid-achse`-Texte.
+  await page.click('[data-testid="achsen-toggle"]'); // [Quelle: apps/kosmo-orbit/src/modules/design/PlanView.tsx Z.180-192]
+  const labelTexte = page.locator('[data-testid="grid-achse"] text'); // [Quelle: PlanView.tsx Z.530,545-553]
+  await expect(labelTexte.first()).toBeVisible();
+  const labels = await labelTexte.allTextContents();
+  const zaehlung = new Map<string, number>();
+  for (const l of labels) zaehlung.set(l, (zaehlung.get(l) ?? 0) + 1);
+  // Jede Achse trägt ihr Label an BEIDEN Enden (PlanView.tsx Z.540-556) —
+  // bijektiv heisst: jedes Label kommt aus GENAU EINER Achse, also genau 2×.
+  for (const [label, n] of zaehlung) {
+    expect(n, `Achslabel «${label}» erscheint nicht genau 2× (Achsen-Kollision?)`).toBe(2);
+  }
+  expect(zaehlung.size).toBe(raster.anzahl + raster.querAnzahl);
+  expect(zaehlung.get('AA'), 'Achse 27 (Querachse j=26) muss «AA» heissen').toBe(2);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 8 — fassade (H2b)
+// ─────────────────────────────────────────────────────────────────────────
+export type Fassadenrichtung = 'sued' | 'nord' | 'west' | 'ost';
+
+export interface FassadenElement {
+  x: number;
+  y: number;
+  b: number;
+  h: number;
+  typ: 'fenster' | 'paneel';
+}
+
+export interface FassadenModulDef {
+  name: string;
+  breite: number;
+  hoehe: number;
+  elemente: FassadenElement[];
+}
+
+export interface FassadenParams {
+  storeyId: string;
+  /** Volumenkörper (`design.volumenErstellen`), dessen Umriss-Kanten den
+   *  Himmelsrichtungen zugewiesen werden. */
+  massId: string;
+  /** Umriss-Kante (1-basiert) je Himmelsrichtung — aus der Reihenfolge der
+   *  MassBody-outline abgeleitet (Rechteck im Uhrzeigersinn Süd→Ost→Nord→West
+   *  ergibt Kanten 1..4 — dieselbe Bbox-Konvention wie
+   *  `kantenRichtung()`/`richtungsModule()` in
+   *  `packages/kosmo-kernel/src/derive/fassadenmodule.ts` Z.109-152). */
+  kanten: Partial<Record<Fassadenrichtung, number>>;
+  /** Modul je Himmelsrichtung; mind. Süd + Nord für den Regressions-Anker 154. */
+  module: Partial<Record<Fassadenrichtung, FassadenModulDef>>;
+  /** Default-Modul für `design.fensterAusModulen` (modul=), i.d.R. das Süd-Modul. */
+  vorgabe: string;
+  /** Aussenwand-IDs je Himmelsrichtung (aus `waendeZeichnen`, Baustein 4) —
+   *  für die seitenrichtige Auswertung der gestanzten Öffnungen. */
+  waende: Partial<Record<Fassadenrichtung, string[]>>;
+}
+
+/**
+ * Fassadenmodule je Himmelsrichtung speichern (`design.modulSpeichern`), dem
+ * Volumenkörper zuweisen (`design.fassadenModulZuweisen`) und Fenster in die
+ * echten Aussenwände stanzen (`design.fensterAusModulen`). Assertet:
+ * Öffnungszahl > 0 UND seitenrichtige Fensterstanzung — Regressions-Anker
+ * ROADMAP 154 (die Fassaden-Zuweisung am Volumenkörper war früher von den
+ * echten Aussenwänden entkoppelt, `richtungsModule()` verbindet beide über
+ * dieselbe Bbox-Richtungslogik): Süd- und Nordwand tragen NACHWEISLICH
+ * unterschiedliche Fensterbreiten.
+ */
+export async function fassade(page: Page, p: FassadenParams): Promise<void> {
+  await page.evaluate((module) => {
+    const k = window.__kosmo;
+    const gespeichert = new Set<string>();
+    (['sued', 'nord', 'west', 'ost'] as const).forEach((richtung) => {
+      const def = module[richtung];
+      if (!def || gespeichert.has(def.name)) return;
+      gespeichert.add(def.name);
+      k.run('design.modulSpeichern', {
+        name: def.name,
+        breite: def.breite,
+        hoehe: def.hoehe,
+        elemente: def.elemente,
+      }); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.modulSpeichern' Z.1273-1307]
+    });
+  }, p.module);
+
+  await page.evaluate(
+    ({ massId, kanten, module }) => {
+      const k = window.__kosmo;
+      (['sued', 'nord', 'west', 'ost'] as const).forEach((richtung) => {
+        const kante = kanten[richtung];
+        const def = module[richtung];
+        if (kante === undefined || !def) return;
+        k.run('design.fassadenModulZuweisen', { massId, kante, modul: def.name }); // [Quelle: design.ts 'design.fassadenModulZuweisen' Z.1245-1271]
+      });
+    },
+    { massId: p.massId, kanten: p.kanten, module: p.module },
+  );
+
+  await page.evaluate(
+    ({ storeyId, vorgabe }) => window.__kosmo.run('design.fensterAusModulen', { storeyId, modul: vorgabe }),
+    { storeyId: p.storeyId, vorgabe: p.vorgabe },
+  ); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.fensterAusModulen' Z.1109-1181]
+
+  const stand = await page.evaluate((waende) => {
+    const doc = window.__kosmo.state().doc;
+    const fenster = doc
+      .byKind('opening')
+      .filter((o) => (o as unknown as { openingType: string }).openingType === 'fenster');
+    const breitenJeRichtung: Record<string, number[]> = {};
+    for (const [richtung, ids] of Object.entries(waende)) {
+      breitenJeRichtung[richtung] = fenster
+        .filter((o) => (ids as string[]).includes((o as unknown as { wallId: string }).wallId))
+        .map((o) => (o as unknown as { width: number }).width)
+        .sort((a, b) => a - b);
+    }
+    return { gesamt: fenster.length, breitenJeRichtung };
+  }, p.waende);
+
+  expect(stand.gesamt).toBeGreaterThan(0);
+  const sued = stand.breitenJeRichtung['sued'] ?? [];
+  const nord = stand.breitenJeRichtung['nord'] ?? [];
+  expect(sued.length, 'Südwand hat keine gestanzten Fenster').toBeGreaterThan(0);
+  expect(nord.length, 'Nordwand hat keine gestanzten Fenster').toBeGreaterThan(0);
+  // Regressions-Anker ROADMAP 154: seitenrichtige Fensterstanzung — Süd- und
+  // Nordmodul unterscheiden sich NACHWEISLICH an den gestanzten Öffnungen.
+  expect(JSON.stringify(sued)).not.toBe(JSON.stringify(nord));
+}
 
 // ─────────────────────────────────────────────────────────────────────────
 // Baustein 15 — bridgeVerfuegbar (H1b)
