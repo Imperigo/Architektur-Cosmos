@@ -43,6 +43,20 @@ import { consumeDeepLink } from '../../state/deep-link';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
 import { registerActions } from '../../shell/palette';
+import { fokusKlasse } from '../../state/fokus';
+import {
+  adaptionAktiv,
+  adaptiveFokusStufe,
+  darfUmordnen,
+  istUnterBasis,
+  LEISTEN_BASIS,
+  leiteTaetigkeitsKontextAb,
+  nutzungsProfil,
+  ZEICHEN_WERKZEUG_IDS,
+  type LeistenGruppe,
+  type NutzungsProfil,
+  type TaetigkeitsKontext,
+} from '../../state/oberflaeche-adaption';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -82,8 +96,25 @@ function Trennlabel({ children }: { children: string }) {
 // T3: Werkzeuge, die eine Punktkette setzen — bekommen Ortho-Sperre (Shift)
 // und Fluchtlinien an bestehenden Punkten. Auswahl/Skizze bleiben unverändert
 // (Skizze hat ihr eigenes Freihand-Overlay, Auswahl darf T1 nicht anfassen).
-const ZEICHEN_WERKZEUGE = new Set<ToolId>(['wand', 'volumen', 'zone', 'dach', 'treppe', 'schnitt', 'stuetze']);
+// Fable-Review-1-Auflage (Serie J / J3b): EINE Quelle der Werkzeugliste —
+// `ZEICHEN_WERKZEUG_IDS` kommt aus `oberflaeche-adaption.ts` (die J3a-Matrix
+// kennt dieselben Werkzeuge als "Zeichenkontext"); hier nur noch importiert,
+// nicht mehr ein zweites Mal literal gepflegt.
+const ZEICHEN_WERKZEUGE = new Set<ToolId>(ZEICHEN_WERKZEUG_IDS as readonly ToolId[]);
 const FLUCHT_TOLERANZ = 150; // mm — grosszügig wie der bestehende Trefferzonen-Zuschlag
+
+/** J3b: deutsche Anzeige-Labels je Werkzeugleisten-Gruppe (Adaptions-Hinweis, 2.3.5). */
+const GRUPPEN_LABEL: Record<LeistenGruppe, string> = {
+  zeichnen: 'Zeichnen',
+  ansicht: 'Ansicht',
+  export: 'Export',
+  ebenen: 'Ebenen',
+  projekt: 'Projekt',
+  verlauf: 'Verlauf',
+};
+const LEERES_NUTZUNGSPROFIL: NutzungsProfil = { zaehler: {}, zuletzt: {} };
+/** Regel 2.3.2: 2s Debounce nach Aktionsende, bevor eine Zeichnen-Demotion wieder greift. */
+const ADAPTION_DEBOUNCE_MS = 2000;
 
 export function DesignWorkspace() {
   const revision = useProject((s) => s.revision);
@@ -591,10 +622,70 @@ export function DesignWorkspace() {
     setContextMeshes([]); // Kontext-Layer weicht dem editierbaren Modell
   };
 
+  // Serie J / Batch J3b (SERIE-J-BUILDPLAN.md Abschnitt 2/3): die Werkzeug-
+  // leisten-Gruppen leben — ihre Fokus-Stufe kommt aus `adaptiveFokusStufe`
+  // statt fest aus T7. `aktionLaeuft` = Punktkette offen ODER 2D-Drag aktiv
+  // (die real in DesignWorkspace vorhandenen Flags; `Viewport3D.tsx` bleibt
+  // unangetastet — siehe Restgrenze in `leiteTaetigkeitsKontextAb`).
+  const taetigkeitsKontext = useMemo<TaetigkeitsKontext>(
+    () =>
+      leiteTaetigkeitsKontextAb({
+        tool,
+        phase: doc.settings.phase,
+        punkteOffen: points.length > 0,
+        ziehtElement: dragEntity !== null,
+      }),
+    [tool, doc.settings.phase, points.length, dragEntity],
+  );
+
+  // Regel 2.3.2 (Anti-Nerv): solange `darfUmordnen` false ist (Aktion läuft),
+  // wird sofort übernommen (die Anti-Dimm-Wache in `adaptiveFokusStufe` hebt
+  // die Gruppe da ohnehin auf Basis — nie eine Dimmung mitten in der Aktion).
+  // Endet die Aktion, wartet eine neue, tiefere Stufe 2s (Debounce), bevor sie
+  // einfällt — reine Werkzeugwechsel im Ruhezustand (kein vorheriges
+  // `aktionLaeuft`) greifen dagegen sofort (kein künstliches Warten beim
+  // simplen Werkzeugwechsel).
+  const [stabilerKontext, setStabilerKontext] = useState<TaetigkeitsKontext>(taetigkeitsKontext);
+  const adaptionFreezeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!darfUmordnen(taetigkeitsKontext)) {
+      if (adaptionFreezeTimer.current) {
+        clearTimeout(adaptionFreezeTimer.current);
+        adaptionFreezeTimer.current = null;
+      }
+      setStabilerKontext(taetigkeitsKontext);
+      return;
+    }
+    if (stabilerKontext.aktionLaeuft) {
+      adaptionFreezeTimer.current = setTimeout(() => setStabilerKontext(taetigkeitsKontext), ADAPTION_DEBOUNCE_MS);
+      return () => {
+        if (adaptionFreezeTimer.current) clearTimeout(adaptionFreezeTimer.current);
+      };
+    }
+    setStabilerKontext(taetigkeitsKontext);
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [taetigkeitsKontext]);
+
+  const adaptionIstAn = adaptionAktiv();
+  const nutzung = adaptionIstAn ? nutzungsProfil() : LEERES_NUTZUNGSPROFIL;
+  const stufeFuerGruppe = (gruppe: LeistenGruppe) => {
+    const basis = LEISTEN_BASIS[gruppe];
+    return adaptionIstAn ? adaptiveFokusStufe(gruppe, basis, stabilerKontext, nutzung) : basis;
+  };
+  const gedaempfteGruppen = (Object.keys(LEISTEN_BASIS) as LeistenGruppe[]).filter((g) =>
+    istUnterBasis(stufeFuerGruppe(g), LEISTEN_BASIS[g]),
+  );
+  const adaptionHinweisSichtbar = gedaempfteGruppen.length > 0;
+  const adaptionHinweisTitel = adaptionHinweisSichtbar
+    ? `${gedaempfteGruppen.map((g) => GRUPPEN_LABEL[g]).join('/')} zurückgestellt — du zeichnest gerade`
+    : '';
+
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
       {/* Werkzeugleiste */}
       <div
+        data-testid="design-werkzeugleiste"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -609,29 +700,35 @@ export function DesignWorkspace() {
       >
         <Badge hue={moduleHue.design}>KosmoDesign</Badge>
         <span style={{ width: 8 }} />
-        {(
-          [
-            ['auswahl', 'Auswahl'],
-            ['wand', 'Wand'],
-            ['volumen', 'Volumen'],
-            ['zone', 'Zone'],
-            ['dach', 'Dach'],
-            ['treppe', 'Treppe'],
-            ['stuetze', 'Stütze'],
-            ['schnitt', 'Schnitt'],
-            ['skizze', '✎ Skizze'],
-          ] as const
-        ).map(([id, label]) => (
-          <KButton
-            key={id}
-            size="sm"
-            tone={tool === id ? 'accent' : 'quiet'}
-            onClick={() => setTool(id)}
-            data-testid={`tool-${id}`}
-          >
-            {label}
-          </KButton>
-        ))}
+        <span
+          data-testid="leiste-gruppe-zeichnen"
+          className={fokusKlasse(stufeFuerGruppe('zeichnen'))}
+          style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, rowGap: 4, alignItems: 'center' }}
+        >
+          {(
+            [
+              ['auswahl', 'Auswahl'],
+              ['wand', 'Wand'],
+              ['volumen', 'Volumen'],
+              ['zone', 'Zone'],
+              ['dach', 'Dach'],
+              ['treppe', 'Treppe'],
+              ['stuetze', 'Stütze'],
+              ['schnitt', 'Schnitt'],
+              ['skizze', '✎ Skizze'],
+            ] as const
+          ).map(([id, label]) => (
+            <KButton
+              key={id}
+              size="sm"
+              tone={tool === id ? 'accent' : 'quiet'}
+              onClick={() => setTool(id)}
+              data-testid={`tool-${id}`}
+            >
+              {label}
+            </KButton>
+          ))}
+        </span>
         <span style={{ width: 12 }} />
         {tool === 'wand' && assemblies.length > 0 && (
           <select
@@ -654,150 +751,168 @@ export function DesignWorkspace() {
         )}
         <div style={{ flex: 1 }} />
         <Trennlabel>Ansicht</Trennlabel>
-        {(
-          [
-            ['3d', '3D'],
-            ['split', '3D | Plan'],
-            ['quad', '4er'],
-            ['2d', 'Grundriss'],
-          ] as const
-        ).map(([id, label]) => (
-          <KButton
-            key={id}
-            size="sm"
-            tone={viewMode === id ? 'accent' : 'ghost'}
-            onClick={() => setViewMode(id)}
-            data-testid={`view-${id}`}
-          >
-            {label}
-          </KButton>
-        ))}
+        <span
+          data-testid="leiste-gruppe-ansicht"
+          className={fokusKlasse(stufeFuerGruppe('ansicht'))}
+          style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, rowGap: 4, alignItems: 'center' }}
+        >
+          {(
+            [
+              ['3d', '3D'],
+              ['split', '3D | Plan'],
+              ['quad', '4er'],
+              ['2d', 'Grundriss'],
+            ] as const
+          ).map(([id, label]) => (
+            <KButton
+              key={id}
+              size="sm"
+              tone={viewMode === id ? 'accent' : 'ghost'}
+              onClick={() => setViewMode(id)}
+              data-testid={`view-${id}`}
+            >
+              {label}
+            </KButton>
+          ))}
+        </span>
         <span style={{ width: 12 }} />
         <Trennlabel>Export</Trennlabel>
-        <KButton size="sm" tone="ghost" onClick={() => void exportPlanPdf()} data-testid="export-pdf">
-          PDF
-        </KButton>
-        <KButton size="sm" tone="ghost" onClick={exportPlanSvg}>
-          SVG
-        </KButton>
-        <KButton size="sm" tone="ghost" onClick={exportIfcFile} data-testid="export-ifc">
-          IFC
-        </KButton>
-        <KButton
-          size="sm"
-          tone="ghost"
-          data-testid="import-ifc"
-          onClick={() => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.ifc';
-            input.onchange = async () => {
-              const f = input.files?.[0];
-              if (!f) return;
-              try {
-                const result = await importIfc(new Uint8Array(await f.arrayBuffer()));
-                setContextMeshes(result.meshes);
-                console.info(`IFC-Kontext: ${result.elementCount} Elemente (${result.schema})`);
-                setBestand(
-                  result.erkannt.waende.length + result.erkannt.decken.length > 0
-                    ? result.erkannt
-                    : null,
-                );
-              } catch (err) {
-                meldeFehler(`IFC-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
-              }
-            };
-            input.click();
-          }}
+        <span
+          data-testid="leiste-gruppe-export"
+          className={fokusKlasse(stufeFuerGruppe('export'))}
+          style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, rowGap: 4, alignItems: 'center' }}
         >
-          IFC laden
-        </KButton>
-        <KButton
-          size="sm"
-          tone="ghost"
-          data-testid="import-splat"
-          onClick={() => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.splat,.ply';
-            input.onchange = async () => {
-              const f = input.files?.[0];
-              if (!f) return;
-              try {
-                const { parseSplatCloud } = await import('./splat-import');
-                const cloud = parseSplatCloud(f.name, await f.arrayBuffer());
-                setSplatCloud(cloud);
-                setSplatCloudState(cloud);
-                setSplatPanelOffen(true);
-              } catch (err) {
-                meldeFehler(`Splat-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
-              }
-            };
-            input.click();
-          }}
-        >
-          Splat laden
-        </KButton>
-        <KButton
-          size="sm"
-          tone={splatPanelOffen ? 'accent' : 'ghost'}
-          data-testid="splat-werkzeug-toggle"
-          onClick={() => setSplatPanelOffen(!splatPanelOffen)}
-        >
-          Splat-Werkzeug
-        </KButton>
+          <KButton size="sm" tone="ghost" onClick={() => void exportPlanPdf()} data-testid="export-pdf">
+            PDF
+          </KButton>
+          <KButton size="sm" tone="ghost" onClick={exportPlanSvg}>
+            SVG
+          </KButton>
+          <KButton size="sm" tone="ghost" onClick={exportIfcFile} data-testid="export-ifc">
+            IFC
+          </KButton>
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="import-ifc"
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = '.ifc';
+              input.onchange = async () => {
+                const f = input.files?.[0];
+                if (!f) return;
+                try {
+                  const result = await importIfc(new Uint8Array(await f.arrayBuffer()));
+                  setContextMeshes(result.meshes);
+                  console.info(`IFC-Kontext: ${result.elementCount} Elemente (${result.schema})`);
+                  setBestand(
+                    result.erkannt.waende.length + result.erkannt.decken.length > 0
+                      ? result.erkannt
+                      : null,
+                  );
+                } catch (err) {
+                  meldeFehler(`IFC-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
+                }
+              };
+              input.click();
+            }}
+          >
+            IFC laden
+          </KButton>
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="import-splat"
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = '.splat,.ply';
+              input.onchange = async () => {
+                const f = input.files?.[0];
+                if (!f) return;
+                try {
+                  const { parseSplatCloud } = await import('./splat-import');
+                  const cloud = parseSplatCloud(f.name, await f.arrayBuffer());
+                  setSplatCloud(cloud);
+                  setSplatCloudState(cloud);
+                  setSplatPanelOffen(true);
+                } catch (err) {
+                  meldeFehler(`Splat-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
+                }
+              };
+              input.click();
+            }}
+          >
+            Splat laden
+          </KButton>
+          <KButton
+            size="sm"
+            tone={splatPanelOffen ? 'accent' : 'ghost'}
+            data-testid="splat-werkzeug-toggle"
+            onClick={() => setSplatPanelOffen(!splatPanelOffen)}
+          >
+            Splat-Werkzeug
+          </KButton>
+        </span>
         <Trennlabel>Ebenen</Trennlabel>
-        <KButton
-          size="sm"
-          tone={texturen ? 'accent' : 'ghost'}
-          data-testid="textur-toggle"
-          onClick={() => {
-            setTexturModus(!texturen);
-            setTexturen(!texturen);
-          }}
+        <span
+          data-testid="leiste-gruppe-ebenen"
+          className={fokusKlasse(stufeFuerGruppe('ebenen'))}
+          style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, rowGap: 4, alignItems: 'center' }}
         >
-          Textur
-        </KButton>
-        <KButton
-          size="sm"
-          tone={sonneOffen ? 'accent' : 'ghost'}
-          data-testid="sonne-toggle"
-          onClick={() => setSonneOffen(!sonneOffen)}
-        >
-          ☀ Sonne
-        </KButton>
-        <KButton
-          size="sm"
-          tone={studieOffen ? 'accent' : 'ghost'}
-          data-testid="studie-toggle"
-          onClick={() => setStudieOffen(!studieOffen)}
-        >
-          Varianten
-        </KButton>
-        <KButton
-          size="sm"
-          tone={drawOffen ? 'accent' : 'ghost'}
-          data-testid="draw-toggle"
-          onClick={() => setDrawOffen(!drawOffen)}
-        >
-          Draw
-        </KButton>
-        <KButton
-          size="sm"
-          tone={listeOffen ? 'accent' : 'ghost'}
-          data-testid="liste-toggle"
-          onClick={() => setListeOffen(!listeOffen)}
-        >
-          Liste
-        </KButton>
-        <KButton
-          size="sm"
-          tone={rasterOffen ? 'accent' : 'ghost'}
-          data-testid="raster-toggle"
-          onClick={() => { setRasterOffen(!rasterOffen); if (!rasterOffen) setListeOffen(false); }}
-        >
-          Raster
-        </KButton>
+          <KButton
+            size="sm"
+            tone={texturen ? 'accent' : 'ghost'}
+            data-testid="textur-toggle"
+            onClick={() => {
+              setTexturModus(!texturen);
+              setTexturen(!texturen);
+            }}
+          >
+            Textur
+          </KButton>
+          <KButton
+            size="sm"
+            tone={sonneOffen ? 'accent' : 'ghost'}
+            data-testid="sonne-toggle"
+            onClick={() => setSonneOffen(!sonneOffen)}
+          >
+            ☀ Sonne
+          </KButton>
+          <KButton
+            size="sm"
+            tone={studieOffen ? 'accent' : 'ghost'}
+            data-testid="studie-toggle"
+            onClick={() => setStudieOffen(!studieOffen)}
+          >
+            Varianten
+          </KButton>
+          <KButton
+            size="sm"
+            tone={drawOffen ? 'accent' : 'ghost'}
+            data-testid="draw-toggle"
+            onClick={() => setDrawOffen(!drawOffen)}
+          >
+            Draw
+          </KButton>
+          <KButton
+            size="sm"
+            tone={listeOffen ? 'accent' : 'ghost'}
+            data-testid="liste-toggle"
+            onClick={() => setListeOffen(!listeOffen)}
+          >
+            Liste
+          </KButton>
+          <KButton
+            size="sm"
+            tone={rasterOffen ? 'accent' : 'ghost'}
+            data-testid="raster-toggle"
+            onClick={() => { setRasterOffen(!rasterOffen); if (!rasterOffen) setListeOffen(false); }}
+          >
+            Raster
+          </KButton>
+        </span>
         {tool === 'treppe' && (
           <select
             value={treppenForm}
@@ -821,7 +936,11 @@ export function DesignWorkspace() {
             der Werkzeugzeile, sondern hinter diesem Umschalter (Fokus-Stufe
             «selten», docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md). Nichts entfernt:
             dieselben Commands, dieselben data-testids, nur der Ort ist neu. */}
-        <span className="k-selten" style={{ display: 'inline-flex' }}>
+        <span
+          data-testid="leiste-gruppe-projekt"
+          className={fokusKlasse(stufeFuerGruppe('projekt'))}
+          style={{ display: 'inline-flex' }}
+        >
           <KButton
             size="sm"
             tone={projektMenuOffen ? 'accent' : 'ghost'}
@@ -832,12 +951,37 @@ export function DesignWorkspace() {
             Projekt ▾
           </KButton>
         </span>
-        <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
-          ↩ Rückgängig
-        </KButton>
-        <KButton size="sm" tone="ghost" onClick={redo}>
-          ↪ Wiederholen
-        </KButton>
+        {/* Regel 2.3.5 (Transparenz): solange die Matrix eine Gruppe unter ihre
+            T7-Basis zurückstellt, zeigt dieser dezente Hinweis warum — anschluss-
+            fähig an Serie G (Kosmo erklärt), hier nur der Text im title. */}
+        {adaptionHinweisSichtbar && (
+          <span
+            data-testid="adaption-hinweis"
+            className="k-selten"
+            title={adaptionHinweisTitel}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              fontSize: 11,
+              color: 'var(--k-ink-faint)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            ⓘ angepasst
+          </span>
+        )}
+        <span
+          data-testid="leiste-gruppe-verlauf"
+          className={fokusKlasse(stufeFuerGruppe('verlauf'))}
+          style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}
+        >
+          <KButton size="sm" tone="ghost" onClick={undo} data-testid="undo">
+            ↩ Rückgängig
+          </KButton>
+          <KButton size="sm" tone="ghost" onClick={redo}>
+            ↪ Wiederholen
+          </KButton>
+        </span>
       </div>
 
       {projektMenuOffen && (

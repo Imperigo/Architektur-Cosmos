@@ -4,8 +4,13 @@ import {
   adaptionZuruecksetzen,
   adaptiveFokusStufe,
   darfUmordnen,
+  istUnterBasis,
+  LEISTEN_BASIS,
+  leiteTaetigkeitsKontextAb,
   nutzungMelden,
+  nutzungsProfil,
   nutzungVerfallen,
+  ZEICHEN_WERKZEUG_IDS,
   type NutzungsProfil,
   type TaetigkeitsKontext,
 } from '../src/state/oberflaeche-adaption';
@@ -279,5 +284,99 @@ describe('Laufzeit-Store — localStorage kosmo.adaption.v1 (Laufzeit ≠ Modell
     adaptionZuruecksetzen();
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
     expect(adaptionAktiv()).toBe(true);
+  });
+
+  it('nutzungsProfil() liest exakt das per nutzungMelden gespeicherte Profil zurück', () => {
+    expect(nutzungsProfil()).toEqual({ zaehler: {}, zuletzt: {} });
+    nutzungMelden('export:pdf');
+    nutzungMelden('export:pdf');
+    expect(nutzungsProfil().zaehler['export:pdf']).toBe(2);
+  });
+
+  it('nutzungsProfil() liefert nach kaputtem Eintrag das leere Basisprofil, kein Crash', () => {
+    localStorage.setItem(STORAGE_KEY, '{ kaputt ][');
+    expect(() => nutzungsProfil()).not.toThrow();
+    expect(nutzungsProfil()).toEqual({ zaehler: {}, zuletzt: {} });
+  });
+});
+
+describe('ZEICHEN_WERKZEUG_IDS — EINE Quelle der Werkzeugliste (Fable-Review-1-Auflage)', () => {
+  it('enthält exakt die sieben Zeichenwerkzeuge (Spiegel des DesignWorkspace-ToolId-Sets ohne auswahl/skizze)', () => {
+    expect([...ZEICHEN_WERKZEUG_IDS].sort()).toEqual(
+      ['dach', 'schnitt', 'stuetze', 'treppe', 'volumen', 'wand', 'zone'].sort(),
+    );
+  });
+
+  it('adaptiveFokusStufe erkennt jedes exportierte Werkzeug als Zeichenkontext', () => {
+    for (const id of ZEICHEN_WERKZEUG_IDS) {
+      expect(adaptiveFokusStufe('export', 'sekundaer', kontext({ tool: id }), leeresProfil())).toBe('selten');
+    }
+  });
+});
+
+describe('LEISTEN_BASIS — T7-Basis je Gruppe (2.2, Basis-Spalte), einzige Quelle für DesignWorkspace', () => {
+  it('entspricht exakt der Buildplan-Tabelle', () => {
+    expect(LEISTEN_BASIS).toEqual({
+      zeichnen: 'primaer',
+      ansicht: 'sekundaer',
+      export: 'sekundaer',
+      ebenen: 'sekundaer',
+      projekt: 'selten',
+      verlauf: 'primaer',
+    });
+  });
+});
+
+describe('istUnterBasis — Vergleichshilfe für den Adaptions-Hinweis (2.3.5)', () => {
+  it('erkennt eine demotete Stufe als unter der Basis', () => {
+    expect(istUnterBasis('selten', 'sekundaer')).toBe(true);
+  });
+
+  it('eine Stufe auf/über der Basis gilt nicht als "unter Basis"', () => {
+    expect(istUnterBasis('sekundaer', 'sekundaer')).toBe(false);
+    expect(istUnterBasis('primaer', 'sekundaer')).toBe(false);
+  });
+});
+
+describe('leiteTaetigkeitsKontextAb — Kontext-Ableitung aus DesignWorkspace-State (J3b)', () => {
+  it('aktionLaeuft ist falsch, wenn weder eine Punktkette offen ist noch gezogen wird', () => {
+    const k = leiteTaetigkeitsKontextAb({
+      tool: 'auswahl',
+      phase: 'bauprojekt',
+      punkteOffen: false,
+      ziehtElement: false,
+    });
+    expect(k).toEqual({ tool: 'auswahl', phase: 'bauprojekt', aktionLaeuft: false });
+  });
+
+  it('aktionLaeuft ist wahr, solange eine Punktkette offen ist (points.length>0)', () => {
+    const k = leiteTaetigkeitsKontextAb({ tool: 'wand', phase: 'bauprojekt', punkteOffen: true, ziehtElement: false });
+    expect(k.aktionLaeuft).toBe(true);
+  });
+
+  it('aktionLaeuft ist wahr, solange ein Element gezogen wird (dragEntity !== null)', () => {
+    const k = leiteTaetigkeitsKontextAb({
+      tool: 'auswahl',
+      phase: 'bauprojekt',
+      punkteOffen: false,
+      ziehtElement: true,
+    });
+    expect(k.aktionLaeuft).toBe(true);
+  });
+
+  it('aktionLaeuft bleibt wahr, wenn beides gleichzeitig zutrifft', () => {
+    const k = leiteTaetigkeitsKontextAb({ tool: 'wand', phase: 'werkplan', punkteOffen: true, ziehtElement: true });
+    expect(k.aktionLaeuft).toBe(true);
+  });
+
+  it('übernimmt tool/phase unverändert (reine Durchreichung)', () => {
+    const k = leiteTaetigkeitsKontextAb({
+      tool: 'skizze',
+      phase: 'vorprojekt',
+      punkteOffen: false,
+      ziehtElement: false,
+    });
+    expect(k.tool).toBe('skizze');
+    expect(k.phase).toBe('vorprojekt');
   });
 });

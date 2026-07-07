@@ -14,8 +14,12 @@
  * (J3b/J3c) entscheiden `adaptionAktiv() ? adaptiveFokusStufe(...) : basis`
  * — die Regel selbst bleibt unkontaminiert und ohne Seiteneffekt testbar.
  *
- * Dieser Batch liefert **kein UI-Wiring** — die Werkzeugleiste bleibt in
- * J3a optisch unverändert (siehe Abnahme J3a in SERIE-J-BUILDPLAN.md).
+ * J3a lieferte **kein UI-Wiring**. Seit J3b konsumiert `DesignWorkspace.tsx`
+ * dieses Modul: `ZEICHEN_WERKZEUG_IDS`/`LEISTEN_BASIS` sind die einzige
+ * Quelle der Matrix-Daten, `leiteTaetigkeitsKontextAb`/`nutzungsProfil`
+ * füttern `adaptiveFokusStufe(...)` mit echtem State — Import-Richtung
+ * bleibt einseitig (DesignWorkspace → hier, nie umgekehrt); dieses Modul
+ * bleibt UI-frei.
  */
 
 import type { FokusStufe } from './fokus';
@@ -72,10 +76,14 @@ const TAETIGKEITS_REGELN: Record<LeistenGruppe, { beimZeichnen: FokusStufe | 'ba
   verlauf: { beimZeichnen: 'basis' }, // immer primär
 };
 
-/** Zeichenwerkzeuge (Spiegel von DesignWorkspace `ZEICHEN_WERKZEUGE`, bewusst
- *  dupliziert statt importiert — J3a fasst DesignWorkspace.tsx nicht an;
- *  J3b hält beide Listen beim Wiring in Sync). */
-const ZEICHEN_TOOL_IDS = new Set([
+/**
+ * Zeichenwerkzeug-IDs — EINE Quelle der Wahrheit (Fable-Review-1-Auflage,
+ * SERIE-J-BUILDPLAN.md Abschnitt 4): DesignWorkspace importiert diese Liste
+ * für sein `ZEICHEN_WERKZEUGE`-Set, statt sie ein zweites Mal zu pflegen.
+ * Import-Richtung bleibt einseitig (adaption → nirgendwo UI-seitig zurück) —
+ * dieses Modul bleibt UI-frei, es exportiert nur Daten.
+ */
+export const ZEICHEN_WERKZEUG_IDS: readonly string[] = [
   'wand',
   'volumen',
   'zone',
@@ -83,15 +91,40 @@ const ZEICHEN_TOOL_IDS = new Set([
   'treppe',
   'stuetze',
   'schnitt',
-]);
+];
+
+const ZEICHEN_TOOL_IDS = new Set(ZEICHEN_WERKZEUG_IDS);
 
 function istZeichenKontext(tool: string): boolean {
   return ZEICHEN_TOOL_IDS.has(tool) || tool === 'skizze';
 }
 
+/**
+ * T7-Basis je Werkzeugleisten-Gruppe (Tabelle 2.2, Basis-Spalte, gespiegelt
+ * aus `docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md`) — die einzige Quelle für
+ * DesignWorkspace (J3b), damit die Matrix nicht ein zweites Mal (dort als
+ * literale Werte) gepflegt werden muss.
+ */
+export const LEISTEN_BASIS: Record<LeistenGruppe, FokusStufe> = {
+  zeichnen: 'primaer',
+  ansicht: 'sekundaer',
+  export: 'sekundaer',
+  ebenen: 'sekundaer',
+  projekt: 'selten',
+  verlauf: 'primaer',
+};
+
 // Stufen-Rangordnung für Anheben/Deckeln/Floor — nur intern.
 const STUFEN_RANG: Record<FokusStufe, number> = { selten: 0, sekundaer: 1, primaer: 2 };
 const RANG_STUFE: FokusStufe[] = ['selten', 'sekundaer', 'primaer'];
+
+/**
+ * Ist `stufe` niedriger als `basis`? Für den Adaptions-Hinweis (2.3.5) —
+ * DesignWorkspace muss dafür die interne Rangordnung nicht selbst kennen.
+ */
+export function istUnterBasis(stufe: FokusStufe, basis: FokusStufe): boolean {
+  return STUFEN_RANG[stufe] < STUFEN_RANG[basis];
+}
 
 function stufeMax(a: FokusStufe, b: FokusStufe): FokusStufe {
   return STUFEN_RANG[a] >= STUFEN_RANG[b] ? a : b;
@@ -166,6 +199,32 @@ export function adaptiveFokusStufe(
 /** Anti-Nerv-Wache: bei laufender Aktion wird NIE neu berechnet. */
 export function darfUmordnen(kontext: TaetigkeitsKontext): boolean {
   return !kontext.aktionLaeuft;
+}
+
+/**
+ * J3b: leitet den `TaetigkeitsKontext` aus dem in DesignWorkspace vorhandenen
+ * State ab — reine Funktion, unit-testbar ohne React/DOM (Muster A4,
+ * `sketch-3d.ts`). `aktionLaeuft` ist wahr, solange eine Punktkette offen ist
+ * ODER ein Element per 2D-Drag gezogen wird (`onMoveStart…onMoveEnd`).
+ *
+ * **Ehrliche Restgrenze:** ein im 3D-Viewport laufender Freihand-Strich
+ * (`sketchPending` in `Viewport3D.tsx`) ist von hier aus nicht sichtbar —
+ * `Viewport3D.tsx` ist die heisse Datei der Viewport-Spur (J1a/J2/J1b) und
+ * bleibt in J3b bewusst unangetastet, um keinen Datei-Konflikt mit dem
+ * parallel laufenden J1b zu riskieren. Die Punktketten-/Drag-Wache deckt den
+ * weit häufigeren 2D-/Klick-Fall vollständig ab.
+ */
+export function leiteTaetigkeitsKontextAb(params: {
+  tool: string;
+  phase: 'vorprojekt' | 'bauprojekt' | 'werkplan';
+  punkteOffen: boolean;
+  ziehtElement: boolean;
+}): TaetigkeitsKontext {
+  return {
+    tool: params.tool,
+    phase: params.phase,
+    aktionLaeuft: params.punkteOffen || params.ziehtElement,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -333,4 +392,13 @@ export function adaptionZuruecksetzen(): void {
 /** Opt-out-Schalter (Default an). Kaputter/fehlender Eintrag → an. */
 export function adaptionAktiv(): boolean {
   return ladeSpeicherRoh().aktiv;
+}
+
+/**
+ * Fable-Review-1-Auflage: Getter für das persistierte, bereits verfallene
+ * Nutzungsprofil — damit Aufrufer (J3b) `adaptiveFokusStufe(...)` mit dem
+ * echten gelernten Profil füttern können, statt selbst den Store zu lesen.
+ */
+export function nutzungsProfil(): NutzungsProfil {
+  return ladeUndVerfalle().profil;
 }

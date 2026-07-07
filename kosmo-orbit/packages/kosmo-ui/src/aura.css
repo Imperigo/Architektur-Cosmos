@@ -320,15 +320,22 @@ progress {
    bereits inline) wirkt sie über die Deckkraft der ganzen Gruppe — das
    überschreibt kein Inline-Attribut eines Kindes, sondern dimmt den
    gerenderten Teilbaum als Ganzes (das Kind selbst bleibt bei opacity:1). */
+/* Serie J / J3b (Tätigkeits-Adaption, Regel 2.3.3): Gruppen wechseln ihre
+   Fokus-Klasse zur Laufzeit (adaptiveFokusStufe) — die Opazitäts-Änderung
+   ist gedämpft über --k-motion-base, NIE ungedämpft. Der globale
+   prefers-reduced-motion-Block oben (jede Transition auf 0.01ms) schaltet
+   auch diese ab. */
 .k-primaer {
   opacity: 1;
   font-size: 14px;
   font-weight: 620;
+  transition: opacity var(--k-motion-base);
 }
 .k-sekundaer {
   opacity: 0.92;
   font-size: 12.5px;
   font-weight: 520;
+  transition: opacity var(--k-motion-base);
 }
 .k-selten {
   opacity: 0.6;
