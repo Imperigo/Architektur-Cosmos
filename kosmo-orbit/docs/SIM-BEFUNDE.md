@@ -335,3 +335,64 @@ Egress-Journeys müssen Zonen ADJAZENT (kantenteilend) zum Treppenhaus
 modellieren, nicht verschachtelt; ein konformer kompakter Grundriss meldet
 keine Fluchtweg-Länge — das ist korrektes, nicht fehlendes Verhalten.
 Status:      spec-korrigiert
+
+### H-14 — `zone-verletzt` und Baugrenzen-/Grenzabstands-Befunde sind zwei getrennte, nicht austauschbare Mechanismen (07.07.2026, Journey blockrand, Schritt 7/10)
+Beobachtung: Buildplan Abschnitt 2 (Zeile Blockrand, «Schärfste Assertions»)
+verlangt für die Verstoss-Probe («eine Wand über die Baugrenze zeichnen»)
+in einem Satz sowohl «die Checks melden `zone-verletzt` bzw. den
+Grenzabstands-Befund» als auch separat «`zone-verletzt`-Markierung
+erscheint und verschwindet nach Korrektur». Im Code sind das aber zwei
+disjunkte Pfade: `derive/checks.ts` vergibt bei Baugrenzen-/Grenzabstands-
+Verstössen die `entityId` ausschliesslich an Wand/Volumen/Dach (Zeilen
+353-379, `grenzVerletzt`/`verletzt`), NIE an eine Zone. `PlanView.tsx`
+(Zeile 50-67, `verletzteZonen`) baut den `zone-verletzt`-Marker dagegen
+ausschliesslich aus Befunden, deren `entityId` auf eine Entität mit
+`kind==='zone'` zeigt (aus `design.regelnSetzen`/Raumtyp-Richtwerten,
+V2-F3). Eine Wand, die über die Baugrenze hinausragt, kann darum den
+`zone-verletzt`-Marker grundsätzlich NIE auslösen — nur den
+Checks-Freitext (Baustein 11 `checksLesen`).
+Triage:      kein-bug
+Beleg:       `packages/kosmo-kernel/src/derive/checks.ts` Z.342-394
+(Baugrenze/Grenzabstand vergibt `entityId` nur an `Wall`/`MassBody`/`Roof`);
+`apps/kosmo-orbit/src/modules/design/PlanView.tsx` Z.50-67 (`e.kind !==
+'zone'` verwirft alle anderen Kinds); `e2e/module.spec.ts` Z.813-829
+(`zone-verletzt` wird ausschliesslich über `design.regelnSetzen` +
+Raumtyp-Mindestfläche gezeigt, nie über eine Baugrenze). `sim-blockrand.spec.ts`
+deckt darum BEIDE im Buildplan genannten Signale mit ihrem jeweils
+tatsächlich zuständigen Mechanismus ab: Schritt 7 (Wand ausserhalb der
+L-Baugrenze) prüft den Checks-Freitext auf «ragt über die Baugrenze …
+hinaus» (erscheint, verschwindet nach `design.loeschen`); Schritt 10
+(separate, bewusst zu kleine Zimmer-Zone + `design.regelnSetzen`
+preset «ch-wohnbau») prüft den `zone-verletzt`-Marker (erscheint,
+verschwindet nach `design.loeschen`).
+Entscheid:   Kein Produktfehler — die Trennung ist korrekt und beabsichtigt
+(Raumtyp-Regeln sind zonen-bezogen, Baugrenzen-/Grenzabstandsregeln sind
+bauteil-bezogen und kennen noch keine Zonen-Zuordnung, vgl. H-4). Der
+Buildplan-Wortlaut suggeriert lediglich fälschlich eine gemeinsame
+Signalquelle; die Journey dokumentiert die Trennung, statt sie stillschweigend
+glattzubügeln. Kein H-Fix-Batch nötig.
+Status:      doku (V2)
+
+### H-15 — Checks-Panel zeigt nur die ersten 6 Befunde (`befunde.slice(0, 6)`), ohne Hinweis auf weitere (07.07.2026, Journey blockrand, Schritt 7)
+Beobachtung: `KennzahlenPanel.tsx` rendert `befunde.slice(0, 6)` ins
+`[data-testid="checks"]`-Panel — bei mehr als 6 gleichzeitigen
+Grundriss-Befunden bleiben weitere (potenziell schwerwiegendere, z. B. eine
+neue Baugrenzen-Verletzung) unsichtbar, ohne «+N weitere»-Hinweis. Für die
+Blockrand-Journey wurde das umgangen, indem das reale Fassaden-Volumen
+(Schritt 5) bewusst Grenzabstands-konform gehalten wird (Marge ≥
+Zonenregel-Grenzabstand auf allen Seiten), sodass die Verstoss-Probe
+(Schritt 7) der EINZIGE Befund im Panel bleibt und sicher innerhalb der
+ersten 6 Zeilen erscheint — eine Journey mit vielen gleichzeitigen
+Regelverstössen könnte das Verstecken tatsächlich beobachten.
+Triage:      v2-lücke
+Beleg:       `apps/kosmo-orbit/src/modules/design/KennzahlenPanel.tsx`
+Z.124 (`befunde.slice(0, 6).map(...)`), keine Anzeige der Gesamtzahl bzw.
+eines Overflow-Hinweises. Verwandt mit H-6 (Checks bleiben Freitext), aber
+eine eigene, engere Beobachtung (Truncation, nicht fehlende Struktur).
+Entscheid:   UI-Politur (Overflow-Hinweis «+N weitere» oder Scroll statt
+harter Deckel bei 6) — kein akuter Bug, kein H-Fix-Batch ohne
+Owner-Priorisierung; für Serie-H-Journeys mit vielen Befunden gilt als
+Lehre: das Modell so aufbauen, dass der zu prüfende Befund isoliert bleibt
+(kompensiert in `sim-blockrand.spec.ts`, s. o.), statt sich auf die
+Sichtbarkeit von Befund Nr. 7+ zu verlassen.
+Status:      offen
