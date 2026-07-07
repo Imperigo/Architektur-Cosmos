@@ -146,6 +146,34 @@ startet ein Job wie bisher direkt `queued`.
   | `KOSMO_BRIDGE_APPROVAL_PFLICHT` | aus | `1`/`true`/`ja` → neuer Job startet `awaiting_approval`, braucht `/approve`. |
   | `KOSMO_BRIDGE_GPU_IDLE` | `1` | `0` = GPU belegt → Render-Jobs bleiben `queued` (Idle-Gate). |
 
+### Blender-Simulationen (V2-Technik Block 1 / HS4)
+
+`POST /jobs/blender-sim` (multipart: Form-Feld `szene` = JSON nach
+`kosmo.blender-sim/v1`, siehe `packages/kosmo-contracts/src/blender-sim.ts`,
++ File `model` = `model.glb`) legt einen Job für eine der drei Simulations-
+arten an: `wind`, `sonnenstunden`, `gebaeude-energie` (jede andere `art` →
+`400`). Genau wie bei `/jobs` wird das Schreibziel `out` **immer serverseitig**
+auf `<job_dir>/out` erzwungen — ein vom Client mitgeliefertes `out` wird
+ignoriert. Der Job-Record trägt `kind: "blender-sim"`, `job_id`-Präfix
+`bsim-` (eigene Regex, unabhängig von `vis-`/`vsplat-`), Status startet
+`queued`.
+
+Diese Simulationen sind eine **harte Ehrlichkeitsgrenze**: ein Platzhalter-
+BILD ist sichtbar ein Platzhalter, aber eine Platzhalter-SIMULATIONSZAHL
+(Windlast, Sonnenstunden, Energiebedarf) sähe aus wie ein echtes
+Analyseergebnis und könnte eine Bau-Entscheidung verseuchen. Darum erfindet
+der Fake-Worker hier **niemals** Zahlen: ohne angeschlossenen Blender-Worker
+endet der Job beweisbar als `status: "kein-blender-worker"` mit einer
+Begründung, die «Blender» und «HomeStation» nennt — kein Simulationsergebnis
+wird vorgetäuscht.
+
+Ein echter Blender-Worker (headless auf der HomeStation, 5090) dockt nach
+demselben Worker-Protokoll unten an: `queued`-Job holen, `blender-sim.json` +
+`model.glb` aus dem Job-Ordner lesen, Simulation rechnen, Ergebnis unter
+`out` ablegen und den Record auf `done` setzen. Bis dieser Worker existiert,
+ist die grün laufende `kein-blender-worker`-Meldung der Beweis, dass nichts
+gefälscht wird.
+
 ### Worker andocken (normatives Protokoll)
 
 Ein echter Worker überwacht den `--store`-Ordner und bewegt jeden Job durch

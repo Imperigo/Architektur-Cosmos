@@ -480,6 +480,82 @@ for _s in hs2_stores:
     shutil.rmtree(_s, ignore_errors=True)
 
 # ---------------------------------------------------------------------------
+# 7) Blender-Sim-Jobs (V2-Technik Block 1 / HS4): /jobs/blender-sim, ehrliche
+#    Grenze "kein-blender-worker" (Physik wird NIE gefakt, Fable-Urteil §3.2),
+#    `out`-Injektion abgewiesen, ungültige `art` → 400, Deckel → 413. Eigener
+#    temp-Store (Modul-Reload), wie die HS2-Prüfungen oben.
+# ---------------------------------------------------------------------------
+bsim_stores: list[Path] = []
+
+
+def _bsim_store() -> Path:
+    p = Path(tempfile.mkdtemp(prefix="kosmo-bsim-"))
+    bsim_stores.append(p)
+    return p
+
+
+def _bsim_job(cl, art: str = "wind", out_value: str = "/tmp/böse-schreibstelle", model_bytes: bytes = b"glb-daten"):
+    szene = {
+        "schema": "kosmo.blender-sim/v1",
+        "art": art,
+        "geometry": {"path": "irrelevant", "format": "glb"},
+        "params": {},
+        "out": out_value,
+    }
+    return cl.post(
+        "/jobs/blender-sim",
+        data={"szene": json.dumps(szene)},
+        files={"model": ("model.glb", model_bytes, "model/gltf-binary")},
+    )
+
+
+store_bsim = _bsim_store()
+for _k in ("KOSMO_BRIDGE_APPROVAL_PFLICHT", "KOSMO_BRIDGE_GPU_IDLE"):
+    os.environ.pop(_k, None)
+cl_bsim = _hs2_reload(store_bsim)
+
+# --- (a) gültiger Job: 200, kind/job_id/status wie erwartet ---
+res = _bsim_job(cl_bsim, art="wind", out_value="/etc/böse")
+check("POST /jobs/blender-sim (gültige art) antwortet 200", res.status_code == 200)
+rec = res.json()
+check("blender-sim-Record: kind == 'blender-sim'", rec.get("kind") == "blender-sim")
+check("blender-sim-Record: job_id beginnt mit 'bsim-'", rec.get("job_id", "").startswith("bsim-"))
+check("blender-sim-Record: Status 'queued'", rec.get("status") == "queued")
+check("blender-sim-Record: art 'wind' übernommen", rec.get("art") == "wind")
+
+bsim_job_id = rec["job_id"]
+
+# --- (b) out-Injektion: Client-Pfad wird verworfen, Schreibziel erzwungen ---
+szene_path = store_bsim / bsim_job_id / "blender-sim.json"
+szene_geschrieben = json.loads(szene_path.read_text()) if szene_path.exists() else {}
+check(
+    "blender-sim: Schreibziel serverseitig auf <job_dir>/out erzwungen",
+    szene_geschrieben.get("out") == str(store_bsim / bsim_job_id / "out"),
+)
+check("blender-sim: Client-geliefertes 'out' NICHT übernommen", szene_geschrieben.get("out") != "/etc/böse")
+
+# --- (c) Fake-Worker: queued → 'kein-blender-worker' mit ehrlicher Begründung ---
+bridge._fake_worker_pass()
+rec_nach = json.loads((store_bsim / bsim_job_id / "job.json").read_text())
+check("blender-sim nach Fake-Worker-Pass: Status 'kein-blender-worker'", rec_nach.get("status") == "kein-blender-worker")
+msg = rec_nach.get("message", "")
+check("blender-sim Begründung enthält 'Blender'", "Blender" in msg)
+check("blender-sim Begründung enthält 'HomeStation'", "HomeStation" in msg)
+
+# --- (d) ungültige art → 400 ---
+res_bad_art = _bsim_job(cl_bsim, art="erdbeben")
+check("blender-sim mit ungültiger art → 400", res_bad_art.status_code == 400)
+
+# --- (e) Deckel: Modell über der Testgrenze (2 MB) → 413 ---
+res_big = _bsim_job(cl_bsim, model_bytes=b"x" * (3 * 1024 * 1024))
+check("blender-sim Modell-Upload über Deckel → 413", res_big.status_code == 413)
+
+for _s in bsim_stores:
+    shutil.rmtree(_s, ignore_errors=True)
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+
+# ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis
 # ---------------------------------------------------------------------------
 shutil.rmtree(TMP_STORE, ignore_errors=True)

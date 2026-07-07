@@ -11,6 +11,14 @@ Endpoints (Vertrag: @kosmo/contracts bridge-api.ts):
                                     Worker (HomeStation/Web-Konverter), sonst
                                     meldet der Status "kein-sfm-worker" statt
                                     ein Splat-Ergebnis vorzutäuschen.
+  POST /jobs/blender-sim           Blender-Simulation (multipart: szene +
+                                    model.glb; art: wind/sonnenstunden/
+                                    gebaeude-energie) — braucht einen echten
+                                    Blender-Worker headless auf der HomeStation
+                                    (5090), sonst meldet der Status
+                                    "kein-blender-worker" statt eine
+                                    Simulationszahl zu erfinden (Physik wird
+                                    NIE gefakt, Fable-Urteil §3.2).
   POST /stt                        Audio → Text (faster-whisper, Schweizerdeutsch-Modell)
   POST /ollama/...                 Reverse-Proxy zur lokalen Ollama-Instanz
 
@@ -427,6 +435,55 @@ async def create_video_splat_job(frames: list[UploadFile] = File(...), meta: str
     return record
 
 
+# ---------- Blender-Sim-Jobs (ehrliche Übergabe, keine Physik hier) ----------
+#
+# V2-Technik Block 1 / HS4: Wind-, Sonnenstunden- und Gebäude-Energie-
+# Simulationen (Vertrag kosmo.blender-sim/v1, siehe
+# packages/kosmo-contracts/src/blender-sim.ts) laufen NUR mit Blender headless
+# auf der HomeStation (5090). Dieser Endpoint nimmt Szene + Modell entgegen
+# und legt einen echten Job an — er täuscht aber KEIN Simulationsergebnis vor:
+# ohne angeschlossenen Blender-Worker bleibt der Job ehrlich als
+# "kein-blender-worker" stehen (siehe _fake_worker_step unten).
+
+BLENDER_SIM_ARTEN = {"wind", "sonnenstunden", "gebaeude-energie"}
+
+
+@app.post("/jobs/blender-sim")
+async def create_blender_sim_job(szene: str = Form(...), model: UploadFile = File(...)):
+    try:
+        szene_obj = json.loads(szene)
+    except json.JSONDecodeError as e:
+        raise HTTPException(400, f"szene ist kein JSON: {e}")
+
+    art = szene_obj.get("art")
+    if art not in BLENDER_SIM_ARTEN:
+        raise HTTPException(400, f"ungültige art: {art!r} (erlaubt: {sorted(BLENDER_SIM_ARTEN)})")
+
+    job_id = f"bsim-{int(time.time())}-{secrets.token_hex(3)}"
+    job_dir = STORE / job_id
+    job_dir.mkdir(parents=True, exist_ok=True)
+
+    model_bytes = await _read_capped(model, MAX_UPLOAD_MODEL_BYTES, "model.glb")
+    model_path = job_dir / "model.glb"
+    model_path.write_bytes(model_bytes)
+    szene_obj["geometry"] = {"path": str(model_path), "format": "glb"}
+    # Schreibziel IMMER serverseitig erzwingen — ein vom Client geliefertes
+    # `out` wird verworfen statt übernommen, exakt wie bei /jobs (R4).
+    szene_obj["out"] = str(job_dir / "out")
+    (job_dir / "blender-sim.json").write_text(json.dumps(szene_obj, indent=2))
+
+    record = {
+        "job_id": job_id,
+        "kind": "blender-sim",
+        "status": "queued",
+        "art": art,
+        "scene": str(job_dir / "blender-sim.json"),
+        "created_at": _now(),
+    }
+    (job_dir / "job.json").write_text(json.dumps(record, indent=2))
+    return record
+
+
 # ---------- STT (Speak-to-Kosmo) ----------
 
 def _stt_available() -> bool:
@@ -641,6 +698,23 @@ def _fake_worker_step(job_dir: Path) -> None:
             "Frames liegen bereit — diese Bridge hat keinen SfM/"
             "Splat-Worker angeschlossen. Braucht die HomeStation "
             "(5090) oder einen Web-Konverter."
+        )
+        record["updated_at"] = _now()
+        f.write_text(json.dumps(record, indent=2))
+        return
+
+    if status == "queued" and record.get("kind") == "blender-sim":
+        # Fable-Urteil §3.2: ein Platzhalter-BILD ist sichtbar ein Platzhalter
+        # (markiert), aber eine Platzhalter-SIMULATIONSZAHL (Wind/Sonnenstunden/
+        # Energie) sähe aus wie ein echtes Analyseergebnis und könnte eine
+        # Bau-Entscheidung verseuchen. Darum wird hier NIEMALS eine Zahl
+        # erfunden — ohne echten Blender-Worker bleibt der Job ehrlich auf
+        # "kein-blender-worker" stehen, mit Begründung statt Fake-Physik.
+        record["status"] = "kein-blender-worker"
+        record["message"] = (
+            "Diese Bridge hat keinen Blender-Worker angeschlossen — Wind/"
+            "Sonnenstunden/Energie brauchen Blender headless auf der "
+            "HomeStation (5090). Physik wird nicht erfunden."
         )
         record["updated_at"] = _now()
         f.write_text(json.dumps(record, indent=2))
