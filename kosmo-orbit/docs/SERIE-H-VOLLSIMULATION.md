@@ -66,6 +66,12 @@ Jeder Lauf triagiert automatisch: echter Bug vs. Test-Artefakt; bestätigte Bugs
 eigene verifizierte Batches (Muster ROADMAP 151), grössere/Design-Fragen an den
 Owner. Fable beurteilt die härtesten/mehrdeutigen Fälle.
 
+**Seit H5a (07.07.2026) scharf geschaltet:** `docs/SIM-BEFUNDE.md` ist ab jetzt
+das lebende, append-only Befund-Journal der Serie H (Schema + Triage-Ablauf
++ Startbestand aus `docs/V1-TESTLAUF-BEFUNDE.md`) — neue Befunde aller
+folgenden Batches werden dort angehängt, nie mehr in
+`docs/V1-TESTLAUF-BEFUNDE.md`.
+
 ## Grenzen (ehrlich)
 - Echte Bildgenerierung, Whisper/Piper scharf, LoRA — HomeStation/GPU, nicht in der
   Simulation prüfbar (nur der Weg dahin).
