@@ -516,3 +516,64 @@ als Annahme aus dem Test zu streichen. Kein H-Fix nötig; die optionale
 V2-Härtung (try/except um den Whisper-Aufruf, sauberer 4xx-Ersatz statt 500)
 geht an den Owner, nicht Teil dieses Serie-H-Batches (kein Produktcode hier).
 Status:      doku (V2)
+
+### H-21 — Command-Coverage-Liste (Fable-Schlussreview, Buildplan Abschnitt 9)
+Beobachtung: Von den 72 Command-IDs fahren die sechs Sim-Journeys (direkt via
+`__kosmo.run` oder über verifizierte UI-Pfade wie `inspector-renovation`,
+`add-sheet`, `place-plan`, `pubset-speichern`, `drei-stimmungen`,
+`grundrisse-fuellen`, `blatt-ablegen`) die grosse Fläche ab. **NICHT in
+Sim-Journeys** (teils anderweitig in `e2e/*.spec.ts` gedeckt):
+`design.aufbauErstellen`, `deckeZeichnen` (=H-7, kein UI-Knopf),
+`eigenschaftSetzen`, `katalogImportieren`, `kennzahlFormelnSetzen`,
+`prioritaetSetzen`, `rasterEntfernen`, `raumTypSetzen`, `rolleSetzen`,
+`stuetzeSetzen` (nur `stuetzenAusRaster` gefahren), `themenPlanEntfernen`,
+`tuerSetzen` (Türen nur via Generator), `verschieben`, `vorlageSetzen`,
+`vorlageSpeichern`; `publish.ansichtAnpassen/-Entfernen/-Verschieben`,
+`bildAnpassen/-Entfernen/-Fuellen/-Verschieben`, `blattEntfernen`,
+`revisionErfassen`, `setEntfernen`, `textSetzen`, `wolkeSetzen/-Entfernen`;
+`vis.graphLoeschen`, `nodeLoeschen`, `nodeParametrieren`, `trennen`.
+Triage:      kein-bug (Coverage-Buchführung, ehrlich statt behauptet)
+Beleg:       `packages/kosmo-kernel/src/commands/` (72 Command-IDs);
+`git diff bd3f3c1..HEAD` berührt keine `packages/`.
+Entscheid:   «Alle Tools» ist ein wachsendes Ziel (Buildplan Abschnitt 9):
+die grosse Fläche ist gedeckt, die obigen Commands docken als weitere
+Bausteine/Journeys an, wenn ein Haustyp sie braucht. Kein H-Fix.
+Zusatz-Fussnote: **Umbau/MFH fahren keinen `phaseSchalten`-Phasengang** —
+das Abschnitt-2-Intro verlangt ihn «je Journey», die Tabellenzeilen sagen aber
+«bleibt, Assertions unverändert»; der Vorrang des leeren H1a-Assertions-Diffs
+war die bewusste Ausnahme (die vier neuen Journeys fahren den Phasengang).
+Status:      doku (V2)
+
+### H-22 — Varianten-Station im Hochhaus nicht in der Journey gefahren (Fable-Schlussreview, Journey hochhaus)
+Beobachtung: Buildplan Abschnitt 2 (Zeile Hochhaus) nennt «Varianten
+(`studie-toggle`/`varianten-matrix` falls Testid-gestützt, sonst Command)».
+Beide Testids EXISTIEREN (`DesignWorkspace.tsx` Z.1040 / Z.1816, in
+`module.spec.ts` UI-gedeckt) — die «falls Testid-gestützt»-Bedingung war also
+erfüllt, `sim-hochhaus.spec.ts` fährt das Varianten-Segment aber nicht.
+Triage:      v2-lücke / Coverage-Lücke (bewusst dokumentiert, nicht still)
+Beleg:       `apps/kosmo-orbit/src/modules/design/DesignWorkspace.tsx`
+Z.1040/1816 (`studie-toggle`/`varianten-matrix`); `e2e/module.spec.ts`
+(Varianten-Matrix bereits e2e-gedeckt).
+Entscheid:   Die Varianten-Matrix ist über `module.spec.ts` bereits
+E2E-gedeckt; ein zusätzliches Segment in der Hochhaus-Journey (nach Schritt 8)
+ist optional und kein Gate. Als bewusste Journey-Lücke geführt.
+Status:      offen
+
+### H-23 — Raumgraph kennt kein Containment-Portal (aus H-13 herausgelöst, v2-lücke)
+Beobachtung: Der Raumgraph (`derive/raumgraph.ts`) bildet Fluchtweg-Portale
+nur aus Tür-Öffnungen oder kollinear GETEILTEN Umriss-Kanten (`offeneKante`).
+Eine überlappend VERSCHACHTELTE Zone (z. B. eine Voll-Geschosszone mit dem
+Treppenhaus-Kern DARIN) teilt keine Kante → `distanz=Infinity` → «keine
+Verbindung zum Treppenhaus (Tür fehlt?)». Das ist eine reale Nutzer-
+Modellierweise; die Warnung ist ehrlich, aber ein Containment-Portal (Zone
+enthält eine Ziel-Zone) oder eine explizite «Zonen überlappen»-Warnung wäre
+nutzerfreundlicher.
+Triage:      v2-lücke (Kernel-Feature; die Journey umgeht es korrekt via
+adjazenter Nordband-Zone, H-13)
+Beleg:       `packages/kosmo-kernel/src/derive/raumgraph.ts` Z.60-77
+(`offeneKante`) + Z.118-126 (offene Übergänge nur bei geteilter Kante);
+`checks.ts` Z.199-205 («keine Verbindung»-Text).
+Entscheid:   Containment-Portal / Überlappungs-Warnung ist ein V2-Kandidat →
+kein H-Fix ohne Owner-Priorisierung. Die Hochhaus-Journey modelliert bewusst
+adjazent (kantenteilend), sodass der Egress korrekt verdrahtet ist.
+Status:      doku (V2)

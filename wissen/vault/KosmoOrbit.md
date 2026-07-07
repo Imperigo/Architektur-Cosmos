@@ -73,10 +73,28 @@ Kosmo — eine KI, die jedes Command als Werkzeug hat und nie ungefragt schreibt
   Kontextcursor), dynamisch adaptive Zeichnungsoberfläche (Gruppen treten je
   Tätigkeit/Nutzung zurück, nie umgeordnet, eingefroren während Aktionen,
   zurücksetzbar)» ist umgesetzt. Volle E2E 125/125.
-- **Noch offen für den Fable-Block:** **Serie H** (Vollständige Benutzersimulation,
-  `docs/SERIE-H-VOLLSIMULATION.md`), dann die technischen V2-Blöcke, dann ein
-  frischer Desktop-Build. Reihung: Fable = Chefdenker/Urteil (jetzt auch
-  Orchestrator), Opus = Ausführungs-Harness, Sonnet = Bau.
+- **Serie H — Vollständige Benutzersimulation** ✅ **abgeschlossen (07.07.2026,
+  ROADMAP 171–176):** Fable-Orchestrierung (`docs/SERIE-H-BUILDPLAN.md`) →
+  Harness-Fundament (Journey-Bausteine + Szenarien, API eingefroren), **sechs
+  CH-Haustyp-Journeys** (Umbau·MFH refaktoriert + EFH Hanglage Emmental·
+  Hochhaus Zürich-West·Stadthaus Bern·Blockrand Basel neu), KI-/Imaging-
+  Ehrlichkeits-Checks (prüft den Weg durch die Bridge + die ehrlichen
+  Grenz-Meldungen, nie die GPU-Qualität), append-only Befund-Journal
+  `docs/SIM-BEFUNDE.md` (H-1…H-23). **Drei Fable-Gates** (Review 1/2 +
+  Schlussreview) bestanden; alle sieben Opus-Spec-Korrekturen als berechtigt
+  bestätigt, **kein Produktfehler versteckt**. Volle E2E von 108 (V1) auf
+  **134 grün + 1 ehrlicher Skip** gewachsen, Goldens durchweg byte-identisch
+  (kein Kernel-Diff in ganz Serie H). Ehrliche offene V2-Lücken sauber im
+  Journal geführt (Dach-2D/-Schnitt, `grenzabstandGross`, Checks-Freitext,
+  Panel-slice(0,6), Site-Zonentyp, Raumgraph-Containment).
+- **Noch offen für den Fable-Block:** die **technischen V2-Blöcke** (Fable gab
+  frei, zuerst HomeStation-Kette/Blender-Worker — `sim-ki-imaging.spec.ts` ist
+  das Regressionsnetz dafür: jede echte GPU-Fähigkeit muss beim Landen bewusst
+  ihre Ehrlichkeits-Assertion umstellen, nichts kann still vorgetäuscht
+  werden), dann Auftragsbuch→Ausführung, FreeMesh, signierte Builds, LoRA,
+  SQLite-Journal — dann ein frischer Desktop-Build. Reihung: Fable =
+  Chefdenker/Urteil + Orchestrator, Opus = Ausführungs-Harness + harte
+  Kernteile, Sonnet = Bau.
 
 ## Wie der Vault mit der Software spricht
 
