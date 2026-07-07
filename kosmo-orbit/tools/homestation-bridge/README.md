@@ -197,3 +197,87 @@ denselben Zustandsautomaten wie der Fake-Worker (`kosmo_bridge/main.py`,
 Kein Ergebnis vortäuschen: fehlt die Fähigkeit (kein Blender, kein SfM),
 gehört der Job auf einen ehrlichen `kein-…-worker`-Status mit Begründung, nicht
 auf `done`.
+
+### Dev-Worker andocken (Auftragsbuch → Ausführung)
+
+V2-Technik Block 2 (`docs/V2-TECHNIK-BLOCK2-BUILDPLAN.md`, Entscheid E3):
+KosmoDev sammelt Aufträge im App-Auftragsbuch; der Owner übergibt sie per
+Knopf «An HomeStation übergeben» als **Workorder** (`kosmodev.workorder/v1`,
+Job-Typ `dev-`, eigenes Store-Verzeichnis `STORE/dev/<job_id>/`) an die
+Bridge. Die Bridge speichert und vermittelt **nur Text** — sie führt NIE
+selbst Code aus. Das folgende Protokoll ist normativ: **Claude Code an der
+HomeStation** bedient es ohne Rückfragen.
+
+1. **Offene Workorders sehen** — `GET /jobs/dev?status=queued` (Token-Header
+   wie überall):
+
+   ```bash
+   curl -s -H "X-Kosmo-Token: GEHEIM" \
+     "http://localhost:8600/jobs/dev?status=queued"
+   ```
+
+2. **Die Workorder holen** — `GET /jobs/dev/{id}/workorder` liefert die
+   Aufträge als JSON (`kosmodev.workorder/v1`: `projekt`, `erzeugt_um`,
+   `auftraege[]` mit `id`/`ts`/`text`/`quelle`/`station`/`ort?`). Dieselbe
+   Workorder liegt daneben auch menschlich lesbar im Store unter
+   `dev/<id>/workorder.md`, mit YAML-Frontmatter (`schema`, `job_id`,
+   `projekt`, `erzeugt_um`, `auftrag_ids`) — praktisch, wenn du die Datei
+   direkt im Store liest statt über die Bridge zu fragen.
+
+   ```bash
+   curl -s -H "X-Kosmo-Token: GEHEIM" \
+     http://localhost:8600/jobs/dev/dev-1720000000-a1b2c3/workorder
+   ```
+
+3. **Claimen** — `POST /jobs/dev/{id}/claim` mit `{"worker": "<name>"}` setzt
+   den Job von `queued` auf `running` und trägt den Worker-Namen ein
+   (verhindert Doppelarbeit). Derselbe Name claimt idempotent nach (liefert
+   den bestehenden `running`-Record zurück); ein **zweiter** Worker-Name auf
+   einen bereits `running`-Job bekommt `409`.
+
+   ```bash
+   curl -s -X POST -H "X-Kosmo-Token: GEHEIM" -H "Content-Type: application/json" \
+     -d '{"worker": "claude-code-homestation"}' \
+     http://localhost:8600/jobs/dev/dev-1720000000-a1b2c3/claim
+   ```
+
+4. **Arbeiten — ausserhalb der Bridge.** Die Bridge ist an dieser Stelle
+   fertig: sie hat vermittelt, sie rechnet nichts. Die eigentliche Arbeit
+   läuft im Repo nach dem üblichen Arbeitsmuster dieses Projekts — je Auftrag
+   Feature → Tests → ROADMAP-Eintrag → deutscher Commit. Kein Bridge-Aufruf
+   in diesem Schritt.
+
+5. **Ergebnis melden** — `POST /jobs/dev/{id}/result` mit einem
+   `DevJobResult` (`worker`, `abgeschlossen_um`, `ergebnisse[]`; je Eintrag
+   `auftrag_id`, `umgesetzt`, optional `commit`, optional `notiz`) setzt den
+   Job auf `done`.
+
+   ```bash
+   curl -s -X POST -H "X-Kosmo-Token: GEHEIM" -H "Content-Type: application/json" \
+     -d '{
+       "worker": "claude-code-homestation",
+       "abgeschlossen_um": "2026-07-07T21:00:00Z",
+       "ergebnisse": [
+         {"auftrag_id": "a-1", "umgesetzt": true, "commit": "a1b2c3d", "notiz": "Tests grün"}
+       ]
+     }' \
+     http://localhost:8600/jobs/dev/dev-1720000000-a1b2c3/result
+   ```
+
+   **Ehrlichkeits-Regeln, serverseitig erzwungen** (Buildplan E5 — Belege
+   werden nie gefaked, wie bei den Blender-Simulationen oben): `commit` ist
+   NUR ein Beleg echter Arbeit — ein Result mit `worker: "fake-worker"` und
+   gesetztem `commit`-Feld wird mit `400` abgewiesen. Auf einen bereits
+   `cancelled`-Job wird gar kein Ergebnis mehr angenommen (`409`) — der
+   Abbruch gewinnt.
+
+**Env-Variablen dieses Protokolls:**
+
+- `KOSMO_BRIDGE_MAX_WORKORDER` (Default 1 MB) — Deckel für den
+  JSON-Body von `POST /jobs/dev` (reine Text-Payload, weit über jeder realen
+  Auftragsliste, aber ein harter Riegel gegen Speicher-DoS).
+- `KOSMO_BRIDGE_AUFTRAEGE_DIR` (Default aus) — optionaler Spiegel: ist der
+  Pfad gesetzt, legt die Bridge die menschliche `workorder.md` zusätzlich
+  dort ab (z. B. ein Repo-Verzeichnis `docs/auftraege/`). Ein kaputter
+  Spiegelpfad verhindert die Job-Annahme nicht, wird aber in `message`
+  benannt — best effort, kein stiller Fehlschlag.

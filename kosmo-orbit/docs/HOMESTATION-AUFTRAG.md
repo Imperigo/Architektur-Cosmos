@@ -40,6 +40,35 @@ Verträge (die EINE Wahrheit): `@kosmo/contracts` (`render-scene/v1`,
 `render-result/v2`, `blender-sim/v1`, `bridge-api.ts`). Der Abnahme-Ablauf
 «Kette scharf» steht in `docs/ABNAHME-DREHBUCH.md`.
 
+## 1d. Dev-Worker: Auftragsbuch → Ausführung (V2-Technik Block 2, ROADMAP 186–189)
+
+Der zweite Kreis ist genauso weit gebaut wie die Render-Kette in §1c: **alles
+ist client-/bridge-/vertragsseitig fertig**, es fehlt nur der echte Dev-Worker.
+Das normative Worker-Protokoll (claim → arbeiten → result) steht in
+`tools/homestation-bridge/README.md` («Dev-Worker andocken») — hier die
+Übergabepunkte je Baustein:
+
+| Baustein | Übergabepunkt (Datei / Endpoint / Env) |
+|---|---|
+| **Workorder-Annahme** | KosmoDev (`apps/kosmo-orbit/.../modules/dev/DevWorkspace.tsx`) → Knopf «↥ An HomeStation übergeben» → `state/auftragsbuch.ts` (`uebergebeWorkorder`) → `POST /jobs/dev` (`kosmodev.workorder/v1`, Deckel `KOSMO_BRIDGE_MAX_WORKORDER`, Default 1 MB). Die Bridge legt je Job `dev/<id>/workorder.json` + `workorder.md` (YAML-Frontmatter) im Job-Store an. |
+| **Claim** | `POST /jobs/dev/{id}/claim` mit `{"worker": "<name>"}` — `queued → running`, Doppelclaim eines zweiten Workers → `409`, idempotent für denselben Namen. |
+| **Result (Rückkanal)** | `POST /jobs/dev/{id}/result` (`DevJobResult`: `worker`, `abgeschlossen_um`, `ergebnisse[]` mit `auftrag_id`/`umgesetzt`/`commit?`/`notiz?`) — `running → done`. Der Client (`pruefeDevJobs`) setzt betroffene Aufträge `an-worker → erledigt` und zeigt Worker-Name + Commit + Notiz an der Karte (`auftrag-ergebnis`). |
+| **Spiegel** | `KOSMO_BRIDGE_AUFTRAEGE_DIR` (Default aus) — legt die menschliche `workorder.md` zusätzlich in ein Repo-Verzeichnis (die `docs/auftraege/`-Vision aus `V2-AUFTAKT.md`), best effort, Fehlschlag wird in `message` benannt statt die Job-Annahme zu blockieren. |
+
+Vertrag: `packages/kosmo-contracts/src/dev-workorder.ts` (`kosmodev.workorder/v1`,
+Contract-Freeze seit AB1). Gegen den `--fake-worker` ist der Protokoll-Kreis
+bereits scharf verifiziert (Bridge-Smoke inkl. Fake-Kreis, Client-Unit-Tests
+für die «Simulation»-Kennzeichnung).
+
+**Die ehrliche Grenze:** Ohne einen angedockten echten Dev-Worker bleibt **jeder
+Dev-Job beweisbar `queued`** — der Client sagt es offen («wartet auf Worker —
+an der HomeStation Claude Code andocken»), nie einen vorgetäuschten
+Fortschritt. Der **erste echte Live-Lauf** — Claude Code an der HomeStation
+claimt einen Job, setzt die Aufträge um und meldet ein Result mit echtem
+Commit — ist deshalb HomeStation-Arbeit und zugleich der Abnahme-Beweis:
+`result.worker` ≠ `"fake-worker"` und die gemeldeten Commit-Hashes lassen sich
+im Repo tatsächlich nachschlagen.
+
 ## 2. Training / Wissen (KOSMOTRAIN.md §5)
 
 | Auftrag | Übergabepunkt |

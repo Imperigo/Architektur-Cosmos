@@ -75,6 +75,42 @@ Job-Schleife (Nahtstelle `_fake_worker_step` ersetzen, normatives Protokoll in
 
 Solange ein Punkt scheitert, ist er ehrlich «⏳ HomeStation», nicht «✅».
 
+## Kreis schliessen — Auftragsbuch → Ausführung (V2-Technik Block 2)
+
+Dieser Ablauf nimmt den **zweiten** Kreis ab: KosmoDev sammelt Aufträge,
+Claude Code an der HomeStation setzt sie um. Voraussetzung: die Bridge läuft
+(gegen den echten oder den `--fake-worker` — Schritt 6 ist die Fake-Gegenprobe,
+Schritt 3–5 brauchen den echten Dev-Worker).
+
+1. **Auftrag erfassen** — im Kosmo-Panel «⚑» drücken oder «@kosmodev» sagen,
+   was besser werden soll, oder direkt in KosmoDev tippen (Feld «⚑ Erfassen»).
+   Der Auftrag erscheint im Auftragsbuch mit Status `offen`.
+2. **«An HomeStation übergeben»** → KosmoDev schickt die offenen Aufträge als
+   Workorder an `POST /jobs/dev`; die Statuszeile zeigt sofort **«wartet auf
+   Worker — an der HomeStation Claude Code andocken»**.
+3. **An der HomeStation Claude Code als Dev-Worker starten** — nach dem
+   normativen Protokoll in `tools/homestation-bridge/README.md`
+   («Dev-Worker andocken»): offene Workorder holen, claimen, umsetzen, Result
+   melden.
+4. **Worker claimt** → die Statuszeile in KosmoDev wechselt auf **«Worker
+   ‹Name› arbeitet …»**.
+5. **Worker setzt um + meldet Result mit Commit** → die betroffene
+   Auftrags-Karte springt auf **«erledigt»** mit Commit-Beleg (Worker-Name +
+   Commit-Hash + Notiz an der Karte, `auftrag-ergebnis`).
+6. **Gegenprobe Fake** — gegen `--fake-worker` claimt und meldet die Bridge
+   selbst (`_fake_dev_worker_step`): die Karte springt ebenfalls auf
+   «erledigt», aber mit dem Badge **«fake-worker · Simulation»** und **OHNE**
+   Commit-Hash — kein erfundener Beleg, die Notiz sagt offen «Simulation —
+   keine echte Umsetzung».
+7. **Offline-Gegenprobe** — ohne erreichbare Bridge (oder falscher Token)
+   meldet KosmoDev die ehrliche Zeile «Bridge nicht erreichbar — Status
+   unbekannt (Offline)» bzw. «Bridge lehnt ab — Token fehlt oder ist falsch»;
+   die Aufträge bleiben unangetastet `offen`, es wird kein Ergebnis
+   vorgetäuscht.
+
+Solange (3)–(5) nicht live an der HomeStation gelaufen sind, ist der Punkt
+ehrlich «⏳ HomeStation», nicht «✅».
+
 ## Wenn etwas klemmt
 
 - **Kosmo-Panel → Zahnrad → Diagnose**: prüft Kern, Ableitung, LLM, Bridge,

@@ -46,11 +46,21 @@ Reihenfolge = Nutzen × Owner-Wunsch. Aufwand grob (S/M/L).
 2. **Blender als Worker (M)** — headless Cycles-Render + Wind-/Sonnen-/
    Gebäudesimulation als Job-Typen. **Kein Fork** (Begründung TECH-RADAR
    04.07.). GLB-Export trägt schon lesbare Namen + Material-Slots in Metern.
-3. **Selbst-entwickelnd: Auftragsbuch → Ausführung (M)** — KosmoDev sammelt heute
-   Aufträge und exportiert die Fable-Workorder (`state/auftragsbuch.ts`). V2
-   schliesst den Kreis: der Worker liest `docs/auftraege/*.md` und arbeitet sie
-   ab (der Owner spricht die Verbesserung, zeigt wo, KosmoDev/ein Fable-Worker
-   setzt sie um).
+3. **Selbst-entwickelnd: Auftragsbuch → Ausführung (M)** ✅ Kreis client-/
+   bridge-/vertragsseitig gebaut (ROADMAP 186–189, `docs/V2-TECHNIK-BLOCK2-
+   BUILDPLAN.md`): Contract `kosmodev.workorder/v1` (append-only, seit AB1
+   eingefroren), Bridge-Job-Typ `dev-` (`POST /jobs/dev` + claim→result,
+   `tools/homestation-bridge/kosmo_bridge/main.py`), KosmoDev-Übergabe
+   («↥ An HomeStation übergeben») + Rückkanal (`ergebnis` an der
+   Auftrags-Karte, Worker-Name + Commit + Notiz). Gegen `--fake-worker`
+   verifiziert (Bridge-Smoke inkl. Fake-Kreis + Client-Unit-Tests für die
+   «Simulation»-Kennzeichnung, `ROADMAP 188/189`) — der Download-Export bleibt
+   der Offline-Fallback. **Offen bleibt ehrlich NUR** der erste Live-Lauf mit
+   einem echten Dev-Worker (Claude Code an der HomeStation claimt, setzt um,
+   meldet einen echten Commit) — Protokoll dazu in
+   `tools/homestation-bridge/README.md` («Dev-Worker andocken»), Übergabepunkte
+   in `docs/HOMESTATION-AUFTRAG.md` §1d, Abnahme-Ablauf in
+   `docs/ABNAHME-DREHBUCH.md` («Kreis schliessen»).
 4. **FreeMesh-Modellieren Stufe 3 (L, Owner-Q9)** — freies Mesh im Viewport;
    bis dahin ist Blender die externe Werkbank (GLB-Roundtrip via KosmoAsset).
 5. **Signierte Builds + Auto-Update (S/M)** — mit Apple-Konto und Tauri-Updater-
