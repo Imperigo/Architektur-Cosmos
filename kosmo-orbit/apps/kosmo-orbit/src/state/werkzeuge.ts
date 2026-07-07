@@ -15,6 +15,29 @@ import type { Betriebsart } from '@kosmo/ai';
 /** Wie der Assistent den Zustand erkennt. */
 export type Pruefung = 'ollama' | 'bridge' | 'sync' | 'konto' | 'manuell';
 
+/** Betriebssystem-Achse für die maschinen-ausführbaren Befehle (V1.6 Block A). */
+export type Plattform = 'win' | 'mac' | 'linux';
+
+/**
+ * Allowlist der Installer-Programme (V1.6 Block A / A2, Serie-I-konform): der
+ * Auto-Setup darf NUR diese Erstbefehle ausführen — kein aus der App
+ * zusammengebauter beliebiger Shell-String. Jeder `install`-Befehl unten wird
+ * gegen diese Liste geprüft (`istErlaubterBefehl`), bevor ein Runner ihn je
+ * anfassen darf.
+ */
+export const ERLAUBTE_INSTALLER = [
+  'winget',
+  'brew',
+  'curl',
+  'ollama',
+  'pip',
+  'pip3',
+  'python',
+  'python3',
+  'node',
+] as const;
+export type ErlaubterInstaller = (typeof ERLAUBTE_INSTALLER)[number];
+
 export interface Werkzeug {
   id: string;
   name: string;
@@ -23,8 +46,16 @@ export interface Werkzeug {
   editionen: Betriebsart[];
   /** Grobe Grösse (für die «passt das noch»-Einschätzung). */
   groesse: string;
-  /** Wie man es holt — Befehl oder Quelle, copy-fertig. */
+  /** Wie man es holt — Befehl oder Quelle, copy-fertig (menschenlesbar). */
   holen: string;
+  /**
+   * Maschinen-ausführbare Installations-Befehle je Plattform (V1.6 Block A).
+   * Ein Eintrag = EIN Befehl (Programm + Argumente, bereits getrennt — kein
+   * Parsen eines Strings). Fehlt eine Plattform, ist dieses Werkzeug dort
+   * NICHT auto-installierbar (der Assistent zeigt dann nur `holen`). Der erste
+   * Eintrag jedes Befehls MUSS in ERLAUBTE_INSTALLER stehen.
+   */
+  install?: Partial<Record<Plattform, string[][]>>;
   pruefung: Pruefung;
   /** Kern (ohne läuft die Betriebsart nicht) vs. optional/V2. */
   pflicht: boolean;
@@ -38,6 +69,11 @@ export const WERKZEUGE: Werkzeug[] = [
     editionen: ['standard', 'remote'],
     groesse: '~50 MB',
     holen: 'winget install Ollama.Ollama  ·  macOS: brew install ollama  ·  Linux: curl -fsSL https://ollama.com/install.sh | sh',
+    install: {
+      win: [['winget', 'install', '--id', 'Ollama.Ollama', '-e', '--accept-source-agreements', '--accept-package-agreements']],
+      mac: [['brew', 'install', 'ollama']],
+      linux: [['curl', '-fsSL', 'https://ollama.com/install.sh', '-o', '/tmp/ollama-install.sh']],
+    },
     pruefung: 'ollama',
     pflicht: true,
   },
@@ -48,6 +84,13 @@ export const WERKZEUGE: Werkzeug[] = [
     editionen: ['standard', 'remote'],
     groesse: '~20 GB (8b ≈ 5 GB)',
     holen: 'ollama pull qwen3-coder:30b   (schwächer: ollama pull qwen3:8b)',
+    // Grosser Download (~20 GB) — der Assistent zeigt die Grösse VOR dem Klick
+    // und lädt nur nach ausdrücklichem OK (Buildplan Block A / A4).
+    install: {
+      win: [['ollama', 'pull', 'qwen3-coder:30b']],
+      mac: [['ollama', 'pull', 'qwen3-coder:30b']],
+      linux: [['ollama', 'pull', 'qwen3-coder:30b']],
+    },
     pruefung: 'ollama',
     pflicht: true,
   },
@@ -58,6 +101,14 @@ export const WERKZEUGE: Werkzeug[] = [
     editionen: ['standard', 'remote'],
     groesse: 'Python + wenige MB',
     holen: 'pip install fastapi uvicorn python-multipart httpx  ·  python3 tools/homestation-bridge/kosmo_bridge/main.py --port 8600',
+    // Nur die Python-Abhängigkeiten werden auto-installiert; das Starten der
+    // Bridge selbst bleibt eine bewusste Nutzer-Handlung (ein laufender Server
+    // ist kein Installations-Schritt — Serie-I-Grenze).
+    install: {
+      win: [['pip', 'install', 'fastapi', 'uvicorn', 'python-multipart', 'httpx']],
+      mac: [['pip3', 'install', 'fastapi', 'uvicorn', 'python-multipart', 'httpx']],
+      linux: [['pip3', 'install', 'fastapi', 'uvicorn', 'python-multipart', 'httpx']],
+    },
     pruefung: 'bridge',
     pflicht: true,
   },
@@ -78,6 +129,10 @@ export const WERKZEUGE: Werkzeug[] = [
     editionen: ['standard', 'remote'],
     groesse: '~300 MB',
     holen: 'https://www.blender.org/download/  (oder: winget install BlenderFoundation.Blender)',
+    install: {
+      win: [['winget', 'install', '--id', 'BlenderFoundation.Blender', '-e', '--accept-source-agreements', '--accept-package-agreements']],
+      mac: [['brew', 'install', '--cask', 'blender']],
+    },
     pruefung: 'manuell',
     pflicht: false,
   },
@@ -128,4 +183,48 @@ export function werkzeugeFuer(betriebsart: Betriebsart): Werkzeug[] {
   return WERKZEUGE.filter((w) => w.editionen.includes(betriebsart)).sort(
     (a, b) => Number(b.pflicht) - Number(a.pflicht),
   );
+}
+
+/**
+ * Plattform aus einem `navigator.platform`/UA-String ableiten (rein testbar —
+ * kein Zugriff auf globale Objekte). Fällt auf 'linux' zurück, wenn nichts
+ * passt (der konservativste Auto-Setup-Weg: curl/pip statt winget/brew).
+ */
+export function plattformAus(kennung: string): Plattform {
+  const s = kennung.toLowerCase();
+  if (s.includes('win')) return 'win';
+  if (s.includes('mac') || s.includes('darwin') || s.includes('iphone') || s.includes('ipad')) return 'mac';
+  return 'linux';
+}
+
+/**
+ * Ist ein einzelner Befehl (Programm + Argumente) erlaubt? Der erste Eintrag
+ * MUSS in ERLAUBTE_INSTALLER stehen (V1.6 Block A / A2, Serie-I-konform).
+ * Zusätzlich: kein Argument darf Shell-Metazeichen enthalten — der Runner
+ * führt Programm+Args als Array aus (kein Shell-Parsing), aber die Prüfung
+ * hält auch versehentlich eingeschleuste Pipes/Semikolons ab.
+ */
+export function istErlaubterBefehl(befehl: readonly string[]): boolean {
+  if (befehl.length === 0) return false;
+  if (!(ERLAUBTE_INSTALLER as readonly string[]).includes(befehl[0]!)) return false;
+  return befehl.every((teil) => teil.length > 0 && !/[;&|`$(){}<>\n]/.test(teil));
+}
+
+/**
+ * Die maschinen-ausführbaren Befehle eines Werkzeugs für eine Plattform —
+ * oder `null`, wenn dort NICHT auto-installierbar (der Assistent zeigt dann
+ * nur `holen`). Jeder gelieferte Befehl ist gegen die Allowlist geprüft;
+ * schlägt EIN Befehl durch, gilt das ganze Werkzeug als nicht auto-fähig
+ * (fail closed — lieber der manuelle Weg als ein ungeprüfter Befehl).
+ */
+export function installBefehleFuer(werkzeug: Werkzeug, plattform: Plattform): string[][] | null {
+  const befehle = werkzeug.install?.[plattform];
+  if (!befehle || befehle.length === 0) return null;
+  if (!befehle.every((b) => istErlaubterBefehl(b))) return null;
+  return befehle.map((b) => [...b]);
+}
+
+/** Kann dieses Werkzeug auf dieser Plattform automatisch geholt werden? */
+export function istAutoInstallierbar(werkzeug: Werkzeug, plattform: Plattform): boolean {
+  return installBefehleFuer(werkzeug, plattform) !== null;
 }
