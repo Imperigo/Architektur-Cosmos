@@ -1,5 +1,5 @@
 import { strToU8, strFromU8, zipSync, unzipSync } from 'fflate';
-import { KosmoDoc, type JournalEntry } from '@kosmo/kernel';
+import { KosmoDoc, type JournalEntry, parseKosmoSafe, safeJsonParse } from '@kosmo/kernel';
 import { useProject } from './project-store';
 
 /**
@@ -7,6 +7,71 @@ import { useProject } from './project-store';
  * Inhalt nach kosmo.project/v1-Manifest: model/model.json, memory/journal.jsonl.
  * Kompatibel gedacht zur kosmo.project.json-Kultur der HomeStation-Lanes.
  */
+
+/**
+ * Deckel auf die (komprimierte) .kosmo-Datei selbst, VOR dem Entpacken —
+ * gespiegelt vom Bridge-Upload-Deckel (Serie I / B4,
+ * `KOSMO_BRIDGE_MAX_UPLOAD_MODEL`). Bremst kein echtes Projekt (die liegen im
+ * MB-Bereich), verhindert aber, dass eine absurd grosse Datei überhaupt
+ * entpackt wird. Restgrenze, ehrlich benannt: eine echte Zip-Bombe (winzig
+ * komprimiert, riesig entpackt) bleibt möglich — `fflate`s `unzipSync`
+ * entpackt synchron ohne Zwischendeckel; der Text-Deckel in `parseKosmoSafe`
+ * greift erst NACH dem Entpacken.
+ */
+const MAX_PAKET_BYTES = 200 * 1024 * 1024;
+
+export type KosmoPaketResult =
+  | { ok: true; doc: KosmoDoc; journal: JournalEntry[] }
+  | { ok: false; fehler: string };
+
+/**
+ * Reine, testbare Funktion (Serie I / B7): Zip-Bytes → geprüftes
+ * `{doc, journal}` oder ein definierter Fehler. Wirft NIE — jeder Fehlerfall
+ * (kaputtes Zip, fehlendes model.json, verseuchtes/übergrosses/zu tiefes
+ * JSON, kaputte Journal-Zeile) kommt als `{ok:false, fehler}` zurück.
+ * `openProjectFile` ist nur noch die dünne DOM/State-Hülle darum — bei
+ * `ok:false` wird KEIN State geschrieben.
+ */
+export function parseKosmoPaket(bytes: Uint8Array): KosmoPaketResult {
+  if (bytes.byteLength === 0) return { ok: false, fehler: 'leere Datei' };
+  if (bytes.byteLength > MAX_PAKET_BYTES) {
+    return { ok: false, fehler: `Paket zu gross (> ${Math.round(MAX_PAKET_BYTES / (1024 * 1024))} MB)` };
+  }
+  let files: ReturnType<typeof unzipSync>;
+  try {
+    files = unzipSync(bytes);
+  } catch (err) {
+    return { ok: false, fehler: `kein gültiges .kosmo-Paket (Zip kaputt): ${err instanceof Error ? err.message : String(err)}` };
+  }
+  const modelRaw = files['model/model.json'];
+  if (!modelRaw) return { ok: false, fehler: 'kein model/model.json im Paket' };
+  let modelText: string;
+  try {
+    modelText = strFromU8(modelRaw);
+  } catch (err) {
+    return { ok: false, fehler: `model.json nicht lesbar: ${err instanceof Error ? err.message : String(err)}` };
+  }
+  const modell = parseKosmoSafe(modelText);
+  if (!modell.ok) return { ok: false, fehler: `model.json: ${modell.fehler}` };
+
+  const journalRaw = files['memory/journal.jsonl'];
+  const journal: JournalEntry[] = [];
+  if (journalRaw) {
+    let journalText: string;
+    try {
+      journalText = strFromU8(journalRaw);
+    } catch (err) {
+      return { ok: false, fehler: `journal.jsonl nicht lesbar: ${err instanceof Error ? err.message : String(err)}` };
+    }
+    for (const zeile of journalText.split('\n')) {
+      if (!zeile) continue;
+      const geparst = safeJsonParse(zeile);
+      if (!geparst.ok) return { ok: false, fehler: `journal.jsonl: ${geparst.fehler}` };
+      journal.push(geparst.value as JournalEntry);
+    }
+  }
+  return { ok: true, doc: modell.doc, journal };
+}
 
 export function packProject(): Uint8Array {
   const { doc, journal } = useProject.getState();
@@ -46,17 +111,9 @@ export function downloadProject(): void {
 
 export async function openProjectFile(file: File): Promise<void> {
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const files = unzipSync(bytes);
-  const modelRaw = files['model/model.json'];
-  if (!modelRaw) throw new Error('Kein model/model.json im Paket');
-  const doc = KosmoDoc.fromJSON(JSON.parse(strFromU8(modelRaw)));
-  const journalRaw = files['memory/journal.jsonl'];
-  const journal: JournalEntry[] = journalRaw
-    ? strFromU8(journalRaw)
-        .split('\n')
-        .filter(Boolean)
-        .map((l) => JSON.parse(l) as JournalEntry)
-    : [];
+  const result = parseKosmoPaket(bytes);
+  if (!result.ok) throw new Error(`Projekt-Paket beschädigt: ${result.fehler}`);
+  const { doc, journal } = result;
   const storeys = doc.storeysOrdered();
   const { History } = await import('@kosmo/kernel');
   useProject.setState({

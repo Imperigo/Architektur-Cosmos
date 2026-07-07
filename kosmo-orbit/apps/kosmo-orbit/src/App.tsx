@@ -828,7 +828,11 @@ function VariantenArchiv({ onOpen }: { onOpen: () => void }) {
                 size="sm"
                 tone="quiet"
                 data-testid="variante-oeffnen"
-                onClick={() => void oeffneVariante(v.id).then(onOpen)}
+                onClick={() =>
+                  void oeffneVariante(v.id)
+                    .then(onOpen)
+                    .catch((err) => meldeFehler(`Variante konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`))
+                }
               >
                 Als Projekt öffnen
               </KButton>
@@ -943,7 +947,11 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
                 size="sm"
                 tone="quiet"
                 data-testid={`projekt-oeffnen-${p.id}`}
-                onClick={() => void oeffneProjekt(p.id).then(onOpen)}
+                onClick={() =>
+                  void oeffneProjekt(p.id)
+                    .then(onOpen)
+                    .catch((err) => meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`))
+                }
               >
                 Öffnen
               </KButton>

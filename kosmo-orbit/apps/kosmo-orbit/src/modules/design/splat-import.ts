@@ -18,8 +18,23 @@ export interface SplatCloud {
 
 const SH_C0 = 0.28209479177387814;
 
+/**
+ * Serie I / B7 — Import-Härtung: Deckel gegen absurd grosse .splat/.ply-
+ * Dateien (OOM-Bremse), bevor überhaupt eine Vertex-Zahl aus dem Header
+ * gelesen/verarbeitet wird. 300 MB deckt reale Punktwolken grosszügig ab.
+ */
+export const MAX_SPLAT_BYTES = 300 * 1024 * 1024;
+
+/** Obergrenze für eine aus dem PLY-Header gelesene Vertex-Zahl — hält eine
+ * gefälschte/absurde Kopfzeile (z.B. `element vertex 999999999999`) davon ab,
+ * überhaupt einen Allokationsversuch auszulösen. */
+export const MAX_PLY_VERTICES = 50_000_000;
+
 /** antimatter15 .splat: 32 Bytes/Splat — pos f32×3, scale f32×3, rgba u8×4, quat u8×4. */
 export function parseSplatFile(buffer: ArrayBuffer): SplatCloud {
+  if (buffer.byteLength > MAX_SPLAT_BYTES) {
+    throw new Error(`.splat: Datei zu gross (> ${Math.round(MAX_SPLAT_BYTES / (1024 * 1024))} MB)`);
+  }
   const count = Math.floor(buffer.byteLength / 32);
   const view = new DataView(buffer);
   const positions = new Float32Array(count * 3);
@@ -44,6 +59,9 @@ export function parseSplatFile(buffer: ArrayBuffer): SplatCloud {
 
 /** Gaussian-PLY (INRIA-Stil): binary_little_endian mit x/y/z, f_dc_*, opacity, scale_*. */
 export function parsePlyGaussian(buffer: ArrayBuffer): SplatCloud {
+  if (buffer.byteLength > MAX_SPLAT_BYTES) {
+    throw new Error(`PLY: Datei zu gross (> ${Math.round(MAX_SPLAT_BYTES / (1024 * 1024))} MB)`);
+  }
   const headerBytes = new Uint8Array(buffer, 0, Math.min(buffer.byteLength, 64 * 1024));
   const headerText = new TextDecoder('ascii').decode(headerBytes);
   const endTag = 'end_header\n';
@@ -56,6 +74,9 @@ export function parsePlyGaussian(buffer: ArrayBuffer): SplatCloud {
   const countMatch = header.match(/element vertex (\d+)/);
   if (!countMatch) throw new Error('PLY: element vertex fehlt');
   const count = Number(countMatch[1]);
+  if (!Number.isInteger(count) || count < 0 || count > MAX_PLY_VERTICES) {
+    throw new Error(`PLY: unplausible Vertex-Zahl im Header (${countMatch[1]})`);
+  }
 
   // Property-Layout lesen (alle als float32 — Gaussian-PLYs sind so)
   const props: string[] = [];
@@ -72,30 +93,42 @@ export function parsePlyGaussian(buffer: ArrayBuffer): SplatCloud {
   const ired = idx('red'), igreen = idx('green'), iblue = idx('blue');
 
   const stride = props.length;
-  const data = new Float32Array(buffer, endIdx + endTag.length, count * stride);
+  const datenStart = endIdx + endTag.length;
+  const benoetigteBytes = count * stride * 4;
+  if (stride <= 0 || datenStart + benoetigteBytes > buffer.byteLength) {
+    throw new Error('PLY: abgeschnitten (Header verspricht mehr Vertices als Bytes vorhanden sind)');
+  }
+  // B7-Fund: eine DataView statt einer Float32Array-Sicht auf den Rohbuffer —
+  // `datenStart` (Headerlänge) ist bei echten PLY-Dateien so gut wie nie
+  // durch 4 teilbar (variable Kommentare/Property-Zeilen), eine
+  // `Float32Array(buffer, datenStart, …)`-Sicht würde dann mit einem
+  // RangeError auf gültigen Dateien crashen. DataView kennt diese
+  // Alignment-Pflicht nicht.
+  const dv = new DataView(buffer, datenStart, benoetigteBytes);
+  const data = (i: number) => dv.getFloat32(i * 4, true);
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 4);
   const sizes = new Float32Array(count);
   for (let i = 0; i < count; i++) {
     const o = i * stride;
-    positions[i * 3] = data[o + ix]!;
-    positions[i * 3 + 1] = data[o + iy]!;
-    positions[i * 3 + 2] = data[o + iz]!;
+    positions[i * 3] = data(o + ix);
+    positions[i * 3 + 1] = data(o + iy);
+    positions[i * 3 + 2] = data(o + iz);
     if (ir !== -1) {
-      colors[i * 4] = clamp01(0.5 + SH_C0 * data[o + ir]!);
-      colors[i * 4 + 1] = clamp01(0.5 + SH_C0 * data[o + ig]!);
-      colors[i * 4 + 2] = clamp01(0.5 + SH_C0 * data[o + ib]!);
+      colors[i * 4] = clamp01(0.5 + SH_C0 * data(o + ir));
+      colors[i * 4 + 1] = clamp01(0.5 + SH_C0 * data(o + ig));
+      colors[i * 4 + 2] = clamp01(0.5 + SH_C0 * data(o + ib));
     } else if (ired !== -1) {
-      colors[i * 4] = data[o + ired]! / 255;
-      colors[i * 4 + 1] = data[o + igreen]! / 255;
-      colors[i * 4 + 2] = data[o + iblue]! / 255;
+      colors[i * 4] = data(o + ired) / 255;
+      colors[i * 4 + 1] = data(o + igreen) / 255;
+      colors[i * 4 + 2] = data(o + iblue) / 255;
     } else {
       colors[i * 4] = colors[i * 4 + 1] = colors[i * 4 + 2] = 0.6;
     }
-    colors[i * 4 + 3] = io !== -1 ? 1 / (1 + Math.exp(-data[o + io]!)) : 1;
+    colors[i * 4 + 3] = io !== -1 ? 1 / (1 + Math.exp(-data(o + io))) : 1;
     sizes[i] =
       is0 !== -1
-        ? Math.max((Math.exp(data[o + is0]!) + Math.exp(data[o + is1]!) + Math.exp(data[o + is2]!)) / 3, 0.001)
+        ? Math.max((Math.exp(data(o + is0)) + Math.exp(data(o + is1)) + Math.exp(data(o + is2))) / 3, 0.001)
         : 0.02;
   }
   return { positions, colors, sizes, count };

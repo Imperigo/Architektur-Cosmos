@@ -1,4 +1,4 @@
-import { History, KosmoDoc, type DocJson } from '@kosmo/kernel';
+import { History, KosmoDoc, parseDocJson, type DocJson } from '@kosmo/kernel';
 import { useProject } from './project-store';
 
 /**
@@ -169,8 +169,20 @@ export async function initVault(): Promise<void> {
   });
 }
 
+/**
+ * Serie I / B7: auch Tresor-Records (IndexedDB) laufen nie durch
+ * `JSON.parse` — trotzdem durch dieselbe Struktur-/Prototype-Pollution-
+ * Schranke wie ein `.kosmo`-Datei-Import, bevor sie den lebenden State
+ * erreichen. Wirft einen sprechenden Fehler statt still Müll zu laden oder
+ * auf einer kaputten Form zu crashen; die Aufrufer (`initVault`,
+ * `oeffneProjekt`, `oeffneJsonAlsNeuesProjekt`) schreiben dann keinen State.
+ */
 function ladeJson(json: DocJson): void {
-  const doc = KosmoDoc.fromJSON(json);
+  const geprueft = parseDocJson(json);
+  if (!geprueft.ok) {
+    throw new Error(`Projekt-Daten beschädigt: ${geprueft.fehler}`);
+  }
+  const doc = KosmoDoc.fromJSON(geprueft.value);
   const storeys = doc.storeysOrdered();
   useProject.setState({
     doc,
@@ -191,9 +203,12 @@ export async function listeProjekte(): Promise<Omit<VaultEintrag, 'json'>[]> {
 export async function oeffneProjekt(id: string): Promise<void> {
   const rec = await tx<VaultEintrag | undefined>('readonly', (s) => s.get(id));
   if (!rec) throw new Error('Projekt nicht gefunden');
+  // B7-Härtung: ERST laden (wirft bei beschädigten Daten, schreibt dann
+  // nichts), DANACH den aktiven Zeiger umstellen — sonst zeigt aktivId nach
+  // einem abgelehnten Laden auf ein Projekt, dessen State nie geschrieben wurde.
+  ladeJson(rec.json);
   aktivId = id;
   speicher?.setItem(AKTIV_KEY, id);
-  ladeJson(rec.json);
 }
 
 export async function loescheProjekt(id: string): Promise<void> {
@@ -202,9 +217,11 @@ export async function loescheProjekt(id: string): Promise<void> {
 
 /** Doc-JSON als NEUES Projekt öffnen (A5: Variante aus dem Archiv holen). */
 export function oeffneJsonAlsNeuesProjekt(json: DocJson): void {
+  // B7-Härtung: gleiche Reihenfolge wie oeffneProjekt — erst laden (wirft bei
+  // beschädigten Daten), erst danach den neuen aktiven Zeiger setzen.
+  ladeJson(json);
   aktivId = `projekt-${Date.now().toString(36)}`;
   speicher?.setItem(AKTIV_KEY, aktivId);
-  ladeJson(json);
 }
 
 /** Neues, leeres Projekt (Bootstrap macht die Werkstatt beim Öffnen). */

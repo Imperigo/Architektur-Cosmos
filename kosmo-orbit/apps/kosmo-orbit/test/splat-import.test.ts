@@ -2,8 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   cropSplat,
   decimateSplat,
+  parsePlyGaussian,
+  parseSplatCloud,
   parseSplatFile,
   writeSplatFile,
+  MAX_SPLAT_BYTES,
   type SplatCloud,
 } from '../src/modules/design/splat-import';
 
@@ -98,5 +101,80 @@ describe('decimateSplat — Ausdünnen fürs flüssige Anzeigen', () => {
     const duenn = decimateSplat(cloud, 2);
     expect(duenn.count).toBe(5);
     expect(Array.from({ length: 5 }, (_, i) => duenn.positions[i * 3])).toEqual([0, 2, 4, 6, 8]);
+  });
+});
+
+/** Baut einen minimalen Gaussian-PLY-Header (binary_little_endian, x/y/z) mit
+ * einer wählbaren `element vertex`-Zahl — für die Fuzz-Fälle unten. */
+function baueGaussianPlyBuffer(vertexAnzahl: number, echteVertexBytes: number): ArrayBuffer {
+  const header =
+    'ply\nformat binary_little_endian 1.0\n' +
+    `element vertex ${vertexAnzahl}\n` +
+    'property float x\nproperty float y\nproperty float z\n' +
+    'end_header\n';
+  const headerBytes = new TextEncoder().encode(header);
+  const buffer = new ArrayBuffer(headerBytes.length + echteVertexBytes);
+  new Uint8Array(buffer).set(headerBytes, 0);
+  return buffer;
+}
+
+describe('Fuzz-Korpus (Serie I / B7 — Parser-Robustheit): kaputte/bösartige Splat-Dateien', () => {
+  it('parseSplatFile: leerer Buffer ergibt eine leere Wolke statt Absturz', () => {
+    expect(() => parseSplatFile(new ArrayBuffer(0))).not.toThrow();
+    expect(parseSplatFile(new ArrayBuffer(0)).count).toBe(0);
+  });
+
+  it('parseSplatFile: abgeschnittener Buffer (kein Vielfaches von 32 Bytes) crasht nicht', () => {
+    const angeschnitten = new ArrayBuffer(50); // 1 volle Splat-Zeile + Rest verworfen
+    expect(() => parseSplatFile(angeschnitten)).not.toThrow();
+    expect(parseSplatFile(angeschnitten).count).toBe(1);
+  });
+
+  it('parseSplatFile: übergrosse Datei → definierter Fehler statt Hänger', () => {
+    const riesig = new ArrayBuffer(MAX_SPLAT_BYTES + 32);
+    expect(() => parseSplatFile(riesig)).toThrow(/zu gross/);
+  });
+
+  it('parsePlyGaussian: leerer Buffer → definierter Fehler, kein Absturz', () => {
+    expect(() => parsePlyGaussian(new ArrayBuffer(0))).toThrow(/end_header/);
+  });
+
+  it('parsePlyGaussian: kaputtes/fremdes Geschwafel statt PLY → definierter Fehler', () => {
+    const muell = new TextEncoder().encode('DAS IST KEIN PLY %%%% ???');
+    expect(() => parsePlyGaussian(muell.buffer as ArrayBuffer)).toThrow(/end_header/);
+  });
+
+  it('parsePlyGaussian: Header verspricht mehr Vertices als Bytes vorhanden (abgeschnitten) → definierter Fehler', () => {
+    // Header sagt 1000 Vertices, aber es folgt nur 1 einziger Vertex an Bytes.
+    const buffer = baueGaussianPlyBuffer(1000, 3 * 4);
+    expect(() => parsePlyGaussian(buffer)).toThrow(/abgeschnitten/);
+  });
+
+  it('parsePlyGaussian: absurde Vertex-Zahl im Header → definierter Fehler statt Allokationsversuch', () => {
+    const buffer = baueGaussianPlyBuffer(999_999_999_999, 0);
+    expect(() => parsePlyGaussian(buffer)).toThrow(/unplausible Vertex-Zahl/);
+  });
+
+  it('parsePlyGaussian: übergrosse Datei → definierter Fehler statt Hänger', () => {
+    const riesig = new ArrayBuffer(MAX_SPLAT_BYTES + 32);
+    expect(() => parsePlyGaussian(riesig)).toThrow(/zu gross/);
+  });
+
+  it('parsePlyGaussian: gültige kleine Datei lädt weiterhin normal (Positivfall)', () => {
+    const buffer = baueGaussianPlyBuffer(2, 2 * 3 * 4);
+    // Absichtlich per DataView geschrieben statt Float32Array — der
+    // Header-Offset ist bei echten PLYs so gut wie nie 4-Byte-aligned
+    // (siehe B7-Fund oben), das ist genau der Fall, den dieser Test beweist.
+    const dv = new DataView(buffer, buffer.byteLength - 2 * 3 * 4);
+    [1, 2, 3, 4, 5, 6].forEach((v, i) => dv.setFloat32(i * 4, v, true));
+    const cloud = parsePlyGaussian(buffer);
+    expect(cloud.count).toBe(2);
+    expect(cloud.positions[0]).toBe(1);
+    expect(cloud.positions[5]).toBe(6);
+  });
+
+  it('parseSplatCloud: Dateiname entscheidet .ply vs .splat, beide Fehlerpfade bleiben definiert', () => {
+    expect(() => parseSplatCloud('kaputt.ply', new ArrayBuffer(4))).toThrow();
+    expect(() => parseSplatCloud('kaputt.splat', new ArrayBuffer(4))).not.toThrow(); // 4 Bytes < 32 → count 0, kein Crash
   });
 });

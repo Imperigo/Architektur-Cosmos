@@ -2,6 +2,7 @@ export * from './model/units';
 export * from './model/ids';
 export * from './model/entities';
 export * from './model/doc';
+export * from './model/parse-guard';
 export * from './commands/core';
 export * from './commands/design';
 export * from './commands/publish';

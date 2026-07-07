@@ -16,6 +16,7 @@ import {
   type KosmodataRefKind,
   type RightsStatus,
 } from '../../state/asset-bibliothek';
+import { pruefeGlbHeader } from '../../state/glb-guard';
 
 /**
  * KosmoAsset (V1-Finish P3, Owner-Q14) — die Bibliothek der Dinge:
@@ -243,9 +244,22 @@ export function AssetWorkspace() {
     input.multiple = true;
     input.onchange = async () => {
       try {
-        for (const f of [...(input.files ?? [])]) await speichereGlb(f);
+        // B7-Härtung: Header+Grösse VOR dem Speichern prüfen — abgeschnittene/
+        // gefälschte/übergrosse Dateien schreiben nie einen Tresor-Eintrag.
+        let importiert = 0;
+        const abgelehnt: string[] = [];
+        for (const f of [...(input.files ?? [])]) {
+          const guard = pruefeGlbHeader(await f.arrayBuffer());
+          if (!guard.ok) {
+            abgelehnt.push(`«${f.name}»: ${guard.fehler}`);
+            continue;
+          }
+          await speichereGlb(f);
+          importiert++;
+        }
         laden();
-        melde(`${input.files?.length ?? 0} Objekt(e) in der Bibliothek`, { ton: 'erfolg' });
+        if (importiert > 0) melde(`${importiert} Objekt(e) in der Bibliothek`, { ton: 'erfolg' });
+        if (abgelehnt.length > 0) meldeFehler(`Abgelehnt: ${abgelehnt.join('; ')}`);
       } catch (err) {
         meldeFehler(err);
       }
