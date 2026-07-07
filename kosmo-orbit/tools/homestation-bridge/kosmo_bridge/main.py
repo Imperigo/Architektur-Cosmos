@@ -47,7 +47,10 @@ from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 
-from kosmo_bridge.lizenz import ED25519_LIB, ist_widerrufen, lade_widerrufsliste, lizenz_pruefen
+try:  # als Paket (python3 -m kosmo_bridge.main) UND als Skript (python3 …/main.py)
+    from kosmo_bridge.lizenz import ED25519_LIB, ist_widerrufen, lade_widerrufsliste, lizenz_pruefen
+except ModuleNotFoundError:  # Skript-Modus: das eigene Verzeichnis liegt auf sys.path
+    from lizenz import ED25519_LIB, ist_widerrufen, lade_widerrufsliste, lizenz_pruefen
 
 
 def _cors_origins() -> list[str]:
