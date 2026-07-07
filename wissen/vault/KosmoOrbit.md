@@ -53,12 +53,21 @@ Kosmo — eine KI, die jedes Command als Werkzeug hat und nie ungefragt schreibt
   drei Profile), Serie F (Rollenprofile + neue Abteilungen, Erfahrungsstufen
   simple/ausgewogen/experte), **Serie G (Kosmo als Benutzer-Guide** — führt vom
   Erstkontakt bis zum Experten, `kosmo-orbit/docs/SERIE-G-KOSMO-ALS-BENUTZERGUIDE.md`).
-- **V2-Konzepte für den 6-Uhr-Fable-Start:** **Serie H** (Vollständige
-  Benutzersimulation, `docs/SERIE-H-VOLLSIMULATION.md`), **Serie I** (Cybersecurity/
-  Anti-Copy/Firewall, `docs/SERIE-I-SICHERHEIT.md`), **Serie J** (Intuitive
-  Bedienung & adaptive Oberfläche — Touch/Gesten + Maus im 3D + adaptive
-  Zeichnungsoberfläche, `docs/SERIE-J-INTUITIVE-BEDIENUNG.md`). Reihung:
-  Fable = Chefdenker/Urteil, Opus = Orchestrierung, Sonnet = Ausführung.
+- **Serie I — Cybersecurity / Anti-Copy / Firewall** ✅ **abgeschlossen (07.07.2026,
+  ROADMAP 156–164):** Fable-Chefdenker-Bauplan (`docs/SERIE-I-BUILDPLAN.md`) →
+  9 Batches, je grün getestet (E2E 111/111) und gepusht. B1 Leak-Gate · B2
+  Secret-Scan+CSP+Tauri-Allowlist · B3 Sync-Härtung · B4 Bridge-Bugs · B5
+  Anti-Copy-Fingerprint · B6 signierte Lizenz + **Server-Bindung** (der einzige
+  wirksame Anti-Copy-Hebel, `@kosmo/lizenz` Ed25519) · B7 Parser-Robustheit ·
+  B8 Firewall-Konzept · B9 Sicherheits-Logging + Incident-Playbook. Rein
+  defensiv, «so hart wie sinnvoll»; 5 reale Bugs nebenbei gefixt. Ehrliche
+  Grenzen dokumentiert (TLS/Firewall = HomeStation, signierte Updates/Backup =
+  Owner-Infrastruktur).
+- **Noch offen für den Fable-Block:** **Serie H** (Vollständige Benutzersimulation,
+  `docs/SERIE-H-VOLLSIMULATION.md`), **Serie J** (Intuitive Bedienung & adaptive
+  Oberfläche — Touch/Gesten + Maus im 3D + adaptive Zeichnungsoberfläche,
+  `docs/SERIE-J-INTUITIVE-BEDIENUNG.md`), dann die technischen V2-Blöcke.
+  Reihung: Fable = Chefdenker/Urteil, Opus = Orchestrierung, Sonnet = Ausführung.
 
 ## Wie der Vault mit der Software spricht
 
