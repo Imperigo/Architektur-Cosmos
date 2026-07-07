@@ -176,3 +176,57 @@ Status:      offen
 
 Weitere Befunde werden ab hier von den H2-/H3-Batches angehängt — je einer
 pro Fund, nummeriert fortlaufend ab `H-8`, im Schema oben.
+
+### H-8 — Kernel kennt nur Walmdach, kein eigenes Satteldach-Command (07.07.2026, Journey efh, Schritt 10)
+Beobachtung: Die EFH-Leitidee (`SZENARIEN.efh.gestaltung.leitidee`) spricht
+von einem Baukörper mit «Sichtbeton-Sockel im Hang, verputzte Holzelement-
+Obergeschosse»; Buildplan Abschnitt 2 (Zeile EFH) nennt das Dach im Kern-
+Toolkette-Text «Satteldach». `design.dachErstellen`
+(`packages/kosmo-kernel/src/commands/design.ts` Z.365-393) modelliert aber
+ausschliesslich ein **Walmdach** (Titel «Walmdach erstellen», konvexer
+Grundriss, `pitch`/`overhang`) — ein Gerbergiebel/Satteldach-Command
+existiert nicht.
+Triage:      kein-bug
+Beleg:       `design.dachErstellen`, Titel/Description Z.366-369; Baustein 5
+(`dachSetzen`, Abschnitt 1.3) heisst im Buildplan-Text selbst nur
+«Dach»/`design.dachErstellen`, nicht «Satteldach» — der Vokabel-Unterschied
+steht nur in der Kern-Toolkette-Spalte der Journey-Tabelle (Abschnitt 2).
+`sim-efh.spec.ts` (Schritt 10) modelliert darum bewusst mit der tatsächlich
+existierenden Walmdach-Form und referenziert diesen Befund im Spec-
+Kommentar, statt den Buildplan-Wortlaut stillschweigend als «Satteldach»
+zu behaupten.
+Entscheid:   Reine Wortlaut-Divergenz zwischen Buildplan-Prosa und
+tatsächlicher Command-Palette, kein Produktfehler und keine falsche
+Assertion in der Journey (die Journey behauptet nirgends «Satteldach»,
+nur «Dach»). Ein echtes Satteldach-Command wäre ein eigenständiges V2-
+Feature (analog zu H-2, Dach-2D-Symbol) — kein H-Fix-Batch ohne
+Owner-Priorisierung.
+Status:      doku (V2)
+
+### H-9 — Manuelles «Schnitt»-Werkzeug ist reiner UI-State ohne Command-Rückbindung (07.07.2026, Journey efh, Schritt 12)
+Beobachtung: Der Schnittlinien-Zug (`tool === 'schnitt'`,
+`DesignWorkspace.tsx` Z.487-491, `setSectionSpec(...)`) lebt ausschliesslich
+in lokalem React-State der Design-Station — es gibt keinen `design.*`-
+Command, der `sectionSpec` setzt, und keinen bestehenden e2e-Beleg (kein
+Treffer für `tool-schnitt`/`sectionSpec` in irgendeinem `e2e/*.spec.ts` vor
+diesem Batch). Ein Playwright-Klick müsste zwei Bildschirmkoordinaten auf
+dem SVG treffen und würde vom aktuellen Zoom/Pan der PlanView abhängen —
+ohne bestehenden Helfer dafür wäre das ein neu erfundener, ungeprüfter
+Interaktionspfad (Regel 1.4.2 verbietet das). «Ansicht Süd»
+(`elevationSpec`, DesignWorkspace.tsx Z.290-308) rechnet dagegen automatisch
+aus der Wand-/Volumen-Bounding-Box, ganz ohne manuellen Schritt, und trägt
+in der Quad-Ansicht dieselben Terrain-/Cut-Kanäle (`derive/section.ts`
+`deriveSection`).
+Triage:      v2-lücke
+Beleg:       `apps/kosmo-orbit/src/modules/design/DesignWorkspace.tsx`
+Z.166 (`sectionSpec` State), Z.487-491 (`tool === 'schnitt'` setzt ihn nur
+über zwei Canvas-Klicks); `sim-efh.spec.ts` Schritt 12 fährt darum
+ausschliesslich `section-Ansicht Süd` (automatisch) und lässt den manuellen
+«Schnitt»-Linienzug unangetastet — ehrlich als Coverage-Lücke dokumentiert
+statt stillschweigend übersprungen.
+Entscheid:   Ein Command-Weg für den Schnittlinien-Zug (z. B.
+`design.schnittSetzen`) wäre ein kleines, aber echtes Produkt-Feature
+(reine UI-Bequemlichkeit + Testbarkeit) — kein H-Fix-Batch ohne
+Owner-Priorisierung, da keine falsche Berechnung vorliegt, nur ein fehlender
+programmatischer Zugriff.
+Status:      offen

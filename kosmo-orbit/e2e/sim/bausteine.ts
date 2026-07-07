@@ -11,9 +11,11 @@ import type { SimSzenario } from './szenarien';
  * H1a implementiert die aus den zwei grünen Saat-Specs (`sim-umbau.spec.ts`,
  * `sim-mfh.spec.ts`) extrahierbaren Bausteine 1–4, 9–13, 16–18. H1b ergänzt
  * die Bridge-/KI-Bausteine 14–15 (`renderUeberBridge`, `bridgeVerfuegbar`)
- * und friert danach die API ein (ab H2 nur noch append-only). Bausteine 5–8
- * (Dach, Treppe, Raster, Fassade) kommen mit ihren ersten Nutzern in H2 —
- * bis dahin bleiben sie als TODO deklariert (kein toter «getesteter» Code).
+ * und friert danach die API ein (ab H2 nur noch append-only — neue Bausteine
+ * werden nur ANGEHÄNGT, bestehende nie geändert). H2a ergänzt Baustein 5
+ * (Dach) und 6 (Treppe), erster Nutzer `sim-efh.spec.ts`. Bausteine 7–8
+ * (Raster, Fassade) kommen mit ihren ersten Nutzern in H2b/H2c — bis dahin
+ * bleiben sie als TODO deklariert (kein toter «getesteter» Code).
  *
  * ── Robustheits-Regeln (1.4) — die Lehren aus den entfernten EFH-/
  *    Hochhaus-Specs, hart für JEDEN neuen Baustein ───────────────────────
@@ -85,6 +87,13 @@ declare global {
       run: (commandId: string, params: unknown) => { patches: { id: string }[] };
       state: () => KosmoState;
       open: (screen: string) => void;
+    };
+    // [Quelle: apps/kosmo-orbit/src/modules/design/Viewport3D.tsx Z.1161-1180]
+    __kosmoViewport: {
+      renderOnce: () => void;
+      resume: () => void;
+      setCamera: (px: number, py: number, pz: number, tx: number, ty: number, tz: number) => void;
+      getCamera: () => { px: number; py: number; pz: number; tx: number; ty: number; tz: number };
     };
   }
 }
@@ -285,14 +294,84 @@ export async function waendeZeichnen(
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Bausteine 5–8 — TODO, kommen mit ihren ersten Nutzern in H2
+// Baustein 5 — dachSetzen (H2a)
 // ─────────────────────────────────────────────────────────────────────────
-// TODO (H2a): dachSetzen(page, params) — design.dachErstellen; Assert
-//   byKind('roof')===1 und Dach-Mesh in der 3D-Szene sichtbar
-//   (view-quad → __kosmoViewport.renderOnce()); bewusst KEINE
-//   2D-Plansymbol-Assertion (V2-Lücke).
-// TODO (H2a): treppeSetzen(page, params) — design.treppeErstellen; Assert
-//   byKind('stair')-Delta + Treppensymbol im Plan-SVG (≥1 Element).
+/**
+ * Erstellt ein Dach (`design.dachErstellen` — V1 kennt nur die Walmdach-Form,
+ * kein eigenes Satteldach-Command; Leitideen, die ein «Satteldach» nennen,
+ * werden darum bewusst mit dem Walmdach-Command modelliert, siehe H-Eintrag
+ * in SIM-BEFUNDE) über dem gegebenen Grundriss. Assert: `byKind('roof')`-
+ * Delta exakt 1 UND das Dach steht sichtbar in der 3D-Szene (`view-quad` →
+ * `__kosmoViewport.renderOnce()` läuft ohne Fehler, der Viewport-Canvas
+ * bleibt sichtbar). BEWUSST KEINE 2D-Plansymbol-Assertion — PlanView.tsx
+ * rendert für `roof` keine eigene Grundriss-Projektion (bekannte V2-Lücke,
+ * in SIM-BEFUNDE referenziert, nicht «rot getestet», Regel 1.4.2).
+ */
+export interface DachParams {
+  storeyId: string;
+  outline: Punkt2[];
+  pitch?: number;
+  overhang?: number;
+}
+
+export async function dachSetzen(page: Page, params: DachParams): Promise<string> {
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('roof').length);
+  const dachId = await page.evaluate(
+    (p) => window.__kosmo.run('design.dachErstellen', p).patches[0]!.id,
+    params,
+  ); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.dachErstellen' Z.365-366]
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('roof').length))
+    .toBe(vorher + 1);
+
+  await page.click('[data-testid="view-quad"]'); // [Quelle: apps/kosmo-orbit/src/modules/design/DesignWorkspace.tsx Z.859-871 view-${id}]
+  await page.evaluate(() => window.__kosmoViewport.renderOnce()); // [Quelle: Viewport3D.tsx Z.1161-1166 / e2e/module.spec.ts Z.1117]
+  await expect(page.locator('[data-testid="viewport3d"]')).toBeVisible(); // [Quelle: Viewport3D.tsx Z.1259]
+  await expect(page.locator('[data-testid="viewport3d"] canvas')).toBeVisible(); // Dach-Mesh rendert in genau diesem WebGL-Canvas (Viewport3D.tsx Z.260 mount.appendChild)
+  return dachId;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 6 — treppeSetzen (H2a)
+// ─────────────────────────────────────────────────────────────────────────
+/**
+ * Erstellt eine Treppe (`design.treppeErstellen`). Assert `byKind('stair')`-
+ * Delta exakt 1 UND mindestens ein Treppensymbol im Plan-SVG DES Geschosses,
+ * dem die Treppe gehört (Regel R1: nie eine fixe Zahl, `count() > 0` —
+ * die Lauf-/Podest-Regionen aus derive/plan.ts tragen die Klasse `treppe`
+ * je Lauf-/Podestrechteck, nicht eine feste Anzahl). Setzt voraus, dass das
+ * Ziel-Geschoss (params.storeyId) beim Aufruf bereits aktiv ist — sonst
+ * zeigt der Plan ein anderes Geschoss und die Assertion schlägt (korrekt)
+ * fehl.
+ */
+export interface TreppeParams {
+  storeyId: string;
+  a: Punkt2;
+  b: Punkt2;
+  width?: number;
+  form?: 'gerade' | 'podest' | 'u' | 'l';
+  ecke?: Punkt2;
+}
+
+export async function treppeSetzen(page: Page, params: TreppeParams): Promise<string> {
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('stair').length);
+  const treppeId = await page.evaluate(
+    (p) => window.__kosmo.run('design.treppeErstellen', p).patches[0]!.id,
+    params,
+  ); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.treppeErstellen' Z.935-936]
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('stair').length))
+    .toBe(vorher + 1);
+
+  await page.click('[data-testid="view-2d"]'); // [Quelle: DesignWorkspace.tsx Z.859-871 view-${id} / bausteine.ts Baustein 1]
+  const treppenSymbole = page.locator('[data-testid="planview"] path.treppe'); // [Quelle: packages/kosmo-kernel/src/derive/plan.ts Z.465-511 classes ['projection','treppe',...] / PlanView.tsx Z.373-386 className={r.classes.join(' ')}]
+  await expect.poll(() => treppenSymbole.count()).toBeGreaterThan(0);
+  return treppeId;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Bausteine 7–8 — TODO, kommen mit ihren ersten Nutzern in H2b/H2c
+// ─────────────────────────────────────────────────────────────────────────
 // TODO (H2b): tragwerkAusRaster(page, raster) — design.rasterSetzen +
 //   design.stuetzenAusRaster; Assert Stützenzahl = Achsen-Produkt und
 //   Achslabels bijektiv (Regressions-Anker Befund 2, «AA» bei Achse 27).
