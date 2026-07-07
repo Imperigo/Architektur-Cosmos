@@ -38,6 +38,8 @@ async function pointerGeste(
       const cv = document.querySelector('canvas') as HTMLCanvasElement;
       const rect = cv.getBoundingClientRect();
       const hook = (window as unknown as { __kosmoViewport: { renderOnce: () => void } }).__kosmoViewport;
+      // buttons-Bitmaske: links=1, mitte=4, rechts=2.
+      const maske = button === 1 ? 4 : button === 2 ? 2 : 1;
       const feuer = (typ: string, x: number, y: number, buttons: number) => {
         cv.dispatchEvent(
           new PointerEvent(typ, {
@@ -54,12 +56,12 @@ async function pointerGeste(
           }),
         );
       };
-      feuer('pointerdown', von[0], von[1], 1);
+      feuer('pointerdown', von[0], von[1], maske);
       hook.renderOnce();
       for (let i = 1; i <= schritte; i++) {
         const x = von[0] + ((nach[0] - von[0]) * i) / schritte;
         const y = von[1] + ((nach[1] - von[1]) * i) / schritte;
-        feuer('pointermove', x, y, 1);
+        feuer('pointermove', x, y, maske);
         hook.renderOnce();
       }
       feuer('pointerup', nach[0], nach[1], 0);
@@ -120,4 +122,46 @@ test('J1a: im Skizzenmodus navigiert der Finger (kein Strich), der Stift zeichne
   await expect(page.locator('[data-testid="sketch3d-proposal"]')).toBeVisible();
   await page.click('[data-testid="sketch3d-accept"]');
   await expect.poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBeGreaterThan(0);
+});
+
+test('J2: Mitteltaste dreht die Kamera (ArchiCAD/Blender-Muscle-Memory)', async ({ page }) => {
+  await bootstrap3D(page);
+  const hook = () => page.evaluate(() => (window as unknown as { __kosmoViewport: CamHook }).__kosmoViewport.getCamera());
+  const vorher = await hook();
+  const cv = (await page.locator('canvas').first().boundingBox())!;
+  await pointerGeste(page, { pointerType: 'mouse', button: 1, von: [cv.width / 2 - 100, cv.height / 2], nach: [cv.width / 2 + 100, cv.height / 2] });
+  const nachher = await hook();
+  const posDelta = Math.hypot(nachher.px - vorher.px, nachher.py - vorher.py, nachher.pz - vorher.pz);
+  expect(posDelta).toBeGreaterThan(0.2);
+});
+
+test('J2: Rechtsklick öffnet das Kontextmenü; «Einpassen» führt es aus', async ({ page }) => {
+  await bootstrap3D(page);
+  const cv = (await page.locator('canvas').first().boundingBox())!;
+  // Rechtsklick ohne Drag am Canvas-Mittelpunkt.
+  await page.evaluate(
+    ({ x, y }) => {
+      const c = document.querySelector('canvas') as HTMLCanvasElement;
+      const r = c.getBoundingClientRect();
+      const opt = (buttons: number) => ({ pointerId: 3, pointerType: 'mouse', button: 2, buttons, clientX: r.left + x, clientY: r.top + y, bubbles: true, cancelable: true, composed: true });
+      c.dispatchEvent(new PointerEvent('pointerdown', opt(2)));
+      c.dispatchEvent(new PointerEvent('pointerup', opt(0)));
+    },
+    { x: cv.width / 2, y: cv.height / 2 },
+  );
+  await expect(page.locator('[data-testid="viewport-kontextmenue"]')).toBeVisible();
+  for (const t of ['kontext-auswaehlen', 'kontext-fokus', 'kontext-einpassen', 'kontext-reset']) {
+    await expect(page.locator(`[data-testid="${t}"]`)).toBeVisible();
+  }
+  await page.click('[data-testid="kontext-einpassen"]');
+  await expect(page.locator('[data-testid="viewport-kontextmenue"]')).toHaveCount(0); // Menü schliesst
+});
+
+test('J2: Kontextcursor wechselt mit dem Werkzeug', async ({ page }) => {
+  await bootstrap3D(page);
+  const cursor = () => page.evaluate(() => (document.querySelector('canvas') as HTMLCanvasElement).style.cursor);
+  await page.click('[data-testid="tool-wand"]');
+  await expect.poll(cursor).toBe('crosshair'); // Zeichen-Werkzeug
+  await page.click('[data-testid="tool-auswahl"]');
+  await expect.poll(cursor).toBe('default'); // Auswahl zeigt den Zeiger
 });

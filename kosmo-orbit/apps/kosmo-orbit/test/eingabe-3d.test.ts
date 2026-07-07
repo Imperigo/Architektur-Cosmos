@@ -3,6 +3,7 @@ import {
   mausBelegung,
   touchBelegung,
   kameraDarfSehen,
+  werkzeugCursorFuer,
   type NavModus,
 } from '../src/modules/design/eingabe-3d';
 
@@ -57,6 +58,19 @@ describe('Serie J / J1a: einheitliches Eingabemodell', () => {
       expect(kameraDarfSehen('mouse', 0, true)).toBe(false); // links zeichnet
       expect(kameraDarfSehen('mouse', 1, true)).toBe(true); // Mitte navigiert
       expect(kameraDarfSehen('mouse', 2, true)).toBe(true); // rechts navigiert
+    });
+  });
+
+  describe('werkzeugCursorFuer (J2)', () => {
+    it('Pan-Modus zeigt die Greifhand, unabhängig vom Werkzeug', () => {
+      expect(werkzeugCursorFuer('auswahl', 'pan')).toBe('grab');
+      expect(werkzeugCursorFuer('wand', 'pan')).toBe('grab');
+    });
+    it('Auswahl-Werkzeug zeigt den Zeiger, Zeichnen/Skizzieren das Fadenkreuz', () => {
+      expect(werkzeugCursorFuer('auswahl', 'orbit')).toBe('default');
+      expect(werkzeugCursorFuer('skizze', 'orbit')).toBe('crosshair');
+      expect(werkzeugCursorFuer('wand', 'orbit')).toBe('crosshair');
+      expect(werkzeugCursorFuer('zone', 'zoom')).toBe('crosshair');
     });
   });
 });

@@ -87,3 +87,16 @@ export function kameraDarfSehen(pointerType: string, button: number, sketchMode:
   if (sketchMode) return button !== 0;
   return true;
 }
+
+/**
+ * Serie J / J2 — Kontextcursor je Werkzeug/Modus (CSS-`cursor`-Wert). Zeigt vor
+ * dem Klick, was er täte: Zeichnen/Skizzieren = Fadenkreuz, Auswahl = Zeiger,
+ * Pan-Modus = Greifhand. Reine Funktion, three-/DOM-frei testbar.
+ */
+export function werkzeugCursorFuer(tool: string, navModus: NavModus): string {
+  if (navModus === 'pan') return 'grab';
+  if (tool === 'auswahl') return 'default';
+  if (tool === 'skizze') return 'crosshair';
+  // alle übrigen sind Zeichen-/Setz-Werkzeuge (Wand/Zone/Volumen/Dach/…).
+  return 'crosshair';
+}

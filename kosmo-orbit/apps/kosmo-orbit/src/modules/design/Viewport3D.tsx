@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { kameraDarfSehen, touchBelegung } from './eingabe-3d';
+import { kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
+import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
 import { deriveAll, type GeometryArtifact, type Pt, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, meldeFehler, moduleHue } from '@kosmo/ui';
@@ -161,15 +162,16 @@ const materialPalette: Record<string, { color: number; roughness: number; metaln
   default: { color: 0xcfccc4, roughness: 0.9 },
 };
 
-// T3: Orbit/Pan/Zoom-Modus fürs linke Mausdrücken — rechte Maustaste/Mittel-
-// taste/Rad bleiben IMMER Pan/Zoom (camera-controls-Default, unverändert),
-// die Knöpfe geben zusätzlich dem linken Klick eine explizite Bedeutung (v.a.
-// hilfreich am Trackpad ohne Mitteltaste).
+// Serie J / J2: eine einzige KameraAktion → camera-controls-ACTION-Map. Ersetzt
+// die frühere T3-`NAV_ACTION` — die gesamte Maus-Belegung (linker Klick nach
+// NavModus, Mitteltaste=Orbit, Shift+Mitte=Pan, rechts=Pan) kommt jetzt aus
+// `mausBelegung()` in eingabe-3d.ts, dieser Map bleibt die einzige three-Kopplung.
 type MausAktion = CameraControls['mouseButtons']['left'];
-const NAV_ACTION: Record<'orbit' | 'pan' | 'zoom', MausAktion> = {
-  orbit: CameraControls.ACTION.ROTATE,
-  pan: CameraControls.ACTION.TRUCK,
-  zoom: CameraControls.ACTION.DOLLY,
+const AKTION_ACTION: Record<KameraAktion, MausAktion> = {
+  rotate: CameraControls.ACTION.ROTATE,
+  truck: CameraControls.ACTION.TRUCK,
+  dolly: CameraControls.ACTION.DOLLY,
+  none: CameraControls.ACTION.NONE,
 };
 
 // Serie J / J1a: Touch-Belegung (eingabe-3d.ts) → camera-controls-Touch-ACTIONs.
@@ -185,6 +187,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   const controlsRef = useRef<CameraControls | null>(null);
   const modelRef = useRef<THREE.Group | null>(null);
   const [navModus, setNavModus] = useState<'orbit' | 'pan' | 'zoom'>('orbit');
+  const navModusRef = useRef<'orbit' | 'pan' | 'zoom'>('orbit');
+  // Serie J / J2: Rechtsklick-/Long-Press-Kontextmenü. x/y positionieren das
+  // Menü im Viewport, clientX/Y speisen den Raycast der Menü-Aktionen.
+  const [kontext, setKontext] = useState<{ x: number; y: number; clientX: number; clientY: number } | null>(null);
+  const setKontextRef = useRef(setKontext);
+  setKontextRef.current = setKontext;
 
   // T5 (Owner-Laptoptest, Punkt 3) + A4-Erweiterung (ROADMAP 155, Owner-
   // Entscheid «Beides/Raycast»): Freihand-Skizzieren im 3D-Viewport — der
@@ -226,10 +234,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     setSketchPending(null);
   };
 
-  // Linker Klick übernimmt den gewählten Modus; Rechtsklick/Mitteltaste/Rad
-  // bleiben von camera-controls unangetastet (kein Funktionsverlust).
+  // Linker Klick folgt dem gewählten Modus (Mitteltaste/Rechts werden pro Geste
+  // in onCaptureDown aus mausBelegung gesetzt, wegen Shift+Mitte). navModusRef
+  // hält den aktuellen Modus für den Pointer-Handler bereit.
   useEffect(() => {
-    if (controlsRef.current) controlsRef.current.mouseButtons.left = NAV_ACTION[navModus];
+    navModusRef.current = navModus;
+    if (controlsRef.current) {
+      controlsRef.current.mouseButtons.left = AKTION_ACTION[mausBelegung(navModus, false).left];
+    }
   }, [navModus]);
 
   useEffect(() => {
@@ -241,9 +253,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     mount.appendChild(renderer.domElement);
     // Serie J / J1a: ohne `touch-action: none` scrollt/zoomt iPad-Safari die
     // Seite statt der Kamera; `user-select: none` verhindert Text-Auswahl beim
-    // Ziehen. Beides fehlte bisher.
-    renderer.domElement.style.touchAction = 'none';
-    renderer.domElement.style.userSelect = 'none';
+    // Ziehen. J2 (Fable-Review-1-Auflage): camera-controls räumt diese Styles
+    // beim `enabled=false`-Toggle wieder ab — darum als Helfer, der nach jedem
+    // Toggle erneut gesetzt wird (sonst scrollt Safari mitten im Stift-Strich).
+    const setzeTouchStyles = () => {
+      renderer.domElement.style.touchAction = 'none';
+      renderer.domElement.style.userSelect = 'none';
+    };
+    setzeTouchStyles();
 
     const scene = new THREE.Scene();
     const cssVar = (name: string) =>
@@ -260,7 +277,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     // natives Damping, kein simuliertes iOS-Flick-Momentum (siehe Buildplan §6).
     controls.draggingSmoothTime = 0.05;
     controls.smoothTime = 0.25;
-    controls.mouseButtons.left = NAV_ACTION[navModus];
+    // Serie J / J2: volle Maus-Belegung aus mausBelegung — Mitteltaste=Orbit,
+    // rechts=Pan (Shift+Mitte→Pan setzt onCaptureDown pro Geste).
+    {
+      const b = mausBelegung(navModus, false);
+      controls.mouseButtons.left = AKTION_ACTION[b.left];
+      controls.mouseButtons.middle = AKTION_ACTION[b.middle];
+      controls.mouseButtons.right = AKTION_ACTION[b.right];
+    }
     // Touch explizit belegen (bisher unkonfigurierte Defaults): 1 Finger Orbit,
     // 2 Finger Pan+Pinch-Zoom (zum Pinch-Zentrum via dollyToCursor), 3 Finger
     // Pan — aus der einzigen Quelle der Wahrheit `eingabe-3d.ts`.
@@ -922,6 +946,22 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       downPos = { x: ev.clientX, y: ev.clientY };
     };
     const onPointerUp = (ev: PointerEvent) => {
+      // Serie J / J2: Rechtsklick OHNE Drag (<4 px) öffnet das Kontextmenü; ein
+      // Rechts-Drag bleibt Pan (camera-controls hat es bereits verarbeitet).
+      if (ev.button === 2 && downPos) {
+        const movedR = Math.hypot(ev.clientX - downPos.x, ev.clientY - downPos.y);
+        downPos = null;
+        if (movedR < 4) {
+          const r = mountRef.current?.getBoundingClientRect();
+          setKontextRef.current({
+            x: r ? ev.clientX - r.left : ev.clientX,
+            y: r ? ev.clientY - r.top : ev.clientY,
+            clientX: ev.clientX,
+            clientY: ev.clientY,
+          });
+        }
+        return;
+      }
       if (handlers.current?.sketchMode) {
         onSketchPointerUp();
         return;
@@ -960,6 +1000,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     renderer.domElement.addEventListener('pointerup', onPointerUp);
     renderer.domElement.addEventListener('pointermove', onPointerMove);
     window.addEventListener('keydown', onKey);
+    // Serie J / J2: Browser-Kontextmenü unterdrücken — der Rechtsklick öffnet
+    // unser eigenes Menü (onPointerUp), nicht das des Browsers.
+    const onContextMenu = (ev: Event) => ev.preventDefault();
+    renderer.domElement.addEventListener('contextmenu', onContextMenu);
 
     // Serie J / J1a: Pencil-Trennung ohne hartes Kamera-Abschalten. In der
     // Capture-Phase (vor camera-controls' eigenem Listener auf demselben
@@ -969,14 +1013,32 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     // frühere statische `controls.enabled = !sketchMode`, ohne die Sketch-
     // Handler (Target-Phase) zu unterbrechen (kein stopImmediatePropagation).
     const onCaptureDown = (ev: PointerEvent) => {
+      // Maus: volle Belegung aus mausBelegung (Shift+Mitte → Pan) VOR
+      // camera-controls das pointerdown latcht — darum liegt dieser Listener
+      // auf dem Mount-DIV (Capture-Phase läuft dort garantiert vor allen
+      // Target-Listenern des Canvas; Fable-Review-1-Auflage J2-1).
+      if (ev.pointerType === 'mouse') {
+        const b = mausBelegung(navModusRef.current, ev.shiftKey);
+        controls.mouseButtons.left = AKTION_ACTION[b.left];
+        controls.mouseButtons.middle = AKTION_ACTION[b.middle];
+        controls.mouseButtons.right = AKTION_ACTION[b.right];
+      }
       controls.enabled = kameraDarfSehen(ev.pointerType, ev.button, !!handlers.current?.sketchMode);
+      setzeTouchStyles(); // enabled-Toggle räumt die Touch-Styles ab (J2-2)
     };
     const onCaptureUp = () => {
       controls.enabled = true;
+      setzeTouchStyles();
     };
-    renderer.domElement.addEventListener('pointerdown', onCaptureDown, { capture: true });
-    renderer.domElement.addEventListener('pointerup', onCaptureUp, { capture: true });
-    renderer.domElement.addEventListener('pointercancel', onCaptureUp, { capture: true });
+    // Capture-Phase auf dem Mount-DIV (nicht dem Canvas), damit der Filter
+    // wirklich VOR camera-controls' eigenem pointerdown-Listener läuft.
+    mount.addEventListener('pointerdown', onCaptureDown, { capture: true });
+    mount.addEventListener('pointerup', onCaptureUp, { capture: true });
+    mount.addEventListener('pointercancel', onCaptureUp, { capture: true });
+    // Reset auch auf window: wird der Pointer ohne Capture ausserhalb des
+    // Canvas losgelassen, feuert sonst kein pointerup → enabled bliebe false
+    // (Rad-Zoom tot bis zur nächsten Geste). J2-3.
+    window.addEventListener('pointerup', onCaptureUp);
 
     const clock = new THREE.Clock();
     let raf = 0;
@@ -991,6 +1053,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncSun();
       syncSketchModus();
       syncSketchDrawing();
+      // Serie J / J2: Kontextcursor je Werkzeug/Modus. handlers ist ein Ref
+      // (kein Re-Render bei Werkzeugwechsel), darum je Frame abgeleitet und nur
+      // bei Änderung gesetzt.
+      {
+        const tool = handlers.current?.sketchMode ? 'skizze' : handlers.current?.pickMode ? 'auswahl' : 'wand';
+        const cur = werkzeugCursorFuer(tool, navModusRef.current);
+        if (renderer.domElement.style.cursor !== cur) renderer.domElement.style.cursor = cur;
+      }
       // Auswahl-Highlight (Kupfer-Glut)
       const sel = new Set(useProject.getState().selection);
       for (const child of model.children) {
@@ -1052,10 +1122,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       renderer.domElement.removeEventListener('pointerdown', onPointerDown);
       renderer.domElement.removeEventListener('pointerup', onPointerUp);
       renderer.domElement.removeEventListener('pointermove', onPointerMove);
-      renderer.domElement.removeEventListener('pointerdown', onCaptureDown, { capture: true } as EventListenerOptions);
-      renderer.domElement.removeEventListener('pointerup', onCaptureUp, { capture: true } as EventListenerOptions);
-      renderer.domElement.removeEventListener('pointercancel', onCaptureUp, { capture: true } as EventListenerOptions);
+      mount.removeEventListener('pointerdown', onCaptureDown, { capture: true } as EventListenerOptions);
+      mount.removeEventListener('pointerup', onCaptureUp, { capture: true } as EventListenerOptions);
+      mount.removeEventListener('pointercancel', onCaptureUp, { capture: true } as EventListenerOptions);
+      window.removeEventListener('pointerup', onCaptureUp);
       window.removeEventListener('keydown', onKey);
+      renderer.domElement.removeEventListener('contextmenu', onContextMenu);
       controls.dispose();
       renderer.dispose();
       mount.removeChild(renderer.domElement);
@@ -1080,6 +1152,44 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     }
   };
 
+  // Serie J / J2: Raycast am Kontextmenü-Klickpunkt (Body-Ebene, über die Refs).
+  const kontextTreffer = (clientX: number, clientY: number) => {
+    const controls = controlsRef.current;
+    const model = modelRef.current;
+    const canvas = mountRef.current?.querySelector('canvas');
+    if (!controls || !model || !canvas) return null;
+    const rect = canvas.getBoundingClientRect();
+    const ndc = new THREE.Vector2(
+      ((clientX - rect.left) / rect.width) * 2 - 1,
+      -((clientY - rect.top) / rect.height) * 2 + 1,
+    );
+    const rc = new THREE.Raycaster();
+    rc.setFromCamera(ndc, controls.camera as THREE.Camera);
+    return rc.intersectObjects(model.children, false).find((h) => (h.object as THREE.Mesh).isMesh) ?? null;
+  };
+  const kontextAktionen = kontext
+    ? [
+        {
+          label: 'Auswählen',
+          testid: 'kontext-auswaehlen',
+          onClick: () => {
+            const hit = kontextTreffer(kontext.clientX, kontext.clientY);
+            handlers.current?.onPick?.(hit ? ((hit.object.userData['entityId'] as string) ?? null) : null);
+          },
+        },
+        {
+          label: 'Fokus hier',
+          testid: 'kontext-fokus',
+          onClick: () => {
+            const hit = kontextTreffer(kontext.clientX, kontext.clientY);
+            if (hit) controlsRef.current?.setOrbitPoint(hit.point.x, hit.point.y, hit.point.z);
+          },
+        },
+        { label: 'Einpassen', testid: 'kontext-einpassen', onClick: einpassen },
+        { label: 'Ansicht zurücksetzen', testid: 'kontext-reset', onClick: () => void controlsRef.current?.reset(true) },
+      ]
+    : [];
+
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
       <div ref={mountRef} style={{ position: 'absolute', inset: 0 }} data-testid="viewport3d" />
@@ -1092,6 +1202,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           { id: 'fit', icon: '⌂', titel: 'Einpassen — Modell ins Bild holen (ohne Modell: Ausgangslage)', onClick: einpassen },
         ]}
       />
+      {kontext && (
+        <ViewportKontextmenue
+          x={kontext.x}
+          y={kontext.y}
+          aktionen={kontextAktionen}
+          onClose={() => setKontext(null)}
+        />
+      )}
       {sketchModeAn && sketchStrokes.length === 0 && !sketchPending && (
         <div
           data-testid="sketch3d-hinweis"
