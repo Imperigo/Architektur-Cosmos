@@ -270,6 +270,76 @@ else:
     check("Default (keine Lizenz-Pflicht): Zugriff bleibt offen wie in B4", res.status_code == 200)
 
 # ---------------------------------------------------------------------------
+# 5) Sicherheits-Logging (Serie I / Batch B9) — reine Formatierung +
+#    Verdrahtung an den bestehenden Ablehnungsstellen. Additiv: die
+#    Statuscodes (401/413) MÜSSEN unverändert bleiben, nur eine zusätzliche
+#    stderr-Zeile kommt dazu.
+# ---------------------------------------------------------------------------
+import contextlib  # noqa: E402
+import io  # noqa: E402
+
+from kosmo_bridge.sicherheits_log import formatiere_sicherheitsereignis  # noqa: E402
+
+# (a) reine Formatierungsfunktion: ein Ereignis → eine JSON-Zeile mit den vier
+#     erwarteten Feldern, testbar ohne laufenden Bridge-Prozess.
+log_zeile_rein = formatiere_sicherheitsereignis(
+    "auth_fehlgeschlagen", "bridge:/jobs", "Token fehlt oder falsch", ts="2026-07-07T12:00:00+00:00"
+)
+log_geparst_rein = json.loads(log_zeile_rein)
+check(
+    "formatiere_sicherheitsereignis: erwartete vier Felder",
+    log_geparst_rein
+    == {
+        "ts": "2026-07-07T12:00:00+00:00",
+        "ereignis": "auth_fehlgeschlagen",
+        "quelle": "bridge:/jobs",
+        "detail": "Token fehlt oder falsch",
+    },
+)
+check("formatiere_sicherheitsereignis: kein Testtoken-Wert im Text", "geheimes-testtoken-xyz" not in log_zeile_rein)
+
+# (b) verdrahtet: eine echte 401-Ablehnung (falscher Token) schreibt eine
+#     passende JSON-Zeile auf stderr, OHNE den echten Token preiszugeben.
+os.environ["KOSMO_BRIDGE_TOKEN"] = "geheimes-testtoken-xyz"
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+log_client = TestClient(bridge.app)
+
+puffer_auth = io.StringIO()
+with contextlib.redirect_stderr(puffer_auth):
+    res = log_client.get("/jobs", headers={"x-kosmo-token": "falsch"})
+check("Falscher Token weiterhin 401 (Verhalten unverändert)", res.status_code == 401)
+log_zeile_auth = puffer_auth.getvalue().strip()
+log_geparst_auth = json.loads(log_zeile_auth) if log_zeile_auth else {}
+check("Log-Zeile für fehlgeschlagene Auth geschrieben", log_geparst_auth.get("ereignis") == "auth_fehlgeschlagen")
+check("Log-Zeile enthält NICHT den echten Token", "geheimes-testtoken-xyz" not in log_zeile_auth)
+
+# (c) Upload über dem Deckel schreibt ebenfalls eine Log-Zeile (413 bleibt 413).
+os.environ.pop("KOSMO_BRIDGE_TOKEN", None)
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+deckel_client = TestClient(bridge.app)
+puffer_deckel = io.StringIO()
+with contextlib.redirect_stderr(puffer_deckel):
+    res = deckel_client.post(
+        "/jobs",
+        data={"scene": json.dumps({"schema": "kosmovis.render-scene/v1"})},
+        files={"model": ("model.glb", b"x" * (3 * 1024 * 1024), "model/gltf-binary")},
+    )
+check("Übergrosser Upload weiterhin 413 (Verhalten unverändert)", res.status_code == 413)
+log_zeile_deckel = puffer_deckel.getvalue().strip()
+log_geparst_deckel = json.loads(log_zeile_deckel) if log_zeile_deckel else {}
+check(
+    "Log-Zeile für verworfenen Übergrossen-Upload geschrieben",
+    log_geparst_deckel.get("ereignis") == "upload_deckel_abgelehnt",
+)
+
+# zurück auf einen sauberen Default-Zustand
+os.environ.pop("KOSMO_BRIDGE_TOKEN", None)
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+
+# ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis
 # ---------------------------------------------------------------------------
 shutil.rmtree(TMP_STORE, ignore_errors=True)

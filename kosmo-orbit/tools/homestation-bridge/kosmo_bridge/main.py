@@ -26,6 +26,11 @@ Serie I / Batch B6 (Server-Bindung, der wirksame Anti-Copy-Hebel — siehe
   zusätzlich zum Token eine signierte Lizenz scharf (Header X-Kosmo-Lizenz,
   öffentlicher Schlüssel KOSMO_BRIDGE_LIZENZ_PUBKEY). Default AUS — ohne die
   Env-Variable verhält sich die Bridge exakt wie in B4 (nur Token zählt).
+
+Serie I / Batch B9 (Betrieb & Notfall): fehlgeschlagene Auth, Lizenz-
+  Fehlschläge und über den Deckel verworfene Uploads schreiben zusätzlich
+  eine strukturierte JSON-Zeile auf stderr (`sicherheits_log.py`) — additiv,
+  ändert keinen Statuscode. Siehe docs/INCIDENT-PLAYBOOK.md.
 """
 
 from __future__ import annotations
@@ -51,6 +56,11 @@ try:  # als Paket (python3 -m kosmo_bridge.main) UND als Skript (python3 …/mai
     from kosmo_bridge.lizenz import ED25519_LIB, ist_widerrufen, lade_widerrufsliste, lizenz_pruefen
 except ModuleNotFoundError:  # Skript-Modus: das eigene Verzeichnis liegt auf sys.path
     from lizenz import ED25519_LIB, ist_widerrufen, lade_widerrufsliste, lizenz_pruefen
+
+try:  # dieselbe Skript-/Paket-Robustheit wie beim Lizenz-Import oben (B9)
+    from kosmo_bridge.sicherheits_log import protokolliere_sicherheitsereignis
+except ModuleNotFoundError:
+    from sicherheits_log import protokolliere_sicherheitsereignis
 
 
 def _cors_origins() -> list[str]:
@@ -107,11 +117,17 @@ def _now() -> str:
 
 @app.middleware("http")
 async def token_guard(request: Request, call_next):
+    # Serie I / Batch B9: jede Ablehnung unten schreibt zusätzlich eine
+    # strukturierte JSON-Log-Zeile auf stderr (additiv — kein Statuscode
+    # ändert sich gegenüber B4/B6).
     if TOKEN and request.url.path != "/health":
         supplied = request.headers.get("x-kosmo-token", "")
         # secrets.compare_digest statt `!=`: konstante Laufzeit, kein
         # Byte-für-Byte-Timing-Seitenkanal auf den Token-Vergleich.
         if not secrets.compare_digest(supplied, TOKEN):
+            protokolliere_sicherheitsereignis(
+                "auth_fehlgeschlagen", f"bridge:{request.url.path}", "Token fehlt oder falsch"
+            )
             return Response(status_code=401, content="Token fehlt oder falsch")
 
     # Lizenz-Pflicht (Serie I / Batch B6) — additiv, NUR wenn per Env aktiv.
@@ -120,15 +136,25 @@ async def token_guard(request: Request, call_next):
         if not LIZENZ_PUBKEY:
             # Pflicht an, aber kein Public Key konfiguriert — ehrlich ablehnen
             # (fail closed) statt eine Prüfung vorzutäuschen, die nicht laufen kann.
+            protokolliere_sicherheitsereignis(
+                "lizenz_fehlgeschlagen", f"bridge:{request.url.path}", "Lizenzpruefung nicht konfiguriert"
+            )
             return Response(status_code=503, content="Lizenzpruefung nicht konfiguriert (KOSMO_BRIDGE_LIZENZ_PUBKEY fehlt)")
         lizenz_text = request.headers.get("x-kosmo-lizenz", "")
         if not lizenz_text:
+            protokolliere_sicherheitsereignis("lizenz_fehlgeschlagen", f"bridge:{request.url.path}", "Lizenz fehlt")
             return Response(status_code=401, content="Lizenz fehlt")
         ergebnis = lizenz_pruefen(lizenz_text, LIZENZ_PUBKEY, datetime.now(timezone.utc))
         if not ergebnis["gueltig"]:
+            protokolliere_sicherheitsereignis(
+                "lizenz_fehlgeschlagen", f"bridge:{request.url.path}", f"Lizenz abgelehnt: {ergebnis['grund']}"
+            )
             return Response(status_code=401, content=f"Lizenz abgelehnt: {ergebnis['grund']}")
         lizenz_id = (ergebnis["lizenz"] or {}).get("lizenzId", "")
         if ist_widerrufen(lizenz_id, LIZENZ_WIDERRUFSLISTE):
+            protokolliere_sicherheitsereignis(
+                "lizenz_fehlgeschlagen", f"bridge:{request.url.path}", f"Lizenz widerrufen (lizenzId={lizenz_id})"
+            )
             return Response(status_code=401, content="Lizenz widerrufen")
 
     return await call_next(request)
@@ -147,6 +173,9 @@ async def _read_capped(upload: UploadFile, max_bytes: int, label: str) -> bytes:
             break
         total += len(chunk)
         if total > max_bytes:
+            protokolliere_sicherheitsereignis(
+                "upload_deckel_abgelehnt", "bridge:_read_capped", f"{label} über Deckel von {max_bytes} Bytes"
+            )
             raise HTTPException(413, f"{label} überschreitet Deckel von {max_bytes} Bytes")
         chunks.append(chunk)
     return b"".join(chunks)

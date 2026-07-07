@@ -25,12 +25,23 @@
  * (`?lizenz=...`) auf der Verbindungs-URL und kommt über Hocuspocus'
  * `requestParameters` an. **Default (kein `KOSMO_SYNC_LIZENZ_PFLICHT`):
  * unverändertes B3-Verhalten — nur der geteilte Token zählt.**
+ *
+ * Serie I / Batch B9 (Betrieb & Notfall): jede Ablehnung unten schreibt
+ * zusätzlich eine strukturierte JSON-Log-Zeile auf stderr
+ * (`sicherheits-log.mjs`) — additiv, ändert keinen der bestehenden
+ * Statuscodes/Ablehnungsgründe. Restgrenze, ehrlich benannt: der
+ * Nachrichten-Grössendeckel (`maxPayload` unten) wird von der zugrunde
+ * liegenden `ws`-Bibliothek VOR jedem Hocuspocus-Hook durchgesetzt — eine
+ * überlange Nachricht schliesst die WebSocket-Verbindung (Code 1009), ohne
+ * dass ein öffentlicher Hook dafür feuert. Diese Ablehnung ist deshalb
+ * NICHT im Sicherheits-Log sichtbar (siehe `docs/INCIDENT-PLAYBOOK.md`).
  */
 
 import { timingSafeEqual } from 'node:crypto';
 import { Server } from '@hocuspocus/server';
 import { SQLite } from '@hocuspocus/extension-sqlite';
 import { ladeWiderrufsliste, pruefeZugang } from './lizenz-auth.mjs';
+import { protokolliereSicherheitsereignis } from './sicherheits-log.mjs';
 
 const port = Number(process.env.KOSMO_SYNC_PORT ?? 8700);
 const token = process.env.KOSMO_SYNC_TOKEN ?? '';
@@ -133,6 +144,11 @@ const server = new Server({
     verifyClient(info, callback) {
       const ip = info.req.socket?.remoteAddress ?? 'unbekannt';
       if (!ipErlaubt(ip)) {
+        protokolliereSicherheitsereignis({
+          ereignis: 'rate_limit_abgelehnt',
+          quelle: 'sync:websocket',
+          detail: `Verbindungslimit überschritten (${ip})`,
+        });
         callback(false, 429, 'Zu viele Verbindungen — bitte kurz warten');
         return;
       }
@@ -153,6 +169,11 @@ const server = new Server({
       jetzt: new Date(),
     });
     if (!ergebnis.ok) {
+      protokolliereSicherheitsereignis(
+        ergebnis.grund === 'token_falsch'
+          ? { ereignis: 'auth_fehlgeschlagen', quelle: 'sync:onAuthenticate', detail: 'Token ungültig oder fehlt' }
+          : { ereignis: 'lizenz_fehlgeschlagen', quelle: 'sync:onAuthenticate', detail: `Lizenz abgelehnt: ${ergebnis.grund}` },
+      );
       throw new Error(ergebnis.grund === 'token_falsch' ? 'Token falsch' : `Lizenz abgelehnt: ${ergebnis.grund}`);
     }
   },
@@ -171,11 +192,21 @@ const server = new Server({
     if (url.pathname === '/raeume') {
       const ip = request.socket?.remoteAddress ?? 'unbekannt';
       if (!ipErlaubt(ip)) {
+        protokolliereSicherheitsereignis({
+          ereignis: 'rate_limit_abgelehnt',
+          quelle: 'sync:/raeume',
+          detail: `Anfragelimit überschritten (${ip})`,
+        });
         response.writeHead(429, mitCors({ 'Content-Type': 'application/json' }));
         response.end(JSON.stringify({ error: 'Zu viele Anfragen' }));
         return Promise.reject(null);
       }
       if (token && !tokenGleich(tokenAusRequest(request), token)) {
+        protokolliereSicherheitsereignis({
+          ereignis: 'auth_fehlgeschlagen',
+          quelle: 'sync:/raeume',
+          detail: 'Token fehlt oder falsch',
+        });
         response.writeHead(401, mitCors({ 'Content-Type': 'application/json' }));
         response.end(JSON.stringify({ error: 'Token fehlt oder falsch' }));
         return Promise.reject(null); // beantwortet — Hocuspocus übernimmt nicht

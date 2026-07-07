@@ -56,6 +56,22 @@
 - **ONLV/CRB-Devis-Export**: NPK-nahes Ausmass + CSV sind da (C1); das echte Devis-Format ist eine Lizenz-/Normfrage.
 - **DGM/swisstopo-Terrain**: das handgesetzte Terrainprofil (A2) steht; Höhenmodell-Download ist V4-Ausbaustufe 2.
 
+## 5. Sicherheit & Betrieb (Serie I / Batch B9) — ehrlich benannte Infrastruktur
+
+Zwei Punkte aus dem Bauplan (`docs/SERIE-I-BUILDPLAN.md` §4, R11), die **keine
+Cloud-Build-Umgebung** herstellen kann — beide brauchen die HomeStation
+und/oder Owner-Entscheidungen, die ausserhalb von Code liegen:
+
+| Auftrag | Übergabepunkt |
+|---|---|
+| **Signierte Tauri-Updates** (V2-D1, R11) | Der Desktop-Build läuft (CI, `.desktop-build-request`), aber ohne Signatur-Keys prüft kein Betriebssystem die Echtheit eines Updates. Ein Tauri-Updater braucht einen **Owner-Signing-Key** (Ed25519, generiert und verwahrt beim Owner, NIE in der Cloud/im Repo) plus einen Update-Manifest-Endpunkt, der signierte Release-Metadaten ausliefert. **Bis dahin ist «Update» ehrlich: ein neuer Installer** (kein `null`-CSP-artiges Vortäuschen einer Signaturprüfung, die nicht läuft) — Nutzer laden den neuen Installer manuell, wie im aktuellen V1-Betrieb. Übergabepunkt für den ersten echten Signatur-Lauf: `src-tauri/tauri.conf.json` (`bundle.createUpdaterArtifacts`/`plugins.updater`), Tauri-Doku «Signing Updater Artifacts». |
+| **Verschlüsseltes, versioniertes Büro-Backup** | Die einzige Persistenz, die heute existiert, ist die Sync-SQLite-Datei (`tools/sync-server`, `KOSMO_SYNC_DB`) plus lokale `.kosmo`-Dateien/IndexedDB im Browser — **kein automatisches Backup**. Ein echtes Backup läuft auf der HomeStation: (1) regelmässiger, versionierter Snapshot der SQLite-Datei + des Projektordners (z.B. `restic`/`borg` — beide bringen client-seitige Verschlüsselung UND Deduplizierung/Versionierung mit, kein Aufwand für ein eigenes Verschlüsselungsschema); (2) der Verschlüsselungs-Schlüssel/das Repository-Passwort gehört **ausschliesslich dem Owner** (Passwort-Manager/Papier-Backup, nie im Repo); (3) ein Restore-Test gehört zur Owner-Routine — ein ungetestetes Backup ist kein Backup. Dieses Repo liefert dafür keinen Code, weil es reine Betriebs-/Owner-Infrastruktur ausserhalb der App ist — ehrlich benannt statt als «Backup-Feature» vorgetäuscht. |
+
+Beide Punkte hängen mit dem Incident-Playbook zusammen
+(`docs/INCIDENT-PLAYBOOK.md`): ein Schlüssel-Leak braucht eine Rotation (die
+Playbook-Schritte laufen unabhängig vom Backup/Update-Stand), ein Restore
+nach einem Vorfall braucht ein tatsächlich vorhandenes, getestetes Backup.
+
 ## Erster Abend am Home-PC (empfohlene Reihenfolge)
 
 1. Bridge echt starten (ohne `--fake`), `docs/ABNAHME-DREHBUCH.md` fahren — Befunde notieren.
