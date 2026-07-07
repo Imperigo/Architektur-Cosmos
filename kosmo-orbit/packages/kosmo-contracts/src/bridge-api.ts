@@ -15,7 +15,15 @@ export const BridgeHealth = z.object({
     ollama: z.boolean(),
     stt: z.boolean(),
     tts: z.boolean(),
+    // Die Bridge liefert `embed` längst — der Contract zog nach (V2-Technik
+    // Block 1). Optional, damit ältere Health-Antworten weiter parsen.
+    embed: z.boolean().optional(),
   }),
+  /**
+   * GPU-Status. Auf der echten HomeStation aus nvidia-smi; im Fake-Modus
+   * ehrlich als Simulation benannt (`name: "fake-gpu (Simulation)"`). Fehlt
+   * ganz, wenn keine GPU/kein Fake-Gate aktiv ist — nie vorgetäuscht.
+   */
   gpu: z
     .object({
       name: z.string().optional(),
@@ -62,12 +70,49 @@ export const EmbedResponse = z.object({
 });
 export type EmbedResponse = z.infer<typeof EmbedResponse>;
 
+/**
+ * Video→Splat-Job-Record. Eigenes Schema (NICHT die `vis-`-Regex von
+ * RenderJob aufweichen): Präfix `vsplat-`. Die Bridge extrahiert nur die
+ * Frames und übergibt ehrlich — ohne SfM-Worker endet der Job beweisbar als
+ * `kein-sfm-worker` mit Begründung, NIE als vorgetäuschter Splat.
+ */
+export const VideoSplatJobStatus = z.enum([
+  'queued',
+  'running',
+  'done',
+  'error',
+  'cancelled',
+  'kein-sfm-worker',
+]);
+export type VideoSplatJobStatus = z.infer<typeof VideoSplatJobStatus>;
+
+export const VideoSplatJob = z.object({
+  job_id: z.string().regex(/^vsplat-\d+-[0-9a-f]{6}$/),
+  status: VideoSplatJobStatus,
+  kind: z.literal('video-splat').default('video-splat'),
+  created_at: z.string(),
+  updated_at: z.string().optional(),
+  /** Ehrliche Begründung, v. a. bei `kein-sfm-worker`. */
+  message: z.string().optional(),
+  worker: z.string().optional(),
+});
+export type VideoSplatJob = z.infer<typeof VideoSplatJob>;
+
 /** Pfade der Bridge-Endpoints — eine Quelle für Client UND Server-Tests. */
 export const bridgeRoutes = {
   health: '/health',
   jobs: '/jobs',
   job: (id: string) => `/jobs/${id}`,
   jobArtifact: (id: string, name: string) => `/jobs/${id}/artifacts/${name}`,
+  /** Freigabe eines wartenden Jobs (nur bei aktiver Freigabe-Pflicht) —
+   * braucht den `approval_token` aus dem Create-Response. */
+  jobApprove: (id: string) => `/jobs/${id}/approve`,
+  /** Kooperativer Abbruch: awaiting_approval/queued sofort, running vor dem
+   * nächsten teuren Schritt. */
+  jobCancel: (id: string) => `/jobs/${id}/cancel`,
+  /** Blender-Simulation (Wind/Sonne/Gebäude) — ohne Blender-Worker endet der
+   * Job als `kein-blender-worker` (Physik wird NIE gefakt). */
+  jobsBlenderSim: '/jobs/blender-sim',
   /** Video→Splat: ehrliche Übergabe der lokal extrahierten Frames — keine
    * SfM-Optimierung in der Bridge selbst (siehe kosmo_bridge/main.py). */
   jobsVideoSplat: '/jobs/video-splat',

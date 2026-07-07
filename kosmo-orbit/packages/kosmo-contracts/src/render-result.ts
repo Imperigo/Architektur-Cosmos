@@ -51,6 +51,16 @@ export const RenderJobStatus = z.enum([
   'cancelled',
 ]);
 
+/**
+ * Fortschritts-Etappe eines laufenden Jobs. Der Worker schreibt sie in den
+ * Record; der Client zeigt Phase/Prozent am Node. `pct` in 0..1.
+ */
+export const RenderJobProgress = z.object({
+  phase: z.string(),
+  pct: z.number().min(0).max(1),
+});
+export type RenderJobProgress = z.infer<typeof RenderJobProgress>;
+
 export const RenderJob = z.object({
   job_id: z.string().regex(/^vis-\d+-[0-9a-f]{6}$/),
   status: RenderJobStatus,
@@ -60,6 +70,16 @@ export const RenderJob = z.object({
   created_at: z.string(),
   updated_at: z.string().optional(),
   error: z.string().optional(),
+  // V2-Technik Block 1 (additiv, alle optional — die heutige Bridge liefert
+  // sie noch nicht, echte/erweiterte Worker tragen sie ein):
+  /** Wer den Job übernommen hat, z. B. "fake-worker" oder ein echter Worker. */
+  worker: z.string().optional(),
+  /** Laufende Etappe; der Client zeigt Phase + Prozent. */
+  progress: RenderJobProgress.optional(),
+  /** Was BESTELLT wurde (nicht was gerendert wurde) — Cycles vs. KI-Veredelung. */
+  requested_engine: z.enum(['cycles', 'ki']).optional(),
+  /** Menschlicher Zusatztext (z. B. Abbruch-/Wartegrund), UI-lesbar. */
+  message: z.string().optional(),
 });
 
 export type RenderJob = z.infer<typeof RenderJob>;
