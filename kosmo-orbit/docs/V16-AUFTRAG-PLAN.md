@@ -185,6 +185,73 @@ Schutz ist «hohe Hürde + wertlose Kopie ohne Server-Bindung», nicht
 
 ---
 
+## Block G — Interop & fliessender Software-Übergang (Owner-Zusatz 07.07.)
+
+**Ziel:** KosmoOrbit lässt sich in einem laufenden Architekturbüro einführen,
+OHNE harten Cut — Dateien gehen in der Übergangsphase verlustfrei zwischen
+ArchiCAD (Leit-Referenz) und KosmoOrbit hin und her; dazu Brücken zu Rhino,
+Grasshopper, AutoCAD, Vectorworks, Blender, Cinema4D und Adobe (Photoshop,
+InDesign, Illustrator). «Wie» entscheidet Fable frei.
+
+**G-0 — Recherche + Interop-Konzept (Fable):** `docs/INTEROP-KONZEPT.md`.
+Der Kern-Entscheid ist die **Austauschsprache**, denn ein 1:1-natives ArchiCAD-
+Format (`.pln`) ist proprietär und nicht offen lesbar. Die ehrliche, tragfähige
+Strategie ist eine **Schichtung nach Verlustgrad**:
+- **BIM-Vollaustausch: IFC** (existiert schon — Export scharf, Import editierbar
+  A4/A2a). Der verlustärmste offene Weg ArchiCAD↔KosmoOrbit für Bauteile mit
+  Semantik (Wände/Decken/Räume/Materialien). Ausbauen: IFC-Property-Sets,
+  Klassifikation (eBKP), Rundlauf-Treue messen (Roundtrip-Test: IFC raus → rein
+  → Bauteile/Kennzahlen identisch).
+- **2D-Planaustausch: DXF/DWG** (DXF-Basis existiert, `derive/dxf.ts`) — Layer,
+  Linientypen, Bemassung, Text; für den Werkplan-Alltag und die Unternehmer-
+  Pläne (verknüpft mit Block C).
+- **Geometrie-Mesh: GLB/OBJ** (existiert, FreeMesh-Brücke) — Rhino/Blender/
+  Cinema4D/Vectorworks über Mesh-Roundtrip.
+- **Grasshopper**: als parametrischer Live-Draht — Konzept für einen
+  KosmoOrbit-Endpunkt, den ein GH-Skript füttert/liest (Bridge-Route, JSON).
+- **Adobe (Photoshop/InDesign/Illustrator)**: Präsentation, nicht BIM — sauberer
+  **SVG/PDF-Export** der Pläne (Vektor, ebenentreu) + hochauflösende Renders/
+  Bildexporte, die in InDesign/Illustrator direkt weiterleben; Blatt-Layouts als
+  PDF/X. KosmoPublish ist der Andockpunkt.
+- **Apple-Ökosystem als Referenz-Vorbild**: nicht ein Klick-Import, sondern der
+  «es passt einfach»-Übergang — Handoff-Gefühl (ein Projekt auf iPad angefangen,
+  am Mac weiter), Universal-Formate, keine Format-Angst. Übertragen: ein
+  **«Übergabe»-Modus**, der beim Import automatisch das beste verfügbare Format
+  wählt und ehrlich zeigt, was verlustfrei ankam und was gemappt/geschätzt wurde
+  (nie stiller Verlust — ein «Interop-Bericht» je Import/Export).
+
+**Bau (nach Konzept, gestuft):** G-1 IFC-Roundtrip härten + Property-Sets/eBKP
+→ G-2 DXF/DWG-Import editierbar (Layer→Entities, verknüpft mit C-2) → G-3
+Präsentations-Export Adobe-tauglich (SVG/PDF-X + Bildexport) → G-4 Mesh-
+Roundtrip Rhino/Blender/C4D + Grasshopper-Endpunkt-Konzept → G-5 «Übergabe»-
+Modus + Interop-Bericht (verlustfrei/gemappt/geschätzt).
+**Grenze ehrlich:** kein proprietäres `.pln`-natives Lesen (technisch nicht
+offen); der Übergang ist über offene Formate **verlustARM**, nicht magisch
+verlustFREI bei allem — der Interop-Bericht sagt bei jedem Import genau, was
+ankam. DWG-Schreiben/Lesen jenseits DXF kann eine Bibliothek/HomeStation
+brauchen (ehrlich markiert).
+
+## Block H — Vollhaus-Simulationsläufe (speak/draw/sketch with Kosmo, Owner-Zusatz)
+
+**Ziel:** Simulationsläufe, in denen ein **vollumfängliches Haus** von Anfang
+bis Ende entsteht — über **Speak-to-Kosmo**, **Draw-with-Kosmo (primitiv)** und
+**Sketch-with-Kosmo**. Ich baue jeden Lauf komplett selbst und präsentiere das
+Endresultat.
+
+**Bau (auf dem Serie-H-Harness):** je ein E2E/Sim-Szenario, das einen der drei
+Eingabewege durchspielt und ein komplettes Haus liefert (Geschosse, Wände,
+Öffnungen, Dach, Treppe, Zonen/Räume, Möblierung, SIA-416-Kennzahlen, Pläne,
+3D, Render-Auftrag, Export). **Ehrlichkeit vorweg:** Speak-to-Kosmo braucht
+Whisper an der echten Bridge — im Container läuft der **Text-/Mock-Pfad** (der
+Ablauf ist identisch, nur die Audiozeile wird getippt statt gesprochen; die
+echte Sprachqualität ist HomeStation-Abnahme). Draw (primitiv, `design.*`-
+Commands) und Sketch (KosmoSketch → BIM) laufen voll. **Präsentation:** je Lauf
+Screenshots (3D + Grundriss + Schnitt + Blatt), Kennzahlen-Tabelle, exportierte
+Dateien (IFC/PDF) und ein kurzer Ergebnisbericht — als das «Endresultat» zum
+Draufschauen.
+**Grenze:** die drei Wege enden im selben Doc (ein Haus), aber Speak ist im
+Container Text-simuliert; jede solche Grenze steht offen im Bericht.
+
 ## Offene Prioritäten aus V2-AUFTAKT (mit aufgenommen)
 
 - **P5-alt — Signierte Builds + Auto-Update:** blockiert auf Owner-Material
@@ -205,15 +272,19 @@ Schutz ist «hohe Hürde + wertlose Kopie ohne Server-Bindung», nicht
 
 ## Vorgeschlagene Bau-Reihenfolge (Nutzen × Aufwand)
 
-1. **Block A (Auto-Setup)** — direkter Nutzen für v1.5-Tester, mittel.
-2. **Block C (Submission + Unternehmer-Übernahme)** — höchster Fachnutzen,
+1. **Block A (Auto-Setup)** — direkter Nutzen für v1.5-Tester, mittel. *(A1 ✅)*
+2. **Block H (Vollhaus-Simulationsläufe)** — früh, weil es das Gesamtsystem
+   scharf prüft UND ein vorzeigbares Ergebnis liefert; mittel.
+3. **Block C (Submission + Unternehmer-Übernahme)** — höchster Fachnutzen,
    gross; C-0-Recherche zuerst.
-3. **Block D (Wettbewerb-Grundlagenstudie)** — gross, baut auf viel
+4. **Block G (Interop/Software-Übergang)** — gross, strategisch wichtig fürs
+   Büro; G-0-Konzept zuerst, baut auf IFC/DXF/GLB-Bestand.
+5. **Block D (Wettbewerb-Grundlagenstudie)** — gross, baut auf viel
    Bestehendem (Volumenstudie/Varianten/Klima/Segmentierer).
-4. **Block E (Starter-Guide)** — mittel, hebt die Erstnutzung.
-5. **Block B (immersive Oberfläche)** — Konzept zuerst, dann Bau.
-6. **Block F (Anti-Kopie)** — Konzept + wirksame Hebel schärfen, ehrlich.
-7. **P5/P6/P7-alt** dazwischen wo sie passen (P7 klein & jederzeit; P5 wartet
+6. **Block E (Starter-Guide)** — mittel, hebt die Erstnutzung.
+7. **Block B (immersive Oberfläche)** — Konzept zuerst, dann Bau.
+8. **Block F (Anti-Kopie)** — Konzept + wirksame Hebel schärfen, ehrlich.
+9. **P5/P6/P7-alt** dazwischen wo sie passen (P7 klein & jederzeit; P5 wartet
    auf Owner-Schlüssel; P6 nach Block D/HomeStation).
 
 Jeder Block: Fable-Konzept wo nötig → Batches (Gate + volle E2E je Batch) →
