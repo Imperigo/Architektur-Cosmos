@@ -2,4 +2,5 @@ export * from './render-scene';
 export * from './render-result';
 export * from './blender-sim';
 export * from './bridge-api';
+export * from './dev-workorder';
 export * from './kosmo-package';

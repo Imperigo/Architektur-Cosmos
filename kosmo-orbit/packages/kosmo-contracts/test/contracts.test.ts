@@ -280,3 +280,112 @@ describe('kosmo.blender-sim/v1 — Physik wird nie gefakt', () => {
     expect(job.approval_token).toBe('CONFIRMED_SIM_1c214b97');
   });
 });
+
+describe('kosmodev.workorder/v1 (Block 2 / AB1)', () => {
+  const auftrag = {
+    id: 'auftrag-abc123-x1',
+    ts: '2026-07-07T09:00:00Z',
+    text: 'Der Wand-Dialog soll den letzten Aufbau vorschlagen',
+    quelle: 'getippt',
+    station: 'KosmoDesign',
+  };
+
+  it('parst eine Workorder und füllt das Schema-Literal als Default', async () => {
+    const { Workorder } = await import('../src');
+    const wo = Workorder.parse({
+      projekt: 'TKB Bibliothek Hönggerberg',
+      erzeugt_um: '2026-07-07T09:05:00Z',
+      auftraege: [auftrag, { ...auftrag, id: 'auftrag-abc123-x2', quelle: 'kosmo', ort: 'Werkzeugleiste' }],
+    });
+    expect(wo.schema).toBe('kosmodev.workorder/v1');
+    expect(wo.auftraege).toHaveLength(2);
+    expect(wo.auftraege[1]?.ort).toBe('Werkzeugleiste');
+  });
+
+  it('verweigert eine leere Workorder (min 1 Auftrag) und unbekannte Quellen', async () => {
+    const { Workorder } = await import('../src');
+    expect(() =>
+      Workorder.parse({ projekt: 'P', erzeugt_um: 'x', auftraege: [] }),
+    ).toThrow();
+    expect(() =>
+      Workorder.parse({
+        projekt: 'P',
+        erzeugt_um: 'x',
+        auftraege: [{ ...auftrag, quelle: 'telepathisch' }],
+      }),
+    ).toThrow();
+  });
+
+  it('erzwingt das dev-Präfix am Job-Record (kein Vermischen mit vis-/bsim-)', async () => {
+    const { DevJob } = await import('../src');
+    const job = DevJob.parse({
+      job_id: 'dev-1783414062-a2c3b1',
+      status: 'queued',
+      created_at: '2026-07-07T09:05:00Z',
+      anzahl_auftraege: 2,
+    });
+    expect(job.kind).toBe('dev-workorder');
+    expect(() =>
+      DevJob.parse({
+        job_id: 'vis-1783414062-a2c3b1',
+        status: 'queued',
+        created_at: 'x',
+        anzahl_auftraege: 1,
+      }),
+    ).toThrow();
+  });
+
+  it('kennt bewusst KEIN awaiting_approval — Absenden ist die Owner-Handlung (E2)', async () => {
+    const { DevJobStatus } = await import('../src');
+    expect(DevJobStatus.options).toEqual(['queued', 'running', 'done', 'error', 'cancelled']);
+    expect(DevJobStatus.safeParse('awaiting_approval').success).toBe(false);
+  });
+
+  it('Result verlangt den Worker-Namen — «Simulation» bleibt sichtbar (E5)', async () => {
+    const { DevJobResult } = await import('../src');
+    expect(() =>
+      DevJobResult.parse({
+        abgeschlossen_um: '2026-07-07T10:00:00Z',
+        ergebnisse: [{ auftrag_id: 'a1', umgesetzt: false }],
+      }),
+    ).toThrow();
+    const fake = DevJobResult.parse({
+      worker: 'fake-worker',
+      abgeschlossen_um: '2026-07-07T10:00:00Z',
+      ergebnisse: [
+        { auftrag_id: 'a1', umgesetzt: false, notiz: 'Simulation — keine echte Umsetzung' },
+      ],
+    });
+    expect(fake.ergebnisse[0]?.commit).toBeUndefined();
+  });
+
+  it('ein echtes Ergebnis trägt den Commit-Beleg', async () => {
+    const { DevJob } = await import('../src');
+    const job = DevJob.parse({
+      job_id: 'dev-1783414062-a2c3b1',
+      status: 'done',
+      created_at: '2026-07-07T09:05:00Z',
+      updated_at: '2026-07-07T11:00:00Z',
+      anzahl_auftraege: 1,
+      worker: 'claude-code@homestation',
+      result: {
+        worker: 'claude-code@homestation',
+        abgeschlossen_um: '2026-07-07T11:00:00Z',
+        ergebnisse: [
+          { auftrag_id: 'a1', umgesetzt: true, commit: 'ab12cd3', notiz: 'Dialog merkt sich den Aufbau' },
+        ],
+      },
+    });
+    expect(job.result?.ergebnisse[0]?.umgesetzt).toBe(true);
+    expect(job.result?.ergebnisse[0]?.commit).toBe('ab12cd3');
+  });
+
+  it('die Dev-Routen sind additiv in bridgeRoutes verankert', async () => {
+    const { bridgeRoutes } = await import('../src');
+    expect(bridgeRoutes.jobsDev).toBe('/jobs/dev');
+    expect(bridgeRoutes.jobDev('dev-1-abcdef')).toBe('/jobs/dev/dev-1-abcdef');
+    expect(bridgeRoutes.jobDevClaim('x')).toBe('/jobs/dev/x/claim');
+    expect(bridgeRoutes.jobDevResult('x')).toBe('/jobs/dev/x/result');
+    expect(bridgeRoutes.jobDevCancel('x')).toBe('/jobs/dev/x/cancel');
+  });
+});

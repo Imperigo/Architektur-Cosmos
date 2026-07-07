@@ -125,6 +125,16 @@ export const bridgeRoutes = {
   /** Video→Splat: ehrliche Übergabe der lokal extrahierten Frames — keine
    * SfM-Optimierung in der Bridge selbst (siehe kosmo_bridge/main.py). */
   jobsVideoSplat: '/jobs/video-splat',
+  /** KosmoDev-Workorders (kosmodev.workorder/v1, Block 2): die Bridge nimmt
+   * Auftrags-Text an und vermittelt ihn an einen Dev-Worker — sie führt NIE
+   * selbst Code aus. Lebenszyklus queued→running→done|error|cancelled. */
+  jobsDev: '/jobs/dev',
+  jobDev: (id: string) => `/jobs/dev/${id}`,
+  /** Worker übernimmt den Job (setzt running + worker — verhindert Doppelarbeit). */
+  jobDevClaim: (id: string) => `/jobs/dev/${id}/claim`,
+  /** Worker meldet das Ergebnis (DevJobResult) — done oder error. */
+  jobDevResult: (id: string) => `/jobs/dev/${id}/result`,
+  jobDevCancel: (id: string) => `/jobs/dev/${id}/cancel`,
   stt: '/stt',
   tts: '/tts',
   ollama: '/ollama',
