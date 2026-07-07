@@ -61,8 +61,25 @@ Reihenfolge = Nutzen × Owner-Wunsch. Aufwand grob (S/M/L).
    `tools/homestation-bridge/README.md` («Dev-Worker andocken»), Übergabepunkte
    in `docs/HOMESTATION-AUFTRAG.md` §1d, Abnahme-Ablauf in
    `docs/ABNAHME-DREHBUCH.md` («Kreis schliessen»).
-4. **FreeMesh-Modellieren Stufe 3 (L, Owner-Q9)** — freies Mesh im Viewport;
-   bis dahin ist Blender die externe Werkbank (GLB-Roundtrip via KosmoAsset).
+4. **FreeMesh-Modellieren Stufe 3 (L, Owner-Q9)** ✅ gebaut (ROADMAP 192–197,
+   `docs/V2-TECHNIK-BLOCK3-BUILDPLAN.md`): freies Mesh im Viewport als
+   Doc-Entity `FreeMesh` (flache Vertex-/Faces-Arrays, Topologie zur Laufzeit
+   in `derive/mesh-topo.ts`). Erstellen aus Quader ODER MassBody
+   («In Mesh umwandeln», ein Undo-Schritt für Wechsel + Löschen zusammen),
+   Editieren NUR über Commands (`design.meshVertexSchieben`,
+   `design.meshFlaecheExtrudieren` über planare Regionen — automatisch
+   Kosmo-Chat-Tools) im eigenen `meshEdit`-Viewport-Modus (Vertex-Handles,
+   Flächen-Pick + Extrude, kein allgemeines Gizmo-Framework). Fliesst
+   ehrlich in Grundriss/Schnitt (Tri-Slice-Schnittfigur ab
+   `PLAN_SCHNITTHOEHE`=1000 mm über Geschoss-OK), GLB-Export mit lesbarem
+   Namen, IFC als echter `IfcFacetedBrep` (ifcopenshell-validiert). **Offen
+   bleibt ehrlich**: ein hartes Vertex-Budget (4096 Vertices/8192 Faces) —
+   grössere/gescannte Meshes bleiben Referenz-Kontext, **Blender bleibt die
+   externe Werkbank für Meshes ÜBER dem Budget** (GLB-Roundtrip via
+   KosmoAsset, «Als FreeMesh übernehmen» weist zu grosse Dateien ehrlich ab);
+   kein 3D-CSG/Boolean, kein Sculpting/Kanten-Beveln/NURBS, keine
+   SIA-416-Flächenanrechnung von FreeMesh, Meshes unter der Schnitthöhe ohne
+   Grundriss-Figur (nur 3D/Schnitt sichtbar).
 5. **Signierte Builds + Auto-Update (S/M)** — mit Apple-Konto und Tauri-Updater-
    Schlüsseln; heute «Update = neuer Installer» (INSTALL.md).
 6. **LoRA-Training aus dem Lernjournal (M)** — KosmoTrain exportiert JSONL; die

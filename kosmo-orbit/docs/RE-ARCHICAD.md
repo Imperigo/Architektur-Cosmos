@@ -63,8 +63,8 @@ Status je Zeile: **●** KosmoOrbit hat es · **◐** teilweise (ein Satz, was f
 | **Tür/Fenster** | GDL-Bibliotheken, Anschläge, parametrische Teilungen, Vermassungs-Rückgaben [H-CustomComponents, K] | `Opening` (Fenster/Tür, Brüstung, Blockanschlag ROADMAP 96, Höhenmass «h/BH» in der Öffnungskette ROADMAP 93), Türsymbol mit Flügel, `design.fensterAusModulen` stanzt aus Fassadenmodulen (ROADMAP 78) | ◐ — Geometrie/Plan ja; parametrische Fenster-Vielfalt (Sprossen, Stürze, Sonderformen) fehlt |
 | **Decke** | Slab mit Composites, Kanten-Winkel [K] | `design.deckeZeichnen` + Aufbau (`assemblyId`, Bodenaufbau → Koten roh/fertig ROADMAP 94, Rohboden-Linie ROADMAP 96) | ● |
 | **Dach** | Ein-/Mehrflächendächer, automatischer Walm, Verschneidung mit Wänden [K] | Walmdach über eigenen Straight Skeleton (`kernel/geometry/skeleton.ts`, TECH-RADAR-Entscheid), Gratkanten in Ansicht/Axo (ROADMAP 21) | ◐ — Walm/Sattel ja; freie Mehrflächendächer, Dachfenster, Wand-anheben-an-Dach fehlen |
-| **Schale (Shell)** | Rotations-/Extrusions-/Regelflächen [H-Shell] | — | ○ — laut Q9 dritte Werkzeugstufe («FreeMesh», V2) |
-| **Morph** | Freiform-Direktmodellierung [K] | — | ○ — wie Schale: bewusst V2 (FreeMesh), kein V1-Ziel |
+| **Schale (Shell)** | Rotations-/Extrusions-/Regelflächen [H-Shell] | `FreeMesh`-Entity, dritte Werkzeugstufe (V2-Technik Block 3, ROADMAP 192–197): Quader/MassBody→Mesh als Start, `meshVertexSchieben`/`meshFlaecheExtrudieren` (planare Regionen), 2D-Schnittfigur (Tri-Slice in Grundriss ab `PLAN_SCHNITTHOEHE`=1000 mm über Geschoss-OK, im Schnitt automatisch), GLB-Export/-Import («Als FreeMesh übernehmen»), IFC als `IfcFacetedBrep` | ◐ — freie Flächenform ja, aber kein Rotations-/Regelflächen-Erzeuger; hartes Budget (4096 Vertices/8192 Faces), kein CSG, keine SIA-416-Flächenanrechnung |
+| **Morph** | Freiform-Direktmodellierung [K] | dieselbe `FreeMesh`-Basis: eigener `meshEdit`-Viewport-Modus (Vertex-Handles, Flächen-Pick + Extrude, Drag committet als EIN Undo-Schritt, kein allgemeines Gizmo-Framework), MassBody→Mesh-Umwandlung («In Mesh umwandeln», ein Undo-Schritt löscht/stellt beide zusammen wieder her) | ◐ — das Push/Pull-Handgefühl ja; kein Subdivide/Smooth/Sculpting/Kanten-Beveln/NURBS, Meshes unter 1 m Schnitthöhe bleiben ohne Grundriss-Figur (nur 3D/Schnitt sichtbar) |
 | **Treppe** | Solver-gestütztes Treppenwerkzeug (Regeln für Steigung/Auftritt, automatische Lösungsvorschläge), Unterkonstruktion, Geländer-Werkzeug [H-Stair, K] | `derive/treppe.ts`: gerade/Zwischenpodest/U-Lauf/L-Lauf, EINE Zerlegung für 3D+Plansymbol+Checks, Schrittmass-Check über den Gesamtlauf, Kappung an der Schnitthöhe (ROADMAP 43, 95) | ◐ — Formen + Regeln ja; gewendelte Läufe, Unterkonstruktions-Detail und ein **Geländer-Werkzeug** fehlen |
 | **Stütze** | Column-Tool (Profile, Kern/Furnier, Raster-Bezug) [K] | nur Raster: `GridAxis`-Entity + Raster-Assistent (`derive/stuetzenraster.ts`, ROADMAP 26/39) — **keine Stützen-Entity** | ○ — Skelettbau nicht modellierbar; grösste Werkzeuglücke im Kern |
 | **Unterzug** | Beam-Tool (Profile, Aussparungen im Träger) [K] | keine Beam-Entity | ○ |
@@ -197,7 +197,10 @@ vervollständigen, dann Anschlüsse automatisch lösen); (3) **A4 + A8** als sch
 Alltagsgewinne dazwischen; (4) **A6 → A7** zusammen als «Werkplan-Beschriftungs-
 Kapitel», sobald der erste echte Planlauf ansteht; A5 wenn der erste Brandschutz-
 Nachweis kommt. Bewusst NICHT bauen: GDL-Kompatibilität, Ebenen-System,
-Translator-Konfiguration, MEP, Morph/Schale vor der FreeMesh-Stufe (Q9).
+Translator-Konfiguration, MEP; Morph/Schale sind seit V2-Technik Block 3
+(ROADMAP 192–197) als `FreeMesh` gebaut — bewusst NICHT darüber hinaus:
+3D-CSG/Boolean, Sculpting, Kanten-Beveln, NURBS, ein hartes Vertex-Budget
+statt unbegrenzter Freiheit (Buildplan §5).
 
 **Stand 04.07.2026: alle 8 Container-Lücken sind gebaut** — A1 Verschneidungs-
 prioritäten (ROADMAP 113, Grundriss; Schnitt-Faces offen), A2 Umbau-Filter je
