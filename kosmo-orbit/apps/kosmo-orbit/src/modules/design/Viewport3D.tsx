@@ -4,13 +4,14 @@ import CameraControls from 'camera-controls';
 import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
 import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
-import { deriveAll, type GeometryArtifact, type Pt, type Wall } from '@kosmo/kernel';
+import { deriveAll, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
 import { pbrPalette } from '@kosmo/data';
 import type { Fluchtlinie } from './zeichenhilfen';
 import { NavLeiste } from './NavLeiste';
+import { meshHandles, threeDeltaZuKernel } from './mesh-edit';
 import { fitStrokes, type FittedSegment, type Stroke } from './sketch';
 import {
   achsAbstand,
@@ -143,6 +144,22 @@ export interface ViewportHandlers {
   fluchtlinien?: Fluchtlinie[];
   /** T3: Shift hat den Winkel zum letzten Punkt auf 45°-Vielfache fixiert. */
   orthoAktiv?: boolean;
+  /**
+   * Block 3 / E4 (Buildplan FM3): ID des FreeMesh im Viewport-Editiermodus —
+   * gesetzt zeigt der Viewport Vertex-Handles (eine Kugel je geschweisster
+   * Position, `mesh-topo.ts` `gleichePositionen`) und macht die Flächen des
+   * Meshs pickbar. KEIN allgemeines Gizmo-Framework, nur dieser eine Modus.
+   */
+  meshEditId?: string | null;
+  /**
+   * Ein Vertex-Handle-Drag endet (pointerup) — `indices` sind die
+   * verschweissten Vertex-Indizes, `delta` das gerundete Kern-mm-Delta
+   * (dx/dy/dz). Der Aufrufer committet EIN `design.meshVertexSchieben`.
+   */
+  onMeshVertexDrag?: (entityId: string, indices: number[], delta: { dx: number; dy: number; dz: number }) => void;
+  /** Klick auf eine Mesh-Fläche im Editiermodus — `face` = Kernel-Dreiecks-
+   * Index (deriveFreeMesh explodiert 1:1, `intersection.faceIndex` passt). */
+  onMeshFaceClick?: (entityId: string, face: number) => void;
 }
 
 import { materialKarten, texturenAktiv } from './texturen';
@@ -450,6 +467,63 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const previewGroup = new THREE.Group();
     previewGroup.scale.set(MM, MM, MM);
     scene.add(previewGroup);
+
+    // Block 3 / E4 (Buildplan FM3): FreeMesh-Editiermodus — Vertex-Handles.
+    // Eigene Gruppe mit derselben MM-Skalierung wie `model`, damit Handle-
+    // Positionen direkt in Kern-mm (wie `artifactToObjects`) gesetzt werden
+    // können. Nur befüllt, solange `handlers.current.meshEditId` gesetzt ist
+    // (Performance-Auflage: Handles nur im Editiermodus, s. Buildplan §Regeln).
+    const meshHandleGroup = new THREE.Group();
+    meshHandleGroup.scale.set(MM, MM, MM);
+    scene.add(meshHandleGroup);
+    const meshHandleGeo = new THREE.SphereGeometry(140, 12, 8);
+    const meshHandleMaterial = new THREE.MeshBasicMaterial({ color: 0xa84b2b, depthTest: false });
+    let meshHandlesBuiltFor: { id: string; revision: number } | null = null;
+    // Laufender Vertex-Drag (lokal, kein Command bis pointerup — NodeCanvas-
+    // /T5-Muster): `plane` ist entweder die horizontale Ebene auf Höhe des
+    // Handles (Normalfall) oder eine kamerazugewandte Vertikal-Ebene durch den
+    // Handle (Shift = nur Höhe, dx/dy bleiben 0 — s. threeDeltaZuKernel).
+    let meshDrag: {
+      entityId: string;
+      indices: number[];
+      startWorld: THREE.Vector3;
+      vertical: boolean;
+      plane: THREE.Plane;
+      handle: THREE.Mesh;
+    } | null = null;
+
+    function syncMeshHandles() {
+      if (meshDrag) return; // nicht mitten im Ziehen neu aufbauen
+      const id = handlers.current?.meshEditId ?? null;
+      const { doc, revision: rev } = useProject.getState();
+      if (!id) {
+        if (meshHandlesBuiltFor) {
+          meshHandleGroup.clear();
+          meshHandlesBuiltFor = null;
+        }
+        return;
+      }
+      if (meshHandlesBuiltFor && meshHandlesBuiltFor.id === id && meshHandlesBuiltFor.revision === rev) return;
+      meshHandlesBuiltFor = { id, revision: rev };
+      meshHandleGroup.clear();
+      const entity = doc.get<FreeMesh>(id);
+      if (!entity || entity.kind !== 'freemesh') return;
+      const storey = doc.get<Storey>(entity.storeyId);
+      const elevation = storey && storey.kind === 'storey' ? storey.elevation : 0;
+      for (const h of meshHandles(entity.positions)) {
+        const handleMesh = new THREE.Mesh(meshHandleGeo, meshHandleMaterial);
+        handleMesh.position.set(h.x, h.z + elevation, -h.y);
+        handleMesh.userData['meshHandle'] = { entityId: id, indices: h.indices };
+        meshHandleGroup.add(handleMesh);
+      }
+    }
+
+    const meshHandleTrefferAt = (clientX: number, clientY: number) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
+      raycaster.setFromCamera(ndc, camera);
+      return raycaster.intersectObjects(meshHandleGroup.children, false)[0] ?? null;
+    };
 
     // T5, Punkt 3 + A4 (ROADMAP 155): KosmoSketch im 3D-Viewport — Roh-
     // Striche (dünn, gedämpft), der aktuell gezogene Strich (Akzentfarbe)
@@ -965,6 +1039,42 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     };
 
     const onPointerDown = (ev: PointerEvent) => {
+      // Block 3 / E4: pointerdown auf einem Vertex-Handle startet den lokalen
+      // Zieh-Zustand — hat Vorrang vor Gesten-Automat/Klick-Erkennung, sonst
+      // würde ein Doppel-Tap auf einem Handle versehentlich «Einpassen» lösen.
+      // Trifft der Down daneben, bleibt es ein normaler Klick (Flächen-Pick
+      // im pointerup unten). Dieselbe Pencil-Trennung wie im Skizzenmodus
+      // (kameraDarfSehen(...,true)): Stift/linke Maus dürfen einen Handle
+      // greifen, Finger navigieren immer weiter (J1, kein Sonderweg für
+      // Touch) — sonst würde ein Finger-Tap gleichzeitig orbiten UND ziehen.
+      if (!handlers.current?.sketchMode && handlers.current?.meshEditId && !kameraDarfSehen(ev.pointerType, ev.button, true)) {
+        const hit = meshHandleTrefferAt(ev.clientX, ev.clientY);
+        if (hit) {
+          const info = hit.object.userData['meshHandle'] as { entityId: string; indices: number[] };
+          const worldPos = hit.object.getWorldPosition(new THREE.Vector3());
+          const vertical = ev.shiftKey;
+          // Vertikal (Shift): kamerazugewandte Vertikal-Ebene durch den Handle
+          // — nur die Höhe (three-y) wird ausgewertet (s. threeDeltaZuKernel).
+          // Horizontal: die Ebene auf Handle-Höhe (wie `groundPoint`).
+          const normal = vertical
+            ? (() => {
+                const n = new THREE.Vector3(camera.position.x - worldPos.x, 0, camera.position.z - worldPos.z);
+                if (n.lengthSq() < 1e-8) n.set(1, 0, 0);
+                return n.normalize();
+              })()
+            : new THREE.Vector3(0, 1, 0);
+          meshDrag = {
+            entityId: info.entityId,
+            indices: info.indices,
+            startWorld: worldPos,
+            vertical,
+            plane: new THREE.Plane().setFromNormalAndCoplanarPoint(normal, worldPos),
+            handle: hit.object as THREE.Mesh,
+          };
+          (renderer.domElement as Element).setPointerCapture(ev.pointerId);
+          return;
+        }
+      }
       if (!handlers.current?.sketchMode) {
         gesten.ereignis({ typ: 'down', t: performance.now(), x: ev.clientX, y: ev.clientY, pointerId: ev.pointerId, pointerType: ev.pointerType });
       }
@@ -979,6 +1089,21 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       downPos = { x: ev.clientX, y: ev.clientY };
     };
     const onPointerUp = (ev: PointerEvent) => {
+      // Block 3 / E4: ein laufender Vertex-Drag committet HIER als EIN
+      // `onMeshVertexDrag` (NodeCanvas-/T5-Muster) — verbraucht das up, bevor
+      // Gesten-Automat/Klick-Erkennung etwas damit anfangen.
+      if (meshDrag) {
+        const dx3 = meshDrag.handle.position.x - meshDrag.startWorld.x / MM;
+        const dy3 = meshDrag.handle.position.y - meshDrag.startWorld.y / MM;
+        const dz3 = meshDrag.handle.position.z - meshDrag.startWorld.z / MM;
+        const delta = threeDeltaZuKernel(dx3, dy3, dz3);
+        if (delta.dx !== 0 || delta.dy !== 0 || delta.dz !== 0) {
+          handlers.current?.onMeshVertexDrag?.(meshDrag.entityId, meshDrag.indices, delta);
+        }
+        meshDrag = null;
+        downPos = null;
+        return;
+      }
       // J1b: Doppel-Tap → Einpassen auf den getroffenen Körper (sonst das ganze
       // Modell). Verbraucht das up.
       if (!handlers.current?.sketchMode) {
@@ -1013,6 +1138,24 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       const moved = Math.hypot(ev.clientX - downPos.x, ev.clientY - downPos.y);
       downPos = null;
       if (moved > 4 || ev.button !== 0) return; // Drag = Kamerafahrt, kein Klick
+      if (handlers.current?.meshEditId) {
+        // Block 3 / E4: Flächen-Pick im Editiermodus — faceIndex entspricht
+        // 1:1 dem Kernel-Dreiecks-Index (deriveFreeMesh explodiert die
+        // Dreiecke sequenziell, s. derive/scene.ts `idx[f*3+k] = f*3+k`).
+        const rect = renderer.domElement.getBoundingClientRect();
+        ndc.set(
+          ((ev.clientX - rect.left) / rect.width) * 2 - 1,
+          -((ev.clientY - rect.top) / rect.height) * 2 + 1,
+        );
+        raycaster.setFromCamera(ndc, camera);
+        const meshEditId = handlers.current.meshEditId;
+        const hits = raycaster.intersectObjects(model.children, false);
+        const hit = hits.find((h) => (h.object as THREE.Mesh).isMesh && h.object.userData['entityId'] === meshEditId);
+        if (hit && hit.faceIndex !== undefined && hit.faceIndex !== null && meshEditId) {
+          handlers.current.onMeshFaceClick?.(meshEditId, hit.faceIndex);
+        }
+        return;
+      }
       if (handlers.current?.pickMode) {
         const rect = renderer.domElement.getBoundingClientRect();
         ndc.set(
@@ -1029,6 +1172,24 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (p) handlers.current?.onGroundClick?.({ p, shiftKey: ev.shiftKey });
     };
     const onPointerMove = (ev: PointerEvent) => {
+      // Block 3 / E4: der Handle folgt lokal dem Zeiger — nur die erlaubte
+      // Achse ändert sich (horizontal: x/z auf Handle-Höhe; vertikal/Shift:
+      // nur die Höhe, x/z bleiben am Ursprung — threeDeltaZuKernel erzwingt
+      // dx=dy=0 ohnehin, hier bleibt schon die Anzeige auf der Achse).
+      if (meshDrag) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        ndc.set(((ev.clientX - rect.left) / rect.width) * 2 - 1, -((ev.clientY - rect.top) / rect.height) * 2 + 1);
+        raycaster.setFromCamera(ndc, camera);
+        const hit = new THREE.Vector3();
+        if (raycaster.ray.intersectPlane(meshDrag.plane, hit)) {
+          if (meshDrag.vertical) {
+            meshDrag.handle.position.set(meshDrag.startWorld.x / MM, hit.y / MM, meshDrag.startWorld.z / MM);
+          } else {
+            meshDrag.handle.position.set(hit.x / MM, meshDrag.startWorld.y / MM, hit.z / MM);
+          }
+        }
+        return;
+      }
       if (!handlers.current?.sketchMode) {
         gesten.ereignis({ typ: 'move', t: performance.now(), x: ev.clientX, y: ev.clientY, pointerId: ev.pointerId, pointerType: ev.pointerType });
       }
@@ -1076,7 +1237,15 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         controls.mouseButtons.middle = AKTION_ACTION[b.middle];
         controls.mouseButtons.right = AKTION_ACTION[b.right];
       }
-      controls.enabled = kameraDarfSehen(ev.pointerType, ev.button, !!handlers.current?.sketchMode);
+      // Block 3 / E4: trifft der Down einen Vertex-Handle, gilt dieselbe
+      // Pencil-Trennung wie im Skizzenmodus (Stift/linke Maus ziehen den
+      // Handle, Kamera steht still; Finger navigieren weiter — J1, kein
+      // Sonderweg für Touch).
+      const handleGetroffen =
+        !!handlers.current?.meshEditId && meshHandleTrefferAt(ev.clientX, ev.clientY) !== null;
+      controls.enabled = handleGetroffen
+        ? kameraDarfSehen(ev.pointerType, ev.button, true)
+        : kameraDarfSehen(ev.pointerType, ev.button, !!handlers.current?.sketchMode);
       setzeTouchStyles(); // enabled-Toggle räumt die Touch-Styles ab (J2-2)
     };
     const onCaptureUp = () => {
@@ -1106,6 +1275,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncSun();
       syncSketchModus();
       syncSketchDrawing();
+      syncMeshHandles();
       // Serie J / J2: Kontextcursor je Werkzeug/Modus. handlers ist ein Ref
       // (kein Re-Render bei Werkzeugwechsel), darum je Frame abgeleitet und nur
       // bei Änderung gesetzt.

@@ -1,13 +1,15 @@
 import { useMemo } from 'react';
-import { Badge, Hairline, KButton, Measure, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import {
   areaOf,
   assemblyThickness,
   dist,
   formatArea,
   formatLength,
+  isSettingsPatch,
   type Assembly,
   type Entity,
+  type Patch,
 } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
@@ -23,6 +25,7 @@ const kindLabel: Record<string, string> = {
   zone: 'Zone',
   mass: 'Volumen',
   opening: 'Öffnung',
+  freemesh: 'FreeMesh',
 };
 
 export function Inspector() {
@@ -30,6 +33,7 @@ export function Inspector() {
   const revision = useProject((s) => s.revision);
   const runCommand = useProject((s) => s.runCommand);
   const select = useProject((s) => s.select);
+  const setMeshEditId = useProject((s) => s.setMeshEditId);
   const doc = useProject.getState().doc;
 
   const entity = useMemo<Entity | null>(() => {
@@ -202,6 +206,43 @@ export function Inspector() {
           <Row label="GF">
             <Measure>{formatArea(areaOf(entity.outline) * 1_000_000)}</Measure>
           </Row>
+          {/* Block 3 / E3+E4: Volumenkörper → FreeMesh (identische Form, ein
+              Undo-Schritt löscht das Volumen UND das neue Mesh zusammen). */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="mesh-umwandeln"
+            onClick={() => {
+              try {
+                const result = runCommand('design.meshErstellen', { form: 'ausVolumen', massId: entity.id });
+                const neu = result.patches.find(
+                  (p): p is Patch => !isSettingsPatch(p) && p.before === null && p.after?.kind === 'freemesh',
+                );
+                melde('Volumen in FreeMesh umgewandelt.', { ton: 'erfolg' });
+                if (neu) select([neu.id]);
+              } catch (err) {
+                meldeFehler(err);
+              }
+            }}
+          >
+            In Mesh umwandeln
+          </KButton>
+        </>
+      )}
+
+      {entity.kind === 'freemesh' && (
+        <>
+          <Row label="Vertices">
+            <span>{entity.positions.length / 3}</span>
+          </Row>
+          <Row label="Flächen">
+            <span>{entity.faces.length / 3}</span>
+          </Row>
+          {/* Block 3 / E4: eigener meshEdit-Modus im Viewport (Vertex-Handles +
+              Flächen-Extrude) — KEIN allgemeines Gizmo-Framework, siehe Buildplan §5. */}
+          <KButton size="sm" tone="accent" data-testid="mesh-bearbeiten" onClick={() => setMeshEditId(entity.id)}>
+            Mesh bearbeiten
+          </KButton>
         </>
       )}
 

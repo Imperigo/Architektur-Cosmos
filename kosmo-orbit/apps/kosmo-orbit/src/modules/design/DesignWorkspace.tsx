@@ -70,7 +70,7 @@ import {
  * Undo/Redo. Splitscreen mit 2D-Plänen folgt in M2.
  */
 
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze' | 'mesh';
 
 const SNAP = 250; // mm Rasterfang, wenn keine Achse in Reichweite
 
@@ -129,6 +129,10 @@ export function DesignWorkspace() {
   const undo = useProject((s) => s.undo);
   const redo = useProject((s) => s.redo);
   const setActiveStorey = useProject((s) => s.setActiveStorey);
+  // Block 3 / E4: FreeMesh-Viewport-Editiermodus — die ID lebt im Store (der
+  // Inspector-Knopf «Mesh bearbeiten» setzt sie, ohne Prop-Bohrung).
+  const meshEditId = useProject((s) => s.meshEditId);
+  const setMeshEditId = useProject((s) => s.setMeshEditId);
   // A4: nach IFC-Import erkannte Bauteile als Übernahme-Angebot (gated)
   const [bestand, setBestand] = useState<{ waende: ErkannteWand[]; decken: ErkannteDecke[] } | null>(null);
 
@@ -174,6 +178,10 @@ export function DesignWorkspace() {
   // folgt der Maus als reine Vorschau — erst bei pointerup EIN design.verschieben
   const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt } | null>(null);
   const [dragCursor, setDragCursor] = useState<Pt | null>(null);
+  // Block 3 / E4: meshEdit-Modus — angeklickte Fläche (Kernel-Dreiecks-Index)
+  // + der Distanzwert des Extrudieren-Felds (Default 500 mm, Buildplan FM3).
+  const [meshFace, setMeshFace] = useState<number | null>(null);
+  const [meshDistanz, setMeshDistanz] = useState(500);
   // Volumenstudien (Q12): letzte Zone = Parzelle, Varianten als Gruppe übernehmen
   const [studieOffen, setStudieOffen] = useState(false);
   const [drawOffen, setDrawOffen] = useState(false);
@@ -332,6 +340,17 @@ export function DesignWorkspace() {
     sketchMode: tool === 'skizze',
     pickMode: tool === 'auswahl',
     onPick: (id) => select(id ? [id] : []),
+    // Block 3 / E4: FreeMesh-Editiermodus — Vertex-Handles + Flächen-Pick.
+    // KEIN allgemeines Gizmo-Framework (Buildplan §5), nur dieser eine Modus.
+    meshEditId,
+    onMeshVertexDrag: (entityId, indices, delta) => {
+      try {
+        runCommand('design.meshVertexSchieben', { entityId, indices, ...delta });
+      } catch (err) {
+        meldeFehler(err);
+      }
+    },
+    onMeshFaceClick: (_entityId, face) => setMeshFace(face),
     // Verschieben (Auswahl-Werkzeug): pointerdown auf einem Treffer wählt es an
     // und merkt den Startpunkt; pointerup committet EIN design.verschieben
     // (bleibt der Cursor am Startpunkt, ist dx/dy = 0 → reine Auswahl, kein Command).
@@ -455,7 +474,15 @@ export function DesignWorkspace() {
           : [...points, cursor]
         : null,
     onGroundMove: (e) => setCursor(zielPunkt(e.p, e.shiftKey)),
-    onEscape: () => setPoints([]),
+    onEscape: () => {
+      // Block 3 / E4: Esc beendet zuerst den meshEdit-Modus (räumt sich sonst
+      // nie ohne den «Fertig»-Knopf ab), sonst wie bisher die laufende Kette.
+      if (meshEditId) {
+        setMeshEditId(null);
+        return;
+      }
+      setPoints([]);
+    },
     onGroundClick: (e) => {
       if (!activeStoreyId) return;
       const p = zielPunkt(e.p, e.shiftKey);
@@ -476,6 +503,22 @@ export function DesignWorkspace() {
             // Kettenzeichnen: Endpunkt wird neuer Anfang; Shift beendet
             setPoints(e.shiftKey ? [] : [p]);
           }
+        }
+      } else if (tool === 'mesh') {
+        // Block 3 / E4: ein Klick = ein FreeMesh-Quader (Default 2×2×2 m,
+        // at = Bodenpunkt gerundet — `zielPunkt` liefert bereits ganze mm).
+        // Danach ist das Mesh normal pickbar (userData.entityId, s. Viewport3D).
+        try {
+          runCommand('design.meshErstellen', {
+            form: 'quader',
+            storeyId: activeStoreyId,
+            at: p,
+            breite: 2000,
+            laenge: 2000,
+            hoehe: 2000,
+          });
+        } catch (err) {
+          meldeFehler(err);
         }
       } else if (tool === 'stuetze') {
         // A3: ein Klick = eine Stütze (Default 30er Beton, Eigenschaften via Kosmo)
@@ -553,6 +596,24 @@ export function DesignWorkspace() {
   useEffect(() => {
     setPoints([]);
   }, [tool, activeStoreyId]);
+
+  // Ein neu betretener/verlassener Editiermodus verliert die alte Flächen-Auswahl.
+  useEffect(() => {
+    setMeshFace(null);
+  }, [meshEditId]);
+
+  // Block 3 / E4: verlässt der meshEdit-Modus sein Mesh (Löschen/Undo, das
+  // FreeMesh verschwindet aus dem Doc), räumt der Modus sich selbst ab —
+  // sonst hingen Handles/Overlay an einer toten ID.
+  useEffect(() => {
+    if (!meshEditId) return;
+    const e = useProject.getState().doc.get(meshEditId);
+    if (!e || e.kind !== 'freemesh') {
+      setMeshEditId(null);
+      setMeshFace(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meshEditId, revision]);
 
   const journal = useProject((s) => s.journal);
   const lastEntry = journal[journal.length - 1];
@@ -817,6 +878,21 @@ export function DesignWorkspace() {
               {label}
             </KButton>
           ))}
+          {/* Block 3 / E4 (Buildplan FM3): Werkzeug «Mesh» — expliziter
+              `werkzeug-mesh`-Testid statt des generischen `tool-*`-Musters,
+              weil die Auftragsspezifikation genau diesen Namen verlangt. */}
+          <KButton
+            size="sm"
+            tone={tool === 'mesh' ? 'accent' : 'quiet'}
+            onClick={() => {
+              setTool('mesh');
+              nutzungMelden('zeichnen:mesh');
+            }}
+            data-testid="werkzeug-mesh"
+            {...elementStil('zeichnen', 'mesh')}
+          >
+            Mesh
+          </KButton>
         </span>
         <span style={{ width: 12 }} />
         {tool === 'wand' && assemblies.length > 0 && (
@@ -1452,6 +1528,83 @@ export function DesignWorkspace() {
 
         <KennzahlenPanel />
         <Inspector />
+
+        {/* Block 3 / E4 (Buildplan FM3): meshEdit-Overlay — Vertex-Handles/
+            Flächen-Pick laufen im Viewport (Viewport3D.tsx), dieses Panel
+            trägt nur die Distanz-Eingabe + die beiden Aktions-Knöpfe. Kein
+            allgemeines Gizmo-Framework (§5), nur dieser eine Modus. */}
+        {meshEditId && (
+          <div
+            data-testid="mesh-edit-panel"
+            style={{
+              position: 'absolute',
+              left: 12,
+              bottom: 12,
+              width: 240,
+              background: 'var(--k-surface)',
+              border: '1px solid var(--k-line)',
+              borderRadius: 'var(--k-radius-md)',
+              boxShadow: 'var(--k-shadow-raised)',
+              padding: 12,
+              display: 'grid',
+              gap: 8,
+              fontSize: 12.5,
+              zIndex: 3,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Badge hue={moduleHue.design}>Mesh bearbeiten</Badge>
+            </div>
+            <span style={{ color: 'var(--k-ink-faint)' }}>
+              Handle ziehen verschiebt die Ecke (Shift = nur Höhe) · Klick auf eine Fläche wählt sie zum Extrudieren.
+            </span>
+            {meshFace !== null && (
+              <div style={{ display: 'grid', gap: 6 }}>
+                <span style={{ color: 'var(--k-ink-faint)' }}>Fläche {meshFace} ausgewählt</span>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <input
+                    type="number"
+                    value={meshDistanz}
+                    data-testid="mesh-extrude-distanz"
+                    onChange={(e) => setMeshDistanz(Number(e.target.value))}
+                    style={{
+                      width: 90,
+                      padding: '3px 7px',
+                      borderRadius: 6,
+                      border: '1px solid var(--k-line-strong)',
+                      background: 'var(--k-raised)',
+                      fontSize: 12.5,
+                    }}
+                  />
+                  <span style={{ color: 'var(--k-ink-faint)' }}>mm — negativ = einwärts</span>
+                </label>
+                <KButton
+                  size="sm"
+                  tone="accent"
+                  data-testid="mesh-extrudieren"
+                  onClick={() => {
+                    if (meshFace === null || !Number.isFinite(meshDistanz) || meshDistanz === 0) return;
+                    try {
+                      runCommand('design.meshFlaecheExtrudieren', {
+                        entityId: meshEditId,
+                        face: meshFace,
+                        distanz: Math.round(meshDistanz),
+                      });
+                      setMeshFace(null);
+                    } catch (err) {
+                      meldeFehler(err);
+                    }
+                  }}
+                >
+                  Extrudieren
+                </KButton>
+              </div>
+            )}
+            <KButton size="sm" tone="ghost" data-testid="mesh-fertig" onClick={() => setMeshEditId(null)}>
+              Fertig
+            </KButton>
+          </div>
+        )}
 
         {/* Geschossleiste */}
         <div

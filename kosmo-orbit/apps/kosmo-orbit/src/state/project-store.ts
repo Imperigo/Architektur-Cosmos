@@ -21,12 +21,19 @@ export interface ProjectState {
   revision: number;
   activeStoreyId: string | null;
   selection: string[];
+  /** Block 3 / E4: ID des FreeMesh im Viewport-Editiermodus (Vertex-Handles,
+   * Flächen-Extrude) — null/undefined = kein Editiermodus aktiv. Bewusst im
+   * Store (nicht lokaler DesignWorkspace-State), weil der Modus vom
+   * Inspector (Knopf «Mesh bearbeiten») UND vom Viewport gemeinsam gelesen
+   * werden muss, ohne Prop-Bohrung zwischen den Geschwister-Komponenten. */
+  meshEditId: string | null;
 
   runCommand(commandId: string, params: unknown, opts?: ExecuteOptions): ExecutionResult;
   undo(): void;
   redo(): void;
   setActiveStorey(id: string): void;
   select(ids: string[]): void;
+  setMeshEditId(id: string | null): void;
 }
 
 /** Sync-Haken: wird nach jeder lokalen Mutation mit den Patches gerufen. */
@@ -46,6 +53,7 @@ export const useProject = create<ProjectState>((set, get) => {
     revision: 0,
     activeStoreyId: null,
     selection: [],
+    meshEditId: null,
 
     runCommand(commandId, params, opts) {
       const result = execute(get().doc, commandId, params, opts);
@@ -82,6 +90,10 @@ export const useProject = create<ProjectState>((set, get) => {
 
     select(ids) {
       set({ selection: ids });
+    },
+
+    setMeshEditId(id) {
+      set({ meshEditId: id });
     },
   };
 });

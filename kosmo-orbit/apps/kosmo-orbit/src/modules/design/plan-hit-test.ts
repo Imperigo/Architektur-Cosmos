@@ -187,5 +187,6 @@ export function outlineOf(doc: KosmoDoc, id: string): Pt[] | null {
   }
 }
 
-/** Kinds, die `design.verschieben` unterstützt (siehe packages/kosmo-kernel/src/commands/design.ts). */
-export const VERSCHIEBBAR = new Set(['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof']);
+/** Kinds, die `design.verschieben` unterstützt (siehe packages/kosmo-kernel/src/commands/design.ts).
+ * `freemesh` seit Block 3 / E3 (design.ts hat einen eigenen freemesh-Zweig). */
+export const VERSCHIEBBAR = new Set(['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof', 'freemesh']);
