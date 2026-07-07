@@ -67,6 +67,7 @@ export async function postRenderJob(params: {
   prompt: string;
   faithful: number;
   samples: number;
+  nurCycles?: boolean;
 }): Promise<JobRecord> {
   const { doc } = useProject.getState();
   const glb = exportGlb(doc, doc.settings.projectName);
@@ -75,7 +76,9 @@ export async function postRenderJob(params: {
     cameras: 'auto',
     render: { resolution: [1600, 1000], samples: params.samples, faithful: params.faithful },
     style: { mode: 'none', refs: [], prompt: params.prompt },
-    vis: { skip: false, backbone: 'qwen', upscale: false },
+    // HS5: «Nur Cycles» → vis.skip: true (reines Cycles, keine KI-Veredelung).
+    // Die Bridge leitet das in requested_engine "cycles" ab (HS2).
+    vis: { skip: params.nurCycles === true, backbone: 'qwen', upscale: false },
     out: '',
     geometry: { path: '', format: 'glb' },
   };

@@ -95,7 +95,14 @@ export const useVisRuntime = create<VisRuntime>((set) => ({
     }),
 }));
 
-/** Memo-Schlüssel eines Render-Auftrags — billig und deterministisch. */
-export function memoKey(a: { prompt: string; faithful: number; samples: number }): string {
-  return `${a.faithful}|${a.samples}|${a.prompt}`;
+/** Memo-Schlüssel eines Render-Auftrags — billig und deterministisch.
+ * `nurCycles` MUSS mit rein (HS5): sonst zeigt der Node nach dem Umschalten
+ * fälschlich «aktuell», obwohl ein anderer Job bestellt würde. */
+export function memoKey(a: {
+  prompt: string;
+  faithful: number;
+  samples: number;
+  nurCycles?: boolean;
+}): string {
+  return `${a.faithful}|${a.samples}|${a.nurCycles ? 'cycles' : 'ki'}|${a.prompt}`;
 }

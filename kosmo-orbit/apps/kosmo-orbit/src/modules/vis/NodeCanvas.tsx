@@ -706,6 +706,16 @@ function NodeKoerper({
               {STATUS_LABEL[status] ?? status}
             </span>
           </div>
+          {/* HS5: «Nur Cycles» bestellt reines Cycles statt KI-Veredelung. */}
+          <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: 'var(--k-ink-soft)', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              data-testid="render-nur-cycles"
+              checked={params['nurCycles'] === true}
+              onChange={(e) => param('nurCycles', e.target.checked)}
+            />
+            nur Cycles (keine KI-Veredelung)
+          </label>
           {/* Worker + Fortschritt, sobald der Worker den Job hält (HS3-Auflage 5). */}
           {(lauf?.worker || lauf?.progress) && (status === 'rendert' || status === 'wartetGpu') && (
             <div data-testid="render-fortschritt" style={{ fontSize: 9.5, fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-soft)' }}>

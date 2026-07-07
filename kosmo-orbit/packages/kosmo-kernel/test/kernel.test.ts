@@ -4437,6 +4437,7 @@ describe('Render-Graph (vis.*)', () => {
     expect(auftrag.faithful).toBe(0.55);
     expect(auftrag.samples).toBe(128); // unverbunden → ehrlicher Default
     expect(auftrag.hatSzene).toBe(true);
+    expect(auftrag.nurCycles).toBe(false); // HS5: Default aus (KI-Veredelung)
 
     // Topologie liefert Quellen vor Senken
     const folge = topoReihenfolge(graph).map((n) => n.id);
@@ -4455,6 +4456,28 @@ describe('Render-Graph (vis.*)', () => {
     expect(doc.get<VisGraph>(graphId)!.nodes.find((n) => n.id === stil)!.params['text']).toBe('Neuer Text');
     doc.apply(invertPatches(res.patches));
     expect(doc.get<VisGraph>(graphId)!.nodes.find((n) => n.id === stil)!.params['text']).toBe('Blick vom Quai');
+  });
+
+  it('HS5: der Render-Node-Param nurCycles fliesst in den RenderAuftrag durch', () => {
+    const doc = new KosmoDoc();
+    const g = execute(doc, 'vis.graphErstellen', { name: 'Cycles-Test' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    execute(doc, 'vis.nodeSetzen', { graphId, typ: 'render', x: 0, y: 0 });
+    const render = doc.get<VisGraph>(graphId)!.nodes[doc.get<VisGraph>(graphId)!.nodes.length - 1]!.id;
+
+    // Default: nurCycles false (KI-Veredelung)
+    let auftrag = evaluiereGraph(doc, doc.get<VisGraph>(graphId)!).renderAuftraege.get(render)!;
+    expect(auftrag.nurCycles).toBe(false);
+
+    // Schalter an → auftrag.nurCycles true (der Client bestellt reines Cycles)
+    execute(doc, 'vis.nodeParametrieren', { graphId, nodeId: render, params: { nurCycles: true } });
+    auftrag = evaluiereGraph(doc, doc.get<VisGraph>(graphId)!).renderAuftraege.get(render)!;
+    expect(auftrag.nurCycles).toBe(true);
+
+    // Nur der strikte Bool zählt — ein truthy-aber-nicht-true bleibt false (ehrlich)
+    execute(doc, 'vis.nodeParametrieren', { graphId, nodeId: render, params: { nurCycles: 'ja' as unknown as boolean } });
+    auftrag = evaluiereGraph(doc, doc.get<VisGraph>(graphId)!).renderAuftraege.get(render)!;
+    expect(auftrag.nurCycles).toBe(false);
   });
 });
 

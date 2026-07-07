@@ -126,3 +126,43 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
   await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(0, { timeout: 5000 });
   await page.screenshot({ path: 'e2e-results/visgraph-handwerk.png' });
 });
+
+test('HS5: «Nur Cycles» bestellt vis.skip: true — beweisbar aus der render-scene.json', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.click('[data-testid="module-vis"]');
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]').first()).toBeVisible();
+
+  // Schalter an, dann rendern
+  await page.locator('[data-testid="render-nur-cycles"]').first().check();
+  await page.locator('[data-testid="render-ausfuehren"]').first().click();
+  await expect(page.locator('[data-testid="render-status"]').first()).not.toHaveText('bereit');
+
+  // Irgendein Render-Job der Default-Bridge trägt vis.skip: true in seiner
+  // render-scene.json (per Artefakt-GET beweisbar — kein UI-Vorgeben). Da NUR
+  // dieser Test den Schalter setzt (alle anderen Render-Aufrufe: skip false)
+  // und der Store frisch startete, ist ein Treffer eindeutig unser Job.
+  // (Über `jobs[0]` allein wäre es flaky: parallele Specs legen vsplat-/vis-
+  // Jobs an, deren Reihenfolge/Fehlen von render-scene.json variiert.)
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(async () => {
+          const jobs = (await (await fetch('http://localhost:8600/jobs')).json()) as { job_id: string }[];
+          for (const j of jobs) {
+            try {
+              const scene = await (
+                await fetch(`http://localhost:8600/jobs/${j.job_id}/artifacts/render-scene.json`)
+              ).json();
+              if ((scene as { vis?: { skip?: boolean } }).vis?.skip === true) return true;
+            } catch {
+              /* vsplat-/bsim-Jobs haben keine render-scene.json — überspringen */
+            }
+          }
+          return false;
+        }),
+      { timeout: 15000 },
+    )
+    .toBe(true);
+});

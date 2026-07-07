@@ -185,7 +185,7 @@ export interface VisAuswertung {
   /** nodeId → Portname → Wert (string für prompt/material, number für zahl). */
   werte: Map<string, Record<string, string | number>>;
   /** Für Render-Nodes: die fertig zusammengezogenen Job-Parameter. */
-  renderAuftraege: Map<string, { prompt: string; faithful: number; samples: number; hatSzene: boolean }>;
+  renderAuftraege: Map<string, { prompt: string; faithful: number; samples: number; hatSzene: boolean; nurCycles: boolean }>;
 }
 
 /**
@@ -195,7 +195,7 @@ export interface VisAuswertung {
  */
 export function evaluiereGraph(doc: KosmoDoc, graph: VisGraph): VisAuswertung {
   const werte = new Map<string, Record<string, string | number>>();
-  const renderAuftraege = new Map<string, { prompt: string; faithful: number; samples: number; hatSzene: boolean }>();
+  const renderAuftraege = new Map<string, { prompt: string; faithful: number; samples: number; hatSzene: boolean; nurCycles: boolean }>();
   const eingangsWert = (nodeId: string, port: string): string | number | undefined => {
     const e = graph.edges.find((e) => e.to === nodeId && e.toPort === port);
     if (!e) return undefined;
@@ -238,6 +238,9 @@ export function evaluiereGraph(doc: KosmoDoc, graph: VisGraph): VisAuswertung {
           faithful: typeof treue === 'number' ? Math.min(1, Math.max(0, treue)) : 0.8,
           samples: typeof samples === 'number' ? Math.max(1, Math.round(samples)) : 128,
           hatSzene: graph.edges.some((e) => e.to === n.id && e.toPort === 'szene'),
+          // HS5: «Nur Cycles» bestellt reines Cycles (vis.skip) statt
+          // KI-Veredelung — Node-Param, Default false hinter striktem `=== true`.
+          nurCycles: params['nurCycles'] === true,
         });
         break;
       }

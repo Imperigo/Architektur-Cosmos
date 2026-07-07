@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   istZeitUeberschritten,
+  memoKey,
   RENDER_TIMEOUT_MS_DEFAULT,
   type NodeLauf,
 } from '../src/modules/vis/vis-runtime';
@@ -56,5 +57,23 @@ describe('mappeJobStatus (HS3 Bridge→Client-Mapper)', () => {
 
   it('unbekannter Status fällt auf einen Wartezustand (nie stiller Fertig, nie vorgetäuschtes «läuft»)', () => {
     expect(mappeJobStatus({ status: 'irgendwas-neues' })).toBe('wartetGpu');
+  });
+});
+
+describe('memoKey (HS5 «Nur Cycles» im Schlüssel)', () => {
+  const basis = { prompt: 'Morgenlicht', faithful: 0.8, samples: 128 };
+
+  it('ändert sich, wenn nurCycles umschaltet — sonst löge der Node «aktuell»', () => {
+    const ki = memoKey({ ...basis, nurCycles: false });
+    const cycles = memoKey({ ...basis, nurCycles: true });
+    expect(ki).not.toBe(cycles);
+  });
+
+  it('behandelt fehlendes nurCycles wie false (rückwärtskompatibel)', () => {
+    expect(memoKey(basis)).toBe(memoKey({ ...basis, nurCycles: false }));
+  });
+
+  it('bleibt für gleiche Parameter stabil (deterministisch)', () => {
+    expect(memoKey({ ...basis, nurCycles: true })).toBe(memoKey({ ...basis, nurCycles: true }));
   });
 });
