@@ -446,3 +446,43 @@ die auf das Checks-Panel schauen, am möglichst leeren Modellstand fahren
 (Panel zeigt nur die ersten 6 Befunde), oder die Zahl der Fremdbefunde
 bewusst klein halten.
 Status:      spec-korrigiert
+
+### H-18 — Dach fehlt nicht nur im 2D-Plan, sondern auch im Schnitt (07.07.2026, Journey efh, Schritt 10)
+Beobachtung: H-2 hielt fest, dass `derive/plan.ts` kein 2D-Plansymbol fürs Dach
+kennt, notierte aber «im Schnitt sichtbar». Die Code-Gegenprobe (Fable-Review 2)
+zeigt: `derive/section.ts` kennt ebenfalls KEINEN `roof`-Fall — das Dach lebt
+nur in `derive/scene.ts` (3D). Der Buildplan-Tabellen-Anker (Zeile EFH) «Dach
+in 3D-Szene UND Schnitt vorhanden» ist damit nicht erfüllbar; die EFH-Journey
+hat den Schnitt-Teil still fallen gelassen. Zusätzlich: die «Dach in 3D
+sichtbar»-Assertion in Baustein 5 (`dachSetzen`, `bausteine.ts`) prüft nur, dass
+der `viewport3d`-Canvas sichtbar ist — das ist mit und ohne Dach grün; echt
+getestet ist allein das Doc-Delta `byKind('roof')+1`.
+Triage:      v2-lücke (Produkt-Feature fehlt) + Coverage-Grenze (kein schärferer
+Hook für «Dach im Bild»)
+Beleg:       `packages/kosmo-kernel/src/derive/section.ts` (kein roof-Fall,
+grep 0 Treffer); `derive/plan.ts` (kein roof-Fall, H-2); `e2e/sim/bausteine.ts`
+Baustein 5 (nur Canvas-Sichtbarkeit).
+Entscheid:   Ein `roof`-Fall in `derive/plan.ts` UND `derive/section.ts` ist ein
+V2-Produkt-Feature (2D-/Schnitt-Projektion des Dachs) → kein H-Fix-Batch ohne
+Owner-Priorisierung. Die EFH-Journey assertet bewusst nur das Doc-Delta + die
+3D-Canvas-Sichtbarkeit und dokumentiert die Grenze hier (statt einen nicht
+existierenden Schnitt-Anker vorzutäuschen). Korrigiert die frühere
+H-2-Formulierung «im Schnitt sichtbar».
+Status:      doku (V2)
+
+### H-19 — Kosmo-Quellensprung verlässt die Plan-Ansicht (07.07.2026, Journey blockrand, Schritt 6→8)
+Beobachtung: Der Kosmo-Quellensprung (`quelle-sprung-dossier`, Baustein 13
+Modus «quelle») führt die Ansicht zur Dossier-Quelle. Blockrand ist die einzige
+Journey, die den Sprung VOR dem Phasengang fährt; danach fand der plan-lesende
+Baustein 3 (`phaseSchalten`) das `planview` nicht mehr (nicht gemountet), die
+stabilisierte Pfadzahl blieb bei 0.
+Triage:      spec-korrigiert (kein Produktfehler — der Sprung IST das Feature;
+korrekte App-Struktur)
+Beleg:       `e2e/sim-blockrand.spec.ts` Schritt 8 (Phasengang); der Sprung
+wechselt bewusst die Ansicht (Nutzerverhalten).
+Entscheid:   Opus (serielle Integration) setzt vor dem Phasengang die Ansicht
+explizit auf KosmoDesign-2D zurück (`__kosmo.open('design')` + `view-2d` +
+`planview`-Sichtbarkeits-Assert), analog zu echtem Nutzerverhalten. Kein
+H-Fix; Journal-Vollständigkeit (Abschnitt 5, Punkt 1) — der Fix stand vorher
+nur in ROADMAP-174-Prosa.
+Status:      spec-korrigiert

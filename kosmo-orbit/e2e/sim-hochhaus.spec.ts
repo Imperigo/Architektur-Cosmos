@@ -162,24 +162,29 @@ test('Vollsimulation Hochhaus: Tragwerk aus Raster → Fassadenmodule N/S/W/O �
   });
 
   // ---------------------------------------------------------------------
-  // 5) Kern trägt die Erschliessung (Leitidee): eine zentrale
-  //    Treppenhaus-Zone (raumTyp=treppenhaus) im Grundriss, eine gerade
-  //    Treppe darin, und eine Regelgeschoss-Zone im Nordband, die die
-  //    Nordkante des Kerns TEILT (adjazent, nicht überlappend). Der
-  //    Raumgraph bildet aus einer gemeinsamen, kollinearen Umriss-Kante ohne
-  //    Wand dazwischen automatisch einen «offenen» Übergang (raumgraph.ts
-  //    `offeneKante`) — das ist der Fluchtweg-Portal zwischen Wohnraum und
-  //    Treppenhaus. (Eine NESTED/überlappende Zone teilt keine Kante → kein
-  //    Portal → «keine Verbindung»; Lehre in SIM-BEFUNDE H-13.)
+  // 5) Kern trägt die Erschliessung: eine Treppenhaus-Zone (raumTyp=
+  //    treppenhaus) mit gerader Treppe, und eine Regelgeschoss-Zone im
+  //    Nordband, die die Nordkante des Kerns TEILT (adjazent, nicht
+  //    überlappend) → der Raumgraph bildet aus der gemeinsamen kollinearen
+  //    Umriss-Kante ohne Wand automatisch einen «offenen» Übergang
+  //    (raumgraph.ts `offeneKante`) = Fluchtweg-Portal. (Nested/überlappend
+  //    teilt keine Kante → kein Portal → «keine Verbindung»; Lehre H-13.)
+  //    Der Kern sitzt BEWUSST exzentrisch am Südrand (Fable-Review-2,
+  //    Auflage 1): so überschreitet die entfernteste Regelgeschoss-Ecke den
+  //    35-m-VKF-Richtwert, und der Egress-Check meldet eine **lesbare
+  //    Fluchtweg-Länge als FEHLER**. Ein Fehler sortiert im Checks-Panel nach
+  //    oben (`checks.ts` fehler-zuerst) und ist damit truncation-fest
+  //    sichtbar — DIE Journey, die die Längen-Anzeige scharf pinnt (die
+  //    kompakten Türme/MFH sind konform-still). Der zentrale Punkt-Turm-Kern
+  //    bleibt in X mittig; nur in Y ist er ans Südende gerückt.
   // ---------------------------------------------------------------------
   const kernMitteX = breite / 2;
-  const kernMitteY = tiefe / 2;
-  const kernHalbe = geometrie.raster / 2; // ein Rasterfeld breit (8.4 m)
+  const kernBreite = geometrie.raster; // ein Rasterfeld breit (8.4 m)
   const kern = {
-    minX: kernMitteX - kernHalbe,
-    maxX: kernMitteX + kernHalbe,
-    minY: kernMitteY - kernHalbe,
-    maxY: kernMitteY + kernHalbe,
+    minX: kernMitteX - kernBreite / 2,
+    maxX: kernMitteX + kernBreite / 2,
+    minY: 2000, // exzentrisch am Südrand → langer Nord-Fluchtweg (> 35 m, s.o.)
+    maxY: 2000 + kernBreite,
   };
 
   await page.evaluate(
@@ -251,26 +256,60 @@ test('Vollsimulation Hochhaus: Tragwerk aus Raster → Fassadenmodule N/S/W/O �
   await B.geschosseStapeln(page, 1, { minZonenOberstes: 0, minMoebelOberstes: 0 });
 
   // ---------------------------------------------------------------------
+  // 6b) Regressions-Anker Befund 1, HART (Fable-Review-2, Auflage 5): in
+  //     JEDEM gestapelten OG steht Tragstruktur — mindestens `geschosseGeplant`
+  //     + EG Geschosse tragen sowohl `column` ALS AUCH `beam`. Fiele die
+  //     Stützen-/Unterzug-Kopie in `design.geschossKopieren` wieder aus, sänke
+  //     diese Zahl. Und Befund 3, HART (Auflage 2): die Geschossleiste ist
+  //     nicht nur sichtbar, sondern das oberste Geschoss ist KLICKBAR — ein
+  //     Klick auf seinen Chip macht es aktiv (statt nur `toBeVisible`, das
+  //     geclippte Elemente fälschlich als sichtbar wertet).
+  // ---------------------------------------------------------------------
+  const tragwerkGeschosse = await page.evaluate(() => {
+    const doc = window.__kosmo.state().doc;
+    return doc
+      .storeysOrdered()
+      .filter(
+        (s) =>
+          doc.byKind('column').some((c) => c.storeyId === s.id) &&
+          doc.byKind('beam').some((b) => b.storeyId === s.id),
+      ).length;
+  });
+  expect(tragwerkGeschosse).toBeGreaterThanOrEqual(geometrie.geschosseGeplant + 1); // EG + 12 Kopien
+
+  const oberstes = await page.evaluate(() => {
+    const g = window.__kosmo.state().doc.storeysOrdered();
+    return g[g.length - 1]!;
+  });
+  await page.click(`[data-testid="storey-${oberstes.name}"]`); // [Quelle: DesignWorkspace.tsx storey-${name} / sim-mfh.spec.ts]
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().activeStoreyId))
+    .toBe(oberstes.id); // klickbar: der Chip wird aktiv gesetzt
+
+  // ---------------------------------------------------------------------
   // 7) Fluchtweg-Check (Baustein 11): das Regelgeschoss ist über den offenen
-  //    Übergang mit dem zentralen Treppenhaus VERBUNDEN — der Egress-Check
-  //    darf KEINE «keine Verbindung zum Treppenhaus»-Warnung melden (das wäre
-  //    ein topologischer Fehler). Ein kompakter, konformer Punkt-Turm mit
-  //    kurzem Weg zum zentralen Kern meldet BEWUSST keine Längen-Warnung —
-  //    checks.ts Z.213 gibt erst > 0.8×35 m eine Meldung aus. Darum: keine
-  //    fixe «≥1 Längen-Meldung», sondern (a) Egress verdrahtet, (b) jede
-  //    GEMELDETE Länge ist in Metern lesbar (>0). Numerische Egress-Längen
-  //    beweist die MFH-Journey (dort liegen die Wohnungen weit genug).
-  //    Lehre: SIM-BEFUNDE H-13 (spec-korrigiert).
+  //    Übergang mit dem Treppenhaus VERBUNDEN (keine «keine Verbindung»-
+  //    Warnung = topologischer Nachweis, Anker H-13). Weil der Kern
+  //    exzentrisch sitzt (Schritt 5), überschreitet die entfernteste
+  //    Regelgeschoss-Ecke den 35-m-VKF-Richtwert → der Check meldet die
+  //    Fluchtweg-Länge in Metern als FEHLER. Das ist die suite-weit scharfe
+  //    Pinnung der Längen-Anzeige (Fable-Review-2, Auflage 1): eine
+  //    Regression im Längen-Format (`checks.ts` `(weg.distanz/1000).toFixed(1)
+  //    m`) oder in der Parse-Regex (Baustein 11) würde hier rot.
   // ---------------------------------------------------------------------
   const befund = await B.checksLesen(page);
   expect(befund, 'Checks-Panel liefert keinen Befund').not.toBeNull();
-  if (befund) {
-    expect(befund.text, `Regelgeschoss ist nicht ans Treppenhaus angebunden:\n${befund.text}`).not.toContain(
-      'keine Verbindung zum Treppenhaus',
-    );
-    for (const laenge of befund.fluchtwegLaengenM) {
-      expect(laenge).toBeGreaterThan(0);
-    }
+  expect(befund!.text, `Regelgeschoss ist nicht ans Treppenhaus angebunden:\n${befund!.text}`).not.toContain(
+    'keine Verbindung zum Treppenhaus',
+  );
+  // Der überlange Egress erscheint als «… Fluchtweg XX.X m > 35 m (VKF-Richtwert)»
+  expect(befund!.text, `Kein Fluchtweg-Überschreitungs-Befund:\n${befund!.text}`).toContain('> 35 m');
+  expect(
+    befund!.fluchtwegLaengenM.length,
+    `Keine lesbare Fluchtweg-Länge im Panel:\n${befund!.text}`,
+  ).toBeGreaterThan(0);
+  for (const laenge of befund!.fluchtwegLaengenM) {
+    expect(laenge).toBeGreaterThan(35); // Meter, jenseits des Richtwerts
   }
 
   // ---------------------------------------------------------------------

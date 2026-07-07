@@ -100,17 +100,20 @@ test('Vollsimulation Mehrfamilienhaus: Raumprogramm → Segmentierer → Grundri
   //    Baustein 11.
   // ---------------------------------------------------------------------
   const befund = await B.checksLesen(page);
-  if (befund) {
-    // Türen werden vom Grundriss-Generator + Kern-Anbindung automatisch
-    // gesetzt — keine Wohnung darf als «ohne Verbindung» auffallen.
-    expect(befund.text, `Unverbundene Wohnung im Egress-Befund:\n${befund.text}`).not.toContain(
-      'keine Verbindung zum Treppenhaus',
-    );
-    // Wo ein Fluchtweg-Befund erscheint, muss die Länge in Metern lesbar
-    // sein — kein Platzhalter-Status.
-    for (const laenge of befund.fluchtwegLaengenM) {
-      expect(laenge).toBeGreaterThan(0);
-    }
+  expect(befund, 'Checks-Panel liefert keinen Befund').not.toBeNull();
+  // Türen werden vom Grundriss-Generator + Kern-Anbindung automatisch
+  // gesetzt — keine Wohnung darf als «ohne Verbindung» auffallen.
+  expect(befund!.text, `Unverbundene Wohnung im Egress-Befund:\n${befund!.text}`).not.toContain(
+    'keine Verbindung zum Treppenhaus',
+  );
+  // Wo ein Fluchtweg-Befund erscheint, muss die Länge in Metern lesbar sein.
+  // (Die MFH-Wohnungen liegen konform nah am zentralen Kern → der Egress ist
+  //  hier still. Die scharfe «≥1 lesbare Länge»-Pinnung (Fable-Review-2,
+  //  Auflage 1) sitzt in der Hochhaus-Journey, wo bewusst ein Fluchtweg-
+  //  FEHLER > 35 m erzwungen wird — ein Fehler sortiert im Panel nach oben
+  //  (`checks.ts` fehler-zuerst) und ist damit truncation-fest sichtbar.)
+  for (const laenge of befund!.fluchtwegLaengenM) {
+    expect(laenge).toBeGreaterThan(0);
   }
 
   // ---------------------------------------------------------------------

@@ -278,8 +278,12 @@ test('Vollsimulation Stadthaus Länggasse Bern: Lückenschluss zwischen Brandmau
   ]); // Regel R10: nie click-dann-warten
   expect(ausmassDownload.suggestedFilename()).toMatch(/Ausmass\.csv$/);
   const ausmassPfad = await ausmassDownload.path();
-  const { statSync } = await import('node:fs');
-  expect(statSync(ausmassPfad!).size).toBeGreaterThan(100); // Schwelle (Baustein-17-Muster)
+  const { readFileSync } = await import('node:fs');
+  // Fable-Review-2, Auflage 6: nicht nur Dateiname/Grösse — die CSV muss eine
+  // echte Datenzeile NACH der Kopfzeile tragen (`Kapitel;Position;…`), sonst
+  // beweist der Export nichts über den Inhalt.
+  const ausmassZeilen = readFileSync(ausmassPfad!, 'utf8').trim().split('\n');
+  expect(ausmassZeilen.length, `Ausmass-CSV ohne Datenzeile:\n${ausmassZeilen.join('\n')}`).toBeGreaterThan(1);
 
   // ---------------------------------------------------------------------
   // 13) Kosmo (Mock-Provider), Dossier-Frage (Baustein 13, Modus «quelle»,
@@ -311,5 +315,8 @@ test('Vollsimulation Stadthaus Länggasse Bern: Lückenschluss zwischen Brandmau
   //     Journey, die den Werkplan-DXF-Weg statt Plansatz-PDF fährt).
   // ---------------------------------------------------------------------
   await page.evaluate(() => window.__kosmo.open('publish')); // [Quelle: App.tsx __kosmo.open / PublishWorkspace.tsx]
-  await B.exportPruefen(page, 'export-dxf', /\.dxf$/);
+  const dxfPfad = await B.exportPruefen(page, 'export-dxf', /\.dxf$/);
+  // Fable-Review-2, Auflage 6: Inhalts-Marker statt nur Suffix — eine gültige
+  // DXF trägt einen ENTITIES-Abschnitt.
+  expect(readFileSync(dxfPfad, 'utf8')).toContain('ENTITIES');
 });
