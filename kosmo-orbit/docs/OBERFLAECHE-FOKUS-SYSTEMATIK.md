@@ -66,6 +66,28 @@ hat sich geändert: ein **Projekt-Menü** (`data-testid="projekt-menu-toggle"`,
 Fokus-Stufe «selten»), das sich per Klick öffnet und die beiden Auswahlfelder
 in einer eigenen Zeile zeigt. Nichts wurde entfernt — nur umgehängt.
 
+## J3: dynamische Ableitung auf der statischen Basis (Serie J, 07.07.2026)
+
+Die Stufen oben sind die **statische T7-Basis** — sie ändert sich nie zur
+Laufzeit. Serie J (`docs/SERIE-J-BUILDPLAN.md` Abschnitt 2) setzt eine
+**dynamische Ableitung darüber**: `state/oberflaeche-adaption.ts` exportiert
+`adaptiveFokusStufe(gruppe, basis, kontext, nutzung)` — eine reine Funktion,
+die dieselbe Basis-Stufe nimmt und sie je nach aktueller Tätigkeit (Werkzeug,
+SIA-Phase) und lokal gelernter Nutzung anhebt oder zurückstellt, bevor
+`fokusKlasse()` (unverändert, Abschnitt oben) daraus die CSS-Klasse macht.
+`fokusStufe()`/`KOPFLEISTE_FOKUS`/`fokusKlasse()` bleiben exakt wie bisher —
+J3 ergänzt eine Schicht, ersetzt nichts.
+
+Batch J3a (dieser Eintrag) liefert nur das reine Regelwerk + einen
+localStorage-Store (`kosmo.adaption.v1`, Halbwertszeit-Verfall 7 Tage,
+Opt-out, Reset) — **kein UI-Wiring**. Die Werkzeugleiste selbst lebt erst ab
+J3b: die Sektionen bekommen ihre Klasse aus `adaptiveFokusStufe(...)` statt
+direkt aus der Basis, eingefroren während einer laufenden Aktion
+(`darfUmordnen`), nie mit DOM-Umordnung (feste Anker, Regel 2.3.1). J3c fügt
+das sichtbare Lernen (Häufigkeit) sowie Opt-out-Schalter/Reset im
+Projekt-Menü hinzu. Details, Tätigkeits-Matrix und Nerv-Faktor-Regeln stehen
+in `docs/SERIE-J-BUILDPLAN.md` Abschnitt 2.
+
 ## V2-Notiz: volle Werkzeugleisten-Ausbaustufe
 
 Dieser Batch liefert **Stufe 1**: eine saubere, konsistente Werkzeugleiste
