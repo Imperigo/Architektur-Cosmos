@@ -102,6 +102,50 @@ test('Vollsimulation Blockrandschliessung Basel-Matthäus: Parzelle/Zonenregel (
   });
 
   // ---------------------------------------------------------------------
+  // 2b) Verstoss-Probe (Regel-Kern) — bewusst JETZT, am leeren Modellstand
+  //    (nur die Baugrenze existiert), damit der Baugrenzen-Verstoss der
+  //    EINZIGE Befund ist und nicht durch andere Befunde aus dem
+  //    `befunde.slice(0,6)`-Fenster des Panels gedrängt wird (SIM-BEFUNDE
+  //    H-15/H-17). Eine Wand VOLLSTÄNDIG ausserhalb der L-Baugrenze (im
+  //    ausgeschnittenen Eckbereich x:10000-13000/y:10000 — die Kontur liegt
+  //    dort bei y=8000 bzw. x=8000, der Punkt also klar ausserhalb) → die
+  //    Checks melden «ragt über die Baugrenze … hinaus» (Regel «Baugrenze»).
+  //    Danach die Wand per `design.loeschen` entfernen → Befund verschwindet.
+  // ---------------------------------------------------------------------
+  const verstossWandId = await page.evaluate((storeyId) => {
+    const k = window.__kosmo;
+    const aw = k.state().doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    return k.run('design.wandZeichnen', {
+      storeyId,
+      a: { x: 10000, y: 10000 },
+      b: { x: 13000, y: 10000 },
+      assemblyId: aw.id,
+    }).patches[0]!.id;
+  }, egId); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.wandZeichnen']
+
+  await expect
+    .poll(
+      async () => {
+        const befund = await B.checksLesen(page);
+        return befund?.text.includes('ragt über die Baugrenze «Baugrenze» hinaus') ?? false;
+      },
+      { timeout: 10_000, message: 'Baugrenzen-Verstoss erscheint nicht im Checks-Panel' },
+    )
+    .toBe(true); // [Quelle: packages/kosmo-kernel/src/derive/checks.ts regel:'Baugrenze' Z.363-372]
+
+  await page.evaluate((id) => window.__kosmo.run('design.loeschen', { entityId: id }), verstossWandId);
+
+  await expect
+    .poll(
+      async () => {
+        const befund = await B.checksLesen(page);
+        return befund?.text.includes('ragt über die Baugrenze') ?? false;
+      },
+      { timeout: 10_000, message: 'Baugrenzen-Verstoss verschwindet nach Entfernen der Wand nicht' },
+    )
+    .toBe(false);
+
+  // ---------------------------------------------------------------------
   // 3) Gestaltungskonzept (H4, Punkt 2): Dossier + Raumprogramm früh setzen.
   // ---------------------------------------------------------------------
   await page.evaluate(
@@ -209,53 +253,15 @@ test('Vollsimulation Blockrandschliessung Basel-Matthäus: Parzelle/Zonenregel (
   });
 
   // ---------------------------------------------------------------------
-  // 7) Verstoss-Probe (Regel-Kern): eine Wand VOLLSTÄNDIG ausserhalb der
-  //    L-Baugrenze (im ausgeschnittenen Eckbereich zwischen den Schenkeln,
-  //    x:10000-13000/y:10000-12000 — für dieses x liegt die Kontur bei
-  //    y=8000, für dieses y bei x=8000, der Punkt also klar ausserhalb) →
-  //    die Checks melden «ragt über die Baugrenze … hinaus» (Regel
-  //    «Baugrenze»; der Grenzabstands-Zweig überspringt Punkte ausserhalb
-  //    des Polygons bewusst, `derive/checks.ts`). Danach die Wand per
-  //    `design.loeschen` entfernen → der Befund verschwindet wieder.
-  // ---------------------------------------------------------------------
-  const verstossWandId = await page.evaluate((storeyId) => {
-    const k = window.__kosmo;
-    const aw = k.state().doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
-    return k.run('design.wandZeichnen', {
-      storeyId,
-      a: { x: 10000, y: 10000 },
-      b: { x: 13000, y: 10000 },
-      assemblyId: aw.id,
-    }).patches[0]!.id;
-  }, egId); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.wandZeichnen']
-
-  await expect
-    .poll(
-      async () => {
-        const befund = await B.checksLesen(page);
-        return befund?.text.includes('ragt über die Baugrenze «Baugrenze» hinaus') ?? false;
-      },
-      { timeout: 10_000, message: 'Baugrenzen-Verstoss erscheint nicht im Checks-Panel' },
-    )
-    .toBe(true); // [Quelle: packages/kosmo-kernel/src/derive/checks.ts regel:'Baugrenze' Z.363-372]
-
-  await page.evaluate((id) => window.__kosmo.run('design.loeschen', { entityId: id }), verstossWandId);
-
-  await expect
-    .poll(
-      async () => {
-        const befund = await B.checksLesen(page);
-        return befund?.text.includes('ragt über die Baugrenze') ?? false;
-      },
-      { timeout: 10_000, message: 'Baugrenzen-Verstoss verschwindet nach Entfernen der Wand nicht' },
-    )
-    .toBe(false);
-
-  // ---------------------------------------------------------------------
   // 8) Phasengang Vorprojekt → Bauprojekt → Werkplan (Baustein 3) mit
   //    Monotonie-Assert am selben Modellstand (Regel R1: nie fixe
-  //    Pfadzahlen).
+  //    Pfadzahlen). Der Kosmo-Quellensprung (Schritt 6) hat die Ansicht auf
+  //    die Dossier-Quelle geführt — vor dem plan-lesenden Baustein 3 zurück
+  //    in die KosmoDesign-2D-Ansicht (sonst ist `planview` nicht gemountet).
   // ---------------------------------------------------------------------
+  await page.evaluate(() => window.__kosmo.open('design'));
+  await page.click('[data-testid="view-2d"]'); // [Quelle: DesignWorkspace.tsx view-${id} / bausteine.ts Baustein 1]
+  await expect(page.locator('[data-testid="planview"]')).toBeVisible();
   const pfadeVorprojekt = await B.phaseSchalten(page, 'vorprojekt');
   const pfadeBauprojekt = await B.phaseSchalten(page, 'bauprojekt');
   const pfadeWerkplan = await B.phaseSchalten(page, 'werkplan');

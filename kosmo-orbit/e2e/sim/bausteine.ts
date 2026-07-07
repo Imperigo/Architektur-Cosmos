@@ -192,8 +192,11 @@ export async function parzelleSetzen(page: Page, szenario: SimSzenario): Promise
         const dy = cy - my;
         const len = Math.hypot(dx, dy) || 1;
         const inset = grenzabstandKlein * 0.3;
-        const p1 = { x: mx + (dx / len) * inset, y: my + (dy / len) * inset };
-        const p2 = { x: p1.x + (b.x - a.x) * 0.05, y: p1.y + (b.y - a.y) * 0.05 };
+        // `design.wandZeichnen` verlangt GANZZAHLIGE mm-Koordinaten (zod .int()).
+        // Ein achsen-schiefer Zentroid (L-förmige Parzelle: Blockrand) erzeugt
+        // sonst Bruchteile → «Invalid input». Runden (SIM-BEFUNDE H-16).
+        const p1 = { x: Math.round(mx + (dx / len) * inset), y: Math.round(my + (dy / len) * inset) };
+        const p2 = { x: Math.round(p1.x + (b.x - a.x) * 0.05), y: Math.round(p1.y + (b.y - a.y) * 0.05) };
         return k.run('design.wandZeichnen', { storeyId, a: p1, b: p2, assemblyId: aw.id }).patches[0]!.id; // [Quelle: sim-umbau.spec.ts Z.51-52]
       },
       { storeyId, outline: szenario.parzelle.outline, grenzabstandKlein: szenario.zonenRegel.grenzabstandKlein },

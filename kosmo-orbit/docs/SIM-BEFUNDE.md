@@ -28,6 +28,32 @@ Entscheid:   <Opus-Triage; bei mehrdeutig/hart: Fable-Urteil, so markiert>
 Status:      offen | fix-batch H-Fix-<n> (ROADMAP <m>) | doku (V2) | spec-korrigiert
 ```
 
+<!-- H-16 (spec-korrigiert): Baustein 2 (parzelleSetzen) — die ROADMAP-153-
+Probe berechnete für achsen-schiefe Parzellen-Zentroide (L-förmiger Blockrand)
+gebrochene Probekörper-Koordinaten; `design.wandZeichnen` verlangt aber
+ganzzahlige mm (zod .int()) → «Invalid input». Die rechteckigen Parzellen
+(EFH) trafen zufällig auf ganzzahlige Werte und liefen durch. Opus (serielle
+Integration) rundet p1/p2 mit Math.round — kein Produktfehler, das Command
+weist Nicht-Ganzzahlen korrekt ab. Voller Schema-Eintrag unten (H-16). -->
+
+### H-16 — Baustein 2 ROADMAP-153-Probe: nicht-ganzzahlige Probekörper-Koordinaten (07.07.2026, Journey blockrand, Schritt 2)
+Beobachtung: Die Verstoss-Probe in Baustein 2 (`parzelleSetzen`) berechnet
+einen Probekörper aus Kantenmitte + Richtung Zentroid. Für die L-förmige
+Blockrand-Parzelle liegt der Zentroid achsen-schief → p1/p2 werden gebrochen
+(z. B. x=9925.2) → `design.wandZeichnen` (zod `.int()`) meldet «Ungültige
+Parameter … a.x — Invalid input». Die rechteckigen Parzellen (EFH) ergaben
+zufällig ganzzahlige Koordinaten und liefen durch — der Bug lag latent, bis
+die erste nicht-achsenparallele Parzelle (Blockrand) ihn auslöste.
+Triage:      zu-strikte-assertion (Harness-Bug im Baustein, kein Produktfehler)
+Beleg:       `e2e/sim/bausteine.ts` Baustein 2, p1/p2-Berechnung;
+`design.wandZeichnen`-Schema verlangt `z.number().int()` für a/b —
+Nicht-Ganzzahlen korrekt abgewiesen.
+Entscheid:   Opus (serielle Integration, kein Parallel-Batch in Flug) rundet
+p1/p2 mit `Math.round`. Kein Produktfehler; das Command verhält sich korrekt.
+Lehre: Probekörper-/Fixture-Koordinaten immer runden, bevor sie an
+int-validierte Commands gehen.
+Status:      spec-korrigiert
+
 ## Triage-Ablauf (wörtlich aus Buildplan Abschnitt 5, Muster = die vier gefixten V1-Befunde / ROADMAP 151–154)
 
 1. **Journey schlägt fehl oder zeigt Seltsames** → Opus triagiert sofort
@@ -396,3 +422,27 @@ Lehre: das Modell so aufbauen, dass der zu prüfende Befund isoliert bleibt
 (kompensiert in `sim-blockrand.spec.ts`, s. o.), statt sich auf die
 Sichtbarkeit von Befund Nr. 7+ zu verlassen.
 Status:      offen
+
+### H-17 — Verstoss-Probe vom Panel-`slice(0,6)` verdrängt (07.07.2026, Journey blockrand, Schritt 7→2b)
+Beobachtung: Die Baugrenzen-Verstoss-Probe stand ursprünglich als Schritt 7,
+NACH Fassade/Volumen/Treppe. Zu diesem Zeitpunkt trägt das Modell bereits
+mehrere andere Befunde (u. a. der Grenzabstand-Fallback der Zonenregel greift
+je bauteil-nahem Element); der neue «ragt über die Baugrenze»-Befund landete
+jenseits der ersten sechs und war im Panel (`befunde.slice(0,6)`, H-15) nicht
+sichtbar → `checksLesen()` sah ihn nicht, die Assertion schlug fehl (obwohl der
+Befund korrekt berechnet wurde).
+Triage:      zu-strikte-assertion / Reihenfolge-Artefakt (kein Produktfehler —
+der Egress-/Baugrenzen-Check verhält sich korrekt; nur das Panel kappt bei 6).
+Beleg:       `apps/kosmo-orbit/src/modules/design/KennzahlenPanel.tsx` Z.124
+(`befunde.slice(0, 6)`); `derive/checks.ts` Z.363-372 (Baugrenze-Befund wird
+korrekt gepusht). Verifiziert: (10000,10000)/(13000,10000) liegen per
+Ray-Cast klar ausserhalb der L-Kontur.
+Entscheid:   Opus (serielle Integration) verschiebt die Verstoss-Probe an den
+LEEREN Modellstand direkt nach `parzelleSetzen` (neuer Schritt 2b) — dort ist
+der Baugrenzen-Verstoss der einzige Befund und damit garantiert in den ersten
+sechs. Die Anbindung an den Regel-Kern (153-Anker via Baustein 2, Grenzabstand
+aus der Zonenregel) bleibt unverändert. Lehre für 1.4: Regel-/Verstoss-Proben,
+die auf das Checks-Panel schauen, am möglichst leeren Modellstand fahren
+(Panel zeigt nur die ersten 6 Befunde), oder die Zahl der Fremdbefunde
+bewusst klein halten.
+Status:      spec-korrigiert
