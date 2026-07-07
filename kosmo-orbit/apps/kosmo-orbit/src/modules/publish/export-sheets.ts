@@ -11,6 +11,7 @@ import {
   type Sheet,
 } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
+import { baueHerkunft, ermittleEditionId, herkunftKennzeichnung, svgMitHerkunft } from '../../state/herkunft';
 
 /** Ganzer Plansatz (oder ein Publikations-Set, A4) als mehrseitiges Vektor-PDF. */
 export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
@@ -19,6 +20,15 @@ export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
     ? setBlaetter(doc, set)
     : doc.byKind<Sheet>('sheet').sort((a, b) => a.index - b.index);
   if (sheets.length === 0) return;
+
+  // Herkunftskennung (Serie I / B5): NUR PDF-Metadaten dieser Export-Schicht,
+  // NIE im `sheetToSvg`/`plansvg.ts`-Golden-Pfad selbst — Nachweis bei einem
+  // fahrlässig geleakten PDF, keine Kopierverhinderung (siehe state/herkunft.ts).
+  const herkunft = baueHerkunft({
+    json: doc.toJSON(),
+    editionId: ermittleEditionId(),
+    exportedAt: new Date().toISOString(),
+  });
 
   let pdf: jsPDF | null = null;
   for (const sheet of sheets) {
@@ -50,6 +60,10 @@ export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
       pdf.addImage(`data:${asset.mime};base64,${asset.data}`, typ, r.x, r.y, r.width, r.height);
     }
   }
+  // Herkunftskennung als PDF-Metadaten (Serie I / B5) — dezent, im
+  // `keywords`-Feld grep-bar; der Plansatz-Inhalt selbst (svg2pdf-Vektoren
+  // oben) bleibt unberührt.
+  pdf!.setProperties({ keywords: herkunftKennzeichnung(herkunft) });
   const stamm = doc.settings.projectName.replace(/\s+/g, '-');
   pdf!.save(`${stamm}-${set ? set.name.replace(/\s+/g, '-') : 'Plansatz'}.pdf`);
 }
@@ -59,8 +73,17 @@ export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
 export function exportSetSvgs(set: PublikationsSet): void {
   const { doc } = useProject.getState();
   const sheets = setBlaetter(doc, set);
+  // Herkunftskennung (Serie I / B5): EIN Hash über den ganzen Export-Lauf
+  // (nicht je Blatt neu gebaut) — alle SVGs desselben Exports tragen denselben
+  // Doc-Stand/Zeitstempel. Sitzt als `<metadata>` NACH `sheetToSvg` im fertigen
+  // Markup, rührt nie an `sheetToSvg`/`plansvg.ts` selbst (Golden-Schutz).
+  const herkunft = baueHerkunft({
+    json: doc.toJSON(),
+    editionId: ermittleEditionId(),
+    exportedAt: new Date().toISOString(),
+  });
   sheets.forEach((sheet, i) => {
-    const markup = sheetToSvg(doc, sheet.id, { projectName: doc.settings.projectName });
+    const markup = svgMitHerkunft(sheetToSvg(doc, sheet.id, { projectName: doc.settings.projectName }), herkunft);
     const name = setDateiname(set.namensregel, {
       nr: i + 1,
       blatt: sheet.name,

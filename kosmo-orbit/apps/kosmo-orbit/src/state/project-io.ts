@@ -1,6 +1,7 @@
 import { strToU8, strFromU8, zipSync, unzipSync } from 'fflate';
 import { KosmoDoc, type JournalEntry, parseKosmoSafe, safeJsonParse } from '@kosmo/kernel';
 import { useProject } from './project-store';
+import { baueHerkunft, ermittleEditionId, type Herkunft } from './herkunft';
 
 /**
  * .kosmo-Projektpaket (Zip) — das universelle Austauschformat.
@@ -73,8 +74,24 @@ export function parseKosmoPaket(bytes: Uint8Array): KosmoPaketResult {
   return { ok: true, doc: modell.doc, journal };
 }
 
-export function packProject(): Uint8Array {
+export interface PackProjectOptions {
+  /** Betriebsart/Edition des Exports (Serie I / B5) — Default: Build-Flag, sonst `'unbekannt'`. */
+  editionId?: string;
+  /** Export-Zeitpunkt (ISO) — vom Aufrufer testbar übergeben, Default `new Date().toISOString()`. */
+  exportedAt?: string;
+}
+
+export function packProject(opts: PackProjectOptions = {}): Uint8Array {
   const { doc, journal } = useProject.getState();
+  const docJson = doc.toJSON();
+  // Additive Herkunftskennung NUR im Export-Wrapper (Manifest) — NICHT im
+  // Doc-Modell (model/model.json), das durch Yjs/Undo/Sync läuft
+  // («Laufzeit ≠ Modell», siehe state/herkunft.ts).
+  const herkunft: Herkunft = baueHerkunft({
+    json: docJson,
+    editionId: opts.editionId ?? ermittleEditionId(),
+    exportedAt: opts.exportedAt ?? new Date().toISOString(),
+  });
   const manifest = {
     schema: 'kosmo.project/v1',
     id: doc.settings.projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -88,10 +105,11 @@ export function packProject(): Uint8Array {
       external_upload: { enabled: false, requires_human_approval: true },
       paid_cloud_job: { enabled: true, requires_human_approval: true },
     },
+    herkunft,
   };
   return zipSync({
     'kosmo.project.json': strToU8(JSON.stringify(manifest, null, 2)),
-    'model/model.json': strToU8(JSON.stringify(useProject.getState().doc.toJSON())),
+    'model/model.json': strToU8(JSON.stringify(docJson)),
     'memory/journal.jsonl': strToU8(journal.map((j) => JSON.stringify(j)).join('\n')),
   });
 }
