@@ -25,7 +25,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,woff2}'],
-        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+        // Block 3 / FM4 (GLB→FreeMesh-Brücke) hat den Haupt-Chunk knapp über
+        // die alte 6-MB-Grenze geschoben (die hatte praktisch keine Reserve
+        // mehr, ~2 KB); angehoben statt Feature verkleinert — echtes
+        // Code-Splitting ist ein separates Aufräum-Thema, kein FM4-Scope.
+        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
       },
     }),
   ],

@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Hairline, KButton, KLade, Measure, Messrahmen, Panel, bestaetigen, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '@kosmo/kernel';
 import { BauteilkatalogView, loadReferences, MaterialkatalogView, type RefEntry } from '../data/DataWorkspace';
 import { setGlbContext } from '../design/Viewport3D';
+import { glbZuMeshDaten } from './glb-zu-mesh';
+import { useProject } from '../../state/project-store';
 import {
   assetBytes,
   entferneAssetReferenz,
@@ -273,6 +276,49 @@ export function AssetWorkspace() {
     melde(`«${o.title}» liegt als Referenz-Kontext im Design-Viewport`, { ton: 'erfolg' });
   };
 
+  /**
+   * GLB-Brücke (Buildplan Block 3, Batch FM4/E6): übernimmt ein GLB-Objekt
+   * als editierbares FreeMesh im aktiven Geschoss — NUR wenn es unters harte
+   * Vertex-/Flächen-Budget passt (Budget-Wächter VOR dem Command, ehrliche
+   * Zahlen in der Meldung). Zu grosse Objekte bleiben Referenz-Kontext, der
+   * bestehende «Ins Modell»-Weg bleibt der Ausweg. `design.meshErstellen`
+   * (form «daten») bewacht Budget/Indizes zusätzlich selbst — ein CommandError
+   * von dort (Doppelboden) landet ebenfalls in `meldeFehler`.
+   */
+  const alsFreeMesh = async (o: KosmoAsset) => {
+    const { activeStoreyId, runCommand } = useProject.getState();
+    if (!activeStoreyId) {
+      meldeFehler(
+        'Kein aktives Geschoss/Projekt — zuerst in KosmoDesign ein Projekt öffnen und ein Geschoss wählen, dann übernehmen.',
+      );
+      return;
+    }
+    try {
+      const { positions, faces, vertexCount, faceCount } = await glbZuMeshDaten(o.daten);
+      if (vertexCount === 0 || faceCount === 0) {
+        meldeFehler(`«${o.title}» enthält kein auswertbares Dreiecksnetz — bleibt Referenz-Kontext, nutze «Ins Modell».`);
+        return;
+      }
+      if (vertexCount > FREEMESH_MAX_VERTICES || faceCount > FREEMESH_MAX_FACES) {
+        meldeFehler(
+          `«${o.title}» ist zu gross für editierbares FreeMesh (${vertexCount} Vertices / ${faceCount} Flächen — ` +
+            `Budget ${FREEMESH_MAX_VERTICES}/${FREEMESH_MAX_FACES}). Bleibt Referenz-Kontext — nutze «Ins Modell».`,
+        );
+        return;
+      }
+      runCommand('design.meshErstellen', {
+        form: 'daten',
+        storeyId: activeStoreyId,
+        positions,
+        faces,
+        name: o.title,
+      });
+      melde(`«${o.title}» als FreeMesh im Modell — im KosmoDesign bearbeiten`, { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
   const loeschen = (o: KosmoAsset) => {
     void bestaetigen({
       titel: `Objekt «${o.title}» löschen?`,
@@ -324,7 +370,9 @@ export function AssetWorkspace() {
               <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
                 Projektübergreifende Objekt-Bibliothek — Möbel, Bäume, Kontextbauten als GLB.
                 «Ins Modell» legt das Objekt als Referenz-Kontext in den Design-Viewport
-                (studierbar, nicht Teil der Pläne). Blender exportiert GLB direkt.
+                (studierbar, nicht Teil der Pläne). «Als FreeMesh übernehmen» wandelt ein
+                kleines GLB (bis {FREEMESH_MAX_VERTICES} Vertices) ins editierbare Doc-Mesh —
+                grössere bleiben ehrlich Referenz-Kontext. Blender exportiert GLB direkt.
               </span>
 
               <input
@@ -424,6 +472,19 @@ export function AssetWorkspace() {
                             }}
                           >
                             Ins Modell
+                          </KButton>
+                        )}
+                        {o.asset_type === 'glb_model' && (
+                          <KButton
+                            size="sm"
+                            tone="quiet"
+                            data-testid="asset-als-freemesh"
+                            onClick={(ev) => {
+                              ev.stopPropagation();
+                              void alsFreeMesh(o);
+                            }}
+                          >
+                            Als FreeMesh übernehmen
                           </KButton>
                         )}
                         <KButton
@@ -643,6 +704,11 @@ export function AssetWorkspace() {
             {selected.asset_type === 'glb_model' && (
               <KButton size="sm" tone="accent" data-testid="asset-detail-ins-modell" onClick={() => insModell(selected)}>
                 Ins Modell
+              </KButton>
+            )}
+            {selected.asset_type === 'glb_model' && (
+              <KButton size="sm" tone="quiet" data-testid="asset-detail-als-freemesh" onClick={() => void alsFreeMesh(selected)}>
+                Als FreeMesh übernehmen
               </KButton>
             )}
             <KButton size="sm" tone="ghost" onClick={() => loeschen(selected)}>
