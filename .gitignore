@@ -15,3 +15,7 @@ archive-intake/
 data/drafts/
 examples/kosmo-projects/*/design/model-profile.exported.json
 tsconfig.tsbuildinfo
+
+# Sync-Server Laufzeit-DB (falls versehentlich am Repo-Root gestartet)
+kosmo-sync.sqlite
+*.sqlite
