@@ -77,6 +77,10 @@ export type EmbedResponse = z.infer<typeof EmbedResponse>;
  * `kein-sfm-worker` mit Begründung, NIE als vorgetäuschter Splat.
  */
 export const VideoSplatJobStatus = z.enum([
+  // `awaiting_approval` (additiv, HS3-Nachbesserung/Fable-Auflage 4): auch
+  // Video→Splat ist rechenintensiv — bei aktiver Freigabe-Pflicht wartet der
+  // Job auf ein explizites /approve, bevor ein echter SfM-Worker ihn nimmt.
+  'awaiting_approval',
   'queued',
   'running',
   'done',
@@ -90,6 +94,8 @@ export const VideoSplatJob = z.object({
   job_id: z.string().regex(/^vsplat-\d+-[0-9a-f]{6}$/),
   status: VideoSplatJobStatus,
   kind: z.literal('video-splat').default('video-splat'),
+  /** Freigabe-Token bei aktiver Freigabe-Pflicht (Symmetrie zu RenderJob). */
+  approval_token: z.string().optional(),
   created_at: z.string(),
   updated_at: z.string().optional(),
   /** Zahl der lokal extrahierten Frames — die Bridge schreibt es, der Client

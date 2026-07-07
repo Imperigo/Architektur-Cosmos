@@ -4,6 +4,7 @@ import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG
 import { useProject } from '../../state/project-store';
 import { NodeCanvas } from './NodeCanvas';
 import { bridgeToken } from './vis-jobs';
+import { BridgeBild } from './BridgeBild';
 
 /**
  * HS3: jeder Bridge-Fetch trägt den Token (falls gesetzt) — sonst sperrt eine
@@ -502,8 +503,9 @@ function EinfachAnsicht() {
                       </div>
                       {j?.result ? (
                         <>
-                          <img
-                            src={`${base}/jobs/${jobId}/artifacts/${j.result.images[0]}`}
+                          <BridgeBild
+                            jobId={jobId}
+                            imageName={j.result.images[0]!}
                             alt={label}
                             style={{ width: '100%', border: '1px solid var(--k-line)' }}
                           />
@@ -568,9 +570,10 @@ function EinfachAnsicht() {
                 <Hairline />
                 <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                   {j.result.images.map((img) => (
-                    <img
+                    <BridgeBild
                       key={img}
-                      src={`${base}/jobs/${j.job_id}/artifacts/${img}`}
+                      jobId={j.job_id}
+                      imageName={img}
                       alt={img}
                       style={{
                         width: 280,

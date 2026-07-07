@@ -38,6 +38,10 @@ export interface NodeLauf {
   fehler?: string;
   /** Freigabe-Token aus dem Create-Response — nötig für `/approve`. */
   approvalToken?: string;
+  /** Wer den Job übernommen hat (z. B. "fake-worker" oder ein echter Worker). */
+  worker?: string;
+  /** Laufende Etappe des Workers — der Node zeigt Phase + Prozent (HS3-Auflage 5). */
+  progress?: { phase: string; pct: number };
   /** Zeitpunkt des Absendens (ms, Date.now) — Basis des Timeout-Wächters. */
   gestartetUm?: number;
   /** Parameter-Hash beim Absenden — weicht der Graph ab, ist das Bild «veraltet». */

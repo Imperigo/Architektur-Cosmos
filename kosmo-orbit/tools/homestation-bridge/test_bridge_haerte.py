@@ -556,6 +556,60 @@ importlib.reload(bridge)
 bridge.STORE = TMP_STORE
 
 # ---------------------------------------------------------------------------
+# 8) Fable-Phase-3-Auflagen (HS3-Nachbesserung):
+#    - Freigabe-Pflicht gilt auch für blender-sim (Auflage 4): mit Pflicht AN
+#      startet der Job awaiting_approval, der generische /approve gibt ihn frei.
+#    - Fake-QA trägt auch beim Stil "fake-worker" statt "dinov3" (Auflage 6).
+# ---------------------------------------------------------------------------
+fable_stores: list[Path] = []
+
+
+def _fable_store() -> Path:
+    p = Path(tempfile.mkdtemp(prefix="kosmo-fable-"))
+    fable_stores.append(p)
+    return p
+
+
+# --- (a) Freigabe-Pflicht für blender-sim ---
+store_fp = _fable_store()
+os.environ["KOSMO_BRIDGE_APPROVAL_PFLICHT"] = "1"
+os.environ.pop("KOSMO_BRIDGE_GPU_IDLE", None)
+cl_fp = _hs2_reload(store_fp)
+res = _bsim_job(cl_fp, art="wind", out_value="/tmp/x")
+rec = res.json()
+jid = rec["job_id"]
+tok = rec.get("approval_token", "")
+check("Auflage 4: blender-sim mit Pflicht AN startet 'awaiting_approval'", rec.get("status") == "awaiting_approval")
+check("Auflage 4: blender-sim trägt approval_token", tok.startswith("CONFIRMED_SIM_"))
+res_ok = cl_fp.post(f"/jobs/{jid}/approve", json={"approval_token": tok})
+check("Auflage 4: /approve gibt blender-sim frei → 'queued'", res_ok.status_code == 200 and res_ok.json().get("status") == "queued")
+res_bad = cl_fp.post(f"/jobs/{jid}/cancel")
+check("Auflage 4: /cancel bricht blender-sim ab → 'cancelled'", res_bad.json().get("status") == "cancelled")
+
+# --- (b) Fake-QA-Stilmethode ist ehrlich "fake-worker" (Auflage 6) ---
+store_qa = _fable_store()
+for _k in ("KOSMO_BRIDGE_APPROVAL_PFLICHT", "KOSMO_BRIDGE_GPU_IDLE"):
+    os.environ.pop(_k, None)
+cl_qa = _hs2_reload(store_qa)
+res = cl_qa.post(
+    "/jobs",
+    data={"scene": json.dumps({"schema": "kosmovis.render-scene/v1"})},
+    files={"model": ("model.glb", b"glb", "model/gltf-binary")},
+)
+jid = res.json()["job_id"]
+bridge._fake_worker_pass()  # queued → running
+bridge._fake_worker_pass()  # running → done + render-result.json
+result = json.loads((store_qa / jid / "render-result.json").read_text())
+check("Auflage 6: Fake-QA style.method == 'fake-worker' (kein vorgetäuschtes dinov3)", result["qa"]["style"]["method"] == "fake-worker")
+
+for _k in ("KOSMO_BRIDGE_APPROVAL_PFLICHT", "KOSMO_BRIDGE_GPU_IDLE"):
+    os.environ.pop(_k, None)
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+for _s in fable_stores:
+    shutil.rmtree(_s, ignore_errors=True)
+
+# ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis
 # ---------------------------------------------------------------------------
 shutil.rmtree(TMP_STORE, ignore_errors=True)

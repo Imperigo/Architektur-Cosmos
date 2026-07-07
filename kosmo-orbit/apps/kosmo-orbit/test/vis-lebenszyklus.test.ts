@@ -54,7 +54,7 @@ describe('mappeJobStatus (HS3 Bridge→Client-Mapper)', () => {
     expect(mappeJobStatus({ status: 'running', result: { images: [] } })).toBe('fertig');
   });
 
-  it('unbekannter Status fällt sicher auf «rendert» (kein stiller Fertig)', () => {
-    expect(mappeJobStatus({ status: 'irgendwas-neues' })).toBe('rendert');
+  it('unbekannter Status fällt auf einen Wartezustand (nie stiller Fertig, nie vorgetäuschtes «läuft»)', () => {
+    expect(mappeJobStatus({ status: 'irgendwas-neues' })).toBe('wartetGpu');
   });
 });

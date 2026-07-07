@@ -38,6 +38,14 @@ test('Node-Tree-Kette: Drei Stimmungen → Ausführen → Bild am Node → Aufs 
   await page.locator('[data-testid="render-ausfuehren"]').first().click();
   await expect(page.locator('[data-testid="render-status"]').first()).not.toHaveText('bereit');
   await expect(page.locator('[data-testid="render-bild"]').first()).toBeVisible({ timeout: 25000 });
+  // HS3-Auflage 1: das Bild kommt jetzt als geladene blob:-URL (CSP img-src
+  // blockte den direkten http-src still) — naturalWidth > 0 beweist echtes
+  // Bild statt kaputtem 16×16-Kästchen, tötet den grünen Schein.
+  const bildBreite = await page
+    .locator('[data-testid="render-bild"]')
+    .first()
+    .evaluate((el) => (el as HTMLImageElement).naturalWidth);
+  expect(bildBreite).toBeGreaterThan(0);
 
   // Blatt-Node ansetzen und verbinden (präziser Befehl — wie Kosmo es täte)
   await page.selectOption('[data-testid="node-hinzu"]', 'blatt');

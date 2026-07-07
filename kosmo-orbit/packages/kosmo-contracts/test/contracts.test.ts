@@ -210,6 +210,18 @@ describe('V2-Technik Block 1 — video-splat (eigenes Schema, kein-sfm-worker eh
       VideoSplatJob.parse({ job_id: 'vis-1-abcdef', status: 'queued', created_at: 'x' }),
     ).toThrow();
   });
+
+  it('nimmt awaiting_approval + approval_token an (Freigabe-Pflicht, HS3-Auflage 4)', async () => {
+    const { VideoSplatJob } = await import('../src');
+    const job = VideoSplatJob.parse({
+      job_id: 'vsplat-1783414062-a2c3b1',
+      status: 'awaiting_approval',
+      approval_token: 'CONFIRMED_SPLAT_1c214b97',
+      created_at: '2026-07-07T08:00:00Z',
+    });
+    expect(job.status).toBe('awaiting_approval');
+    expect(job.approval_token).toBe('CONFIRMED_SPLAT_1c214b97');
+  });
 });
 
 describe('kosmo.blender-sim/v1 — Physik wird nie gefakt', () => {
@@ -252,5 +264,19 @@ describe('kosmo.blender-sim/v1 — Physik wird nie gefakt', () => {
         created_at: 'x',
       }),
     ).toThrow();
+  });
+
+  it('nimmt awaiting_approval + approval_token an (Freigabe-Pflicht, HS3-Auflage 4)', async () => {
+    const { BlenderSimJob } = await import('../src');
+    const job = BlenderSimJob.parse({
+      job_id: 'bsim-1783414062-a2c3b1',
+      status: 'awaiting_approval',
+      approval_token: 'CONFIRMED_SIM_1c214b97',
+      art: 'wind',
+      scene: 'blender-sim.json',
+      created_at: '2026-07-07T08:00:00Z',
+    });
+    expect(job.status).toBe('awaiting_approval');
+    expect(job.approval_token).toBe('CONFIRMED_SIM_1c214b97');
   });
 });

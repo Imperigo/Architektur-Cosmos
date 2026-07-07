@@ -34,6 +34,10 @@ export type BlenderSimScene = z.infer<typeof BlenderSimScene>;
  * Grenze im Container/ohne HomeStation — kein vorgetäuschtes Ergebnis.
  */
 export const BlenderSimJobStatus = z.enum([
+  // `awaiting_approval` (additiv, HS3-Nachbesserung/Fable-Auflage 4): auch eine
+  // Blender-Simulation ist teuer — bei aktiver Freigabe-Pflicht wartet sie auf
+  // ein explizites /approve, bevor ein echter Worker sie rechnet.
+  'awaiting_approval',
   'queued',
   'running',
   'done',
@@ -51,6 +55,8 @@ export const BlenderSimJob = z.object({
   kind: z.literal('blender-sim').default('blender-sim'),
   art: BlenderSimArt,
   scene: z.string().describe('Pfad zur blender-sim.json'),
+  /** Freigabe-Token bei aktiver Freigabe-Pflicht (Symmetrie zu RenderJob). */
+  approval_token: z.string().optional(),
   created_at: z.string(),
   updated_at: z.string().optional(),
   error: z.string().optional(),

@@ -56,7 +56,9 @@ export function mappeJobStatus(record: { status: string; result?: unknown }): No
     case 'cancelled':
       return 'abgebrochen';
     default:
-      return 'rendert';
+      // Unbekannter/neuer Bridge-Status: ein Wartezustand ist ehrlicher als
+      // «rendert» — wir behaupten keine laufende Rechnung (Fable-Auflage 7).
+      return 'wartetGpu';
   }
 }
 
@@ -124,14 +126,27 @@ export function bildUrl(jobId: string, imageName: string): string {
 }
 
 /**
+ * Artefakt-Bild als Blob holen — über `bridgeFetch` (trägt den Token, liegt im
+ * connect-src der CSP). Ein direktes `<img src="http://…">` scheitert doppelt:
+ * es kann keinen Token-Header tragen UND wird von `img-src` der CSP geblockt
+ * (HS3-Nachbesserung/Fable-Auflage 1). Der Aufrufer macht daraus eine
+ * `blob:`-URL (img-src erlaubt `blob:`) oder eine dataURL.
+ */
+export async function bildBlob(jobId: string, imageName: string): Promise<Blob> {
+  const res = await bridgeFetch(bridgeRoutes.jobArtifact(jobId, imageName), { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Bild ${imageName}: ${res.status}`);
+  return res.blob();
+}
+
+/**
  * Bild als Blatt-Bürger nach KosmoPublish (C1) — leerer Bild-Slot zuerst,
  * sonst neuer Slot; ohne Blatt entsteht eines. Alles EIN Undo-Schritt.
  * Gibt den Blattnamen zurück.
  */
 export async function bildAufsBlatt(jobId: string, imageName: string, titel: string): Promise<string> {
-  // no-store: die <img>-Tags cachen die Antwort ohne CORS-Header (no-cors) —
-  // ein normaler fetch träfe den vergifteten Cache-Eintrag und scheiterte.
-  const blob = await (await fetch(bildUrl(jobId, imageName), { cache: 'no-store' })).blob();
+  // Über bridgeFetch (Token-Header + connect-src) statt rohem fetch — sonst
+  // sperrt eine token-geschützte Bridge das Blatt-Einbetten aus (Fable-Auflage 1).
+  const blob = await bildBlob(jobId, imageName);
   const dataUrl = await new Promise<string>((resolve, reject) => {
     const r = new FileReader();
     r.onload = () => resolve(String(r.result));

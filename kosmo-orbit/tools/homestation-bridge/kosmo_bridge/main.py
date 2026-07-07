@@ -426,11 +426,15 @@ async def create_video_splat_job(frames: list[UploadFile] = File(...), meta: str
     record = {
         "job_id": job_id,
         "kind": "video-splat",
-        "status": "queued",
+        # Freigabe-Pflicht gilt auch hier (HS3-Nachbesserung/Fable-Auflage 4):
+        # Video→Splat ist rechenintensiv — ohne Freigabe kein SfM-Lauf.
+        "status": "awaiting_approval" if APPROVAL_PFLICHT else "queued",
         "frame_count": len(frame_names),
         "meta": meta_obj,
         "created_at": _now(),
     }
+    if APPROVAL_PFLICHT:
+        record["approval_token"] = f"CONFIRMED_SPLAT_{secrets.token_hex(4)}"
     (job_dir / "job.json").write_text(json.dumps(record, indent=2))
     return record
 
@@ -475,11 +479,15 @@ async def create_blender_sim_job(szene: str = Form(...), model: UploadFile = Fil
     record = {
         "job_id": job_id,
         "kind": "blender-sim",
-        "status": "queued",
+        # Freigabe-Pflicht gilt auch für die (teure) Blender-Simulation
+        # (HS3-Nachbesserung/Fable-Auflage 4) — ohne Freigabe kein Worker-Lauf.
+        "status": "awaiting_approval" if APPROVAL_PFLICHT else "queued",
         "art": art,
         "scene": str(job_dir / "blender-sim.json"),
         "created_at": _now(),
     }
+    if APPROVAL_PFLICHT:
+        record["approval_token"] = f"CONFIRMED_SIM_{secrets.token_hex(4)}"
     (job_dir / "job.json").write_text(json.dumps(record, indent=2))
     return record
 
@@ -734,10 +742,10 @@ def _fake_worker_step(job_dir: Path) -> None:
         return
 
     if status == "running":
-        # Kooperativer Abbruch wird als eigener Zustand ("cancelled") vom
-        # /cancel-Endpoint gesetzt; ein laufender Job, der nicht abgebrochen
-        # wurde, rechnet hier fertig. Da Abbruch einen anderen Status schreibt,
-        # kommen wir bei "cancelled" gar nicht erst hierher — kein Ergebnis.
+        # Kooperativer Abbruch (normatives Worker-Protokoll, README Punkt 3):
+        # VOR dem teuren Schreiben den Status frisch lesen. Ein /cancel, das
+        # zwischen dem Schrittbeginn und hier eintraf, darf nicht überschrieben
+        # werden — sonst entstünde ein Ergebnis für einen abgebrochenen Job.
         img = job_dir / "cam-01.png"
         img.write_bytes(_placeholder_png())
         result = {
@@ -746,7 +754,9 @@ def _fake_worker_step(job_dir: Path) -> None:
             "images": [img.name],
             "ai_variant": img.name,
             "qa": {
-                "style": {"style_score": 0.42, "threshold": 0.3, "passed": True, "method": "dinov3"},
+                # Alle Fake-Werte tragen "fake-worker" als method — kein
+                # vorgetäuschtes echtes Verfahren (auch nicht beim Stil).
+                "style": {"style_score": 0.42, "threshold": 0.3, "passed": True, "method": "fake-worker"},
                 "geometry": {
                     "geometry_fidelity": 0.87,
                     "spearman": 0.93,
@@ -758,6 +768,11 @@ def _fake_worker_step(job_dir: Path) -> None:
                 "verdict": {"passed": True, "reason": "Fake-Worker (Demo ohne GPU)"},
             },
         }
+        aktuell = json.loads(f.read_text())
+        if aktuell.get("status") == "cancelled":
+            # Abbruch gewann das Rennen — kein render-result.json, kein done.
+            img.unlink(missing_ok=True)
+            return
         (job_dir / "render-result.json").write_text(json.dumps(result, indent=2))
         record["status"] = "done"
         record["progress"] = {"phase": "fertig", "pct": 1.0}

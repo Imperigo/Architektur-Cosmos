@@ -12,7 +12,6 @@ import { useProject } from '../../state/project-store';
 import {
   abbrechenJob,
   bildAufsBlatt,
-  bildUrl,
   bridgeBase,
   freigebenJob,
   holeJob,
@@ -22,10 +21,12 @@ import {
 import {
   istZeitUeberschritten,
   memoKey,
+  type NodeLauf,
   OFFENE_LAUF_STATUS,
   RENDER_TIMEOUT_MS_DEFAULT,
   useVisRuntime,
 } from './vis-runtime';
+import { BridgeBild } from './BridgeBild';
 
 /**
  * NodeCanvas (V1-Finish P2) — der Blender-artige Node-Editor von KosmoVis.
@@ -117,9 +118,12 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
       const limitMs =
         Number(localStorage.getItem('kosmo.render.timeoutMs')) || RENDER_TIMEOUT_MS_DEFAULT;
       const offen = Object.entries(useVisRuntime.getState().laeufe).filter(
-        ([, l]) => l.jobId && (OFFENE_LAUF_STATUS as readonly string[]).includes(l.status),
+        ([, l]) => (OFFENE_LAUF_STATUS as readonly string[]).includes(l.status),
       );
       for (const [nodeId, lauf] of offen) {
+        // Timeout-Wächter ZUERST — unabhängig von einer jobId (HS3-Auflage 2):
+        // ein hängender POST bleibt sonst ewig «gesendet» ohne jobId und würde
+        // nie ablaufen.
         if (istZeitUeberschritten(lauf, jetzt, limitMs)) {
           patchLauf(nodeId, {
             status: 'zeitueberschreitung',
@@ -127,18 +131,25 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
           });
           continue;
         }
-        const jobId = lauf.jobId!;
+        // Ohne jobId (POST noch nicht bestätigt) gibt es nichts abzufragen.
+        if (!lauf.jobId) continue;
+        const jobId = lauf.jobId;
         void holeJob(jobId)
           .then((j) => {
             // P6-Review #7: eine verspätete Antwort darf einen NEUEN Lauf
             // (anderer/kein jobId) nie als «fertig» markieren
             if (useVisRuntime.getState().laeufe[nodeId]?.jobId !== jobId) return;
+            // Fortschritt/Worker mitführen (HS3-Auflage 5) — der Node zeigt sie.
+            const marker: Partial<NodeLauf> = {
+              ...(j.worker !== undefined ? { worker: j.worker } : {}),
+              ...(j.progress !== undefined ? { progress: j.progress } : {}),
+            };
             if (j.result) {
-              patchLauf(nodeId, { status: 'fertig', bild: j.result.images[0] ?? '', qa: j.result.qa });
+              patchLauf(nodeId, { ...marker, status: 'fertig', bild: j.result.images[0] ?? '', qa: j.result.qa });
             } else if (j.status === 'error') {
-              patchLauf(nodeId, { status: 'fehler', fehler: 'Render fehlgeschlagen' });
+              patchLauf(nodeId, { ...marker, status: 'fehler', fehler: 'Render fehlgeschlagen' });
             } else {
-              patchLauf(nodeId, { status: mappeJobStatus(j) });
+              patchLauf(nodeId, { ...marker, status: mappeJobStatus(j) });
             }
           })
           .catch(() => undefined);
@@ -540,7 +551,7 @@ function NodeKoerper({
   node: VisNode;
   prompt: string | undefined;
   material: string | undefined;
-  lauf: { status: string; jobId?: string; bild?: string; qa?: { verdict: { passed: boolean } } | undefined; fehler?: string } | undefined;
+  lauf: { status: string; jobId?: string; bild?: string; qa?: { verdict: { passed: boolean } } | undefined; fehler?: string; worker?: string; progress?: { phase: string; pct: number } } | undefined;
   veraltet: boolean;
   onAusfuehren: () => void;
   onFreigeben: () => void;
@@ -695,23 +706,32 @@ function NodeKoerper({
               {STATUS_LABEL[status] ?? status}
             </span>
           </div>
+          {/* Worker + Fortschritt, sobald der Worker den Job hält (HS3-Auflage 5). */}
+          {(lauf?.worker || lauf?.progress) && (status === 'rendert' || status === 'wartetGpu') && (
+            <div data-testid="render-fortschritt" style={{ fontSize: 9.5, fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-soft)' }}>
+              {lauf.worker ?? 'worker'}
+              {lauf.progress ? ` · ${lauf.progress.phase} ${Math.round(lauf.progress.pct * 100)}%` : ''}
+            </div>
+          )}
           {status === 'fertig' && lauf?.jobId && lauf.bild ? (
-            <img src={bildUrl(lauf.jobId, lauf.bild)} alt="Render" data-testid="render-bild" style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+            <BridgeBild jobId={lauf.jobId} imageName={lauf.bild} alt="Render" testid="render-bild" style={{ width: '100%', border: '1px solid var(--k-line)' }} />
           ) : (
             <div style={{ height: 110, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 6, fontSize: 10, color: rot ? 'var(--k-danger)' : 'var(--k-ink-faint)' }}>
               {rot
                 ? (lauf?.fehler ?? 'Render fehlgeschlagen')
-                : status === 'wartetFreigabe'
-                  ? 'wartet auf Freigabe — «Freigeben» startet den Render'
-                  : status === 'wartetGpu'
-                    ? 'wartet auf GPU-Leerlauf …'
-                    : status === 'abgebrochen'
-                      ? 'abgebrochen'
-                      : lauf
-                        ? 'rendert im GPU-Leerlauf …'
-                        : cloudLeer
-                          ? 'Cloud-Betrieb: kein lokaler Render'
-                          : 'Bild erscheint hier'}
+                : status === 'fertig'
+                  ? 'fertig — aber kein Bild geliefert'
+                  : status === 'wartetFreigabe'
+                    ? 'wartet auf Freigabe — «Freigeben» startet den Render'
+                    : status === 'wartetGpu'
+                      ? 'wartet auf GPU-Leerlauf …'
+                      : status === 'abgebrochen'
+                        ? 'abgebrochen'
+                        : lauf
+                          ? 'rendert im GPU-Leerlauf …'
+                          : cloudLeer
+                            ? 'Cloud-Betrieb: kein lokaler Render'
+                            : 'Bild erscheint hier'}
             </div>
           )}
         </div>
@@ -730,7 +750,7 @@ function NodeKoerper({
           )}
           {bilder.map((b, i) => (
             <div key={i} style={{ flex: 1, display: 'grid', gap: 2 }}>
-              <img src={bildUrl(b.jobId, b.bild)} alt={`Bild ${i + 1}`} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+              <BridgeBild jobId={b.jobId} imageName={b.bild} alt={`Bild ${i + 1}`} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
               {b.qa && (
                 <span style={{ fontSize: 9, fontFamily: 'var(--k-font-mono)', color: b.qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)' }}>
                   QA {b.qa.verdict.passed ? 'ok' : '✗'}

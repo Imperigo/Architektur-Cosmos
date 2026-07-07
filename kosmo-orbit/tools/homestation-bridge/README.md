@@ -124,9 +124,12 @@ startet ein Job wie bisher direkt `queued`.
   kein passender Worker angeschlossen ist (Physik/Splats werden nie gefälscht).
 - **Freigabe-Pflicht** (`KOSMO_BRIDGE_APPROVAL_PFLICHT=1`, Default aus): ein
   neuer Job startet in `awaiting_approval` und rechnet erst nach
-  `POST /jobs/{id}/approve` mit `{"approval_token": "CONFIRMED_RENDER_…"}` aus
-  dem Create-Response. Falscher Token → `403` (timing-sicher, protokolliert).
-  So läuft kein teurer/bezahlter Render ungefragt an.
+  `POST /jobs/{id}/approve` mit `{"approval_token": "CONFIRMED_…"}` aus dem
+  Create-Response. Falscher Token → `403` (timing-sicher, protokolliert). Gilt
+  für **alle teuren Job-Typen** — Render (`CONFIRMED_RENDER_…`), Blender-Sim
+  (`CONFIRMED_SIM_…`) und Video→Splat (`CONFIRMED_SPLAT_…`); der generische
+  `/approve`/`/cancel`-Weg bedient alle drei. So läuft kein teurer/bezahlter
+  Job ungefragt an.
 - **Abbruch**: `POST /jobs/{id}/cancel` setzt `awaiting_approval`/`queued`/
   `running` sofort auf `cancelled`. Kooperativ: ein laufender Worker sieht den
   Abbruch **vor** dem nächsten teuren Schritt und schreibt kein Ergebnis mehr.
