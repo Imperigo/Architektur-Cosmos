@@ -27,6 +27,12 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
+      - name: Secret-Scan (Quelltext + dist/) — hartes Gate, Serie I / B2
+        run: npm run security:secrets
+      - name: Secret-Scan-Selbsttest (beweist: Fund bei Test-Key, grün bei sauberem dist/)
+        run: npm run test:secret-scan
+      - name: npm audit (Warngate, kein harter Bruch — Owner entscheidet später über Verschärfung)
+        run: npm audit --audit-level=high || true
       - name: Upload Web-Build (PWA)
         uses: actions/upload-artifact@v4
         with:

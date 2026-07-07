@@ -2,6 +2,21 @@
 <html lang="de-CH">
   <head>
     <meta charset="UTF-8" />
+    <!--
+      PWA-CSP-Basisriegel (Serie I / Batch B2, R6) — dieselbe Politik wie die
+      Tauri-Desktop-CSP (`src-tauri/tauri.conf.json`), hier als Meta-Tag, weil
+      die statisch gehostete PWA keine eigenen HTTP-Header setzen kann. Die
+      echte Produktions-Header-CSP bleibt Hosting-Sache (z. B. Cloudflare/
+      Nginx-Konfiguration architekturkosmos.ch) — dieser Tag ist die
+      Baseline-Absicherung, die JEDE Auslieferung mitbringt, auch ohne
+      Server-Konfiguration. Verifiziert per Playwright-Root-Smoke gegen den
+      echten `vite preview`-Build (keine CSP-Verstösse in der Konsole,
+      KosmoOrbit-Zentrale + eine Station laden fehlerfrei).
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src 'self' https://api.anthropic.com http://localhost:* ws://localhost:* https://architekturkosmos.ch wss://*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"

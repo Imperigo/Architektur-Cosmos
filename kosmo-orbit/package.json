@@ -17,7 +17,9 @@
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "security:secrets": "node tools/secret-scan.mjs",
+    "test:secret-scan": "node tools/secret-scan.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1"
