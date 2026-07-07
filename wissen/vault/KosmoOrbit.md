@@ -63,11 +63,20 @@ Kosmo — eine KI, die jedes Command als Werkzeug hat und nie ungefragt schreibt
   defensiv, «so hart wie sinnvoll»; 5 reale Bugs nebenbei gefixt. Ehrliche
   Grenzen dokumentiert (TLS/Firewall = HomeStation, signierte Updates/Backup =
   Owner-Infrastruktur).
+- **Serie J — Intuitive Bedienung & adaptive Oberfläche** ✅ **abgeschlossen
+  (07.07.2026, ROADMAP 165–170):** Fable-Orchestrierung (`docs/SERIE-J-BUILDPLAN.md`)
+  → 6 Batches J1a/J3a/J2/J1b/J3b/J3c, zwei Fable-Reviews dazwischen (fanden 3
+  Wiring-Bugs + 2 Nerv-Faktor-Ärgernisse + die opacity-Falle, alle vorher
+  geschlossen). Der Owner-Grossauftrag «intuitive Touch-/Gestensteuerung im 3D
+  (iPad: 1-Finger-Orbit, 2-Finger-Pan/Pinch, Doppel-Tap-Einpassen, Long-Press-
+  Menü), intuitiver Maus-Umgang (Mittel-Orbit, Shift-Pan, Rechtsklick-Menü,
+  Kontextcursor), dynamisch adaptive Zeichnungsoberfläche (Gruppen treten je
+  Tätigkeit/Nutzung zurück, nie umgeordnet, eingefroren während Aktionen,
+  zurücksetzbar)» ist umgesetzt. Volle E2E 125/125.
 - **Noch offen für den Fable-Block:** **Serie H** (Vollständige Benutzersimulation,
-  `docs/SERIE-H-VOLLSIMULATION.md`), **Serie J** (Intuitive Bedienung & adaptive
-  Oberfläche — Touch/Gesten + Maus im 3D + adaptive Zeichnungsoberfläche,
-  `docs/SERIE-J-INTUITIVE-BEDIENUNG.md`), dann die technischen V2-Blöcke.
-  Reihung: Fable = Chefdenker/Urteil, Opus = Orchestrierung, Sonnet = Ausführung.
+  `docs/SERIE-H-VOLLSIMULATION.md`), dann die technischen V2-Blöcke, dann ein
+  frischer Desktop-Build. Reihung: Fable = Chefdenker/Urteil (jetzt auch
+  Orchestrator), Opus = Ausführungs-Harness, Sonnet = Bau.
 
 ## Wie der Vault mit der Software spricht
 
