@@ -169,6 +169,123 @@ test.describe('Serie H / H3a — Ehrlichkeits-Assertions gegen die Fake-Bridge',
     expect(final.message).toContain('SfM'); // [Quelle: main.py Z.569-573 Begründungstext]
     expect(final.message).toContain('HomeStation');
   });
+
+  // ─── V2-Technik Block 1 / HS6 — die neuen Block-Marker als Regressionsnetz ───
+  // Append-only: die fünf Assertions oben bleiben zeichengenau. Freigabe-Pflicht
+  // und Idle-Gate sind hier bewusst NICHT dupliziert — sie prüfen
+  // test_bridge_haerte.py (HS2) und homestation-kette.spec.ts (HS3) gegen eine
+  // eigene Bridge-Instanz; hier läuft alles gegen die Default-Fake-Bridge.
+
+  test('HS6 (6) blender-sim: ehrliche Grenze "kein-blender-worker" (Physik wird NIE gefakt)', async () => {
+    test.skip(!bridgeOk, BRIDGE_FEHLT_HINWEIS);
+
+    const form = new FormData();
+    form.set(
+      'szene',
+      JSON.stringify({ schema: 'kosmo.blender-sim/v1', art: 'wind', geometry: { path: 'x', format: 'glb' }, params: {}, out: 'x' }),
+    ); // [Quelle: main.py '@app.post("/jobs/blender-sim")' szene: str = Form(...)]
+    form.set('model', new Blob([new Uint8Array([0, 1, 2, 3])], { type: 'model/gltf-binary' }), 'model.glb');
+    const createRes = await fetch(`${BRIDGE}/jobs/blender-sim`, { method: 'POST', body: form });
+    expect(createRes.status).toBe(200);
+    const created = (await createRes.json()) as { job_id: string; kind: string; status: string };
+    expect(created.kind).toBe('blender-sim');
+    expect(created.job_id.startsWith('bsim-')).toBe(true);
+    expect(created.status).toBe('queued'); // Default-Bridge ohne Freigabe-Pflicht
+
+    await expect
+      .poll(
+        async () => {
+          const job = (await (await fetch(`${BRIDGE}/jobs/${created.job_id}`)).json()) as { status: string };
+          return job.status;
+        },
+        { timeout: 15_000, message: 'Fake-Worker meldet den blender-sim-Job nicht als kein-blender-worker' },
+      )
+      .toBe('kein-blender-worker'); // [Quelle: main.py '_fake_worker_step' blender-sim-Zweig — kein vorgetäuschtes Ergebnis]
+
+    const final = (await (await fetch(`${BRIDGE}/jobs/${created.job_id}`)).json()) as { message: string };
+    expect(final.message).toContain('Blender');
+    expect(final.message).toContain('HomeStation');
+  });
+
+  test('HS6 (7) Render-Record: approval_token CONFIRMED_RENDER_, idle_window_only, nach done worker fake-worker', async () => {
+    test.skip(!bridgeOk, BRIDGE_FEHLT_HINWEIS);
+
+    const form = new FormData();
+    form.set('scene', '{}');
+    form.set('model', new Blob([new Uint8Array([0, 1, 2, 3])], { type: 'model/gltf-binary' }), 'model.glb');
+    const createRes = await fetch(`${BRIDGE}/jobs`, { method: 'POST', body: form });
+    const created = (await createRes.json()) as {
+      job_id: string;
+      approval_token: string;
+      idle_window_only: boolean;
+    };
+    // Die Kette benennt Freigabe-Token + Idle-Fenster offen (HS1/HS2).
+    expect(created.approval_token.startsWith('CONFIRMED_RENDER_')).toBe(true); // [Quelle: main.py create_job approval_token]
+    expect(created.idle_window_only).toBe(true);
+
+    await expect
+      .poll(async () => {
+        const job = (await (await fetch(`${BRIDGE}/jobs/${created.job_id}`)).json()) as { status: string };
+        return job.status;
+      }, { timeout: 15_000 })
+      .toBe('done');
+
+    // Nach done sagt die Kette selbst, WER gerendert hat (HS2 worker-Marker).
+    const done = (await (await fetch(`${BRIDGE}/jobs/${created.job_id}`)).json()) as { worker: string };
+    expect(done.worker).toBe('fake-worker'); // [Quelle: main.py _fake_worker_step record["worker"] = "fake-worker"]
+  });
+
+  test('HS6 (8) vis.skip: true → requested_engine "cycles", aber method bleibt "fake-worker" (Cycles nicht vorgetäuscht)', async () => {
+    test.skip(!bridgeOk, BRIDGE_FEHLT_HINWEIS);
+
+    const form = new FormData();
+    // vis.skip: true = «nur Cycles» bestellt (HS5-Schalter schreibt genau das).
+    form.set('scene', JSON.stringify({ schema: 'kosmovis.render-scene/v1', vis: { skip: true, backbone: 'qwen', upscale: false } }));
+    form.set('model', new Blob([new Uint8Array([0, 1, 2, 3])], { type: 'model/gltf-binary' }), 'model.glb');
+    const createRes = await fetch(`${BRIDGE}/jobs`, { method: 'POST', body: form });
+    const created = (await createRes.json()) as { job_id: string; requested_engine: string };
+    // BESTELLT: Cycles (HS2 leitet requested_engine aus vis.skip ab).
+    expect(created.requested_engine).toBe('cycles'); // [Quelle: main.py create_job requested_engine]
+
+    await expect
+      .poll(async () => {
+        const job = (await (await fetch(`${BRIDGE}/jobs/${created.job_id}`)).json()) as { status: string };
+        return job.status;
+      }, { timeout: 15_000 })
+      .toBe('done');
+
+    // GELIEFERT: der markierte Fake — Cycles wird NICHT vorgetäuscht. Das
+    // Ergebnis trägt weiter method:"fake-worker" (die ehrliche Grenze im
+    // Container; ein echter Cycles-Worker auf der HomeStation flippt das).
+    const artifact = (await (
+      await fetch(`${BRIDGE}/jobs/${created.job_id}/artifacts/render-result.json`)
+    ).json()) as { qa: { geometry: { method: string } } };
+    expect(artifact.qa.geometry.method).toBe('fake-worker');
+  });
+
+  test('HS6 (9) cancel: sofortiger Abbruch → cancelled, KEIN render-result.json (404 aufs Artefakt)', async () => {
+    test.skip(!bridgeOk, BRIDGE_FEHLT_HINWEIS);
+
+    const form = new FormData();
+    form.set('scene', '{}');
+    form.set('model', new Blob([new Uint8Array([0, 1, 2, 3])], { type: 'model/gltf-binary' }), 'model.glb');
+    const createRes = await fetch(`${BRIDGE}/jobs`, { method: 'POST', body: form });
+    const created = (await createRes.json()) as { job_id: string };
+
+    // Sofort abbrechen (der Job ist noch queued — der Poll läuft im Sekundentakt).
+    const cancelRes = await fetch(`${BRIDGE}/jobs/${created.job_id}/cancel`, { method: 'POST' }); // [Quelle: main.py '@app.post("/jobs/{job_id}/cancel")']
+    expect(cancelRes.status).toBe(200);
+    expect(((await cancelRes.json()) as { status: string }).status).toBe('cancelled');
+
+    // Ein abgebrochener Job erzeugt kein Ergebnis — das Artefakt fehlt (404).
+    // Kurz gegenprobieren, dass es auch nach einem Worker-Durchlauf 404 bleibt.
+    await expect
+      .poll(
+        async () => (await fetch(`${BRIDGE}/jobs/${created.job_id}/artifacts/render-result.json`)).status,
+        { timeout: 5_000, intervals: [500, 1000, 1500], message: 'render-result.json entstand trotz Abbruch' },
+      )
+      .toBe(404);
+  });
 });
 
 test.describe('Abnahme H3a — jede H2-Journey trägt ihr renderUeberBridge-Segment', () => {
