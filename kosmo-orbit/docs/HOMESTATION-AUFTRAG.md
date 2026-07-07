@@ -10,13 +10,35 @@
 
 | Auftrag | Übergabepunkt im Repo |
 |---|---|
-| **Echte Renders** (ComfyUI-Worker) | Bridge nimmt Jobs an: `tools/homestation-bridge/kosmo_bridge/main.py` (`/jobs`, Artefakt-Store). Der `--fake-worker` (`_fake_worker_loop`) zeigt exakt die Nahtstelle: gleiche Job-Schleife, statt Platzhalter-PNG ComfyUI aufrufen. Client/QA-Verdikt/Serien sind fertig (KosmoVis), Render-Prompt kommt transparent aus `derive/renderprompt.ts`. |
+| **Echte Renders** (ComfyUI-/Cycles-Worker) | Bridge nimmt Jobs an: `tools/homestation-bridge/kosmo_bridge/main.py` (`/jobs`, Artefakt-Store). Der `--fake-worker` (`_fake_worker_step`/`_fake_worker_pass`/`_fake_worker_loop`) zeigt exakt die Nahtstelle: gleiche Job-Schleife, statt Platzhalter-PNG ComfyUI/Cycles aufrufen. Der **vollständige Job-Lebenszyklus** (Freigabe → GPU-Leerlauf → Fortschritt → Ergebnis / Abbruch) ist client- und bridgeseitig gebaut — siehe §1c. Client/QA-Verdikt/Serien sind fertig (KosmoVis), Render-Prompt kommt transparent aus `derive/renderprompt.ts`. |
 | **Render-Slots im Plakat mit echten Bildern** | KosmoPublish-Bildslots (`publish.bild*`) sind gebaut — sie warten nur auf echte Renders. |
 | **Gaussian-Splatting im Viewport** (V2-C3) | Splat-Import (`design/splat-import.ts`) zeigt heute die Punktwolke; echtes GS-Rendering braucht GPU. |
 | **Foto-Texturmaps** (V2-C2) | Parametrische PBR-Kacheln stehen (`design/texturen.ts`, Materialkatalog in `@kosmo/data`) — Foto-Maps ersetzen nur die Prozeduren. |
 | **Whisper/Piper scharf** (KosmoSpeak) | Bridge-Endpoints `/stt` (faster-whisper) und `/tts` sind real implementiert; Ablauf + UI (Push-to-Talk im Kosmo-Panel) fertig. Am Home-PC: Modelle laden, Qualität hören, Wortliste CH-Deutsch nachziehen. |
 | **Embedding-RAG bge-m3** (KosmoPrepare) | `/embed` ist real in der Bridge, der Client-Pfad (`prepare/knowledge.ts: embedTexts`) und der Contract (`EmbedRequest/Response` in `@kosmo/contracts`) stehen; ohne Bridge trägt BM25. Am Home-PC: bge-m3 in die Bridge, fertig. |
 | **HDD-Voll-Index** (KosmoData-Archiv, V2-D5) | Bridge-Endpunkt `/archiv` (Ordner scannen, Grössen/Dateilisten, später Einbetten via bge-m3) — heute nur Manifest im Client (`state/archiv.ts`, IndexedDB `kosmo-archiv`); das echte Scannen/Indexieren der HDD läuft auf der HomeStation. Die Bridge hat heute keinen HDD-Endpunkt, nur `/health`, `/jobs`, `/stt`, `/tts`, `/embed`. |
+
+## 1c. Job-Lebenszyklus + Job-Typen (V2-Technik Block 1, ROADMAP 177–183)
+
+Die HomeStation-Kette ist scharf: alles unten ist **im Container gebaut und
+grün getestet**, es fehlt nur der echte GPU-Worker. Das normative Worker-
+Protokoll (der Zustandsautomat, den ein echter Worker exakt so bedient wie der
+Fake-Worker) steht in `tools/homestation-bridge/README.md` («Worker andocken»)
+— hier die Übergabepunkte je Zeile:
+
+| (B)-Auftrag | Übergabepunkt (Datei / Endpoint / Env) |
+|---|---|
+| **Freigabe-Pflicht** (kein teurer Job läuft ungefragt) | `KOSMO_BRIDGE_APPROVAL_PFLICHT=1` → Job startet `awaiting_approval`, wartet auf `POST /jobs/{id}/approve` mit dem `approval_token` aus dem Create-Response. Client-Knopf «Freigeben» ist gebaut (`render-freigeben`); gilt für Render, `blender-sim`, `video-splat`. |
+| **GPU-Leerlauf-Fenster** (nur im Idle rendern) | Der echte Worker holt einen `queued`-Job **nur wenn die GPU idle ist**. Als Owner-Parameter gedacht: `nvidia-smi`-Auslastungs-**Schwelle** (z. B. < 10 %) + Zeit-**Fenster** (z. B. 22–06 Uhr). Im Container simuliert `KOSMO_BRIDGE_GPU_IDLE=0/1`; der Client zeigt «wartet auf GPU-Leerlauf …». `GET /health` liefert auf der echten Station `gpu` aus `nvidia-smi` (im Fake-Modus ehrlich `fake-gpu (Simulation)`). |
+| **Fortschritt + Worker-Marker** | Der Worker schreibt `worker` (wer rechnet) + `progress {phase, pct}` in den Record; der Client zeigt beides am Node (`render-fortschritt`). **Abnahme-Beweis: `worker` ≠ `"fake-worker"`.** |
+| **Kooperativer Abbruch** | `POST /jobs/{id}/cancel` → `cancelled`; der Worker liest den Status **vor** dem teuren Schreibschritt frisch und schreibt dann kein Ergebnis (README-Protokoll Punkt 3). |
+| **«Nur Cycles» vs. KI-Veredelung** | Der Render-Node-Schalter «nur Cycles» (`render-nur-cycles`) schreibt `vis.skip: true` in die Szene; die Bridge leitet daraus `requested_engine: "cycles"` ab. Der Worker liest `requested_engine`: `"cycles"` = reiner Cycles-Render, `"ki"` = Cycles + KI-Veredelung (Qwen-Backbone). **Ehrlichkeit: solange nur der Fake-Worker läuft, bleibt das Ergebnis `method: "fake-worker"` — echtes Cycles flippt das erst am Gerät.** |
+| **Blender-Simulationen** (Physik, nie gefakt) | `POST /jobs/blender-sim` (multipart `szene` = `kosmo.blender-sim/v1` + `model.glb`; `art`: `wind` / `sonnenstunden` / `gebaeude-energie`). Ohne Blender-Worker endet der Job beweisbar als `kein-blender-worker` — **eine Platzhalter-Simulationszahl entsteht NIE** (eine erfundene Zahl sähe aus wie ein Analyseergebnis und könnte eine Bau-Entscheidung verseuchen). Der echte Blender-headless-Worker liefert echte Werte. |
+| **Video→Splat** (SfM auf der Station) | `POST /jobs/video-splat` übergibt die lokal extrahierten Frames ehrlich; ohne SfM-Worker (COLMAP/nerfstudio) endet der Job als `kein-sfm-worker`, kein vorgetäuschter Splat. |
+
+Verträge (die EINE Wahrheit): `@kosmo/contracts` (`render-scene/v1`,
+`render-result/v2`, `blender-sim/v1`, `bridge-api.ts`). Der Abnahme-Ablauf
+«Kette scharf» steht in `docs/ABNAHME-DREHBUCH.md`.
 
 ## 2. Training / Wissen (KOSMOTRAIN.md §5)
 

@@ -43,6 +43,38 @@
 | 10 | QA-Verdikt zurück | Ergebnis erscheint mit Doppel-QA-Verdikt (Geometrie/Stil) im Monitor | ⏳ wie 9 |
 | 11 | iPad synchron | Beide Geräte im selben Sync-Raum → Wand am Desktop zeichnen → erscheint live auf dem iPad (und umgekehrt) | ✅ 2-Client-Test maschinell; Gefühl auf echtem iPad = Abnahme |
 
+## Kette scharf — HomeStation-Job-Lebenszyklus (V2-Technik Block 1, ROADMAP 177–183)
+
+Dieser Ablauf nimmt die **echte** GPU-Kette ab — nicht den `--fake-worker`.
+Voraussetzung: der echte Render-Worker (ComfyUI/Cycles) hängt an der
+Job-Schleife (Nahtstelle `_fake_worker_step` ersetzen, normatives Protokoll in
+`tools/homestation-bridge/README.md` «Worker andocken»).
+
+1. **Bridge scharf starten** — OHNE `--fake-worker`, mit Freigabe-Pflicht:
+   `KOSMO_BRIDGE_APPROVAL_PFLICHT=1 kosmo-bridge --store /mnt/data/render-jobs --host 0.0.0.0`
+   (Token setzen, GPU-Idle-Fenster im Worker konfigurieren). In der App unter
+   KosmoVis die Bridge-URL + den Token eintragen.
+2. **Job senden** → am Render-Node erscheint **«wartet auf Freigabe»** (der
+   teure Render läuft NICHT ungefragt an). Der Knopf **«Freigeben»** ist da.
+3. **Freigeben** → Status wechselt auf **«wartet auf GPU-Leerlauf …»**, sobald
+   die GPU belegt ist; im Leerlauf-Fenster nimmt der Worker den Job und der
+   Node zeigt **Worker + Fortschritt** (`fake-worker` darf hier NICHT stehen —
+   es muss der echte Worker-Name mit `progress`-Prozenten sein).
+4. **Abbrechen (Gegenprobe)** → ein zweiter Job, «Abbrechen» im Wartezustand →
+   Status **«abgebrochen»**, es entsteht **kein** `render-result.json`.
+5. **Echtes Bild aufs Blatt** → der fertige Job liefert ein echtes ComfyUI-/
+   Cycles-Bild; «Aufs Blatt» bettet es in ein KosmoPublish-Blatt ein.
+   **Abnahme-Beweis:** `GET /jobs/{id}` zeigt `worker` ≠ `"fake-worker"` und
+   `qa.geometry.method` ≠ `"fake-worker"`.
+6. **«Nur Cycles» prüfen** → Checkbox «nur Cycles» am Node an → der Job trägt
+   `vis.skip: true` / `requested_engine: "cycles"`; das Ergebnis ist ein reiner
+   Cycles-Render (keine KI-Veredelung).
+7. **Blender-Simulation** → eine Wind-/Sonnenstunden-/Gebäude-Energie-Sim
+   auslösen (`/jobs/blender-sim`). **Abnahme-Beweis:** der Job liefert **echte
+   Werte**, nicht `kein-blender-worker` — und keine erfundene Platzhalterzahl.
+
+Solange ein Punkt scheitert, ist er ehrlich «⏳ HomeStation», nicht «✅».
+
 ## Wenn etwas klemmt
 
 - **Kosmo-Panel → Zahnrad → Diagnose**: prüft Kern, Ableitung, LLM, Bridge,
