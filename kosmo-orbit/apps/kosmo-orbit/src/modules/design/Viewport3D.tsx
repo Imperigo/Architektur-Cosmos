@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
+import { kameraDarfSehen, touchBelegung } from './eingabe-3d';
 import * as SunCalc from 'suncalc';
 import { deriveAll, type GeometryArtifact, type Pt, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, meldeFehler, moduleHue } from '@kosmo/ui';
@@ -171,6 +172,14 @@ const NAV_ACTION: Record<'orbit' | 'pan' | 'zoom', MausAktion> = {
   zoom: CameraControls.ACTION.DOLLY,
 };
 
+// Serie J / J1a: Touch-Belegung (eingabe-3d.ts) → camera-controls-Touch-ACTIONs.
+// Einzige three-Kopplung des einheitlichen Eingabemodells auf der Touch-Seite.
+const TOUCH_ACTION = {
+  rotate: CameraControls.ACTION.TOUCH_ROTATE,
+  truck: CameraControls.ACTION.TOUCH_TRUCK,
+  dollyTruck: CameraControls.ACTION.TOUCH_DOLLY_TRUCK,
+} as const;
+
 export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHandlers> }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<CameraControls | null>(null);
@@ -230,6 +239,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     mount.appendChild(renderer.domElement);
+    // Serie J / J1a: ohne `touch-action: none` scrollt/zoomt iPad-Safari die
+    // Seite statt der Kamera; `user-select: none` verhindert Text-Auswahl beim
+    // Ziehen. Beides fehlte bisher.
+    renderer.domElement.style.touchAction = 'none';
+    renderer.domElement.style.userSelect = 'none';
 
     const scene = new THREE.Scene();
     const cssVar = (name: string) =>
@@ -240,8 +254,22 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const controls = new CameraControls(camera, renderer.domElement);
     controls.setLookAt(18, 14, 18, 4, 0, -4, false);
     controls.dollyToCursor = true;
-    controls.smoothTime = 0.12;
+    // Serie J / J1a: weiche Dämpfung — `draggingSmoothTime` ist direkt an der
+    // Hand (kaum Verzug beim Ziehen), `smoothTime` lässt die Kamera nach dem
+    // Loslassen sanft ausrollen. Ehrliche Grenze: das ist camera-controls-
+    // natives Damping, kein simuliertes iOS-Flick-Momentum (siehe Buildplan §6).
+    controls.draggingSmoothTime = 0.05;
+    controls.smoothTime = 0.25;
     controls.mouseButtons.left = NAV_ACTION[navModus];
+    // Touch explizit belegen (bisher unkonfigurierte Defaults): 1 Finger Orbit,
+    // 2 Finger Pan+Pinch-Zoom (zum Pinch-Zentrum via dollyToCursor), 3 Finger
+    // Pan — aus der einzigen Quelle der Wahrheit `eingabe-3d.ts`.
+    {
+      const t = touchBelegung();
+      controls.touches.one = TOUCH_ACTION[t.one as 'rotate' | 'truck'];
+      controls.touches.two = TOUCH_ACTION[t.two];
+      controls.touches.three = TOUCH_ACTION[t.three as 'rotate' | 'truck'];
+    }
     controls.saveState(); // Home-Punkt für die «Einpassen»-Taste (reset())
     controlsRef.current = controls;
 
@@ -574,7 +602,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     let sketchModeZuletzt = false;
     function syncSketchModus() {
       const an = !!handlers.current?.sketchMode;
-      controls.enabled = !an;
+      // Serie J / J1a: kein hartes `controls.enabled = !an` mehr — der Capture-
+      // Phase-Pointerfilter (onCaptureDown) entscheidet pro Geste, ob die Kamera
+      // die Eingabe sieht, sodass der Finger auch im Skizzenmodus navigiert.
       if (an === sketchModeZuletzt) return;
       sketchModeZuletzt = an;
       setSketchModeAn(an);
@@ -882,7 +912,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     let downPos: { x: number; y: number } | null = null;
     const onPointerDown = (ev: PointerEvent) => {
       if (handlers.current?.sketchMode) {
-        onSketchPointerDown(ev);
+        // Serie J / J1a: nur zeichnen, wenn die Kamera dieses Event NICHT sehen
+        // darf (Stift oder linke Maustaste). Finger + Mittel-/Rechtstaste
+        // navigieren stattdessen — der Capture-Filter unten hat die Kamera für
+        // sie freigeschaltet.
+        if (!kameraDarfSehen(ev.pointerType, ev.button, true)) onSketchPointerDown(ev);
         return;
       }
       downPos = { x: ev.clientX, y: ev.clientY };
@@ -926,6 +960,23 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     renderer.domElement.addEventListener('pointerup', onPointerUp);
     renderer.domElement.addEventListener('pointermove', onPointerMove);
     window.addEventListener('keydown', onKey);
+
+    // Serie J / J1a: Pencil-Trennung ohne hartes Kamera-Abschalten. In der
+    // Capture-Phase (vor camera-controls' eigenem Listener auf demselben
+    // Element) entscheidet `kameraDarfSehen`, ob die Kamera diese Geste
+    // verarbeiten darf: Stift/linke-Maus im Skizzenmodus → false (zeichnet,
+    // Kamera still), Finger + Mittel/Rechts → true (navigiert). Das ersetzt das
+    // frühere statische `controls.enabled = !sketchMode`, ohne die Sketch-
+    // Handler (Target-Phase) zu unterbrechen (kein stopImmediatePropagation).
+    const onCaptureDown = (ev: PointerEvent) => {
+      controls.enabled = kameraDarfSehen(ev.pointerType, ev.button, !!handlers.current?.sketchMode);
+    };
+    const onCaptureUp = () => {
+      controls.enabled = true;
+    };
+    renderer.domElement.addEventListener('pointerdown', onCaptureDown, { capture: true });
+    renderer.domElement.addEventListener('pointerup', onCaptureUp, { capture: true });
+    renderer.domElement.addEventListener('pointercancel', onCaptureUp, { capture: true });
 
     const clock = new THREE.Clock();
     let raf = 0;
@@ -986,6 +1037,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       setCamera: (px: number, py: number, pz: number, tx: number, ty: number, tz: number) => {
         controls.setLookAt(px, py, pz, tx, ty, tz, false);
       },
+      // Serie J / J1a: Kamerazustand für E2E-Assertions (Gesten → Kamera-Delta).
+      getCamera: () => {
+        const p = controls.getPosition(new THREE.Vector3());
+        const t = controls.getTarget(new THREE.Vector3());
+        return { px: p.x, py: p.y, pz: p.z, tx: t.x, ty: t.y, tz: t.z };
+      },
     };
 
     return () => {
@@ -995,6 +1052,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       renderer.domElement.removeEventListener('pointerdown', onPointerDown);
       renderer.domElement.removeEventListener('pointerup', onPointerUp);
       renderer.domElement.removeEventListener('pointermove', onPointerMove);
+      renderer.domElement.removeEventListener('pointerdown', onCaptureDown, { capture: true } as EventListenerOptions);
+      renderer.domElement.removeEventListener('pointerup', onCaptureUp, { capture: true } as EventListenerOptions);
+      renderer.domElement.removeEventListener('pointercancel', onCaptureUp, { capture: true } as EventListenerOptions);
       window.removeEventListener('keydown', onKey);
       controls.dispose();
       renderer.dispose();
@@ -1026,9 +1086,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       <NavLeiste
         testid="nav-3d"
         aktionen={[
-          { id: 'orbit', icon: '⟳', titel: 'Orbit — linke Maustaste dreht die Kamera um das Modell', aktiv: navModus === 'orbit', onClick: () => setNavModus('orbit') },
-          { id: 'pan', icon: '✋', titel: 'Pan — linke Maustaste verschiebt die Ansicht (sonst: rechte Maustaste)', aktiv: navModus === 'pan', onClick: () => setNavModus('pan') },
-          { id: 'zoom', icon: '🔍', titel: 'Zoom — linke Maustaste zieht näher/weiter (sonst: Mausrad/Mitteltaste)', aktiv: navModus === 'zoom', onClick: () => setNavModus('zoom') },
+          { id: 'orbit', icon: '⟳', titel: 'Orbit — linke/mittlere Maustaste dreht die Kamera · 1 Finger dreht', aktiv: navModus === 'orbit', onClick: () => setNavModus('orbit') },
+          { id: 'pan', icon: '✋', titel: 'Pan — rechte Maustaste (oder Shift+Mitte) verschiebt · 2/3 Finger verschieben', aktiv: navModus === 'pan', onClick: () => setNavModus('pan') },
+          { id: 'zoom', icon: '🔍', titel: 'Zoom — Mausrad zieht zum Cursor · 2 Finger zusammen/auseinander (Pinch)', aktiv: navModus === 'zoom', onClick: () => setNavModus('zoom') },
           { id: 'fit', icon: '⌂', titel: 'Einpassen — Modell ins Bild holen (ohne Modell: Ausgangslage)', onClick: einpassen },
         ]}
       />
