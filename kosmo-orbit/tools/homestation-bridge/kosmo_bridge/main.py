@@ -19,6 +19,17 @@ Endpoints (Vertrag: @kosmo/contracts bridge-api.ts):
                                     "kein-blender-worker" statt eine
                                     Simulationszahl zu erfinden (Physik wird
                                     NIE gefakt, Fable-Urteil §3.2).
+  POST /jobs/dev                   KosmoDev-Workorder (kosmodev.workorder/v1,
+                                    JSON-Body) — die Bridge speichert und
+                                    vermittelt NUR Text, sie führt NIE Code
+                                    aus. Ohne angedockten Dev-Worker (Claude
+                                    Code an der HomeStation) bleibt der Job
+                                    ehrlich "queued".
+  GET  /jobs/dev                   Dev-Jobliste (optional ?status=queued)
+  GET  /jobs/dev/{id}              Dev-Job-Record + dev-result.json falls da
+  POST /jobs/dev/{id}/claim        Worker übernimmt ({worker}) → running
+  POST /jobs/dev/{id}/result       Worker meldet Ergebnis (DevJobResult) → done
+  POST /jobs/dev/{id}/cancel       Kooperativer Abbruch (queued/running)
   POST /stt                        Audio → Text (faster-whisper, Schweizerdeutsch-Modell)
   POST /ollama/...                 Reverse-Proxy zur lokalen Ollama-Instanz
 
@@ -46,6 +57,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import secrets
 import struct
 import threading
@@ -115,6 +127,13 @@ MAX_UPLOAD_AUDIO_BYTES = int(os.environ.get("KOSMO_BRIDGE_MAX_UPLOAD_AUDIO", str
 # einzelner Env-Namensraum reicht — aktuell von keinem Endpoint genutzt.
 MAX_UPLOAD_FRAME_BYTES = int(os.environ.get("KOSMO_BRIDGE_MAX_UPLOAD_FRAME", str(500 * 1024)))  # ~500 KB
 MAX_FRAME_COUNT = int(os.environ.get("KOSMO_BRIDGE_MAX_FRAMES", "400"))
+# Workorder-Deckel (Block 2 / AB2): reine Text-Payload — 1 MB ist weit über
+# jeder realen Auftragsliste, aber ein harter Riegel gegen Speicher-DoS.
+MAX_WORKORDER_BYTES = int(os.environ.get("KOSMO_BRIDGE_MAX_WORKORDER", str(1024 * 1024)))
+# Optionaler Spiegel (Buildplan E6): ist der Pfad gesetzt, legt die Bridge je
+# Workorder zusätzlich die menschlich lesbare .md dort ab (z.B. das Repo-
+# Verzeichnis docs/auftraege/). Default AUS — nur der Job-Store zählt.
+AUFTRAEGE_DIR = os.environ.get("KOSMO_BRIDGE_AUFTRAEGE_DIR", "").strip()
 
 # V2-Technik Block 1 / HS2 — Job-Lebenszyklus.
 # Freigabe-Pflicht: additiv, Default AUS. Bleibt sie aus, wird ein neuer Job
@@ -370,6 +389,265 @@ async def list_jobs():
             if f.exists():
                 jobs.append(json.loads(f.read_text()))
     return jobs[:50]
+
+
+# ---------- KosmoDev-Workorders (Block 2 / AB2, kosmodev.workorder/v1) ----------
+#
+# Der Kreis «Owner erfasst → Worker setzt um»: die Bridge nimmt die Workorder
+# als reinen TEXT an, legt sie im Store ab (STORE/dev/…, eigenes Unter-
+# verzeichnis — Dev-Jobs verschmutzen die /jobs-Render-Liste nicht) und
+# vermittelt sie an einen Dev-Worker (Claude Code an der HomeStation) über
+# das Protokoll claim→result. Die Bridge führt NIE selbst Code aus.
+#
+# WICHTIG (FastAPI-Routing): diese Routen stehen VOR /jobs/{job_id}, sonst
+# fängt der {job_id}-Platzhalter den Literal-Pfad "dev" ab.
+
+_DEV_ID_RE = re.compile(r"^dev-\d+-[0-9a-f]{6}$")
+_QUELLEN = ("gesprochen", "getippt", "kosmo")
+
+
+async def _read_body_capped(request: Request, max_bytes: int, label: str) -> bytes:
+    """Streamt den Request-Body mit Deckel — dieselbe Idee wie _read_capped,
+    aber für JSON-Bodies statt multipart-Uploads."""
+    chunks: list[bytes] = []
+    total = 0
+    async for chunk in request.stream():
+        total += len(chunk)
+        if total > max_bytes:
+            protokolliere_sicherheitsereignis(
+                "upload_deckel_abgelehnt", "bridge:_read_body_capped", f"{label} über Deckel von {max_bytes} Bytes"
+            )
+            raise HTTPException(413, f"{label} überschreitet Deckel von {max_bytes} Bytes")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+def _dev_job_file(job_id: str) -> Path:
+    """Job-Datei eines Dev-Jobs — erzwingt das dev-Präfix (kein Vermischen mit
+    vis-/vsplat-/bsim-Jobs) und die Store-Pfad-Sicherheit."""
+    if not _DEV_ID_RE.match(job_id):
+        raise HTTPException(404, "Dev-Job unbekannt (ungültige Job-ID)")
+    return _safe_store_path("dev", job_id) / "job.json"
+
+
+def _validiere_workorder(payload: dict) -> dict:
+    """Validiert die Workorder gegen kosmodev.workorder/v1 (Spiegel des
+    zod-Contracts in @kosmo/contracts) — ehrliche 400er statt stillem Raten."""
+    if payload.get("schema", "kosmodev.workorder/v1") != "kosmodev.workorder/v1":
+        raise HTTPException(400, f"unbekanntes Workorder-Schema: {payload.get('schema')}")
+    projekt = payload.get("projekt")
+    if not isinstance(projekt, str) or not projekt.strip():
+        raise HTTPException(400, "Workorder braucht ein Projekt")
+    auftraege = payload.get("auftraege")
+    if not isinstance(auftraege, list) or not (1 <= len(auftraege) <= 200):
+        raise HTTPException(400, "Workorder braucht 1–200 Aufträge")
+    for a in auftraege:
+        if not isinstance(a, dict):
+            raise HTTPException(400, "Auftrag muss ein Objekt sein")
+        for feld in ("id", "ts", "text", "station"):
+            if not isinstance(a.get(feld), str) or not a[feld].strip():
+                raise HTTPException(400, f"Auftrag ohne gültiges Feld «{feld}»")
+        if a.get("quelle") not in _QUELLEN:
+            raise HTTPException(400, f"unbekannte Auftrag-Quelle: {a.get('quelle')}")
+        if "ort" in a and a["ort"] is not None and not isinstance(a["ort"], str):
+            raise HTTPException(400, "Auftrag-Feld «ort» muss Text sein")
+    return {
+        "schema": "kosmodev.workorder/v1",
+        "projekt": projekt,
+        "erzeugt_um": str(payload.get("erzeugt_um", _now())),
+        "auftraege": auftraege,
+    }
+
+
+def _workorder_md(workorder: dict, job_id: str) -> str:
+    """Menschlich lesbare Workorder mit YAML-Frontmatter (maschinell greifbar)
+    — dasselbe Checkbox-Format wie der App-Export (alsWorkorderMd), plus
+    Frontmatter, damit ein Worker die Datei ohne die Bridge parsen kann."""
+    auftraege = workorder["auftraege"]
+    ids = ", ".join(a["id"] for a in auftraege)
+    zeilen = [
+        "---",
+        "schema: kosmodev.workorder/v1",
+        f"job_id: {job_id}",
+        f"projekt: {json.dumps(workorder['projekt'], ensure_ascii=False)}",
+        f"erzeugt_um: {workorder['erzeugt_um']}",
+        f"auftrag_ids: [{ids}]",
+        "---",
+        "",
+        f"# Workorder {job_id} — {workorder['projekt']}",
+        "",
+        f"{len(auftraege)} Aufträge. Arbeitsmuster: je Auftrag Feature → Tests → ROADMAP-Eintrag → deutscher Commit.",
+        f"Rückmeldung: POST /jobs/dev/{job_id}/result (kosmodev.workorder/v1, DevJobResult).",
+        "",
+    ]
+    stationen: dict[str, list[dict]] = {}
+    for a in auftraege:
+        stationen.setdefault(a["station"], []).append(a)
+    for station, liste in stationen.items():
+        zeilen.append(f"## {station}")
+        for a in liste:
+            ort = f" — _wo: {a['ort']}_" if a.get("ort") else ""
+            zeilen.append(f"- [ ] {a['text']}{ort} `{a['quelle']} · {a['id']}`")
+        zeilen.append("")
+    return "\n".join(zeilen)
+
+
+@app.post("/jobs/dev")
+async def create_dev_job(request: Request):
+    raw = await _read_body_capped(request, MAX_WORKORDER_BYTES, "workorder")
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as e:
+        raise HTTPException(400, f"Workorder ist kein JSON: {e}")
+    if not isinstance(payload, dict):
+        raise HTTPException(400, "Workorder muss ein JSON-Objekt sein")
+    workorder = _validiere_workorder(payload)
+
+    job_id = f"dev-{int(time.time())}-{secrets.token_hex(3)}"
+    job_dir = _safe_store_path("dev", job_id)
+    job_dir.mkdir(parents=True, exist_ok=True)
+    (job_dir / "workorder.json").write_text(json.dumps(workorder, indent=2, ensure_ascii=False))
+    md = _workorder_md(workorder, job_id)
+    (job_dir / "workorder.md").write_text(md)
+
+    # Optionaler Spiegel ins Owner-Verzeichnis (E6) — best effort: ein kaputter
+    # Spiegelpfad darf die Job-Annahme nicht verhindern, wird aber benannt.
+    record_message = None
+    if AUFTRAEGE_DIR:
+        try:
+            spiegel = Path(AUFTRAEGE_DIR)
+            spiegel.mkdir(parents=True, exist_ok=True)
+            (spiegel / f"{workorder['erzeugt_um'][:10]}-{job_id}.md").write_text(md)
+        except OSError as e:
+            record_message = f"Spiegel nach KOSMO_BRIDGE_AUFTRAEGE_DIR fehlgeschlagen: {e}"
+
+    record = {
+        "job_id": job_id,
+        "status": "queued",
+        "kind": "dev-workorder",
+        "created_at": _now(),
+        "projekt": workorder["projekt"],
+        "anzahl_auftraege": len(workorder["auftraege"]),
+        **({"message": record_message} if record_message else {}),
+    }
+    (job_dir / "job.json").write_text(json.dumps(record, indent=2, ensure_ascii=False))
+    return record
+
+
+@app.get("/jobs/dev")
+async def list_dev_jobs(status: str | None = None):
+    jobs = []
+    dev_dir = STORE / "dev"
+    if dev_dir.exists():
+        for d in sorted(dev_dir.iterdir(), reverse=True):
+            f = d / "job.json"
+            if f.exists():
+                record = json.loads(f.read_text())
+                if status is None or record.get("status") == status:
+                    jobs.append(record)
+    return jobs[:50]
+
+
+@app.get("/jobs/dev/{job_id}")
+async def get_dev_job(job_id: str):
+    f = _dev_job_file(job_id)
+    if not f.exists():
+        raise HTTPException(404, "Dev-Job unbekannt")
+    record = json.loads(f.read_text())
+    result_file = f.parent / "dev-result.json"
+    if result_file.exists():
+        record["result"] = json.loads(result_file.read_text())
+    return record
+
+
+@app.get("/jobs/dev/{job_id}/workorder")
+async def get_dev_workorder(job_id: str):
+    """Die Workorder selbst (JSON) — der Weg, über den ein Worker den vollen
+    Auftrags-Text holt (die .md liegt daneben im Store)."""
+    f = _dev_job_file(job_id).parent / "workorder.json"
+    if not f.exists():
+        raise HTTPException(404, "Workorder unbekannt")
+    return json.loads(f.read_text())
+
+
+@app.post("/jobs/dev/{job_id}/claim")
+async def claim_dev_job(job_id: str, payload: dict = Body(default={})):
+    """Worker übernimmt den Job — queued→running + Worker-Name (verhindert
+    Doppelarbeit). Idempotent für denselben Worker; ein zweiter Worker wird
+    mit 409 abgewiesen statt still zu überschreiben."""
+    worker = str(payload.get("worker", "")).strip()
+    if not worker:
+        raise HTTPException(400, "claim braucht einen Worker-Namen")
+    f = _dev_job_file(job_id)
+    if not f.exists():
+        raise HTTPException(404, "Dev-Job unbekannt")
+    record = json.loads(f.read_text())
+    if record.get("status") == "running" and record.get("worker") == worker:
+        return record
+    if record.get("status") != "queued":
+        raise HTTPException(409, f"Job ist {record.get('status')} — claim nur aus queued")
+    record["status"] = "running"
+    record["worker"] = worker
+    record["updated_at"] = _now()
+    f.write_text(json.dumps(record, indent=2, ensure_ascii=False))
+    return record
+
+
+@app.post("/jobs/dev/{job_id}/result")
+async def report_dev_result(job_id: str, payload: dict = Body(default={})):
+    """Worker meldet das Ergebnis (DevJobResult) → done. Ehrlichkeits-Regeln
+    serverseitig erzwungen: Worker-Name Pflicht; ein fake-worker darf NIE
+    einen Commit-Beleg liefern (Belege werden nicht erfunden, Buildplan E5)."""
+    worker = str(payload.get("worker", "")).strip()
+    if not worker:
+        raise HTTPException(400, "Result braucht einen Worker-Namen")
+    ergebnisse = payload.get("ergebnisse")
+    if not isinstance(ergebnisse, list) or not ergebnisse:
+        raise HTTPException(400, "Result braucht mindestens ein Ergebnis")
+    for e in ergebnisse:
+        if not isinstance(e, dict) or not isinstance(e.get("auftrag_id"), str) or not isinstance(e.get("umgesetzt"), bool):
+            raise HTTPException(400, "Ergebnis braucht auftrag_id (Text) und umgesetzt (bool)")
+        if worker == "fake-worker" and e.get("commit"):
+            raise HTTPException(400, "fake-worker darf keinen Commit-Beleg erfinden (E5)")
+    f = _dev_job_file(job_id)
+    if not f.exists():
+        raise HTTPException(404, "Dev-Job unbekannt")
+    record = json.loads(f.read_text())
+    if record.get("status") == "cancelled":
+        # Abbruch gewann — kein Ergebnis mehr für einen abgebrochenen Job.
+        raise HTTPException(409, "Job ist cancelled — Ergebnis wird nicht angenommen")
+    if record.get("status") not in ("running", "queued"):
+        raise HTTPException(409, f"Job ist {record.get('status')} — Ergebnis nur aus running")
+    if record.get("status") == "queued":
+        # Ein Result ohne vorherigen claim ist erlaubt, aber der Worker-Name
+        # wird nachgetragen — das Protokoll bleibt nachvollziehbar.
+        record["worker"] = worker
+    result = {
+        "worker": worker,
+        "abgeschlossen_um": str(payload.get("abgeschlossen_um", _now())),
+        "ergebnisse": ergebnisse,
+    }
+    (f.parent / "dev-result.json").write_text(json.dumps(result, indent=2, ensure_ascii=False))
+    record["status"] = "done"
+    record["updated_at"] = _now()
+    f.write_text(json.dumps(record, indent=2, ensure_ascii=False))
+    record["result"] = result
+    return record
+
+
+@app.post("/jobs/dev/{job_id}/cancel")
+async def cancel_dev_job(job_id: str):
+    """Kooperativer Abbruch — queued/running → cancelled; Endzustände bleiben."""
+    f = _dev_job_file(job_id)
+    if not f.exists():
+        raise HTTPException(404, "Dev-Job unbekannt")
+    record = json.loads(f.read_text())
+    if record.get("status") in ("queued", "running"):
+        record["status"] = "cancelled"
+        record["updated_at"] = _now()
+        record["message"] = "Vom Nutzer abgebrochen."
+        f.write_text(json.dumps(record, indent=2, ensure_ascii=False))
+    return record
 
 
 @app.get("/jobs/{job_id}")
@@ -780,6 +1058,53 @@ def _fake_worker_step(job_dir: Path) -> None:
         f.write_text(json.dumps(record, indent=2))
 
 
+def _fake_dev_worker_step(job_dir: Path) -> None:
+    """Der Fake-DEV-Worker schliesst nur den PROTOKOLL-Kreis (Buildplan E5):
+    claim → result, aber das Result sagt ehrlich `umgesetzt: false` mit
+    Simulation-Notiz und OHNE Commit-Beleg — anders als das Platzhalter-Bild
+    könnte ein erfundener Hash für echte Arbeit gehalten werden. Jobs, die ein
+    ECHTER Worker geclaimt hat, fasst er nie an."""
+    f = job_dir / "job.json"
+    if not f.exists():
+        return
+    record = json.loads(f.read_text())
+    status = record.get("status")
+
+    if status == "queued":
+        record["status"] = "running"
+        record["worker"] = "fake-worker"
+        record["updated_at"] = _now()
+        f.write_text(json.dumps(record, indent=2, ensure_ascii=False))
+        return
+
+    if status == "running" and record.get("worker") == "fake-worker":
+        workorder_file = job_dir / "workorder.json"
+        auftraege = []
+        if workorder_file.exists():
+            auftraege = json.loads(workorder_file.read_text()).get("auftraege", [])
+        result = {
+            "worker": "fake-worker",
+            "abgeschlossen_um": _now(),
+            "ergebnisse": [
+                {
+                    "auftrag_id": a.get("id", "?"),
+                    "umgesetzt": False,
+                    "notiz": "Simulation — keine echte Umsetzung (Fake-Worker ohne Code-Zugriff)",
+                }
+                for a in auftraege
+            ]
+            or [{"auftrag_id": "?", "umgesetzt": False, "notiz": "Simulation — Workorder nicht lesbar"}],
+        }
+        # Abbruch-Rennen wie beim Render-Worker: Status frisch lesen.
+        aktuell = json.loads(f.read_text())
+        if aktuell.get("status") == "cancelled":
+            return
+        (job_dir / "dev-result.json").write_text(json.dumps(result, indent=2, ensure_ascii=False))
+        record["status"] = "done"
+        record["updated_at"] = _now()
+        f.write_text(json.dumps(record, indent=2, ensure_ascii=False))
+
+
 def _fake_worker_pass() -> None:
     """Ein Durchlauf über alle Job-Ordner (jeder um höchstens einen Schritt)."""
     if not STORE.exists():
@@ -790,6 +1115,13 @@ def _fake_worker_pass() -> None:
         except Exception:
             # Ein einzelner kaputter Job-Ordner darf den Worker nicht anhalten.
             continue
+    dev_dir = STORE / "dev"
+    if dev_dir.exists():
+        for d in dev_dir.iterdir():
+            try:
+                _fake_dev_worker_step(d)
+            except Exception:
+                continue
 
 
 def _fake_worker_loop():
