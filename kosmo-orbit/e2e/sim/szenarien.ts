@@ -22,6 +22,11 @@ export interface SimSzenario {
     outline: Pt[];
     maxHoehe: number | null;
     grenzabstand: number | null;
+    // Fassadenhöhen-Freigrenze + Zuschlag (Fable-Review-1, Auflage 3) —
+    // `design.baugrenzeSetzen` nimmt beide optional; der Blockrand braucht
+    // sie (grosser Grenzabstand + Mehrhöhen-Bonus zum Hof).
+    mehrHoehenAb?: number;
+    mehrHoehenAnteil?: number;
   };
   zonenRegel: {
     name: string;
@@ -187,6 +192,23 @@ export const SZENARIEN: Record<SimSzenario['key'], SimSzenario> = {
       ],
       hangNeigungProzent: 15,
       hangRichtung: 'Süd',
+      // Zentral befüllt (Fable-Review-1, Auflage 5), damit H2a `szenarien.ts`
+      // nicht mehr anfassen muss: gewachsenes Terrain ~15 % nach Süden (3 m
+      // Gefälle über 20 m Tiefe), neues Terrain als Hangsprung TERRASSIERT
+      // (zwei Ebenen, NICHT flach) — fährt bewusst den Nicht-flach-Zweig von
+      // Baustein 18 (Auflage 2).
+      terrain: {
+        gewachsen: [
+          { x: 0, y: 0, z: 1500 },
+          { x: 0, y: 20000, z: -1500 },
+        ],
+        neu: [
+          { x: 0, y: 0, z: 0 },
+          { x: 0, y: 9000, z: 0 },
+          { x: 0, y: 11000, z: -1500 },
+          { x: 0, y: 20000, z: -1500 },
+        ],
+      },
     },
   },
 
@@ -250,6 +272,8 @@ export const SZENARIEN: Record<SimSzenario['key'], SimSzenario> = {
       ],
       maxHoehe: null,
       grenzabstand: null, // Grenzabstand kommt bewusst aus der Zonenregel (Regressions-Anker 153)
+      mehrHoehenAb: 15000, // Fassade darf über 15 m hinaus, aber
+      mehrHoehenAnteil: 0.5, // nur mit halbem Höhenzuschlag zum grossen Grenzabstand (Basler Attikaregel)
     },
     zonenRegel: {
       name: 'Wohn- und Geschäftszone WGZ3 (Basel-Matthäus)',
@@ -315,6 +339,12 @@ export const SZENARIEN: Record<SimSzenario['key'], SimSzenario> = {
         { typ: 'dont', text: 'Die Kernachse darf nicht ausserhalb des 8.4-m-Rasters zu liegen kommen.' },
       ],
     },
-    geometrie: { raster: 8400, geschosseGeplant: 12 },
+    // Zentral befüllt (Fable-Review-1, Auflage 5): 8.4-m-Skelettraster, aber
+    // BEWUSST `querAnzahl: 28` (> 26) — das ist der Regressions-Anker Befund 2
+    // (Achse 27 muss «AA» heissen, bijektive Basis-26-Achslabels). Der feine
+    // `querAchsmass` von 1400 mm hält die 28 Querachsen im 40-m-Fussabdruck
+    // (Zwischenachsen), während `achsmass`/`anzahl` das tragende 8.4-m-Raster
+    // sind. H2b nimmt diese Werte, ohne `szenarien.ts` zu ändern.
+    geometrie: { raster: 8400, anzahl: 5, querAnzahl: 28, querAchsmass: 1400, geschosseGeplant: 12 },
   },
 };

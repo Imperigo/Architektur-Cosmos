@@ -139,6 +139,20 @@ test('Vollsimulation Mehrfamilienhaus: Raumprogramm → Segmentierer → Grundri
   });
 
   // ---------------------------------------------------------------------
+  // 7c) KosmoVis-Render über die (Fake-)Bridge (H3): «Drei Stimmungen» →
+  //     Render → Bild am Node → aufs Blatt. Prüft DEN WEG durch die Bridge,
+  //     nicht die Bildqualität. Nur bei laufender :8600-Fake-Bridge (Regel
+  //     R7); fehlt sie, wird das Segment ehrlich mit Anleitung übersprungen —
+  //     kein stiller Pass. Baustein 14 (bewiesen aus einem Aufrufer, H1b).
+  // ---------------------------------------------------------------------
+  if (await B.bridgeVerfuegbar()) {
+    await B.renderUeberBridge(page);
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn(`[sim-mfh] Render-Segment übersprungen — ${B.BRIDGE_FEHLT_HINWEIS}`);
+  }
+
+  // ---------------------------------------------------------------------
   // 7b) Themenplan-Overrides (RE-ARCHICAD A5): ein Brandschutzplan tönt das
   //     Treppenhaus rot und trägt die Legende auf dem Blatt — dann Export.
   //     Baustein 16 (Blatt-Aufbau) + Baustein 17 (Export).

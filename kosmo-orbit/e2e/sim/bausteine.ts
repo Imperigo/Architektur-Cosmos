@@ -9,9 +9,11 @@ import type { SimSzenario } from './szenarien';
  * fast nur noch Bausteine auf, statt 200-Zeilen-Monolithen.
  *
  * H1a implementiert die aus den zwei grünen Saat-Specs (`sim-umbau.spec.ts`,
- * `sim-mfh.spec.ts`) extrahierbaren Bausteine 1–4, 9–13, 16–18. Bausteine
- * 5–8 und 14–15 kommen erst mit ihren ersten Nutzern (H1b/H2) — bis dahin
- * bleiben sie als TODO deklariert (kein toter «getesteter» Code).
+ * `sim-mfh.spec.ts`) extrahierbaren Bausteine 1–4, 9–13, 16–18. H1b ergänzt
+ * die Bridge-/KI-Bausteine 14–15 (`renderUeberBridge`, `bridgeVerfuegbar`)
+ * und friert danach die API ein (ab H2 nur noch append-only). Bausteine 5–8
+ * (Dach, Treppe, Raster, Fassade) kommen mit ihren ersten Nutzern in H2 —
+ * bis dahin bleiben sie als TODO deklariert (kein toter «getesteter» Code).
  *
  * ── Robustheits-Regeln (1.4) — die Lehren aus den entfernten EFH-/
  *    Hochhaus-Specs, hart für JEDEN neuen Baustein ───────────────────────
@@ -146,7 +148,11 @@ export async function parzelleSetzen(page: Page, szenario: SimSzenario): Promise
         outline: parzelle.outline,
         maxHoehe: parzelle.maxHoehe,
         grenzabstand: parzelle.grenzabstand,
-      }); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.baugrenzeSetzen']
+        // Mehrhöhen-Bonus optional durchreichen (Fable-Review-1, Auflage 3);
+        // exactOptionalPropertyTypes: nur setzen, wenn beide Werte da sind.
+        ...(parzelle.mehrHoehenAb !== undefined ? { mehrHoehenAb: parzelle.mehrHoehenAb } : {}),
+        ...(parzelle.mehrHoehenAnteil !== undefined ? { mehrHoehenAnteil: parzelle.mehrHoehenAnteil } : {}),
+      }); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.baugrenzeSetzen' Z.1027-1028]
       k.run('design.zonenRegelSetzen', zonenRegel); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.zonenRegelSetzen']
     },
     { storeyId, parzelle: szenario.parzelle, zonenRegel: szenario.zonenRegel },
@@ -184,8 +190,11 @@ export async function parzelleSetzen(page: Page, szenario: SimSzenario): Promise
       { storeyId, outline: szenario.parzelle.outline, grenzabstandKlein: szenario.zonenRegel.grenzabstandKlein },
     );
 
-    const checksText = await page.locator('[data-testid="checks"]').innerText(); // [Quelle: KennzahlenPanel.tsx Z.123]
-    expect(checksText).toContain(`Zonenregel «${szenario.zonenRegel.name}»`); // [Quelle: packages/kosmo-kernel/src/derive/checks.ts Z.356]
+    // Regel R3 (Fable-Review-1, Auflage 1): das Checks-Panel rendert nach dem
+    // Command asynchron — retrykendes `toContainText` statt one-shot `innerText`.
+    await expect(page.locator('[data-testid="checks"]')).toContainText(
+      `Zonenregel «${szenario.zonenRegel.name}»`,
+    ); // [Quelle: KennzahlenPanel.tsx Z.123 / packages/kosmo-kernel/src/derive/checks.ts Z.356]
 
     await page.evaluate((id) => window.__kosmo.run('design.loeschen', { entityId: id }), probeId); // [Quelle: packages/kosmo-kernel/src/commands/design.ts 'design.loeschen']
   }
@@ -195,9 +204,34 @@ export async function parzelleSetzen(page: Page, szenario: SimSzenario): Promise
 // Baustein 3 — phaseSchalten
 // ─────────────────────────────────────────────────────────────────────────
 /**
- * Schaltet die SIA-Phase; liefert die Pfadzahl im Plan-SVG danach zurück —
- * der Aufrufer prüft die Monotonie `werkplan ≥ bauprojekt ≥ vorprojekt` am
- * SELBEN Modellstand (Regel R1: nie fixe Pfadzahlen).
+ * Liefert eine STABILE Pfadzahl des Plan-SVG (Fable-Review-1, Auflage 4):
+ * der Plan rendert nach einem Phasenwechsel asynchron neu — ein one-shot
+ * `count()` direkt nach dem Doc-Poll kann einen nachlaufenden Render
+ * verpassen und die Monotonie-Zahl verfälschen. Wir warten auf zwei gleiche
+ * Messungen in Folge (> 0), bevor wir die Zahl herausgeben.
+ */
+async function stabilePfadzahl(page: Page): Promise<number> {
+  const pfade = page.locator('[data-testid="planview"] path'); // [Quelle: apps/kosmo-orbit/src/modules/design/PlanView.tsx Z.195]
+  let vorige = -1;
+  await expect
+    .poll(
+      async () => {
+        const c = await pfade.count();
+        const stabil = c > 0 && c === vorige;
+        vorige = c;
+        return stabil;
+      },
+      { timeout: 10_000, message: 'Plan-SVG-Pfadzahl stabilisiert sich nicht' },
+    )
+    .toBe(true);
+  return vorige;
+}
+
+/**
+ * Schaltet die SIA-Phase; liefert die (stabilisierte) Pfadzahl im Plan-SVG
+ * danach zurück — der Aufrufer prüft die Monotonie
+ * `werkplan ≥ bauprojekt ≥ vorprojekt` am SELBEN Modellstand (Regel R1: nie
+ * fixe Pfadzahlen).
  */
 export async function phaseSchalten(
   page: Page,
@@ -210,7 +244,7 @@ export async function phaseSchalten(
   await expect
     .poll(() => page.evaluate(() => window.__kosmo.state().doc.settings.phase))
     .toBe(phase); // Regel R3: Doc pollen, nicht das DOM
-  return page.locator('[data-testid="planview"] path').count(); // [Quelle: apps/kosmo-orbit/src/modules/design/PlanView.tsx Z.195]
+  return stabilePfadzahl(page);
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -251,7 +285,7 @@ export async function waendeZeichnen(
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Bausteine 5–8, 14–15 — TODO, kommen mit ihren ersten Nutzern (H1b/H2)
+// Bausteine 5–8 — TODO, kommen mit ihren ersten Nutzern in H2
 // ─────────────────────────────────────────────────────────────────────────
 // TODO (H2a): dachSetzen(page, params) — design.dachErstellen; Assert
 //   byKind('roof')===1 und Dach-Mesh in der 3D-Szene sichtbar
@@ -265,14 +299,84 @@ export async function waendeZeichnen(
 // TODO (H2b/H2c): fassade(page, module) — design.modulSpeichern,
 //   fassadenModulZuweisen, fensterAusModulen; Assert Öffnungszahl > 0 und
 //   Süd-/Nordwand tragen unterschiedliche Module (Regressions-Anker 154).
-// TODO (H1b): renderUeberBridge(page) — KosmoVis-Kette (Muster
-//   visgraph.spec.ts): drei-stimmungen → render-ausfuehren → render-bild
-//   sichtbar → Blatt-Node verbinden → blatt-ablegen → Assert Bild auf
-//   byKind('sheet'). Vorher bridgeVerfuegbar(page).
-// TODO (H1b): bridgeVerfuegbar() — beforeAll-Probe: fetch
-//   http://127.0.0.1:8600/health (Node-Kontext); bei Fehlschlag klarer
-//   Skip-Fehlertext («Bridge :8600 mit --fake-worker starten, siehe
-//   CLAUDE.md») statt kryptischem Timeout mitten in der Journey.
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 15 — bridgeVerfuegbar (H1b)
+// ─────────────────────────────────────────────────────────────────────────
+/**
+ * Hinweistext bei toter Bridge (Regel R7) — kein kryptischer Timeout mitten
+ * in der Journey, sondern eine klare Anleitung.
+ */
+export const BRIDGE_FEHLT_HINWEIS =
+  'HomeStation-Bridge :8600 nicht erreichbar — mit `--fake-worker` starten ' +
+  '(siehe CLAUDE.md): setsid python3 tools/homestation-bridge/kosmo_bridge/main.py ' +
+  '--fake-worker --port 8600';
+
+/**
+ * Health-Probe der Fake-Bridge aus dem NODE-Kontext (nicht `page`) — als
+ * `beforeAll`/Segment-Gate. `true` nur bei `{ ok: true }` von `/health`.
+ * Der Aufrufer entscheidet: ganze Bridge-Journey `test.skip(!ok,
+ * BRIDGE_FEHLT_HINWEIS)` oder ein einzelnes Segment ehrlich überspringen
+ * (mit `console.warn(BRIDGE_FEHLT_HINWEIS)` — nie stiller Pass, Regel R7).
+ */
+export async function bridgeVerfuegbar(): Promise<boolean> {
+  try {
+    const res = await fetch('http://127.0.0.1:8600/health'); // [Quelle: tools/homestation-bridge/kosmo_bridge/main.py '/health']
+    if (!res.ok) return false;
+    const daten = (await res.json()) as { ok?: boolean };
+    return daten.ok === true;
+  } catch {
+    return false; // Verbindung verweigert = Bridge läuft nicht
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 14 — renderUeberBridge (H1b)
+// ─────────────────────────────────────────────────────────────────────────
+/**
+ * KosmoVis-Render-Kette über die (Fake-)Bridge, Muster `visgraph.spec.ts`:
+ * «Drei Stimmungen» → Render ausführen → Bild am Node → Blatt-Node verbinden
+ * (spät erzeugte Node mit `vis.nodeSchieben` ins Sichtfeld, Regel R5) →
+ * «Aufs Blatt» → Assert: das Bild liegt auf einem `sheet`. Prüft DEN WEG
+ * durch die Bridge, nicht die Bildqualität (H3). Setzt eine laufende Bridge
+ * voraus — Aufrufer gatet mit `bridgeVerfuegbar()` (Regel R7).
+ */
+export async function renderUeberBridge(page: Page): Promise<void> {
+  await page.evaluate(() => window.__kosmo.open('vis')); // [Quelle: visgraph.spec.ts Z.29 (module-vis) / App.tsx __kosmo.open]
+  const bilderVorher = await page.evaluate(
+    () => window.__kosmo.state().doc.byKind('sheet').reduce((s, sh) => s + ((sh.bilder as unknown[])?.length ?? 0), 0),
+  ); // [Quelle: visgraph.spec.ts Z.55-57]
+
+  await page.click('[data-testid="drei-stimmungen"]'); // [Quelle: visgraph.spec.ts Z.30]
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3); // [Quelle: visgraph.spec.ts Z.33]
+
+  await page.locator('[data-testid="render-ausfuehren"]').first().click(); // [Quelle: visgraph.spec.ts Z.38]
+  await expect(page.locator('[data-testid="render-status"]').first()).not.toHaveText('bereit'); // [Quelle: visgraph.spec.ts Z.39]
+  await expect(page.locator('[data-testid="render-bild"]').first()).toBeVisible({ timeout: 25_000 }); // [Quelle: visgraph.spec.ts Z.40]
+
+  await page.selectOption('[data-testid="node-hinzu"]', 'blatt'); // [Quelle: visgraph.spec.ts Z.43]
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const graph = k.state().doc.byKind('visgraph')[0] as unknown as {
+      id: string;
+      nodes: { id: string; typ: string }[];
+    };
+    const render = graph.nodes.find((n) => n.typ === 'render')!;
+    const blatt = graph.nodes.find((n) => n.typ === 'blatt')!;
+    k.run('vis.verbinden', { graphId: graph.id, from: render.id, fromPort: 'bild', to: blatt.id, toPort: 'bild' });
+    k.run('vis.nodeSchieben', { graphId: graph.id, nodeId: blatt.id, x: 620, y: 320 }); // ins Sichtfeld (Regel R5)
+  }); // [Quelle: visgraph.spec.ts Z.44-52]
+  await page.locator('[data-testid="blatt-ablegen"]').click(); // [Quelle: visgraph.spec.ts Z.53]
+  await expect(page.locator('[data-testid="meldung-erfolg"]')).toContainText('Render liegt auf', { timeout: 15_000 }); // [Quelle: visgraph.spec.ts Z.54]
+
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => window.__kosmo.state().doc.byKind('sheet').reduce((s, sh) => s + ((sh.bilder as unknown[])?.length ?? 0), 0),
+      ),
+    )
+    .toBeGreaterThan(bilderVorher); // [Quelle: visgraph.spec.ts Z.55-58]
+}
 
 // ─────────────────────────────────────────────────────────────────────────
 // Baustein 9 — segmentieren / grundrissFuellen
@@ -575,6 +679,15 @@ export async function terrainSetzen(page: Page, profil: TerrainProfil): Promise<
   await expect(gewachsen).toHaveAttribute('stroke-dasharray', '200 120'); // [Quelle: sim-umbau.spec.ts Z.112]
 
   const neu = page.locator('[data-testid="terrain-neu"]').first(); // [Quelle: sim-umbau.spec.ts Z.114]
-  await expect(neu).toHaveAttribute('points', /,0 .*,0$/); // [Quelle: sim-umbau.spec.ts Z.115]
-  await expect(neu).not.toHaveAttribute('stroke-dasharray', /.*/); // [Quelle: sim-umbau.spec.ts Z.116]
+  await expect(neu).not.toHaveAttribute('stroke-dasharray', /.*/); // neues Terrain durchgezogen (kein gewachsen-Dash) [Quelle: sim-umbau.spec.ts Z.116]
+  // Fable-Review-1, Auflage 2: die flache-Profil-Assertion (`,0 …,0$`) gilt
+  // NUR für ein tatsächlich flaches Neu-Profil (jedes z===0, z.B. Umbau). Ein
+  // terrassiertes Neu-Terrain (EFH-Hangsprung) hätte Nicht-null-Höhen → dort
+  // nur das generische Attribut prüfen (Punkte vorhanden), Regel R4.
+  const neuFlach = profil.neu.every((p) => p.z === 0);
+  if (neuFlach) {
+    await expect(neu).toHaveAttribute('points', /,0 .*,0$/); // [Quelle: sim-umbau.spec.ts Z.115]
+  } else {
+    await expect(neu).toHaveAttribute('points', /\d/); // mind. eine Koordinate — kein leeres Profil
+  }
 }
