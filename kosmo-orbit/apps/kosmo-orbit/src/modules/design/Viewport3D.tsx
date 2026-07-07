@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
-import { kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
+import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
 import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
 import { deriveAll, type GeometryArtifact, type Pt, type Wall } from '@kosmo/kernel';
@@ -193,6 +193,13 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   const [kontext, setKontext] = useState<{ x: number; y: number; clientX: number; clientY: number } | null>(null);
   const setKontextRef = useRef(setKontext);
   setKontextRef.current = setKontext;
+  // J1b (Fable-Auflage): der Menü-offen-Zustand fliesst in die EINE
+  // Capture-Down-Entscheidung ein (kein zweiter, verstreuter enabled-Schreiber)
+  // — solange das Kontextmenü offen ist, bleibt die Kamera still.
+  const kontextOffenRef = useRef(false);
+  useEffect(() => {
+    kontextOffenRef.current = !!kontext;
+  }, [kontext]);
 
   // T5 (Owner-Laptoptest, Punkt 3) + A4-Erweiterung (ROADMAP 155, Owner-
   // Entscheid «Beides/Raycast»): Freihand-Skizzieren im 3D-Viewport — der
@@ -934,7 +941,33 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     }
 
     let downPos: { x: number; y: number } | null = null;
+
+    // Serie J / J1b: Gesten-Detektor (Doppel-Tap = Einpassen, Long-Press =
+    // Kontextmenü + Fokus). Reiner Automat aus eingabe-3d.ts; gefüttert aus den
+    // Pointer-Handlern (nur ausserhalb des Skizzenmodus), Long-Press geprüft im
+    // Renderloop mit performance.now().
+    const gesten = gestenDetektor();
+    const meshTrefferAt = (clientX: number, clientY: number) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
+      raycaster.setFromCamera(ndc, camera);
+      return raycaster.intersectObjects(model.children, false).find((h) => (h.object as THREE.Mesh).isMesh) ?? null;
+    };
+    const doppelTapEinpassen = (clientX: number, clientY: number) => {
+      const hit = meshTrefferAt(clientX, clientY);
+      if (hit) {
+        void controls.fitToBox(hit.object, true, { paddingLeft: 0.2, paddingRight: 0.2, paddingTop: 0.2, paddingBottom: 0.2 });
+      } else if (model.children.length > 0) {
+        void controls.fitToBox(model, true, { paddingLeft: 0.15, paddingRight: 0.15, paddingTop: 0.15, paddingBottom: 0.15 });
+      } else {
+        void controls.reset(true);
+      }
+    };
+
     const onPointerDown = (ev: PointerEvent) => {
+      if (!handlers.current?.sketchMode) {
+        gesten.ereignis({ typ: 'down', t: performance.now(), x: ev.clientX, y: ev.clientY, pointerId: ev.pointerId, pointerType: ev.pointerType });
+      }
       if (handlers.current?.sketchMode) {
         // Serie J / J1a: nur zeichnen, wenn die Kamera dieses Event NICHT sehen
         // darf (Stift oder linke Maustaste). Finger + Mittel-/Rechtstaste
@@ -946,6 +979,16 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       downPos = { x: ev.clientX, y: ev.clientY };
     };
     const onPointerUp = (ev: PointerEvent) => {
+      // J1b: Doppel-Tap → Einpassen auf den getroffenen Körper (sonst das ganze
+      // Modell). Verbraucht das up.
+      if (!handlers.current?.sketchMode) {
+        const g = gesten.ereignis({ typ: 'up', t: performance.now(), x: ev.clientX, y: ev.clientY, pointerId: ev.pointerId, pointerType: ev.pointerType });
+        if (g.doppelTap) {
+          downPos = null;
+          doppelTapEinpassen(g.doppelTap.x, g.doppelTap.y);
+          return;
+        }
+      }
       // Serie J / J2: Rechtsklick OHNE Drag (<4 px) öffnet das Kontextmenü; ein
       // Rechts-Drag bleibt Pan (camera-controls hat es bereits verarbeitet).
       if (ev.button === 2 && downPos) {
@@ -986,6 +1029,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (p) handlers.current?.onGroundClick?.({ p, shiftKey: ev.shiftKey });
     };
     const onPointerMove = (ev: PointerEvent) => {
+      if (!handlers.current?.sketchMode) {
+        gesten.ereignis({ typ: 'move', t: performance.now(), x: ev.clientX, y: ev.clientY, pointerId: ev.pointerId, pointerType: ev.pointerType });
+      }
       if (handlers.current?.sketchMode) {
         onSketchPointerMove(ev);
         return;
@@ -1013,6 +1059,13 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     // frühere statische `controls.enabled = !sketchMode`, ohne die Sketch-
     // Handler (Target-Phase) zu unterbrechen (kein stopImmediatePropagation).
     const onCaptureDown = (ev: PointerEvent) => {
+      // J1b: solange das Kontextmenü offen ist, bekommt die Kamera keine Geste
+      // (die eine, zentrale enabled-Entscheidung — Fable-Auflage J1b-1).
+      if (kontextOffenRef.current) {
+        controls.enabled = false;
+        setzeTouchStyles();
+        return;
+      }
       // Maus: volle Belegung aus mausBelegung (Shift+Mitte → Pan) VOR
       // camera-controls das pointerdown latcht — darum liegt dieser Listener
       // auf dem Mount-DIV (Capture-Phase läuft dort garantiert vor allen
@@ -1060,6 +1113,17 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         const tool = handlers.current?.sketchMode ? 'skizze' : handlers.current?.pickMode ? 'auswahl' : 'wand';
         const cur = werkzeugCursorFuer(tool, navModusRef.current);
         if (renderer.domElement.style.cursor !== cur) renderer.domElement.style.cursor = cur;
+      }
+      // J1b: Long-Press öffnet das Kontextmenü + setzt den Orbit-Pivot auf den
+      // Treffer (nur ausserhalb Skizzenmodus/offenem Menü; feuert genau einmal).
+      if (!handlers.current?.sketchMode && !kontextOffenRef.current) {
+        const lp = gesten.pruefeLongPress(performance.now());
+        if (lp.longPress) {
+          const hit = meshTrefferAt(lp.longPress.x, lp.longPress.y);
+          if (hit) controls.setOrbitPoint(hit.point.x, hit.point.y, hit.point.z);
+          const r = mount.getBoundingClientRect();
+          setKontextRef.current({ x: lp.longPress.x - r.left, y: lp.longPress.y - r.top, clientX: lp.longPress.x, clientY: lp.longPress.y });
+        }
       }
       // Auswahl-Highlight (Kupfer-Glut)
       const sel = new Set(useProject.getState().selection);

@@ -14,6 +14,7 @@ import { expect, test } from '@playwright/test';
 type CamHook = {
   renderOnce: () => void;
   getCamera: () => { px: number; py: number; pz: number; tx: number; ty: number; tz: number };
+  setCamera: (px: number, py: number, pz: number, tx: number, ty: number, tz: number) => void;
 };
 
 async function bootstrap3D(page: import('@playwright/test').Page) {
@@ -164,4 +165,69 @@ test('J2: Kontextcursor wechselt mit dem Werkzeug', async ({ page }) => {
   await expect.poll(cursor).toBe('crosshair'); // Zeichen-Werkzeug
   await page.click('[data-testid="tool-auswahl"]');
   await expect.poll(cursor).toBe('default'); // Auswahl zeigt den Zeiger
+});
+
+test('J1b: Doppel-Tap passt die Ansicht ein (Kamera bewegt sich)', async ({ page }) => {
+  await bootstrap3D(page);
+  // Eine Wand anlegen, damit es etwas einzupassen gibt.
+  await page.evaluate(() => {
+    const k = window.__kosmo as { run: (id: string, p: unknown) => unknown; state: () => { activeStoreyId: string | null; doc: { byKind: (k: string) => { id: string; name?: string }[] } } };
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 0, y: 0 }, b: { x: 6000, y: 0 }, assemblyId: aw.id });
+  });
+  const hook = () => page.evaluate(() => (window as unknown as { __kosmoViewport: CamHook }).__kosmoViewport.getCamera());
+  await page.waitForTimeout(600); // derive-Worker baut das Wand-Mesh
+  // Kamera bewusst weit weg setzen — so bewegt ein Doppel-Tap-Einpassen sie
+  // messbar, egal ob es auf den Wand-Körper oder (falls das Mesh noch fehlt)
+  // aufs Modell/Home einpasst.
+  await page.evaluate(() => (window as unknown as { __kosmoViewport: CamHook }).__kosmoViewport.setCamera(45, 32, 45, 0, 0, 0));
+  const vorher = await hook();
+  const cv = (await page.locator('canvas').first().boundingBox())!;
+  // Zwei schnelle Taps in der Canvas-Mitte (synchron → < DOPPELTAP_MS). KEIN
+  // renderOnce — der live rAF-Loop animiert die gedämpfte fitToBox aus (im
+  // synchronen renderOnce-Loop wäre clock.getDelta() ~0, die Kamera bliebe stehen).
+  await page.evaluate(
+    ({ x, y }) => {
+      const c = document.querySelector('canvas') as HTMLCanvasElement;
+      const r = c.getBoundingClientRect();
+      const ev = (typ: string, buttons: number) =>
+        c.dispatchEvent(new PointerEvent(typ, { pointerId: 5, pointerType: 'touch', button: 0, buttons, clientX: r.left + x, clientY: r.top + y, bubbles: true, cancelable: true, composed: true }));
+      ev('pointerdown', 1);
+      ev('pointerup', 0);
+      ev('pointerdown', 1);
+      ev('pointerup', 0);
+    },
+    { x: cv.width / 2, y: cv.height / 2 },
+  );
+  await expect
+    .poll(
+      async () => {
+        const n = await hook();
+        return Math.hypot(n.px - vorher.px, n.py - vorher.py, n.pz - vorher.pz);
+      },
+      { timeout: 4000 },
+    )
+    .toBeGreaterThan(0.2);
+});
+
+test('J1b: Long-Press öffnet das Kontextmenü', async ({ page }) => {
+  await bootstrap3D(page);
+  const cv = (await page.locator('canvas').first().boundingBox())!;
+  // Finger auf die Canvas-Mitte legen und HALTEN — der Renderloop prüft
+  // pruefeLongPress je Frame; nach > 500 ms erscheint das Menü.
+  await page.evaluate(
+    ({ x, y }) => {
+      const c = document.querySelector('canvas') as HTMLCanvasElement;
+      const r = c.getBoundingClientRect();
+      c.dispatchEvent(new PointerEvent('pointerdown', { pointerId: 6, pointerType: 'touch', button: 0, buttons: 1, clientX: r.left + x, clientY: r.top + y, bubbles: true, cancelable: true, composed: true }));
+    },
+    { x: cv.width / 2, y: cv.height / 2 },
+  );
+  await expect(page.locator('[data-testid="viewport-kontextmenue"]')).toBeVisible({ timeout: 3000 });
+  await page.evaluate(() => {
+    const c = document.querySelector('canvas') as HTMLCanvasElement;
+    const r = c.getBoundingClientRect();
+    c.dispatchEvent(new PointerEvent('pointerup', { pointerId: 6, pointerType: 'touch', button: 0, buttons: 0, clientX: r.left, clientY: r.top, bubbles: true, cancelable: true, composed: true }));
+  });
 });

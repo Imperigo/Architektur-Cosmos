@@ -4,8 +4,15 @@ import {
   touchBelegung,
   kameraDarfSehen,
   werkzeugCursorFuer,
+  gestenDetektor,
   type NavModus,
+  type PointerSample,
 } from '../src/modules/design/eingabe-3d';
+
+// Bequemer Sample-Bauer für die Detektor-Tests.
+function s(typ: PointerSample['typ'], t: number, x: number, y: number, pointerId = 1): PointerSample {
+  return { typ, t, x, y, pointerId, pointerType: 'touch' };
+}
 
 describe('Serie J / J1a: einheitliches Eingabemodell', () => {
   describe('mausBelegung', () => {
@@ -71,6 +78,54 @@ describe('Serie J / J1a: einheitliches Eingabemodell', () => {
       expect(werkzeugCursorFuer('skizze', 'orbit')).toBe('crosshair');
       expect(werkzeugCursorFuer('wand', 'orbit')).toBe('crosshair');
       expect(werkzeugCursorFuer('zone', 'zoom')).toBe('crosshair');
+    });
+  });
+
+  describe('gestenDetektor (J1b)', () => {
+    it('einzelner Tap wird als tap gemeldet', () => {
+      const g = gestenDetektor();
+      expect(g.ereignis(s('down', 0, 100, 100))).toEqual({});
+      expect(g.ereignis(s('up', 50, 101, 101))).toEqual({ tap: { x: 101, y: 101 } });
+    });
+    it('zwei schnelle Taps nahe beieinander = Doppel-Tap', () => {
+      const g = gestenDetektor();
+      g.ereignis(s('down', 0, 100, 100));
+      expect(g.ereignis(s('up', 40, 100, 100))).toEqual({ tap: { x: 100, y: 100 } });
+      g.ereignis(s('down', 120, 105, 103));
+      expect(g.ereignis(s('up', 160, 105, 103))).toEqual({ doppelTap: { x: 105, y: 103 } });
+    });
+    it('zwei langsame Taps = zwei einzelne Taps (kein Doppel-Tap)', () => {
+      const g = gestenDetektor();
+      g.ereignis(s('down', 0, 100, 100));
+      g.ereignis(s('up', 40, 100, 100));
+      g.ereignis(s('down', 900, 100, 100)); // > DOPPELTAP_MS später
+      expect(g.ereignis(s('up', 940, 100, 100))).toEqual({ tap: { x: 100, y: 100 } });
+    });
+    it('Halten ohne Bewegung ≥ 500 ms = Long-Press (genau einmal)', () => {
+      const g = gestenDetektor();
+      g.ereignis(s('down', 0, 200, 150));
+      expect(g.pruefeLongPress(300)).toEqual({}); // noch zu früh
+      expect(g.pruefeLongPress(600)).toEqual({ longPress: { x: 200, y: 150 } });
+      expect(g.pruefeLongPress(900)).toEqual({}); // feuert nicht erneut
+    });
+    it('Halten MIT Bewegung löst keinen Long-Press aus', () => {
+      const g = gestenDetektor();
+      g.ereignis(s('down', 0, 200, 150));
+      g.ereignis(s('move', 100, 240, 150)); // > LONGPRESS_RADIUS bewegt
+      expect(g.pruefeLongPress(700)).toEqual({});
+    });
+    it('bewegter Pointer meldet keinen Tap beim Loslassen', () => {
+      const g = gestenDetektor();
+      g.ereignis(s('down', 0, 100, 100));
+      g.ereignis(s('move', 30, 140, 100));
+      expect(g.ereignis(s('up', 60, 140, 100))).toEqual({});
+    });
+    it('zweiter Finger (Pinch) bricht Tap- und Long-Press-Erkennung ab', () => {
+      const g = gestenDetektor();
+      g.ereignis(s('down', 0, 100, 100, 1));
+      g.ereignis(s('down', 10, 300, 300, 2)); // zweiter Pointer
+      expect(g.pruefeLongPress(700)).toEqual({});
+      expect(g.ereignis(s('up', 60, 100, 100, 1))).toEqual({});
     });
   });
 });

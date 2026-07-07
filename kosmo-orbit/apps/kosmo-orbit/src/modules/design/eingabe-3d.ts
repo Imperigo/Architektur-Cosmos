@@ -100,3 +100,101 @@ export function werkzeugCursorFuer(tool: string, navModus: NavModus): string {
   // alle übrigen sind Zeichen-/Setz-Werkzeuge (Wand/Zone/Volumen/Dach/…).
   return 'crosshair';
 }
+
+// Serie J / J1b — Gesten-Schwellen (px/ms).
+export const KLICK_RADIUS_PX = 4;
+export const DOPPELTAP_MS = 300;
+export const DOPPELTAP_RADIUS_PX = 24;
+export const LONGPRESS_MS = 500;
+export const LONGPRESS_RADIUS_PX = 8;
+
+export interface PointerSample {
+  typ: 'down' | 'move' | 'up' | 'cancel';
+  t: number;
+  x: number;
+  y: number;
+  pointerId: number;
+  pointerType: string;
+}
+
+/** Was der Detektor bei `ereignis()`/`pruefeLongPress()` meldet. */
+export interface GestenEreignis {
+  tap?: { x: number; y: number };
+  doppelTap?: { x: number; y: number };
+  longPress?: { x: number; y: number };
+}
+
+/**
+ * Serie J / J1b — Gesten-Detektor als reiner Zustandsautomat (Muster A4): wird
+ * mit PointerSamples gefüttert und meldet Tap / Doppel-Tap / Long-Press. Kein
+ * DOM, kein Timer — die Zeit kommt als Parameter herein (`pruefeLongPress`
+ * ruft der Aufrufer aus dem Renderloop mit `performance.now()`). Mehr als ein
+ * gleichzeitiger Pointer (Pinch) bricht die Tap-/Long-Press-Erkennung ab.
+ */
+export function gestenDetektor(): {
+  ereignis(e: PointerSample): GestenEreignis;
+  pruefeLongPress(tJetzt: number): GestenEreignis;
+} {
+  let downX = 0;
+  let downY = 0;
+  let downT = 0;
+  let downId = -1;
+  let bewegt = false; // über KLICK_RADIUS hinaus bewegt
+  let aktiv = false; // genau ein Pointer unten
+  let mehrfach = false; // zweiter Pointer war unten → keine Geste
+  let longPressGefeuert = false;
+  let letzterTapX = 0;
+  let letzterTapY = 0;
+  let letzterTapT = -Infinity;
+
+  return {
+    ereignis(e: PointerSample): GestenEreignis {
+      if (e.typ === 'down') {
+        if (aktiv) {
+          // zweiter Finger → Pinch, keine Tap-/Long-Press-Geste
+          mehrfach = true;
+          return {};
+        }
+        aktiv = true;
+        mehrfach = false;
+        bewegt = false;
+        longPressGefeuert = false;
+        downX = e.x;
+        downY = e.y;
+        downT = e.t;
+        downId = e.pointerId;
+        return {};
+      }
+      if (e.typ === 'move') {
+        if (aktiv && e.pointerId === downId && Math.hypot(e.x - downX, e.y - downY) > KLICK_RADIUS_PX) {
+          bewegt = true;
+        }
+        return {};
+      }
+      // up | cancel
+      if (e.pointerId !== downId) return {};
+      const warAktiv = aktiv;
+      aktiv = false;
+      if (e.typ === 'cancel' || mehrfach || bewegt || !warAktiv) return {};
+      // Tap: kurz, kaum bewegt.
+      const istDoppel =
+        e.t - letzterTapT <= DOPPELTAP_MS &&
+        Math.hypot(e.x - letzterTapX, e.y - letzterTapY) <= DOPPELTAP_RADIUS_PX;
+      letzterTapX = e.x;
+      letzterTapY = e.y;
+      letzterTapT = e.t;
+      if (istDoppel) {
+        letzterTapT = -Infinity; // ein Doppel-Tap verbraucht den vorherigen
+        return { doppelTap: { x: e.x, y: e.y } };
+      }
+      return { tap: { x: e.x, y: e.y } };
+    },
+    pruefeLongPress(tJetzt: number): GestenEreignis {
+      if (aktiv && !mehrfach && !bewegt && !longPressGefeuert && tJetzt - downT >= LONGPRESS_MS) {
+        longPressGefeuert = true;
+        return { longPress: { x: downX, y: downY } };
+      }
+      return {};
+    },
+  };
+}
