@@ -47,7 +47,12 @@ async function weltZuBildschirm(page: Page, x: number, y: number): Promise<{ x: 
 
 async function bootstrapDesign(page: Page) {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG
 }

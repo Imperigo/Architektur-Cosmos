@@ -116,6 +116,10 @@ export async function projektStarten(page: Page, szenario: SimSzenario): Promise
   await page.goto('/'); // [Quelle: sim-umbau.spec.ts Z.32 / sim-mfh.spec.ts Z.31]
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (kein API-Bruch): der Block-E-Starter-Guide startet ohne
+    // dieses Flag automatisch und seine Karte fängt Klicks darunter ab
+    // (nav-fit, Export-Knöpfe) — die Journeys emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
   }); // [Quelle: sim-umbau.spec.ts Z.33-36 / sim-mfh.spec.ts Z.32-35]
   await page.reload(); // [Quelle: sim-umbau.spec.ts Z.37 / sim-mfh.spec.ts Z.36]

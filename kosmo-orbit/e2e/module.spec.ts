@@ -4,6 +4,12 @@ import { expect, test } from '@playwright/test';
 
 test('KosmoPublish: Blatt → Grundriss platzieren → Plansatz-PDF', async ({ page }) => {
   await page.goto('/');
+  await page.evaluate(() => {
+    // Block-E-Guide startet sonst automatisch — seine Karte liegt unten links
+    // exakt über dem Plansatz-Export-Knopf und fängt den Klick ab.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
+  await page.reload(); // Flag wird beim App-Start gelesen — Muster aller anderen Bootstraps
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG
   await page.evaluate(() => {
     const k = window.__kosmo as {
@@ -73,7 +79,12 @@ test('Befehlspalette: ⌘K → Modulwechsel', async ({ page }) => {
 
 test('KosmoDraw: Modellbaum sichtbar, Mengenauszug mit IFC-Identität', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="load-tkb"]');
   await page.click('[data-testid="draw-toggle"]');
@@ -88,7 +99,12 @@ test('KosmoDraw: Modellbaum sichtbar, Mengenauszug mit IFC-Identität', async ({
 
 test('Berechnungsliste: Raumprogramm → Zone zeichnen → ausgezogen + Δ Max leben', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="liste-toggle"]');
@@ -122,7 +138,12 @@ test('Berechnungsliste: Raumprogramm → Zone zeichnen → ausgezogen + Δ Max l
 
 test('KosmoDoc-Modul: Diagnose läuft, Hilfe-Karten stehen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-doc"]'); // D1: eigene Kachel (vorher fälschlich id «draw»)
   await page.click('[data-testid="doc-tab-hilfe"]');
@@ -136,7 +157,12 @@ test('KosmoDoc-Modul: Diagnose läuft, Hilfe-Karten stehen', async ({ page }) =>
 
 test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="raster-toggle"]');
@@ -206,7 +232,12 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
 
 test('Axonometrie: aufs Blatt platzieren, Linien erscheinen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="load-tkb"]');
   await page.waitForSelector('text=KENNZAHLEN');
@@ -221,7 +252,12 @@ test('Axonometrie: aufs Blatt platzieren, Linien erscheinen', async ({ page }) =
 
 test('Plakat-Designer: A0-Plakat mit Slots und editierbaren Texten', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="load-tkb"]');
   await page.waitForSelector('text=KENNZAHLEN');
@@ -242,7 +278,12 @@ test('Plakat-Designer: A0-Plakat mit Slots und editierbaren Texten', async ({ pa
 
 test('Baugrenze: setzen, im Grundriss sichtbar, Checks melden Verstoss', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -297,7 +338,12 @@ test('Dossier + KosmoTrain: Regeln erfassen, Journal kuratieren', async ({ page 
 
 test('Referenz-Sammlung: Stern setzen, Filter zeigt nur Gemerkte', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-data"]');
   await page.waitForSelector('[data-testid="ref-card"]');
@@ -309,7 +355,12 @@ test('Referenz-Sammlung: Stern setzen, Filter zeigt nur Gemerkte', async ({ page
 test('Härtetest: 600 Wände — UI bleibt bedienbar, Mengen bleiben endlich', async ({ page }) => {
   test.setTimeout(120_000);
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -342,7 +393,12 @@ test('Härtetest: 600 Wände — UI bleibt bedienbar, Mengen bleiben endlich', a
 
 test('Härtetest: kaputte .kosmo-Datei → klare Meldung, UI lebt weiter', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   const [chooser] = await Promise.all([
     page.waitForEvent('filechooser'),
@@ -361,7 +417,12 @@ test('Härtetest: kaputte .kosmo-Datei → klare Meldung, UI lebt weiter', async
 
 test('Blatt-Pflege: Massstab ändern, Titel setzen, Text verschieben, Blatt löschen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="load-tkb"]');
   await page.waitForSelector('text=KENNZAHLEN');
@@ -411,7 +472,12 @@ test('Aktionskette: «Haus» → EIN Paket → alle anwenden → EIN Undo', asyn
 
 test('Bild-Slots: Plakat trägt leeren Render-Slot, Bild einbetten, PDF exportiert', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]'); // bootstrappt das Projekt
   await page.evaluate(() => window.__kosmo.open('publish'));
@@ -568,7 +634,12 @@ test('Belegte Antwort: Dossier-Regel wird zitiert und angesprungen', async ({ pa
 
 test('Bemassungs-Stile: Werkplan zeigt Innenkette + Höhenkoten, Wettbewerb nicht', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -608,7 +679,12 @@ test('Bemassungs-Stile: Werkplan zeigt Innenkette + Höhenkoten, Wettbewerb nich
 
 test('SIA-Phase: Vorprojekt reduziert die Darstellung, Werkplan detailliert voll', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -640,7 +716,12 @@ test('SIA-Phase: Vorprojekt reduziert die Darstellung, Werkplan detailliert voll
 
 test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('button:text-is("Treppe")');
@@ -696,7 +777,12 @@ test('LM-Studio-Provider (V2-B3): SSE-Tool-Call → Vorschlagskarte → Wand ste
 
 test('Kosmo-Einstellungen (V2-B3): Anthropic-Felder erscheinen, Schlüssel bleibt lokal', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[aria-label="Einstellungen"]');
@@ -715,7 +801,12 @@ test('Kosmo-Einstellungen (V2-B3): Anthropic-Felder erscheinen, Schlüssel bleib
 
 test('IFC-Bestand (V2-A4): Export → Re-Import → «Übernehmen» macht Wände editierbar', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   // Zwei Wände zeichnen (Kernel-Commands direkt — deterministisch)
@@ -781,7 +872,12 @@ test('IFC-Bestand (V2-A4): Export → Re-Import → «Übernehmen» macht Wände
 
 test('Materialkarten (V2-C2): Textur-Umschalter wirkt und bleibt gemerkt', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -804,7 +900,12 @@ test('Materialkarten (V2-C2): Textur-Umschalter wirkt und bleibt gemerkt', async
 
 test('Bauwissen-Basis (Wissens-Andockung): Lehrhefte laden → Suche zitierfähig', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-prepare"]');
   await expect(page.locator('[data-testid="basis-sektion"]')).toBeVisible();
@@ -822,7 +923,12 @@ test('Bauwissen-Basis (Wissens-Andockung): Lehrhefte laden → Suche zitierfähi
 
 test('Regel-Sätze (V2-F3): Preset per Kernel → verletzte Zone im Plan getönt', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -840,7 +946,12 @@ test('Regel-Sätze (V2-F3): Preset per Kernel → verletzte Zone im Plan getönt
 
 test('Varianten-Matrix (V2-V3/F4): Parallel-Axis-Vergleich erscheint im Studien-Panel', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -860,7 +971,12 @@ test('Varianten-Matrix (V2-V3/F4): Parallel-Axis-Vergleich erscheint im Studien-
 
 test('Wohnungs-Segmentierer (V2-F5): Soll-Mix → Vorschlag → Übernehmen → Zonen, 1 Undo', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -895,7 +1011,12 @@ test('Wohnungs-Segmentierer (V2-F5): Soll-Mix → Vorschlag → Übernehmen → 
 
 test('Segmentierer-Dialog (V2-F6): Slider rechnet den Vorschlag sofort neu', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -921,7 +1042,12 @@ test('Segmentierer-Dialog (V2-F6): Slider rechnet den Vorschlag sofort neu', asy
 
 test('Custom-Kennzahlen (V2-F9): Formel erscheint im Kennzahlen-Panel', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -942,7 +1068,12 @@ test('Custom-Kennzahlen (V2-F9): Formel erscheint im Kennzahlen-Panel', async ({
 
 test('Raumtyp-Copilot (V2-F10): Vorschlag-Chip → Übernehmen setzt den Raumtyp', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   const zoneId = await page.evaluate(() => {
@@ -966,7 +1097,12 @@ test('Raumtyp-Copilot (V2-F10): Vorschlag-Chip → Übernehmen setzt den Raumtyp
 
 test('Raumprogramm-CSV (V2-V5): Import setzt Posten, %-Spalte erscheint', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="liste-toggle"]');
@@ -984,7 +1120,12 @@ test('Raumprogramm-CSV (V2-V5): Import setzt Posten, %-Spalte erscheint', async 
 
 test('Render-Prompt (V2-V8): Material-Baustein erscheint im finalen Prompt, Tippen überschreibt', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1009,7 +1150,12 @@ test('Render-Prompt (V2-V8): Material-Baustein erscheint im finalen Prompt, Tipp
 
 test('Möblierung (V2-F8): Möbel im Plan sichtbar, SIA-500-Kollision im Check', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1031,7 +1177,12 @@ test('Möblierung (V2-F8): Möbel im Plan sichtbar, SIA-500-Kollision im Check',
 
 test('Fassaden-Module (V2-V7): Bilanz erscheint und reagiert auf Modulbreite', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1056,7 +1207,12 @@ test('Fassaden-Module (V2-V7): Bilanz erscheint und reagiert auf Modulbreite', a
 
 test('Direktzeichnen (V2-V6): Live-m²-Label beim Volumen-Ziehen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="tool-volumen"]');
@@ -1088,7 +1244,12 @@ test('CH-Standort (V2-V4): Suche (gemockt) → Standort gesetzt → Parzelle als
     }),
   );
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="sonne-toggle"]');
@@ -1106,7 +1267,12 @@ test('CH-Standort (V2-V4): Suche (gemockt) → Standort gesetzt → Parzelle als
 
 test('Modulraster im 3D (V7-Ausbau): Toggle aktiviert das Fassaden-Overlay', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1132,7 +1298,12 @@ test('Modulraster im 3D (V7-Ausbau): Toggle aktiviert das Fassaden-Overlay', asy
 
 test('Grundriss-Generator (Finch-Kern): schneiden → füllen → Zimmer + Möbel im Plan, 1 Undo', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1165,7 +1336,12 @@ test('Grundriss-Generator (Finch-Kern): schneiden → füllen → Zimmer + Möbe
 
 test('Raumgraph-Overlay (Plan-Library v2): Toggle zeigt Knoten und Kanten im Plan', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1192,7 +1368,12 @@ test('Raumgraph-Overlay (Plan-Library v2): Toggle zeigt Knoten und Kanten im Pla
 
 test('Zonentüren: Generator setzt Türen, Symbol im Plan, Graph zeigt tuer-Kanten', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1215,7 +1396,12 @@ test('Zonentüren: Generator setzt Türen, Symbol im Plan, Graph zeigt tuer-Kant
 
 test('Modul-Editor: Element aufziehen → speichern → Auswahl im Panel → 3D rendert', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1252,7 +1438,12 @@ test('Modul-Editor: Element aufziehen → speichern → Auswahl im Panel → 3D 
 
 test('Module je Fassade: Dropdown weist zu, Bilanz zieht nach', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1282,7 +1473,12 @@ test('Module je Fassade: Dropdown weist zu, Bilanz zieht nach', async ({ page })
 
 test('Wände aus Räumen: generieren → bauen → echte Wände + Türöffnungen, 1 Undo', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1311,7 +1507,12 @@ test('Wände aus Räumen: generieren → bauen → echte Wände + Türöffnungen
 
 test('Fenster stanzen (A1): Kette → Tageslicht-Befund verschwindet', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1340,7 +1541,12 @@ test('Fenster stanzen (A1): Kette → Tageslicht-Befund verschwindet', async ({ 
 
 test('Erschliessungskern (A3): Kette mit Kern → kein Fluchtweg-Fehler', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1374,7 +1580,12 @@ test('Erschliessungskern (A3): Kette mit Kern → kein Fluchtweg-Fehler', async 
 
 test('Geschoss stapeln (B1): ⧉ kopiert das aktive Geschoss samt Inhalt', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1430,7 +1641,12 @@ test('Kosmo fährt die Kette per Sprache: stapeln über den Chat (Mock-Provider)
 
 test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb mit Kreuz', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1458,7 +1674,12 @@ test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb mit
 
 test('Terrain (Vision A2): Profil gesetzt → Ansicht zeigt gewachsen gestrichelt + neu ausgezogen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1493,7 +1714,12 @@ test('Terrain (Vision A2): Profil gesetzt → Ansicht zeigt gewachsen gestrichel
 
 test('Aussparung (Vision A3): Inspector-Knopf setzt Durchbruch → Kreuz + Kote im Werkplan', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1517,7 +1743,12 @@ test('Aussparung (Vision A3): Inspector-Knopf setzt Durchbruch → Kreuz + Kote 
 
 test('Varianten-Archiv (Vision A5): archivieren → Zentrale vergleicht → als Projekt öffnen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="load-tkb"]');
   await page.click('[data-testid="liste-toggle"]');
@@ -1539,7 +1770,12 @@ test('Varianten-Archiv (Vision A5): archivieren → Zentrale vergleicht → als 
 
 test('Massstabs-Automatik (Vision B5): Phasenwechsel schlägt SIA-Massstab vor', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   // T7: Phase sitzt jetzt im Projekt-Menü (selten geändert) statt in der Dauerleiste.
@@ -1554,7 +1790,12 @@ test('Massstabs-Automatik (Vision B5): Phasenwechsel schlägt SIA-Massstab vor',
 
 test('NPK-Ausmass (Vision C1): Draw-Panel zeigt Positionen mit Herleitung + CSV-Knopf', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="load-tkb"]');
   await page.click('[data-testid="draw-toggle"]');
@@ -1566,7 +1807,12 @@ test('NPK-Ausmass (Vision C1): Draw-Panel zeigt Positionen mit Herleitung + CSV-
 
 test('Stationen-Kacheln (Vision D1): Doc/Draw/Sketch/Speak führen an den richtigen Ort', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   // KosmoDoc: die eigene Kachel (Bugfix: hiess vorher id «draw»)
   await page.click('[data-testid="module-doc"]');
@@ -1587,7 +1833,12 @@ test('Stationen-Kacheln (Vision D1): Doc/Draw/Sketch/Speak führen an den richti
 
 test('Rollen-Vorstufe (Vision D2): Rolle «Ausführung» rückt KosmoPublish nach vorn', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   // T7: die Zentrale gruppiert die Kacheln jetzt nach Familien, mit Kosmo
   // (module-speak) bewusst VOR den Familien (übergeordnete Intelligenz,
@@ -1604,7 +1855,12 @@ test('Rollen-Vorstufe (Vision D2): Rolle «Ausführung» rückt KosmoPublish nac
 
 test('Umbau-Filter je Blatt (RE-ARCHICAD A2): Abbruchplan blendet Neubau aus', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG
   await page.evaluate(() => {
@@ -1645,7 +1901,12 @@ test('Umbau-Filter je Blatt (RE-ARCHICAD A2): Abbruchplan blendet Neubau aus', a
 
 test('Stütze + Unterzug (RE-ARCHICAD A3): Raster-Knopf setzt Stützen auf Kreuzungen', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1673,7 +1934,12 @@ test('Stütze + Unterzug (RE-ARCHICAD A3): Raster-Knopf setzt Stützen auf Kreuz
 
 test('Publikations-Sets (RE-ARCHICAD A4): Set speichern → SVGs nach Namensregel', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {
@@ -1711,7 +1977,12 @@ test('Publikations-Sets (RE-ARCHICAD A4): Set speichern → SVGs nach Namensrege
 
 test('Trace + Katalog (RE-ARCHICAD A8): Geschoss unterlegen, Katalog-Download', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]'); // bootstrappt EG + 1.OG
   await page.click('[data-testid="view-2d"]');
@@ -1745,7 +2016,12 @@ test('Trace + Katalog (RE-ARCHICAD A8): Geschoss unterlegen, Katalog-Download', 
 
 test('Etiketten (RE-ARCHICAD A6): Inspector-Knopf setzt Aufbau-Etikett mit Leader', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
@@ -1771,7 +2047,12 @@ test('Etiketten (RE-ARCHICAD A6): Inspector-Knopf setzt Aufbau-Etikett mit Leade
 
 test('Plan-Revisionen (RE-ARCHICAD A7): Verzeichnis im Blatt, Transmittal-CSV', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.evaluate(() => {

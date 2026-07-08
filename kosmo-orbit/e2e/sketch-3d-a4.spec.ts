@@ -16,7 +16,12 @@ import { expect, test } from '@playwright/test';
 
 test('A4: 3D-Skizze auf eine Wandfläche ergibt eine Öffnung (kein Wand-Zug)', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG
 
@@ -95,7 +100,12 @@ test('A4: 3D-Skizze auf eine Wandfläche ergibt eine Öffnung (kein Wand-Zug)', 
 
 test('A4: 3D-Skizze auf den Boden ergibt weiterhin einen Wand-Zug (Regression T5)', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG, noch keine Wände
 

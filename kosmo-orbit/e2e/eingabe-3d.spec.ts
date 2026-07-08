@@ -19,7 +19,12 @@ type CamHook = {
 
 async function bootstrap3D(page: import('@playwright/test').Page) {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
   await page.reload();
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG
   await page.click('[data-testid="view-3d"]');
