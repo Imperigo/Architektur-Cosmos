@@ -1942,6 +1942,62 @@ export const setKvKennwerte = registerCommand({
   },
 });
 
+export const setBauablaufKennwerte = registerCommand({
+  id: 'design.bauablaufKennwerteSetzen',
+  title: 'Bauablauf-Kennwerte setzen',
+  description:
+    'Setzt die Leistungswerte des Bauablaufplans (Grob-Terminplan, Richtwert — ersetzt keine Bauleitung): m2AushubProWoche/m3RohbauProWoche/m2DachProWoche/m2HuelleProWoche (Menge pro Woche je Gewerk), m2ElektroProWoche/m2SanitaerHeizungProWoche/m2TrockenbauProWoche/m2BodenbelaegeProWoche/m2MalerProWoche (Innenausbau-Gewerke, m² Geschossfläche pro Woche), m2UmgebungProWoche, abnahmeWochen (feste Dauer, kein Mengenbezug) und minDauerWochen (Mindestdauer je Phase). Nur genannte Felder werden geändert, alle Werte bleiben Owner-Annahmen ohne Norm-Bezug.',
+  params: z.object({
+    m2AushubProWoche: z.number().positive().optional(),
+    m3RohbauProWoche: z.number().positive().optional(),
+    m2DachProWoche: z.number().positive().optional(),
+    m2HuelleProWoche: z.number().positive().optional(),
+    m2ElektroProWoche: z.number().positive().optional(),
+    m2SanitaerHeizungProWoche: z.number().positive().optional(),
+    m2TrockenbauProWoche: z.number().positive().optional(),
+    m2BodenbelaegeProWoche: z.number().positive().optional(),
+    m2MalerProWoche: z.number().positive().optional(),
+    m2UmgebungProWoche: z.number().positive().optional(),
+    abnahmeWochen: z.number().min(0).optional(),
+    minDauerWochen: z.number().min(0).optional(),
+  }),
+  summarize: (p) =>
+    `Bauablauf-Kennwerte: ${[
+      p.m2AushubProWoche !== undefined ? `Aushub ${p.m2AushubProWoche} m²/Woche` : null,
+      p.m3RohbauProWoche !== undefined ? `Rohbau ${p.m3RohbauProWoche} m³/Woche` : null,
+      p.m2DachProWoche !== undefined ? `Dach ${p.m2DachProWoche} m²/Woche` : null,
+      p.m2HuelleProWoche !== undefined ? `Hülle ${p.m2HuelleProWoche} m²/Woche` : null,
+      p.m2ElektroProWoche !== undefined ? `Elektro ${p.m2ElektroProWoche} m²/Woche` : null,
+      p.m2SanitaerHeizungProWoche !== undefined ? `Sanitär/Heizung ${p.m2SanitaerHeizungProWoche} m²/Woche` : null,
+      p.m2TrockenbauProWoche !== undefined ? `Trockenbau ${p.m2TrockenbauProWoche} m²/Woche` : null,
+      p.m2BodenbelaegeProWoche !== undefined ? `Bodenbeläge ${p.m2BodenbelaegeProWoche} m²/Woche` : null,
+      p.m2MalerProWoche !== undefined ? `Maler ${p.m2MalerProWoche} m²/Woche` : null,
+      p.m2UmgebungProWoche !== undefined ? `Umgebung ${p.m2UmgebungProWoche} m²/Woche` : null,
+      p.abnahmeWochen !== undefined ? `Abnahme ${p.abnahmeWochen} Wochen fix` : null,
+      p.minDauerWochen !== undefined ? `Mindestdauer ${p.minDauerWochen} Wochen` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ') || 'unverändert'} (Richtwert, ersetzt keine Bauleitung)`,
+  run: (doc, p) => {
+    const alt = doc.settings.bauablaufKennwerte;
+    const neu = {
+      m2AushubProWoche: p.m2AushubProWoche ?? alt.m2AushubProWoche,
+      m3RohbauProWoche: p.m3RohbauProWoche ?? alt.m3RohbauProWoche,
+      m2DachProWoche: p.m2DachProWoche ?? alt.m2DachProWoche,
+      m2HuelleProWoche: p.m2HuelleProWoche ?? alt.m2HuelleProWoche,
+      m2ElektroProWoche: p.m2ElektroProWoche ?? alt.m2ElektroProWoche,
+      m2SanitaerHeizungProWoche: p.m2SanitaerHeizungProWoche ?? alt.m2SanitaerHeizungProWoche,
+      m2TrockenbauProWoche: p.m2TrockenbauProWoche ?? alt.m2TrockenbauProWoche,
+      m2BodenbelaegeProWoche: p.m2BodenbelaegeProWoche ?? alt.m2BodenbelaegeProWoche,
+      m2MalerProWoche: p.m2MalerProWoche ?? alt.m2MalerProWoche,
+      m2UmgebungProWoche: p.m2UmgebungProWoche ?? alt.m2UmgebungProWoche,
+      abnahmeWochen: p.abnahmeWochen ?? alt.abnahmeWochen,
+      minDauerWochen: p.minDauerWochen ?? alt.minDauerWochen,
+    };
+    return [{ settings: true, before: { bauablaufKennwerte: alt }, after: { bauablaufKennwerte: neu } }];
+  },
+});
+
 export const setDimensionStyle = registerCommand({
   id: 'design.bemassungSetzen',
   title: 'Bemassungs-Stil setzen',

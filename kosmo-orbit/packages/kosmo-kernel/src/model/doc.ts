@@ -164,6 +164,65 @@ export const defaultKvKennwerte: KvKennwerte = {
   reserve: 0.1,
 };
 
+/**
+ * Bauablauf-Kennwerte (v0.6.3, `docs/V063-VOLLPROJEKT-KONZEPT.md` Abschnitt 4,
+ * Lücken-Batch 4, Owner-Hauptaufgabe K22) — Leistungswerte (Menge pro Woche)
+ * für den Grob-Terminplan (`derive/bauablauf.ts`). Genau wie bei
+ * `KvKennwerte`: jeder Zahlenwert ist eine **Annahme Owner-Guideline, kein
+ * verbindlicher Wert** — grobe CH-Baustellen-Grössenordnung (kleines MFH,
+ * ein Team je Gewerk), keine SIA-/Baumeisterverband-Norm zitiert. Additiv zu
+ * `DocSettings` (wie `kvKennwerte`): Altbestand-Docs laden über den
+ * Default-Spread in `fromJSON`/`defaultSettings`, kein Kernel-Bruch.
+ */
+export interface BauablaufKennwerte {
+  /** Aushub: m² Baugrube (Grundfläche der untersten Geschossdecke) pro Woche. Annahme. */
+  m2AushubProWoche: number;
+  /** Rohbau: m³ Wand-/Deckenvolumen (Beton/Mauerwerk) pro Woche — gilt für
+   * Fundament/Bodenplatte UND für jedes Rohbau-Geschoss. Annahme. */
+  m3RohbauProWoche: number;
+  /** Dach: m² Dachfläche (Grundriss, ohne Abwicklung) pro Woche. Annahme. */
+  m2DachProWoche: number;
+  /** Fenster/Hülle dicht: m² Fenster-/Türfläche pro Woche. Annahme. */
+  m2HuelleProWoche: number;
+  /** Innenausbau Elektro: m² Geschossfläche (GF) pro Woche. Annahme. */
+  m2ElektroProWoche: number;
+  /** Innenausbau Sanitär/Heizung: m² GF pro Woche. Annahme. */
+  m2SanitaerHeizungProWoche: number;
+  /** Innenausbau Trockenbau/Gipser: m² GF pro Woche. Annahme. */
+  m2TrockenbauProWoche: number;
+  /** Innenausbau Bodenbeläge: m² GF pro Woche. Annahme. */
+  m2BodenbelaegeProWoche: number;
+  /** Innenausbau Maler: m² GF pro Woche. Annahme. */
+  m2MalerProWoche: number;
+  /** Umgebung: m² Umgebungsfläche (Parzelle minus Fussabdruck, sonst
+   * Fussabdruck selbst) pro Woche. Annahme. */
+  m2UmgebungProWoche: number;
+  /** Abnahme: feste Dauer in Wochen — ein Termin, kein Bauvolumen, darum kein
+   * Mengenbezug. Annahme. */
+  abnahmeWochen: number;
+  /** Mindestdauer je Phase in Wochen (nie ein 0-Wochen-Balken, auch bei sehr
+   * kleiner oder fehlender Menge). Annahme. */
+  minDauerWochen: number;
+}
+
+/** Default-Bauablauf-Kennwerte — s. Kommentar bei `BauablaufKennwerte`:
+ * Annahme Owner-Guideline, kein verbindlicher Wert, jederzeit über
+ * `design.bauablaufKennwerteSetzen` überschreibbar. */
+export const defaultBauablaufKennwerte: BauablaufKennwerte = {
+  m2AushubProWoche: 250,
+  m3RohbauProWoche: 60,
+  m2DachProWoche: 200,
+  m2HuelleProWoche: 150,
+  m2ElektroProWoche: 300,
+  m2SanitaerHeizungProWoche: 250,
+  m2TrockenbauProWoche: 200,
+  m2BodenbelaegeProWoche: 350,
+  m2MalerProWoche: 400,
+  m2UmgebungProWoche: 300,
+  abnahmeWochen: 1,
+  minDauerWochen: 1,
+};
+
 /** Bemassungs-Stil (V2-A5) — projektweit, wirkt in App-Plan, Druck und DXF. */
 export interface BemassungsStil {
   /** Aussenketten: beide (Öffnungen + Gesamtmass), nur Gesamtmass, oder keine. */
@@ -200,6 +259,10 @@ export interface DocSettings {
   /** KV-Grobschätzung-Kennwerte (v0.6.3) — s. `KvKennwerte`-Kommentar:
    * Richtwert, kein Devis. Nur über `design.kvKennwerteSetzen` gesetzt. */
   kvKennwerte: KvKennwerte;
+  /** Bauablaufplan-Kennwerte (v0.6.3) — s. `BauablaufKennwerte`-Kommentar:
+   * Richtwert, ersetzt keine Bauleitung. Nur über
+   * `design.bauablaufKennwerteSetzen` gesetzt. */
+  bauablaufKennwerte: BauablaufKennwerte;
   /** Aktive Zonenregel (V2-Vorform V1): speist Δ-Max, Höhen-/Geschoss-Checks. */
   zonenRegel: ZonenRegel | null;
   /** Raumtyp-Regeln (V2-F3, Finch Graph-Rules): leer = eingebaute Richtwerte. */
@@ -354,6 +417,7 @@ export const defaultSettings: DocSettings = {
   // Default = Beginn des SIA-Zyklus (neues Projekt startet im Wettbewerb).
   siaPhase: 'wettbewerb',
   kvKennwerte: { ...defaultKvKennwerte },
+  bauablaufKennwerte: { ...defaultBauablaufKennwerte },
   zonenRegel: null,
   parzellenFlaeche: null,
   raumRegeln: [],

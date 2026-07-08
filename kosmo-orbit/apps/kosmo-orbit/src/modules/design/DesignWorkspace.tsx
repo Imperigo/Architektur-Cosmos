@@ -44,6 +44,7 @@ import { KennzahlenPanel } from './KennzahlenPanel';
 import { DrawPanel } from './DrawPanel';
 import { BerechnungslistePanel } from './BerechnungslistePanel';
 import { KvPanel } from './KvPanel';
+import { BauablaufPanel } from './BauablaufPanel';
 import { RasterPanel } from './RasterPanel';
 import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
@@ -258,6 +259,9 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
   // damit der Ehrlichkeits-Hinweis («Richtwert, kein Devis») nicht in der
   // Fläche der Wohnungstyp-Tabelle untergeht.
   const [kvOffen, setKvOffen] = useState(false);
+  // Bauablauf-Grundgerüst (v0.6.3, Lücken-Batch 4, K22): Grob-Terminplan-Panel
+  // gleich neben dem KV-Panel — dieselbe Anordnung, derselbe Ehrlichkeits-Grundsatz.
+  const [bauablaufOffen, setBauablaufOffen] = useState(false);
   // Splat-Werkzeug (Owner-Korrektur 05.07.: NICHT HomeStation-exklusiv) —
   // Crop/Ausdünnen/Export laufen lokal, siehe SplatPanel.tsx.
   const [splatPanelOffen, setSplatPanelOffen] = useState(false);
@@ -800,7 +804,8 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
   // Fable-Review-2-Auflage J3c-0b: irgendein Ebenen-Panel offen? Die Ebenen-
   // Gruppe wird dann nie gedimmt (weder Sonne/Draw/Liste/Raster/Splat/Studie
   // selbst noch ihre Geschwister-Buttons in derselben Gruppe).
-  const ebenenPanelOffen = sonneOffen || drawOffen || listeOffen || rasterOffen || splatPanelOffen || studieOffen || kvOffen;
+  const ebenenPanelOffen =
+    sonneOffen || drawOffen || listeOffen || rasterOffen || splatPanelOffen || studieOffen || kvOffen || bauablaufOffen;
 
   // Serie J / Batch J3b (SERIE-J-BUILDPLAN.md Abschnitt 2/3): die Werkzeug-
   // leisten-Gruppen leben — ihre Fokus-Stufe kommt aus `adaptiveFokusStufe`
@@ -1283,6 +1288,19 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             {...elementStil('ebenen', 'kv')}
           >
             KV
+          </KButton>
+          <KButton
+            size="sm"
+            tone={bauablaufOffen ? 'accent' : 'ghost'}
+            data-testid="bauablauf-oeffnen"
+            title="Bauablaufplan — abgeleiteter Grob-Terminplan, ersetzt keine Bauleitung"
+            onClick={() => {
+              setBauablaufOffen(!bauablaufOffen);
+              nutzungMelden('ebenen:bauablauf');
+            }}
+            {...elementStil('ebenen', 'bauablauf')}
+          >
+            Bauablauf
           </KButton>
           <KButton size="sm" tone={rasterOffen ? 'accent' : 'ghost'} data-testid="raster-toggle" onClick={klickRaster} {...elementStil('ebenen', 'raster')}>
             Raster
@@ -1768,6 +1786,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
           />
         )}
         {kvOffen && <KvPanel onClose={() => setKvOffen(false)} />}
+        {bauablaufOffen && <BauablaufPanel onClose={() => setBauablaufOffen(false)} />}
         {studieOffen && (
           <StudienPanel
             zielGf={zielGf}
