@@ -303,7 +303,7 @@ export function App() {
           aria-label="Zur Zentrale"
         >
           <OrbitMark module="orbit" size={24} />
-          <Wordmark size={16} />
+          <Wordmark size={16} version={`v${__APP_VERSION__}`} />
         </button>
         {screen !== 'home' && (
           <>
@@ -791,7 +791,7 @@ export function App() {
                 );
               })()}
               <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)' }} data-testid="about-zeile">
-                KosmoOrbit V1.0 · lokal-first · Installation: docs/INSTALL.md · Update = neuer Installer (Signierung folgt zuhause)
+                KosmoOrbit v{__APP_VERSION__} · lokal-first · Installation: docs/INSTALL.md · Update = neuer Installer (Signierung folgt zuhause)
               </div>
             </div>
           </div>

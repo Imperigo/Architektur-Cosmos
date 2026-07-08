@@ -86,10 +86,12 @@ export function OrbitMark({
 export interface WordmarkProps {
   size?: number;
   style?: CSSProperties;
+  /** Versions-Exponent, z.B. «v0.6.0». Fehlt er, steht «V1» (Rückwärtskompat). */
+  version?: string;
 }
 
-/** Wortmarke «KosmoOrbit» — feine Grotesk, das V1 als Exponent. */
-export function Wordmark({ size = 18, style }: WordmarkProps) {
+/** Wortmarke «KosmoOrbit» — feine Grotesk, die Version als Exponent. */
+export function Wordmark({ size = 18, style, version }: WordmarkProps) {
   return (
     <span
       style={{
@@ -103,7 +105,9 @@ export function Wordmark({ size = 18, style }: WordmarkProps) {
       }}
     >
       Kosmo<span style={{ fontWeight: 350 }}>Orbit</span>
-      <sup style={{ fontSize: size * 0.55, opacity: 0.55, fontWeight: 450 }}>V1</sup>
+      <sup data-testid="app-version" style={{ fontSize: size * 0.55, opacity: 0.55, fontWeight: 450 }}>
+        {version ?? 'V1'}
+      </sup>
     </span>
   );
 }
