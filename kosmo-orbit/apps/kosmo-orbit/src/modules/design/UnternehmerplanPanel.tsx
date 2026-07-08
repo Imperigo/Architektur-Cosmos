@@ -25,6 +25,12 @@ import {
  * geraten: die Karte wird ehrlich auf «manuell» herabgestuft — das Modell
  * bleibt unverändert, der Architekt zeichnet selbst. Stufe 2 hat bewusst
  * keinen Anwenden-Knopf — nur Titel/Detail + Badge «markiert».
+ *
+ * Nacht v0.6.2 (C5/PDF): ohne geladenen DXF, aber mit einem `pdfHinweis`
+ * (der Unternehmer hat ein PDF geschickt, `DesignWorkspace.tsx` hat es
+ * erkannt und NICHT geparst), zeigt das Panel statt der Karten den
+ * ehrlichen Betriebsarten-Gate-Text (`pdf-hinweis`) — kein Karten-Rendering,
+ * keine Attrappe.
  */
 
 type KartenStatus = 'offen' | 'uebernommen' | 'manuell';
@@ -33,6 +39,7 @@ export function UnternehmerplanPanel() {
   const dxf = useUnternehmerplan((s) => s.dxf);
   const abgleich = useUnternehmerplan((s) => s.abgleich);
   const dateiname = useUnternehmerplan((s) => s.dateiname);
+  const pdfHinweis = useUnternehmerplan((s) => s.pdfHinweis);
   const runCommand = useProject((s) => s.runCommand);
   const doc = useProject((s) => s.doc);
   const [status, setStatus] = useState<Record<string, KartenStatus>>({});
@@ -42,8 +49,43 @@ export function UnternehmerplanPanel() {
     return baueKarten(abgleich, dxf.bericht);
   }, [dxf, abgleich]);
 
-  // Daten-Guard: ohne geladenen Unternehmerplan gibt es kein Panel.
-  if (!dxf || !abgleich) return null;
+  // Daten-Guard: ohne geladenen DXF gibt es entweder den ehrlichen
+  // PDF-Hinweis oder gar kein Panel.
+  if (!dxf || !abgleich) {
+    if (!pdfHinweis) return null;
+    return (
+      <div
+        data-testid="unternehmerplan-panel"
+        className="k-dialog"
+        style={{
+          position: 'absolute',
+          right: 12,
+          top: 52,
+          zIndex: 20,
+          width: 'min(420px, calc(100vw - 122px))',
+          maxHeight: 'calc(100% - 90px)',
+          overflow: 'auto',
+          background: 'var(--k-raised)',
+          border: '1px solid var(--k-technik)',
+          boxShadow: 'var(--k-shadow-overlay)',
+          padding: 12,
+          display: 'grid',
+          gap: 10,
+          fontSize: 12.5,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Badge hue="var(--k-mod-design)">Unternehmerplan</Badge>
+          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11, fontFamily: 'var(--k-font-mono)' }}>
+            {pdfHinweis.dateiname}
+          </span>
+        </div>
+        <span data-testid="pdf-hinweis" style={{ color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+          {pdfHinweis.text}
+        </span>
+      </div>
+    );
+  }
 
   const berichtText = importBerichtText(dxf.bericht, abgleich);
 

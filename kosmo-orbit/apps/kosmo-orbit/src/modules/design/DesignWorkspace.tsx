@@ -30,6 +30,7 @@ import {
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { importBerichtText, useUnternehmerplan } from './unternehmerplan';
+import { betriebsLageAusRoh, erkennePdf } from './unternehmerplan-pdf';
 import { VERSCHIEBBAR } from './plan-hit-test';
 import { zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { werkzeugFuerTaste } from './zeichen-shortcuts';
@@ -1059,7 +1060,7 @@ export function DesignWorkspace() {
               nutzungMelden('export:import-dxf');
               const input = document.createElement('input');
               input.type = 'file';
-              input.accept = '.dxf,.dwg';
+              input.accept = '.dxf,.dwg,.pdf';
               input.onchange = async () => {
                 const f = input.files?.[0];
                 if (!f) return;
@@ -1067,6 +1068,23 @@ export function DesignWorkspace() {
                 // statt eines stillen Fehlschlags beim Parsen.
                 if (/\.dwg$/i.test(f.name)) {
                   melde('DWG ist proprietär — bitte als DXF exportieren (jedes CAD kann das).', { ton: 'fehler' });
+                  return;
+                }
+                // C5 (Nacht v0.6.2): PDF geht NICHT in den DXF-Parser — Endung
+                // zuerst, `%PDF`-Magic-Bytes als Fallback bei falscher Endung
+                // (z.B. ein PDF, das versehentlich als .dxf verschickt wurde).
+                const ersteBytes = new Uint8Array(await f.slice(0, 4).arrayBuffer());
+                if (erkennePdf(f.name, ersteBytes)) {
+                  let lage: ReturnType<typeof betriebsLageAusRoh>;
+                  try {
+                    const raw = localStorage.getItem('kosmo.llm');
+                    lage = betriebsLageAusRoh(raw ? JSON.parse(raw) : null);
+                  } catch {
+                    lage = betriebsLageAusRoh(null);
+                  }
+                  useUnternehmerplan.getState().pdfLaden(f.name, lage);
+                  const { pdfHinweis } = useUnternehmerplan.getState();
+                  if (pdfHinweis) melde(pdfHinweis.text, { ton: 'info' });
                   return;
                 }
                 const text = await f.text();

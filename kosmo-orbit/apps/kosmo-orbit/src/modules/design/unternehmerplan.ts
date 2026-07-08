@@ -11,6 +11,7 @@ import type {
   Pt,
   Wall,
 } from '@kosmo/kernel';
+import { pdfImportPfad, type BetriebsLage, type PdfPfadEntscheid } from './unternehmerplan-pdf';
 
 /**
  * Unternehmerplan-Laufzeitschicht (V1.6 Block C / C4a, Entscheide C-E4/C-E5
@@ -33,7 +34,22 @@ import type {
  * - `importBerichtText` ist der ehrliche Ein-Absatz-Bericht («n von m
  *   Abweichungen als Vorschlag, Rest markiert») inkl. Match-Quote,
  *   unklassierten Layern, unaufgelösten Blöcken und Ausrichtungs-Status.
+ *
+ * Nacht v0.6.2 (C5/PDF, `unternehmerplan-pdf.ts`): schickt ein Unternehmer
+ * ein PDF statt eines DXF, geht es NICHT durch `parseDxf` — PDF trägt in
+ * aller Regel keine verlässliche Vektor-Geometrie. `pdfLaden` legt
+ * stattdessen den ehrlichen Betriebsarten-Gate-Entscheid (`pdfImportPfad`)
+ * in `pdfHinweis` ab; `UnternehmerplanPanel.tsx` zeigt ihn (`pdf-hinweis`),
+ * solange kein DXF geladen ist. Beide Wege sind gegenseitig exklusiv:
+ * `laden` löscht einen alten `pdfHinweis`, `pdfLaden` löscht einen alten
+ * DXF-Stand — wie ein neuer Import den vorigen immer ersetzt.
  */
+
+/** Ablage eines PDF-Imports — der Gate-Entscheid plus der Dateiname, den
+ * das Panel neben dem Hinweistext zeigt. */
+export interface PdfHinweisZustand extends PdfPfadEntscheid {
+  dateiname: string;
+}
 
 interface UnternehmerplanState {
   dxf: DxfGraphic | null;
@@ -42,11 +58,19 @@ interface UnternehmerplanState {
   overlaySichtbar: boolean;
   /** Parse-/Abgleich-Fehler als String — `laden` wirft NIE. */
   fehler: string | null;
+  /** Zuletzt geladener PDF-Unternehmerplan (C5) — `null`, solange keiner
+   * geladen wurde oder ein DXF-Import ihn ersetzt hat. */
+  pdfHinweis: PdfHinweisZustand | null;
   /** Parst `dxfText`, vergleicht gegen `plan` (bereits abgeleiteter
    * Architektenplan des Aufrufers) und legt das Ergebnis ab. Ein Fehler
    * beim Parsen/Vergleichen wird abgefangen und landet ausschliesslich in
    * `fehler` — kein throw, keine halb gefüllte Ablage. */
   laden: (dateiname: string, dxfText: string, plan: PlanGraphic) => void;
+  /** C5: PDF erkannt (DesignWorkspace.tsx prüft Endung/Magic-Bytes VOR dem
+   * Aufruf) — kein Parse-Versuch, nur der ehrliche Betriebsarten-Gate-
+   * Entscheid (`pdfImportPfad`) landet in `pdfHinweis`. Löscht einen
+   * vorherigen DXF-Stand (derselbe „ein neuer Import ersetzt" wie `laden`). */
+  pdfLaden: (dateiname: string, lage: BetriebsLage) => void;
   /** Wirft den geladenen Unternehmerplan komplett weg (zurück auf den
    * Ausgangszustand) — z.B. wenn der Architekt den Import abbricht. */
   verwerfen: () => void;
@@ -60,7 +84,8 @@ const ANFANGSZUSTAND = {
   dateiname: null,
   overlaySichtbar: false,
   fehler: null,
-} satisfies Omit<UnternehmerplanState, 'laden' | 'verwerfen' | 'overlayUmschalten'>;
+  pdfHinweis: null,
+} satisfies Omit<UnternehmerplanState, 'laden' | 'pdfLaden' | 'verwerfen' | 'overlayUmschalten'>;
 
 export const useUnternehmerplan = create<UnternehmerplanState>((set) => ({
   ...ANFANGSZUSTAND,
@@ -68,7 +93,7 @@ export const useUnternehmerplan = create<UnternehmerplanState>((set) => ({
     try {
       const dxf = parseDxf(dxfText);
       const abgleich = vergleichePlaene(plan, dxf);
-      set({ dxf, abgleich, dateiname, fehler: null });
+      set({ dxf, abgleich, dateiname, fehler: null, pdfHinweis: null });
     } catch (e) {
       set({
         dxf: null,
@@ -76,8 +101,19 @@ export const useUnternehmerplan = create<UnternehmerplanState>((set) => ({
         dateiname: null,
         overlaySichtbar: false,
         fehler: e instanceof Error ? e.message : String(e),
+        pdfHinweis: null,
       });
     }
+  },
+  pdfLaden: (dateiname, lage) => {
+    const entscheid = pdfImportPfad(lage);
+    set({
+      dxf: null,
+      abgleich: null,
+      dateiname: null,
+      fehler: null,
+      pdfHinweis: { dateiname, ...entscheid },
+    });
   },
   verwerfen: () => set({ ...ANFANGSZUSTAND }),
   overlayUmschalten: () => set((s) => ({ overlaySichtbar: !s.overlaySichtbar })),
