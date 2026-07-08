@@ -22,7 +22,8 @@ import { KosmoSymbol } from './shell/KosmoSymbol';
 import { ZentraleKachel } from './shell/ZentraleKachel';
 import { AppDeinstallieren } from './shell/AppDeinstallieren';
 import { StarterGuide } from './shell/StarterGuide';
-import { istStarterGuideAbgeschlossen } from './shell/starter-guide-schritte';
+import { ErsteStartFrage } from './shell/ErsteStartFrage';
+import { istStarterGuideAbgeschlossen, starterGuideAlsAbgeschlossenMarkieren } from './shell/starter-guide-schritte';
 import { VisWorkspace } from './modules/vis/VisWorkspace';
 import { DataWorkspace } from './modules/data/DataWorkspace';
 import { PublishWorkspace } from './modules/publish/PublishWorkspace';
@@ -128,13 +129,15 @@ export function App() {
   const [syncOpen, setSyncOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('aus');
   const [onboarding, setOnboarding] = useState(localStorage.getItem('kosmo.onboarded') !== '1');
-  // V1.6 Block E: eigenes, von `kosmo.onboarded` getrenntes Flag — der
-  // Starter-Guide startet automatisch beim ALLERERSTEN Programmstart (noch
-  // nie beendet/übersprungen) und bleibt danach still, bis ihn der Nutzer
-  // über den «?»-Knopf erneut ruft. `guideLauf` erzwingt bei jedem erneuten
-  // Aufruf einen frischen Mount (React-`key`) — «erneut» beginnt immer bei
-  // Schritt 0, auch wenn ein vorheriger Lauf noch offen war.
-  const [starterGuideOffen, setStarterGuideOffen] = useState(() => !istStarterGuideAbgeschlossen());
+  // Serie K / A3 (K13): der Guide startet NICHT mehr automatisch — beim
+  // allerersten Start fragt Kosmo in der Zentrale («Neu hier?»,
+  // ErsteStartFrage.tsx). Ja → Rundgang; Nein → dasselbe done-Flag wie der
+  // Guide selbst (kosmo.starterGuide.done), die Frage kommt nie wieder.
+  // Reaktivierung bleibt der «?»-Knopf (flag-unabhängig). `guideLauf`
+  // erzwingt bei jedem Aufruf einen frischen Mount (React-`key`) — Start
+  // immer bei Schritt 0.
+  const [ersteStartFrage, setErsteStartFrage] = useState(() => !istStarterGuideAbgeschlossen());
+  const [starterGuideOffen, setStarterGuideOffen] = useState(false);
   const [guideLauf, setGuideLauf] = useState(0);
   const [peers, setPeers] = useState(0);
   const [syncUrl, setSyncUrl] = useState(localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700');
@@ -698,6 +701,19 @@ export function App() {
                   </KButton>
                 </div>
               </div>
+              {ersteStartFrage && !starterGuideOffen && (
+                <ErsteStartFrage
+                  onJa={() => {
+                    setErsteStartFrage(false);
+                    setGuideLauf((n) => n + 1);
+                    setStarterGuideOffen(true);
+                  }}
+                  onNein={() => {
+                    starterGuideAlsAbgeschlossenMarkieren();
+                    setErsteStartFrage(false);
+                  }}
+                />
+              )}
               {onboarding && (
                 <Panel data-testid="onboarding" style={{ padding: '16px 18px', display: 'grid', gap: 10 }}>
                   <div style={{ fontWeight: 550 }}>Erste Schritte</div>
