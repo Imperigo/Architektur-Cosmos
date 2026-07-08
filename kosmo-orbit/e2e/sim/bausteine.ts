@@ -991,3 +991,51 @@ export async function submissionsreifePruefen(
   }
   return befunde;
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 20 — grundlagenStudieAusfuehren (D6, Wettbewerbs-Testlauf,
+// `docs/WETTBEWERB-KONZEPT.md` Grundlagenphase / `e2e/sim-wettbewerb.spec.ts`)
+// ─────────────────────────────────────────────────────────────────────────
+/**
+ * Führt `grundlagen.volumenstudie` (D4, `packages/kosmo-kernel/src/commands/
+ * grundlagen.ts`) über denselben `__kosmo.run`-Weg aus, den jeder andere
+ * Baustein für Commands nutzt: der Command löst Parzelle (letzte Zone des
+ * Geschosses), Zonenregel-Defaults und GF-Ziel selbst auf und übernimmt EINE
+ * Typologie als `MassBody`-Körper (program:'studie') — EIN `run()`-Aufruf,
+ * darum bereits eine atomare Undo-Gruppe (D4-Kommentar, `commands/
+ * grundlagen.ts` Z.26-28). Assertet den exakten Delta an neuen Körpern
+ * (> 0, ALLE mit program==='studie') und liefert deren IDs zurück — Undo/
+ * Redo bleiben Sache des Aufrufers (der etablierte `data-testid="undo"`-Weg;
+ * ein Redo-Testid existiert im Produkt nicht, siehe `freemesh.spec.ts`
+ * Z.201-205).
+ */
+export interface GrundlagenStudieParams {
+  storeyId: string;
+  varianteIndex?: number;
+  zielGf?: number;
+  maxHoehe?: number;
+}
+
+export async function grundlagenStudieAusfuehren(
+  page: Page,
+  params: GrundlagenStudieParams,
+): Promise<string[]> {
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('mass').length);
+  await page.evaluate(
+    (p) => window.__kosmo.run('grundlagen.volumenstudie', p),
+    params,
+  ); // [Quelle: packages/kosmo-kernel/src/commands/grundlagen.ts 'grundlagen.volumenstudie' Z.119-189]
+
+  const nachher = await page.evaluate(() => window.__kosmo.state().doc.byKind('mass').length);
+  expect(nachher, 'grundlagen.volumenstudie hat keinen einzigen MassBody erzeugt').toBeGreaterThan(vorher);
+
+  const koerperIds = await page.evaluate(() =>
+    window.__kosmo
+      .state()
+      .doc.byKind('mass')
+      .filter((m) => m.program === 'studie')
+      .map((m) => m.id),
+  );
+  expect(koerperIds.length, 'nicht alle neuen Körper tragen program:"studie"').toBe(nachher - vorher);
+  return koerperIds;
+}
