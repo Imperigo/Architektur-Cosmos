@@ -83,6 +83,20 @@ export function UnternehmerplanPanel() {
         <span data-testid="pdf-hinweis" style={{ color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
           {pdfHinweis.text}
         </span>
+        {/* K5 (Owner-Rundgang 0.6.2, S. 10): die ausführliche Begründung
+            (WARUM keine automatische Analyse möglich ist) steckt nicht mehr
+            als Dauer-Textblock im Panel, sondern hinter einem einklappbaren
+            «?»-Hinweis — die Kernaussage oben bleibt immer sichtbar. */}
+        {pdfHinweis.detail && (
+          <details data-testid="pdf-hinweis-mehr">
+            <summary style={{ cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+              ? Warum keine automatische Analyse
+            </summary>
+            <p style={{ color: 'var(--k-ink-faint)', fontSize: 11.5, lineHeight: 1.5, marginTop: 6 }}>
+              {pdfHinweis.detail}
+            </p>
+          </details>
+        )}
       </div>
     );
   }

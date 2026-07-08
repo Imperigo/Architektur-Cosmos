@@ -121,8 +121,17 @@ export type PdfPfadModus = 'vision-anfrage' | 'hinweis';
 
 export interface PdfPfadEntscheid {
   modus: PdfPfadModus;
+  /** Kurze, IMMER sichtbare Kernaussage (K5: keine langen Textblöcke im
+   * Panel) — trägt die ehrlichen Kernbegriffe («keine automatische
+   * Analyse»/«DXF»), nie nur hinter einem Klick versteckt. */
   text: string;
+  /** Ausführliche Begründung für den einklappbaren «?»-Hinweis (K5,
+   * Owner-Rundgang 0.6.2 S. 10: «beschreibende Textblöcke nutzlos») —
+   * optional, fehlt beim (noch nicht erreichbaren) vision-anfrage-Erfolgsfall. */
+  detail?: string;
 }
+
+const DXF_WEG_KURZ = 'DXF beim Unternehmer anfordern statt PDF.';
 
 const DXF_WEG =
   'Konkreter Weg: DXF beim Unternehmer anfordern (R12/AC1009 wird von KosmoOrbit gelesen) — der Import-Bericht danach zeigt Match-Quote, unklassierte Layer und offene Punkte.';
@@ -163,12 +172,19 @@ export function pdfImportPfad(
     }
     return {
       modus: 'vision-anfrage',
-      text: `${VISION_LUECKE} Bis der Anschluss steht, gilt derselbe Weg wie ohne Cloud-KI: ${DXF_WEG}`,
+      // K5: kurze Kernaussage direkt sichtbar, die Begründung wandert in
+      // den einklappbaren «?»-Hinweis (`detail`).
+      text: `${VISION_LUECKE} ${DXF_WEG_KURZ}`,
+      detail: `Bis der Anschluss steht, gilt derselbe Weg wie ohne Cloud-KI: ${DXF_WEG}`,
     };
   }
   return {
     modus: 'hinweis',
-    text:
+    // K5 (Owner-Rundgang 0.6.2, S. 10): «beschreibende Textblöcke nutzlos»
+    // — die Kernaussage bleibt EIN kurzer Satz mit den ehrlichen Kern-
+    // begriffen, die ausführliche Begründung steht im «?»-Hinweis (`detail`).
+    text: `PDF erkannt — keine automatische Analyse möglich (fehlt: verlässliche Vektor-Geometrie). ${DXF_WEG_KURZ}`,
+    detail:
       'Dies ist ein PDF-Plan des Unternehmers. PDF trägt in aller Regel keine verlässliche ' +
       'Vektor-Geometrie wie DXF — ohne Cloud-KI (aktive Betriebsart Standard/Remote, oder Cloud ' +
       `ohne konfigurierten Anthropic-Zugang) ist keine automatische Analyse möglich. ${DXF_WEG}`,

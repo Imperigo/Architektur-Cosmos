@@ -294,8 +294,12 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     const ren = wall.meta?.renovation;
 
     if (ren === 'abbruch') {
-      // Abbruch (SIA-Umbau-Lesart): EIN Poché über die Gesamtdicke — die
-      // Schichten sind egal, es kommt weg. Nicht vereinigt, Kreuz je Teilfläche.
+      // Abbruch (SIA-Umbau-Lesart, K2-bereinigt): EIN Poché über die
+      // Gesamtdicke — die Schichten sind egal, es kommt weg. Nicht vereinigt
+      // (jedes Bauteil bleibt eine eigene Fläche). Owner-Rundgang 0.6.2 (S. 18):
+      // KEIN Diagonalkreuz mehr über die ganze Wand (SIA 400 kennt die gelbe
+      // Signatur als Fläche, kein Bauteil-X) — die gelbe Tönung + der
+      // gestrichelte Abbruch-Stift (plansvg.ts/PlanView.tsx) sind Signatur genug.
       const outline = wallOutlineMitered(wall, assembly, endMiters);
       const cutPolys: Poly[] = strips.length > 0 ? difference([outline], strips) : [outline];
       const material = assembly.layers.find((l) => l.function === 'tragend')?.material ?? 'masse';
@@ -304,17 +308,6 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
           rings: groupRings(cutPolys.map((p) => [...p])),
           classes: ['cut', 'tragend', `material-${material}`, 'renovation-abbruch'],
         });
-      }
-      for (const ring of cutPolys) {
-        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-        for (const p of ring) {
-          x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y);
-          x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y);
-        }
-        if (x0 === Infinity) continue;
-        const kreuz = ['symbol', 'abbruch-kreuz', 'renovation-abbruch'];
-        lines.push({ a: { x: x0, y: y0 }, b: { x: x1, y: y1 }, classes: kreuz });
-        lines.push({ a: { x: x0, y: y1 }, b: { x: x1, y: y0 }, classes: kreuz });
       }
     } else if (phase === 'vorprojekt') {
       // Vorprojekt (SIA 31): Wand als EIN Poché über die Gesamtdicke — keine Schichten

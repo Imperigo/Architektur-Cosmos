@@ -19,6 +19,14 @@ export type UmbauFilter = 'bestand' | 'abbruch' | 'neu';
  * Ohne Filter kommt der Original-Doc zurück (keine Kopie, byte-identische
  * Ableitungen). Der Klon teilt die Entity-Objekte — NUR für Ableitungen
  * verwenden, nie mutieren.
+ *
+ * K2 (Owner-Rundgang 0.6.2, S. 18): das Stützenraster (`GridAxis`, die
+ * einzige dauerhaft im Code gerenderte Konstruktionsachse, s. T3/ROADMAP 143)
+ * fällt aus JEDER gefilterten Umbau-Sicht heraus — Abbruch-/Neubau-/
+ * Bestandspläne sind SIA-Druckbilder, keine Zeichenhilfe-Ansicht. Ohne
+ * Filter (kombinierter Plan) bleibt das Raster unverändert sichtbar wie
+ * bisher, nur die drei Blatt-Platzierungen (`SheetPlacement.umbau`) werden
+ * sauberer.
  */
 export function docFuerUmbau(doc: KosmoDoc, filter?: UmbauFilter): KosmoDoc {
   if (!filter) return doc;
@@ -37,6 +45,7 @@ export function docFuerUmbau(doc: KosmoDoc, filter?: UmbauFilter): KosmoDoc {
   sicht.settings = doc.settings;
   for (const [id, e] of doc.entities) {
     if (weg.has(id)) continue;
+    if (e.kind === 'grid') continue; // K2: keine Achslinien im Umbau-Druckbild
     if (e.kind === 'opening' && weg.has((e as Opening).wallId)) continue;
     if (e.kind === 'aussparung' && weg.has((e as Aussparung).hostId)) continue;
     sicht.entities.set(id, e);

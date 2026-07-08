@@ -1064,7 +1064,7 @@ export const setRenovation = registerCommand({
   id: 'design.renovationSetzen',
   title: 'Umbau-Status setzen',
   description:
-    'Setzt den Umbau-Status auf Elemente (Umbau-Pläne nach SIA 400: Bestand schwarz, Neubau rot, Abbruch gelb mit Kreuz). status weglassen = Status entfernen (Element gilt wieder als normal).',
+    'Setzt den Umbau-Status auf Elemente (Umbau-Pläne nach SIA 400: Bestand einheitlich grau, Neubau rot, Abbruch gelb — je EINE Fläche, kein Kreuz, keine Konstruktionsachsen im Druckbild). status weglassen = Status entfernen (Element gilt wieder als normal).',
   params: z.object({
     ids: z.array(z.string()).min(1).describe('Element-IDs'),
     status: z.enum(['bestand', 'neu', 'abbruch']).optional(),

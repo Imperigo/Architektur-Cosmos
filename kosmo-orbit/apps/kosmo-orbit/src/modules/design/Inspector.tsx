@@ -56,11 +56,15 @@ export function Inspector() {
   return (
     <div
       data-testid="inspector"
+      // K3 (Owner S. 8): «Popup-Texte dürfen niemals den Block verlassen».
+      className="k-dialog"
       style={{
         position: 'absolute',
         right: 12,
         bottom: 12,
         width: 250,
+        maxHeight: 'calc(100% - 24px)',
+        overflow: 'auto',
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',
         borderRadius: 'var(--k-radius-md)',

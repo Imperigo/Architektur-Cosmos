@@ -64,6 +64,7 @@ export function planInnerSvg(
     const isProjection = r.classes.includes('projection');
     const neu = r.classes.includes('renovation-neu');
     const abbruch = r.classes.includes('renovation-abbruch');
+    const bestand = r.classes.includes('renovation-bestand');
     // svg2pdf rendert SVG-Patterns nicht zuverlässig → solides Poché (SIA-Druckkonvention)
     let fill = isCore ? '#c9c9c9' : isDaemmung ? '#efefef' : isProjection ? 'none' : 'white';
     let stroke = 'black';
@@ -73,6 +74,14 @@ export function planInnerSvg(
     } else if (abbruch) {
       fill = '#f3e29b';
       stroke = ABBRUCH_STIFT;
+    } else if (bestand) {
+      // K2 (Owner-Rundgang 0.6.2, S. 18): explizit als Bestand markierte
+      // Bauteile einheitlich grau über ALLE Schichten (Kern UND
+      // Dämmung/Bekleidung) — vorher tönte nur die tragende Schicht grau,
+      // die übrigen Schichten blieben weiss ("hälftig grau"). Der Umbau-
+      // Status zeigt den Bestand als Ganzes, nicht den Materialaufbau.
+      fill = isProjection ? 'none' : '#c9c9c9';
+      stroke = 'black';
     }
     // Themenplan (A5): Regel-Farbe übersteuert die Füllung, der Stift bleibt
     const themaFarbe = themaFuer(r.classes);

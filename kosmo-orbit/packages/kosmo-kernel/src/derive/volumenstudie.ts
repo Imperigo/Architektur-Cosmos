@@ -27,8 +27,23 @@ export interface StudienOptionen {
   zielGf: number;
   /** Nutzung: reines Wohnen oder gemischt (Gewerbe-EG 4 m, Turm als Cluster). */
   nutzung?: 'wohnen' | 'gemischt';
-  /** Wohn-Geschosshöhe ok–ok in mm (Standard 2800, Owner-Regel). */
+  /**
+   * Geschosshöhe ok–ok in mm — Owner-Rundgang 0.6.2 (S. 8): die Geschoss-
+   * höhe ist PROJEKTSPEZIFISCH (Wettbewerbsvorgabe/Architekt-Entscheid/
+   * SIA-Minimum/lichte Raumhöhe), kein universeller Fixwert. Gesetzt,
+   * überschreibt sie BEIDE Defaults (Wohnen 2.80 m UND, bei `nutzung:
+   * 'gemischt'`, das Gewerbe-EG 4.00 m) — das Turm-Cluster-OG (3.50 m,
+   * `eig.turm`) bleibt ein Spezialfall der Vertical-Cluster-Logik und wird
+   * hiervon bewusst nicht berührt. Ohne Angabe: unverändert 2800/4000.
+   */
   geschosshoehe?: number;
+  /**
+   * Herkunft der Geschosshöhe (K4, Owner S. 8) — rein beschreibend, geht in
+   * KEINE Berechnung ein (siehe `hoehen` im Ergebnis für die tatsächlich
+   * gerechneten Werte). Panel-Ebene: erscheint als ehrlicher Beisatz
+   * («Geschosshöhe 3.00 m — Wettbewerbsvorgabe») neben dem Eingabefeld.
+   */
+  geschosshoeheHerkunft?: 'wettbewerb' | 'architekt' | 'sia-minimum' | 'standard';
   /** Maximale Gebäudehöhe mm (Zonenrecht), Standard 25 m. */
   maxHoehe?: number;
   /** Grenzabstand mm (Standard 4 m). */
@@ -147,8 +162,11 @@ export function generiereVolumenstudien(parzelle: Pt[], opts: StudienOptionen): 
   ): StudienVariante | null => {
     const flaeche = footprints.reduce((s, f) => s + polygonArea(f), 0) / 1e6;
     if (flaeche < 40) return null;
-    // Höhenlogik: EG + n×OG (Owner: Wohnen 2.80; gemischt: EG 4.00; Turm-OG 3.50)
-    const eg = gemischt ? 4000 : wohnOg;
+    // Höhenlogik: EG + n×OG (Owner: Wohnen 2.80; gemischt: EG 4.00; Turm-OG 3.50).
+    // K4: eine EXPLIZIT gesetzte Geschosshöhe (Wettbewerbsvorgabe/Architekt/
+    // SIA-Minimum) überschreibt auch das gemischt-EG — der Standard-Fixwert
+    // 4.00 gilt nur, solange niemand projektspezifisch etwas anderes vorgibt.
+    const eg = gemischt ? (opts.geschosshoehe ?? 4000) : wohnOg;
     const og = gemischt && eig.turm ? 3500 : wohnOg;
     const maxGeschosse = Math.max(1 + Math.floor((maxH - eg) / og), 1);
     const geschosse = Math.min(Math.max(Math.ceil(opts.zielGf / flaeche), 1), maxGeschosse);

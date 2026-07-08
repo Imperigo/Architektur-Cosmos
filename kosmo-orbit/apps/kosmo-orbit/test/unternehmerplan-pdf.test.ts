@@ -114,6 +114,26 @@ describe('Betriebsarten-Gate (pdfImportPfad)', () => {
     expect(e.text).toMatch(/DXF/);
   });
 
+  // K5 (Owner-Rundgang 0.6.2, S. 10): die Kernaussage bleibt EIN kurzer Satz
+  // (kein Dauer-Textblock im Panel); die ausführliche Begründung steht
+  // separat in `detail`, fürs einklappbare «?»-Panel.
+  it('hinweis-Text bleibt kurz (K5) — die ausführliche Begründung steckt separat in `detail`', () => {
+    const e = pdfImportPfad(lage({ betriebsart: 'standard' }));
+    expect(e.text.length).toBeLessThan(160);
+    expect(e.detail).toBeDefined();
+    expect(e.detail).toMatch(/keine automatische Analyse/);
+    expect(e.detail!.length).toBeGreaterThan(e.text.length);
+  });
+
+  it('vision-anfrage-Lücken-Text bleibt kurz (K5); `detail` trägt den DXF-Weg ausführlich', () => {
+    const e = pdfImportPfad(
+      lage({ betriebsart: 'cloud', provider: 'anthropic', anthropicSchluessel: 'sk-test' }),
+      false,
+    );
+    expect(e.detail).toBeDefined();
+    expect(e.detail).toMatch(/DXF beim Unternehmer anfordern/);
+  });
+
   it('anthropicUnterstuetztPdfVision meldet ehrlich den heutigen Stand (kein Bild-/Dokument-Input)', () => {
     expect(anthropicUnterstuetztPdfVision()).toBe(false);
   });

@@ -1083,6 +1083,45 @@ describe('Volumenstudien: Owner-Regeln (Höhen, Spänner, Hof, 3h)', () => {
     expect(zeilen.tiefe).toBe(14000);
     expect(zeilen.tiefeOk).toBe(true);
   });
+
+  // K4 (Owner-Rundgang 0.6.2, S. 8): Geschosshöhe ist projektspezifisch
+  // (Wettbewerbsvorgabe/Architekt/SIA-Minimum), nicht universell 2.80/4.00.
+  describe('K4: explizite Geschosshöhe wirkt auf Geschosszahl/GF', () => {
+    it('Wohnen: eine höhere Geschosshöhe (z.B. 3.20 m Wettbewerbsvorgabe) senkt bei fixer maxHoehe die Geschosszahl', () => {
+      const parzelle = P(60000, 60000);
+      const standard = generiereVolumenstudien(parzelle, { zielGf: 8000, maxHoehe: 25000 });
+      const hoeher = generiereVolumenstudien(parzelle, { zielGf: 8000, maxHoehe: 25000, geschosshoehe: 3200 });
+      const riegelStandard = standard.find((x) => x.id === 'riegel')!;
+      const riegelHoeher = hoeher.find((x) => x.id === 'riegel')!;
+      expect(riegelStandard.hoehen).toEqual({ eg: 2800, og: 2800 });
+      expect(riegelHoeher.hoehen).toEqual({ eg: 3200, og: 3200 });
+      // Gleiche maxHoehe, grössere OG-Höhe → nie mehr, oft weniger max. Geschosse
+      const maxGeschosseStandard = Math.floor((25000 - 2800) / 2800) + 1;
+      const maxGeschosseHoeher = Math.floor((25000 - 3200) / 3200) + 1;
+      expect(maxGeschosseHoeher).toBeLessThan(maxGeschosseStandard);
+      expect(riegelHoeher.geschosse).toBeLessThanOrEqual(maxGeschosseHoeher);
+    });
+
+    it('gemischt: geschosshoehe überschreibt AUCH das hartcodierte Gewerbe-EG (4.00), Turm-OG (3.50) bleibt unberührt', () => {
+      const parzelle = P(80000, 60000);
+      const v = generiereVolumenstudien(parzelle, {
+        zielGf: 20000, nutzung: 'gemischt', maxHoehe: 25000, geschosshoehe: 3000,
+      });
+      const riegel = v.find((x) => x.id === 'riegel')!;
+      expect(riegel.hoehen).toEqual({ eg: 3000, og: 3000 });
+      const turm = v.find((x) => x.id === 'turm')!;
+      // Turm-Cluster-OG bleibt die eigene 3.50-m-Logik, unabhängig von geschosshoehe
+      expect(turm.hoehen).toEqual({ eg: 3000, og: 3500 });
+    });
+
+    it('ohne geschosshoehe bleiben die Owner-Defaults (2.80 Wohnen / 4.00 gemischt-EG) unverändert — Golden-Verträglichkeit', () => {
+      const parzelle = P(80000, 60000);
+      const wohnen = generiereVolumenstudien(parzelle, { zielGf: 8000 });
+      expect(wohnen.find((x) => x.id === 'riegel')!.hoehen.eg).toBe(2800);
+      const gemischt = generiereVolumenstudien(parzelle, { zielGf: 20000, nutzung: 'gemischt', maxHoehe: 25000 });
+      expect(gemischt.find((x) => x.id === 'riegel')!.hoehen.eg).toBe(4000);
+    });
+  });
 });
 
 describe('Blatt-Texte (Plakat)', () => {
@@ -1745,7 +1784,7 @@ describe('Umbau-Status (Vision A1)', () => {
     expect((doc.get<Wall>(wall2)!.meta ?? {}).renovation).toBeUndefined();
   });
 
-  it('Abbruch: EIN Poché über die Gesamtdicke, Kreuz je Teilfläche, gelb/gestrichelt im Druck', async () => {
+  it('Abbruch: EIN Poché über die Gesamtdicke, gelb/gestrichelt im Druck, KEIN Diagonalkreuz (K2)', async () => {
     const { doc, storeyId, wall1 } = haus();
     execute(doc, 'design.oeffnungSetzen', { wallId: wall1, openingType: 'tuer', center: 2000, width: 900, height: 2200, sill: 0 });
     execute(doc, 'design.renovationSetzen', { ids: [wall1], status: 'abbruch' });
@@ -1754,8 +1793,9 @@ describe('Umbau-Status (Vision A1)', () => {
     expect(abbruch).toHaveLength(1);
     // Keine Dämm-Schicht mehr für die Abbruchwand (Gesamtdicke), Wand 2 behält ihre
     expect(plan.regions.filter((r) => r.classes.includes('daemmung'))).toHaveLength(1);
-    // Tür-Strip teilt die Wand in 2 Teilflächen → 2 Kreuze à 2 Linien
-    expect(plan.lines.filter((l) => l.classes.includes('abbruch-kreuz'))).toHaveLength(4);
+    // K2 (Owner-Rundgang 0.6.2, S. 18): kein Diagonalkreuz mehr über die
+    // ganze Wand — die gelbe Fläche allein ist die SIA-Signatur.
+    expect(plan.lines.filter((l) => l.classes.includes('abbruch-kreuz'))).toHaveLength(0);
     const { planInnerSvg } = await import('../src');
     const svg = planInnerSvg(doc, storeyId, 50).inner;
     expect(svg).toContain('#f3e29b'); // Abbruch-Gelb
@@ -1773,6 +1813,68 @@ describe('Umbau-Status (Vision A1)', () => {
     // Ohne Status bleibt der Druck frei von Umbau-Farben (Golden-Verträglichkeit)
     execute(doc, 'design.renovationSetzen', { ids: [wall2] });
     expect(planInnerSvg(doc, storeyId, 50).inner).not.toContain('#b3261e');
+  });
+
+  it('Bestand: einheitlich grau über ALLE Schichten im Druck, nicht nur den Kern (K2 — vorher "hälftig grau")', async () => {
+    // Eine einzelne freistehende Wand (3-Schicht-AW: putz/daemmung/beton) —
+    // isoliert, damit keine zweite (unmarkierte) Wand mit ihrer eigenen
+    // weissen Bekleidungs-Fläche die Fill-Assertion verfälscht.
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 4000, y: 0 } });
+    const wallId = (w.patches[0] as { id: string }).id;
+    execute(doc, 'design.renovationSetzen', { ids: [wallId], status: 'bestand' });
+    const plan = derivePlan(doc, storeyId);
+    const bestandRegionen = plan.regions.filter((r) => r.classes.includes('renovation-bestand'));
+    // Kern UND Dämmschicht tragen beide die renovation-bestand-Klasse
+    expect(bestandRegionen.some((r) => r.classes.includes('tragend'))).toBe(true);
+    expect(bestandRegionen.some((r) => r.classes.includes('daemmung'))).toBe(true);
+    const { planInnerSvg } = await import('../src');
+    const svg = planInnerSvg(doc, storeyId, 50).inner;
+    // Jede Bestand-Fläche (Kern + Dämmung + Bekleidung) füllt einheitlich
+    // #c9c9c9 — nicht "weiss" für die Nicht-Kern-Schichten (das wäre das
+    // gerügte Halbgrau).
+    expect(svg).not.toContain('fill="white"');
+    expect((svg.match(/#c9c9c9/g) ?? []).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('docFuerUmbau (K2): Stützenraster fällt aus JEDER gefilterten Umbau-Sicht, bleibt im kombinierten Plan', async () => {
+    const { doc, storeyId, wall1 } = haus();
+    execute(doc, 'design.rasterSetzen', { storeyId, achsmass: 4500, anzahl: 2 });
+    execute(doc, 'design.renovationSetzen', { ids: [wall1], status: 'abbruch' });
+    const { docFuerUmbau } = await import('../src');
+    expect(doc.byKind('grid').length).toBeGreaterThan(0);
+    // Kombinierter Plan (kein Filter): Raster bleibt wie bisher sichtbar
+    expect(derivePlan(docFuerUmbau(doc), storeyId).axes.length).toBeGreaterThan(0);
+    // JEDE gefilterte Umbau-Sicht: keine Konstruktionsachsen im Druckbild
+    expect(derivePlan(docFuerUmbau(doc, 'abbruch'), storeyId).axes).toHaveLength(0);
+    expect(derivePlan(docFuerUmbau(doc, 'neu'), storeyId).axes).toHaveLength(0);
+    expect(derivePlan(docFuerUmbau(doc, 'bestand'), storeyId).axes).toHaveLength(0);
+  });
+
+  it('Alle drei Umbau-Zustände nebeneinander: SIA-saubere Signaturen ohne Kreuz/Achse, unterscheidbare Klassen (K2)', async () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const W = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      (execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a, b }).patches[0] as { id: string }).id;
+    const bestand = W({ x: 0, y: 0 }, { x: 4000, y: 0 });
+    const abbruch = W({ x: 5000, y: 0 }, { x: 9000, y: 0 });
+    const neu = W({ x: 10000, y: 0 }, { x: 14000, y: 0 });
+    execute(doc, 'design.renovationSetzen', { ids: [bestand], status: 'bestand' });
+    execute(doc, 'design.renovationSetzen', { ids: [abbruch], status: 'abbruch' });
+    execute(doc, 'design.renovationSetzen', { ids: [neu], status: 'neu' });
+    const plan = derivePlan(doc, storeyId);
+    // Jeder Zustand trägt genau seine eigene Klasse — keine Überschneidung
+    expect(plan.regions.some((r) => r.classes.includes('renovation-bestand'))).toBe(true);
+    expect(plan.regions.some((r) => r.classes.includes('renovation-abbruch'))).toBe(true);
+    expect(plan.regions.some((r) => r.classes.includes('renovation-neu'))).toBe(true);
+    // K2: kein Bauteil trägt je ein Diagonalkreuz-Symbol
+    expect(plan.lines.some((l) => l.classes.includes('abbruch-kreuz'))).toBe(false);
+    // Kein Stützenraster gesetzt → keine Achsen sowieso; ohne Filter unverändert leer
+    expect(plan.axes).toHaveLength(0);
+    const { planInnerSvg } = await import('../src');
+    const svg = planInnerSvg(doc, storeyId, 50).inner;
+    expect(svg).toContain('#c9c9c9'); // Bestand-Grau
+    expect(svg).toContain('#f3e29b'); // Abbruch-Gelb
+    expect(svg).toContain('#e9c8c5'); // Neubau-Rot(-Tönung)
   });
 
   it('IFC trägt Pset_KosmoUmbau; storey/assembly werden abgewiesen', async () => {

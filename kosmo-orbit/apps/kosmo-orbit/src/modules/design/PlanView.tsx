@@ -431,9 +431,14 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               const isCore = r.classes.includes('tragend') || r.classes.includes('stuetze');
               const isDaemmung = r.classes.includes('daemmung');
               const isProjection = r.classes.includes('projection');
-              // Umbau-Farbcode (SIA 400): Neubau rot, Abbruch gelb, Bestand normal
+              // Umbau-Farbcode (SIA 400): Neubau rot, Abbruch gelb, Bestand einheitlich grau
               const neu = r.classes.includes('renovation-neu');
               const abbruch = r.classes.includes('renovation-abbruch');
+              // K2 (Owner-Rundgang 0.6.2, S. 18): explizit markierter Bestand
+              // bekommt EINE einheitliche graue Fläche über alle Schichten —
+              // sonst tönte nur die tragende Schicht (hatch-beton), die
+              // Dämmung/Bekleidung blieb weiss ("hälftig grau").
+              const bestand = r.classes.includes('renovation-bestand');
               return (
                 <path
                   key={i}
@@ -445,13 +450,15 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                       ? 'rgba(179, 38, 30, 0.22)'
                       : abbruch
                         ? 'rgba(214, 178, 20, 0.35)'
-                        : isCore
-                          ? 'url(#hatch-beton)'
-                          : isDaemmung
-                            ? 'url(#hatch-daemmung)'
-                            : isProjection
-                              ? 'none'
-                              : 'var(--k-surface)'
+                        : bestand
+                          ? '#c9c9c9'
+                          : isCore
+                            ? 'url(#hatch-beton)'
+                            : isDaemmung
+                              ? 'url(#hatch-daemmung)'
+                              : isProjection
+                                ? 'none'
+                                : 'var(--k-surface)'
                   }
                   stroke={neu ? '#b3261e' : abbruch ? '#8a7500' : 'var(--k-ink)'}
                   strokeWidth={isProjection ? 8 : isCore ? 24 : 12}

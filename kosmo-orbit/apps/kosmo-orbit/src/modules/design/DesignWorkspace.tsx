@@ -29,8 +29,7 @@ import {
   type Zone,
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
-import { importBerichtText, useUnternehmerplan } from './unternehmerplan';
-import { betriebsLageAusRoh, erkennePdf } from './unternehmerplan-pdf';
+import { verarbeiteUnternehmerplanDatei } from './unternehmerplan';
 import { VERSCHIEBBAR } from './plan-hit-test';
 import { zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { werkzeugFuerTaste } from './zeichen-shortcuts';
@@ -193,6 +192,9 @@ export function DesignWorkspace() {
   // Volumenstudien (Q12): letzte Zone = Parzelle, Varianten als Gruppe übernehmen
   const [studieOffen, setStudieOffen] = useState(false);
   const [drawOffen, setDrawOffen] = useState(false);
+  // K5 (Owner-Rundgang 0.6.2, S. 10): Drag-Hover-Zustand der kompakten
+  // Unternehmerplan-Upload-Fläche (rein visuell).
+  const [uplanDragUeber, setUplanDragUeber] = useState(false);
   const [listeOffen, setListeOffen] = useState(false);
   const [rasterOffen, setRasterOffen] = useState(false);
   // Splat-Werkzeug (Owner-Korrektur 05.07.: NICHT HomeStation-exklusiv) —
@@ -206,6 +208,16 @@ export function DesignWorkspace() {
   const [wohnungstyp, setWohnungstyp] = useState<string | null>(null);
   const [zielGf, setZielGf] = useState<number | null>(null);
   const [maxHoeheM, setMaxHoeheM] = useState(25);
+  // K3 (Owner-Rundgang 0.6.2, S. 8): «Textblöcke dürfen niemals überlappen» —
+  // die Geschossleiste (links oben) und das Volumenstudien-Panel sassen
+  // beide fest bei left:12, nur 40 px Top-Abstand auseinander; schon ab
+  // einem einzigen Geschoss ragt die Geschossleiste (Buttons + Stapeln-
+  // Knopf) tiefer als das und überdeckt das Studien-Panel. Fix weiter unten
+  // (nach `storeys`): das Studien-Panel misst die tatsächliche Geschoss-
+  // leisten-Höhe und rückt IMMER darunter — keine Kollision, unabhängig von
+  // der Geschosszahl.
+  const geschossleisteRef = useRef<HTMLDivElement>(null);
+  const [geschossleisteHoehe, setGeschossleisteHoehe] = useState(40);
 
   // D1: Deep-Links der Zentrale — KosmoDraw/KosmoSketch öffnen die Werkstatt
   // mit dem passenden Panel bzw. Werkzeug (einmaliger Merker)
@@ -287,6 +299,11 @@ export function DesignWorkspace() {
 
   const doc = useProject.getState().doc;
   const storeys = useMemo(() => doc.storeysOrdered(), [doc, revision]);
+  // K3: Geschossleisten-Höhe nachmessen, sobald sich die Geschosszahl ändert
+  // (neues Geschoss, Undo, Projektwechsel) — das Studien-Panel liest das ab.
+  useEffect(() => {
+    setGeschossleisteHoehe(geschossleisteRef.current?.offsetHeight ?? 40);
+  }, [storeys.length]);
   // Aktives Bemassungs-Preset aus den Settings ableiten (Anzeige im Select)
   const bemassungPreset = useMemo(() => {
     const b = doc.settings.bemassung;
@@ -846,8 +863,11 @@ export function DesignWorkspace() {
           zIndex: 2,
         }}
       >
-        <Badge hue={moduleHue.design}>KosmoDesign</Badge>
-        <span style={{ width: 8 }} />
+        {/* K6 (Owner-Rundgang 0.6.2, S. 3): «KosmoDesign» stand hier UND in
+            der App-Kopfzeile (App.tsx, dynamisches Modul-Badge, gilt für
+            JEDE Station) — doppelte Beschriftung. Die Kopfzeile ist die
+            generische, für alle Stationen gültige Anzeige und bleibt; das
+            lokale Duplikat hier fällt weg. */}
         <span
           data-testid="leiste-gruppe-zeichnen"
           className={fokusKlasse(stufeFuerGruppe('zeichnen'))}
@@ -1064,46 +1084,7 @@ export function DesignWorkspace() {
               input.onchange = async () => {
                 const f = input.files?.[0];
                 if (!f) return;
-                // C4b/C-E7: DWG ist proprietär — kein Ladeversuch, ehrliche Absage
-                // statt eines stillen Fehlschlags beim Parsen.
-                if (/\.dwg$/i.test(f.name)) {
-                  melde('DWG ist proprietär — bitte als DXF exportieren (jedes CAD kann das).', { ton: 'fehler' });
-                  return;
-                }
-                // C5 (Nacht v0.6.2): PDF geht NICHT in den DXF-Parser — Endung
-                // zuerst, `%PDF`-Magic-Bytes als Fallback bei falscher Endung
-                // (z.B. ein PDF, das versehentlich als .dxf verschickt wurde).
-                const ersteBytes = new Uint8Array(await f.slice(0, 4).arrayBuffer());
-                if (erkennePdf(f.name, ersteBytes)) {
-                  let lage: ReturnType<typeof betriebsLageAusRoh>;
-                  try {
-                    const raw = localStorage.getItem('kosmo.llm');
-                    lage = betriebsLageAusRoh(raw ? JSON.parse(raw) : null);
-                  } catch {
-                    lage = betriebsLageAusRoh(null);
-                  }
-                  useUnternehmerplan.getState().pdfLaden(f.name, lage);
-                  const { pdfHinweis } = useUnternehmerplan.getState();
-                  if (pdfHinweis) melde(pdfHinweis.text, { ton: 'info' });
-                  return;
-                }
-                const text = await f.text();
-                const { doc, activeStoreyId } = useProject.getState();
-                if (!activeStoreyId) return;
-                const plan = derivePlan(doc, activeStoreyId);
-                useUnternehmerplan.getState().laden(f.name, text, plan);
-                const { dxf, abgleich, fehler } = useUnternehmerplan.getState();
-                if (fehler) {
-                  melde(fehler, { ton: 'fehler' });
-                  return;
-                }
-                if (dxf && abgleich) {
-                  melde(importBerichtText(dxf.bericht, abgleich), { ton: 'erfolg' });
-                  // Overlay einmalig beim Laden einschalten — nur wenn es noch aus ist.
-                  if (!useUnternehmerplan.getState().overlaySichtbar) {
-                    useUnternehmerplan.getState().overlayUmschalten();
-                  }
-                }
+                await verarbeiteUnternehmerplanDatei(f);
               };
               input.click();
             }}
@@ -1532,7 +1513,74 @@ export function DesignWorkspace() {
         </div>
       )}
       {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
-      <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
+      <div
+        style={{ position: 'relative', flex: 1, display: 'flex' }}
+        // K5 (Owner-Rundgang 0.6.2, S. 10): «beschreibende Textblöcke nutzlos
+        // … Funktion, die als One-Click mit Upload-Oberfläche von Kosmo
+        // komplett selbst erledigt wird» — die ganze Arbeitsfläche ist ein
+        // Drop-Ziel; die Fläche unten erscheint NUR während eines echten
+        // Drags (zeigt sich nie ungefragt, kostet also nie feste Höhe/Breite
+        // — eine frühere Toolbar-Zeilen-Variante schob die Plan-/3D-Fläche
+        // nach unten und riss den harten Stützenraster-Klick-Test aus dem
+        // Bild). Klick bleibt zusätzlich am bestehenden «DXF laden»-Knopf,
+        // derselbe Handler (`verarbeiteUnternehmerplanDatei`, `unternehmerplan.ts`).
+        onDragOver={(e) => {
+          if (e.dataTransfer?.types?.includes('Files')) {
+            e.preventDefault();
+            setUplanDragUeber(true);
+          }
+        }}
+        onDragLeave={(e) => {
+          if (e.currentTarget === e.target) setUplanDragUeber(false);
+        }}
+        onDrop={(e) => {
+          if (!uplanDragUeber) return;
+          e.preventDefault();
+          setUplanDragUeber(false);
+          const f = e.dataTransfer.files?.[0];
+          if (f) {
+            nutzungMelden('export:import-dxf');
+            void verarbeiteUnternehmerplanDatei(f);
+          }
+        }}
+      >
+        {uplanDragUeber && (
+          <div
+            data-testid="uplan-upload"
+            role="button"
+            aria-label="Unternehmerplan hier ablegen — DXF wird verglichen, PDF wird erkannt"
+            title="Unternehmerplan hier ablegen — DXF wird verglichen, PDF wird erkannt"
+            onDrop={(e) => {
+              e.preventDefault();
+              setUplanDragUeber(false);
+              const f = e.dataTransfer.files?.[0];
+              if (f) {
+                nutzungMelden('export:import-dxf');
+                void verarbeiteUnternehmerplanDatei(f);
+              }
+            }}
+            onDragOver={(e) => e.preventDefault()}
+            style={{
+              position: 'absolute',
+              inset: 8,
+              zIndex: 60,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              padding: 16,
+              border: '2px dashed var(--k-accent)',
+              borderRadius: 'var(--k-radius-md)',
+              background: 'var(--k-accent-wash)',
+              color: 'var(--k-accent)',
+              fontSize: 14,
+              fontWeight: 600,
+              pointerEvents: 'auto',
+            }}
+          >
+            Unternehmerplan hier ablegen — DXF wird verglichen, PDF wird erkannt
+          </div>
+        )}
         {drawOffen && <DrawPanel />}
         {rasterOffen && <RasterPanel onClose={() => setRasterOffen(false)} />}
         {/* C4b (C-E4): Daten-Guard — die Karten-Liste erscheint automatisch,
@@ -1562,6 +1610,9 @@ export function DesignWorkspace() {
             setZielGf={setZielGf}
             maxHoeheM={maxHoeheM}
             setMaxHoeheM={setMaxHoeheM}
+            // K3: rückt IMMER unter die Geschossleiste, egal wie viele
+            // Geschosse (keine Bauteil-/Panel-Überlappung, s. Kommentar oben).
+            topOffset={geschossleisteHoehe + 20}
             onClose={() => setStudieOffen(false)}
           />
         )}
@@ -1620,6 +1671,7 @@ export function DesignWorkspace() {
         {meshEditId && (
           <div
             data-testid="mesh-edit-panel"
+            className="k-dialog"
             style={{
               position: 'absolute',
               left: 12,
@@ -1692,6 +1744,8 @@ export function DesignWorkspace() {
 
         {/* Geschossleiste */}
         <div
+          ref={geschossleisteRef}
+          data-testid="geschossleiste"
           style={{
             position: 'absolute',
             left: 12,
@@ -1829,12 +1883,16 @@ function StudienPanel({
   setZielGf,
   maxHoeheM,
   setMaxHoeheM,
+  topOffset,
   onClose,
 }: {
   zielGf: number | null;
   setZielGf: (v: number) => void;
   maxHoeheM: number;
   setMaxHoeheM: (v: number) => void;
+  /** K3: Top-Position in px — misst sich an der tatsächlichen Geschoss-
+   * leisten-Höhe, damit die beiden Panels nie überlappen (Owner S. 8). */
+  topOffset: number;
   onClose: () => void;
 }) {
   const revision = useProject((s) => s.revision);
@@ -1842,6 +1900,14 @@ function StudienPanel({
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const { doc, history } = useProject.getState();
   const [nutzung, setNutzung] = useState<'wohnen' | 'gemischt'>('wohnen');
+  // K4 (Owner-Rundgang 0.6.2, S. 8): Geschosshöhe ist projektspezifisch
+  // (Wettbewerbsvorgabe/Architekt-Entscheid/SIA-Minimum/lichte Raumhöhe) —
+  // kein universeller Fixwert. `null` = kein Override, die Owner-Defaults
+  // (2.80 Wohnen / 4.00 Gewerbe-EG, unverändert) gelten weiter.
+  const [geschosshoeheM, setGeschosshoeheM] = useState<number | null>(null);
+  const [geschosshoeheHerkunft, setGeschosshoeheHerkunft] = useState<
+    'wettbewerb' | 'architekt' | 'sia-minimum' | 'standard'
+  >('standard');
 
   // D1 (D-E2): aktive Zonenregel des Projekts speist die Studien-Defaults —
   // ohne Regel bleibt regelOptionen {} und nichts am bisherigen Verhalten
@@ -1870,6 +1936,15 @@ function StudienPanel({
 
   const zielEffektiv = zielGf ?? Math.max(Math.round(areaReport(doc).agfZiel) || 0, 500);
   const grenzabstandAnzeigeM = (regelOptionen.grenzabstand ?? 4000) / 1000;
+  // K4: die tatsächlich gerechnete Geschosshöhe — Override, falls gesetzt,
+  // sonst der unveränderte Owner-Default (2.80 Wohnen / 4.00 Gewerbe-EG).
+  const geschosshoeheEffektivM = geschosshoeheM ?? (nutzung === 'gemischt' ? 4 : 2.8);
+  const geschosshoeheHerkunftLabel: Record<typeof geschosshoeheHerkunft, string> = {
+    wettbewerb: 'Wettbewerbsvorgabe',
+    architekt: 'Architekt-Entscheid',
+    'sia-minimum': 'SIA-Minimum',
+    standard: nutzung === 'gemischt' ? 'Standard Gewerbe-EG' : 'Standard Wohnen',
+  };
 
   const varianten = useMemo(
     () =>
@@ -1879,10 +1954,13 @@ function StudienPanel({
             maxHoehe: maxHoeheM * 1000,
             nutzung,
             ...(regelOptionen.grenzabstand !== undefined ? { grenzabstand: regelOptionen.grenzabstand } : {}),
+            ...(geschosshoeheM !== null
+              ? { geschosshoehe: Math.round(geschosshoeheM * 1000), geschosshoeheHerkunft }
+              : {}),
           })
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parzelle, zielEffektiv, maxHoeheM, nutzung, revision, regelOptionen.grenzabstand],
+    [parzelle, zielEffektiv, maxHoeheM, nutzung, revision, regelOptionen.grenzabstand, geschosshoeheM, geschosshoeheHerkunft],
   );
 
   const uebernehmen = (id: string) => {
@@ -1957,9 +2035,9 @@ function StudienPanel({
       style={{
         position: 'absolute',
         left: 12,
-        top: 52,
+        top: topOffset,
         width: 268,
-        maxHeight: 'calc(100% - 64px)',
+        maxHeight: `calc(100% - ${topOffset + 12}px)`,
         zIndex: 4,
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',
@@ -2045,6 +2123,43 @@ function StudienPanel({
             >
               Gewerbe-EG 4.00
             </KButton>
+          </div>
+          {/* K4 (Owner-Rundgang 0.6.2, S. 8): Geschosshöhe ist projekt-
+              spezifisch (Wettbewerbsvorgabe/Architekt/SIA-Minimum) — Panel-
+              Eingabe + ehrliche Herkunfts-Beschriftung. Leeres Feld = kein
+              Override, die Owner-Defaults oben gelten unverändert weiter. */}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <label style={{ display: 'flex', gap: 5, alignItems: 'center', color: 'var(--k-ink-soft)' }}>
+              Geschosshöhe
+              <input
+                type="number"
+                step={0.05}
+                min={0}
+                placeholder={geschosshoeheEffektivM.toFixed(2)}
+                value={geschosshoeheM ?? ''}
+                data-testid="studie-geschosshoehe"
+                onChange={(e) => {
+                  const roh = e.target.value;
+                  setGeschosshoeheM(roh === '' ? null : Number(roh));
+                }}
+                style={{ ...inputStyle, width: 56 }}
+              />
+              m
+            </label>
+            <select
+              data-testid="studie-geschosshoehe-herkunft"
+              value={geschosshoeheHerkunft}
+              onChange={(e) => setGeschosshoeheHerkunft(e.target.value as typeof geschosshoeheHerkunft)}
+              style={{ ...inputStyle, width: 'auto' }}
+            >
+              <option value="standard">Standard</option>
+              <option value="wettbewerb">Wettbewerbsvorgabe</option>
+              <option value="architekt">Architekt-Entscheid</option>
+              <option value="sia-minimum">SIA-Minimum</option>
+            </select>
+          </div>
+          <div data-testid="studie-geschosshoehe-anzeige" style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+            Geschosshöhe {geschosshoeheEffektivM.toFixed(2)} m — {geschosshoeheHerkunftLabel[geschosshoeheHerkunft]}
           </div>
           {varianten.map((v) => (
             <div

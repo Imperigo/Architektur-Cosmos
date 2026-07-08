@@ -30,12 +30,16 @@ export function KennzahlenPanel() {
   return (
     <div
       data-testid="kennzahlen"
+      // K3 (Owner S. 8): «Popup-Texte dürfen niemals den Block verlassen» —
+      // dieselbe zentrale Overflow-Regel wie alle anderen Panels (T4b).
+      className="k-dialog"
       style={{
         position: 'absolute',
         right: 12,
         // unter den Trace/Graph-Knöpfen des Plans (keine Überlappung im Split)
         top: 44,
         width: 240,
+        maxHeight: 'calc(100% - 56px)',
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',
         borderRadius: 'var(--k-radius-md)',

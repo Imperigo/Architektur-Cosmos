@@ -78,11 +78,13 @@ test('Vollsimulation Umbau: Altbau-Sanierung Zürich-Aussersihl — Bestand mark
   await expect(page.locator('path.renovation-abbruch')).toHaveCount(0);
   await expect(page.locator('path.renovation-neu')).toHaveCount(0);
 
-  // Abbruch: die innere Trennwand → gelbe Fläche + Abbruch-Kreuz im Plan
+  // Abbruch: die innere Trennwand → gelbe Fläche im Plan. K2 (Owner-Rundgang
+  // 0.6.2, S. 18): kein Diagonalkreuz mehr über die ganze Wand — SIA-sauber
+  // ist die gelbe Fläche allein die Signatur.
   await page.evaluate((id) => window.__kosmo.state().select([id]), trennwand);
   await page.selectOption('[data-testid="inspector-renovation"]', 'abbruch');
   await expect(page.locator('path.renovation-abbruch')).toHaveCount(1);
-  await expect(page.locator('line.abbruch-kreuz')).toHaveCount(2);
+  await expect(page.locator('line.abbruch-kreuz')).toHaveCount(0);
 
   // Neu: die Gartenstützmauer → rote Fläche im Plan, Abbruch bleibt unverändert stehen
   await page.evaluate((id) => window.__kosmo.state().select([id]), gartenmauer);

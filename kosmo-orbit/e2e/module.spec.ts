@@ -1639,7 +1639,7 @@ test('Kosmo fährt die Kette per Sprache: stapeln über den Chat (Mock-Provider)
     .toBe(vorher + 2);
 });
 
-test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb mit Kreuz', async ({ page }) => {
+test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb (K2: kein Kreuz)', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
@@ -1665,10 +1665,12 @@ test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb mit
   });
   await page.selectOption('[data-testid="inspector-renovation"]', 'abbruch');
   await expect(page.locator('path.renovation-abbruch')).toHaveCount(1);
-  await expect(page.locator('line.abbruch-kreuz')).toHaveCount(2);
-  // Umschalten auf Neubau: Kreuz weg, rote Region da
-  await page.selectOption('[data-testid="inspector-renovation"]', 'neu');
+  // K2 (Owner-Rundgang 0.6.2, S. 18): kein Diagonalkreuz mehr — die gelbe
+  // Fläche allein ist die SIA-Signatur.
   await expect(page.locator('line.abbruch-kreuz')).toHaveCount(0);
+  // Umschalten auf Neubau: gelbe Region weg, rote Region da
+  await page.selectOption('[data-testid="inspector-renovation"]', 'neu');
+  await expect(page.locator('path.renovation-abbruch')).toHaveCount(0);
   await expect(page.locator('path.renovation-neu')).toHaveCount(1);
 });
 

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { dist, parseDxf, vergleichePlaene } from '@kosmo/kernel';
+import { melde } from '@kosmo/ui';
+import { derivePlan, dist, parseDxf, vergleichePlaene } from '@kosmo/kernel';
 import type {
   AbgleichBefund,
   Assembly,
@@ -11,7 +12,8 @@ import type {
   Pt,
   Wall,
 } from '@kosmo/kernel';
-import { pdfImportPfad, type BetriebsLage, type PdfPfadEntscheid } from './unternehmerplan-pdf';
+import { useProject } from '../../state/project-store';
+import { betriebsLageAusRoh, erkennePdf, pdfImportPfad, type BetriebsLage, type PdfPfadEntscheid } from './unternehmerplan-pdf';
 
 /**
  * Unternehmerplan-Laufzeitschicht (V1.6 Block C / C4a, Entscheide C-E4/C-E5
@@ -118,6 +120,60 @@ export const useUnternehmerplan = create<UnternehmerplanState>((set) => ({
   verwerfen: () => set({ ...ANFANGSZUSTAND }),
   overlayUmschalten: () => set((s) => ({ overlaySichtbar: !s.overlaySichtbar })),
 }));
+
+/**
+ * K5 (Owner-Rundgang 0.6.2, S. 10): EINE Verarbeitungslogik für JEDEN
+ * Unternehmerplan-Dateiweg — den Werkzeugleisten-Knopf «DXF laden»
+ * (`import-dxf`, `DesignWorkspace.tsx`) UND die kompakte Drop-Fläche
+ * (`data-testid="uplan-upload"`, `UnternehmerplanPanel.tsx`, Drag&Drop +
+ * Klick). Reiner Auszug aus dem ursprünglichen `import-dxf`-onChange,
+ * unverändertes Verhalten: DWG ehrlich abgewiesen (C-E7), PDF geht in den
+ * Betriebsarten-Gate-Hinweis (C5), DXF in den Abgleich (C4b). Modul-Funktion
+ * statt Hook — nur `.getState()`-Zugriffe und plain Imports, kein
+ * React-State nötig, darum aus JEDEM Handler ohne Hook-Regeln aufrufbar.
+ */
+export async function verarbeiteUnternehmerplanDatei(f: File): Promise<void> {
+  // C4b/C-E7: DWG ist proprietär — kein Ladeversuch, ehrliche Absage statt
+  // eines stillen Fehlschlags beim Parsen.
+  if (/\.dwg$/i.test(f.name)) {
+    melde('DWG ist proprietär — bitte als DXF exportieren (jedes CAD kann das).', { ton: 'fehler' });
+    return;
+  }
+  // C5 (Nacht v0.6.2): PDF geht NICHT in den DXF-Parser — Endung zuerst,
+  // `%PDF`-Magic-Bytes als Fallback bei falscher Endung (z.B. ein PDF, das
+  // versehentlich als .dxf verschickt wurde).
+  const ersteBytes = new Uint8Array(await f.slice(0, 4).arrayBuffer());
+  if (erkennePdf(f.name, ersteBytes)) {
+    let lage: ReturnType<typeof betriebsLageAusRoh>;
+    try {
+      const raw = localStorage.getItem('kosmo.llm');
+      lage = betriebsLageAusRoh(raw ? JSON.parse(raw) : null);
+    } catch {
+      lage = betriebsLageAusRoh(null);
+    }
+    useUnternehmerplan.getState().pdfLaden(f.name, lage);
+    const { pdfHinweis } = useUnternehmerplan.getState();
+    if (pdfHinweis) melde(pdfHinweis.text, { ton: 'info' });
+    return;
+  }
+  const text = await f.text();
+  const { doc, activeStoreyId } = useProject.getState();
+  if (!activeStoreyId) return;
+  const plan = derivePlan(doc, activeStoreyId);
+  useUnternehmerplan.getState().laden(f.name, text, plan);
+  const { dxf, abgleich, fehler } = useUnternehmerplan.getState();
+  if (fehler) {
+    melde(fehler, { ton: 'fehler' });
+    return;
+  }
+  if (dxf && abgleich) {
+    melde(importBerichtText(dxf.bericht, abgleich), { ton: 'erfolg' });
+    // Overlay einmalig beim Laden einschalten — nur wenn es noch aus ist.
+    if (!useUnternehmerplan.getState().overlaySichtbar) {
+      useUnternehmerplan.getState().overlayUmschalten();
+    }
+  }
+}
 
 /** Eine Diff-Karte für die Kosmo-Panel-Anzeige (Bau der UI/Commands: C4b). */
 export interface UnternehmerKarte {
