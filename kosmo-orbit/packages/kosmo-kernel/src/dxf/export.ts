@@ -244,6 +244,9 @@ function dxfText(s: string): string {
     .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue')
     .replace(/Ä/g, 'Ae').replace(/Ö/g, 'Oe').replace(/Ü/g, 'Ue')
     .replace(/ß/g, 'ss')
+    // Mass-Typografie: × (Aussparungs-Koten «400×400») → x statt Tilgung —
+    // C3-Befund: sonst verliert der Roundtrip die Massangabe im Text.
+    .replace(/×/g, 'x').replace(/–/g, '-').replace(/«/g, '"').replace(/»/g, '"')
     .replace(/[\r\n]+/g, ' ')
     // eslint-disable-next-line no-control-regex
     .replace(/[^\x20-\x7E]/g, '');

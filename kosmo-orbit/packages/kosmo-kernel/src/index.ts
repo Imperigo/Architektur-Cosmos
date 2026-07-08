@@ -36,6 +36,7 @@ export * from './derive/dxf';
 export * from './derive/dimensions';
 export * from './derive/checks';
 export * from './derive/submissionsreife';
+export * from './derive/planabgleich';
 export * from './derive/volumenstudie';
 export * from './ifc/export';
 export * from './dxf/export';
