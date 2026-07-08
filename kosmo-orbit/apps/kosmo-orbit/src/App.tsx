@@ -47,7 +47,7 @@ import {
   type VariantenEintrag,
 } from './state/variant-archive';
 import { useProject } from './state/project-store';
-import { katalogExport } from '@kosmo/kernel';
+import { katalogExport, pruefeSubmissionsreife } from '@kosmo/kernel';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
@@ -281,6 +281,10 @@ export function App() {
         useProject.getState().runCommand(commandId, params),
       state: () => useProject.getState(),
       open: (s: Screen) => setScreen(s),
+      // V1.6 Block C6 (docs/SUBMISSION-KONZEPT.md, e2e/sim-submission.spec.ts):
+      // liest die Submissionsreife-Lückenliste (C-E8) auf dem AKTUELLEN Doc —
+      // reiner Lesezugriff, keine Modelländerung.
+      reife: (storeyId?: string) => pruefeSubmissionsreife(useProject.getState().doc, storeyId),
     };
   }, []);
 

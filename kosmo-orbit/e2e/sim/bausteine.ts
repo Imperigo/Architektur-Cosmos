@@ -1,5 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 import type { SimSzenario } from './szenarien';
+import type { SubmissionsBefund } from '@kosmo/kernel';
 
 /**
  * Serie H (Buildplan `docs/SERIE-H-BUILDPLAN.md`, Abschnitt 1.3) —
@@ -945,4 +946,48 @@ export async function terrainSetzen(page: Page, profil: TerrainProfil): Promise<
   } else {
     await expect(neu).toHaveAttribute('points', /\d/); // mind. eine Koordinate — kein leeres Profil
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 19 — submissionsreifePruefen (C6, V1.6 Block C /
+// docs/SUBMISSION-KONZEPT.md, «E2E-Simulation Submissions-Testlauf»)
+// ─────────────────────────────────────────────────────────────────────────
+/**
+ * Liest die Submissionsreife-Lückenliste (C-E8, `pruefeSubmissionsreife` in
+ * `packages/kosmo-kernel/src/derive/submissionsreife.ts`) über den
+ * Test-Hook `window.__kosmo.reife()` (C6-Ergänzung in `App.tsx`, gleiche
+ * Machart wie `run`/`state`/`open`) auf dem AKTUELLEN Doc — reiner
+ * Lesezugriff, keine Modelländerung. `reife` steht bewusst NICHT in der
+ * gemeinsamen Ambient-Deklaration oben (API-Freeze dieser Datei, s.
+ * Kommentarkopf): ein lokaler Cast hält die geteilte Deklaration
+ * unverändert, exakt die Praxis, die `unternehmerplan.spec.ts` für seine
+ * eigene erweiterte `__kosmo`-Form schon fährt (dort lokal statt hier
+ * gemeinsam erweitert).
+ */
+export interface SubmissionsreifeErwartung {
+  /** Mindestanzahl Befunde insgesamt (Lücken UND Hinweise), z.B. der
+   *  Phasen-Hinweis vor dem Wechsel auf Werkplan. */
+  mindestensLuecken?: number;
+  /** Keine einzige Lücke/Hinweis mehr — alle Bauteile vollständig definiert,
+   *  Submissionsreife erreicht. */
+  keineLuecken?: boolean;
+}
+
+export async function submissionsreifePruefen(
+  page: Page,
+  erwartung: SubmissionsreifeErwartung,
+): Promise<SubmissionsBefund[]> {
+  const befunde = await page.evaluate(() =>
+    (window.__kosmo as unknown as { reife: (storeyId?: string) => SubmissionsBefund[] }).reife(),
+  ); // [Quelle: apps/kosmo-orbit/src/App.tsx '__kosmo.reife' (C6) / derive/submissionsreife.ts 'pruefeSubmissionsreife']
+  if (erwartung.mindestensLuecken !== undefined) {
+    expect(
+      befunde.length,
+      `Erwartet ≥${erwartung.mindestensLuecken} Befund(e), gefunden:\n${JSON.stringify(befunde, null, 2)}`,
+    ).toBeGreaterThanOrEqual(erwartung.mindestensLuecken);
+  }
+  if (erwartung.keineLuecken) {
+    expect(befunde, `Erwartet keine Befunde, gefunden:\n${JSON.stringify(befunde, null, 2)}`).toEqual([]);
+  }
+  return befunde;
 }
