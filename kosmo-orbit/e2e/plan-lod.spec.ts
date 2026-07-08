@@ -92,7 +92,11 @@ test('Plan-LOD: Bemassung/Raster verschwinden aus der Distanz, Öffnungen bleibe
   await expect(dims.locator('text').first()).toBeVisible();
   await expect(grid).toBeVisible();
   await expect(moebel).toBeVisible();
-  await expect(fenster).toBeVisible();
+  // Öffnungen: horizontale SVG-Linien haben Bounding-Box-Höhe 0 — Playwright
+  // meldet sie IMMER als hidden. Der LOD-Filter ENTFERNT ausgeblendete Linien
+  // aus dem DOM; Öffnungen bleiben auf jeder Stufe drin → toBeAttached ist
+  // die zutreffende Assertion.
+  await expect(fenster).toBeAttached();
 
   // Weit weg: Stufe «fern» — Bemassungstexte, Raster und Möbel ausgeblendet
   // (Owner-Auflage «keine Texte/Bemassung»); das Fenstersymbol (Öffnung)
@@ -102,7 +106,7 @@ test('Plan-LOD: Bemassung/Raster verschwinden aus der Distanz, Öffnungen bleibe
   await expect(dims).toBeHidden();
   await expect(grid).toBeHidden();
   await expect(moebel).toBeHidden();
-  await expect(fenster).toBeVisible();
+  await expect(fenster).toBeAttached();
 
   // Wieder heran: Bemassung, Raster und Möbel sind zurück — kein
   // Datenverlust, nur die Anzeige war weg.
