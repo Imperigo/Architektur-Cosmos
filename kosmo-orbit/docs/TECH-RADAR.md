@@ -104,3 +104,16 @@ deutsche Material-Slots, Meter), Modellieren via GLB-Import/Export als externes
 Werkzeug (FreeMesh selbst bleibt bewusst V2, Owner-Q9 Stufe 3), Rendern/Physik
 (Cycles, Wind-/Gebäudesimulation) als **Blender-headless-Worker an der
 Bridge-Nahtstelle** — HomeStation-Punkt, siehe HOMESTATION-AUFTRAG.md.
+
+## Nachtrag 2026-07-08 — aus der Notion-Scan-Auswertung (AI-SCAN-AUSWERTUNG-0.6.3.md)
+
+| Baustein | Entscheid | Quelle | Lizenz |
+|---|---|---|---|
+| Gemini Omni Flash (Preview) | **TEST (Owner-Entscheid)** — erster konkreter Cloud-Bild-/Video-Kandidat für KOSMOVIS-OHNE-HOMEPC Option (b); 0.10 USD/s, max 10 s, Preview ≠ GA. Schlüssel/Kosten/Datenabfluss = Owner. | Gemini API | proprietär |
+| Open-Design (nexu-io) | **EVALUATE (Owner-Posten, ~2–4 h)** — lokal-first Design-Desktop mit `DESIGN.md`-Haus-Stil-Profil + PDF-Export; direktester externer K10-Andockpunkt (Publish-Auto-Befüllung). Gegen ein exportiertes KosmoPublish-Blatt testen. | github.com/nexu-io/open-design | Apache 2.0 (laut Scans) |
+| PosterGen | **READ (~3–4 h)** — 7-Agenten-Poster-Pipeline (CVPR 2026) als Architektur-Blaupause für den K10-Batch; kein Einbau. | github.com/Y-Research-SBU/PosterGen | MIT (laut Scan) |
+| Arbor (RUC-NLPIR) | **WATCH** — autonomer Research-Agent (Claude-Code-Plugin/MCP); Lizenzangaben der Scans widersprüchlich (Apache 2.0 / MIT / «prüfen») — vor jedem Schritt selbst verifizieren; Einsatz nur mit explizitem Owner-Mandat. | github.com/RUC-NLPIR/Arbor | widersprüchlich ⚠️ |
+
+Alle Angaben dieser Tabelle sind Scan-Aussagen (16 Notion-Seiten 01.–08.07.),
+nicht selbst verifiziert — Details und Widersprüche in
+`AI-SCAN-AUSWERTUNG-0.6.3.md` §4.

@@ -56,6 +56,12 @@ ablehnt («unregelmässig», siehe `zerlegeRektilinear()`), sollen mit einem
 gelernten, aber immer noch **regelkonformen** Vorschlag beantwortet werden
 können — der Algorithmus bleibt der Wahrheits-Anker (Golden-Referenz und
 Trainingsdaten-Quelle), das LoRA lernt seine *Grammatik*, nicht seinen Ersatz.
+Extern bestätigt: der erste IFC-LLM-Benchmark **BIM-Edit**
+(arXiv:2606.20146, via `AI-SCAN-AUSWERTUNG-0.6.3.md`) misst beim besten
+Modell 49.5 % und keine >3.4 % vollständig gelöste Aufgaben — LLM-Freiflug
+über Gebäudemodellen ist 2026 quantitativ unhaltbar; die BIM-Edit-Taxonomie
+(direkt/räumlich/topologisch) ist als Raster für das Eval-Set in §1.4
+vorgemerkt.
 
 Zielformat der Assistant-Antwort ist **dasselbe JSON**, das
 `generiereGrundriss()`/`generiereGrundrissL()` heute zurückgeben

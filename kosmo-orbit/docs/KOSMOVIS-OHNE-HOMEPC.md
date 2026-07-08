@@ -230,6 +230,14 @@ Flux Schnell (billigstes Modell beider Anbieter) wäre der naheliegende
 Einstieg — Cent-Beträge pro Klick bei einer «Drei Stimmungen»-Serie, aber
 bei grossen Batch-Serien (§4) summiert sich das linear.
 
+**Nachtrag 08.07.2026 (aus `AI-SCAN-AUSWERTUNG-0.6.3.md`):** Gemini Omni
+Flash ist laut den Notion-AI-Scans seit 30.06.2026 in Public Preview
+(Gemini API, `gemini-omni-flash-preview`, 0.10 USD/s Video, max. 10 s) —
+damit ist die Wartebedingung für einen ersten konkreten Cloud-Bild-/Video-
+Test dieser Option erfüllt. Preview ≠ GA; Preis/Verfügbarkeit sind
+Scan-Angaben, vor einem Test selbst zu verifizieren. Die Entscheidung
+(Schlüssel, Kosten, Datenabfluss) bleibt wie oben beim Owner.
+
 **Datenschutz:** Sobald ein Cloud-Bild-Dienst angefragt wird, verlässt das
 Modell (Prompt, ggf. Depth-Map aus dem GLB) das Büro und läuft auf fremder
 Infrastruktur (Replicate/fal.ai — USA-basiert, kein Schweizer/EU-Standort
