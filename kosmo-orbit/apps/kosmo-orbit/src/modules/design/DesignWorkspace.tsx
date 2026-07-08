@@ -8,6 +8,9 @@ import {
   generiereVolumenstudien,
   geschossZu,
   studienOptionenAusRegel,
+  studienBerichtSvg,
+  besonnungJeVariante,
+  programmErfuellungJeVariante,
   variantenMatrix,
   parzelleZuOutline,
   fassadenModule,
@@ -1882,6 +1885,33 @@ function StudienPanel({
     }
   };
 
+  // D5 (Wettbewerb-Konzept D-E8): Grundlagenstudie-Bericht als eigenständiges
+  // SVG-Exportartefakt — Besonnung/Programm fliessen NUR ein, wenn Standort
+  // bzw. Raumprogramm tatsächlich im Doc stehen (Ehrlichkeitspfad, keine
+  // erfundenen Kennwerte). `new Date()` bleibt bewusst im App-Code, nicht im
+  // Kernel (Determinismus der reinen Ableitung `studienBerichtSvg`).
+  const berichtLaden = () => {
+    const { doc: aktuellerDoc } = useProject.getState();
+    const standort = aktuellerDoc.settings.standort;
+    const raumprogramm = aktuellerDoc.settings.raumprogramm;
+    const svg = studienBerichtSvg(varianten, {
+      zielGf: zielEffektiv,
+      ...(aktuellerDoc.settings.projectName ? { titel: aktuellerDoc.settings.projectName } : {}),
+      ...(zonenRegel ? { regelName: zonenRegel.name } : {}),
+      datum: new Date().toLocaleDateString('de-CH'),
+      ...(standort ? { besonnung: besonnungJeVariante(varianten, standort) } : {}),
+      ...(raumprogramm.length > 0
+        ? { programm: programmErfuellungJeVariante(varianten, raumprogramm, aktuellerDoc.settings.programmFaktor) }
+        : {}),
+    });
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'grundlagenstudie.svg';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   const inputStyle: React.CSSProperties = {
     width: 70,
     padding: '3px 6px',
@@ -2027,6 +2057,11 @@ function StudienPanel({
           ))}
           {varianten.length >= 2 && (
             <VariantenMatrixSvg varianten={varianten} zielGf={zielEffektiv} />
+          )}
+          {varianten.length >= 1 && (
+            <KButton size="sm" tone="quiet" data-testid="studie-bericht" onClick={berichtLaden}>
+              Bericht (SVG)
+            </KButton>
           )}
           <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
             Anstoss, kein Entwurf — Übernahme ist ein Undo-Schritt.
