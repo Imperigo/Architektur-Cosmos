@@ -18,6 +18,7 @@ import {
 } from '@kosmo/ui';
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
+import { KosmoSymbol } from './shell/KosmoSymbol';
 import { AppDeinstallieren } from './shell/AppDeinstallieren';
 import { StarterGuide } from './shell/StarterGuide';
 import { istStarterGuideAbgeschlossen } from './shell/starter-guide-schritte';
@@ -109,7 +110,20 @@ export function App() {
   );
   const [akzent, setAkzent] = useState(localStorage.getItem('kosmo.akzent') ?? 'tusche');
   const [screen, setScreen] = useState<Screen>('home');
-  const [kosmoOpen, setKosmoOpen] = useState(true);
+  // K11 (Owner-Befund, wörtlich: «Kosmo als Copilot-Symbol, nicht Dauerchat»):
+  // Default ist ZU — das schwebende Kosmo-Symbol (KosmoSymbol.tsx) ist der
+  // Erstkontakt, das grosse Panel ein bewusster Klick. Persistiert unter
+  // demselben Schlüssel, den die betroffenen E2E-Bootstraps setzen (siehe
+  // Abschlussbericht Batch A1) — ein Wrapper statt des rohen Setters hält
+  // JEDEN bestehenden Aufrufer (Wert ODER Updater-Funktion) unverändert.
+  const [kosmoOpen, setKosmoOpenIntern] = useState(() => localStorage.getItem('kosmo.panelOffen') === '1');
+  const setKosmoOpen = (naechster: boolean | ((vorher: boolean) => boolean)) => {
+    setKosmoOpenIntern((vorher) => {
+      const wert = typeof naechster === 'function' ? (naechster as (v: boolean) => boolean)(vorher) : naechster;
+      localStorage.setItem('kosmo.panelOffen', wert ? '1' : '0');
+      return wert;
+    });
+  };
   const [syncOpen, setSyncOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('aus');
   const [onboarding, setOnboarding] = useState(localStorage.getItem('kosmo.onboarded') !== '1');
@@ -821,6 +835,9 @@ export function App() {
         </div>
         {kosmoOpen && <KosmoPanel onClose={() => setKosmoOpen(false)} />}
       </main>
+      {/* K11: das Symbol ist der Erstkontakt — es erscheint NUR, wenn das
+          Panel zu ist (nie beide gleichzeitig), unten rechts über dem Inhalt. */}
+      {!kosmoOpen && <KosmoSymbol onOpen={() => setKosmoOpen(true)} />}
       {/* V1.6 Block E: nicht-modales Guide-Overlay — bewusst AUSSERHALB der
           Fehlerzonen-Stationen, damit es stationsübergreifend sichtbar
           bleibt. `key=guideLauf` sorgt dafür, dass ein erneuter Aufruf immer

@@ -375,6 +375,34 @@ progress {
   opacity: 1;
 }
 
+/* Kosmo-Symbol (K11, Owner-Befund «Copilot-Symbol, nicht Dauerchat») —
+   schwebendes rundes Symbol, sichtbar solange das grosse Panel zu ist. */
+.k-kosmo-symbol {
+  transition:
+    border-color var(--k-motion-fast),
+    transform var(--k-motion-fast),
+    box-shadow var(--k-motion-fast);
+}
+.k-kosmo-symbol:hover,
+.k-kosmo-symbol:focus-visible {
+  border-color: var(--k-accent);
+  transform: translateY(-1px);
+}
+/* Arbeitet Kosmo gerade: ruhiger, wiederkehrender Puls im Kosmo-Farbton —
+   reduced-motion killt das global (Block oben), kein Sonderfall nötig. */
+.k-kosmo-symbol-beschaeftigt {
+  animation: k-kosmo-arbeitet 1.6s ease-in-out infinite;
+}
+@keyframes k-kosmo-arbeitet {
+  0%,
+  100% {
+    box-shadow: var(--k-shadow-overlay), 0 0 0 0 color-mix(in srgb, var(--k-mod-kosmo) 45%, transparent);
+  }
+  50% {
+    box-shadow: var(--k-shadow-overlay), 0 0 0 7px transparent;
+  }
+}
+
 /* Kacheln der Zentrale: Hairline-Akzent + leiser Lift */
 .k-kachel {
   transition:

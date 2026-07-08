@@ -120,6 +120,9 @@ export async function projektStarten(page: Page, szenario: SimSzenario): Promise
     // dieses Flag automatisch und seine Karte fängt Klicks darunter ab
     // (nav-fit, Export-Knöpfe) — die Journeys emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) — die
+    // Journeys sprechen kosmo-input direkt an (kosmoFragen-Baustein).
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
   }); // [Quelle: sim-umbau.spec.ts Z.33-36 / sim-mfh.spec.ts Z.32-35]
   await page.reload(); // [Quelle: sim-umbau.spec.ts Z.37 / sim-mfh.spec.ts Z.36]
@@ -833,6 +836,12 @@ export type KosmoErwartung =
  * Schritt 7). Nur im Mock-Provider bewiesene Prompts verwenden (R9).
  */
 export async function kosmoFragen(page: Page, frage: string, erwartung: KosmoErwartung): Promise<void> {
+  // Interner Fix (K11): Panel-Default ist jetzt zu — projektStarten setzt
+  // kosmo.panelOffen bereits, aber ein Baustein soll auch robust bleiben,
+  // wenn eine Journey das Panel zwischenzeitlich schliesst.
+  if (!(await page.locator('[data-testid="kosmo-input"]').isVisible())) {
+    await page.click('[data-testid="kosmo-symbol"]');
+  }
   await page.fill('[data-testid="kosmo-input"]', frage); // [Quelle: sim-umbau.spec.ts Z.183 / sim-mfh.spec.ts Z.196]
   await page.click('[data-testid="kosmo-send"]'); // [Quelle: sim-umbau.spec.ts Z.184 / sim-mfh.spec.ts Z.197]
 

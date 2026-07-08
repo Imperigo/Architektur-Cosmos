@@ -28,6 +28,7 @@ import { WerkzeugSetup } from './WerkzeugSetup';
 import { hydriereJournal, journalStore } from '../state/journal-store';
 import { auftragErfassen } from '../state/auftragsbuch';
 import { claudeAboAnmeldung, istTauriDesktop } from './cloud-login';
+import { kurzform, useKosmoStatus } from '../state/kosmo-status';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -284,14 +285,25 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             return [...b, { id: currentKosmoBubble, who: 'kosmo', text: delta }];
           });
         },
-        onProposal: (p) => setCards((c) => [...c, { ...p, state: 'offen' }]),
+        onProposal: (p) => {
+          setCards((c) => [...c, { ...p, state: 'offen' }]);
+          // Laufzeit-Status fürs Kosmo-Symbol (K11) — der Vorschlag selbst
+          // geht weiter normal als Karte durchs Panel/den Undo-Weg.
+          useKosmoStatus.getState().setzeLetzteAktivitaet(kurzform(p.summary));
+        },
         onBusy: (v) => {
           setBusy(v);
+          useKosmoStatus.getState().setzeBeschaeftigt(v);
           if (v) {
             currentKosmoBubble = -1;
             lastKosmoText.current = '';
-          } else if (ttsRef.current && lastKosmoText.current.trim()) {
-            void speak(lastKosmoText.current);
+          } else {
+            if (lastKosmoText.current.trim()) {
+              useKosmoStatus.getState().setzeLetzteAktivitaet(kurzform(lastKosmoText.current));
+            }
+            if (ttsRef.current && lastKosmoText.current.trim()) {
+              void speak(lastKosmoText.current);
+            }
           }
         },
         onError: (msg) => {
@@ -414,6 +426,9 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       storeys: doc.byKind('storey').length,
     });
     setBubbles([{ id: ++bubbleSeq.current, who: 'kosmo', text }]);
+    // Erst-Zustand fürs Kosmo-Symbol: bis zur ersten echten Antwort zeigt das
+    // Mini-Popup wenigstens die Begrüssung statt leer zu bleiben.
+    useKosmoStatus.getState().setzeLetzteAktivitaet(kurzform(text));
   }, []);
 
   useEffect(() => {

@@ -87,6 +87,9 @@ test('Kosmo (Demo-Modus): Vorschlag → Anwenden → Element existiert → Undo'
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // dieser Test spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
   });
   await page.reload();
   await page.click('[data-testid="module-design"]');

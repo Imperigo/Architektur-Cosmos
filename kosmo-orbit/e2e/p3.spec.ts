@@ -22,7 +22,14 @@ function miniGlb(): Buffer {
 
 test('Auftragsbuch: ⚑ im Kosmo-Panel + Erfassen in KosmoDev → Workorder-Export', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) — dieser
+    // Test spricht kosmo-input direkt an; ein reload() ist nötig, damit das
+    // Flag VOR dem ersten Mount gilt (sonst lädt useState den alten Stand).
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  await page.reload();
 
   // ⚑ im Kosmo-Panel: Eingabetext wird zum Auftrag (Station = Zentrale)
   await page.fill('[data-testid="kosmo-input"]', 'Die Kacheln sollen ihre Kurzbefehl-Ziffer zeigen');

@@ -19,7 +19,15 @@ test('Web-Preview: Mit-Claude-Anmeldung zeigt den ehrlichen Desktop-Hinweis, kei
   page,
 }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu — die Einstellungen
+    // (Gear-Icon) leben im Kosmo-Panel, «Einstellungen» braucht es offen.
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  // Interner Fix (K11): reload() ist nötig, damit kosmo.panelOffen VOR dem
+  // ersten Mount gilt — sonst hat das evaluate() danach keine Wirkung mehr.
+  await page.reload();
   await oeffneCloudEinstellungen(page);
 
   await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toBeVisible();
@@ -30,7 +38,15 @@ test('Web-Preview: Mit-Claude-Anmeldung zeigt den ehrlichen Desktop-Hinweis, kei
 
 test('API-Schlüssel-Weg bleibt voll funktionsfähig neben dem Abo-Login', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu — die Einstellungen
+    // (Gear-Icon) leben im Kosmo-Panel, «Einstellungen» braucht es offen.
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  // Interner Fix (K11): reload() ist nötig, damit kosmo.panelOffen VOR dem
+  // ersten Mount gilt — sonst hat das evaluate() danach keine Wirkung mehr.
+  await page.reload();
   await oeffneCloudEinstellungen(page);
 
   await page.getByLabel('API-Schlüssel (bleibt auf diesem Gerät)').fill('sk-ant-test-123');

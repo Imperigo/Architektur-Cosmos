@@ -81,6 +81,9 @@ test('KosmoDraw: Modellbaum sichtbar, Mengenauszug mit IFC-Identität', async ({
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -101,6 +104,9 @@ test('Berechnungsliste: Raumprogramm → Zone zeichnen → ausgezogen + Δ Max l
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -140,6 +146,9 @@ test('KosmoDoc-Modul: Diagnose läuft, Hilfe-Karten stehen', async ({ page }) =>
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -159,6 +168,9 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -234,6 +246,9 @@ test('Axonometrie: aufs Blatt platzieren, Linien erscheinen', async ({ page }) =
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -254,6 +269,9 @@ test('Plakat-Designer: A0-Plakat mit Slots und editierbaren Texten', async ({ pa
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -280,6 +298,9 @@ test('Baugrenze: setzen, im Grundriss sichtbar, Checks melden Verstoss', async (
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -316,6 +337,9 @@ test('Dossier + KosmoTrain: Regeln erfassen, Journal kuratieren', async ({ page 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem('kosmo.lernjournal', JSON.stringify([
       { ts: '2026-07-03T08:00:00.000Z', sentiment: 'schlecht', context: 'Wand ohne Aufbau vorgeschlagen' },
     ]));
@@ -340,6 +364,9 @@ test('Referenz-Sammlung: Stern setzen, Filter zeigt nur Gemerkte', async ({ page
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -357,6 +384,9 @@ test('Härtetest: 600 Wände — UI bleibt bedienbar, Mengen bleiben endlich', a
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -395,6 +425,9 @@ test('Härtetest: kaputte .kosmo-Datei → klare Meldung, UI lebt weiter', async
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -419,6 +452,9 @@ test('Blatt-Pflege: Massstab ändern, Titel setzen, Text verschieben, Blatt lös
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -448,6 +484,9 @@ test('Aktionskette: «Haus» → EIN Paket → alle anwenden → EIN Undo', asyn
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
   });
   await page.reload();
@@ -474,6 +513,9 @@ test('Bild-Slots: Plakat trägt leeren Render-Slot, Bild einbetten, PDF exportie
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -527,6 +569,9 @@ test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async (
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem('kosmo.bridge', 'http://localhost:8600');
   });
   await page.reload();
@@ -579,6 +624,9 @@ test('Belegte Antwort: Kosmo zitiert [Q1] → Chip → Quellensprung in die Grun
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
   });
   await page.reload();
@@ -613,6 +661,9 @@ test('Belegte Antwort: Dossier-Regel wird zitiert und angesprungen', async ({ pa
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
   });
   await page.reload();
@@ -636,6 +687,9 @@ test('Bemassungs-Stile: Werkplan zeigt Innenkette + Höhenkoten, Wettbewerb nich
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -681,6 +735,9 @@ test('SIA-Phase: Vorprojekt reduziert die Darstellung, Werkplan detailliert voll
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -718,6 +775,9 @@ test('SIA-Teilphase (v0.6.3): eigener Projektstand, koppelt die Plan-Detaillieru
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -745,6 +805,9 @@ test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ pa
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -785,6 +848,9 @@ test('LM-Studio-Provider (V2-B3): SSE-Tool-Call → Vorschlagskarte → Wand ste
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem(
       'kosmo.llm',
       JSON.stringify({ provider: 'lmstudio', lmBaseUrl: 'http://localhost:1234/v1', lmModel: 'test-modell' }),
@@ -806,6 +872,9 @@ test('Kosmo-Einstellungen (V2-B3): Anthropic-Felder erscheinen, Schlüssel bleib
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -830,6 +899,9 @@ test('IFC-Bestand (V2-A4): Export → Re-Import → «Übernehmen» macht Wände
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -901,6 +973,9 @@ test('Materialkarten (V2-C2): Textur-Umschalter wirkt und bleibt gemerkt', async
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -929,6 +1004,9 @@ test('Bauwissen-Basis (Wissens-Andockung): Lehrhefte laden → Suche zitierfähi
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -952,6 +1030,9 @@ test('Regel-Sätze (V2-F3): Preset per Kernel → verletzte Zone im Plan getönt
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -975,6 +1056,9 @@ test('Varianten-Matrix (V2-V3/F4): Parallel-Axis-Vergleich erscheint im Studien-
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1000,6 +1084,9 @@ test('Wohnungs-Segmentierer (V2-F5): Soll-Mix → Vorschlag → Übernehmen → 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1040,6 +1127,9 @@ test('Segmentierer-Dialog (V2-F6): Slider rechnet den Vorschlag sofort neu', asy
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1071,6 +1161,9 @@ test('Custom-Kennzahlen (V2-F9): Formel erscheint im Kennzahlen-Panel', async ({
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1097,6 +1190,9 @@ test('Raumtyp-Copilot (V2-F10): Vorschlag-Chip → Übernehmen setzt den Raumtyp
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1126,6 +1222,9 @@ test('Raumprogramm-CSV (V2-V5): Import setzt Posten, %-Spalte erscheint', async 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1149,6 +1248,9 @@ test('Render-Prompt (V2-V8): Material-Baustein erscheint im finalen Prompt, Tipp
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1179,6 +1281,9 @@ test('Möblierung (V2-F8): Möbel im Plan sichtbar, SIA-500-Kollision im Check',
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1206,6 +1311,9 @@ test('Fassaden-Module (V2-V7): Bilanz erscheint und reagiert auf Modulbreite', a
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1236,6 +1344,9 @@ test('Direktzeichnen (V2-V6): Live-m²-Label beim Volumen-Ziehen', async ({ page
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1273,6 +1384,9 @@ test('CH-Standort (V2-V4): Suche (gemockt) → Standort gesetzt → Parzelle als
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1296,6 +1410,9 @@ test('Modulraster im 3D (V7-Ausbau): Toggle aktiviert das Fassaden-Overlay', asy
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1327,6 +1444,9 @@ test('Grundriss-Generator (Finch-Kern): schneiden → füllen → Zimmer + Möbe
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1365,6 +1485,9 @@ test('Raumgraph-Overlay (Plan-Library v2): Toggle zeigt Knoten und Kanten im Pla
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1397,6 +1520,9 @@ test('Zonentüren: Generator setzt Türen, Symbol im Plan, Graph zeigt tuer-Kant
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1425,6 +1551,9 @@ test('Modul-Editor: Element aufziehen → speichern → Auswahl im Panel → 3D 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1467,6 +1596,9 @@ test('Module je Fassade: Dropdown weist zu, Bilanz zieht nach', async ({ page })
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1502,6 +1634,9 @@ test('Wände aus Räumen: generieren → bauen → echte Wände + Türöffnungen
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1536,6 +1671,9 @@ test('Fenster stanzen (A1): Kette → Tageslicht-Befund verschwindet', async ({ 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1570,6 +1708,9 @@ test('Erschliessungskern (A3): Kette mit Kern → kein Fluchtweg-Fehler', async 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1609,6 +1750,9 @@ test('Geschoss stapeln (B1): ⧉ kopiert das aktive Geschoss samt Inhalt', async
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1643,6 +1787,9 @@ test('Kosmo fährt die Kette per Sprache: stapeln über den Chat (Mock-Provider)
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
   });
   await page.reload();
@@ -1670,6 +1817,9 @@ test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb (K2
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1705,6 +1855,9 @@ test('Terrain (Vision A2): Profil gesetzt → Ansicht zeigt gewachsen gestrichel
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1745,6 +1898,9 @@ test('Aussparung (Vision A3): Inspector-Knopf setzt Durchbruch → Kreuz + Kote 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1774,6 +1930,9 @@ test('Varianten-Archiv (Vision A5): archivieren → Zentrale vergleicht → als 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1801,6 +1960,9 @@ test('Massstabs-Automatik (Vision B5): Phasenwechsel schlägt SIA-Massstab vor',
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1821,6 +1983,9 @@ test('NPK-Ausmass (Vision C1): Draw-Panel zeigt Positionen mit Herleitung + CSV-
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1838,6 +2003,9 @@ test('Stationen-Kacheln (Vision D1): Doc/Draw/Sketch/Speak führen an den richti
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1864,6 +2032,9 @@ test('Rollen-Vorstufe (Vision D2): Rolle «Ausführung» rückt KosmoPublish nac
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1886,6 +2057,9 @@ test('Umbau-Filter je Blatt (RE-ARCHICAD A2): Abbruchplan blendet Neubau aus', a
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1932,6 +2106,9 @@ test('Stütze + Unterzug (RE-ARCHICAD A3): Raster-Knopf setzt Stützen auf Kreuz
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -1965,6 +2142,9 @@ test('Publikations-Sets (RE-ARCHICAD A4): Set speichern → SVGs nach Namensrege
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -2008,6 +2188,9 @@ test('Trace + Katalog (RE-ARCHICAD A8): Geschoss unterlegen, Katalog-Download', 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -2047,6 +2230,9 @@ test('Etiketten (RE-ARCHICAD A6): Inspector-Knopf setzt Aufbau-Etikett mit Leade
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -2078,6 +2264,9 @@ test('Plan-Revisionen (RE-ARCHICAD A7): Verzeichnis im Blatt, Transmittal-CSV', 
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');

@@ -16,7 +16,16 @@ async function oeffneEinstellungen(page: import('@playwright/test').Page) {
 
 test('Betriebsart Cloud stellt auf Claude Opus 4.8, Standard führt zum HomePC zurück', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) — diese
+    // Tests sprechen kosmo-input/das Panel-Innere direkt an.
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  // Interner Fix (K11): reload() ist nötig, damit kosmo.panelOffen VOR dem
+  // ersten Mount gilt — sonst hat das evaluate() danach keine Wirkung mehr
+  // (useState-Initializer hat schon gelesen).
+  await page.reload();
   await oeffneEinstellungen(page);
 
   await page.click('[data-testid="betriebsart-cloud"]');
@@ -40,7 +49,16 @@ test('Betriebsart Cloud stellt auf Claude Opus 4.8, Standard führt zum HomePC z
 
 test('Betriebsart Remote leitet Bridge + Sync auf den VPN-Host', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) — diese
+    // Tests sprechen kosmo-input/das Panel-Innere direkt an.
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  // Interner Fix (K11): reload() ist nötig, damit kosmo.panelOffen VOR dem
+  // ersten Mount gilt — sonst hat das evaluate() danach keine Wirkung mehr
+  // (useState-Initializer hat schon gelesen).
+  await page.reload();
   await oeffneEinstellungen(page);
 
   await page.click('[data-testid="betriebsart-remote"]');
@@ -58,7 +76,16 @@ test('Betriebsart Remote leitet Bridge + Sync auf den VPN-Host', async ({ page }
 
 test('Setup-Assistent zeigt die Werkzeuge der Betriebsart (Standard vs. Cloud)', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) — diese
+    // Tests sprechen kosmo-input/das Panel-Innere direkt an.
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  // Interner Fix (K11): reload() ist nötig, damit kosmo.panelOffen VOR dem
+  // ersten Mount gilt — sonst hat das evaluate() danach keine Wirkung mehr
+  // (useState-Initializer hat schon gelesen).
+  await page.reload();
   await oeffneEinstellungen(page);
 
   // Standard: Ollama + Modell + Bridge als Kern, kein VPN/Claude-Schlüssel.
@@ -78,7 +105,16 @@ test('Setup-Assistent zeigt die Werkzeuge der Betriebsart (Standard vs. Cloud)',
 
 test('Auto-«Holen» (Block A2/A3): Knopf nur bei Auto-Befehlen, im Browser ehrlich Desktop-only', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) — diese
+    // Tests sprechen kosmo-input/das Panel-Innere direkt an.
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  // Interner Fix (K11): reload() ist nötig, damit kosmo.panelOffen VOR dem
+  // ersten Mount gilt — sonst hat das evaluate() danach keine Wirkung mehr
+  // (useState-Initializer hat schon gelesen).
+  await page.reload();
   await oeffneEinstellungen(page);
   await page.click('[data-testid="werkzeuge-oeffnen"]');
   await expect(page.locator('[data-testid="werkzeug-setup"]')).toBeVisible();
@@ -102,6 +138,7 @@ test('HomeStation nicht erreichbar → Cloud-Fallback (Opus 4.8) wird angeboten'
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.panelOffen', '1');
     // Standard/HomePC, aber auf eine garantiert tote Adresse gezeigt.
     localStorage.setItem(
       'kosmo.llm',

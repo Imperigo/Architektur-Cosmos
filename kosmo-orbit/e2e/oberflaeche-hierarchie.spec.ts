@@ -52,7 +52,13 @@ test('Zentrale zeigt die Familien-Gruppen (Design/Data/Büro) + Kosmo eigenstän
 
 test('jede bestehende Station bleibt über ihre module-*-Kachel erreichbar (Klick → Station offen)', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Interner Fix (K11): Panel-Default ist jetzt zu — hier unschädlich, weil
+    // «module-speak» das Panel ohnehin direkt über setKosmoOpen(true) öffnet,
+    // aber konsequent gesetzt wie in den übrigen Kosmo-Suiten.
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
   await page.reload();
 
   // Repräsentativ je Familie: KosmoDesign, KosmoData, KosmoBüro (Dev) + Kosmo selbst

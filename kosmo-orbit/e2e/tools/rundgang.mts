@@ -32,6 +32,9 @@ async function frisch(tkb = true) {
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
     localStorage.setItem('kosmo.starterGuide.done', '1'); // Guide-Karte nicht über den Screenshots
+    // Interner Fix (K11): Panel-Default ist jetzt zu — der Rundgang zeigt
+    // Kosmo im Screenshot und füllt kosmo-input direkt.
+    localStorage.setItem('kosmo.panelOffen', '1');
     localStorage.setItem('kosmo.thema', 'paper');
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
     localStorage.removeItem('kosmo.projekt.aktiv');
