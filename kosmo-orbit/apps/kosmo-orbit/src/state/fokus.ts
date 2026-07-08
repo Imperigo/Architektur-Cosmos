@@ -21,6 +21,8 @@ export const KOPFLEISTE_FOKUS = {
   sync: 'sekundaer',
   thema: 'selten',
   akzent: 'selten',
+  /** V1.6 Block E: der «?»-Rundgang-Knopf — selten gebraucht, immer erreichbar. */
+  guide: 'selten',
 } as const satisfies Record<string, FokusStufe>;
 
 export type KopfleisteElement = keyof typeof KOPFLEISTE_FOKUS;

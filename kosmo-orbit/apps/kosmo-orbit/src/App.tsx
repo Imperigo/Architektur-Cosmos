@@ -18,6 +18,8 @@ import {
 } from '@kosmo/ui';
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
+import { StarterGuide } from './shell/StarterGuide';
+import { istStarterGuideAbgeschlossen } from './shell/starter-guide-schritte';
 import { VisWorkspace } from './modules/vis/VisWorkspace';
 import { DataWorkspace } from './modules/data/DataWorkspace';
 import { PublishWorkspace } from './modules/publish/PublishWorkspace';
@@ -110,6 +112,14 @@ export function App() {
   const [syncOpen, setSyncOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('aus');
   const [onboarding, setOnboarding] = useState(localStorage.getItem('kosmo.onboarded') !== '1');
+  // V1.6 Block E: eigenes, von `kosmo.onboarded` getrenntes Flag — der
+  // Starter-Guide startet automatisch beim ALLERERSTEN Programmstart (noch
+  // nie beendet/übersprungen) und bleibt danach still, bis ihn der Nutzer
+  // über den «?»-Knopf erneut ruft. `guideLauf` erzwingt bei jedem erneuten
+  // Aufruf einen frischen Mount (React-`key`) — «erneut» beginnt immer bei
+  // Schritt 0, auch wenn ein vorheriger Lauf noch offen war.
+  const [starterGuideOffen, setStarterGuideOffen] = useState(() => !istStarterGuideAbgeschlossen());
+  const [guideLauf, setGuideLauf] = useState(0);
   const [peers, setPeers] = useState(0);
   const [syncUrl, setSyncUrl] = useState(localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700');
   const [syncRoom, setSyncRoom] = useState(localStorage.getItem('kosmo.sync.room') ?? 'projekt-1');
@@ -364,6 +374,24 @@ export function App() {
             aria-label="Kosmo öffnen/schliessen"
           >
             <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
+          </button>
+        </span>
+        <Hairline vertical />
+        {/* V1.6 Block E: dezenter Rundgang-Knopf — jederzeit erreichbar, egal
+            ob der Erststart-Guide schon lief. `guideLauf`-Inkrement erzwingt
+            einen frischen Mount, damit «erneut» immer bei Schritt 0 beginnt. */}
+        <span className={fokusKlasse(fokusStufe('guide'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <button
+            onClick={() => {
+              setGuideLauf((n) => n + 1);
+              setStarterGuideOffen(true);
+            }}
+            data-testid="starter-guide-start"
+            title="Rundgang — Kosmo erklärt das Programm erneut"
+            aria-label="Rundgang erneut starten"
+            style={{ all: 'unset', cursor: 'pointer' }}
+          >
+            <Badge hue="var(--k-ink-faint)">?</Badge>
           </button>
         </span>
         <Hairline vertical />
@@ -771,6 +799,19 @@ export function App() {
         </div>
         {kosmoOpen && <KosmoPanel onClose={() => setKosmoOpen(false)} />}
       </main>
+      {/* V1.6 Block E: nicht-modales Guide-Overlay — bewusst AUSSERHALB der
+          Fehlerzonen-Stationen, damit es stationsübergreifend sichtbar
+          bleibt. `key=guideLauf` sorgt dafür, dass ein erneuter Aufruf immer
+          frisch bei Schritt 0 startet, auch mitten in einem laufenden Guide. */}
+      {starterGuideOffen && (
+        <StarterGuide
+          key={guideLauf}
+          screen={screen}
+          kosmoOffen={kosmoOpen}
+          wandAnzahl={useProject.getState().doc.byKind('wall').length}
+          onSchliessen={() => setStarterGuideOffen(false)}
+        />
+      )}
       <CommandPalette />
       <Kurzbefehle stationen={stationen} zurZentrale={() => setScreen('home')} />
       <KMeldungen />
