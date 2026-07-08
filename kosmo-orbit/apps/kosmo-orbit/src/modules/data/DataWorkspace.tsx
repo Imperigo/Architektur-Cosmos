@@ -67,6 +67,15 @@ import {
   zaehleAchsen,
   type TrainBeispiel,
 } from '../../state/training-korpus';
+import { fokusKlasse } from '../../state/fokus';
+import {
+  ALLE_DATEN_GRUPPEN,
+  DATEN_LEISTEN_BASIS,
+  adaptiveDatenFokusStufe,
+  leiteDatenTaetigkeitsKontextAb,
+  type DatenGruppe,
+} from '../../state/oberflaeche-adaption-data';
+import { nutzungMelden, useAdaptionsSteuerung } from '../../state/oberflaeche-adaption-kern';
 
 /**
  * KosmoData — die Referenzbibliothek (Keim aus architekturkosmos.ch).
@@ -248,7 +257,16 @@ export function lokaleRef3dQuelle(refId: string, assets: KosmoAsset[]): Blob | u
   return undefined;
 }
 
-type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training' | 'gedaechtnis' | 'archiv';
+export type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training' | 'gedaechtnis' | 'archiv';
+
+/** Serie J2 / Batch B1: deutsche Anzeige-Labels je Adaptions-Gruppe
+ *  (Adaptions-Hinweis, analog `GRUPPEN_LABEL` in DesignWorkspace.tsx). */
+const DATEN_GRUPPEN_LABEL: Record<DatenGruppe, string> = {
+  navigation: 'Navigation',
+  suche: 'Suche',
+  sync: 'Sync',
+  dossier: 'Dossier',
+};
 
 export function DataWorkspace() {
   const [entries, setEntries] = useState<RefEntry[]>([]);
@@ -383,36 +401,85 @@ export function DataWorkspace() {
     setSyncState('synced');
   };
 
+  // Serie J2 / Batch B1 (SERIE-J2-IMMERSIVE-OBERFLAECHE.md Abschnitt 4):
+  // KosmoData schliesst als zweite Station ans Adaptions-Regelwerk an — der
+  // Kern (state/oberflaeche-adaption-kern.ts) ist derselbe, der KosmoDesign
+  // bedient (Design bleibt in B1 unverändert). Die Matrix ist reine
+  // Daten-Konfiguration (state/oberflaeche-adaption-data.ts): Suche bleibt
+  // primär solange getippt wird, Sync tritt dabei zurück, das Dossier wird
+  // nie gedimmt solange eine Referenz gewählt ist.
+  const datenKontext = useMemo(
+    () => leiteDatenTaetigkeitsKontextAb({ tab, query, dossierOffen: selected !== null }),
+    [tab, query, selected],
+  );
+  const {
+    adaptionIstAn,
+    adaptionUmschalten,
+    adaptionZuruecksetzenUndAuffrischen,
+    stufeFuerGruppe,
+    gedaempfteGruppen,
+    adaptionHinweisSichtbar,
+    elementStil,
+    gruppeHatGehobenesElement,
+  } = useAdaptionsSteuerung({
+    taetigkeitsKontext: datenKontext,
+    alleGruppen: ALLE_DATEN_GRUPPEN,
+    basisProGruppe: DATEN_LEISTEN_BASIS,
+    adaptiveStufe: adaptiveDatenFokusStufe,
+  });
+  const adaptionHinweisTitel = adaptionHinweisSichtbar
+    ? `${gedaempfteGruppen.map((g) => DATEN_GRUPPEN_LABEL[g]).join('/')} zurückgestellt — du suchst gerade`
+    : '';
+
   return (
     <div className="k-einblenden" style={{ position: 'absolute', inset: 0, display: 'flex' }}>
       <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
         <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 14 }}>
+          {/* Serie J2 / Batch B1: reiner Test-/Gruppierungs-Wrapper (kein
+              eigener Box-Effekt, `display: contents`) — analog zu Designs
+              `design-werkzeugleiste`, hier zusätzlich über die (nur im
+              referenzen-Tab gerenderte) Such-/Filter-Gruppe hinweg, damit die
+              feste-Anker-Prüfung (E2E) alle drei Adaptions-Gruppen erfasst. */}
+          <div data-testid="referenzen-werkzeugleiste" style={{ display: 'contents' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <Badge hue={moduleHue.data}>KosmoData</Badge>
-            <KButton size="sm" tone={tab === 'uebersicht' ? 'accent' : 'ghost'} onClick={() => setTab('uebersicht')} data-testid="tab-uebersicht">
-              Übersicht
-            </KButton>
-            <KButton size="sm" tone={tab === 'referenzen' ? 'accent' : 'ghost'} onClick={() => setTab('referenzen')} data-testid="tab-referenzen">
-              Referenzen
-            </KButton>
-            <KButton size="sm" tone={tab === 'bauteile' ? 'accent' : 'ghost'} onClick={() => setTab('bauteile')} data-testid="tab-bauteile">
-              Bauteilkatalog CH
-            </KButton>
-            <KButton size="sm" tone={tab === 'materialien' ? 'accent' : 'ghost'} onClick={() => setTab('materialien')} data-testid="tab-materialien">
-              Materialien
-            </KButton>
-            <KButton size="sm" tone={tab === 'wissen' ? 'accent' : 'ghost'} onClick={() => setTab('wissen')} data-testid="tab-wissen">
-              Wissen
-            </KButton>
-            <KButton size="sm" tone={tab === 'training' ? 'accent' : 'ghost'} onClick={() => setTab('training')} data-testid="tab-training">
-              Training
-            </KButton>
-            <KButton size="sm" tone={tab === 'gedaechtnis' ? 'accent' : 'ghost'} onClick={() => setTab('gedaechtnis')} data-testid="tab-gedaechtnis">
-              Gedächtnis
-            </KButton>
-            <KButton size="sm" tone={tab === 'archiv' ? 'accent' : 'ghost'} onClick={() => setTab('archiv')} data-testid="tab-archiv">
-              Archiv
-            </KButton>
+            <span
+              data-testid="leiste-gruppe-navigation"
+              className={fokusKlasse(stufeFuerGruppe('navigation'))}
+              style={{
+                display: 'inline-flex',
+                flexWrap: 'wrap',
+                gap: 10,
+                rowGap: 4,
+                alignItems: 'center',
+                ...(gruppeHatGehobenesElement('navigation') ? { opacity: 1 } : {}),
+              }}
+            >
+              <KButton size="sm" tone={tab === 'uebersicht' ? 'accent' : 'ghost'} onClick={() => { setTab('uebersicht'); nutzungMelden('navigation:uebersicht'); }} data-testid="tab-uebersicht" {...elementStil('navigation', 'uebersicht')}>
+                Übersicht
+              </KButton>
+              <KButton size="sm" tone={tab === 'referenzen' ? 'accent' : 'ghost'} onClick={() => { setTab('referenzen'); nutzungMelden('navigation:referenzen'); }} data-testid="tab-referenzen" {...elementStil('navigation', 'referenzen')}>
+                Referenzen
+              </KButton>
+              <KButton size="sm" tone={tab === 'bauteile' ? 'accent' : 'ghost'} onClick={() => { setTab('bauteile'); nutzungMelden('navigation:bauteile'); }} data-testid="tab-bauteile" {...elementStil('navigation', 'bauteile')}>
+                Bauteilkatalog CH
+              </KButton>
+              <KButton size="sm" tone={tab === 'materialien' ? 'accent' : 'ghost'} onClick={() => { setTab('materialien'); nutzungMelden('navigation:materialien'); }} data-testid="tab-materialien" {...elementStil('navigation', 'materialien')}>
+                Materialien
+              </KButton>
+              <KButton size="sm" tone={tab === 'wissen' ? 'accent' : 'ghost'} onClick={() => { setTab('wissen'); nutzungMelden('navigation:wissen'); }} data-testid="tab-wissen" {...elementStil('navigation', 'wissen')}>
+                Wissen
+              </KButton>
+              <KButton size="sm" tone={tab === 'training' ? 'accent' : 'ghost'} onClick={() => { setTab('training'); nutzungMelden('navigation:training'); }} data-testid="tab-training" {...elementStil('navigation', 'training')}>
+                Training
+              </KButton>
+              <KButton size="sm" tone={tab === 'gedaechtnis' ? 'accent' : 'ghost'} onClick={() => { setTab('gedaechtnis'); nutzungMelden('navigation:gedaechtnis'); }} data-testid="tab-gedaechtnis" {...elementStil('navigation', 'gedaechtnis')}>
+                Gedächtnis
+              </KButton>
+              <KButton size="sm" tone={tab === 'archiv' ? 'accent' : 'ghost'} onClick={() => { setTab('archiv'); nutzungMelden('navigation:archiv'); }} data-testid="tab-archiv" {...elementStil('navigation', 'archiv')}>
+                Archiv
+              </KButton>
+            </span>
             <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
               {tab === 'uebersicht'
                 ? 'Sechs Sammlungen unter einem Dach'
@@ -440,9 +507,104 @@ export function DataWorkspace() {
                     ? `Live · ${entries.length}`
                     : `Cache (letzter Stand) · ${entries.length}`}
             </Badge>
-            <KButton size="sm" tone="ghost" onClick={() => void syncLive()} data-testid="data-sync">
-              Sync
+            <span
+              data-testid="leiste-gruppe-sync"
+              className={fokusKlasse(stufeFuerGruppe('sync'))}
+              style={{ display: 'inline-flex', ...(gruppeHatGehobenesElement('sync') ? { opacity: 1 } : {}) }}
+            >
+              <KButton
+                size="sm"
+                tone="ghost"
+                onClick={() => {
+                  void syncLive();
+                  nutzungMelden('sync:sync-button');
+                }}
+                data-testid="data-sync"
+                {...elementStil('sync', 'sync-button')}
+              >
+                Sync
+              </KButton>
+            </span>
+            {/* Serie J2 / Batch B1 (Regel 2.3.5 Transparenz, geteilter
+                Adaptions-Kern): KosmoData hat kein «Projekt ▾»-Menü wie
+                Design — Hinweis/Schalter/Reset stehen direkt neben Sync. */}
+            <span
+              data-testid="adaption-hinweis"
+              className="k-selten"
+              title={adaptionHinweisTitel}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                fontSize: 11,
+                color: 'var(--k-ink-faint)',
+                whiteSpace: 'nowrap',
+                visibility: adaptionHinweisSichtbar ? 'visible' : 'hidden',
+              }}
+            >
+              ⓘ angepasst
+            </span>
+            <label style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <input
+                type="checkbox"
+                data-testid="adaption-schalter"
+                checked={adaptionIstAn}
+                onChange={(e) => adaptionUmschalten(e.target.checked)}
+              />
+              Oberfläche passt sich an
+            </label>
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="adaption-reset"
+              title="Gelerntes Nutzungsprofil löschen — die Leisten fallen auf die Basis-Stufen zurück. Der Schalter bleibt unverändert."
+              onClick={adaptionZuruecksetzenUndAuffrischen}
+            >
+              Oberfläche zurücksetzen
             </KButton>
+          </div>
+
+          {tab === 'referenzen' && (
+            <span
+              data-testid="leiste-gruppe-suche"
+              className={fokusKlasse(stufeFuerGruppe('suche'))}
+              style={{ display: 'grid', gap: 8, ...(gruppeHatGehobenesElement('suche') ? { opacity: 1 } : {}) }}
+            >
+              <input
+                data-testid="data-search"
+                placeholder="Suchen: Titel, Ort, Architekt, Thema, Material …"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                style={{
+                  padding: '9px 12px',
+                  borderRadius: 'var(--k-radius-sm)',
+                  border: '1px solid var(--k-line-strong)',
+                  background: 'var(--k-raised)',
+                  fontSize: 14,
+                }}
+              />
+
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                <KButton
+                  size="sm"
+                  tone={nurSammlung ? 'accent' : 'quiet'}
+                  data-testid="filter-sammlung"
+                  onClick={() => setNurSammlung(!nurSammlung)}
+                >
+                  ★ Sammlung ({sammlung.size})
+                </KButton>
+                {sectors.map(([s, n]) => (
+                  <KButton
+                    key={s}
+                    size="sm"
+                    tone={sector === s ? 'accent' : 'quiet'}
+                    onClick={() => setSector(sector === s ? null : s)}
+                  >
+                    {s.replace(/_/g, ' ')} · {n}
+                  </KButton>
+                ))}
+              </div>
+            </span>
+          )}
           </div>
 
           {tab === 'uebersicht' && (
@@ -456,41 +618,6 @@ export function DataWorkspace() {
           {tab === 'archiv' && <KosmoArchivView />}
 
           {tab === 'referenzen' && (<>
-          <input
-            data-testid="data-search"
-            placeholder="Suchen: Titel, Ort, Architekt, Thema, Material …"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            style={{
-              padding: '9px 12px',
-              borderRadius: 'var(--k-radius-sm)',
-              border: '1px solid var(--k-line-strong)',
-              background: 'var(--k-raised)',
-              fontSize: 14,
-            }}
-          />
-
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <KButton
-              size="sm"
-              tone={nurSammlung ? 'accent' : 'quiet'}
-              data-testid="filter-sammlung"
-              onClick={() => setNurSammlung(!nurSammlung)}
-            >
-              ★ Sammlung ({sammlung.size})
-            </KButton>
-            {sectors.map(([s, n]) => (
-              <KButton
-                key={s}
-                size="sm"
-                tone={sector === s ? 'accent' : 'quiet'}
-                onClick={() => setSector(sector === s ? null : s)}
-              >
-                {s.replace(/_/g, ' ')} · {n}
-              </KButton>
-            ))}
-          </div>
-
           {/* D3: Leerzustand als Bauzeichnung (Gestaltungskonzept) */}
           {filtered.length === 0 && (
             <Messrahmen
@@ -729,7 +856,10 @@ export function DataWorkspace() {
                 size="sm"
                 tone="ghost"
                 data-testid={`ref-asset-${a.id}`}
-                onClick={() => oeffneInKosmoAsset(a.id)}
+                onClick={() => {
+                  oeffneInKosmoAsset(a.id);
+                  nutzungMelden('dossier:ref-asset');
+                }}
               >
                 {a.title}
               </KButton>
@@ -737,7 +867,11 @@ export function DataWorkspace() {
           </div>
 
           {selected.has_3d && (
-            <>
+            <div
+              data-testid="leiste-gruppe-dossier"
+              className={fokusKlasse(stufeFuerGruppe('dossier'))}
+              style={{ display: 'grid', gap: 6, ...(gruppeHatGehobenesElement('dossier') ? { opacity: 1 } : {}) }}
+            >
               <Hairline />
               {ref3dQuelle ? (
                 <>
@@ -746,7 +880,11 @@ export function DataWorkspace() {
                     tone="accent"
                     data-testid="ref3d-laden"
                     disabled={ref3dLaden}
-                    onClick={() => ladeRef3d(selected, ref3dQuelle)}
+                    onClick={() => {
+                      ladeRef3d(selected, ref3dQuelle);
+                      nutzungMelden('dossier:ref3d-laden');
+                    }}
+                    {...elementStil('dossier', 'ref3d-laden')}
                   >
                     {ref3dLaden ? 'Lädt …' : 'Referenz-3D ins Modell laden'}
                   </KButton>
@@ -760,7 +898,7 @@ export function DataWorkspace() {
                   mit dieser Referenz oder importiere die GLB dort.
                 </span>
               )}
-            </>
+            </div>
           )}
         </aside>
       )}
