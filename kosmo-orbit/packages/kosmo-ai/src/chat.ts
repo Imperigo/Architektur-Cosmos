@@ -132,7 +132,7 @@ export class ChatSession {
         continue;
       }
       const withDefaults = this.applyDefaults(call);
-      const validated = validateToolCall(withDefaults);
+      const validated = validateToolCall(withDefaults, this.doc);
       if (!validated.ok) {
         this.messages.push({
           role: 'tool',

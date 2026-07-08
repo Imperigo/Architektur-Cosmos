@@ -18,8 +18,17 @@ export interface Command<P = unknown> {
   /** Beschreibung für Menschen UND fürs LLM-Tool-Schema. */
   readonly description: string;
   readonly params: z.ZodType<P>;
-  /** Menschlesbare Zusammenfassung einer konkreten Ausführung (Diff-Karte, Journal). */
-  summarize(params: P): string;
+  /**
+   * Menschlesbare Zusammenfassung einer konkreten Ausführung (Diff-Karte,
+   * Journal). `doc` ist additiv (D4, `docs/WETTBEWERB-KONZEPT.md` D-E9):
+   * die meisten Commands fassen nur aus `params` zusammen und ignorieren
+   * ihn; ein Command, dessen Zusammenfassung berechnete Ergebnisse braucht
+   * (z.B. eine Kennzahl, die erst aus dem Doc ableitbar ist), darf ihn
+   * lesen. `execute()` ruft `run()` zuerst auf — schlägt die Validierung
+   * dort fehl, wird `summarize` gar nicht erreicht, darf sich also auf
+   * bereits geprüfte Eingaben verlassen.
+   */
+  summarize(params: P, doc: KosmoDoc): string;
   /** Pur: liest den Doc, liefert Patches — mutiert nie selbst. */
   run(doc: KosmoDoc, params: P): AnyPatch[];
 }
@@ -89,7 +98,7 @@ export function execute(
   }
   const patches = cmd.run(doc, parsed.data);
   if (!opts.dryRun) doc.apply(patches);
-  const summary = cmd.summarize(parsed.data);
+  const summary = cmd.summarize(parsed.data, doc);
   return {
     patches,
     summary,

@@ -22,8 +22,19 @@ export function toolNameFor(commandId: string): string {
   return commandId.replace(/\./g, '_');
 }
 
+/**
+ * Rückrichtung von `toolNameFor`: jede Command-ID hat die Form
+ * `namensraum.aktionCamelCase` — genau EIN Punkt, die Aktion selbst ist
+ * lagerweise camelCase (kein weiterer Unterstrich). Der erste Unterstrich
+ * im Tool-Namen ist deshalb immer die ursprüngliche Punkt-Stelle, unabhängig
+ * vom Namensraum (`design`, `publish`, `vis`, `grundlagen`, künftige …) —
+ * vorher war das auf `design_`/`doc_` fest verdrahtet und hätte z.B.
+ * `grundlagen_volumenstudie` NICHT zurück auf `grundlagen.volumenstudie`
+ * aufgelöst (Werkzeug wäre in `commandTools()` gelistet, aber
+ * `validateToolCall` hätte es nie gefunden — Batch D4 deckte das auf).
+ */
 export function commandIdFor(toolName: string): string {
-  return toolName.replace(/^design_/, 'design.').replace(/^doc_/, 'doc.');
+  return toolName.replace('_', '.');
 }
 
 export function commandTools(): ToolDefinition[] {
@@ -104,8 +115,16 @@ export interface FailedCall {
  * Tool-Call validieren: Argumente ggf. per jsonrepair retten, dann durchs
  * zod-Schema des Commands. Fehler gehen als präzises Feedback ans Modell
  * zurück (Retry-Muster für lokale LLMs).
+ *
+ * `doc` ist optional (D4, `docs/WETTBEWERB-KONZEPT.md` D-E9): die meisten
+ * Commands fassen ihren Vorschlag rein aus den Argumenten zusammen; ein
+ * Command, dessen Zusammenfassung berechnete Kennzahlen braucht (z.B.
+ * `grundlagen.volumenstudie`), bekommt den aktuellen Doc-Stand für die
+ * Diff-Karten-Vorschau. Ohne `doc` (z.B. in Tests, die nur die
+ * Argument-Validierung prüfen) fassen solche Commands ehrlich ohne die
+ * berechneten Zahlen zusammen statt abzustürzen.
  */
-export function validateToolCall(call: ToolCall): ValidatedCall | FailedCall {
+export function validateToolCall(call: ToolCall, doc?: KosmoDoc): ValidatedCall | FailedCall {
   const commandId = commandIdFor(call.name);
   const cmd = allCommands().find((c) => c.id === commandId) as Command<unknown> | undefined;
   if (!cmd) return { ok: false, error: `Unbekanntes Werkzeug «${call.name}»` };
@@ -141,6 +160,8 @@ export function validateToolCall(call: ToolCall): ValidatedCall | FailedCall {
     ok: true,
     commandId,
     params: parsed.data,
-    summary: cmd.summarize(parsed.data),
+    // `doc` fehlt nur in reinen Argument-Validierungstests; echte Läufe
+    // (ChatSession) übergeben immer den aktuellen Doc-Stand.
+    summary: cmd.summarize(parsed.data, doc as KosmoDoc),
   };
 }

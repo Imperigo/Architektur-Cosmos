@@ -7,6 +7,7 @@ export * from './commands/core';
 export * from './commands/design';
 export * from './commands/publish';
 export * from './commands/vis';
+export * from './commands/grundlagen';
 export * from './geometry/clip';
 export * from './geometry/wall';
 export * from './derive/mesh';

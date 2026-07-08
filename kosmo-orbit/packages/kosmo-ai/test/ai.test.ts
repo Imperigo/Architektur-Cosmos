@@ -64,6 +64,45 @@ describe('Tool-Registry', () => {
     expect(bad.ok).toBe(false);
     if (!bad.ok) expect(bad.error).toContain('storeyId');
   });
+
+  it('D4: grundlagen_volumenstudie ist über den Tool-Namen erreichbar und liefert eine doc-gestützte Zusammenfassung', () => {
+    const { doc, storeyId } = demoDoc();
+    execute(doc, 'design.zoneErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 60000, y: 0 },
+        { x: 60000, y: 60000 },
+        { x: 0, y: 60000 },
+      ],
+      name: 'Parzelle',
+      sia: 'HNF',
+    });
+    execute(doc, 'design.zonenRegelSetzen', {
+      name: 'Test-Zone',
+      az: 0.5,
+      maxHoehe: 20000,
+      maxVollgeschosse: null,
+      grenzabstandKlein: 4000,
+      grenzabstandGross: null,
+      parzellenFlaeche: 3600,
+    });
+
+    // Ohne `doc`: die alte, auf design_/doc_ verdrahtete commandIdFor hätte
+    // dieses Tool nie gefunden (Batch D4). Mit `doc` läuft die volle Kette.
+    const ohneDoc = validateToolCall({ id: 'g0', name: 'grundlagen_volumenstudie', arguments: { storeyId } });
+    expect(ohneDoc.ok).toBe(true);
+
+    const mitDoc = validateToolCall({ id: 'g1', name: 'grundlagen_volumenstudie', arguments: { storeyId } }, doc);
+    expect(mitDoc.ok).toBe(true);
+    if (mitDoc.ok) {
+      expect(mitDoc.commandId).toBe('grundlagen.volumenstudie');
+      expect(mitDoc.summary).toContain('Extremvarianten-Studie');
+      expect(mitDoc.summary).toMatch(/GF \d+(\.\d+)? m²/);
+      // Vorschlag ist nur ein Vorschlag — noch kein Doc-Write.
+      expect(doc.byKind('mass')).toHaveLength(0);
+    }
+  });
 });
 
 describe('ChatSession (Mock-Provider, gated)', () => {
@@ -374,6 +413,9 @@ describe('Tool-Vollständigkeit (Bonus-Block)', () => {
       'design.tuerSetzen', 'design.vorlageSpeichern', 'design.vorlageSetzen',
       'design.grundrissGenerieren', 'design.waendeAusZonen', 'design.fensterAusModulen',
       'design.modulSpeichern', 'design.fassadenModulZuweisen', 'design.geschossKopieren',
+      // D4 (Wettbewerb-Konzept D-E9): erste Grundlagenstudien-Kette als
+      // echter Kosmo-Tool-Aufruf, kein reiner Ableitungspfad mehr.
+      'grundlagen.volumenstudie',
     ]) {
       expect(namen.has(id), `${id} fehlt als Tool`).toBe(true);
     }
@@ -382,5 +424,20 @@ describe('Tool-Vollständigkeit (Bonus-Block)', () => {
       expect(t.description.length, `${t.name} ohne Beschreibung`).toBeGreaterThan(20);
       expect(t.parameters && typeof t.parameters === 'object').toBe(true);
     }
+  });
+
+  it('D4-Fund: commandIdFor(toolNameFor(id)) rundet für JEDEN Command korrekt, nicht nur design.*/doc.* ' +
+    '(vorher fest auf diese zwei Präfixe verdrahtet — publish.*/vis.*/grundlagen.* wären real nie aufrufbar gewesen, ' +
+    'obwohl commandTools() sie brav gelistet hätte)', async () => {
+    const { allCommands } = await import('@kosmo/kernel');
+    const { commandIdFor, toolNameFor } = await import('../src/tools');
+    for (const cmd of allCommands()) {
+      expect(commandIdFor(toolNameFor(cmd.id)), cmd.id).toBe(cmd.id);
+    }
+    // Stichprobe ausserhalb design./doc. — genau die Namensräume, die der
+    // alte Präfix-Regex nicht kannte.
+    expect(commandIdFor('publish_blattErstellen')).toBe('publish.blattErstellen');
+    expect(commandIdFor('vis_graphErstellen')).toBe('vis.graphErstellen');
+    expect(commandIdFor('grundlagen_volumenstudie')).toBe('grundlagen.volumenstudie');
   });
 });
