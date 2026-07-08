@@ -9,7 +9,7 @@ import { chromium } from 'playwright-core';
 import { writeFileSync, mkdirSync } from 'node:fs';
 
 const DIR = new URL('../../docs/rundgang/', import.meta.url).pathname;
-const OUT = new URL('../../abgabe/RUNDGANG-NOTIZEN-0.6.1.pdf', import.meta.url).pathname;
+const OUT = new URL('../../abgabe/RUNDGANG-NOTIZEN-0.6.2.pdf', import.meta.url).pathname;
 mkdirSync(DIR, { recursive: true });
 
 interface Seite {
@@ -54,21 +54,21 @@ const SEITEN: Seite[] = [
   },
   {
     bild: '19-studien-panel.png',
-    titel: 'Volumenstudien — Zonenregel speist die Studie',
+    titel: 'Volumenstudien — jetzt mit Geschosshöhen-Herkunft',
     neu: true,
-    text: 'NEU heute Nacht: Die aktive Zonenregel (AZ, max. Höhe, Grenzabstand) füllt die Studien-Regler automatisch («aus Zonenregel …»), die Extremvarianten zeigen Besonnung und Programm-Erfüllung, der Parallel-Achsen-Vergleich macht sie vergleichbar. Kosmo kann die Studie jetzt selbst auslösen (Befehl «grundlagen.volumenstudie») — eine Übernahme ist EIN Undo-Schritt.',
+    text: 'Zonenregel speist die Studie; NEU in 0.6.2: die Geschosshöhe ist wählbar und trägt ihre Herkunft (Wettbewerbsvorgabe / Architekt / SIA-Minimum / Standard) — dein S.8-Befund. Das Panel rückt jetzt sauber unter die Geschossleiste (Popup-Regel: kein Text verlässt den Block, keine Überlappung).',
   },
   {
     bild: '20-bericht.svg',
-    titel: 'Grundlagenstudie-Bericht (SVG-Export)',
+    titel: 'Grundlagenstudie-Bericht v2',
     neu: true,
-    text: 'NEU heute Nacht: Ein Klick auf «Bericht (SVG)» exportiert die Studie als druckfähiges Blatt — Varianten-Footprints im gemeinsamen Massstab, Kennwerte, Besonnung, Programm-Erfüllung. Ehrlichkeits-Zeilen stehen im Blatt: Richtwerte, kein Nachweis; fehlende Daten zeigen «—».',
+    text: 'KOMPLETT NEU nach deiner Kritik: Erst das Urteil (Empfehlung mit Begründung aus gewichtetem Ranking), dann der Beweis (Situations-Diagramme mit Parzelle + Footprint, saubere Vergleichstabelle, Beurteilung je Typologie aus echten Zahlen), dann die Grenzen als getrennter Block. Dabei einen echten Rechenfehler gefixt («sprengt Höhe» war systematisch falsch).',
   },
   {
     bild: '21-unternehmerplan-pdf.png',
-    titel: 'Unternehmerplan-Import — ehrlicher PDF-Pfad',
+    titel: 'Unternehmerplan — One-Click-Upload',
     neu: true,
-    text: 'NEU heute Nacht: Schickt ein Unternehmer ein PDF statt DXF, erkennt KosmoOrbit das (auch bei falscher Endung) und sagt ehrlich, warum ohne Cloud-KI keine automatische Analyse möglich ist — plus den konkreten Arbeitsweg (DXF anfordern, R12 wird gelesen). DXF-Pläne werden weiterhin verglichen und als anwendbare Karten angeboten.',
+    text: 'Dein S.10-Befund umgesetzt: Datei einfach ins Fenster ziehen — Kosmo erledigt den Rest (DXF wird verglichen, PDF ehrlich erkannt). Die Erklär-Textblöcke sind weg bzw. hinter einem einklappbaren «?»; die Ehrlichkeits-Kernaussage bleibt als kurze Meldung.',
   },
   {
     bild: '07-vis-nodetree.png',
@@ -110,9 +110,16 @@ const SEITEN: Seite[] = [
     text: 'Mengen, Ausmass und Berechnungsliste aus dem Modell; daneben KosmoSketch fürs freie Zeichnen (Pencil → BIM).',
   },
   {
+    bild: '22-deinstallieren.png',
+    titel: 'App deinstallieren — neuer Menüpunkt',
+    neu: true,
+    text: 'Neu in der Kopfleiste: «Deinstallieren…» öffnet die ehrliche OS-Anleitung (die App kann sich nicht selbst deinstallieren) mit Link auf die Website — dort gibt es jetzt auch den Download-Bereich mit allen Editionen (live nach Merge auf main).',
+  },
+  {
     bild: '18-umbau-werkplan.png',
     titel: 'Umbau — Bestand / Abbruch / Neu',
-    text: 'Ein Modell, drei Zustände: Umbau-Status je Bauteil, gefilterte Abbruch-/Neubaupläne je Blatt, SIA-konforme Darstellung.',
+    neu: true,
+    text: 'Dein S.18-Befund umgesetzt: kein Diagonalkreuz mehr in der Abbruchwand, Bestand einheitlich grau über alle Schichten, und Umbau-Blätter drucken keine Raster-Achslinien mehr — SIA-sauber.',
   },
 ];
 
@@ -134,7 +141,7 @@ const seiteHtml = (s: Seite) => `
 </section>`;
 
 const html = `<!doctype html>
-<html lang="de"><head><meta charset="utf-8"><title>KosmoOrbit 0.6.1 — Rundgang</title>
+<html lang="de"><head><meta charset="utf-8"><title>KosmoOrbit 0.6.2 — Rundgang</title>
 <style>
   * { box-sizing: border-box; margin: 0; }
   body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2b2924; }
@@ -160,7 +167,7 @@ const html = `<!doctype html>
 
 <section class="seite deckblatt">
   <h1>KosmoOrbit — Rundgang zum Kommentieren</h1>
-  <div class="version">Stand 0.6.1-Update · 08.07.2026 · ${SEITEN.length} Stationen &amp; Funktionen</div>
+  <div class="version">Stand 0.6.2 · 08.07.2026 · ${SEITEN.length} Stationen &amp; Funktionen</div>
   <ol>
     <li>PDF im Reader öffnen (Adobe Acrobat, Microsoft Edge, Vorschau …).</li>
     <li>Seite für Seite durchgehen — jede Seite zeigt eine Station oder Funktion.</li>
@@ -170,7 +177,7 @@ const html = `<!doctype html>
   <div class="kasten">
     <b>Was mit deinen Notizen passiert</b>
     Jede Notiz wird ein Auftrag im Auftragsbuch und fliesst in die gemeinsame
-    <b style="display:inline">0.6.2-Runde</b> ein. Seiten mit «NEU» zeigen, was heute Nacht dazugekommen ist:
+    <b style="display:inline">0.6.3-Runde</b> ein. Seiten mit «NEU» zeigen, was heute Nacht dazugekommen ist:
     Zonenregel-gespeiste Volumenstudien mit Besonnung/Programm-Erfüllung und Kosmo-Auslösung,
     der Grundlagenstudie-Bericht als SVG-Blatt, der ehrliche PDF-Pfad beim Unternehmerplan-Import
     und die lernende Oberfläche in KosmoData.
@@ -193,7 +200,7 @@ await page.pdf({
   displayHeaderFooter: true,
   headerTemplate: '<span></span>',
   footerTemplate:
-    '<div style="width:100%;text-align:center;font-size:8px;color:#8a857a;font-family:Menlo,monospace;">KosmoOrbit 0.6.1 — Rundgang &amp; Notizen · Seite <span class="pageNumber"></span> / <span class="totalPages"></span></div>',
+    '<div style="width:100%;text-align:center;font-size:8px;color:#8a857a;font-family:Menlo,monospace;">KosmoOrbit 0.6.2 — Rundgang &amp; Notizen · Seite <span class="pageNumber"></span> / <span class="totalPages"></span></div>',
   margin: { top: '12mm', bottom: '16mm', left: '13mm', right: '13mm' },
 });
 await browser.close();

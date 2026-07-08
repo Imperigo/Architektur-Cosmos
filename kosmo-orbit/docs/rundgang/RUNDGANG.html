@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><title>KosmoOrbit 0.6.1 — Rundgang</title>
+<html lang="de"><head><meta charset="utf-8"><title>KosmoOrbit 0.6.2 — Rundgang</title>
 <style>
   * { box-sizing: border-box; margin: 0; }
   body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2b2924; }
@@ -25,7 +25,7 @@
 
 <section class="seite deckblatt">
   <h1>KosmoOrbit — Rundgang zum Kommentieren</h1>
-  <div class="version">Stand 0.6.1-Update · 08.07.2026 · 17 Stationen &amp; Funktionen</div>
+  <div class="version">Stand 0.6.2 · 08.07.2026 · 18 Stationen &amp; Funktionen</div>
   <ol>
     <li>PDF im Reader öffnen (Adobe Acrobat, Microsoft Edge, Vorschau …).</li>
     <li>Seite für Seite durchgehen — jede Seite zeigt eine Station oder Funktion.</li>
@@ -35,7 +35,7 @@
   <div class="kasten">
     <b>Was mit deinen Notizen passiert</b>
     Jede Notiz wird ein Auftrag im Auftragsbuch und fliesst in die gemeinsame
-    <b style="display:inline">0.6.2-Runde</b> ein. Seiten mit «NEU» zeigen, was heute Nacht dazugekommen ist:
+    <b style="display:inline">0.6.3-Runde</b> ein. Seiten mit «NEU» zeigen, was heute Nacht dazugekommen ist:
     Zonenregel-gespeiste Volumenstudien mit Besonnung/Programm-Erfüllung und Kosmo-Auslösung,
     der Grundlagenstudie-Bericht als SVG-Blatt, der ehrliche PDF-Pfad beim Unternehmerplan-Import
     und die lernende Oberfläche in KosmoData.
@@ -128,13 +128,13 @@
 
 <section class="seite">
   <header>
-    <h2>Volumenstudien — Zonenregel speist die Studie <span class="neu">NEU</span></h2>
+    <h2>Volumenstudien — jetzt mit Geschosshöhen-Herkunft <span class="neu">NEU</span></h2>
   </header>
   <div class="bildzeile">
-    <img class="haupt" src="bilder/19-studien-panel.png" alt="Volumenstudien — Zonenregel speist die Studie" />
+    <img class="haupt" src="bilder/19-studien-panel.png" alt="Volumenstudien — jetzt mit Geschosshöhen-Herkunft" />
     
   </div>
-  <p class="beschrieb">NEU heute Nacht: Die aktive Zonenregel (AZ, max. Höhe, Grenzabstand) füllt die Studien-Regler automatisch («aus Zonenregel …»), die Extremvarianten zeigen Besonnung und Programm-Erfüllung, der Parallel-Achsen-Vergleich macht sie vergleichbar. Kosmo kann die Studie jetzt selbst auslösen (Befehl «grundlagen.volumenstudie») — eine Übernahme ist EIN Undo-Schritt.</p>
+  <p class="beschrieb">Zonenregel speist die Studie; NEU in 0.6.2: die Geschosshöhe ist wählbar und trägt ihre Herkunft (Wettbewerbsvorgabe / Architekt / SIA-Minimum / Standard) — dein S.8-Befund. Das Panel rückt jetzt sauber unter die Geschossleiste (Popup-Regel: kein Text verlässt den Block, keine Überlappung).</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -142,13 +142,13 @@
 
 <section class="seite">
   <header>
-    <h2>Grundlagenstudie-Bericht (SVG-Export) <span class="neu">NEU</span></h2>
+    <h2>Grundlagenstudie-Bericht v2 <span class="neu">NEU</span></h2>
   </header>
   <div class="bildzeile">
-    <img class="haupt" src="bilder/20-bericht.svg" alt="Grundlagenstudie-Bericht (SVG-Export)" />
+    <img class="haupt" src="bilder/20-bericht.svg" alt="Grundlagenstudie-Bericht v2" />
     
   </div>
-  <p class="beschrieb">NEU heute Nacht: Ein Klick auf «Bericht (SVG)» exportiert die Studie als druckfähiges Blatt — Varianten-Footprints im gemeinsamen Massstab, Kennwerte, Besonnung, Programm-Erfüllung. Ehrlichkeits-Zeilen stehen im Blatt: Richtwerte, kein Nachweis; fehlende Daten zeigen «—».</p>
+  <p class="beschrieb">KOMPLETT NEU nach deiner Kritik: Erst das Urteil (Empfehlung mit Begründung aus gewichtetem Ranking), dann der Beweis (Situations-Diagramme mit Parzelle + Footprint, saubere Vergleichstabelle, Beurteilung je Typologie aus echten Zahlen), dann die Grenzen als getrennter Block. Dabei einen echten Rechenfehler gefixt («sprengt Höhe» war systematisch falsch).</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -156,13 +156,13 @@
 
 <section class="seite">
   <header>
-    <h2>Unternehmerplan-Import — ehrlicher PDF-Pfad <span class="neu">NEU</span></h2>
+    <h2>Unternehmerplan — One-Click-Upload <span class="neu">NEU</span></h2>
   </header>
   <div class="bildzeile">
-    <img class="haupt" src="bilder/21-unternehmerplan-pdf.png" alt="Unternehmerplan-Import — ehrlicher PDF-Pfad" />
+    <img class="haupt" src="bilder/21-unternehmerplan-pdf.png" alt="Unternehmerplan — One-Click-Upload" />
     
   </div>
-  <p class="beschrieb">NEU heute Nacht: Schickt ein Unternehmer ein PDF statt DXF, erkennt KosmoOrbit das (auch bei falscher Endung) und sagt ehrlich, warum ohne Cloud-KI keine automatische Analyse möglich ist — plus den konkreten Arbeitsweg (DXF anfordern, R12 wird gelesen). DXF-Pläne werden weiterhin verglichen und als anwendbare Karten angeboten.</p>
+  <p class="beschrieb">Dein S.10-Befund umgesetzt: Datei einfach ins Fenster ziehen — Kosmo erledigt den Rest (DXF wird verglichen, PDF ehrlich erkannt). Die Erklär-Textblöcke sind weg bzw. hinter einem einklappbaren «?»; die Ehrlichkeits-Kernaussage bleibt als kurze Meldung.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -268,13 +268,27 @@
 
 <section class="seite">
   <header>
-    <h2>Umbau — Bestand / Abbruch / Neu</h2>
+    <h2>App deinstallieren — neuer Menüpunkt <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/22-deinstallieren.png" alt="App deinstallieren — neuer Menüpunkt" />
+    
+  </div>
+  <p class="beschrieb">Neu in der Kopfleiste: «Deinstallieren…» öffnet die ehrliche OS-Anleitung (die App kann sich nicht selbst deinstallieren) mit Link auf die Website — dort gibt es jetzt auch den Download-Bereich mit allen Editionen (live nach Merge auf main).</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Umbau — Bestand / Abbruch / Neu <span class="neu">NEU</span></h2>
   </header>
   <div class="bildzeile">
     <img class="haupt" src="bilder/18-umbau-werkplan.png" alt="Umbau — Bestand / Abbruch / Neu" />
     
   </div>
-  <p class="beschrieb">Ein Modell, drei Zustände: Umbau-Status je Bauteil, gefilterte Abbruch-/Neubaupläne je Blatt, SIA-konforme Darstellung.</p>
+  <p class="beschrieb">Dein S.18-Befund umgesetzt: kein Diagonalkreuz mehr in der Abbruchwand, Bestand einheitlich grau über alle Schichten, und Umbau-Blätter drucken keine Raster-Achslinien mehr — SIA-sauber.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>

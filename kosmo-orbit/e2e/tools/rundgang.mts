@@ -191,5 +191,10 @@ await chooser.setFiles({
 await page.waitForSelector('[data-testid="pdf-hinweis"]');
 await shot('21-unternehmerplan-pdf', 800);
 
+// ── 22 NEU 0.6.2: Deinstallieren-Dialog (ehrliche OS-Anleitung) ──────
+await page.click('[data-testid="menu-deinstallieren"]');
+await page.waitForSelector('[role="dialog"]');
+await shot('22-deinstallieren', 500);
+
 await browser.close();
 console.log('Alle Rundgang-Bilder liegen unter docs/rundgang/bilder/');
