@@ -199,6 +199,25 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     });
   }
 
+  /**
+   * «Blatt füllen» (Owner-Befund K10): schlägt die Kosmo-Ableitung vor, was
+   * noch fehlt (Grundrisse, im Modell bereits definierte Schnitte, Axo,
+   * Kennzahlen, Renderbild/Platzhalter), und platziert es — EIN atomarer
+   * Undo-Schritt (publish.blattFuellen liefert genau EINEN Patch). Die
+   * Meldung nennt ehrlich, was platziert wurde UND was das Modell (noch)
+   * nicht hergibt, statt es stillschweigend zu verschweigen.
+   */
+  function blattFuellen() {
+    if (!sheet) return;
+    try {
+      const res = runCommand('publish.blattFuellen', { sheetId: sheet.id });
+      const hatHinweise = res.summary.includes('Fehlt im Modell');
+      melde(res.summary, { ton: hatHinweise ? 'info' : 'erfolg', dauerMs: hatHinweise ? 9000 : 4000 });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  }
+
   /** Datei-Picker: gewähltes Bild in den ausgewählten Slot einbetten. */
   function bildDateiGewaehlt(file: File | undefined) {
     if (!file || !sheet || !selectedBild) return;
@@ -528,6 +547,16 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </KButton>
           <KButton size="sm" tone="quiet" onClick={placeBildSlot} data-testid="place-bildslot" disabled={!sheet}>
             Bild-Slot
+          </KButton>
+          <KButton
+            size="sm"
+            tone="accent"
+            onClick={blattFuellen}
+            data-testid="blatt-fuellen"
+            disabled={!sheet}
+            title="Kosmo schlägt fehlende Ansichten/Schnitte vor und platziert sie — Blatt immer vollständig, ehrlich über Lücken im Modell"
+          >
+            Blatt füllen
           </KButton>
           <span style={{ color: 'var(--k-ink-faint)' }}>Ansicht:</span>
           {(

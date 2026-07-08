@@ -1141,6 +1141,47 @@ describe('T4a-Bug2 (KosmoPublish): «Set speichern» persistiert dort, wo die Li
   });
 });
 
+describe('K10 (KosmoPublish): «Blatt füllen» — Owner-Befund «Publish-Blätter halb leer»', () => {
+  it('runCommand(publish.blattFuellen) — exakt der Weg des «Blatt füllen»-Knopfs, EIN Undo-Schritt', async () => {
+    const { KosmoDoc } = await import('@kosmo/kernel');
+    const { useProject } = await import('../src/state/project-store');
+    useProject.setState({ doc: new KosmoDoc(), journal: [], revision: 0, activeStoreyId: null, selection: [] });
+    const { runCommand } = useProject.getState();
+
+    const eg = runCommand('design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const aufbau = runCommand('design.aufbauErstellen', {
+      name: 'AW Beton 36', target: 'wall', layers: [{ material: 'beton', thickness: 250, function: 'tragend' }],
+    });
+    const assemblyId = (aufbau.patches[0] as { id: string }).id;
+    const w = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      runCommand('design.wandZeichnen', { storeyId, a, b, assemblyId });
+    w({ x: 0, y: 0 }, { x: 7000, y: 0 });
+    w({ x: 7000, y: 0 }, { x: 7000, y: 5000 });
+    w({ x: 7000, y: 5000 }, { x: 0, y: 5000 });
+    w({ x: 0, y: 5000 }, { x: 0, y: 0 });
+    const blatt = runCommand('publish.blattErstellen', { name: 'Blatt 1', format: 'A1', orientation: 'quer' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+
+    const res = runCommand('publish.blattFuellen', { sheetId });
+    expect(res.patches).toHaveLength(1); // ein Patch = ein atomarer Undo-Schritt
+    expect(res.summary).toContain('Platziert:');
+    expect(res.summary).toContain('Fehlt im Modell'); // ehrlich: kein Schnitt im Modell definiert
+
+    const { doc } = useProject.getState();
+    const nachher = doc.get<import('@kosmo/kernel').Sheet>(sheetId)!;
+    expect(nachher.placements.some((p) => p.view === 'grundriss' && p.storeyId === storeyId)).toBe(true);
+    expect(nachher.placements.some((p) => p.view === 'axo')).toBe(true);
+
+    // Undo macht ALLES (Grundriss + Axo + Kennzahlen-Text + Render-Platzhalter) in EINEM Schritt rückgängig.
+    useProject.getState().undo();
+    const zurueck = useProject.getState().doc.get<import('@kosmo/kernel').Sheet>(sheetId)!;
+    expect(zurueck.placements).toHaveLength(0);
+    expect(zurueck.texte ?? []).toHaveLength(0);
+    expect(zurueck.bilder ?? []).toHaveLength(0);
+  });
+});
+
 describe('T4a-Bug1 (KosmoVis): kaputter/leerer Render-Graph wirft nicht mehr', () => {
   it('evaluiereGraph mit leerem Graphen (0 Nodes) wirft nicht und liefert leere Auswertung', async () => {
     const { KosmoDoc, execute, evaluiereGraph } = await import('@kosmo/kernel');

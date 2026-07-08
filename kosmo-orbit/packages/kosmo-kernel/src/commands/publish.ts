@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { newId } from '../model/ids';
 import type { ImageAsset, Sheet, SheetImage, SheetPlacement, SheetText, Storey } from '../model/entities';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
+import { formatBelegungsBericht, schlageBlattBelegungVor } from '../derive/blattfuellung';
 import { CommandError, registerCommand } from './core';
 
 /**
@@ -554,5 +555,65 @@ export const removeSheet = registerCommand({
   run: (doc, p) => {
     const sheet = requireSheet(doc, p.sheetId);
     return [{ id: sheet.id, before: sheet, after: null }];
+  },
+});
+
+/** Cache run()→summarize() für DENSELBEN Aufruf (execute() übergibt dasselbe
+ * parsed.data-Objekt an beide) — vermeidet doppelte Ableitung, kein Zustand
+ * ausserhalb eines einzelnen execute()-Durchlaufs. */
+const letzterBericht = new WeakMap<object, ReturnType<typeof schlageBlattBelegungVor>>();
+
+export const fillSheet = registerCommand({
+  id: 'publish.blattFuellen',
+  title: 'Blatt füllen',
+  description:
+    'Befüllt die freie Fläche eines Planblatts automatisch (Owner-Befund K10): platziert fehlende Grundrisse (je Geschoss), bereits im Modell definierte Schnitte, eine Axonometrie, eine Kennzahlen-Zusammenfassung und ein vorhandenes Renderbild (oder einen leeren Platzhalter) — nach einem einfachen Spaltenraster über die freie Blattfläche, KEIN Layout-«KI». Was das Modell nicht hergibt (kein Schnitt definiert, kein Raumprogramm, kein Render) erscheint als ehrlicher Hinweis in der Zusammenfassung statt erfunden zu werden. EIN atomarer Undo-Schritt.',
+  params: z.object({ sheetId: z.string() }),
+  summarize: (p) => formatBelegungsBericht(letzterBericht.get(p) ?? { vorschlaege: [], hinweise: [] }),
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const vorschlag = schlageBlattBelegungVor(doc, sheet);
+    letzterBericht.set(p, vorschlag);
+    if (vorschlag.vorschlaege.length === 0) return [];
+
+    let aktuell: Sheet = sheet;
+    for (const v of vorschlag.vorschlaege) {
+      if (v.art === 'grundriss' || v.art === 'schnitt' || v.art === 'axo') {
+        const placement: SheetPlacement = {
+          id: newId('ansicht'),
+          view: v.art,
+          scale: v.scale,
+          x: v.x,
+          y: v.y,
+          ...(v.art === 'grundriss' ? { storeyId: v.storeyId, title: v.title } : {}),
+          ...(v.art === 'schnitt'
+            ? { section: { a: v.a, b: v.b, depth: v.depth, lookLeft: v.lookLeft }, title: v.title }
+            : {}),
+          ...(v.art === 'axo' ? { title: v.title } : {}),
+        };
+        aktuell = { ...aktuell, placements: [...aktuell.placements, placement] };
+      } else if (v.art === 'bild') {
+        const bild: SheetImage = {
+          id: newId('slot'),
+          x: v.x,
+          y: v.y,
+          w: v.w,
+          assetId: v.assetId,
+          ...(v.title ? { title: v.title } : {}),
+        };
+        aktuell = { ...aktuell, bilder: [...(aktuell.bilder ?? []), bild] };
+      } else {
+        const text: SheetText = {
+          id: newId('text'),
+          x: v.x,
+          y: v.y,
+          text: v.text,
+          size: v.size,
+          ...(v.titel ? { titel: true } : {}),
+        };
+        aktuell = { ...aktuell, texte: [...(aktuell.texte ?? []), text] };
+      }
+    }
+    return [{ id: sheet.id, before: sheet, after: aktuell }];
   },
 });
