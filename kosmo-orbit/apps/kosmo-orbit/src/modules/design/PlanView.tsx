@@ -6,12 +6,20 @@ import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
 import { outlineOf, pickEntityAt } from './plan-hit-test';
 import { NavLeiste } from './NavLeiste';
+import { planLod, type PlanLod } from './planLod';
 
 /**
  * PlanView — der lebende Grundriss als semantisches SVG.
  * Stifte/Schraffuren kommen aus CSS-Klassen (SIA-Konvention), nie aus der
  * Geometrie: Umstiften ohne Neuableitung. Zeichnen funktioniert hier mit
  * denselben Werkzeug-Handlers wie im 3D — 2D und 3D sind gleichberechtigt.
+ *
+ * Plan-LOD (B2, Owner-Befund «Grundriss aus Distanz schlecht»): nur HIER,
+ * nie im Export/Druck (derive/plansvg.ts bleibt masstabstreu, Goldens
+ * byte-identisch). Die Stufe kommt aus `planLod` (reine Funktion mit
+ * Hysterese gegen Flackern an der Schwelle, eigene Unit-Tests) und schaltet
+ * bestehende SVG-Gruppen per `display` bzw. filtert Feindetails vor dem
+ * Rendern — kein Re-Mount, kein rAF-Gefrickel nötig.
  */
 
 export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandlers> }) {
@@ -95,6 +103,12 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
     () => (activeStoreyId ? deriveDimensions(doc, activeStoreyId) : null),
     [doc, activeStoreyId, revision],
   );
+
+  // Plan-LOD: view.scale ist px pro mm Welt → × 1000 = px pro Meter.
+  // lodRef trägt die zuletzt gültige Stufe für die Hysterese in planLod weiter.
+  const lodRef = useRef<PlanLod>('voll');
+  const lod = planLod(view.scale * 1000, lodRef.current);
+  lodRef.current = lod;
 
   // Trefferzone + Umriss leben in plan-hit-test.ts (eigener Unit-Test, unabhängig
   // von derivePlan/den Poché-Regionen — die Goldens bleiben unberührt).
@@ -215,6 +229,7 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
       <svg
         ref={svgRef}
         data-testid="planview"
+        data-lod={lod}
         style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none' }}
         onPointerDown={(e) => {
           if (e.pointerType === 'touch') {
@@ -368,8 +383,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
         <g
           transform={`translate(${(svgRef.current?.clientWidth ?? 800) / 2}, ${(svgRef.current?.clientHeight ?? 600) / 2}) scale(${view.scale}) translate(${-view.cx}, ${view.cy})`}
         >
-          {/* Raster: 1m-Punkte */}
-          <PlanGrid cx={view.cx} cy={view.cy} scale={view.scale} />
+          {/* Raster: 1m-Punkte — nur «voll», aus der Distanz wird das Punktraster selbst zu Matsch */}
+          <g data-testid="plan-grid" style={{ display: lod === 'voll' ? undefined : 'none' }}>
+            <PlanGrid cx={view.cx} cy={view.cy} scale={view.scale} />
+          </g>
 
           {/* Trace (A8): anderes Geschoss blass darunter — einfarbig, gedämpft */}
           {tracePlan && (
@@ -425,7 +442,11 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
           )}
 
           {plan &&
-            plan.regions.map((r, i) => {
+            plan.regions
+              // LOD «fern»: nur Poché + Öffnungen — Nebenprojektionen (Treppe,
+              // Decken-/Volumenumriss, Freemesh) tragen aus der Distanz nichts bei.
+              .filter((r) => lod !== 'fern' || !r.classes.includes('projection'))
+              .map((r, i) => {
               const cls = r.classes.join(' ');
               // A3: Stützen sind immer geschnitten → Poché wie tragend
               const isCore = r.classes.includes('tragend') || r.classes.includes('stuetze');
@@ -453,9 +474,15 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                         : bestand
                           ? '#c9c9c9'
                           : isCore
-                            ? 'url(#hatch-beton)'
+                            ? lod === 'voll'
+                              ? 'url(#hatch-beton)'
+                              // «mittel»/«fern»: Schraffur wird flaches Poché
+                              // (Druckkonvention, gleicher Grauwert wie Bestand)
+                              : '#c9c9c9'
                             : isDaemmung
-                              ? 'url(#hatch-daemmung)'
+                              ? lod === 'voll'
+                                ? 'url(#hatch-daemmung)'
+                                : 'var(--k-line)'
                               : isProjection
                                 ? 'none'
                                 : 'var(--k-surface)'
@@ -476,7 +503,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               );
             })}
 
-          {/* F8: Möbel — Korpus fein, Bewegungsfläche gestrichelt (Bildschirm) */}
+          {/* F8: Möbel — Korpus fein, Bewegungsfläche gestrichelt (Bildschirm).
+              LOD: ab «mittel» ausgeblendet — feine Möbelumrisse werden aus der
+              Distanz zu Matsch und verdecken die Poché-Lesbarkeit. */}
+          <g data-testid="plan-moebel" style={{ display: lod === 'voll' ? undefined : 'none' }}>
           {doc
             .byKind<Furniture>('furniture')
             .filter((f) => f.storeyId === activeStoreyId)
@@ -491,6 +521,7 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                 </g>
               );
             })}
+          </g>
           {/* Zonentüren kommen seit A4 als Linien-Klassen aus derivePlan
               (zonentuer-luecke/-fluegel) — der Druck erbt dasselbe Symbol. */}
           {plan &&
@@ -527,7 +558,19 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
             </g>
           )}
           {plan &&
-            plan.lines.map((l, i) => {
+            plan.lines
+              // LOD-Feindetail-Filter: Öffnungen (Leibung/Fenster/Tür/Anschlag/
+              // Zonentür) und die Baugrenze bleiben auf JEDER Stufe — sie sind
+              // die Information, die auch aus der Distanz lesbar sein muss.
+              // Treppen-Feindetail (Stufen, Bruchlinie) schon ab «mittel» weg;
+              // Lauflinie, Unterzug und Etiketten-Anker erst «fern».
+              .filter((l) => {
+                if (lod === 'voll') return true;
+                if (l.classes.includes('stufe') || l.classes.includes('bruchlinie')) return false;
+                if (lod === 'fern' && (l.classes.includes('lauflinie') || l.classes.includes('unterzug') || l.classes.includes('etikett'))) return false;
+                return true;
+              })
+              .map((l, i) => {
               const luecke = l.classes.includes('zonentuer-luecke');
               const fluegel = l.classes.includes('zonentuer-fluegel');
               return (
@@ -564,7 +607,9 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               );
             })}
 
-          {/* Plan-Beschriftungen (A3: Aussparungs-Koten, A6: Etiketten) */}
+          {/* Plan-Beschriftungen (A3: Aussparungs-Koten, A6: Etiketten) —
+              LOD «fern»: keine Texte (Owner-Auflage, Schrift matscht zuerst) */}
+          <g data-testid="plan-texte" style={{ display: lod === 'fern' ? 'none' : undefined }}>
           {plan &&
             plan.texte.map((t, i) => (
               <text
@@ -580,6 +625,7 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                 {t.text}
               </text>
             ))}
+          </g>
 
           {/* Stützenraster: Achsen strichpunktiert + Achskopf an beiden Enden.
               T3: standardmässig aus (nur das Bauteil, nicht die Konstruktions-
@@ -640,7 +686,10 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               );
             })}
 
-          {/* Assoziative Bemassung — Aussen- und Innenketten je nach Stil */}
+          {/* Assoziative Bemassung — Aussen- und Innenketten je nach Stil.
+              LOD «fern»: Gruppe ausgeblendet (Bemassungstexte sind das erste,
+              was aus der Distanz unlesbar wird — Owner-Befund). */}
+          <g data-testid="plan-dims" style={{ display: lod === 'fern' ? 'none' : undefined }}>
           {dims &&
             dims.chains.map((c, ci) => {
               const innen = c.role === 'innen';
@@ -684,6 +733,7 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
                 </g>
               );
             })}
+          </g>
 
           {/* Auswahl-Highlight (Anwählen) + Zieh-Vorschau (Verschieben) — reine
               Bildschirmdarstellung aus der Entity-Geometrie, unabhängig von
