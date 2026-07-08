@@ -41,6 +41,7 @@ import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
 import { DrawPanel } from './DrawPanel';
 import { BerechnungslistePanel } from './BerechnungslistePanel';
+import { KvPanel } from './KvPanel';
 import { RasterPanel } from './RasterPanel';
 import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
@@ -207,6 +208,11 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
   const [uplanDragUeber, setUplanDragUeber] = useState(false);
   const [listeOffen, setListeOffen] = useState(false);
   const [rasterOffen, setRasterOffen] = useState(false);
+  // KV-Grobschätzung (v0.6.3, Lücken-Batch 3, K22): Kostenvoranschlag-Panel
+  // neben der Berechnungsliste — eigenes Panel statt Tab in BerechnungslistePanel,
+  // damit der Ehrlichkeits-Hinweis («Richtwert, kein Devis») nicht in der
+  // Fläche der Wohnungstyp-Tabelle untergeht.
+  const [kvOffen, setKvOffen] = useState(false);
   // Splat-Werkzeug (Owner-Korrektur 05.07.: NICHT HomeStation-exklusiv) —
   // Crop/Ausdünnen/Export laufen lokal, siehe SplatPanel.tsx.
   const [splatPanelOffen, setSplatPanelOffen] = useState(false);
@@ -731,7 +737,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
   // Fable-Review-2-Auflage J3c-0b: irgendein Ebenen-Panel offen? Die Ebenen-
   // Gruppe wird dann nie gedimmt (weder Sonne/Draw/Liste/Raster/Splat/Studie
   // selbst noch ihre Geschwister-Buttons in derselben Gruppe).
-  const ebenenPanelOffen = sonneOffen || drawOffen || listeOffen || rasterOffen || splatPanelOffen || studieOffen;
+  const ebenenPanelOffen = sonneOffen || drawOffen || listeOffen || rasterOffen || splatPanelOffen || studieOffen || kvOffen;
 
   // Serie J / Batch J3b (SERIE-J-BUILDPLAN.md Abschnitt 2/3): die Werkzeug-
   // leisten-Gruppen leben — ihre Fokus-Stufe kommt aus `adaptiveFokusStufe`
@@ -1219,6 +1225,19 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
           </KButton>
           <KButton
             size="sm"
+            tone={kvOffen ? 'accent' : 'ghost'}
+            data-testid="kv-oeffnen"
+            title="Kostenvoranschlag-Grobschätzung — Richtwert auf GF-Basis, kein Devis"
+            onClick={() => {
+              setKvOffen(!kvOffen);
+              nutzungMelden('ebenen:kv');
+            }}
+            {...elementStil('ebenen', 'kv')}
+          >
+            KV
+          </KButton>
+          <KButton
+            size="sm"
             tone={rasterOffen ? 'accent' : 'ghost'}
             data-testid="raster-toggle"
             onClick={() => {
@@ -1659,6 +1678,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             onClose={() => setListeOffen(false)}
           />
         )}
+        {kvOffen && <KvPanel onClose={() => setKvOffen(false)} />}
         {studieOffen && (
           <StudienPanel
             zielGf={zielGf}

@@ -17,6 +17,8 @@ export * from './derive/plan';
 export * from './derive/visgraph';
 export * from './derive/sia416';
 export * from './derive/berechnungsliste';
+export * from './derive/kostenschaetzung';
+export * from './derive/kvblatt';
 export * from './derive/mengen';
 export * from './derive/ausmass';
 export * from './derive/stuetzenraster';

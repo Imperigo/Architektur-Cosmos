@@ -1901,6 +1901,47 @@ export const setSiaPhase = registerCommand({
   },
 });
 
+export const setKvKennwerte = registerCommand({
+  id: 'design.kvKennwerteSetzen',
+  title: 'KV-Kennwerte setzen',
+  description:
+    'Setzt die Kennwerte der KV-Grobschätzung (BKP-2-Stellen-Niveau, Richtwert — kein Devis, keine NPK-Positionen): chfProM2Gf (BKP-2-Basiswert CHF/m² GF), anteilRohbau/anteilAusbau/anteilTechnik (Anteile am BKP-2-Basiswert, 0..1), zuschlagUmgebung (BKP 4, Anteil der BKP-2-Summe), zuschlagBaunebenkosten (BKP 5, Anteil der BKP-2-Summe), reserve (Anteil der Zwischensumme BKP 2+4+5). Nur genannte Felder werden geändert, alle Werte bleiben Owner-Annahmen ohne Norm-Bezug.',
+  params: z.object({
+    chfProM2Gf: z.number().positive().optional(),
+    anteilRohbau: z.number().min(0).max(1).optional(),
+    anteilAusbau: z.number().min(0).max(1).optional(),
+    anteilTechnik: z.number().min(0).max(1).optional(),
+    zuschlagUmgebung: z.number().min(0).max(1).optional(),
+    zuschlagBaunebenkosten: z.number().min(0).max(1).optional(),
+    reserve: z.number().min(0).max(1).optional(),
+  }),
+  summarize: (p) =>
+    `KV-Kennwerte: ${[
+      p.chfProM2Gf !== undefined ? `${p.chfProM2Gf} CHF/m² GF` : null,
+      p.anteilRohbau !== undefined ? `Rohbau ${Math.round(p.anteilRohbau * 100)}%` : null,
+      p.anteilAusbau !== undefined ? `Ausbau ${Math.round(p.anteilAusbau * 100)}%` : null,
+      p.anteilTechnik !== undefined ? `Technik ${Math.round(p.anteilTechnik * 100)}%` : null,
+      p.zuschlagUmgebung !== undefined ? `Umgebung +${Math.round(p.zuschlagUmgebung * 100)}%` : null,
+      p.zuschlagBaunebenkosten !== undefined ? `Baunebenkosten +${Math.round(p.zuschlagBaunebenkosten * 100)}%` : null,
+      p.reserve !== undefined ? `Reserve +${Math.round(p.reserve * 100)}%` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ') || 'unverändert'} (Richtwert, kein Devis)`,
+  run: (doc, p) => {
+    const alt = doc.settings.kvKennwerte;
+    const neu = {
+      chfProM2Gf: p.chfProM2Gf ?? alt.chfProM2Gf,
+      anteilRohbau: p.anteilRohbau ?? alt.anteilRohbau,
+      anteilAusbau: p.anteilAusbau ?? alt.anteilAusbau,
+      anteilTechnik: p.anteilTechnik ?? alt.anteilTechnik,
+      zuschlagUmgebung: p.zuschlagUmgebung ?? alt.zuschlagUmgebung,
+      zuschlagBaunebenkosten: p.zuschlagBaunebenkosten ?? alt.zuschlagBaunebenkosten,
+      reserve: p.reserve ?? alt.reserve,
+    };
+    return [{ settings: true, before: { kvKennwerte: alt }, after: { kvKennwerte: neu } }];
+  },
+});
+
 export const setDimensionStyle = registerCommand({
   id: 'design.bemassungSetzen',
   title: 'Bemassungs-Stil setzen',

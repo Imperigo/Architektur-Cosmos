@@ -111,6 +111,59 @@ export function empfohlenePlanPhase(siaPhase: SiaPhase): BauPhase {
   }
 }
 
+/**
+ * KV-Kennwerte (v0.6.3, `docs/V063-VOLLPROJEKT-KONZEPT.md` Abschnitt 4,
+ * Lücken-Batch 3) — Basis für die Kostenvoranschlag-**Grobschätzung**
+ * (`derive/kostenschaetzung.ts`). AUSDRÜCKLICH ein Richtwert auf GF-Basis,
+ * KEIN Devis: keine CRB/NPK-Positionen, keine eBKP-Feingliederung — das
+ * echte Devis-Modul bleibt laut `SUBMISSION-KONZEPT.md` §5.1 Owner-Entscheid.
+ * Jeder Zahlenwert unten ist eine **Annahme Owner-Guideline, kein
+ * verbindlicher Wert** — Owner-typische CH-Wohnbau-Grössenordnung, kein
+ * Norm-/Baukostenindex-Zitat. Additiv zu `DocSettings` (wie `siaPhase`,
+ * ROADMAP 233): Altbestand-Docs laden über den Default-Spread in
+ * `fromJSON`/`defaultSettings`, kein Kernel-Bruch.
+ */
+export interface KvKennwerte {
+  /** BKP-2-Basiswert in CHF pro m² GF (Geschossfläche aus der Berechnungsliste/
+   * den gezeichneten Decken). Annahme Owner-Guideline, kein verbindlicher Wert
+   * — grobe CH-Wohnbau-Grössenordnung mittlerer Standard, keine Baukostenindex-
+   * Quelle. */
+  chfProM2Gf: number;
+  /** Anteil Rohbau am BKP-2-Basiswert (0..1). Annahme Owner-Guideline, kein
+   * verbindlicher Wert. */
+  anteilRohbau: number;
+  /** Anteil Ausbau am BKP-2-Basiswert (0..1). Annahme Owner-Guideline, kein
+   * verbindlicher Wert. */
+  anteilAusbau: number;
+  /** Anteil Gebäudetechnik am BKP-2-Basiswert (0..1). Annahme Owner-Guideline,
+   * kein verbindlicher Wert. Rohbau+Ausbau+Technik ergeben nicht zwingend
+   * genau 1.0 — die Summe wird gerechnet, nicht erzwungen (Owner darf bewusst
+   * über/unter 100 % der BKP-2-Basis gewichten). */
+  anteilTechnik: number;
+  /** Zuschlag BKP 4 (Umgebung) als Anteil der BKP-2-Summe (0..1). Annahme
+   * Owner-Guideline, kein verbindlicher Wert. */
+  zuschlagUmgebung: number;
+  /** Zuschlag BKP 5 (Baunebenkosten) als Anteil der BKP-2-Summe (0..1).
+   * Annahme Owner-Guideline, kein verbindlicher Wert. */
+  zuschlagBaunebenkosten: number;
+  /** Reserve/Unvorhergesehenes als Anteil der Zwischensumme (BKP 2+4+5, 0..1).
+   * Annahme Owner-Guideline, kein verbindlicher Wert. */
+  reserve: number;
+}
+
+/** Default-KV-Kennwerte — s. Kommentar bei `KvKennwerte`: Annahme
+ * Owner-Guideline, kein verbindlicher Wert, jederzeit über
+ * `design.kvKennwerteSetzen` überschreibbar. */
+export const defaultKvKennwerte: KvKennwerte = {
+  chfProM2Gf: 1900,
+  anteilRohbau: 0.45,
+  anteilAusbau: 0.4,
+  anteilTechnik: 0.15,
+  zuschlagUmgebung: 0.06,
+  zuschlagBaunebenkosten: 0.08,
+  reserve: 0.1,
+};
+
 /** Bemassungs-Stil (V2-A5) — projektweit, wirkt in App-Plan, Druck und DXF. */
 export interface BemassungsStil {
   /** Aussenketten: beide (Öffnungen + Gesamtmass), nur Gesamtmass, oder keine. */
@@ -144,6 +197,9 @@ export interface DocSettings {
    * `phase`, s. `SiaPhase`-Kommentar. Nur über `design.siaPhaseSetzen`
    * gesetzt, koppelt `phase` NICHT automatisch. */
   siaPhase: SiaPhase;
+  /** KV-Grobschätzung-Kennwerte (v0.6.3) — s. `KvKennwerte`-Kommentar:
+   * Richtwert, kein Devis. Nur über `design.kvKennwerteSetzen` gesetzt. */
+  kvKennwerte: KvKennwerte;
   /** Aktive Zonenregel (V2-Vorform V1): speist Δ-Max, Höhen-/Geschoss-Checks. */
   zonenRegel: ZonenRegel | null;
   /** Raumtyp-Regeln (V2-F3, Finch Graph-Rules): leer = eingebaute Richtwerte. */
@@ -297,6 +353,7 @@ export const defaultSettings: DocSettings = {
   phase: 'werkplan',
   // Default = Beginn des SIA-Zyklus (neues Projekt startet im Wettbewerb).
   siaPhase: 'wettbewerb',
+  kvKennwerte: { ...defaultKvKennwerte },
   zonenRegel: null,
   parzellenFlaeche: null,
   raumRegeln: [],
