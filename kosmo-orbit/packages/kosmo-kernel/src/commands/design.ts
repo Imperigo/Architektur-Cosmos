@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
+import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Mangel, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
@@ -2141,5 +2141,84 @@ export const setDossier = registerCommand({
         after: { dossier: p.eintraege },
       },
     ];
+  },
+});
+
+/**
+ * Mängel-/Abnahme-Commands (v0.6.3, `docs/V063-VOLLPROJEKT-KONZEPT.md`
+ * Abschnitt 4, Lücken-Batch 5, Owner-Hauptaufgabe K22) — Abschlussphase
+ * «Gebäudeabnahme». Kein Bauteilbezug (s. `Mangel`-Kommentar in
+ * `model/entities.ts`); `erfasstAm`/`behobenAm` sind Parameter (App liefert
+ * `toLocaleDateString('de-CH')`), NIE `Date.now()` im Command selbst.
+ */
+export const mangelErfassen = registerCommand({
+  id: 'design.mangelErfassen',
+  title: 'Mangel erfassen',
+  description:
+    'Erfasst einen Mangel für die Schlussbegehung (Abschlussphase «Gebäudeabnahme»). ort ist ein freier Lagetext (z.B. «Bad 2.OG»), optional ergänzt um storeyId (Geschossbezug) und/oder at (Welt-mm). gewerk ist ein freies Feld — Vorschläge kommen aus der Bauablauf-Gewerkeliste, jeder Text ist gültig. erfasstAm ist ein vorformatiertes Datum (de-CH) — die App liefert das Tagesdatum, der Kernel rechnet nie selbst mit der Uhrzeit. Status startet immer bei «offen».',
+  params: z.object({
+    ort: z.string().min(1).describe('Freier Lagetext, z.B. «Bad 2.OG»'),
+    storeyId: z.string().optional().describe('Optionaler Geschossbezug'),
+    at: PtSchema.optional().describe('Optionaler Lagepunkt in Welt-mm'),
+    beschreibung: z.string().min(1),
+    gewerk: z.string().min(1).describe('Freies Feld, z.B. «Sanitär/Heizung» — Vorschlagsliste aus dem Bauablaufplan'),
+    erfasstAm: z.string().min(1).describe('Vorformatiertes Datum, z.B. 08.07.2026'),
+    frist: z.string().optional().describe('Optionale Frist zur Behebung (Text oder Datum)'),
+  }),
+  summarize: (p) => `Mangel erfasst: ${p.ort} — ${p.beschreibung.slice(0, 40)}`,
+  run: (doc, p) => {
+    if (p.storeyId) require<Storey>(doc, p.storeyId, 'storey');
+    const mangel: Mangel = {
+      id: newId('mangel'),
+      kind: 'mangel',
+      ort: p.ort,
+      beschreibung: p.beschreibung,
+      gewerk: p.gewerk,
+      status: 'offen',
+      erfasstAm: p.erfasstAm,
+      ...(p.storeyId !== undefined ? { storeyId: p.storeyId } : {}),
+      ...(p.at !== undefined ? { at: p.at as Pt } : {}),
+      ...(p.frist !== undefined ? { frist: p.frist } : {}),
+    };
+    return [added(mangel)];
+  },
+});
+
+export const mangelStatusSetzen = registerCommand({
+  id: 'design.mangelStatusSetzen',
+  title: 'Mangel-Status setzen',
+  description:
+    'Setzt den Status eines erfassten Mangels: «behoben» braucht behobenAm (vorformatiertes Datum, de-CH — die App liefert das Tagesdatum). Zurückstufen auf «offen» löscht behobenAm wieder.',
+  params: z.object({
+    mangelId: z.string(),
+    status: z.enum(['offen', 'behoben']),
+    behobenAm: z.string().optional().describe('Pflicht bei status «behoben»'),
+  }),
+  summarize: (p) => (p.status === 'behoben' ? `Mangel behoben (${p.behobenAm ?? '?'})` : 'Mangel wieder offen'),
+  run: (doc, p) => {
+    const mangel = require<Mangel>(doc, p.mangelId, 'mangel');
+    if (p.status === 'behoben' && !p.behobenAm) {
+      throw new CommandError('Status «behoben» braucht ein Datum (behobenAm)');
+    }
+    const { behobenAm: _weg, ...ohne } = mangel;
+    void _weg;
+    const after: Mangel = {
+      ...ohne,
+      status: p.status,
+      ...(p.status === 'behoben' ? { behobenAm: p.behobenAm as string } : {}),
+    };
+    return [{ id: mangel.id, before: mangel, after }];
+  },
+});
+
+export const mangelLoeschen = registerCommand({
+  id: 'design.mangelLoeschen',
+  title: 'Mangel löschen',
+  description: 'Löscht einen erfassten Mangel wieder (z.B. Fehleintrag).',
+  params: z.object({ mangelId: z.string() }),
+  summarize: () => 'Mangel gelöscht',
+  run: (doc, p) => {
+    const mangel = require<Mangel>(doc, p.mangelId, 'mangel');
+    return [{ id: mangel.id, before: mangel, after: null }];
   },
 });

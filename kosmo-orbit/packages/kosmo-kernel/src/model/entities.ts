@@ -440,6 +440,39 @@ export interface Aussparung extends Base {
   sill?: Mm;
 }
 
+/**
+ * Mangel (v0.6.3, `docs/V063-VOLLPROJEKT-KONZEPT.md` Abschnitt 4,
+ * Lücken-Batch 5, Owner-Hauptaufgabe K22) — Mängel-Erfassung für die
+ * Abschlussphase «Gebäudeabnahme». `ort` ist ein freier Lagetext (z.B. «Bad
+ * 2.OG»), optional ergänzt um `storeyId` (Geschossbezug) und/oder `at`
+ * (Welt-mm) — bewusst KEIN Bauteil-Host wie bei `Etikett`/`Aussparung`:
+ * Mängel treffen oft mehrere Bauteile oder gar keins (z.B. «Handlauf fehlt
+ * ganz»), ein starrer Bauteilbezug wäre zu eng. `gewerk` ist ein FREIES Feld
+ * ohne Enum-Bindung — die App bietet die Bauablauf-Gewerke
+ * (`MANGEL_GEWERK_VORSCHLAEGE`, `derive/bauablauf.ts`) nur als Vorschlagsliste
+ * an, jeder Text bleibt gültig. `erfasstAm`/`behobenAm` sind vorformatierte
+ * Datumsstrings (de-CH) — wie überall im Kernel NIE `Date.now()` im
+ * Command-/Derive-Pfad, das Datum kommt als Parameter von der App.
+ */
+export interface Mangel extends Base {
+  kind: 'mangel';
+  ort: string;
+  storeyId?: string;
+  /** Optionaler Lagepunkt in Welt-mm (Plan-Marker sind bewusst NICHT gebaut,
+   * s. `derive/abnahmeprotokoll.ts` Kommentar — dieses Feld liegt bereit,
+   * falls ein künftiger Batch einen Overlay-Marker ergänzt). */
+  at?: Pt;
+  beschreibung: string;
+  gewerk: string;
+  status: 'offen' | 'behoben';
+  /** Vorformatiertes Erfassungsdatum (de-CH), Parameter des Commands. */
+  erfasstAm: string;
+  /** Vorformatiertes Behebungsdatum (de-CH); nur gesetzt, wenn status 'behoben'. */
+  behobenAm?: string;
+  /** Optionale Frist (freier Text/Datum) zur Behebung. */
+  frist?: string;
+}
+
 /** Port-Typen im Render-Graphen (V1-P2): nur gleiche Typen verbinden sich.
  * `kameras` (Owner-Befund K20/A10): Auto-Kamera-Standpunkte, s. derive/kamera.ts. */
 export type VisPortTyp = 'szene' | 'bild' | 'prompt' | 'zahl' | 'material' | 'kameras';
@@ -478,7 +511,7 @@ export interface VisGraph extends Base {
 }
 
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

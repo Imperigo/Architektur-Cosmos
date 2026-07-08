@@ -46,6 +46,7 @@ import { DrawPanel } from './DrawPanel';
 import { BerechnungslistePanel } from './BerechnungslistePanel';
 import { KvPanel } from './KvPanel';
 import { BauablaufPanel } from './BauablaufPanel';
+import { MaengelPanel } from './MaengelPanel';
 import { RasterPanel } from './RasterPanel';
 import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
@@ -300,6 +301,9 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
   // Bauablauf-Grundgerüst (v0.6.3, Lücken-Batch 4, K22): Grob-Terminplan-Panel
   // gleich neben dem KV-Panel — dieselbe Anordnung, derselbe Ehrlichkeits-Grundsatz.
   const [bauablaufOffen, setBauablaufOffen] = useState(false);
+  // Mängel-/Abnahme-Grundgerüst (v0.6.3, Lücken-Batch 5, K22): Abschlussphase
+  // «Gebäudeabnahme» — gleiche Panel-Anordnung wie KV/Bauablauf.
+  const [maengelOffen, setMaengelOffen] = useState(false);
   // Splat-Werkzeug (Owner-Korrektur 05.07.: NICHT HomeStation-exklusiv) —
   // Crop/Ausdünnen/Export laufen lokal, siehe SplatPanel.tsx.
   const [splatPanelOffen, setSplatPanelOffen] = useState(false);
@@ -853,7 +857,15 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
   // Gruppe wird dann nie gedimmt (weder Sonne/Draw/Liste/Raster/Splat/Studie
   // selbst noch ihre Geschwister-Buttons in derselben Gruppe).
   const ebenenPanelOffen =
-    sonneOffen || drawOffen || listeOffen || rasterOffen || splatPanelOffen || studieOffen || kvOffen || bauablaufOffen;
+    sonneOffen ||
+    drawOffen ||
+    listeOffen ||
+    rasterOffen ||
+    splatPanelOffen ||
+    studieOffen ||
+    kvOffen ||
+    bauablaufOffen ||
+    maengelOffen;
 
   // Serie J / Batch J3b (SERIE-J-BUILDPLAN.md Abschnitt 2/3): die Werkzeug-
   // leisten-Gruppen leben — ihre Fokus-Stufe kommt aus `adaptiveFokusStufe`
@@ -1078,6 +1090,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
   const klickKv = () => {
     setKvOffen(!kvOffen);
     nutzungMelden('ebenen:kv');
+  };
+  const klickMaengel = () => {
+    setMaengelOffen(!maengelOffen);
+    nutzungMelden('ebenen:maengel');
   };
   const klickRaster = () => {
     setRasterOffen(!rasterOffen);
@@ -1349,6 +1365,16 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
             {...elementStil('ebenen', 'bauablauf')}
           >
             Bauablauf
+          </KButton>
+          <KButton
+            size="sm"
+            tone={maengelOffen ? 'accent' : 'ghost'}
+            data-testid="maengel-oeffnen"
+            title="Mängel — Abschlussphase Gebäudeabnahme, Anstoss zur Schlussbegehung"
+            onClick={klickMaengel}
+            {...elementStil('ebenen', 'maengel')}
+          >
+            Mängel
           </KButton>
           <KButton size="sm" tone={rasterOffen ? 'accent' : 'ghost'} data-testid="raster-toggle" onClick={klickRaster} {...elementStil('ebenen', 'raster')}>
             Raster
@@ -1835,6 +1861,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
         )}
         {kvOffen && <KvPanel onClose={() => setKvOffen(false)} />}
         {bauablaufOffen && <BauablaufPanel onClose={() => setBauablaufOffen(false)} />}
+        {maengelOffen && <MaengelPanel onClose={() => setMaengelOffen(false)} />}
         {studieOffen && (
           <StudienPanel
             zielGf={zielGf}

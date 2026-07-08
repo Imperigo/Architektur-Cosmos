@@ -41,6 +41,29 @@ const M3 = 1_000_000_000;
 /** Der eine Ehrlichkeitssatz, der überall erscheinen muss, wo der Terminplan sichtbar wird (Panel, Blatt). */
 export const BAUABLAUF_HINWEIS = 'Abgeleiteter Grob-Terminplan, ersetzt keine Bauleitung.';
 
+/**
+ * Gewerke-Vorschlagsliste fürs Mangel-Erfassungsformular (v0.6.3, Lücken-
+ * Batch 5) — dieselbe Schweizer Gewerke-Reihenfolge wie oben, generisch ohne
+ * Geschossbezug («Rohbau» statt «Rohbau EG»). NUR ein Vorschlag: `gewerk` auf
+ * `Mangel` bleibt ein freies Feld, jeder Text ist gültig (s. Kommentar bei
+ * `Mangel` in `model/entities.ts`). Bestimmt zugleich die Gruppen-Reihenfolge
+ * im Abnahmeprotokoll (`derive/abnahmeprotokoll.ts`) — unbekannte Gewerke
+ * landen dort alphabetisch nach dieser Liste.
+ */
+export const MANGEL_GEWERK_VORSCHLAEGE: readonly string[] = [
+  'Aushub',
+  'Fundament/Bodenplatte',
+  'Rohbau',
+  'Dach',
+  'Fenster/Hülle',
+  'Elektro',
+  'Sanitär/Heizung',
+  'Trockenbau/Gipser',
+  'Bodenbeläge',
+  'Maler',
+  'Umgebung',
+];
+
 export interface BauablaufPhase {
   /** Stabile Kennung (z.B. `rohbau:<storeyId>`, `innenausbau:elektro`). */
   id: string;
