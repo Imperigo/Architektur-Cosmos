@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, KButton, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { LearningJournal } from '@kosmo/ai';
 import {
   areaReport,
   derivePlan,
@@ -53,6 +54,9 @@ import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanDxf, exportPlanPdf, exportPlanSvg, PHASEN_MASSSTAB } from './export-plan';
 import { consumeDeepLink } from '../../state/deep-link';
+import { journalStore } from '../../state/journal-store';
+import { requestKosmoFokus } from '../../state/kosmo-focus';
+import { EntwurfsDock, type EntwurfsModus } from './EntwurfsDock';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
 import { registerActions } from '../../shell/palette';
@@ -84,6 +88,12 @@ import {
  */
 
 type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze' | 'mesh';
+
+// K16 A6: dasselbe Lernjournal wie `KosmoPanel.tsx` (👍/👎) — EIN Store
+// (`journalStore()`), eine Modul-Instanz. Loggt hier ausschliesslich, welche
+// Skizze-Annäherung gewählt wurde (Datensammlung fürs spätere, kuratierbare
+// LoRA-Training — KEIN Live-Training, s. Kommentar bei `onSketchAccept`).
+const entwurfsJournal = new LearningJournal(journalStore());
 
 const SNAP = 250; // mm Rasterfang, wenn keine Achse in Reichweite
 
@@ -184,9 +194,17 @@ export interface DesignWorkspaceProps {
    *  diesen Weg kennt — Tests, die die Komponente isoliert mounten, brauchen
    *  ihn nicht. */
   onEinstellungen?: () => void;
+  /** K16 A6 (Entwurfs-Einstieg «Sprechen/Schreiben»): öffnet das Kosmo-Panel —
+   *  derselbe `setKosmoOpen`-Weg wie die Zentrale-Kachel `module-speak`
+   *  (App.tsx). Optional aus demselben Grund wie `onEinstellungen`. */
+  onKosmoOeffnen?: () => void;
+  /** K16 A6: ist das Kosmo-Panel gerade offen? Nur für die Aktiv-Markierung
+   *  des Entwurfs-Docks (Modus «Sprechen») — App.tsx kennt `kosmoOpen`
+   *  bereits, hier rein lesend. */
+  kosmoOffen?: boolean;
 }
 
-export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) {
+export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }: DesignWorkspaceProps = {}) {
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const runCommand = useProject((s) => s.runCommand);
@@ -227,6 +245,26 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
   // ArchiCAD-Gefühl: die Arbeitsfläche öffnet im Auswahl-Werkzeug (Pfeil), nicht
   // schon zeichnend — sonst baut der erste Klick versehentlich eine Wand.
   const [tool, setTool] = useState<ToolId>('auswahl');
+  // K16 A6 (Entwurfs-Einstieg): der aktive Modus wird aus vorhandenem Zustand
+  // ABGELEITET, keine zweite Quelle der Wahrheit — «Skizzieren» ist exakt das
+  // bestehende `tool === 'skizze'`, «Sprechen» ist das Kosmo-Panel offen
+  // (App.tsx), sonst «CAD» (die heutige Werkzeugleiste ist aktiv).
+  const entwurfsModus: EntwurfsModus = tool === 'skizze' ? 'skizzieren' : kosmoOffen ? 'sprechen' : 'cad';
+  const klickEntwurfSprechen = () => {
+    nutzungMelden('zeichnen:entwurf-sprechen');
+    onKosmoOeffnen?.();
+  };
+  const klickEntwurfSkizzieren = () => {
+    setTool('skizze');
+    nutzungMelden('zeichnen:entwurf-skizzieren');
+  };
+  const klickEntwurfCad = () => {
+    // «Nur Markierung des Modus — kein Umbau» (Bauauftrag K16/3): die
+    // klassische Werkzeugleiste existiert unverändert; ein Klick verlässt
+    // höchstens den Skizzenmodus zurück zur Auswahl (ArchiCAD-Grundzustand).
+    if (tool === 'skizze') setTool('auswahl');
+    nutzungMelden('zeichnen:entwurf-cad');
+  };
   const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
   const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split' | 'quad'>('split');
   // B5: Massstabs-Automatik — bestätigbarer Hinweis nach dem Phasenwechsel
@@ -535,7 +573,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
       // Wand/Treppe/Schnitt: Kette bzw. Antritt/Austritt-Eingabe abschliessen
       setPoints([]);
     },
-    onSketchAccept: (segments) => {
+    onSketchAccept: (segments, meta) => {
       if (!activeStoreyId || !effectiveAssembly) return;
       // T5: alle Segmente (evtl. aus mehreren frei gezeichneten Strichen)
       // als EINE Undo-Gruppe — ein «Rückgängig» hebt die ganze Skizzier-
@@ -557,6 +595,16 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
         }
       } finally {
         history.endGroup();
+      }
+      // K16 A6 («Entscheid füttert die LoRA» — ehrlich: es ist Datensammlung
+      // fürs spätere, kuratierbare Training, kein Live-Training): nur der
+      // 2D-Annäherungs-Weg liefert `meta` (SketchOverlay bietet die 3 Karten
+      // an, der 3D-Sketch-Weg ruft unverändert ohne `meta` auf).
+      if (meta) {
+        entwurfsJournal.add({
+          sentiment: 'gut',
+          context: `Skizze-Annäherung gewählt: ${meta.variante} (${meta.anzahl} Wände) — Trainingsdatensatz, kein Live-Training.`,
+        });
       }
     },
     // A4 (ROADMAP 155): ein auf eine Wandfläche gezeichneter Strich ergibt
@@ -1924,6 +1972,16 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             </KButton>
           </div>
         )}
+
+        {/* K16 A6: Entwurfs-Einstieg — vertikal mittig an der linken Kante,
+            kollidiert dadurch weder mit der Geschossleiste (oben) noch mit
+            NavLeiste/Statusleiste (unten). */}
+        <EntwurfsDock
+          modus={entwurfsModus}
+          onSprechen={klickEntwurfSprechen}
+          onSkizzieren={klickEntwurfSkizzieren}
+          onCad={klickEntwurfCad}
+        />
 
         {/* Geschossleiste */}
         <div

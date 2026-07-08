@@ -3,20 +3,30 @@ import { getStroke } from 'perfect-freehand';
 import { Badge, KButton, moduleHue } from '@kosmo/ui';
 import type { Pt } from '@kosmo/kernel';
 import { fitStrokes, type FittedSegment, type Stroke } from './sketch';
+import { skizzeAnnaeherungen, skizzeMiniPfad, type SkizzeVarianteId } from './skizze-annaeherungen';
 
 /**
  * KosmoSketch-Overlay — liegt über dem Plan: Freihand zeichnen (Apple Pencil:
  * Druckstufen via PointerEvents). T5 (Owner-Laptoptest): mehrere Striche
  * hintereinander frei zeichnen, OHNE dass jeder einzelne sofort «korrigiert»
  * wird — erst «Übergeben» fittet ALLE gesammelten Striche gemeinsam zu einem
- * Vorschlag, «Übernehmen» committet sie als EINEN Aufruf (eine Undo-Gruppe).
+ * Vorschlag.
+ *
+ * K16 A6 (Modus 2, «Skizzieren mit 3 Annäherungen»): genau an diesem
+ * Batch-Commit-Moment (bisher EIN «Übernehmen») erscheinen jetzt DREI
+ * deterministische Annäherungs-Karten (exakt/orthogonalisiert/begradigt+
+ * gerastert, `skizze-annaeherungen.ts`) — die Wahl committet über denselben
+ * `onAccept`-Weg wie bisher (EIN Aufruf, EINE Undo-Gruppe). Karte 1 (exakt)
+ * behält bewusst den alten Testid `sketch-accept` — sie IST das bisherige
+ * Verhalten, nur jetzt eine von drei Optionen statt die einzige.
  */
 
 export interface SketchOverlayProps {
   /** Pixel ↔ Welt-mm Umrechnung der darunterliegenden Planansicht. */
   toWorld: (clientX: number, clientY: number) => Pt;
   toScreen: (p: Pt) => { x: number; y: number };
-  onAccept: (segments: FittedSegment[]) => void;
+  /** `meta` fehlt nur, wenn ein Aufrufer (z.B. der 3D-Sketch-Weg) keine Varianten anbietet. */
+  onAccept: (segments: FittedSegment[], meta?: { variante: SkizzeVarianteId; anzahl: number }) => void;
 }
 
 type LivePt = { x: number; y: number; pressure: number };
@@ -56,9 +66,8 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
     if (segments.length > 0) setPending(segments);
   };
 
-  const uebernehmen = () => {
-    if (!pending) return;
-    onAccept(pending);
+  const waehleVariante = (id: SkizzeVarianteId, segmente: FittedSegment[]) => {
+    onAccept(segmente, { variante: id, anzahl: segmente.length });
     setPending(null);
     setStrokes([]);
   };
@@ -159,20 +168,55 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
             bottom: 18,
             transform: 'translateX(-50%)',
             display: 'flex',
+            flexDirection: 'column',
             gap: 8,
             alignItems: 'center',
             background: 'var(--k-surface)',
             border: '1px solid var(--k-accent)',
             borderRadius: 'var(--k-radius-md)',
-            padding: '8px 12px',
+            padding: '10px 12px',
             boxShadow: 'var(--k-shadow-overlay)',
           }}
         >
-          <Badge hue={moduleHue.design}>Skizze erkannt</Badge>
-          <span style={{ fontSize: 13 }}>{pending.length} Wände</span>
-          <KButton size="sm" tone="accent" data-testid="sketch-accept" onClick={uebernehmen}>
-            Übernehmen
-          </KButton>
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+            <Badge hue={moduleHue.design}>Skizze erkannt</Badge>
+            <span style={{ fontSize: 13 }}>{pending.length} Wände — eine Annäherung wählen</span>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {skizzeAnnaeherungen(pending).map((v, i) => (
+              <div
+                key={v.id}
+                data-testid={`skizze-vorschlag-${i + 1}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 4,
+                  alignItems: 'center',
+                  width: 108,
+                  border: '1px solid var(--k-line)',
+                  borderRadius: 'var(--k-radius-sm)',
+                  padding: 6,
+                }}
+              >
+                <div style={{ fontSize: 11.5, fontWeight: 600 }}>{v.titel}</div>
+                <svg width={56} height={56} viewBox="0 0 56 56" style={{ background: 'var(--k-raised)', borderRadius: 4 }}>
+                  <path d={skizzeMiniPfad(v.segments)} fill="none" stroke="var(--k-accent)" strokeWidth={2} strokeLinecap="round" />
+                </svg>
+                <span style={{ fontSize: 10.5, color: 'var(--k-ink-faint)', textAlign: 'center', lineHeight: 1.3 }}>
+                  {v.beschreibung}
+                </span>
+                <KButton
+                  size="sm"
+                  tone="accent"
+                  // Karte 1 (exakt) = das bisherige Verhalten — behält den alten Testid.
+                  data-testid={i === 0 ? 'sketch-accept' : `skizze-vorschlag-${i + 1}-waehlen`}
+                  onClick={() => waehleVariante(v.id, v.segments)}
+                >
+                  Übernehmen
+                </KButton>
+              </div>
+            ))}
+          </div>
           <KButton size="sm" tone="ghost" onClick={() => setPending(null)}>
             Verwerfen
           </KButton>

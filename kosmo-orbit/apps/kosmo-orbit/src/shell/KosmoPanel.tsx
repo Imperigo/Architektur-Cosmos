@@ -26,6 +26,7 @@ import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
 import { DiagnosePanel } from './Diagnose';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { hydriereJournal, journalStore } from '../state/journal-store';
+import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
 import { claudeAboAnmeldung, istTauriDesktop } from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
@@ -247,6 +248,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  // K16 A6: Ziel des einmaligen Fokus-Wunschs (`consumeKosmoFokus`, s. Mount-Effekt unten).
+  const eingabeRef = useRef<HTMLInputElement>(null);
   const bubbleSeq = useRef(0);
   const runCommand = useProject((s) => s.runCommand);
   // Belege des Gesprächs: [Qn] im Antworttext → Quelle (Chip mit Quellensprung)
@@ -434,6 +437,12 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     // Erst-Zustand fürs Kosmo-Symbol: bis zur ersten echten Antwort zeigt das
     // Mini-Popup wenigstens die Begrüssung statt leer zu bleiben.
     useKosmoStatus.getState().setzeLetzteAktivitaet(kurzform(text));
+    // K16 A6 (Entwurfs-Einstieg «Sprechen/Schreiben»): war das Öffnen dieses
+    // Panels ein expliziter Fokus-Wunsch (Dock-Klick in KosmoDesign), landet
+    // der Cursor sofort im Eingabefeld — derselbe einmalige Merker wie
+    // `deep-link.ts`, hier konsumiert beim Mount (das Panel mountet frisch
+    // bei jedem Öffnen, s. App.tsx `{kosmoOpen && <KosmoPanel …/>}`).
+    if (consumeKosmoFokus()) eingabeRef.current?.focus();
   }, []);
 
   useEffect(() => {
@@ -1214,6 +1223,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           ⚑
         </KButton>
         <input
+          ref={eingabeRef}
           data-testid="kosmo-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}

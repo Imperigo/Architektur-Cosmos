@@ -56,6 +56,7 @@ import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
 import { setDeepLink } from './state/deep-link';
+import { requestKosmoFokus } from './state/kosmo-focus';
 import { setzeAktuelleStation } from './state/auftragsbuch';
 import { hydriereJournal } from './state/journal-store';
 import { qrSvg } from './state/qr';
@@ -640,7 +641,17 @@ export function App() {
         {screen === 'design' ? (
           <KFehlerzone bereich="KosmoDesign" onDiagnose={() => setScreen('doc')}>
             <Absturztest />
-            <DesignWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'design', name: 'KosmoDesign' })} />
+            <DesignWorkspace
+              onEinstellungen={() => oeffneEinstellungen({ id: 'design', name: 'KosmoDesign' })}
+              kosmoOffen={kosmoOpen}
+              onKosmoOeffnen={() => {
+                // K16 A6 («Sprechen/Schreiben»): derselbe Weg wie die Zentrale-
+                // Kachel `module-speak` (oeffneModul unten) — nur zusätzlich
+                // ein Fokus-Wunsch fürs Eingabefeld (KosmoPanel konsumiert ihn).
+                requestKosmoFokus();
+                setKosmoOpen(true);
+              }}
+            />
           </KFehlerzone>
         ) : screen === 'vis' ? (
           <KFehlerzone bereich="KosmoVis" onDiagnose={() => setScreen('doc')}>

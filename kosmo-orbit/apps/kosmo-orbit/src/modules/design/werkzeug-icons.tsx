@@ -79,3 +79,66 @@ export function IconZone() {
     </svg>
   );
 }
+
+/**
+ * K16 A6 (Entwurfs-Einstieg, linke Kante): drei weitere Icons für den
+ * Entwurfs-Dock — Sprechen/Schreiben, Skizzieren, manuelles CAD. Gleicher
+ * aura-Stil wie oben (nur Linien, `currentColor`, `aria-hidden`).
+ */
+
+/** Sprechen/Schreiben — Sprechblase mit Punkten (Text/Dialog, kein Mikrofon-Klischee). */
+export function IconEntwurfSprechen() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2.2 3.4 H13.8 V9.8 H6.6 L3.6 12.6 V9.8 H2.2 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      <circle cx="5.6" cy="6.6" r="0.7" fill="currentColor" />
+      <circle cx="8" cy="6.6" r="0.7" fill="currentColor" />
+      <circle cx="10.4" cy="6.6" r="0.7" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Skizzieren — Stift über einer angedeuteten Freihandlinie (dieselbe Geste wie das ✎-Werkzeug). */
+export function IconEntwurfSkizzieren() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2.4 12.4 C5 11.4 6.5 9.4 8.6 8.6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8.2 8.9 L11.6 5.5 A1.2 1.2 0 0 1 13.3 7.2 L9.9 10.6 L7.6 11.2 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Manuelles CAD — T-Winkel/Lineal (klassisches Zeichenwerkzeug, ArchiCAD-Anmutung). */
+export function IconEntwurfCad() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2.2 2.2 H13.8 V4.6 H4.6 V13.8 H2.2 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      <path d="M6.8 4.6 V7.4 M9.4 4.6 V7.4 M12 4.6 V7.4" stroke="currentColor" strokeWidth="0.9" />
+      <path d="M2.2 8.8 H4.6 M2.2 11.2 H4.6" stroke="currentColor" strokeWidth="0.9" />
+    </svg>
+  );
+}

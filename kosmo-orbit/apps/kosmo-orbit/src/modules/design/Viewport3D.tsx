@@ -13,6 +13,7 @@ import type { Fluchtlinie } from './zeichenhilfen';
 import { NavLeiste } from './NavLeiste';
 import { meshHandles, threeDeltaZuKernel } from './mesh-edit';
 import { fitStrokes, type FittedSegment, type Stroke } from './sketch';
+import type { SkizzeVarianteId } from './skizze-annaeherungen';
 import {
   achsAbstand,
   groundHitToPlanPt,
@@ -117,7 +118,13 @@ export interface ViewportHandlers {
   previewLine?: Pt[] | null;
   /** KosmoSketch: Freihand-Overlay im Plan aktiv. */
   sketchMode?: boolean;
-  onSketchAccept?: (segments: { a: Pt; b: Pt }[]) => void;
+  /**
+   * K16 A6: `meta` transportiert die im 2D-Overlay gewählte Annäherungs-
+   * Variante (fürs Lernjournal) — der 3D-Weg hier ruft weiterhin ohne `meta`
+   * auf (kein Annäherungs-Karten-UI im 3D-Viewport, `sketch3d-*`-Testids
+   * bleiben unverändert, s. `sketch-3d-a4.spec.ts`).
+   */
+  onSketchAccept?: (segments: { a: Pt; b: Pt }[], meta?: { variante: SkizzeVarianteId; anzahl: number }) => void;
   /**
    * A4 (ROADMAP 155): ein im 3D-Viewport auf eine Wandfläche gezeichneter
    * Strich ergibt eine Öffnung statt eines Wand-Zugs — ein Aufruf pro Strich,
