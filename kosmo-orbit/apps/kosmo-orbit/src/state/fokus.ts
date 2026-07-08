@@ -23,6 +23,8 @@ export const KOPFLEISTE_FOKUS = {
   akzent: 'selten',
   /** V1.6 Block E: der «?»-Rundgang-Knopf — selten gebraucht, immer erreichbar. */
   guide: 'selten',
+  /** «App deinstallieren…» — sehr selten gebraucht, aber immer auffindbar (Owner-Auftrag). */
+  deinstallieren: 'selten',
 } as const satisfies Record<string, FokusStufe>;
 
 export type KopfleisteElement = keyof typeof KOPFLEISTE_FOKUS;

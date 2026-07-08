@@ -30,3 +30,13 @@ Desktop-Plattformen + Xcode-Artefakt). Sie tragen den vollständigen V1-Stand
 inklusive Node-Editor, Pairing, KosmoAsset/KosmoDev und dem Meldungs-System.
 
 Installation je Plattform: siehe `INSTALL.md`.
+
+## Stabile Download-Links (Website)
+
+Neben den 14-Tage-Workflow-Artefakten oben veröffentlicht derselbe Workflow
+die Installer zusätzlich als **dauerhafte** Release-Assets unter dem
+GitHub-Release-Tag `desktop-latest` (stabile Dateinamen
+`KosmoOrbit-<edition>-<plattform>…`, wird bei jedem Lauf ersetzt statt
+versioniert). Genau diese Links zeigt `architekturkosmos.ch/orbit` an — der
+volle Ablauf inkl. Versions-Bump, Build-Trigger und Obsidian-Release-Notiz
+steht in `../docs/RELEASE-ABLAUF.md`.

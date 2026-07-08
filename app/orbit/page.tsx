@@ -12,6 +12,8 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { PublicSiteHeader } from '@/components/public/PublicSiteHeader';
+import { OrbitDownload } from './OrbitDownload';
+import { OrbitDeinstallation } from './OrbitDeinstallation';
 import {
   ingenbohlEntry,
   publicAssets,
@@ -188,6 +190,9 @@ export default function OrbitPage() {
             />
           </div>
         </section>
+
+        <OrbitDownload />
+        <OrbitDeinstallation />
 
         <section className="grid gap-5 py-10 md:grid-cols-3">
           <PublicPrinciple

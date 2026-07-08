@@ -18,6 +18,7 @@ import {
 } from '@kosmo/ui';
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
+import { AppDeinstallieren } from './shell/AppDeinstallieren';
 import { StarterGuide } from './shell/StarterGuide';
 import { istStarterGuideAbgeschlossen } from './shell/starter-guide-schritte';
 import { VisWorkspace } from './modules/vis/VisWorkspace';
@@ -127,6 +128,7 @@ export function App() {
   const [wartend, setWartend] = useState(0);
   const [raeume, setRaeume] = useState<{ name: string; verbindungen: number }[] | null>(null);
   const [koppelnOffen, setKoppelnOffen] = useState(false);
+  const [deinstallierenOffen, setDeinstallierenOffen] = useState(false);
   // D2: Rolle aus den Projekteinstellungen (Revision hält die Zentrale frisch)
   const revision = useProject((s) => s.revision);
   void revision;
@@ -396,6 +398,22 @@ export function App() {
             style={{ all: 'unset', cursor: 'pointer' }}
           >
             <Badge hue="var(--k-ink-faint)">?</Badge>
+          </button>
+        </span>
+        <Hairline vertical />
+        {/* Owner-Auftrag «App deinstallieren…»: sehr selten gebraucht, darum
+            dezent am Ende der Kopfleiste, aber immer erreichbar (nicht in
+            einem Overflow-Menü versteckt — KosmoOrbit hat keine klassische
+            Menüleiste, die Kopfleiste IST das Hauptmenü). */}
+        <span className={fokusKlasse(fokusStufe('deinstallieren'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <button
+            onClick={() => setDeinstallierenOffen(true)}
+            data-testid="menu-deinstallieren"
+            title="App deinstallieren…"
+            aria-label="App deinstallieren…"
+            style={{ all: 'unset', cursor: 'pointer' }}
+          >
+            <Badge hue="var(--k-ink-faint)">Deinstallieren…</Badge>
           </button>
         </span>
         <Hairline vertical />
@@ -820,6 +838,7 @@ export function App() {
       <Kurzbefehle stationen={stationen} zurZentrale={() => setScreen('home')} />
       <KMeldungen />
       <KBestaetigung />
+      {deinstallierenOffen && <AppDeinstallieren onClose={() => setDeinstallierenOffen(false)} />}
     </div>
   );
 }
