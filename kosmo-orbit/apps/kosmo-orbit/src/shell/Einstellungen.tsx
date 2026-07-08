@@ -4,6 +4,17 @@ import { Badge, Hairline, KButton, moduleHue, type ModuleId, type ThemeName } fr
 import { AKZENTE } from './akzente';
 import { NEUIGKEITEN, neuigkeitenFuerStation } from './neuigkeiten';
 import { adaptionAktiv, adaptionZuruecksetzen, setAdaptionAktiv } from '../state/oberflaeche-adaption-kern';
+import {
+  effektiveLeistungsStufe,
+  formatiereLeistungsBericht,
+  holeLetztesErgebnis,
+  holeOverride,
+  istZustimmungErteilt,
+  pruefeLeistungMitFreigabe,
+  setOverride,
+  setZustimmung,
+  type LeistungsOverride,
+} from '../state/leistung';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { loadSettings } from './KosmoPanel';
 
@@ -53,6 +64,13 @@ export function Einstellungen({
 }: EinstellungenProps) {
   const [werkzeugSetupOffen, setWerkzeugSetupOffen] = useState(false);
   const [adaptionIstAn, setAdaptionIstAn] = useState(() => adaptionAktiv());
+
+  // A9 (Owner-Befund K19, Leistungs-Autotuning): Zustimmung, letztes Ergebnis
+  // und Override leben in leistung.ts (localStorage kosmo.leistung.v1) — hier
+  // nur der React-Spiegel für die Anzeige, dieselben Setter wie überall sonst.
+  const [leistungZustimmung, setLeistungZustimmungState] = useState(() => istZustimmungErteilt());
+  const [leistungErgebnis, setLeistungErgebnis] = useState(() => holeLetztesErgebnis());
+  const [leistungOverride, setLeistungOverrideState] = useState<LeistungsOverride>(() => holeOverride());
 
   // Escape schliesst das Panel (Muster wie ZentraleKachel-Info/Kurzbefehle).
   useEffect(() => {
@@ -215,6 +233,97 @@ export function Einstellungen({
             >
               Oberfläche zurücksetzen
             </KButton>
+          </div>
+        </section>
+        <Hairline />
+
+        <section data-testid="einstellungen-leistung" style={{ display: 'grid', gap: 8 }}>
+          <div className="k-primaer">Leistung</div>
+          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              type="checkbox"
+              data-testid="leistung-zustimmung"
+              checked={leistungZustimmung}
+              onChange={(e) => {
+                setZustimmung(e.target.checked);
+                setLeistungZustimmungState(e.target.checked);
+              }}
+            />
+            Kosmo darf die Systemleistung prüfen (Kerne, Speicher, Grafiktreiber, ein kurzer Mikro-Benchmark) und die
+            Render-Qualität selbst drosseln
+          </label>
+          <div>
+            <KButton
+              size="sm"
+              tone="quiet"
+              data-testid="leistung-pruefen"
+              disabled={!leistungZustimmung}
+              title={leistungZustimmung ? undefined : 'Erst die Zustimmung oben aktivieren'}
+              onClick={() => {
+                const ergebnis = pruefeLeistungMitFreigabe();
+                if (ergebnis) setLeistungErgebnis(ergebnis);
+              }}
+            >
+              Systemleistung jetzt prüfen
+            </KButton>
+          </div>
+          {leistungErgebnis && (
+            <div
+              data-testid="leistung-bericht"
+              style={{
+                fontSize: 12,
+                color: 'var(--k-ink-soft)',
+                lineHeight: 1.6,
+                background: 'var(--k-surface)',
+                borderRadius: 8,
+                padding: '8px 10px',
+                display: 'grid',
+                gap: 2,
+              }}
+            >
+              {(() => {
+                const bericht = formatiereLeistungsBericht(leistungErgebnis);
+                return (
+                  <>
+                    <div>Kerne: {bericht.kerne}</div>
+                    <div>Speicher: {bericht.speicher}</div>
+                    <div>Grafiktreiber: {bericht.renderer}</div>
+                    <div>
+                      Stufe: <strong data-testid="leistung-stufe">{bericht.stufe}</strong>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>Render-Qualität:</span>
+            {(['auto', 'hoch', 'mittel', 'niedrig'] as const).map((stufe) => (
+              <button
+                key={stufe}
+                data-testid={`leistung-override-${stufe}`}
+                onClick={() => {
+                  setOverride(stufe);
+                  setLeistungOverrideState(stufe);
+                }}
+                className="k-primaer"
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  fontSize: 11.5,
+                  padding: '3px 9px',
+                  borderRadius: 999,
+                  color: leistungOverride === stufe ? 'var(--k-field)' : 'var(--k-ink-soft)',
+                  background: leistungOverride === stufe ? 'var(--k-technik)' : 'var(--k-surface)',
+                }}
+              >
+                {stufe === 'auto' ? `Automatisch (${effektiveLeistungsStufe()})` : stufe}
+              </button>
+            ))}
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--k-ink-faint)', lineHeight: 1.5 }}>
+            🔒 Cycles-Preview-Synchro, ein Host-PC-Client und die Wahl des lokalen LLM nach Leistung folgen erst mit der
+            HomeStation — hier gibt es dafür bewusst keinen Regler.
           </div>
         </section>
         <Hairline />

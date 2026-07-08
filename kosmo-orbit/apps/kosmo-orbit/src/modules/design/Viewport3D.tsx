@@ -170,6 +170,7 @@ export interface ViewportHandlers {
 }
 
 import { materialKarten, texturenAktiv } from './texturen';
+import { effektiveLeistungsStufe, leistungRevisionAktuell, pixelRatioFuerStufe, schattenAnFuerStufe } from '../../state/leistung';
 
 // C2: Textur-Umschalter — Rebuild des Modells beim Wechsel
 let texturRevision = 0;
@@ -278,8 +279,16 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   useEffect(() => {
     const mount = mountRef.current!;
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
+    // A9 (Owner-Befund K19, Leistungs-Autotuning): die beiden echten Qualitäts-
+    // Schrauben (pixelRatio-Deckel, Schatten an/aus) folgen der effektiven
+    // Leistungsstufe statt eines Fixwerts. Ohne Zustimmung/Messung liefert
+    // effektiveLeistungsStufe() weiterhin 'hoch' (s. leistung.ts) — exakt das
+    // bisherige Fixverhalten, keine unangekündigte Drosselung ohne Zustimmung.
+    // Erst nach Zustimmung + tatsächlicher Prüfung (oder manuellem Override im
+    // Einstellungen-Panel) weicht die Stufe davon ab; `syncLeistung` unten
+    // hält den Renderer synchron, ohne den Viewport neu zu mounten.
+    renderer.setPixelRatio(pixelRatioFuerStufe(effektiveLeistungsStufe(), window.devicePixelRatio));
+    renderer.shadowMap.enabled = schattenAnFuerStufe(effektiveLeistungsStufe());
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     mount.appendChild(renderer.domElement);
     // Serie J / J1a: ohne `touch-action: none` scrollt/zoomt iPad-Safari die
@@ -992,6 +1001,19 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       deriveWorker.postMessage({ revision, json: doc.toJSON() });
     }
 
+    // A9 (Owner-Befund K19): dieselbe Revisions-Poll-Idee wie `texturRevision`/
+    // `syncContext` — pollt billig (ein Zahlenvergleich) statt eines eigenen
+    // Event-Listeners, damit ein Override im Einstellungen-Panel sofort wirkt,
+    // ohne den Viewport neu zu mounten.
+    let letzteLeistungsRevision = -1;
+    function syncLeistung() {
+      if (leistungRevisionAktuell() === letzteLeistungsRevision) return;
+      letzteLeistungsRevision = leistungRevisionAktuell();
+      const stufe = effektiveLeistungsStufe();
+      renderer.setPixelRatio(pixelRatioFuerStufe(stufe, window.devicePixelRatio));
+      renderer.shadowMap.enabled = schattenAnFuerStufe(stufe);
+    }
+
     function syncPreview() {
       previewGroup.clear();
       const line = handlers.current?.previewLine;
@@ -1273,6 +1295,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     let raf = 0;
     let testMode = false;
     const renderFrame = () => {
+      syncLeistung();
       syncModel();
       syncPreview();
       syncModulRaster();
