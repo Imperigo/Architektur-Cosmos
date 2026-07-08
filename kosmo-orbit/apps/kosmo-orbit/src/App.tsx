@@ -19,6 +19,7 @@ import {
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
 import { KosmoSymbol } from './shell/KosmoSymbol';
+import { ZentraleKachel } from './shell/ZentraleKachel';
 import { AppDeinstallieren } from './shell/AppDeinstallieren';
 import { StarterGuide } from './shell/StarterGuide';
 import { istStarterGuideAbgeschlossen } from './shell/starter-guide-schritte';
@@ -241,6 +242,16 @@ export function App() {
       // transienter Fehler: letzte bekannte Liste behalten (kein Chip-Flackern)
       .catch(() => setRaeume((alt) => alt));
   }, [syncOpen, syncUrl, syncStatus]);
+
+  // Serie K / A2 (Owner-Befund K12): stromsparende Idle-Animation der
+  // Kachel-Halos pausiert, sobald der Tab/das Fenster im Hintergrund ist —
+  // eine Klasse am Zentrale-Container statt eines Timers pro Kachel.
+  const [dokumentVersteckt, setDokumentVersteckt] = useState(() => document.hidden);
+  useEffect(() => {
+    const onSichtbarkeit = () => setDokumentVersteckt(document.hidden);
+    document.addEventListener('visibilitychange', onSichtbarkeit);
+    return () => document.removeEventListener('visibilitychange', onSichtbarkeit);
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -642,7 +653,10 @@ export function App() {
           </KFehlerzone>
         ) : (
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
-            <div className="k-einblenden" style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}>
+            <div
+              className={`k-einblenden${dokumentVersteckt ? ' k-zentrale-pausiert' : ''}`}
+              style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}
+            >
               <div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
                   <div className="k-titel" style={{ fontSize: 34 }}>
@@ -736,6 +750,11 @@ export function App() {
                   FOKUS-SYSTEMATIK.md). */}
               {(() => {
                 const kosmoKachel = sortierteModule.find((m) => stationFamilie(m.id) === 'kosmo');
+                // Serie K / A2: EIN fortlaufender Index über alle Kacheln der
+                // Zentrale (Kosmo-Kachel zuerst, dann Familie für Familie) —
+                // steuert nur die Startanimations-Staffelung (animation-delay
+                // in ZentraleKachel.tsx), NIE die DOM-Reihenfolge selbst.
+                let kachelIndex = 0;
                 const kachelGrid = (mods: typeof sortierteModule) => (
                   <div
                     style={{
@@ -745,34 +764,15 @@ export function App() {
                     }}
                   >
                     {mods.map((m) => (
-                      <Panel
+                      <ZentraleKachel
                         key={m.id}
-                        onClick={() => oeffneModul(m)}
-                        role="button"
-                        tabIndex={0}
-                        aria-label={`${m.name} öffnen`}
-                        onKeyDown={(e: React.KeyboardEvent) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            oeffneModul(m);
-                          }
-                        }}
-                        data-testid={`module-${m.id}`}
-                        className="k-kachel"
-                        style={{
-                          display: 'flex',
-                          gap: 12,
-                          alignItems: 'center',
-                          cursor: m.screen || m.deepLink ? 'pointer' : 'default',
-                          opacity: m.screen || m.deepLink ? 1 : 0.55,
-                        }}
-                      >
-                        <OrbitMark module={m.id} size={34} />
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ fontWeight: 550 }}>{m.name}</div>
-                          <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>{m.desc}</div>
-                        </div>
-                      </Panel>
+                        id={m.id}
+                        name={m.name}
+                        desc={m.desc}
+                        klickbar={!!(m.screen || m.deepLink)}
+                        onOeffnen={() => oeffneModul(m)}
+                        index={kachelIndex++}
+                      />
                     ))}
                   </div>
                 );

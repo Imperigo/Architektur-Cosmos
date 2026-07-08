@@ -1,0 +1,63 @@
+import type { ModuleId } from '@kosmo/ui';
+
+/**
+ * Werkzeug-Stichworte je Zentrale-Kachel (Serie K / A2, Owner-Befund K12:
+ * «Hover zeigt enthaltene Tools»). Reine Datentabelle (unit-testbar), die
+ * Darstellung (Hover-Zeile + Info-Panel) lebt in `ZentraleKachel.tsx`.
+ *
+ * Ehrlichkeitsregel (Owner-Mandat): jedes Stichwort verweist auf eine WIRKLICH
+ * gebaute Fähigkeit des jeweiligen Workspace — belegt gegen den Quellcode
+ * unter `src/modules/<station>/`, keine Wunschliste. Wo eine Station von der
+ * HomeStation/Bridge abhängt (KosmoVis-Render, KosmoSpeak-Sprache), sagt das
+ * Stichwort das offen (keine vorgetäuschte Autonomie).
+ *
+ * `orbit`/`kosmo` sind bewusst NICHT hier drin: das sind reine Farbton-/Logo-
+ * Werte aus `moduleHue` (Kopfzeile, Badges) — nie eine eigene Zentrale-Kachel
+ * (siehe `modules` in App.tsx, das nie eine dieser zwei Ids listet).
+ */
+
+export type StationModulId = Exclude<ModuleId, 'orbit' | 'kosmo'>;
+
+/** Alle zwölf Stations-Ids, exakt wie in `modules` (App.tsx) — dient der
+ *  Vollständigkeitsprüfung im Unit-Test. */
+export const STATIONS_MODUL_IDS: StationModulId[] = [
+  'design',
+  'draw',
+  'sketch',
+  'data',
+  'vis',
+  'publish',
+  'prepare',
+  'asset',
+  'dev',
+  'speak',
+  'doc',
+  'train',
+];
+
+export const STATIONS_WERKZEUGE: Record<StationModulId, string[]> = {
+  design: [
+    'Wände, Decken, Dach zeichnen',
+    '2D-Werkplan (Grundriss/Schnitt)',
+    'Volumenstudien-Generator',
+    'DXF/IFC-Export/Import',
+    'Sonnenstudie',
+  ],
+  draw: ['Modellbaum mit IFC-Identität', 'Mengenauszug / Vorausmasse', 'Ausmass als CSV'],
+  sketch: ['Freihandzug → Wandachse', 'Winkel-Snap (0°/45°/90°)', 'Vorschlag vor Übernahme geprüft'],
+  data: ['Referenzen- und Bauteilkatalog', 'Materialkatalog mit U-Wert', 'Wissenssuche mit Belegen', 'Trainings-Kuration'],
+  vis: ['Render-Jobs an die HomeStation', 'Node-Graph für Render-Prompts', 'Drei-Stimmungen-Serie', 'QA-Verdikt je Ergebnis'],
+  publish: ['Blätter und Plansätze', 'Grundriss/Axo/Schnitt platzieren', 'PDF/SVG/Transmittal-Export', 'Renderbild einfügen'],
+  prepare: ['Dokumente aufnehmen (Ingest)', 'Wissenssuche mit [Qn]-Belegen', 'OneDrive/Graph-Anbindung', 'Wettbewerbsdossier übernehmen'],
+  asset: ['GLB-Objekt-Bibliothek', 'CH-Bauteilkatalog übernehmen', 'Materialkarten (PBR)', 'Ins Modell laden'],
+  dev: ['Auftragsbuch erfassen', 'Workorder-Export (Markdown)', 'An HomeStation übergeben'],
+  speak: ['Text-Chat mit Kosmo', 'Push-to-Talk-Mikrofon (Bridge)', 'Vorlesen (TTS)', 'Vorschlagskarten mit Undo'],
+  doc: ['Selbstdiagnose', 'Hilfe-Themen (Werkzeug-Wissen)', 'Lernjournal-Berichte'],
+  train: ['Lernstand-Übersicht', 'Kuration fürs Training', 'JSONL-Trainingspaket-Export'],
+};
+
+/** Werkzeuge einer Zentrale-Kachel — leer für `orbit`/`kosmo` (nie als
+ *  Kachel gerendert, siehe Kommentar oben), sonst 3–5 ehrliche Stichworte. */
+export function werkzeugeFuerStation(id: ModuleId): string[] {
+  return id === 'orbit' || id === 'kosmo' ? [] : STATIONS_WERKZEUGE[id];
+}

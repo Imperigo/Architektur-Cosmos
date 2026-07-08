@@ -223,6 +223,20 @@ progress {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    /* Serie K / A2: eine reine Dauer-Kürzung reicht nicht, solange eine
+       `animation-delay` steht (z.B. die gestaffelte Kachel-Startanimation) —
+       ohne diese Zeile bliebe eine spät gestaffelte Kachel bis zu ~450ms
+       unsichtbar (opacity:0 hält per `both`-Fill-Mode), obwohl die Animation
+       selbst schon "fertig" wäre. Betrifft auch Transitions (harmlos, keine
+       hier verzögert absichtlich). */
+    animation-delay: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+  /* Idle-Puls des Kachel-Halos: bewusst ganz AUS (nicht nur auf 0.01ms
+     verkürzt) — «Reduced-motion: aus» (Bauauftrag Punkt 6), kein
+     Dauer-Flackern durch `infinite` bei entkoppelter Mikro-Dauer. */
+  .k-kachel-halo {
+    animation: none;
   }
 }
 
@@ -414,4 +428,108 @@ progress {
   border-color: var(--k-accent);
   box-shadow: var(--k-shadow-raised);
   transform: translateY(-1px);
+}
+
+/* Serie K / A2 (Owner-Befund K12): Startanimation — gestaffeltes Erscheinen
+   der Kacheln beim Mount der Zentrale. `animation-delay` kommt je Kachel aus
+   `ZentraleKachel.tsx` (Inline-Style, aus dem laufenden Index); Dauer +
+   grösste Verzögerung bleiben zusammen klar unter 800 ms. Rein additiv zur
+   bestehenden Hover-Transition oben — KEIN pointer-events-Eingriff, die
+   Kachel bleibt ab Frame 1 klickbar (Playwrights Actionability-Check prüft
+   Sichtbarkeit/Grösse, nicht opacity). */
+.k-kachel-einblenden {
+  animation: k-kachel-einblenden var(--k-motion-settle) both;
+}
+@keyframes k-kachel-einblenden {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Info-Icon oben rechts je Kachel — dezent, tritt erst bei Hover/Fokus der
+   Kachel klar hervor (Understatement, Gestaltungskonzept «Papier-Ruhe»). */
+.k-kachel-info {
+  all: unset;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--k-ink-faint);
+  opacity: 0.45;
+  transition: opacity var(--k-motion-fast), color var(--k-motion-fast);
+}
+.k-kachel:hover .k-kachel-info,
+.k-kachel-info:hover,
+.k-kachel-info:focus-visible {
+  opacity: 1;
+  color: var(--k-ink);
+}
+
+/* Tiefenlayer hinter dem OrbitMark: ein weicher, stationsfarbener Halo
+   (Farbe kommt via `color-mix` aus `moduleHue`, inline gesetzt — bleibt so
+   die einzige Quelle der Wahrheit für Modulfarben, keine zweite Token-Kopie
+   in CSS). Hover/Fokus hebt ihn leicht an (Transform/Opacity, KEIN
+   pointer-events-Eingriff). Der Idle-Puls (stromsparend: NUR opacity, sehr
+   lange Dauer) läuft eigenständig weiter. */
+.k-kachel-halo {
+  position: absolute;
+  inset: -11px;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0.7;
+  transform: scale(1);
+  transition: opacity var(--k-motion-base), transform var(--k-motion-base);
+  animation: k-kachel-idle-puls 7s ease-in-out infinite;
+}
+.k-kachel:hover .k-kachel-halo,
+.k-kachel:focus-visible .k-kachel-halo {
+  opacity: 1;
+  transform: scale(1.08);
+}
+@keyframes k-kachel-idle-puls {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+/* Stromsparend: pausiert, sobald das Dokument versteckt ist (Tab im
+   Hintergrund) — die Klasse setzt ein visibilitychange-Listener in App.tsx
+   auf dem Zentrale-Container, kein Timer pro Kachel. */
+.k-zentrale-pausiert .k-kachel-halo {
+  animation-play-state: paused;
+}
+
+/* Hover/Fokus zeigt die enthaltenen Werkzeuge unter der Beschreibung — die
+   Kachel darf dabei leicht wachsen (max-height/opacity), das Grid bleibt
+   stabil (kein Sprung der Nachbarn, jede Kachel wächst nur für sich). */
+.k-kachel-werkzeuge {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--k-ink-faint);
+  margin-top: 0;
+  transition: max-height var(--k-motion-base), opacity var(--k-motion-base), margin-top var(--k-motion-base);
+}
+.k-kachel:hover .k-kachel-werkzeuge,
+.k-kachel:focus-within .k-kachel-werkzeuge {
+  max-height: 40px;
+  opacity: 1;
+  margin-top: 4px;
 }
