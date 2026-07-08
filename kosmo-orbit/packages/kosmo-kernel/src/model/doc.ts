@@ -23,9 +23,18 @@ export interface RaumprogrammPosten {
 }
 
 /**
- * SIA-Bauphase (Owner-Auftrag 03.07.) — steuert den Detaillierungsgrad der
- * Pläne. Regelwerk: docs/PLAN-DETAILLIERUNG.md (Hochbauzeichner-Konvention,
+ * SIA-Bauphase (Owner-Auftrag 03.07.) — steuert NUR den Detaillierungsgrad
+ * der Pläne (Poché vs. Schichten vs. volle Materialschraffur, 1:200/1:100/
+ * 1:50). Regelwerk: docs/PLAN-DETAILLIERUNG.md (Hochbauzeichner-Konvention,
  * Abgleich mit den Lehrheften folgt über KosmoPrepare).
+ *
+ * WICHTIG (v0.6.3, s. `SiaPhase` unten): `BauPhase` ist NICHT die aktuelle
+ * SIA-Teilphase des Projekts — es ist rein der Plan-Zeichenstil. Ein Projekt
+ * in der Wettbewerbsphase kann z.B. bereits mit `phase: 'werkplan'` gezeichnet
+ * sein (voller Detailgrad für eine Studie), und ein Projekt in der
+ * Ausführung kann testweise auf `'vorprojekt'`-Poché zurückgestellt werden.
+ * Die beiden Zustände sind bewusst getrennt (`doc.settings.phase` vs.
+ * `doc.settings.siaPhase`) und werden NICHT automatisch gekoppelt.
  */
 export type BauPhase = 'vorprojekt' | 'bauprojekt' | 'werkplan';
 
@@ -35,6 +44,71 @@ export function phaseLabel(phase: BauPhase): string {
     : phase === 'bauprojekt'
       ? 'Bauprojekt (SIA 32/33)'
       : 'Werkplan (SIA 51)';
+}
+
+/**
+ * Aktuelle SIA-Teilphase des Projekts (v0.6.3, `docs/V063-VOLLPROJEKT-KONZEPT.md`
+ * Abschnitt 2 + Lücken-Batch 1) — der reale Projektstand im SIA-102/112-Zyklus
+ * vom Wettbewerb bis zur Gebäudeabnahme. Zeichnet NICHTS, steuert NICHTS am
+ * Plan-Detaillierungsgrad (das bleibt `BauPhase` oben) — reiner
+ * Kosmo-sichtbarer Statuszustand, additiv zu `DocSettings`, kein Kernel-Bruch.
+ *
+ * `'wettbewerb'` = SIA 4.22 (Auswahlverfahren/Studie, vor der eigentlichen
+ * SIA-102-Nummerierung), `'vorprojekt'` = SIA 31, `'bauprojekt'` = SIA 32,
+ * `'bewilligung'` = SIA 33 (Baugesuch), `'ausschreibung'` = SIA 41,
+ * `'ausfuehrung'` = SIA 51/52 (Ausführungsprojekt/Werkplanung/Bauausführung),
+ * `'abnahme'` = Gebäudeabnahme nach Bauende — SIA 102 kennt dafür keine
+ * eigene Teilphase-Nummer im OCR-Korpus, hier ehrlich als eigene,
+ * unbelegte Arbeitsphase geführt (kein SIA-Zitat erfunden).
+ */
+export type SiaPhase =
+  | 'wettbewerb'
+  | 'vorprojekt'
+  | 'bauprojekt'
+  | 'bewilligung'
+  | 'ausschreibung'
+  | 'ausfuehrung'
+  | 'abnahme';
+
+export function siaPhaseLabel(phase: SiaPhase): string {
+  switch (phase) {
+    case 'wettbewerb':
+      return 'Wettbewerb/Studie (SIA 4.22)';
+    case 'vorprojekt':
+      return 'Vorprojekt (SIA 31)';
+    case 'bauprojekt':
+      return 'Bauprojekt (SIA 32)';
+    case 'bewilligung':
+      return 'Bewilligungsverfahren (SIA 33)';
+    case 'ausschreibung':
+      return 'Ausschreibung (SIA 41)';
+    case 'ausfuehrung':
+      return 'Ausführungsprojekt/Ausführung (SIA 51/52)';
+    case 'abnahme':
+      return 'Gebäudeabnahme (unbelegte Arbeitsphase)';
+  }
+}
+
+/**
+ * NUR-Vorschlag (kein Zwang, s. Kommentar bei `BauPhase`): welcher
+ * Plan-Detaillierungsgrad zu einer SIA-Teilphase passt. Der Command
+ * `design.siaPhaseSetzen` nennt das in seiner Zusammenfassung, koppelt es
+ * aber NICHT automatisch in `doc.settings.phase` — Owner-Kontrolle, keine
+ * Überraschungen.
+ */
+export function empfohlenePlanPhase(siaPhase: SiaPhase): BauPhase {
+  switch (siaPhase) {
+    case 'wettbewerb':
+    case 'vorprojekt':
+      return 'vorprojekt';
+    case 'bauprojekt':
+    case 'bewilligung':
+    case 'ausschreibung':
+      return 'bauprojekt';
+    case 'ausfuehrung':
+    case 'abnahme':
+      return 'werkplan';
+  }
 }
 
 /** Bemassungs-Stil (V2-A5) — projektweit, wirkt in App-Plan, Druck und DXF. */
@@ -64,8 +138,12 @@ export interface DocSettings {
   /** Wettbewerbsdossier (Phase 0): Do's, Don'ts, Fakten — fliesst in Kosmos Systemprompt. */
   dossier: DossierEintrag[];
   bemassung: BemassungsStil;
-  /** Detaillierungsgrad der Pläne nach SIA-Phase. */
+  /** Detaillierungsgrad der Pläne nach SIA-Phase — NICHT der Projektstand, s. `BauPhase`-Kommentar. */
   phase: BauPhase;
+  /** Aktuelle SIA-Teilphase des Projekts (v0.6.3) — getrennter Zustand von
+   * `phase`, s. `SiaPhase`-Kommentar. Nur über `design.siaPhaseSetzen`
+   * gesetzt, koppelt `phase` NICHT automatisch. */
+  siaPhase: SiaPhase;
   /** Aktive Zonenregel (V2-Vorform V1): speist Δ-Max, Höhen-/Geschoss-Checks. */
   zonenRegel: ZonenRegel | null;
   /** Raumtyp-Regeln (V2-F3, Finch Graph-Rules): leer = eingebaute Richtwerte. */
@@ -217,6 +295,8 @@ export const defaultSettings: DocSettings = {
   bemassung: { aussenKetten: 'beide', innenKetten: false, hoehenKoten: true },
   // Default = volle Detaillierung (Bestandsverhalten); Vorprojekt reduziert
   phase: 'werkplan',
+  // Default = Beginn des SIA-Zyklus (neues Projekt startet im Wettbewerb).
+  siaPhase: 'wettbewerb',
   zonenRegel: null,
   parzellenFlaeche: null,
   raumRegeln: [],

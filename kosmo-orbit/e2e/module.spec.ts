@@ -714,6 +714,33 @@ test('SIA-Phase: Vorprojekt reduziert die Darstellung, Werkplan detailliert voll
   await expect(page.locator('[data-testid="phase-stil"]')).toHaveValue('werkplan');
 });
 
+test('SIA-Teilphase (v0.6.3): eigener Projektstand, koppelt die Plan-Detaillierung NICHT, undo-fähig', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  // Teilphase sitzt wie Phase/Bemassung im Projekt-Menü (selten geändert).
+  await page.click('[data-testid="projekt-menu-toggle"]');
+  const teilphase = page.locator('[data-testid="sia-phase-select"]');
+  await expect(teilphase).toBeVisible();
+  // Default: Beginn des SIA-Zyklus (Wettbewerb/Studie).
+  await expect(teilphase).toHaveValue('wettbewerb');
+  // Wert wechseln → nur der Projektstand ändert sich, die Plan-Detaillierung
+  // («Phase», Default werkplan) bleibt unangetastet — keine automatische Kopplung.
+  await page.selectOption('[data-testid="sia-phase-select"]', 'bewilligung');
+  await expect(teilphase).toHaveValue('bewilligung');
+  await expect(page.locator('[data-testid="phase-stil"]')).toHaveValue('werkplan');
+  // Undo stellt die Teilphase zurück.
+  await page.click('[data-testid="undo"]');
+  await expect(teilphase).toHaveValue('wettbewerb');
+  await expect(page.locator('[data-testid="phase-stil"]')).toHaveValue('werkplan');
+});
+
 test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {

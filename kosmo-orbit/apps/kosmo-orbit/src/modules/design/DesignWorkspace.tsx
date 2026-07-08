@@ -16,6 +16,7 @@ import {
   fassadenModule,
   moduleAlsCsv,
   magnetFang,
+  siaPhaseLabel,
   type Assembly,
   type Column,
   type ErkannteDecke,
@@ -23,6 +24,7 @@ import {
   type FangKandidaten,
   type Pt,
   type SectionSpec,
+  type SiaPhase,
   type Stair,
   type Storey,
   type Wall,
@@ -1363,6 +1365,36 @@ export function DesignWorkspace() {
               <option value="vorprojekt">Vorprojekt</option>
               <option value="bauprojekt">Bauprojekt</option>
               <option value="werkplan">Werkplan</option>
+            </select>
+          </label>
+          {/* SIA-Teilphase (v0.6.3, Lücken-Batch 1): der reale Projektstand im
+              SIA-102/112-Zyklus — bewusst GETRENNT vom Plan-Detaillierungsgrad
+              («Phase» links) und NICHT automatisch gekoppelt (Owner-Kontrolle).
+              Die Kosmo-Zusammenfassung des Commands nennt den passenden
+              Detaillierungsgrad als reinen Vorschlag. */}
+          <label
+            style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}
+            title="Aktuelle SIA-Teilphase des Projekts (Wettbewerb bis Abnahme) — reiner Projektstand, ändert den Plan-Detaillierungsgrad nicht."
+          >
+            Teilphase
+            <select
+              value={doc.settings.siaPhase}
+              data-testid="sia-phase-select"
+              onChange={(e) => {
+                const siaPhase = e.target.value as SiaPhase;
+                // Bewusst KEINE Kopplung an design.phaseSetzen/bemassungSetzen —
+                // der Command schlägt den passenden Detaillierungsgrad nur vor.
+                runCommand('design.siaPhaseSetzen', { siaPhase });
+              }}
+              style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+            >
+              {(
+                ['wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung', 'ausschreibung', 'ausfuehrung', 'abnahme'] as const
+              ).map((p) => (
+                <option key={p} value={p}>
+                  {siaPhaseLabel(p)}
+                </option>
+              ))}
             </select>
           </label>
           {/* Bemassungs-Stil (V2-A5): Presets als Projekteinstellung, undo-fähig */}

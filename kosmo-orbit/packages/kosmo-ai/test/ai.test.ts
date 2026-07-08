@@ -440,4 +440,17 @@ describe('Tool-Vollständigkeit (Bonus-Block)', () => {
     expect(commandIdFor('vis_graphErstellen')).toBe('vis.graphErstellen');
     expect(commandIdFor('grundlagen_volumenstudie')).toBe('grundlagen.volumenstudie');
   });
+
+  it('v0.6.3: design.siaPhaseSetzen (SIA-Teilphase) ist als Kosmo-Tool erreichbar und rundet korrekt', async () => {
+    const { commandIdFor, toolNameFor } = await import('../src/tools');
+    await import('@kosmo/kernel'); // registriert alle Commands
+    const tools = commandTools();
+    const tool = tools.find((t) => t.name === 'design_siaPhaseSetzen');
+    expect(tool, 'design_siaPhaseSetzen fehlt als Tool').toBeDefined();
+    expect(tool!.description).toContain('SIA-Teilphase');
+    const schema = tool!.parameters as { properties: Record<string, unknown> };
+    expect(Object.keys(schema.properties)).toContain('siaPhase');
+    expect(commandIdFor(toolNameFor('design.siaPhaseSetzen'))).toBe('design.siaPhaseSetzen');
+    expect(toolNameFor('design.siaPhaseSetzen')).toBe('design_siaPhaseSetzen');
+  });
 });

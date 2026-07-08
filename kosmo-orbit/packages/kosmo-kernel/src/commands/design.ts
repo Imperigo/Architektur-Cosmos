@@ -4,6 +4,7 @@ import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Opening, Slab, 
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc } from '../model/doc';
+import { empfohlenePlanPhase, phaseLabel, siaPhaseLabel } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
 import { isConvex } from '../geometry/skeleton';
@@ -1876,6 +1877,27 @@ export const setPhase = registerCommand({
   summarize: (p) => `Phase: ${p.phase}`,
   run: (doc, p) => {
     return [{ settings: true, before: { phase: doc.settings.phase }, after: { phase: p.phase } }];
+  },
+});
+
+export const setSiaPhase = registerCommand({
+  id: 'design.siaPhaseSetzen',
+  title: 'SIA-Teilphase setzen',
+  description:
+    'Setzt die aktuelle SIA-Teilphase des Projekts (Wettbewerb/Vorprojekt/Bauprojekt/Bewilligung/Ausschreibung/Ausführung/Abnahme) — der reale Projektstand im SIA-102/112-Zyklus vom Wettbewerb bis zur Gebäudeabnahme nach Bauende. Getrennt von der Plan-Detaillierung (design.phaseSetzen): dieser Command koppelt den Plan-Detaillierungsgrad NICHT automatisch, nennt aber in der Zusammenfassung, welcher dazu passen würde — Owner entscheidet selbst, ob und wann er umschaltet.',
+  params: z.object({
+    siaPhase: z.enum(['wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung', 'ausschreibung', 'ausfuehrung', 'abnahme']),
+  }),
+  summarize: (p, doc) => {
+    const empfohlen = empfohlenePlanPhase(p.siaPhase);
+    const hinweis =
+      doc.settings.phase === empfohlen
+        ? `Plan-Detaillierung passt bereits (${phaseLabel(empfohlen)})`
+        : `passender Plan-Detaillierungsgrad wäre ${phaseLabel(empfohlen)} — nicht automatisch gesetzt`;
+    return `SIA-Teilphase: ${siaPhaseLabel(p.siaPhase)} (${hinweis})`;
+  },
+  run: (doc, p) => {
+    return [{ settings: true, before: { siaPhase: doc.settings.siaPhase }, after: { siaPhase: p.siaPhase } }];
   },
 });
 

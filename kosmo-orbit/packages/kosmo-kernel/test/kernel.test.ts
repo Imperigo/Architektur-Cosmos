@@ -47,6 +47,7 @@ import {
   topoReihenfolge,
   hatZyklus,
   exportGlb,
+  parseKosmoSafe,
   type Storey,
   type Wall,
   type Assembly,
@@ -1755,6 +1756,70 @@ describe('SIA-Phasen-Detaillierung (Owner 03.07.)', () => {
       entities: [],
     });
     expect(alt.settings.phase).toBe('werkplan');
+  });
+});
+
+describe('SIA-Teilphase (v0.6.3, getrennt von der Plan-Detaillierung)', () => {
+  it('Default eines neuen Docs ist «wettbewerb»', () => {
+    const doc = new KosmoDoc();
+    expect(doc.settings.siaPhase).toBe('wettbewerb');
+    // Bestandsverhalten unangetastet: phase (Plan-Detaillierung) bleibt weiterhin werkplan-Default.
+    expect(doc.settings.phase).toBe('werkplan');
+  });
+
+  it('Command setzt die Teilphase, koppelt NICHT die Plan-Detaillierung, ist undo-fähig', () => {
+    const doc = new KosmoDoc();
+    const res = execute(doc, 'design.siaPhaseSetzen', { siaPhase: 'bauprojekt' });
+    expect(doc.settings.siaPhase).toBe('bauprojekt');
+    // phase (Plan-Detaillierung) bleibt unverändert — keine automatische Kopplung.
+    expect(doc.settings.phase).toBe('werkplan');
+    expect(res.summary).toContain('Bauprojekt (SIA 32)');
+    expect(res.summary).toContain('nicht automatisch gesetzt');
+    doc.apply(invertPatches(res.patches));
+    expect(doc.settings.siaPhase).toBe('wettbewerb');
+  });
+
+  it('akzeptiert alle 7 SIA-Teilphasen-Werte', () => {
+    const werte = [
+      'wettbewerb',
+      'vorprojekt',
+      'bauprojekt',
+      'bewilligung',
+      'ausschreibung',
+      'ausfuehrung',
+      'abnahme',
+    ] as const;
+    const doc = new KosmoDoc();
+    for (const siaPhase of werte) {
+      execute(doc, 'design.siaPhaseSetzen', { siaPhase });
+      expect(doc.settings.siaPhase).toBe(siaPhase);
+    }
+  });
+
+  it('unbekannter Wert wird von der Parameter-Validierung abgelehnt', () => {
+    const doc = new KosmoDoc();
+    expect(() => execute(doc, 'design.siaPhaseSetzen', { siaPhase: 'garantie' })).toThrow(CommandError);
+  });
+
+  it('Roundtrip toJSON → JSON.stringify/parse → fromJSON erhält die Teilphase', () => {
+    const doc = new KosmoDoc();
+    execute(doc, 'design.siaPhaseSetzen', { siaPhase: 'ausschreibung' });
+    const json = JSON.parse(JSON.stringify(doc.toJSON()));
+    const wieder = KosmoDoc.fromJSON(json);
+    expect(wieder.settings.siaPhase).toBe('ausschreibung');
+  });
+
+  it('parse-guard: Altbestand-Doc ohne siaPhase-Feld lädt mit Default (kein Absturz)', () => {
+    // Simuliert eine .kosmo-Datei aus der Zeit VOR diesem Feature — settings
+    // hat schlicht keinen siaPhase-Schlüssel.
+    const altesSettings = { projectName: 'Altbau', agfFactor: 1.28, facadeFactor: 1.1 } as never;
+    const doc = KosmoDoc.fromJSON({ schema: 'kosmo.model/v1', settings: altesSettings, entities: [] });
+    expect(doc.settings.siaPhase).toBe('wettbewerb');
+    // Derselbe Fall über den gehärteten .kosmo-Loader (parseKosmoSafe).
+    const roh = JSON.stringify({ schema: 'kosmo.model/v1', settings: altesSettings, entities: [] });
+    const r = parseKosmoSafe(roh);
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.doc.settings.siaPhase).toBe('wettbewerb');
   });
 });
 
