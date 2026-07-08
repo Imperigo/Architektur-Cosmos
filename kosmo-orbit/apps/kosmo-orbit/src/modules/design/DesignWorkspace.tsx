@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, KButton, Measure, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Badge, KButton, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import {
   areaReport,
+  derivePlan,
   fangKandidaten,
   formatLength,
   generiereVolumenstudien,
@@ -24,6 +25,7 @@ import {
   type Zone,
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
+import { importBerichtText, useUnternehmerplan } from './unternehmerplan';
 import { VERSCHIEBBAR } from './plan-hit-test';
 import { zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { werkzeugFuerTaste } from './zeichen-shortcuts';
@@ -1043,6 +1045,48 @@ export function DesignWorkspace() {
             {...elementStil('export', 'import-ifc')}
           >
             IFC laden
+          </KButton>
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="import-dxf"
+            onClick={() => {
+              nutzungMelden('export:import-dxf');
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = '.dxf,.dwg';
+              input.onchange = async () => {
+                const f = input.files?.[0];
+                if (!f) return;
+                // C4b/C-E7: DWG ist proprietär — kein Ladeversuch, ehrliche Absage
+                // statt eines stillen Fehlschlags beim Parsen.
+                if (/\.dwg$/i.test(f.name)) {
+                  melde('DWG ist proprietär — bitte als DXF exportieren (jedes CAD kann das).', { ton: 'fehler' });
+                  return;
+                }
+                const text = await f.text();
+                const { doc, activeStoreyId } = useProject.getState();
+                if (!activeStoreyId) return;
+                const plan = derivePlan(doc, activeStoreyId);
+                useUnternehmerplan.getState().laden(f.name, text, plan);
+                const { dxf, abgleich, fehler } = useUnternehmerplan.getState();
+                if (fehler) {
+                  melde(fehler, { ton: 'fehler' });
+                  return;
+                }
+                if (dxf && abgleich) {
+                  melde(importBerichtText(dxf.bericht, abgleich), { ton: 'erfolg' });
+                  // Overlay einmalig beim Laden einschalten — nur wenn es noch aus ist.
+                  if (!useUnternehmerplan.getState().overlaySichtbar) {
+                    useUnternehmerplan.getState().overlayUmschalten();
+                  }
+                }
+              };
+              input.click();
+            }}
+            {...elementStil('export', 'import-dxf')}
+          >
+            DXF laden
           </KButton>
           <KButton
             size="sm"

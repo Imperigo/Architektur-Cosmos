@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, type Furniture, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
+import { useUnternehmerplan } from './unternehmerplan';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
 import { outlineOf, pickEntityAt } from './plan-hit-test';
@@ -65,6 +66,12 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc, activeStoreyId, revision]);
+  // C4b (C-E5, docs/SUBMISSION-KONZEPT.md): Unternehmerplan-Referenz-Overlay —
+  // reine Laufzeitschicht (`modules/design/unternehmerplan.ts`), nie im Doc.
+  const unternehmerDxf = useUnternehmerplan((s) => s.dxf);
+  const overlaySichtbar = useUnternehmerplan((s) => s.overlaySichtbar);
+  const overlayUmschalten = useUnternehmerplan((s) => s.overlayUmschalten);
+
   const svgRef = useRef<SVGSVGElement>(null);
 
   // Ansicht: Zentrum (mm) + Massstab (px pro mm)
@@ -165,6 +172,21 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
           <option key={s.id} value={s.id}>{s.name}</option>
         ))}
       </select>
+      {unternehmerDxf && (
+        <button
+          data-testid="unternehmerplan-toggle"
+          onClick={() => overlayUmschalten()}
+          title="Unternehmerplan-Referenz ein-/ausblenden (Durchpaus-Layer, nur Bildschirm, C4b)"
+          style={{
+            position: 'absolute', top: 8, right: 215, zIndex: 5, padding: '3px 10px',
+            borderRadius: 6, border: '1px solid var(--k-line-strong)', cursor: 'pointer',
+            background: overlaySichtbar ? '#2455a4' : 'var(--k-raised)', color: overlaySichtbar ? 'white' : 'inherit',
+            font: 'inherit', fontSize: 11.5,
+          }}
+        >
+          U-Plan
+        </button>
+      )}
       <button
         data-testid="graph-toggle"
         onClick={() => setGraphAn(!graphAn)}
@@ -364,6 +386,40 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
               ))}
               {tracePlan.lines.map((l, i) => (
                 <line key={`tl${i}`} x1={l.a.x} y1={-l.a.y} x2={l.b.x} y2={-l.b.y} stroke="var(--k-ink-soft)" strokeWidth={8} />
+              ))}
+            </g>
+          )}
+
+          {/* Unternehmerplan-Referenz-Overlay (C4b, C-E5): reiner Durchpaus-
+              Layer in einer Akzentfarbe, nie wählbar (pointerEvents="none"),
+              nur wenn ein DXF geladen UND sichtbar geschaltet ist — ohne
+              Unternehmerplan bleibt das SVG byte-identisch (Golden-Guard). */}
+          {unternehmerDxf && overlaySichtbar && (
+            <g data-testid="unternehmerplan-overlay" opacity={0.45} pointerEvents="none">
+              {unternehmerDxf.lines.map((l, i) => (
+                <line key={`ul${i}`} x1={l.a.x} y1={-l.a.y} x2={l.b.x} y2={-l.b.y} stroke="#1a6fb5" strokeWidth={14} />
+              ))}
+              {unternehmerDxf.regions.map((r, i) => (
+                <polygon
+                  key={`ur${i}`}
+                  points={r.ring.map((p) => `${p.x},${-p.y}`).join(' ')}
+                  fill="none"
+                  stroke="#1a6fb5"
+                  strokeWidth={14}
+                />
+              ))}
+              {unternehmerDxf.texte.map((t, i) => (
+                <text
+                  key={`ut${i}`}
+                  x={t.at.x}
+                  y={-t.at.y}
+                  textAnchor="middle"
+                  fontSize={220}
+                  fontFamily="ui-monospace, monospace"
+                  fill="#1a6fb5"
+                >
+                  {t.text}
+                </text>
               ))}
             </g>
           )}
