@@ -23,7 +23,13 @@ import { exportSetSvgs, exportSheetSetPdf } from './export-sheets';
 const FORMATS: SheetFormat[] = ['A0', 'A1', 'A2', 'A3', 'A4'];
 const SCALES = [50, 100, 200, 500];
 
-export function PublishWorkspace() {
+export interface PublishWorkspaceProps {
+  /** Serie K / A4: öffnet das zentrale Einstellungs-Panel, vorgefiltert auf
+   *  KosmoPublish. Optional — nur `App.tsx` kennt diesen Weg. */
+  onEinstellungen?: () => void;
+}
+
+export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}) {
   const revision = useProject((s) => s.revision);
   const runCommand = useProject((s) => s.runCommand);
   const undo = useProject((s) => s.undo);
@@ -299,6 +305,19 @@ export function PublishWorkspace() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Badge hue={moduleHue.publish}>Plansatz</Badge>
+          <div style={{ flex: 1 }} />
+          {onEinstellungen && (
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="station-einstellungen-publish"
+              title="Einstellungen — KosmoPublish"
+              aria-label="Einstellungen — KosmoPublish"
+              onClick={onEinstellungen}
+            >
+              ⚙
+            </KButton>
+          )}
         </div>
         {sheets.map((s) => (
           <Panel

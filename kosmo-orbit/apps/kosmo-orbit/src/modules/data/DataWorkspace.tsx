@@ -268,7 +268,13 @@ const DATEN_GRUPPEN_LABEL: Record<DatenGruppe, string> = {
   dossier: 'Dossier',
 };
 
-export function DataWorkspace() {
+export interface DataWorkspaceProps {
+  /** Serie K / A4: öffnet das zentrale Einstellungs-Panel, vorgefiltert auf
+   *  KosmoData. Optional — nur `App.tsx` kennt diesen Weg. */
+  onEinstellungen?: () => void;
+}
+
+export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
   const [entries, setEntries] = useState<RefEntry[]>([]);
   const [geladen, setGeladen] = useState(false);
   const [query, setQuery] = useState('');
@@ -561,6 +567,18 @@ export function DataWorkspace() {
             >
               Oberfläche zurücksetzen
             </KButton>
+            {onEinstellungen && (
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="station-einstellungen-data"
+                title="Einstellungen — KosmoData"
+                aria-label="Einstellungen — KosmoData"
+                onClick={onEinstellungen}
+              >
+                ⚙
+              </KButton>
+            )}
           </div>
 
           {tab === 'referenzen' && (

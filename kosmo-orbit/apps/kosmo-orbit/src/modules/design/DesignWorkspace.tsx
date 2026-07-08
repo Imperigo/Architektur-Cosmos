@@ -131,7 +131,15 @@ const LEERES_NUTZUNGSPROFIL: NutzungsProfil = { zaehler: {}, zuletzt: {} };
 /** Regel 2.3.2: 2s Debounce nach Aktionsende, bevor eine Zeichnen-Demotion wieder greift. */
 const ADAPTION_DEBOUNCE_MS = 2000;
 
-export function DesignWorkspace() {
+export interface DesignWorkspaceProps {
+  /** Serie K / A4: öffnet das zentrale Einstellungs-Panel, vorgefiltert auf
+   *  KosmoDesign. Optional, weil `App.tsx` der einzige Aufrufer ist, der
+   *  diesen Weg kennt — Tests, die die Komponente isoliert mounten, brauchen
+   *  ihn nicht. */
+  onEinstellungen?: () => void;
+}
+
+export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) {
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const runCommand = useProject((s) => s.runCommand);
@@ -1315,6 +1323,21 @@ export function DesignWorkspace() {
             ↪ Wiederholen
           </KButton>
         </span>
+        {onEinstellungen && (
+          <>
+            <div style={{ flex: 1 }} />
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="station-einstellungen-design"
+              title="Einstellungen — KosmoDesign"
+              aria-label="Einstellungen — KosmoDesign"
+              onClick={onEinstellungen}
+            >
+              ⚙
+            </KButton>
+          </>
+        )}
       </div>
 
       {projektMenuOffen && (

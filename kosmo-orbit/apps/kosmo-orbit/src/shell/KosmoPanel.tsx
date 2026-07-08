@@ -73,7 +73,12 @@ interface PendingCard extends Proposal {
   state: 'offen' | 'angewendet' | 'abgelehnt';
 }
 
-interface KosmoSettings {
+/**
+ * Exportiert (Serie K / A4): das zentrale Einstellungs-Panel liest hierüber
+ * `betriebsart`, um `WerkzeugSetup` (derselbe Weg wie das ⚙ im Kosmo-Panel)
+ * direkt einzubetten — keine zweite Betriebsart-Herleitung.
+ */
+export interface KosmoSettings {
   /** Betriebsart (Owner «drei Versionen»): HomePC / VPN-Client / Cloud. */
   betriebsart: Betriebsart;
   /** Remote: VPN-Adresse des HomePC (IP oder Name). */
@@ -132,7 +137,7 @@ function lizenzPublicKey(): string {
   return (import.meta.env.VITE_KOSMO_LIZENZ_PUBKEY ?? '').trim();
 }
 
-function loadSettings(): KosmoSettings {
+export function loadSettings(): KosmoSettings {
   try {
     const raw = localStorage.getItem('kosmo.llm');
     if (raw) return { ...defaultSettings, ...JSON.parse(raw) };

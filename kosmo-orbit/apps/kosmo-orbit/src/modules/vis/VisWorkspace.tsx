@@ -71,7 +71,13 @@ function saveSerien(s: Serie[]): void {
  * KosmoVis-Station: der Node-Tree ist die Hauptansicht (Vertiefungsarbeit),
  * die bisherige lineare Ansicht bleibt als «Einfach»-Tab — kein Funktionsverlust.
  */
-export function VisWorkspace() {
+export interface VisWorkspaceProps {
+  /** Serie K / A4: öffnet das zentrale Einstellungs-Panel, vorgefiltert auf
+   *  KosmoVis. Optional — nur `App.tsx` kennt diesen Weg. */
+  onEinstellungen?: () => void;
+}
+
+export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
   const [tab, setTab] = useState<'graph' | 'einfach'>('graph');
   const revision = useProject((s) => s.revision);
   void revision;
@@ -155,7 +161,7 @@ export function VisWorkspace() {
 
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
-      <VisTabs tab={tab} setTab={setTab}>
+      <VisTabs tab={tab} setTab={setTab} {...(onEinstellungen ? { onEinstellungen } : {})}>
         <select
           value={graphId}
           data-testid="graph-select"
@@ -206,10 +212,12 @@ function VisTabs({
   tab,
   setTab,
   children,
+  onEinstellungen,
 }: {
   tab: 'graph' | 'einfach';
   setTab: (t: 'graph' | 'einfach') => void;
   children?: React.ReactNode;
+  onEinstellungen?: () => void;
 }) {
   return (
     <div
@@ -241,6 +249,18 @@ function VisTabs({
       <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
         Render nur auf «Ausführen» — der Graph ist Teil des Projekts (Undo, Sync)
       </span>
+      {onEinstellungen && (
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="station-einstellungen-vis"
+          title="Einstellungen — KosmoVis"
+          aria-label="Einstellungen — KosmoVis"
+          onClick={onEinstellungen}
+        >
+          ⚙
+        </KButton>
+      )}
     </div>
   );
 }

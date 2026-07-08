@@ -61,6 +61,8 @@ import { hydriereJournal } from './state/journal-store';
 import { qrSvg } from './state/qr';
 import { STATION_FAMILIEN, V2_PLATZHALTER, stationFamilie } from './state/stationen';
 import { fokusKlasse, fokusStufe } from './state/fokus';
+import { AKZENTE } from './shell/akzente';
+import { Einstellungen } from './shell/Einstellungen';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
 
@@ -96,15 +98,6 @@ const ROLLEN_REIHENFOLGE: Record<'entwurf' | 'ausfuehrung' | 'admin', ModuleId[]
   ausfuehrung: ['publish', 'draw', 'design', 'doc', 'data', 'asset', 'prepare', 'sketch', 'vis', 'speak', 'dev', 'train'],
   admin: ['doc', 'train', 'dev', 'data', 'prepare', 'asset', 'publish', 'design', 'draw', 'sketch', 'vis', 'speak'],
 };
-
-/** Wählbare Farbakzente (Gestaltungskonzept «Werkplan»): Standard = Tusche. */
-const AKZENTE: { key: string; name: string; farbe: string | null }[] = [
-  { key: 'tusche', name: 'Tusche', farbe: null },
-  { key: 'kupfer', name: 'Kupfer', farbe: '#a84b2b' },
-  { key: 'signal', name: 'Signal', farbe: '#c8501e' },
-  { key: 'blau', name: 'Blau', farbe: '#2455a4' },
-  { key: 'gruen', name: 'Grün', farbe: '#1e6b47' },
-];
 
 export function App() {
   const [theme, setTheme] = useState<ThemeName>(
@@ -147,6 +140,19 @@ export function App() {
   const [raeume, setRaeume] = useState<{ name: string; verbindungen: number }[] | null>(null);
   const [koppelnOffen, setKoppelnOffen] = useState(false);
   const [deinstallierenOffen, setDeinstallierenOffen] = useState(false);
+  // Serie K / A4 (Owner-Befund K14): EIN zentrales Einstellungs-Panel für die
+  // ganze App — die Kopfleiste öffnet es ungefiltert (`einstellungenStation`
+  // bleibt undefined), jede Station öffnet dasselbe Panel mit ihrer eigenen
+  // ModuleId als Filter (siehe `oeffneEinstellungen` unten). Kein zweites
+  // Panel je Station, kein Logik-Duplikat.
+  const [einstellungenOffen, setEinstellungenOffen] = useState(false);
+  const [einstellungenStation, setEinstellungenStation] = useState<{ id: ModuleId; name: string } | undefined>(
+    undefined,
+  );
+  const oeffneEinstellungen = (station?: { id: ModuleId; name: string }) => {
+    setEinstellungenStation(station);
+    setEinstellungenOffen(true);
+  };
   // D2: Rolle aus den Projekteinstellungen (Revision hält die Zentrale frisch)
   const revision = useProject((s) => s.revision);
   void revision;
@@ -429,6 +435,20 @@ export function App() {
           </button>
         </span>
         <Hairline vertical />
+        {/* Serie K / A4 (Owner-Befund K14): zentrales Einstellungs-Panel —
+            dezent neben dem «?» (Rundgang), immer erreichbar. */}
+        <span className={fokusKlasse(fokusStufe('einstellungen'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+          <button
+            onClick={() => oeffneEinstellungen()}
+            data-testid="einstellungen-oeffnen"
+            title="Einstellungen"
+            aria-label="Einstellungen öffnen"
+            style={{ all: 'unset', cursor: 'pointer' }}
+          >
+            <Badge hue="var(--k-ink-faint)">⚙</Badge>
+          </button>
+        </span>
+        <Hairline vertical />
         {/* Owner-Auftrag «App deinstallieren…»: sehr selten gebraucht, darum
             dezent am Ende der Kopfleiste, aber immer erreichbar (nicht in
             einem Overflow-Menü versteckt — KosmoOrbit hat keine klassische
@@ -620,19 +640,19 @@ export function App() {
         {screen === 'design' ? (
           <KFehlerzone bereich="KosmoDesign" onDiagnose={() => setScreen('doc')}>
             <Absturztest />
-            <DesignWorkspace />
+            <DesignWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'design', name: 'KosmoDesign' })} />
           </KFehlerzone>
         ) : screen === 'vis' ? (
           <KFehlerzone bereich="KosmoVis" onDiagnose={() => setScreen('doc')}>
-            <VisWorkspace />
+            <VisWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'vis', name: 'KosmoVis' })} />
           </KFehlerzone>
         ) : screen === 'data' ? (
           <KFehlerzone bereich="KosmoData" onDiagnose={() => setScreen('doc')}>
-            <DataWorkspace />
+            <DataWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'data', name: 'KosmoData' })} />
           </KFehlerzone>
         ) : screen === 'publish' ? (
           <KFehlerzone bereich="KosmoPublish" onDiagnose={() => setScreen('doc')}>
-            <PublishWorkspace />
+            <PublishWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'publish', name: 'KosmoPublish' })} />
           </KFehlerzone>
         ) : screen === 'prepare' ? (
           <KFehlerzone bereich="KosmoPrepare" onDiagnose={() => setScreen('doc')}>
@@ -872,6 +892,27 @@ export function App() {
       <KMeldungen />
       <KBestaetigung />
       {deinstallierenOffen && <AppDeinstallieren onClose={() => setDeinstallierenOffen(false)} />}
+      {einstellungenOffen && (
+        <Einstellungen
+          theme={theme}
+          setTheme={setTheme}
+          akzent={akzent}
+          setAkzent={setAkzent}
+          onClose={() => setEinstellungenOffen(false)}
+          aufRundgangStarten={() => {
+            setEinstellungenOffen(false);
+            setGuideLauf((n) => n + 1);
+            setStarterGuideOffen(true);
+          }}
+          aufKosmoOeffnen={() => {
+            setEinstellungenOffen(false);
+            setKosmoOpen(true);
+          }}
+          {...(einstellungenStation
+            ? { station: einstellungenStation.id, stationName: einstellungenStation.name }
+            : {})}
+        />
+      )}
     </div>
   );
 }

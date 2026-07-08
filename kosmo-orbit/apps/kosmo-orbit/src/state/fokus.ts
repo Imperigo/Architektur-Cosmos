@@ -23,6 +23,9 @@ export const KOPFLEISTE_FOKUS = {
   akzent: 'selten',
   /** V1.6 Block E: der «?»-Rundgang-Knopf — selten gebraucht, immer erreichbar. */
   guide: 'selten',
+  /** Serie K / A4 (Owner-Befund K14): das zentrale Einstellungs-Panel — dezent
+   *  neben dem «?», wie der Rundgang-Knopf selten gebraucht. */
+  einstellungen: 'selten',
   /** «App deinstallieren…» — sehr selten gebraucht, aber immer auffindbar (Owner-Auftrag). */
   deinstallieren: 'selten',
 } as const satisfies Record<string, FokusStufe>;
