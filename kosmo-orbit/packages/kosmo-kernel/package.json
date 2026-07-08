@@ -17,11 +17,13 @@
     "@tarikjabiri/dxf": "^2.8.9",
     "clipper2-ts": "^2.0.1-17",
     "earcut": "^3.0.0",
+    "suncalc": "^2.0.0",
     "zod": "^4.1.0"
   },
   "devDependencies": {
     "@types/earcut": "^3.0.0",
     "@types/node": "^26.1.0",
+    "@types/suncalc": "^1.9.2",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"
   }
