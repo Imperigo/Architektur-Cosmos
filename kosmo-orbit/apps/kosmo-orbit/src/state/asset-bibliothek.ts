@@ -1,4 +1,5 @@
 import { vaultTx } from './project-vault';
+import type { MaterialArt, MaterialDimensionen } from '@kosmo/data';
 
 /**
  * KosmoAsset-Bibliothek (V1-Finish P3, Owner-Q14 → Codex-Übernahme Batch 3)
@@ -11,6 +12,14 @@ import { vaultTx } from './project-vault';
  * KosmoAsset-Manifests (`schema/kosmo-asset-library.schema.json`): Titel,
  * Typ, Kategorie, Tags, Formate, Rechte-Status, Sichtbarkeit. Nur das
  * Datenmodell + Migration — Suche/Facetten/Detail kommen Batch 4.
+ *
+ * v0.6.3 / B4 (Owner-Befund K21, Materialbibliothek Stufe 1) hebt das Manifest
+ * additiv um `quelle`/`materialArt`/`materialDimensionen`/`region` an — Pflicht
+ * bei NEU erfassten Material-Einträgen (`erfasseMaterial`), Altbestand
+ * (GLB-Importe vor diesem Batch) migriert ehrlich auf «Quelle unbelegt
+ * (Altbestand)» statt eine Herkunft zu erfinden (`project-vault.ts`, DB v4→v5).
+ * Stufe 2 (externer Quellen-Ingest, Lizenzprüfung, echte Texturdateien) bleibt
+ * offen — hier nur Datenmodell + Erfassung + 3D-Würfel-Vorschau.
  */
 
 export type AssetType =
@@ -125,6 +134,18 @@ export interface KosmoAsset {
   visibility: AssetVisibility;
   kosmodata_refs: KosmodataRef[];
   dimensions?: AssetDimensions;
+  /**
+   * Herkunft/Quelle des Assets (K21) — Pflicht bei NEU erfassten Materialien
+   * (`erfasseMaterial` erzwingt das in der UI), Altbestand trägt ehrlich
+   * «Quelle unbelegt (Altbestand)» statt eine Herkunft zu erfinden.
+   */
+  quelle?: string;
+  /** Rohmaterial vs. Baumaterial (K21) — nur befüllt, wo bekannt. */
+  materialArt?: MaterialArt;
+  /** Lieferbare Grössen/Dicken (K21) — Basis für den 3D-Würfel in der Vorschau. */
+  materialDimensionen?: MaterialDimensionen;
+  /** Regionale Eigenschaft/Herkunft, optional (K21). */
+  region?: string;
   createdAt: string;
   daten: ArrayBuffer;
 }
@@ -172,6 +193,59 @@ export async function listeGlb(): Promise<KosmoAsset[]> {
 
 export async function loescheGlb(id: string): Promise<void> {
   await vaultTx('objekte', 'readwrite', (s) => s.delete(id));
+}
+
+/** Eingabe fürs Erfassen eines Material-Eintrags (K21, Materialbibliothek Stufe 1). */
+export interface ErfasseMaterialEingabe {
+  title: string;
+  /** Pflicht — leer/nur-Whitespace wirft (UI zeigt die Meldung als Validierung). */
+  quelle: string;
+  materialArt?: MaterialArt;
+  materialDimensionen?: MaterialDimensionen;
+  region?: string;
+  tags?: string[];
+}
+
+/**
+ * Erfasst einen neuen Material-Eintrag in der Objekt-Bibliothek
+ * (`asset_type: 'material'`) — OHNE Binärdaten: die eigentliche Textur-/
+ * PBR-Map-Datei ist Stufe 2 (externer Quellen-Ingest, Lizenzprüfung). Stufe 1
+ * liefert nur das Manifest + die Würfel-Vorschau (Farbton/Fallback). `quelle`
+ * ist Pflicht — der Owner-Befund K21 verlangt sie IMMER in der Erfassung.
+ */
+export async function erfasseMaterial(eingabe: ErfasseMaterialEingabe): Promise<KosmoAsset> {
+  const quelle = eingabe.quelle.trim();
+  if (!quelle) {
+    throw new Error('Quelle ist Pflicht — Herkunft des Materials angeben, bevor es gespeichert wird.');
+  }
+  const titel = eingabe.title.trim() || 'Material';
+  const asset: KosmoAsset = {
+    id: `material-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    title: titel,
+    asset_type: 'material',
+    category: 'material',
+    tags: eingabe.tags ?? [],
+    formats: [{ format: 'material_json', bytes: 0, status: 'ready' }],
+    preview: { kind: 'material_swatch' },
+    rights_status: 'unknown',
+    public_use_allowed: false,
+    visibility: 'private',
+    kosmodata_refs: [],
+    quelle,
+    ...(eingabe.materialArt !== undefined ? { materialArt: eingabe.materialArt } : {}),
+    ...(eingabe.materialDimensionen !== undefined ? { materialDimensionen: eingabe.materialDimensionen } : {}),
+    ...(eingabe.region !== undefined ? { region: eingabe.region } : {}),
+    createdAt: new Date().toISOString(),
+    daten: new ArrayBuffer(0),
+  };
+  await vaultTx('objekte', 'readwrite', (s) => s.put(asset));
+  return asset;
+}
+
+/** Erfasste Material-Einträge (Stufe 1) aus der Objekt-Bibliothek — neueste zuerst. */
+export async function listeMaterialien(): Promise<KosmoAsset[]> {
+  const alle = await listeGlb();
+  return alle.filter((a) => a.asset_type === 'material');
 }
 
 /** Optionale Übersteuerung der Default-Felder beim Verknüpfen (Batch 5). */

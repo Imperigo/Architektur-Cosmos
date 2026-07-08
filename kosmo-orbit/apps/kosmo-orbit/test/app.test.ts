@@ -539,6 +539,118 @@ describe('Ref↔Asset-Verknüpfung (Batch 5)', () => {
   });
 });
 
+// ── v0.6.3 / B4: Material-Programm Stufe 1 (Owner-Befund K21) — Datenmodell + Migration v4 → v5 ──
+
+describe('KosmoAsset-Materialfelder (B4, K21): Tresor-Migration v4 → v5', () => {
+  it('alter Record ohne `quelle` (v4-Shape) migriert ehrlich auf «Quelle unbelegt (Altbestand)» — sonst unverändert', async () => {
+    await new Promise<void>((resolve, reject) => {
+      const del = indexedDB.deleteDatabase('kosmo-projekte');
+      del.onsuccess = () => resolve();
+      del.onerror = () => reject(del.error);
+    });
+    const altesBlob = new Uint8Array([4, 4, 4]).buffer;
+    await new Promise<void>((resolve, reject) => {
+      const req = indexedDB.open('kosmo-projekte', 4);
+      req.onupgradeneeded = () => {
+        req.result.createObjectStore('projekte', { keyPath: 'id' });
+        req.result.createObjectStore('varianten', { keyPath: 'id' });
+        req.result.createObjectStore('auftraege', { keyPath: 'id' });
+        req.result.createObjectStore('objekte', { keyPath: 'id' });
+        req.result.createObjectStore('lernjournal', { keyPath: 'id' });
+      };
+      req.onsuccess = () => {
+        const t = req.result.transaction('objekte', 'readwrite');
+        t.objectStore('objekte').put({
+          id: 'glb-v4-1',
+          title: 'Vorhandener Stuhl',
+          asset_type: 'glb_model',
+          category: 'furniture',
+          tags: ['stuhl'],
+          formats: [{ format: 'glb', bytes: 3, status: 'ready' }],
+          rights_status: 'own_work',
+          public_use_allowed: true,
+          visibility: 'private',
+          kosmodata_refs: [],
+          createdAt: '2026-02-01T00:00:00.000Z',
+          daten: altesBlob,
+        });
+        t.oncomplete = () => {
+          req.result.close();
+          resolve();
+        };
+        t.onerror = () => reject(t.error);
+      };
+      req.onerror = () => reject(req.error);
+    });
+    const { listeGlb } = await import('../src/state/asset-bibliothek');
+    const alle = await listeGlb();
+    const migriert = alle.find((a) => a.id === 'glb-v4-1');
+    expect(migriert).toBeDefined();
+    expect(migriert!.quelle).toBe('Quelle unbelegt (Altbestand)');
+    // unbeteiligte Felder unverändert
+    expect(migriert!.title).toBe('Vorhandener Stuhl');
+    expect(migriert!.tags).toEqual(['stuhl']);
+    expect(migriert!.rights_status).toBe('own_work');
+    expect(new Uint8Array(migriert!.daten)).toEqual(new Uint8Array(altesBlob));
+    // Materialfelder bleiben ehrlich unbefüllt, statt eine Klassifikation zu erfinden
+    expect(migriert!.materialArt).toBeUndefined();
+    expect(migriert!.materialDimensionen).toBeUndefined();
+    expect(migriert!.region).toBeUndefined();
+
+    await new Promise<void>((resolve, reject) => {
+      const del = indexedDB.deleteDatabase('kosmo-projekte');
+      del.onsuccess = () => resolve();
+      del.onerror = () => reject(del.error);
+    });
+  });
+});
+
+describe('Material erfassen (B4, K21): Quelle ist Pflicht, Rest additiv', () => {
+  it('erfasseMaterial verweigert eine leere/nur-Whitespace-Quelle', async () => {
+    const { erfasseMaterial } = await import('../src/state/asset-bibliothek');
+    await expect(erfasseMaterial({ title: 'Backstein Muster', quelle: '' })).rejects.toThrow(/Quelle/);
+    await expect(erfasseMaterial({ title: 'Backstein Muster', quelle: '   ' })).rejects.toThrow(/Quelle/);
+  });
+
+  it('mit Quelle: erfasst, gespeichert, taucht in listeMaterialien() auf — mit Dimensionen/Materialart/Region', async () => {
+    const { erfasseMaterial, listeMaterialien, listeGlb, loescheGlb } = await import('../src/state/asset-bibliothek');
+    const material = await erfasseMaterial({
+      title: 'Muster-Klinker Nordfassade',
+      quelle: 'Musterlieferant AG, Musterweg 1, 8000 Zürich — Datenblatt 2026',
+      materialArt: 'baumaterial',
+      region: 'Zürich',
+      materialDimensionen: { lieferbar: [{ bezeichnung: 'NF', laenge_mm: 250, breite_mm: 120, dicke_mm: 65 }] },
+    });
+    expect(material.asset_type).toBe('material');
+    expect(material.quelle).toBe('Musterlieferant AG, Musterweg 1, 8000 Zürich — Datenblatt 2026');
+    expect(material.materialArt).toBe('baumaterial');
+    expect(material.region).toBe('Zürich');
+    expect(material.materialDimensionen?.lieferbar[0]).toMatchObject({ laenge_mm: 250, breite_mm: 120, dicke_mm: 65 });
+    // Kein Binärteil in Stufe 1 (Textur-Ingest ist Stufe 2) — ehrlich leer, kein vorgetäuschtes Blob.
+    expect(material.daten.byteLength).toBe(0);
+
+    const gelistet = await listeMaterialien();
+    expect(gelistet.some((m) => m.id === material.id)).toBe(true);
+    expect(gelistet.every((m) => m.asset_type === 'material')).toBe(true);
+
+    // Persistiert im selben Tresor wie GLB-Objekte (ein System), aber die
+    // Objekte-Tab-UI filtert `material` explizit heraus (AssetWorkspace.tsx).
+    const alle = await listeGlb();
+    expect(alle.some((a) => a.id === material.id)).toBe(true);
+
+    await loescheGlb(material.id);
+  });
+
+  it('materialArt/region/materialDimensionen bleiben optional — ein Minimal-Eintrag mit nur Titel+Quelle ist gültig', async () => {
+    const { erfasseMaterial, loescheGlb } = await import('../src/state/asset-bibliothek');
+    const minimal = await erfasseMaterial({ title: 'Unbekanntes Fundstück', quelle: 'Vor Ort fotografiert, 08.07.2026' });
+    expect(minimal.materialArt).toBeUndefined();
+    expect(minimal.region).toBeUndefined();
+    expect(minimal.materialDimensionen).toBeUndefined();
+    await loescheGlb(minimal.id);
+  });
+});
+
 // ── D1: KosmoData-Dach — vereinheitlichter Adapter über die sechs Sammlungen ──
 
 describe('visibility-Default (D1): Alt-Daten ohne Feld gelten beim Lesen als "private"', () => {

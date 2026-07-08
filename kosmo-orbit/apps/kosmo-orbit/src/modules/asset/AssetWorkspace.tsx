@@ -4,6 +4,7 @@ import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '@kosmo/kernel';
 import { BauteilkatalogView, loadReferences, MaterialkatalogView, type RefEntry } from '../data/DataWorkspace';
 import { setGlbContext } from '../design/Viewport3D';
 import { glbZuMeshDaten } from './glb-zu-mesh';
+import { renderStandbild } from './three-standbild';
 import { useProject } from '../../state/project-store';
 import {
   assetBytes,
@@ -134,7 +135,10 @@ export function AssetWorkspace() {
   const laden = () => {
     void listeGlb()
       .then((liste) => {
-        setObjekte(liste);
+        // K21/Batch 4: erfasste Material-Einträge leben in der «Materialien»-Tab
+        // (eigene UI mit Pflicht-Quelle + Würfel-Vorschau), nicht gemischt unter
+        // GLB-Objekten — dieselbe IndexedDB-Tabelle, zwei getrennte Ansichten.
+        setObjekte(liste.filter((o) => o.asset_type !== 'material'));
         // Batch 5: KosmoData kann per Klick auf «Assets dieses Projekts» hierher
         // springen — die Brücke ist sessionStorage (analog `kosmo.data.openRef`),
         // weil `__kosmo.open()` nur den Screen wechselt, keine Nutzlast trägt.
@@ -791,49 +795,26 @@ function GlbVorschau({ objekt }: { objekt: KosmoAsset }) {
     let verworfen = false;
     let url = '';
     void (async () => {
-      // P6-Review #4: WebGL-Kontexte sind knapp (~8–16 pro Browser). Der
-      // Renderer lebt nur für EIN Standbild auf einem Wegwerf-Canvas, das
-      // Ergebnis wandert per drawImage in den sichtbaren 2D-Canvas, und der
-      // Kontext wird im finally HART freigegeben (forceContextLoss).
-      let renderer: import('three').WebGLRenderer | null = null;
       try {
-        const [THREE, { GLTFLoader }] = await Promise.all([
-          import('three'),
-          import('three/examples/jsm/loaders/GLTFLoader.js'),
-        ]);
         if (verworfen || !ref.current) return;
-        const ziel = ref.current;
-        const breite = ziel.clientWidth || 208;
-        const offscreen = document.createElement('canvas');
-        renderer = new THREE.WebGLRenderer({ canvas: offscreen, antialias: true, alpha: true });
-        renderer.setSize(breite, 120, false);
-        const scene = new THREE.Scene();
-        scene.add(new THREE.AmbientLight(0xffffff, 1.1));
-        const sonne = new THREE.DirectionalLight(0xffffff, 1.4);
-        sonne.position.set(3, 5, 4);
-        scene.add(sonne);
-        url = URL.createObjectURL(new Blob([objekt.daten], { type: 'model/gltf-binary' }));
-        const gltf = await new GLTFLoader().loadAsync(url);
-        if (verworfen) return;
-        scene.add(gltf.scene);
-        // Kamera auf den Inhalt einpassen (leichte Vogelperspektive)
-        const box = new THREE.Box3().setFromObject(gltf.scene);
-        const mitte = box.getCenter(new THREE.Vector3());
-        const groesse = Math.max(box.getSize(new THREE.Vector3()).length(), 0.001);
-        const camera = new THREE.PerspectiveCamera(40, breite / 120, groesse / 100, groesse * 10);
-        camera.position.set(mitte.x + groesse * 0.7, mitte.y + groesse * 0.5, mitte.z + groesse * 0.7);
-        camera.lookAt(mitte);
-        renderer.render(scene, camera);
-        ziel.width = breite;
-        ziel.height = 120;
-        ziel.getContext('2d')?.drawImage(offscreen, 0, 0);
+        await renderStandbild(ref.current, 120, async ({ THREE, scene, breite, hoehe }) => {
+          const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+          url = URL.createObjectURL(new Blob([objekt.daten], { type: 'model/gltf-binary' }));
+          const gltf = await new GLTFLoader().loadAsync(url);
+          if (verworfen) throw new Error('Vorschau verworfen (Komponente entfernt)');
+          scene.add(gltf.scene);
+          // Kamera auf den Inhalt einpassen (leichte Vogelperspektive)
+          const box = new THREE.Box3().setFromObject(gltf.scene);
+          const mitte = box.getCenter(new THREE.Vector3());
+          const groesse = Math.max(box.getSize(new THREE.Vector3()).length(), 0.001);
+          const camera = new THREE.PerspectiveCamera(40, breite / hoehe, groesse / 100, groesse * 10);
+          camera.position.set(mitte.x + groesse * 0.7, mitte.y + groesse * 0.5, mitte.z + groesse * 0.7);
+          camera.lookAt(mitte);
+          return camera;
+        });
       } catch {
         if (!verworfen) setFehler(true);
       } finally {
-        if (renderer) {
-          renderer.forceContextLoss();
-          renderer.dispose();
-        }
         if (url) URL.revokeObjectURL(url);
       }
     })();

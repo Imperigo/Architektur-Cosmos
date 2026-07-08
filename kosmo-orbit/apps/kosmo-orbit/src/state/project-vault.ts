@@ -27,38 +27,63 @@ const DB = 'kosmo-projekte';
 // state/asset-bibliothek.ts). Alt-Records werden per Cursor IN DER
 // Upgrade-Transaktion verlustfrei umgeformt — der Blob (`daten`) bleibt
 // unangetastet.
-const DB_VERSION = 4;
+// v5 (v0.6.3/B4, Owner-Befund K21 — Materialbibliothek Stufe 1): «objekte»
+// bekommt additive Herkunfts-/Klassifikationsfelder (`quelle`/`materialArt`/
+// `materialDimensionen`/`region`, siehe state/asset-bibliothek.ts). Alt-
+// Records ohne `quelle` bekommen per Default-Spread (Muster `siaPhase`,
+// packages/kosmo-kernel/src/model/doc.ts) ehrlich «Quelle unbelegt
+// (Altbestand)» statt eine erfundene Herkunft — `materialArt`/`region`/
+// `materialDimensionen` bleiben optional und unangetastet.
+const DB_VERSION = 5;
 const AKTIV_KEY = 'kosmo.projekt.aktiv';
 
 /**
- * v3→v4: alte GLB-Records ({id,name,createdAt,bytes,daten}) auf die reiche
- * KosmoAsset-Shape heben. Erkennungsmerkmal: kein `asset_type`-Feld. Bereits
- * migrierte oder neu angelegte Records werden unverändert übersprungen —
- * die Migration ist damit auch bei leerem/gemischtem Store sicher.
+ * Migriert «objekte» in EINEM Cursor-Durchlauf auf den aktuellen Stand —
+ * bewusst NICHT zwei getrennte Cursor-Durchläufe (v3→v4, v4→v5) auf demselben
+ * Store in derselben Upgrade-Transaktion: zwei unabhängige `openCursor()`-
+ * Läufe könnten sich beim Update desselben Records überholen und einander
+ * überschreiben (`cursor.update()` ersetzt den ganzen Record). Ein
+ * kombinierter Pass pro Record ist deterministisch.
+ *
+ * - v3→v4 (Codex-Übernahme Batch 3): alte GLB-Records
+ *   ({id,name,createdAt,bytes,daten}) auf die reiche KosmoAsset-Shape heben.
+ *   Erkennungsmerkmal: kein `asset_type`-Feld.
+ * - v4→v5 (v0.6.3/B4, Owner-Befund K21): Default-Spread fürs Herkunfts-Feld
+ *   (Muster `siaPhase`) — Records ohne `quelle` bekommen ehrlich «Quelle
+ *   unbelegt (Altbestand)» statt eine erfundene Herkunft.
+ *
+ * Bereits migrierte/neu angelegte Records werden je Schritt unverändert
+ * übersprungen — sicher auch bei leerem/gemischtem Store.
  */
-function migriereObjekteV3AufV4(store: IDBObjectStore): void {
+function migriereObjekte(store: IDBObjectStore, altVersion: number): void {
   const cursorReq = store.openCursor();
   cursorReq.onsuccess = () => {
     const cursor = cursorReq.result;
     if (!cursor) return;
-    const alt = cursor.value as Record<string, unknown>;
-    if (!('asset_type' in alt)) {
-      const migriert = {
-        id: alt['id'],
-        title: (alt['name'] as string | undefined) ?? 'Objekt',
+    let wert = cursor.value as Record<string, unknown>;
+    let geaendert = false;
+    if (altVersion < 4 && !('asset_type' in wert)) {
+      wert = {
+        id: wert['id'],
+        title: (wert['name'] as string | undefined) ?? 'Objekt',
         asset_type: 'glb_model',
         category: 'component',
         tags: [],
-        formats: [{ format: 'glb', bytes: (alt['bytes'] as number | undefined) ?? 0, status: 'ready' }],
+        formats: [{ format: 'glb', bytes: (wert['bytes'] as number | undefined) ?? 0, status: 'ready' }],
         rights_status: 'generated_needs_review',
         public_use_allowed: false,
         visibility: 'private',
         kosmodata_refs: [],
-        createdAt: (alt['createdAt'] as string | undefined) ?? new Date().toISOString(),
-        daten: alt['daten'],
+        createdAt: (wert['createdAt'] as string | undefined) ?? new Date().toISOString(),
+        daten: wert['daten'],
       };
-      cursor.update(migriert);
+      geaendert = true;
     }
+    if (altVersion < 5 && !('quelle' in wert)) {
+      wert = { ...wert, quelle: 'Quelle unbelegt (Altbestand)' };
+      geaendert = true;
+    }
+    if (geaendert) cursor.update(wert);
     cursor.continue();
   };
 }
@@ -78,8 +103,8 @@ function openDb(): Promise<IDBDatabase> {
           req.result.createObjectStore(store, { keyPath: 'id' });
         }
       }
-      if (event.oldVersion < 4) {
-        migriereObjekteV3AufV4(req.transaction!.objectStore('objekte'));
+      if (event.oldVersion < 5) {
+        migriereObjekte(req.transaction!.objectStore('objekte'), event.oldVersion);
       }
     };
     req.onsuccess = () => resolve(req.result);

@@ -20,6 +20,9 @@ import {
   materialkatalog,
   uWert,
   type KatalogEintrag,
+  type MaterialArt,
+  type MaterialEintrag,
+  type MaterialGroesse,
   type RefEntry,
   type RefEntryAnalysisLayer,
   type RefEntryMedia,
@@ -28,7 +31,8 @@ import {
 } from '@kosmo/data';
 import { useProject } from '../../state/project-store';
 import { setGlbContext, subscribeGlbStatus } from '../design/Viewport3D';
-import { listeGlb, type KosmoAsset } from '../../state/asset-bibliothek';
+import { erfasseMaterial, listeGlb, listeMaterialien, loescheGlb, type KosmoAsset } from '../../state/asset-bibliothek';
+import { renderStandbild } from '../asset/three-standbild';
 import {
   istTraining,
   sammlungen,
@@ -1168,40 +1172,462 @@ export function BauteilkatalogView() {
   );
 }
 
-/** Materialkatalog (Q14): ein Schlüssel — PBR fürs 3D, SIA-Schraffur, Lambda. */
+const materialArtLabel: Record<MaterialArt, string> = {
+  rohmaterial: 'Rohmaterial',
+  baumaterial: 'Baumaterial',
+  unbekannt: 'Unbekannt',
+};
+
+const materialArtHue: Record<MaterialArt, string> = {
+  rohmaterial: 'var(--k-success)',
+  baumaterial: 'var(--k-info)',
+  unbekannt: 'var(--k-ink-faint)',
+};
+
+const materialInputStyle: CSSProperties = {
+  padding: '8px 10px',
+  borderRadius: 'var(--k-radius-sm)',
+  border: '1px solid var(--k-line-strong)',
+  background: 'var(--k-raised)',
+  fontSize: 13,
+};
+
+/** Lesbare «L×B×D mm»-Zeile aus einer lieferbaren Grösse — nur die vorhandenen Masse. */
+function formatMaterialGroesse(g: MaterialGroesse): string {
+  const masse = [g.laenge_mm, g.breite_mm, g.dicke_mm].filter((v): v is number => v !== undefined);
+  return `${g.bezeichnung}${masse.length ? ` — ${masse.join('×')} mm` : ''}`;
+}
+
+/** Ehrlicher Platzhalter-Ton (K21) — Materialien ohne Farbwert/Textur zeigen ihn, statt eine Farbe zu erfinden. */
+const PLATZHALTER_TON = 0x9a9488;
+
+/** Würfel-Kantenverhältnis aus einer lieferbaren Grösse (mm) — 1:1:1, wenn keine Masse hinterlegt (ehrlicher Platzhalter). */
+function wuerfelKanten(groesse: MaterialGroesse | undefined): { x: number; y: number; z: number } {
+  const laenge = groesse?.laenge_mm ?? 100;
+  const breite = groesse?.breite_mm ?? 100;
+  const dicke = groesse?.dicke_mm ?? 100;
+  const max = Math.max(laenge, breite, dicke, 1);
+  return { x: laenge / max, y: dicke / max, z: breite / max };
+}
+
+/**
+ * 3D-Würfel-Vorschau (K21, Owner-Befund «Materialbibliothek ausbauen» Stufe 1)
+ * — EIN Standbild (`three-standbild.ts`, dieselbe Infrastruktur wie
+ * `AssetWorkspace.tsx`s GLB-Vorschau) mit den echten lieferbaren Massen und,
+ * wo ein Materialkatalog-Schlüssel vorliegt, den prozeduralen PBR-Maps aus
+ * `modules/design/texturen.ts` (C2 — Wiederverwendung, keine zweite
+ * Textur-Erzeugung). Ohne Schlüssel/Textur: ehrlicher Platzhalter-Ton, keine
+ * erfundene Farbe.
+ */
+function MaterialWuerfel({
+  groesse,
+  farbe,
+  rauheit,
+  metallisch,
+  materialKey,
+}: {
+  groesse?: MaterialGroesse;
+  farbe?: number;
+  rauheit?: number;
+  metallisch?: number;
+  materialKey?: string;
+}) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const [fehler, setFehler] = useState(false);
+
+  useEffect(() => {
+    let verworfen = false;
+    void (async () => {
+      try {
+        if (!ref.current) return;
+        await renderStandbild(ref.current, 130, async ({ THREE, scene, breite, hoehe }) => {
+          const kanten = wuerfelKanten(groesse);
+          const geo = new THREE.BoxGeometry(kanten.x, kanten.y, kanten.z);
+          const karten = materialKey ? (await import('../design/texturen')).materialKarten(materialKey) : null;
+          const basis = {
+            roughness: rauheit ?? 0.85,
+            ...(metallisch !== undefined ? { metalness: metallisch } : {}),
+          };
+          const mat = karten
+            ? new THREE.MeshStandardMaterial({ map: karten.map, bumpMap: karten.bumpMap, bumpScale: karten.bumpScale, ...basis })
+            : new THREE.MeshStandardMaterial({ color: farbe ?? PLATZHALTER_TON, ...basis });
+          scene.add(new THREE.Mesh(geo, mat));
+          const camera = new THREE.PerspectiveCamera(35, breite / hoehe, 0.01, 10);
+          camera.position.set(1.1, 0.85, 1.1);
+          camera.lookAt(0, 0, 0);
+          return camera;
+        });
+      } catch {
+        if (!verworfen) setFehler(true);
+      }
+    })();
+    return () => {
+      verworfen = true;
+    };
+  }, [groesse, farbe, rauheit, metallisch, materialKey]);
+
+  if (fehler) return <Messrahmen height={130} caption="Würfel nicht darstellbar" />;
+  return (
+    <canvas
+      ref={ref}
+      data-testid="material-wuerfel"
+      style={{ width: '100%', height: 130, border: '1px solid var(--k-line)', background: 'var(--k-plan-paper)' }}
+    />
+  );
+}
+
+/**
+ * Materialkatalog (Q14) — ein Schlüssel: PBR fürs 3D, SIA-Schraffur, Lambda.
+ *
+ * v0.6.3 / B4 (Owner-Befund K21, Materialbibliothek Stufe 1): Rohmaterial-/
+ * Baumaterial-Filter + Badges, ein Detail mit 3D-Würfel-Vorschau (echte Masse,
+ * wo hinterlegt) und «+ Material erfassen» für eigene Einträge — Quelle ist
+ * dort Pflicht (`erfasseMaterial` in `state/asset-bibliothek.ts` erzwingt es).
+ * Stufe 2 (externer Quellen-Ingest, Lizenzprüfung, echte 4k/8k-Fotomaps,
+ * HSLU-Materialdatenbank) bleibt offen.
+ */
 export function MaterialkatalogView() {
   const hex = (c: number) => `#${c.toString(16).padStart(6, '0')}`;
+  const [filter, setFilter] = useState<MaterialArt | 'alle'>('alle');
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+  const [erfasst, setErfasst] = useState<KosmoAsset[] | null>(null);
+  const [selectedErfasstId, setSelectedErfasstId] = useState<string | null>(null);
+  const [formOffen, setFormOffen] = useState(false);
+  const [formTitel, setFormTitel] = useState('');
+  const [formQuelle, setFormQuelle] = useState('');
+  const [formArt, setFormArt] = useState<MaterialArt | ''>('');
+  const [formRegion, setFormRegion] = useState('');
+  const [formLaenge, setFormLaenge] = useState('');
+  const [formBreite, setFormBreite] = useState('');
+  const [formDicke, setFormDicke] = useState('');
+
+  const ladeErfasst = () => {
+    void listeMaterialien()
+      .then(setErfasst)
+      .catch((err) => {
+        setErfasst([]);
+        meldeFehler(err);
+      });
+  };
+  useEffect(ladeErfasst, []);
+
+  const gefiltert = filter === 'alle' ? materialkatalog : materialkatalog.filter((m) => m.materialArt === filter);
+  const selected: MaterialEintrag | null = materialkatalog.find((m) => m.key === selectedKey) ?? null;
+  const selectedErfasst = erfasst?.find((m) => m.id === selectedErfasstId) ?? null;
+
+  async function materialAbsenden() {
+    if (!formQuelle.trim()) {
+      meldeFehler('Quelle ist Pflicht — Herkunft des Materials angeben, bevor gespeichert wird.');
+      return;
+    }
+    const laenge = formLaenge.trim() ? Number(formLaenge) : undefined;
+    const breite = formBreite.trim() ? Number(formBreite) : undefined;
+    const dicke = formDicke.trim() ? Number(formDicke) : undefined;
+    const hatMasse = laenge !== undefined || breite !== undefined || dicke !== undefined;
+    try {
+      const material = await erfasseMaterial({
+        title: formTitel,
+        quelle: formQuelle,
+        ...(formArt ? { materialArt: formArt } : {}),
+        ...(formRegion.trim() ? { region: formRegion.trim() } : {}),
+        ...(hatMasse
+          ? {
+              materialDimensionen: {
+                lieferbar: [
+                  {
+                    bezeichnung: 'Erfasst',
+                    ...(laenge !== undefined ? { laenge_mm: laenge } : {}),
+                    ...(breite !== undefined ? { breite_mm: breite } : {}),
+                    ...(dicke !== undefined ? { dicke_mm: dicke } : {}),
+                  },
+                ],
+              },
+            }
+          : {}),
+      });
+      ladeErfasst();
+      setSelectedErfasstId(material.id);
+      setFormOffen(false);
+      setFormTitel('');
+      setFormQuelle('');
+      setFormArt('');
+      setFormRegion('');
+      setFormLaenge('');
+      setFormBreite('');
+      setFormDicke('');
+      melde(`«${material.title}» erfasst`, { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  }
+
+  async function materialLoeschen(m: KosmoAsset) {
+    const ok = await bestaetigen({ titel: `Material «${m.title}» löschen?`, gefaehrlich: true, bestaetigen: 'Löschen' });
+    if (!ok) return;
+    await loescheGlb(m.id);
+    if (selectedErfasstId === m.id) setSelectedErfasstId(null);
+    ladeErfasst();
+  }
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 10 }}>
-      {materialkatalog.map((m) => (
-        <Panel key={m.key} data-testid={`material-${m.key}`} style={{ padding: '10px 12px', display: 'grid', gap: 6 }}>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <span
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 8,
-                background: `linear-gradient(135deg, ${hex(m.pbr.color)}, color-mix(in srgb, ${hex(m.pbr.color)} ${Math.round((1 - m.pbr.roughness) * 60 + 40)}%, white))`,
-                border: '1px solid var(--k-line-strong)',
-                flexShrink: 0,
-              }}
-              title={`Rauheit ${m.pbr.roughness}${m.pbr.metalness ? ` · Metall ${m.pbr.metalness}` : ''}`}
-            />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 550, fontSize: 13 }}>{m.name}</div>
-              <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
-                Schraffur: {m.sia}
-                {m.lambda !== undefined ? ` · λ ${m.lambda}` : ''}
+    <div style={{ display: 'grid', gap: 14 }}>
+      <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+        Referenzkatalog (fest) — dieselben Schlüssel tragen die Aufbauten des Bauteilkatalogs:
+        3D-Farbe, Plan-Schraffur und U-Wert kommen aus einer Quelle. Der 3D-Würfel zeigt die
+        lieferbare Grösse, wo bekannt, sonst ehrlich einen Platzhalter-Würfel 1:1:1. «Quelle
+        unbelegt (Altbestand)», weil die Herkunft der ursprünglichen Werte nie dokumentiert
+        wurde. Eigene Einträge unten verlangen die Quelle immer (Owner-Befund K21).
+      </div>
+
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        {(['alle', 'baumaterial', 'rohmaterial', 'unbekannt'] as const).map((f) => (
+          <KButton
+            key={f}
+            size="sm"
+            tone={filter === f ? 'accent' : 'quiet'}
+            data-testid={`material-filter-${f}`}
+            onClick={() => setFilter(f)}
+          >
+            {f === 'alle' ? 'Alle' : materialArtLabel[f]} ·{' '}
+            {f === 'alle' ? materialkatalog.length : materialkatalog.filter((m) => m.materialArt === f).length}
+          </KButton>
+        ))}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 10 }}>
+        {gefiltert.map((m) => (
+          <Panel
+            key={m.key}
+            data-testid={`material-${m.key}`}
+            onClick={() => setSelectedKey(selectedKey === m.key ? null : m.key)}
+            style={{
+              padding: '10px 12px',
+              display: 'grid',
+              gap: 6,
+              cursor: 'pointer',
+              outline: selectedKey === m.key ? '2px solid var(--k-accent)' : 'none',
+            }}
+          >
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <span
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 8,
+                  background: `linear-gradient(135deg, ${hex(m.pbr.color)}, color-mix(in srgb, ${hex(m.pbr.color)} ${Math.round((1 - m.pbr.roughness) * 60 + 40)}%, white))`,
+                  border: '1px solid var(--k-line-strong)',
+                  flexShrink: 0,
+                }}
+                title={`Rauheit ${m.pbr.roughness}${m.pbr.metalness ? ` · Metall ${m.pbr.metalness}` : ''}`}
+              />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 550, fontSize: 13 }}>{m.name}</div>
+                <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+                  Schraffur: {m.sia}
+                  {m.lambda !== undefined ? ` · λ ${m.lambda}` : ''}
+                </div>
               </div>
             </div>
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{m.beschrieb}</div>
-        </Panel>
-      ))}
-      <div style={{ gridColumn: '1 / -1', fontSize: 12, color: 'var(--k-ink-faint)' }}>
-        Dieselben Schlüssel tragen die Aufbauten des Bauteilkatalogs — 3D-Farbe, Plan-Schraffur
-        und U-Wert kommen aus einer Quelle. Texturen (PBR-Maps) folgen mit der HomeStation.
+            <div style={{ fontSize: 12, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{m.beschrieb}</div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              <Badge hue={materialArtHue[m.materialArt]}>{materialArtLabel[m.materialArt]}</Badge>
+              {m.region && <Badge hue="var(--k-ink-faint)">{m.region}</Badge>}
+            </div>
+          </Panel>
+        ))}
       </div>
+
+      {selected && (
+        <Panel data-testid="material-detail" style={{ padding: 14, display: 'grid', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontWeight: 600, fontSize: 15 }}>{selected.name}</span>
+            <div style={{ flex: 1 }} />
+            <KButton size="sm" tone="ghost" onClick={() => setSelectedKey(null)}>
+              ×
+            </KButton>
+          </div>
+          <MaterialWuerfel
+            {...(selected.dimensionen?.lieferbar[0] !== undefined ? { groesse: selected.dimensionen.lieferbar[0] } : {})}
+            farbe={selected.pbr.color}
+            rauheit={selected.pbr.roughness}
+            {...(selected.pbr.metalness !== undefined ? { metallisch: selected.pbr.metalness } : {})}
+            materialKey={selected.key}
+          />
+          <div data-testid="material-detail-quelle" style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+            Quelle: {selected.quelle}
+          </div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <Badge hue={materialArtHue[selected.materialArt]}>{materialArtLabel[selected.materialArt]}</Badge>
+            {selected.region && <Badge hue="var(--k-ink-faint)">{selected.region}</Badge>}
+          </div>
+          {selected.dimensionen ? (
+            <div style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+              Lieferbar: {selected.dimensionen.lieferbar.map(formatMaterialGroesse).join(' · ')}
+              {selected.dimensionen.hinweis && <div>{selected.dimensionen.hinweis}</div>}
+            </div>
+          ) : (
+            <div style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+              Keine lieferbare Grösse hinterlegt — Würfel zeigt den Platzhalter 1:1:1.
+            </div>
+          )}
+        </Panel>
+      )}
+
+      <Hairline />
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span className="k-titel" style={{ fontSize: 14 }}>
+          Eigene Materialien
+        </span>
+        <div style={{ flex: 1 }} />
+        <KButton
+          size="sm"
+          tone={formOffen ? 'accent' : 'quiet'}
+          data-testid="material-erfassen-oeffnen"
+          onClick={() => setFormOffen(!formOffen)}
+        >
+          {formOffen ? 'Formular schliessen' : '+ Material erfassen'}
+        </KButton>
+      </div>
+
+      {formOffen && (
+        <Panel data-testid="material-erfassen-formular" style={{ padding: 14, display: 'grid', gap: 8, maxWidth: 480 }}>
+          <input
+            data-testid="material-titel"
+            placeholder="Titel"
+            value={formTitel}
+            onChange={(e) => setFormTitel(e.target.value)}
+            style={materialInputStyle}
+          />
+          <input
+            data-testid="material-quelle"
+            placeholder="Quelle (Pflicht) — Lieferant, Katalog, Foto-Datum …"
+            value={formQuelle}
+            onChange={(e) => setFormQuelle(e.target.value)}
+            style={materialInputStyle}
+          />
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <select
+              data-testid="material-art"
+              value={formArt}
+              onChange={(e) => setFormArt(e.target.value as MaterialArt | '')}
+              style={{ ...materialInputStyle, flex: 1 }}
+            >
+              <option value="">Materialart (optional)</option>
+              <option value="rohmaterial">Rohmaterial</option>
+              <option value="baumaterial">Baumaterial</option>
+              <option value="unbekannt">Unbekannt</option>
+            </select>
+            <input
+              data-testid="material-region"
+              placeholder="Region (optional)"
+              value={formRegion}
+              onChange={(e) => setFormRegion(e.target.value)}
+              style={{ ...materialInputStyle, flex: 1 }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              data-testid="material-laenge"
+              placeholder="Länge mm"
+              type="number"
+              value={formLaenge}
+              onChange={(e) => setFormLaenge(e.target.value)}
+              style={{ ...materialInputStyle, flex: 1 }}
+            />
+            <input
+              data-testid="material-breite"
+              placeholder="Breite mm"
+              type="number"
+              value={formBreite}
+              onChange={(e) => setFormBreite(e.target.value)}
+              style={{ ...materialInputStyle, flex: 1 }}
+            />
+            <input
+              data-testid="material-dicke"
+              placeholder="Dicke mm"
+              type="number"
+              value={formDicke}
+              onChange={(e) => setFormDicke(e.target.value)}
+              style={{ ...materialInputStyle, flex: 1 }}
+            />
+          </div>
+          <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+            Masse optional — nur wenn bekannt. Die Textur/PBR-Map selbst ist Stufe 2 (externer
+            Quellen-Ingest, Lizenzprüfung); der Würfel zeigt bis dahin einen ehrlichen
+            Platzhalter-Ton.
+          </span>
+          <KButton size="sm" tone="accent" data-testid="material-erfassen-speichern" onClick={() => void materialAbsenden()}>
+            Speichern
+          </KButton>
+        </Panel>
+      )}
+
+      {erfasst === null && <KLade text="Eigene Materialien laden …" height={80} />}
+      {erfasst !== null && erfasst.length === 0 && (
+        <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+          Noch keine eigenen Materialien — «+ Material erfassen» legt den ersten an.
+        </span>
+      )}
+      {erfasst !== null && erfasst.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 10 }}>
+          {erfasst.map((m) => (
+            <Panel
+              key={m.id}
+              data-testid={`material-erfasst-${m.id}`}
+              onClick={() => setSelectedErfasstId(selectedErfasstId === m.id ? null : m.id)}
+              style={{
+                padding: '10px 12px',
+                display: 'grid',
+                gap: 6,
+                cursor: 'pointer',
+                outline: selectedErfasstId === m.id ? '2px solid var(--k-accent)' : 'none',
+              }}
+            >
+              <div style={{ fontWeight: 550, fontSize: 13, overflowWrap: 'anywhere' }}>{m.title}</div>
+              <div style={{ fontSize: 11, color: 'var(--k-ink-faint)', overflowWrap: 'anywhere' }}>Quelle: {m.quelle}</div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {m.materialArt && <Badge hue={materialArtHue[m.materialArt]}>{materialArtLabel[m.materialArt]}</Badge>}
+                {m.region && <Badge hue="var(--k-ink-faint)">{m.region}</Badge>}
+              </div>
+            </Panel>
+          ))}
+        </div>
+      )}
+
+      {selectedErfasst && (
+        <Panel data-testid="material-erfasst-detail" style={{ padding: 14, display: 'grid', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontWeight: 600, fontSize: 15, overflowWrap: 'anywhere' }}>{selectedErfasst.title}</span>
+            <div style={{ flex: 1 }} />
+            <KButton size="sm" tone="ghost" onClick={() => void materialLoeschen(selectedErfasst)}>
+              Löschen
+            </KButton>
+          </div>
+          <MaterialWuerfel
+            {...(selectedErfasst.materialDimensionen?.lieferbar[0] !== undefined
+              ? { groesse: selectedErfasst.materialDimensionen.lieferbar[0] }
+              : {})}
+          />
+          <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>Quelle: {selectedErfasst.quelle}</div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {selectedErfasst.materialArt && (
+              <Badge hue={materialArtHue[selectedErfasst.materialArt]}>{materialArtLabel[selectedErfasst.materialArt]}</Badge>
+            )}
+            {selectedErfasst.region && <Badge hue="var(--k-ink-faint)">{selectedErfasst.region}</Badge>}
+          </div>
+          {selectedErfasst.materialDimensionen ? (
+            <div style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+              Lieferbar: {selectedErfasst.materialDimensionen.lieferbar.map(formatMaterialGroesse).join(' · ')}
+            </div>
+          ) : (
+            <div style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+              Keine lieferbare Grösse hinterlegt — Würfel zeigt den Platzhalter 1:1:1.
+            </div>
+          )}
+        </Panel>
+      )}
     </div>
   );
 }
