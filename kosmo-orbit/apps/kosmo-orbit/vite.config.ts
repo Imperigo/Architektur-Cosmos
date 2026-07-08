@@ -13,6 +13,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Registrierung passiert MANUELL in main.tsx (kein injiziertes
+      // registerSW.js): im Tauri-Desktop wird der Service Worker bewusst NICHT
+      // registriert und ein vorhandener aktiv entfernt — sonst serviert der
+      // SW-Precache nach einem Installer-Update die ALTE Oberfläche weiter
+      // (Owner-Befund 08.07.: «v1.5 sieht aus wie v1»). Die PWA (Browser/iPad)
+      // behält ihr Offline-Verhalten unverändert.
+      injectRegister: null,
       includeAssets: ['icons/icon-180.png'],
       manifest: {
         name: 'KosmoOrbit',

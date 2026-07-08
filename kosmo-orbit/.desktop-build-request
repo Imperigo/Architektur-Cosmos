@@ -1,1 +1,1 @@
-2026-07-08T00:55:00Z Desktop-Build v0.6.0 — öffentliche Version (Owner-Entscheid), echte Versions-Anzeige im Header, Blöcke E/H/A2-A3/G (ROADMAP 201-205)
+2026-07-08T01:10:00Z Desktop-Build v0.6.0 (final) — SW-Cache-Fix: Tauri-Desktop registriert keinen Service Worker mehr und räumt alte SW/Caches ab (Owner-Befund: Installer-Update zeigte alte Oberfläche)
