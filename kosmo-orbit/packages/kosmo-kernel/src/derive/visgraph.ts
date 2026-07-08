@@ -1,6 +1,8 @@
 import type { KosmoDoc } from '../model/doc';
 import type { VisEdge, VisGraph, VisNode, VisPortTyp } from '../model/entities';
 import { finalerRenderPrompt, renderPromptBausteine } from './renderprompt';
+import { deriveAutoKameras, type AutoKameraStandpunkt } from './kamera';
+import { isVisPresetId, visPresetById, type VisPresetId } from './render-presets';
 
 /**
  * Render-Graph-Maschine (V1-Finish P2) — das Herz des KosmoVis-Node-Trees.
@@ -98,8 +100,18 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
       { name: 'prompt', typ: 'prompt', label: 'Prompt' },
       { name: 'treue', typ: 'zahl', label: 'Geometrie-Treue' },
       { name: 'samples', typ: 'zahl', label: 'Samples' },
+      { name: 'kameras', typ: 'kameras', label: 'Kamera-Standpunkte' },
     ],
     outputs: [{ name: 'bild', typ: 'bild', label: 'Bild' }],
+    defaults: {},
+  },
+  kamera: {
+    typ: 'kamera',
+    label: 'Auto-Kamera',
+    hilfe:
+      'Leitet benannte Standpunkte (Eingang/Übersicht/ggf. Innenraum) regelbasiert aus den Modell-Bounds ab — Vorschlag aus dem Modell, keine KI-Wahl. Mit dem Render-Node verbinden.',
+    inputs: [],
+    outputs: [{ name: 'kameras', typ: 'kameras', label: 'Kamera-Standpunkte' }],
     defaults: {},
   },
   vergleich: {
@@ -180,12 +192,32 @@ export function topoReihenfolge(graph: VisGraph): VisNode[] {
   return folge;
 }
 
+/**
+ * Fertig zusammengezogene Job-Parameter eines Render-Nodes. `presetId`/
+ * `resolution`/`sun`/`komposition` (Owner-Befund K20/A10) erscheinen NUR, wenn
+ * der Node-Param `preset` gesetzt ist — ohne Preset bleibt das Verhalten
+ * byte-identisch zum bisherigen Stand (Default-Samples 128 etc.). `kameras`
+ * erscheint NUR, wenn ein Auto-Kamera-Node am `kameras`-Port hängt.
+ */
+export interface VisRenderAuftrag {
+  prompt: string;
+  faithful: number;
+  samples: number;
+  hatSzene: boolean;
+  nurCycles: boolean;
+  presetId?: VisPresetId;
+  resolution?: readonly [number, number];
+  sun?: { azimuth: number; elevation: number };
+  komposition?: { seitenverhaeltnis: number; brennweiteMm: number; horizontlinie: number };
+  kameras?: AutoKameraStandpunkt[];
+}
+
 /** Auswertungs-Ergebnis je Node: Ausgangswerte der puren Ports. */
 export interface VisAuswertung {
   /** nodeId → Portname → Wert (string für prompt/material, number für zahl). */
   werte: Map<string, Record<string, string | number>>;
   /** Für Render-Nodes: die fertig zusammengezogenen Job-Parameter. */
-  renderAuftraege: Map<string, { prompt: string; faithful: number; samples: number; hatSzene: boolean; nurCycles: boolean }>;
+  renderAuftraege: Map<string, VisRenderAuftrag>;
 }
 
 /**
@@ -195,7 +227,7 @@ export interface VisAuswertung {
  */
 export function evaluiereGraph(doc: KosmoDoc, graph: VisGraph): VisAuswertung {
   const werte = new Map<string, Record<string, string | number>>();
-  const renderAuftraege = new Map<string, { prompt: string; faithful: number; samples: number; hatSzene: boolean; nurCycles: boolean }>();
+  const renderAuftraege = new Map<string, VisRenderAuftrag>();
   const eingangsWert = (nodeId: string, port: string): string | number | undefined => {
     const e = graph.edges.find((e) => e.to === nodeId && e.toPort === port);
     if (!e) return undefined;
@@ -233,17 +265,37 @@ export function evaluiereGraph(doc: KosmoDoc, graph: VisGraph): VisAuswertung {
         const prompt = String(eingangsWert(n.id, 'prompt') ?? '');
         const treue = eingangsWert(n.id, 'treue');
         const samples = eingangsWert(n.id, 'samples');
+        // K20/A10: Cycles-Preset ist ein Node-Param (wie `stimmung.preset`),
+        // NUR wirksam wenn explizit gesetzt — ohne Preset bleibt der
+        // 128-Samples-Default (unten) byte-identisch zum bisherigen Stand.
+        const presetRoh = params['preset'];
+        const presetId = isVisPresetId(presetRoh) ? presetRoh : undefined;
+        const preset = presetId ? visPresetById(presetId) : undefined;
+        // Ein Auto-Kamera-Node am `kameras`-Port liefert Standpunkte live aus
+        // den aktuellen Modell-Bounds — wie `material` ist das eine reine
+        // Ableitung, nie ein gespeicherter Wert (immer aktuell).
+        const hatKameras = graph.edges.some((e) => e.to === n.id && e.toPort === 'kameras');
+        const kameras = hatKameras ? deriveAutoKameras(doc) : [];
         renderAuftraege.set(n.id, {
           prompt,
           faithful: typeof treue === 'number' ? Math.min(1, Math.max(0, treue)) : 0.8,
-          samples: typeof samples === 'number' ? Math.max(1, Math.round(samples)) : 128,
+          samples:
+            typeof samples === 'number' ? Math.max(1, Math.round(samples)) : (preset?.render.samples ?? 128),
           hatSzene: graph.edges.some((e) => e.to === n.id && e.toPort === 'szene'),
           // HS5: «Nur Cycles» bestellt reines Cycles (vis.skip) statt
           // KI-Veredelung — Node-Param, Default false hinter striktem `=== true`.
           nurCycles: params['nurCycles'] === true,
+          ...(preset && presetId
+            ? { presetId, resolution: preset.render.resolution, sun: preset.render.sun, komposition: preset.komposition }
+            : {}),
+          ...(kameras.length > 0 ? { kameras } : {}),
         });
         break;
       }
+      case 'kamera':
+        // Reine Quelle — konsumiert direkt im 'render'-Fall über die Kante,
+        // trägt selbst keinen Ausgangswert im `werte`-Store (wie 'modell').
+        break;
       default:
         // modell / vergleich / blatt / referenz: keine puren Ausgangswerte
         break;

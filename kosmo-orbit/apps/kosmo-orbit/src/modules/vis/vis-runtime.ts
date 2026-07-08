@@ -97,12 +97,15 @@ export const useVisRuntime = create<VisRuntime>((set) => ({
 
 /** Memo-Schlüssel eines Render-Auftrags — billig und deterministisch.
  * `nurCycles` MUSS mit rein (HS5): sonst zeigt der Node nach dem Umschalten
- * fälschlich «aktuell», obwohl ein anderer Job bestellt würde. */
+ * fälschlich «aktuell», obwohl ein anderer Job bestellt würde. `presetId`
+ * (K20/A10) genauso: ein Preset-Wechsel ändert Samples/Auflösung/Sonne, ohne
+ * das im Schlüssel würde der Node fälschlich «aktuell» bleiben. */
 export function memoKey(a: {
   prompt: string;
   faithful: number;
   samples: number;
   nurCycles?: boolean;
+  presetId?: string;
 }): string {
-  return `${a.faithful}|${a.samples}|${a.nurCycles ? 'cycles' : 'ki'}|${a.prompt}`;
+  return `${a.faithful}|${a.samples}|${a.nurCycles ? 'cycles' : 'ki'}|${a.presetId ?? 'kein-preset'}|${a.prompt}`;
 }

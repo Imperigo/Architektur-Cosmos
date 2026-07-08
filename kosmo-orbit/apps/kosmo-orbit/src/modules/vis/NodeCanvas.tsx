@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
+  deriveAutoKameras,
   evaluiereGraph,
+  RENDER_PRESETS,
   VIS_NODE_KATALOG,
   VIS_STIMMUNGEN,
   type VisGraph,
@@ -48,6 +50,7 @@ const PORT_FARBE: Record<VisPortTyp, string> = {
   prompt: '#1e6b47',
   zahl: '#7a5c9e',
   material: '#8a6d3b',
+  kameras: '#2b8a7a',
 };
 
 /** Höhe des Inhaltsbereichs je Node-Typ (Canvas-Einheiten). */
@@ -58,10 +61,11 @@ const KOERPER_H: Record<string, number> = {
   stimmung: 34,
   kombinierer: 64,
   zahl: 38,
-  render: 168,
+  render: 192,
   vergleich: 132,
   blatt: 38,
   referenz: 92,
+  kamera: 54,
 };
 
 function nodeHoehe(n: VisNode): number {
@@ -737,6 +741,20 @@ function NodeKoerper({
             />
             nur Cycles (keine KI-Veredelung)
           </label>
+          {/* K20/A10: Cycles-Preset (Samples/Auflösung/Sonne/Komposition) — regelbasierte
+              Datentabelle, kein KI-Vorschlag. Leer = bisheriger Default (128 Samples). */}
+          <select
+            value={String(params['preset'] ?? '')}
+            data-testid="vis-preset-select"
+            onChange={(e) => param('preset', e.target.value)}
+            onPointerDown={(e) => e.stopPropagation()}
+            style={feld}
+          >
+            <option value="">kein Preset (Default 128 Samples)</option>
+            {RENDER_PRESETS.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
           {/* Worker + Fortschritt, sobald der Worker den Job hält (HS3-Auflage 5). */}
           {(lauf?.worker || lauf?.progress) && (status === 'rendert' || status === 'wartetGpu') && (
             <div data-testid="render-fortschritt" style={{ fontSize: 9.5, fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-soft)' }}>
@@ -830,6 +848,27 @@ function NodeKoerper({
             <div style={{ height: 46, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--k-ink-faint)' }}>
               Referenz / Splat-Ansicht
             </div>
+          )}
+        </div>
+      );
+    }
+    case 'kamera': {
+      // Reine Anzeige — live aus den aktuellen Modell-Bounds abgeleitet,
+      // nie gespeichert (wie der Material-Node). Ehrlich: «Vorschlag aus dem
+      // Modell», keine KI-Wahl.
+      const kameras = deriveAutoKameras(doc);
+      return (
+        <div style={{ display: 'grid', gap: 3, fontSize: 10, color: 'var(--k-ink-soft)' }} data-testid="vis-auto-kamera-liste">
+          {kameras.length === 0 ? (
+            <span style={{ fontStyle: 'italic', color: 'var(--k-ink-faint)' }}>
+              Keine Geometrie im Modell — nichts abzuleiten.
+            </span>
+          ) : (
+            kameras.map((k) => (
+              <div key={k.name} title={k.begruendung}>
+                <b>{k.name}</b> — Vorschlag aus dem Modell
+              </div>
+            ))
           )}
         </div>
       );

@@ -53,6 +53,19 @@ export const RenderScene = z.object({
       upscale: z.boolean().default(false),
     })
     .prefault({}),
+  /**
+   * Bildkomposition (Owner-Befund K20/A10) — Metadaten des angewandten
+   * Cycles-Presets (kosmo-kernel derive/render-presets.ts), NUR gesetzt wenn
+   * ein Preset aktiv ist. Ehrliche Transparenz statt Blackbox: Seitenverhältnis/
+   * Brennweiten-Äquivalent/Horizontlinie fliessen so in den Render-Prompt/Job.
+   */
+  komposition: z
+    .object({
+      seitenverhaeltnis: z.number().positive(),
+      brennweiteMm: z.number().positive(),
+      horizontlinie: z.number().min(0).max(1),
+    })
+    .optional(),
 });
 
 export type RenderScene = z.infer<typeof RenderScene>;

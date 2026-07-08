@@ -1,4 +1,4 @@
-import { exportGlb, type Sheet } from '@kosmo/kernel';
+import { exportGlb, type AutoKameraStandpunkt, type Sheet } from '@kosmo/kernel';
 import { RenderJob, bridgeRoutes } from '@kosmo/contracts';
 import { useProject } from '../../state/project-store';
 import type { NodeLaufStatus } from './vis-runtime';
@@ -100,23 +100,42 @@ export function mappeJobStatus(record: { status: string; result?: unknown }): No
   }
 }
 
-/** Render-Job senden — Szene kommt aus dem Graphen (Prompt, Treue, Samples). */
+/**
+ * Render-Job senden — Szene kommt aus dem Graphen (Prompt, Treue, Samples).
+ * K20/A10: `presetId`/`resolution`/`sun`/`komposition` kommen NUR mit, wenn
+ * der Render-Node ein Cycles-Preset trägt; `kameras` NUR, wenn ein
+ * Auto-Kamera-Node verbunden ist — sonst bleibt der Job byte-identisch zum
+ * bisherigen Stand (1600×1000, `cameras: 'auto'`, keine Sonne).
+ */
 export async function postRenderJob(params: {
   prompt: string;
   faithful: number;
   samples: number;
   nurCycles?: boolean;
+  resolution?: readonly [number, number];
+  sun?: { azimuth: number; elevation: number };
+  komposition?: { seitenverhaeltnis: number; brennweiteMm: number; horizontlinie: number };
+  kameras?: AutoKameraStandpunkt[];
 }): Promise<JobRecord> {
   const { doc } = useProject.getState();
   const glb = exportGlb(doc, doc.settings.projectName);
+  const kameras = params.kameras && params.kameras.length > 0 ? params.kameras : undefined;
   const scene = {
     schema: 'kosmovis.render-scene/v1',
-    cameras: 'auto',
-    render: { resolution: [1600, 1000], samples: params.samples, faithful: params.faithful },
+    cameras: kameras
+      ? kameras.map((k) => ({ name: k.name, position: k.position, target: k.target, fov: k.fov }))
+      : 'auto',
+    render: {
+      resolution: params.resolution ?? [1600, 1000],
+      samples: params.samples,
+      faithful: params.faithful,
+      ...(params.sun ? { sun: params.sun } : {}),
+    },
     style: { mode: 'none', refs: [], prompt: params.prompt },
     // HS5: «Nur Cycles» → vis.skip: true (reines Cycles, keine KI-Veredelung).
     // Die Bridge leitet das in requested_engine "cycles" ab (HS2).
     vis: { skip: params.nurCycles === true, backbone: 'qwen', upscale: false },
+    ...(params.komposition ? { komposition: params.komposition } : {}),
     out: '',
     geometry: { path: '', format: 'glb' },
   };

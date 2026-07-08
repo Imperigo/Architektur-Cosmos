@@ -440,8 +440,9 @@ export interface Aussparung extends Base {
   sill?: Mm;
 }
 
-/** Port-Typen im Render-Graphen (V1-P2): nur gleiche Typen verbinden sich. */
-export type VisPortTyp = 'szene' | 'bild' | 'prompt' | 'zahl' | 'material';
+/** Port-Typen im Render-Graphen (V1-P2): nur gleiche Typen verbinden sich.
+ * `kameras` (Owner-Befund K20/A10): Auto-Kamera-Standpunkte, s. derive/kamera.ts. */
+export type VisPortTyp = 'szene' | 'bild' | 'prompt' | 'zahl' | 'material' | 'kameras';
 
 /** Ein Node im Render-Graphen. Typ-Katalog: derive/visgraph.ts. */
 export interface VisNode {

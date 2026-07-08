@@ -137,6 +137,51 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
     }
   };
 
+  /**
+   * «Kamera vorschlagen» (Owner-Befund K20/A10) — erzeugt/aktualisiert einen
+   * Auto-Kamera-Node und verbindet ihn mit jedem Render-Node ohne bestehende
+   * Kamera-Verbindung. Die Standpunkte selbst sind eine reine Ableitung aus
+   * den Modell-Bounds (derive/kamera.ts) — dieser Klick legt nur den
+   * bestehenden Mechanismus (Node + Verbindung) an, EIN Undo-Schritt.
+   */
+  const kameraVorschlagen = () => {
+    const { history } = useProject.getState();
+    try {
+      history.beginGroup();
+      try {
+        let gid = graphId;
+        if (!gid) {
+          const res = runCommand('vis.graphErstellen', { name: 'Kamera-Vorschlag' });
+          gid = (res.patches[0] as { id: string }).id;
+          setAktiverGraph(gid);
+        }
+        let graph = doc.get<VisGraph>(gid)!;
+        let kameraNode = graph.nodes.find((n) => n.typ === 'kamera');
+        if (!kameraNode) {
+          runCommand('vis.nodeSetzen', { graphId: gid, typ: 'kamera', x: 40, y: 40 });
+          graph = doc.get<VisGraph>(gid)!;
+          kameraNode = graph.nodes[graph.nodes.length - 1]!;
+        }
+        const renderOhneKamera = graph.nodes.filter(
+          (n) => n.typ === 'render' && !graph.edges.some((e) => e.to === n.id && e.toPort === 'kameras'),
+        );
+        for (const render of renderOhneKamera) {
+          runCommand('vis.verbinden', {
+            graphId: gid,
+            from: kameraNode.id,
+            fromPort: 'kameras',
+            to: render.id,
+            toPort: 'kameras',
+          });
+        }
+      } finally {
+        history.endGroup();
+      }
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
   const nodeHinzu = (typ: string) => {
     if (!graphId) return;
     try {
@@ -190,6 +235,13 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
         </select>
         <KButton size="sm" tone="accent" data-testid="drei-stimmungen" onClick={dreiStimmungen}>
           Drei Stimmungen
+        </KButton>
+        <Hairline vertical />
+        <span style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: '0.03em', color: 'var(--k-ink-faint)' }}>
+          AUTO
+        </span>
+        <KButton size="sm" tone="quiet" data-testid="vis-auto-kamera" onClick={kameraVorschlagen}>
+          Kamera vorschlagen
         </KButton>
       </VisTabs>
       <div style={{ position: 'absolute', inset: 0, top: 44 }}>

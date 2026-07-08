@@ -22,6 +22,25 @@ describe('render-scene/v1', () => {
       }),
     ).toThrow();
   });
+
+  it('K20/A10: komposition ist optional (ohne Preset bleibt der Job wie bisher)', () => {
+    const scene = RenderScene.parse({
+      geometry: { path: 'm.glb', format: 'glb' },
+      out: 'x',
+    });
+    expect(scene.komposition).toBeUndefined();
+  });
+
+  it('K20/A10: komposition trägt Seitenverhältnis/Brennweite/Horizontlinie eines Cycles-Presets', () => {
+    const scene = RenderScene.parse({
+      geometry: { path: 'm.glb', format: 'glb' },
+      out: 'x',
+      cameras: [{ position: [5, 1.6, 8], target: [5, 1.2, -3], fov: 55 }],
+      komposition: { seitenverhaeltnis: 1.6, brennweiteMm: 50, horizontlinie: 0.42 },
+    });
+    expect(scene.komposition).toEqual({ seitenverhaeltnis: 1.6, brennweiteMm: 50, horizontlinie: 0.42 });
+    expect(scene.cameras).toEqual([{ position: [5, 1.6, 8], target: [5, 1.2, -3], fov: 55 }]);
+  });
 });
 
 describe('render-result/v2', () => {

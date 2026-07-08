@@ -41,6 +41,8 @@ export * from './derive/checks';
 export * from './derive/submissionsreife';
 export * from './derive/planabgleich';
 export * from './derive/volumenstudie';
+export * from './derive/kamera';
+export * from './derive/render-presets';
 export * from './ifc/export';
 export * from './dxf/export';
 export * from './dxf/import';
