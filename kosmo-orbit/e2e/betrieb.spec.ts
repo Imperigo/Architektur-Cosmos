@@ -76,6 +76,28 @@ test('Setup-Assistent zeigt die Werkzeuge der Betriebsart (Standard vs. Cloud)',
   await expect(page.locator('[data-testid="werkzeug-ollama"]')).toHaveCount(0);
 });
 
+test('Auto-«Holen» (Block A2/A3): Knopf nur bei Auto-Befehlen, im Browser ehrlich Desktop-only', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await oeffneEinstellungen(page);
+  await page.click('[data-testid="werkzeuge-oeffnen"]');
+  await expect(page.locator('[data-testid="werkzeug-setup"]')).toBeVisible();
+
+  // Der Web-Hinweis nennt ehrlich die Desktop-Grenze (im Browser kein Tauri).
+  await expect(page.locator('[data-testid="werkzeug-holen-hinweis"]')).toContainText(/Desktop-App/);
+
+  // «Holen» erscheint bei Ollama (hat Auto-Befehle je Plattform) …
+  const holen = page.locator('[data-testid="werkzeug-holen-ollama"]');
+  await expect(holen).toBeVisible();
+  // … aber NICHT beim Sync-Server (kein install-Befehl im Manifest).
+  await expect(page.locator('[data-testid="werkzeug-holen-sync"]')).toHaveCount(0);
+
+  // Klick im Browser: ehrlicher Fehler statt stiller Fehlschlag → Knopf geht
+  // in den «erneut holen»-Zustand (Ollama ist ~50 MB, keine GB-Rückfrage).
+  await holen.click();
+  await expect(holen).toHaveText(/erneut holen/, { timeout: 10_000 });
+});
+
 test('HomeStation nicht erreichbar → Cloud-Fallback (Opus 4.8) wird angeboten', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {

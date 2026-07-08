@@ -65,12 +65,82 @@ fn claude_login() -> Result<String, String> {
     lese_token().ok_or_else(|| "Anmeldung abgeschlossen, aber kein Token lesbar.".to_string())
 }
 
+/// Auto-Setup: einen geprüften Installations-Befehl je Werkzeug ausführen
+/// (V1.6 Block A / A2–A3, Owner-Frage P1 «Ein-Klick-Installieren»).
+///
+/// Jeder Befehl kommt als bereits getrennte Programm+Argument-Liste aus dem
+/// Client-Manifest (`state/werkzeuge.ts`), das dort schon gegen die Allowlist
+/// geprüft ist. **Defense in depth (Serie-I-Grundsatz «dem Client nie
+/// vertrauen»):** die Rust-Seite prüft NOCH EINMAL — das erste Wort MUSS in
+/// der hier fest verdrahteten Allowlist stehen, und kein Argument darf ein
+/// Shell-Metazeichen enthalten. Ausgeführt wird über `Command::new(programm)
+/// .args(rest)` OHNE Shell (keine Interpolation), die Prüfung hält zusätzlich
+/// versehentlich/böswillig eingeschleuste Ketten ab.
+///
+/// Gibt bei Erfolg ein knappes Protokoll zurück; beim ersten Fehlschlag bricht
+/// die Kette ehrlich ab und meldet, welcher Befehl warum scheiterte. Grosse
+/// Downloads (LLM-Gewichte) laufen NUR, weil der Nutzer im UI vorher die
+/// Grösse gesehen und «Holen» gedrückt hat — dieser Command lädt nie von
+/// selbst.
+#[tauri::command]
+fn werkzeug_holen(befehle: Vec<Vec<String>>) -> Result<String, String> {
+    // Fest verdrahtet — muss ERLAUBTE_INSTALLER in state/werkzeuge.ts spiegeln.
+    const ERLAUBTE_INSTALLER: [&str; 9] = [
+        "winget", "brew", "curl", "ollama", "pip", "pip3", "python", "python3", "node",
+    ];
+    fn ist_metazeichen(s: &str) -> bool {
+        s.chars()
+            .any(|c| matches!(c, ';' | '&' | '|' | '`' | '$' | '(' | ')' | '{' | '}' | '<' | '>' | '\n'))
+    }
+    fn ist_erlaubt(befehl: &[String]) -> bool {
+        match befehl.first() {
+            None => false,
+            Some(erstes) if !ERLAUBTE_INSTALLER.contains(&erstes.as_str()) => false,
+            _ => befehl.iter().all(|t| !t.is_empty() && !ist_metazeichen(t)),
+        }
+    }
+
+    if befehle.is_empty() {
+        return Err("Keine Befehle übergeben.".to_string());
+    }
+
+    let mut protokoll = String::new();
+    for befehl in &befehle {
+        if !ist_erlaubt(befehl) {
+            return Err(format!(
+                "Befehl abgewiesen (nicht in der Allowlist oder Shell-Metazeichen): {}",
+                befehl.join(" ")
+            ));
+        }
+        let (programm, args) = befehl.split_first().expect("nicht leer, siehe ist_erlaubt");
+        match Command::new(programm).args(args).status() {
+            Ok(status) if status.success() => {
+                protokoll.push_str(&format!("✓ {}\n", befehl.join(" ")));
+            }
+            Ok(status) => {
+                return Err(format!(
+                    "«{}» endete mit Code {}. Bisher:\n{protokoll}",
+                    befehl.join(" "),
+                    status.code().unwrap_or(-1)
+                ));
+            }
+            Err(e) => {
+                return Err(format!(
+                    "«{}» liess sich nicht starten: {e}. Bisher:\n{protokoll}",
+                    befehl.join(" ")
+                ));
+            }
+        }
+    }
+    Ok(protokoll)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
-        .invoke_handler(tauri::generate_handler![claude_login])
+        .invoke_handler(tauri::generate_handler![claude_login, werkzeug_holen])
         .run(tauri::generate_context!())
         .expect("Fehler beim Starten von KosmoOrbit");
 }
