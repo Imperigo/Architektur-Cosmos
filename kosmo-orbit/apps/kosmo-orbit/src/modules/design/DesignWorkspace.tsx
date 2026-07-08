@@ -38,7 +38,7 @@ import { SplatPanel } from './SplatPanel';
 import type { SplatCloud } from './splat-import';
 import { Inspector } from './Inspector';
 import { SectionView } from './SectionView';
-import { exportIfcFile, exportPlanPdf, exportPlanSvg, PHASEN_MASSSTAB } from './export-plan';
+import { exportIfcFile, exportPlanDxf, exportPlanPdf, exportPlanSvg, PHASEN_MASSSTAB } from './export-plan';
 import { consumeDeepLink } from '../../state/deep-link';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
@@ -237,6 +237,7 @@ export function DesignWorkspace() {
       { id: 'view-2d', titel: 'Grundriss', gruppe: 'Ansicht', run: () => setViewMode('2d') },
       { id: 'export-pdf', titel: 'Grundriss als PDF', gruppe: 'Export', run: () => void exportPlanPdf() },
       { id: 'export-svg', titel: 'Grundriss als SVG', gruppe: 'Export', run: exportPlanSvg },
+      { id: 'export-dxf', titel: 'Grundriss als DXF (CAD)', gruppe: 'Export', run: exportPlanDxf },
       { id: 'export-ifc', titel: 'Modell als IFC', gruppe: 'Export', run: exportIfcFile },
       { id: 'undo', titel: 'Rückgängig', gruppe: 'Bearbeiten', run: undo },
       { id: 'redo', titel: 'Wiederholen', gruppe: 'Bearbeiten', run: redo },
@@ -987,6 +988,18 @@ export function DesignWorkspace() {
             {...elementStil('export', 'svg')}
           >
             SVG
+          </KButton>
+          <KButton
+            size="sm"
+            tone="ghost"
+            onClick={() => {
+              exportPlanDxf();
+              nutzungMelden('export:dxf');
+            }}
+            data-testid="export-dxf"
+            {...elementStil('export', 'dxf')}
+          >
+            DXF
           </KButton>
           <KButton
             size="sm"

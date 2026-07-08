@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { svg2pdf } from 'svg2pdf.js';
-import { A3_QUER, exportIfc, planToSvg, type BauPhase } from '@kosmo/kernel';
+import { A3_QUER, exportIfc, planToDxf, planToSvg, type BauPhase } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
 /** SIA-Massstabsempfehlung je Phase (B5, PLAN-DETAILLIERUNG Fig. 4) —
@@ -48,6 +48,25 @@ export function exportPlanSvg(): void {
   const a = document.createElement('a');
   a.href = url;
   a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-Grundriss.svg`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
+/**
+ * Grundriss des aktiven Geschosses als DXF (R2000/AC1015, mm) — die 2D-Brücke
+ * zu AutoCAD/Rhino/Vectorworks. Dieselbe Geometrie wie der SVG/PDF-Plan,
+ * Linien/Polylinien/Text auf semantischen Layern (V1.6 Block G).
+ */
+export function exportPlanDxf(): void {
+  const { doc, activeStoreyId } = useProject.getState();
+  if (!activeStoreyId) return;
+  const dxf = planToDxf(doc, activeStoreyId);
+  const url = URL.createObjectURL(new Blob([dxf], { type: 'application/dxf' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-Grundriss.dxf`;
   document.body.appendChild(a);
   a.click();
   a.remove();

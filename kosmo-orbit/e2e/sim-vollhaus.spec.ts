@@ -120,8 +120,15 @@ test.describe('V1.6 Block H — Vollhaus', () => {
     await expect(page.locator('[data-testid="plan-svg"], [data-testid="planview"]').first()).toBeVisible();
     await page.screenshot({ path: 'e2e-results/vollhaus-draw-grundriss.png', fullPage: true });
 
-    // Exporte: IFC (BIM) + PDF-Plansatz — die «Endresultat»-Dateien.
+    // Exporte: IFC (BIM) + DXF (CAD-Interop) — die «Endresultat»-Dateien.
     await exportPruefen(page, 'export-ifc', /\.ifc$/);
+    const dxfPfad = await exportPruefen(page, 'export-dxf', /\.dxf$/);
+    // DXF-Inhalt beweisen: R2000-Kopf, Entities-Sektion, Wand-Poché, EOF.
+    const dxf = await (await import('node:fs/promises')).readFile(dxfPfad, 'utf8');
+    expect(dxf).toContain('AC1009'); // AutoCAD R12 (max. Interop)
+    expect(dxf).toContain('0\nSECTION\n2\nENTITIES\n');
+    expect(dxf).toContain('0\nPOLYLINE\n'); // Wand-Poché
+    expect(dxf.trimEnd().endsWith('0\nEOF')).toBe(true);
     await page.screenshot({ path: 'e2e-results/vollhaus-draw-fertig.png', fullPage: true });
 
     // Modell-Bilanz als harter Beweis, dass ein VOLLES Haus steht.
