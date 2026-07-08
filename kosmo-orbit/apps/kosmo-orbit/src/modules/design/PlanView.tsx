@@ -22,7 +22,17 @@ import { planLod, type PlanLod } from './planLod';
  * Rendern — kein Re-Mount, kein rAF-Gefrickel nötig.
  */
 
-export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandlers> }) {
+export function PlanView({
+  handlers,
+  onLod,
+}: {
+  handlers: React.RefObject<ViewportHandlers>;
+  /** Serie K A5 (K15, Statusleiste): meldet die aktuelle Plan-LOD-Stufe an den
+   *  Aufrufer — reiner Zustandsspiegel, ändert nichts an der LOD-Logik selbst
+   *  (`planLod.ts` bleibt unberührt). Optional, weil ältere/isolierte Mounts
+   *  (Tests) den Callback nicht brauchen. */
+  onLod?: (lod: PlanLod) => void;
+}) {
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const doc = useProject.getState().doc;
@@ -109,6 +119,12 @@ export function PlanView({ handlers }: { handlers: React.RefObject<ViewportHandl
   const lodRef = useRef<PlanLod>('voll');
   const lod = planLod(view.scale * 1000, lodRef.current);
   lodRef.current = lod;
+  // Serie K A5 (K15, Statusleiste): reiner Zustandsspiegel für den Aufrufer —
+  // keine Rückwirkung auf die LOD-Berechnung selbst.
+  useEffect(() => {
+    onLod?.(lod);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lod]);
 
   // Trefferzone + Umriss leben in plan-hit-test.ts (eigener Unit-Test, unabhängig
   // von derivePlan/den Poché-Regionen — die Goldens bleiben unberührt).

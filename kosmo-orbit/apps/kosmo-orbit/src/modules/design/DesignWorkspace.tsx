@@ -36,6 +36,8 @@ import { VERSCHIEBBAR } from './plan-hit-test';
 import { zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { werkzeugFuerTaste } from './zeichen-shortcuts';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
+import type { PlanLod } from './planLod';
+import { IconAuswahl, IconVolumen, IconWand, IconZone } from './werkzeug-icons';
 import { ModulEditor } from './ModulEditor';
 import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
@@ -132,6 +134,49 @@ const LEERES_NUTZUNGSPROFIL: NutzungsProfil = { zaehler: {}, zuletzt: {} };
 /** Regel 2.3.2: 2s Debounce nach Aktionsende, bevor eine Zeichnen-Demotion wieder greift. */
 const ADAPTION_DEBOUNCE_MS = 2000;
 
+/**
+ * Serie K A5 (K15): die vier meistgenutzten Zeichenwerkzeuge tragen ein
+ * Inline-SVG-Icon statt Textlabel (Owner «kein Text wo möglich») — Text bleibt
+ * als `title`+`aria-label` erhalten (Zugänglichkeit, keine Kontraktänderung:
+ * `data-testid`s unverändert). Die restlichen Werkzeuge (Dach/Treppe/Stütze/
+ * Schnitt/Skizze) bleiben Text — seltener genutzt, teils geometrisch nicht auf
+ * ein Icon reduzierbar. Begründung der Auswahl: Kommentar in
+ * `werkzeug-icons.tsx`.
+ */
+const ZEICHEN_WERKZEUGE_LEISTE: readonly {
+  id: ToolId;
+  label: string;
+  Icon?: () => React.JSX.Element;
+}[] = [
+  { id: 'auswahl', label: 'Auswahl', Icon: IconAuswahl },
+  { id: 'wand', label: 'Wand', Icon: IconWand },
+  { id: 'volumen', label: 'Volumen', Icon: IconVolumen },
+  { id: 'zone', label: 'Zone', Icon: IconZone },
+  { id: 'dach', label: 'Dach' },
+  { id: 'treppe', label: 'Treppe' },
+  { id: 'stuetze', label: 'Stütze' },
+  { id: 'schnitt', label: 'Schnitt' },
+  { id: 'skizze', label: '✎ Skizze' },
+];
+
+/** Statusleiste (Aufgabe 3, K15): kurzes deutsches Label je Werkzeug-ID,
+ *  inkl. Mesh (das keinen Eintrag in `ZEICHEN_WERKZEUGE_LEISTE` hat). */
+const WERKZEUG_KURZLABEL: Record<ToolId, string> = {
+  auswahl: 'Auswahl',
+  wand: 'Wand',
+  volumen: 'Volumen',
+  zone: 'Zone',
+  dach: 'Dach',
+  treppe: 'Treppe',
+  stuetze: 'Stütze',
+  schnitt: 'Schnitt',
+  skizze: 'Skizze',
+  mesh: 'Mesh',
+};
+
+/** Statusleiste: kurzes deutsches Label je Plan-LOD-Stufe (`planLod.ts`, B2). */
+const LOD_KURZLABEL: Record<PlanLod, string> = { voll: 'voll', mittel: 'mittel', fern: 'fern' };
+
 export interface DesignWorkspaceProps {
   /** Serie K / A4: öffnet das zentrale Einstellungs-Panel, vorgefiltert auf
    *  KosmoDesign. Optional, weil `App.tsx` der einzige Aufrufer ist, der
@@ -221,6 +266,15 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
   // wechseln über Jahre selten; sie stehen nicht mehr dauerhaft in der Werk-
   // zeugzeile, sondern im Projekt-Menü (Fokus-Stufe «selten»).
   const [projektMenuOffen, setProjektMenuOffen] = useState(false);
+  // Serie K A5 (K15, Aufgabe 2): Überlauf-Menü «Mehr…» für die Export-/
+  // Ebenen-Werkzeuge, die die Adaption gerade unter ihre Basis zurückstellt
+  // (`gedaempfteGruppen`, weiter unten) — Zero-/One-Click-Zugriff statt nur
+  // gedimmter Anblick.
+  const [mehrOffen, setMehrOffen] = useState(false);
+  // Serie K A5 (Aufgabe 3): Plan-LOD-Stufe für die Statusleiste — kommt aus
+  // `PlanView` (nur gemountet in 2d/split/quad), `onLod`-Callback hält den
+  // letzten bekannten Wert auch, wenn die 3D-Ansicht allein aktiv ist.
+  const [planLodStufe, setPlanLodStufe] = useState<PlanLod>('voll');
   const [wohnungstyp, setWohnungstyp] = useState<string | null>(null);
   const [zielGf, setZielGf] = useState<number | null>(null);
   const [maxHoeheM, setMaxHoeheM] = useState(25);
@@ -315,6 +369,15 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
 
   const doc = useProject.getState().doc;
   const storeys = useMemo(() => doc.storeysOrdered(), [doc, revision]);
+  // Serie K A5 (K15, Aufgabe 3): m²-Kurzwert der Statusleiste — ausgezogene
+  // SIA-Fläche (NGF) des AKTIVEN Geschosses, dieselbe Zahl wie die
+  // Berechnungsliste, nur je Geschoss statt Projekt-Summe (Zero-Click neben
+  // «welches Geschoss ist aktiv»).
+  const flaecheGeschossM2 = useMemo(() => {
+    if (!activeStoreyId) return null;
+    return areaReport(doc).storeys.find((s) => s.storeyId === activeStoreyId)?.ngf ?? 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc, revision, activeStoreyId]);
   // K3: Geschossleisten-Höhe nachmessen, sobald sich die Geschosszahl ändert
   // (neues Geschoss, Undo, Projektwechsel) — das Studien-Panel liest das ab.
   useEffect(() => {
@@ -862,6 +925,141 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
     return { style: { opacity: opazitaetsWert(stufe) } };
   }
 
+  // Serie K A5 (Aufgabe 2): die Export-/Ebenen-Knöpfe waren bisher NUR inline
+  // in der Werkzeugleiste verdrahtet — für das «Mehr…»-Überlaufmenü (unten)
+  // brauchen dieselben Aktionen einen zweiten Aufrufort. Statt die Logik zu
+  // duplizieren, tragen die Klick-Handler jetzt einen Namen; die Knöpfe unten
+  // UND die Überlauf-Einträge rufen exakt dieselbe Funktion.
+  const klickExportPdf = () => {
+    void exportPlanPdf();
+    nutzungMelden('export:pdf');
+  };
+  const klickExportSvg = () => {
+    exportPlanSvg();
+    nutzungMelden('export:svg');
+  };
+  const klickExportDxf = () => {
+    exportPlanDxf();
+    nutzungMelden('export:dxf');
+  };
+  const klickExportIfc = () => {
+    exportIfcFile();
+    nutzungMelden('export:ifc');
+  };
+  const klickImportIfc = () => {
+    nutzungMelden('export:import-ifc');
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.ifc';
+    input.onchange = async () => {
+      const f = input.files?.[0];
+      if (!f) return;
+      try {
+        const result = await importIfc(new Uint8Array(await f.arrayBuffer()));
+        setContextMeshes(result.meshes);
+        console.info(`IFC-Kontext: ${result.elementCount} Elemente (${result.schema})`);
+        setBestand(result.erkannt.waende.length + result.erkannt.decken.length > 0 ? result.erkannt : null);
+      } catch (err) {
+        meldeFehler(`IFC-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
+      }
+    };
+    input.click();
+  };
+  const klickImportDxf = () => {
+    nutzungMelden('export:import-dxf');
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.dxf,.dwg,.pdf';
+    input.onchange = async () => {
+      const f = input.files?.[0];
+      if (!f) return;
+      await verarbeiteUnternehmerplanDatei(f);
+    };
+    input.click();
+  };
+  const klickImportSplat = () => {
+    nutzungMelden('export:import-splat');
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.splat,.ply';
+    input.onchange = async () => {
+      const f = input.files?.[0];
+      if (!f) return;
+      try {
+        const { parseSplatCloud } = await import('./splat-import');
+        const cloud = parseSplatCloud(f.name, await f.arrayBuffer());
+        setSplatCloud(cloud);
+        setSplatCloudState(cloud);
+        setSplatPanelOffen(true);
+      } catch (err) {
+        meldeFehler(`Splat-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
+      }
+    };
+    input.click();
+  };
+  const klickSplatWerkzeug = () => {
+    setSplatPanelOffen(!splatPanelOffen);
+    nutzungMelden('export:splat-werkzeug');
+  };
+  const klickTextur = () => {
+    setTexturModus(!texturen);
+    setTexturen(!texturen);
+    nutzungMelden('ebenen:textur');
+  };
+  const klickSonne = () => {
+    setSonneOffen(!sonneOffen);
+    nutzungMelden('ebenen:sonne');
+  };
+  const klickStudie = () => {
+    setStudieOffen(!studieOffen);
+    nutzungMelden('ebenen:studie');
+  };
+  const klickDraw = () => {
+    setDrawOffen(!drawOffen);
+    nutzungMelden('ebenen:draw');
+  };
+  const klickListe = () => {
+    setListeOffen(!listeOffen);
+    nutzungMelden('ebenen:liste');
+  };
+  const klickKv = () => {
+    setKvOffen(!kvOffen);
+    nutzungMelden('ebenen:kv');
+  };
+  const klickRaster = () => {
+    setRasterOffen(!rasterOffen);
+    if (!rasterOffen) setListeOffen(false);
+    nutzungMelden('ebenen:raster');
+  };
+
+  /** Alle Export-/Ebenen-Werkzeuge, die die Adaption zurückstellen kann —
+   *  Grundlage des Überlauf-Menüs «Mehr…» (Aufgabe 2). */
+  const UEBERLAUFFAEHIGE_WERKZEUGE: { gruppe: 'export' | 'ebenen'; id: string; label: string; aktion: () => void }[] = [
+    { gruppe: 'export', id: 'pdf', label: 'PDF', aktion: klickExportPdf },
+    { gruppe: 'export', id: 'svg', label: 'SVG', aktion: klickExportSvg },
+    { gruppe: 'export', id: 'dxf', label: 'DXF', aktion: klickExportDxf },
+    { gruppe: 'export', id: 'ifc', label: 'IFC', aktion: klickExportIfc },
+    { gruppe: 'export', id: 'import-ifc', label: 'IFC laden', aktion: klickImportIfc },
+    { gruppe: 'export', id: 'import-dxf', label: 'DXF laden', aktion: klickImportDxf },
+    { gruppe: 'export', id: 'import-splat', label: 'Splat laden', aktion: klickImportSplat },
+    { gruppe: 'export', id: 'splat-werkzeug', label: 'Splat-Werkzeug', aktion: klickSplatWerkzeug },
+    { gruppe: 'ebenen', id: 'textur', label: 'Textur', aktion: klickTextur },
+    { gruppe: 'ebenen', id: 'sonne', label: 'Sonne', aktion: klickSonne },
+    { gruppe: 'ebenen', id: 'studie', label: 'Varianten', aktion: klickStudie },
+    { gruppe: 'ebenen', id: 'draw', label: 'Draw', aktion: klickDraw },
+    { gruppe: 'ebenen', id: 'liste', label: 'Liste', aktion: klickListe },
+    { gruppe: 'ebenen', id: 'kv', label: 'KV', aktion: klickKv },
+    { gruppe: 'ebenen', id: 'raster', label: 'Raster', aktion: klickRaster },
+  ];
+  // Nur Werkzeuge aus Gruppen, die die Adaption GERADE unter ihre T7-Basis
+  // zurückstellt (`gedaempfteGruppen`) — sortiert nach Nutzungszählung
+  // absteigend (das meistgenutzte der zurückgestellten Werkzeuge zuoberst).
+  const ueberlaufWerkzeuge = adaptionIstAn
+    ? UEBERLAUFFAEHIGE_WERKZEUGE.filter((w) => gedaempfteGruppen.includes(w.gruppe)).sort(
+        (a, b) => (nutzung.zaehler[`${b.gruppe}:${b.id}`] ?? 0) - (nutzung.zaehler[`${a.gruppe}:${a.id}`] ?? 0),
+      )
+    : [];
+
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
       {/* Werkzeugleiste */}
@@ -896,19 +1094,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             ...(gehobenNachGruppe.zeichnen ? { opacity: 1 } : {}),
           }}
         >
-          {(
-            [
-              ['auswahl', 'Auswahl'],
-              ['wand', 'Wand'],
-              ['volumen', 'Volumen'],
-              ['zone', 'Zone'],
-              ['dach', 'Dach'],
-              ['treppe', 'Treppe'],
-              ['stuetze', 'Stütze'],
-              ['schnitt', 'Schnitt'],
-              ['skizze', '✎ Skizze'],
-            ] as const
-          ).map(([id, label]) => (
+          {ZEICHEN_WERKZEUGE_LEISTE.map(({ id, label, Icon }) => (
             <KButton
               key={id}
               size="sm"
@@ -918,9 +1104,10 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
                 nutzungMelden(`zeichnen:${id}`);
               }}
               data-testid={`tool-${id}`}
+              {...(Icon ? { title: label, 'aria-label': label } : {})}
               {...elementStil('zeichnen', id)}
             >
-              {label}
+              {Icon ? <Icon /> : label}
             </KButton>
           ))}
           {/* Block 3 / E4 (Buildplan FM3): Werkzeug «Mesh» — expliziter
@@ -1010,80 +1197,23 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             ...(gehobenNachGruppe.export ? { opacity: 1 } : {}),
           }}
         >
-          <KButton
-            size="sm"
-            tone="ghost"
-            onClick={() => {
-              void exportPlanPdf();
-              nutzungMelden('export:pdf');
-            }}
-            data-testid="export-pdf"
-            {...elementStil('export', 'pdf')}
-          >
+          <KButton size="sm" tone="ghost" onClick={klickExportPdf} data-testid="export-pdf" {...elementStil('export', 'pdf')}>
             PDF
           </KButton>
-          <KButton
-            size="sm"
-            tone="ghost"
-            onClick={() => {
-              exportPlanSvg();
-              nutzungMelden('export:svg');
-            }}
-            {...elementStil('export', 'svg')}
-          >
+          <KButton size="sm" tone="ghost" onClick={klickExportSvg} {...elementStil('export', 'svg')}>
             SVG
           </KButton>
-          <KButton
-            size="sm"
-            tone="ghost"
-            onClick={() => {
-              exportPlanDxf();
-              nutzungMelden('export:dxf');
-            }}
-            data-testid="export-dxf"
-            {...elementStil('export', 'dxf')}
-          >
+          <KButton size="sm" tone="ghost" onClick={klickExportDxf} data-testid="export-dxf" {...elementStil('export', 'dxf')}>
             DXF
           </KButton>
-          <KButton
-            size="sm"
-            tone="ghost"
-            onClick={() => {
-              exportIfcFile();
-              nutzungMelden('export:ifc');
-            }}
-            data-testid="export-ifc"
-            {...elementStil('export', 'ifc')}
-          >
+          <KButton size="sm" tone="ghost" onClick={klickExportIfc} data-testid="export-ifc" {...elementStil('export', 'ifc')}>
             IFC
           </KButton>
           <KButton
             size="sm"
             tone="ghost"
             data-testid="import-ifc"
-            onClick={() => {
-              nutzungMelden('export:import-ifc');
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = '.ifc';
-              input.onchange = async () => {
-                const f = input.files?.[0];
-                if (!f) return;
-                try {
-                  const result = await importIfc(new Uint8Array(await f.arrayBuffer()));
-                  setContextMeshes(result.meshes);
-                  console.info(`IFC-Kontext: ${result.elementCount} Elemente (${result.schema})`);
-                  setBestand(
-                    result.erkannt.waende.length + result.erkannt.decken.length > 0
-                      ? result.erkannt
-                      : null,
-                  );
-                } catch (err) {
-                  meldeFehler(`IFC-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
-                }
-              };
-              input.click();
-            }}
+            onClick={klickImportIfc}
             {...elementStil('export', 'import-ifc')}
           >
             IFC laden
@@ -1092,18 +1222,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             size="sm"
             tone="ghost"
             data-testid="import-dxf"
-            onClick={() => {
-              nutzungMelden('export:import-dxf');
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = '.dxf,.dwg,.pdf';
-              input.onchange = async () => {
-                const f = input.files?.[0];
-                if (!f) return;
-                await verarbeiteUnternehmerplanDatei(f);
-              };
-              input.click();
-            }}
+            onClick={klickImportDxf}
             {...elementStil('export', 'import-dxf')}
           >
             DXF laden
@@ -1112,26 +1231,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             size="sm"
             tone="ghost"
             data-testid="import-splat"
-            onClick={() => {
-              nutzungMelden('export:import-splat');
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = '.splat,.ply';
-              input.onchange = async () => {
-                const f = input.files?.[0];
-                if (!f) return;
-                try {
-                  const { parseSplatCloud } = await import('./splat-import');
-                  const cloud = parseSplatCloud(f.name, await f.arrayBuffer());
-                  setSplatCloud(cloud);
-                  setSplatCloudState(cloud);
-                  setSplatPanelOffen(true);
-                } catch (err) {
-                  meldeFehler(`Splat-Import fehlgeschlagen: ${err instanceof Error ? err.message : err}`);
-                }
-              };
-              input.click();
-            }}
+            onClick={klickImportSplat}
             {...elementStil('export', 'import-splat')}
           >
             Splat laden
@@ -1140,10 +1240,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             size="sm"
             tone={splatPanelOffen ? 'accent' : 'ghost'}
             data-testid="splat-werkzeug-toggle"
-            onClick={() => {
-              setSplatPanelOffen(!splatPanelOffen);
-              nutzungMelden('export:splat-werkzeug');
-            }}
+            onClick={klickSplatWerkzeug}
             {...elementStil('export', 'splat-werkzeug')}
           >
             Splat-Werkzeug
@@ -1162,65 +1259,19 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             ...(gehobenNachGruppe.ebenen ? { opacity: 1 } : {}),
           }}
         >
-          <KButton
-            size="sm"
-            tone={texturen ? 'accent' : 'ghost'}
-            data-testid="textur-toggle"
-            onClick={() => {
-              setTexturModus(!texturen);
-              setTexturen(!texturen);
-              nutzungMelden('ebenen:textur');
-            }}
-            {...elementStil('ebenen', 'textur')}
-          >
+          <KButton size="sm" tone={texturen ? 'accent' : 'ghost'} data-testid="textur-toggle" onClick={klickTextur} {...elementStil('ebenen', 'textur')}>
             Textur
           </KButton>
-          <KButton
-            size="sm"
-            tone={sonneOffen ? 'accent' : 'ghost'}
-            data-testid="sonne-toggle"
-            onClick={() => {
-              setSonneOffen(!sonneOffen);
-              nutzungMelden('ebenen:sonne');
-            }}
-            {...elementStil('ebenen', 'sonne')}
-          >
+          <KButton size="sm" tone={sonneOffen ? 'accent' : 'ghost'} data-testid="sonne-toggle" onClick={klickSonne} {...elementStil('ebenen', 'sonne')}>
             ☀ Sonne
           </KButton>
-          <KButton
-            size="sm"
-            tone={studieOffen ? 'accent' : 'ghost'}
-            data-testid="studie-toggle"
-            onClick={() => {
-              setStudieOffen(!studieOffen);
-              nutzungMelden('ebenen:studie');
-            }}
-            {...elementStil('ebenen', 'studie')}
-          >
+          <KButton size="sm" tone={studieOffen ? 'accent' : 'ghost'} data-testid="studie-toggle" onClick={klickStudie} {...elementStil('ebenen', 'studie')}>
             Varianten
           </KButton>
-          <KButton
-            size="sm"
-            tone={drawOffen ? 'accent' : 'ghost'}
-            data-testid="draw-toggle"
-            onClick={() => {
-              setDrawOffen(!drawOffen);
-              nutzungMelden('ebenen:draw');
-            }}
-            {...elementStil('ebenen', 'draw')}
-          >
+          <KButton size="sm" tone={drawOffen ? 'accent' : 'ghost'} data-testid="draw-toggle" onClick={klickDraw} {...elementStil('ebenen', 'draw')}>
             Draw
           </KButton>
-          <KButton
-            size="sm"
-            tone={listeOffen ? 'accent' : 'ghost'}
-            data-testid="liste-toggle"
-            onClick={() => {
-              setListeOffen(!listeOffen);
-              nutzungMelden('ebenen:liste');
-            }}
-            {...elementStil('ebenen', 'liste')}
-          >
+          <KButton size="sm" tone={listeOffen ? 'accent' : 'ghost'} data-testid="liste-toggle" onClick={klickListe} {...elementStil('ebenen', 'liste')}>
             Liste
           </KButton>
           <KButton
@@ -1228,27 +1279,65 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             tone={kvOffen ? 'accent' : 'ghost'}
             data-testid="kv-oeffnen"
             title="Kostenvoranschlag-Grobschätzung — Richtwert auf GF-Basis, kein Devis"
-            onClick={() => {
-              setKvOffen(!kvOffen);
-              nutzungMelden('ebenen:kv');
-            }}
+            onClick={klickKv}
             {...elementStil('ebenen', 'kv')}
           >
             KV
           </KButton>
-          <KButton
-            size="sm"
-            tone={rasterOffen ? 'accent' : 'ghost'}
-            data-testid="raster-toggle"
-            onClick={() => {
-              setRasterOffen(!rasterOffen);
-              if (!rasterOffen) setListeOffen(false);
-              nutzungMelden('ebenen:raster');
-            }}
-            {...elementStil('ebenen', 'raster')}
-          >
+          <KButton size="sm" tone={rasterOffen ? 'accent' : 'ghost'} data-testid="raster-toggle" onClick={klickRaster} {...elementStil('ebenen', 'raster')}>
             Raster
           </KButton>
+        </span>
+        <span style={{ position: 'relative', display: 'inline-flex' }}>
+          <KButton
+            size="sm"
+            tone={mehrOffen ? 'accent' : 'ghost'}
+            data-testid="werkzeuge-mehr"
+            title="Weitere Werkzeuge — nach Nutzungshäufigkeit sortiert"
+            aria-label="Weitere Werkzeuge"
+            style={{ visibility: ueberlaufWerkzeuge.length > 0 ? 'visible' : 'hidden' }}
+            onClick={() => setMehrOffen((o) => !o)}
+          >
+            Mehr…
+          </KButton>
+          {mehrOffen && ueberlaufWerkzeuge.length > 0 && (
+            <div
+              data-testid="werkzeuge-mehr-liste"
+              className="k-dialog"
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                marginTop: 4,
+                zIndex: 5,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 3,
+                padding: 6,
+                minWidth: 140,
+                background: 'var(--k-surface)',
+                border: '1px solid var(--k-line)',
+                borderRadius: 'var(--k-radius-md)',
+                boxShadow: 'var(--k-shadow-raised)',
+              }}
+            >
+              {ueberlaufWerkzeuge.map((w) => (
+                <KButton
+                  key={`${w.gruppe}:${w.id}`}
+                  size="sm"
+                  tone="ghost"
+                  data-testid={`werkzeuge-mehr-eintrag-${w.gruppe}-${w.id}`}
+                  style={{ justifyContent: 'flex-start' }}
+                  onClick={() => {
+                    w.aktion();
+                    setMehrOffen(false);
+                  }}
+                >
+                  {w.label}
+                </KButton>
+              ))}
+            </div>
+          )}
         </span>
         {tool === 'treppe' && (
           <select
@@ -1706,7 +1795,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
               <Viewport3D handlers={handlersRef} />
             </div>
             <div style={{ position: 'relative' }}>
-              <PlanView handlers={handlersRef} />
+              <PlanView handlers={handlersRef} onLod={setPlanLodStufe} />
             </div>
             <div style={{ position: 'relative' }}>
               <SectionView spec={sectionSpec} title="Schnitt" />
@@ -1730,7 +1819,7 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
                   borderLeft: viewMode === 'split' ? '1px solid var(--k-line)' : 'none',
                 }}
               >
-                <PlanView handlers={handlersRef} />
+                <PlanView handlers={handlersRef} onLod={setPlanLodStufe} />
               </div>
             )}
           </>
@@ -1868,14 +1957,23 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
           </KButton>
         </div>
 
-        {/* Statuszeile */}
+        {/* Statusleiste (Serie K A5, K15 Aufgabe 3): Zero-Click-Kennzahlen an
+            der Unterkante des Design-Viewports — aktives Werkzeug, Plan-LOD-
+            Stufe (`planLod.ts`, B2), aktives Geschoss, m²-Kurzwert. Ersetzt
+            kein Panel — die Werte standen vorher NUR hinter einem Klick
+            (Werkzeugleiste/Geschossleiste/Berechnungsliste) oder gar nicht
+            beisammen. Bewusst unterhalb der bestehenden Statuszeile ergänzt,
+            nicht als zweite Leiste — «eine» dezente Leiste, wie beauftragt. */}
         <div
+          data-testid="statusleiste"
           style={{
             position: 'absolute',
             left: 12,
             bottom: 12,
             right: 12,
             display: 'flex',
+            flexWrap: 'wrap',
+            rowGap: 4,
             gap: 14,
             alignItems: 'center',
             pointerEvents: 'none',
@@ -1883,6 +1981,32 @@ export function DesignWorkspace({ onEinstellungen }: DesignWorkspaceProps = {}) 
             color: 'var(--k-ink-soft)',
           }}
         >
+          <span
+            data-testid="statusleiste-werkzeug"
+            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+          >
+            {WERKZEUG_KURZLABEL[tool]}
+          </span>
+          <span
+            data-testid="statusleiste-geschoss"
+            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+          >
+            {storeys.find((s: Storey) => s.id === activeStoreyId)?.name ?? '–'}
+          </span>
+          <span
+            data-testid="statusleiste-lod"
+            title="Plan-Detaillierungsgrad (zoomabhängig)"
+            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+          >
+            {LOD_KURZLABEL[planLodStufe]}
+          </span>
+          <span
+            data-testid="statusleiste-flaeche"
+            title="Ausgezogene SIA-Fläche (NGF) des aktiven Geschosses"
+            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+          >
+            {flaecheGeschossM2 !== null ? `${flaecheGeschossM2.toFixed(0)} m²` : '–'}
+          </span>
           {cursor && (
             <Measure style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}>
               {formatLength(cursor.x)} / {formatLength(cursor.y)}
