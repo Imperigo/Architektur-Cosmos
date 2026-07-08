@@ -1,6 +1,7 @@
 import type { Pt } from '../model/units';
 import { polygonArea } from '../model/units';
 import { offsetPolygon } from '../geometry/clip';
+import type { ZonenRegel } from '../model/doc';
 
 /**
  * Volumenstudien-Generator (Q12 + Phase 3.27, Vorform-Essenz) — Extrem-
@@ -85,6 +86,40 @@ const R = (x: number, y: number, w: number, h: number): Pt[] => [
   { x: Math.round(x + w), y: Math.round(y + h) },
   { x: Math.round(x), y: Math.round(y + h) },
 ];
+
+/**
+ * D-E2: leitet aus der aktiven Zonenregel automatisch StudienOptionen ab —
+ * die Regel speist die Volumenstudie statt manueller Zahlen-Eingabe. Reine
+ * Funktion, kein LLM. Liefert NUR Felder, die die Regel wirklich hergibt:
+ * - `maxHoehe` ← `regel.maxHoehe` (mm, direkt übernommen).
+ * - `zielGf` ← `regel.az × parzelleFlaecheM2`, nur wenn BEIDE vorhanden sind
+ *   (dieselbe Formel wie `design.zonenRegelSetzen` fürs Δ-Max der
+ *   Berechnungsliste — az ist bereits aGF/Parzellenfläche, keine
+ *   Einheitenumrechnung nötig).
+ * - `grenzabstand` ← `regel.grenzabstandKlein` (mm, direkt übernommen —
+ *   schrumpft die nutzbare Fläche wie bisher über `offsetPolygon`).
+ * Fehlt ein Regel-Feld (null/undefined) oder fehlt `regel`/`parzelleFlaecheM2`
+ * für `zielGf`, bleibt das jeweilige Ergebnis-Feld weg — keine erfundenen
+ * Defaults, der bisherige UI-/Funktions-Default (`??` in
+ * `generiereVolumenstudien`) greift unverändert weiter.
+ */
+export function studienOptionenAusRegel(
+  regel: ZonenRegel | undefined,
+  parzelleFlaecheM2: number | null,
+): Partial<StudienOptionen> {
+  if (!regel) return {};
+  const out: Partial<StudienOptionen> = {};
+  if (regel.maxHoehe !== null && regel.maxHoehe !== undefined) {
+    out.maxHoehe = regel.maxHoehe;
+  }
+  if (regel.az !== null && regel.az !== undefined && parzelleFlaecheM2 !== null) {
+    out.zielGf = regel.az * parzelleFlaecheM2;
+  }
+  if (regel.grenzabstandKlein !== null && regel.grenzabstandKlein !== undefined) {
+    out.grenzabstand = regel.grenzabstandKlein;
+  }
+  return out;
+}
 
 const TIEFE_MIN = 14000;
 const TIEFE_MAX = 18000;

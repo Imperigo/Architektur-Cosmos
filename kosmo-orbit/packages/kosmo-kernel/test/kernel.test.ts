@@ -593,6 +593,77 @@ describe('Volumenstudien-Generator (Q12)', () => {
   });
 });
 
+describe('studienOptionenAusRegel (D-E2): Zonenregel → StudienOptionen', () => {
+  const parzelle = [
+    { x: 0, y: 0 }, { x: 60000, y: 0 }, { x: 60000, y: 40000 }, { x: 0, y: 40000 },
+  ];
+  const regelVoll = {
+    name: 'W3 (Richtwert LU)',
+    az: 0.6,
+    maxHoehe: 11500,
+    maxVollgeschosse: 3,
+    grenzabstandKlein: 4000,
+    grenzabstandGross: 10000,
+  };
+
+  it('ohne Regel: leeres Objekt (bisheriges UI-Verhalten bleibt unverändert)', async () => {
+    const { studienOptionenAusRegel } = await import('../src');
+    expect(studienOptionenAusRegel(undefined, 1000)).toEqual({});
+    expect(studienOptionenAusRegel(undefined, null)).toEqual({});
+  });
+
+  it('volle Regel + Parzellenfläche: maxHoehe, zielGf (az×Fläche) und grenzabstand', async () => {
+    const { studienOptionenAusRegel } = await import('../src');
+    expect(studienOptionenAusRegel(regelVoll, 1000)).toEqual({
+      maxHoehe: 11500,
+      zielGf: 600,
+      grenzabstand: 4000,
+    });
+  });
+
+  it('Regel ohne maxHoehe (null): das Feld fehlt im Ergebnis, kein erfundener Default', async () => {
+    const { studienOptionenAusRegel } = await import('../src');
+    const regel = { ...regelVoll, maxHoehe: null };
+    const out = studienOptionenAusRegel(regel, 1000);
+    expect(out.maxHoehe).toBeUndefined();
+    expect(out.zielGf).toBe(600);
+    expect(out.grenzabstand).toBe(4000);
+  });
+
+  it('Regel ohne az (Kernzone-Fall): zielGf fehlt, auch mit Parzellenfläche', async () => {
+    const { studienOptionenAusRegel } = await import('../src');
+    const regel = { ...regelVoll, az: null };
+    const out = studienOptionenAusRegel(regel, 1000);
+    expect(out.zielGf).toBeUndefined();
+    expect(out.maxHoehe).toBe(11500);
+    expect(out.grenzabstand).toBe(4000);
+  });
+
+  it('Regel mit az, aber ohne Parzellenfläche (null): zielGf fehlt', async () => {
+    const { studienOptionenAusRegel } = await import('../src');
+    const out = studienOptionenAusRegel(regelVoll, null);
+    expect(out.zielGf).toBeUndefined();
+    expect(out.maxHoehe).toBe(11500);
+  });
+
+  it('Regel ohne grenzabstandKlein (null): das Feld fehlt', async () => {
+    const { studienOptionenAusRegel } = await import('../src');
+    const regel = { ...regelVoll, grenzabstandKlein: null };
+    const out = studienOptionenAusRegel(regel, 1000);
+    expect(out.grenzabstand).toBeUndefined();
+    expect(out.maxHoehe).toBe(11500);
+    expect(out.zielGf).toBe(600);
+  });
+
+  it('Ergebnis speist generiereVolumenstudien unverändert (kein Golden-Bruch, additiv)', async () => {
+    const { generiereVolumenstudien, studienOptionenAusRegel } = await import('../src');
+    const abgeleitet = studienOptionenAusRegel(regelVoll, 4000); // zielGf = 2400
+    const v = generiereVolumenstudien(parzelle, { zielGf: abgeleitet.zielGf!, ...abgeleitet });
+    expect(v.length).toBeGreaterThan(0);
+    for (const x of v) expect(x.hoehe).toBeLessThanOrEqual(11500);
+  });
+});
+
 describe('Golden-SVG (Plan-Regression)', () => {
   it('Testhaus-Grundriss ist byte-identisch zur committeten Referenz', async () => {
     const { planToSvg, A3_QUER } = await import('../src');

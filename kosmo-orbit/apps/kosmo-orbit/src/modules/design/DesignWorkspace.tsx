@@ -7,6 +7,7 @@ import {
   formatLength,
   generiereVolumenstudien,
   geschossZu,
+  studienOptionenAusRegel,
   variantenMatrix,
   parzelleZuOutline,
   fassadenModule,
@@ -1821,6 +1822,25 @@ function StudienPanel({
   const { doc, history } = useProject.getState();
   const [nutzung, setNutzung] = useState<'wohnen' | 'gemischt'>('wohnen');
 
+  // D1 (D-E2): aktive Zonenregel des Projekts speist die Studien-Defaults —
+  // ohne Regel bleibt regelOptionen {} und nichts am bisherigen Verhalten
+  // ändert sich.
+  const zonenRegel = doc.settings.zonenRegel;
+  const parzellenFlaecheM2 = doc.settings.parzellenFlaeche;
+  const regelOptionen = useMemo(
+    () => studienOptionenAusRegel(zonenRegel ?? undefined, parzellenFlaecheM2),
+    [zonenRegel, parzellenFlaecheM2],
+  );
+
+  // Einmalig beim Öffnen des Panels (Mount) aus der Regel initialisieren —
+  // der Höhen-/GF-Ziel-Regler bleibt danach ein echter Override für diese
+  // Sitzung, kein erzwungenes Nachziehen bei jedem Tastendruck.
+  useEffect(() => {
+    if (regelOptionen.maxHoehe !== undefined) setMaxHoeheM(Math.round(regelOptionen.maxHoehe / 1000));
+    if (regelOptionen.zielGf !== undefined) setZielGf(Math.round(regelOptionen.zielGf));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const parzelle = useMemo(() => {
     const zonen = doc.byKind<Zone>('zone').filter((z) => z.storeyId === activeStoreyId);
     return zonen[zonen.length - 1] ?? null;
@@ -1828,14 +1848,20 @@ function StudienPanel({
   }, [revision, activeStoreyId]);
 
   const zielEffektiv = zielGf ?? Math.max(Math.round(areaReport(doc).agfZiel) || 0, 500);
+  const grenzabstandAnzeigeM = (regelOptionen.grenzabstand ?? 4000) / 1000;
 
   const varianten = useMemo(
     () =>
       parzelle
-        ? generiereVolumenstudien(parzelle.outline, { zielGf: zielEffektiv, maxHoehe: maxHoeheM * 1000, nutzung })
+        ? generiereVolumenstudien(parzelle.outline, {
+            zielGf: zielEffektiv,
+            maxHoehe: maxHoeheM * 1000,
+            nutzung,
+            ...(regelOptionen.grenzabstand !== undefined ? { grenzabstand: regelOptionen.grenzabstand } : {}),
+          })
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parzelle, zielEffektiv, maxHoeheM, nutzung, revision],
+    [parzelle, zielEffektiv, maxHoeheM, nutzung, revision, regelOptionen.grenzabstand],
   );
 
   const uebernehmen = (id: string) => {
@@ -1899,8 +1925,16 @@ function StudienPanel({
       ) : (
         <>
           <div style={{ color: 'var(--k-ink-faint)' }}>
-            Parzelle: «{parzelle.name}» · Grenzabstand 4 m
+            Parzelle: «{parzelle.name}» · Grenzabstand {grenzabstandAnzeigeM} m
           </div>
+          {zonenRegel &&
+            (regelOptionen.maxHoehe !== undefined ||
+              regelOptionen.zielGf !== undefined ||
+              regelOptionen.grenzabstand !== undefined) && (
+              <div data-testid="studie-regel-hinweis" style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+                aus Zonenregel «{zonenRegel.name}»
+              </div>
+            )}
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <label style={{ display: 'flex', gap: 5, alignItems: 'center', color: 'var(--k-ink-soft)' }}>
               GF-Ziel
