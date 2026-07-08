@@ -5,19 +5,20 @@ import { generiereVolumenstudien } from '../src/derive/volumenstudie';
 import type { StudienVariante } from '../src/derive/volumenstudie';
 import { besonnungJeVariante, BESONNUNG_HINWEIS } from '../src/derive/besonnungsvergleich';
 import { programmErfuellungJeVariante, PROGRAMM_ERFUELLUNG_HINWEIS } from '../src/derive/programmerfuellung';
-import type { RaumprogrammPosten } from '../src/model/doc';
+import type { RaumprogrammPosten, ZonenRegel } from '../src/model/doc';
 import { escapeXml } from '../src/derive/plansvg';
 
 /**
- * Batch D5 (Wettbewerb-Konzept, Entscheid D-E8, Nacht v0.6.2):
- * Grundlagenstudie-Bericht als eigenständiges A4-quer-SVG-Exportartefakt.
- * Reine Ableitung aus `StudienVariante[]` + optionalen Besonnungs-/
- * Programm-Kennwerten — Anstoss, kein Entwurf.
+ * Batch D5 (Wettbewerb-Konzept, Entscheid D-E8) + v2 (K1, `docs/OWNER-BEFUNDE-
+ * 0.6.2.md` S. 9 — «Dieser gesamte Teil ist ultra schlecht!»): Grundlagen-
+ * studie-Bericht als eigenständiges A3-quer-SVG-Exportartefakt mit echter
+ * Blatt-Dramaturgie (Empfehlung → Situation + Vergleichstabelle + Beurteilung
+ * je Variante → Grenzen der Studie). Die architektonische Urteilsbildung
+ * selbst (Ranking, Beurteilungssätze, Situations-Diagramm) ist in
+ * `test/studienbeurteilung.test.ts` separat getestet — hier geht es um die
+ * KOMPOSITION des Blatts: Reihenfolge, Ehrlichkeitspfade, Determinismus.
  */
 
-// Feste Parzelle (60×60 m, quadratisch) — liefert alle 6 Typologien, inkl.
-// einer Variante mit `passt: false` (Turm sprengt die Höhe) und einer mit
-// `tiefeOk: false` (Winkel unter Spänner-Mass) — s. Probe-Lauf im Auftrag.
 const PARZELLE = [
   { x: 0, y: 0 },
   { x: 60000, y: 0 },
@@ -31,12 +32,21 @@ function fixtureVarianten(): StudienVariante[] {
 
 const ZUG = { lat: 47.05, lon: 8.31 };
 
+const REGEL: ZonenRegel = {
+  name: 'W3',
+  az: 0.6,
+  maxHoehe: 30000,
+  maxVollgeschosse: 10,
+  grenzabstandKlein: 4000,
+  grenzabstandGross: 10000,
+};
+
 describe('studienBerichtSvg', () => {
-  it('liefert ein wohlgeformtes, eigenständiges SVG (beginnt mit <svg, endet mit </svg>)', () => {
+  it('liefert ein wohlgeformtes, eigenständiges A3-quer-SVG (beginnt mit <svg, endet mit </svg>)', () => {
     const svg = studienBerichtSvg(fixtureVarianten(), { zielGf: 6000 });
     expect(svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(true);
     expect(svg.endsWith('</svg>')).toBe(true);
-    expect(svg).toContain('viewBox="0 0 1123 794"');
+    expect(svg).toContain('viewBox="0 0 1587 1123"');
   });
 
   it('enthält jeden Variantennamen und die formatierte GF jeder Variante', () => {
@@ -50,7 +60,14 @@ describe('studienBerichtSvg', () => {
 
   it('Determinismus: zweimaliger Aufruf mit identischen Eingaben liefert byte-identisches SVG', () => {
     const varianten = fixtureVarianten();
-    const opts: StudienBerichtOptionen = { zielGf: 6000, titel: 'Testprojekt', regelName: 'Wohnzone W3', datum: '07.07.2026' };
+    const opts: StudienBerichtOptionen = {
+      zielGf: 6000,
+      titel: 'Testprojekt',
+      regelName: 'Wohnzone W3',
+      regel: REGEL,
+      datum: '07.07.2026',
+      parzelle: PARZELLE,
+    };
     const a = studienBerichtSvg(varianten, opts);
     const b = studienBerichtSvg(varianten, opts);
     expect(a).toBe(b);
@@ -61,7 +78,7 @@ describe('studienBerichtSvg', () => {
     const ohne = studienBerichtSvg(varianten, { zielGf: 6000 });
     expect(ohne).not.toContain(BESONNUNG_HINWEIS);
     expect(ohne).not.toContain(PROGRAMM_ERFUELLUNG_HINWEIS);
-    expect(ohne).toContain('Anstoss, kein Entwurf — Extremvarianten nach GF-Ziel/Zonenregel.');
+    expect(ohne).toContain('Anstoss, kein Entwurf');
 
     const besonnung = besonnungJeVariante(varianten, ZUG);
     const raumprogramm: RaumprogrammPosten[] = [{ typ: 'marktgerecht', hnfSoll: 5000 }];
@@ -71,12 +88,14 @@ describe('studienBerichtSvg', () => {
     expect(mit).toContain(PROGRAMM_ERFUELLUNG_HINWEIS);
   });
 
-  it('leere Besonnungs-/Programmlisten ([]) zählen als NICHT übergeben — keine Hinweise, kein Kennwert-Zeilenzusatz', () => {
+  it('leere Besonnungs-/Programmlisten ([]) zählen als NICHT übergeben — keine Hinweise, keine Programm-Erfüllungs-Spalte', () => {
     const varianten = fixtureVarianten();
     const svg = studienBerichtSvg(varianten, { zielGf: 6000, besonnung: [], programm: [] });
     expect(svg).not.toContain(BESONNUNG_HINWEIS);
     expect(svg).not.toContain(PROGRAMM_ERFUELLUNG_HINWEIS);
     expect(svg).not.toContain('Winter-Besonnung');
+    // Ehrlichkeit (K1): ohne Raumprogramm bleibt die Tabellenzeile schlicht
+    // «GF» — «Programm-Erfüllung» darf ohne Datengrundlage nirgends stehen.
     expect(svg).not.toContain('Programm-Erfüllung');
   });
 
@@ -85,48 +104,117 @@ describe('studienBerichtSvg', () => {
     const svgOhneZiel = studienBerichtSvg(varianten, { zielGf: null });
     expect(svgOhneZiel).toContain('Ziel-GF: —');
 
-    // Leeres Raumprogramm ⇒ sollGf 0 ⇒ erfuellungProzent null (s. programmerfuellung.ts) ⇒ «—»
+    // Leeres Raumprogramm ⇒ sollGf 0 ⇒ erfuellungProzent null je Variante ⇒ Tabellenzelle zeigt «—»
     const programmLeer = programmErfuellungJeVariante(varianten, [], 1.22);
     const svgProgrammLeer = studienBerichtSvg(varianten, { zielGf: 6000, programm: programmLeer });
-    expect(svgProgrammLeer).toContain('Programm-Erfüllung: —');
+    expect(svgProgrammLeer).toContain('GF / Programm-Erfüllung');
+    expect(svgProgrammLeer).toContain('(—)');
   });
 
-  it('Grenzabstand-3h-Zeile zeigt «—» für Varianten ohne Näherung (`besonnung: null`) und ok/verfehlt sonst', () => {
+  it('Grenzabstand-Besonnung-Zeile zeigt «—» für Varianten ohne 3h-Näherung und ok/verfehlt sonst', () => {
     const varianten = fixtureVarianten();
     const svg = studienBerichtSvg(varianten, { zielGf: 6000 });
+    expect(svg).toContain('Grenzabstand-Besonnung (3h-Näherung)');
     // 'teppich'/'turm'/'winkel' haben laut Fixture `besonnung: null`.
-    expect(svg).toContain('Grenzabstand 3h (Näherung): —');
     // 'zeilen'/'blockrand' haben `besonnung.ok === true` in der Fixture.
-    expect(svg).toContain('Grenzabstand 3h (Näherung): ok');
+    expect(svg).toContain('>—<');
+    expect(svg).toContain('>ok<');
   });
 
-  it('Warn-Badges: «sprengt Höhe» bei passt=false, «Tiefe» bei tiefeOk=false (Fixture: Turm bzw. Winkel)', () => {
+  it('Beurteilung je Variante nennt die echte Regel-/Tiefen-Überschreitung (Fixture: Turm bzw. Winkel), nie eine generische Floskel ohne Zahl', () => {
     const varianten = fixtureVarianten();
     const turm = varianten.find((v) => v.id === 'turm')!;
     const winkel = varianten.find((v) => v.id === 'winkel')!;
     expect(turm.passt).toBe(false);
     expect(winkel.tiefeOk).toBe(false);
 
-    const svg = studienBerichtSvg(varianten, { zielGf: 6000 });
-    expect(svg).toContain('sprengt Höhe');
-    expect(svg).toContain('Tiefe');
+    const svg = studienBerichtSvg(varianten, { zielGf: 6000, regel: REGEL });
+    expect(svg).toContain('Sprengt die zulässige Höhe um');
+    // Der Beurteilungstext ist zeilenumgebrochen (SVG kennt keinen Fliesstext)
+    // — der Spänner-Mass-Hinweis kann darum über zwei <text>-Elemente
+    // verteilt sein; einzeln bleiben beide Fragmente eindeutig.
+    expect(svg).toContain('Gebäudetiefe 13 m');
+    expect(svg).toContain('Spänner-Masses (14–18 m)');
   });
 
-  it('Kopfzeile: Titel, Zonenregel-Name und Datum erscheinen nur, wenn übergeben', () => {
+  it('Kopfzeile: Titel, Zonenregel-Name/-Eckwerte und Datum erscheinen nur, wenn übergeben', () => {
     const varianten = fixtureVarianten();
     const ohne = studienBerichtSvg(varianten, { zielGf: 6000 });
     expect(ohne).not.toContain('aus Zonenregel');
+    expect(ohne).not.toContain('AZ ');
     expect(ohne).toBe(studienBerichtSvg(varianten, { zielGf: 6000 })); // stabil ohne optionale Felder
 
     const mit = studienBerichtSvg(varianten, {
       zielGf: 6000,
       titel: 'Wohnüberbauung Rank',
       regelName: 'W3',
+      regel: REGEL,
       datum: '07.07.2026',
     });
     expect(mit).toContain('Grundlagenstudie — Wohnüberbauung Rank');
     expect(mit).toContain('aus Zonenregel «W3»');
+    expect(mit).toContain('AZ 0.6');
+    expect(mit).toContain('max. Höhe 30 m');
+    expect(mit).toContain('Grenzabstand 4/10 m');
     expect(mit).toContain('07.07.2026');
+  });
+
+  it('Situations-Zeile enthält das Parzellen-Polygon (gestrichelt) NUR wenn `parzelle` übergeben wird', () => {
+    const varianten = fixtureVarianten();
+    const ohneParzelle = studienBerichtSvg(varianten, { zielGf: 6000 });
+    expect(ohneParzelle).not.toContain('stroke-dasharray="3,2"');
+
+    const mitParzelle = studienBerichtSvg(varianten, { zielGf: 6000, parzelle: PARZELLE });
+    expect(mitParzelle).toContain('stroke-dasharray="3,2"');
+    // Freiflächenanteil ist NUR mit Parzellenbezug eine echte Zahl.
+    expect(ohneParzelle).toContain('Freifläche —');
+    expect(mitParzelle).not.toContain('Freifläche —');
+  });
+
+  it('Blatt-Dramaturgie (K1): Empfehlung steht VOR der Vergleichstabelle, die Grenzen der Studie stehen NACH allem als EIN Block (keine Themenvermischung)', () => {
+    const varianten = fixtureVarianten();
+    const svg = studienBerichtSvg(varianten, {
+      zielGf: 6000,
+      regel: REGEL,
+      parzelle: PARZELLE,
+      besonnung: besonnungJeVariante(varianten, ZUG),
+      programm: programmErfuellungJeVariante(varianten, [{ typ: 'marktgerecht', hnfSoll: 5000 }], 1.22),
+    });
+    const posEmpfehlung = svg.indexOf('EMPFEHLUNG');
+    const posTabelle = svg.indexOf('Höhe / Reserve zur Regel');
+    const posGrenzen = svg.indexOf('Grenzen der Studie');
+    const posBesonnungHinweis = svg.indexOf(BESONNUNG_HINWEIS);
+    const posProgrammHinweis = svg.indexOf(PROGRAMM_ERFUELLUNG_HINWEIS);
+    expect(posEmpfehlung).toBeGreaterThanOrEqual(0);
+    expect(posTabelle).toBeGreaterThan(posEmpfehlung);
+    expect(posGrenzen).toBeGreaterThan(posTabelle);
+    // Die Ehrlichkeits-Hinweise stehen NACH «Grenzen der Studie» im selben Block, nicht zwischen den Inhalten.
+    expect(posBesonnungHinweis).toBeGreaterThan(posGrenzen);
+    expect(posProgrammHinweis).toBeGreaterThan(posGrenzen);
+  });
+
+  it('Empfehlung nennt die Top-Ranking-Variante namentlich und ist deterministisch reproduzierbar', () => {
+    const varianten = fixtureVarianten();
+    const opts: StudienBerichtOptionen = {
+      zielGf: 6000,
+      regel: REGEL,
+      parzelle: PARZELLE,
+      programm: programmErfuellungJeVariante(varianten, [{ typ: 'marktgerecht', hnfSoll: 5000 }], 1.22),
+    };
+    const svg = studienBerichtSvg(varianten, opts);
+    const match = svg.match(/Empfehlung: ([^.]+)\./);
+    expect(match).not.toBeNull();
+    const empfohleneName = match![1]!;
+    expect(varianten.some((v) => v.name === empfohleneName)).toBe(true);
+    // Die Turm-Variante sprengt die Höhe fürs Programm — sie darf NIE empfohlen werden.
+    expect(empfohleneName).not.toBe('Turm');
+  });
+
+  it('Ranking-Gewichte erscheinen transparent im Fusstext', () => {
+    const varianten = fixtureVarianten();
+    const svg = studienBerichtSvg(varianten, { zielGf: 6000 });
+    expect(svg).toContain('Ranking-Gewichte:');
+    expect(svg).toContain('Regelkonformität');
   });
 
   it('leere Variantenliste liefert weiterhin ein valides SVG ohne Spalten (kein Absturz)', () => {
@@ -150,19 +238,33 @@ describe('studienBerichtSvg', () => {
     const svg = studienBerichtSvg(varianten, { zielGf: 6000, programm });
     for (const p of programm) {
       const erwartet = p.erfuellungProzent !== null ? `${p.erfuellungProzent.toLocaleString('de-CH', { maximumFractionDigits: 1 })} %` : '—';
-      expect(svg).toContain(escapeXml(`Programm-Erfüllung: ${erwartet}`));
+      expect(svg).toContain(escapeXml(`(${erwartet})`));
     }
+  });
+
+  it('Ziel-GF-Herkunft erscheint in der Kopfzeile nur, wenn übergeben', () => {
+    const varianten = fixtureVarianten();
+    const ohne = studienBerichtSvg(varianten, { zielGf: 6000 });
+    expect(ohne).toContain('Ziel-GF: 6\'000 m²');
+    expect(ohne).not.toContain('(aus Zonenregel)');
+
+    const mit = studienBerichtSvg(varianten, { zielGf: 6000, zielGfHerkunft: 'aus Zonenregel' });
+    expect(mit).toContain('Ziel-GF: 6\'000 m² (aus Zonenregel)');
   });
 });
 
-describe('Golden-SVG (Grundlagenstudie-Bericht)', () => {
+describe('Golden-SVG (Grundlagenstudie-Bericht v2)', () => {
   it('Bericht der Fixtur-Parzelle (60×60 m, Ziel-GF 6000 m², alle 6 Typologien) ist byte-identisch zur committeten Referenz', () => {
+    // BEWUSST NEU ERZEUGT (K1, `docs/OWNER-BEFUNDE-0.6.2.md`): der v1-Bericht
+    // zeigte nur Footprints + rohe Kennwert-Zeilen («ultra schlecht», Owner-
+    // Wortlaut). v2 ist ein A3-quer-Blatt mit Empfehlung/Situations-Diagramm/
+    // Vergleichstabelle/Beurteilung je Variante/Grenzen-Block — das Golden
+    // wurde bewusst neu erzeugt (writeFileSync statt readFileSync/expect,
+    // Diff begutachtet, zurückgebaut). ALLE anderen Kernel-Goldens bleiben
+    // byte-identisch.
     const varianten = fixtureVarianten();
     const svg = studienBerichtSvg(varianten, { zielGf: 6000 });
     const golden = readFileSync(new URL('./golden/studienbericht.svg', import.meta.url), 'utf8');
     expect(svg).toBe(golden);
-    // Bewusste Änderungen an studienbericht.ts: Golden neu erzeugen (Test
-    // kurz `writeFileSync` statt `readFileSync`/`expect` einsetzen, laufen
-    // lassen, Diff begutachten, zurückbauen) und im Diff begutachten.
   });
 });

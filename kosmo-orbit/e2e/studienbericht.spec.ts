@@ -2,15 +2,24 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 /**
- * D5 (Wettbewerb-Konzept D-E8, Nacht v0.6.2): Grundlagenstudie-Bericht als
- * eigenständiges SVG-Exportartefakt. Vorbild fürs Download-Muster:
- * `unternehmerplan.spec.ts` (`export-dxf` → `page.waitForEvent('download')`
- * → `download.path()` → `readFileSync`). `e2e/sim/bausteine.ts` wird NUR
- * gelesen (API eingefroren, nicht angefasst) — das StudienPanel selbst hat
- * keinen eigenen Baustein, darum bootstrapt dieser Spec direkt wie die
- * bestehende Baugrenze-Journey in `module.spec.ts` («Baugrenze: setzen, im
- * Grundriss sichtbar …», Zeile 243ff: `design.zoneErstellen` + `studie-
- * toggle`).
+ * D5 (Wettbewerb-Konzept D-E8, Nacht v0.6.2) + v2 (K1, `docs/OWNER-BEFUNDE-
+ * 0.6.2.md` S. 9 — «Dieser gesamte Teil ist ultra schlecht!»): Grundlagen-
+ * studie-Bericht als eigenständiges SVG-Exportartefakt. Vorbild fürs
+ * Download-Muster: `unternehmerplan.spec.ts` (`export-dxf` →
+ * `page.waitForEvent('download')` → `download.path()` → `readFileSync`).
+ * `e2e/sim/bausteine.ts` wird NUR gelesen (API eingefroren, nicht angefasst)
+ * — das StudienPanel selbst hat keinen eigenen Baustein, darum bootstrapt
+ * dieser Spec direkt wie die bestehende Baugrenze-Journey in `module.spec.ts`
+ * («Baugrenze: setzen, im Grundriss sichtbar …», Zeile 243ff:
+ * `design.zoneErstellen` + `studie-toggle`).
+ *
+ * v2 setzt zusätzlich eine Zonenregel (`design.zonenRegelSetzen`, echtes
+ * CH-Preset-Muster wie `sim-wettbewerb.spec.ts`) — das StudienPanel gibt die
+ * aktive Regel + die Parzellen-Outline seit v2 automatisch an
+ * `studienBerichtSvg` weiter (`DesignWorkspace.tsx` `berichtLaden`), darum
+ * zeigt das Blatt jetzt Zonenregel-Eckwerte UND das Situations-Diagramm mit
+ * der Parzelle darin (K1) — ohne dass der Test selbst etwas anders herunter-
+ * lädt als zuvor.
  */
 
 async function bootstrapStudien(page: Page): Promise<void> {
@@ -23,6 +32,15 @@ async function bootstrapStudien(page: Page): Promise<void> {
       run: (id: string, p: unknown) => unknown;
       state: () => { activeStoreyId: string | null };
     };
+    k.run('design.zonenRegelSetzen', {
+      name: 'W4 (Richtwert LU)',
+      az: 0.8,
+      maxHoehe: 30000,
+      maxVollgeschosse: 10,
+      grenzabstandKlein: 4000,
+      grenzabstandGross: 12000,
+      parzellenFlaeche: 3600, // 60×60 m (Fixtur-Parzelle unten)
+    });
     const eg = k.state().activeStoreyId;
     k.run('design.zoneErstellen', {
       storeyId: eg,
@@ -54,15 +72,33 @@ async function berichtLaden(page: Page): Promise<string> {
   return readFileSync(pfad!, 'utf8');
 }
 
-test('Grundlagenstudie-Bericht: SVG-Download enthält Titel, Variante und Ehrlichkeits-Satz', async ({ page }) => {
+test('Grundlagenstudie-Bericht: SVG-Download enthält Empfehlung, Zonenregel-Eckwerte, Situations-Parzelle und Ehrlichkeits-Satz (K1-Blatt v2)', async ({ page }) => {
   await bootstrapStudien(page);
   const svg = await berichtLaden(page);
 
   expect(svg).toContain('<svg');
   expect(svg.trim().endsWith('</svg>')).toBe(true);
+  expect(svg).toContain('viewBox="0 0 1587 1123"'); // A3 quer (v2)
   expect(svg).toContain('Grundlagenstudie');
   expect(svg).toContain('Teppich'); // Variantenname aus generiereVolumenstudien
   expect(svg).toContain('Anstoss, kein Entwurf');
+
+  // K1: Erst das Urteil — die Empfehlung ist ein prominenter Block, kein
+  // Fliesstext irgendwo im Blatt.
+  expect(svg).toContain('EMPFEHLUNG');
+  expect(svg).toContain('Empfehlung:');
+
+  // K1: die Zonenregel-Eckwerte (AZ, max. Höhe, Grenzabstand) stehen als
+  // kompakte Kopfzeile — das StudienPanel gibt die aktive Regel seit v2
+  // automatisch an `studienBerichtSvg` weiter.
+  expect(svg).toContain('aus Zonenregel «W4 (Richtwert LU)»');
+  expect(svg).toContain('AZ 0.8');
+  expect(svg).toContain('max. Höhe 30 m');
+  expect(svg).toContain('Grenzabstand 4/12 m');
+
+  // K1: das Situations-Diagramm zeigt die Parzelle (gestrichelter Umriss)
+  // MIT dem Footprint darin, nicht nur den Footprint allein wie v1.
+  expect(svg).toContain('stroke-dasharray="3,2"');
 });
 
 test('Grundlagenstudie-Bericht: ohne Standort/Raumprogramm keine Besonnungs-/Programm-Hinweise (Ehrlichkeitspfad)', async ({ page }) => {

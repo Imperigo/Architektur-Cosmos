@@ -1903,19 +1903,30 @@ function StudienPanel({
     }
   };
 
-  // D5 (Wettbewerb-Konzept D-E8): Grundlagenstudie-Bericht als eigenständiges
-  // SVG-Exportartefakt — Besonnung/Programm fliessen NUR ein, wenn Standort
-  // bzw. Raumprogramm tatsächlich im Doc stehen (Ehrlichkeitspfad, keine
-  // erfundenen Kennwerte). `new Date()` bleibt bewusst im App-Code, nicht im
-  // Kernel (Determinismus der reinen Ableitung `studienBerichtSvg`).
+  // D5 (Wettbewerb-Konzept D-E8), v2 K1 (`docs/OWNER-BEFUNDE-0.6.2.md` —
+  // «Grundlagenstudie-Bericht ultra schlecht»): Grundlagenstudie-Bericht als
+  // eigenständiges SVG-Exportartefakt — Besonnung/Programm fliessen NUR ein,
+  // wenn Standort bzw. Raumprogramm tatsächlich im Doc stehen
+  // (Ehrlichkeitspfad, keine erfundenen Kennwerte). `parzelle`/`regel` speisen
+  // das Situations-Diagramm, die Ranking-Funktion und die harten Eckwerte in
+  // der Kopfzeile (v2-Blatt). `new Date()` bleibt bewusst im App-Code, nicht
+  // im Kernel (Determinismus der reinen Ableitung `studienBerichtSvg`).
   const berichtLaden = () => {
     const { doc: aktuellerDoc } = useProject.getState();
     const standort = aktuellerDoc.settings.standort;
     const raumprogramm = aktuellerDoc.settings.raumprogramm;
+    const zielGfHerkunft =
+      zielGf === null
+        ? 'aus Programmvorgabe'
+        : regelOptionen.zielGf !== undefined && Math.round(regelOptionen.zielGf) === zielGf
+          ? 'aus Zonenregel'
+          : 'manuell gesetzt';
     const svg = studienBerichtSvg(varianten, {
       zielGf: zielEffektiv,
+      zielGfHerkunft,
       ...(aktuellerDoc.settings.projectName ? { titel: aktuellerDoc.settings.projectName } : {}),
-      ...(zonenRegel ? { regelName: zonenRegel.name } : {}),
+      ...(zonenRegel ? { regelName: zonenRegel.name, regel: zonenRegel } : {}),
+      ...(parzelle ? { parzelle: parzelle.outline } : {}),
       datum: new Date().toLocaleDateString('de-CH'),
       ...(standort ? { besonnung: besonnungJeVariante(varianten, standort) } : {}),
       ...(raumprogramm.length > 0

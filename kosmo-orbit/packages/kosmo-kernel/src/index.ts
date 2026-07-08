@@ -49,6 +49,7 @@ export * from './model/regelpresets';
 export * from './derive/variantenmatrix';
 export * from './derive/besonnungsvergleich';
 export * from './derive/programmerfuellung';
+export * from './derive/studienbeurteilung';
 export * from './derive/studienbericht';
 export * from './derive/segmentierer';
 export * from './derive/raumtypcopilot';
