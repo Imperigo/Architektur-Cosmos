@@ -15,12 +15,17 @@ pip install -e ".[stt]"
 ## Start (im Büronetz)
 
 ```bash
-export KOSMO_BRIDGE_TOKEN=dein-geheimes-token          # empfohlen
+export KOSMO_BRIDGE_TOKEN=dein-geheimes-token          # nötig für --host 0.0.0.0 (sonst Startverweigerung, siehe unten)
 export KOSMO_OLLAMA_URL=http://127.0.0.1:11434
 export KOSMO_WHISPER_MODEL=jayr23/whisper-large-v3-turbo-swiss-german-ct2
 export KOSMO_BRIDGE_ORIGIN="http://homestation:5183"   # oder mehrere, komma-getrennt
 kosmo-bridge --store /mnt/data/ArchitekturKosmos/render-jobs --host 0.0.0.0
 ```
+
+Ohne `KOSMO_BRIDGE_TOKEN` verweigert `--host 0.0.0.0` seit dem I2-Nachtrag
+(08.07.2026) den Start (Exit-Code 1) — entweder Token setzen (wie oben) oder
+den bewussten Offen-Betrieb explizit bestätigen: `--offen-ohne-token` bzw.
+`KOSMO_BRIDGE_OFFEN=1`. Details unten unter «Sicherheit».
 
 In KosmoOrbit dann unter KosmoVis → Einstellungen die Bridge-URL eintragen
 (z.B. `http://homestation:8600`).
@@ -40,14 +45,18 @@ In KosmoOrbit dann unter KosmoVis → Einstellungen die Bridge-URL eintragen
 Die Bridge ist für das vertrauenswürdige Büronetz gebaut, nicht fürs offene
 Internet. **Ehrlich benannt, keine "unhackbar"-Behauptung:**
 
-- **Ohne `KOSMO_BRIDGE_TOKEN` bleibt die Bridge offen** — jeder Client im
-  erreichbaren Netz kann Jobs anlegen/abrufen. Token setzen, sobald mehr als
-  dein eigener Rechner Zugriff hat. Der Token-Vergleich läuft über
-  `secrets.compare_digest` (timing-sicher).
 - **Bind-Default `127.0.0.1`**: die Bridge ist standardmässig nur vom eigenen
-  Rechner erreichbar. `--host 0.0.0.0` (alle Interfaces, z.B. damit ein iPad
-  im Büronetz zugreifen kann) ist eine **bewusste Option**, kein Default —
-  beim Start erscheint dazu ein Hinweis im Log.
+  Rechner erreichbar — egal ob ein Token gesetzt ist. `--host 0.0.0.0` (alle
+  Interfaces, z.B. damit ein iPad im Büronetz zugreifen kann) ist eine
+  **bewusste Option**, kein Default.
+- **Serie I / I2-Nachtrag (08.07.2026) — sicherer Standard, laute Ausnahme**:
+  ein nicht-lokaler `--host` OHNE `KOSMO_BRIDGE_TOKEN` verweigert jetzt den
+  Start (Exit-Code 1), sofern nicht explizit bestätigt via
+  `--offen-ohne-token` bzw. `KOSMO_BRIDGE_OFFEN=1` — dann startet die Bridge
+  mit einer unübersehbaren Warnzeile im Log. **Mit** Token bleibt der Host frei
+  konfigurierbar wie gehabt (LAN-Betrieb ist der Sinn der Bridge); der
+  Token-Vergleich läuft über `secrets.compare_digest` (timing-sicher). Token
+  setzen, sobald mehr als dein eigener Rechner Zugriff haben soll.
 - **CORS-Allowlist über `KOSMO_BRIDGE_ORIGIN`** (Default: nur die lokalen
   Dev-/Preview-Ports der App). `KOSMO_BRIDGE_ORIGIN=*` ist eine bewusste
   Büronetz-Option (z.B. mehrere Geräte/Ports), kein Default — `*` öffnet die

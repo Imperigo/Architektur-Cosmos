@@ -18,6 +18,8 @@ import {
   scanText,
   scanSource,
   scanDist,
+  scanWissen,
+  wissenRoots,
   findEnvLeftovers,
   entropy,
   kosmoOrbitRoot,
@@ -245,6 +247,72 @@ try {
   check(`Echter dist/-Build ist grün (${realDistFindings.length} Fund(e))`, realDistFindings.length === 0);
   if (realDistFindings.length > 0) {
     for (const f of realDistFindings) console.error('  ', f);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 7) wissen/vault + wissen/training (Serie I / I2-Nachtrag, 08.07.2026) —
+//    Geschwister-Verzeichnis von kosmo-orbit/, ausserhalb von kosmoOrbitRoot.
+//    Beweist: (a) beide Unterordner werden real vom Scan erfasst (nicht nur
+//    theoretisch verdrahtet), (b) ein injizierter Test-Schlüssel wird auch
+//    dort gefangen, (c) der echte wissen/-Baum ist grün, (d) ein fehlender
+//    wissen/-Ordner wird ehrlich übersprungen statt zu crashen.
+// ---------------------------------------------------------------------------
+
+{
+  const wurzeln = wissenRoots(kosmoOrbitRoot);
+  check('wissenRoots liefert genau 2 Pfade (vault, training)', wurzeln.length === 2);
+  check('wissenRoots zeigt auf .../wissen/vault', wurzeln.some((p) => p.endsWith(path.join('wissen', 'vault'))));
+  check('wissenRoots zeigt auf .../wissen/training', wurzeln.some((p) => p.endsWith(path.join('wissen', 'training'))));
+}
+
+const wissenFixtureRoot = mkdtempSync(path.join(tmpdir(), 'kosmo-secret-scan-wissen-'));
+try {
+  const kosmoOrbitFixture = path.join(wissenFixtureRoot, 'kosmo-orbit');
+  const vaultDir = path.join(wissenFixtureRoot, 'wissen', 'vault');
+  const trainingDir = path.join(wissenFixtureRoot, 'wissen', 'training');
+  mkdirSync(kosmoOrbitFixture, { recursive: true });
+  mkdirSync(vaultDir, { recursive: true });
+  mkdirSync(trainingDir, { recursive: true });
+
+  writeFileSync(path.join(vaultDir, 'Sauber.md'), '# Notiz\n\nKeine Geheimnisse hier.\n');
+  writeFileSync(
+    trainingDir + '/briefings.jsonl',
+    JSON.stringify({ text: 'Ganz normaler Trainings-Eintrag ohne Geheimnis.' }) + '\n',
+  );
+
+  const cleanWissen = scanWissen(kosmoOrbitFixture);
+  check('Sauberer wissen/-Fixture-Baum ist grün', cleanWissen.length === 0);
+
+  // Injizierter Anthropic-Key in einer Vault-Notiz — muss gefangen werden.
+  writeFileSync(
+    path.join(vaultDir, 'Versehentlich.md'),
+    `Notiz mit versehentlich eingefügtem Key: ${FAKE_ANTHROPIC_KEY}\n`,
+  );
+  const dirtyWissen = scanWissen(kosmoOrbitFixture);
+  check(
+    'Injizierter Test-Schlüssel in wissen/vault wird gefangen',
+    findingsOf('anthropic-key', dirtyWissen).some((f) => f.file.includes('Versehentlich.md')),
+  );
+
+  // Fehlender wissen/-Ordner (z.B. isolierter Checkout): ehrlich übersprungen, kein Crash.
+  const isolierterRoot = path.join(wissenFixtureRoot, 'kein-geschwister', 'kosmo-orbit');
+  mkdirSync(isolierterRoot, { recursive: true });
+  const fehlenderWissen = scanWissen(isolierterRoot);
+  check('Fehlender wissen/-Ordner wird übersprungen (kein Crash, 0 Funde)', fehlenderWissen.length === 0);
+} finally {
+  rmSync(wissenFixtureRoot, { recursive: true, force: true });
+}
+
+// Regression gegen den ECHTEN wissen/-Baum (falls im Checkout vorhanden).
+{
+  const realWissenFindings = scanWissen(kosmoOrbitRoot);
+  check(
+    `Echter wissen/-Baum ist grün (${realWissenFindings.length} Fund(e))`,
+    realWissenFindings.length === 0,
+  );
+  if (realWissenFindings.length > 0) {
+    for (const f of realWissenFindings) console.error('  ', f);
   }
 }
 

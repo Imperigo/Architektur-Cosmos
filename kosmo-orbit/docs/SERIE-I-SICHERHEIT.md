@@ -93,6 +93,79 @@ Vieles aus I2 ist **jetzt** in der Cloud baubar (CSP, visibility-Gate,
 Secret-Scan-CI, Sync-Härtung, Parser-Fuzzing); I3/I4/I5 haben HomeStation-/
 Konto-/Router-Anteile, die ehrlich dorthin gehören.
 
+## I2-Nachtrag (08.07.2026) — Sicherer-Standard-Batch (Bridge-Bind)
+
+Fable-Befund aus dem Nachtbetrieb: `main.py` druckte beim Fehlen von
+`KOSMO_BRIDGE_TOKEN` unbedingt «Bridge ist im Netz offen» — unabhängig vom
+tatsächlichen Bind-Host. **Ehrlicher Ist-Zustand-Check (Prinzip: Ehrlichkeit
+vor Politur):** der reale Befund war **kleiner als der Wortlaut nahelegte**.
+Batch B4 (siehe oben) hatte den `--host`-Default bereits auf `127.0.0.1`
+gesetzt — die Bridge band nie standardmässig `0.0.0.0`. Der Bug war die
+**Meldung**, nicht der Bind: eine rein lokale Bridge (`127.0.0.1`) meldete
+sich fälschlich als «im Netz offen», was Owner/Admins in die Irre führen
+konnte (entweder unnötig beunruhigend, oder — schlimmer — abstumpfend für den
+Fall, dass wirklich mal `--host 0.0.0.0` gesetzt ist).
+
+Prinzip dieses Nachtrags: **sichere Standards, laute Ausnahmen.**
+
+- **Meldung präzisiert**: Ohne Token + lokaler Host → «Bind bleibt bei
+  127.0.0.1 (nur diese Maschine erreicht die Bridge, kein Netzzugriff)» statt
+  der pauschalen «im Netz offen»-Zeile.
+- **Neues Gate für den unauthentifizierten LAN-Fall**: `--host` ungleich
+  `127.0.0.1`/`localhost` **ohne** `KOSMO_BRIDGE_TOKEN` verweigert den Start
+  (`BridgeBindFehler`, Exit-Code 1), sofern nicht **explizit** bestätigt via
+  `--offen-ohne-token` bzw. `KOSMO_BRIDGE_OFFEN=1` — dann startet die Bridge
+  mit einer unübersehbaren Warnzeile (`!`×70 + `⚠⚠⚠`-Banner). Kein stilles
+  Offen mehr; vorher liess sich `--host 0.0.0.0` ohne Token kommentarlos
+  starten.
+- **Mit Token bleibt alles wie in B4**: Host frei konfigurierbar (LAN-Betrieb
+  ist der Sinn der Bridge), nur ein informativer Hinweis im Log.
+- **`--fake-worker`-Testbetrieb (CI/E2E/Container, `127.0.0.1:8600`)
+  unverändert**: Default-Host + kein Token → kein Token nötig, keine
+  Ablehnung, nur die präzisierte Meldung. `.github/workflows/kosmo-orbit-ci.yml`
+  und `CLAUDE.md` starten die Bridge ohne `--host`, treffen also immer den
+  lokalen, nie den Ablehnungs-Zweig.
+
+**Betriebsmatrix:**
+
+| Modus | Host | Token | `--offen-ohne-token`/`KOSMO_BRIDGE_OFFEN` | Ergebnis |
+|---|---|---|---|---|
+| Lokal (Default, auch `--fake-worker`) | `127.0.0.1`/`localhost` | egal | egal | startet, präzise Meldung, kein Netzzugriff |
+| LAN + Token (empfohlener Büronetz-Betrieb) | z.B. `0.0.0.0` | gesetzt | egal | startet, Token-Pflicht wie B4 |
+| Offen-bewusst | z.B. `0.0.0.0` | **nicht** gesetzt | gesetzt | startet, unübersehbare Warnung |
+| Silentes Offen (neu blockiert) | z.B. `0.0.0.0` | **nicht** gesetzt | **nicht** gesetzt | **Start verweigert** (Exit 1) |
+
+**Tests**: `tools/homestation-bridge/test_bridge_haerte.py` §9 (6 neue Prüfungen:
+lokal ohne Token → präzise Meldung; LAN mit Token → kein Fehlschlag; LAN ohne
+Token/ohne Flag → `BridgeBindFehler`; LAN ohne Token/mit Flag → laute Warnung;
+`--fake-worker`-Default unverändert; Token-Header weiterhin verlangt wenn
+gesetzt). Zusätzlich echte Prozessläufe verifiziert (`python3 main.py --host
+0.0.0.0 …` ohne Flag → Exit 1 mit Fehlertext; mit `--offen-ohne-token` bzw.
+`KOSMO_BRIDGE_OFFEN=1` → startet mit Warnbanner; Default → startet lokal).
+
+**Secret-Scan-Lücke geschlossen**: `tools/secret-scan.mjs` scannte nur
+`kosmoOrbitRoot` (= `kosmo-orbit/`) — `wissen/vault/` und `wissen/training/`
+(Obsidian-Vault + LoRA-Trainingskorpus, Geschwister-Verzeichnis im selben
+Repo, siehe I1 «Büro-Daten» als Asset) lagen **ausserhalb** des Scan-Bereichs
+und wurden nie geprüft. Jetzt zusätzlich per `scanWissen()` erfasst (dieselben
+drei präzisen Regeln wie bei `dist/`, keine generische Hoch-Entropie-Regel —
+Prosa/Trainingsdaten hätten dort zu viele Falsch-Treffer erzeugt). Fehlt
+`wissen/` in einer Umgebung (z.B. isolierter Checkout), wird ehrlich
+übersprungen statt zu crashen. Test: `tools/secret-scan.test.mjs` §7 (4 neue
+Prüfungen inkl. Regression gegen den echten `wissen/`-Baum — aktuell 0 Funde).
+
+**Tauri-CSP/Allowlist (nur verifiziert, keine Änderung nötig)**: die neuen
+DXF-/PDF-Importe (`DesignWorkspace.tsx`) lesen ausschliesslich über die
+Browser-File-API (natives `<input type="file">`, `File.arrayBuffer()`/
+`.text()`) — kein `@tauri-apps/plugin-fs`, kein `@tauri-apps/plugin-dialog`,
+kein Netzwerk-Fetch. Lokale Datei-/Blob-Reads sind kein CSP-relevanter
+Netzwerkzugriff und brauchen keine Tauri-Capability; `tauri.conf.json`
+(CSP) und `capabilities/default.json` (FS-Allowlist) wurden im Zuge dieser
+Importe nachweislich nicht verändert (git-history-Check).
+
+**`npm audit --omit=dev`**: 0 Findings (verifiziert 08.07.2026) — nichts zu
+reparieren, was nicht kaputt ist.
+
 ## Grenzen (ehrlich, verbindlich)
 - Kein «unhackbar» — jede Massnahme wird mit ihrem realen Schutzgrad und ihrer
   Umgehbarkeit benannt.

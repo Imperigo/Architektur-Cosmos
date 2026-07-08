@@ -35,10 +35,15 @@ Endpoints (Vertrag: @kosmo/contracts bridge-api.ts):
 
 Start:   kosmo-bridge --store /mnt/data/ArchitekturKosmos/render-jobs
 Test:    kosmo-bridge --store /tmp/kosmo-jobs --fake-worker
-Sicherheit: KOSMO_BRIDGE_TOKEN setzen → Header X-Kosmo-Token wird verlangt.
-  Ohne Token bleibt die Bridge im erreichbaren Netz offen (ehrlich benannt,
-  kein Vortäuschen von Schutz, siehe Startlog). --host 0.0.0.0 und
-  KOSMO_BRIDGE_ORIGIN=* sind bewusste Büronetz-Optionen, keine Defaults.
+Sicherheit: Default-Bind ist `127.0.0.1` (nur die eigene Maschine erreicht die
+  Bridge, egal ob ein Token gesetzt ist). Ein nicht-lokaler `--host` (z.B.
+  `0.0.0.0` fürs Büronetz) verlangt entweder KOSMO_BRIDGE_TOKEN (Header
+  X-Kosmo-Token wird dann geprüft) ODER die bewusste Bestätigung
+  `--offen-ohne-token` / `KOSMO_BRIDGE_OFFEN=1` — ohne eines von beiden
+  VERWEIGERT die Bridge den Start (sicherer Standard, laute Ausnahme statt
+  stillem Offen; Serie I / I2-Nachtrag, 08.07.2026, siehe
+  docs/SERIE-I-SICHERHEIT.md). KOSMO_BRIDGE_ORIGIN=* ist eine weitere bewusste
+  Büronetz-Option, kein Default.
 
 Serie I / Batch B6 (Server-Bindung, der wirksame Anti-Copy-Hebel — siehe
   docs/SERIE-I-BUILDPLAN.md §3): KOSMO_BRIDGE_LIZENZ_PFLICHT schaltet
@@ -60,6 +65,7 @@ import os
 import re
 import secrets
 import struct
+import sys
 import threading
 import time
 import zlib
@@ -1130,6 +1136,66 @@ def _fake_worker_loop():
         _fake_worker_pass()
 
 
+LOKALE_HOSTS = ("127.0.0.1", "localhost")
+
+
+class BridgeBindFehler(RuntimeError):
+    """Start wird verweigert: --host ist nicht-lokal, kein Token gesetzt und der
+    bewusste Offen-Betrieb wurde nicht explizit bestätigt (--offen-ohne-token /
+    KOSMO_BRIDGE_OFFEN=1). Serie I / I2-Nachtrag (08.07.2026): sichere
+    Standards, laute Ausnahmen — kein stilles Offen mehr."""
+
+
+def bind_entscheidung(host: str, token: str, offen_bewusst: bool) -> list[str]:
+    """Reine, ohne Serverstart testbare Entscheidungsfunktion für das Startlog.
+
+    Regeln (Serie I / I2-Nachtrag, 08.07.2026):
+      - Host lokal (127.0.0.1/localhost): läuft immer, Token optional — die
+        Meldung ist präzise (kein "im Netz offen", weil es das schlicht nicht
+        ist).
+      - Host nicht-lokal + Token gesetzt: LAN-Betrieb wie gehabt, nur ein
+        informativer Hinweis.
+      - Host nicht-lokal + KEIN Token + KEIN --offen-ohne-token/KOSMO_BRIDGE_OFFEN:
+        Start wird verweigert (`BridgeBindFehler`) — sicherer Standard.
+      - Host nicht-lokal + KEIN Token + bewusst bestätigt: startet, aber mit
+        unübersehbarer Warnung im Log.
+    """
+    ist_lokal = host in LOKALE_HOSTS
+    zeilen: list[str] = []
+
+    if ist_lokal:
+        if token:
+            zeilen.append("Token gesetzt — Header X-Kosmo-Token wird verlangt (zusätzlich zum lokalen Bind).")
+        else:
+            zeilen.append(
+                f"Hinweis: KOSMO_BRIDGE_TOKEN nicht gesetzt — Bind bleibt bei {host} "
+                "(nur diese Maschine erreicht die Bridge, kein Netzzugriff)."
+            )
+        return zeilen
+
+    # Host nicht-lokal ab hier:
+    if token:
+        zeilen.append(f"Token gesetzt — Bind an {host} ist eine bewusste Büronetz-Option, im LAN erreichbar.")
+        return zeilen
+
+    if not offen_bewusst:
+        raise BridgeBindFehler(
+            f"Start verweigert: --host {host} ohne KOSMO_BRIDGE_TOKEN würde die Bridge "
+            "ungeschützt im Netz erreichbar machen (jeder Client im Netz kann Jobs anlegen/"
+            "abrufen). Entweder KOSMO_BRIDGE_TOKEN setzen, oder den bewussten Offen-Betrieb "
+            "explizit bestätigen: --offen-ohne-token (bzw. Env KOSMO_BRIDGE_OFFEN=1)."
+        )
+
+    zeilen.append("!" * 70)
+    zeilen.append(
+        f"⚠⚠⚠ BRIDGE OFFEN OHNE TOKEN AN {host} — JEDER CLIENT IM ERREICHBAREN NETZ "
+        "KANN JOBS ANLEGEN/ABRUFEN ⚠⚠⚠"
+    )
+    zeilen.append("Bewusst per --offen-ohne-token / KOSMO_BRIDGE_OFFEN=1 bestätigt (Serie I / I2-Nachtrag).")
+    zeilen.append("!" * 70)
+    return zeilen
+
+
 def cli():
     global STORE, OLLAMA, FAKE_WORKER, TOKEN
     ap = argparse.ArgumentParser(description="Kosmo-Bridge")
@@ -1141,6 +1207,13 @@ def cli():
     ap.add_argument("--host", default="127.0.0.1", help="0.0.0.0 nur bewusst fürs Büronetz setzen")
     ap.add_argument("--port", type=int, default=8600)
     ap.add_argument("--fake-worker", action="store_true", help="Jobs ohne GPU beantworten (Demo/CI)")
+    # Serie I / I2-Nachtrag (08.07.2026): expliziter, bewusster Offen-Betrieb
+    # ohne Token bei nicht-lokalem Host — sonst wird der Start verweigert.
+    ap.add_argument(
+        "--offen-ohne-token",
+        action="store_true",
+        help="Bestätigt bewusst: nicht-lokaler Host OHNE Token (sonst verweigert die Bridge den Start).",
+    )
     args = ap.parse_args()
     STORE = Path(args.store)
     STORE.mkdir(parents=True, exist_ok=True)
@@ -1149,10 +1222,17 @@ def cli():
         FAKE_WORKER = True
         threading.Thread(target=_fake_worker_loop, daemon=True).start()
         print("⚠ Fake-Worker aktiv — Render/TTS/Embeddings sind Platzhalter")
-    if not TOKEN:
-        print("Hinweis: KOSMO_BRIDGE_TOKEN nicht gesetzt — Bridge ist im Netz offen")
-    if args.host not in ("127.0.0.1", "localhost"):
-        print(f"⚠ Bind an {args.host} — bewusste Büronetz-Option, im LAN erreichbar")
+    offen_bewusst = args.offen_ohne_token or os.environ.get("KOSMO_BRIDGE_OFFEN", "").strip().lower() in (
+        "1",
+        "true",
+        "ja",
+    )
+    try:
+        for zeile in bind_entscheidung(args.host, TOKEN, offen_bewusst):
+            print(zeile)
+    except BridgeBindFehler as fehler:
+        print(f"FEHLER: {fehler}", file=sys.stderr)
+        raise SystemExit(1) from fehler
     if LIZENZ_PFLICHT and ED25519_LIB is None:
         print(
             "⚠ KOSMO_BRIDGE_LIZENZ_PFLICHT gesetzt, aber weder 'cryptography' noch 'pynacl' "

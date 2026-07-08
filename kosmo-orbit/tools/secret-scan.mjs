@@ -113,6 +113,7 @@ const ALL_TEXT_EXTS = new Set([
   '.css',
   '.txt',
   '.webmanifest',
+  '.jsonl', // Trainings-Korpus (wissen/training/*.jsonl)
 ]);
 
 // Nur diese Erweiterungen bekommen zusätzlich die generische Hoch-Entropie-
@@ -327,6 +328,51 @@ export function scanDist(distDir) {
 }
 
 // ---------------------------------------------------------------------------
+// wissen/ (Serie I / I2-Nachtrag, 08.07.2026) — Büro-Wissenskorpus
+// ---------------------------------------------------------------------------
+
+// `wissen/vault` (Obsidian-Notizen) und `wissen/training` (LoRA-/Fine-Tune-
+// Korpus, `.jsonl`) liegen als Geschwister-Verzeichnis von `kosmo-orbit/` im
+// selben Repo, ausserhalb von `kosmoOrbitRoot` — der ursprüngliche
+// Scan-Bereich (`scanSource(kosmoOrbitRoot)`) hat sie darum NIE erfasst.
+// Genau die Art Text, in die versehentlich ein API-Key/Token aus einem
+// eingefügten Briefing/Log geraten könnte (I1: Büro-Daten + Schlüssel/Token
+// sind beide benannte Assets). Nur die drei präzisen Regeln (wie `dist/`),
+// keine generische Hoch-Entropie-Regel — Prose/Trainingsdaten enthalten
+// legitime lange Zeichenketten (ISBNs, ID-Listen, ISO-Zeitstempel-Reihen),
+// die als Falsch-Treffer explodieren würden.
+export const WISSEN_UNTERORDNER = ['vault', 'training'];
+
+export function wissenRoots(root = kosmoOrbitRoot) {
+  return WISSEN_UNTERORDNER.map((name) => path.resolve(root, '..', 'wissen', name));
+}
+
+/** `wissen/vault` + `wissen/training`: dieselben drei präzisen Regeln wie
+ * `dist/` (kein generischer Hoch-Entropie-Treffer auf Prosa/Trainingsdaten).
+ * Fehlt `wissen/` in der Umgebung (z. B. isolierter Checkout ohne den
+ * Geschwister-Ordner), wird der jeweilige Unterordner ehrlich übersprungen. */
+export function scanWissen(root = kosmoOrbitRoot) {
+  const findings = [];
+  for (const dir of wissenRoots(root)) {
+    if (!existsSync(dir)) continue;
+    for (const file of listFiles(dir)) {
+      const ext = path.extname(file).toLowerCase();
+      if (BINARY_EXTS.has(ext)) continue;
+      if (!ALL_TEXT_EXTS.has(ext)) continue;
+      let content;
+      try {
+        content = readFileSync(file, 'utf8');
+      } catch {
+        continue;
+      }
+      const rel = path.relative(path.resolve(root, '..'), file);
+      findings.push(...scanText(content, rel, { genericRule: false }));
+    }
+  }
+  return findings;
+}
+
+// ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
 
@@ -336,11 +382,16 @@ function main() {
     ...scanSource(kosmoOrbitRoot),
     ...scanDist(distDir),
     ...findEnvLeftovers(kosmoOrbitRoot),
+    ...scanWissen(kosmoOrbitRoot),
   ];
 
   if (findings.length === 0) {
-    console.log('[secret-scan] grün — keine Geheimnis-Muster in Quelltext oder dist/ gefunden.');
+    console.log('[secret-scan] grün — keine Geheimnis-Muster in Quelltext, dist/ oder wissen/ gefunden.');
+    const wissenGefunden = wissenRoots(kosmoOrbitRoot).filter((d) => existsSync(d));
     console.log(`[secret-scan] geprüft: Quelltext unter ${kosmoOrbitRoot} + ${existsSync(distDir) ? distDir : '(dist/ fehlt — nicht gebaut, übersprungen)'}`);
+    console.log(
+      `[secret-scan] geprüft: wissen/{vault,training} — ${wissenGefunden.length > 0 ? wissenGefunden.join(', ') : '(wissen/ hier nicht vorhanden — übersprungen)'}`
+    );
     process.exit(0);
   }
 

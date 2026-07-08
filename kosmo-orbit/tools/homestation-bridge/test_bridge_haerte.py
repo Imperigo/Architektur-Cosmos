@@ -610,6 +610,68 @@ for _s in fable_stores:
     shutil.rmtree(_s, ignore_errors=True)
 
 # ---------------------------------------------------------------------------
+# 9) Bind-Verhalten ohne Token / mit Token / bewusster Offen-Betrieb
+#    (Serie I / I2-Nachtrag, 08.07.2026): sichere Standards, laute Ausnahmen.
+#    `bind_entscheidung` ist eine reine Funktion, testbar ohne Server/Prozess —
+#    genau die Logik, die `cli()` vor `uvicorn.run(...)` auswertet.
+# ---------------------------------------------------------------------------
+from kosmo_bridge.main import BridgeBindFehler, bind_entscheidung  # noqa: E402
+
+# (a) ohne Token, lokaler Host (heutiger UND neuer Default): läuft unverändert,
+#     Meldung ist präzise — NICHT mehr "im Netz offen", weil 127.0.0.1 das
+#     schlicht nicht ist.
+zeilen_lokal = bind_entscheidung("127.0.0.1", "", False)
+check(
+    "Bind lokal ohne Token: Meldung nennt 'kein Netzzugriff', NICHT 'im Netz offen'",
+    any("kein Netzzugriff" in z for z in zeilen_lokal) and not any("im Netz offen" in z for z in zeilen_lokal),
+)
+
+# (b) mit Token, Host frei konfigurierbar (LAN-Betrieb ist der Sinn der Bridge) —
+#     läuft unverändert, nur ein informativer Hinweis, keine Ablehnung.
+zeilen_lan_token = bind_entscheidung("0.0.0.0", "geheim-token", False)
+check("Bind LAN mit Token: keine Ablehnung, informativer Hinweis", any("Büronetz" in z for z in zeilen_lan_token))
+
+# (c) ohne Token, nicht-lokaler Host, OHNE --offen-ohne-token/KOSMO_BRIDGE_OFFEN:
+#     Start wird verweigert (fail-closed) — kein stilles Offen mehr.
+try:
+    bind_entscheidung("0.0.0.0", "", False)
+    verweigert = False
+except BridgeBindFehler:
+    verweigert = True
+check("Bind LAN ohne Token, ohne Flag: Start wird verweigert (fail-closed)", verweigert)
+
+# (d) ohne Token, nicht-lokaler Host, MIT --offen-ohne-token/KOSMO_BRIDGE_OFFEN=1:
+#     startet, aber mit unübersehbarer Warnung im Log.
+zeilen_offen = bind_entscheidung("0.0.0.0", "", True)
+check(
+    "Bind LAN ohne Token, MIT Flag: startet, aber mit unübersehbarer Warnung",
+    any("OFFEN OHNE TOKEN" in z for z in zeilen_offen) and any(z == "!" * 70 for z in zeilen_offen),
+)
+
+# (e) --fake-worker-Testbetrieb (CI/E2E: `main.py --fake-worker --port 8600`,
+#     ohne --host/--offen-ohne-token) bleibt unverändert: Default-Host
+#     127.0.0.1, kein Token, keine Ablehnung — nur der präzisierte Hinweis.
+zeilen_fake_default = bind_entscheidung("127.0.0.1", "", False)
+check(
+    "Fake-Worker-Default (kein --host/--offen-ohne-token): startet unverändert, präziser Hinweis",
+    zeilen_fake_default == zeilen_lokal,
+)
+
+# (f) Token-Header wird weiterhin verlangt, wenn TOKEN gesetzt ist — reine
+#     Auth-Regression: die Bind-Änderung darf `token_guard` nicht anfassen.
+os.environ["KOSMO_BRIDGE_TOKEN"] = "bind-test-token"
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+token_client = TestClient(bridge.app)
+res_ohne = token_client.get("/jobs")
+check("Token gesetzt: Zugriff ohne Header weiterhin 401", res_ohne.status_code == 401)
+res_mit = token_client.get("/jobs", headers={"x-kosmo-token": "bind-test-token"})
+check("Token gesetzt: Zugriff mit korrektem Header weiterhin 200", res_mit.status_code == 200)
+os.environ.pop("KOSMO_BRIDGE_TOKEN", None)
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+
+# ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis
 # ---------------------------------------------------------------------------
 shutil.rmtree(TMP_STORE, ignore_errors=True)
