@@ -36,6 +36,7 @@ import { KennzahlenPanel } from './KennzahlenPanel';
 import { DrawPanel } from './DrawPanel';
 import { BerechnungslistePanel } from './BerechnungslistePanel';
 import { RasterPanel } from './RasterPanel';
+import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
 import type { SplatCloud } from './splat-import';
 import { Inspector } from './Inspector';
@@ -1512,6 +1513,10 @@ export function DesignWorkspace() {
       <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
         {drawOffen && <DrawPanel />}
         {rasterOffen && <RasterPanel onClose={() => setRasterOffen(false)} />}
+        {/* C4b (C-E4): Daten-Guard — die Karten-Liste erscheint automatisch,
+            sobald ein Unternehmerplan geladen ist, kein eigener Toggle nötig
+            (das Vorhandensein der Daten IST der Sichtbarkeits-Zustand). */}
+        <UnternehmerplanPanel />
         {splatPanelOffen && (
           <SplatPanel
             cloud={splatCloud}

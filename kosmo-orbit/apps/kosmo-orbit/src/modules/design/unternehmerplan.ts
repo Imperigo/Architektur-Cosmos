@@ -1,11 +1,15 @@
 import { create } from 'zustand';
-import { parseDxf, vergleichePlaene } from '@kosmo/kernel';
+import { dist, parseDxf, vergleichePlaene } from '@kosmo/kernel';
 import type {
   AbgleichBefund,
+  Assembly,
   DxfGraphic,
   DxfImportBericht,
+  KosmoDoc,
   PlanAbgleich,
   PlanGraphic,
+  Pt,
+  Wall,
 } from '@kosmo/kernel';
 
 /**
@@ -252,4 +256,101 @@ export function importBerichtText(bericht: DxfImportBericht, abgleich: PlanAbgle
         : 'Kein Ausrichtungsversatz nötig.',
   );
   return saetze.join(' ');
+}
+
+// ── C4b: Stufe-1-Karten anwenden (Karte → Command → runCommand) ──────────
+//
+// Der eiserne Grundsatz (C-E4): das Modell ändert sich AUSSCHLIESSLICH über
+// bestätigte Karten durch DENSELBEN `runCommand`-Weg wie ein Klick/Kosmo —
+// nie still. Diese zwei reinen Funktionen bereiten das vor: Wand finden,
+// Command bauen. Der eigentliche `runCommand`-Aufruf (mit Undo-Gruppe,
+// Yjs-Sync, Journal) passiert in `UnternehmerplanPanel.tsx`, NICHT hier.
+
+/** Winkeltoleranz „parallel" — ±1° in rad (grosszügiger als der 0.5°-Wert
+ * der Diff-Engine selbst, weil hier zusätzlich die Rundung der
+ * Poché-Rekonstruktion mit hineinspielt). */
+const WAND_WINKEL_TOL_RAD = (1 * Math.PI) / 180;
+
+/** Fallback-Wanddicke, wenn der Aufbau fehlt oder keine Schichten trägt
+ * (z.B. ein von Hand kaputtes Testdokument) — konservativ grosszügig, damit
+ * lieber ein Kandidat mehr gefunden wird als der Command grundlos scheitert;
+ * die Mehrdeutigkeits-Regel (0/≥2 Kandidaten → null) bleibt die eigentliche
+ * Sicherung gegen Fehlzuordnung. */
+const WAND_DICKE_FALLBACK = 300;
+
+/** Achsrichtung a→b, ungerichtet (mod π) — wie `segWinkel` in
+ * `derive/planabgleich.ts`, hier lokal, weil dort nicht exportiert. */
+function achsWinkel(a: Pt, b: Pt): number {
+  let w = Math.atan2(b.y - a.y, b.x - a.x);
+  if (w < 0) w += Math.PI;
+  if (w >= Math.PI) w -= Math.PI;
+  return w;
+}
+
+function winkelAbstand(a: number, b: number): number {
+  const d = Math.abs(a - b);
+  return Math.min(d, Math.PI - d);
+}
+
+function mittelpunkt(a: Pt, b: Pt): Pt {
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+}
+
+/** Wanddicke aus der Schichtsumme des Aufbaus; `WAND_DICKE_FALLBACK`, wenn
+ * kein Aufbau (mehr) existiert oder er keine Schichten trägt. */
+function wandDicke(doc: KosmoDoc, wand: Wall): number {
+  const assembly = doc.get<Assembly>(wand.assemblyId);
+  if (!assembly || assembly.layers.length === 0) return WAND_DICKE_FALLBACK;
+  return assembly.layers.reduce((summe, l) => summe + l.thickness, 0);
+}
+
+/**
+ * Rekonstruiert für einen `'verschoben'`-Befund die Architekten-Seite
+ * (`segment − delta`, da `delta = Unternehmer − Architekt`) und sucht die
+ * Wand, deren Achse (a→b) parallel dazu liegt (±1°) und deren
+ * Achsmittelpunkt nahe genug am rekonstruierten Segmentmittelpunkt ist
+ * (Wanddicke + 5 mm — die Poché-Aussenkante liegt seitlich versetzt zur
+ * Achse, nie auf ihr). Bei 0 oder ≥2 Kandidaten `null` — ehrlich
+ * mehrdeutig, lieber keine Zuordnung als eine falsche. Reine Funktion.
+ */
+export function findeWandFuerBefund(doc: KosmoDoc, befund: AbgleichBefund): string | null {
+  if (befund.art !== 'verschoben' || !befund.segment || !befund.delta) return null;
+
+  const architektA: Pt = { x: befund.segment.a.x - befund.delta.x, y: befund.segment.a.y - befund.delta.y };
+  const architektB: Pt = { x: befund.segment.b.x - befund.delta.x, y: befund.segment.b.y - befund.delta.y };
+  const winkel = achsWinkel(architektA, architektB);
+  const mitte = mittelpunkt(architektA, architektB);
+
+  const kandidaten: string[] = [];
+  for (const wand of doc.byKind<Wall>('wall')) {
+    const wandWinkel = achsWinkel(wand.a, wand.b);
+    if (winkelAbstand(winkel, wandWinkel) > WAND_WINKEL_TOL_RAD) continue;
+    const wandMitte = mittelpunkt(wand.a, wand.b);
+    const abstand = dist(mitte, wandMitte);
+    if (abstand > wandDicke(doc, wand) + 5) continue;
+    kandidaten.push(wand.id);
+  }
+  return kandidaten.length === 1 ? kandidaten[0]! : null;
+}
+
+/** Der Command-Vorschlag zu einer Karte — `null`, wenn die Karte nicht
+ * Stufe 1 ist, kein `'verschoben'`-Befund vorliegt, oder die Wand nicht
+ * eindeutig gefunden wird (`findeWandFuerBefund`). Reine Funktion: baut nur
+ * den Aufruf, führt ihn NICHT aus — das bleibt `runCommand` im UI
+ * vorbehalten (C-E4, derselbe Weg wie Klick/Kosmo). */
+export function commandFuerKarte(
+  doc: KosmoDoc,
+  karte: UnternehmerKarte,
+): { id: 'design.verschieben'; params: { entityId: string; dx: number; dy: number } } | null {
+  if (karte.stufe !== 1 || karte.befund.art !== 'verschoben' || !karte.befund.delta) return null;
+  const wandId = findeWandFuerBefund(doc, karte.befund);
+  if (!wandId) return null;
+  return {
+    id: 'design.verschieben',
+    params: {
+      entityId: wandId,
+      dx: Math.round(karte.befund.delta.x),
+      dy: Math.round(karte.befund.delta.y),
+    },
+  };
 }

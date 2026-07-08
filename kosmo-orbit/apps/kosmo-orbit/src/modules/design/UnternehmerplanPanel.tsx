@@ -1,0 +1,149 @@
+import { useMemo, useState } from 'react';
+import { Badge, Hairline, Karteikarte, KButton, melde, meldeFehler } from '@kosmo/ui';
+import { useProject } from '../../state/project-store';
+import {
+  baueKarten,
+  commandFuerKarte,
+  importBerichtText,
+  useUnternehmerplan,
+  type UnternehmerKarte,
+} from './unternehmerplan';
+
+/**
+ * Unternehmerplan-Panel (V1.6 Block C / C4b, C-E4 in
+ * `docs/SUBMISSION-KONZEPT.md`) — die Diff-Karten aus dem DXF-Rücklauf des
+ * Unternehmers, kompakt wie `RasterPanel.tsx`. Daten-Guard: nur sichtbar,
+ * solange der Laufzeit-Store einen geladenen `dxf` trägt (Regel
+ * «Laufzeit ≠ Modell» — kein eigener Sichtbarkeits-Zustand nötig, das
+ * Vorhandensein der Daten IST der Zustand).
+ *
+ * Stufe 1 («Übernehmen») läuft — der eiserne Grundsatz — AUSSCHLIESSLICH
+ * über `commandFuerKarte` + `runCommand` (Regel R3: derselbe Weg wie ein
+ * Klick oder ein bestätigter Kosmo-Vorschlag, `apply-proposal` in
+ * `KosmoPanel.tsx`). Findet `commandFuerKarte` keine eindeutige Wand
+ * (Doppeldeutigkeit, `findeWandFuerBefund` liefert `null`), wird NICHT
+ * geraten: die Karte wird ehrlich auf «manuell» herabgestuft — das Modell
+ * bleibt unverändert, der Architekt zeichnet selbst. Stufe 2 hat bewusst
+ * keinen Anwenden-Knopf — nur Titel/Detail + Badge «markiert».
+ */
+
+type KartenStatus = 'offen' | 'uebernommen' | 'manuell';
+
+export function UnternehmerplanPanel() {
+  const dxf = useUnternehmerplan((s) => s.dxf);
+  const abgleich = useUnternehmerplan((s) => s.abgleich);
+  const dateiname = useUnternehmerplan((s) => s.dateiname);
+  const runCommand = useProject((s) => s.runCommand);
+  const doc = useProject((s) => s.doc);
+  const [status, setStatus] = useState<Record<string, KartenStatus>>({});
+
+  const karten = useMemo<UnternehmerKarte[]>(() => {
+    if (!dxf || !abgleich) return [];
+    return baueKarten(abgleich, dxf.bericht);
+  }, [dxf, abgleich]);
+
+  // Daten-Guard: ohne geladenen Unternehmerplan gibt es kein Panel.
+  if (!dxf || !abgleich) return null;
+
+  const berichtText = importBerichtText(dxf.bericht, abgleich);
+
+  const uebernehmen = (karte: UnternehmerKarte) => {
+    const command = commandFuerKarte(doc, karte);
+    if (!command) {
+      setStatus((s) => ({ ...s, [karte.id]: 'manuell' }));
+      melde(
+        `«${karte.titel}» ist nicht eindeutig zuordenbar — bitte manuell übernehmen.`,
+        { ton: 'fehler' },
+      );
+      return;
+    }
+    try {
+      // Derselbe runCommand-Weg wie ein Klick oder `apply-proposal` in
+      // KosmoPanel.tsx — atomare Undo-Gruppe, Yjs-Sync, Journal. Nie stilles
+      // Überschreiben (C-E4).
+      const result = runCommand(command.id, command.params);
+      setStatus((s) => ({ ...s, [karte.id]: 'uebernommen' }));
+      melde(`«${karte.titel}» übernommen: ${result.summary}.`, { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  return (
+    <div
+      data-testid="unternehmerplan-panel"
+      className="k-dialog"
+      style={{
+        position: 'absolute',
+        right: 12,
+        top: 52,
+        zIndex: 20,
+        width: 'min(420px, calc(100vw - 122px))',
+        maxHeight: 'calc(100% - 90px)',
+        overflow: 'auto',
+        background: 'var(--k-raised)',
+        border: '1px solid var(--k-technik)',
+        boxShadow: 'var(--k-shadow-overlay)',
+        padding: 12,
+        display: 'grid',
+        gap: 10,
+        fontSize: 12.5,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Badge hue="var(--k-mod-design)">Unternehmerplan</Badge>
+        {dateiname && (
+          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11, fontFamily: 'var(--k-font-mono)' }}>
+            {dateiname}
+          </span>
+        )}
+      </div>
+
+      <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{berichtText}</span>
+
+      <Hairline />
+
+      {karten.length === 0 ? (
+        <span style={{ color: 'var(--k-ink-faint)' }}>Keine Karten.</span>
+      ) : (
+        <div style={{ display: 'grid', gap: 6 }} data-testid="unternehmerplan-karten">
+          {karten.map((karte, i) => {
+            const st = status[karte.id] ?? 'offen';
+            const zeigeAnwenden = karte.stufe === 1 && st === 'offen';
+            return (
+              <Karteikarte key={karte.id} nr={i + 1} data-testid={`karte-${karte.id}`}>
+                <div style={{ display: 'grid', gap: 4, padding: '8px 10px', width: '100%' }}>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                    <span style={{ fontWeight: 600, fontSize: 12.5, flex: 1, minWidth: 160 }}>{karte.titel}</span>
+                    {st === 'uebernommen' ? (
+                      <Badge hue="var(--k-success)">übernommen ✓</Badge>
+                    ) : st === 'manuell' ? (
+                      <Badge hue="var(--k-warning)">manuell</Badge>
+                    ) : karte.stufe === 1 ? (
+                      <Badge hue="var(--k-info)">Stufe 1</Badge>
+                    ) : (
+                      <Badge hue="var(--k-ink-faint)">markiert</Badge>
+                    )}
+                  </div>
+                  <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>{karte.detail}</span>
+                  {zeigeAnwenden && (
+                    <div>
+                      <KButton
+                        size="sm"
+                        tone="accent"
+                        data-testid={`karte-anwenden-${karte.id}`}
+                        onClick={() => uebernehmen(karte)}
+                      >
+                        Übernehmen
+                      </KButton>
+                    </div>
+                  )}
+                </div>
+              </Karteikarte>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
