@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 import type { SimSzenario } from './szenarien';
-import type { SubmissionsBefund } from '@kosmo/kernel';
+import type { SubmissionsBefund, SiaPhase } from '@kosmo/kernel';
 
 /**
  * Serie H (Buildplan `docs/SERIE-H-BUILDPLAN.md`, Abschnitt 1.3) —
@@ -1051,4 +1051,107 @@ export async function grundlagenStudieAusfuehren(
   );
   expect(koerperIds.length, 'nicht alle neuen Körper tragen program:"studie"').toBe(nachher - vorher);
   return koerperIds;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 21 — phaseWechseln (VP7, `docs/V063-VOLLPROJEKT-KONZEPT.md`
+// Abschnitt 4, Lücken-Batch 6/7 zusammengelegt — s. Abweichungs-Hinweis
+// beim nächsten Baustein) — erste Ergänzung nach dem H2-Freeze für die
+// Vollprojekt-Kette (`sim-vollprojekt-phaseN.spec.ts`).
+// ─────────────────────────────────────────────────────────────────────────
+/**
+ * Wechselt die SIA-**Teilphase** (`doc.settings.siaPhase`, A8/K18) über das
+ * ECHTE UI: Projekt-Menü öffnen (falls zu) → `sia-phase-select` setzen → das
+ * A8-Preset-Angebot bedienen. `design.siaPhaseSetzen` koppelt bewusst NICHT
+ * an den Plan-Detaillierungsgrad (`design.phaseSetzen`/Baustein 3
+ * `phaseSchalten`) — beide Achsen bleiben getrennt, exakt wie
+ * `phasen-presets.ts`s Modulkommentar es festhält; wer beides braucht, ruft
+ * beide Bausteine.
+ *
+ * Kein-Wechsel-Fall (Regel `faehigkeiten-phasen.spec.ts` Z.100-101: «kein
+ * Angebot vor einem echten Wechsel»): bleibt `siaPhase` gleich (z.B. Phase 1
+ * setzt explizit 'wettbewerb', der Doc-Default, `model/doc.ts`
+ * `defaultSettings.siaPhase`), bietet A8 NICHTS an — der Baustein liest den
+ * Vorzustand VOR dem Select und überspringt das Banner in diesem Fall
+ * ehrlich, statt auf ein nie erscheinendes `phasen-preset-angebot` zu warten.
+ *
+ * `presetAnwenden`: `true` klickt `phasen-preset-anwenden` (Fokus-Icons auf
+ * volle Opazität, Rest gedämpft), `false` klickt `phasen-preset-verwerfen`
+ * (keine Änderung an den Icons, nur die Teilphase selbst wechselt — s.
+ * `faehigkeiten-phasen.spec.ts` «Ablehnen-Pfad»).
+ */
+export async function phaseWechseln(page: Page, siaPhase: SiaPhase, presetAnwenden: boolean): Promise<void> {
+  const vorher = await page.evaluate(() => window.__kosmo.state().doc.settings.siaPhase); // [Quelle: model/doc.ts 'siaPhase: SiaPhase' Z.258]
+
+  if (!(await page.locator('[data-testid="projekt-menu"]').isVisible())) {
+    await page.click('[data-testid="projekt-menu-toggle"]'); // [Quelle: DesignWorkspace.tsx Z.1708]
+  }
+  const auswahl = page.locator('[data-testid="sia-phase-select"]'); // [Quelle: DesignWorkspace.tsx Z.1848]
+  await expect(auswahl).toBeVisible();
+  await auswahl.selectOption(siaPhase);
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.settings.siaPhase))
+    .toBe(siaPhase); // Regel R3: Doc pollen statt DOM
+
+  if (vorher === siaPhase) return; // kein echter Wechsel → A8 bietet nichts an (s. Kommentar oben)
+
+  const angebot = page.locator('[data-testid="phasen-preset-angebot"]'); // [Quelle: DesignWorkspace.tsx Z.1997]
+  await expect(angebot).toBeVisible();
+  if (presetAnwenden) {
+    await page.click('[data-testid="phasen-preset-anwenden"]'); // [Quelle: DesignWorkspace.tsx Z.2023]
+  } else {
+    await page.click('[data-testid="phasen-preset-verwerfen"]'); // [Quelle: DesignWorkspace.tsx Z.2031]
+  }
+  await expect(angebot).toHaveCount(0);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 22 — berichtExportPruefen (VP7)
+// ─────────────────────────────────────────────────────────────────────────
+/**
+ * Export-Knopf klicken (Regel R10: `Promise.all`, nie click-dann-warten),
+ * EXAKTEN Dateinamen + nichtleeren Download prüfen; liefert den lokalen
+ * Download-Pfad für journey-spezifische Inhalts-Marker (Disclaimer-Text,
+ * Kennzahlen) zurück — dieselbe Signatur-Idee wie Baustein 17
+ * `exportPruefen`, aber bewusst NICHT dieselbe Funktion wiederverwendet
+ * (API-Freeze: Baustein 17 bleibt unverändert stehen, s. Kommentarkopf der
+ * Datei).
+ *
+ * Abweichung: `exportPruefen` (Baustein 17) matcht den Dateinamen gegen ein
+ * `RegExp`-Muster (IFC/DXF/PDF-Plansatz-Exporte, deren Namen einen
+ * Projektnamen enthalten) — die vier Bericht-Exporte dieser Kette
+ * (`kv-blatt.svg`/`bauablaufblatt.svg`/`abnahmeprotokoll.svg`/
+ * `grundlagenstudie.svg`, je Panel EIN fest verdrahteter `a.download`-Wert,
+ * `KvPanel.tsx` Z.58 / `BauablaufPanel.tsx` Z.37 / `MaengelPanel.tsx` Z.108 /
+ * `DesignWorkspace.tsx` Z.2062) haben dagegen einen EXAKTEN, konstanten
+ * Namen — ein `RegExp`-Parameter wäre hier nur ein `.svg$`-Nachbau, der die
+ * schärfere exakte Prüfung verwässert. Ein einziger, generischer
+ * Export-Baustein für beide Fälle bräuchte eine Union-Signatur
+ * (`string | RegExp`) ohne echten Zusatznutzen — zwei kleine, klar benannte
+ * Bausteine sind ehrlicher als eine überladene Funktion (kein Baustein-17-
+ * Bruch, append-only-Regel bleibt sauber).
+ *
+ * NICHT gebaut (Owner-Abweichung, Konzept §4 Lücken-Batch 7): die dort
+ * skizzierten Spiegel-Bausteine `unternehmerplanImportieren`/
+ * `diffKartenPruefen`/`diffKarteAnwenden` für `bausteine.ts` — der
+ * Ein-Klick-Upload (K5, ROADMAP 230, `verarbeiteUnternehmerplanDatei()`) hat
+ * die alten Textblock-getriebenen Importpfade, die das Konzept noch vor
+ * Augen hatte, längst ersetzt; Phase 5 dieser Kette (`sim-vollprojekt-
+ * phase5.spec.ts`) braucht für den PDF-Drop-Ehrlichkeitspfad (Muster
+ * `unternehmerplan-pdf.spec.ts`) keinen eigenen Baustein — der bestehende
+ * `filechooser`-Weg genügt direkt in der Spec, ein Diff-Karten-Rücklauf wie
+ * in `sim-submission.spec.ts` ist für diese Phase nicht Teil des
+ * Owner-Auftrags. Was die Kette wirklich neu braucht, sind exakt diese
+ * zwei Bausteine (21+22).
+ */
+export async function berichtExportPruefen(page: Page, ausloeserTestid: string, dateiname: string): Promise<string> {
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click(`[data-testid="${ausloeserTestid}"]`),
+  ]); // [Quelle: sim-umbau.spec.ts Z.197-200 / Baustein 17 exportPruefen — Regel R10]
+  expect(download.suggestedFilename()).toBe(dateiname);
+  const pfad = await download.path();
+  const { statSync } = await import('node:fs');
+  expect(statSync(pfad!).size).toBeGreaterThan(0);
+  return pfad!;
 }

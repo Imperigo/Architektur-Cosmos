@@ -63,10 +63,15 @@ test('Baugesuch: TKB → Publish → Wand + Schnitt → Baugesuch-Knopf → mehr
   await page.evaluate(() => window.__kosmo.open('publish'));
   const sheetsVorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('sheet').length);
 
-  // Vorbedingung «mind. 1 Schnitt»: ein Arbeitsblatt mit einer platzierten Schnittlinie
+  // Vorbedingung «mind. 1 Schnitt»: ein Arbeitsblatt mit einer platzierten Schnittlinie.
+  // H-24-Fix (SIM-BEFUNDE): die Schnittlinie ist bei achsenparalleler
+  // Schnittebene ein SVG-`line` mit Bounding-Breite 0 (x1===x2) — für
+  // Playwright nie «visible» (dieselbe R4-Regel wie Baustein 18
+  // `terrainSetzen`, `e2e/sim/bausteine.ts`). `toBeAttached` beweist die
+  // Existenz der Linie, ohne von der zufälligen Schnittrichtung abzuhängen.
   await page.click('[data-testid="add-sheet"]');
   await page.click('[data-testid="place-section"]');
-  await expect(page.locator('[data-testid="sheet-canvas"] line').first()).toBeVisible();
+  await expect(page.locator('[data-testid="sheet-canvas"] line').first()).toBeAttached();
 
   // Baugesuch-Knopf
   await page.click('[data-testid="baugesuch-erstellen"]');

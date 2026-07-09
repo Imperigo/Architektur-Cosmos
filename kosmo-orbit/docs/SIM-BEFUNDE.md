@@ -577,3 +577,78 @@ Entscheid:   Containment-Portal / Überlappungs-Warnung ist ein V2-Kandidat →
 kein H-Fix ohne Owner-Priorisierung. Die Hochhaus-Journey modelliert bewusst
 adjazent (kantenteilend), sodass der Egress korrekt verdrahtet ist.
 Status:      doku (V2)
+
+### H-24 — `baugesuch.spec.ts`: Schnittlinien-Vorbedingung scheitert an degenerierter Bounding-Box (08.07.2026, Journey vollprojekt-phase4, Schritt 3)
+Beobachtung: `e2e/baugesuch.spec.ts` (VP2) trägt selbst den Hinweis «NICHT im
+Worktree ausgeführt (Owner-Auftrag) — der Koordinator fährt ihn nach dem
+Einpflegen» — beim ersten echten Lauf in diesem Batch (VP6 Phase 4 baut
+denselben Ablauf: Rechteck zeichnen → Schnitt platzieren → Assertion auf
+`[data-testid="sheet-canvas"] line"` `toBeVisible()`) schlug GENAU diese
+Zeile fehl: `Received: hidden`, obwohl das Element resolved wurde
+(`<line x1="…" x2="…" stroke="#444" …>` mit `x1 === x2`). Die abgeleitete
+Schnittlinie ist bei achsenparalleler Schnittebene ein SVG-`line` mit
+Bounding-Breite 0 — exakt dieselbe Klasse Problem, die Baustein 18
+`terrainSetzen` (`e2e/sim/bausteine.ts`, Regel R4) für degeneriertes
+Terrain schon dokumentiert: Playwright meldet ein Element mit
+Bounding-Höhe/Breite 0 nie als «visible».
+Triage:      zu-strikte-assertion (Regel R4 — kein Produktfehler, die Linie
+existiert und ist korrekt gezeichnet)
+Beleg:       `e2e/baugesuch.spec.ts` Z.66-69 (Reproduktion: `npx playwright
+test e2e/baugesuch.spec.ts` schlägt am ersten der zwei Tests fehl, vor dem
+H-24-Fix); `e2e/sim/bausteine.ts` Baustein 18 Regel R4 (identisches Muster).
+Entscheid:   Trivialer, regressionsfreier Fix direkt im bestehenden VP2-Test
+(nicht nur in der neuen VP6-Kette umgangen): `.toBeVisible()` →
+`.toBeAttached()` für diese eine Zeilen-Assertion, mit Verweis auf Regel R4
+im Kommentar. `e2e/sim-vollprojekt-phase4.spec.ts` (VP6) übernimmt denselben
+Fix von Anfang an. Beide Specs 2× grün nach dem Fix.
+Status:      fix-batch VP6+VP7 (dieser Batch, kein neuer ROADMAP-Eintrag
+nötig — Ein-Zeilen-Testfix, kein Produktcode berührt)
+
+### H-25 — Baustein 12 `berechnungslistePruefen` setzt ein bereits offenes Liste-Panel voraus (08.07.2026, Journey vollprojekt-phase2, Schritt 5)
+Beobachtung: `berechnungslistePruefen` (Baustein 12, `e2e/sim/bausteine.ts`
+Z.811-823) assertet direkt `[data-testid="liste-tabelle"]` `toBeVisible()`,
+ohne das Panel selbst zu öffnen. In JEDEM bisherigen Aufrufer (`sim-mfh.spec.ts`)
+war das Panel bereits offen, weil `segmentieren` (Baustein 9) vorher
+`[data-testid="liste-toggle"]` klickt. `sim-vollprojekt-phase2.spec.ts` baut
+das Erdgeschoss ohne den Segmentierer (nur Wände/Decke/Zone per Command) und
+ruft `berechnungslistePruefen` direkt auf — das Panel war zu, die Tabelle
+nie im DOM, Timeout.
+Triage:      v2-lücke / Coverage-Lücke (kein Bug — der Baustein tut exakt,
+was sein Name sagt: er PRÜFT die Liste, öffnet sie nicht; die stillschweigende
+Abhängigkeit von Baustein 9 war bisher nie dokumentiert, weil nie getrennt
+aufgerufen)
+Beleg:       `e2e/sim/bausteine.ts` Z.657-696 (`segmentieren`, klickt
+`liste-toggle` Z.662) vs. Z.811-823 (`berechnungslistePruefen`, kein eigener
+Toggle-Klick); `e2e/sim-vollprojekt-phase2.spec.ts` (neuer, direkter Aufrufer
+ohne Segmentierer).
+Entscheid:   Kein Baustein-Fix (API-Freeze, Baustein 12 bleibt unverändert —
+ein zusätzlicher impliziter Toggle-Klick in einer bestehenden, eingefrorenen
+Funktion wäre eine stille Verhaltensänderung). Der Aufrufer trägt die
+Verantwortung: `sim-vollprojekt-phase2.spec.ts` klickt `liste-toggle` selbst,
+mit Kommentar-Verweis auf diesen Befund. Für einen künftigen Baustein-23+
+könnte das Panel-Öffnen ergänzt werden (kein Blocker, keine v0.6.3-Pflicht).
+Status:      offen (Doku-Befund, Spec-seitig umgangen)
+
+### H-26 — Baustein 3 `phaseSchalten` verlangt bereits gezeichnete Geometrie (08.07.2026, Journey vollprojekt-phase2/3/4, Schritt 1)
+Beobachtung: `phaseSchalten` (Baustein 3) endet mit `stabilePfadzahl()`, die
+`[data-testid="planview"] path"` auf `count() > 0` UND zwei stabile Messungen
+in Folge pollt (Regel R1: nie eine fixe Pfadzahl). Ruft man `phaseSchalten`
+auf einem NOCH LEEREN Geschoss (keine Wände/Decken/Zonen — z. B. direkt nach
+`phaseWechseln`, vor jeder Geometrie), pollt die Funktion bis zum Timeout,
+weil die Pfadzahl nie über 0 steigt. In allen bisherigen Journeys (`sim-efh`,
+`sim-hochhaus`, `sim-submission`) stand beim `phaseSchalten`-Aufruf bereits
+Geometrie im Plan — die Vorbedingung «nicht-leerer Plan» war nie explizit
+benannt, weil nie verletzt.
+Triage:      kein-bug (Baustein tut exakt, was er soll — die Vorbedingung war
+nur nicht dokumentiert, weil in Serie H nie verletzt)
+Beleg:       `e2e/sim/bausteine.ts` Z.226-268 (`stabilePfadzahl`/
+`phaseSchalten`); erster Fehlversuch von `sim-vollprojekt-phase2.spec.ts`
+(Baustein-21-Aufruf unmittelbar gefolgt von Baustein-3-Aufruf auf leerem
+Geschoss, `Plan-SVG-Pfadzahl stabilisiert sich nicht`-Timeout).
+Entscheid:   Kein Baustein-Fix. Alle sechs VP6-Phasen-Specs rufen
+`phaseSchalten` jetzt bewusst NACH der Wände/Decken/Zonen-Konstruktion auf
+(dokumentiert im jeweiligen Spec-Kommentar) — dieselbe Reihenfolge, die die
+bestehenden Journeys immer schon (implizit) eingehalten haben. Ein Kandidat
+für eine spätere Baustein-3-Doku-Ergänzung («Vorbedingung: Geschoss trägt
+bereits Geometrie»), kein Produktcode-Fix.
+Status:      doku
