@@ -730,7 +730,7 @@ function NodeKoerper({
               data-testid="render-ausfuehren"
               onClick={onAusfuehren}
               disabled={laeuftNoch || cloudLeer}
-              title={cloudLeer ? 'Kein HomeStation-Server verbunden — im Cloud-Betrieb rendert die Kette nicht lokal.' : undefined}
+              title={cloudLeer ? 'Kein HomeStation-Server verbunden — im Cloud-Betrieb rendert die Kette nicht lokal. Ein Cloud-Renderweg (Gemini Omni Flash, Public Preview) ist im Tech-Radar (KosmoDoc) vorgemerkt — braucht deinen Entscheid + API-Schlüssel.' : undefined}
             >
               Ausführen
             </KButton>
@@ -796,7 +796,7 @@ function NodeKoerper({
                         : lauf
                           ? 'rendert im GPU-Leerlauf …'
                           : cloudLeer
-                            ? 'Cloud-Betrieb: kein lokaler Render'
+                            ? 'Cloud-Betrieb: kein lokaler Render. Geprüfter Cloud-Weg (Gemini Omni Flash, Preview) wartet auf Owner-Entscheid + Schlüssel — siehe KosmoDoc → Tech-Radar.'
                             : 'Bild erscheint hier'}
             </div>
           )}

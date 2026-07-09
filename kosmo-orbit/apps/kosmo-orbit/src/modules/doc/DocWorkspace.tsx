@@ -3,6 +3,7 @@ import { LearningJournal } from '@kosmo/ai';
 import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, moduleHue } from '@kosmo/ui';
 import { DiagnosePanel } from '../../shell/Diagnose';
 import { journalStore } from '../../state/journal-store';
+import { entscheidFarbe, RADAR_BEREICHE, RADAR_STAND, TECH_RADAR } from './tech-radar';
 
 /**
  * KosmoDoc — der Projektdoktor als eigenes Modul (Owner-Q24, Vision Persona 3):
@@ -10,7 +11,7 @@ import { journalStore } from '../../state/journal-store';
  * (Lernjournal — echte Daten, keine Attrappen).
  */
 
-type Tab = 'diagnose' | 'hilfe' | 'berichte';
+type Tab = 'diagnose' | 'hilfe' | 'berichte' | 'radar';
 
 interface HilfeThema {
   titel: string;
@@ -79,7 +80,7 @@ export function DocWorkspace() {
             Der Projektdoktor — Diagnose, Hilfe, Berichte.
           </span>
           <div style={{ flex: 1 }} />
-          {(['diagnose', 'hilfe', 'berichte'] as Tab[]).map((t) => (
+          {(['diagnose', 'hilfe', 'berichte', 'radar'] as Tab[]).map((t) => (
             <KButton
               key={t}
               size="sm"
@@ -87,7 +88,7 @@ export function DocWorkspace() {
               onClick={() => setTab(t)}
               data-testid={`doc-tab-${t}`}
             >
-              {t === 'diagnose' ? 'Diagnose' : t === 'hilfe' ? 'Hilfe' : 'Berichte'}
+              {t === 'diagnose' ? 'Diagnose' : t === 'hilfe' ? 'Hilfe' : t === 'berichte' ? 'Berichte' : 'Tech-Radar'}
             </KButton>
           ))}
         </div>
@@ -119,6 +120,47 @@ export function DocWorkspace() {
             ))}
             <span style={{ color: 'var(--k-ink-faint)', fontSize: 12 }}>
               Für alles andere: frag Kosmo direkt im Panel rechts — er kennt Modell und Werkzeuge.
+            </span>
+          </div>
+        )}
+
+        {tab === 'radar' && (
+          <div style={{ display: 'grid', gap: 12 }} data-testid="doc-radar">
+            <span style={{ color: 'var(--k-ink-soft)', fontSize: 12.5, lineHeight: 1.5 }}>
+              Worauf diese Software technisch steht — und was beobachtet wird. {RADAR_STAND}.
+              Posten mit ⚠ stammen aus den Notion-Scans und sind noch nicht selbst verifiziert.
+            </span>
+            {RADAR_BEREICHE.map((bereich) => (
+              <div key={bereich} style={{ display: 'grid', gap: 6 }}>
+                <div className="k-titel" style={{ fontSize: 13 }}>{bereich}</div>
+                {TECH_RADAR.filter((p) => p.bereich === bereich).map((p) => (
+                  <div
+                    key={p.baustein}
+                    data-testid="radar-posten"
+                    style={{ display: 'flex', gap: 10, alignItems: 'baseline', fontSize: 12.5, borderBottom: '1px solid var(--k-line)', paddingBottom: 5 }}
+                  >
+                    <span
+                      style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, fontWeight: 700, color: entscheidFarbe(p.entscheid), minWidth: 62 }}
+                      title={p.unverifiziert ? 'Scan-Aussage — noch nicht selbst verifiziert' : undefined}
+                    >
+                      {p.entscheid}
+                      {p.unverifiziert ? ' ⚠' : ''}
+                    </span>
+                    <span style={{ fontWeight: 600, minWidth: 170 }}>{p.baustein}</span>
+                    <span style={{ flex: 1, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>
+                      {p.kommentar}
+                      {p.paket ? (
+                        <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-faint)' }}>
+                          {' '}· {p.paket}{p.lizenz ? ` (${p.lizenz})` : ''}
+                        </span>
+                      ) : null}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ))}
+            <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+              Vollständige, begründete Fassung inkl. Lizenz-Politik: kosmo-orbit/docs/TECH-RADAR.md.
             </span>
           </div>
         )}
