@@ -5,6 +5,7 @@ import {
   formatiereLeistungsBericht,
   holeLetztesErgebnis,
   holeOverride,
+  istRenderBeiBedarfAn,
   istZustimmungErteilt,
   leistungRevisionAktuell,
   leistungsStufeAus,
@@ -12,6 +13,7 @@ import {
   pruefeLeistungMitFreigabe,
   schattenAnFuerStufe,
   setOverride,
+  setRenderBeiBedarf,
   setZustimmung,
   type LeistungsMerkmale,
 } from '../src/state/leistung';
@@ -166,6 +168,40 @@ describe('formatiereLeistungsBericht — benennt offen, was nicht messbar war', 
     // In der Vitest/jsdom-Umgebung ist WEBGL_debug_renderer_info nicht vorhanden —
     // der Renderer-String muss das ehrlich sagen, nicht schweigen oder faken.
     expect(bericht.renderer).toMatch(/nicht verfügbar/);
+  });
+});
+
+describe('renderBeiBedarf (V-M1 Commit 2) — on-demand-Renderloop-Schalter', () => {
+  it('Default AN — ein frischer Speicher (kein Feld) zählt als true, keine stille Rückstufung', () => {
+    expect(istRenderBeiBedarfAn()).toBe(true);
+  });
+
+  it('setRenderBeiBedarf(false) persistiert und bumpt die Revision (Viewport3D-Poll)', () => {
+    const r0 = leistungRevisionAktuell();
+    setRenderBeiBedarf(false);
+    expect(istRenderBeiBedarfAn()).toBe(false);
+    expect(leistungRevisionAktuell()).toBeGreaterThan(r0);
+  });
+
+  it('bleibt über einen erneuten Ladevorgang persistent (Grundlage der E2E-storageState-Saat)', () => {
+    setRenderBeiBedarf(false);
+    // Simuliert "Reload": derselbe localStorage, neuer Lesevorgang.
+    expect(istRenderBeiBedarfAn()).toBe(false);
+    setRenderBeiBedarf(true);
+    expect(istRenderBeiBedarfAn()).toBe(true);
+  });
+
+  it('ein von Hand geschriebener Speicher OHNE das Feld (Alt-Stand vor Commit 2) bleibt gültig und liefert true', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto' }));
+    expect(istRenderBeiBedarfAn()).toBe(true);
+  });
+
+  it('ein kaputter Wert (falscher Typ) fällt auf den Basiszustand zurück statt zu crashen', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: 'ja' }),
+    );
+    expect(istRenderBeiBedarfAn()).toBe(true); // Basiszustand-Default, kein Absturz
   });
 });
 

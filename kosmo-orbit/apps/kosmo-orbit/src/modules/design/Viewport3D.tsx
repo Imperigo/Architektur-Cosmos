@@ -209,7 +209,7 @@ export interface ViewportHandlers {
 }
 
 import { materialKarten, texturenAktiv } from './texturen';
-import { effektiveLeistungsStufe, leistungRevisionAktuell, pixelRatioFuerStufe, schattenAnFuerStufe } from '../../state/leistung';
+import { effektiveLeistungsStufe, istRenderBeiBedarfAn, leistungRevisionAktuell, pixelRatioFuerStufe, schattenAnFuerStufe } from '../../state/leistung';
 
 // C2: Textur-Umschalter — Rebuild des Modells beim Wechsel
 let texturRevision = 0;
@@ -1045,6 +1045,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
               o.receiveShadow = true;
             });
             scene.add(glbGroup);
+            invalidate(); // V-M1 Commit 2: asynchroner Ladeabschluss — sonst verpasst on-demand die neue Geometrie
             console.info('Referenz-3D geladen:', req.url);
           },
           undefined,
@@ -1172,6 +1173,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           if (e.data.revision !== useProject.getState().revision) return;
           lastRevision = e.data.revision;
           applyArtifacts(e.data.artifacts);
+          invalidate(); // V-M1 Commit 2: Worker-Antwort kommt in einem eigenen Task, ausserhalb jedes rAF-Ticks
         };
       }
       deriveWorker.postMessage({ revision, json: doc.toJSON() });
@@ -1244,6 +1246,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     };
 
     const onPointerDown = (ev: PointerEvent) => {
+      // V-M1 Commit 2: jede Zeigergeste ist potenziell sichtbar (Auswahl,
+      // Mesh-Handle-Griff, Skizzenstrich-Start, Kontextmenü) — billiger,
+      // konservativer Trigger statt jeden einzelnen Folgefall separat zu
+      // instrumentieren.
+      invalidate();
       // Block 3 / E4: pointerdown auf einem Vertex-Handle startet den lokalen
       // Zieh-Zustand — hat Vorrang vor Gesten-Automat/Klick-Erkennung, sonst
       // würde ein Doppel-Tap auf einem Handle versehentlich «Einpassen» lösen.
@@ -1294,6 +1301,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       downPos = { x: ev.clientX, y: ev.clientY };
     };
     const onPointerUp = (ev: PointerEvent) => {
+      // V-M1 Commit 2: Loslassen beendet oft eine Geste sichtbar (Klick-
+      // Auswahl, Kontextmenü, Mesh-Drag-Commit, Skizzenstrich-Ende).
+      invalidate();
       // Block 3 / E4: ein laufender Vertex-Drag committet HIER als EIN
       // `onMeshVertexDrag` (NodeCanvas-/T5-Muster) — verbraucht das up, bevor
       // Gesten-Automat/Klick-Erkennung etwas damit anfangen.
@@ -1377,6 +1387,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (p) handlers.current?.onGroundClick?.({ p, shiftKey: ev.shiftKey });
     };
     const onPointerMove = (ev: PointerEvent) => {
+      // V-M1 Commit 2: deckt Hover-Vorschau (Gummiband/Fangpunkt, von
+      // DesignWorkspace über `handlers.current.previewLine` gesetzt),
+      // Mesh-Handle-Drag und Skizzenstriche in einem Rutsch ab.
+      invalidate();
       // Block 3 / E4: der Handle folgt lokal dem Zeiger — nur die erlaubte
       // Achse ändert sich (horizontal: x/z auf Handle-Höhe; vertikal/Shift:
       // nur die Höhe, x/z bleiben am Ursprung — threeDeltaZuKernel erzwingt
@@ -1406,7 +1420,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (p) handlers.current?.onGroundMove?.({ p, shiftKey: ev.shiftKey });
     };
     const onKey = (ev: KeyboardEvent) => {
-      if (ev.key === 'Escape') handlers.current?.onEscape?.();
+      if (ev.key === 'Escape') {
+        handlers.current?.onEscape?.();
+        invalidate(); // V-M1 Commit 2: Escape bricht i.d.R. eine sichtbare Vorschau/Auswahl ab
+      }
     };
     renderer.domElement.addEventListener('pointerdown', onPointerDown);
     renderer.domElement.addEventListener('pointerup', onPointerUp);
@@ -1470,7 +1487,128 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const clock = new THREE.Clock();
     let raf = 0;
     let testMode = false;
+
+    // -------------------------------------------------------------------
+    // V-M1 Commit 2 (v0.6.6 W2): Renderloop on-demand statt Dauerschleife.
+    // Flag in `state/leistung.ts` (`istRenderBeiBedarfAn`, Default AN für
+    // Nutzer:innen, E2E sät bewusst AUS über playwright-storageState) —
+    // AUS verhält sich BYTE-IDENTISCH zum alten Dauerloop (der komplette
+    // Gate-Block unten wird dann übersprungen, jeder Tick rendert wie bisher).
+    // AN: gerendert wird nur bei (a) camera-controls-Kamerabewegung
+    // (`controls.update()`-Rückgabewert — deckt `update`/`control`/
+    // Übergänge ab, s. Bibliotheksquelle: die 'update'-Events dispatchen
+    // exakt beim selben `true`), (b) Doc-/Auswahl-/Geschoss-Änderung
+    // (`useProject.subscribe`) + Modul-Level-Signalen ohne Event-Kanal
+    // (Kontext/Sonne/Splat/Textur/GLB/Modulraster/Leistungsstufe — billige
+    // Revisions-Vergleiche, dieselben Zähler wie die bestehenden syncXxx()),
+    // (c) laufenden Gesten (Zeiger-Events, Skizzieren, Mesh-Drag, Long-Press-
+    // Treffer), (d) explizitem `invalidate()` (Resize, asynchrone Worker-/
+    // GLB-Antworten). Fallback-Schraube: ein FPS-Deckel (30) ausserhalb
+    // aktiver Kamerabewegung, falls eine Invalidierungs-Quelle zu oft feuert.
+    let needsRender = true; // erste Zeichnung
+    const invalidate = () => {
+      needsRender = true;
+    };
+    let renderBeiBedarfAn = istRenderBeiBedarfAn();
+    let letzteFlagRevision = leistungRevisionAktuell();
+    let letzterRenderMs = 0;
+    const FPS_DECKEL_INTERVALL_MS = 1000 / 30;
+    let frameCount = 0;
+    // Doc/Auswahl/aktives Geschoss: JEDE Store-Aktualisierung ist visuell
+    // relevant (Patches, Undo/Redo, Yjs-Sync von einem Remote-Peer, Kosmo-KI).
+    const unsubscribeProjekt = useProject.subscribe(() => invalidate());
+    // Modul-Level-Revisionen (kein Event-Kanal, s. Datei-Kopf) — eigene
+    // "zuletzt gesehen"-Variablen, getrennt von den syncXxx()-internen
+    // (die laufen nur, wenn ohnehin schon gerendert wird).
+    let dirtyContextRevision = contextRevision;
+    let dirtySunRevision = sunRevision;
+    let dirtyModulRevision = modulRevision;
+    let dirtySplatRevision = splatRevision;
+    let dirtyTexturRevision = texturRevision;
+    let dirtyGlbRevision = glbRevision;
+    // Werkzeug-/Modus-Signatur aus dem `handlers`-Ref + den Sketch-Refs (kein
+    // Event-Kanal, DesignWorkspace/die React-States mutieren sie ausserhalb
+    // dieses Effekts) — nur die Felder, die Viewport3D tatsächlich liest.
+    let letzteAeussereSignatur = '';
+    function aeussereSignatur(): string {
+      const h = handlers.current;
+      return `${h?.sketchMode ?? false}|${h?.meshEditId ?? ''}|${h?.pickMode ?? false}|${h?.previewLine?.length ?? -1}|${sketchStrokesRef.current.length}|${sketchPendingRef.current ? sketchPendingRef.current.length : -1}`;
+    }
+
     const renderFrame = () => {
+      // Immer günstig, JEDEN Tick (auch im on-demand-Leerlauf) — MUSS laufen,
+      // sonst bricht die Feder-Physik bei Wiederaufnahme (Doku: "This should
+      // be called in your tick loop every time"). Der Rückgabewert ist exakt
+      // das camera-controls-`update`-Signal.
+      const kameraAktiv = controls.update(clock.getDelta());
+      if (kameraAktiv) invalidate();
+
+      // Flag-Wechsel + Modul-Level-Revisionen + Werkzeug-Signatur: billige
+      // Vergleiche, unabhängig vom aktuellen Render-Gate unten geprüft.
+      if (leistungRevisionAktuell() !== letzteFlagRevision) {
+        letzteFlagRevision = leistungRevisionAktuell();
+        renderBeiBedarfAn = istRenderBeiBedarfAn();
+        invalidate();
+      }
+      if (
+        contextRevision !== dirtyContextRevision ||
+        sunRevision !== dirtySunRevision ||
+        modulRevision !== dirtyModulRevision ||
+        splatRevision !== dirtySplatRevision ||
+        texturRevision !== dirtyTexturRevision ||
+        glbRevision !== dirtyGlbRevision
+      ) {
+        dirtyContextRevision = contextRevision;
+        dirtySunRevision = sunRevision;
+        dirtyModulRevision = modulRevision;
+        dirtySplatRevision = splatRevision;
+        dirtyTexturRevision = texturRevision;
+        dirtyGlbRevision = glbRevision;
+        invalidate();
+      }
+      const aktSignatur = aeussereSignatur();
+      if (aktSignatur !== letzteAeussereSignatur) {
+        letzteAeussereSignatur = aktSignatur;
+        invalidate();
+      }
+
+      // Serie J / J2: Kontextcursor je Werkzeug/Modus — DOM-Style, kein
+      // Render, darum ungegatet jeden Tick (wie bisher).
+      {
+        const tool = handlers.current?.sketchMode ? 'skizze' : handlers.current?.pickMode ? 'auswahl' : 'wand';
+        const cur = werkzeugCursorFuer(tool, navModusRef.current);
+        if (renderer.domElement.style.cursor !== cur) renderer.domElement.style.cursor = cur;
+      }
+      // J1b: Long-Press-Automat MUSS jeden Tick laufen (Timer-Fenster) —
+      // sonst verpasst on-demand einen gehaltenen Zeiger. Öffnet das
+      // Kontextmenü + setzt den Orbit-Pivot (nur ausserhalb Skizzenmodus/
+      // offenem Menü; feuert genau einmal).
+      if (!handlers.current?.sketchMode && !kontextOffenRef.current) {
+        const lp = gesten.pruefeLongPress(performance.now());
+        if (lp.longPress) {
+          const hit = meshTrefferAt(lp.longPress.x, lp.longPress.y);
+          if (hit) controls.setOrbitPoint(hit.point.x, hit.point.y, hit.point.z);
+          const r = mount.getBoundingClientRect();
+          setKontextRef.current({ x: lp.longPress.x - r.left, y: lp.longPress.y - r.top, clientX: lp.longPress.x, clientY: lp.longPress.y });
+          invalidate();
+        }
+      }
+
+      // ---- Render-Gate ----------------------------------------------
+      // AUS (E2E-Default): dieser Block tut nichts, die Funktion läuft
+      // exakt wie vor Commit 2 bis zum Ende durch — byte-identisches
+      // Altverhalten für ALLE bestehenden 3D-Specs.
+      if (renderBeiBedarfAn) {
+        if (!needsRender) return;
+        // Fallback-Schraube (getrennt von der on-demand-Erkennung): ein
+        // FPS-Deckel greift NUR ausserhalb aktiver Kamerabewegung, damit
+        // Orbit/Pan/Zoom so flüssig bleiben wie vorher.
+        const jetzt = performance.now();
+        if (!kameraAktiv && jetzt - letzterRenderMs < FPS_DECKEL_INTERVALL_MS) return;
+        letzterRenderMs = jetzt;
+      }
+      needsRender = false;
+
       syncLeistung();
       syncModel();
       syncPreview();
@@ -1482,25 +1620,6 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncSketchModus();
       syncSketchDrawing();
       syncMeshHandles();
-      // Serie J / J2: Kontextcursor je Werkzeug/Modus. handlers ist ein Ref
-      // (kein Re-Render bei Werkzeugwechsel), darum je Frame abgeleitet und nur
-      // bei Änderung gesetzt.
-      {
-        const tool = handlers.current?.sketchMode ? 'skizze' : handlers.current?.pickMode ? 'auswahl' : 'wand';
-        const cur = werkzeugCursorFuer(tool, navModusRef.current);
-        if (renderer.domElement.style.cursor !== cur) renderer.domElement.style.cursor = cur;
-      }
-      // J1b: Long-Press öffnet das Kontextmenü + setzt den Orbit-Pivot auf den
-      // Treffer (nur ausserhalb Skizzenmodus/offenem Menü; feuert genau einmal).
-      if (!handlers.current?.sketchMode && !kontextOffenRef.current) {
-        const lp = gesten.pruefeLongPress(performance.now());
-        if (lp.longPress) {
-          const hit = meshTrefferAt(lp.longPress.x, lp.longPress.y);
-          if (hit) controls.setOrbitPoint(hit.point.x, hit.point.y, hit.point.z);
-          const r = mount.getBoundingClientRect();
-          setKontextRef.current({ x: lp.longPress.x - r.left, y: lp.longPress.y - r.top, clientX: lp.longPress.x, clientY: lp.longPress.y });
-        }
-      }
       // Auswahl-Highlight (Kupfer-Glut)
       const sel = new Set(useProject.getState().selection);
       for (const child of model.children) {
@@ -1511,10 +1630,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         if (mat.emissive) mat.emissive.setHex(isSel ? 0xa84b2b : 0x000000);
         if ('emissiveIntensity' in mat) mat.emissiveIntensity = isSel ? 0.35 : 0;
       }
-      controls.update(clock.getDelta());
       // Punktgrösse der Splats folgt Brennweite × Pufferhöhe (perspektivisch korrekt)
       splatUniforms.uFocal.value = 0.5 * renderer.domElement.height * camera.projectionMatrix.elements[5]!;
       renderer.render(scene, camera);
+      frameCount++;
     };
     const loop = () => {
       renderFrame();
@@ -1527,6 +1646,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       renderer.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      invalidate(); // V-M1 Commit 2: neue Grösse muss sofort sichtbar sein
     };
     const ro = new ResizeObserver(resize);
     ro.observe(mount);
@@ -1538,10 +1658,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       renderOnce: () => {
         testMode = true;
         cancelAnimationFrame(raf);
+        // V-M1 Commit 2: `renderOnce()` MUSS immer wirklich rendern — der
+        // API-Vertrag bleibt gleich, unabhängig vom on-demand-Zustand.
+        needsRender = true;
         renderFrame();
       },
       resume: () => {
         testMode = false;
+        needsRender = true;
         loop();
       },
       setCamera: (px: number, py: number, pz: number, tx: number, ty: number, tz: number) => {
@@ -1553,9 +1677,18 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         const t = controls.getTarget(new THREE.Vector3());
         return { px: p.x, py: p.y, pz: p.z, tx: t.x, ty: t.y, tz: t.z };
       },
+      // V-M1 Commit 2 (API-kompatible Erweiterung, s. Vertrag): Frame-Zähler
+      // + manuelles Invalidieren für `e2e/tools/frame-messung.mts`.
+      frameCount: () => frameCount,
+      resetFrameCount: () => {
+        frameCount = 0;
+      },
+      invalidate: () => invalidate(),
+      renderBeiBedarfAktiv: () => renderBeiBedarfAn,
     };
 
     return () => {
+      unsubscribeProjekt();
       deriveWorker?.terminate();
       cancelAnimationFrame(raf);
       ro.disconnect();

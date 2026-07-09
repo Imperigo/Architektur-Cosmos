@@ -230,12 +230,23 @@ interface LeistungsSpeicher {
   /** Manueller Override im Einstellungs-Panel; 'auto' folgt der letzten Messung. */
   override: LeistungsOverride;
   letztesErgebnis?: LeistungsErgebnis;
+  /**
+   * V-M1 Commit 2 (v0.6.6 W2): Renderloop on-demand statt Dauerschleife —
+   * Viewport3D rendert nur noch bei Kamerabewegung/Doc-Änderung/laufender
+   * Geste/explizitem `invalidate()`, sonst Leerlauf. Default AN für echte
+   * Nutzer:innen (`basiszustand()` unten) — spürbarer Akku-/CPU-Gewinn ohne
+   * Bildverlust. Optional (`?`), damit ein VOR dieser Änderung gespeicherter
+   * Datensatz (kein Feld) weiterhin gültig bleibt; die Auslese-Funktion
+   * `istRenderBeiBedarfAn()` behandelt ein fehlendes Feld als `true`
+   * (identisch zum neuen Default), NIE als stille Rückstufung.
+   */
+  renderBeiBedarf?: boolean;
 }
 
 const STORAGE_KEY = 'kosmo.leistung.v1';
 
 function basiszustand(): LeistungsSpeicher {
-  return { version: 1, zustimmungErteilt: false, override: 'auto' };
+  return { version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: true };
 }
 
 /**
@@ -311,6 +322,9 @@ function istGueltigerSpeicher(wert: unknown): wert is LeistungsSpeicher {
   if ('letztesErgebnis' in w && w['letztesErgebnis'] !== undefined && !istGueltigesErgebnis(w['letztesErgebnis'])) {
     return false;
   }
+  if ('renderBeiBedarf' in w && w['renderBeiBedarf'] !== undefined && typeof w['renderBeiBedarf'] !== 'boolean') {
+    return false;
+  }
   return true;
 }
 
@@ -382,6 +396,24 @@ export function setOverride(override: LeistungsOverride): void {
 
 export function holeLetztesErgebnis(): LeistungsErgebnis | undefined {
   return ladeSpeicherRoh().letztesErgebnis;
+}
+
+/**
+ * V-M1 Commit 2: on-demand-Renderloop AN/AUS. Default AN (fehlendes Feld =
+ * `true`, s. Interface-Kommentar) — E2E sät bewusst `renderBeiBedarf: false`
+ * über die playwright-`storageState` (s. `playwright.config.ts`), damit ALLE
+ * bestehenden 3D-Specs weiterhin den alten Dauerloop sehen; nur
+ * `render-knopf.spec.ts`/`e2e/tools/frame-messung.mts` schalten es gezielt
+ * per `localStorage`/`setRenderBeiBedarf(true)` ein.
+ */
+export function istRenderBeiBedarfAn(): boolean {
+  return ladeSpeicherRoh().renderBeiBedarf ?? true;
+}
+
+export function setRenderBeiBedarf(an: boolean): void {
+  const speicher = ladeSpeicherRoh();
+  schreibeSpeicher({ ...speicher, renderBeiBedarf: an });
+  bumpLeistungRevision();
 }
 
 /**

@@ -44,6 +44,15 @@ export default defineConfig({
     // liest sie defensiv mit Default nach), stehen hier trotzdem explizit,
     // damit dieser Seed für sich allein bereits ein vollständiger, gültiger
     // Datensatz ist.
+    // v0.6.6 Welle 2 / Stream D (V-M1 Commit 2): `kosmo.leistung.v1` mit
+    // `renderBeiBedarf: false` vorbelegt — der neue on-demand-Renderloop
+    // (Viewport3D.tsx, state/leistung.ts) ist für echte Nutzer:innen ohne
+    // gespeicherten Wert AN (Default true), würde aber ALLE bestehenden
+    // 3D-Specs (die auf den alten Dauerloop timen, __kosmoViewport.renderOnce
+    // etc.) auf einen anderen Rendertakt umstellen. Mit diesem Seed sehen
+    // alle Bestands-Specs weiterhin den alten Dauerloop; nur
+    // `render-knopf.spec.ts`/`e2e/tools/frame-messung.mts` schalten das Flag
+    // gezielt selbst ein. Gleiches Muster wie `kosmo.ui.v1` oben (Stream B).
     storageState: {
       cookies: [],
       origins: [
@@ -53,6 +62,10 @@ export default defineConfig({
             {
               name: 'kosmo.ui.v1',
               value: JSON.stringify({ version: 1, modusAutomatik: false, modusFesthalten: false, phasenFokus: null }),
+            },
+            {
+              name: 'kosmo.leistung.v1',
+              value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
             },
           ],
         },
