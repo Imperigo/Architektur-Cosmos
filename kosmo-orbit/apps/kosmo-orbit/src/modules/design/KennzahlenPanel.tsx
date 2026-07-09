@@ -23,6 +23,20 @@ export function KennzahlenPanel() {
     () => (activeStoreyId ? pruefeGrundriss(doc, activeStoreyId) : []),
     [doc, revision, activeStoreyId],
   );
+  // UI-Selbstkritik 0.6.4 (SK-D2): identische Befundtexte (z.B. zwei gleich
+  // schmale «Küche»-Zonen) erscheinen nicht mehr als Wiederholung, sondern
+  // EINMAL mit «2×»-Zähler — die Einzelbefunde selbst bleiben unverändert
+  // (pruefeGrundriss ist Kernel, hier nur Anzeige-Gruppierung).
+  const befundeGruppiert = useMemo(() => {
+    const m = new Map<string, { schwere: (typeof befunde)[number]['schwere']; text: string; n: number }>();
+    for (const b of befunde) {
+      const k = `${b.schwere}|${b.text}`;
+      const e = m.get(k);
+      if (e) e.n++;
+      else m.set(k, { schwere: b.schwere, text: b.text, n: 1 });
+    }
+    return [...m.values()];
+  }, [befunde]);
 
   const hasZones = report.totalNgf > 0;
   const hasMasses = report.gfVolumen > 0;
@@ -125,7 +139,7 @@ export function KennzahlenPanel() {
             <>
               <Hairline />
               <div style={{ display: 'grid', gap: 5 }} data-testid="checks">
-                {befunde.slice(0, 6).map((b, i) => (
+                {befundeGruppiert.slice(0, 6).map((b, i) => (
                   <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
                     <span
                       title={b.schwere}
@@ -141,11 +155,14 @@ export function KennzahlenPanel() {
                     >
                       {b.schwere === 'hinweis' ? '·' : '!'}
                     </span>
-                    <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>{b.text}</span>
+                    <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>
+                      {b.n > 1 ? `${b.n}× ` : ''}
+                      {b.text}
+                    </span>
                   </div>
                 ))}
-                {befunde.length > 6 && (
-                  <span style={{ color: 'var(--k-ink-faint)' }}>… {befunde.length - 6} weitere</span>
+                {befundeGruppiert.length > 6 && (
+                  <span style={{ color: 'var(--k-ink-faint)' }}>… {befundeGruppiert.length - 6} weitere</span>
                 )}
                 <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
                   Richtwerte-Checks — kein Normersatz.

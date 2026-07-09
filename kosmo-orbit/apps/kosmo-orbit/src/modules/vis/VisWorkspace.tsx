@@ -233,8 +233,12 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
             <option key={t.typ} value={t.typ}>{t.label}</option>
           ))}
         </select>
+        {/* SK-V2 (UI-Selbstkritik 0.6.4): «+»-Präfix wie bei «+ Graph»/«+ Node» —
+            vorher stand «Drei Stimmungen» doppelt in der Leiste (Graph-NAME im
+            Select links + dieser Knopf), ohne dass erkennbar war, dass der
+            Knopf etwas NEUES anlegt. */}
         <KButton size="sm" tone="accent" data-testid="drei-stimmungen" onClick={dreiStimmungen}>
-          Drei Stimmungen
+          + Drei Stimmungen
         </KButton>
         <Hairline vertical />
         <span style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: '0.03em', color: 'var(--k-ink-faint)' }}>
