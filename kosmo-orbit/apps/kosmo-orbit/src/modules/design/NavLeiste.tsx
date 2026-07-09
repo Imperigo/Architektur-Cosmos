@@ -27,7 +27,11 @@ export function NavLeiste({ aktionen, testid }: { aktionen: NavAktion[]; testid:
         // Viewport-Nav-Pillen stapeln sich in derselben Ecke»); die
         // Statusleiste (DesignWorkspace.tsx) bleibt unten LINKS — beide
         // Ecken sind jetzt entstapelt. testids/aria-labels unverändert.
-        right: 8,
+        // Integration-Fix: `right:8` schob nav-fit UNTER das fixe Kosmo-Symbol
+        // (right:22/bottom:22, 54px, z-110) — dessen Container fing die Klicks
+        // ab (eingabe-3d.spec komplett rot). 88px = 22+54+12 Abstand lassen
+        // dem Symbol seine Ecke; die Pillen sitzen links daneben.
+        right: 88,
         // Bewusst über der Statuszeile (bottom:12, ~30px hoch) — sonst
         // überlappen sich Cursor-Koordinaten und die Nav-Knöpfe.
         bottom: 50,
