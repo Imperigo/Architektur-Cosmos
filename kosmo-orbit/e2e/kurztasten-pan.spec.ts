@@ -31,9 +31,11 @@ async function oeffneKosmoDesign(page: import('@playwright/test').Page) {
   await expect(page.locator('[data-testid="planview"]')).toBeAttached();
 }
 
-/** Tone «accent» (aktives Werkzeug) setzt `background: var(--k-accent)` inline. */
+/** Tone «accent» (aktives Werkzeug) — seit v0.6.6 trägt KButton CSS-Klassen
+ * (`k-btn-accent`) statt Inline-Styles (MOTION-KONZEPT-066, Phase 0); der
+ * frühere `style.background`-Check lief deshalb ins Leere. */
 async function werkzeugIstAktiv(page: import('@playwright/test').Page, testid: string): Promise<boolean> {
-  return page.locator(`[data-testid="${testid}"]`).evaluate((el) => (el as HTMLElement).style.background.includes('k-accent'));
+  return page.locator(`[data-testid="${testid}"]`).evaluate((el) => el.classList.contains('k-btn-accent'));
 }
 
 test('W-Taste wechselt aufs Wand-Werkzeug; Fokus in einem Eingabefeld blockiert die Kurztaste', async ({ page }) => {
