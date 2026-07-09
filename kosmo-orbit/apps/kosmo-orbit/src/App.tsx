@@ -454,52 +454,11 @@ export function App() {
             <Badge hue="var(--k-ink-faint)">⚙</Badge>
           </button>
         </span>
-        <Hairline vertical />
-        {/* Owner-Auftrag «App deinstallieren…»: sehr selten gebraucht, darum
-            dezent am Ende der Kopfleiste, aber immer erreichbar (nicht in
-            einem Overflow-Menü versteckt — KosmoOrbit hat keine klassische
-            Menüleiste, die Kopfleiste IST das Hauptmenü). */}
-        <span className={fokusKlasse(fokusStufe('deinstallieren'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
-          <button
-            onClick={() => setDeinstallierenOffen(true)}
-            data-testid="menu-deinstallieren"
-            title="App deinstallieren…"
-            aria-label="App deinstallieren…"
-            style={{ all: 'unset', cursor: 'pointer' }}
-          >
-            <Badge hue="var(--k-ink-faint)">Deinstallieren…</Badge>
-          </button>
-        </span>
-        <Hairline vertical />
-        {/* Selten: Thema + Akzent ändern sich fast nie — gedimmt, bis Hover/Fokus */}
-        <span className={fokusKlasse(fokusStufe('thema'))} style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-          <KButton tone="ghost" size="sm" onClick={() => setTheme(theme === 'paper' ? 'ink' : 'paper')}>
-            {theme === 'paper' ? 'Tinte' : 'Papier'}
-          </KButton>
-          <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center', marginLeft: 4 }}>
-            {AKZENTE.map((a) => (
-              <button
-                key={a.key}
-                onClick={() => setAkzent(a.key)}
-                title={`Akzent ${a.name}`}
-                aria-label={`Akzent ${a.name}`}
-                data-testid={`akzent-${a.key}`}
-                style={{
-                  all: 'unset',
-                  cursor: 'pointer',
-                  width: 12,
-                  height: 12,
-                  borderRadius: 999,
-                  background: a.farbe ?? 'var(--k-technik)',
-                  boxShadow:
-                    akzent === a.key
-                      ? '0 0 0 1.5px var(--k-field), 0 0 0 3px var(--k-technik)'
-                      : '0 0 0 1px var(--k-line-strong)',
-                }}
-              />
-            ))}
-          </span>
-        </span>
+        {/* F2 (v0.6.4, Entdoppelung — Owner: «entscheide dich, eine Funktion
+            = ein Ort»): «Deinstallieren…» und Thema/Akzent zogen KOMPLETT in
+            die Einstellungen um (dort lebten sie längst als K14-Sektionen).
+            Die Kopfleiste behält nur den Alltag: Sync, Speichern/Öffnen,
+            Kosmo, «?» (Rundgang), ⚙ (Einstellungen). */}
       </header>
 
       {syncOpen && (
@@ -857,6 +816,10 @@ export function App() {
           aufKosmoOeffnen={() => {
             setEinstellungenOffen(false);
             setKosmoOpen(true);
+          }}
+          aufDeinstallieren={() => {
+            setEinstellungenOffen(false);
+            setDeinstallierenOffen(true);
           }}
           {...(einstellungenStation
             ? { station: einstellungenStation.id, stationName: einstellungenStation.name }

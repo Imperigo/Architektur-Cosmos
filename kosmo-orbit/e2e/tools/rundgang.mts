@@ -446,8 +446,10 @@ await chooser.setFiles({
 await page.waitForSelector('[data-testid="pdf-hinweis"]');
 await shot('23-unternehmerplan-pdf', 800);
 
-// ── 24 Deinstallieren-Dialog — unverändert diese Runde ─────────────────
-await page.click('[data-testid="menu-deinstallieren"]');
+// ── 24 Deinstallieren-Dialog — F2 (0.6.4): Einstieg NUR noch über die
+//    Einstellungen (Sektion «System»), der Kopfleisten-Knopf ist weg ────
+await page.click('[data-testid="einstellungen-oeffnen"]');
+await page.click('[data-testid="einstellung-deinstallieren"]');
 await page.waitForSelector('[role="dialog"]');
 await shot('24-deinstallieren', 500);
 

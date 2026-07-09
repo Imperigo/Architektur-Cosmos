@@ -44,6 +44,10 @@ export interface EinstellungenProps {
   aufRundgangStarten: () => void;
   /** Öffnet das Kosmo-Panel (Betriebsart/TTS/Lizenz leben dort, kein Duplikat). */
   aufKosmoOeffnen: () => void;
+  /** F2 (v0.6.4, Entdoppelung): öffnet den Deinstallieren-Dialog — der Knopf
+   *  wohnt NUR noch hier (eine Funktion = ein Ort), nicht mehr in der
+   *  Kopfleiste; der Dialog selbst (AppDeinstallieren) bleibt in App.tsx. */
+  aufDeinstallieren: () => void;
   /** Gesetzt, wenn über ein Stations-Zahnrad geöffnet — filtert «Funktionen &
    *  Neues» oben auf diese Station vor; die übrigen Sektionen bleiben gleich. */
   station?: ModuleId;
@@ -58,6 +62,7 @@ export function Einstellungen({
   setAkzent,
   onClose,
   aufRundgangStarten,
+  aufDeinstallieren,
   aufKosmoOeffnen,
   station,
   stationName,
@@ -344,6 +349,22 @@ export function Einstellungen({
               </ul>
             </div>
           ))}
+        </section>
+        <Hairline />
+
+        {/* F2 (v0.6.4, Entdoppelung): «App deinstallieren…» zog aus der
+            Kopfleiste hierher um — selten gebraucht, gehört zu den
+            System-Einstellungen, nicht auf den teuersten Platz der App. */}
+        <section data-testid="einstellungen-system" style={{ display: 'grid', gap: 10 }}>
+          <div className="k-primaer">System</div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <KButton size="sm" tone="quiet" data-testid="einstellung-deinstallieren" onClick={aufDeinstallieren}>
+              App deinstallieren…
+            </KButton>
+            <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+              öffnet die ehrliche Anleitung für dein Betriebssystem — nichts wird sofort gelöscht.
+            </span>
+          </div>
         </section>
       </div>
     </div>,
