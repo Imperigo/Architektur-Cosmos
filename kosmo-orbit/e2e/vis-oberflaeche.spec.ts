@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test';
  * «Drei Stimmungen»-Layout, SK-V3-Klapptext (Karte wächst NICHT von selbst).
  *
  * Bootstrap-Muster wie e2e/visgraph.spec.ts. Eigene Fake-Worker-Bridge auf
- * Port 8611 (Begründung siehe dort) — hier nicht gebraucht (keine Render-Jobs
+ * Port 8600 (Hauptbaum-Bridge) — hier nicht gebraucht (keine Render-Jobs
  * in dieser Suite), `kosmo.bridge` wird trotzdem gesetzt, damit ein zufälliger
  * Poll (Timeout-Wächter im NodeCanvas) nie gegen den Hauptbaum-Port 8600 läuft.
  */
@@ -34,7 +34,7 @@ function parseViewBox(vb: string): { x: number; y: number; w: number; h: number 
 async function oeffneVis(page: import('@playwright/test').Page) {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
-  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="module-vis"]');
 }
 

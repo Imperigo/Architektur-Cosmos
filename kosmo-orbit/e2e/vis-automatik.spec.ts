@@ -12,7 +12,7 @@ import { expect, test } from '@playwright/test';
  * e2e/visgraph.spec.ts, dessen Bootstrap-Muster dieser Test übernimmt.
  *
  * W1-Anpassung (Begründung): dieser Worktree-Stream läuft mit einer EIGENEN
- * Fake-Worker-Bridge auf Port 8611 (statt 8600) — `kosmo.bridge` wird darum
+ * Fake-Worker-Bridge auf Port 8600 (Hauptbaum-Default) — `kosmo.bridge` wird darum
  * explizit gesetzt, die render-scene.json-Polls zeigen auf denselben Port.
  * Reine Testumgebungs-Anpassung, keine Vertragsänderung. (Die ursprüngliche
  * Koordinator-Warnung «nicht im Batch-Worktree» galt für den Fall EINES
@@ -37,7 +37,7 @@ test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   // W1: eigene Bridge (Begründung siehe Datei-Kopf)
-  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
 
   // TKB laden (Beispielprojekt) — nicht leer, damit Auto-Kamera echte Bounds hat
   await page.click('[data-testid="load-tkb"]');
@@ -82,11 +82,11 @@ test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-
     .poll(
       async () =>
         page.evaluate(async () => {
-          const jobs = (await (await fetch('http://localhost:8611/jobs')).json()) as { job_id: string }[];
+          const jobs = (await (await fetch('http://localhost:8600/jobs')).json()) as { job_id: string }[];
           for (const j of jobs) {
             try {
               const scene = (await (
-                await fetch(`http://localhost:8611/jobs/${j.job_id}/artifacts/render-scene.json`)
+                await fetch(`http://localhost:8600/jobs/${j.job_id}/artifacts/render-scene.json`)
               ).json()) as { render?: { resolution?: number[]; sun?: { elevation?: number } } };
               if (scene.render?.resolution?.[0] === 1920 && scene.render?.sun?.elevation === 32) return true;
             } catch {
@@ -117,7 +117,7 @@ test('F6: Pannen nach «Kamera vorschlagen» stürzt nicht ab (Maus-Pan + synchr
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   // W1: eigene Bridge (Begründung siehe Datei-Kopf)
-  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="load-tkb"]');
   await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
   await page.evaluate(() => window.__kosmo.open('vis'));
