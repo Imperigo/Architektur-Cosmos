@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Badge, Hairline, KButton, melde, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, melde, moduleHue } from '@kosmo/ui';
 import type { Betriebsart } from '@kosmo/ai';
 import { installBefehleFuer, plattformAus, werkzeugeFuer, type Plattform, type Pruefung, type Werkzeug } from '../state/werkzeuge';
 import { werkzeugHolen } from './werkzeug-holen';
@@ -242,7 +242,7 @@ export function WerkzeugSetup({ betriebsart, onClose }: { betriebsart: Betriebsa
             Neu prüfen
           </KButton>
           <KButton size="sm" tone="ghost" aria-label="Schliessen" onClick={onClose}>
-            ×
+            <KIcon name="schliessen" size={16} />
           </KButton>
         </div>
         <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>

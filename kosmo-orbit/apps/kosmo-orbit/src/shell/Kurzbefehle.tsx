@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Badge, Hairline } from '@kosmo/ui';
 import { KURZTASTEN } from '../modules/design/kurztasten';
+import './orbit-065.css';
 
 /**
  * Globales Kurzbefehl-Schema (V1-Finish P1): Ziffern 1–9 springen zu den
@@ -101,30 +102,30 @@ export function Kurzbefehle({
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--k-raised)',
-          padding: '18px 20px',
+          padding: 'var(--k-s5) var(--k-s6)',
           width: 'min(460px, calc(100vw - 48px))',
           display: 'grid',
-          gap: 10,
+          gap: 'var(--k-s4)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div className="k-titel" style={{ fontSize: 13, fontWeight: 650 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+          <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>
             Kurzbefehle
           </div>
           <div style={{ flex: 1 }} />
           <Badge hue="var(--k-ink-faint)">?</Badge>
         </div>
         <Hairline />
-        <div style={{ display: 'grid', gap: 7 }}>{zeilen.map((z) => <Kurzbefehlzeile key={z.taste} {...z} />)}</div>
+        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>{zeilen.map((z) => <Kurzbefehlzeile key={z.taste} {...z} />)}</div>
         <Hairline />
-        <div style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--k-ink-soft)' }}>
+        <div style={{ fontSize: 'var(--k-t-sm)', fontWeight: 600, color: 'var(--k-ink-soft)' }}>
           Zeichnen (KosmoDesign, an ArchiCAD angelehnt)
         </div>
-        <div style={{ display: 'grid', gap: 7 }}>
+        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
           {zeichenZeilen.map((z) => <Kurzbefehlzeile key={z.taste} {...z} />)}
         </div>
         <Hairline />
-        <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+        <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
           Stationen der Ziffern:{' '}
           {stationen.slice(0, 9).map((s, i) => `${i + 1} ${s.name.replace(/^Kosmo/, '')}`).join(' · ')}
         </div>
@@ -133,23 +134,14 @@ export function Kurzbefehle({
   );
 }
 
+/** Technik-Stimme (UI-KONZEPT-065 §2): Mono-Kürzel rechtsbündig, Beschrieb
+ *  als Lauftext links — «Werte/Masse/Status in Mono» gilt auch für
+ *  Tastenkürzel. */
 function Kurzbefehlzeile({ taste, text }: { taste: string; text: string }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '76px 1fr', gap: 12, alignItems: 'baseline' }}>
-      <kbd
-        style={{
-          fontFamily: 'var(--k-font-mono)',
-          fontSize: 11.5,
-          padding: '2px 6px',
-          border: '1px solid var(--k-line-strong)',
-          borderRadius: 'var(--k-radius-sm)',
-          background: 'var(--k-surface)',
-          textAlign: 'center',
-        }}
-      >
-        {taste}
-      </kbd>
-      <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{text}</span>
+    <div className="orbit065-kurzbefehl-zeile">
+      <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{text}</span>
+      <kbd className="orbit065-kurzbefehl-taste">{taste}</kbd>
     </div>
   );
 }

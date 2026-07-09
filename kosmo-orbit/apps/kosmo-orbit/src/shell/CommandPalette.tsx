@@ -73,8 +73,8 @@ export function CommandPalette() {
           maxWidth: '92vw',
           background: 'var(--k-surface)',
           border: '1px solid var(--k-line-strong)',
-          borderRadius: 12,
-          boxShadow: '0 18px 50px rgba(0,0,0,0.22)',
+          borderRadius: 'var(--k-radius-md)',
+          boxShadow: 'var(--k-shadow-overlay)',
           overflow: 'hidden',
         }}
       >
@@ -100,16 +100,16 @@ export function CommandPalette() {
           placeholder="Befehl … (Module, Ansichten, Exporte)"
           style={{
             width: '100%',
-            padding: '13px 16px',
+            padding: 'var(--k-s4) var(--k-s5)',
             border: 'none',
             borderBottom: '1px solid var(--k-line)',
             background: 'transparent',
-            fontSize: 14.5,
+            fontSize: 'var(--k-t-lg)',
             outline: 'none',
             color: 'var(--k-ink)',
           }}
         />
-        <div style={{ maxHeight: 340, overflow: 'auto', padding: 6 }}>
+        <div style={{ maxHeight: 340, overflow: 'auto', padding: 'var(--k-s2)' }}>
           {treffer.map((a, i) => (
             <div
               key={a.id}
@@ -118,23 +118,33 @@ export function CommandPalette() {
               onClick={() => ausfuehren(a)}
               style={{
                 display: 'flex',
-                gap: 10,
+                gap: 'var(--k-s4)',
                 alignItems: 'baseline',
-                padding: '8px 12px',
-                borderRadius: 8,
+                padding: 'var(--k-s3) var(--k-s4)',
+                borderRadius: 'var(--k-radius-sm)',
                 cursor: 'pointer',
                 background: i === cursor ? 'var(--k-accent-wash)' : 'transparent',
-                fontSize: 13.5,
+                fontSize: 'var(--k-t-md)',
               }}
             >
-              <span style={{ fontSize: 11, color: 'var(--k-ink-faint)', width: 64, flexShrink: 0 }}>
+              <span
+                style={{
+                  fontSize: 'var(--k-t-xs)',
+                  color: 'var(--k-ink-faint)',
+                  width: 64,
+                  flexShrink: 0,
+                  fontFamily: 'var(--k-font-mono)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.03em',
+                }}
+              >
                 {a.gruppe}
               </span>
               <span>{a.titel}</span>
             </div>
           ))}
           {treffer.length === 0 && (
-            <div style={{ padding: '10px 12px', fontSize: 13, color: 'var(--k-ink-faint)' }}>
+            <div style={{ padding: 'var(--k-s3) var(--k-s4)', fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
               Nichts gefunden.
             </div>
           )}

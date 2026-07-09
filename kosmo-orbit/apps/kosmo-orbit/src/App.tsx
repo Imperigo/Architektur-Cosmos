@@ -6,6 +6,7 @@ import {
   KButton,
   KFehlerzone,
   KMeldungen,
+  KSelect,
   OrbitMark,
   Panel,
   Wordmark,
@@ -660,117 +661,133 @@ export function App() {
           <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
             <div
               className={`k-einblenden${dokumentVersteckt ? ' k-zentrale-pausiert' : ''}`}
-              style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 28 }}
+              style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gap: 28 }}
             >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
-                  <div className="k-titel" style={{ fontSize: 34 }}>
-                    {tagesgruss()}
+              {/* R2-N3 (0.6.5, docs/UI-SELBSTKRITIK-064.md): Begrüssung/
+                  Projekte und Orbit teilten bisher zwei konkurrierende
+                  Zentren (linksbündige Mittelspalte vs. zentrierter Orbit)
+                  — jetzt EINE Layout-Achse als zweispaltiges Grid. Dieser
+                  Ausschnitt liegt in App.tsx, nicht in `shell/**` (mein
+                  Dateibesitz) — R2-N3 verlangt aber zwingend genau diese
+                  Umstrukturierung; minimal-invasiv umgesetzt (nur Grid-Hülle
+                  + Verschiebung der bestehenden Blöcke, keine Logik
+                  verändert), siehe Bericht. Klassen aus `shell/orbit-065.css`
+                  (importiert von OrbitStart.tsx, gilt global). */}
+              <div className="orbit065-home-grid">
+                <div className="orbit065-home-links">
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
+                      <div className="k-titel" style={{ fontSize: 34 }}>
+                        {tagesgruss()}
+                      </div>
+                      <div style={{ flex: 1 }} />
+                      {/* D2: Rollen-Vorstufe — ordnet die Kacheln, färbt Kosmos Blick */}
+                      <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        Rolle
+                        <KSelect
+                          size="sm"
+                          value={rolle ?? ''}
+                          data-testid="rolle-select"
+                          onChange={(e) =>
+                            useProject.getState().runCommand('design.rolleSetzen', e.target.value ? { rolle: e.target.value } : {})
+                          }
+                        >
+                          <option value="">neutral</option>
+                          <option value="entwurf">Entwurf</option>
+                          <option value="ausfuehrung">Ausführung</option>
+                          <option value="admin">Administration</option>
+                        </KSelect>
+                      </label>
+                    </div>
+                    <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
+                      Womit beginnen wir? KosmoDesign ist bereit zum Zeichnen.
+                    </div>
+                    <div style={{ marginTop: 12 }}>
+                      <KButton
+                        size="sm"
+                        tone="quiet"
+                        data-testid="load-tkb"
+                        onClick={() => {
+                          loadTkbDemo();
+                          setScreen('design');
+                        }}
+                      >
+                        Beispielprojekt laden — TKB Bibliothek Hönggerberg
+                      </KButton>
+                    </div>
                   </div>
-                  <div style={{ flex: 1 }} />
-                  {/* D2: Rollen-Vorstufe — ordnet die Kacheln, färbt Kosmos Blick */}
-                  <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    Rolle
-                    <select
-                      value={rolle ?? ''}
-                      data-testid="rolle-select"
-                      onChange={(e) =>
-                        useProject.getState().runCommand('design.rolleSetzen', e.target.value ? { rolle: e.target.value } : {})
-                      }
-                      style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
-                    >
-                      <option value="">neutral</option>
-                      <option value="entwurf">Entwurf</option>
-                      <option value="ausfuehrung">Ausführung</option>
-                      <option value="admin">Administration</option>
-                    </select>
-                  </label>
+                  {ersteStartFrage && !starterGuideOffen && (
+                    <ErsteStartFrage
+                      onJa={() => {
+                        setErsteStartFrage(false);
+                        setGuideLauf((n) => n + 1);
+                        setStarterGuideOffen(true);
+                      }}
+                      onNein={() => {
+                        starterGuideAlsAbgeschlossenMarkieren();
+                        setErsteStartFrage(false);
+                      }}
+                    />
+                  )}
+                  {onboarding && (
+                    <Panel data-testid="onboarding" style={{ padding: '16px 18px', display: 'grid', gap: 10 }}>
+                      <div style={{ fontWeight: 550 }}>Erste Schritte</div>
+                      <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7, color: 'var(--k-ink-soft)' }}>
+                        <li>
+                          <b>Zeichnen:</b> In KosmoDesign Wände klicken (Snap aufs Raster), Fenster und Türen in die
+                          Wand setzen — Grundriss, Schnitt und Kennzahlen laufen live mit.
+                        </li>
+                        <li>
+                          <b>Kosmo fragen:</b> Rechts im Panel, z.&nbsp;B. «Zeichne eine Wand von 0,0 nach 8,0» —
+                          Vorschläge wendest du per Karte an, Rückgängig gilt immer.
+                        </li>
+                        <li>
+                          <b>Schnell springen:</b> ⌘K/Ctrl+K öffnet die Befehlspalette (Module, Ansichten, Exporte).
+                        </li>
+                      </ol>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <KButton
+                          size="sm"
+                          tone="accent"
+                          data-testid="onboarding-start"
+                          onClick={() => {
+                            localStorage.setItem('kosmo.onboarded', '1');
+                            setOnboarding(false);
+                            setScreen('design');
+                          }}
+                        >
+                          Los geht's — KosmoDesign öffnen
+                        </KButton>
+                        <KButton
+                          size="sm"
+                          tone="ghost"
+                          onClick={() => {
+                            localStorage.setItem('kosmo.onboarded', '1');
+                            setOnboarding(false);
+                          }}
+                        >
+                          Ausblenden
+                        </KButton>
+                      </div>
+                    </Panel>
+                  )}
+                  <ProjektListe onOpen={() => setScreen('design')} />
+                  <VariantenArchiv onOpen={() => setScreen('design')} />
                 </div>
-                <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
-                  Womit beginnen wir? KosmoDesign ist bereit zum Zeichnen.
-                </div>
-                <div style={{ marginTop: 12 }}>
-                  <KButton
-                    size="sm"
-                    tone="quiet"
-                    data-testid="load-tkb"
-                    onClick={() => {
-                      loadTkbDemo();
-                      setScreen('design');
-                    }}
-                  >
-                    Beispielprojekt laden — TKB Bibliothek Hönggerberg
-                  </KButton>
+                <div className="orbit065-home-rechts">
+                  {/* Serie K / F3 (Owner-Auftrag, wörtlich: «nicht Blöcke, eher
+                      wie das Kosmos-Zeichen rund») — ersetzt die frühere
+                      Familien-Kachel-Ansicht (T7/Serie K A2) durch das Orbit-
+                      Startmenü: NUR die 4 Hauptwerkzeuge sichtbar, Untertools im
+                      Hover-/Klick-Fächer. Mapping + Ehrlichkeitsregeln (welche
+                      echte Registry-Id hinter welchem Untertool steckt) leben in
+                      `shell/orbit-werkzeuge.ts`. */}
+                  <OrbitStart
+                    onOeffnen={oeffneModulById}
+                    {...(rolle ? { rollenPrio: ROLLEN_REIHENFOLGE[rolle] } : {})}
+                  />
                 </div>
               </div>
-              {ersteStartFrage && !starterGuideOffen && (
-                <ErsteStartFrage
-                  onJa={() => {
-                    setErsteStartFrage(false);
-                    setGuideLauf((n) => n + 1);
-                    setStarterGuideOffen(true);
-                  }}
-                  onNein={() => {
-                    starterGuideAlsAbgeschlossenMarkieren();
-                    setErsteStartFrage(false);
-                  }}
-                />
-              )}
-              {onboarding && (
-                <Panel data-testid="onboarding" style={{ padding: '16px 18px', display: 'grid', gap: 10 }}>
-                  <div style={{ fontWeight: 550 }}>Erste Schritte</div>
-                  <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7, color: 'var(--k-ink-soft)' }}>
-                    <li>
-                      <b>Zeichnen:</b> In KosmoDesign Wände klicken (Snap aufs Raster), Fenster und Türen in die
-                      Wand setzen — Grundriss, Schnitt und Kennzahlen laufen live mit.
-                    </li>
-                    <li>
-                      <b>Kosmo fragen:</b> Rechts im Panel, z.&nbsp;B. «Zeichne eine Wand von 0,0 nach 8,0» —
-                      Vorschläge wendest du per Karte an, Rückgängig gilt immer.
-                    </li>
-                    <li>
-                      <b>Schnell springen:</b> ⌘K/Ctrl+K öffnet die Befehlspalette (Module, Ansichten, Exporte).
-                    </li>
-                  </ol>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <KButton
-                      size="sm"
-                      tone="accent"
-                      data-testid="onboarding-start"
-                      onClick={() => {
-                        localStorage.setItem('kosmo.onboarded', '1');
-                        setOnboarding(false);
-                        setScreen('design');
-                      }}
-                    >
-                      Los geht's — KosmoDesign öffnen
-                    </KButton>
-                    <KButton
-                      size="sm"
-                      tone="ghost"
-                      onClick={() => {
-                        localStorage.setItem('kosmo.onboarded', '1');
-                        setOnboarding(false);
-                      }}
-                    >
-                      Ausblenden
-                    </KButton>
-                  </div>
-                </Panel>
-              )}
-              <ProjektListe onOpen={() => setScreen('design')} />
-              <VariantenArchiv onOpen={() => setScreen('design')} />
-              {/* Serie K / F3 (Owner-Auftrag, wörtlich: «nicht Blöcke, eher
-                  wie das Kosmos-Zeichen rund») — ersetzt die frühere
-                  Familien-Kachel-Ansicht (T7/Serie K A2) durch das Orbit-
-                  Startmenü: NUR die 4 Hauptwerkzeuge sichtbar, Untertools im
-                  Hover-/Klick-Fächer. Mapping + Ehrlichkeitsregeln (welche
-                  echte Registry-Id hinter welchem Untertool steckt) leben in
-                  `shell/orbit-werkzeuge.ts`. */}
-              <OrbitStart
-                onOeffnen={oeffneModulById}
-                {...(rolle ? { rollenPrio: ROLLEN_REIHENFOLGE[rolle] } : {})}
-              />
               <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)' }} data-testid="about-zeile">
                 KosmoOrbit v{__APP_VERSION__} · lokal-first · Installation: docs/INSTALL.md · Update = neuer Installer (Signierung folgt zuhause)
               </div>

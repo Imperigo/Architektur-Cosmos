@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Badge, Hairline, KButton, moduleHue, type ModuleId, type ThemeName } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, moduleHue, type ModuleId, type ThemeName } from '@kosmo/ui';
+import './orbit-065.css';
 import { AKZENTE } from './akzente';
 import { NEUIGKEITEN, neuigkeitenFuerStation } from './neuigkeiten';
 import { adaptionAktiv, adaptionZuruecksetzen, setAdaptionAktiv } from '../state/oberflaeche-adaption-kern';
@@ -32,6 +33,20 @@ import { loadSettings } from './KosmoPanel';
  * die Oberflächen-Anpassung (Serie J3c) ruft den stationsneutralen Adaptions-
  * Kern direkt (`oberflaeche-adaption-kern.ts`) — derselbe globale Schalter,
  * den DesignWorkspace/DataWorkspace über ihre eigene Kopie schon anzeigen.
+ *
+ * v0.6.5 (Mass 5, UI-KONZEPT-065 §3): der Kopf/Körper-Aufbau folgt jetzt
+ * `KDialog` (Plakat-Titel, Schliessen-KIcon, `.k-dialog-box`/`.k-dialog-kopf`/
+ * `.k-dialog-koerper`-Klassen aus `packages/kosmo-ui` — dieselbe Optik wie
+ * jeder andere Dialog). Die Komponente selbst wird NICHT instanziiert: sie
+ * kennt kein Prop, um `data-testid="einstellungen-panel"` auf die BOX (statt
+ * auf den Scrim) zu legen, und dieser exakte Testid-Ort ist ein bestehender
+ * Vertrag (`einstellungen.spec.ts` u. a.: `panel.toContainText(...)` erwartet
+ * Titel UND Sektionen im selben Element). Deshalb hier dieselben Klassen von
+ * Hand, mit vollem Zugriff auf die Testid-Platzierung — Verhalten/Optik
+ * bleiben identisch zu `KDialog`. Innere Sektions-Testids/-Struktur (System,
+ * Darstellung, Leistung, Funktionen & Neues, `neuigkeiten-version-*`)
+ * bleiben unverändert, nur die Sektionstitel wandern auf `--k-t-lg`
+ * (`.orbit065-einstellungen-sektionstitel`, orbit-065.css) statt `--k-primaer`.
  */
 
 export interface EinstellungenProps {
@@ -100,57 +115,54 @@ export function Einstellungen({
     >
       <div
         data-testid="einstellungen-panel"
-        className="k-karte k-skalieren-ein k-dialog"
+        className="k-dialog-box k-dialog k-skalieren-ein"
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: 'var(--k-raised)',
-          padding: '16px 20px',
           width: 'min(640px, calc(100vw - 48px))',
           maxHeight: 'calc(100vh - 48px)',
-          overflowY: 'auto',
-          display: 'grid',
-          gap: 16,
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {werkzeugSetupOffen && (
           <WerkzeugSetup betriebsart={loadSettings().betriebsart} onClose={() => setWerkzeugSetupOffen(false)} />
         )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div className="k-titel" style={{ fontSize: 14, fontWeight: 650 }}>
+        <div className="k-dialog-kopf">
+          <span className="k-titel k-dialog-kopf-titel">
             Einstellungen{station && stationName ? ` — ${stationName}` : ''}
-          </div>
-          <div style={{ flex: 1 }} />
-          <KButton size="sm" tone="ghost" aria-label="Schliessen" onClick={onClose}>
-            ×
-          </KButton>
+          </span>
+          <button type="button" aria-label="Schliessen" className="k-dialog-kopf-schliessen" onClick={onClose}>
+            <KIcon name="schliessen" size={16} />
+          </button>
         </div>
 
-        {station && (
-          <section data-testid="einstellungen-neuigkeiten-station" style={{ display: 'grid', gap: 8 }}>
-            <div className="k-primaer">Neu in {stationName ?? station}</div>
-            {stationPunkte.length === 0 ? (
-              <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>
-                Noch keine eigenen Einträge für diese Station — siehe «Funktionen &amp; Neues» unten.
-              </div>
-            ) : (
-              <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 4, fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
-                {stationPunkte.map((t, i) => (
-                  <li key={i}>
-                    <span style={{ color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)', fontSize: 11 }}>
-                      {t.version}
-                      {t.inArbeit ? ' · in Arbeit' : ''}
-                    </span>{' '}
-                    {t.punkt.text}
-                  </li>
-                ))}
-              </ul>
-            )}
-            <Hairline />
-          </section>
-        )}
+        <div className="k-dialog-koerper orbit065-einstellungen-koerper" style={{ overflowY: 'auto' }}>
+          {station && (
+            <section data-testid="einstellungen-neuigkeiten-station" className="orbit065-einstellungen-sektion">
+              <div className="orbit065-einstellungen-sektionstitel">Neu in {stationName ?? station}</div>
+              {stationPunkte.length === 0 ? (
+                <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>
+                  Noch keine eigenen Einträge für diese Station — siehe «Funktionen &amp; Neues» unten.
+                </div>
+              ) : (
+                <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 4, fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+                  {stationPunkte.map((t, i) => (
+                    <li key={i}>
+                      <span style={{ color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)', fontSize: 11 }}>
+                        {t.version}
+                        {t.inArbeit ? ' · in Arbeit' : ''}
+                      </span>{' '}
+                      {t.punkt.text}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Hairline />
+            </section>
+          )}
 
-        <section data-testid="einstellungen-darstellung" style={{ display: 'grid', gap: 8 }}>
-          <div className="k-primaer">Darstellung</div>
+          <section data-testid="einstellungen-darstellung" className="orbit065-einstellungen-sektion">
+            <div className="orbit065-einstellungen-sektionstitel">Darstellung</div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             <KButton
               size="sm"
@@ -187,8 +199,8 @@ export function Einstellungen({
         </section>
         <Hairline />
 
-        <section data-testid="einstellungen-rundgang" style={{ display: 'grid', gap: 8 }}>
-          <div className="k-primaer">Rundgang &amp; Hilfe</div>
+        <section data-testid="einstellungen-rundgang" className="orbit065-einstellungen-sektion">
+          <div className="orbit065-einstellungen-sektionstitel">Rundgang &amp; Hilfe</div>
           <div>
             <KButton size="sm" tone="quiet" data-testid="einstellung-rundgang" onClick={aufRundgangStarten}>
               Rundgang erneut zeigen
@@ -197,8 +209,8 @@ export function Einstellungen({
         </section>
         <Hairline />
 
-        <section data-testid="einstellungen-kosmo" style={{ display: 'grid', gap: 8 }}>
-          <div className="k-primaer">Kosmo &amp; Betrieb</div>
+        <section data-testid="einstellungen-kosmo" className="orbit065-einstellungen-sektion">
+          <div className="orbit065-einstellungen-sektionstitel">Kosmo &amp; Betrieb</div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <KButton size="sm" tone="quiet" data-testid="einstellung-kosmo-oeffnen" onClick={aufKosmoOeffnen}>
               Kosmo-Einstellungen öffnen
@@ -214,8 +226,8 @@ export function Einstellungen({
         </section>
         <Hairline />
 
-        <section data-testid="einstellungen-adaption" style={{ display: 'grid', gap: 8 }}>
-          <div className="k-primaer">Oberflächen-Anpassung</div>
+        <section data-testid="einstellungen-adaption" className="orbit065-einstellungen-sektion">
+          <div className="orbit065-einstellungen-sektionstitel">Oberflächen-Anpassung</div>
           <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <input
               type="checkbox"
@@ -242,8 +254,8 @@ export function Einstellungen({
         </section>
         <Hairline />
 
-        <section data-testid="einstellungen-leistung" style={{ display: 'grid', gap: 8 }}>
-          <div className="k-primaer">Leistung</div>
+        <section data-testid="einstellungen-leistung" className="orbit065-einstellungen-sektion">
+          <div className="orbit065-einstellungen-sektionstitel">Leistung</div>
           <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <input
               type="checkbox"
@@ -333,8 +345,8 @@ export function Einstellungen({
         </section>
         <Hairline />
 
-        <section data-testid="einstellungen-neuigkeiten" style={{ display: 'grid', gap: 10 }}>
-          <div className="k-primaer">Funktionen &amp; Neues</div>
+        <section data-testid="einstellungen-neuigkeiten" className="orbit065-einstellungen-sektion">
+          <div className="orbit065-einstellungen-sektionstitel">Funktionen &amp; Neues</div>
           {NEUIGKEITEN.map((eintrag) => (
             <div key={eintrag.version} data-testid={`neuigkeiten-version-${eintrag.version}`} style={{ display: 'grid', gap: 4 }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
@@ -355,8 +367,8 @@ export function Einstellungen({
         {/* F2 (v0.6.4, Entdoppelung): «App deinstallieren…» zog aus der
             Kopfleiste hierher um — selten gebraucht, gehört zu den
             System-Einstellungen, nicht auf den teuersten Platz der App. */}
-        <section data-testid="einstellungen-system" style={{ display: 'grid', gap: 10 }}>
-          <div className="k-primaer">System</div>
+        <section data-testid="einstellungen-system" className="orbit065-einstellungen-sektion">
+          <div className="orbit065-einstellungen-sektionstitel">System</div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
             <KButton size="sm" tone="quiet" data-testid="einstellung-deinstallieren" onClick={aufDeinstallieren}>
               App deinstallieren…
@@ -366,6 +378,7 @@ export function Einstellungen({
             </span>
           </div>
         </section>
+        </div>
       </div>
     </div>,
     document.body,

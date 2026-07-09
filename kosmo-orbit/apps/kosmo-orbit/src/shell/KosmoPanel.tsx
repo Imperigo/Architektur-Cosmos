@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, bestaetigen, melde, meldeFehler, moduleHue, OrbitMark } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, KSelect, bestaetigen, melde, meldeFehler, moduleHue, OrbitMark } from '@kosmo/ui';
 import {
   ChatSession,
   LearningJournal,
@@ -843,10 +843,10 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         )}
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="ghost" onClick={() => setShowSettings(!showSettings)} aria-label="Einstellungen">
-          ⚙
+          <KIcon name="zahnrad" size={16} />
         </KButton>
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          ×
+          <KIcon name="schliessen" size={16} />
         </KButton>
       </div>
       <Hairline />
@@ -897,20 +897,21 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           <Hairline />
           <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
             Verbindung
-            <select
+            <KSelect
+              size="sm"
               value={settings.provider}
               onChange={(e) => {
                 const s = { ...settings, provider: e.target.value as KosmoSettings['provider'] };
                 setSettings(s);
                 localStorage.setItem('kosmo.llm', JSON.stringify(s));
               }}
-              style={selectStyle}
+              style={{ display: 'block', width: '100%', marginTop: 4 }}
             >
               <option value="ollama">Ollama (HomeStation)</option>
               <option value="lmstudio">LM Studio (HomeStation)</option>
               <option value="anthropic">Anthropic (Claude, Cloud)</option>
               <option value="mock">Demo-Modus (ohne LLM)</option>
-            </select>
+            </KSelect>
           </label>
           {settings.provider === 'ollama' && (
             <>
@@ -1005,7 +1006,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               />
               <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
                 Modell
-                <select
+                <KSelect
+                  size="sm"
                   data-testid="claude-modell-select"
                   value={modellFreitext ? 'freitext' : settings.anthropicModel}
                   onChange={(e) => {
@@ -1017,7 +1019,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                       speichere({ ...settings, anthropicModel: v });
                     }
                   }}
-                  style={selectStyle}
+                  style={{ display: 'block', width: '100%', marginTop: 4 }}
                 >
                   {ANTHROPIC_MODELLE.map((m) => (
                     <option key={m.id} value={m.id}>
@@ -1025,7 +1027,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                     </option>
                   ))}
                   <option value="freitext">Eigenes Modell (Freitext) …</option>
-                </select>
+                </KSelect>
               </label>
               {modellFreitext && (
                 <SettingsFeld
@@ -1194,7 +1196,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                       background: b.feedback === f ? 'var(--k-accent-wash)' : 'transparent',
                     }}
                   >
-                    {f === 'gut' ? '👍' : '👎'}
+                    <KIcon name={f === 'gut' ? 'daumen-hoch' : 'daumen-runter'} size={14} />
                   </button>
                 ))}
               </div>
@@ -1339,7 +1341,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           data-testid="kosmo-mic"
           style={recording ? { animation: 'none' } : undefined}
         >
-          {recording ? '● Stopp' : '🎙'}
+          {recording ? '● Stopp' : <KIcon name="mikrofon" size={16} />}
         </KButton>
         <KButton
           size="sm"
@@ -1361,7 +1363,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               .catch((err) => meldeFehler(err));
           }}
         >
-          ⚑
+          <KIcon name="fahne" size={16} />
         </KButton>
         <input
           ref={eingabeRef}
@@ -1413,5 +1415,3 @@ const inputStyle: React.CSSProperties = {
   background: 'var(--k-raised)',
   fontSize: 13,
 };
-
-const selectStyle: React.CSSProperties = { ...inputStyle };

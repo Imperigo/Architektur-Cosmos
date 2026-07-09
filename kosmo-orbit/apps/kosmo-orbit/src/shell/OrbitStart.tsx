@@ -13,6 +13,7 @@ import {
   type OrbitUntertool,
 } from './orbit-werkzeuge';
 import { IconHauptData, IconHauptDesign, IconHauptKosmo, IconHauptOffice } from './orbit-icons';
+import './orbit-065.css';
 
 /**
  * Serie K / F3 — Owner-Auftrag wörtlich: «das startmenü muss neu gestaltet
@@ -94,6 +95,29 @@ function verzoegerung(index: number): string {
   return `${-((index * ORBIT_DAUER_S) / ORBIT_HAUPTWERKZEUGE.length)}s`;
 }
 
+/**
+ * R2-N1 (0.6.5, docs/UI-SELBSTKRITIK-064.md): Kompassrichtung, in der der
+ * Fächer eines Knotens aufgeht — abgeleitet aus demselben 90°-Rhythmus wie
+ * `verzoegerung()` (4 Hauptwerkzeuge, gleichmässig verteilt: Index 0 startet
+ * bei 0° = oben, danach im Uhrzeigersinn rechts/unten/links). Bewusst
+ * STATISCH (nicht der laufenden Rotation nachgeführt): der Fächer wächst
+ * IMMER vom Knoten-Rand WEG (nie zum Zentrum hin) — das gilt exakt, solange
+ * der reale Rotationswinkel nicht mehr als 90° von dieser Start-Richtung
+ * abgedriftet ist (siehe Bericht/Grenzen; dieselbe Toleranz akzeptiert der
+ * Code bei der `steps()`-Rotation ohnehin schon). */
+const ORBIT_RICHTUNGEN = ['oben', 'rechts', 'unten', 'links'] as const;
+type OrbitRichtung = (typeof ORBIT_RICHTUNGEN)[number];
+
+function richtungVon(index: number): OrbitRichtung {
+  return ORBIT_RICHTUNGEN[index % ORBIT_RICHTUNGEN.length]!;
+}
+
+/** R2-N2: leichte Rotation/Versatz je Karte (±2–4°, kleiner horizontaler
+ *  Jog) — «der Kreisgeometrie folgend» statt einer geraden Blockliste.
+ *  Vier Werte im Wechsel reichen (die Fächer haben 2–6 Karten). */
+const KARTEN_ROTATION_DEG = [-3, 2, -2.5, 3.5];
+const KARTEN_JOG_PX = [-4, 6, -6, 4];
+
 /** Schliesst den Fächer NUR, wenn Fokus/Maus den ganzen Knoten (Hauptknopf +
  *  Fächer) tatsächlich verlassen hat — Wechsel innerhalb (z. B. Hauptknopf →
  *  Untertool-Zeile) darf nicht zwischenzeitlich schliessen. */
@@ -169,40 +193,59 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                   <span className="k-orbit-hauptknopf-titel">{h.titel}</span>
                   {h.kommend && <span className="k-orbit-badge-kommend">kommend</span>}
                 </button>
+                {/* R2-N1/R2-N2 (0.6.5): Fächer öffnet AUSSERHALB des Rings
+                    (Kompassrichtung `richtungVon`, siehe Kommentar oben),
+                    Familien-Beschrieb bekommt festen Platz ÜBER dem
+                    Kartenfächer (eigenes Element, `--k-s3`-Abstand aus dem
+                    `gap` der Hülle in orbit-065.css) statt als erste Zeile
+                    IM Fächer. */}
                 <div
-                  className={`k-orbit-faecher${offen ? ' offen' : ''}`}
-                  data-testid={`orbit-faecher-${h.id}`}
+                  className={`orbit065-faecher-huelle orbit065-faecher-huelle--${richtungVon(index)}${offen ? ' offen' : ''}`}
                 >
-                  <div className="k-orbit-faecher-kopf">{h.kurzbeschrieb}</div>
-                  {untertoolsVon(h).map((u) => {
-                    const testid = u.kommend
-                      ? `orbit-office-${u.id}`
-                      : (u.testidOverride ?? (u.moduleId ? `module-${u.moduleId}` : `orbit-sub-${u.id}`));
-                    return (
-                      <div key={u.id} className="k-orbit-untertool-zeile">
-                        <button
-                          type="button"
-                          className="k-orbit-untertool"
-                          data-testid={testid}
-                          disabled={u.kommend}
-                          aria-label={u.kommend ? `${u.titel} — kommend, noch nicht verfügbar` : `${u.titel} öffnen`}
-                          onClick={() => {
-                            if (u.kommend || !u.moduleId) return;
-                            onOeffnen(u.moduleId);
-                          }}
-                        >
-                          <span className="k-orbit-untertool-titel">
-                            {u.titel}
-                            {u.kommend ? ' · kommend' : ''}
-                          </span>
-                          <span className="k-orbit-untertool-kurz">{u.kurzbeschrieb}</span>
-                        </button>
-                        <div className="k-orbit-faehigkeit" data-testid={`orbit-faehigkeit-${u.id}`}>
-                          {u.faehigkeit}
+                  <div className="orbit065-beschrieb" data-testid={`orbit-beschrieb-${h.id}`}>
+                    {h.kurzbeschrieb}
+                  </div>
+                  <div
+                    className={`k-orbit-faecher${offen ? ' offen' : ''}`}
+                    data-testid={`orbit-faecher-${h.id}`}
+                  >
+                    {untertoolsVon(h).map((u, kartenIndex) => {
+                      const testid = u.kommend
+                        ? `orbit-office-${u.id}`
+                        : (u.testidOverride ?? (u.moduleId ? `module-${u.moduleId}` : `orbit-sub-${u.id}`));
+                      const staffel = kartenIndex % KARTEN_ROTATION_DEG.length;
+                      return (
+                        <div key={u.id} className="k-orbit-untertool-zeile">
+                          <button
+                            type="button"
+                            className="k-orbit-untertool orbit065-karte"
+                            style={
+                              {
+                                '--k-karte-rot': `${KARTEN_ROTATION_DEG[staffel]}deg`,
+                                '--k-karte-jog': `${KARTEN_JOG_PX[staffel]}px`,
+                              } as CSSProperties
+                            }
+                            data-testid={testid}
+                            disabled={u.kommend}
+                            aria-label={u.kommend ? `${u.titel} — kommend, noch nicht verfügbar` : `${u.titel} öffnen`}
+                            onClick={() => {
+                              if (u.kommend || !u.moduleId) return;
+                              onOeffnen(u.moduleId);
+                            }}
+                          >
+                            <span className="orbit065-karte-titel">
+                              {u.titel}
+                              {u.kommend ? ' · kommend' : ''}
+                            </span>
+                            <span className="orbit065-karte-kurz">{u.kurzbeschrieb}</span>
+                          </button>
+                          <div className="k-orbit-faehigkeit" data-testid={`orbit-faehigkeit-${u.id}`}>
+                            {u.faehigkeit}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>

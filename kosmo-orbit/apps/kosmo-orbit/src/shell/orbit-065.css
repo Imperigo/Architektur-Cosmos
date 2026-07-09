@@ -1,0 +1,223 @@
+/**
+ * v0.6.5 (Stream W5 — Shell & Orbit) — NEUE, additive Styles für das Orbit-
+ * Startmenü und die Einstellungen. `aura.css`/`packages/kosmo-ui` bleiben
+ * dabei komplett unangetastet (Freeze, siehe Owner-Auftrag): alles hier sind
+ * NEUE Klassen, teils mit gezielt höherer Spezifität, um einzelne
+ * Positionierungs-Eigenschaften bestehender `k-orbit-*`-Klassen zu
+ * überschreiben (nie deren Öffnen/Schliessen-Vertrag: Opazität +
+ * `pointer-events:auto` bleiben in JEDEM Zustand erhalten, F3-Vertrag).
+ *
+ * Importiert einmal von `OrbitStart.tsx` — CSS-Importe sind global (kein
+ * Modul-Scoping), andere Shell-Dateien nutzen dieselben Klassen ohne
+ * eigenen Import.
+ *
+ * Behebt (docs/UI-SELBSTKRITIK-064.md, Runde 2):
+ *  - R2-N1 (Fächer-Versatz): der Fächer wächst IMMER vom Knoten-Rand weg,
+ *    nie zum Zentrum hin (Kompassrichtung aus dem Hauptwerkzeug-Index,
+ *    90°-Rhythmus von Haus aus — siehe Kommentar in OrbitStart.tsx).
+ *  - R2-N2 (Fächer-Karten): echte Karteikarten (45°-Ecke, radial gestaffelt).
+ *  - R2-N3 (Achsen): Begrüssung/Projekte + Orbit auf einer Layout-Achse.
+ */
+
+/* ── R2-N3: Begrüssung/Projekte und Orbit teilen EINE Layout-Achse ──────
+   (App.tsx-Layout gehört nicht zu meinem Dateibesitz — siehe Bericht:
+   minimal-invasive Grid-Hülle, keine Logik verändert.) */
+.orbit065-home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--k-s7);
+  align-items: start;
+}
+.orbit065-home-links {
+  display: grid;
+  gap: var(--k-s6);
+  min-width: 0;
+}
+.orbit065-home-rechts {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  /* Reserviert Raum für den "oben" wachsenden Fächer (siehe OrbitStart.tsx
+     `richtungVon`) — der Fächer sitzt `position:absolute` und trägt daher
+     NICHTS zur Grid-/Flex-Höhe bei; ohne diese Reserve würde er beim
+     Öffnen über den Seitenrand hinaus in negative Koordinaten wachsen
+     (nicht mehr scrollbar, nicht mehr klickbar — siehe Bericht/Grenzen für
+     den gemessenen Bedarf: grösster "oben"-Fächer ≈ 430px inkl. Abstand). */
+  padding-top: 440px;
+}
+@media (max-width: 860px) {
+  .orbit065-home-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── R2-N1/N2: Fächer ausserhalb des Rings, echte Karteikarten ──────────
+   Geometrie: `.orbit065-faecher-huelle` hängt (wie `.k-orbit-faecher`
+   vorher) im 108px-Anker `.k-orbit-knoten-gegendreh` — NEU aber
+   kompassrichtungsabhängig (oben/rechts/unten/links, aus dem Index der 4
+   Hauptwerkzeuge) statt immer "unten": sie wächst vom Knoten-Rand WEG,
+   nie zum Zentrum hin. Der Knoten selbst hat einen festen 90°-Rhythmus
+   (0/90/180/270° bei Mount, siehe `verzoegerung()`); die fortlaufende
+   Rotation ist rein dekorativ (Owner-Auftrag «ganz langsam») — die
+   Kompassrichtung bleibt für den Fächer bewusst STATISCH je Knoten (siehe
+   Bericht/Grenzen: bei sehr langem Verweilen ohne Reload könnte der Fächer
+   geringfügig von der dann weitergedrehten Knotenposition abweichen, exakt
+   dieselbe Toleranz, die die bestehende `steps()`-Rotation schon hat). */
+.orbit065-faecher-huelle {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s3);
+  width: min(300px, 64vw);
+  opacity: 0.0015;
+  pointer-events: auto;
+  z-index: 5;
+  transition: opacity var(--k-motion-base);
+}
+.orbit065-faecher-huelle.offen {
+  opacity: 1;
+  z-index: 20;
+}
+.orbit065-faecher-huelle--oben {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: var(--k-s6);
+}
+.orbit065-faecher-huelle--unten {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: var(--k-s6);
+}
+.orbit065-faecher-huelle--rechts {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: var(--k-s6);
+}
+.orbit065-faecher-huelle--links {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: var(--k-s6);
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit065-faecher-huelle {
+    transition: none;
+  }
+}
+
+/* Familien-Beschrieb — fester Platz ÜBER dem Kartenfächer, --k-s3-Abstand
+   (kommt aus dem `gap` der Hülle oben) — eigenes Element, NICHT mehr die
+   erste Zeile im selben Kasten wie die Karten (R2-N1/N2-Fix). */
+.orbit065-beschrieb {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-soft);
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-sm);
+  padding: var(--k-s2) var(--k-s3);
+  line-height: 1.4;
+}
+
+/* Der Kartenfächer selbst — überschreibt NUR die Positionierungs-
+   Eigenschaften von `.k-orbit-faecher` (aura.css, Freeze); Öffnen/Schliessen
+   (Opazität/Klick-Vertrag) bleibt unverändert dort geregelt (dieselbe
+   `offen`-Klasse steuert beides weiter). Zwei Klassen (0,2,0) schlagen die
+   einzelne aura-Klasse (0,1,0) unabhängig von der Stylesheet-Reihenfolge. */
+.orbit065-faecher-huelle .k-orbit-faecher {
+  position: static;
+  top: auto;
+  left: auto;
+  margin-top: 0;
+  transform: none;
+  width: 100%;
+  display: grid;
+  gap: var(--k-s6);
+}
+
+/* Karteikarten (R2-N2): 45°-Ecke wie `.k-karte` (aura.css), aber mit den in
+   UI-KONZEPT-065 §1 verlangten Werten (--k-line-strong/--k-radius-sm statt
+   --k-technik/0) — eigene Klasse statt `.k-karte` zu ändern (Freeze).
+   Radial gestaffelt: leichte Rotation/Versatz je Karte (±2–4°, JS-Variablen
+   `--k-karte-rot`/`--k-karte-jog`, der Kreisgeometrie folgend). */
+.orbit065-karte {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--k-s3) var(--k-s4);
+  border: 1px solid var(--k-line-strong);
+  border-radius: var(--k-radius-sm);
+  background: var(--k-raised);
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  transform: rotate(var(--k-karte-rot, 0deg)) translateX(var(--k-karte-jog, 0px));
+  transition:
+    border-color var(--k-motion-fast),
+    background var(--k-motion-fast),
+    transform var(--k-motion-fast);
+}
+.orbit065-karte:hover,
+.orbit065-karte:focus-visible {
+  border-color: var(--k-accent);
+  background: var(--k-surface);
+  transform: rotate(0deg) translateX(0);
+}
+.orbit065-karte:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+.orbit065-karte-titel {
+  display: block;
+  font-weight: 650;
+  font-size: var(--k-t-sm);
+  overflow-wrap: anywhere;
+}
+.orbit065-karte-kurz {
+  display: block;
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+  margin-top: var(--k-s1);
+  overflow-wrap: anywhere;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit065-karte {
+    transform: none !important;
+  }
+}
+
+/* ── Einstellungen (KDialog-Umstellung, Mass 5) ─────────────────────────
+   `.k-dialog-koerper` (aura.css) bleibt die scrollende Hülle; hier nur das
+   interne Sektions-Raster + die einheitlichen Sektionstitel (--k-t-lg). */
+.orbit065-einstellungen-koerper {
+  display: grid;
+  gap: var(--k-s5);
+}
+.orbit065-einstellungen-sektion {
+  display: grid;
+  gap: var(--k-s3);
+}
+.orbit065-einstellungen-sektionstitel {
+  font-size: var(--k-t-lg);
+  font-weight: 650;
+}
+
+/* ── Kurzbefehle: Technik-Stimme (Mass 7) — Mono-Kürzel rechtsbündig ───── */
+.orbit065-kurzbefehl-zeile {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--k-s4);
+  align-items: baseline;
+}
+.orbit065-kurzbefehl-taste {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  padding: var(--k-s1) var(--k-s3);
+  border: 1px solid var(--k-line-strong);
+  border-radius: var(--k-radius-sm);
+  background: var(--k-surface);
+  white-space: nowrap;
+}
