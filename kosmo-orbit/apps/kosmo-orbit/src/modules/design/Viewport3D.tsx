@@ -4,8 +4,8 @@ import CameraControls from 'camera-controls';
 import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
 import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
-import { deriveAll, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
-import { Badge, KButton, meldeFehler, moduleHue } from '@kosmo/ui';
+import { deriveAll, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
+import { Badge, KButton, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
 import { pbrPalette } from '@kosmo/data';
@@ -22,6 +22,39 @@ import {
   wandTrefferZuOeffnung,
   type WandTrefferPunkt,
 } from './sketch-3d';
+// V-M1 (v0.6.6 W2 Stream D, UI-SELBSTKRITIK-065 Restliste Priorität 1):
+// Render-Knopf im 3D-Viewport stösst DIESELBE KosmoVis-Render-Kette an wie
+// die Vis-Station (NodeCanvas.tsx/VisWorkspace.tsx) — kein Parallelweg.
+// `vis-jobs.ts`/`vis-runtime.ts` bleiben unangetastet (nur importiert); der
+// Viewport bekommt einen eigenen, festen Laufzeit-Schlüssel im GEMEINSAMEN
+// `useVisRuntime`-Store (Graph-Node-IDs sind UUIDs, kollidieren nie mit
+// diesem Literal). Die Status-TEXTE «bereit»/«rendert» der Vis-Station
+// (NodeCanvas testid `render-status`) bleiben unverändert — der Viewport
+// trägt eigene `viewport-render-*`-testids.
+import {
+  abbrechenJob,
+  bildAufsBlatt,
+  bridgeBase,
+  bridgeVermutlichCspGeblockt,
+  freigebenJob,
+  holeJob,
+  istAuthFehler,
+  mappeJobStatus,
+  postRenderJob,
+} from '../vis/vis-jobs';
+import {
+  istZeitUeberschritten,
+  memoKey,
+  OFFENE_LAUF_STATUS,
+  RENDER_TIMEOUT_MS_DEFAULT,
+  useVisRuntime,
+  type NodeLaufStatus,
+} from '../vis/vis-runtime';
+import { BridgeBild } from '../vis/BridgeBild';
+
+/** Fester Laufzeit-Schlüssel des Viewport-Render-Knopfs im gemeinsamen
+ *  `useVisRuntime`-Store — s. Import-Kommentar oben. */
+const VIEWPORT_RENDER_NODE_ID = '__viewport3d-render__';
 
 /** A4 (ROADMAP 155): Brüstung unter dieser Schwelle gilt als Boden-Anschlag → Tür statt Fenster. */
 const SKETCH_TUER_SCHWELLE_MM = 150;
@@ -271,6 +304,143 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     setSketchStrokes([]);
     setSketchPending(null);
   };
+
+  // V-M1: Render-Knopf — Laufzeit-Zustand kommt 1:1 aus dem gemeinsamen
+  // `useVisRuntime`-Store (wie ein Vis-Node), nur unter dem festen Schlüssel
+  // `VIEWPORT_RENDER_NODE_ID` statt einer Graph-Node-ID.
+  const renderLauf = useVisRuntime((s) => s.laeufe[VIEWPORT_RENDER_NODE_ID]);
+  const renderStatus: NodeLaufStatus | 'bereit' = renderLauf?.status ?? 'bereit';
+  const renderLaeuftNoch = (OFFENE_LAUF_STATUS as readonly string[]).includes(renderStatus);
+  const renderCloudLeer = bridgeBase() === '';
+
+  // Eigener Poll (2.5 s, dasselbe Intervall wie NodeCanvas/EinfachAnsicht) —
+  // fragt NUR den einen Viewport-Lauf ab, fasst keine fremden Node-Läufe an.
+  useEffect(() => {
+    const t = setInterval(() => {
+      const lauf = useVisRuntime.getState().laeufe[VIEWPORT_RENDER_NODE_ID];
+      if (!lauf || !(OFFENE_LAUF_STATUS as readonly string[]).includes(lauf.status)) return;
+      const jetzt = Date.now();
+      const limitMs = Number(localStorage.getItem('kosmo.render.timeoutMs')) || RENDER_TIMEOUT_MS_DEFAULT;
+      if (istZeitUeberschritten(lauf, jetzt, limitMs)) {
+        useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, {
+          status: 'zeitueberschreitung',
+          fehler: 'Zeitüberschreitung — Bridge/GPU meldet sich nicht.',
+        });
+        return;
+      }
+      if (!lauf.jobId) return;
+      const jobId = lauf.jobId;
+      void holeJob(jobId)
+        .then((j) => {
+          if (useVisRuntime.getState().laeufe[VIEWPORT_RENDER_NODE_ID]?.jobId !== jobId) return;
+          if (j.result) {
+            useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, {
+              status: 'fertig',
+              bild: j.result.images[0] ?? '',
+              qa: j.result.qa,
+            });
+          } else if (j.status === 'error') {
+            useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, { status: 'fehler', fehler: 'Render fehlgeschlagen' });
+          } else {
+            useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, { status: mappeJobStatus(j) });
+          }
+        })
+        .catch((err) => {
+          if (useVisRuntime.getState().laeufe[VIEWPORT_RENDER_NODE_ID]?.jobId !== jobId) return;
+          if (istAuthFehler(err)) {
+            useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, {
+              status: 'fehler',
+              fehler: 'Bridge lehnt ab — Token fehlt oder ist falsch (KosmoVis-Einstellungen).',
+            });
+          }
+          // Transiente Netzfehler NICHT hochziehen — der nächste Poll fasst nach.
+        });
+    }, 2500);
+    return () => clearInterval(t);
+  }, []);
+
+  const renderStarten = () => {
+    const { doc } = useProject.getState();
+    // Kein Formular im Viewport (bewusst schlank) — derselbe Zusammenführungs-
+    // Weg wie die Vis-Station (kernel `finalerRenderPrompt`/`renderPromptBausteine`),
+    // nur ohne Stimmungs-/Freitext-Zusatz.
+    const prompt = finalerRenderPrompt('', '', renderPromptBausteine(doc));
+    const auftrag = { prompt, faithful: 0.8, samples: 128 };
+    useVisRuntime.getState().setzeLauf(VIEWPORT_RENDER_NODE_ID, {
+      status: 'gesendet',
+      memoKey: memoKey(auftrag),
+      gestartetUm: Date.now(),
+    });
+    void postRenderJob(auftrag)
+      .then((j) =>
+        useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, {
+          jobId: j.job_id,
+          status: mappeJobStatus(j),
+          ...(j.approval_token !== undefined ? { approvalToken: j.approval_token } : {}),
+        }),
+      )
+      .catch((err) => {
+        // Ehrliche Offline-/CSP-Meldung — WORTGLEICH der Weg aus
+        // NodeCanvas.tsx `ausfuehren()` (kein eigener, abweichender Text).
+        const offline = err instanceof TypeError;
+        const cspGeblockt = offline && bridgeVermutlichCspGeblockt();
+        useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, {
+          status: 'fehler',
+          fehler: cspGeblockt
+            ? 'Bridge-Adresse ist eine LAN-IP, die die CSP nicht erlaubt (nur localhost/127.0.0.1) — am selben Gerät über localhost ansprechen. (Offline)'
+            : offline
+              ? 'Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)'
+              : err instanceof Error
+                ? err.message
+                : String(err),
+        });
+        meldeFehler(err);
+      });
+  };
+
+  const renderFreigeben = () => {
+    const lauf = useVisRuntime.getState().laeufe[VIEWPORT_RENDER_NODE_ID];
+    if (!lauf?.jobId || !lauf.approvalToken) return;
+    void freigebenJob(lauf.jobId, lauf.approvalToken)
+      .then((j) => useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, { status: mappeJobStatus(j) }))
+      .catch(meldeFehler);
+  };
+  const renderAbbrechen = () => {
+    const lauf = useVisRuntime.getState().laeufe[VIEWPORT_RENDER_NODE_ID];
+    if (!lauf?.jobId) return;
+    void abbrechenJob(lauf.jobId)
+      .then((j) => useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, { status: mappeJobStatus(j) }))
+      .catch(meldeFehler);
+  };
+  const renderAufsBlatt = () => {
+    if (!renderLauf?.jobId || !renderLauf.bild) return;
+    void bildAufsBlatt(renderLauf.jobId, renderLauf.bild, 'Viewport-Render')
+      .then((name) => melde(`Render liegt auf «${name}» — im KosmoPublish weiterschieben`, { ton: 'erfolg' }))
+      .catch(meldeFehler);
+  };
+
+  const RENDER_STATUS_LABEL: Record<string, string> = {
+    bereit: 'bereit',
+    gesendet: 'gesendet',
+    wartetFreigabe: 'wartet auf Freigabe',
+    wartetGpu: 'wartet auf GPU-Leerlauf',
+    rendert: 'rendert',
+    fertig: 'fertig',
+    fehler: 'fehler',
+    abgebrochen: 'abgebrochen',
+    zeitueberschreitung: 'Zeitüberschreitung',
+  };
+  const renderIstFehler = renderStatus === 'fehler' || renderStatus === 'zeitueberschreitung';
+  const renderKnopfLabel =
+    renderStatus === 'bereit'
+      ? 'Rendern'
+      : renderLaeuftNoch
+        ? 'Rendert …'
+        : renderStatus === 'fertig'
+          ? 'Neu rendern'
+          : renderIstFehler
+            ? 'Erneut versuchen'
+            : 'Rendern';
 
   // Linker Klick folgt dem gewählten Modus (Mitteltaste/Rechts werden pro Geste
   // in onCaptureDown aus mausBelegung gesetzt, wegen Shift+Mitte). navModusRef
@@ -1472,6 +1642,107 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           { id: 'fit', icon: '⌂', titel: 'Einpassen — Modell ins Bild holen (ohne Modell: Ausgangslage)', onClick: einpassen },
         ]}
       />
+      {/* V-M1: Render-Knopf — eigene untere Werkzeug-Ecke (rechts, ÜBER der
+          Orbit/Pan/Zoom/Fit-Leiste, unter dem fixen Kosmo-Symbol vorbei —
+          gleiche Spalte wie `NavLeiste` (`right:88`), aber `bottom:92` statt
+          `bottom:50`, damit sich nichts stapelt). Unaufdringlich: im Ruhe-
+          zustand nur der Knopf, das Status-/Ergebnis-Panel wächst darüber. */}
+      <div
+        style={{
+          position: 'absolute',
+          right: 88,
+          bottom: 92,
+          zIndex: 5,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          gap: 6,
+        }}
+      >
+        {renderStatus !== 'bereit' && (
+          <div
+            data-testid="viewport-render-panel"
+            style={{
+              background: 'var(--k-surface)',
+              border: '1px solid var(--k-line)',
+              borderRadius: 'var(--k-radius-md)',
+              padding: 8,
+              boxShadow: 'var(--k-shadow-raised)',
+              display: 'grid',
+              gap: 6,
+              width: 200,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Badge hue={moduleHue.vis}>Render</Badge>
+              <span
+                data-testid="viewport-render-status"
+                style={{
+                  fontSize: 10,
+                  fontFamily: 'var(--k-font-mono)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color:
+                    renderStatus === 'fertig'
+                      ? 'var(--k-success)'
+                      : renderIstFehler
+                        ? 'var(--k-danger)'
+                        : 'var(--k-warning)',
+                }}
+              >
+                {RENDER_STATUS_LABEL[renderStatus] ?? renderStatus}
+              </span>
+            </div>
+            {renderStatus === 'wartetFreigabe' && (
+              <KButton size="sm" tone="quiet" data-testid="viewport-render-freigeben" onClick={renderFreigeben}>
+                Freigeben
+              </KButton>
+            )}
+            {renderLaeuftNoch && (
+              <KButton size="sm" tone="ghost" data-testid="viewport-render-abbrechen" onClick={renderAbbrechen}>
+                Abbrechen
+              </KButton>
+            )}
+            {renderStatus === 'fertig' && renderLauf?.jobId && renderLauf.bild ? (
+              <>
+                <BridgeBild
+                  jobId={renderLauf.jobId}
+                  imageName={renderLauf.bild}
+                  alt="Render"
+                  testid="viewport-render-bild"
+                  style={{ width: '100%', border: '1px solid var(--k-line)' }}
+                />
+                <KButton size="sm" tone="accent" data-testid="viewport-render-blatt" onClick={renderAufsBlatt}>
+                  Aufs Blatt legen
+                </KButton>
+              </>
+            ) : (
+              renderIstFehler && (
+                <div data-testid="viewport-render-fehler" style={{ fontSize: 11, color: 'var(--k-danger)' }}>
+                  {renderLauf?.fehler ?? 'Render fehlgeschlagen'}
+                </div>
+              )
+            )}
+          </div>
+        )}
+        <KButton
+          tone="accent"
+          size="sm"
+          data-testid="viewport-render-knopf"
+          disabled={renderLaeuftNoch || renderCloudLeer}
+          title={
+            renderCloudLeer
+              ? 'Kein HomeStation-Server verbunden — im Cloud-Betrieb rendert die Kette nicht lokal. Cloud-Weg (Gemini Omni Flash, Preview) wartet auf Owner-Entscheid + Schlüssel — siehe KosmoDoc → Tech-Radar.'
+              : 'Rendern — dieselbe KosmoVis-Kette wie die Vis-Station'
+          }
+          onClick={renderStarten}
+        >
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <KIcon name="kamera" size={14} />
+            {renderKnopfLabel}
+          </span>
+        </KButton>
+      </div>
       {kontext && (
         <ViewportKontextmenue
           x={kontext.x}
