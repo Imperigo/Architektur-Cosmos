@@ -75,3 +75,51 @@ test('KosmoData-Dach: Übersichts-Tab zeigt sechs Sammlungen mit Zähler und fin
 
   await page.screenshot({ path: 'e2e-results/kosmodata-dach.png' });
 });
+
+/**
+ * F8 (Owner-Befund v0.6.4, Live-Test 0.6.3-Desktop): «Wieso sehe ich
+ * KosmoData-Daten nicht, es steht offline seed.» Simuliert genau den
+ * Desktop-Zustand — Website-Sync (architekturkosmos.ch) nicht erreichbar —
+ * per Route-Abort NUR auf dem Sync-Endpoint (die lokale kosmodata-seed.json
+ * bleibt unangetastet). Erwartung: Referenz-Kanon, CH-Bauteilkatalog und
+ * Materialkatalog bleiben VOLL sichtbar, und die Badge sagt ehrlich statt
+ * kryptisch, was passiert.
+ */
+test('F8: Website-Sync unerreichbar — eingebaute Referenzdaten/Kataloge bleiben voll sichtbar, Badge ist ehrlich statt kryptisch', async ({ page }) => {
+  // Nur der Sync-Endpoint wird abgebrochen — der lokale Seed-Abruf
+  // (kosmodata-seed.json, same-origin) ist davon nicht betroffen.
+  await page.route('https://architekturkosmos.ch/**', (route) => route.abort('failed'));
+
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-data"]');
+
+  // Referenzen-Tab (Standard): der volle eingebaute Referenz-Kanon (112 Einträge).
+  await expect(page.locator('[data-testid="ref-card"]')).toHaveCount(112);
+
+  // Badge ist ehrlich: nicht der kryptische String «Offline-Seed», sondern
+  // ein Hinweis, dass die eingebauten Referenzdaten trotzdem da sind.
+  const badge = page.locator('[data-testid="data-sync-badge"]');
+  await expect(badge).toBeVisible();
+  await expect(badge).not.toHaveText('Offline-Seed');
+  await expect(badge).toContainText(/eingebaute Referenzdaten/i);
+  await expect(badge).toHaveAttribute('title', /Website-Sync nicht erreichbar/i);
+
+  // CH-Bauteilkatalog und Materialkatalog hängen nicht am Sync — sie zeigen
+  // voll, unabhängig vom (nicht erreichbaren) Website-Sync.
+  await page.click('[data-testid="tab-bauteile"]');
+  await expect(page.locator('[data-testid^="bauteil-"]').first()).toBeVisible();
+  await page.click('[data-testid="tab-materialien"]');
+  const materialCount = await page.locator('[data-testid^="material-"]').count();
+  expect(materialCount).toBeGreaterThan(0);
+
+  // Klick auf «Sync» versucht den Website-Sync explizit — scheitert er
+  // (Route-Abort), bleibt der Seed sichtbar UND die Meldung bleibt ehrlich:
+  // Grund benennen, nicht nur "Fehler".
+  await page.click('[data-testid="tab-referenzen"]');
+  await page.click('[data-testid="data-sync"]');
+  await expect(badge).toContainText(/Website-Sync nicht erreichbar/i);
+  await expect(badge).toContainText(/eingebaute Referenzdaten bleiben sichtbar/i);
+  await expect(page.locator('[data-testid="ref-card"]')).toHaveCount(112);
+});

@@ -13,5 +13,5 @@
     "test:leak": "vitest run test/privatspur-leak-gate.test.ts"
   },
   "dependencies": { "@kosmo/kernel": "*" },
-  "devDependencies": { "typescript": "^5.9.0", "vitest": "^3.2.0" }
+  "devDependencies": { "typescript": "^5.9.0", "vitest": "^3.2.0", "fake-indexeddb": "^6.2.5" }
 }

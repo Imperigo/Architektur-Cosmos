@@ -100,6 +100,7 @@ let cache: RefEntry[] | null = null;
 export async function loadReferences(): Promise<RefEntry[]> {
   if (cache) return cache;
   const res = await fetch('./kosmodata-seed.json');
+  if (!res.ok) throw new Error(`kosmodata-seed.json: HTTP ${res.status}`);
   const data = (await res.json()) as { entries: RefEntry[] };
   cache = data.entries;
   return cache;
@@ -261,6 +262,60 @@ export function lokaleRef3dQuelle(refId: string, assets: KosmoAsset[]): Blob | u
   return undefined;
 }
 
+export interface KosmoDataSyncBadgeInfo {
+  hue: string;
+  text: string;
+  /** Ausführlicher, ehrlicher Tooltip-Text (Badge-Titel). */
+  titel: string;
+}
+
+/**
+ * F8 (Owner-Befund v0.6.4, Live-Test 0.6.3-Desktop): «Wieso sehe ich
+ * KosmoData-Daten nicht, es steht offline seed.» Die alte Badge-Aufschrift
+ * «Offline-Seed» war technisch korrekt, aber kryptisch — sie sagte nicht,
+ * DASS die eingebauten Referenzdaten trotzdem vollständig sichtbar sind und
+ * WARUM kein Live-Sync passiert (Website-Sync/architekturkosmos.ch im
+ * Desktop-Build nicht erreichbar/konfiguriert). Reine Funktion (aus der
+ * Komponente gezogen), damit die Formulierungen ohne Rendering testbar sind.
+ */
+export function kosmoDataSyncBadge(state: {
+  seedFehler: boolean;
+  syncState: 'seed' | 'synced' | 'fehler';
+  quelle: 'seed' | 'live' | 'cache';
+  entriesCount: number;
+}): KosmoDataSyncBadgeInfo {
+  if (state.seedFehler) {
+    return {
+      hue: 'var(--k-warning)',
+      text: 'Eingebaute Referenzdaten nicht ladbar',
+      titel:
+        'Die eingebauten Referenzdaten (Referenz-Kanon, CH-Bauteilkatalog, Materialkatalog) konnten gerade nicht geladen werden — «Erneut versuchen» wiederholt den Ladevorgang.',
+    };
+  }
+  if (state.syncState === 'synced' && state.quelle === 'live') {
+    return { hue: 'var(--k-success)', text: `Live · ${state.entriesCount}`, titel: 'Referenzen sind mit architekturkosmos.ch synchronisiert.' };
+  }
+  if (state.syncState === 'synced') {
+    return {
+      hue: 'var(--k-info)',
+      text: `Cache (letzter Stand) · ${state.entriesCount}`,
+      titel: 'Website-Sync gerade nicht erreichbar — letzter erfolgreich synchronisierter Stand wird gezeigt.',
+    };
+  }
+  if (state.syncState === 'fehler') {
+    return {
+      hue: 'var(--k-warning)',
+      text: 'Website-Sync nicht erreichbar — eingebaute Referenzdaten bleiben sichtbar',
+      titel: 'Offline — eingebaute Referenzdaten (Stand vom Build). Website-Sync nicht erreichbar.',
+    };
+  }
+  return {
+    hue: 'var(--k-info)',
+    text: 'Offline — eingebaute Referenzdaten (Stand vom Build)',
+    titel: 'Offline — eingebaute Referenzdaten (Stand vom Build). Website-Sync nicht erreichbar.',
+  };
+}
+
 export type DataTab = 'uebersicht' | 'referenzen' | 'bauteile' | 'materialien' | 'wissen' | 'training' | 'gedaechtnis' | 'archiv';
 
 /** Serie J2 / Batch B1: deutsche Anzeige-Labels je Adaptions-Gruppe
@@ -281,6 +336,15 @@ export interface DataWorkspaceProps {
 export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
   const [entries, setEntries] = useState<RefEntry[]>([]);
   const [geladen, setGeladen] = useState(false);
+  // F8 (Owner-Befund v0.6.4): der eingebaute Referenz-Seed kommt selbst per
+  // fetch() (lokale kosmodata-seed.json) — schlägt der Abruf fehl (blockiertes
+  // fetch, defekter Build, o.ä.), blieb die Liste bisher leer, ohne Meldung
+  // und ohne Wiederholung. `seedFehler` unterscheidet «kein Treffer für die
+  // Suche» ehrlich von «der Seed selbst ist nicht geladen» — `seedRetry`
+  // triggert einen neuen Versuch (der Sync-Knopf ist etwas anderes: der holt
+  // Live-Daten von der Website, nicht den Build-Seed).
+  const [seedFehler, setSeedFehler] = useState(false);
+  const [seedRetry, setSeedRetry] = useState(0);
   const [query, setQuery] = useState('');
   const [sector, setSector] = useState<string | null>(null);
   const [selected, setSelected] = useState<RefEntry | null>(null);
@@ -305,9 +369,13 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
   };
 
   useEffect(() => {
+    let verworfen = false;
+    setSeedFehler(false);
     void loadReferences()
       .then((es) => {
+        if (verworfen) return;
         setEntries(es);
+        setSeedFehler(false);
         // Batch 4: KosmoAsset kann per kosmodata_refs auf eine Referenz zeigen —
         // die Brücke ist sessionStorage, weil `__kosmo.open()` nur den Screen
         // wechselt und keine Nutzlast transportiert.
@@ -322,8 +390,18 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           /* privates Fenster — kein Sprung, kein Absturz */
         }
       })
-      .finally(() => setGeladen(true));
-  }, []);
+      .catch(() => {
+        // F8: ehrlich scheitern statt leer bleiben — die Station zeigt einen
+        // Wiederholen-Knopf statt den «kein Treffer»-Leerzustand vorzutäuschen.
+        if (!verworfen) setSeedFehler(true);
+      })
+      .finally(() => {
+        if (!verworfen) setGeladen(true);
+      });
+    return () => {
+      verworfen = true;
+    };
+  }, [seedRetry]);
 
   // Batch 5: Ref↔Asset-Verknüpfung — «Assets dieses Projekts» im Dossier.
   const [refAssets, setRefAssets] = useState<KosmoAsset[]>([]);
@@ -441,6 +519,8 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
     ? `${gedaempfteGruppen.map((g) => DATEN_GRUPPEN_LABEL[g]).join('/')} zurückgestellt — du suchst gerade`
     : '';
 
+  const syncBadge = kosmoDataSyncBadge({ seedFehler, syncState, quelle, entriesCount: entries.length });
+
   return (
     <div className="k-einblenden" style={{ position: 'absolute', inset: 0, display: 'flex' }}>
       <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
@@ -508,15 +588,20 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                             : 'HomePC-Archiv — Manifest für die HDD, lokal & privat'}
             </span>
             <div style={{ flex: 1 }} />
-            <Badge hue={syncState === 'synced' && quelle === 'live' ? 'var(--k-success)' : syncState === 'fehler' ? 'var(--k-warning)' : 'var(--k-info)'}>
-              {syncState === 'seed'
-                ? 'Offline-Seed'
-                : syncState === 'fehler'
-                  ? 'Site nicht erreichbar — Seed bleibt'
-                  : quelle === 'live'
-                    ? `Live · ${entries.length}`
-                    : `Cache (letzter Stand) · ${entries.length}`}
-            </Badge>
+            <span data-testid="data-sync-badge" title={syncBadge.titel}>
+              <Badge hue={syncBadge.hue}>{syncBadge.text}</Badge>
+            </span>
+            {seedFehler && (
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="data-seed-retry"
+                title="Eingebaute Referenzdaten erneut laden"
+                onClick={() => setSeedRetry((n) => n + 1)}
+              >
+                Erneut versuchen
+              </KButton>
+            )}
             <span
               data-testid="leiste-gruppe-sync"
               className={fokusKlasse(stufeFuerGruppe('sync'))}
@@ -640,8 +725,19 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {tab === 'archiv' && <KosmoArchivView />}
 
           {tab === 'referenzen' && (<>
-          {/* D3: Leerzustand als Bauzeichnung (Gestaltungskonzept) */}
-          {filtered.length === 0 && (
+          {/* D3: Leerzustand als Bauzeichnung (Gestaltungskonzept). F8: bei
+              einem gescheiterten Seed-Ladevorgang ist die Liste ehrlich als
+              «nicht geladen», nicht als «kein Treffer» ausgewiesen — sonst
+              sieht es aus, als hätte die Suche/der Filter schuld. */}
+          {geladen && seedFehler && entries.length === 0 && (
+            <div data-testid="seed-fehler-leerzustand">
+              <Messrahmen
+                height={220}
+                caption="Eingebaute Referenzdaten momentan nicht ladbar — «Erneut versuchen» oben rechts"
+              />
+            </div>
+          )}
+          {geladen && !seedFehler && filtered.length === 0 && (
             <Messrahmen
               height={220}
               caption="Keine Referenz passt zur Suche — Begriff lockern oder Filter lösen"
