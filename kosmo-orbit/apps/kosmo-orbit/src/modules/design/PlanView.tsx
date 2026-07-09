@@ -36,6 +36,7 @@ import { cursor2dFuer, istEingabefeld } from './kurztasten';
 export function PlanView({
   handlers,
   onLod,
+  modus,
 }: {
   handlers: React.RefObject<ViewportHandlers>;
   /** Serie K A5 (K15, Statusleiste): meldet die aktuelle Plan-LOD-Stufe an den
@@ -43,6 +44,12 @@ export function PlanView({
    *  (`planLod.ts` bleibt unberührt). Optional, weil ältere/isolierte Mounts
    *  (Tests) den Callback nicht brauchen. */
   onLod?: (lod: PlanLod) => void;
+  /** Kritik-065 Befund [C] «Grundriss-Ansicht passt beim Wechsel nicht ein»:
+   *  `split`→`2d` (und zurück) remountet PlanView NICHT (derselbe JSX-Zweig
+   *  in DesignWorkspace.tsx, `viewMode !== '3d'`) — der Mount-Erstfit unten
+   *  läuft also nur einmal, mit der SCHMALEN Split-Pane-Grösse. Optional,
+   *  damit isolierte Mounts (Tests, quad-Kacheln) unverändert bleiben. */
+  modus?: 'split' | '2d' | 'quad';
 }) {
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
@@ -187,6 +194,17 @@ export function PlanView({
     einpassen();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Kritik-065 Befund [C]: zusätzlich einmalig einpassen, wenn `modus`
+  // WECHSELT auf `2d` (SK-D4-Erstmount-Muster, hier für den Fall ohne
+  // Remount — split→2d bleibt derselbe Component-Baum). `modus` fehlt bei
+  // isolierten Mounts (Tests/quad) → kein Verhalten geändert, kein Sprung.
+  const vorherigerModus = useRef(modus);
+  useEffect(() => {
+    if (modus === '2d' && vorherigerModus.current !== '2d') einpassen();
+    vorherigerModus.current = modus;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modus]);
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -634,17 +652,44 @@ export function PlanView({
           {/* Zonentüren kommen seit A4 als Linien-Klassen aus derivePlan
               (zonentuer-luecke/-fluegel) — der Druck erbt dasselbe Symbol. */}
           {plan &&
-            /* F3: verletzte Zonen live tönen (nur Bildschirm, nicht Druck) */
-            verletzteZonen.map((v) => (
-              <path
-                key={`verletzt-${v.zone.id}`}
-                data-testid="zone-verletzt"
-                d={`M ${v.zone.outline.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z`}
-                fill={v.schwere === 'fehler' ? 'rgba(179, 70, 46, 0.28)' : 'rgba(198, 134, 34, 0.22)'}
-                stroke={v.schwere === 'fehler' ? 'var(--k-danger)' : '#c68622'}
-                strokeWidth={16}
-              />
-            ))}
+            /* F3: verletzte Zonen live tönen (nur Bildschirm, nicht Druck).
+               Kritik-065 Befund 1: die getönte Fläche war ein ECHTES
+               Element (eine benannte Zone mit Check-Befund), aber ohne
+               erkennbaren Rahmen (16mm Weltmass-Stroke verschwand bei
+               üblichem Zoom zu <1px) und ohne Beschriftung — wirkte wie
+               eine tote Fläche. Fix: zoomstabiler Rahmen (Muster V-H1
+               `n / view.scale`, wie schon beim mass-label) + Name+Warnhinweis
+               als Etikett, damit die Fläche als das lesbar ist, was sie ist. */
+            verletzteZonen.map((v) => {
+              const farbe = v.schwere === 'fehler' ? 'var(--k-danger)' : '#c68622';
+              const cx = v.zone.outline.reduce((s, p) => s + p.x, 0) / v.zone.outline.length;
+              const cy = v.zone.outline.reduce((s, p) => s + p.y, 0) / v.zone.outline.length;
+              return (
+                <g key={`verletzt-${v.zone.id}`}>
+                  <path
+                    data-testid="zone-verletzt"
+                    d={`M ${v.zone.outline.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z`}
+                    fill={v.schwere === 'fehler' ? 'rgba(179, 70, 46, 0.28)' : 'rgba(198, 134, 34, 0.22)'}
+                    stroke={farbe}
+                    strokeWidth={2.5 / view.scale}
+                    strokeDasharray={`${10 / view.scale} ${6 / view.scale}`}
+                  />
+                  <text
+                    data-testid="zone-verletzt-label"
+                    x={cx}
+                    y={-cy}
+                    textAnchor="middle"
+                    fontSize={13 / view.scale}
+                    fontWeight={600}
+                    fill={farbe}
+                    fontFamily="var(--k-font-mono)"
+                    pointerEvents="none"
+                  >
+                    {`⚠ ${v.zone.name}`}
+                  </text>
+                </g>
+              );
+            })}
           {graph && (
             <g data-testid="raumgraph-overlay">
               {graph.kanten.map((k, i) => {

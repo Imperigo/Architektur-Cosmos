@@ -137,6 +137,21 @@ function snap(p: Pt, magnet?: FangKandidaten): Pt {
  * Menü-Gruppe statt einer blassen Inline-Sektion wirken — reine Optik, kein
  * neues Verhalten (`children` bleibt der Text, der bisher schon stand).
  */
+/**
+ * v0.6.5 Kritik-065 Runde 1, Befund [B] «Aktiv-Zustand als Füllfläche»:
+ * Geschoss («EG»), Ansichts-Segment («Grundriss») und «Textur» tönten den
+ * ganzen Knopf mit `tone="accent"` (Vollfüllung) statt dem §2-Hierarchie-
+ * Rezept (UI-KONZEPT-065: «aktiv/gewählt = 1.5px --k-ink-Rahmen ODER
+ * Akzent-Eckpunkt, nie beides, keine Vollfläche»). Diese Knöpfe bleiben
+ * `tone="ghost"` (transparenter Grund) und bekommen im aktiven Zustand
+ * NUR den betonten Tusche-Rahmen — Text/testid unverändert, reiner Stil.
+ */
+function aktivRahmen(aktiv: boolean): React.CSSProperties {
+  return aktiv
+    ? { borderWidth: 1.5, borderStyle: 'solid', borderColor: 'var(--k-ink)', color: 'var(--k-ink)', fontWeight: 600 }
+    : {};
+}
+
 function Trennlabel({ children, icon }: { children: string; icon?: KIconName }) {
   return (
     <span
@@ -1527,13 +1542,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               <KButton
                 key={id}
                 size="sm"
-                tone={viewMode === id ? 'accent' : 'ghost'}
+                tone="ghost"
                 onClick={() => {
                   setViewMode(id);
                   nutzungMelden(`ansicht:${id}`);
                 }}
                 data-testid={`view-${id}`}
-                {...elementStil('ansicht', id)}
+                aria-pressed={viewMode === id}
+                style={{ ...aktivRahmen(viewMode === id), ...elementStil('ansicht', id).style }}
               >
                 {label}
               </KButton>
@@ -1602,7 +1618,6 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             display: 'flex',
             alignItems: 'center',
             flexWrap: 'nowrap',
-            overflowX: 'auto',
             gap: 'var(--k-s3)',
             padding: 'var(--k-s2) var(--k-s4)',
             borderBottom: '1px solid var(--k-line)',
@@ -1610,6 +1625,29 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             zIndex: 2,
           }}
         >
+          {/* Kritik-065 Befund [A] «Export-Zeile verdrängt Rückgängig/
+              Wiederholen»: die Kontextzeile ist EIN Flex-Container mit
+              `overflowX:auto` — öffnete man die Export-Kette, wuchs der
+              Inhalt über die Zeile hinaus und «Rückgängig»/«Wiederholen»
+              (ganz am Ende) rutschten aus dem sichtbaren Bereich, nur per
+              Scrollen erreichbar. Fix: der scrollende Teil (Zeichnen-Selects
+              bis Adaption-Hinweis) wandert in einen eigenen `flex:1;
+              min-width:0; overflow-x:auto`-Innenbereich; die Verlauf-Gruppe
+              (`leiste-gruppe-verlauf`) steht als `flexShrink:0`-Geschwister
+              DANACH, ausserhalb des scrollenden Bereichs — bleibt bei jedem
+              Öffnen-Zustand sichtbar, unabhängig vom Toggle. Bleibt
+              EIN Y-Band (design-werkzeugleiste.spec.ts). */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              gap: 'var(--k-s3)',
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
           {tool === 'wand' && assemblies.length > 0 && (
             <select
               value={effectiveAssembly ?? ''}
@@ -1655,14 +1693,22 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             </KButton>
           </span>
           {exportMenuOffen && (
+            /* Befund [A] «aufgeklappte Format-Kette wirkt wie lose Links»:
+               gerahmter Container (1px --k-line-strong, --k-raised, Radius
+               sm) — liest sich als GEÖFFNETES Menü-Band statt loser Links,
+               ohne die testids/Klickbarkeit der Kinder anzufassen. */
             <span
               data-testid="leiste-gruppe-export"
               className={fokusKlasse(stufeFuerGruppe('export'))}
               style={{
                 display: 'inline-flex',
                 flexWrap: 'nowrap',
-                gap: 'var(--k-s3)',
+                gap: 'var(--k-s2)',
                 alignItems: 'center',
+                border: '1px solid var(--k-line-strong)',
+                background: 'var(--k-raised)',
+                borderRadius: 'var(--k-radius-sm)',
+                padding: '2px 6px',
                 ...(gehobenNachGruppe.export ? { opacity: 1 } : {}),
               }}
             >
@@ -1716,6 +1762,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               </KButton>
             </span>
           )}
+          <Hairline vertical />
           <Trennlabel icon="ebenen">Ebenen</Trennlabel>
           <span
             data-testid="leiste-gruppe-ebenen"
@@ -1728,7 +1775,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               ...(gehobenNachGruppe.ebenen ? { opacity: 1 } : {}),
             }}
           >
-            <KButton size="sm" tone={texturen ? 'accent' : 'ghost'} data-testid="textur-toggle" onClick={klickTextur} {...elementStil('ebenen', 'textur')}>
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="textur-toggle"
+              onClick={klickTextur}
+              aria-pressed={texturen}
+              style={{ ...aktivRahmen(texturen), ...elementStil('ebenen', 'textur').style }}
+            >
               Textur
             </KButton>
             <KButton size="sm" tone={sonneOffen ? 'accent' : 'ghost'} data-testid="sonne-toggle" onClick={klickSonne} {...elementStil('ebenen', 'sonne')}>
@@ -1833,6 +1887,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               «Ebenen» (Begründung: Kommentar bei `FAEHIGKEITEN` oben). Klick =
               Fähigkeit wie heute; Rechtsklick ODER das kleine ⌄ öffnen das
               zugehörige Panel garantiert («voll»). */}
+          <Hairline vertical />
           <Trennlabel>Fähigkeiten</Trennlabel>
           <span
             data-testid="leiste-gruppe-faehigkeiten"
@@ -1932,11 +1987,21 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           >
             ⓘ angepasst
           </span>
-          <div style={{ flex: 1 }} />
+          </div>
+          {/* Ausserhalb des scrollenden Innenbereichs (s. Kommentar oben) —
+              eigener, immer sichtbarer rechter Bereich, per Hairline von der
+              scrollenden Zone abgesetzt (Befund [B] «Zweite Zeile Gruppierung»). */}
+          <Hairline vertical />
           <span
             data-testid="leiste-gruppe-verlauf"
             className={fokusKlasse(stufeFuerGruppe('verlauf'))}
-            style={{ display: 'inline-flex', gap: 'var(--k-s3)', alignItems: 'center', ...(gehobenNachGruppe.verlauf ? { opacity: 1 } : {}) }}
+            style={{
+              display: 'inline-flex',
+              gap: 'var(--k-s3)',
+              alignItems: 'center',
+              flexShrink: 0,
+              ...(gehobenNachGruppe.verlauf ? { opacity: 1 } : {}),
+            }}
           >
             <KButton
               size="sm"
@@ -2393,10 +2458,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                     EIGENEN Mount automatisch ein (`einpassen()`, PlanView.tsx)
                     — das greift unverändert beim Öffnen aus dem 3D-Modus
                     (echter Erstmount), aber NICHT beim reinen split↔2d-
-                    Wechsel (dieselbe Instanz bleibt bestehen). Ein sauberer
-                    Fix (gezielter Re-Fit-Trigger ohne vollen Remount) gehört
-                    in `PlanView.tsx` selbst — das ist W3-Gebiet. */}
-                <PlanView handlers={handlersRef} onLod={setPlanLodStufe} />
+                    Wechsel (dieselbe Instanz bleibt bestehen). Kritik-065
+                    Befund [C] «Grundriss-Ansicht passt beim Wechsel nicht
+                    ein»: gezielter Re-Fit-Trigger OHNE vollen Remount jetzt
+                    in `PlanView.tsx` selbst (`modus`-Prop, einpassen() genau
+                    beim Wechsel AUF `2d`) — kein Eingriff in den Mount/Key-
+                    Mechanismus hier, `achsen-toggle` bleibt unberührt. */}
+                <PlanView handlers={handlersRef} onLod={setPlanLodStufe} modus={viewMode} />
               </div>
             )}
           </>
@@ -2539,9 +2607,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             <KButton
               key={s.id}
               size="sm"
-              tone={s.id === activeStoreyId ? 'accent' : 'ghost'}
+              tone="ghost"
               onClick={() => setActiveStorey(s.id)}
               data-testid={`storey-${s.name}`}
+              aria-pressed={s.id === activeStoreyId}
+              style={aktivRahmen(s.id === activeStoreyId)}
             >
               {s.name}
             </KButton>
@@ -2577,7 +2647,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             position: 'absolute',
             left: 12,
             bottom: 12,
-            right: 12,
+            // Kritik-065 Befund [B] «Abgeschnittenes Label unten rechts»:
+            // `right:12` liess den letzten Eintrag («Klick: …») bis unter
+            // das fixe Kosmo-Symbol laufen (right:22/bottom:22, 54px,
+            // z-110 — s. Begründung in NavLeiste.tsx), das den Text
+            // optisch abschnitt. Dieselbe Klärung (right:88), die
+            // `NavLeiste.tsx` fürs `nav-fit`-Werkzeug schon nutzt.
+            right: 88,
             display: 'flex',
             flexWrap: 'wrap',
             rowGap: 4,
