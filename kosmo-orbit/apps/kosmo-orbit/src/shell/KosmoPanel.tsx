@@ -23,6 +23,7 @@ import type { Assembly } from '@kosmo/kernel';
 import { useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
+import { vorschauFuerProposal, type ProposalVorschau } from '../state/proposal-vorschau';
 import { DiagnosePanel } from './Diagnose';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { hydriereJournal, journalStore } from '../state/journal-store';
@@ -72,6 +73,11 @@ function rollePromptBlock(): string {
 
 interface PendingCard extends Proposal {
   state: 'offen' | 'angewendet' | 'abgelehnt';
+  /**
+   * Visuelle Vorschau (Owner-Befund K8, B1): `null`, wenn keine ehrliche
+   * Vorschau möglich war — die Karte zeigt dann unverändert nur Text.
+   */
+  vorschau: ProposalVorschau | null;
 }
 
 /**
@@ -294,7 +300,11 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           });
         },
         onProposal: (p) => {
-          setCards((c) => [...c, { ...p, state: 'offen' }]);
+          // Vorschau JETZT ableiten (Command-ID + Params kennt der Vorschlag
+          // bereits vor dem Anwenden) — auf dem aktuellen Doc-Stand, nicht
+          // dem beim Session-Start eingefrorenen `doc` oben im Closure.
+          const vorschau = vorschauFuerProposal(useProject.getState().doc, p.commandId, p.params);
+          setCards((c) => [...c, { ...p, state: 'offen', vorschau }]);
           // Laufzeit-Status fürs Kosmo-Symbol (K11) — der Vorschlag selbst
           // geht weiter normal als Karte durchs Panel/den Undo-Weg.
           useKosmoStatus.getState().setzeLetzteAktivitaet(kurzform(p.summary));
@@ -1171,6 +1181,51 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                 Vorschlag von Kosmo
               </div>
               <div style={{ fontWeight: 550, fontSize: 13.5 }}>{c.summary}</div>
+              {c.vorschau && (
+                <>
+                  {c.vorschau.typologieHinweis && (
+                    <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>{c.vorschau.typologieHinweis}</div>
+                  )}
+                  <div data-testid="proposal-vorschau" style={{ display: 'flex', gap: 6 }}>
+                    <div style={{ display: 'grid', gap: 2, flex: 1, minWidth: 0 }}>
+                      <span
+                        style={{
+                          fontSize: 9.5,
+                          color: 'var(--k-ink-faint)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                        }}
+                      >
+                        Vorher
+                      </span>
+                      <div
+                        style={{ height: 90, background: 'var(--k-plan-paper)', borderRadius: 6, overflow: 'hidden' }}
+                        dangerouslySetInnerHTML={{
+                          __html: c.vorschau.vorherSvg.replace('<svg ', '<svg style="width:100%;height:100%" '),
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'grid', gap: 2, flex: 1, minWidth: 0 }}>
+                      <span
+                        style={{
+                          fontSize: 9.5,
+                          color: 'var(--k-ink-faint)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                        }}
+                      >
+                        Nachher
+                      </span>
+                      <div
+                        style={{ height: 90, background: 'var(--k-plan-paper)', borderRadius: 6, overflow: 'hidden' }}
+                        dangerouslySetInnerHTML={{
+                          __html: c.vorschau.nachherSvg.replace('<svg ', '<svg style="width:100%;height:100%" '),
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
               {c.state === 'offen' ? (
                 <div style={{ display: 'flex', gap: 6 }}>
                   <KButton size="sm" tone="accent" onClick={() => applyCard(c)} data-testid="apply-proposal">
