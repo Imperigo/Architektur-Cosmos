@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { allActions, onActionsChanged, scoreAction, type PaletteAction } from './palette';
+import './orbit-065.css';
 
 /**
  * Befehlspalette — ⌘K/Ctrl+K. Zurückhaltend-präzise (Aura): ein Feld,
@@ -67,7 +68,11 @@ export function CommandPalette() {
       <div
         onClick={(e) => e.stopPropagation()}
         data-testid="command-palette"
-        className="k-skalieren-ein"
+        // Aufgabe 4 (MOTION-KONZEPT-066 §4, Overlays der Zentrale): öffnet
+        // mit `--k-feder` + Translation (4-8px) + Opacity statt der
+        // bisherigen Skalier-Animation (`.k-skalieren-ein`, aura.css) —
+        // `.orbit065-sheet-ein` (orbit-065.css) setzt genau das um.
+        className="orbit065-sheet-ein"
         style={{
           width: 480,
           maxWidth: '92vw',
@@ -116,6 +121,10 @@ export function CommandPalette() {
               data-testid={`palette-item-${a.id}`}
               onMouseEnter={() => setCursor(i)}
               onClick={() => ausfuehren(a)}
+              // Aufgabe 3: jedes klickbare Element trägt `.k-druck`.
+              // Aufgabe 4: Kinder-Staffelung 24ms, gedeckelt bei 8 (Konzept
+              // §4) — `orbit065-sheet-kind` staffelt per `animation-delay`.
+              className="k-druck orbit065-sheet-kind"
               style={{
                 display: 'flex',
                 gap: 'var(--k-s4)',
@@ -125,6 +134,7 @@ export function CommandPalette() {
                 cursor: 'pointer',
                 background: i === cursor ? 'var(--k-accent-wash)' : 'transparent',
                 fontSize: 'var(--k-t-md)',
+                animationDelay: `${Math.min(i, 8) * 24}ms`,
               }}
             >
               <span

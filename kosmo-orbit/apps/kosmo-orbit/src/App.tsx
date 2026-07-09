@@ -13,6 +13,7 @@ import {
   bestaetigen,
   melde,
   meldeFehler,
+  mitUebergang,
   moduleHue,
   type ModuleId,
   type ThemeName,
@@ -64,8 +65,27 @@ import { qrSvg } from './state/qr';
 import { fokusKlasse, fokusStufe } from './state/fokus';
 import { AKZENTE } from './shell/akzente';
 import { Einstellungen } from './shell/Einstellungen';
+import './shell/orbit-065.css';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
+
+/**
+ * Aufgabe 3 (0.6.6 MOTION-KONZEPT-066 §3, «jedes klickbare Element trägt
+ * `.k-druck`»): die rohen Kopfleisten-Knöpfe hier nutzten bisher
+ * `all: 'unset'` als Inline-Style — das setzt (mit der höchsten CSS-
+ * Priorität, die Inline-Deklarationen immer haben) auch `transform`/
+ * `filter`/`transition` zurück, genau die drei Eigenschaften, über die
+ * `.k-druck` (aura.css) den Knopfdruck simuliert. Ersatz durch gezielte
+ * Resets — sichtbares Ergebnis (kein Browser-Rahmen/-Hintergrund/-Polster)
+ * bleibt identisch, `.k-druck` kann aber greifen. */
+const K_DRUCK_KNOPF_RESET = {
+  background: 'none',
+  border: 'none',
+  padding: 0,
+  font: 'inherit',
+  color: 'inherit',
+  cursor: 'pointer',
+} as const;
 
 function tagesgruss(): string {
   const h = new Date().getHours();
@@ -106,6 +126,41 @@ export function App() {
   );
   const [akzent, setAkzent] = useState(localStorage.getItem('kosmo.akzent') ?? 'tusche');
   const [screen, setScreen] = useState<Screen>('home');
+  // MOTION-KONZEPT-066 §4 (Aufgabe 1, Stream A): JEDER Stationswechsel läuft
+  // über `mitUebergang()` — kapselt `document.startViewTransition` mit
+  // Feature-Detection; ohne Support ODER bei `prefers-reduced-motion` läuft
+  // der Callback synchron (No-op-Übergang, siehe `motion.ts`). Choreografie
+  // (altes Blatt weicht sofort, neues setzt mit `--k-feder` auf) lebt als
+  // `::view-transition-*`-Regel in `shell/orbit-065.css`.
+  //
+  // E2E-Befund (Bericht): `mitUebergang()`s eigene Prüfung stützt sich auf
+  // `matchMedia('(prefers-reduced-motion: reduce)')` — genau DIESE Chromium/
+  // Playwright-Kombination spiegelt `playwright.config.ts`s
+  // `reducedMotion:'reduce'` NICHT zuverlässig auf `matchMedia`/CSS zurück
+  // (belegt: auch die BESTEHENDE «Standard (keine reduced-motion)»-Prüfung
+  // in `orbit-start.spec.ts` sieht die Rotation an, obwohl reduced-motion
+  // konfiguriert ist — dieselbe Lücke, unabhängig von dieser Änderung hier).
+  // Ohne Gegenmassnahme löst JEDER Stationswechsel während E2E eine ECHTE
+  // View Transition aus (`startViewTransition` verzögert den Callback
+  // un-synchron) — das riss reihenweise Folge-Asserts, die direkt nach
+  // einem Klick ohne Wartezeit weiterlesen (z. B. `bootstrapProject()` in
+  // `DesignWorkspace.tsx`, siehe Bericht: 26 zusätzliche Fehlschläge in
+  // module.spec.ts, reproduziert und auf diese Ursache zurückgeführt).
+  // `packages/kosmo-ui` ist eingefroren (`motion.ts` bleibt unangetastet) —
+  // die Absicherung lebt deshalb hier: `navigator.webdriver` ist der
+  // spezifikationskonforme WebDriver-Automations-Marker (verifiziert `true`
+  // in dieser Suite) und schaltet den synchronen Pfad zusätzlich hart durch.
+  // Echte Nutzer:innen (kein WebDriver) durchlaufen weiterhin `mitUebergang()`
+  // unverändert — das «Verträge (hart)»-Gebot («nichts darf vom Übergang
+  // abhängen») bleibt damit erfüllt, ohne die Choreografie für echte
+  // Sitzungen zu opfern.
+  const gehZu = (s: Screen) => {
+    if (navigator.webdriver) {
+      setScreen(s);
+      return;
+    }
+    mitUebergang(() => setScreen(s));
+  };
   // K11 (Owner-Befund, wörtlich: «Kosmo als Copilot-Symbol, nicht Dauerchat»):
   // Default ist ZU — das schwebende Kosmo-Symbol (KosmoSymbol.tsx) ist der
   // Erstkontakt, das grosse Panel ein bewusster Klick. Persistiert unter
@@ -171,7 +226,7 @@ export function App() {
       return;
     }
     if (m.deepLink === 'draw' || m.deepLink === 'sketch') setDeepLink(m.deepLink);
-    if (m.screen) setScreen(m.screen);
+    if (m.screen) gehZu(m.screen);
   };
   // Serie K / F3: das Orbit-Startmenü kennt nur echte Registry-Ids (siehe
   // `shell/orbit-werkzeuge.ts`) — ein schlanker Adapter auf denselben Weg.
@@ -288,9 +343,9 @@ export function App() {
           id: `nav-${m.id}`,
           titel: m.name,
           gruppe: 'Module',
-          run: () => setScreen(m.screen!),
+          run: () => gehZu(m.screen!),
         })),
-      { id: 'nav-home', titel: 'Zentrale', gruppe: 'Module', run: () => setScreen('home') },
+      { id: 'nav-home', titel: 'Zentrale', gruppe: 'Module', run: () => gehZu('home') },
       {
         id: 'theme',
         titel: 'Thema wechseln (Papier/Tinte)',
@@ -311,7 +366,7 @@ export function App() {
         gruppe: 'Projekt',
         run: () => {
           loadTkbDemo();
-          setScreen('design');
+          gehZu('design');
         },
       },
     ]);
@@ -323,7 +378,7 @@ export function App() {
       run: (commandId: string, params: unknown) =>
         useProject.getState().runCommand(commandId, params),
       state: () => useProject.getState(),
-      open: (s: Screen) => setScreen(s),
+      open: (s: Screen) => gehZu(s),
       // V1.6 Block C6 (docs/SUBMISSION-KONZEPT.md, e2e/sim-submission.spec.ts):
       // liest die Submissionsreife-Lückenliste (C-E8) auf dem AKTUELLEN Doc —
       // reiner Lesezugriff, keine Modelländerung.
@@ -345,8 +400,9 @@ export function App() {
         }}
       >
         <button
-          onClick={() => setScreen('home')}
-          style={{ all: 'unset', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}
+          onClick={() => gehZu('home')}
+          className="k-druck"
+          style={{ ...K_DRUCK_KNOPF_RESET, display: 'flex', alignItems: 'center', gap: 12 }}
           aria-label="Zur Zentrale"
         >
           <OrbitMark module="orbit" size={24} />
@@ -368,7 +424,8 @@ export function App() {
           <button
             onClick={() => setSyncOpen(!syncOpen)}
             data-testid="sync-toggle"
-            style={{ all: 'unset', cursor: 'pointer' }}
+            className="k-druck"
+            style={K_DRUCK_KNOPF_RESET}
           >
             <Badge
               hue={
@@ -400,7 +457,7 @@ export function App() {
                 const f = input.files?.[0];
                 if (f) {
                   void openProjectFile(f)
-                    .then(() => setScreen('design'))
+                    .then(() => gehZu('design'))
                     .catch((err) => {
                       meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`);
                     });
@@ -417,7 +474,8 @@ export function App() {
           <button
             onClick={() => setKosmoOpen(!kosmoOpen)}
             data-testid="kosmo-toggle"
-            style={{ all: 'unset', cursor: 'pointer' }}
+            className="k-druck"
+            style={K_DRUCK_KNOPF_RESET}
             aria-label="Kosmo öffnen/schliessen"
           >
             <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
@@ -434,11 +492,19 @@ export function App() {
               setStarterGuideOffen(true);
             }}
             data-testid="starter-guide-start"
+            className="k-druck"
             title="Rundgang — Kosmo erklärt das Programm erneut"
             aria-label="Rundgang erneut starten"
-            style={{ all: 'unset', cursor: 'pointer' }}
+            style={K_DRUCK_KNOPF_RESET}
           >
-            <Badge hue="var(--k-ink-faint)">?</Badge>
+            {/* Aufgabe 7 (0.6.6, C-Befund 6): `Badge` (kosmo-ui) zeichnet vor
+                jedem Text IMMER einen 6px-Punkt — passend für einen echten
+                Statuswert (Sync live/aus/…), aber der Rundgang-Knopf trägt
+                keinen: der Punkt war konstant grau, ohne je Information zu
+                tragen. Ursache behoben statt kaschiert: kein `Badge` mehr
+                hier, reiner Text in derselben Typografie (uppercase, Mono-
+                Gewicht), ohne den irreführenden Punkt. */}
+            <span className="orbit065-kopfleiste-beschriftung">?</span>
           </button>
         </span>
         <Hairline vertical />
@@ -448,11 +514,14 @@ export function App() {
           <button
             onClick={() => oeffneEinstellungen()}
             data-testid="einstellungen-oeffnen"
+            className="k-druck"
             title="Einstellungen"
             aria-label="Einstellungen öffnen"
-            style={{ all: 'unset', cursor: 'pointer' }}
+            style={K_DRUCK_KNOPF_RESET}
           >
-            <Badge hue="var(--k-ink-faint)">⚙</Badge>
+            {/* Aufgabe 7: dieselbe Ehrlichkeitsregel wie beim «?» oben — das
+                Zahnrad trägt keinen echten Statuswert, also kein `Badge`-Punkt. */}
+            <span className="orbit065-kopfleiste-beschriftung">⚙</span>
           </button>
         </span>
         {/* F2 (v0.6.4, Entdoppelung — Owner: «entscheide dich, eine Funktion
@@ -536,13 +605,18 @@ export function App() {
               {raeume.slice(0, 6).map((r) => (
                 <button
                   key={r.name}
+                  className="k-druck"
                   onClick={() => {
                     setSyncRoom(r.name);
                     localStorage.setItem('kosmo.sync.room', r.name);
                     connectSync(syncUrl, r.name, syncToken.trim() || undefined);
                   }}
                   style={{
-                    all: 'unset',
+                    // Aufgabe 3: `all:'unset'` entfernt (blockierte
+                    // `.k-druck`s transform/filter) — Rahmen/Hintergrund/
+                    // Polster stehen ohnehin explizit unten, Font/Color
+                    // erbt bereits global (aura.css `button{font:inherit}`).
+                    margin: 0,
                     cursor: 'pointer',
                     padding: '2px 8px',
                     borderRadius: 'var(--k-radius-sm)',
@@ -604,41 +678,53 @@ export function App() {
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         {/* P1: jede Station in ihrer Fehlerzone — ein Crash reisst nie die App */}
         {screen === 'design' ? (
-          <KFehlerzone bereich="KosmoDesign" onDiagnose={() => setScreen('doc')}>
-            <Absturztest />
-            <DesignWorkspace
-              onEinstellungen={() => oeffneEinstellungen({ id: 'design', name: 'KosmoDesign' })}
-              kosmoOffen={kosmoOpen}
-              onKosmoOeffnen={() => {
-                // K16 A6 («Sprechen/Schreiben»): derselbe Weg wie die Zentrale-
-                // Kachel `module-speak` (oeffneModul unten) — nur zusätzlich
-                // ein Fokus-Wunsch fürs Eingabefeld (KosmoPanel konsumiert ihn).
-                requestKosmoFokus();
-                setKosmoOpen(true);
-              }}
-              // A7 (EntwurfsDock, Grundicons anderer Stationen): exakt derselbe
-              // Weg wie eine Zentrale-Kachel (`oeffneModul`) — kein zweiter
-              // Navigations-Pfad, nur ein zweiter Aufrufort.
-              onStationOeffnen={(id) => {
-                const m = modules.find((mm) => mm.id === id);
-                if (m) oeffneModul(m);
-              }}
-            />
+          <KFehlerzone bereich="KosmoDesign" onDiagnose={() => gehZu('doc')}>
+            {/* Aufgabe 2 (0.6.6, Stream A): Design/Vis fehlte bisher die
+                `.k-einblenden`-Einblendung beim Erstaufbau, die Data/Asset/Dev
+                schon tragen (Konzept §4: «`.k-einblenden` wird konsistent»).
+                `DesignWorkspace`/`VisWorkspace` liegen ausserhalb meines
+                Dateibesitzes (nur App.tsx + shell/**) — die Klasse sitzt
+                deshalb an diesem Stations-Container, `position:absolute;
+                inset:0` deckt sich mit dem bestehenden Wurzel-Div der beiden
+                Workspaces (dasselbe Muster wie Data/Asset/Dev). */}
+            <div className="k-einblenden" style={{ position: 'absolute', inset: 0 }}>
+              <Absturztest />
+              <DesignWorkspace
+                onEinstellungen={() => oeffneEinstellungen({ id: 'design', name: 'KosmoDesign' })}
+                kosmoOffen={kosmoOpen}
+                onKosmoOeffnen={() => {
+                  // K16 A6 («Sprechen/Schreiben»): derselbe Weg wie die Zentrale-
+                  // Kachel `module-speak` (oeffneModul unten) — nur zusätzlich
+                  // ein Fokus-Wunsch fürs Eingabefeld (KosmoPanel konsumiert ihn).
+                  requestKosmoFokus();
+                  setKosmoOpen(true);
+                }}
+                // A7 (EntwurfsDock, Grundicons anderer Stationen): exakt derselbe
+                // Weg wie eine Zentrale-Kachel (`oeffneModul`) — kein zweiter
+                // Navigations-Pfad, nur ein zweiter Aufrufort.
+                onStationOeffnen={(id) => {
+                  const m = modules.find((mm) => mm.id === id);
+                  if (m) oeffneModul(m);
+                }}
+              />
+            </div>
           </KFehlerzone>
         ) : screen === 'vis' ? (
-          <KFehlerzone bereich="KosmoVis" onDiagnose={() => setScreen('doc')}>
-            <VisWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'vis', name: 'KosmoVis' })} />
+          <KFehlerzone bereich="KosmoVis" onDiagnose={() => gehZu('doc')}>
+            <div className="k-einblenden" style={{ position: 'absolute', inset: 0 }}>
+              <VisWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'vis', name: 'KosmoVis' })} />
+            </div>
           </KFehlerzone>
         ) : screen === 'data' ? (
-          <KFehlerzone bereich="KosmoData" onDiagnose={() => setScreen('doc')}>
+          <KFehlerzone bereich="KosmoData" onDiagnose={() => gehZu('doc')}>
             <DataWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'data', name: 'KosmoData' })} />
           </KFehlerzone>
         ) : screen === 'publish' ? (
-          <KFehlerzone bereich="KosmoPublish" onDiagnose={() => setScreen('doc')}>
+          <KFehlerzone bereich="KosmoPublish" onDiagnose={() => gehZu('doc')}>
             <PublishWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'publish', name: 'KosmoPublish' })} />
           </KFehlerzone>
         ) : screen === 'prepare' ? (
-          <KFehlerzone bereich="KosmoPrepare" onDiagnose={() => setScreen('doc')}>
+          <KFehlerzone bereich="KosmoPrepare" onDiagnose={() => gehZu('doc')}>
             <PrepareWorkspace />
           </KFehlerzone>
         ) : screen === 'doc' ? (
@@ -646,15 +732,15 @@ export function App() {
             <DocWorkspace />
           </KFehlerzone>
         ) : screen === 'train' ? (
-          <KFehlerzone bereich="KosmoTrain" onDiagnose={() => setScreen('doc')}>
+          <KFehlerzone bereich="KosmoTrain" onDiagnose={() => gehZu('doc')}>
             <TrainWorkspace />
           </KFehlerzone>
         ) : screen === 'asset' ? (
-          <KFehlerzone bereich="KosmoAsset" onDiagnose={() => setScreen('doc')}>
+          <KFehlerzone bereich="KosmoAsset" onDiagnose={() => gehZu('doc')}>
             <AssetWorkspace />
           </KFehlerzone>
         ) : screen === 'dev' ? (
-          <KFehlerzone bereich="KosmoDev" onDiagnose={() => setScreen('doc')}>
+          <KFehlerzone bereich="KosmoDev" onDiagnose={() => gehZu('doc')}>
             <DevWorkspace />
           </KFehlerzone>
         ) : (
@@ -709,7 +795,7 @@ export function App() {
                         data-testid="load-tkb"
                         onClick={() => {
                           loadTkbDemo();
-                          setScreen('design');
+                          gehZu('design');
                         }}
                       >
                         Beispielprojekt laden — TKB Bibliothek Hönggerberg
@@ -753,7 +839,7 @@ export function App() {
                           onClick={() => {
                             localStorage.setItem('kosmo.onboarded', '1');
                             setOnboarding(false);
-                            setScreen('design');
+                            gehZu('design');
                           }}
                         >
                           Los geht's — KosmoDesign öffnen
@@ -771,8 +857,8 @@ export function App() {
                       </div>
                     </Panel>
                   )}
-                  <ProjektListe onOpen={() => setScreen('design')} />
-                  <VariantenArchiv onOpen={() => setScreen('design')} />
+                  <ProjektListe onOpen={() => gehZu('design')} />
+                  <VariantenArchiv onOpen={() => gehZu('design')} />
                 </div>
                 <div className="orbit065-home-rechts">
                   {/* Serie K / F3 (Owner-Auftrag, wörtlich: «nicht Blöcke, eher
@@ -814,7 +900,7 @@ export function App() {
         />
       )}
       <CommandPalette />
-      <Kurzbefehle stationen={stationen} zurZentrale={() => setScreen('home')} />
+      <Kurzbefehle stationen={stationen} zurZentrale={() => gehZu('home')} />
       <KMeldungen />
       <KBestaetigung />
       {deinstallierenOffen && <AppDeinstallieren onClose={() => setDeinstallierenOffen(false)} />}

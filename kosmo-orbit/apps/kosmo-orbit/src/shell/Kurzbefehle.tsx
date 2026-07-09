@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Badge, Hairline } from '@kosmo/ui';
+import { Hairline } from '@kosmo/ui';
 import { KURZTASTEN } from '../modules/design/kurztasten';
 import './orbit-065.css';
 
@@ -98,7 +98,8 @@ export function Kurzbefehle({
       style={{ zIndex: 205, background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)' }}
     >
       <div
-        className="k-karte k-skalieren-ein k-dialog"
+        // Aufgabe 4 (Konzept §4, Overlays): Feder + Translation statt Skalierung.
+        className="k-karte orbit065-sheet-ein k-dialog"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--k-raised)',
@@ -113,7 +114,11 @@ export function Kurzbefehle({
             Kurzbefehle
           </div>
           <div style={{ flex: 1 }} />
-          <Badge hue="var(--k-ink-faint)">?</Badge>
+          {/* Aufgabe 7 (0.6.6, C-Befund 6): kein `Badge`-Statuspunkt vor
+              diesem «?» — reine Kopf-Verzierung ohne echten Statuswert (siehe
+              orbit-065.css, dieselbe Regel wie die Kopfleisten-Knöpfe in
+              App.tsx). */}
+          <span className="orbit065-kopfleiste-beschriftung">?</span>
         </div>
         <Hairline />
         <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>{zeilen.map((z) => <Kurzbefehlzeile key={z.taste} {...z} />)}</div>

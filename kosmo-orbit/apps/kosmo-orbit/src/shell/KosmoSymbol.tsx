@@ -3,6 +3,7 @@ import { OrbitMark } from '@kosmo/ui';
 import { greeting } from '@kosmo/ai';
 import { useKosmoStatus, kurzform } from '../state/kosmo-status';
 import { useProject } from '../state/project-store';
+import './orbit-065.css';
 
 export interface KosmoSymbolProps {
   /** Öffnet das grosse Panel (Klick ODER Tastatur — natives <button>). */
@@ -84,9 +85,16 @@ export function KosmoSymbol({ onOpen }: KosmoSymbolProps) {
         onBlur={() => setZeigePopup(false)}
         aria-label={beschaeftigt ? 'Kosmo öffnen — arbeitet gerade' : 'Kosmo öffnen'}
         title="Kosmo"
-        className={beschaeftigt ? 'k-kosmo-symbol k-kosmo-symbol-beschaeftigt' : 'k-kosmo-symbol'}
+        // Aufgabe 3 (0.6.6): `.k-druck` zusätzlich zu den bestehenden
+        // `k-kosmo-symbol*`-Klassen (Puls-Animation bleibt unverändert).
+        className={
+          beschaeftigt ? 'k-kosmo-symbol k-kosmo-symbol-beschaeftigt k-druck' : 'k-kosmo-symbol k-druck'
+        }
         style={{
-          all: 'unset',
+          // `all:'unset'` entfernt (blockierte `.k-druck`s transform/
+          // filter) — die übrigen Optik-Eigenschaften stehen weiter unten
+          // explizit, Font/Color erben bereits global (aura.css).
+          margin: 0,
           cursor: 'pointer',
           width: 52,
           height: 52,

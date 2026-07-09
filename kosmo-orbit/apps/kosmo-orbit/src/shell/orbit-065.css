@@ -17,7 +17,34 @@
  *    90°-Rhythmus von Haus aus — siehe Kommentar in OrbitStart.tsx).
  *  - R2-N2 (Fächer-Karten): echte Karteikarten (45°-Ecke, radial gestaffelt).
  *  - R2-N3 (Achsen): Begrüssung/Projekte + Orbit auf einer Layout-Achse.
+ *
+ * 0.6.6 (Stream A) ergänzt: Aufgabe 1 (Stationswechsel-Choreografie),
+ * Aufgabe 3 (`.k-druck`-Rollout + Konflikt-Auflösung), Aufgabe 4 (Sheet-/
+ * Fächer-Motion), Aufgabe 5 (Fächer-Ruheraum), Aufgabe 6 (Fächer-Planet-
+ * Bezug), Aufgabe 7 (ehrliche Kopfleisten-Beschriftung ohne Fake-Statuspunkt).
  */
+
+/* ── Aufgabe 1 (0.6.6 MOTION-KONZEPT-066 §4) — Stationswechsel-Choreografie
+   `mitUebergang()` (@kosmo/ui `motion.ts`, App.tsx `gehZu()`) kapselt
+   `document.startViewTransition` — die Choreografie selbst («altes Blatt
+   weicht sofort, neues setzt mit --k-feder auf») lebt hier als
+   `::view-transition-*`-Regel. Ohne Browser-Support oder bei
+   `prefers-reduced-motion` ruft `mitUebergang()` den Wechsel synchron auf,
+   `startViewTransition` läuft dann nie — diese Pseudo-Elemente entstehen
+   in dem Fall gar nicht erst (kein Sonderfall/@media hier nötig). */
+@keyframes orbit065-view-alt-weicht {
+  to { opacity: 0; }
+}
+@keyframes orbit065-view-neu-setzt {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+::view-transition-old(root) {
+  animation: orbit065-view-alt-weicht var(--k-motion-fast) ease both;
+}
+::view-transition-new(root) {
+  animation: orbit065-view-neu-setzt var(--k-feder) both;
+}
 
 /* ── R2-N3: Begrüssung/Projekte und Orbit teilen EINE Layout-Achse ──────
    (App.tsx-Layout gehört nicht zu meinem Dateibesitz — siehe Bericht:
@@ -52,10 +79,25 @@
      liess beim Hover das GANZE Layout um 408px springen — Fächer öffnet,
      Padding erscheint, die Karte flieht unter dem Zeiger weg, Fächer schliesst,
      alles springt zurück (Oszillation; bei 1920px landete die Karte unter der
-     Kopfleiste). «Papier flattert nicht»: die Reserve ist wieder STATISCH.
-     Der tote Raum im Ruhezustand ist als 0.6.6-Befund dokumentiert (richtige
-     Lösung: Öffnungsrichtung des oben-Fächers, nicht Layout-Verschiebung). */
-  padding-top: 440px;
+     Kopfleiste). «Papier flattert nicht»: die Reserve bleibt STATISCH — KEIN
+     `:has()`-Hover-Layoutsprung (0.6.6-Lehre aus genau diesem Befund).
+
+     Aufgabe 5 (0.6.6, Fächer-Ruheraum): Öffnungsrichtung des oben-Fächers
+     geprüft (nach unten/Richtung Orbit-Mitte statt nach oben) UND mit
+     echten, per Playwright gemessenen Werten (1400×900, `--k-orbit-radius`
+     klemmt hier bei 208px) durchgerechnet — nicht sauber machbar: der
+     Design-Fächer (5 Untertools) misst offen ≈406px + 24px Abstand ≈430px,
+     der freie Raum zwischen Knoten-Oberkante und `.k-orbit-mitte` beträgt
+     nur ≈234px. Jede «nach unten»-Variante hätte ENTWEDER `.k-orbit-mitte`
+     überlappt (bricht R2-N1, orbit-faecher.spec, hart) ODER den eigenen
+     Auslöse-Knopf unter dem offenen Fächer verschwinden lassen (neue,
+     schlechtere Regression). Beides verworfen — Fallback wie im Auftrag
+     vorgesehen: Reserve MODERAT verkleinert statt aufgegeben. Der reale
+     Frei-Raum vor dem eigentlichen Clipping (Rand der scrollenden Zentrale)
+     lag gemessen bei ≈70px zusätzlicher Luft über den bisherigen 440px
+     hinaus nicht mehr nötig — 50px davon zurückgegeben (Sicherheitsabstand
+     bleibt), der Rest bleibt ehrlich als ungelöster Rest (siehe Bericht). */
+  padding-top: 390px;
 }
 @media (max-width: 860px) {
   .orbit065-home-grid {
@@ -132,39 +174,141 @@
   opacity: 0.0015;
   pointer-events: auto;
   z-index: 5;
-  transition: opacity var(--k-motion-base);
+  /* Aufgabe 4 (Konzept §4, Overlays der Zentrale): öffnet mit `--k-feder`
+     (Translation 4-8px + Opacity), schliesst mit `--k-motion-fast` Opacity
+     — die Basisregel (hier) trägt die SCHLIESSEN-Dauer, `.offen` (unten)
+     überschreibt sie für die ÖFFNEN-Richtung (CSS wählt die Dauer immer aus
+     dem NEUEN Zustand, derselbe Trick wie bei `.k-druck`). */
+  transition: opacity var(--k-motion-fast), transform var(--k-motion-fast);
 }
 .orbit065-faecher-huelle.offen {
   opacity: 1;
   z-index: 20;
+  transition: opacity var(--k-feder), transform var(--k-feder);
 }
+/* Jede Kompassrichtung wächst «aus dem Knoten heraus»: im Ruhezustand ein
+   6px-Versatz IN Richtung Knoten (Translation, Konzept-Vorgabe 4-8px), beim
+   Öffnen federt sie auf ihre endgültige, zentrierte Position. */
 .orbit065-faecher-huelle--oben {
   bottom: 100%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 6px);
   margin-bottom: var(--k-s6);
+}
+.orbit065-faecher-huelle--oben.offen {
+  transform: translate(-50%, 0);
 }
 .orbit065-faecher-huelle--unten {
   top: 100%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -6px);
   margin-top: var(--k-s6);
+}
+.orbit065-faecher-huelle--unten.offen {
+  transform: translate(-50%, 0);
 }
 .orbit065-faecher-huelle--rechts {
   left: 100%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-6px, -50%);
   margin-left: var(--k-s6);
+}
+.orbit065-faecher-huelle--rechts.offen {
+  transform: translate(0, -50%);
 }
 .orbit065-faecher-huelle--links {
   right: 100%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(6px, -50%);
   margin-right: var(--k-s6);
 }
+.orbit065-faecher-huelle--links.offen {
+  transform: translate(0, -50%);
+}
 @media (prefers-reduced-motion: reduce) {
-  .orbit065-faecher-huelle {
+  .orbit065-faecher-huelle,
+  .orbit065-faecher-huelle.offen {
     transition: none;
+  }
+}
+
+/* ── Aufgabe 6 (0.6.6, C-Befund 5) — Fächer-Planet-Bezug ─────────────────
+   «sichtbarer Bezug zwischen auslösendem Orbit-Planeten und offenem
+   Fächer»: (1) Akzent-Rahmen am Hauptknopf, solange SEIN Fächer offen ist
+   (`aria-expanded` ist bereits vorhanden, kein neuer State nötig — zwei
+   Klassen/Attribut-Selektor (0,2,0) schlagen `.k-orbit-hauptknopf:hover`
+   dank späterer Ladereihenfolge dieser Datei, siehe Kopfkommentar); (2)
+   eine feine Tusche-Verbindungslinie GENAU in der Lücke zwischen Knoten und
+   Fächer, kompassrichtungsabhängig — reines `::before`, kein zusätzliches
+   DOM-Element, ändert keine Bounding-Box eines getesteten Elements
+   (R2-N1/R2-N2 messen `.k-orbit-mitte`/die Karten, nicht dieses Pseudo). */
+.k-orbit-hauptknopf[aria-expanded='true'] {
+  border-color: var(--k-accent);
+  box-shadow: 0 0 0 2px var(--k-accent-wash);
+}
+@media (prefers-reduced-motion: reduce) {
+  .k-orbit-hauptknopf[aria-expanded='true'] {
+    transition: none;
+  }
+}
+.orbit065-faecher-huelle.offen::before {
+  content: '';
+  position: absolute;
+  background: var(--k-accent);
+  opacity: 0.6;
+  pointer-events: none;
+}
+.orbit065-faecher-huelle--oben.offen::before {
+  left: 50%;
+  bottom: calc(-1 * var(--k-s6));
+  width: 1px;
+  height: var(--k-s6);
+  transform: translateX(-50%);
+}
+.orbit065-faecher-huelle--unten.offen::before {
+  left: 50%;
+  top: calc(-1 * var(--k-s6));
+  width: 1px;
+  height: var(--k-s6);
+  transform: translateX(-50%);
+}
+.orbit065-faecher-huelle--rechts.offen::before {
+  top: 50%;
+  left: calc(-1 * var(--k-s6));
+  width: var(--k-s6);
+  height: 1px;
+  transform: translateY(-50%);
+}
+.orbit065-faecher-huelle--links.offen::before {
+  top: 50%;
+  right: calc(-1 * var(--k-s6));
+  width: var(--k-s6);
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+/* ── Aufgabe 3 (0.6.6) — `.k-druck` vs. bestehende Eigen-Transitions ────
+   `.k-orbit-hauptknopf:hover`/`.orbit065-karte:hover` (Zoom bzw. Rotations-
+   Reset) und `.k-druck:active` (Press-Skalierung) haben gleiche
+   Spezifität (0,2,0) und treffen beim Drücken-während-Hover gleichzeitig
+   zu — ohne Auflösung würde je nach Ladereihenfolge der Hover-Transform den
+   Druck-Transform stumm verschlucken («doppelte Eigen-Transitions»). Diese
+   Regeln (zwei Klassen, 0,3,0) lösen es EXPLIZIT auf: der Druck gewinnt
+   immer. */
+.k-orbit-hauptknopf.k-druck:active {
+  transform: scale(var(--k-druck-skala));
+}
+.orbit065-karte.k-druck:active {
+  transform: scale(var(--k-druck-skala)) rotate(0deg) translateX(0);
+}
+.k-kosmo-symbol.k-druck:active {
+  transform: scale(var(--k-druck-skala));
+}
+@media (prefers-reduced-motion: reduce) {
+  .k-orbit-hauptknopf.k-druck:active,
+  .orbit065-karte.k-druck:active,
+  .k-kosmo-symbol.k-druck:active {
+    transform: none;
   }
 }
 
@@ -261,6 +405,52 @@
 .orbit065-einstellungen-sektionstitel {
   font-size: var(--k-t-lg);
   font-weight: 650;
+}
+
+/* ── Aufgabe 4 (0.6.6 MOTION-KONZEPT-066 §4) — Sheet-/Overlay-Motion ────
+   «Overlays (KMenu/KDialog/Sheet): öffnen mit --k-feder (Translation 4-8px
+   + Opacity), schliessen mit --k-motion-fast Opacity. Kein Backdrop-Blur.»
+   Ersetzt `.k-skalieren-ein` (Skalierung, aura.css) für die Overlays dieser
+   Datei/Domäne (CommandPalette, Kurzbefehle) — echtes Schliessen ist bei
+   beiden ein sofortiges Unmount (kein Exit-State im Component), das
+   entspricht bereits «Austritt schneller als Eintritt» (Punkt 2 der
+   Motion-Haltung); eine animierte Austritts-Phase (verzögertes Unmount)
+   ist hier bewusst NICHT gebaut (Scope 0.6.6 Stream A, siehe Bericht). */
+@keyframes orbit065-sheet-ein {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.orbit065-sheet-ein {
+  animation: orbit065-sheet-ein var(--k-feder) both;
+}
+/* Kinder-Staffelung (Konzept §4: «24ms Versatz, max. 8 Kinder») — Aufrufer
+   setzt `animationDelay: Math.min(index,8)*24ms` inline (JS-Wert, siehe
+   `CommandPalette.tsx`/`OrbitStart.tsx`). */
+.orbit065-sheet-kind {
+  animation: orbit065-sheet-ein var(--k-feder) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit065-sheet-ein,
+  .orbit065-sheet-kind {
+    animation: none;
+  }
+}
+
+/* ── Aufgabe 7 (0.6.6, C-Befund 6) — ehrliche Kopfleisten-Beschriftung ───
+   `Badge` (kosmo-ui) zeichnet vor jedem Text zwingend einen 6px-Statuspunkt
+   — richtig für Sync (live/aus/wartend), falsch für reine Aktions-Knöpfe
+   («?» Rundgang, «⚙» Einstellungen, «?» im Kurzbefehle-Kopf), die NIE einen
+   Statuswert trugen (der Punkt war konstant grau). Diese Klasse übernimmt
+   NUR die Typografie von `Badge`, ohne den Punkt — Ursache behoben statt
+   kaschiert (kein Statuspunkt ohne echten Status). */
+.orbit065-kopfleiste-beschriftung {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
 }
 
 /* ── Kurzbefehle: Technik-Stimme (Mass 7) — Mono-Kürzel rechtsbündig ───── */

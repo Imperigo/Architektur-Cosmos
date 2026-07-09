@@ -189,7 +189,12 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
               >
                 <button
                   type="button"
-                  className="k-orbit-hauptknopf"
+                  // Aufgabe 3: `.k-druck` (Knopfdrucksimulation). Aufgabe 6
+                  // (C-Befund 5, Fächer-Planet-Bezug): `aria-expanded`
+                  // (unverändert vorhanden) steuert per CSS-Attributselektor
+                  // in `orbit-065.css` einen Akzent-Rahmen, solange der
+                  // Fächer dieses Planeten offen ist — kein zweiter State.
+                  className="k-orbit-hauptknopf k-druck"
                   data-testid={`orbit-haupt-${h.id}`}
                   aria-label={h.kommend ? `${h.titel} — kommend, V2` : `${h.titel} — Untertools zeigen`}
                   aria-expanded={offen}
@@ -233,11 +238,25 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                         ? `orbit-office-${u.id}`
                         : (u.testidOverride ?? (u.moduleId ? `module-${u.moduleId}` : `orbit-sub-${u.id}`));
                       const staffel = kartenIndex % KARTEN_ROTATION_DEG.length;
+                      // Aufgabe 4 (Konzept §4, Kinder-Staffelung 24ms/max. 8):
+                      // die Klasse (und damit die Animation) wird NUR gesetzt,
+                      // solange der Fächer offen ist — die Karten bleiben laut
+                      // E2E-Vertrag permanent im DOM (siehe Kopfkommentar),
+                      // ein CSS-`animation: ... both`, das dauerhaft anläge,
+                      // liefe nur EINMAL beim Erstmount statt bei jedem
+                      // Öffnen. Der Klassenwechsel (weg/da) lässt die
+                      // Animation bei jedem `offen`-Wechsel neu anlaufen.
+                      const staggerVerzoegerung = `${Math.min(kartenIndex, 8) * 24}ms`;
                       return (
-                        <div key={u.id} className="k-orbit-untertool-zeile">
+                        <div
+                          key={u.id}
+                          className={`k-orbit-untertool-zeile${offen ? ' orbit065-sheet-kind' : ''}`}
+                          style={offen ? ({ animationDelay: staggerVerzoegerung } as CSSProperties) : undefined}
+                        >
                           <button
                             type="button"
-                            className="k-orbit-untertool orbit065-karte"
+                            // Aufgabe 3: `.k-druck` auf jeder Fächer-Karte.
+                            className="k-orbit-untertool orbit065-karte k-druck"
                             style={
                               {
                                 '--k-karte-rot': `${KARTEN_ROTATION_DEG[staffel]}deg`,
