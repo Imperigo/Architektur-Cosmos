@@ -8,13 +8,12 @@ import { expect, test, type Page } from '@playwright/test';
  * wandert ehrlich weiter → Ergebnisbild erscheint → «Aufs Blatt legen»
  * (Weiterleitung) legt es auf ein Publish-Blatt.
  *
- * Eigene Bridge-Instanz auf :8634 (nicht der Hauptbaum-Default :8600) — der
- * Worktree dieses Streams lief parallel zu Stream C (PlanView/eingabe-3d),
- * `kosmo.bridge` wird darum explizit gesetzt (dieselbe Begründung wie der
- * W1-Kommentarkopf in `visgraph.spec.ts`, nur ein anderer Port).
+ * Fake-Worker-Bridge auf :8600 (Hauptbaum-Default; die Stream-Isolation der
+ * W2-Phase ist mit der Integration beendet — Muster visgraph.spec.ts).
+ * `kosmo.bridge` wird explizit gesetzt.
  */
 
-const BRIDGE = 'http://localhost:8634';
+const BRIDGE = 'http://localhost:8600';
 
 async function bootstrapDesign3D(page: Page) {
   await page.goto('/');
