@@ -1,8 +1,12 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
 import type { ImageAsset, Sheet, SheetImage, SheetPlacement, SheetText, Storey } from '../model/entities';
-import type { AnyPatch, KosmoDoc } from '../model/doc';
+import type { AnyPatch, KosmoDoc, PublikationsSet } from '../model/doc';
 import { formatBelegungsBericht, schlageBlattBelegungVor } from '../derive/blattfuellung';
+import { formatBaugesuchBericht, schlageBaugesuchSatzVor } from '../derive/baugesuch';
+import { ausnuetzungsnachweisSvg, BAUGESUCH_HINWEIS, deriveAusnuetzungKennwerte, utf8ToBase64 } from '../derive/ausnuetzungsnachweis';
+import { deriveBerechnungsliste } from '../derive/berechnungsliste';
+import { sheetPaperSize } from '../derive/sheet';
 import { CommandError, registerCommand } from './core';
 
 /**
@@ -615,5 +619,144 @@ export const fillSheet = registerCommand({
       }
     }
     return [{ id: sheet.id, before: sheet, after: aktuell }];
+  },
+});
+
+/** Cache run()→summarize() für DENSELBEN Aufruf, wie bei `fillSheet` oben. */
+const letzterBaugesuchBericht = new WeakMap<object, ReturnType<typeof schlageBaugesuchSatzVor>>();
+
+export const createBaugesuch = registerCommand({
+  id: 'publish.baugesuchErstellen',
+  title: 'Baugesuch-Blattsatz erstellen',
+  description:
+    'Stellt den kuratierten Blattsatz fürs CH-Baugesuch (SIA-Teilphase Bewilligung) aus dem Modell zusammen: Situation (falls Baugrenze/Parzelle gezeichnet), Grundriss je Geschoss (1:100), die im Plansatz bereits definierten Schnitte sowie ein Ausnützungsnachweis-Blatt (Berechnungsliste + Zonenregel-Gegenüberstellung AZ/Höhe/Vollgeschosse/Grenzabstand). Bündelt alle erzeugten Blätter als Publikations-Set «Baugesuch» (ersetzt ein gleichnamiges Set). EIN atomarer Undo-Schritt. Fassaden/Ansichten und eine Situation ohne Baugrenze bleiben ehrliche Lücken (das Datenmodell kennt keinen Fassaden-Blatt-Typ) — die eigentliche Einreichung bei der Behörde bleibt real, dies ist nur die Zusammenstellung.',
+  params: z.object({}),
+  summarize: (p) =>
+    formatBaugesuchBericht(letzterBaugesuchBericht.get(p) ?? { situation: null, grundrisse: [], schnitte: [], hinweise: [] }),
+  run: (doc, p) => {
+    const vorschlag = schlageBaugesuchSatzVor(doc);
+    letzterBaugesuchBericht.set(p, vorschlag);
+
+    const patches: AnyPatch[] = [];
+    const neueSheetIds: string[] = [];
+    let nextIndex = doc.byKind<Sheet>('sheet').length;
+
+    const anlegen = (name: string, format: Sheet['format'], orientation: Sheet['orientation']): Sheet => {
+      const sheet: Sheet = { id: newId('blatt'), kind: 'sheet', name, format, orientation, index: nextIndex++, placements: [] };
+      return sheet;
+    };
+    const zentrierterPlatz = (sheet: Sheet) => {
+      const paper = sheetPaperSize(sheet);
+      return { x: Math.round(paper.width / 2), y: Math.round((paper.height - 30) / 2) };
+    };
+
+    // Situation
+    if (vorschlag.situation) {
+      const sheet = anlegen(`Situation ${vorschlag.situation.storeyName}`, 'A3', 'quer');
+      const p0 = zentrierterPlatz(sheet);
+      const placement: SheetPlacement = {
+        id: newId('ansicht'),
+        view: 'grundriss',
+        storeyId: vorschlag.situation.storeyId,
+        scale: vorschlag.situation.scale,
+        x: p0.x,
+        y: p0.y,
+        title: 'Situation',
+      };
+      sheet.placements = [placement];
+      patches.push({ id: sheet.id, before: null, after: sheet });
+      neueSheetIds.push(sheet.id);
+    }
+
+    // Grundrisse aller Geschosse
+    for (const g of vorschlag.grundrisse) {
+      const sheet = anlegen(`Grundriss ${g.storeyName}`, 'A1', 'quer');
+      const p0 = zentrierterPlatz(sheet);
+      const placement: SheetPlacement = {
+        id: newId('ansicht'),
+        view: 'grundriss',
+        storeyId: g.storeyId,
+        scale: g.scale,
+        x: p0.x,
+        y: p0.y,
+        title: `Grundriss ${g.storeyName}`,
+      };
+      sheet.placements = [placement];
+      patches.push({ id: sheet.id, before: null, after: sheet });
+      neueSheetIds.push(sheet.id);
+    }
+
+    // Schnitte (mind. 1, falls im Modell definiert)
+    for (const s of vorschlag.schnitte) {
+      const sheet = anlegen(`Schnitt ${s.title}`, 'A1', 'quer');
+      const p0 = zentrierterPlatz(sheet);
+      const placement: SheetPlacement = {
+        id: newId('ansicht'),
+        view: 'schnitt',
+        section: { a: s.a, b: s.b, depth: s.depth, lookLeft: s.lookLeft },
+        scale: s.scale,
+        x: p0.x,
+        y: p0.y,
+        title: s.title,
+      };
+      sheet.placements = [placement];
+      patches.push({ id: sheet.id, before: null, after: sheet });
+      neueSheetIds.push(sheet.id);
+    }
+
+    // Ausnützungsnachweis — IMMER erstellt (Pflichtbeilage), auch bei leerem
+    // Modell (dann mit «—»-Werten statt erfundenen Zahlen). Das eigenständige
+    // SVG-Blatt (derive/ausnuetzungsnachweis.ts) wird als Bild-Slot auf ein
+    // eigenes A4-Blatt eingebettet — «auf bestehende Sheet-Entities gemappt
+    // statt ein neues Artefakt» (Konzept §4, Batch 2).
+    const liste = deriveBerechnungsliste(doc);
+    const kennwerte = deriveAusnuetzungKennwerte(doc);
+    const svg = ausnuetzungsnachweisSvg(liste, kennwerte, {
+      ...(doc.settings.projectName ? { titel: doc.settings.projectName } : {}),
+      siaPhase: doc.settings.siaPhase,
+      ...(doc.settings.zonenRegel ? { regelName: doc.settings.zonenRegel.name } : {}),
+    });
+    const asset: ImageAsset = {
+      id: newId('bild'),
+      kind: 'imageasset',
+      name: 'Ausnützungsnachweis',
+      mime: 'image/svg+xml',
+      data: utf8ToBase64(svg),
+      // Intrinsische Seitenverhältnis-Angabe (kein echtes Pixelmass): das
+      // SVG-Blatt hat den viewBox 794×1123 (A4 hoch) — `imagePaperBounds`
+      // rechnet die Bild-Höhe daraus, statt den Default-3:2-Fallback zu
+      // nehmen (der das Blatt seitenverkehrt verzerren würde).
+      width: 794,
+      height: 1123,
+    };
+    patches.push({ id: asset.id, before: null, after: asset });
+
+    const nachweisSheet = anlegen('Ausnützungsnachweis', 'A4', 'hoch');
+    const paper = sheetPaperSize(nachweisSheet);
+    const plankopfReserve = 40;
+    const usableHeight = paper.height - 20 - plankopfReserve;
+    const bildW = Math.round(usableHeight * (794 / 1123));
+    const bild: SheetImage = {
+      id: newId('slot'),
+      x: Math.round((paper.width - bildW) / 2),
+      y: 12,
+      w: bildW,
+      assetId: asset.id,
+      title: `Ausnützungsnachweis — ${BAUGESUCH_HINWEIS}`,
+    };
+    nachweisSheet.bilder = [bild];
+    patches.push({ id: nachweisSheet.id, before: null, after: nachweisSheet });
+    neueSheetIds.push(nachweisSheet.id);
+
+    // Als Publikations-Set «Baugesuch» bündeln (ersetzt ein gleichnamiges Set)
+    const vorherSets = doc.settings.publikationsSets ?? [];
+    const set: PublikationsSet = { name: 'Baugesuch', sheetIds: neueSheetIds };
+    patches.push({
+      settings: true as const,
+      before: { publikationsSets: vorherSets },
+      after: { publikationsSets: [...vorherSets.filter((s) => s.name !== 'Baugesuch'), set] },
+    });
+
+    return patches;
   },
 });

@@ -35,6 +35,8 @@ export * from './derive/gltf';
 export * from './derive/plansvg';
 export * from './derive/sheet';
 export * from './derive/blattfuellung';
+export * from './derive/ausnuetzungsnachweis';
+export * from './derive/baugesuch';
 export * from './derive/umbau';
 export * from './model/prioritaet';
 export * from './derive/publikation';

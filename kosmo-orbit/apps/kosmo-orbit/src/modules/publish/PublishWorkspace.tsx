@@ -228,6 +228,27 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     reader.readAsDataURL(file);
   }
 
+  /**
+   * Baugesuch-Blattsatz (v0.6.3 VP2, Owner-Hauptaufgabe K22): stellt den
+   * kuratierten Blattsatz fürs CH-Baugesuch zusammen — Situation, Grundriss
+   * je Geschoss, die bereits definierten Schnitte und ein
+   * Ausnützungsnachweis-Blatt — und bündelt sie als Publikations-Set
+   * «Baugesuch». EIN atomarer Undo-Schritt (publish.baugesuchErstellen
+   * liefert alle Patches in einem Command). Die Meldung nennt ehrlich, was
+   * erstellt wurde UND was das Modell (noch) nicht hergibt (keine Parzelle,
+   * kein Schnitt) — die Einreichung bei der Behörde bleibt real, dies ist
+   * nur die Zusammenstellung der Unterlagen.
+   */
+  function baugesuchErstellen() {
+    try {
+      const res = runCommand('publish.baugesuchErstellen', {});
+      const hatLuecken = res.summary.includes('Fehlt/Lücke');
+      melde(res.summary, { ton: hatLuecken ? 'info' : 'erfolg', dauerMs: hatLuecken ? 10000 : 4500 });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  }
+
   /** Toolkit 5: A0-Wettbewerbsplakat mit vorplatzierten Slots — EIN Undo-Schritt. */
   function erzeugePlakat(layout: 'klassisch' | 'spalte') {
     const { history } = useProject.getState();
@@ -382,6 +403,21 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </select>
           <KButton size="sm" tone="quiet" onClick={addSheet} data-testid="add-sheet">
             + Blatt
+          </KButton>
+        </div>
+        <Hairline />
+        <div style={{ display: 'grid', gap: 5 }}>
+          <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+            Baugesuch (SIA 33)
+          </span>
+          <KButton
+            size="sm"
+            tone="accent"
+            onClick={baugesuchErstellen}
+            data-testid="baugesuch-erstellen"
+            title="Stellt Situation, Grundriss je Geschoss, die definierten Schnitte und ein Ausnützungsnachweis-Blatt zusammen und bündelt sie als Publikations-Set «Baugesuch» — EIN Undo-Schritt. Zusammenstellung für die Eingabe, keine Bewilligung."
+          >
+            Baugesuch
           </KButton>
         </div>
         <Hairline />

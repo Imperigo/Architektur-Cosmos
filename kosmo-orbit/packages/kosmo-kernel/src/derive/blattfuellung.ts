@@ -76,6 +76,36 @@ function schnittSchluessel(a: Pt, b: Pt): string {
   return `${Math.round(a.x)}/${Math.round(a.y)}-${Math.round(b.x)}/${Math.round(b.y)}`;
 }
 
+/** Ein im Plansatz bereits definierter Schnitt (dedupe-Ergebnis). */
+export interface BekannterSchnitt {
+  a: Pt;
+  b: Pt;
+  depth: number;
+  lookLeft: boolean;
+  title: string;
+}
+
+/**
+ * Alle im Plansatz irgendwo bereits platzierten Schnitte, dedupliziert über
+ * die (gerundete) Schnittlinie — gemeinsam benutzt von `schlageBlattBelegungVor`
+ * (Blatt füllen) UND `derive/baugesuch.ts` (Baugesuch-Blattsatz verlangt
+ * mind. 1 Schnitt aus bereits definierten SectionSpecs, nie eine geratene
+ * Linie — Ehrlichkeitsregel, s. Modul-Kommentar oben).
+ */
+export function alleBekanntenSchnitte(doc: KosmoDoc): Map<string, BekannterSchnitt> {
+  const bekannteSchnitte = new Map<string, BekannterSchnitt>();
+  for (const s of doc.byKind<Sheet>('sheet')) {
+    for (const pl of s.placements) {
+      if (pl.view !== 'schnitt' || !pl.section) continue;
+      const key = schnittSchluessel(pl.section.a, pl.section.b);
+      if (!bekannteSchnitte.has(key)) {
+        bekannteSchnitte.set(key, { ...pl.section, title: pl.title ?? 'Schnitt' });
+      }
+    }
+  }
+  return bekannteSchnitte;
+}
+
 /**
  * Schlägt eine deterministische Belegung der freien Blattfläche vor.
  * Reihenfolge/Priorität: Grundrisse je Geschoss → Schnitte (aus im Modell
@@ -113,16 +143,7 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
   }
 
   // 2) Schnitte aus SectionSpecs, die irgendwo im Plansatz schon definiert sind
-  const bekannteSchnitte = new Map<string, { a: Pt; b: Pt; depth: number; lookLeft: boolean; title: string }>();
-  for (const s of doc.byKind<Sheet>('sheet')) {
-    for (const pl of s.placements) {
-      if (pl.view !== 'schnitt' || !pl.section) continue;
-      const key = schnittSchluessel(pl.section.a, pl.section.b);
-      if (!bekannteSchnitte.has(key)) {
-        bekannteSchnitte.set(key, { ...pl.section, title: pl.title ?? 'Schnitt' });
-      }
-    }
-  }
+  const bekannteSchnitte = alleBekanntenSchnitte(doc);
   if (bekannteSchnitte.size === 0) {
     hinweise.push('Kein Schnitt im Modell definiert — zuerst irgendwo eine Schnittlinie platzieren (publish.ansichtPlatzieren)');
   } else {
