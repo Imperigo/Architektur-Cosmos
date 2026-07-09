@@ -206,6 +206,14 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
   await expect(page.locator('[data-testid="grid-achse"]').first()).toBeVisible();
   await page.click('[data-testid="raster-toggle"]'); // Panel zu — es liegt über dem Plan
 
+  // Voll-Plan + Einpassen: seit der dreizeiligen Werkzeugleiste (A5/A7)
+  // liegt die Quer-Achse B in der Standard-Splitansicht UNTER der Leiste —
+  // der Klick träfe einen Toolbar-Knopf statt den Plan. Einpassen holt alle
+  // Kreuzungen sichtbar in den Viewport (per Debug-Skript bewiesen).
+  await page.click('[data-testid="view-2d"]');
+  await page.click('[data-testid="nav-fit"]');
+  await page.waitForTimeout(400);
+
   // T1: Standard-Werkzeug ist jetzt «Auswahl» (ArchiCAD-Gefühl) — zum
   // Zeichnen muss das Wand-Werkzeug explizit angewählt werden.
   await page.click('[data-testid="tool-wand"]');
@@ -223,11 +231,14 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
     // Bildschirm-y wächst nach unten; Quer-Achse A (Welt-y 0) liegt zuunterst
     const ys = waagrecht.map((r) => (r.top + r.bottom) / 2).sort((a, b) => b - a);
     const pxProMm = (xs[1]! - xs[0]!) / achsmass;
-    return { x1: xs[0]!, yA: ys[0]!, yB: ys[1]!, versatz: 300 * pxProMm };
+    // Achse 2 statt Achse 1: das Entwurfs-Dock (A6/K16) liegt fix an der
+    // linken Kante ÜBER dem Plan und fängt Klicks auf Achse 1 ab — derselbe
+    // Befund wie die Guide-Karte (ROADMAP 221), interner Fix dokumentiert.
+    return { x1: xs[1]!, yA: ys[0]!, yB: ys[1]!, versatz: 300 * pxProMm };
   }, raster.achsmass);
   // 300 mm neben der Kreuzung: Magnet (Radius 400) zieht auf die Achse,
-  // der 250er-Rasterfang würde daneben landen — das unterscheidet die Wege.
-  // Wand entlang Achse 1 (Kreuzungen 1/A und 1/B sind beide im Sichtfeld).
+  // der 250er-Rasterfang (2750) würde daneben landen — das unterscheidet die Wege.
+  // Wand entlang Achse 2 (Kreuzungen 2/A und 2/B sind beide im Sichtfeld).
   await page.mouse.click(koord.x1 + koord.versatz, koord.yA - 2);
   await page.mouse.click(koord.x1 + koord.versatz, koord.yB + 2);
   const wand = await page.evaluate(() => {
@@ -238,8 +249,8 @@ test('Stützenraster: Owner-Varianten mit Bewertung erscheinen', async ({ page }
     return w ? { a: w.a, b: w.b } : null;
   });
   expect(wand).not.toBeNull();
-  expect(wand!.a).toEqual({ x: 0, y: 0 });
-  expect(wand!.b).toEqual({ x: 0, y: raster.quermass });
+  expect(wand!.a).toEqual({ x: raster.achsmass, y: 0 });
+  expect(wand!.b).toEqual({ x: raster.achsmass, y: raster.quermass });
 });
 
 test('Axonometrie: aufs Blatt platzieren, Linien erscheinen', async ({ page }) => {
