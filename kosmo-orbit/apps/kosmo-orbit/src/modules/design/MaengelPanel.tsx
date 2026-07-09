@@ -7,7 +7,7 @@ import {
   siaPhaseLabel,
   type Mangel,
 } from '@kosmo/kernel';
-import { Badge, Hairline, Karteikarte, KButton, meldeFehler } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KButton, KIcon, KInput, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -20,15 +20,6 @@ import { useProject } from '../../state/project-store';
  * AUSDRÜCKLICH kein rechtsgültiges Abnahmeprotokoll: `ABNAHME_HINWEIS` steht
  * hier UND im Export-SVG, nicht nur beim Export.
  */
-
-const inputStyle: React.CSSProperties = {
-  padding: '3px 6px',
-  borderRadius: 'var(--k-radius-sm)',
-  border: '1px solid var(--k-line-strong)',
-  background: 'var(--k-raised)',
-  fontSize: 12,
-  fontFamily: 'inherit',
-};
 
 function heute(): string {
   return new Date().toLocaleDateString('de-CH');
@@ -124,20 +115,20 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
         boxShadow: 'var(--k-shadow-overlay)',
-        padding: 12,
+        padding: 'var(--k-s4)',
         display: 'grid',
-        gap: 10,
-        fontSize: 12.5,
+        gap: 'var(--k-s4)',
+        fontSize: 'var(--k-t-sm)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
         <Badge hue="var(--k-mod-design)">Mängel</Badge>
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="maengel-protokoll">
           Abnahmeprotokoll (SVG)
         </KButton>
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          ✕
+          <KIcon name="schliessen" size={14} />
         </KButton>
       </div>
 
@@ -147,7 +138,7 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
           background: 'var(--k-warning-wash, #f6f2e6)',
           border: '1px solid var(--k-warning-line, #c9bfa0)',
           borderRadius: 'var(--k-radius-sm)',
-          padding: '8px 10px',
+          padding: 'var(--k-s3) var(--k-s4)',
           fontWeight: 600,
           color: 'var(--k-ink)',
         }}
@@ -155,7 +146,7 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
         {ABNAHME_HINWEIS}
       </div>
 
-      <div style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+      <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
         {protokoll.anzahlOffen} offen / {protokoll.anzahlBehoben} behoben ({protokoll.anzahlTotal} total)
         {' · '}
         {siaPhaseLabel(doc.settings.siaPhase)}
@@ -163,37 +154,40 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
 
       <Hairline />
 
-      <div data-testid="maengel-form" style={{ display: 'grid', gap: 6 }}>
-        <div className="k-titel" style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+      <div data-testid="maengel-form" style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+        <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
           Mangel erfassen
         </div>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          <input
+        <div style={{ display: 'flex', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+          <KInput
+            size="sm"
             data-testid="maengel-ort"
             placeholder="Ort, z.B. «Bad 2.OG»"
             value={ort}
             onChange={(e) => setOrt(e.target.value)}
-            style={{ ...inputStyle, flex: '1 1 160px' }}
+            style={{ flex: '1 1 160px' }}
           />
-          <input
+          <KInput
+            size="sm"
             data-testid="maengel-gewerk"
             placeholder="Gewerk"
             list="maengel-gewerk-vorschlaege"
             value={gewerk}
             onChange={(e) => setGewerk(e.target.value)}
-            style={{ ...inputStyle, flex: '1 1 140px' }}
+            style={{ flex: '1 1 140px' }}
           />
           <datalist id="maengel-gewerk-vorschlaege">
             {MANGEL_GEWERK_VORSCHLAEGE.map((g) => (
               <option key={g} value={g} />
             ))}
           </datalist>
-          <input
+          <KInput
+            size="sm"
             data-testid="maengel-frist"
             placeholder="Frist (optional)"
             value={frist}
             onChange={(e) => setFrist(e.target.value)}
-            style={{ ...inputStyle, flex: '1 1 120px' }}
+            style={{ flex: '1 1 120px' }}
           />
         </div>
         <textarea
@@ -202,7 +196,8 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
           value={beschreibung}
           onChange={(e) => setBeschreibung(e.target.value)}
           rows={2}
-          style={{ ...inputStyle, resize: 'vertical' }}
+          className="k-input k-input--sm"
+          style={{ resize: 'vertical' }}
         />
         <KButton
           size="sm"
@@ -222,11 +217,11 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
           Noch keine Mängel erfasst — die Liste bleibt leer, bis die Schlussbegehung beginnt.
         </div>
       ) : (
-        <div data-testid="maengel-liste" style={{ display: 'grid', gap: 6 }}>
+        <div data-testid="maengel-liste" style={{ display: 'grid', gap: 'var(--k-s3)' }}>
           {maengel.map((m, i) => (
             <Karteikarte key={m.id} nr={i + 1} data-testid={`maengel-zeile-${m.id}`}>
-              <div style={{ display: 'grid', gap: 3 }}>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ display: 'grid', gap: 'var(--k-s1)' }}>
+                <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap' }}>
                   <span style={{ fontWeight: 600 }}>{m.ort}</span>
                   <Badge hue={m.status === 'behoben' ? 'var(--k-success)' : 'var(--k-warning)'}>{m.gewerk}</Badge>
                   <div style={{ flex: 1 }} />
@@ -245,11 +240,11 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
                     data-testid={`maengel-loeschen-${m.id}`}
                     onClick={() => loeschen(m)}
                   >
-                    ✕
+                    <KIcon name="schliessen" size={14} />
                   </KButton>
                 </div>
-                <span style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>{m.beschreibung}</span>
-                <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+                <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{m.beschreibung}</span>
+                <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
                   {m.status === 'behoben' ? `Behoben ${m.behobenAm ?? ''}` : `Erfasst ${m.erfasstAm}`}
                   {m.frist ? ` · Frist ${m.frist}` : ''}
                 </span>
@@ -261,7 +256,7 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
 
       <Hairline />
 
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+      <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
         Nur ein interner Anstoss zur Schlussbegehung, kein rechtsgültiges Abnahmeprotokoll — die reale Abnahme
         (Bauherr, Architekt, Unternehmer vor Ort) bleibt Sache der Parteien (SIA 118).
       </span>

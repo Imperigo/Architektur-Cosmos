@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { ModulElement } from '@kosmo/kernel';
-import { KButton } from '@kosmo/ui';
+import { KButton, KInput, KSelect } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -55,8 +55,8 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
       data-testid="modul-editor"
       style={{
         position: 'fixed', top: 70, left: '50%', transform: 'translateX(-50%)', zIndex: 60,
-        background: 'var(--k-raised)', border: '1px solid var(--k-line-strong)', borderRadius: 10,
-        boxShadow: '0 12px 40px rgba(0,0,0,0.25)', padding: 14, display: 'grid', gap: 8,
+        background: 'var(--k-raised)', border: '1px solid var(--k-line-strong)', borderRadius: 'var(--k-radius-md)',
+        boxShadow: 'var(--k-shadow-overlay)', padding: 'var(--k-s5)', display: 'grid', gap: 'var(--k-s3)',
       }}
       onKeyDown={(e) => {
         if ((e.key === 'Delete' || e.key === 'Backspace') && auswahl !== null) {
@@ -66,13 +66,13 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
       }}
       tabIndex={0}
     >
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <b style={{ fontSize: 13 }}>Modul-Editor</b>
-        <input value={name} onChange={(e) => setName(e.target.value)} data-testid="modul-name" style={{ width: 110, padding: '3px 6px' }} />
-        <input type="number" value={modB} step={50} onChange={(e) => setModB(Number(e.target.value) || 2500)} style={{ width: 66 }} />
+      <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center' }}>
+        <b className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Modul-Editor</b>
+        <KInput size="sm" value={name} onChange={(e) => setName(e.target.value)} data-testid="modul-name" style={{ width: 110 }} />
+        <KInput size="sm" mono type="number" value={modB} step={50} onChange={(e) => setModB(Number(e.target.value) || 2500)} style={{ width: 66 }} />
         <span>×</span>
-        <input type="number" value={modH} step={50} onChange={(e) => setModH(Number(e.target.value) || 3000)} style={{ width: 66 }} />
-        <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>mm</span>
+        <KInput size="sm" mono type="number" value={modH} step={50} onChange={(e) => setModH(Number(e.target.value) || 3000)} style={{ width: 66 }} />
+        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>mm</span>
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone={typ === 'fenster' ? 'accent' : 'quiet'} data-testid="typ-fenster" onClick={() => setTyp('fenster')}>
           Fenster
@@ -150,19 +150,19 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
           />
         )}
       </svg>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11.5 }}>
+      <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', fontSize: 'var(--k-t-sm)' }}>
         <span style={{ color: 'var(--k-ink-faint)' }}>
           Aufziehen zeichnet ({typ}), Klick wählt, Entf löscht · Snap 5 cm
         </span>
         <div style={{ flex: 1 }} />
         {bestehend.length > 0 && (
-          <select
+          <KSelect
+            size="sm"
             onChange={(e) => {
               const m = bestehend.find((x) => x.name === e.target.value);
               if (m) laden(m);
             }}
             defaultValue=""
-            style={{ padding: '3px 6px' }}
           >
             <option value="" disabled>
               laden …
@@ -170,7 +170,7 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
             {bestehend.map((m) => (
               <option key={m.name}>{m.name}</option>
             ))}
-          </select>
+          </KSelect>
         )}
         <KButton size="sm" tone="quiet" onClick={onClose}>
           Abbrechen

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { bauablaufBlattSvg, BAUABLAUF_HINWEIS, deriveBauablauf, siaPhaseLabel } from '@kosmo/kernel';
-import { Badge, Hairline, KButton, Measure } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -53,20 +53,20 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
         boxShadow: 'var(--k-shadow-overlay)',
-        padding: 12,
+        padding: 'var(--k-s4)',
         display: 'grid',
-        gap: 10,
-        fontSize: 12.5,
+        gap: 'var(--k-s4)',
+        fontSize: 'var(--k-t-sm)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
         <Badge hue="var(--k-mod-design)">Bauablauf</Badge>
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="bauablauf-blatt">
           Bauablaufblatt (SVG)
         </KButton>
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          ✕
+          <KIcon name="schliessen" size={14} />
         </KButton>
       </div>
 
@@ -76,7 +76,7 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
           background: 'var(--k-warning-wash, #f6f2e6)',
           border: '1px solid var(--k-warning-line, #c9bfa0)',
           borderRadius: 'var(--k-radius-sm)',
-          padding: '8px 10px',
+          padding: 'var(--k-s3) var(--k-s4)',
           fontWeight: 600,
           color: 'var(--k-ink)',
         }}
@@ -84,7 +84,7 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
         {BAUABLAUF_HINWEIS}
       </div>
 
-      <div style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+      <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
         Gesamtdauer:{' '}
         <Measure>{ablauf.gesamtWochen > 0 ? `${ablauf.gesamtWochen} Wochen` : '—'}</Measure>
         {' · '}
@@ -101,7 +101,7 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
       ) : (
         <table style={{ borderCollapse: 'collapse', width: '100%' }} data-testid="bauablauf-tabelle">
           <thead>
-            <tr style={{ textAlign: 'right', color: 'var(--k-ink-faint)', fontSize: 11 }}>
+            <tr style={{ textAlign: 'right', color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
               <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'left' }}>Gewerk</th>
               <th style={{ fontWeight: 500, padding: '2px 4px' }}>Dauer</th>
               <th style={{ fontWeight: 500, padding: '2px 4px' }}>Wochen</th>
@@ -113,7 +113,7 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
                 <td style={{ padding: '3px 4px' }}>
                   {p.gewerk}
                   {p.parallel ? (
-                    <span style={{ color: 'var(--k-ink-faint)', fontSize: 10.5 }}> (überlappt)</span>
+                    <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}> (überlappt)</span>
                   ) : null}
                 </td>
                 <td style={{ padding: '3px 4px', textAlign: 'right' }}>
@@ -130,7 +130,7 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
 
       <Hairline />
 
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+      <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
         Gewerke-Reihenfolge und Dauern sind aus der gezeichneten Geometrie und konfigurierbaren
         Leistungswerten abgeleitet (Annahme Owner-Guideline, kein verbindlicher Wert) — Wochen sind
         relativ (Woche 1 = Baubeginn), ohne Kalenderbezug.

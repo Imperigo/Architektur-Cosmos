@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Badge, Hairline, Measure, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, Measure, moduleHue } from '@kosmo/ui';
 import { areaReport, kennzahlenAuswerten, pruefeGrundriss } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
@@ -18,6 +18,7 @@ export function KennzahlenPanel() {
   const doc = useProject.getState().doc;
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const [open, setOpen] = useState(true);
+  const [checksAufgeklappt, setChecksAufgeklappt] = useState(false);
   const report = useMemo(() => areaReport(doc), [doc, revision]);
   const befunde = useMemo(
     () => (activeStoreyId ? pruefeGrundriss(doc, activeStoreyId) : []),
@@ -49,7 +50,7 @@ export function KennzahlenPanel() {
       className="k-dialog"
       style={{
         position: 'absolute',
-        right: 12,
+        right: 'var(--k-s4)',
         // unter den Trace/Graph-Knöpfen des Plans (keine Überlappung im Split)
         top: 44,
         width: 240,
@@ -58,7 +59,7 @@ export function KennzahlenPanel() {
         border: '1px solid var(--k-line)',
         borderRadius: 'var(--k-radius-md)',
         boxShadow: 'var(--k-shadow-raised)',
-        fontSize: 12.5,
+        fontSize: 'var(--k-t-sm)',
         overflow: 'hidden',
       }}
     >
@@ -69,8 +70,8 @@ export function KennzahlenPanel() {
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          padding: '8px 12px',
+          gap: 'var(--k-s3)',
+          padding: 'var(--k-s3) var(--k-s4)',
           width: 'calc(100% - 24px)',
         }}
       >
@@ -81,10 +82,10 @@ export function KennzahlenPanel() {
           </Badge>
         )}
         <span style={{ flex: 1 }} />
-        <span style={{ color: 'var(--k-ink-faint)' }}>{open ? '−' : '+'}</span>
+        <KIcon name={open ? 'minus' : 'plus'} size={14} style={{ color: 'var(--k-ink-faint)' }} />
       </button>
       {open && (
-        <div style={{ padding: '0 12px 12px', display: 'grid', gap: 6 }}>
+        <div style={{ padding: '0 var(--k-s4) var(--k-s4)', display: 'grid', gap: 'var(--k-s3)' }}>
           {!hasZones && !hasMasses && (
             <div style={{ color: 'var(--k-ink-faint)' }}>
               Zeichne Zonen oder Volumen — die Flächen laufen hier live mit.
@@ -138,23 +139,24 @@ export function KennzahlenPanel() {
           {befunde.length > 0 && (
             <>
               <Hairline />
-              <div style={{ display: 'grid', gap: 5 }} data-testid="checks">
-                {befundeGruppiert.slice(0, 6).map((b, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
-                    <span
-                      title={b.schwere}
-                      style={{
-                        color:
-                          b.schwere === 'fehler'
-                            ? 'var(--k-danger, #b3462e)'
-                            : b.schwere === 'warnung'
-                              ? 'var(--k-warning)'
-                              : 'var(--k-ink-faint)',
-                        fontWeight: 700,
-                      }}
-                    >
-                      {b.schwere === 'hinweis' ? '·' : '!'}
-                    </span>
+              <div style={{ display: 'grid', gap: 'var(--k-s2)' }} data-testid="checks">
+                {(checksAufgeklappt ? befundeGruppiert : befundeGruppiert.slice(0, 6)).map((b, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline' }}>
+                    {b.schwere === 'hinweis' ? (
+                      <span title={b.schwere} style={{ color: 'var(--k-ink-faint)', fontWeight: 700 }}>
+                        ·
+                      </span>
+                    ) : (
+                      <KIcon
+                        name="warnung"
+                        size={14}
+                        title={b.schwere}
+                        style={{
+                          color: b.schwere === 'fehler' ? 'var(--k-danger, #b3462e)' : 'var(--k-warning)',
+                          flex: '0 0 auto',
+                        }}
+                      />
+                    )}
                     <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>
                       {b.n > 1 ? `${b.n}× ` : ''}
                       {b.text}
@@ -162,9 +164,17 @@ export function KennzahlenPanel() {
                   </div>
                 ))}
                 {befundeGruppiert.length > 6 && (
-                  <span style={{ color: 'var(--k-ink-faint)' }}>… {befundeGruppiert.length - 6} weitere</span>
+                  <KButton
+                    size="sm"
+                    tone="ghost"
+                    data-testid="kennzahlen-mehr"
+                    onClick={() => setChecksAufgeklappt((v) => !v)}
+                    style={{ justifySelf: 'start', color: 'var(--k-ink-faint)' }}
+                  >
+                    {checksAufgeklappt ? 'weniger' : `… ${befundeGruppiert.length - 6} weitere`}
+                  </KButton>
                 )}
-                <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+                <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
                   Richtwerte-Checks — kein Normersatz.
                 </span>
               </div>

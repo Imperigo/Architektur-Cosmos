@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Badge, Hairline, KButton, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, KInput, KSelect, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import {
   areaOf,
   assemblyThickness,
@@ -60,8 +60,8 @@ export function Inspector() {
       className="k-dialog"
       style={{
         position: 'absolute',
-        right: 12,
-        bottom: 12,
+        right: 'var(--k-s4)',
+        bottom: 'var(--k-s4)',
         width: 250,
         maxHeight: 'calc(100% - 24px)',
         overflow: 'auto',
@@ -69,18 +69,18 @@ export function Inspector() {
         border: '1px solid var(--k-line)',
         borderRadius: 'var(--k-radius-md)',
         boxShadow: 'var(--k-shadow-raised)',
-        padding: 12,
+        padding: 'var(--k-s4)',
         display: 'grid',
-        gap: 8,
-        fontSize: 12.5,
+        gap: 'var(--k-s3)',
+        fontSize: 'var(--k-t-sm)',
         zIndex: 3,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
         <Badge hue={moduleHue.design}>{kindLabel[entity.kind] ?? entity.kind}</Badge>
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="ghost" onClick={() => select([])} aria-label="Auswahl aufheben">
-          ×
+          <KIcon name="schliessen" size={14} />
         </KButton>
       </div>
       <Hairline />
@@ -91,10 +91,11 @@ export function Inspector() {
             <Measure>{formatLength(Math.round(dist(entity.a, entity.b)))}</Measure>
           </Row>
           <Row label="Aufbau">
-            <select
+            <KSelect
+              size="sm"
               value={entity.assemblyId}
               onChange={(e) => set('assemblyId', e.target.value)}
-              style={inputStyle}
+              style={{ width: '100%' }}
             >
               {assemblies
                 .filter((a) => a.target === 'wall')
@@ -103,18 +104,19 @@ export function Inspector() {
                     {a.name} ({assemblyThickness(a)} mm)
                   </option>
                 ))}
-            </select>
+            </KSelect>
           </Row>
           <Row label="Achse">
-            <select
+            <KSelect
+              size="sm"
               value={entity.alignment}
               onChange={(e) => set('alignment', e.target.value)}
-              style={inputStyle}
+              style={{ width: '100%' }}
             >
               <option value="zentrum">Zentrum</option>
               <option value="kern-aussen">Kern aussen</option>
               <option value="kern-innen">Kern innen</option>
-            </select>
+            </KSelect>
           </Row>
           <Row label="Öffnungen">
             <span>{doc.openingsOf(entity.id).length}</span>
@@ -170,20 +172,21 @@ export function Inspector() {
       {entity.kind === 'zone' && (
         <>
           <Row label="Name">
-            <input
+            <KInput
+              size="sm"
               defaultValue={entity.name}
               key={entity.id + entity.name}
               onBlur={(e) => e.target.value !== entity.name && set('name', e.target.value)}
-              style={inputStyle}
+              style={{ width: '100%' }}
               data-testid="inspector-name"
             />
           </Row>
           <Row label="SIA 416">
-            <select value={entity.sia} onChange={(e) => set('sia', e.target.value)} style={inputStyle}>
+            <KSelect size="sm" value={entity.sia} onChange={(e) => set('sia', e.target.value)} style={{ width: '100%' }}>
               {['HNF', 'NNF', 'VF', 'FF', 'KF'].map((s) => (
                 <option key={s}>{s}</option>
               ))}
-            </select>
+            </KSelect>
           </Row>
           <Row label="Fläche">
             <Measure>{formatArea(areaOf(entity.outline) * 1_000_000)}</Measure>
@@ -258,7 +261,8 @@ export function Inspector() {
 
       {entity.kind !== 'storey' && entity.kind !== 'assembly' && entity.kind !== 'sheet' && (
         <Row label="Umbau">
-          <select
+          <KSelect
+            size="sm"
             value={entity.meta?.renovation ?? ''}
             onChange={(e) => {
               try {
@@ -270,14 +274,14 @@ export function Inspector() {
                 meldeFehler(err);
               }
             }}
-            style={inputStyle}
+            style={{ width: '100%' }}
             data-testid="inspector-renovation"
           >
             <option value="">—</option>
             <option value="bestand">Bestand</option>
             <option value="neu">Neubau (rot)</option>
             <option value="abbruch">Abbruch (gelb)</option>
-          </select>
+          </KSelect>
         </Row>
       )}
 
@@ -299,7 +303,7 @@ export function Inspector() {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '84px 1fr', alignItems: 'center', gap: 6 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '84px 1fr', alignItems: 'center', gap: 'var(--k-s2)' }}>
       <span style={{ color: 'var(--k-ink-faint)' }}>{label}</span>
       {children}
     </div>
@@ -316,8 +320,10 @@ function NumberField({
   onCommit: (v: number) => void;
 }) {
   return (
-    <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-      <input
+    <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+      <KInput
+        size="sm"
+        mono
         key={value}
         type="number"
         defaultValue={value}
@@ -326,18 +332,9 @@ function NumberField({
           if (Number.isFinite(v) && v !== value) onCommit(v);
         }}
         onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-        style={{ ...inputStyle, width: 90 }}
+        style={{ width: 90 }}
       />
       <span style={{ color: 'var(--k-ink-faint)' }}>{suffix}</span>
     </span>
   );
 }
-
-const inputStyle: React.CSSProperties = {
-  padding: '3px 7px',
-  borderRadius: 6,
-  border: '1px solid var(--k-line-strong)',
-  background: 'var(--k-raised)',
-  fontSize: 12.5,
-  width: '100%',
-};

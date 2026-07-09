@@ -4,6 +4,14 @@
  * Klick/Rechtsklick daneben, Escape ebenso (der Aufrufer hört auf Escape).
  * Reine Präsentation — die Aktionen (Auswählen/Fokus hier/Einpassen/Ansicht
  * zurücksetzen) reicht der Viewport als Callbacks herein.
+ *
+ * W3-Phantom-Token-Fix (UI-KONZEPT-065 Diagnose §1.4): dieses Menü stand auf
+ * drei erfundenen CSS-Variablen, die in `aura.css` nie existiert haben (nur
+ * die Hex-Fallbacks griffen, daher folgte das Menü keinem Thema-/
+ * Akzentwechsel). Jetzt ausschliesslich echte Tokens (`--k-raised`,
+ * `--k-line`, `--k-accent-wash`, `--k-shadow-overlay`, `--k-radius-md`) und
+ * CSS statt JS-Hover (`.k-kontext-item` + `.k-uebergang-schnell`, analog zu
+ * `.k-menu-item` in aura.css).
  */
 
 export interface KontextAktion {
@@ -11,6 +19,32 @@ export interface KontextAktion {
   testid: string;
   onClick: () => void;
 }
+
+/**
+ * Lokale Styles für die Menü-Zeilen: `aura.css` (kosmo-ui, W0-Freeze) trägt
+ * bereits ein nahezu identisches `.k-menu-item`, aber dieses Menü lebt in der
+ * App (nicht in kosmo-ui) — ein scoped `<style>`-Block statt eines Eingriffs
+ * in die eingefrorene `aura.css` hält den Fix innerhalb dieser Datei. Nur
+ * Tokens, kein Hex; Hover läuft über die echte CSS-Pseudoklasse statt JS.
+ */
+const KONTEXT_ITEM_STYLE = `
+  .k-kontext-item {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: var(--k-s3) var(--k-s4);
+    border-radius: var(--k-radius-sm);
+    font-size: var(--k-t-md);
+    color: var(--k-ink);
+    cursor: pointer;
+  }
+  .k-kontext-item:hover,
+  .k-kontext-item:focus-visible {
+    background: var(--k-accent-wash);
+  }
+`;
 
 export function ViewportKontextmenue({
   x,
@@ -41,16 +75,17 @@ export function ViewportKontextmenue({
           top: Math.round(y),
           zIndex: 31,
           minWidth: 168,
-          padding: 4,
-          background: 'var(--k-panel, #f7f5f0)',
-          border: '1px solid var(--k-hairline, #cfcabf)',
-          borderRadius: 6,
-          boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
+          padding: 'var(--k-s2)',
+          background: 'var(--k-raised)',
+          border: '1px solid var(--k-line)',
+          borderRadius: 'var(--k-radius-md)',
+          boxShadow: 'var(--k-shadow-overlay)',
           display: 'flex',
           flexDirection: 'column',
-          gap: 1,
+          gap: 'var(--k-s1)',
         }}
       >
+        <style>{KONTEXT_ITEM_STYLE}</style>
         {aktionen.map((a) => (
           <button
             key={a.testid}
@@ -59,19 +94,7 @@ export function ViewportKontextmenue({
               a.onClick();
               onClose();
             }}
-            style={{
-              textAlign: 'left',
-              padding: '7px 10px',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 4,
-              font: 'inherit',
-              fontSize: 13,
-              color: 'var(--k-ink, #23211c)',
-              cursor: 'pointer',
-            }}
-            onPointerEnter={(e) => (e.currentTarget.style.background = 'var(--k-hover, #ece8e0)')}
-            onPointerLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            className="k-kontext-item k-uebergang-schnell"
           >
             {a.label}
           </button>

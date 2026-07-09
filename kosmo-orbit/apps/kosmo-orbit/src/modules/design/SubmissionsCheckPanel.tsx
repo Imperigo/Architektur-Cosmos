@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { pruefeSubmissionsreife, type SubmissionsBefund } from '@kosmo/kernel';
-import { Badge, Hairline, KButton } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
 /**
@@ -41,21 +41,21 @@ export function SubmissionsCheckPanel({ onClose }: { onClose: () => void }) {
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
         boxShadow: 'var(--k-shadow-overlay)',
-        padding: 12,
+        padding: 'var(--k-s4)',
         display: 'grid',
-        gap: 10,
-        fontSize: 12.5,
+        gap: 'var(--k-s4)',
+        fontSize: 'var(--k-t-sm)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
         <Badge hue="var(--k-mod-design)">Submissions-Check</Badge>
         <div style={{ flex: 1 }} />
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          ✕
+          <KIcon name="schliessen" size={14} />
         </KButton>
       </div>
 
-      <div style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+      <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
         Lückenliste für die Submissionsreife (SIA-Teilphase 4.41) — {activeStoreyId ? 'aktuelles Geschoss' : 'ganzes Projekt'}.
         Richtwerte aus dem Datenmodell, kein Normersatz.
       </div>
@@ -69,24 +69,24 @@ export function SubmissionsCheckPanel({ onClose }: { onClose: () => void }) {
       ) : (
         <>
           {luecken.length > 0 && (
-            <div style={{ display: 'grid', gap: 6 }} data-testid="submission-luecken">
-              <div className="k-titel" style={{ fontSize: 12, color: 'var(--k-danger, #a33)' }}>
+            <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="submission-luecken">
+              <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-danger, #a33)' }}>
                 Lücken ({luecken.length}) — Nachtragsrisiko bei der Vergabe
               </div>
               {luecken.map((b, i) => (
-                <div key={`l-${i}`} style={{ padding: '4px 6px', borderLeft: '2px solid var(--k-danger, #a33)' }}>
+                <div key={`l-${i}`} style={{ padding: 'var(--k-s2) var(--k-s3)', borderLeft: '2px solid var(--k-danger, #a33)' }}>
                   {b.text}
                 </div>
               ))}
             </div>
           )}
           {hinweise.length > 0 && (
-            <div style={{ display: 'grid', gap: 6 }} data-testid="submission-hinweise">
-              <div className="k-titel" style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+            <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="submission-hinweise">
+              <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
                 Hinweise ({hinweise.length})
               </div>
               {hinweise.map((b, i) => (
-                <div key={`h-${i}`} style={{ padding: '4px 6px', borderLeft: '2px solid var(--k-line-strong)' }}>
+                <div key={`h-${i}`} style={{ padding: 'var(--k-s2) var(--k-s3)', borderLeft: '2px solid var(--k-line-strong)' }}>
                   {b.text}
                 </div>
               ))}

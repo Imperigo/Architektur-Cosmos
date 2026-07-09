@@ -1491,8 +1491,8 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             background: 'var(--k-surface)',
             border: '1px solid var(--k-line)',
             borderRadius: 'var(--k-radius-md)',
-            padding: '6px 12px',
-            fontSize: 13,
+            padding: 'var(--k-s3) var(--k-s4)',
+            fontSize: 'var(--k-t-md)',
             boxShadow: 'var(--k-shadow-overlay)',
           }}
         >
@@ -1509,17 +1509,17 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             bottom: 18,
             transform: 'translateX(-50%)',
             display: 'flex',
-            gap: 8,
+            gap: 'var(--k-s3)',
             alignItems: 'center',
             background: 'var(--k-surface)',
             border: '1px solid var(--k-line)',
             borderRadius: 'var(--k-radius-md)',
-            padding: '8px 12px',
+            padding: 'var(--k-s3) var(--k-s4)',
             boxShadow: 'var(--k-shadow-overlay)',
           }}
         >
           <Badge hue={moduleHue.design}>Frei skizziert</Badge>
-          <span style={{ fontSize: 13 }}>{sketchStrokes.length} Strich{sketchStrokes.length === 1 ? '' : 'e'}</span>
+          <span style={{ fontSize: 'var(--k-t-md)' }}>{sketchStrokes.length} Strich{sketchStrokes.length === 1 ? '' : 'e'}</span>
           <KButton size="sm" tone="accent" data-testid="sketch3d-uebergeben" onClick={sketchUebergeben}>
             Übergeben
           </KButton>
@@ -1537,17 +1537,17 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             bottom: 18,
             transform: 'translateX(-50%)',
             display: 'flex',
-            gap: 8,
+            gap: 'var(--k-s3)',
             alignItems: 'center',
             background: 'var(--k-surface)',
             border: '1px solid var(--k-accent)',
             borderRadius: 'var(--k-radius-md)',
-            padding: '8px 12px',
+            padding: 'var(--k-s3) var(--k-s4)',
             boxShadow: 'var(--k-shadow-overlay)',
           }}
         >
           <Badge hue={moduleHue.design}>Skizze erkannt</Badge>
-          <span style={{ fontSize: 13 }}>{sketchPending.length} Wände</span>
+          <span style={{ fontSize: 'var(--k-t-md)' }}>{sketchPending.length} Wände</span>
           <KButton size="sm" tone="accent" data-testid="sketch3d-accept" onClick={sketchUebernehmen}>
             Übernehmen
           </KButton>

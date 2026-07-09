@@ -10,7 +10,7 @@ import {
   type SegmentierungsErgebnis,
   type Zone,
 } from '@kosmo/kernel';
-import { Badge, Hairline, KButton, Measure } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, KInput, KSelect, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import { anfangsEntwurf } from './berechnungsliste-entwurf';
 
@@ -109,16 +109,6 @@ export function BerechnungslistePanel({
     pdf.save('Berechnungsliste.pdf');
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: 72,
-    padding: '3px 6px',
-    borderRadius: 'var(--k-radius-sm)',
-    border: '1px solid var(--k-line-strong)',
-    background: 'var(--k-raised)',
-    fontSize: 12,
-    fontFamily: 'var(--k-font-mono)',
-  };
-
   return (
     <div
       data-testid="berechnungsliste-panel"
@@ -133,13 +123,13 @@ export function BerechnungslistePanel({
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
         boxShadow: 'var(--k-shadow-overlay)',
-        padding: 12,
+        padding: 'var(--k-s4)',
         display: 'grid',
-        gap: 10,
-        fontSize: 12.5,
+        gap: 'var(--k-s4)',
+        fontSize: 'var(--k-t-sm)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
         <Badge hue="var(--k-mod-design)">Berechnungsliste</Badge>
         <div style={{ flex: 1 }} />
         <KButton
@@ -155,26 +145,26 @@ export function BerechnungslistePanel({
             );
           }}
         >
-          ⧉ Variante
+          Variante
         </KButton>
         <KButton size="sm" tone="ghost" onClick={() => void exportPdf()} data-testid="liste-pdf">
           A4-PDF
         </KButton>
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          ✕
+          <KIcon name="schliessen" size={14} />
         </KButton>
       </div>
 
       {/* Raumprogramm-Erfassung */}
-      <div style={{ display: 'grid', gap: 6 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div className="k-titel" style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+      <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+          <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
             Raumprogramm (HNF-Soll)
           </div>
           <div style={{ flex: 1 }} />
           {/* V5: Wettbewerbs-Soll als CSV — nie mehr abtippen */}
           <label style={{ cursor: 'pointer' }}>
-            <span className="k-btn k-btn-sm k-btn-quiet" data-testid="csv-import" style={{ fontSize: 11 }}>
+            <span className="k-btn k-btn-sm k-btn-quiet" data-testid="csv-import" style={{ fontSize: 'var(--k-t-xs)' }}>
               CSV importieren
             </span>
             <input
@@ -201,26 +191,27 @@ export function BerechnungslistePanel({
           </label>
         </div>
         {importMeldung && (
-          <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }} data-testid="csv-import-meldung">
+          <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }} data-testid="csv-import-meldung">
             {importMeldung}
           </div>
         )}
         {entwurf.length === 0 && (
-          <div style={{ color: 'var(--k-ink-faint)', fontSize: 11 }} data-testid="kein-raumprogramm">
+          <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }} data-testid="kein-raumprogramm">
             Kein Wettbewerbs-Raumprogramm geladen — über KosmoData/Import ein Projekt laden oder
             manuell Typen hinzufügen.
           </div>
         )}
         {entwurf.map((p, i) => (
-          <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            <select
+          <div key={i} style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center' }}>
+            <KSelect
+              size="sm"
               value={p.typ}
               onChange={(e) => {
                 const next = [...entwurf];
                 next[i] = { ...p, typ: e.target.value };
                 setEntwurf(next);
               }}
-              style={{ ...inputStyle, width: 150, fontFamily: 'var(--k-font-ui)' }}
+              style={{ width: 150 }}
               data-testid={`posten-typ-${i}`}
             >
               {WOHNUNGSTYPEN.map((t) => (
@@ -228,8 +219,10 @@ export function BerechnungslistePanel({
                   {t.name}
                 </option>
               ))}
-            </select>
-            <input
+            </KSelect>
+            <KInput
+              size="sm"
+              mono
               type="number"
               value={p.hnfSoll === 0 ? '' : p.hnfSoll}
               placeholder="m²"
@@ -238,10 +231,10 @@ export function BerechnungslistePanel({
                 next[i] = { ...p, hnfSoll: Number(e.target.value) || 0 };
                 setEntwurf(next);
               }}
-              style={inputStyle}
+              style={{ width: 72 }}
               data-testid={`posten-hnf-${i}`}
             />
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>m² HNF</span>
+            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>m² HNF</span>
             <div style={{ flex: 1 }} />
             <KButton
               size="sm"
@@ -249,27 +242,29 @@ export function BerechnungslistePanel({
               onClick={() => setEntwurf(entwurf.filter((_, j) => j !== i))}
               aria-label="Posten entfernen"
             >
-              −
+              <KIcon name="minus" size={14} />
             </KButton>
           </div>
         ))}
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap' }}>
           <KButton
             size="sm"
             tone="ghost"
             data-testid="posten-hinzufuegen"
             onClick={() => setEntwurf([...entwurf, { typ: 'preisguenstig', hnfSoll: 0 }])}
           >
-            + Posten
+            <KIcon name="plus" size={14} /> Posten
           </KButton>
           <span style={{ color: 'var(--k-ink-faint)' }}>×</span>
-          <input value={faktor} onChange={(e) => setFaktor(e.target.value)} style={{ ...inputStyle, width: 52 }} title="aGF-Faktor" />
+          <KInput size="sm" mono value={faktor} onChange={(e) => setFaktor(e.target.value)} style={{ width: 72 }} title="aGF-Faktor" />
           <span style={{ color: 'var(--k-ink-faint)' }}>Max aGF</span>
-          <input
+          <KInput
+            size="sm"
+            mono
             value={maxAgf}
             onChange={(e) => setMaxAgf(e.target.value)}
             placeholder="—"
-            style={inputStyle}
+            style={{ width: 72 }}
             data-testid="liste-max"
           />
           <div style={{ flex: 1 }} />
@@ -289,7 +284,7 @@ export function BerechnungslistePanel({
       ) : (
         <table style={{ borderCollapse: 'collapse', width: '100%' }} data-testid="liste-tabelle">
           <thead>
-            <tr style={{ textAlign: 'right', color: 'var(--k-ink-faint)', fontSize: 11 }}>
+            <tr style={{ textAlign: 'right', color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
               <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'left' }}>Typ</th>
               <th style={{ fontWeight: 500, padding: '2px 4px' }}>Soll</th>
               <th style={{ fontWeight: 500, padding: '2px 4px' }}>Ziel ×{liste.programmFaktor}</th>
@@ -348,7 +343,7 @@ export function BerechnungslistePanel({
         </table>
       )}
       {liste.untypisiert > 0.5 && (
-        <div style={{ color: 'var(--k-warning)', fontSize: 11.5 }} data-testid="liste-tieout">
+        <div style={{ color: 'var(--k-warning)', fontSize: 'var(--k-t-sm)' }} data-testid="liste-tieout">
           ⚠ {fmt(liste.untypisiert)} m² gezeichnet ohne Typzuordnung (Tie-out) — Zonen unten einem
           Wohnungstyp zuweisen.
         </div>
@@ -357,11 +352,11 @@ export function BerechnungslistePanel({
       <Hairline />
 
       {/* Zeichnen mit Typ: das Zonen-Werkzeug schreibt den aktiven Typ */}
-      <div style={{ display: 'grid', gap: 5 }}>
-        <div className="k-titel" style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+      <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+        <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
           Zeichnen als
         </div>
-        <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
           <KButton size="sm" tone={wohnungstyp === null ? 'accent' : 'ghost'} onClick={() => setWohnungstyp(null)}>
             ohne Typ
           </KButton>
@@ -378,14 +373,14 @@ export function BerechnungslistePanel({
             </KButton>
           ))}
         </div>
-        <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
           Neue Zonen (Werkzeug «Zone») erhalten den gewählten Typ und zählen ins «ausgezogen».
         </span>
       </div>
 
       {/* GF-Block */}
-      <div style={{ display: 'grid', gap: 3 }} data-testid="liste-gf">
-        <div className="k-titel" style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+      <div style={{ display: 'grid', gap: 'var(--k-s1)' }} data-testid="liste-gf">
+        <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
           GF-Block
         </div>
         {liste.geschosse.filter((g) => g.gf > 0.5).map((g) => (
@@ -400,7 +395,7 @@ export function BerechnungslistePanel({
             <Measure>{fmt(liste.gfVolumen)} m²</Measure>
           </div>
         )}
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, borderTop: '1px solid var(--k-line)', paddingTop: 3 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, borderTop: '1px solid var(--k-line)', paddingTop: 'var(--k-s1)' }}>
           <span>Total GF</span>
           <Measure>{fmt(liste.totalGf)} m²</Measure>
         </div>

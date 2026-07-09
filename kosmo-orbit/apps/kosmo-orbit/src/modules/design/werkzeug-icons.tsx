@@ -56,7 +56,7 @@ export function IconVolumen() {
         d="M8 1.6 L14 5 L14 11 L8 14.4 L2 11 L2 5 Z M2 5 L8 8.4 L14 5 M8 8.4 L8 14.4"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.1"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
     </svg>
@@ -74,7 +74,7 @@ export function IconZone() {
         height="11.2"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.3"
+        strokeWidth="1.5"
       />
     </svg>
   );
@@ -94,7 +94,7 @@ export function IconEntwurfSprechen() {
         d="M2.2 3.4 H13.8 V9.8 H6.6 L3.6 12.6 V9.8 H2.2 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.2"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
       <circle cx="5.6" cy="6.6" r="0.7" fill="currentColor" />
@@ -112,14 +112,14 @@ export function IconEntwurfSkizzieren() {
         d="M2.4 12.4 C5 11.4 6.5 9.4 8.6 8.6"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.1"
+        strokeWidth="1.5"
         strokeLinecap="round"
       />
       <path
         d="M8.2 8.9 L11.6 5.5 A1.2 1.2 0 0 1 13.3 7.2 L9.9 10.6 L7.6 11.2 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.1"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
     </svg>
@@ -134,11 +134,11 @@ export function IconEntwurfCad() {
         d="M2.2 2.2 H13.8 V4.6 H4.6 V13.8 H2.2 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.2"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
-      <path d="M6.8 4.6 V7.4 M9.4 4.6 V7.4 M12 4.6 V7.4" stroke="currentColor" strokeWidth="0.9" />
-      <path d="M2.2 8.8 H4.6 M2.2 11.2 H4.6" stroke="currentColor" strokeWidth="0.9" />
+      <path d="M6.8 4.6 V7.4 M9.4 4.6 V7.4 M12 4.6 V7.4" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2.2 8.8 H4.6 M2.2 11.2 H4.6" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }
@@ -160,11 +160,11 @@ export function IconEntwurfCad() {
 export function IconFaehigkeitSonne() {
   return (
     <svg {...basis}>
-      <circle cx="8" cy="8" r="3.1" fill="none" stroke="currentColor" strokeWidth="1.2" />
+      <circle cx="8" cy="8" r="3.1" fill="none" stroke="currentColor" strokeWidth="1.5" />
       <path
         d="M8 1.6 V3.3 M8 12.7 V14.4 M1.6 8 H3.3 M12.7 8 H14.4 M3.2 3.2 L4.4 4.4 M11.6 11.6 L12.8 12.8 M12.8 3.2 L11.6 4.4 M4.4 11.6 L3.2 12.8"
         stroke="currentColor"
-        strokeWidth="1.1"
+        strokeWidth="1.5"
         strokeLinecap="round"
       />
     </svg>
@@ -179,7 +179,7 @@ export function IconFaehigkeitStudien() {
         d="M2.4 10.4 L5.6 8.6 L8.8 10.4 L8.8 13.6 L5.6 15.4 L2.4 13.6 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1"
+        strokeWidth="1.5"
         strokeLinejoin="round"
         transform="translate(0 -2.4)"
       />
@@ -187,7 +187,7 @@ export function IconFaehigkeitStudien() {
         d="M7.2 5 L10.4 3.2 L13.6 5 L13.6 8.2 L10.4 10 L7.2 8.2 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.2"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
     </svg>
@@ -202,7 +202,7 @@ export function IconFaehigkeitKv() {
         d="M4.6 2.4 H12.2 M4.6 2.4 V13.6 M4.6 7.4 H10.4 M4.6 2.4 L3 4 M4.6 7.4 L3 9"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.3"
+        strokeWidth="1.5"
         strokeLinecap="square"
       />
     </svg>
@@ -216,7 +216,7 @@ export function IconFaehigkeitBauablauf() {
       <path
         d="M2.4 3.6 H8.2 M2.4 7.6 H12.4 M2.4 11.6 H6.6"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.5"
         strokeLinecap="butt"
       />
     </svg>
@@ -231,10 +231,10 @@ export function IconFaehigkeitMaengel() {
         d="M8 1.8 L13.4 3.8 V8.2 C13.4 11.4 11 13.4 8 14.4 C5 13.4 2.6 11.4 2.6 8.2 V3.8 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.1"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
-      <path d="M5.6 8.2 L7.3 10 L10.6 6.2" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5.6 8.2 L7.3 10 L10.6 6.2" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -243,14 +243,14 @@ export function IconFaehigkeitMaengel() {
 export function IconFaehigkeitSubmission() {
   return (
     <svg {...basis}>
-      <rect x="2.6" y="2" width="10.8" height="12" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      <rect x="2.6" y="2" width="10.8" height="12" fill="none" stroke="currentColor" strokeWidth="1.5" />
       <path
         d="M4.8 5.2 H11.2 M4.8 8 H11.2 M4.8 10.8 H8.8"
         stroke="currentColor"
-        strokeWidth="0.95"
+        strokeWidth="1.5"
         strokeLinecap="round"
       />
-      <path d="M4.4 5.2 L4.9 5.7 L5.9 4.4" stroke="currentColor" strokeWidth="0.7" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4.4 5.2 L4.9 5.7 L5.9 4.4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -269,7 +269,7 @@ export function IconDockDraw() {
       <path
         d="M2.6 3.4 H13.4 M2.6 6.6 H13.4 M2.6 9.8 H10.4 M2.6 13 H8.6"
         stroke="currentColor"
-        strokeWidth="1.1"
+        strokeWidth="1.5"
         strokeLinecap="round"
       />
     </svg>
@@ -284,7 +284,7 @@ export function IconDockVis() {
         d="M1.6 8 C3.4 4.8 6 3.6 8 3.6 C10 3.6 12.6 4.8 14.4 8 C12.6 11.2 10 12.4 8 12.4 C6 12.4 3.4 11.2 1.6 8 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.1"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
       <circle cx="8" cy="8" r="2" fill="currentColor" />
@@ -296,9 +296,9 @@ export function IconDockVis() {
 export function IconDockPublish() {
   return (
     <svg {...basis}>
-      <rect x="3.4" y="1.8" width="9.2" height="12.4" fill="none" stroke="currentColor" strokeWidth="1.1" />
-      <path d="M5.2 4.6 H10.8 M5.2 7 H10.8 M5.2 9.4 H9" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
-      <path d="M5.2 11.8 H8" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
+      <rect x="3.4" y="1.8" width="9.2" height="12.4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M5.2 4.6 H10.8 M5.2 7 H10.8 M5.2 9.4 H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M5.2 11.8 H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -311,11 +311,11 @@ export function IconDockPrepare() {
         d="M2.4 9.6 H5.4 L6.6 11.4 H9.4 L10.6 9.6 H13.6"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.1"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
-      <path d="M2.4 9.6 L3 3.6 H13 L13.6 9.6" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
-      <path d="M8 4.4 V8.4 M6.2 6.6 L8 8.4 L9.8 6.6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M2.4 9.6 L3 3.6 H13 L13.6 9.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M8 4.4 V8.4 M6.2 6.6 L8 8.4 L9.8 6.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
   );
 }

@@ -139,17 +139,17 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
             bottom: 18,
             transform: 'translateX(-50%)',
             display: 'flex',
-            gap: 8,
+            gap: 'var(--k-s3)',
             alignItems: 'center',
             background: 'var(--k-surface)',
             border: '1px solid var(--k-line)',
             borderRadius: 'var(--k-radius-md)',
-            padding: '8px 12px',
+            padding: 'var(--k-s3) var(--k-s4)',
             boxShadow: 'var(--k-shadow-overlay)',
           }}
         >
           <Badge hue={moduleHue.design}>Frei skizziert</Badge>
-          <span style={{ fontSize: 13 }}>{strokes.length} Strich{strokes.length === 1 ? '' : 'e'}</span>
+          <span style={{ fontSize: 'var(--k-t-md)' }}>{strokes.length} Strich{strokes.length === 1 ? '' : 'e'}</span>
           <KButton size="sm" tone="accent" data-testid="sketch-uebergeben" onClick={uebergeben}>
             Übergeben
           </KButton>
@@ -169,20 +169,20 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
             transform: 'translateX(-50%)',
             display: 'flex',
             flexDirection: 'column',
-            gap: 8,
+            gap: 'var(--k-s3)',
             alignItems: 'center',
             background: 'var(--k-surface)',
             border: '1px solid var(--k-accent)',
             borderRadius: 'var(--k-radius-md)',
-            padding: '10px 12px',
+            padding: 'var(--k-s3) var(--k-s4)',
             boxShadow: 'var(--k-shadow-overlay)',
           }}
         >
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center' }}>
             <Badge hue={moduleHue.design}>Skizze erkannt</Badge>
-            <span style={{ fontSize: 13 }}>{pending.length} Wände — eine Annäherung wählen</span>
+            <span style={{ fontSize: 'var(--k-t-md)' }}>{pending.length} Wände — eine Annäherung wählen</span>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
             {skizzeAnnaeherungen(pending).map((v, i) => (
               <div
                 key={v.id}
@@ -190,19 +190,19 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 4,
+                  gap: 'var(--k-s2)',
                   alignItems: 'center',
                   width: 108,
                   border: '1px solid var(--k-line)',
                   borderRadius: 'var(--k-radius-sm)',
-                  padding: 6,
+                  padding: 'var(--k-s2)',
                 }}
               >
-                <div style={{ fontSize: 11.5, fontWeight: 600 }}>{v.titel}</div>
+                <div style={{ fontSize: 'var(--k-t-sm)', fontWeight: 600 }}>{v.titel}</div>
                 <svg width={56} height={56} viewBox="0 0 56 56" style={{ background: 'var(--k-raised)', borderRadius: 4 }}>
                   <path d={skizzeMiniPfad(v.segments)} fill="none" stroke="var(--k-accent)" strokeWidth={2} strokeLinecap="round" />
                 </svg>
-                <span style={{ fontSize: 10.5, color: 'var(--k-ink-faint)', textAlign: 'center', lineHeight: 1.3 }}>
+                <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', textAlign: 'center', lineHeight: 1.3 }}>
                   {v.beschreibung}
                 </span>
                 <KButton

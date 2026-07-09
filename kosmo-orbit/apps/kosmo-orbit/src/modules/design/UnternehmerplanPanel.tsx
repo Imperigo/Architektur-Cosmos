@@ -68,15 +68,15 @@ export function UnternehmerplanPanel() {
           background: 'var(--k-raised)',
           border: '1px solid var(--k-technik)',
           boxShadow: 'var(--k-shadow-overlay)',
-          padding: 12,
+          padding: 'var(--k-s4)',
           display: 'grid',
-          gap: 10,
-          fontSize: 12.5,
+          gap: 'var(--k-s4)',
+          fontSize: 'var(--k-t-sm)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
           <Badge hue="var(--k-mod-design)">Unternehmerplan</Badge>
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11, fontFamily: 'var(--k-font-mono)' }}>
+          <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)', fontFamily: 'var(--k-font-mono)' }}>
             {pdfHinweis.dateiname}
           </span>
         </div>
@@ -89,10 +89,10 @@ export function UnternehmerplanPanel() {
             «?»-Hinweis — die Kernaussage oben bleibt immer sichtbar. */}
         {pdfHinweis.detail && (
           <details data-testid="pdf-hinweis-mehr">
-            <summary style={{ cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+            <summary style={{ cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
               ? Warum keine automatische Analyse
             </summary>
-            <p style={{ color: 'var(--k-ink-faint)', fontSize: 11.5, lineHeight: 1.5, marginTop: 6 }}>
+            <p style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)', lineHeight: 1.5, marginTop: 'var(--k-s2)' }}>
               {pdfHinweis.detail}
             </p>
           </details>
@@ -140,16 +140,16 @@ export function UnternehmerplanPanel() {
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
         boxShadow: 'var(--k-shadow-overlay)',
-        padding: 12,
+        padding: 'var(--k-s4)',
         display: 'grid',
-        gap: 10,
-        fontSize: 12.5,
+        gap: 'var(--k-s4)',
+        fontSize: 'var(--k-t-sm)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
         <Badge hue="var(--k-mod-design)">Unternehmerplan</Badge>
         {dateiname && (
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11, fontFamily: 'var(--k-font-mono)' }}>
+          <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)', fontFamily: 'var(--k-font-mono)' }}>
             {dateiname}
           </span>
         )}
@@ -162,15 +162,15 @@ export function UnternehmerplanPanel() {
       {karten.length === 0 ? (
         <span style={{ color: 'var(--k-ink-faint)' }}>Keine Karten.</span>
       ) : (
-        <div style={{ display: 'grid', gap: 6 }} data-testid="unternehmerplan-karten">
+        <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="unternehmerplan-karten">
           {karten.map((karte, i) => {
             const st = status[karte.id] ?? 'offen';
             const zeigeAnwenden = karte.stufe === 1 && st === 'offen';
             return (
               <Karteikarte key={karte.id} nr={i + 1} data-testid={`karte-${karte.id}`}>
-                <div style={{ display: 'grid', gap: 4, padding: '8px 10px', width: '100%' }}>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                    <span style={{ fontWeight: 600, fontSize: 12.5, flex: 1, minWidth: 160 }}>{karte.titel}</span>
+                <div style={{ display: 'grid', gap: 'var(--k-s2)', padding: 'var(--k-s3) var(--k-s4)', width: '100%' }}>
+                  <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                    <span style={{ fontWeight: 600, fontSize: 'var(--k-t-sm)', flex: 1, minWidth: 160 }}>{karte.titel}</span>
                     {st === 'uebernommen' ? (
                       <Badge hue="var(--k-success)">übernommen ✓</Badge>
                     ) : st === 'manuell' ? (
@@ -181,7 +181,7 @@ export function UnternehmerplanPanel() {
                       <Badge hue="var(--k-ink-faint)">markiert</Badge>
                     )}
                   </div>
-                  <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>{karte.detail}</span>
+                  <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>{karte.detail}</span>
                   {zeigeAnwenden && (
                     <div>
                       <KButton
