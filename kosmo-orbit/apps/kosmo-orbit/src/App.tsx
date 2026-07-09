@@ -941,8 +941,13 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
         <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
           Autosave — jede Änderung landet hier. .kosmo bleibt fürs Weitergeben.
         </span>
-        <div style={{ flex: 1 }} />
-        {/* Katalog-Transfer (A8): Aufbauten/Vorlagen/Module/Formeln ins nächste Projekt */}
+      </div>
+      {/* Katalog-Transfer (A8): Aufbauten/Vorlagen/Module/Formeln ins nächste Projekt.
+          Eigene Zeile (statt im Kopf mitzuwrappen, wo «Katalog ↑» bei Platzmangel
+          allein umbrach und wie ein defekter Toggle neben «Katalog ↓» aussah,
+          siehe Kritik-065 p-01/i-01): zwei klar beschriftete, nebeneinander
+          stehende Aktionen — Export/Import bleiben zwei eigenständige Knöpfe. */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         <KButton
           size="sm"
           tone="ghost"
@@ -959,7 +964,7 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
             URL.revokeObjectURL(url);
           }}
         >
-          Katalog ↓
+          Katalog sichern ↓
         </KButton>
         <KButton
           size="sm"
@@ -984,7 +989,7 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
             input.click();
           }}
         >
-          Katalog ↑
+          Katalog laden ↑
         </KButton>
       </div>
       {projekte.length === 0 && (

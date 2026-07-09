@@ -237,6 +237,33 @@ function MediaThumb({ media }: { media: RefEntryMedia }) {
 }
 
 /**
+ * R1-Fix (Kritik-065 p-07/i-07, «Leerbild-Signet fehlt auf ~108 von 112
+ * Karten»): die alte Bedingung `e.hero ? <img> : <DataLeerbild>` traf nur
+ * die ~33 Einträge OHNE `hero`-Feld im Offline-Seed. Die restlichen ~79
+ * tragen echte `hero`-URLs (externe Wikimedia-Bilder,
+ * `apps/kosmo-orbit/public/kosmodata-seed.json`) — die in einer Umgebung
+ * ohne Zugriff auf diese externen Hosts (Sandbox/CI, dieselbe Umgebung, in
+ * der die Kritik-Screenshots entstanden) fehlschlagen. Der alte
+ * `onError`-Handler versteckte das kaputte `<img>` nur (`display:none`),
+ * OHNE auf das Leerbild-Signet umzuschalten — eine leere Fläche blieb
+ * zurück. Fix: eigener State pro Karte, der bei `onError` auf das Signet
+ * umschaltet — JEDE Karte ohne tatsächlich geladenes Bild (kein `hero`
+ * ODER `hero` vorhanden aber Ladefehler) zeigt jetzt das Signet. */
+function ReferenzHeroBild({ hero }: { hero: string | null | undefined }) {
+  const [fehlgeschlagen, setFehlgeschlagen] = useState(false);
+  if (!hero || fehlgeschlagen) return <DataLeerbild typ="referenz" />;
+  return (
+    <img
+      src={hero}
+      alt=""
+      loading="lazy"
+      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      onError={() => setFehlgeschlagen(true)}
+    />
+  );
+}
+
+/**
  * KdKarte (W4, UI-KONZEPT-065 §2 «Hierarchie-Rezept») — lokale Karten-Hülle
  * um `Panel` (kosmo-ui, eingefroren für diesen Stream — keine Zustands-Props
  * dort ergänzbar). Ruhe = 1px `--k-line` auf `--k-raised`; Hover = 1px
@@ -671,6 +698,21 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                             : 'HomePC-Archiv — Manifest für die HDD, lokal & privat'}
             </span>
             <div style={{ flex: 1 }} />
+            {/* R1-Fix (Kritik-065 p-07/i-07, «Zweite Werkzeugzeile mischt 5
+                Paradigmen»): dieselbe flex-Zeile bricht bei knapper Breite
+                um — Badge/Chip, «nackter» Ghost-Text, Checkbox, Text-Knopf
+                und Zahnrad standen dann unverbunden nebeneinander. Fix OHNE
+                die Element-Typen zu wechseln (E2E-Vertrag: testids/Wortlaut
+                unverändert) — drei Massnahmen: (1) `<Hairline vertical>`
+                gruppiert die drei Absichten (Sync-Stand / Adaption / Station)
+                sichtbar, (2) Sync und «Oberfläche zurücksetzen» bekommen
+                trotz `tone="ghost"` einen sichtbaren Rand (bleiben als
+                KButton ghost sm erkennbar statt wie Fliesstext zu wirken),
+                (3) das Zahnrad bekommt Text («Stations-Einstellungen») statt
+                nackt zu bleiben — es führt NICHT zum selben Ziel wie das
+                globale Zahnrad im Header (dort ungefiltert, hier auf
+                KosmoData vorgefiltert), ist also kein Duplikat, nur bisher
+                nicht als eigenständig lesbar. */}
             <span data-testid="data-sync-badge" title={syncBadge.titel}>
               <KChip hue={syncBadge.hue}>{syncBadge.text}</KChip>
             </span>
@@ -681,6 +723,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 data-testid="data-seed-retry"
                 title="Eingebaute Referenzdaten erneut laden"
                 onClick={() => setSeedRetry((n) => n + 1)}
+                style={{ borderColor: 'var(--k-line)' }}
               >
                 Erneut versuchen
               </KButton>
@@ -699,10 +742,12 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 }}
                 data-testid="data-sync"
                 {...elementStil('sync', 'sync-button')}
+                style={{ borderColor: 'var(--k-line)' }}
               >
                 Sync
               </KButton>
             </span>
+            <Hairline vertical />
             {/* Serie J2 / Batch B1 (Regel 2.3.5 Transparenz, geteilter
                 Adaptions-Kern): KosmoData hat kein «Projekt ▾»-Menü wie
                 Design — Hinweis/Schalter/Reset stehen direkt neben Sync. */}
@@ -736,20 +781,26 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               data-testid="adaption-reset"
               title="Gelerntes Nutzungsprofil löschen — die Leisten fallen auf die Basis-Stufen zurück. Der Schalter bleibt unverändert."
               onClick={adaptionZuruecksetzenUndAuffrischen}
+              style={{ borderColor: 'var(--k-line)' }}
             >
               Oberfläche zurücksetzen
             </KButton>
             {onEinstellungen && (
-              <KButton
-                size="sm"
-                tone="ghost"
-                data-testid="station-einstellungen-data"
-                title="Einstellungen — KosmoData"
-                aria-label="Einstellungen — KosmoData"
-                onClick={onEinstellungen}
-              >
-                <KIcon name="zahnrad" size={14} />
-              </KButton>
+              <>
+                <Hairline vertical />
+                <KButton
+                  size="sm"
+                  tone="ghost"
+                  data-testid="station-einstellungen-data"
+                  title="Einstellungen — KosmoData"
+                  aria-label="Einstellungen — KosmoData"
+                  onClick={onEinstellungen}
+                  style={{ borderColor: 'var(--k-line)' }}
+                >
+                  <KIcon name="zahnrad" size={14} />
+                  Stations-Einstellungen
+                </KButton>
+              </>
             )}
           </div>
 
@@ -866,17 +917,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                     overflow: 'hidden',
                   }}
                 >
-                  {e.hero ? (
-                    <img
-                      src={e.hero}
-                      alt=""
-                      loading="lazy"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(ev) => ((ev.target as HTMLElement).style.display = 'none')}
-                    />
-                  ) : (
-                    <DataLeerbild typ="referenz" />
-                  )}
+                  <ReferenzHeroBild hero={e.hero} />
                 </div>
                 <div style={{ padding: `var(--k-s3) var(--k-s4)` }}>
                   <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)', lineHeight: 1.3 }}>{e.title}</div>

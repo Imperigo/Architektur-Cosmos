@@ -183,9 +183,55 @@ test('Opt-out-Schalter: Umschalten wirkt sofort ohne Reload — aus liefert exak
  * geprüft: `apps/kosmo-orbit/public/kosmodata-seed.json`) — die Karte muss
  * das gezeichnete Signet + den ehrlichen Satz zeigen, NICHT eine leere
  * Fläche und KEIN Fake-Thumbnail.
+ *
+ * R1-Fix (Kritik-065 p-07/i-07, «Leerbild-Signet fehlt auf ~108 von 112
+ * Karten»): die alte Bedingung (`e.hero ? <img> : <DataLeerbild>`) traf nur
+ * die ~33 Einträge OHNE `hero`-Feld — die ~79 mit einer echten (externen,
+ * hier unerreichbaren) `hero`-URL blieben als leere Fläche stehen, weil ihr
+ * `onError`-Handler das kaputte `<img>` nur versteckte, statt auf das
+ * Signet umzuschalten. Gehärtet (statt nur die EINE gefilterte Karte zu
+ * prüfen): im UNGEFILTERTEN Ruhezustand (112 Referenzen, keine erreichbaren
+ * externen Bilder in dieser Umgebung) zeigt eine deutliche Mehrheit (> 50)
+ * der Karten das Signet — nicht nur die von Haus aus bildlosen.
  */
 test('Referenz-Karte ohne Bild zeigt das gezeichnete Leerbild-Signet statt einer leeren Fläche', async ({ page }) => {
   await oeffneKosmoData(page);
+
+  // Ungefiltert: die Karten sitzen in `loading="lazy"` <img>s — ausserhalb
+  // des Sichtfensters starten sie ihren Ladeversuch erst gar nicht. Den
+  // scrollenden Container (kein eigener testid) über die erste Karte finden
+  // und schrittweise bis ans Ende scrollen, damit JEDE Karte ihren
+  // Ladeversuch (Erfolg ODER Fehlschlag) tatsächlich auslöst.
+  await expect(page.locator('[data-testid="ref-card"]')).toHaveCount(112);
+  const scrollHandle = await page.locator('[data-testid="ref-card"]').first().evaluateHandle((el) => {
+    let node: HTMLElement | null = el.parentElement;
+    while (node && node.scrollHeight <= node.clientHeight) node = node.parentElement;
+    return node ?? el;
+  });
+  const scroller = scrollHandle.asElement();
+  if (scroller) {
+    for (let i = 0; i < 12; i++) {
+      await scroller.evaluate((el, frac) => {
+        el.scrollTop = (el.scrollHeight * frac) / 12;
+      }, i + 1);
+      await page.waitForTimeout(150);
+    }
+  }
+  // Alle <img>-Ladeversuche (Erfolg ODER Fehlschlag) abwarten, dann zählen,
+  // wie viele Karten auf das Signet umgeschaltet haben.
+  await expect
+    .poll(
+      async () => {
+        const laufen = await page.locator('[data-testid="ref-card"] img').evaluateAll(
+          (imgs) => imgs.filter((img) => !(img as HTMLImageElement).complete).length,
+        );
+        return laufen;
+      },
+      { timeout: 30_000 },
+    )
+    .toBe(0);
+  const signetAnzahlUngefiltert = await page.locator('[data-testid="karte-leerbild"]').count();
+  expect(signetAnzahlUngefiltert).toBeGreaterThan(50);
 
   await page.fill('[data-testid="data-search"]', 'De architectura');
   const karte = page.locator('[data-testid="ref-card"]');

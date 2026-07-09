@@ -37,18 +37,80 @@
   display: flex;
   justify-content: center;
   min-width: 0;
-  /* Reserviert Raum für den "oben" wachsenden Fächer (siehe OrbitStart.tsx
-     `richtungVon`) — der Fächer sitzt `position:absolute` und trägt daher
-     NICHTS zur Grid-/Flex-Höhe bei; ohne diese Reserve würde er beim
-     Öffnen über den Seitenrand hinaus in negative Koordinaten wachsen
-     (nicht mehr scrollbar, nicht mehr klickbar — siehe Bericht/Grenzen für
-     den gemessenen Bedarf: grösster "oben"-Fächer ≈ 430px inkl. Abstand). */
+  /* R1-Fix (Kritik-065 p-01/i-01, «tote Fläche zwischen Dashboard-Spalte und
+     Orbit»): die volle 440px-Reserve für den "oben" wachsenden Fächer
+     (KosmoDesign, `richtungVon(0) === 'oben'`, siehe OrbitStart.tsx) wird
+     jetzt NUR gebraucht, WENN dieser eine Fächer offen ist — der Fächer
+     sitzt `position:absolute` und trägt nichts zur Grid-/Flex-Höhe bei, sonst
+     würde er beim Öffnen über den Seitenrand hinaus in negative Koordinaten
+     wachsen (siehe Bericht/Grenzen für den gemessenen Bedarf: grösster
+     "oben"-Fächer ≈ 430px inkl. Abstand). Im Ruhezustand reicht ein kleiner
+     Respektabstand — kein 440px-Loch mehr über dem Ring. `:has()` wird von
+     der Chromium-Version dieses Repos unterstützt (Playwright-Suite lief
+     grün, siehe Bericht). */
+  padding-top: var(--k-s7);
+  transition: padding-top var(--k-motion-base);
+}
+.orbit065-home-rechts:has([data-testid='orbit-faecher-design'].offen) {
   padding-top: 440px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit065-home-rechts {
+    transition: none;
+  }
 }
 @media (max-width: 860px) {
   .orbit065-home-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* ── R1-Fix (Kritik-065 p-01/i-01): Hauptwerkzeug-Titel unter dem Kreis ──
+   Vorher lag der Titel als flex-Zeile IM 108px-Kreis (`.k-orbit-hauptknopf`,
+   aura.css) — bei «KosmoDesign» reichte die Kreis-SEHNE nahe am unteren Rand
+   nicht für die Textbreite, die Buchstaben schnitten sichtbar den Tuscherand
+   (Kreisgeometrie: die Sehnenbreite schrumpft zum Rand hin, das Rechteck des
+   Textknotens nicht). Fix: Titel + «kommend»-Badge in einen eigenen, absolut
+   positionierten Block UNTER dem Kreis verschoben — mit festem Abstand
+   (`--k-s2`), unabhängig von Icon/Kreis-Füllung. Bleibt Kind des `<button>`
+   (Klick-Fläche + `toContainText`-Vertrag in orbit-start.spec unverändert).
+   `.k-orbit-hauptknopf` bekommt hier NUR `position:relative` dazu (aura.css
+   selbst setzt keine Position) — alles andere dort unverändert (Freeze). */
+.k-orbit-knoten-gegendreh .k-orbit-hauptknopf {
+  position: relative;
+}
+.orbit065-hauptknopf-unterlabel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: var(--k-s2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+/* ── R1-Fix (Kritik-065 p-01/i-01): Kreismittelpunkt ohne Fadenkreuz-Icon ──
+   `.k-orbit-mitte` (aura.css) ist ein rein dekorativer, `pointer-events:none`
+   Bahn-Anker — trug bisher dasselbe OrbitMark-Fadenkreuz wie der echte
+   «Kosmo»-Hauptwerkzeugknopf (`IconHauptKosmo`) und wirkte dadurch wie ein
+   unbeschrifteter fünfter Orbit-Knoten mitten im Ring. Der Ort/die Grösse
+   bleiben (orbit-faecher.spec misst seine Bounding-Box) — nur der Inhalt
+   schrumpft auf einen stillen Punkt, klar als Bahn-Mittelpunkt statt als
+   Knopf-Duplikat lesbar. */
+.orbit065-mitte {
+  border-color: transparent;
+  background: transparent;
+}
+.orbit065-mitte::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--k-ink-faint);
+  opacity: 0.6;
 }
 
 /* ── R2-N1/N2: Fächer ausserhalb des Rings, echte Karteikarten ──────────

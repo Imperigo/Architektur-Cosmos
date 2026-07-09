@@ -5,7 +5,7 @@ import {
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
 } from 'react';
-import { OrbitMark, moduleHue, type ModuleId } from '@kosmo/ui';
+import { moduleHue, type ModuleId } from '@kosmo/ui';
 import {
   ORBIT_HAUPTWERKZEUGE,
   type HauptwerkzeugId,
@@ -152,9 +152,15 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
   return (
     <div className="k-orbit-start" data-testid="orbit-start">
       <div className="k-orbit-ring-feld" data-testid="orbit-ring">
-        <div className="k-orbit-mitte" aria-hidden>
-          <OrbitMark module="kosmo" size={40} />
-        </div>
+        {/* Rein dekorativer Kreismittelpunkt (Bahn-Anker) — bewusst OHNE das
+            OrbitMark-Fadenkreuz-Icon: das Icon ist bereits das Zeichen des
+            «Kosmo»-Hauptwerkzeugs (IconHauptKosmo, siehe orbit-icons.tsx);
+            hier verdoppelt es sich zu einem unbeschrifteten, knopfartig
+            wirkenden 5. Kreis mitten im Ring (Kritik-065 p-01/i-01: «Unbe-
+            schrifteter Orbit-Knoten mit dupliziertem Fadenkreuz-Icon»). Bleibt
+            als Element/Klasse erhalten (orbit-faecher.spec misst seine
+            Bounding-Box), zeigt aber nur noch einen stillen Punkt. */}
+        <div className="k-orbit-mitte orbit065-mitte" aria-hidden />
         {ORBIT_HAUPTWERKZEUGE.map((h, index) => {
           const Icon = ICONS[h.id];
           const delay = verzoegerung(index);
@@ -190,8 +196,21 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                   onClick={() => klickHauptwerkzeug(h)}
                 >
                   <Icon akzent={HAUPT_AKZENT[h.id]} />
-                  <span className="k-orbit-hauptknopf-titel">{h.titel}</span>
-                  {h.kommend && <span className="k-orbit-badge-kommend">kommend</span>}
+                  {/* R1-Fix (Kritik-065 p-01/i-01): Titel sass VORHER als
+                      flex-Zeile IM 108px-Kreis — bei Namen wie «KosmoDesign»
+                      reichte die Kreis-Sehne an dieser Höhe nicht für die
+                      Textbreite, die Buchstaben schnitten den Tuscherand
+                      (siehe Bericht/Messung). Jetzt `position:absolute`
+                      UNTERHALB des Kreises mit festem Abstand
+                      (`.orbit065-hauptknopf-unterlabel`, orbit-065.css) —
+                      bleibt Kind des `<button>` (Klick-/Text-Vertrag,
+                      `toContainText` in orbit-start.spec unverändert grün),
+                      unabhängig von der Kompasslage (der Knopf selbst dreht
+                      sich dank Gegenrotation nie). */}
+                  <span className="orbit065-hauptknopf-unterlabel">
+                    <span className="k-orbit-hauptknopf-titel">{h.titel}</span>
+                    {h.kommend && <span className="k-orbit-badge-kommend">kommend</span>}
+                  </span>
                 </button>
                 {/* R2-N1/R2-N2 (0.6.5): Fächer öffnet AUSSERHALB des Rings
                     (Kompassrichtung `richtungVon`, siehe Kommentar oben),

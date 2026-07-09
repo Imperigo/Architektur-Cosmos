@@ -410,15 +410,35 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
             Baugesuch (SIA 33)
           </span>
-          <KButton
-            size="sm"
-            tone="accent"
-            onClick={baugesuchErstellen}
-            data-testid="baugesuch-erstellen"
-            title="Stellt Situation, Grundriss je Geschoss, die definierten Schnitte und ein Ausnützungsnachweis-Blatt zusammen und bündelt sie als Publikations-Set «Baugesuch» — EIN Undo-Schritt. Zusammenstellung für die Eingabe, keine Bewilligung."
-          >
-            Baugesuch
-          </KButton>
+          {/* R1-Fix (Kritik-065 p-09/i-09, «Füllflächen-Inkonsistenz»):
+              «Baugesuch», «Plansatz PDF» (unten) und «Blatt füllen»
+              (Werkzeugleiste) waren alle drei `tone="accent"` — drei
+              gleich laut schreiende schwarze Flächen ohne erkennbare
+              Rangfolge. §2-Muster: EIN Primär-Knopf pro Bereich darf
+              Akzent-Füllung tragen — «Plansatz PDF» bleibt das (der
+              Abschluss der ganzen Seite), «Blatt füllen» bleibt es in
+              seiner eigenen Werkzeuggruppe. «Baugesuch» ist eine
+              Kurzstart-Aktion wie «Klassisch»/«Spalte» (A0-Plakat, beide
+              `tone="quiet"`) — bekommt dieselbe Kontur-Optik, plus einen
+              Akzent-Eckpunkt (KdKarte-Muster, `DataWorkspace.tsx`
+              `.k-orbit-mitte`-Nachbar) statt Füllung: aktiv/besonders
+              ≠ gefüllt. */}
+          <span style={{ position: 'relative', display: 'inline-block' }}>
+            <KButton
+              size="sm"
+              tone="quiet"
+              onClick={baugesuchErstellen}
+              data-testid="baugesuch-erstellen"
+              title="Stellt Situation, Grundriss je Geschoss, die definierten Schnitte und ein Ausnützungsnachweis-Blatt zusammen und bündelt sie als Publikations-Set «Baugesuch» — EIN Undo-Schritt. Zusammenstellung für die Eingabe, keine Bewilligung."
+              style={{ borderWidth: 1.5, borderColor: 'var(--k-accent)' }}
+            >
+              Baugesuch
+            </KButton>
+            <span
+              aria-hidden
+              style={{ position: 'absolute', top: 0, right: 0, width: 6, height: 6, background: 'var(--k-accent)' }}
+            />
+          </span>
         </div>
         <Hairline />
         <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
@@ -516,7 +536,12 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               size="sm"
               value={neuesSetName}
               onChange={(e) => setNeuesSetName(e.target.value)}
-              placeholder="Set-Name (z.B. Wettbewerb)"
+              /* R1-Fix (Kritik-065 p-09/i-09, «Set-Name-Placeholder hart
+                 abgeschnitten»): die schmale Sidebar liess vom Beispiel nur
+                 «Set-Name (z.B.» stehen — gekürzt statt der Sidebar-Breite
+                 (die auch andere Bereiche trägt) hinterherzujagen. */
+              placeholder="Set-Name…"
+              title="Set-Name, z.B. «Wettbewerb»"
               data-testid="pubset-name"
               style={{ flex: 1, minWidth: 0 }}
             />
@@ -532,13 +557,44 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </div>
         </div>
         <div style={{ flex: 1 }} />
-        <KButton size="sm" tone="accent" onClick={() => void exportSheetSetPdf()} data-testid="export-set">
-          Plansatz PDF
-        </KButton>
-        <KButton size="sm" tone="ghost" onClick={exportSvg}>Blatt SVG</KButton>
-        <KButton size="sm" tone="ghost" onClick={exportDxfFile} data-testid="export-dxf">
-          Grundriss DXF
-        </KButton>
+        {/* R1-Fix (Kritik-065 p-09/i-09, «Blatt SVG»/«Grundriss DXF» als
+            nackte Textlinks): beide waren `tone="ghost"` OHNE sichtbaren
+            Rand — neben dem gefüllten «Plansatz PDF» wirkten sie wie reine
+            Textlinks statt wie gleichrangige Export-Aktionen. Jetzt in einer
+            gerahmten Gruppe mit «Plansatz PDF» (Panel-Rand), beide mit
+            Export-KIcon und sichtbarem Rand — bleiben `tone="ghost"`
+            (Kontur statt Füllung, §2-Muster: nur «Plansatz PDF» akzentuiert). */}
+        <div
+          style={{
+            display: 'grid',
+            gap: 'var(--k-s2)',
+            padding: 'var(--k-s3)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-sm)',
+          }}
+        >
+          <KButton size="sm" tone="accent" onClick={() => void exportSheetSetPdf()} data-testid="export-set">
+            <KIcon name="export" size={14} /> Plansatz PDF
+          </KButton>
+          <KButton
+            size="sm"
+            tone="ghost"
+            onClick={exportSvg}
+            data-testid="export-blatt-svg"
+            style={{ borderColor: 'var(--k-line)' }}
+          >
+            <KIcon name="export" size={14} /> Blatt SVG
+          </KButton>
+          <KButton
+            size="sm"
+            tone="ghost"
+            onClick={exportDxfFile}
+            data-testid="export-dxf"
+            style={{ borderColor: 'var(--k-line)' }}
+          >
+            <KIcon name="export" size={14} /> Grundriss DXF
+          </KButton>
+        </div>
       </div>
 
       {/* Blattfläche */}
@@ -947,11 +1003,39 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               })}
             </div>
           ) : (
-            <Messrahmen
-              height={280}
-              style={{ width: 520, maxWidth: '90%' }}
-              caption="Noch kein Blatt im Plansatz — links Format wählen und «+ Blatt», dann Grundrisse, Schnitte und Ansichten platzieren"
-            />
+            /* R1-Fix (Kritik-065 p-09/i-09, «Blattbereich-Leersatz von
+               Mono-Versal auf Lauftext-Stimme umstellen»): `Messrahmen`
+               (kosmo-ui, eingefroren) rendert seine `caption` fest in
+               Mono-Versal (Vermessungs-Anmutung, für Passermarken/Achsen
+               dort korrekt) — für einen ganzen Satz an Anleitung liest sich
+               das wie eine Fehlermeldung, nicht wie ein Hinweis. `caption`
+               bleibt leer (die Passermarken/Achsen/Eckwinkel bleiben), der
+               eigentliche Satz kommt als eigenes, normal gesetztes Element
+               darüber (`--k-font-ui`/`--k-t-sm`) — Wortlaut unverändert
+               (e2e/module.spec.ts:491 prüft `getByText('Noch kein Blatt im
+               Plansatz', …)`, nur EINE sichtbare Fundstelle im DOM). */
+            <div style={{ position: 'relative', width: 520, maxWidth: '90%' }}>
+              <Messrahmen height={280} caption="" style={{ width: '100%' }} />
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 16%',
+                  textAlign: 'center',
+                  fontFamily: 'var(--k-font-ui)',
+                  fontSize: 'var(--k-t-sm)',
+                  color: 'var(--k-ink-soft)',
+                  lineHeight: 1.5,
+                  pointerEvents: 'none',
+                }}
+              >
+                Noch kein Blatt im Plansatz — links Format wählen und «+ Blatt», dann Grundrisse, Schnitte und
+                Ansichten platzieren
+              </div>
+            </div>
           )}
         </div>
       </div>

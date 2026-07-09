@@ -174,6 +174,44 @@ const statusHue: Record<Befund['status'], string> = {
   fehler: 'var(--k-danger, #b3462e)',
 };
 
+/**
+ * R1-Fix (Kritik-065 p-10/i-10, «KosmoDoc-Leerfläche unter der
+ * Diagnosekarte»): vor dem ersten Klick auf «Prüfen» blieb `befunde === null`
+ * — `befunde?.map(...)` rendert dann nichts, die ganze Seite unter der Karte
+ * blieb leer. Gezeichnetes Signet + EIN ehrlicher Satz statt der leeren
+ * Fläche (Muster `DataLeerbild`, `modules/data/DataLeerbild.tsx`: 1.5px-
+ * Stroke, `--k-ink-faint`, kein Fill) — sagt genau, was hier erscheint,
+ * sobald geprüft wurde.
+ */
+function DiagnoseLeerbild() {
+  return (
+    <div style={{ display: 'grid', justifyItems: 'center', alignContent: 'center', gap: 8, padding: '28px 16px' }}>
+      <svg
+        data-testid="diagnose-leerbild"
+        aria-hidden="true"
+        viewBox="0 0 40 40"
+        width={32}
+        height={32}
+        fill="none"
+        stroke="var(--k-ink-faint)"
+        strokeWidth={1.5}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      >
+        {/* Klemmbrett/Befundblatt mit Puls-/Kurvenlinie — «Projektdoktor». */}
+        <path d="M11 8h18v27H11Z" />
+        <path d="M15 4h10v5H15Z" />
+        <path d="M15 16h4M15 21h9" />
+        <path d="M14 28h4l2 -5 3 9 2.5 -6.5 1.5 2.5h4" />
+      </svg>
+      <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', textAlign: 'center', maxWidth: 340, lineHeight: 1.5 }}>
+        Noch keine Prüfung gelaufen — «Prüfen» zeigt hier den Befund zu Kern, Ableitung, Kosmo-LLM,
+        Bridge, Wissensbasis und Speicher.
+      </span>
+    </div>
+  );
+}
+
 export function DiagnosePanel() {
   const [befunde, setBefunde] = useState<Befund[] | null>(null);
   const [laueft, setLaueft] = useState(false);
@@ -198,14 +236,18 @@ export function DiagnosePanel() {
           {laueft ? 'Prüfe …' : 'Prüfen'}
         </KButton>
       </div>
-      {befunde?.map((b, i) => (
-        <Karteikarte key={b.bereich} nr={i + 1} data-testid={`befund-${b.bereich}`}>
-          <div style={{ display: 'grid', gap: 3, fontSize: 12.5 }}>
-            <Badge hue={statusHue[b.status]}>{b.bereich}</Badge>
-            <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{b.detail}</span>
-          </div>
-        </Karteikarte>
-      ))}
+      {befunde === null ? (
+        <DiagnoseLeerbild />
+      ) : (
+        befunde.map((b, i) => (
+          <Karteikarte key={b.bereich} nr={i + 1} data-testid={`befund-${b.bereich}`}>
+            <div style={{ display: 'grid', gap: 3, fontSize: 12.5 }}>
+              <Badge hue={statusHue[b.status]}>{b.bereich}</Badge>
+              <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{b.detail}</span>
+            </div>
+          </Karteikarte>
+        ))
+      )}
     </div>
   );
 }
