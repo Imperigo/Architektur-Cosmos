@@ -21,7 +21,13 @@ export function NavLeiste({ aktionen, testid }: { aktionen: NavAktion[]; testid:
       data-testid={testid}
       style={{
         position: 'absolute',
-        left: 8,
+        // v0.6.5 (W2, SK-D5): vorher `left:8` — stapelte sich optisch mit der
+        // Geschossleiste/dem Entwurfs-Dock, die beide an der linken Kante
+        // sitzen. Wandert nach unten RECHTS (Owner-Befund «Statuszeile +
+        // Viewport-Nav-Pillen stapeln sich in derselben Ecke»); die
+        // Statusleiste (DesignWorkspace.tsx) bleibt unten LINKS — beide
+        // Ecken sind jetzt entstapelt. testids/aria-labels unverändert.
+        right: 8,
         // Bewusst über der Statuszeile (bottom:12, ~30px hoch) — sonst
         // überlappen sich Cursor-Koordinaten und die Nav-Knöpfe.
         bottom: 50,

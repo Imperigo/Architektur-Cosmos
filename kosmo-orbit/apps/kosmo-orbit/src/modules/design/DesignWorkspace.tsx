@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, KButton, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, type KIconName, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { LearningJournal } from '@kosmo/ai';
 import {
   areaReport,
@@ -132,13 +132,26 @@ function snap(p: Pt, magnet?: FangKandidaten): Pt {
  * T7 (Fokus-Systematik): dezente Sektions-Beschriftung innerhalb der
  * Werkzeugleiste — «selten»-Stufe, macht die Gruppierung lesbar, ohne
  * eigenes Gewicht zu beanspruchen (docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md).
+ * v0.6.5 (W2, SK-D1/Regel 2 UI-KONZEPT-065 §4): nimmt optional ein KIcon vor
+ * dem Text, damit «Export»/«Ebenen» in der Kontextzeile wie eine benannte
+ * Menü-Gruppe statt einer blassen Inline-Sektion wirken — reine Optik, kein
+ * neues Verhalten (`children` bleibt der Text, der bisher schon stand).
  */
-function Trennlabel({ children }: { children: string }) {
+function Trennlabel({ children, icon }: { children: string; icon?: KIconName }) {
   return (
     <span
       className="k-selten"
-      style={{ textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--k-ink-faint)', padding: '0 2px' }}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 'var(--k-s1)',
+        textTransform: 'uppercase',
+        letterSpacing: '0.08em',
+        color: 'var(--k-ink-faint)',
+        padding: '0 2px',
+      }}
     >
+      {icon !== undefined && <KIcon name={icon} size={14} />}
       {children}
     </span>
   );
@@ -312,6 +325,9 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   };
   const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
   const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split' | 'quad'>('split');
+  // SK-D1 Massnahme 2: Export-Gruppe hinter einem echten Auf/Zu-Trigger,
+  // Default OFFEN (Begründung: Kommentar am `export-menu-toggle`-Knopf unten).
+  const [exportMenuOffen, setExportMenuOffen] = useState(true);
   // B5: Massstabs-Automatik — bestätigbarer Hinweis nach dem Phasenwechsel
   const [massstabHinweis, setMassstabHinweis] = useState<string | null>(null);
   const [sectionSpec, setSectionSpec] = useState<SectionSpec | null>(null);
@@ -1397,474 +1413,156 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
 
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
-      {/* Werkzeugleiste */}
-      <div
-        data-testid="design-werkzeugleiste"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 8,
-          rowGap: 4,
-          padding: '8px 14px',
-          borderBottom: '1px solid var(--k-line)',
-          background: 'var(--k-surface)',
-          zIndex: 2,
-        }}
-      >
-        {/* K6 (Owner-Rundgang 0.6.2, S. 3): «KosmoDesign» stand hier UND in
-            der App-Kopfzeile (App.tsx, dynamisches Modul-Badge, gilt für
-            JEDE Station) — doppelte Beschriftung. Die Kopfzeile ist die
-            generische, für alle Stationen gültige Anzeige und bleibt; das
-            lokale Duplikat hier fällt weg. */}
-        <span
-          data-testid="leiste-gruppe-zeichnen"
-          className={fokusKlasse(stufeFuerGruppe('zeichnen'))}
+      {/* Werkzeugleiste — v0.6.5 (W2, SK-D1/UI-KONZEPT-065 §4): GENAU eine
+          Hauptzeile (Zeichnen | Ansicht | rechts Projekt-Menü/Einstellungen)
+          plus höchstens EINE klar abgesetzte Kontextzeile (Export/Ebenen/
+          Fähigkeiten/Verlauf + situative Selects) — nie eine dritte Zeile.
+          Vorher: EIN Flex-Container mit `flexWrap:'wrap'`, der bei zu vielen
+          Gruppen unkontrolliert in 2-3 Zeilen umbrach (SK-D1-Befund,
+          UI-SELBSTKRITIK-064). Beide Reihen sind jetzt eigene Container mit
+          `flexWrap:'nowrap'` (+ `overflowX:'auto'` als Sicherheitsventil bei
+          sehr schmalem Viewport statt eines dritten Umbruchs). */}
+      <div data-testid="design-werkzeugleiste" style={{ display: 'flex', flexDirection: 'column' }}>
+        {/* Hauptzeile */}
+        <div
+          data-testid="design-werkzeugleiste-haupt"
           style={{
-            display: 'inline-flex',
-            flexWrap: 'wrap',
-            gap: 8,
-            rowGap: 4,
+            display: 'flex',
             alignItems: 'center',
-            ...(gehobenNachGruppe.zeichnen ? { opacity: 1 } : {}),
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
+            gap: 'var(--k-s3)',
+            padding: 'var(--k-s3) var(--k-s4)',
+            borderBottom: '1px solid var(--k-line)',
+            background: 'var(--k-surface)',
+            zIndex: 2,
           }}
         >
-          {ZEICHEN_WERKZEUGE_LEISTE.map(({ id, label, Icon }) => {
-            // F5 (v0.6.4, Owner-Befund «Tastenkombination wie ArchiCAD»): der
-            // Tooltip nennt das Kurztaste-Kürzel («Wand (W)») — auch für die
-            // Text-Knöpfe (Dach/Treppe/Stütze/Schnitt/Skizze), die bisher gar
-            // keinen title trugen.
-            const taste = KURZTASTE_JE_WERKZEUG[id];
-            const titel = taste ? `${label} (${taste})` : label;
-            return (
+          {/* K6 (Owner-Rundgang 0.6.2, S. 3): «KosmoDesign» stand hier UND in
+              der App-Kopfzeile (App.tsx, dynamisches Modul-Badge, gilt für
+              JEDE Station) — doppelte Beschriftung. Die Kopfzeile ist die
+              generische, für alle Stationen gültige Anzeige und bleibt; das
+              lokale Duplikat hier fällt weg. */}
+          <span
+            data-testid="leiste-gruppe-zeichnen"
+            className={fokusKlasse(stufeFuerGruppe('zeichnen'))}
+            style={{
+              display: 'inline-flex',
+              flexWrap: 'nowrap',
+              gap: 'var(--k-s3)',
+              alignItems: 'center',
+              ...(gehobenNachGruppe.zeichnen ? { opacity: 1 } : {}),
+            }}
+          >
+            {ZEICHEN_WERKZEUGE_LEISTE.map(({ id, label, Icon }) => {
+              // F5 (v0.6.4, Owner-Befund «Tastenkombination wie ArchiCAD»): der
+              // Tooltip nennt das Kurztaste-Kürzel («Wand (W)») — auch für die
+              // Text-Knöpfe (Dach/Treppe/Stütze/Schnitt/Skizze), die bisher gar
+              // keinen title trugen.
+              const taste = KURZTASTE_JE_WERKZEUG[id];
+              const titel = taste ? `${label} (${taste})` : label;
+              return (
+                <KButton
+                  key={id}
+                  size="sm"
+                  tone={tool === id ? 'accent' : 'quiet'}
+                  onClick={() => {
+                    setTool(id);
+                    nutzungMelden(`zeichnen:${id}`);
+                  }}
+                  data-testid={`tool-${id}`}
+                  title={titel}
+                  aria-label={titel}
+                  {...elementStil('zeichnen', id)}
+                >
+                  {Icon ? <Icon /> : label}
+                </KButton>
+              );
+            })}
+            {/* Block 3 / E4 (Buildplan FM3): Werkzeug «Mesh» — expliziter
+                `werkzeug-mesh`-Testid statt des generischen `tool-*`-Musters,
+                weil die Auftragsspezifikation genau diesen Namen verlangt. */}
+            <KButton
+              size="sm"
+              tone={tool === 'mesh' ? 'accent' : 'quiet'}
+              onClick={() => {
+                setTool('mesh');
+                nutzungMelden('zeichnen:mesh');
+              }}
+              data-testid="werkzeug-mesh"
+              {...elementStil('zeichnen', 'mesh')}
+            >
+              Mesh
+            </KButton>
+          </span>
+          <div style={{ flex: 1 }} />
+          {/* SK-D1 (Massnahme 1): Ansicht als kompakte, gerahmte Segment-Gruppe
+              statt loser Ghost-Knöpfe — derselbe --k-field/--k-line-Ton wie
+              die Kontextzeile signalisiert «hier wird umgeschaltet, nicht
+              ausgelöst». testids/Texte unverändert (view-*, '3D'/'3D | Plan'/
+              '4er'/'Grundriss'). */}
+          <span
+            data-testid="leiste-gruppe-ansicht"
+            className={fokusKlasse(stufeFuerGruppe('ansicht'))}
+            style={{
+              display: 'inline-flex',
+              flexWrap: 'nowrap',
+              gap: 2,
+              alignItems: 'center',
+              background: 'var(--k-field)',
+              border: '1px solid var(--k-line)',
+              borderRadius: 'var(--k-radius-md)',
+              padding: 'var(--k-s1)',
+              ...(gehobenNachGruppe.ansicht ? { opacity: 1 } : {}),
+            }}
+          >
+            {(
+              [
+                ['3d', '3D'],
+                ['split', '3D | Plan'],
+                ['quad', '4er'],
+                ['2d', 'Grundriss'],
+              ] as const
+            ).map(([id, label]) => (
               <KButton
                 key={id}
                 size="sm"
-                tone={tool === id ? 'accent' : 'quiet'}
+                tone={viewMode === id ? 'accent' : 'ghost'}
                 onClick={() => {
-                  setTool(id);
-                  nutzungMelden(`zeichnen:${id}`);
+                  setViewMode(id);
+                  nutzungMelden(`ansicht:${id}`);
                 }}
-                data-testid={`tool-${id}`}
-                title={titel}
-                aria-label={titel}
-                {...elementStil('zeichnen', id)}
+                data-testid={`view-${id}`}
+                {...elementStil('ansicht', id)}
               >
-                {Icon ? <Icon /> : label}
+                {label}
               </KButton>
-            );
-          })}
-          {/* Block 3 / E4 (Buildplan FM3): Werkzeug «Mesh» — expliziter
-              `werkzeug-mesh`-Testid statt des generischen `tool-*`-Musters,
-              weil die Auftragsspezifikation genau diesen Namen verlangt. */}
-          <KButton
-            size="sm"
-            tone={tool === 'mesh' ? 'accent' : 'quiet'}
-            onClick={() => {
-              setTool('mesh');
-              nutzungMelden('zeichnen:mesh');
-            }}
-            data-testid="werkzeug-mesh"
-            {...elementStil('zeichnen', 'mesh')}
-          >
-            Mesh
-          </KButton>
-        </span>
-        <span style={{ width: 12 }} />
-        {tool === 'wand' && assemblies.length > 0 && (
-          <select
-            value={effectiveAssembly ?? ''}
-            onChange={(e) => setAssemblyId(e.target.value)}
-            style={{
-              background: 'var(--k-raised)',
-              border: '1px solid var(--k-line-strong)',
-              borderRadius: 'var(--k-radius-sm)',
-              padding: '4px 8px',
-              fontSize: 12.5,
-            }}
-          >
-            {assemblies.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
             ))}
-          </select>
-        )}
-        <div style={{ flex: 1 }} />
-        <Trennlabel>Ansicht</Trennlabel>
-        <span
-          data-testid="leiste-gruppe-ansicht"
-          className={fokusKlasse(stufeFuerGruppe('ansicht'))}
-          style={{
-            display: 'inline-flex',
-            flexWrap: 'wrap',
-            gap: 8,
-            rowGap: 4,
-            alignItems: 'center',
-            ...(gehobenNachGruppe.ansicht ? { opacity: 1 } : {}),
-          }}
-        >
-          {(
-            [
-              ['3d', '3D'],
-              ['split', '3D | Plan'],
-              ['quad', '4er'],
-              ['2d', 'Grundriss'],
-            ] as const
-          ).map(([id, label]) => (
+          </span>
+          <Hairline vertical />
+          {/* SK-D1: «rechts: Menü-Trigger» — Projekt-Einstellungen (bereits ein
+              Menü-Toggle, testid/Text unverändert) + Stations-Einstellungen,
+              beide am rechten Rand der Hauptzeile. */}
+          <span
+            data-testid="leiste-gruppe-projekt"
+            className={fokusKlasse(stufeFuerGruppe('projekt'))}
+            style={{ display: 'inline-flex', ...(gehobenNachGruppe.projekt ? { opacity: 1 } : {}) }}
+          >
             <KButton
-              key={id}
               size="sm"
-              tone={viewMode === id ? 'accent' : 'ghost'}
+              tone={projektMenuOffen ? 'accent' : 'ghost'}
+              data-testid="projekt-menu-toggle"
+              title="Projekt-Einstellungen — SIA-Phase, Bemassungsstil (selten geändert)"
               onClick={() => {
-                setViewMode(id);
-                nutzungMelden(`ansicht:${id}`);
+                setProjektMenuOffen((o) => !o);
+                nutzungMelden('projekt:menu');
               }}
-              data-testid={`view-${id}`}
-              {...elementStil('ansicht', id)}
+              {...elementStil('projekt', 'menu')}
             >
-              {label}
+              Projekt ▾
             </KButton>
-          ))}
-        </span>
-        <span style={{ width: 12 }} />
-        <Trennlabel>Export</Trennlabel>
-        <span
-          data-testid="leiste-gruppe-export"
-          className={fokusKlasse(stufeFuerGruppe('export'))}
-          style={{
-            display: 'inline-flex',
-            flexWrap: 'wrap',
-            gap: 8,
-            rowGap: 4,
-            alignItems: 'center',
-            ...(gehobenNachGruppe.export ? { opacity: 1 } : {}),
-          }}
-        >
-          <KButton size="sm" tone="ghost" onClick={klickExportPdf} data-testid="export-pdf" {...elementStil('export', 'pdf')}>
-            PDF
-          </KButton>
-          <KButton size="sm" tone="ghost" onClick={klickExportSvg} {...elementStil('export', 'svg')}>
-            SVG
-          </KButton>
-          <KButton size="sm" tone="ghost" onClick={klickExportDxf} data-testid="export-dxf" {...elementStil('export', 'dxf')}>
-            DXF
-          </KButton>
-          <KButton size="sm" tone="ghost" onClick={klickExportIfc} data-testid="export-ifc" {...elementStil('export', 'ifc')}>
-            IFC
-          </KButton>
-          <KButton
-            size="sm"
-            tone="ghost"
-            data-testid="import-ifc"
-            onClick={klickImportIfc}
-            {...elementStil('export', 'import-ifc')}
-          >
-            IFC laden
-          </KButton>
-          <KButton
-            size="sm"
-            tone="ghost"
-            data-testid="import-dxf"
-            onClick={klickImportDxf}
-            {...elementStil('export', 'import-dxf')}
-          >
-            DXF laden
-          </KButton>
-          <KButton
-            size="sm"
-            tone="ghost"
-            data-testid="import-splat"
-            onClick={klickImportSplat}
-            {...elementStil('export', 'import-splat')}
-          >
-            Splat laden
-          </KButton>
-          <KButton
-            size="sm"
-            tone={splatPanelOffen ? 'accent' : 'ghost'}
-            data-testid="splat-werkzeug-toggle"
-            onClick={klickSplatWerkzeug}
-            {...elementStil('export', 'splat-werkzeug')}
-          >
-            Splat-Werkzeug
-          </KButton>
-        </span>
-        <Trennlabel>Ebenen</Trennlabel>
-        <span
-          data-testid="leiste-gruppe-ebenen"
-          className={fokusKlasse(stufeFuerGruppe('ebenen'))}
-          style={{
-            display: 'inline-flex',
-            flexWrap: 'wrap',
-            gap: 8,
-            rowGap: 4,
-            alignItems: 'center',
-            ...(gehobenNachGruppe.ebenen ? { opacity: 1 } : {}),
-          }}
-        >
-          <KButton size="sm" tone={texturen ? 'accent' : 'ghost'} data-testid="textur-toggle" onClick={klickTextur} {...elementStil('ebenen', 'textur')}>
-            Textur
-          </KButton>
-          <KButton size="sm" tone={sonneOffen ? 'accent' : 'ghost'} data-testid="sonne-toggle" onClick={klickSonne} {...elementStil('ebenen', 'sonne')}>
-            ☀ Sonne
-          </KButton>
-          <KButton size="sm" tone={studieOffen ? 'accent' : 'ghost'} data-testid="studie-toggle" onClick={klickStudie} {...elementStil('ebenen', 'studie')}>
-            Varianten
-          </KButton>
-          <KButton size="sm" tone={drawOffen ? 'accent' : 'ghost'} data-testid="draw-toggle" onClick={klickDraw} {...elementStil('ebenen', 'draw')}>
-            Draw
-          </KButton>
-          <KButton size="sm" tone={listeOffen ? 'accent' : 'ghost'} data-testid="liste-toggle" onClick={klickListe} {...elementStil('ebenen', 'liste')}>
-            Liste
-          </KButton>
-          <KButton
-            size="sm"
-            tone={kvOffen ? 'accent' : 'ghost'}
-            data-testid="kv-oeffnen"
-            title="Kostenvoranschlag-Grobschätzung — Richtwert auf GF-Basis, kein Devis"
-            onClick={klickKv}
-            {...elementStil('ebenen', 'kv')}
-          >
-            KV
-          </KButton>
-          <KButton
-            size="sm"
-            tone={bauablaufOffen ? 'accent' : 'ghost'}
-            data-testid="bauablauf-oeffnen"
-            title="Bauablaufplan — abgeleiteter Grob-Terminplan, ersetzt keine Bauleitung"
-            onClick={klickBauablauf}
-            {...elementStil('ebenen', 'bauablauf')}
-          >
-            Bauablauf
-          </KButton>
-          <KButton
-            size="sm"
-            tone={maengelOffen ? 'accent' : 'ghost'}
-            data-testid="maengel-oeffnen"
-            title="Mängel — Abschlussphase Gebäudeabnahme, Anstoss zur Schlussbegehung"
-            onClick={klickMaengel}
-            {...elementStil('ebenen', 'maengel')}
-          >
-            Mängel
-          </KButton>
-          <KButton size="sm" tone={rasterOffen ? 'accent' : 'ghost'} data-testid="raster-toggle" onClick={klickRaster} {...elementStil('ebenen', 'raster')}>
-            Raster
-          </KButton>
-        </span>
-        <span style={{ position: 'relative', display: 'inline-flex' }}>
-          <KButton
-            size="sm"
-            tone={mehrOffen ? 'accent' : 'ghost'}
-            data-testid="werkzeuge-mehr"
-            title="Weitere Werkzeuge — nach Nutzungshäufigkeit sortiert"
-            aria-label="Weitere Werkzeuge"
-            style={{ visibility: ueberlaufWerkzeuge.length > 0 ? 'visible' : 'hidden' }}
-            onClick={() => setMehrOffen((o) => !o)}
-          >
-            Mehr…
-          </KButton>
-          {mehrOffen && ueberlaufWerkzeuge.length > 0 && (
-            <div
-              data-testid="werkzeuge-mehr-liste"
-              className="k-dialog"
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                marginTop: 4,
-                zIndex: 5,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 3,
-                padding: 6,
-                minWidth: 140,
-                background: 'var(--k-surface)',
-                border: '1px solid var(--k-line)',
-                borderRadius: 'var(--k-radius-md)',
-                boxShadow: 'var(--k-shadow-raised)',
-              }}
-            >
-              {ueberlaufWerkzeuge.map((w) => (
-                <KButton
-                  key={`${w.gruppe}:${w.id}`}
-                  size="sm"
-                  tone="ghost"
-                  data-testid={`werkzeuge-mehr-eintrag-${w.gruppe}-${w.id}`}
-                  style={{ justifyContent: 'flex-start' }}
-                  onClick={() => {
-                    w.aktion();
-                    setMehrOffen(false);
-                  }}
-                >
-                  {w.label}
-                </KButton>
-              ))}
-            </div>
-          )}
-        </span>
-        {/* A7 (K17): «Fähigkeiten» — eine eigene Icon-Gruppe für die sechs
-            Spezialfähigkeiten, zusätzlich zu den unveränderten Alt-Knöpfen in
-            «Ebenen» (Begründung: Kommentar bei `FAEHIGKEITEN` oben). Klick =
-            Fähigkeit wie heute; Rechtsklick ODER das kleine ⌄ öffnen das
-            zugehörige Panel garantiert («voll»). */}
-        <Trennlabel>Fähigkeiten</Trennlabel>
-        <span
-          data-testid="leiste-gruppe-faehigkeiten"
-          className={fokusKlasse(stufeFuerGruppe('faehigkeiten'))}
-          style={{
-            display: 'inline-flex',
-            flexWrap: 'wrap',
-            gap: 6,
-            rowGap: 4,
-            alignItems: 'center',
-            ...(gehobenNachGruppe.faehigkeiten ? { opacity: 1 } : {}),
-          }}
-        >
-          {FAEHIGKEITEN.map(({ id, titel, Icon, aktiv, klick, voll }) => (
-            <span key={id} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-              <KButton
-                size="sm"
-                tone={aktiv ? 'accent' : 'ghost'}
-                data-testid={`faehigkeit-${id}`}
-                title={titel}
-                aria-label={titel}
-                onClick={klick}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  voll();
-                }}
-                style={{
-                  width: 30,
-                  height: 30,
-                  padding: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  // Reihenfolge bewusst: Nutzer-Adaption zuerst, ein
-                  // angewendetes Phasen-Preset (falls vorhanden) gewinnt
-                  // darüber — Owner-Kontrolle schlägt automatische Vermutung.
-                  ...elementStil('faehigkeiten', id).style,
-                  ...faehigkeitStil(id).style,
-                }}
-              >
-                <Icon />
-              </KButton>
-              <button
-                type="button"
-                data-testid={`faehigkeit-${id}-voll`}
-                title={`${titel} — Panel voll öffnen`}
-                aria-label={`${titel} — Panel voll öffnen`}
-                onClick={voll}
-                style={{
-                  all: 'unset',
-                  cursor: 'pointer',
-                  fontSize: 9,
-                  lineHeight: 1,
-                  padding: '0 2px',
-                  color: 'var(--k-ink-faint)',
-                }}
-              >
-                ⌄
-              </button>
-            </span>
-          ))}
-        </span>
-        {tool === 'treppe' && (
-          <select
-            value={treppenForm}
-            data-testid="treppen-form"
-            onChange={(e) => {
-              setTreppenForm(e.target.value as 'gerade' | 'podest' | 'u' | 'l');
-              setPoints([]);
-            }}
-            title="Treppenform — L-Lauf: Antritt, Ecke, Austritt klicken"
-            style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
-          >
-            <option value="gerade">gerade</option>
-            <option value="podest">mit Podest</option>
-            <option value="u">U-Lauf</option>
-            <option value="l">L-Lauf</option>
-          </select>
-        )}
-        <span style={{ width: 12 }} />
-        {/* T7 (Projekt-Lebenszyklus): Phase/Bemassungsstil sind projektspezifisch
-            und wechseln über Jahre selten — sie stehen nicht mehr dauerhaft in
-            der Werkzeugzeile, sondern hinter diesem Umschalter (Fokus-Stufe
-            «selten», docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md). Nichts entfernt:
-            dieselben Commands, dieselben data-testids, nur der Ort ist neu. */}
-        <span
-          data-testid="leiste-gruppe-projekt"
-          className={fokusKlasse(stufeFuerGruppe('projekt'))}
-          style={{ display: 'inline-flex', ...(gehobenNachGruppe.projekt ? { opacity: 1 } : {}) }}
-        >
-          <KButton
-            size="sm"
-            tone={projektMenuOffen ? 'accent' : 'ghost'}
-            data-testid="projekt-menu-toggle"
-            title="Projekt-Einstellungen — SIA-Phase, Bemassungsstil (selten geändert)"
-            onClick={() => {
-              setProjektMenuOffen((o) => !o);
-              nutzungMelden('projekt:menu');
-            }}
-            {...elementStil('projekt', 'menu')}
-          >
-            Projekt ▾
-          </KButton>
-        </span>
-        {/* Regel 2.3.5 (Transparenz): solange die Matrix eine Gruppe unter ihre
-            T7-Basis zurückstellt, zeigt dieser dezente Hinweis warum — anschluss-
-            fähig an Serie G (Kosmo erklärt), hier nur der Text im title.
-            Fable-Review-2-Auflage J3c-0a: IMMER gemountet (nicht conditional),
-            Sichtbarkeit über `visibility` — der Platz bleibt reserviert, kein
-            Layout-Ruck, wenn der Hinweis erscheint/verschwindet. */}
-        <span
-          data-testid="adaption-hinweis"
-          className="k-selten"
-          title={adaptionHinweisTitel}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            fontSize: 11,
-            color: 'var(--k-ink-faint)',
-            whiteSpace: 'nowrap',
-            visibility: adaptionHinweisSichtbar ? 'visible' : 'hidden',
-          }}
-        >
-          ⓘ angepasst
-        </span>
-        <span
-          data-testid="leiste-gruppe-verlauf"
-          className={fokusKlasse(stufeFuerGruppe('verlauf'))}
-          style={{ display: 'inline-flex', gap: 8, alignItems: 'center', ...(gehobenNachGruppe.verlauf ? { opacity: 1 } : {}) }}
-        >
-          <KButton
-            size="sm"
-            tone="ghost"
-            onClick={() => {
-              undo();
-              nutzungMelden('verlauf:undo');
-            }}
-            data-testid="undo"
-            {...elementStil('verlauf', 'undo')}
-          >
-            ↩ Rückgängig
-          </KButton>
-          <KButton
-            size="sm"
-            tone="ghost"
-            onClick={() => {
-              redo();
-              nutzungMelden('verlauf:redo');
-            }}
-            {...elementStil('verlauf', 'redo')}
-          >
-            ↪ Wiederholen
-          </KButton>
-        </span>
-        {onEinstellungen && (
-          <>
-            <div style={{ flex: 1 }} />
+          </span>
+          {onEinstellungen && (
             <KButton
               size="sm"
               tone="ghost"
@@ -1875,8 +1573,396 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             >
               ⚙
             </KButton>
-          </>
-        )}
+          )}
+        </div>
+
+        {/* Kontextzeile — SK-D1 Massnahme 1/2: Export/Ebenen/Fähigkeiten/
+            Verlauf + situative Selects (Assembly bei Wand, Treppenform bei
+            Treppe). Bewusst EINE zweite Zeile (nie mehr), klar abgesetzt über
+            --k-field statt --k-surface (UI-KONZEPT-065 §2 Hierarchie-Rezept).
+            Export/Ebenen bleiben inhaltlich Panel-Toggles statt eines echten
+            ausklappbaren KMenu (Massnahme 2 erlaubt ausdrücklich «bleibt
+            Panel-Toggle»): die alten `export-*`/`import-*`-testids werden von
+            zahlreichen NICHT-W2-Spec-Dateien direkt angeklickt (module.spec,
+            abnahme, splat, unternehmerplan*, sim-*, studienbericht — vorher
+            per grep gezählt), ohne zuerst ein Menü zu öffnen. Ein echtes
+            KMenu aus dem eingefrorenen `packages/kosmo-ui` setzt
+            `pointer-events:none`, solange es zu ist, und würde diese Klicks
+            brechen; eine dauerhaft klickbare, aber unsichtbare Fläche über dem
+            Viewport (Opazitäts-Fächer-Pattern wie beim Orbit) widerspräche
+            der ROADMAP-253-Lehre («Leiste überdeckte Plan-Klicks», s.
+            UI-SELBSTKRITIK-064 SK-D1) — genau die koordinatensensiblen
+            Plan-/Element-Fang-Tests, die dieser Stream grün halten muss.
+            Die Gruppen wandern daher unverändert-klickbar hierher, nur
+            visuell unter einem KIcon-Label zusammengefasst statt der alten
+            blassen Inline-Sektion (dokumentierte Wahl, s. Bericht/Grenzen). */}
+        <div
+          data-testid="design-werkzeugleiste-kontext"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
+            gap: 'var(--k-s3)',
+            padding: 'var(--k-s2) var(--k-s4)',
+            borderBottom: '1px solid var(--k-line)',
+            background: 'var(--k-field)',
+            zIndex: 2,
+          }}
+        >
+          {tool === 'wand' && assemblies.length > 0 && (
+            <select
+              value={effectiveAssembly ?? ''}
+              onChange={(e) => setAssemblyId(e.target.value)}
+              style={{
+                background: 'var(--k-raised)',
+                border: '1px solid var(--k-line-strong)',
+                borderRadius: 'var(--k-radius-sm)',
+                padding: '4px 8px',
+                fontSize: 12.5,
+              }}
+            >
+              {assemblies.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {/* SK-D1 Massnahme 2 («EIN KMenu Export»): echter Auf/Zu-Trigger,
+              STANDARDMÄSSIG OFFEN. Grund für «offen» als Default (dokumentierte
+              Wahl, s. Bericht/Grenzen): ein Grep über alle Specs zeigte, dass
+              zahlreiche NICHT-W2-Dateien (module.spec, abnahme, splat,
+              unternehmerplan*, sim-*, studienbericht) `export-pdf`/`export-dxf`/
+              `export-ifc`/`import-*`/`splat-werkzeug-toggle` DIREKT anklicken,
+              ohne zuvor ein Menü zu öffnen. Mit Default «offen» sehen diese
+              Specs die Gruppe unverändert wie vorher (sie rühren
+              `export-menu-toggle` nie an); nur wer bewusst zuklappt (hier
+              bewiesen in `design-werkzeugleiste.spec.ts`), verliert die Sicht
+              auf die Knöpfe — nie ungefragt, nie versteckt-aber-klickbar über
+              dem Viewport (ROADMAP-253-Lehre). */}
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--k-s1)' }}>
+            <KButton
+              size="sm"
+              tone={exportMenuOffen ? 'accent' : 'ghost'}
+              data-testid="export-menu-toggle"
+              aria-expanded={exportMenuOffen}
+              aria-label="Export/Import — Menü auf-/zuklappen"
+              title="Export/Import — PDF, SVG, DXF, IFC, Splat"
+              onClick={() => setExportMenuOffen((o) => !o)}
+            >
+              <KIcon name="export" size={14} /> Export {exportMenuOffen ? '▾' : '▸'}
+            </KButton>
+          </span>
+          {exportMenuOffen && (
+            <span
+              data-testid="leiste-gruppe-export"
+              className={fokusKlasse(stufeFuerGruppe('export'))}
+              style={{
+                display: 'inline-flex',
+                flexWrap: 'nowrap',
+                gap: 'var(--k-s3)',
+                alignItems: 'center',
+                ...(gehobenNachGruppe.export ? { opacity: 1 } : {}),
+              }}
+            >
+              <KButton size="sm" tone="ghost" onClick={klickExportPdf} data-testid="export-pdf" {...elementStil('export', 'pdf')}>
+                PDF
+              </KButton>
+              <KButton size="sm" tone="ghost" onClick={klickExportSvg} {...elementStil('export', 'svg')}>
+                SVG
+              </KButton>
+              <KButton size="sm" tone="ghost" onClick={klickExportDxf} data-testid="export-dxf" {...elementStil('export', 'dxf')}>
+                DXF
+              </KButton>
+              <KButton size="sm" tone="ghost" onClick={klickExportIfc} data-testid="export-ifc" {...elementStil('export', 'ifc')}>
+                IFC
+              </KButton>
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="import-ifc"
+                onClick={klickImportIfc}
+                {...elementStil('export', 'import-ifc')}
+              >
+                IFC laden
+              </KButton>
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="import-dxf"
+                onClick={klickImportDxf}
+                {...elementStil('export', 'import-dxf')}
+              >
+                DXF laden
+              </KButton>
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="import-splat"
+                onClick={klickImportSplat}
+                {...elementStil('export', 'import-splat')}
+              >
+                Splat laden
+              </KButton>
+              <KButton
+                size="sm"
+                tone={splatPanelOffen ? 'accent' : 'ghost'}
+                data-testid="splat-werkzeug-toggle"
+                onClick={klickSplatWerkzeug}
+                {...elementStil('export', 'splat-werkzeug')}
+              >
+                Splat-Werkzeug
+              </KButton>
+            </span>
+          )}
+          <Trennlabel icon="ebenen">Ebenen</Trennlabel>
+          <span
+            data-testid="leiste-gruppe-ebenen"
+            className={fokusKlasse(stufeFuerGruppe('ebenen'))}
+            style={{
+              display: 'inline-flex',
+              flexWrap: 'nowrap',
+              gap: 'var(--k-s3)',
+              alignItems: 'center',
+              ...(gehobenNachGruppe.ebenen ? { opacity: 1 } : {}),
+            }}
+          >
+            <KButton size="sm" tone={texturen ? 'accent' : 'ghost'} data-testid="textur-toggle" onClick={klickTextur} {...elementStil('ebenen', 'textur')}>
+              Textur
+            </KButton>
+            <KButton size="sm" tone={sonneOffen ? 'accent' : 'ghost'} data-testid="sonne-toggle" onClick={klickSonne} {...elementStil('ebenen', 'sonne')}>
+              ☀ Sonne
+            </KButton>
+            <KButton size="sm" tone={studieOffen ? 'accent' : 'ghost'} data-testid="studie-toggle" onClick={klickStudie} {...elementStil('ebenen', 'studie')}>
+              Varianten
+            </KButton>
+            <KButton size="sm" tone={drawOffen ? 'accent' : 'ghost'} data-testid="draw-toggle" onClick={klickDraw} {...elementStil('ebenen', 'draw')}>
+              Draw
+            </KButton>
+            <KButton size="sm" tone={listeOffen ? 'accent' : 'ghost'} data-testid="liste-toggle" onClick={klickListe} {...elementStil('ebenen', 'liste')}>
+              Liste
+            </KButton>
+            <KButton
+              size="sm"
+              tone={kvOffen ? 'accent' : 'ghost'}
+              data-testid="kv-oeffnen"
+              title="Kostenvoranschlag-Grobschätzung — Richtwert auf GF-Basis, kein Devis"
+              onClick={klickKv}
+              {...elementStil('ebenen', 'kv')}
+            >
+              KV
+            </KButton>
+            <KButton
+              size="sm"
+              tone={bauablaufOffen ? 'accent' : 'ghost'}
+              data-testid="bauablauf-oeffnen"
+              title="Bauablaufplan — abgeleiteter Grob-Terminplan, ersetzt keine Bauleitung"
+              onClick={klickBauablauf}
+              {...elementStil('ebenen', 'bauablauf')}
+            >
+              Bauablauf
+            </KButton>
+            <KButton
+              size="sm"
+              tone={maengelOffen ? 'accent' : 'ghost'}
+              data-testid="maengel-oeffnen"
+              title="Mängel — Abschlussphase Gebäudeabnahme, Anstoss zur Schlussbegehung"
+              onClick={klickMaengel}
+              {...elementStil('ebenen', 'maengel')}
+            >
+              Mängel
+            </KButton>
+            <KButton size="sm" tone={rasterOffen ? 'accent' : 'ghost'} data-testid="raster-toggle" onClick={klickRaster} {...elementStil('ebenen', 'raster')}>
+              Raster
+            </KButton>
+          </span>
+          <span style={{ position: 'relative', display: 'inline-flex' }}>
+            <KButton
+              size="sm"
+              tone={mehrOffen ? 'accent' : 'ghost'}
+              data-testid="werkzeuge-mehr"
+              title="Weitere Werkzeuge — nach Nutzungshäufigkeit sortiert"
+              aria-label="Weitere Werkzeuge"
+              style={{ visibility: ueberlaufWerkzeuge.length > 0 ? 'visible' : 'hidden' }}
+              onClick={() => setMehrOffen((o) => !o)}
+            >
+              Mehr…
+            </KButton>
+            {mehrOffen && ueberlaufWerkzeuge.length > 0 && (
+              <div
+                data-testid="werkzeuge-mehr-liste"
+                className="k-dialog"
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  marginTop: 4,
+                  zIndex: 5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 3,
+                  padding: 6,
+                  minWidth: 140,
+                  background: 'var(--k-surface)',
+                  border: '1px solid var(--k-line)',
+                  borderRadius: 'var(--k-radius-md)',
+                  boxShadow: 'var(--k-shadow-raised)',
+                }}
+              >
+                {ueberlaufWerkzeuge.map((w) => (
+                  <KButton
+                    key={`${w.gruppe}:${w.id}`}
+                    size="sm"
+                    tone="ghost"
+                    data-testid={`werkzeuge-mehr-eintrag-${w.gruppe}-${w.id}`}
+                    style={{ justifyContent: 'flex-start' }}
+                    onClick={() => {
+                      w.aktion();
+                      setMehrOffen(false);
+                    }}
+                  >
+                    {w.label}
+                  </KButton>
+                ))}
+              </div>
+            )}
+          </span>
+          {/* A7 (K17): «Fähigkeiten» — eine eigene Icon-Gruppe für die sechs
+              Spezialfähigkeiten, zusätzlich zu den unveränderten Alt-Knöpfen in
+              «Ebenen» (Begründung: Kommentar bei `FAEHIGKEITEN` oben). Klick =
+              Fähigkeit wie heute; Rechtsklick ODER das kleine ⌄ öffnen das
+              zugehörige Panel garantiert («voll»). */}
+          <Trennlabel>Fähigkeiten</Trennlabel>
+          <span
+            data-testid="leiste-gruppe-faehigkeiten"
+            className={fokusKlasse(stufeFuerGruppe('faehigkeiten'))}
+            style={{
+              display: 'inline-flex',
+              flexWrap: 'nowrap',
+              gap: 'var(--k-s2)',
+              alignItems: 'center',
+              ...(gehobenNachGruppe.faehigkeiten ? { opacity: 1 } : {}),
+            }}
+          >
+            {FAEHIGKEITEN.map(({ id, titel, Icon, aktiv, klick, voll }) => (
+              <span key={id} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+                <KButton
+                  size="sm"
+                  tone={aktiv ? 'accent' : 'ghost'}
+                  data-testid={`faehigkeit-${id}`}
+                  title={titel}
+                  aria-label={titel}
+                  onClick={klick}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    voll();
+                  }}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    // Reihenfolge bewusst: Nutzer-Adaption zuerst, ein
+                    // angewendetes Phasen-Preset (falls vorhanden) gewinnt
+                    // darüber — Owner-Kontrolle schlägt automatische Vermutung.
+                    ...elementStil('faehigkeiten', id).style,
+                    ...faehigkeitStil(id).style,
+                  }}
+                >
+                  <Icon />
+                </KButton>
+                <button
+                  type="button"
+                  data-testid={`faehigkeit-${id}-voll`}
+                  title={`${titel} — Panel voll öffnen`}
+                  aria-label={`${titel} — Panel voll öffnen`}
+                  onClick={voll}
+                  style={{
+                    all: 'unset',
+                    cursor: 'pointer',
+                    fontSize: 9,
+                    lineHeight: 1,
+                    padding: '0 2px',
+                    color: 'var(--k-ink-faint)',
+                  }}
+                >
+                  ⌄
+                </button>
+              </span>
+            ))}
+          </span>
+          {tool === 'treppe' && (
+            <select
+              value={treppenForm}
+              data-testid="treppen-form"
+              onChange={(e) => {
+                setTreppenForm(e.target.value as 'gerade' | 'podest' | 'u' | 'l');
+                setPoints([]);
+              }}
+              title="Treppenform — L-Lauf: Antritt, Ecke, Austritt klicken"
+              style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+            >
+              <option value="gerade">gerade</option>
+              <option value="podest">mit Podest</option>
+              <option value="u">U-Lauf</option>
+              <option value="l">L-Lauf</option>
+            </select>
+          )}
+          {/* Regel 2.3.5 (Transparenz): solange die Matrix eine Gruppe unter ihre
+              T7-Basis zurückstellt, zeigt dieser dezente Hinweis warum — anschluss-
+              fähig an Serie G (Kosmo erklärt), hier nur der Text im title.
+              Fable-Review-2-Auflage J3c-0a: IMMER gemountet (nicht conditional),
+              Sichtbarkeit über `visibility` — der Platz bleibt reserviert, kein
+              Layout-Ruck, wenn der Hinweis erscheint/verschwindet. */}
+          <span
+            data-testid="adaption-hinweis"
+            className="k-selten"
+            title={adaptionHinweisTitel}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              fontSize: 11,
+              color: 'var(--k-ink-faint)',
+              whiteSpace: 'nowrap',
+              visibility: adaptionHinweisSichtbar ? 'visible' : 'hidden',
+            }}
+          >
+            ⓘ angepasst
+          </span>
+          <div style={{ flex: 1 }} />
+          <span
+            data-testid="leiste-gruppe-verlauf"
+            className={fokusKlasse(stufeFuerGruppe('verlauf'))}
+            style={{ display: 'inline-flex', gap: 'var(--k-s3)', alignItems: 'center', ...(gehobenNachGruppe.verlauf ? { opacity: 1 } : {}) }}
+          >
+            <KButton
+              size="sm"
+              tone="ghost"
+              onClick={() => {
+                undo();
+                nutzungMelden('verlauf:undo');
+              }}
+              data-testid="undo"
+              {...elementStil('verlauf', 'undo')}
+            >
+              ↩ Rückgängig
+            </KButton>
+            <KButton
+              size="sm"
+              tone="ghost"
+              onClick={() => {
+                redo();
+                nutzungMelden('verlauf:redo');
+              }}
+              {...elementStil('verlauf', 'redo')}
+            >
+              ↪ Wiederholen
+            </KButton>
+          </span>
+        </div>
       </div>
 
       {projektMenuOffen && (
@@ -2298,6 +2384,18 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   borderLeft: viewMode === 'split' ? '1px solid var(--k-line)' : 'none',
                 }}
               >
+                {/* SK-D4 (Massnahme 5) — Versuch verworfen, s. Bericht/Grenzen:
+                    ein `key`-erzwungener Neu-Mount hier hätte PlanView bei
+                    JEDEM split↔2d-Wechsel zurückgesetzt und damit lokalen
+                    PlanView-UI-Zustand (z.B. `achsen-toggle`) verloren —
+                    nachweislich eine Regression (module.spec.ts «Stützen-
+                    raster»-Test). PlanView passt sich schon bei ihrem
+                    EIGENEN Mount automatisch ein (`einpassen()`, PlanView.tsx)
+                    — das greift unverändert beim Öffnen aus dem 3D-Modus
+                    (echter Erstmount), aber NICHT beim reinen split↔2d-
+                    Wechsel (dieselbe Instanz bleibt bestehen). Ein sauberer
+                    Fix (gezielter Re-Fit-Trigger ohne vollen Remount) gehört
+                    in `PlanView.tsx` selbst — das ist W3-Gebiet. */}
                 <PlanView handlers={handlersRef} onLod={setPlanLodStufe} />
               </div>
             )}
@@ -2409,21 +2507,27 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           onDockPrepare={() => onStationOeffnen?.('prepare')}
         />
 
-        {/* Geschossleiste */}
+        {/* Geschossleiste — v0.6.5 (W2, SK-D3): gerahmter Karteikarten-
+            Container statt kontextlos schwebender Knöpfe (Owner-Befund
+            «kollidiert optisch mit Dock-Icons darunter»). `k-karte` liefert
+            die 45°-Ecke + `--k-raised` (UI-KONZEPT-065 §2 Hierarchie-Rezept,
+            frozen `packages/kosmo-ui`); Randfarbe wird auf --k-line-strong
+            angehoben (`k-karte` selbst nutzt --k-technik für Werkplan-Karten,
+            hier ist es keine Werkplan-Karte). Dockt jetzt bündig an die
+            Viewport-Kante (0/0 statt 12/12), testids/Texte unverändert. */}
         <div
           ref={geschossleisteRef}
           data-testid="geschossleiste"
+          className="k-karte"
           style={{
             position: 'absolute',
-            left: 12,
-            top: 12,
+            left: 0,
+            top: 0,
             display: 'flex',
             flexDirection: 'column-reverse',
-            gap: 4,
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-md)',
-            padding: 6,
+            gap: 'var(--k-s2)',
+            border: '1px solid var(--k-line-strong)',
+            padding: 'var(--k-s2)',
             boxShadow: 'var(--k-shadow-raised)',
             // Testlauf-Befund: bei Hochhäusern (20+ Geschossen) lief die Liste
             // sonst unten aus dem Viewport — Höhe deckeln, dann scrollt sie.
@@ -2555,7 +2659,37 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             </span>
           )}
           <span style={{ flex: 1 }} />
-          <span style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}>
+          {/* SK-D5-Nachbarbefund (Massnahme 6): dieser Hinweistext ist der
+              längste Statusleisten-Eintrag und sass ohne Platzbegrenzung
+              unten rechts — bei schmalerem Viewport/mehr Nachbar-Badges lief
+              er ab, statt sauber zu enden. `maxWidth` + Ellipsis statt eines
+              harten Abschnitts (Text bleibt vollständig im `title`, falls
+              abgeschnitten). */}
+          <span
+            title={
+              tool === 'wand'
+                ? 'Klick: Punkte setzen · Shift halten: Winkel einrasten (0/45/90°) · Shift-Klick: Kette beenden · Esc: abbrechen'
+                : tool === 'skizze'
+                  ? 'Freihand zeichnen — beliebig viele Striche, dann «Übergeben»: fasst alles zu Wänden zusammen'
+                  : tool === 'treppe'
+                    ? 'Klick: Antritt, dann Austritt (Steigung wird berechnet) · Shift: Winkel einrasten'
+                    : tool === 'schnitt'
+                      ? 'Klick: Anfang und Ende der Schnittlinie · Shift: Winkel einrasten'
+                      : tool === 'volumen' || tool === 'zone' || tool === 'dach'
+                        ? 'Klick: Eckpunkte · Shift: Winkel einrasten · Klick auf Start: schliessen'
+                        : 'Klick: auswählen'
+            }
+            style={{
+              background: 'var(--k-surface)',
+              padding: '3px 8px',
+              borderRadius: 6,
+              border: '1px solid var(--k-line)',
+              maxWidth: 'min(46vw, 480px)',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {tool === 'wand'
               ? 'Klick: Punkte setzen · Shift halten: Winkel einrasten (0/45/90°) · Shift-Klick: Kette beenden · Esc: abbrechen'
               : tool === 'skizze'
