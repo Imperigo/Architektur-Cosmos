@@ -1,5 +1,13 @@
-import { KButton } from '@kosmo/ui';
-import { IconEntwurfCad, IconEntwurfSkizzieren, IconEntwurfSprechen } from './werkzeug-icons';
+import { Hairline, KButton } from '@kosmo/ui';
+import {
+  IconDockDraw,
+  IconDockPrepare,
+  IconDockPublish,
+  IconDockVis,
+  IconEntwurfCad,
+  IconEntwurfSkizzieren,
+  IconEntwurfSprechen,
+} from './werkzeug-icons';
 
 /**
  * K16 (Owner-Befund, wörtlich): «Drei Entwurfs-Icons in KosmoDesign: (1)
@@ -24,6 +32,15 @@ export interface EntwurfsDockProps {
   onSprechen: () => void;
   onSkizzieren: () => void;
   onCad: () => void;
+  /** A7 (Grundicons anderer Stationen): öffnet KosmoDraw (Deep-Link, s.
+   *  `DesignWorkspace.tsx`). */
+  onDockDraw: () => void;
+  /** A7: wechselt zu KosmoVis — ehrlich Navigation, keine Einbettung. */
+  onDockVis: () => void;
+  /** A7: wechselt zu KosmoPublish. */
+  onDockPublish: () => void;
+  /** A7: wechselt zu KosmoPrepare. */
+  onDockPrepare: () => void;
 }
 
 const EINTRAEGE: {
@@ -42,11 +59,46 @@ const EINTRAEGE: {
   { modus: 'cad', testid: 'entwurf-cad', titel: 'Manuelles CAD — klassische Werkzeuge', Icon: IconEntwurfCad },
 ];
 
-export function EntwurfsDock({ modus, onSprechen, onSkizzieren, onCad }: EntwurfsDockProps) {
+/**
+ * A7 (Owner-Befund K17, wörtlich: «Grundicons KosmoDraw/Vis/Publish/Prepare
+ * in KosmoDesign integriert»): vier kleine Stations-Icons unter einem
+ * Trenner — Draw öffnet den bestehenden Deep-Link (bleibt in KosmoDesign),
+ * Vis/Publish/Prepare wechseln die Station. Ehrlich Navigation, KEINE
+ * Einbettung: der Tooltip sagt das offen («öffnet KosmoVis» etc.), keine
+ * `aria-pressed`-Modusmarkierung wie bei den drei Entwurfs-Icons oben (es
+ * gibt hier keinen "aktiven Modus", nur einen Sprung).
+ */
+const STATIONS_EINTRAEGE: {
+  testid: string;
+  titel: string;
+  Icon: () => React.JSX.Element;
+}[] = [
+  { testid: 'dock-draw', titel: 'KosmoDraw — Modellbaum, Mengen, Ausmass (in KosmoDesign)', Icon: IconDockDraw },
+  { testid: 'dock-vis', titel: 'öffnet KosmoVis — Renderings, Varianten', Icon: IconDockVis },
+  { testid: 'dock-publish', titel: 'öffnet KosmoPublish — Plansätze, Layouts', Icon: IconDockPublish },
+  { testid: 'dock-prepare', titel: 'öffnet KosmoPrepare — Grundlagen, Ingestion', Icon: IconDockPrepare },
+];
+
+export function EntwurfsDock({
+  modus,
+  onSprechen,
+  onSkizzieren,
+  onCad,
+  onDockDraw,
+  onDockVis,
+  onDockPublish,
+  onDockPrepare,
+}: EntwurfsDockProps) {
   const aktion: Record<EntwurfsModus, () => void> = {
     sprechen: onSprechen,
     skizzieren: onSkizzieren,
     cad: onCad,
+  };
+  const stationsAktion: Record<string, () => void> = {
+    'dock-draw': onDockDraw,
+    'dock-vis': onDockVis,
+    'dock-publish': onDockPublish,
+    'dock-prepare': onDockPrepare,
   };
   return (
     <div
@@ -78,6 +130,23 @@ export function EntwurfsDock({ modus, onSprechen, onSkizzieren, onCad }: Entwurf
           data-testid={testid}
           onClick={aktion[m]}
           style={{ width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Icon />
+        </KButton>
+      ))}
+      <div style={{ padding: '2px 0' }}>
+        <Hairline />
+      </div>
+      {STATIONS_EINTRAEGE.map(({ testid, titel, Icon }) => (
+        <KButton
+          key={testid}
+          size="sm"
+          tone="quiet"
+          title={titel}
+          aria-label={titel}
+          data-testid={testid}
+          onClick={stationsAktion[testid]}
+          style={{ width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.85 }}
         >
           <Icon />
         </KButton>

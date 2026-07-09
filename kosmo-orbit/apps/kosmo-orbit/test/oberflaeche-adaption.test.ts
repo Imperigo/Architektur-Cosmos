@@ -172,6 +172,29 @@ describe('adaptiveFokusStufe — Tätigkeits-Matrix (2.2), jede Zeile/Spalte', (
     expect(adaptiveFokusStufe('verlauf', 'primaer', kontext({ tool: 'wand' }), leeresProfil())).toBe('primaer');
   });
 
+  // A7 (K17): `faehigkeiten` — dieselbe Basis-Spalte wie `ebenen` (sekundär,
+  // beim Zeichnen selten), UND dieselbe Anti-Dimm-Ausnahme bei offenem Panel
+  // (Submissions-Check teilt sich `panelOffen` mit den Ebenen-Panels, s.
+  // Kommentar in `oberflaeche-adaption.ts`).
+  it('faehigkeiten: Basis sekundär, beim Zeichnen selten — wie ebenen', () => {
+    expect(adaptiveFokusStufe('faehigkeiten', 'sekundaer', kontext({ tool: 'auswahl' }), leeresProfil())).toBe(
+      'sekundaer',
+    );
+    expect(adaptiveFokusStufe('faehigkeiten', 'sekundaer', kontext({ tool: 'volumen' }), leeresProfil())).toBe(
+      'selten',
+    );
+  });
+
+  it('faehigkeiten: ein offenes Panel (panelOffen) hält die Gruppe auf Basis — wie ebenen', () => {
+    const stufe = adaptiveFokusStufe(
+      'faehigkeiten',
+      'sekundaer',
+      kontext({ tool: 'wand', aktionLaeuft: false, panelOffen: true }),
+      leeresProfil(),
+    );
+    expect(stufe).toBe('sekundaer');
+  });
+
   it('ein unbekanntes/neutrales Werkzeug verhält sich wie auswahl (bleibt auf Basis)', () => {
     expect(adaptiveFokusStufe('export', 'sekundaer', kontext({ tool: 'irgendwas' }), leeresProfil())).toBe(
       'sekundaer',
@@ -365,6 +388,7 @@ describe('LEISTEN_BASIS — T7-Basis je Gruppe (2.2, Basis-Spalte), einzige Quel
       ansicht: 'sekundaer',
       export: 'sekundaer',
       ebenen: 'sekundaer',
+      faehigkeiten: 'sekundaer',
       projekt: 'selten',
       verlauf: 'primaer',
     });

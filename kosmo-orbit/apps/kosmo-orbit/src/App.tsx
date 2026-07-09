@@ -651,6 +651,13 @@ export function App() {
                 requestKosmoFokus();
                 setKosmoOpen(true);
               }}
+              // A7 (EntwurfsDock, Grundicons anderer Stationen): exakt derselbe
+              // Weg wie eine Zentrale-Kachel (`oeffneModul`) — kein zweiter
+              // Navigations-Pfad, nur ein zweiter Aufrufort.
+              onStationOeffnen={(id) => {
+                const m = modules.find((mm) => mm.id === id);
+                if (m) oeffneModul(m);
+              }}
             />
           </KFehlerzone>
         ) : screen === 'vis' ? (

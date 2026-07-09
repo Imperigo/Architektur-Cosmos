@@ -142,3 +142,180 @@ export function IconEntwurfCad() {
     </svg>
   );
 }
+
+/**
+ * K17/A7 (Owner-Befund, wörtlich: «Spezialfähigkeiten hinter Icons»): sechs
+ * Icons für die neue «Fähigkeiten»-Gruppe der Design-Werkzeugleiste —
+ * Sonnenstudie, Volumenstudien, KV, Bauablauf, Mängel, Submissions-Check.
+ * Gleicher Stil wie oben (nur Linien/Flächen aus `currentColor`, `aria-hidden`,
+ * 16×16, kaum Rundung). `IconFaehigkeitStudien` ist bewusst ANDERS als das
+ * bestehende `IconVolumen` (Zeichenwerkzeug «Volumen», ein einzelner Baukörper)
+ * — hier mehrere gestapelte Baukörper, weil «Volumenstudien» Varianten
+ * VERGLEICHT statt eine Masse zu zeichnen; eine Verwechslung der beiden wäre
+ * genau der Fehler, den zwei visuell identische Icons für zwei verschiedene
+ * Fähigkeiten erzeugen würden.
+ */
+
+/** Sonnenstudie — Sonnenscheibe mit Strahlen (Schattenwurf/2h-Nachweis). */
+export function IconFaehigkeitSonne() {
+  return (
+    <svg {...basis}>
+      <circle cx="8" cy="8" r="3.1" fill="none" stroke="currentColor" strokeWidth="1.2" />
+      <path
+        d="M8 1.6 V3.3 M8 12.7 V14.4 M1.6 8 H3.3 M12.7 8 H14.4 M3.2 3.2 L4.4 4.4 M11.6 11.6 L12.8 12.8 M12.8 3.2 L11.6 4.4 M4.4 11.6 L3.2 12.8"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Volumenstudien — zwei gestapelte/verglichene Baukörper (Varianten). */
+export function IconFaehigkeitStudien() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2.4 10.4 L5.6 8.6 L8.8 10.4 L8.8 13.6 L5.6 15.4 L2.4 13.6 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinejoin="round"
+        transform="translate(0 -2.4)"
+      />
+      <path
+        d="M7.2 5 L10.4 3.2 L13.6 5 L13.6 8.2 L10.4 10 L7.2 8.2 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** KV — stilisiertes Franken-Zeichen (Kostenvoranschlag-Grobschätzung). */
+export function IconFaehigkeitKv() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M4.6 2.4 H12.2 M4.6 2.4 V13.6 M4.6 7.4 H10.4 M4.6 2.4 L3 4 M4.6 7.4 L3 9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="square"
+      />
+    </svg>
+  );
+}
+
+/** Bauablauf — Gantt-Balken (Grob-Terminplan aus Mengen/Geschossen). */
+export function IconFaehigkeitBauablauf() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2.4 3.6 H8.2 M2.4 7.6 H12.4 M2.4 11.6 H6.6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="butt"
+      />
+    </svg>
+  );
+}
+
+/** Mängel — Haken im Schild (Abnahme/Schlussbegehung). */
+export function IconFaehigkeitMaengel() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M8 1.8 L13.4 3.8 V8.2 C13.4 11.4 11 13.4 8 14.4 C5 13.4 2.6 11.4 2.6 8.2 V3.8 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+      />
+      <path d="M5.6 8.2 L7.3 10 L10.6 6.2" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Submissions-Check — Checkliste (Lückenliste vor der Ausschreibung). */
+export function IconFaehigkeitSubmission() {
+  return (
+    <svg {...basis}>
+      <rect x="2.6" y="2" width="10.8" height="12" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      <path
+        d="M4.8 5.2 H11.2 M4.8 8 H11.2 M4.8 10.8 H8.8"
+        stroke="currentColor"
+        strokeWidth="0.95"
+        strokeLinecap="round"
+      />
+      <path d="M4.4 5.2 L4.9 5.7 L5.9 4.4" stroke="currentColor" strokeWidth="0.7" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/**
+ * A7 (EntwurfsDock, Grundicons anderer Stationen): vier kleine Stations-
+ * Icons unter einem Trenner — Draw/Vis/Publish/Prepare. Ehrlich Navigation
+ * (Stationswechsel), keine Einbettung — Tooltip in `EntwurfsDock.tsx` sagt
+ * das offen («öffnet KosmoVis» etc.).
+ */
+
+/** Draw — Mengen-/Ausmass-Zeilen (Modellbaum, Aufriss auf Papier). */
+export function IconDockDraw() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2.6 3.4 H13.4 M2.6 6.6 H13.4 M2.6 9.8 H10.4 M2.6 13 H8.6"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Vis — Auge (Renderings/Varianten). */
+export function IconDockVis() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M1.6 8 C3.4 4.8 6 3.6 8 3.6 C10 3.6 12.6 4.8 14.4 8 C12.6 11.2 10 12.4 8 12.4 C6 12.4 3.4 11.2 1.6 8 Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+      />
+      <circle cx="8" cy="8" r="2" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Publish — bedrucktes Blatt (Plansätze/Layouts). */
+export function IconDockPublish() {
+  return (
+    <svg {...basis}>
+      <rect x="3.4" y="1.8" width="9.2" height="12.4" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      <path d="M5.2 4.6 H10.8 M5.2 7 H10.8 M5.2 9.4 H9" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
+      <path d="M5.2 11.8 H8" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Prepare — Eingangs-Tray mit Pfeil (Grundlagen/Ingestion). */
+export function IconDockPrepare() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2.4 9.6 H5.4 L6.6 11.4 H9.4 L10.6 9.6 H13.6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+      />
+      <path d="M2.4 9.6 L3 3.6 H13 L13.6 9.6" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
+      <path d="M8 4.4 V8.4 M6.2 6.6 L8 8.4 L9.8 6.6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}

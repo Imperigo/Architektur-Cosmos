@@ -61,13 +61,25 @@ export type { NutzungsProfil } from './oberflaeche-adaption-kern';
 // Typen (API aus Abschnitt 2.1, exakt — unverändert seit J3a)
 // ---------------------------------------------------------------------------
 
-export type LeistenGruppe = 'zeichnen' | 'ansicht' | 'export' | 'ebenen' | 'projekt' | 'verlauf';
+// A7 (K17): neue Gruppe `faehigkeiten` — die sechs Fähigkeits-Icons
+// (Sonnenstudie/Volumenstudien/KV/Bauablauf/Mängel/Submissions-Check,
+// `DesignWorkspace.tsx`/`phasen-presets.ts`). Bewusst eine EIGENE Gruppe,
+// NICHT ein Umzug der bestehenden `ebenen`-Einträge (sonne-toggle,
+// studie-toggle, kv-oeffnen, bauablauf-oeffnen, maengel-oeffnen bleiben
+// unverändert in `ebenen` — `e2e/oberflaeche-adaption.spec.ts` beweist am
+// lebenden Objekt, dass `sonne-toggle` ein Geschwister von `textur-toggle`
+// in genau dieser Gruppe ist, inkl. der 0.92-Opazitäts-Assertion; ein Umzug
+// hätte diese Pflicht-Regression zerstört). Die Fähigkeiten-Icons sind
+// zusätzliche, gleichwertige Zugänge zu denselben Handlern — kein Duplikat
+// der Logik, nur ein zweiter Knopf.
+export type LeistenGruppe = 'zeichnen' | 'ansicht' | 'export' | 'ebenen' | 'faehigkeiten' | 'projekt' | 'verlauf';
 
 const LEISTEN_GRUPPEN: readonly LeistenGruppe[] = [
   'zeichnen',
   'ansicht',
   'export',
   'ebenen',
+  'faehigkeiten',
   'projekt',
   'verlauf',
 ];
@@ -107,6 +119,7 @@ const TAETIGKEITS_REGELN: Record<LeistenGruppe, { beimZeichnen: FokusStufe | 'ba
   ansicht: { beimZeichnen: 'basis' }, // immer sekundär
   export: { beimZeichnen: 'selten' }, // wird beim Zeichnen zurückgestellt
   ebenen: { beimZeichnen: 'selten' }, // wird beim Zeichnen zurückgestellt
+  faehigkeiten: { beimZeichnen: 'selten' }, // wie ebenen: Spezialfähigkeiten treten beim Zeichnen zurück
   projekt: { beimZeichnen: 'basis' }, // immer selten
   verlauf: { beimZeichnen: 'basis' }, // immer primär
 };
@@ -145,6 +158,7 @@ export const LEISTEN_BASIS: Record<LeistenGruppe, FokusStufe> = {
   ansicht: 'sekundaer',
   export: 'sekundaer',
   ebenen: 'sekundaer',
+  faehigkeiten: 'sekundaer',
   projekt: 'selten',
   verlauf: 'primaer',
 };
@@ -175,7 +189,16 @@ export function adaptiveFokusStufe(
   let stufe = stufeAusRegel(regelStufe, basis);
 
   stufe = wendeAntiDimmAn(stufe, basis, kontext.aktionLaeuft);
-  stufe = wendeAntiDimmAn(stufe, basis, !kontext.aktionLaeuft && gruppe === 'ebenen' && kontext.panelOffen);
+  // A7: `faehigkeiten` teilt sich die Anti-Dimm-Ausnahme mit `ebenen` — die
+  // meisten Fähigkeits-Panels (Sonne/Studie/KV/Bauablauf/Mängel) sind exakt
+  // dieselben Panels wie die `ebenen`-Toggles (kein zweiter Zustand, s.
+  // `DesignWorkspace.tsx`), nur der neue Submissions-Check gehört
+  // ausschliesslich hierher — `kontext.panelOffen` deckt beides ab.
+  stufe = wendeAntiDimmAn(
+    stufe,
+    basis,
+    !kontext.aktionLaeuft && (gruppe === 'ebenen' || gruppe === 'faehigkeiten') && kontext.panelOffen,
+  );
 
   if (!kontext.aktionLaeuft && gruppe === 'export' && stufe === 'selten' && kontext.phase === 'werkplan') {
     // Werkplan-Phasen-Sonderfall — bleibt lokal, ist NICHT generisch (nur

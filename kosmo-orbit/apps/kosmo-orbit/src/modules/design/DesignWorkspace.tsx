@@ -17,7 +17,9 @@ import {
   fassadenModule,
   moduleAlsCsv,
   magnetFang,
+  phaseLabel,
   siaPhaseLabel,
+  UMBAU_LABEL,
   type Assembly,
   type Column,
   type ErkannteDecke,
@@ -38,7 +40,22 @@ import { zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { werkzeugFuerTaste } from './zeichen-shortcuts';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
 import type { PlanLod } from './planLod';
-import { IconAuswahl, IconVolumen, IconWand, IconZone } from './werkzeug-icons';
+import {
+  IconAuswahl,
+  IconDockDraw,
+  IconDockPrepare,
+  IconDockPublish,
+  IconDockVis,
+  IconFaehigkeitBauablauf,
+  IconFaehigkeitKv,
+  IconFaehigkeitMaengel,
+  IconFaehigkeitSonne,
+  IconFaehigkeitStudien,
+  IconFaehigkeitSubmission,
+  IconVolumen,
+  IconWand,
+  IconZone,
+} from './werkzeug-icons';
 import { ModulEditor } from './ModulEditor';
 import { PlanView } from './PlanView';
 import { KennzahlenPanel } from './KennzahlenPanel';
@@ -47,7 +64,9 @@ import { BerechnungslistePanel } from './BerechnungslistePanel';
 import { KvPanel } from './KvPanel';
 import { BauablaufPanel } from './BauablaufPanel';
 import { MaengelPanel } from './MaengelPanel';
+import { SubmissionsCheckPanel } from './SubmissionsCheckPanel';
 import { RasterPanel } from './RasterPanel';
+import { FAEHIGKEIT_LABEL, PHASEN_PRESETS, empfohlenePlanPhaseFuer, type FaehigkeitId } from './phasen-presets';
 import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
 import type { SplatCloud } from './splat-import';
@@ -139,6 +158,7 @@ const GRUPPEN_LABEL: Record<LeistenGruppe, string> = {
   ansicht: 'Ansicht',
   export: 'Export',
   ebenen: 'Ebenen',
+  faehigkeiten: 'Fähigkeiten',
   projekt: 'Projekt',
   verlauf: 'Verlauf',
 };
@@ -203,9 +223,15 @@ export interface DesignWorkspaceProps {
    *  des Entwurfs-Docks (Modus «Sprechen») — App.tsx kennt `kosmoOpen`
    *  bereits, hier rein lesend. */
   kosmoOffen?: boolean;
+  /** A7 (EntwurfsDock, Grundicons anderer Stationen): wechselt die Station —
+   *  derselbe Weg wie eine Zentrale-Kachel (`oeffneModul`, App.tsx). Ehrlich
+   *  Navigation, keine Einbettung. Optional aus demselben Grund wie
+   *  `onEinstellungen`/`onKosmoOeffnen` (isoliert gemountete Tests brauchen
+   *  ihn nicht). */
+  onStationOeffnen?: (station: 'vis' | 'publish' | 'prepare') => void;
 }
 
-export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }: DesignWorkspaceProps = {}) {
+export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, onStationOeffnen }: DesignWorkspaceProps = {}) {
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const runCommand = useProject((s) => s.runCommand);
@@ -304,6 +330,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
   // Mängel-/Abnahme-Grundgerüst (v0.6.3, Lücken-Batch 5, K22): Abschlussphase
   // «Gebäudeabnahme» — gleiche Panel-Anordnung wie KV/Bauablauf.
   const [maengelOffen, setMaengelOffen] = useState(false);
+  // A7 (K17): Submissions-Check — sechstes Fähigkeits-Icon, erstes echtes UI
+  // für `pruefeSubmissionsreife` (bislang nur `window.__kosmo.reife()` für
+  // Tests). Gleiche Panel-Anordnung wie KV/Bauablauf/Mängel.
+  const [submissionOffen, setSubmissionOffen] = useState(false);
   // Splat-Werkzeug (Owner-Korrektur 05.07.: NICHT HomeStation-exklusiv) —
   // Crop/Ausdünnen/Export laufen lokal, siehe SplatPanel.tsx.
   const [splatPanelOffen, setSplatPanelOffen] = useState(false);
@@ -415,6 +445,27 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
 
   const doc = useProject.getState().doc;
   const storeys = useMemo(() => doc.storeysOrdered(), [doc, revision]);
+
+  // A8 (K18, Bauphasen-Kopplung): wechselt die SIA-Teilphase (egal ob über
+  // `sia-phase-select` oder — künftig — Undo/Redo/Sync), bietet Kosmo das
+  // kuratierte Preset dieser Phase AN, wendet es aber NIE stumm um (Owner-
+  // Kontrolle, dasselbe Prinzip wie die bewusste Nicht-Kopplung Phase↔Teil-
+  // phase). `vorherigeSiaPhase` verhindert ein Angebot beim ERSTEN Mount
+  // (kein Angebot ohne echten Wechsel).
+  const vorherigeSiaPhase = useRef<SiaPhase | null>(null);
+  const [phasenAngebot, setPhasenAngebot] = useState<SiaPhase | null>(null);
+  // Angewendetes Preset: NUR UI-Zustand (welche Fähigkeits-Icons im Fokus
+  // stehen) — kein Kernel-Command, geht nicht durchs Doc/Undo/Yjs (Laufzeit
+  // ≠ Modell, s. `phasen-presets.ts`).
+  const [phasenFokus, setPhasenFokus] = useState<ReadonlySet<FaehigkeitId> | null>(null);
+  useEffect(() => {
+    const aktuell = doc.settings.siaPhase;
+    if (vorherigeSiaPhase.current !== null && vorherigeSiaPhase.current !== aktuell) {
+      setPhasenAngebot(aktuell);
+    }
+    vorherigeSiaPhase.current = aktuell;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc.settings.siaPhase]);
   // Serie K A5 (K15, Aufgabe 3): m²-Kurzwert der Statusleiste — ausgezogene
   // SIA-Fläche (NGF) des AKTIVEN Geschosses, dieselbe Zahl wie die
   // Berechnungsliste, nur je Geschoss statt Projekt-Summe (Zero-Click neben
@@ -856,6 +907,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
   // Fable-Review-2-Auflage J3c-0b: irgendein Ebenen-Panel offen? Die Ebenen-
   // Gruppe wird dann nie gedimmt (weder Sonne/Draw/Liste/Raster/Splat/Studie
   // selbst noch ihre Geschwister-Buttons in derselben Gruppe).
+  // A7: `submissionOffen` gehört ausschliesslich zur neuen `faehigkeiten`-
+  // Gruppe (kein Alt-Panel in `ebenen`) — trägt hier trotzdem mit ein, weil
+  // `kontext.panelOffen` jetzt beide Gruppen vor Dimmung schützt (s.
+  // `oberflaeche-adaption.ts`).
   const ebenenPanelOffen =
     sonneOffen ||
     drawOffen ||
@@ -865,7 +920,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
     studieOffen ||
     kvOffen ||
     bauablaufOffen ||
-    maengelOffen;
+    maengelOffen ||
+    submissionOffen;
 
   // Serie J / Batch J3b (SERIE-J-BUILDPLAN.md Abschnitt 2/3): die Werkzeug-
   // leisten-Gruppen leben — ihre Fokus-Stufe kommt aus `adaptiveFokusStufe`
@@ -1100,6 +1156,129 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
     if (!rasterOffen) setListeOffen(false);
     nutzungMelden('ebenen:raster');
   };
+  // A7: vorher inline im Bauablauf-Knopf der Ebenen-Gruppe — jetzt benannt,
+  // damit die neue Fähigkeiten-Gruppe denselben Handler aufruft (kein
+  // Logik-Duplikat, s. Kommentar bei `FAEHIGKEITEN` unten).
+  const klickBauablauf = () => {
+    setBauablaufOffen(!bauablaufOffen);
+    nutzungMelden('ebenen:bauablauf');
+  };
+  // A7: Submissions-Check ist neu (kein Alt-Knopf in `ebenen` — bislang gab
+  // es dafür kein UI, s. `SubmissionsCheckPanel.tsx`).
+  const klickSubmission = () => {
+    setSubmissionOffen(!submissionOffen);
+    nutzungMelden('faehigkeiten:submission');
+  };
+
+  /**
+   * A7 (K17, Owner-Befund «Spezialfähigkeiten hinter Icons»): die sechs
+   * Fähigkeits-Icons der neuen Werkzeugleisten-Gruppe. `klick` ruft
+   * ABSICHTLICH exakt denselben Handler auf, den der jeweilige Alt-Knopf in
+   * `ebenen` bereits benutzt (keine Logik-Kopie) — die Alt-Knöpfe selbst
+   * bleiben unverändert an Ort und Stelle stehen (s. Kommentar bei
+   * `LeistenGruppe` in `oberflaeche-adaption.ts`: ein Umzug hätte die
+   * Pflicht-Regression `oberflaeche-adaption.spec.ts` zerstört, die
+   * `sonne-toggle` explizit als Geschwister von `textur-toggle` in `ebenen`
+   * voraussetzt). `voll` öffnet das zugehörige Panel IMMER (kein Toggle) —
+   * die Rechtsklick-/⌄-Geste aus dem Bauauftrag («öffnet das Panel voll»).
+   * Bei allen sechs Fähigkeiten ist der bestehende Klick-Handler bereits die
+   * volle Fähigkeit (KvPanel/BauablaufPanel/MaengelPanel/StudienPanel/
+   * SubmissionsCheckPanel sind je EIN Panel, keine Quick/Voll-Zweistufigkeit;
+   * Sonne hat gar kein tieferes Panel) — «voll» unterscheidet sich vom Klick
+   * daher NICHT im Ziel, sondern nur darin, dass es garantiert ÖFFNET statt
+   * umzuschalten (ehrlich dokumentiert, keine erfundene zweite Tiefe).
+   */
+  const FAEHIGKEITEN: readonly {
+    id: FaehigkeitId;
+    titel: string;
+    Icon: () => React.JSX.Element;
+    aktiv: boolean;
+    klick: () => void;
+    voll: () => void;
+  }[] = [
+    {
+      id: 'sonne',
+      titel: 'Sonnenstudie — Schattenwurf/2h-Nachweis',
+      Icon: IconFaehigkeitSonne,
+      aktiv: sonneOffen,
+      klick: klickSonne,
+      voll: () => {
+        setSonneOffen(true);
+        nutzungMelden('faehigkeiten:sonne');
+      },
+    },
+    {
+      id: 'volumenstudien',
+      titel: 'Volumenstudien — Massenvarianten aus der Parzelle',
+      Icon: IconFaehigkeitStudien,
+      aktiv: studieOffen,
+      klick: klickStudie,
+      voll: () => {
+        setStudieOffen(true);
+        nutzungMelden('faehigkeiten:volumenstudien');
+      },
+    },
+    {
+      id: 'kv',
+      titel: 'KV — Kostenvoranschlag-Grobschätzung (Richtwert, kein Devis)',
+      Icon: IconFaehigkeitKv,
+      aktiv: kvOffen,
+      klick: klickKv,
+      voll: () => {
+        setKvOffen(true);
+        nutzungMelden('faehigkeiten:kv');
+      },
+    },
+    {
+      id: 'bauablauf',
+      titel: 'Bauablauf — Grob-Terminplan',
+      Icon: IconFaehigkeitBauablauf,
+      aktiv: bauablaufOffen,
+      klick: klickBauablauf,
+      voll: () => {
+        setBauablaufOffen(true);
+        nutzungMelden('faehigkeiten:bauablauf');
+      },
+    },
+    {
+      id: 'maengel',
+      titel: 'Mängel — Abnahme/Schlussbegehung',
+      Icon: IconFaehigkeitMaengel,
+      aktiv: maengelOffen,
+      klick: klickMaengel,
+      voll: () => {
+        setMaengelOffen(true);
+        nutzungMelden('faehigkeiten:maengel');
+      },
+    },
+    {
+      id: 'submission',
+      titel: 'Submissions-Check — Lückenliste vor der Ausschreibung',
+      Icon: IconFaehigkeitSubmission,
+      aktiv: submissionOffen,
+      klick: klickSubmission,
+      voll: () => {
+        setSubmissionOffen(true);
+        nutzungMelden('faehigkeiten:submission');
+      },
+    },
+  ];
+
+  /**
+   * A8: Preset-getriebene Fokus-Darstellung — reiner Style-Zusatz nach
+   * demselben numerischen Opazitäts-Prinzip wie `elementStil` (oben,
+   * Nutzer-Adaption): `phasenFokus` ist entweder `null` (kein Preset
+   * angewendet, keine Wirkung) oder ein Set von Fähigkeits-IDs, die
+   * `primaer` bleiben — der Rest dämpft auf `selten`. KEIN Entfernen aus dem
+   * DOM, exakt die Owner-Vorgabe («Rest … gedämpft»). Unabhängig von
+   * `elementStil`, weil `gehobenesElementDerGruppe` nur EIN Element je
+   * Gruppe hebt (Nutzungshäufigkeit) — ein Phasen-Preset kann mehrere Icons
+   * gleichzeitig in den Vordergrund stellen, das ist ein anderer Datenpfad.
+   */
+  function faehigkeitStil(id: FaehigkeitId): { style?: React.CSSProperties } {
+    if (!phasenFokus) return {};
+    return { style: { opacity: opazitaetsWert(phasenFokus.has(id) ? 'primaer' : 'selten') } };
+  }
 
   /** Alle Export-/Ebenen-Werkzeuge, die die Adaption zurückstellen kann —
    *  Grundlage des Überlauf-Menüs «Mehr…» (Aufgabe 2). */
@@ -1358,10 +1537,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
             tone={bauablaufOffen ? 'accent' : 'ghost'}
             data-testid="bauablauf-oeffnen"
             title="Bauablaufplan — abgeleiteter Grob-Terminplan, ersetzt keine Bauleitung"
-            onClick={() => {
-              setBauablaufOffen(!bauablaufOffen);
-              nutzungMelden('ebenen:bauablauf');
-            }}
+            onClick={klickBauablauf}
             {...elementStil('ebenen', 'bauablauf')}
           >
             Bauablauf
@@ -1430,6 +1606,73 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
               ))}
             </div>
           )}
+        </span>
+        {/* A7 (K17): «Fähigkeiten» — eine eigene Icon-Gruppe für die sechs
+            Spezialfähigkeiten, zusätzlich zu den unveränderten Alt-Knöpfen in
+            «Ebenen» (Begründung: Kommentar bei `FAEHIGKEITEN` oben). Klick =
+            Fähigkeit wie heute; Rechtsklick ODER das kleine ⌄ öffnen das
+            zugehörige Panel garantiert («voll»). */}
+        <Trennlabel>Fähigkeiten</Trennlabel>
+        <span
+          data-testid="leiste-gruppe-faehigkeiten"
+          className={fokusKlasse(stufeFuerGruppe('faehigkeiten'))}
+          style={{
+            display: 'inline-flex',
+            flexWrap: 'wrap',
+            gap: 6,
+            rowGap: 4,
+            alignItems: 'center',
+            ...(gehobenNachGruppe.faehigkeiten ? { opacity: 1 } : {}),
+          }}
+        >
+          {FAEHIGKEITEN.map(({ id, titel, Icon, aktiv, klick, voll }) => (
+            <span key={id} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+              <KButton
+                size="sm"
+                tone={aktiv ? 'accent' : 'ghost'}
+                data-testid={`faehigkeit-${id}`}
+                title={titel}
+                aria-label={titel}
+                onClick={klick}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  voll();
+                }}
+                style={{
+                  width: 30,
+                  height: 30,
+                  padding: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  // Reihenfolge bewusst: Nutzer-Adaption zuerst, ein
+                  // angewendetes Phasen-Preset (falls vorhanden) gewinnt
+                  // darüber — Owner-Kontrolle schlägt automatische Vermutung.
+                  ...elementStil('faehigkeiten', id).style,
+                  ...faehigkeitStil(id).style,
+                }}
+              >
+                <Icon />
+              </KButton>
+              <button
+                type="button"
+                data-testid={`faehigkeit-${id}-voll`}
+                title={`${titel} — Panel voll öffnen`}
+                aria-label={`${titel} — Panel voll öffnen`}
+                onClick={voll}
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  fontSize: 9,
+                  lineHeight: 1,
+                  padding: '0 2px',
+                  color: 'var(--k-ink-faint)',
+                }}
+              >
+                ⌄
+              </button>
+            </span>
+          ))}
         </span>
         {tool === 'treppe' && (
           <select
@@ -1745,6 +1988,51 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
           </KButton>
         </div>
       )}
+      {/* A8 (K18): Preset-Angebot beim Teilphasen-Wechsel — Owner-Kontrolle,
+          dasselbe Banner-Muster wie `bestand-angebot`/`massstab-hinweis`
+          oben: anbieten statt stumm umbauen. Rein informativ bis zum Klick
+          auf «Anwenden» — `phasenFokus` bleibt bis dahin `null`. */}
+      {phasenAngebot && (
+        <div
+          data-testid="phasen-preset-angebot"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '6px 14px',
+            borderBottom: '1px solid var(--k-line)',
+            background: 'var(--k-raised)',
+            fontSize: 12.5,
+            zIndex: 2,
+          }}
+        >
+          <Badge hue={moduleHue.design}>Phase</Badge>
+          <span>
+            Phase {siaPhaseLabel(phasenAngebot)}: Fähigkeiten{' '}
+            {PHASEN_PRESETS[phasenAngebot].imFokus.map((id) => FAEHIGKEIT_LABEL[id]).join('/')} im Fokus — anwenden?
+            {' '}(empfohlene Plan-Detaillierung: {phaseLabel(empfohlenePlanPhaseFuer(phasenAngebot))}
+            {PHASEN_PRESETS[phasenAngebot].umbauFilterDefault
+              ? `, Umbau-Filter-Empfehlung: ${UMBAU_LABEL[PHASEN_PRESETS[phasenAngebot].umbauFilterDefault!]}`
+              : ''}
+            )
+          </span>
+          <div style={{ flex: 1 }} />
+          <KButton
+            size="sm"
+            tone="accent"
+            data-testid="phasen-preset-anwenden"
+            onClick={() => {
+              setPhasenFokus(new Set(PHASEN_PRESETS[phasenAngebot].imFokus));
+              setPhasenAngebot(null);
+            }}
+          >
+            Anwenden
+          </KButton>
+          <KButton size="sm" tone="ghost" data-testid="phasen-preset-verwerfen" onClick={() => setPhasenAngebot(null)}>
+            Nicht jetzt
+          </KButton>
+        </div>
+      )}
       {massstabHinweis && (
         <div
           data-testid="massstab-hinweis"
@@ -1862,6 +2150,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
         {kvOffen && <KvPanel onClose={() => setKvOffen(false)} />}
         {bauablaufOffen && <BauablaufPanel onClose={() => setBauablaufOffen(false)} />}
         {maengelOffen && <MaengelPanel onClose={() => setMaengelOffen(false)} />}
+        {submissionOffen && <SubmissionsCheckPanel onClose={() => setSubmissionOffen(false)} />}
         {studieOffen && (
           <StudienPanel
             zielGf={zielGf}
@@ -2008,6 +2297,20 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
           onSprechen={klickEntwurfSprechen}
           onSkizzieren={klickEntwurfSkizzieren}
           onCad={klickEntwurfCad}
+          // A7: «Draw als bestehender Deep-Link» — dieselbe Wirkung wie die
+          // Zentrale-Kachel KosmoDraw (`setDeepLink('draw')`, konsumiert nur
+          // beim MOUNT von DesignWorkspace, s. `consumeDeepLink`-Effekt
+          // oben). Da der Dock hier schon läuft, wird direkt das Ziel dieses
+          // Effekts nachgebildet (`setDrawOffen(true)`, kein Toggle — ein
+          // Stations-Icon soll IMMER hinführen, nie wegschalten), ohne den
+          // Merker unnötig über den Store zu routen.
+          onDockDraw={() => {
+            setDrawOffen(true);
+            nutzungMelden('ebenen:draw');
+          }}
+          onDockVis={() => onStationOeffnen?.('vis')}
+          onDockPublish={() => onStationOeffnen?.('publish')}
+          onDockPrepare={() => onStationOeffnen?.('prepare')}
         />
 
         {/* Geschossleiste */}
@@ -2110,6 +2413,18 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen }:
             style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
           >
             {flaecheGeschossM2 !== null ? `${flaecheGeschossM2.toFixed(0)} m²` : '–'}
+          </span>
+          {/* A8 (K18): dezentes Phasen-Badge — reine Anzeige der aktuellen
+              SIA-Teilphase, Zero-Click neben den übrigen Statusleisten-Werten.
+              Das eigentliche Preset-Angebot lebt im Banner oben (gleiches
+              Muster wie `bestand-angebot`); dieses Badge macht nur sichtbar,
+              WAS gerade gilt, ohne die Statusleiste interaktiv zu machen. */}
+          <span
+            data-testid="statusleiste-phase"
+            title="Aktuelle SIA-Teilphase des Projekts"
+            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+          >
+            {siaPhaseLabel(doc.settings.siaPhase)}
           </span>
           {cursor && (
             <Measure style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}>
