@@ -616,4 +616,10 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
     - Alle drei Specs danach 3× isoliert grün; Regressionen `betrieb.spec.ts` (5/5) und `module.spec.ts` Anthropic-Felder grün; typecheck grün, Goldens byte-identisch.
     - Release-Bump 0.6.4 überall (package.json, App, tauri.conf.json, Cargo.toml/lock), `neuigkeiten.ts` mit 12 ehrlichen 0.6.4-Punkten, Release-Notiz im Vault, `.desktop-build-request` angestossen.
 
+269. **v0.6.4 / Rundgang-PDF — Kommentier-Rundgang auf 0.6.4-Stand (31 Seiten, 39 Screenshots)** *(09.07.2026)*
+    - `e2e/tools/rundgang.mts` + `rundgang-pdf.mts` auf 0.6.4: alte Zentrale-Kachel-Blöcke durch Orbit-Start ersetzt (Ruhezustand + offener Fächer), neue NEU-Seiten für Werkzeug-Kurztasten/«?»-Übersicht, Masszahl am Cursor, Element-Fang-Marker, Claude-Modellwahl (Kosmo-Panel Cloud), Tech-Radar in KosmoDoc; alle 0.6.3-Bestandsseiten gegen die echte Oberfläche neu verifiziert und neu fotografiert.
+    - Ehrlichkeit: die Masszahl-Seite benennt, dass NUR das Fadenkreuz im Screenshot sichtbar ist (empirisch geprüft) — die übrigen Kontext-Cursor-Formen (Zeiger/Verschieben/Greifhand) sind im PDF nicht demonstrierbar; Farbpalette korrekt der Sektion «Darstellung» zugeordnet (nicht «System»).
+    - Headless-Falle dokumentiert: Dialog über der 3D-WebGL-Ansicht kompositiert unter SwiftShader durchscheinend — vor dem Kurztasten-Screenshot wird auf 2D umgeschaltet (Kommentar in rundgang.mts).
+    - `abgabe/RUNDGANG-NOTIZEN-0.6.4.pdf` (31 Seiten, je Seite Notiz-Box) — an den Owner geliefert; seine Notizen dazu werden die 0.6.5-Auftragsliste.
+
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.

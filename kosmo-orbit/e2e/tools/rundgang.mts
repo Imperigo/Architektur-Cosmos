@@ -1,14 +1,18 @@
 /**
- * Rundgang-Screenshots «0.6.3» (Owner-Auftrag 09.07.) — Teil 1.
+ * Rundgang-Screenshots «0.6.4» (Owner-Auftrag 09.07.) — Teil 1.
  * Wie `handbuch.mts` (V1-Finish P6), aber für das Kommentier-PDF
  * `rundgang-pdf.mts`: fährt alle Stationen deterministisch ab. Diese Runde
- * hat die Oberfläche transformiert (Serie K: Kosmo-Symbol statt Dauerchat,
- * neue Zentrale-Kacheln, Erststart-Frage, Entwurfs-Dock + Fähigkeiten-Zeile
- * + Statusleiste in KosmoDesign, Plan-LOD, Phasen-Presets) plus die
- * Vollprojekt-Lücken-Batches (KV/Bauablauf/Mängel/Baugesuch/Blatt-füllen/
- * Vis-Automatik/Material-Würfel). Jede Station steuert exakt die
- * `data-testid`-Selektoren an, die in den zugehörigen E2E-Specs bewiesen
- * sind (siehe Kommentar je Block). Bilder → docs/rundgang/bilder/.
+ * hat die 0.6.4-Testbefunde des Owners umgesetzt (siehe
+ * `apps/kosmo-orbit/src/shell/neuigkeiten.ts`, Version 0.6.4): das neue
+ * Orbit-Startmenü ersetzt die alte Zentrale-Kachel-Ansicht (4 Hauptwerkzeuge
+ * kreisen um das Kosmos-Zeichen, Hover/Klick zeigt den Fächer), Element-Fang
+ * und Masszahl-am-Cursor beim Zeichnen (F4/F5), Werkzeug-Kurztasten + «?»-
+ * Übersicht, KosmoVis-Auto-Fit, KosmoData-Offline-Ehrlichkeit, wählbares
+ * Claude-Modell, Tech-Radar in KosmoDoc, und Deinstallieren/Farbpalette
+ * ausschliesslich in den Einstellungen (F2, Sektion «System»). Jede Station
+ * steuert exakt die `data-testid`-Selektoren an, die in den zugehörigen
+ * E2E-Specs bewiesen sind (siehe Kommentar je Block). Bilder →
+ * docs/rundgang/bilder/.
  * Voraussetzungen: Preview :5183, Fake-Bridge :8600, Sync-Server :8700
  * (überschreibbar über RUNDGANG_URL).
  */
@@ -87,18 +91,18 @@ await shot('00-erste-start-frage');
 // Frage sauber wegklicken («Nein»), damit nichts in den Folgeschritt bricht.
 await page.click('[data-testid="erste-start-nein"]');
 
-// ── 01 NEU: Zentrale — Kacheln mit Halo, Hover-Werkzeugzeile, Info-Panel ──
-// Muster `zentrale-kacheln.spec.ts`.
+// ── 01 NEU (0.6.4, F3): Orbit-Startmenü — Ruhezustand + offener Fächer ──
+// Muster `orbit-start.spec.ts`: löst die alte Kachel-Zentrale ab. Die 4
+// Hauptwerkzeuge (KosmoDesign/KosmoData/Kosmo/KosmoOffice) kreisen ganz
+// langsam im Kreis um das Kosmos-Zeichen; Hover auf ein Hauptwerkzeug öffnet
+// den Fächer mit den Untertools (Titel + Kurzbeschrieb je Kachel).
 await frisch(false);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('home'));
-await shot('01-zentrale');
-const designKachel = page.locator('[data-testid="module-design"]');
-await designKachel.hover();
-await page.waitForSelector('[data-testid="kachel-werkzeuge-design"]');
-await shot('01-zentrale-hover', 400);
-await page.click('[data-testid="kachel-info-design"]');
-await page.waitForSelector('[data-testid="kachel-info-panel"]');
-await shot('01-zentrale-info', 400);
+await page.waitForSelector('[data-testid="orbit-start"]');
+await shot('01-orbit-start');
+await page.locator('[data-testid="orbit-haupt-design"]').hover();
+await page.waitForSelector('[data-testid="orbit-faecher-design"].offen');
+await shot('01-orbit-faecher-design', 400);
 await page.keyboard.press('Escape');
 
 // ── 02 NEU: Kosmo-Symbol + Mini-Popup (Hover) ────────────────────────
@@ -118,28 +122,108 @@ await kosmoSymbol.hover();
 await page.waitForSelector('[data-testid="kosmo-mini"]');
 await shot('02-kosmo-symbol-mini', 400);
 
-// ── 03 NEU: Einstellungs-Panel — Funktionen & Neues (0.6.3) + Leistung ──
-// Muster `einstellungen.spec.ts` + `leistung.spec.ts`.
+// ── 03 NEU: Einstellungs-Panel — Funktionen & Neues (0.6.4) + Leistung ──
+// Muster `einstellungen.spec.ts` + `leistung.spec.ts`. Der 0.6.4-Eintrag
+// steht in `NEUIGKEITEN` jetzt zuoberst (neuster zuerst).
 await frisch(false);
 await page.click('[data-testid="einstellungen-oeffnen"]');
 await page.waitForSelector('[data-testid="einstellungen-panel"]');
 await shot('03-einstellungen', 400);
-await page.locator('[data-testid="neuigkeiten-version-0.6.3"]').scrollIntoViewIfNeeded();
+await page.locator('[data-testid="neuigkeiten-version-0.6.4"]').scrollIntoViewIfNeeded();
 await shot('03-einstellungen-neuigkeiten', 400);
 await page.locator('[data-testid="einstellungen-leistung"]').scrollIntoViewIfNeeded();
 await shot('03-einstellungen-leistung', 400);
 await page.keyboard.press('Escape');
 
-// ── 04 NEU: KosmoDesign — Entwurfs-Dock + Fähigkeiten-Zeile + Statusleiste ──
+// ── 04 NEU (0.6.4, F5/A2): Werkzeug-Kurztasten + «?»-Übersicht ──────────
+// Muster `module.spec.ts` (Kurzbefehle-Test) + `Kurzbefehle.tsx`: KosmoDesign
+// offen, «?» blendet die Übersicht ein — der Zeichnen-Abschnitt zeigt die
+// ArchiCAD-angelehnten Werkzeug-Kurztasten (A/W/Z/…) aus `kurztasten.ts`.
+// WICHTIG (Screenshot-Falle): view-2d VOR dem Dialog anwählen — über der
+// 3D/WebGL-Ansicht rendert der Dialog in der Headless-Aufnahme (SwiftShader)
+// als Geisterbild (Compositing-Artefakt), im echten Betrieb ohne Befund.
+await frisch(true); // load-tkb landet bereits in KosmoDesign
+await page.click('[data-testid="view-2d"]');
+await page.waitForTimeout(400);
+await page.keyboard.press('?');
+await page.waitForSelector('[data-testid="kurzbefehle"]');
+await shot('04-kurztasten-uebersicht', 500);
+await page.keyboard.press('Escape');
+
+// ── 05 NEU: KosmoDesign — Entwurfs-Dock + Fähigkeiten-Zeile + Statusleiste ──
 // Muster `faehigkeiten-phasen.spec.ts` + `entwurfs-icons.spec.ts`.
 await frisch(true); // TKB geladen — load-tkb landet bereits in KosmoDesign
 await page.waitForSelector('[data-testid="entwurf-dock"]');
 await page.waitForSelector('[data-testid="leiste-gruppe-faehigkeiten"]');
-await shot('04-design-uebersicht', 1000);
+await shot('05-design-uebersicht', 1000);
 await page.click('[data-testid="view-quad"]');
-await shot('04-design-4er', 1000);
+await shot('05-design-4er', 1000);
 
-// ── 05 NEU: Plan-LOD — nah (voll) / fern, data-lod beweist die Stufe ────
+// ── 06 NEU (0.6.4, F5 «Zahlen zur Hand»): Masszahl am Cursor ────────────
+// Muster `mass-eingabe.spec.ts`: Wand-Werkzeug, ersten Punkt setzen, Maus
+// bewegen (Live-Label läuft mit), dann eine Länge tippen — der Puffer
+// («3.5 m ⏎») zeigt die exakte Länge, bevor Enter den Punkt setzt.
+await frisch(false);
+await page.click('[data-testid="module-design"]');
+await page.click('[data-testid="view-2d"]');
+await page.click('[data-testid="nav-fit"]');
+await page.waitForTimeout(300);
+await page.click('[data-testid="tool-wand"]');
+{
+  const svg = page.locator('[data-testid="planview"]');
+  const box = (await svg.boundingBox())!;
+  const mitteX = box.x + box.width / 2;
+  const mitteY = box.y + box.height / 2;
+  await page.mouse.click(mitteX, mitteY);
+  await page.mouse.move(mitteX + 120, mitteY);
+  const label = page.locator('[data-testid="mass-label"]');
+  await label.waitFor();
+  await page.keyboard.type('3.5');
+  await page.waitForSelector('[data-testid="mass-label"]:has-text("⏎")');
+}
+await shot('06-mass-eingabe', 400);
+await page.keyboard.press('Escape');
+await page.keyboard.press('Escape');
+
+// ── 07 NEU (0.6.4, F4 «Element-Fang»): Fangpunkt-Marker am Wandende ─────
+// Muster `element-fang.spec.ts`: bestehende Wand über den Command-Weg,
+// Wand-Werkzeug wählen, Maus neben das Wandende bewegen — der Fang-Marker
+// (Quadrat = Endpunkt) erscheint, bevor geklickt wird.
+await frisch(false);
+await page.click('[data-testid="module-design"]');
+await page.evaluate(() => {
+  const s = (window as unknown as { __kosmo: Kosmo }).__kosmo.state();
+  const assembly = (s.doc.byKind('assembly') as unknown as { id: string; target: string }[]).find(
+    (a) => a.target === 'wall',
+  );
+  (window as unknown as { __kosmo: Kosmo }).__kosmo.run('design.wandZeichnen', {
+    storeyId: s.activeStoreyId,
+    a: { x: 0, y: 0 },
+    b: { x: 6000, y: 0 },
+    ...(assembly ? { assemblyId: assembly.id } : {}),
+  });
+});
+await page.click('[data-testid="view-2d"]');
+await page.click('[data-testid="nav-fit"]');
+await page.waitForTimeout(400);
+await page.click('[data-testid="tool-wand"]');
+{
+  const ziel = await page.evaluate(() => {
+    const svg = document.querySelector('[data-testid="planview"]') as SVGSVGElement;
+    const inhalt = svg.querySelector('g') as SVGGElement;
+    const m = inhalt.getScreenCTM()!;
+    const pt = new DOMPoint(6000, 0).matrixTransform(m);
+    const proMm = new DOMPoint(7000, 0).matrixTransform(m).x - pt.x;
+    return { x: pt.x, y: pt.y, pxProMm: proMm / 1000 };
+  });
+  const abstand = 250 * ziel.pxProMm;
+  await page.mouse.move(ziel.x + abstand, ziel.y - abstand);
+  await page.waitForSelector('[data-testid="fang-marker"]');
+}
+await shot('07-element-fang', 400);
+await page.keyboard.press('Escape');
+
+// ── 08 NEU: Plan-LOD — nah (voll) / fern, data-lod beweist die Stufe ────
 // Muster `plan-lod.spec.ts` exakt (Wand + Öffnung + Möbel per Command).
 await frisch(true); // load-tkb landet bereits in KosmoDesign
 const wandId = await page.evaluate(() => {
@@ -178,13 +262,13 @@ const planview = page.locator('[data-testid="planview"]');
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.wheel(0, -20000); // rein
   await page.waitForSelector('[data-testid="planview"][data-lod="voll"]');
-  await shot('05-plan-lod-voll', 500);
+  await shot('08-plan-lod-voll', 500);
   await page.mouse.wheel(0, 20000); // raus
   await page.waitForSelector('[data-testid="planview"][data-lod="fern"]');
-  await shot('05-plan-lod-fern', 500);
+  await shot('08-plan-lod-fern', 500);
 }
 
-// ── 06 NEU: Skizzieren-Annäherungen — 3 Karten sichtbar ─────────────────
+// ── 09 NEU: Skizzieren-Annäherungen — 3 Karten sichtbar ─────────────────
 // Muster `entwurfs-icons.spec.ts` (dritter Test), Strich bewusst nicht
 // achsenparallel (~23°) — erst die Annäherung macht ihn orthogonal.
 await frisch(false);
@@ -208,9 +292,9 @@ await overlay.waitFor();
 await page.click('[data-testid="sketch-uebergeben"]');
 await page.waitForSelector('[data-testid="sketch-proposal"]', { timeout: 15000 });
 await page.waitForSelector('[data-testid="skizze-vorschlag-3"]');
-await shot('06-skizzieren-annaeherungen', 600);
+await shot('09-skizzieren-annaeherungen', 600);
 
-// ── 07 NEU: Kosmo-Vorschlagskarte mit VORSCHAU (Vorher/Nachher-Mini-SVG) ──
+// ── 10 NEU: Kosmo-Vorschlagskarte mit VORSCHAU (Vorher/Nachher-Mini-SVG) ──
 // Muster `proposal-vorschau.spec.ts` + `kosmo-symbol.spec.ts` (Panel übers
 // Symbol öffnen — der neue Default ist zu).
 await frisch(false);
@@ -221,9 +305,9 @@ await page.fill('[data-testid="kosmo-input"]', 'Zeichne eine Wand von 0,0 bis 6,
 await page.click('[data-testid="kosmo-send"]');
 await page.waitForSelector('[data-testid="proposal-card"]', { timeout: 15000 });
 await page.waitForSelector('[data-testid="proposal-vorschau"] svg', { timeout: 15000 });
-await shot('07-kosmo-vorschlag-vorschau', 500);
+await shot('10-kosmo-vorschlag-vorschau', 500);
 
-// ── 08 NEU: Phasen-Preset-Banner — Teilphase → Bewilligung ──────────────
+// ── 11 NEU: Phasen-Preset-Banner — Teilphase → Bewilligung ──────────────
 // Muster `faehigkeiten-phasen.spec.ts` (dritter Test).
 await frisch(false);
 await page.click('[data-testid="module-design"]');
@@ -231,23 +315,23 @@ await page.click('[data-testid="view-2d"]');
 await page.click('[data-testid="projekt-menu-toggle"]');
 await page.selectOption('[data-testid="sia-phase-select"]', 'bewilligung');
 await page.waitForSelector('[data-testid="phasen-preset-angebot"]');
-await shot('08-phasen-preset-banner', 500);
+await shot('11-phasen-preset-banner', 500);
 
-// ── 09 NEU: KV-Panel — Richtwert-Summe + Ehrlichkeits-Hinweis ───────────
+// ── 12 NEU: KV-Panel — Richtwert-Summe + Ehrlichkeits-Hinweis ───────────
 // Muster `kv-schaetzung.spec.ts`.
 await frisch(true); // load-tkb landet bereits in KosmoDesign
 await page.click('[data-testid="kv-oeffnen"]');
 await page.waitForSelector('[data-testid="kv-panel"]');
-await shot('09-kv-panel', 500);
+await shot('12-kv-panel', 500);
 
-// ── 10 NEU: Bauablauf-Panel — Gewerke-Tabelle ───────────────────────────
+// ── 13 NEU: Bauablauf-Panel — Gewerke-Tabelle ───────────────────────────
 // Muster `bauablauf.spec.ts`.
 await frisch(true); // load-tkb landet bereits in KosmoDesign
 await page.click('[data-testid="bauablauf-oeffnen"]');
 await page.waitForSelector('[data-testid="bauablauf-tabelle"]');
-await shot('10-bauablauf-panel', 500);
+await shot('13-bauablauf-panel', 500);
 
-// ── 11 NEU: Mängel-Panel — mit einem erfassten Mangel (keine Leerdemo) ──
+// ── 14 NEU: Mängel-Panel — mit einem erfassten Mangel (keine Leerdemo) ──
 // Muster `maengel.spec.ts`.
 await frisch(true); // load-tkb landet bereits in KosmoDesign
 await page.click('[data-testid="maengel-oeffnen"]');
@@ -257,9 +341,9 @@ await page.fill('[data-testid="maengel-gewerk"]', 'Sanitär/Heizung');
 await page.fill('[data-testid="maengel-beschreibung"]', 'Silikonfuge Dusche undicht');
 await page.click('[data-testid="maengel-erfassen"]');
 await page.waitForSelector('[data-testid="maengel-liste"]');
-await shot('11-maengel-panel', 500);
+await shot('14-maengel-panel', 500);
 
-// ── 12 NEU: Baugesuch — Blattsatz + Set + Ausnützungsnachweis ──────────
+// ── 15 NEU: Baugesuch — Blattsatz + Set + Ausnützungsnachweis ──────────
 // Muster `baugesuch.spec.ts`.
 await frisch(true);
 await page.evaluate(() => {
@@ -284,9 +368,9 @@ await page.click('[data-testid="place-section"]');
 await page.waitForTimeout(400);
 await page.click('[data-testid="baugesuch-erstellen"]');
 await page.locator('[data-testid="pubset-karte"]', { hasText: 'Baugesuch' }).waitFor({ timeout: 15000 });
-await shot('12-baugesuch', 700);
+await shot('15-baugesuch', 700);
 
-// ── 13 NEU: Blatt-füllen — mehrere Slots automatisch belegt ─────────────
+// ── 16 NEU: Blatt-füllen — mehrere Slots automatisch belegt ─────────────
 // Muster `blatt-fuellen.spec.ts`.
 await frisch(false);
 await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG + Standard-Aufbauten
@@ -318,9 +402,9 @@ await page.click('[data-testid="add-sheet"]');
 await page.waitForSelector('[data-testid="sheet-canvas"]');
 await page.click('[data-testid="blatt-fuellen"]');
 await page.waitForSelector('[data-testid="meldung-info"]');
-await shot('13-blatt-fuellen', 700);
+await shot('16-blatt-fuellen', 700);
 
-// ── 14 NEU: Vis-Automatik — Auto-Kamera + Cycles-Preset + Fake-Render ───
+// ── 17 NEU: Vis-Automatik — Auto-Kamera + Cycles-Preset + Fake-Render ───
 // Muster `vis-automatik.spec.ts`.
 await frisch(true);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('vis'));
@@ -333,9 +417,9 @@ const ersterRenderNode = page.locator('[data-testid="vis-node-render"]').first()
 await ersterRenderNode.locator('[data-testid="vis-preset-select"]').selectOption('praesentation');
 await ersterRenderNode.locator('[data-testid="render-ausfuehren"]').click();
 await ersterRenderNode.locator('[data-testid="render-bild"]').waitFor({ timeout: 45000 });
-await shot('14-vis-automatik', 800);
+await shot('17-vis-automatik', 800);
 
-// ── 15 NEU: Material-Würfel — Referenzkatalog-Detail mit Quelle ─────────
+// ── 18 NEU: Material-Würfel — Referenzkatalog-Detail mit Quelle ─────────
 // Muster `material-programm.spec.ts`.
 await frisch(false);
 await page.click('[data-testid="module-asset"]');
@@ -343,40 +427,48 @@ await page.click('[data-testid="asset-tab-materialien"]');
 await page.click('[data-testid="material-backstein"]');
 await page.waitForSelector('[data-testid="material-detail"] canvas');
 await page.locator('[data-testid="material-detail"]').scrollIntoViewIfNeeded();
-await shot('15-material-wuerfel', 600);
+await shot('18-material-wuerfel', 600);
 
-// ── 16 KosmoData (Referenzen/Bauteile) — unverändert diese Runde ───────
+// ── 19 KosmoData (Referenzen/Bauteile) + NEU 0.6.4: ehrlicher Offline-
+//    Badge («Offline — eingebaute Referenzdaten» statt «Offline-Seed») ──
 await frisch(true);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('data'));
 await page.waitForSelector('[data-testid="ref-card"]');
-await shot('16-data-referenzen', 800);
+await page.locator('[data-testid="data-sync-badge"]').scrollIntoViewIfNeeded();
+await shot('19-data-referenzen', 800);
 await page.click('[data-testid="tab-bauteile"]');
-await shot('16-data-bauteile', 500);
+await shot('19-data-bauteile', 500);
 
-// ── 17 KosmoDev: Auftragsbuch — unverändert diese Runde ────────────────
+// ── 20 KosmoDev: Auftragsbuch — unverändert diese Runde ────────────────
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('dev'));
 await page.fill('[data-testid="auftrag-text"]', 'Türanschläge im Grundriss wählbar machen — Werkzeugleiste KosmoDesign');
 await page.click('[data-testid="auftrag-erfassen"]');
 await page.waitForSelector('[data-testid="auftrag-karte"]');
-await shot('17-dev-auftragsbuch', 500);
+await shot('20-dev-auftragsbuch', 500);
 
-// ── 18 Prepare / Doc / Train — unverändert diese Runde ─────────────────
+// ── 21 Prepare / Doc (+ NEU 0.6.4: Tech-Radar) / Train ──────────────────
+// Doc-Grundansicht unverändert diese Runde; der vierte Tab «Tech-Radar»
+// (Muster `tech-radar.spec.ts`) ist neu — kuratierte Posten, Scan-Einträge
+// ehrlich mit ⚠ markiert.
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('prepare'));
-await shot('18-prepare', 800);
+await shot('21-prepare', 800);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('doc'));
-await shot('18-doc', 800);
+await shot('21-doc', 800);
+await page.click('[data-testid="doc-tab-radar"]');
+await page.waitForSelector('[data-testid="doc-radar"]');
+await shot('21-doc-tech-radar', 500);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('train'));
-await shot('18-train', 800);
+await shot('21-train', 800);
 
-// ── 19 KosmoDraw + KosmoSketch — unverändert diese Runde ───────────────
+// ── 22 KosmoDraw + KosmoSketch — unverändert diese Runde ───────────────
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('home'));
 await page.click('[data-testid="module-draw"]');
-await shot('19-draw', 1000);
+await shot('22-draw', 1000);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('home'));
 await page.click('[data-testid="module-sketch"]');
-await shot('19-sketch', 1000);
+await shot('22-sketch', 1000);
 
-// ── 20 Umbau-Werkplan (Bestand/Abbruch/Neu) — unverändert diese Runde ──
+// ── 23 Umbau-Werkplan (Bestand/Abbruch/Neu) — unverändert diese Runde ──
 await frisch(false);
 await page.click('[data-testid="module-design"]');
 await page.waitForTimeout(600);
@@ -394,9 +486,9 @@ await page.evaluate(`(() => {
   k.run('design.renovationSetzen', { ids: [neu], status: 'neu' });
 })()`);
 await page.click('[data-testid="view-2d"]');
-await shot('20-umbau-werkplan', 800);
+await shot('23-umbau-werkplan', 800);
 
-// ── 21 Volumenstudien — unverändert diese Runde ────────────────────────
+// ── 24 Volumenstudien — unverändert diese Runde ────────────────────────
 await frisch(false);
 await page.click('[data-testid="module-design"]');
 await page.waitForTimeout(600);
@@ -419,18 +511,18 @@ await page.click('[data-testid="view-3d"]');
 await page.click('[data-testid="studie-toggle"]');
 await page.waitForSelector('[data-testid="studien-panel"]');
 await page.waitForSelector('[data-testid="varianten-matrix"]');
-await shot('21-studien-panel', 1200);
+await shot('24-studien-panel', 1200);
 
-// ── 22 Grundlagenstudie-Bericht (SVG) — unverändert diese Runde ────────
+// ── 25 Grundlagenstudie-Bericht (SVG) — unverändert diese Runde ────────
 const [download] = await Promise.all([
   page.waitForEvent('download'),
   page.click('[data-testid="studie-bericht"]'),
 ]);
 const svgPfad = await download.path();
-writeFileSync(`${OUT}22-bericht.svg`, readFileSync(svgPfad!, 'utf8'));
-console.log('✓ 22-bericht (SVG-Download)');
+writeFileSync(`${OUT}25-bericht.svg`, readFileSync(svgPfad!, 'utf8'));
+console.log('✓ 25-bericht (SVG-Download)');
 
-// ── 23 Unternehmerplan-Import — unverändert diese Runde ────────────────
+// ── 26 Unternehmerplan-Import — unverändert diese Runde ────────────────
 await frisch(false);
 await page.click('[data-testid="module-design"]');
 await page.click('[data-testid="view-2d"]');
@@ -444,14 +536,30 @@ await chooser.setFiles({
   buffer: Buffer.from('%PDF-1.4\n%…kein echter Plan, nur die Magic-Bytes fuer die Erkennung…\n'),
 });
 await page.waitForSelector('[data-testid="pdf-hinweis"]');
-await shot('23-unternehmerplan-pdf', 800);
+await shot('26-unternehmerplan-pdf', 800);
 
-// ── 24 Deinstallieren-Dialog — F2 (0.6.4): Einstieg NUR noch über die
-//    Einstellungen (Sektion «System»), der Kopfleisten-Knopf ist weg ────
+// ── 27 NEU (0.6.4, F1 «Claude-Modell auswählbar»): Modellwahl im Kosmo-Panel ──
+// Muster `cloud-login.spec.ts`: Kosmo-Symbol → Panel öffnen, Zahnrad
+// («Einstellungen» im Panel, NICHT der globale Einstellungen-Knopf),
+// Betriebsart Cloud → das Claude-Modell-Select (Opus/Sonnet/Haiku/Freitext)
+// erscheint, Owner-Default ist Opus 4.8.
+await frisch(false);
+await page.click('[data-testid="kosmo-symbol"]');
+await page.waitForSelector('[data-testid="kosmo-panel"]');
+await page.click('[aria-label="Einstellungen"]');
+await page.click('[data-testid="betriebsart-cloud"]');
+await page.waitForSelector('[data-testid="claude-modell-select"]');
+await shot('27-claude-modell', 400);
+
+// ── 28 Deinstallieren-Dialog — F2 (0.6.4): Einstieg NUR noch über die
+//    Einstellungen (Sektion «System»), der Kopfleisten-Knopf ist weg. Die
+//    Farbpalette (Akzente) zog ebenfalls hierher (Sektion «Darstellung»,
+//    siehe Block 03) — beides «eine Funktion, ein Ort» ────────────────
+await frisch(false);
 await page.click('[data-testid="einstellungen-oeffnen"]');
 await page.click('[data-testid="einstellung-deinstallieren"]');
 await page.waitForSelector('[role="dialog"]');
-await shot('24-deinstallieren', 500);
+await shot('28-deinstallieren', 500);
 
 await browser.close();
 console.log('Alle Rundgang-Bilder liegen unter docs/rundgang/bilder/');

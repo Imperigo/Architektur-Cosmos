@@ -1,15 +1,18 @@
 /**
- * Rundgang-PDF «0.6.3» (Owner-Auftrag 09.07.) — Teil 2: HTML → PDF.
+ * Rundgang-PDF «0.6.4» (Owner-Auftrag 09.07.) — Teil 2: HTML → PDF.
  * Baut aus den Bildern von `rundgang.mts` ein Kommentier-Dokument: je
  * Station/Feature eine A4-Seite mit Screenshot, kurzem Beschrieb und einer
- * grossen linierten Notiz-Box zum Reinschreiben im PDF-Reader. Die Notizen
- * zu DIESEM PDF werden die Auftragsliste der 0.6.4-Runde.
+ * grossen linierten Notiz-Box zum Reinschreiben im PDF-Reader. Diese Runde
+ * hat die 0.6.4-Testbefunde des Owners umgesetzt — die 12 Punkte stehen in
+ * `apps/kosmo-orbit/src/shell/neuigkeiten.ts` (Version 0.6.4) und sind die
+ * ehrliche Quelle für die Texte unten. Die Notizen zu DIESEM PDF werden die
+ * Auftragsliste der 0.6.5-Runde.
  */
 import { chromium } from 'playwright-core';
 import { writeFileSync, mkdirSync } from 'node:fs';
 
 const DIR = new URL('../../docs/rundgang/', import.meta.url).pathname;
-const OUT = new URL('../../abgabe/RUNDGANG-NOTIZEN-0.6.3.pdf', import.meta.url).pathname;
+const OUT = new URL('../../abgabe/RUNDGANG-NOTIZEN-0.6.4.pdf', import.meta.url).pathname;
 mkdirSync(DIR, { recursive: true });
 
 interface Seite {
@@ -27,151 +30,170 @@ const SEITEN: Seite[] = [
   {
     bild: '00-erste-start-frage.png',
     titel: 'Erster Start — «Neu hier?»',
-    neu: true,
-    text: 'K13 umgesetzt: der automatische Guide-Autostart ist weg. Beim allerersten Start fragt Kosmo in der Zentrale, ob ein Rundgang gewünscht ist. «Nein» heisst nie wieder — die Frage lässt sich über das «?» in der Kopfleiste jederzeit erneut auslösen.',
+    text: 'Aus 0.6.3, unverändert diese Runde: beim allerersten Start fragt Kosmo in der Zentrale, ob ein Rundgang gewünscht ist. «Nein» heisst nie wieder — die Frage lässt sich über das «?» in der Kopfleiste jederzeit erneut auslösen.',
   },
   {
-    bild: '01-zentrale.png',
-    titel: 'Zentrale — neue Kacheln',
+    bild: '01-orbit-start.png',
+    titel: 'Orbit-Startmenü — die Zentrale neu gedacht',
     neu: true,
-    extra: ['01-zentrale-hover.png', '01-zentrale-info.png'],
-    text: 'K12 umgesetzt: personalisierte Kacheln mit Tiefenlayer und Farbakzenten statt der flachen Liste. Hover auf eine Kachel zeigt die enthaltenen Werkzeuge (rechtes Extra-Bild), das Info-Icon öffnet ein erklärendes Panel (zweites Extra-Bild) — beides ohne die Kachel selbst zu öffnen.',
+    extra: ['01-orbit-faecher-design.png'],
+    text: 'F3 umgesetzt (Owner-Befund wörtlich: «nicht Blöcke, eher wie das Kosmos-Zeichen rund»): die alten Kacheln sind weg. Nur die vier Hauptwerkzeuge (KosmoDesign, KosmoData, Kosmo, KosmoOffice «kommend») kreisen ganz langsam im Kreis um das Kosmos-Zeichen. Hover auf ein Hauptwerkzeug öffnet den Fächer mit den Untertools — Titel und Kurzbeschrieb, wie im rechten Extra-Bild (KosmoDesign: Draw/Prepare/Vis/Publish/Modellbaum). Die Rotation pausiert, sobald die Maus im Ring steht, damit das Ziel ihr nicht entflieht.',
   },
   {
     bild: '02-kosmo-symbol-mini.png',
     titel: 'Kosmo — Symbol statt Dauerchat',
-    neu: true,
-    text: 'K11 umgesetzt: Kosmo ist jetzt ein schwebendes Symbol, kein permanent offenes Panel mehr. Hover zeigt ein Mini-Popup mit der letzten Aktivität, ein Klick entfaltet bei Bedarf das grosse Panel. Der Zustand (offen/zu) merkt sich über einen Reload.',
+    text: 'Aus 0.6.3, unverändert diese Runde: Kosmo bleibt ein schwebendes Symbol statt eines dauerhaft offenen Panels. Hover zeigt ein Mini-Popup mit der letzten Aktivität, ein Klick entfaltet bei Bedarf das grosse Panel.',
   },
   {
     bild: '03-einstellungen.png',
-    titel: 'Einstellungs-Panel — zentral',
+    titel: 'Einstellungs-Panel — Funktionen & Neues, System',
     neu: true,
     extra: ['03-einstellungen-neuigkeiten.png', '03-einstellungen-leistung.png'],
-    text: 'K14 umgesetzt: EIN Panel für die ganze App (Kopfleiste ungefiltert, jede Station mit Stations-Filter). «Funktionen & Neues» listet jetzt auch die 0.6.3-Punkte (mittleres Extra-Bild); die neue Leistungs-Sektion (rechtes Extra-Bild) prüft auf Zustimmung die echte Systemleistung und benennt offen, was HomeStation-Reste bleiben.',
+    text: 'Die 0.6.4-Punkte stehen jetzt zuoberst in «Funktionen & Neues» (mittleres Extra-Bild). F2 umgesetzt («eine Funktion, ein Ort»): «App deinstallieren…» zog aus der Kopfleiste in die neue Sektion «System» (siehe Seite 28) und die Farbpalette (Akzent-Punkte) lebt jetzt ausschliesslich in der Sektion «Darstellung» oben im Hauptbild — beide Kopfleisten-Reste sind entfernt. Die Leistungs-Sektion (rechtes Extra-Bild) bleibt unverändert.',
   },
   {
-    bild: '04-design-uebersicht.png',
+    bild: '04-kurztasten-uebersicht.png',
+    titel: 'Werkzeug-Kurztasten + «?»-Übersicht',
+    neu: true,
+    text: 'F5/F9 umgesetzt (Owner-Befund wörtlich: «eine Tastenkombination … um mich intuitiv bewegen zu können wie ArchiCAD»): «?» blendet die Kurzbefehl-Übersicht ein, der neue Abschnitt «Zeichnen» zeigt die ArchiCAD-angelehnten Werkzeug-Kurztasten (A Auswahl, W Wand, Z Zone, V Volumen, D Dach, T Treppe, C Stütze, S Schnitt, F Freihand-Skizze) plus «Leertaste halten + ziehen» fürs Verschieben (Pan) im 2D-Plan. Die Kurztasten wirken nie, solange ein Eingabefeld den Fokus hat.',
+  },
+  {
+    bild: '05-design-uebersicht.png',
     titel: 'KosmoDesign — Entwurfs-Dock, Fähigkeiten, Statusleiste',
-    neu: true,
-    extra: ['04-design-4er.png'],
-    text: 'K16/K17/K18 umgesetzt: links das Entwurfs-Dock (Sprechen · Skizzieren · CAD, dazu Sprünge zu Draw/Vis/Publish/Prepare), oben sechs Fähigkeits-Icons (Sonne, Volumenstudien, KV, Bauablauf, Mängel, Submissions-Check — die Sonnenstudie lebt jetzt hier statt auf einer eigenen Seite), unten eine Zero-Click-Statusleiste mit Werkzeug/Geschoss/LOD/Fläche/Teilphase. Der 4er-Splitscreen (Extra-Bild) bleibt unverändert nutzbar.',
+    extra: ['05-design-4er.png'],
+    text: 'Aus 0.6.3, unverändert diese Runde: links das Entwurfs-Dock (Sprechen · Skizzieren · CAD, dazu Sprünge zu Draw/Vis/Publish/Prepare), oben die Fähigkeits-Icons, unten die Zero-Click-Statusleiste. Der 4er-Splitscreen (Extra-Bild) bleibt unverändert nutzbar.',
   },
   {
-    bild: '05-plan-lod-voll.png',
+    bild: '06-mass-eingabe.png',
+    titel: 'Masszahl am Cursor — «Zahlen zur Hand»',
+    neu: true,
+    text: 'F5 umgesetzt: beim Zeichnen läuft eine Live-Masszahl am Cursor mit (hier «3.5 m ⏎» nach dem Tippen von «3.5»); Enter setzt den nächsten Punkt exakt in dieser Länge, ohne erneutes Raster-Snapping — die Zahl ist die Absicht. Ehrlicher Hinweis: das Fadenkreuz im Bild ist hier tatsächlich sichtbar (Chromium zeichnet den CSS-Cursor in dieser Aufnahme mit); die weiteren kontextabhängigen Cursor-Formen aus demselben 0.6.4-Punkt (Zeiger über Bauteilen, Verschieben-Cursor über Gewähltem, Greifhand beim Pan) zeigt kein Bild in diesem Rundgang — sie sind nur im laufenden Betrieb zu sehen.',
+  },
+  {
+    bild: '07-element-fang.png',
+    titel: 'Element-Fang — Fangpunkt-Marker beim Zeichnen',
+    neu: true,
+    text: 'F4 umgesetzt (Owner-Befund wörtlich: «die Maus muss auf die anderen Wände oder Elemente snappen können … ein sichtbarer Punkt, der beim Hovern anzeigt, wo es snappen wird»): das Quadrat am Wandende ist der Fangpunkt-Marker (Typ «endpunkt»), er erscheint erst innerhalb des Fangradius und zieht den nächsten Klick exakt auf die Bauteilgeometrie statt aufs 250er-Raster. Ausserhalb des Radius bleibt der Marker weg — der Fang drängt sich nicht auf.',
+  },
+  {
+    bild: '08-plan-lod-voll.png',
     titel: 'Plan-LOD — Detailstufe aus der Distanz',
-    neu: true,
-    extra: ['05-plan-lod-fern.png'],
+    extra: ['08-plan-lod-fern.png'],
     paar: true,
-    text: 'Owner-Befund «Grundriss aus Distanz schlecht» umgesetzt: nah dran (links) zeigt Bemassung, 1m-Raster und Möbel; weit weg (rechts) verschwinden Bemassungstexte, Raster und Möbel — nur Poché und Öffnungssymbole (Fenster) bleiben immer sichtbar. Reine Anzeige-Umschaltung, der Plansatz-Export bleibt unverändert.',
+    text: 'Aus 0.6.3, unverändert diese Runde: nah dran (links) zeigt Bemassung, Raster und Möbel; weit weg (rechts) bleiben nur Poché und Fenstersymbole. Reine Anzeige-Umschaltung, der Plansatz-Export bleibt unverändert.',
   },
   {
-    bild: '06-skizzieren-annaeherungen.png',
+    bild: '09-skizzieren-annaeherungen.png',
     titel: 'Skizzieren — drei Annäherungen',
-    neu: true,
-    text: 'K16 umgesetzt: ein Freihand-Strich im neuen Skizzieren-Modus ergibt am Übergabe-Moment drei Karten (u.a. eine orthogonalisierte Variante). Die gewählte Variante entsteht als EIN atomarer Undo-Schritt und landet als kuratierbarer Eintrag im Lernjournal — kein Live-Training.',
+    text: 'Aus 0.6.3, unverändert diese Runde: ein Freihand-Strich im Skizzieren-Modus ergibt am Übergabe-Moment drei Karten (u.a. eine orthogonalisierte Variante), als EIN atomarer Undo-Schritt.',
   },
   {
-    bild: '07-kosmo-vorschlag-vorschau.png',
+    bild: '10-kosmo-vorschlag-vorschau.png',
     titel: 'Kosmo-Vorschlagskarte — mit Vorschau',
-    neu: true,
-    text: 'K8/B1 umgesetzt: die Diff-Karte zeigt jetzt einen Vorher/Nachher-Mini-Grundriss (zwei SVGs) statt nur Text — ehrlich nur dort, wo die Vorschau tatsächlich berechenbar ist. Scheitert das probeweise Ausführen, bleibt die bisherige Textkarte ohne Absturz.',
+    text: 'Aus 0.6.3, unverändert diese Runde: die Diff-Karte zeigt einen Vorher/Nachher-Mini-Grundriss statt nur Text — ehrlich nur dort, wo die Vorschau tatsächlich berechenbar ist.',
   },
   {
-    bild: '08-phasen-preset-banner.png',
+    bild: '11-phasen-preset-banner.png',
     titel: 'Phasen-Presets — Angebot, nie stumm',
-    neu: true,
-    text: 'K18 umgesetzt: wechselt die SIA-Teilphase (hier auf «Bewilligung»), bietet Kosmo passende Fähigkeits-Icons als Fokus an (Banner). «Anwenden» hebt die vorgeschlagenen Icons hervor und dämpft den Rest optisch — nichts verschwindet aus dem DOM, «Nicht jetzt» lässt alles unverändert.',
+    text: 'Aus 0.6.3, unverändert diese Runde: wechselt die SIA-Teilphase, bietet Kosmo passende Fähigkeits-Icons als Fokus an. «Nicht jetzt» lässt alles unverändert.',
   },
   {
-    bild: '09-kv-panel.png',
-    titel: 'KV-Grobschätzung — neu',
-    neu: true,
-    text: 'Lücken-Batch 3 (K22): Richtwert-Kostenvoranschlag auf GF-Basis mit stets sichtbarem Ehrlichkeits-Hinweis («kein Devis, keine NPK-Positionen»). Kennwert-Änderungen wirken sofort, jede Änderung ist ein eigener Undo-Schritt.',
+    bild: '12-kv-panel.png',
+    titel: 'KV-Grobschätzung',
+    text: 'Aus 0.6.3, unverändert diese Runde: Richtwert-Kostenvoranschlag auf GF-Basis mit stets sichtbarem Ehrlichkeits-Hinweis («kein Devis, keine NPK-Positionen»).',
   },
   {
-    bild: '10-bauablauf-panel.png',
-    titel: 'Bauablaufplan — neu',
-    neu: true,
-    text: 'Lücken-Batch 4 (K22): abgeleiteter Grob-Terminplan mit fester Gewerke-Reihenfolge (Aushub … Abnahme), Export als druckfähiges SVG-Blatt. Ehrlichkeits-Hinweis «ersetzt keine Bauleitung» steht permanent im Panel.',
+    bild: '13-bauablauf-panel.png',
+    titel: 'Bauablaufplan',
+    text: 'Aus 0.6.3, unverändert diese Runde: abgeleiteter Grob-Terminplan mit fester Gewerke-Reihenfolge, Export als druckfähiges SVG-Blatt. Hinweis «ersetzt keine Bauleitung» steht permanent im Panel.',
   },
   {
-    bild: '11-maengel-panel.png',
-    titel: 'Mängel & Abnahme — neu',
-    neu: true,
-    text: 'Lücken-Batch 5 (K22): erste Abschlussphase «Gebäudeabnahme» im Kernel. Mängel erfassen, Status umschalten, Abnahmeprotokoll als SVG exportieren — mit dem klaren Hinweis, dass dies kein rechtsgültiges SIA-118-Protokoll ersetzt.',
+    bild: '14-maengel-panel.png',
+    titel: 'Mängel & Abnahme',
+    text: 'Aus 0.6.3, unverändert diese Runde: Mängel erfassen, Status umschalten, Abnahmeprotokoll als SVG exportieren — kein rechtsgültiges SIA-118-Protokoll.',
   },
   {
-    bild: '12-baugesuch.png',
-    titel: 'Baugesuch-Blattsatz — neu',
-    neu: true,
-    text: 'Lücken-Batch 2 (K22): ein Klick erzeugt mehrere Blätter (Grundriss/Schnitt/Ausnützungsnachweis) plus ein Set «Baugesuch». Fehlende Grundlagen (z.B. kein Standort/keine Parzelle) werden als ehrliche Lücken-Meldung benannt statt eines stillen Teilerfolgs. EIN Undo räumt den ganzen Blattsatz wieder weg.',
+    bild: '15-baugesuch.png',
+    titel: 'Baugesuch-Blattsatz',
+    text: 'Aus 0.6.3, unverändert diese Runde: ein Klick erzeugt mehrere Blätter plus ein Set «Baugesuch». Fehlende Grundlagen werden als ehrliche Lücken-Meldung benannt statt eines stillen Teilerfolgs.',
   },
   {
-    bild: '13-blatt-fuellen.png',
-    titel: 'Blatt füllen — neu',
-    neu: true,
-    text: 'K10 umgesetzt: «Blatt füllen» platziert Grundriss, Axonometrie, einen Kennzahlen-Textblock und einen Render-Platzhalter in einem atomaren Schritt und meldet ehrlich, was noch im Modell fehlt (z.B. kein Schnitt definiert). Ein Rückgängig entfernt alle Platzierungen auf einmal.',
+    bild: '16-blatt-fuellen.png',
+    titel: 'Blatt füllen',
+    text: 'Aus 0.6.3, unverändert diese Runde: platziert Grundriss, Axonometrie, Kennzahlen-Textblock und Render-Platzhalter atomar und meldet ehrlich, was im Modell fehlt.',
   },
   {
-    bild: '14-vis-automatik.png',
-    titel: 'KosmoVis — Automatik',
+    bild: '17-vis-automatik.png',
+    titel: 'KosmoVis — Automatik + Auto-Fit (behoben)',
     neu: true,
-    text: 'K20/A10 umgesetzt: «Kamera vorschlagen» legt einen Auto-Kamera-Node an und verbindet ihn mit jedem Render-Node, Cycles-Presets (z.B. «Präsentation») wählen Auflösung/Sonnenstand direkt am Node. Der Fake-Render-Job bestätigt die gewählten Werte.',
+    text: 'Auto-Kamera und Cycles-Presets aus 0.6.3 bleiben unverändert. NEU in 0.6.4: der Absturz beim Verschieben des Node-Trees ist behoben, und der Node-Graph passt sich beim Öffnen jetzt automatisch ins Bild ein (Auto-Fit) — vorher musste von Hand gezoomt werden, um die Nodes überhaupt zu sehen.',
   },
   {
-    bild: '15-material-wuerfel.png',
+    bild: '18-material-wuerfel.png',
     titel: 'Materialbibliothek — Würfel-Vorschau',
+    text: 'Aus 0.6.3, unverändert diese Runde: jedes Material zeigt einen 3D-Würfel (echte Canvas-Vorschau), echte Dimensionen und eine Pflicht-Quelle.',
+  },
+  {
+    bild: '19-data-referenzen.png',
+    titel: 'KosmoData — ehrlicher Offline-Badge',
     neu: true,
-    text: 'K21 Stufe 1 umgesetzt: jedes Material zeigt jetzt einen 3D-Würfel (echte Canvas-Vorschau), echte Dimensionen (z.B. Backstein NF 250×120×65 mm) und eine Pflicht-Quelle — «Quelle unbelegt (Altbestand)» bei den mitgelieferten Referenzen, Pflichtfeld bei eigenen Einträgen.',
+    extra: ['19-data-bauteile.png'],
+    text: 'Referenz-Kanon, CH-Bauteilkatalog, Wissen, Training und Gedächtnis bleiben unverändert unter einem Dach (rechtes Extra-Bild: Bauteile). NEU in 0.6.4: der Badge oben links sagt jetzt ehrlich «Offline — eingebaute Referenzdaten (Stand vom Build)» statt des vagen «Offline-Seed» — die Kataloge sind auch offline vollständig da, und ein Ladefehler bekäme einen «Erneut versuchen»-Knopf.',
   },
   {
-    bild: '16-data-referenzen.png',
-    titel: 'KosmoData — Referenzen & Bauteile',
-    extra: ['16-data-bauteile.png'],
-    text: 'Referenz-Kanon, CH-Bauteilkatalog, Wissen, Training und Gedächtnis unter einem Dach — diese Runde unverändert, die lernende Oberflächen-Adaption aus 0.6.1 bleibt aktiv.',
-  },
-  {
-    bild: '17-dev-auftragsbuch.png',
+    bild: '20-dev-auftragsbuch.png',
     titel: 'KosmoDev — Auftragsbuch',
     text: 'Deine Aufträge an die Software-Werkstatt: erfassen, priorisieren, als Workorder exportieren. Genau hier landen auch deine Notizen aus diesem PDF — unverändert diese Runde.',
   },
   {
-    bild: '18-prepare.png',
+    bild: '21-prepare.png',
     titel: 'KosmoPrepare / KosmoDoc / KosmoTrain',
-    extra: ['18-doc.png', '18-train.png'],
-    text: 'Wissens-Ingest, Diagnose/Hilfe/Berichte und Kosmos Lernstand mit Kuration — unverändert diese Runde.',
+    extra: ['21-doc.png', '21-train.png'],
+    text: 'Wissens-Ingest, Diagnose/Hilfe/Berichte und Kosmos Lernstand mit Kuration — unverändert diese Runde. Der neue vierte Doc-Tab «Tech-Radar» hat eine eigene Seite (nächste Seite).',
   },
   {
-    bild: '19-draw.png',
+    bild: '21-doc-tech-radar.png',
+    titel: 'KosmoDoc — Tech-Radar (neu)',
+    neu: true,
+    text: 'Neuer vierter Tab in KosmoDoc: worauf die Software technisch steht (Adopt/Selbst/Reject je Baustein) und was noch beobachtet wird, in einer kuratierten Liste (mind. 20 Posten). Einträge aus dem Notion-Scan sind ehrlich mit ⚠ markiert, weil noch nicht selbst verifiziert (z.B. «Gemini Omni Flash») — verifizierter Bestand (z.B. camera-controls) trägt kein Warnzeichen.',
+  },
+  {
+    bild: '22-draw.png',
     titel: 'KosmoDraw — Modellbaum · Mengen · Ausmass',
-    extra: ['19-sketch.png'],
-    text: 'Mengen, Ausmass und Berechnungsliste aus dem Modell; daneben KosmoSketch fürs freie Zeichnen — unverändert diese Runde.',
+    extra: ['22-sketch.png'],
+    text: 'Mengen, Ausmass und Berechnungsliste aus dem Modell; daneben KosmoSketch fürs freie Zeichnen (Extra-Bild). Der 0.6.4-Fix «3D-Skizzieren funktioniert wieder zuverlässig» betrifft genau KosmoSketch: die Rundgang-Karte verdeckte früher den «Übergeben»-Knopf, sie sitzt jetzt daneben.',
   },
   {
-    bild: '20-umbau-werkplan.png',
+    bild: '23-umbau-werkplan.png',
     titel: 'Umbau — Bestand / Abbruch / Neu',
     text: 'Bestand einheitlich grau, kein Diagonalkreuz, SIA-saubere Umbau-Blätter — aus 0.6.2, unverändert diese Runde.',
   },
   {
-    bild: '21-studien-panel.png',
+    bild: '24-studien-panel.png',
     titel: 'Volumenstudien — Zonenregel-gespeist',
     text: 'Zonenregel speist die Studie, Geschosshöhe mit Herkunft, Besonnungs-Richtwert und Raumprogramm-Erfüllung je Extremvariante — aus 0.6.1/0.6.2, unverändert diese Runde.',
   },
   {
-    bild: '22-bericht.svg',
+    bild: '25-bericht.svg',
     titel: 'Grundlagenstudie-Bericht',
     text: 'Empfehlung mit Begründung zuerst, dann die Vergleichstabelle mit echten Zahlen, dann die Grenzen der Studie als eigener Block — aus 0.6.2, unverändert diese Runde.',
   },
   {
-    bild: '23-unternehmerplan-pdf.png',
+    bild: '26-unternehmerplan-pdf.png',
     titel: 'Unternehmerplan — ehrlicher PDF-Pfad',
     text: 'Datei ins Fenster ziehen genügt; ein hochgeladenes PDF wird ehrlich erkannt statt in den DXF-Import zu laufen — aus 0.6.1/0.6.2, unverändert diese Runde.',
   },
   {
-    bild: '24-deinstallieren.png',
-    titel: 'App deinstallieren',
-    text: '«Deinstallieren…» in der Kopfleiste öffnet die ehrliche OS-Anleitung — aus 0.6.2, unverändert diese Runde.',
+    bild: '27-claude-modell.png',
+    titel: 'Claude-Modellwahl',
+    neu: true,
+    text: 'F1 umgesetzt (Owner-Befund wörtlich: «Modell auswählbar machen von Claude»): im Kosmo-Panel (Zahnrad → Betriebsart Cloud) steht jetzt ein Modell-Select mit den aktuellen Claude-Modellen (Opus 4.8 als Owner-Default, Sonnet, Haiku) plus Freitext-Override für eigene Modell-IDs — die Wahl übersteht einen Reload. Fehlt die Anthropic-CLI für die Abo-Anmeldung, erklärt ein bleibender Hinweis Installation und den API-Schlüssel-Weg als Alternative.',
+  },
+  {
+    bild: '28-deinstallieren.png',
+    titel: 'App deinstallieren — jetzt nur in den Einstellungen',
+    neu: true,
+    text: 'F2 umgesetzt («Entdoppelung», eine Funktion = ein Ort): der Einstieg wohnt nur noch in den Einstellungen (Sektion «System», siehe Seite 03) — der frühere Kopfleisten-Knopf ist komplett entfernt. Der Dialog selbst bleibt ehrlich: KosmoOrbit kann sich als Tauri-App nicht selbst deinstallieren, das Panel zeigt die OS-Kurzanleitung (Windows/macOS/Linux) und den Link auf die Website.',
   },
 ];
 
@@ -193,7 +215,7 @@ const seiteHtml = (s: Seite) => `
 </section>`;
 
 const html = `<!doctype html>
-<html lang="de"><head><meta charset="utf-8"><title>KosmoOrbit 0.6.3 — Rundgang</title>
+<html lang="de"><head><meta charset="utf-8"><title>KosmoOrbit 0.6.4 — Rundgang</title>
 <style>
   * { box-sizing: border-box; margin: 0; }
   body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2b2924; }
@@ -221,7 +243,7 @@ const html = `<!doctype html>
 
 <section class="seite deckblatt">
   <h1>KosmoOrbit — Rundgang zum Kommentieren</h1>
-  <div class="version">Stand 0.6.3 · 09.07.2026 · ${SEITEN.length} Stationen &amp; Funktionen</div>
+  <div class="version">Stand 0.6.4 · 09.07.2026 · ${SEITEN.length} Stationen &amp; Funktionen</div>
   <ol>
     <li>PDF im Reader öffnen (Adobe Acrobat, Microsoft Edge, Vorschau …).</li>
     <li>Seite für Seite durchgehen — jede Seite zeigt eine Station oder Funktion.</li>
@@ -230,15 +252,16 @@ const html = `<!doctype html>
   </ol>
   <div class="kasten">
     <b>Was mit deinen Notizen passiert</b>
-    Diese Runde hat dein kommentiertes 0.6.2-PDF umgesetzt — Serie K komplett
-    (Kosmo-Symbol, neue Zentrale-Kacheln, Erststart-Frage, zentrales
-    Einstellungs-Panel, Entwurfs-Dock, Fähigkeiten-Zeile, Plan-LOD,
-    Phasen-Presets) und dazu das Vollprojekt Wettbewerb bis Abnahme
-    (KV-Grobschätzung, Bauablaufplan, Baugesuch-Blattsatz, Mängel &amp;
-    Abnahme, Blatt füllen, Vis-Automatik, Material-Würfel). Seiten mit «NEU»
-    zeigen, was seit dem letzten PDF dazugekommen ist. Deine Notizen zu
-    <b style="display:inline">diesem</b> PDF werden die
-    <b style="display:inline">0.6.4-Auftragsliste</b>.
+    Diese Runde hat dein kommentiertes 0.6.3-PDF umgesetzt — die 12 Testbefunde
+    aus deinem letzten Rundgang (F1–F9 und die Notion-Restpunkte, siehe
+    <code>neuigkeiten.ts</code> Version 0.6.4): neues Orbit-Startmenü,
+    Element-Fang und Masszahl-am-Cursor beim Zeichnen, Werkzeug-Kurztasten
+    mit «?»-Übersicht, kontextabhängiger Cursor, KosmoVis-Auto-Fit,
+    ehrlicher Offline-Badge in KosmoData, wählbares Claude-Modell,
+    Tech-Radar in KosmoDoc, und Deinstallieren/Farbpalette ausschliesslich
+    in den Einstellungen. Seiten mit «NEU» zeigen, was seit dem letzten PDF
+    dazugekommen ist. Deine Notizen zu <b style="display:inline">diesem</b>
+    PDF werden die <b style="display:inline">0.6.5-Auftragsliste</b>.
   </div>
 </section>
 ${SEITEN.map(seiteHtml).join('\n')}
@@ -258,7 +281,7 @@ await page.pdf({
   displayHeaderFooter: true,
   headerTemplate: '<span></span>',
   footerTemplate:
-    '<div style="width:100%;text-align:center;font-size:8px;color:#8a857a;font-family:Menlo,monospace;">KosmoOrbit 0.6.3 — Rundgang &amp; Notizen · Seite <span class="pageNumber"></span> / <span class="totalPages"></span></div>',
+    '<div style="width:100%;text-align:center;font-size:8px;color:#8a857a;font-family:Menlo,monospace;">KosmoOrbit 0.6.4 — Rundgang &amp; Notizen · Seite <span class="pageNumber"></span> / <span class="totalPages"></span></div>',
   margin: { top: '12mm', bottom: '16mm', left: '13mm', right: '13mm' },
 });
 await browser.close();
