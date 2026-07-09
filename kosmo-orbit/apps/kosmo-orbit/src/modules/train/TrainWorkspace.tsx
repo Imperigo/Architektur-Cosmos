@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { LearningJournal, type Learning } from '@kosmo/ai';
-import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KButton, KIcon, KInput, KToolbar, Measure, Messrahmen, moduleHue } from '@kosmo/ui';
 import { listDocs } from '../prepare/knowledge';
 import { useQuellen } from '../../state/quellen';
 import { journalStore } from '../../state/journal-store';
@@ -57,22 +57,22 @@ export function TrainWorkspace() {
 
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
-      <div style={{ maxWidth: 860, margin: '0 auto', padding: '20px 24px', display: 'grid', gap: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: 'var(--k-s5) var(--k-s6)', display: 'grid', gap: 'var(--k-s4)' }}>
+        <KToolbar data-testid="train-werkzeugleiste" style={{ flexWrap: 'wrap' }}>
           <Badge hue={moduleHue.train}>KosmoTrain</Badge>
-          <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
+          <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
             Das System lernt DICH — Journal kuratieren, Trainingspaket schnüren.
           </span>
           <div style={{ flex: 1 }} />
           <KButton size="sm" tone="accent" onClick={exportJsonl} data-testid="train-export" disabled={eintraege.length === 0}>
             JSONL exportieren
           </KButton>
-        </div>
+        </KToolbar>
         <Hairline />
 
         {/* Lernstand */}
-        <div style={{ display: 'flex', gap: 20, alignItems: 'baseline', flexWrap: 'wrap' }} data-testid="train-stand">
-          <span className="k-titel" style={{ fontSize: 14 }}>Lernstand</span>
+        <div style={{ display: 'flex', gap: 'var(--k-s5)', alignItems: 'baseline', flexWrap: 'wrap' }} data-testid="train-stand">
+          <span className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Lernstand</span>
           <Measure>{eintraege.length} Journal-Einträge</Measure>
           <Measure style={{ color: 'var(--k-success)' }}>{gut} 👍</Measure>
           <Measure style={{ color: 'var(--k-danger)' }}>{eintraege.length - gut} 👎</Measure>
@@ -86,7 +86,7 @@ export function TrainWorkspace() {
             caption="Noch nichts zu kuratieren — 👍/👎 unter Kosmo-Antworten sammelt Beispiele"
           />
         ) : (
-          <div style={{ display: 'grid', gap: 6 }} data-testid="train-kuration">
+          <div style={{ display: 'grid', gap: 'var(--k-s2)' }} data-testid="train-kuration">
             {[...eintraege].reverse().map((e) => {
               const zitiert = ziel?.typ === 'journal' && ziel.ts === e.ts;
               return (
@@ -97,11 +97,11 @@ export function TrainWorkspace() {
                 style={zitiert ? { outline: '2px solid var(--k-accent)', borderRadius: 'var(--k-radius-sm)' } : undefined}
               >
               <Karteikarte>
-                <div style={{ display: 'grid', gap: 5, fontSize: 12.5 }}>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
+                <div style={{ display: 'grid', gap: 'var(--k-s2)', fontSize: 'var(--k-t-sm)' }}>
+                  <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline' }}>
                     <span>{e.sentiment === 'gut' ? '👍' : '👎'}</span>
                     <span style={{ flex: 1, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{e.context}</span>
-                    <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-faint)' }}>
+                    <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
                       {e.ts.slice(0, 16).replace('T', ' ')}
                     </span>
                     <KButton
@@ -113,10 +113,11 @@ export function TrainWorkspace() {
                         refresh();
                       }}
                     >
-                      ✕
+                      <KIcon name="schliessen" size={14} title="Eintrag löschen" />
                     </KButton>
                   </div>
-                  <input
+                  <KInput
+                    size="sm"
                     defaultValue={e.note ?? ''}
                     placeholder="Notiz schärfen — sie ist der Trainings-Kern (z.B. «nie Fenster unter 900 Brüstung vorschlagen»)"
                     onBlur={(ev) => {
@@ -124,13 +125,6 @@ export function TrainWorkspace() {
                         journal.notieren(e.ts, ev.target.value);
                         refresh();
                       }
-                    }}
-                    style={{
-                      padding: '4px 8px',
-                      borderRadius: 'var(--k-radius-sm)',
-                      border: '1px solid var(--k-line)',
-                      background: 'var(--k-surface)',
-                      fontSize: 12,
                     }}
                   />
                 </div>
@@ -144,14 +138,14 @@ export function TrainWorkspace() {
         <Hairline />
 
         {/* Trainings-Zyklus */}
-        <div style={{ display: 'grid', gap: 8 }}>
-          <span className="k-titel" style={{ fontSize: 14 }}>Trainings-Zyklus (HomeStation)</span>
+        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+          <span className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Trainings-Zyklus (HomeStation)</span>
           {REZEPT.map((r, i) => (
             <Karteikarte key={i} nr={i + 1}>
-              <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{r}</span>
+              <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{r}</span>
             </Karteikarte>
           ))}
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+          <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
             Ehrlich: Schritte 3–5 brauchen die 5090 — das volle Rezept steht in docs/KOSMOTRAIN.md.
             Hier entsteht der Datensatz; trainiert wird zuhause.
           </span>

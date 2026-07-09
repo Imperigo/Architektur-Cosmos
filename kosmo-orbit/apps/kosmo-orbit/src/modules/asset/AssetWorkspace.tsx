@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, KLade, Measure, Messrahmen, Panel, bestaetigen, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KChip, KIcon, KInput, KLade, KTabs, KToolbar, Measure, Messrahmen, Panel, bestaetigen, melde, meldeFehler, moduleHue, type KTabItem } from '@kosmo/ui';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '@kosmo/kernel';
 import { BauteilkatalogView, loadReferences, MaterialkatalogView, type RefEntry } from '../data/DataWorkspace';
 import { setGlbContext } from '../design/Viewport3D';
@@ -97,6 +97,12 @@ const kosmodataRefKindLabel: Record<KosmodataRefKind, string> = {
   material_context: 'Material-Kontext',
   typology_context: 'Typologie-Kontext',
 };
+
+const TAB_ITEMS: readonly KTabItem[] = [
+  { id: 'objekte', label: 'Objekte (GLB)', testid: 'tab-objekte' },
+  { id: 'bauteile', label: 'Bauteilkatalog CH', testid: 'asset-tab-bauteile' },
+  { id: 'materialien', label: 'Materialien', testid: 'asset-tab-materialien' },
+];
 
 /** Springt zu KosmoData und merkt den Bezug für die Vorauswahl im Dossier (sessionStorage-Brücke). */
 function oeffneInKosmoData(entryId: string) {
@@ -339,31 +345,23 @@ export function AssetWorkspace() {
 
   return (
     <div className="k-einblenden" style={{ position: 'absolute', inset: 0, display: 'flex' }}>
-      <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
-        <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: 'var(--k-s5)' }}>
+        <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 'var(--k-s4)' }}>
+          <KToolbar data-testid="asset-werkzeugleiste" style={{ flexWrap: 'wrap' }}>
             <Badge hue={moduleHue.asset}>KosmoAsset</Badge>
-            <KButton size="sm" tone={tab === 'objekte' ? 'accent' : 'ghost'} onClick={() => setTab('objekte')} data-testid="tab-objekte">
-              Objekte (GLB)
-            </KButton>
-            <KButton size="sm" tone={tab === 'bauteile' ? 'accent' : 'ghost'} onClick={() => setTab('bauteile')} data-testid="asset-tab-bauteile">
-              Bauteilkatalog CH
-            </KButton>
-            <KButton size="sm" tone={tab === 'materialien' ? 'accent' : 'ghost'} onClick={() => setTab('materialien')} data-testid="asset-tab-materialien">
-              Materialien
-            </KButton>
+            <KTabs items={TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as typeof tab)} size="sm" />
             {tab === 'objekte' && objekte !== null && (
-              <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
+              <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
                 {filtered.length} von {objekte.length} Objekten
               </span>
             )}
             <div style={{ flex: 1 }} />
             {tab === 'objekte' && (
               <KButton size="sm" tone="accent" onClick={importieren} data-testid="glb-import">
-                + GLB importieren
+                <KIcon name="plus" size={14} /> GLB importieren
               </KButton>
             )}
-          </div>
+          </KToolbar>
           <Hairline />
 
           {tab === 'bauteile' && <BauteilkatalogView />}
@@ -371,7 +369,7 @@ export function AssetWorkspace() {
 
           {tab === 'objekte' && (
             <>
-              <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+              <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
                 Projektübergreifende Objekt-Bibliothek — Möbel, Bäume, Kontextbauten als GLB.
                 «Ins Modell» legt das Objekt als Referenz-Kontext in den Design-Viewport
                 (studierbar, nicht Teil der Pläne). «Als FreeMesh übernehmen» wandelt ein
@@ -379,28 +377,21 @@ export function AssetWorkspace() {
                 grössere bleiben ehrlich Referenz-Kontext. Blender exportiert GLB direkt.
               </span>
 
-              <input
+              <KInput
                 data-testid="asset-search"
                 placeholder="Suchen: Titel, Typ, Kategorie, Tag …"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                style={{
-                  padding: '9px 12px',
-                  borderRadius: 'var(--k-radius-sm)',
-                  border: '1px solid var(--k-line-strong)',
-                  background: 'var(--k-raised)',
-                  fontSize: 14,
-                }}
               />
 
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
                 <KButton
                   size="sm"
                   tone={nurSammlung ? 'accent' : 'quiet'}
                   data-testid="asset-sammlung"
                   onClick={() => setNurSammlung(!nurSammlung)}
                 >
-                  ★ Sammlung ({sammlung.size})
+                  <KIcon name="stern-voll" size={14} /> Sammlung ({sammlung.size})
                 </KButton>
                 {typeCounts.map(([t, n]) => (
                   <KButton
@@ -423,14 +414,19 @@ export function AssetWorkspace() {
                 <Messrahmen height={220} caption="Kein Objekt passt zur Suche — Begriff lockern oder Filter lösen" />
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 'var(--k-s4)' }}>
                 {filtered.map((o) => (
                   <Panel
                     key={o.id}
                     pad={false}
                     data-testid="asset-card"
                     onClick={() => setSelected(o)}
-                    style={{ cursor: 'pointer', overflow: 'hidden', position: 'relative' }}
+                    style={{
+                      cursor: 'pointer',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      borderColor: selected?.id === o.id ? 'var(--k-accent)' : undefined,
+                    }}
                   >
                     <button
                       aria-label="Zur Sammlung"
@@ -443,28 +439,28 @@ export function AssetWorkspace() {
                         all: 'unset',
                         cursor: 'pointer',
                         position: 'absolute',
-                        top: 6,
-                        right: 8,
+                        top: 'var(--k-s2)',
+                        right: 'var(--k-s3)',
                         zIndex: 2,
-                        fontSize: 15,
+                        display: 'flex',
                         color: sammlung.has(o.id) ? 'var(--k-warning)' : 'var(--k-ink-faint)',
-                        textShadow: '0 0 3px var(--k-raised)',
+                        filter: 'drop-shadow(0 0 3px var(--k-raised))',
                       }}
                     >
-                      {sammlung.has(o.id) ? '★' : '☆'}
+                      <KIcon name={sammlung.has(o.id) ? 'stern-voll' : 'stern'} size={16} title="Zur Sammlung" />
                     </button>
-                    <div data-testid="glb-karte" style={{ display: 'grid', gap: 6, padding: 10 }}>
+                    <div data-testid="glb-karte" style={{ display: 'grid', gap: 'var(--k-s2)', padding: 'var(--k-s3)' }}>
                       <AssetPreviewView asset={o} />
-                      <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-                        <span style={{ fontWeight: 600, fontSize: 12.5, overflowWrap: 'anywhere' }}>{o.title}</span>
+                      <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline' }}>
+                        <span style={{ fontWeight: 600, fontSize: 'var(--k-t-sm)', overflowWrap: 'anywhere' }}>{o.title}</span>
                         <div style={{ flex: 1 }} />
                         <Measure>{(assetBytes(o) / 1024).toFixed(0)} KB</Measure>
                       </div>
-                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
                         <Badge hue={moduleHue.asset}>{assetTypeLabel[o.asset_type] ?? o.asset_type}</Badge>
                         <Badge hue="var(--k-ink-faint)">{categoryLabel[o.category] ?? o.category}</Badge>
                       </div>
-                      <div style={{ display: 'flex', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
                         {o.asset_type === 'glb_model' && (
                           <KButton
                             size="sm"
@@ -520,25 +516,25 @@ export function AssetWorkspace() {
             borderLeft: '1px solid var(--k-line)',
             background: 'var(--k-surface)',
             overflow: 'auto',
-            padding: 16,
+            padding: 'var(--k-s5)',
             display: 'grid',
-            gap: 10,
+            gap: 'var(--k-s3)',
             alignContent: 'start',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Badge hue={moduleHue.asset}>Objekt</Badge>
             <div style={{ flex: 1 }} />
-            <KButton size="sm" tone="ghost" onClick={() => setSelected(null)}>
-              ×
+            <KButton size="sm" tone="ghost" onClick={() => setSelected(null)} aria-label="Detail schliessen">
+              <KIcon name="schliessen" size={14} title="Detail schliessen" />
             </KButton>
           </div>
 
           <AssetPreviewView asset={selected} />
 
-          <div style={{ fontSize: 17, fontWeight: 600, overflowWrap: 'anywhere' }}>{selected.title}</div>
+          <div style={{ fontSize: 'var(--k-t-lg)', fontWeight: 600, overflowWrap: 'anywhere' }}>{selected.title}</div>
 
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
             <Badge hue={moduleHue.asset}>{assetTypeLabel[selected.asset_type] ?? selected.asset_type}</Badge>
             <Badge hue="var(--k-ink-faint)">{categoryLabel[selected.category] ?? selected.category}</Badge>
             <span data-testid="asset-visibility">
@@ -549,22 +545,22 @@ export function AssetWorkspace() {
           </div>
 
           {selected.tags.length > 0 && (
-            <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
               {selected.tags.map((t) => (
-                <span key={t} style={{ fontSize: 11, padding: '2px 8px', borderRadius: 999, background: 'var(--k-accent-wash)' }}>
+                <KChip key={t} size="sm" tone="fuellung" hue="var(--k-ink-soft)">
                   {t}
-                </span>
+                </KChip>
               ))}
             </div>
           )}
 
           <Hairline />
-          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+          <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
             Formate
           </div>
-          <div data-testid="asset-formats" style={{ display: 'grid', gap: 4 }}>
+          <div data-testid="asset-formats" style={{ display: 'grid', gap: 'var(--k-s2)' }}>
             {selected.formats.map((f, i) => (
-              <div key={`${f.format}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5 }}>
+              <div key={`${f.format}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', fontSize: 'var(--k-t-sm)' }}>
                 <Measure>{f.format.toUpperCase()}</Measure>
                 <span style={{ color: 'var(--k-ink-soft)' }}>{(f.bytes / 1024).toFixed(0)} KB</span>
                 <div style={{ flex: 1 }} />
@@ -574,10 +570,10 @@ export function AssetWorkspace() {
           </div>
 
           <Hairline />
-          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+          <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
             Rechte
           </div>
-          <div data-testid="asset-rights" style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'grid', gap: 3 }}>
+          <div data-testid="asset-rights" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', display: 'grid', gap: 'var(--k-s1)' }}>
             <div>Status: {rightsStatusLabel[selected.rights_status] ?? selected.rights_status}</div>
             <div>Öffentliche Nutzung: {selected.public_use_allowed ? 'Erlaubt' : 'Nicht erlaubt'}</div>
           </div>
@@ -585,7 +581,7 @@ export function AssetWorkspace() {
           {selected.dimensions && (
             <>
               <Hairline />
-              <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+              <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
                 Masse
               </div>
               <div data-testid="asset-dimensions">
@@ -604,17 +600,17 @@ export function AssetWorkspace() {
           )}
 
           <Hairline />
-          <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+          <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
             KosmoData-Bezüge
           </div>
           {selected.kosmodata_refs.length === 0 && (
-            <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>Noch keine Referenz verknüpft</span>
+            <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>Noch keine Referenz verknüpft</span>
           )}
           {selected.kosmodata_refs.length > 0 && (
-            <div data-testid="asset-refs" style={{ display: 'grid', gap: 6 }}>
+            <div data-testid="asset-refs" style={{ display: 'grid', gap: 'var(--k-s3)' }}>
               {selected.kosmodata_refs.map((r, i) => (
-                <div key={`${r.entry_id}-${i}`} style={{ display: 'grid', gap: 2, fontSize: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <div key={`${r.entry_id}-${i}`} style={{ display: 'grid', gap: 'var(--k-s1)', fontSize: 'var(--k-t-sm)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
                     <KButton
                       size="sm"
                       tone="ghost"
@@ -626,14 +622,15 @@ export function AssetWorkspace() {
                     </KButton>
                     <Badge hue="var(--k-info)">{r.relation.replace(/_/g, ' ')}</Badge>
                     <div style={{ flex: 1 }} />
-                    <button
+                    <KButton
+                      size="sm"
+                      tone="ghost"
                       aria-label="Verknüpfung entfernen"
                       data-testid={`asset-ref-entfernen-${r.entry_id}`}
                       onClick={() => void entferneRef(r.entry_id)}
-                      style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 14, padding: '0 4px' }}
                     >
-                      ×
-                    </button>
+                      <KIcon name="schliessen" size={14} title="Verknüpfung entfernen" />
+                    </KButton>
                   </div>
                   <div style={{ color: 'var(--k-ink-faint)' }}>
                     {kosmodataRefKindLabel[r.kind] ?? r.kind} · {r.review_status.replace(/_/g, ' ')}
@@ -650,30 +647,27 @@ export function AssetWorkspace() {
             data-testid="asset-ref-verknuepfen"
             onClick={() => (refPickerOffen ? setRefPickerOffen(false) : oeffneRefPicker())}
           >
-            {refPickerOffen ? 'Picker schliessen' : '+ Mit Referenzprojekt verknüpfen'}
+            {refPickerOffen ? 'Picker schliessen' : (
+              <>
+                <KIcon name="plus" size={14} /> Mit Referenzprojekt verknüpfen
+              </>
+            )}
           </KButton>
 
           {refPickerOffen && (
-            <div data-testid="asset-ref-picker" style={{ display: 'grid', gap: 6 }}>
-              <input
+            <div data-testid="asset-ref-picker" style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+              <KInput
                 data-testid="asset-ref-picker-suche"
                 placeholder="Referenz suchen: Titel, Ort …"
                 value={refQuery}
                 onChange={(e) => setRefQuery(e.target.value)}
-                style={{
-                  padding: '7px 10px',
-                  borderRadius: 'var(--k-radius-sm)',
-                  border: '1px solid var(--k-line-strong)',
-                  background: 'var(--k-raised)',
-                  fontSize: 13,
-                }}
               />
               {refs === null && <KLade text="Referenzen laden …" height={60} />}
               {refs !== null && refTreffer.length === 0 && (
-                <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>Kein Treffer</span>
+                <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>Kein Treffer</span>
               )}
               {refTreffer.length > 0 && (
-                <div style={{ display: 'grid', gap: 4, maxHeight: 220, overflow: 'auto' }}>
+                <div style={{ display: 'grid', gap: 'var(--k-s2)', maxHeight: 220, overflow: 'auto' }}>
                   {refTreffer.map((entry) => (
                     <button
                       key={entry.id}
@@ -682,10 +676,10 @@ export function AssetWorkspace() {
                       style={{
                         all: 'unset',
                         cursor: 'pointer',
-                        padding: '6px 8px',
+                        padding: 'var(--k-s2) var(--k-s3)',
                         borderRadius: 'var(--k-radius-sm)',
                         border: '1px solid var(--k-line)',
-                        fontSize: 12.5,
+                        fontSize: 'var(--k-t-sm)',
                       }}
                     >
                       {entry.title}
@@ -704,7 +698,7 @@ export function AssetWorkspace() {
           <Measure>{new Date(selected.createdAt).toLocaleString('de-CH')}</Measure>
 
           <Hairline />
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
             {selected.asset_type === 'glb_model' && (
               <KButton size="sm" tone="accent" data-testid="asset-detail-ins-modell" onClick={() => insModell(selected)}>
                 Ins Modell
@@ -767,7 +761,7 @@ function WireframeVorschau({ kind }: { kind: 'axis_marker' | 'wireframe_componen
         height: 120,
         display: 'grid',
         placeItems: 'center',
-        gap: 4,
+        gap: 'var(--k-s2)',
         border: '1px dashed var(--k-line-strong)',
         borderRadius: 'var(--k-radius-sm)',
         background: 'var(--k-plan-paper)',
@@ -779,7 +773,7 @@ function WireframeVorschau({ kind }: { kind: 'axis_marker' | 'wireframe_componen
         <line x1="36" y1="12" x2="20" y2="20" stroke="var(--k-technik)" strokeWidth="1" />
         <line x1="20" y1="20" x2="20" y2="36" stroke="var(--k-technik)" strokeWidth="1" />
       </svg>
-      <span style={{ fontSize: 10, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {kind === 'axis_marker' ? 'Achsmarker' : 'Wireframe'}
       </span>
     </div>

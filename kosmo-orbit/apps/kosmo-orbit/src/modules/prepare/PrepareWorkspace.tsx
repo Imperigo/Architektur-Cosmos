@@ -1,6 +1,6 @@
 import { useProject } from '../../state/project-store';
 import { useEffect, useRef, useState } from 'react';
-import { Karteikarte, Messrahmen, Badge, KButton, Panel, moduleHue } from '@kosmo/ui';
+import { Karteikarte, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KToolbar, Panel, moduleHue } from '@kosmo/ui';
 import {
   basisIndex,
   geladeneSammlungen,
@@ -93,28 +93,28 @@ export function PrepareWorkspace() {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 24 }}>
-      <div style={{ maxWidth: 860, margin: '0 auto', display: 'grid', gap: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+    <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 'var(--k-s6)' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', display: 'grid', gap: 'var(--k-s5)' }}>
+        <KToolbar data-testid="prepare-werkzeugleiste">
           <Badge hue={moduleHue.prepare}>Grundlagen</Badge>
-          <span style={{ fontSize: 13, color: 'var(--k-ink-faint)' }}>
+          <span style={{ fontSize: 'var(--k-t-md)', color: 'var(--k-ink-faint)' }}>
             Lokal aufgenommen — Dokumente verlassen das Gerät nie. Kosmo zitiert daraus.
           </span>
-        </div>
+        </KToolbar>
 
         {/* Quellensprung: der von Kosmo zitierte Abschnitt, hervorgehoben */}
         {sprung && (
           <div ref={sprungRef}>
-            <Panel data-testid="quelle-sprung" style={{ padding: '12px 14px', borderColor: 'var(--k-accent)', display: 'grid', gap: 6 }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-accent)' }}>Quellensprung</span>
-                <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>{sprung.titel}</span>
+            <Panel data-testid="quelle-sprung" style={{ padding: 'var(--k-s4)', borderColor: 'var(--k-accent)', display: 'grid', gap: 'var(--k-s2)' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--k-s3)' }}>
+                <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-accent)' }}>Quellensprung</span>
+                <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>{sprung.titel}</span>
                 <div style={{ flex: 1 }} />
                 <KButton size="sm" tone="ghost" onClick={() => setSprung(null)} aria-label="Quellensprung schliessen">
-                  ✕
+                  <KIcon name="schliessen" size={14} title="Quellensprung schliessen" />
                 </KButton>
               </div>
-              <div style={{ fontSize: 13, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>{sprung.text}</div>
+              <div style={{ fontSize: 'var(--k-t-md)', lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>{sprung.text}</div>
             </Panel>
           </div>
         )}
@@ -133,56 +133,49 @@ export function PrepareWorkspace() {
             if (e.dataTransfer.files.length) void addFiles(e.dataTransfer.files);
           }}
           style={{
-            padding: 28,
+            padding: 'var(--k-s6)',
             textAlign: 'center',
             borderStyle: 'dashed',
             borderColor: dragOver ? 'var(--k-accent)' : 'var(--k-line-strong)',
             background: dragOver ? 'var(--k-accent-wash)' : 'var(--k-surface)',
           }}
         >
-          <div style={{ fontWeight: 550, marginBottom: 6 }}>
+          <div style={{ fontWeight: 550, marginBottom: 'var(--k-s2)' }}>
             PDF, Text oder Markdown hierher ziehen
           </div>
-          <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)', marginBottom: 12 }}>
+          <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)', marginBottom: 'var(--k-s4)' }}>
             Normen-Auszüge · Wettbewerbsprogramme · Baubeschriebe · Detailbibliothek
           </div>
           <KButton size="sm" tone="accent" onClick={pickFiles} data-testid="pick-files">
             Dateien wählen
           </KButton>
           {busy && (
-            <div style={{ marginTop: 10, fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+            <div style={{ marginTop: 'var(--k-s3)', fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
               Nehme «{busy}» auf …
             </div>
           )}
           {error && (
-            <div style={{ marginTop: 10, fontSize: 12.5, color: 'var(--k-danger, #b3462e)' }}>⚠ {error}</div>
+            <div style={{ marginTop: 'var(--k-s3)', fontSize: 'var(--k-t-sm)', color: 'var(--k-danger, #b3462e)' }}>⚠ {error}</div>
           )}
         </Panel>
 
         {/* Suche */}
         <div>
-          <input
+          <KInput
             data-testid="knowledge-search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Wissensbasis durchsuchen … (z.B. «Brandschutz Treppenhaus»)"
-            style={{
-              width: '100%',
-              padding: '9px 12px',
-              borderRadius: 8,
-              border: '1px solid var(--k-line-strong)',
-              background: 'var(--k-raised)',
-              fontSize: 13.5,
-            }}
+            style={{ width: '100%' }}
           />
           {hits.length > 0 && (
-            <div style={{ display: 'grid', gap: 8, marginTop: 10 }}>
+            <div style={{ display: 'grid', gap: 'var(--k-s3)', marginTop: 'var(--k-s3)' }}>
               {hits.map((h) => (
-                <Panel key={h.id} data-testid="knowledge-hit" style={{ padding: '10px 12px' }}>
-                  <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', marginBottom: 4 }}>
+                <Panel key={h.id} data-testid="knowledge-hit" style={{ padding: 'var(--k-s3) var(--k-s4)' }}>
+                  <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)', marginBottom: 'var(--k-s1)' }}>
                     {h.docName} · Abschnitt {h.seq + 1}
                   </div>
-                  <div style={{ fontSize: 13, lineHeight: 1.55 }}>
+                  <div style={{ fontSize: 'var(--k-t-md)', lineHeight: 1.55 }}>
                     {h.text.length > 320 ? `${h.text.slice(0, 320)} …` : h.text}
                   </div>
                 </Panel>
@@ -194,8 +187,8 @@ export function PrepareWorkspace() {
         <BasisSection onGeladen={refresh} />
 
         {/* Dokumente (Basis-Sammlungen erscheinen kompakt oben, nicht als Einzelzeilen) */}
-        <div style={{ display: 'grid', gap: 8 }}>
-          <div style={{ fontWeight: 550, fontSize: 13.5 }}>
+        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+          <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>
             Aufgenommen ({docs.filter((d) => d.source !== 'basis').length})
           </div>
           {docs.filter((d) => d.source !== 'basis').length === 0 && (
@@ -208,13 +201,13 @@ export function PrepareWorkspace() {
             <Panel
               key={d.id}
               data-testid={`doc-${d.id}`}
-              style={{ padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 12 }}
+              style={{ padding: 'var(--k-s3) var(--k-s4)', display: 'flex', alignItems: 'center', gap: 'var(--k-s4)' }}
             >
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontWeight: 550, fontSize: 13.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {d.name}
                 </div>
-                <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
                   {d.pages ? `${d.pages} ${d.pages === 1 ? 'Seite' : 'Seiten'} · ` : ''}
                   {d.chunkCount} Abschnitte · {new Date(d.addedAt).toLocaleDateString('de-CH')} · {d.source}
                 </div>
@@ -288,22 +281,22 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
   }
 
   return (
-    <Panel style={{ padding: '12px 14px', display: 'grid', gap: 10 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ fontWeight: 550, fontSize: 13.5 }}>OneDrive (Hochbauzeichner-Bibliothek)</div>
+    <Panel style={{ padding: 'var(--k-s4)', display: 'grid', gap: 'var(--k-s3)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+        <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>OneDrive (Hochbauzeichner-Bibliothek)</div>
         {account && (
           <Badge hue="var(--k-success)">{account.name}</Badge>
         )}
       </div>
       {!account ? (
         <>
-          <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+          <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
             Einmalig: App-Registrierung im Azure-Portal (Typ SPA, Redirect-URI = App-Adresse,
             Berechtigungen <code>Files.Read</code> + <code>User.Read</code>) — dann Client-ID hier
             eintragen und anmelden. Es fliesst kein Geheimnis (PKCE).
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <input
+          <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
+            <KInput
               value={clientId}
               onChange={(e) => {
                 setClientId(e.target.value);
@@ -311,14 +304,7 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
               }}
               placeholder="Azure Client-ID (GUID)"
               data-testid="graph-client-id"
-              style={{
-                flex: 1,
-                padding: '7px 10px',
-                borderRadius: 8,
-                border: '1px solid var(--k-line-strong)',
-                background: 'var(--k-raised)',
-                fontSize: 13,
-              }}
+              style={{ flex: 1 }}
             />
             <KButton size="sm" tone="accent" onClick={() => void connect()} data-testid="graph-signin">
               Mit Microsoft anmelden
@@ -327,7 +313,7 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
         </>
       ) : (
         <>
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', fontSize: 12.5 }}>
+          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap', fontSize: 'var(--k-t-sm)' }}>
             {path.map((p, i) => (
               <span key={`${p.id ?? 'root'}-${i}`}>
                 {i > 0 && <span style={{ color: 'var(--k-ink-faint)' }}> / </span>}
@@ -343,13 +329,13 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
               </span>
             ))}
           </div>
-          <div style={{ display: 'grid', gap: 4, maxHeight: 260, overflow: 'auto' }}>
+          <div style={{ display: 'grid', gap: 'var(--k-s2)', maxHeight: 260, overflow: 'auto' }}>
             {items.map((it) => (
               <div
                 key={it.id}
-                style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, padding: '3px 2px' }}
+                style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', fontSize: 'var(--k-t-md)', padding: 'var(--k-s1)' }}
               >
-                <span>{it.isFolder ? '📁' : '📄'}</span>
+                <KIcon name={it.isFolder ? 'ordner' : 'dokument'} size={14} />
                 {it.isFolder ? (
                   <button
                     style={{ all: 'unset', cursor: 'pointer', flex: 1 }}
@@ -370,12 +356,12 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
               </div>
             ))}
             {items.length === 0 && (
-              <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>Leerer Ordner.</div>
+              <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>Leerer Ordner.</div>
             )}
           </div>
         </>
       )}
-      {status && <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{status}</div>}
+      {status && <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{status}</div>}
     </Panel>
   );
 }
@@ -394,17 +380,17 @@ function BasisSection({ onGeladen }: { onGeladen: () => void }) {
   }, []);
   if (sammlungen.length === 0) return null;
   return (
-    <div style={{ display: 'grid', gap: 8 }} data-testid="basis-sektion">
-      <div style={{ fontWeight: 550, fontSize: 13.5 }}>Bauwissen-Basis (Kosmos-Bibliothek)</div>
+    <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="basis-sektion">
+      <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>Bauwissen-Basis (Kosmos-Bibliothek)</div>
       {sammlungen.map((sa) => (
         <Panel
           key={sa.sammlung}
           data-testid={`basis-${sa.sammlung}`}
-          style={{ padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 12 }}
+          style={{ padding: 'var(--k-s3) var(--k-s4)', display: 'flex', alignItems: 'center', gap: 'var(--k-s4)' }}
         >
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontWeight: 550, fontSize: 13.5 }}>{sa.label}</div>
-            <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+            <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{sa.label}</div>
+            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
               {sa.quellen} Quellen · {sa.chunks} Abschnitte · {(sa.kb / 1024).toFixed(1)} MB
             </div>
           </div>
@@ -433,7 +419,7 @@ function BasisSection({ onGeladen }: { onGeladen: () => void }) {
           )}
         </Panel>
       ))}
-      {fehler && <div style={{ fontSize: 12.5, color: 'var(--k-danger, #b3462e)' }}>⚠ {fehler}</div>}
+      {fehler && <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-danger, #b3462e)' }}>⚠ {fehler}</div>}
     </div>
   );
 }
@@ -465,14 +451,15 @@ function DossierSection() {
   ] as const;
 
   return (
-    <div style={{ display: 'grid', gap: 8 }} data-testid="dossier">
-      <div className="k-titel" style={{ fontSize: 13 }}>Phase 0 — Wettbewerbsdossier</div>
-      <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+    <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="dossier">
+      <div className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>Phase 0 — Wettbewerbsdossier</div>
+      <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
         Harte Regeln und Fakten aus dem Programm. Kosmo behandelt sie in jeder Antwort als bindend.
       </span>
       {entwurf.map((e, i) => (
-        <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <select
+        <div key={i} style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center' }}>
+          <KSelect
+            size="sm"
             value={e.typ}
             data-testid={`dossier-typ-${i}`}
             onChange={(ev) => {
@@ -480,13 +467,13 @@ function DossierSection() {
               next[i] = { ...e, typ: ev.target.value as 'do' | 'dont' | 'fakt' };
               setEntwurf(next);
             }}
-            style={{ padding: '4px 6px', borderRadius: 'var(--k-radius-sm)', border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
           >
             {TYPEN.map((t) => (
               <option key={t.key} value={t.key}>{t.label}</option>
             ))}
-          </select>
-          <input
+          </KSelect>
+          <KInput
+            size="sm"
             value={e.text}
             data-testid={`dossier-text-${i}`}
             placeholder="z.B. «Nordwohnungen ohne Direktsonne sind ein No-go»"
@@ -495,16 +482,16 @@ function DossierSection() {
               next[i] = { ...e, text: ev.target.value };
               setEntwurf(next);
             }}
-            style={{ flex: 1, padding: '5px 8px', borderRadius: 'var(--k-radius-sm)', border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12.5 }}
+            style={{ flex: 1 }}
           />
           <KButton size="sm" tone="ghost" onClick={() => setEntwurf(entwurf.filter((_, j) => j !== i))} aria-label="Eintrag entfernen">
-            −
+            <KIcon name="minus" size={14} title="Eintrag entfernen" />
           </KButton>
         </div>
       ))}
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
         <KButton size="sm" tone="ghost" onClick={() => setEntwurf([...entwurf, { typ: 'do', text: '' }])}>
-          + Eintrag
+          <KIcon name="plus" size={14} /> Eintrag
         </KButton>
         <div style={{ flex: 1 }} />
         <KButton
@@ -517,7 +504,7 @@ function DossierSection() {
         </KButton>
       </div>
       {doc.settings.dossier.length > 0 && (
-        <div style={{ display: 'grid', gap: 5 }}>
+        <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
           {doc.settings.dossier.map((e, i) => {
             const zitiert = ziel?.typ === 'dossier' && ziel.index === i;
             return (
@@ -528,11 +515,11 @@ function DossierSection() {
               style={zitiert ? { outline: '2px solid var(--k-accent)', borderRadius: 'var(--k-radius-sm)' } : undefined}
             >
               <Karteikarte nr={i + 1}>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'baseline', fontSize: 12.5 }}>
+                <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline', fontSize: 'var(--k-t-sm)' }}>
                   <span
                     style={{
                       fontFamily: 'var(--k-font-mono)',
-                      fontSize: 10.5,
+                      fontSize: 'var(--k-t-xs)',
                       fontWeight: 700,
                       color: e.typ === 'dont' ? 'var(--k-danger)' : e.typ === 'do' ? 'var(--k-success)' : 'var(--k-ink-faint)',
                     }}

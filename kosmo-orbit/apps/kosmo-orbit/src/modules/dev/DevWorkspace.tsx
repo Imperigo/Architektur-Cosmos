@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, KLade, Measure, Messrahmen, Panel, bestaetigen, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, KInput, KLade, KToolbar, Measure, Messrahmen, Panel, bestaetigen, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import {
   alsWorkorderMd,
   auftragErfassen,
@@ -181,11 +181,11 @@ export function DevWorkspace() {
   const offene = (auftraege ?? []).filter((a) => a.status === 'offen').length;
 
   return (
-    <div className="k-einblenden" style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 20 }}>
-      <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+    <div className="k-einblenden" style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 'var(--k-s5)' }}>
+      <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 'var(--k-s4)' }}>
+        <KToolbar data-testid="dev-werkzeugleiste" style={{ flexWrap: 'wrap' }}>
           <Badge hue={moduleHue.dev}>KosmoDev</Badge>
-          <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
+          <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
             Auftragsbuch — {offene} offen
           </span>
           <div style={{ flex: 1 }} />
@@ -196,17 +196,17 @@ export function DevWorkspace() {
             data-testid="workorder-uebergeben"
             disabled={offene === 0 || uebergebend}
           >
-            ↥ An HomeStation übergeben
+            <KIcon name="pfeil-oben" size={14} /> An HomeStation übergeben
           </KButton>
           <KButton size="sm" tone="accent" onClick={exportieren} data-testid="workorder-export" disabled={offene === 0}>
-            ⇥ Fable-Workorder (.md)
+            <KIcon name="export" size={14} /> Fable-Workorder (.md)
           </KButton>
-        </div>
+        </KToolbar>
 
         {devJobs.length > 0 && (
-          <Panel data-testid="dev-job-status" style={{ display: 'grid', gap: 4, padding: '8px 14px' }}>
+          <Panel data-testid="dev-job-status" style={{ display: 'grid', gap: 'var(--k-s2)', padding: 'var(--k-s3) var(--k-s4)' }}>
             {devJobs.map((p) => (
-              <div key={p.jobId} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12.5 }}>
+              <div key={p.jobId} style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', fontSize: 'var(--k-t-sm)' }}>
                 <Badge hue={p.problem ? 'var(--k-warning)' : 'var(--k-info)'}>{p.jobId}</Badge>
                 <span style={{ color: 'var(--k-ink-soft)' }}>{devJobLabel(p)}</span>
               </div>
@@ -214,29 +214,22 @@ export function DevWorkspace() {
           </Panel>
         )}
 
-        <Panel style={{ display: 'grid', gap: 8 }}>
-          <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+        <Panel style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+          <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
             Verbesserung erfassen — oder im Kosmo-Panel «⚑» drücken bzw. @kosmodev sagen,
             was besser werden soll (Kosmo strukturiert Gesprochenes selbst ins Buch).
           </span>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <input
+          <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
+            <KInput
               data-testid="auftrag-text"
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && erfassen()}
               placeholder="z.B. «Im Grundriss sollen Türanschläge wählbar sein — Werkzeugleiste Design»"
-              style={{
-                flex: 1,
-                padding: '7px 10px',
-                borderRadius: 'var(--k-radius-sm)',
-                border: '1px solid var(--k-line-strong)',
-                background: 'var(--k-raised)',
-                fontSize: 13,
-              }}
+              style={{ flex: 1 }}
             />
             <KButton size="sm" tone="quiet" onClick={erfassen} data-testid="auftrag-erfassen">
-              ⚑ Erfassen
+              <KIcon name="fahne" size={14} /> Erfassen
             </KButton>
           </div>
         </Panel>
@@ -245,22 +238,22 @@ export function DevWorkspace() {
         {auftraege !== null && auftraege.length === 0 && (
           <Messrahmen height={220} caption="Das Buch ist leer — jede erfasste Verbesserung erscheint hier" />
         )}
-        <div style={{ display: 'grid', gap: 8 }}>
+        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
           {(auftraege ?? []).map((a) => (
-            <Panel key={a.id} style={{ display: 'grid', gap: 6, padding: '10px 14px' }} data-testid="auftrag-karte">
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Panel key={a.id} style={{ display: 'grid', gap: 'var(--k-s2)', padding: 'var(--k-s3) var(--k-s4)' }} data-testid="auftrag-karte">
+              <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap' }}>
                 <Badge hue={STATUS_HUE[a.status]}>{a.status}</Badge>
                 <Badge hue="var(--k-ink-faint)">{a.station}</Badge>
-                <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>{QUELLE_LABEL[a.quelle]}</span>
+                <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>{QUELLE_LABEL[a.quelle]}</span>
                 <div style={{ flex: 1 }} />
                 <Measure>{new Date(a.ts).toLocaleString('de-CH')}</Measure>
               </div>
-              <div style={{ fontSize: 13.5 }}>{a.text}</div>
-              {a.ort && <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>wo: {a.ort}</div>}
+              <div style={{ fontSize: 'var(--k-t-md)' }}>{a.text}</div>
+              {a.ort && <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>wo: {a.ort}</div>}
               {a.ergebnis && (
                 <div
                   data-testid="auftrag-ergebnis"
-                  style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', fontSize: 12 }}
+                  style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap', fontSize: 'var(--k-t-sm)' }}
                 >
                   <Badge hue="var(--k-success)">
                     {a.ergebnis.worker}
@@ -275,7 +268,7 @@ export function DevWorkspace() {
                 </div>
               )}
               <Hairline />
-              <div style={{ display: 'flex', gap: 6 }}>
+              <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
                 {(['offen', 'an-worker', 'erledigt'] as const).map((s) => (
                   <KButton
                     key={s}
@@ -297,7 +290,7 @@ export function DevWorkspace() {
                     );
                   }}
                 >
-                  ✕
+                  <KIcon name="schliessen" size={14} title="Auftrag löschen" />
                 </KButton>
               </div>
             </Panel>

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { LearningJournal } from '@kosmo/ai';
-import { Badge, Hairline, Karteikarte, KButton, Measure, Messrahmen, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KTabs, KToolbar, Measure, Messrahmen, moduleHue, type KTabItem } from '@kosmo/ui';
 import { DiagnosePanel } from '../../shell/Diagnose';
 import { journalStore } from '../../state/journal-store';
 import { entscheidFarbe, RADAR_BEREICHE, RADAR_STAND, TECH_RADAR } from './tech-radar';
@@ -65,6 +65,13 @@ const HILFE: HilfeThema[] = [
   },
 ];
 
+const TAB_ITEMS: readonly KTabItem[] = [
+  { id: 'diagnose', label: 'Diagnose', testid: 'doc-tab-diagnose' },
+  { id: 'hilfe', label: 'Hilfe', testid: 'doc-tab-hilfe' },
+  { id: 'berichte', label: 'Berichte', testid: 'doc-tab-berichte' },
+  { id: 'radar', label: 'Tech-Radar', testid: 'doc-tab-radar' },
+];
+
 export function DocWorkspace() {
   const [tab, setTab] = useState<Tab>('diagnose');
   const journal = useMemo(() => new LearningJournal(journalStore()), []);
@@ -73,31 +80,21 @@ export function DocWorkspace() {
 
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
-      <div style={{ maxWidth: 860, margin: '0 auto', padding: '20px 24px', display: 'grid', gap: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: 'var(--k-s5) var(--k-s6)', display: 'grid', gap: 'var(--k-s4)' }}>
+        <KToolbar data-testid="doc-werkzeugleiste" style={{ flexWrap: 'wrap' }}>
           <Badge hue={moduleHue.draw}>KosmoDoc</Badge>
-          <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
+          <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
             Der Projektdoktor — Diagnose, Hilfe, Berichte.
           </span>
           <div style={{ flex: 1 }} />
-          {(['diagnose', 'hilfe', 'berichte', 'radar'] as Tab[]).map((t) => (
-            <KButton
-              key={t}
-              size="sm"
-              tone={tab === t ? 'accent' : 'ghost'}
-              onClick={() => setTab(t)}
-              data-testid={`doc-tab-${t}`}
-            >
-              {t === 'diagnose' ? 'Diagnose' : t === 'hilfe' ? 'Hilfe' : t === 'berichte' ? 'Berichte' : 'Tech-Radar'}
-            </KButton>
-          ))}
-        </div>
+          <KTabs items={TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as Tab)} size="sm" />
+        </KToolbar>
         <Hairline />
 
         {tab === 'diagnose' && (
-          <div style={{ display: 'grid', gap: 10 }}>
+          <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
             <DiagnosePanel />
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
               Prüft Kern, Ableitung, Kosmo-LLM, Bridge, Wissensbasis und Speicher — mit konkretem
               Befund statt grüner Lampe.
             </span>
@@ -105,12 +102,12 @@ export function DocWorkspace() {
         )}
 
         {tab === 'hilfe' && (
-          <div style={{ display: 'grid', gap: 10 }}>
+          <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
             {HILFE.map((h, i) => (
               <Karteikarte key={h.titel} nr={i + 1}>
-                <div style={{ display: 'grid', gap: 6 }}>
-                  <div style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 13 }}>{h.titel}</div>
-                  <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 4, fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+                <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+                  <div style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 'var(--k-t-md)' }}>{h.titel}</div>
+                  <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 'var(--k-s2)', fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
                     {h.punkte.map((p) => (
                       <li key={p}>{p}</li>
                     ))}
@@ -118,29 +115,29 @@ export function DocWorkspace() {
                 </div>
               </Karteikarte>
             ))}
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 12 }}>
+            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
               Für alles andere: frag Kosmo direkt im Panel rechts — er kennt Modell und Werkzeuge.
             </span>
           </div>
         )}
 
         {tab === 'radar' && (
-          <div style={{ display: 'grid', gap: 12 }} data-testid="doc-radar">
-            <span style={{ color: 'var(--k-ink-soft)', fontSize: 12.5, lineHeight: 1.5 }}>
+          <div style={{ display: 'grid', gap: 'var(--k-s4)' }} data-testid="doc-radar">
+            <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-sm)', lineHeight: 1.5 }}>
               Worauf diese Software technisch steht — und was beobachtet wird. {RADAR_STAND}.
               Posten mit ⚠ stammen aus den Notion-Scans und sind noch nicht selbst verifiziert.
             </span>
             {RADAR_BEREICHE.map((bereich) => (
-              <div key={bereich} style={{ display: 'grid', gap: 6 }}>
-                <div className="k-titel" style={{ fontSize: 13 }}>{bereich}</div>
+              <div key={bereich} style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+                <div className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>{bereich}</div>
                 {TECH_RADAR.filter((p) => p.bereich === bereich).map((p) => (
                   <div
                     key={p.baustein}
                     data-testid="radar-posten"
-                    style={{ display: 'flex', gap: 10, alignItems: 'baseline', fontSize: 12.5, borderBottom: '1px solid var(--k-line)', paddingBottom: 5 }}
+                    style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline', fontSize: 'var(--k-t-sm)', borderBottom: '1px solid var(--k-line)', paddingBottom: 'var(--k-s2)' }}
                   >
                     <span
-                      style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, fontWeight: 700, color: entscheidFarbe(p.entscheid), minWidth: 62 }}
+                      style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', fontWeight: 700, color: entscheidFarbe(p.entscheid), minWidth: 62 }}
                       title={p.unverifiziert ? 'Scan-Aussage — noch nicht selbst verifiziert' : undefined}
                     >
                       {p.entscheid}
@@ -150,7 +147,7 @@ export function DocWorkspace() {
                     <span style={{ flex: 1, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>
                       {p.kommentar}
                       {p.paket ? (
-                        <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-faint)' }}>
+                        <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
                           {' '}· {p.paket}{p.lizenz ? ` (${p.lizenz})` : ''}
                         </span>
                       ) : null}
@@ -159,16 +156,16 @@ export function DocWorkspace() {
                 ))}
               </div>
             ))}
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
               Vollständige, begründete Fassung inkl. Lizenz-Politik: kosmo-orbit/docs/TECH-RADAR.md.
             </span>
           </div>
         )}
 
         {tab === 'berichte' && (
-          <div style={{ display: 'grid', gap: 10 }} data-testid="doc-berichte">
-            <div style={{ display: 'flex', gap: 18, alignItems: 'baseline' }}>
-              <span className="k-titel" style={{ fontSize: 14 }}>Lernjournal</span>
+          <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="doc-berichte">
+            <div style={{ display: 'flex', gap: 'var(--k-s5)', alignItems: 'baseline' }}>
+              <span className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>Lernjournal</span>
               <Measure>{eintraege.length} Einträge</Measure>
               <Measure style={{ color: 'var(--k-success)' }}>{gut} 👍</Measure>
               <Measure style={{ color: 'var(--k-danger)' }}>{eintraege.length - gut} 👎</Measure>
@@ -179,16 +176,16 @@ export function DocWorkspace() {
                 caption="Noch keine Einträge — 👍/👎 unter Kosmo-Antworten füttert das Journal (Q8: daraus wird der LoRA-Trainingssatz)"
               />
             ) : (
-              <div style={{ display: 'grid', gap: 6 }}>
+              <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
                 {[...eintraege].reverse().slice(0, 12).map((e, i) => (
                   <Karteikarte key={`${e.ts}-${i}`}>
-                    <div style={{ display: 'flex', gap: 10, alignItems: 'baseline', fontSize: 12.5 }}>
+                    <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline', fontSize: 'var(--k-t-sm)' }}>
                       <span>{e.sentiment === 'gut' ? '👍' : '👎'}</span>
                       <span style={{ flex: 1, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>
                         {e.context}
                         {e.note ? ` — «${e.note}»` : ''}
                       </span>
-                      <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-faint)' }}>
+                      <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
                         {e.ts.slice(0, 16).replace('T', ' ')}
                       </span>
                     </div>
@@ -196,7 +193,7 @@ export function DocWorkspace() {
                 ))}
               </div>
             )}
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
               Export als JSONL im Kosmo-Panel (Zahnrad) — das Rezept für den Trainings-Zyklus auf der
               HomeStation steht in docs/KOSMOTRAIN.md. Code-Qualität wacht in der CI (Unit + Golden +
               E2E bei jedem Push).

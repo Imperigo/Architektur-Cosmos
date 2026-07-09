@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Hairline, Messrahmen, Badge, KButton, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
+import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KToolbar, KToolGruppe, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
 import {
   exportDxf,
   imagePaperBounds,
@@ -336,14 +336,14 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           width: 220,
           borderRight: '1px solid var(--k-line)',
           background: 'var(--k-surface)',
-          padding: 12,
+          padding: 'var(--k-s3)',
           display: 'flex',
           flexDirection: 'column',
-          gap: 8,
+          gap: 'var(--k-s3)',
           overflow: 'auto',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div data-testid="publish-werkzeugleiste" style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
           <Badge hue={moduleHue.publish}>Plansatz</Badge>
           <div style={{ flex: 1 }} />
           {onEinstellungen && (
@@ -355,7 +355,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               aria-label="Einstellungen — KosmoPublish"
               onClick={onEinstellungen}
             >
-              ⚙
+              <KIcon name="zahnrad" size={14} title="Einstellungen — KosmoPublish" />
             </KButton>
           )}
         </div>
@@ -365,13 +365,13 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             data-testid={`sheet-${s.index}`}
             onClick={() => setActiveSheetId(s.id)}
             style={{
-              padding: '8px 10px',
+              padding: 'var(--k-s3) var(--k-s4)',
               cursor: 'pointer',
               borderColor: sheet?.id === s.id ? 'var(--k-accent)' : 'var(--k-line)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ fontWeight: 550, fontSize: 13, flex: 1 }}>{s.name}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+              <div style={{ fontWeight: 550, fontSize: 'var(--k-t-sm)', flex: 1 }}>{s.name}</div>
               <button
                 aria-label="Blatt entfernen"
                 data-testid={`blatt-entfernen-${s.index}`}
@@ -380,34 +380,34 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                   runCommand('publish.blattEntfernen', { sheetId: s.id });
                   if (activeSheetId === s.id) setActiveSheetId(null);
                 }}
-                style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 12, padding: '0 2px' }}
+                style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', display: 'flex', padding: '0 var(--k-s1)' }}
               >
-                ✕
+                <KIcon name="schliessen" size={14} title="Blatt entfernen" />
               </button>
             </div>
-            <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
               {s.format} {s.orientation} · {s.placements.length} Ansichten
               {(s.bilder?.length ?? 0) > 0 ? ` · ${s.bilder!.length} ${s.bilder!.length === 1 ? 'Bild' : 'Bilder'}` : ''}
             </div>
           </Panel>
         ))}
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <select
+        <div style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center' }}>
+          <KSelect
+            size="sm"
             value={newFormat}
             onChange={(e) => setNewFormat(e.target.value as SheetFormat)}
-            style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
           >
             {FORMATS.map((f) => (
               <option key={f} value={f}>{f}</option>
             ))}
-          </select>
+          </KSelect>
           <KButton size="sm" tone="quiet" onClick={addSheet} data-testid="add-sheet">
-            + Blatt
+            <KIcon name="plus" size={14} /> Blatt
           </KButton>
         </div>
         <Hairline />
-        <div style={{ display: 'grid', gap: 5 }}>
-          <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+        <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+          <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
             Baugesuch (SIA 33)
           </span>
           <KButton
@@ -421,11 +421,11 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </KButton>
         </div>
         <Hairline />
-        <div style={{ display: 'grid', gap: 5 }}>
-          <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+        <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+          <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
             A0-Plakat (Toolkit 5)
           </span>
-          <div style={{ display: 'flex', gap: 5 }}>
+          <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
             <KButton size="sm" tone="quiet" onClick={() => erzeugePlakat('klassisch')} data-testid="plakat-klassisch">
               Klassisch
             </KButton>
@@ -435,8 +435,8 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </div>
         </div>
         {sheet && (sheet.texte?.length ?? 0) > 0 && (
-          <div style={{ display: 'grid', gap: 6 }} data-testid="text-editor">
-            <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>Texte</span>
+          <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="text-editor">
+            <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>Texte</span>
             {sheet.texte!.map((t) => (
               <textarea
                 key={t.id}
@@ -449,11 +449,11 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                   }
                 }}
                 style={{
-                  padding: '5px 7px',
+                  padding: 'var(--k-s2) var(--k-s3)',
                   borderRadius: 'var(--k-radius-sm)',
                   border: '1px solid var(--k-line-strong)',
                   background: 'var(--k-raised)',
-                  fontSize: 11.5,
+                  fontSize: 'var(--k-t-sm)',
                   fontFamily: t.titel ? 'var(--k-font-titel)' : 'var(--k-font-ui)',
                   resize: 'vertical',
                 }}
@@ -462,15 +462,15 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </div>
         )}
         <Hairline />
-        <div style={{ display: 'grid', gap: 6 }} data-testid="pubsets">
-          <span className="k-titel" style={{ fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+        <div style={{ display: 'grid', gap: 'var(--k-s2)' }} data-testid="pubsets">
+          <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
             Publikations-Sets
           </span>
           {(doc.settings.publikationsSets ?? []).map((set) => (
             <div
               key={set.name}
               data-testid="pubset-karte"
-              style={{ display: 'flex', gap: 5, alignItems: 'center', fontSize: 12 }}
+              style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center', fontSize: 'var(--k-t-sm)' }}
             >
               <span style={{ flex: 1, fontWeight: 550 }}>
                 {set.name}{' '}
@@ -489,6 +489,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                 tone="ghost"
                 data-testid="pubset-transmittal"
                 title="Transmittal-Liste (Begleitliste zum Planversand): Blatt, Format, Massstab, Revision"
+                aria-label="Transmittal-Liste exportieren"
                 onClick={() => {
                   const csv = transmittalCsv(useProject.getState().doc, set);
                   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
@@ -499,24 +500,25 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                   URL.revokeObjectURL(url);
                 }}
               >
-                ⇥
+                <KIcon name="export" size={14} title="Transmittal-Liste exportieren" />
               </KButton>
               <button
                 aria-label={`Set ${set.name} entfernen`}
                 onClick={() => runCommand('publish.setEntfernen', { name: set.name })}
-                style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 12, padding: '0 2px' }}
+                style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', display: 'flex', padding: '0 var(--k-s1)' }}
               >
-                ✕
+                <KIcon name="schliessen" size={14} title="Set entfernen" />
               </button>
             </div>
           ))}
-          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-            <input
+          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+            <KInput
+              size="sm"
               value={neuesSetName}
               onChange={(e) => setNeuesSetName(e.target.value)}
               placeholder="Set-Name (z.B. Wettbewerb)"
               data-testid="pubset-name"
-              style={{ flex: 1, minWidth: 0, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+              style={{ flex: 1, minWidth: 0 }}
             />
             <KButton
               size="sm"
@@ -541,86 +543,78 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
 
       {/* Blattfläche */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        <div
-          style={{
-            display: 'flex',
-            gap: 8,
-            alignItems: 'center',
-            padding: '8px 12px',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-surface)',
-            fontSize: 12.5,
-          }}
-        >
-          <span style={{ color: 'var(--k-ink-faint)' }}>Platzieren:</span>
-          <select
-            value={placeStoreyId ?? storeys[0]?.id ?? ''}
-            onChange={(e) => setPlaceStoreyId(e.target.value)}
-            data-testid="place-storey"
-            style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
-          >
-            {storeys.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
-          <select
-            value={placeScale}
-            onChange={(e) => setPlaceScale(Number(e.target.value))}
-            style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
-          >
-            {SCALES.map((s) => (
-              <option key={s} value={s}>1:{s}</option>
-            ))}
-          </select>
-          <KButton size="sm" tone="quiet" onClick={placeGrundriss} data-testid="place-plan" disabled={!sheet}>
-            Grundriss
-          </KButton>
-          <KButton size="sm" tone="quiet" onClick={placeAxo} data-testid="place-axo" disabled={!sheet}>
-            Axo
-          </KButton>
-          <KButton size="sm" tone="quiet" onClick={() => placeSchnitt('schnitt')} data-testid="place-section" disabled={!sheet}>
-            Schnitt
-          </KButton>
-          <KButton size="sm" tone="quiet" onClick={placeBildSlot} data-testid="place-bildslot" disabled={!sheet}>
-            Bild-Slot
-          </KButton>
-          <KButton
-            size="sm"
-            tone="accent"
-            onClick={blattFuellen}
-            data-testid="blatt-fuellen"
-            disabled={!sheet}
-            title="Kosmo schlägt fehlende Ansichten/Schnitte vor und platziert sie — Blatt immer vollständig, ehrlich über Lücken im Modell"
-          >
-            Blatt füllen
-          </KButton>
-          <span style={{ color: 'var(--k-ink-faint)' }}>Ansicht:</span>
-          {(
-            [
-              ['nord', 'N'],
-              ['ost', 'O'],
-              ['sued', 'S'],
-              ['west', 'W'],
-            ] as const
-          ).map(([r, label]) => (
-            <KButton
-              key={r}
+        <KToolbar data-testid="blattflaeche-werkzeugleiste" dicht style={{ flexWrap: 'wrap' }}>
+          <KToolGruppe label="Platzieren">
+            <KSelect
               size="sm"
-              tone="quiet"
-              onClick={() => placeSchnitt(r)}
-              data-testid={`place-${r}`}
-              disabled={!sheet}
+              value={placeStoreyId ?? storeys[0]?.id ?? ''}
+              onChange={(e) => setPlaceStoreyId(e.target.value)}
+              data-testid="place-storey"
             >
-              {label}
+              {storeys.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </KSelect>
+            <KSelect
+              size="sm"
+              value={placeScale}
+              onChange={(e) => setPlaceScale(Number(e.target.value))}
+            >
+              {SCALES.map((s) => (
+                <option key={s} value={s}>1:{s}</option>
+              ))}
+            </KSelect>
+            <KButton size="sm" tone="quiet" onClick={placeGrundriss} data-testid="place-plan" disabled={!sheet}>
+              Grundriss
             </KButton>
-          ))}
+            <KButton size="sm" tone="quiet" onClick={placeAxo} data-testid="place-axo" disabled={!sheet}>
+              Axo
+            </KButton>
+            <KButton size="sm" tone="quiet" onClick={() => placeSchnitt('schnitt')} data-testid="place-section" disabled={!sheet}>
+              Schnitt
+            </KButton>
+            <KButton size="sm" tone="quiet" onClick={placeBildSlot} data-testid="place-bildslot" disabled={!sheet}>
+              Bild-Slot
+            </KButton>
+            <KButton
+              size="sm"
+              tone="accent"
+              onClick={blattFuellen}
+              data-testid="blatt-fuellen"
+              disabled={!sheet}
+              title="Kosmo schlägt fehlende Ansichten/Schnitte vor und platziert sie — Blatt immer vollständig, ehrlich über Lücken im Modell"
+            >
+              Blatt füllen
+            </KButton>
+          </KToolGruppe>
+          <KToolGruppe label="Ansicht">
+            {(
+              [
+                ['nord', 'N'],
+                ['ost', 'O'],
+                ['sued', 'S'],
+                ['west', 'W'],
+              ] as const
+            ).map(([r, label]) => (
+              <KButton
+                key={r}
+                size="sm"
+                tone="quiet"
+                onClick={() => placeSchnitt(r)}
+                data-testid={`place-${r}`}
+                disabled={!sheet}
+              >
+                {label}
+              </KButton>
+            ))}
+          </KToolGruppe>
           {selectedPlacement && sheet && (() => {
             const pl = sheet.placements.find((x) => x.id === selectedPlacement);
             if (!pl) return null;
             return (
-              <>
-                <span style={{ color: 'var(--k-ink-faint)' }}>Auswahl:</span>
-                <select
+              <KToolGruppe label="Auswahl">
+                <KSelect
+                  size="sm"
                   value={pl.scale}
                   data-testid="auswahl-massstab"
                   onChange={(e) =>
@@ -630,13 +624,13 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       scale: Number(e.target.value),
                     })
                   }
-                  style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
                 >
                   {(SCALES.includes(pl.scale) ? SCALES : [pl.scale, ...SCALES]).map((sc) => (
                     <option key={sc} value={sc}>1:{sc}</option>
                   ))}
-                </select>
-                <select
+                </KSelect>
+                <KSelect
+                  size="sm"
                   value={pl.umbau ?? ''}
                   data-testid="auswahl-umbau"
                   title="Umbau-Filter: Abbruch- und Neubauplan aus einem Modell"
@@ -647,15 +641,15 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       umbau: e.target.value === '' ? null : e.target.value,
                     })
                   }
-                  style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
                 >
                   <option value="">Kombiniert</option>
                   <option value="bestand">Bestand</option>
                   <option value="abbruch">Abbruchplan</option>
                   <option value="neu">Neubauplan</option>
-                </select>
+                </KSelect>
                 {(doc.settings.themen ?? []).length > 0 && (
-                  <select
+                  <KSelect
+                    size="sm"
                     value={pl.thema ?? ''}
                     data-testid="auswahl-thema"
                     title="Themenplan: Regeln aus design.themenPlanSpeichern tönen die Platzierung"
@@ -666,15 +660,15 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                         thema: e.target.value === '' ? null : e.target.value,
                       })
                     }
-                    style={{ padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
                   >
                     <option value="">Kein Thema</option>
                     {(doc.settings.themen ?? []).map((t) => (
                       <option key={t.name} value={t.name}>{t.name}</option>
                     ))}
-                  </select>
+                  </KSelect>
                 )}
-                <input
+                <KInput
+                  size="sm"
                   defaultValue={pl.title ?? ''}
                   key={pl.id}
                   placeholder="Titel"
@@ -684,7 +678,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       runCommand('publish.ansichtAnpassen', { sheetId: sheet.id, placementId: pl.id, title: e.target.value });
                     }
                   }}
-                  style={{ width: 130, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+                  style={{ width: 130 }}
                 />
                 <KButton
                   size="sm"
@@ -697,30 +691,32 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                 >
                   Entfernen
                 </KButton>
-              </>
+              </KToolGruppe>
             );
           })()}
           {selectedBild && sheet && (() => {
             const b = (sheet.bilder ?? []).find((x) => x.id === selectedBild);
             if (!b) return null;
             return (
-              <>
-                <span style={{ color: 'var(--k-ink-faint)' }}>Bild:</span>
-                <input
+              <KToolGruppe label="Bild">
+                <KInput
+                  size="sm"
                   type="number"
                   defaultValue={Math.round(b.w)}
                   key={`w-${b.id}-${b.w}`}
                   data-testid="bild-breite"
                   title="Breite in Papier-mm"
+                  mono
                   onBlur={(e) => {
                     const w = Number(e.target.value);
                     if (Number.isFinite(w) && w >= 10 && w !== b.w) {
                       runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: b.id, w });
                     }
                   }}
-                  style={{ width: 62, padding: '4px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+                  style={{ width: 62 }}
                 />
-                <input
+                <KInput
+                  size="sm"
                   defaultValue={b.title ?? ''}
                   key={`t-${b.id}`}
                   placeholder="Bildtitel"
@@ -730,7 +726,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: b.id, title: e.target.value });
                     }
                   }}
-                  style={{ width: 110, padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
+                  style={{ width: 110 }}
                 />
                 <KButton size="sm" tone="quiet" data-testid="bild-laden" onClick={() => bildDateiRef.current?.click()}>
                   Bild laden…
@@ -746,7 +742,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                 >
                   Entfernen
                 </KButton>
-              </>
+              </KToolGruppe>
             );
           })()}
           <input
@@ -760,8 +756,10 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             }}
           />
           <div style={{ flex: 1 }} />
-          <KButton size="sm" tone="ghost" onClick={undo}>↩ Rückgängig</KButton>
-        </div>
+          <KButton size="sm" tone="ghost" onClick={undo}>
+            <KIcon name="pfeil-links" size={14} /> Rückgängig
+          </KButton>
+        </KToolbar>
 
         <div
           style={{
@@ -770,7 +768,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             display: 'grid',
             placeItems: 'center',
             background: 'var(--k-field)',
-            padding: 24,
+            padding: 'var(--k-s6)',
           }}
         >
           {sheet && paper ? (
@@ -866,7 +864,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       height: `${(b.height / paper.height) * 100}%`,
                       border: sel ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
                       cursor: 'move',
-                      borderRadius: 2,
+                      borderRadius: 'var(--k-radius-sm)',
                     }}
                     onMouseEnter={(e) => {
                       if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
@@ -901,7 +899,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       height: `${(r.height / paper.height) * 100}%`,
                       border: sel ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
                       cursor: 'move',
-                      borderRadius: 2,
+                      borderRadius: 'var(--k-radius-sm)',
                     }}
                     onMouseEnter={(e) => {
                       if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
