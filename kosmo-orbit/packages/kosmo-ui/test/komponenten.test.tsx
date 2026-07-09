@@ -255,3 +255,152 @@ describe('KMenu: öffnet/schliesst, onSelect liefert die id', () => {
     expect(menu.className).not.toContain('offen');
   });
 });
+
+// ── Fokus-Trap (v0.6.5-Restpunkt, mit v0.6.6 nachgezogen) ──
+
+describe('KMenu: Fokus-Trap — Tab zykliert innerhalb des offenen Overlays', () => {
+  let root: Root | null = null;
+  let container: HTMLDivElement | null = null;
+
+  afterEach(() => {
+    if (root) {
+      act(() => root!.unmount());
+      root = null;
+    }
+    if (container) {
+      container.remove();
+      container = null;
+    }
+  });
+
+  function renderOffenesMenu() {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+    act(() => {
+      root!.render(
+        <KMenu
+          trigger={
+            <button type="button" data-testid="menu-trigger-falle">
+              Mehr
+            </button>
+          }
+          items={[
+            { id: 'a', label: 'A', testid: 'falle-item-a' },
+            { id: 'b', label: 'B', testid: 'falle-item-b' },
+          ]}
+          onSelect={() => {}}
+        />,
+      );
+    });
+    const trigger = container!.querySelector('[data-testid="menu-trigger-falle"]') as HTMLButtonElement;
+    act(() => {
+      trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    return {
+      itemA: container!.querySelector('[data-testid="falle-item-a"]') as HTMLButtonElement,
+      itemB: container!.querySelector('[data-testid="falle-item-b"]') as HTMLButtonElement,
+    };
+  }
+
+  it('Tab auf dem letzten Item springt zurück zum ersten', () => {
+    const { itemA, itemB } = renderOffenesMenu();
+    act(() => itemB.focus());
+    expect(document.activeElement).toBe(itemB);
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
+    });
+    expect(document.activeElement).toBe(itemA);
+  });
+
+  it('Shift+Tab auf dem ersten Item springt zum letzten', () => {
+    const { itemA, itemB } = renderOffenesMenu();
+    act(() => itemA.focus());
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }));
+    });
+    expect(document.activeElement).toBe(itemB);
+  });
+});
+
+describe('KDialog: Fokus-Trap — Tab zykliert in der Box (Schliessen-Knopf + Fusszeile)', () => {
+  let root: Root | null = null;
+  let container: HTMLDivElement | null = null;
+
+  afterEach(() => {
+    if (root) {
+      act(() => root!.unmount());
+      root = null;
+    }
+    if (container) {
+      container.remove();
+      container = null;
+    }
+  });
+
+  it('Tab auf der letzten Fusszeilen-Aktion springt zurück zum Schliessen-Knopf', () => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => {
+      root!.render(
+        <KDialog
+          titel="Testdialog"
+          onClose={() => {}}
+          data-testid="dlg-falle"
+          fusszeile={
+            <button type="button" data-testid="fuss-ok">
+              OK
+            </button>
+          }
+        >
+          Inhalt
+        </KDialog>,
+      );
+    });
+
+    const schliessen = container.querySelector('.k-dialog-kopf-schliessen') as HTMLButtonElement;
+    const fussOk = container.querySelector('[data-testid="fuss-ok"]') as HTMLButtonElement;
+
+    act(() => fussOk.focus());
+    expect(document.activeElement).toBe(fussOk);
+
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
+    });
+    expect(document.activeElement).toBe(schliessen);
+  });
+
+  it('Shift+Tab auf dem Schliessen-Knopf springt zur letzten Fusszeilen-Aktion', () => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => {
+      root!.render(
+        <KDialog
+          titel="Testdialog"
+          onClose={() => {}}
+          data-testid="dlg-falle-2"
+          fusszeile={
+            <button type="button" data-testid="fuss-ok-2">
+              OK
+            </button>
+          }
+        >
+          Inhalt
+        </KDialog>,
+      );
+    });
+
+    const schliessen = container.querySelector('.k-dialog-kopf-schliessen') as HTMLButtonElement;
+    const fussOk = container.querySelector('[data-testid="fuss-ok-2"]') as HTMLButtonElement;
+
+    act(() => schliessen.focus());
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }));
+    });
+    expect(document.activeElement).toBe(fussOk);
+  });
+});

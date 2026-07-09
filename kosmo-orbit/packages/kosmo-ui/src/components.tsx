@@ -12,47 +12,24 @@ export interface KButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md';
 }
 
-const buttonBase: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 6,
-  border: '1px solid transparent',
-  borderRadius: 'var(--k-radius-sm)',
-  cursor: 'pointer',
-  fontWeight: 500,
-  transition: 'background var(--k-motion-fast), border-color var(--k-motion-fast), color var(--k-motion-fast), opacity var(--k-motion-fast)',
-  userSelect: 'none',
-  whiteSpace: 'nowrap',
+/**
+ * v0.6.6 MOTION-KONZEPT-066 §3: Inline-Styles → CSS-Klassen (`.k-btn` +
+ * `.k-btn-<tone>` + `.k-btn-<size>` in `aura.css`) + `.k-druck` (Knopfdruck-
+ * simulation, `aura.css`). DOM-Struktur (ein `<button>`), Props-API,
+ * `data-testid`-Durchreichung (via `...rest`) und disabled-Verhalten bleiben
+ * identisch — nur die Style-QUELLE wandert, die Optik ist byte-gleich aus
+ * den vorherigen Inline-Werten übernommen (siehe Git-Historie dieser Datei).
+ */
+const TONE_KLASSE: Record<Tone, string> = {
+  accent: 'k-btn-accent',
+  quiet: 'k-btn-quiet',
+  ghost: 'k-btn-ghost',
+  danger: 'k-btn-danger',
 };
 
-const toneStyle: Record<Tone, React.CSSProperties> = {
-  accent: { background: 'var(--k-accent)', color: 'var(--k-accent-ink)' },
-  quiet: {
-    background: 'var(--k-raised)',
-    color: 'var(--k-ink)',
-    borderColor: 'var(--k-line-strong)',
-  },
-  ghost: { background: 'transparent', color: 'var(--k-ink-soft)' },
-  danger: { background: 'transparent', color: 'var(--k-danger)', borderColor: 'var(--k-danger)' },
-};
-
-export function KButton({ tone = 'quiet', size = 'md', style, disabled, ...rest }: KButtonProps) {
-  return (
-    <button
-      {...rest}
-      disabled={disabled}
-      style={{
-        ...buttonBase,
-        ...toneStyle[tone],
-        padding: size === 'sm' ? '3px 10px' : '6px 14px',
-        fontSize: size === 'sm' ? '12.5px' : '14px',
-        opacity: disabled ? 0.45 : 1,
-        cursor: disabled ? 'default' : 'pointer',
-        ...style,
-      }}
-    />
-  );
+export function KButton({ tone = 'quiet', size = 'md', className, style, disabled, ...rest }: KButtonProps) {
+  const klassen = ['k-btn', TONE_KLASSE[tone], `k-btn-${size}`, 'k-druck', className].filter(Boolean).join(' ');
+  return <button {...rest} disabled={disabled} className={klassen} style={style} />;
 }
 
 export interface PanelProps extends HTMLAttributes<HTMLDivElement> {

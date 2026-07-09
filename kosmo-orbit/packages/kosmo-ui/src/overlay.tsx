@@ -6,6 +6,7 @@ import {
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
   type ReactNode,
+  type RefObject,
 } from 'react';
 import type { KIconName } from './icons';
 import { KIcon } from './icons';
@@ -15,6 +16,45 @@ import { KIcon } from './icons';
  * KMenu ersetzt Link-Reihen (ANSICHT/EXPORT/EBENEN) durch Dropdowns; KDialog
  * ersetzt Ad-hoc-Popups. Beide teilen sich Esc-/Aussenklick-Verhalten.
  */
+
+const FOKUSIERBAR_AUSWAHL =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/**
+ * Fokus-Trap (v0.6.5-Restpunkt, im Zug von v0.6.6 nachgezogen): solange
+ * `aktiv`, zykliert Tab/Shift+Tab innerhalb von `containerRef` statt den
+ * Fokus aus dem Overlay hinauswandern zu lassen. Reiner Tastatur-Event-
+ * Handler — ändert NICHTS an DOM-Struktur oder Klassen-Verträgen von KMenu/
+ * KDialog (`meldung-{ton}`/`bestaetigung-ja`/`-nein`/`fehlerzone`/`lade`
+ * bleiben unberührt, die liegen in anderen Dateien).
+ */
+function useFokusFalle(containerRef: RefObject<HTMLElement | null>, aktiv: boolean): void {
+  useEffect(() => {
+    if (!aktiv) return undefined;
+    const behandleTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const container = containerRef.current;
+      if (!container) return;
+      const fokussierbare = Array.from(container.querySelectorAll<HTMLElement>(FOKUSIERBAR_AUSWAHL));
+      if (fokussierbare.length === 0) return;
+      const erster = fokussierbare[0]!;
+      const letzter = fokussierbare[fokussierbare.length - 1]!;
+      const aktives = document.activeElement as HTMLElement | null;
+      const innerhalb = aktives !== null && container.contains(aktives);
+      if (e.shiftKey) {
+        if (!innerhalb || aktives === erster) {
+          e.preventDefault();
+          letzter.focus();
+        }
+      } else if (!innerhalb || aktives === letzter) {
+        e.preventDefault();
+        erster.focus();
+      }
+    };
+    document.addEventListener('keydown', behandleTab);
+    return () => document.removeEventListener('keydown', behandleTab);
+  }, [aktiv, containerRef]);
+}
 
 // ── KMenu ───────────────────────────────────────────────────────────
 
@@ -50,6 +90,8 @@ export interface KMenuProps {
 export function KMenu({ trigger, items, onSelect, ...rest }: KMenuProps) {
   const [offen, setOffen] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  useFokusFalle(menuRef, offen);
 
   useEffect(() => {
     if (!offen) return undefined;
@@ -86,7 +128,12 @@ export function KMenu({ trigger, items, onSelect, ...rest }: KMenuProps) {
   return (
     <div className="k-menu-wrap" ref={wrapRef} {...rest}>
       {geklonterTrigger}
-      <div role="menu" className={`k-menu k-uebergang-schnell${offen ? ' offen' : ''}`} aria-hidden={!offen}>
+      <div
+        role="menu"
+        ref={menuRef}
+        className={`k-menu k-uebergang-schnell${offen ? ' offen' : ''}`}
+        aria-hidden={!offen}
+      >
         {items.map((item, i) =>
           item === 'trenner' ? (
             // eslint-disable-next-line react/no-array-index-key -- Trenner tragen keine eigene Identität
@@ -133,6 +180,12 @@ export interface KDialogProps {
  * (`.k-dialog`, bestehend) werden wiederverwendet, nicht neu erfunden.
  * Esc + Scrim-Klick schliessen. KEINE 45°-Ecke (die gehört den Karteikarten). */
 export function KDialog({ titel, onClose, children, fusszeile, breite = 560, ...rest }: KDialogProps) {
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  // KDialog ist immer "offen", solange gemountet (kein internes offen/zu wie
+  // KMenu) — die Falle ist darum durchgehend aktiv, gebunden an die Lebens-
+  // dauer der Komponente.
+  useFokusFalle(boxRef, true);
+
   useEffect(() => {
     const schliesseEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -151,6 +204,7 @@ export function KDialog({ titel, onClose, children, fusszeile, breite = 560, ...
       {...rest}
     >
       <div
+        ref={boxRef}
         className="k-dialog-box k-dialog k-skalieren-ein"
         onClick={(e) => e.stopPropagation()}
         style={{ width: `min(${breite}px, calc(100vw - 48px))` }}

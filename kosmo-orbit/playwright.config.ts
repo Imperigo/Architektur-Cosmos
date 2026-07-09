@@ -5,6 +5,12 @@ import { defineConfig } from '@playwright/test';
  * Läuft gegen den Preview-Build; WebGL via SwiftShader (kein GPU nötig).
  * Screenshots je Lauf unter e2e-results/ — die KosmoDoc-Berichte.
  */
+
+// EINE Konstante für baseURL UND den storageState-Origin (unten) — ein
+// künftiger Port-Override (z.B. via ENV) muss nur hier geändert werden,
+// statt an zwei Stellen synchron zu bleiben.
+const BASE_URL = 'http://localhost:5183';
+
 export default defineConfig({
   testDir: './e2e',
   outputDir: './e2e-results',
@@ -12,9 +18,46 @@ export default defineConfig({
   retries: process.env['CI'] ? 1 : 0,
   workers: 1,
   use: {
-    baseURL: 'http://localhost:5183',
+    baseURL: BASE_URL,
     viewport: { width: 1400, height: 900 },
     screenshot: 'only-on-failure',
+    // v0.6.6 MOTION-KONZEPT-066 §7: E2E läuft mit erzwungener reduced-motion
+    // — Playwright setzt `prefers-reduced-motion: reduce` in jedem Kontext,
+    // damit Bewegung (Federn/Übergänge/Knopfdruck-Skalierung) nie zu Flakiness
+    // führt. Wer eine Animation GEZIELT testet, tut das in einer eigenen
+    // Spec ohne diese Fixture (Konzept-Vorgabe, kein Ausnahme-Flag hier).
+    reducedMotion: 'reduce',
+    // v0.6.6 BEWEGUNGSKONZEPT-066 §8: `kosmo.ui.v1` mit `modusAutomatik: false`
+    // vorbelegt (für ALLE Specs, vor jeder Navigation) — die 0.6.6-Arbeits-
+    // modi-Automatik ist NEU und würde, einmal in DesignWorkspace.tsx
+    // verdrahtet (Stream B), Panels/Werkzeuge je erkanntem Modus ausblenden.
+    // Ohne diesen Seed sähen die ~1633 BESTEHENDEN testid-Verträge plötzlich
+    // eine andere Oberfläche als heute. Mit dem Seed sehen alle Bestands-
+    // specs weiterhin die heutige Voll-UI; nur NEUE Specs (`arbeitsmodi.
+    // spec.ts`, `kosmo-ui-bruecke.spec.ts`) schalten die Automatik
+    // ausdrücklich per `ui.modusAutomatik`/localStorage wieder ein.
+    //
+    // Feldname bewusst `version` (nicht `v`): `state/ui-zustand.ts` folgt
+    // demselben Versionierungsmuster wie `kosmo.adaption.v1`
+    // (`oberflaeche-adaption-kern.ts`) — dort heisst das Feld überall
+    // `version`. `modusFesthalten`/`phasenFokus` dürfen fehlen (der Store
+    // liest sie defensiv mit Default nach), stehen hier trotzdem explizit,
+    // damit dieser Seed für sich allein bereits ein vollständiger, gültiger
+    // Datensatz ist.
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: new URL(BASE_URL).origin,
+          localStorage: [
+            {
+              name: 'kosmo.ui.v1',
+              value: JSON.stringify({ version: 1, modusAutomatik: false, modusFesthalten: false, phasenFokus: null }),
+            },
+          ],
+        },
+      ],
+    },
     launchOptions: {
       ...(process.env['PLAYWRIGHT_CHROMIUM_PATH']
         ? { executablePath: process.env['PLAYWRIGHT_CHROMIUM_PATH'] }

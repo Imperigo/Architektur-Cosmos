@@ -145,6 +145,17 @@ export const motion = {
   fast: '120ms cubic-bezier(0.3, 0, 0.2, 1)',
   base: '200ms cubic-bezier(0.3, 0, 0.2, 1)',
   settle: '320ms cubic-bezier(0.22, 0.9, 0.28, 1)',
+  /**
+   * NEU (v0.6.6 MOTION-KONZEPT-066 §2) — spiegelt `--k-feder`/-fallback/
+   * `--k-druck-dauer`/-skala aus `aura.css` (dort die einzige Wahrheit,
+   * `token-spiegel.test.ts` bricht bei Abweichung). Fünf Dauern bleiben die
+   * Obergrenze im Konzept — eine sechste ändert das Konzept, nicht den
+   * Einzelfall.
+   */
+  feder: '260ms linear(0, 0.32 12%, 0.72 28%, 0.95 46%, 1.02 64%, 1 82%, 1)',
+  federFallback: '260ms cubic-bezier(0.3, 1.25, 0.4, 1)',
+  druckDauer: '80ms',
+  druckSkala: '0.97',
 } as const;
 
 /** Schatten — aura.css führt je Thema unterschiedliche Werte (Tinte braucht

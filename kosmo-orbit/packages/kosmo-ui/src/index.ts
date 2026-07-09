@@ -8,3 +8,4 @@ export * from './select';
 export * from './tabs';
 export * from './overlay';
 export * from './field';
+export * from './motion';

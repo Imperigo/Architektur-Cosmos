@@ -155,6 +155,27 @@
   --k-motion-fast: 120ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-base: 200ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-settle: 320ms cubic-bezier(0.22, 0.9, 0.28, 1);
+
+  /* v0.6.6 MOTION-KONZEPT-066 §2 — Federkurve: schnelles Anreissen, weiches
+     Setzen mit minimalem Überschwung (~2%). linear()-Approximation einer
+     Feder (Steifigkeit hoch, Dämpfung ~0.8); Fallback für alte Engines ohne
+     linear()-Easing steht in --k-feder-fallback und wird unten per
+     @supports automatisch eingesetzt — Komponenten referenzieren immer nur
+     --k-feder. */
+  --k-feder: 260ms linear(0, 0.32 12%, 0.72 28%, 0.95 46%, 1.02 64%, 1 82%, 1);
+  --k-feder-fallback: 260ms cubic-bezier(0.3, 1.25, 0.4, 1);
+  /* Druck: die Knopfdruck-Simulation — kürzer als fast, weil sie auf
+     pointerdown antwortet und NIE nachhinken darf. */
+  --k-druck-dauer: 80ms;
+  --k-druck-skala: 0.97;
+}
+
+/* Alte Engines ohne linear()-Easing (Konzept §2): --k-feder zeigt dann die
+   cubic-bezier-Annäherung statt eine unbekannte Easing-Funktion zu ignorieren. */
+@supports not (transition-timing-function: linear(0, 1)) {
+  :root {
+    --k-feder: var(--k-feder-fallback);
+  }
 }
 
 [data-theme='ink'] {
@@ -289,6 +310,54 @@ progress {
     transform var(--k-motion-settle);
 }
 
+/* Knopfdrucksimulation (v0.6.6 MOTION-KONZEPT-066 §3) — universelle
+   Pressklasse: «jedes klickbare Element trägt .k-druck» (Rollout je Stream
+   in seinem Gebiet). Vorbild ist `.k-orbit-hauptknopf` weiter unten,
+   verallgemeinert für beliebige Tusche-Töne (Danger/Quiet/Ghost behalten
+   ihre EIGENE Randfarbe — .k-druck überschreibt bewusst KEIN border-color,
+   sondern hebt den Ton per `filter: brightness()`, das funktioniert
+   unabhängig von jeder Komponenten-Farbe).
+   - `:hover` → Ton-Anhebung (leichte Aufhellung), Übergang --k-motion-fast.
+   - `:active` → `transform: scale(--k-druck-skala)` + Tusche-Abdunklung
+     (`brightness(0.96)` Papier / `brightness(1.08)` Tinte), Übergang
+     --k-druck-dauer — OHNE Verzögerung beim Niederdrücken. Das Loslassen
+     federt zurück: die Basisregel (unten) trägt --k-feder für `transform`,
+     und genau die greift, sobald `:active` nicht mehr matcht (CSS wählt die
+     Übergangsdauer immer aus dem NEUEN, nicht dem alten Zustand).
+   - `:focus-visible` bleibt der globale Ring (Zeile weiter unten) — hier
+     bewusst UNANGETASTET, keine eigene Deklaration.
+   - `prefers-reduced-motion`: kein `scale` mehr (siehe Regel unten), nur der
+     Ton-Wechsel (`filter`) bleibt — das globale reduced-motion-Kürzen der
+     `transition-duration` (oben) sorgt zusätzlich dafür, dass jeder
+     verbleibende Übergang praktisch augenblicklich passiert. */
+.k-druck {
+  transition:
+    transform var(--k-feder),
+    filter var(--k-motion-fast),
+    border-color var(--k-motion-fast);
+}
+.k-druck:hover {
+  filter: brightness(1.04);
+}
+[data-theme='ink'] .k-druck:hover {
+  filter: brightness(1.12);
+}
+.k-druck:active {
+  transform: scale(var(--k-druck-skala));
+  filter: brightness(0.96);
+  transition:
+    transform var(--k-druck-dauer),
+    filter var(--k-druck-dauer);
+}
+[data-theme='ink'] .k-druck:active {
+  filter: brightness(1.08);
+}
+@media (prefers-reduced-motion: reduce) {
+  .k-druck:active {
+    transform: none;
+  }
+}
+
 /* Werkplan-Utilities (Gestaltungskonzept): Plakat-Titel + Karteikarte */
 .k-titel {
   font-family: var(--k-font-titel);
@@ -302,6 +371,28 @@ progress {
   border: 1px solid var(--k-technik);
   border-radius: 0;
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+}
+
+/* Akzent-Eckpunkt (UI-KONZEPT-065 §2, Hierarchie-Rezept «aktiv/gewählt»):
+   1.5px --k-ink-Rahmen ODER 6px-Quadrat in der 45°-Ecke — NIE BEIDE
+   gleichzeitig an einem Element. Wiederverwendbare Utility-Klasse, NUR
+   kosmo-ui-seitig definiert (Form + Farbe); WELCHES Element sie WANN trägt
+   (Stationsleisten, Karten, Kacheln) entscheidet der jeweilige Stream beim
+   Rollout. Träger braucht `position: relative` (bringt die Klasse selbst
+   mit); Standard-Ecke oben rechts, `::after` bleibt klick-durchlässig. */
+.k-akzent-eckpunkt {
+  position: relative;
+}
+.k-akzent-eckpunkt::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 6px;
+  height: 6px;
+  background: var(--k-accent);
+  transform: rotate(45deg);
+  pointer-events: none;
 }
 
 /* Meldungen + Ladezustand (V1-Finish P1) — ruhig, präzise, reduced-motion-fest */
@@ -332,7 +423,11 @@ progress {
 }
 
 /* Motion-Rollout (V1-Finish P5) — Regel «Papier flattert nicht»:
-   kurz, klein, einmalig; reduced-motion killt alles global (oben). */
+   kurz, klein, einmalig; reduced-motion killt alles global (oben).
+   v0.6.6 MOTION-KONZEPT-066 §4: DIE wiederverwendbare Einblend-Klasse für
+   den Erstaufbau einer Station («jede Station nutzt beim Erstaufbau
+   dieselbe Einblend-Klasse») — Design/Vis fehlten sie bislang, das
+   Nachziehen dort macht der jeweilige Stations-Stream, nicht kosmo-ui. */
 .k-einblenden {
   animation: k-einblenden var(--k-motion-settle) both;
 }
@@ -706,10 +801,70 @@ progress {
    W0 — Komponenten-Fundament (UI-KONZEPT-065 §3). Neu ERGÄNZT, nichts
    Bestehendes oben in dieser Datei wurde verändert. */
 
-/* KSelect — natives <select>, eigener Chevron. GRENZE: `background-image`
-   kennt kein `currentColor` — der Stroke ist ein fest verdrahteter,
-   neutraler Tuscheton je Thema (Override unten für [data-theme='ink']); er
-   folgt NICHT automatisch einem gewählten `data-akzent` oder einem Hover. */
+/* KButton (v0.6.6 MOTION-KONZEPT-066 §3): Inline-Styles → Klassen, damit
+   `.k-druck` (oben) sauber andocken kann. DOM-Struktur, Props-API,
+   `data-testid`-Durchreichung und disabled-Verhalten bleiben unverändert
+   (`components.tsx`) — die Optik ist BYTE-GLEICH aus den bisherigen
+   Inline-Werten übernommen, nur die Style-QUELLE wandert. `.k-btn:disabled`
+   ersetzt die frühere JS-Ternäre für opacity/cursor (dasselbe Ergebnis, weil
+   `disabled` weiterhin echtes Button-Attribut bleibt). */
+.k-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--k-radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+  transition:
+    background var(--k-motion-fast),
+    border-color var(--k-motion-fast),
+    color var(--k-motion-fast),
+    opacity var(--k-motion-fast);
+  user-select: none;
+  white-space: nowrap;
+}
+.k-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.k-btn-accent {
+  background: var(--k-accent);
+  color: var(--k-accent-ink);
+}
+.k-btn-quiet {
+  background: var(--k-raised);
+  color: var(--k-ink);
+  border-color: var(--k-line-strong);
+}
+.k-btn-ghost {
+  background: transparent;
+  color: var(--k-ink-soft);
+}
+.k-btn-danger {
+  background: transparent;
+  color: var(--k-danger);
+  border-color: var(--k-danger);
+}
+.k-btn-sm {
+  padding: 3px 10px;
+  font-size: 12.5px;
+}
+.k-btn-md {
+  padding: 6px 14px;
+  font-size: 14px;
+}
+
+/* KSelect — natives <select>, eigener Chevron. GRENZE (bleibt bestehen):
+   `background-image` kennt kein `currentColor` UND kann keine CSS-Variable
+   (`var(--k-accent)`) auflösen — Data-URIs sind statische Strings, das ist
+   eine CSS-Sprachgrenze, keine Lücke hier. v0.6.6: der Chevron folgt dem
+   Akzentwechsel TROTZDEM, indem er (wie die `[data-akzent]`-Blöcke oben)
+   als eigene Variante je Akzent × Theme geführt wird — die Hexwerte sind
+   exakt dieselben wie dort. Eine sechste Akzentfarbe braucht eine weitere
+   Variante hier (Review-Hinweis). KSelect bleibt ein natives `<select>` —
+   diese Änderung ist reine Chevron-Optik, DOM/Props/E2E-Verträge unverändert. */
 .k-select {
   appearance: none;
   -webkit-appearance: none;
@@ -722,10 +877,39 @@ progress {
   background-size: 10px 6px;
   padding-right: var(--k-s6);
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%2355503f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  /* Standard = monochromer Tusche-Akzent (kein data-akzent gesetzt), paper. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%231a1815' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 [data-theme='ink'] .k-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23a7a296' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23f2efe6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-akzent='kupfer']:not([data-theme='ink']) .k-select,
+[data-akzent='kupfer'][data-theme='paper'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23a84b2b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-akzent='kupfer'][data-theme='ink'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23d9743f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-akzent='signal']:not([data-theme='ink']) .k-select,
+[data-akzent='signal'][data-theme='paper'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23c8501e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-akzent='signal'][data-theme='ink'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23e06a30' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-akzent='blau']:not([data-theme='ink']) .k-select,
+[data-akzent='blau'][data-theme='paper'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%232455a4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-akzent='blau'][data-theme='ink'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%236c96d6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-akzent='gruen']:not([data-theme='ink']) .k-select,
+[data-akzent='gruen'][data-theme='paper'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%231e6b47' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-akzent='gruen'][data-theme='ink'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%236fb593' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 .k-select:disabled {
   opacity: 0.5;

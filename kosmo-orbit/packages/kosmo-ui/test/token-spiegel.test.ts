@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ink, paper, radius, scale, type } from '../src/tokens';
+import { ink, motion, paper, radius, scale, type } from '../src/tokens';
 
 /**
  * Token-Spiegel-Wächter (W0, UI-KONZEPT-065 §2): `aura.css` ist die einzige
@@ -93,6 +93,27 @@ describe('token-spiegel (W0): aura.css ist die Wahrheit, tokens.ts folgt exakt',
     ];
     for (const [key, cssVar] of paare) {
       expect(type[key], `type.${key} vs. ${cssVar}`).toBe(lies(paperBlock, cssVar, 'paper'));
+    }
+  });
+
+  /**
+   * v0.6.6 MOTION-KONZEPT-066 §2: bislang war `tokens.motion` NICHT gegen
+   * aura.css verdrahtet (der Wächter prüfte nur Radien/Farben/Skalen) — hier
+   * wird die Lücke geschlossen UND die vier neuen Federkurve-/Druck-Tokens
+   * geprüft, byte-gleich, wie im Briefing gefordert.
+   */
+  it('Motion-Tokens (--k-motion-fast/-base/-settle + NEU --k-feder/-fallback/--k-druck-dauer/-skala) stimmen mit tokens.motion überein', () => {
+    const paare: Array<[keyof typeof motion, string]> = [
+      ['fast', '--k-motion-fast'],
+      ['base', '--k-motion-base'],
+      ['settle', '--k-motion-settle'],
+      ['feder', '--k-feder'],
+      ['federFallback', '--k-feder-fallback'],
+      ['druckDauer', '--k-druck-dauer'],
+      ['druckSkala', '--k-druck-skala'],
+    ];
+    for (const [key, cssVar] of paare) {
+      expect(motion[key], `motion.${key} vs. ${cssVar}`).toBe(lies(rootBlock, cssVar, ':root'));
     }
   });
 });
