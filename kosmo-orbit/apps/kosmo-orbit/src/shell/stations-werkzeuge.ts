@@ -1,10 +1,12 @@
 import type { ModuleId } from '@kosmo/ui';
 
 /**
- * Werkzeug-Stichworte je Zentrale-Kachel (Serie K / A2, Owner-Befund K12:
- * «Hover zeigt enthaltene Tools»). Reine Datentabelle (unit-testbar), die
- * Darstellung (Hover-Zeile + Info-Panel) lebt in `ZentraleKachel.tsx`.
+ * Werkzeug-Stichworte je Station (ursprünglich Serie K / A2, Owner-Befund
+ * K12: «Hover zeigt enthaltene Tools»). Reine Datentabelle (unit-testbar) —
+ * seit Serie K / F3 die Quelle für die «Fähigkeit»-Hovertexte im neuen
+ * Orbit-Startmenü (`OrbitStart.tsx`, Zuordnung in `orbit-werkzeuge.ts`).
  *
+
  * Ehrlichkeitsregel (Owner-Mandat): jedes Stichwort verweist auf eine WIRKLICH
  * gebaute Fähigkeit des jeweiligen Workspace — belegt gegen den Quellcode
  * unter `src/modules/<station>/`, keine Wunschliste. Wo eine Station von der

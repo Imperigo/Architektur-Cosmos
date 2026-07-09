@@ -232,12 +232,6 @@ progress {
     animation-delay: 0ms !important;
     transition-delay: 0ms !important;
   }
-  /* Idle-Puls des Kachel-Halos: bewusst ganz AUS (nicht nur auf 0.01ms
-     verkürzt) — «Reduced-motion: aus» (Bauauftrag Punkt 6), kein
-     Dauer-Flackern durch `infinite` bei entkoppelter Mikro-Dauer. */
-  .k-kachel-halo {
-    animation: none;
-  }
 }
 
 /* Werkplan-Utilities (Gestaltungskonzept): Plakat-Titel + Karteikarte */
@@ -417,119 +411,238 @@ progress {
   }
 }
 
-/* Kacheln der Zentrale: Hairline-Akzent + leiser Lift */
-.k-kachel {
-  transition:
-    border-color var(--k-motion-fast),
-    box-shadow var(--k-motion-fast),
-    transform var(--k-motion-fast);
+/* Serie K / F3 (Owner-Auftrag: «rund statt Blöcke») — das Orbit-Startmenü.
+   Vier Hauptwerkzeuge kreisen GANZ LANGSAM (>= 120s/Umdrehung, hier 200s) um
+   das zentrale OrbitMark. Konstruktion: ein 0×0-Ankerpunkt (`.k-orbit-knoten`)
+   bewegt sich per `rotate()+translateY()` auf der Kreisbahn — die
+   Kreis-Position der vier Werkzeuge (90°-Versatz) entsteht NICHT über einen
+   zusätzlichen statischen Rotationswert (der würde mit der Transform-Property
+   der Animation kollidieren), sondern über eine negative `animation-delay`
+   je Knoten (ein Viertel der Umlaufdauer) — dieselbe Keyframe-Animation läuft
+   nur phasenverschoben. Das Kind `.k-orbit-knoten-gegendreh` gegenrotiert mit
+   IDENTISCHER Verzögerung in Gegenrichtung, damit Titel/Fächer aufrecht
+   bleiben; seine Grösse (nicht 0) macht es zum stabilen, nicht rotierenden
+   Anker für den Fächer (Zentrierung über negative Margins, NICHT über
+   `transform: translate(-50%,-50%)` — sonst kollidiert das wieder mit der
+   Rotations-Animation auf derselben Property). */
+:root {
+  --k-orbit-radius: clamp(132px, 24vmin, 208px);
+  --k-orbit-dauer: 200s;
+  --k-orbit-knoten-groesse: 108px;
 }
-.k-kachel:hover {
-  border-color: var(--k-accent);
-  box-shadow: var(--k-shadow-raised);
-  transform: translateY(-1px);
+.k-orbit-start {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 8px;
 }
-
-/* Serie K / A2 (Owner-Befund K12): Startanimation — gestaffeltes Erscheinen
-   der Kacheln beim Mount der Zentrale. `animation-delay` kommt je Kachel aus
-   `ZentraleKachel.tsx` (Inline-Style, aus dem laufenden Index); Dauer +
-   grösste Verzögerung bleiben zusammen klar unter 800 ms. Rein additiv zur
-   bestehenden Hover-Transition oben — KEIN pointer-events-Eingriff, die
-   Kachel bleibt ab Frame 1 klickbar (Playwrights Actionability-Check prüft
-   Sichtbarkeit/Grösse, nicht opacity). */
-.k-kachel-einblenden {
-  animation: k-kachel-einblenden var(--k-motion-settle) both;
+.k-orbit-ring-feld {
+  position: relative;
+  width: calc(var(--k-orbit-radius) * 2 + var(--k-orbit-knoten-groesse));
+  height: calc(var(--k-orbit-radius) * 2 + var(--k-orbit-knoten-groesse));
+  max-width: 100%;
 }
-@keyframes k-kachel-einblenden {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Info-Icon oben rechts je Kachel — dezent, tritt erst bei Hover/Fokus der
-   Kachel klar hervor (Understatement, Gestaltungskonzept «Papier-Ruhe»). */
-.k-kachel-info {
-  all: unset;
+.k-orbit-mitte {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 18px;
-  height: 18px;
+  top: 50%;
+  left: 50%;
+  margin-left: -28px;
+  margin-top: -28px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  cursor: pointer;
-  font-size: 12px;
-  line-height: 1;
-  color: var(--k-ink-faint);
-  opacity: 0.45;
-  transition: opacity var(--k-motion-fast), color var(--k-motion-fast);
-}
-.k-kachel:hover .k-kachel-info,
-.k-kachel-info:hover,
-.k-kachel-info:focus-visible {
-  opacity: 1;
-  color: var(--k-ink);
-}
-
-/* Tiefenlayer hinter dem OrbitMark: ein weicher, stationsfarbener Halo
-   (Farbe kommt via `color-mix` aus `moduleHue`, inline gesetzt — bleibt so
-   die einzige Quelle der Wahrheit für Modulfarben, keine zweite Token-Kopie
-   in CSS). Hover/Fokus hebt ihn leicht an (Transform/Opacity, KEIN
-   pointer-events-Eingriff). Der Idle-Puls (stromsparend: NUR opacity, sehr
-   lange Dauer) läuft eigenständig weiter. */
-.k-kachel-halo {
-  position: absolute;
-  inset: -11px;
-  border-radius: 999px;
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-surface);
   pointer-events: none;
-  opacity: 0.7;
-  transform: scale(1);
-  transition: opacity var(--k-motion-base), transform var(--k-motion-base);
-  animation: k-kachel-idle-puls 7s ease-in-out infinite;
 }
-.k-kachel:hover .k-kachel-halo,
-.k-kachel:focus-visible .k-kachel-halo {
-  opacity: 1;
-  transform: scale(1.08);
+.k-orbit-knoten {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  /* `steps(200, end)` statt `linear`: EIN Sprung/Sekunde (200 Schritte über
+     200s) statt einer PERMANENT wechselnden Transform-Fliesskommazahl. Für
+     das Auge bei dieser Radius/Geschwindigkeit praktisch ununterscheidbar
+     von echtem Fliessen («GANZ LANGSAM») — für Playwright entscheidend: der
+     Knoten steht zwischen zwei Sprüngen exakt still, die Actionability-
+     Stabilitätsprüfung (die bei einer kontinuierlichen Transform NIE zwei
+     identische Bounding-Boxen sieht und ewig retryt) findet fast immer ein
+     stabiles Fenster. */
+  animation: k-orbit-drehen var(--k-orbit-dauer) steps(200, end) infinite;
+  animation-delay: var(--k-orbit-delay, 0s);
 }
-@keyframes k-kachel-idle-puls {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 0.85;
-  }
+@keyframes k-orbit-drehen {
+  from { transform: rotate(0deg) translateY(calc(-1 * var(--k-orbit-radius))); }
+  to   { transform: rotate(360deg) translateY(calc(-1 * var(--k-orbit-radius))); }
 }
-/* Stromsparend: pausiert, sobald das Dokument versteckt ist (Tab im
-   Hintergrund) — die Klasse setzt ein visibilitychange-Listener in App.tsx
-   auf dem Zentrale-Container, kein Timer pro Kachel. */
-.k-zentrale-pausiert .k-kachel-halo {
+.k-orbit-knoten-gegendreh {
+  position: absolute;
+  width: var(--k-orbit-knoten-groesse);
+  height: var(--k-orbit-knoten-groesse);
+  margin-left: calc(-1 * var(--k-orbit-knoten-groesse) / 2);
+  margin-top: calc(-1 * var(--k-orbit-knoten-groesse) / 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Gleiche Schrittzahl/Dauer wie `.k-orbit-knoten` — beide springen
+     GLEICHZEITIG, sonst geraten Fächer/Titel zwischen zwei Sprüngen sichtbar
+     schief. */
+  animation: k-orbit-gegendrehen var(--k-orbit-dauer) steps(200, end) infinite;
+  animation-delay: var(--k-orbit-delay, 0s);
+}
+@keyframes k-orbit-gegendrehen {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+/* Usability (Owner-Auftrag): Hover/Fokus über IRGENDEINEM Knoten pausiert die
+   ganze Bahn — sonst flieht das Ziel unter der Maus weg. Stromsparend
+   (Gestaltungskonzept): pausiert zusätzlich, sobald der Tab versteckt ist
+   (`.k-zentrale-pausiert`, gesetzt in App.tsx wie beim Kachel-Halo). */
+.k-orbit-ring-feld:hover .k-orbit-knoten,
+.k-orbit-ring-feld:hover .k-orbit-knoten-gegendreh,
+.k-orbit-ring-feld:focus-within .k-orbit-knoten,
+.k-orbit-ring-feld:focus-within .k-orbit-knoten-gegendreh,
+.k-zentrale-pausiert .k-orbit-knoten,
+.k-zentrale-pausiert .k-orbit-knoten-gegendreh {
   animation-play-state: paused;
 }
+@media (prefers-reduced-motion: reduce) {
+  .k-orbit-knoten,
+  .k-orbit-knoten-gegendreh,
+  .k-orbit-icon-puls {
+    animation: none;
+  }
+}
 
-/* Hover/Fokus zeigt die enthaltenen Werkzeuge unter der Beschreibung — die
-   Kachel darf dabei leicht wachsen (max-height/opacity), das Grid bleibt
-   stabil (kein Sprung der Nachbarn, jede Kachel wächst nur für sich). */
-.k-kachel-werkzeuge {
+.k-orbit-hauptknopf {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-raised);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  text-align: center;
+  padding: 6px;
+  transition: border-color var(--k-motion-fast), box-shadow var(--k-motion-fast), transform var(--k-motion-fast);
+}
+.k-orbit-hauptknopf:hover,
+.k-orbit-hauptknopf:focus-visible {
+  border-color: var(--k-accent);
+  box-shadow: var(--k-shadow-raised);
+  transform: scale(1.03);
+}
+.k-orbit-hauptknopf-titel {
+  font-weight: 650;
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+}
+.k-orbit-badge-kommend {
+  font-family: var(--k-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  opacity: 0.85;
+}
+.k-orbit-icon-puls {
+  animation: k-orbit-icon-puls 4.5s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes k-orbit-icon-puls {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.08); }
+}
+
+/* Fächer: IMMER im DOM und klickbar (Owner-Entscheidung, siehe
+   `OrbitStart.tsx`-Kopfkommentar) — nur Opazität/Position signalisieren
+   offen/zu, NIE `display:none`/`max-height:0` (das würde die Kachel für
+   Playwright unsichtbar machen und bestehende E2E ohne Hover brechen). */
+.k-orbit-faecher {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-top: 10px;
+  transform: translateX(-50%);
+  width: min(280px, 62vw);
+  display: grid;
+  gap: 2px;
+  opacity: 0.0015;
+  pointer-events: auto;
+  transition: opacity var(--k-motion-base);
+  z-index: 5;
+}
+.k-orbit-faecher.offen {
+  opacity: 1;
+  z-index: 20;
+}
+.k-orbit-faecher-kopf {
+  font-size: 11px;
+  color: var(--k-ink-faint);
+  padding: 4px 8px;
+}
+.k-orbit-untertool-zeile {
+  position: relative;
+}
+.k-orbit-untertool {
+  all: unset;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--k-line);
+  background: var(--k-raised);
+  cursor: pointer;
+  transition: border-color var(--k-motion-fast), background var(--k-motion-fast);
+}
+.k-orbit-untertool:hover,
+.k-orbit-untertool:focus-visible {
+  border-color: var(--k-accent);
+  background: var(--k-surface);
+}
+.k-orbit-untertool:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+.k-orbit-untertool-titel {
+  display: block;
+  font-weight: 600;
+  font-size: 12.5px;
+}
+.k-orbit-untertool-kurz {
+  display: block;
+  font-size: 11px;
+  color: var(--k-ink-faint);
+  margin-top: 1px;
+}
+/* «Was es kann» — 2–3 Sätze, sichtbar beim Hover/Fokus GENAU dieser Zeile
+   (gleiche Collapse-Technik wie `.k-kachel-werkzeuge`: reale Grösse bleibt
+   0 bis zum Hover, `toBeAttached()` bleibt also vorher wahr, `toBeVisible()`
+   erst danach). */
+.k-orbit-faehigkeit {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
   font-size: 11px;
-  color: var(--k-ink-faint);
-  margin-top: 0;
-  transition: max-height var(--k-motion-base), opacity var(--k-motion-base), margin-top var(--k-motion-base);
+  line-height: 1.45;
+  color: var(--k-ink-soft);
+  background: var(--k-surface);
+  border: 0 solid var(--k-line);
+  transition: max-height var(--k-motion-base), opacity var(--k-motion-base);
 }
-.k-kachel:hover .k-kachel-werkzeuge,
-.k-kachel:focus-within .k-kachel-werkzeuge {
-  max-height: 40px;
+.k-orbit-untertool-zeile:hover .k-orbit-faehigkeit,
+.k-orbit-untertool:focus-visible ~ .k-orbit-faehigkeit {
+  max-height: 140px;
   opacity: 1;
-  margin-top: 4px;
+  border-width: 0 1px 1px 1px;
+  padding: 7px 10px;
 }

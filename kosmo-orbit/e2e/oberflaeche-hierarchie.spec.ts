@@ -1,67 +1,67 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * T7 — Oberflächen-Systematik: die Zentrale gruppiert ihre Stationen jetzt
- * nach Familien (Kosmo eigenständig + KosmoDesign/KosmoData/KosmoBüro) und
- * zeigt dezente V2-Platzhalter. Diese Suite prüft, dass die Gruppierung
- * sichtbar ist UND dass jede bestehende Station weiterhin über ihre
- * unveränderte `module-<id>`-Kachel erreichbar bleibt.
+ * T7 → Serie K / F3: die Zentrale gruppierte ihre Stationen früher als
+ * flache Familien-Kacheln (Design/Data/Büro + Kosmo). Das Orbit-Startmenü
+ * (`OrbitStart.tsx`, Owner-Auftrag «rund statt Blöcke») ersetzt das durch
+ * 4 Hauptwerkzeuge (KosmoDesign/KosmoData/Kosmo/KosmoOffice) mit einem
+ * Hover-/Klick-Fächer; das Mapping (welche echte Station zu welchem
+ * Hauptwerkzeug gehört) steht in `shell/orbit-werkzeuge.ts`.
+ *
+ * Diese Suite prüft die NEUE Hierarchie UND dass jede bestehende Station
+ * weiterhin über ihre unveränderte `module-<id>`-Testid erreichbar bleibt
+ * (siehe `OrbitStart.tsx`-Kopfkommentar: Untertool-Knöpfe sind IMMER im DOM
+ * und klickbar, ihr Fächer ist nur eine optische Fächer-Öffnung).
  */
 
-test('Zentrale zeigt die Familien-Gruppen (Design/Data/Büro) + Kosmo eigenständig + mind. einen V2-Platzhalter', async ({ page }) => {
+test('Orbit zeigt genau 4 Hauptwerkzeuge; hover ordnet jede Station korrekt ihrem Hauptwerkzeug-Fächer zu', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
 
-  // Kosmo ist keine Familie — eigener, immer sichtbarer Bereich
-  const kosmo = page.locator('[data-testid="familie-kosmo"]');
-  await expect(kosmo).toBeVisible();
-  await expect(kosmo.locator('[data-testid="module-speak"]')).toBeVisible();
+  await expect(page.locator('[data-testid="orbit-start"]')).toBeVisible();
+  for (const id of ['design', 'data', 'kosmo', 'office']) {
+    await expect(page.locator(`[data-testid="orbit-haupt-${id}"]`)).toBeVisible();
+  }
 
-  // Die drei Familien mit ihren Titeln
-  const design = page.locator('[data-testid="familie-design"]');
-  await expect(design).toContainText('KosmoDesign');
-  await expect(design).toContainText('Entwerfen');
-  const data = page.locator('[data-testid="familie-data"]');
-  await expect(data).toContainText('KosmoData');
-  const buero = page.locator('[data-testid="familie-buero"]');
-  await expect(buero).toContainText('KosmoBüro');
+  // KosmoDesign-Fächer: Draw(design)/Prepare/Vis/Publish + Modellbaum(draw)
+  await page.locator('[data-testid="orbit-haupt-design"]').hover();
+  const designFaecher = page.locator('[data-testid="orbit-faecher-design"]');
+  await expect(designFaecher.locator('[data-testid="module-design"]')).toBeVisible();
+  await expect(designFaecher.locator('[data-testid="module-prepare"]')).toBeVisible();
+  await expect(designFaecher.locator('[data-testid="module-vis"]')).toBeVisible();
+  await expect(designFaecher.locator('[data-testid="module-publish"]')).toBeVisible();
+  await expect(designFaecher.locator('[data-testid="module-draw"]')).toBeVisible();
 
-  // Jede Familie enthält ihre zugehörigen Stations-Kacheln
-  await expect(design.locator('[data-testid="module-design"]')).toBeVisible();
-  await expect(design.locator('[data-testid="module-draw"]')).toBeVisible();
-  await expect(design.locator('[data-testid="module-vis"]')).toBeVisible();
-  await expect(design.locator('[data-testid="module-publish"]')).toBeVisible();
-  await expect(design.locator('[data-testid="module-asset"]')).toBeVisible();
-  await expect(data.locator('[data-testid="module-data"]')).toBeVisible();
-  await expect(data.locator('[data-testid="module-prepare"]')).toBeVisible();
-  await expect(data.locator('[data-testid="module-train"]')).toBeVisible();
-  await expect(buero.locator('[data-testid="module-dev"]')).toBeVisible();
+  // KosmoData-Fächer: Reference(data) + Asset — Asset ist NICHT mehr bei KosmoDesign.
+  await page.locator('[data-testid="orbit-haupt-data"]').hover();
+  const dataFaecher = page.locator('[data-testid="orbit-faecher-data"]');
+  await expect(dataFaecher.locator('[data-testid="module-data"]')).toBeVisible();
+  await expect(dataFaecher.locator('[data-testid="module-asset"]')).toBeVisible();
+  await expect(designFaecher.locator('[data-testid="module-asset"]')).toHaveCount(0);
 
-  // Kosmo/Speak taucht NICHT nochmals innerhalb einer Familie auf
-  await expect(design.locator('[data-testid="module-speak"]')).toHaveCount(0);
-  await expect(data.locator('[data-testid="module-speak"]')).toHaveCount(0);
-  await expect(buero.locator('[data-testid="module-speak"]')).toHaveCount(0);
+  // Kosmo-Fächer: Speak/Sketch/Train/Dev/Doc (Owner-Wortlaut).
+  await page.locator('[data-testid="orbit-haupt-kosmo"]').hover();
+  const kosmoFaecher = page.locator('[data-testid="orbit-faecher-kosmo"]');
+  for (const id of ['speak', 'sketch', 'train', 'dev', 'doc']) {
+    await expect(kosmoFaecher.locator(`[data-testid="module-${id}"]`)).toBeVisible();
+  }
 
-  // V2-Platzhalter: dezent sichtbar, mindestens einer, nicht Teil der echten Familien
-  const v2 = page.locator('[data-testid="familie-v2"] [data-testid^="v2-platzhalter-"]');
-  expect(await v2.count()).toBeGreaterThanOrEqual(4);
-  await expect(page.locator('[data-testid="v2-platzhalter-lead"]')).toContainText('KosmoLead');
-  await expect(page.locator('[data-testid="v2-platzhalter-bau"]')).toContainText('KosmoBau');
+  // Alle 12 Stations-Testids existieren irgendwo in der Zentrale (attached).
+  for (const id of ['design', 'draw', 'sketch', 'data', 'vis', 'publish', 'prepare', 'asset', 'dev', 'speak', 'doc', 'train']) {
+    await expect(page.locator(`[data-testid="module-${id}"]`)).toBeAttached();
+  }
 });
 
-test('jede bestehende Station bleibt über ihre module-*-Kachel erreichbar (Klick → Station offen)', async ({ page }) => {
+test('jede bestehende Station bleibt über ihre module-*-Testid erreichbar (Klick → Station offen), auch ohne vorheriges Hover', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
-    // Interner Fix (K11): Panel-Default ist jetzt zu — hier unschädlich, weil
-    // «module-speak» das Panel ohnehin direkt über setKosmoOpen(true) öffnet,
-    // aber konsequent gesetzt wie in den übrigen Kosmo-Suiten.
     localStorage.setItem('kosmo.panelOffen', '1');
   });
   await page.reload();
 
-  // Repräsentativ je Familie: KosmoDesign, KosmoData, KosmoBüro (Dev) + Kosmo selbst
+  // Repräsentativ je Hauptwerkzeug: KosmoDesign, KosmoData, Kosmo (Dev/Doc/Speak)
   await page.click('[data-testid="module-design"]');
   await expect(page.locator('[data-testid="planview"], [data-testid="inspector"], canvas').first()).toBeVisible();
   await page.click('header button[aria-label="Zur Zentrale"]');
@@ -82,7 +82,7 @@ test('jede bestehende Station bleibt über ihre module-*-Kachel erreichbar (Klic
   await page.click('[data-testid="module-speak"]');
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 
-  // Alle 12 Stations-Kacheln sind angehängt + sichtbar (keine verlorene Station)
+  // Alle 12 Stations-Testids sind angehängt + sichtbar (keine verlorene Station)
   for (const id of ['design', 'draw', 'sketch', 'data', 'vis', 'publish', 'prepare', 'asset', 'dev', 'speak', 'doc', 'train']) {
     await expect(page.locator(`[data-testid="module-${id}"]`)).toBeVisible();
   }

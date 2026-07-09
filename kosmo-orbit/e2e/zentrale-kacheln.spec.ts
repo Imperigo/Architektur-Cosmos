@@ -1,15 +1,13 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * Serie K / A2 (Owner-Befund K12, wörtlich): «Startmenü neu: personalisierte,
- * dynamische Icons mit Tiefenlayern, Hover zeigt enthaltene Tools, Info-Icon
- * je Kachel; Startanimation; Farbakzente + stromsparende Idle-Animationen.»
- *
- * Diese Suite beweist die neuen Kachel-Fähigkeiten am lebenden Objekt, OHNE
- * die bestehenden Verträge zu verlassen: jede Kachel bleibt exakt
- * `data-testid="module-<id>"`, `role="button"`, sofort klickbar — die
- * Startanimation (opacity/translateY) darf einen Klick direkt nach dem Laden
- * nie verzögern oder blockieren (kein pointer-events-Trick).
+ * Serie K / A2 (Owner-Befund K12) → Serie K / F3 (Owner-Auftrag «rund statt
+ * Blöcke»): die alte Kachel-Ansicht (`ZentraleKachel.tsx`, Info-Icon +
+ * Hover-Werkzeugzeile je Kachel) ist durch das Orbit-Startmenü ersetzt
+ * (`OrbitStart.tsx`). Diese Suite beweist die neuen Fähigkeiten am lebenden
+ * Objekt, OHNE den zentralen Bestandsvertrag zu verlassen: jede Station
+ * bleibt exakt `data-testid="module-<id>"`, sofort klickbar — auch während
+ * die (sehr langsame) Orbit-Rotation läuft (kein pointer-events-Trick).
  */
 
 async function zentraleLaden(page: import('@playwright/test').Page): Promise<void> {
@@ -21,69 +19,44 @@ async function zentraleLaden(page: import('@playwright/test').Page): Promise<voi
   await page.reload();
 }
 
-test('Familien-Gruppen sind da (Kosmo + Design/Data/Büro) — Kachel-Extraktion hat nichts verschluckt', async ({ page }) => {
+test('Orbit mit den 4 Hauptwerkzeugen ist da — nichts aus der Kachel-Extraktion verschluckt', async ({ page }) => {
   await zentraleLaden(page);
-  await expect(page.locator('[data-testid="familie-kosmo"]')).toBeVisible();
-  await expect(page.locator('[data-testid="familie-design"]')).toBeVisible();
-  await expect(page.locator('[data-testid="familie-data"]')).toBeVisible();
-  await expect(page.locator('[data-testid="familie-buero"]')).toBeVisible();
-  await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
+  await expect(page.locator('[data-testid="orbit-start"]')).toBeVisible();
+  await expect(page.locator('[data-testid="orbit-haupt-design"]')).toBeVisible();
+  await expect(page.locator('[data-testid="module-design"]')).toBeAttached();
 });
 
-test('Kachel funktioniert DIREKT nach dem Laden — die Startanimation blockiert den Klick nicht', async ({ page }) => {
+test('Station öffnet DIREKT nach dem Laden — die (pausierte) Orbit-Rotation blockiert den Klick nicht', async ({ page }) => {
   await zentraleLaden(page);
   // Kein zusätzliches Warten: click() direkt nach dem Reload, während die
-  // gestaffelte Startanimation (≤ 800 ms gesamt) noch laufen könnte.
+  // 200s-Rotation längst läuft (Owner: «GANZ LANGSAM» — trotzdem nie im Weg).
   await page.click('[data-testid="module-design"]');
   await expect(page.locator('[data-testid="planview"], [data-testid="inspector"], canvas').first()).toBeVisible();
   await page.click('header button[aria-label="Zur Zentrale"]');
   await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
 });
 
-test('Hover auf module-design zeigt die Werkzeug-Zeile mit einem echten Design-Stichwort', async ({ page }) => {
+test('Hover auf ein Untertool zeigt «was es kann» (Fähigkeitstext), vorher nur angehängt', async ({ page }) => {
   await zentraleLaden(page);
-  const kachel = page.locator('[data-testid="module-design"]');
-  const werkzeugZeile = kachel.locator('[data-testid="kachel-werkzeuge-design"]');
+  const faehigkeit = page.locator('[data-testid="orbit-faehigkeit-draw"]');
 
-  // Vor dem Hover unsichtbar (max-height/opacity 0) — kein Layout-Sprung.
-  await expect(werkzeugZeile).toBeAttached();
-  await kachel.hover();
-  await expect(werkzeugZeile).toBeVisible();
-  await expect(werkzeugZeile).toContainText('Volumenstudien');
+  // Vor jedem Hover unsichtbar (max-height/opacity 0) — kein Layout-Sprung.
+  await expect(faehigkeit).toBeAttached();
+  await page.locator('[data-testid="orbit-haupt-design"]').hover();
+  await page.locator('[data-testid="module-design"]').hover();
+  await expect(faehigkeit).toBeVisible();
+  await expect(faehigkeit).toContainText('Volumenstudien');
 });
 
-test('Info-Icon öffnet das Info-Panel mit Werkzeugliste; Escape schliesst', async ({ page }) => {
+test('KosmoOffice ist «kommend» — sichtbar, aber die Untertools öffnen nie einen leeren Screen', async ({ page }) => {
   await zentraleLaden(page);
-  const infoKnopf = page.locator('[data-testid="kachel-info-design"]');
-  await expect(page.locator('[data-testid="kachel-info-panel"]')).toHaveCount(0);
-
-  await infoKnopf.click();
-  const panel = page.locator('[data-testid="kachel-info-panel"]');
-  await expect(panel).toBeVisible();
-  await expect(panel).toContainText('KosmoDesign');
-  await expect(panel).toContainText('Volumenstudien');
-
-  // Klick auf das Info-Icon darf NIE die Station öffnen (stopPropagation).
+  await expect(page.locator('[data-testid="orbit-haupt-office"]')).toContainText('kommend');
+  await page.locator('[data-testid="orbit-haupt-office"]').hover();
+  const lead = page.locator('[data-testid="orbit-office-lead"]');
+  await expect(lead).toBeVisible();
+  await expect(lead).toBeDisabled();
+  // Ein Klick (erzwungen, da disabled) darf niemals eine Station öffnen.
+  await page.locator('[data-testid="orbit-haupt-office"]').click();
+  await expect(page.locator('[data-testid="orbit-start"]')).toBeVisible();
   await expect(page.locator('[data-testid="planview"]')).toHaveCount(0);
-
-  await page.keyboard.press('Escape');
-  await expect(page.locator('[data-testid="kachel-info-panel"]')).toHaveCount(0);
-  // Die Kachel selbst ist danach unverändert klickbar.
-  await page.click('[data-testid="module-design"]');
-  await expect(page.locator('[data-testid="planview"], [data-testid="inspector"], canvas').first()).toBeVisible();
-});
-
-test('Info-Panel schliesst auch per × und per Klick daneben', async ({ page }) => {
-  await zentraleLaden(page);
-
-  await page.click('[data-testid="kachel-info-design"]');
-  await expect(page.locator('[data-testid="kachel-info-panel"]')).toBeVisible();
-  await page.click('[aria-label="Schliessen"]');
-  await expect(page.locator('[data-testid="kachel-info-panel"]')).toHaveCount(0);
-
-  await page.click('[data-testid="kachel-info-design"]');
-  await expect(page.locator('[data-testid="kachel-info-panel"]')).toBeVisible();
-  // Klick auf den Scrim (weit ausserhalb der Karte) schliesst.
-  await page.locator('[data-testid="kachel-info-panel"]').click({ position: { x: 5, y: 5 } });
-  await expect(page.locator('[data-testid="kachel-info-panel"]')).toHaveCount(0);
 });

@@ -2051,17 +2051,16 @@ test('Rollen-Vorstufe (Vision D2): Rolle «Ausführung» rückt KosmoPublish nac
     localStorage.setItem('kosmo.starterGuide.done', '1');
   });
   await page.reload();
-  // T7: die Zentrale gruppiert die Kacheln jetzt nach Familien, mit Kosmo
-  // (module-speak) bewusst VOR den Familien (übergeordnete Intelligenz,
-  // docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md) — «erste Kachel der ganzen Seite»
-  // wäre darum immer Kosmo, unabhängig von der Rolle. Die Rollen-Priorität
-  // wirkt weiterhin, aber INNERHALB der KosmoDesign-Familie — dort scopen wir.
-  const ersteKachel = page.locator('[data-testid="familie-design"] [data-testid^="module-"]').first();
-  await expect(ersteKachel).toHaveAttribute('data-testid', 'module-design');
+  // Serie K / F3: die Zentrale ist jetzt das Orbit-Startmenü (OrbitStart.tsx)
+  // — die 4 Hauptwerkzeuge sind fix, die Rollen-Priorität wirkt weiterhin,
+  // aber INNERHALB des KosmoDesign-Fächers (Untertool-Reihenfolge; das
+  // vorderste Untertool ist zugleich das Primärziel des Hauptwerkzeug-Klicks).
+  const erstesUntertool = page.locator('[data-testid="orbit-faecher-design"] [data-testid^="module-"]').first();
+  await expect(erstesUntertool).toHaveAttribute('data-testid', 'module-design');
   await page.selectOption('[data-testid="rolle-select"]', 'ausfuehrung');
-  await expect(ersteKachel).toHaveAttribute('data-testid', 'module-publish');
+  await expect(erstesUntertool).toHaveAttribute('data-testid', 'module-publish');
   await page.selectOption('[data-testid="rolle-select"]', '');
-  await expect(ersteKachel).toHaveAttribute('data-testid', 'module-design');
+  await expect(erstesUntertool).toHaveAttribute('data-testid', 'module-design');
 });
 
 test('Umbau-Filter je Blatt (RE-ARCHICAD A2): Abbruchplan blendet Neubau aus', async ({ page }) => {

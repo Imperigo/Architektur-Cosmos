@@ -19,7 +19,7 @@ import {
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
 import { KosmoSymbol } from './shell/KosmoSymbol';
-import { ZentraleKachel } from './shell/ZentraleKachel';
+import { OrbitStart } from './shell/OrbitStart';
 import { AppDeinstallieren } from './shell/AppDeinstallieren';
 import { StarterGuide } from './shell/StarterGuide';
 import { ErsteStartFrage } from './shell/ErsteStartFrage';
@@ -60,7 +60,6 @@ import { requestKosmoFokus } from './state/kosmo-focus';
 import { setzeAktuelleStation } from './state/auftragsbuch';
 import { hydriereJournal } from './state/journal-store';
 import { qrSvg } from './state/qr';
-import { STATION_FAMILIEN, V2_PLATZHALTER, stationFamilie } from './state/stationen';
 import { fokusKlasse, fokusStufe } from './state/fokus';
 import { AKZENTE } from './shell/akzente';
 import { Einstellungen } from './shell/Einstellungen';
@@ -172,6 +171,12 @@ export function App() {
     }
     if (m.deepLink === 'draw' || m.deepLink === 'sketch') setDeepLink(m.deepLink);
     if (m.screen) setScreen(m.screen);
+  };
+  // Serie K / F3: das Orbit-Startmenü kennt nur echte Registry-Ids (siehe
+  // `shell/orbit-werkzeuge.ts`) — ein schlanker Adapter auf denselben Weg.
+  const oeffneModulById = (id: ModuleId) => {
+    const m = modules.find((x) => x.id === id);
+    if (m) oeffneModul(m);
   };
   const stationen = useMemo(
     () => sortierteModule.map((m) => ({ name: m.name, oeffne: () => oeffneModul(m) })),
@@ -796,90 +801,17 @@ export function App() {
               )}
               <ProjektListe onOpen={() => setScreen('design')} />
               <VariantenArchiv onOpen={() => setScreen('design')} />
-              {/* T7: Stations-Hierarchie — Kosmo bleibt eigenständig VOR den
-                  Familien (übergeordnete Intelligenz, keine Kachel-Familie),
-                  danach Design → Data → Büro, dann die dezenten V2-Platzhalter.
-                  Jede Kachel behält data-testid="module-<id>" + oeffneModul()
-                  unverändert — nur die Anordnung ist neu (docs/OBERFLAECHE-
-                  FOKUS-SYSTEMATIK.md). */}
-              {(() => {
-                const kosmoKachel = sortierteModule.find((m) => stationFamilie(m.id) === 'kosmo');
-                // Serie K / A2: EIN fortlaufender Index über alle Kacheln der
-                // Zentrale (Kosmo-Kachel zuerst, dann Familie für Familie) —
-                // steuert nur die Startanimations-Staffelung (animation-delay
-                // in ZentraleKachel.tsx), NIE die DOM-Reihenfolge selbst.
-                let kachelIndex = 0;
-                const kachelGrid = (mods: typeof sortierteModule) => (
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                      gap: 14,
-                    }}
-                  >
-                    {mods.map((m) => (
-                      <ZentraleKachel
-                        key={m.id}
-                        id={m.id}
-                        name={m.name}
-                        desc={m.desc}
-                        klickbar={!!(m.screen || m.deepLink)}
-                        onOeffnen={() => oeffneModul(m)}
-                        index={kachelIndex++}
-                      />
-                    ))}
-                  </div>
-                );
-                return (
-                  <div style={{ display: 'grid', gap: 26 }}>
-                    {kosmoKachel && (
-                      <div data-testid="familie-kosmo" style={{ display: 'grid', gap: 10 }}>
-                        <div className="k-primaer">Kosmo — die steuernde Intelligenz, immer erreichbar</div>
-                        <div style={{ maxWidth: 340 }}>{kachelGrid([kosmoKachel])}</div>
-                      </div>
-                    )}
-                    {STATION_FAMILIEN.map((familie) => {
-                      const mods = sortierteModule.filter((m) => stationFamilie(m.id) === familie.id);
-                      if (mods.length === 0) return null;
-                      return (
-                        <div key={familie.id} data-testid={`familie-${familie.id}`} style={{ display: 'grid', gap: 10 }}>
-                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-                            <span className="k-primaer">{familie.titel}</span>
-                            <span className="k-sekundaer" style={{ color: 'var(--k-ink-faint)' }}>
-                              — {familie.untertitel}
-                            </span>
-                          </div>
-                          {kachelGrid(mods)}
-                        </div>
-                      );
-                    })}
-                    <div data-testid="familie-v2" style={{ display: 'grid', gap: 10 }}>
-                      <span className="k-selten">V2 — geplante Abteilungen, bald</span>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                          gap: 14,
-                        }}
-                      >
-                        {V2_PLATZHALTER.map((p) => (
-                          <Panel
-                            key={p.id}
-                            data-testid={`v2-platzhalter-${p.id}`}
-                            className="k-selten"
-                            style={{ display: 'flex', gap: 12, alignItems: 'center', cursor: 'default' }}
-                          >
-                            <div style={{ minWidth: 0 }}>
-                              <div style={{ fontWeight: 550 }}>{p.name} · bald</div>
-                              <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>{p.kurzbeschrieb}</div>
-                            </div>
-                          </Panel>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
+              {/* Serie K / F3 (Owner-Auftrag, wörtlich: «nicht Blöcke, eher
+                  wie das Kosmos-Zeichen rund») — ersetzt die frühere
+                  Familien-Kachel-Ansicht (T7/Serie K A2) durch das Orbit-
+                  Startmenü: NUR die 4 Hauptwerkzeuge sichtbar, Untertools im
+                  Hover-/Klick-Fächer. Mapping + Ehrlichkeitsregeln (welche
+                  echte Registry-Id hinter welchem Untertool steckt) leben in
+                  `shell/orbit-werkzeuge.ts`. */}
+              <OrbitStart
+                onOeffnen={oeffneModulById}
+                {...(rolle ? { rollenPrio: ROLLEN_REIHENFOLGE[rolle] } : {})}
+              />
               <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)' }} data-testid="about-zeile">
                 KosmoOrbit v{__APP_VERSION__} · lokal-first · Installation: docs/INSTALL.md · Update = neuer Installer (Signierung folgt zuhause)
               </div>
