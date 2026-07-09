@@ -54,9 +54,8 @@ for (const thema of ['paper', 'ink'] as const) {
   });
   await shot(`${T}-02-zentrale-faecher`);
 
-  // KosmoDesign: 3D-Übersicht + 2D mit Werkzeugleiste + Export-Menü offen
+  // KosmoDesign: load-tkb öffnet die Station DIREKT (kein module-design-Klick).
   await frisch(thema);
-  await page.click('[data-testid="module-design"]');
   await shot(`${T}-03-design-3d`);
   await page.click('[data-testid="view-2d"]');
   await shot(`${T}-04-design-2d`);
@@ -66,26 +65,34 @@ for (const thema of ['paper', 'ink'] as const) {
     await shot(`${T}-05-design-export-menu`);
   }
 
-  // KosmoVis: Drei Stimmungen + Zoom-Leiste
+  // KosmoVis: frischer Boot ohne TKB (Muster visgraph.spec), Drei Stimmungen + Zoom-Leiste
+  await frisch(thema, false);
   await page.click('[data-testid="module-vis"]');
   await page.waitForTimeout(600);
   const drei = page.locator('[data-testid="drei-stimmungen"]');
   if (await drei.count()) await drei.click();
   await shot(`${T}-06-vis-graph`, 1200);
 
-  // KosmoData: Referenzen (Karten + Leerbilder)
+  // KosmoData: frischer Boot, Referenzen (Karten + Leerbilder)
+  await frisch(thema, false);
   await page.click('[data-testid="module-data"]');
   await page.waitForTimeout(800);
   await shot(`${T}-07-data-referenzen`);
 
-  // Einstellungen-Dialog
-  await page.click('[aria-label="Einstellungen"]').catch(() => {});
+  // Einstellungen-Dialog — Kritik-Runde-1-Lehre: der aria-label-Klick schlug
+  // still fehl (catch), das Bild zeigte weiter KosmoData. Der echte Öffner
+  // ist der Kopfleisten-Knopf `einstellungen-oeffnen`; danach HART auf das
+  // Panel warten statt blind zu fotografieren.
+  await page.click('[data-testid="einstellungen-oeffnen"]');
+  await page.waitForSelector('[data-testid="einstellungen-panel"]');
   await shot(`${T}-08-einstellungen`);
   await page.keyboard.press('Escape');
 
-  // Publish + Doc (W6-Stichproben)
+  // Publish + Doc (W6-Stichproben, frischer Boot je Station)
+  await frisch(thema, false);
   await page.click('[data-testid="module-publish"]');
   await shot(`${T}-09-publish`);
+  await frisch(thema, false);
   await page.click('[data-testid="module-doc"]');
   await shot(`${T}-10-doc`);
 }

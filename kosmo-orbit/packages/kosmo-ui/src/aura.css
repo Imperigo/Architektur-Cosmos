@@ -55,7 +55,11 @@
   --k-raised: #1b1a15;
   --k-ink: #f2efe6;
   --k-ink-soft: #a7a296;
-  --k-ink-faint: #6e6a5f;
+  /* v0.6.5 Kritik-Runde 1: #6e6a5f lag auf dem fast-schwarzen Grund bei ~3:1
+     und fiel mit der k-selten-Dimmung unter 2:1 (EBENEN-Trigger, Karten-
+     Metazeilen, Portlabels unlesbar). #918c80 haelt ~5:1 nackt und bleibt
+     nach der 0.6-Dimmung ueber 3:1 — faint heisst zurueckgenommen, nicht weg. */
+  --k-ink-faint: #918c80;
   --k-line: #2b2921;
   --k-line-strong: #4a4638;
   --k-technik: #f2efe6;
