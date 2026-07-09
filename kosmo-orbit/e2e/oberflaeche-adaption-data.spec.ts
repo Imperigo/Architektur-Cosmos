@@ -173,3 +173,29 @@ test('Opt-out-Schalter: Umschalten wirkt sofort ohne Reload — aus liefert exak
   expect(geparst.aktiv).toBe(false);
   expect(geparst.profil.zaehler).toEqual({});
 });
+
+/**
+ * W4 (UI-KONZEPT-065 §4/§4.5 «Leerzustände sind gezeichnet», Chefbefund 5) —
+ * Begründung für die Anpassung an dieser (Adaptions-)Spec-Datei: sie ist per
+ * Dateibesitz die einzige Data-Spec, die dieser Stream erweitern darf, und
+ * `oeffneKosmoData()`/die Offline-Seed-Fixtur leben bereits hier. «De
+ * architectura» ist im Seed EIN eindeutiger Treffer ohne `hero`-Bild (Repro
+ * geprüft: `apps/kosmo-orbit/public/kosmodata-seed.json`) — die Karte muss
+ * das gezeichnete Signet + den ehrlichen Satz zeigen, NICHT eine leere
+ * Fläche und KEIN Fake-Thumbnail.
+ */
+test('Referenz-Karte ohne Bild zeigt das gezeichnete Leerbild-Signet statt einer leeren Fläche', async ({ page }) => {
+  await oeffneKosmoData(page);
+
+  await page.fill('[data-testid="data-search"]', 'De architectura');
+  const karte = page.locator('[data-testid="ref-card"]');
+  await expect(karte).toHaveCount(1);
+
+  const signet = karte.locator('[data-testid="karte-leerbild"]');
+  await expect(signet).toBeVisible();
+  await expect(karte).toContainText('kein Bild hinterlegt');
+
+  // Ehrlich: kein <img> im Karten-Kopf, wo das Signet steht — kein
+  // Fake-Thumbnail, kein generiertes Bild (Owner-Mandat).
+  await expect(karte.locator('img')).toHaveCount(0);
+});
