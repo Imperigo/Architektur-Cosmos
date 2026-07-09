@@ -5,6 +5,8 @@ import {
   areaReport,
   derivePlan,
   fangKandidaten,
+  elementFangKandidaten,
+  type ElementFangPunkt,
   formatLength,
   generiereVolumenstudien,
   geschossZu,
@@ -269,6 +271,15 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision, activeStoreyId]);
 
+  // F4 (v0.6.4): Element-Fang-Kandidaten des aktiven Geschosses (Wand-Enden/
+  // -Mitten, Stützen, Polygon-Ecken + Kanten) — dieselbe Ableitung wie der
+  // Achsen-Magnet oben, nur über die gezeichneten Bauteile.
+  const elementKandidaten = useMemo(
+    () => (activeStoreyId ? elementFangKandidaten(useProject.getState().doc, activeStoreyId) : undefined),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [revision, activeStoreyId],
+  );
+
   // ArchiCAD-Gefühl: die Arbeitsfläche öffnet im Auswahl-Werkzeug (Pfeil), nicht
   // schon zeichnend — sonst baut der erste Klick versehentlich eine Wand.
   const [tool, setTool] = useState<ToolId>('auswahl');
@@ -303,6 +314,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // T3-Zeichenhilfen: sichtbare Fluchtlinien + Ortho-Status fürs Overlay (PlanView)
   const [fluchtlinien, setFluchtlinien] = useState<Fluchtlinie[]>([]);
   const [orthoAktiv, setOrthoAktiv] = useState(false);
+  // F4 (v0.6.4): getroffener Element-Fangpunkt — PlanView malt den sichtbaren
+  // Marker (Quadrat/Kreis/Kreuz) an dieser Stelle, solange ein Zeichenwerkzeug
+  // über einem Bauteil schwebt.
+  const [fangPunkt, setFangPunkt] = useState<ElementFangPunkt | null>(null);
   // Ziehen im Plan (Auswahl-Werkzeug): Startpunkt gemerkt, aktuelle Position
   // folgt der Maus als reine Vorschau — erst bei pointerup EIN design.verschieben
   const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt } | null>(null);
@@ -525,12 +540,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     if (!ZEICHEN_WERKZEUGE.has(tool)) {
       setFluchtlinien([]);
       setOrthoAktiv(false);
+      setFangPunkt(null);
       return snap(rawP, magnet);
     }
     const ref = points.length > 0 ? points[points.length - 1]! : null;
-    const erg = zeichenSnap(rawP, ref, shiftKey, magnet, alignPunkte, FLUCHT_TOLERANZ, (p) => snap(p, magnet));
+    const erg = zeichenSnap(rawP, ref, shiftKey, magnet, alignPunkte, FLUCHT_TOLERANZ, (p) => snap(p, magnet), elementKandidaten);
     setFluchtlinien(erg.fluchtlinien);
     setOrthoAktiv(erg.orthoAktiv);
+    setFangPunkt(erg.fang);
     return erg.p;
   };
 
@@ -539,6 +556,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   handlersRef.current = {
     fluchtlinien,
     orthoAktiv,
+    fangPunkt,
     sketchMode: tool === 'skizze',
     pickMode: tool === 'auswahl',
     onPick: (id) => select(id ? [id] : []),

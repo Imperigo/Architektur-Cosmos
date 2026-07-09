@@ -37,6 +37,8 @@ import {
   CommandError,
   fangKandidaten,
   magnetFang,
+  elementFang,
+  elementFangKandidaten,
   derivePlan,
   deriveDimensions,
   treppenTeile,
@@ -1613,6 +1615,34 @@ describe('Stützenraster ins Modell (V2-A3)', () => {
     // leeres Raster
     execute(doc, 'design.rasterEntfernen', { storeyId });
     expect(magnetFang({ x: 10_000, y: 6_000 }, fangKandidaten(doc, storeyId))).toBeNull();
+  });
+
+  it('Element-Fang (v0.6.4 F4): Endpunkt > Mitte > Kante, Radius wird respektiert', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, a: { x: 0, y: 0 }, b: { x: 6000, y: 0 }, assemblyId });
+    const k = elementFangKandidaten(doc, storeyId);
+    // Wand liefert 2 Endpunkte + 1 Mitte als Punkte und 1 Kante
+    expect(k.punkte.filter((p) => p.typ === 'endpunkt')).toHaveLength(2);
+    expect(k.punkte.filter((p) => p.typ === 'mitte')).toHaveLength(1);
+    expect(k.kanten).toHaveLength(1);
+    // Nahe dem Wandende: Endpunkt gewinnt
+    const ende = elementFang({ x: 6200, y: 250 }, k);
+    expect(ende?.typ).toBe('endpunkt');
+    expect(ende?.p).toEqual({ x: 6000, y: 0 });
+    // Nahe der Wandmitte: Mitte gewinnt
+    const mitte = elementFang({ x: 3100, y: -200 }, k);
+    expect(mitte?.typ).toBe('mitte');
+    expect(mitte?.p).toEqual({ x: 3000, y: 0 });
+    // Auf halber Strecke abseits der Sonderpunkte: Fusspunkt auf der Kante
+    const kante = elementFang({ x: 1500, y: 300 }, k);
+    expect(kante?.typ).toBe('kante');
+    expect(kante?.p).toEqual({ x: 1500, y: 0 });
+    // Ausser Reichweite: null → Raster-Fallback der App
+    expect(elementFang({ x: 1500, y: 900 }, k)).toBeNull();
+    // Stütze und Zonen-Ecke sind ebenfalls Kandidaten
+    execute(doc, 'design.stuetzeSetzen', { storeyId, at: { x: 9000, y: 2000 } });
+    const k2 = elementFangKandidaten(doc, storeyId);
+    expect(elementFang({ x: 9150, y: 2100 }, k2)?.p).toEqual({ x: 9000, y: 2000 });
   });
 });
 

@@ -4,7 +4,7 @@ import CameraControls from 'camera-controls';
 import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
 import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
-import { deriveAll, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
+import { deriveAll, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
@@ -149,6 +149,9 @@ export interface ViewportHandlers {
   moveOffset?: { id: string; dx: number; dy: number } | null;
   /** T3-Zeichenhilfen: sichtbare Fluchtlinien (Ausrichtung an bestehenden Punkten) — nur 2D-Overlay (PlanView). */
   fluchtlinien?: Fluchtlinie[];
+  /** F4 (v0.6.4): getroffener Element-Fangpunkt — PlanView malt den sichtbaren
+   *  Marker (Quadrat=Endpunkt, Kreis=Mitte, Kreuz=Kante); nur 2D-Overlay. */
+  fangPunkt?: ElementFangPunkt | null;
   /** T3: Shift hat den Winkel zum letzten Punkt auf 45°-Vielfache fixiert. */
   orthoAktiv?: boolean;
   /**

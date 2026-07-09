@@ -1,4 +1,4 @@
-import { magnetFang, type FangKandidaten, type Pt } from '@kosmo/kernel';
+import { elementFang, magnetFang, type ElementFangKandidaten, type ElementFangPunkt, type FangKandidaten, type Pt } from '@kosmo/kernel';
 
 /**
  * Zeichenhilfen (T3): ArchiCAD-Gefühl beim Setzen von Punkten (Wand, Zone,
@@ -9,11 +9,14 @@ import { magnetFang, type FangKandidaten, type Pt } from '@kosmo/kernel';
  * Rangfolge (höchste zuerst):
  *  1. Shift fixiert den Winkel zum letzten Punkt auf ein 45°-Vielfaches
  *     (ortho45) — die Distanz bleibt frei, wie in ArchiCAD/Blender.
- *  2. Der bestehende Stützenraster-Magnet (Kreuzung > Achslinie, derive/fang.ts)
- *     bleibt danach vorrangig — das Tragwerk gewinnt vor einer Hilfslinie.
- *  3. Eine Fluchtlinie an einem bestehenden Punkt (gleiches x oder y, z.B.
+ *  2. Element-Fang auf gezeichnete Bauteile (v0.6.4 F4, Owner-Befund):
+ *     Wand-/Treppen-Enden, Wandmitten, Stützen, Polygon-Ecken, dann Kanten —
+ *     das gebaute Element gewinnt vor dem Tragraster (ArchiCAD-Verhalten);
+ *     bei aktiver Ortho-Sperre bleibt er aus, sonst bräche der fixierte Winkel.
+ *  3. Der bestehende Stützenraster-Magnet (Kreuzung > Achslinie, derive/fang.ts).
+ *  4. Eine Fluchtlinie an einem bestehenden Punkt (gleiches x oder y, z.B.
  *     Wandecke) zieht die Koordinate exakt heran.
- *  4. Sonst das gewöhnliche 250-mm-Raster (Fallback der aufrufenden Stelle).
+ *  5. Sonst das gewöhnliche 250-mm-Raster (Fallback der aufrufenden Stelle).
  */
 
 export interface Fluchtlinie {
@@ -27,6 +30,10 @@ export interface ZeichenErgebnis {
   fluchtlinien: Fluchtlinie[];
   /** Shift hat den Winkel zum letzten Punkt fixiert (fürs Overlay/Statuszeile). */
   orthoAktiv: boolean;
+  /** F4: getroffener Element-Fangpunkt — PlanView malt daraus den sichtbaren
+   *  Marker (Quadrat=Endpunkt, Kreis=Mitte, Kreuz=Kante). Null, wenn ein
+   *  anderer Snap gewonnen hat oder nichts in Reichweite liegt. */
+  fang: ElementFangPunkt | null;
 }
 
 const WINKEL_SCHRITT = (45 * Math.PI) / 180;
@@ -87,19 +94,25 @@ export function zeichenSnap(
   kandidaten: readonly Pt[],
   toleranzMm: number,
   rasterRunden: (p: Pt) => Pt,
+  elemente?: ElementFangKandidaten,
 ): ZeichenErgebnis {
   const orthoAktiv = !!(ref && shiftKey);
   const nachOrtho = orthoAktiv ? ortho45(ref!, rawP) : rawP;
 
+  if (!orthoAktiv && elemente) {
+    const treffer = elementFang(nachOrtho, elemente);
+    if (treffer) return { p: treffer.p, fluchtlinien: [], orthoAktiv, fang: treffer };
+  }
+
   const magnetTreffer = magnet ? magnetFang(nachOrtho, magnet) : null;
-  if (magnetTreffer) return { p: magnetTreffer, fluchtlinien: [], orthoAktiv };
+  if (magnetTreffer) return { p: magnetTreffer, fluchtlinien: [], orthoAktiv, fang: null };
 
   if (!orthoAktiv) {
     const flucht = fluchtFang(nachOrtho, kandidaten, toleranzMm);
     if (flucht.fluchtlinien.length > 0) {
-      return { p: flucht.p, fluchtlinien: flucht.fluchtlinien, orthoAktiv };
+      return { p: flucht.p, fluchtlinien: flucht.fluchtlinien, orthoAktiv, fang: null };
     }
   }
 
-  return { p: rasterRunden(nachOrtho), fluchtlinien: [], orthoAktiv };
+  return { p: rasterRunden(nachOrtho), fluchtlinien: [], orthoAktiv, fang: null };
 }

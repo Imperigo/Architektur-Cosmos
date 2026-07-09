@@ -810,6 +810,31 @@ export function PlanView({
             ),
           )}
 
+          {/* F4 (v0.6.4): sichtbarer Element-Fangpunkt beim Hover — ArchiCAD-
+              Konvention: Quadrat = Endpunkt/Ecke, Kreis = Wandmitte, Kreuz =
+              Kante (Fusspunkt). Grösse in Bildschirm-px über 1/scale, damit der
+              Marker in jeder Zoomstufe gleich gross bleibt. */}
+          {handlers.current?.fangPunkt && (() => {
+            const f = handlers.current.fangPunkt!;
+            const r = 7 / view.scale; // ≙ 7 px halbe Markergrösse
+            const sw = 2 / view.scale;
+            const stil = { stroke: 'var(--k-accent)', strokeWidth: sw, fill: 'none' as const };
+            return (
+              <g data-testid="fang-marker" data-fang-typ={f.typ} pointerEvents="none">
+                {f.typ === 'endpunkt' && (
+                  <rect x={f.p.x - r} y={-f.p.y - r} width={2 * r} height={2 * r} {...stil} />
+                )}
+                {f.typ === 'mitte' && <circle cx={f.p.x} cy={-f.p.y} r={r} {...stil} />}
+                {f.typ === 'kante' && (
+                  <>
+                    <line x1={f.p.x - r} y1={-f.p.y - r} x2={f.p.x + r} y2={-f.p.y + r} {...stil} />
+                    <line x1={f.p.x - r} y1={-f.p.y + r} x2={f.p.x + r} y2={-f.p.y - r} {...stil} />
+                  </>
+                )}
+              </g>
+            );
+          })()}
+
           {/* Werkzeug-Vorschau */}
           {handlers.current?.previewLine && handlers.current.previewLine.length >= 2 && (
             <polyline

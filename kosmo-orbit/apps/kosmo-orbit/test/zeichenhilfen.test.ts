@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { FangKandidaten } from '@kosmo/kernel';
+import type { ElementFangKandidaten, FangKandidaten } from '@kosmo/kernel';
 import { fluchtFang, ortho45, zeichenSnap } from '../src/modules/design/zeichenhilfen';
 
 /**
@@ -137,5 +137,40 @@ describe('zeichenSnap — Rangfolge Ortho > Stützenraster-Magnet > Fluchtlinie 
     const ergebnis = zeichenSnap({ x: 3110, y: 3110 }, null, true, undefined, [], 150, rasterRunden);
     expect(ergebnis.orthoAktiv).toBe(false);
     expect(ergebnis.p).toEqual({ x: 3000, y: 3000 });
+  });
+
+  // F4 (v0.6.4): Element-Fang auf gezeichnete Bauteile — gewinnt vor dem
+  // Stützenraster-Magnet und liefert den Treffer fürs sichtbare Marker-Overlay.
+  const elemente: ElementFangKandidaten = {
+    punkte: [
+      { p: { x: 5000, y: 5100 }, typ: 'endpunkt', entityId: 'wand-1' },
+      { p: { x: 2500, y: 5100 }, typ: 'mitte', entityId: 'wand-1' },
+    ],
+    kanten: [{ a: { x: 0, y: 5100 }, b: { x: 5000, y: 5100 }, entityId: 'wand-1' }],
+  };
+
+  it('F4: der Element-Fang (Wandende) gewinnt vor dem Stützenraster-Magnet', () => {
+    const magnet: FangKandidaten = { kreuzungen: [{ x: 5000, y: 5000 }], achsen: [] };
+    const ergebnis = zeichenSnap({ x: 5040, y: 5060 }, null, false, magnet, [], 150, rasterRunden, elemente);
+    expect(ergebnis.p).toEqual({ x: 5000, y: 5100 }); // Wandende, NICHT die Rasterkreuzung
+    expect(ergebnis.fang).toEqual({ p: { x: 5000, y: 5100 }, typ: 'endpunkt', entityId: 'wand-1' });
+  });
+
+  it('F4: ohne Element in Reichweite bleibt fang null und die alte Kette greift', () => {
+    const ergebnis = zeichenSnap({ x: 12_110, y: 110 }, null, false, undefined, [], 150, rasterRunden, elemente);
+    expect(ergebnis.fang).toBeNull();
+    expect(ergebnis.p).toEqual({ x: 12_000, y: 0 }); // 250er-Raster wie bisher
+  });
+
+  it('F4: bei aktiver Ortho-Sperre bleibt der Element-Fang aus (der Winkel gewinnt)', () => {
+    const ergebnis = zeichenSnap({ x: 4000, y: 5050 }, { x: 0, y: 5100 }, true, undefined, [], 150, rasterRunden, elemente);
+    expect(ergebnis.orthoAktiv).toBe(true);
+    expect(ergebnis.fang).toBeNull();
+  });
+
+  it('F4: Kanten-Fusspunkt fängt, wenn kein Punkt-Kandidat in Reichweite liegt', () => {
+    const ergebnis = zeichenSnap({ x: 1200, y: 5300 }, null, false, undefined, [], 150, rasterRunden, elemente);
+    expect(ergebnis.p).toEqual({ x: 1200, y: 5100 });
+    expect(ergebnis.fang?.typ).toBe('kante');
   });
 });
