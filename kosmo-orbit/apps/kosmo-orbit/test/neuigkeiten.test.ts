@@ -38,12 +38,15 @@ describe('Neuigkeiten (Serie K / A4, Owner-Befund K14): «Funktionen & Neues»-D
     expect(new Set(versionen).size).toBe(versionen.length);
   });
 
-  it('genau eine Version ist «in Arbeit» markiert — die aktuell entstehende', async () => {
+  it('höchstens eine Version ist «in Arbeit» markiert — im Release-Moment keine', async () => {
     const { NEUIGKEITEN } = await import('../src/shell/neuigkeiten');
     const inArbeit = NEUIGKEITEN.filter((e) => e.inArbeit);
-    expect(inArbeit.length).toBe(1);
-    // «In Arbeit» ist immer die neuste (erste) Version der absteigenden Liste.
-    expect(inArbeit[0]?.version).toBe(NEUIGKEITEN[0]?.version);
+    // Während der Entwicklung trägt genau die neuste Version das Flag; beim
+    // Release wird es entfernt — beide Zustände sind korrekt, zwei nie.
+    expect(inArbeit.length).toBeLessThanOrEqual(1);
+    if (inArbeit.length === 1) {
+      expect(inArbeit[0]?.version).toBe(NEUIGKEITEN[0]?.version);
+    }
   });
 
   it('enthält den 0.6.2-Eintrag mit mindestens einem Design-Punkt (E2E-Stichprobe)', async () => {
