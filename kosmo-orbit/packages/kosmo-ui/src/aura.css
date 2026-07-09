@@ -27,6 +27,26 @@
   --k-viewport-sky: #e7e2d4;
   --k-plan-paper: #f4f1e7;
   color-scheme: light;
+
+  /* Spacing-Skala (W0, UI-KONZEPT-065 §2) — ALLE gaps/paddings; rohe
+     px-Literale sind ab jetzt ein Review-Befund. Theme-unabhängig, darum
+     hier im gemeinsamen Basis-Block statt in einem Theme-Block. */
+  --k-s1: 2px;
+  --k-s2: 4px;
+  --k-s3: 8px;
+  --k-s4: 12px;
+  --k-s5: 16px;
+  --k-s6: 24px;
+  --k-s7: 32px;
+
+  /* Typo-Skala (W0) — Portlabels/Fussnoten/Chips (xs) bis Plakat-Versalien
+     (plakat). Zwei Stimmen bleiben Gesetz (Plakat/Technik); diese Skala regelt
+     nur die GRÖSSE, nicht die Stimme selbst. */
+  --k-t-xs: 10.5px;
+  --k-t-sm: 12px;
+  --k-t-md: 13.5px;
+  --k-t-lg: 16px;
+  --k-t-plakat: 20px;
 }
 
 [data-theme='ink'] {
@@ -232,6 +252,37 @@ progress {
     animation-delay: 0ms !important;
     transition-delay: 0ms !important;
   }
+}
+
+/* Motion-Utility-Klassen (W0, UI-KONZEPT-065 §2) — ersetzen wiederholte
+   Inline-`transition`-Strings. Regel «Papier flattert nicht»: nur Opazität,
+   Farbe, Linienstärke und kleine Versätze (transform, ≤4px) animieren — nie
+   Grösse springen lassen, nie federn. Der globale reduced-motion-Block oben
+   killt `transition-duration` auf allen Elementen (inkl. dieser Klassen) —
+   kein Sonderfall hier nötig. */
+.k-uebergang-schnell {
+  transition:
+    background var(--k-motion-fast),
+    border-color var(--k-motion-fast),
+    color var(--k-motion-fast),
+    opacity var(--k-motion-fast),
+    transform var(--k-motion-fast);
+}
+.k-uebergang-basis {
+  transition:
+    background var(--k-motion-base),
+    border-color var(--k-motion-base),
+    color var(--k-motion-base),
+    opacity var(--k-motion-base),
+    transform var(--k-motion-base);
+}
+.k-uebergang-setzen {
+  transition:
+    background var(--k-motion-settle),
+    border-color var(--k-motion-settle),
+    color var(--k-motion-settle),
+    opacity var(--k-motion-settle),
+    transform var(--k-motion-settle);
 }
 
 /* Werkplan-Utilities (Gestaltungskonzept): Plakat-Titel + Karteikarte */
@@ -645,4 +696,310 @@ progress {
   opacity: 1;
   border-width: 0 1px 1px 1px;
   padding: 7px 10px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   W0 — Komponenten-Fundament (UI-KONZEPT-065 §3). Neu ERGÄNZT, nichts
+   Bestehendes oben in dieser Datei wurde verändert. */
+
+/* KSelect — natives <select>, eigener Chevron. GRENZE: `background-image`
+   kennt kein `currentColor` — der Stroke ist ein fest verdrahteter,
+   neutraler Tuscheton je Thema (Override unten für [data-theme='ink']); er
+   folgt NICHT automatisch einem gewählten `data-akzent` oder einem Hover. */
+.k-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--k-line-strong);
+  border-radius: var(--k-radius-sm);
+  background-color: var(--k-surface);
+  color: var(--k-ink);
+  background-repeat: no-repeat;
+  background-position: right var(--k-s3) center;
+  background-size: 10px 6px;
+  padding-right: var(--k-s6);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%2355503f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+[data-theme='ink'] .k-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23a7a296' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.k-select:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.k-select--sm {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: var(--k-s3);
+  font-size: var(--k-t-sm);
+}
+.k-select--md {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: var(--k-s4);
+  font-size: var(--k-t-md);
+}
+
+/* KTabs — role=tab-Buttons, aktiv = 2px-Akzent-Unterstrich, KEINE Füllfläche. */
+.k-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: var(--k-s5);
+  border-bottom: 1px solid var(--k-line);
+}
+.k-tab {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s2);
+  cursor: pointer;
+  color: var(--k-ink-soft);
+  border-bottom: 2px solid transparent;
+  padding: var(--k-s3) var(--k-s2);
+  margin-bottom: -1px;
+}
+.k-tabs--sm .k-tab {
+  font-size: var(--k-t-sm);
+  padding: var(--k-s2) var(--k-s2);
+}
+.k-tabs--md .k-tab {
+  font-size: var(--k-t-md);
+}
+.k-tab:hover {
+  color: var(--k-ink);
+}
+.k-tab--aktiv {
+  color: var(--k-ink);
+  border-bottom-color: var(--k-accent);
+  font-weight: 600;
+}
+.k-tab:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* KMenu — Papier-Karte mit --k-shadow-overlay; öffnet über CSS-Klasse
+   (`.offen`), bleibt (wie `.k-orbit-faecher`) immer im DOM — Opazität/
+   pointer-events signalisieren offen/zu, Öffnungs-Animation ausschliesslich
+   über `.k-uebergang-schnell` (Opazität). */
+.k-menu-wrap {
+  position: relative;
+  display: inline-block;
+}
+.k-menu {
+  position: absolute;
+  top: calc(100% + var(--k-s2));
+  left: 0;
+  z-index: 100;
+  min-width: 190px;
+  background: var(--k-raised);
+  border: 1px solid var(--k-line-strong);
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-shadow-overlay);
+  padding: var(--k-s2) 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+}
+.k-menu.offen {
+  opacity: 1;
+  pointer-events: auto;
+}
+.k-menu-item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  padding: var(--k-s3) var(--k-s4);
+  cursor: pointer;
+  color: var(--k-ink);
+  font-size: var(--k-t-md);
+}
+.k-menu-item:hover,
+.k-menu-item:focus-visible {
+  background: var(--k-surface);
+}
+.k-menu-item:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.k-menu-item--gefahr {
+  color: var(--k-danger);
+}
+.k-menu-item-label {
+  flex: 1;
+  text-align: left;
+}
+.k-menu-item-kuerzel {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+  text-align: right;
+}
+.k-menu-trenner {
+  height: 1px;
+  background: var(--k-line);
+  margin: var(--k-s2) 0;
+}
+
+/* KDialog — nutzt die BESTEHENDEN `.k-dialog-scrim`/`.k-dialog`-Klassen
+   (oben, unverändert) für Scrim/Höhen-Deckel/Umbruch; `.k-dialog-box` trägt
+   NEU Fläche/Rahmen/Schatten/Layout, `.k-dialog-kopf`/`.k-dialog-fuss` sind
+   NEU. KEINE 45°-Ecke (die gehört den Karteikarten). */
+.k-dialog-box {
+  background: var(--k-raised);
+  border: 1px solid var(--k-line-strong);
+  box-shadow: var(--k-shadow-overlay);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+.k-dialog-kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-s4);
+  padding: var(--k-s4) var(--k-s5);
+  border-bottom: 1px solid var(--k-line);
+  flex: 0 0 auto;
+}
+.k-dialog-kopf-titel {
+  font-size: var(--k-t-plakat);
+  color: var(--k-ink);
+}
+.k-dialog-kopf-schliessen {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  color: var(--k-ink-faint);
+  display: inline-flex;
+  padding: var(--k-s2);
+}
+.k-dialog-kopf-schliessen:hover,
+.k-dialog-kopf-schliessen:focus-visible {
+  color: var(--k-ink);
+}
+.k-dialog-koerper {
+  padding: var(--k-s5);
+  overflow-y: auto;
+  min-height: 0;
+}
+.k-dialog-fuss {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--k-s3);
+  padding: var(--k-s4) var(--k-s5);
+  border-top: 1px solid var(--k-line);
+  flex: 0 0 auto;
+}
+
+/* KField/KInput — ersetzt die 10 lokalen `inputStyle`-Konstanten. */
+.k-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+}
+.k-field-label {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+.k-field-hinweis {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+.k-field-fehler {
+  font-size: var(--k-t-xs);
+  color: var(--k-danger);
+}
+.k-input {
+  border: 1px solid var(--k-line-strong);
+  border-radius: var(--k-radius-sm);
+  background: var(--k-surface);
+  color: var(--k-ink);
+  padding: 6px var(--k-s4);
+}
+.k-input--sm {
+  padding: 3px var(--k-s3);
+  font-size: var(--k-t-sm);
+}
+.k-input--md {
+  font-size: var(--k-t-md);
+}
+.k-input--mono {
+  font-family: var(--k-font-mono);
+  font-feature-settings: 'tnum' 1;
+}
+.k-input:disabled {
+  opacity: 0.5;
+}
+.k-input:focus-visible {
+  border-color: var(--k-accent);
+}
+
+/* KChip — konsolidiert Badge/Statusleisten-Chip/orbit-badge (`Badge` bleibt
+   als Alias bestehen). Ton nur als Zeichenfarbe + Rand — `fuellung` erlaubt
+   AUSSCHLIESSLICH `--k-accent-wash` als Hintergrund, nie eine hue-Fläche. */
+.k-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s2);
+  border: 1px solid currentColor;
+  border-radius: var(--k-radius-sm);
+  background: transparent;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.k-chip--sm {
+  font-size: var(--k-t-xs);
+  padding: 0 var(--k-s2);
+}
+.k-chip--md {
+  font-size: var(--k-t-sm);
+  padding: 1px var(--k-s3);
+}
+.k-chip--fuellung {
+  background: var(--k-accent-wash);
+}
+.k-chip-entfernen {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+}
+.k-chip-entfernen:hover {
+  opacity: 1;
+}
+
+/* KToolbar/KToolGruppe — EINE Zeile, Gruppen durch Hairlines getrennt. */
+.k-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  padding: var(--k-s3) var(--k-s4);
+  border-bottom: 1px solid var(--k-line);
+  background: var(--k-surface);
+}
+.k-toolbar--dicht {
+  padding: var(--k-s2) var(--k-s3);
+}
+.k-toolgruppe {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+}
+.k-toolgruppe + .k-toolgruppe {
+  border-left: 1px solid var(--k-line);
+  padding-left: var(--k-s4);
+  margin-left: var(--k-s1);
+}
+.k-toolgruppe-label {
+  font-size: var(--k-t-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--k-ink-faint);
 }

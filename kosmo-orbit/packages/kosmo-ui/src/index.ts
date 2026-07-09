@@ -3,3 +3,8 @@ export * from './Logo';
 export * from './components';
 export * from './meldungen';
 export * from './fehlerzone';
+export * from './icons';
+export * from './select';
+export * from './tabs';
+export * from './overlay';
+export * from './field';

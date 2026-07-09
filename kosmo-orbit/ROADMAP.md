@@ -622,4 +622,12 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
     - Headless-Falle dokumentiert: Dialog über der 3D-WebGL-Ansicht kompositiert unter SwiftShader durchscheinend — vor dem Kurztasten-Screenshot wird auf 2D umgeschaltet (Kommentar in rundgang.mts).
     - `abgabe/RUNDGANG-NOTIZEN-0.6.4.pdf` (31 Seiten, je Seite Notiz-Box) — an den Owner geliefert; seine Notizen dazu werden die 0.6.5-Auftragsliste.
 
+270. **v0.6.5 / W0 — UI-Fundament: Token-Ordnung, Skalen und 9 geteilte Komponenten (Fable-Design-Spec)** *(09.07.2026)*
+    - `docs/UI-KONZEPT-065.md`: verbindliche Design-Spec für die v0.6.5-Gesamtüberarbeitung (Diagnose der 5 Chefbefunde, Token-Ordnung, Komponenten-Vertrag, Regeln für alle Stations-Streams, KosmoVis-Zielbild, ehrlicher Schnitt mit 0.6.6-Liste).
+    - Token-Konsolidierung: `aura.css` ist die einzige Wahrheit; `tokens.ts` neu als reiner TS-Spiegel (Radien 2/4/6 statt der abgedrifteten 6/10/14, Papier-/Tusche-Hexwerte exakt) + Drift-Wächter `token-spiegel.test.ts` (parst aura.css, Drift bricht den Build). Neu: Spacing-Skala `--k-s1…s7` (2/4/8/12/16/24/32) und Typo-Skala `--k-t-xs…lg` + Plakat, Motion-Utilities `.k-uebergang-*`.
+    - Neue geteilte Komponenten (alle testid-durchreichend, exactOptionalPropertyTypes-konform): KSelect (bewusst NATIVES select — 31 E2E-selectOption-Verträge), KTabs, KMenu (immer im DOM, öffnet per Klasse — Playwright-robust wie der Orbit-Fächer), KDialog (gestalteter Kopf/Fusszeile auf bestehendem Scrim), KField/KInput (ersetzt 10 duplizierte inputStyle-Konstanten), KChip (konsolidiert 3 Badge-Implementierungen, Badge bleibt Alias), KToolbar/KToolGruppe, KIcon-Registry (30 selbstgezeichnete 16px/1.5px-Tusche-Zeichen als Emoji-Ersatz, keine Fremd-Library).
+    - Bestandsschutz bewiesen: kein bestehender aura.css-Selektor angetastet, KButton/Panel/Meldungen/Bestätigung/Fehlerzone unverändert — App 587/587 grün.
+    - Ehrliche Grenzen dokumentiert: KSelect-Chevron folgt als background-image keinem Akzentwechsel (je Thema fest); KMenu/KDialog ohne Fokus-Trap (0.6.6-Kandidat).
+    - Gates: typecheck · Kernel 491 (Goldens byte-identisch) · KI 59 · UI 14 (neu) · App 587.
+
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.

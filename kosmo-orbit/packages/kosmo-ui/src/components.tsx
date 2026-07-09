@@ -87,6 +87,10 @@ export function Hairline({ vertical = false }: { vertical?: boolean }) {
   );
 }
 
+/** Alias-Hinweis (W0, UI-KONZEPT-065 §3): `KChip` (`field.tsx`) konsolidiert
+ * Badge/Statusleisten-Chip/orbit-badge für NEUEN Code (Rand statt Punkt+Fläche,
+ * Grössen, `onRemove`, `tone`). `Badge` selbst bleibt UNVERÄNDERT bestehen —
+ * Bestandsschutz, viele Stationen binden ihn bereits ein. */
 export interface BadgeProps {
   children: ReactNode;
   hue?: string;

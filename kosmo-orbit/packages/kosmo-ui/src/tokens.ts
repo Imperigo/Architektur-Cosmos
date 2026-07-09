@@ -1,74 +1,89 @@
 /**
  * KosmoOrbit Aura — Design-Tokens.
  *
+ * Spiegel von aura.css — Änderungen IMMER zuerst dort. `aura.css` ist die
+ * einzige Wahrheit (UI-KONZEPT-065 §2); dieses Modul liest ihre Werte NICHT
+ * zur Laufzeit (kein CSS-Parser im Bundle), sondern hält sie als TS-Literale
+ * nach — `packages/kosmo-ui/test/token-spiegel.test.ts` parst aura.css und
+ * bricht mit einer sprechenden Meldung, sobald hier und dort etwas
+ * auseinanderläuft. Wer eine Farbe/einen Radius/eine Skala ändert: zuerst
+ * aura.css anfassen, dann hier den exakt gleichen Wert eintragen.
+ *
  * Gestaltungshaltung (Owner-Mandat Q17–Q20): elegant, schlicht, für Architekten.
- * Papier-Hell als Primärmodus, Tinte-Dunkel als Zweitmodus (abgeleitet aus dem
- * bestehenden ArchitekturKosmos-Design #050505/#f7f7f4). EIN präziser Akzent:
- * Kupfer/Terracotta — gebrannter Ton und Kupferblech, die Farben des Bauens.
- * Sekundär trägt jedes Modul einen eigenen, zurückhaltenden Farbton, der nur in
+ * Papier-Hell als Primärmodus, Tinte-Dunkel als Zweitmodus. EIN präziser
+ * Standard-Akzent (monochrom, Tusche) — wählbare Zweit-Akzente (Kupfer,
+ * Signal, Blau, Grün) leben als `data-akzent`-Blöcke in aura.css. Sekundär
+ * trägt jedes Modul einen eigenen, zurückhaltenden Farbton, der nur in
  * Zeichen, Badges und aktiven Zuständen erscheint — nie flächig.
  */
 
+/** Kupfer/Terracotta — entspricht `[data-akzent='kupfer']` in aura.css. */
 export const accent = {
-  /** Kupfer/Terracotta — die Stimme der Marke. */
   copper: '#C25E3A',
   copperDeep: '#A84B2B',
   copperBright: '#D9743F',
   copperWash: '#C25E3A22',
 } as const;
 
+/** Papier-Thema (`:root, [data-theme='paper']` in aura.css) — Hexwerte exakt gespiegelt. */
 export const paper = {
-  field: '#F5F3EE',
-  surface: '#FBFAF6',
-  raised: '#FFFFFF',
-  ink: '#191713',
-  inkSoft: '#5C574D',
-  inkFaint: '#8F897B',
-  line: '#E4E0D6',
-  lineStrong: '#C9C4B6',
-  accent: accent.copperDeep,
-  accentInk: '#FFFFFF',
+  field: '#ece7db',
+  surface: '#f2eee3',
+  raised: '#f7f4ea',
+  ink: '#1a1815',
+  inkSoft: '#55503f',
+  inkFaint: '#8b8471',
+  line: '#d9d3c2',
+  lineStrong: '#a49c86',
+  /** Monochromer Standard-Akzent (kein `data-akzent` gesetzt). */
+  accent: '#1a1815',
+  accentInk: '#f7f4ea',
 } as const;
 
+/** Tinte-Thema (`[data-theme='ink']` in aura.css) — Hexwerte exakt gespiegelt. */
 export const ink = {
-  field: '#0A0A08',
-  surface: '#131210',
-  raised: '#1B1A16',
-  ink: '#F7F6F1',
-  inkSoft: '#A7A296',
-  inkFaint: '#6E6A5F',
-  line: '#28261F',
-  lineStrong: '#3B382F',
-  accent: accent.copperBright,
-  accentInk: '#14100C',
+  field: '#0c0b09',
+  surface: '#14130f',
+  raised: '#1b1a15',
+  ink: '#f2efe6',
+  inkSoft: '#a7a296',
+  inkFaint: '#6e6a5f',
+  line: '#2b2921',
+  lineStrong: '#4a4638',
+  /** Monochromer Standard-Akzent (kein `data-akzent` gesetzt). */
+  accent: '#f2efe6',
+  accentInk: '#14120e',
 } as const;
 
-/** Semantische Töne — in beiden Themes lesbar. */
+/** Semantische Töne — in beiden Themes lesbar (aura.css: paper-Werte, Referenz). */
 export const semantic = {
-  success: '#6F8B6A', // Salbei
-  warning: '#C79A3D', // Ocker
-  danger: '#B5483C', // gebrannter Ziegel
-  info: '#5D7489', // Schiefer
+  success: '#4e6d49',
+  warning: '#a37b22',
+  danger: '#a33d31',
+  info: '#46617a',
 } as const;
 
 /**
  * Modul-Farbtöne — dezente Identität pro Werkzeug (nur Zeichen/Badges/Aktiv-Ring).
+ * Deckt sich mit den `--k-mod-*`-Variablen in aura.css, plus Module, die
+ * (noch) keine eigene aura-Variable haben (train/doc/sketch/speak/asset/dev)
+ * — dort gilt dieser TS-Wert als Erstdefinition.
  */
 export const moduleHue = {
-  orbit: '#8F897B', // die Zentrale bleibt neutral
-  design: accent.copper, // Entwerfen trägt die Markenfarbe
-  draw: '#4E4A42', // Graphit — die Zeichnung
-  data: '#46617A', // tiefes Blau — das Wissen
-  vis: '#C79A3D', // Bernstein — das Licht
-  publish: '#6F8B6A', // Salbei — das fertige Blatt
-  prepare: '#7D5E78', // Pflaume — die Grundlagen
-  kosmo: '#B06A8C', // Kosmo selbst: warmes Karmin-Rosé, die Stimme im Raum
-  train: '#8C6D3F', // Ocker — das Lernen, Schicht um Schicht
-  doc: '#5D7489', // Schiefer — Diagnose und Berichte
-  sketch: '#96604A', // Sienna — der Stift auf Papier
-  speak: '#4F7A7A', // Petrol — die Stimme im Raum
-  asset: '#7A6A55', // Nussbaum — die Bibliothek der Dinge
-  dev: '#5E6B52', // Tannengrün — die Werkstatt an der Software
+  orbit: '#8f897b', // die Zentrale bleibt neutral
+  design: '#c25e3a', // Entwerfen trägt die Markenfarbe
+  draw: '#4e4a42', // Graphit — die Zeichnung
+  data: '#46617a', // tiefes Blau — das Wissen
+  vis: '#c79a3d', // Bernstein — das Licht
+  publish: '#6f8b6a', // Salbei — das fertige Blatt
+  prepare: '#7d5e78', // Pflaume — die Grundlagen
+  kosmo: '#b06a8c', // Kosmo selbst: warmes Karmin-Rosé, die Stimme im Raum
+  train: '#8c6d3f', // Ocker — das Lernen, Schicht um Schicht
+  doc: '#5d7489', // Schiefer — Diagnose und Berichte
+  sketch: '#96604a', // Sienna — der Stift auf Papier
+  speak: '#4f7a7a', // Petrol — die Stimme im Raum
+  asset: '#7a6a55', // Nussbaum — die Bibliothek der Dinge
+  dev: '#5e6b52', // Tannengrün — die Werkstatt an der Software
 } as const;
 
 export type ModuleId = keyof typeof moduleHue;
@@ -78,6 +93,11 @@ export const typography = {
   ui: "'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   /** Mass- und Wertangaben: Mono für Planlesbarkeit. */
   mono: "'IBM Plex Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace",
+  /**
+   * Alte, feinere Anzeige-Skala (Legacy — vor der `type`-Skala unten
+   * entstanden). Bleibt bestehen, damit keine bestehende Export-Form bricht;
+   * neuer Code verwendet die `type`-Skala (spiegelt `--k-t-*`).
+   */
   scale: {
     xs: '11px',
     sm: '12.5px',
@@ -88,7 +108,37 @@ export const typography = {
   },
 } as const;
 
-export const radius = { sm: '6px', md: '10px', lg: '14px', pill: '999px' } as const;
+/**
+ * Typo-Skala (NEU, W0) — spiegelt `--k-t-xs/-sm/-md/-lg/-plakat` aus
+ * aura.css. Portlabels/Fussnoten/Chips (xs) bis Plakat-Versalien (plakat).
+ */
+export const type = {
+  xs: '10.5px',
+  sm: '12px',
+  md: '13.5px',
+  lg: '16px',
+  plakat: '20px',
+} as const;
+
+/**
+ * Spacing-Skala (NEU, W0) — spiegelt `--k-s1`…`--k-s7` aus aura.css. Gilt für
+ * ALLE gaps/paddings; rohe px-Literale sind ab jetzt ein Review-Befund.
+ */
+export const scale = {
+  s1: '2px',
+  s2: '4px',
+  s3: '8px',
+  s4: '12px',
+  s5: '16px',
+  s6: '24px',
+  s7: '32px',
+} as const;
+
+/** Radien — spiegelt `--k-radius-sm/-md/-lg` aus aura.css (Korrektur W0: die
+ * alten Werte 6/10/14px waren von aura.css abgedriftet — 2/4/6px ist die
+ * Wahrheit). `pill` bleibt als praktischer Zusatzwert (volle Rundung, keine
+ * aura-Variable nötig) bestehen. */
+export const radius = { sm: '2px', md: '4px', lg: '6px', pill: '999px' } as const;
 
 export const motion = {
   /** Zurückhaltend-präzise (Owner Q20): kurz, physikalisch sauber, nie verspielt. */
@@ -97,9 +147,22 @@ export const motion = {
   settle: '320ms cubic-bezier(0.22, 0.9, 0.28, 1)',
 } as const;
 
+/** Schatten — aura.css führt je Thema unterschiedliche Werte (Tinte braucht
+ * mehr Kontrast als Papier); `raised`/`overlay` (Legacy-Form, unverändert
+ * exportiert) zeigen die Papier-Werte, `paper`/`ink` (NEU) beide Varianten
+ * exakt. Der einzig erlaubte Schatten in der Oberfläche bleibt `overlay`,
+ * ausschliesslich an schwebenden Overlays (Menü, Dialog, Palette). */
 export const shadow = {
-  raised: '0 1px 2px rgba(20, 16, 12, 0.06), 0 4px 16px rgba(20, 16, 12, 0.07)',
-  overlay: '0 2px 6px rgba(20, 16, 12, 0.10), 0 16px 48px rgba(20, 16, 12, 0.18)',
+  raised: '0 1px 0 rgba(26, 24, 21, 0.08)',
+  overlay: '0 1px 0 rgba(26, 24, 21, 0.12), 0 12px 40px rgba(26, 24, 21, 0.18)',
+  paper: {
+    raised: '0 1px 0 rgba(26, 24, 21, 0.08)',
+    overlay: '0 1px 0 rgba(26, 24, 21, 0.12), 0 12px 40px rgba(26, 24, 21, 0.18)',
+  },
+  ink: {
+    raised: '0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.45)',
+    overlay: '0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(0, 0, 0, 0.6)',
+  },
 } as const;
 
 export type ThemeName = 'paper' | 'ink';
