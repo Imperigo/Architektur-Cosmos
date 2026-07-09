@@ -2014,57 +2014,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               Raster
             </KButton>
           </span>
-          <span style={{ position: 'relative', display: 'inline-flex' }}>
-            <KButton
-              size="sm"
-              tone={mehrOffen ? 'accent' : 'ghost'}
-              data-testid="werkzeuge-mehr"
-              title="Weitere Werkzeuge — nach Nutzungshäufigkeit sortiert"
-              aria-label="Weitere Werkzeuge"
-              style={{ visibility: ueberlaufWerkzeuge.length > 0 ? 'visible' : 'hidden' }}
-              onClick={() => setMehrOffen(!mehrOffen)}
-            >
-              Mehr…
-            </KButton>
-            {mehrOffen && ueberlaufWerkzeuge.length > 0 && (
-              <div
-                data-testid="werkzeuge-mehr-liste"
-                className="k-dialog"
-                style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  marginTop: 4,
-                  zIndex: 5,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 3,
-                  padding: 6,
-                  minWidth: 140,
-                  background: 'var(--k-surface)',
-                  border: '1px solid var(--k-line)',
-                  borderRadius: 'var(--k-radius-md)',
-                  boxShadow: 'var(--k-shadow-raised)',
-                }}
-              >
-                {ueberlaufWerkzeuge.map((w) => (
-                  <KButton
-                    key={`${w.gruppe}:${w.id}`}
-                    size="sm"
-                    tone="ghost"
-                    data-testid={`werkzeuge-mehr-eintrag-${w.gruppe}-${w.id}`}
-                    style={{ justifyContent: 'flex-start' }}
-                    onClick={() => {
-                      w.aktion();
-                      setMehrOffen(false);
-                    }}
-                  >
-                    {w.label}
-                  </KButton>
-                ))}
-              </div>
-            )}
-          </span>
+          {/* «Mehr…» wohnt AUSSERHALB des scrollenden Innenbereichs (siehe
+              Einfügung nach dessen schliessendem div): der Innenbereich trägt
+              overflowX:auto, und sobald eine Achse scrollt, klemmt CSS auch
+              die andere — das absolute Dropdown war im DOM komplett, aber
+              optisch unsichtbar (Kritik-066-Befund; besonders kritisch, weil
+              die Arbeitsmodi ihre Erreichbarkeits-Garantie über genau diese
+              Liste einlösen). */}
           {/* A7 (K17): «Fähigkeiten» — eine eigene Icon-Gruppe für die sechs
               Spezialfähigkeiten, zusätzlich zu den unveränderten Alt-Knöpfen in
               «Ebenen» (Begründung: Kommentar bei `FAEHIGKEITEN` oben). Klick =
@@ -2181,6 +2137,60 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             ⓘ angepasst
           </span>
           </div>
+          {/* «Mehr…» + Dropdown: ausserhalb der Scroll-Zone (kein Clipping,
+              immer sichtbar — Erreichbarkeits-Garantie der Arbeitsmodi),
+              flexShrink:0 wie die Verlauf-Gruppe. */}
+          <span style={{ position: 'relative', display: 'inline-flex', flexShrink: 0 }}>
+            <KButton
+              size="sm"
+              tone={mehrOffen ? 'accent' : 'ghost'}
+              data-testid="werkzeuge-mehr"
+              title="Weitere Werkzeuge — nach Nutzungshäufigkeit sortiert"
+              aria-label="Weitere Werkzeuge"
+              style={{ visibility: ueberlaufWerkzeuge.length > 0 ? 'visible' : 'hidden' }}
+              onClick={() => setMehrOffen(!mehrOffen)}
+            >
+              Mehr…
+            </KButton>
+            {mehrOffen && ueberlaufWerkzeuge.length > 0 && (
+              <div
+                data-testid="werkzeuge-mehr-liste"
+                className="k-dialog"
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: 4,
+                  zIndex: 5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 3,
+                  padding: 6,
+                  minWidth: 140,
+                  background: 'var(--k-surface)',
+                  border: '1px solid var(--k-line)',
+                  borderRadius: 'var(--k-radius-md)',
+                  boxShadow: 'var(--k-shadow-raised)',
+                }}
+              >
+                {ueberlaufWerkzeuge.map((w) => (
+                  <KButton
+                    key={`${w.gruppe}:${w.id}`}
+                    size="sm"
+                    tone="ghost"
+                    data-testid={`werkzeuge-mehr-eintrag-${w.gruppe}-${w.id}`}
+                    style={{ justifyContent: 'flex-start' }}
+                    onClick={() => {
+                      w.aktion();
+                      setMehrOffen(false);
+                    }}
+                  >
+                    {w.label}
+                  </KButton>
+                ))}
+              </div>
+            )}
+          </span>
           {/* Ausserhalb des scrollenden Innenbereichs (s. Kommentar oben) —
               eigener, immer sichtbarer rechter Bereich, per Hairline von der
               scrollenden Zone abgesetzt (Befund [B] «Zweite Zeile Gruppierung»). */}
