@@ -83,8 +83,23 @@ export function StarterGuide({ screen, kosmoOffen, wandAnzahl, onSchliessen }: S
       data-testid="starter-guide"
       style={{
         position: 'fixed',
-        left: 20,
-        bottom: 20,
+        // v0.6.4 / F7 (Owner-Befund, wiederholt: «kann in 3D-Viewer immer noch
+        // nicht skizzieren»): bei `left:20, bottom:20` sass die Karte GENAU auf
+        // dem 3D-/2D-Viewport-Bodenstreifen (NavLeiste `bottom:50`, KosmoSketch-
+        // Batch-/Vorschlagsleisten `bottom:18`, beide links/mittig in JEDER
+        // Pane) — ihr eigener Knopfsatz (Weiter/Überspringen) landete pixel-
+        // genau auf «Übergeben» & Co. und schluckte den Klick (bewiesen per
+        // Playwright: "starter-guide-schritt … intercepts pointer events" auf
+        // `sketch3d-uebergeben`). Wer beim Erststart «Ja, zeig mir den
+        // Rundgang» wählt und dann (statt der Wand-Mini-Aufgabe) gleich
+        // «Skizzieren» ausprobiert, zeichnet zwar einen Strich, kann ihn aber
+        // nie übergeben — sieht aus wie «Skizzieren geht nicht». Fix: die
+        // Karte steht jetzt deutlich höher (`bottom:100`) und weiter rechts
+        // (`left:60`) — ausserhalb des Boden-Streifens UND des vertikal
+        // mittigen Entwurfs-Docks (`left:12`, K16 A6) — ohne Position/Grösse
+        // sonst zu verändern.
+        left: 60,
+        bottom: 100,
         width: 340,
         zIndex: 120,
         // Ehrlich nicht-modal: kein Scrim, kein Klick-Fänger über der App —
