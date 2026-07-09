@@ -19,3 +19,4 @@ tsconfig.tsbuildinfo
 # Sync-Server Laufzeit-DB (falls versehentlich am Repo-Root gestartet)
 kosmo-sync.sqlite
 *.sqlite
+test-results/
