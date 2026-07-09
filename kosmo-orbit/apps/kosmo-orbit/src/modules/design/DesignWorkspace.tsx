@@ -39,7 +39,7 @@ import { bootstrapProject, useProject } from '../../state/project-store';
 import { verarbeiteUnternehmerplanDatei } from './unternehmerplan';
 import { VERSCHIEBBAR } from './plan-hit-test';
 import { zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
-import { werkzeugFuerTaste } from './zeichen-shortcuts';
+import { istEingabefeld, KURZTASTEN, kurztasteFuer } from './kurztasten';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
 import type { PlanLod } from './planLod';
 import {
@@ -192,6 +192,13 @@ const ZEICHEN_WERKZEUGE_LEISTE: readonly {
   { id: 'schnitt', label: 'Schnitt' },
   { id: 'skizze', label: '✎ Skizze' },
 ];
+
+/** F5 (v0.6.4): Tastenkürzel je Werkzeug — grossgeschrieben fürs Tooltip
+ *  («Wand (W)») und die Kurzbefehle-Übersicht. Aus `kurztasten.ts` abgeleitet,
+ *  keine zweite Belegung gepflegt (Mesh hat keinen Eintrag → kein Kürzel). */
+const KURZTASTE_JE_WERKZEUG: Partial<Record<ToolId, string>> = Object.fromEntries(
+  KURZTASTEN.map((k) => [k.werkzeug, k.taste.toUpperCase()]),
+);
 
 /** Statusleiste (Aufgabe 3, K15): kurzes deutsches Label je Werkzeug-ID,
  *  inkl. Mesh (das keinen Eintrag in `ZEICHEN_WERKZEUGE_LEISTE` hat). */
@@ -426,26 +433,23 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // T3: Zeichen-Kurzbefehle (W/Z/V/D/T/C/S/F, Esc → Auswahl) — an ArchiCAD
-  // angelehnt, nur solange KosmoDesign offen ist. Dieselbe Eingabefeld-/
-  // Dialog-Wache wie shell/Kurzbefehle.tsx, damit Tippen nie ein Werkzeug wechselt.
+  // T3/F5 (v0.6.4): Zeichen-Kurzbefehle (A/W/Z/V/D/T/C/S/F, Esc → Auswahl) —
+  // an ArchiCAD angelehnt, nur solange KosmoDesign offen ist. Dieselbe
+  // Eingabefeld-/Dialog-Wache wie shell/Kurzbefehle.tsx, damit Tippen (u.a.
+  // in den Kosmo-Chat-Eingaben) nie ein Werkzeug wechselt — die reine
+  // Auflösung (inkl. Fokus-Guard) lebt in `kurztasten.ts` (unit-getestet),
+  // hier nur noch das DOM-Binding.
   useEffect(() => {
-    const inEingabe = (target: EventTarget | null): boolean => {
-      const el = target as HTMLElement | null;
-      if (!el) return false;
-      const tag = el.tagName;
-      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
-    };
     const onKey = (e: KeyboardEvent) => {
-      if (e.repeat || inEingabe(e.target) || e.metaKey || e.ctrlKey || e.altKey) return;
       if (document.querySelector('[role="dialog"]')) return; // Palette/Bestätigung/Kurzbefehle behalten die Tastatur
-      if (e.key === 'Escape') {
+      const fokusImEingabefeld = istEingabefeld(document.activeElement);
+      if (!e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && !fokusImEingabefeld && e.key === 'Escape') {
         // ArchiCAD-Reflex: Esc bricht die laufende Kette ab UND geht zur Auswahl zurück
         setTool('auswahl');
         setPoints([]);
         return;
       }
-      const werkzeug = werkzeugFuerTaste(e.key);
+      const werkzeug = kurztasteFuer(e, fokusImEingabefeld);
       if (werkzeug) {
         e.preventDefault();
         setTool(werkzeug as ToolId);
@@ -1360,22 +1364,31 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             ...(gehobenNachGruppe.zeichnen ? { opacity: 1 } : {}),
           }}
         >
-          {ZEICHEN_WERKZEUGE_LEISTE.map(({ id, label, Icon }) => (
-            <KButton
-              key={id}
-              size="sm"
-              tone={tool === id ? 'accent' : 'quiet'}
-              onClick={() => {
-                setTool(id);
-                nutzungMelden(`zeichnen:${id}`);
-              }}
-              data-testid={`tool-${id}`}
-              {...(Icon ? { title: label, 'aria-label': label } : {})}
-              {...elementStil('zeichnen', id)}
-            >
-              {Icon ? <Icon /> : label}
-            </KButton>
-          ))}
+          {ZEICHEN_WERKZEUGE_LEISTE.map(({ id, label, Icon }) => {
+            // F5 (v0.6.4, Owner-Befund «Tastenkombination wie ArchiCAD»): der
+            // Tooltip nennt das Kurztaste-Kürzel («Wand (W)») — auch für die
+            // Text-Knöpfe (Dach/Treppe/Stütze/Schnitt/Skizze), die bisher gar
+            // keinen title trugen.
+            const taste = KURZTASTE_JE_WERKZEUG[id];
+            const titel = taste ? `${label} (${taste})` : label;
+            return (
+              <KButton
+                key={id}
+                size="sm"
+                tone={tool === id ? 'accent' : 'quiet'}
+                onClick={() => {
+                  setTool(id);
+                  nutzungMelden(`zeichnen:${id}`);
+                }}
+                data-testid={`tool-${id}`}
+                title={titel}
+                aria-label={titel}
+                {...elementStil('zeichnen', id)}
+              >
+                {Icon ? <Icon /> : label}
+              </KButton>
+            );
+          })}
           {/* Block 3 / E4 (Buildplan FM3): Werkzeug «Mesh» — expliziter
               `werkzeug-mesh`-Testid statt des generischen `tool-*`-Musters,
               weil die Auftragsspezifikation genau diesen Namen verlangt. */}

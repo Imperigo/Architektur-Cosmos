@@ -7,6 +7,7 @@ import { SketchOverlay } from './SketchOverlay';
 import { outlineOf, pickEntityAt } from './plan-hit-test';
 import { NavLeiste } from './NavLeiste';
 import { planLod, type PlanLod } from './planLod';
+import { cursor2dFuer, istEingabefeld } from './kurztasten';
 
 /**
  * PlanView — der lebende Grundriss als semantisches SVG.
@@ -20,6 +21,16 @@ import { planLod, type PlanLod } from './planLod';
  * Hysterese gegen Flackern an der Schwelle, eigene Unit-Tests) und schaltet
  * bestehende SVG-Gruppen per `display` bzw. filtert Feindetails vor dem
  * Rendern — kein Re-Mount, kein rAF-Gefrickel nötig.
+ *
+ * F5 (v0.6.4, Owner-Befund «Tastenkombination wie ArchiCAD»): Leertaste
+ * halten + linke Maustaste ziehen = Pan (Photoshop/ArchiCAD-Muskelgedächtnis),
+ * ZUSÄTZLICH zum bestehenden Mitteltaste-/Rechtsklick-/`navModus2d`-Pan, das
+ * unverändert bleibt. Solange die Leertaste gehalten wird, pausiert das
+ * Werkzeug-Gummiband (kein `onGroundMove`) — siehe `kurztasten.ts` für den
+ * Fokus-Guard (Kosmo-Chat-Eingaben dürfen die Leertaste normal tippen).
+ * F9 (Owner-Befund «Maus soll auf die Umgebung reagieren»): der Cursor auf
+ * dem Plan-SVG wechselt kontextabhängig (`cursor2dFuer`, `kurztasten.ts`) —
+ * dieselbe Systematik wie `werkzeugCursorFuer` im 3D (`eingabe-3d.ts`).
  */
 
 export function PlanView({
@@ -96,6 +107,15 @@ export function PlanView({
   const [view, setView] = useState({ cx: 5000, cy: 3000, scale: 0.05 });
   const [cursor, setCursor] = useState<Pt | null>(null);
   const panning = useRef<{ x: number; y: number; cx: number; cy: number } | null>(null);
+  // F5 (v0.6.4): Leertaste gehalten → Pan-Bereitschaft (Cursor «grab»); ein
+  // zusätzliches `panAktiv` (statt nur aus der Ref zu lesen) macht das
+  // tatsächliche Ziehen («grabbing») für den Render sichtbar.
+  const [spaceGedrueckt, setSpaceGedrueckt] = useState(false);
+  const [panAktiv, setPanAktiv] = useState(false);
+  // F9 (v0.6.4): Hover-Trefferzone fürs Auswahl-Werkzeug — nur fürs Cursor-
+  // Feedback (`cursor2dFuer`), unabhängig vom Klick-Hit-Test in `onPointerUp`.
+  const [hoverId, setHoverId] = useState<string | null>(null);
+  const hoverThrottle = useRef(false);
   // Touch (iPad): zwei Finger = Pinch-Zoom + Pan; ein Finger zeichnet wie die Maus
   const touches = useRef(new Map<number, { x: number; y: number }>());
   const pinch = useRef<{ d0: number; mid0: { x: number; y: number }; v0: { cx: number; cy: number; scale: number } } | null>(null);
@@ -180,8 +200,50 @@ export function PlanView({
     return () => svg.removeEventListener('wheel', onWheel);
   }, []);
 
+  // F5: Leertaste halten = Pan-Bereitschaft (ArchiCAD/Photoshop). Dieselbe
+  // Eingabefeld-/Dialog-Wache wie die Werkzeug-Kurztasten (DesignWorkspace.tsx)
+  // — Tippen in einer Kosmo-Chat-Eingabe darf nie die Ansicht kapern. Ein
+  // fokussierter Knopf/Link bekommt ebenfalls keinen Pan-Space, damit die
+  // native Leertaste-aktiviert-den-Knopf-Tastaturbedienung erhalten bleibt.
+  useEffect(() => {
+    const darfPannen = (): boolean => {
+      const el = document.activeElement as HTMLElement | null;
+      if (istEingabefeld(el)) return false;
+      if (el && (el.tagName === 'BUTTON' || el.tagName === 'A')) return false;
+      return true;
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== 'Space' || e.repeat) return;
+      if (document.querySelector('[role="dialog"]')) return;
+      if (!darfPannen()) return;
+      e.preventDefault();
+      setSpaceGedrueckt(true);
+    };
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.code !== 'Space') return;
+      setSpaceGedrueckt(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, []);
+
   const w = 100 / view.scale; // halbe Breite in mm — via viewBox gelöst
   void w;
+
+  // F9 (v0.6.4): Kontextcursor fürs Plan-SVG — dieselbe Systematik wie
+  // `werkzeugCursorFuer` im 3D-Viewport (`eingabe-3d.ts`), hier um den
+  // Hover-Trefferzustand des Auswahl-Werkzeugs erweitert.
+  const cursorStil = cursor2dFuer({
+    istAuswahlWerkzeug: Boolean(handlers.current?.pickMode),
+    spaceOderPanModus: spaceGedrueckt || navModus2d === 'pan',
+    ziehtGerade: panAktiv,
+    hoverTrifftElement: hoverId !== null,
+    hoverIstAusgewaehlt: hoverId !== null && selection.includes(hoverId),
+  });
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--k-plan-paper)' }}>
@@ -246,7 +308,8 @@ export function PlanView({
         ref={svgRef}
         data-testid="planview"
         data-lod={lod}
-        style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none' }}
+        data-cursor={cursorStil}
+        style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none', cursor: cursorStil }}
         onPointerDown={(e) => {
           if (e.pointerType === 'touch') {
             touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -270,8 +333,16 @@ export function PlanView({
           // T3: Pan-/Zoom-Modus (Nav-Leiste) gibt dem linken Klick zusätzlich
           // die Bedeutung des gewählten Knopfs — Mitteltaste/Rechtsklick/Alt
           // bleiben unabhängig davon IMMER Pan (kein Funktionsverlust).
-          if (e.button === 1 || e.button === 2 || e.altKey || (e.button === 0 && navModus2d === 'pan')) {
+          // F5 (v0.6.4): Leertaste gehalten + linke Taste ist ZUSÄTZLICH Pan —
+          // während sie unten ist, zeichnet kein Werkzeug (siehe `onPointerMove`).
+          if (
+            e.button === 1 ||
+            e.button === 2 ||
+            e.altKey ||
+            (e.button === 0 && (navModus2d === 'pan' || spaceGedrueckt))
+          ) {
             panning.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy };
+            setPanAktiv(true);
             (e.target as Element).setPointerCapture(e.pointerId);
           } else if (e.button === 0 && navModus2d === 'zoom') {
             zoomDrag.current = { y: e.clientY, scale: view.scale };
@@ -318,10 +389,28 @@ export function PlanView({
             setView((v) => ({ ...v, cx: panning.current!.cx - dx, cy: panning.current!.cy + dy }));
           } else if (moveActive.current) {
             handlers.current?.onMoveDrag?.(toWorld(e.clientX, e.clientY));
-          } else if (!gestureAktiv.current) {
+          } else if (!gestureAktiv.current && !spaceGedrueckt) {
+            // F5: solange die Leertaste gehalten wird (Pan-Bereitschaft, noch
+            // kein Drag), pausiert das Werkzeug-Gummiband komplett — sonst
+            // würde die laufende Wand-/Zonen-Vorschau der Maus unterm
+            // Pan-Cursor weiter folgen.
             const p = toWorld(e.clientX, e.clientY);
             setCursor(p);
             handlers.current?.onGroundMove?.({ p, shiftKey: e.shiftKey });
+            // F9: Hover-Trefferzone fürs Auswahl-Werkzeug, EINMAL pro Frame
+            // (rAF-Drossel) — reines Cursor-Feedback (`cursor2dFuer`), teilt
+            // sich den Hit-Test mit dem bestehenden `pickAt` bei pointerup.
+            if (handlers.current?.pickMode && activeStoreyId) {
+              if (!hoverThrottle.current) {
+                hoverThrottle.current = true;
+                requestAnimationFrame(() => {
+                  hoverThrottle.current = false;
+                  setHoverId(pickEntityAt(doc, activeStoreyId, p));
+                });
+              }
+            } else if (hoverId !== null) {
+              setHoverId(null);
+            }
           }
         }}
         onPointerUp={(e) => {
@@ -344,6 +433,7 @@ export function PlanView({
           }
           if (panning.current) {
             panning.current = null;
+            setPanAktiv(false);
             return;
           }
           if (moveActive.current) {
@@ -373,7 +463,10 @@ export function PlanView({
           }
           moveActive.current = false;
           zoomDrag.current = null;
+          panning.current = null;
+          setPanAktiv(false);
         }}
+        onPointerLeave={() => setHoverId(null)}
         onContextMenu={(e) => e.preventDefault()}
       >
         <defs>

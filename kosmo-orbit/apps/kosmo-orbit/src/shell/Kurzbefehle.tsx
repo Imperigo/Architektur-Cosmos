@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Badge, Hairline } from '@kosmo/ui';
-import { ZEICHEN_KURZBEFEHLE } from '../modules/design/zeichen-shortcuts';
+import { KURZTASTEN } from '../modules/design/kurztasten';
 
 /**
  * Globales Kurzbefehl-Schema (V1-Finish P1): Ziffern 1–9 springen zu den
@@ -73,12 +73,18 @@ export function Kurzbefehle({
     { taste: '?', text: 'Diese Übersicht ein-/ausblenden' },
   ];
 
-  // T3: Zeichen-Kurzbefehle — nur in KosmoDesign aktiv (an ArchiCAD angelehnt),
-  // aus derselben Registry wie der keydown-Handler dort (zeichen-shortcuts.ts).
-  const zeichenZeilen = ZEICHEN_KURZBEFEHLE.map((k) => ({
-    taste: k.taste.toUpperCase(),
-    text: `Werkzeug «${k.beschrieb}» (in KosmoDesign)`,
-  }));
+  // T3/F5 (v0.6.4): Zeichen-Kurzbefehle — nur in KosmoDesign aktiv (an
+  // ArchiCAD angelehnt), aus derselben Registry wie der keydown-Handler dort
+  // (kurztasten.ts). Die Leertaste (Pan im 2D-Plan, F5) hat keinen Eintrag in
+  // der Werkzeug-Registry (sie wechselt kein Werkzeug) und wird hier separat
+  // angehängt.
+  const zeichenZeilen = [
+    ...KURZTASTEN.map((k) => ({
+      taste: k.taste.toUpperCase(),
+      text: `Werkzeug «${k.beschrieb}» (in KosmoDesign)`,
+    })),
+    { taste: 'Leertaste', text: 'Halten + Ziehen: Ansicht verschieben (Pan) im 2D-Plan, wie ArchiCAD/Photoshop' },
+  ];
 
   return (
     <div

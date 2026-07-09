@@ -577,4 +577,11 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
     - **SK-V2** KosmoVis-Leiste: der Anlege-Knopf heisst «+ Drei Stimmungen» (Konvention wie «+ Graph»/«+ Node») — vorher stand «Drei Stimmungen» doppelt (Graph-Name im Select + Knopf), ohne erkennbaren Anlege-Charakter.
     - Beweise: Typecheck, App 561, Regressionen visgraph/vis-automatik/module (77 Tests) grün.
 
+263. **v0.6.4 / F5+F9 — Space-Pan, Werkzeug-Kurztasten und Kontext-Cursor im 2D-Plan (Owner-Befunde)** *(09.07.2026)*
+    - Owner wörtlich: «beim modellieren des grundrisses eine tastenkombination oder so einbauen um mich intuitiv bewegen zu können wie archicad» (F5) und «die maus sollte sich zudem an die verschiedenen bereichen anpassen können, sprich sie sollte auf die umgebung reagieren» (F9).
+    - Neue pure Registry `kurztasten.ts`: A=Auswahl, W=Wand, V=Volumen, Z=Zone, D=Dach, T=Treppe, C=Stütze, S=Schnitt, F=Skizze (löst die alte T3-Registry `zeichen-shortcuts.ts` vollständig ab; Mesh bewusst ohne Kürzel, Fenster/Öffnungen laufen weiter über die Wand-Skizze). Harter Fokus-Guard: in Eingabefeldern/Dialogen feuert NICHTS (Kosmo-Chat!). Tooltips «Wand (W)» auf allen Werkzeugknöpfen, «?»-Kurzbefehle-Overlay ergänzt.
+    - Space-Halten + Linksziehen = Pan im 2D-Plan (Photoshop/ArchiCAD-Geste); das Werkzeug-Gummiband pausiert derweil, bestehendes Mitteltaste-/Rechtsklick-/navModus2d-Pan unangetastet.
+    - Kontext-Cursor (pure `cursor2dFuer`, nur aufs Plan-SVG): Zeichenwerkzeuge Fadenkreuz, Auswahl über treffbarem Element Zeiger, über gewähltem Element Verschieben, Space grab/grabbing — Hover-Hit-Test rAF-gedrosselt über den bestehenden `pickEntityAt`.
+    - Beweise: 20 neue Unit-Tests (App 570, 5 alte ersetzt), Kernel 491/Goldens stabil; neuer E2E `kurztasten-pan.spec.ts` (3 Tests) 6× grün im Worktree, Regressionen eingabe-3d + element-fang grün; der einzelne module.spec-Fail im Worktree war ein CORS-Artefakt der geteilten Fake-Bridge (Worktree-Origin nicht in KOSMO_BRIDGE_ORIGIN) — im Hauptbaum nach Cherry-Pick erneut geprüft. (Sonnet-Worktree-Batch.)
+
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.
