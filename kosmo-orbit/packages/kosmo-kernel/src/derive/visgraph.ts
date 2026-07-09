@@ -43,10 +43,21 @@ export interface VisNodeTyp {
  * Zurückhaltende Kategorie-Hue-Zuordnung (W1) — bewusst bestehende
  * `--k-mod-*`-Tokens aus `aura.css` wiederverwendet (keine neuen Farbwerte),
  * je Kategorie EIN Ton für den 2px-Tonstreifen unter dem Node-Kopf.
+ *
+ * Kritik-065 Runde 1, Befund 6: `--k-mod-prepare` (#7d5e78, Violett) lag zu
+ * nah an der Zahl-Portfarbe (`PORT_FARBE.zahl` = #7a5c9e, ebenfalls Violett)
+ * — beide praktisch ununterscheidbar im Node-Kopf/-Port nebeneinander. Alle
+ * übrigen `--k-mod-*`-Töne sind schon an eine Kategorie vergeben (data=Blau
+ * → quelle, design=Terracotta → render, publish=Grün → ausgabe; vis=Gold
+ * ist die Stationsfarbe selbst, oben im Badge/Bullet bereits sichtbar) —
+ * daher hier EIN neuer, bewusst zurückhaltender Ocker/Braun-Ton, in
+ * derselben Familie wie `PORT_FARBE.material` (#8a6d3b), aber eigenständig.
  */
+const K_WANDLER_OCKER = '#96702f';
+
 export const VIS_KATEGORIE_HUE: Record<VisKategorie, string> = {
   quelle: 'var(--k-mod-data)',
-  wandler: 'var(--k-mod-prepare)',
+  wandler: K_WANDLER_OCKER,
   render: 'var(--k-mod-design)',
   ausgabe: 'var(--k-mod-publish)',
 };

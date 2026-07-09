@@ -7,12 +7,14 @@ import {
   KButton,
   KIcon,
   KSelect,
+  KTabs,
   KToolbar,
   KToolGruppe,
   Measure,
   Panel,
   meldeFehler,
   moduleHue,
+  type KTabItem,
 } from '@kosmo/ui';
 import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, type Sheet, type VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
@@ -37,6 +39,15 @@ function authKopf(): HeadersInit {
  * Varianten-Serien (drei Stimmungen auf einen Klick) für die visuelle
  * Prüfung nebeneinander; Serien überleben den Neustart (localStorage).
  */
+
+// Kritik-065 Runde 1, Befund 3: aktiver Tab war volle Schwarzfläche —
+// identisch mit den Aktions-Knöpfen (z. B. «+ Drei Stimmungen»). KTabs
+// (2px-Akzent-Unterstrich, KEINE Füllfläche) statt zweier KButton mit
+// tone="accent"/"ghost". testids + sichtbare Texte unverändert.
+const VIS_TAB_ITEMS: readonly KTabItem[] = [
+  { id: 'graph', label: 'Node-Tree', testid: 'tab-graph' },
+  { id: 'einfach', label: 'Einfach', testid: 'tab-einfach' },
+];
 
 interface JobRecord {
   job_id: string;
@@ -271,7 +282,11 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
         {/* W1 Massnahme 6: KToolbar/KToolGruppe (UI-KONZEPT-065 §3) — Gruppen
             Graph | Bauen | Automatik. Alle testids + Beschriftungen wörtlich
             erhalten; `node-hinzu` bleibt ein natives Select (KSelect wrappt
-            nur Styling, `page.selectOption` funktioniert unverändert). */}
+            nur Styling, `page.selectOption` funktioniert unverändert).
+            Kritik-065 Runde 1, Befund 4: explizite Hairline zwischen den
+            Gruppen statt dem CSS-Geschwister-Selektor `.k-toolgruppe +
+            .k-toolgruppe` zu vertrauen — sichtbar unabhängig davon, was
+            sonst noch dazwischensteht. */}
         <KToolGruppe label="Graph">
           <KSelect
             size="sm"
@@ -288,6 +303,7 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
             + Graph
           </KButton>
         </KToolGruppe>
+        <Hairline vertical />
         <KToolGruppe label="Bauen">
           <KSelect
             size="sm"
@@ -309,6 +325,7 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
             + Drei Stimmungen
           </KButton>
         </KToolGruppe>
+        <Hairline vertical />
         <KToolGruppe label="Automatik">
           <KButton size="sm" tone="quiet" data-testid="vis-auto-kamera" onClick={kameraVorschlagen}>
             Kamera vorschlagen
@@ -351,12 +368,7 @@ function VisTabs({
   return (
     <KToolbar>
       <Badge hue={moduleHue.vis}>KosmoVis</Badge>
-      <KButton size="sm" tone={tab === 'graph' ? 'accent' : 'ghost'} data-testid="tab-graph" onClick={() => setTab('graph')}>
-        Node-Tree
-      </KButton>
-      <KButton size="sm" tone={tab === 'einfach' ? 'accent' : 'ghost'} data-testid="tab-einfach" onClick={() => setTab('einfach')}>
-        Einfach
-      </KButton>
+      <KTabs items={VIS_TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as 'graph' | 'einfach')} size="sm" />
       <Hairline vertical />
       {children}
       <div style={{ flex: 1 }} />

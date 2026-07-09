@@ -1013,72 +1013,91 @@ function NodeKoerper({
       const finalPrompt = kombiniertePrompt(eingehenderPrompt, formularZusatz(params));
       return (
         <div style={{ display: 'grid', gap: 6 }} onPointerDown={(e) => e.stopPropagation()}>
-          <div data-testid="render-formular" style={{ display: 'grid', gap: 4 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-              <KField label="Fassade">
-                {fassadenBausteine.length > 0 ? (
+          <div data-testid="render-formular" style={{ display: 'grid', gap: 4, minWidth: 0 }}>
+            {/* V-H4-Fix (Kritik-065 Runde 1, Befund 1): `1fr 1fr` allein lässt
+                Grid-Spalten am Inhalt (Select-Optionstext) wachsen — `minmax(0, 1fr)`
+                erzwingt die Spur, `minWidth: 0` an JEDEM Grid-Kind bricht die
+                Flex-/Select-Mindestbreite, `width: 100% + boxSizing: border-box` an
+                Input/Select klemmt sie auf das Innenmass. Sonst ragen «Szene»/
+                «Personen» über den rechten 45°-Kartenrand hinaus. */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 4 }}>
+              <div style={{ minWidth: 0 }}>
+                <KField label="Fassade">
+                  {fassadenBausteine.length > 0 ? (
+                    <KSelect
+                      size="sm"
+                      value={formFassade}
+                      data-testid="render-formular-fassade"
+                      onChange={(e) => param('formFassade', e.target.value)}
+                      style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                    >
+                      <option value="">— frei —</option>
+                      {fassadenBausteine.map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </KSelect>
+                  ) : (
+                    <KInput
+                      size="sm"
+                      defaultValue={formFassade}
+                      key={formFassade}
+                      placeholder="frei …"
+                      data-testid="render-formular-fassade"
+                      onBlur={(e) => e.target.value !== formFassade && param('formFassade', e.target.value)}
+                      style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                    />
+                  )}
+                </KField>
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <KField label="Szene">
                   <KSelect
                     size="sm"
-                    value={formFassade}
-                    data-testid="render-formular-fassade"
-                    onChange={(e) => param('formFassade', e.target.value)}
+                    value={formSzene}
+                    data-testid="render-formular-szene"
+                    onChange={(e) => param('formSzene', e.target.value)}
+                    style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
                   >
-                    <option value="">— frei —</option>
-                    {fassadenBausteine.map((b) => (
-                      <option key={b} value={b}>{b}</option>
-                    ))}
+                    <option value="">—</option>
+                    <option value="Aussenansicht von der Strasse">Aussen · Strasse</option>
+                    <option value="Aussenansicht vom Hof">Aussen · Hof</option>
+                    <option value="Vogelperspektive">Aussen · Vogel</option>
+                    <option value="Innenraumansicht">Innen</option>
                   </KSelect>
-                ) : (
-                  <KInput
+                </KField>
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <KField label="Jahreszeit">
+                  <KSelect
                     size="sm"
-                    defaultValue={formFassade}
-                    key={formFassade}
-                    placeholder="frei …"
-                    data-testid="render-formular-fassade"
-                    onBlur={(e) => e.target.value !== formFassade && param('formFassade', e.target.value)}
-                  />
-                )}
-              </KField>
-              <KField label="Szene">
-                <KSelect
-                  size="sm"
-                  value={formSzene}
-                  data-testid="render-formular-szene"
-                  onChange={(e) => param('formSzene', e.target.value)}
-                >
-                  <option value="">—</option>
-                  <option value="Aussenansicht von der Strasse">Aussen · Strasse</option>
-                  <option value="Aussenansicht vom Hof">Aussen · Hof</option>
-                  <option value="Vogelperspektive">Aussen · Vogel</option>
-                  <option value="Innenraumansicht">Innen</option>
-                </KSelect>
-              </KField>
-              <KField label="Jahreszeit">
-                <KSelect
-                  size="sm"
-                  value={formJahreszeit}
-                  data-testid="render-formular-jahreszeit"
-                  onChange={(e) => param('formJahreszeit', e.target.value)}
-                >
-                  <option value="">—</option>
-                  <option value="Sommer">Sommer</option>
-                  <option value="Winter">Winter</option>
-                  <option value="Herbst">Herbst</option>
-                </KSelect>
-              </KField>
-              <KField label="Personen">
-                <KSelect
-                  size="sm"
-                  value={formPersonen}
-                  data-testid="render-formular-personen"
-                  onChange={(e) => param('formPersonen', e.target.value)}
-                >
-                  <option value="">—</option>
-                  <option value="keine Personen">keine</option>
-                  <option value="wenige Personen">wenige</option>
-                  <option value="belebte Szene, viele Personen">belebt</option>
-                </KSelect>
-              </KField>
+                    value={formJahreszeit}
+                    data-testid="render-formular-jahreszeit"
+                    onChange={(e) => param('formJahreszeit', e.target.value)}
+                    style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                  >
+                    <option value="">—</option>
+                    <option value="Sommer">Sommer</option>
+                    <option value="Winter">Winter</option>
+                    <option value="Herbst">Herbst</option>
+                  </KSelect>
+                </KField>
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <KField label="Personen">
+                  <KSelect
+                    size="sm"
+                    value={formPersonen}
+                    data-testid="render-formular-personen"
+                    onChange={(e) => param('formPersonen', e.target.value)}
+                    style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                  >
+                    <option value="">—</option>
+                    <option value="keine Personen">keine</option>
+                    <option value="wenige Personen">wenige</option>
+                    <option value="belebte Szene, viele Personen">belebt</option>
+                  </KSelect>
+                </KField>
+              </div>
             </div>
             <KField label="Freitext">
               <KInput
@@ -1088,6 +1107,7 @@ function NodeKoerper({
                 placeholder="Freitext-Zusatz …"
                 data-testid="render-formular-freitext"
                 onBlur={(e) => e.target.value !== formFreitext && param('formFreitext', e.target.value)}
+                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
               />
             </KField>
             {/* Ehrlichkeit/V8: der TATSÄCHLICHE Prompt, den «Ausführen» sendet. */}
@@ -1185,7 +1205,28 @@ function NodeKoerper({
       return (
         <div style={{ display: 'flex', gap: 4 }} data-testid="vergleich-bilder">
           {bilder.length === 0 && (
-            <div style={{ height: 110, flex: 1, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--k-ink-faint)' }}>
+            <div
+              style={{
+                height: 110,
+                flex: 1,
+                border: '1px dashed var(--k-line-strong)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 10,
+                color: 'var(--k-ink-faint)',
+              }}
+            >
+              {/* Kritik-065 Runde 1, Befund 5: Leerzustand-Signet — zwei
+                  überlappende Bildrahmen statt reiner Textwüste. */}
+              <svg width="28" height="22" viewBox="0 0 28 22" aria-hidden focusable="false">
+                <rect x="0.75" y="4.75" width="17.5" height="13.5" rx="1.5" fill="none" stroke="var(--k-ink-faint)" strokeWidth="1.5" />
+                <rect x="9.75" y="0.75" width="17.5" height="13.5" rx="1.5" fill="var(--k-raised)" stroke="var(--k-ink-faint)" strokeWidth="1.5" />
+                <circle cx="14.75" cy="5.25" r="1.4" fill="none" stroke="var(--k-ink-faint)" strokeWidth="1.2" />
+                <path d="M11 11 L15.5 6.5 L19.5 10.5 L22.5 7.5 L26.25 11" fill="none" stroke="var(--k-ink-faint)" strokeWidth="1.2" strokeLinejoin="round" strokeLinecap="round" />
+              </svg>
               verbinde Render-Bilder
             </div>
           )}
