@@ -6,6 +6,14 @@
  * tiefer) · selten (Overflow/Menü, nicht dauerpräsent). Die Stufe bestimmt
  * NUR die visuelle Prominenz über die CSS-Klassen `k-primaer`/`k-sekundaer`/
  * `k-selten` (aura.css) — nie Funktion oder Erreichbarkeit.
+ *
+ * **Schichtenmodell (v0.6.6, docs/BEWEGUNGSKONZEPT-066.md §4):** diese Datei
+ * bleibt Schicht 2 ("Fokus-Dimmung", unangetastet) — sie dimmt/hebt einzelne
+ * Werkzeuge INNERHALB des Satzes, den ein Arbeitsmodus (Schicht 1, NEU,
+ * `state/arbeitsmodi-kern.ts` + `sichtbaresSet()`) überhaupt aufgebaut hat.
+ * Schicht 3 sind manuell geöffnete Panels (Bestand). Die Invariante bleibt
+ * wörtlich: Adaption ändert NIE Erreichbarkeit, nur Prominenz — was ein Modus
+ * ausblendet, bleibt vollständig im «Mehr»-Fächer der Werkzeugleiste.
  */
 
 export type FokusStufe = 'primaer' | 'sekundaer' | 'selten';

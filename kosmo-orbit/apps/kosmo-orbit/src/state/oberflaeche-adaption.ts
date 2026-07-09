@@ -30,6 +30,7 @@
  */
 
 import type { FokusStufe } from './fokus';
+import type { Arbeitsmodus } from './arbeitsmodi-kern';
 import {
   gehobenesElementDerGruppe as gehobenesElementDerGruppeKern,
   stufeAnheben,
@@ -100,6 +101,31 @@ export interface TaetigkeitsKontext {
    * solange eines ihrer Panels offen ist.
    */
   panelOffen: boolean;
+
+  // -------------------------------------------------------------------------
+  // Stream B (W1b, BEWEGUNGSKONZEPT-066 §4/§7): vier zusätzliche, ALLE
+  // optionale Signale für die Feinjustierung INNERHALB des sichtbaren Satzes
+  // (Schicht 2 — s. `fokus.ts`-Schichtenkommentar). Ein fehlendes Signal
+  // wirkt nie (kein Verhaltenswechsel für Aufrufer, die sie nicht setzen —
+  // `test/oberflaeche-adaption.test.ts` bleibt unverändert grün). Diese
+  // Felder ändern NIE, welche Gruppe überhaupt sichtbar ist — das entscheidet
+  // ausschliesslich der Arbeitsmodus (Schicht 1, `arbeitsmodi-kern.ts`).
+  // -------------------------------------------------------------------------
+  /** `doc.settings.rolle` — gewichtet wie die Arbeitsmodi-Matrix (§7). */
+  rolle?: 'entwurf' | 'ausfuehrung' | 'admin' | null;
+  /** `doc.settings.siaPhase` — feiner als `phase` (BauPhase), speist zusammen
+   *  mit `phasen-presets.ts` (§6: "Phase wirkt mit") die Feinjustierung. */
+  siaPhase?: string;
+  /** Aktuelle Station (`ModuleId`) — in KosmoDesign aktuell immer `'design'`
+   *  (nur diese eine Station rendert dieses Modul, 0.6.6-Rollout); der
+   *  Parameter bleibt additiv für eine künftige stationsübergreifende
+   *  Wiederverwendung reserviert, wirkt hier ehrlich (noch) nicht. */
+  station?: string;
+  /** Aktueller Arbeitsmodus (Schicht 1, `state/ui-zustand.ts` `arbeitsmodus`)
+   *  — erlaubt der Feinjustierung, mit der bereits getroffenen Modus-
+   *  Entscheidung konsistent zu bleiben (z.B. Export nicht zusätzlich dimmen,
+   *  wenn der Modus ohnehin schon "exportieren" ist). */
+  arbeitsmodus?: Arbeitsmodus;
 }
 
 // ---------------------------------------------------------------------------
@@ -207,6 +233,29 @@ export function adaptiveFokusStufe(
     stufe = stufeMin(stufeAnheben(stufe), basis);
   }
 
+  // Stream B (W1b, BEWEGUNGSKONZEPT-066 §4/§7): Feinjustierung durch
+  // rolle/siaPhase/arbeitsmodus — dieselbe stufeMin(stufeAnheben(...), basis)-
+  // Arithmetik wie der Werkplan-Sonderfall oben, NIE über die eigene Basis
+  // hinaus (Erreichbarkeit bleibt Sache von Schicht 1). Alle drei Signale
+  // sind optional — fehlen sie (Default in praktisch jeder Bestands-Spec),
+  // greift KEINE der drei Bedingungen, das Verhalten ist byte-identisch zu
+  // vorher (Regression = null für `oberflaeche-adaption.spec.ts`).
+  if (!kontext.aktionLaeuft && stufe === 'selten') {
+    // Bauleitung (Rolle) oder eine bauleitungsnahe SIA-Phase (Ausschreibung/
+    // Ausführung, s. `phasen-presets.ts` PHASEN_PRESETS — dort tragen genau
+    // diese Phasen `submission`/`bauablauf` im Fokus) hält die Fähigkeiten-
+    // Gruppe erreichbar, auch während gezeichnet wird.
+    const bauleitungsnah =
+      gruppe === 'faehigkeiten' &&
+      (kontext.rolle === 'ausfuehrung' || kontext.siaPhase === 'ausschreibung' || kontext.siaPhase === 'ausfuehrung');
+    // Der Arbeitsmodus (Schicht 1) hat bereits "exportieren" erkannt — die
+    // Export-Gruppe muss die Zeichnen-Demotion dann nicht zusätzlich tragen.
+    const modusKongruentExport = gruppe === 'export' && kontext.arbeitsmodus === 'exportieren';
+    if (bauleitungsnah || modusKongruentExport) {
+      stufe = stufeMin(stufeAnheben(stufe), basis);
+    }
+  }
+
   return wendeNutzerHebungAn(stufe, gruppe, LEISTEN_GRUPPEN, nutzung);
 }
 
@@ -255,11 +304,20 @@ export function leiteTaetigkeitsKontextAb(params: {
   ziehtElement: boolean;
   /** Fable-Review-2-Auflage (J3c-0b): irgendein Ebenen-Panel gerade offen. */
   panelOffen: boolean;
+  /** Stream B (W1b): optionale Feinjustierungs-Signale, s. `TaetigkeitsKontext`. */
+  rolle?: 'entwurf' | 'ausfuehrung' | 'admin' | null;
+  siaPhase?: string;
+  station?: string;
+  arbeitsmodus?: Arbeitsmodus;
 }): TaetigkeitsKontext {
   return {
     tool: params.tool,
     phase: params.phase,
     aktionLaeuft: params.punkteOffen || params.ziehtElement,
     panelOffen: params.panelOffen,
+    ...(params.rolle !== undefined ? { rolle: params.rolle } : {}),
+    ...(params.siaPhase !== undefined ? { siaPhase: params.siaPhase } : {}),
+    ...(params.station !== undefined ? { station: params.station } : {}),
+    ...(params.arbeitsmodus !== undefined ? { arbeitsmodus: params.arbeitsmodus } : {}),
   };
 }

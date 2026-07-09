@@ -44,6 +44,7 @@ import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D'
 import type { PlanLod } from './planLod';
 import {
   IconAuswahl,
+  IconDach,
   IconDockDraw,
   IconDockPrepare,
   IconDockPublish,
@@ -54,6 +55,10 @@ import {
   IconFaehigkeitSonne,
   IconFaehigkeitStudien,
   IconFaehigkeitSubmission,
+  IconMesh,
+  IconSchnitt,
+  IconStuetze,
+  IconTreppe,
   IconVolumen,
   IconWand,
   IconZone,
@@ -84,24 +89,30 @@ import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './V
 import { registerActions } from '../../shell/palette';
 import { fokusKlasse } from '../../state/fokus';
 import {
-  adaptionAktiv,
-  adaptionZuruecksetzen,
   adaptiveFokusStufe,
-  darfUmordnen,
-  elementFokusStufe,
-  gehobenesElementDerGruppe,
-  istUnterBasis,
   LEISTEN_BASIS,
   leiteTaetigkeitsKontextAb,
   nutzungMelden,
   nutzungsProfil,
   opazitaetsWert,
-  setAdaptionAktiv,
   ZEICHEN_WERKZEUG_IDS,
   type LeistenGruppe,
-  type NutzungsProfil,
   type TaetigkeitsKontext,
 } from '../../state/oberflaeche-adaption';
+import { useAdaptionsSteuerung } from '../../state/oberflaeche-adaption-kern';
+import { useUiZustand } from '../../state/ui-zustand';
+import {
+  begruendeModus,
+  bewerteModi,
+  entscheideModus,
+  HYSTERESE_MS,
+  MODI_VOLLSTAENDIG_0_6_6,
+  sichtbaresSet,
+  ARBEITSMODUS_LABEL,
+  type Arbeitsmodus,
+  type ModusSignale,
+  type PointerArt,
+} from '../../state/arbeitsmodi-kern';
 
 /**
  * KosmoDesign — Arbeitsfläche. V1-Start: 3D-Viewport mit Wand-/Volumen-
@@ -192,9 +203,6 @@ const GRUPPEN_LABEL: Record<LeistenGruppe, string> = {
   projekt: 'Projekt',
   verlauf: 'Verlauf',
 };
-const LEERES_NUTZUNGSPROFIL: NutzungsProfil = { zaehler: {}, zuletzt: {} };
-/** Regel 2.3.2: 2s Debounce nach Aktionsende, bevor eine Zeichnen-Demotion wieder greift. */
-const ADAPTION_DEBOUNCE_MS = 2000;
 
 /**
  * Serie K A5 (K15): die vier meistgenutzten Zeichenwerkzeuge tragen ein
@@ -209,15 +217,21 @@ const ZEICHEN_WERKZEUGE_LEISTE: readonly {
   id: ToolId;
   label: string;
   Icon?: () => React.JSX.Element;
+  /** Stream B (W1b, Aufgabe 7): Icon ADDITIV VOR dem Text (nicht ersetzend)
+   *  — nur für die fünf neu bebilderten Werkzeuge. Die vier bestehenden
+   *  Icon-Werkzeuge (Auswahl/Wand/Volumen/Zone) bleiben Icon-ODER-Text, wie
+   *  bisher (`e2e/oberflaeche-minimal.spec.ts` verlangt dort `innerText()`
+   *  exakt leer — ein Vertrag, den dieses Feld unangetastet lässt). */
+  iconMitText?: boolean;
 }[] = [
   { id: 'auswahl', label: 'Auswahl', Icon: IconAuswahl },
   { id: 'wand', label: 'Wand', Icon: IconWand },
   { id: 'volumen', label: 'Volumen', Icon: IconVolumen },
   { id: 'zone', label: 'Zone', Icon: IconZone },
-  { id: 'dach', label: 'Dach' },
-  { id: 'treppe', label: 'Treppe' },
-  { id: 'stuetze', label: 'Stütze' },
-  { id: 'schnitt', label: 'Schnitt' },
+  { id: 'dach', label: 'Dach', Icon: IconDach, iconMitText: true },
+  { id: 'treppe', label: 'Treppe', Icon: IconTreppe, iconMitText: true },
+  { id: 'stuetze', label: 'Stütze', Icon: IconStuetze, iconMitText: true },
+  { id: 'schnitt', label: 'Schnitt', Icon: IconSchnitt, iconMitText: true },
   { id: 'skizze', label: '✎ Skizze' },
 ];
 
@@ -317,7 +331,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
 
   // ArchiCAD-Gefühl: die Arbeitsfläche öffnet im Auswahl-Werkzeug (Pfeil), nicht
   // schon zeichnend — sonst baut der erste Klick versehentlich eine Wand.
-  const [tool, setTool] = useState<ToolId>('auswahl');
+  // Stream B (W1b, BEWEGUNGSKONZEPT-066 §6): dieses Feld + die Panel-Flags
+  // unten wandern MECHANISCH 1:1 aus dem lokalen `useState` in den
+  // zustand-Store `state/ui-zustand.ts` — gleiche Variablennamen über
+  // Store-Selektoren, der restliche Datei-Code bleibt unverändert. Reine
+  // Zeichen-/Geometrie-Zustände (points, cursor, drag*, fangPunkt, …) bleiben
+  // bewusst lokal (nicht Teil der W1b-Migration).
+  const tool = useUiZustand((s) => s.tool);
+  const setTool = useUiZustand((s) => s.setTool);
   // K16 A6 (Entwurfs-Einstieg): der aktive Modus wird aus vorhandenem Zustand
   // ABGELEITET, keine zweite Quelle der Wahrheit — «Skizzieren» ist exakt das
   // bestehende `tool === 'skizze'`, «Sprechen» ist das Kosmo-Panel offen
@@ -339,10 +360,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     nutzungMelden('zeichnen:entwurf-cad');
   };
   const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
-  const [viewMode, setViewMode] = useState<'3d' | '2d' | 'split' | 'quad'>('split');
+  const viewMode = useUiZustand((s) => s.viewMode);
+  const setViewMode = useUiZustand((s) => s.setViewMode);
   // SK-D1 Massnahme 2: Export-Gruppe hinter einem echten Auf/Zu-Trigger,
   // Default OFFEN (Begründung: Kommentar am `export-menu-toggle`-Knopf unten).
-  const [exportMenuOffen, setExportMenuOffen] = useState(true);
+  const exportMenuOffen = useUiZustand((s) => s.exportMenuOffen);
+  const setExportMenuOffen = useUiZustand((s) => s.setExportMenuOffen);
   // B5: Massstabs-Automatik — bestätigbarer Hinweis nach dem Phasenwechsel
   const [massstabHinweis, setMassstabHinweis] = useState<string | null>(null);
   const [sectionSpec, setSectionSpec] = useState<SectionSpec | null>(null);
@@ -368,41 +391,52 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   const [meshFace, setMeshFace] = useState<number | null>(null);
   const [meshDistanz, setMeshDistanz] = useState(500);
   // Volumenstudien (Q12): letzte Zone = Parzelle, Varianten als Gruppe übernehmen
-  const [studieOffen, setStudieOffen] = useState(false);
-  const [drawOffen, setDrawOffen] = useState(false);
+  const studieOffen = useUiZustand((s) => s.studieOffen);
+  const setStudieOffen = useUiZustand((s) => s.setStudieOffen);
+  const drawOffen = useUiZustand((s) => s.drawOffen);
+  const setDrawOffen = useUiZustand((s) => s.setDrawOffen);
   // K5 (Owner-Rundgang 0.6.2, S. 10): Drag-Hover-Zustand der kompakten
   // Unternehmerplan-Upload-Fläche (rein visuell).
   const [uplanDragUeber, setUplanDragUeber] = useState(false);
-  const [listeOffen, setListeOffen] = useState(false);
-  const [rasterOffen, setRasterOffen] = useState(false);
+  const listeOffen = useUiZustand((s) => s.listeOffen);
+  const setListeOffen = useUiZustand((s) => s.setListeOffen);
+  const rasterOffen = useUiZustand((s) => s.rasterOffen);
+  const setRasterOffen = useUiZustand((s) => s.setRasterOffen);
   // KV-Grobschätzung (v0.6.3, Lücken-Batch 3, K22): Kostenvoranschlag-Panel
   // neben der Berechnungsliste — eigenes Panel statt Tab in BerechnungslistePanel,
   // damit der Ehrlichkeits-Hinweis («Richtwert, kein Devis») nicht in der
   // Fläche der Wohnungstyp-Tabelle untergeht.
-  const [kvOffen, setKvOffen] = useState(false);
+  const kvOffen = useUiZustand((s) => s.kvOffen);
+  const setKvOffen = useUiZustand((s) => s.setKvOffen);
   // Bauablauf-Grundgerüst (v0.6.3, Lücken-Batch 4, K22): Grob-Terminplan-Panel
   // gleich neben dem KV-Panel — dieselbe Anordnung, derselbe Ehrlichkeits-Grundsatz.
-  const [bauablaufOffen, setBauablaufOffen] = useState(false);
+  const bauablaufOffen = useUiZustand((s) => s.bauablaufOffen);
+  const setBauablaufOffen = useUiZustand((s) => s.setBauablaufOffen);
   // Mängel-/Abnahme-Grundgerüst (v0.6.3, Lücken-Batch 5, K22): Abschlussphase
   // «Gebäudeabnahme» — gleiche Panel-Anordnung wie KV/Bauablauf.
-  const [maengelOffen, setMaengelOffen] = useState(false);
+  const maengelOffen = useUiZustand((s) => s.maengelOffen);
+  const setMaengelOffen = useUiZustand((s) => s.setMaengelOffen);
   // A7 (K17): Submissions-Check — sechstes Fähigkeits-Icon, erstes echtes UI
   // für `pruefeSubmissionsreife` (bislang nur `window.__kosmo.reife()` für
   // Tests). Gleiche Panel-Anordnung wie KV/Bauablauf/Mängel.
-  const [submissionOffen, setSubmissionOffen] = useState(false);
+  const submissionOffen = useUiZustand((s) => s.submissionOffen);
+  const setSubmissionOffen = useUiZustand((s) => s.setSubmissionOffen);
   // Splat-Werkzeug (Owner-Korrektur 05.07.: NICHT HomeStation-exklusiv) —
   // Crop/Ausdünnen/Export laufen lokal, siehe SplatPanel.tsx.
-  const [splatPanelOffen, setSplatPanelOffen] = useState(false);
+  const splatPanelOffen = useUiZustand((s) => s.splatPanelOffen);
+  const setSplatPanelOffen = useUiZustand((s) => s.setSplatPanelOffen);
   const [splatCloud, setSplatCloudState] = useState<SplatCloud | null>(null);
   // T7: Projekt-Lebenszyklus — Phase/Bemassungsstil sind projektspezifisch und
   // wechseln über Jahre selten; sie stehen nicht mehr dauerhaft in der Werk-
   // zeugzeile, sondern im Projekt-Menü (Fokus-Stufe «selten»).
-  const [projektMenuOffen, setProjektMenuOffen] = useState(false);
+  const projektMenuOffen = useUiZustand((s) => s.projektMenuOffen);
+  const setProjektMenuOffen = useUiZustand((s) => s.setProjektMenuOffen);
   // Serie K A5 (K15, Aufgabe 2): Überlauf-Menü «Mehr…» für die Export-/
   // Ebenen-Werkzeuge, die die Adaption gerade unter ihre Basis zurückstellt
   // (`gedaempfteGruppen`, weiter unten) — Zero-/One-Click-Zugriff statt nur
   // gedimmter Anblick.
-  const [mehrOffen, setMehrOffen] = useState(false);
+  const mehrOffen = useUiZustand((s) => s.mehrOffen);
+  const setMehrOffen = useUiZustand((s) => s.setMehrOffen);
   // Serie K A5 (Aufgabe 3): Plan-LOD-Stufe für die Statusleiste — kommt aus
   // `PlanView` (nur gemountet in 2d/split/quad), `onLod`-Callback hält den
   // letzten bekannten Wert auch, wenn die 3D-Ansicht allein aktiv ist.
@@ -509,8 +543,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   const [phasenAngebot, setPhasenAngebot] = useState<SiaPhase | null>(null);
   // Angewendetes Preset: NUR UI-Zustand (welche Fähigkeits-Icons im Fokus
   // stehen) — kein Kernel-Command, geht nicht durchs Doc/Undo/Yjs (Laufzeit
-  // ≠ Modell, s. `phasen-presets.ts`).
-  const [phasenFokus, setPhasenFokus] = useState<ReadonlySet<FaehigkeitId> | null>(null);
+  // ≠ Modell, s. `phasen-presets.ts`). Store-Migration (W1b): PERSISTIERT
+  // (`kosmo.ui.v1`) — war vorher flüchtiger `useState`, überlebt jetzt einen
+  // Neuladen (`ui-zustand.ts` persistiert `phasenFokus` bewusst, Kommentar dort).
+  const phasenFokus = useUiZustand((s) => s.phasenFokus);
+  const setPhasenFokus = useUiZustand((s) => s.setPhasenFokus);
   useEffect(() => {
     const aktuell = doc.settings.siaPhase;
     if (vorherigeSiaPhase.current !== null && vorherigeSiaPhase.current !== aktuell) {
@@ -1041,11 +1078,169 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     maengelOffen ||
     submissionOffen;
 
-  // Serie J / Batch J3b (SERIE-J-BUILDPLAN.md Abschnitt 2/3): die Werkzeug-
-  // leisten-Gruppen leben — ihre Fokus-Stufe kommt aus `adaptiveFokusStufe`
-  // statt fest aus T7. `aktionLaeuft` = Punktkette offen ODER 2D-Drag aktiv
-  // (die real in DesignWorkspace vorhandenen Flags; `Viewport3D.tsx` bleibt
-  // unangetastet — siehe Restgrenze in `leiteTaetigkeitsKontextAb`).
+  // ---------------------------------------------------------------------------
+  // Stream B (W1b, Aufgabe 3) — Arbeitsmodi-Anbindung (BEWEGUNGSKONZEPT-066
+  // §2-§4). Signale sammeln → `arbeitsmodi-kern` bewerten/entscheiden lassen
+  // (Hysterese 5s) → `sichtbaresSet(modus)` steuert weiter unten, welche
+  // Werkzeug-Gruppen/Panel-Schnellzugriffe aufgebaut werden. Neutral-Start
+  // (arbeitsmodus `undefined`, `modusAutomatik: aus` per Playwright-Default)
+  // = exakt heutige Voll-UI (Konzept §8, hart getestet).
+  // ---------------------------------------------------------------------------
+
+  // §2, Zeile «iPad-Skizzieren»: Stift-Pointer-Signal. Eigener Capture-
+  // Handler am äusseren Wrapper (return-Statement unten) — Viewport3D/
+  // PlanView sind tabu (Welle-2-Gebiet), dieser Handler liest nur `pointerType`
+  // mit, greift nie in die eigentliche Zeiger-/Zeichenlogik ein.
+  const [pointerType, setPointerType] = useState<PointerArt | undefined>(undefined);
+  const onWorkspacePointerDownCapture: React.PointerEventHandler<HTMLDivElement> = (e) => {
+    const art: PointerArt | undefined = e.pointerType === 'pen' ? 'pen' : e.pointerType === 'touch' ? 'touch' : e.pointerType === 'mouse' ? 'maus' : undefined;
+    if (art && art !== pointerType) setPointerType(art);
+  };
+
+  // Offene Panels als ID-Liste (Konzept §3 `offenePanels`) — dieselben
+  // Flag-Namen wie `state/ui-zustand.ts` `PanelId`, damit `arbeitsmodi-kern.ts`
+  // dieselbe Sprache spricht wie der Store.
+  const offenePanels = useMemo(() => {
+    const liste: string[] = [];
+    if (studieOffen) liste.push('studieOffen');
+    if (drawOffen) liste.push('drawOffen');
+    if (listeOffen) liste.push('listeOffen');
+    if (rasterOffen) liste.push('rasterOffen');
+    if (kvOffen) liste.push('kvOffen');
+    if (bauablaufOffen) liste.push('bauablaufOffen');
+    if (maengelOffen) liste.push('maengelOffen');
+    if (submissionOffen) liste.push('submissionOffen');
+    if (splatPanelOffen) liste.push('splatPanelOffen');
+    if (sonneOffen) liste.push('sonneOffen');
+    if (exportMenuOffen) liste.push('exportMenuOffen');
+    return liste;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studieOffen, drawOffen, listeOffen, rasterOffen, kvOffen, bauablaufOffen, maengelOffen, submissionOffen, splatPanelOffen, sonneOffen, exportMenuOffen]);
+
+  const arbeitsmodus = useUiZustand((s) => s.arbeitsmodus);
+  const setArbeitsmodus = useUiZustand((s) => s.setArbeitsmodus);
+  const modusAutomatik = useUiZustand((s) => s.modusAutomatik);
+  const setModusAutomatik = useUiZustand((s) => s.setModusAutomatik);
+  const modusFesthalten = useUiZustand((s) => s.modusFesthalten);
+  const setModusFesthalten = useUiZustand((s) => s.setModusFesthalten);
+  const setModusManuell = useUiZustand((s) => s.setModusManuell);
+  // Ehrlichkeits-UI (Konzept §5): Tooltip-Begründung + kurze Akzentuierung
+  // des Chips, wenn die AUTOMATIK (nicht der Mensch) den Modus wechselt.
+  const [modusGrund, setModusGrund] = useState<string[]>([]);
+  const [modusAkzent, setModusAkzent] = useState(false);
+  const [modusMenuOffen, setModusMenuOffen] = useState(false);
+
+  const modusSignale = useMemo<ModusSignale>(
+    () => ({
+      tool,
+      viewMode,
+      offenePanels,
+      ...(pointerType !== undefined ? { pointerType } : {}),
+      siaPhase: doc.settings.siaPhase,
+      ...(doc.settings.rolle !== null ? { rolle: doc.settings.rolle } : {}),
+      station: 'design',
+    }),
+    [tool, viewMode, offenePanels, pointerType, doc.settings.siaPhase, doc.settings.rolle],
+  );
+
+  // Hysterese (Konzept §3): ein Moduswechsel wird frühestens nach
+  // `HYSTERESE_MS` (5s) Signal-Stabilität übernommen — derselbe Kandidat muss
+  // die volle Zeit über der bestbewertete bleiben, sonst startet der Timer
+  // neu. `entscheideModus(..., stabilSeitMs=Infinity, ...)` liefert hier NUR
+  // den aktuellen Kandidaten (kein Store-Zustand nötig, um "seit wann stabil"
+  // zu tracken) — die Stabilität selbst übernimmt dieser `setTimeout`, exakt
+  // wie `page.clock`/`fastForward()` es deterministisch vorspulen kann.
+  const modusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!modusAutomatik) {
+      if (modusTimer.current) {
+        clearTimeout(modusTimer.current);
+        modusTimer.current = null;
+      }
+      return undefined;
+    }
+    const scores = bewerteModi(modusSignale);
+    const kandidat = entscheideModus(arbeitsmodus, scores, Number.POSITIVE_INFINITY, modusFesthalten);
+    // `entscheideModus` liefert bei jedem "kein Wechsel"-Pfad exakt `aktuell`
+    // (=`arbeitsmodus`) zurück — ein `undefined`-Kandidat ist also IMMER
+    // gleich `arbeitsmodus` und landet schon im ersten Zweig. Der zweite
+    // Check ist defensiv (macht `kandidat` für TS ab hier `Arbeitsmodus`,
+    // ohne die Laufzeit-Logik zu ändern).
+    if (kandidat === arbeitsmodus || kandidat === undefined) {
+      if (modusTimer.current) {
+        clearTimeout(modusTimer.current);
+        modusTimer.current = null;
+      }
+      return undefined;
+    }
+    modusTimer.current = setTimeout(() => {
+      setArbeitsmodus(kandidat);
+      setModusGrund(begruendeModus(kandidat, modusSignale));
+      setModusAkzent(true);
+      window.setTimeout(() => setModusAkzent(false), 900);
+    }, HYSTERESE_MS);
+    return () => {
+      if (modusTimer.current) clearTimeout(modusTimer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modusAutomatik, modusFesthalten, arbeitsmodus, modusSignale]);
+
+  // Manuelle Übersteuerung (Konzept §3/§5, Modus-Chip-Menü unten): ein von
+  // Hand gewählter Modus zählt als Übersteuerung — «festgehalten» friert ihn
+  // sofort ein, die Automatik greift ab jetzt nicht mehr, bis der Mensch
+  // wieder loslässt (`modus-festhalten`) oder die Automatik ganz ausschaltet.
+  const modusHandVonListeWaehlen = (m: Arbeitsmodus) => {
+    setArbeitsmodus(m);
+    setModusManuell(m);
+    setModusFesthalten(true);
+    setModusMenuOffen(false);
+  };
+  const modusFesthaltenUmschalten = () => {
+    setModusFesthalten(!modusFesthalten);
+  };
+  // «Automatik aus» (Konzept §3, wörtlich): «schaltet die Erkennung ganz ab
+  // — dann zeigt die Oberfläche wie heute alles». Darum wird beim Ausschalten
+  // zusätzlich der Modus selbst auf den Neutral-Zustand zurückgesetzt (statt
+  // nur die Erkennung stillzulegen) — Voll-UI ist danach sofort wahr, nicht
+  // erst nach dem nächsten Signalwechsel.
+  const modusAutomatikUmschalten = () => {
+    if (modusAutomatik) {
+      setModusAutomatik(false);
+      setArbeitsmodus(undefined);
+      setModusFesthalten(false);
+    } else {
+      setModusAutomatik(true);
+    }
+    setModusMenuOffen(false);
+  };
+
+  // Schicht 1 (Konzept §4): welche Werkzeug-Gruppen/Panel-Schnellzugriffe der
+  // aktuelle Modus überhaupt aufbaut. `undefined` (kein Modus erkannt/gesetzt
+  // — der Playwright-Default) = Voll-UI, byte-identisch zu heute. Design-
+  // Station 0.6.6: `export`/`faehigkeiten` sind die einzigen situativen
+  // Gruppen, die ein Modus vollständig ausblendet (Erreichbarkeit bleibt über
+  // das bestehende «Mehr…»-Überlaufmenü gewahrt, s. `ueberlaufWerkzeuge`
+  // unten) — `zeichnen`/`ansicht`/`ebenen`/`projekt`/`verlauf` bleiben in
+  // JEDEM Modus aufgebaut (Kern-Chrome, Werkzeugwechsel/Historie/Ansicht
+  // dürfen nie ganz verschwinden).
+  const modusSichtbarkeit = sichtbaresSet(arbeitsmodus);
+  // `faehigkeiten` dupliziert bewusst nur bequem, was `ebenen` bereits zeigt
+  // (Kommentar bei `FAEHIGKEITEN` unten) — sobald ein Modus sicher feststeht,
+  // tritt der zweite, redundante Zugang zurück; der ERSTE (ebenen) bleibt.
+  const faehigkeitenGruppeSichtbar = modusSichtbarkeit === undefined;
+  // `export` bleibt nur im Modus «exportieren» selbst prominent — in jedem
+  // anderen erkannten Modus tritt die Export-Kette zurück (Konzept-Tabelle
+  // §2: «Werkplan-Export tritt zurück», hier auf die Design-Gruppen
+  // übertragen).
+  const exportGruppeSichtbar = modusSichtbarkeit === undefined || arbeitsmodus === 'exportieren';
+
+  // Serie J / Batch J3b (SERIE-J-BUILDPLAN.md Abschnitt 2/3), Stream B (W1b,
+  // Aufgabe 5): die Werkzeugleisten-Gruppen leben — ihre Fokus-Stufe kommt
+  // aus `adaptiveFokusStufe` statt fest aus T7. `aktionLaeuft` = Punktkette
+  // offen ODER 2D-Drag aktiv (die real in DesignWorkspace vorhandenen Flags;
+  // `Viewport3D.tsx` bleibt unangetastet — siehe Restgrenze in
+  // `leiteTaetigkeitsKontextAb`). W1b ergänzt additiv `rolle`/`siaPhase`/
+  // `station`/`arbeitsmodus` für die Feinjustierung (§4/§7).
   const taetigkeitsKontext = useMemo<TaetigkeitsKontext>(
     () =>
       leiteTaetigkeitsKontextAb({
@@ -1054,115 +1249,51 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         punkteOffen: points.length > 0,
         ziehtElement: dragEntity !== null,
         panelOffen: ebenenPanelOffen,
+        rolle: doc.settings.rolle,
+        siaPhase: doc.settings.siaPhase,
+        station: 'design',
+        // exactOptionalPropertyTypes: ein `arbeitsmodus: undefined`-Schlüssel
+        // ist etwas anderes als ein FEHLENDER Schlüssel — konditionaler
+        // Spread statt `arbeitsmodus ?? undefined` (CLAUDE.md-Muster).
+        ...(arbeitsmodus !== undefined ? { arbeitsmodus } : {}),
       }),
-    [tool, doc.settings.phase, points.length, dragEntity, ebenenPanelOffen],
+    [
+      tool,
+      doc.settings.phase,
+      points.length,
+      dragEntity,
+      ebenenPanelOffen,
+      doc.settings.rolle,
+      doc.settings.siaPhase,
+      arbeitsmodus,
+    ],
   );
 
-  // Regel 2.3.2 (Anti-Nerv): solange `darfUmordnen` false ist (Aktion läuft),
-  // wird sofort übernommen (die Anti-Dimm-Wache in `adaptiveFokusStufe` hebt
-  // die Gruppe da ohnehin auf Basis — nie eine Dimmung mitten in der Aktion).
-  // Endet die Aktion, wartet eine neue, tiefere Stufe 2s (Debounce), bevor sie
-  // einfällt — reine Werkzeugwechsel im Ruhezustand (kein vorheriges
-  // `aktionLaeuft`) greifen dagegen sofort (kein künstliches Warten beim
-  // simplen Werkzeugwechsel).
-  const [stabilerKontext, setStabilerKontext] = useState<TaetigkeitsKontext>(taetigkeitsKontext);
-  // Fable-Review-2-Auflage J3c-4: das gelernte Nutzungsprofil wird zusammen
-  // mit `stabilerKontext` snapshottet, NICHT frisch bei jedem Render aus dem
-  // Store gelesen — sonst könnte ein Klick mitten in einer offenen Punktkette
-  // die Top-3-Schwelle reissen und am Debounce vorbei umstufen. Aufgefrischt
-  // wird nur an genau den Stellen, an denen auch `stabilerKontext` weiter-
-  // rückt (`darfUmordnen` gilt) — das behebt zugleich J3c-5 (kein Store-Read
-  // mehr pro Render/Mousemove).
-  const [nutzungSnapshot, setNutzungSnapshot] = useState<NutzungsProfil>(() => nutzungsProfil());
-  const adaptionFreezeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => {
-    if (!darfUmordnen(taetigkeitsKontext)) {
-      if (adaptionFreezeTimer.current) {
-        clearTimeout(adaptionFreezeTimer.current);
-        adaptionFreezeTimer.current = null;
-      }
-      setStabilerKontext(taetigkeitsKontext);
-      return;
-    }
-    if (stabilerKontext.aktionLaeuft) {
-      adaptionFreezeTimer.current = setTimeout(() => {
-        setStabilerKontext(taetigkeitsKontext);
-        setNutzungSnapshot(nutzungsProfil());
-      }, ADAPTION_DEBOUNCE_MS);
-      return () => {
-        if (adaptionFreezeTimer.current) clearTimeout(adaptionFreezeTimer.current);
-      };
-    }
-    setStabilerKontext(taetigkeitsKontext);
-    setNutzungSnapshot(nutzungsProfil());
-    return undefined;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taetigkeitsKontext]);
-
-  // Fable-Review-2-Auflage J3c-1/J3c-5: expliziter React-State für den
-  // Opt-out-Schalter (Projekt-Menü) — ein Umschalten wirkt sofort, ohne
-  // Reload und ohne auf einen zufälligen Re-Render angewiesen zu sein; der
-  // Store selbst wird dabei nur EINMAL beim Schreiben angefasst, nicht mehr
-  // pro Render gelesen.
-  const [adaptionIstAn, setAdaptionIstAnState] = useState(() => adaptionAktiv());
-  const adaptionUmschalten = (aktiv: boolean) => {
-    setAdaptionAktiv(aktiv);
-    setAdaptionIstAnState(aktiv);
-  };
-  // `adaption-reset` (2.3.4): löscht NUR das gelernte Profil, der Schalter
-  // bleibt unangetastet (siehe `adaptionZuruecksetzen` in
-  // oberflaeche-adaption.ts, Fable-Review-2-Auflage J3c-1).
-  const adaptionZuruecksetzenUndAuffrischen = () => {
-    adaptionZuruecksetzen();
-    setNutzungSnapshot(nutzungsProfil());
-  };
-
-  const nutzung = adaptionIstAn ? nutzungSnapshot : LEERES_NUTZUNGSPROFIL;
-  const stufeFuerGruppe = (gruppe: LeistenGruppe) => {
-    const basis = LEISTEN_BASIS[gruppe];
-    return adaptionIstAn ? adaptiveFokusStufe(gruppe, basis, stabilerKontext, nutzung) : basis;
-  };
-  const gedaempfteGruppen = (Object.keys(LEISTEN_BASIS) as LeistenGruppe[]).filter((g) =>
-    istUnterBasis(stufeFuerGruppe(g), LEISTEN_BASIS[g]),
-  );
-  const adaptionHinweisSichtbar = gedaempfteGruppen.length > 0;
+  // Stream B (W1b, Aufgabe 2 — Hook-Deduplikation): dieselben ~100 Zeilen
+  // React-Verdrahtung (Freeze/Debounce nach Regel 2.3.2, Opt-out-State,
+  // Top-3-Element-Hebung ohne die multiplikative CSS-opacity-Falle), die
+  // hier vorher inline standen (Serie J / J3b/J3c), leben jetzt EINMAL im
+  // geteilten Hook `useAdaptionsSteuerung` (`oberflaeche-adaption-kern.ts`,
+  // Batch B1) — Verhalten bewiesen identisch: `oberflaeche-adaption.spec.ts`
+  // bleibt unverändert grün.
+  const {
+    adaptionIstAn,
+    adaptionUmschalten,
+    adaptionZuruecksetzenUndAuffrischen,
+    stufeFuerGruppe,
+    gedaempfteGruppen,
+    adaptionHinweisSichtbar,
+    elementStil,
+    gruppeHatGehobenesElement,
+  } = useAdaptionsSteuerung<LeistenGruppe, TaetigkeitsKontext>({
+    taetigkeitsKontext,
+    alleGruppen: Object.keys(LEISTEN_BASIS) as LeistenGruppe[],
+    basisProGruppe: LEISTEN_BASIS,
+    adaptiveStufe: adaptiveFokusStufe,
+  });
   const adaptionHinweisTitel = adaptionHinweisSichtbar
     ? `${gedaempfteGruppen.map((g) => GRUPPEN_LABEL[g]).join('/')} zurückgestellt — du zeichnest gerade`
     : '';
-
-  // Fable-Review-2-Auflage J3c-2 (Element-Hebung): pro Gruppe höchstens ein
-  // "gehobenes" Element (oft genutzt, Top-3, s. oberflaeche-adaption.ts).
-  // NUR wenn eines existiert, wird die Dimmung dieser Gruppe pro Kind
-  // angewandt — sonst unverändert wie in J3b (der Gruppen-Wrapper trägt die
-  // Opazität für alle Kinder gemeinsam, kein unnötiger Zusatzaufwand).
-  const gehobenNachGruppe = Object.fromEntries(
-    (Object.keys(LEISTEN_BASIS) as LeistenGruppe[]).map((g) => [
-      g,
-      adaptionIstAn ? gehobenesElementDerGruppe(g, nutzung) : undefined,
-    ]),
-  ) as Record<LeistenGruppe, string | undefined>;
-
-  /**
-   * style für EIN Werkzeugleisten-Element (`gruppe:name`). Ohne gehobenes
-   * Element in der Gruppe: kein Zusatz (Wrapper dimmt wie gewohnt, keine
-   * unnötige Extra-Arbeit). MIT gehobenem Element: numerischer Opazitätswert
-   * (`opazitaetsWert`, NIE font-size/font-weight, 2.3.1) als `style.opacity`
-   * — `KButton` setzt selbst immer eine Inline-`opacity` (0.45/1), die eine
-   * className NICHT überschreiben könnte (CSS-Kaskade: Inline schlägt jede
-   * nicht-`!important`-Klasse). Die multiplikative CSS-opacity-Falle
-   * (J3c-2) wird dadurch umgangen, dass der Gruppen-Wrapper seine eigene
-   * Opazität in diesem Fall auf 1 neutralisiert (s. `style={{ opacity: 1 }}`
-   * an den Gruppen-Spans unten) und jedes Kind seine Opazität stattdessen
-   * selbst trägt — bestehende `opacity var(--k-motion-fast)`-Transition aus
-   * `buttonBase` (kosmo-ui) dämpft den Wechsel weiterhin, ungefragt entfernt
-   * wird hier nichts.
-   */
-  function elementStil(gruppe: LeistenGruppe, name: string): { style?: React.CSSProperties } {
-    const gehoben = gehobenNachGruppe[gruppe];
-    if (!gehoben) return {};
-    const stufe = elementFokusStufe(`${gruppe}:${name}`, stufeFuerGruppe(gruppe), gehoben);
-    return { style: { opacity: opazitaetsWert(stufe) } };
-  }
 
   // Serie K A5 (Aufgabe 2): die Export-/Ebenen-Knöpfe waren bisher NUR inline
   // in der Werkzeugleiste verdrahtet — für das «Mehr…»-Überlaufmenü (unten)
@@ -1398,9 +1529,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     return { style: { opacity: opazitaetsWert(phasenFokus.has(id) ? 'primaer' : 'selten') } };
   }
 
-  /** Alle Export-/Ebenen-Werkzeuge, die die Adaption zurückstellen kann —
-   *  Grundlage des Überlauf-Menüs «Mehr…» (Aufgabe 2). */
-  const UEBERLAUFFAEHIGE_WERKZEUGE: { gruppe: 'export' | 'ebenen'; id: string; label: string; aktion: () => void }[] = [
+  /** Alle Export-/Ebenen-/Fähigkeiten-Werkzeuge, die die Adaption zurück-
+   *  stellen ODER ein Arbeitsmodus ganz ausblenden kann — Grundlage des
+   *  Überlauf-Menüs «Mehr…» (Aufgabe 2 + Aufgabe 3 Erreichbarkeits-Garantie).
+   *  Stream B (W1b): `bauablauf`/`maengel` (Ebenen) und `submission`
+   *  (Fähigkeiten, kein Alt-Knopf in Ebenen) waren hier bisher NICHT gelistet
+   *  — additiv nachgezogen, damit auch sie einen One-Click-Ausweg haben,
+   *  sobald ihre Gruppe zurücktritt. */
+  const UEBERLAUFFAEHIGE_WERKZEUGE: { gruppe: LeistenGruppe; id: string; label: string; aktion: () => void }[] = [
     { gruppe: 'export', id: 'pdf', label: 'PDF', aktion: klickExportPdf },
     { gruppe: 'export', id: 'svg', label: 'SVG', aktion: klickExportSvg },
     { gruppe: 'export', id: 'dxf', label: 'DXF', aktion: klickExportDxf },
@@ -1416,18 +1552,41 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     { gruppe: 'ebenen', id: 'liste', label: 'Liste', aktion: klickListe },
     { gruppe: 'ebenen', id: 'kv', label: 'KV', aktion: klickKv },
     { gruppe: 'ebenen', id: 'raster', label: 'Raster', aktion: klickRaster },
+    { gruppe: 'ebenen', id: 'bauablauf', label: 'Bauablauf', aktion: klickBauablauf },
+    { gruppe: 'ebenen', id: 'maengel', label: 'Mängel', aktion: klickMaengel },
+    { gruppe: 'faehigkeiten', id: 'submission', label: 'Submissions-Check', aktion: klickSubmission },
   ];
-  // Nur Werkzeuge aus Gruppen, die die Adaption GERADE unter ihre T7-Basis
-  // zurückstellt (`gedaempfteGruppen`) — sortiert nach Nutzungszählung
-  // absteigend (das meistgenutzte der zurückgestellten Werkzeuge zuoberst).
-  const ueberlaufWerkzeuge = adaptionIstAn
-    ? UEBERLAUFFAEHIGE_WERKZEUGE.filter((w) => gedaempfteGruppen.includes(w.gruppe)).sort(
-        (a, b) => (nutzung.zaehler[`${b.gruppe}:${b.id}`] ?? 0) - (nutzung.zaehler[`${a.gruppe}:${a.id}`] ?? 0),
-      )
-    : [];
+  // Zwei unabhängige Gründe, warum ein Werkzeug im Überlauf landet: (1) die
+  // Fokus-Dimmung (Schicht 2) stellt seine Gruppe GERADE unter die T7-Basis
+  // zurück (`gedaempfteGruppen`, bestehend seit Serie K) — ODER (2, NEU W1b)
+  // der Arbeitsmodus (Schicht 1) baut seine Gruppe im Hauptband gar nicht
+  // erst auf (`exportGruppeSichtbar`/`faehigkeitenGruppeSichtbar`, oben).
+  // Sortiert nach Nutzungszählung absteigend (das meistgenutzte zuoberst) —
+  // ein frischer, ungefrorener Lesezugriff genügt hier (reine Anzeige-
+  // Reihenfolge, keine Debounce-Semantik nötig wie bei `stufeFuerGruppe`).
+  const modusVerbirgtGruppe = (gruppe: LeistenGruppe): boolean =>
+    (gruppe === 'export' && !exportGruppeSichtbar) || (gruppe === 'faehigkeiten' && !faehigkeitenGruppeSichtbar);
+  const ueberlaufWerkzeuge =
+    adaptionIstAn || modusSichtbarkeit !== undefined
+      ? (() => {
+          const zaehler = nutzungsProfil().zaehler;
+          return UEBERLAUFFAEHIGE_WERKZEUGE.filter(
+            (w) => (adaptionIstAn && gedaempfteGruppen.includes(w.gruppe)) || modusVerbirgtGruppe(w.gruppe),
+          ).sort((a, b) => (zaehler[`${b.gruppe}:${b.id}`] ?? 0) - (zaehler[`${a.gruppe}:${a.id}`] ?? 0));
+        })()
+      : [];
 
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}
+      // Stream B (W1b, Aufgabe 3): pointerType-Signal für die Arbeitsmodi-
+      // Erkennung («iPad-Skizzieren», Konzept §2) — Capture-Phase, damit das
+      // Signal auch dann ankommt, wenn ein Kind-Element `stopPropagation()`
+      // ruft. Viewport3D/PlanView bleiben unangetastet (Welle-2-Gebiet):
+      // dieser Handler liest nur mit, greift nie in die Zeiger-/Zeichenlogik
+      // ein.
+      onPointerDownCapture={onWorkspacePointerDownCapture}
+    >
       {/* Werkzeugleiste — v0.6.5 (W2, SK-D1/UI-KONZEPT-065 §4): GENAU eine
           Hauptzeile (Zeichnen | Ansicht | rechts Projekt-Menü/Einstellungen)
           plus höchstens EINE klar abgesetzte Kontextzeile (Export/Ebenen/
@@ -1466,10 +1625,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               flexWrap: 'nowrap',
               gap: 'var(--k-s3)',
               alignItems: 'center',
-              ...(gehobenNachGruppe.zeichnen ? { opacity: 1 } : {}),
+              ...(gruppeHatGehobenesElement('zeichnen') ? { opacity: 1 } : {}),
             }}
           >
-            {ZEICHEN_WERKZEUGE_LEISTE.map(({ id, label, Icon }) => {
+            {ZEICHEN_WERKZEUGE_LEISTE.map(({ id, label, Icon, iconMitText }) => {
               // F5 (v0.6.4, Owner-Befund «Tastenkombination wie ArchiCAD»): der
               // Tooltip nennt das Kurztaste-Kürzel («Wand (W)») — auch für die
               // Text-Knöpfe (Dach/Treppe/Stütze/Schnitt/Skizze), die bisher gar
@@ -1490,13 +1649,24 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   aria-label={titel}
                   {...elementStil('zeichnen', id)}
                 >
-                  {Icon ? <Icon /> : label}
+                  {Icon ? (
+                    iconMitText ? (
+                      <>
+                        <Icon /> {label}
+                      </>
+                    ) : (
+                      <Icon />
+                    )
+                  ) : (
+                    label
+                  )}
                 </KButton>
               );
             })}
             {/* Block 3 / E4 (Buildplan FM3): Werkzeug «Mesh» — expliziter
                 `werkzeug-mesh`-Testid statt des generischen `tool-*`-Musters,
-                weil die Auftragsspezifikation genau diesen Namen verlangt. */}
+                weil die Auftragsspezifikation genau diesen Namen verlangt.
+                Stream B (W1b, Aufgabe 7): Icon additiv vor dem Text ergänzt. */}
             <KButton
               size="sm"
               tone={tool === 'mesh' ? 'accent' : 'quiet'}
@@ -1507,7 +1677,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               data-testid="werkzeug-mesh"
               {...elementStil('zeichnen', 'mesh')}
             >
-              Mesh
+              <IconMesh /> Mesh
             </KButton>
           </span>
           <div style={{ flex: 1 }} />
@@ -1528,7 +1698,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               border: '1px solid var(--k-line)',
               borderRadius: 'var(--k-radius-md)',
               padding: 'var(--k-s1)',
-              ...(gehobenNachGruppe.ansicht ? { opacity: 1 } : {}),
+              ...(gruppeHatGehobenesElement('ansicht') ? { opacity: 1 } : {}),
             }}
           >
             {(
@@ -1562,7 +1732,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           <span
             data-testid="leiste-gruppe-projekt"
             className={fokusKlasse(stufeFuerGruppe('projekt'))}
-            style={{ display: 'inline-flex', ...(gehobenNachGruppe.projekt ? { opacity: 1 } : {}) }}
+            style={{ display: 'inline-flex', ...(gruppeHatGehobenesElement('projekt') ? { opacity: 1 } : {}) }}
           >
             <KButton
               size="sm"
@@ -1570,7 +1740,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               data-testid="projekt-menu-toggle"
               title="Projekt-Einstellungen — SIA-Phase, Bemassungsstil (selten geändert)"
               onClick={() => {
-                setProjektMenuOffen((o) => !o);
+                // Store-Migration (W1b): der `ui-zustand.ts`-Setter nimmt den
+                // direkten Wert, kein funktionales Update mehr (zustand-Setter
+                // sind keine React-`useState`-Setter).
+                setProjektMenuOffen(!projektMenuOffen);
                 nutzungMelden('projekt:menu');
               }}
               {...elementStil('projekt', 'menu')}
@@ -1679,20 +1852,28 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               bewiesen in `design-werkzeugleiste.spec.ts`), verliert die Sicht
               auf die Knöpfe — nie ungefragt, nie versteckt-aber-klickbar über
               dem Viewport (ROADMAP-253-Lehre). */}
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--k-s1)' }}>
-            <KButton
-              size="sm"
-              tone={exportMenuOffen ? 'accent' : 'ghost'}
-              data-testid="export-menu-toggle"
-              aria-expanded={exportMenuOffen}
-              aria-label="Export/Import — Menü auf-/zuklappen"
-              title="Export/Import — PDF, SVG, DXF, IFC, Splat"
-              onClick={() => setExportMenuOffen((o) => !o)}
-            >
-              <KIcon name="export" size={14} /> Export {exportMenuOffen ? '▾' : '▸'}
-            </KButton>
-          </span>
-          {exportMenuOffen && (
+          {/* Stream B (W1b, Aufgabe 3): Schicht 1 (Arbeitsmodus) — die ganze
+              Export-Gruppe (Trigger + Inhalt) wird nur aufgebaut, wenn kein
+              Modus erkannt/gesetzt ist ODER der Modus selbst «exportieren»
+              ist. Erreichbarkeits-Garantie: in jedem anderen Modus wandert
+              der komplette Inhalt ins «Mehr…»-Überlaufmenü unten
+              (`ueberlaufWerkzeuge`) — nichts wird unerreichbar. */}
+          {exportGruppeSichtbar && (
+            <>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--k-s1)' }}>
+                <KButton
+                  size="sm"
+                  tone={exportMenuOffen ? 'accent' : 'ghost'}
+                  data-testid="export-menu-toggle"
+                  aria-expanded={exportMenuOffen}
+                  aria-label="Export/Import — Menü auf-/zuklappen"
+                  title="Export/Import — PDF, SVG, DXF, IFC, Splat"
+                  onClick={() => setExportMenuOffen(!exportMenuOffen)}
+                >
+                  <KIcon name="export" size={14} /> Export {exportMenuOffen ? '▾' : '▸'}
+                </KButton>
+              </span>
+              {exportMenuOffen && (
             /* Befund [A] «aufgeklappte Format-Kette wirkt wie lose Links»:
                gerahmter Container (1px --k-line-strong, --k-raised, Radius
                sm) — liest sich als GEÖFFNETES Menü-Band statt loser Links,
@@ -1709,7 +1890,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 background: 'var(--k-raised)',
                 borderRadius: 'var(--k-radius-sm)',
                 padding: '2px 6px',
-                ...(gehobenNachGruppe.export ? { opacity: 1 } : {}),
+                ...(gruppeHatGehobenesElement('export') ? { opacity: 1 } : {}),
               }}
             >
               <KButton size="sm" tone="ghost" onClick={klickExportPdf} data-testid="export-pdf" {...elementStil('export', 'pdf')}>
@@ -1761,6 +1942,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 Splat-Werkzeug
               </KButton>
             </span>
+              )}
+            </>
           )}
           <Hairline vertical />
           <Trennlabel icon="ebenen">Ebenen</Trennlabel>
@@ -1772,7 +1955,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               flexWrap: 'nowrap',
               gap: 'var(--k-s3)',
               alignItems: 'center',
-              ...(gehobenNachGruppe.ebenen ? { opacity: 1 } : {}),
+              ...(gruppeHatGehobenesElement('ebenen') ? { opacity: 1 } : {}),
             }}
           >
             <KButton
@@ -1839,7 +2022,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               title="Weitere Werkzeuge — nach Nutzungshäufigkeit sortiert"
               aria-label="Weitere Werkzeuge"
               style={{ visibility: ueberlaufWerkzeuge.length > 0 ? 'visible' : 'hidden' }}
-              onClick={() => setMehrOffen((o) => !o)}
+              onClick={() => setMehrOffen(!mehrOffen)}
             >
               Mehr…
             </KButton>
@@ -1887,20 +2070,28 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               «Ebenen» (Begründung: Kommentar bei `FAEHIGKEITEN` oben). Klick =
               Fähigkeit wie heute; Rechtsklick ODER das kleine ⌄ öffnen das
               zugehörige Panel garantiert («voll»). */}
-          <Hairline vertical />
-          <Trennlabel>Fähigkeiten</Trennlabel>
-          <span
-            data-testid="leiste-gruppe-faehigkeiten"
-            className={fokusKlasse(stufeFuerGruppe('faehigkeiten'))}
-            style={{
-              display: 'inline-flex',
-              flexWrap: 'nowrap',
-              gap: 'var(--k-s2)',
-              alignItems: 'center',
-              ...(gehobenNachGruppe.faehigkeiten ? { opacity: 1 } : {}),
-            }}
-          >
-            {FAEHIGKEITEN.map(({ id, titel, Icon, aktiv, klick, voll }) => (
+          {/* Stream B (W1b, Aufgabe 3): Schicht 1 (Arbeitsmodus) — «Fähigkeiten»
+              ist ein bewusst REDUNDANTER Zweitzugang zu denselben Handlern
+              wie «Ebenen» (Kommentar bei `FAEHIGKEITEN` unten). Sobald ein
+              Modus sicher feststeht, tritt der zweite Zugang zurück; alle
+              sechs Einträge bleiben über «Mehr…» weiterhin One-Click
+              erreichbar (`ueberlaufWerkzeuge`). */}
+          {faehigkeitenGruppeSichtbar && (
+            <>
+              <Hairline vertical />
+              <Trennlabel>Fähigkeiten</Trennlabel>
+              <span
+                data-testid="leiste-gruppe-faehigkeiten"
+                className={fokusKlasse(stufeFuerGruppe('faehigkeiten'))}
+                style={{
+                  display: 'inline-flex',
+                  flexWrap: 'nowrap',
+                  gap: 'var(--k-s2)',
+                  alignItems: 'center',
+                  ...(gruppeHatGehobenesElement('faehigkeiten') ? { opacity: 1 } : {}),
+                }}
+              >
+                {FAEHIGKEITEN.map(({ id, titel, Icon, aktiv, klick, voll }) => (
               <span key={id} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                 <KButton
                   size="sm"
@@ -1948,7 +2139,9 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 </button>
               </span>
             ))}
-          </span>
+              </span>
+            </>
+          )}
           {tool === 'treppe' && (
             <select
               value={treppenForm}
@@ -2000,7 +2193,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               gap: 'var(--k-s3)',
               alignItems: 'center',
               flexShrink: 0,
-              ...(gehobenNachGruppe.verlauf ? { opacity: 1 } : {}),
+              ...(gruppeHatGehobenesElement('verlauf') ? { opacity: 1 } : {}),
             }}
           >
             <KButton
@@ -2701,6 +2894,108 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
           >
             {siaPhaseLabel(doc.settings.siaPhase)}
+          </span>
+          {/* Stream B (W1b, Aufgabe 4) — Modus-Chip (Ehrlichkeits-UI,
+              BEWEGUNGSKONZEPT-066 §5): «Modus: {Name} · automatisch|
+              festgehalten|automatik aus». Die umgebende Statusleiste trägt
+              `pointerEvents:'none'` (Zero-Click-Kennzahlen, Klicks fallen
+              durch zum Viewport) — dieser EINE interaktive Chip braucht ein
+              gezieltes `pointerEvents:'auto'`-Override, sonst wäre er unter
+              der Maus unsichtbar unklickbar. */}
+          <span style={{ position: 'relative', display: 'inline-flex', pointerEvents: 'auto' }}>
+            <button
+              type="button"
+              className="k-druck"
+              data-testid="modus-chip"
+              title={
+                modusGrund.length > 0
+                  ? modusGrund.join(' · ')
+                  : arbeitsmodus
+                    ? 'Arbeitsmodus — Klick öffnet Modus-Liste, Festhalten, Automatik aus'
+                    : 'Voll-UI — kein Arbeitsmodus erkannt/gesetzt'
+              }
+              aria-haspopup="menu"
+              aria-expanded={modusMenuOffen}
+              onClick={() => setModusMenuOffen((o) => !o)}
+              style={{
+                background: 'var(--k-surface)',
+                padding: '3px 8px',
+                borderRadius: 6,
+                border: modusAkzent ? '1px solid var(--k-accent)' : '1px solid var(--k-line)',
+                transitionProperty: 'border-color',
+                transitionDuration: 'var(--k-feder)',
+                cursor: 'pointer',
+                font: 'inherit',
+                color: 'inherit',
+              }}
+            >
+              Modus: {arbeitsmodus ? ARBEITSMODUS_LABEL[arbeitsmodus] : 'Voll'} ·{' '}
+              {!modusAutomatik ? 'automatik aus' : modusFesthalten ? 'festgehalten' : 'automatisch'}
+            </button>
+            {modusMenuOffen && (
+              <div
+                data-testid="modus-menu"
+                className="k-dialog"
+                style={{
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: 0,
+                  marginBottom: 4,
+                  zIndex: 5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 3,
+                  padding: 6,
+                  minWidth: 170,
+                  background: 'var(--k-surface)',
+                  border: '1px solid var(--k-line)',
+                  borderRadius: 'var(--k-radius-md)',
+                  boxShadow: 'var(--k-shadow-raised)',
+                }}
+              >
+                {MODI_VOLLSTAENDIG_0_6_6.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    className="k-druck"
+                    data-testid={`modus-item-${m}`}
+                    aria-pressed={arbeitsmodus === m}
+                    onClick={() => modusHandVonListeWaehlen(m)}
+                    style={{
+                      all: 'unset',
+                      cursor: 'pointer',
+                      padding: '4px 6px',
+                      borderRadius: 4,
+                      fontSize: 12.5,
+                      background: arbeitsmodus === m ? 'var(--k-accent-wash)' : 'transparent',
+                    }}
+                  >
+                    {ARBEITSMODUS_LABEL[m]}
+                  </button>
+                ))}
+                <Hairline />
+                <button
+                  type="button"
+                  className="k-druck"
+                  data-testid="modus-festhalten"
+                  aria-pressed={modusFesthalten}
+                  onClick={modusFesthaltenUmschalten}
+                  style={{ all: 'unset', cursor: 'pointer', padding: '4px 6px', borderRadius: 4, fontSize: 12.5 }}
+                >
+                  {modusFesthalten ? 'Festhalten aufheben' : 'Festhalten'}
+                </button>
+                <button
+                  type="button"
+                  className="k-druck"
+                  data-testid="modus-automatik"
+                  aria-pressed={!modusAutomatik}
+                  onClick={modusAutomatikUmschalten}
+                  style={{ all: 'unset', cursor: 'pointer', padding: '4px 6px', borderRadius: 4, fontSize: 12.5 }}
+                >
+                  {modusAutomatik ? 'Automatik aus' : 'Automatik an'}
+                </button>
+              </div>
+            )}
           </span>
           {cursor && (
             <Measure style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}>

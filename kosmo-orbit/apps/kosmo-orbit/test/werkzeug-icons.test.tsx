@@ -1,15 +1,27 @@
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { IconAuswahl, IconVolumen, IconWand, IconZone } from '../src/modules/design/werkzeug-icons';
+import {
+  IconAuswahl,
+  IconDach,
+  IconMesh,
+  IconSchnitt,
+  IconStuetze,
+  IconTreppe,
+  IconVolumen,
+  IconWand,
+  IconZone,
+} from '../src/modules/design/werkzeug-icons';
 
 /**
- * Serie K A5 (K15): die vier Werkzeug-Icons der Design-Werkzeugleiste —
- * Regressionsschutz für die Zugänglichkeits- und Stil-Verträge:
- * (a) rein dekorativ (`aria-hidden`, der Name sitzt am Button), (b) Farbe
- * ausschliesslich über `currentColor` (erbt Akzent/Ton vom KButton, nie eine
- * hartkodierte Farbe — Gestaltungskonzept «Tusche», Thema-/Akzentwechsel
- * wirken automatisch), (c) einheitliche 16er-Geometrie, (d) vier sichtbar
- * unterschiedliche Zeichnungen (kein Copy-Paste-Duplikat).
+ * Serie K A5 (K15) + Stream B (W1b, Aufgabe 7): die Werkzeug-Icons der
+ * Design-Werkzeugleiste — Regressionsschutz für die Zugänglichkeits- und
+ * Stil-Verträge: (a) rein dekorativ (`aria-hidden`, der Name sitzt am
+ * Button), (b) Farbe ausschliesslich über `currentColor` (erbt Akzent/Ton
+ * vom KButton, nie eine hartkodierte Farbe — Gestaltungskonzept «Tusche»,
+ * Thema-/Akzentwechsel wirken automatisch), (c) einheitliche 16er-Geometrie,
+ * (d) sichtbar unterschiedliche Zeichnungen (kein Copy-Paste-Duplikat). W1b
+ * ergänzt additiv die fünf neuen Registry-Icons (Dach/Treppe/Stütze/Schnitt/
+ * Mesh) — dieselben Verträge gelten für sie unverändert.
  */
 
 const ALLE = [
@@ -17,6 +29,11 @@ const ALLE = [
   ['Wand', IconWand],
   ['Volumen', IconVolumen],
   ['Zone', IconZone],
+  ['Dach', IconDach],
+  ['Treppe', IconTreppe],
+  ['Stütze', IconStuetze],
+  ['Schnitt', IconSchnitt],
+  ['Mesh', IconMesh],
 ] as const;
 
 describe('werkzeug-icons (K15): dekorative Inline-SVGs im aura-Stil', () => {
@@ -48,7 +65,7 @@ describe('werkzeug-icons (K15): dekorative Inline-SVGs im aura-Stil', () => {
     }
   });
 
-  it('die vier Zeichnungen sind paarweise verschieden', () => {
+  it('die Zeichnungen sind paarweise verschieden', () => {
     const markup = ALLE.map(([, Icon]) => renderToStaticMarkup(<Icon />));
     expect(new Set(markup).size).toBe(ALLE.length);
   });

@@ -125,10 +125,16 @@ test('«Mehr…»-Menü: erscheint nur bei zurückgestellten Werkzeugen, listet 
   const eintraege = await liste
     .locator('[data-testid^="werkzeuge-mehr-eintrag-"]')
     .evaluateAll((els) => els.map((el) => el.getAttribute('data-testid')));
-  // Export (8 Werkzeuge) + Ebenen (7 Werkzeuge) sind beide zurückgestellt.
-  expect(eintraege.length).toBe(15);
+  // Export (8 Werkzeuge) + Ebenen (9 Werkzeuge, seit Stream B/W1b inkl.
+  // Bauablauf/Mängel) + Fähigkeiten (1 Werkzeug, Submissions-Check — kein
+  // Alt-Knopf in Ebenen) sind alle drei zurückgestellt.
+  expect(eintraege.length).toBe(18);
   expect(eintraege).toContain('werkzeuge-mehr-eintrag-ebenen-raster');
   expect(eintraege).toContain('werkzeuge-mehr-eintrag-export-pdf');
+  // Stream B (W1b): die zuvor fehlenden Einträge sind jetzt erreichbar.
+  expect(eintraege).toContain('werkzeuge-mehr-eintrag-ebenen-bauablauf');
+  expect(eintraege).toContain('werkzeuge-mehr-eintrag-ebenen-maengel');
+  expect(eintraege).toContain('werkzeuge-mehr-eintrag-faehigkeiten-submission');
   // Sortiert nach Nutzungszählung: Raster (2×) steht vor dem ungenutzten Textur (0×).
   expect(eintraege.indexOf('werkzeuge-mehr-eintrag-ebenen-raster')).toBeLessThan(
     eintraege.indexOf('werkzeuge-mehr-eintrag-ebenen-textur'),

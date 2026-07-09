@@ -81,6 +81,84 @@ export function IconZone() {
 }
 
 /**
+ * Stream B (W1b, Aufgabe 7): fünf weitere Registry-Icons für die bislang
+ * reinen Text-Werkzeuge Dach/Treppe/Stütze/Schnitt/Mesh — additiv, gleicher
+ * 16px/1.5px-Tusche-Stil wie oben. **Additiv vor dem sichtbaren Text**: die
+ * Buttons zeigen künftig Icon UND Label (nicht Icon-ODER-Label wie bei den
+ * vier bestehenden Icon-Werkzeugen oben) — die `toHaveText('Treppe'
+ * /'Dach'/…)`-Verträge (`e2e/oberflaeche-minimal.spec.ts`,
+ * `e2e/module.spec.ts` `button:text-is("Treppe")`) bleiben so unangetastet
+ * wahr, ein SVG ohne `<text>`-Kind trägt nichts zum Text-Inhalt bei.
+ */
+
+/** Dach — Giebellinie (Firstlinie über zwei Dachflächen), Grundriss-Symbol. */
+export function IconDach() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M1.6 10.6 L8 3.2 L14.4 10.6 M4.4 7.4 V13 M11.6 7.4 V13"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Treppe — Stufenprofil (Seitenansicht), klassisches Treppensymbol. */
+export function IconTreppe() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2 13.4 H5 V10.4 H8 V7.4 H11 V4.4 H14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="miter"
+      />
+    </svg>
+  );
+}
+
+/** Stütze — Rundstütze im Grundriss (Kreis mit Fusskreuz, Statik-Anmutung). */
+export function IconStuetze() {
+  return (
+    <svg {...basis}>
+      <circle cx="8" cy="8" r="3.4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M8 1.8 V4.2 M8 11.8 V14.2 M1.8 8 H4.2 M11.8 8 H14.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Schnitt — Schnittlinie mit Blickrichtungs-Pfeilen an beiden Enden (Norm-Symbol). */
+export function IconSchnitt() {
+  return (
+    <svg {...basis}>
+      <path d="M2.2 12.4 L13.8 3.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="2.6 1.6" />
+      <path d="M2.2 12.4 L4.6 12 M2.2 12.4 L2.6 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.8 3.6 L11.4 4 M13.8 3.6 L13.4 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Mesh — trianguliertes Drahtgitter (Freiform-Netz, Buildplan FM3). */
+export function IconMesh() {
+  return (
+    <svg {...basis}>
+      <path
+        d="M2 5.4 L8 2.2 L14 5.4 L14 10.6 L8 13.8 L2 10.6 Z M2 5.4 L8 8 L14 5.4 M8 8 L8 13.8 M2 10.6 L8 8 L14 10.6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/**
  * K16 A6 (Entwurfs-Einstieg, linke Kante): drei weitere Icons für den
  * Entwurfs-Dock — Sprechen/Schreiben, Skizzieren, manuelles CAD. Gleicher
  * aura-Stil wie oben (nur Linien, `currentColor`, `aria-hidden`).

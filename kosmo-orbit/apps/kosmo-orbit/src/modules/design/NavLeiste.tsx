@@ -49,6 +49,10 @@ export function NavLeiste({ aktionen, testid }: { aktionen: NavAktion[]; testid:
         <button
           key={a.id}
           type="button"
+          // v0.6.6 MOTION-KONZEPT-066 §3: «jedes klickbare Element trägt
+          // .k-druck» — dieser Knopf ist roh (kein KButton, das die Klasse
+          // bereits automatisch trägt), darum hier explizit nachgezogen.
+          className="k-druck"
           title={a.titel}
           aria-label={a.titel}
           aria-pressed={a.aktiv}

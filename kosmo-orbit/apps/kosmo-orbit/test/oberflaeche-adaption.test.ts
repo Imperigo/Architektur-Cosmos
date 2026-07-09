@@ -548,3 +548,60 @@ describe('Element-Hebung (2.2 Schlussabsatz, Fable-Review-2-Auflage J3c-2)', () 
     expect(texturStufe).toBe(gruppenStufe); // Geschwister bleiben auf der Gruppen-Stufe
   });
 });
+
+describe('adaptiveFokusStufe — Feinjustierung durch rolle/siaPhase/arbeitsmodus (Stream B, W1b, BEWEGUNGSKONZEPT-066 §4/§7)', () => {
+  it('ohne die neuen Signale bleibt das Verhalten byte-identisch (optionale Felder wirken nie, wenn sie fehlen)', () => {
+    const leer = leeresProfil();
+    expect(adaptiveFokusStufe('faehigkeiten', 'sekundaer', kontext({ tool: 'wand' }), leer)).toBe('selten');
+    expect(adaptiveFokusStufe('export', 'sekundaer', kontext({ tool: 'wand' }), leer)).toBe('selten');
+  });
+
+  it('rolle="ausfuehrung" hält die Fähigkeiten-Gruppe erreichbar (sekundär statt selten) während des Zeichnens', () => {
+    const leer = leeresProfil();
+    const stufe = adaptiveFokusStufe('faehigkeiten', 'sekundaer', kontext({ tool: 'wand', rolle: 'ausfuehrung' }), leer);
+    expect(stufe).toBe('sekundaer');
+  });
+
+  it('siaPhase="ausschreibung"/"ausfuehrung" hebt die Fähigkeiten-Gruppe genauso wie die Rolle — nie über die eigene Basis hinaus', () => {
+    const leer = leeresProfil();
+    expect(adaptiveFokusStufe('faehigkeiten', 'sekundaer', kontext({ tool: 'wand', siaPhase: 'ausschreibung' }), leer)).toBe('sekundaer');
+    expect(adaptiveFokusStufe('faehigkeiten', 'sekundaer', kontext({ tool: 'wand', siaPhase: 'ausfuehrung' }), leer)).toBe('sekundaer');
+    // Eine andere Phase (z.B. das Standard-`wettbewerb`) hebt NICHT — sonst
+    // wäre die Zeichnen-Demotion der Gruppe wirkungslos geworden.
+    expect(adaptiveFokusStufe('faehigkeiten', 'sekundaer', kontext({ tool: 'wand', siaPhase: 'wettbewerb' }), leer)).toBe('selten');
+  });
+
+  it('arbeitsmodus="exportieren" hält die Export-Gruppe erreichbar (Schicht-1-Modus und Schicht-2-Dimmung bleiben konsistent)', () => {
+    const leer = leeresProfil();
+    const stufe = adaptiveFokusStufe('export', 'sekundaer', kontext({ tool: 'wand', arbeitsmodus: 'exportieren' }), leer);
+    expect(stufe).toBe('sekundaer');
+    // Ein anderer Modus (z.B. "zeichnen") hebt die Export-Gruppe NICHT an.
+    expect(adaptiveFokusStufe('export', 'sekundaer', kontext({ tool: 'wand', arbeitsmodus: 'zeichnen' }), leer)).toBe('selten');
+  });
+
+  it('leiteTaetigkeitsKontextAb reicht rolle/siaPhase/station/arbeitsmodus additiv durch, ohne die Pflichtfelder anzutasten', () => {
+    const k = leiteTaetigkeitsKontextAb({
+      tool: 'wand',
+      phase: 'werkplan',
+      punkteOffen: false,
+      ziehtElement: false,
+      panelOffen: false,
+      rolle: 'ausfuehrung',
+      siaPhase: 'ausschreibung',
+      station: 'design',
+      arbeitsmodus: 'exportieren',
+    });
+    expect(k.rolle).toBe('ausfuehrung');
+    expect(k.siaPhase).toBe('ausschreibung');
+    expect(k.station).toBe('design');
+    expect(k.arbeitsmodus).toBe('exportieren');
+
+    // Ohne die optionalen Felder: unverändert nicht gesetzt (kein "undefined"
+    // im Objekt — exactOptionalPropertyTypes-konform).
+    const kOhne = leiteTaetigkeitsKontextAb({ tool: 'auswahl', phase: 'vorprojekt', punkteOffen: false, ziehtElement: false, panelOffen: false });
+    expect('rolle' in kOhne).toBe(false);
+    expect('siaPhase' in kOhne).toBe(false);
+    expect('station' in kOhne).toBe(false);
+    expect('arbeitsmodus' in kOhne).toBe(false);
+  });
+});

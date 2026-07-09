@@ -34,6 +34,16 @@ describe('ui-zustand — Defaults (v0.6.6 Bewegungskonzept §6)', () => {
     expect(s.splatPanelOffen).toBe(false);
     expect(s.sonneOffen).toBe(false);
     expect(s.mehrOffen).toBe(false);
+    // Stream B (W1b): additiv ergänztes Feld — fehlte im Fundament.
+    expect(s.projektMenuOffen).toBe(false);
+  });
+
+  it('setProjektMenuOffen schreibt direkt (kein funktionales Update, Stream-B-Migration)', () => {
+    const s = useUiZustand.getState();
+    s.setProjektMenuOffen(true);
+    expect(useUiZustand.getState().projektMenuOffen).toBe(true);
+    useUiZustand.getState().setProjektMenuOffen(false);
+    expect(useUiZustand.getState().projektMenuOffen).toBe(false);
   });
 });
 

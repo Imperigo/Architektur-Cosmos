@@ -62,6 +62,12 @@ export const PANEL_IDS = [
   'sonneOffen',
   'mehrOffen',
   'exportMenuOffen',
+  // Stream B (W1b): fehlte in der Fundament-Fassung — DesignWorkspace.tsx
+  // (Z.400) hat dieses Flag, additiv nachgezogen (API-kompatibel, gleiches
+  // Muster wie `mehrOffen`/`exportMenuOffen`: ein Menü-Toggle, kein Panel im
+  // engeren Sinn, trotzdem Teil von `PANEL_IDS`, damit `ui.panelSetzen`/
+  // `ui.zustandLesen` es generisch mitnehmen).
+  'projektMenuOffen',
 ] as const;
 export type PanelId = (typeof PANEL_IDS)[number];
 
@@ -83,6 +89,9 @@ export interface UiZustand {
   /** Separat genannte Menü-Flags (Konzept-Briefing): kein "Panel" im engeren Sinn. */
   mehrOffen: boolean;
   exportMenuOffen: boolean;
+  /** Stream B (W1b): additiv ergänzt — DesignWorkspace.tsx (Z.400) hat dieses
+   *  Flag, das Fundament hatte es noch nicht. */
+  projektMenuOffen: boolean;
 
   // ---- persistiert (kosmo.ui.v1) ----
   /** Neutral-Zustand `undefined` = Voll-UI, vor erster sicherer Erkennung (arbeitsmodi-kern.ts). */
@@ -110,6 +119,7 @@ export interface UiZustand {
   setSonneOffen: (v: boolean) => void;
   setMehrOffen: (v: boolean) => void;
   setExportMenuOffen: (v: boolean) => void;
+  setProjektMenuOffen: (v: boolean) => void;
 
   setArbeitsmodus: (v: Arbeitsmodus | undefined) => void;
   setModusAutomatik: (v: boolean) => void;
@@ -291,6 +301,7 @@ function anfangsZustand() {
     mehrOffen: false,
     // Owner-Muster aus DesignWorkspace.tsx: das Export-Menü startet OFFEN.
     exportMenuOffen: true,
+    projektMenuOffen: false,
     arbeitsmodus: gespeichert.arbeitsmodus,
     modusAutomatik: gespeichert.modusAutomatik,
     modusFesthalten: gespeichert.modusFesthalten,
@@ -316,6 +327,7 @@ export const useUiZustand = create<UiZustand>((set, get) => ({
   setSonneOffen: (v) => set({ sonneOffen: v }),
   setMehrOffen: (v) => set({ mehrOffen: v }),
   setExportMenuOffen: (v) => set({ exportMenuOffen: v }),
+  setProjektMenuOffen: (v) => set({ projektMenuOffen: v }),
 
   setzePanel: (panel, offen) => set({ [panel]: offen } as Partial<UiZustand>),
 
