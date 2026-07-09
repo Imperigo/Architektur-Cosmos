@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><title>KosmoOrbit 0.6.2 — Rundgang</title>
+<html lang="de"><head><meta charset="utf-8"><title>KosmoOrbit 0.6.3 — Rundgang</title>
 <style>
   * { box-sizing: border-box; margin: 0; }
   body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2b2924; }
@@ -9,7 +9,9 @@
   .bildzeile { display: flex; gap: 6px; align-items: flex-start; }
   .bildzeile img.haupt { width: 100%; border: 1px solid #b9b2a4; border-radius: 4px; }
   .bildzeile.mit-extra img.haupt { width: 58%; }
-  .bildzeile img.extra { width: 20%; flex: 1; border: 1px solid #b9b2a4; border-radius: 4px; }
+  .bildzeile.mit-extra img.extra { width: 20%; flex: 1; border: 1px solid #b9b2a4; border-radius: 4px; }
+  .bildzeile.paar img.haupt { width: 49%; }
+  .bildzeile.paar img.extra { width: 49%; flex: none; border: 1px solid #b9b2a4; border-radius: 4px; }
   .beschrieb { font-size: 10.5pt; line-height: 1.5; margin: 9px 0 10px; color: #3d3a33; }
   .notiz { flex: 1; border: 1.5px solid #8a857a; border-radius: 8px; padding: 8px 12px;
     background: repeating-linear-gradient(to bottom, transparent 0, transparent 27px, #dcd6c8 27px, #dcd6c8 28px);
@@ -25,7 +27,7 @@
 
 <section class="seite deckblatt">
   <h1>KosmoOrbit — Rundgang zum Kommentieren</h1>
-  <div class="version">Stand 0.6.2 · 08.07.2026 · 18 Stationen &amp; Funktionen</div>
+  <div class="version">Stand 0.6.3 · 09.07.2026 · 25 Stationen &amp; Funktionen</div>
   <ol>
     <li>PDF im Reader öffnen (Adobe Acrobat, Microsoft Edge, Vorschau …).</li>
     <li>Seite für Seite durchgehen — jede Seite zeigt eine Station oder Funktion.</li>
@@ -34,23 +36,27 @@
   </ol>
   <div class="kasten">
     <b>Was mit deinen Notizen passiert</b>
-    Jede Notiz wird ein Auftrag im Auftragsbuch und fliesst in die gemeinsame
-    <b style="display:inline">0.6.3-Runde</b> ein. Seiten mit «NEU» zeigen, was heute Nacht dazugekommen ist:
-    Zonenregel-gespeiste Volumenstudien mit Besonnung/Programm-Erfüllung und Kosmo-Auslösung,
-    der Grundlagenstudie-Bericht als SVG-Blatt, der ehrliche PDF-Pfad beim Unternehmerplan-Import
-    und die lernende Oberfläche in KosmoData.
+    Diese Runde hat dein kommentiertes 0.6.2-PDF umgesetzt — Serie K komplett
+    (Kosmo-Symbol, neue Zentrale-Kacheln, Erststart-Frage, zentrales
+    Einstellungs-Panel, Entwurfs-Dock, Fähigkeiten-Zeile, Plan-LOD,
+    Phasen-Presets) und dazu das Vollprojekt Wettbewerb bis Abnahme
+    (KV-Grobschätzung, Bauablaufplan, Baugesuch-Blattsatz, Mängel &amp;
+    Abnahme, Blatt füllen, Vis-Automatik, Material-Würfel). Seiten mit «NEU»
+    zeigen, was seit dem letzten PDF dazugekommen ist. Deine Notizen zu
+    <b style="display:inline">diesem</b> PDF werden die
+    <b style="display:inline">0.6.4-Auftragsliste</b>.
   </div>
 </section>
 
 <section class="seite">
   <header>
-    <h2>Zentrale</h2>
+    <h2>Erster Start — «Neu hier?» <span class="neu">NEU</span></h2>
   </header>
   <div class="bildzeile">
-    <img class="haupt" src="bilder/01-zentrale.png" alt="Zentrale" />
+    <img class="haupt" src="bilder/00-erste-start-frage.png" alt="Erster Start — «Neu hier?»" />
     
   </div>
-  <p class="beschrieb">Startpunkt mit allen Stationen, Projekt-Tresor, Varianten-Archiv und iPad-Kopplung. Von hier öffnest du jede Station; Kosmo begleitet überall.</p>
+  <p class="beschrieb">K13 umgesetzt: der automatische Guide-Autostart ist weg. Beim allerersten Start fragt Kosmo in der Zentrale, ob ein Rundgang gewünscht ist. «Nein» heisst nie wieder — die Frage lässt sich über das «?» in der Kopfleiste jederzeit erneut auslösen.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -58,153 +64,13 @@
 
 <section class="seite">
   <header>
-    <h2>KosmoDesign — 3D-Modell</h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/02-design-3d.png" alt="KosmoDesign — 3D-Modell" />
-    
-  </div>
-  <p class="beschrieb">BIM-Modell mit Wänden, Decken, Dach, Treppen, Zonen und Möbeln (TKB-Demo). Orbit mit Rechtsklick/Trackpad, Skizzieren direkt auf Flächen, Kontextmenü mit Rechtsklick.</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>KosmoDesign — Werkplan (2D)</h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/03-design-werkplan.png" alt="KosmoDesign — Werkplan (2D)" />
-    
-  </div>
-  <p class="beschrieb">Abgeleiteter Grundriss mit SIA-Schraffuren, Verschneidungs-Poché, Bemassung, Koten und Zeichenhilfen. Anwählen/Verschieben wie im CAD, Doppelklick setzt ab.</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>KosmoDesign — 4er-Splitscreen</h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/04-design-4er.png" alt="KosmoDesign — 4er-Splitscreen" />
-    
-  </div>
-  <p class="beschrieb">Grundriss, Schnitt, Ansicht und 3D gleichzeitig — alles live aus demselben Modell abgeleitet, keine getrennten Zeichnungen.</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>Sonnenstudie</h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/05-sonnenstudie.png" alt="Sonnenstudie" />
-    
-  </div>
-  <p class="beschrieb">Echte Sonnenstände am Projektstandort (Datum/Uhrzeit-Regler), Schattenwurf im 3D. Grundlage für den neuen Besonnungs-Kennwert der Volumenstudien.</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>Kosmo — Vorschlagskarten</h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/06-kosmo-vorschlag.png" alt="Kosmo — Vorschlagskarten" />
-    
-  </div>
-  <p class="beschrieb">Kosmo schlägt Modelländerungen als Diff-Karten vor; «Anwenden» läuft über denselben Command-Weg wie Handarbeit — ein Undo-Schritt, nichts passiert ungefragt.</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>Volumenstudien — jetzt mit Geschosshöhen-Herkunft <span class="neu">NEU</span></h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/19-studien-panel.png" alt="Volumenstudien — jetzt mit Geschosshöhen-Herkunft" />
-    
-  </div>
-  <p class="beschrieb">Zonenregel speist die Studie; NEU in 0.6.2: die Geschosshöhe ist wählbar und trägt ihre Herkunft (Wettbewerbsvorgabe / Architekt / SIA-Minimum / Standard) — dein S.8-Befund. Das Panel rückt jetzt sauber unter die Geschossleiste (Popup-Regel: kein Text verlässt den Block, keine Überlappung).</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>Grundlagenstudie-Bericht v2 <span class="neu">NEU</span></h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/20-bericht.svg" alt="Grundlagenstudie-Bericht v2" />
-    
-  </div>
-  <p class="beschrieb">KOMPLETT NEU nach deiner Kritik: Erst das Urteil (Empfehlung mit Begründung aus gewichtetem Ranking), dann der Beweis (Situations-Diagramme mit Parzelle + Footprint, saubere Vergleichstabelle, Beurteilung je Typologie aus echten Zahlen), dann die Grenzen als getrennter Block. Dabei einen echten Rechenfehler gefixt («sprengt Höhe» war systematisch falsch).</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>Unternehmerplan — One-Click-Upload <span class="neu">NEU</span></h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/21-unternehmerplan-pdf.png" alt="Unternehmerplan — One-Click-Upload" />
-    
-  </div>
-  <p class="beschrieb">Dein S.10-Befund umgesetzt: Datei einfach ins Fenster ziehen — Kosmo erledigt den Rest (DXF wird verglichen, PDF ehrlich erkannt). Die Erklär-Textblöcke sind weg bzw. hinter einem einklappbaren «?»; die Ehrlichkeits-Kernaussage bleibt als kurze Meldung.</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>KosmoVis — Render-Nodetree</h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/07-vis-nodetree.png" alt="KosmoVis — Render-Nodetree" />
-    
-  </div>
-  <p class="beschrieb">Szene → Stimmungen → Render als Node-Baum; Render-Jobs laufen über die HomeStation-Bridge (hier Fake-Worker). «Einfach»-Tab für den schnellen Weg.</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>KosmoPublish — Blätter &amp; Sets</h2>
-  </header>
-  <div class="bildzeile">
-    <img class="haupt" src="bilder/08-publish-blatt.png" alt="KosmoPublish — Blätter &amp; Sets" />
-    
-  </div>
-  <p class="beschrieb">Pläne, Bilder und Legenden auf A1-Blättern layouten, Publikations-Sets für den Ein-Klick-Export (PDF/SVG), Revisionswolken und Transmittal.</p>
-  <div class="notiz">
-    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
-  </div>
-</section>
-
-<section class="seite">
-  <header>
-    <h2>KosmoData — Referenzen <span class="neu">NEU</span></h2>
+    <h2>Zentrale — neue Kacheln <span class="neu">NEU</span></h2>
   </header>
   <div class="bildzeile mit-extra">
-    <img class="haupt" src="bilder/09-data-referenzen.png" alt="KosmoData — Referenzen" />
-    <img class="extra" src="bilder/10-data-bauteile.png" alt="" />
+    <img class="haupt" src="bilder/01-zentrale.png" alt="Zentrale — neue Kacheln" />
+    <img class="extra" src="bilder/01-zentrale-hover.png" alt="" /><img class="extra" src="bilder/01-zentrale-info.png" alt="" />
   </div>
-  <p class="beschrieb">Referenz-Kanon, CH-Bauteilkatalog, Wissen, Training, Gedächtnis unter einem Dach. NEU heute Nacht: dieselbe lernende Oberflächen-Adaption wie in KosmoDesign — häufig Genutztes bleibt präsent, Ungenutztes tritt zurück; Schalter und Reset direkt in der Leiste.</p>
+  <p class="beschrieb">K12 umgesetzt: personalisierte Kacheln mit Tiefenlayer und Farbakzenten statt der flachen Liste. Hover auf eine Kachel zeigt die enthaltenen Werkzeuge (rechtes Extra-Bild), das Info-Icon öffnet ein erklärendes Panel (zweites Extra-Bild) — beides ohne die Kachel selbst zu öffnen.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -212,13 +78,209 @@
 
 <section class="seite">
   <header>
-    <h2>KosmoAsset — Materialien &amp; Objekte</h2>
+    <h2>Kosmo — Symbol statt Dauerchat <span class="neu">NEU</span></h2>
   </header>
   <div class="bildzeile">
-    <img class="haupt" src="bilder/11-asset-materialien.png" alt="KosmoAsset — Materialien &amp; Objekte" />
+    <img class="haupt" src="bilder/02-kosmo-symbol-mini.png" alt="Kosmo — Symbol statt Dauerchat" />
     
   </div>
-  <p class="beschrieb">3D-Objekte und PBR-Materialkarten mit Vorschau, Sammlungen und Verknüpfung zu Referenzen («Assets dieses Projekts»).</p>
+  <p class="beschrieb">K11 umgesetzt: Kosmo ist jetzt ein schwebendes Symbol, kein permanent offenes Panel mehr. Hover zeigt ein Mini-Popup mit der letzten Aktivität, ein Klick entfaltet bei Bedarf das grosse Panel. Der Zustand (offen/zu) merkt sich über einen Reload.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Einstellungs-Panel — zentral <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile mit-extra">
+    <img class="haupt" src="bilder/03-einstellungen.png" alt="Einstellungs-Panel — zentral" />
+    <img class="extra" src="bilder/03-einstellungen-neuigkeiten.png" alt="" /><img class="extra" src="bilder/03-einstellungen-leistung.png" alt="" />
+  </div>
+  <p class="beschrieb">K14 umgesetzt: EIN Panel für die ganze App (Kopfleiste ungefiltert, jede Station mit Stations-Filter). «Funktionen &amp; Neues» listet jetzt auch die 0.6.3-Punkte (mittleres Extra-Bild); die neue Leistungs-Sektion (rechtes Extra-Bild) prüft auf Zustimmung die echte Systemleistung und benennt offen, was HomeStation-Reste bleiben.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>KosmoDesign — Entwurfs-Dock, Fähigkeiten, Statusleiste <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile mit-extra">
+    <img class="haupt" src="bilder/04-design-uebersicht.png" alt="KosmoDesign — Entwurfs-Dock, Fähigkeiten, Statusleiste" />
+    <img class="extra" src="bilder/04-design-4er.png" alt="" />
+  </div>
+  <p class="beschrieb">K16/K17/K18 umgesetzt: links das Entwurfs-Dock (Sprechen · Skizzieren · CAD, dazu Sprünge zu Draw/Vis/Publish/Prepare), oben sechs Fähigkeits-Icons (Sonne, Volumenstudien, KV, Bauablauf, Mängel, Submissions-Check — die Sonnenstudie lebt jetzt hier statt auf einer eigenen Seite), unten eine Zero-Click-Statusleiste mit Werkzeug/Geschoss/LOD/Fläche/Teilphase. Der 4er-Splitscreen (Extra-Bild) bleibt unverändert nutzbar.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Plan-LOD — Detailstufe aus der Distanz <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile mit-extra paar">
+    <img class="haupt" src="bilder/05-plan-lod-voll.png" alt="Plan-LOD — Detailstufe aus der Distanz" />
+    <img class="extra" src="bilder/05-plan-lod-fern.png" alt="" />
+  </div>
+  <p class="beschrieb">Owner-Befund «Grundriss aus Distanz schlecht» umgesetzt: nah dran (links) zeigt Bemassung, 1m-Raster und Möbel; weit weg (rechts) verschwinden Bemassungstexte, Raster und Möbel — nur Poché und Öffnungssymbole (Fenster) bleiben immer sichtbar. Reine Anzeige-Umschaltung, der Plansatz-Export bleibt unverändert.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Skizzieren — drei Annäherungen <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/06-skizzieren-annaeherungen.png" alt="Skizzieren — drei Annäherungen" />
+    
+  </div>
+  <p class="beschrieb">K16 umgesetzt: ein Freihand-Strich im neuen Skizzieren-Modus ergibt am Übergabe-Moment drei Karten (u.a. eine orthogonalisierte Variante). Die gewählte Variante entsteht als EIN atomarer Undo-Schritt und landet als kuratierbarer Eintrag im Lernjournal — kein Live-Training.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Kosmo-Vorschlagskarte — mit Vorschau <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/07-kosmo-vorschlag-vorschau.png" alt="Kosmo-Vorschlagskarte — mit Vorschau" />
+    
+  </div>
+  <p class="beschrieb">K8/B1 umgesetzt: die Diff-Karte zeigt jetzt einen Vorher/Nachher-Mini-Grundriss (zwei SVGs) statt nur Text — ehrlich nur dort, wo die Vorschau tatsächlich berechenbar ist. Scheitert das probeweise Ausführen, bleibt die bisherige Textkarte ohne Absturz.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Phasen-Presets — Angebot, nie stumm <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/08-phasen-preset-banner.png" alt="Phasen-Presets — Angebot, nie stumm" />
+    
+  </div>
+  <p class="beschrieb">K18 umgesetzt: wechselt die SIA-Teilphase (hier auf «Bewilligung»), bietet Kosmo passende Fähigkeits-Icons als Fokus an (Banner). «Anwenden» hebt die vorgeschlagenen Icons hervor und dämpft den Rest optisch — nichts verschwindet aus dem DOM, «Nicht jetzt» lässt alles unverändert.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>KV-Grobschätzung — neu <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/09-kv-panel.png" alt="KV-Grobschätzung — neu" />
+    
+  </div>
+  <p class="beschrieb">Lücken-Batch 3 (K22): Richtwert-Kostenvoranschlag auf GF-Basis mit stets sichtbarem Ehrlichkeits-Hinweis («kein Devis, keine NPK-Positionen»). Kennwert-Änderungen wirken sofort, jede Änderung ist ein eigener Undo-Schritt.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Bauablaufplan — neu <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/10-bauablauf-panel.png" alt="Bauablaufplan — neu" />
+    
+  </div>
+  <p class="beschrieb">Lücken-Batch 4 (K22): abgeleiteter Grob-Terminplan mit fester Gewerke-Reihenfolge (Aushub … Abnahme), Export als druckfähiges SVG-Blatt. Ehrlichkeits-Hinweis «ersetzt keine Bauleitung» steht permanent im Panel.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Mängel &amp; Abnahme — neu <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/11-maengel-panel.png" alt="Mängel &amp; Abnahme — neu" />
+    
+  </div>
+  <p class="beschrieb">Lücken-Batch 5 (K22): erste Abschlussphase «Gebäudeabnahme» im Kernel. Mängel erfassen, Status umschalten, Abnahmeprotokoll als SVG exportieren — mit dem klaren Hinweis, dass dies kein rechtsgültiges SIA-118-Protokoll ersetzt.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Baugesuch-Blattsatz — neu <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/12-baugesuch.png" alt="Baugesuch-Blattsatz — neu" />
+    
+  </div>
+  <p class="beschrieb">Lücken-Batch 2 (K22): ein Klick erzeugt mehrere Blätter (Grundriss/Schnitt/Ausnützungsnachweis) plus ein Set «Baugesuch». Fehlende Grundlagen (z.B. kein Standort/keine Parzelle) werden als ehrliche Lücken-Meldung benannt statt eines stillen Teilerfolgs. EIN Undo räumt den ganzen Blattsatz wieder weg.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Blatt füllen — neu <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/13-blatt-fuellen.png" alt="Blatt füllen — neu" />
+    
+  </div>
+  <p class="beschrieb">K10 umgesetzt: «Blatt füllen» platziert Grundriss, Axonometrie, einen Kennzahlen-Textblock und einen Render-Platzhalter in einem atomaren Schritt und meldet ehrlich, was noch im Modell fehlt (z.B. kein Schnitt definiert). Ein Rückgängig entfernt alle Platzierungen auf einmal.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>KosmoVis — Automatik <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/14-vis-automatik.png" alt="KosmoVis — Automatik" />
+    
+  </div>
+  <p class="beschrieb">K20/A10 umgesetzt: «Kamera vorschlagen» legt einen Auto-Kamera-Node an und verbindet ihn mit jedem Render-Node, Cycles-Presets (z.B. «Präsentation») wählen Auflösung/Sonnenstand direkt am Node. Der Fake-Render-Job bestätigt die gewählten Werte.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Materialbibliothek — Würfel-Vorschau <span class="neu">NEU</span></h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/15-material-wuerfel.png" alt="Materialbibliothek — Würfel-Vorschau" />
+    
+  </div>
+  <p class="beschrieb">K21 Stufe 1 umgesetzt: jedes Material zeigt jetzt einen 3D-Würfel (echte Canvas-Vorschau), echte Dimensionen (z.B. Backstein NF 250×120×65 mm) und eine Pflicht-Quelle — «Quelle unbelegt (Altbestand)» bei den mitgelieferten Referenzen, Pflichtfeld bei eigenen Einträgen.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>KosmoData — Referenzen &amp; Bauteile</h2>
+  </header>
+  <div class="bildzeile mit-extra">
+    <img class="haupt" src="bilder/16-data-referenzen.png" alt="KosmoData — Referenzen &amp; Bauteile" />
+    <img class="extra" src="bilder/16-data-bauteile.png" alt="" />
+  </div>
+  <p class="beschrieb">Referenz-Kanon, CH-Bauteilkatalog, Wissen, Training und Gedächtnis unter einem Dach — diese Runde unverändert, die lernende Oberflächen-Adaption aus 0.6.1 bleibt aktiv.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -229,10 +291,10 @@
     <h2>KosmoDev — Auftragsbuch</h2>
   </header>
   <div class="bildzeile">
-    <img class="haupt" src="bilder/12-dev-auftragsbuch.png" alt="KosmoDev — Auftragsbuch" />
+    <img class="haupt" src="bilder/17-dev-auftragsbuch.png" alt="KosmoDev — Auftragsbuch" />
     
   </div>
-  <p class="beschrieb">Deine Aufträge an die Software-Werkstatt: erfassen, priorisieren, als Workorder exportieren. Genau hier landen auch deine Notizen aus diesem PDF.</p>
+  <p class="beschrieb">Deine Aufträge an die Software-Werkstatt: erfassen, priorisieren, als Workorder exportieren. Genau hier landen auch deine Notizen aus diesem PDF — unverändert diese Runde.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -243,10 +305,10 @@
     <h2>KosmoPrepare / KosmoDoc / KosmoTrain</h2>
   </header>
   <div class="bildzeile mit-extra">
-    <img class="haupt" src="bilder/13-prepare.png" alt="KosmoPrepare / KosmoDoc / KosmoTrain" />
-    <img class="extra" src="bilder/14-doc.png" alt="" /><img class="extra" src="bilder/15-train.png" alt="" />
+    <img class="haupt" src="bilder/18-prepare.png" alt="KosmoPrepare / KosmoDoc / KosmoTrain" />
+    <img class="extra" src="bilder/18-doc.png" alt="" /><img class="extra" src="bilder/18-train.png" alt="" />
   </div>
-  <p class="beschrieb">Wissens-Ingest (OneDrive-Lesen), Diagnose/Hilfe/Berichte und Kosmos Lernstand mit Kuration — die drei Stationen rund um Wissen und Lernen.</p>
+  <p class="beschrieb">Wissens-Ingest, Diagnose/Hilfe/Berichte und Kosmos Lernstand mit Kuration — unverändert diese Runde.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -257,10 +319,10 @@
     <h2>KosmoDraw — Modellbaum · Mengen · Ausmass</h2>
   </header>
   <div class="bildzeile mit-extra">
-    <img class="haupt" src="bilder/16-draw.png" alt="KosmoDraw — Modellbaum · Mengen · Ausmass" />
-    <img class="extra" src="bilder/17-sketch.png" alt="" />
+    <img class="haupt" src="bilder/19-draw.png" alt="KosmoDraw — Modellbaum · Mengen · Ausmass" />
+    <img class="extra" src="bilder/19-sketch.png" alt="" />
   </div>
-  <p class="beschrieb">Mengen, Ausmass und Berechnungsliste aus dem Modell; daneben KosmoSketch fürs freie Zeichnen (Pencil → BIM).</p>
+  <p class="beschrieb">Mengen, Ausmass und Berechnungsliste aus dem Modell; daneben KosmoSketch fürs freie Zeichnen — unverändert diese Runde.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -268,13 +330,13 @@
 
 <section class="seite">
   <header>
-    <h2>App deinstallieren — neuer Menüpunkt <span class="neu">NEU</span></h2>
+    <h2>Umbau — Bestand / Abbruch / Neu</h2>
   </header>
   <div class="bildzeile">
-    <img class="haupt" src="bilder/22-deinstallieren.png" alt="App deinstallieren — neuer Menüpunkt" />
+    <img class="haupt" src="bilder/20-umbau-werkplan.png" alt="Umbau — Bestand / Abbruch / Neu" />
     
   </div>
-  <p class="beschrieb">Neu in der Kopfleiste: «Deinstallieren…» öffnet die ehrliche OS-Anleitung (die App kann sich nicht selbst deinstallieren) mit Link auf die Website — dort gibt es jetzt auch den Download-Bereich mit allen Editionen (live nach Merge auf main).</p>
+  <p class="beschrieb">Bestand einheitlich grau, kein Diagonalkreuz, SIA-saubere Umbau-Blätter — aus 0.6.2, unverändert diese Runde.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
@@ -282,13 +344,55 @@
 
 <section class="seite">
   <header>
-    <h2>Umbau — Bestand / Abbruch / Neu <span class="neu">NEU</span></h2>
+    <h2>Volumenstudien — Zonenregel-gespeist</h2>
   </header>
   <div class="bildzeile">
-    <img class="haupt" src="bilder/18-umbau-werkplan.png" alt="Umbau — Bestand / Abbruch / Neu" />
+    <img class="haupt" src="bilder/21-studien-panel.png" alt="Volumenstudien — Zonenregel-gespeist" />
     
   </div>
-  <p class="beschrieb">Dein S.18-Befund umgesetzt: kein Diagonalkreuz mehr in der Abbruchwand, Bestand einheitlich grau über alle Schichten, und Umbau-Blätter drucken keine Raster-Achslinien mehr — SIA-sauber.</p>
+  <p class="beschrieb">Zonenregel speist die Studie, Geschosshöhe mit Herkunft, Besonnungs-Richtwert und Raumprogramm-Erfüllung je Extremvariante — aus 0.6.1/0.6.2, unverändert diese Runde.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Grundlagenstudie-Bericht</h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/22-bericht.svg" alt="Grundlagenstudie-Bericht" />
+    
+  </div>
+  <p class="beschrieb">Empfehlung mit Begründung zuerst, dann die Vergleichstabelle mit echten Zahlen, dann die Grenzen der Studie als eigener Block — aus 0.6.2, unverändert diese Runde.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>Unternehmerplan — ehrlicher PDF-Pfad</h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/23-unternehmerplan-pdf.png" alt="Unternehmerplan — ehrlicher PDF-Pfad" />
+    
+  </div>
+  <p class="beschrieb">Datei ins Fenster ziehen genügt; ein hochgeladenes PDF wird ehrlich erkannt statt in den DXF-Import zu laufen — aus 0.6.1/0.6.2, unverändert diese Runde.</p>
+  <div class="notiz">
+    <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
+  </div>
+</section>
+
+<section class="seite">
+  <header>
+    <h2>App deinstallieren</h2>
+  </header>
+  <div class="bildzeile">
+    <img class="haupt" src="bilder/24-deinstallieren.png" alt="App deinstallieren" />
+    
+  </div>
+  <p class="beschrieb">«Deinstallieren…» in der Kopfleiste öffnet die ehrliche OS-Anleitung — aus 0.6.2, unverändert diese Runde.</p>
   <div class="notiz">
     <div class="notiz-label">✍️ Verbesserungen / Befunde:</div>
   </div>
