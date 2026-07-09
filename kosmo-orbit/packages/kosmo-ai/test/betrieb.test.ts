@@ -43,10 +43,11 @@ describe('Betriebsart → Konfiguration', () => {
     expect(k.cloudModell).toBe(CLOUD_MODELL_MIN);
   });
 
-  it('cloud hebt ein zu schwaches Modell auf Opus 4.8 an, lässt Opus/Eigenes stehen', () => {
-    expect(betriebKonfig({ betriebsart: 'cloud', cloudModell: 'claude-haiku-4-5-20251001' }).cloudModell).toBe(CLOUD_MODELL_MIN);
-    expect(betriebKonfig({ betriebsart: 'cloud', cloudModell: 'claude-sonnet-5' }).cloudModell).toBe(CLOUD_MODELL_MIN);
+  it('cloud respektiert die explizite Modellwahl (v0.6.4/F1) — nur leer fällt auf Opus 4.8 zurück', () => {
+    expect(betriebKonfig({ betriebsart: 'cloud', cloudModell: 'claude-haiku-4-5-20251001' }).cloudModell).toBe('claude-haiku-4-5-20251001');
+    expect(betriebKonfig({ betriebsart: 'cloud', cloudModell: 'claude-sonnet-5' }).cloudModell).toBe('claude-sonnet-5');
     expect(betriebKonfig({ betriebsart: 'cloud', cloudModell: 'claude-opus-4-8' }).cloudModell).toBe('claude-opus-4-8');
+    expect(betriebKonfig({ betriebsart: 'cloud' }).cloudModell).toBe(CLOUD_MODELL_MIN);
   });
 });
 
@@ -163,16 +164,18 @@ describe('lizenzHinweis (Serie I / Batch B6 — additiv, Default unverändert)',
   });
 });
 
-describe('mindestensOpus', () => {
-  it('leer → Opus 4.8', () => {
+describe('mindestensOpus — v0.6.4/F1: Vorgabe statt stiller Anhebung', () => {
+  it('leer → Opus 4.8 (Guideline-Vorgabe)', () => {
     expect(mindestensOpus()).toBe(CLOUD_MODELL_MIN);
     expect(mindestensOpus('')).toBe(CLOUD_MODELL_MIN);
+    expect(mindestensOpus('  ')).toBe(CLOUD_MODELL_MIN);
   });
-  it('schwache Stufen werden angehoben', () => {
-    expect(mindestensOpus('claude-haiku-4-5-20251001')).toBe(CLOUD_MODELL_MIN);
-    expect(mindestensOpus('claude-sonnet-5')).toBe(CLOUD_MODELL_MIN);
+  it('die EXPLIZITE Owner-Wahl bleibt unangetastet — auch Sonnet/Haiku (F1-Regression: die alte Anhebung machte die Modellwahl wirkungslos)', () => {
+    expect(mindestensOpus('claude-haiku-4-5-20251001')).toBe('claude-haiku-4-5-20251001');
+    expect(mindestensOpus('claude-sonnet-5')).toBe('claude-sonnet-5');
   });
-  it('Opus bleibt', () => {
+  it('Opus/eigene IDs bleiben (getrimmt)', () => {
     expect(mindestensOpus('claude-opus-4-8')).toBe('claude-opus-4-8');
+    expect(mindestensOpus(' mein-eigenes-modell ')).toBe('mein-eigenes-modell');
   });
 });

@@ -88,10 +88,22 @@ test('Materialbibliothek K21: eigenes Material — Quelle ist Pflicht (Validieru
   await expect(karte).toContainText('Muster-Klinker Nordfassade');
   await expect(karte).toContainText('Musterlieferant AG');
 
-  // Detail des eigenen Eintrags zeigt ebenfalls den Würfel (Canvas).
-  await karte.click();
+  // v0.6.4-Korrektur: Speichern wählt das neue Material AUTOMATISCH an
+  // (`materialAbsenden` → `setSelectedErfasstId`, B4) — das Detail mit dem
+  // Würfel steht also OHNE weiteren Klick offen. Der frühere `karte.click()`
+  // an dieser Stelle traf das bereits gewählte Material und SCHLOSS das
+  // Detail wieder (Toggle) — der Spec prüfte damit das Gegenteil des
+  // gewollten Verhaltens.
   const detail = page.locator('[data-testid="material-erfasst-detail"]');
   await expect(detail).toBeVisible();
   await expect(detail.locator('[data-testid="material-wuerfel"]')).toBeVisible();
   await expect(detail).toContainText('Musterlieferant AG');
+
+  // Toggle-Vertrag: Klick auf die gewählte Karte schliesst das Detail,
+  // erneuter Klick öffnet es wieder (inkl. Würfel-Canvas).
+  await karte.click();
+  await expect(detail).toHaveCount(0);
+  await karte.click();
+  await expect(detail).toBeVisible();
+  await expect(detail.locator('canvas')).toHaveCount(1);
 });

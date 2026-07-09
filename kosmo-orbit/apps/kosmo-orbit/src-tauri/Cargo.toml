@@ -1,6 +1,6 @@
 [package]
 name = "kosmo-orbit"
-version = "0.6.3"
+version = "0.6.4"
 description = "KosmoOrbit — die Architektur-Designzentrale"
 authors = ["Imperigo"]
 edition = "2021"

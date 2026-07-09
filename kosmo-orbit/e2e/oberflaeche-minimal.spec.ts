@@ -68,11 +68,13 @@ test('Icon-Werkzeuge: aria-label vorhanden, Wand zeichnen funktioniert über den
 
   // Die vier umgestellten Werkzeuge tragen Icon (SVG) + aria-label, keinen
   // sichtbaren Text mehr — die data-testid bleibt exakt wie vorher.
+  // v0.6.4/F5: die aria-labels tragen die Kurztaste mit («Auswahl (A)») —
+  // der Kürzel-Hinweis ist Teil des Vertrags, Screenreader lesen ihn mit.
   for (const [id, label] of [
-    ['auswahl', 'Auswahl'],
-    ['wand', 'Wand'],
-    ['volumen', 'Volumen'],
-    ['zone', 'Zone'],
+    ['auswahl', 'Auswahl (A)'],
+    ['wand', 'Wand (W)'],
+    ['volumen', 'Volumen (V)'],
+    ['zone', 'Zone (Z)'],
   ] as const) {
     const knopf = page.locator(`[data-testid="tool-${id}"]`);
     await expect(knopf).toHaveAttribute('aria-label', label);

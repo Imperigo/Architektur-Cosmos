@@ -134,13 +134,21 @@ export function bereinigeHost(roh: string): string {
   return h;
 }
 
-/** Hebt ein zu schwaches Cloud-Modell auf das Minimum Opus 4.8 an. */
+/**
+ * Cloud-Modell mit Vorgabe: leer → Opus 4.8 (Qualitäts-VORGABE aus der
+ * KI-Modell-Guideline), eine EXPLIZITE Wahl bleibt unangetastet.
+ *
+ * v0.6.4 / F1 (Owner wörtlich: «zudem möchte ich das man das modell von
+ * claude auswählen kann»): bis 0.6.3 hob diese Funktion Haiku/Sonnet STILL
+ * auf Opus an — das machte die neue Modellwahl im Kosmo-Panel wirkungslos,
+ * sobald die Betriebsart Cloud erneut gesetzt wurde (der Wechsel läuft über
+ * betriebKonfig und überschrieb die Wahl beim nächsten Klick/Reload-Pfad).
+ * Die Owner-Entscheidung schlägt die alte stille Politik: gewählt ist
+ * gewählt; die Guideline bleibt als Default für den Leer-Fall.
+ */
 export function mindestensOpus(modell?: string): string {
-  const m = (modell ?? '').trim().toLowerCase();
-  if (!m) return CLOUD_MODELL_MIN;
-  // Schwächere Stufen (Haiku/Sonnet) auf den Boden anheben; Opus/eigenes lassen.
-  if (m.includes('haiku') || m.includes('sonnet')) return CLOUD_MODELL_MIN;
-  return (modell as string).trim();
+  const m = (modell ?? '').trim();
+  return m === '' ? CLOUD_MODELL_MIN : m;
 }
 
 /** Betriebsart → konkrete Adressen. Rein, ohne Seiteneffekt. */
