@@ -423,7 +423,11 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               Akzent-Eckpunkt (KdKarte-Muster, `DataWorkspace.tsx`
               `.k-orbit-mitte`-Nachbar) statt Füllung: aktiv/besonders
               ≠ gefüllt. */}
-          <span style={{ position: 'relative', display: 'inline-block' }}>
+          {/* Kritik-Runde 2: als Grid-Kind wurde der Span auf volle Spalten-
+              breite gestreckt — der absolute Akzent-Eckpunkt sass dadurch frei
+              schwebend am rechten Panelrand statt an der Knopfecke.
+              justifySelf begrenzt den Span auf die Knopfbreite. */}
+          <span style={{ position: 'relative', display: 'inline-block', justifySelf: 'start' }}>
             <KButton
               size="sm"
               tone="quiet"

@@ -48,16 +48,14 @@
      Respektabstand — kein 440px-Loch mehr über dem Ring. `:has()` wird von
      der Chromium-Version dieses Repos unterstützt (Playwright-Suite lief
      grün, siehe Bericht). */
-  padding-top: var(--k-s7);
-  transition: padding-top var(--k-motion-base);
-}
-.orbit065-home-rechts:has([data-testid='orbit-faecher-design'].offen) {
+  /* Kritik-Runde-2-Korrektur: die bedingte Reserve (nur bei offenem Fächer)
+     liess beim Hover das GANZE Layout um 408px springen — Fächer öffnet,
+     Padding erscheint, die Karte flieht unter dem Zeiger weg, Fächer schliesst,
+     alles springt zurück (Oszillation; bei 1920px landete die Karte unter der
+     Kopfleiste). «Papier flattert nicht»: die Reserve ist wieder STATISCH.
+     Der tote Raum im Ruhezustand ist als 0.6.6-Befund dokumentiert (richtige
+     Lösung: Öffnungsrichtung des oben-Fächers, nicht Layout-Verschiebung). */
   padding-top: 440px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .orbit065-home-rechts {
-    transition: none;
-  }
 }
 @media (max-width: 860px) {
   .orbit065-home-grid {

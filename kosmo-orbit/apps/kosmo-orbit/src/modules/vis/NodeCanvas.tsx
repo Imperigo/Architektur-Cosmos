@@ -664,7 +664,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                       setPending(null);
                     }}
                   />
-                  <text x={10} y={y + 3.5} fontSize={10} fill="var(--k-ink-soft)">{p.label}</text>
+                  <text x={10} y={y + 3.5} fontSize={10} fill="var(--k-ink)">{p.label}</text>
                 </g>
               );
             })}
@@ -688,7 +688,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                       setPending({ from: n.id, fromPort: p.name, typ: p.typ, x: pos.x, y: pos.y });
                     }}
                   />
-                  <text x={NODE_W - 10} y={y + 3.5} fontSize={10} textAnchor="end" fill="var(--k-ink-soft)">{p.label}</text>
+                  <text x={NODE_W - 10} y={y + 3.5} fontSize={10} textAnchor="end" fill="var(--k-ink)">{p.label}</text>
                 </g>
               );
             })}

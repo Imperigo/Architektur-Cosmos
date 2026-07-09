@@ -891,6 +891,16 @@ progress {
   overflow-y: auto;
   min-height: 0;
 }
+/* Kritik-Runde 2: der 8px-Daumen in --k-line-strong war auf --k-raised
+   praktisch unsichtbar — Inhalt wirkte hart abgeschnitten, ohne Hinweis,
+   dass darunter mehr liegt. Im Dialog-Körper trägt der Daumen darum den
+   helleren faint-Ton (beide Themes deutlich sichtbar, Track bleibt still). */
+.k-dialog-koerper::-webkit-scrollbar-thumb {
+  background: var(--k-ink-faint);
+}
+.k-dialog-koerper {
+  scrollbar-color: var(--k-ink-faint) transparent;
+}
 .k-dialog-fuss {
   display: flex;
   justify-content: flex-end;
