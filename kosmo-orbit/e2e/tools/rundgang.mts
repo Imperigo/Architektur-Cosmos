@@ -1,18 +1,23 @@
 /**
- * Rundgang-Screenshots «0.6.4» (Owner-Auftrag 09.07.) — Teil 1.
+ * Rundgang-Screenshots «0.6.5» (Fable-Intelligenz-Tag, 09.07.) — Teil 1.
  * Wie `handbuch.mts` (V1-Finish P6), aber für das Kommentier-PDF
  * `rundgang-pdf.mts`: fährt alle Stationen deterministisch ab. Diese Runde
- * hat die 0.6.4-Testbefunde des Owners umgesetzt (siehe
- * `apps/kosmo-orbit/src/shell/neuigkeiten.ts`, Version 0.6.4): das neue
- * Orbit-Startmenü ersetzt die alte Zentrale-Kachel-Ansicht (4 Hauptwerkzeuge
- * kreisen um das Kosmos-Zeichen, Hover/Klick zeigt den Fächer), Element-Fang
- * und Masszahl-am-Cursor beim Zeichnen (F4/F5), Werkzeug-Kurztasten + «?»-
- * Übersicht, KosmoVis-Auto-Fit, KosmoData-Offline-Ehrlichkeit, wählbares
- * Claude-Modell, Tech-Radar in KosmoDoc, und Deinstallieren/Farbpalette
- * ausschliesslich in den Einstellungen (F2, Sektion «System»). Jede Station
- * steuert exakt die `data-testid`-Selektoren an, die in den zugehörigen
- * E2E-Specs bewiesen sind (siehe Kommentar je Block). Bilder →
- * docs/rundgang/bilder/.
+ * ist die UI/UX-Gesamtüberarbeitung (siehe
+ * `apps/kosmo-orbit/src/shell/neuigkeiten.ts`, Version 0.6.5, und
+ * `docs/UI-SELBSTKRITIK-065.md`): eine Zeichen-Bibliothek mit 30 Tusche-Icons
+ * ersetzt die Emoji-Bedienelemente, KosmoVis bekam Kategorie-Zeichen,
+ * Zoom-Leiste mit «Einpassen», Porttyp-Legende und das V-H4-Formular im
+ * Render-Node (Fassade/Szene/Jahreszeit/Personen), der KosmoDesign-Kopf
+ * schrumpfte von drei gestapelten Zeilen auf EINE Hauptzeile + Kontextzeile
+ * (Export als aufklappbare Gruppe), die Zentrale trägt die Werkzeug-Namen
+ * unter den Kreisen und Fächer aus Karteikarten, KosmoData zeigt gezeichnete
+ * Leerbild-Signete, die Einstellungen haben Kopf/Schliessen-Zeichen/
+ * sichtbaren Scrollbalken. Strukturfolgen fürs Skript: `load-tkb` landet
+ * DIREKT in KosmoDesign (kein module-design-Klick danach), Einstellungen
+ * öffnen über `einstellungen-oeffnen` + hartes Warten auf
+ * `einstellungen-panel` (Lehre aus Kritik-Befund A11). Jede Station steuert
+ * exakt die `data-testid`-Selektoren an, die in den zugehörigen E2E-Specs
+ * bewiesen sind (siehe Kommentar je Block). Bilder → docs/rundgang/bilder/.
  * Voraussetzungen: Preview :5183, Fake-Bridge :8600, Sync-Server :8700
  * (überschreibbar über RUNDGANG_URL).
  */
@@ -91,11 +96,11 @@ await shot('00-erste-start-frage');
 // Frage sauber wegklicken («Nein»), damit nichts in den Folgeschritt bricht.
 await page.click('[data-testid="erste-start-nein"]');
 
-// ── 01 NEU (0.6.4, F3): Orbit-Startmenü — Ruhezustand + offener Fächer ──
-// Muster `orbit-start.spec.ts`: löst die alte Kachel-Zentrale ab. Die 4
-// Hauptwerkzeuge (KosmoDesign/KosmoData/Kosmo/KosmoOffice) kreisen ganz
-// langsam im Kreis um das Kosmos-Zeichen; Hover auf ein Hauptwerkzeug öffnet
-// den Fächer mit den Untertools (Titel + Kurzbeschrieb je Kachel).
+// ── 01 Orbit-Startmenü — Ruhezustand + offener Fächer (0.6.5 aufgeräumt) ──
+// Muster `orbit-start.spec.ts` + `orbit-faecher.spec.ts`. NEU 0.6.5: die
+// Werkzeug-Namen sitzen UNTER den Kreisen statt darin (Kritik-Befund A6:
+// Labels schnitten den Kreisrand), der Fächer besteht aus echten
+// Karteikarten, Katalog sichern/laden sind klare Knöpfe.
 await frisch(false);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('home'));
 await page.waitForSelector('[data-testid="orbit-start"]');
@@ -122,14 +127,16 @@ await kosmoSymbol.hover();
 await page.waitForSelector('[data-testid="kosmo-mini"]');
 await shot('02-kosmo-symbol-mini', 400);
 
-// ── 03 NEU: Einstellungs-Panel — Funktionen & Neues (0.6.4) + Leistung ──
-// Muster `einstellungen.spec.ts` + `leistung.spec.ts`. Der 0.6.4-Eintrag
-// steht in `NEUIGKEITEN` jetzt zuoberst (neuster zuerst).
+// ── 03 NEU (0.6.5): Einstellungs-Panel — gestalteter Kopf, Schliessen-
+//    Zeichen, sichtbarer Scrollbalken; «Funktionen & Neues» mit 0.6.5 oben ──
+// Muster `einstellungen.spec.ts` + `leistung.spec.ts`. Öffnen IMMER über
+// `einstellungen-oeffnen` + hartes Warten auf `einstellungen-panel`
+// (Kritik-Befund A11: blindes Fotografieren lieferte ein Data-Duplikat).
 await frisch(false);
 await page.click('[data-testid="einstellungen-oeffnen"]');
 await page.waitForSelector('[data-testid="einstellungen-panel"]');
 await shot('03-einstellungen', 400);
-await page.locator('[data-testid="neuigkeiten-version-0.6.4"]').scrollIntoViewIfNeeded();
+await page.locator('[data-testid="neuigkeiten-version-0.6.5"]').scrollIntoViewIfNeeded();
 await shot('03-einstellungen-neuigkeiten', 400);
 await page.locator('[data-testid="einstellungen-leistung"]').scrollIntoViewIfNeeded();
 await shot('03-einstellungen-leistung', 400);
@@ -150,10 +157,17 @@ await page.waitForSelector('[data-testid="kurzbefehle"]');
 await shot('04-kurztasten-uebersicht', 500);
 await page.keyboard.press('Escape');
 
-// ── 05 NEU: KosmoDesign — Entwurfs-Dock + Fähigkeiten-Zeile + Statusleiste ──
-// Muster `faehigkeiten-phasen.spec.ts` + `entwurfs-icons.spec.ts`.
+// ── 05 NEU (0.6.5): KosmoDesign — entrümpelter Kopf: EINE Hauptzeile +
+//    Kontextzeile (drei gestapelte Zeilen sind Geschichte), Export als
+//    aufklappbare Gruppe (`export-menu-toggle`, Default offen), Geschoss-
+//    leiste als gerahmte Karte; dazu Entwurfs-Dock + Statusleiste ──────────
+// Muster `faehigkeiten-phasen.spec.ts` + `entwurfs-icons.spec.ts` +
+// `werkzeugleiste.spec.ts`.
 await frisch(true); // TKB geladen — load-tkb landet bereits in KosmoDesign
 await page.waitForSelector('[data-testid="entwurf-dock"]');
+await page.waitForSelector('[data-testid="design-werkzeugleiste-haupt"]');
+await page.waitForSelector('[data-testid="design-werkzeugleiste-kontext"]');
+await page.waitForSelector('[data-testid="export-menu-toggle"]');
 await page.waitForSelector('[data-testid="leiste-gruppe-faehigkeiten"]');
 await shot('05-design-uebersicht', 1000);
 await page.click('[data-testid="view-quad"]');
@@ -404,13 +418,23 @@ await page.click('[data-testid="blatt-fuellen"]');
 await page.waitForSelector('[data-testid="meldung-info"]');
 await shot('16-blatt-fuellen', 700);
 
-// ── 17 NEU: Vis-Automatik — Auto-Kamera + Cycles-Preset + Fake-Render ───
-// Muster `vis-automatik.spec.ts`.
+// ── 17 NEU (0.6.5): KosmoVis neu gedacht — Graph nach «+ Drei Stimmungen»:
+//    Nodes mit Kategorie-Zeichen und Farbton, Zoom-Leiste (vis-zoom-minus/
+//    fit/plus), Porttyp-Legende (vis-legende), V-H4-Formular im Render-Node
+//    (Fassade/Szene/Jahreszeit/Personen, sichtbarer finaler Prompt) ────────
+// Muster `visgraph.spec.ts` + `vis-automatik.spec.ts`.
 await frisch(true);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('vis'));
 await page.waitForSelector('[data-testid="tab-graph"]');
 await page.click('[data-testid="drei-stimmungen"]');
 await page.waitForSelector('[data-testid="vis-node-render"]');
+// Erst der reine Graph-Zustand: Zoom-Leiste, Legende, Kategorie-Icons und
+// das V-H4-Formular der drei Render-Nodes sind im Bild.
+await page.waitForSelector('[data-testid="vis-zoom-fit"]');
+await page.waitForSelector('[data-testid="vis-legende"]');
+await page.waitForSelector('[data-testid="render-formular"]');
+await page.click('[data-testid="vis-zoom-fit"]');
+await shot('17-vis-graph', 800);
 await page.click('[data-testid="vis-auto-kamera"]');
 await page.waitForSelector('[data-testid="vis-node-kamera"]');
 const ersterRenderNode = page.locator('[data-testid="vis-node-render"]').first();
@@ -429,27 +453,30 @@ await page.waitForSelector('[data-testid="material-detail"] canvas');
 await page.locator('[data-testid="material-detail"]').scrollIntoViewIfNeeded();
 await shot('18-material-wuerfel', 600);
 
-// ── 19 KosmoData (Referenzen/Bauteile) + NEU 0.6.4: ehrlicher Offline-
-//    Badge («Offline — eingebaute Referenzdaten» statt «Offline-Seed») ──
+// ── 19 KosmoData (Referenzen/Bauteile) + NEU 0.6.5: gezeichnete Leerbild-
+//    Signete («kein Bild hinterlegt») auf allen fotolosen Karten, Karten
+//    heben sich über Linienstärke statt Schatten (Kritik-Befund A8) ──────
 await frisch(true);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('data'));
 await page.waitForSelector('[data-testid="ref-card"]');
+await page.waitForSelector('[data-testid="karte-leerbild"]');
 await page.locator('[data-testid="data-sync-badge"]').scrollIntoViewIfNeeded();
 await shot('19-data-referenzen', 800);
 await page.click('[data-testid="tab-bauteile"]');
 await shot('19-data-bauteile', 500);
 
-// ── 20 KosmoDev: Auftragsbuch — unverändert diese Runde ────────────────
+// ── 20 KosmoDev: Auftragsbuch — 0.6.5: auf die gemeinsame Formensprache
+//    gebracht (ein Primärknopf, gruppierte Werkzeugzeile), Funktion gleich ─
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('dev'));
 await page.fill('[data-testid="auftrag-text"]', 'Türanschläge im Grundriss wählbar machen — Werkzeugleiste KosmoDesign');
 await page.click('[data-testid="auftrag-erfassen"]');
 await page.waitForSelector('[data-testid="auftrag-karte"]');
 await shot('20-dev-auftragsbuch', 500);
 
-// ── 21 Prepare / Doc (+ NEU 0.6.4: Tech-Radar) / Train ──────────────────
-// Doc-Grundansicht unverändert diese Runde; der vierte Tab «Tech-Radar»
-// (Muster `tech-radar.spec.ts`) ist neu — kuratierte Posten, Scan-Einträge
-// ehrlich mit ⚠ markiert.
+// ── 21 Prepare / Doc (Tech-Radar aus 0.6.4) / Train ─────────────────────
+// 0.6.5: alle drei auf die gemeinsame Formensprache gebracht (Primärknopf,
+// gezeichnete Leerzustände, gruppierte Werkzeugzeilen); Tech-Radar-Inhalt
+// (Muster `tech-radar.spec.ts`) unverändert aus 0.6.4.
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('prepare'));
 await shot('21-prepare', 800);
 await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('doc'));
@@ -557,6 +584,7 @@ await shot('27-claude-modell', 400);
 //    siehe Block 03) — beides «eine Funktion, ein Ort» ────────────────
 await frisch(false);
 await page.click('[data-testid="einstellungen-oeffnen"]');
+await page.waitForSelector('[data-testid="einstellungen-panel"]');
 await page.click('[data-testid="einstellung-deinstallieren"]');
 await page.waitForSelector('[role="dialog"]');
 await shot('28-deinstallieren', 500);
