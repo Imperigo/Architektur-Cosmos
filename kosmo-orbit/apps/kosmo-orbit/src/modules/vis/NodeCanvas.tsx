@@ -314,16 +314,33 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
       onPointerDown={(e) => {
         if (e.target === svgRef.current) {
           panning.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy };
-          (e.target as Element).setPointerCapture(e.pointerId);
+          // Wie beim Node-Kopf-Griff (unten) mit `?.` statt blankem Aufruf:
+          // ein zwischenzeitlich schon abgelaufener/losgelassener Pointer
+          // (schnelle Klickfolge, manche Browser/Webviews) darf das Pannen
+          // selbst nicht zum Fehler machen — die Position tracken wir ohnehin
+          // per pointermove auf dem svg, Capture ist nur die Komfort-Zugabe.
+          (e.target as Element).setPointerCapture?.(e.pointerId);
           setAuswahlEdge(null);
         }
       }}
       onPointerMove={(e) => {
-        if (panning.current) {
+        // F6 (v0.6.4): NICHT panning.current im setView-Updater lesen — die
+        // Updater-Funktion läuft erst, wenn React den Zustand tatsächlich
+        // verarbeitet, was NACH diesem Event liegen kann. Feuert dazwischen
+        // ein pointerup (setzt panning.current = null, z.B. bei einem
+        // schnellen Los-/Klick-Ende), lesen ältere, noch nicht geflushte
+        // pointermove-Updater den Ref dann als null — «Cannot read properties
+        // of null (reading 'cx')», von der KFehlerzone gefangen (Owner-Befund
+        // F6: Absturz beim Pannen des Node-Trees). Fix: den Anfangszustand
+        // JETZT in eine lokale Konstante schnappen — die bleibt stabil, ganz
+        // gleich, was mit dem Ref danach passiert.
+        const anfang = panning.current;
+        if (anfang) {
+          const { clientX, clientY } = e;
           setView((v) => ({
             ...v,
-            cx: panning.current!.cx - (e.clientX - panning.current!.x) / view.scale,
-            cy: panning.current!.cy - (e.clientY - panning.current!.y) / view.scale,
+            cx: anfang.cx - (clientX - anfang.x) / view.scale,
+            cy: anfang.cy - (clientY - anfang.y) / view.scale,
           }));
           return;
         }

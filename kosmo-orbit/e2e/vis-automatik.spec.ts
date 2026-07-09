@@ -93,3 +93,76 @@ test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-
 
   await page.screenshot({ path: 'e2e-results/vis-automatik.png' });
 });
+
+/**
+ * v0.6.4 / F6 — Owner-Befund (Live-Test 0.6.3-Desktop): «KosmoVis ist auf
+ * einen Fehler gelaufen» beim Pannen des Node-Trees, NACH «Kamera
+ * vorschlagen» (A10-Kamera-Node im Graph). Ursache und Fix siehe
+ * e2e/visgraph.spec.ts (NodeCanvas.tsx onPointerMove: `panning.current`
+ * wurde lazy im setView-Updater gelesen statt beim Event geschnappt — ein
+ * dazwischenfeuerndes pointerup konnte den Ref auf null setzen, bevor der
+ * Updater lief). Dieser Test stellt dieselbe Nachstellung an, aber MIT dem
+ * Auto-Kamera-Node im Graph (der Verdacht des Owner-Befunds: die neue
+ * Node-Art als Renderer-Sonderfall) — Repro + Regression zugleich.
+ */
+test('F6: Pannen nach «Kamera vorschlagen» stürzt nicht ab (Maus-Pan + synchrone Race)', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.click('[data-testid="load-tkb"]');
+  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  await page.evaluate(() => window.__kosmo.open('vis'));
+  await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
+
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
+  await page.click('[data-testid="vis-auto-kamera"]');
+  await expect(page.locator('[data-testid="vis-node-kamera"]')).toHaveCount(1);
+
+  const canvas = page.locator('[data-testid="node-canvas"]');
+  const box = (await canvas.boundingBox())!;
+
+  // Alltags-Geste: Maus-Pan + Wheel.
+  await page.mouse.move(box.x + box.width * 0.85, box.y + box.height * 0.85);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.5, { steps: 10 });
+  await page.mouse.up();
+  await page.mouse.wheel(0, -300);
+  await expect(page.locator('[data-testid="fehlerzone"]')).toHaveCount(0);
+
+  // Deterministische Nachstellung der Race (siehe visgraph.spec.ts) — mit
+  // dem Auto-Kamera-Node im Graph, exakt die vom Owner-Befund benannte
+  // Konstellation (A10-Kamera-Node + Pan).
+  const consoleErrors: string[] = [];
+  page.on('pageerror', (e) => consoleErrors.push(e.message));
+  await page.evaluate(() => {
+    const svg = document.querySelector('[data-testid="node-canvas"]') as SVGSVGElement;
+    const rect = svg.getBoundingClientRect();
+    const cx = rect.left + rect.width * 0.8;
+    const cy = rect.top + rect.height * 0.8;
+    const fire = (type: string, x: number, y: number) => {
+      svg.dispatchEvent(
+        new PointerEvent(type, {
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+          clientX: x,
+          clientY: y,
+          pointerId: 1,
+          pointerType: 'mouse',
+          isPrimary: true,
+          button: 0,
+          buttons: type === 'pointerup' ? 0 : 1,
+        }),
+      );
+    };
+    for (let round = 0; round < 10; round++) {
+      fire('pointerdown', cx, cy);
+      for (let i = 1; i <= 40; i++) fire('pointermove', cx - i * 4, cy - i * 3);
+      fire('pointerup', cx - 160, cy - 120);
+    }
+  });
+
+  expect(consoleErrors.filter((m) => m.includes('reading') || m.includes('null'))).toHaveLength(0);
+  await expect(page.locator('[data-testid="fehlerzone"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="vis-node-kamera"]')).toBeVisible();
+});

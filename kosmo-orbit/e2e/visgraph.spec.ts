@@ -166,3 +166,98 @@ test('HS5: «Nur Cycles» bestellt vis.skip: true — beweisbar aus der render-s
     )
     .toBe(true);
 });
+
+/**
+ * v0.6.4 / F6 — Owner-Befund (Live-Test 0.6.3-Desktop): «KosmoVis ist auf
+ * einen Fehler gelaufen» beim Pannen des Node-Trees. Ursache in
+ * NodeCanvas.tsx (onPointerMove): der Hintergrund-Pan liest `panning.current`
+ * (ein Ref, mutierbar in Echtzeit) NICHT beim Event, sondern LAZY innerhalb
+ * der `setView(v => ...)`-Updater-Funktion. Feuert dazwischen ein pointerup
+ * (setzt `panning.current = null` — z.B. bei einer schnellen Los-Geste, oder
+ * wenn der Browser mehrere pointermove/-up im selben Batch verarbeitet, bevor
+ * React den noch ausstehenden Updater tatsächlich aufruft), liest der
+ * Updater den Ref als `null` — «Cannot read properties of null (reading
+ * 'cx')», von der KFehlerzone gefangen. Fix: den Zustand beim Event in eine
+ * lokale Konstante schnappen, statt ihn im Updater erneut vom Ref zu lesen.
+ *
+ * Diese Suite prüft zwei Ebenen:
+ * 1. Ein normaler Maus-Pan (down/move/up) + Wheel-Zoom nach «Drei
+ *    Stimmungen» — die im Auftrag verlangte Alltags-Geste.
+ * 2. Eine deterministische Nachstellung der Race (synchrones
+ *    down→move…→up ohne Event-Loop-Yield dazwischen, direkt per
+ *    PointerEvent) — das ist der Pfad, der den Fehler VOR dem Fix
+ *    zuverlässig auslöste; ein reiner Maus-Pan trifft die Race nur
+ *    gelegentlich (Timing-abhängig), die direkte Nachstellung IMMER.
+ */
+test('F6: Pannen des Node-Trees stürzt nicht ab (Drei Stimmungen) — Maus-Pan + Wheel', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.click('[data-testid="module-vis"]');
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
+
+  const canvas = page.locator('[data-testid="node-canvas"]');
+  const box = (await canvas.boundingBox())!;
+
+  // Maus-Pan: down → mehrere move → up, über den ganzen sichtbaren Canvas.
+  await page.mouse.move(box.x + box.width * 0.85, box.y + box.height * 0.85);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.6, { steps: 8 });
+  await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.3, { steps: 8 });
+  await page.mouse.up();
+
+  // Wheel-Zoom obendrauf — beide Gesten zusammen, wie im Owner-Repro.
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.wheel(0, -300);
+  await page.mouse.wheel(0, 300);
+
+  await expect(page.locator('[data-testid="fehlerzone"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
+});
+
+test('F6: schnelles down→move…→up (synchrone Race) stürzt den Node-Tree nicht ab', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.click('[data-testid="module-vis"]');
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
+
+  // Feuert down → 40× move → up als NATIVE PointerEvents, synchron in einem
+  // JS-Turn (kein Yield an die Event-Loop dazwischen) — genau das Timing,
+  // das den panning.current-Ref VOR dem Fix als null erwischen konnte,
+  // während ein bereits gequeuter setView-Updater noch aussteht.
+  const consoleErrors: string[] = [];
+  page.on('pageerror', (e) => consoleErrors.push(e.message));
+
+  await page.evaluate(() => {
+    const svg = document.querySelector('[data-testid="node-canvas"]') as SVGSVGElement;
+    const rect = svg.getBoundingClientRect();
+    const cx = rect.left + rect.width * 0.8;
+    const cy = rect.top + rect.height * 0.8;
+    const fire = (type: string, x: number, y: number) => {
+      svg.dispatchEvent(
+        new PointerEvent(type, {
+          bubbles: true,
+          cancelable: true,
+          composed: true,
+          clientX: x,
+          clientY: y,
+          pointerId: 1,
+          pointerType: 'mouse',
+          isPrimary: true,
+          button: 0,
+          buttons: type === 'pointerup' ? 0 : 1,
+        }),
+      );
+    };
+    for (let round = 0; round < 10; round++) {
+      fire('pointerdown', cx, cy);
+      for (let i = 1; i <= 40; i++) fire('pointermove', cx - i * 4, cy - i * 3);
+      fire('pointerup', cx - 160, cy - 120);
+    }
+  });
+
+  expect(consoleErrors.filter((m) => m.includes('reading') || m.includes('null'))).toHaveLength(0);
+  await expect(page.locator('[data-testid="fehlerzone"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
+});
