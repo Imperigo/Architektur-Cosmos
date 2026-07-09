@@ -86,6 +86,54 @@ export function fluchtFang(
  * Fallback (250-mm-Raster) der aufrufenden Stelle — bleibt unverändert, nur der
  * Weg dorthin bekommt die neuen Hilfen vorgeschaltet.
  */
+/**
+ * V-H1 «Zahlen zur Hand» (v0.6.4, VORFORM-UI-KONZEPT §1.4): während einer
+ * laufenden Zeichenkette baut Tippen von Ziffern einen Eingabepuffer auf;
+ * Enter setzt den Punkt in der AKTUELLEN Cursor-Richtung mit exakt der
+ * getippten Länge (Meter). Pur und ohne DOM — der Aufrufer verdrahtet
+ * Fokus-Guard und Punkt-Commit.
+ *
+ * Rückgabe null = Taste geht diese Funktion nichts an (andere Handler dürfen).
+ */
+export function masseingabeTaste(
+  puffer: string,
+  key: string,
+): { puffer: string; commit: number | null } | null {
+  if (/^[0-9]$/.test(key)) {
+    // führende Nullen erlauben (0.5), aber Puffer sinnvoll deckeln
+    if (puffer.length >= 7) return { puffer, commit: null };
+    return { puffer: puffer + key, commit: null };
+  }
+  if (key === '.' || key === ',') {
+    if (puffer.includes('.')) return { puffer, commit: null };
+    return { puffer: (puffer === '' ? '0' : puffer) + '.', commit: null };
+  }
+  if (key === 'Backspace' && puffer !== '') {
+    return { puffer: puffer.slice(0, -1), commit: null };
+  }
+  if (key === 'Enter' && puffer !== '') {
+    const meter = Number.parseFloat(puffer);
+    if (Number.isFinite(meter) && meter > 0) return { puffer: '', commit: meter };
+    return { puffer: '', commit: null };
+  }
+  return null;
+}
+
+/**
+ * V-H1: exakter Punkt in Richtung des Cursors — Referenz = letzter Punkt der
+ * Kette, Richtung = ref→cursor (bereits gesnappter Cursor, d.h. Ortho/Fang
+ * bestimmen die Richtung, die getippte Zahl die Distanz). Null bei
+ * entarteter Richtung (Cursor auf dem Referenzpunkt).
+ */
+export function punktInRichtung(ref: Pt, cursor: Pt, meter: number): Pt | null {
+  const dx = cursor.x - ref.x;
+  const dy = cursor.y - ref.y;
+  const len = Math.hypot(dx, dy);
+  if (len < 1e-6) return null;
+  const mm = meter * 1000;
+  return { x: Math.round(ref.x + (dx / len) * mm), y: Math.round(ref.y + (dy / len) * mm) };
+}
+
 export function zeichenSnap(
   rawP: Pt,
   ref: Pt | null,

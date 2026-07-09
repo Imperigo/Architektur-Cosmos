@@ -152,6 +152,9 @@ export interface ViewportHandlers {
   /** F4 (v0.6.4): getroffener Element-Fangpunkt — PlanView malt den sichtbaren
    *  Marker (Quadrat=Endpunkt, Kreis=Mitte, Kreuz=Kante); nur 2D-Overlay. */
   fangPunkt?: ElementFangPunkt | null;
+  /** V-H1 (v0.6.4): Live-Masszahl/Ziffern-Puffer am Zeichen-Gummiband —
+   *  PlanView malt sie neben dem Cursor; nur 2D-Overlay. */
+  massLabel?: string | null;
   /** T3: Shift hat den Winkel zum letzten Punkt auf 45°-Vielfache fixiert. */
   orthoAktiv?: boolean;
   /**

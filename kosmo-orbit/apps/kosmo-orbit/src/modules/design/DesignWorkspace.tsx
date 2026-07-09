@@ -38,7 +38,7 @@ import {
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { verarbeiteUnternehmerplanDatei } from './unternehmerplan';
 import { VERSCHIEBBAR } from './plan-hit-test';
-import { zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
+import { masseingabeTaste, punktInRichtung, zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { istEingabefeld, KURZTASTEN, kurztasteFuer } from './kurztasten';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
 import type { PlanLod } from './planLod';
@@ -325,6 +325,9 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // Marker (Quadrat/Kreis/Kreuz) an dieser Stelle, solange ein Zeichenwerkzeug
   // über einem Bauteil schwebt.
   const [fangPunkt, setFangPunkt] = useState<ElementFangPunkt | null>(null);
+  // V-H1 «Zahlen zur Hand» (VORFORM-UI-KONZEPT §1.4): Ziffern-Puffer der
+  // numerischen Direkteingabe während einer laufenden Zeichenkette.
+  const [masseingabe, setMasseingabe] = useState('');
   // Ziehen im Plan (Auswahl-Werkzeug): Startpunkt gemerkt, aktuelle Position
   // folgt der Maus als reine Vorschau — erst bei pointerup EIN design.verschieben
   const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt } | null>(null);
@@ -557,10 +560,22 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
 
   const handlersRef = useRef<ViewportHandlers>({});
   const select = useProject((s) => s.select);
+  // V-H1: Live-Masszahl am Gummiband — Länge des AKTUELLEN Segments (letzter
+  // Punkt → gesnappter Cursor) bzw. der Eingabepuffer, solange getippt wird.
+  const massLabel = (() => {
+    if (!ZEICHEN_WERKZEUGE.has(tool) || points.length === 0 || !cursor) return null;
+    if (masseingabe !== '') return `${masseingabe} m ⏎`;
+    const ref = points[points.length - 1]!;
+    const len = Math.hypot(cursor.x - ref.x, cursor.y - ref.y);
+    if (len < 1) return null;
+    return `${(len / 1000).toFixed(2)} m`;
+  })();
+
   handlersRef.current = {
     fluchtlinien,
     orthoAktiv,
     fangPunkt,
+    massLabel,
     sketchMode: tool === 'skizze',
     pickMode: tool === 'auswahl',
     onPick: (id) => select(id ? [id] : []),
@@ -710,16 +725,30 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     onGroundMove: (e) => setCursor(zielPunkt(e.p, e.shiftKey)),
     onEscape: () => {
       // Block 3 / E4: Esc beendet zuerst den meshEdit-Modus (räumt sich sonst
-      // nie ohne den «Fertig»-Knopf ab), sonst wie bisher die laufende Kette.
+      // nie ohne den «Fertig»-Knopf ab); V-H1: dann den Ziffern-Puffer
+      // (Tippfehler verwerfen, Kette behalten); sonst wie bisher die Kette.
       if (meshEditId) {
         setMeshEditId(null);
+        return;
+      }
+      if (masseingabe !== '') {
+        setMasseingabe('');
         return;
       }
       setPoints([]);
     },
     onGroundClick: (e) => {
       if (!activeStoreyId) return;
-      const p = zielPunkt(e.p, e.shiftKey);
+      punktSetzen(zielPunkt(e.p, e.shiftKey), e.shiftKey);
+    },
+  };
+
+  // V-H1 «Zahlen zur Hand»: der Punkt-Commit ist aus onGroundClick extrahiert,
+  // damit die numerische Direkteingabe (Enter) EXAKT denselben Werkzeug-Weg
+  // nimmt — nur ohne erneutes Snappen (die getippte Länge ist die Absicht,
+  // kein Fang darf sie verfälschen).
+  function punktSetzen(p: Pt, shiftKey: boolean) {
+      if (!activeStoreyId) return;
       if (tool === 'wand') {
         if (points.length === 0) {
           setPoints([p]);
@@ -735,7 +764,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               });
             }
             // Kettenzeichnen: Endpunkt wird neuer Anfang; Shift beendet
-            setPoints(e.shiftKey ? [] : [p]);
+            setPoints(shiftKey ? [] : [p]);
           }
         }
       } else if (tool === 'mesh') {
@@ -824,12 +853,48 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           setPoints([...points, p]);
         }
       }
-    },
-  };
+  }
 
   useEffect(() => {
     setPoints([]);
+    setMasseingabe('');
   }, [tool, activeStoreyId]);
+
+  // V-H1: numerische Direkteingabe während einer laufenden Zeichenkette —
+  // Ziffern/Komma füllen den Puffer, Enter setzt den Punkt in Cursor-Richtung
+  // mit exakt der getippten Länge (Meter). CAPTURE-Phase + stopPropagation:
+  // die globalen Stations-Kurzbefehle (Kurzbefehle.tsx: Ziffern 1–9 wechseln
+  // die Station!) dürfen einer aktiven Zeichenkette die Zahlen nicht klauen.
+  // Eigener Listener mit echten Deps (der Kurztasten-Handler oben ist bewusst
+  // zustandslos registriert).
+  useEffect(() => {
+    const onKey = (ev: KeyboardEvent) => {
+      if (!ZEICHEN_WERKZEUGE.has(tool) || points.length === 0) return;
+      if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+      if (istEingabefeld(document.activeElement)) return;
+      if (document.querySelector('[role="dialog"]')) return;
+      // Esc mit gefülltem Puffer: NUR den Tippfehler verwerfen — die Kette
+      // (und das Werkzeug) bleiben; der globale Esc-Handler kommt nicht dran.
+      if (ev.key === 'Escape' && masseingabe !== '') {
+        ev.preventDefault();
+        ev.stopPropagation();
+        setMasseingabe('');
+        return;
+      }
+      const r = masseingabeTaste(masseingabe, ev.key);
+      if (!r) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      setMasseingabe(r.puffer);
+      if (r.commit !== null && cursor) {
+        const ref = points[points.length - 1]!;
+        const p = punktInRichtung(ref, cursor, r.commit);
+        if (p) punktSetzen(p, false);
+      }
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  });
 
   // Ein neu betretener/verlassener Editiermodus verliert die alte Flächen-Auswahl.
   useEffect(() => {

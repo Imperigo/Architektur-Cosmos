@@ -956,6 +956,24 @@ export function PlanView({
                 stroke={handlers.current?.orthoAktiv ? 'var(--k-success, #2e7d32)' : 'var(--k-accent)'}
                 strokeWidth={8}
               />
+              {/* V-H1 «Zahlen zur Hand» (VORFORM-UI-KONZEPT §1.4): blaue Live-
+                  Masszahl am Gummiband bzw. der getippte Ziffern-Puffer —
+                  zoomstabil über 1/scale, unter dem Cursor (der Ortho-Hinweis
+                  wohnt oben rechts). */}
+              {handlers.current?.massLabel && (
+                <text
+                  data-testid="mass-label"
+                  x={cursor.x + 14 / view.scale}
+                  y={-cursor.y + 26 / view.scale}
+                  fontSize={13 / view.scale}
+                  fontWeight={600}
+                  fill="var(--k-accent)"
+                  fontFamily="var(--k-font-mono)"
+                  pointerEvents="none"
+                >
+                  {handlers.current.massLabel}
+                </text>
+              )}
               {handlers.current?.orthoAktiv && (
                 <text
                   data-testid="ortho-hinweis"

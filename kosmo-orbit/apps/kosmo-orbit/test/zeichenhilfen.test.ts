@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ElementFangKandidaten, FangKandidaten } from '@kosmo/kernel';
-import { fluchtFang, ortho45, zeichenSnap } from '../src/modules/design/zeichenhilfen';
+import { fluchtFang, masseingabeTaste, ortho45, punktInRichtung, zeichenSnap } from '../src/modules/design/zeichenhilfen';
 
 /**
  * Zeichenhilfen (T3): Ortho-Sperre (Shift), Fluchtlinien an bestehenden
@@ -172,5 +172,38 @@ describe('zeichenSnap — Rangfolge Ortho > Stützenraster-Magnet > Fluchtlinie 
     const ergebnis = zeichenSnap({ x: 1200, y: 5300 }, null, false, undefined, [], 150, rasterRunden, elemente);
     expect(ergebnis.p).toEqual({ x: 1200, y: 5100 });
     expect(ergebnis.fang?.typ).toBe('kante');
+  });
+});
+
+describe('V-H1 «Zahlen zur Hand» — Masseingabe beim Zeichnen (Vorform §1.4)', () => {
+  it('Ziffern und Komma/Punkt bauen den Puffer auf, nur EIN Dezimalpunkt', () => {
+    expect(masseingabeTaste('', '3')).toEqual({ puffer: '3', commit: null });
+    expect(masseingabeTaste('3', ',')).toEqual({ puffer: '3.', commit: null });
+    expect(masseingabeTaste('3.', '5')).toEqual({ puffer: '3.5', commit: null });
+    expect(masseingabeTaste('3.5', '.')).toEqual({ puffer: '3.5', commit: null }); // zweiter Punkt ignoriert
+    expect(masseingabeTaste('', '.')).toEqual({ puffer: '0.', commit: null }); // führende Null ergänzt
+  });
+
+  it('Backspace löscht, Enter committet die Meterzahl und leert den Puffer', () => {
+    expect(masseingabeTaste('3.5', 'Backspace')).toEqual({ puffer: '3.', commit: null });
+    expect(masseingabeTaste('3.5', 'Enter')).toEqual({ puffer: '', commit: 3.5 });
+    // ungültig (nur Punkt/Null): kein Commit, Puffer geleert
+    expect(masseingabeTaste('0.', 'Enter')).toEqual({ puffer: '', commit: null });
+  });
+
+  it('fremde Tasten gehen die Eingabe nichts an (andere Handler dürfen)', () => {
+    expect(masseingabeTaste('3', 'w')).toBeNull();
+    expect(masseingabeTaste('', 'Enter')).toBeNull(); // leerer Puffer: Enter unangetastet
+    expect(masseingabeTaste('', 'Backspace')).toBeNull();
+  });
+
+  it('punktInRichtung: Richtung vom Cursor, Distanz von der Zahl, mm gerundet', () => {
+    // horizontal nach rechts, 3.5 m
+    expect(punktInRichtung({ x: 1000, y: 2000 }, { x: 4000, y: 2000 }, 3.5)).toEqual({ x: 4500, y: 2000 });
+    // Diagonale: Richtung bleibt, Länge exakt
+    const p = punktInRichtung({ x: 0, y: 0 }, { x: 100, y: 100 }, 1)!;
+    expect(Math.round(Math.hypot(p.x, p.y))).toBe(1000);
+    // entartet (Cursor auf Referenz): null
+    expect(punktInRichtung({ x: 5, y: 5 }, { x: 5, y: 5 }, 2)).toBeNull();
   });
 });
