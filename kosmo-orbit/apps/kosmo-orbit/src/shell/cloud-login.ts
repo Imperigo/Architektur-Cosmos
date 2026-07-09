@@ -31,3 +31,26 @@ export async function claudeAboAnmeldung(): Promise<string> {
   const { invoke } = await import('@tauri-apps/api/core');
   return invoke<string>('claude_login');
 }
+
+/**
+ * Installationsbefehl für die Anthropic-CLI (`ant`, Paket `@anthropic-ai/claude-code`)
+ * — Owner-Befund F1: die bisherige Fehlermeldung («ant nicht gefunden») liess
+ * den Architekten ohne Anleitung stehen. Eine Konstante, damit UI-Text und
+ * Tests denselben Befehl zeigen/prüfen.
+ */
+export const ANT_INSTALL_BEFEHL = 'npm i -g @anthropic-ai/claude-code';
+
+/**
+ * Erkennt, ob ein Fehler aus `claudeAboAnmeldung()` daher kommt, dass die
+ * Anthropic-CLI (`ant`) lokal fehlt — unterscheidet das von anderen Fehlern
+ * (Login abgebrochen, kein Token lesbar, Web/PWA-Hinweis). Reines
+ * String-Matching auf die Rust-Fehlermeldung des Tauri-Commands
+ * `claude_login` (`src-tauri/src/lib.rs`: *«Anthropic-CLI (`ant`) nicht
+ * gefunden — installieren oder API-Schlüssel nutzen.»*) — ohne Tauri/DOM,
+ * deshalb ohne Desktop-Build testbar (Owner-Befund F1, Repro-Test zuerst rot
+ * in `test/cloud-login.test.ts`).
+ */
+export function istAntFehltFehler(fehler: unknown): boolean {
+  const text = fehler instanceof Error ? fehler.message : String(fehler ?? '');
+  return /\bant\b/i.test(text) && text.toLowerCase().includes('nicht gefunden');
+}

@@ -29,7 +29,7 @@ import { WerkzeugSetup } from './WerkzeugSetup';
 import { hydriereJournal, journalStore } from '../state/journal-store';
 import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
-import { claudeAboAnmeldung, istTauriDesktop } from './cloud-login';
+import { ANT_INSTALL_BEFEHL, claudeAboAnmeldung, istAntFehltFehler, istTauriDesktop } from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
 
 /**
@@ -117,6 +117,20 @@ export interface KosmoSettings {
    */
   lizenzText: string;
 }
+
+/**
+ * Modellwahl für den Anthropic-Provider (Owner-Befund F1 «Modell auswählbar
+ * machen von Claude»): die drei aktuellen Claude-Modelle zur Auswahl, Opus
+ * 4.8 als Owner-Default («mind. Opus 4.8» für volle Cloud-Betriebsart bleibt
+ * unberührt, siehe `betriebKonfig`/`mindestensOpus` in `@kosmo/ai`). Ein
+ * Freitext-Override bleibt daneben möglich — für neuere/eigene Modell-IDs,
+ * ohne auf ein Kosmo-Release zu warten.
+ */
+const ANTHROPIC_MODELLE: { id: string; label: string }[] = [
+  { id: 'claude-opus-4-8', label: 'Claude Opus 4.8 (Standard)' },
+  { id: 'claude-sonnet-5', label: 'Claude Sonnet 5' },
+  { id: 'claude-haiku-4-5', label: 'Claude Haiku 4.5' },
+];
 
 const defaultSettings: KosmoSettings = {
   betriebsart: 'standard',
@@ -241,6 +255,16 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const cloudAnRef = useRef<(text: string) => void>(() => {});
   const [showSettings, setShowSettings] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
+  // Owner-Befund F1: «ant nicht gefunden» soll eine Anleitung zeigen, keinen
+  // blossen Toast — persistiert im Panel, bis der nächste Versuch klappt.
+  const [cliFehlt, setCliFehlt] = useState(false);
+  // Owner-Befund F1 «Modell auswählbar»: Freitext-Override-Modus für die
+  // Anthropic-Modellwahl, unabhängig davon ob der aktuelle Wert zufällig
+  // einer Preset-Option entspricht (sonst könnte man den Freitext-Modus nie
+  // sichtbar verlassen/betreten, wenn der Wert gerade ein Preset ist).
+  const [modellFreitext, setModellFreitext] = useState(
+    () => !ANTHROPIC_MODELLE.some((m) => m.id === settings.anthropicModel),
+  );
   // Lizenz-Hinweis (Serie I / Batch B6): rein informativ, sperrt NIE die
   // lokale Arbeit. Ohne konfigurierten Public Key ist der Status dauerhaft
   // 'keine-pflicht' (kein Badge, kein Feld) — Default-Verhalten wie vor B6.
@@ -558,10 +582,18 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const mitClaudeAnmelden = async () => {
     try {
       const token = await claudeAboAnmeldung();
+      setCliFehlt(false);
       speichere({ ...settingsRef.current, anthropicOauthToken: token, cloudAuth: 'abo' });
       melde('Mit dem Claude-Abo angemeldet.', { ton: 'erfolg' });
     } catch (err) {
-      meldeFehler(err);
+      // Owner-Befund F1: «ant nicht gefunden» bekommt eine Anleitung im Panel
+      // statt nur eines Toasts — andere Fehler (Login abgebrochen, Web/PWA)
+      // bleiben beim bisherigen `meldeFehler`.
+      if (istAntFehltFehler(err)) {
+        setCliFehlt(true);
+      } else {
+        meldeFehler(err);
+      }
     }
   };
 
@@ -937,17 +969,71 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                   Mit-Claude-Anmeldung nur in der Desktop-App — im Browser bitte API-Schlüssel.
                 </div>
               )}
+              {cliFehlt && (
+                <div
+                  data-testid="cloud-login-anleitung"
+                  style={{
+                    fontSize: 11.5,
+                    color: 'var(--k-ink-soft)',
+                    lineHeight: 1.5,
+                    display: 'grid',
+                    gap: 4,
+                    padding: '8px 10px',
+                    borderRadius: 'var(--k-radius-sm)',
+                    border: '1px solid var(--k-line)',
+                    background: 'var(--k-raised)',
+                  }}
+                >
+                  <div>
+                    Die Anthropic-CLI (<code>ant</code>) fehlt lokal — sie ist das Werkzeug, über das
+                    die Abo-Anmeldung läuft (derselbe Weg wie bei Claude Code).
+                  </div>
+                  <div>
+                    Installieren: <code>{ANT_INSTALL_BEFEHL}</code> (oder die Anthropic-Dokumentation
+                    unter platform.claude.com) — danach «Mit Claude-Abo anmelden» erneut versuchen.
+                  </div>
+                  <div>
+                    Gleichwertige Alternative ohne CLI: den API-Schlüssel direkt unten eintragen.
+                  </div>
+                </div>
+              )}
               <SettingsFeld
                 label="API-Schlüssel (bleibt auf diesem Gerät)"
                 value={settings.anthropicKey}
                 typ="password"
                 onChange={(v) => speichere({ ...settings, anthropicKey: v, cloudAuth: 'schluessel' })}
               />
-              <SettingsFeld
-                label="Modell"
-                value={settings.anthropicModel}
-                onChange={(v) => speichere({ ...settings, anthropicModel: v })}
-              />
+              <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+                Modell
+                <select
+                  data-testid="claude-modell-select"
+                  value={modellFreitext ? 'freitext' : settings.anthropicModel}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === 'freitext') {
+                      setModellFreitext(true);
+                    } else {
+                      setModellFreitext(false);
+                      speichere({ ...settings, anthropicModel: v });
+                    }
+                  }}
+                  style={selectStyle}
+                >
+                  {ANTHROPIC_MODELLE.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.label}
+                    </option>
+                  ))}
+                  <option value="freitext">Eigenes Modell (Freitext) …</option>
+                </select>
+              </label>
+              {modellFreitext && (
+                <SettingsFeld
+                  label="Modell-ID (Freitext)"
+                  value={settings.anthropicModel}
+                  onChange={(v) => speichere({ ...settings, anthropicModel: v })}
+                />
+              )}
             </>
           )}
           <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', gap: 8, alignItems: 'center' }}>

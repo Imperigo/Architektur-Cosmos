@@ -57,3 +57,53 @@ test('API-Schlüssel-Weg bleibt voll funktionsfähig neben dem Abo-Login', async
   expect(s.cloudAuth).toBe('schluessel');
   expect(s.provider).toBe('anthropic');
 });
+
+/**
+ * Owner-Befund F1 «Modell auswählbar machen von Claude»: das
+ * Claude-Modell-Select im Kosmo-Panel (⚙, wo Provider/Schlüssel leben) zeigt
+ * die drei aktuellen Modelle + Freitext-Override und persistiert die Wahl in
+ * `kosmo.llm`, damit sie einen Reload übersteht.
+ */
+test('Claude-Modell-Select ist sichtbar und der Wechsel persistiert nach Reload', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+
+  const select = page.locator('[data-testid="claude-modell-select"]');
+  await expect(select).toBeVisible();
+  // Owner-Default: Opus 4.8, solange nichts anderes gewählt wurde.
+  await expect(select).toHaveValue('claude-opus-4-8');
+
+  await select.selectOption('claude-sonnet-5');
+  const nachWahl = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(nachWahl.anthropicModel).toBe('claude-sonnet-5');
+
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+  await expect(page.locator('[data-testid="claude-modell-select"]')).toHaveValue('claude-sonnet-5');
+});
+
+test('Claude-Modell-Select: Freitext-Override für eigene Modell-IDs, persistiert ebenfalls', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+
+  await page.locator('[data-testid="claude-modell-select"]').selectOption('freitext');
+  await page.getByLabel('Modell-ID (Freitext)').fill('claude-opus-4-9-preview');
+
+  const s = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(s.anthropicModel).toBe('claude-opus-4-9-preview');
+
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+  await expect(page.locator('[data-testid="claude-modell-select"]')).toHaveValue('freitext');
+  await expect(page.getByLabel('Modell-ID (Freitext)')).toHaveValue('claude-opus-4-9-preview');
+});

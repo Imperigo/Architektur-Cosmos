@@ -350,6 +350,27 @@ describe('AnthropicProvider (V2-B3)', () => {
     expect(done.error).toContain('401');
     expect(done.error).toContain('Schlüssel');
   });
+
+  /**
+   * Owner-Befund F1 «Modell auswählbar machen von Claude»: das im
+   * KosmoPanel gewählte Modell (`claude-modell-select`, Freitext inklusive)
+   * muss unverändert im Request-Body landen — der Provider darf es nicht
+   * hartcodieren. Ein Mock-fetch prüft den tatsächlich gesendeten Body statt
+   * nur das Ergebnis zu beobachten.
+   */
+  it.each(['claude-opus-4-8', 'claude-sonnet-5', 'claude-haiku-4-5', 'claude-eigenes-modell-xyz'])(
+    'sendet das konfigurierte Modell (%s) unverändert im Request-Body',
+    async (modell) => {
+      let gesendeterBody: { model?: string } = {};
+      globalThis.fetch = async (_url, init) => {
+        gesendeterBody = JSON.parse(String(init?.body ?? '{}'));
+        return sseResponse(['data: {"type":"message_stop"}']);
+      };
+      const p = new AnthropicProvider({ apiKey: 'sk-test', model: modell });
+      await sammle(p, [{ role: 'user', content: 'Hallo' }]);
+      expect(gesendeterBody.model).toBe(modell);
+    },
+  );
 });
 
 describe('OpenAiKompatibelProvider / LM Studio (V2-B3)', () => {
