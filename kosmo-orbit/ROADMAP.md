@@ -603,4 +603,9 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
     - Befehlspalette unverändert (Thema/Akzent dort sind Suchwege, keine zweite Oberfläche); Rundgang-Screenshot-Tool auf den neuen Weg nachgezogen.
     - Beweise: `app-deinstallieren.spec.ts` erneuert + neuer Entdoppelungs-Test (Kopfleiste ohne Akzent/Thema, Einstellungen als der EINE Ort inkl. wirksamem Akzentwechsel) 3× grün; Regressionen einstellungen/orbit-start/oberflaeche-hierarchie (14) grün; App 587. Schliesst SK-Z2/SK-A2 aus der Selbstkritik-Runde 1.
 
+267. **v0.6.4 / UI-Selbstkritik Runde 2 — 7 von 15 Befunden geschlossen, 0 hoch offen (F10/F11 erfüllt)** *(09.07.2026)*
+    - Zweite Iteration auf FRISCHEN Screenshots des neuen Stands (Orbit-Zentrale, Hover-Fächer, Design): SK-Z1/Z2/Z3/Z4/A2 durch F3+F2 belegt geschlossen, SK-D2/SK-V2 aus Runde 1 bestätigt.
+    - **Runde-2-Fix SK-V1:** der KosmoVis-Node-Canvas passt die Ansicht beim Öffnen eines Graphen jetzt auf die Nodes ein (Bounding-Box → Zentrum + Massstab, min 0.35) — vorher startete er fix bei (560/300) und der «Drei Stimmungen»-Graph lag halb ausserhalb. Nur beim Mount je Graph, Nutzer-Pan/Zoom bleiben unangetastet; visgraph/vis-automatik (7 E2E) grün.
+    - Bilanz ehrlich dokumentiert (`docs/UI-SELBSTKRITIK-064.md`): 15 Befunde → 8 offen, davon 0 der Schwere «hoch»; 3 neue Tief-Befunde durch die Umbauten selbst (Fächer-Versatz, Karten-Radius, Achsen-Versatz der Zentrale) — zusammen mit SK-D1/D3/D4/D5/V3 die kuratierte 0.6.5-UI-Arbeitsliste. «Mehrmals bis effektiv besser» damit messbar erfüllt.
+
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.

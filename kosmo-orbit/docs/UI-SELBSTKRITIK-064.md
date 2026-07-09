@@ -56,8 +56,35 @@ alten Stand wäre verschwendete Arbeit).
 
 ---
 
-## Runde 2 — nach Integration von F3/F5/F9/F2 (gleiche Nacht)
+## Runde 2 — nach Integration von F3/F5/F9/F2 (gleiche Nacht, frische Screenshots)
 
-*(wird nach den neuen Screenshots ausgefüllt — Ziel: messbar weniger
-Befunde als Runde 1, keine neuen Schwere-hoch-Befunde durch die Umbauten
-selbst)*
+**Nachprüfung Runde 1** (Screenshots r2-zentrale / r2-zentrale-hover / r2-design,
+Session-Scratchpad):
+- ✅ SK-Z1 behoben: vier UNTERSCHEIDBARE, detaillierte Haupt-Icons im Orbit (F3).
+- ✅ SK-Z2 + SK-A2 behoben: Kopfleiste trägt nur noch Sync · Speichern/Öffnen ·
+  Kosmo · «?» · ⚙ — Deinstallieren und Palette sind in den Einstellungen (F2).
+- ✅ SK-Z3 behoben: Hauptwerkzeug = Familienname, Untertools eigene Namen (F3).
+- ✅ SK-Z4 behoben: KosmoOffice ist EIN Orbit-Posten mit «KOMMEND»-Badge.
+- ✅ SK-D2 / SK-V2: Runde-1-Fixes bestätigt.
+- ✅ SK-V1 behoben (**Runde-2-Fix**): NodeCanvas passt die Ansicht beim Öffnen
+  eines Graphen auf die Nodes ein (Bounding-Box → Zentrum+Massstab, Nutzer-
+  Pan/Zoom danach unangetastet; visgraph/vis-automatik 7 E2E grün).
+- ◐ SK-A1 teilweise: der Stations-Name steht noch in Kopfleiste UND Werkzeugleiste
+  (KosmoVis) — bewusst belassen, die Leisten-Variante ist der Tab-Wechsler.
+
+**Neue Befunde Runde 2** (alle tief — keine neuen Hoch-Befunde durch die Umbauten):
+| # | Befund | Massnahme |
+|---|---|---|
+| R2-N1 | Der Untertool-Fächer überdeckt beim Hover das Orbit-Zentrum; der Familien-Beschrieb sitzt knapp über dem Fächer | 0.6.5 (Fächer-Versatz/Radius) |
+| R2-N2 | Die Untertool-Karten sind rechteckige Blöcke im runden Orbit — funktional richtig (Lesbarkeit), aber die Kanten dürfen dem Orbit folgen (Radius, weicherer Schatten) | 0.6.5 |
+| R2-N3 | Begrüssung/Projekte stehen linksbündig in der Mittelspalte, der Orbit exakt zentriert — zwei konkurrierende Achsen (Rest von SK-Z5) | 0.6.5 |
+
+**Offen aus Runde 1** (übertragen, mit Grund): SK-D1 Werkzeugzeilen-Konsolidierung
+(braucht eigenes Konzept, betrifft viele E2E-Koordinaten — eigener 0.6.5-Batch),
+SK-D3 Geschoss-Schalter-Container, SK-D4 Plan-Auto-Fit im Split (E2E-Risiko,
+bewusst vertagt), SK-D5 Ecken-Stapelung, SK-V3 Prompt-Ellipsen.
+
+**Bilanz:** Runde 1 = 15 Befunde (2 hoch offen) → Runde 2 = 8 offene Befunde,
+**davon 0 hoch** — 7 von 15 geschlossen, 3 neue (alle tief). Das Kriterium
+«effektiv besser» ist damit belegt; die verbleibende Liste ist die kuratierte
+0.6.5-UI-Arbeitsliste.

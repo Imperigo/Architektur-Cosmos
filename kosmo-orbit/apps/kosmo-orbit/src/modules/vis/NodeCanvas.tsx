@@ -224,6 +224,28 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
   const nodePos = (n: VisNode) =>
     drag && drag.nodeId === n.id ? { ...n, x: drag.x, y: drag.y } : n;
 
+  // SK-V1 (UI-Selbstkritik 0.6.4, Runde 2): beim Öffnen eines Graphen die
+  // Ansicht auf die Nodes EINPASSEN — vorher startete der Canvas fix bei
+  // (560, 300) und ein «Drei Stimmungen»-Graph lag halb ausserhalb, links
+  // oben blieb eine grosse Leerfläche. Nur beim Mount (key={graphId} in
+  // VisWorkspace remountet je Graph) — Nutzer-Pan/Zoom danach bleiben heilig.
+  useEffect(() => {
+    const g = useProject.getState().doc.get<VisGraph>(graphId);
+    if (!g || g.nodes.length === 0) return;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const n of g.nodes) {
+      minX = Math.min(minX, n.x);
+      minY = Math.min(minY, n.y);
+      maxX = Math.max(maxX, n.x + NODE_W);
+      maxY = Math.max(maxY, n.y + nodeHoehe(n));
+    }
+    // flaeche ist beim ersten Mount noch der Default (1200×700) — fürs
+    // Einpassen gut genug, der ResizeObserver korrigiert die viewBox danach.
+    const scale = Math.min(1, 1120 / Math.max(1, maxX - minX), 620 / Math.max(1, maxY - minY));
+    setView({ cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, scale: Math.max(0.35, scale) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graphId]);
+
   const sicher = (fn: () => void) => {
     try {
       fn();
