@@ -3,22 +3,27 @@ import {
   deriveAutoKameras,
   evaluiereGraph,
   RENDER_PRESETS,
+  renderPromptBausteine,
+  VIS_KATEGORIE_HUE,
   VIS_NODE_KATALOG,
   VIS_STIMMUNGEN,
   type VisGraph,
+  type VisKategorie,
   type VisNode,
   type VisPortTyp,
 } from '@kosmo/kernel';
-import { KButton, melde, meldeFehler } from '@kosmo/ui';
+import { KButton, KField, KIcon, KInput, KSelect, melde, meldeFehler, type KIconName } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import {
   abbrechenJob,
   bildAufsBlatt,
   bridgeBase,
   bridgeVermutlichCspGeblockt,
+  formularZusatz,
   freigebenJob,
   holeJob,
   istAuthFehler,
+  kombiniertePrompt,
   mappeJobStatus,
   postRenderJob,
 } from './vis-jobs';
@@ -33,16 +38,21 @@ import {
 import { BridgeBild } from './BridgeBild';
 
 /**
- * NodeCanvas (V1-Finish P2) — der Blender-artige Node-Editor von KosmoVis.
- * Eigenbau-SVG statt react-flow: jede Änderung läuft als vis.*-Command
- * (Undo, Yjs, Kosmo spricht Graphen). Drag lebt im lokalen State und wird
- * bei pointerup als EIN vis.nodeSchieben committet; Parameter committen
- * bei blur. Render nur auf «Ausführen» — nie automatisch.
+ * NodeCanvas (V1-Finish P2, W1-Neubau UI-KONZEPT-065 §5) — der Blender-artige
+ * Node-Editor von KosmoVis. Eigenbau-SVG statt react-flow: jede Änderung läuft
+ * als vis.*-Command (Undo, Yjs, Kosmo spricht Graphen). Drag lebt im lokalen
+ * State und wird bei pointerup als EIN vis.nodeSchieben committet; Parameter
+ * committen bei blur. Render nur auf «Ausführen» — nie automatisch.
  */
 
-const NODE_W = 200;
+export const NODE_W = 200;
 const PORT_ABSTAND = 20;
 const KOPF_H = 26;
+/** Portanker sitzen 4px vom Kartenrand abgesetzt (W1 Massnahme 5). */
+const PORT_ABSATZ = 4;
+/** Zoom-Grenzen der Steuerleiste (W1 Massnahme 4). */
+const ZOOM_MIN = 0.25;
+const ZOOM_MAX = 2.5;
 
 const PORT_FARBE: Record<VisPortTyp, string> = {
   szene: '#2455a4',
@@ -53,32 +63,92 @@ const PORT_FARBE: Record<VisPortTyp, string> = {
   kameras: '#2b8a7a',
 };
 
-/** Höhe des Inhaltsbereichs je Node-Typ (Canvas-Einheiten). */
+/** Deutsche Kurznamen je Porttyp — für die Legende (nicht die Port-Labels,
+ * die pro Node unterschiedlich heissen, z.B. «Wert» vs. «Geometrie-Treue»). */
+const PORT_TYP_NAME: Record<VisPortTyp, string> = {
+  szene: 'Szene',
+  bild: 'Bild',
+  prompt: 'Prompt',
+  zahl: 'Zahl',
+  material: 'Material',
+  kameras: 'Kameras',
+};
+
+/** Ein KIcon je Kategorie (W1 Massnahme 1) — die Hue kommt aus dem Kernel-
+ * Katalog (`VIS_KATEGORIE_HUE`), die Zeichenwahl ist reine UI-Entscheidung. */
+const KATEGORIE_ICON: Record<VisKategorie, KIconName> = {
+  quelle: 'ordner',
+  wandler: 'stift',
+  render: 'auge',
+  ausgabe: 'dokument',
+};
+
+/** Höhe des Inhaltsbereichs je Node-Typ (Canvas-Einheiten). V-H4: `render`
+ * wächst um das neue semantische Formular (4 Selects/Feld + Freitext + der
+ * sichtbare finale Prompt). */
 const KOERPER_H: Record<string, number> = {
   modell: 22,
-  material: 40,
+  material: 60,
   prompt: 56,
-  stimmung: 34,
-  kombinierer: 64,
+  stimmung: 90,
+  kombinierer: 80,
   zahl: 38,
-  render: 192,
+  render: 192 + 132,
   vergleich: 132,
   blatt: 38,
   referenz: 92,
   kamera: 54,
 };
 
-function nodeHoehe(n: VisNode): number {
-  const kat = VIS_NODE_KATALOG[n.typ];
+/** SK-V3: Zusatzhöhe, wenn ein geklappter Text-Körper (node-expand) offen ist —
+ * lokaler UI-State, NICHT im Doc; nur diese drei Node-Typen tragen Klapptext. */
+const KOERPER_H_ZUSATZ_OFFEN = 70;
+const KLAPPBARE_TYPEN = new Set(['kombinierer', 'stimmung', 'material']);
+
+/** Basis-Nodehöhe eines Typs (ohne Klapp-Zusatz) — für Layout-Vorausberechnung
+ * (Drei-Stimmungen-Zeilenabstand, Spiral-Platzsuche), die noch keine Node-ID hat. */
+export function basisNodeHoehe(typ: string): number {
+  const kat = VIS_NODE_KATALOG[typ];
   const ports = Math.max(kat?.inputs.length ?? 0, kat?.outputs.length ?? 0);
-  return KOPF_H + 8 + ports * PORT_ABSTAND + (KOERPER_H[n.typ] ?? 30) + 10;
+  return KOPF_H + 8 + ports * PORT_ABSTAND + (KOERPER_H[typ] ?? 30) + 10;
+}
+
+/** Echte Nodehöhe inkl. eines offenen Klapptexts (W1 Massnahme 3a). */
+function nodeHoehe(n: VisNode, offen?: ReadonlySet<string>): number {
+  const zusatz = offen?.has(n.id) && KLAPPBARE_TYPEN.has(n.typ) ? KOERPER_H_ZUSATZ_OFFEN : 0;
+  return basisNodeHoehe(n.typ) + zusatz;
 }
 
 function portPos(n: VisNode, port: string, richtung: 'in' | 'out'): { x: number; y: number } {
   const kat = VIS_NODE_KATALOG[n.typ];
   const liste = richtung === 'in' ? (kat?.inputs ?? []) : (kat?.outputs ?? []);
   const i = Math.max(0, liste.findIndex((p) => p.name === port));
-  return { x: n.x + (richtung === 'in' ? 0 : NODE_W), y: n.y + KOPF_H + 14 + i * PORT_ABSTAND };
+  return {
+    x: n.x + (richtung === 'in' ? -PORT_ABSATZ : NODE_W + PORT_ABSATZ),
+    y: n.y + KOPF_H + 14 + i * PORT_ABSTAND,
+  };
+}
+
+function klemme(v: number, lo: number, hi: number): number {
+  return Math.min(hi, Math.max(lo, v));
+}
+
+/** Fit-Berechnung als eigene Funktion (W1 Massnahme 4) — sowohl der Mount-
+ * Auto-Fit als auch der «Fit»-Knopf der Zoom-Steuerleiste rufen sie auf. */
+function berechneFit(
+  nodes: VisNode[],
+  flaeche: { w: number; h: number },
+): { cx: number; cy: number; scale: number } | null {
+  if (nodes.length === 0) return null;
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const n of nodes) {
+    minX = Math.min(minX, n.x);
+    minY = Math.min(minY, n.y);
+    maxX = Math.max(maxX, n.x + NODE_W);
+    maxY = Math.max(maxY, n.y + nodeHoehe(n));
+  }
+  const scale = Math.min(1, (flaeche.w - 80) / Math.max(1, maxX - minX), (flaeche.h - 80) / Math.max(1, maxY - minY));
+  return { cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, scale: klemme(scale, 0.35, ZOOM_MAX) };
 }
 
 /** Kubische Bézier mit horizontalen Tangenten — kein Routing, ruhige Kurven. */
@@ -104,6 +174,17 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
   const [drag, setDrag] = useState<{ nodeId: string; dx: number; dy: number; x: number; y: number } | null>(null);
   const [pending, setPending] = useState<{ from: string; fromPort: string; typ: VisPortTyp; x: number; y: number } | null>(null);
   const [auswahlEdge, setAuswahlEdge] = useState<string | null>(null);
+  // W1 Massnahme 5: Hover je Kante (CSS-Opazität steuert Trenn-✕ + Stroke).
+  const [hoverEdge, setHoverEdge] = useState<string | null>(null);
+  // SK-V3: offene Klapptexte je Node (lokaler UI-State, NICHT im Doc).
+  const [offenerKlapptext, setOffenerKlapptext] = useState<ReadonlySet<string>>(new Set());
+  const toggleKlapptext = (nodeId: string) =>
+    setOffenerKlapptext((s) => {
+      const next = new Set(s);
+      if (next.has(nodeId)) next.delete(nodeId);
+      else next.add(nodeId);
+      return next;
+    });
 
   const laeufe = useVisRuntime((s) => s.laeufe);
   const setzeLauf = useVisRuntime((s) => s.setzeLauf);
@@ -205,7 +286,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const factor = Math.exp(-e.deltaY * 0.0012);
-      setView((v) => ({ ...v, scale: Math.min(2.5, Math.max(0.25, v.scale * factor)) }));
+      setView((v) => ({ ...v, scale: klemme(v.scale * factor, ZOOM_MIN, ZOOM_MAX) }));
     };
     svg.addEventListener('wheel', onWheel, { passive: false });
     return () => svg.removeEventListener('wheel', onWheel);
@@ -231,20 +312,21 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
   // VisWorkspace remountet je Graph) — Nutzer-Pan/Zoom danach bleiben heilig.
   useEffect(() => {
     const g = useProject.getState().doc.get<VisGraph>(graphId);
-    if (!g || g.nodes.length === 0) return;
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    for (const n of g.nodes) {
-      minX = Math.min(minX, n.x);
-      minY = Math.min(minY, n.y);
-      maxX = Math.max(maxX, n.x + NODE_W);
-      maxY = Math.max(maxY, n.y + nodeHoehe(n));
-    }
-    // flaeche ist beim ersten Mount noch der Default (1200×700) — fürs
+    if (!g) return;
+    // flaeche ist beim ersten Mount evtl. noch der Default (1200×700) — fürs
     // Einpassen gut genug, der ResizeObserver korrigiert die viewBox danach.
-    const scale = Math.min(1, 1120 / Math.max(1, maxX - minX), 620 / Math.max(1, maxY - minY));
-    setView({ cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, scale: Math.max(0.35, scale) });
+    const fit = berechneFit(g.nodes, flaeche);
+    if (fit) setView(fit);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphId]);
+
+  /** Zoom-Steuerleiste (W1 Massnahme 4): ×1.25/÷1.25, geklemmt 0.25–2.5. */
+  const zoomUm = (faktor: number) => setView((v) => ({ ...v, scale: klemme(v.scale * faktor, ZOOM_MIN, ZOOM_MAX) }));
+  const zoomFit = () => {
+    const g = useProject.getState().doc.get<VisGraph>(graphId);
+    const fit = g ? berechneFit(g.nodes, flaeche) : null;
+    if (fit) setView(fit);
+  };
 
   const sicher = (fn: () => void) => {
     try {
@@ -255,12 +337,18 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
   };
 
   const ausfuehren = (nodeId: string) => {
-    const auftrag = auswertung?.renderAuftraege.get(nodeId);
-    if (!auftrag) return;
-    if (!auftrag.hatSzene) {
+    const roh = auswertung?.renderAuftraege.get(nodeId);
+    if (!roh) return;
+    if (!roh.hatSzene) {
       melde('Der Render-Node braucht eine Szene — verbinde den Modell-Node.', { ton: 'fehler' });
       return;
     }
+    // V-H4: derselbe Zusammenführungs-Weg wie die sichtbare Anzeige
+    // (render-final-prompt) — der Job bekommt NIE einen anderen Prompt als
+    // den, den der Architekt am Node liest (Ehrlichkeit/V8).
+    const node = graph.nodes.find((n) => n.id === nodeId);
+    const zusatz = formularZusatz(node?.params ?? {});
+    const auftrag = { ...roh, prompt: kombiniertePrompt(roh.prompt, zusatz) };
     const key = memoKey(auftrag);
     setzeLauf(nodeId, { status: 'gesendet', memoKey: key, gestartetUm: Date.now() });
     void postRenderJob(auftrag)
@@ -323,7 +411,25 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
   const rect = { w: 100 / view.scale, h: 100 / view.scale };
   void rect;
 
+  // W1 Massnahme 5: Porttyp-Legende — nur die Typen, die im aktuellen Graphen
+  // tatsächlich vorkommen (kein toter Ballast bei kleinen Graphen).
+  const legendeTypen: VisPortTyp[] = [];
+  {
+    const gesehen = new Set<VisPortTyp>();
+    for (const n of graph.nodes) {
+      const k = VIS_NODE_KATALOG[n.typ];
+      if (!k) continue;
+      for (const p of [...k.inputs, ...k.outputs]) {
+        if (!gesehen.has(p.typ)) {
+          gesehen.add(p.typ);
+          legendeTypen.push(p.typ);
+        }
+      }
+    }
+  }
+
   return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
     <svg
       ref={svgRef}
       data-testid="node-canvas"
@@ -401,8 +507,18 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
         const b = portPos(nodePos(zu), e.toPort, 'in');
         const typ = VIS_NODE_KATALOG[von.typ]?.outputs.find((p) => p.name === e.fromPort)?.typ ?? 'prompt';
         const gewaehlt = auswahlEdge === e.id;
+        const gehovert = hoverEdge === e.id;
+        // W1 Massnahme 5: Trenn-✕ bleibt IMMER im DOM (E2E hovert dann klickt);
+        // Sichtbarkeit läuft über CSS-Opazität, nicht über Mount/Unmount —
+        // sonst könnte ein Klick den Knopf treffen, bevor er real gerendert ist.
+        const trennenSichtbar = gehovert || gewaehlt;
         return (
-          <g key={e.id} data-testid="vis-edge">
+          <g
+            key={e.id}
+            data-testid="vis-edge"
+            onPointerEnter={() => setHoverEdge(e.id)}
+            onPointerLeave={() => setHoverEdge((h) => (h === e.id ? null : h))}
+          >
             <path
               d={edgePfad(a, b)}
               fill="none"
@@ -418,25 +534,26 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
               d={edgePfad(a, b)}
               fill="none"
               stroke={gewaehlt ? 'var(--k-accent)' : PORT_FARBE[typ]}
-              strokeWidth={gewaehlt ? 2.5 : 1.5}
+              strokeWidth={gewaehlt ? 2.5 : gehovert ? 2 : 1.5}
               opacity={0.85}
               pointerEvents="none"
+              className="k-uebergang-schnell"
             />
-            {gewaehlt && (
-              <g
-                transform={`translate(${(a.x + b.x) / 2}, ${(a.y + b.y) / 2})`}
-                style={{ cursor: 'pointer' }}
-                data-testid="edge-trennen"
-                onPointerDown={(ev) => {
-                  ev.stopPropagation();
-                  sicher(() => runCommand('vis.trennen', { graphId, edgeId: e.id }));
-                  setAuswahlEdge(null);
-                }}
-              >
-                <circle r={9} fill="var(--k-raised)" stroke="var(--k-danger)" />
-                <text textAnchor="middle" dominantBaseline="central" fontSize={10} fill="var(--k-danger)">✕</text>
-              </g>
-            )}
+            <g
+              transform={`translate(${(a.x + b.x) / 2}, ${(a.y + b.y) / 2})`}
+              style={{ cursor: 'pointer', opacity: trennenSichtbar ? 1 : 0 }}
+              className="k-uebergang-schnell"
+              data-testid="edge-trennen"
+              onPointerDown={(ev) => {
+                ev.stopPropagation();
+                sicher(() => runCommand('vis.trennen', { graphId, edgeId: e.id }));
+                setAuswahlEdge(null);
+                setHoverEdge(null);
+              }}
+            >
+              <circle r={9} fill="var(--k-raised)" stroke="var(--k-danger)" />
+              <KIcon name="schliessen" size={14} x={-7} y={-7} style={{ color: 'var(--k-danger)' }} />
+            </g>
           </g>
         );
       })}
@@ -463,11 +580,15 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
         const n = nodePos(n0);
         const kat = VIS_NODE_KATALOG[n.typ];
         if (!kat) return null;
-        const h = nodeHoehe(n0);
+        const h = nodeHoehe(n0, offenerKlapptext);
         const lauf = laeufe[n.id];
         const auftrag = auswertung?.renderAuftraege.get(n.id);
         const veraltet = lauf && auftrag && lauf.memoKey !== memoKey(auftrag);
         const koerperY = KOPF_H + 8 + Math.max(kat.inputs.length, kat.outputs.length) * PORT_ABSTAND;
+        // W1 Massnahme 1: Kategorie-Icon + 2px-Tonstreifen (Hue aus dem
+        // Kernel-Katalog, Zeichen aus der KIcon-Registry je Kategorie).
+        const kategorieFarbe = VIS_KATEGORIE_HUE[kat.kategorie];
+        const kategorieIcon = KATEGORIE_ICON[kat.kategorie];
         return (
           <g key={n.id} transform={`translate(${n.x}, ${n.y})`} data-testid={`vis-node-${n.typ}`}>
             {/* Karte mit geschnittener Ecke (Karteikarten-Verwandter) */}
@@ -488,15 +609,11 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
               }}
             >
               <rect width={NODE_W} height={KOPF_H} fill="transparent" />
-              <text x={10} y={17} fontSize={11.5} fontWeight={650} fill="var(--k-ink)" style={{ letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              <KIcon name={kategorieIcon} size={14} x={8} y={6} style={{ color: 'var(--k-ink-soft)' }} />
+              <text x={28} y={17} fontSize={11.5} fontWeight={650} fill="var(--k-ink)" style={{ letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                 {kat.label}
               </text>
-              <text
-                x={NODE_W - 10}
-                y={17}
-                fontSize={11}
-                textAnchor="end"
-                fill="var(--k-ink-faint)"
+              <g
                 style={{ cursor: 'pointer' }}
                 data-testid="node-loeschen"
                 onPointerDown={(e) => {
@@ -504,10 +621,12 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                   sicher(() => runCommand('vis.nodeLoeschen', { graphId, nodeId: n.id }));
                 }}
               >
-                ✕
-              </text>
+                <KIcon name="schliessen" size={14} x={NODE_W - 22} y={6} style={{ color: 'var(--k-ink-faint)' }} />
+              </g>
             </g>
-            <line x1={0} y1={KOPF_H} x2={NODE_W} y2={KOPF_H} stroke="var(--k-line)" />
+            {/* Tonstreifen (W1): zurückhaltender Kategorie-Hue, 2px, ersetzt die
+                bisherige neutrale Hairline unter dem Kopf. */}
+            <rect x={0} y={KOPF_H} width={NODE_W} height={2} fill={kategorieFarbe} />
 
             {/* Eingänge links */}
             {kat.inputs.map((p, i) => {
@@ -515,7 +634,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
               return (
                 <g key={p.name}>
                   <circle
-                    cx={0}
+                    cx={-PORT_ABSATZ}
                     cy={y}
                     r={5}
                     fill={graph.edges.some((e) => e.to === n.id && e.toPort === p.name) ? PORT_FARBE[p.typ] : 'var(--k-raised)'}
@@ -525,7 +644,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                   />
                   {/* 16-px-Hitkreis */}
                   <circle
-                    cx={0}
+                    cx={-PORT_ABSATZ}
                     cy={y}
                     r={11}
                     fill="transparent"
@@ -555,9 +674,9 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
               const y = KOPF_H + 14 + i * PORT_ABSTAND;
               return (
                 <g key={p.name}>
-                  <circle cx={NODE_W} cy={y} r={5} fill={PORT_FARBE[p.typ]} stroke={PORT_FARBE[p.typ]} data-testid={`port-out-${p.name}`} />
+                  <circle cx={NODE_W + PORT_ABSATZ} cy={y} r={5} fill={PORT_FARBE[p.typ]} stroke={PORT_FARBE[p.typ]} data-testid={`port-out-${p.name}`} />
                   <circle
-                    cx={NODE_W}
+                    cx={NODE_W + PORT_ABSATZ}
                     cy={y}
                     r={11}
                     fill="transparent"
@@ -581,6 +700,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                 node={n0}
                 prompt={auswertung?.werte.get(n.id)?.['prompt'] as string | undefined}
                 material={auswertung?.werte.get(n.id)?.['material'] as string | undefined}
+                eingehenderPrompt={auftrag?.prompt ?? ''}
                 lauf={lauf}
                 veraltet={!!veraltet}
                 onAusfuehren={() => ausfuehren(n.id)}
@@ -588,12 +708,122 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                 onAbbrechen={() => abbrechen(n.id)}
                 cloudLeer={bridgeBase() === ''}
                 bildQuelle={bildQuelle}
+                offen={offenerKlapptext.has(n.id)}
+                onToggleOffen={() => toggleKlapptext(n.id)}
               />
             </foreignObject>
           </g>
         );
       })}
     </svg>
+
+    {/* Zoom-Steuerleiste (W1 Massnahme 4) — schwebend unten rechts. `bottom:
+        92` statt 12: das globale Kosmo-Symbol (KosmoSymbol.tsx, fixed
+        right:22/bottom:22, zIndex 110) sitzt GENAU in der Ecke und würde bei
+        12px sonst die Hälfte des Zoom-Plus-Knopfs verdecken (unklickbar). */}
+    <div style={{ position: 'absolute', right: 12, bottom: 92, display: 'flex', gap: 4 }}>
+      <KButton size="sm" tone="ghost" data-testid="vis-zoom-minus" title="Kleiner" onClick={() => zoomUm(1 / 1.25)}>
+        <KIcon name="zoom-minus" size={16} title="Kleiner" />
+      </KButton>
+      <KButton size="sm" tone="ghost" data-testid="vis-zoom-fit" title="Einpassen" onClick={zoomFit}>
+        <KIcon name="fit" size={16} title="Einpassen" />
+      </KButton>
+      <KButton size="sm" tone="ghost" data-testid="vis-zoom-plus" title="Grösser" onClick={() => zoomUm(1.25)}>
+        <KIcon name="zoom-plus" size={16} title="Grösser" />
+      </KButton>
+    </div>
+
+    {/* Porttyp-Legende (W1 Massnahme 5) — nur wenn der Graph Nodes hat. */}
+    {graph.nodes.length > 0 && legendeTypen.length > 0 && (
+      <div
+        data-testid="vis-legende"
+        style={{
+          position: 'absolute',
+          left: 12,
+          bottom: 12,
+          display: 'grid',
+          gap: 3,
+          padding: '6px 8px',
+          background: 'var(--k-surface)',
+          border: '1px solid var(--k-line)',
+          borderRadius: 'var(--k-radius-sm)',
+          fontSize: 'var(--k-t-xs)',
+          color: 'var(--k-ink-soft)',
+        }}
+      >
+        {legendeTypen.map((t) => (
+          <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, background: PORT_FARBE[t] }} />
+            <span>{PORT_TYP_NAME[t]}</span>
+          </div>
+        ))}
+      </div>
+    )}
+    </div>
+  );
+}
+
+/**
+ * SK-V3 (W1): 3-Zeilen-Klapptext — «… mehr» expandiert den Node über den
+ * Eltern-State (`offen`/`onToggleOffen`), NICHT lokal, weil die Kartenhöhe
+ * (SVG-Pfad + foreignObject) im ELTERN-Node-Canvas berechnet wird.
+ */
+function KlappText({
+  testid,
+  text,
+  platzhalter,
+  offen,
+  onToggleOffen,
+}: {
+  testid: string;
+  text: string;
+  platzhalter: string;
+  offen: boolean;
+  onToggleOffen: () => void;
+}) {
+  const hatText = text.trim().length > 0;
+  return (
+    <div style={{ display: 'grid', gap: 2 }}>
+      <div
+        data-testid={testid}
+        style={{
+          fontSize: 10.5,
+          color: 'var(--k-ink-soft)',
+          lineHeight: 1.35,
+          fontStyle: hatText ? 'normal' : 'italic',
+          ...(offen
+            ? {}
+            : ({
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              } as React.CSSProperties)),
+        }}
+      >
+        {hatText ? text : platzhalter}
+      </div>
+      {hatText && (
+        <button
+          type="button"
+          data-testid="node-expand"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={onToggleOffen}
+          style={{
+            justifySelf: 'start',
+            fontSize: 10,
+            color: 'var(--k-ink-faint)',
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            textDecoration: 'underline',
+          }}
+        >
+          {offen ? 'weniger' : '… mehr'}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -603,6 +833,7 @@ function NodeKoerper({
   node,
   prompt,
   material,
+  eingehenderPrompt,
   lauf,
   veraltet,
   onAusfuehren,
@@ -610,11 +841,15 @@ function NodeKoerper({
   onAbbrechen,
   cloudLeer,
   bildQuelle,
+  offen,
+  onToggleOffen,
 }: {
   graphId: string;
   node: VisNode;
   prompt: string | undefined;
   material: string | undefined;
+  /** V-H4: der eingehende Prompt am Render-Node (vor dem Formular-Zusatz). */
+  eingehenderPrompt: string;
   lauf: { status: string; jobId?: string; bild?: string; qa?: { verdict: { passed: boolean } } | undefined; fehler?: string; worker?: string; progress?: { phase: string; pct: number } } | undefined;
   veraltet: boolean;
   onAusfuehren: () => void;
@@ -622,6 +857,9 @@ function NodeKoerper({
   onAbbrechen: () => void;
   cloudLeer: boolean;
   bildQuelle: (nodeId: string, port: string) => { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | null;
+  /** SK-V3: ist der Klapptext dieses Nodes offen (lokaler UI-State im Canvas). */
+  offen: boolean;
+  onToggleOffen: () => void;
 }) {
   const runCommand = useProject((s) => s.runCommand);
   const doc = useProject.getState().doc;
@@ -654,9 +892,13 @@ function NodeKoerper({
     }
     case 'material':
       return (
-        <div style={{ fontSize: 10.5, color: 'var(--k-ink-soft)', lineHeight: 1.35, overflow: 'hidden' }}>
-          {material || 'keine Material-Phrasen — Wandaufbauten sprechen mit'}
-        </div>
+        <KlappText
+          testid="material"
+          text={material ?? ''}
+          platzhalter="keine Material-Phrasen — Wandaufbauten sprechen mit"
+          offen={offen}
+          onToggleOffen={onToggleOffen}
+        />
       );
     case 'prompt':
       return (
@@ -671,20 +913,33 @@ function NodeKoerper({
           style={{ ...feld, resize: 'none' }}
         />
       );
-    case 'stimmung':
+    case 'stimmung': {
+      const presetKey = String(params['preset'] ?? 'morgen');
       return (
-        <select
-          value={String(params['preset'] ?? 'morgen')}
-          data-testid="stimmung-preset"
-          onChange={(e) => param('preset', e.target.value)}
-          onPointerDown={(e) => e.stopPropagation()}
-          style={feld}
-        >
-          {Object.entries(VIS_STIMMUNGEN).map(([key, s]) => (
-            <option key={key} value={key}>{s.label}</option>
-          ))}
-        </select>
+        <div style={{ display: 'grid', gap: 4 }}>
+          <select
+            value={presetKey}
+            data-testid="stimmung-preset"
+            onChange={(e) => param('preset', e.target.value)}
+            onPointerDown={(e) => e.stopPropagation()}
+            style={feld}
+          >
+            {Object.entries(VIS_STIMMUNGEN).map(([key, s]) => (
+              <option key={key} value={key}>{s.label}</option>
+            ))}
+          </select>
+          {/* SK-V3: die Stimmungs-Beschreibung (der tatsächliche Prompt-Text
+              des Presets) sichtbar — clampt wie kombinierer-prompt/material. */}
+          <KlappText
+            testid="stimmung-beschrieb"
+            text={VIS_STIMMUNGEN[presetKey]?.prompt ?? ''}
+            platzhalter="kein Beschrieb"
+            offen={offen}
+            onToggleOffen={onToggleOffen}
+          />
+        </div>
       );
+    }
     case 'zahl': {
       const min = Number(params['min'] ?? 0);
       const max = Number(params['max'] ?? 1);
@@ -708,12 +963,13 @@ function NodeKoerper({
     }
     case 'kombinierer':
       return (
-        <div
-          data-testid="kombinierer-prompt"
-          style={{ fontSize: 10.5, color: 'var(--k-ink-soft)', lineHeight: 1.35, overflow: 'hidden', fontStyle: prompt ? 'normal' : 'italic' }}
-        >
-          {prompt || 'verbinde Stimmung / Stil / Material — der finale Prompt erscheint live'}
-        </div>
+        <KlappText
+          testid="kombinierer-prompt"
+          text={prompt ?? ''}
+          platzhalter="verbinde Stimmung / Stil / Material — der finale Prompt erscheint live"
+          offen={offen}
+          onToggleOffen={onToggleOffen}
+        />
       );
     case 'render': {
       const roh = lauf?.status ?? 'bereit';
@@ -743,8 +999,105 @@ function NodeKoerper({
             ? 'var(--k-ink-faint)'
             : 'var(--k-warning)';
       const laeuftNoch = ['gesendet', 'wartetFreigabe', 'wartetGpu', 'rendert'].includes(status);
+      // V-H4 (UI-KONZEPT-065 §5): semantisches Formular — schreibt in flache
+      // Render-Node-`params` über den bestehenden `vis.nodeParametrieren`-Weg;
+      // derselbe Zusammenführungs-Helfer (vis-jobs.ts) speist Anzeige UND Job.
+      const formFassade = String(params['formFassade'] ?? '');
+      const formSzene = String(params['formSzene'] ?? '');
+      const formJahreszeit = String(params['formJahreszeit'] ?? '');
+      const formPersonen = String(params['formPersonen'] ?? '');
+      const formFreitext = String(params['formFreitext'] ?? '');
+      // Fassade: aus den Modell-Material-Bausteinen, falls vorhanden — sonst
+      // freier Text (kein Material verbunden/erkannt).
+      const fassadenBausteine = renderPromptBausteine(doc);
+      const finalPrompt = kombiniertePrompt(eingehenderPrompt, formularZusatz(params));
       return (
-        <div style={{ display: 'grid', gap: 5 }} onPointerDown={(e) => e.stopPropagation()}>
+        <div style={{ display: 'grid', gap: 6 }} onPointerDown={(e) => e.stopPropagation()}>
+          <div data-testid="render-formular" style={{ display: 'grid', gap: 4 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+              <KField label="Fassade">
+                {fassadenBausteine.length > 0 ? (
+                  <KSelect
+                    size="sm"
+                    value={formFassade}
+                    data-testid="render-formular-fassade"
+                    onChange={(e) => param('formFassade', e.target.value)}
+                  >
+                    <option value="">— frei —</option>
+                    {fassadenBausteine.map((b) => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </KSelect>
+                ) : (
+                  <KInput
+                    size="sm"
+                    defaultValue={formFassade}
+                    key={formFassade}
+                    placeholder="frei …"
+                    data-testid="render-formular-fassade"
+                    onBlur={(e) => e.target.value !== formFassade && param('formFassade', e.target.value)}
+                  />
+                )}
+              </KField>
+              <KField label="Szene">
+                <KSelect
+                  size="sm"
+                  value={formSzene}
+                  data-testid="render-formular-szene"
+                  onChange={(e) => param('formSzene', e.target.value)}
+                >
+                  <option value="">—</option>
+                  <option value="Aussenansicht von der Strasse">Aussen · Strasse</option>
+                  <option value="Aussenansicht vom Hof">Aussen · Hof</option>
+                  <option value="Vogelperspektive">Aussen · Vogel</option>
+                  <option value="Innenraumansicht">Innen</option>
+                </KSelect>
+              </KField>
+              <KField label="Jahreszeit">
+                <KSelect
+                  size="sm"
+                  value={formJahreszeit}
+                  data-testid="render-formular-jahreszeit"
+                  onChange={(e) => param('formJahreszeit', e.target.value)}
+                >
+                  <option value="">—</option>
+                  <option value="Sommer">Sommer</option>
+                  <option value="Winter">Winter</option>
+                  <option value="Herbst">Herbst</option>
+                </KSelect>
+              </KField>
+              <KField label="Personen">
+                <KSelect
+                  size="sm"
+                  value={formPersonen}
+                  data-testid="render-formular-personen"
+                  onChange={(e) => param('formPersonen', e.target.value)}
+                >
+                  <option value="">—</option>
+                  <option value="keine Personen">keine</option>
+                  <option value="wenige Personen">wenige</option>
+                  <option value="belebte Szene, viele Personen">belebt</option>
+                </KSelect>
+              </KField>
+            </div>
+            <KField label="Freitext">
+              <KInput
+                size="sm"
+                defaultValue={formFreitext}
+                key={formFreitext}
+                placeholder="Freitext-Zusatz …"
+                data-testid="render-formular-freitext"
+                onBlur={(e) => e.target.value !== formFreitext && param('formFreitext', e.target.value)}
+              />
+            </KField>
+            {/* Ehrlichkeit/V8: der TATSÄCHLICHE Prompt, den «Ausführen» sendet. */}
+            <div
+              data-testid="render-final-prompt"
+              style={{ fontSize: 9.5, fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-faint)', lineHeight: 1.3 }}
+            >
+              {finalPrompt || 'kein Prompt — verbinde Stimmung/Stil oder fülle das Formular'}
+            </div>
+          </div>
           <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
             <KButton
               size="sm"

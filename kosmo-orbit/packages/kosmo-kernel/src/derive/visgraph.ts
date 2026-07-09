@@ -19,16 +19,37 @@ export interface VisPort {
   label: string;
 }
 
+/**
+ * Node-Kategorie (W1, UI-KONZEPT-065 §5) — reine Katalog-Metadaten für die
+ * Kopf-Gestaltung im Node-Editor (KIcon + 2px-Tonstreifen je Kategorie).
+ * Keine Auswirkung auf `evaluiereGraph`/Entities — rein visuelle Gruppierung.
+ */
+export type VisKategorie = 'quelle' | 'wandler' | 'render' | 'ausgabe';
+
 export interface VisNodeTyp {
   typ: string;
   label: string;
   /** Kurzbeschrieb für Palette + Kosmo. */
   hilfe: string;
+  /** W1: Quelle/Wandler/Render/Ausgabe — steuert Kopf-Icon + Tonstreifen. */
+  kategorie: VisKategorie;
   inputs: VisPort[];
   outputs: VisPort[];
   /** Default-Parameter beim Setzen. */
   defaults: Record<string, string | number | boolean>;
 }
+
+/**
+ * Zurückhaltende Kategorie-Hue-Zuordnung (W1) — bewusst bestehende
+ * `--k-mod-*`-Tokens aus `aura.css` wiederverwendet (keine neuen Farbwerte),
+ * je Kategorie EIN Ton für den 2px-Tonstreifen unter dem Node-Kopf.
+ */
+export const VIS_KATEGORIE_HUE: Record<VisKategorie, string> = {
+  quelle: 'var(--k-mod-data)',
+  wandler: 'var(--k-mod-prepare)',
+  render: 'var(--k-mod-design)',
+  ausgabe: 'var(--k-mod-publish)',
+};
 
 /** Die Stimmungs-Presets — identisch mit der bisherigen Serien-Logik. */
 export const VIS_STIMMUNGEN: Record<string, { label: string; prompt: string }> = {
@@ -37,12 +58,13 @@ export const VIS_STIMMUNGEN: Record<string, { label: string; prompt: string }> =
   weiss: { label: 'Weissmodell', prompt: 'Weissmodell, neutrales Studiolicht, keine Materialien' },
 };
 
-/** Katalog der 10 Node-Typen — deckt alle heutigen KosmoVis-Fähigkeiten. */
+/** Katalog der 11 Node-Typen — deckt alle heutigen KosmoVis-Fähigkeiten. */
 export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
   modell: {
     typ: 'modell',
     label: 'Modell',
     hilfe: 'Das aktuelle Projekt als GLB-Szene — der Startpunkt jedes Renders.',
+    kategorie: 'quelle',
     inputs: [],
     outputs: [{ name: 'szene', typ: 'szene', label: 'Szene' }],
     defaults: {},
@@ -51,6 +73,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'material',
     label: 'Material-Bausteine',
     hilfe: 'Liest die äussersten Wandschichten + Fassadenmodule als Prompt-Phrasen (V8).',
+    kategorie: 'quelle',
     inputs: [],
     outputs: [{ name: 'material', typ: 'material', label: 'Material' }],
     defaults: {},
@@ -59,6 +82,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'prompt',
     label: 'Prompt',
     hilfe: 'Freier Stil-Text, z.B. «Sichtbeton, warmes Licht».',
+    kategorie: 'wandler',
     inputs: [],
     outputs: [{ name: 'prompt', typ: 'prompt', label: 'Prompt' }],
     defaults: { text: '' },
@@ -67,6 +91,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'stimmung',
     label: 'Stimmung',
     hilfe: 'Preset Morgenlicht / Abendstimmung / Weissmodell.',
+    kategorie: 'wandler',
     inputs: [],
     outputs: [{ name: 'prompt', typ: 'prompt', label: 'Prompt' }],
     defaults: { preset: 'morgen' },
@@ -75,6 +100,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'kombinierer',
     label: 'Prompt-Kombinierer',
     hilfe: 'Fügt Stimmung + Stil + Material zum finalen Prompt — live sichtbar am Node.',
+    kategorie: 'wandler',
     inputs: [
       { name: 'stimmung', typ: 'prompt', label: 'Stimmung' },
       { name: 'stil', typ: 'prompt', label: 'Stil' },
@@ -87,6 +113,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'zahl',
     label: 'Zahl',
     hilfe: 'Regler-Wert, z.B. Geometrie-Treue 0–1 oder Samples.',
+    kategorie: 'wandler',
     inputs: [],
     outputs: [{ name: 'zahl', typ: 'zahl', label: 'Wert' }],
     defaults: { wert: 0.8, min: 0, max: 1, schritt: 0.05 },
@@ -95,6 +122,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'render',
     label: 'Render',
     hilfe: 'Schickt Szene + Prompt an die HomeStation — nur auf «Ausführen», nie automatisch.',
+    kategorie: 'render',
     inputs: [
       { name: 'szene', typ: 'szene', label: 'Szene' },
       { name: 'prompt', typ: 'prompt', label: 'Prompt' },
@@ -110,6 +138,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     label: 'Auto-Kamera',
     hilfe:
       'Leitet benannte Standpunkte (Eingang/Übersicht/ggf. Innenraum) regelbasiert aus den Modell-Bounds ab — Vorschlag aus dem Modell, keine KI-Wahl. Mit dem Render-Node verbinden.',
+    kategorie: 'quelle',
     inputs: [],
     outputs: [{ name: 'kameras', typ: 'kameras', label: 'Kamera-Standpunkte' }],
     defaults: {},
@@ -118,6 +147,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'vergleich',
     label: 'Bildvergleich',
     hilfe: 'Bilder nebeneinander mit QA-Verdikt — die heutige Varianten-Serie als Node.',
+    kategorie: 'ausgabe',
     inputs: [
       { name: 'bild1', typ: 'bild', label: 'Bild 1' },
       { name: 'bild2', typ: 'bild', label: 'Bild 2' },
@@ -130,6 +160,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'blatt',
     label: 'Aufs Blatt',
     hilfe: 'Legt das Bild als Blatt-Bürger in KosmoPublish ab (ein Undo-Schritt).',
+    kategorie: 'ausgabe',
     inputs: [{ name: 'bild', typ: 'bild', label: 'Bild' }],
     outputs: [],
     defaults: { titel: 'Visualisierung' },
@@ -138,6 +169,7 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     typ: 'referenz',
     label: 'Bild-Referenz',
     hilfe: 'Referenzbild oder Splat-Ansicht als Bild-Quelle (Stil-Referenz, Vergleich).',
+    kategorie: 'quelle',
     inputs: [],
     outputs: [{ name: 'bild', typ: 'bild', label: 'Bild' }],
     defaults: { url: '' },

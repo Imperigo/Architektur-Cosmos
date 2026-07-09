@@ -181,6 +181,29 @@ function parseJob(raw: unknown): JobRecord {
   return geprueft.data;
 }
 
+/**
+ * V-H4 (W1, UI-KONZEPT-065 §5) — semantisches Render-Formular: Fassade / Szene
+ * / Jahreszeit / Personen / Freitext sind flache Render-Node-`params` (wie
+ * `nurCycles`/`preset`), gesetzt über das bestehende `vis.nodeParametrieren`.
+ * Diese zwei Funktionen sind die EINE Naht, die den Formular-Zusatz an den
+ * eingehenden Prompt hängt — dieselbe Zusammenführung speist sowohl die
+ * sichtbare Anzeige (`render-final-prompt`) als auch den tatsächlichen
+ * Bridge-Auftrag (Ehrlichkeit/V8: kein stiller Unterschied zwischen Anzeige
+ * und Job). KEINE Änderung am render-scene/v1-Vertrag — nur Prompt-Inhalt.
+ */
+const RENDER_FORMULAR_FELDER = ['formFassade', 'formSzene', 'formJahreszeit', 'formPersonen', 'formFreitext'] as const;
+
+export function formularZusatz(params: Record<string, string | number | boolean>): string {
+  return RENDER_FORMULAR_FELDER.map((f) => String(params[f] ?? '').trim())
+    .filter((t) => t.length > 0)
+    .join(', ');
+}
+
+/** Eingehender Prompt (aus der bestehenden Prompt-Leitung) + Formular-Zusatz. */
+export function kombiniertePrompt(eingang: string, zusatz: string): string {
+  return [eingang, zusatz].filter((t) => t.trim().length > 0).join(', ');
+}
+
 export function bildUrl(jobId: string, imageName: string): string {
   return `${bridgeBase()}${bridgeRoutes.jobArtifact(jobId, imageName)}`;
 }

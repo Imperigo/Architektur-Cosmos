@@ -4,6 +4,12 @@ import { expect, test } from '@playwright/test';
  * V1-Finish P2: KosmoVis Node-Tree — die Kette Graph bauen → Render über
  * den Fake-Worker → Bild am Node → Aufs Blatt, plus das Canvas-Handwerk
  * (Ports per Drag verbinden, Node schieben = EIN Command).
+ *
+ * W1-Anpassung (Begründung): dieser Worktree-Stream läuft mit einer EIGENEN
+ * Fake-Worker-Bridge auf Port 8611 (statt des Haupbaum-Defaults 8600), damit
+ * parallele Streams sich nicht in die Quere kommen — `kosmo.bridge` wird
+ * darum explizit gesetzt, die render-scene.json-Polls zeigen auf denselben
+ * Port. Reine Testumgebungs-Anpassung, keine Vertragsänderung.
  */
 
 declare global {
@@ -26,6 +32,8 @@ declare global {
 test('Node-Tree-Kette: Drei Stimmungen → Ausführen → Bild am Node → Aufs Blatt', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  // W1: eigene Bridge (Begründung siehe Datei-Kopf)
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
   await page.click('[data-testid="module-vis"]');
   await page.click('[data-testid="drei-stimmungen"]');
 
@@ -70,6 +78,8 @@ test('Node-Tree-Kette: Drei Stimmungen → Ausführen → Bild am Node → Aufs 
 test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, Trennen räumt', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  // W1: eigene Bridge (Begründung siehe Datei-Kopf)
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
   await page.click('[data-testid="module-vis"]');
   await page.click('[data-testid="graph-neu"]');
   await page.selectOption('[data-testid="node-hinzu"]', 'prompt');
@@ -120,9 +130,13 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
     )
     .not.toBe(vorherY);
 
-  // Kante wählen und trennen
-  await page.locator('[data-testid="vis-edge"] path').first().click({ force: true });
-  await page.locator('[data-testid="edge-trennen"]').click({ force: true });
+  // W1-Anpassung (Begründung): Trenn-✕ ist jetzt NUR bei Hover der Kante
+  // sichtbar (CSS-Opazität, Element bleibt im DOM — UI-KONZEPT-065 §5). Vor
+  // dem Klick wird darum gehovert, sonst träfe der Klick einen unsichtbaren
+  // Knopf (funktional noch klickbar, aber nicht mehr das reale Nutzer-Verhalten).
+  const kante = page.locator('[data-testid="vis-edge"]').first();
+  await kante.hover({ force: true });
+  await kante.locator('[data-testid="edge-trennen"]').click({ force: true });
   await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(0, { timeout: 5000 });
   await page.screenshot({ path: 'e2e-results/visgraph-handwerk.png' });
 });
@@ -130,6 +144,8 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
 test('HS5: «Nur Cycles» bestellt vis.skip: true — beweisbar aus der render-scene.json', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  // W1: eigene Bridge (Begründung siehe Datei-Kopf)
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
   await page.click('[data-testid="module-vis"]');
   await page.click('[data-testid="drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]').first()).toBeVisible();
@@ -149,11 +165,11 @@ test('HS5: «Nur Cycles» bestellt vis.skip: true — beweisbar aus der render-s
     .poll(
       async () =>
         page.evaluate(async () => {
-          const jobs = (await (await fetch('http://localhost:8600/jobs')).json()) as { job_id: string }[];
+          const jobs = (await (await fetch('http://localhost:8611/jobs')).json()) as { job_id: string }[];
           for (const j of jobs) {
             try {
               const scene = await (
-                await fetch(`http://localhost:8600/jobs/${j.job_id}/artifacts/render-scene.json`)
+                await fetch(`http://localhost:8611/jobs/${j.job_id}/artifacts/render-scene.json`)
               ).json();
               if ((scene as { vis?: { skip?: boolean } }).vis?.skip === true) return true;
             } catch {
@@ -192,6 +208,8 @@ test('HS5: «Nur Cycles» bestellt vis.skip: true — beweisbar aus der render-s
 test('F6: Pannen des Node-Trees stürzt nicht ab (Drei Stimmungen) — Maus-Pan + Wheel', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  // W1: eigene Bridge (Begründung siehe Datei-Kopf)
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
   await page.click('[data-testid="module-vis"]');
   await page.click('[data-testid="drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
@@ -218,6 +236,8 @@ test('F6: Pannen des Node-Trees stürzt nicht ab (Drei Stimmungen) — Maus-Pan 
 test('F6: schnelles down→move…→up (synchrone Race) stürzt den Node-Tree nicht ab', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  // W1: eigene Bridge (Begründung siehe Datei-Kopf)
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
   await page.click('[data-testid="module-vis"]');
   await page.click('[data-testid="drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);

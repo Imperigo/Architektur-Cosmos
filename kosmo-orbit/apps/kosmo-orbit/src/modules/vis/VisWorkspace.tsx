@@ -1,8 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
-import { Messrahmen, Badge, Hairline, Karteikarte, KButton, Measure, Panel, meldeFehler, moduleHue } from '@kosmo/ui';
+import {
+  Messrahmen,
+  Badge,
+  Hairline,
+  Karteikarte,
+  KButton,
+  KIcon,
+  KSelect,
+  KToolbar,
+  KToolGruppe,
+  Measure,
+  Panel,
+  meldeFehler,
+  moduleHue,
+} from '@kosmo/ui';
 import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, type Sheet, type VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
-import { NodeCanvas } from './NodeCanvas';
+import { basisNodeHoehe, NODE_W, NodeCanvas } from './NodeCanvas';
 import { bridgeToken } from './vis-jobs';
 import { BridgeBild } from './BridgeBild';
 
@@ -117,12 +131,22 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
           runCommand('vis.verbinden', { graphId: gid, from, fromPort, to, toPort });
         const modell = setze('modell', 40, 260);
         const material = setze('material', 40, 420);
-        const vergleich = setze('vergleich', 1120, 300);
+        // W1 Massnahme 3a («Kein Overlap»): vertikaler Versatz = echte
+        // Node-Höhe (der grösste der drei Typen in einer Zeile, `render` ist
+        // mit Abstand am höchsten) + 40; horizontaler Versatz = NODE_W + 80 —
+        // reicht auch für x=40 (Modell/Material) zur ersten Spalte (320).
+        const zeilenAbstand = Math.max(basisNodeHoehe('stimmung'), basisNodeHoehe('kombinierer'), basisNodeHoehe('render')) + 40;
+        const spaltenAbstand = NODE_W + 80;
+        const stimmungX = 320;
+        const kombX = stimmungX + spaltenAbstand;
+        const renderX = kombX + spaltenAbstand;
+        const vergleichX = renderX + spaltenAbstand;
+        const vergleich = setze('vergleich', vergleichX, zeilenAbstand + 40);
         (['morgen', 'abend', 'weiss'] as const).forEach((preset, i) => {
-          const y = 40 + i * 230;
-          const stimmung = setze('stimmung', 320, y, { preset });
-          const komb = setze('kombinierer', 580, y);
-          const render = setze('render', 840, y);
+          const y = 40 + i * zeilenAbstand;
+          const stimmung = setze('stimmung', stimmungX, y, { preset });
+          const komb = setze('kombinierer', kombX, y);
+          const render = setze('render', renderX, y);
           verbinde(stimmung, 'prompt', komb, 'stimmung');
           verbinde(material, 'material', komb, 'material');
           verbinde(modell, 'szene', render, 'szene');
@@ -182,12 +206,49 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
     }
   };
 
+  /**
+   * W1 Massnahme 3b («Kein Overlap»): statt eines festen Rasterpunkts eine
+   * Spiral-Platzsuche — prüft die Bounding-Box des neuen Nodes gegen ALLE
+   * bestehenden (mit 24px Sicherheitsabstand) und weicht sonst spiralförmig
+   * (wachsender Radius, 12 Winkel je Umlauf) nach aussen aus. Reine App-Logik,
+   * `vis.nodeSetzen` bleibt unverändert (EIN Command, EIN Undo-Schritt).
+   */
   const nodeHinzu = (typ: string) => {
     if (!graphId) return;
     try {
-      const anzahl = doc.get<VisGraph>(graphId)?.nodes.length ?? 0;
-      // Raster-Platzierung ohne Überlappung — schieben kann man immer noch
-      runCommand('vis.nodeSetzen', { graphId, typ, x: 100 + (anzahl % 4) * 250, y: 60 + Math.floor(anzahl / 4) * 280 });
+      const bestehend = doc.get<VisGraph>(graphId)?.nodes ?? [];
+      const eigeneHoehe = basisNodeHoehe(typ);
+      const ABSTAND = 24;
+      const passtHier = (x: number, y: number) =>
+        !bestehend.some((n) => {
+          const nHoehe = basisNodeHoehe(n.typ);
+          return (
+            x < n.x + NODE_W + ABSTAND &&
+            x + NODE_W + ABSTAND > n.x &&
+            y < n.y + nHoehe + ABSTAND &&
+            y + eigeneHoehe + ABSTAND > n.y
+          );
+        });
+      const START_X = 100;
+      const START_Y = 60;
+      const findeSpiralPlatz = (): { x: number; y: number } => {
+        const SCHRITT = 60;
+        const WINKEL_JE_UMLAUF = 12;
+        for (let radius = 1; radius <= 40; radius++) {
+          for (let schritt = 0; schritt < WINKEL_JE_UMLAUF; schritt++) {
+            const winkel = (schritt / WINKEL_JE_UMLAUF) * Math.PI * 2;
+            const kandX = Math.round(START_X + radius * SCHRITT * Math.cos(winkel));
+            const kandY = Math.round(START_Y + radius * SCHRITT * Math.sin(winkel) * 0.6);
+            if (passtHier(kandX, kandY)) return { x: kandX, y: kandY };
+          }
+        }
+        // Kein freier Platz in 40 Umläufen (sehr grosser Graph) — weit unten
+        // anhängen bleibt immer noch überlappungsfrei (unter allen Nodes).
+        const maxY = bestehend.reduce((m, n) => Math.max(m, n.y + basisNodeHoehe(n.typ)), START_Y);
+        return { x: START_X, y: maxY + ABSTAND };
+      };
+      const { x, y } = passtHier(START_X, START_Y) ? { x: START_X, y: START_Y } : findeSpiralPlatz();
+      runCommand('vis.nodeSetzen', { graphId, typ, x: Math.max(20, x), y: Math.max(20, y) });
     } catch (err) {
       meldeFehler(err);
     }
@@ -195,9 +256,9 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
 
   if (tab === 'einfach') {
     return (
-      <div style={{ position: 'absolute', inset: 0 }}>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
         <VisTabs tab={tab} setTab={setTab} />
-        <div style={{ position: 'absolute', inset: 0, top: 44 }}>
+        <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
           <EinfachAnsicht />
         </div>
       </div>
@@ -205,50 +266,56 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0 }}>
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
       <VisTabs tab={tab} setTab={setTab} {...(onEinstellungen ? { onEinstellungen } : {})}>
-        <select
-          value={graphId}
-          data-testid="graph-select"
-          onChange={(e) => setAktiverGraph(e.target.value)}
-          style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
-        >
-          {graphen.length === 0 && <option value="">— kein Graph —</option>}
-          {graphen.map((g) => (
-            <option key={g.id} value={g.id}>{g.name}</option>
-          ))}
-        </select>
-        <KButton size="sm" tone="quiet" data-testid="graph-neu" onClick={neuerGraph}>
-          + Graph
-        </KButton>
-        <select
-          value=""
-          data-testid="node-hinzu"
-          disabled={!graphId}
-          onChange={(e) => e.target.value && nodeHinzu(e.target.value)}
-          style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
-        >
-          <option value="">+ Node …</option>
-          {Object.values(VIS_NODE_KATALOG).map((t) => (
-            <option key={t.typ} value={t.typ}>{t.label}</option>
-          ))}
-        </select>
-        {/* SK-V2 (UI-Selbstkritik 0.6.4): «+»-Präfix wie bei «+ Graph»/«+ Node» —
-            vorher stand «Drei Stimmungen» doppelt in der Leiste (Graph-NAME im
-            Select links + dieser Knopf), ohne dass erkennbar war, dass der
-            Knopf etwas NEUES anlegt. */}
-        <KButton size="sm" tone="accent" data-testid="drei-stimmungen" onClick={dreiStimmungen}>
-          + Drei Stimmungen
-        </KButton>
-        <Hairline vertical />
-        <span style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: '0.03em', color: 'var(--k-ink-faint)' }}>
-          AUTO
-        </span>
-        <KButton size="sm" tone="quiet" data-testid="vis-auto-kamera" onClick={kameraVorschlagen}>
-          Kamera vorschlagen
-        </KButton>
+        {/* W1 Massnahme 6: KToolbar/KToolGruppe (UI-KONZEPT-065 §3) — Gruppen
+            Graph | Bauen | Automatik. Alle testids + Beschriftungen wörtlich
+            erhalten; `node-hinzu` bleibt ein natives Select (KSelect wrappt
+            nur Styling, `page.selectOption` funktioniert unverändert). */}
+        <KToolGruppe label="Graph">
+          <KSelect
+            size="sm"
+            value={graphId}
+            data-testid="graph-select"
+            onChange={(e) => setAktiverGraph(e.target.value)}
+          >
+            {graphen.length === 0 && <option value="">— kein Graph —</option>}
+            {graphen.map((g) => (
+              <option key={g.id} value={g.id}>{g.name}</option>
+            ))}
+          </KSelect>
+          <KButton size="sm" tone="quiet" data-testid="graph-neu" onClick={neuerGraph}>
+            + Graph
+          </KButton>
+        </KToolGruppe>
+        <KToolGruppe label="Bauen">
+          <KSelect
+            size="sm"
+            value=""
+            data-testid="node-hinzu"
+            disabled={!graphId}
+            onChange={(e) => e.target.value && nodeHinzu(e.target.value)}
+          >
+            <option value="">+ Node …</option>
+            {Object.values(VIS_NODE_KATALOG).map((t) => (
+              <option key={t.typ} value={t.typ}>{t.label}</option>
+            ))}
+          </KSelect>
+          {/* SK-V2 (UI-Selbstkritik 0.6.4): «+»-Präfix wie bei «+ Graph»/«+ Node» —
+              vorher stand «Drei Stimmungen» doppelt in der Leiste (Graph-NAME im
+              Select links + dieser Knopf), ohne dass erkennbar war, dass der
+              Knopf etwas NEUES anlegt. */}
+          <KButton size="sm" tone="accent" data-testid="drei-stimmungen" onClick={dreiStimmungen}>
+            + Drei Stimmungen
+          </KButton>
+        </KToolGruppe>
+        <KToolGruppe label="Automatik">
+          <KButton size="sm" tone="quiet" data-testid="vis-auto-kamera" onClick={kameraVorschlagen}>
+            Kamera vorschlagen
+          </KButton>
+        </KToolGruppe>
       </VisTabs>
-      <div style={{ position: 'absolute', inset: 0, top: 44 }}>
+      <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
         {graphId ? (
           <NodeCanvas key={graphId} graphId={graphId} />
         ) : (
@@ -264,6 +331,12 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
   );
 }
 
+/**
+ * Werkzeugzeile der Station (W1: KToolbar statt manueller Div — UI-KONZEPT-065
+ * §4 Regel 1 «eine Werkzeugzeile pro Station»). Der doppelte Stationsname
+ * (Badge hier UND Toolbar-Titel in der Kopfleiste) bleibt bewusst — diese
+ * Zeile ist der Tab-Wechsler (SK-A1), keine Redundanz zum Entfernen.
+ */
 function VisTabs({
   tab,
   setTab,
@@ -276,22 +349,7 @@ function VisTabs({
   onEinstellungen?: () => void;
 }) {
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 44,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '0 14px',
-        borderBottom: '1px solid var(--k-line)',
-        background: 'var(--k-surface)',
-        zIndex: 4,
-      }}
-    >
+    <KToolbar>
       <Badge hue={moduleHue.vis}>KosmoVis</Badge>
       <KButton size="sm" tone={tab === 'graph' ? 'accent' : 'ghost'} data-testid="tab-graph" onClick={() => setTab('graph')}>
         Node-Tree
@@ -314,10 +372,10 @@ function VisTabs({
           aria-label="Einstellungen — KosmoVis"
           onClick={onEinstellungen}
         >
-          ⚙
+          <KIcon name="zahnrad" size={14} />
         </KButton>
       )}
-    </div>
+    </KToolbar>
   );
 }
 

@@ -7,10 +7,16 @@ import { expect, test } from '@playwright/test';
  * (Auto-Kamera-Node + Verbindung zu jedem Render-Node) → Preset wählen →
  * Ausführen (Fake-Worker) → Render-Bild erscheint.
  *
- * HINWEIS für den Koordinator: NICHT im Batch-Worktree laufen lassen (Ports
- * gehören dem Hauptbaum) — braucht den laufenden Preview-Build + die
- * Fake-Worker-Bridge (`kosmo-bridge --fake --port 8600`), analog zu
+ * HINWEIS für den Koordinator: braucht den laufenden Preview-Build + die
+ * Fake-Worker-Bridge (`kosmo-bridge --fake-worker --port 8600`), analog zu
  * e2e/visgraph.spec.ts, dessen Bootstrap-Muster dieser Test übernimmt.
+ *
+ * W1-Anpassung (Begründung): dieser Worktree-Stream läuft mit einer EIGENEN
+ * Fake-Worker-Bridge auf Port 8611 (statt 8600) — `kosmo.bridge` wird darum
+ * explizit gesetzt, die render-scene.json-Polls zeigen auf denselben Port.
+ * Reine Testumgebungs-Anpassung, keine Vertragsänderung. (Die ursprüngliche
+ * Koordinator-Warnung «nicht im Batch-Worktree» galt für den Fall EINES
+ * geteilten Ports — mit eigenem Port pro Stream entfällt der Grund.)
  */
 
 declare global {
@@ -30,6 +36,8 @@ declare global {
 test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-Render liefert ein Bild', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  // W1: eigene Bridge (Begründung siehe Datei-Kopf)
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
 
   // TKB laden (Beispielprojekt) — nicht leer, damit Auto-Kamera echte Bounds hat
   await page.click('[data-testid="load-tkb"]');
@@ -74,11 +82,11 @@ test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-
     .poll(
       async () =>
         page.evaluate(async () => {
-          const jobs = (await (await fetch('http://localhost:8600/jobs')).json()) as { job_id: string }[];
+          const jobs = (await (await fetch('http://localhost:8611/jobs')).json()) as { job_id: string }[];
           for (const j of jobs) {
             try {
               const scene = (await (
-                await fetch(`http://localhost:8600/jobs/${j.job_id}/artifacts/render-scene.json`)
+                await fetch(`http://localhost:8611/jobs/${j.job_id}/artifacts/render-scene.json`)
               ).json()) as { render?: { resolution?: number[]; sun?: { elevation?: number } } };
               if (scene.render?.resolution?.[0] === 1920 && scene.render?.sun?.elevation === 32) return true;
             } catch {
@@ -108,6 +116,8 @@ test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-
 test('F6: Pannen nach «Kamera vorschlagen» stürzt nicht ab (Maus-Pan + synchrone Race)', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  // W1: eigene Bridge (Begründung siehe Datei-Kopf)
+  await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8611'));
   await page.click('[data-testid="load-tkb"]');
   await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
   await page.evaluate(() => window.__kosmo.open('vis'));
