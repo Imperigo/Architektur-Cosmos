@@ -649,4 +649,10 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
     - Bilanz + kuratierte 0.6.6-Liste: `docs/UI-SELBSTKRITIK-065.md`. Belege: `docs/rundgang/kritik-065/` (Runde-1-Stand committet, Runde-2-Stand dieser Commit).
     - Gates: typecheck · Kernel 491 · App 588 · KI 59 · UI 14 · gezielter Integrations-Lauf 42/42 · orbit-start+faecher 3× · baugesuch/visgraph/einstellungen grün.
 
+273. **v0.6.5 / Finale — Release des Fable-Intelligenz-Tags: Vollsuite komplett grün** *(09.07.2026)*
+    - Finale Vollsuite gegen den 0.6.5-Build: **251/251 grün + 1 bekannter Skip** (253 Tests, exit 0) — erster Release der V2-Serie ohne einen einzigen roten Vollsuiten-Test. Dazu typecheck · Kernel 491 (Goldens byte-identisch) · App 588 · KI 59 · UI 14.
+    - Tagesbilanz des Fable-Intelligenz-Tags (ROADMAP 270–273): W0-Fundament (Token-Ordnung, Skalen, 9 geteilte Komponenten, 30 Tusche-Icons) → 6 parallele Worktree-Streams (KosmoVis-Neubau, Design-Werkzeugleisten, Viewport/Panels, Data, Shell/Orbit, Nebenstationen) → Integration mit Ein-Wurzel-Triage (Nav-Pillen unter Kosmo-Symbol) → 2 Kritik-Runden mit Kritiker-/Prüfer-Panels (11 A + 12 B behoben, kuratierte 0.6.6-Liste in UI-SELBSTKRITIK-065.md).
+    - Release-Bump 0.6.5 überall (Bundle-Beweis im dist-Asset), `neuigkeiten.ts` mit 11 ehrlichen Punkten, Release-Notiz im Vault (ROADMAP 270–273), `.desktop-build-request` angestossen.
+    - Ehrlich vertagt (0.6.6, Priorität dokumentiert): V-M1 Render-Knopf im 3D-Viewport (fiel der dichten Kritik-Runde zum Opfer), V-H5 Kuratier-Fläche, Node-Palette, Minimap, Kanten-Routing, Fächer-Ruheraum.
+
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.
