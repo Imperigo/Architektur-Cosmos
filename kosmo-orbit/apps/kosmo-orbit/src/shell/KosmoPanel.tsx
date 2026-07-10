@@ -1055,14 +1055,18 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px' }}>
         <OrbitMark module="kosmo" size={24} />
         <div style={{ fontWeight: 550 }}>Kosmo</div>
-        <Badge hue={settings.provider === 'mock' ? 'var(--k-warning)' : moduleHue.kosmo}>
+        {/* Kritik 0.6.8 (Runde 1, Shot 04): der ScriptedProvider zeigte das
+            konfigurierte Ollama-Modell — ehrlich «Skript» statt Fremd-Label. */}
+        <Badge hue={settings.provider === 'mock' || settings.provider === 'scripted' ? 'var(--k-warning)' : moduleHue.kosmo}>
           {settings.provider === 'mock'
             ? 'Demo'
-            : settings.provider === 'anthropic'
-              ? settings.anthropicModel
-              : settings.provider === 'lmstudio'
-                ? settings.lmModel
-                : settings.model}
+            : settings.provider === 'scripted'
+              ? 'Skript'
+              : settings.provider === 'anthropic'
+                ? settings.anthropicModel
+                : settings.provider === 'lmstudio'
+                  ? settings.lmModel
+                  : settings.model}
         </Badge>
         {(lizenz.status === 'fehlt' || lizenz.status === 'abgelaufen' || lizenz.status === 'ungueltig') && (
           <span data-testid="lizenz-badge" title={lizenz.text}>

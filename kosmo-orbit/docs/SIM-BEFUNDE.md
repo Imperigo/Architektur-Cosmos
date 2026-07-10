@@ -738,3 +738,38 @@ Beide Journeys (kosmo-journey-efh, kosmo-journey-mfh) liefen nach der Integratio
 - **H-33 behoben** (V2): ui.geschossSetzen wechselt das aktive Geschoss als Kosmo-Werkzeug (Chat-Systemzeile zeigt den echten Geschossnamen). Der __kosmo.run-Fallback in Journey B (Dach) bleibt bewusst als Dokumentation des Runde-1-Zustands bestehen — Ablösung durch einen Skript-Zug mit ui_geschossSetzen ist 0.6.8-Kandidat.
 - **H-36 behoben** (V1): Kuratier-Fläche nimmt aufnahme-Nodes auf; Journey B assertiert ZWEI Karten als Regressions-Anker.
 - **Offen → 0.6.8** (unverändert, ehrlich): H-30 (Szene-Options als Langtexte), H-34 (Segmentierer-Command), H-35 (fassadenModulZuweisen auf Wandzügen), H-38 (geschossErstellen-Duplikat-Warnung); H-31/H-37 dokumentiert/kein-bug.
+
+---
+
+## v0.6.8-Statusrunde (10.07.2026, Tagesauftrag «Weisses Papier, Kosmos Auge, tiefe Hebel»)
+
+Nachführung nach den drei Wellen (ROADMAP 292–299) — append-only, Original-Einträge unangetastet:
+
+- **H-2 + H-18 behoben (294):** Dach erscheint im 2D-Grundriss (Aufsicht mit First/Traufe/Ortgang/Grat, Geschoss darunter gestrichelt) und im Schnitt (Poché + Schraffur, Verschneidung Wand∧Decke∧Dach). 4 neue Goldens, bestehende byte-identisch.
+- **H-5/H-10 behoben (298):** `raster-quer-anzahl`-testid im RasterPanel + Spec.
+- **H-6/H-15/H-17 behoben (298):** Befunde tragen `regelId`, der 6er-Deckel ist weg, UI gruppiert nach Schwere mit Filter.
+- **H-7 behoben (298):** deckeZeichnen-Knopf in der Geschossleiste (Werkzeugzähler 18 unverändert).
+- **H-9 behoben (298):** Schnitt läuft über `design.schnittSetzen` (Undo/Yjs/Kosmo); Schnittlinie persistiert neu mit dem Projekt.
+- **H-30 behoben (299):** Render-Formular-Options mit stabilen Schlüsseln + Anzeige-Map (Fallback für Alt-Projekte).
+- **H-33-Folge abgelöst (299):** Journey B fährt den Geschosswechsel als echten `ui_geschossSetzen`-Chat-Zug; der `__kosmo.run`-Fallback ist raus.
+- **H-38 behoben — abweichend vom Erst-Entscheid (298):** statt CommandError WARNT geschossErstellen im Summary und führt aus (Duplikate bleiben erlaubt — Ablehnung hätte legitime Alt-Docs und Sim-Skripte gebrochen); die Warnung reist als Textkonvention, ein typisierter Meta-Kanal bleibt notiert.
+- **H-34/H-35:** Kür-Stream E läuft (Charakterisierungstests vor Extraktion); Ergebnis siehe ROADMAP 300.
+- **H-31/H-36/H-37:** unverändert offen (H-36 war 0.6.7 behoben; H-37 ist dokumentiertes Kein-Bug-Design).
+
+### H-39 — Tusche-Platzhalter: geringe sichtbare Varianz innerhalb einer Typologie (10.07.2026, Kritik-Runde 1, Shot 05)
+- **Beobachtung:** Im Referenz-Grid wirken benachbarte Karten derselben Typologie (building) fast identisch — der Hash variiert nur Dachform/Details, auf 34 px kaum lesbar.
+- **Triage:** v2-lücke (D, kosmetisch; Ehrlichkeit ist gewahrt, das Piktogramm behauptet nichts Falsches).
+- **Entscheid (Fable):** beobachten; falls Owner mehr Unterscheidbarkeit wünscht: Motiv-Familien pro Typologie erweitern (0.6.9-Kandidat, klein).
+- **Status:** offen.
+
+### H-40 — Kosmo-Blick-Thumbnail auf leerem weissen Viewport kaum erkennbar (10.07.2026, Kritik-Runde 1, Shot 04)
+- **Beobachtung:** Der Mini-Chip «Kosmo sieht: ‹KosmoDesign›» zeigt bei leerem Projekt ein fast rein weisses Bild — korrekt (der Viewport IST weiss), aber der Chip wirkt leer.
+- **Triage:** kein-bug (ehrliches Abbild); UI könnte den Rahmen betonen.
+- **Entscheid (Fable):** keine Änderung; bei Inhalt (Wände/Dach) ist das Thumbnail aussagekräftig.
+- **Status:** geschlossen (kein-bug).
+
+### H-41 — Kosmo-Kopf zeigte bei ScriptedProvider das konfigurierte Ollama-Modell-Label (10.07.2026, Kritik-Runde 1, Shot 04)
+- **Beobachtung:** Mit `provider: 'scripted'` stand im Panel-Kopf «QWEN3-CODER:30B» — das Label des (gar nicht aktiven) Ollama-Modells; Ehrlichkeits-Verstoss im Kleinen.
+- **Triage:** bug (D, kosmetisch aber irreführend).
+- **Entscheid + Fix (Fable, Kritik-Runde 2, gleicher Tag):** Badge zeigt jetzt «Skript» (Warnton, wie «Demo» beim Mock).
+- **Status:** behoben (0.6.8).
