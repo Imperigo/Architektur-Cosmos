@@ -57,6 +57,9 @@ import { BridgeBild } from './BridgeBild';
 
 export const NODE_W = 200;
 const PORT_ABSTAND = 20;
+/** V1-Welle Commit 2 (Node-Kollaps): Port-Abstand im eingeklappten Zustand —
+ * kompakter als PORT_ABSTAND; `portY()` wählt je nach `node.collapsed`. */
+const PORT_ABSTAND_KOLLABIERT = 14;
 const KOPF_H = 26;
 /** Portanker sitzen 4px vom Kartenrand abgesetzt (W1 Massnahme 5). */
 const PORT_ABSATZ = 4;
@@ -150,8 +153,29 @@ export function basisNodeHoehe(typ: string): number {
   return KOPF_H + 8 + ports * PORT_ABSTAND + (KOERPER_H[typ] ?? 30) + 10;
 }
 
-/** Echte Nodehöhe inkl. eines offenen Klapptexts (W1 Massnahme 3a). */
+/** V1-Welle Commit 2: Höhe eines eingeklappten Nodes — nur Kopf + (komprimiert
+ * gestapelte) Ports, kein Körper. Mindestens ein Port-Slot, auch ohne Ports. */
+function kollabierteNodeHoehe(typ: string): number {
+  const kat = VIS_NODE_KATALOG[typ];
+  const ports = Math.max(kat?.inputs.length ?? 0, kat?.outputs.length ?? 0, 1);
+  return KOPF_H + 14 + (ports - 1) * PORT_ABSTAND_KOLLABIERT + 12;
+}
+
+/** Y-Position des i-ten Ports (Eingang ODER Ausgang, gleiche Zählung) — im
+ * eingeklappten Zustand komprimiert (`PORT_ABSTAND_KOLLABIERT`), sonst der
+ * gewohnte `PORT_ABSTAND`. EINE Naht für `portPos()` UND das Render selbst
+ * (V1-Welle Commit 2: Kanten bleiben beim Kollaps korrekt verbunden, weil
+ * beide Stellen dieselbe Funktion rufen). */
+function portY(n: VisNode, i: number): number {
+  const abstand = n.collapsed ? PORT_ABSTAND_KOLLABIERT : PORT_ABSTAND;
+  return KOPF_H + 14 + i * abstand;
+}
+
+/** Echte Nodehöhe inkl. eines offenen Klapptexts (W1 Massnahme 3a) ODER
+ * (V1-Welle Commit 2) eingeklappt — `collapsed` gewinnt: ein Klapptext bleibt
+ * dabei zu (kollabiert zeigt nie einen Körper). */
 function nodeHoehe(n: VisNode, offen?: ReadonlySet<string>): number {
+  if (n.collapsed) return kollabierteNodeHoehe(n.typ);
   const zusatz = offen?.has(n.id) && KLAPPBARE_TYPEN.has(n.typ) ? KOERPER_H_ZUSATZ_OFFEN : 0;
   return basisNodeHoehe(n.typ) + zusatz;
 }
@@ -162,7 +186,7 @@ function portPos(n: VisNode, port: string, richtung: 'in' | 'out'): { x: number;
   const i = Math.max(0, liste.findIndex((p) => p.name === port));
   return {
     x: n.x + (richtung === 'in' ? -PORT_ABSATZ : NODE_W + PORT_ABSATZ),
-    y: n.y + KOPF_H + 14 + i * PORT_ABSTAND,
+    y: n.y + portY(n, i),
   };
 }
 
@@ -246,10 +270,44 @@ function minimapZuNodeRaum(ansicht: MinimapAnsicht, mx: number, my: number): { x
   };
 }
 
-/** Kubische Bézier mit horizontalen Tangenten — kein Routing, ruhige Kurven. */
-function edgePfad(a: { x: number; y: number }, b: { x: number; y: number }): string {
+export type VisRoutingModus = 'kurve' | 'ortho';
+
+/** Kubische Bézier mit horizontalen Tangenten — kein Routing, ruhige Kurven
+ * (Default, byte-identisch zum bisherigen Verhalten). */
+function edgePfadKurve(a: { x: number; y: number }, b: { x: number; y: number }): string {
   const dx = Math.max(40, Math.abs(b.x - a.x) / 2);
   return `M ${a.x} ${a.y} C ${a.x + dx} ${a.y}, ${b.x - dx} ${b.y}, ${b.x} ${b.y}`;
+}
+
+/** V1-Welle Commit 2: orthogonales («Manhattan») Routing — waagrecht/senkrecht
+ * mit kleinen Eck-Radien (Q-Segmente statt scharfer Ecken). Nur L/Q, kein C —
+ * der Umschalter (`vis-routing-toggle`) prüft das im E2E direkt am d-Attribut. */
+function edgePfadOrtho(a: { x: number; y: number }, b: { x: number; y: number }): string {
+  const RADIUS = 8;
+  const midX = a.x + (b.x - a.x) / 2;
+  if (Math.abs(b.y - a.y) < 0.5) {
+    return `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
+  }
+  const signY = b.y > a.y ? 1 : -1;
+  const r = Math.max(0, Math.min(RADIUS, Math.abs(midX - a.x), Math.abs(b.x - midX), Math.abs(b.y - a.y) / 2));
+  if (r < 0.5) {
+    return `M ${a.x} ${a.y} L ${midX} ${a.y} L ${midX} ${b.y} L ${b.x} ${b.y}`;
+  }
+  return [
+    `M ${a.x} ${a.y}`,
+    `L ${midX - r} ${a.y}`,
+    `Q ${midX} ${a.y} ${midX} ${a.y + signY * r}`,
+    `L ${midX} ${b.y - signY * r}`,
+    `Q ${midX} ${b.y} ${midX + r} ${b.y}`,
+    `L ${b.x} ${b.y}`,
+  ].join(' ');
+}
+
+/** EIN Weg für beide Routing-Modi (Default 'kurve' — alle Bestandsverträge
+ * unverändert). Sowohl bestehende Kanten als auch die Pending-Kante rufen
+ * diese Funktion mit demselben `routingModus`-State. */
+function edgePfad(a: { x: number; y: number }, b: { x: number; y: number }, modus: VisRoutingModus = 'kurve'): string {
+  return modus === 'ortho' ? edgePfadOrtho(a, b) : edgePfadKurve(a, b);
 }
 
 /**
@@ -318,6 +376,8 @@ export function NodeCanvas({
   const [marquee, setMarquee] = useState<{ x0: number; y0: number; x1: number; y1: number } | null>(null);
   // V1-Welle Commit 1: 24px-Grid-Snap beim Drag-Commit — Default AN.
   const [snapAktiv, setSnapAktiv] = useState(true);
+  // V1-Welle Commit 2: Kanten-Routing — Default 'kurve' (Bestandsverträge unverändert).
+  const [routingModus, setRoutingModus] = useState<VisRoutingModus>('kurve');
   // Node-Drag (Einzel ODER Gruppe, W1 + V1-Welle Commit 1): lokale
   // Startpositionen ALLER bewegten Nodes + der laufende Pointer-Delta;
   // EIN vis.nodeSchieben je Node bei pointerup, bei Mehrfachauswahl in
@@ -575,6 +635,12 @@ export function NodeCanvas({
       .then((j) => patchLauf(nodeId, { status: mappeJobStatus(j) }))
       .catch(meldeFehler);
   };
+
+  // V1-Welle Commit 2: ein laufender Render-Job (Status weder «bereit» noch
+  // «fertig») lässt sich nicht kollabieren — ein ehrlicher Hinweis statt eines
+  // stillen No-Ops (sonst verliert der Architekt den Job optisch aus den Augen).
+  const kollapsBlockiert = (n: VisNode): boolean =>
+    n.typ === 'render' && !!laeufe[n.id] && laeufe[n.id]!.status !== 'fertig';
 
   // V1-Welle Commit 1: Ausrichten/Verteilen — EIN beginGroup-Batch, wie
   // Gruppen-Drag (Muster VisWorkspace.tsx:126-188).
@@ -871,7 +937,7 @@ export function NodeCanvas({
             onPointerLeave={() => setHoverEdge((h) => (h === e.id ? null : h))}
           >
             <path
-              d={edgePfad(a, b)}
+              d={edgePfad(a, b, routingModus)}
               fill="none"
               stroke="transparent"
               strokeWidth={12}
@@ -882,7 +948,7 @@ export function NodeCanvas({
               }}
             />
             <path
-              d={edgePfad(a, b)}
+              d={edgePfad(a, b, routingModus)}
               fill="none"
               stroke={gewaehlt ? 'var(--k-accent)' : PORT_FARBE[typ]}
               strokeWidth={gewaehlt ? 2.5 : gehovert ? 2 : 1.5}
@@ -925,7 +991,7 @@ export function NodeCanvas({
         const a = portPos(nodePos(von), pending.fromPort, 'out');
         return (
           <path
-            d={edgePfad(a, { x: pending.x, y: pending.y })}
+            d={edgePfad(a, { x: pending.x, y: pending.y }, routingModus)}
             fill="none"
             stroke={PORT_FARBE[pending.typ]}
             strokeWidth={1.5}
@@ -1041,6 +1107,32 @@ export function NodeCanvas({
               <text x={28} y={17} fontSize={11.5} fontWeight={650} fill="var(--k-ink)" style={{ letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                 {kat.label}
               </text>
+              {/* V1-Welle Commit 2: Node-Kollaps — nur Kopf+Ports sichtbar
+                  (nodeHoehe/portY berücksichtigen `collapsed`). Ein laufender
+                  Render-Job (Status weder «bereit» noch «fertig») blockiert
+                  den Kollaps mit einem ehrlichen Hinweis statt still zu tun. */}
+              <g
+                className="k-druck"
+                style={{ cursor: 'pointer' }}
+                data-testid="node-kollaps"
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  if (kollapsBlockiert(n0)) {
+                    melde('Render läuft noch — erst wenn er fertig ist, lässt sich der Node einklappen.', { ton: 'info' });
+                    return;
+                  }
+                  sicher(() => runCommand('vis.nodeKollabieren', { graphId, nodeId: n.id, collapsed: !n0.collapsed }));
+                }}
+              >
+                <title>{n0.collapsed ? 'Node aufklappen' : 'Node einklappen'}</title>
+                <KIcon
+                  name={n0.collapsed ? 'pfeil-unten' : 'pfeil-oben'}
+                  size={14}
+                  x={NODE_W - 40}
+                  y={6}
+                  style={{ color: 'var(--k-ink-faint)' }}
+                />
+              </g>
               <g
                 className="k-druck"
                 style={{ cursor: 'pointer' }}
@@ -1060,7 +1152,7 @@ export function NodeCanvas({
 
             {/* Eingänge links */}
             {kat.inputs.map((p, i) => {
-              const y = KOPF_H + 14 + i * PORT_ABSTAND;
+              const y = portY(n, i);
               return (
                 <g key={p.name}>
                   <circle
@@ -1101,7 +1193,7 @@ export function NodeCanvas({
 
             {/* Ausgänge rechts */}
             {kat.outputs.map((p, i) => {
-              const y = KOPF_H + 14 + i * PORT_ABSTAND;
+              const y = portY(n, i);
               return (
                 <g key={p.name}>
                   <circle cx={NODE_W + PORT_ABSATZ} cy={y} r={5} fill={PORT_FARBE[p.typ]} stroke={PORT_FARBE[p.typ]} data-testid={`port-out-${p.name}`} />
@@ -1123,37 +1215,40 @@ export function NodeCanvas({
               );
             })}
 
-            {/* Körper je Typ. V1-Welle Commit 1: pointer-events AUS, solange ein
-                Drag/eine Marquee läuft — der Zeiger kann sonst während des
-                Ziehens über ein HTML-Formularelement im foreignObject (z.B.
-                eine `prompt-text`-Textarea, auch eines FREMDEN Nodes) laufen
-                und native Text-Interaktion auslösen. Ausserhalb eines Drags
-                unverändert interaktiv. */}
-            <foreignObject
-              x={8}
-              y={koerperY}
-              width={NODE_W - 16}
-              height={h - koerperY - 8}
-              style={{ pointerEvents: drag || marquee ? 'none' : 'auto' }}
-            >
-              <NodeKoerper
-                graphId={graphId}
-                node={n0}
-                prompt={auswertung?.werte.get(n.id)?.['prompt'] as string | undefined}
-                material={auswertung?.werte.get(n.id)?.['material'] as string | undefined}
-                eingehenderPrompt={auftrag?.prompt ?? ''}
-                lauf={lauf}
-                veraltet={!!veraltet}
-                onAusfuehren={() => ausfuehren(n.id)}
-                onFreigeben={() => freigeben(n.id)}
-                onAbbrechen={() => abbrechen(n.id)}
-                cloudLeer={bridgeBase() === ''}
-                bildQuelle={bildQuelle}
-                aufnahmen={aufnahmen}
-                offen={offenerKlapptext.has(n.id)}
-                onToggleOffen={() => toggleKlapptext(n.id)}
-              />
-            </foreignObject>
+            {/* Körper je Typ — V1-Welle Commit 2: eingeklappte Nodes zeigen NUR
+                Kopf + Ports, kein Körper. pointer-events AUS, solange ein
+                Drag/eine Marquee läuft (V1-Welle Commit 1) — der Zeiger kann
+                sonst während des Ziehens über ein HTML-Formularelement im
+                foreignObject (z.B. eine `prompt-text`-Textarea, auch eines
+                FREMDEN Nodes) laufen und native Text-Interaktion auslösen.
+                Ausserhalb eines Drags unverändert interaktiv. */}
+            {!n0.collapsed && (
+              <foreignObject
+                x={8}
+                y={koerperY}
+                width={NODE_W - 16}
+                height={h - koerperY - 8}
+                style={{ pointerEvents: drag || marquee ? 'none' : 'auto' }}
+              >
+                <NodeKoerper
+                  graphId={graphId}
+                  node={n0}
+                  prompt={auswertung?.werte.get(n.id)?.['prompt'] as string | undefined}
+                  material={auswertung?.werte.get(n.id)?.['material'] as string | undefined}
+                  eingehenderPrompt={auftrag?.prompt ?? ''}
+                  lauf={lauf}
+                  veraltet={!!veraltet}
+                  onAusfuehren={() => ausfuehren(n.id)}
+                  onFreigeben={() => freigeben(n.id)}
+                  onAbbrechen={() => abbrechen(n.id)}
+                  cloudLeer={bridgeBase() === ''}
+                  bildQuelle={bildQuelle}
+                  aufnahmen={aufnahmen}
+                  offen={offenerKlapptext.has(n.id)}
+                  onToggleOffen={() => toggleKlapptext(n.id)}
+                />
+              </foreignObject>
+            )}
           </g>
         );
       })}
@@ -1401,8 +1496,9 @@ export function NodeCanvas({
         right:22/bottom:22, zIndex 110) sitzt GENAU in der Ecke und würde bei
         12px sonst die Hälfte des Zoom-Plus-Knopfs verdecken (unklickbar). */}
     <div style={{ position: 'absolute', right: 12, bottom: 92, display: 'flex', gap: 4 }}>
-      {/* V1-Welle Commit 1: Raster-Snap — Werkzeug-Umschalter neben der
-          Zoom-Leiste, fern von Testpunkt (30,30) und der Minimap (unten links). */}
+      {/* V1-Welle Commit 1/2: Raster-Snap + Kanten-Routing — Werkzeug-
+          Umschalter neben der Zoom-Leiste, fern von Testpunkt (30,30) und
+          der Minimap (unten links). */}
       <KButton
         size="sm"
         tone="ghost"
@@ -1413,6 +1509,17 @@ export function NodeCanvas({
         onClick={() => setSnapAktiv((s) => !s)}
       >
         Raster
+      </KButton>
+      <KButton
+        size="sm"
+        tone="ghost"
+        data-testid="vis-routing-toggle"
+        title="Kanten-Routing"
+        aria-label="Kanten-Routing"
+        aria-pressed={routingModus === 'ortho'}
+        onClick={() => setRoutingModus((m) => (m === 'ortho' ? 'kurve' : 'ortho'))}
+      >
+        {routingModus === 'ortho' ? 'Ortho' : 'Kurve'}
       </KButton>
       <KButton size="sm" tone="ghost" data-testid="vis-zoom-minus" title="Kleiner" onClick={() => zoomUm(1 / 1.25)}>
         <KIcon name="zoom-minus" size={16} title="Kleiner" />

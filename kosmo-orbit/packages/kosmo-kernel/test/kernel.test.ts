@@ -4749,6 +4749,33 @@ describe('Render-Graph (vis.*)', () => {
     return { doc, graphId, node };
   };
 
+  it('V1-Welle Commit 2: vis.nodeKollabieren klappt einen Node ein/aus, ist undo-fähig und prüft den Node', () => {
+    const { doc, graphId, node } = grundGraph();
+    const prompt = node('prompt', { text: 'Sichtbeton' });
+    let graph = doc.get<VisGraph>(graphId)!;
+    expect(graph.nodes.find((n) => n.id === prompt)!.collapsed).toBeUndefined();
+
+    const res = execute(doc, 'vis.nodeKollabieren', { graphId, nodeId: prompt, collapsed: true });
+    graph = doc.get<VisGraph>(graphId)!;
+    expect(graph.nodes.find((n) => n.id === prompt)!.collapsed).toBe(true);
+
+    // Undo (Patch-Inverse) stellt den unkollabierten Zustand exakt wieder her.
+    doc.apply(invertPatches(res.patches));
+    graph = doc.get<VisGraph>(graphId)!;
+    expect(graph.nodes.find((n) => n.id === prompt)!.collapsed).toBeUndefined();
+
+    // Wieder einklappen, dann ausklappen — beides funktioniert symmetrisch.
+    execute(doc, 'vis.nodeKollabieren', { graphId, nodeId: prompt, collapsed: true });
+    execute(doc, 'vis.nodeKollabieren', { graphId, nodeId: prompt, collapsed: false });
+    graph = doc.get<VisGraph>(graphId)!;
+    expect(graph.nodes.find((n) => n.id === prompt)!.collapsed).toBe(false);
+
+    // Unbekannter Node ehrlich abgelehnt (wie jeder andere vis.*-Command).
+    expect(() => execute(doc, 'vis.nodeKollabieren', { graphId, nodeId: 'nix', collapsed: true })).toThrow(
+      /existiert nicht/,
+    );
+  });
+
   it('Verbinden validiert: Typen, Ports, Selbstbezug, Zyklen — belegter Eingang wird ersetzt', () => {
     const { doc, graphId, node } = grundGraph();
     const prompt = node('prompt', { text: 'Sichtbeton' });

@@ -235,6 +235,77 @@ test('Ausrichten-links: setzt bei ≥2 ausgewählten Nodes dieselbe x (min-x all
   expect(posPrompt.x).toBe(100);
 });
 
+test('Kanten-Routing: Ortho-Toggle liefert nur H/V/Q-Segmente (kein C), zurück auf Kurve mit C', async ({ page }) => {
+  await neuerLeererGraph(page);
+  await page.selectOption('[data-testid="node-hinzu"]', 'prompt');
+  await page.selectOption('[data-testid="node-hinzu"]', 'kombinierer');
+  const promptNode = page.locator('[data-testid="vis-node-prompt"]');
+  const kombNode = page.locator('[data-testid="vis-node-kombinierer"]');
+  await expect(promptNode).toBeVisible();
+  await expect(kombNode).toBeVisible();
+
+  const ausPort = promptNode.locator('[data-testid="port-out-prompt"]');
+  const einPort = kombNode.locator('[data-testid="port-in-stil"]');
+  const aus = (await ausPort.boundingBox())!;
+  const ein = (await einPort.boundingBox())!;
+  await page.mouse.move(aus.x + aus.width / 2, aus.y + aus.height / 2);
+  await page.mouse.down();
+  await page.mouse.move((aus.x + ein.x) / 2, (aus.y + ein.y) / 2, { steps: 6 });
+  await page.mouse.move(ein.x + ein.width / 2, ein.y + ein.height / 2, { steps: 8 });
+  await page.mouse.up();
+  await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(1, { timeout: 5000 });
+
+  const pfad = page.locator('[data-testid="vis-edge"] path').first();
+  const dKurve = await pfad.getAttribute('d');
+  expect(dKurve).toContain('C');
+
+  await page.click('[data-testid="vis-routing-toggle"]');
+  const dOrtho = await pfad.getAttribute('d');
+  expect(dOrtho).not.toContain('C');
+  expect(dOrtho ?? '').toMatch(/[LQ]/);
+
+  await page.click('[data-testid="vis-routing-toggle"]');
+  const dZurueck = await pfad.getAttribute('d');
+  expect(dZurueck).toContain('C');
+});
+
+test('Node-Kollaps: Node schrumpft, Kante bleibt verbunden, erneuter Klick expandiert, Undo-fähig', async ({ page }) => {
+  await neuerLeererGraph(page);
+  await page.selectOption('[data-testid="node-hinzu"]', 'prompt');
+  await page.selectOption('[data-testid="node-hinzu"]', 'kombinierer');
+  const promptNode = page.locator('[data-testid="vis-node-prompt"]');
+  const kombNode = page.locator('[data-testid="vis-node-kombinierer"]');
+  await expect(promptNode).toBeVisible();
+  await expect(kombNode).toBeVisible();
+
+  const ausPort = promptNode.locator('[data-testid="port-out-prompt"]');
+  const einPort = kombNode.locator('[data-testid="port-in-stil"]');
+  const aus = (await ausPort.boundingBox())!;
+  const ein = (await einPort.boundingBox())!;
+  await page.mouse.move(aus.x + aus.width / 2, aus.y + aus.height / 2);
+  await page.mouse.down();
+  await page.mouse.move((aus.x + ein.x) / 2, (aus.y + ein.y) / 2, { steps: 6 });
+  await page.mouse.move(ein.x + ein.width / 2, ein.y + ein.height / 2, { steps: 8 });
+  await page.mouse.up();
+  await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(1, { timeout: 5000 });
+
+  const hoeheOffen = (await promptNode.boundingBox())!.height;
+  await promptNode.locator('[data-testid="node-kollaps"]').click({ force: true });
+  const hoeheZu = (await promptNode.boundingBox())!.height;
+  expect(hoeheZu).toBeLessThan(hoeheOffen - 20);
+  // Die Kante bleibt verbunden — kein Verwaisen beim Kollaps.
+  await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(1);
+
+  await promptNode.locator('[data-testid="node-kollaps"]').click({ force: true });
+  const hoeheWiederOffen = (await promptNode.boundingBox())!.height;
+  expect(Math.abs(hoeheWiederOffen - hoeheOffen)).toBeLessThan(1.5);
+
+  // Undo-fähig: EIN Undo macht den letzten Kollaps-Toggle (Ausklappen) rückgängig.
+  await page.evaluate(() => window.__kosmo.state().undo());
+  const hoeheNachUndo = (await promptNode.boundingBox())!.height;
+  expect(hoeheNachUndo).toBeLessThan(hoeheOffen - 20);
+});
+
 test('H-32-Regression: Formularfeld setzen, dann «Ausführen» zeigt das Render-Bild (nicht für immer «veraltet»)', async ({
   page,
 }) => {

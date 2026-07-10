@@ -181,6 +181,24 @@ export const removeNode = registerCommand({
   },
 });
 
+export const collapseNode = registerCommand({
+  id: 'vis.nodeKollabieren',
+  title: 'Node ein-/ausklappen',
+  description:
+    'Klappt einen Node im Render-Graphen ein (nur Kopf + Ports sichtbar, kein Körper) oder wieder aus.',
+  params: z.object({ graphId: z.string(), nodeId: z.string(), collapsed: z.boolean() }),
+  summarize: (p) => (p.collapsed ? 'Node eingeklappt' : 'Node ausgeklappt'),
+  run: (doc, p) => {
+    const graph = requireGraph(doc, p.graphId);
+    const node = requireNode(graph, p.nodeId);
+    const after: VisGraph = {
+      ...graph,
+      nodes: graph.nodes.map((n) => (n.id === node.id ? { ...n, collapsed: p.collapsed } : n)),
+    };
+    return [{ id: graph.id, before: graph, after }];
+  },
+});
+
 export const removeGraph = registerCommand({
   id: 'vis.graphLoeschen',
   title: 'Render-Graph löschen',
