@@ -4,6 +4,7 @@ import { execute } from '../src/commands/core';
 import '../src/commands/design';
 import { derivePlan } from '../src/derive/plan';
 import { planGraphicToDxf, planToDxf } from '../src/dxf/export';
+import { testhausFensterZweifluegel, testhausFensterband } from './fixtures';
 
 /**
  * V1.6 Block G — DXF-Grundriss-Export (Interop AutoCAD/Rhino/Vectorworks).
@@ -132,5 +133,47 @@ describe('planToDxf — ehrliche Grenzen', () => {
     expect(plan.regions.length).toBeGreaterThan(0);
     // planToDxf und planGraphicToDxf(derivePlan(...)) sind identisch.
     expect(planToDxf(doc, storeyId)).toBe(planGraphicToDxf(plan));
+  });
+});
+
+// v0.6.9 Stream F, ADDITIV — docs/FENSTER-KONZEPT.md §5: die neuen
+// Plan-Symbole für parametrische Fenster (Sprossen/Öffnungsbogen) und
+// Fensterband (Pfostentakt) kommen generisch aus `plan.lines`/`plan.arcs`
+// (derive/plan.ts) — `dxf/export.ts` selbst braucht dafür KEINEN neuen Code
+// (docs-Behauptung). Diese Tests belegen genau das: kein Absturz, die neuen
+// Symbole erscheinen automatisch als LINE/ARC-Entities, «eine Quelle»
+// (planToDxf === planGraphicToDxf(derivePlan(...))) bleibt auch hier gültig.
+describe('planToDxf — parametrisches Fenster + Fensterband (additiv)', () => {
+  it('parametrisches Zweiflügel-Fenster: kein Absturz, der Öffnungsbogen (fenster-bogen) fliesst automatisch als ARC-Entity ein', () => {
+    const { doc, storeyId } = testhausFensterZweifluegel();
+    const plan = derivePlan(doc, storeyId);
+    const bogenArcs = plan.arcs.filter((a) => a.classes.includes('fenster-bogen'));
+    expect(bogenArcs.length).toBeGreaterThan(0);
+
+    expect(() => planToDxf(doc, storeyId)).not.toThrow();
+    const dxf = planToDxf(doc, storeyId);
+    expect(dxf).toContain('0\nARC\n');
+    // Eine Quelle bleibt auch mit Fenster-Symbolik gültig — kein eigener
+    // DXF-Codepfad für Fenster nötig (docs/FENSTER-KONZEPT.md §5).
+    expect(dxf).toBe(planGraphicToDxf(plan));
+    // eslint-disable-next-line no-control-regex
+    expect(/[^\x09\x0A\x20-\x7E]/.test(dxf)).toBe(false);
+  });
+
+  it('Fensterband (design.curtainWallSetzen): kein Absturz, der Pfostentakt fliesst automatisch als zusätzliche LINE-Entities ein', () => {
+    const { doc, storeyId } = testhausFensterband();
+    const plan = derivePlan(doc, storeyId);
+    // Pfostentakt-Linien tragen dieselbe Klasse wie die übrigen
+    // Fenstersymbol-Linien (derive/plan.ts: `classes: ['symbol', 'fenster', …]`) —
+    // ehrlich per Klassenzahl belegt statt nur "irgendeine Linie existiert".
+    const fensterLinien = plan.lines.filter((l) => l.classes.includes('fenster'));
+    expect(fensterLinien.length).toBeGreaterThan(0);
+
+    expect(() => planToDxf(doc, storeyId)).not.toThrow();
+    const dxf = planToDxf(doc, storeyId);
+    expect(dxf).toContain('0\nLINE\n');
+    expect(dxf).toBe(planGraphicToDxf(plan));
+    // eslint-disable-next-line no-control-regex
+    expect(/[^\x09\x0A\x20-\x7E]/.test(dxf)).toBe(false);
   });
 });

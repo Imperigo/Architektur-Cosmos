@@ -123,37 +123,56 @@ export function refHash(id: string): number {
 /**
  * Strichpiktogramm je Typologie im Werkplan-Stil — monochrome SVG-Pfade
  * (viewBox 0 0 48 34, Stroke zeichnet der Aufrufer mit `--k-ink-faint`).
- * Deterministisch aus der Referenz-Id: der Hash variiert je Motiv 1–2
- * Parameter (Dachform, Linienzahl, Versatz), erfindet aber nie Inhalt —
- * es bleibt ein ehrliches Piktogramm der Kategorie, kein Fake-Foto.
+ * Deterministisch aus der Referenz-Id: der Hash variiert je Motiv mehrere
+ * Parameter (Dachform, Linienzahl, Versatz, Grundform), erfindet aber nie
+ * Inhalt — es bleibt ein ehrliches Piktogramm der Kategorie, kein Fake-Foto.
+ *
+ * H-39 (v0.6.9 Stream F): je Typologie 2–3 ZUSÄTZLICHE Hash-Varianten, damit
+ * benachbarte Karten (oft dieselbe Typologie, z.B. mehrere `building`-
+ * Einträge im selben Suchergebnis) sich im Signet stärker unterscheiden —
+ * `object` und der `default`-Fall hatten vorher GAR keine Hash-Variation
+ * (jede Referenz zeichnete dasselbe Motiv); alle anderen bekommen zusätzlich
+ * zur bestehenden Variation einen zweiten unabhängigen Hash-Ausschnitt
+ * (`h >> n`), damit die neue Varianz nicht einfach mit der alten korreliert.
+ * Bleibt eine reine Funktion von `(id, entryType)` — dieselbe Id zeichnet
+ * weiterhin exakt dasselbe Signet (kosmodata-sichtbar.spec.ts K1).
  */
 export function tuschePfade(id: string, entryType?: string | undefined): string[] {
   const h = refHash(id);
   const boden = 'M4 30 H44';
   switch (entryType) {
     case 'building': {
-      // Haus im Schnitt: zwei Wände, Decke, Dachform je Hash (Flach/Sattel/Pult).
-      const dach = h % 3;
+      // Haus im Schnitt: zwei Wände, Decke, Dachform je Hash (5 statt 3
+      // Formen: + Walmdach-Trapez, + Staffelgeschoss-Versatz).
+      const dach = h % 5;
       const first =
         dach === 0
           ? 'M10 12 H38' // Flachdach
           : dach === 1
             ? 'M10 14 L24 5 L38 14' // Satteldach
-            : 'M10 15 L38 8'; // Pultdach
+            : dach === 2
+              ? 'M10 15 L38 8' // Pultdach
+              : dach === 3
+                ? 'M10 13 L16 6 H32 L38 13' // Walmdach (Trapez-Silhouette)
+                : 'M10 9 H24 V15 H38'; // Staffelgeschoss (Versatz)
       return [boden, 'M10 30 V12 M38 30 V12', first, 'M14 30 V22 H20 V30', 'M26 22 H33 V27 H26 Z'];
     }
     case 'urban_plan': {
       // Stadtraster: Blockfeld, ein Block je Hash betont (Schraffur-Kreuz).
+      // 3 statt 2 Block-Höhen + gespiegelte Schraffur-Richtung als eigener
+      // Hash-Ausschnitt (h >> 6) — mehr unterscheidbare Kombinationen.
       const bx = 8 + (h % 3) * 12;
-      const by = 8 + ((h >> 4) % 2) * 10;
+      const by = 8 + ((h >> 4) % 3) * 7;
+      const gespiegelt = (h >> 6) % 2 === 1;
       return [
         'M6 6 H42 V28 H6 Z',
         'M18 6 V28 M30 6 V28 M6 16 H42',
-        `M${bx} ${by} l8 6 M${bx + 8} ${by} l-8 6`,
+        gespiegelt ? `M${bx} ${by} l-8 6 M${bx - 8} ${by} l8 6` : `M${bx} ${by} l8 6 M${bx + 8} ${by} l-8 6`,
       ];
     }
     case 'landscape_project': {
-      // Höhenlinien: 3–5 Kurven je Hash + Baumsignet.
+      // Höhenlinien: 3–5 Kurven je Hash + 1–3 Bäume (vorher fest ein Baum)
+      // aus einem eigenen Hash-Ausschnitt (h >> 9).
       const n = 3 + (h % 3);
       const kurven: string[] = [];
       for (let i = 0; i < n; i++) {
@@ -161,65 +180,117 @@ export function tuschePfade(id: string, entryType?: string | undefined): string[
         const amp = 2 + ((h >> (i * 3)) % 3);
         kurven.push(`M4 ${y} Q16 ${y - amp} 24 ${y} T44 ${y}`);
       }
-      return [...kurven, 'M36 12 l3 -6 l3 6 Z M39 12 V16'];
+      const baeume = 1 + ((h >> 9) % 3);
+      const baumSignet: string[] = [];
+      for (let i = 0; i < baeume; i++) {
+        const bx = 34 + i * 4;
+        baumSignet.push(`M${bx} 12 l3 -6 l3 6 Z M${bx + 3} 12 V16`);
+      }
+      return [...kurven, ...baumSignet];
     }
-    case 'infrastructure':
-      // Brücke: Fahrbahn, Bogen, Pfeiler (Pfeilerzahl je Hash 2–3).
+    case 'infrastructure': {
+      // Brücke: Fahrbahn, Bogen, Pfeiler (Pfeilerzahl je Hash 2–3). Neu: 3
+      // Bogenhöhen (h >> 1) statt einer fixen Kurve — Betonbrücke flach bis
+      // Stahlbrücke hoch gewölbt.
+      const bogenY = 6 + ((h >> 1) % 3) * 4;
       return [
         'M4 14 H44',
-        'M8 28 Q24 6 40 28',
+        `M8 28 Q24 ${bogenY} 40 28`,
         h % 2 === 0 ? 'M16 14 V22 M32 14 V22' : 'M14 14 V24 M24 14 V17 M34 14 V24',
         boden,
       ];
+    }
     case 'text': {
       // Schriftblock: Initial-Quadrat + Zeilen variabler Länge je Hash.
+      // Neu: Initial-Quadrat-Grösse als eigener Hash-Ausschnitt (h >> 16).
       const zeilen: string[] = [];
       for (let i = 0; i < 4; i++) {
         const b = 24 + ((h >> (i * 4)) % 14);
         zeilen.push(`M18 ${9 + i * 5} H${Math.min(44, 18 + b)}`);
       }
-      return ['M6 6 H14 V14 H6 Z', ...zeilen, 'M6 29 H36'];
+      const initial = (h >> 16) % 3 === 0 ? 'M6 5 H15 V15 H6 Z' : 'M6 7 H13 V13 H6 Z';
+      return [initial, ...zeilen, 'M6 29 H36'];
     }
-    case 'theory':
-      // Diagramm: Kreis + Achsenkreuz, Sekante je Hash gedreht.
+    case 'theory': {
+      // Diagramm: Kreis + Achsenkreuz, Sekante je Hash gedreht. Neu: ein
+      // Datenpunkt auf dem Kreis an einer von 3 Positionen (h >> 2).
+      const punktWinkel = [30, 150, 270][(h >> 2) % 3]! * (Math.PI / 180);
+      const px = (24 + Math.cos(punktWinkel) * 11).toFixed(1);
+      const py = (17 + Math.sin(punktWinkel) * 11).toFixed(1);
       return [
         'M24 17 m-11 0 a11 11 0 1 0 22 0 a11 11 0 1 0 -22 0',
         'M24 2 V32 M9 17 H39',
         h % 2 === 0 ? 'M15 8 L33 26' : 'M33 8 L15 26',
+        `M${px} ${py} m-1.5 0 a1.5 1.5 0 1 0 3 0 a1.5 1.5 0 1 0 -3 0`,
       ];
+    }
     case 'map': {
-      // Karte: Rahmen, mäandrierender Weg je Hash, Nordpfeil.
+      // Karte: Rahmen, mäandrierender Weg je Hash, Nordpfeil. Neu: eine
+      // zweite Wegkoordinate (h >> 3) variiert die Kurvenhöhe unabhängig
+      // von der bestehenden x-Verschiebung.
       const kx = 12 + (h % 8);
+      const ky = 17 + ((h >> 3) % 3);
       return [
         'M6 4 H42 V30 H6 Z',
-        `M6 24 Q${kx} 18 24 20 T42 10`,
+        `M6 24 Q${kx} ${ky} 24 20 T42 10`,
         'M37 8 l2.5 6 l-2.5 -2 l-2.5 2 Z',
       ];
     }
-    case 'object':
-      // Objekt: Axo-Quader (wie das bisherige Referenz-Signet, kompakter).
+    case 'object': {
+      // Objekt: bisher IMMER derselbe Axo-Quader (keine Hash-Variation) —
+      // jetzt 3 Grundformen je Hash (Quader/Zylinder/Pyramide), damit
+      // benachbarte Objekt-Karten sich überhaupt unterscheiden.
+      const form = h % 3;
+      if (form === 1) {
+        // Axo-Zylinder (rundes Objekt/Gefäss).
+        return [
+          'M24 6 m-10 0 a10 4 0 1 0 20 0 a10 4 0 1 0 -20 0',
+          'M14 6 V24 M34 6 V24',
+          'M14 24 a10 4 0 0 0 20 0',
+        ];
+      }
+      if (form === 2) {
+        // Axo-Pyramide (Skulptur/Denkmal).
+        return ['M24 5 L38 27 H10 Z', 'M24 5 V27', 'M17 27 L24 16 L31 27'];
+      }
+      // Axo-Quader (bisheriges Referenz-Signet, kompakter).
       return ['M24 4 38 11 24 18 10 11Z', 'M38 11 V24 M24 18 V31 M10 11 V24', 'M38 24 24 31 10 24'];
-    case 'event':
-      // Ereignis: Punkt mit radialen Strichen (Strahlenzahl je Hash 6/8).
+    }
+    case 'event': {
+      // Ereignis: Punkt mit radialen Strichen. Neu: 3 statt 2 Strahlenzahlen
+      // (h % 3) + eigener Radius-Ausschnitt (h >> 2) für den Innenkreis.
+      const strahlen = h % 3;
+      const winkel =
+        strahlen === 0
+          ? [0, 45, 90, 135, 180, 225, 270, 315]
+          : strahlen === 1
+            ? [0, 60, 120, 180, 240, 300]
+            : [0, 72, 144, 216, 288];
+      const radius = 6 + ((h >> 2) % 3);
       return [
         'M24 17 m-4 0 a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0',
-        (h % 2 === 0
-          ? [0, 45, 90, 135, 180, 225, 270, 315]
-          : [0, 60, 120, 180, 240, 300]
-        )
+        winkel
           .map((g) => {
             const r = (g * Math.PI) / 180;
-            const x1 = 24 + Math.cos(r) * 7;
-            const y1 = 17 + Math.sin(r) * 7;
-            const x2 = 24 + Math.cos(r) * 12;
-            const y2 = 17 + Math.sin(r) * 12;
+            const x1 = 24 + Math.cos(r) * radius;
+            const y1 = 17 + Math.sin(r) * radius;
+            const x2 = 24 + Math.cos(r) * (radius + 5);
+            const y2 = 17 + Math.sin(r) * (radius + 5);
             return `M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}`;
           })
           .join(' '),
       ];
-    default:
-      // Unbekannte Typologie: Messrahmen-Motiv (Rechteck + Achsenkreuz).
-      return ['M8 6 H40 V28 H8 Z', 'M24 2 V32 M4 17 H44'];
+    }
+    default: {
+      // Unbekannte Typologie: Messrahmen-Motiv (Rechteck + Achsenkreuz) —
+      // bisher IMMER identisch. Neu: eine von 3 Eckmarken je Hash (oder
+      // keine), analog zu den anderen Typologien.
+      const ecke = h % 3;
+      const rahmen = ['M8 6 H40 V28 H8 Z', 'M24 2 V32 M4 17 H44'];
+      if (ecke === 1) return [...rahmen, 'M8 6 l6 6 M40 6 l-6 6'];
+      if (ecke === 2) return [...rahmen, 'M8 28 l6 -6 M40 28 l-6 -6'];
+      return rahmen;
+    }
   }
 }
 

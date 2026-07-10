@@ -6,6 +6,8 @@ import {
   ansichtSvg,
   testhausWalmdachGrundriss,
   testhausSatteldachZweiGeschosse,
+  testhausFensterZweifluegel,
+  testhausFensterband,
 } from './fixtures';
 import { dachGeometrie, DACH_SCHNITT_DICKE_MM } from '../src/derive/dach';
 import { deriveBerechnungsliste, parseRaumprogrammCsv } from '../src/derive/berechnungsliste';
@@ -383,6 +385,37 @@ describe('IFC4-Export (SPF)', () => {
     expect(ifc).toContain('IFCRELCONTAINEDINSPATIALSTRUCTURE');
     expect(ifc).toContain('IFCSLAB');
     expect(ifc.trim().endsWith('END-ISO-10303-21;')).toBe(true);
+  });
+
+  // v0.6.9 Stream F, ADDITIV zum obigen Test — docs/FENSTER-KONZEPT.md §5:
+  // ein parametrisches Fenster (fensterTyp/teilung/rahmenbreite) UND ein
+  // Fensterband (design.curtainWallSetzen, mehrere Openings in einem
+  // Undo-Schritt) dürfen den IFC-Export nicht zum Absturz bringen — und
+  // bleiben ehrlich beim dokumentierten V1-Stand: IFC exportiert Fenster
+  // WEITERHIN nur als IFCOPENINGELEMENT (Void), NIE als IFCWINDOW/IFCDOOR
+  // (die kein IFC-Codepfad dieses Kernels je erzeugt). Das ist keine
+  // Regression — die neuen Felder fliessen bewusst nicht in den Export ein.
+  it('parametrisches Fenster + Fensterband exportieren ohne Absturz weiterhin NUR IFCOPENINGELEMENT (kein IFCWINDOW/IFCDOOR) — dokumentierter V1-Stand', async () => {
+    const { exportIfc } = await import('../src');
+
+    const zwei = testhausFensterZweifluegel();
+    expect(() => exportIfc(zwei.doc, 'Test')).not.toThrow();
+    const ifcZwei = exportIfc(zwei.doc, 'Test');
+    const zaehlZwei = (t: string) => (ifcZwei.match(new RegExp(`=\\s*${t}\\(`, 'g')) ?? []).length;
+    expect(zaehlZwei('IFCOPENINGELEMENT')).toBe(zwei.doc.byKind('opening').length);
+    expect(zwei.doc.byKind('opening').length).toBeGreaterThan(0); // ehrlich: die Fixture setzt wirklich ein Fenster
+    expect(ifcZwei).not.toContain('IFCWINDOW');
+    expect(ifcZwei).not.toContain('IFCDOOR');
+
+    const band = testhausFensterband();
+    const oeffnungenBand = band.doc.byKind('opening').length;
+    expect(oeffnungenBand).toBeGreaterThan(0); // ehrlich: mind. ein Bandsegment gestanzt (sonst würfe die Fixture bereits)
+    expect(() => exportIfc(band.doc, 'Test')).not.toThrow();
+    const ifcBand = exportIfc(band.doc, 'Test');
+    const zaehlBand = (t: string) => (ifcBand.match(new RegExp(`=\\s*${t}\\(`, 'g')) ?? []).length;
+    expect(zaehlBand('IFCOPENINGELEMENT')).toBe(oeffnungenBand);
+    expect(ifcBand).not.toContain('IFCWINDOW');
+    expect(ifcBand).not.toContain('IFCDOOR');
   });
 });
 
