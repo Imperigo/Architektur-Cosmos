@@ -111,23 +111,45 @@ function verdicktesPrisma(ring: Pt3[], normale: Pt3, dicke: number): DachDreieck
   return out;
 }
 
-/** Sutherland–Hodgman-Halbebenen-Clip — identisch zu scene.ts (dort nicht
- * exportiert, darum hier dieselbe kleine Funktion). */
-function clipHalfPlane(poly: readonly Pt[], f: (p: Pt) => number): Pt[] {
+/**
+ * Teilt den Aussenring EINMAL entlang der First-Ebene (perp(p) = mid) in
+ * zwei Halbringe — v0.6.9-Politur: vorher klippte `satteldach()` denselben
+ * Ring in zwei UNABHÄNGIGEN Sutherland-Hodgman-Durchläufen mit entgegen-
+ * gesetzt vorzeichenbehafteter Halbebenen-Funktion (`mid - perp(p)` bzw.
+ * `perp(p) - mid`); die beiden First-Schnittpunkte entstanden dadurch aus
+ * ZWEI getrennt interpolierten Werten statt aus einem geteilten. Für alle
+ * bisher geprüften Umrisse (Rechteck/Trapez/Parallelogramm/konkave Form,
+ * mit und ohne Überstand) war dieser Wert dank IEEE-754-Symmetrie von
+ * Subtraktion/Division bit-identisch (empirisch nachgemessen, Diff = 0) —
+ * die Funktion macht diese Übereinstimmung aber nicht mehr vom Zufall
+ * einer Gleitkomma-Symmetrie abhängig, sondern erzwingt sie strukturell:
+ * jeder First-Schnittpunkt wird genau EINMAL berechnet und dasselbe
+ * Objekt in BEIDE Halbringe (`seiteA`/`seiteB`) übernommen. Damit
+ * schliesst sich der zuvor nur theoretisch mögliche Sub-Promille-Spalt
+ * zwischen den beiden Halbdach-Prismen am First strukturell, nicht nur
+ * numerisch zufällig.
+ */
+function teileAmFirst(poly: readonly Pt[], perp: (p: Pt) => number, mid: number): [Pt[], Pt[]] {
   const n = poly.length;
-  const out: Pt[] = [];
+  const seiteA: Pt[] = [];
+  const seiteB: Pt[] = [];
   for (let i = 0; i < n; i++) {
     const cur = poly[i]!;
     const next = poly[(i + 1) % n]!;
-    const fc = f(cur);
-    const fn = f(next);
-    if (fc >= 0) out.push(cur);
+    const fc = mid - perp(cur);
+    const fn = mid - perp(next);
+    if (fc >= 0) seiteA.push(cur);
+    if (fc <= 0) seiteB.push(cur);
     if (fc >= 0 !== fn >= 0) {
       const t = fc / (fc - fn);
-      out.push({ x: cur.x + (next.x - cur.x) * t, y: cur.y + (next.y - cur.y) * t });
+      // EIN First-Schnittpunkt, EIN Objekt — in beide Seiten übernommen,
+      // statt ihn (wie zuvor) für jede Seite separat zu interpolieren.
+      const schnitt: Pt = { x: cur.x + (next.x - cur.x) * t, y: cur.y + (next.y - cur.y) * t };
+      seiteA.push(schnitt);
+      seiteB.push(schnitt);
     }
   }
-  return out;
+  return [seiteA, seiteB];
 }
 
 function satteldach(roof: Roof, eave: Pt[], tan: number, zBase: number): DachGeometrie {
@@ -150,7 +172,7 @@ function satteldach(roof: Roof, eave: Pt[], tan: number, zBase: number): DachGeo
   const dreiecke: DachDreieck[] = [];
   let firstGezeichnet = false;
 
-  for (const halb of [clipHalfPlane(eave, (p) => mid - perp(p)), clipHalfPlane(eave, (p) => perp(p) - mid)]) {
+  for (const halb of teileAmFirst(eave, perp, mid)) {
     if (halb.length < 3) continue;
     const ring3 = halb.map((p) => ({ x: p.x, y: p.y, z: hoehe(p) }));
     const normale = kreuzNormale(ring3[0]!, ring3[1]!, ring3[ring3.length - 1]!);

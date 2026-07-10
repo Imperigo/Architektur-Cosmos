@@ -106,7 +106,26 @@ export function planInnerSvg(
     // Zonentür-Lücke (A4): radiert die Zonenkontur weiss aus, der Flügel folgt fein
     const luecke = l.classes.includes('zonentuer-luecke');
     const unterzug = l.classes.includes('unterzug');
-    const sw = luecke ? 120 : (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug ? 0.18 : 0.25) * scale;
+    // Dach-Linienhierarchie (v0.6.9 Politur, «Werkplan-Härte»): First
+    // kräftig wie eine Schnittkante (0.5 — dieselbe Stärke wie `isCore`
+    // oben und die Cut-Linien in sectionInnerSvg), Traufe mittel (0.35 —
+    // wie eine normale Bauteilkante), Ortgang/Grat fein (0.18 — wie
+    // Fenster/Bruchlinien). Vorher fielen alle vier `dach-<art>`-Klassen
+    // (derive/plan.ts) unklassifiziert in den 0.25-Standardstrich — First,
+    // Traufe, Ortgang und Grat waren im Werkplan nicht unterscheidbar. Das
+    // gestrichelte «Geschoss darunter»-Symbol trägt bereits `dach-traufe`
+    // (plan.ts) und bekommt dadurch automatisch die mittlere Stärke; sein
+    // `ueber-schnitt`-Dasharray (unten) bleibt unverändert.
+    const dachStift = l.classes.includes('dach-first')
+      ? 0.5
+      : l.classes.includes('dach-traufe')
+        ? 0.35
+        : l.classes.includes('dach-ortgang') || l.classes.includes('dach-grat')
+          ? 0.18
+          : null;
+    const sw = luecke
+      ? 120
+      : (dachStift ?? (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug ? 0.18 : 0.25)) * scale;
     const stroke = luecke ? 'white' : neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : 'black';
     // Baugrenze strichpunktiert auch im Druck (wie am Bildschirm); B3: über dem
     // Schnitt liegende Treppenteile strichpunktiert; A3: Unterzüge verdeckt

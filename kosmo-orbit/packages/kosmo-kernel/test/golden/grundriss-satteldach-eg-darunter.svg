@@ -6,10 +6,10 @@
 <path d="M 8045 45 L 8045 -6045 L 8205 -6205 L 8205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
 <path d="M 8045 -6045 L -45 -6045 L -205 -6205 L 8205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
 <path d="M -45 -6045 L -45 45 L -205 205 L -205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
-<line x1="8400" y1="-6400" x2="-400" y2="-6400" stroke="black" stroke-width="25" stroke-dasharray="150 60 30 60"/>
-<line x1="-400" y1="-6400" x2="-400" y2="400" stroke="black" stroke-width="25" stroke-dasharray="150 60 30 60"/>
-<line x1="-400" y1="400" x2="8400" y2="400" stroke="black" stroke-width="25" stroke-dasharray="150 60 30 60"/>
-<line x1="8400" y1="400" x2="8400" y2="-6400" stroke="black" stroke-width="25" stroke-dasharray="150 60 30 60"/>
+<line x1="8400" y1="-6400" x2="-400" y2="-6400" stroke="black" stroke-width="35" stroke-dasharray="150 60 30 60"/>
+<line x1="-400" y1="-6400" x2="-400" y2="400" stroke="black" stroke-width="35" stroke-dasharray="150 60 30 60"/>
+<line x1="-400" y1="400" x2="8400" y2="400" stroke="black" stroke-width="35" stroke-dasharray="150 60 30 60"/>
+<line x1="8400" y1="400" x2="8400" y2="-6400" stroke="black" stroke-width="35" stroke-dasharray="150 60 30 60"/>
 <g stroke="black" fill="black">
 <line x1="0" y1="1200" x2="8000" y2="1200" stroke-width="18"/>
 <line x1="-80" y1="1280" x2="80" y2="1120" stroke-width="36"/>
