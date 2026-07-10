@@ -20,6 +20,8 @@ import {
   type PanelProps,
 } from '@kosmo/ui';
 import { DataLeerbild } from './DataLeerbild';
+import { RefHeroBild } from './RefHeroBild';
+import { gedaechtnisQuerverweise } from './data-runtime';
 import {
   bauteilkatalog,
   gesamtdicke,
@@ -237,30 +239,93 @@ function MediaThumb({ media }: { media: RefEntryMedia }) {
 }
 
 /**
- * R1-Fix (Kritik-065 p-07/i-07, «Leerbild-Signet fehlt auf ~108 von 112
- * Karten»): die alte Bedingung `e.hero ? <img> : <DataLeerbild>` traf nur
- * die ~33 Einträge OHNE `hero`-Feld im Offline-Seed. Die restlichen ~79
- * tragen echte `hero`-URLs (externe Wikimedia-Bilder,
- * `apps/kosmo-orbit/public/kosmodata-seed.json`) — die in einer Umgebung
- * ohne Zugriff auf diese externen Hosts (Sandbox/CI, dieselbe Umgebung, in
- * der die Kritik-Screenshots entstanden) fehlschlagen. Der alte
- * `onError`-Handler versteckte das kaputte `<img>` nur (`display:none`),
- * OHNE auf das Leerbild-Signet umzuschalten — eine leere Fläche blieb
- * zurück. Fix: eigener State pro Karte, der bei `onError` auf das Signet
- * umschaltet — JEDE Karte ohne tatsächlich geladenes Bild (kein `hero`
- * ODER `hero` vorhanden aber Ladefehler) zeigt jetzt das Signet. */
-function ReferenzHeroBild({ hero }: { hero: string | null | undefined }) {
-  const [fehlgeschlagen, setFehlgeschlagen] = useState(false);
-  if (!hero || fehlgeschlagen) return <DataLeerbild typ="referenz" />;
+ * K1 (v0.6.8): Hero-Bilder laufen jetzt über den Laufzeit-Blob-Store
+ * (`data-runtime.ts` + `RefHeroBild.tsx`) — on-demand bei sichtbarer Karte,
+ * lokal-first, ohne kaputte `<img>` (der frühere R1-Fix mit `onError` →
+ * `DataLeerbild` ist darin aufgegangen; der W4-Vertrag
+ * `data-testid="karte-leerbild"` bleibt auf dem Platzhalter-Signet).
+ */
+
+/** K6: Jahr-Spanne fürs Dossier — zeigt `year_end`, wo es vom Start abweicht. */
+function formatJahrSpanne(e: RefEntry): string {
+  const von = formatYear(e);
+  if (e.year_end == null || e.year_end === e.year_start) return von;
+  return `${von}–${e.year_end < 0 ? `${Math.abs(e.year_end)} v. Chr.` : e.year_end}`;
+}
+
+/** K6: Seed-Felder ausserhalb des `RefEntry`-Typs (Seed ist READ-ONLY — der
+ * Typ in `packages/kosmo-data` bleibt unangetastet; hier nur eine lokale,
+ * additive Lese-Sicht auf das, was `kosmodata-seed.json` real enthält). */
+interface RefEntrySeedExtras {
+  architecture_text?: {
+    headline?: string;
+    overview?: string;
+    chapters?: { title: string; text: string; review_status?: RefReviewStatus }[];
+  };
+  source_candidates?: {
+    source_type?: string;
+    title?: string;
+    reliability_level?: string;
+    rights_status?: string;
+  }[];
+}
+
+function seedExtras(e: RefEntry): RefEntrySeedExtras {
+  return e as RefEntry & RefEntrySeedExtras;
+}
+
+/** K6: schlanker Klapp-Abschnitt fürs Dossier (natives `<details>` — das
+ * Repo-Muster, es gibt bewusst kein Accordion in @kosmo/ui). Titelzeile im
+ * selben Uppercase-Stil wie die bestehenden Dossier-Abschnitte. */
+function DossierGruppe({
+  titel,
+  anzahl,
+  testid,
+  offen = false,
+  children,
+}: {
+  titel: string;
+  anzahl?: number;
+  testid: string;
+  offen?: boolean;
+  children: ReactNode;
+}) {
   return (
-    <img
-      src={hero}
-      alt=""
-      loading="lazy"
-      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-      onError={() => setFehlgeschlagen(true)}
-    />
+    <>
+      <Hairline />
+      <details data-testid={testid} open={offen}>
+        <summary
+          style={{
+            cursor: 'pointer',
+            fontSize: 'var(--k-t-xs)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            color: 'var(--k-ink-faint)',
+          }}
+        >
+          {titel}
+          {anzahl !== undefined && (
+            <span style={{ fontFamily: 'var(--k-font-mono)', marginLeft: 'var(--k-s2)' }}>{anzahl}</span>
+          )}
+        </summary>
+        <div style={{ display: 'grid', gap: 'var(--k-s2)', paddingTop: 'var(--k-s2)' }}>{children}</div>
+      </details>
+    </>
   );
+}
+
+const modelTypeLabel: Record<string, string> = {
+  full_model: 'Vollmodell',
+  low_poly_model: 'Low-Poly-Modell',
+  structure_model: 'Tragwerksmodell',
+  tectonic_model: 'Tektonikmodell',
+  site_model: 'Umgebungsmodell',
+  mass_model: 'Massenmodell',
+};
+
+/** Seed-Vokabeln (snake_case-Freitext) lesbar machen, ohne Inhalt zu erfinden. */
+function entschlange(s: string): string {
+  return s.replace(/_/g, ' ');
 }
 
 /**
@@ -521,6 +586,41 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
       verworfen = true;
     };
   }, [seedRetry]);
+
+  // K8 (v0.6.8): Gedächtnis-/Wissens-Querverweise im Dossier — ehrlich
+  // textbasiert (das Lernjournal trägt keine persistierte Referenz-Kante,
+  // siehe `gedaechtnisQuerverweise` in data-runtime.ts). Klick wechselt den
+  // Tab INNERHALB von KosmoData und übergibt Fokus (Gedächtnis) bzw.
+  // Startsuche (Wissen) an die Ziel-Ansicht.
+  const journal = useMemo(() => new LearningJournal(journalStore()), []);
+  const [gedaechtnisLinks, setGedaechtnisLinks] = useState<Learning[]>([]);
+  const [wissenLinks, setWissenLinks] = useState<KnowledgeHit[]>([]);
+  const [gedaechtnisFokus, setGedaechtnisFokus] = useState<string | null>(null);
+  const [wissenStartQuery, setWissenStartQuery] = useState('');
+  useEffect(() => {
+    if (!selected) {
+      setGedaechtnisLinks([]);
+      setWissenLinks([]);
+      return;
+    }
+    let verworfen = false;
+    try {
+      journal.reload();
+      setGedaechtnisLinks(gedaechtnisQuerverweise(journal.all, selected));
+    } catch {
+      setGedaechtnisLinks([]);
+    }
+    void searchKnowledge(selected.title, 3)
+      .then((t) => {
+        if (!verworfen) setWissenLinks(t);
+      })
+      .catch(() => {
+        if (!verworfen) setWissenLinks([]);
+      });
+    return () => {
+      verworfen = true;
+    };
+  }, [selected, journal]);
 
   // Batch 5: Ref↔Asset-Verknüpfung — «Assets dieses Projekts» im Dossier.
   const [refAssets, setRefAssets] = useState<KosmoAsset[]>([]);
@@ -853,9 +953,13 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           )}
           {tab === 'bauteile' && <BauteilkatalogView />}
           {tab === 'materialien' && <MaterialkatalogView />}
-          {tab === 'wissen' && <KosmoWissenView />}
+          {tab === 'wissen' && (
+            <KosmoWissenView {...(wissenStartQuery ? { startQuery: wissenStartQuery } : {})} />
+          )}
           {tab === 'training' && <KosmoTrainingView />}
-          {tab === 'gedaechtnis' && <KosmoGedaechtnisView />}
+          {tab === 'gedaechtnis' && (
+            <KosmoGedaechtnisView {...(gedaechtnisFokus !== null ? { fokusTs: gedaechtnisFokus } : {})} />
+          )}
           {tab === 'archiv' && <KosmoArchivView />}
 
           {tab === 'referenzen' && (<>
@@ -934,7 +1038,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                     overflow: 'hidden',
                   }}
                 >
-                  <ReferenzHeroBild hero={e.hero} />
+                  <RefHeroBild entry={e} />
                 </div>
                 <div style={{ padding: `var(--k-s3) var(--k-s4)` }}>
                   <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)', lineHeight: 1.3 }}>{e.title}</div>
@@ -971,12 +1075,24 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               ×
             </KButton>
           </div>
-          {selected.hero && (
-            <img src={selected.hero} alt="" style={{ width: '100%', borderRadius: 'var(--k-radius-lg)', border: '1px solid var(--k-line)' }} />
-          )}
+          {/* K1: lokal-first — lokales Bild als <img>, sonst Tusche-Platzhalter
+              plus die ehrliche Zeile «Bild nicht lokal — Quelle: <domain>»
+              (vorher stand hier ein kaputtes externes <img> ohne Fallback). */}
+          <div
+            data-testid="ref-dossier-bild"
+            style={{
+              height: 170,
+              borderRadius: 'var(--k-radius-lg)',
+              border: '1px solid var(--k-line)',
+              background: 'var(--k-field)',
+              overflow: 'hidden',
+            }}
+          >
+            <RefHeroBild entry={selected} signetGroesse={72} />
+          </div>
           <div style={{ fontSize: 'var(--k-t-lg)', fontWeight: 600 }}>{selected.title}</div>
           <Measure>
-            {[formatYear(selected), selected.city, selected.country].filter(Boolean).join(' · ')}
+            {[formatJahrSpanne(selected), selected.city, selected.country].filter(Boolean).join(' · ')}
           </Measure>
           {(selected.authors ?? []).length > 0 && (
             <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{(selected.authors ?? []).join(', ')}</div>
@@ -1088,11 +1204,235 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                       <Badge hue={reviewStatusHue[layer.review_status]}>{reviewStatusLabel[layer.review_status]}</Badge>
                     </div>
                     <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{layer.summary}</div>
+                    {/* K6: strukturierte Analyse-Daten (`data`-Feld des reichen
+                        Typs) — heute im Seed leer, aber der Vertrag sieht sie
+                        vor; sobald sie kommen, sind sie sichtbar. */}
+                    {layer.data && Object.keys(layer.data).length > 0 && (
+                      <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', overflowWrap: 'anywhere' }}>
+                        {Object.entries(layer.data)
+                          .map(([k, v]) => `${entschlange(k)}: ${typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v)}`)
+                          .join(' · ')}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </>
           )}
+
+          {/* ---------- K6 (v0.6.8): bisher unsichtbare Felder des reichen
+              Master-Modells — gruppiert und zusammenklappbar (Werkplan-Stil,
+              natives <details>). Jede Gruppe erscheint nur, wenn der Seed
+              für diese Referenz wirklich Daten trägt (kein leeres Gerüst). */}
+
+          {(selected.program_detail || selected.program) && (
+            <DossierGruppe titel="Programm" testid="ref-programm" offen>
+              {selected.program_detail ? (
+                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', display: 'grid', gap: 'var(--k-s1)' }}>
+                  {selected.program_detail.type && <div>Typ: {entschlange(selected.program_detail.type)}</div>}
+                  {selected.program_detail.subtype && <div>Untertyp: {entschlange(selected.program_detail.subtype)}</div>}
+                  {selected.program_detail.public_access && (
+                    <div>Zugang: {entschlange(selected.program_detail.public_access)}</div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{entschlange(selected.program ?? '')}</div>
+              )}
+            </DossierGruppe>
+          )}
+
+          {selected.context && Object.keys(selected.context).length > 0 && (
+            <DossierGruppe titel="Kontext" testid="ref-kontext" offen>
+              <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', display: 'grid', gap: 'var(--k-s1)' }}>
+                {selected.context.topography && <div>Topografie: {entschlange(selected.context.topography)}</div>}
+                {selected.context.setting && <div>Lage: {entschlange(selected.context.setting)}</div>}
+                {selected.context.climate && <div>Klima: {entschlange(selected.context.climate)}</div>}
+              </div>
+              {(selected.context.heritage_context ?? []).length > 0 && (
+                <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                  Denkmalkontext: {(selected.context.heritage_context ?? []).map(entschlange).join(' · ')}
+                </div>
+              )}
+              {(selected.context.landscape_relation ?? []).length > 0 && (
+                <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                  Landschaftsbezug: {(selected.context.landscape_relation ?? []).map(entschlange).join(' · ')}
+                </div>
+              )}
+            </DossierGruppe>
+          )}
+
+          {((selected.lecture_cluster ?? []).length > 0 ||
+            (selected.vibes ?? []).length > 0 ||
+            (selected.database_tags ?? []).length > 0) && (
+            <DossierGruppe titel="Einordnung" testid="ref-einordnung">
+              {(selected.lecture_cluster ?? []).length > 0 && (
+                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+                  Vorlesungs-Cluster: {(selected.lecture_cluster ?? []).map(entschlange).join(' · ')}
+                </div>
+              )}
+              {(selected.vibes ?? []).length > 0 && (
+                <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+                  {(selected.vibes ?? []).map((v) => (
+                    <span
+                      key={v}
+                      style={{
+                        fontSize: 'var(--k-t-xs)',
+                        padding: `var(--k-s1) var(--k-s3)`,
+                        borderRadius: 999,
+                        border: '1px solid var(--k-line)',
+                        color: 'var(--k-ink-soft)',
+                      }}
+                    >
+                      {entschlange(v)}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {(selected.database_tags ?? []).length > 0 && (
+                <div
+                  style={{
+                    fontFamily: 'var(--k-font-mono)',
+                    fontSize: 'var(--k-t-xs)',
+                    color: 'var(--k-ink-faint)',
+                    lineHeight: 1.6,
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {(selected.database_tags ?? []).join('  ')}
+                </div>
+              )}
+            </DossierGruppe>
+          )}
+
+          {(() => {
+            const at = seedExtras(selected).architecture_text;
+            if (!at || (!at.overview && (at.chapters ?? []).length === 0)) return null;
+            return (
+              <DossierGruppe titel="Architektur-Text" testid="ref-architekturtext" anzahl={(at.chapters ?? []).length}>
+                {at.headline && <div style={{ fontSize: 'var(--k-t-md)', fontWeight: 600 }}>{at.headline}</div>}
+                {at.overview && (
+                  <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{at.overview}</div>
+                )}
+                {(at.chapters ?? []).map((k, i) => (
+                  <details key={`${k.title}-${i}`} data-testid="ref-architekturtext-kapitel">
+                    <summary style={{ cursor: 'pointer', fontSize: 'var(--k-t-sm)', fontWeight: 550 }}>
+                      {k.title}
+                      {k.review_status && (
+                        <span style={{ marginLeft: 'var(--k-s2)' }}>
+                          <Badge hue={reviewStatusHue[k.review_status]}>{reviewStatusLabel[k.review_status]}</Badge>
+                        </span>
+                      )}
+                    </summary>
+                    <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.55, paddingTop: 'var(--k-s1)' }}>
+                      {k.text}
+                    </div>
+                  </details>
+                ))}
+              </DossierGruppe>
+            );
+          })()}
+
+          {(selected.model_assets ?? []).length > 0 && (
+            <DossierGruppe titel="3D-Modelle" testid="ref-modelle" anzahl={(selected.model_assets ?? []).length}>
+              {(selected.model_assets ?? []).map((m, i) => (
+                <div key={`${m.r2_key}-${i}`} style={{ display: 'grid', gap: 'var(--k-s1)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 'var(--k-t-sm)', fontWeight: 550 }}>{m.title}</span>
+                    <div style={{ flex: 1 }} />
+                    <Badge hue={reviewStatusHue[m.review_status]}>{reviewStatusLabel[m.review_status]}</Badge>
+                  </div>
+                  <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                    {modelTypeLabel[m.model_type] ?? entschlange(m.model_type)} · {m.format.toUpperCase()} · LOD {entschlange(m.lod_level)}
+                    {m.confidence_score !== undefined ? ` · Konfidenz ${Math.round(m.confidence_score * 100)}%` : ''}
+                  </div>
+                </div>
+              ))}
+            </DossierGruppe>
+          )}
+
+          {(() => {
+            const quellen = seedExtras(selected).source_candidates ?? [];
+            if (quellen.length === 0) return null;
+            return (
+              <DossierGruppe titel="Quellen-Kandidaten" testid="ref-quellen" anzahl={quellen.length}>
+                {quellen.map((q, i) => (
+                  <div key={`${q.title ?? 'quelle'}-${i}`} style={{ display: 'grid', gap: 2 }}>
+                    <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{q.title ?? 'Ohne Titel'}</span>
+                    <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                      {[q.source_type, q.reliability_level, q.rights_status].filter(Boolean).map((s) => entschlange(s!)).join(' · ')}
+                    </span>
+                  </div>
+                ))}
+              </DossierGruppe>
+            );
+          })()}
+
+          {selected.database_profile && (
+            <DossierGruppe titel="Datenbankprofil" testid="ref-dbprofil">
+              <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-soft)', lineHeight: 1.6 }}>
+                Quellen {selected.database_profile.source_count} · Medien {selected.database_profile.media_count} · Modelle{' '}
+                {selected.database_profile.model_count} · Analysen {selected.database_profile.analysis_count} · Tags{' '}
+                {selected.database_profile.tag_count}
+              </div>
+              <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', overflowWrap: 'anywhere' }}>
+                {selected.database_profile.r2_prefix}
+              </div>
+            </DossierGruppe>
+          )}
+
+          {/* ---------- K8 (v0.6.8): Gedächtnis-/Wissens-Querverweise — klickbar,
+              Klick wechselt den Tab innerhalb von KosmoData. Ehrlich: das
+              Lernjournal kennt keine persistierte Referenz-Kante, gezeigt wird,
+              was die Referenz wörtlich nennt (Gedächtnis) bzw. was die lokale
+              BM25-Suche zum Titel findet (Wissen). */}
+          <DossierGruppe titel="Gedächtnis & Wissen" testid="ref-querverweise" offen>
+            <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>Gedächtnis</div>
+            {gedaechtnisLinks.length === 0 ? (
+              <span data-testid="ref-gedaechtnis-leer" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+                Kein Gedächtnis-Eintrag erwähnt diese Referenz.
+              </span>
+            ) : (
+              gedaechtnisLinks.map((g) => (
+                <KButton
+                  key={g.ts}
+                  size="sm"
+                  tone="ghost"
+                  data-testid="ref-gedaechtnis-link"
+                  style={{ justifyContent: 'flex-start', textAlign: 'left' }}
+                  onClick={() => {
+                    setGedaechtnisFokus(g.ts);
+                    setTab('gedaechtnis');
+                    nutzungMelden('dossier:gedaechtnis-link');
+                  }}
+                >
+                  {g.sentiment === 'gut' ? '👍' : '👎'} {kuerzeText(g.context, 90)}
+                </KButton>
+              ))
+            )}
+            <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', marginTop: 'var(--k-s1)' }}>Wissen</div>
+            {wissenLinks.length === 0 ? (
+              <span data-testid="ref-wissen-leer" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+                Kein Wissens-Abschnitt zum Titel gefunden.
+              </span>
+            ) : (
+              wissenLinks.map((h) => (
+                <KButton
+                  key={h.id}
+                  size="sm"
+                  tone="ghost"
+                  data-testid="ref-wissen-link"
+                  style={{ justifyContent: 'flex-start', textAlign: 'left' }}
+                  onClick={() => {
+                    setWissenStartQuery(selected.title);
+                    setTab('wissen');
+                    nutzungMelden('dossier:wissen-link');
+                  }}
+                >
+                  {h.docName} · Abschnitt {h.seq + 1}
+                </KButton>
+              ))
+            )}
+          </DossierGruppe>
 
           {/* Assets dieses Projekts (Batch 5): Rückrichtung zu KosmoAsset per kosmodata_refs. */}
           <Hairline />
@@ -1866,13 +2206,15 @@ export function MaterialkatalogView() {
  * Dokumentliste mit Sichtbarkeits-Umschalter und die Bauwissen-Basis-Korpora
  * (`wissen/`-Bündel) — alles was vorher nur in KosmoPrepare lebte.
  */
-export function KosmoWissenView() {
+export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
   const [docs, setDocs] = useState<KnowledgeDoc[]>([]);
   const [basis, setBasis] = useState<BasisSammlung[]>([]);
   const [geladeneBasis, setGeladeneBasis] = useState<Set<string>>(new Set());
   const [ladeBasis, setLadeBasis] = useState<string | null>(null);
   const [geladen, setGeladen] = useState(false);
-  const [query, setQuery] = useState('');
+  // K8: ein Querverweis aus dem Referenz-Dossier belegt die Suche vor —
+  // die View wird beim Tab-Wechsel frisch gemountet, der Initialwert reicht.
+  const [query, setQuery] = useState(startQuery ?? '');
   const [hits, setHits] = useState<KnowledgeHit[]>([]);
   const searchSeq = useRef(0);
 
@@ -2258,7 +2600,7 @@ export function gedaechtnisZeilen(
  * BM25-Suche (`searchKnowledge`) über den Kontext — schlank, nicht für alle
  * Einträge gleichzeitig geladen.
  */
-export function KosmoGedaechtnisView() {
+export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
   const journal = useMemo(() => new LearningJournal(journalStore()), []);
   const [eintraege, setEintraege] = useState<readonly Learning[]>([]);
   const [geladen, setGeladen] = useState(false);
@@ -2279,6 +2621,15 @@ export function KosmoGedaechtnisView() {
     setGeladen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // K8: kommt die View über einen Dossier-Querverweis, springt sie zum
+  // verwiesenen Eintrag (der zusätzlich markiert ist, s. unten).
+  useEffect(() => {
+    if (!fokusTs || !geladen) return;
+    document
+      .querySelector(`[data-gedaechtnis-ts="${CSS.escape(fokusTs)}"]`)
+      ?.scrollIntoView({ block: 'center' });
+  }, [fokusTs, geladen]);
 
   function toggleVisibility(e: Learning) {
     try {
@@ -2397,12 +2748,28 @@ export function KosmoGedaechtnisView() {
           const oeffentlich = (e.visibility ?? 'private') === 'public';
           const wirdBefoerdert = befoerdern === e.ts;
           const treffer = wissenTreffer[e.ts];
+          const fokussiert = fokusTs === e.ts;
           return (
-            <Panel key={e.ts} data-testid="gedaechtnis-eintrag" style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'grid', gap: 'var(--k-s2)' }}>
+            <Panel
+              key={e.ts}
+              data-testid="gedaechtnis-eintrag"
+              data-gedaechtnis-ts={e.ts}
+              style={{
+                padding: `var(--k-s3) var(--k-s4)`,
+                display: 'grid',
+                gap: 'var(--k-s2)',
+                ...(fokussiert ? { borderColor: 'var(--k-accent)' } : {}),
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
                 <Badge hue={e.sentiment === 'gut' ? 'var(--k-success)' : 'var(--k-warning)'}>
                   {e.sentiment === 'gut' ? '👍 BEIBEHALTEN' : '👎 VERMEIDEN'}
                 </Badge>
+                {fokussiert && (
+                  <span data-testid="gedaechtnis-fokus">
+                    <Badge hue={moduleHue.data}>Querverweis aus Referenz</Badge>
+                  </span>
+                )}
                 <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
                   {e.ts.slice(0, 16).replace('T', ' ')}
                 </span>
