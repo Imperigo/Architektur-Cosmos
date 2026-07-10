@@ -378,6 +378,46 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
           lines.push({ a: at(r.s0 + tiefe, L), b: at(r.s0 + tiefe, mid + 25), classes: ['symbol', 'anschlag', ...oRen] });
           lines.push({ a: at(r.s1 - tiefe, L), b: at(r.s1 - tiefe, mid + 25), classes: ['symbol', 'anschlag', ...oRen] });
         }
+        // v0.6.9 Stream A (docs/FENSTER-KONZEPT.md): parametrische Fenster —
+        // Teilungslinien + Öffnungsflügel-Bogen NUR bei gesetztem fensterTyp
+        // (Alt-Fenster ohne das Feld bleiben byte-identisch, Goldens-Guard).
+        if (o.fensterTyp) {
+          // Teilung: Zweiflügel ohne explizite Teilung = Mittelsprosse (n=2);
+          // Fensterband trägt seine Pfostenzahl in teilung.n («Pfostentakt»
+          // im Doppellinien-Band).
+          const effN = Math.max(1, o.teilung?.n ?? (o.fensterTyp === 'zweifluegel' ? 2 : 1));
+          const feld = (r.s1 - r.s0) / effN;
+          for (let i = 1; i < effN; i++) {
+            const s = r.s0 + i * feld;
+            lines.push({ a: at(s, mid - 25), b: at(s, mid + 25), classes: ['symbol', 'fenster', ...oRen] });
+          }
+          if (o.fensterTyp === 'einfluegel' || o.fensterTyp === 'zweifluegel') {
+            // Öffnungsbogen — dieselbe Winkelkonvention wie das Türsymbol
+            // (Angel auf der L-Seite, Schwenk über die Wand-Normale), aber
+            // eigene Klasse 'fenster-bogen' (Renderer/Export unterscheidbar).
+            const fluegelBogen = (hingeS: number, radius: number, nachAnfang: boolean): void => {
+              const hingePt = at(hingeS, L);
+              const normalAngle = Math.atan2(n.y, n.x);
+              const toward = nachAnfang ? Math.atan2(-d.y, -d.x) : Math.atan2(d.y, d.x);
+              arcs.push({
+                center: hingePt,
+                radius,
+                startAngle: Math.min(normalAngle, toward),
+                endAngle: Math.max(normalAngle, toward),
+                classes: ['symbol', 'fenster-bogen', ...oRen],
+              });
+            };
+            const width = r.s1 - r.s0;
+            if (o.fensterTyp === 'einfluegel') {
+              // swing 'rechts': Angel am Öffnungsende, Flügel schwenkt zurück
+              fluegelBogen(o.swing === 'rechts' ? r.s1 : r.s0, width, o.swing === 'rechts');
+            } else {
+              // Zweiflügel: beide Flügel schwenken zur Mitte
+              fluegelBogen(r.s0, width / 2, false);
+              fluegelBogen(r.s1, width / 2, true);
+            }
+          }
+        }
       } else {
         // Türsymbol: Flügel senkrecht zur Wand + 90°-Schwenkbogen
         const width = r.s1 - r.s0;

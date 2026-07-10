@@ -173,11 +173,23 @@ export interface Opening extends Base {
   height: Mm;
   /** Brüstungshöhe ab OK Boden (bei Türen 0). */
   sill: Mm;
-  /** Anschlagrichtung für Türsymbol im Grundriss. */
+  /** Anschlagrichtung für das Tür- ODER Fensterflügel-Symbol im Grundriss
+   * (v0.6.9 Stream A: bei fensterTyp 'einfluegel' bestimmt swing die
+   * Angelseite des Öffnungsbogens; 'fensterband'/'fest' tragen kein swing). */
   swing?: 'links' | 'rechts';
   /** Fensteranschlag-Tiefe in der Leibung (B4, Werkplan-Detail; Default 40). */
   anschlag?: Mm;
   typeId?: string;
+  /** Fenstertyp (v0.6.9 Stream A, docs/FENSTER-KONZEPT.md): fehlt =
+   * Alt-Fenster (heutiges Zweilinien-Symbol, keine Teilung, kein
+   * Flügelbogen, keine 3D-Rahmen). Nur bei openingType 'fenster' sinnvoll. */
+  fensterTyp?: 'einfluegel' | 'zweifluegel' | 'fest' | 'fensterband';
+  /** Feldteilung n (horizontal) × m (vertikal) — Flügel-/Pfosten-Riegel-
+   * Raster. Nur wirksam, wenn fensterTyp gesetzt ist. */
+  teilung?: { n: number; m: number };
+  /** Rahmen-/Pfostenbreite in mm (Blendrahmen bzw. Fensterband-Profil);
+   * fehlt = Default 60 in der Ableitung (FENSTER_RAHMEN_DEFAULT_MM). */
+  rahmenbreite?: Mm;
 }
 
 /** Zone/Raum — Polygon mit SIA-416-Klassierung. */

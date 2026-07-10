@@ -1,6 +1,8 @@
-# Fenster-Konzept — Parametrische Fenster & Curtain-Wall v1
+# Fenster-Konzept — Parametrische Fenster & Fensterband/Curtain-Wall v1 (Pfosten-Riegel als Teilung)
 
-*(Stream A, v0.6.9 — grösster Modell-Hebel nach dem Dach)*
+*(Stream A, v0.6.9 — grösster Modell-Hebel nach dem Dach. Freigegeben mit
+Auflagen: CW-Multi-Segment atomar, ehrliche Benennung, Command-Validierung,
+Golden-Disziplin — eingearbeitet.)*
 
 ## 0 · Ausgangslage (Bestand, geprüft)
 
@@ -42,8 +44,8 @@ Zwei Fassaden-Systeme existieren bereits, unabhängig vom Opening-Modell:
    neu gebaut.
 
 Fenster-Erzeugung aus Modulen bleibt unverändert bestehen (V1 ergänzt sie nur
-additiv um zwei neue Wege: Parametrisierung einzelner Fenster und
-Curtain-Wall auf einem Wandzug).
+additiv um zwei neue Wege: Parametrisierung einzelner Fenster und das
+Fensterband/Curtain-Wall v1 auf einem Wandzug).
 
 ## 1 · Parametermodell Fenster (additiv auf `Opening`)
 
@@ -78,61 +80,71 @@ DXF-Export, `derive/mengen.ts`-Mengenauszug) hängt an `openingRects` bzw.
 direkt an `Opening`. Ein zweites Fenster-Objekt würde jeden dieser Pfade
 verdoppeln müssen — genau das Parallelsystem, das vermieden werden soll.
 
-## 2 · Curtain-Wall als Fassadentyp auf Wandzug
+## 2 · Fensterband/Curtain-Wall v1 (Pfosten-Riegel als Teilung) auf Wandzug
 
-Eine Pfosten-Riegel-Fassade ist **kein Loch in einer massiven Wand**, sondern
-eine durchlaufende Verglasung über einen ganzen Wandzug. V1 bildet sie
-trotzdem als `Opening` mit `fensterTyp: 'fensterband'` ab (kein
-Parallelsystem, siehe oben) — der Unterschied zum «Modul-Fenster» ist nur:
-die Öffnung ist (fast) so breit wie die Wand und trägt ein durchlaufendes
-Pfostenraster statt einzelner Blendrahmen.
+Ehrliche Benennung (Auflage 2): V1 liefert ein **durchlaufendes Fensterband
+mit Pfosten-Riegel-Teilung** — KEIN vollwertiges Curtain-Wall-System (keine
+Passstücke, keine Eckdetails, keine Profilserien; Abschnitt 5). Abgebildet
+als `Opening` mit `fensterTyp: 'fensterband'` (kein Parallelsystem, siehe
+oben) — der Unterschied zum «Modul-Fenster» ist nur: die Öffnung ist (fast)
+so breit wie die Wand und trägt ein durchlaufendes Pfostenraster statt
+einzelner Blendrahmen.
 
 `design.curtainWallSetzen({storeyId, richtung, pfostenraster, riegelraster?,
 rahmenbreite, bruestung, sturz})`:
 
-1. **Wandauswahl reuse**: exakt dieselbe Klassierung wie
-   `design.fensterAusModulen` — `richtungsModule`/`kantenRichtung` werden
-   NICHT gebraucht (die Zuweisung ist hier direkt Parameter, kein
-   Zwei-Schritt-«zuweisen dann stanzen»), aber `kantenRichtung(w.a, w.b,
-   wandBbox)` **wird importiert und wiederverwendet**, um alle `AW…`-Wände
+1. **Wandauswahl reuse**: `kantenRichtung(w.a, w.b, wandBbox)` aus
+   `derive/fassadenmodule.ts` wird importiert und wiederverwendet (exakt
+   dieselbe Klassierung wie `design.fensterAusModulen`), um alle `AW…`-Wände
    eines Geschosses zu finden, deren Fassadenseite `richtung` entspricht.
-2. Je matchende Wand: EIN `Opening` mit `sill = bruestung`,
-   `height = geschosshöhe − bruestung − sturz`, `width` = Wandlänge minus
-   Eckabstand (dieselbe «Eckenregel»-Idee wie beim Modul-Editor: Vorfabrikation
-   beginnt an der Ecke, der Rest bleibt ehrlich Passstück — hier vereinfacht:
-   Restbreite bleibt ungedeckt Massivwand, keine Passstück-Buchhaltung wie im
-   Modulsystem, das ist V1-Schnitt), `openingType: 'fenster'`,
-   `fensterTyp: 'fensterband'`, `teilung: {n, m}` aus
-   `pfostenraster`/`riegelraster` (Spalten = `floor(width / pfostenraster)`,
-   Zeilen = `riegelraster` gesetzt ? `floor(height / riegelraster)` : 1),
+   `richtungsModule` wird NICHT gebraucht — die Zuweisung ist hier direkter
+   Parameter, kein Zwei-Schritt-«zuweisen dann stanzen».
+2. **Mehrere Wandsegmente = mehrere Openings, EIN Command-Resultat**
+   (Auflage 1; ein Opening gehört zu genau einer Wand): je matchende Wand
+   entsteht EIN `Opening`, ALLE Patches kommen in einem Resultat zurück —
+   atomarer Undo-Schritt wie bei `design.wohnungenSegmentieren`. Je Segment:
+   `sill = bruestung`, `height = Wandhöhe − bruestung − sturz`, Band von
+   `CW_ECKABSTAND_MM` bis `Wandlänge − CW_ECKABSTAND_MM` (der Eckrest bleibt
+   ehrlich Massivwand), `openingType: 'fenster'`,
+   `fensterTyp: 'fensterband'`, `teilung: {n, m}` mit
+   `n = floor(Bandbreite / pfostenraster)` (das Raster wird gleichmässig aufs
+   Segment verteilt — bewusst KEIN Passstück) und
+   `m = riegelraster ? max(1, floor(height / riegelraster)) : 1`,
    `rahmenbreite`.
-3. Bestehende Öffnungen im Weg (wie bei `fensterAusModulen`) blockieren —
-   dieselbe Belegungslogik (`belegt`-Intervalle) wird als kleine gemeinsame
-   Hilfsfunktion aus `fensterAusModulen` herausgezogen (`freieIntervalle`
-   o.ä.), damit kein Code verdoppelt wird.
+3. **Kein Segment wird still ausgelassen** (Auflage 1): Segmente, die zu kurz
+   fürs Pfostenraster sind (`n = 0`), zu niedrig (`height ≤ 0`) oder durch
+   eine bestehende Öffnung belegt, werden übersprungen UND ehrlich im
+   `summarize` gezählt («… — k Segment(e) ausgelassen»). Sind ALLE Segmente
+   unbrauchbar oder gibt es keine passende Aussenwand, wirft der Command
+   einen `CommandError` — dieselbe Ehrlichkeit wie `fensterAusModulen`.
 
-Kein neues `settings`-Feld: Curtain-Wall ist wie `fensterAusModulen` ein
+Kein neues `settings`-Feld: das Fensterband ist wie `fensterAusModulen` ein
 **einmaliger Stanz-Command** (ein Undo-Schritt), keine persistente
 Fassaden-Zuweisung — die Wiederverwendung betrifft die
 Richtungs-/Wandzug-Erkennung, nicht die Speicherform.
 
 ## 3 · Abbildung in Commands
 
-- **`design.fensterParametrieren`** — `{openingId, fensterTyp, teilung?,
-  rahmenbreite?, swing?}`. Lädt die bestehende `Opening` (`require<Opening>`),
-  wirft `CommandError`, wenn `openingType !== 'fenster'` (Türen bleiben
-  Türen). Patch: `{id, before: opening, after: {...opening, fensterTyp, …}}`
-  (konditionale Spreads, `exactOptionalPropertyTypes`). `summarize`: z.B.
-  «Fenster 2×1 Zweiflügel parametriert».
-- **`design.curtainWallSetzen`** — Signatur wie oben, zod-Schema mit
-  `richtung: z.enum(['sued','nord','west','ost'])`,
-  `pfostenraster: z.number().int().positive().default(1200)`,
-  `riegelraster: z.number().int().positive().optional()`,
-  `rahmenbreite: z.number().int().positive().default(60)`,
+- **`design.fensterParametrieren`** — `{openingId, fensterTyp, teilungN?,
+  teilungM?, rahmenbreite?, swing?}` (flache Params, LLM-Tool-Konvention).
+  Validierung (Auflage 3): `teilungN`/`teilungM` `int().min(1).max(12)`,
+  `rahmenbreite` `int().min(20).max(200)`; Nicht-Fenster-Openings (Tür,
+  Leibung) werden mit sprechendem `CommandError` abgelehnt; bei
+  `fensterTyp: 'fensterband'` ist `swing` verboten (`CommandError` — ein
+  Band hat keinen Öffnungsflügel), ein bestehendes `swing` wird dabei vom
+  Opening entfernt. Patch: `{id, before: opening, after: {...opening,
+  fensterTyp, …}}` (konditionale Spreads, `exactOptionalPropertyTypes`).
+  `summarize`: z.B. «Fenster Zweiflügel 2×1 parametriert».
+- **`design.curtainWallSetzen`** — Titel «Fensterband/Curtain-Wall setzen»,
+  zod-Schema mit `richtung: z.enum(['sued','nord','west','ost'])`,
+  `pfostenraster: z.number().int().min(300).default(1200)` (Auflage 3),
+  `riegelraster: z.number().int().min(300).optional()`,
+  `rahmenbreite: z.number().int().min(20).max(200).default(60)`,
   `bruestung: z.number().int().nonnegative().default(0)`,
-  `sturz: z.number().int().nonnegative().default(200)`. `summarize`: «CW
-  Süd-Fassade, Raster 1.2m». Wirft `CommandError`, wenn keine passende
-  Aussenwand existiert (gleiche Ehrlichkeit wie `fensterAusModulen`).
+  `sturz: z.number().int().nonnegative().default(200)`. `summarize`:
+  «Fensterband Süd (Raster 1.20 m)» + ehrliche Auslassungs-Warnung
+  (Abschnitt 2, Punkt 3). Wirft `CommandError`, wenn keine passende
+  Aussenwand existiert oder alle Segmente unbrauchbar sind.
 
 Beide Commands sind additiv in `commands/design.ts`, nutzen die bestehenden
 Helfer `added`/`require`/`newId`/`CommandError` und importieren
@@ -169,21 +181,26 @@ Rahmen-Umlauf als 4 schlanke Boxen (Breite `rahmenbreite`, Tiefe = halbe
 Wanddicke) plus, je nach `teilung`, vertikale/horizontale Sprossen-Boxen. CW
 (`fensterband`) unterscheidet sich nur graduell: mehr Sprossen (aus
 `pfostenraster`/`riegelraster`), kein «Flügel»-Absatz. Materialschlüssel
-`fenster-rahmen` (neuer, kleiner Eintrag im `schraffurFuer`-Katalog,
-Metall-Tönung) — fällt sonst auf den bestehenden Generik-Fallback zurück,
-bricht also nichts, falls der Katalogeintrag in Phase 2 doch entfällt.
+`fenster-rahmen` — der `schraffurFuer`-Katalogeintrag dazu entfällt per
+Auflage (0.7.0-Kür); der Schlüssel fällt auf den bestehenden
+Generik-Fallback zurück (neutral graues Poché), bricht also nichts.
 Guard: Funktion liefert `[]`, wenn `fensterTyp` fehlt → alte Modelle erzeugen
 exakt null zusätzliche Artefakte.
 
 ## 5 · V1-Schnitt — bewusst NICHT
 
+V1 heisst ehrlich «Fensterband/Curtain-Wall v1 (Pfosten-Riegel als
+Teilung)» — die folgenden CW-System-Leistungen werden NICHT versprochen:
+
 - **Keine Öffnungsflügel-Simulation** (kein animiertes/interaktives Öffnen,
   kein Freiheitsgrad im Modell — der Bogen ist reines Plansymbol wie bei
   Türen).
 - **Keine Beschläge** (Griffe, Bänder, Dichtungsprofile) — weder 2D noch 3D.
-- **Keine Passstück-Buchhaltung** für Curtain-Wall-Restbreiten (anders als
-  der Modul-Editor); der Rest am Wandende bleibt ungedeckt (ehrlich, aber
-  ohne eigene Meldung — Konzept-Entscheid, kein Bug).
+- **Keine Passstücke, keine Eckdetails, keine Profilserien**: das Raster wird
+  gleichmässig aufs Segment verteilt (kein Passstück am Bandende), Ecken
+  zweier Bänder stossen nicht aneinander (fester `CW_ECKABSTAND_MM`, der
+  Eckrest bleibt Massivwand), Pfosten/Riegel sind schlanke Boxen mit
+  quadratischem Denken, keine Systemprofile.
 - **`derive/mengen.ts`** bleibt unverändert: zählt weiter nach `openingType`
   (`fenster`/`tuer`), nicht nach `fensterTyp` — ein CW-Fensterband ist dort
   weiterhin schlicht «ein Fenster». Eine Typ-Aufschlüsselung ist ein
@@ -226,17 +243,13 @@ Jedes neue Golden bekommt beim Bau ein Selbstverdikt nach den 6 Kriterien
 (Rendering-Validität, Canvas-Fitting, Anker-Präzision, Text-Containment,
 Graph-Konsistenz, Code-Sauberkeit) im Abschlussbericht.
 
-## 7 · Risiken / offene Fragen für die Freigabe
+## 7 · Freigabe-Entscheide (Koordinator, 10.07.2026)
 
-- Materialkatalog-Eintrag `fenster-rahmen` in `schraffurFuer` ist ein
-  Nice-to-have, kein Muss — ohne ihn wirkt der Rahmenquerschnitt im Schnitt
-  nur generisch grau statt metallisch getönt. Kann in Phase 2 entfallen,
-  ohne den Rest zu berühren.
-- `fensterband`-Eckabstand (Punkt 2, Abschnitt 2) ist bewusst simpel
-  (keine Passstück-Logik) — falls das als zu grob gilt, wäre die
-  Modul-Editor-Eckenregel eins zu eins wiederverwendbar, kostet aber mehr
-  Code für V1.
-- `design.fensterParametrieren` ändert nur bestehende `fenster`-Openings;
-  ob Kosmo (LLM-Tool) daraus in EINEM Zug auch gleich erzeugen soll
-  (statt `design.oeffnungSetzen` + `design.fensterParametrieren`), ist eine
-  UX-Frage für Stream F (App/Kosmo-Integration), nicht Teil dieses Kernel-Batches.
+- Materialkatalog-Eintrag `fenster-rahmen` in `schraffurFuer`: **weggelassen**
+  (0.7.0-Kür) — der Rahmenquerschnitt fällt auf den Generik-Fallback zurück.
+- CW-Eckabstand bleibt bewusst simpel (kein Passstück, kein Eckdetail) —
+  per Auflage ehrlich benannt statt aufgerüstet.
+- Kosmo-Ein-Zug-UX (Erzeugen + Parametrieren in einem Zug): Stream F,
+  nicht Teil dieses Kernel-Batches.
+- CW über mehrere Wandsegmente: je Segment ein Opening, alle Patches in
+  EINEM Command-Resultat (atomarer Undo) — umgesetzt, siehe Abschnitt 2.

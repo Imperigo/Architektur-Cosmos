@@ -123,6 +123,95 @@ export function testhausWalmdachGrundriss(): { doc: KosmoDoc; storeyId: string }
   return { doc, storeyId };
 }
 
+/** Testhaus 8×6 m mit EINEM parametrischen Zweiflügel-Fenster in der Südwand
+ * (v0.6.9 Stream A, docs/FENSTER-KONZEPT.md) — für die Fenster-Goldens
+ * Grundriss (Teilungslinie + Öffnungsbogen) und Schnitt (Sturz/Brüstung +
+ * Riegel-Querschnitte). Der Schnitt-Spec läuft quer durch das rechte
+ * Flügelfeld (x = 4200, NEBEN dem Mittelpfosten bei x = 4000). */
+export function testhausFensterZweifluegel(): {
+  doc: KosmoDoc;
+  storeyId: string;
+  openingId: string;
+  spec: SectionSpec;
+} {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  const sued = wand({ x: 0, y: 0 }, { x: 8000, y: 0 });
+  const suedId = (sued.patches[0] as { id: string }).id;
+  wand({ x: 8000, y: 0 }, { x: 8000, y: 6000 });
+  wand({ x: 8000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+  const oeffnung = execute(doc, 'design.oeffnungSetzen', {
+    wallId: suedId,
+    openingType: 'fenster',
+    center: 4000,
+    width: 1600,
+    height: 1400,
+    sill: 900,
+  });
+  const openingId = (oeffnung.patches[0] as { id: string }).id;
+  execute(doc, 'design.fensterParametrieren', {
+    openingId,
+    fensterTyp: 'zweifluegel',
+    teilungN: 2,
+    teilungM: 1,
+    rahmenbreite: 80,
+    swing: 'links',
+  });
+  const spec: SectionSpec = { a: { x: 4200, y: -2000 }, b: { x: 4200, y: 8000 }, depth: 30000, lookLeft: true };
+  return { doc, storeyId, openingId, spec };
+}
+
+/** Testhaus 8×6 m mit Fensterband (Curtain-Wall v1, Pfosten-Riegel als
+ * Teilung) über die ganze Südfassade — für die Goldens Grundriss
+ * (Pfostentakt im Doppellinien-Band) und Ansicht Süd (Raster-Beleg).
+ * Brüstung 800 / Sturz 300 auf 3000er-Geschoss → Bandhöhe 1900;
+ * Riegelraster 900 → m = 2 (ein Zwischenriegel). */
+export function testhausFensterband(): { doc: KosmoDoc; storeyId: string; spec: SectionSpec } {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  wand({ x: 0, y: 0 }, { x: 8000, y: 0 });
+  wand({ x: 8000, y: 0 }, { x: 8000, y: 6000 });
+  wand({ x: 8000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+  execute(doc, 'design.curtainWallSetzen', {
+    storeyId,
+    richtung: 'sued',
+    pfostenraster: 1200,
+    riegelraster: 900,
+    rahmenbreite: 60,
+    bruestung: 800,
+    sturz: 300,
+  });
+  // Ansicht Süd: Linie südlich des Modells, Blick nach Norden
+  const spec: SectionSpec = { a: { x: -5000, y: -3000 }, b: { x: 13000, y: -3000 }, depth: 30000, lookLeft: true };
+  return { doc, storeyId, spec };
+}
+
 /** Satteldach-Testhaus über ZWEI Geschossen (First entlang x, auf dem OG) —
  * für die Grundriss-Golden «Geschoss darunter»: das EG zeigt nur den
  * gestrichelten Dachumriss (Überzeichnungs-Konvention), das OG die volle

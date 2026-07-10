@@ -1393,6 +1393,188 @@ export const windowsFromModules = registerCommand({
   },
 });
 
+// ---------------------------------------------------------------------------
+// Parametrische Fenster & Fensterband/Curtain-Wall v1 (v0.6.9 Stream A,
+// docs/FENSTER-KONZEPT.md)
+
+const FENSTERTYP_LABEL = {
+  einfluegel: 'Einflügel',
+  zweifluegel: 'Zweiflügel',
+  fest: 'Festverglasung',
+  fensterband: 'Fensterband',
+} as const;
+
+const RICHTUNG_LABEL: Record<Fassadenrichtung, string> = {
+  sued: 'Süd',
+  nord: 'Nord',
+  west: 'West',
+  ost: 'Ost',
+};
+
+export const parametrizeWindow = registerCommand({
+  id: 'design.fensterParametrieren',
+  title: 'Fenster parametrieren',
+  description:
+    'Macht aus einer bestehenden Fenster-Öffnung ein parametrisches Fenster: Typ (einfluegel/zweifluegel/fest/fensterband), Teilung n×m Felder, Rahmenbreite in mm, Angelseite swing (nur Ein-/Zweiflügel — der Grundriss zeigt dann den Öffnungsbogen). Türen und Leibungen werden abgelehnt. 3D und Schnitt bekommen Rahmen-/Pfostenprofile, der Grundriss Teilungslinien.',
+  params: z.object({
+    openingId: z.string(),
+    fensterTyp: z.enum(['einfluegel', 'zweifluegel', 'fest', 'fensterband']),
+    teilungN: z.number().int().min(1).max(12).optional().describe('Felder horizontal (1–12)'),
+    teilungM: z.number().int().min(1).max(12).optional().describe('Felder vertikal (1–12)'),
+    rahmenbreite: z.number().int().min(20).max(200).optional().describe('Rahmen-/Profilbreite mm (20–200)'),
+    swing: z.enum(['links', 'rechts']).optional().describe('Angelseite (nur einfluegel/zweifluegel)'),
+  }),
+  summarize: (p) => {
+    const teilung =
+      p.teilungN !== undefined || p.teilungM !== undefined ? ` ${p.teilungN ?? 1}×${p.teilungM ?? 1}` : '';
+    return `Fenster ${FENSTERTYP_LABEL[p.fensterTyp]}${teilung} parametriert`;
+  },
+  run: (doc, p) => {
+    const o = doc.get<Opening>(p.openingId);
+    if (!o || o.kind !== 'opening') throw new CommandError(`Öffnung «${p.openingId}» existiert nicht`);
+    if (o.openingType !== 'fenster') {
+      throw new CommandError(
+        `«${p.openingId}» ist eine ${o.openingType === 'tuer' ? 'Tür' : 'Leibung'} — parametrieren geht nur für Fenster`,
+      );
+    }
+    if (p.fensterTyp === 'fensterband' && p.swing) {
+      throw new CommandError('Ein Fensterband hat keinen Öffnungsflügel — swing ist nur bei einfluegel/zweifluegel erlaubt');
+    }
+    // Ein Band trägt nie einen Flügel: bestehendes swing wird beim Umtypen
+    // aufs Fensterband entfernt (statt still mitgeschleppt).
+    const { swing: altSwing, ...ohneSwing } = o;
+    const swing = p.fensterTyp === 'fensterband' ? undefined : (p.swing ?? altSwing);
+    const after: Opening = {
+      ...ohneSwing,
+      fensterTyp: p.fensterTyp,
+      ...(swing ? { swing } : {}),
+      ...(p.teilungN !== undefined || p.teilungM !== undefined
+        ? { teilung: { n: p.teilungN ?? 1, m: p.teilungM ?? 1 } }
+        : {}),
+      ...(p.rahmenbreite !== undefined ? { rahmenbreite: p.rahmenbreite } : {}),
+    };
+    return [{ id: o.id, before: o, after }];
+  },
+});
+
+/** Fester Eckabstand des Fensterbands vom Wandende — der Eckrest bleibt
+ * ehrlich Massivwand (bewusst KEIN Passstück/Eckdetail, V1-Schnitt). */
+export const CW_ECKABSTAND_MM = 150;
+
+interface CwSegment {
+  wall: Wall;
+  s0: number;
+  s1: number;
+  /** Fensterhöhe (Wandhöhe − Brüstung − Sturz). */
+  hoehe: number;
+  /** Pfostenfelder (0 = Segment zu kurz fürs Raster). */
+  n: number;
+  grund: 'ok' | 'zu-kurz' | 'belegt';
+}
+
+/**
+ * Fensterband-Segmente einer Fassadenseite: alle Aussenwände («AW…») des
+ * Geschosses, deren Fassadenseite via `kantenRichtung` (dieselbe Klassierung
+ * wie `design.fensterAusModulen`) der gewünschten Richtung entspricht.
+ * `fuerSummary`: `summarize` läuft laut Command-Vertrag NACH `doc.apply()`
+ * (s. core.ts execute()) — die eben gestanzten Bänder stecken dann schon im
+ * Doc. Für die Auslassungs-Warnung zählen darum nur Öffnungen, die KEIN
+ * Fensterband sind, als «belegt»; `run()` dagegen blockt gegen ALLE
+ * (ein Doppel-Lauf stanzt nicht übereinander, sondern wirft ehrlich).
+ */
+function cwSegmente(
+  doc: KosmoDoc,
+  p: { storeyId: string; richtung: Fassadenrichtung; pfostenraster: number; bruestung: number; sturz: number },
+  fuerSummary: boolean,
+): CwSegment[] {
+  const storey = doc.get<Storey>(p.storeyId);
+  if (!storey || storey.kind !== 'storey') return [];
+  const alleWaende = doc.byKind<Wall>('wall').filter((w) => w.storeyId === p.storeyId);
+  const bbox = boundingBox(alleWaende.flatMap((w) => [w.a, w.b]));
+  if (!bbox) return [];
+  const out: CwSegment[] = [];
+  for (const w of alleWaende) {
+    const asm = doc.get<Assembly>(w.assemblyId);
+    if (asm?.kind !== 'assembly' || !asm.name.toUpperCase().startsWith('AW')) continue;
+    if (kantenRichtung(w.a, w.b, bbox) !== p.richtung) continue;
+    const laenge = Math.round(Math.hypot(w.b.x - w.a.x, w.b.y - w.a.y));
+    const s0 = CW_ECKABSTAND_MM;
+    const s1 = laenge - CW_ECKABSTAND_MM;
+    const wandTop = w.heightMode === 'fix' && w.height ? w.baseOffset + w.height : storey.height;
+    const hoehe = wandTop - p.sturz - p.bruestung;
+    const n = s1 > s0 ? Math.floor((s1 - s0) / p.pfostenraster) : 0;
+    let grund: CwSegment['grund'] = 'ok';
+    if (n < 1 || hoehe <= 0) {
+      grund = 'zu-kurz';
+    } else {
+      const belegt = doc.openingsOf(w.id).some((o) => {
+        const op = o as Opening;
+        if (fuerSummary && op.fensterTyp === 'fensterband') return false;
+        return op.center - op.width / 2 < s1 && op.center + op.width / 2 > s0;
+      });
+      if (belegt) grund = 'belegt';
+    }
+    out.push({ wall: w, s0, s1, hoehe, n, grund });
+  }
+  return out;
+}
+
+export const setCurtainWall = registerCommand({
+  id: 'design.curtainWallSetzen',
+  title: 'Fensterband/Curtain-Wall setzen',
+  description:
+    'Setzt ein durchlaufendes Fensterband (Curtain-Wall v1: Pfosten-Riegel als Teilung — bewusst OHNE Passstücke und Eckdetails) auf alle Aussenwände (Aufbau «AW…») einer Fassadenseite. Je Wandsegment entsteht EINE Fensterband-Öffnung von der Brüstung bis Wandhöhe minus Sturz, mit festem Eckabstand beidseits; das Pfostenraster wird gleichmässig aufs Segment verteilt. Mehrere Segmente werden in EINEM Undo-Schritt gestanzt; zu kurze oder belegte Segmente werden ausgelassen und ehrlich gemeldet.',
+  params: z.object({
+    storeyId: z.string(),
+    richtung: z.enum(['sued', 'nord', 'west', 'ost']).describe('Fassadenseite'),
+    pfostenraster: z.number().int().min(300).default(1200).describe('Pfostenabstand mm (≥ 300)'),
+    riegelraster: z.number().int().min(300).optional().describe('Riegelabstand mm; fehlt = keine Zwischenriegel'),
+    rahmenbreite: z.number().int().min(20).max(200).default(60).describe('Profilbreite mm (20–200)'),
+    bruestung: z.number().int().nonnegative().default(0).describe('Brüstungshöhe mm'),
+    sturz: z.number().int().nonnegative().default(200).describe('Sturzhöhe mm (OK Band bis OK Wand)'),
+  }),
+  summarize: (p, doc) => {
+    const ausgelassen = cwSegmente(doc, p, true).filter((s) => s.grund !== 'ok').length;
+    const basis = `Fensterband ${RICHTUNG_LABEL[p.richtung]} (Raster ${(p.pfostenraster / 1000).toFixed(2)} m)`;
+    return ausgelassen > 0
+      ? `${basis} — Achtung: ${ausgelassen} Segment(e) ausgelassen (zu kurz fürs Raster oder belegt)`
+      : basis;
+  },
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const segmente = cwSegmente(doc, p, false);
+    if (segmente.length === 0) {
+      throw new CommandError(`Keine Aussenwand (Aufbau «AW…») auf der ${RICHTUNG_LABEL[p.richtung]}-Fassade`);
+    }
+    const patches: AnyPatch[] = [];
+    for (const s of segmente) {
+      if (s.grund !== 'ok') continue;
+      const m = p.riegelraster ? Math.max(1, Math.floor(s.hoehe / p.riegelraster)) : 1;
+      patches.push(
+        added({
+          id: newId('oeffnung'),
+          kind: 'opening' as const,
+          wallId: s.wall.id,
+          openingType: 'fenster' as const,
+          center: Math.round((s.s0 + s.s1) / 2),
+          width: s.s1 - s.s0,
+          height: s.hoehe,
+          sill: p.bruestung,
+          fensterTyp: 'fensterband' as const,
+          teilung: { n: s.n, m },
+          rahmenbreite: p.rahmenbreite,
+        }),
+      );
+    }
+    if (patches.length === 0) {
+      throw new CommandError(
+        'Alle Segmente der Fassade sind zu kurz fürs Raster oder belegt — kein Fensterband gestanzt',
+      );
+    }
+    return patches;
+  },
+});
+
 export const wallsFromZones = registerCommand({
   id: 'design.waendeAusZonen',
   title: 'Wände aus Räumen bauen',

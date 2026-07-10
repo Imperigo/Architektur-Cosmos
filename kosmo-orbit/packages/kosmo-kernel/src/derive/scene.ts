@@ -1,4 +1,4 @@
-import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type MassBody, type Roof, type Slab, type Stair, type Storey, type Wall } from '../model/entities';
+import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type MassBody, type Opening, type Roof, type Slab, type Stair, type Storey, type Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
@@ -45,6 +45,88 @@ export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
     }
   }
   out.push(...deriveKnotenstuecke(doc));
+  out.push(...deriveFensterProfile(doc));
+  return out;
+}
+
+/** Default-Profilbreite parametrischer Fenster (docs/FENSTER-KONZEPT.md). */
+export const FENSTER_RAHMEN_DEFAULT_MM = 60;
+
+/**
+ * Rahmen-/Pfosten-Riegel-Profile parametrischer Fenster (v0.6.9 Stream A,
+ * docs/FENSTER-KONZEPT.md): je Opening mit gesetztem fensterTyp entstehen
+ * schlanke Boxen (extrudePolygon) in der Öffnungsebene — Blendrahmen
+ * umlaufend, Pfosten/Riegel nach teilung (Fensterband = viele Pfosten).
+ * Tiefe = halbe Wanddicke, zentriert auf die Wandmitte (dort liegt auch die
+ * Plan-Glasebene). Pfosten und Riegel kreuzen sich als durchlaufende Boxen —
+ * die Überlappung am Kreuzungspunkt ist bewusst (gleiches Material, im
+ * Schnitt deckungsgleiches Poché, keine sichtbare Doppelkante). Öffnungen
+ * OHNE fensterTyp liefern NICHTS — bestehende Szenen/Schnitte/Ansichten
+ * bleiben byte-identisch (Goldens-Guard).
+ */
+function deriveFensterProfile(doc: KosmoDoc): GeometryArtifact[] {
+  const out: GeometryArtifact[] = [];
+  for (const o of doc.byKind<Opening>('opening')) {
+    if (o.openingType !== 'fenster' || !o.fensterTyp) continue;
+    const wall = doc.get<Wall>(o.wallId);
+    if (!wall || wall.kind !== 'wall') continue;
+    const storey = doc.get<Storey>(wall.storeyId);
+    const assembly = doc.get<Assembly>(wall.assemblyId);
+    if (!storey || storey.kind !== 'storey' || !assembly || assembly.kind !== 'assembly') continue;
+    const r = openingRects(wall, [o])[0];
+    if (!r) continue;
+    const { offsetLeft, offsetRight } = wallFrame(wall, assembly);
+    const dicke = offsetLeft + offsetRight;
+    const midOff = (offsetLeft - offsetRight) / 2;
+    const oA = midOff + dicke / 4;
+    const oB = midOff - dicke / 4;
+    const d = axisDirection(wall);
+    const nrm = { x: -d.y, y: d.x };
+    const P = (s: number, off: number): Pt => ({
+      x: Math.round(wall.a.x + d.x * s + nrm.x * off),
+      y: Math.round(wall.a.y + d.y * s + nrm.y * off),
+    });
+    // Grundriss-Rechteck des Profils, CCW ausgerichtet (extrudePolygon
+    // erwartet positive Fläche — wie deriveKnotenstuecke).
+    const quad = (sA: number, sB: number): Pt[] => {
+      const poly = [P(sA, oA), P(sB, oA), P(sB, oB), P(sA, oB)];
+      let f = 0;
+      for (let i = 0; i < poly.length; i++) {
+        const p1 = poly[i]!;
+        const p2 = poly[(i + 1) % poly.length]!;
+        f += p1.x * p2.y - p2.x * p1.y;
+      }
+      return f >= 0 ? poly : poly.reverse();
+    };
+    const rb = o.rahmenbreite ?? FENSTER_RAHMEN_DEFAULT_MM;
+    const z0 = storey.elevation + r.z0;
+    const z1 = storey.elevation + r.z1;
+    // Entartete Öffnungen (kleiner als der doppelte Rahmen) bekommen kein Profil
+    if (r.s1 - r.s0 <= 2 * rb || z1 - z0 <= 2 * rb) continue;
+    let teil = 0;
+    const push = (sA: number, sB: number, zA: number, zB: number): void => {
+      if (sB - sA < 1 || zB - zA < 1) return;
+      out.push(extrudePolygon(`${o.id}:rahmen:${teil++}`, 'fenster-rahmen', quad(sA, sB), [], zA, zB));
+    };
+    const n = Math.max(1, o.teilung?.n ?? (o.fensterTyp === 'zweifluegel' ? 2 : 1));
+    const m = Math.max(1, o.teilung?.m ?? 1);
+    // Vertikal: Blendrahmen beidseits + Pfosten an den Teilungspunkten
+    push(r.s0, r.s0 + rb, z0, z1);
+    push(r.s1 - rb, r.s1, z0, z1);
+    const feldB = (r.s1 - r.s0) / n;
+    for (let i = 1; i < n; i++) {
+      const s = r.s0 + i * feldB;
+      push(s - rb / 2, s + rb / 2, z0, z1);
+    }
+    // Horizontal: Brüstungs-/Sturzriegel zwischen den Blendrahmen + Zwischenriegel
+    push(r.s0 + rb, r.s1 - rb, z0, z0 + rb);
+    push(r.s0 + rb, r.s1 - rb, z1 - rb, z1);
+    const feldH = (z1 - z0) / m;
+    for (let j = 1; j < m; j++) {
+      const z = z0 + j * feldH;
+      push(r.s0 + rb, r.s1 - rb, z - rb / 2, z + rb / 2);
+    }
+  }
   return out;
 }
 
