@@ -2316,6 +2316,16 @@ async function holeWissenImport(): Promise<WissenImportEintrag[]> {
   }
 }
 
+/** K5-artige Facette (Serie F, 0.6.8/0.6.9): Sammlung eines Dokuments aus der
+ * stabilen doc-Id ableiten (`basis-<sammlung>-<slug>`, siehe `basisDocId` in
+ * `knowledge.ts`) — lokal aufgenommene Dokumente (kein `basis-`-Präfix)
+ * gelten als eigene Gruppe «lokal». Rein deterministisch, kein Netzwerk. */
+export function sammlungVonDoc(d: Pick<KnowledgeDoc, 'id' | 'source'>): string {
+  if (d.source !== 'basis') return 'lokal';
+  const m = d.id.match(/^basis-([a-z0-9-]+?)-/);
+  return m ? m[1]! : 'basis';
+}
+
 /**
  * D2 (KosmoData-Dach) — der Wissen-Tab: die Wissensbasis aus KosmoPrepare
  * (`modules/prepare/knowledge.ts`, unverändert wiederverwendet) als
@@ -2325,6 +2335,9 @@ async function holeWissenImport(): Promise<WissenImportEintrag[]> {
  */
 export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
   const [docs, setDocs] = useState<KnowledgeDoc[]>([]);
+  // v0.6.9 (Stream B) — Facette nach Sammlung/Quelle: additiv, Default 'alle'
+  // zeigt exakt die bisherige, ungefilterte Dokumentliste (kein Vertragsbruch).
+  const [sammlungFilter, setSammlungFilter] = useState<string | 'alle'>('alle');
   const [importEintraege, setImportEintraege] = useState<WissenImportEintrag[]>([]);
   const [basis, setBasis] = useState<BasisSammlung[]>([]);
   const [geladeneBasis, setGeladeneBasis] = useState<Set<string>>(new Set());
@@ -2431,6 +2444,10 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
 
   const zeigtSuche = query.trim().length >= 2;
   const leer = geladen && docs.length === 0 && basis.length === 0;
+  // v0.6.9: Sammlung-Facette für die Dokumentliste — additiv, 'alle' liefert
+  // exakt die bisherige, ungefilterte Liste (byte-identisch).
+  const sammlungenInDocs = [...new Set(docs.map((d) => sammlungVonDoc(d)))].sort();
+  const sichtbareDocs = sammlungFilter === 'alle' ? docs : docs.filter((d) => sammlungVonDoc(d) === sammlungFilter);
 
   return (
     <div data-testid="kosmodata-wissen" style={{ display: 'grid', gap: 'var(--k-s5)' }}>
@@ -2525,8 +2542,33 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
 
           {docs.length > 0 && (
             <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-              <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Dokumente ({docs.length})</div>
-              {docs.map((d) => {
+              <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>
+                Dokumente ({sichtbareDocs.length})
+              </div>
+              {sammlungenInDocs.length > 1 && (
+                <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+                  <KButton
+                    size="sm"
+                    tone={sammlungFilter === 'alle' ? 'accent' : 'quiet'}
+                    data-testid="dach-facette-wissen-alle"
+                    onClick={() => setSammlungFilter('alle')}
+                  >
+                    Alle · {docs.length}
+                  </KButton>
+                  {sammlungenInDocs.map((s) => (
+                    <KButton
+                      key={s}
+                      size="sm"
+                      tone={sammlungFilter === s ? 'accent' : 'quiet'}
+                      data-testid={`dach-facette-wissen-${s}`}
+                      onClick={() => setSammlungFilter(sammlungFilter === s ? 'alle' : s)}
+                    >
+                      {s} · {docs.filter((d) => sammlungVonDoc(d) === s).length}
+                    </KButton>
+                  ))}
+                </div>
+              )}
+              {sichtbareDocs.map((d) => {
                 const oeffentlich = (d.visibility ?? 'private') === 'public';
                 return (
                   <Panel
@@ -2629,10 +2671,15 @@ function oeffneKosmoTrain() {
  * Station — dieser Tab ist die Sammlungs-/Übersichts-/Export-Ebene für die
  * kombinierte LoRA-JSONL.
  */
+export type TrainAchseFilter = 'alle' | 'architektur' | 'software';
+
 export function KosmoTrainingView() {
   const [architektur, setArchitektur] = useState<TrainBeispiel[]>([]);
   const [software, setSoftware] = useState<TrainBeispiel[]>([]);
   const [geladen, setGeladen] = useState(false);
+  // v0.6.9 (Stream B) — Facette nach Achse: additiv, Default 'alle' zeigt
+  // exakt beide Panels wie bisher (kein Vertragsbruch).
+  const [achseFilter, setAchseFilter] = useState<TrainAchseFilter>('alle');
 
   useEffect(() => {
     let verworfen = false;
@@ -2694,6 +2741,35 @@ export function KosmoTrainingView() {
         </KButton>
       </div>
 
+      {geladen && !leer && (
+        <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+          <KButton
+            size="sm"
+            tone={achseFilter === 'alle' ? 'accent' : 'quiet'}
+            data-testid="dach-facette-training-alle"
+            onClick={() => setAchseFilter('alle')}
+          >
+            Alle · {architekturCount + softwareCount}
+          </KButton>
+          <KButton
+            size="sm"
+            tone={achseFilter === 'architektur' ? 'accent' : 'quiet'}
+            data-testid="dach-facette-training-architektur"
+            onClick={() => setAchseFilter(achseFilter === 'architektur' ? 'alle' : 'architektur')}
+          >
+            Architektur · {architekturCount}
+          </KButton>
+          <KButton
+            size="sm"
+            tone={achseFilter === 'software' ? 'accent' : 'quiet'}
+            data-testid="dach-facette-training-software"
+            onClick={() => setAchseFilter(achseFilter === 'software' ? 'alle' : 'software')}
+          >
+            Software · {softwareCount}
+          </KButton>
+        </div>
+      )}
+
       {!geladen && <KLade text="Trainings-Korpus laden …" height={160} />}
 
       {leer && (
@@ -2707,6 +2783,7 @@ export function KosmoTrainingView() {
 
       {geladen && !leer && (
         <>
+          {achseFilter !== 'software' && (
           <Panel data-testid="training-achse-architektur" style={{ padding: `var(--k-s4) var(--k-s5)`, display: 'grid', gap: 'var(--k-s3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
               <Badge hue={moduleHue.train}>Architektur — Bürostil &amp; Fachwissen</Badge>
@@ -2737,7 +2814,9 @@ export function KosmoTrainingView() {
               </div>
             )}
           </Panel>
+          )}
 
+          {achseFilter !== 'architektur' && (
           <Panel data-testid="training-achse-software" style={{ padding: `var(--k-s4) var(--k-s5)`, display: 'grid', gap: 'var(--k-s3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
               <Badge hue={moduleHue.data}>Software — KosmoOrbit selbst</Badge>
@@ -2759,6 +2838,7 @@ export function KosmoTrainingView() {
               )}
             </div>
           </Panel>
+          )}
         </>
       )}
     </div>
