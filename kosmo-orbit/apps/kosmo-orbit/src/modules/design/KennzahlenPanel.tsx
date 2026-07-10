@@ -18,7 +18,10 @@ export function KennzahlenPanel() {
   const doc = useProject.getState().doc;
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const [open, setOpen] = useState(true);
-  const [checksAufgeklappt, setChecksAufgeklappt] = useState(false);
+  // H-15/H-17 (Sim-Befunde): kein 6er-Deckel mehr — die Liste zeigt alle
+  // Befunde, gruppiert nach Schwere; ein einfacher Filter blendet Warnungen/
+  // Hinweise aus, wenn nur die Fehler interessieren.
+  const [checksFilter, setChecksFilter] = useState<'alle' | 'fehler'>('alle');
   const report = useMemo(() => areaReport(doc), [doc, revision]);
   const befunde = useMemo(
     () => (activeStoreyId ? pruefeGrundriss(doc, activeStoreyId) : []),
@@ -139,41 +142,73 @@ export function KennzahlenPanel() {
           {befunde.length > 0 && (
             <>
               <Hairline />
-              <div style={{ display: 'grid', gap: 'var(--k-s2)' }} data-testid="checks">
-                {(checksAufgeklappt ? befundeGruppiert : befundeGruppiert.slice(0, 6)).map((b, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline' }}>
-                    {b.schwere === 'hinweis' ? (
-                      <span title={b.schwere} style={{ color: 'var(--k-ink-faint)', fontWeight: 700 }}>
-                        ·
-                      </span>
-                    ) : (
-                      <KIcon
-                        name="warnung"
-                        size={14}
-                        title={b.schwere}
-                        style={{
-                          color: b.schwere === 'fehler' ? 'var(--k-danger, #b3462e)' : 'var(--k-warning)',
-                          flex: '0 0 auto',
-                        }}
-                      />
-                    )}
-                    <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>
-                      {b.n > 1 ? `${b.n}× ` : ''}
-                      {b.text}
-                    </span>
-                  </div>
-                ))}
-                {befundeGruppiert.length > 6 && (
-                  <KButton
-                    size="sm"
-                    tone="ghost"
-                    data-testid="kennzahlen-mehr"
-                    onClick={() => setChecksAufgeklappt((v) => !v)}
-                    style={{ justifySelf: 'start', color: 'var(--k-ink-faint)' }}
-                  >
-                    {checksAufgeklappt ? 'weniger' : `… ${befundeGruppiert.length - 6} weitere`}
-                  </KButton>
-                )}
+              <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
+                <KButton
+                  size="sm"
+                  tone={checksFilter === 'alle' ? 'accent' : 'ghost'}
+                  data-testid="checks-filter-alle"
+                  onClick={() => setChecksFilter('alle')}
+                >
+                  Alle
+                </KButton>
+                <KButton
+                  size="sm"
+                  tone={checksFilter === 'fehler' ? 'accent' : 'ghost'}
+                  data-testid="checks-filter-fehler"
+                  onClick={() => setChecksFilter('fehler')}
+                >
+                  Nur Fehler
+                </KButton>
+              </div>
+              <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="checks">
+                {(['fehler', 'warnung', 'hinweis'] as const)
+                  .filter((schwere) => checksFilter === 'alle' || schwere === 'fehler')
+                  .map((schwere) => {
+                    const gruppe = befundeGruppiert.filter((b) => b.schwere === schwere);
+                    if (gruppe.length === 0) return null;
+                    return (
+                      <div
+                        key={schwere}
+                        data-testid={`checks-gruppe-${schwere}`}
+                        style={{ display: 'grid', gap: 'var(--k-s2)' }}
+                      >
+                        <span
+                          style={{
+                            fontSize: 'var(--k-t-xs)',
+                            fontWeight: 600,
+                            letterSpacing: '0.02em',
+                            textTransform: 'uppercase',
+                            color: 'var(--k-ink-faint)',
+                          }}
+                        >
+                          {schwere} ({gruppe.length})
+                        </span>
+                        {gruppe.map((b, i) => (
+                          <div key={i} style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline' }}>
+                            {b.schwere === 'hinweis' ? (
+                              <span title={b.schwere} style={{ color: 'var(--k-ink-faint)', fontWeight: 700 }}>
+                                ·
+                              </span>
+                            ) : (
+                              <KIcon
+                                name="warnung"
+                                size={14}
+                                title={b.schwere}
+                                style={{
+                                  color: b.schwere === 'fehler' ? 'var(--k-danger, #b3462e)' : 'var(--k-warning)',
+                                  flex: '0 0 auto',
+                                }}
+                              />
+                            )}
+                            <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>
+                              {b.n > 1 ? `${b.n}× ` : ''}
+                              {b.text}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
                 <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
                   Richtwerte-Checks — kein Normersatz.
                 </span>

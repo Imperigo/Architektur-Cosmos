@@ -13,6 +13,8 @@ import { pruefeBewegungsflaechen } from './moebel';
 
 export interface PruefBefund {
   schwere: 'fehler' | 'warnung' | 'hinweis';
+  /** Stabiles Kürzel der Regel (z.B. 'fluchtweg', 'grenzabstand') — für UI-Filter/-Gruppierung, unabhängig vom Freitext. */
+  regelId: string;
   regel: string;
   text: string;
   entityId?: string;
@@ -73,6 +75,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (regel.minBreite !== null && b < regel.minBreite) {
         befunde.push({
           schwere: 'warnung',
+          regelId: 'raumregel',
           regel: `Regel ${z.raumTyp}`,
           text: `«${z.name}» ist ${(b / 1000).toFixed(2)} m breit — Regel «${z.raumTyp}» verlangt ≥ ${(regel.minBreite / 1000).toFixed(2)} m`,
           entityId: z.id,
@@ -81,6 +84,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (regel.minFlaeche !== null && flaeche < regel.minFlaeche) {
         befunde.push({
           schwere: 'warnung',
+          regelId: 'raumregel',
           regel: `Regel ${z.raumTyp}`,
           text: `«${z.name}» hat ${flaeche.toFixed(1)} m² — Regel «${z.raumTyp}» verlangt ≥ ${regel.minFlaeche} m²`,
           entityId: z.id,
@@ -89,6 +93,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (regel.tageslicht && !fensterPunkte.some((f) => nahAmUmriss(f, z.outline))) {
         befunde.push({
           schwere: 'warnung',
+          regelId: 'raumregel',
           regel: `Regel ${z.raumTyp}`,
           text: `«${z.name}» hat kein Fenster am Raum — Regel «${z.raumTyp}» verlangt Tageslicht`,
           entityId: z.id,
@@ -99,6 +104,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (z.sia === 'HNF' && b < 2400) {
       befunde.push({
         schwere: 'warnung',
+        regelId: 'zimmerbreite',
         regel: 'Zimmerbreite',
         text: `«${z.name}» ist nur ${(b / 1000).toFixed(2)} m breit (Richtwert Wohnräume ≥ 2.40 m)`,
         entityId: z.id,
@@ -107,6 +113,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (z.sia === 'HNF' && flaeche < 10) {
       befunde.push({
         schwere: 'hinweis',
+        regelId: 'zimmerflaeche',
         regel: 'Zimmerfläche',
         text: `«${z.name}» hat ${flaeche.toFixed(1)} m² (Einzelzimmer üblich ≥ 10 m²)`,
         entityId: z.id,
@@ -121,6 +128,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (!assembly || assembly.kind !== 'assembly') {
       befunde.push({
         schwere: 'fehler',
+        regelId: 'aufbau',
         regel: 'Aufbau',
         text: 'Wand ohne gültigen Aufbau — Ableitung unvollständig',
         entityId: w.id,
@@ -131,6 +139,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (o.openingType === 'tuer' && o.width < 800) {
         befunde.push({
           schwere: 'warnung',
+          regelId: 'tuerbreite',
           regel: 'Türbreite',
           text: `Tür nur ${o.width} mm breit (hindernisfrei SIA 500: ≥ 800 mm)`,
           entityId: o.id,
@@ -139,6 +148,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (o.openingType === 'fenster' && o.sill > 0 && o.sill < 600) {
         befunde.push({
           schwere: 'hinweis',
+          regelId: 'bruestung',
           regel: 'Brüstung',
           text: `Fensterbrüstung ${o.sill} mm — Absturzsicherung prüfen (üblich ≥ 900 mm oder Geländer)`,
           entityId: o.id,
@@ -155,6 +165,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if ((st.form ?? 'gerade') === 'gerade' && spec.steps > 18) {
       befunde.push({
         schwere: 'hinweis',
+        regelId: 'podest',
         regel: 'Podest',
         text: `Treppe: ${spec.steps} Steigungen ohne Podest (üblich max. 18) — Form «podest» oder «u» erwägen`,
         entityId: st.id,
@@ -163,6 +174,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (spec.comfort < 590 || spec.comfort > 650) {
       befunde.push({
         schwere: 'warnung',
+        regelId: 'schrittmass',
         regel: 'Schrittmass',
         text: `Treppe: 2s+a = ${Math.round(spec.comfort)} mm (bequem 590–650); Lauf anpassen`,
         entityId: st.id,
@@ -171,6 +183,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (spec.riser > 180) {
       befunde.push({
         schwere: 'hinweis',
+        regelId: 'steigung',
         regel: 'Steigung',
         text: `Treppensteigung ${Math.round(spec.riser)} mm (Wohnbau üblich ≤ 180 mm)`,
         entityId: st.id,
@@ -179,6 +192,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (st.width < 1000) {
       befunde.push({
         schwere: 'hinweis',
+        regelId: 'laufbreite',
         regel: 'Laufbreite',
         text: `Treppenlauf ${st.width} mm (CH-üblich ≥ 1000 mm, Fluchtweg ≥ 1200 mm)`,
         entityId: st.id,
@@ -199,6 +213,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (weg.distanz === Infinity) {
         befunde.push({
           schwere: 'warnung',
+          regelId: 'fluchtweg',
           regel: 'Fluchtweg',
           text: `«${zone.name}» hat keine Verbindung zum Treppenhaus (Tür fehlt?)`,
           entityId: zone.id,
@@ -206,6 +221,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       } else if (weg.distanz > MAX_FLUCHT) {
         befunde.push({
           schwere: 'fehler',
+          regelId: 'fluchtweg',
           regel: 'Fluchtweg',
           text: `«${zone.name}»: Fluchtweg ${(weg.distanz / 1000).toFixed(1)} m > 35 m (VKF-Richtwert)`,
           entityId: zone.id,
@@ -213,6 +229,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       } else if (weg.distanz > MAX_FLUCHT * 0.8) {
         befunde.push({
           schwere: 'hinweis',
+          regelId: 'fluchtweg',
           regel: 'Fluchtweg',
           text: `«${zone.name}»: Fluchtweg ${(weg.distanz / 1000).toFixed(1)} m — nah am 35-m-Richtwert`,
           entityId: zone.id,
@@ -228,6 +245,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (gebaeude.some((w) => w.vertikal === Infinity)) {
       befunde.push({
         schwere: 'warnung',
+        regelId: 'fluchtweg-gebaeude',
         regel: 'Fluchtweg Gebäude',
         text: `${storey.name}: kein durchgehendes Treppenhaus bis zur Ausgangsebene (Zwischengeschoss ohne Treppe)`,
         entityId: storey.id,
@@ -240,6 +258,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
         if (weg.distanz > MAX_FLUCHT) {
           befunde.push({
             schwere: 'warnung',
+            regelId: 'fluchtweg-gebaeude',
             regel: 'Fluchtweg Gebäude',
             text: `«${zone.name}»: bis zur Ausgangsebene ${(weg.distanz / 1000).toFixed(1)} m (davon ${(weg.vertikal / 1000).toFixed(1)} m Treppenläufe) — Übersichtswert über dem 35-m-Richtwert`,
             entityId: zone.id,
@@ -253,6 +272,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
   if (storey.height - 300 < 2300) {
     befunde.push({
       schwere: 'warnung',
+      regelId: 'raumhoehe',
       regel: 'Raumhöhe',
       text: `Geschosshöhe ${storey.height} mm ergibt unter ~2.30 m lichte Höhe`,
       entityId: storey.id,
@@ -268,6 +288,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (voll > regel.maxVollgeschosse) {
         befunde.push({
           schwere: 'fehler',
+          regelId: 'zonenregel',
           regel: 'Zonenregel',
           text: `${voll} Vollgeschosse — Zone «${regel.name}» erlaubt ${regel.maxVollgeschosse} (Richtwert)`,
         });
@@ -278,6 +299,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
         if (top > regel.maxHoehe!) {
           befunde.push({
             schwere: 'fehler',
+            regelId: 'zonenregel',
             regel: 'Zonenregel',
             text: `${name}: ${(top / 1000).toFixed(1)} m über Projektnull — Zone «${regel.name}» erlaubt ${(regel.maxHoehe! / 1000).toFixed(1)} m (Richtwert)`,
             entityId: id,
@@ -298,7 +320,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
 
   // Möblierung (V2-F8): SIA-500-Bewegungsflächen gegen Wände
   for (const m of pruefeBewegungsflaechen(doc, storeyId)) {
-    befunde.push({ schwere: 'warnung', regel: 'SIA 500', text: m.text, entityId: m.furnitureId });
+    befunde.push({ schwere: 'warnung', regelId: 'sia500', regel: 'SIA 500', text: m.text, entityId: m.furnitureId });
   }
 
   const rang = { fehler: 0, warnung: 1, hinweis: 2 } as const;
@@ -352,6 +374,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
         if (ist < soll) {
           befunde.push({
             schwere: 'fehler',
+            regelId: 'grenzabstand',
             regel: 'Grenzabstand',
             text: `${name}: ${(ist / 1000).toFixed(1)} m zur Grenze «${g.name}» — verlangt ${(soll / 1000).toFixed(1)} m${g.mehrHoehen && top !== null && top > g.mehrHoehen.abHoehe ? ' (inkl. Mehrhöhenzuschlag)' : ''}${zonenFallback ? ` (Zonenregel «${regel!.name}» grenzabstandKlein — Richtwert ohne Seiten-Zuordnung; Baugrenze mit eigenem Grenzabstand setzen für die genaue Prüfung)` : ''}`,
             entityId: id,
@@ -365,6 +388,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (punkte.some((p) => !inPoly(p))) {
         befunde.push({
           schwere: 'fehler',
+          regelId: 'baugrenze',
           regel: 'Baugrenze',
           text: `${name} ragt über die Baugrenze «${g.name}» hinaus`,
           entityId: id,
@@ -373,6 +397,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
       if (g.maxHoehe !== null && top !== null && top > g.maxHoehe) {
         befunde.push({
           schwere: 'fehler',
+          regelId: 'baugrenze',
           regel: 'Baugrenze',
           text: `${name} überschreitet die Höhenbeschränkung (${(top / 1000).toFixed(1)} m > ${(g.maxHoehe / 1000).toFixed(1)} m)`,
           entityId: id,
@@ -408,6 +433,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     if (m2Masse < 150) {
       befunde.push({
         schwere: 'warnung',
+        regelId: 'schallschutz',
         regel: 'Schallschutz',
         text: `TW «${assembly.name}»: nur ~${Math.round(m2Masse)} kg/m² — Massengesetz nicht anwendbar (< 150 kg/m²), Aufbau prüfen`,
         entityId: w.id,
@@ -418,6 +444,7 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     const erfuellt = rw >= SIA181_TRENNWAND_DB;
     befunde.push({
       schwere: erfuellt ? 'hinweis' : 'warnung',
+      regelId: 'schallschutz',
       regel: 'Schallschutz',
       text: `TW «${assembly.name}»: Rw ≈ ${Math.round(rw)} dB ${erfuellt ? '≥' : '<'} ${SIA181_TRENNWAND_DB} dB (SIA 181 Mindestanforderung, ~${Math.round(m2Masse)} kg/m²) — Hinweis, kein Nachweis`,
       entityId: w.id,

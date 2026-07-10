@@ -869,6 +869,38 @@ describe('Grundriss-Checks (Q12)', () => {
     expect(befunde[0]!.schwere).not.toBe('hinweis'); // sortiert: Schweres zuerst
   });
 
+  it('trägt stabile regelId je Befund (H-6/H-15/H-17: strukturiert, nicht nur Freitext)', async () => {
+    const { pruefeGrundriss } = await import('../src');
+    const { doc, storeyId, assemblyId } = setupDoc();
+    const w = execute(doc, 'design.wandZeichnen', {
+      storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 9000, y: 0 },
+    });
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: (w.patches[0] as { id: string }).id,
+      openingType: 'tuer', center: 2000, width: 700, height: 2100, sill: 0,
+    });
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Kammer', sia: 'HNF',
+      outline: [{ x: 0, y: 0 }, { x: 2000, y: 0 }, { x: 2000, y: 4000 }, { x: 0, y: 4000 }],
+    });
+    execute(doc, 'design.treppeErstellen', {
+      storeyId, a: { x: 5000, y: 2000 }, b: { x: 5000, y: 4800 }, width: 900,
+    });
+    const befunde = pruefeGrundriss(doc, storeyId);
+    expect(befunde.length).toBeGreaterThan(0);
+    // jeder Befund hat eine nichtleere, stabile regelId — unabhängig vom Freitext
+    for (const b of befunde) {
+      expect(typeof b.regelId).toBe('string');
+      expect(b.regelId.length).toBeGreaterThan(0);
+    }
+    const idByRegel = new Map(befunde.map((b) => [b.regel, b.regelId]));
+    expect(idByRegel.get('Türbreite')).toBe('tuerbreite');
+    expect(idByRegel.get('Zimmerbreite')).toBe('zimmerbreite');
+    expect(idByRegel.get('Zimmerfläche')).toBe('zimmerflaeche');
+    expect(idByRegel.get('Schrittmass')).toBe('schrittmass');
+    expect(idByRegel.get('Laufbreite')).toBe('laufbreite');
+  });
+
   it('sauberer Grundriss ergibt keine Befunde', async () => {
     const { pruefeGrundriss } = await import('../src');
     const { doc, storeyId, assemblyId } = setupDoc();
