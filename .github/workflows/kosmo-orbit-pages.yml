@@ -1,10 +1,14 @@
 name: KosmoOrbit Web (GitHub Pages)
 
-# Interaktives Testen im Browser — v.a. auf Handy/iPad (Owner-Wunsch 10.07.2026):
-# die echte App als Web-Link statt Installer/PDF. Der Service Worker macht sie
-# «Zum Startbildschirm hinzufügen»-fähig (PWA). Build-Anforderung aus der
-# Cloud-Session: kosmo-orbit/.pages-build-request ändern und pushen
-# (dasselbe Muster wie .desktop-build-request).
+# Interaktives Testen im Browser — v.a. auf Handy/iPad (Owner-Wunsch + Freigabe
+# 10.07.2026): die echte App als Web-Link statt Installer/PDF; PWA-fähig.
+# Lauf 1 scheiterte am Environment-Schutz des actions/deploy-pages-Wegs
+# (Deploys nur vom Default-Branch) → Route über einen gh-pages-Branch:
+# der Build wird von der CI auf `gh-pages` gepusht, Pages serviert den Branch.
+# Die Aktivierung wird per REST versucht (idempotent, tolerant); falls die
+# Token-Rechte nicht reichen, meldet der letzte Schritt ehrlich den EINEN
+# nötigen Settings-Klick (Settings → Pages → Source: gh-pages).
+# Build-Anforderung: kosmo-orbit/.pages-build-request ändern und pushen.
 on:
   workflow_dispatch:
   push:
@@ -12,11 +16,9 @@ on:
     paths: ['kosmo-orbit/.pages-build-request']
 
 permissions:
-  contents: read
+  contents: write
   pages: write
-  id-token: write
 
-# Nur ein Pages-Deploy zur Zeit; laufende nicht abbrechen.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -24,9 +26,6 @@ concurrency:
 jobs:
   build-deploy:
     runs-on: ubuntu-22.04
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -42,13 +41,34 @@ jobs:
         env:
           VITE_KOSMO_EDITION: cloud
         run: npm run build -w @kosmo/orbit-app
-      - name: Pages aktivieren (falls noch nie)
-        uses: actions/configure-pages@v5
+      - name: Jekyll aus (Unterstriche in Asset-Namen schützen)
+        run: touch kosmo-orbit/apps/kosmo-orbit/dist/.nojekyll
+      - name: Auf gh-pages veröffentlichen
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: kosmo-orbit/apps/kosmo-orbit/dist
-      - name: Deploy
-        id: deploy
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: kosmo-orbit/apps/kosmo-orbit/dist
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: 'KosmoOrbit Web-Build (Pages)'
+      - name: Pages aktivieren (Versuch, idempotent)
+        continue-on-error: true
+        run: |
+          curl -sS -o /tmp/pages.json -w '%{http_code}\n' \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/pages \
+            -d '{"source":{"branch":"gh-pages","path":"/"}}' || true
+          cat /tmp/pages.json || true
+      - name: Pages-Status melden (ehrlich)
+        run: |
+          code=$(curl -sS -o /tmp/pages-get.json -w '%{http_code}' \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/pages)
+          echo "GET /pages → $code"
+          cat /tmp/pages-get.json || true
+          if [ "$code" != "200" ]; then
+            echo '::warning::Pages ist noch nicht aktiviert. Ein Klick nötig: Settings → Pages → Source: Deploy from a branch → gh-pages / (root).'
+          fi
