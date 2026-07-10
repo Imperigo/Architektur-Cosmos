@@ -60,5 +60,5 @@ test('Render-Knopf im 3D-Viewport: sichtbar, Klick startet Job, Ergebnisbild + W
     timeout: 15000,
   });
 
-  await page.screenshot({ path: 'e2e-results-streamd/render-knopf.png' });
+  await page.screenshot({ path: 'e2e-results/render-knopf.png' });
 });

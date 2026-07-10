@@ -24,7 +24,7 @@ import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 
 const URL_ = process.env.FRAME_MESSUNG_URL ?? 'http://localhost:5234';
-const OUT_DIR = new URL('../../e2e-results-streamd/', import.meta.url).pathname;
+const OUT_DIR = new URL('../../e2e-results/', import.meta.url).pathname;
 mkdirSync(OUT_DIR, { recursive: true });
 
 const IDLE_SEKUNDEN = 10;
