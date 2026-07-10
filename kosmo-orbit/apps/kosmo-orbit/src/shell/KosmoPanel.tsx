@@ -88,6 +88,13 @@ interface PendingCard extends Proposal {
    * Vorschau möglich war — die Karte zeigt dann unverändert nur Text.
    */
   vorschau: ProposalVorschau | null;
+  /**
+   * H-28 (`docs/SIM-BEFUNDE.md`): gesetzt, wenn `state === 'abgelehnt'` NICHT
+   * durch einen Klick auf «Ablehnen» entstand, sondern weil `runCommand` beim
+   * Anwenden geworfen hat (`applyCard`-catch) — die Karte bleibt dann mit
+   * dieser Fehlerzeile sichtbar statt spurlos zu verschwinden.
+   */
+  fehler?: string;
 }
 
 /**
@@ -321,6 +328,18 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const quellenMap = useRef(new Map<number, QuellenRef>());
   const quellenZaehler = useRef(0);
 
+  // Bleibende Chat-Bubble hinzufügen — herausgehoben aus dem `session`-Aufbau
+  // (H-28, `docs/SIM-BEFUNDE.md`): `applyCard`/`applyPaket` liegen ausserhalb
+  // des `useMemo`-Closures unten und brauchen denselben Push-Mechanismus wie
+  // die Mikrofon-/ui.*-Bubbles, um einen gescheiterten Anwenden-Versuch
+  // sichtbar zu machen. Stützt sich nur auf stabile Refs/Setter — unabhängig
+  // vom `[settings]`-Neuaufbau der Session unten sicher wiederverwendbar.
+  const push = (who: Bubble['who'], text: string, testidSuffix?: string) => {
+    const id = ++bubbleSeq.current;
+    setBubbles((b) => [...b, { id, who, text, ...(testidSuffix !== undefined ? { testidSuffix } : {}) }]);
+    return id;
+  };
+
   const session = useMemo(() => {
     const provider: ChatProvider =
       settings.provider === 'mock'
@@ -338,11 +357,6 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
     const { doc } = useProject.getState();
     let currentKosmoBubble = -1;
-    const push = (who: Bubble['who'], text: string, testidSuffix?: string) => {
-      const id = ++bubbleSeq.current;
-      setBubbles((b) => [...b, { id, who, text, ...(testidSuffix !== undefined ? { testidSuffix } : {}) }]);
-      return id;
-    };
     const s = new ChatSession(
       provider,
       doc,
@@ -782,17 +796,41 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       setCards((c) => c.map((x) => (x.callId === card.callId ? { ...x, state: 'angewendet' } : x)));
       void session.resolveApplied(card.callId, result.summary);
     } catch (err) {
-      setCards((c) => c.map((x) => (x.callId === card.callId ? { ...x, state: 'abgelehnt' } : x)));
-      void session.resolveRejected(
-        card.callId,
-        err instanceof Error ? err.message : 'Ausführung fehlgeschlagen',
+      const meldung = err instanceof Error ? err.message : 'Ausführung fehlgeschlagen';
+      // H-28 (`docs/SIM-BEFUNDE.md`): ein gescheitertes Anwenden hinterliess
+      // bisher KEINE sichtbare Spur — nur der Karten-State wechselte lautlos
+      // auf 'abgelehnt'. Jetzt zusätzlich: eine bleibende Kosmo-Bubble
+      // (Muster der Mikrofon-/STT-Fehlerbubbles oben) UND der Fehlertext an
+      // der Karte selbst (`fehler`, gerendert als `diff-karte-fehler` unten).
+      setCards((c) =>
+        c.map((x) => (x.callId === card.callId ? { ...x, state: 'abgelehnt', fehler: meldung } : x)),
       );
+      push('kosmo', `⚠ Anwenden fehlgeschlagen: ${meldung}`);
+      void session.resolveRejected(card.callId, meldung);
     }
   };
 
   const rejectCard = (card: PendingCard) => {
     setCards((c) => c.map((x) => (x.callId === card.callId ? { ...x, state: 'abgelehnt' } : x)));
     void session.resolveRejected(card.callId);
+  };
+
+  /**
+   * Paket-Zusammenfassung («Kosmo schlägt N Schritte vor: 4× Wand, 2× …») —
+   * aggregiert über das FÜHRENDE Wort jedes Karten-`summary`-Texts. Die
+   * `summarize()`-Texte der Commands beginnen durchgehend mit dem
+   * Objektnamen (z.B. «Wand 4,00 m», «Decke mit 4 Eckpunkten…», «Fenster
+   * 1200×1400…», siehe `packages/kosmo-kernel/src/commands/design.ts`) —
+   * kein neuer Vertrag, nur eine Lesart des bereits vorhandenen Texts.
+   */
+  const paketZusammenfassungsZeile = (schritte: PendingCard[]): string => {
+    const zaehlung = new Map<string, number>();
+    for (const c of schritte) {
+      const stichwort = c.summary.trim().split(/\s+/)[0] || c.commandId;
+      zaehlung.set(stichwort, (zaehlung.get(stichwort) ?? 0) + 1);
+    }
+    const teile = [...zaehlung.entries()].map(([wort, n]) => `${n}× ${wort}`);
+    return `Kosmo schlägt ${schritte.length} Schritte vor: ${teile.join(', ')}`;
   };
 
   /** «$neu:N» in den Parametern durch die Id des N-ten Paket-Schritts ersetzen. */
@@ -894,7 +932,13 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         <KButton size="sm" tone="ghost" onClick={() => setShowSettings(!showSettings)} aria-label="Einstellungen">
           <KIcon name="zahnrad" size={16} />
         </KButton>
-        <KButton size="sm" tone="ghost" onClick={handleClose} aria-label="Schliessen">
+        <KButton
+          size="sm"
+          tone="ghost"
+          onClick={handleClose}
+          aria-label="Schliessen"
+          data-testid="kosmo-panel-schliessen"
+        >
           <KIcon name="schliessen" size={16} />
         </KButton>
       </div>
@@ -1290,38 +1334,51 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           if (schritte.length === 0) return null;
           const offen = schritte.some((c) => c.state === 'offen');
           return (
-            <div
-              key={pid}
-              data-testid="paket-card"
-              style={{
-                border: `1px solid ${offen ? 'var(--k-accent)' : 'var(--k-success)'}`,
-                borderRadius: 10,
-                padding: 10,
-                display: 'grid',
-                gap: 8,
-                background: 'var(--k-raised)',
-              }}
-            >
-              <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Aktionskette — {schritte.length} Schritte
-              </div>
-              <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 3, fontSize: 12.5 }}>
-                {schritte.map((c) => (
-                  <li key={c.callId}>{c.summary}</li>
-                ))}
-              </ol>
-              {offen ? (
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <KButton size="sm" tone="accent" onClick={() => void applyPaket(pid)} data-testid="apply-paket">
-                    Alle {schritte.length} anwenden
-                  </KButton>
-                  <KButton size="sm" tone="ghost" onClick={() => void rejectPaket(pid)}>
-                    Ablehnen
-                  </KButton>
+            <div key={pid} style={{ display: 'grid', gap: 6 }}>
+              {/* Paket-Zusammenfassung (Aufgabe 3): nur ab N≥2 — bei EINEM
+                  Paket immer der Fall (chat.ts vergibt `paket` nur, wenn ein
+                  Zug mehr als einen schreibenden Tool-Call enthielt), die
+                  Bedingung bleibt trotzdem explizit statt implizit. */}
+              {schritte.length >= 2 && (
+                <div
+                  data-testid="diff-paket-zusammenfassung"
+                  style={{ fontSize: 12, color: 'var(--k-ink-soft)', padding: '0 2px' }}
+                >
+                  {paketZusammenfassungsZeile(schritte)}
                 </div>
-              ) : (
-                <Badge hue="var(--k-success)">Angewendet — EIN ↩ macht alles rückgängig</Badge>
               )}
+              <div
+                data-testid="paket-card"
+                style={{
+                  border: `1px solid ${offen ? 'var(--k-accent)' : 'var(--k-success)'}`,
+                  borderRadius: 10,
+                  padding: 10,
+                  display: 'grid',
+                  gap: 8,
+                  background: 'var(--k-raised)',
+                }}
+              >
+                <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Aktionskette — {schritte.length} Schritte
+                </div>
+                <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 3, fontSize: 12.5 }}>
+                  {schritte.map((c) => (
+                    <li key={c.callId}>{c.summary}</li>
+                  ))}
+                </ol>
+                {offen ? (
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <KButton size="sm" tone="accent" onClick={() => void applyPaket(pid)} data-testid="apply-paket">
+                      Alle {schritte.length} anwenden
+                    </KButton>
+                    <KButton size="sm" tone="ghost" onClick={() => void rejectPaket(pid)}>
+                      Ablehnen
+                    </KButton>
+                  </div>
+                ) : (
+                  <Badge hue="var(--k-success)">Angewendet — EIN ↩ macht alles rückgängig</Badge>
+                )}
+              </div>
             </div>
           );
         })}
@@ -1403,6 +1460,38 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
               ) : (
                 <Badge hue="var(--k-success)">Angewendet — mit ↩ rückgängig</Badge>
               )}
+            </div>
+          ))}
+
+        {/* H-28 (`docs/SIM-BEFUNDE.md`): gescheiterte Einzel-Vorschläge
+            (`applyCard`-catch setzt `fehler`) bleiben sichtbar statt spurlos
+            zu verschwinden — die normale Karte oben ist wegen
+            `state !== 'abgelehnt'` schon gefiltert, dieser Block zeigt den
+            REST der Karte (Titel + Fehlerzeile), keine Anwenden/Ablehnen-
+            Knöpfe mehr (der Zug ist entschieden). */}
+        {cards
+          .filter((c) => c.state === 'abgelehnt' && c.fehler !== undefined && !c.paket)
+          .map((c) => (
+            <div
+              key={c.callId}
+              data-testid="proposal-card-fehler"
+              className="k-einblenden"
+              style={{
+                border: '1px solid var(--k-warning)',
+                borderRadius: 10,
+                padding: 10,
+                display: 'grid',
+                gap: 6,
+                background: 'var(--k-raised)',
+              }}
+            >
+              <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Vorschlag von Kosmo — nicht angewendet
+              </div>
+              <div style={{ fontWeight: 550, fontSize: 13.5 }}>{c.summary}</div>
+              <div data-testid="diff-karte-fehler" style={{ fontSize: 11.5, color: 'var(--k-warning)' }}>
+                ⚠ {c.fehler}
+              </div>
             </div>
           ))}
 

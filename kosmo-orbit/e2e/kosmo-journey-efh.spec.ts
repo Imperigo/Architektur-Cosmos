@@ -190,8 +190,9 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
 
   // ── Akt 2: Sehen — Drei Stimmungen, Render, Prompt-Transparenz ────────
   // Das offene Kosmo-Panel verdeckt die Stations-Navigation (Sim-Befund
-  // 0.6.7, C: Schliessen-Knopf nur per aria-label adressierbar).
-  await page.locator('[data-testid="kosmo-panel"] [aria-label="Schliessen"]').click();
+  // 0.6.7, H-29: behoben — Schliessen-Knopf trägt jetzt data-testid
+  // `kosmo-panel-schliessen`, KosmoPanel.tsx).
+  await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
   // Stationswechsel aus KosmoDesign heraus: derselbe __kosmo.open()-Weg wie
   // vis-automatik.spec/module.spec (module-vis lebt nur in der Zentrale).
   await page.evaluate(() => (window.__kosmo as unknown as { open: (s: string) => void }).open('vis'));

@@ -102,15 +102,16 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // Befund 1: `[data-testid="kosmo-symbol"]` schliesst NICHTS — das Symbol
   // wird nur gerendert, wenn das Panel bereits ZU ist (`{!kosmoOpen &&
   // <KosmoSymbol/>}`, apps/kosmo-orbit/src/App.tsx Z.888). Der echte
-  // Schliessen-Knopf im offenen Panel trägt kein data-testid, nur
-  // `aria-label="Schliessen"` (KosmoPanel.tsx Z.895). `projektStarten`
-  // (Baustein 1) setzt `kosmo.panelOffen=1` — das Panel ist hier also
-  // bereits offen; der `kosmoChatSkript`-Baustein selbst geht (wie diese
-  // Stelle ursprünglich auch) von `[data-testid="kosmo-symbol"]` als
-  // Schliessen-Knopf aus und würde sich an genau diesem Klick aufhängen
-  // (Timeout) — siehe Absicherung vor dem Baustein-Aufruf weiter unten.
+  // Schliessen-Knopf im offenen Panel trägt jetzt `data-testid=
+  // "kosmo-panel-schliessen"` (Sim-Befund 0.6.7, H-29: behoben,
+  // KosmoPanel.tsx). `projektStarten` (Baustein 1) setzt
+  // `kosmo.panelOffen=1` — das Panel ist hier also bereits offen; der
+  // `kosmoChatSkript`-Baustein selbst geht (wie diese Stelle ursprünglich
+  // auch) von `[data-testid="kosmo-symbol"]` als Schliessen-Knopf aus und
+  // würde sich an genau diesem Klick aufhängen (Timeout) — siehe
+  // Absicherung vor dem Baustein-Aufruf weiter unten.
   if (await page.locator('[data-testid="kosmo-input"]').isVisible()) {
-    await page.locator('[aria-label="Schliessen"]').click();
+    await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
     await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
   }
   await page.click('[data-testid="kosmo-symbol"]');
@@ -144,7 +145,7 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // bereits geschlossenes Panel trifft (dort funktioniert er — das Symbol
   // existiert dann) statt sich am nicht-existenten Schliessen-Symbol
   // aufzuhängen.
-  await page.locator('[aria-label="Schliessen"]').click();
+  await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
 
   const protokoll = await kosmoChatSkript(

@@ -1207,9 +1207,9 @@ export async function kosmoChatSkript(
   // Panel FRISCH mounten (loadSettings() läuft im useState-Init des Panels).
   // Bei OFFENEM Panel ist das Symbol unmounted (App.tsx `{!kosmoOpen && …}`) —
   // schliessen geht nur über den Panel-Kopf-Knopf, der (Sim-Befund 0.6.7,
-  // C: fehlende testid) heute nur per aria-label adressierbar ist.
+  // H-29: behoben) jetzt `data-testid="kosmo-panel-schliessen"` trägt.
   if (await page.locator('[data-testid="kosmo-input"]').isVisible()) {
-    await page.locator('[data-testid="kosmo-panel"] [aria-label="Schliessen"]').click();
+    await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
     await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
   }
   await page.click('[data-testid="kosmo-symbol"]'); // … und mit scripted-Settings neu öffnen [Quelle: kosmoFragen-Baustein oben]
