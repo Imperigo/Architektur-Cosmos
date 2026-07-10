@@ -189,6 +189,68 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
   }));
   await expect.poll(doc).toEqual({ walls: 4, slabs: 1, stairs: 1, zones: 2, roofs: 1, openings: 3 });
 
+  // ── Akt 1b: Fenster parametrieren (v0.6.9 Stream F) ────────────────────
+  // ScriptedProvider-Skripte sind STATISCH (H-37, packages/kosmo-ai/src/
+  // scripted.ts Kopfkommentar) — ein `SzenarioSkript` kann NICHT auf eine
+  // erst zur Laufzeit vom `rohbau`-Zug oben erzeugte `openingId` reagieren
+  // (`$neu:N` löst nur paket-INTERNE Rückverweise DESSELBEN Zugs auf). Darum
+  // bleibt EFH_SKRIPT oben unverändert (Zug-Zählung/Assertionen unangetastet)
+  // und dieser neue Zug läuft als eigener, zweiter `kosmoChatSkript`-Aufruf:
+  // die reale Id wird jetzt — NACH dem Rohbau — aus dem Doc gelesen und in
+  // einem frisch gemounteten Skript-Container real referenziert.
+  const wohnzimmerfensterId = await page.evaluate(() => {
+    const openings = window.__kosmo.state().doc.byKind('opening') as unknown as Array<{
+      id: string;
+      openingType: string;
+      width: number;
+    }>;
+    // Das breitere der beiden Rohbau-Fenster (2400 mm, Südwand, Brüstung
+    // 300 — bodennahe Verglasung) ist das Wohnzimmerfenster; das schmalere
+    // (1600 mm, Brüstung 900) liegt an der Ostwand (Bad/Nebenraum).
+    return openings
+      .filter((o) => o.openingType === 'fenster')
+      .reduce((a, b) => (b.width > a.width ? b : a)).id;
+  });
+
+  const FENSTER_SKRIPT: SzenarioSkript = {
+    id: 'journey-efh-fenster',
+    zuege: [
+      {
+        nutzerErwartung: 'zweiflügelig',
+        antwortText: 'Ich mache das Wohnzimmerfenster zweiflügelig mit einer Sprosse in der Mitte.',
+        toolCalls: [
+          {
+            name: 'design_fensterParametrieren',
+            args: { openingId: wohnzimmerfensterId, fensterTyp: 'zweifluegel', teilungN: 2, teilungM: 1, swing: 'links' },
+          },
+        ],
+      },
+    ],
+  };
+  const fensterProtokoll = await kosmoChatSkript(page, 'journey-efh-fenster', FENSTER_SKRIPT, {
+    nutzerTexte: ['Mach das Wohnzimmerfenster zweiflügelig mit Sprosse'],
+  });
+  expect(fensterProtokoll).toHaveLength(1);
+  expect(fensterProtokoll[0]!.fehler, fensterProtokoll[0]!.fehler ?? '').toBeUndefined();
+
+  // Doc: das Opening trägt jetzt den parametrischen Fenstertyp + die Sprosse
+  // (teilung 2×1 = ein vertikaler Steg).
+  const fensterZustand = await page.evaluate((id) => {
+    const o = window.__kosmo.state().doc.byKind('opening').find((x) => x.id === id) as unknown as
+      | { fensterTyp?: string; teilung?: { n: number; m: number } }
+      | undefined;
+    return { fensterTyp: o?.fensterTyp, teilung: o?.teilung };
+  }, wohnzimmerfensterId);
+  expect(fensterZustand).toEqual({ fensterTyp: 'zweifluegel', teilung: { n: 2, m: 1 } });
+
+  // Plan-Sichtbarkeit: der Öffnungsbogen (`fenster-bogen`, derive/plan.ts,
+  // erst bei gesetztem fensterTyp+swing gezeichnet) erscheint jetzt im
+  // Grundriss — Regressions-Anker für PlanView.tsx (Arc-`className`,
+  // vorher wurden `plan.arcs`-Klassen beim Rendern verworfen).
+  await page.click('[data-testid="view-2d"]');
+  const fensterBogen = page.locator('[data-testid="planview"] path.fenster-bogen');
+  await expect.poll(() => fensterBogen.count()).toBeGreaterThan(0);
+
   // ── Akt 2: Sehen — Drei Stimmungen, Render, Prompt-Transparenz ────────
   // Das offene Kosmo-Panel verdeckt die Stations-Navigation (Sim-Befund
   // 0.6.7, H-29: behoben — Schliessen-Knopf trägt jetzt data-testid

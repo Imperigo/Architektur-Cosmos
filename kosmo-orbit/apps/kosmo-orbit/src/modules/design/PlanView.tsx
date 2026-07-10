@@ -1127,6 +1127,11 @@ export function PlanView({
               return (
                 <path
                   key={`a${i}`}
+                  // v0.6.9 Stream F: Klassen wie bei regions/lines durchreichen
+                  // (waren vorher verworfen) — erst so wird z.B. `fenster-bogen`
+                  // (derive/plan.ts) im Plan-SVG als `path.fenster-bogen`
+                  // auffindbar, analog zu `path.treppe` bei den regions.
+                  className={a.classes.join(' ')}
                   d={`M ${sx} ${-sy} A ${a.radius} ${a.radius} 0 ${large} 0 ${ex} ${-ey}`}
                   fill="none"
                   stroke="var(--k-ink-soft)"
