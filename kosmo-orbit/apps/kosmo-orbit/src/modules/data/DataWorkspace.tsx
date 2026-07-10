@@ -2200,6 +2200,43 @@ export function MaterialkatalogView() {
 }
 
 /**
+ * D (v0.6.8) — Stream D: Docling-Wissens-Ingest (Übernahme aus der
+ * AI-Scan-Auswertung 0.6.8, `docs/AI-SCAN-AUSWERTUNG-0.6.8.md` §1.1).
+ * `tools/docling-ingest/ingest.py` legt PDF-Importe als Markdown-Notizen in
+ * `wissen/vault/Import/` ab und regeneriert daraus dieses schlanke Manifest
+ * unter `public/wissen/import.json` — derselbe «wissen/-Bündel»-Weg, über
+ * den die App bereits die Bauwissen-Basis-Korpora lädt (siehe `basisIndex()`
+ * oben in `modules/prepare/knowledge.ts`), hier additiv für Import-Notizen
+ * statt Trainings-Sammlungen. Dreistufige Ehrlichkeit im Ingest-Tool: echte
+ * Docling-Konvertierung, ehrlicher Fehlausgang ohne Docling, oder eine klar
+ * markierte `--fake`-Fixture (nie als echte Extraktion ausgegeben).
+ */
+interface WissenImportEintrag {
+  titel: string;
+  quelleDateiname: string;
+  importiertAm: string;
+  werkzeug: string;
+  seiten?: number;
+  tags: string[];
+}
+
+/** Nur das Datum aus einem ISO-Zeitstempel («2026-07-10T09:00:00Z» → «2026-07-10»). */
+function importDatum(importiertAm: string): string {
+  return importiertAm.split('T')[0] || importiertAm;
+}
+
+async function holeWissenImport(): Promise<WissenImportEintrag[]> {
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL ?? '/'}wissen/import.json`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const daten = (await res.json()) as WissenImportEintrag[];
+    return Array.isArray(daten) ? daten : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
  * D2 (KosmoData-Dach) — der Wissen-Tab: die Wissensbasis aus KosmoPrepare
  * (`modules/prepare/knowledge.ts`, unverändert wiederverwendet) als
  * erstklassige, durchsuchbare und pflegbare Ansicht in KosmoData. Suche,
@@ -2208,6 +2245,7 @@ export function MaterialkatalogView() {
  */
 export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
   const [docs, setDocs] = useState<KnowledgeDoc[]>([]);
+  const [importEintraege, setImportEintraege] = useState<WissenImportEintrag[]>([]);
   const [basis, setBasis] = useState<BasisSammlung[]>([]);
   const [geladeneBasis, setGeladeneBasis] = useState<Set<string>>(new Set());
   const [ladeBasis, setLadeBasis] = useState<string | null>(null);
@@ -2231,6 +2269,12 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
     });
   };
   useEffect(refresh, []);
+
+  // D (v0.6.8): Import-Manifest separat laden — eigene Quelle (statisches
+  // JSON aus dem Ingest-Tool), unabhängig von der IndexedDB-Wissensbasis.
+  useEffect(() => {
+    void holeWissenImport().then(setImportEintraege);
+  }, []);
 
   useEffect(() => {
     const q = query.trim();
@@ -2326,6 +2370,31 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
         </div>
       ) : (
         <>
+          <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="wissen-import">
+            <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Import (Docling-Wissens-Ingest)</div>
+            {importEintraege.length === 0 ? (
+              <span data-testid="wissen-import-leer" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+                Noch keine Importe — tools/docling-ingest/ingest.py
+              </span>
+            ) : (
+              importEintraege.map((e) => (
+                <Panel
+                  key={`${e.quelleDateiname}-${e.importiertAm}`}
+                  data-testid="wissen-import-eintrag"
+                  style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'grid', gap: 'var(--k-s2)' }}
+                >
+                  <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{e.titel}</div>
+                  <div
+                    data-testid="wissen-import-herkunft"
+                    style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}
+                  >
+                    Import · {e.werkzeug} · {importDatum(e.importiertAm)}
+                  </div>
+                </Panel>
+              ))
+            )}
+          </div>
+
           {docs.length > 0 && (
             <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
               <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Dokumente ({docs.length})</div>

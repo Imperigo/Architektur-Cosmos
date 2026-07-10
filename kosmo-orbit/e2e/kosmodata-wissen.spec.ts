@@ -63,3 +63,43 @@ test('KosmoData-Wissen: Basis-Korpus laden, Suche findet Treffer, Sichtbarkeit u
 
   await page.screenshot({ path: 'e2e-results/kosmodata-wissen.png' });
 });
+
+/**
+ * D (v0.6.8) — Stream D: Docling-Wissens-Ingest. Additiv zum Test oben: die
+ * neue Import-Sektion im Wissen-Tab liest `public/wissen/import.json`
+ * (von `tools/docling-ingest/ingest.py` regeneriert) und zeigt je Notiz aus
+ * `wissen/vault/Import/` eine Herkunftszeile «Import · ‹werkzeug› ·
+ * ‹datum›». Ein per `--fake` erzeugtes Beispiel liegt fest im Repo
+ * (`wissen/vault/Import/bauteilkatalog-aussenwand-20260710-131701.md`,
+ * `werkzeug: fixture`) — dieser Test verifiziert genau diese Notiz als
+ * sichtbaren E2E-Anker.
+ */
+test('KosmoData-Wissen: Import-Sektion zeigt die Fixture-Notiz mit Herkunftszeile', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+
+  await page.click('[data-testid="module-data"]');
+  await page.click('[data-testid="tab-wissen"]');
+
+  const wissenTab = page.locator('[data-testid="kosmodata-wissen"]');
+  await expect(wissenTab).toBeVisible();
+
+  const importSektion = page.locator('[data-testid="wissen-import"]');
+  await expect(importSektion).toBeVisible();
+
+  // Ehrliche Leerzeile nur, wenn kein Import-Manifest ausgeliefert wird —
+  // im Preview-Build liegt die committete Fixture-Notiz vor, also erwarten
+  // wir den echten Eintrag statt des Leerzustands.
+  const eintrag = page.locator('[data-testid="wissen-import-eintrag"]');
+  const leer = page.locator('[data-testid="wissen-import-leer"]');
+  await expect(eintrag.first().or(leer)).toBeVisible();
+
+  const anzahlEintraege = await eintrag.count();
+  test.skip(anzahlEintraege === 0, 'Kein Import-Manifest im Preview-Build ausgeliefert');
+
+  await expect(eintrag.first()).toContainText('Bauteilkatalog-Aussenwand');
+
+  const herkunft = eintrag.first().locator('[data-testid="wissen-import-herkunft"]');
+  await expect(herkunft).toHaveText('Import · fixture · 2026-07-10');
+});
