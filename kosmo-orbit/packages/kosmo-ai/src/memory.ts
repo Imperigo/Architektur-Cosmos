@@ -24,6 +24,14 @@ export interface Learning {
    * Migration nötig, der Default greift beim Zugriff.
    */
   visibility?: LearningVisibility;
+  /**
+   * v0.6.9 (Stream B, «Wissen antwortet») — die persistierte Referenz-Kante:
+   * die Id der KosmoData-Referenz (`RefEntry.id`), die im Moment des
+   * Feedbacks aktiv/betrachtet war. Additiv — Alteinträge ohne dieses Feld
+   * bleiben gültig, `gedaechtnisQuerverweise` (K8, `modules/data/
+   * data-runtime.ts`) fällt für sie auf den bisherigen Text-Match zurück.
+   */
+  refId?: string;
 }
 
 export interface MemoryStore {

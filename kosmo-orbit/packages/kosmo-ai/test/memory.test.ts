@@ -74,6 +74,45 @@ describe('LearningJournal.setzeVisibility', () => {
   });
 });
 
+describe('LearningJournal.add — refId (v0.6.9, Stream B «Wissen antwortet»)', () => {
+  it('additiv: ein Eintrag ohne refId bleibt wie bisher (kein Feld im gespeicherten Objekt)', () => {
+    const journal = new LearningJournal(memoryStore());
+    journal.add({ sentiment: 'gut', context: 'Ohne Referenz-Kontext' });
+
+    const [eintrag] = journal.all;
+    expect(eintrag!.refId).toBeUndefined();
+    expect('refId' in eintrag!).toBe(false);
+  });
+
+  it('speichert die aktive Referenz-Id mit, wenn im Referenz-Kontext gefeuert', () => {
+    const journal = new LearningJournal(memoryStore());
+    journal.add({ sentiment: 'gut', context: 'Referenz als gut bewertet', refId: 'ref-pantheon' });
+
+    const [eintrag] = journal.all;
+    expect(eintrag!.refId).toBe('ref-pantheon');
+  });
+
+  it('persistiert refId über den Store — ein neu geladenes Journal sieht sie', () => {
+    const store = memoryStore();
+    const journal = new LearningJournal(store);
+    journal.add({ sentiment: 'schlecht', context: 'Nicht passend', refId: 'ref-parthenon' });
+
+    const neuGeladen = new LearningJournal(store);
+    expect(neuGeladen.all[0]?.refId).toBe('ref-parthenon');
+  });
+
+  it('mischt Einträge mit und ohne refId im selben Journal, ohne sich zu beeinflussen', () => {
+    const journal = new LearningJournal(memoryStore());
+    journal.add({ sentiment: 'gut', context: 'Mit Referenz', refId: 'ref-a' });
+    journal.add({ sentiment: 'gut', context: 'Ohne Referenz' });
+
+    const mitRef = journal.all.find((e) => e.context === 'Mit Referenz');
+    const ohneRef = journal.all.find((e) => e.context === 'Ohne Referenz');
+    expect(mitRef?.refId).toBe('ref-a');
+    expect(ohneRef?.refId).toBeUndefined();
+  });
+});
+
 describe('localStorageMemory (Sanity — bestehendes Verhalten unverändert)', () => {
   it('liefert einen MemoryStore, der leer startet, wenn kein localStorage da ist', () => {
     // Node-Umgebung ohne DOM: localStorage ist nicht global — load() fängt

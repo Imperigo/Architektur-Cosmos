@@ -21,7 +21,7 @@ import {
 } from '@kosmo/ui';
 import { DataLeerbild } from './DataLeerbild';
 import { RefHeroBild } from './RefHeroBild';
-import { gedaechtnisQuerverweise } from './data-runtime';
+import { gedaechtnisQuerverweise, type GedaechtnisTreffer } from './data-runtime';
 import {
   bauteilkatalog,
   gesamtdicke,
@@ -587,16 +587,30 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
     };
   }, [seedRetry]);
 
-  // K8 (v0.6.8): Gedächtnis-/Wissens-Querverweise im Dossier — ehrlich
-  // textbasiert (das Lernjournal trägt keine persistierte Referenz-Kante,
-  // siehe `gedaechtnisQuerverweise` in data-runtime.ts). Klick wechselt den
-  // Tab INNERHALB von KosmoData und übergibt Fokus (Gedächtnis) bzw.
-  // Startsuche (Wissen) an die Ziel-Ansicht.
+  // K8 (v0.6.8, erweitert v0.6.9 Stream B «Wissen antwortet»):
+  // Gedächtnis-/Wissens-Querverweise im Dossier. `gedaechtnisQuerverweise`
+  // (data-runtime.ts) nutzt jetzt zuerst die persistierte Referenz-Kante
+  // (`Learning.refId`), Text-Match bleibt der Fallback für Alteinträge —
+  // beide Arten sind im UI ehrlich unterscheidbar (`GedaechtnisTreffer.
+  // matchArt`). Klick wechselt den Tab INNERHALB von KosmoData und übergibt
+  // Fokus (Gedächtnis) bzw. Startsuche (Wissen) an die Ziel-Ansicht.
   const journal = useMemo(() => new LearningJournal(journalStore()), []);
-  const [gedaechtnisLinks, setGedaechtnisLinks] = useState<Learning[]>([]);
+  const [gedaechtnisLinks, setGedaechtnisLinks] = useState<GedaechtnisTreffer[]>([]);
   const [wissenLinks, setWissenLinks] = useState<KnowledgeHit[]>([]);
   const [gedaechtnisFokus, setGedaechtnisFokus] = useState<string | null>(null);
   const [wissenStartQuery, setWissenStartQuery] = useState('');
+  const aktualisiereGedaechtnisLinks = () => {
+    if (!selected) {
+      setGedaechtnisLinks([]);
+      return;
+    }
+    try {
+      journal.reload();
+      setGedaechtnisLinks(gedaechtnisQuerverweise(journal.all, selected));
+    } catch {
+      setGedaechtnisLinks([]);
+    }
+  };
   useEffect(() => {
     if (!selected) {
       setGedaechtnisLinks([]);
@@ -604,12 +618,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
       return;
     }
     let verworfen = false;
-    try {
-      journal.reload();
-      setGedaechtnisLinks(gedaechtnisQuerverweise(journal.all, selected));
-    } catch {
-      setGedaechtnisLinks([]);
-    }
+    aktualisiereGedaechtnisLinks();
     void searchKnowledge(selected.title, 3)
       .then((t) => {
         if (!verworfen) setWissenLinks(t);
@@ -620,7 +629,23 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
     return () => {
       verworfen = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, journal]);
+
+  // v0.6.9 (Stream B): die 👍/👎-Feedbackstelle im Referenz-Kontext — schreibt
+  // die aktive Referenz-Id (`refId`) ins Lernjournal mit, statt sich auf
+  // Text-Match zu verlassen (`gedaechtnisQuerverweise` nutzt refId-Treffer
+  // zuerst). Additiver Journal-Schreibpfad, unabhängig vom Chat-Feedback.
+  function feedbackZurReferenz(sentiment: 'gut' | 'schlecht') {
+    if (!selected) return;
+    journal.add({
+      sentiment,
+      context: `Referenz «${selected.title}» im Dossier als ${sentiment === 'gut' ? 'passend' : 'nicht passend'} bewertet`,
+      refId: selected.id,
+    });
+    aktualisiereGedaechtnisLinks();
+    nutzungMelden('dossier:referenz-feedback');
+  }
 
   // Batch 5: Ref↔Asset-Verknüpfung — «Assets dieses Projekts» im Dossier.
   const [refAssets, setRefAssets] = useState<KosmoAsset[]>([]);
@@ -1380,13 +1405,36 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
             </DossierGruppe>
           )}
 
-          {/* ---------- K8 (v0.6.8): Gedächtnis-/Wissens-Querverweise — klickbar,
-              Klick wechselt den Tab innerhalb von KosmoData. Ehrlich: das
-              Lernjournal kennt keine persistierte Referenz-Kante, gezeigt wird,
-              was die Referenz wörtlich nennt (Gedächtnis) bzw. was die lokale
-              BM25-Suche zum Titel findet (Wissen). */}
+          {/* ---------- K8 (v0.6.8, erweitert v0.6.9 Stream B): Gedächtnis-/
+              Wissens-Querverweise — klickbar, Klick wechselt den Tab
+              innerhalb von KosmoData. Gedächtnis: zuerst die persistierte
+              Referenz-Kante (`refId`, «verknüpft»), Text-Match («Texttreffer»)
+              bleibt der ehrliche Fallback für Alteinträge. Wissen: was die
+              lokale BM25-Suche zum Titel findet. */}
           <DossierGruppe titel="Gedächtnis & Wissen" testid="ref-querverweise" offen>
-            <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>Gedächtnis</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+              <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', flex: 1 }}>Gedächtnis</div>
+              <button
+                type="button"
+                className="k-druck"
+                data-testid="ref-feedback-gut"
+                aria-label="Referenz als hilfreich bewerten"
+                onClick={() => feedbackZurReferenz('gut')}
+                style={{ all: 'unset', cursor: 'pointer', fontSize: 13, padding: '1px 4px' }}
+              >
+                <KIcon name="daumen-hoch" size={14} />
+              </button>
+              <button
+                type="button"
+                className="k-druck"
+                data-testid="ref-feedback-schlecht"
+                aria-label="Referenz als nicht hilfreich bewerten"
+                onClick={() => feedbackZurReferenz('schlecht')}
+                style={{ all: 'unset', cursor: 'pointer', fontSize: 13, padding: '1px 4px' }}
+              >
+                <KIcon name="daumen-runter" size={14} />
+              </button>
+            </div>
             {gedaechtnisLinks.length === 0 ? (
               <span data-testid="ref-gedaechtnis-leer" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
                 Kein Gedächtnis-Eintrag erwähnt diese Referenz.
@@ -1405,7 +1453,14 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                     nutzungMelden('dossier:gedaechtnis-link');
                   }}
                 >
-                  {g.sentiment === 'gut' ? '👍' : '👎'} {kuerzeText(g.context, 90)}
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}>
+                    <span>
+                      {g.sentiment === 'gut' ? '👍' : '👎'} {kuerzeText(g.context, 90)}
+                    </span>
+                    <span data-testid="ref-gedaechtnis-matchart" style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                      {g.matchArt === 'verknuepft' ? 'verknüpft' : 'Texttreffer'}
+                    </span>
+                  </span>
                 </KButton>
               ))
             )}

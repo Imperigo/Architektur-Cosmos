@@ -224,29 +224,58 @@ export function tuschePfade(id: string, entryType?: string | undefined): string[
 }
 
 /* ------------------------------------------------------------------ */
-/* K8 — Gedächtnis-Querverweise (deterministisch, textbasiert)         */
+/* K8 — Gedächtnis-Querverweise (refId zuerst, Text-Match als Fallback) */
 /* ------------------------------------------------------------------ */
 
+/** Wie ein Gedächtnis-Eintrag zur Referenz gefunden wurde — ehrlich sichtbar
+ * im UI (Meta-Zeile «verknüpft» vs. «Texttreffer»), statt beides zu vermengen. */
+export type GedaechtnisMatchArt = 'verknuepft' | 'text';
+
+export interface GedaechtnisTreffer extends Learning {
+  /**
+   * v0.6.9 (Stream B): 'verknuepft' = der Eintrag trägt `refId === referenz.id`
+   * (persistierte Kante, seit die 👍/👎-Feedbackstellen im Referenz-Kontext
+   * die aktive Referenz-Id mitschreiben). 'text' = Fallback für Alteinträge
+   * ohne `refId` — der bisherige textbasierte Treffer (Titel/Id wörtlich im
+   * Kontext oder in der Notiz genannt).
+   */
+  matchArt: GedaechtnisMatchArt;
+}
+
 /**
- * Gedächtnis-Einträge, die eine Referenz erwähnen — ehrlich textbasiert:
- * das Lernjournal (`@kosmo/ai` `Learning`) trägt KEINE persistierte
- * Referenz-Kante (kein `refId`-Feld im Datenmodell), also gilt als
- * Querverweis, was den Referenz-Titel oder die Referenz-Id im Kontext oder
- * in der Notiz wörtlich nennt (case-insensitiv). Neueste zuerst, gedeckelt.
+ * Gedächtnis-Einträge, die eine Referenz erwähnen. `refId`-Treffer (die
+ * persistierte Kante) gehen IMMER vor — Text-Match (Titel/Id wörtlich im
+ * Kontext/in der Notiz genannt, case-insensitiv) füllt nur auf, was die
+ * Kante nicht liefert; Alteinträge ohne `refId` fallen automatisch auf den
+ * bisherigen Weg zurück (keine Migration nötig). Neueste zuerst je Gruppe,
+ * gedeckelt.
  */
 export function gedaechtnisQuerverweise(
   eintraege: readonly Learning[],
   referenz: Pick<RefEntry, 'id' | 'title'>,
   max = 5,
-): Learning[] {
-  const titel = referenz.title.trim().toLowerCase();
-  if (titel.length < 3) return [];
-  const idKlein = referenz.id.toLowerCase();
-  return eintraege
-    .filter((e) => {
-      const text = `${e.context} ${e.note ?? ''}`.toLowerCase();
-      return text.includes(titel) || text.includes(idKlein);
-    })
+): GedaechtnisTreffer[] {
+  const verknuepft: GedaechtnisTreffer[] = eintraege
+    .filter((e) => e.refId === referenz.id)
     .sort((a, b) => b.ts.localeCompare(a.ts))
-    .slice(0, max);
+    .map((e) => ({ ...e, matchArt: 'verknuepft' as const }));
+
+  if (verknuepft.length >= max) return verknuepft.slice(0, max);
+
+  const titel = referenz.title.trim().toLowerCase();
+  const idKlein = referenz.id.toLowerCase();
+  const verknuepfteTs = new Set(verknuepft.map((e) => e.ts));
+  const textTreffer: GedaechtnisTreffer[] =
+    titel.length < 3
+      ? []
+      : eintraege
+          .filter((e) => !verknuepfteTs.has(e.ts))
+          .filter((e) => {
+            const text = `${e.context} ${e.note ?? ''}`.toLowerCase();
+            return text.includes(titel) || text.includes(idKlein);
+          })
+          .sort((a, b) => b.ts.localeCompare(a.ts))
+          .map((e) => ({ ...e, matchArt: 'text' as const }));
+
+  return [...verknuepft, ...textTreffer].slice(0, max);
 }
