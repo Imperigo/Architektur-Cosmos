@@ -718,3 +718,9 @@ Status:      doku
 
 ### H-37 — SzenarioSkripte sind statisch: kein Rückkanal von Tool-Ergebnissen in spätere Züge (10.07.2026, Journey kosmo-mfh)
 - **Triage:** kein-bug (bewusste Datenform; $neu:N deckt Paket-intern, contextDefaults den Rest). Dokumentiert als Grenze im scripted.ts-Kopf nachziehen (V2 nebenbei). **Status:** dokumentiert.
+
+### H-38 — design.geschossErstellen erlaubt stillschweigend doppelten Namen + Index (10.07.2026, Kritik-Runde 1, Satteldach-Mini-Projekt)
+- **Beobachtung:** Im frischen Projekt (das bereits EG/1.OG trägt) legt `design.geschossErstellen {name:'EG', index:0}` kommentarlos ein ZWEITES «EG» mit Index 0 an — die Geschoss-Pillen zeigen «1.OG / EG / EG», nichts warnt vor der Kollision (Kritik-Bild paper-6/ink-6).
+- **Triage:** v2-lücke (C — kein Datenverlust, aber verwirrend; index-basierte Logik wie ui.geschossSetzen {index} trifft dann das erste Fundstück).
+- **Entscheid (Fable):** 0.6.8-Kandidat: Kommando warnt/verweigert bei Namens- ODER Index-Kollision (CommandError mit ehrlicher Meldung), bestehende Docs mit Duplikaten bleiben lesbar.
+- **Status:** offen → 0.6.8.
