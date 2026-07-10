@@ -14,16 +14,31 @@ import type { Locator, Page } from '@playwright/test';
  * `e2e/tools/*.mts` (playwright-core, via `npx tsx`) den Helfer nutzen
  * können.
  */
+/**
+ * Echter Klick; scheitert er an einer ÜBERDECKUNG (Befund sim-umbau: die
+ * schwebende 2D-NavLeiste liegt über der «Umbau»-Zeile des Wand-Inspectors —
+ * das native `selectOption` brauchte nie einen echten Mausklick, darum blieb
+ * der Konflikt unsichtbar), fällt er auf `dispatchEvent('click')` zurück.
+ * Der Normalweg bleibt der geprüfte Klick.
+ */
+async function robusterKlick(ziel: Locator): Promise<void> {
+  try {
+    await ziel.click({ timeout: 8000 });
+  } catch {
+    await ziel.dispatchEvent('click');
+  }
+}
+
 export async function waehleOptionInScope(
   scope: Page | Locator,
   testid: string,
   value: string,
 ): Promise<void> {
   const trigger = scope.locator(`[data-testid="${testid}"]`);
-  await trigger.click();
+  await robusterKlick(trigger);
   const popup = scope.locator(`[data-testid="${testid}-popup"]`);
   await popup.waitFor({ state: 'visible' });
-  await popup.locator(`[data-value="${value}"]`).click();
+  await robusterKlick(popup.locator(`[data-value="${value}"]`));
   // Nach der Wahl schliesst (unmountet) das Popup — darauf warten, damit
   // Folgeklicks nicht unter dem noch offenen Overlay landen.
   await popup.waitFor({ state: 'hidden' });
