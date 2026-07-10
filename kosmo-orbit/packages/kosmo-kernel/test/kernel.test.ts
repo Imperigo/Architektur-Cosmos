@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { testhausMitQuertrakt, ansichtSvg } from './fixtures';
+import { testhausMitQuertrakt, testhausSatteldach, ansichtSvg } from './fixtures';
 import { deriveBerechnungsliste, parseRaumprogrammCsv } from '../src/derive/berechnungsliste';
 import { deriveMengen } from '../src/derive/mengen';
 import { generiereStuetzenraster } from '../src/derive/stuetzenraster';
@@ -56,6 +56,7 @@ import {
   type Assembly,
   type Zone,
   type VisGraph,
+  type Roof,
 } from '../src';
 
 function setupDoc() {
@@ -416,6 +417,149 @@ describe('Walmdach (Straight Skeleton, eigener)', () => {
         ],
       }),
     ).toThrow(/konvex/);
+  });
+});
+
+describe('Satteldach (First-Ebenen-Teilung)', () => {
+  it('Default bleibt Walm, wenn form weggelassen wird', () => {
+    const { doc, storeyId } = setupDoc();
+    const res = execute(doc, 'design.dachErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 10000, y: 0 },
+        { x: 10000, y: 6000 },
+        { x: 0, y: 6000 },
+      ],
+      pitch: 35,
+      overhang: 0,
+    });
+    const roof = doc.get<Roof>((res.patches[0] as { id: string }).id)!;
+    expect(roof.form).toBe('walm');
+    expect(roof.firstrichtung).toBe('x');
+  });
+
+  it('Rechteck 8×6m, First entlang x: Firsthöhe zBase + 3m·tan(pitch), First mittig bei y=3000', () => {
+    const { doc, storeyId } = setupDoc();
+    const res = execute(doc, 'design.dachErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 8000, y: 0 },
+        { x: 8000, y: 6000 },
+        { x: 0, y: 6000 },
+      ],
+      pitch: 40,
+      overhang: 0,
+      form: 'sattel',
+      firstrichtung: 'x',
+    });
+    const roofId = (res.patches[0] as { id: string }).id;
+    const roof = doc.get<Roof>(roofId)!;
+    expect(roof.form).toBe('sattel');
+    const artifact = deriveEntity(doc, roofId)!;
+    let maxZ = -Infinity;
+    const firstPunkte: number[][] = [];
+    for (let i = 0; i < artifact.positions.length; i += 3) {
+      const x = artifact.positions[i]!, y = artifact.positions[i + 1]!, z = artifact.positions[i + 2]!;
+      maxZ = Math.max(maxZ, z);
+      if (Math.abs(y - 3000) < 1) firstPunkte.push([x, y, z]);
+    }
+    // Geschoss EG: elevation 0, height 3000 → Traufe 3000; First 3000 + 3000·tan40°
+    const erwarteteFirsthoehe = 3000 + 3000 * Math.tan((40 * Math.PI) / 180);
+    expect(maxZ).toBeCloseTo(erwarteteFirsthoehe, 0);
+    // Alle Punkte auf der Firstlinie (y=3000) liegen auf Firsthöhe — First ist eine Gerade
+    expect(firstPunkte.length).toBeGreaterThan(0);
+    for (const [, , z] of firstPunkte) expect(z).toBeCloseTo(erwarteteFirsthoehe, 0);
+  });
+
+  it('zwei Dachflächen (zwei Ringe à 4 Eckpunkten bei rechteckigem Grundriss)', () => {
+    const { doc, storeyId } = setupDoc();
+    const res = execute(doc, 'design.dachErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 8000, y: 0 },
+        { x: 8000, y: 6000 },
+        { x: 0, y: 6000 },
+      ],
+      pitch: 40,
+      overhang: 0,
+      form: 'sattel',
+    });
+    const roofId = (res.patches[0] as { id: string }).id;
+    const artifact = deriveEntity(doc, roofId)!;
+    // 2 Rechtecks-Flächen à 4 Eckpunkten = 8 Vertices, je 2 Dreiecke = 4 Dreiecke
+    expect(artifact.positions.length / 3).toBe(8);
+    expect(artifact.indices.length / 3).toBe(4);
+    // Zwei unterschiedliche Flächennormalen (die beiden geneigten Ebenen)
+    const normalen = new Set<string>();
+    for (let i = 0; i < artifact.normals.length; i += 3) {
+      normalen.add(
+        `${artifact.normals[i]!.toFixed(3)},${artifact.normals[i + 1]!.toFixed(3)},${artifact.normals[i + 2]!.toFixed(3)}`,
+      );
+    }
+    expect(normalen.size).toBe(2);
+  });
+
+  it('Giebel an den Schmalseiten: First entlang x → Ortgang-Kante bei x=0 steigt von 0 auf First-Höhe und zurück', () => {
+    const { doc, storeyId } = setupDoc();
+    const res = execute(doc, 'design.dachErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 8000, y: 0 },
+        { x: 8000, y: 6000 },
+        { x: 0, y: 6000 },
+      ],
+      pitch: 40,
+      overhang: 0,
+      form: 'sattel',
+      firstrichtung: 'x',
+    });
+    const roofId = (res.patches[0] as { id: string }).id;
+    const artifact = deriveEntity(doc, roofId)!;
+    const giebelPunkte = new Map<number, number>(); // y → z, bei x≈0
+    for (let i = 0; i < artifact.positions.length; i += 3) {
+      const x = artifact.positions[i]!, y = artifact.positions[i + 1]!, z = artifact.positions[i + 2]!;
+      if (Math.abs(x) < 1) giebelPunkte.set(Math.round(y), z);
+    }
+    expect(giebelPunkte.get(0)).toBeCloseTo(3000, 0); // Traufe
+    expect(giebelPunkte.get(6000)).toBeCloseTo(3000, 0); // Traufe
+    expect(giebelPunkte.get(3000)).toBeGreaterThan(giebelPunkte.get(0)!); // First höher als Traufe
+  });
+
+  it('firstrichtung y: First verläuft entlang y, Giebel an den y-Enden', () => {
+    const { doc, storeyId } = setupDoc();
+    const res = execute(doc, 'design.dachErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 6000, y: 0 },
+        { x: 6000, y: 8000 },
+        { x: 0, y: 8000 },
+      ],
+      pitch: 40,
+      overhang: 0,
+      form: 'sattel',
+      firstrichtung: 'y',
+    });
+    const roofId = (res.patches[0] as { id: string }).id;
+    const artifact = deriveEntity(doc, roofId)!;
+    const erwarteteFirsthoehe = 3000 + 3000 * Math.tan((40 * Math.PI) / 180);
+    let maxZ = -Infinity;
+    for (let i = 2; i < artifact.positions.length; i += 3) maxZ = Math.max(maxZ, artifact.positions[i]!);
+    expect(maxZ).toBeCloseTo(erwarteteFirsthoehe, 0);
+  });
+});
+
+describe('Golden-Sattel (Plan-Regression)', () => {
+  it('Ansicht Süd des Satteldach-Testhauses ist byte-identisch zur Golden-Datei', () => {
+    const { doc, spec } = testhausSatteldach();
+    const svg = ansichtSvg(doc, spec);
+    const golden = readFileSync(new URL('./golden/ansicht-sued-satteldach.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
+    // Bewusste Änderungen: `npx tsx e2e/tools/golden-ansicht-sattel.mts` (falls angelegt) und Diff begutachten.
   });
 });
 

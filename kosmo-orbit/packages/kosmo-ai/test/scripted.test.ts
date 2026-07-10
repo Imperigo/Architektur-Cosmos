@@ -179,6 +179,87 @@ describe('ScriptedProvider — durch den ECHTEN ChatSession-Pfad (Validierung/De
   });
 });
 
+describe('ScriptedProvider — Härtung: Quittierung zählt FEHLER-Resultate statt sie pauschal zu bestätigen', () => {
+  it('«1 von 3 Schritten scheiterte»: zwei gültige Wände + eine mit fehlendem Pflichtfeld', async () => {
+    const { doc, storeyId, assemblyId } = demoDoc();
+    const skript: SzenarioSkript = {
+      id: 'gemischt',
+      zuege: [
+        {
+          antwortText: 'Ich baue drei Wände.',
+          toolCalls: [
+            { name: 'design_wandZeichnen', args: { a: { x: 0, y: 0 }, b: { x: 4000, y: 0 } } },
+            // Pflichtfeld `b` fehlt — scheitert an der zod-Validierung, NIE
+            // eine Diff-Karte, sofortige FEHLER-Tool-Nachricht.
+            { name: 'design_wandZeichnen', args: { a: { x: 4000, y: 0 } } },
+            { name: 'design_wandZeichnen', args: { a: { x: 4000, y: 0 }, b: { x: 4000, y: 4000 } } },
+          ],
+        },
+      ],
+    };
+    const provider = new ScriptedProvider('gemischt', { gemischt: skript });
+    const proposals: { callId: string; commandId: string; params: unknown }[] = [];
+    let text = '';
+    const session = new ChatSession(
+      provider,
+      doc,
+      {
+        onText: (d) => (text += d),
+        onProposal: (p) => proposals.push(p),
+        onBusy: () => {},
+        onError: (e) => {
+          throw new Error(e);
+        },
+      },
+      'System',
+      () => ({ storeyId, assemblyId }),
+    );
+
+    await session.send('Baue drei Wände');
+    // Nur die zwei gültigen Aufrufe werden zu Diff-Karten — der dritte scheiterte
+    // sofort an der Validierung (kein Vorschlag, keine Chance ihn freizugeben).
+    expect(proposals).toHaveLength(2);
+
+    for (const p of proposals) {
+      const result = execute(doc, p.commandId, p.params);
+      await session.resolveApplied(p.callId, result.summary);
+    }
+
+    // Quittierung nennt den Fehlschlag ehrlich statt pauschal «Erledigt».
+    expect(text).toContain('1 von 3 Schritten scheiterte');
+    expect(text).not.toContain('Erledigt — weiter');
+  });
+
+  it('ohne Fehlschlag bleibt die Quittierung wörtlich «Erledigt — weiter mit dem nächsten Schritt.» (byte-stabil für bestehende Skripte)', async () => {
+    const { doc, storeyId, assemblyId } = demoDoc();
+    const skript = zweiZuegeSkript({ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 8000 });
+    const provider = new ScriptedProvider('demo-haus', { 'demo-haus': skript });
+    const proposals: { callId: string; commandId: string; params: unknown }[] = [];
+    let text = '';
+    const session = new ChatSession(
+      provider,
+      doc,
+      {
+        onText: (d) => (text += d),
+        onProposal: (p) => proposals.push(p),
+        onBusy: () => {},
+        onError: (e) => {
+          throw new Error(e);
+        },
+      },
+      'System',
+      () => ({ storeyId, assemblyId }),
+    );
+    await session.send('Zeichne die Wand-Kette');
+    for (const p of proposals) {
+      const result = execute(doc, p.commandId, p.params);
+      await session.resolveApplied(p.callId, result.summary);
+    }
+    expect(text).toContain('Erledigt — weiter mit dem nächsten Schritt.');
+    expect(text).not.toContain('scheiterte');
+  });
+});
+
 describe('ScriptedProvider — Züge-Index lebt am Objekt (kein Modul-Global)', () => {
   it('zwei unabhängige Provider-Instanzen desselben Skripts stören sich nicht gegenseitig', async () => {
     const skript = zweiZuegeSkript({ x: 0, y: 0 }, { x: 1000, y: 0 }, { x: 1000, y: 1000 });

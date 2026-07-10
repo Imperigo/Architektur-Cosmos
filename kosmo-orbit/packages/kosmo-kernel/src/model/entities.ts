@@ -211,7 +211,8 @@ export interface Stair extends Base {
   ecke?: Pt;
 }
 
-/** Walmdach — Grundriss-Polygon + Neigung; Geometrie via Straight Skeleton. */
+/** Walm- oder Satteldach — Grundriss-Polygon + Neigung; Geometrie via Straight Skeleton (Walm)
+ * bzw. First-Ebenen-Teilung (Sattel). */
 export interface Roof extends Base {
   kind: 'roof';
   storeyId: string;
@@ -222,6 +223,12 @@ export interface Roof extends Base {
   overhang: Mm;
   /** Fusspunkt (Traufe) über OK Boden des Geschosses. */
   baseOffset: Mm;
+  /** Dachform: «walm» (Default, alle Seiten geneigt) oder «sattel» (First + 2 Flächen,
+   * Giebel an den Schmalseiten quer zur Firstrichtung). Fehlt das Feld (ältere Dokumente),
+   * gilt «walm». */
+  form?: 'walm' | 'sattel';
+  /** Nur bei form «sattel»: Achse, entlang der der First verläuft. */
+  firstrichtung?: 'x' | 'y';
 }
 
 /** Baugrenze (Phase 0): Polygon aus dem Baugesetz + optionale Höhenbeschränkung. */

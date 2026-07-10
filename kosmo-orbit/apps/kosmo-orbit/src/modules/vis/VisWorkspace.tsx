@@ -16,7 +16,7 @@ import {
   moduleHue,
   type KTabItem,
 } from '@kosmo/ui';
-import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, type Sheet, type VisGraph } from '@kosmo/kernel';
+import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, VIS_STIMMUNGEN, type Sheet, type VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { basisNodeHoehe, NODE_W, NodeCanvas } from './NodeCanvas';
 import { bridgeToken } from './vis-jobs';
@@ -70,11 +70,9 @@ interface Serie {
   jobs: Record<string, string>;
 }
 
-const STIMMUNGEN = [
-  { label: 'Morgenlicht', prompt: 'Morgenlicht, klare lange Schatten, frische kühle Luft' },
-  { label: 'Abendstimmung', prompt: 'Abendstimmung, warmes Licht, leuchtende Fenster' },
-  { label: 'Weissmodell', prompt: 'Weissmodell, neutrales Studiolicht, keine Materialien' },
-] as const;
+// Stimmungs-Presets: dedupliziert auf die Kernel-Konstante (VIS_STIMMUNGEN,
+// packages/kosmo-kernel/src/derive/visgraph.ts) — byte-gleiche Werte, eine Quelle.
+const STIMMUNGEN = Object.values(VIS_STIMMUNGEN);
 
 function loadBridgeUrl(): string {
   return localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600';
@@ -630,7 +628,10 @@ function EinfachAnsicht() {
               {sending ? 'Sende …' : 'Render-Job senden'}
             </KButton>
             <KButton tone="quiet" onClick={() => void submitSerie()} disabled={sending || health !== 'ok'} data-testid="send-serie">
-              3 Varianten (Morgen · Abend · Weissmodell)
+              {/* Politur: Label aus STIMMUNGEN (= Kernel-Konstante VIS_STIMMUNGEN)
+                  abgeleitet statt hart eingetippt — Knopftext kann nie von den
+                  tatsächlich gesendeten Presets abweichen. */}
+              {STIMMUNGEN.length} Varianten ({STIMMUNGEN.map((s) => s.label).join(' · ')})
             </KButton>
             <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
               Modell wird als GLB exportiert; gerendert wird im GPU-Leerlauf-Fenster.

@@ -1,6 +1,8 @@
 import { z } from 'zod';
+import type { Storey } from '@kosmo/kernel';
 import { ARBEITSMODI, type Arbeitsmodus } from './arbeitsmodi-kern';
 import { PANEL_IDS, TOOL_IDS, VIEW_MODES, useUiZustand, type PanelId, type ToolId, type ViewMode } from './ui-zustand';
+import { useProject } from './project-store';
 
 /**
  * `ui.*`-Command-Namensraum (v0.6.6 BEWEGUNGSKONZEPT §6) — app-seitige
@@ -158,4 +160,65 @@ export const uiZustandLesen = registriereUiBefehl({
   params: z.object({}),
   beschreibung: 'Liest einen Schnappschuss des UI-Zustands (Werkzeug, Ansicht, Panels, Arbeitsmodus).',
   run: () => schnappschuss(),
+});
+
+// ---------------------------------------------------------------------------
+// ui.geschossSetzen (Sim-Befund H-33, docs/SIM-BEFUNDE.md) — App-Zustand
+// (activeStoreyId in state/project-store.ts), KEIN Doc-Patch, KEIN Undo-
+// Eintrag: exakt dasselbe Muster wie die sechs Befehle oben. Der Fund: KEIN
+// Kommando wechselt bisher das aktive Geschoss — design.*-Commands erwarten
+// storeyId als Argument, aber die App füllt fehlende storeyId per
+// `contextDefaults` (ChatSession) IMMER mit `activeStoreyId`, und das ist nach
+// dem Geschoss-Stapeln kommentarlos das unterste Geschoss (EG). Ohne diesen
+// Befehl landen Chat-Dächer/-Wände fürs Dachgeschoss also stillschweigend im
+// EG. Dieser Befehl wechselt VOR dem Bauen ins Zielgeschoss («wechsle ins
+// Dachgeschoss» → `ui.geschossSetzen` → nächster Bau-Zug trifft es).
+// ---------------------------------------------------------------------------
+
+export interface UiGeschossResultat {
+  storeyId: string;
+  name: string;
+  index: number;
+}
+
+export const uiGeschossSetzen = registriereUiBefehl({
+  id: 'ui.geschossSetzen',
+  params: z.object({
+    storeyId: z.string().optional().describe('Geschoss-ID (aus modell_lesen) — Alternative zu name/index'),
+    name: z.string().optional().describe('Geschossname, z.B. «1.OG» — Alternative zu storeyId/index'),
+    index: z.number().int().optional().describe('Geschoss-Index (0=EG, 1=1.OG, -1=1.UG) — Alternative zu storeyId/name'),
+  }),
+  beschreibung:
+    'Setzt das AKTIVE Geschoss fürs weitere Bauen (App-Zustand, kein Doc-Patch, kein Undo-Eintrag) — genau EINES von storeyId, name oder index angeben. Ohne aktives Geschoss füllen Design-Commands ihre storeyId sonst immer mit dem untersten Geschoss. Vor dem Bauen in einem anderen Geschoss (z.B. Dachgeschoss) zuerst dieses Werkzeug rufen.',
+  run: ({ storeyId, name, index }) => {
+    const { doc, setActiveStorey } = useProject.getState();
+    const storeys = doc.byKind<Storey>('storey');
+    let ziel: Storey | undefined;
+    if (storeyId !== undefined) {
+      const e = doc.get(storeyId);
+      ziel = e && e.kind === 'storey' ? (e as Storey) : undefined;
+      if (!ziel) throw new UiBefehlError(`Geschoss «${storeyId}» existiert nicht`, 'ui.geschossSetzen');
+    } else if (name !== undefined) {
+      ziel = storeys.find((s) => s.name === name);
+      if (!ziel) {
+        throw new UiBefehlError(
+          `Kein Geschoss namens «${name}» — vorhanden: ${storeys.map((s) => s.name).join(', ') || '(keine Geschosse)'}`,
+          'ui.geschossSetzen',
+        );
+      }
+    } else if (index !== undefined) {
+      ziel = storeys.find((s) => s.index === index);
+      if (!ziel) {
+        throw new UiBefehlError(
+          `Kein Geschoss mit Index ${index} — vorhanden: ${storeys.map((s) => s.index).join(', ') || '(keine Geschosse)'}`,
+          'ui.geschossSetzen',
+        );
+      }
+    } else {
+      throw new UiBefehlError('ui.geschossSetzen braucht storeyId, name oder index', 'ui.geschossSetzen');
+    }
+    setActiveStorey(ziel.id);
+    const ergebnis: UiGeschossResultat = { storeyId: ziel.id, name: ziel.name, index: ziel.index };
+    return ergebnis;
+  },
 });

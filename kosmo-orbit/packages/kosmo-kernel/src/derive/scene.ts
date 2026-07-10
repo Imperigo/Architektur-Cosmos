@@ -444,6 +444,126 @@ function deriveFreeMesh(doc: KosmoDoc, m: FreeMesh): GeometryArtifact | null {
   return { entityId: m.id, materialKey: 'masse', positions: pos, normals: nor, indices: idx, edges };
 }
 
+/**
+ * Satteldach (Giebeldach): First entlang firstrichtung durch die Mitte der
+ * Traufe — Höhe hängt NUR von der Quer-Koordinate ab (Abstand zum First),
+ * darum sind beide Dachhälften exakte Ebenen, unabhängig vom Grundriss
+ * (auch bei nicht-rechteckigen, konvexen Grundrissen). Die schrägen Ortgang-
+ * Kanten an den Schmalseiten (Giebel) entstehen automatisch aus derselben
+ * Höhenformel — kein Sonderfall nötig. Zwei Flächen, ein First, kein
+ * Straight-Skeleton (das bleibt exklusiv dem Walmdach vorbehalten).
+ */
+function clipHalfPlane(
+  poly: readonly { x: number; y: number }[],
+  f: (p: { x: number; y: number }) => number,
+): { x: number; y: number }[] {
+  const n = poly.length;
+  const out: { x: number; y: number }[] = [];
+  for (let i = 0; i < n; i++) {
+    const cur = poly[i]!;
+    const next = poly[(i + 1) % n]!;
+    const fc = f(cur);
+    const fn = f(next);
+    if (fc >= 0) out.push(cur);
+    if (fc >= 0 !== fn >= 0) {
+      const t = fc / (fc - fn);
+      out.push({ x: cur.x + (next.x - cur.x) * t, y: cur.y + (next.y - cur.y) * t });
+    }
+  }
+  return out;
+}
+
+function deriveSatteldach(
+  roof: Roof,
+  eave: { x: number; y: number }[],
+  tan: number,
+  zBase: number,
+): GeometryArtifact {
+  const achse = roof.firstrichtung ?? 'x';
+  const perp = (p: { x: number; y: number }) => (achse === 'x' ? p.y : p.x);
+  const along = (p: { x: number; y: number }) => (achse === 'x' ? p.x : p.y);
+
+  let perpMin = Infinity;
+  let perpMax = -Infinity;
+  for (const p of eave) {
+    const v = perp(p);
+    if (v < perpMin) perpMin = v;
+    if (v > perpMax) perpMax = v;
+  }
+  const mid = (perpMin + perpMax) / 2;
+  const halfSpan = (perpMax - perpMin) / 2;
+  const height = (p: { x: number; y: number }) => zBase + tan * (halfSpan - Math.abs(perp(p) - mid));
+
+  const seiten = [
+    clipHalfPlane(eave, (p) => mid - perp(p)),
+    clipHalfPlane(eave, (p) => perp(p) - mid),
+  ];
+
+  const pos: number[] = [];
+  const nor: number[] = [];
+  const idx: number[] = [];
+  const edges: number[] = [];
+  const EPS = 1e-6;
+
+  let ridgeGezeichnet = false;
+  for (const ring of seiten) {
+    if (ring.length < 3) continue;
+    const P = (q: { x: number; y: number }) => [q.x, q.y, height(q)] as const;
+    const [ax, ay, az] = P(ring[0]!);
+    const [bx, by, bz] = P(ring[1]!);
+    const [cx, cy, cz] = P(ring[ring.length - 1]!);
+    let nx = (by - ay) * (cz - az) - (bz - az) * (cy - ay);
+    let ny = (bz - az) * (cx - ax) - (bx - ax) * (cz - az);
+    let nz = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+    const nl = Math.hypot(nx, ny, nz) || 1;
+    nx /= nl; ny /= nl; nz /= nl;
+    if (nz < 0) { nx = -nx; ny = -ny; nz = -nz; }
+    const base = pos.length / 3;
+    for (const q of ring) {
+      const [x, y, z] = P(q);
+      pos.push(x, y, z);
+      nor.push(nx, ny, nz);
+    }
+    for (let i = 1; i < ring.length - 1; i++) {
+      if (nz >= 0) idx.push(base, base + i, base + i + 1);
+      else idx.push(base, base + i + 1, base + i);
+    }
+    // Traufe + Ortgang (First-First-Kanten separat, einmal, unten)
+    for (let i = 0; i < ring.length; i++) {
+      const q1 = ring[i]!;
+      const q2 = ring[(i + 1) % ring.length]!;
+      if (Math.abs(perp(q1) - mid) < EPS && Math.abs(perp(q2) - mid) < EPS) continue;
+      edges.push(q1.x, q1.y, height(q1), q2.x, q2.y, height(q2));
+    }
+    // First-Endpunkte einsammeln (kleinster/grösster Wert entlang der Firstachse) —
+    // beide Seiten teilen dieselbe Firstlinie, darum nur einmal zeichnen.
+    if (!ridgeGezeichnet) {
+      const ridgePts = ring.filter((q) => Math.abs(perp(q) - mid) < EPS);
+      if (ridgePts.length >= 2) {
+        let a = ridgePts[0]!;
+        let b = ridgePts[0]!;
+        for (const q of ridgePts) {
+          if (along(q) < along(a)) a = q;
+          if (along(q) > along(b)) b = q;
+        }
+        if (a !== b) {
+          edges.push(a.x, a.y, height(a), b.x, b.y, height(b));
+          ridgeGezeichnet = true;
+        }
+      }
+    }
+  }
+
+  return {
+    entityId: roof.id,
+    materialKey: 'dach',
+    positions: new Float32Array(pos),
+    normals: new Float32Array(nor),
+    indices: new Uint32Array(idx),
+    edges: new Float32Array(edges),
+  };
+}
+
 function deriveRoof(doc: KosmoDoc, roof: Roof): GeometryArtifact | null {
   const storey = doc.get<Storey>(roof.storeyId);
   if (!storey || storey.kind !== 'storey' || roof.outline.length < 3) return null;
@@ -454,6 +574,8 @@ function deriveRoof(doc: KosmoDoc, roof: Roof): GeometryArtifact | null {
   const expanded = roof.overhang > 0 ? offsetPolygon(roof.outline, roof.overhang) : [roof.outline];
   const eave = expanded[0];
   if (!eave || eave.length < 3) return null;
+
+  if (roof.form === 'sattel') return deriveSatteldach(roof, eave, tan, zBase);
 
   const skel = convexSkeleton(eave);
   const pos: number[] = [];

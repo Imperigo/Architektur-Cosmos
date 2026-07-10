@@ -47,6 +47,39 @@ export function testhausMitQuertrakt(): { doc: KosmoDoc; spec: SectionSpec } {
   return { doc, spec };
 }
 
+/** Satteldach-Haus 8×6 m, First entlang x — für die Sattel-Golden-Ansicht. */
+export function testhausSatteldach(): { doc: KosmoDoc; spec: SectionSpec } {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  wand({ x: 0, y: 0 }, { x: 8000, y: 0 });
+  wand({ x: 8000, y: 0 }, { x: 8000, y: 6000 });
+  wand({ x: 8000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+  execute(doc, 'design.dachErstellen', {
+    storeyId,
+    outline: [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 6000 }, { x: 0, y: 6000 }],
+    pitch: 40,
+    overhang: 400,
+    form: 'sattel',
+    firstrichtung: 'x',
+  });
+  // Ansicht Süd: Linie südlich des Modells, Blick nach Norden
+  const spec: SectionSpec = { a: { x: -5000, y: -3000 }, b: { x: 13000, y: -3000 }, depth: 30000, lookLeft: true };
+  return { doc, spec };
+}
+
 /** Ansicht als eigenständiges SVG-Dokument (fester Rahmen, 500 mm Rand). */
 export function ansichtSvg(doc: KosmoDoc, spec: SectionSpec): string {
   const { inner, bounds: b } = sectionInnerSvg(doc, spec, 14);

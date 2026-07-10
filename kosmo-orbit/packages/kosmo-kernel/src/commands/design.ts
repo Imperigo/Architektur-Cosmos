@@ -524,18 +524,23 @@ export const createRoof = registerCommand({
   id: 'design.dachErstellen',
   title: 'Walmdach erstellen',
   description:
-    'Erstellt ein Walmdach über einem konvexen Polygon-Grundriss. pitch = Dachneigung in Grad (Standard 35), overhang = Dachüberstand in mm (Standard 500). Die Traufe liegt auf OK des Geschosses.',
+    'Erstellt ein Dach über einem konvexen Polygon-Grundriss. pitch = Dachneigung in Grad (Standard 35), overhang = Dachüberstand in mm (Standard 500). Die Traufe liegt auf OK des Geschosses. form: «walm» (Standard, alle Seiten geneigt) oder «sattel» (First + 2 geneigte Flächen, Giebel an den Schmalseiten). Bei form «sattel» gibt firstrichtung an, entlang welcher Achse (x oder y) der First verläuft.',
   params: z.object({
     storeyId: z.string(),
     outline: z.array(PtSchema).min(3),
     pitch: z.number().min(5).max(75).default(35),
     overhang: z.number().int().nonnegative().default(500),
+    form: z.enum(['walm', 'sattel']).default('walm'),
+    firstrichtung: z.enum(['x', 'y']).default('x').describe('Nur bei form «sattel»: Achse des Firstes'),
   }),
-  summarize: (p) => `Walmdach ${p.pitch}° über ${p.outline.length} Eckpunkten`,
+  summarize: (p) =>
+    p.form === 'sattel'
+      ? `Satteldach ${p.pitch}° über ${p.outline.length} Eckpunkten (First ${p.firstrichtung})`
+      : `Walmdach ${p.pitch}° über ${p.outline.length} Eckpunkten`,
   run: (doc, p) => {
     const storey = require<Storey>(doc, p.storeyId, 'storey');
     if (!isConvex(p.outline as Pt[])) {
-      throw new CommandError('Walmdach V1 braucht einen konvexen Grundriss (keine einspringenden Ecken)');
+      throw new CommandError('Dach V1 braucht einen konvexen Grundriss (keine einspringenden Ecken)');
     }
     const roof: Roof = {
       id: newId('dach'),
@@ -545,6 +550,8 @@ export const createRoof = registerCommand({
       pitch: p.pitch,
       overhang: p.overhang,
       baseOffset: storey.height,
+      form: p.form,
+      firstrichtung: p.firstrichtung,
     };
     return [added(roof)];
   },

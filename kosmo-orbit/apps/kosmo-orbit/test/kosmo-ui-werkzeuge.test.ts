@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { kosmoUiWerkzeuge, type UiAktionMeldung } from '../src/state/kosmo-ui-werkzeuge';
+import { KOSMO_AUSGESCHLOSSENE_COMMANDS, kosmoUiWerkzeuge, type UiAktionMeldung } from '../src/state/kosmo-ui-werkzeuge';
 import { alleUiBefehle } from '../src/state/ui-befehle';
 import { neuLadenAusSpeicher, useUiZustand } from '../src/state/ui-zustand';
+import { useProject } from '../src/state/project-store';
 
 /**
  * v0.6.6 Welle 3 / Stream E — Kosmo-UI-Brücke (BEWEGUNGSKONZEPT §6):
@@ -23,6 +24,7 @@ describe('kosmoUiWerkzeuge()', () => {
     const namen = werkzeuge.map((w) => w.name).sort();
     expect(namen).toEqual([
       'ui_ansichtSetzen',
+      'ui_geschossSetzen',
       'ui_modusAutomatik',
       'ui_modusSetzen',
       'ui_panelSetzen',
@@ -115,5 +117,41 @@ describe('kosmoUiWerkzeuge()', () => {
 
     const lesen = werkzeuge.find((w) => w.name === 'ui_zustandLesen')!;
     expect(() => lesen.execute(undefined)).not.toThrow();
+  });
+
+  it('ui_geschossSetzen (H-33) quittiert sich mit dem ECHTEN Geschossnamen (aus dem Ergebnis, nicht aus rohen Params) — art "geschoss"', () => {
+    const res = useProject.getState().runCommand('design.geschossErstellen', {
+      name: 'Werkzeuge-DG', index: 3, elevation: 8000, height: 2400,
+    });
+    const storeyId = (res.patches[0] as { id: string }).id;
+    const meldungen: UiAktionMeldung[] = [];
+    const werkzeuge = kosmoUiWerkzeuge((m) => meldungen.push(m));
+    const tool = werkzeuge.find((w) => w.name === 'ui_geschossSetzen')!;
+    // Aufruf per storeyId (kein Name im Argument) — die Meldung kennt den
+    // Namen trotzdem, weil sie aus dem RESULTAT (nicht den rohen Params) baut.
+    tool.execute({ storeyId });
+    expect(meldungen).toHaveLength(1);
+    expect(meldungen[0]!.art).toBe('geschoss');
+    expect(meldungen[0]!.text).toContain('Werkzeuge-DG');
+    expect(useProject.getState().activeStoreyId).toBe(storeyId);
+  });
+
+  it('ui_geschossSetzen mit unbekanntem Geschoss wirft, KEINE Aktionsmeldung', () => {
+    const meldungen: UiAktionMeldung[] = [];
+    const werkzeuge = kosmoUiWerkzeuge((m) => meldungen.push(m));
+    const tool = werkzeuge.find((w) => w.name === 'ui_geschossSetzen')!;
+    expect(() => tool.execute({ storeyId: 'geschoss-existiert-nicht' })).toThrow();
+    expect(meldungen).toHaveLength(0);
+  });
+});
+
+describe('KOSMO_AUSGESCHLOSSENE_COMMANDS — kuratierte Ausschlussliste für commandTools({ ohne })', () => {
+  it('nennt genau die destruktiven/technischen Commands aus der Auflage (Kosmo soll bauen, nicht abreissen)', () => {
+    expect([...KOSMO_AUSGESCHLOSSENE_COMMANDS].sort()).toEqual([
+      'design.loeschen',
+      'design.meshVertexSchieben',
+      'vis.graphLoeschen',
+      'vis.nodeLoeschen',
+    ]);
   });
 });

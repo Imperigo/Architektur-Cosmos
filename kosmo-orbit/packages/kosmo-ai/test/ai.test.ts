@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { KosmoDoc, execute } from '@kosmo/kernel';
+import { KosmoDoc, allCommands, execute } from '@kosmo/kernel';
 import {
   AnthropicProvider,
   ChatSession,
@@ -48,6 +48,21 @@ describe('Tool-Registry', () => {
     const schema = wand!.parameters as { properties: Record<string, unknown> };
     expect(Object.keys(schema.properties)).toContain('storeyId');
     expect(Object.keys(schema.properties)).toContain('a');
+  });
+
+  it('commandTools() ohne Argumente liefert weiterhin ALLE Commands (kein API-Bruch)', () => {
+    expect(commandTools()).toHaveLength(allCommands().length);
+  });
+
+  it('commandTools({ ohne }) blendet genau die genannten Command-IDs aus, Rest bleibt vollständig', () => {
+    const alle = commandTools();
+    const kuratiert = commandTools({ ohne: ['design.loeschen', 'design.meshVertexSchieben'] });
+    expect(kuratiert).toHaveLength(alle.length - 2);
+    expect(kuratiert.some((t) => t.name === 'design_loeschen')).toBe(false);
+    expect(kuratiert.some((t) => t.name === 'design_meshVertexSchieben')).toBe(false);
+    // Unbekannte/tote IDs in der Ausschlussliste ändern nichts (kein stiller Fehlschlag)
+    expect(commandTools({ ohne: ['design.nichtVorhanden'] })).toHaveLength(alle.length);
+    expect(allCommands().length).toBeGreaterThan(0);
   });
 
   it('validiert Tool-Calls und repariert kaputtes JSON', () => {

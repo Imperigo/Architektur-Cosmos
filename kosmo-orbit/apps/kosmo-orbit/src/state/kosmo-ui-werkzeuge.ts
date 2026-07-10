@@ -30,6 +30,27 @@ import type { PanelId, ToolId, ViewMode } from './ui-zustand';
  * ohnehin nur ein Lesezugriff — dafür gab es noch nie ein Freigabe-Ritual.
  */
 
+/**
+ * Kuratierte Ausschlussliste für `commandTools({ ohne })` (`packages/kosmo-ai`
+ * `tools.ts`): Kosmo soll bauen, nicht abreissen — Abriss bleibt Handgriff.
+ * `design.loeschen`/`design.meshVertexSchieben`/`vis.graphLoeschen`/
+ * `vis.nodeLoeschen` sind destruktive bzw. rein technische Commands, die kein
+ * Sim-Zug bisher sinnvoll über den Chat ausgelöst hat und die im schlimmsten
+ * Fall unwiederbringlich wirken, BEVOR der Architekt eine Diff-Karte sieht —
+ * die Diff-Karte bleibt zwar das erste Netz (jede Wirkung braucht weiterhin
+ * eine Freigabe), aber ein Modell, das gar nicht erst vorschlägt abzureissen,
+ * ist das ehrlichere zweite Netz. Gedacht für den `commandTools()`-Aufruf in
+ * `packages/kosmo-ai/src/chat.ts` (`ChatSession`-Konstruktor) — DIESE Datei
+ * kennt den Aufrufer nicht (App → Package, nie umgekehrt), darum nur als
+ * fertig begründete Konstante zum Importieren.
+ */
+export const KOSMO_AUSGESCHLOSSENE_COMMANDS: readonly string[] = [
+  'design.loeschen',
+  'design.meshVertexSchieben',
+  'vis.graphLoeschen',
+  'vis.nodeLoeschen',
+];
+
 const PANEL_LABEL: Record<PanelId, string> = {
   studieOffen: 'Volumenstudien-Panel',
   drawOffen: 'Zeichnen-Panel',
@@ -68,7 +89,7 @@ const VIEW_LABEL: Record<ViewMode, string> = {
 
 export interface UiAktionMeldung {
   /** Für `data-testid="kosmo-ui-aktion-${art}"` (Aufgabe 3, Sichtbare Ehrlichkeit). */
-  art: 'panel' | 'werkzeug' | 'ansicht' | 'modus' | 'automatik';
+  art: 'panel' | 'werkzeug' | 'ansicht' | 'modus' | 'automatik' | 'geschoss';
   /** Die Chat-Systemzeile, z.B. «Kosmo hat auf ‹PDF exportieren› gestellt — auf Wunsch.» */
   text: string;
 }
@@ -80,7 +101,7 @@ export interface UiAktionMeldung {
  * wäre selbst schon der stille Zauber, den sie vermeiden soll (Rauschen ohne
  * Wirkung).
  */
-function beschreibeAktion(befehlId: string, params: unknown): UiAktionMeldung | null {
+function beschreibeAktion(befehlId: string, params: unknown, ergebnis?: unknown): UiAktionMeldung | null {
   switch (befehlId) {
     case 'ui.panelSetzen': {
       const p = params as { panel: PanelId; offen: boolean };
@@ -115,6 +136,16 @@ function beschreibeAktion(befehlId: string, params: unknown): UiAktionMeldung | 
       return {
         art: 'automatik',
         text: `Kosmo hat die Arbeitsmodus-Automatik ${p.automatik ? 'eingeschaltet' : 'ausgeschaltet'}.`,
+      };
+    }
+    case 'ui.geschossSetzen': {
+      // H-33: `ergebnis` (Rückgabe von `ui-befehle.ts`s `run()`) statt der
+      // rohen `params` — das Modell liefert oft nur storeyId ODER index,
+      // der Mensch soll aber immer den echten Geschossnamen sehen.
+      const r = ergebnis as { name: string } | undefined;
+      return {
+        art: 'geschoss',
+        text: `Kosmo hat das aktive Geschoss auf «${r?.name ?? '?'}» gestellt.`,
       };
     }
     default:
@@ -157,7 +188,7 @@ export function kosmoUiWerkzeuge(onAktion: (m: UiAktionMeldung) => void): ReadTo
       execute: (args: unknown) => {
         const params = alsParamObjekt(args);
         const ergebnis = fuehreUiBefehlAus(befehl.id, params);
-        const meldung = beschreibeAktion(befehl.id, params);
+        const meldung = beschreibeAktion(befehl.id, params, ergebnis);
         if (meldung) onAktion(meldung);
         return JSON.stringify(ergebnis);
       },

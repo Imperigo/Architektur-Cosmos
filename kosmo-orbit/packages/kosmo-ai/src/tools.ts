@@ -37,12 +37,27 @@ export function commandIdFor(toolName: string): string {
   return toolName.replace('_', '.');
 }
 
-export function commandTools(): ToolDefinition[] {
-  return allCommands().map((cmd) => ({
-    name: toolNameFor(cmd.id),
-    description: cmd.description,
-    parameters: z.toJSONSchema(cmd.params as z.ZodType, { io: 'input', target: 'draft-7' }),
-  }));
+export interface CommandToolsOptionen {
+  /** Command-IDs, die NICHT als Kosmo-Werkzeug erscheinen sollen (z.B. destruktive/
+   * technische Commands, die die App bewusst ausschliesst — Begründung am Aufrufort). */
+  ohne?: readonly string[];
+}
+
+/**
+ * Ohne Argumente: ALLE Commands wie bisher (kein API-Bruch für bestehende
+ * Aufrufer). Mit `optionen.ohne`: eine kuratierte Untermenge — die Auswahl
+ * selbst (WAS ausgeschlossen wird und WARUM) liegt bewusst beim Aufrufer,
+ * dieses Paket kennt keine Meinung über einzelne Commands.
+ */
+export function commandTools(optionen?: CommandToolsOptionen): ToolDefinition[] {
+  const ausschluss = new Set(optionen?.ohne ?? []);
+  return allCommands()
+    .filter((cmd) => !ausschluss.has(cmd.id))
+    .map((cmd) => ({
+      name: toolNameFor(cmd.id),
+      description: cmd.description,
+      parameters: z.toJSONSchema(cmd.params as z.ZodType, { io: 'input', target: 'draft-7' }),
+    }));
 }
 
 /**
