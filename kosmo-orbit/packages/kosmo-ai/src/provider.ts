@@ -208,6 +208,16 @@ export class MockProvider implements ChatProvider {
         delta = lastMsg.content.startsWith('Keine')
           ? lastMsg.content
           : `Aus KosmoData passen diese Referenzen:\n${lastMsg.content}`;
+      } else if (lastMsg.toolName === 'ui_zustandLesen') {
+        // v0.6.6 Stream E (Kosmo-UI-Brücke, BEWEGUNGSKONZEPT §6): das Resultat
+        // ist der ECHTE, live gelesene `ui-zustand.ts`-Snapshot (JSON) —
+        // hier nur menschenlesbar zusammengefasst, nichts erfunden.
+        try {
+          const snap = JSON.parse(lastMsg.content) as { tool?: string; viewMode?: string; arbeitsmodus?: string };
+          delta = `Aktuell: Werkzeug ${snap.tool}, Ansicht ${snap.viewMode}${snap.arbeitsmodus ? `, Modus ${snap.arbeitsmodus}` : ', kein Arbeitsmodus'}.`;
+        } catch {
+          delta = 'Konnte den UI-Zustand nicht lesen.';
+        }
       } else {
         delta = lastMsg.content.startsWith('AUSGEFÜHRT')
           ? 'Erledigt — die Wand steht. Soll ich gleich Fenster setzen?'
@@ -238,6 +248,60 @@ export class MockProvider implements ChatProvider {
         type: 'tool_call',
         call: { id: 'call_mock_ref', name: 'referenzen_suchen', arguments: { suchbegriff: ref[1] } },
       };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
+    // v0.6.6 Stream E (Kosmo-UI-Brücke) — deterministische Trigger für die
+    // fünf SCHREIBENDEN `ui.*`-Werkzeuge + `ui.zustandLesen`, ausschliesslich
+    // für E2E/Demo (`kosmo-ui-bruecke.spec.ts`); ein echtes Modell entscheidet
+    // das selbst anhand der Tool-Beschreibungen.
+    if (text.includes('ui-zustand') || text.includes('ui zustand')) {
+      yield { type: 'text', delta: 'Ich lese den aktuellen UI-Zustand. ' };
+      yield { type: 'tool_call', call: { id: 'call_mock_ui_lesen', name: 'ui_zustandLesen', arguments: {} } };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
+    if (text.includes('automatik')) {
+      const aus = text.includes('aus');
+      yield { type: 'text', delta: `Ich schalte die Arbeitsmodus-Automatik ${aus ? 'aus' : 'ein'}. ` };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_mock_automatik', name: 'ui_modusAutomatik', arguments: { automatik: !aus } },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
+    const modusMatch = text.match(
+      /modus.*?(?:auf|zu|nach)\s*«?(entwerfen|zeichnen|ideen|recherchieren|erfassen|skizzieren|vergleichen|exportieren|modellieren)»?/,
+    );
+    if (modusMatch) {
+      const modus = modusMatch[1]!;
+      yield { type: 'text', delta: `Ich stelle den Modus auf ${modus}. ` };
+      yield { type: 'tool_call', call: { id: 'call_mock_modus', name: 'ui_modusSetzen', arguments: { modus } } };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
+    const PANEL_WORT: Record<string, string> = {
+      kv: 'kvOffen',
+      studie: 'studieOffen',
+      sonne: 'sonneOffen',
+      submission: 'submissionOffen',
+      bauablauf: 'bauablaufOffen',
+      mängel: 'maengelOffen',
+      mangel: 'maengelOffen',
+      liste: 'listeOffen',
+      raster: 'rasterOffen',
+      splat: 'splatPanelOffen',
+      export: 'exportMenuOffen',
+      projekt: 'projektMenuOffen',
+    };
+    const panelMatch = text.match(
+      /öffne.*?(kv|studie|sonne|submission|bauablauf|mängel|mangel|liste|raster|splat|export|projekt)[- ]?panel/,
+    );
+    if (panelMatch) {
+      const panel = PANEL_WORT[panelMatch[1]!]!;
+      yield { type: 'text', delta: 'Ich öffne das Panel. ' };
+      yield { type: 'tool_call', call: { id: 'call_mock_panel', name: 'ui_panelSetzen', arguments: { panel, offen: true } } };
       yield { type: 'done', stopReason: 'tool_calls' };
       return;
     }

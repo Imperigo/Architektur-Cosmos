@@ -45,6 +45,37 @@ export function commandTools(): ToolDefinition[] {
   }));
 }
 
+/**
+ * Deskriptor für ein Werkzeug AUSSERHALB der Kernel-Command-Registry — z.B.
+ * die App-seitige `ui.*`-Registry (`apps/kosmo-orbit/src/state/ui-befehle.ts`,
+ * v0.6.6 BEWEGUNGSKONZEPT §6). Bewusst nur Name/Beschreibung/Schema: dieses
+ * Paket kennt die Quelle NIE (Abhängigkeitsrichtung bleibt App → Package,
+ * niemals umgekehrt) — die App reicht ihre eigene Registry hier nur als
+ * Daten durch.
+ */
+export interface ExternalToolSpec {
+  readonly id: string;
+  readonly beschreibung: string;
+  readonly params: z.ZodType;
+}
+
+/**
+ * Externe Werkzeuge (z.B. `ui.*`) als LLM-Tool-Definitionen — dasselbe
+ * Namens-/Schema-Muster wie `commandTools()` (Punkt → Unterstrich via
+ * `toolNameFor`, JSON-Schema aus dem zod-Schema), nur mit Deskriptoren als
+ * Parameter statt der Kernel-Command-Registry. Damit bekommt JEDE
+ * app-seitige Command-artige Registry (aktuell: `ui.*`) dieselbe
+ * LLM-Sichtbarkeit wie ein Kernel-Command, ohne dass dieses Paket sie kennen
+ * muss.
+ */
+export function externalTools(specs: readonly ExternalToolSpec[]): ToolDefinition[] {
+  return specs.map((s) => ({
+    name: toolNameFor(s.id),
+    description: s.beschreibung,
+    parameters: z.toJSONSchema(s.params, { io: 'input', target: 'draft-7' }),
+  }));
+}
+
 /** Read-only-Tool: Modellzustand für Kosmo lesbar machen (blender-mcp-Muster). */
 export function modelQueryTool(doc: KosmoDoc): ToolDefinition & {
   execute: () => string;

@@ -442,6 +442,25 @@ progress {
   from { opacity: 0; transform: scale(0.985); }
   to { opacity: 1; transform: scale(1); }
 }
+/* v0.6.6 Stream E (KosmoPanel Motion-Politur) — MOTION-KONZEPT §4 «Overlays
+   (KMenu/KDialog/Sheet): öffnen mit --k-feder …, schliessen mit
+   --k-motion-fast Opacity». KosmoPanel ist ein angedocktes Sheet, kein
+   Vollbild-Dialog, darum eine leichte seitliche Verschiebung statt
+   Skalierung. Rein additiv — keine bestehende Regel geändert. */
+.k-panel-eintritt {
+  animation: k-panel-eintritt var(--k-feder) both;
+}
+@keyframes k-panel-eintritt {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: none; }
+}
+.k-panel-austritt {
+  animation: k-panel-austritt var(--k-motion-fast) both;
+}
+@keyframes k-panel-austritt {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateX(12px); }
+}
 /* Einmaliger Bestätigungs-Puls (Diff-Karte angewendet, Snap-Fang) */
 .k-puls {
   animation: k-puls var(--k-motion-settle) both;

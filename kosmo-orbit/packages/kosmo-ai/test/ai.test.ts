@@ -1,16 +1,21 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { z } from 'zod';
 import { KosmoDoc, execute } from '@kosmo/kernel';
 import {
   AnthropicProvider,
   ChatSession,
   MockProvider,
   OpenAiKompatibelProvider,
+  commandIdFor,
   commandTools,
+  externalTools,
+  toolNameFor,
   validateToolCall,
   verknuepfeToolIds,
   zuAnthropicNachrichten,
   zuOpenAiNachrichten,
   type ChatMessage,
+  type ChatProvider,
   type StreamEvent,
 } from '../src';
 
@@ -473,5 +478,155 @@ describe('Tool-Vollständigkeit (Bonus-Block)', () => {
     expect(Object.keys(schema.properties)).toContain('siaPhase');
     expect(commandIdFor(toolNameFor('design.siaPhaseSetzen'))).toBe('design.siaPhaseSetzen');
     expect(toolNameFor('design.siaPhaseSetzen')).toBe('design_siaPhaseSetzen');
+  });
+});
+
+describe('externalTools() — Kosmo-UI-Brücke (v0.6.6 Welle 3 / Stream E)', () => {
+  /**
+   * Die App-seitige `ui.*`-Registry (`state/ui-befehle.ts`) lebt in
+   * `apps/kosmo-orbit`, nicht in diesem Paket (Abhängigkeitsrichtung
+   * App → Package) — hier wird nur das generische Brücken-Werkzeug
+   * `externalTools()` selbst geprüft, mit einem kleinen, unabhängigen
+   * Deskriptor-Satz im Stil der echten `ui.*`-Befehle.
+   */
+  const uiSpecs = [
+    { id: 'ui.zustandLesen', beschreibung: 'Liest einen Schnappschuss des UI-Zustands.', params: z.object({}) },
+    {
+      id: 'ui.modusSetzen',
+      beschreibung: 'Setzt den Arbeitsmodus manuell (null = Neutral-Zustand).',
+      params: z.object({ modus: z.string().nullable() }),
+    },
+  ];
+
+  it('baut LLM-Tool-Definitionen aus Deskriptoren — gleiches Namens-/Schema-Muster wie commandTools()', () => {
+    const tools = externalTools(uiSpecs);
+    expect(tools.map((t) => t.name)).toEqual(['ui_zustandLesen', 'ui_modusSetzen']);
+    expect(tools[0]!.description).toBe('Liest einen Schnappschuss des UI-Zustands.');
+    const schema = tools[1]!.parameters as { properties: Record<string, unknown> };
+    expect(Object.keys(schema.properties)).toContain('modus');
+  });
+
+  it('Punkt-Namensraum rundet exakt wie jeder Kernel-Command — kein Sonderfall für externe Tools', () => {
+    for (const spec of uiSpecs) {
+      expect(commandIdFor(toolNameFor(spec.id))).toBe(spec.id);
+    }
+    expect(toolNameFor('ui.modusAutomatik')).toBe('ui_modusAutomatik');
+  });
+
+  it('leere Deskriptor-Liste → leere Tool-Liste (kein Crash, kein Platzhalter)', () => {
+    expect(externalTools([])).toEqual([]);
+  });
+
+  /**
+   * Die harte Grenze aus dem Konzept (§6): ein externes Werkzeug im
+   * `ReadTool`-Muster (`ChatSession`s `extraReadTools`-Parameter, dasselbe
+   * Muster wie `referenzen_suchen`/`quellen_suchen` UND — app-seitig —
+   * `kosmo-ui-werkzeuge.ts`) läuft SOFORT: kein `onProposal`, keine
+   * Diff-Karte, kein Freigabe-Schritt. Ein Fake-Provider (kein Mock-Regex
+   * nötig) beweist das an der `ChatSession`-Mechanik selbst, unabhängig von
+   * der App-seitigen `ui.*`-Registry.
+   */
+  it('ChatSession führt ein externes Tool (ReadTool-Muster) SOFORT aus — kein onProposal, keine Diff-Karte', async () => {
+    const { doc, storeyId, assemblyId } = demoDoc();
+    const ausgefuehrt: unknown[] = [];
+    const proposals: unknown[] = [];
+
+    class SofortProvider implements ChatProvider {
+      readonly id = 'sofort-test';
+      async *chat(req: { messages: ChatMessage[] }): AsyncIterable<StreamEvent> {
+        const last = req.messages[req.messages.length - 1];
+        if (last?.role === 'tool') {
+          yield { type: 'text', delta: 'Erledigt.' };
+          yield { type: 'done', stopReason: 'stop' };
+          return;
+        }
+        yield {
+          type: 'tool_call',
+          call: { id: 'c1', name: 'ui_modusSetzen', arguments: { modus: 'exportieren' } },
+        };
+        yield { type: 'done', stopReason: 'tool_calls' };
+      }
+    }
+
+    const [toolDef] = externalTools([uiSpecs[1]!]);
+    const session = new ChatSession(
+      new SofortProvider(),
+      doc,
+      {
+        onText: () => {},
+        onProposal: (p) => proposals.push(p),
+        onBusy: () => {},
+        onError: (e) => {
+          throw new Error(e);
+        },
+      },
+      'System',
+      () => ({ storeyId, assemblyId }),
+      [
+        {
+          ...toolDef!,
+          execute: (args: unknown) => {
+            ausgefuehrt.push(args);
+            return 'ok';
+          },
+        },
+      ],
+    );
+
+    await session.send('Stell den Modus auf exportieren');
+
+    expect(ausgefuehrt).toEqual([{ modus: 'exportieren' }]);
+    expect(proposals).toHaveLength(0); // kein Diff-Karten-Weg — lief flüchtig & sofort
+  });
+});
+
+describe('MockProvider — deterministische ui.*-Trigger (v0.6.6 Welle 3 / Stream E, für kosmo-ui-bruecke.spec.ts)', () => {
+  const p = new MockProvider();
+
+  it('«Wie ist der UI-Zustand?» → ui_zustandLesen (leere Argumente)', async () => {
+    const events = await sammle(p, [{ role: 'user', content: 'Wie ist der UI-Zustand?' }]);
+    const call = events.find((e) => e.type === 'tool_call') as { call: { name: string; arguments: unknown } };
+    expect(call.call.name).toBe('ui_zustandLesen');
+    expect(call.call.arguments).toEqual({});
+  });
+
+  it('«Schalte die Automatik aus» / «ein» → ui_modusAutomatik mit dem richtigen Bool', async () => {
+    const aus = await sammle(p, [{ role: 'user', content: 'Schalte die Automatik aus' }]);
+    const ausCall = aus.find((e) => e.type === 'tool_call') as { call: { name: string; arguments: unknown } };
+    expect(ausCall.call.name).toBe('ui_modusAutomatik');
+    expect(ausCall.call.arguments).toEqual({ automatik: false });
+
+    const ein = await sammle(p, [{ role: 'user', content: 'Schalte die Automatik ein' }]);
+    const einCall = ein.find((e) => e.type === 'tool_call') as { call: { name: string; arguments: unknown } };
+    expect(einCall.call.arguments).toEqual({ automatik: true });
+  });
+
+  it('«Stell den Modus auf exportieren» → ui_modusSetzen({ modus: "exportieren" })', async () => {
+    const events = await sammle(p, [{ role: 'user', content: 'Stell den Modus auf exportieren' }]);
+    const call = events.find((e) => e.type === 'tool_call') as { call: { name: string; arguments: unknown } };
+    expect(call.call.name).toBe('ui_modusSetzen');
+    expect(call.call.arguments).toEqual({ modus: 'exportieren' });
+  });
+
+  it('«Öffne das KV-Panel» → ui_panelSetzen({ panel: "kvOffen", offen: true })', async () => {
+    const events = await sammle(p, [{ role: 'user', content: 'Öffne das KV-Panel' }]);
+    const call = events.find((e) => e.type === 'tool_call') as { call: { name: string; arguments: unknown } };
+    expect(call.call.name).toBe('ui_panelSetzen');
+    expect(call.call.arguments).toEqual({ panel: 'kvOffen', offen: true });
+  });
+
+  it('nach ui_zustandLesen: fasst den ECHTEN Snapshot in Text zusammen, statt eine feste Phrase zu wiederholen', async () => {
+    const events = await sammle(p, [
+      { role: 'user', content: 'Wie ist der UI-Zustand?' },
+      {
+        role: 'tool',
+        toolName: 'ui_zustandLesen',
+        content: JSON.stringify({ tool: 'mesh', viewMode: '3d', arbeitsmodus: 'modellieren' }),
+      },
+    ]);
+    const text = events.filter((e): e is Extract<StreamEvent, { type: 'text' }> => e.type === 'text').map((e) => e.delta).join('');
+    expect(text).toContain('mesh');
+    expect(text).toContain('3d');
+    expect(text).toContain('modellieren');
   });
 });

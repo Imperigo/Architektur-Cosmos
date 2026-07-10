@@ -31,18 +31,27 @@ import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
 import { ANT_INSTALL_BEFEHL, claudeAboAnmeldung, istAntFehltFehler, istTauriDesktop } from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
+import { kosmoUiWerkzeuge } from '../state/kosmo-ui-werkzeuge';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
  * Schreibende Vorschläge erscheinen als Karten: Anwenden führt den Command
  * über denselben Weg aus wie ein Handgriff des Architekten (Undo inklusive).
+ *
+ * `ui.*`-Befehle (v0.6.6 BEWEGUNGSKONZEPT §6, `state/kosmo-ui-werkzeuge.ts`)
+ * laufen NICHT über diesen Karten-Weg — sie sind flüchtig/undo-frei, laufen
+ * SOFORT und quittieren sich stattdessen als eigene, dezente `who: 'system'`-
+ * Chat-Zeile (`kosmo-ui-aktion-*`). Siehe die ausführliche Begründung der
+ * Grenze in `kosmo-ui-werkzeuge.ts`.
  */
 
 interface Bubble {
   id: number;
-  who: 'du' | 'kosmo';
+  who: 'du' | 'kosmo' | 'system';
   text: string;
   feedback?: 'gut' | 'schlecht';
+  /** Nur bei `who === 'system'`: testid-Suffix, z.B. 'modus' → `kosmo-ui-aktion-modus`. */
+  testidSuffix?: string;
 }
 
 const journal = new LearningJournal(journalStore());
@@ -255,6 +264,24 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const cloudAnRef = useRef<(text: string) => void>(() => {});
   const [showSettings, setShowSettings] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
+  // v0.6.6 Stream E — Motion-Politur (MOTION-KONZEPT §4 «Overlays… öffnen mit
+  // --k-feder, schliessen mit --k-motion-fast»): das Panel selbst kann sein
+  // Mounten/Unmounten nicht verzögern (App.tsx bleibt Struktur-tabu), also
+  // spielt es den kurzen Austritt SELBST ab, bevor es den Eltern-`onClose`
+  // (der es tatsächlich unmountet) aufruft. Bei reduced-motion (u.a. jeder
+  // E2E-Lauf, `playwright.config.ts`) entfällt die Verzögerung vollständig —
+  // exakt dasselbe Timing wie vorher, keine neue Testflakiness.
+  const [schliessend, setSchliessend] = useState(false);
+  const handleClose = () => {
+    const reduziert =
+      typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduziert) {
+      onClose();
+      return;
+    }
+    setSchliessend(true);
+    window.setTimeout(onClose, 120); // --k-motion-fast
+  };
   // Owner-Befund F1: «ant nicht gefunden» soll eine Anleitung zeigen, keinen
   // blossen Toast — persistiert im Panel, bis der nächste Versuch klappt.
   const [cliFehlt, setCliFehlt] = useState(false);
@@ -301,9 +328,9 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
     const { doc } = useProject.getState();
     let currentKosmoBubble = -1;
-    const push = (who: Bubble['who'], text: string) => {
+    const push = (who: Bubble['who'], text: string, testidSuffix?: string) => {
       const id = ++bubbleSeq.current;
-      setBubbles((b) => [...b, { id, who, text }]);
+      setBubbles((b) => [...b, { id, who, text, ...(testidSuffix !== undefined ? { testidSuffix } : {}) }]);
       return id;
     };
     const s = new ChatSession(
@@ -452,6 +479,12 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             return `Auftrag im Buch (${auftrag.station}): «${auftrag.text}» — der Architekt sieht ihn in KosmoDev und exportiert dort die Workorder.`;
           },
         },
+        // v0.6.6 Stream E (Kosmo-UI-Brücke, BEWEGUNGSKONZEPT §6): die sechs
+        // ui.*-Befehle als weitere ReadTool-Einträge — sie laufen wie die
+        // drei oben SOFORT (kein Diff-Karten-Gate), melden eine erfolgreiche
+        // SCHREIBENDE Aktion aber zusätzlich sichtbar über `push('system', …)`
+        // (Begründung der Grenze: `state/kosmo-ui-werkzeuge.ts`).
+        ...kosmoUiWerkzeuge((m) => push('system', m.text, m.art)),
       ],
       journal.toPromptBlock() + dossierPromptBlock() + rollePromptBlock(),
     );
@@ -811,6 +844,10 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   return (
     <aside
       data-testid="kosmo-panel"
+      // v0.6.6 Stream E — Motion-Politur (MOTION-KONZEPT §4): Feder-Eintritt
+      // beim Erstaufbau, schneller Austritt sobald `handleClose()` ihn
+      // einleitet (s. State oben) — rein additive Klassen, keine Struktur.
+      className={schliessend ? 'k-panel-austritt' : 'k-panel-eintritt'}
       style={{
         width: 340,
         display: 'flex',
@@ -845,7 +882,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         <KButton size="sm" tone="ghost" onClick={() => setShowSettings(!showSettings)} aria-label="Einstellungen">
           <KIcon name="zahnrad" size={16} />
         </KButton>
-        <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
+        <KButton size="sm" tone="ghost" onClick={handleClose} aria-label="Schliessen">
           <KIcon name="schliessen" size={16} />
         </KButton>
       </div>
@@ -1103,6 +1140,32 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
 
       <div ref={scrollRef} style={{ flex: 1, overflow: 'auto', padding: 14, display: 'grid', gap: 10, alignContent: 'start' }}>
         {bubbles.map((b) => {
+          // v0.6.6 Stream E — sichtbare Ehrlichkeit der ui.*-Brücke: eine
+          // eigene, dezente Zeile statt einer Sprechblase (Konzept §5/§6),
+          // testid kosmo-ui-aktion-* pro Befehlsart.
+          if (b.who === 'system') {
+            return (
+              <div
+                key={b.id}
+                data-testid={`kosmo-ui-aktion-${b.testidSuffix ?? 'aktion'}`}
+                className="k-einblenden"
+                style={{
+                  justifySelf: 'center',
+                  maxWidth: '92%',
+                  padding: '4px 11px',
+                  borderRadius: 999,
+                  fontSize: 11.5,
+                  lineHeight: 1.4,
+                  textAlign: 'center',
+                  color: 'var(--k-ink-faint)',
+                  background: 'var(--k-raised)',
+                  border: '1px solid var(--k-line)',
+                }}
+              >
+                {b.text}
+              </div>
+            );
+          }
           // Zitierte Belege dieser Antwort → Chips mit Quellensprung
           const marken =
             b.who === 'kosmo'
@@ -1134,6 +1197,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                   return (
                     <button
                       key={n}
+                      className="k-druck"
                       data-testid="quelle-chip"
                       title={`${ref.text.slice(0, 180)}${ref.text.length > 180 ? ' …' : ''}`}
                       onClick={() => {
@@ -1181,6 +1245,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                 {(['gut', 'schlecht'] as const).map((f) => (
                   <button
                     key={f}
+                    className="k-druck"
                     aria-label={f === 'gut' ? 'Hilfreich' : 'Nicht hilfreich'}
                     data-testid={`fb-${f}`}
                     onClick={() => {
