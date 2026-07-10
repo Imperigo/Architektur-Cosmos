@@ -32,7 +32,7 @@ import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
 import { ANT_INSTALL_BEFEHL, claudeAboAnmeldung, istAntFehltFehler, istTauriDesktop } from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
-import { kosmoUiWerkzeuge } from '../state/kosmo-ui-werkzeuge';
+import { KOSMO_AUSGESCHLOSSENE_COMMANDS, kosmoUiWerkzeuge } from '../state/kosmo-ui-werkzeuge';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -497,6 +497,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         ...kosmoUiWerkzeuge((m) => push('system', m.text, m.art)),
       ],
       journal.toPromptBlock() + dossierPromptBlock() + rollePromptBlock(),
+      // Kuratierte Werkzeug-Untermenge (Begründung: KOSMO_AUSGESCHLOSSENE_COMMANDS).
+      { ohne: KOSMO_AUSGESCHLOSSENE_COMMANDS },
     );
     return s;
     // Session bewusst pro Provider-Konfiguration neu

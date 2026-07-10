@@ -65,6 +65,35 @@ describe('Tool-Registry', () => {
     expect(allCommands().length).toBeGreaterThan(0);
   });
 
+  it('ChatSession reicht toolOptionen.ohne bis zum Provider durch (kuratierte Untermenge)', async () => {
+    const { doc } = demoDoc();
+    let gesehen: string[] = [];
+    const spionProvider = {
+      // Minimaler ChatProvider: merkt sich die angebotenen Tools und endet.
+      chat(req: { tools: { name: string }[] }) {
+        gesehen = req.tools.map((t) => t.name);
+        return (async function* () {
+          yield { type: 'text' as const, delta: 'ok' };
+        })();
+      },
+    };
+    const session = new ChatSession(
+      spionProvider as never,
+      doc,
+      { onText: () => {}, onProposal: () => {}, onBusy: () => {}, onError: () => {} },
+      'System',
+      undefined,
+      [],
+      '',
+      { ohne: ['design.loeschen', 'vis.nodeLoeschen'] },
+    );
+    await session.send('Hallo');
+    expect(gesehen.length).toBeGreaterThan(0);
+    expect(gesehen).not.toContain('design_loeschen');
+    expect(gesehen).not.toContain('vis_nodeLoeschen');
+    expect(gesehen).toContain('design_wandZeichnen');
+  });
+
   it('validiert Tool-Calls und repariert kaputtes JSON', () => {
     const { storeyId, assemblyId } = demoDoc();
     const good = validateToolCall({

@@ -1,6 +1,6 @@
 import { allCommands, type KosmoDoc } from '@kosmo/kernel';
 import type { ChatMessage, ChatProvider, ToolCall, ToolDefinition } from './provider';
-import { commandIdFor, commandTools, modelQueryTool, validateToolCall, type ValidatedCall } from './tools';
+import { commandIdFor, commandTools, modelQueryTool, validateToolCall, type CommandToolsOptionen, type ValidatedCall } from './tools';
 import { routePersona } from './personas';
 
 /** Read-Only-Tool: läuft sofort (ungated), z.B. Referenzsuche in KosmoData. */
@@ -50,13 +50,16 @@ export class ChatSession {
     extraReadTools: ReadTool[] = [],
     /** Wird an jeden Persona-Systemprompt angehängt (z.B. Lernjournal). */
     private systemSuffix = '',
+    /** Kuratierung der Command-Werkzeuge (z.B. `{ ohne: [...] }` — die App
+     * entscheidet und begründet, WAS Kosmo nicht vorschlagen soll). */
+    toolOptionen?: CommandToolsOptionen,
   ) {
     this.queryTool = modelQueryTool(doc);
     this.readTools = new Map(extraReadTools.map((t) => [t.name, t]));
     this.tools = [
       { name: this.queryTool.name, description: this.queryTool.description, parameters: this.queryTool.parameters },
       ...extraReadTools.map((t) => ({ name: t.name, description: t.description, parameters: t.parameters })),
-      ...commandTools(),
+      ...commandTools(toolOptionen),
     ];
     if (systemPrompt) this.messages.push({ role: 'system', content: systemPrompt });
   }
