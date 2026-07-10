@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { SZENARIEN } from './sim/szenarien';
 import { projektStarten, parzelleSetzen, kosmoChatSkript, viewportAufnahme } from './sim/bausteine';
 import { MFH_SKRIPT, MFH_NUTZERTEXTE } from './sim/skripte-mfh';
+import { waehleOption, waehleOptionInScope } from './helfer/waehleOption';
 
 /**
  * v0.6.7 Nachtkampagne — Journey B «Mehrfamilienhaus»: EINE Benutzersimulation,
@@ -354,12 +355,19 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // renderPromptBausteine) — Materialphrase (Aufbau AW Beton 36 → Putz
   // aussen) UND Fensteranteil (aus dem gespeicherten Fassadenmodul).
   const ersterRenderNode = page.locator('[data-testid="vis-node-render"]').first();
+  // v0.6.9: KSelect ist ein Custom-Dropdown — die Optionen liegen im Popup
+  // (role=option, data-value == Label bei den Fassaden-Bausteinen), das nur
+  // offen gemountet ist: erst Trigger klicken, dann Texte lesen und wählen.
   const fassadeSelect = ersterRenderNode.locator('[data-testid="render-formular-fassade"]');
-  const fassadenOptionen = await fassadeSelect.locator('option').allTextContents();
+  await fassadeSelect.click();
+  const fassadePopup = ersterRenderNode.locator('[data-testid="render-formular-fassade-popup"]');
+  await expect(fassadePopup).toBeVisible();
+  const fassadenOptionen = await fassadePopup.locator('[role="option"]').allTextContents();
   expect(fassadenOptionen.some((t) => t.includes('Fensteranteil'))).toBe(true);
   expect(fassadenOptionen.some((t) => /verputzte Fassade|Sichtbeton|Klinker/.test(t))).toBe(true);
   const fensteranteilOption = fassadenOptionen.find((t) => t.includes('Fensteranteil'))!;
-  await fassadeSelect.selectOption({ label: fensteranteilOption });
+  await fassadePopup.locator(`[data-value=${JSON.stringify(fensteranteilOption)}]`).click();
+  await expect(fassadePopup).toBeHidden();
   await expect(ersterRenderNode.locator('[data-testid="render-final-prompt"]')).toContainText('Fensteranteil');
 
   // Befund 8 — echter Bug (nicht nur eine Reibung): die «veraltet»-Prüfung
@@ -376,7 +384,7 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // Fallback: die Formularauswahl vor dem Ausführen wieder zurücksetzen —
   // die Materialphrase/Fensteranteil-Assertion oben ist damit bereits
   // erbracht, unabhängig vom tatsächlich ausgeführten Job.
-  await fassadeSelect.selectOption('');
+  await waehleOptionInScope(ersterRenderNode, 'render-formular-fassade', '');
 
   await ersterRenderNode.locator('[data-testid="render-ausfuehren"]').click();
   await expect(ersterRenderNode.locator('[data-testid="render-status"]')).not.toHaveText('bereit');
@@ -390,7 +398,7 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // aufnehmen» → zurück zu KosmoVis.
   await viewportAufnahme(page);
 
-  await page.selectOption('[data-testid="node-hinzu"]', 'aufnahme');
+  await waehleOption(page, 'node-hinzu', 'aufnahme');
   await expect(page.locator('[data-testid="vis-node-aufnahme"]')).toHaveCount(1);
   const aufnahmeBild = page.locator('[data-testid="vis-node-aufnahme"] [data-testid="aufnahme-bild"]');
   await expect(aufnahmeBild).toBeVisible();
@@ -406,7 +414,7 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // `vergleich`-Node an (Vergleich der drei Stimmungen) — es gibt nach diesem
   // Zug also ZWEI `vergleich`-Nodes; `node-hinzu` fügt den unseren dazu, wir
   // greifen ihn über den zuletzt erzeugten (`nodes.filter(...).at(-1)`).
-  await page.selectOption('[data-testid="node-hinzu"]', 'vergleich');
+  await waehleOption(page, 'node-hinzu', 'vergleich');
   await page.evaluate(() => {
     const k = window.__kosmo;
     const graph = k.state().doc.byKind<{ id: string; nodes: { id: string; typ: string }[] }>('visgraph')[0]!;
@@ -442,7 +450,7 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
       .doc.byKind<{ bilder?: unknown[] }>('sheet')
       .reduce((s, sh) => s + (sh.bilder?.length ?? 0), 0),
   );
-  await page.selectOption('[data-testid="node-hinzu"]', 'blatt');
+  await waehleOption(page, 'node-hinzu', 'blatt');
   await page.evaluate(() => {
     const k = window.__kosmo;
     const graph = k.state().doc.byKind<{ id: string; nodes: { id: string; typ: string }[] }>('visgraph')[0]!;

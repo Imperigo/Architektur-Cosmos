@@ -2,6 +2,7 @@ import { expect, type Page } from '@playwright/test';
 import type { SimSzenario } from './szenarien';
 import type { SubmissionsBefund, SiaPhase } from '@kosmo/kernel';
 import type { SzenarioSkript } from '@kosmo/ai';
+import { waehleOption } from '../helfer/waehleOption';
 
 /**
  * Serie H (Buildplan `docs/SERIE-H-BUILDPLAN.md`, Abschnitt 1.3) —
@@ -612,7 +613,7 @@ export async function renderUeberBridge(page: Page): Promise<void> {
   await expect(page.locator('[data-testid="render-status"]').first()).not.toHaveText('bereit'); // [Quelle: visgraph.spec.ts Z.39]
   await expect(page.locator('[data-testid="render-bild"]').first()).toBeVisible({ timeout: 25_000 }); // [Quelle: visgraph.spec.ts Z.40]
 
-  await page.selectOption('[data-testid="node-hinzu"]', 'blatt'); // [Quelle: visgraph.spec.ts Z.43]
+  await waehleOption(page, 'node-hinzu', 'blatt'); // [Quelle: visgraph.spec.ts Z.43]
   await page.evaluate(() => {
     const k = window.__kosmo;
     const graph = k.state().doc.byKind('visgraph')[0] as unknown as {
@@ -884,13 +885,13 @@ export async function blattPublizieren(page: Page, opts: BlattOptionen = {}): Pr
   await page.click(`[data-testid="place-${opts.art ?? 'plan'}"]`); // [Quelle: PublishWorkspace.tsx Z.485/501/504/507 / sim-umbau.spec.ts Z.139]
   await page.locator('[data-testid^="placement-"]').first().click(); // [Quelle: PublishWorkspace.tsx Z.770 / sim-umbau.spec.ts Z.148]
   if (opts.thema !== undefined) {
-    await page.selectOption('[data-testid="auswahl-thema"]', opts.thema); // [Quelle: PublishWorkspace.tsx Z.576 / sim-mfh.spec.ts Z.217]
+    await waehleOption(page, 'auswahl-thema', opts.thema); // [Quelle: PublishWorkspace.tsx Z.576 / sim-mfh.spec.ts Z.217]
   }
   if (opts.umbau !== undefined) {
-    await page.selectOption('[data-testid="auswahl-umbau"]', opts.umbau); // [Quelle: PublishWorkspace.tsx Z.557 / sim-umbau.spec.ts Z.149]
+    await waehleOption(page, 'auswahl-umbau', opts.umbau); // [Quelle: PublishWorkspace.tsx Z.557 / sim-umbau.spec.ts Z.149]
   }
   if (opts.massstab !== undefined) {
-    await page.selectOption('[data-testid="auswahl-massstab"]', opts.massstab); // [Quelle: PublishWorkspace.tsx Z.541]
+    await waehleOption(page, 'auswahl-massstab', opts.massstab); // [Quelle: PublishWorkspace.tsx Z.541]
   }
   await expect(page.locator('[data-testid="sheet-canvas"]')).toBeVisible(); // [Quelle: PublishWorkspace.tsx Z.695 / sim-mfh.spec.ts Z.218]
 }
@@ -1089,7 +1090,7 @@ export async function phaseWechseln(page: Page, siaPhase: SiaPhase, presetAnwend
   }
   const auswahl = page.locator('[data-testid="sia-phase-select"]'); // [Quelle: DesignWorkspace.tsx Z.1848]
   await expect(auswahl).toBeVisible();
-  await auswahl.selectOption(siaPhase);
+  await waehleOption(page, 'sia-phase-select', siaPhase);
   await expect
     .poll(() => page.evaluate(() => window.__kosmo.state().doc.settings.siaPhase))
     .toBe(siaPhase); // Regel R3: Doc pollen statt DOM

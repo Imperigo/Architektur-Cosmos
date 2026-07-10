@@ -28,6 +28,7 @@
  */
 import { chromium } from 'playwright-core';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { waehleOption, waehleOptionInScope } from '../helfer/waehleOption';
 
 const OUT = new URL('../../docs/rundgang/bilder/', import.meta.url).pathname;
 const URL_ = process.env.RUNDGANG_URL ?? 'http://localhost:5183';
@@ -337,7 +338,7 @@ await frisch(false);
 await page.click('[data-testid="module-design"]');
 await page.click('[data-testid="view-2d"]');
 await page.click('[data-testid="projekt-menu-toggle"]');
-await page.selectOption('[data-testid="sia-phase-select"]', 'bewilligung');
+await waehleOption(page, 'sia-phase-select', 'bewilligung');
 await page.waitForSelector('[data-testid="phasen-preset-angebot"]');
 await shot('11-phasen-preset-banner', 500);
 
@@ -453,7 +454,7 @@ await shot('17-vis-graph', 800);
 await page.click('[data-testid="vis-auto-kamera"]');
 await page.waitForSelector('[data-testid="vis-node-kamera"]');
 const ersterRenderNode = page.locator('[data-testid="vis-node-render"]').first();
-await ersterRenderNode.locator('[data-testid="vis-preset-select"]').selectOption('praesentation');
+await waehleOptionInScope(ersterRenderNode, 'vis-preset-select', 'praesentation');
 await ersterRenderNode.locator('[data-testid="render-ausfuehren"]').click();
 await ersterRenderNode.locator('[data-testid="render-bild"]').waitFor({ timeout: 45000 });
 await shot('17-vis-automatik', 800);

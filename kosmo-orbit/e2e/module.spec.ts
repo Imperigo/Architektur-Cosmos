@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /** KosmoPublish, KosmoPrepare, KosmoData-Katalog, Palette — Modulflüsse. */
 
@@ -117,7 +118,7 @@ test('Berechnungsliste: Raumprogramm → Zone zeichnen → ausgezogen + Δ Max l
   // T6: frisches Projekt hat KEIN Wettbewerbsprogramm als Default — Posten manuell anlegen
   await expect(page.locator('[data-testid="kein-raumprogramm"]')).toBeVisible();
   await page.click('[data-testid="posten-hinzufuegen"]');
-  await page.selectOption('[data-testid="posten-typ-0"]', 'marktgerecht');
+  await waehleOption(page, 'posten-typ-0', 'marktgerecht');
   // Raumprogramm: Marktgerecht 100 m², Max 200
   await page.fill('[data-testid="posten-hnf-0"]', '100');
   await page.fill('[data-testid="liste-max"]', '200');
@@ -477,7 +478,7 @@ test('Blatt-Pflege: Massstab ändern, Titel setzen, Text verschieben, Blatt lös
   await page.click('[data-testid="plakat-klassisch"]');
   // Platzierung wählen → Massstab 1:500 → steht im Blatt-SVG
   await page.locator('[data-testid^="placement-"]').first().click();
-  await page.selectOption('[data-testid="auswahl-massstab"]', '500');
+  await waehleOption(page, 'auswahl-massstab', '500');
   await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('1:500');
   // Titel umbenennen
   await page.fill('[data-testid="auswahl-titel"]', 'Situation');
@@ -730,13 +731,13 @@ test('Bemassungs-Stile: Werkplan zeigt Innenkette + Höhenkoten, Wettbewerb nich
   await expect(page.locator('[data-testid="dim-kette-oeffnung"]').first()).toBeVisible();
   await expect(page.locator('[data-testid="dim-kette-innen"]')).toHaveCount(0);
   // Werkplan-Preset → Innenkette erscheint
-  await page.selectOption('[data-testid="bemassung-stil"]', 'werkplan');
+  await waehleOption(page, 'bemassung-stil', 'werkplan');
   await expect(page.locator('[data-testid="dim-kette-innen"]').first()).toBeVisible();
   // Höhenkoten in der Ansicht (4er-Splitscreen, Ansicht Süd)
   await page.click('text=4er');
   await expect(page.locator('[data-testid="hoehenkote"]').first()).toBeVisible();
   // Wettbewerb → nur Gesamtmass, keine Innenkette
-  await page.selectOption('[data-testid="bemassung-stil"]', 'wettbewerb');
+  await waehleOption(page, 'bemassung-stil', 'wettbewerb');
   await expect(page.locator('[data-testid="dim-kette-innen"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="dim-kette-oeffnung"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="dim-kette-gesamt"]').first()).toBeVisible();
@@ -773,13 +774,13 @@ test('SIA-Phase: Vorprojekt reduziert die Darstellung, Werkplan detailliert voll
   // Default Werkplan: Dämmschicht als eigene Region (Schraffur-Füllung)
   await expect(planview.locator('path[fill="url(#hatch-daemmung)"]').first()).toBeAttached();
   // Vorprojekt: EIN Poché, keine Dämmschicht, kein Türbogen; Bemassung koppelt auf «Wettbewerb»
-  await page.selectOption('[data-testid="phase-stil"]', 'vorprojekt');
+  await waehleOption(page, 'phase-stil', 'vorprojekt');
   await expect(planview.locator('path[fill="url(#hatch-daemmung)"]')).toHaveCount(0);
-  await expect(page.locator('[data-testid="bemassung-stil"]')).toHaveValue('wettbewerb');
+  await expect(page.locator('[data-testid="bemassung-stil"]')).toHaveAttribute('data-value', 'wettbewerb');
   // EIN Undo stellt Phase + Bemassung zusammen zurück
   await page.click('[data-testid="undo"]');
   await expect(planview.locator('path[fill="url(#hatch-daemmung)"]').first()).toBeAttached();
-  await expect(page.locator('[data-testid="phase-stil"]')).toHaveValue('werkplan');
+  await expect(page.locator('[data-testid="phase-stil"]')).toHaveAttribute('data-value', 'werkplan');
 });
 
 test('SIA-Teilphase (v0.6.3): eigener Projektstand, koppelt die Plan-Detaillierung NICHT, undo-fähig', async ({ page }) => {
@@ -800,16 +801,16 @@ test('SIA-Teilphase (v0.6.3): eigener Projektstand, koppelt die Plan-Detaillieru
   const teilphase = page.locator('[data-testid="sia-phase-select"]');
   await expect(teilphase).toBeVisible();
   // Default: Beginn des SIA-Zyklus (Wettbewerb/Studie).
-  await expect(teilphase).toHaveValue('wettbewerb');
+  await expect(teilphase).toHaveAttribute('data-value', 'wettbewerb');
   // Wert wechseln → nur der Projektstand ändert sich, die Plan-Detaillierung
   // («Phase», Default werkplan) bleibt unangetastet — keine automatische Kopplung.
-  await page.selectOption('[data-testid="sia-phase-select"]', 'bewilligung');
-  await expect(teilphase).toHaveValue('bewilligung');
-  await expect(page.locator('[data-testid="phase-stil"]')).toHaveValue('werkplan');
+  await waehleOption(page, 'sia-phase-select', 'bewilligung');
+  await expect(teilphase).toHaveAttribute('data-value', 'bewilligung');
+  await expect(page.locator('[data-testid="phase-stil"]')).toHaveAttribute('data-value', 'werkplan');
   // Undo stellt die Teilphase zurück.
   await page.click('[data-testid="undo"]');
-  await expect(teilphase).toHaveValue('wettbewerb');
-  await expect(page.locator('[data-testid="phase-stil"]')).toHaveValue('werkplan');
+  await expect(teilphase).toHaveAttribute('data-value', 'wettbewerb');
+  await expect(page.locator('[data-testid="phase-stil"]')).toHaveAttribute('data-value', 'werkplan');
 });
 
 test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ page }) => {
@@ -826,7 +827,7 @@ test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ pa
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('button:text-is("Treppe")');
-  await page.selectOption('[data-testid="treppen-form"]', 'u');
+  await waehleOption(page, 'treppen-form', 'u');
   // Zwei Klicks im Plan (rechte Hälfte, auto-zentriert um 5000/3000)
   await page.mouse.click(680, 480);
   await page.mouse.click(950, 480);
@@ -893,9 +894,10 @@ test('Kosmo-Einstellungen (V2-B3): Anthropic-Felder erscheinen, Schlüssel bleib
   await page.reload();
   await page.click('[data-testid="module-design"]');
   await page.click('[aria-label="Einstellungen"]');
-  // Das Verbindungs-Select eindeutig ansteuern (Toolbar hat weitere Selects)
-  const verbindung = page.locator('select', { has: page.locator('option[value="anthropic"]') });
-  await verbindung.selectOption('anthropic');
+  // Das Verbindungs-Select eindeutig ansteuern — seit v0.6.9 (KSelect =
+  // Custom-Dropdown) über sein eigenes data-testid statt über den
+  // `option[value="anthropic"]`-Filter (die Optionen liegen nur noch im Popup).
+  await waehleOption(page, 'verbindung-select', 'anthropic');
   const schluessel = page.locator('input[type="password"]');
   await expect(schluessel).toBeVisible();
   await schluessel.fill('sk-ant-test');
@@ -1597,7 +1599,7 @@ test('Modul-Editor: Element aufziehen → speichern → Auswahl im Panel → 3D 
   await page.click('[data-testid="modul-speichern"]');
   await expect(page.locator('[data-testid="modul-editor"]')).toHaveCount(0);
   // Im Panel wählbar, 3D rendert ohne Fehler
-  await page.selectOption('[data-testid="modul-wahl"]', 'Testmodul');
+  await waehleOption(page, 'modul-wahl', 'Testmodul');
   await page.click('[data-testid="module-3d"]');
   await page.evaluate(() => window.__kosmoViewport.renderOnce());
   expect(await page.evaluate(() => window.__kosmo.state().doc.settings.fassadenModule.length)).toBe(1);
@@ -1634,7 +1636,7 @@ test('Module je Fassade: Dropdown weist zu, Bilanz zieht nach', async ({ page })
   });
   await page.click('[data-testid="studie-toggle"]');
   const vorher = await page.locator('[data-testid="module-bilanz"]').innerText();
-  await page.selectOption('[data-testid="zuweisung-1"]', 'Schmal');
+  await waehleOption(page, 'zuweisung-1', 'Schmal');
   await expect.poll(() => page.locator('[data-testid="module-bilanz"]').innerText()).not.toBe(vorher);
   expect(
     await page.evaluate(() => window.__kosmo.state().doc.byKind('mass')[0].module),
@@ -1851,13 +1853,13 @@ test('Umbau-Status (Vision A1): Inspector setzt Abbruch → Plan färbt gelb (K2
     });
     st.select([w.patches[0].id]);
   });
-  await page.selectOption('[data-testid="inspector-renovation"]', 'abbruch');
+  await waehleOption(page, 'inspector-renovation', 'abbruch');
   await expect(page.locator('path.renovation-abbruch')).toHaveCount(1);
   // K2 (Owner-Rundgang 0.6.2, S. 18): kein Diagonalkreuz mehr — die gelbe
   // Fläche allein ist die SIA-Signatur.
   await expect(page.locator('line.abbruch-kreuz')).toHaveCount(0);
   // Umschalten auf Neubau: gelbe Region weg, rote Region da
-  await page.selectOption('[data-testid="inspector-renovation"]', 'neu');
+  await waehleOption(page, 'inspector-renovation', 'neu');
   await expect(page.locator('path.renovation-abbruch')).toHaveCount(0);
   await expect(page.locator('path.renovation-neu')).toHaveCount(1);
 });
@@ -1982,9 +1984,9 @@ test('Massstabs-Automatik (Vision B5): Phasenwechsel schlägt SIA-Massstab vor',
   await page.click('[data-testid="module-design"]');
   // T7: Phase sitzt jetzt im Projekt-Menü (selten geändert) statt in der Dauerleiste.
   await page.click('[data-testid="projekt-menu-toggle"]');
-  await page.selectOption('[data-testid="phase-stil"]', 'vorprojekt');
+  await waehleOption(page, 'phase-stil', 'vorprojekt');
   await expect(page.locator('[data-testid="massstab-hinweis"]')).toContainText('1:200');
-  await page.selectOption('[data-testid="phase-stil"]', 'werkplan');
+  await waehleOption(page, 'phase-stil', 'werkplan');
   await expect(page.locator('[data-testid="massstab-hinweis"]')).toContainText('1:50');
   await page.click('[data-testid="massstab-ok"]');
   await expect(page.locator('[data-testid="massstab-hinweis"]')).toHaveCount(0);
@@ -2057,9 +2059,9 @@ test('Rollen-Vorstufe (Vision D2): Rolle «Ausführung» rückt KosmoPublish nac
   // vorderste Untertool ist zugleich das Primärziel des Hauptwerkzeug-Klicks).
   const erstesUntertool = page.locator('[data-testid="orbit-faecher-design"] [data-testid^="module-"]').first();
   await expect(erstesUntertool).toHaveAttribute('data-testid', 'module-design');
-  await page.selectOption('[data-testid="rolle-select"]', 'ausfuehrung');
+  await waehleOption(page, 'rolle-select', 'ausfuehrung');
   await expect(erstesUntertool).toHaveAttribute('data-testid', 'module-publish');
-  await page.selectOption('[data-testid="rolle-select"]', '');
+  await waehleOption(page, 'rolle-select', '');
   await expect(erstesUntertool).toHaveAttribute('data-testid', 'module-design');
 });
 
@@ -2101,7 +2103,7 @@ test('Umbau-Filter je Blatt (RE-ARCHICAD A2): Abbruchplan blendet Neubau aus', a
   expect(await farben()).toEqual({ rot: true, gelb: true });
   // Platzierung wählen → Abbruchplan: Neubau verschwindet, Status im Modell
   await page.locator('[data-testid^="placement-"]').first().click();
-  await page.selectOption('[data-testid="auswahl-umbau"]', 'abbruch');
+  await waehleOption(page, 'auswahl-umbau', 'abbruch');
   await expect
     .poll(async () => (await farben()).rot, { message: 'Neubau-Rot muss aus dem Abbruchplan verschwinden' })
     .toBe(false);
@@ -2225,7 +2227,7 @@ test('Trace + Katalog (RE-ARCHICAD A8): Geschoss unterlegen, Katalog-Download', 
   await expect(page.locator('[data-testid="trace-layer"]')).toHaveCount(0);
   const egId = await page.evaluate(() => window.__kosmo.state().activeStoreyId);
   await page.click('button:text-is("1.OG")');
-  await page.selectOption('[data-testid="trace-select"]', egId!);
+  await waehleOption(page, 'trace-select', egId!);
   await expect(page.locator('[data-testid="trace-layer"] path').first()).toBeVisible();
   // Katalog-Export lädt eine .json mit dem Aufbau
   await page.click('header button[aria-label="Zur Zentrale"]');

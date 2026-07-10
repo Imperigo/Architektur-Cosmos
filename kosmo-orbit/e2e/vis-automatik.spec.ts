@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waehleOptionInScope } from './helfer/waehleOption';
 
 /**
  * Owner-Befund K20/A10 — KosmoVis-Automatik: Auto-Kamera (deterministisch aus
@@ -65,7 +66,7 @@ test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-
 
   // Preset am ERSTEN Render-Node wählen (bestehender vis.nodeParametrieren-Weg)
   const ersterRenderNode = page.locator('[data-testid="vis-node-render"]').first();
-  await ersterRenderNode.locator('[data-testid="vis-preset-select"]').selectOption('praesentation');
+  await waehleOptionInScope(ersterRenderNode, 'vis-preset-select', 'praesentation');
 
   // Ausführen — Fake-Worker beantwortet den Job, das Bild hängt am Node
   await ersterRenderNode.locator('[data-testid="render-ausfuehren"]').click();

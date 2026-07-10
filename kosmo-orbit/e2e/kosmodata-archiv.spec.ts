@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * D5 (Serie D, KosmoData-Dach) — der Archiv-Tab: das Manifest für «alles auf
@@ -38,7 +39,7 @@ test('KosmoData-Archiv: Leerzustand, manuelle Erfassung, Ordner-Register, Suche,
   // Manuelle Erfassung eines Bestands.
   await page.fill('[data-testid="archiv-feld-name"]', 'Projekte 2010-2020');
   await page.fill('[data-testid="archiv-feld-pfad"]', 'D:\\Archiv\\Projekte 2010-2020');
-  await page.selectOption('[data-testid="archiv-feld-kategorie"]', 'projekte');
+  await waehleOption(page, 'archiv-feld-kategorie', 'projekte');
   await page.click('[data-testid="archiv-hinzu"]');
 
   await expect(page.locator('[data-testid="meldung-erfolg"]')).toBeVisible();

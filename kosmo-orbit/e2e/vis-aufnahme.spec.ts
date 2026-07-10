@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { viewportAufnahme } from './sim/bausteine';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * v0.6.7 Phase 0 — Viewport-Aufnahme-Node (Typ `aufnahme`, Kategorie Quelle).
@@ -54,7 +55,7 @@ async function aufnahmeVorbereiten(page: import('@playwright/test').Page): Promi
 test('Viewport-Aufnahme: TKB laden → «Für Vis aufnehmen» → aufnahme-Node zeigt das Bild', async ({ page }) => {
   await aufnahmeVorbereiten(page);
 
-  await page.selectOption('[data-testid="node-hinzu"]', 'aufnahme'); // [Quelle: VisWorkspace.tsx Z.326, Katalog additiv 11→12]
+  await waehleOption(page, 'node-hinzu', 'aufnahme'); // [Quelle: VisWorkspace.tsx Z.326, Katalog additiv 11→12]
   await expect(page.locator('[data-testid="vis-node-aufnahme"]')).toHaveCount(1);
 
   const bild = page.locator('[data-testid="vis-node-aufnahme"] [data-testid="aufnahme-bild"]');
@@ -68,8 +69,8 @@ test('Viewport-Aufnahme: TKB laden → «Für Vis aufnehmen» → aufnahme-Node 
 test('aufnahme → vergleich: verbinden funktioniert, das Bild erscheint in der Vergleichsfläche', async ({ page }) => {
   await aufnahmeVorbereiten(page);
 
-  await page.selectOption('[data-testid="node-hinzu"]', 'aufnahme');
-  await page.selectOption('[data-testid="node-hinzu"]', 'vergleich');
+  await waehleOption(page, 'node-hinzu', 'aufnahme');
+  await waehleOption(page, 'node-hinzu', 'vergleich');
   await page.evaluate(() => {
     const k = window.__kosmo;
     const graph = k.state().doc.byKind('visgraph')[0]!;
@@ -90,8 +91,8 @@ test('aufnahme → vergleich: verbinden funktioniert, das Bild erscheint in der 
 test('aufnahme → blatt: das Bild landet auf einem Blatt (sheet.bilder-Delta)', async ({ page }) => {
   await aufnahmeVorbereiten(page);
 
-  await page.selectOption('[data-testid="node-hinzu"]', 'aufnahme');
-  await page.selectOption('[data-testid="node-hinzu"]', 'blatt');
+  await waehleOption(page, 'node-hinzu', 'aufnahme');
+  await waehleOption(page, 'node-hinzu', 'blatt');
 
   const bilderVorher = await page.evaluate(() =>
     window.__kosmo

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import * as B from './sim/bausteine';
 import { SZENARIEN } from './sim/szenarien';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * VP6 Phase 3 — Bauprojekt (v0.6.3, `docs/V063-VOLLPROJEKT-KONZEPT.md`
@@ -103,7 +104,7 @@ test('VP6 Phase 3 — Bauprojekt: Plan-Detaillierung + Bemassung → KV-Kennwert
     await page.click('[data-testid="projekt-menu-toggle"]');
   }
   await expect(page.locator('[data-testid="dim-kette-innen"]')).toHaveCount(0); // Standard: keine Innenkette
-  await page.selectOption('[data-testid="bemassung-stil"]', 'werkplan'); // [Quelle: DesignWorkspace.tsx Z.1871]
+  await waehleOption(page, 'bemassung-stil', 'werkplan'); // [Quelle: DesignWorkspace.tsx Z.1871]
   await expect(page.locator('[data-testid="dim-kette-innen"]').first()).toBeVisible();
 
   // ---------------------------------------------------------------------

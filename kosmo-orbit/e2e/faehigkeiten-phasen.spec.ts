@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * A7+A8 (Owner-Befunde K17+K18, gekoppelt, v0.6.3):
@@ -100,7 +101,7 @@ test('Teilphase → Bewilligung: Preset wird angeboten, Anwenden hebt KV/Sonne, 
   const angebot = page.locator('[data-testid="phasen-preset-angebot"]');
   await expect(angebot).toHaveCount(0); // kein Angebot vor einem echten Wechsel
 
-  await page.selectOption('[data-testid="sia-phase-select"]', 'bewilligung');
+  await waehleOption(page, 'sia-phase-select', 'bewilligung');
   await expect(angebot).toBeVisible();
   await expect(angebot).toContainText('Bewilligungsverfahren');
   await expect(angebot).toContainText('KV');
@@ -130,7 +131,7 @@ test('Ablehnen-Pfad: «Nicht jetzt» schliesst das Angebot ohne jede Änderung',
   await oeffneKosmoDesign(page);
 
   await page.click('[data-testid="projekt-menu-toggle"]');
-  await page.selectOption('[data-testid="sia-phase-select"]', 'ausschreibung');
+  await waehleOption(page, 'sia-phase-select', 'ausschreibung');
   const angebot = page.locator('[data-testid="phasen-preset-angebot"]');
   await expect(angebot).toBeVisible();
   await expect(angebot).toContainText('Submissions-Check');

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * W1 (v0.6.5, UI-KONZEPT-065 §5) — KosmoVis-Oberfläche: die vier neuen
@@ -149,15 +150,15 @@ test('Ketten-Überlappung (Rundgang-Befund 0.6.5): zweiter «Drei Stimmungen»-K
   await page.screenshot({ path: 'e2e-results/vis-ketten-entzerrt.png' });
 });
 
-test('Node-Palette: Kategorien sichtbar, Klick fügt einen Node hinzu — node-hinzu-Select bleibt der native E2E-Vertrag', async ({
+test('Node-Palette: Kategorien sichtbar, Klick fügt einen Node hinzu — node-hinzu bedient das KSelect-Dropdown (waehleOption)', async ({
   page,
 }) => {
   await oeffneVis(page);
   await page.click('[data-testid="graph-neu"]');
   await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
 
-  // Der native Select bleibt unverändert bedienbar (selectOption).
-  await page.selectOption('[data-testid="node-hinzu"]', 'modell');
+  // Seit v0.6.9 ist KSelect ein Custom-Dropdown — bedient per waehleOption.
+  await waehleOption(page, 'node-hinzu', 'modell');
   await expect(page.locator('[data-testid="vis-node-modell"]')).toHaveCount(1);
 
   // Palette ZUSÄTZLICH: öffnen, alle vier Kategorien sichtbar.
@@ -227,8 +228,8 @@ test('SK-V3 Prompt-Clamp: langer Text lässt die Karte NICHT wachsen, node-expan
 }) => {
   await oeffneVis(page);
   await page.click('[data-testid="graph-neu"]');
-  await page.selectOption('[data-testid="node-hinzu"]', 'prompt');
-  await page.selectOption('[data-testid="node-hinzu"]', 'kombinierer');
+  await waehleOption(page, 'node-hinzu', 'prompt');
+  await waehleOption(page, 'node-hinzu', 'kombinierer');
 
   const promptNode = page.locator('[data-testid="vis-node-prompt"]');
   const kombNode = page.locator('[data-testid="vis-node-kombinierer"]');
@@ -349,8 +350,8 @@ test('Minimap: Klick verschiebt den Viewport (Zentrum wandert, Zoom bleibt gleic
 test('Minimap-Toggle: unter 5 Nodes standardmässig aus, Klick zeigt/versteckt sie', async ({ page }) => {
   await oeffneVis(page);
   await page.click('[data-testid="graph-neu"]');
-  await page.selectOption('[data-testid="node-hinzu"]', 'modell');
-  await page.selectOption('[data-testid="node-hinzu"]', 'material');
+  await waehleOption(page, 'node-hinzu', 'modell');
+  await waehleOption(page, 'node-hinzu', 'material');
   await expect(page.locator(ALLE_KETTEN_NODE_TESTIDS)).toHaveCount(2);
 
   const toggle = page.locator('[data-testid="vis-minimap-toggle"]');

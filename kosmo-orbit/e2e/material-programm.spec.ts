@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * v0.6.3 / B4 (Owner-Befund K21 «Materialbibliothek ausbauen», Stufe 1).
@@ -75,7 +76,7 @@ test('Materialbibliothek K21: eigenes Material — Quelle ist Pflicht (Validieru
 
   // Mit Quelle + Dimensionen + Materialart → gespeichert, taucht in der Liste auf.
   await page.fill('[data-testid="material-quelle"]', 'Musterlieferant AG, Datenblatt 2026');
-  await page.selectOption('[data-testid="material-art"]', 'baumaterial');
+  await waehleOption(page, 'material-art', 'baumaterial');
   await page.fill('[data-testid="material-region"]', 'Zürich');
   await page.fill('[data-testid="material-laenge"]', '250');
   await page.fill('[data-testid="material-breite"]', '120');

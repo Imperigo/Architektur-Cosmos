@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * Cloud-Login mit Abo («Mit Claude anmelden», Owner-Auftrag): der OAuth-Weg
@@ -76,15 +77,17 @@ test('Claude-Modell-Select ist sichtbar und der Wechsel persistiert nach Reload'
   const select = page.locator('[data-testid="claude-modell-select"]');
   await expect(select).toBeVisible();
   // Owner-Default: Opus 4.8, solange nichts anderes gewählt wurde.
-  await expect(select).toHaveValue('claude-opus-4-8');
+  // (v0.6.9: KSelect ist ein Custom-Dropdown — der Wert steht als
+  // `data-value` am Trigger, nicht mehr als select-value.)
+  await expect(select).toHaveAttribute('data-value', 'claude-opus-4-8');
 
-  await select.selectOption('claude-sonnet-5');
+  await waehleOption(page, 'claude-modell-select', 'claude-sonnet-5');
   const nachWahl = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
   expect(nachWahl.anthropicModel).toBe('claude-sonnet-5');
 
   await page.reload();
   await oeffneCloudEinstellungen(page);
-  await expect(page.locator('[data-testid="claude-modell-select"]')).toHaveValue('claude-sonnet-5');
+  await expect(page.locator('[data-testid="claude-modell-select"]')).toHaveAttribute('data-value', 'claude-sonnet-5');
 });
 
 test('Claude-Modell-Select: Freitext-Override für eigene Modell-IDs, persistiert ebenfalls', async ({ page }) => {
@@ -96,7 +99,7 @@ test('Claude-Modell-Select: Freitext-Override für eigene Modell-IDs, persistier
   await page.reload();
   await oeffneCloudEinstellungen(page);
 
-  await page.locator('[data-testid="claude-modell-select"]').selectOption('freitext');
+  await waehleOption(page, 'claude-modell-select', 'freitext');
   await page.getByLabel('Modell-ID (Freitext)').fill('claude-opus-4-9-preview');
 
   const s = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
@@ -104,6 +107,6 @@ test('Claude-Modell-Select: Freitext-Override für eigene Modell-IDs, persistier
 
   await page.reload();
   await oeffneCloudEinstellungen(page);
-  await expect(page.locator('[data-testid="claude-modell-select"]')).toHaveValue('freitext');
+  await expect(page.locator('[data-testid="claude-modell-select"]')).toHaveAttribute('data-value', 'freitext');
   await expect(page.getByLabel('Modell-ID (Freitext)')).toHaveValue('claude-opus-4-9-preview');
 });

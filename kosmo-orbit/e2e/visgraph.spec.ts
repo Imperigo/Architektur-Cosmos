@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * V1-Finish P2: KosmoVis Node-Tree — die Kette Graph bauen → Render über
@@ -56,7 +57,7 @@ test('Node-Tree-Kette: Drei Stimmungen → Ausführen → Bild am Node → Aufs 
   expect(bildBreite).toBeGreaterThan(0);
 
   // Blatt-Node ansetzen und verbinden (präziser Befehl — wie Kosmo es täte)
-  await page.selectOption('[data-testid="node-hinzu"]', 'blatt');
+  await waehleOption(page, 'node-hinzu', 'blatt');
   await page.evaluate(() => {
     const k = window.__kosmo;
     const graph = k.state().doc.byKind('visgraph')[0]!;
@@ -82,8 +83,8 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
   await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="module-vis"]');
   await page.click('[data-testid="graph-neu"]');
-  await page.selectOption('[data-testid="node-hinzu"]', 'prompt');
-  await page.selectOption('[data-testid="node-hinzu"]', 'kombinierer');
+  await waehleOption(page, 'node-hinzu', 'prompt');
+  await waehleOption(page, 'node-hinzu', 'kombinierer');
 
   // Erst warten, bis beide Nodes wirklich gelayoutet sind — sonst liefert
   // boundingBox() Vor-Layout-Koordinaten und der Drag verfehlt den Port (flaky).

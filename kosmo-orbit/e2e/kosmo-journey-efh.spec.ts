@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import type { SzenarioSkript } from '@kosmo/ai';
 import { kosmoChatSkript, projektStarten, viewportAufnahme } from './sim/bausteine';
 import { SZENARIEN } from './sim/szenarien';
+import { waehleOption, waehleOptionInScope } from './helfer/waehleOption';
 
 /**
  * v0.6.7 Simulationsrunde 1 / Journey A — «EFH kompakt, komplett über Kosmo»
@@ -204,8 +205,8 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
   // H-30 (0.6.8): die Options-Values sind stabile Schlüssel, nicht mehr die
   // Prompt-Langtexte selbst — `formularZusatz` (vis-jobs.ts) übersetzt sie
   // zurück, die Regex-Assertionen unten bleiben darum unverändert gültig.
-  await ersterRender.locator('[data-testid="render-formular-szene"]').selectOption('hof');
-  await ersterRender.locator('[data-testid="render-formular-jahreszeit"]').selectOption('winter');
+  await waehleOptionInScope(ersterRender, 'render-formular-szene', 'hof');
+  await waehleOptionInScope(ersterRender, 'render-formular-jahreszeit', 'winter');
   const finalPrompt = ersterRender.locator('[data-testid="render-final-prompt"]');
   await expect(finalPrompt).toContainText(/hof/i);
   await expect(finalPrompt).toContainText(/winter/i);
@@ -219,7 +220,7 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
 
   // ── Akt 3: Viewport-Aufnahme als zweite, ehrliche Bildquelle ──────────
   await viewportAufnahme(page);
-  await page.selectOption('[data-testid="node-hinzu"]', 'aufnahme');
+  await waehleOption(page, 'node-hinzu', 'aufnahme');
   const aufnahmeNode = page.locator('[data-testid="vis-node-aufnahme"]');
   await expect(aufnahmeNode).toBeVisible();
   const aufnahmeBild = aufnahmeNode.locator('img');

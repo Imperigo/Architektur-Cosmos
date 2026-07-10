@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * Serie J / Batch J3b — Tätigkeits-Adaption in der KosmoDesign-Werkzeugleiste
@@ -40,7 +41,7 @@ async function oeffneKosmoDesign(page: Page): Promise<void> {
  *  — dort hebt die Matrix die Export-Demotion planmässig gleich wieder an). */
 async function setzePhaseVorprojekt(page: Page): Promise<void> {
   await page.click('[data-testid="projekt-menu-toggle"]');
-  await page.selectOption('[data-testid="phase-stil"]', 'vorprojekt');
+  await waehleOption(page, 'phase-stil', 'vorprojekt');
   await page.click('[data-testid="projekt-menu-toggle"]'); // Menü wieder schliessen
 }
 

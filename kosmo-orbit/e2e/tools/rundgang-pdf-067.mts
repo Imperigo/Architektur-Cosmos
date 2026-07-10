@@ -39,6 +39,7 @@ import { chromium } from 'playwright-core';
 import { writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { waehleOption } from '../helfer/waehleOption';
 
 const ROOT = new URL('../../', import.meta.url).pathname; // kosmo-orbit/
 const KRITIK = `${ROOT}docs/rundgang/kritik-067/`;
@@ -174,7 +175,7 @@ await page.evaluate(() => window.__kosmoViewport.renderOnce());
 await page.click('[data-testid="viewport-aufnahme"]');
 await page.locator('[data-testid="meldung-erfolg"]', { hasText: 'aufgenommen' }).waitFor({ timeout: 10000 });
 await page.evaluate(() => window.__kosmo.open('vis'));
-await page.selectOption('[data-testid="node-hinzu"]', 'aufnahme');
+await waehleOption(page, 'node-hinzu', 'aufnahme');
 await page.waitForSelector('[data-testid="vis-node-aufnahme"]');
 await page.click('[data-testid="vis-kuratier-toggle"]');
 await page.waitForSelector('[data-testid="vis-kuratier-flaeche"]');

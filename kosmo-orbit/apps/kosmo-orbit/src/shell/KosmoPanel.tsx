@@ -1179,6 +1179,10 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             <KSelect
               size="sm"
               value={settings.provider}
+              // v0.6.9: eigenes testid — E2E fand dieses Select früher über
+              // `option[value="anthropic"]`, die Optionen liegen beim
+              // Custom-Dropdown aber nur noch im Popup (module.spec.ts).
+              data-testid="verbindung-select"
               onChange={(e) => {
                 const s = { ...settings, provider: e.target.value as KosmoSettings['provider'] };
                 setSettings(s);

@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import * as B from './sim/bausteine';
 import type { TerrainProfil } from './sim/bausteine';
 import { SZENARIEN } from './sim/szenarien';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * V1-Testlauf «Vollsimulation Umbau» — Haustyp Umbau/Sanierung.
@@ -72,8 +73,8 @@ test('Vollsimulation Umbau: Altbau-Sanierung Zürich-Aussersihl — Bestand mark
 
   // Bestand explizit markieren: die Brandmauer West bleibt unangetastet stehen
   await page.evaluate((id) => window.__kosmo.state().select([id]), west);
-  await page.selectOption('[data-testid="inspector-renovation"]', 'bestand');
-  await expect(page.locator('[data-testid="inspector-renovation"]')).toHaveValue('bestand');
+  await waehleOption(page, 'inspector-renovation', 'bestand');
+  await expect(page.locator('[data-testid="inspector-renovation"]')).toHaveAttribute('data-value', 'bestand');
   // Explizites «Bestand» sieht (SIA 400) wie unmarkiert aus — keine Sonderfarbe
   await expect(page.locator('path.renovation-abbruch')).toHaveCount(0);
   await expect(page.locator('path.renovation-neu')).toHaveCount(0);
@@ -82,13 +83,13 @@ test('Vollsimulation Umbau: Altbau-Sanierung Zürich-Aussersihl — Bestand mark
   // 0.6.2, S. 18): kein Diagonalkreuz mehr über die ganze Wand — SIA-sauber
   // ist die gelbe Fläche allein die Signatur.
   await page.evaluate((id) => window.__kosmo.state().select([id]), trennwand);
-  await page.selectOption('[data-testid="inspector-renovation"]', 'abbruch');
+  await waehleOption(page, 'inspector-renovation', 'abbruch');
   await expect(page.locator('path.renovation-abbruch')).toHaveCount(1);
   await expect(page.locator('line.abbruch-kreuz')).toHaveCount(0);
 
   // Neu: die Gartenstützmauer → rote Fläche im Plan, Abbruch bleibt unverändert stehen
   await page.evaluate((id) => window.__kosmo.state().select([id]), gartenmauer);
-  await page.selectOption('[data-testid="inspector-renovation"]', 'neu');
+  await waehleOption(page, 'inspector-renovation', 'neu');
   // Das Poché rendert EINEN Pfad je Schicht — die AW-Gartenmauer (3 Schichten)
   // ergibt entsprechend mehrere `renovation-neu`-Pfade; geprüft wird darum
   // «mindestens eine neu-Fläche erscheint», nicht eine feste Pfadzahl (Regel 1.4.1).
@@ -137,19 +138,19 @@ test('Vollsimulation Umbau: Altbau-Sanierung Zürich-Aussersihl — Bestand mark
   expect(await farben()).toEqual({ rot: true, gelb: true });
 
   await page.locator('[data-testid^="placement-"]').first().click();
-  await page.selectOption('[data-testid="auswahl-umbau"]', 'abbruch');
+  await waehleOption(page, 'auswahl-umbau', 'abbruch');
   await expect
     .poll(async () => (await farben()).rot, { message: 'Abbruchplan muss Neubau-Rot ausblenden' })
     .toBe(false);
   expect((await farben()).gelb).toBe(true);
 
-  await page.selectOption('[data-testid="auswahl-umbau"]', 'neu');
+  await waehleOption(page, 'auswahl-umbau', 'neu');
   await expect
     .poll(async () => (await farben()).gelb, { message: 'Neubauplan muss Abbruch-Gelb ausblenden' })
     .toBe(false);
   expect((await farben()).rot).toBe(true);
 
-  await page.selectOption('[data-testid="auswahl-umbau"]', 'bestand');
+  await waehleOption(page, 'auswahl-umbau', 'bestand');
   await expect
     .poll(async () => (await farben()).rot, { message: 'Bestandsplan darf weder Neubau- noch Abbruchfarbe zeigen' })
     .toBe(false);

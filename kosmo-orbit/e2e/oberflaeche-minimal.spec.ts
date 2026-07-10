@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * Serie K A5 (K15, Owner-Befund, wörtlich): «Oberfläche minimal: kein Text wo
@@ -38,7 +39,7 @@ async function oeffneKosmoDesign(page: Page): Promise<void> {
  *  Muster `oberflaeche-adaption.spec.ts`). */
 async function setzePhaseVorprojekt(page: Page): Promise<void> {
   await page.click('[data-testid="projekt-menu-toggle"]');
-  await page.selectOption('[data-testid="phase-stil"]', 'vorprojekt');
+  await waehleOption(page, 'phase-stil', 'vorprojekt');
   await page.click('[data-testid="projekt-menu-toggle"]'); // Menü wieder schliessen
 }
 

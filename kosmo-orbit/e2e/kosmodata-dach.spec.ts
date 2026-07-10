@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waehleOption } from './helfer/waehleOption';
 
 /**
  * D1 (Serie D, KosmoData-Dach) — der leichtgewichtige Übersichts-Tab in
@@ -180,13 +181,13 @@ test('K5: Archiv-Facette filtert nach Kategorie', async ({ page }) => {
   // Zwei Bestände in unterschiedlichen Kategorien erfassen.
   await page.fill('[data-testid="archiv-feld-name"]', 'Projekte-Ordner');
   await page.fill('[data-testid="archiv-feld-pfad"]', 'D:\\Archiv\\Projekte');
-  await page.selectOption('[data-testid="archiv-feld-kategorie"]', 'projekte');
+  await waehleOption(page, 'archiv-feld-kategorie', 'projekte');
   await page.click('[data-testid="archiv-hinzu"]');
   await expect(page.locator('[data-testid="archiv-eintrag"]')).toHaveCount(1);
 
   await page.fill('[data-testid="archiv-feld-name"]', 'Foto-Ordner');
   await page.fill('[data-testid="archiv-feld-pfad"]', 'D:\\Archiv\\Fotos');
-  await page.selectOption('[data-testid="archiv-feld-kategorie"]', 'fotos');
+  await waehleOption(page, 'archiv-feld-kategorie', 'fotos');
   await page.click('[data-testid="archiv-hinzu"]');
   await expect(page.locator('[data-testid="archiv-eintrag"]')).toHaveCount(2);
 

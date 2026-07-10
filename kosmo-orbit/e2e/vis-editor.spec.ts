@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { viewportAufnahme } from './sim/bausteine';
+import { waehleOption, waehleOptionInScope } from './helfer/waehleOption';
 
 /**
  * v0.6.7 Stream V1 (Nachtkampagne) — der neue Node-Editor-Feinschliff:
@@ -237,8 +238,8 @@ test('Ausrichten-links: setzt bei ≥2 ausgewählten Nodes dieselbe x (min-x all
 
 test('Kanten-Routing: Ortho-Toggle liefert nur H/V/Q-Segmente (kein C), zurück auf Kurve mit C', async ({ page }) => {
   await neuerLeererGraph(page);
-  await page.selectOption('[data-testid="node-hinzu"]', 'prompt');
-  await page.selectOption('[data-testid="node-hinzu"]', 'kombinierer');
+  await waehleOption(page, 'node-hinzu', 'prompt');
+  await waehleOption(page, 'node-hinzu', 'kombinierer');
   const promptNode = page.locator('[data-testid="vis-node-prompt"]');
   const kombNode = page.locator('[data-testid="vis-node-kombinierer"]');
   await expect(promptNode).toBeVisible();
@@ -271,8 +272,8 @@ test('Kanten-Routing: Ortho-Toggle liefert nur H/V/Q-Segmente (kein C), zurück 
 
 test('Node-Kollaps: Node schrumpft, Kante bleibt verbunden, erneuter Klick expandiert, Undo-fähig', async ({ page }) => {
   await neuerLeererGraph(page);
-  await page.selectOption('[data-testid="node-hinzu"]', 'prompt');
-  await page.selectOption('[data-testid="node-hinzu"]', 'kombinierer');
+  await waehleOption(page, 'node-hinzu', 'prompt');
+  await waehleOption(page, 'node-hinzu', 'kombinierer');
   const promptNode = page.locator('[data-testid="vis-node-prompt"]');
   const kombNode = page.locator('[data-testid="vis-node-kombinierer"]');
   await expect(promptNode).toBeVisible();
@@ -317,8 +318,8 @@ test('H-32-Regression: Formularfeld setzen, dann «Ausführen» zeigt das Render
   // H-30 (0.6.8): die Options-Values sind stabile Schlüssel, nicht mehr die
   // Prompt-Langtexte selbst — `formularZusatz` (vis-jobs.ts) übersetzt sie
   // zurück in den Render-Prompt.
-  await ersterRender.locator('[data-testid="render-formular-szene"]').selectOption('hof');
-  await ersterRender.locator('[data-testid="render-formular-jahreszeit"]').selectOption('winter');
+  await waehleOptionInScope(ersterRender, 'render-formular-szene', 'hof');
+  await waehleOptionInScope(ersterRender, 'render-formular-jahreszeit', 'winter');
   await ersterRender.locator('[data-testid="render-ausfuehren"]').click();
 
   // VOR dem Fix blieb der Status nach «fertig» als «veraltet» stehen und
@@ -342,7 +343,7 @@ test('H-36-Nachweis: Kuratier-Fläche nimmt auch einen aufnahme-Node mit vorhand
   await page.click('[data-testid="graph-neu"]');
   await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
 
-  await page.selectOption('[data-testid="node-hinzu"]', 'aufnahme');
+  await waehleOption(page, 'node-hinzu', 'aufnahme');
   await expect(page.locator('[data-testid="vis-node-aufnahme"]')).toHaveCount(1);
   await expect(page.locator('[data-testid="aufnahme-bild"]')).toBeVisible();
 
