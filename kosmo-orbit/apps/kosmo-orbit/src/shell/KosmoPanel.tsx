@@ -66,6 +66,12 @@ interface Bubble {
    * Station nur einen Text-Kontext lieferte).
    */
   blickBild?: string;
+  /**
+   * v0.6.9 Stream D: `Blick.zeit` (Date.now() beim Erfassen), NUR gesetzt
+   * zusammen mit `blickBild` — trägt die ehrliche Zeitangabe («erfasst
+   * HH:MM:SS») in die Vollbild-Vorschau, ohne sie aus dem Text zu parsen.
+   */
+  blickZeit?: number;
 }
 
 const journal = new LearningJournal(journalStore());
@@ -194,6 +200,14 @@ function istVisionFaehig(provider: KosmoSettings['provider']): boolean {
  */
 function kannBildVerstehen(provider: KosmoSettings['provider']): boolean {
   return provider !== 'mock';
+}
+
+/** v0.6.9 Stream D: ehrliche Uhrzeit («erfasst HH:MM:SS») für Ringpuffer-
+ * Tooltips und die Vollbild-Vorschau — lokale Zeit, `Date.now()`-basiert. */
+function formatiereZeit(zeit: number): string {
+  const d = new Date(zeit);
+  const zwei = (n: number) => String(n).padStart(2, '0');
+  return `${zwei(d.getHours())}:${zwei(d.getMinutes())}:${zwei(d.getSeconds())}`;
 }
 
 /**
@@ -373,6 +387,8 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   const [cards, setCards] = useState<PendingCard[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  /** v0.6.9 Stream D: Vollbild-Vorschau der Blick-Miniatur — `null` = geschlossen. */
+  const [vollbildBlick, setVollbildBlick] = useState<{ dataUrl: string; zeit: number; text: string } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   // K16 A6: Ziel des einmaligen Fokus-Wunschs (`consumeKosmoFokus`, s. Mount-Effekt unten).
   const eingabeRef = useRef<HTMLInputElement>(null);
@@ -395,12 +411,20 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   };
 
   /** v0.6.8 («Kosmo sieht mit»): die dezente Auto-Blick-Zeile, optional mit
-   * Mini-Thumbnail (nur wenn tatsächlich ein Bild erfasst/mitgeschickt wurde). */
-  const pushBlick = (text: string, blickBild?: string) => {
+   * Mini-Thumbnail (nur wenn tatsächlich ein Bild erfasst/mitgeschickt wurde).
+   * v0.6.9 Stream D: `blickZeit` (Blick.zeit) reist mit, fürs Overlay unten. */
+  const pushBlick = (text: string, blickBild?: string, blickZeit?: number) => {
     const id = ++bubbleSeq.current;
     setBubbles((b) => [
       ...b,
-      { id, who: 'system', text, testidSuffix: 'blick', ...(blickBild !== undefined ? { blickBild } : {}) },
+      {
+        id,
+        who: 'system',
+        text,
+        testidSuffix: 'blick',
+        ...(blickBild !== undefined ? { blickBild } : {}),
+        ...(blickZeit !== undefined ? { blickZeit } : {}),
+      },
     ]);
   };
 
@@ -611,6 +635,17 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     };
   }, [session]);
 
+  // v0.6.9 Stream D: Escape schliesst die Vollbild-Vorschau — Muster
+  // `CommandPalette.tsx` (`window.addEventListener('keydown', ...)`, prüft
+  // `e.key === 'Escape'` UND ob überhaupt etwas offen ist).
+  useEffect(() => {
+    const schliesseEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && vollbildBlick) setVollbildBlick(null);
+    };
+    window.addEventListener('keydown', schliesseEsc);
+    return () => window.removeEventListener('keydown', schliesseEsc);
+  }, [vollbildBlick]);
+
   useEffect(() => {
     // Journal-Spiegel kann nach dem Modul-Import angekommen sein (P6-Review #1)
     void hydriereJournal().then(() => journal.reload());
@@ -781,7 +816,11 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     if (blick.bild && bildVerstehbar) {
       const zusatz = ergaenzendeBilderAusRing(blick, 2);
       const bilder = [blick.bild, ...zusatz].map(({ mediaType, dataBase64 }) => ({ mediaType, dataBase64 }));
-      pushBlick(`Kosmo sieht: ‹${blick.stationTitel}›`, `data:${blick.bild.mediaType};base64,${blick.bild.dataBase64}`);
+      pushBlick(
+        `Kosmo sieht: ‹${blick.stationTitel}›`,
+        `data:${blick.bild.mediaType};base64,${blick.bild.dataBase64}`,
+        blick.zeit,
+      );
       void session.send(text, bilder);
       return;
     }
@@ -1299,6 +1338,60 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             />
             Kosmo sieht mit (aktuelle Station als Bild an jede Nachricht anhängen)
           </label>
+          {/* v0.6.9 Stream D: Ringpuffer-Anzeige — die letzten ≤3 erfassten
+              Blicke (`blickRingPuffer()`, state/kosmo-blick.ts), als Mini-
+              Thumbnails mit Station+Zeit. Reine Anzeige (kein eigener
+              Zustand nötig): der Ring lebt im Modul-Scope von kosmo-blick.ts,
+              ein Re-Render von KosmoPanel (z.B. nach jedem neuen Blick via
+              `pushBlick`/`setBubbles`) liest hier den jeweils aktuellen
+              Stand. Text-Blicke (kein `bild`) bekommen einen Platzhalter
+              statt eines erfundenen Bilds. */}
+          {blickRingPuffer().length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>Kosmos letzte Blicke</span>
+              <div data-testid="kosmo-blick-ring" style={{ display: 'flex', gap: 8 }}>
+                {blickRingPuffer()
+                  .slice(-3)
+                  .map((b) => (
+                    <div
+                      key={b.zeit}
+                      data-testid="kosmo-blick-ring-eintrag"
+                      title={`${b.stationTitel} — erfasst ${formatiereZeit(b.zeit)}`}
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, width: 52 }}
+                    >
+                      {b.bild ? (
+                        <img
+                          src={`data:${b.bild.mediaType};base64,${b.bild.dataBase64}`}
+                          alt=""
+                          style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover', border: '1px solid var(--k-line-strong)' }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 6,
+                            border: '1px dashed var(--k-line-strong)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: 9,
+                            color: 'var(--k-ink-faint)',
+                          }}
+                        >
+                          Text
+                        </div>
+                      )}
+                      <span style={{ fontSize: 9, color: 'var(--k-ink-faint)', textAlign: 'center', lineHeight: 1.2 }}>
+                        {b.stationTitel}
+                        <br />
+                        {formatiereZeit(b.zeit)}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
           <KButton
             size="sm"
             tone="ghost"
@@ -1381,9 +1474,19 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                 {b.blickBild && (
                   <img
                     src={b.blickBild}
-                    alt=""
+                    alt="Kosmos erfasster Blick — anklicken für die Vollbild-Vorschau"
                     data-testid="kosmo-blick-thumbnail"
-                    style={{ width: 26, height: 26, borderRadius: 6, objectFit: 'cover', border: '1px solid var(--k-line-strong)' }}
+                    onClick={() =>
+                      setVollbildBlick({ dataUrl: b.blickBild!, zeit: b.blickZeit ?? b.id, text: b.text })
+                    }
+                    style={{
+                      width: 26,
+                      height: 26,
+                      borderRadius: 6,
+                      objectFit: 'cover',
+                      border: '1px solid var(--k-line-strong)',
+                      cursor: 'pointer',
+                    }}
                   />
                 )}
                 <span>{b.text}</span>
@@ -1738,6 +1841,55 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           Senden
         </KButton>
       </div>
+      {/* v0.6.9 Stream D: Vollbild-Vorschau der Blick-Miniatur — Muster
+          `CommandPalette.tsx` (fixed Scrim, Klick/Escape schliesst, innerer
+          Container stoppt die Klick-Propagation). Eigener `zIndex` über dem
+          Panel selbst (KosmoPanel hat keinen eigenen Stacking-Kontext-Zwang),
+          damit die Vorschau auch bei geöffnetem Einstellungen-Bereich sichtbar ist. */}
+      {vollbildBlick && (
+        <div
+          data-testid="kosmo-blick-vollbild"
+          onClick={() => setVollbildBlick(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'color-mix(in srgb, var(--k-ink) 55%, transparent)',
+            display: 'grid',
+            justifyItems: 'center',
+            alignItems: 'center',
+            zIndex: 500,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 8,
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+            }}
+          >
+            <img
+              src={vollbildBlick.dataUrl}
+              alt="Kosmos erfasster Blick — Vollbild"
+              style={{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain', borderRadius: 8, border: '1px solid var(--k-line-strong)' }}
+            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#fff', fontSize: 12 }}>
+              <span>{vollbildBlick.text} — erfasst {formatiereZeit(vollbildBlick.zeit)}</span>
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="kosmo-blick-vollbild-schliessen"
+                onClick={() => setVollbildBlick(null)}
+              >
+                Schliessen
+              </KButton>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

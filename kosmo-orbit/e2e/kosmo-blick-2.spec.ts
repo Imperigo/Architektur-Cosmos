@@ -171,3 +171,73 @@ test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
     expect(bild.dataBase64.length).toBeGreaterThan(MIN_BASE64_LAENGE);
   });
 });
+
+test.describe('Kosmo-Blick — Chip klickbar + Ringpuffer-Anzeige (v0.6.9 Stream D)', () => {
+  test('Klick auf die Blick-Miniatur öffnet die Vollbild-Vorschau, Esc schliesst sie wieder', async ({ page }) => {
+    await projektMitTkb(page);
+    const skript: SzenarioSkript = {
+      id: 'blick-vollbild',
+      zuege: [{ nutzerErwartung: 'siehst', antwortText: 'Ich beschreibe, was ich sehe.', toolCalls: [] }],
+    };
+    await kosmoMitSkriptOeffnen(page, 'blick-vollbild', skript, true);
+    await sendeUndWarte(page, 'Was siehst du gerade?');
+
+    const thumbnail = page.locator('[data-testid="kosmo-blick-thumbnail"]');
+    await expect(thumbnail).toBeVisible({ timeout: 15_000 });
+
+    await thumbnail.click();
+    const overlay = page.locator('[data-testid="kosmo-blick-vollbild"]');
+    await expect(overlay).toBeVisible();
+    // Ehrliche Zeitangabe «erfasst HH:MM:SS» — Format geprüft, nicht der
+    // exakte Wert (der hängt von der Systemuhr des Testlaufs ab).
+    await expect(overlay).toContainText(/erfasst \d{2}:\d{2}:\d{2}/);
+
+    // Esc schliesst.
+    await page.keyboard.press('Escape');
+    await expect(overlay).toBeHidden();
+
+    // Erneut öffnen, diesmal per Klick auf den Schliessen-Knopf.
+    await thumbnail.click();
+    await expect(overlay).toBeVisible();
+    await page.click('[data-testid="kosmo-blick-vollbild-schliessen"]');
+    await expect(overlay).toBeHidden();
+
+    // Erneut öffnen, diesmal per Scrim-Klick (ausserhalb des Bilds).
+    await thumbnail.click();
+    await expect(overlay).toBeVisible();
+    await overlay.click({ position: { x: 5, y: 5 } });
+    await expect(overlay).toBeHidden();
+  });
+
+  test('Kosmo-Einstellungen: Ringpuffer zeigt die letzten Blicke als Mini-Thumbnails mit Station+Zeit', async ({ page }) => {
+    await projektMitTkb(page);
+    const skript: SzenarioSkript = {
+      id: 'blick-ring-anzeige',
+      zuege: [
+        { nutzerErwartung: 'design', antwortText: 'Design-Antwort.', toolCalls: [] },
+        { nutzerErwartung: 'data', antwortText: 'Data-Antwort.', toolCalls: [] },
+      ],
+    };
+    await kosmoMitSkriptOeffnen(page, 'blick-ring-anzeige', skript, true);
+
+    await sendeUndWarte(page, 'Blick in KosmoDesign');
+    await expect(page.locator('[data-testid="kosmo-blick-zeile"]')).toHaveCount(1, { timeout: 15_000 });
+
+    await page.evaluate(() => window.__kosmo.open('data'));
+    await expect(page.locator('[data-testid="station-einstellungen-data"]')).toBeVisible();
+    await sendeUndWarte(page, 'Blick in KosmoData');
+    await expect(page.locator('[data-testid="kosmo-blick-zeile"]')).toHaveCount(2, { timeout: 15_000 });
+
+    // Einstellungen öffnen (Muster e2e/betrieb.spec.ts) — die Ringpuffer-
+    // Anzeige lebt direkt neben dem Blick-Toggle.
+    await page.click('[aria-label="Einstellungen"]');
+    const ring = page.locator('[data-testid="kosmo-blick-ring-eintrag"]');
+    await expect(ring.first()).toBeVisible();
+    // Design (Bild) UND Data (Text-Fallback, kein Bild) sind beide im Ring —
+    // die Anzeige zeigt für den Text-Blick ehrlich einen Platzhalter statt
+    // eines erfundenen Bilds.
+    const anzahl = await ring.count();
+    expect(anzahl).toBeGreaterThanOrEqual(2);
+    await expect(ring.last()).toContainText('KosmoData');
+  });
+});
