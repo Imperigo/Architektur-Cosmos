@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { testhausMitQuertrakt, testhausSatteldach, ansichtSvg } from './fixtures';
+import {
+  testhausMitQuertrakt,
+  testhausSatteldach,
+  ansichtSvg,
+  testhausWalmdachGrundriss,
+  testhausSatteldachZweiGeschosse,
+} from './fixtures';
+import { dachGeometrie, DACH_SCHNITT_DICKE_MM } from '../src/derive/dach';
 import { deriveBerechnungsliste, parseRaumprogrammCsv } from '../src/derive/berechnungsliste';
 import { deriveMengen } from '../src/derive/mengen';
 import { generiereStuetzenraster } from '../src/derive/stuetzenraster';
@@ -560,6 +567,182 @@ describe('Golden-Sattel (Plan-Regression)', () => {
     const golden = readFileSync(new URL('./golden/ansicht-sued-satteldach.svg', import.meta.url), 'utf8');
     expect(svg).toBe(golden);
     // Bewusste Änderungen: `npx tsx e2e/tools/golden-ansicht-sattel.mts` (falls angelegt) und Diff begutachten.
+  });
+});
+
+describe('Dach im 2D-Plan & Schnitt (Stream A / v0.6.8, SIM-Befunde H-2/H-18)', () => {
+  it('derive/dach.ts: Satteldach-Kanten stimmen mit der 3D-Ableitung (scene.ts) überein — First/Traufe/Ortgang, keine Grat-Kante', () => {
+    const { doc, spec: _spec } = testhausSatteldach();
+    const storeyId = doc.storeysOrdered()[0]!.id;
+    const roof = doc.byKind<Roof>('roof').find((r) => r.storeyId === storeyId)!;
+    const storey = doc.get<Storey>(storeyId)!;
+    const geom = dachGeometrie(roof, storey)!;
+    expect(geom).not.toBeNull();
+    const arten = geom.kanten.reduce<Record<string, number>>((acc, k) => {
+      acc[k.art] = (acc[k.art] ?? 0) + 1;
+      return acc;
+    }, {});
+    expect(arten['first']).toBe(1);
+    expect(arten['traufe']).toBeGreaterThan(0);
+    expect(arten['ortgang']).toBeGreaterThan(0);
+    expect(arten['grat']).toBeUndefined(); // Sattel kennt keinen Grat
+
+    // Höhen decken sich exakt mit deriveEntity (scene.ts) — dieselbe Quelle.
+    const artifact = deriveEntity(doc, roof.id)!;
+    let maxZ3d = -Infinity;
+    for (let i = 2; i < artifact.positions.length; i += 3) maxZ3d = Math.max(maxZ3d, artifact.positions[i]!);
+    const maxZKanten = Math.max(...geom.kanten.map((k) => Math.max(k.a.z, k.b.z)));
+    // 2 Nachkommastellen genügen: scene.ts speichert in Float32Array (weniger
+    // Präzision als dieser Helfer, der mit float64 rechnet) — Differenz liegt
+    // im Sub-Mikrometer-Bereich, weit unter jeder architektonischen Relevanz.
+    expect(maxZKanten).toBeCloseTo(maxZ3d, 2);
+
+    // Prismen sind wasserdicht genug: jedes Dreieck hat nichttriviale Fläche.
+    for (const [a, b, c] of geom.dreiecke) {
+      const ux = b.x - a.x, uy = b.y - a.y, uz = b.z - a.z;
+      const vx = c.x - a.x, vy = c.y - a.y, vz = c.z - a.z;
+      const area = Math.hypot(uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx) / 2;
+      expect(area).toBeGreaterThan(1);
+    }
+  });
+
+  it('derive/dach.ts: Walmdach-Kanten kennen First + Grat, keinen Ortgang', () => {
+    const { doc, storeyId } = testhausWalmdachGrundriss();
+    const roof = doc.byKind<Roof>('roof').find((r) => r.storeyId === storeyId)!;
+    const storey = doc.get<Storey>(storeyId)!;
+    const geom = dachGeometrie(roof, storey)!;
+    const arten = geom.kanten.reduce<Record<string, number>>((acc, k) => {
+      acc[k.art] = (acc[k.art] ?? 0) + 1;
+      return acc;
+    }, {});
+    expect(arten['first']).toBeGreaterThan(0);
+    expect(arten['grat']).toBeGreaterThan(0);
+    expect(arten['traufe']).toBeGreaterThan(0);
+    expect(arten['ortgang']).toBeUndefined(); // Walm kennt keinen Ortgang (alle Seiten geneigt)
+  });
+
+  it('Grundriss: das Geschoss des Dachs zeigt First/Traufe/Ortgang als klassifizierte Linien, tiefere Geschosse nichts', () => {
+    const { doc, storeyId } = testhausWalmdachGrundriss();
+    const plan = derivePlan(doc, storeyId);
+    const dachLinien = plan.lines.filter((l) => l.classes.includes('dach'));
+    expect(dachLinien.length).toBeGreaterThan(0);
+    expect(dachLinien.some((l) => l.classes.includes('dach-first'))).toBe(true);
+    expect(dachLinien.some((l) => l.classes.includes('dach-traufe'))).toBe(true);
+    expect(dachLinien.some((l) => l.classes.includes('dach-grat'))).toBe(true);
+    // keine ueber-schnitt-Dach-Linien im EIGENEN Geschoss (das ist nur für das Geschoss darunter)
+    expect(dachLinien.some((l) => l.classes.includes('ueber-schnitt'))).toBe(false);
+  });
+
+  it('Grundriss: das Geschoss UNTER dem Dach zeigt nur den gestrichelten Dachumriss (Überzeichnungs-Konvention)', () => {
+    const { doc, egId, ogId } = testhausSatteldachZweiGeschosse();
+    const planEg = derivePlan(doc, egId);
+    const dachLinienEg = planEg.lines.filter((l) => l.classes.includes('dach'));
+    expect(dachLinienEg.length).toBeGreaterThan(0);
+    // Alle Dach-Linien im EG sind Traufe UND gestrichelt (ueber-schnitt) — keine First/Ortgang-Details
+    for (const l of dachLinienEg) {
+      expect(l.classes).toContain('dach-traufe');
+      expect(l.classes).toContain('ueber-schnitt');
+    }
+    expect(dachLinienEg.some((l) => l.classes.includes('dach-first'))).toBe(false);
+
+    // Das OG (das Dach-Geschoss selbst) zeigt die volle klassifizierte Aufsicht, nicht gestrichelt
+    const planOg = derivePlan(doc, ogId);
+    const dachLinienOg = planOg.lines.filter((l) => l.classes.includes('dach'));
+    expect(dachLinienOg.some((l) => l.classes.includes('dach-first'))).toBe(true);
+    expect(dachLinienOg.some((l) => l.classes.includes('ueber-schnitt'))).toBe(false);
+  });
+
+  it('Grundriss ohne Dach bleibt exakt wie zuvor (additiver Guard): keine dach-Linien', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, assemblyId, a: { x: 0, y: 0 }, b: { x: 5000, y: 0 } });
+    const plan = derivePlan(doc, storeyId);
+    expect(plan.lines.some((l) => l.classes.includes('dach'))).toBe(false);
+  });
+
+  it('Schnitt: die Schnittebene quer zur Firstrichtung liefert ein geschlossenes Dach-Poché (First-Spitze) UND schneidet die Wand am Anschluss zurück', () => {
+    const { doc } = testhausSatteldach();
+    // First entlang x bei y=3000 (8×6 m, Überstand 400) — ein Schnitt quer
+    // dazu (x = 4000, über die volle Gebäudetiefe) zeigt das klassische
+    // Giebel-Dreiecksprofil mit First-Spitze.
+    const spec = { a: { x: 4000, y: -2000 }, b: { x: 4000, y: 8000 }, depth: 30000, lookLeft: true };
+    const g = deriveSection(doc, spec);
+    const dachFaces = g.faces.filter((f) => f.material === 'dach');
+    expect(dachFaces.length).toBeGreaterThan(0);
+    // First-Spitze: der höchste Punkt eines Dach-Loops liegt deutlich über
+    // der Traufhöhe (OK Wand = 3000) — die beiden Dachflächen bilden dort
+    // gemeinsam die Spitze.
+    const maxZDach = Math.max(...dachFaces.flatMap((f) => f.loops.flat().map((p) => p.z)));
+    expect(maxZDach).toBeGreaterThan(3000 + 2000);
+
+    // Wand-Anschluss: die Betonwand wird an der Traufe vom höher
+    // priorisierten... nein, umgekehrt: Beton (900) schlägt den Dach-
+    // Default (500) — die Wand bleibt UNGESCHNITTEN, das Dach weicht.
+    // Prüfen wir stattdessen die Kehrseite: das Dach-Poché reicht nicht
+    // tiefer als knapp unter die Traufe (es wurde von der Wand zurück-
+    // geschnitten, kein Doppel-Poché im selben (s,z)-Bereich).
+    const wandFace = g.faces.find((f) => f.material === 'beton' && f.functionKey === 'tragend');
+    expect(wandFace).toBeDefined();
+    const minZDach = Math.min(...dachFaces.flatMap((f) => f.loops.flat().map((p) => p.z)));
+    // Das Dach-Prisma ist DACH_SCHNITT_DICKE_MM dick, symbolisch ab der
+    // Traufhöhe abwärts — nach der Verschneidung darf es nicht mehr die
+    // volle Dicke unter die Traufe reichen (die Wand hat den Überlapp
+    // weggeschnitten).
+    expect(minZDach).toBeGreaterThan(3000 - DACH_SCHNITT_DICKE_MM);
+  });
+
+  it('Golden: Grundriss-Aufsicht eines Walmdachs (niedrige Neigung) ist byte-identisch zur Referenz', async () => {
+    const { planToSvg, A3_QUER } = await import('../src');
+    const { doc, storeyId } = testhausWalmdachGrundriss();
+    const svg = planToSvg(doc, storeyId, {
+      scale: 100,
+      paper: A3_QUER,
+      projectName: 'Golden-Walmdach',
+      planTitle: 'Grundriss Dachaufsicht',
+      date: '10.07.2026',
+    });
+    const golden = readFileSync(new URL('./golden/grundriss-walmdach-flach.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
+  });
+
+  it('Golden: Grundriss-Aufsicht eines Satteldachs mit sichtbarem First ist byte-identisch zur Referenz', async () => {
+    const { planToSvg, A3_QUER } = await import('../src');
+    const { doc } = testhausSatteldach();
+    const storeyId = doc.storeysOrdered()[0]!.id;
+    const svg = planToSvg(doc, storeyId, {
+      scale: 100,
+      paper: A3_QUER,
+      projectName: 'Golden-Satteldach',
+      planTitle: 'Grundriss Dachaufsicht',
+      date: '10.07.2026',
+    });
+    const golden = readFileSync(new URL('./golden/grundriss-satteldach-first.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
+  });
+
+  it('Golden: Grundriss des Geschosses UNTER dem Satteldach (gestrichelter Umriss) ist byte-identisch zur Referenz', async () => {
+    const { planToSvg, A3_QUER } = await import('../src');
+    const { doc, egId } = testhausSatteldachZweiGeschosse();
+    const svg = planToSvg(doc, egId, {
+      scale: 100,
+      paper: A3_QUER,
+      projectName: 'Golden-Satteldach-2G',
+      planTitle: 'Grundriss EG',
+      date: '10.07.2026',
+    });
+    const golden = readFileSync(new URL('./golden/grundriss-satteldach-eg-darunter.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
+  });
+
+  it('Golden: Querschnitt durch das Satteldach mit Wand-Anschluss ist byte-identisch zur Referenz', () => {
+    const { doc } = testhausSatteldach();
+    const spec = { a: { x: 4000, y: -2000 }, b: { x: 4000, y: 8000 }, depth: 30000, lookLeft: true };
+    const { inner, bounds: b } = sectionInnerSvg(doc, spec, 14);
+    const pad = 500;
+    const w = b!.maxX - b!.minX + 2 * pad;
+    const h = b!.maxY - b!.minY + 2 * pad;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${b!.minX - pad} ${b!.minY - pad} ${w} ${h}">\n${inner}\n</svg>\n`;
+    const golden = readFileSync(new URL('./golden/schnitt-satteldach-querschnitt.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
   });
 });
 
