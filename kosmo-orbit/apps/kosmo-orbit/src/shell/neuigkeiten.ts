@@ -35,6 +35,24 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.6.8',
+    datum: '2026-07-10',
+    punkte: [
+      { text: 'Weisses Papier: die Oberfläche kehrt vom Sandton zur weissen Palette zurück (Karten reinweiss, Grund hell) — die feine Papier-Korntextur bleibt.' },
+      { text: 'Das Dach erscheint endlich im 2D-Plan (Aufsicht mit First, Traufe und Ortgang; im Geschoss darunter gestrichelt) und im Schnitt (geschnittene Dachflächen mit Schraffur, sauber mit Wand und Decke verschnitten).', station: 'design' },
+      { text: 'Kosmo sieht mit: beim Senden einer Nachricht erfasst die App automatisch, was du gerade siehst (3D-Viewport, Plan, Schnitt oder Node-Fläche), und gibt es vision-fähigen Modellen als Bild mit — sichtbar als «Kosmo sieht: ‹Station›»-Zeile mit Miniatur, abschaltbar; ohne Vision-Modell steht ehrlich «Kosmo liest».' },
+      { text: 'Kosmo erinnert sich an die letzten Blicke (Stationswechsel) und kann per Werkzeug «ereignisse_lesen» die letzten ~20 Kommandos nachlesen — auch Nicht-Visuelles entgeht ihm nicht.' },
+      { text: 'KosmoData zeigt Referenzen ohne Internet ehrlich: statt kaputter Bild-Links gezeichnete Tusche-Piktogramme je Typologie plus «Bild nicht lokal — Quelle: …»; online lädt das Bild erst, wenn die Karte sichtbar wird (abschaltbar).', station: 'data' },
+      { text: 'Das Referenz-Dossier zeigt die bisher verborgenen Tiefen des Datenbestands: Programm, Kontext, Einordnung, kapitelweiser Architektur-Text, 3D-Modelle, Quellen und Datenbankprofil — aufklappbar gruppiert; dazu Querverweise ins Gedächtnis und Wissen.', station: 'data' },
+      { text: 'Wissens-Import per Docling: `tools/docling-ingest` wandelt PDFs lokal in Markdown-Notizen (mit ehrlichem Fehlpfad ohne Installation und klar markierter Test-Fixture); der Wissen-Tab zeigt Importe mit Herkunftszeile.', station: 'data' },
+      { text: 'Grundriss-Checks ohne Deckel: alle Befunde sichtbar, nach Schwere gruppiert und filterbar; jeder Befund trägt eine stabile Regel-Kennung.', station: 'design' },
+      { text: 'Decke zeichnen hat jetzt einen Knopf (Geschossleiste), das Schnitt-Werkzeug läuft über ein echtes Kommando (Rückgängig, Sync und Kosmo gelten — die Schnittlinie bleibt beim Projekt), und «Geschoss erstellen» warnt bei doppeltem Namen statt still zu duplizieren.', station: 'design' },
+      { text: 'Der Wohnungs-Segmentierer ist ein Kosmo-Kommando geworden (ein Vorschlag, EIN Rückgängig-Schritt statt Teilanwendung); Fassadenmodule funktionieren neu auch auf reinen Wandbauten ohne Volumenkörper.', station: 'design' },
+      { text: 'KosmoData-Facetten für Bauteilkatalog und Archiv; die Render-Formular-Auswahl (Szene/Jahreszeit/Personen) speichert stabile Schlüssel statt Langtexte.', station: 'vis' },
+      { text: 'Unter der Haube: die täglichen AI-Scan-Auswertungen sind jetzt fester Release-Schritt (Wächter-Skript verweigert einen Release ohne Auswertung) — dieser Release enthält den ersten Lauf, mit Docling als direkt eingebautem Scan-Fund.' },
+    ],
+  },
+  {
     version: '0.6.7',
     datum: '2026-07-10',
     punkte: [
