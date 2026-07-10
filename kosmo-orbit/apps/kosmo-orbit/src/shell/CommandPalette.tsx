@@ -14,22 +14,59 @@ export function CommandPalette() {
   const [tick, setTick] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => onActionsChanged(() => setTick((t) => t + 1)), []);
+  // Stream D1 (0.6.7, ROADMAP-277 «hartes Unmount»): spiegelbildliche
+  // Austritts-Phase zur Eintritts-Choreografie («Feder+Translation»,
+  // `.orbit065-sheet-ein`) — dasselbe Muster wie KosmoPanel
+  // (`k-panel-eintritt`/`-austritt`, aura.css): ein `schliessend`-Bit hält
+  // die Klasse `.orbit065-sheet-aus` (--k-motion-fast Opazität) für die
+  // Dauer der Animation, DANACH erst das echte Unmount (`setOpen(false)`).
+  // `prefers-reduced-motion` überspringt die Verzögerung ganz (wie
+  // KosmoPanel) — E2E läuft standardmässig mit reduced-motion
+  // (playwright.config.ts), darum bleibt das bestehende Sofort-Verschwinden
+  // dort unverändert.
+  const [schliessend, setSchliessend] = useState(false);
+  const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const schliessen = () => {
+    if (schliessTimer.current) return; // Austritt läuft schon
+    const reduziert =
+      typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduziert) {
+      setOpen(false);
+      return;
+    }
+    setSchliessend(true);
+    schliessTimer.current = setTimeout(() => {
+      setOpen(false);
+      setSchliessend(false);
+      schliessTimer.current = null;
+    }, 120); // --k-motion-fast
+  };
+
+  useEffect(() => () => {
+    if (schliessTimer.current) clearTimeout(schliessTimer.current);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setOpen((o) => !o);
-        setQuery('');
-        setCursor(0);
-      } else if (e.key === 'Escape') {
-        setOpen(false);
+        if (open) {
+          schliessen();
+        } else {
+          setOpen(true);
+          setQuery('');
+          setCursor(0);
+        }
+      } else if (e.key === 'Escape' && open) {
+        // Escape schliesst über denselben Weg wie Blur/Auswahl.
+        schliessen();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   useEffect(() => {
     if (open) inputRef.current?.focus();
@@ -46,14 +83,15 @@ export function CommandPalette() {
   }, [query, tick, open]);
 
   const ausfuehren = (a: PaletteAction) => {
-    setOpen(false);
+    // Auswahl schliesst über denselben Weg wie Escape/Blur (Backdrop-Klick).
+    schliessen();
     a.run();
   };
 
   if (!open) return null;
   return (
     <div
-      onClick={() => setOpen(false)}
+      onClick={schliessen}
       style={{
         position: 'fixed',
         inset: 0,
@@ -71,8 +109,10 @@ export function CommandPalette() {
         // Aufgabe 4 (MOTION-KONZEPT-066 §4, Overlays der Zentrale): öffnet
         // mit `--k-feder` + Translation (4-8px) + Opacity statt der
         // bisherigen Skalier-Animation (`.k-skalieren-ein`, aura.css) —
-        // `.orbit065-sheet-ein` (orbit-065.css) setzt genau das um.
-        className="orbit065-sheet-ein"
+        // `.orbit065-sheet-ein` (orbit-065.css) setzt genau das um. D1
+        // (0.6.7): `schliessend` schaltet auf die spiegelbildliche
+        // `.orbit065-sheet-aus` (--k-motion-fast Opazität) um.
+        className={schliessend ? 'orbit065-sheet-aus' : 'orbit065-sheet-ein'}
         style={{
           width: 480,
           maxWidth: '92vw',

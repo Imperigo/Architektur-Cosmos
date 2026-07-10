@@ -411,11 +411,7 @@
    «Overlays (KMenu/KDialog/Sheet): öffnen mit --k-feder (Translation 4-8px
    + Opacity), schliessen mit --k-motion-fast Opacity. Kein Backdrop-Blur.»
    Ersetzt `.k-skalieren-ein` (Skalierung, aura.css) für die Overlays dieser
-   Datei/Domäne (CommandPalette, Kurzbefehle) — echtes Schliessen ist bei
-   beiden ein sofortiges Unmount (kein Exit-State im Component), das
-   entspricht bereits «Austritt schneller als Eintritt» (Punkt 2 der
-   Motion-Haltung); eine animierte Austritts-Phase (verzögertes Unmount)
-   ist hier bewusst NICHT gebaut (Scope 0.6.6 Stream A, siehe Bericht). */
+   Datei/Domäne (CommandPalette, Kurzbefehle). */
 @keyframes orbit065-sheet-ein {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
@@ -429,9 +425,26 @@
 .orbit065-sheet-kind {
   animation: orbit065-sheet-ein var(--k-feder) both;
 }
+/* Stream D1 (0.6.7, ROADMAP-277 dokumentierte Lücke «hartes Unmount»):
+   spiegelbildliche Austritts-Phase — Feder+Translation beim Öffnen,
+   --k-motion-fast reine Opazität beim Schliessen (exakt der Vertrag, den der
+   Kommentar oben schon zitierte, aber 0.6.6 Stream A bewusst vertagt hatte).
+   Dasselbe Muster wie `.k-panel-austritt` (aura.css, KosmoPanel-Präzedenz):
+   der Aufrufer hält ein `schliessend`-State-Bit, setzt diese Klasse
+   VOR dem eigentlichen Unmount und ruft es erst nach `--k-motion-fast`
+   (120ms) auf. Keine Translation beim Austritt (nur Opazität) — Punkt 2 der
+   Motion-Haltung «Austritt schneller/ruhiger als Eintritt». */
+@keyframes orbit065-sheet-aus {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.orbit065-sheet-aus {
+  animation: orbit065-sheet-aus var(--k-motion-fast) both;
+}
 @media (prefers-reduced-motion: reduce) {
   .orbit065-sheet-ein,
-  .orbit065-sheet-kind {
+  .orbit065-sheet-kind,
+  .orbit065-sheet-aus {
     animation: none;
   }
 }

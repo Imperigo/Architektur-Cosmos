@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Hairline } from '@kosmo/ui';
 import { KURZTASTEN } from '../modules/design/kurztasten';
 import './orbit-065.css';
@@ -32,6 +32,34 @@ export function Kurzbefehle({
   zurZentrale: () => void;
 }) {
   const [offen, setOffen] = useState(false);
+  // Stream D1 (0.6.7, ROADMAP-277 «hartes Unmount»): spiegelbildliche
+  // Austritts-Phase zur Eintritts-Choreografie (`orbit065-sheet-ein`,
+  // Feder+Translation) — selbes Muster wie CommandPalette.tsx/KosmoPanel:
+  // `schliessend` hält `.orbit065-sheet-aus` (--k-motion-fast Opazität) für
+  // die Animationsdauer, danach erst das echte Unmount. Escape/Backdrop-Klick
+  // laufen beide über `schliessen()`.
+  const [schliessend, setSchliessend] = useState(false);
+  const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const schliessen = () => {
+    if (schliessTimer.current) return;
+    const reduziert =
+      typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduziert) {
+      setOffen(false);
+      return;
+    }
+    setSchliessend(true);
+    schliessTimer.current = setTimeout(() => {
+      setOffen(false);
+      setSchliessend(false);
+      schliessTimer.current = null;
+    }, 120); // --k-motion-fast
+  };
+
+  useEffect(() => () => {
+    if (schliessTimer.current) clearTimeout(schliessTimer.current);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -41,11 +69,15 @@ export function Kurzbefehle({
       if (document.querySelector('[role="dialog"]') && !offen) return;
       if (e.key === '?') {
         e.preventDefault();
-        setOffen((o) => !o);
+        if (offen) {
+          schliessen();
+        } else {
+          setOffen(true);
+        }
         return;
       }
       if (e.key === 'Escape' && offen) {
-        setOffen(false);
+        schliessen();
         return;
       }
       if (offen) return;
@@ -60,6 +92,7 @@ export function Kurzbefehle({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stationen, zurZentrale, offen]);
 
   if (!offen) return null;
@@ -94,12 +127,14 @@ export function Kurzbefehle({
       aria-label="Kurzbefehle"
       data-testid="kurzbefehle"
       className="k-dialog-scrim"
-      onClick={() => setOffen(false)}
+      onClick={schliessen}
       style={{ zIndex: 205, background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)' }}
     >
       <div
-        // Aufgabe 4 (Konzept §4, Overlays): Feder + Translation statt Skalierung.
-        className="k-karte orbit065-sheet-ein k-dialog"
+        // Aufgabe 4 (Konzept §4, Overlays): Feder + Translation statt
+        // Skalierung. D1 (0.6.7): `schliessend` schaltet auf die
+        // spiegelbildliche `.orbit065-sheet-aus` (--k-motion-fast Opazität).
+        className={`k-karte ${schliessend ? 'orbit065-sheet-aus' : 'orbit065-sheet-ein'} k-dialog`}
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--k-raised)',

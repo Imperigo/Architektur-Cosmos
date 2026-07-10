@@ -2939,7 +2939,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 color: 'inherit',
               }}
             >
-              Modus: {arbeitsmodus ? ARBEITSMODUS_LABEL[arbeitsmodus] : 'Voll'} ·{' '}
+              {/* C-Befund 0.6.6: der frühere Ein-Wort-Fallback «Voll» klang wie
+                  ein Zustand ohne Erklärung («voll» wovon?) — «Alle Werkzeuge»
+                  sagt direkt, was der Neutral-Zustand bedeutet (nichts ist
+                  ausgeblendet), im selben knappen Zwei-Wort-Stil wie die
+                  übrigen ARBEITSMODUS_LABEL-Werte («3D modellieren», «Varianten
+                  vergleichen»). */}
+              Modus: {arbeitsmodus ? ARBEITSMODUS_LABEL[arbeitsmodus] : 'Alle Werkzeuge'} ·{' '}
               {!modusAutomatik ? 'automatik aus' : modusFesthalten ? 'festgehalten' : 'automatisch'}
             </button>
             {modusMenuOffen && (
@@ -2963,26 +2969,51 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   boxShadow: 'var(--k-shadow-raised)',
                 }}
               >
-                {MODI_VOLLSTAENDIG_0_6_6.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    className="k-druck"
-                    data-testid={`modus-item-${m}`}
-                    aria-pressed={arbeitsmodus === m}
-                    onClick={() => modusHandVonListeWaehlen(m)}
-                    style={{
-                      all: 'unset',
-                      cursor: 'pointer',
-                      padding: '4px 6px',
-                      borderRadius: 4,
-                      fontSize: 12.5,
-                      background: arbeitsmodus === m ? 'var(--k-accent-wash)' : 'transparent',
-                    }}
-                  >
-                    {ARBEITSMODUS_LABEL[m]}
-                  </button>
-                ))}
+                {MODI_VOLLSTAENDIG_0_6_6.map((m) => {
+                  // D1 (0.6.7, C-Befund 0.6.6): Ehrlichkeits-Begründung je
+                  // KANDIDAT (nicht nur für den amtierenden Modus wie
+                  // `modusGrund`/das Tooltip oben) — dieselbe reine Funktion
+                  // `begruendeModus` (arbeitsmodi-kern.ts), diesmal pro
+                  // Listeneintrag mit `m` statt `arbeitsmodus` aufgerufen.
+                  // EHRLICH: bei ausgeschalteter Automatik oder wenn kein
+                  // Signal für DIESEN Kandidaten spricht, bleibt die Zeile
+                  // schlicht weg — nichts wird erfunden.
+                  const begruendung = modusAutomatik ? begruendeModus(m, modusSignale) : [];
+                  return (
+                    <div key={m} style={{ display: 'flex', flexDirection: 'column' }}>
+                      <button
+                        type="button"
+                        className="k-druck"
+                        data-testid={`modus-item-${m}`}
+                        aria-pressed={arbeitsmodus === m}
+                        onClick={() => modusHandVonListeWaehlen(m)}
+                        style={{
+                          all: 'unset',
+                          cursor: 'pointer',
+                          padding: '4px 6px',
+                          borderRadius: 4,
+                          fontSize: 12.5,
+                          background: arbeitsmodus === m ? 'var(--k-accent-wash)' : 'transparent',
+                        }}
+                      >
+                        {ARBEITSMODUS_LABEL[m]}
+                      </button>
+                      {begruendung.length > 0 && (
+                        <span
+                          data-testid={`modus-chip-begruendung-${m}`}
+                          style={{
+                            fontSize: 10.5,
+                            lineHeight: 1.3,
+                            color: 'var(--k-ink-faint)',
+                            padding: '0 6px 3px',
+                          }}
+                        >
+                          erkannt: {begruendung.join(' · ')}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
                 <Hairline />
                 <button
                   type="button"

@@ -51,7 +51,10 @@ test('(b) ui.modusSetzen(\'exportieren\') wechselt den Modus, der Chip zeigt ihn
   page,
 }) => {
   await bootstrap(page);
-  await expect(chip(page)).toContainText('Modus: Voll');
+  // D1 (0.6.7, C-Befund): Chip-Fallback jetzt «Alle Werkzeuge» statt «Voll»
+  // (DesignWorkspace.tsx ~Z.2942, Folgeanpassung derselben Textänderung wie
+  // in arbeitsmodi.spec.ts).
+  await expect(chip(page)).toContainText('Modus: Alle Werkzeuge');
 
   await page.fill('[data-testid="kosmo-input"]', 'Stell den Modus auf exportieren');
   await page.click('[data-testid="kosmo-send"]');
@@ -102,7 +105,12 @@ test('(d) Kosmo schaltet die Automatik wieder ein — ein von Hand gehaltener Mo
   await page.reload();
   // Uhr einfrieren, BEVOR die Design-Werkstatt mountet (Muster
   // arbeitsmodi.spec.ts) — jeder Hysterese-Timer ab hier virtuell steuerbar.
+  // D1 (0.6.7) Härtung: `pauseAt()` direkt nach `install()` ist der Teil, der
+  // die Uhr TATSÄCHLICH anhält (`install()` allein lässt Timer laut
+  // Playwright-Doku in Echtzeit weiterlaufen) — s. ausführliche Begründung
+  // in arbeitsmodi.spec.ts.
   await page.clock.install();
+  await page.clock.pauseAt(Date.now());
   await page.click('[data-testid="module-design"]');
 
   // Modus von Hand halten (Chip-Menü) — Automatik ist noch aus, darum zeigt

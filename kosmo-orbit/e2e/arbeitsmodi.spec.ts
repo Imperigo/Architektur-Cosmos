@@ -13,6 +13,18 @@ import { expect, test, type Page } from '@playwright/test';
  * `fastForward()` (Playwright 1.61) spult die 5s-Hysterese
  * (`HYSTERESE_MS`, `state/arbeitsmodi-kern.ts`) virtuell vor — kein
  * `waitForTimeout` auf echte Zeit.
+ *
+ * D1 (0.6.7) Härtung: `page.clock.install()` ALLEIN friert die Uhr NICHT
+ * ein — laut Playwright-Doku («Clock.pauseAt») laufen Timer nach `install()`
+ * normal in Echtzeit weiter, bis `pauseAt`/`runFor`/`fastForward`/`resume`
+ * aufgerufen wird. Ohne das direkt folgende `pauseAt()` war die 5s-Hysterese
+ * (`HYSTERESE_MS`) in Wahrheit ein ECHTER 5s-Timer, der zufällig meist VOR
+ * jeder Prüfung fertig war (schnelle CI) — unter Last (paralleler
+ * Sandbox-Nachbar) oder mit minimal mehr Rendergewicht lief er dem
+ * Playwright-Standard-Assertion-Timeout (ebenfalls 5000ms) knapp davon und
+ * die «noch nicht gewechselt»-Prüfungen wurden flaky. `pauseAt()` direkt
+ * nach `install()` macht die Uhr wirklich deterministisch, wie der
+ * Kommentar unten es schon immer beschrieb.
  */
 
 async function oeffneMitAutomatikAn(page: Page): Promise<void> {
@@ -31,8 +43,11 @@ async function oeffneMitAutomatikAn(page: Page): Promise<void> {
   await page.reload();
   // Uhr einfrieren, BEVOR die Design-Werkstatt (und damit die Arbeitsmodi-
   // Erkennung) überhaupt mountet — jeder danach gesetzte `setTimeout`
-  // (Hysterese-Timer) ist ab hier virtuell steuerbar.
+  // (Hysterese-Timer) ist ab hier virtuell steuerbar. `pauseAt()` ist der
+  // Teil, der die Uhr TATSÄCHLICH anhält (`install()` allein lässt sie in
+  // Echtzeit weiterlaufen, s. Suiten-Kommentar oben).
   await page.clock.install();
+  await page.clock.pauseAt(Date.now());
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG + Standard-Aufbauten
 }
 
@@ -48,7 +63,9 @@ test('(a)+(b) 2D-Plan + Wandwerkzeug → Modus «Zeichnen» erst nach der 5s-Hys
   // Signale stehen sofort (viewMode 2D + Zeichenwerkzeug), der Modus
   // wechselt aber NICHT sofort — Regel 2.3.2-Analogon auf Schicht 1: erst
   // nach `HYSTERESE_MS` (5s) Signal-Stabilität.
-  await expect(chip(page)).toContainText('Voll');
+  // D1 (0.6.7, C-Befund): der Chip-Fallback heisst jetzt «Alle Werkzeuge»
+  // statt des blossen «Voll» (DesignWorkspace.tsx ~Z.2942).
+  await expect(chip(page)).toContainText('Alle Werkzeuge');
   await expect(chip(page)).toContainText('automatisch');
 
   await page.clock.fastForward(5001);
@@ -134,7 +151,7 @@ test('(e) Automatik aus → sofort Voll-UI, exakt wie der Playwright-Default', a
   // «modusAutomatik: aus schaltet die Erkennung ganz ab — dann zeigt die
   // Oberfläche wie heute alles» (Konzept §3, wörtlich): sofort Voll-UI,
   // kein Warten auf einen weiteren Signalwechsel.
-  await expect(chip(page)).toContainText('Modus: Voll');
+  await expect(chip(page)).toContainText('Modus: Alle Werkzeuge');
   await expect(chip(page)).toContainText('automatik aus');
   await expect(page.locator('[data-testid="export-menu-toggle"]')).toBeVisible();
   await expect(page.locator('[data-testid="leiste-gruppe-faehigkeiten"]')).toBeVisible();
@@ -142,5 +159,5 @@ test('(e) Automatik aus → sofort Voll-UI, exakt wie der Playwright-Default', a
   // Auch nach beliebig viel weiterer virtueller Zeit bleibt es bei Voll-UI
   // — die Automatik ist wirklich abgeschaltet, kein verzögertes Nachholen.
   await page.clock.fastForward(30_000);
-  await expect(chip(page)).toContainText('Modus: Voll');
+  await expect(chip(page)).toContainText('Modus: Alle Werkzeuge');
 });
