@@ -314,8 +314,11 @@ test('H-32-Regression: Formularfeld setzen, dann «Ausführen» zeigt das Render
   const ersterRender = page.locator('[data-testid="vis-node-render"]').first();
   await expect(ersterRender).toBeVisible();
 
-  await ersterRender.locator('[data-testid="render-formular-szene"]').selectOption('Aussenansicht vom Hof');
-  await ersterRender.locator('[data-testid="render-formular-jahreszeit"]').selectOption('Winter');
+  // H-30 (0.6.8): die Options-Values sind stabile Schlüssel, nicht mehr die
+  // Prompt-Langtexte selbst — `formularZusatz` (vis-jobs.ts) übersetzt sie
+  // zurück in den Render-Prompt.
+  await ersterRender.locator('[data-testid="render-formular-szene"]').selectOption('hof');
+  await ersterRender.locator('[data-testid="render-formular-jahreszeit"]').selectOption('winter');
   await ersterRender.locator('[data-testid="render-ausfuehren"]').click();
 
   // VOR dem Fix blieb der Status nach «fertig» als «veraltet» stehen und

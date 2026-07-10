@@ -193,8 +193,48 @@ function parseJob(raw: unknown): JobRecord {
  */
 const RENDER_FORMULAR_FELDER = ['formFassade', 'formSzene', 'formJahreszeit', 'formPersonen', 'formFreitext'] as const;
 
+/**
+ * H-30 (`docs/SIM-BEFUNDE.md`, 0.6.8) — Szene/Jahreszeit/Personen trugen als
+ * Options-`value` bislang die deutschen Prompt-Langtexte selbst (fragil für
+ * Automatisierung/Übersetzung, jede Value-Änderung war ein stiller
+ * Vertragsbruch). Jetzt: stabile Schlüssel als `value` (NodeCanvas.tsx
+ * Render-Formular), diese Anzeige-Map übersetzt zurück in den Prompt-Text —
+ * `formFassade` (modellabgeleitet) und `formFreitext` (frei) bleiben
+ * unübersetzt. Unbekannte/alte Werte (z.B. aus einem vor H-30 gespeicherten
+ * Projekt) fallen ehrlich auf den rohen gespeicherten Text zurück, statt
+ * einen kryptischen Schlüssel zu senden.
+ */
+const RENDER_FORMULAR_UEBERSETZUNG: Partial<Record<(typeof RENDER_FORMULAR_FELDER)[number], Record<string, string>>> = {
+  formSzene: {
+    strasse: 'Aussenansicht von der Strasse',
+    hof: 'Aussenansicht vom Hof',
+    vogel: 'Vogelperspektive',
+    innen: 'Innenraumansicht',
+  },
+  formJahreszeit: {
+    sommer: 'Sommer',
+    winter: 'Winter',
+    herbst: 'Herbst',
+  },
+  formPersonen: {
+    keine: 'keine Personen',
+    wenige: 'wenige Personen',
+    belebt: 'belebte Szene, viele Personen',
+  },
+};
+
+/** Übersetzt EINEN Formular-Wert (Schlüssel → Prompt-Text) — auch für Stellen
+ * ausserhalb von `formularZusatz`, die einen einzelnen Feldwert anzeigen
+ * (z.B. die Kuratier-Karten-Bildunterschrift, NodeCanvas.tsx). */
+export function formularFeldText(feld: string, wert: string): string {
+  return RENDER_FORMULAR_UEBERSETZUNG[feld as (typeof RENDER_FORMULAR_FELDER)[number]]?.[wert] ?? wert;
+}
+
 export function formularZusatz(params: Record<string, string | number | boolean>): string {
-  return RENDER_FORMULAR_FELDER.map((f) => String(params[f] ?? '').trim())
+  return RENDER_FORMULAR_FELDER.map((f) => {
+    const roh = String(params[f] ?? '').trim();
+    return roh ? formularFeldText(f, roh) : '';
+  })
     .filter((t) => t.length > 0)
     .join(', ');
 }

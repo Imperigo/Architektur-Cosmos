@@ -201,8 +201,11 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
   await expect(ersterRender).toBeVisible();
 
   // Prompt-Transparenz: Formularfelder fliessen sichtbar in den finalen Prompt.
-  await ersterRender.locator('[data-testid="render-formular-szene"]').selectOption('Aussenansicht vom Hof');
-  await ersterRender.locator('[data-testid="render-formular-jahreszeit"]').selectOption('Winter');
+  // H-30 (0.6.8): die Options-Values sind stabile Schlüssel, nicht mehr die
+  // Prompt-Langtexte selbst — `formularZusatz` (vis-jobs.ts) übersetzt sie
+  // zurück, die Regex-Assertionen unten bleiben darum unverändert gültig.
+  await ersterRender.locator('[data-testid="render-formular-szene"]').selectOption('hof');
+  await ersterRender.locator('[data-testid="render-formular-jahreszeit"]').selectOption('winter');
   const finalPrompt = ersterRender.locator('[data-testid="render-final-prompt"]');
   await expect(finalPrompt).toContainText(/hof/i);
   await expect(finalPrompt).toContainText(/winter/i);

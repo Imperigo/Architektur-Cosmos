@@ -20,6 +20,7 @@ import {
   bildAufsBlatt,
   bridgeBase,
   bridgeVermutlichCspGeblockt,
+  formularFeldText,
   formularZusatz,
   freigebenJob,
   holeJob,
@@ -1675,14 +1676,17 @@ function KuratierKarte({
 }) {
   const kat = VIS_NODE_KATALOG[knoten.typ];
   const preset = knoten.params?.['formSzene'];
+  // H-30: `formSzene` trägt seit der Schlüssel-Ablösung einen stabilen
+  // Schlüssel (z.B. «hof») — die Bildunterschrift zeigt den Anzeigetext.
+  const presetText = typeof preset === 'string' && preset ? formularFeldText('formSzene', preset) : '';
   const qa = 'qa' in quelle ? quelle.qa : undefined;
   return (
     <Karteikarte nr={nr} data-testid="vis-kuratier-karte" style={{ opacity: kuration.verworfen ? 0.6 : 1 }}>
       <div style={{ display: 'grid', gap: 6 }}>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           <span style={{ fontSize: 11.5, fontWeight: 650 }}>{kat?.label ?? knoten.typ}</span>
-          {typeof preset === 'string' && preset && (
-            <span style={{ fontSize: 10, color: 'var(--k-ink-faint)' }}>· {preset}</span>
+          {presetText && (
+            <span style={{ fontSize: 10, color: 'var(--k-ink-faint)' }}>· {presetText}</span>
           )}
           <div style={{ flex: 1 }} />
           {qa && (
@@ -2035,10 +2039,10 @@ function NodeKoerper({
                     style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
                   >
                     <option value="">—</option>
-                    <option value="Aussenansicht von der Strasse">Aussen · Strasse</option>
-                    <option value="Aussenansicht vom Hof">Aussen · Hof</option>
-                    <option value="Vogelperspektive">Aussen · Vogel</option>
-                    <option value="Innenraumansicht">Innen</option>
+                    <option value="strasse">Aussen · Strasse</option>
+                    <option value="hof">Aussen · Hof</option>
+                    <option value="vogel">Aussen · Vogel</option>
+                    <option value="innen">Innen</option>
                   </KSelect>
                 </KField>
               </div>
@@ -2052,9 +2056,9 @@ function NodeKoerper({
                     style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
                   >
                     <option value="">—</option>
-                    <option value="Sommer">Sommer</option>
-                    <option value="Winter">Winter</option>
-                    <option value="Herbst">Herbst</option>
+                    <option value="sommer">Sommer</option>
+                    <option value="winter">Winter</option>
+                    <option value="herbst">Herbst</option>
                   </KSelect>
                 </KField>
               </div>
@@ -2068,9 +2072,9 @@ function NodeKoerper({
                     style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
                   >
                     <option value="">—</option>
-                    <option value="keine Personen">keine</option>
-                    <option value="wenige Personen">wenige</option>
-                    <option value="belebte Szene, viele Personen">belebt</option>
+                    <option value="keine">keine</option>
+                    <option value="wenige">wenige</option>
+                    <option value="belebt">belebt</option>
                   </KSelect>
                 </KField>
               </div>
