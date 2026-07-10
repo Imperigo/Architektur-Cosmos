@@ -1,0 +1,9 @@
+{
+  "werkzeug": "fixture",
+  "version": "fixture",
+  "dauer_s": 0.0,
+  "seiten": null,
+  "warnungen": [
+    "--fake: kein echtes PDF gelesen — deterministischer Beispielinhalt, keine echte Extraktion"
+  ]
+}
