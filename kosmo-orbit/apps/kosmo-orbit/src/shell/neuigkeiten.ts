@@ -35,6 +35,23 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.6.6',
+    datum: '2026-07-10',
+    punkte: [
+      { text: 'Knopfdruck spürbar: jeder Knopf reagiert beim Drücken sichtbar (kurzes Einsinken, federndes Loslassen) — überall in der App.' },
+      { text: 'Stationswechsel gleiten: beim Wechsel zwischen Stationen weicht das alte Blatt und das neue setzt federnd auf (abschaltbar über die System-Einstellung «Bewegung reduzieren»).' },
+      { text: 'Die Oberfläche folgt der Tätigkeit: KosmoDesign erkennt Arbeitsmodi (Entwerfen, Zeichnen, iPad-Skizzieren, Varianten vergleichen, PDF exportieren, 3D modellieren) und zeigt die passenden Werkzeuge prominent — alles Ausgeblendete bleibt vollständig unter «Mehr…» erreichbar.', station: 'design' },
+      { text: 'Modus-Chip in der Statuszeile zeigt ehrlich, welcher Modus aktiv ist und warum; ein Klick wechselt, hält fest oder schaltet die Automatik ganz aus.', station: 'design' },
+      { text: 'Kosmo kann die Oberfläche jetzt lesen und einstellen (Modus, Panels, Ansicht, Werkzeug) — jede Aktion erscheint sichtbar quittiert im Chat, nichts passiert still.' },
+      { text: 'Kosmo bleibt Kosmo: in der Cloud-Betriebsart gibt sich die KI nicht mehr als Basismodell aus; auf direkte Nachfrage antwortet sie weiterhin ehrlich (Anthropic Claude).' },
+      { text: 'Gesten mit Schwung: schnelles Pan-Loslassen im 2D-Plan läuft aus (Momentum), Doppeltipp zoomt auf die Stelle, langes Drücken öffnet das Kontextmenü; auf Geräten mit Vibration gibt es feine haptische Ticks.', station: 'design' },
+      { text: 'Rendern direkt aus dem 3D-Viewport: ein Knopf stösst die bestehende KosmoVis-Render-Kette an — mit ehrlicher Meldung, wenn keine HomeStation verbunden ist.', station: 'design' },
+      { text: 'Der 3D-Viewport rendert nur noch bei Bedarf (Kamerabewegung, Änderungen) statt dauernd — im Leerlauf null statt ~16 Bilder pro Sekunde, spürbar leichter für Akku und Lüfter (abschaltbar in Einstellungen → Leistung).', station: 'design' },
+      { text: 'KosmoVis: Kuratier-Fläche sammelt fertige Renderbilder als Karten (merken, verwerfen, zwei vergleichen), eine kategorisierte Node-Palette ergänzt das Auswahlmenü, und «Drei Stimmungen» überlappt bestehende Ketten nicht mehr.', station: 'vis' },
+      { text: 'Fächer der Zentrale öffnen federnd aus ihrem Planeten heraus, mit sichtbarem Bezug (Akzent-Rahmen + Verbindungslinie); die Werkzeug-Icons sind auf die einheitliche Tusche-Norm nachgezeichnet.' },
+    ],
+  },
+  {
     version: '0.6.5',
     datum: '2026-07-09',
     punkte: [
