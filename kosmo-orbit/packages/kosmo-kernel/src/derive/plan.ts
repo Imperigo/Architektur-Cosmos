@@ -1,4 +1,4 @@
-import { columnOutline, type Aussparung, type Beam, type Boundary, type Assembly, type Column, type GridAxis, type Opening, type Stair, type Storey, type Wall, type Zone, type ZonenTuer } from '../model/entities';
+import { columnOutline, type Aussparung, type Beam, type Boundary, type Assembly, type Column, type GridAxis, type Opening, type Roof, type Stair, type Storey, type Wall, type Zone, type ZonenTuer } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, intersect, union, type Poly } from '../geometry/clip';
 import { materialPrioritaet } from '../model/prioritaet';
@@ -11,6 +11,7 @@ import {
 import { dist, normal, polygonArea, pt, type Pt } from '../model/units';
 import { treppenTeile } from './treppe';
 import { meshSchnittRinge } from './mesh-topo';
+import { dachGeometrie } from './dach';
 
 /** Standard-Schnitthöhe des Grundrisses über Geschoss-OK (SIA-üblich 1 m) —
  * die Ebene, auf der FreeMesh-Körper ihre ehrliche Schnittfigur zeigen. */
@@ -692,6 +693,49 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
         text: `${a.typ === 'schlitz' ? 'S' : 'D'} ${a.breite}×${a.hoehe}${a.sill !== undefined ? ` UK ${a.sill}` : ''}`,
         classes: ['aussparung'],
       });
+    }
+  }
+
+  // Dach (Stream A / v0.6.8, SIM-Befunde H-2/H-18): im Geschoss, dem das
+  // Dach zugeordnet ist, zeigt die Aufsicht First/Traufe/Ortgang/Grat
+  // klassifiziert (dieselbe Geometrie wie die 3D-Ableitung, siehe
+  // derive/dach.ts). Symbolische Linien (keine Poché) — First/Traufe/
+  // Ortgang unterscheidbar über die Klasse `dach-<art>`, Strichstärke/
+  // -art kommt aus dem Stiftsatz (Bonsai-Muster dieses Moduls, siehe
+  // Kopfkommentar), nicht aus der Geometrie.
+  for (const roof of doc.byKind<Roof>('roof')) {
+    if (roof.storeyId !== storeyId) continue;
+    const geom = dachGeometrie(roof, storey);
+    if (!geom) continue;
+    for (const k of geom.kanten) {
+      lines.push({
+        a: { x: k.a.x, y: k.a.y },
+        b: { x: k.b.x, y: k.b.y },
+        classes: ['symbol', 'dach', `dach-${k.art}`],
+      });
+    }
+  }
+  // Geschoss DARUNTER: Dachumriss gestrichelt — dieselbe Überzeichnungs-
+  // Konvention wie die «ueber-schnitt»-Treppenteile oberhalb der
+  // Schnitthöhe (Klasse `ueber-schnitt`, bereits im Renderer gestrichelt).
+  {
+    const storeysAsc = doc.storeysOrdered();
+    const meinIndex = storeysAsc.findIndex((s) => s.id === storeyId);
+    const obenStorey = meinIndex >= 0 ? storeysAsc[meinIndex + 1] : undefined;
+    if (obenStorey) {
+      for (const roof of doc.byKind<Roof>('roof')) {
+        if (roof.storeyId !== obenStorey.id) continue;
+        const geom = dachGeometrie(roof, obenStorey);
+        if (!geom) continue;
+        const ring = geom.aussenring;
+        for (let i = 0; i < ring.length; i++) {
+          lines.push({
+            a: ring[i]!,
+            b: ring[(i + 1) % ring.length]!,
+            classes: ['symbol', 'dach', 'dach-traufe', 'ueber-schnitt'],
+          });
+        }
+      }
     }
   }
 
