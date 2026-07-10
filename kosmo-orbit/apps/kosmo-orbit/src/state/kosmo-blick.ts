@@ -1,4 +1,5 @@
 import { useVisRuntime } from '../modules/vis/vis-runtime';
+import { bildBlob } from '../modules/vis/vis-jobs';
 import { useProject } from './project-store';
 
 /**
@@ -172,29 +173,61 @@ async function erfasseDesignBlick(): Promise<BlickBild | null> {
   return null;
 }
 
-/** Der jüngste FERTIGE Render-Lauf mit Bild (`vis-runtime.ts`) — kein neuer
- * Render-Auftrag, nur das, was ohnehin schon auf dem Bildschirm/im Store liegt. */
-function neuesterFertigerLauf(): string | null {
+/** `Blob` → `data:<type>;base64,<...>` (FileReader) — dasselbe Muster wie
+ * `modules/vis/vis-jobs.ts` `bildAufsBlatt` fürs Publish-Blatt. */
+function blobZuDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = () => reject(r.error ?? new Error('Bild nicht lesbar'));
+    r.readAsDataURL(blob);
+  });
+}
+
+/**
+ * Der jüngste FERTIGE Render-Lauf mit Bild (`vis-runtime.ts`) — kein neuer
+ * Render-Auftrag, nur das, was ohnehin schon auf dem Bildschirm/im Store liegt.
+ *
+ * FIX (v0.6.9 Stream D, «Kosmo-Blick fertig beweisen»): `NodeLauf.bild` ist
+ * ENTGEGEN der ursprünglichen 0.6.8-Annahme dieser Datei KEINE dataURL,
+ * sondern nur der Bild-DATEINAME des Bridge-Jobs (`NodeCanvas.tsx`:
+ * `patchLauf(nodeId, { ..., bild: j.result.images[0] ?? '' })`). Das echte
+ * Bild liegt erst hinter einem authentifizierten Bridge-Fetch (`vis-jobs.ts`
+ * `bildBlob`, dasselbe Muster wie `bildAufsBlatt` fürs Publish-Blatt). Die
+ * alte Version versuchte den Dateinamen direkt mit `ausDataUrl` zu parsen —
+ * das schlug IMMER lautlos fehl (kein `data:`-Präfix), der Blick fiel
+ * unbemerkt auf den Node-Canvas-Screenshot zurück. `quelle:'vis-render'`
+ * wurde dadurch NIE tatsächlich vergeben — ein e2e-Beweisversuch
+ * (`e2e/kosmo-blick-2.spec.ts`) deckte das auf. Owner-Mandat «Ehrlichkeit vor
+ * Politur»: minimal gefixt statt kaschiert, kein neuer Render-Auftrag nötig.
+ */
+async function neuesterFertigerLaufBild(): Promise<BlickBild | null> {
   const laeufe = useVisRuntime.getState().laeufe;
-  let bestesBild: string | null = null;
+  let bester: { jobId: string; bild: string } | null = null;
   let besteZeit = -1;
   for (const lauf of Object.values(laeufe)) {
-    if (lauf.status !== 'fertig' || !lauf.bild) continue;
+    if (lauf.status !== 'fertig' || !lauf.bild || !lauf.jobId) continue;
     const zeit = lauf.gestartetUm ?? 0;
     if (zeit >= besteZeit) {
       besteZeit = zeit;
-      bestesBild = lauf.bild;
+      bester = { jobId: lauf.jobId, bild: lauf.bild };
     }
   }
-  return bestesBild;
+  if (!bester) return null;
+  try {
+    const blob = await bildBlob(bester.jobId, bester.bild);
+    const teile = ausDataUrl(await blobZuDataUrl(blob));
+    return teile ? { ...teile, quelle: 'vis-render' } : null;
+  } catch {
+    // Bridge nicht erreichbar/Artefakt weg — ehrlich auf den Node-Canvas
+    // zurückfallen (Aufrufer) statt eines kaputten/erfundenen Bilds.
+    return null;
+  }
 }
 
 async function erfasseVisBlick(): Promise<BlickBild | null> {
-  const renderBild = neuesterFertigerLauf();
-  if (renderBild) {
-    const teile = ausDataUrl(renderBild);
-    if (teile) return { ...teile, quelle: 'vis-render' };
-  }
+  const renderBild = await neuesterFertigerLaufBild();
+  if (renderBild) return renderBild;
   const canvas = document.querySelector<SVGSVGElement>('svg[data-testid="node-canvas"]');
   if (canvas) {
     const bild = await erfasseSvg(canvas, 'node-canvas');
