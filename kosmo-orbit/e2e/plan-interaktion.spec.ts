@@ -124,3 +124,139 @@ test('Plan-Interaktion: Doppelklick schliesst die Zonen-Platzierung ohne Rückwe
   // Werkzeug ist wieder bereit für die nächste Zone (kein hängender Punkt)
   await expect(page.locator('[data-testid="live-flaeche"]')).toHaveCount(0);
 });
+
+/** Liest den `scale(...)`-Faktor aus derselben `transform`-Matrix wie `weltZuBildschirm`. */
+async function planScale(page: Page): Promise<number> {
+  const svg = page.locator('[data-testid="planview"]');
+  const transform = await svg.locator('> g').first().getAttribute('transform');
+  const m = transform!.match(/scale\(([-\d.]+)\)/);
+  return Number(m![1]);
+}
+
+test('v0.6.6 Welle 2 Stream C: Doppelklick auf leere Fläche (Auswahl-Werkzeug) zoomt Faktor 2', async ({ page }) => {
+  // §7: Bewegung wird HIER gezielt geprüft — eigene Spec-Zeile ohne die
+  // projektweite reduced-motion-Fixture.
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+  await page.click('[data-testid="nav-fit"]');
+  await page.waitForTimeout(300);
+
+  // Standard-Werkzeug ist «Auswahl» (siehe Test oben) — kein Extra-Klick nötig.
+  // Frisches Projekt (keine Wände/Zonen gezeichnet) → JEDE Stelle im
+  // sichtbaren Plan ist leer, darum reicht die SVG-Mitte per Bounding-Box
+  // (robust gegen Fit-Skalierung, kein Off-Screen-Risiko wie bei einer
+  // Welt-mm-Koordinate weit ausserhalb des eingepassten Ausschnitts).
+  const vorScale = await planScale(page);
+  const box = (await page.locator('[data-testid="planview"]').boundingBox())!;
+  const mitte = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  await page.mouse.click(mitte.x, mitte.y, { clickCount: 2 });
+
+  // Federanimation läuft aus (--k-feder 260ms, ~2% Überschwung) — erst
+  // GROSSZÜGIG warten, bis sie fertig ist, DANN erst den Endwert lesen
+  // (ein `expect.poll`-Treffer mitten im Überschwung wäre kein Endwert).
+  await page.waitForTimeout(500);
+  const nachScale = await planScale(page);
+  expect(nachScale).toBeGreaterThan(vorScale * 1.7);
+  expect(nachScale).toBeLessThan(vorScale * 2.3); // ~Faktor 2, kein Wegdriften
+
+  // Wert bleibt stabil (Animation ist wirklich fertig, kein Weiterlaufen ins Unendliche).
+  await page.waitForTimeout(200);
+  expect(await planScale(page)).toBeCloseTo(nachScale, 2);
+});
+
+test('v0.6.6 Welle 2 Stream C: Doppelklick auf ein Element (Auswahl-Werkzeug) zoomt NICHT — Element beansprucht die Geste', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 4000, y: 2000 }, b: { x: 6000, y: 2000 }, assemblyId: aw.id });
+  });
+  await page.click('[data-testid="nav-fit"]');
+  await page.waitForTimeout(300);
+
+  const vorScale = await planScale(page);
+  const mitte = await weltZuBildschirm(page, 5000, 2000); // Wandmitte — ein echter Treffer
+  await page.mouse.click(mitte.x, mitte.y, { clickCount: 2 });
+  await page.waitForTimeout(400); // genug Zeit für eine (nicht stattfindende) Animation
+  expect(await planScale(page)).toBeCloseTo(vorScale, 5);
+});
+
+test('v0.6.6 Welle 2 Stream C: Touch-Longpress auf ein Element öffnet das Kontextmenü; Rechtsklick ebenso', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+
+  const wallId = await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    const r = k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 4000, y: 2000 }, b: { x: 6000, y: 2000 }, assemblyId: aw.id });
+    return r.patches[0]!.id;
+  });
+  await page.click('[data-testid="nav-fit"]');
+  await page.waitForTimeout(300);
+  const mitte = await weltZuBildschirm(page, 5000, 2000);
+
+  // Rechtsklick öffnet dasselbe Kontextmenü-Bauteil wie im 3D-Viewport.
+  await page.mouse.click(mitte.x, mitte.y, { button: 'right' });
+  await expect(page.locator('[data-testid="viewport-kontextmenue"]')).toBeVisible();
+  await expect(page.locator('[data-testid="kontext2d-auswaehlen"]')).toBeVisible();
+  // Ein Klick auf den Deckel (deutlich AUSSERHALB des Menü-Panels, das bei
+  // `mitte` selbst beginnt und nach unten-rechts wächst) schliesst das Menü —
+  // `ViewportKontextmenue.tsx` legt einen vollflächigen Deckel über die Ansicht.
+  const box = (await page.locator('[data-testid="planview"]').boundingBox())!;
+  await page.mouse.click(box.x + 10, box.y + 10);
+  await expect(page.locator('[data-testid="viewport-kontextmenue"]')).toHaveCount(0);
+
+  // Touch-Longpress (>500ms halten, keine Bewegung) — derselbe Weg wie im 3D
+  // (`gestenDetektor().pruefeLongPress`), hier additiv im 2D-Plan verdrahtet.
+  await page.evaluate(
+    ({ x, y }) => {
+      const svg = document.querySelector('[data-testid="planview"]') as SVGSVGElement;
+      svg.dispatchEvent(
+        new PointerEvent('pointerdown', {
+          pointerId: 42, pointerType: 'touch', button: 0, buttons: 1,
+          clientX: x, clientY: y, bubbles: true, cancelable: true, composed: true,
+        }),
+      );
+    },
+    mitte,
+  );
+  await expect(page.locator('[data-testid="viewport-kontextmenue"]')).toBeVisible({ timeout: 3000 });
+  await expect(page.locator('[data-testid="kontext2d-auswaehlen"]')).toBeVisible();
+
+  // «Auswählen» wählt tatsächlich das getroffene Element an.
+  await page.click('[data-testid="kontext2d-auswaehlen"]');
+  await expect(page.locator('[data-testid="viewport-kontextmenue"]')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBe(1);
+  const selHighlight = page.locator('[data-testid="auswahl-highlight"]');
+  await expect(selHighlight).toBeAttached();
+  void wallId;
+
+  // Aufräumen: den hängenden Touch-Pointer beenden (kein Effekt auf die Assertions oben).
+  await page.evaluate(
+    ({ x, y }) => {
+      const svg = document.querySelector('[data-testid="planview"]') as SVGSVGElement;
+      svg.dispatchEvent(
+        new PointerEvent('pointerup', {
+          pointerId: 42, pointerType: 'touch', button: 0, buttons: 0,
+          clientX: x, clientY: y, bubbles: true, cancelable: true, composed: true,
+        }),
+      );
+    },
+    mitte,
+  );
+});

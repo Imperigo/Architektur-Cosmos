@@ -8,6 +8,38 @@ import { outlineOf, pickEntityAt } from './plan-hit-test';
 import { NavLeiste } from './NavLeiste';
 import { planLod, type PlanLod } from './planLod';
 import { cursor2dFuer, istEingabefeld } from './kurztasten';
+import { FLING_STOPP_GESCHWINDIGKEIT, flingSchritt, flingTracker, gestenDetektor } from './eingabe-3d';
+import { tick as haptikTick } from '../../state/haptik';
+import { ViewportKontextmenue, type KontextAktion } from './ViewportKontextmenue';
+
+/**
+ * v0.6.6 / Welle 2 Stream C (MOTION-KONZEPT-066 §5): `prefers-reduced-motion`
+ * schaltet Fling/Momentum UND die Doppeltap-Zoom-Animation ab (§1.3/§7 — der
+ * E2E-Stabilitätsvertrag; Playwright erzwingt reduced-motion standardmässig,
+ * Specs, die die Bewegung SELBST prüfen, schalten gezielt `no-preference`).
+ * Dieselbe Feature-Detection wie `packages/kosmo-ui/src/motion.ts`
+ * `mitUebergang()` — hier lokal dupliziert, weil `kosmo-ui` eingefroren ist
+ * und keinen eigenständig exportierten Baustein dafür anbietet.
+ */
+function reduzierteBewegung(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
+
+/**
+ * Näherung von `--k-feder` (MOTION-KONZEPT-066 §2: schnelles Anreissen,
+ * weiches Setzen mit ~2% Überschwung) als JS-Easing — `easeOutBack` mit
+ * kleinem Rückschwung-Faktor, ohne ein CSS-Bezier-Paket zu brauchen.
+ */
+function federGefuehl(t: number): number {
+  const c1 = 0.35; // klein gehalten → Überschwung bleibt subtil (~2%)
+  const c3 = c1 + 1;
+  const p = t - 1;
+  return 1 + c3 * p * p * p + c1 * p * p;
+}
 
 /**
  * PlanView — der lebende Grundriss als semantisches SVG.
@@ -31,6 +63,15 @@ import { cursor2dFuer, istEingabefeld } from './kurztasten';
  * F9 (Owner-Befund «Maus soll auf die Umgebung reagieren»): der Cursor auf
  * dem Plan-SVG wechselt kontextabhängig (`cursor2dFuer`, `kurztasten.ts`) —
  * dieselbe Systematik wie `werkzeugCursorFuer` im 3D (`eingabe-3d.ts`).
+ *
+ * v0.6.6 / Welle 2 Stream C (MOTION-KONZEPT-066 §5): Fling/Momentum-Pan
+ * (Maus-Drag UND Zwei-Finger-Touch-Pan), Doppeltap-/Doppelklick-Zoom auf
+ * leerer Fläche (Auswahl-Werkzeug) und Touch-Longpress-Kontextmenü auf einem
+ * Element — alle drei additiv über den gemeinsamen Gesten-Kern
+ * (`eingabe-3d.ts` `flingSchritt`/`flingTracker`/`gestenDetektor`). Bestehende
+ * Pfade bleiben unangetastet: Einzelklick-Aktionen (`onGroundClick`/`onPick`)
+ * feuern weiterhin SOFORT (keine Doppeltap-Wartezeit), Pinch-Zoom/Space-Pan/
+ * Mausrad-Zoom (ohne Momentum) sind unverändert.
  */
 
 export function PlanView({
@@ -128,6 +169,158 @@ export function PlanView({
   const pinch = useRef<{ d0: number; mid0: { x: number; y: number }; v0: { cx: number; cy: number; scale: number } } | null>(null);
   const gestureAktiv = useRef(false);
 
+  // v0.6.6 / Welle 2 Stream C — Fling/Momentum (§5): sammelt die letzten
+  // ~80ms Bewegung während eines Pans (Maus-Drag ODER Zwei-Finger-Touch-Pan)
+  // und trägt beim Loslassen die Restgeschwindigkeit über `requestAnimationFrame`
+  // ab (`flingSchritt`, Dämpfung 0.95/Frame). JEDE neue Eingabe UND das
+  // Mausrad brechen einen laufenden Fling sofort ab (`stoppeFling`).
+  const flingRef = useRef<ReturnType<typeof flingTracker> | null>(null);
+  if (!flingRef.current) flingRef.current = flingTracker();
+  const flingAnimRef = useRef<number | null>(null);
+  const stoppeFling = () => {
+    if (flingAnimRef.current !== null) {
+      cancelAnimationFrame(flingAnimRef.current);
+      flingAnimRef.current = null;
+    }
+  };
+  const starteFling = (vx: number, vy: number) => {
+    if (reduzierteBewegung()) return; // §5/§7: kein Fling bei reduced-motion
+    if (Math.hypot(vx, vy) < FLING_STOPP_GESCHWINDIGKEIT) return;
+    stoppeFling();
+    let v = { vx, vy };
+    let letzte = performance.now();
+    const schritt = (t: number) => {
+      const dt = Math.min(t - letzte, 48); // Deckel gegen rAF-Aussetzer (Tab-Wechsel etc.)
+      letzte = t;
+      setView((cur) => ({
+        ...cur,
+        cx: cur.cx - (v.vx * dt) / cur.scale,
+        cy: cur.cy + (v.vy * dt) / cur.scale,
+      }));
+      const naechste = flingSchritt(v, dt);
+      if (!naechste) {
+        flingAnimRef.current = null;
+        return;
+      }
+      v = naechste;
+      flingAnimRef.current = requestAnimationFrame(schritt);
+    };
+    flingAnimRef.current = requestAnimationFrame(schritt);
+  };
+
+  // v0.6.6 / Welle 2 Stream C — Doppeltap-Zoom (§5): animierter Zoomvorgang
+  // (Faktor 2, Feder-Gefühl), Ziel = Zeigerposition bleibt unter dem Zeiger.
+  const zoomAnimRef = useRef<number | null>(null);
+  const stoppeZoomAnimation = () => {
+    if (zoomAnimRef.current !== null) {
+      cancelAnimationFrame(zoomAnimRef.current);
+      zoomAnimRef.current = null;
+    }
+  };
+  const starteZoomAnimation = (clientX: number, clientY: number) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const px = clientX - rect.left - rect.width / 2;
+    const py = clientY - rect.top - rect.height / 2;
+    const start = { cx: view.cx, cy: view.cy, scale: view.scale };
+    const zielScale = Math.min(1, Math.max(0.005, start.scale * 2));
+    const faktor = zielScale / start.scale;
+    if (faktor <= 1.0001) return; // schon am Zoom-Deckel — keine Animation ohne Effekt
+    const ziel = {
+      cx: start.cx + (px / start.scale) * (1 - 1 / faktor),
+      cy: start.cy - (py / start.scale) * (1 - 1 / faktor),
+      scale: zielScale,
+    };
+    stoppeZoomAnimation();
+    if (reduzierteBewegung()) {
+      setView(ziel);
+      return;
+    }
+    const dauer = 260; // --k-feder
+    const t0 = performance.now();
+    const schritt = (t: number) => {
+      const u = Math.min(1, (t - t0) / dauer);
+      const e = federGefuehl(u);
+      setView({
+        cx: start.cx + (ziel.cx - start.cx) * e,
+        cy: start.cy + (ziel.cy - start.cy) * e,
+        scale: start.scale + (ziel.scale - start.scale) * e,
+      });
+      if (u < 1) {
+        zoomAnimRef.current = requestAnimationFrame(schritt);
+      } else {
+        zoomAnimRef.current = null;
+      }
+    };
+    zoomAnimRef.current = requestAnimationFrame(schritt);
+  };
+  /** Auswahl-Werkzeug + Treffer=leer: NUR dann beansprucht kein Element/
+   *  Werkzeug den Doppelklick/-tap, siehe `plan-interaktion.spec.ts` (T1
+   *  Doppelklick-Absetzen bleibt unverändert ausserhalb des Auswahl-Werkzeugs). */
+  const versucheDoppeltapZoom = (clientX: number, clientY: number) => {
+    if (activeStoreyId) {
+      const hit = pickEntityAt(doc, activeStoreyId, toWorld(clientX, clientY));
+      if (hit) return;
+    }
+    starteZoomAnimation(clientX, clientY);
+  };
+
+  // v0.6.6 / Welle 2 Stream C — 2D-Gesten-Kern (§5, "ein Kern" für Touch UND
+  // Maus): hier NUR für Touch-Doppeltap (Zoom) und Touch-Longpress
+  // (Kontextmenü) gefüttert — additiv, ändert nichts an moveActive/pickMode/
+  // onGroundClick. Maus nutzt fürs Doppelklick-Zoom das native `onDoubleClick`
+  // (identische DOPPELTAP_MS-Grössenordnung, kein Duplikat der Bewegungslogik).
+  const gestenRef = useRef<ReturnType<typeof gestenDetektor> | null>(null);
+  if (!gestenRef.current) gestenRef.current = gestenDetektor();
+  const longPressPollRef = useRef<number | null>(null);
+  // Touch-Longpress-Kontextmenü (Task 4) — dasselbe Präsentationsbauteil wie
+  // der 3D-Viewport (`ViewportKontextmenue.tsx`, unverändert wiederverwendet,
+  // «kein neues Menü bauen»). Rechtsklick öffnet dasselbe Menü (vorher: reines
+  // `preventDefault()`, kein Menü — additiv, kein bestehender Vertrag).
+  const [kontext2d, setKontext2d] = useState<{ x: number; y: number; entityId: string } | null>(null);
+  const stoppeLongPressPoll = () => {
+    if (longPressPollRef.current !== null) {
+      cancelAnimationFrame(longPressPollRef.current);
+      longPressPollRef.current = null;
+    }
+  };
+  const starteLongPressPoll = () => {
+    stoppeLongPressPoll();
+    const poll = () => {
+      const ev = gestenRef.current!.pruefeLongPress(performance.now());
+      if (ev.longPress) {
+        longPressPollRef.current = null;
+        if (activeStoreyId) {
+          const hit = pickEntityAt(doc, activeStoreyId, toWorld(ev.longPress.x, ev.longPress.y));
+          if (hit) {
+            haptikTick(); // §6: Longpress-Auslösung
+            const rect = svgRef.current?.getBoundingClientRect();
+            setKontext2d({
+              x: ev.longPress.x - (rect?.left ?? 0),
+              y: ev.longPress.y - (rect?.top ?? 0),
+              entityId: hit,
+            });
+          }
+        }
+        return;
+      }
+      longPressPollRef.current = requestAnimationFrame(poll);
+    };
+    longPressPollRef.current = requestAnimationFrame(poll);
+  };
+
+  // Alle drei rAF-Läufe brechen beim Unmount ab (Ansicht wechselt weg) —
+  // sonst liefe ein Fling/Zoom/Longpress-Poll gegen ein entsorgtes Bauteil.
+  useEffect(() => {
+    return () => {
+      stoppeFling();
+      stoppeZoomAnimation();
+      stoppeLongPressPoll();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const plan = useMemo(
     () => (activeStoreyId ? derivePlan(doc, activeStoreyId) : null),
     [doc, activeStoreyId, revision],
@@ -211,11 +404,13 @@ export function PlanView({
     if (!svg) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      stoppeFling(); // §5: Mausrad bleibt ohne Momentum — UND bricht einen laufenden Fling ab
       const factor = Math.exp(-e.deltaY * 0.0012);
       setView((v) => ({ ...v, scale: Math.min(1, Math.max(0.005, v.scale * factor)) }));
     };
     svg.addEventListener('wheel', onWheel, { passive: false });
     return () => svg.removeEventListener('wheel', onWheel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // F5: Leertaste halten = Pan-Bereitschaft (ArchiCAD/Photoshop). Dieselbe
@@ -252,6 +447,19 @@ export function PlanView({
   const w = 100 / view.scale; // halbe Breite in mm — via viewBox gelöst
   void w;
 
+  // v0.6.6 / Welle 2 Stream C (§6): Fang-Einrasten löst einen Haptik-Tick aus
+  // — EINMAL pro neu eingerastetem Fangpunkt (Identität über Typ+Position),
+  // nicht bei jedem Render. `handlers.current` ist eine Ref (kein React-
+  // State), darum ein reiner Ableitungs-Key als Effekt-Dependency statt eines
+  // direkten Ref-Vergleichs — `fangPunkt` selbst lebt in DesignWorkspace.tsx
+  // (tabu), PlanView liest ihn nur mit (wie den bestehenden Marker unten).
+  const fangPunkt = handlers.current?.fangPunkt ?? null;
+  const fangSchluessel = fangPunkt ? `${fangPunkt.typ}:${fangPunkt.p.x}:${fangPunkt.p.y}` : null;
+  useEffect(() => {
+    if (fangSchluessel) haptikTick(); // §6: Fang-Einrasten
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fangSchluessel]);
+
   // F9 (v0.6.4): Kontextcursor fürs Plan-SVG — dieselbe Systematik wie
   // `werkzeugCursorFuer` im 3D-Viewport (`eingabe-3d.ts`), hier um den
   // Hover-Trefferzustand des Auswahl-Werkzeugs erweitert.
@@ -285,6 +493,10 @@ export function PlanView({
       {unternehmerDxf && (
         <button
           data-testid="unternehmerplan-toggle"
+          // v0.6.6 / Welle 2 Stream C (Task 7, MOTION-KONZEPT-066 §3): .k-druck-
+          // Rollout auf PlanView-eigene Leisten-Knöpfe — DOM/Props/testid/Text
+          // byte-identisch, nur die Pressklasse kommt zusätzlich dazu.
+          className="k-druck"
           onClick={() => overlayUmschalten()}
           title="Unternehmerplan-Referenz ein-/ausblenden (Durchpaus-Layer, nur Bildschirm, C4b)"
           style={{
@@ -299,6 +511,7 @@ export function PlanView({
       )}
       <button
         data-testid="graph-toggle"
+        className="k-druck"
         onClick={() => setGraphAn(!graphAn)}
         style={{
           position: 'absolute', top: 8, right: 8, zIndex: 5, padding: '3px 10px',
@@ -311,6 +524,7 @@ export function PlanView({
       </button>
       <button
         data-testid="achsen-toggle"
+        className="k-druck"
         onClick={() => setAchsenAn(!achsenAn)}
         title="Stützenraster-Achsen (Konstruktionslinien) ein-/ausblenden — nur Bildschirm, Druck/Export unverändert"
         style={{
@@ -329,6 +543,10 @@ export function PlanView({
         data-cursor={cursorStil}
         style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none', cursor: cursorStil }}
         onPointerDown={(e) => {
+          // §5: JEDE neue Eingabe bricht einen laufenden Fling/Zoom-Anim sofort
+          // ab — vor jeder Verzweigung, unabhängig von Taste/Pointer-Typ.
+          stoppeFling();
+          stoppeZoomAnimation();
           if (e.pointerType === 'touch') {
             touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
             try {
@@ -345,6 +563,22 @@ export function PlanView({
               };
               gestureAktiv.current = true;
               panning.current = null;
+              // Zweiter Finger → Pinch: kein Tap/Longpress mehr (Kernvertrag),
+              // Fling-Sample-Fenster startet neu am Pinch-Mittelpunkt (§5).
+              gestenRef.current!.ereignis({
+                typ: 'down', t: performance.now(), x: e.clientX, y: e.clientY, pointerId: e.pointerId, pointerType: 'touch',
+              });
+              stoppeLongPressPoll();
+              flingRef.current!.reset();
+              flingRef.current!.sample(performance.now(), pinch.current.mid0.x, pinch.current.mid0.y);
+            } else if (touches.current.size === 1) {
+              // Erster Finger: additiver 2D-Gesten-Kern für Touch-Doppeltap-
+              // Zoom + Touch-Longpress-Kontextmenü (§5/§6) — die bestehende
+              // Zeichnen-/Auswahl-Logik unten läuft komplett unverändert weiter.
+              gestenRef.current!.ereignis({
+                typ: 'down', t: performance.now(), x: e.clientX, y: e.clientY, pointerId: e.pointerId, pointerType: 'touch',
+              });
+              starteLongPressPoll();
             }
             return;
           }
@@ -362,6 +596,9 @@ export function PlanView({
             panning.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy };
             setPanAktiv(true);
             (e.target as Element).setPointerCapture(e.pointerId);
+            // §5: Fling-Sample-Fenster für den Maus-Drag-Pan neu starten.
+            flingRef.current!.reset();
+            flingRef.current!.sample(performance.now(), e.clientX, e.clientY);
           } else if (e.button === 0 && navModus2d === 'zoom') {
             zoomDrag.current = { y: e.clientY, scale: view.scale };
             (e.target as Element).setPointerCapture(e.pointerId);
@@ -379,6 +616,11 @@ export function PlanView({
         onPointerMove={(e) => {
           if (e.pointerType === 'touch' && touches.current.has(e.pointerId)) {
             touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            // §5: additive Bewegt-Verfolgung für Touch-Doppeltap/-Longpress —
+            // bricht Longpress bei echter Bewegung ab (bestehende Kernel-Regel).
+            gestenRef.current!.ereignis({
+              typ: 'move', t: performance.now(), x: e.clientX, y: e.clientY, pointerId: e.pointerId, pointerType: 'touch',
+            });
             if (pinch.current && touches.current.size >= 2) {
               const [a, b] = [...touches.current.values()];
               const d = Math.hypot(b!.x - a!.x, b!.y - a!.y) || 1;
@@ -390,6 +632,7 @@ export function PlanView({
                 cx: v0.cx - (mid.x - mid0.x) / scale,
                 cy: v0.cy + (mid.y - mid0.y) / scale,
               });
+              flingRef.current!.sample(performance.now(), mid.x, mid.y); // §5: Fling-Fenster (2-Finger-Pan)
               return;
             }
           }
@@ -405,6 +648,7 @@ export function PlanView({
             const dx = (e.clientX - panning.current.x) / view.scale;
             const dy = (e.clientY - panning.current.y) / view.scale;
             setView((v) => ({ ...v, cx: panning.current!.cx - dx, cy: panning.current!.cy + dy }));
+            flingRef.current!.sample(performance.now(), e.clientX, e.clientY); // §5: Fling-Fenster (Maus-Drag-Pan)
           } else if (moveActive.current) {
             handlers.current?.onMoveDrag?.(toWorld(e.clientX, e.clientY));
           } else if (!gestureAktiv.current && !spaceGedrueckt) {
@@ -434,12 +678,32 @@ export function PlanView({
         onPointerUp={(e) => {
           if (e.pointerType === 'touch') {
             touches.current.delete(e.pointerId);
-            if (touches.current.size < 2) pinch.current = null;
+            if (touches.current.size < 2) {
+              // §5: Pinch/2-Finger-Pan endet — Momentum aus der zuletzt
+              // gemessenen Mittelpunkt-Geschwindigkeit übernehmen (Zoom selbst
+              // bleibt ohne Momentum, nur die Translation läuft aus).
+              if (pinch.current) {
+                const v = flingRef.current!.loslassGeschwindigkeit();
+                if (v) starteFling(v.vx, v.vy);
+              }
+              pinch.current = null;
+            }
             if (touches.current.size === 0) {
+              stoppeLongPressPoll();
               // Zwei-Finger-Geste beendet? Dann diesen Lift nicht als Klick werten.
               if (gestureAktiv.current) {
                 gestureAktiv.current = false;
                 return;
+              }
+              // §5: Ein-Finger-Loslassen additiv durch denselben Gesten-Kern —
+              // Doppeltap-Zoom NUR bei Auswahl-Werkzeug + leerer Trefferzone;
+              // der bestehende Klick-/Pick-Pfad unten läuft UNVERÄNDERT weiter
+              // (kein `return` hier — Einzelklick feuert weiter sofort).
+              const g = gestenRef.current!.ereignis({
+                typ: 'up', t: performance.now(), x: e.clientX, y: e.clientY, pointerId: e.pointerId, pointerType: 'touch',
+              });
+              if (g.doppelTap && handlers.current?.pickMode) {
+                versucheDoppeltapZoom(g.doppelTap.x, g.doppelTap.y);
               }
             } else {
               return;
@@ -452,6 +716,10 @@ export function PlanView({
           if (panning.current) {
             panning.current = null;
             setPanAktiv(false);
+            // §5: Maus-Drag-Pan endet — Momentum aus dem Fling-Fenster (falls
+            // schnell genug losgelassen, sonst bleibt die Ansicht einfach stehen).
+            const v = flingRef.current!.loslassGeschwindigkeit();
+            if (v) starteFling(v.vx, v.vy);
             return;
           }
           if (moveActive.current) {
@@ -469,7 +737,15 @@ export function PlanView({
         }}
         onDoubleClick={(e) => {
           // ArchiCAD-Geste: Doppelklick schliesst/setzt die laufende Platzierung ab
-          if (moveActive.current || handlers.current?.pickMode) return;
+          if (moveActive.current) return;
+          if (handlers.current?.pickMode) {
+            // §5: Auswahl-Werkzeug beansprucht den Doppelklick NICHT zum
+            // Absetzen (das gilt nur für Zeichenwerkzeuge oben) — hier bisher
+            // toter Code (reines `return`), jetzt Doppelklick-Zoom auf leerer
+            // Fläche (Treffer=Element lässt `versucheDoppeltapZoom` unangetastet).
+            versucheDoppeltapZoom(e.clientX, e.clientY);
+            return;
+          }
           const p = toWorld(e.clientX, e.clientY);
           handlers.current?.onGroundDoubleClick?.({ p, shiftKey: e.shiftKey });
         }}
@@ -477,7 +753,13 @@ export function PlanView({
           if (e.pointerType === 'touch') {
             touches.current.delete(e.pointerId);
             if (touches.current.size < 2) pinch.current = null;
-            if (touches.current.size === 0) gestureAktiv.current = false;
+            if (touches.current.size === 0) {
+              gestureAktiv.current = false;
+              stoppeLongPressPoll();
+              gestenRef.current!.ereignis({
+                typ: 'cancel', t: performance.now(), x: e.clientX, y: e.clientY, pointerId: e.pointerId, pointerType: 'touch',
+              });
+            }
           }
           moveActive.current = false;
           zoomDrag.current = null;
@@ -485,7 +767,18 @@ export function PlanView({
           setPanAktiv(false);
         }}
         onPointerLeave={() => setHoverId(null)}
-        onContextMenu={(e) => e.preventDefault()}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          // v0.6.6 / Welle 2 Stream C (Task 4): Rechtsklick auf ein Element
+          // öffnet dasselbe Kontextmenü-Bauteil wie Touch-Longpress (vorher:
+          // reines `preventDefault()`, kein Menü — additiv, kein bestehender
+          // Vertrag betroffen, kein Spec deckt bisher `contextmenu` hier ab).
+          if (!activeStoreyId) return;
+          const hit = pickEntityAt(doc, activeStoreyId, toWorld(e.clientX, e.clientY));
+          if (!hit) return;
+          const rect = svgRef.current?.getBoundingClientRect();
+          setKontext2d({ x: e.clientX - (rect?.left ?? 0), y: e.clientY - (rect?.top ?? 0), entityId: hit });
+        }}
       >
         <defs>
           {/* SIA-Schraffuren — Beton: Tönung + Diagonale wie im Schnitt
@@ -1048,6 +1341,30 @@ export function PlanView({
             };
           }}
           onAccept={handlers.current.onSketchAccept}
+          // v0.6.6 / Welle 2 Stream C (Task 5, Palm-Rejection-Basis): zweiter
+          // Pointer während eines Stift-Strichs pannt statt zu zeichnen —
+          // dieselbe Umrechnung wie beim Maus-Drag-Pan oben (dx/dy in
+          // Bildschirm-px → Weltverschiebung über `view.scale`).
+          onPanDelta={(dx, dy) => {
+            stoppeFling();
+            setView((v) => ({ ...v, cx: v.cx - dx / v.scale, cy: v.cy + dy / v.scale }));
+          }}
+        />
+      )}
+      {kontext2d && (
+        <ViewportKontextmenue
+          x={kontext2d.x}
+          y={kontext2d.y}
+          aktionen={
+            [
+              {
+                label: 'Auswählen',
+                testid: 'kontext2d-auswaehlen',
+                onClick: () => handlers.current?.onPick?.(kontext2d.entityId),
+              },
+            ] satisfies KontextAktion[]
+          }
+          onClose={() => setKontext2d(null)}
         />
       )}
       <NavLeiste

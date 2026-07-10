@@ -19,6 +19,21 @@ import { skizzeAnnaeherungen, skizzeMiniPfad, type SkizzeVarianteId } from './sk
  * `onAccept`-Weg wie bisher (EIN Aufruf, EINE Undo-Gruppe). Karte 1 (exakt)
  * behält bewusst den alten Testid `sketch-accept` — sie IST das bisherige
  * Verhalten, nur jetzt eine von drei Optionen statt die einzige.
+ *
+ * v0.6.6 / Welle 2 Stream C (MOTION-KONZEPT-066 §5, Task 5): `pointerType`
+ * kommt hier NIE eigens abgefangen/verändert an — jedes `onPointerDown`/
+ * `-Move`-Event reicht sein natives `pointerType` unangetastet weiter nach
+ * oben durch (keine `stopPropagation()`, wie schon vorher). Das genügt als
+ * «sauber durchreichen»: die eigentliche «iPad-Skizzieren»-Erkennung für die
+ * Arbeitsmodi-Automatik sitzt in `DesignWorkspace.tsx`s Capture-Phase-Handler
+ * (Stream B/W1b, `onWorkspacePointerDownCapture`), der ausdrücklich AUCH bei
+ * `stopPropagation()` in einem Kind mitliest — dieses Bauteil braucht dafür
+ * keinen eigenen Verdrahtungsweg. Palm-Rejection-Basis: kommt WÄHREND ein
+ * Stift (`pointerType==='pen'`) zeichnet ein zweiter Pointer dazu
+ * (typischerweise die aufliegende Handfläche), wird der begonnene Strich
+ * verworfen (er ist ohnehin vom Aufsetzen der Hand verwackelt) und der
+ * zweite Pointer treibt stattdessen `onPanDelta` — NUR in genau diesem Fall,
+ * das normale Ein-Pointer-Zeichnen (Maus/Touch/Pen allein) ist unverändert.
  */
 
 export interface SketchOverlayProps {
@@ -27,6 +42,11 @@ export interface SketchOverlayProps {
   toScreen: (p: Pt) => { x: number; y: number };
   /** `meta` fehlt nur, wenn ein Aufrufer (z.B. der 3D-Sketch-Weg) keine Varianten anbietet. */
   onAccept: (segments: FittedSegment[], meta?: { variante: SkizzeVarianteId; anzahl: number }) => void;
+  /** Palm-Rejection-Basis (Task 5): Bildschirm-px-Delta, wenn ein zweiter
+   *  Pointer während eines aktiven Stift-Strichs pannen soll, statt zu
+   *  zeichnen. Optional — ohne diesen Callback bleibt das Verhalten wie
+   *  zuvor (jeder Pointer zeichnet mit, keine Sonderrolle für einen zweiten). */
+  onPanDelta?: (dx: number, dy: number) => void;
 }
 
 type LivePt = { x: number; y: number; pressure: number };
@@ -47,14 +67,20 @@ function strichPfad(pts: LivePt[], toScreen: (p: Pt) => { x: number; y: number }
     : '';
 }
 
-export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProps) {
+export function SketchOverlay({ toWorld, toScreen, onAccept, onPanDelta }: SketchOverlayProps) {
   const [live, setLive] = useState<LivePt[]>([]);
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   const [pending, setPending] = useState<FittedSegment[] | null>(null);
   const drawing = useRef(false);
+  // v0.6.6 / Welle 2 Stream C (Task 5): pointerType des zeichnenden Pointers
+  // + Palm-Rejection-Zustand (zweiter Pointer während Stift → Pan statt Zeichnen).
+  const drawingPointerType = useRef<string | null>(null);
+  const panPointerId = useRef<number | null>(null);
+  const panLetzte = useRef<{ x: number; y: number } | null>(null);
 
   const finish = () => {
     drawing.current = false;
+    drawingPointerType.current = null;
     setLive((l) => {
       if (l.length >= 4) setStrokes((s) => [...s, { points: l }]);
       return [];
@@ -85,12 +111,38 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
       style={{ position: 'absolute', inset: 0, touchAction: 'none', cursor: 'crosshair' }}
       onPointerDown={(e) => {
         if (pending) return;
+        // v0.6.6 / Welle 2 Stream C (Task 5): Palm-Rejection-Basis — ein
+        // zweiter Pointer während ein Stift zeichnet ist typischerweise die
+        // aufliegende Handfläche, nicht eine zweite Absicht. Der begonnene
+        // (ohnehin vom Aufsetzen verwackelte) Strich wird verworfen, der
+        // zweite Pointer treibt stattdessen `onPanDelta` — NUR wenn ein
+        // Aufrufer das anbietet (PlanView) UND wirklich ein Stift zeichnet.
+        if (drawing.current && drawingPointerType.current === 'pen' && onPanDelta) {
+          drawing.current = false;
+          drawingPointerType.current = null;
+          setLive([]);
+          panPointerId.current = e.pointerId;
+          panLetzte.current = { x: e.clientX, y: e.clientY };
+          try {
+            (e.target as Element).setPointerCapture(e.pointerId);
+          } catch {
+            /* synthetische Events (Tests) haben keinen aktiven Pointer */
+          }
+          return;
+        }
         drawing.current = true;
+        drawingPointerType.current = e.pointerType;
         (e.target as Element).setPointerCapture(e.pointerId);
         const w = toWorld(e.clientX, e.clientY);
         setLive([{ ...w, pressure: e.pressure || 0.5 }]);
       }}
       onPointerMove={(e) => {
+        if (panPointerId.current !== null && e.pointerId === panPointerId.current) {
+          const letzte = panLetzte.current;
+          if (letzte) onPanDelta?.(e.clientX - letzte.x, e.clientY - letzte.y);
+          panLetzte.current = { x: e.clientX, y: e.clientY };
+          return;
+        }
         if (!drawing.current) return;
         // Pencil: 240Hz-Zwischenpunkte mitnehmen
         const events =
@@ -105,8 +157,22 @@ export function SketchOverlay({ toWorld, toScreen, onAccept }: SketchOverlayProp
           })),
         ]);
       }}
-      onPointerUp={finish}
-      onPointerCancel={finish}
+      onPointerUp={(e) => {
+        if (panPointerId.current !== null && e.pointerId === panPointerId.current) {
+          panPointerId.current = null;
+          panLetzte.current = null;
+          return;
+        }
+        finish();
+      }}
+      onPointerCancel={(e) => {
+        if (panPointerId.current !== null && e.pointerId === panPointerId.current) {
+          panPointerId.current = null;
+          panLetzte.current = null;
+          return;
+        }
+        finish();
+      }}
     >
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
         {/* Roh-Skizze: fertige, noch nicht gefittete Striche — dezent, grau */}

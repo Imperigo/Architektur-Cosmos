@@ -108,6 +108,22 @@ export const DOPPELTAP_RADIUS_PX = 24;
 export const LONGPRESS_MS = 500;
 export const LONGPRESS_RADIUS_PX = 8;
 
+// v0.6.6 / Welle 2 Stream C (MOTION-KONZEPT-066 §5) — Swipe-Schwellen: 40px
+// Mindeststrecke UND 0.5 px/ms Mindestgeschwindigkeit, sonst zählt die Geste
+// als reines Ziehen, kein Swipe.
+export const SWIPE_MIN_PX = 40;
+export const SWIPE_MIN_GESCHWINDIGKEIT = 0.5; // px/ms
+
+// v0.6.6 / Welle 2 Stream C — Fling/Momentum-Konstanten (§5): Dämpfung 0.95
+// je 60Hz-Frame (~16.6667ms), Stopp unter 0.02 px/ms. Das Geschwindigkeits-
+// fenster (letzte ~80ms Bewegung vor dem Loslassen) sammelt der `flingTracker`.
+export const FLING_DAEMPFUNG = 0.95;
+export const FLING_STOPP_GESCHWINDIGKEIT = 0.02; // px/ms
+export const FLING_SAMPLE_FENSTER_MS = 80;
+const FLING_FRAME_MS = 1000 / 60; // Bezugsrahmen für die 0.95-Dämpfung/Frame
+
+export type SwipeRichtung = 'links' | 'rechts' | 'hoch' | 'runter';
+
 export interface PointerSample {
   typ: 'down' | 'move' | 'up' | 'cancel';
   t: number;
@@ -122,14 +138,21 @@ export interface GestenEreignis {
   tap?: { x: number; y: number };
   doppelTap?: { x: number; y: number };
   longPress?: { x: number; y: number };
+  /** Serie J / Welle 2 Stream C: schnelles, gerades Ziehen über die Schwelle
+   *  (Richtung + tatsächliche Geschwindigkeit px/ms). Feuert NUR beim Loslassen,
+   *  zusätzlich zum (weiterhin fehlenden) Tap — bewegte Gesten melden nie einen Tap. */
+  swipe?: { richtung: SwipeRichtung; geschwindigkeit: number };
 }
 
 /**
  * Serie J / J1b — Gesten-Detektor als reiner Zustandsautomat (Muster A4): wird
- * mit PointerSamples gefüttert und meldet Tap / Doppel-Tap / Long-Press. Kein
- * DOM, kein Timer — die Zeit kommt als Parameter herein (`pruefeLongPress`
+ * mit PointerSamples gefüttert und meldet Tap / Doppel-Tap / Long-Press / Swipe.
+ * Kein DOM, kein Timer — die Zeit kommt als Parameter herein (`pruefeLongPress`
  * ruft der Aufrufer aus dem Renderloop mit `performance.now()`). Mehr als ein
- * gleichzeitiger Pointer (Pinch) bricht die Tap-/Long-Press-Erkennung ab.
+ * gleichzeitiger Pointer (Pinch) bricht die Tap-/Long-Press-/Swipe-Erkennung
+ * ab. Touch UND Maus füttern denselben Automaten mit denselben Konstanten
+ * (§5 «ein Kern») — ein `pointerType: 'mouse'`-Sample braucht keine eigene
+ * Fassung; `PlanView.tsx` speist hier auch Maus-Doppelklicks/-Longpress ein.
  */
 export function gestenDetektor(): {
   ereignis(e: PointerSample): GestenEreignis;
@@ -175,7 +198,28 @@ export function gestenDetektor(): {
       if (e.pointerId !== downId) return {};
       const warAktiv = aktiv;
       aktiv = false;
-      if (e.typ === 'cancel' || mehrfach || bewegt || !warAktiv) return {};
+      if (e.typ === 'cancel' || mehrfach || !warAktiv) return {};
+      if (bewegt) {
+        // Swipe: gerades, schnelles Ziehen ECHT über die Schwelle (strikt
+        // > 40px, nicht nur erreicht) — bewegte Gesten melden weiterhin NIE
+        // einen Tap (kein Verhaltenswechsel für bestehende Ziehen-/Zeichnen-
+        // Pfade, nur ein zusätzliches Signal oberhalb der bisherigen
+        // Bewegt-Schwelle `KLICK_RADIUS_PX`). Die strikte Ungleichung hält
+        // den bestehenden Vertrag "40px/60ms bewegt = kein Tap, {}" intakt.
+        const dx = e.x - downX;
+        const dy = e.y - downY;
+        const dt = e.t - downT;
+        const dist = Math.hypot(dx, dy);
+        if (dt > 0 && dist > SWIPE_MIN_PX) {
+          const v = dist / dt;
+          if (v >= SWIPE_MIN_GESCHWINDIGKEIT) {
+            const richtung: SwipeRichtung =
+              Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'rechts' : 'links') : dy > 0 ? 'runter' : 'hoch';
+            return { swipe: { richtung, geschwindigkeit: v } };
+          }
+        }
+        return {};
+      }
       // Tap: kurz, kaum bewegt.
       const istDoppel =
         e.t - letzterTapT <= DOPPELTAP_MS &&
@@ -195,6 +239,68 @@ export function gestenDetektor(): {
         return { longPress: { x: downX, y: downY } };
       }
       return {};
+    },
+  };
+}
+
+/** Geschwindigkeitsvektor in px/ms (Bildschirmraum). */
+export interface FlingVektor {
+  vx: number;
+  vy: number;
+}
+
+/**
+ * Serie J / Welle 2 Stream C (MOTION-KONZEPT-066 §5) — Ein Dämpfungsschritt
+ * des Fling/Momentum: Faktor `FLING_DAEMPFUNG` (0.95) bezogen auf einen
+ * 60Hz-Frame (~16.6667ms), auf das tatsächliche `dt` skaliert (rAF liefert
+ * selten exakt 16.6667ms). Fällt die resultierende Geschwindigkeit unter
+ * `FLING_STOPP_GESCHWINDIGKEIT`, ist der Fling vorbei (`null` statt eines
+ * de-facto-Stillstands, den der Aufrufer sonst extra prüfen müsste). Reine
+ * Funktion — kein `requestAnimationFrame`, kein DOM; der Aufrufer (PlanView)
+ * ruft sie je Frame mit der zuletzt aktuellen Geschwindigkeit und dem
+ * gemessenen `dt` seit dem letzten Frame.
+ */
+export function flingSchritt(v: FlingVektor, dt: number): FlingVektor | null {
+  if (dt <= 0) return v;
+  const faktor = Math.pow(FLING_DAEMPFUNG, dt / FLING_FRAME_MS);
+  const vx = v.vx * faktor;
+  const vy = v.vy * faktor;
+  if (Math.hypot(vx, vy) < FLING_STOPP_GESCHWINDIGKEIT) return null;
+  return { vx, vy };
+}
+
+/**
+ * Serie J / Welle 2 Stream C — Loslass-Geschwindigkeit aus den Samples der
+ * letzten `FLING_SAMPLE_FENSTER_MS` (~80ms) vor dem Loslassen: eine kleine,
+ * DOM-freie Ringpuffer-Sammlung, die der Aufrufer (PlanView) während einer
+ * Pan-Geste (Maus-Drag ODER Touch-Zwei-Finger-Pan) mit `sample(t, x, y)`
+ * füttert — bei jedem `pointermove`. `loslassGeschwindigkeit()` liefert beim
+ * Loslassen die mittlere Geschwindigkeit über das Fenster (älteste vs.
+ * neueste Probe im Fenster), `null` ohne genug Daten (kein Fling).
+ */
+export function flingTracker(): {
+  sample(t: number, x: number, y: number): void;
+  reset(): void;
+  loslassGeschwindigkeit(): FlingVektor | null;
+} {
+  let proben: { t: number; x: number; y: number }[] = [];
+  return {
+    sample(t, x, y) {
+      proben.push({ t, x, y });
+      const grenze = t - FLING_SAMPLE_FENSTER_MS;
+      // Chronologisch sortierte Proben — von vorn abschneiden reicht.
+      while (proben.length > 1 && proben[0]!.t < grenze) proben.shift();
+    },
+    reset() {
+      proben = [];
+    },
+    loslassGeschwindigkeit(): FlingVektor | null {
+      if (proben.length < 2) return null;
+      const erste = proben[0]!;
+      const letzte = proben[proben.length - 1]!;
+      const dt = letzte.t - erste.t;
+      if (dt <= 0) return null;
+      return { vx: (letzte.x - erste.x) / dt, vy: (letzte.y - erste.y) / dt };
     },
   };
 }

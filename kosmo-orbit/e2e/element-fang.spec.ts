@@ -82,3 +82,64 @@ test('Element-Fang: Marker am Wandende sichtbar, Klick rastet exakt ein', async 
   await page.mouse.move(ziel.x + 1500 * ziel.pxProMm, ziel.y - 1500 * ziel.pxProMm);
   await expect(marker).toHaveCount(0);
 });
+
+test('v0.6.6 Welle 2 Stream C (§6): Fang-Einrasten löst einen Haptik-Tick aus', async ({ page }) => {
+  // navigator.vibrate VOR jeder App-Initialisierung mocken (addInitScript
+  // läuft vor jedem Dokument-Script, also auch vor dem Reload unten).
+  await page.addInitScript(() => {
+    (window as unknown as { __vibrateCalls: unknown[] }).__vibrateCalls = [];
+    (navigator as unknown as { vibrate: (p: number | number[]) => boolean }).vibrate = (p: number | number[]) => {
+      (window as unknown as { __vibrateCalls: unknown[] }).__vibrateCalls.push(p);
+      return true;
+    };
+  });
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.panelOffen', '1');
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+
+  await page.evaluate(() => {
+    const s = window.__kosmo.state();
+    const assembly = (s.doc.byKind('assembly') as unknown as { id: string; target: string }[]).find(
+      (a) => a.target === 'wall',
+    );
+    window.__kosmo.run('design.wandZeichnen', {
+      storeyId: s.activeStoreyId,
+      a: { x: 0, y: 0 },
+      b: { x: 6000, y: 0 },
+      ...(assembly ? { assemblyId: assembly.id } : {}),
+    });
+  });
+
+  await page.click('[data-testid="view-2d"]');
+  await page.click('[data-testid="nav-fit"]');
+  await page.waitForTimeout(400);
+  await page.click('[data-testid="tool-wand"]');
+
+  const ziel = await page.evaluate(() => {
+    const svg = document.querySelector('[data-testid="planview"]') as SVGSVGElement;
+    const inhalt = svg.querySelector('g') as SVGGElement;
+    const m = inhalt.getScreenCTM()!;
+    const pt = new DOMPoint(6000, 0).matrixTransform(m);
+    const proMm = new DOMPoint(7000, 0).matrixTransform(m).x - pt.x;
+    return { x: pt.x, y: pt.y, pxProMm: proMm / 1000 };
+  });
+
+  const vorherAnzahl = await page.evaluate(
+    () => (window as unknown as { __vibrateCalls: unknown[] }).__vibrateCalls.length,
+  );
+  // Neben das Wandende fahren — derselbe Fang-Marker wie im Test oben.
+  const abstand = 250 * ziel.pxProMm;
+  await page.mouse.move(ziel.x + abstand, ziel.y - abstand);
+  await expect(page.locator('[data-testid="fang-marker"]')).toBeAttached();
+
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { __vibrateCalls: unknown[] }).__vibrateCalls.length))
+    .toBeGreaterThan(vorherAnzahl);
+  const calls = await page.evaluate(() => (window as unknown as { __vibrateCalls: unknown[] }).__vibrateCalls);
+  expect(calls[calls.length - 1]).toBe(10); // tick() = vibrate(10), §6
+});

@@ -9,7 +9,8 @@ import { defineConfig } from '@playwright/test';
 // EINE Konstante für baseURL UND den storageState-Origin (unten) — ein
 // künftiger Port-Override (z.B. via ENV) muss nur hier geändert werden,
 // statt an zwei Stellen synchron zu bleiben.
-const BASE_URL = 'http://localhost:5183';
+const PORT = process.env['KOSMO_E2E_PORT'] ?? '5183';
+const BASE_URL = `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: './e2e',
@@ -79,8 +80,8 @@ export default defineConfig({
     },
   },
   webServer: {
-    command: 'npm run preview -w @kosmo/orbit-app -- --port 5183 --strictPort',
-    port: 5183,
+    command: `npm run preview -w @kosmo/orbit-app -- --port ${PORT} --strictPort`,
+    port: Number(PORT),
     reuseExistingServer: true,
     timeout: 30_000,
   },

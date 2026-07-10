@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   cursor2dFuer,
   istEingabefeld,
@@ -103,6 +103,39 @@ describe('kurztasteFuer', () => {
 
   it('liefert null für unbekannte Tasten', () => {
     expect(kurztasteFuer(taste('q'), false)).toBeNull();
+  });
+
+  // v0.6.6 / Welle 2 Stream C (§6): jeder erfolgreiche Werkzeugwechsel löst
+  // EINEN Haptik-Tick aus — reiner Seiteneffekt, der Rückgabewert bleibt
+  // unverändert (siehe die Tests oben, alle unangetastet grün).
+  describe('Haptik-Tick beim Werkzeugwechsel (§6)', () => {
+    afterEach(() => {
+      delete (navigator as { vibrate?: unknown }).vibrate;
+      vi.restoreAllMocks();
+    });
+
+    it('löst navigator.vibrate(10) aus, wenn eine gültige Taste auflöst', () => {
+      const vibrate = vi.fn().mockReturnValue(true);
+      (navigator as unknown as { vibrate: typeof vibrate }).vibrate = vibrate;
+      expect(kurztasteFuer(taste('w'), false)).toBe('wand');
+      expect(vibrate).toHaveBeenCalledTimes(1);
+      expect(vibrate).toHaveBeenCalledWith(10);
+    });
+
+    it('löst KEINEN Tick aus, wenn die Taste nicht auflöst (unbekannt/Guard)', () => {
+      const vibrate = vi.fn().mockReturnValue(true);
+      (navigator as unknown as { vibrate: typeof vibrate }).vibrate = vibrate;
+      expect(kurztasteFuer(taste('q'), false)).toBeNull();
+      expect(kurztasteFuer(taste('w'), true)).toBeNull(); // Eingabefeld
+      expect(kurztasteFuer(taste('w', { repeat: true }), false)).toBeNull();
+      expect(vibrate).not.toHaveBeenCalled();
+    });
+
+    it('ohne navigator.vibrate bleibt der Rückgabewert unverändert (kein Fehler)', () => {
+      delete (navigator as { vibrate?: unknown }).vibrate;
+      expect(() => kurztasteFuer(taste('a'), false)).not.toThrow();
+      expect(kurztasteFuer(taste('a'), false)).toBe('auswahl');
+    });
   });
 });
 

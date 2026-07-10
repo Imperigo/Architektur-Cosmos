@@ -20,7 +20,18 @@
  *   A Auswahl · W Wand · Z Zone · V Volumen · D Dach · T Treppe ·
  *   C Stütze (Column) · S Schnitt · F Freihand-Skizze ·
  *   Esc zurück zur Auswahl (+ Kette abbrechen) · Leertaste halten = Pan (2D)
+ *
+ * v0.6.6 / Welle 2 Stream C (MOTION-KONZEPT-066 §6): `kurztasteFuer` löst bei
+ * jedem erfolgreichen Werkzeugwechsel EINEN kurzen Haptik-Tick aus
+ * (`state/haptik.ts`, streng feature-detected, still ohne `navigator.vibrate`
+ * — auf Desktop/Tauri passiert nichts). Das bleibt ein reiner Seiteneffekt
+ * OHNE Einfluss auf den Rückgabewert — die Funktion ist für den Aufrufer
+ * (`DesignWorkspace.tsx`, unverändert) weiterhin deterministisch, nur die
+ * Testumgebung sieht zusätzlich einen (im Testlauf wirkungslosen) Vibrations-
+ * Versuch.
  */
+
+import { tick as haptikTick } from '../../state/haptik';
 
 export type WerkzeugId =
   | 'auswahl'
@@ -82,7 +93,9 @@ export function kurztasteFuer(
   fokusImEingabefeld: boolean,
 ): WerkzeugId | null {
   if (event.repeat || event.metaKey || event.ctrlKey || event.altKey || fokusImEingabefeld) return null;
-  return werkzeugFuerTaste(event.key);
+  const werkzeug = werkzeugFuerTaste(event.key);
+  if (werkzeug) haptikTick(); // §6: Werkzeugwechsel-Pfad — kurzer Tick, still ohne Touch-Support
+  return werkzeug;
 }
 
 // ---------------------------------------------------------------------------

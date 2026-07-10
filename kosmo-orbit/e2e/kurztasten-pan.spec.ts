@@ -113,6 +113,114 @@ test('Leertaste halten + Ziehen verschiebt die Ansicht (Pan) und pausiert das We
   expect(waendeNach).toBe(waendeVor);
 });
 
+/** Wie `holeVerschiebung` im Pan-Test oben — eigenständig, weil jeder Test
+ *  isoliert läuft (kein modulweiter State zwischen Playwright-Tests). */
+async function holeVerschiebung(page: import('@playwright/test').Page): Promise<{ e: number; f: number }> {
+  return page.evaluate(() => {
+    const svg = document.querySelector('[data-testid="planview"]') as SVGSVGElement;
+    const inhalt = svg.querySelector('g') as SVGGElement;
+    const m = inhalt.getScreenCTM()!;
+    return { e: m.e, f: m.f };
+  });
+}
+
+test('Fling/Momentum: schnelles Maus-Drag-Pan-Loslassen läuft aus und stoppt von selbst (MOTION-KONZEPT-066 §5)', async ({ page }) => {
+  // §7: Bewegung wird HIER gezielt geprüft — eigene Spec-Zeile ohne die
+  // projektweite reduced-motion-Fixture (Playwright-Default), s. playwright.config.ts.
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await oeffneKosmoDesign(page);
+  await page.click('[data-testid="view-2d"]');
+  await page.click('[data-testid="nav-fit"]');
+  await page.waitForTimeout(300);
+  // Pan-Modus über die Nav-Leiste (kein Werkzeug-Gummiband im Weg).
+  await page.click('[data-testid="nav-pan"]');
+
+  const box = (await page.locator('[data-testid="planview"]').boundingBox())!;
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  // Schnelle, grosse Schritte OHNE Zwischenpausen → hohe Loslass-Geschwindigkeit
+  // im 80ms-Fenster des `flingTracker` (eingabe-3d.ts).
+  await page.mouse.move(cx + 90, cy, { steps: 1 });
+  await page.mouse.move(cx + 220, cy, { steps: 1 });
+  await page.mouse.move(cx + 380, cy, { steps: 1 });
+  await page.mouse.up();
+
+  // Erst settlen lassen (derselbe Render-Nachlauf-Grund wie im reduced-
+  // motion-Test unten — die Baseline soll NICHT den regulären Drag-Render
+  // nachlaufend als «Momentum» missverstehen), DANN zwei Messpunkte im
+  // Abstand nehmen: bewegt sich die Ansicht zwischen ihnen WEITER, ohne dass
+  // die Maus noch gedrückt/bewegt wird, läuft der Fling wirklich aus.
+  await page.waitForTimeout(400);
+  const sofortNachLoslassen = await holeVerschiebung(page);
+  await page.waitForTimeout(150);
+  const kurzDanach = await holeVerschiebung(page);
+  const momentumDelta = Math.abs(kurzDanach.e - sofortNachLoslassen.e) + Math.abs(kurzDanach.f - sofortNachLoslassen.f);
+  expect(momentumDelta).toBeGreaterThan(3);
+  // Bewegungsrichtung des Fling stimmt mit der Zugrichtung überein (nach rechts
+  // gezogen → Inhalt wandert weiter nach rechts, e wächst weiter).
+  expect(kurzDanach.e).toBeGreaterThan(sofortNachLoslassen.e);
+
+  // … und der Fling stoppt von selbst (Dämpfung 0.95/Frame, Stopp < 0.02 px/ms
+  // RESTGESCHWINDIGKEIT — das ist noch ~5px/250ms, also grosszügig länger
+  // warten, bis die Restgeschwindigkeit selbst nochmals klar abgeklungen ist).
+  await page.waitForTimeout(3500);
+  const spaeterA = await holeVerschiebung(page);
+  await page.waitForTimeout(300);
+  const spaeterB = await holeVerschiebung(page);
+  expect(Math.abs(spaeterB.e - spaeterA.e) + Math.abs(spaeterB.f - spaeterA.f)).toBeLessThan(2);
+});
+
+test('Fling/Momentum: bei reduced-motion läuft NACH dem Loslassen nichts mehr aus', async ({ page }) => {
+  // Playwright-Projektstandard IST `reducedMotion: 'reduce'` (playwright.config.ts)
+  // — explizit gesetzt statt nur verlassen: dieselbe, im Repo bereits
+  // dokumentierte Chromium/Playwright-Lücke wie in `App.tsx` (Kommentar bei
+  // `gehZu`) — `matchMedia('(prefers-reduced-motion: reduce)')` spiegelt den
+  // reinen Kontext-Default NICHT immer zuverlässig, ein expliziter
+  // `emulateMedia`-Aufruf schon (CDP setzt die Media-Feature-Emulation hart).
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await oeffneKosmoDesign(page);
+  await page.click('[data-testid="view-2d"]');
+  await page.click('[data-testid="nav-fit"]');
+  await page.waitForTimeout(300);
+  await page.click('[data-testid="nav-pan"]');
+  // `emulateMedia` setzt sich manchmal erst NACH dem `reload()` in
+  // `oeffneKosmoDesign` durch (Race, dieselbe Chromium/Playwright-Lücke wie
+  // in App.tsx dokumentiert) — hart auf den tatsächlichen matchMedia-Zustand
+  // warten, statt ihn nur anzunehmen, macht den Test deterministisch statt
+  // gelegentlich flau.
+  await expect
+    .poll(() => page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches))
+    .toBe(true);
+
+  const box = (await page.locator('[data-testid="planview"]').boundingBox())!;
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  await page.mouse.move(cx + 90, cy, { steps: 1 });
+  await page.mouse.move(cx + 220, cy, { steps: 1 });
+  await page.mouse.move(cx + 380, cy, { steps: 1 });
+  await page.mouse.up();
+
+  // ERST den letzten Pan-Move (regulärer Drag-Pfad, unverändert) vollständig
+  // rendern lassen (die schnellen synthetischen Moves können den Render
+  // kurz ins Hintertreffen bringen — belegt per Diagnose: der `<g>`-Transform
+  // «nachzog» sonst noch bis zu ~350ms nach `mouseup`), DANN erst die
+  // Momentum-losigkeits-Baseline lesen — sonst verwechselt der Test
+  // Render-Nachlauf des regulären Drags mit einem (hier NICHT gewollten) Fling.
+  await page.waitForTimeout(400);
+  const sofort = await holeVerschiebung(page);
+  await page.waitForTimeout(300);
+  const danach = await holeVerschiebung(page);
+  // Keine Weiterbewegung ohne gehaltene Maustaste — der Pan endet exakt dort,
+  // wo losgelassen wurde (kein Fake-Momentum unter reduced-motion).
+  expect(Math.abs(danach.e - sofort.e) + Math.abs(danach.f - sofort.f)).toBeLessThan(0.5);
+});
+
 test('Cursor-Attribut des Plans wechselt je Werkzeug/Modus (F9 — kontextabhängige Maus)', async ({ page }) => {
   await oeffneKosmoDesign(page);
   await page.click('[data-testid="view-2d"]');
