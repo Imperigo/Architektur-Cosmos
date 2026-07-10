@@ -9,6 +9,7 @@ import {
   isSettingsPatch,
   type Assembly,
   type Entity,
+  type Opening,
   type Patch,
 } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
@@ -119,7 +120,26 @@ export function Inspector() {
             </KSelect>
           </Row>
           <Row label="Öffnungen">
-            <span>{doc.openingsOf(entity.id).length}</span>
+            {/* v0.6.9 Stream F: Öffnungen sind im Plan (noch) nicht direkt
+                anklickbar (kein Hit-Test-Ziel, plan-hit-test.ts) — die Liste
+                hier ist der Einstieg, um ein einzelnes Fenster auszuwählen
+                und im eigenen Inspector-Zweig unten zu parametrieren. */}
+            <div style={{ display: 'grid', gap: 4, width: '100%' }}>
+              {doc.openingsOf(entity.id).length === 0 && <span>0</span>}
+              {doc.openingsOf(entity.id).map((o) => (
+                <KButton
+                  key={o.id}
+                  size="sm"
+                  tone="ghost"
+                  data-testid="inspector-oeffnung"
+                  onClick={() => select([o.id])}
+                  style={{ width: '100%', justifyContent: 'flex-start' }}
+                >
+                  {o.openingType === 'fenster' ? 'Fenster' : o.openingType === 'tuer' ? 'Tür' : 'Leibung'}{' '}
+                  {o.width}×{o.height}
+                </KButton>
+              ))}
+            </div>
           </Row>
           <Row label="Durchbruch">
             <KButton
@@ -259,6 +279,30 @@ export function Inspector() {
         </Row>
       )}
 
+      {entity.kind === 'opening' && (
+        <>
+          <Row label="Wand">
+            <KButton
+              size="sm"
+              tone="ghost"
+              onClick={() => select([entity.wallId])}
+              style={{ width: '100%', justifyContent: 'flex-start' }}
+            >
+              zur Wand ↑
+            </KButton>
+          </Row>
+          <Row label="Art">
+            <span>{entity.openingType === 'fenster' ? 'Fenster' : entity.openingType === 'tuer' ? 'Tür' : 'Leibung'}</span>
+          </Row>
+          <Row label="Masse">
+            <Measure>
+              {formatLength(entity.width)} × {formatLength(entity.height)}
+            </Measure>
+          </Row>
+          {entity.openingType === 'fenster' && <FensterAbschnitt opening={entity} runCommand={runCommand} />}
+        </>
+      )}
+
       {entity.kind !== 'storey' && entity.kind !== 'assembly' && entity.kind !== 'sheet' && (
         <Row label="Umbau">
           <KSelect
@@ -314,10 +358,12 @@ function NumberField({
   value,
   suffix,
   onCommit,
+  testid,
 }: {
   value: number;
   suffix: string;
   onCommit: (v: number) => void;
+  testid?: string;
 }) {
   return (
     <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
@@ -327,6 +373,7 @@ function NumberField({
         key={value}
         type="number"
         defaultValue={value}
+        data-testid={testid}
         onBlur={(e) => {
           const v = Number(e.target.value);
           if (Number.isFinite(v) && v !== value) onCommit(v);
@@ -336,5 +383,121 @@ function NumberField({
       />
       <span style={{ color: 'var(--k-ink-faint)' }}>{suffix}</span>
     </span>
+  );
+}
+
+/** Fenstertyp-Optionen (v0.6.9 Stream F) — deutsche Labels für die UI; die
+ * kernel-internen Labels (`commands/design.ts` FENSTERTYP_LABEL) sind nicht
+ * exportiert, darum eine schlanke eigene Kopie statt eines Kernel-Imports
+ * für reine Anzeigetexte. */
+const FENSTERTYP_OPTIONEN: Array<{ value: NonNullable<Opening['fensterTyp']>; label: string }> = [
+  { value: 'einfluegel', label: 'Einflügelig' },
+  { value: 'zweifluegel', label: 'Zweiflügelig' },
+  { value: 'fest', label: 'Festverglasung' },
+  { value: 'fensterband', label: 'Fensterband' },
+];
+
+/**
+ * Fenster-Parametrik-UI (v0.6.9 Stream F, docs/FENSTER-KONZEPT.md §3):
+ * Fenstertyp, Teilung n×m, Rahmenbreite — jede Änderung läuft über
+ * `design.fensterParametrieren` (Undo/Sync/Kosmo-sichtbar wie jeder andere
+ * Command). `swing` wird unverändert mitgeführt (ausser beim Umtypen auf
+ * `fensterband` — der Command selbst entfernt es dort, s. FENSTER-KONZEPT
+ * §3), diese UI bietet dafür bewusst keinen eigenen Schalter (nicht Teil des
+ * Auftrags — nur Typ/Teilung/Rahmenbreite).
+ */
+function FensterAbschnitt({
+  opening,
+  runCommand,
+}: {
+  opening: Opening;
+  runCommand: (commandId: string, params: unknown) => unknown;
+}) {
+  const typ = opening.fensterTyp ?? 'einfluegel';
+  const n = opening.teilung?.n ?? 1;
+  const m = opening.teilung?.m ?? 1;
+  const rahmenbreite = opening.rahmenbreite ?? 60;
+
+  const parametrieren = (patch: {
+    fensterTyp?: Opening['fensterTyp'];
+    teilungN?: number;
+    teilungM?: number;
+    rahmenbreite?: number;
+  }) => {
+    const naechsterTyp = patch.fensterTyp ?? typ;
+    try {
+      runCommand('design.fensterParametrieren', {
+        openingId: opening.id,
+        fensterTyp: naechsterTyp,
+        teilungN: patch.teilungN ?? n,
+        teilungM: patch.teilungM ?? m,
+        rahmenbreite: patch.rahmenbreite ?? rahmenbreite,
+        ...(naechsterTyp !== 'fensterband' && opening.swing ? { swing: opening.swing } : {}),
+      });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  return (
+    <>
+      <Hairline />
+      <Row label="Typ">
+        <KSelect
+          size="sm"
+          data-testid="fenster-typ"
+          value={typ}
+          onChange={(e) => parametrieren({ fensterTyp: e.target.value as Opening['fensterTyp'] })}
+          style={{ width: '100%' }}
+        >
+          {FENSTERTYP_OPTIONEN.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </KSelect>
+      </Row>
+      <Row label="Teilung">
+        <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+          <KInput
+            size="sm"
+            mono
+            type="number"
+            key={`n-${n}`}
+            defaultValue={n}
+            data-testid="fenster-teilung-n"
+            onBlur={(e) => {
+              const v = Number(e.target.value);
+              if (Number.isFinite(v) && v !== n) parametrieren({ teilungN: v });
+            }}
+            onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+            style={{ width: 48 }}
+          />
+          <span style={{ color: 'var(--k-ink-faint)' }}>×</span>
+          <KInput
+            size="sm"
+            mono
+            type="number"
+            key={`m-${m}`}
+            defaultValue={m}
+            data-testid="fenster-teilung-m"
+            onBlur={(e) => {
+              const v = Number(e.target.value);
+              if (Number.isFinite(v) && v !== m) parametrieren({ teilungM: v });
+            }}
+            onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+            style={{ width: 48 }}
+          />
+        </span>
+      </Row>
+      <Row label="Rahmen">
+        <NumberField
+          value={rahmenbreite}
+          suffix="mm"
+          testid="fenster-rahmenbreite"
+          onCommit={(v) => parametrieren({ rahmenbreite: v })}
+        />
+      </Row>
+    </>
   );
 }

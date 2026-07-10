@@ -73,6 +73,7 @@ import { BauablaufPanel } from './BauablaufPanel';
 import { MaengelPanel } from './MaengelPanel';
 import { SubmissionsCheckPanel } from './SubmissionsCheckPanel';
 import { RasterPanel } from './RasterPanel';
+import { CurtainWallPanel } from './CurtainWallPanel';
 import { FAEHIGKEIT_LABEL, PHASEN_PRESETS, empfohlenePlanPhaseFuer, type FaehigkeitId } from './phasen-presets';
 import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
@@ -397,6 +398,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // K5 (Owner-Rundgang 0.6.2, S. 10): Drag-Hover-Zustand der kompakten
   // Unternehmerplan-Upload-Fläche (rein visuell).
   const [uplanDragUeber, setUplanDragUeber] = useState(false);
+  // v0.6.9 Stream F: «Fensterband/CW setzen»-Dialog — bewusst LOKALER State
+  // statt eines neuen useUiZustand-Flags: der Knopf sitzt wie deckeZeichnen
+  // (H-7) ausserhalb der Werkzeug-Zähler-/Arbeitsmodi-Buchführung
+  // (ebenenPanelOffen/offenePanels unten), ein neues Flag dort würde diese
+  // Buchführung ohne Auftrag erweitern.
+  const [cwSetzenOffen, setCwSetzenOffen] = useState(false);
   const listeOffen = useUiZustand((s) => s.listeOffen);
   const setListeOffen = useUiZustand((s) => s.setListeOffen);
   const rasterOffen = useUiZustand((s) => s.rasterOffen);
@@ -2580,6 +2587,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         )}
         {drawOffen && <DrawPanel />}
         {rasterOffen && <RasterPanel onClose={() => setRasterOffen(false)} />}
+        {cwSetzenOffen && <CurtainWallPanel onClose={() => setCwSetzenOffen(false)} />}
         {/* C4b (C-E4): Daten-Guard — die Karten-Liste erscheint automatisch,
             sobald ein Unternehmerplan geladen ist, kein eigener Toggle nötig
             (das Vorhandensein der Daten IST der Sichtbarkeits-Zustand). */}
@@ -2880,6 +2888,20 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             }}
           >
             Decke
+          </KButton>
+          {/* v0.6.9 Stream F: design.curtainWallSetzen hatte keine UI-Fläche.
+              Gleiches Muster wie «Decke» oben (H-7): ein Panel-Knopf statt
+              eines 19. Werkzeugs — der Vertrag toBe(18) im Mehr…-Menü
+              (e2e/oberflaeche-minimal.spec.ts, UEBERLAUFFAEHIGE_WERKZEUGE)
+              bleibt so unberührt. */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="cw-setzen-oeffnen"
+            title="Fensterband/Curtain-Wall auf eine Fassadenseite des Geschosses setzen"
+            onClick={() => setCwSetzenOffen(true)}
+          >
+            Fensterband
           </KButton>
         </div>
 
