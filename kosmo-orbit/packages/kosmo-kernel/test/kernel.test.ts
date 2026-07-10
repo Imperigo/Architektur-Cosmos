@@ -2903,6 +2903,50 @@ describe('Koten roh/fertig + Absolutbezug (Vision B2)', () => {
   });
 });
 
+describe('Schnitt setzen (H-9: Schnitt-Werkzeug an Command gebunden)', () => {
+  it('setzt die Schnittlinie mit Defaults für depth/lookLeft', () => {
+    const { doc } = setupDoc();
+    expect(doc.settings.schnitt ?? null).toBe(null);
+    execute(doc, 'design.schnittSetzen', { a: { x: 0, y: 0 }, b: { x: 5000, y: 0 } });
+    expect(doc.settings.schnitt).toEqual({
+      a: { x: 0, y: 0 },
+      b: { x: 5000, y: 0 },
+      depth: 30000,
+      lookLeft: true,
+    });
+  });
+
+  it('übernimmt explizite depth/lookLeft', () => {
+    const { doc } = setupDoc();
+    execute(doc, 'design.schnittSetzen', {
+      a: { x: 1000, y: 2000 }, b: { x: 1000, y: 8000 }, depth: 12000, lookLeft: false,
+    });
+    expect(doc.settings.schnitt).toEqual({
+      a: { x: 1000, y: 2000 },
+      b: { x: 1000, y: 8000 },
+      depth: 12000,
+      lookLeft: false,
+    });
+  });
+
+  it('weist eine Schnittlinie der Länge 0 ab', () => {
+    const { doc } = setupDoc();
+    expect(() =>
+      execute(doc, 'design.schnittSetzen', { a: { x: 500, y: 500 }, b: { x: 500, y: 500 } }),
+    ).toThrow(CommandError);
+  });
+
+  it('Undo stellt den vorherigen Schnitt-Zustand wieder her (H-9: geht über die History)', () => {
+    const { doc } = setupDoc();
+    const h = new History();
+    const res = execute(doc, 'design.schnittSetzen', { a: { x: 0, y: 0 }, b: { x: 4000, y: 0 } });
+    h.record(res.patches);
+    expect(doc.settings.schnitt).not.toBe(undefined);
+    h.undo(doc);
+    expect(doc.settings.schnitt ?? null).toBe(null);
+  });
+});
+
 describe('Treppen-Ausbau (V2-A2)', () => {
   const basis = () => {
     const { doc, storeyId } = setupDoc(); // EG, 3000 hoch

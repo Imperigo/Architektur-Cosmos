@@ -141,6 +141,40 @@ export const createWall = registerCommand({
   },
 });
 
+export const setSchnitt = registerCommand({
+  id: 'design.schnittSetzen',
+  title: 'Schnitt setzen',
+  description:
+    'Setzt die Schnittlinie (a→b) für Schnittansicht und -export. depth = Sichttiefe hinter der Ebene in mm, lookLeft = Blick zur linken Normalen. Läuft über den Kernel, damit Undo/Yjs-Sync/Kosmo-Tool wie bei jedem anderen Command gelten (H-9: vorher direkter UI-State am Schnitt-Werkzeug).',
+  params: z.object({
+    a: PtSchema,
+    b: PtSchema,
+    depth: z.number().int().positive().default(30000).describe('Sichttiefe hinter der Schnittebene, mm'),
+    lookLeft: z.boolean().default(true),
+  }),
+  summarize: (p) => {
+    const len = Math.hypot(p.b.x - p.a.x, p.b.y - p.a.y);
+    return `Schnitt ${formatLength(Math.round(len))}`;
+  },
+  run: (doc, p) => {
+    if (p.a.x === p.b.x && p.a.y === p.b.y) {
+      throw new CommandError('Schnittlinie hat Länge 0');
+    }
+    return [
+      {
+        settings: true as const,
+        // Schmales Patch (nur `schnitt`), wie bei themen/materialPrioritaeten:
+        // `schnitt` ist ein optionales Feld ohne defaultSettings-Eintrag —
+        // ein volles doc.settings-Snapshot-Patch würde beim Undo die
+        // Abwesenheit des Schlüssels nicht wiederherstellen (Object-Spread
+        // löscht keine Keys), «vorher» braucht also einen expliziten Wert.
+        before: { schnitt: doc.settings.schnitt ?? null },
+        after: { schnitt: { a: p.a as Pt, b: p.b as Pt, depth: p.depth, lookLeft: p.lookLeft } },
+      },
+    ];
+  },
+});
+
 export const createSlab = registerCommand({
   id: 'design.deckeZeichnen',
   title: 'Decke zeichnen',

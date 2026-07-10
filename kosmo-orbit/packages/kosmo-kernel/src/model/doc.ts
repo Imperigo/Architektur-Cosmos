@@ -1,5 +1,5 @@
 import type { Entity } from './entities';
-import type { Mm } from './units';
+import type { Mm, Pt } from './units';
 
 /**
  * KosmoDoc — der Entity-Store des Projekts.
@@ -293,6 +293,9 @@ export interface DocSettings {
   /** Keynotes (RE-ARCHICAD A6): zentrale Notizliste nr→Text — Etiketten
    * verweisen mit der Nummer, die Blatt-Legende schreibt den Text aus. */
   keynotes?: { nr: string; text: string }[];
+  /** Aktive Schnittlinie (H-9, v0.6.8) — null = kein Schnitt gesetzt. Nur über
+   * `design.schnittSetzen` gesetzt. */
+  schnitt?: SchnittSpec | null;
 }
 
 /** Eine Override-Regel: WAS wird WIE getönt (erste Treffer-Regel gewinnt). */
@@ -388,6 +391,21 @@ export interface RaumRegel {
   minBreite: number | null;
   /** Raum braucht ein Fenster (Tageslicht). */
   tageslicht: boolean;
+}
+
+/** Schnittlinie (H-9, v0.6.8): früher reiner UI-Laufzeit-State am Schnitt-
+ * Werkzeug, jetzt über `design.schnittSetzen` im Doc — damit gelten Undo,
+ * Yjs-Sync und Kosmo-Tool automatisch wie bei jedem anderen Command. Die
+ * Geometrie deckt sich absichtlich mit `derive/section.ts`s `SectionSpec`
+ * (a/b/depth/lookLeft), ist hier aber unabhängig definiert, damit `model/`
+ * nicht von `derive/` importiert. */
+export interface SchnittSpec {
+  a: Pt;
+  b: Pt;
+  /** Sichttiefe in mm (wie weit hinter der Ebene projiziert wird). */
+  depth: number;
+  /** Blick zur linken Normalen (true) oder rechten (false). */
+  lookLeft: boolean;
 }
 
 /** CH-Zonenregel — Richtwerte je Bauzone, editierbar; kein Ersatz fürs Baureglement. */

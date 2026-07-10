@@ -368,7 +368,6 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   const setExportMenuOffen = useUiZustand((s) => s.setExportMenuOffen);
   // B5: Massstabs-Automatik — bestätigbarer Hinweis nach dem Phasenwechsel
   const [massstabHinweis, setMassstabHinweis] = useState<string | null>(null);
-  const [sectionSpec, setSectionSpec] = useState<SectionSpec | null>(null);
   const [assemblyId, setAssemblyId] = useState<string | null>(null);
   const [points, setPoints] = useState<Pt[]>([]);
   const [cursor, setCursor] = useState<Pt | null>(null);
@@ -532,6 +531,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
 
   const doc = useProject.getState().doc;
   const storeys = useMemo(() => doc.storeysOrdered(), [doc, revision]);
+  // H-9 (Sim-Befund): der Schnitt lief früher an runCommand vorbei (reiner
+  // useState hier) — jetzt liegt die Schnittlinie in doc.settings.schnitt
+  // (design.schnittSetzen), Undo/Yjs-Sync/Kosmo-Tool gelten automatisch.
+  const sectionSpec = useMemo<SectionSpec | null>(
+    () => doc.settings.schnitt ?? null,
+    [doc, revision],
+  );
 
   // A8 (K18, Bauphasen-Kopplung): wechselt die SIA-Teilphase (egal ob über
   // `sia-phase-select` oder — künftig — Undo/Redo/Sync), bietet Kosmo das
@@ -862,9 +868,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         if (points.length === 0) {
           setPoints([p]);
         } else {
-          setSectionSpec({ a: points[0]!, b: p, depth: 30000, lookLeft: true });
+          try {
+            runCommand('design.schnittSetzen', { a: points[0]!, b: p, depth: 30000, lookLeft: true });
+            setViewMode('quad');
+          } catch (err) {
+            meldeFehler(err);
+          }
           setPoints([]);
-          setViewMode('quad');
         }
       } else if (tool === 'treppe') {
         if (points.length === 0) {
