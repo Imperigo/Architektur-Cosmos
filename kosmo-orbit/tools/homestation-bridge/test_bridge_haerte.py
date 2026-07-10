@@ -672,6 +672,41 @@ importlib.reload(bridge)
 bridge.STORE = TMP_STORE
 
 # ---------------------------------------------------------------------------
+# 10) H-31 (docs/SIM-BEFUNDE.md, v0.6.9-Fix): Job-Store-Pfad wird — wenn nicht
+#     explizit gesetzt — vom Port abgeleitet, damit parallele Bridge-
+#     Instanzen auf unterschiedlichen Ports sich nicht mehr denselben Fake-
+#     Job-Ordner teilen (der frühere Bug: alle Ports landeten ohne explizites
+#     --store im selben /tmp/kosmo-jobs). `_store_fuer` ist eine reine
+#     Funktion, testbar ohne Server/Prozess.
+# ---------------------------------------------------------------------------
+os.environ.pop("KOSMO_JOB_STORE", None)
+try:
+    check(
+        "H-31: Port 8600 (zentrale, geteilte Bridge) bleibt beim alten festen Pfad",
+        bridge._store_fuer(8600, None) == Path("/tmp/kosmo-jobs"),
+    )
+    check(
+        "H-31: anderer Port ohne explizites --store bekommt einen eigenen, port-abgeleiteten Store",
+        bridge._store_fuer(8611, None) == Path("/tmp/kosmo-jobs-8611"),
+    )
+    check(
+        "H-31: zwei verschiedene Ports bekommen zwei verschiedene Stores (keine Kollision)",
+        bridge._store_fuer(8611, None) != bridge._store_fuer(8612, None),
+    )
+    check(
+        "H-31: explizites --store hat Vorrang vor der Port-Ableitung (auch für 8600)",
+        bridge._store_fuer(8600, "/tmp/mein-eigener-store") == Path("/tmp/mein-eigener-store"),
+    )
+    os.environ["KOSMO_JOB_STORE"] = "/tmp/kosmo-jobs-aus-env"
+    check(
+        "H-31: KOSMO_JOB_STORE hat Vorrang vor der Port-Ableitung, wenn --store fehlt",
+        bridge._store_fuer(8611, None) == Path("/tmp/kosmo-jobs-aus-env"),
+    )
+finally:
+    os.environ.pop("KOSMO_JOB_STORE", None)
+os.environ["KOSMO_JOB_STORE"] = str(TMP_STORE)
+
+# ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis
 # ---------------------------------------------------------------------------
 shutil.rmtree(TMP_STORE, ignore_errors=True)

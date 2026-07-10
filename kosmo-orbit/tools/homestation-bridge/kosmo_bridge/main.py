@@ -1196,10 +1196,45 @@ def bind_entscheidung(host: str, token: str, offen_bewusst: bool) -> list[str]:
     return zeilen
 
 
+def _store_fuer(port: int, store_arg: str | None) -> Path:
+    """H-31 (docs/SIM-BEFUNDE.md): ohne explizites `--store`/`KOSMO_JOB_STORE`
+    landeten bislang ALLE Bridge-Instanzen — unabhängig vom `--port` — im
+    selben `/tmp/kosmo-jobs` (der `--store`-Default war `str(STORE)`, aus dem
+    port-unabhängigen Modul-Default berechnet, BEVOR `--port` überhaupt
+    geparst wird). Parallele Test-/Journey-Läufe, die je einen eigenen Port
+    wählen (um Port-Kollisionen zu vermeiden), teilten sich dadurch trotzdem
+    EINEN Job-Ordner — `_fake_worker_pass()` iteriert je Sekunde über ALLE
+    Jobs im Store, unabhängig davon, welcher Prozess sie angelegt hat, also
+    bremsten sich fremde Läufe gegenseitig aus (Befund: 52 Jobs in einem
+    gemeinsamen Store, eine Journey blieb >25s ohne Bild).
+
+    Minimaler, additiver Fix: der Store wird — wenn nicht explizit gesetzt —
+    vom PORT abgeleitet, damit unterschiedliche Bridge-Instanzen automatisch
+    getrennte Job-Ordner bekommen. Die zentrale, von allen geteilte Bridge
+    (Port 8600, s. CLAUDE.md/Setup) bleibt dabei BEWUSST beim alten, festen
+    Pfad `/tmp/kosmo-jobs` — ihr Verhalten für Einzel-Läufe ändert sich nicht.
+    Nur andere Ports (isolierte Test-/Parallel-Instanzen) bekommen einen
+    eigenen `/tmp/kosmo-jobs-<port>`. Ein explizites `--store` oder
+    `KOSMO_JOB_STORE` hat weiterhin immer Vorrang vor dieser Ableitung.
+    """
+    if store_arg is not None:
+        return Path(store_arg)
+    env_store = os.environ.get("KOSMO_JOB_STORE")
+    if env_store:
+        return Path(env_store)
+    if port == 8600:
+        return Path("/tmp/kosmo-jobs")
+    return Path(f"/tmp/kosmo-jobs-{port}")
+
+
 def cli():
     global STORE, OLLAMA, FAKE_WORKER, TOKEN
     ap = argparse.ArgumentParser(description="Kosmo-Bridge")
-    ap.add_argument("--store", default=str(STORE), help="Job-Store-Verzeichnis")
+    ap.add_argument(
+        "--store",
+        default=None,
+        help="Job-Store-Verzeichnis (Default: portabhängig — s. _store_fuer/H-31)",
+    )
     ap.add_argument("--ollama", default=OLLAMA, help="Ollama-URL")
     # Default eng: nur lokal erreichbar. 0.0.0.0 (alle Interfaces, inkl.
     # Büronetz/LAN) ist eine bewusste Owner-Option — muss explizit gesetzt
@@ -1215,8 +1250,9 @@ def cli():
         help="Bestätigt bewusst: nicht-lokaler Host OHNE Token (sonst verweigert die Bridge den Start).",
     )
     args = ap.parse_args()
-    STORE = Path(args.store)
+    STORE = _store_fuer(args.port, args.store)
     STORE.mkdir(parents=True, exist_ok=True)
+    print(f"Job-Store: {STORE}")
     OLLAMA = args.ollama
     if args.fake_worker:
         FAKE_WORKER = True
