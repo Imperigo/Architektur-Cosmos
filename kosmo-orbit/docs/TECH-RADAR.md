@@ -117,3 +117,17 @@ Bridge-Nahtstelle** — HomeStation-Punkt, siehe HOMESTATION-AUFTRAG.md.
 Alle Angaben dieser Tabelle sind Scan-Aussagen (16 Notion-Seiten 01.–08.07.),
 nicht selbst verifiziert — Details und Widersprüche in
 `AI-SCAN-AUSWERTUNG-0.6.3.md` §4.
+
+## Nachtrag 2026-07-10 — aus der Notion-Scan-Delta-Auswertung (AI-SCAN-AUSWERTUNG-0.6.8.md)
+
+| Baustein | Entscheid | Quelle | Lizenz |
+|---|---|---|---|
+| Docling v2 + Granite-Docling-258M | **ADOPT** — lokale, halluzinationsarme PDF→MD/JSON-Extraktion (IBM); in v0.6.8 als `tools/docling-ingest` eingebaut (dreistufige Ehrlichkeit: echt / fehlend / --fake). Granite-258M als HomeStation-Option dokumentiert. | github.com/docling-project/docling | Apache 2.0 (laut Scan) |
+| Markitdown (Microsoft) | **EVALUATE** — leichter PDF/Office→MD-Konverter, als dokumentierte Alternative in derselben Ingest-Naht (kein zweiter Pfad). | github.com/microsoft/markitdown | MIT (laut Scan) |
+| RAG-Anything (HKUDS) | **WATCH** — multimodales RAG über MinerU-Extraktion; 0.6.9-Kandidat für den Abfrage-Teil über dem neuen Wissens-Import. | github.com/HKUDS/RAG-Anything | MIT (laut Scan) |
+| Qwen2.5-VL 7B / Qwen3-VL (Ollama) | **TEST (HomeStation)** — lokaler Seh-Weg für «Kosmo sieht mit» (v0.6.8 Bildpfad `images`); RTX-5090-tauglich laut Scan. | ollama.com/library/qwen2.5vl | Apache 2.0 (laut Scan) |
+| Qwen3-Embedding 0.6B | **WATCH** — Embedding-Upgrade-Kandidat für den Wissens-RAG (70.7 MTEB laut Scan); HomeStation-Schritt. | ollama.com/library/qwen3-embedding | Apache 2.0 (laut Scan) |
+| Nemotron 3 Ultra (OpenRouter) | **WATCH (Owner-Entscheid)** — via OpenRouter kostenlos, lokal auf RTX 5090 UNMÖGLICH; Cloud-Konto + Datenabfluss = Owner-Gate. | openrouter.ai | OpenMDW-1.1 (laut Scan) |
+
+Alle Angaben dieser Tabelle sind Scan-Aussagen (4 Notion-Seiten 09.–10.07.),
+nicht selbst verifiziert — Details in `AI-SCAN-AUSWERTUNG-0.6.8.md` §4.
