@@ -8,9 +8,12 @@
 
 Was die Vorlage trägt — und was wir daraus übernehmen:
 
-1. **Papier, nicht Bildschirm.** Der Grund ist nie reinweiss, sondern warmes,
-   leicht körniges Skizzen-/Zeitungspapier (≈ #ECE7DB) mit sichtbarer Textur.
-   → Papier-Textur als Grundfläche der ganzen App (subtil, nie laut).
+1. **Papier, nicht Bildschirm.** Die Referenz zeigt warmes Skizzenpapier mit
+   sichtbarer Textur. → Die **Korn-Textur** bleibt Grundfläche der ganzen App
+   (subtil, nie laut). **Owner-Entscheid 10.07.2026:** die Farbwerte kehren
+   vom Sandton (≈ #ECE7DB, 02.–10.07.) zurück zur weissen Palette
+   (Grund #F5F3EE, Karten reinweiss) — «das Sandpapierige wieder mit Weiss
+   ersetzen», ausdrücklich NUR die Farbe; das Korn bleibt.
 2. **Tusche auf Papier.** Fast alles ist Schwarz (#1A1815) in feinen,
    technischen Linien (1px) — Farbe ist die Ausnahme, nicht die Regel.
    → Standard-Akzent = Schwarz/Weiss (monochrom). Farbakzent wählbar.
@@ -33,15 +36,21 @@ Was die Vorlage trägt — und was wir daraus übernehmen:
 
 ## Tokens (verbindlich, in `kosmo-ui/src/aura.css`)
 
+Stand 10.07.2026 (weisse Palette, Owner-Entscheid — Korntextur unverändert):
+
 | Token | Papier (Standard) | Tinte |
 |---|---|---|
-| Grund `--k-field` | #ECE7DB + Korntextur | #0C0B09 |
-| Fläche `--k-surface` | #F2EEE3 | #14130F |
-| Karte `--k-raised` | #F7F4EA | #1B1A15 |
+| Grund `--k-field` | #F5F3EE + Korntextur | #0C0B09 |
+| Fläche `--k-surface` | #FBFAF6 | #14130F |
+| Karte `--k-raised` | #FFFFFF | #1B1A15 |
 | Tusche `--k-ink` | #1A1815 | #F2EFE6 |
 | Technik-Linie `--k-technik` | #1A1815 | #F2EFE6 |
-| Akzent (Standard «Tusche») | #1A1815 / Schrift #F7F4EA | #F2EFE6 / Schrift #14120E |
+| Akzent (Standard «Tusche») | #1A1815 / Schrift #FFFFFF | #F2EFE6 / Schrift #14120E |
 | Radien | 2 / 4 / 6 px (technisch, kaum gerundet) | gleich |
+
+Die Sand-Werte der Zwischenphase (02.–10.07.: Grund #ECE7DB, Fläche #F2EEE3,
+Karte #F7F4EA) sind bewusst abgelöst; Spiegel der gültigen Werte:
+`packages/kosmo-ui/src/tokens.ts` (testerzwungen, `token-spiegel.test.ts`).
 
 **Wählbare Akzente** (`data-akzent`, localStorage `kosmo.akzent`):
 `tusche` (Standard, monochrom) · `kupfer` (bisheriges Aura) · `signal`

@@ -27,17 +27,17 @@ export const accent = {
 
 /** Papier-Thema (`:root, [data-theme='paper']` in aura.css) — Hexwerte exakt gespiegelt. */
 export const paper = {
-  field: '#ece7db',
-  surface: '#f2eee3',
-  raised: '#f7f4ea',
+  field: '#f5f3ee',
+  surface: '#fbfaf6',
+  raised: '#ffffff',
   ink: '#1a1815',
-  inkSoft: '#55503f',
-  inkFaint: '#8b8471',
-  line: '#d9d3c2',
-  lineStrong: '#a49c86',
+  inkSoft: '#5c574d',
+  inkFaint: '#8f897b',
+  line: '#e4e0d6',
+  lineStrong: '#c9c4b6',
   /** Monochromer Standard-Akzent (kein `data-akzent` gesetzt). */
   accent: '#1a1815',
-  accentInk: '#f7f4ea',
+  accentInk: '#ffffff',
 } as const;
 
 /** Tinte-Thema (`[data-theme='ink']` in aura.css) — Hexwerte exakt gespiegelt. */

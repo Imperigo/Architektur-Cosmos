@@ -5,18 +5,18 @@
 
 :root,
 [data-theme='paper'] {
-  --k-field: #ece7db;
-  --k-surface: #f2eee3;
-  --k-raised: #f7f4ea;
+  --k-field: #f5f3ee;
+  --k-surface: #fbfaf6;
+  --k-raised: #ffffff;
   --k-ink: #1a1815;
-  --k-ink-soft: #55503f;
-  --k-ink-faint: #8b8471;
-  --k-line: #d9d3c2;
-  --k-line-strong: #a49c86;
+  --k-ink-soft: #5c574d;
+  --k-ink-faint: #8f897b;
+  --k-line: #e4e0d6;
+  --k-line-strong: #c9c4b6;
   --k-technik: #1a1815;
   --k-accent: #1a1815;
   --k-accent-hover: #3a362c;
-  --k-accent-ink: #f7f4ea;
+  --k-accent-ink: #ffffff;
   --k-accent-wash: rgba(26, 24, 21, 0.08);
   --k-success: #4e6d49;
   --k-warning: #a37b22;
@@ -24,8 +24,8 @@
   --k-info: #46617a;
   --k-shadow-raised: 0 1px 0 rgba(26, 24, 21, 0.08);
   --k-shadow-overlay: 0 1px 0 rgba(26, 24, 21, 0.12), 0 12px 40px rgba(26, 24, 21, 0.18);
-  --k-viewport-sky: #e7e2d4;
-  --k-plan-paper: #f4f1e7;
+  --k-viewport-sky: #edeae2;
+  --k-plan-paper: #fdfcf9;
   color-scheme: light;
 
   /* Spacing-Skala (W0, UI-KONZEPT-065 §2) — ALLE gaps/paddings; rohe
@@ -97,7 +97,7 @@
 [data-akzent='signal']:not([data-theme='ink']) {
   --k-accent: #c8501e;
   --k-accent-hover: #dd6229;
-  --k-accent-ink: #f7f4ea;
+  --k-accent-ink: #ffffff;
   --k-accent-wash: rgba(200, 80, 30, 0.1);
 }
 [data-akzent='signal'][data-theme='ink'] {
@@ -110,7 +110,7 @@
 [data-akzent='blau']:not([data-theme='ink']) {
   --k-accent: #2455a4;
   --k-accent-hover: #2f66bd;
-  --k-accent-ink: #f7f4ea;
+  --k-accent-ink: #ffffff;
   --k-accent-wash: rgba(36, 85, 164, 0.1);
 }
 [data-akzent='blau'][data-theme='ink'] {
@@ -123,7 +123,7 @@
 [data-akzent='gruen']:not([data-theme='ink']) {
   --k-accent: #1e6b47;
   --k-accent-hover: #27815a;
-  --k-accent-ink: #f7f4ea;
+  --k-accent-ink: #ffffff;
   --k-accent-wash: rgba(30, 107, 71, 0.1);
 }
 [data-akzent='gruen'][data-theme='ink'] {
