@@ -7,6 +7,7 @@ import {
   MockProvider,
   OllamaProvider,
   OpenAiKompatibelProvider,
+  ScriptedProvider,
   betriebKonfig,
   editionBetriebsart,
   greeting,
@@ -99,9 +100,16 @@ export interface KosmoSettings {
   betriebsart: Betriebsart;
   /** Remote: VPN-Adresse des HomePC (IP oder Name). */
   remoteHost: string;
-  provider: 'ollama' | 'lmstudio' | 'anthropic' | 'mock';
+  provider: 'ollama' | 'lmstudio' | 'anthropic' | 'mock' | 'scripted';
   baseUrl: string;
   model: string;
+  /**
+   * v0.6.7 Phase 0 (ScriptedProvider) — NUR über `localStorage['kosmo.llm']`
+   * gesetzt, nie über die Verbindungs-Auswahl im Panel (die bleibt tabu,
+   * KosmoPanel-Provider-Labels ändern sich nicht). Skripte selbst kommen aus
+   * `window.__kosmoSkripte[skriptId]`, nicht aus den Settings.
+   */
+  skriptId?: string;
   /** LM Studio: eigene Basis-URL + Modell (getrennt von Ollama gemerkt). */
   lmBaseUrl: string;
   lmModel: string;
@@ -317,15 +325,17 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     const provider: ChatProvider =
       settings.provider === 'mock'
         ? new MockProvider()
-        : settings.provider === 'anthropic'
-          ? new AnthropicProvider(
-              settings.cloudAuth === 'abo'
-                ? { oauthToken: settings.anthropicOauthToken, model: settings.anthropicModel }
-                : { apiKey: settings.anthropicKey, model: settings.anthropicModel },
-            )
-          : settings.provider === 'lmstudio'
-            ? new OpenAiKompatibelProvider({ baseUrl: settings.lmBaseUrl, model: settings.lmModel })
-            : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
+        : settings.provider === 'scripted'
+          ? new ScriptedProvider(settings.skriptId ?? '')
+          : settings.provider === 'anthropic'
+            ? new AnthropicProvider(
+                settings.cloudAuth === 'abo'
+                  ? { oauthToken: settings.anthropicOauthToken, model: settings.anthropicModel }
+                  : { apiKey: settings.anthropicKey, model: settings.anthropicModel },
+              )
+            : settings.provider === 'lmstudio'
+              ? new OpenAiKompatibelProvider({ baseUrl: settings.lmBaseUrl, model: settings.lmModel })
+              : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
     const { doc } = useProject.getState();
     let currentKosmoBubble = -1;
     const push = (who: Bubble['who'], text: string, testidSuffix?: string) => {

@@ -91,18 +91,38 @@ export interface KurationEintrag {
   verworfen: boolean;
 }
 
+/**
+ * Viewport-Aufnahme (v0.6.7 Phase 0) — ein Schnappschuss des 3D-Viewports
+ * («Für Vis aufnehmen»-Knopf in Viewport3D.tsx), als dataURL. Wie `laeufe`
+ * BEWUSST reine Laufzeit: entities.ts:500-505 hält fest, dass Render-Graph-
+ * Bilder nie durch Undo/Yjs/.kosmo gehen — dieselbe Regel gilt für den
+ * `aufnahme`-Node. Mehrere Aufnahmen können nebeneinander leben (id = eigener
+ * Schlüssel), der `aufnahme`-Node zeigt per Default die jüngste.
+ */
+export interface Aufnahme {
+  id: string;
+  dataUrl: string;
+  /** Date.now() beim Aufnehmen — bestimmt die «jüngste» Aufnahme. */
+  zeit: number;
+  /** Dokumentarisch: welcher Standpunkt gemeint war (Node-Param `kamera`). */
+  kamera: string;
+}
+
 interface VisRuntime {
   laeufe: Record<string, NodeLauf>;
   kuration: Record<string, KurationEintrag>;
+  aufnahmen: Record<string, Aufnahme>;
   setzeLauf: (nodeId: string, lauf: NodeLauf) => void;
   patchLauf: (nodeId: string, patch: Partial<NodeLauf>) => void;
   markiereBild: (nodeId: string) => void;
   verwerfeBild: (nodeId: string) => void;
+  fuegeAufnahmeHinzu: (a: Aufnahme) => void;
 }
 
 export const useVisRuntime = create<VisRuntime>((set) => ({
   laeufe: {},
   kuration: {},
+  aufnahmen: {},
   setzeLauf: (nodeId, lauf) => set((s) => ({ laeufe: { ...s.laeufe, [nodeId]: lauf } })),
   patchLauf: (nodeId, patch) =>
     set((s) => {
@@ -120,7 +140,23 @@ export const useVisRuntime = create<VisRuntime>((set) => ({
       const alt = s.kuration[nodeId] ?? { markiert: false, verworfen: false };
       return { kuration: { ...s.kuration, [nodeId]: { ...alt, verworfen: !alt.verworfen } } };
     }),
+  fuegeAufnahmeHinzu: (a) => set((s) => ({ aufnahmen: { ...s.aufnahmen, [a.id]: a } })),
 }));
+
+/**
+ * Wählt die zu einem `aufnahme`-Node-Param passende Aufnahme: ein Treffer
+ * nach `kamera` gewinnt, sonst (oder bei 'aktuell'/ohne Param) die jüngste
+ * insgesamt. `null` ohne jede Aufnahme — ehrlich, kein Platzhalterbild.
+ */
+export function waehleAufnahme(aufnahmen: Record<string, Aufnahme>, kamera?: string): Aufnahme | null {
+  const alle = Object.values(aufnahmen).sort((a, b) => b.zeit - a.zeit);
+  if (alle.length === 0) return null;
+  if (kamera && kamera !== 'aktuell') {
+    const treffer = alle.find((a) => a.kamera === kamera);
+    if (treffer) return treffer;
+  }
+  return alle[0]!;
+}
 
 /** Memo-Schlüssel eines Render-Auftrags — billig und deterministisch.
  * `nurCycles` MUSS mit rein (HS5): sonst zeigt der Node nach dem Umschalten

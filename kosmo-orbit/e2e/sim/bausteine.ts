@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 import type { SimSzenario } from './szenarien';
 import type { SubmissionsBefund, SiaPhase } from '@kosmo/kernel';
+import type { SzenarioSkript } from '@kosmo/ai';
 
 /**
  * Serie H (Buildplan `docs/SERIE-H-BUILDPLAN.md`, Abschnitt 1.3) —
@@ -1154,4 +1155,113 @@ export async function berichtExportPruefen(page: Page, ausloeserTestid: string, 
   const { statSync } = await import('node:fs');
   expect(statSync(pfad!).size).toBeGreaterThan(0);
   return pfad!;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 23 — kosmoChatSkript (v0.6.7 Phase 0)
+// ─────────────────────────────────────────────────────────────────────────
+/** Ein Zug-Protokolleintrag — für die Befund-Auswertung der aufrufenden Journey. */
+export interface SkriptZugProtokoll {
+  zug: number;
+  dauerMs: number;
+  /** Anzahl Diff-Karten-Vorschläge, die dieser Zug erzeugt hat (0 = reine Auskunft). */
+  proposals: number;
+  fehler?: string;
+}
+
+/**
+ * Spielt ein `SzenarioSkript` (`@kosmo/ai` ScriptedProvider) durch den ECHTEN
+ * `KosmoPanel`/`ChatSession`-Pfad: Skript-Registry via `page.evaluate` in
+ * `window.__kosmoSkripte` (der Provider liest sie LAZY je `chat()`-Aufruf —
+ * KEIN Reload nötig, das Projekt/Doc des Aufrufers bleibt erhalten; ein
+ * Reload würde das geladene Projekt und damit die App-Kontext-Defaults
+ * storeyId/assemblyId verlieren). `kosmo.llm` auf `scripted` + Skript-Id,
+ * Panel danach FRISCH mounten (KosmoPanel liest die Settings im
+ * useState-Init — ein bereits offenes Panel kennt den Provider-Wechsel
+ * nicht, darum erst schliessen). Dann je Zug: Text senden, EIN Paket
+ * (>1 Tool-Call → `apply-paket`) oder EIN Einzel-Vorschlag (1 Tool-Call →
+ * `apply-proposal`) anwenden, nichts bei einer reinen Auskunft (0 Tool-
+ * Calls). `kosmo-send` ist `disabled={busy}` (KosmoPanel.tsx) — das Warten
+ * auf «wieder aktiv» ersetzt ein Warten auf einen bestimmten Text und deckt
+ * sowohl den Antwort- als auch den Quittierungs-Umlauf ab.
+ *
+ * HINWEIS: `nutzerErwartung` im Skript als STRING übergeben — eine RegExp
+ * überlebt die JSON-Serialisierung der evaluate-Argumente nicht (der
+ * Provider toleriert das defensiv, die Erwartung wäre aber wirkungslos).
+ */
+export async function kosmoChatSkript(
+  page: Page,
+  skriptId: string,
+  skript: SzenarioSkript,
+  optionen?: { nutzerTexte?: readonly string[] },
+): Promise<SkriptZugProtokoll[]> {
+  await page.evaluate(
+    ({ skriptId, skript }) => {
+      const w = window as unknown as { __kosmoSkripte?: Record<string, unknown> };
+      w.__kosmoSkripte = { ...(w.__kosmoSkripte ?? {}), [skriptId]: skript };
+      localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'scripted', skriptId }));
+    },
+    { skriptId, skript },
+  ); // [Quelle: packages/kosmo-ai/src/scripted.ts globaleSkriptRegistry() (lazy je chat()) / KosmoPanel.tsx Provider-Fall 'scripted']
+
+  // Panel FRISCH mounten (loadSettings() läuft im useState-Init des Panels).
+  if (await page.locator('[data-testid="kosmo-input"]').isVisible()) {
+    await page.click('[data-testid="kosmo-symbol"]'); // schliessen …
+    await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
+  }
+  await page.click('[data-testid="kosmo-symbol"]'); // … und mit scripted-Settings neu öffnen [Quelle: kosmoFragen-Baustein oben]
+  await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
+
+  const sendKnopf = page.locator('[data-testid="kosmo-send"]'); // [Quelle: KosmoPanel.tsx Z.1452, disabled={busy}]
+  const protokoll: SkriptZugProtokoll[] = [];
+  for (let i = 0; i < skript.zuege.length; i++) {
+    const zug = skript.zuege[i]!;
+    const start = Date.now();
+    await expect(sendKnopf).toBeEnabled({ timeout: 15_000 });
+    await page.fill('[data-testid="kosmo-input"]', optionen?.nutzerTexte?.[i] ?? 'weiter');
+    await sendKnopf.click();
+
+    let proposals = 0;
+    let fehler: string | undefined;
+    try {
+      if (zug.toolCalls.length > 1) {
+        const paket = page.locator('[data-testid="paket-card"]').last(); // [Quelle: KosmoPanel.tsx Z.1293]
+        await expect(paket).toBeVisible({ timeout: 15_000 });
+        proposals = zug.toolCalls.length;
+        await paket.locator('[data-testid="apply-paket"]').click(); // [Quelle: KosmoPanel.tsx Z.1313]
+        await expect(paket.locator('[data-testid="apply-paket"]')).toHaveCount(0, { timeout: 15_000 });
+      } else if (zug.toolCalls.length === 1) {
+        const proposal = page.locator('[data-testid="proposal-card"]').last(); // [Quelle: KosmoPanel.tsx Z.1332]
+        await expect(proposal).toBeVisible({ timeout: 15_000 });
+        proposals = 1;
+        await proposal.locator('[data-testid="apply-proposal"]').click(); // [Quelle: KosmoPanel.tsx Z.1394]
+        await expect(proposal.locator('[data-testid="apply-proposal"]')).toHaveCount(0, { timeout: 15_000 });
+      }
+      await expect(sendKnopf).toBeEnabled({ timeout: 15_000 }); // Antwort-/Quittierungs-Umlauf beendet
+    } catch (err) {
+      fehler = err instanceof Error ? err.message : String(err);
+    }
+    protokoll.push({ zug: i, dauerMs: Date.now() - start, proposals, ...(fehler ? { fehler } : {}) });
+  }
+  return protokoll;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Baustein 24 — viewportAufnahme (v0.6.7 Phase 0)
+// ─────────────────────────────────────────────────────────────────────────
+/**
+ * «Für Vis aufnehmen» (Viewport3D.tsx, testid `viewport-aufnahme`): öffnet
+ * KosmoDesign + die 3D-Ansicht (Muster `dachSetzen`/`renderUeberBridge`),
+ * erzwingt EINEN frischen Frame (`__kosmoViewport.renderOnce()`), klickt den
+ * Aufnahme-Knopf und kehrt danach zu KosmoVis zurück — der eigentliche
+ * Aufrufer bleibt so in KosmoVis, wie eine Journey es erwartet.
+ */
+export async function viewportAufnahme(page: Page): Promise<void> {
+  await page.evaluate(() => window.__kosmo.open('design')); // [Quelle: App.tsx __kosmo.open / renderUeberBridge Z.602]
+  await page.click('[data-testid="view-quad"]'); // [Quelle: DesignWorkspace.tsx view-${id} / dachSetzen Z.338]
+  await expect(page.locator('[data-testid="viewport3d"]')).toBeVisible(); // [Quelle: Viewport3D.tsx Z.1259]
+  await page.evaluate(() => window.__kosmoViewport.renderOnce()); // [Quelle: Viewport3D.tsx Z.1161-1166 / dachSetzen Z.339]
+  await page.click('[data-testid="viewport-aufnahme"]'); // [Quelle: Viewport3D.tsx — «Für Vis aufnehmen»-Knopf]
+  await expect(page.locator('[data-testid="meldung-erfolg"]')).toContainText('aufgenommen', { timeout: 10_000 }); // [Quelle: Viewport3D.tsx fuerVisAufnehmen() melde()]
+  await page.evaluate(() => window.__kosmo.open('vis')); // zurück zu KosmoVis (Vis bleibt der Zielzustand)
 }

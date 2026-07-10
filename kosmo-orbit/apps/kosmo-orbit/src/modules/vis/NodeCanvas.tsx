@@ -16,6 +16,7 @@ import { Badge, Karteikarte, KButton, KField, KIcon, KInput, KSelect, melde, mel
 import { useProject } from '../../state/project-store';
 import {
   abbrechenJob,
+  aufnahmeAufsBlatt,
   bildAufsBlatt,
   bridgeBase,
   bridgeVermutlichCspGeblockt,
@@ -30,11 +31,13 @@ import {
 import {
   istZeitUeberschritten,
   memoKey,
+  type Aufnahme,
   type KurationEintrag,
   type NodeLauf,
   OFFENE_LAUF_STATUS,
   RENDER_TIMEOUT_MS_DEFAULT,
   useVisRuntime,
+  waehleAufnahme,
 } from './vis-runtime';
 import { BridgeBild } from './BridgeBild';
 
@@ -118,6 +121,7 @@ const KOERPER_H: Record<string, number> = {
   blatt: 38,
   referenz: 92,
   kamera: 54,
+  aufnahme: 118,
 };
 
 /** SK-V3: Zusatzhöhe, wenn ein geklappter Text-Körper (node-expand) offen ist —
@@ -318,6 +322,8 @@ export function NodeCanvas({
   const kuration = useVisRuntime((s) => s.kuration);
   const markiereBild = useVisRuntime((s) => s.markiereBild);
   const verwerfeBild = useVisRuntime((s) => s.verwerfeBild);
+  // v0.6.7 P0: Viewport-Aufnahmen (aufnahme-Node) — reine Laufzeit, wie `laeufe`.
+  const aufnahmen = useVisRuntime((s) => s.aufnahmen);
 
   const auswertung = useMemo(
     () => (graph ? evaluiereGraph(doc, graph) : null),
@@ -527,10 +533,24 @@ export function NodeCanvas({
       .catch(meldeFehler);
   };
 
-  /** Bild-Quelle eines Eingangs-Ports: der Lauf des verbundenen Render-Nodes. */
-  const bildQuelle = (nodeId: string, port: string) => {
+  /**
+   * Bild-Quelle eines Eingangs-Ports — entweder der Lauf eines verbundenen
+   * Render-Nodes (Bridge-Artefakt) ODER (v0.6.7 P0) eine Viewport-Aufnahme:
+   * derselbe `bild`-Port, zwei ehrlich unterschiedliche Herkünfte. `vergleich`/
+   * `blatt` bleiben Bild-Port-kompatibel zu beiden (kein Sonderfall am Ziel-Node).
+   */
+  const bildQuelle = (
+    nodeId: string,
+    port: string,
+  ): { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | { dataUrl: string } | null => {
     const e = graph.edges.find((e) => e.to === nodeId && e.toPort === port);
     if (!e) return null;
+    const quellNode = graph.nodes.find((n) => n.id === e.from);
+    if (quellNode?.typ === 'aufnahme') {
+      const params = quellNode.params ?? {};
+      const aufnahme = waehleAufnahme(aufnahmen, String(params['kamera'] ?? 'aktuell'));
+      return aufnahme ? { dataUrl: aufnahme.dataUrl } : null;
+    }
     const lauf = laeufe[e.from];
     return lauf && lauf.status === 'fertig' && lauf.jobId && lauf.bild
       ? { jobId: lauf.jobId, bild: lauf.bild, qa: lauf.qa }
@@ -880,6 +900,7 @@ export function NodeCanvas({
                 onAbbrechen={() => abbrechen(n.id)}
                 cloudLeer={bridgeBase() === ''}
                 bildQuelle={bildQuelle}
+                aufnahmen={aufnahmen}
                 offen={offenerKlapptext.has(n.id)}
                 onToggleOffen={() => toggleKlapptext(n.id)}
               />
@@ -1360,6 +1381,7 @@ function NodeKoerper({
   onAbbrechen,
   cloudLeer,
   bildQuelle,
+  aufnahmen,
   offen,
   onToggleOffen,
 }: {
@@ -1375,7 +1397,13 @@ function NodeKoerper({
   onFreigeben: () => void;
   onAbbrechen: () => void;
   cloudLeer: boolean;
-  bildQuelle: (nodeId: string, port: string) => { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | null;
+  bildQuelle: (
+    nodeId: string,
+    port: string,
+  ) => { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | { dataUrl: string } | null;
+  /** v0.6.7 P0: Viewport-Aufnahmen (nur der 'aufnahme'-Node zeigt sich selbst
+   * daraus — Quell-Nodes ohne Eingang brauchen die rohe Ablage, nicht `bildQuelle`). */
+  aufnahmen: Record<string, Aufnahme>;
   /** SK-V3: ist der Klapptext dieses Nodes offen (lokaler UI-State im Canvas). */
   offen: boolean;
   onToggleOffen: () => void;
@@ -1749,9 +1777,17 @@ function NodeKoerper({
               verbinde Render-Bilder
             </div>
           )}
-          {bilder.map((b, i) => (
-            <BildKachel key={i} jobId={b.jobId} bild={b.bild} qa={b.qa} alt={`Bild ${i + 1}`} />
-          ))}
+          {bilder.map((b, i) =>
+            'dataUrl' in b ? (
+              // v0.6.7 P0: Viewport-Aufnahme — keine Bridge, direktes <img> (wie
+              // der 'referenz'-Node bei einer data:-URL, s.u.).
+              <div key={i} style={{ flex: 1, display: 'grid', gap: 2, minWidth: 0 }}>
+                <img src={b.dataUrl} alt={`Bild ${i + 1}`} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+              </div>
+            ) : (
+              <BildKachel key={i} jobId={b.jobId} bild={b.bild} qa={b.qa} alt={`Bild ${i + 1}`} />
+            ),
+          )}
         </div>
       );
     }
@@ -1766,7 +1802,11 @@ function NodeKoerper({
             disabled={!quelle}
             onClick={() => {
               if (!quelle) return;
-              void bildAufsBlatt(quelle.jobId, quelle.bild, String(params['titel'] ?? 'Visualisierung'))
+              const titel = String(params['titel'] ?? 'Visualisierung');
+              // v0.6.7 P0: eine Viewport-Aufnahme braucht keinen Bridge-Fetch
+              // (die dataURL liegt schon lokal vor) — sonst derselbe Weg.
+              const ablage = 'dataUrl' in quelle ? aufnahmeAufsBlatt(quelle.dataUrl, titel) : bildAufsBlatt(quelle.jobId, quelle.bild, titel);
+              void ablage
                 .then((name) => melde(`Render liegt auf «${name}» — im KosmoPublish weiterschieben`, { ton: 'erfolg' }))
                 .catch((err) => meldeFehler(err));
             }}
@@ -1794,6 +1834,61 @@ function NodeKoerper({
               Referenz / Splat-Ansicht
             </div>
           )}
+        </div>
+      );
+    }
+    case 'aufnahme': {
+      // v0.6.7 P0 — ECHTE lokale Bildquelle: das Bild kommt vom «Für Vis
+      // aufnehmen»-Knopf im 3D-Viewport (Viewport3D.tsx, testid
+      // viewport-aufnahme), NICHT von hier. KosmoVis kann selbst nicht in den
+      // 3D-Viewport blicken (Viewport3D mountet nur in KosmoDesign, App.tsx
+      // hält Design/Vis als sich ausschliessende Stationen) — «Aufnehmen»
+      // hier wechselt DESHALB bewusst NICHT die Station (Vis bleibt offen,
+      // Owner-Vorgabe), sondern sagt ehrlich, wo der Knopf wirklich sitzt.
+      // Das Bild selbst lebt NUR in vis-runtime (entities.ts:500-505: Render-
+      // Graph-Bilder gehen nie durchs Doc/Undo/Yjs) — dieselbe Regel wie beim
+      // 'render'-Node.
+      const kameraParam = String(params['kamera'] ?? 'aktuell');
+      const gewaehlt = waehleAufnahme(aufnahmen, kameraParam);
+      return (
+        <div style={{ display: 'grid', gap: 4 }} onPointerDown={(e) => e.stopPropagation()}>
+          <div style={{ fontSize: 9.5, color: 'var(--k-ink-faint)' }}>Viewport-Aufnahme (kein Rendering)</div>
+          <select
+            value={kameraParam}
+            data-testid="aufnahme-kamera"
+            onChange={(e) => param('kamera', e.target.value)}
+            onPointerDown={(e) => e.stopPropagation()}
+            style={feld}
+          >
+            <option value="aktuell">jüngste Aufnahme</option>
+            <option value="nordost">Nordost</option>
+            <option value="sued">Süd</option>
+          </select>
+          {gewaehlt ? (
+            <img
+              src={gewaehlt.dataUrl}
+              alt="Viewport-Aufnahme"
+              data-testid="aufnahme-bild"
+              style={{ width: '100%', border: '1px solid var(--k-line)' }}
+            />
+          ) : (
+            <div style={{ height: 46, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--k-ink-faint)', textAlign: 'center', padding: 4 }}>
+              Noch keine Aufnahme
+            </div>
+          )}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="aufnahme-ausfuehren"
+            onClick={() =>
+              melde(
+                'Öffne kurz KosmoDesign → 3D-Viewport und klicke dort «Für Vis aufnehmen» — Vis bleibt offen, das Bild landet automatisch hier.',
+                { ton: 'info' },
+              )
+            }
+          >
+            Aufnehmen
+          </KButton>
         </div>
       );
     }

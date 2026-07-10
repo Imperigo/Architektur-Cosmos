@@ -222,20 +222,13 @@ export async function bildBlob(jobId: string, imageName: string): Promise<Blob> 
 }
 
 /**
- * Bild als Blatt-Bürger nach KosmoPublish (C1) — leerer Bild-Slot zuerst,
- * sonst neuer Slot; ohne Blatt entsteht eines. Alles EIN Undo-Schritt.
- * Gibt den Blattnamen zurück.
+ * Gemeinsamer Kern von `bildAufsBlatt`/`aufnahmeAufsBlatt` — leerer Bild-Slot
+ * zuerst, sonst neuer Slot; ohne Blatt entsteht eines. Alles EIN Undo-Schritt.
+ * Gibt den Blattnamen zurück. Nimmt eine FERTIGE dataURL: der Bridge-Weg
+ * (`bildAufsBlatt`) holt sie erst per Fetch, der Aufnahme-Weg
+ * (`aufnahmeAufsBlatt`) hat sie schon (Viewport-Screenshot, kein Bridge-Job).
  */
-export async function bildAufsBlatt(jobId: string, imageName: string, titel: string): Promise<string> {
-  // Über bridgeFetch (Token-Header + connect-src) statt rohem fetch — sonst
-  // sperrt eine token-geschützte Bridge das Blatt-Einbetten aus (Fable-Auflage 1).
-  const blob = await bildBlob(jobId, imageName);
-  const dataUrl = await new Promise<string>((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result));
-    r.onerror = () => reject(r.error ?? new Error('Bild nicht lesbar'));
-    r.readAsDataURL(blob);
-  });
+function platziereBildAufsBlatt(dataUrl: string, titel: string): string {
   const { doc, runCommand, history } = useProject.getState();
   history.beginGroup();
   try {
@@ -255,4 +248,32 @@ export async function bildAufsBlatt(jobId: string, imageName: string, titel: str
   } finally {
     history.endGroup();
   }
+}
+
+/**
+ * Bild als Blatt-Bürger nach KosmoPublish (C1) — Bridge-Artefakt (Render-Job).
+ * Gibt den Blattnamen zurück.
+ */
+export async function bildAufsBlatt(jobId: string, imageName: string, titel: string): Promise<string> {
+  // Über bridgeFetch (Token-Header + connect-src) statt rohem fetch — sonst
+  // sperrt eine token-geschützte Bridge das Blatt-Einbetten aus (Fable-Auflage 1).
+  const blob = await bildBlob(jobId, imageName);
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = () => reject(r.error ?? new Error('Bild nicht lesbar'));
+    r.readAsDataURL(blob);
+  });
+  return platziereBildAufsBlatt(dataUrl, titel);
+}
+
+/**
+ * v0.6.7 P0: Viewport-Aufnahme als Blatt-Bürger — dieselbe Ablage wie
+ * `bildAufsBlatt`, aber OHNE Bridge-Fetch (die dataURL liegt schon lokal vor,
+ * `vis-runtime.Aufnahme.dataUrl`). Async wie `bildAufsBlatt` (einheitlicher
+ * Aufrufer-Weg, `.then().catch()`), auch wenn hier nichts zu awaiten ist.
+ * Gibt den Blattnamen zurück.
+ */
+export async function aufnahmeAufsBlatt(dataUrl: string, titel: string): Promise<string> {
+  return platziereBildAufsBlatt(dataUrl, titel);
 }

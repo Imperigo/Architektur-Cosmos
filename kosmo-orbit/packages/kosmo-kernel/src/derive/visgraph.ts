@@ -69,7 +69,7 @@ export const VIS_STIMMUNGEN: Record<string, { label: string; prompt: string }> =
   weiss: { label: 'Weissmodell', prompt: 'Weissmodell, neutrales Studiolicht, keine Materialien' },
 };
 
-/** Katalog der 11 Node-Typen — deckt alle heutigen KosmoVis-Fähigkeiten. */
+/** Katalog der 12 Node-Typen — deckt alle heutigen KosmoVis-Fähigkeiten. */
 export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
   modell: {
     typ: 'modell',
@@ -184,6 +184,19 @@ export const VIS_NODE_KATALOG: Record<string, VisNodeTyp> = {
     inputs: [],
     outputs: [{ name: 'bild', typ: 'bild', label: 'Bild' }],
     defaults: { url: '' },
+  },
+  aufnahme: {
+    typ: 'aufnahme',
+    label: 'Viewport-Aufnahme',
+    hilfe:
+      'Echte lokale Bildquelle: ein Schnappschuss des 3D-Viewports («Für Vis aufnehmen» in KosmoDesign) — kein Rendering, funktioniert ohne HomeStation.',
+    kategorie: 'quelle',
+    inputs: [],
+    outputs: [{ name: 'bild', typ: 'bild', label: 'Bild' }],
+    // kamera: rein dokumentarisch, welcher Standpunkt gemeint ist — der
+    // Viewport-Knopf selbst bewegt/wählt keine Kamera (kein Renderloop-
+    // Eingriff), er nimmt IMMER den aktuellen Viewport-Stand auf.
+    defaults: { kamera: 'aktuell' },
   },
 };
 
@@ -340,7 +353,10 @@ export function evaluiereGraph(doc: KosmoDoc, graph: VisGraph): VisAuswertung {
         // trägt selbst keinen Ausgangswert im `werte`-Store (wie 'modell').
         break;
       default:
-        // modell / vergleich / blatt / referenz: keine puren Ausgangswerte
+        // modell / vergleich / blatt / referenz / aufnahme: keine puren
+        // Ausgangswerte — 'aufnahme' liefert sein 'bild' wie 'render' rein aus
+        // der App-Laufzeit (vis-runtime), der Kernel bleibt pull-basiert und
+        // kennt nur den Porttyp, nie die Bilddaten selbst.
         break;
     }
   }

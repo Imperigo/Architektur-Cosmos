@@ -50,6 +50,7 @@ import {
   hatZyklus,
   exportGlb,
   parseKosmoSafe,
+  VIS_NODE_KATALOG,
   type Storey,
   type Wall,
   type Assembly,
@@ -4746,6 +4747,46 @@ describe('Render-Graph (vis.*)', () => {
     execute(doc, 'vis.nodeParametrieren', { graphId, nodeId: render, params: { nurCycles: 'ja' as unknown as boolean } });
     auftrag = evaluiereGraph(doc, doc.get<VisGraph>(graphId)!).renderAuftraege.get(render)!;
     expect(auftrag.nurCycles).toBe(false);
+  });
+
+  it('v0.6.7 P0: Katalog trägt den additiven Node-Typ «aufnahme» (Quelle, kein Eingang, Ausgang bild)', () => {
+    // Nachgezogener Katalog-Vertrag (Briefing v0.6.7 P0): der Katalog wuchs
+    // additiv von 11 auf 12 Typen — dieser Test hält die Grösse UND die
+    // konkrete Form des neuen Eintrags ehrlich fest, damit ein künftiger
+    // Katalog-Umbau hier ehrlich auffliegt.
+    expect(Object.keys(VIS_NODE_KATALOG)).toHaveLength(12);
+    const kat = VIS_NODE_KATALOG['aufnahme']!;
+    expect(kat.kategorie).toBe('quelle');
+    expect(kat.inputs).toEqual([]);
+    expect(kat.outputs).toEqual([{ name: 'bild', typ: 'bild', label: 'Bild' }]);
+    expect(kat.defaults).toEqual({ kamera: 'aktuell' });
+  });
+
+  it('v0.6.7 P0: «aufnahme» im Graph — evaluiereGraph stürzt nie, liefert (wie render/referenz) keinen puren Bild-Wert; aufnahme→vergleich verbindet', () => {
+    const doc = new KosmoDoc();
+    const g = execute(doc, 'vis.graphErstellen', { name: 'Aufnahme-Test' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    execute(doc, 'vis.nodeSetzen', { graphId, typ: 'aufnahme', x: 0, y: 0, params: { kamera: 'nordost' } });
+    execute(doc, 'vis.nodeSetzen', { graphId, typ: 'vergleich', x: 200, y: 0 });
+    const graph0 = doc.get<VisGraph>(graphId)!;
+    const [aufnahme, vergleich] = graph0.nodes.map((n) => n.id) as [string, string];
+
+    expect(() => evaluiereGraph(doc, doc.get<VisGraph>(graphId)!)).not.toThrow();
+    const vorVerbindung = evaluiereGraph(doc, doc.get<VisGraph>(graphId)!);
+    expect(vorVerbindung.werte.get(aufnahme)).toBeUndefined(); // Bild lebt nur in der App-Laufzeit
+
+    // Kernel-seitig ist die Kante ein normaler bild→bild-Verbund — wie render→vergleich.
+    execute(doc, 'vis.verbinden', { graphId, from: aufnahme, fromPort: 'bild', to: vergleich, toPort: 'bild1' });
+    const graph1 = doc.get<VisGraph>(graphId)!;
+    expect(graph1.edges).toHaveLength(1);
+    expect(graph1.nodes.find((n) => n.id === aufnahme)!.params['kamera']).toBe('nordost');
+    expect(() => evaluiereGraph(doc, graph1)).not.toThrow();
+
+    // Roundtrip durch .kosmo/Sync-Serialisierung bleibt stabil.
+    const wieder = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));
+    const graphWieder = wieder.get<VisGraph>(graphId)!;
+    expect(graphWieder.nodes.find((n) => n.typ === 'aufnahme')).toBeDefined();
+    expect(graphWieder.edges).toHaveLength(1);
   });
 });
 

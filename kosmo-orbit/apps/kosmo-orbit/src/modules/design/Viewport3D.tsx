@@ -50,6 +50,9 @@ import {
   useVisRuntime,
   type NodeLaufStatus,
 } from '../vis/vis-runtime';
+// v0.6.7 Phase 0: «Für Vis aufnehmen» — ein kleiner, additiver Knopf (eigener
+// testid, eigene Laufzeit-Ablage `aufnahmen`), KEINE Renderloop-/Kamera-
+// Änderung. Der Viewport bleibt sonst unangetastet (s. Kommentar oben).
 import { BridgeBild } from '../vis/BridgeBild';
 
 /** Fester Laufzeit-Schlüssel des Viewport-Render-Knopfs im gemeinsamen
@@ -250,6 +253,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   const mountRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<CameraControls | null>(null);
   const modelRef = useRef<THREE.Group | null>(null);
+  // v0.6.7 P0: für den «Für Vis aufnehmen»-Knopf — rendert EINEN Frame mit
+  // der aktuellen Kamera (wie jeder normale Frame, keine Bewegung) und liest
+  // danach sofort das Canvas-Pixelbild; rührt sonst nichts an.
+  const captureRef = useRef<(() => string) | null>(null);
   const [navModus, setNavModus] = useState<'orbit' | 'pan' | 'zoom'>('orbit');
   const navModusRef = useRef<'orbit' | 'pan' | 'zoom'>('orbit');
   // Serie J / J2: Rechtsklick-/Long-Press-Kontextmenü. x/y positionieren das
@@ -417,6 +424,30 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     void bildAufsBlatt(renderLauf.jobId, renderLauf.bild, 'Viewport-Render')
       .then((name) => melde(`Render liegt auf «${name}» — im KosmoPublish weiterschieben`, { ton: 'erfolg' }))
       .catch(meldeFehler);
+  };
+
+  /**
+   * v0.6.7 P0 «Für Vis aufnehmen» — echte lokale Bildquelle ohne HomeStation:
+   * ein Schnappschuss des aktuellen Viewport-Pixelbilds landet NUR im
+   * gemeinsamen `useVisRuntime`-Store (`aufnahmen`, entities.ts:500-505:
+   * Bilder gehen nie durchs Doc/Undo/Yjs) — der `aufnahme`-Node in KosmoVis
+   * zeigt ihn als sein Bild. Kein Rendering, kein Bridge-Job.
+   */
+  const fuerVisAufnehmen = () => {
+    const capture = captureRef.current;
+    if (!capture) return;
+    try {
+      const dataUrl = capture();
+      useVisRuntime.getState().fuegeAufnahmeHinzu({
+        id: `aufnahme_${Date.now()}_${Math.round(Math.random() * 1e6)}`,
+        dataUrl,
+        zeit: Date.now(),
+        kamera: 'aktuell',
+      });
+      melde('Bild für KosmoVis aufgenommen — im aufnahme-Node sichtbar (kein Rendering).', { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
   };
 
   const RENDER_STATUS_LABEL: Record<string, string> = {
@@ -1653,6 +1684,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     resize();
     loop();
 
+    // v0.6.7 P0: «Für Vis aufnehmen» — EIN frischer Frame mit der jetzigen
+    // Kamera (kein Sprung, keine Bewegung), sofort danach als dataURL gelesen
+    // (kein `preserveDrawingBuffer`-Umweg nötig: synchron im selben Tick).
+    captureRef.current = () => {
+      renderFrame();
+      return renderer.domElement.toDataURL('image/png');
+    };
+
     // Deterministischer Test-Hook (Playwright): RAF stoppen, Einzelframe rendern
     (window as never as Record<string, unknown>)['__kosmoViewport'] = {
       renderOnce: () => {
@@ -1706,6 +1745,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       mount.removeChild(renderer.domElement);
       controlsRef.current = null;
       modelRef.current = null;
+      captureRef.current = null;
     };
     // navModus wird über den separaten Sync-Effekt oben nachgezogen (controlsRef) —
     // hier zählt nur der Startwert beim Aufbau der Szene.
@@ -1858,6 +1898,21 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             )}
           </div>
         )}
+        {/* v0.6.7 P0: klein, additiv, eigener Knopf — KEIN Teil der Render-
+            Kette (kein Job, keine Bridge). Nimmt IMMER den aktuellen
+            Viewport-Stand auf, bewegt/wählt selbst keine Kamera. */}
+        <KButton
+          tone="ghost"
+          size="sm"
+          data-testid="viewport-aufnahme"
+          title="Aktuelles Viewport-Bild als lokale Bildquelle für KosmoVis aufnehmen (kein Rendering, kein Bridge-Job)"
+          onClick={fuerVisAufnehmen}
+        >
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <KIcon name="kamera" size={14} />
+            Für Vis aufnehmen
+          </span>
+        </KButton>
         <KButton
           tone="accent"
           size="sm"
