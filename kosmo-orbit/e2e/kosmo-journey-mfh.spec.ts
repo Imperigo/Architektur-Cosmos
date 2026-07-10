@@ -212,21 +212,26 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // abgelehnten/fehlerhaften `runCommand`-Aufruf gleichermassen — das
   // Protokoll meldet in beiden Fällen `fehler: undefined`. Nur ein
   // Doc-Delta-Vergleich (wie hier) deckt das auf.
+  // BEHOBEN in Sim-Runde 1 (H-27): applyDefaults füllt Kontext-Defaults nur
+  // noch in PFLICHT-Felder — das optionale Decken-assemblyId bleibt leer,
+  // die Chat-Decke gelingt. Der obige Befund-Kommentar bleibt als Historie;
+  // dieser Assert ist der Regressions-Anker für den Fix.
   // -----------------------------------------------------------------------
-  expect(nachher.slabsEg, 'Befund 2: Decke scheitert über den Chat an der auto-injizierten Wand-assemblyId').toBe(0);
+  expect(nachher.slabsEg, 'H-27-Fix: Chat-Decke gelingt (kein Wand-Aufbau-Leck mehr)').toBe(1);
 
-  // Fallback (dokumentiert, KEIN Chat-Weg vorhanden, der die generische
-  // assemblyId-Vorbelegung umgeht): die Decken direkt über
-  // window.__kosmo.run anlegen — auf JEDEM Geschoss, das bereits existiert
-  // (EG + die beiden von Zug 7 gestapelten Geschosse trugen wegen des
-  // Befunds nie eine Decke, da Zug 7 zeitlich VOR dieser Korrektur lief).
+  // Rest-Fallback nur noch für die von Zug 7 gestapelten Geschosse: das
+  // Stapeln lief VOR der Decke, die Chat-Decke deckt nur das EG — die
+  // Obergeschosse ziehen wir wie ein Nutzer per Handgriff nach.
   const storeyIdsFuerDecke = await page.evaluate(() =>
     window.__kosmo.state().doc.storeysOrdered().map((s) => s.id),
   );
   await page.evaluate(
     ({ storeyIds, outline }) => {
       const k = window.__kosmo;
-      for (const storeyId of storeyIds) {
+      const ohneDecke = storeyIds.filter(
+        (sid) => !k.state().doc.byKind('slab').some((sl) => (sl as { storeyId?: string }).storeyId === sid),
+      );
+      for (const storeyId of ohneDecke) {
         k.run('design.deckeZeichnen', { storeyId, outline });
       }
     },

@@ -1,6 +1,6 @@
-import type { KosmoDoc } from '@kosmo/kernel';
+import { allCommands, type KosmoDoc } from '@kosmo/kernel';
 import type { ChatMessage, ChatProvider, ToolCall, ToolDefinition } from './provider';
-import { commandTools, modelQueryTool, validateToolCall, type ValidatedCall } from './tools';
+import { commandIdFor, commandTools, modelQueryTool, validateToolCall, type ValidatedCall } from './tools';
 import { routePersona } from './personas';
 
 /** Read-Only-Tool: läuft sofort (ungated), z.B. Referenzsuche in KosmoData. */
@@ -177,9 +177,22 @@ export class ChatSession {
       }
     }
     if (typeof args !== 'object' || args === null || Array.isArray(args)) return call;
+    // Sim-Befund 0.6.7 (Journey A, H-Reihe): Kontext-Defaults dürfen nur
+    // PFLICHT-Felder des Ziel-Commands füllen. Der frühere blinde Merge
+    // stopfte z.B. die Wand-Aufbau-Id des App-Kontexts in das OPTIONALE
+    // `assemblyId` von design.deckeZeichnen — dessen run() lehnt einen
+    // Nicht-slab-Aufbau zu Recht ab, und der Schritt scheiterte erst beim
+    // Anwenden, für den Nutzer ohne erkennbaren Grund.
+    const cmd = allCommands().find((c) => c.id === commandIdFor(call.name));
+    const shape = (
+      cmd?.params as unknown as { shape?: Record<string, { isOptional(): boolean }> } | undefined
+    )?.shape;
     const merged: Record<string, unknown> = { ...(args as Record<string, unknown>) };
     for (const [k, v] of Object.entries(defaults)) {
-      if (merged[k] === undefined || merged[k] === '') merged[k] = v;
+      if (merged[k] !== undefined && merged[k] !== '') continue;
+      const feld = shape?.[k];
+      if (!feld || feld.isOptional()) continue;
+      merged[k] = v;
     }
     return { ...call, arguments: merged };
   }

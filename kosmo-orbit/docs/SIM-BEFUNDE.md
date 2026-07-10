@@ -652,3 +652,69 @@ bestehenden Journeys immer schon (implizit) eingehalten haben. Ein Kandidat
 für eine spätere Baustein-3-Doku-Ergänzung («Vorbedingung: Geschoss trägt
 bereits Geometrie»), kein Produktcode-Fix.
 Status:      doku
+
+### H-27 — applyDefaults stopfte Kontext-assemblyId in OPTIONALE Felder (10.07.2026, Journey kosmo-efh, Zug 3)
+- **Beobachtung:** «Jetzt die Decke übers Erdgeschoss» → Diff-Karte erschien, das Anwenden scheiterte mit «Aufbau ‹AW Sichtbeton 39› ist kein Decken-Aufbau (target slab)» — der ChatSession-Default-Merge hatte die WAND-Aufbau-Id des App-Kontexts in das optionale `assemblyId` von `design.deckeZeichnen` gestopft. Für den Nutzer: Kosmo scheitert grundlos an einem simplen Wunsch.
+- **Triage:** echter-bug (B).
+- **Beleg:** e2e/kosmo-journey-efh.spec.ts Lauf 2 (slabs=0 bei 6/6 «fehlerfreien» Zügen); Wurzel chat.ts applyDefaults (blinder Merge).
+- **Entscheid (Fable):** Sofort behoben — Kontext-Defaults füllen nur noch PFLICHT-Felder des Ziel-Commands (chat.ts + Unit-Test chat-defaults.test.ts: Wand bekommt storeyId/assemblyId, Decke nur storeyId).
+- **Status:** behoben (0.6.7 Sim-Runde 1).
+
+### H-28 — Fehlgeschlagenes Anwenden hinterlässt keine bleibende Spur im Chat (10.07.2026, Journey kosmo-efh, Zug 3)
+- **Beobachtung:** Als das Decken-Anwenden scheiterte (H-27), zeigte der Chatverlauf danach WEDER die Karte NOCH einen Fehlerhinweis — nur Kosmos Ankündigungstext. Ein Nutzer, der den Toast verpasst, hält den Schritt für erledigt; ein Modell ohne Retry lässt ihn stumm fallen.
+- **Triage:** echter-bug (B).
+- **Beleg:** error-context Lauf 2 (Decke-Zug ohne Karte/Fehlerzeile im Verlauf).
+- **Entscheid (Fable):** an Welle D2 (Chat-/Proposal-Erlebnis): fehlgeschlagene Anwendungen als bleibende, ehrliche Fehlerzeile im Verlauf («Schritt konnte nicht angewendet werden: …»).
+- **Status:** offen → D2.
+
+### H-29 — Kosmo-Panel: Schliessen ohne testid, offenes Panel verdeckt die Stations-Navigation (10.07.2026, Journey kosmo-efh, Akt 2)
+- **Beobachtung:** Das Panel lässt sich nur über einen aria-label-Knopf schliessen (kein testid); bei offenem Panel ist das KosmoSymbol unmounted und die Navigation verdeckt — Baustein 23 musste auf `[aria-label="Schliessen"]` ausweichen.
+- **Triage:** v2-lücke (C).
+- **Beleg:** App.tsx `{!kosmoOpen && <KosmoSymbol/>}`; KosmoPanel Kopf-KButton ohne testid.
+- **Entscheid (Fable):** an Welle D2 (testid `kosmo-panel-schliessen`, additiv).
+- **Status:** offen → D2.
+
+### H-30 — render-formular-szene: Options-Values sind Prompt-Langtexte statt stabiler Schlüssel (10.07.2026, Journey kosmo-efh, Akt 2)
+- **Beobachtung:** `selectOption('Aussenansicht vom Hof')` — die Values des Szene-Selects sind die deutschen Prompt-Fragmente selbst. Für Automatisierung, spätere Übersetzung und Prompt-Umbauten fragil (Value-Änderung = stiller Vertragsbruch).
+- **Triage:** v2-lücke (C).
+- **Beleg:** NodeCanvas.tsx Z.1608-1612.
+- **Entscheid (Fable):** an Welle V1/V2 nur falls billig (stabile Keys + Anzeige-Map, Prompt-Bau übersetzt) — sonst 0.6.8.
+- **Status:** offen.
+
+### H-31 — Geteilter Fake-Worker-Job-Store verzögert parallele Render-Läufe (10.07.2026, Journey kosmo-efh, Akt 2)
+- **Beobachtung:** 52 Jobs paralleler Läufe in /tmp/kosmo-jobs — der Render der Journey blieb >25 s ohne Bild (Warteschlangen-Stau), obwohl die Bridge gesund war.
+- **Triage:** kein-bug (Test-Infrastruktur; der echte Betrieb hat einen Nutzer je HomeStation).
+- **Beleg:** health ok, 52 Einträge im Store, render-status «bereit» der Nachbar-Nodes.
+- **Entscheid (Fable):** dokumentierte Betriebsregel bleibt (Store-Reset zwischen isolierten Läufen); keine Produktänderung.
+- **Status:** dokumentiert.
+
+### H-32 — Render-Node mit Formularfeldern bleibt für immer «veraltet», Bild nie sichtbar (10.07.2026, Journeys kosmo-efh + kosmo-mfh)
+- **Beobachtung:** Sobald ein V-H4-Formularfeld (Fassade/Szene/Jahreszeit/Personen/Freitext) gesetzt ist, gilt der Render nach dem Ausführen sofort und dauerhaft als «veraltet»: der beim Absenden gespeicherte memoKey rechnet formularZusatz() MIT ein (ausfuehren, NodeCanvas ~Z.474-488), der Veraltet-Vergleich (~Z.776) nutzt den ROHEN Auftrag OHNE Zusatz — und render-bild rendert nur bei status «fertig». Das fertige Bridge-Bild bleibt unsichtbar; auch Journey A hing genau hier (der H-31-Job-Stau war NICHT die Wurzel — Korrektur unten).
+- **Triage:** echter-bug (A — entwertet das ganze Formular-Feature in Kombination mit Ausführung).
+- **Beleg:** Journey B Befund 8 (Fallback: Formular vor dem Ausführen geleert); Journey A Lauf 6 (Bild-Timeout trotz gesunder Bridge).
+- **Entscheid (Fable):** Auflage an Welle V1 (NodeCanvas-Besitzer): der Veraltet-Vergleich nutzt denselben KOMBINIERTEN Prompt wie das Absenden; Regressionstest im neuen vis-editor.spec.
+- **Status:** offen → V1 (Auflage 0).
+
+**Korrektur zu H-31:** Der Job-Store-Stau war Begleiterscheinung, nicht Ursache des Journey-A-Bildausfalls — die Wurzel ist H-32. Betriebsregel (Store-Reset zwischen isolierten Läufen) bleibt sinnvoll.
+
+### H-33 — Kein Kommando wechselt das aktive Geschoss: Chat-Dach landet nach dem Stapeln auf dem EG (10.07.2026, Journey kosmo-mfh, Zug 8)
+- **Beobachtung:** applyDefaults füllt storeyId immer mit dem AKTIVEN Geschoss — das seit Projektstart unverändert das EG ist, weil weder ein design.*- noch ein ui.*-Kommando das aktive Geschoss wechselt. design.dachErstellen setzt das Walmdach darum kommentarlos aufs unterste Geschoss.
+- **Triage:** echter-bug (A — geometrisch falsches Ergebnis ohne Fehlermeldung).
+- **Beleg:** Journey B Befund 6 (Fallback: Dach gelöscht + direkt aufs oberste Geschoss).
+- **Entscheid (Fable):** Auflage an Welle V2: additiver ui.*-Befehl `ui.geschossSetzen` (App-Zustand!) in ui-befehle.ts + als Kosmo-Werkzeug via kosmo-ui-werkzeuge — Kosmo kann dann ehrlich «ins Dachgeschoss wechseln» bevor es baut.
+- **Status:** offen → V2.
+
+### H-34 — Wohnungs-Segmentierer ist kein Command, für Kosmo unerreichbar (10.07.2026, Journey kosmo-mfh, Zug 4)
+- **Beobachtung:** segmentierer-lauf/-uebernehmen existieren nur als UI-Knöpfe der Berechnungsliste — kein design.*-Command, also kein Kosmo-Tool.
+- **Triage:** v2-lücke (B).
+- **Entscheid (Fable):** 0.6.8-Kandidat (Command-Extraktion aus der UI-Logik ist kein Nacht-Nebenjob); im Skript ehrlich über zoneErstellen umfahren.
+- **Status:** offen → 0.6.8.
+
+### H-35 — fassadenModulZuweisen setzt Volumenkörper voraus, wand-basierter Baupfad geht leer aus (10.07.2026, Journey kosmo-mfh, Zug 5)
+- **Triage:** v2-lücke (C). **Entscheid:** 0.6.8-Kandidat (Kante-zu-Modul auch auf Wandzügen); fensterAusModulen bleibt der gangbare Chat-Weg. **Status:** offen.
+
+### H-36 — Kuratier-Fläche zeigt nur render-Nodes, Viewport-Aufnahmen fehlen (10.07.2026, Journey kosmo-mfh, Vis)
+- **Triage:** v2-lücke (C). **Entscheid:** Auflage an Welle V1: kuratierKarten nimmt auch aufnahme-Nodes mit Bild auf (gleiches Karten-Muster). **Status:** offen → V1.
+
+### H-37 — SzenarioSkripte sind statisch: kein Rückkanal von Tool-Ergebnissen in spätere Züge (10.07.2026, Journey kosmo-mfh)
+- **Triage:** kein-bug (bewusste Datenform; $neu:N deckt Paket-intern, contextDefaults den Rest). Dokumentiert als Grenze im scripted.ts-Kopf nachziehen (V2 nebenbei). **Status:** dokumentiert.
