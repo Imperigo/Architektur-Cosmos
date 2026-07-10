@@ -35,6 +35,24 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.6.7',
+    datum: '2026-07-10',
+    punkte: [
+      { text: 'KosmoVis-Node-Editor auf Werkzeug-Niveau: Mehrfachauswahl (Shift-Klick oder Shift-Aufziehen), Gruppen-Verschieben mit EINEM Rückgängig-Schritt, echtes 24px-Raster-Einrasten (abschaltbar) und eine Ausrichten-Leiste (links, oben, verteilen).', station: 'vis' },
+      { text: 'Kanten wahlweise orthogonal: ein Umschalter zeichnet die Node-Verbindungen als rechtwinklige Pfade mit weichen Ecken statt Kurven — für dichte Graphen deutlich lesbarer.', station: 'vis' },
+      { text: 'Nodes lassen sich einklappen (nur Kopf und Anschlüsse bleiben sichtbar); ein Render mit laufendem Auftrag verweigert das Einklappen mit ehrlicher Meldung.', station: 'vis' },
+      { text: 'Render-Formular repariert: mit gesetzter Szene/Jahreszeit blieb das fertige Bild bisher fälschlich «veraltet» und unsichtbar — jetzt erscheint es zuverlässig.', station: 'vis' },
+      { text: 'Die Kuratier-Fläche sammelt neben Renderbildern jetzt auch Viewport-Aufnahmen; ihr Leerzustand erklärt ehrlich, wie Bilder entstehen.', station: 'vis' },
+      { text: 'Neue Dachform Satteldach: «Dach erstellen» kann jetzt Walm ODER Sattel mit wählbarer Firstrichtung — auch als Kosmo-Kommando.', station: 'design' },
+      { text: 'Kosmo kann das aktive Geschoss wechseln («wechsle ins Dachgeschoss») — vorher landeten Chat-Bauten nach dem Geschoss-Stapeln stumm im Erdgeschoss.' },
+      { text: 'Kosmo schlägt keine Abriss-Kommandos mehr vor (Löschen bleibt Handgriff im Programm); Vorschlags-Pakete tragen eine Zusammenfassung «Kosmo schlägt 7 Schritte vor: 4× Wand, 2× Fenster …».' },
+      { text: 'Scheitert ein «Anwenden», bleibt die Spur sichtbar: eine Chat-Zeile nennt den Grund und die Karte zeigt den Fehler — nichts verschwindet mehr lautlos.' },
+      { text: 'Das Modus-Chip-Menü begründet jede Empfehlung («erkannt: 2D-Plan aktiv · Zeichenwerkzeug aktiv»), der Modusname ohne Anpassung heisst jetzt ehrlich «Alle Werkzeuge».', station: 'design' },
+      { text: 'Befehlspalette und Kurzbefehle schliessen mit derselben federnden Bewegung, mit der sie öffnen (respektiert «Bewegung reduzieren»).' },
+      { text: 'Unter der Haube: zwei vollständige Benutzersimulationen (Einfamilien- und Mehrfamilienhaus, komplett über den Kosmo-Chat gebaut) laufen jetzt als bleibende Tests mit — die Software wird an ihrem eigenen Anspruch gemessen.' },
+    ],
+  },
+  {
     version: '0.6.6',
     datum: '2026-07-10',
     punkte: [
