@@ -724,3 +724,17 @@ Status:      doku
 - **Triage:** v2-lücke (C — kein Datenverlust, aber verwirrend; index-basierte Logik wie ui.geschossSetzen {index} trifft dann das erste Fundstück).
 - **Entscheid (Fable):** 0.6.8-Kandidat: Kommando warnt/verweigert bei Namens- ODER Index-Kollision (CommandError mit ehrlicher Meldung), bestehende Docs mit Duplikaten bleiben lesbar.
 - **Status:** offen → 0.6.8.
+
+---
+
+## Sim-Runde 2 (10.07.2026, Nachtschicht v0.6.7) — Beweis über dieselben Journeys
+
+Beide Journeys (kosmo-journey-efh, kosmo-journey-mfh) liefen nach der Integration der Wellen V1/V2/D1/D2 erneut **3× isoliert grün** — die in Runde 1 dokumentierten Reibungen sind messbar weg:
+
+- **H-27 behoben** (Sim 1): applyDefaults füllt nur noch Pflichtfelder — die Chat-Decke gelingt; Journey B assertiert den geheilten Zustand.
+- **H-28 behoben** (D2): gescheitertes Anwenden hinterlässt eine bleibende Kosmo-Bubble + Fehlerzeile an der Karte (diff-karte-fehler); E2E-Nachweis in kosmo-scripted.spec mit fachlichem run()-Fehler.
+- **H-29 behoben** (D2): kosmo-panel-schliessen-testid; beide Journeys + Baustein umgestellt.
+- **H-32 behoben** (V1, Auflage 0): Veraltet-Vergleich nutzt den kombinierten Prompt — Journey A setzt Szene/Jahreszeit und rendert direkt, der Workaround ist entfernt.
+- **H-33 behoben** (V2): ui.geschossSetzen wechselt das aktive Geschoss als Kosmo-Werkzeug (Chat-Systemzeile zeigt den echten Geschossnamen). Der __kosmo.run-Fallback in Journey B (Dach) bleibt bewusst als Dokumentation des Runde-1-Zustands bestehen — Ablösung durch einen Skript-Zug mit ui_geschossSetzen ist 0.6.8-Kandidat.
+- **H-36 behoben** (V1): Kuratier-Fläche nimmt aufnahme-Nodes auf; Journey B assertiert ZWEI Karten als Regressions-Anker.
+- **Offen → 0.6.8** (unverändert, ehrlich): H-30 (Szene-Options als Langtexte), H-34 (Segmentierer-Command), H-35 (fassadenModulZuweisen auf Wandzügen), H-38 (geschossErstellen-Duplikat-Warnung); H-31/H-37 dokumentiert/kein-bug.
