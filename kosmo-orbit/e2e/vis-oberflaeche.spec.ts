@@ -273,3 +273,93 @@ test('SK-V3 Prompt-Clamp: langer Text lässt die Karte NICHT wachsen, node-expan
   // Der volle Text steht im DOM (nicht nur ein CSS-Clamp-Trick auf Teiltext).
   await expect(kombNode.locator('[data-testid="kombinierer-prompt"]')).toContainText('Merkmal 24');
 });
+
+/**
+ * Minimap (Welle 3): kleine Übersichtskarte unten links, Default AN ab
+ * MINIMAP_KNOTEN_MIN (5) Nodes. Prüft zusätzlich die Kollisionsfreiheit mit
+ * den bestehenden Ecken-Elementen (Palette oben links, Kuratier-Stern oben
+ * rechts, Zoom-Leiste unten rechts) und dass der historische Canvas-
+ * Testpunkt (30, 30) — Lehre aus Stream F (Palette-Toggle musste deswegen
+ * auf top:56 wandern) — weiterhin frei/klickbar bleibt.
+ */
+test('Minimap: ab 5 Nodes standardmässig sichtbar, verdeckt keine bestehende Fläche', async ({ page }) => {
+  await oeffneVis(page);
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
+
+  const minimap = page.locator('[data-testid="vis-minimap"]');
+  await expect(minimap).toBeVisible();
+  await expect(page.locator('[data-testid="vis-minimap-viewport"]')).toBeVisible();
+  // Kategorie-getönte Rechtecke für alle 12 Nodes der «Drei Stimmungen»-Kette.
+  await expect(minimap.locator('rect')).toHaveCount(12 + 1); // +1 Viewport-Rahmen
+
+  // Kollisionsfreiheit: Minimap überlappt keine der vier Ecken-Flächen.
+  const minimapBox = (await minimap.boundingBox())!;
+  const andere = [
+    'vis-palette-toggle',
+    'vis-kuratier-toggle',
+    'vis-zoom-minus',
+    'vis-zoom-fit',
+    'vis-zoom-plus',
+  ];
+  for (const testid of andere) {
+    const box = await page.locator(`[data-testid="${testid}"]`).boundingBox();
+    expect(box).not.toBeNull();
+    expect(ueberlappt(minimapBox, box!), `Minimap überlappt ${testid}`).toBe(false);
+  }
+
+  // Historischer Canvas-Testpunkt (30, 30) bleibt frei — der Klick muss den
+  // Canvas selbst treffen (kein interceptor-Fehler durch die neue Fläche).
+  await page.locator('[data-testid="node-canvas"]').click({ position: { x: 30, y: 30 } });
+});
+
+/**
+ * Klick/Drag auf die Minimap verschiebt den bestehenden Zoom/Pan-Viewport
+ * des Canvas DIREKT (kein Easing) — derselbe `view`-State, den auch
+ * vis-zoom-fit liest/schreibt. Zoom (Skalierung) bleibt beim Klick
+ * unverändert, nur das Zentrum (viewBox x/y) wandert.
+ */
+test('Minimap: Klick verschiebt den Viewport (Zentrum wandert, Zoom bleibt gleich)', async ({ page }) => {
+  await oeffneVis(page);
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
+  await expect(page.locator('[data-testid="vis-minimap"]')).toBeVisible();
+
+  const canvas = page.locator('[data-testid="node-canvas"]');
+  const vbVorher = parseViewBox((await canvas.getAttribute('viewBox'))!);
+
+  const minimap = page.locator('[data-testid="vis-minimap"]');
+  const box = (await minimap.boundingBox())!;
+  // Klick in die obere linke Ecke der Minimap — das Viewport-Zentrum muss
+  // dorthin wandern (x/y der viewBox sinken), der Zoom (Breite) bleibt fix.
+  await page.mouse.click(box.x + 8, box.y + 8);
+
+  const vbNachher = parseViewBox((await canvas.getAttribute('viewBox'))!);
+  expect(vbNachher.x).toBeLessThan(vbVorher.x);
+  expect(vbNachher.y).toBeLessThan(vbVorher.y);
+  expect(vbNachher.w).toBeCloseTo(vbVorher.w, 1);
+  expect(vbNachher.h).toBeCloseTo(vbVorher.h, 1);
+});
+
+/**
+ * Toggle-Knopf (`vis-minimap-toggle`): unter der 5-Node-Schwelle ist die
+ * Minimap standardmässig AUS, ein Klick zeigt/versteckt sie unabhängig von
+ * der Nodemenge.
+ */
+test('Minimap-Toggle: unter 5 Nodes standardmässig aus, Klick zeigt/versteckt sie', async ({ page }) => {
+  await oeffneVis(page);
+  await page.click('[data-testid="graph-neu"]');
+  await page.selectOption('[data-testid="node-hinzu"]', 'modell');
+  await page.selectOption('[data-testid="node-hinzu"]', 'material');
+  await expect(page.locator(ALLE_KETTEN_NODE_TESTIDS)).toHaveCount(2);
+
+  const toggle = page.locator('[data-testid="vis-minimap-toggle"]');
+  await expect(toggle).toBeVisible();
+  await expect(page.locator('[data-testid="vis-minimap"]')).toHaveCount(0);
+
+  await toggle.click();
+  await expect(page.locator('[data-testid="vis-minimap"]')).toBeVisible();
+
+  await toggle.click();
+  await expect(page.locator('[data-testid="vis-minimap"]')).toHaveCount(0);
+});

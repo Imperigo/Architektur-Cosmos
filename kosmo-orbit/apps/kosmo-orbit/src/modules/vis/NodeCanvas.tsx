@@ -55,6 +55,13 @@ const PORT_ABSATZ = 4;
 const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 2.5;
 
+/** Minimap (Welle 3): feste Pixelgrösse (Papier-Stil, unten links neben der
+ * Legende) + Schwelle, ab der sie standardmässig eingeblendet ist — kleine
+ * Graphen brauchen sie nicht, die Legende reicht dort zur Orientierung. */
+const MINIMAP_W = 160;
+const MINIMAP_H = 100;
+const MINIMAP_KNOTEN_MIN = 5;
+
 const PORT_FARBE: Record<VisPortTyp, string> = {
   szene: '#2455a4',
   bild: '#a84b2b',
@@ -164,6 +171,64 @@ function berechneFit(
   return { cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, scale: klemme(scale, 0.35, ZOOM_MAX) };
 }
 
+/** Minimap-Geometrie (Welle 3): bildet Node-Raum → Minimap-Pixelraum ab.
+ * Die Bounds umfassen NODES **und** den aktuellen Viewport, damit der
+ * Tusche-Rahmen des Viewports auch beim weit weggepannten Canvas noch in
+ * der kleinen Karte liegt (ein Editor-Minimap-Grundsatz). Reine Geometrie,
+ * kein State — sowohl fürs Zeichnen als auch für den Rück-Umrechnungsschritt
+ * beim Klick/Drag verwendet (`minimapZuNodeRaum`, unten). */
+interface MinimapAnsicht {
+  scale: number;
+  minX: number;
+  minY: number;
+  offsetX: number;
+  offsetY: number;
+}
+
+function berechneMinimapAnsicht(
+  nodes: VisNode[],
+  view: { cx: number; cy: number; scale: number },
+  flaeche: { w: number; h: number },
+  mmW: number,
+  mmH: number,
+): MinimapAnsicht {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const n of nodes) {
+    minX = Math.min(minX, n.x);
+    minY = Math.min(minY, n.y);
+    maxX = Math.max(maxX, n.x + NODE_W);
+    maxY = Math.max(maxY, n.y + nodeHoehe(n));
+  }
+  const vw = flaeche.w / view.scale;
+  const vh = flaeche.h / view.scale;
+  minX = Math.min(minX, view.cx - vw / 2);
+  minY = Math.min(minY, view.cy - vh / 2);
+  maxX = Math.max(maxX, view.cx + vw / 2);
+  maxY = Math.max(maxY, view.cy + vh / 2);
+  const pad = 10;
+  const breite = Math.max(1, maxX - minX);
+  const hoehe = Math.max(1, maxY - minY);
+  const scale = Math.min((mmW - pad * 2) / breite, (mmH - pad * 2) / hoehe);
+  return {
+    scale,
+    minX,
+    minY,
+    offsetX: (mmW - breite * scale) / 2,
+    offsetY: (mmH - hoehe * scale) / 2,
+  };
+}
+
+/** Minimap-Pixelpunkt → Node-Raum (invertiert `berechneMinimapAnsicht`) —
+ * der Klick-/Drag-Handler setzt das Ergebnis direkt als neues View-Zentrum
+ * (kein Easing: erfüllt «keine animierten Sprünge» bei reduced-motion durch
+ * Konstruktion, nicht durch eine Fallunterscheidung). */
+function minimapZuNodeRaum(ansicht: MinimapAnsicht, mx: number, my: number): { x: number; y: number } {
+  return {
+    x: ansicht.minX + (mx - ansicht.offsetX) / ansicht.scale,
+    y: ansicht.minY + (my - ansicht.offsetY) / ansicht.scale,
+  };
+}
+
 /** Kubische Bézier mit horizontalen Tangenten — kein Routing, ruhige Kurven. */
 function edgePfad(a: { x: number; y: number }, b: { x: number; y: number }): string {
   const dx = Math.max(40, Math.abs(b.x - a.x) / 2);
@@ -219,6 +284,9 @@ export function NodeCanvas({
   const [paletteOffen, setPaletteOffen] = useState(false);
   const [kuratierOffen, setKuratierOffen] = useState(false);
   const [vergleichAuswahl, setVergleichAuswahl] = useState<readonly string[]>([]);
+  // Minimap (Welle 3): `null` = Default folgt der Node-Schwelle
+  // (MINIMAP_KNOTEN_MIN); einmal manuell geklickt, gewinnt der Nutzerwille.
+  const [minimapManuell, setMinimapManuell] = useState<boolean | null>(null);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [view, setView] = useState({ cx: 560, cy: 300, scale: 1 });
@@ -488,6 +556,19 @@ export function NodeCanvas({
       }
     }
   }
+
+  // Minimap (Welle 3): sichtbar per Default ab MINIMAP_KNOTEN_MIN Nodes,
+  // solange niemand am Toggle-Knopf war; danach gewinnt der Nutzerwille.
+  const minimapSichtbar = minimapManuell ?? graph.nodes.length >= MINIMAP_KNOTEN_MIN;
+  const minimapAnsicht = berechneMinimapAnsicht(graph.nodes, view, flaeche, MINIMAP_W, MINIMAP_H);
+  /** Klick/Drag auf die Minimap: Zielpunkt wird SOFORT das neue Viewport-
+   * Zentrum — kein Easing (erfüllt «keine animierten Sprünge» unter
+   * reduced-motion durch Konstruktion). Zoom (`view.scale`) bleibt unberührt. */
+  const minimapSpringeZu = (e: { clientX: number; clientY: number; currentTarget: SVGSVGElement }) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const ziel = minimapZuNodeRaum(minimapAnsicht, e.clientX - r.left, e.clientY - r.top);
+    setView((v) => ({ ...v, cx: ziel.x, cy: ziel.y }));
+  };
 
   // V-H5 (Welle 3, Kuratier-Fläche): jeder Render-Node mit einem fertigen
   // Bild ist eine Karte. Laufzeit bleibt in vis-runtime (`laeufe`/`kuration`)
@@ -1008,32 +1089,116 @@ export function NodeCanvas({
       </KButton>
     </div>
 
-    {/* Porttyp-Legende (W1 Massnahme 5) — nur wenn der Graph Nodes hat. */}
-    {graph.nodes.length > 0 && legendeTypen.length > 0 && (
-      <div
-        data-testid="vis-legende"
-        style={{
-          position: 'absolute',
-          left: 12,
-          bottom: 12,
-          display: 'grid',
-          gap: 3,
-          padding: '6px 8px',
-          background: 'var(--k-surface)',
-          border: '1px solid var(--k-line)',
-          borderRadius: 'var(--k-radius-sm)',
-          fontSize: 'var(--k-t-xs)',
-          color: 'var(--k-ink-soft)',
-        }}
-      >
-        {legendeTypen.map((t) => (
-          <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, background: PORT_FARBE[t] }} />
-            <span>{PORT_TYP_NAME[t]}</span>
-          </div>
-        ))}
-      </div>
-    )}
+    {/* Unten links, EIN verankerter Stapel (Welle 3): Minimap ÜBER der
+        Legende — beide Kinder liegen im normalen Fluss desselben Flex-
+        Containers, können einander also nie überlappen, ganz gleich wie
+        viele Legende-Zeilen oder wie gross die Minimap gerade ist. Die
+        Legende bleibt an ihrer historischen Stelle (letztes Kind, also am
+        Container-Boden bei `bottom: 12`) — unverändertes Aussehen, wenn die
+        Minimap unter der Node-Schwelle verborgen bleibt. */}
+    <div style={{ position: 'absolute', left: 12, bottom: 12, zIndex: 5, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
+      {/* Minimap (Welle 3): kleine Übersichtskarte, Papier-Stil — Nodes als
+          kategorie-getönte Rechtecke (VIS_KATEGORIE_HUE), der aktuelle
+          Viewport als Tusche-Rahmen. Default AN ab MINIMAP_KNOTEN_MIN Nodes,
+          per Toggle jederzeit übersteuerbar. Klick/Drag setzt das View-
+          Zentrum DIREKT (kein Easing) — «keine animierten Sprünge» bei
+          reduced-motion gilt dadurch immer, nicht nur unter der Media-Query. */}
+      {graph.nodes.length > 0 && (
+        <div style={{ display: 'grid', gap: 4, justifyItems: 'start' }}>
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="vis-minimap-toggle"
+            title="Übersichtskarte"
+            aria-label="Übersichtskarte"
+            aria-pressed={minimapSichtbar}
+            onClick={() => setMinimapManuell(!minimapSichtbar)}
+          >
+            <KIcon name="ebenen" size={16} title="Übersichtskarte" />
+          </KButton>
+          {minimapSichtbar && (
+            <svg
+              data-testid="vis-minimap"
+              width={MINIMAP_W}
+              height={MINIMAP_H}
+              viewBox={`0 0 ${MINIMAP_W} ${MINIMAP_H}`}
+              style={{
+                display: 'block',
+                background: 'var(--k-raised)',
+                border: '1px solid var(--k-line)',
+                borderRadius: 'var(--k-radius-sm)',
+                cursor: 'crosshair',
+                touchAction: 'none',
+              }}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                (e.currentTarget as SVGSVGElement).setPointerCapture?.(e.pointerId);
+                minimapSpringeZu(e);
+              }}
+              onPointerMove={(e) => {
+                // Nur bei gedrückter Haupttaste nachziehen (Drag) — reiner
+                // Hover soll den Viewport nicht verschieben.
+                if (e.buttons !== 1) return;
+                minimapSpringeZu(e);
+              }}
+            >
+              {graph.nodes.map((n) => {
+                const kat = VIS_NODE_KATALOG[n.typ];
+                if (!kat) return null;
+                const x = (n.x - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
+                const y = (n.y - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
+                const w = Math.max(2, NODE_W * minimapAnsicht.scale);
+                const h = Math.max(2, nodeHoehe(n) * minimapAnsicht.scale);
+                return <rect key={n.id} x={x} y={y} width={w} height={h} fill={VIS_KATEGORIE_HUE[kat.kategorie]} opacity={0.8} />;
+              })}
+              {(() => {
+                const vw = flaeche.w / view.scale;
+                const vh = flaeche.h / view.scale;
+                const x = (view.cx - vw / 2 - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
+                const y = (view.cy - vh / 2 - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
+                return (
+                  <rect
+                    data-testid="vis-minimap-viewport"
+                    x={x}
+                    y={y}
+                    width={vw * minimapAnsicht.scale}
+                    height={vh * minimapAnsicht.scale}
+                    fill="none"
+                    stroke="var(--k-ink)"
+                    strokeWidth={1.5}
+                    pointerEvents="none"
+                  />
+                );
+              })()}
+            </svg>
+          )}
+        </div>
+      )}
+
+      {/* Porttyp-Legende (W1 Massnahme 5) — nur wenn der Graph Nodes hat. */}
+      {graph.nodes.length > 0 && legendeTypen.length > 0 && (
+        <div
+          data-testid="vis-legende"
+          style={{
+            display: 'grid',
+            gap: 3,
+            padding: '6px 8px',
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-sm)',
+            fontSize: 'var(--k-t-xs)',
+            color: 'var(--k-ink-soft)',
+          }}
+        >
+          {legendeTypen.map((t) => (
+            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, background: PORT_FARBE[t] }} />
+              <span>{PORT_TYP_NAME[t]}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
     </div>
   );
 }
