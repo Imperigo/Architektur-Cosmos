@@ -70,31 +70,35 @@ async function bauFenster(page: Page): Promise<void> {
   await page.context().close();
 }
 
-// 3 — Echtes KSelect offen (Projekt-Menü phase-stil) im Werkplan-Stil
+// 3 — Echtes KSelect offen (phase-stil) — Projekt-Menü ZUERST öffnen
+// (Lehre aus Runde 1: der Trigger existiert erst mit offenem Projekt-Menü).
 {
   const page = await frisch();
-  await bauFenster(page);
-  const trigger = page.locator('[data-testid="phase-stil"]');
-  if (await trigger.count()) {
-    await trigger.scrollIntoViewIfNeeded();
-    await trigger.click();
-    await page.waitForTimeout(500);
-  }
+  await page.click('[data-testid="module-design"]');
+  await page.waitForTimeout(1200);
+  await page.click('[data-testid="projekt-menu-toggle"]');
+  await page.waitForTimeout(400);
+  await page.click('[data-testid="phase-stil"]');
+  await page.waitForTimeout(500);
   await page.screenshot({ path: `${OUT}/03-kselect-offen.png` });
   await page.context().close();
 }
 
-// 4 — Kosmo-Blick in der Grundriss-Ansicht (quelle:planview) mit Chip
+// 4 — Kosmo-Blick in der Grundriss-Ansicht (quelle:planview) mit Chip.
+// Skript-Registry via addInitScript VOR dem Laden (Lehre aus Runde 1:
+// evaluate+reload verliert window.__kosmoSkripte wieder).
 {
-  const page = await frisch();
-  await page.evaluate(() => {
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  await page.addInitScript(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
     (window as unknown as Record<string, any>).__kosmoSkripte = {
       kritik069: { id: 'kritik069', zuege: [{ antwortText: 'Ich sehe deinen Grundriss mit dem neuen Zweiflügel-Fenster.', toolCalls: [] }] },
     };
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'scripted', skriptId: 'kritik069', blickAn: true }));
   });
-  await page.reload();
-  await page.waitForTimeout(1200);
+  await page.goto(URL_);
+  await page.waitForTimeout(1500);
   await bauFenster(page);
   await page.getByRole('button', { name: 'Grundriss', exact: true }).click();
   await page.waitForTimeout(600);

@@ -49,11 +49,18 @@ const goldens = [
 ];
 for (const g of goldens) {
   brauche(`${GOLDEN}${g}.svg`);
-  const ctx = await browser.newContext({ viewport: { width: 1200, height: 900 } });
+  // Standalone-SVG + fullPage kann in riesige Seitenmasse laufen — deshalb
+  // eine HTML-Hülle mit fixiertem <img> und Element-Screenshot (QA-Loop-Weg).
+  const huelle = join(WORK, `${g}.html`);
+  writeFileSync(
+    huelle,
+    `<!doctype html><body style="margin:0;background:#fff"><img id="g" src="file://${GOLDEN}${g}.svg" style="width:1200px;display:block"></body>`,
+  );
+  const ctx = await browser.newContext({ viewport: { width: 1240, height: 1000 } });
   const page = await ctx.newPage();
-  await page.goto(`file://${GOLDEN}${g}.svg`);
-  await page.waitForTimeout(300);
-  await page.screenshot({ path: join(WORK, 'bilder', `${g}.png`), fullPage: true });
+  await page.goto(`file://${huelle}`);
+  await page.waitForTimeout(400);
+  await page.locator('#g').screenshot({ path: join(WORK, 'bilder', `${g}.png`) });
   await ctx.close();
 }
 
@@ -72,7 +79,7 @@ const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
   h1 { font-size: 26px; letter-spacing: 0.04em; }
   h2 { font-size: 16px; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #c9c4b6; padding-bottom: 4px; }
   .seite { page-break-after: always; }
-  img { max-width: 100%; max-height: 150mm; border: 1px solid #e4e0d6; display: block; margin: 6px auto; }
+  img { max-width: 100%; max-height: 132mm; border: 1px solid #e4e0d6; display: block; margin: 6px auto; }
   .duo { display: flex; gap: 8px; } .duo div { flex: 1; } .duo img { max-height: 120mm; }
   .notiz { background: #f5f3ee; border-left: 3px solid #1a1815; padding: 8px 12px; font-size: 12.5px; margin-top: 8px; }
   .titelblatt p, li { font-size: 13px; line-height: 1.5; }
@@ -97,7 +104,7 @@ const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
 ${seite(
   '1 · Parametrisches Zweiflügel-Fenster — 3D und Plan, live',
   '01-fenster-zweifluegel-3d-plan.png',
-  'design.fensterParametrieren macht aus einer bestehenden Öffnung ein Zweiflügel-Fenster (Teilung 2×1, Rahmen 60 mm): 3D zeigt die Rahmenprofile, der Plan Öffnungsbogen je Flügel und Teilungslinie. Additiv auf dem bestehenden Opening — Alt-Projekte und Bestands-Goldens blieben byte-identisch.',
+  'design.fensterParametrieren macht aus einer bestehenden Öffnung ein Zweiflügel-Fenster (Teilung 2×1, Rahmen 60 mm): 3D zeigt die Rahmenprofile, der Plan Öffnungsbogen je Flügel. Additiv — Bestands-Goldens blieben byte-identisch.',
 )}
 
 ${seite(
@@ -118,13 +125,13 @@ ${seite(
 ${seite(
   '4 · Echtes KSelect — Auswahlmenü im Werkplan-Stil',
   '03-kselect-offen.png',
-  'Die Dropdowns sind jetzt eigene Popups (role=listbox, ↑↓/Enter/Esc, Tipp-Suche, Fokusring) statt der Browser-Standardliste; das native Menü bleibt als dokumentierter Fluchtweg. Der alte E2E-Vertrag «31 Stück per selectOption» wurde bewusst als EIN Schnitt abgelöst: 72 Stellen in 20 Dateien laufen über den neuen Helfer waehleOption().',
+  'Die Dropdowns sind jetzt eigene Popups (role=listbox, ↑↓/Enter/Esc, Tipp-Suche, Fokusring); das native Menü bleibt als dokumentierter Fluchtweg. Der alte E2E-Vertrag wurde bewusst als EIN Schnitt abgelöst: 72 Stellen in 20 Dateien nutzen den neuen Helfer.',
 )}
 
 ${seite(
   '5 · Kosmo sieht den Grundriss — Blick-Beweis mit Chip',
   '04-blick-grundriss-chip.png',
-  'Der Mitschau-Beweis gilt jetzt für alle Pfade: Grundriss/Schnitt (SVG-Raster), Node-Fläche und echte Renderbilder. Dabei kam ein echter 0.6.8-Bug ans Licht: NodeLauf.bild ist ein Bridge-Dateiname, kein dataURL — der Vis-Renderbild-Blick scheiterte lautlos; jetzt holt ihn ein Bridge-Fetch. Der Chip öffnet per Klick eine Vollbild-Vorschau mit ehrlicher Zeitangabe.',
+  'Der Mitschau-Beweis gilt jetzt für alle Pfade: Grundriss/Schnitt (SVG-Raster), Node-Fläche und echte Renderbilder — dabei kam ein echter 0.6.8-Bug ans Licht (Vis-Blick scheiterte lautlos, jetzt Bridge-Fetch). Der Chip öffnet per Klick eine Vollbild-Vorschau. Und links oben: die Begrüssung beherrscht den Singular (H-44).',
 )}
 
 ${seite(
