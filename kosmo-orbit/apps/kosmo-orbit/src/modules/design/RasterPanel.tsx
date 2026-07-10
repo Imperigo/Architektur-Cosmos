@@ -115,7 +115,7 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
         </label>
         <label>
           Querachsen{' '}
-          <KInput size="sm" mono type="number" min={2} max={40} value={querAnzahl} onChange={(e) => setQuerAnzahl(Math.max(2, Number(e.target.value) || 4))} style={{ width: 58 }} />
+          <KInput size="sm" mono type="number" min={2} max={40} value={querAnzahl} onChange={(e) => setQuerAnzahl(Math.max(2, Number(e.target.value) || 4))} style={{ width: 58 }} data-testid="raster-quer-anzahl" />
         </label>
         <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>ersetzt das Raster des Geschosses · Zeichnen fängt auf Achsen</span>
         <KButton
