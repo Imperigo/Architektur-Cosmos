@@ -16,11 +16,18 @@ import { MFH_SKRIPT, MFH_NUTZERTEXTE } from './sim/skripte-mfh';
  * Vergleich Bridge-Bild vs. Aufnahme → Kuratieren (Stern) → aufs Blatt.
  *
  * Befund-Protokoll (Kernzweck dieser Journey): jede Reibung ist im
- * Abschlussbericht nummeriert; wo ein Zug über den Chat-Weg NICHT (oder nicht
- * korrekt) lösbar ist, steht hier ein klar kommentierter
- * `window.__kosmo.run`-Fallback (Befund 6 — kein Chat-Command wechselt das
- * aktive Geschoss, `design.dachErstellen` landet über den Chat darum immer
- * auf dem falschen (untersten) Geschoss).
+ * Abschlussbericht nummeriert.
+ *
+ * 0.6.8-ABLÖSUNG (vormals Befund 6): der Geschosswechsel vor dem Dach lief
+ * früher über einen `window.__kosmo.run`-Fallback (falsches Dach löschen,
+ * korrektes auf dem obersten Geschoss neu anlegen), weil kein Chat-Command
+ * das aktive Geschoss wechseln konnte. `ui.geschossSetzen` (H-33) schliesst
+ * diese Lücke jetzt echt — Zug 8 in `e2e/sim/skripte-mfh.ts` wechselt das
+ * aktive Geschoss über den ECHTEN Chat-Weg. Weil `ui.geschossSetzen` ein
+ * Read-Tool ist (App-Zustand, sofort, KEINE Diff-Karte — siehe Kopfkommentar
+ * in `skripte-mfh.ts`), passt dieser Zug nicht ins `kosmoChatSkript`-Muster
+ * (das je Zug genau eine Karte erwartet) — er läuft darum manuell, wie
+ * Zug 1, zwischen den zwei `kosmoChatSkript`-Abschnitten unten.
  */
 
 declare global {
@@ -137,8 +144,8 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
     .toBe(vorher.grid + 8);
 
   // =======================================================================
-  // ZÜGE 2–9 über den echten `kosmoChatSkript`-Baustein (Züge 2–9 des
-  // gemeinsamen SzenarioSkripts `MFH_SKRIPT` — Zug-Index 1..8).
+  // ZÜGE 2–7 über den echten `kosmoChatSkript`-Baustein (Zug-Index 1..6:
+  // Wände, Decke, Zonen, Fassadenmodul, Fenster, Geschosse stapeln).
   // =======================================================================
   // Fallback für Befund 1 (siehe oben): das Panel VOR dem Baustein-Aufruf
   // schliessen, damit `kosmoChatSkript`s eigener `kosmo-symbol`-Klick auf ein
@@ -148,18 +155,85 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
 
-  const protokoll = await kosmoChatSkript(
+  const protokollA = await kosmoChatSkript(
     page,
-    'journey-b-mfh-rest',
-    { id: 'journey-b-mfh-rest', zuege: MFH_SKRIPT.zuege.slice(1) },
-    { nutzerTexte: MFH_NUTZERTEXTE.slice(1) },
+    'journey-b-mfh-a',
+    { id: 'journey-b-mfh-a', zuege: MFH_SKRIPT.zuege.slice(1, 7) },
+    { nutzerTexte: MFH_NUTZERTEXTE.slice(1, 7) },
   );
 
+  // =======================================================================
+  // ZUG 8 (Geschosswechsel, Zug-Index 7) — MANUELL statt über
+  // `kosmoChatSkript`: `ui_geschossSetzen` ist ein Read-Tool (App-Zustand,
+  // sofort ausgeführt, KEINE Diff-Karte, siehe Kopfkommentar in
+  // `e2e/sim/skripte-mfh.ts`) — `kosmoChatSkript` erwartet für jeden Zug mit
+  // genau einem Tool-Call eine `proposal-card`, die hier nie entsteht.
+  // Gleiches Remount-Muster wie `kosmoChatSkript` selbst (eigene
+  // Skript-Registrierung, Panel zu/auf), damit der ScriptedProvider mit
+  // frischem `zugIndex` genau diesen einen Zug spielt.
+  // =======================================================================
+  await page.evaluate(
+    ({ skriptId, skript }) => {
+      const w = window as unknown as { __kosmoSkripte?: Record<string, unknown> };
+      w.__kosmoSkripte = { ...(w.__kosmoSkripte ?? {}), [skriptId]: skript };
+      localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'scripted', skriptId }));
+    },
+    { skriptId: 'journey-b-mfh-geschoss', skript: { id: 'journey-b-mfh-geschoss', zuege: [MFH_SKRIPT.zuege[7]!] } },
+  );
+  if (await page.locator('[data-testid="kosmo-input"]').isVisible()) {
+    await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
+    await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
+  }
+  await page.click('[data-testid="kosmo-symbol"]');
+  await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
+
+  const sendKnopfGeschoss = page.locator('[data-testid="kosmo-send"]');
+  await expect(sendKnopfGeschoss).toBeEnabled({ timeout: 15_000 });
+  await page.fill('[data-testid="kosmo-input"]', MFH_NUTZERTEXTE[7]!);
+  await sendKnopfGeschoss.click();
+  // Read-Tool: kein Karten-Klick — nur auf den Antwort-/Quittierungs-Umlauf
+  // warten (derselbe Vertrag, den `kosmoChatSkript` nach einem Karten-Klick
+  // prüft: `kosmo-send` wieder aktiv).
+  await expect(sendKnopfGeschoss).toBeEnabled({ timeout: 15_000 });
+  expect(
+    await page.locator('[data-testid="proposal-card"]').count(),
+    'ui_geschossSetzen ist ein Read-Tool — es darf KEINE Diff-Karte erzeugen',
+  ).toBe(0);
+
+  const topStoreyId = await page.evaluate(() => window.__kosmo.state().activeStoreyId);
+  expect(topStoreyId, 'Der Chat-Geschosswechsel muss activeStoreyId wirklich ändern').not.toBe(egId);
+  const topStoreyName = await page.evaluate(
+    (id) => window.__kosmo.state().doc.storeysOrdered().find((s) => s.id === id)?.name ?? null,
+    topStoreyId,
+  );
+  expect(topStoreyName, 'ui_geschossSetzen({name:"3.OG"}) muss über den Chat wirklich das 3.OG aktivieren').toBe(
+    '3.OG',
+  );
+
+  // =======================================================================
+  // ZÜGE 9–10 über `kosmoChatSkript` (Zug-Index 8..9: Dach, Material) — das
+  // Dach landet jetzt dank Zug 8 ehrlich auf dem obersten Geschoss.
+  // =======================================================================
+  const protokollB = await kosmoChatSkript(
+    page,
+    'journey-b-mfh-b',
+    { id: 'journey-b-mfh-b', zuege: MFH_SKRIPT.zuege.slice(8) },
+    { nutzerTexte: MFH_NUTZERTEXTE.slice(8) },
+  );
+
+  const protokoll = [...protokollA, ...protokollB];
+  // 0-basierte Indices in MFH_SKRIPT.zuege für die kombinierten Protokoll-
+  // einträge — Zug-Index 7 (Geschosswechsel) fehlt bewusst, der ist oben
+  // schon separat geprüft.
+  const kombinierteZugIndices = [1, 2, 3, 4, 5, 6, 8, 9];
   expect(protokoll).toHaveLength(8);
   for (const [i, eintrag] of protokoll.entries()) {
-    expect(eintrag.fehler, `Zug ${i + 2} («${MFH_NUTZERTEXTE[i + 1]}») meldet einen Fehler`).toBeUndefined();
+    const zugIndex = kombinierteZugIndices[i]!;
+    expect(eintrag.fehler, `Zug ${zugIndex + 1} («${MFH_NUTZERTEXTE[zugIndex]}») meldet einen Fehler`).toBeUndefined();
   }
-  // Erwartete Proposal-Zahlen je Zug (Wände=4 Paket, Rest Einzelvorschläge).
+  // Erwartete Proposal-Zahlen je Zug (Wände=4 Paket, Rest Einzelvorschläge) —
+  // unverändert gegenüber vor der ui_geschossSetzen-Ablösung: der neue Zug 8
+  // läuft separat und trägt keinen Proposal.
   expect(protokoll.map((p) => p.proposals)).toEqual([4, 1, 3, 1, 1, 1, 1, 1]);
 
   // -----------------------------------------------------------------------
@@ -243,40 +317,17 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
     .toBe(storeyIdsFuerDecke.length);
 
   // -----------------------------------------------------------------------
-  // Befund 6 — Beweis: das Walmdach landet über den Chat auf dem FALSCHEN
-  // (untersten, weil nie gewechselten) Geschoss — es gibt keinen Chat-Command,
-  // der das aktive Geschoss wechselt (kein design.geschossAktivSetzen o.ä.,
-  // siehe e2e/sim/skripte-mfh.ts Kopfkommentar). `applyDefaults()` füllt
-  // storeyId darum IMMER mit dem seit Projektstart unveränderten EG.
+  // 0.6.8-Ablösung (vormals Befund 6): das Walmdach landet über den ECHTEN
+  // Chat-Weg jetzt auf dem RICHTIGEN (obersten) Geschoss — Zug 8
+  // (`ui_geschossSetzen`) hat `activeStoreyId` vor dem Dach-Zug umgestellt,
+  // `applyDefaults()` füllt storeyId darum mit `topStoreyId`, nicht mehr mit
+  // dem unveränderten EG. Kein Lösch-/Neubau-Fallback mehr nötig — das ist
+  // der Regressions-Anker für den echten Fix.
   // -----------------------------------------------------------------------
-  expect(nachher.roofStoreyId, 'Befund 6: Dach landet chat-seitig auf EG statt dem obersten Geschoss').toBe(
-    egId,
-  );
-
-  // Fallback (dokumentiert, KEIN Chat-Weg vorhanden): falsches Dach löschen,
-  // korrektes Dach direkt über window.__kosmo.run auf dem obersten Geschoss
-  // anlegen — damit die restliche Journey (Vis/Screenshots) ein plausibles
-  // Gebäude zeigt.
-  const { wrongRoofId, topStoreyId } = await page.evaluate(() => {
-    const doc = window.__kosmo.state().doc;
-    const storeys = doc.storeysOrdered();
-    const top = storeys[storeys.length - 1]!;
-    const roof = doc.byKind<{ id: string }>('roof')[0]!;
-    return { wrongRoofId: roof.id, topStoreyId: top.id };
-  });
-  await page.evaluate(
-    ({ wrongRoofId, topStoreyId, outline }) => {
-      const k = window.__kosmo;
-      k.run('design.loeschen', { entityId: wrongRoofId });
-      k.run('design.dachErstellen', { storeyId: topStoreyId, outline, pitch: 35, overhang: 500 });
-    },
-    { wrongRoofId, topStoreyId, outline: GEBAEUDE_OUTLINE },
-  );
-  await expect
-    .poll(() =>
-      page.evaluate(() => window.__kosmo.state().doc.byKind<{ storeyId: string }>('roof')[0]?.storeyId),
-    )
-    .toBe(topStoreyId);
+  expect(
+    nachher.roofStoreyId,
+    'ui_geschossSetzen-Fix: Dach landet über den Chat-Weg auf dem obersten Geschoss, nicht auf EG',
+  ).toBe(topStoreyId);
 
   // Fertiges 3D — Schlüsselmoment-Screenshot.
   await page.click('[data-testid="view-quad"]');

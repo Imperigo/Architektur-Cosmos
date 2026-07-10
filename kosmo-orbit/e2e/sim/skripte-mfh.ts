@@ -15,11 +15,31 @@ import type { SzenarioSkript } from '@kosmo/ai';
  * füllt beides aus dem App-Kontext (aktives Geschoss / erster Wandaufbau)
  * automatisch, GENAU wie ein echter Nutzer es täte, der storeyId nie selbst
  * nennt. Das geht nur, WEIL das aktive Geschoss (EG) während des ganzen
- * Chat-Baus nie wechselt — siehe Zug 8 (Dach) für den Fall, in dem genau das
- * zum Problem wird: es gibt KEINEN Chat-Command, der das aktive Geschoss
- * wechselt (kein `design.geschossAktivSetzen` o.ä.), und `applyDefaults()`
- * überschreibt NUR fehlende Felder. Das Dach landet dadurch chat-seitig auf
- * dem falschen (untersten) Geschoss — Befund 6 im Abschlussbericht.
+ * Chat-Baus nie wechselt — siehe Zug 8 (Geschosswechsel) + Zug 9 (Dach).
+ *
+ * 0.6.8-ABLÖSUNG (Restpunkt aus der 0.6.7-Nachtkampagne, vormals Befund 6):
+ * `ui.geschossSetzen` (H-33, `state/kosmo-ui-werkzeuge.ts`) ist seit 0.6.7
+ * ein echtes Chat-Werkzeug (`ui_geschossSetzen`) — Zug 8 unten wechselt das
+ * aktive Geschoss GENAU wie ein Nutzer es täte, «wechsle ins Dachgeschoss»,
+ * BEVOR Zug 9 das Dach zeichnet. Das Walmdach landet dadurch über den
+ * echten Chat-Weg auf dem RICHTIGEN (obersten) Geschoss — der frühere
+ * `window.__kosmo.run`-Fallback in `kosmo-journey-mfh.spec.ts` (falsches
+ * Dach löschen + auf dem obersten Geschoss neu anlegen) entfällt.
+ * `ui.geschossSetzen` ist ein READ-TOOL (App-Zustand, kein Doc-Patch, kein
+ * Undo-Eintrag, `packages/kosmo-ai/src/chat.ts` `readTools`) — es läuft
+ * SOFORT ohne Diff-Karten-Gate (`KosmoPanel.tsx` `kosmoUiWerkzeuge`-
+ * Kommentar). Der geteilte Baustein `kosmoChatSkript` (`e2e/sim/
+ * bausteine.ts`) erwartet für JEDEN Zug mit genau einem Tool-Call eine
+ * `proposal-card` — die bei einem reinen Read-Tool NIE entsteht. Zug 8
+ * läuft darum NICHT über `kosmoChatSkript`, sondern manuell (Muster wie
+ * Zug 1 in `kosmo-journey-mfh.spec.ts`): Text senden, auf den wieder
+ * aktiven Send-Knopf warten, `activeStoreyId` pollen — kein Karten-Klick.
+ * Ziel-Geschoss «3.OG» ist deterministisch: `bootstrapProject()`
+ * (state/project-store.ts) legt IMMER genau EG(index 0) + 1.OG(index 1) an,
+ * `design.geschossKopieren({anzahl:2})` (Zug 7) stapelt danach auf dem
+ * höchsten bestehenden Index (`design.ts` 'design.geschossKopieren':
+ * `index = maxIndex + n`) — die zwei neuen Geschosse heissen darum immer
+ * «2.OG» (index 2) und «3.OG» (index 3), unabhängig vom Szenario.
  */
 export const MFH_SKRIPT: SzenarioSkript = {
   id: 'journey-b-mfh',
@@ -146,8 +166,18 @@ export const MFH_SKRIPT: SzenarioSkript = {
       antwortText: 'Ich staple das EG zweimal — das ergibt die Regelgeschosse darüber.',
       toolCalls: [{ name: 'design_geschossKopieren', args: { anzahl: 2 } }],
     },
-    // 8) Walmdach (Befund 6: landet chat-seitig auf dem falschen Geschoss,
-    // weil storeyId ohne Chat-Weg zum Geschosswechsel immer auf EG defaultet) --
+    // 8) Aktives Geschoss aufs oberste (3.OG) wechseln — echter Chat-Weg
+    // (ui.geschossSetzen, H-33/0.6.8-Ablösung, siehe Kopfkommentar) statt des
+    // früheren window.__kosmo.run-Fallbacks. LÄUFT NICHT über kosmoChatSkript
+    // (Read-Tool, keine Diff-Karte) — kosmo-journey-mfh.spec.ts spielt diesen
+    // Zug manuell.
+    {
+      nutzerErwartung: 'geschoss',
+      antwortText: 'Ich wechsle aufs oberste Geschoss (3.OG), bevor ich das Dach zeichne.',
+      toolCalls: [{ name: 'ui_geschossSetzen', args: { name: '3.OG' } }],
+    },
+    // 9) Walmdach — dank Zug 8 landet storeyId (aus applyDefaults()) jetzt
+    // ehrlich auf dem obersten Geschoss, nicht mehr auf EG.
     {
       nutzerErwartung: 'dach',
       antwortText: 'Und obendrauf ein Walmdach, 35° Neigung.',
@@ -165,7 +195,7 @@ export const MFH_SKRIPT: SzenarioSkript = {
         },
       ],
     },
-    // 9) Material/Aufbau -------------------------------------------------------
+    // 10) Material/Aufbau -------------------------------------------------------
     {
       nutzerErwartung: 'material',
       antwortText: 'Ich lege noch einen Klinker-Aussenwandaufbau im Katalog an, für die Materialisierung.',
@@ -197,6 +227,7 @@ export const MFH_NUTZERTEXTE: readonly string[] = [
   'Zeichne mir ein Lochfassaden-Modul mit einem Fenster pro Feld.',
   'Stanz die Fenster aus dem Modul in alle Aussenwände.',
   'Stapel das EG zweimal für die Regelgeschosse.',
+  'Wechsle aufs oberste Geschoss, das 3.OG.',
   'Und jetzt ein Walmdach obendrauf, 35 Grad.',
   'Leg mir noch einen Klinker-Aussenwandaufbau im Katalog an.',
 ];
