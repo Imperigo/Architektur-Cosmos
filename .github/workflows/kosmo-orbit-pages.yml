@@ -1,0 +1,54 @@
+name: KosmoOrbit Web (GitHub Pages)
+
+# Interaktives Testen im Browser — v.a. auf Handy/iPad (Owner-Wunsch 10.07.2026):
+# die echte App als Web-Link statt Installer/PDF. Der Service Worker macht sie
+# «Zum Startbildschirm hinzufügen»-fähig (PWA). Build-Anforderung aus der
+# Cloud-Session: kosmo-orbit/.pages-build-request ändern und pushen
+# (dasselbe Muster wie .desktop-build-request).
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/kosmo-orbit-v1-build-pzxkbj']
+    paths: ['kosmo-orbit/.pages-build-request']
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Nur ein Pages-Deploy zur Zeit; laufende nicht abbrechen.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: kosmo-orbit/package-lock.json
+      - name: Abhängigkeiten
+        working-directory: kosmo-orbit
+        run: npm ci
+      - name: Web-Build (cloud-Edition — Browser hat keine HomeStation)
+        working-directory: kosmo-orbit
+        env:
+          VITE_KOSMO_EDITION: cloud
+        run: npm run build -w @kosmo/orbit-app
+      - name: Pages aktivieren (falls noch nie)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: kosmo-orbit/apps/kosmo-orbit/dist
+      - name: Deploy
+        id: deploy
+        uses: actions/deploy-pages@v4
