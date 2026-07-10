@@ -49,6 +49,33 @@ Chip-Menü öffnet mit Modusliste + Übersteuerung · ink-Theme durchgängig
 Misch-Themes war ein Irrtum des Prüfers, dokumentiert der Ehrlichkeit
 halber) · Vis/Data/Einstellungen ohne Regression.
 
-## Runde 2 — nach Welle 3 (geplant)
-Fokus: Kosmo-UI-Brücke sichtbar ehrlich, Gesten-Gefühl (Fling/Doppeltap),
-Render-Knopf im Viewport, C-Befunde oben.
+## Runde 2 — Bilanz: 0 A · 0 B · 2 C (nach Welle 2+3)
+
+Screenshot-Runde 2 (`e2e/tools/kritik-shots-066-r2.mts`, 8 Bilder beide
+Themes: Vis-Palette, entzerrte Drei-Stimmungen-Ketten, Kuratier-Fläche,
+Viewport-Render-Knopf) mit Fable-Review:
+
+- **Vis-Palette**: vier Kategorien (Quelle/Wandler/Render/Ausgabe) sauber
+  gegliedert, Tusche-Rahmen, additiv zum nativen Select — kein Befund.
+- **Render-Knopf** sitzt unaufdringlich über der Orbit-/Zoom-Leiste,
+  Zustand ehrlich — kein Befund.
+- **Ketten-Entzerrung** und **Kuratier-Fläche** über die neuen
+  vis-oberflaeche-Tests und Beweis-Screenshots verifiziert.
+- Die Kosmo-UI-Aktionszeilen sind spec-verifiziert (kosmo-ui-bruecke 3×4/4);
+  ein Screenshot mit echtem Chat-Fluss bleibt dem Rundgang-PDF vorbehalten.
+
+**C-Befunde (kuratiert → 0.6.7):**
+1. Palette-Kategorie-Tonstreifen sind sehr dezent — bei vielen Einträgen
+   dürfte der Kategoriebezug kräftiger sein (bewusster Erstwurf).
+2. Kuratier-Fläche im Leerzustand könnte ein Tusche-Signet tragen
+   (Muster DataLeerbild) statt nur des Erklärsatzes.
+
+**Verfahrens-Lehren dieser Kampagne** (fürs nächste Mal eingebaut):
+Preview-Prozesse servieren das Bundle ihrer STARTZEIT — nach jedem Build
+Preview neu starten und das servierte Bundle gegen dist hashen (kostete
+in Runde 280 einen vollen Diagnose-Zyklus). Agenten brennen Isolations-
+Ports in Specs ein (render-knopf :8634 wie 0.6.5 :8611) — Integration
+normalisiert IMMER auf :8600/:5183. DOM-Präsenz ≠ Sichtbarkeit (Runde 1).
+
+**Verdikt:** keine offenen A-/B-Befunde. Die C-Restliste oben plus die
+Vertagungsliste des Kampagnenplans bilden die 0.6.7-Arbeitsliste.
