@@ -78,20 +78,47 @@ export function istZeitUeberschritten(
   return jetzt - lauf.gestartetUm > limitMs;
 }
 
+/**
+ * V-H5 (Welle 3, Kuratier-Fläche): Kuration eines Renderbilds am Node —
+ * «markiert» (Stern) und «verworfen» (Ablage statt Löschen, VORFORM-UI-
+ * KONZEPT §1.5 «Layout 02» als Ablage, nichts geht verloren). BEWUSST hier
+ * in vis-runtime, nicht im Doc: die Kuration hängt am AKTUELLEN Bild eines
+ * Nodes (Laufzeit), nicht an einer Modell-Eigenschaft — kein Undo, kein
+ * Yjs-Sync, wie `laeufe` selbst («Laufzeit ≠ Modell»).
+ */
+export interface KurationEintrag {
+  markiert: boolean;
+  verworfen: boolean;
+}
+
 interface VisRuntime {
   laeufe: Record<string, NodeLauf>;
+  kuration: Record<string, KurationEintrag>;
   setzeLauf: (nodeId: string, lauf: NodeLauf) => void;
   patchLauf: (nodeId: string, patch: Partial<NodeLauf>) => void;
+  markiereBild: (nodeId: string) => void;
+  verwerfeBild: (nodeId: string) => void;
 }
 
 export const useVisRuntime = create<VisRuntime>((set) => ({
   laeufe: {},
+  kuration: {},
   setzeLauf: (nodeId, lauf) => set((s) => ({ laeufe: { ...s.laeufe, [nodeId]: lauf } })),
   patchLauf: (nodeId, patch) =>
     set((s) => {
       const alt = s.laeufe[nodeId];
       if (!alt) return s;
       return { laeufe: { ...s.laeufe, [nodeId]: { ...alt, ...patch } } };
+    }),
+  markiereBild: (nodeId) =>
+    set((s) => {
+      const alt = s.kuration[nodeId] ?? { markiert: false, verworfen: false };
+      return { kuration: { ...s.kuration, [nodeId]: { ...alt, markiert: !alt.markiert } } };
+    }),
+  verwerfeBild: (nodeId) =>
+    set((s) => {
+      const alt = s.kuration[nodeId] ?? { markiert: false, verworfen: false };
+      return { kuration: { ...s.kuration, [nodeId]: { ...alt, verworfen: !alt.verworfen } } };
     }),
 }));
 

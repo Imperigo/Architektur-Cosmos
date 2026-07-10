@@ -38,6 +38,31 @@ async function oeffneVis(page: import('@playwright/test').Page) {
   await page.click('[data-testid="module-vis"]');
 }
 
+type Box = { x: number; y: number; width: number; height: number };
+
+function ueberlappt(a: Box, b: Box): boolean {
+  return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+}
+
+/** Wiederverwendet von beiden Overlap-Tests (Welle 3: auch vom Zweifach-Klick-Test). */
+async function pruefeAlleDisjunkt(nodes: import('@playwright/test').Locator): Promise<void> {
+  const anzahl = await nodes.count();
+  const boxen: Box[] = [];
+  for (let i = 0; i < anzahl; i++) {
+    const b = await nodes.nth(i).boundingBox();
+    expect(b).not.toBeNull();
+    boxen.push(b!);
+  }
+  for (let i = 0; i < boxen.length; i++) {
+    for (let j = i + 1; j < boxen.length; j++) {
+      expect(ueberlappt(boxen[i]!, boxen[j]!), `Node ${i} und ${j} überlappen`).toBe(false);
+    }
+  }
+}
+
+const ALLE_KETTEN_NODE_TESTIDS =
+  '[data-testid="vis-node-modell"], [data-testid="vis-node-material"], [data-testid="vis-node-stimmung"], [data-testid="vis-node-kombinierer"], [data-testid="vis-node-render"], [data-testid="vis-node-vergleich"]';
+
 test('Zoom-Steuerleiste: Plus/Minus ändern die viewBox-Skalierung', async ({ page }) => {
   await oeffneVis(page);
   await page.click('[data-testid="drei-stimmungen"]');
@@ -92,28 +117,109 @@ test('Drei Stimmungen: alle Node-Bounding-Boxen sind paarweise disjunkt (kein Ov
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
 
   // 2 Quellen (Modell/Material) + 3× (Stimmung/Kombinierer/Render) + Vergleich = 12
-  const nodes = page.locator(
-    '[data-testid="vis-node-modell"], [data-testid="vis-node-material"], [data-testid="vis-node-stimmung"], [data-testid="vis-node-kombinierer"], [data-testid="vis-node-render"], [data-testid="vis-node-vergleich"]',
-  );
-  const anzahl = await nodes.count();
-  expect(anzahl).toBe(12);
+  const nodes = page.locator(ALLE_KETTEN_NODE_TESTIDS);
+  await expect(nodes).toHaveCount(12);
+  await pruefeAlleDisjunkt(nodes);
+});
 
-  const boxen: { x: number; y: number; width: number; height: number }[] = [];
-  for (let i = 0; i < anzahl; i++) {
-    const b = await nodes.nth(i).boundingBox();
-    expect(b).not.toBeNull();
-    boxen.push(b!);
-  }
-  const ueberlappt = (
-    a: { x: number; y: number; width: number; height: number },
-    b: { x: number; y: number; width: number; height: number },
-  ) => a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+/**
+ * V-H5-Nachbaraufgabe (Welle 3, Ketten-Überlappung, Rundgang-Befund 0.6.5,
+ * docs/rundgang/bilder/17-vis-graph.png): «Drei Stimmungen» setzte seine
+ * Ketten früher auf FESTE Koordinaten — ein zweiter Klick auf denselben
+ * Graphen (eine «Default-Kette» ist schon da) legte die neue Kette exakt auf
+ * die erste. Fix in VisWorkspace.tsx (`dreiStimmungen`, Basis-Y-Versatz unter
+ * der tiefsten Unterkante aller bestehenden Nodes) — Beweis: zweiter Klick,
+ * alle 24 Node-Boxen bleiben paarweise disjunkt.
+ */
+test('Ketten-Überlappung (Rundgang-Befund 0.6.5): zweiter «Drei Stimmungen»-Klick überlappt die erste Kette nicht', async ({
+  page,
+}) => {
+  await oeffneVis(page);
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(6);
 
-  for (let i = 0; i < boxen.length; i++) {
-    for (let j = i + 1; j < boxen.length; j++) {
-      expect(ueberlappt(boxen[i]!, boxen[j]!), `Node ${i} und ${j} überlappen`).toBe(false);
-    }
-  }
+  const nodes = page.locator(ALLE_KETTEN_NODE_TESTIDS);
+  await expect(nodes).toHaveCount(24);
+
+  // Beweis-Screenshot: eingepasst, damit beide Ketten sichtbar sind.
+  await page.click('[data-testid="vis-zoom-fit"]');
+  await pruefeAlleDisjunkt(nodes);
+  await page.screenshot({ path: 'e2e-results/vis-ketten-entzerrt.png' });
+});
+
+test('Node-Palette: Kategorien sichtbar, Klick fügt einen Node hinzu — node-hinzu-Select bleibt der native E2E-Vertrag', async ({
+  page,
+}) => {
+  await oeffneVis(page);
+  await page.click('[data-testid="graph-neu"]');
+  await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
+
+  // Der native Select bleibt unverändert bedienbar (selectOption).
+  await page.selectOption('[data-testid="node-hinzu"]', 'modell');
+  await expect(page.locator('[data-testid="vis-node-modell"]')).toHaveCount(1);
+
+  // Palette ZUSÄTZLICH: öffnen, alle vier Kategorien sichtbar.
+  await page.click('[data-testid="vis-palette-toggle"]');
+  await expect(page.locator('[data-testid="vis-palette"]')).toBeVisible();
+  await expect(page.locator('[data-testid="vis-palette-kategorie-quelle"]')).toBeVisible();
+  await expect(page.locator('[data-testid="vis-palette-kategorie-wandler"]')).toBeVisible();
+  await expect(page.locator('[data-testid="vis-palette-kategorie-render"]')).toBeVisible();
+  await expect(page.locator('[data-testid="vis-palette-kategorie-ausgabe"]')).toBeVisible();
+
+  // Klick auf einen Palette-Eintrag fügt den Node über dieselbe Spiral-
+  // Platzsuche ein wie der native Select.
+  await page.click('[data-testid="vis-palette-eintrag-material"]');
+  await expect(page.locator('[data-testid="vis-node-material"]')).toHaveCount(1);
+  await expect(page.locator(ALLE_KETTEN_NODE_TESTIDS)).toHaveCount(2);
+
+  await page.screenshot({ path: 'e2e-results/vis-palette.png' });
+});
+
+/**
+ * V-H5 Kuratier-Fläche: Renderbilder als Karten (Tusche-Rahmen), markieren
+ * (Stern), verwerfen (→ Ablage, NICHTS wird gelöscht), zwei Bilder in der
+ * Vergleichsfläche nebeneinander (derselbe Bildvergleich-Baustein wie der
+ * `vergleich`-Node). Laufzeitdaten (Job/Bild/Kuration) leben in vis-runtime.
+ */
+test('V-H5 Kuratier-Fläche: Karten markieren, verwerfen (Ablage), zwei Bilder vergleichen', async ({ page }) => {
+  await oeffneVis(page);
+  await page.click('[data-testid="drei-stimmungen"]');
+  await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
+
+  // Zwei Render-Nodes ausführen (Fake-Worker) — die Kuratier-Fläche zeigt
+  // ausschliesslich Nodes mit einem FERTIGEN Bild.
+  const renderNodes = page.locator('[data-testid="vis-node-render"]');
+  await renderNodes.nth(0).locator('[data-testid="render-ausfuehren"]').click();
+  await renderNodes.nth(1).locator('[data-testid="render-ausfuehren"]').click();
+  await expect(page.locator('[data-testid="render-bild"]')).toHaveCount(2, { timeout: 25000 });
+
+  await page.click('[data-testid="vis-kuratier-toggle"]');
+  await expect(page.locator('[data-testid="vis-kuratier-flaeche"]')).toBeVisible();
+  const karten = page.locator('[data-testid="vis-kuratier-karte"]');
+  await expect(karten).toHaveCount(2);
+
+  // Markieren (Stern) an der ersten Karte.
+  const sternErsteKarte = karten.nth(0).locator('[data-testid="vis-kuratier-stern"]');
+  await sternErsteKarte.click();
+  await expect(sternErsteKarte).toHaveAttribute('aria-pressed', 'true');
+
+  // Verwerfen an der zweiten Karte — sie wandert in die Ablage, bleibt aber
+  // im DOM (nichts gelöscht, VORFORM-UI-KONZEPT §1.5 «Layout 02»).
+  await karten.nth(1).locator('[data-testid="vis-kuratier-verwerfen"]').click();
+  await expect(page.locator('[data-testid="vis-kuratier-ablage"]')).toBeVisible();
+  await expect(page.locator('[data-testid="vis-kuratier-karte"]')).toHaveCount(2);
+
+  // Vergleich: beide Karten anhaken → Vergleichsfläche mit zwei Bildern.
+  const checkboxen = page.locator('[data-testid="vis-kuratier-vergleich-wahl"]');
+  await checkboxen.nth(0).check();
+  await checkboxen.nth(1).check();
+  const vergleichFlaeche = page.locator('[data-testid="vis-kuratier-vergleich-flaeche"]');
+  await expect(vergleichFlaeche).toBeVisible();
+  await expect(vergleichFlaeche.locator('img')).toHaveCount(2, { timeout: 15000 });
+
+  await page.screenshot({ path: 'e2e-results/vis-kuratier.png' });
 });
 
 test('SK-V3 Prompt-Clamp: langer Text lässt die Karte NICHT wachsen, node-expand zeigt den vollen Text', async ({

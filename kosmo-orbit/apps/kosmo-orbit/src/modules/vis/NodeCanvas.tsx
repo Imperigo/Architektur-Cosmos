@@ -12,7 +12,7 @@ import {
   type VisNode,
   type VisPortTyp,
 } from '@kosmo/kernel';
-import { KButton, KField, KIcon, KInput, KSelect, melde, meldeFehler, type KIconName } from '@kosmo/ui';
+import { Badge, Karteikarte, KButton, KField, KIcon, KInput, KSelect, melde, meldeFehler, type KIconName } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import {
   abbrechenJob,
@@ -30,6 +30,7 @@ import {
 import {
   istZeitUeberschritten,
   memoKey,
+  type KurationEintrag,
   type NodeLauf,
   OFFENE_LAUF_STATUS,
   RENDER_TIMEOUT_MS_DEFAULT,
@@ -82,6 +83,18 @@ const KATEGORIE_ICON: Record<VisKategorie, KIconName> = {
   render: 'auge',
   ausgabe: 'dokument',
 };
+
+/** Node-Palette (Welle 3): deutsche Kategorie-Titel + feste Anzeige-Reihenfolge
+ * (Quelle → Wandler → Render → Ausgabe folgt dem Datenfluss selbst). Beides
+ * reine UI-Entscheidung wie `KATEGORIE_ICON` — der Katalog trägt nur die
+ * Kategorie-Codes. */
+const KATEGORIE_LABEL: Record<VisKategorie, string> = {
+  quelle: 'Quelle',
+  wandler: 'Wandler',
+  render: 'Render',
+  ausgabe: 'Ausgabe',
+};
+const KATEGORIE_REIHENFOLGE: readonly VisKategorie[] = ['quelle', 'wandler', 'render', 'ausgabe'];
 
 /** Höhe des Inhaltsbereichs je Node-Typ (Canvas-Einheiten). V-H4: `render`
  * wächst um das neue semantische Formular (4 Selects/Feld + Freitext + der
@@ -157,12 +170,55 @@ function edgePfad(a: { x: number; y: number }, b: { x: number; y: number }): str
   return `M ${a.x} ${a.y} C ${a.x + dx} ${a.y}, ${b.x - dx} ${b.y}, ${b.x} ${b.y}`;
 }
 
-export function NodeCanvas({ graphId }: { graphId: string }) {
+/**
+ * Bild + QA-Zeile — der gemeinsame Kern des bestehenden Bildvergleichs
+ * (`vergleich`-Node, ehemals als Inline-JSX dupliziert). V-H5 (Welle 3): die
+ * Kuratier-Fläche nutzt exakt dieselbe Kachel für ihre Zweier-Vergleichsfläche
+ * — «bestehenden Bildvergleich wiederverwenden», nicht neu erfinden.
+ */
+function BildKachel({
+  jobId,
+  bild,
+  qa,
+  alt,
+}: {
+  jobId: string;
+  bild: string;
+  qa?: { verdict: { passed: boolean } } | undefined;
+  alt: string;
+}) {
+  return (
+    <div style={{ flex: 1, display: 'grid', gap: 2, minWidth: 0 }}>
+      <BridgeBild jobId={jobId} imageName={bild} alt={alt} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+      {qa && (
+        <span style={{ fontSize: 9, fontFamily: 'var(--k-font-mono)', color: qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)' }}>
+          QA {qa.verdict.passed ? 'ok' : '✗'}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export function NodeCanvas({
+  graphId,
+  onNodeHinzu,
+}: {
+  graphId: string;
+  /** Node-Palette (Welle 3): reicht den Klick an `VisWorkspace.nodeHinzu`
+   * weiter (Spiral-Platzsuche) — optional, weil ältere Aufrufer (Tests, die
+   * NodeCanvas isoliert mounten) die Palette schlicht nicht sehen. */
+  onNodeHinzu?: (typ: string) => void;
+}) {
   const revision = useProject((s) => s.revision);
   void revision;
   const runCommand = useProject((s) => s.runCommand);
   const doc = useProject.getState().doc;
   const graph = doc.get<VisGraph>(graphId);
+  // V-H5 (Welle 3): Palette + Kuratier-Fläche starten beide zu — reines
+  // Overlay-UI, kein Layout-Shift am Canvas selbst.
+  const [paletteOffen, setPaletteOffen] = useState(false);
+  const [kuratierOffen, setKuratierOffen] = useState(false);
+  const [vergleichAuswahl, setVergleichAuswahl] = useState<readonly string[]>([]);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [view, setView] = useState({ cx: 560, cy: 300, scale: 1 });
@@ -189,6 +245,11 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
   const laeufe = useVisRuntime((s) => s.laeufe);
   const setzeLauf = useVisRuntime((s) => s.setzeLauf);
   const patchLauf = useVisRuntime((s) => s.patchLauf);
+  // V-H5: Kuration lebt in vis-runtime (Laufzeit ≠ Modell) — Stern/Ablage
+  // hängen am AKTUELLEN Bild eines Nodes, nie im Doc/Undo/Yjs.
+  const kuration = useVisRuntime((s) => s.kuration);
+  const markiereBild = useVisRuntime((s) => s.markiereBild);
+  const verwerfeBild = useVisRuntime((s) => s.verwerfeBild);
 
   const auswertung = useMemo(
     () => (graph ? evaluiereGraph(doc, graph) : null),
@@ -428,6 +489,25 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
     }
   }
 
+  // V-H5 (Welle 3, Kuratier-Fläche): jeder Render-Node mit einem fertigen
+  // Bild ist eine Karte. Laufzeit bleibt in vis-runtime (`laeufe`/`kuration`)
+  // — der Graph selbst kennt nur den Node, nie das Bild (Laufzeit ≠ Modell).
+  const kuratierKarten = graph.nodes
+    .filter((n) => n.typ === 'render')
+    .map((n) => ({ node: n, lauf: laeufe[n.id], kur: kuration[n.id] ?? { markiert: false, verworfen: false } }))
+    .filter((k): k is typeof k & { lauf: NonNullable<typeof k.lauf> } => !!k.lauf && k.lauf.status === 'fertig' && !!k.lauf.bild);
+  const kuratierAktiv = kuratierKarten.filter((k) => !k.kur.verworfen);
+  const kuratierAblage = kuratierKarten.filter((k) => k.kur.verworfen);
+  const vergleichKarten = kuratierKarten.filter((k) => vergleichAuswahl.includes(k.node.id));
+  const toggleVergleich = (nodeId: string) =>
+    setVergleichAuswahl((sel) => {
+      if (sel.includes(nodeId)) return sel.filter((id) => id !== nodeId);
+      // Genau zwei zur Zeit — die dritte Wahl verdrängt die älteste (FIFO),
+      // bleibt so immer sofort bedienbar statt stumm zu blockieren.
+      const next = [...sel, nodeId];
+      return next.length > 2 ? next.slice(next.length - 2) : next;
+    });
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
     <svg
@@ -541,8 +621,8 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
             />
             <g
               transform={`translate(${(a.x + b.x) / 2}, ${(a.y + b.y) / 2})`}
-              style={{ cursor: 'pointer', opacity: trennenSichtbar ? 1 : 0 }}
               className="k-uebergang-schnell"
+              style={{ cursor: 'pointer', opacity: trennenSichtbar ? 1 : 0 }}
               data-testid="edge-trennen"
               onPointerDown={(ev) => {
                 ev.stopPropagation();
@@ -551,8 +631,17 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                 setHoverEdge(null);
               }}
             >
-              <circle r={9} fill="var(--k-raised)" stroke="var(--k-danger)" />
-              <KIcon name="schliessen" size={14} x={-7} y={-7} style={{ color: 'var(--k-danger)' }} />
+              {/* .k-druck sitzt auf einer INNEREN Gruppe ohne eigenes
+                  `transform`-Attribut — die ÄUSSERE Gruppe trägt die
+                  Positionierung (translate); CSS-`transform` (das `.k-druck`
+                  bei :active setzt) würde ein `transform`-ATTRIBUT sonst
+                  ersetzen statt ergänzen und den Knopf beim Drücken an den
+                  SVG-Ursprung springen lassen. */}
+              <g className="k-druck">
+                <title>Verbindung trennen</title>
+                <circle r={9} fill="var(--k-raised)" stroke="var(--k-danger)" />
+                <KIcon name="schliessen" size={14} x={-7} y={-7} style={{ color: 'var(--k-danger)' }} />
+              </g>
             </g>
           </g>
         );
@@ -614,6 +703,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                 {kat.label}
               </text>
               <g
+                className="k-druck"
                 style={{ cursor: 'pointer' }}
                 data-testid="node-loeschen"
                 onPointerDown={(e) => {
@@ -621,6 +711,7 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
                   sicher(() => runCommand('vis.nodeLoeschen', { graphId, nodeId: n.id }));
                 }}
               >
+                <title>Node löschen</title>
                 <KIcon name="schliessen" size={14} x={NODE_W - 22} y={6} style={{ color: 'var(--k-ink-faint)' }} />
               </g>
             </g>
@@ -717,6 +808,190 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
       })}
     </svg>
 
+    {/* Node-Palette (Welle 3): kategorisierte, klickbare Fläche ZUSÄTZLICH
+        zum nativen `node-hinzu`-Select in der Werkzeugzeile (VisWorkspace) —
+        der bleibt der E2E-Vertrag (`selectOption`), diese Fläche ist ein
+        zweiter, visuellerer Weg zum selben `nodeHinzu`. Kategorien + Icons/
+        Hue kommen 1:1 aus dem bestehenden Katalog (VIS_NODE_KATALOG /
+        VIS_KATEGORIE_HUE) — keine neuen Metadaten, minimal-invasiv.
+        `top: 56` statt 12: (30, 30) relativ zum Canvas ist ein bestehender
+        E2E-Vertrag (visgraph.spec.ts + diese Datei) — «irgendwo ins leere
+        Canvas klicken, um ein Textfeld zu blur(en)». Bei top:12 lag der
+        Palette-Knopf GENAU über diesem Punkt und fing den Klick ab. */}
+    <div style={{ position: 'absolute', left: 12, top: 56, zIndex: 5 }}>
+      <KButton
+        size="sm"
+        tone="ghost"
+        data-testid="vis-palette-toggle"
+        title="Node-Palette"
+        aria-label="Node-Palette"
+        aria-expanded={paletteOffen}
+        onClick={() => setPaletteOffen((o) => !o)}
+      >
+        <KIcon name="ordner" size={16} title="Node-Palette" />
+      </KButton>
+      {paletteOffen && (
+        <div
+          data-testid="vis-palette"
+          className="k-einblenden"
+          style={{
+            marginTop: 6,
+            width: 200,
+            maxHeight: '70vh',
+            overflow: 'auto',
+            display: 'grid',
+            gap: 10,
+            padding: 8,
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-sm)',
+          }}
+        >
+          {KATEGORIE_REIHENFOLGE.map((kat) => {
+            const eintraege = Object.values(VIS_NODE_KATALOG).filter((t) => t.kategorie === kat);
+            if (eintraege.length === 0) return null;
+            return (
+              <div key={kat} data-testid={`vis-palette-kategorie-${kat}`}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                  <span aria-hidden style={{ width: 14, height: 2, background: VIS_KATEGORIE_HUE[kat] }} />
+                  <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-soft)' }}>
+                    {KATEGORIE_LABEL[kat]}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gap: 3 }}>
+                  {eintraege.map((t) => (
+                    <button
+                      key={t.typ}
+                      type="button"
+                      className="k-druck"
+                      data-testid={`vis-palette-eintrag-${t.typ}`}
+                      title={t.hilfe}
+                      onClick={() => onNodeHinzu?.(t.typ)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '4px 6px',
+                        border: '1px solid var(--k-line)',
+                        borderRadius: 'var(--k-radius-sm)',
+                        background: 'var(--k-raised)',
+                        fontSize: 11,
+                        color: 'var(--k-ink)',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <KIcon name={KATEGORIE_ICON[kat]} size={14} style={{ color: 'var(--k-ink-soft)', flexShrink: 0 }} />
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+
+    {/* Kuratier-Fläche (V-H5, Welle 3): erzeugte Renderbilder als Karten
+        (Tusche-Rahmen, `Karteikarte`/`.k-karte` wie die bestehenden
+        Varianten-Serien-Karten) — markieren (Stern), verwerfen (in eine
+        Ablage, NICHTS wird gelöscht — VORFORM-UI-KONZEPT §1.5 «Layout 02»),
+        zwei Karten vergleichen (derselbe `BildKachel`-Baustein wie der
+        `vergleich`-Node). Laufzeitdaten (Bild/Kuration) bleiben in
+        vis-runtime — der Doc kennt nur die Nodes. */}
+    <div style={{ position: 'absolute', right: 12, top: 12, zIndex: 5, maxWidth: 340 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="vis-kuratier-toggle"
+          title="Kuratieren"
+          aria-label="Kuratieren"
+          aria-expanded={kuratierOffen}
+          onClick={() => setKuratierOffen((o) => !o)}
+        >
+          <KIcon name="stern" size={16} title="Kuratieren" />
+          {kuratierKarten.length > 0 && (
+            <span style={{ fontSize: 10, fontFamily: 'var(--k-font-mono)' }}>{kuratierKarten.length}</span>
+          )}
+        </KButton>
+      </div>
+      {kuratierOffen && (
+        <div
+          data-testid="vis-kuratier-flaeche"
+          className="k-einblenden"
+          style={{
+            marginTop: 6,
+            maxHeight: '76vh',
+            overflow: 'auto',
+            display: 'grid',
+            gap: 10,
+            padding: 8,
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-sm)',
+          }}
+        >
+          {vergleichKarten.length === 2 && (
+            <div data-testid="vis-kuratier-vergleich-flaeche" style={{ display: 'grid', gap: 4 }}>
+              <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-soft)' }}>
+                Vergleich
+              </span>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {vergleichKarten.map((k, i) => (
+                  <BildKachel key={k.node.id} jobId={k.lauf.jobId!} bild={k.lauf.bild!} qa={k.lauf.qa} alt={`Vergleich ${i + 1}`} />
+                ))}
+              </div>
+            </div>
+          )}
+          {kuratierKarten.length === 0 ? (
+            <span style={{ fontSize: 11, color: 'var(--k-ink-faint)', fontStyle: 'italic' }}>
+              Noch keine Renderbilder — «Ausführen» an einem Render-Node füllt die Fläche.
+            </span>
+          ) : (
+            <>
+              <div style={{ display: 'grid', gap: 8 }}>
+                {kuratierAktiv.map((k, i) => (
+                  <KuratierKarte
+                    key={k.node.id}
+                    nr={i + 1}
+                    knoten={k.node}
+                    lauf={k.lauf}
+                    kuration={k.kur}
+                    imVergleich={vergleichAuswahl.includes(k.node.id)}
+                    onMarkieren={() => markiereBild(k.node.id)}
+                    onVerwerfen={() => verwerfeBild(k.node.id)}
+                    onVergleichWahl={() => toggleVergleich(k.node.id)}
+                  />
+                ))}
+              </div>
+              {kuratierAblage.length > 0 && (
+                <div style={{ display: 'grid', gap: 8 }} data-testid="vis-kuratier-ablage">
+                  <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-faint)' }}>
+                    Ablage ({kuratierAblage.length})
+                  </span>
+                  {kuratierAblage.map((k, i) => (
+                    <KuratierKarte
+                      key={k.node.id}
+                      nr={i + 1}
+                      knoten={k.node}
+                      lauf={k.lauf}
+                      kuration={k.kur}
+                      imVergleich={vergleichAuswahl.includes(k.node.id)}
+                      onMarkieren={() => markiereBild(k.node.id)}
+                      onVerwerfen={() => verwerfeBild(k.node.id)}
+                      onVergleichWahl={() => toggleVergleich(k.node.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+
     {/* Zoom-Steuerleiste (W1 Massnahme 4) — schwebend unten rechts. `bottom:
         92` statt 12: das globale Kosmo-Symbol (KosmoSymbol.tsx, fixed
         right:22/bottom:22, zIndex 110) sitzt GENAU in der Ecke und würde bei
@@ -764,6 +1039,84 @@ export function NodeCanvas({ graphId }: { graphId: string }) {
 }
 
 /**
+ * V-H5 (Welle 3): eine Kuratier-Karte — Tusche-Rahmen (`Karteikarte`, wie die
+ * Varianten-Serien-Karten in der «Einfach»-Ansicht), Bild, QA-Badge, Stern
+ * (markieren), Verwerfen (→ Ablage, nicht löschen) und eine Vergleich-Wahl
+ * (Checkbox, genau zwei Karten füllen die Vergleichsfläche oben).
+ */
+function KuratierKarte({
+  nr,
+  knoten,
+  lauf,
+  kuration,
+  imVergleich,
+  onMarkieren,
+  onVerwerfen,
+  onVergleichWahl,
+}: {
+  nr: number;
+  knoten: VisNode;
+  lauf: NodeLauf;
+  kuration: KurationEintrag;
+  imVergleich: boolean;
+  onMarkieren: () => void;
+  onVerwerfen: () => void;
+  onVergleichWahl: () => void;
+}) {
+  const kat = VIS_NODE_KATALOG[knoten.typ];
+  const preset = knoten.params?.['formSzene'];
+  return (
+    <Karteikarte nr={nr} data-testid="vis-kuratier-karte" style={{ opacity: kuration.verworfen ? 0.6 : 1 }}>
+      <div style={{ display: 'grid', gap: 6 }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span style={{ fontSize: 11.5, fontWeight: 650 }}>{kat?.label ?? knoten.typ}</span>
+          {typeof preset === 'string' && preset && (
+            <span style={{ fontSize: 10, color: 'var(--k-ink-faint)' }}>· {preset}</span>
+          )}
+          <div style={{ flex: 1 }} />
+          {lauf.qa && (
+            <Badge hue={lauf.qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)'}>
+              QA {lauf.qa.verdict.passed ? 'ok' : 'verfehlt'}
+            </Badge>
+          )}
+        </div>
+        <BridgeBild jobId={lauf.jobId!} imageName={lauf.bild!} alt={kat?.label ?? 'Render'} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <button
+            type="button"
+            className="k-druck"
+            data-testid="vis-kuratier-stern"
+            title={kuration.markiert ? 'Markierung entfernen' : 'Bild markieren'}
+            aria-label={kuration.markiert ? 'Markierung entfernen' : 'Bild markieren'}
+            aria-pressed={kuration.markiert}
+            onClick={onMarkieren}
+            style={{ border: '1px solid var(--k-line)', borderRadius: 'var(--k-radius-sm)', background: 'var(--k-raised)', padding: '3px 6px', cursor: 'pointer', color: kuration.markiert ? 'var(--k-warning)' : 'var(--k-ink-soft)' }}
+          >
+            <KIcon name={kuration.markiert ? 'stern-voll' : 'stern'} size={14} />
+          </button>
+          <button
+            type="button"
+            className="k-druck"
+            data-testid="vis-kuratier-verwerfen"
+            title={kuration.verworfen ? 'Aus der Ablage zurückholen' : 'Verwerfen (in die Ablage — nicht gelöscht)'}
+            aria-label={kuration.verworfen ? 'Aus der Ablage zurückholen' : 'Verwerfen'}
+            aria-pressed={kuration.verworfen}
+            onClick={onVerwerfen}
+            style={{ border: '1px solid var(--k-line)', borderRadius: 'var(--k-radius-sm)', background: 'var(--k-raised)', padding: '3px 6px', cursor: 'pointer', color: kuration.verworfen ? 'var(--k-danger)' : 'var(--k-ink-soft)' }}
+          >
+            <KIcon name="schliessen" size={14} />
+          </button>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10.5, color: 'var(--k-ink-soft)', cursor: 'pointer' }}>
+            <input type="checkbox" data-testid="vis-kuratier-vergleich-wahl" checked={imVergleich} onChange={onVergleichWahl} />
+            Vergleichen
+          </label>
+        </div>
+      </div>
+    </Karteikarte>
+  );
+}
+
+/**
  * SK-V3 (W1): 3-Zeilen-Klapptext — «… mehr» expandiert den Node über den
  * Eltern-State (`offen`/`onToggleOffen`), NICHT lokal, weil die Kartenhöhe
  * (SVG-Pfad + foreignObject) im ELTERN-Node-Canvas berechnet wird.
@@ -806,6 +1159,7 @@ function KlappText({
       {hatText && (
         <button
           type="button"
+          className="k-druck"
           data-testid="node-expand"
           onPointerDown={(e) => e.stopPropagation()}
           onClick={onToggleOffen}
@@ -1231,14 +1585,7 @@ function NodeKoerper({
             </div>
           )}
           {bilder.map((b, i) => (
-            <div key={i} style={{ flex: 1, display: 'grid', gap: 2 }}>
-              <BridgeBild jobId={b.jobId} imageName={b.bild} alt={`Bild ${i + 1}`} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
-              {b.qa && (
-                <span style={{ fontSize: 9, fontFamily: 'var(--k-font-mono)', color: b.qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)' }}>
-                  QA {b.qa.verdict.passed ? 'ok' : '✗'}
-                </span>
-              )}
-            </div>
+            <BildKachel key={i} jobId={b.jobId} bild={b.bild} qa={b.qa} alt={`Bild ${i + 1}`} />
           ))}
         </div>
       );

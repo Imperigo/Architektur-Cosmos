@@ -273,13 +273,20 @@ function ReferenzHeroBild({ hero }: { hero: string | null | undefined }) {
 function KdKarte({
   aktiv = false,
   style,
+  className,
   children,
   ...rest
 }: PanelProps & { aktiv?: boolean; children?: ReactNode }) {
   const [hover, setHover] = useState(false);
+  // MOTION-KONZEPT-066 §3 (.k-druck-Rollout Data): JEDE Verwendung von
+  // `KdKarte` in dieser Datei trägt bereits ein `onClick` (Referenz-/
+  // Material-/Dach-Karten) — die Karte selbst ist also immer echt klickbar,
+  // nie Fake-Affordance. Darum hier zentral, statt an jedem Aufrufort.
+  const klassen = ['k-druck', className].filter(Boolean).join(' ');
   return (
     <Panel
       {...rest}
+      className={klassen}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
@@ -890,12 +897,22 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 <button
                   aria-label="Zur Sammlung"
                   data-testid={`stern-${e.id}`}
+                  className="k-druck"
                   onClick={(ev) => {
                     ev.stopPropagation();
                     toggleSammlung(e.id);
                   }}
                   style={{
-                    all: 'unset',
+                    // .k-druck-Rollout: `all: 'unset'` (inline) hätte JEDE
+                    // Klassenregel — auch die Press-Simulation — überstimmt
+                    // (inline schlägt Stylesheet unabhängig von Pseudoklassen).
+                    // Ersetzt durch dieselben Resets einzeln, sichtbar
+                    // byte-identisch, `.k-druck` kann jetzt greifen.
+                    border: 'none',
+                    background: 'transparent',
+                    padding: 0,
+                    margin: 0,
+                    font: 'inherit',
                     cursor: 'pointer',
                     display: 'grid',
                     placeItems: 'center',

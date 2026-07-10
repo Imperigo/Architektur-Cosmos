@@ -140,8 +140,6 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
         };
         const verbinde = (from: string, fromPort: string, to: string, toPort: string) =>
           runCommand('vis.verbinden', { graphId: gid, from, fromPort, to, toPort });
-        const modell = setze('modell', 40, 260);
-        const material = setze('material', 40, 420);
         // W1 Massnahme 3a («Kein Overlap»): vertikaler Versatz = echte
         // Node-Höhe (der grösste der drei Typen in einer Zeile, `render` ist
         // mit Abstand am höchsten) + 40; horizontaler Versatz = NODE_W + 80 —
@@ -152,9 +150,26 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
         const kombX = stimmungX + spaltenAbstand;
         const renderX = kombX + spaltenAbstand;
         const vergleichX = renderX + spaltenAbstand;
-        const vergleich = setze('vergleich', vergleichX, zeilenAbstand + 40);
+        // W2 (0.6.6 Welle 3, Rundgang-Befund 0.6.5 «Default-Kette und
+        // Stimmungs-Kette überlappen teils», docs/rundgang/bilder/17-vis-graph.png):
+        // die drei Spalten-/Zeilen-Koordinaten oben waren bisher FEST — ein
+        // zweiter Klick auf «+ Drei Stimmungen» (oder ein Klick, nachdem der
+        // Graph schon eine eigene «Default»-Kette trägt) legte die neue Kette
+        // exakt auf die alte. Fix: ein Basis-Versatz, der die GESAMTE neue
+        // Kette unterhalb der tiefsten Unterkante ALLER bestehenden Nodes
+        // startet — bei einem leeren/neuen Graphen bleibt er 0 (Layout
+        // byte-identisch zum bisherigen Verhalten, vis-oberflaeche.spec
+        // «Drei Stimmungen: … kein Overlap» prüft genau diesen Fall).
+        const bestehend = doc.get<VisGraph>(gid)?.nodes ?? [];
+        const basisY =
+          bestehend.length === 0
+            ? 0
+            : Math.max(0, ...bestehend.map((n) => n.y + basisNodeHoehe(n.typ))) + 40;
+        const modell = setze('modell', 40, basisY + 260);
+        const material = setze('material', 40, basisY + 420);
+        const vergleich = setze('vergleich', vergleichX, basisY + zeilenAbstand + 40);
         (['morgen', 'abend', 'weiss'] as const).forEach((preset, i) => {
-          const y = 40 + i * zeilenAbstand;
+          const y = basisY + 40 + i * zeilenAbstand;
           const stimmung = setze('stimmung', stimmungX, y, { preset });
           const komb = setze('kombinierer', kombX, y);
           const render = setze('render', renderX, y);
@@ -334,7 +349,11 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
       </VisTabs>
       <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
         {graphId ? (
-          <NodeCanvas key={graphId} graphId={graphId} />
+          // Node-Palette (Welle 3, ZUSÄTZLICH zum nativen `node-hinzu`-Select
+          // oben — der bleibt der E2E-Vertrag): der Klick ruft dieselbe
+          // Spiral-Platzsuche wie das Select, `nodeHinzu` bleibt der EINE Ort,
+          // der das entscheidet.
+          <NodeCanvas key={graphId} graphId={graphId} onNodeHinzu={nodeHinzu} />
         ) : (
           <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Messrahmen
