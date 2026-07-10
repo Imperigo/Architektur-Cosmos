@@ -47,6 +47,12 @@ import { BridgeBild } from './BridgeBild';
  * als vis.*-Command (Undo, Yjs, Kosmo spricht Graphen). Drag lebt im lokalen
  * State und wird bei pointerup als EIN vis.nodeSchieben committet; Parameter
  * committen bei blur. Render nur auf «Ausführen» — nie automatisch.
+ *
+ * V1-Nachtkampagne (v0.6.7 Stream V1, Commit 1+2): Mehrfachauswahl +
+ * Gruppen-Drag + Grid-Snap + Ausrichten, orthogonales Kanten-Routing und
+ * echter Node-Kollaps kommen alle als lokaler Laufzeit-State/additive
+ * vis.*-Commands dazu — kein bestehender E2E-Vertrag (Kantenzahlen, Overlap,
+ * Testpunkt (30,30), Status-Texte, Minimap) wird angetastet.
  */
 
 export const NODE_W = 200;
@@ -57,6 +63,13 @@ const PORT_ABSATZ = 4;
 /** Zoom-Grenzen der Steuerleiste (W1 Massnahme 4). */
 const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 2.5;
+/** V1-Welle Commit 1: Grid-Snap-Raster in Node-Raum-Einheiten — deckt sich
+ * mit dem sichtbaren 24px-Punktraster (`vis-raster`-Pattern unten). */
+const RASTER = 24;
+
+function snap24(v: number): number {
+  return Math.round(v / RASTER) * RASTER;
+}
 
 /** Minimap (Welle 3): feste Pixelgrösse (Papier-Stil, unten links neben der
  * Legende) + Schwelle, ab der sie standardmässig eingeblendet ist — kleine
@@ -298,8 +311,24 @@ export function NodeCanvas({
   // aus getBoundingClientRect wäre beim Mount und nach Resize stale
   const [flaeche, setFlaeche] = useState({ w: 1200, h: 700 });
   const panning = useRef<{ x: number; y: number; cx: number; cy: number } | null>(null);
-  // Node-Drag: lokal bewegen, EIN Command bei pointerup
-  const [drag, setDrag] = useState<{ nodeId: string; dx: number; dy: number; x: number; y: number } | null>(null);
+  // V1-Welle Commit 1: Mehrfachauswahl (lokaler Laufzeit-State, NICHT im Doc —
+  // wie `offenerKlapptext`). Klick am Kopf = Einzelauswahl (ersetzt), Shift-
+  // Klick = toggeln, Shift-Marquee auf leerer Fläche = Box-Auswahl, Escape leert.
+  const [auswahl, setAuswahl] = useState<ReadonlySet<string>>(new Set());
+  const [marquee, setMarquee] = useState<{ x0: number; y0: number; x1: number; y1: number } | null>(null);
+  // V1-Welle Commit 1: 24px-Grid-Snap beim Drag-Commit — Default AN.
+  const [snapAktiv, setSnapAktiv] = useState(true);
+  // Node-Drag (Einzel ODER Gruppe, W1 + V1-Welle Commit 1): lokale
+  // Startpositionen ALLER bewegten Nodes + der laufende Pointer-Delta;
+  // EIN vis.nodeSchieben je Node bei pointerup, bei Mehrfachauswahl in
+  // EINER beginGroup/endGroup-Klammer (Muster VisWorkspace.tsx:126-188).
+  const [drag, setDrag] = useState<{
+    start: Record<string, { x: number; y: number }>;
+    startPX: number;
+    startPY: number;
+    curPX: number;
+    curPY: number;
+  } | null>(null);
   const [pending, setPending] = useState<{ from: string; fromPort: string; typ: VisPortTyp; x: number; y: number } | null>(null);
   const [auswahlEdge, setAuswahlEdge] = useState<string | null>(null);
   // W1 Massnahme 5: Hover je Kante (CSS-Opazität steuert Trenn-✕ + Stroke).
@@ -427,7 +456,15 @@ export function NodeCanvas({
     return () => svg.removeEventListener('wheel', onWheel);
   }, []);
 
-  if (!graph) return null;
+  // V1-Welle Commit 1: Escape leert die Mehrfachauswahl (global, wie die
+  // Kurzbefehle-Registry — greift unabhängig davon, wo der Fokus gerade sitzt).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setAuswahl(new Set());
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const toCanvas = (clientX: number, clientY: number) => {
     const rect = svgRef.current!.getBoundingClientRect();
@@ -437,8 +474,14 @@ export function NodeCanvas({
     };
   };
 
-  const nodePos = (n: VisNode) =>
-    drag && drag.nodeId === n.id ? { ...n, x: drag.x, y: drag.y } : n;
+  if (!graph) return null;
+
+  const nodePos = (n: VisNode) => {
+    const d = drag;
+    const s = d?.start[n.id];
+    if (!d || !s) return n;
+    return { ...n, x: s.x + (d.curPX - d.startPX), y: s.y + (d.curPY - d.startPY) };
+  };
 
   // SK-V1 (UI-Selbstkritik 0.6.4, Runde 2): beim Öffnen eines Graphen die
   // Ansicht auf die Nodes EINPASSEN — vorher startete der Canvas fix bei
@@ -533,6 +576,53 @@ export function NodeCanvas({
       .catch(meldeFehler);
   };
 
+  // V1-Welle Commit 1: Ausrichten/Verteilen — EIN beginGroup-Batch, wie
+  // Gruppen-Drag (Muster VisWorkspace.tsx:126-188).
+  const ausrichtenAn = (achse: 'x' | 'y') => {
+    const nodes = [...auswahl].map((id) => graph.nodes.find((n) => n.id === id)).filter((n): n is VisNode => !!n);
+    if (nodes.length < 2) return;
+    const ziel = Math.min(...nodes.map((n) => n[achse]));
+    sicher(() => {
+      const { history } = useProject.getState();
+      history.beginGroup();
+      try {
+        for (const n of nodes) {
+          if (n[achse] !== ziel) {
+            runCommand('vis.nodeSchieben', {
+              graphId,
+              nodeId: n.id,
+              x: achse === 'x' ? ziel : n.x,
+              y: achse === 'y' ? ziel : n.y,
+            });
+          }
+        }
+      } finally {
+        history.endGroup();
+      }
+    });
+  };
+
+  const vertikalVerteilen = () => {
+    const nodes = [...auswahl].map((id) => graph.nodes.find((n) => n.id === id)).filter((n): n is VisNode => !!n);
+    if (nodes.length < 2) return;
+    const sortiert = [...nodes].sort((a, b) => a.y - b.y);
+    const oben = sortiert[0]!.y;
+    const unten = sortiert[sortiert.length - 1]!.y;
+    const schritt = sortiert.length > 1 ? (unten - oben) / (sortiert.length - 1) : 0;
+    sicher(() => {
+      const { history } = useProject.getState();
+      history.beginGroup();
+      try {
+        sortiert.forEach((n, i) => {
+          const zielY = Math.round(oben + i * schritt);
+          if (n.y !== zielY) runCommand('vis.nodeSchieben', { graphId, nodeId: n.id, x: n.x, y: zielY });
+        });
+      } finally {
+        history.endGroup();
+      }
+    });
+  };
+
   /**
    * Bild-Quelle eines Eingangs-Ports — entweder der Lauf eines verbundenen
    * Render-Nodes (Bridge-Artefakt) ODER (v0.6.7 P0) eine Viewport-Aufnahme:
@@ -590,13 +680,32 @@ export function NodeCanvas({
     setView((v) => ({ ...v, cx: ziel.x, cy: ziel.y }));
   };
 
-  // V-H5 (Welle 3, Kuratier-Fläche): jeder Render-Node mit einem fertigen
-  // Bild ist eine Karte. Laufzeit bleibt in vis-runtime (`laeufe`/`kuration`)
-  // — der Graph selbst kennt nur den Node, nie das Bild (Laufzeit ≠ Modell).
-  const kuratierKarten = graph.nodes
+  // V-H5 (Welle 3, Kuratier-Fläche) + H-36 (V1-Welle Commit 1): jeder
+  // Render-Node mit einem fertigen Bild UND jeder aufnahme-Node mit einer
+  // vorhandenen Viewport-Aufnahme ist eine Karte — dieselbe Kartenform, zwei
+  // ehrlich unterschiedliche Bildquellen (wie `bildQuelle` es fürs Verbinden
+  // schon kennt). Laufzeit bleibt in vis-runtime (`laeufe`/`aufnahmen`/
+  // `kuration`) — der Graph selbst kennt nur den Node, nie das Bild.
+  type KuratierQuelle = { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | { dataUrl: string };
+  const renderKarten = graph.nodes
     .filter((n) => n.typ === 'render')
-    .map((n) => ({ node: n, lauf: laeufe[n.id], kur: kuration[n.id] ?? { markiert: false, verworfen: false } }))
-    .filter((k): k is typeof k & { lauf: NonNullable<typeof k.lauf> } => !!k.lauf && k.lauf.status === 'fertig' && !!k.lauf.bild);
+    .map((n) => {
+      const lauf = laeufe[n.id];
+      if (!lauf || lauf.status !== 'fertig' || !lauf.jobId || !lauf.bild) return null;
+      const quelle: KuratierQuelle = { jobId: lauf.jobId, bild: lauf.bild, qa: lauf.qa };
+      return { node: n, quelle, kur: kuration[n.id] ?? { markiert: false, verworfen: false } };
+    })
+    .filter((k): k is NonNullable<typeof k> => k !== null);
+  const aufnahmeKarten = graph.nodes
+    .filter((n) => n.typ === 'aufnahme')
+    .map((n) => {
+      const gewaehlt = waehleAufnahme(aufnahmen, String((n.params ?? {})['kamera'] ?? 'aktuell'));
+      if (!gewaehlt) return null;
+      const quelle: KuratierQuelle = { dataUrl: gewaehlt.dataUrl };
+      return { node: n, quelle, kur: kuration[n.id] ?? { markiert: false, verworfen: false } };
+    })
+    .filter((k): k is NonNullable<typeof k> => k !== null);
+  const kuratierKarten = [...renderKarten, ...aufnahmeKarten];
   const kuratierAktiv = kuratierKarten.filter((k) => !k.kur.verworfen);
   const kuratierAblage = kuratierKarten.filter((k) => k.kur.verworfen);
   const vergleichKarten = kuratierKarten.filter((k) => vergleichAuswahl.includes(k.node.id));
@@ -622,6 +731,15 @@ export function NodeCanvas({
       })()}
       onPointerDown={(e) => {
         if (e.target === svgRef.current) {
+          // V1-Welle Commit 1: Shift auf leerer Fläche startet die Marquee-
+          // Auswahl statt zu pannen — OHNE Shift bleibt Pan exakt wie bisher
+          // (Testpunkt (30,30) + bestehende Pan-Tests unangetastet).
+          if (e.shiftKey) {
+            const p = toCanvas(e.clientX, e.clientY);
+            setMarquee({ x0: p.x, y0: p.y, x1: p.x, y1: p.y });
+            (e.target as Element).setPointerCapture?.(e.pointerId);
+            return;
+          }
           panning.current = { x: e.clientX, y: e.clientY, cx: view.cx, cy: view.cy };
           // Wie beim Node-Kopf-Griff (unten) mit `?.` statt blankem Aufruf:
           // ein zwischenzeitlich schon abgelaufener/losgelassener Pointer
@@ -633,6 +751,14 @@ export function NodeCanvas({
         }
       }}
       onPointerMove={(e) => {
+        // V1-Welle Commit 1: Marquee zuerst — sie schliesst Pan/Drag/Pending
+        // in derselben Geste per Konstruktion aus (Pan startet gar nicht,
+        // wenn Shift gedrückt war; s. onPointerDown).
+        if (marquee) {
+          const p = toCanvas(e.clientX, e.clientY);
+          setMarquee({ ...marquee, x1: p.x, y1: p.y });
+          return;
+        }
         // F6 (v0.6.4): NICHT panning.current im setView-Updater lesen — die
         // Updater-Funktion läuft erst, wenn React den Zustand tatsächlich
         // verarbeitet, was NACH diesem Event liegen kann. Feuert dazwischen
@@ -655,7 +781,7 @@ export function NodeCanvas({
         }
         if (drag) {
           const p = toCanvas(e.clientX, e.clientY);
-          setDrag({ ...drag, x: p.x - drag.dx, y: p.y - drag.dy });
+          setDrag({ ...drag, curPX: p.x, curPY: p.y });
         }
         if (pending) {
           const p = toCanvas(e.clientX, e.clientY);
@@ -664,8 +790,52 @@ export function NodeCanvas({
       }}
       onPointerUp={() => {
         panning.current = null;
+        // V1-Welle Commit 1: Marquee committet die Box-Auswahl (jeder Node,
+        // dessen Bounding-Box die Marquee-Box berührt — Overlap-Test).
+        if (marquee) {
+          const x0 = Math.min(marquee.x0, marquee.x1);
+          const x1 = Math.max(marquee.x0, marquee.x1);
+          const y0 = Math.min(marquee.y0, marquee.y1);
+          const y1 = Math.max(marquee.y0, marquee.y1);
+          const getroffen = graph.nodes
+            .filter((n) => {
+              const h = nodeHoehe(n, offenerKlapptext);
+              return n.x < x1 && n.x + NODE_W > x0 && n.y < y1 && n.y + h > y0;
+            })
+            .map((n) => n.id);
+          setAuswahl(new Set(getroffen));
+          setMarquee(null);
+        }
+        // Gruppen-Drag-Commit: EIN Command je bewegtem Node, bei Mehrfach-
+        // auswahl in EINER beginGroup/endGroup-Klammer — EIN Undo-Schritt
+        // (Muster VisWorkspace.tsx:126-188). Grid-Snap (24px, Toggle
+        // `vis-snap-toggle`) rundet die Zielposition, wenn aktiv. Ein reiner
+        // Klick ohne Bewegung committet NICHTS (kein Leer-Patch fürs Undo).
         if (drag) {
-          sicher(() => runCommand('vis.nodeSchieben', { graphId, nodeId: drag.nodeId, x: Math.round(drag.x), y: Math.round(drag.y) }));
+          const bewegt = drag.curPX !== drag.startPX || drag.curPY !== drag.startPY;
+          if (bewegt) {
+            const dx = drag.curPX - drag.startPX;
+            const dy = drag.curPY - drag.startPY;
+            const eintraege = Object.entries(drag.start);
+            sicher(() => {
+              const { history } = useProject.getState();
+              history.beginGroup();
+              try {
+                for (const [nodeId, s] of eintraege) {
+                  const zielX = Math.round(s.x + dx);
+                  const zielY = Math.round(s.y + dy);
+                  runCommand('vis.nodeSchieben', {
+                    graphId,
+                    nodeId,
+                    x: snapAktiv ? snap24(zielX) : zielX,
+                    y: snapAktiv ? snap24(zielY) : zielY,
+                  });
+                }
+              } finally {
+                history.endGroup();
+              }
+            });
+          }
           setDrag(null);
         }
         if (pending) setPending(null);
@@ -765,6 +935,24 @@ export function NodeCanvas({
         );
       })()}
 
+      {/* V1-Welle Commit 1: Marquee-Auswahlbox (Shift+Drag auf leerer Fläche) —
+          Akzent-Rahmen, kein Fill (dezent), folgt dem Zeiger bis pointerup. */}
+      {marquee && (
+        <rect
+          data-testid="vis-marquee"
+          x={Math.min(marquee.x0, marquee.x1)}
+          y={Math.min(marquee.y0, marquee.y1)}
+          width={Math.abs(marquee.x1 - marquee.x0)}
+          height={Math.abs(marquee.y1 - marquee.y0)}
+          fill="var(--k-accent)"
+          fillOpacity={0.06}
+          stroke="var(--k-accent)"
+          strokeWidth={1}
+          strokeDasharray="4 3"
+          pointerEvents="none"
+        />
+      )}
+
       {/* Nodes */}
       {graph.nodes.map((n0) => {
         const n = nodePos(n0);
@@ -773,12 +961,23 @@ export function NodeCanvas({
         const h = nodeHoehe(n0, offenerKlapptext);
         const lauf = laeufe[n.id];
         const auftrag = auswertung?.renderAuftraege.get(n.id);
-        const veraltet = lauf && auftrag && lauf.memoKey !== memoKey(auftrag);
+        // H-32-Fix (V1-Welle Auflage 0, docs/SIM-BEFUNDE.md): der Veraltet-
+        // Vergleich MUSS denselben kombinierten Prompt (roh + Formular-Zusatz)
+        // nutzen wie `ausfuehren()` beim Absenden — sonst bleibt ein Render mit
+        // gesetzten Formularfeldern für immer «veraltet» (memoKey-Schiefe).
+        // `auftrag` selbst bleibt RAW (geht als `eingehenderPrompt` an
+        // NodeKoerper, das den Formular-Zusatz SELBST anhängt — sonst
+        // erschiene er im Text doppelt).
+        const veraltetAuftrag = auftrag
+          ? { ...auftrag, prompt: kombiniertePrompt(auftrag.prompt, formularZusatz(n0.params ?? {})) }
+          : undefined;
+        const veraltet = lauf && veraltetAuftrag && lauf.memoKey !== memoKey(veraltetAuftrag);
         const koerperY = KOPF_H + 8 + Math.max(kat.inputs.length, kat.outputs.length) * PORT_ABSTAND;
         // W1 Massnahme 1: Kategorie-Icon + 2px-Tonstreifen (Hue aus dem
         // Kernel-Katalog, Zeichen aus der KIcon-Registry je Kategorie).
         const kategorieFarbe = VIS_KATEGORIE_HUE[kat.kategorie];
         const kategorieIcon = KATEGORIE_ICON[kat.kategorie];
+        const istAusgewaehlt = auswahl.has(n.id);
         return (
           <g key={n.id} transform={`translate(${n.x}, ${n.y})`} data-testid={`vis-node-${n.typ}`}>
             {/* Karte mit geschnittener Ecke (Karteikarten-Verwandter) */}
@@ -788,13 +987,52 @@ export function NodeCanvas({
               stroke="var(--k-mod-vis, var(--k-line-strong))"
               strokeWidth={1}
             />
-            {/* Kopf = Drag-Griff */}
+            {/* V1-Welle Commit 1: Akzent-Rahmen (Tusche, kein Fill) für
+                ausgewählte Nodes — Marquee/Klick/Shift-Klick setzen `auswahl`. */}
+            {istAusgewaehlt && (
+              <rect
+                data-testid="vis-node-ausgewaehlt"
+                x={-3}
+                y={-3}
+                width={NODE_W + 6}
+                height={h + 6}
+                fill="none"
+                stroke="var(--k-accent)"
+                strokeWidth={1.5}
+                pointerEvents="none"
+              />
+            )}
+            {/* Kopf = Drag-Griff (V1-Welle Commit 1: + Auswahl-Logik) */}
             <g
               style={{ cursor: 'grab' }}
               onPointerDown={(e) => {
                 e.stopPropagation();
+                if (e.shiftKey) {
+                  setAuswahl((s) => {
+                    const next = new Set(s);
+                    if (next.has(n.id)) next.delete(n.id);
+                    else next.add(n.id);
+                    return next;
+                  });
+                  return;
+                }
+                // Ein Klick auf einen bereits mehrfach ausgewählten Node hält
+                // die Gruppe (Gruppen-Drag); sonst ersetzt der Klick die
+                // Auswahl durch genau diesen Node (Einzelauswahl). IMMER ein
+                // FRISCHES Set (auch wenn inhaltlich gleich) — dieselbe
+                // Set-Referenz an setAuswahl zurückzugeben liess Chromium/
+                // Playwright das nachfolgende Pointer-Capture-Drag(!) verlieren
+                // (kein Bug im Muster selbst, aber ein neues Set kostet nichts
+                // und ist die robuste Seite).
+                const effektiv = auswahl.has(n.id) && auswahl.size > 1 ? new Set(auswahl) : new Set([n.id]);
+                setAuswahl(effektiv);
                 const p = toCanvas(e.clientX, e.clientY);
-                setDrag({ nodeId: n.id, dx: p.x - n.x, dy: p.y - n.y, x: n.x, y: n.y });
+                const start: Record<string, { x: number; y: number }> = {};
+                for (const id of effektiv) {
+                  const nd = graph.nodes.find((x) => x.id === id);
+                  if (nd) start[id] = { x: nd.x, y: nd.y };
+                }
+                setDrag({ start, startPX: p.x, startPY: p.y, curPX: p.x, curPY: p.y });
                 (e.currentTarget.ownerSVGElement as SVGSVGElement).setPointerCapture?.(e.pointerId);
               }}
             >
@@ -885,8 +1123,19 @@ export function NodeCanvas({
               );
             })}
 
-            {/* Körper je Typ */}
-            <foreignObject x={8} y={koerperY} width={NODE_W - 16} height={h - koerperY - 8}>
+            {/* Körper je Typ. V1-Welle Commit 1: pointer-events AUS, solange ein
+                Drag/eine Marquee läuft — der Zeiger kann sonst während des
+                Ziehens über ein HTML-Formularelement im foreignObject (z.B.
+                eine `prompt-text`-Textarea, auch eines FREMDEN Nodes) laufen
+                und native Text-Interaktion auslösen. Ausserhalb eines Drags
+                unverändert interaktiv. */}
+            <foreignObject
+              x={8}
+              y={koerperY}
+              width={NODE_W - 16}
+              height={h - koerperY - 8}
+              style={{ pointerEvents: drag || marquee ? 'none' : 'auto' }}
+            >
               <NodeKoerper
                 graphId={graphId}
                 node={n0}
@@ -955,7 +1204,9 @@ export function NodeCanvas({
             return (
               <div key={kat} data-testid={`vis-palette-kategorie-${kat}`}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-                  <span aria-hidden style={{ width: 14, height: 2, background: VIS_KATEGORIE_HUE[kat] }} />
+                  {/* C-Befund (V1-Welle Commit 1): kräftigerer Tonstreifen —
+                      3px statt der bisher blassen 2px-Linie, leichte Rundung. */}
+                  <span aria-hidden style={{ width: 20, height: 3, borderRadius: 1, background: VIS_KATEGORIE_HUE[kat] }} />
                   <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-soft)' }}>
                     {KATEGORIE_LABEL[kat]}
                   </span>
@@ -994,6 +1245,37 @@ export function NodeCanvas({
         </div>
       )}
     </div>
+
+    {/* V1-Welle Commit 1: Ausrichten-Leiste — nur bei ≥2 ausgewählten Nodes,
+        zentriert oben. EIN beginGroup-Batch je Aktion. */}
+    {auswahl.size >= 2 && (
+      <div
+        data-testid="vis-ausrichten-leiste"
+        style={{
+          position: 'absolute',
+          left: '50%',
+          top: 12,
+          transform: 'translateX(-50%)',
+          zIndex: 5,
+          display: 'flex',
+          gap: 4,
+          padding: 4,
+          background: 'var(--k-surface)',
+          border: '1px solid var(--k-line)',
+          borderRadius: 'var(--k-radius-sm)',
+        }}
+      >
+        <KButton size="sm" tone="ghost" data-testid="vis-ausrichten-links" title="Links ausrichten" onClick={() => ausrichtenAn('x')}>
+          Links
+        </KButton>
+        <KButton size="sm" tone="ghost" data-testid="vis-ausrichten-oben" title="Oben ausrichten" onClick={() => ausrichtenAn('y')}>
+          Oben
+        </KButton>
+        <KButton size="sm" tone="ghost" data-testid="vis-vertikal-verteilen" title="Vertikal verteilen" onClick={vertikalVerteilen}>
+          Verteilen
+        </KButton>
+      </div>
+    )}
 
     {/* Kuratier-Fläche (V-H5, Welle 3): erzeugte Renderbilder als Karten
         (Tusche-Rahmen, `Karteikarte`/`.k-karte` wie die bestehenden
@@ -1041,16 +1323,36 @@ export function NodeCanvas({
                 Vergleich
               </span>
               <div style={{ display: 'flex', gap: 6 }}>
-                {vergleichKarten.map((k, i) => (
-                  <BildKachel key={k.node.id} jobId={k.lauf.jobId!} bild={k.lauf.bild!} qa={k.lauf.qa} alt={`Vergleich ${i + 1}`} />
-                ))}
+                {vergleichKarten.map((k, i) =>
+                  'dataUrl' in k.quelle ? (
+                    <div key={k.node.id} style={{ flex: 1, display: 'grid', gap: 2, minWidth: 0 }}>
+                      <img src={k.quelle.dataUrl} alt={`Vergleich ${i + 1}`} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+                    </div>
+                  ) : (
+                    <BildKachel key={k.node.id} jobId={k.quelle.jobId} bild={k.quelle.bild} qa={k.quelle.qa} alt={`Vergleich ${i + 1}`} />
+                  ),
+                )}
               </div>
             </div>
           )}
           {kuratierKarten.length === 0 ? (
-            <span style={{ fontSize: 11, color: 'var(--k-ink-faint)', fontStyle: 'italic' }}>
-              Noch keine Renderbilder — «Ausführen» an einem Render-Node füllt die Fläche.
-            </span>
+            // C-Befund (V1-Welle Commit 1, Muster vergleich-Leerzustand ~:1741):
+            // ein Tusche-Signet statt reiner Textwüste.
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center', padding: '8px 4px', textAlign: 'center' }}>
+              <svg width="26" height="22" viewBox="0 0 26 22" aria-hidden focusable="false">
+                <rect x="1.5" y="2.5" width="17" height="14" rx="1.5" fill="none" stroke="var(--k-ink-faint)" strokeWidth="1.4" />
+                <path
+                  d="M13 4.6 14.4 8 18 8.3 15.3 10.6 16.1 14.1 13 12.2 9.9 14.1 10.7 10.6 8 8.3 11.6 8Z"
+                  fill="none"
+                  stroke="var(--k-ink-faint)"
+                  strokeWidth="1.2"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span style={{ fontSize: 11, color: 'var(--k-ink-faint)', fontStyle: 'italic' }}>
+                Noch keine Renderbilder oder Aufnahmen — «Ausführen» an einem Render-Node oder eine Viewport-Aufnahme füllt die Fläche.
+              </span>
+            </div>
           ) : (
             <>
               <div style={{ display: 'grid', gap: 8 }}>
@@ -1059,7 +1361,7 @@ export function NodeCanvas({
                     key={k.node.id}
                     nr={i + 1}
                     knoten={k.node}
-                    lauf={k.lauf}
+                    quelle={k.quelle}
                     kuration={k.kur}
                     imVergleich={vergleichAuswahl.includes(k.node.id)}
                     onMarkieren={() => markiereBild(k.node.id)}
@@ -1078,7 +1380,7 @@ export function NodeCanvas({
                       key={k.node.id}
                       nr={i + 1}
                       knoten={k.node}
-                      lauf={k.lauf}
+                      quelle={k.quelle}
                       kuration={k.kur}
                       imVergleich={vergleichAuswahl.includes(k.node.id)}
                       onMarkieren={() => markiereBild(k.node.id)}
@@ -1099,6 +1401,19 @@ export function NodeCanvas({
         right:22/bottom:22, zIndex 110) sitzt GENAU in der Ecke und würde bei
         12px sonst die Hälfte des Zoom-Plus-Knopfs verdecken (unklickbar). */}
     <div style={{ position: 'absolute', right: 12, bottom: 92, display: 'flex', gap: 4 }}>
+      {/* V1-Welle Commit 1: Raster-Snap — Werkzeug-Umschalter neben der
+          Zoom-Leiste, fern von Testpunkt (30,30) und der Minimap (unten links). */}
+      <KButton
+        size="sm"
+        tone="ghost"
+        data-testid="vis-snap-toggle"
+        title="Raster-Einrasten (24px)"
+        aria-label="Raster-Einrasten"
+        aria-pressed={snapAktiv}
+        onClick={() => setSnapAktiv((s) => !s)}
+      >
+        Raster
+      </KButton>
       <KButton size="sm" tone="ghost" data-testid="vis-zoom-minus" title="Kleiner" onClick={() => zoomUm(1 / 1.25)}>
         <KIcon name="zoom-minus" size={16} title="Kleiner" />
       </KButton>
@@ -1233,7 +1548,7 @@ export function NodeCanvas({
 function KuratierKarte({
   nr,
   knoten,
-  lauf,
+  quelle,
   kuration,
   imVergleich,
   onMarkieren,
@@ -1242,7 +1557,9 @@ function KuratierKarte({
 }: {
   nr: number;
   knoten: VisNode;
-  lauf: NodeLauf;
+  /** H-36 (V1-Welle Commit 1): Bridge-Render ODER Viewport-Aufnahme — dieselbe
+   * Unterscheidung wie `bildQuelle()`/`BildKachel` (kein Sonderfall am Ziel). */
+  quelle: { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | { dataUrl: string };
   kuration: KurationEintrag;
   imVergleich: boolean;
   onMarkieren: () => void;
@@ -1251,6 +1568,7 @@ function KuratierKarte({
 }) {
   const kat = VIS_NODE_KATALOG[knoten.typ];
   const preset = knoten.params?.['formSzene'];
+  const qa = 'qa' in quelle ? quelle.qa : undefined;
   return (
     <Karteikarte nr={nr} data-testid="vis-kuratier-karte" style={{ opacity: kuration.verworfen ? 0.6 : 1 }}>
       <div style={{ display: 'grid', gap: 6 }}>
@@ -1260,13 +1578,17 @@ function KuratierKarte({
             <span style={{ fontSize: 10, color: 'var(--k-ink-faint)' }}>· {preset}</span>
           )}
           <div style={{ flex: 1 }} />
-          {lauf.qa && (
-            <Badge hue={lauf.qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)'}>
-              QA {lauf.qa.verdict.passed ? 'ok' : 'verfehlt'}
+          {qa && (
+            <Badge hue={qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)'}>
+              QA {qa.verdict.passed ? 'ok' : 'verfehlt'}
             </Badge>
           )}
         </div>
-        <BridgeBild jobId={lauf.jobId!} imageName={lauf.bild!} alt={kat?.label ?? 'Render'} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+        {'dataUrl' in quelle ? (
+          <img src={quelle.dataUrl} alt={kat?.label ?? 'Aufnahme'} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+        ) : (
+          <BridgeBild jobId={quelle.jobId} imageName={quelle.bild} alt={kat?.label ?? 'Render'} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+        )}
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           <button
             type="button"

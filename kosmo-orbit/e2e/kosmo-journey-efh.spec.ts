@@ -206,12 +206,10 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
   await expect(finalPrompt).toContainText(/hof/i);
   await expect(finalPrompt).toContainText(/winter/i);
 
-  // H-32-Workaround (Sim-Befund A, Fix-Auflage an Welle V1): mit gesetzten
-  // Formularfeldern bliebe der Render für immer «veraltet» (memoKey-Schiefe)
-  // und das Bild unsichtbar — Prompt-Assertion ist erbracht, also Formular
-  // vor dem Ausführen ehrlich leeren. Sim-Runde 2 stellt die Felder wieder an.
-  await ersterRender.locator('[data-testid="render-formular-szene"]').selectOption('');
-  await ersterRender.locator('[data-testid="render-formular-jahreszeit"]').selectOption('');
+  // H-32 behoben (V1-Welle Auflage 0): der Veraltet-Vergleich nutzt jetzt
+  // denselben kombinierten Prompt wie das Absenden (NodeCanvas.tsx) — die
+  // Journey setzt die Formularfelder und rendert direkt, kein Workaround
+  // mehr nötig (Beweis: render-bild wird trotz gesetztem Formular sichtbar).
   await ersterRender.locator('[data-testid="render-ausfuehren"]').click();
   await expect(ersterRender.locator('[data-testid="render-bild"]')).toBeVisible({ timeout: 25_000 });
 
