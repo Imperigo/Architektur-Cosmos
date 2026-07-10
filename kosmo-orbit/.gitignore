@@ -6,6 +6,7 @@ playwright-report/
 test-results/
 dev-dist/
 e2e-results/
+e2e-results-*/
 tools/sync-server/*.sqlite
 kosmo-sync.sqlite
 docs/handbuch/bilder/
