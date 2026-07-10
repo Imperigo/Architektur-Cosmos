@@ -345,11 +345,11 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   const aufnahmeBreite = await aufnahmeBild.evaluate((el) => (el as HTMLImageElement).naturalWidth);
   expect(aufnahmeBreite).toBeGreaterThan(0);
 
-  // Vergleich Bridge-Bild vs. Aufnahme — NICHT über die Kuratier-Fläche
-  // (Befund 7: die zeigt nur `render`-Nodes, siehe apps/kosmo-orbit/src/
-  // modules/vis/NodeCanvas.tsx `kuratierKarten = graph.nodes.filter(n =>
-  // n.typ === 'render')` — ein `aufnahme`-Node erscheint dort NIE), sondern
-  // über einen eigenständigen `vergleich`-Node (Muster e2e/vis-aufnahme.spec.ts).
+  // Vergleich Bridge-Bild vs. Aufnahme über einen eigenständigen
+  // `vergleich`-Node (Muster e2e/vis-aufnahme.spec.ts). Historie: Befund 7
+  // (H-36) — die Kuratier-Fläche zeigte damals nur `render`-Nodes; seit dem
+  // V1-Fix nimmt sie auch `aufnahme`-Nodes auf (Assertion unten), der
+  // Pixel-Vergleich nebeneinander bleibt aber Sache des vergleich-Nodes.
   // «Drei Stimmungen» (VisWorkspace.tsx Z.170) legt bereits SELBST einen
   // `vergleich`-Node an (Vergleich der drei Stimmungen) — es gibt nach diesem
   // Zug also ZWEI `vergleich`-Nodes; `node-hinzu` fügt den unseren dazu, wir
@@ -371,12 +371,13 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   await expect(vergleichFlaeche.locator('img')).toHaveCount(2, { timeout: 15_000 });
   await page.screenshot({ path: 'e2e-results-journey/03-vis-graph-vergleich.png' });
 
-  // Kuratieren (Stern) — nur der ausgeführte Render-Node hat ein fertiges
-  // Bild, darum genau EINE Kuratier-Karte.
+  // Kuratieren (Stern) — seit dem H-36-Fix (Welle V1) zeigt die Fläche neben
+  // dem ausgeführten Render-Node auch den aufnahme-Node mit Viewport-Bild:
+  // genau ZWEI Karten (Regressions-Anker für den geheilten Zustand).
   await page.click('[data-testid="vis-kuratier-toggle"]');
   await expect(page.locator('[data-testid="vis-kuratier-flaeche"]')).toBeVisible();
   const kuratierKarten = page.locator('[data-testid="vis-kuratier-karte"]');
-  await expect(kuratierKarten).toHaveCount(1);
+  await expect(kuratierKarten).toHaveCount(2);
   const stern = kuratierKarten.first().locator('[data-testid="vis-kuratier-stern"]');
   await stern.click();
   await expect(stern).toHaveAttribute('aria-pressed', 'true');
