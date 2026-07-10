@@ -1,11 +1,12 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Assembly, LayerFunction, Slab, Terrain, Wall } from '../model/entities';
+import type { Assembly, LayerFunction, Roof, Slab, Storey, Terrain, Wall } from '../model/entities';
 import { dir, normal, polygonArea, type Pt } from '../model/units';
 import { wallFrame } from '../geometry/wall';
 import { difference, intersect } from '../geometry/clip';
 import { materialPrioritaet } from '../model/prioritaet';
 import { deriveAll } from './scene';
 import { clipEdges, type HlEdge, type HlTriInput } from './hiddenline';
+import { dachGeometrie } from './dach';
 
 /**
  * Schnitt/Ansicht-Derivation — Mesh-Slicing mit Verdeckungsrechnung.
@@ -38,7 +39,7 @@ export interface SectionFace {
  * werden, ohne dass sie Teil der öffentlichen SectionFace-Form wird.
  */
 interface RawFace extends SectionFace {
-  entityKind: 'wall' | 'slab' | 'other';
+  entityKind: 'wall' | 'slab' | 'roof' | 'other';
 }
 
 export interface SectionGraphic {
@@ -146,6 +147,48 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
           u2: toS(e[i + 3]!, e[i + 4]!), v2: e[i + 5]!, w2: -t2,
         });
       }
+    }
+  }
+
+  // Dach (Stream A / v0.6.8, SIM-Befund H-18): scene.ts liefert für ein Roof
+  // nur eine dünne Aufsichtsfläche (kein Volumen — siehe deriveRoof/
+  // deriveSatteldach dort), darum liefert die generische Dreieck×Ebene-
+  // Schneidung oben zwar Randlinien (bereits vorher: `cuts` enthält Dach-
+  // Segmente), aber KEIN geschlossenes Poché — stitchLoops braucht einen
+  // umlaufenden Rand, eine offene Schale liefert nur offene Enden.
+  // derive/dach.ts verdickt dieselbe Geometrie NUR für diesen Zweck künstlich
+  // zu einem wasserdichten Prisma je Dachfläche (DACH_SCHNITT_DICKE_MM,
+  // symbolisch — ein Roof trägt keine Schicht-Assembly wie eine Wand).
+  // Bewusst ein eigener, kleiner Block statt den Haupt-Loop oben umzubauen:
+  // der bleibt unverändert, bestehende Golden-Schnitte/-Ansichten bleiben
+  // dadurch byte-identisch (siehe Abschlussbericht).
+  for (const roof of doc.byKind<Roof>('roof')) {
+    const storey = doc.get<Storey>(roof.storeyId);
+    if (!storey || storey.kind !== 'storey') continue;
+    const geom = dachGeometrie(roof, storey);
+    if (!geom || geom.dreiecke.length === 0) continue;
+    const artSegs: Seg[] = [];
+    for (const [pa, pb, pc] of geom.dreiecke) {
+      const pts = [pa, pb, pc].map((p) => ({ s: toS(p.x, p.y), t: toT(p.x, p.y), z: p.z }));
+      const hits: { s: number; z: number }[] = [];
+      for (let k = 0; k < 3; k++) {
+        const p = pts[k]!;
+        const q = pts[(k + 1) % 3]!;
+        if ((p.t <= 0 && q.t > 0) || (p.t > 0 && q.t <= 0)) {
+          const f = p.t / (p.t - q.t);
+          hits.push({ s: p.s + (q.s - p.s) * f, z: p.z + (q.z - p.z) * f });
+        }
+      }
+      if (hits.length === 2) {
+        const seg: Seg = { a: hits[0]!, b: hits[1]! };
+        cuts.push({ a: seg.a, b: seg.b, classes: ['cut', 'dach'] });
+        artSegs.push(seg);
+      }
+    }
+    if (artSegs.length === 0) continue;
+    const loops = stitchLoops(artSegs);
+    if (loops.length) {
+      rawFaces.push({ loops, material: 'dach', classes: ['cut-face', 'dach'], entityKind: 'roof' });
     }
   }
 
@@ -366,46 +409,60 @@ function xyToLoops(polys: readonly (readonly Pt[])[]): { s: number; z: number }[
 
 /**
  * Schneidet bei ECHTER Überlappung die Flächen der niedriger priorisierten
- * Seite an der jeweils höher priorisierten zurück (beidseitig: eine Wand-
- * schicht kann eine Decke zurückschneiden UND umgekehrt, je nach Material).
+ * Seite an der jeweils höher priorisierten zurück (allseitig: eine
+ * Wandschicht kann eine Decke zurückschneiden UND umgekehrt, je nach
+ * Material — seit Stream A / v0.6.8 ebenso zwischen Wand/Decke und Dach:
+ * die Traufe eines Roof-Prismas (derive/dach.ts) fällt konstruktionsbedingt
+ * exakt auf OK der tragenden Aussenwand, dieselbe ArchiCAD-Lücke A1 wie beim
+ * Wand↔Decke-Fall).
  */
 function wandDeckeVerschneiden(doc: KosmoDoc, rawFaces: RawFace[]): SectionFace[] {
   const wandFaces = rawFaces.filter((f) => f.entityKind === 'wall');
   const deckeFaces = rawFaces.filter((f) => f.entityKind === 'slab');
-  if (wandFaces.length > 0 && deckeFaces.length > 0) {
-    // Ungeschnittene Ausgangsform sichern — die Verschneidung schneidet immer
-    // gegen die ORIGINAL-Geometrie der anderen Seite, nie gegen eine bereits
-    // zurückgeschnittene (Reihenfolge-Unabhängigkeit, wie im Grundriss-Join).
+  const dachFaces = rawFaces.filter((f) => f.entityKind === 'roof');
+  const gruppenBesetzt =
+    (wandFaces.length > 0 ? 1 : 0) + (deckeFaces.length > 0 ? 1 : 0) + (dachFaces.length > 0 ? 1 : 0);
+  if (gruppenBesetzt > 1) {
+    // Ungeschnittene Ausgangsform je Gruppe sichern — die Verschneidung
+    // schneidet immer gegen die ORIGINAL-Geometrie der anderen Seite(n), nie
+    // gegen eine bereits zurückgeschnittene (Reihenfolge-Unabhängigkeit, wie
+    // im Grundriss-Join).
     const wandOrig = wandFaces.map((f) => loopsToXY(f.loops));
     const deckeOrig = deckeFaces.map((f) => loopsToXY(f.loops));
-    for (let i = 0; i < wandFaces.length; i++) {
-      const w = wandFaces[i]!;
-      const prio = materialPrioritaet(doc, w.material);
-      const hoeher: Pt[][] = [];
-      for (let j = 0; j < deckeFaces.length; j++) {
-        if (materialPrioritaet(doc, deckeFaces[j]!.material) > prio) hoeher.push(...deckeOrig[j]!);
+    const dachOrig = dachFaces.map((f) => loopsToXY(f.loops));
+    const schneideZurueck = (ziel: RawFace[], andere: { faces: RawFace[]; orig: Pt[][][] }[]) => {
+      for (let i = 0; i < ziel.length; i++) {
+        const f = ziel[i]!;
+        const prio = materialPrioritaet(doc, f.material);
+        const hoeher: Pt[][] = [];
+        for (const { faces, orig } of andere) {
+          for (let j = 0; j < faces.length; j++) {
+            if (materialPrioritaet(doc, faces[j]!.material) > prio) hoeher.push(...orig[j]!);
+          }
+        }
+        if (hoeher.length === 0) continue;
+        const polys = loopsToXY(f.loops);
+        const ueberlapp = intersect(polys, hoeher);
+        const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
+        if (flaeche < SZ_FUGE_FLAECHE_MM2) continue;
+        f.loops = xyToLoops(difference(polys, hoeher));
       }
-      if (hoeher.length === 0) continue;
-      const polys = loopsToXY(w.loops);
-      const ueberlapp = intersect(polys, hoeher);
-      const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
-      if (flaeche < SZ_FUGE_FLAECHE_MM2) continue;
-      w.loops = xyToLoops(difference(polys, hoeher));
-    }
-    for (let j = 0; j < deckeFaces.length; j++) {
-      const s = deckeFaces[j]!;
-      const prio = materialPrioritaet(doc, s.material);
-      const hoeher: Pt[][] = [];
-      for (let i = 0; i < wandFaces.length; i++) {
-        if (materialPrioritaet(doc, wandFaces[i]!.material) > prio) hoeher.push(...wandOrig[i]!);
-      }
-      if (hoeher.length === 0) continue;
-      const polys = loopsToXY(s.loops);
-      const ueberlapp = intersect(polys, hoeher);
-      const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
-      if (flaeche < SZ_FUGE_FLAECHE_MM2) continue;
-      s.loops = xyToLoops(difference(polys, hoeher));
-    }
+    };
+    // Reihenfolge wie zuvor (Wand zuerst, dann Decke) + Dach neu dazu —
+    // jede Gruppe schneidet gegen die ORIGINALE der jeweils ANDEREN
+    // beiden, darum ist die Aufruf-Reihenfolge hier ohne Wirkung.
+    schneideZurueck(wandFaces, [
+      { faces: deckeFaces, orig: deckeOrig },
+      { faces: dachFaces, orig: dachOrig },
+    ]);
+    schneideZurueck(deckeFaces, [
+      { faces: wandFaces, orig: wandOrig },
+      { faces: dachFaces, orig: dachOrig },
+    ]);
+    schneideZurueck(dachFaces, [
+      { faces: wandFaces, orig: wandOrig },
+      { faces: deckeFaces, orig: deckeOrig },
+    ]);
   }
   const faces: SectionFace[] = [];
   for (const raw of rawFaces) {
