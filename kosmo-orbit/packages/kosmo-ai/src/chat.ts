@@ -68,7 +68,14 @@ export class ChatSession {
     return this.messages;
   }
 
-  async send(userText: string): Promise<void> {
+  /**
+   * `images` (v0.6.8 «Kosmo sieht mit», optional): der von der App erfasste
+   * Stations-Blick, ans user-Message-Objekt gehängt — additiv, exakt wie
+   * `ChatMessage.images` selbst. exactOptionalPropertyTypes: konditionaler
+   * Spread statt `images: images ?? undefined` (der würde das Feld explizit
+   * auf `undefined` setzen, was der strikte Optional-Typ nicht erlaubt).
+   */
+  async send(userText: string, images?: ChatMessage['images']): Promise<void> {
     const { persona, cleaned } = routePersona(userText);
     // Persona-Wechsel: Systemprompt der Runde austauschen (eine sichtbare Stimme)
     const system = persona.systemPrompt + this.systemSuffix;
@@ -77,7 +84,7 @@ export class ChatSession {
     } else {
       this.messages.unshift({ role: 'system', content: system });
     }
-    this.messages.push({ role: 'user', content: cleaned });
+    this.messages.push({ role: 'user', content: cleaned, ...(images && images.length > 0 ? { images } : {}) });
     await this.turn();
   }
 

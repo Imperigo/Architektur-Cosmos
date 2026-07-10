@@ -1694,6 +1694,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
     // Deterministischer Test-Hook (Playwright): RAF stoppen, Einzelframe rendern
     (window as never as Record<string, unknown>)['__kosmoViewport'] = {
+      // v0.6.8 («Kosmo sieht mit», state/kosmo-blick.ts): Kosmos ehrlichster
+      // Blick auf die 3D-Station — derselbe Weg wie `fuerVisAufnehmen()`
+      // oben (EIN frischer Frame mit der jetzigen Kamera, direkt danach
+      // synchron `toDataURL`, kein dauerhaftes `preserveDrawingBuffer`).
+      // `null`, solange kein Frame gerendert werden kann (z.B. nach Unmount).
+      captureFrame: (): string | null => captureRef.current?.() ?? null,
       renderOnce: () => {
         testMode = true;
         cancelAnimationFrame(raf);

@@ -11,6 +11,17 @@ export interface ChatMessage {
   toolCalls?: ToolCall[];
   /** Bei role=tool: Name des beantworteten Tools. */
   toolName?: string;
+  /**
+   * v0.6.8 («Kosmo sieht mit») — OPTIONALE Bilder an einer Nachricht (praktisch
+   * nur bei role=user gefüllt: der erfasste Stations-Blick der App). Bewusst
+   * KEINE content-Union (string|Block[]) — das würde den `MockProvider`-Regex-
+   * Pfad (`content.toLowerCase()`) und alle bestehenden Kosmo-Specs brechen.
+   * `content` bleibt immer der reine Text; `images` ist additiv daneben.
+   * Vision-fähige Provider (Anthropic/Ollama/LM-Studio) mappen dieses Feld auf
+   * ihr jeweiliges Bild-Format; Mock/Scripted ignorieren es still (kein
+   * Vertragsbruch, siehe deren `chat()`).
+   */
+  images?: { mediaType: string; dataBase64: string }[];
 }
 
 export interface ToolCall {
@@ -76,6 +87,36 @@ export interface OllamaConfig {
   temperature?: number;
 }
 
+type OllamaNachricht = {
+  role: ChatMessage['role'];
+  content: string;
+  tool_calls?: { function: { name: string; arguments: unknown } }[];
+  tool_name?: string;
+  images?: string[];
+};
+
+/**
+ * Verlauf → Ollamas `/api/chat`-Nachrichtenform — reine Bau-Funktion (v0.6.8,
+ * exportiert fürs Unit-testen ohne Netz/Stream). Bilder gehen als eigenes
+ * Feld `images` (Array roher base64-Strings, ohne data:-Prefix/mediaType)
+ * neben `content` — https://github.com/ollama/ollama/blob/main/docs/api.md#chat-request-with-images
+ */
+export function zuOllamaNachrichten(messages: ChatMessage[]): OllamaNachricht[] {
+  return messages.map((m) => ({
+    role: m.role,
+    content: m.content,
+    ...(m.toolCalls
+      ? {
+          tool_calls: m.toolCalls.map((c) => ({
+            function: { name: c.name, arguments: c.arguments },
+          })),
+        }
+      : {}),
+    ...(m.toolName ? { tool_name: m.toolName } : {}),
+    ...(m.images && m.images.length > 0 ? { images: m.images.map((i) => i.dataBase64) } : {}),
+  }));
+}
+
 export class OllamaProvider implements ChatProvider {
   readonly id = 'ollama';
   constructor(private cfg: OllamaConfig) {}
@@ -91,18 +132,7 @@ export class OllamaProvider implements ChatProvider {
           model: this.cfg.model,
           stream: true,
           options: { temperature: this.cfg.temperature ?? 0.2 },
-          messages: req.messages.map((m) => ({
-            role: m.role,
-            content: m.content,
-            ...(m.toolCalls
-              ? {
-                  tool_calls: m.toolCalls.map((c) => ({
-                    function: { name: c.name, arguments: c.arguments },
-                  })),
-                }
-              : {}),
-            ...(m.toolName ? { tool_name: m.toolName } : {}),
-          })),
+          messages: zuOllamaNachrichten(req.messages),
           ...(req.tools && req.tools.length > 0
             ? {
                 tools: req.tools.map((t) => ({

@@ -14,12 +14,33 @@ export interface OpenAiKompatibelConfig {
   temperature?: number;
 }
 
+type OaInhaltsTeil =
+  | { type: 'text'; text: string }
+  | { type: 'image_url'; image_url: { url: string } };
+
 type OaNachricht = {
   role: 'system' | 'user' | 'assistant' | 'tool';
-  content: string | null;
+  content: string | OaInhaltsTeil[] | null;
   tool_calls?: { id: string; type: 'function'; function: { name: string; arguments: string } }[];
   tool_call_id?: string;
 };
+
+/**
+ * v0.6.8: `content` einer user-Nachricht MIT Bildern → das OpenAI-übliche
+ * Teile-Array (`image_url` je Bild als data:-URI, Text zuletzt); ohne Bilder
+ * bleibt `content` unverändert ein reiner String — kein Vertragsbruch für
+ * bestehende (bildlose) Aufrufe/Tests.
+ */
+export function zuOpenAiInhalt(content: string, images?: ChatMessage['images']): string | OaInhaltsTeil[] {
+  if (!images || images.length === 0) return content;
+  return [
+    ...images.map((img): OaInhaltsTeil => ({
+      type: 'image_url',
+      image_url: { url: `data:${img.mediaType};base64,${img.dataBase64}` },
+    })),
+    { type: 'text', text: content },
+  ];
+}
 
 /** Verlauf → chat/completions: Tool-Resultate brauchen tool_call_id. */
 export function zuOpenAiNachrichten(messages: ChatMessage[]): OaNachricht[] {
@@ -42,6 +63,9 @@ export function zuOpenAiNachrichten(messages: ChatMessage[]): OaNachricht[] {
     if (m.role === 'tool') {
       const id = ids.get(i);
       return { role: 'tool' as const, content: m.content, ...(id ? { tool_call_id: id } : {}) };
+    }
+    if (m.role === 'user') {
+      return { role: 'user' as const, content: zuOpenAiInhalt(m.content, m.images) };
     }
     return { role: m.role, content: m.content };
   });

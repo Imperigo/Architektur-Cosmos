@@ -41,7 +41,8 @@ export function anthropicAuthHeader(cfg: Pick<AnthropicConfig, 'apiKey' | 'oauth
 type InhaltsBlock =
   | { type: 'text'; text: string }
   | { type: 'tool_use'; id: string; name: string; input: unknown }
-  | { type: 'tool_result'; tool_use_id: string; content: string };
+  | { type: 'tool_result'; tool_use_id: string; content: string }
+  | { type: 'image'; source: { type: 'base64'; media_type: string; data: string } };
 
 /** Verlauf → Messages-API: system separat, tool-Nachrichten als tool_result-User-Blöcke. */
 export function zuAnthropicNachrichten(messages: ChatMessage[]): {
@@ -62,6 +63,15 @@ export function zuAnthropicNachrichten(messages: ChatMessage[]): {
       return;
     }
     if (m.role === 'user') {
+      // v0.6.8: Bildblöcke VOR dem Textblock (Anthropic-Konvention/Beispiele —
+      // das Modell liest ein Bild zuverlässiger, wenn die Beschreibung danach
+      // kommt). Additiv: ohne `images` unverändert ein einzelner Textblock.
+      for (const img of m.images ?? []) {
+        anhaengen('user', {
+          type: 'image',
+          source: { type: 'base64', media_type: img.mediaType, data: img.dataBase64 },
+        });
+      }
       anhaengen('user', { type: 'text', text: m.content });
       return;
     }
