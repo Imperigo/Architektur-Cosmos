@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { KSelect } from '@kosmo/ui';
 import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, type Furniture, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUnternehmerplan } from './unternehmerplan';
@@ -473,23 +474,25 @@ export function PlanView({
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--k-plan-paper)' }}>
-      <select
+      <KSelect
+        size="sm"
         data-testid="trace-select"
         value={traceId}
         onChange={(e) => setTraceId(e.target.value)}
         title="Trace: anderes Geschoss blass unterlegen (nur Bildschirm)"
         style={{
-          position: 'absolute', top: 8, right: 70, zIndex: 5, padding: '3px 6px',
-          borderRadius: 6, border: '1px solid var(--k-line-strong)', cursor: 'pointer',
+          // v0.6.9 KSelect-Split: position/top/right/zIndex tragen den Wrapper,
+          // Farbe/Schrift den Trigger — Optik wie zuvor (lila, solange aktiv).
+          position: 'absolute', top: 8, right: 70, zIndex: 5,
           background: traceId ? '#7a5c9e' : 'var(--k-raised)', color: traceId ? 'white' : 'inherit',
-          font: 'inherit', fontSize: 11.5,
+          fontSize: 11.5,
         }}
       >
         <option value="">Trace</option>
         {doc.storeysOrdered().filter((s) => s.id !== activeStoreyId).map((s) => (
           <option key={s.id} value={s.id}>{s.name}</option>
         ))}
-      </select>
+      </KSelect>
       {unternehmerDxf && (
         <button
           data-testid="unternehmerplan-toggle"

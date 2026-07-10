@@ -1897,17 +1897,18 @@ function NodeKoerper({
       const presetKey = String(params['preset'] ?? 'morgen');
       return (
         <div style={{ display: 'grid', gap: 4 }}>
-          <select
+          <KSelect
+            size="sm"
             value={presetKey}
             data-testid="stimmung-preset"
             onChange={(e) => param('preset', e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            style={feld}
+            style={{ width: '100%', fontSize: 11 }}
           >
             {Object.entries(VIS_STIMMUNGEN).map(([key, s]) => (
               <option key={key} value={key}>{s.label}</option>
             ))}
-          </select>
+          </KSelect>
           {/* SK-V3: die Stimmungs-Beschreibung (der tatsächliche Prompt-Text
               des Presets) sichtbar — clampt wie kombinierer-prompt/material. */}
           <KlappText
@@ -2135,18 +2136,19 @@ function NodeKoerper({
           </label>
           {/* K20/A10: Cycles-Preset (Samples/Auflösung/Sonne/Komposition) — regelbasierte
               Datentabelle, kein KI-Vorschlag. Leer = bisheriger Default (128 Samples). */}
-          <select
+          <KSelect
+            size="sm"
             value={String(params['preset'] ?? '')}
             data-testid="vis-preset-select"
             onChange={(e) => param('preset', e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            style={feld}
+            style={{ width: '100%', fontSize: 11 }}
           >
             <option value="">kein Preset (Default 128 Samples)</option>
             {RENDER_PRESETS.map((p) => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
-          </select>
+          </KSelect>
           {/* Worker + Fortschritt, sobald der Worker den Job hält (HS3-Auflage 5). */}
           {(lauf?.worker || lauf?.progress) && (status === 'rendert' || status === 'wartetGpu') && (
             <div data-testid="render-fortschritt" style={{ fontSize: 9.5, fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-soft)' }}>
@@ -2286,17 +2288,18 @@ function NodeKoerper({
       return (
         <div style={{ display: 'grid', gap: 4 }} onPointerDown={(e) => e.stopPropagation()}>
           <div style={{ fontSize: 9.5, color: 'var(--k-ink-faint)' }}>Viewport-Aufnahme (kein Rendering)</div>
-          <select
+          <KSelect
+            size="sm"
             value={kameraParam}
             data-testid="aufnahme-kamera"
             onChange={(e) => param('kamera', e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            style={feld}
+            style={{ width: '100%', fontSize: 11 }}
           >
             <option value="aktuell">jüngste Aufnahme</option>
             <option value="nordost">Nordost</option>
             <option value="sued">Süd</option>
-          </select>
+          </KSelect>
           {gewaehlt ? (
             <img
               src={gewaehlt.dataUrl}

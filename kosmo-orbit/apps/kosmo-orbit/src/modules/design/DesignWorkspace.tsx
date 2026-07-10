@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, KIcon, type KIconName, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, type KIconName, KSelect, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { LearningJournal } from '@kosmo/ai';
 import {
   areaReport,
@@ -1832,23 +1832,17 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             }}
           >
           {tool === 'wand' && assemblies.length > 0 && (
-            <select
+            <KSelect
+              size="sm"
               value={effectiveAssembly ?? ''}
               onChange={(e) => setAssemblyId(e.target.value)}
-              style={{
-                background: 'var(--k-raised)',
-                border: '1px solid var(--k-line-strong)',
-                borderRadius: 'var(--k-radius-sm)',
-                padding: '4px 8px',
-                fontSize: 12.5,
-              }}
             >
               {assemblies.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.name}
                 </option>
               ))}
-            </select>
+            </KSelect>
           )}
           {/* SK-D1 Massnahme 2 («EIN KMenu Export»): echter Auf/Zu-Trigger,
               STANDARDMÄSSIG OFFEN. Grund für «offen» als Default (dokumentierte
@@ -2109,7 +2103,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             </>
           )}
           {tool === 'treppe' && (
-            <select
+            <KSelect
+              size="sm"
               value={treppenForm}
               data-testid="treppen-form"
               onChange={(e) => {
@@ -2117,13 +2112,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 setPoints([]);
               }}
               title="Treppenform — L-Lauf: Antritt, Ecke, Austritt klicken"
-              style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
             >
               <option value="gerade">gerade</option>
               <option value="podest">mit Podest</option>
               <option value="u">U-Lauf</option>
               <option value="l">L-Lauf</option>
-            </select>
+            </KSelect>
           )}
           {/* Regel 2.3.5 (Transparenz): solange die Matrix eine Gruppe unter ihre
               T7-Basis zurückstellt, zeigt dieser dezente Hinweis warum — anschluss-
@@ -2263,7 +2257,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           {/* SIA-Phase (Owner 03.07.): Detaillierungsgrad der Pläne; koppelt den passenden Bemassungs-Stil */}
           <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
             Phase
-            <select
+            <KSelect
+              size="sm"
               value={doc.settings.phase}
               data-testid="phase-stil"
               onChange={(e) => {
@@ -2286,12 +2281,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 const label = { vorprojekt: 'Vorprojekt', bauprojekt: 'Bauprojekt', werkplan: 'Werkplan' }[phase];
                 setMassstabHinweis(`${label}: Plan-Export neu 1:${PHASEN_MASSSTAB[phase]} (SIA-Empfehlung).`);
               }}
-              style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
             >
               <option value="vorprojekt">Vorprojekt</option>
               <option value="bauprojekt">Bauprojekt</option>
               <option value="werkplan">Werkplan</option>
-            </select>
+            </KSelect>
           </label>
           {/* SIA-Teilphase (v0.6.3, Lücken-Batch 1): der reale Projektstand im
               SIA-102/112-Zyklus — bewusst GETRENNT vom Plan-Detaillierungsgrad
@@ -2303,7 +2297,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             title="Aktuelle SIA-Teilphase des Projekts (Wettbewerb bis Abnahme) — reiner Projektstand, ändert den Plan-Detaillierungsgrad nicht."
           >
             Teilphase
-            <select
+            <KSelect
+              size="sm"
               value={doc.settings.siaPhase}
               data-testid="sia-phase-select"
               onChange={(e) => {
@@ -2312,7 +2307,6 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 // der Command schlägt den passenden Detaillierungsgrad nur vor.
                 runCommand('design.siaPhaseSetzen', { siaPhase });
               }}
-              style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
             >
               {(
                 ['wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung', 'ausschreibung', 'ausfuehrung', 'abnahme'] as const
@@ -2321,12 +2315,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   {siaPhaseLabel(p)}
                 </option>
               ))}
-            </select>
+            </KSelect>
           </label>
           {/* Bemassungs-Stil (V2-A5): Presets als Projekteinstellung, undo-fähig */}
           <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
             Masse
-            <select
+            <KSelect
+              size="sm"
               value={bemassungPreset}
               data-testid="bemassung-stil"
               onChange={(e) => {
@@ -2339,14 +2334,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 const p = presets[e.target.value];
                 if (p) runCommand('design.bemassungSetzen', p);
               }}
-              style={{ padding: '3px 5px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', fontSize: 12 }}
             >
               <option value="standard">Standard</option>
               <option value="wettbewerb">Wettbewerb</option>
               <option value="werkplan">Werkplan</option>
               <option value="aus">Aus</option>
               {bemassungPreset === 'eigen' && <option value="eigen">eigen</option>}
-            </select>
+            </KSelect>
           </label>
           <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
             Ändert sich mit der SIA-Phase des Projekts — bleibt über Jahre stabil, gehört nicht in die Dauerleiste.
@@ -3458,17 +3452,17 @@ function StudienPanel({
               />
               m
             </label>
-            <select
+            <KSelect
+              size="sm"
               data-testid="studie-geschosshoehe-herkunft"
               value={geschosshoeheHerkunft}
               onChange={(e) => setGeschosshoeheHerkunft(e.target.value as typeof geschosshoeheHerkunft)}
-              style={{ ...inputStyle, width: 'auto' }}
             >
               <option value="standard">Standard</option>
               <option value="wettbewerb">Wettbewerbsvorgabe</option>
               <option value="architekt">Architekt-Entscheid</option>
               <option value="sia-minimum">SIA-Minimum</option>
-            </select>
+            </KSelect>
           </div>
           <div data-testid="studie-geschosshoehe-anzeige" style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
             Geschosshöhe {geschosshoeheEffektivM.toFixed(2)} m — {geschosshoeheHerkunftLabel[geschosshoeheHerkunft]}
@@ -3643,17 +3637,18 @@ function FassadenModulSektion() {
       {module.length > 0 && (
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 11.5 }}>
           <span style={{ color: 'var(--k-ink-soft)' }}>Gezeichnet</span>
-          <select
+          <KSelect
+            size="sm"
             value={modulName ?? ''}
             data-testid="modul-wahl"
             onChange={(e) => setModulName(e.target.value || null)}
-            style={{ padding: '2px 6px', flex: 1 }}
+            style={{ flex: 1 }}
           >
             <option value="">— freie Masse —</option>
             {module.map((m) => (
               <option key={m.name} value={m.name}>{m.name} ({(m.breite / 1000).toFixed(2)} × {(m.hoehe / 1000).toFixed(2)})</option>
             ))}
-          </select>
+          </KSelect>
         </div>
       )}
       {editorOffen && <ModulEditor onClose={() => setEditorOffen(false)} />}
@@ -3675,7 +3670,8 @@ function FassadenModulSektion() {
               <span style={{ color: 'var(--k-ink-soft)', width: 120 }}>
                 {z.koerper} · K{z.kante} ({(z.laenge / 1000).toFixed(1)} m)
               </span>
-              <select
+              <KSelect
+                size="sm"
                 value={z.modul ?? ''}
                 data-testid={`zuweisung-${z.kante}`}
                 onChange={(e) =>
@@ -3685,13 +3681,13 @@ function FassadenModulSektion() {
                     modul: e.target.value || null,
                   })
                 }
-                style={{ padding: '1px 4px', flex: 1 }}
+                style={{ flex: 1 }}
               >
                 <option value="">frei</option>
                 {module.map((m) => (
                   <option key={m.name} value={m.name}>{m.name}</option>
                 ))}
-              </select>
+              </KSelect>
             </div>
           ))}
         </div>

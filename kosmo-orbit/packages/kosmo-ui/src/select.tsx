@@ -325,7 +325,16 @@ export function KSelect(props: KSelectProps) {
               tabIndex={-1}
               className="k-menu-item"
               onMouseEnter={() => setAktivIndex(i)}
-              onClick={() => waehle(o.value)}
+              onClick={(e) => {
+                // Steckt das KSelect in einem <label> (verbreitet: «Phase»,
+                // «Verbindung», …), löst der Browser als Default-Action des
+                // Klicks einen synthetischen Klick aufs Label-Control (den
+                // Trigger) aus, sobald die geklickte Option nach dem React-
+                // Commit nicht mehr im DOM hängt — das Popup ginge sofort
+                // wieder auf. preventDefault unterbindet genau das.
+                e.preventDefault();
+                waehle(o.value);
+              }}
               style={{
                 fontSize: size === 'sm' ? 'var(--k-t-sm)' : 'var(--k-t-md)',
                 whiteSpace: 'nowrap',
