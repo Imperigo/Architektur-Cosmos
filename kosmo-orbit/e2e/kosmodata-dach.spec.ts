@@ -123,3 +123,77 @@ test('F8: Website-Sync unerreichbar — eingebaute Referenzdaten/Kataloge bleibe
   await expect(badge).toContainText(/eingebaute Referenzdaten bleiben sichtbar/i);
   await expect(page.locator('[data-testid="ref-card"]')).toHaveCount(112);
 });
+
+/**
+ * K5 (Serie F, 0.6.8) — Facetten für die übrigen KosmoData-Dach-Sammlungen:
+ * additiv, NUR wo Tabs reale facettierbare Felder haben (Bauteilkatalog:
+ * `kategorie`, Archiv: `kategorie`). Materialien hat bereits eine eigene
+ * Facette (`material-filter-*`), Gedächtnis zwei (`gedaechtnis-filter-*`),
+ * Training/Wissen haben keine geeignete kategoriale Struktur — bewusst
+ * ausgelassen (Abschlussbericht). Beide neuen Tests laufen komplett additiv
+ * NEBEN den harten Verträgen oben (112 Referenzen / 19× Beton bleiben
+ * unangetastet).
+ */
+test('K5: Bauteilkatalog-Facette filtert nach Kategorie, «Alle» zeigt wieder alle vier Sektionen', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-data"]');
+  await page.click('[data-testid="tab-bauteile"]');
+
+  const alle = page.locator('[data-testid="dach-facette-bauteile-alle"]');
+  const dach = page.locator('[data-testid="dach-facette-bauteile-Dach"]');
+  await expect(alle).toBeVisible();
+  await expect(dach).toBeVisible();
+
+  const kartenVorher = await page.locator('[data-testid^="bauteil-"]').count();
+  expect(kartenVorher).toBeGreaterThan(0);
+
+  await dach.click();
+  const kartenDach = await page.locator('[data-testid^="bauteil-"]').count();
+  expect(kartenDach).toBeGreaterThan(0);
+  expect(kartenDach).toBeLessThan(kartenVorher);
+  // Nur die Dach-Sektionsüberschrift ist sichtbar — die anderen drei nicht.
+  await expect(page.locator('.k-titel', { hasText: 'Dach' })).toHaveCount(1);
+  await expect(page.locator('.k-titel', { hasText: 'Aussenwand' })).toHaveCount(0);
+  await expect(page.locator('.k-titel', { hasText: 'Innenwand' })).toHaveCount(0);
+
+  // Erneuter Klick auf die aktive Facette setzt zurück (Toggle-Verhalten).
+  await dach.click();
+  await expect(page.locator('[data-testid^="bauteil-"]')).toHaveCount(kartenVorher);
+
+  // Ausdrücklich «Alle» klicken bringt denselben Ausgangszustand.
+  await dach.click();
+  await alle.click();
+  await expect(page.locator('[data-testid^="bauteil-"]')).toHaveCount(kartenVorher);
+});
+
+test('K5: Archiv-Facette filtert nach Kategorie', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  await page.reload();
+  await page.click('[data-testid="module-data"]');
+  await page.click('[data-testid="tab-archiv"]');
+
+  // Zwei Bestände in unterschiedlichen Kategorien erfassen.
+  await page.fill('[data-testid="archiv-feld-name"]', 'Projekte-Ordner');
+  await page.fill('[data-testid="archiv-feld-pfad"]', 'D:\\Archiv\\Projekte');
+  await page.selectOption('[data-testid="archiv-feld-kategorie"]', 'projekte');
+  await page.click('[data-testid="archiv-hinzu"]');
+  await expect(page.locator('[data-testid="archiv-eintrag"]')).toHaveCount(1);
+
+  await page.fill('[data-testid="archiv-feld-name"]', 'Foto-Ordner');
+  await page.fill('[data-testid="archiv-feld-pfad"]', 'D:\\Archiv\\Fotos');
+  await page.selectOption('[data-testid="archiv-feld-kategorie"]', 'fotos');
+  await page.click('[data-testid="archiv-hinzu"]');
+  await expect(page.locator('[data-testid="archiv-eintrag"]')).toHaveCount(2);
+
+  await page.click('[data-testid="dach-facette-archiv-projekte"]');
+  await expect(page.locator('[data-testid="archiv-eintrag"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="archiv-eintrag"]')).toContainText('Projekte-Ordner');
+
+  await page.click('[data-testid="dach-facette-archiv-alle"]');
+  await expect(page.locator('[data-testid="archiv-eintrag"]')).toHaveCount(2);
+});

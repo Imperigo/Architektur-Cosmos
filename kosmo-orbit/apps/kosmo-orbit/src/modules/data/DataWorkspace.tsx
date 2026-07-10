@@ -1662,6 +1662,10 @@ export function BauteilkatalogView() {
   const [uebernommen, setUebernommen] = useState<string | null>(null);
 
   const kategorien: KatalogEintrag['kategorie'][] = ['Aussenwand', 'Innenwand', 'Decke', 'Dach'];
+  // K5 (Serie F, 0.6.8) — Kategorie-Facette: additiv, Default 'alle' zeigt
+  // exakt die bisherigen vier Sektionen unverändert (kein Vertragsbruch).
+  const [kategorieFilter, setKategorieFilter] = useState<KatalogEintrag['kategorie'] | 'alle'>('alle');
+  const sichtbareKategorien = kategorieFilter === 'alle' ? kategorien : kategorien.filter((k) => k === kategorieFilter);
 
   function uebernehmen(e: KatalogEintrag) {
     runCommand('design.aufbauErstellen', { name: e.name, target: e.target, layers: e.layers });
@@ -1670,7 +1674,28 @@ export function BauteilkatalogView() {
 
   return (
     <div style={{ display: 'grid', gap: 'var(--k-s5)' }}>
-      {kategorien.map((kat) => (
+      <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+        <KButton
+          size="sm"
+          tone={kategorieFilter === 'alle' ? 'accent' : 'quiet'}
+          data-testid="dach-facette-bauteile-alle"
+          onClick={() => setKategorieFilter('alle')}
+        >
+          Alle · {bauteilkatalog.length}
+        </KButton>
+        {kategorien.map((kat) => (
+          <KButton
+            key={kat}
+            size="sm"
+            tone={kategorieFilter === kat ? 'accent' : 'quiet'}
+            data-testid={`dach-facette-bauteile-${kat}`}
+            onClick={() => setKategorieFilter(kategorieFilter === kat ? 'alle' : kat)}
+          >
+            {kat} · {bauteilkatalog.filter((e) => e.kategorie === kat).length}
+          </KButton>
+        ))}
+      </div>
+      {sichtbareKategorien.map((kat) => (
         <div key={kat} style={{ display: 'grid', gap: 'var(--k-s3)' }}>
           <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>{kat}</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 'var(--k-s3)' }}>
@@ -2966,6 +2991,9 @@ export function KosmoArchivView() {
   const [eintraege, setEintraege] = useState<ArchivEintrag[]>([]);
   const [geladen, setGeladen] = useState(false);
   const [query, setQuery] = useState('');
+  // K5 (Serie F, 0.6.8) — Kategorie-Facette: additiv, Default 'alle' verhält
+  // sich exakt wie die bisherige reine Textsuche (kein Vertragsbruch).
+  const [kategorieFilter, setKategorieFilter] = useState<ArchivKategorie | 'alle'>('alle');
 
   const [name, setName] = useState('');
   const [pfad, setPfad] = useState('');
@@ -3051,7 +3079,10 @@ export function KosmoArchivView() {
     refresh();
   }
 
-  const gefiltert = useMemo(() => sucheArchiv(eintraege, query), [eintraege, query]);
+  const gefiltert = useMemo(() => {
+    const basis = kategorieFilter === 'alle' ? eintraege : eintraege.filter((e) => e.kategorie === kategorieFilter);
+    return sucheArchiv(basis, query);
+  }, [eintraege, query, kategorieFilter]);
   const leer = geladen && eintraege.length === 0;
 
   return (
@@ -3145,6 +3176,28 @@ export function KosmoArchivView() {
           )}
         </div>
       </Panel>
+
+      <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+        <KButton
+          size="sm"
+          tone={kategorieFilter === 'alle' ? 'accent' : 'quiet'}
+          data-testid="dach-facette-archiv-alle"
+          onClick={() => setKategorieFilter('alle')}
+        >
+          Alle · {eintraege.length}
+        </KButton>
+        {ARCHIV_KATEGORIEN.map((k) => (
+          <KButton
+            key={k}
+            size="sm"
+            tone={kategorieFilter === k ? 'accent' : 'quiet'}
+            data-testid={`dach-facette-archiv-${k}`}
+            onClick={() => setKategorieFilter(kategorieFilter === k ? 'alle' : k)}
+          >
+            {archivKategorieLabel[k]} · {eintraege.filter((e) => e.kategorie === k).length}
+          </KButton>
+        ))}
+      </div>
 
       <SuchFeld
         testid="archiv-search"
