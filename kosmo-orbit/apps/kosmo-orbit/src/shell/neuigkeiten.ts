@@ -35,6 +35,20 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.6.9',
+    datum: '2026-07-10',
+    punkte: [
+      { text: 'Fenster werden parametrisch: Einflügel, Zweiflügel, Festverglasung oder Fensterband mit Teilung (n×m) und Rahmenbreite — einstellbar im Inspector, als Kosmo-Kommando und sichtbar in 3D, Grundriss, Schnitt und Ansicht.', station: 'design' },
+      { text: 'Curtain-Wall v1: «Fassadenband setzen» belegt eine ganze Fassadenseite (Süd/Nord/West/Ost) in einem Zug mit Fensterband-Öffnungen im Pfostenraster — EIN Rückgängig-Schritt, ausgelassene Segmente werden ehrlich gemeldet.', station: 'design' },
+      { text: 'Wissen antwortet mit Beleg: per Docling importierte Dokumente lassen sich in die Wissensbasis laden und fliessen dann in Kosmos Quellensuche — Antworten zitieren die eigene Import-Notiz als [Q]-Quelle.', station: 'data' },
+      { text: 'Echte Auswahlmenüs: die Dropdowns der App sind jetzt eigene Menüs im Werkplan-Stil (Tastatur ↑↓/Enter/Esc, Tipp-Suche, Fokusring) statt der Browser-Standardliste — das native Menü bleibt als Fluchtweg erhalten.' },
+      { text: 'Kosmo-Blick fertig bewiesen: der Mitschau-Beweis gilt jetzt auch für Grundriss/Schnitt, die Node-Fläche und echte Renderbilder; der «Kosmo sieht»-Chip öffnet per Klick eine Vollbild-Vorschau, die letzten Blicke sind in den Einstellungen sichtbar.' },
+      { text: 'Werkpläne mit Dach-Hierarchie: First, Traufe und Ortgang/Grat tragen jetzt differenzierte Strichstärken; ein neuer SVG-Prüflauf rastert alle Golden-Pläne automatisch und prüft Sichtbarkeit, Passung und Text-Überlappungen.', station: 'draw' },
+      { text: 'Tusche-Piktogramme variieren jetzt auch bei Objekten und unbestimmten Typologien (vorher wirkten Nachbarkarten identisch); die Render-Bridge isoliert parallele Läufe pro Instanz.', station: 'data' },
+      { text: 'Unter der Haube: der Repo-CI-Lauf (Typecheck, Tests, Build, Secret-Scan, E2E) war seit Tagen durch einen YAML-Fehler still tot — repariert und erstmals grün; Kosmos Begrüssung beherrscht den Singular («steht 1 Wand»).' },
+    ],
+  },
+  {
     version: '0.6.8',
     datum: '2026-07-10',
     punkte: [
