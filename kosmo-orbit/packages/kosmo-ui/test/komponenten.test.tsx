@@ -22,17 +22,116 @@ import { KTabs } from '../src/tabs';
  * wo keine Interaktion geprüft wird.
  */
 
-describe('KSelect: bleibt ein echtes natives <select>', () => {
-  it('rendert <select> mit durchgereichtem data-testid', () => {
+describe('KSelect: Custom-Dropdown (v0.6.9) — Trigger/Popup/data-value-Vertrag', () => {
+  it('rendert einen Trigger-Button mit data-testid, data-value und k-select-Klassen', () => {
     const html = renderToStaticMarkup(
       <KSelect data-testid="mein-select" value="a" onChange={() => {}}>
         <option value="a">A</option>
         <option value="b">B</option>
       </KSelect>,
     );
-    expect(html).toContain('<select');
+    expect(html).not.toContain('<select');
+    expect(html).toContain('<button');
     expect(html).toContain('data-testid="mein-select"');
+    expect(html).toContain('data-value="a"');
     expect(html).toContain('class="k-select k-select--md"');
+    expect(html).toContain('aria-haspopup="listbox"');
+    // Trigger zeigt das LABEL der gewählten Option, nicht den Wert.
+    expect(html).toContain('>A</button>');
+  });
+
+  it('nativ-Prop rendert weiterhin das echte native <select> (Alt-Vertrag)', () => {
+    const html = renderToStaticMarkup(
+      <KSelect nativ data-testid="nativ-select" value="a" onChange={() => {}}>
+        <option value="a">A</option>
+      </KSelect>,
+    );
+    expect(html).toContain('<select');
+    expect(html).toContain('data-testid="nativ-select"');
+    expect(html).toContain('class="k-select k-select--md"');
+  });
+
+  let root: Root | null = null;
+  let container: HTMLDivElement | null = null;
+
+  afterEach(() => {
+    if (root) {
+      act(() => root!.unmount());
+      root = null;
+    }
+    if (container) {
+      container.remove();
+      container = null;
+    }
+  });
+
+  it('Klick öffnet das Popup (role=listbox, `${testid}-popup`), Options-Klick liefert onChange(value) und schliesst', () => {
+    const werte: string[] = [];
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => {
+      root!.render(
+        <KSelect data-testid="mein-select" value="a" onChange={(e) => werte.push(e.target.value)}>
+          <option value="a">Alpha</option>
+          <option value="b">Beta</option>
+        </KSelect>,
+      );
+    });
+
+    const trigger = container.querySelector('[data-testid="mein-select"]') as HTMLButtonElement;
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(container.querySelector('[data-testid="mein-select-popup"]')).toBeNull();
+
+    act(() => {
+      trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const popup = container.querySelector('[data-testid="mein-select-popup"]') as HTMLElement;
+    expect(popup).not.toBeNull();
+    expect(popup.getAttribute('role')).toBe('listbox');
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    const optionA = popup.querySelector('[data-value="a"]') as HTMLButtonElement;
+    expect(optionA.getAttribute('role')).toBe('option');
+    expect(optionA.getAttribute('aria-selected')).toBe('true');
+
+    act(() => {
+      (popup.querySelector('[data-value="b"]') as HTMLButtonElement).dispatchEvent(
+        new MouseEvent('click', { bubbles: true }),
+      );
+    });
+
+    expect(werte).toEqual(['b']);
+    expect(container.querySelector('[data-testid="mein-select-popup"]')).toBeNull();
+  });
+
+  it('Esc schliesst das offene Popup ohne onChange', () => {
+    const werte: string[] = [];
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => {
+      root!.render(
+        <KSelect data-testid="esc-select" value="a" onChange={(e) => werte.push(e.target.value)}>
+          <option value="a">Alpha</option>
+          <option value="b">Beta</option>
+        </KSelect>,
+      );
+    });
+
+    const trigger = container.querySelector('[data-testid="esc-select"]') as HTMLButtonElement;
+    act(() => {
+      trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(container.querySelector('[data-testid="esc-select-popup"]')).not.toBeNull();
+
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    });
+    expect(container.querySelector('[data-testid="esc-select-popup"]')).toBeNull();
+    expect(werte).toEqual([]);
   });
 });
 
