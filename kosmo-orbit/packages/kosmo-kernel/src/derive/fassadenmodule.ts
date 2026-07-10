@@ -134,6 +134,13 @@ export function kantenRichtung(a: Pt, b: Pt, bbox: Bbox): Fassadenrichtung | nul
  * Geschosses: verbindet `design.fassadenModulZuweisen` (Kante am MassBody) mit
  * der Wandrichtung, damit `design.fensterAusModulen` je Aussenwand das zur
  * Fassadenseite passende Modul stanzen kann statt pauschal das erste.
+ *
+ * H-35 (v0.6.8, additiv): wo kein Volumenkörper existiert (reiner wand-
+ * basierter Baupfad), setzt `design.fassadenModulZuweisen` die Zuweisung
+ * direkt über `storeyId`+`richtung` in `doc.settings.wandFassadenModule` —
+ * diese Quelle wird hier zusätzlich eingemischt (überschreibt bei Gleichstand
+ * die MassBody-Zuweisung derselben Richtung, weil sie die explizitere,
+ * zuletzt gesetzte Absicht ist).
  */
 export function richtungsModule(doc: KosmoDoc, storeyId: string): Map<Fassadenrichtung, string> {
   const map = new Map<Fassadenrichtung, string>();
@@ -147,6 +154,9 @@ export function richtungsModule(doc: KosmoDoc, storeyId: string): Map<Fassadenri
       const richtung = kantenRichtung(m.outline[i]!, m.outline[(i + 1) % m.outline.length]!, bbox);
       if (richtung) map.set(richtung, zuweisung.modul);
     }
+  }
+  for (const z of doc.settings.wandFassadenModule ?? []) {
+    if (z.storeyId === storeyId) map.set(z.richtung, z.modul);
   }
   return map;
 }

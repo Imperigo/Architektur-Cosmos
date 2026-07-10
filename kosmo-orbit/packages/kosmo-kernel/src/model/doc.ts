@@ -296,6 +296,23 @@ export interface DocSettings {
   /** Aktive Schnittlinie (H-9, v0.6.8) — null = kein Schnitt gesetzt. Nur über
    * `design.schnittSetzen` gesetzt. */
   schnitt?: SchnittSpec | null;
+  /** Fassadenmodul-Zuweisung auf Wandzügen ohne Volumenkörper (H-35, v0.6.8):
+   * additive Erweiterung von `design.fassadenModulZuweisen` — statt einer
+   * MassBody-Kante wird die Fassadenseite eines Geschosses direkt benannt,
+   * abgeleitet aus den zusammenhängenden Aussenwänden. `derive/
+   * fassadenmodule.ts`s `richtungsModule()` liest BEIDE Quellen (Volumenkörper
+   * UND diese Liste); der bestehende MassBody-Weg bleibt unverändert. */
+  wandFassadenModule?: WandFassadenZuweisung[];
+}
+
+/** Eine Fassadenseiten-Zuweisung im wand-basierten Baupfad (H-35, v0.6.8).
+ * `richtung` dupliziert absichtlich `Fassadenrichtung` aus `derive/
+ * fassadenmodule.ts` statt sie zu importieren — `model/` importiert nicht aus
+ * `derive/` (siehe `SchnittSpec`-Kommentar). */
+export interface WandFassadenZuweisung {
+  storeyId: string;
+  richtung: 'sued' | 'nord' | 'west' | 'ost';
+  modul: string;
 }
 
 /** Eine Override-Regel: WAS wird WIE getönt (erste Treffer-Regel gewinnt). */

@@ -12,7 +12,8 @@ import { stairSpec, treppenTeile } from '../derive/treppe';
 import { REGEL_PRESETS } from '../model/regelpresets';
 import { generiereGrundriss, generiereGrundrissL, zerlegeRektilinear } from '../derive/grundrissgenerator';
 import { zonenZuWaenden } from '../derive/zonenwaende';
-import { boundingBox, kantenRichtung, richtungsModule } from '../derive/fassadenmodule';
+import { boundingBox, kantenRichtung, richtungsModule, type Fassadenrichtung } from '../derive/fassadenmodule';
+import { segmentiere, sollMix, WOHNUNGS_GROESSEN, type WohnungsTypSoll } from '../derive/segmentierer';
 
 export { stairSpec } from '../derive/treppe';
 
@@ -1458,27 +1459,70 @@ export const assignFacadeModule = registerCommand({
   id: 'design.fassadenModulZuweisen',
   title: 'Fassadenmodul zuweisen',
   description:
-    'Weist einer Fassadenkante eines Volumenkörpers ein gezeichnetes Modul zu (kante 1-basiert = Reihenfolge der Umriss-Kanten, modul = Name aus dem Modul-Editor; null entfernt). Süd kriegt das Fensterband, Nord das geschlossene Modul — 3D-Raster und Elementbilanz folgen je Kante.',
+    'Weist einer Fassadenkante ein gezeichnetes Modul zu (modul = Name aus dem Modul-Editor; null entfernt). ZWEI Wege: (1) massId+kante — Kante 1-basiert = Reihenfolge der Umriss-Kanten eines Volumenkörpers. (2) storeyId+richtung (sued/nord/west/ost) — H-35: für den wand-basierten Baupfad OHNE Volumenkörper, abgeleitet aus den zusammenhängenden Aussenwänden dieser Fassadenseite. Genau einer der beiden Wege pro Aufruf. Süd kriegt das Fensterband, Nord das geschlossene Modul — 3D-Raster/Elementbilanz (Weg 1) bzw. design.fensterAusModulen (Weg 2) folgen je Seite.',
   params: z.object({
-    massId: z.string(),
-    kante: z.number().int().positive(),
+    massId: z.string().optional(),
+    kante: z.number().int().positive().optional(),
+    storeyId: z.string().optional(),
+    richtung: z.enum(['sued', 'nord', 'west', 'ost']).optional(),
     modul: z.string().nullable(),
   }),
-  summarize: (p) => (p.modul ? `Kante ${p.kante} → «${p.modul}»` : `Kante ${p.kante}: Modul entfernt`),
+  summarize: (p) =>
+    p.massId !== undefined
+      ? p.modul
+        ? `Kante ${p.kante} → «${p.modul}»`
+        : `Kante ${p.kante}: Modul entfernt`
+      : p.modul
+        ? `Fassade ${p.richtung} → «${p.modul}»`
+        : `Fassade ${p.richtung}: Modul entfernt`,
   run: (doc, p) => {
-    const mass = require<MassBody>(doc, p.massId, 'mass');
-    if (p.modul && !doc.settings.fassadenModule.some((m) => m.name === p.modul)) {
-      throw new CommandError(`Modul «${p.modul}» existiert nicht — zuerst im Modul-Editor zeichnen`);
+    if (p.massId !== undefined || p.kante !== undefined) {
+      if (p.massId === undefined || p.kante === undefined) {
+        throw new CommandError('massId und kante gehören zusammen (Volumenkörper-Weg)');
+      }
+      // --- unverändert: bestehender MassBody-Weg (Goldens/Tests bleiben byte-identisch) ---
+      const mass = require<MassBody>(doc, p.massId, 'mass');
+      if (p.modul && !doc.settings.fassadenModule.some((m) => m.name === p.modul)) {
+        throw new CommandError(`Modul «${p.modul}» existiert nicht — zuerst im Modul-Editor zeichnen`);
+      }
+      if (p.kante > mass.outline.length) {
+        throw new CommandError(`Kante ${p.kante} — der Körper hat nur ${mass.outline.length}`);
+      }
+      const rest = (mass.module ?? []).filter((z2) => z2.kante !== p.kante);
+      const module = p.modul ? [...rest, { kante: p.kante, modul: p.modul }] : rest;
+      const { module: _weg, ...ohne } = mass;
+      void _weg;
+      const after: MassBody = module.length > 0 ? { ...ohne, module } : (ohne as MassBody);
+      return [{ id: mass.id, before: mass, after }];
     }
-    if (p.kante > mass.outline.length) {
-      throw new CommandError(`Kante ${p.kante} — der Körper hat nur ${mass.outline.length}`);
+    if (p.storeyId !== undefined && p.richtung !== undefined) {
+      // --- neu (H-35): wand-basierter Weg ohne Volumenkörper ---
+      require<Storey>(doc, p.storeyId, 'storey');
+      if (p.modul && !doc.settings.fassadenModule.some((m) => m.name === p.modul)) {
+        throw new CommandError(`Modul «${p.modul}» existiert nicht — zuerst im Modul-Editor zeichnen`);
+      }
+      const aussenwaende = doc
+        .byKind<Wall>('wall')
+        .filter((w) => w.storeyId === p.storeyId)
+        .filter((w) => {
+          const asm = doc.get<Assembly>(w.assemblyId);
+          return asm?.kind === 'assembly' && asm.name.toUpperCase().startsWith('AW');
+        });
+      if (aussenwaende.length === 0) {
+        throw new CommandError('Keine Aussenwand (Aufbau «AW…») auf diesem Geschoss — zuerst design.waendeAusZonen');
+      }
+      const bbox = boundingBox(aussenwaende.flatMap((w) => [w.a, w.b]));
+      const treffer = bbox ? aussenwaende.some((w) => kantenRichtung(w.a, w.b, bbox) === p.richtung) : false;
+      if (!treffer) {
+        throw new CommandError(`Keine Aussenwand liegt an der Fassadenseite «${p.richtung}»`);
+      }
+      const richtung: Fassadenrichtung = p.richtung;
+      const bisher = doc.settings.wandFassadenModule ?? [];
+      const rest = bisher.filter((z2) => !(z2.storeyId === p.storeyId && z2.richtung === richtung));
+      const nach = p.modul ? [...rest, { storeyId: p.storeyId, richtung, modul: p.modul }] : rest;
+      return [{ settings: true as const, before: { wandFassadenModule: bisher }, after: { wandFassadenModule: nach } }];
     }
-    const rest = (mass.module ?? []).filter((z2) => z2.kante !== p.kante);
-    const module = p.modul ? [...rest, { kante: p.kante, modul: p.modul }] : rest;
-    const { module: _weg, ...ohne } = mass;
-    void _weg;
-    const after: MassBody = module.length > 0 ? { ...ohne, module } : (ohne as MassBody);
-    return [{ id: mass.id, before: mass, after }];
+    throw new CommandError('Entweder massId+kante (Volumenkörper) oder storeyId+richtung (Wandzüge) angeben.');
   },
 });
 
@@ -1532,6 +1576,137 @@ export const placeZoneDoor = registerCommand({
   run: (doc, p) => {
     require<Storey>(doc, p.storeyId, 'storey');
     return [added({ id: newId('tuer'), kind: 'zonentuer' as const, storeyId: p.storeyId, at: p.at, breite: p.breite })];
+  },
+});
+
+/** Fläche eines Polygons (Shoelace, unsigniert) — identisch zur bisherigen UI-Rechnung. */
+function polyFlaeche(outline: Pt[]): number {
+  let s = 0;
+  for (let i = 0; i < outline.length; i++) {
+    const p = outline[i]!;
+    const q = outline[(i + 1) % outline.length]!;
+    s += p.x * q.y - q.x * p.y;
+  }
+  return Math.abs(s) / 2;
+}
+
+export const segmentWohnungen = registerCommand({
+  id: 'design.wohnungenSegmentieren',
+  title: 'Wohnungen segmentieren',
+  description:
+    'Schneidet die grösste Zone eines Geschosses (Footprint) entlang der Zone mit Raumtyp «korridor» in Wohnungen — Soll-Mix aus dem Raumprogramm (design.raumprogrammSetzen) oder explizit übergeben. Beidseits des Korridors entstehen Bänder, eine dynamische Programmierung sucht Schnittstationen nahe der Zielgrösse je Typ; Restfläche wird ehrlich als «Opfer-Wohnung» ausgewiesen. kern reserviert 3.0 m Erschliessungskern (Treppenhaus-Zone, gerader Treppenlauf, Zonentür zum Korridor). Ein Undo-Schritt.',
+  params: z.object({
+    storeyId: z.string(),
+    mix: z
+      .array(
+        z.object({
+          typ: z.string().describe('Wohnungstyp-Schlüssel, z.B. «marktgerecht» oder «preisguenstig»'),
+          anzahl: z.number().int().positive(),
+          groesse: z.number().positive().optional().describe('Zielgrösse in m² — weggelassen: Standardgrösse des Typs'),
+        }),
+      )
+      .max(20)
+      .optional()
+      .describe('Soll-Mix (Typ/Anzahl/Grösse) — weggelassen: aus dem Raumprogramm abgeleitet (sollMix)'),
+    minBreite: z.number().int().min(3500).max(7000).default(4500).describe('Minimale Wohnungsbreite am Korridor (mm)'),
+    groessenFaktor: z.number().min(0.5).max(2).default(1).describe('Skaliert alle Zielgrössen (F6-Regler-Äquivalent)'),
+    kern: z.boolean().default(false).describe('Reserviert 3.0 m Erschliessungskern mit Treppenhaus, Treppe und Zonentür'),
+  }),
+  summarize: (p) => `Wohnungen segmentieren${p.kern ? ' (mit Erschliessungskern)' : ''}`,
+  run: (doc, p) => {
+    const storey = require<Storey>(doc, p.storeyId, 'storey');
+    const zonen = doc.byKind<Zone>('zone').filter((z) => z.storeyId === p.storeyId);
+    const korridor = zonen.find((z) => z.raumTyp === 'korridor');
+    if (!korridor) {
+      throw new CommandError('Eine Zone mit Raumtyp «korridor» zeichnen — daran werden die Wohnungen geschnitten.');
+    }
+    const rest = zonen.filter((z) => z.id !== korridor.id);
+    const footprint = [...rest].sort((a, b) => polyFlaeche(b.outline) - polyFlaeche(a.outline))[0];
+    if (!footprint) {
+      throw new CommandError('Eine Footprint-Zone (Geschossfläche) zeichnen — sie wird geteilt.');
+    }
+    const basis = p.mix ?? sollMix(doc);
+    if (basis.length === 0) {
+      throw new CommandError('Zuerst das Raumprogramm erfassen — daraus entsteht der Soll-Mix.');
+    }
+    const mix: WohnungsTypSoll[] = basis.map((m) => ({
+      typ: m.typ,
+      anzahl: m.anzahl,
+      groesse: m.groesse ?? WOHNUNGS_GROESSEN[m.typ] ?? 85,
+    }));
+    const groessen = Object.fromEntries(mix.map((m) => [m.typ, Math.round(m.groesse * p.groessenFaktor)]));
+    const ergebnis = segmentiere(footprint.outline, korridor.outline, mix, {
+      minBreite: p.minBreite,
+      groessen,
+      kern: p.kern,
+    });
+    if (ergebnis.wohnungen.length === 0) {
+      throw new CommandError(ergebnis.diagnose[0] ?? 'Segmentierung ergab keine Wohnungen — Korridorlage prüfen.');
+    }
+
+    const patches: AnyPatch[] = [];
+    let i = 0;
+    for (const w of ergebnis.wohnungen) {
+      i++;
+      patches.push(
+        added({
+          id: newId('zone'),
+          kind: 'zone',
+          storeyId: p.storeyId,
+          outline: w.outline,
+          name: w.typ ? `Whg ${i} (${w.typ})` : 'Restfläche',
+          sia: 'HNF',
+          ...(w.typ ? { program: w.typ } : {}),
+        }),
+      );
+    }
+
+    if (ergebnis.kern) {
+      patches.push(
+        added({
+          id: newId('zone'),
+          kind: 'zone',
+          storeyId: p.storeyId,
+          outline: ergebnis.kern.outline,
+          name: 'Treppenhaus',
+          sia: 'VF',
+          raumTyp: 'treppenhaus',
+        }),
+      );
+      // Gerader Lauf mittig im Kern (identische Geometrie zum bisherigen
+      // UI-Weg: BerechnungslistePanel.uebernehmen).
+      const xs = ergebnis.kern.outline.map((pt) => pt.x);
+      const ys = ergebnis.kern.outline.map((pt) => pt.y);
+      const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+      const y0 = Math.min(...ys);
+      const y1 = Math.max(...ys);
+      const hoch = y1 - y0 >= Math.max(...xs) - Math.min(...xs);
+      const a: Pt = hoch ? { x: cx, y: y0 + 600 } : { x: Math.min(...xs) + 600, y: (y0 + y1) / 2 };
+      const b: Pt = hoch ? { x: cx, y: y1 - 600 } : { x: Math.max(...xs) - 600, y: (y0 + y1) / 2 };
+      const laenge = Math.hypot(b.x - a.x, b.y - a.y);
+      if (laenge < 1000) throw new CommandError('Treppenlauf zu kurz (< 1 m) — Kern zu knapp für den Lauf.');
+      const stair: Stair = { id: newId('treppe'), kind: 'stair', storeyId: p.storeyId, a, b, width: 1200 };
+      const teile = treppenTeile(stair, storey.height, storey.elevation);
+      if (teile.spec.riser > 200) {
+        throw new CommandError(
+          `Lauf zu kurz für ${formatLength(storey.height)} Geschosshöhe: Steigung wäre ${Math.round(teile.spec.riser)} mm (max. 200).`,
+        );
+      }
+      patches.push(added(stair));
+      // Tür an der Kante zum Korridor (Kern grenzt bandseitig an den Korridor)
+      const ky = korridor.outline.map((pt) => pt.y);
+      const grenzY = Math.abs(Math.min(...ky) - y1) < Math.abs(Math.max(...ky) - y0) ? y1 : y0;
+      patches.push(
+        added({
+          id: newId('tuer'),
+          kind: 'zonentuer' as const,
+          storeyId: p.storeyId,
+          at: { x: Math.round(cx), y: grenzY },
+          breite: 1000,
+        }),
+      );
+    }
+    return patches;
   },
 });
 

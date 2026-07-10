@@ -490,55 +490,25 @@ function SegmentiererSektion() {
     );
   };
 
+  // H-34: die Übersetzung von SegmentierungsErgebnis in Zonen-/Treppen-/
+  // Türpatches lebt jetzt im Kernel als design.wohnungenSegmentieren — EIN
+  // Command, EIN Undo-Schritt, dieselbe Geometrie wie zuvor hier direkt
+  // (Charakterisierungstests: packages/kosmo-kernel/test/
+  // wohnungen-segmentieren-command.test.ts). «Vorschlag» bleibt eine reine
+  // Vorschau über die pure Funktion segmentiere(); erst «Übernehmen» schreibt
+  // — jetzt über runCommand, also automatisch Kosmo-Tool-fähig.
   const uebernehmen = () => {
     if (!ergebnis || !activeStoreyId) return;
-    const { history } = useProject.getState();
-    history.beginGroup();
     try {
-      let i = 0;
-      for (const w of ergebnis.wohnungen) {
-        i++;
-        runCommand('design.zoneErstellen', {
-          storeyId: activeStoreyId,
-          outline: w.outline,
-          name: w.typ ? `Whg ${i} (${w.typ})` : 'Restfläche',
-          sia: 'HNF',
-          ...(w.typ ? { program: w.typ } : {}),
-        });
-      }
-      if (ergebnis.kern) {
-        runCommand('design.zoneErstellen', {
-          storeyId: activeStoreyId,
-          outline: ergebnis.kern.outline,
-          name: 'Treppenhaus',
-          sia: 'VF',
-          raumTyp: 'treppenhaus',
-        });
-        // Gerader Lauf mittig im Kern + Tür zum Korridor
-        const xs = ergebnis.kern.outline.map((p) => p.x);
-        const ys = ergebnis.kern.outline.map((p) => p.y);
-        const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
-        const y0 = Math.min(...ys);
-        const y1 = Math.max(...ys);
-        const hoch = y1 - y0 >= Math.max(...xs) - Math.min(...xs);
-        runCommand('design.treppeErstellen', {
-          storeyId: activeStoreyId,
-          a: hoch ? { x: cx, y: y0 + 600 } : { x: Math.min(...xs) + 600, y: (y0 + y1) / 2 },
-          b: hoch ? { x: cx, y: y1 - 600 } : { x: Math.max(...xs) - 600, y: (y0 + y1) / 2 },
-          width: 1200,
-        });
-        // Tür an der Kante zum Korridor (Kern grenzt bandseitig an den Korridor)
-        const korridor = useProject.getState().doc
-          .byKind<Zone>('zone')
-          .find((z) => z.storeyId === activeStoreyId && z.raumTyp === 'korridor');
-        if (korridor) {
-          const ky = korridor.outline.map((p) => p.y);
-          const grenzY = Math.abs(Math.min(...ky) - y1) < Math.abs(Math.max(...ky) - y0) ? y1 : y0;
-          runCommand('design.tuerSetzen', { storeyId: activeStoreyId, at: { x: Math.round(cx), y: grenzY }, breite: 1000 });
-        }
-      }
-    } finally {
-      history.endGroup();
+      runCommand('design.wohnungenSegmentieren', {
+        storeyId: activeStoreyId,
+        minBreite,
+        groessenFaktor,
+        kern: mitKern,
+      });
+    } catch (err) {
+      setHinweis(err instanceof Error ? err.message : String(err));
+      return;
     }
     setErgebnis(null);
   };
