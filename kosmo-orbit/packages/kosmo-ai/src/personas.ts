@@ -66,9 +66,11 @@ export function routePersona(text: string): { persona: Persona; cleaned: string 
 export function greeting(now: Date, projectName: string, stats: { walls: number; storeys: number }): string {
   const h = now.getHours();
   const tageszeit = h < 11 ? 'Guten Morgen' : h < 17 ? 'Guten Tag' : 'Guten Abend';
+  const waende = stats.walls === 1 ? 'steht 1 Wand' : `stehen ${stats.walls} Wände`;
+  const geschosse = stats.storeys === 1 ? '1 Geschoss' : `${stats.storeys} Geschosse`;
   const stand =
     stats.walls > 0
-      ? `Im Projekt «${projectName}» stehen ${stats.walls} Wände über ${stats.storeys} Geschosse.`
+      ? `Im Projekt «${projectName}» ${waende} über ${geschosse}.`
       : `Das Projekt «${projectName}» ist bereit — eine leere Parzelle wartet.`;
   return `${tageszeit}. ${stand} Womit beginnen wir?`;
 }

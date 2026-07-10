@@ -773,3 +773,32 @@ Nachführung nach den drei Wellen (ROADMAP 292–299) — append-only, Original-
 - **Triage:** bug (D, kosmetisch aber irreführend).
 - **Entscheid + Fix (Fable, Kritik-Runde 2, gleicher Tag):** Badge zeigt jetzt «Skript» (Warnton, wie «Demo» beim Mock).
 - **Status:** behoben (0.6.8).
+
+---
+
+## v0.6.9-Statusrunde (10.07.2026, Auftrag «Offene Fenster, klare Antworten»)
+
+Nachführung nach den drei Wellen (ROADMAP 302–308) — append-only, Original-Einträge unangetastet:
+
+- **H-31 behoben (307):** Die Bridge hält den Fake-Worker-Job-Store jetzt PRO PORT (`_store_fuer(port)` → `/tmp/kosmo-jobs-<port>`); parallele Bridge-Instanzen (E2E-Gate vs. Agenten-Worktrees) stauen sich nicht mehr gegenseitig. `:8600` behält bewusst den historischen Pfad `/tmp/kosmo-jobs`. Beweis: test_bridge_haerte.py 70/70.
+- **H-39 behoben (308):** Tusche-Piktogramme variieren jetzt auch innerhalb der Typologien `object` und `default` (vorher hatten genau diese beiden KEINE Hash-Varianten — der Kritik-Befund traf den wahren Kern); je Typologie 2–3 zusätzliche Motiv-Familien, data-runtime.test.ts +16.
+
+### H-42 — Fenster-Öffnungsbögen im Grundriss fachlich unüblich (10.07.2026, Kritik-Runde 2, Shot 01/02)
+- **Beobachtung:** Der Grundriss zeichnet für parametrische Fenster (einfluegel/zweifluegel) Öffnungsbögen wie bei Türen. In Schweizer Werkplänen sind Fenster-Aufschlagbögen im GRUNDRISS unüblich (üblich: Ansicht/Detail); der Bogen ist fachlich nicht falsch, aber unkonventionell.
+- **Triage:** geschmacksfrage (D — bewusste Design-Entscheidung des Fenster-Konzepts, SIA-konform darstellbar, aber Owner-Stil entscheidet).
+- **Entscheid (Fable):** beobachten; falls der Owner die Bögen nicht will: Sichtbarkeits-Schalter (settings) als kleiner 0.7.0-Punkt.
+- **Status:** offen → Owner-Geschmack.
+
+### H-43 — Inspector-Panel überlappt bei schmalen Viewports die Navigations-Leiste (10.07.2026, Stream-C-Befund, KSelect-Rollout)
+- **Beobachtung:** Bei ~1280 px Breite schiebt sich das Design-Inspector-Panel über die linke Modul-Leiste; Trigger darunter sind nur noch per dispatchEvent erreichbar (deshalb trägt `waehleOption()` einen ehrlichen Fallback).
+- **Triage:** v2-lücke (C — Layout-Fix-Kandidat: min-width-Grenze oder Panel-Kollaps).
+- **Entscheid (Fable):** 0.7.0-Kandidat (Layout-Pass zusammen mit CurtainWallPanel→useUiZustand-Buchführung).
+- **Status:** offen → 0.7.0.
+
+### H-44 — Kosmo-Begrüssung sagt «1 Wände über 1 Geschosse» (10.07.2026, Kritik-Runde 2)
+- **Beobachtung:** `greeting()` (personas.ts) pluralisierte stur: bei genau einer Wand/einem Geschoss entstand «stehen 1 Wände über 1 Geschosse».
+- **Triage:** bug (D, kosmetisch — aber Kosmos Sprache ist Teil des Produkts).
+- **Entscheid + Fix (Fable, gleiche Runde):** Singular/Plural sauber getrennt («steht 1 Wand über 1 Geschoss»); kein Test hing am Wortlaut.
+- **Status:** behoben (0.6.9).
+
+**Notiz (kein H-Eintrag):** Das neue CurtainWallPanel führt seine Sichtbarkeit lokal statt über `useUiZustand` — dokumentierte Abweichung, Vereinheitlichung als 0.7.0-Punkt notiert (zusammen mit H-43).
