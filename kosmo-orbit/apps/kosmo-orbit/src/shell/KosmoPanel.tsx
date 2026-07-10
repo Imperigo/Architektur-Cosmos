@@ -21,7 +21,7 @@ import {
 } from '@kosmo/ai';
 import { verifiziereLizenz } from '@kosmo/lizenz';
 import type { Assembly } from '@kosmo/kernel';
-import { useProject } from '../state/project-store';
+import { formatiereEreignisse, useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
 import { vorschauFuerProposal, type ProposalVorschau } from '../state/proposal-vorschau';
@@ -33,6 +33,13 @@ import { auftragErfassen } from '../state/auftragsbuch';
 import { ANT_INSTALL_BEFEHL, claudeAboAnmeldung, istAntFehltFehler, istTauriDesktop } from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
 import { KOSMO_AUSGESCHLOSSENE_COMMANDS, kosmoUiWerkzeuge } from '../state/kosmo-ui-werkzeuge';
+import {
+  blickErfassen,
+  blickRingPuffer,
+  erkenneAktiveStation,
+  ergaenzendeBilderAusRing,
+  type Blick,
+} from '../state/kosmo-blick';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -53,6 +60,12 @@ interface Bubble {
   feedback?: 'gut' | 'schlecht';
   /** Nur bei `who === 'system'`: testid-Suffix, z.B. 'modus' → `kosmo-ui-aktion-modus`. */
   testidSuffix?: string;
+  /**
+   * v0.6.8 («Kosmo sieht mit»): NUR bei `testidSuffix === 'blick'` gesetzt —
+   * dataURL fürs Mini-Thumbnail der Auto-Blick-Zeile (kein Bild, wenn die
+   * Station nur einen Text-Kontext lieferte).
+   */
+  blickBild?: string;
 }
 
 const journal = new LearningJournal(journalStore());
@@ -140,6 +153,47 @@ export interface KosmoSettings {
    * dieses Feld wirkungslos — dann verhält sich alles wie vor B6.
    */
   lizenzText: string;
+  /**
+   * v0.6.8 («Kosmo sieht mit», Owner-Nachtrag): Auto-Blick — bei jeder
+   * gesendeten Nutzer-Nachricht wird der aktuelle Stations-Blick erfasst und
+   * (bei einem vision-fähigen Provider) mitgeschickt. `undefined` = noch nie
+   * angefasst, dann gilt der Provider-Default (`istVisionFaehig`); einmal vom
+   * Menschen umgeschaltet, bleibt die Wahl explizit — unabhängig von
+   * späteren Provider-Wechseln (gewohntes Toggle-Verhalten).
+   */
+  blickAn?: boolean;
+}
+
+/**
+ * v0.6.8 — DEFAULT des Auto-Blick-Toggles, wenn der Mensch ihn nie angefasst
+ * hat (`KosmoSettings.blickAn === undefined`): AN nur bei einem ECHTEN
+ * vision-fähigen Provider (Anthropic/Ollama/LM-Studio mappen `images` gegen
+ * einen echten Dienst, s. `@kosmo/ai`). Mock UND «scripted» defaulten AUS —
+ * beide sind Test-/Demo-Provider ohne echten Gegenüber; ein Default-AN dort
+ * würde bei JEDER bestehenden ScriptedProvider-E2E-Suite unbemerkt einen
+ * echten Viewport-Capture pro Chat-Zug auslösen (Zeit/Flakiness-Risiko für
+ * Specs, die dieses Feature nie angefragt haben). Wer den Toggle explizit
+ * einschaltet (`blickAn: true`, z.B. `e2e/kosmo-blick.spec.ts`), bekommt das
+ * volle Verhalten auch mit «scripted» — s. `kannBildVerstehen` unten.
+ */
+function istVisionFaehig(provider: KosmoSettings['provider']): boolean {
+  return provider === 'anthropic' || provider === 'ollama' || provider === 'lmstudio';
+}
+
+/**
+ * v0.6.8 — sobald der Blick-Toggle (per Default ODER explizit) AN ist: kann
+ * DIESER Provider ein mitgeschicktes Bild sinnvoll nutzen? Bewusst NICHT
+ * dieselbe enge Liste wie `istVisionFaehig` oben: «scripted» spielt zwar kein
+ * echtes Modell nach, routet ein Bild aber durch GENAU denselben
+ * `ChatMessage.images`-Weg wie ein echter Provider (`@kosmo/ai` `chat.ts`) —
+ * für einen Menschen, der den Toggle bewusst eingeschaltet hat, ist «das Bild
+ * ging tatsächlich raus» die ehrliche Aussage. NUR der `MockProvider` ist ein
+ * reiner Regex-Bot, der Bilder nachweislich nie ansieht — er bleibt der
+ * EINZIGE «Kosmo sieht nicht»-Fall (Owner-Vorgabe: «bei Mock ... ehrlicher
+ * Hinweis statt Vortäuschung»).
+ */
+function kannBildVerstehen(provider: KosmoSettings['provider']): boolean {
+  return provider !== 'mock';
 }
 
 /**
@@ -340,6 +394,16 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     return id;
   };
 
+  /** v0.6.8 («Kosmo sieht mit»): die dezente Auto-Blick-Zeile, optional mit
+   * Mini-Thumbnail (nur wenn tatsächlich ein Bild erfasst/mitgeschickt wurde). */
+  const pushBlick = (text: string, blickBild?: string) => {
+    const id = ++bubbleSeq.current;
+    setBubbles((b) => [
+      ...b,
+      { id, who: 'system', text, testidSuffix: 'blick', ...(blickBild !== undefined ? { blickBild } : {}) },
+    ]);
+  };
+
   const session = useMemo(() => {
     const provider: ChatProvider =
       settings.provider === 'mock'
@@ -503,6 +567,18 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             return `Auftrag im Buch (${auftrag.station}): «${auftrag.text}» — der Architekt sieht ihn in KosmoDev und exportiert dort die Workorder.`;
           },
         },
+        {
+          // v0.6.8 («Kosmo sieht mit», Commit 2 — Ereignis-Mitschnitt): so
+          // "sieht" Kosmo auch nicht-visuell, was zuletzt im Projekt geschah
+          // — die letzten ~20 Command-Zusammenfassungen mit Zeit+Aktor, aus
+          // demselben `journal`, das JEDER `runCommand()`-Aufruf füttert
+          // (`state/project-store.ts`), egal ob Mensch oder Kosmo handelte.
+          name: 'ereignisse_lesen',
+          description:
+            'Liest die letzten rund 20 Aktionen dieser Sitzung (Befehle von Nutzer UND Kosmo, mit Uhrzeit). Nutze es, wenn der Architekt fragt, was zuletzt geschah, oder du selbst den jüngsten Verlauf kennen musst, bevor du etwas vorschlägst.',
+          parameters: { type: 'object', properties: {}, additionalProperties: false },
+          execute: () => formatiereEreignisse(),
+        },
         // v0.6.6 Stream E (Kosmo-UI-Brücke, BEWEGUNGSKONZEPT §6): die sechs
         // ui.*-Befehle als weitere ReadTool-Einträge — sie laufen wie die
         // drei oben SOFORT (kein Diff-Karten-Gate), melden eine erfolgreiche
@@ -517,6 +593,23 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     return s;
     // Session bewusst pro Provider-Konfiguration neu
   }, [settings]);
+
+  // v0.6.8 («Kosmo sieht mit») — Test-Hooks (Playwright), Muster wie
+  // `window.__kosmo`/`window.__kosmoViewport` (App.tsx/Viewport3D.tsx): rein
+  // lesende Fenster in Laufzeit-Zustand, den es sonst nirgends im DOM zu
+  // sehen gibt — der Ringpuffer (`e2e/kosmo-blick.spec.ts` Test 3, "nach
+  // Stationswechsel enthält der Ringpuffer den vorherigen Blick") und die
+  // tatsächliche `ChatSession`-Historie (Test 4, `ereignisse_lesen`-Resultat
+  // ist sonst nur als generische ScriptedProvider-Quittierung sichtbar, nicht
+  // als Werkzeug-Text selbst).
+  useEffect(() => {
+    (window as never as Record<string, unknown>)['__kosmoBlick'] = {
+      ring: () => blickRingPuffer(),
+    };
+    (window as never as Record<string, unknown>)['__kosmoChat'] = {
+      history: () => session.history,
+    };
+  }, [session]);
 
   useEffect(() => {
     // Journal-Spiegel kann nach dem Modul-Import angekommen sein (P6-Review #1)
@@ -656,13 +749,63 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     }
   };
 
+  /**
+   * v0.6.8 («Kosmo sieht mit», Owner-Nachtrag) — Auto-Blick: bei JEDER
+   * gesendeten Nutzer-Nachricht (Tippen, Mikrofon, Cloud-Nachsenden) wird der
+   * aktuelle Stations-Blick erfasst und — nur bei einem vision-fähigen
+   * Provider — als Bild mitgeschickt. Ehrlichkeit vor Politur (Owner-Mandat):
+   *  - Bild + vision-fähiger Provider → «Kosmo sieht: ‹Station›» + Thumbnail,
+   *    Bild geht als `images` an `ChatSession.send()`.
+   *  - Kein Bild ODER Provider kann nicht sehen → «Kosmo sieht nicht»/«Kosmo
+   *    liest», der Text-Kontext hängt sichtbar benannt an der GESENDETEN
+   *    Nachricht (nicht an der angezeigten `du`-Bubble — die zeigt weiter
+   *    genau das, was der Mensch geschrieben/gesagt hat).
+   *  - Toggle aus (`blickAn`-Effektivwert false) → unverändertes Verhalten,
+   *    keine Blick-Zeile, kein zusätzliches Bild/Text.
+   */
+  const sendeMitBlick = async (text: string) => {
+    const s = settingsRef.current;
+    const blickEffektivAn = s.blickAn ?? istVisionFaehig(s.provider);
+    if (!blickEffektivAn) {
+      void session.send(text);
+      return;
+    }
+    const station = erkenneAktiveStation();
+    const blick: Blick | null = await blickErfassen(station);
+    if (!blick) {
+      // Zentrale/Speak — ehrlich nichts zu erfassen, unverändertes Senden.
+      void session.send(text);
+      return;
+    }
+    const bildVerstehbar = kannBildVerstehen(s.provider);
+    if (blick.bild && bildVerstehbar) {
+      const zusatz = ergaenzendeBilderAusRing(blick, 2);
+      const bilder = [blick.bild, ...zusatz].map(({ mediaType, dataBase64 }) => ({ mediaType, dataBase64 }));
+      pushBlick(`Kosmo sieht: ‹${blick.stationTitel}›`, `data:${blick.bild.mediaType};base64,${blick.bild.dataBase64}`);
+      void session.send(text, bilder);
+      return;
+    }
+    // Kein Bild (Text-Fallback-Station/Erfassung gescheitert) ODER der
+    // aktuelle Provider kann kein Bild verstehen (Mock) — Text-Kontext
+    // ANHÄNGEN, klar benannt, nie als Bild ausgegeben.
+    const textKontext =
+      blick.text ??
+      `Station ${blick.stationTitel} — ein Bild wurde erfasst, aber vom aktuellen Modell (Demo-Modus) nicht mitgeschickt.`;
+    pushBlick(
+      bildVerstehbar
+        ? `Kosmo liest: ‹${blick.stationTitel}› — kein Bild in dieser Station, Text-Kontext mitgesendet.`
+        : `Kosmo sieht nicht (Demo-Modus ohne Bildverständnis) — Stationskontext ‹${blick.stationTitel}› geht als Text mit.`,
+    );
+    void session.send(`${text}\n\n[Kosmo-Blick — Stationskontext ${blick.stationTitel}, als Text angehängt]\n${textKontext}`);
+  };
+
   // Nach dem Cloud-Wechsel die letzte Frage auf der neuen Session nachsenden.
   useEffect(() => {
     if (!nachSendText.current) return;
     const t = nachSendText.current;
     nachSendText.current = '';
     setBubbles((b) => [...b, { id: ++bubbleSeq.current, who: 'du', text: t }]);
-    void session.send(t);
+    void sendeMitBlick(t);
   }, [session]);
 
   const send = () => {
@@ -673,7 +816,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     // dem Cloud-Wechsel erneut gesendet.
     zuletztGefragt.current = text;
     setBubbles((b) => [...b, { id: ++bubbleSeq.current, who: 'du', text }]);
-    void session.send(text);
+    void sendeMitBlick(text);
   };
 
   // KosmoSpeak: Push-to-Talk → Bridge-Whisper (Schweizerdeutsch);
@@ -708,7 +851,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
         .trim();
       if (text) {
         setBubbles((b) => [...b, { id: ++bubbleSeq.current, who: 'du', text: `🎙 ${text}` }]);
-        void session.send(text);
+        void sendeMitBlick(text);
       }
     };
     rec.onend = () => {
@@ -764,7 +907,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           const { text } = (await res.json()) as { text: string };
           if (text) {
             setBubbles((b) => [...b, { id: ++bubbleSeq.current, who: 'du', text: `🎙 ${text}` }]);
-            void session.send(text);
+            void sendeMitBlick(text);
           }
         } catch (err) {
           setBubbles((b) => [
@@ -1143,6 +1286,15 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             />
             Antworten vorlesen (Stimme über die HomeStation-Bridge)
           </label>
+          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input
+              type="checkbox"
+              data-testid="blick-toggle"
+              checked={settings.blickAn ?? istVisionFaehig(settings.provider)}
+              onChange={(e) => speichere({ ...settings, blickAn: e.target.checked })}
+            />
+            Kosmo sieht mit (aktuelle Station als Bild an jede Nachricht anhängen)
+          </label>
           <KButton
             size="sm"
             tone="ghost"
@@ -1196,6 +1348,44 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
 
       <div ref={scrollRef} style={{ flex: 1, overflow: 'auto', padding: 14, display: 'grid', gap: 10, alignContent: 'start' }}>
         {bubbles.map((b) => {
+          // v0.6.8 («Kosmo sieht mit»): die Auto-Blick-Zeile — dieselbe
+          // dezente Form wie die ui.*-Zeilen unten, aber mit eigenem testid
+          // (kein ui.*-Befehl) und optionalem Mini-Thumbnail des erfassten
+          // Stations-Blicks (nur wenn wirklich ein Bild mitging).
+          if (b.who === 'system' && b.testidSuffix === 'blick') {
+            return (
+              <div
+                key={b.id}
+                data-testid="kosmo-blick-zeile"
+                className="k-einblenden"
+                style={{
+                  justifySelf: 'center',
+                  maxWidth: '92%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '4px 11px',
+                  borderRadius: 999,
+                  fontSize: 11.5,
+                  lineHeight: 1.4,
+                  textAlign: 'center',
+                  color: 'var(--k-ink-faint)',
+                  background: 'var(--k-raised)',
+                  border: '1px solid var(--k-line)',
+                }}
+              >
+                {b.blickBild && (
+                  <img
+                    src={b.blickBild}
+                    alt=""
+                    data-testid="kosmo-blick-thumbnail"
+                    style={{ width: 26, height: 26, borderRadius: 6, objectFit: 'cover', border: '1px solid var(--k-line-strong)' }}
+                  />
+                )}
+                <span>{b.text}</span>
+              </div>
+            );
+          }
           // v0.6.6 Stream E — sichtbare Ehrlichkeit der ui.*-Brücke: eine
           // eigene, dezente Zeile statt einer Sprechblase (Konzept §5/§6),
           // testid kosmo-ui-aktion-* pro Befehlsart.

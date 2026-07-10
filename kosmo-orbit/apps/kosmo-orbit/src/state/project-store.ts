@@ -98,6 +98,31 @@ export const useProject = create<ProjectState>((set, get) => {
   };
 });
 
+/**
+ * Ereignis-Mitschnitt (v0.6.8 «Kosmo sieht mit», Commit 2) — bewusst KEIN
+ * neuer Store: `journal` oben wird bereits bei JEDEM `runCommand()` gefüttert
+ * (der EINE zentrale Schreib-Weg, CLAUDE.md), unabhängig vom Actor (Mensch/
+ * Kosmo/…), und als Ring gehalten (`.slice(-500)`). Diese reine Funktion
+ * liest nur die letzten `anzahl` Einträge und formatiert sie menschenlesbar —
+ * Kosmos `ereignisse_lesen`-Werkzeug (`shell/KosmoPanel.tsx`) nutzt sie, so
+ * "sieht" Kosmo auch nicht-visuell, was zuletzt im Projekt geschah.
+ */
+export function formatiereEreignisse(anzahl = 20): string {
+  const letzte = useProject.getState().journal.slice(-anzahl);
+  if (letzte.length === 0) return 'Noch keine Aktionen in dieser Sitzung.';
+  return letzte
+    .map((e) => {
+      const aktor = e.actor === 'benutzer' ? 'nutzer' : e.actor;
+      const uhrzeit = new Date(e.ts).toLocaleTimeString('de-CH', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+      return `[${uhrzeit}] (${aktor}) ${e.summary}`;
+    })
+    .join('\n');
+}
+
 /** Startprojekt: EG + Standardaufbauten, damit sofort gezeichnet werden kann. */
 export function bootstrapProject(): void {
   const { doc, runCommand } = useProject.getState();
