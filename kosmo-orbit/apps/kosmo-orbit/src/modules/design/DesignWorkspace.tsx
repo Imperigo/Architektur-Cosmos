@@ -2835,6 +2835,48 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           >
             ⧉
           </KButton>
+          {/* H-7 (Sim-Befund): design.deckeZeichnen hatte keine UI-Fläche.
+              Statt eines 19. Werkzeugs (Vertrag toBe(18) im Mehr…-Menü bliebe
+              sonst instabil) ein Panel-Knopf hier — er braucht ein Umriss-
+              Polygon, das leiten wir ehrlich aus der Bounding-Box aller Zonen
+              des aktiven Geschosses ab (kein Freihand-Zeichnen einer Decke). */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="decke-zeichnen"
+            title="Decke über der Bounding-Box aller Zonen des Geschosses zeichnen"
+            onClick={() => {
+              if (!activeStoreyId) return;
+              const d = useProject.getState().doc;
+              const zonen = d.byKind<Zone>('zone').filter((z) => z.storeyId === activeStoreyId);
+              if (zonen.length === 0) {
+                meldeFehler('Keine Zonen im Geschoss — zuerst Zonen zeichnen, die Decke braucht einen Umriss.');
+                return;
+              }
+              let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+              for (const z of zonen) {
+                for (const p of z.outline) {
+                  minX = Math.min(minX, p.x);
+                  maxX = Math.max(maxX, p.x);
+                  minY = Math.min(minY, p.y);
+                  maxY = Math.max(maxY, p.y);
+                }
+              }
+              const outline: Pt[] = [
+                { x: minX, y: minY },
+                { x: maxX, y: minY },
+                { x: maxX, y: maxY },
+                { x: minX, y: maxY },
+              ];
+              try {
+                runCommand('design.deckeZeichnen', { storeyId: activeStoreyId, outline, thickness: 250 });
+              } catch (err) {
+                meldeFehler(err);
+              }
+            }}
+          >
+            Decke
+          </KButton>
         </div>
 
         {/* Statusleiste (Serie K A5, K15 Aufgabe 3): Zero-Click-Kennzahlen an
