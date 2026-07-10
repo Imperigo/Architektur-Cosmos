@@ -91,7 +91,7 @@ const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
     <li><strong>Werkplan-Härte:</strong> Dach-Linienhierarchie (First/Traufe/Ortgang), SVG-QA-Loop v1 rastert alle Goldens automatisch, Bridge-Störe pro Instanz (H-31).</li>
     <li><strong>CI geheilt:</strong> der seit Tagen dauerrote Repo-Workflow hatte einen YAML-Parse-Fehler — Ein-Zeilen-Fix, erstmals grün inkl. E2E-Job.</li>
   </ul>
-  <p class="klein">__SUITE__ · Unit 1452 · H-31/H-39/H-44 behoben · Kritik-Runden 1+2 · Release-Notiz ab ROADMAP 302</p>
+  <p class="klein">Vollsuite 308 passed / 1 skipped / 0 rot (31.6 min) · Unit 1452 · H-31/H-39/H-44 behoben · Kritik-Runden 1+2 · Release-Notiz ab ROADMAP 302</p>
 </section>
 
 ${seite(

@@ -13,7 +13,7 @@ Automatisch erzeugt aus `ROADMAP.md` (Einträge ab **302**) von
 git, obsidian und die neuste Installer-Version zum Herunterladen auf der
 Website»).
 
-## Enthaltene ROADMAP-Einträge (302–308)
+## Enthaltene ROADMAP-Einträge (302–310)
 
 - **302.** v0.6.9-Vorspann: CI-Dauerrot geheilt + Scan-Delta-Lauf 2
 - **303.** Parametrische Fenster & Fensterband/Curtain-Wall v1
@@ -22,6 +22,8 @@ Website»).
 - **306.** Kosmo-Blick fertig bewiesen — inklusive eines echten 0.6.8-Bugs
 - **307.** Werkplan-Härte: Dach-Linienhierarchie, SVG-QA-Loop v1, H-31
 - **308.** Fenster im Alltag: Parametrik-UI, Journey-Zug, H-39, Export-Beweise
+- **309.** Kritik-Runde 2 + Journal-Statusrunde v0.6.9
+- **310.** v0.6.9 «Offene Fenster, klare Antworten» — Release
 
 ## Installer
 
@@ -59,4 +61,12 @@ liegt (siehe [[Release-Ablauf]] Abschnitt 6, DEPLOYMENT.md).
 ### 308
 
 308. **Fenster im Alltag: Parametrik-UI, Journey-Zug, H-39, Export-Beweise** *(10.07.2026, v0.6.9 Welle 3 / Stream F)*
+
+### 309
+
+309. **Kritik-Runde 2 + Journal-Statusrunde v0.6.9** *(10.07.2026)*
+
+### 310
+
+310. **v0.6.9 «Offene Fenster, klare Antworten» — Release** *(10.07.2026)*
 
