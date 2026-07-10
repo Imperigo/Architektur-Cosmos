@@ -54,7 +54,19 @@ export const createStorey = registerCommand({
     elevation: z.number().int().describe('OK Boden über Projektnull, mm'),
     height: z.number().int().positive().default(2800).describe('Geschosshöhe OK–OK, mm'),
   }),
-  summarize: (p) => `Geschoss ${p.name} auf ${formatLength(p.elevation)}`,
+  // H-38 (Sim-Befund): ein Doppel-Name wird NICHT abgelehnt (Geschossnamen
+  // sind kein Schlüssel, ein Bestand könnte legitim gleiche Namen auf
+  // verschiedenen Trakten haben) — aber ehrlich zurückgemeldet. `summarize`
+  // läuft laut Command-Vertrag NACH `run()`/`doc.apply()` (s. core.ts
+  // execute()), das neue Geschoss steckt hier also schon im Doc; ein
+  // Duplikat-Check zählt darum absichtlich `> 1`, nicht `>= 1`. Kein eigener
+  // Metadaten-Kanal existiert im Command-Ergebnis (nur `summary`/
+  // `journal.summary`) — die Warnung reist im Summary-Text mit, denselben
+  // Weg, den Diff-Karte und Journal ohnehin lesen.
+  summarize: (p, doc) => {
+    const doppelt = doc.byKind<Storey>('storey').filter((s) => s.name === p.name).length > 1;
+    return `Geschoss ${p.name} auf ${formatLength(p.elevation)}${doppelt ? ' — Achtung: Name «' + p.name + '» bereits vergeben (Duplikat)' : ''}`;
+  },
   run: (doc, p) => {
     const storey: Storey = {
       id: newId('geschoss'),

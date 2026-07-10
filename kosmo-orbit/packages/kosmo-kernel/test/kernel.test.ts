@@ -167,6 +167,20 @@ describe('Command-System', () => {
     expect(doc.byKind('opening' as never)).toHaveLength(0);
     expect(doc.byKind('wall' as never)).toHaveLength(0);
   });
+
+  it('geschossErstellen: Doppel-Name wird NICHT abgelehnt, aber im Summary gewarnt (H-38)', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    expect(eg.summary).not.toContain('Duplikat');
+    // gleicher Name auf einem anderen Trakt/Index — legitim, kein Ablehnungsgrund
+    const eg2 = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3200 });
+    expect(doc.byKind<Storey>('storey')).toHaveLength(2); // nicht abgelehnt
+    expect(eg2.summary).toContain('«EG» bereits vergeben (Duplikat)');
+    expect(eg2.journal.summary).toBe(eg2.summary); // derselbe Kanal fürs Journal/die Kosmo-Quittierung
+    // ein drittes, eindeutig benanntes Geschoss bleibt unauffällig
+    const og = execute(doc, 'design.geschossErstellen', { name: '1.OG', index: 1, elevation: 3200, height: 2800 });
+    expect(og.summary).not.toContain('Duplikat');
+  });
 });
 
 describe('Geometrie', () => {
