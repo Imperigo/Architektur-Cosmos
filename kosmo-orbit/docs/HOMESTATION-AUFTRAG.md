@@ -98,6 +98,7 @@ im Repo tatsächlich nachschlagen.
 | **Tauri-Auto-Update** (V2-D1) | Desktop-Build steht; Updater braucht Signatur-Keys des Owners. |
 | **iOS aufs Gerät** (V2-D3) | Simulator-Build läuft in CI; TestFlight/Signierung braucht Apple-Konto + Mac. |
 | **KosmoData-Schreibpfad** | Lesen ist live (E2, read-only + Cache); Schreiben Richtung architekturkosmos.ch braucht einen Auth-Entscheid. |
+| **Kosmo-Blick, echter Cloud-Bildcall** (v0.6.9 Stream D) | «Kosmo sieht mit» (`state/kosmo-blick.ts`, `packages/kosmo-ai/src/anthropic.ts` `images`-Zweig) ist client-/providerseitig fertig und end-to-end mit `ScriptedProvider`/`MockProvider` bewiesen (`e2e/kosmo-blick*.spec.ts`) — der lokale Weg (Ollama + Qwen2.5-VL, `docs/BETRIEBSARTEN.md` «Kosmo sieht mit — lokal») läuft ebenfalls. Ein echter Anthropic-Bildcall braucht den **Owner-eigenen API-Schlüssel** (⚙ → Cloud-Zugang) UND Netzzugang zur Anthropic-API — beides hat diese Container-Umgebung nicht. Abnahme-Beweis am Home-PC: Schlüssel eintragen, Provider auf Anthropic stellen, Häkchen «Kosmo sieht mit» setzen, eine Frage zu einem sichtbaren Stationsbild stellen — Kosmos Antwort muss den tatsächlichen Bildinhalt korrekt beschreiben (nicht nur den mitgeschickten Text-Kontext raten). |
 
 ## 4. Bewusst vertagt (Owner-Entscheid, nicht Technik)
 

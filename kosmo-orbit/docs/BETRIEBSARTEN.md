@@ -49,6 +49,44 @@ Tools, prüft die erreichbaren live (Ollama `/api/tags`, Bridge `/health`, Sync
 | VPN (Tailscale/WireGuard) | Remote | ja | ~40 MB |
 | Claude-API-Schlüssel | Cloud | ja | — |
 
+## Kosmo sieht mit — lokal (v0.6.9 Stream D)
+
+«Kosmo sieht mit» (⚙ → Häkchen «Kosmo sieht mit») hängt der Nachricht das
+aktuell erfasste Stationsbild an (3D-Viewport, Grundriss/Schnitt, KosmoVis-
+Node-Canvas oder ein fertiger Render-Lauf — `state/kosmo-blick.ts`). Damit ein
+**lokales** Modell das Bild tatsächlich versteht, statt es nur mitzuschleppen,
+braucht Ollama ein vision-fähiges Modell:
+
+1. **Modell pullen** (Terminal am Heim-PC, Ollama muss laufen):
+   ```
+   ollama pull qwen2.5vl:7b
+   ```
+   Für schwächere Hardware gibt es kleinere Varianten (`qwen2.5vl:3b`); für
+   mehr VRAM `qwen2.5vl:32b`. Grössenordnung: `qwen2.5vl:7b` ~ 6 GB.
+2. **Kosmo-Einstellungen** (⚙): Provider bleibt **Ollama**, das Feld **Modell**
+   auf `qwen2.5vl:7b` (oder die gepullte Variante) umstellen — dasselbe
+   Freitextfeld wie für `qwen3-coder:30b`, es gibt keinen separaten
+   «Vision-Modell»-Schalter. Danach das Häkchen **«Kosmo sieht mit»** setzen
+   (bei Ollama per Default bereits AN, s. Tabelle oben `istVisionFaehig`).
+3. **Was zu erwarten ist**: bei jeder gesendeten Nachricht erscheint zuerst
+   die dezente Zeile «Kosmo sieht: ‹Station›» mit einem Mini-Thumbnail
+   (anklickbar für die Vollbild-Vorschau) — danach reagiert Kosmo inhaltlich
+   auf das Bild (z.B. «ich sehe zwei Aussenwände und eine Türöffnung»). Ein
+   reines Text-Modell (`qwen3-coder:30b` o.ä.) bekäme dasselbe Bild zwar
+   ebenfalls mitgeschickt, würde es aber ignorieren oder halluzinieren —
+   deshalb der ausdrückliche Modellwechsel.
+
+**Ehrlich zur Cloud-Betriebsart:** der Anthropic-Provider (Claude) unterstützt
+denselben `images`-Weg (`packages/kosmo-ai/src/anthropic.ts`) technisch
+genauso — ein echter Cloud-Bildcall braucht aber den **Owner-eigenen
+Anthropic-API-Schlüssel** (⚙ → Cloud-Zugang) und ist in dieser
+Container-Umgebung **unerprobt**: das CI/E2E-Setup hier hat keinen echten
+Anthropic-Schlüssel und keinen Netzzugang zur Anthropic-API, es kann also nur
+`ScriptedProvider`/`MockProvider` end-to-end beweisen (`e2e/kosmo-blick*.spec.ts`),
+nie den echten Cloud-Bildcall selbst. Der erste echte Beweis, dass ein
+`images`-Zug bei Anthropic tatsächlich ankommt und sinnvoll beantwortet wird,
+ist HomeStation-/Owner-Arbeit (Abnahmepunkt: `docs/HOMESTATION-AUFTRAG.md`).
+
 ### Ehrlich: warum die Tools nicht *in* der .exe stecken
 
 Die App ist ~44 MB. Die schweren Werkzeuge zusammen sind zweistellige Gigabyte
