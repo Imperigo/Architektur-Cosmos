@@ -1,23 +1,28 @@
 /**
- * Rundgang-Screenshots «0.6.5» (Fable-Intelligenz-Tag, 09.07.) — Teil 1.
+ * Rundgang-Screenshots «0.6.6» («Bewegung & Anpassung», 10.07.) — Teil 1.
  * Wie `handbuch.mts` (V1-Finish P6), aber für das Kommentier-PDF
  * `rundgang-pdf.mts`: fährt alle Stationen deterministisch ab. Diese Runde
- * ist die UI/UX-Gesamtüberarbeitung (siehe
- * `apps/kosmo-orbit/src/shell/neuigkeiten.ts`, Version 0.6.5, und
- * `docs/UI-SELBSTKRITIK-065.md`): eine Zeichen-Bibliothek mit 30 Tusche-Icons
- * ersetzt die Emoji-Bedienelemente, KosmoVis bekam Kategorie-Zeichen,
- * Zoom-Leiste mit «Einpassen», Porttyp-Legende und das V-H4-Formular im
- * Render-Node (Fassade/Szene/Jahreszeit/Personen), der KosmoDesign-Kopf
- * schrumpfte von drei gestapelten Zeilen auf EINE Hauptzeile + Kontextzeile
- * (Export als aufklappbare Gruppe), die Zentrale trägt die Werkzeug-Namen
- * unter den Kreisen und Fächer aus Karteikarten, KosmoData zeigt gezeichnete
- * Leerbild-Signete, die Einstellungen haben Kopf/Schliessen-Zeichen/
- * sichtbaren Scrollbalken. Strukturfolgen fürs Skript: `load-tkb` landet
+ * ist BEWEGUNGSKONZEPT-066 (siehe `apps/kosmo-orbit/src/shell/neuigkeiten.ts`,
+ * Version 0.6.6): Knopfdruck spürbar (`.k-druck`), Arbeitsmodi-Automatik
+ * (`state/arbeitsmodi-kern.ts`, Modus-Chip in der Statuszeile), Kosmo-UI-
+ * Brücke (Kosmo liest/stellt die Oberfläche über `ui.*`-Werkzeuge, sichtbar
+ * quittiert als `kosmo-ui-aktion-*`-Chatzeile, nie als stille Diff-Karte),
+ * Gesten mit Schwung (Momentum-Pan/Doppeltipp/langes Drücken), ein Render-
+ * Knopf direkt im 3D-Viewport (V-M1, dieselbe KosmoVis-Kette), Renderloop
+ * on-demand statt Dauerbetrieb, KosmoVis-Kuratier-Fläche + kategorisierte
+ * Node-Palette + Minimap (ab 5 Nodes) + entzerrte Ketten bei «Drei
+ * Stimmungen», und Fächer der Zentrale, die federnd aus ihrem Planeten
+ * öffnen. Die 0.6.5-Basis (Icon-Bibliothek, KosmoVis-Formular, entrümpelter
+ * Design-Kopf, Leerbild-Signete …) bleibt unverändert bestehen — nur die
+ * NEUEN Blöcke unten (29+) sind 0.6.6-spezifisch, alles davor ist 1:1 der
+ * bewiesene 0.6.5-Rundgang. Strukturfolgen fürs Skript: `load-tkb` landet
  * DIREKT in KosmoDesign (kein module-design-Klick danach), Einstellungen
  * öffnen über `einstellungen-oeffnen` + hartes Warten auf
- * `einstellungen-panel` (Lehre aus Kritik-Befund A11). Jede Station steuert
- * exakt die `data-testid`-Selektoren an, die in den zugehörigen E2E-Specs
- * bewiesen sind (siehe Kommentar je Block). Bilder → docs/rundgang/bilder/.
+ * `einstellungen-panel` (Lehre aus Kritik-Befund A11), `kosmo.ui.v1` MUSS
+ * VOR dem `reload()` gesetzt werden (Muster `arbeitsmodi.spec.ts`/
+ * `kosmo-ui-bruecke.spec.ts`). Jede Station steuert exakt die
+ * `data-testid`-Selektoren an, die in den zugehörigen E2E-Specs bewiesen
+ * sind (siehe Kommentar je Block). Bilder → docs/rundgang/bilder/.
  * Voraussetzungen: Preview :5183, Fake-Bridge :8600, Sync-Server :8700
  * (überschreibbar über RUNDGANG_URL).
  */
@@ -71,6 +76,11 @@ async function frisch(tkb = true) {
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
     localStorage.removeItem('kosmo.panelOffen');
     localStorage.removeItem('kosmo.projekt.aktiv');
+    // 0.6.6: `kosmo.ui.v1` überlebt wie `panelOffen` die ganze Browser-
+    // Session — die Modus-Blöcke 30/36 setzen es explizit, alle übrigen
+    // Stationen sollen den frischen Default zeigen (Automatik an, noch kein
+    // Modus erkannt → Chip «Voll»), nicht den Rest der Vorgänger-Station.
+    localStorage.removeItem('kosmo.ui.v1');
     indexedDB.deleteDatabase('kosmo-projekte');
   });
   await page.reload();
@@ -136,7 +146,7 @@ await frisch(false);
 await page.click('[data-testid="einstellungen-oeffnen"]');
 await page.waitForSelector('[data-testid="einstellungen-panel"]');
 await shot('03-einstellungen', 400);
-await page.locator('[data-testid="neuigkeiten-version-0.6.5"]').scrollIntoViewIfNeeded();
+await page.locator('[data-testid="neuigkeiten-version-0.6.6"]').scrollIntoViewIfNeeded();
 await shot('03-einstellungen-neuigkeiten', 400);
 await page.locator('[data-testid="einstellungen-leistung"]').scrollIntoViewIfNeeded();
 await shot('03-einstellungen-leistung', 400);
@@ -429,11 +439,16 @@ await page.waitForSelector('[data-testid="tab-graph"]');
 await page.click('[data-testid="drei-stimmungen"]');
 await page.waitForSelector('[data-testid="vis-node-render"]');
 // Erst der reine Graph-Zustand: Zoom-Leiste, Legende, Kategorie-Icons und
-// das V-H4-Formular der drei Render-Nodes sind im Bild.
+// das V-H4-Formular der drei Render-Nodes sind im Bild. BEWUSST OHNE den
+// `vis-zoom-fit`-Klick der 0.6.5-Fassung (gleiche Lehre wie Block 35):
+// herausgezoomt malt Headless-Chromium/SwiftShader die foreignObject-
+// Karteninhalte unskaliert über die verkleinerte Szene (Aufnahme-Artefakt,
+// DOM sauber). Bei 1:1 ist das Formular gestochen lesbar; die dann
+// sichtbare Minimap unten links ist bereits die 0.6.6-Zutat und wird auf
+// der PDF-Seite ehrlich als solche benannt.
 await page.waitForSelector('[data-testid="vis-zoom-fit"]');
 await page.waitForSelector('[data-testid="vis-legende"]');
 await page.waitForSelector('[data-testid="render-formular"]');
-await page.click('[data-testid="vis-zoom-fit"]');
 await shot('17-vis-graph', 800);
 await page.click('[data-testid="vis-auto-kamera"]');
 await page.waitForSelector('[data-testid="vis-node-kamera"]');
@@ -588,6 +603,200 @@ await page.waitForSelector('[data-testid="einstellungen-panel"]');
 await page.click('[data-testid="einstellung-deinstallieren"]');
 await page.waitForSelector('[role="dialog"]');
 await shot('28-deinstallieren', 500);
+
+// ── 29 NEU (0.6.6): Knopfdruck spürbar — Ruhe/gedrückt-Paar ──────────────
+// Ehrlichkeitsgrenze: Bewegung selbst zeigt kein Standbild — aber der
+// GEDRÜCKTE Zustand (`.k-druck:active`, `packages/kosmo-ui/src/aura.css`:
+// scale(0.97) + Tusche-Abdunklung) lässt sich sauber fotografieren:
+// `mouse.down()` halten, OHNE `mouse.up()`, dann fotografieren. Lehren aus
+// dem ersten Lauf: (1) ein grosser TEXT-Knopf mit sichtbarem Rand
+// (`load-tkb`, KButton) statt des kleinen Zahnrad-Icons — 3% Skalierung auf
+// ~20px Icon ist Sub-Pixel und beweist nichts; (2) BEIDE Bilder im
+// Hover-Zustand aufnehmen, damit der Unterschied wirklich NUR der Druck ist
+// (nicht Hover vs. Nicht-Hover). Der Klick beim Loslassen lädt harmlos die
+// TKB-Demo — Block 30 macht ohnehin sein eigenes goto.
+await frisch(false);
+{
+  const knopf = page.locator('[data-testid="load-tkb"]');
+  await knopf.waitFor();
+  const box = (await knopf.boundingBox())!;
+  const clip = { x: Math.max(0, box.x - 30), y: Math.max(0, box.y - 24), width: box.width + 60, height: box.height + 48 };
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}29-knopfdruck-ruhe.png`, clip });
+  console.log('✓ 29-knopfdruck-ruhe');
+  await page.mouse.down();
+  await page.waitForTimeout(150); // .k-druck-dauer (80ms) sicher abgewartet
+  await page.screenshot({ path: `${OUT}29-knopfdruck-gedrueckt.png`, clip });
+  console.log('✓ 29-knopfdruck-gedrueckt');
+  await page.mouse.up();
+  await page.waitForTimeout(2200); // TKB-Demo lädt (Klick durch das Loslassen) — sauber ausklingen lassen
+}
+
+// ── 30 NEU (0.6.6): Design im Arbeitsmodus «Zeichnen» — Modus-Chip zeigt
+//    ihn ehrlich («festgehalten»), Chip-Menü offen ─────────────────────────
+// Muster `arbeitsmodi.spec.ts` + `kosmo-ui-bruecke.spec.ts`: `kosmo.ui.v1`
+// MIT `arbeitsmodus:'zeichnen'` + `modusFesthalten:true` VOR dem `reload()`
+// gesetzt — zeigt den Modus sofort, ohne die 5s-Hysterese der Live-Erkennung
+// abzuwarten (die läuft unverändert, ist aber in Bewegung nicht fotografierbar).
+await page.goto(URL_);
+await page.evaluate(() => {
+  localStorage.setItem('kosmo.onboarded', '1');
+  localStorage.setItem('kosmo.starterGuide.done', '1');
+  localStorage.setItem('kosmo.thema', 'paper');
+  localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
+  localStorage.removeItem('kosmo.panelOffen');
+  localStorage.removeItem('kosmo.projekt.aktiv');
+  localStorage.setItem(
+    'kosmo.ui.v1',
+    JSON.stringify({
+      version: 1,
+      modusAutomatik: true,
+      modusFesthalten: true,
+      modusManuell: 'zeichnen',
+      arbeitsmodus: 'zeichnen',
+      phasenFokus: null,
+    }),
+  );
+  indexedDB.deleteDatabase('kosmo-projekte');
+});
+await page.reload();
+await page.waitForSelector('[data-testid="module-design"]');
+await page.click('[data-testid="load-tkb"]'); // landet direkt in KosmoDesign
+await page.waitForTimeout(2200);
+await page.click('[data-testid="view-2d"]');
+await page.waitForSelector('[data-testid="modus-chip"]');
+await shot('30-design-modus-zeichnen', 500);
+const modusChip = page.locator('[data-testid="modus-chip"]');
+await modusChip.click();
+await page.waitForSelector('[data-testid="modus-menu"]');
+await shot('30-design-modus-chip-menu', 400);
+
+// ── 31 NEU (0.6.6): «Mehr…» — Export/Fähigkeiten treten im festen Modus
+//    zurück, bleiben aber vollständig im Überlaufmenü erreichbar ───────────
+// Muster `arbeitsmodi.spec.ts` (c). Chip-Menü über den Chip selbst wieder
+// schliessen (Toggle, kein Deckel-Overlay hinter diesem Menü).
+await modusChip.click();
+await page.locator('[data-testid="modus-menu"]').waitFor({ state: 'detached' });
+await page.waitForSelector('[data-testid="werkzeuge-mehr"]');
+await page.click('[data-testid="werkzeuge-mehr"]');
+await page.waitForSelector('[data-testid="werkzeuge-mehr-liste"]');
+await shot('31-design-mehr-faecher', 400);
+
+// ── 32 NEU (0.6.6): 3D-Viewport — Render-Knopf (V-M1) stösst dieselbe
+//    KosmoVis-Kette an; die Fake-Bridge liefert ein Ergebnisbild ───────────
+// Muster `kritik-shots-066-r2.mts` (Block «viewport-render-knopf»).
+await frisch(true); // load-tkb landet bereits in KosmoDesign
+await page.click('[data-testid="view-3d"]');
+await page.waitForSelector('[data-testid="viewport-render-knopf"]');
+await shot('32-viewport-render-knopf', 1000);
+await page.click('[data-testid="viewport-render-knopf"]');
+await page.waitForSelector('[data-testid="viewport-render-bild"]', { timeout: 45000 });
+await shot('32-viewport-render-fertig', 800);
+
+// ── 33 NEU (0.6.6): KosmoVis — kategorisierte Node-Palette ──────────────
+// Muster `kritik-shots-066-r2.mts`: `graph-neu` (leere Canvas) →
+// `vis-palette-toggle`.
+await frisch(false);
+await page.evaluate(() => (window as unknown as { __kosmo: Kosmo }).__kosmo.open('vis'));
+await page.waitForSelector('[data-testid="tab-graph"]');
+await page.click('[data-testid="graph-neu"]');
+await page.waitForSelector('[data-testid="node-canvas"]');
+await page.click('[data-testid="vis-palette-toggle"]');
+await shot('33-vis-palette', 500);
+await page.click('[data-testid="vis-palette-toggle"]'); // schliessen, damit sie die Kuratier-Fläche nicht verdeckt
+
+// ── 34 NEU (0.6.6): KosmoVis — Kuratier-Fläche (merken/verwerfen/vergleichen) ──
+await page.click('[data-testid="vis-kuratier-toggle"]');
+await shot('34-vis-kuratier', 500);
+await page.click('[data-testid="vis-kuratier-toggle"]'); // schliessen
+
+// ── 35 NEU (0.6.6): KosmoVis — Minimap (ab 5 Nodes, hier 24 nach zweifachem
+//    «Drei Stimmungen») + entzerrte Ketten (keine Überlappung mehr) ────────
+// Muster `vis-oberflaeche.spec.ts` («Minimap: ab 5 Nodes …») +
+// `kritik-shots-066-r2.mts` (zweifaches `drei-stimmungen` für die Entzerrung).
+// BEWUSST KEIN `vis-zoom-fit` vor dem Foto (Lehre aus dem ersten Lauf):
+// beim herausgezoomten Fit malt Headless-Chromium/SwiftShader die
+// foreignObject-Inhalte der Node-Karten UNskaliert über die verkleinerte
+// Szene (dieselbe Artefakt-Familie wie das dokumentierte Kurzbefehle-
+// Geisterbild; DOM nachweislich sauber — ein `vis-minimap`, disjunkte
+// Node-Boxen laut vis-oberflaeche.spec). Bei Zoom 1:1 gibt es nichts zu
+// skalieren → sauberes Bild, und die Minimap zeigt ihren eigentlichen
+// Zweck: der Graph ragt übers Fenster hinaus, der Viewport-Rahmen sitzt
+// auf dem sichtbaren Ausschnitt, die zweite (versetzte) Kette liegt als
+// Rechteck-Wolke darunter.
+await page.click('[data-testid="drei-stimmungen"]');
+await page.waitForSelector('[data-testid="vis-node-render"]');
+await page.waitForTimeout(800);
+await page.click('[data-testid="drei-stimmungen"]');
+await page.waitForTimeout(800);
+await page.waitForSelector('[data-testid="vis-minimap"]');
+await shot('35-vis-minimap-entzerrt', 1000);
+
+// ── 36 NEU (0.6.6): Kosmo-UI-Brücke — Kosmo stellt den Arbeitsmodus selbst;
+//    eine eigene `kosmo-ui-aktion-modus`-Chatzeile quittiert es sichtbar
+//    (NICHT der Diff-Karten-Weg) ────────────────────────────────────────────
+// Muster `kosmo-ui-bruecke.spec.ts`, Test (b), 1:1 übernommen (Mock-Provider).
+await page.goto(URL_);
+await page.evaluate(() => {
+  localStorage.setItem('kosmo.onboarded', '1');
+  localStorage.setItem('kosmo.starterGuide.done', '1');
+  localStorage.setItem('kosmo.panelOffen', '1');
+  localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
+  localStorage.setItem(
+    'kosmo.ui.v1',
+    JSON.stringify({ version: 1, modusAutomatik: true, modusFesthalten: false, phasenFokus: null }),
+  );
+});
+await page.reload();
+await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG + AW-Aufbau
+await page.waitForSelector('[data-testid="kosmo-panel"]');
+await page.fill('[data-testid="kosmo-input"]', 'Stell den Modus auf exportieren');
+await page.click('[data-testid="kosmo-send"]');
+await page.waitForSelector('[data-testid="kosmo-ui-aktion-modus"]', { timeout: 15000 });
+await shot('36-kosmo-ui-aktion-modus', 600);
+
+// ── 37 NEU (0.6.6): Gesten mit Schwung — langes Drücken öffnet das
+//    Kontextmenü (Desktop-Äquivalent: Rechtsklick) ──────────────────────────
+// Ehrlichkeitsgrenze: Momentum-Pan, Doppeltipp-Zoom und Haptik-Ticks SIND
+// Bewegung/Berührungssensorik — in einem Standbild nicht seriös zeigbar,
+// bleiben darum textlich im PDF. Nur der STATISCHE Endzustand des langen
+// Drückens (das offene Kontextmenü) ist bebilderbar. Muster
+// `plan-interaktion.spec.ts` («Touch-Longpress … Rechtsklick ebenso»).
+await frisch(false);
+await page.click('[data-testid="module-design"]');
+await page.evaluate(() => {
+  const k = (window as unknown as { __kosmo: Kosmo }).__kosmo;
+  const st = k.state();
+  const assembly = (st.doc.byKind('assembly') as unknown as { id: string; target: string }[]).find((a) => a.target === 'wall');
+  k.run('design.wandZeichnen', {
+    storeyId: st.activeStoreyId,
+    a: { x: 4000, y: 2000 },
+    b: { x: 6000, y: 2000 },
+    ...(assembly ? { assemblyId: assembly.id } : {}),
+  });
+});
+await page.click('[data-testid="view-2d"]');
+await page.click('[data-testid="nav-fit"]');
+await page.waitForTimeout(300);
+{
+  const ziel = await page.evaluate(() => {
+    const svg = document.querySelector('[data-testid="planview"]') as SVGSVGElement;
+    const inhalt = svg.querySelector('g') as SVGGElement;
+    const m = inhalt.getScreenCTM()!;
+    // ACHTUNG Plan-Koordinaten: PlanView zeichnet Welt-y NEGIERT (die
+    // Transform-Gruppe flippt nicht, die Geometrie steht bei -y) — Welt
+    // (5000, 2000) liegt im SVG darum bei (5000, -2000). Block 07 oben merkt
+    // davon nichts, weil dort y=0 ist; ohne die Negation landet der
+    // Rechtsklick hier ausserhalb des Fensters (Lehre aus dem ersten
+    // 0.6.6-Lauf, Timeout auf viewport-kontextmenue).
+    const pt = new DOMPoint(5000, -2000).matrixTransform(m);
+    return { x: pt.x, y: pt.y };
+  });
+  await page.mouse.click(ziel.x, ziel.y, { button: 'right' });
+}
+await page.waitForSelector('[data-testid="viewport-kontextmenue"]');
+await shot('37-gesten-kontextmenu', 400);
 
 await browser.close();
 console.log('Alle Rundgang-Bilder liegen unter docs/rundgang/bilder/');
