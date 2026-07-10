@@ -15,6 +15,10 @@ Deckt die drei Ehrlichkeitsstufen ab:
      nicht gesetzt, weil im Fixture-Pfad unbekannt).
   4. Das App-Manifest (`import.json`) wird nach jedem Lauf aus dem Zielordner
      neu aufgebaut und enthält den frischen Eintrag.
+  5. (v0.6.9, Stream B) `import-sammlung.json` entsteht im selben Format wie
+     die übrigen Bauwissen-Basis-Korpora und trägt den frischen Eintrag; der
+     `import`-Eintrag in `index.json` wird idempotent eingefügt/aktualisiert,
+     bestehende Sammlungen bleiben unangetastet.
 """
 
 from __future__ import annotations
@@ -46,10 +50,27 @@ def check(name: str, cond: bool) -> None:
 with tempfile.TemporaryDirectory() as tmp:
     ziel = Path(tmp) / "Import"
     manifest = Path(tmp) / "import.json"
+    sammlung = Path(tmp) / "import-sammlung.json"
+    index = Path(tmp) / "index.json"
     JETZT = "2026-07-10T09:00:00Z"
     pdf = "irgendwo/Bauteilkatalog Muster.pdf"
 
-    code1 = ingest.main([pdf, "--fake", "--ziel", str(ziel), "--jetzt", JETZT, "--manifest", str(manifest)])
+    code1 = ingest.main(
+        [
+            pdf,
+            "--fake",
+            "--ziel",
+            str(ziel),
+            "--jetzt",
+            JETZT,
+            "--manifest",
+            str(manifest),
+            "--sammlung",
+            str(sammlung),
+            "--index",
+            str(index),
+        ]
+    )
     dateien_nach_lauf1 = sorted(p.name for p in ziel.glob("*"))
     md_dateien = sorted(ziel.glob("*.md"))
     inhalt1 = md_dateien[0].read_text(encoding="utf-8") if md_dateien else ""
@@ -62,7 +83,24 @@ with tempfile.TemporaryDirectory() as tmp:
     # Zweiter Lauf in einen frischen Ordner, identische Eingaben (inkl. --jetzt)
     ziel2 = Path(tmp) / "Import2"
     manifest2 = Path(tmp) / "import2.json"
-    code2 = ingest.main([pdf, "--fake", "--ziel", str(ziel2), "--jetzt", JETZT, "--manifest", str(manifest2)])
+    sammlung2 = Path(tmp) / "import-sammlung2.json"
+    index2 = Path(tmp) / "index2.json"
+    code2 = ingest.main(
+        [
+            pdf,
+            "--fake",
+            "--ziel",
+            str(ziel2),
+            "--jetzt",
+            JETZT,
+            "--manifest",
+            str(manifest2),
+            "--sammlung",
+            str(sammlung2),
+            "--index",
+            str(index2),
+        ]
+    )
     md_dateien2 = sorted(ziel2.glob("*.md"))
     inhalt2 = md_dateien2[0].read_text(encoding="utf-8") if md_dateien2 else ""
     meta_dateien2 = sorted(ziel2.glob("*.meta.json"))
@@ -102,6 +140,67 @@ with tempfile.TemporaryDirectory() as tmp:
         "Manifest: Eintrag trägt Titel + werkzeug=fixture",
         manifest_daten[0].get("titel") == "Bauteilkatalog Muster" and manifest_daten[0].get("werkzeug") == "fixture",
     )
+
+    # -----------------------------------------------------------------
+    # 5) import-sammlung.json + index.json (v0.6.9, Stream B)
+    # -----------------------------------------------------------------
+    check("Sammlung: Datei wurde geschrieben", sammlung.exists())
+    sammlung_daten = json.loads(sammlung.read_text(encoding="utf-8"))
+    check("Sammlung: sammlung=import, Label gesetzt", sammlung_daten.get("sammlung") == "import" and bool(sammlung_daten.get("label")))
+    check("Sammlung: genau eine Quelle (die frische Notiz)", len(sammlung_daten.get("quellen", [])) == 1)
+    sammlung_quelle = sammlung_daten["quellen"][0]
+    check("Sammlung: Quellenname = Titel der Notiz", sammlung_quelle.get("name") == "Bauteilkatalog Muster")
+    check("Sammlung: mindestens ein Chunk, Chunk-Text nicht leer", len(sammlung_quelle.get("chunks", [])) >= 1 and sammlung_quelle["chunks"][0].get("text"))
+    check(
+        "Sammlung: Chunk-Text bettet den PDF-Dateinamen ein (echter Fixture-Inhalt, kein Platzhalter-Leerlauf)",
+        any("Bauteilkatalog Muster.pdf" in c["text"] for c in sammlung_quelle["chunks"]),
+    )
+    check("Sammlung: kompaktes JSON wie die übrigen Basis-Korpora (keine Einrückung)", "\n" not in sammlung.read_text(encoding="utf-8"))
+
+    check("Index: Datei wurde geschrieben", index.exists())
+    index_daten = json.loads(index.read_text(encoding="utf-8"))
+    index_eintraege = [e for e in index_daten if e.get("sammlung") == "import"]
+    check("Index: genau ein `import`-Eintrag", len(index_eintraege) == 1)
+    check("Index: Eintrag trägt Quellen-/Chunk-Zahl", index_eintraege[0].get("quellen") == 1 and index_eintraege[0].get("chunks", 0) >= 1)
+
+    # Idempotenz: ein zweiter Lauf gegen denselben Zielordner (frischer
+    # Dateiname wegen anderem --jetzt) darf bestehende index.json-Einträge
+    # NICHT verlieren — nur den `import`-Eintrag ersetzen.
+    index_vorbelegt = Path(tmp) / "index-vorbelegt.json"
+    index_vorbelegt.write_text(
+        json.dumps([{"sammlung": "projektwissen", "label": "KosmoOrbit-Projektwissen", "quellen": 11, "chunks": 68, "kb": 71}]),
+        encoding="utf-8",
+    )
+    JETZT2 = "2026-07-10T10:00:00Z"
+    code_idempotent = ingest.main(
+        [
+            pdf,
+            "--fake",
+            "--ziel",
+            str(ziel),
+            "--jetzt",
+            JETZT2,
+            "--manifest",
+            str(manifest),
+            "--sammlung",
+            str(sammlung),
+            "--index",
+            str(index_vorbelegt),
+        ]
+    )
+    index_vorbelegt_daten = json.loads(index_vorbelegt.read_text(encoding="utf-8"))
+    check("Index (idempotent): Exit-Code 0", code_idempotent == 0)
+    check(
+        "Index (idempotent): bestehende Fremd-Sammlung bleibt unangetastet",
+        any(e.get("sammlung") == "projektwissen" and e.get("quellen") == 11 for e in index_vorbelegt_daten),
+    )
+    check(
+        "Index (idempotent): `import`-Eintrag weiterhin genau einmal vorhanden",
+        len([e for e in index_vorbelegt_daten if e.get("sammlung") == "import"]) == 1,
+    )
+    # Zweite Notiz im selben Zielordner (JETZT2) → Sammlung wächst auf zwei Quellen.
+    sammlung_nach_zweitem_lauf = json.loads(sammlung.read_text(encoding="utf-8"))
+    check("Sammlung (idempotent): wächst mit dem Zielordner auf zwei Quellen", len(sammlung_nach_zweitem_lauf.get("quellen", [])) == 2)
 
 
 # ---------------------------------------------------------------------------

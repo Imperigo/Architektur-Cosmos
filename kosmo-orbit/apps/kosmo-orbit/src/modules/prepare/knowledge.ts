@@ -296,7 +296,15 @@ export async function geladeneSammlungen(): Promise<Set<string>> {
 export async function importiereBasis(
   sammlung: string,
 ): Promise<{ quellen: number; chunks: number }> {
-  const res = await fetch(basisUrl(`${sammlung}.json`), { cache: 'no-store' });
+  // v0.6.9 (Stream B «Wissen antwortet»): minimaler, begründeter Sonderfall
+  // NUR für die Sammlung-Id `import` — sie kollidiert sonst mit dem bereits
+  // bestehenden `import.json` (Docling-Anzeige-Manifest der Import-Sektion,
+  // ein ANDERES Format — `DataWorkspace.tsx` `holeWissenImport()`). Die
+  // RAG-fähige Sammlung liegt deshalb unter `import-sammlung.json`
+  // (`tools/docling-ingest/ingest.py`, exaktes Format der übrigen
+  // Basis-Korpora). Alle anderen Sammlungen unverändert: `<sammlung>.json`.
+  const datei = sammlung === 'import' ? 'import-sammlung.json' : `${sammlung}.json`;
+  const res = await fetch(basisUrl(datei), { cache: 'no-store' });
   if (!res.ok) throw new Error(`Sammlung «${sammlung}» nicht erreichbar (${res.status})`);
   const daten = (await res.json()) as {
     quellen: { name: string; chunks: { text: string; seite?: number }[] }[];

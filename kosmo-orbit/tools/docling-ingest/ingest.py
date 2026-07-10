@@ -31,6 +31,17 @@ Bauwissen-Basis-Korpora lädt (`apps/kosmo-orbit/src/modules/prepare/
 knowledge.ts`, `basisIndex()`), hier additiv für Import-Notizen. Der
 KosmoData-Wissen-Tab liest dieses Manifest direkt (siehe
 `DataWorkspace.tsx`, `KosmoWissenView`).
+
+v0.6.9 (Stream B, «Wissen antwortet»): zusätzlich wird
+`apps/kosmo-orbit/public/wissen/import-sammlung.json` regeneriert — EXAKT
+dasselbe Format wie die übrigen Bauwissen-Basis-Korpora
+(`wissen/tools/export-webbasis.py`: `{sammlung, label, quellen: [{name,
+chunks: [{text}]}]}`), damit die bestehende RAG-Kette (`knowledge.ts`
+`importiereBasis('import')` → IndexedDB → `state/quellen.ts`
+`sucheQuellen()` → Kosmo-Tool `quellen_suchen`) Import-Notizen ohne
+Sonderweg mitliest. Der `import`-Eintrag in `index.json` wird dabei
+idempotent eingefügt/aktualisiert — alle anderen Sammlungen bleiben
+unangetastet.
 """
 
 from __future__ import annotations
@@ -51,6 +62,15 @@ DEFAULT_ZIEL = REPO_ROOT / "wissen" / "vault" / "Import"
 DEFAULT_MANIFEST = (
     REPO_ROOT / "kosmo-orbit" / "apps" / "kosmo-orbit" / "public" / "wissen" / "import.json"
 )
+DEFAULT_SAMMLUNG = (
+    REPO_ROOT / "kosmo-orbit" / "apps" / "kosmo-orbit" / "public" / "wissen" / "import-sammlung.json"
+)
+DEFAULT_INDEX = (
+    REPO_ROOT / "kosmo-orbit" / "apps" / "kosmo-orbit" / "public" / "wissen" / "index.json"
+)
+
+SAMMLUNG_ID = "import"
+SAMMLUNG_LABEL = "Docling-Import (KosmoPrepare)"
 
 UMLAUT_ERSATZ = {"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"}
 
@@ -178,7 +198,86 @@ def regenerate_manifest(ziel: Path, manifest_pfad: Path) -> list[dict[str, Any]]
     return eintraege
 
 
-def ingest_fake(pdf_pfad: Path, ziel: Path, jetzt: str, manifest_pfad: Path) -> int:
+def chunk_body(text: str, target: int = 1200) -> list[str]:
+    """Absatz-Chunker wie `chunkText` in `knowledge.ts` (~1200 Zeichen, an
+    Absatzgrenzen) — dieselbe Web-Basis-Kette liest beide Formate identisch,
+    also entsteht hier bewusst dasselbe Chunk-Bild."""
+    paragraphs = [re.sub(r"\s+", " ", p).strip() for p in re.split(r"\n{2,}", text)]
+    paragraphs = [p for p in paragraphs if p]
+    chunks: list[str] = []
+    current = ""
+    for p in paragraphs:
+        if current and len(current) + len(p) + 1 > target:
+            chunks.append(current)
+            current = p
+        else:
+            current = f"{current}\n{p}" if current else p
+    if current:
+        chunks.append(current)
+    return chunks
+
+
+def regenerate_sammlung(ziel: Path, sammlung_pfad: Path, index_pfad: Path) -> dict[str, Any]:
+    """Baut `import-sammlung.json` — EXAKT das Format der übrigen Bauwissen-
+    Basis-Korpora (`wissen/tools/export-webbasis.py`), additiv aus ALLEN
+    Notizen im Zielordner (Vollregeneration, wie `regenerate_manifest`).
+    Trägt/aktualisiert danach den `import`-Eintrag in `index.json` — alle
+    anderen Sammlungen bleiben unangetastet (idempotent)."""
+    quellen: list[dict[str, Any]] = []
+    if ziel.exists():
+        for md_pfad in sorted(ziel.glob("*.md")):
+            try:
+                text = md_pfad.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            fm = parse_frontmatter(text)
+            if not fm:
+                continue
+            ende = text.find("\n---", 3)
+            body = text[ende + 4 :].strip("\n") if ende != -1 else text
+            chunks = chunk_body(body)
+            if not chunks:
+                continue
+            quellen.append(
+                {
+                    "name": fm.get("titel", md_pfad.stem),
+                    "chunks": [{"text": c} for c in chunks],
+                }
+            )
+    sammlung = {"sammlung": SAMMLUNG_ID, "label": SAMMLUNG_LABEL, "quellen": quellen}
+    sammlung_pfad.parent.mkdir(parents=True, exist_ok=True)
+    with sammlung_pfad.open("w", encoding="utf-8") as f:
+        json.dump(sammlung, f, ensure_ascii=False)
+
+    # index.json idempotent aktualisieren — nur den `import`-Eintrag
+    # ersetzen/einfügen, alle anderen Sammlungen bleiben Byte-für-Byte gleich.
+    index: list[dict[str, Any]] = []
+    if index_pfad.exists():
+        try:
+            index = json.loads(index_pfad.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            index = []
+    index = [e for e in index if e.get("sammlung") != SAMMLUNG_ID]
+    if quellen:
+        anzahl_chunks = sum(len(q["chunks"]) for q in quellen)
+        index.append(
+            {
+                "sammlung": SAMMLUNG_ID,
+                "label": SAMMLUNG_LABEL,
+                "quellen": len(quellen),
+                "chunks": anzahl_chunks,
+                "kb": sammlung_pfad.stat().st_size // 1024,
+            }
+        )
+    index_pfad.parent.mkdir(parents=True, exist_ok=True)
+    with index_pfad.open("w", encoding="utf-8") as f:
+        json.dump(index, f, ensure_ascii=False)
+    return sammlung
+
+
+def ingest_fake(
+    pdf_pfad: Path, ziel: Path, jetzt: str, manifest_pfad: Path, sammlung_pfad: Path, index_pfad: Path
+) -> int:
     """Stufe (c): deterministische Fixture — bewusst OHNE Docling, OHNE das PDF zu lesen."""
     titel = pdf_pfad.stem
     quelle_dateiname = pdf_pfad.name
@@ -196,12 +295,15 @@ def ingest_fake(pdf_pfad: Path, ziel: Path, jetzt: str, manifest_pfad: Path) -> 
     }
     md_pfad, meta_pfad = schreibe_notiz(ziel, basis_dateiname, frontmatter, body, meta)
     regenerate_manifest(ziel, manifest_pfad)
+    regenerate_sammlung(ziel, sammlung_pfad, index_pfad)
     print(f"Fixture-Notiz geschrieben: {md_pfad}")
     print(f"Metadaten: {meta_pfad}")
     return 0
 
 
-def ingest_real(pdf_pfad: Path, ziel: Path, jetzt: str, manifest_pfad: Path) -> int:
+def ingest_real(
+    pdf_pfad: Path, ziel: Path, jetzt: str, manifest_pfad: Path, sammlung_pfad: Path, index_pfad: Path
+) -> int:
     """Stufe (a): echte Docling-Konvertierung."""
     try:
         from docling.document_converter import DocumentConverter  # type: ignore[import-not-found]
@@ -255,6 +357,7 @@ def ingest_real(pdf_pfad: Path, ziel: Path, jetzt: str, manifest_pfad: Path) -> 
     }
     md_pfad, meta_pfad = schreibe_notiz(ziel, basis_dateiname, frontmatter, markdown, meta)
     regenerate_manifest(ziel, manifest_pfad)
+    regenerate_sammlung(ziel, sammlung_pfad, index_pfad)
     print(f"Notiz geschrieben: {md_pfad} ({seiten if seiten is not None else '?'} Seiten, {dauer_s:.2f}s)")
     print(f"Metadaten: {meta_pfad}")
     return 0
@@ -282,6 +385,8 @@ def build_parser() -> argparse.ArgumentParser:
     # Test-/Automations-Haken, bewusst ohne Werbung im --help-Text:
     p.add_argument("--jetzt", default=None, help=argparse.SUPPRESS)
     p.add_argument("--manifest", default=None, help=argparse.SUPPRESS)
+    p.add_argument("--sammlung", default=None, help=argparse.SUPPRESS)
+    p.add_argument("--index", default=None, help=argparse.SUPPRESS)
     return p
 
 
@@ -290,16 +395,18 @@ def main(argv: list[str] | None = None) -> int:
     jetzt = args.jetzt or jetzt_iso_default()
     ziel = Path(args.ziel) if args.ziel else DEFAULT_ZIEL
     manifest_pfad = Path(args.manifest) if args.manifest else DEFAULT_MANIFEST
+    sammlung_pfad = Path(args.sammlung) if args.sammlung else DEFAULT_SAMMLUNG
+    index_pfad = Path(args.index) if args.index else DEFAULT_INDEX
     pdf_pfad = Path(args.pdf)
 
     if args.fake:
-        return ingest_fake(pdf_pfad, ziel, jetzt, manifest_pfad)
+        return ingest_fake(pdf_pfad, ziel, jetzt, manifest_pfad, sammlung_pfad, index_pfad)
 
     if not pdf_pfad.exists():
         print(f"Fehler: PDF nicht gefunden — {pdf_pfad}", file=sys.stderr)
         return 2
 
-    return ingest_real(pdf_pfad, ziel, jetzt, manifest_pfad)
+    return ingest_real(pdf_pfad, ziel, jetzt, manifest_pfad, sammlung_pfad, index_pfad)
 
 
 if __name__ == "__main__":

@@ -2348,6 +2348,32 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
     }
   }
 
+  // v0.6.9 (Stream B, «Wissen antwortet»): Import-Sektion → RAG-Kette. KEIN
+  // neuer Lade-Weg — derselbe `importiereBasis('import')` wie die übrigen
+  // Bauwissen-Basis-Korpora unten (`ladeSammlung`); hier zusätzlich direkt an
+  // der Import-Liste, weil der Architekt hier zuerst hinschaut. Ehrliche
+  // Statuszeile: unterscheidet frisch geladene Dokumente von «schon geladen»
+  // (idempotent — `importiereBasis` überspringt bereits vorhandene doc-Ids).
+  const [ladeImport, setLadeImport] = useState(false);
+  const [importStatus, setImportStatus] = useState<string | null>(null);
+
+  async function ladeImportSammlung() {
+    setLadeImport(true);
+    try {
+      const { quellen, chunks } = await importiereBasis('import');
+      refresh();
+      setImportStatus(
+        quellen > 0
+          ? `${quellen} Dokument${quellen === 1 ? '' : 'e'} · ${chunks} Abschnitt${chunks === 1 ? '' : 'e'} geladen`
+          : 'Schon geladen — keine neuen Dokumente',
+      );
+    } catch (err) {
+      meldeFehler(err);
+    } finally {
+      setLadeImport(false);
+    }
+  }
+
   const zeigtSuche = query.trim().length >= 2;
   const leer = geladen && docs.length === 0 && basis.length === 0;
 
@@ -2402,21 +2428,43 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
                 Noch keine Importe — tools/docling-ingest/ingest.py
               </span>
             ) : (
-              importEintraege.map((e) => (
-                <Panel
-                  key={`${e.quelleDateiname}-${e.importiertAm}`}
-                  data-testid="wissen-import-eintrag"
-                  style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'grid', gap: 'var(--k-s2)' }}
-                >
-                  <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{e.titel}</div>
-                  <div
-                    data-testid="wissen-import-herkunft"
-                    style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}
+              <>
+                {importEintraege.map((e) => (
+                  <Panel
+                    key={`${e.quelleDateiname}-${e.importiertAm}`}
+                    data-testid="wissen-import-eintrag"
+                    style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'grid', gap: 'var(--k-s2)' }}
                   >
-                    Import · {e.werkzeug} · {importDatum(e.importiertAm)}
-                  </div>
-                </Panel>
-              ))
+                    <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{e.titel}</div>
+                    <div
+                      data-testid="wissen-import-herkunft"
+                      style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}
+                    >
+                      Import · {e.werkzeug} · {importDatum(e.importiertAm)}
+                    </div>
+                  </Panel>
+                ))}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+                  {geladeneBasis.has('import') && !importStatus ? (
+                    <Badge hue={moduleHue.prepare}>In Wissensbasis geladen</Badge>
+                  ) : (
+                    <KButton
+                      size="sm"
+                      tone="accent"
+                      data-testid="wissen-import-laden"
+                      disabled={ladeImport}
+                      onClick={() => void ladeImportSammlung()}
+                    >
+                      {ladeImport ? 'Lade …' : 'In Wissensbasis laden'}
+                    </KButton>
+                  )}
+                  {importStatus && (
+                    <span data-testid="wissen-import-status" style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                      {importStatus}
+                    </span>
+                  )}
+                </div>
+              </>
             )}
           </div>
 
