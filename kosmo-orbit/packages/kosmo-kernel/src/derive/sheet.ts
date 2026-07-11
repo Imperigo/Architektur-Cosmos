@@ -72,11 +72,17 @@ function placementInner(doc: KosmoDoc, pl: SheetPlacement): InnerSvg {
 export function situationsplanInnerSvg(doc: KosmoDoc, scale: number): InnerSvg {
   const geo = schwarzplanGeometrie(doc);
   if (!geo) return { inner: '', bounds: null };
-  const { parzelle, footprints, bounds } = geo;
+  const { parzelle, footprints, nachbarn, bounds } = geo;
   const punkte = (o: Pt[]) => o.map((p) => `${p.x},${-p.y}`).join(' ');
   const parts: string[] = [
     `<polygon points="${punkte(parzelle)}" fill="none" stroke="black" stroke-width="${(0.35 * scale).toFixed(3)}" stroke-dasharray="${(3 * scale).toFixed(2)} ${(0.9 * scale).toFixed(2)} ${(0.6 * scale).toFixed(2)} ${(0.9 * scale).toFixed(2)}"/>`,
   ];
+  // Nachbarn grau VOR den eigenen Footprints (v0.7.1 E2) — dieselbe
+  // Reihenfolge/Farbe wie das eigenständige Schwarzplan-Blatt; ohne
+  // Nachbar-Zonen bleibt die Liste leer und die Ausgabe byte-identisch.
+  for (const np of nachbarn) {
+    parts.push(`<polygon points="${punkte(np)}" fill="#8a8a8a" stroke="none"/>`);
+  }
   for (const fp of footprints) {
     parts.push(`<polygon points="${punkte(fp)}" fill="#1a1a1a" stroke="none"/>`);
   }
