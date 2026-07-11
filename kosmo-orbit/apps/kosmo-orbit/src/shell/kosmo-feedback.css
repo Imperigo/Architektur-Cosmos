@@ -712,7 +712,10 @@
 }
 .kosmo-orb-takeover-chip {
   position: absolute;
-  bottom: 14px;
+  /* Kritik-2-Auflage (11.07.2026): der Chip sass AUF der Statusleiste und
+     verdeckte Modus/Status — gerade im Takeover muss beides lesbar bleiben.
+     Statusleiste ≈ 40 px hoch ⇒ 40 + 12 px Abstand, weiterhin Mitte. */
+  bottom: 52px;
   left: 50%;
   transform: translateX(-50%);
   pointer-events: auto;

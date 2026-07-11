@@ -83,14 +83,13 @@ export const PHASEN_PRESETS: Record<SiaPhase, PhasenPreset> = {
   // Strategische Planung (SIA 112 Ph. 1, additiv v0.7.2): laut
   // `V072-VISUELLES-UPDATE-SPEZ.md` §4 (BASE-Zeile 1) ist diese Phase
   // prepare/data/chat-lastig — reine Grundlagen-/Bedarfsklärung, noch VOR
-  // dem eigentlichen Wettbewerb. Keine der sechs Fähigkeits-Icons deckt
-  // "Grundlagen/Wissen sammeln" direkt ab (das ist KosmoPrepare/KosmoData/
-  // Kosmo-Speak, ausserhalb dieser Design-Werkzeugleisten-Gruppe) — die
-  // einzige der sechs, die schon VOR einem echten Wettbewerbsbeitrag
-  // sinnvoll ist, ist eine erste, grobe Machbarkeits-Massenstudie (dieselbe
-  // Fähigkeit, die auch 'wettbewerb' im Fokus hat — hier nur sie allein,
-  // ohne die Besonnung, die einen konkreteren Baukörper voraussetzt).
-  strategie: preset('strategie', ['volumenstudien']),
+  // dem eigentlichen Wettbewerb; prepare/data/chat sind aber keine
+  // Fähigkeits-Icons dieser Design-Werkzeugleisten-Gruppe.
+  // Kritik-2-Auflage (11.07.2026): SIA-Phase 1 = Machbarkeit + Kostenrahmen
+  // — also Volumenstudien (grobe Machbarkeits-Massenstudie) UND KV
+  // (Kostenrahmen früh abstecken); die Besonnung bleibt draussen, sie
+  // setzt einen konkreteren Baukörper voraus (ab 'wettbewerb').
+  strategie: preset('strategie', ['volumenstudien', 'kv']),
   // Wettbewerb/Studie (SIA 4.22): Massenstudien + Besonnungsnachweis sind die
   // beiden Entscheidungsgrundlagen eines Wettbewerbsbeitrags.
   wettbewerb: preset('wettbewerb', ['volumenstudien', 'sonne']),

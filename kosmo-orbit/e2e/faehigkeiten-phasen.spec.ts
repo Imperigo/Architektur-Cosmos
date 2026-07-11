@@ -184,8 +184,11 @@ test('+strategie (additiv v0.7.2): design.siaPhaseSetzen("strategie") zeigt das 
   await expect(angebot).toContainText('Volumenstudien');
 
   await page.click('[data-testid="phasen-preset-anwenden"]');
+  // Kritik-2-Auflage (11.07.2026, bewusste Anpassung): SIA-Phase 1 =
+  // Machbarkeit + Kostenrahmen ⇒ Volumenstudien UND KV im Fokus.
   await expect(page.locator('[data-testid="faehigkeit-volumenstudien"]')).toHaveCSS('opacity', '1');
-  // Rest gedämpft (nur EINE Fähigkeit im Fokus) — feste Anker bleiben.
-  await expect(page.locator('[data-testid="faehigkeit-kv"]')).toHaveCSS('opacity', '0.6');
+  await expect(page.locator('[data-testid="faehigkeit-kv"]')).toHaveCSS('opacity', '1');
+  // Rest gedämpft — feste Anker bleiben.
+  await expect(page.locator('[data-testid="faehigkeit-sonne"]')).toHaveCSS('opacity', '0.6');
   await expect(page.locator('[data-testid="faehigkeit-submission"]')).toHaveCSS('opacity', '0.6');
 });

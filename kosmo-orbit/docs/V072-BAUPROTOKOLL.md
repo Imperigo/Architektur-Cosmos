@@ -172,4 +172,21 @@ DOM) · Kernel-Goldens byte-identisch.
   eng (SYNC AUS/KOSMO ÖFFNEN brechen zweizeilig um) · takeover-Chip
   überlappt die Statusleiste unten Mitte.
 
+- **Kritik-2-Verdikt (Fable) + Umsetzung:**
+  1. Rang nur im Design-Fächer → REICHT für 0.7.2; hub-weit = 0.7.3
+     («Dock/Hub-Ausbau»). Auflage: ehrlich in Neuigkeiten-ENTWURF + ROADMAP.
+  2. strategie-Preset → Direktfix: ['volumenstudien','kv'] (SIA Ph. 1 =
+     Machbarkeit + Kostenrahmen); faehigkeiten-phasen.spec bewusst
+     angepasst (kv opacity 1, sonne neu als 0.6-Anker).
+  3. Header-Enge → Auflage an W4-H: SYNC/KOSMO nie umbrechen (nowrap);
+     unter ~1500 px kollabiert die Phasen-Leiste auf Nummern-Pills 1–5
+     (Label als title).
+  4. takeover-Chip → Direktfix: bottom 52 px (über der Statusleiste,
+     Modus/Status lesbar; kosmo-feedback.css).
+  5. Dock-Pop/Hover ohne eigenen E2E → AKZEPTIERT (bewusste Testlücke:
+     Animations-E2E flake-anfällig; Shots + laufende Specs genügen).
+  reducedMotion-Config → Finale-Prüfpunkt + SIM-BEFUNDE-Notiz.
+  Beweis: Preset-Units 11 grün, Wächter+faehigkeiten-phasen+kosmo-
+  zustaende 1× grün (28 passed), takeover-Shot neu (Statusleiste frei).
+
 <!-- Weitere Einträge folgen je Welle -->
