@@ -15,11 +15,16 @@ import type { Locator, Page } from '@playwright/test';
  * können.
  */
 /**
- * Echter Klick; scheitert er an einer ÜBERDECKUNG (Befund sim-umbau: die
- * schwebende 2D-NavLeiste liegt über der «Umbau»-Zeile des Wand-Inspectors —
- * das native `selectOption` brauchte nie einen echten Mausklick, darum blieb
- * der Konflikt unsichtbar), fällt er auf `dispatchEvent('click')` zurück.
- * Der Normalweg bleibt der geprüfte Klick.
+ * Echter Klick; scheitert er an einer ÜBERDECKUNG, fällt er auf
+ * `dispatchEvent('click')` zurück. Der Normalweg bleibt der geprüfte Klick.
+ *
+ * Der Ursprungs-Befund (sim-umbau: die schwebende 2D-NavLeiste lag über der
+ * «Umbau»-Zeile des Wand-Inspectors — das native `selectOption` brauchte nie
+ * einen echten Mausklick, darum blieb der Konflikt unsichtbar) ist seit
+ * v0.7.0 BEHOBEN (H-43: die Inspector-Unterkante rückt über die NavLeiste-/
+ * Kosmo-Symbol-Ecke, Beweis `inspector-layout.spec.ts`). Der Fallback bleibt
+ * bewusst als Sicherheitsnetz für ANDERE Überdeckungen stehen (z.B. offene
+ * Overlays/Panels über einem Trigger) — Verhalten unverändert.
  */
 async function robusterKlick(ziel: Locator): Promise<void> {
   try {

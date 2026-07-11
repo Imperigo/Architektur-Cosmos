@@ -62,9 +62,22 @@ export function Inspector() {
       style={{
         position: 'absolute',
         right: 'var(--k-s4)',
-        bottom: 'var(--k-s4)',
+        // H-43 (v0.7.0, Stream 1B): vorher `bottom: var(--k-s4)` — damit lagen
+        // die untersten Inspector-Zeilen («Umbau»-KSelect, «Löschen») GENAU im
+        // Streifen der rechten unteren Ecke, den NavLeiste (right:88/bottom:50,
+        // z-5) und Kosmo-Symbol (right:22/bottom:22, z-110) belegen; beide
+        // gewannen den Klick, Trigger darunter waren nur per dispatchEvent
+        // erreichbar (waehleOption-Fallback). Der Konflikt ist breiten-
+        // UNabhängig (beide Blöcke sind rechts-unten verankert) — die
+        // Unterkante rückt deshalb IMMER über diese Ecke (NavLeiste top ≈
+        // 84 px, Kosmo-Symbol top ≈ 76 px → 90 px + Atemraum), statt eines
+        // neuen Layout-Systems oder einer Media-Query. K3-Regel «Blöcke
+        // kollisionsfrei» — dieselbe Entstapelung wie NavLeiste↔Kosmo-Symbol.
+        bottom: 'calc(var(--k-s4) + 78px)',
         width: 250,
-        maxHeight: 'calc(100% - 24px)',
+        // Oberkanten-Abstand bleibt wie vorher (12 px Luft): 24 px alt +
+        // die 78 px, um die die Unterkante angehoben wurde.
+        maxHeight: 'calc(100% - 102px)',
         overflow: 'auto',
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',
