@@ -60,6 +60,21 @@ DOM) · Kernel-Goldens byte-identisch.
   W4-H nachziehen oder ehrlich 0.7.3? (c) evtl. tote Dock-Icon-Exporte in
   werkzeug-icons.tsx (DesignWorkspace war nicht W1-B-Besitz) — prüfen,
   ggf. W4-H-Restfix.
-- Kritik-Runde 1 folgt (Shots paper+orbit auf :5183).
+- Befund (c) geklärt: `DesignWorkspace.tsx` Z.50–53 importiert
+  IconDockDraw/Vis/Publish/Prepare ohne Verwendung (EntwurfsDock rendert
+  seit W1-B selbst via STATION_GLYPHE) → toter Import, W4-H-Restfix.
+- **Kritik-Runde 1:** 8 Shots (`e2e/tools/kritik-shots-072-r1.mts`, :5183,
+  Bundle==dist) → `docs/rundgang/kritik-072/r1-{orbit,paper}-0{1..4}-*.png`.
+  Eigenbefund vor Verdikt: Papier-Welt regressionsfrei; orbit-Zentrale/
+  Design/Einstellungen stimmig; Hub-Glyphen-Punkte erben die MODUL-
+  Akzentfarbe (design=orange) statt Spec-§3-Rollenfarbe (draw=mint) —
+  bewusster W1-B-Entscheid («einfarbig-fähig», akzent-Prop), als
+  Gestaltungsfrage an Fable eskaliert; KIcon-Registry (kosmo-ui/icons.tsx)
+  noch alter 16/1.5-Stil — ebenfalls Fable-Frage (W4-H vs. 0.7.3).
+- **Welle 2 dispatcht** (parallel zur Kritik-Runde): W2-C «Phasen &
+  Ordnung» (Sonnet, Port 5174, Basis 0ae35b5) + W2-D «Kosmo-Zustände +
+  Feedback» (Sonnet, Port 5175, Basis 0ae35b5). EntwurfsDock-Aufwertung
+  (Glas/Pop/Hover, Keyframes in orbit-065.css) liegt bei W2-C;
+  kosmo-feedback.css als Bibliothek bei W2-D — disjunkt.
 
 <!-- Weitere Einträge folgen je Welle -->
