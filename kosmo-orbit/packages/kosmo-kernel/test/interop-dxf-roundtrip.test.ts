@@ -12,20 +12,19 @@ import type { Wall } from '../src/model/entities';
  * Finch-Interop-Brücke ehrlich härten). Testhaus = Wände + ein parametrisches
  * Zweiflügel-Fenster + eine Tür + Bemassungs-Einstellung.
  *
- * Geprüft wird der TATSÄCHLICHE Roundtrip-Paar aus V1.6 Block G/C2:
- * `planToDxf` (dxf/export.ts) ⇄ `parseDxf` (dxf/import.ts) — dasselbe Paar,
- * das die App im Design-Modul verwendet (export-plan.ts). Der ZWEITE,
- * unabhängige DXF-Exporter des Kernels (`exportDxf` / derive/dxf.ts, Q30,
- * @tarikjabiri/dxf-basiert, mit echten Bemassungsketten aus
- * derive/dimensions.ts) hat KEINEN eigenen Import-Parser — dieser Test lässt
- * ihn bewusst aussen vor (siehe docs/INTEROP.md «bekannte Verluste»).
+ * Geprüft wird das Roundtrip-Paar `planToDxf` (dxf/export.ts) ⇄ `parseDxf`
+ * (dxf/import.ts) — dasselbe Paar, das die App im Design-Modul verwendet
+ * (export-plan.ts).
  *
- * Ehrlicher Befund vorab (Code-Audit, nicht Vermutung): `derivePlan()` ruft
- * `deriveDimensions()` NICHT auf — Bemassungsketten fliessen NIE in das
- * `PlanGraphic`, aus dem `planToDxf` schreibt. Der `LAYER_BEMASSUNG` in
- * dxf/export.ts existiert nur für den (in der Praxis nie erreichten) Fall,
- * dass irgendein `PlanLine`/`PlanText` die Klasse `'bemassung'` trägt. Diese
- * Tests belegen das explizit, statt es zu verschweigen.
+ * v0.7.1 Stream 3A (DXF-Konsolidierung): der früher ZWEITE, unabhängige
+ * DXF-Exporter des Kernels (`exportDxf` / `derive/dxf.ts`, Q30,
+ * `@tarikjabiri/dxf`-basiert, ohne y-Spiegelung, ohne Rückweg) ist entfernt.
+ * Seine Bemassungs-Emission (Ketten aus `derive/dimensions.ts`) lebt jetzt
+ * HIER, in `planToDxf`/`planGraphicToDxf`, MIT y-Spiegelung wie alle anderen
+ * Elemente. `dxf/import.ts` liest den restlichen Plan weiterhin exakt
+ * zurück, ignoriert den Bemassungs-Layer aber bewusst (eine Masskette ist
+ * eine Ableitung, kein Entity) — siehe die eigene Describe-Gruppe unten und
+ * `docs/INTEROP.md`.
  */
 
 function testhausMitFensterUndTuer(): {
@@ -204,21 +203,38 @@ describe('DXF-Roundtrip-Beweis am Testhaus (Wände + Fenster + Tür), v0.7.0 6A'
     expect(zurueck.bericht.layerUnklassiert).toEqual([]);
   });
 
-  it('ehrlich belegte Grenze: die projektweite Bemassungs-Einstellung (design.bemassungSetzen) ' +
-    'wirkt NICHT auf planToDxf/parseDxf — echte Bemassungsketten (derive/dimensions.ts) fliessen ' +
-    'nur in exportDxf (Q30/@tarikjabiri) und die SVG-Bemassung, NICHT in dieses Roundtrip-Paar ' +
-    '(siehe docs/INTEROP.md «bekannte Verluste»)', () => {
+  it('Bemassung wird beim Import bewusst NICHT zu Geometrie: LAYER_BEMASSUNG-Entities ' +
+    '(Linien + Text) fliessen NICHT in zurueck.lines/texte — eine Masskette ist eine ' +
+    'Ableitung (derive/dimensions.ts), kein Entity', () => {
+    expect(dxf).toContain('2\nBEMASSUNG\n');
+    // Der Layer ist im Bericht sichtbar (nichts wird verschwiegen)...
+    expect(zurueck.bericht.layerBenutzt).toContain('BEMASSUNG');
+    // ...aber KEINE seiner Linien/Texte landet in der Geometrie.
+    expect(zurueck.lines.some((l) => l.layer === 'BEMASSUNG')).toBe(false);
+    expect(zurueck.texte.some((t) => t.layer === 'BEMASSUNG')).toBe(false);
+  });
+
+  it('behobene Grenze (v0.7.1 3A): die projektweite Bemassungs-Einstellung (design.bemassungSetzen) ' +
+    'wirkt jetzt auf planToDxf — Bemassungsketten (derive/dimensions.ts) fliessen seit der ' +
+    'DXF-Konsolidierung direkt in diesen Roundtrip-Pfad ein (vorher nur in den entfernten ' +
+    'Q30-Exporter und die SVG-Bemassung)', () => {
+    // Default (aussenKetten:'beide') zeichnet bereits eine Bemassung — das
+    // ist der neue Normalfall, keine Ausnahme mehr.
     const dxfVorher = planToDxf(doc, storeyId);
-    execute(doc, 'design.bemassungSetzen', { aussenKetten: 'beide', innenKetten: true, hoehenKoten: true });
-    const dxfNachher = planToDxf(doc, storeyId);
-    expect(dxfNachher).toBe(dxfVorher);
-    expect(dxfNachher).not.toContain('BEMASSUNG\n');
+    expect(dxfVorher).toContain('BEMASSUNG\n');
+
+    // 'keine' schaltet die Aussenketten ab → BEMASSUNG-Layer verschwindet
+    // wieder (die Emission ist wirklich an die Einstellung gekoppelt).
+    execute(doc, 'design.bemassungSetzen', { aussenKetten: 'keine', innenKetten: false, hoehenKoten: true });
+    const dxfOhne = planToDxf(doc, storeyId);
+    expect(dxfOhne).not.toContain('BEMASSUNG\n');
+    expect(dxfOhne).not.toBe(dxfVorher);
   });
 });
 
-describe('planGraphicToDxf ⇄ parseDxf — synthetische Bemassungs-Klasse (Layer existiert, wird aber nie befüllt)', () => {
-  it('eine PlanLine mit Klasse "bemassung" LANDET auf dem BEMASSUNG-Layer, falls sie je erzeugt würde ' +
-    '(zeigt: der Layer ist bereit, nur derivePlan() befüllt ihn nie)', () => {
+describe('planGraphicToDxf ⇄ parseDxf — synthetische Bemassungs-Klasse (Layer wird generisch geroutet, Import filtert ihn)', () => {
+  it('eine PlanLine mit Klasse "bemassung" LANDET beim Export auf dem BEMASSUNG-Layer, ' +
+    'kommt beim Import aber NICHT als Linie zurück (bewusst gefiltert)', () => {
     const plan = {
       storeyId: 's',
       regions: [],
@@ -229,8 +245,9 @@ describe('planGraphicToDxf ⇄ parseDxf — synthetische Bemassungs-Klasse (Laye
       bounds: null,
     };
     const dxf = planGraphicToDxf(plan);
-    const zurueck = parseDxf(dxf);
-    expect(zurueck.lines[0]!.layer).toBe('BEMASSUNG');
     expect(dxf).toContain('2\nBEMASSUNG\n');
+    const zurueck = parseDxf(dxf);
+    expect(zurueck.lines.length).toBe(0);
+    expect(zurueck.bericht.layerBenutzt).toContain('BEMASSUNG');
   });
 });

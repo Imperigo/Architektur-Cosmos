@@ -882,19 +882,21 @@ describe('KosmoPublish (Blätter, DXF)', () => {
     expect(doc.get<import('../src').Sheet>(sheetId)!.placements).toHaveLength(1);
   });
 
-  it('DXF-Export: gültige Struktur, Layer, Polylinien und Bemassungstexte', async () => {
-    const { exportDxf } = await import('../src');
+  it('DXF-Export: gültige Struktur, Layer, Polylinien und Bemassungstexte ' +
+    '(v0.7.1 3A: EIN Exporter — `planToDxf`, der frühere zweite Exporter ' +
+    '`exportDxf`/`derive/dxf.ts` ist entfernt, seine Bemassung lebt jetzt hier)', async () => {
+    const { planToDxf } = await import('../src');
     const { doc, storeyId } = setupWithWalls();
     execute(doc, 'design.oeffnungSetzen', {
       wallId: doc.byKind<Wall>('wall')[0]!.id,
       openingType: 'fenster', center: 3000, width: 2000, height: 1500, sill: 900,
     });
-    const dxf = exportDxf(doc, storeyId);
+    const dxf = planToDxf(doc, storeyId);
     expect(dxf).toContain('SECTION');
     expect(dxf).toContain('ENTITIES');
-    expect(dxf).toContain('KOSMO-WAND');
-    expect(dxf).toContain('KOSMO-BEMASSUNG');
-    expect(dxf).toContain('LWPOLYLINE');
+    expect(dxf).toContain('TRAGEND');
+    expect(dxf).toContain('BEMASSUNG');
+    expect(dxf).toContain('POLYLINE');
     expect(dxf).toContain('EOF');
   });
 });

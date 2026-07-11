@@ -19,6 +19,14 @@ import type { Pt } from '../model/units';
  * Ehrlich (C-E2): Layer→Semantik ist eine DATEN-Tabelle (Export-Regeln
  * invertiert + Fremd-CAD-Heuristik). Unbekannte Layer bleiben
  * «unklassiert» und stehen namentlich im Bericht — nie geraten.
+ *
+ * v0.7.1 3A: der Bemassungs-Layer (semantische Klasse `'bemassung'`, i.d.R.
+ * `BEMASSUNG`) wird bewusst NICHT zu Geometrie — eine Masskette ist eine
+ * ABLEITUNG aus der Parametrik (`derive/dimensions.ts`), kein Entity, das
+ * re-importiert werden dürfte (sonst entstünden aus Bemassungslinien
+ * plötzlich Wand-Kandidaten). Der Layer bleibt im Bericht sichtbar
+ * (`layerBenutzt`), seine Entities fliessen aber nie in `regions`/`lines`/
+ * `texte` ein.
  */
 
 export interface DxfLinie {
@@ -203,39 +211,50 @@ export function parseDxf(dxf: string): DxfGraphic {
     }
     const eins = (code: number): string | undefined => attr.get(code)?.[0];
     const layer = (eins(8) ?? '0').trim() || '0';
+    // Bemassung ist eine Ableitung (`derive/dimensions.ts`), kein Entity —
+    // der Layer wird im Bericht sichtbar gehalten, seine Geometrie aber
+    // nie zu `regions`/`lines`/`texte` (sonst entstünden aus Masslinien
+    // Wand-/Symbol-Kandidaten beim Re-Import).
+    const bemassung = semantikFuerLayer(layer) === 'bemassung';
 
     switch (typ) {
       case 'LINE': {
         layerBenutzt.add(layer);
-        lines.push({
-          a: { x: zahl(eins(10) ?? '', 'LINE x1'), y: y(zahl(eins(20) ?? '', 'LINE y1')) },
-          b: { x: zahl(eins(11) ?? '', 'LINE x2'), y: y(zahl(eins(21) ?? '', 'LINE y2')) },
-          layer,
-        });
+        if (!bemassung) {
+          lines.push({
+            a: { x: zahl(eins(10) ?? '', 'LINE x1'), y: y(zahl(eins(20) ?? '', 'LINE y1')) },
+            b: { x: zahl(eins(11) ?? '', 'LINE x2'), y: y(zahl(eins(21) ?? '', 'LINE y2')) },
+            layer,
+          });
+        }
         i = j;
         break;
       }
       case 'ARC': {
         layerBenutzt.add(layer);
-        // Export schrieb deg50 = −endAngle, deg51 = −startAngle → invers.
-        arcs.push({
-          center: { x: zahl(eins(10) ?? '', 'ARC cx'), y: y(zahl(eins(20) ?? '', 'ARC cy')) },
-          radius: zahl(eins(40) ?? '', 'ARC r'),
-          startAngle: weltWinkel(zahl(eins(51) ?? '0', 'ARC 51')),
-          endAngle: weltWinkel(zahl(eins(50) ?? '0', 'ARC 50')),
-          layer,
-        });
+        if (!bemassung) {
+          // Export schrieb deg50 = −endAngle, deg51 = −startAngle → invers.
+          arcs.push({
+            center: { x: zahl(eins(10) ?? '', 'ARC cx'), y: y(zahl(eins(20) ?? '', 'ARC cy')) },
+            radius: zahl(eins(40) ?? '', 'ARC r'),
+            startAngle: weltWinkel(zahl(eins(51) ?? '0', 'ARC 51')),
+            endAngle: weltWinkel(zahl(eins(50) ?? '0', 'ARC 50')),
+            layer,
+          });
+        }
         i = j;
         break;
       }
       case 'TEXT':
       case 'MTEXT': {
         layerBenutzt.add(layer);
-        texte.push({
-          at: { x: zahl(eins(10) ?? '', 'TEXT x'), y: y(zahl(eins(20) ?? '', 'TEXT y')) },
-          text: eins(1) ?? '',
-          layer,
-        });
+        if (!bemassung) {
+          texte.push({
+            at: { x: zahl(eins(10) ?? '', 'TEXT x'), y: y(zahl(eins(20) ?? '', 'TEXT y')) },
+            text: eins(1) ?? '',
+            layer,
+          });
+        }
         i = j;
         break;
       }
@@ -248,7 +267,7 @@ export function parseDxf(dxf: string): DxfGraphic {
           x: zahl(xv, 'LWPOLYLINE x'),
           y: y(zahl(ys[k] ?? '', 'LWPOLYLINE y')),
         }));
-        ringAblegen(ring, geschlossen, layer, regions, lines);
+        if (!bemassung) ringAblegen(ring, geschlossen, layer, regions, lines);
         i = j;
         break;
       }
@@ -283,7 +302,7 @@ export function parseDxf(dxf: string): DxfGraphic {
           }
           break; // POLYLINE ohne SEQEND — tolerant beenden.
         }
-        ringAblegen(ring, geschlossen, layer, regions, lines);
+        if (!bemassung) ringAblegen(ring, geschlossen, layer, regions, lines);
         i = k;
         break;
       }

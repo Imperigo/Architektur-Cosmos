@@ -9,18 +9,33 @@
 > Enterprise/SSO/Teams (Finchs sechster Katalogpunkt) bleibt bewusst aussen
 > vor — Begründung in `docs/RE-FINCH.md` §8.
 >
+> **Update 11.07.2026 (v0.7.1 Stream 3A, DXF-Konsolidierung):** der Kernel
+> hatte bis hierhin **zwei unabhängige DXF-Exporter** (Design-Modul-DXF und
+> Publish-Modul-DXF/«Q30») mit unterschiedlichem Verlustprofil — das war der
+> zentrale Befund von Abschnitt 1 unten. Das ist jetzt behoben: der
+> Q30-Exporter (`derive/dxf.ts`, `exportDxf`, `@tarikjabiri/dxf`) ist
+> entfernt, seine Bemassungs-Emission (Ketten aus `derive/dimensions.ts`)
+> lebt jetzt im Design-Modul-Exporter (`dxf/export.ts`, `planToDxf`) — MIT
+> y-Spiegelung, MIT Rückweg. **Bewusster Verhaltenswechsel:** das
+> KosmoPublish-DXF (`PublishWorkspace.tsx`, Knopf «DXF») nutzt jetzt
+> ebenfalls `planToDxf` — es ist damit **y-gespiegelt** (vorher nicht) und
+> trägt **semantische Layer** (TRAGEND/FENSTER/… statt der alten
+> `KOSMO-*`-Layer). Abschnitt 1 unten bleibt als historischer Befund stehen
+> (er begründet die Konsolidierung), ist aber **kein aktueller Zustand
+> mehr** — der aktuelle Stand steht direkt danach in Abschnitt 1a.
+>
 > Dieses Dokument ist der **Finch-fokussierte Ergänzungsband** zum bereits
 > bestehenden, breiteren `docs/INTEROP-KONZEPT.md` (ArchiCAD-Schwerpunkt,
 > Owner-Auftrag V1.6 Block G, deckt zusätzlich AutoCAD/Vectorworks/Blender/
 > Cinema4D/Photoshop/InDesign/Illustrator ab). Wo sich beide Dokumente
 > überschneiden (DXF/IFC-Kern, Verlust-Prinzipien), wird hier nicht
-> wiederholt, sondern verwiesen. Neu und NUR hier: (a) der Befund, dass der
-> Kernel **zwei unabhängige, nicht austauschbare DXF-Exporter** besitzt — für
-> die Rhino/Revit/Grasshopper-Frage entscheidend, weil sie nicht dasselbe
-> Verlustprofil haben; (b) die konkreten Schritt-für-Schritt-Wege für exakt
-> die drei Finch-Werkzeuge; (c) die Testbeweise aus
-> `packages/kosmo-kernel/test/interop-dxf-roundtrip.test.ts` und
-> `test/interop-ifc-haertung.test.ts` (v0.7.0 6A).
+> wiederholt, sondern verwiesen. Neu und NUR hier: (a) der historische
+> Befund (jetzt behoben, s.o.), dass der Kernel zwei unabhängige, nicht
+> austauschbare DXF-Exporter besass; (b) die konkreten
+> Schritt-für-Schritt-Wege für exakt die drei Finch-Werkzeuge; (c) die
+> Testbeweise aus `packages/kosmo-kernel/test/interop-dxf-roundtrip.test.ts`
+> und `test/interop-ifc-haertung.test.ts` (v0.7.0 6A, seit 3A um die
+> Bemassungs-/Import-Filter-Tests ergänzt).
 
 ---
 
@@ -33,35 +48,70 @@ in einer Lückenliste am Ende.
 
 ---
 
-## 1 · Der wichtigste Befund: zwei DXF-Exporter, zwei Verlustprofile
+## 1 · Historischer Befund (behoben 11.07.2026): zwei DXF-Exporter, zwei Verlustprofile
 
-Der Kernel exportiert DXF auf **zwei unabhängigen Codepfaden**, die je einem
-UI-Knopf zugeordnet sind. Das ist in keinem bisherigen Dokument
-zusammengeführt — hier zum ersten Mal explizit, weil es für «welches DXF gebe
-ich Rhino/Grasshopper» entscheidend ist:
+> **Dieser Abschnitt beschreibt den Stand VOR v0.7.1 Stream 3A.** Er bleibt
+> stehen, weil er die Konsolidierung begründet — der aktuelle Stand steht in
+> Abschnitt 1a direkt danach. Kurzfassung: es gibt seit 3A nur noch EINEN
+> DXF-Exporter.
 
-| | **Design-Modul-DXF** («V1.6 Block G») | **Publish-Modul-DXF** («Q30») |
+Der Kernel exportierte DXF bis 3A auf **zwei unabhängigen Codepfaden**, die je
+einem UI-Knopf zugeordnet waren:
+
+| | **Design-Modul-DXF** («V1.6 Block G») | **Publish-Modul-DXF** («Q30», ENTFERNT) |
 |---|---|---|
 | Quelltext | `packages/kosmo-kernel/src/dxf/export.ts` (`planToDxf`/`planGraphicToDxf`) | `packages/kosmo-kernel/src/derive/dxf.ts` (`exportDxf`) |
 | App-Knopf | KosmoDesign, «DXF» (`apps/kosmo-orbit/src/modules/design/export-plan.ts:67`) | KosmoPublish, «DXF» (`apps/kosmo-orbit/src/modules/publish/PublishWorkspace.tsx:316`) |
 | Bibliothek | eigener SPF-artiger Writer, keine Fremdbibliothek | `@tarikjabiri/dxf` |
 | Format | AutoCAD R12 (AC1009) | R2018 (Bibliotheksdefault) |
 | y-Konvention | **gespiegelt** (`dxfY = -weltY`, «Norden oben wie am Schirm») | **nicht gespiegelt** (Weltkoordinaten direkt) |
-| Assoziative Bemassungsketten (`derive/dimensions.ts`) | **NEIN** — `derivePlan()` ruft `deriveDimensions()` nie auf; `PlanGraphic` trägt nie Klasse `'bemassung'` [Code-Beleg: kein Treffer in `derive/plan.ts`] | **JA** — zeichnet Ketten+Ticks+Text auf Layer `KOSMO-BEMASSUNG` |
-| Rückweg (Import/Roundtrip) | **JA** — `packages/kosmo-kernel/src/dxf/import.ts` (`parseDxf`), geometrisch identisch bis ±0.001 mm [Testbeweis: `interop-dxf-roundtrip.test.ts`] | **NEIN** — kein Parser existiert für diesen Pfad |
-| Geprüft gegen | ezdxf (0 Fehler, ROADMAP 204) + eigener Roundtrip-Test (neu, 6A) | ezdxf (0 Fehler, ROADMAP 11, historisch, vor Block G) |
+| Assoziative Bemassungsketten (`derive/dimensions.ts`) | **NEIN** — `derivePlan()` ruft `deriveDimensions()` nie auf; `PlanGraphic` trägt nie Klasse `'bemassung'` | **JA** — zeichnet Ketten+Ticks+Text auf Layer `KOSMO-BEMASSUNG` |
+| Rückweg (Import/Roundtrip) | **JA** — `packages/kosmo-kernel/src/dxf/import.ts` (`parseDxf`), geometrisch identisch bis ±0.001 mm | **NEIN** — kein Parser existiert für diesen Pfad |
 
-**Konsequenz fürs Büro:** Für Rhino/Grasshopper/AutoCAD/Vectorworks — jeden
-Fall, in dem eine Datei später wieder eingelesen, mit dem Architektenplan
-verglichen oder in einem Round-Trip-Workflow verwendet wird — ist **das
-Design-Modul-DXF der richtige Weg** (roundtrip-bewiesen, y-Konvention
-dokumentiert). Das Publish-Modul-DXF ist ein **Einbahnstrasse-Export** fürs
-fertige, bemasste Planblatt (z.B. als CAD-Unterlage fürs Ausdrucken/Archivieren
-beim Unternehmer) — es trägt echte Maßketten, aber niemand im Kernel liest es
-je zurück, und die y-Achse ist NICHT gespiegelt wie beim anderen Pfad. **Wer
-beide Exporte im selben Projekt mischt, muss die unterschiedliche
-y-Konvention von Hand beachten** — das ist kein Bug, aber eine reale
-Stolperfalle, die hier zum ersten Mal benannt ist.
+**Konsequenz damals:** Für Rhino/Grasshopper/AutoCAD/Vectorworks war das
+Design-Modul-DXF der einzig roundtrip-sichere Weg; das Publish-Modul-DXF war
+ein Einbahnstrasse-Export mit echten Massketten, aber ohne Rückweg und mit
+abweichender y-Konvention — «wer beide Exporte mischt, muss von Hand
+umrechnen» war die reale Stolperfalle.
+
+---
+
+## 1a · Aktueller Stand (seit v0.7.1 Stream 3A): EIN DXF-Exporter
+
+Die Konsolidierung hat die Stolperfalle aus Abschnitt 1 beseitigt, indem sie
+den zweiten Codepfad ELIMINIERT statt harmonisiert hat:
+
+- **Nur noch `dxf/export.ts`** (`planToDxf`/`planGraphicToDxf`) exportiert
+  DXF — sowohl KosmoDesign («DXF», `export-plan.ts:67`) als auch KosmoPublish
+  («DXF», `PublishWorkspace.tsx:316`) rufen jetzt denselben Code.
+  `derive/dxf.ts`/`exportDxf` und die Abhängigkeit `@tarikjabiri/dxf` sind aus
+  dem Kernel entfernt (`packages/kosmo-kernel/package.json`).
+- **Assoziative Bemassungsketten sind jetzt Teil dieses EINEN Pfads:**
+  `planToDxf` ruft `deriveDimensions()` auf und zeichnet Ketten+Ticks+Text auf
+  `LAYER_BEMASSUNG` — MIT derselben y-Spiegelung wie jedes andere Element
+  (`dxfY = -weltY`). Die SIA-typische Hochziffer-Notation des mm-Rests
+  (`dimensionLabel`, z.B. «601⁵») wird für DXF auf eine ASCII-sichere
+  Dezimalpunkt-Notation (`601.5`) umgeschrieben — der bestehende
+  ASCII-Purge (`dxfText`) hätte die Unicode-Hochziffer sonst stillschweigend
+  getilgt und den mm-Rest verloren.
+- **Der Rückweg bleibt roundtrip-sicher, ignoriert Bemassung aber bewusst:**
+  `dxf/import.ts` liest Wände/Symbole/Texte weiterhin geometrisch identisch
+  zurück (±0.001 mm), überspringt Entities auf dem Bemassungs-Layer aber
+  gezielt — eine Masskette ist eine **Ableitung** aus der Parametrik
+  (`derive/dimensions.ts`), kein Entity; sie beim Re-Import als Linie/Wand-
+  Kandidat zurückzulesen wäre falsch. Der Layer bleibt im Import-Bericht
+  sichtbar (`layerBenutzt`), seine Geometrie fliesst aber nie in
+  `regions`/`lines`/`texte` [Testbeweis:
+  `interop-dxf-roundtrip.test.ts`, Gruppe «Bemassung wird beim Import
+  bewusst NICHT zu Geometrie»].
+- **Bewusster Verhaltenswechsel im Publish-Modul:** das KosmoPublish-DXF ist
+  jetzt **y-gespiegelt** (vorher nicht) und trägt **semantische Layer**
+  (TRAGEND/FENSTER/TUEREN/… statt der alten `KOSMO-WAND`/`KOSMO-SYMBOL`/
+  `KOSMO-PROJEKTION`/`KOSMO-BEMASSUNG`-Namen). Wer ein älteres
+  KosmoPublish-DXF mit einem neuen vergleicht, sieht andere y-Werte und
+  Layer-Namen — das ist beabsichtigt (Konsistenz mit dem Design-Modul-Export
+  ist wichtiger als Rückwärtskompatibilität eines internen Layer-Namensraums,
+  den kein Fremdtool kennt).
 
 ---
 
@@ -80,10 +130,13 @@ Stolperfalle, die hier zum ersten Mal benannt ist.
    geometrische Lücken»]), Fenster-/Tür-Symbole, Rasterachsen und Texte, alles
    auf **semantischen Layern** (TRAGEND/DAEMMUNG/FENSTER/TUEREN/TREPPE/
    ACHSEN/TEXT/…). y ist gespiegelt («Norden oben»).
-4. Geht **nicht** mit: assoziative Bemassungsketten (Massketten sind bei
-   diesem Export nicht Teil der Geometrie — s. Abschnitt 1), Bauteil-Identität
-   (Rhino sieht Kurven/Polylinien, keine «Wand»-Objekte), Mehrschicht-Aufbau
-   (nur die geometrische Poché, kein Materialaufbau als Attribut).
+4. Geht **seit v0.7.1 3A mit**: assoziative Bemassungsketten — sie kommen als
+   Linien+Text auf Layer `BEMASSUNG` mit (s. Abschnitt 1a). Geht weiterhin
+   **nicht** mit: Bauteil-Identität (Rhino sieht Kurven/Polylinien, keine
+   «Wand»-Objekte), Mehrschicht-Aufbau (nur die geometrische Poché, kein
+   Materialaufbau als Attribut). Beim Rückweg (Punkt 5) wird der
+   Bemassungs-Layer bewusst wieder herausgefiltert — er ist eine Ableitung,
+   kein wiedereinlesbares Entity.
 5. Rückweg: eine in Rhino bearbeitete/kommentierte DXF-Datei lässt sich mit
    `parseDxf` wieder einlesen (`unternehmerplan.ts`-Overlay-Pfad, siehe
    `docs/INTEROP-KONZEPT.md` §2b) — als Referenz-Overlay + Diff-Karten, nicht
@@ -200,8 +253,8 @@ Rhino/Revit/Grasshopper-Frage zusätzlich oder anders liegt:
 
 | # | Verlust | Betrifft | Beleg |
 |---|---|---|---|
-| 1 | Assoziative Bemassungsketten fehlen im roundtrip-fähigen DXF-Pfad (Design-Modul) | Rhino, Grasshopper (DXF-Weg) | Code-Audit `derive/plan.ts` (kein `deriveDimensions`-Aufruf) + Test «ehrlich belegte Grenze» in `interop-dxf-roundtrip.test.ts` |
-| 2 | Zwei DXF-Exporter mit unterschiedlicher y-Konvention, nur einer roundtrip-geprüft | Rhino, Grasshopper, AutoCAD (wer beide Knöpfe nutzt) | Abschnitt 1 dieses Dokuments |
+| 1 | ~~Assoziative Bemassungsketten fehlen im roundtrip-fähigen DXF-Pfad~~ — **behoben v0.7.1 3A**: `planToDxf` zeichnet Bemassungsketten jetzt selbst (Abschnitt 1a); der Import filtert den Layer bewusst wieder heraus (Bemassung ist Ableitung, kein Entity) | Rhino, Grasshopper (DXF-Weg) | `interop-dxf-roundtrip.test.ts`, Gruppe «Bemassung wird beim Import bewusst NICHT zu Geometrie» |
+| 2 | ~~Zwei DXF-Exporter mit unterschiedlicher y-Konvention~~ — **behoben v0.7.1 3A**: nur noch `planToDxf`, EINE y-Konvention (gespiegelt) für Design- UND Publish-Modul | Rhino, Grasshopper, AutoCAD | Abschnitt 1a dieses Dokuments |
 | 3 | Kein `.rvt`-Export, keine Revit-Familien (auch nicht für Fenster/Türen/Möbel) | Revit | Abschnitt 3, explizit gegen `docs/RE-FINCH.md` §2.6 abgegrenzt |
 | 4 | Kein natives IFC im Kernel-Code für Rhino (läuft über Drittanbieter-Plugin) | Rhino | Abschnitt 2, Weg 2 |
 | 5 | Kein Live-Node-Endpunkt für Grasshopper (nur Datei-Import/-Export) | Grasshopper | Abschnitt 4, `docs/INTEROP-KONZEPT.md` §4 |
@@ -224,8 +277,9 @@ geprüft, nicht nur einmalig von Hand (ifcopenshell/ezdxf) verifiziert.
   Poché-Ringe (inkl. Öffnungs-Notches) geometrisch identisch (±0.001 mm),
   Wandachsen-Länge in Toleranz (an einer gehrungsfreien Einzelwand exakt
   geprüft), Öffnungs-Symbole korrekt positioniert, sauberer Import-Bericht,
-  und die explizite Grenze «Bemassungs-Einstellung wirkt NICHT auf diesen
-  Pfad».
+  und (seit v0.7.1 3A) die behobene Grenze «Bemassungs-Einstellung wirkt
+  jetzt auf `planToDxf`» sowie die neue Grenze «Bemassung wird beim Import
+  bewusst NICHT zu Geometrie» (Layer sichtbar im Bericht, Geometrie gefiltert).
 - `packages/kosmo-kernel/test/interop-ifc-haertung.test.ts` — GUID-
   Eindeutigkeit, Referenz-Integrität (`IFCRELCONTAINEDINSPATIALSTRUCTURE`
   zeigt immer auf ein echtes Geschoss), lückenloser Spatial-Tree (jedes

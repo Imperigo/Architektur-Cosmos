@@ -1,9 +1,9 @@
 import { useMemo, useRef, useState } from 'react';
 import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KToolbar, KToolGruppe, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
 import {
-  exportDxf,
   imagePaperBounds,
   placementPaperBounds,
+  planToDxf,
   sheetPaperSize,
   sheetToSvg,
   transmittalCsv,
@@ -317,7 +317,11 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     const storeyId = placeStoreyId ?? storeys[0]?.id;
     if (!storeyId) return;
     const storey = doc.get<Storey>(storeyId);
-    const dxf = exportDxf(doc, storeyId);
+    // v0.7.1 3A: EIN DXF-Exporter im Kernel (vorher zwei) — bewusster
+    // Verhaltenswechsel fürs Publish-DXF: jetzt y-gespiegelt (Norden oben,
+    // konsistent mit dem Design-Modul-Export/-Import) und mit semantischen
+    // Layern statt der alten KOSMO-*-Layer (docs/INTEROP.md).
+    const dxf = planToDxf(doc, storeyId);
     const url = URL.createObjectURL(new Blob([dxf], { type: 'application/dxf' }));
     const a = document.createElement('a');
     a.href = url;

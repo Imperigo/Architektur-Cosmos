@@ -1,5 +1,6 @@
 import type { KosmoDoc } from '../model/doc';
 import { derivePlan, type PlanGraphic } from '../derive/plan';
+import { deriveDimensions, type DimensionSet } from '../derive/dimensions';
 
 /**
  * DXF-Export des Grundrisses (V1.6 Block G — Interop AutoCAD/Rhino/
@@ -7,6 +8,14 @@ import { derivePlan, type PlanGraphic } from '../derive/plan';
  * abgeleitet (`derivePlan` → Regionen/Linien/Bögen/Achsen/Texte in Welt-mm);
  * hier wird genau diese Geometrie in ein DXF geschrieben — dieselbe Quelle
  * wie der SVG/PDF-Plan, nur im CAD-Austauschformat.
+ *
+ * v0.7.1 Stream 3A (DXF-Konsolidierung): dies ist jetzt der EINZIGE
+ * DXF-Exporter des Kernels. Die früher zweite, `@tarikjabiri/dxf`-basierte
+ * Ableitung (`derive/dxf.ts`, `exportDxf`) ist entfernt — sie war der
+ * einzige Codepfad, der echte Bemassungsketten (`deriveDimensions`)
+ * schrieb, aber weder y-spiegelte noch einen Rückweg (Import) hatte. Diese
+ * Bemassungs-Emission lebt jetzt HIER, auf `LAYER_BEMASSUNG`, MIT
+ * y-Spiegelung wie alle anderen Elemente (siehe `planGraphicToDxf` unten).
  *
  * Zielformat: **AutoCAD R12 (AC1009)** als ASCII-DXF — der kleinste
  * gemeinsame Nenner, den AutoCAD, Rhino, Vectorworks, BricsCAD und QCAD
@@ -90,14 +99,22 @@ class DxfSchreiber {
 /**
  * Serialisiert den Grundriss eines Geschosses als DXF-Text (R2000/AC1015).
  * Reine Funktion — kein DOM, keine Datei; der Aufrufer legt den Blob an.
+ * Bemassungsketten kommen aus `deriveDimensions` (dieselbe Ableitung wie
+ * die SVG-Bemassung) und fliessen additiv in `planGraphicToDxf`.
  */
 export function planToDxf(doc: KosmoDoc, storeyId: string): string {
   const plan = derivePlan(doc, storeyId);
-  return planGraphicToDxf(plan);
+  const dims = deriveDimensions(doc, storeyId);
+  return planGraphicToDxf(plan, dims);
 }
 
-/** Kern: aus einem bereits abgeleiteten PlanGraphic (einzeln testbar). */
-export function planGraphicToDxf(plan: PlanGraphic): string {
+/**
+ * Kern: aus einem bereits abgeleiteten PlanGraphic (+ optionalen
+ * Bemassungsketten) einzeln testbar. `dims` fehlt bewusst optional — ein
+ * roher PlanGraphic-Literal (wie in den Struktur-Tests) bleibt ohne
+ * Bemassung gültig.
+ */
+export function planGraphicToDxf(plan: PlanGraphic, dims?: DimensionSet): string {
   const y = (v: number) => -v; // CAD y-nach-oben, Norden oben (wie SVG)
 
   // Alle vorkommenden Layer einsammeln (die Tabelle muss sie deklarieren).
@@ -111,6 +128,7 @@ export function planGraphicToDxf(plan: PlanGraphic): string {
   for (const a of plan.arcs) merke(layerFuer(a.classes));
   for (const t of plan.texte) merke(LAYER_TEXT);
   if (plan.axes.length) merke(LAYER_ACHSEN);
+  if (dims && dims.chains.length) merke(LAYER_BEMASSUNG);
 
   const s = new DxfSchreiber();
 
@@ -227,6 +245,78 @@ export function planGraphicToDxf(plan: PlanGraphic): string {
     s.zeile(30, 0);
     s.zeile(40, 250);
     s.zeile(1, dxfText(t.text));
+  }
+
+  // Bemassungsketten (v0.7.1 3A, portiert aus der ehemaligen zweiten
+  // DXF-Ableitung `derive/dxf.ts`) → Masslinie (LINE) + Ticks (LINE) +
+  // zentrierter Text (TEXT) je Kette, alles auf LAYER_BEMASSUNG, MIT
+  // y-Spiegelung wie jedes andere Element hier (über `linie()`/`y()`).
+  // Stabile Sortierung (Achse, Lage, erster Tick) — `deriveDimensions`
+  // liefert bereits deterministische Ketten/Ticks, die Sortierung ist
+  // zusätzliche Absicherung für den Determinismus-Test.
+  if (dims && dims.chains.length) {
+    const textH = 260; // Texthöhe mm (massstabsneutral, wie der Q30-Vorgänger)
+    const tick = 80; // Tick-Strich Halblänge mm
+    const ketten = [...dims.chains].sort((a, b) => {
+      if (a.axis !== b.axis) return a.axis.localeCompare(b.axis);
+      if (a.offset !== b.offset) return a.offset - b.offset;
+      return a.ticks[0]! - b.ticks[0]!;
+    });
+    for (const c of ketten) {
+      const ticks = [...c.ticks].sort((p, q) => p - q);
+      const t0 = ticks[0]!;
+      const t1 = ticks[ticks.length - 1]!;
+      const massText = (a: number, b: number) => {
+        // ASCII-sicheres Pendant zu `dimensionLabel` (SIA-Hochzahl für den
+        // mm-Rest): dxfText() würde die Unicode-Hochziffer sonst stillos
+        // tilgen (ASCII-Purge) und damit den mm-Rest verlieren — ein
+        // Dezimalpunkt bleibt lesbar UND verlustfrei.
+        const mm = Math.round(Math.abs(b - a));
+        const cm = Math.floor(mm / 10);
+        const rest = mm % 10;
+        return rest === 0 ? String(cm) : `${cm}.${rest}`;
+      };
+      if (c.axis === 'x') {
+        linie(t0, c.offset, t1, c.offset, LAYER_BEMASSUNG.name);
+        for (const t of ticks) {
+          linie(t - tick, c.offset - tick, t + tick, c.offset + tick, LAYER_BEMASSUNG.name);
+        }
+        for (let i = 0; i < ticks.length - 1; i++) {
+          const mid = (ticks[i]! + ticks[i + 1]!) / 2;
+          s.zeile(0, 'TEXT');
+          s.zeile(8, LAYER_BEMASSUNG.name);
+          s.zeile(10, n(mid));
+          s.zeile(20, n(y(c.offset + 120)));
+          s.zeile(30, 0);
+          s.zeile(40, textH);
+          s.zeile(1, dxfText(massText(ticks[i]!, ticks[i + 1]!)));
+          s.zeile(72, 1); // horizontal zentriert
+          s.zeile(11, n(mid));
+          s.zeile(21, n(y(c.offset + 120)));
+          s.zeile(31, 0);
+        }
+      } else {
+        linie(c.offset, t0, c.offset, t1, LAYER_BEMASSUNG.name);
+        for (const t of ticks) {
+          linie(c.offset - tick, t - tick, c.offset + tick, t + tick, LAYER_BEMASSUNG.name);
+        }
+        for (let i = 0; i < ticks.length - 1; i++) {
+          const mid = (ticks[i]! + ticks[i + 1]!) / 2;
+          s.zeile(0, 'TEXT');
+          s.zeile(8, LAYER_BEMASSUNG.name);
+          s.zeile(10, n(c.offset - 120));
+          s.zeile(20, n(y(mid)));
+          s.zeile(30, 0);
+          s.zeile(40, textH);
+          s.zeile(50, 90); // senkrecht (CCW), wie der Q30-Vorgänger
+          s.zeile(1, dxfText(massText(ticks[i]!, ticks[i + 1]!)));
+          s.zeile(72, 1); // horizontal zentriert
+          s.zeile(11, n(c.offset - 120));
+          s.zeile(21, n(y(mid)));
+          s.zeile(31, 0);
+        }
+      }
+    }
   }
 
   s.zeile(0, 'ENDSEC');

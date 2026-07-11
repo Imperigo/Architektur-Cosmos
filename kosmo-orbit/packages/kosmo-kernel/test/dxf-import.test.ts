@@ -62,13 +62,19 @@ describe('Roundtrip planGraphicToDxf → parseDxf (Abnahmekern C-E1)', () => {
     }
   });
 
-  it('Linien identisch, y-Spiegelung exakt invertiert', () => {
-    expect(zurueck.lines.length).toBe(plan.lines.length);
-    for (const l of plan.lines) {
+  it('Linien identisch, y-Spiegelung exakt invertiert — ausser der Bemassungslinie ' +
+    '(v0.7.1 3A: LAYER_BEMASSUNG wird beim Import bewusst NICHT zu Geometrie)', () => {
+    const nichtBemassung = plan.lines.filter((l) => !l.classes.includes('bemassung'));
+    expect(zurueck.lines.length).toBe(nichtBemassung.length);
+    for (const l of nichtBemassung) {
       expect(zurueck.lines.some((z) => segmentNah(z, l)), `Linie ${JSON.stringify(l.a)}`).toBe(true);
     }
-    // Layer-Zuordnung des Exports kommt mit.
-    expect(zurueck.lines.map((l) => l.layer).sort()).toEqual(['BEMASSUNG', 'FENSTER']);
+    // Die 'bemassung'-Linie landet beim Export zwar auf BEMASSUNG (Layer-
+    // Routing bleibt generisch über die Klasse), kommt aber beim Import
+    // nicht zurück — eine Masskette ist eine Ableitung, kein Entity.
+    expect(zurueck.lines.some((l) => l.layer === 'BEMASSUNG')).toBe(false);
+    // Layer-Zuordnung des Exports kommt mit (nur noch das, was übrig bleibt).
+    expect(zurueck.lines.map((l) => l.layer).sort()).toEqual(['FENSTER']);
   });
 
   it('Bogen: Zentrum/Radius exakt, Winkel bis auf 2π-Normierung identisch', () => {
@@ -115,8 +121,10 @@ describe('Roundtrip am echten Testhaus (planToDxf → parseDxf)', () => {
     const zurueck = parseDxf(dxf);
 
     // Struktur: Poché-Ringe als Regionen, Symbole als Linien — nichts verloren.
+    // Bemassungs-LINEs (v0.7.1 3A) zählen bewusst NICHT mit — sie werden
+    // beim Import gefiltert (Bemassung ist Ableitung, kein Entity).
     const anzahlPolylines = (dxf.match(/0\nPOLYLINE\n/g) ?? []).length;
-    const anzahlLines = (dxf.match(/0\nLINE\n/g) ?? []).length;
+    const anzahlLines = (dxf.match(/0\nLINE\n8\n(?!BEMASSUNG\n)/g) ?? []).length;
     expect(zurueck.regions.length).toBe(anzahlPolylines);
     expect(zurueck.lines.length).toBe(anzahlLines);
     expect(zurueck.regions.length).toBeGreaterThan(0);
