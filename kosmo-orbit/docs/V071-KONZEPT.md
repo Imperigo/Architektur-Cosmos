@@ -77,19 +77,23 @@ dem Vertrags-Audit.
   Nachbar-Zonen desselben Geschosses (Re-Import idempotent). Golden
   `schwarzplan-nachbarn.svg` hinter Daten-Guard; Alt-Goldens
   byte-identisch.
-- **2B (App):** zweiter identify-Aufruf neben dem Parzellen-identify —
-  Gebäude-Footprint-Layer; **ERSTER SCHRITT: Layer live per curl
-  verifizieren** (Kandidaten in dieser Reihenfolge:
-  `ch.swisstopo.vec25-gebaeude`? `ch.bfs.gebaeude_wohnungs_register`
-  liefert PUNKTE, keine Polygone — dann ist der ehrliche Fallback:
-  identify auf `ch.swisstopo.swissbuildings3d_2_0` bzw. der
-  amtliche Footprint-Layer, der Polygone in LV95 zurückgibt; liefert
-  KEIN Layer Polygone → Fallback-Pfad: nur manuell erfasste
-  Nachbar-Zonen via Zeichnen, Import-Knopf entfällt ehrlich, Konzept +
-  ROADMAP dokumentieren das); Import-Knopf «Nachbarn übernehmen» im
-  Standort-Panel (nur nach Parzellen-Import aktiv, Radius ~60 m um das
-  Parzellen-Zentrum, eigene Parzellen-Fläche wird NICHT als Nachbar
-  importiert); e2e/nachbarn-import.spec.ts mit gemocktem fetch.
+- **2B (App):** zweiter identify-Aufruf neben dem Parzellen-identify.
+  **Layer-Verdikt (Fable, live verifiziert 11.07. gegen
+  api3.geo.admin.ch):** `ch.swisstopo.vec25-gebaeude` ist der einzige
+  identify-fähige Layer, der Gebäude-POLYGONE (rings, LV95) liefert —
+  `ch.bfs.gebaeude_wohnungs_register` und das Adressverzeichnis liefern
+  nur Punkte, `swissbuildings3d_2_0`/`swisstlm3d-gebaeude` sind keine
+  GeoTables, `ch.swisstopo-vd.amtliche-vermessung` liefert Liegenschaften
+  (Parzellen), keine Gebäude. **Ehrlichkeits-Fussnote (UI + Doku):**
+  VECTOR25 hat Datenstand ~2008 — amtlich, aber nicht tagesaktuell;
+  neuere Gebäude können fehlen. Für die Situationsplan-Körnung
+  akzeptabel, im Import-Dialog offen benannt.
+  Import-Knopf «Nachbarn übernehmen» im Standort-Panel (nur nach
+  Parzellen-Import aktiv; identify mit Box-Geometrie ~120 m um das
+  Parzellen-Zentrum via `geometryType=esriGeometryEnvelope`, Features
+  dedupliziert per featureId; Polygone, die das eigene Parzellen-Zentrum
+  enthalten, werden NICHT importiert); e2e/nachbarn-import.spec.ts mit
+  gemocktem fetch.
 
 **E3 — DXF-Konsolidierung.** Bemassungs-Emission (Ketten aus
 `deriveDimensions`: Linie + Ticks + Label) in `dxf/export.ts`
