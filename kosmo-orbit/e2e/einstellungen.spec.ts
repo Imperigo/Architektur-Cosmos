@@ -72,3 +72,86 @@ test('Stations-Zahnrad in KosmoDesign öffnet dasselbe Panel gefiltert (Design-P
   await expect(page.locator('[data-testid="einstellungen-darstellung"]')).toBeVisible();
   await expect(page.locator('[data-testid="einstellungen-neuigkeiten"]')).toBeVisible();
 });
+
+/**
+ * v0.7.2 §5/§7/§8/§9 (W4-H, Kritik-Auflage «Einstellungs-Verdrahtung»): vier
+ * neue Schalter in der Sektion «Bewegung & Klang» — jeder schreibt exakt den
+ * localStorage-Key, den das jeweilige Modul bereits liest (`state/sounds.ts`,
+ * `state/cursor-zustand.ts`, `state/abspiel-ebene.ts`), keine neue Logik.
+ */
+test.describe('Einstellungen: «Bewegung & Klang» — vier neue Schalter (W4-H)', () => {
+  test('Sounds: Default aus, Schalter schreibt kosmo.sounds und wirkt sofort', async ({ page }) => {
+    await bootstrap(page);
+    await page.click('[data-testid="einstellungen-oeffnen"]');
+    const schalter = page.locator('[data-testid="einstellung-sounds"]');
+    await expect(schalter).not.toBeChecked(); // Owner-Entscheid: Default AUS
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.sounds'))).toBeNull();
+
+    await schalter.click();
+    await expect(schalter).toBeChecked();
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.sounds'))).toBe('1');
+
+    await schalter.click();
+    await expect(schalter).not.toBeChecked();
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.sounds'))).toBe('0');
+  });
+
+  test('Eigencursor: Default an (pointer:fine in Chromium), Schalter schreibt kosmo.eigencursor und wirkt sofort auf die Cursor-Ebene', async ({
+    page,
+  }) => {
+    await bootstrap(page);
+    // Test-Hook aktivieren (Muster e2e/cursor-ebene.spec.ts) — unter
+    // navigator.webdriver bleibt die Ebene sonst per Hartvertrag aus,
+    // unabhängig von der Einstellung selbst.
+    await page.evaluate(() => (window as unknown as { __kosmoCursor: { aktivieren: () => void } }).__kosmoCursor.aktivieren());
+    await expect(page.locator('[data-testid="cursor-ebene"]')).toBeAttached();
+
+    await page.click('[data-testid="einstellungen-oeffnen"]');
+    const schalter = page.locator('[data-testid="einstellung-eigencursor"]');
+    await expect(schalter).toBeChecked(); // Default AN bei pointer:fine
+
+    await schalter.click();
+    await expect(schalter).not.toBeChecked();
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.eigencursor'))).toBe('0');
+    // Wirkt SOFORT, ohne Reload — die Cursor-Ebene verschwindet komplett
+    // (kein gecachter Re-Read-Bug, s. `EIGENCURSOR_EINSTELLUNG_EVENT`).
+    await expect(page.locator('[data-testid="cursor-ebene"]')).toHaveCount(0);
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.dataset.eigencursor))
+      .toBe('aus');
+
+    // Zurückschalten stellt die Ebene ebenso sofort wieder her.
+    await schalter.click();
+    await expect(schalter).toBeChecked();
+    await expect(page.locator('[data-testid="cursor-ebene"]')).toBeAttached();
+  });
+
+  test('«Kosmo zeichnet sichtbar»: Default an, Schalter schreibt kosmo.abspielen', async ({ page }) => {
+    await bootstrap(page);
+    await page.click('[data-testid="einstellungen-oeffnen"]');
+    const schalter = page.locator('[data-testid="einstellung-abspielen"]');
+    await expect(schalter).toBeChecked(); // Default AN (Spec §7)
+
+    await schalter.click();
+    await expect(schalter).not.toBeChecked();
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.abspielen'))).toBe('0');
+
+    await schalter.click();
+    await expect(schalter).toBeChecked();
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.abspielen'))).toBe('1');
+  });
+
+  test('Kosmo-Charakter-Fenster: ehrlich «nur Desktop-App» — ausserhalb Tauri deaktiviert/ausgegraut', async ({
+    page,
+  }) => {
+    await bootstrap(page);
+    await page.click('[data-testid="einstellungen-oeffnen"]');
+    const schalter = page.locator('[data-testid="einstellung-charakter"]');
+    await expect(schalter).toBeVisible();
+    // Kein Tauri in dieser Browser-Umgebung (`istTauriDesktop()` prüft
+    // `__TAURI_INTERNALS__`, das hier nie gesetzt ist) — der Schalter bleibt
+    // ehrlich deaktiviert, nicht nur optisch grau.
+    await expect(schalter).toBeDisabled();
+    await expect(schalter).not.toBeChecked();
+  });
+});

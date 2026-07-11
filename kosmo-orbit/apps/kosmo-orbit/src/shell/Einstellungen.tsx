@@ -18,6 +18,10 @@ import {
 } from '../state/leistung';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { loadSettings } from './KosmoPanel';
+import { istTauriDesktop } from './cloud-login';
+import { sindSoundsAn, setSoundsAn } from '../state/sounds';
+import { eigencursorAktiv, setEigencursorEingestellt } from '../state/cursor-zustand';
+import { abspielenEingestellt, setAbspielenEingestellt } from '../state/abspiel-ebene';
 
 /**
  * Zentrales Einstellungs-Panel (Serie K / Batch A4, Owner-Befund K14, wörtlich:
@@ -91,6 +95,32 @@ export function Einstellungen({
   const [leistungZustimmung, setLeistungZustimmungState] = useState(() => istZustimmungErteilt());
   const [leistungErgebnis, setLeistungErgebnis] = useState(() => holeLetztesErgebnis());
   const [leistungOverride, setLeistungOverrideState] = useState<LeistungsOverride>(() => holeOverride());
+
+  // v0.7.2 §5/§7/§8/§9 (W4-H, Kritik-Auflage «Einstellungs-Verdrahtung»):
+  // vier neue Schalter — Sounds/Eigencursor/Abspielen sind reine
+  // localStorage-Spiegel (dieselben Lese-Funktionen wie die jeweiligen
+  // Module selbst, KEINE Zweitlogik); der Charakter-Schalter hat KEINEN
+  // persistierten Wert (er zeigt/versteckt das Tauri-Zweitfenster live).
+  const [soundsAn, setSoundsAnState] = useState(() => sindSoundsAn());
+  const [eigencursorAn, setEigencursorAnState] = useState(() => eigencursorAktiv());
+  const [abspielenAn, setAbspielenAnState] = useState(() => abspielenEingestellt());
+  const tauriDesktop = istTauriDesktop();
+  const [charakterSichtbar, setCharakterSichtbar] = useState(false);
+  const [charakterFehler, setCharakterFehler] = useState<string | null>(null);
+
+  async function aufCharakterUmschalten(): Promise<void> {
+    if (!tauriDesktop) return; // ausserhalb Tauri deaktiviert (s. Button-Render unten) — defensiv doppelt geprüft
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      const neuSichtbar = await invoke<boolean>('charakter_fenster_umschalten');
+      setCharakterSichtbar(neuSichtbar);
+      setCharakterFehler(null);
+    } catch (err) {
+      // Ehrlich statt stillschweigend: das Fenster/der Command kann fehlen
+      // (z.B. ein Build ohne Zweitfenster) — der Schalter bleibt unverändert.
+      setCharakterFehler(err instanceof Error ? err.message : String(err));
+    }
+  }
 
   // Escape schliesst das Panel (Muster wie ZentraleKachel-Info/Kurzbefehle).
   useEffect(() => {
@@ -234,6 +264,78 @@ export function Einstellungen({
               ))}
             </span>
           </div>
+        </section>
+        <Hairline />
+
+        {/* v0.7.2 W4-H (Kritik-Auflage «Einstellungs-Verdrahtung», Spec §5/§7/
+            §8/§9): vier neue Schalter — dieselben Lese-Funktionen wie die
+            jeweiligen Module selbst (keine Zweitlogik), Schreiben über die
+            zugehörigen Setter (s. Import-Kopf). */}
+        <section data-testid="einstellungen-bewegung-klang" className="orbit065-einstellungen-sektion">
+          <div className="orbit065-einstellungen-sektionstitel">Bewegung &amp; Klang</div>
+
+          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              type="checkbox"
+              data-testid="einstellung-sounds"
+              checked={soundsAn}
+              onChange={(e) => {
+                setSoundsAn(e.target.checked);
+                setSoundsAnState(e.target.checked);
+              }}
+            />
+            Dezente Klick-/Bestätigungstöne (Default aus)
+          </label>
+
+          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              type="checkbox"
+              data-testid="einstellung-eigencursor"
+              checked={eigencursorAn}
+              onChange={(e) => {
+                setEigencursorEingestellt(e.target.checked);
+                setEigencursorAnState(e.target.checked);
+              }}
+            />
+            Eigener Zeiger (Default an bei Maus/Trackpad, aus bei reinem Touch)
+          </label>
+
+          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              type="checkbox"
+              data-testid="einstellung-abspielen"
+              checked={abspielenAn}
+              onChange={(e) => {
+                setAbspielenEingestellt(e.target.checked);
+                setAbspielenAnState(e.target.checked);
+              }}
+            />
+            Kosmo zeichnet sichtbar, bevor eine Änderung übernommen wird (Default an)
+          </label>
+
+          <label
+            style={{
+              fontSize: 12.5,
+              color: tauriDesktop ? 'var(--k-ink-soft)' : 'var(--k-ink-faint)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              opacity: tauriDesktop ? 1 : 0.55,
+            }}
+            title={tauriDesktop ? undefined : 'Nur in der Desktop-App verfügbar — im Browser/PWA gibt es kein Zweitfenster.'}
+          >
+            <input
+              type="checkbox"
+              data-testid="einstellung-charakter"
+              checked={charakterSichtbar}
+              disabled={!tauriDesktop}
+              onChange={() => void aufCharakterUmschalten()}
+            />
+            Kosmo-Charakter-Fenster anzeigen (nur Desktop-App)
+          </label>
+          {charakterFehler && (
+            <div style={{ fontSize: 11, color: 'var(--k-danger)' }}>{charakterFehler}</div>
+          )}
         </section>
         <Hairline />
 

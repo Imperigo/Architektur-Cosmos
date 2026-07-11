@@ -790,6 +790,11 @@ export function NodeCanvas({
     <svg
       ref={svgRef}
       data-testid="node-canvas"
+      // v0.7.2 §8/W4-H (Cursor-Zonen, Kritik-Auflage — W3-F-Grenze): NUR das
+      // Attribut, kein Verhalten — `CursorEbene.tsx` versteckt sich hier
+      // komplett (eigenes Node-Interaktions-Feedback der Kanvas bleibt
+      // unverändert bestehen).
+      data-cursor-zone="eigen"
       style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none', background: 'var(--k-plan-paper)' }}
       viewBox={(() => {
         const w = flaeche.w / view.scale;

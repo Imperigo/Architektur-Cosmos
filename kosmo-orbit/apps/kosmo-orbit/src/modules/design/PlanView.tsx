@@ -616,6 +616,12 @@ export function PlanView({
         data-testid="planview"
         data-lod={lod}
         data-cursor={cursorStil}
+        // v0.7.2 §8/W4-H (Cursor-Zonen, Kritik-Auflage — W3-F-Grenze):
+        // NUR das Attribut, kein Verhalten. `CursorEbene.tsx` liest es über
+        // `closest('[data-cursor-zone]')` und morpht auf das Fadenkreuz
+        // (precision) — der eigene `cursorStil` (Zeile oben) bleibt
+        // unverändert bestehen (Spec §8, wörtlich «eigener cursorStil bleibt»).
+        data-cursor-zone="praezision"
         style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none', cursor: cursorStil }}
         onPointerDown={(e) => {
           // §5: JEDE neue Eingabe bricht einen laufenden Fling/Zoom-Anim sofort

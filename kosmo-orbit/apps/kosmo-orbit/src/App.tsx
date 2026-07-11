@@ -442,7 +442,13 @@ export function App() {
         {/* Fokus-Systematik (docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md): die Stufe
             sitzt am umschliessenden Element — opacity wirkt so auf die ganze
             Gruppe, ohne die eigenen Inline-Styles der Kinder zu überschreiben. */}
-        <span className={fokusKlasse(fokusStufe('sync'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+        {/* Kritik-2-Auflage (11.07.2026, Header-Kompaktierung): «SYNC AUS»/
+            «KOSMO ÖFFNEN» brachen bei engem Header zweizeilig um (`Badge`
+            selbst setzt kein `white-space` — s. `packages/kosmo-ui`, fremder
+            Dateibesitz, hier NICHT angefasst). `white-space` vererbt sich an
+            Text-Nachfahren; `nowrap` auf diesem Wrapper genügt, ohne die
+            gemeinsame `Badge`-Komponente zu verändern. */}
+        <span className={fokusKlasse(fokusStufe('sync'))} style={{ display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
           <button
             onClick={() => setSyncOpen(!syncOpen)}
             data-testid="sync-toggle"
@@ -492,7 +498,7 @@ export function App() {
           </KButton>
         </span>
         <Hairline vertical />
-        <span className={fokusKlasse(fokusStufe('kosmo'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+        <span className={fokusKlasse(fokusStufe('kosmo'))} style={{ display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
           <button
             onClick={() => setKosmoOpen(!kosmoOpen)}
             data-testid="kosmo-toggle"

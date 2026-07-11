@@ -44,13 +44,17 @@ import { masseingabeTaste, punktInRichtung, zeichenSnap, type Fluchtlinie } from
 import { istEingabefeld, KURZTASTEN, kurztasteFuer } from './kurztasten';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
 import type { PlanLod } from './planLod';
+// v0.7.2 §5/W4-H (Restfix): Punkt-Burst-Bibliothek (Stream W2-D,
+// `kosmo-feedback.css`) — bislang nirgends verdrahtet (Datei-Kopf dort:
+// «Anwendung in fremden Dateien übernimmt später Stream W4-H»). Hier NUR
+// die Werkzeug-Auswahl der Design-Werkzeugleiste (`tool-*`/`werkzeug-mesh`-
+// Klick) — aria/innerText/testids der Knöpfe bleiben exakt wie vorher, der
+// Burst ist ein rein dekorativer Overlay-Span (`aria-hidden`, keine
+// Textknoten, s. `PunktBurst` unten).
+import '../../shell/kosmo-feedback.css';
 import {
   IconAuswahl,
   IconDach,
-  IconDockDraw,
-  IconDockPrepare,
-  IconDockPublish,
-  IconDockVis,
   IconFaehigkeitBauablauf,
   IconFaehigkeitKv,
   IconFaehigkeitMaengel,
@@ -265,6 +269,30 @@ const WERKZEUG_KURZLABEL: Record<ToolId, string> = {
 /** Statusleiste: kurzes deutsches Label je Plan-LOD-Stufe (`planLod.ts`, B2). */
 const LOD_KURZLABEL: Record<PlanLod, string> = { voll: 'voll', mittel: 'mittel', fern: 'fern' };
 
+/**
+ * v0.7.2 §5/W4-H (Restfix — Punkt-Burst-Verdrahtung): rein dekorativer
+ * Overlay bei der Werkzeug-Auswahl (`.k-fb-punkt-burst`/`.k-fb-punkt-burst-p`,
+ * `kosmo-feedback.css`, Stream W2-D). `aria-hidden`, KEINE Textknoten — der
+ * `innerText()`/`toHaveText()`-Vertrag der Knöpfe (`e2e/oberflaeche-minimal.
+ * spec.ts`) bleibt unberührt, egal ob dieser Overlay gerade eingeblendet ist.
+ * Entfernt sich selbst nach der Bibliotheks-Dauer (600ms + 8×25ms Stagger,
+ * s. Datei-Kopf `kosmo-feedback.css`) über einen festen Timer — 8 separate
+ * `onAnimationEnd`-Events pro Punkt sauber einzusammeln wäre hier mehr
+ * Komplexität als der Effekt rechtfertigt (dieselbe Abwägung wie die feste
+ * Aufstarten-Dauer in `KosmoCharakterFenster.tsx`).
+ */
+const PUNKT_BURST_DAUER_MS = 800;
+
+function PunktBurst() {
+  return (
+    <span className="k-fb-punkt-burst" aria-hidden="true">
+      {Array.from({ length: 8 }, (_, i) => (
+        <span key={i} className="k-fb-punkt-burst-p" />
+      ))}
+    </span>
+  );
+}
+
 export interface DesignWorkspaceProps {
   /** Serie K / A4: öffnet das zentrale Einstellungs-Panel, vorgefiltert auf
    *  KosmoDesign. Optional, weil `App.tsx` der einzige Aufrufer ist, der
@@ -300,6 +328,21 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   const setMeshEditId = useProject((s) => s.setMeshEditId);
   // A4: nach IFC-Import erkannte Bauteile als Übernahme-Angebot (gated)
   const [bestand, setBestand] = useState<{ waende: ErkannteWand[]; decken: ErkannteDecke[] } | null>(null);
+
+  // v0.7.2 §5/W4-H (Restfix): Punkt-Burst bei der Werkzeug-Auswahl —
+  // `burstKey` erzwingt bei wiederholtem Klick auf DASSELBE Werkzeug einen
+  // Remount (sonst würde React die laufende CSS-Animation nicht neu
+  // starten, weil sich weder `id` noch Elementtyp ändern).
+  const [punktBurst, setPunktBurst] = useState<{ id: string; key: number } | null>(null);
+  const punktBurstTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const zeigePunktBurst = (id: string) => {
+    if (punktBurstTimerRef.current) clearTimeout(punktBurstTimerRef.current);
+    setPunktBurst((vorher) => ({ id, key: (vorher?.id === id ? vorher.key : 0) + 1 }));
+    punktBurstTimerRef.current = setTimeout(() => setPunktBurst(null), PUNKT_BURST_DAUER_MS);
+  };
+  useEffect(() => () => {
+    if (punktBurstTimerRef.current) clearTimeout(punktBurstTimerRef.current);
+  }, []);
 
   // Achsen-Magnet: Kandidaten des aktiven Geschosses, revision-abhängig
   const magnet = useMemo(
@@ -1668,9 +1711,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   key={id}
                   size="sm"
                   tone={tool === id ? 'accent' : 'quiet'}
+                  className="k-fb-punkt-burst-anker"
                   onClick={() => {
                     setTool(id);
                     nutzungMelden(`zeichnen:${id}`);
+                    zeigePunktBurst(id);
                   }}
                   data-testid={`tool-${id}`}
                   title={titel}
@@ -1688,6 +1733,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   ) : (
                     label
                   )}
+                  {punktBurst?.id === id && <PunktBurst key={punktBurst.key} />}
                 </KButton>
               );
             })}

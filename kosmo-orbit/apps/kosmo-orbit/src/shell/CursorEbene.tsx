@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { eigencursorAktiv, useCursorZustand, type CursorZustand } from '../state/cursor-zustand';
+import { EIGENCURSOR_EINSTELLUNG_EVENT, eigencursorAktiv, useCursorZustand, type CursorZustand } from '../state/cursor-zustand';
 import { installiereKosmoZustandSender } from './kosmo-zustand-bruecke';
 import { WerkzeugGlyphe, type WerkzeugGlyphenArt } from './werkzeug-glyphen';
 import './cursor-ebene.css';
@@ -249,6 +249,16 @@ export function CursorEbene() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // v0.7.2 W4-H (Einstellungs-Verdrahtung): `eigencursorAktiv()` liest
+  // `localStorage` nur beim Aufruf — ein Re-Render-Trigger, wenn
+  // `Einstellungen.tsx` (fremder Komponentenbaum) den Wert ändert (s.
+  // Kopfkommentar `EIGENCURSOR_EINSTELLUNG_EVENT` in `state/cursor-zustand.ts`).
+  const [, erzwingeEigencursorNeuLesen] = useState(0);
+  useEffect(() => {
+    const aufAenderung = () => erzwingeEigencursorNeuLesen((n) => n + 1);
+    window.addEventListener(EIGENCURSOR_EINSTELLUNG_EVENT, aufAenderung);
+    return () => window.removeEventListener(EIGENCURSOR_EINSTELLUNG_EVENT, aufAenderung);
+  }, []);
   const eigencursorEinstellungAn = eigencursorAktiv();
   const webdriverAktiv = typeof navigator !== 'undefined' && navigator.webdriver === true;
   const aktiv = !erzwungenAus && eigencursorEinstellungAn && (erzwungenAn || !webdriverAktiv);

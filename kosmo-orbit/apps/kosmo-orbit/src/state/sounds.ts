@@ -64,6 +64,18 @@ export function sindSoundsAn(): boolean {
   }
 }
 
+/** Schreibt `kosmo.sounds` (Einstellungen.tsx, Schalter `einstellung-
+ *  sounds») — wirkt sofort, ohne Zutun: `spiele()` liest `sindSoundsAn()`
+ *  bei JEDEM Sound-Wunsch frisch (kein gecachter Zustand hier), ein Re-Read-
+ *  Mechanismus wie bei `state/cursor-zustand.ts` ist darum nicht nötig. */
+export function setSoundsAn(an: boolean): void {
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem('kosmo.sounds', an ? '1' : '0');
+  } catch {
+    /* localStorage kann in seltenen Umgebungen werfen — Einstellung ist optional */
+  }
+}
+
 function spiele(env: Envelope): void {
   if (!sindSoundsAn()) return;
   const ctx = holeContext();

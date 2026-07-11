@@ -573,6 +573,23 @@
   }
 }
 
+/* ── Kritik-2-Auflage (11.07.2026, Header-Kompaktierung) ──────────────────
+   Unter ~1500px Viewport kollabiert die PhasenLeiste auf reine Ziffer-Pillen
+   «1»…«5» (volles Label bleibt als `title`, Spec §4/§12 wörtlich). NUR
+   visuell (`display:none`) — der Textknoten bleibt im DOM, `textContent`
+   (worauf `toContainText`/`toHaveText` bauen) ignoriert CSS-Sichtbarkeit,
+   der Bestands-Vertrag `phasen-leiste.spec.ts` bleibt darum unverändert
+   grün, auch beim Standard-E2E-Viewport (1400px, `playwright.config.ts`),
+   der unter dieser Schwelle liegt. */
+@media (max-width: 1500px) {
+  .orbit065-phasen-rest {
+    display: none;
+  }
+  .orbit065-phasen-segment {
+    padding: 5px 9px;
+  }
+}
+
 /* ── EntwurfsDock (v0.7.2 W2-C, Paket 03/05 — Spec §4 «Wirkung») ─────────
    Layout 1:1 aus den vorherigen Inline-Styles übernommen (nur die
    Style-QUELLE wandert in eine Klasse, damit die Glas-Optik unten per

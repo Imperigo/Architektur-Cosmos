@@ -21,16 +21,22 @@ import './orbit-065.css';
 
 interface Segment {
   gruppe: Sia112Gruppe;
-  label: string;
+  /** Ziffer allein — bleibt auch im kollabierten Zustand sichtbar (s. `.orbit065-phasen-rest`-Media-Query, orbit-065.css). */
+  nummer: string;
+  /** Rest des Labels MIT führendem Leerzeichen — zusammen mit `nummer` ergibt
+   *  sich exakt dasselbe Textbild wie vorher («1 STRATEGIE»), nur auf zwei
+   *  Spans verteilt (kein Verhaltens-/Text-Vertragsbruch: `textContent`
+   *  ignoriert `display:none`, s. Kopfkommentar unten). */
+  rest: string;
   repraesentativePhase: SiaPhase;
 }
 
 const SEGMENTE: readonly Segment[] = [
-  { gruppe: 1, label: '1 STRATEGIE', repraesentativePhase: 'strategie' },
-  { gruppe: 2, label: '2 VORSTUDIE', repraesentativePhase: 'wettbewerb' },
-  { gruppe: 3, label: '3 PROJEKTIERUNG', repraesentativePhase: 'bauprojekt' },
-  { gruppe: 4, label: '4 AUSSCHREIBUNG', repraesentativePhase: 'ausschreibung' },
-  { gruppe: 5, label: '5 REALISIERUNG', repraesentativePhase: 'ausfuehrung' },
+  { gruppe: 1, nummer: '1', rest: ' STRATEGIE', repraesentativePhase: 'strategie' },
+  { gruppe: 2, nummer: '2', rest: ' VORSTUDIE', repraesentativePhase: 'wettbewerb' },
+  { gruppe: 3, nummer: '3', rest: ' PROJEKTIERUNG', repraesentativePhase: 'bauprojekt' },
+  { gruppe: 4, nummer: '4', rest: ' AUSSCHREIBUNG', repraesentativePhase: 'ausschreibung' },
+  { gruppe: 5, nummer: '5', rest: ' REALISIERUNG', repraesentativePhase: 'ausfuehrung' },
 ];
 
 export function PhasenLeiste() {
@@ -59,7 +65,16 @@ export function PhasenLeiste() {
             onClick={() => runCommand('design.siaPhaseSetzen', { siaPhase: segment.repraesentativePhase })}
           >
             {aktiv && <span className="orbit065-phasen-signal" aria-hidden />}
-            {segment.label}
+            {/* Kritik-2-Auflage (11.07.2026, Header-Kompaktierung): unter
+                ~1500px Viewport blendet `orbit-065.css` `.orbit065-phasen-
+                rest` per Media-Query aus — übrig bleibt die Ziffer-Pille
+                («1»…«5»), das volle Label bleibt als `title` (oben) erreichbar.
+                `display:none` wirkt NUR visuell: `textContent` (worauf
+                Playwrights `toContainText`/`toHaveText` bauen) ignoriert
+                CSS-Sichtbarkeit — der Bestands-Vertrag `phasen-leiste.spec.ts`
+                (volles Label im Textinhalt) bleibt darum unverändert wahr. */}
+            <span className="orbit065-phasen-nummer">{segment.nummer}</span>
+            <span className="orbit065-phasen-rest">{segment.rest}</span>
           </button>
         );
       })}

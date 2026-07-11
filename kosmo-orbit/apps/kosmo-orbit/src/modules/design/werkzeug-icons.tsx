@@ -368,66 +368,11 @@ export function IconFaehigkeitSubmission() {
 }
 
 /**
- * A7 (EntwurfsDock, Grundicons anderer Stationen): vier kleine Stations-
- * Icons unter einem Trenner — Draw/Vis/Publish/Prepare. Ehrlich Navigation
- * (Stationswechsel), keine Einbettung — Tooltip in `EntwurfsDock.tsx` sagt
- * das offen («öffnet KosmoVis» etc.).
+ * v0.7.2 W4-H (Restfix, Bauprotokoll Tag 1 Befund c): die vier Stations-
+ * Icons Draw/Vis/Publish/Prepare («A7, EntwurfsDock-Grundicons») standen
+ * hier bis W1-B (Paket 02) — seither rendert `EntwurfsDock.tsx` seine
+ * Stations-Verknüpfungen selbst über `STATION_GLYPHE`/`WerkzeugGlyphe`
+ * (`shell/werkzeug-glyphen.tsx`), der einzige Aufrufer (`DesignWorkspace.tsx`)
+ * importierte sie nur noch ungenutzt. Tote Exporte entfernt statt weiter
+ * mitgeschleppt — kein Ersatz nötig, es gibt keinen zweiten Verwender mehr.
  */
-
-/** Draw — Mengen-/Ausmass-Zeilen (Modellbaum, Aufriss auf Papier). */
-export function IconDockDraw() {
-  return (
-    <svg {...basis}>
-      <path
-        d="M2.6 3.4 H13.4 M2.6 6.6 H13.4 M2.6 9.8 H10.4 M2.6 13 H8.6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-/** Vis — Auge (Renderings/Varianten). */
-export function IconDockVis() {
-  return (
-    <svg {...basis}>
-      <path
-        d="M1.6 8 C3.4 4.8 6 3.6 8 3.6 C10 3.6 12.6 4.8 14.4 8 C12.6 11.2 10 12.4 8 12.4 C6 12.4 3.4 11.2 1.6 8 Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <circle cx="8" cy="8" r="2" fill="currentColor" />
-    </svg>
-  );
-}
-
-/** Publish — bedrucktes Blatt (Plansätze/Layouts). */
-export function IconDockPublish() {
-  return (
-    <svg {...basis}>
-      <rect x="3.4" y="1.8" width="9.2" height="12.4" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M5.2 4.6 H10.8 M5.2 7 H10.8 M5.2 9.4 H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M5.2 11.8 H8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/** Prepare — Eingangs-Tray mit Pfeil (Grundlagen/Ingestion). */
-export function IconDockPrepare() {
-  return (
-    <svg {...basis}>
-      <path
-        d="M2.4 9.6 H5.4 L6.6 11.4 H9.4 L10.6 9.6 H13.6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <path d="M2.4 9.6 L3 3.6 H13 L13.6 9.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-      <path d="M8 4.4 V8.4 M6.2 6.6 L8 8.4 L9.8 6.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}

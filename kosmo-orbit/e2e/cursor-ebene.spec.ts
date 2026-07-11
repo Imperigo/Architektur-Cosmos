@@ -111,6 +111,48 @@ test.describe('reduced-motion: Morph/Rotor strukturell statisch (Spec §0/§8)',
 });
 
 /**
+ * v0.7.2 §8/W4-H (Cursor-Zonen-Verdrahtung, Kritik-Auflage — W3-F-Grenze):
+ * `data-cursor-zone="praezision"|"eigen"` wurden erst mit W4-H tatsächlich
+ * auf PlanView/SketchOverlay/NodeCanvas gesetzt (vorher griff nur die
+ * defensive `getComputedStyle`-Heuristik, s. `CursorEbene.tsx` Kopf-
+ * kommentar). Diese Suite prüft die ECHTEN Zonen-Attribute + ihre Wirkung.
+ */
+test.describe('Cursor-Zonen (Spec §8, W4-H: data-cursor-zone auf PlanView/NodeCanvas)', () => {
+  test('praezision-Zone (PlanView) trägt das Attribut und morpht auf das Fadenkreuz', async ({ page }) => {
+    await geladen(page);
+    await page.evaluate(() => (window as unknown as { __kosmoCursor: { aktivieren: () => void } }).__kosmoCursor.aktivieren());
+    await page.click('[data-testid="module-design"]');
+    await page.click('[data-testid="view-2d"]');
+
+    const plan = page.locator('[data-testid="planview"]');
+    await expect(plan).toHaveAttribute('data-cursor-zone', 'praezision');
+
+    const box = await plan.boundingBox();
+    if (!box) throw new Error('PlanView hat keine BoundingBox');
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    // Fadenkreuz-Morph (Spec §8: "precision Fadenkreuz") — eigener SVG-Klassenname.
+    await expect(page.locator('.cursor-ebene-precision')).toBeAttached();
+  });
+
+  test('eigen-Zone (NodeCanvas, KosmoVis) versteckt die Cursor-Ebene komplett (Layer aus)', async ({ page }) => {
+    await geladen(page);
+    await page.evaluate(() => (window as unknown as { __kosmoCursor: { aktivieren: () => void } }).__kosmoCursor.aktivieren());
+    await page.click('[data-testid="module-vis"]');
+    await page.click('[data-testid="graph-neu"]');
+
+    const canvas = page.locator('[data-testid="node-canvas"]');
+    await expect(canvas).toBeVisible();
+    await expect(canvas).toHaveAttribute('data-cursor-zone', 'eigen');
+
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error('NodeCanvas hat keine BoundingBox');
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    const wrapper = page.locator('[data-testid="cursor-ebene"]');
+    await expect(wrapper).toHaveClass(/cursor-ebene--versteckt/);
+  });
+});
+
+/**
  * pointer:fine-Gate (Spec §8: "Default AN nur bei pointer:fine"): Playwright
  * emuliert in dieser Chromium-Version **immer** `pointer:fine` — es gibt
  * keinen `page.emulateMedia`-Hebel für `pointer`/`hover` (nur

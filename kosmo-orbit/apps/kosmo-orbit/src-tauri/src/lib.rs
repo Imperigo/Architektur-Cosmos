@@ -177,6 +177,29 @@ fn zeige_hauptfenster(app: &tauri::AppHandle<tauri::Wry>) {
     }
 }
 
+/// v0.7.2 §9/W4-H (Einstellungs-Verdrahtung, Schalter `einstellung-charakter`
+/// in `Einstellungen.tsx`): schaltet das Charakter-Zweitfenster sichtbar/
+/// unsichtbar — das Fenster startet `visible:false` (`tauri.conf.json`) und
+/// wurde bislang von NICHTS im Produkt je gezeigt (ehrlicher Befund, s.
+/// Abschlussbericht). Bewusst KEIN `set_focus()`: das Fenster bleibt
+/// `alwaysOnTop`/`skipTaskbar` — ein unaufdringlicher Begleiter, kein
+/// Fokus-Dieb. Liefert den NEUEN Sichtbarkeitsstand zurück, damit die
+/// Einstellungen den Schalter korrekt spiegeln, auch wenn mehrere Quellen
+/// (Tray/Einstellungen) gleichzeitig schalten könnten.
+#[tauri::command]
+fn charakter_fenster_umschalten(app: tauri::AppHandle<tauri::Wry>) -> Result<bool, String> {
+    let fenster = app
+        .get_webview_window("kosmo-charakter")
+        .ok_or_else(|| "Charakter-Fenster nicht gefunden.".to_string())?;
+    let sichtbar = fenster.is_visible().map_err(|e| e.to_string())?;
+    if sichtbar {
+        fenster.hide().map_err(|e| e.to_string())?;
+    } else {
+        fenster.show().map_err(|e| e.to_string())?;
+    }
+    Ok(!sichtbar)
+}
+
 /// Baut den System-Tray (Spec §9: TrayIconBuilder, Menü Öffnen/Beenden,
 /// Klick zeigt Hauptfenster). Nutzt bewusst dasselbe Icon wie die Fenster
 /// (`app.default_window_icon()`, aus `tauri.conf.json`s `bundle.icon`
@@ -220,7 +243,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
-        .invoke_handler(tauri::generate_handler![claude_login, werkzeug_holen])
+        .invoke_handler(tauri::generate_handler![
+            claude_login,
+            werkzeug_holen,
+            charakter_fenster_umschalten
+        ])
         .setup(|app| {
             positioniere_charakter_fenster_unten_rechts(app);
             baue_tray(app)?;

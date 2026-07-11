@@ -57,6 +57,20 @@ export function abspielenEingestellt(): boolean {
   }
 }
 
+/** Schreibt `kosmo.abspielen` (Einstellungen.tsx, Schalter `einstellung-
+ *  abspielen») — wirkt sofort: `abspielenAktiv()` wird erst beim NÄCHSTEN
+ *  «Anwenden» gelesen (`vorspielFuer()`, kein gecachter Zustand), ein
+ *  Re-Read-Mechanismus wie bei `state/cursor-zustand.ts` ist darum nicht
+ *  nötig. Schreibt bewusst `'1'`/`'0'`, nie `'erzwingen'` (der Test-Hook aus
+ *  dem Datei-Kopf bleibt exklusiv `e2e/kosmo-zeichnet.spec.ts` vorbehalten). */
+export function setAbspielenEingestellt(an: boolean): void {
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem('kosmo.abspielen', an ? '1' : '0');
+  } catch {
+    /* localStorage kann in seltenen Umgebungen werfen — Einstellung ist optional */
+  }
+}
+
 /**
  * Alle Abbruch-Pfade aus dem Datei-Kopf in EINER Funktion. Reihenfolge ist
  * Vertrag: Einstellung aus → reduced-motion (Veto über alles, auch über

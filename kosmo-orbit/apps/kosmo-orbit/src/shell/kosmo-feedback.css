@@ -7,10 +7,22 @@
  * §5-Klassen unten sind allgemein nutzbar, aber NUR in Stream W2-D-eigenen
  * Dateien tatsächlich verdrahtet (`KosmoOrb.tsx`) — Anwendung in fremden
  * Dateien (z.B. die Design-Werkzeugleiste, ein Erfolgs-Pop auf einem
- * bestehenden Knopf) übernimmt später Stream W4-H. Ehrlich dokumentiert:
- * `.k-fb-chip-serie`, `.k-fb-punkt-burst` und `.k-fb-orbit-loader` sind in
- * DIESEM Batch nirgends im Produkt verdrahtet (kein eigener Ort im
- * W2-D-Dateibesitz dafür) — sie stehen fertig bereit.
+ * bestehenden Knopf) übernahm W4-H (Restfix, v0.7.2 Finale).
+ *
+ * **Stand W4-H:** `.k-fb-punkt-burst` ist verdrahtet — Werkzeug-Auswahl der
+ * Design-Werkzeugleiste (`tool-*`-Klick, `DesignWorkspace.tsx`, Anker-Klasse
+ * `.k-fb-punkt-burst-anker` unten). `.k-fb-chip-serie` und `.k-fb-orbit-
+ * loader` bleiben BEWUSST UNVERDRAHTET (0.7.3-Kandidat): für «+1 · SERIE n»
+ * bräuchte es einen ehrlichen, ganzzahligen Serien-/Streak-Zähler — der
+ * bestehende Adaption-Kern (`nutzungMelden`/`nutzungsProfil`,
+ * `state/oberflaeche-adaption-kern.ts`) führt nur einen mit 7-Tage-
+ * Halbwertszeit VERFALLENDEN Float-Zähler (Rang-/Adaptions-Gewicht, keine
+ * Klick-Serie) — den ungefragt als «SERIE n» zu beschriften wäre selbst
+ * die Art Politur-vor-Ehrlichkeit, die dieser Auftrag vermeiden soll. Für
+ * `.k-fb-orbit-loader` gibt es keinen echten, dieser Restfix-Stream
+ * eigenen Ladezustand ohne fremden Dateibesitz zu verlassen (Vis-/Dev-
+ * Renderläufe gehören anderen Modulen). Beide Klassen bleiben fertig
+ * bereitstehend für 0.7.3.
  *
  * ── Klassen-Übersicht (§5, «ALLE deine Keyframes hier») ──────────────────
  *   .k-fb-pop            — kPop: Erfolgs-Pop, scale 1→1.22→.94→1, 450ms
@@ -195,6 +207,15 @@
 .k-fb-punkt-burst-p:nth-child(8) {
   --k-fb-winkel: 315deg;
   --k-fb-i: 7;
+}
+
+/* v0.7.2 W4-H (Restfix — Verdrahtung Werkzeug-Auswahl, Design-Werkzeugleiste,
+   DesignWorkspace.tsx): `.k-fb-punkt-burst` selbst ist `position:absolute`
+   (relativ zum nächsten positionierten Vorfahren) — die Werkzeug-Knöpfe
+   (`.k-btn`, aura.css) setzen das nicht, darum eine additive Anker-Klasse
+   statt eines Eingriffs in die fremde `.k-btn`-Basisregel. */
+.k-fb-punkt-burst-anker {
+  position: relative;
 }
 
 /* ── §5 · Orbit-Loader — Kreisprogress 5 Segmente + Haken-Draw ────────── */

@@ -108,6 +108,10 @@ export function SketchOverlay({ toWorld, toScreen, onAccept, onPanDelta }: Sketc
   return (
     <div
       data-testid="sketch-overlay"
+      // v0.7.2 §8/W4-H (Cursor-Zonen, Kritik-Auflage — W3-F-Grenze): NUR das
+      // Attribut, kein Verhalten — `cursor: 'crosshair'` (Zeile unten) bleibt
+      // unverändert, `CursorEbene.tsx` morpht zusätzlich auf das Fadenkreuz.
+      data-cursor-zone="praezision"
       style={{ position: 'absolute', inset: 0, touchAction: 'none', cursor: 'crosshair' }}
       onPointerDown={(e) => {
         if (pending) return;

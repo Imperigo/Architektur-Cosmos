@@ -72,6 +72,32 @@ export function eigencursorAktiv(): boolean {
   }
 }
 
+/** Event-Name (v0.7.2 W4-H, Einstellungs-Verdrahtung): `CursorEbene.tsx`
+ *  liest `eigencursorAktiv()` nur beim RENDER, nicht reaktiv aus einem
+ *  Store — ein Schreiben aus `Einstellungen.tsx` (ein separater Komponenten-
+ *  baum) löst dort sonst keinen Re-Render aus. Statt die bewusst store-freie
+ *  Architektur dieser Datei umzubauen (Kopfkommentar: «kein Import aus
+ *  shell/**»), ein simples DOM-Event — `CursorEbene.tsx` hört zu und
+ *  erzwingt einen Re-Render, der `eigencursorAktiv()` dann frisch liest. */
+export const EIGENCURSOR_EINSTELLUNG_EVENT = 'kosmo:eigencursor-einstellung';
+
+/** Schreibt `kosmo.eigencursor` (Einstellungen.tsx, Schalter
+ *  `einstellung-eigencursor`) UND benachrichtigt `CursorEbene.tsx` sofort
+ *  (s. `EIGENCURSOR_EINSTELLUNG_EVENT` oben) — der Schalter wirkt ohne
+ *  Reload. */
+export function setEigencursorEingestellt(an: boolean): void {
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(EIGENCURSOR_KEY, an ? '1' : '0');
+  } catch {
+    /* localStorage kann in seltenen Umgebungen (privates Fenster o.ä.) werfen — Einstellung ist optional */
+  }
+  try {
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event(EIGENCURSOR_EINSTELLUNG_EVENT));
+  } catch {
+    /* kein window (SSR/Test) — nichts zu benachrichtigen */
+  }
+}
+
 /** `prefers-reduced-motion: reduce`? — reiner Lese-Helfer, siehe `CursorEbene.tsx`
  *  Kopfkommentar dazu, WARUM diese Datei ihn kaum je selbst braucht (die
  *  komplette Zeitsteuerung des Cursors läuft über CSS, das der globale
