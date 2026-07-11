@@ -82,6 +82,7 @@ import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
 import type { SplatCloud } from './splat-import';
 import { Inspector } from './Inspector';
+import { KosmoZeichnet } from './KosmoZeichnet';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanDxf, exportPlanPdf, exportPlanSvg, PHASEN_MASSSTAB } from './export-plan';
 import { consumeDeepLink } from '../../state/deep-link';
@@ -2758,6 +2759,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
 
         <KennzahlenPanel />
         <Inspector />
+        {/* v0.7.2 §7 (W3-E): Abspiel-Overlay «Kosmo zeichnet sichtbar» — pointer-events:none, rendert nur während eines Vorspiels. */}
+        <KosmoZeichnet />
 
         {/* Block 3 / E4 (Buildplan FM3): meshEdit-Overlay — Vertex-Handles/
             Flächen-Pick laufen im Viewport (Viewport3D.tsx), dieses Panel
