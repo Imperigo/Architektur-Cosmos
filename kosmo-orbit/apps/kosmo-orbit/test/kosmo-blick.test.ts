@@ -1,9 +1,11 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
+  BLICK_MAX_MEGAPIXEL,
   blickErfassen,
   blickRingPuffer,
   blickRingZuruecksetzen,
+  downscaleGroesse,
   erkenneAktiveStation,
   ergaenzendeBilderAusRing,
   waehleErgaenzendeBilder,
@@ -120,5 +122,43 @@ describe('Ringpuffer', () => {
     expect(waehleErgaenzendeBilder(ring, aktuell, 1)).toEqual([
       { mediaType: 'image/png', dataBase64: 'BBB', quelle: 'vis-render' },
     ]);
+  });
+});
+
+describe('downscaleGroesse (v0.7.1 E1/2A «Blick-Cloud-UI») — reine Zielgrössen-Berechnung ohne Canvas', () => {
+  it('4000×3000 (12 MP) wird auf ≤ 1.15 MP verkleinert, Seitenverhältnis (4:3) bleibt erhalten', () => {
+    const ziel = downscaleGroesse({ breite: 4000, hoehe: 3000 });
+    // Breite/Höhe werden unabhängig gerundet — minimales Überschiessen durch
+    // Rundung (<0.1 %) ist normal und unproblematisch, kein hartes ≤.
+    expect(ziel.breite * ziel.hoehe).toBeLessThanOrEqual(BLICK_MAX_MEGAPIXEL * 1_000_000 * 1.001);
+    // 4:3 bleibt bis auf Rundungsfehler erhalten.
+    expect(ziel.breite / ziel.hoehe).toBeCloseTo(4000 / 3000, 2);
+    expect(ziel).toEqual({ breite: 1238, hoehe: 929 });
+  });
+
+  it('800×600 (0.48 MP, bereits unter dem Deckel) bleibt unangetastet', () => {
+    expect(downscaleGroesse({ breite: 800, hoehe: 600 })).toEqual({ breite: 800, hoehe: 600 });
+  });
+
+  it('genau am Deckel (z.B. 1150×1000 = 1.15 MP) bleibt unangetastet — kein Downscale bei ==', () => {
+    expect(downscaleGroesse({ breite: 1150, hoehe: 1000 })).toEqual({ breite: 1150, hoehe: 1000 });
+  });
+
+  it('ein extremes Hochformat (1000×5000, 5 MP) wird ebenfalls gedeckelt, Verhältnis bleibt', () => {
+    const ziel = downscaleGroesse({ breite: 1000, hoehe: 5000 });
+    // Breite/Höhe werden unabhängig gerundet — minimales Überschiessen durch
+    // Rundung (<0.1 %) ist normal und unproblematisch, kein hartes ≤.
+    expect(ziel.breite * ziel.hoehe).toBeLessThanOrEqual(BLICK_MAX_MEGAPIXEL * 1_000_000 * 1.001);
+    expect(ziel.hoehe / ziel.breite).toBeCloseTo(5, 1);
+  });
+
+  it('nie kleiner als 1×1 (Degenerierte Eingabe wird nicht negativ/0)', () => {
+    expect(downscaleGroesse({ breite: 0, hoehe: 0 })).toEqual({ breite: 1, hoehe: 1 });
+  });
+
+  it('ein eigener, kleinerer Deckel (maxMegapixel-Parameter) wird respektiert', () => {
+    const ziel = downscaleGroesse({ breite: 2000, hoehe: 2000 }, 0.5);
+    expect(ziel.breite * ziel.hoehe).toBeLessThanOrEqual(0.5 * 1_000_000);
+    expect(ziel.breite).toBe(ziel.hoehe); // quadratisch bleibt quadratisch
   });
 });

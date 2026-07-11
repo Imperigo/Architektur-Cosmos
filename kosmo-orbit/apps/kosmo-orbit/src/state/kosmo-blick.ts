@@ -85,20 +85,103 @@ function ausDataUrl(dataUrl: string): { mediaType: string; dataBase64: string } 
   return m ? { mediaType: m[1]!, dataBase64: m[2]! } : null;
 }
 
+// ---------------------------------------------------------------------------
+// Downscale (v0.7.1 E1/2A «Blick-Cloud-UI») — jeder Bild-Weg (SVG UND
+// 3D-Viewport) geht vor dem Encode durch dieselbe Verkleinerung: ein
+// ungebremstes PNG in Bildschirm-Naturgrösse ist unnötig viel Payload für
+// einen Cloud-Call (mehr Tokens/Bandbreite/Kosten, s. `bildBudget()` in
+// `@kosmo/ai`). Ziel ~1.15 Megapixel, Seitenverhältnis erhalten, kleiner
+// bleibt unangetastet — und JPEG (q≈0.8) statt PNG, denn ein Situationsfoto/
+// Screenshot komprimiert verlustbehaftet deutlich kleiner als ein
+// verlustfreies PNG, ohne dass ein Vision-Modell dadurch nennenswert an
+// Kontext verliert.
+// ---------------------------------------------------------------------------
+
+/** Deckel: ~1.15 Megapixel je Blick-Bild vor dem Cloud-Versand. */
+export const BLICK_MAX_MEGAPIXEL = 1.15;
+
+/** JPEG-Qualität beim Re-Encode (Owner-Vorgabe q≈0.8). */
+export const BLICK_JPEG_QUALITAET = 0.8;
+
+export interface BlickGroesse {
+  breite: number;
+  hoehe: number;
+}
+
+/**
+ * Reine Berechnung der Zielgrösse — OHNE Canvas, darum in Vitest/jsdom ohne
+ * echtes Rendering testbar. Bilder mit ≤ `maxMegapixel` bleiben unverändert
+ * (kein Hochskalieren); grössere werden gleichmässig (Seitenverhältnis
+ * erhalten) auf den Deckel heruntergerechnet.
+ */
+export function downscaleGroesse(original: BlickGroesse, maxMegapixel: number = BLICK_MAX_MEGAPIXEL): BlickGroesse {
+  const breite = Math.max(1, Math.round(original.breite));
+  const hoehe = Math.max(1, Math.round(original.hoehe));
+  const maxPixel = maxMegapixel * 1_000_000;
+  const aktuellePixel = breite * hoehe;
+  if (aktuellePixel <= maxPixel) return { breite, hoehe };
+  const faktor = Math.sqrt(maxPixel / aktuellePixel);
+  return {
+    breite: Math.max(1, Math.round(breite * faktor)),
+    hoehe: Math.max(1, Math.round(hoehe * faktor)),
+  };
+}
+
+/**
+ * Zeichnet ein bereits geladenes Bild (SVG-Raster oder Viewport-Frame)
+ * verkleinert auf ein frisches Canvas und encodiert als JPEG — der
+ * gemeinsame Downscale-Schritt für SVG- und Viewport-Weg. `null` nur, wenn
+ * der Browser keinen 2D-Kontext hergibt (praktisch nie).
+ */
+function skaliertAlsJpeg(
+  bild: CanvasImageSource,
+  originalGroesse: BlickGroesse,
+): { mediaType: string; dataBase64: string } | null {
+  const ziel = downscaleGroesse(originalGroesse);
+  const canvas = document.createElement('canvas');
+  canvas.width = ziel.breite;
+  canvas.height = ziel.hoehe;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  // Planpapier-/Bild-Grund statt transparent — ein leeres Alpha-Bild ist für
+  // ein vision-Modell kaum von einem defekten Bild zu unterscheiden; JPEG
+  // kennt ohnehin keine Transparenz (würde sonst schwarz aufgefüllt).
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, ziel.breite, ziel.hoehe);
+  ctx.drawImage(bild, 0, 0, ziel.breite, ziel.hoehe);
+  return ausDataUrl(canvas.toDataURL('image/jpeg', BLICK_JPEG_QUALITAET));
+}
+
+/** Lädt eine dataURL als `Image` (Promise) — Hilfsbaustein für den
+ * Viewport-Downscale (das native `toDataURL` liefert bereits ein fertiges
+ * PNG in Bildschirm-Naturgrösse, das hier zum Verkleinern neu decodiert wird). */
+function dataUrlAlsBild(dataUrl: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Bild liess sich nicht laden'));
+    img.src = dataUrl;
+  });
+}
+
 /**
  * 3D-Viewport (design-Station): der neue `captureFrame`-Hook in
- * Viewport3D.tsx — EIN frischer Frame, synchron danach `toDataURL`. `null`,
- * solange kein Viewport gemountet ist (z.B. `viewMode:'2d'`) oder kein Frame
- * zu holen war — dann übernimmt der SVG- bzw. Text-Fallback.
+ * Viewport3D.tsx — EIN frischer Frame, synchron danach `toDataURL` in
+ * Bildschirm-Naturgrösse. `null`, solange kein Viewport gemountet ist (z.B.
+ * `viewMode:'2d'`) oder kein Frame zu holen war — dann übernimmt der SVG-
+ * bzw. Text-Fallback. Die Naturgrösse-dataURL wird VOR der Rückgabe durch
+ * denselben Downscale wie der SVG-Weg geschickt (s. oben).
  */
-function erfasseViewport3d(): BlickBild | null {
+async function erfasseViewport3d(): Promise<BlickBild | null> {
   const hook = (window as unknown as { __kosmoViewport?: { captureFrame?: () => string | null } }).__kosmoViewport;
   const capture = hook?.captureFrame;
   if (!capture) return null;
   try {
     const dataUrl = capture();
     if (!dataUrl) return null;
-    const teile = ausDataUrl(dataUrl);
+    const bild = await dataUrlAlsBild(dataUrl);
+    const groesse = { breite: bild.naturalWidth || bild.width, hoehe: bild.naturalHeight || bild.height };
+    const teile = skaliertAlsJpeg(bild, groesse);
     return teile ? { ...teile, quelle: 'viewport3d' } : null;
   } catch {
     return null;
@@ -131,23 +214,8 @@ async function erfasseSvg(el: SVGSVGElement, quelle: BlickBild['quelle']): Promi
     const markup = new XMLSerializer().serializeToString(klon);
     const url = URL.createObjectURL(new Blob([markup], { type: 'image/svg+xml;charset=utf-8' }));
     try {
-      const bild = await new Promise<HTMLImageElement>((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error('SVG liess sich nicht als Bild laden'));
-        img.src = url;
-      });
-      const canvas = document.createElement('canvas');
-      canvas.width = breite;
-      canvas.height = hoehe;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return null;
-      // Planpapier-Grund statt transparent — ein leeres Alpha-PNG ist für ein
-      // vision-Modell kaum von einem defekten Bild zu unterscheiden.
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, breite, hoehe);
-      ctx.drawImage(bild, 0, 0, breite, hoehe);
-      const teile = ausDataUrl(canvas.toDataURL('image/png'));
+      const bild = await dataUrlAlsBild(url);
+      const teile = skaliertAlsJpeg(bild, { breite, hoehe });
       return teile ? { ...teile, quelle } : null;
     } finally {
       URL.revokeObjectURL(url);
@@ -158,7 +226,7 @@ async function erfasseSvg(el: SVGSVGElement, quelle: BlickBild['quelle']): Promi
 }
 
 async function erfasseDesignBlick(): Promise<BlickBild | null> {
-  const dreiD = erfasseViewport3d();
+  const dreiD = await erfasseViewport3d();
   if (dreiD) return dreiD;
   const plan = document.querySelector<SVGSVGElement>('svg[data-testid="planview"]');
   if (plan) {

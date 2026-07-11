@@ -1342,6 +1342,14 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
             />
             Kosmo sieht mit (aktuelle Station als Bild an jede Nachricht anhängen)
           </label>
+          {/* v0.7.1 E1/2A («Blick-Cloud-UI»): Kosten-/Grössen-Hinweis — NUR in
+              Betriebsart cloud, weil dort das Bild tatsächlich das Haus
+              verlässt (Anthropic-API). HomePC/Remote bleiben unverändert. */}
+          {settings.betriebsart === 'cloud' && (
+            <div data-testid="kosmo-blick-cloud-hinweis" style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+              Blick geht als Bild an Claude (Cloud) — verkleinert auf ~1 MP
+            </div>
+          )}
           {/* v0.6.9 Stream D: Ringpuffer-Anzeige — die letzten ≤3 erfassten
               Blicke (`blickRingPuffer()`, state/kosmo-blick.ts), als Mini-
               Thumbnails mit Station+Zeit. Reine Anzeige (kein eigener

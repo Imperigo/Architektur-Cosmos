@@ -1,0 +1,155 @@
+import { expect, test, type Page } from '@playwright/test';
+
+/**
+ * v0.7.1 E1/2A («Blick-Cloud-UI») — Härtetest des «Mit Claude-Abo anmelden»-
+ * Flows (`shell/cloud-login.ts`, existiert seit dem Owner-Auftrag
+ * Cloud-Login/0.6.x). `e2e/cloud-login.spec.ts` beweist bereits den
+ * WEB/PWA-Zweig (kein Tauri → ehrlicher Desktop-Hinweis, kein Login-Knopf).
+ * Diese Spec beweist den DESKTOP-Zweig, den Playwright im echten Chromium
+ * sonst nie sieht.
+ *
+ * EHRLICHKEITSGRENZE (bewusst dokumentiert, nicht gefakt):
+ * Der echte Login-Weg verlässt den Browser vollständig — `claudeAboAnmeldung()`
+ * ruft den Tauri-Command `claude_login` (`src-tauri/src/lib.rs`), der als
+ * natives Rust/`std::process::Command` die Anthropic-CLI `ant` aufruft:
+ * `ant auth print-credentials` und, falls kein Login aktiv ist, `ant auth
+ * login` — LETZTERES öffnet einen ECHTEN System-Browser-Popup beim
+ * Anthropic-Konto. Das ist weder ein HTTP-Request (also nicht per
+ * `page.route` abfangbar) noch überhaupt im Browser-Prozess, den Playwright
+ * steuert — es ist ein Popup ausserhalb der Seite, in einem Prozess, den
+ * Tauri erst zur Laufzeit der Desktop-App startet. Playwright hat schlicht
+ * keinen Zugriff auf diese Ebene.
+ *
+ * Was diese Spec darum WIRKLICH testet: die Tauri-IPC-Grenze selbst wird
+ * gestubbt (`window.__TAURI_INTERNALS__.invoke`, exakt die Funktion, die
+ * `@tauri-apps/api/core`'s `invoke()` unter der Haube aufruft — siehe
+ * `node_modules/@tauri-apps/api/core.js`: `invoke(cmd,...) { return
+ * window.__TAURI_INTERNALS__.invoke(cmd, args, options); }`). Das ist die
+ * ECHTE Bibliothek, kein Mock-Ersatz — nur die IPC-Transportschicht dahinter
+ * (die in einem echten Tauri-Fenster zur nativen Runtime führt) wird durch
+ * ein Test-Double ersetzt. Damit prüft diese Spec ECHT: `istTauriDesktop()`,
+ * `claudeAboAnmeldung()`, die Token-Übernahme in `KosmoSettings`, die
+ * Anzeige (`cloud-login-status`) und die Persistenz über `localStorage`/
+ * Reload — NICHT geprüft: der reale `claude_login`-Rust-Code, `ant` selbst,
+ * der echte Browser-Popup. Das bleibt Owner-Abnahme (Desktop-Build).
+ *
+ * «Abmelden»: die App hat AKTUELL (Stand 0.7.1) KEINEN dedizierten
+ * Abmelden-Knopf für den Abo-Login — weder in `KosmoPanel.tsx` noch
+ * anderswo (geprüft per Volltextsuche nach «abmelden»/«logout» im
+ * App-Quellcode). Der einzige existierende Weg, den Abo-Zustand zu
+ * verlassen, ist ein neuer API-Schlüssel-Eintrag (setzt `cloudAuth` auf
+ * `'schluessel'`) — das ändert die ANZEIGE ehrlich («API-Schlüssel
+ * hinterlegt» statt «angemeldet als Abo»), löscht aber NICHT das im
+ * localStorage stehende `anthropicOauthToken` (das Feld bleibt schlicht
+ * ungenutzt liegen, bis ggf. ein künftiger echter Login es überschreibt).
+ * Diese Spec prüft GENAU das reale Verhalten, statt einen nicht
+ * existierenden Abmelden-Knopf zu erfinden — der fehlende Token-Reset ist
+ * ein ehrlich benannter Befund, kein Testartefakt.
+ */
+
+/** Stubbt die Tauri-IPC-Grenze VOR jeder Navigation (gilt auch über
+ * `page.reload()` hinweg, solange dieselbe Page-Instanz läuft) — macht
+ * `istTauriDesktop()` wahr und beantwortet `invoke('claude_login')` mit
+ * einem Fake-Token, exakt wie die echte `@tauri-apps/api/core`
+ * `invoke()`-Implementierung es an `window.__TAURI_INTERNALS__.invoke`
+ * weiterreicht. */
+async function stubTauriDesktop(page: Page, fakeToken: string): Promise<void> {
+  await page.addInitScript((token: string) => {
+    (window as unknown as { __TAURI_INTERNALS__: unknown }).__TAURI_INTERNALS__ = {
+      invoke: (cmd: string) =>
+        cmd === 'claude_login'
+          ? Promise.resolve(token)
+          : Promise.reject(new Error(`Test-Stub kennt den Tauri-Command nicht: ${cmd}`)),
+    };
+  }, fakeToken);
+}
+
+async function oeffneCloudEinstellungen(page: Page): Promise<void> {
+  await page.click('[data-testid="module-design"]');
+  await page.click('[aria-label="Einstellungen"]');
+  await page.click('[data-testid="betriebsart-cloud"]');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toBeVisible();
+}
+
+const FAKE_TOKEN = 'fake-oauth-token-e2e-xyz';
+
+test('Desktop-Stub: «Mit Claude-Abo anmelden» setzt das Token, die Anzeige wechselt auf «angemeldet als Abo»', async ({
+  page,
+}) => {
+  await stubTauriDesktop(page, FAKE_TOKEN);
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+
+  // Mit dem Tauri-Stub zeigt sich der echte Desktop-Zweig: der Login-Knopf
+  // statt des Web/PWA-Hinweises (Gegenprobe zu `e2e/cloud-login.spec.ts`).
+  await expect(page.locator('[data-testid="cloud-login-abo"]')).toBeVisible();
+  await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('nicht angemeldet');
+
+  await page.click('[data-testid="cloud-login-abo"]');
+
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+  const nachLogin = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(nachLogin.anthropicOauthToken).toBe(FAKE_TOKEN);
+  expect(nachLogin.cloudAuth).toBe('abo');
+});
+
+test('Token-Persistenz über Reload: «angemeldet als Abo» bleibt nach einem vollen Reload bestehen', async ({
+  page,
+}) => {
+  await stubTauriDesktop(page, FAKE_TOKEN);
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+  await page.click('[data-testid="cloud-login-abo"]');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+
+  // Voller Reload — kein Test-Hook, keine Wiederholung des Logins. Das Token
+  // lebt in `localStorage` (KosmoSettings), nicht im Laufzeit-Speicher.
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+  const nachReload = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(nachReload.anthropicOauthToken).toBe(FAKE_TOKEN);
+});
+
+test('«Abmelden» (ehrlicher Befund): ein neuer API-Schlüssel wechselt die Anzeige weg von «Abo», löscht das alte Token aber NICHT aus localStorage', async ({
+  page,
+}) => {
+  await stubTauriDesktop(page, FAKE_TOKEN);
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+  await page.click('[data-testid="cloud-login-abo"]');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+
+  // Es gibt (Stand 0.7.1) KEINEN «Abmelden»-Knopf — der einzige reale Weg,
+  // den Abo-Zustand zu verlassen, ist ein neuer API-Schlüssel-Eintrag.
+  await expect(page.locator('[data-testid="cloud-logout"]')).toHaveCount(0);
+  await page.getByLabel('API-Schlüssel (bleibt auf diesem Gerät)').fill('sk-ant-anderer-weg');
+
+  // Die ANZEIGE ist ehrlich: nicht mehr «angemeldet als Abo».
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('API-Schlüssel hinterlegt');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).not.toContainText('angemeldet als Abo');
+
+  const stand = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(stand.cloudAuth).toBe('schluessel');
+  expect(stand.anthropicKey).toBe('sk-ant-anderer-weg');
+  // Ehrlich benannter Befund: das alte OAuth-Token bleibt liegen — kein
+  // Reset. Dieser Test dokumentiert den heutigen Stand, erfindet keinen
+  // Abmelden-Effekt, den es (noch) nicht gibt.
+  expect(stand.anthropicOauthToken).toBe(FAKE_TOKEN);
+});

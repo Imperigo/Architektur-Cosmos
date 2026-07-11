@@ -6,11 +6,18 @@ import type { SzenarioSkript } from '@kosmo/ai';
  * Ehrlichkeitslücke: `e2e/kosmo-blick.spec.ts` beweist bislang nur den
  * 3D-Viewport-Capture-Pfad. Diese additive Spec beweist die drei übrigen
  * Erfassungspfade aus `state/kosmo-blick.ts` END-TO-END — jeweils ECHTES
- * dataURL-PNG, nicht nur "eine Blick-Zeile erschien":
+ * dataURL-Bild, nicht nur "eine Blick-Zeile erschien":
  *  1. Grundriss (PlanView-SVG → Canvas-Raster, `quelle:'planview'`).
  *  2. KosmoVis NodeCanvas (SVG → Canvas-Raster, `quelle:'node-canvas'`).
  *  3. KosmoVis Render-Lauf (`NodeLauf.bild`, `quelle:'vis-render'`) — via
  *     Fake-Worker-Bridge (Muster `visgraph.spec.ts`).
+ *
+ * v0.7.1 E1/2A («Blick-Cloud-UI»): der SVG-Weg (Tests 1+2 unten) läuft seit
+ * dem Downscale (`state/kosmo-blick.ts` `skaliertAlsJpeg`) durch ein
+ * JPEG-Re-Encode statt PNG — `bild.mediaType` ist darum `image/jpeg`, nicht
+ * mehr `image/png`. Der Render-Lauf-Pfad (Test 3, `quelle:'vis-render'`) holt
+ * das Bild dagegen unverändert als PNG von der Bridge (kein Canvas-Downscale
+ * dort vorgesehen, s. V071-KONZEPT.md E1/2A) — dessen Assertion bleibt PNG.
  */
 
 // Dieselbe Signatur wie `kosmo-blick.spec.ts` (`bild?: unknown`) — bewusst
@@ -80,7 +87,7 @@ async function sendeUndWarte(page: Page, text: string): Promise<void> {
 const MIN_BASE64_LAENGE = 500;
 
 test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
-  test('Grundriss-Ansicht: Blick liefert ein echtes gerastertes PNG (quelle:planview)', async ({ page }) => {
+  test('Grundriss-Ansicht: Blick liefert ein echtes gerastertes JPEG (quelle:planview)', async ({ page }) => {
     await projektMitTkb(page);
     // Reiner Grundriss (view-2d) — KEIN Viewport3D gemountet, sonst gewinnt
     // erfasseViewport3d() zuerst (Prioritätsliste in kosmo-blick.ts).
@@ -103,11 +110,11 @@ test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
     expect(letzter.bild).toBeDefined();
     const bild = letzter.bild as BlickBildProbe;
     expect(bild.quelle).toBe('planview');
-    expect(bild.mediaType).toBe('image/png');
+    expect(bild.mediaType).toBe('image/jpeg');
     expect(bild.dataBase64.length).toBeGreaterThan(MIN_BASE64_LAENGE);
   });
 
-  test('KosmoVis NodeCanvas: Blick liefert ein echtes gerastertes PNG (quelle:node-canvas)', async ({ page }) => {
+  test('KosmoVis NodeCanvas: Blick liefert ein echtes gerastertes JPEG (quelle:node-canvas)', async ({ page }) => {
     await projektMitTkb(page);
     // Stationswechsel über den bestehenden Test-Hook (App.tsx __kosmo.open,
     // Muster kosmo-blick.spec.ts Test 3) — 'module-vis' ist nur auf der
@@ -137,7 +144,7 @@ test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
     expect(letzter.bild).toBeDefined();
     const bild = letzter.bild as BlickBildProbe;
     expect(bild.quelle).toBe('node-canvas');
-    expect(bild.mediaType).toBe('image/png');
+    expect(bild.mediaType).toBe('image/jpeg');
     expect(bild.dataBase64.length).toBeGreaterThan(MIN_BASE64_LAENGE);
   });
 
