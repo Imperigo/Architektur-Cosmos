@@ -410,6 +410,17 @@ const FENSTERTYP_OPTIONEN: Array<{ value: NonNullable<Opening['fensterTyp']>; la
   { value: 'fensterband', label: 'Fensterband' },
 ];
 
+/** Flügeltyp-Optionen (v0.7.1 E5/4B) — steuert die SIA-Öffnungssymbolik in
+ * Ansicht (Dreieck/Pfeil) und Grundriss (Doppelstrich/versetzte Doppellinie),
+ * s. `derive/section.ts`/`derive/plan.ts`. Unabhängig vom Fenstertyp oben. */
+const FLUEGELTYP_OPTIONEN: Array<{ value: NonNullable<Opening['fluegelTyp']>; label: string }> = [
+  { value: 'fest', label: 'Fest (keine Symbolik)' },
+  { value: 'dreh', label: 'Dreh' },
+  { value: 'kipp', label: 'Kipp' },
+  { value: 'drehkipp', label: 'Dreh-Kipp' },
+  { value: 'schiebe', label: 'Schiebe' },
+];
+
 /**
  * Fenster-Parametrik-UI (v0.6.9 Stream F, docs/FENSTER-KONZEPT.md §3):
  * Fenstertyp, Teilung n×m, Rahmenbreite — jede Änderung läuft über
@@ -431,13 +442,17 @@ function FensterAbschnitt({
   const m = opening.teilung?.m ?? 1;
   const rahmenbreite = opening.rahmenbreite ?? 60;
 
+  const fluegel = opening.fluegelTyp ?? 'fest';
+
   const parametrieren = (patch: {
     fensterTyp?: Opening['fensterTyp'];
     teilungN?: number;
     teilungM?: number;
     rahmenbreite?: number;
+    fluegelTyp?: Opening['fluegelTyp'];
   }) => {
     const naechsterTyp = patch.fensterTyp ?? typ;
+    const naechsterFluegel = patch.fluegelTyp ?? opening.fluegelTyp;
     try {
       runCommand('design.fensterParametrieren', {
         openingId: opening.id,
@@ -446,6 +461,7 @@ function FensterAbschnitt({
         teilungM: patch.teilungM ?? m,
         rahmenbreite: patch.rahmenbreite ?? rahmenbreite,
         ...(naechsterTyp !== 'fensterband' && opening.swing ? { swing: opening.swing } : {}),
+        ...(naechsterFluegel !== undefined ? { fluegelTyp: naechsterFluegel } : {}),
       });
     } catch (err) {
       meldeFehler(err);
@@ -510,6 +526,21 @@ function FensterAbschnitt({
           testid="fenster-rahmenbreite"
           onCommit={(v) => parametrieren({ rahmenbreite: v })}
         />
+      </Row>
+      <Row label="Flügeltyp">
+        <KSelect
+          size="sm"
+          data-testid="fluegel-typ"
+          value={fluegel}
+          onChange={(e) => parametrieren({ fluegelTyp: e.target.value as Opening['fluegelTyp'] })}
+          style={{ width: '100%' }}
+        >
+          {FLUEGELTYP_OPTIONEN.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </KSelect>
       </Row>
     </>
   );

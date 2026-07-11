@@ -190,6 +190,12 @@ export interface Opening extends Base {
   /** Rahmen-/Pfostenbreite in mm (Blendrahmen bzw. Fensterband-Profil);
    * fehlt = Default 60 in der Ableitung (FENSTER_RAHMEN_DEFAULT_MM). */
   rahmenbreite?: Mm;
+  /** Flügeltyp (v0.7.1 E5/4B, docs/V071-KONZEPT.md): steuert die SIA-
+   * Öffnungssymbolik in Ansicht (Dreieck/Pfeil) und Grundriss (Doppelstrich/
+   * versetzte Doppellinie). Fehlt = keine Symbolik — heutiges Bild bleibt
+   * byte-identisch (Goldens-Guard, wie `fensterTyp` in v0.6.9). Nur bei
+   * openingType 'fenster' sinnvoll; unabhängig von `fensterTyp` (additiv). */
+  fluegelTyp?: 'dreh' | 'kipp' | 'drehkipp' | 'schiebe' | 'fest';
 }
 
 /** Zone/Raum — Polygon mit SIA-416-Klassierung. */

@@ -629,13 +629,16 @@ const editableFields = [
   'swing',
   'openingType',
   'anschlag',
+  'fluegelTyp',
 ] as const;
+
+const FLUEGELTYP_WERTE = ['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'] as const;
 
 export const setProperty = registerCommand({
   id: 'design.eigenschaftSetzen',
   title: 'Eigenschaft ändern',
   description:
-    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType). Zahlen in mm (pitch in Grad).',
+    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5). Zahlen in mm (pitch in Grad).',
   params: z.object({
     entityId: z.string(),
     feld: z.enum(editableFields),
@@ -651,7 +654,7 @@ export const setProperty = registerCommand({
       mass: ['height', 'program'],
       slab: ['thickness'],
       wall: ['assemblyId', 'alignment', 'height'],
-      opening: ['center', 'width', 'height', 'sill', 'swing', 'openingType', 'anschlag'],
+      opening: ['center', 'width', 'height', 'sill', 'swing', 'openingType', 'anschlag', 'fluegelTyp'],
       storey: ['name', 'height'],
       assembly: ['name'],
       freemesh: ['name'],
@@ -671,6 +674,9 @@ export const setProperty = registerCommand({
     }
     if (p.feld === 'sia' && !['HNF', 'NNF', 'VF', 'FF', 'KF'].includes(String(wert))) {
       throw new CommandError('sia muss HNF, NNF, VF, FF oder KF sein');
+    }
+    if (p.feld === 'fluegelTyp' && !FLUEGELTYP_WERTE.includes(String(wert) as (typeof FLUEGELTYP_WERTE)[number])) {
+      throw new CommandError(`fluegelTyp muss eines von ${FLUEGELTYP_WERTE.join(', ')} sein`);
     }
     if (p.feld === 'assemblyId') require<Assembly>(doc, String(wert), 'assembly');
     const after = { ...e, [p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' ? 'meta' : p.feld]:
@@ -1424,7 +1430,7 @@ export const parametrizeWindow = registerCommand({
   id: 'design.fensterParametrieren',
   title: 'Fenster parametrieren',
   description:
-    'Macht aus einer bestehenden Fenster-Öffnung ein parametrisches Fenster: Typ (einfluegel/zweifluegel/fest/fensterband), Teilung n×m Felder, Rahmenbreite in mm, Angelseite swing (nur Ein-/Zweiflügel — der Grundriss zeigt dann den Öffnungsbogen). Türen und Leibungen werden abgelehnt. 3D und Schnitt bekommen Rahmen-/Pfostenprofile, der Grundriss Teilungslinien.',
+    'Macht aus einer bestehenden Fenster-Öffnung ein parametrisches Fenster: Typ (einfluegel/zweifluegel/fest/fensterband), Teilung n×m Felder, Rahmenbreite in mm, Angelseite swing (nur Ein-/Zweiflügel — der Grundriss zeigt dann den Öffnungsbogen), Flügeltyp (dreh/kipp/drehkipp/schiebe/fest — steuert die SIA-Öffnungssymbolik in Ansicht und Grundriss, v0.7.1 E5). Türen und Leibungen werden abgelehnt. 3D und Schnitt bekommen Rahmen-/Pfostenprofile, der Grundriss Teilungslinien.',
   params: z.object({
     openingId: z.string(),
     fensterTyp: z.enum(['einfluegel', 'zweifluegel', 'fest', 'fensterband']),
@@ -1432,6 +1438,10 @@ export const parametrizeWindow = registerCommand({
     teilungM: z.number().int().min(1).max(12).optional().describe('Felder vertikal (1–12)'),
     rahmenbreite: z.number().int().min(20).max(200).optional().describe('Rahmen-/Profilbreite mm (20–200)'),
     swing: z.enum(['links', 'rechts']).optional().describe('Angelseite (nur einfluegel/zweifluegel)'),
+    fluegelTyp: z
+      .enum(['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'])
+      .optional()
+      .describe('Flügeltyp für die SIA-Öffnungssymbolik (Ansicht/Grundriss, v0.7.1 E5)'),
   }),
   summarize: (p) => {
     const teilung =
@@ -1461,6 +1471,9 @@ export const parametrizeWindow = registerCommand({
         ? { teilung: { n: p.teilungN ?? 1, m: p.teilungM ?? 1 } }
         : {}),
       ...(p.rahmenbreite !== undefined ? { rahmenbreite: p.rahmenbreite } : {}),
+      // Flügeltyp (v0.7.1 E5): additiv, unverändert lassen wenn weggelassen
+      // (steckt schon in `ohneSwing`, sofern zuvor gesetzt).
+      ...(p.fluegelTyp !== undefined ? { fluegelTyp: p.fluegelTyp } : {}),
     };
     return [{ id: o.id, before: o, after }];
   },

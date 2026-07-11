@@ -135,9 +135,13 @@ export function planInnerSvg(
         : l.classes.includes('dach-ortgang') || l.classes.includes('dach-grat')
           ? 0.18
           : null;
+    // v0.7.1 E5/4B: Flügeltyp-Symbolik (Doppelstrich Kipp, versetzte
+    // Doppellinie Schiebe) ist dieselbe dezente 0.18er-Klasse wie das
+    // Fenstersymbol selbst.
+    const fluegelSymbol = l.classes.includes('fluegel-kipp') || l.classes.includes('fluegel-schiebe');
     const sw = luecke
       ? 120
-      : (dachStift ?? (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug ? 0.18 : 0.25)) * scale;
+      : (dachStift ?? (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug || fluegelSymbol ? 0.18 : 0.25)) * scale;
     const stroke = luecke ? 'white' : neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : 'black';
     // Baugrenze strichpunktiert auch im Druck (wie am Bildschirm); B3: über dem
     // Schnitt liegende Treppenteile strichpunktiert; A3: Unterzüge verdeckt
@@ -355,6 +359,16 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
   for (const l of g.cuts) {
     parts.push(
       `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="black" stroke-width="${0.5 * scale}"/>`,
+    );
+  }
+  // SIA-Öffnungssymbolik (v0.7.1 E5/4B): eigener, dünner Stift (0.18er-Klasse
+  // wie Fenster-/Bruchlinien im Grundriss) — UNABHÄNGIG vom cuts.length-
+  // Umschalter oben, sonst würde die reine Ansicht (kein Schnittkanal) die
+  // Symbole mit dem mittleren 0.35er-Projektionsstift zeichnen. Leer, wenn
+  // keine Öffnung ein `fluegelTyp` trägt (Byte-Identität, Goldens-Guard).
+  for (const l of g.fenstersymbole) {
+    parts.push(
+      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="#333" stroke-width="${0.18 * scale}"/>`,
     );
   }
   const b = g.bounds;

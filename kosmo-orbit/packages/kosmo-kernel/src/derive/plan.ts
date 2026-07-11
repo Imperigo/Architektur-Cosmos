@@ -438,6 +438,50 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
             }
           }
         }
+        // v0.7.1 E5/4B (docs/V071-KONZEPT.md): Flügeltyp-Symbolik im
+        // Grundriss — additiv, UNABHÄNGIG von fensterTyp (steht auf jeder
+        // Fenster-Öffnung, ob parametrisch oder nicht). Bestehende
+        // Flügelbögen + der `fensterBoegen`-Schalter (0.7.0) bleiben
+        // unverändert; ohne `fluegelTyp` passiert HIER nichts (Goldens-Guard).
+        if (o.fluegelTyp === 'kipp' || o.fluegelTyp === 'drehkipp') {
+          // Kurzes Doppelstrich-Symbol am Flügel: zwei kurze, feine Striche
+          // quer zur Wand, symmetrisch um die Öffnungsmitte (der Grundriss
+          // kann die Bandseite eines Kipp-Flügels — Unterkante — nicht
+          // zeigen, das leistet erst die Ansicht; das Doppelstrich-Symbol ist
+          // hier reiner Typ-Hinweis, keine Bandrichtung).
+          const sMitte = (r.s0 + r.s1) / 2;
+          const tickAbstand = 120;
+          const tickHalb = 30;
+          lines.push({
+            a: at(sMitte - tickAbstand / 2, mid - tickHalb),
+            b: at(sMitte - tickAbstand / 2, mid + tickHalb),
+            classes: ['symbol', 'fluegel-kipp', ...oRen],
+          });
+          lines.push({
+            a: at(sMitte + tickAbstand / 2, mid - tickHalb),
+            b: at(sMitte + tickAbstand / 2, mid + tickHalb),
+            classes: ['symbol', 'fluegel-kipp', ...oRen],
+          });
+        }
+        if (o.fluegelTyp === 'schiebe') {
+          // Versetzte Doppellinie: zwei halbe Glaslinien, je zur Hälfte der
+          // Öffnungsbreite, in der Mitte leicht überlappend und quer zur Wand
+          // gegeneinander versetzt (off ±40 statt der einen Glasebene bei
+          // ±25) — die klassische Grundriss-Symbolik zweier gegeneinander
+          // verschieblicher Scheiben.
+          const halbBreite = (r.s1 - r.s0) / 2;
+          const ueberlapp = Math.min(halbBreite * 0.15, 150);
+          lines.push({
+            a: at(r.s0, mid - 40),
+            b: at(r.s0 + halbBreite + ueberlapp, mid - 40),
+            classes: ['symbol', 'fluegel-schiebe', ...oRen],
+          });
+          lines.push({
+            a: at(r.s1 - halbBreite - ueberlapp, mid + 40),
+            b: at(r.s1, mid + 40),
+            classes: ['symbol', 'fluegel-schiebe', ...oRen],
+          });
+        }
       } else {
         // Türsymbol: Flügel senkrecht zur Wand + 90°-Schwenkbogen
         const width = r.s1 - r.s0;

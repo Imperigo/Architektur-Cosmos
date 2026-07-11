@@ -1,7 +1,7 @@
 import type { KosmoDoc } from '../model/doc';
-import type { Assembly, LayerFunction, Roof, Slab, Storey, Terrain, Wall } from '../model/entities';
+import type { Assembly, LayerFunction, Opening, Roof, Slab, Storey, Terrain, Wall } from '../model/entities';
 import { dir, normal, polygonArea, type Pt } from '../model/units';
-import { wallFrame } from '../geometry/wall';
+import { openingRects, pointOnAxis, wallFrame } from '../geometry/wall';
 import { difference, intersect } from '../geometry/clip';
 import { materialPrioritaet } from '../model/prioritaet';
 import { deriveAll } from './scene';
@@ -50,6 +50,11 @@ export interface SectionGraphic {
   /** Terrainprofile (A2), auf die Schnittebene projiziert — leer = kein Terrain
    * gesetzt, die Renderer zeichnen dann die flache Linie bei z = 0. */
   terrain: { typ: 'gewachsen' | 'neu'; pts: { s: number; z: number }[] }[];
+  /** SIA-Öffnungssymbolik (v0.7.1 E5/4B): Dreieck-/Pfeil-Linien für Fenster
+   * mit gesetztem `fluegelTyp`, in derselben (s,z)-Ebene wie cuts/projections.
+   * Leer, solange KEINE Öffnung ein `fluegelTyp` trägt — bestehende
+   * Ansichten/Schnitte bleiben dadurch byte-identisch (Goldens-Guard). */
+  fenstersymbole: SectionLine2D[];
   bounds: { minS: number; maxS: number; minZ: number; maxZ: number } | null;
 }
 
@@ -213,8 +218,75 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
     .filter((t) => t.punkte.length >= 2)
     .map((t) => ({ typ: t.typ, pts: t.punkte.map((p) => ({ s: toS(p.x, p.y), z: p.z })) }));
 
+  // SIA-Öffnungssymbolik (v0.7.1 E5/4B, docs/V071-KONZEPT.md): Fenster mit
+  // gesetztem `fluegelTyp` bekommen die übliche Dreieck-/Pfeil-Konvention in
+  // Ansicht/Schnitt. Die Öffnungsrechtecke werden UNABHÄNGIG vom generischen
+  // Mesh-Dreieck-Kanal direkt aus Wand+Opening berechnet (dieselbe Quelle
+  // wie das 3D-Rahmenprofil in `derive/scene.ts`: `openingRects` + Storey-
+  // Elevation) und mit toS/toT in dieselbe (s,z)-Ebene projiziert.
+  //
+  // Konvention (Spitze = Bandseite, Schenkel = Griff-/Gegenseite):
+  //  – 'dreh': Band links (Default, kein eigenes swing-Feld für die Ansicht)
+  //    — Spitze an der linken Kante (Mitte der Höhe), Schenkel zu den BEIDEN
+  //    rechten Ecken (Griffseite).
+  //  – 'kipp': Band unten — Spitze an der Unterkante (Mitte der Breite),
+  //    Schenkel zu den beiden OBEREN Ecken (öffnet oben zur Raumseite).
+  //  – 'drehkipp': beide Dreiecke gleichzeitig.
+  //  – 'schiebe': waagrechter Doppelpfeil auf halber Höhe (Schieberichtung
+  //    offen — ein Pfeil deutet «verschieblich», nicht «genau diese Seite»).
+  //  – 'fest'/undefined: keine Symbolik.
+  // Sichtbarkeit: wie der generische Projektions-Kanal oben nur, wenn die
+  // Öffnung vor der Schnittebene liegt (0 < t ≤ depth) — KEINE volle
+  // Hidden-Line-Verdeckung gegen davorstehende Bauteile (ehrlich benannt im
+  // Abschlussbericht: eine verdeckte Öffnung wird nicht ausgeblendet).
+  const fenstersymbole: SectionLine2D[] = [];
+  for (const o of doc.byKind<Opening>('opening')) {
+    if (o.openingType !== 'fenster' || !o.fluegelTyp || o.fluegelTyp === 'fest') continue;
+    const wall = doc.get<Wall>(o.wallId);
+    if (!wall || wall.kind !== 'wall') continue;
+    const storey = doc.get<Storey>(wall.storeyId);
+    if (!storey || storey.kind !== 'storey') continue;
+    const r = openingRects(wall, [o])[0];
+    if (!r) continue;
+    const pLinks = pointOnAxis(wall, r.s0);
+    const pRechts = pointOnAxis(wall, r.s1);
+    const tLinks = toT(pLinks.x, pLinks.y);
+    const tRechts = toT(pRechts.x, pRechts.y);
+    if (!(tLinks > 0 && tRechts > 0 && tLinks <= spec.depth && tRechts <= spec.depth)) continue;
+    const sA = toS(pLinks.x, pLinks.y);
+    const sB = toS(pRechts.x, pRechts.y);
+    const s0 = Math.min(sA, sB);
+    const s1 = Math.max(sA, sB);
+    const z0 = storey.elevation + r.z0;
+    const z1 = storey.elevation + r.z1;
+    const sMid = (s0 + s1) / 2;
+    const zMid = (z0 + z1) / 2;
+    const linie = (pA: { s: number; z: number }, pB: { s: number; z: number }, klasse: string): void => {
+      fenstersymbole.push({ a: pA, b: pB, classes: ['symbol', klasse] });
+    };
+    if (o.fluegelTyp === 'dreh' || o.fluegelTyp === 'drehkipp') {
+      linie({ s: s0, z: zMid }, { s: s1, z: z0 }, 'fluegel-dreh');
+      linie({ s: s0, z: zMid }, { s: s1, z: z1 }, 'fluegel-dreh');
+    }
+    if (o.fluegelTyp === 'kipp' || o.fluegelTyp === 'drehkipp') {
+      linie({ s: sMid, z: z0 }, { s: s0, z: z1 }, 'fluegel-kipp');
+      linie({ s: sMid, z: z0 }, { s: s1, z: z1 }, 'fluegel-kipp');
+    }
+    if (o.fluegelTyp === 'schiebe') {
+      const laenge = Math.min((s1 - s0) * 0.7, 400);
+      const spitze = Math.min(laenge * 0.25, 100);
+      const sLinks = sMid - laenge / 2;
+      const sRechts = sMid + laenge / 2;
+      linie({ s: sLinks, z: zMid }, { s: sRechts, z: zMid }, 'fluegel-schiebe');
+      linie({ s: sLinks, z: zMid }, { s: sLinks + spitze, z: zMid + spitze / 2 }, 'fluegel-schiebe');
+      linie({ s: sLinks, z: zMid }, { s: sLinks + spitze, z: zMid - spitze / 2 }, 'fluegel-schiebe');
+      linie({ s: sRechts, z: zMid }, { s: sRechts - spitze, z: zMid + spitze / 2 }, 'fluegel-schiebe');
+      linie({ s: sRechts, z: zMid }, { s: sRechts - spitze, z: zMid - spitze / 2 }, 'fluegel-schiebe');
+    }
+  }
+
   let bounds: SectionGraphic['bounds'] = null;
-  for (const l of [...cuts, ...projections]) {
+  for (const l of [...cuts, ...projections, ...fenstersymbole]) {
     if (!bounds) {
       bounds = { minS: l.a.s, maxS: l.a.s, minZ: l.a.z, maxZ: l.a.z };
     }
@@ -225,7 +297,7 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       bounds.maxZ = Math.max(bounds.maxZ, p.z);
     }
   }
-  return { cuts, projections, faces, terrain, bounds };
+  return { cuts, projections, faces, terrain, fenstersymbole, bounds };
 }
 
 // ---------------------------------------------------------------------------
