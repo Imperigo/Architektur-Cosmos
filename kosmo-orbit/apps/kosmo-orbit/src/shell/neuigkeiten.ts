@@ -35,11 +35,50 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.2',
+    datum: '2026-07-11',
+    punkte: [
+    {
+      text: 'Neues drittes Thema «Orbit» (dunkel, Teal-Akzent) ist jetzt der Standard — «Papier» und «Tinte» bleiben unverändert wählbar (3-Segment-Wähler in den Einstellungen), eine bereits getroffene eigene Wahl wird respektiert.',
+    },
+    {
+      text: 'Neues Marken-Logo («6a», Satellit + Mittelpunkt), ein animierter Startbildschirm vor dem ersten App-Rendern und ein neues App-Icon (dunkle Standard-Variante mit Teal-Signal) für Startbildschirm, Taskleiste und PWA-Installation — die weiteren Handoff-Varianten (Tint/Glas/Hell) sind nicht gebaut.',
+    },
+    {
+      text: '14 handgezeichnete Werkzeug-Glyphen (u. a. Entwerfen, Skizzieren, Daten, Visualisieren, Publizieren, Vorbereiten, Sprechen) mit je einem Rollen-Punkt in der jeweiligen Werkzeugfamilie-Farbe — sichtbar im Zentrale-Hub und im Entwurfs-Dock. Ehrlich vertagt: die ältere, app-weite Icon-Sammlung (`packages/kosmo-ui` KIcon-Registry, rund 30 Zeichen) trägt diesen Strichstil noch nicht — das folgt mit 0.7.3.',
+    },
+    {
+      text: 'App-weite Phasen-Leiste im Kopfbereich (5 SIA-112-Gruppen: Strategie/Vorstudie/Projektierung/Ausschreibung/Realisierung) als Schnellzugriff neben der bestehenden, feineren Phasenwahl in KosmoDesign — ein Klick schreibt dieselbe Projektphase, auf beiden Wegen. Unter schmalem Fenster kollabiert die Leiste auf reine Ziffern (1…5), das volle Label bleibt als Tooltip.',
+    },
+    {
+      text: 'Die Werkzeuge im Design-Fächer sortieren sich seither selbst um — nach einer Mischung aus «typisch für die aktuelle Phase» und «zuletzt tatsächlich genutzt», mit einer Sperre gegen Umsortier-«Nervosität». Ehrlich vertagt: diese Rang-Logik zeigt sich bisher nur im Design-Fächer (die anderen Stationen haben zu wenige Plätze, um Ränge sichtbar zu machen) — ein hub-weiter Ausbau ist für 0.7.3 vorgesehen.',
+    },
+    {
+      text: 'Kosmo zeigt jetzt neun klar unterscheidbare Zustände (u. a. Zuhören, Sprechen, Schreiben, Losschicken, Fertig, Fehler) durch eine eigene, punktbasierte Darstellung statt nur eines Beschäftigt-Indikators — dazu eine vorbereitete Vollbild-Rahmen-Darstellung für den Takeover-Modus (Punkte laufen dem Fensterrand entlang, Hinweis-Chip) — in 0.7.2 löst sie noch kein realer Ablauf aus; Trigger und ESC-Abbruch folgen mit dem Desktop-Takeover in 0.7.3.',
+    },
+    {
+      text: '«Kosmo zeichnet sichtbar»: bevor eine von Kosmo vorgeschlagene Änderung endgültig übernommen wird, zieht ein Orb den Vorschlag sichtbar auf dem Plan nach — Stufe 1 zeigt genau einen Orb (ein Schwarm mehrerer Orbs für grosse Pakete ist als Stufe 2 für 0.7.3 vorbereitet, aber nicht gebaut). Abschaltbar in den Einstellungen, per Default an; automatisch übersprungen bei reduzierter Bewegung.',
+    },
+    {
+      text: 'Ein eigener, gezeichneter Mauszeiger (Pfeil mit Teal-Glow) ersetzt den Systemzeiger auf Geräten mit Maus/Trackpad — er verwandelt sich je nach Kontext (z. B. Fadenkreuz beim präzisen Zeichnen) und ist über eine eigene Einstellung abschaltbar, systemseitig per Default aus auf reinen Touch-Geräten.',
+    },
+    {
+      text: 'Nur in der Desktop-App: ein schwebendes Kosmo-Charakter-Fenster (unaufdringlich, immer über anderen Fenstern, unten rechts) plus ein Symbol in der System-Ablage (Tray) zum schnellen Öffnen der App. Ehrlich vertagt: eine choreografierte Übergangs-Animation beim Schliessen ist noch nicht verdrahtet (bräuchte einen Rust-seitigen Vorlauf, der heute nicht existiert); das Zusammenspiel beider Fenster liess sich in der Container-Umgebung nicht automatisiert prüfen (kein echtes Betriebssystem-Fenstersystem) — ein echter Desktop-Rundgang steht noch aus.',
+    },
+    {
+      text: 'Neue, schmale Companion-Ansicht — erreichbar auf jedem per QR gekoppelten Gerät, indem man an die App-Adresse «#companion» anhängt (einen eigenen Link im Koppeln-Dialog gibt es noch nicht, der folgt mit 0.7.3): zeigt den Phasen-Fortschritt als Ring sowie Job-/Freigabe-Karten zum Mitlesen und Freigeben, ohne selbst zu zeichnen. Ehrlich benannt: Visualisierungs-Freigaben sind an die jeweilige Sitzung gebunden — ein frisch geöffneter Tab sieht keine fremden, bereits gerenderten Karten.',
+    },
+    {
+      text: 'Dezente Klick-/Bestätigungstöne stehen bereit, sind aber per Default AUS (Owner-Entscheid) — eine eigene Einstellung schaltet sie bei Bedarf ein.',
+    },
+    {
+      text: 'Untertool-Zugriff läuft jetzt über einen runden Hub (Zentrale-Kachel + Entwurfs-Dock) statt über ein durchgängiges Boden-Dock über die ganze App — ein app-weites Boden-Dock ist als Kandidat für 0.7.3 offen, nicht Teil dieser Version.',
+    },
+    ],
+  },
+  {
     version: '0.7.1',
     datum: '2026-07-11',
-    // Bau abgeschlossen am 11.07.; Auslieferung bewusst mit v0.7.2 gebündelt
-    // (Owner-Entscheid) — bis dahin «in dieser Version».
-    inArbeit: true,
     punkte: [
       {
         text: 'Kosmo-Blick in der Cloud gehärtet: jedes Bild wird vor dem Versand auf ~1.15 Megapixel verkleinert und als JPEG neu encodiert, ein 4-MB-Budget prüft die Bildgrösse VOR dem Netz-Roundtrip, und ein zu grosses Bild bekommt eine konkrete deutsche Meldung statt eines generischen Fehlers — bewiesen per abgefangenem Anthropic-Request (Bild-Block im Request-Body); der echte Modell-Call mit einem echten Owner-Schlüssel bleibt Owner-Abnahme (Drehbuch in docs/BETRIEBSARTEN.md).',

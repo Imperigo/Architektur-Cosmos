@@ -114,7 +114,7 @@ test.describe('Kosmo-Blick — Cloud (Anthropic), Bild-Request + ehrlicher Schl�
     await kosmoMitEinstellungenOeffnen(page, {
       provider: 'anthropic',
       betriebsart: 'cloud',
-      anthropicKey: 'sk-ant-test-fake-schluessel',
+      anthropicKey: 'sk-ant-fake' /* bewusst <20 Zeichen Suffix — Secret-Scan-Muster (RE_ANTHROPIC) darf den Test-Dummy nicht treffen */,
       anthropicModel: 'claude-opus-4-8',
       cloudAuth: 'schluessel',
       blickAn: true,

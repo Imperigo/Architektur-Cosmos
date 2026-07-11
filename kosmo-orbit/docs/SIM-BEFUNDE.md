@@ -877,3 +877,22 @@ Nachführung nach den sechs Wellen (ROADMAP 322–325) + Kritik-Runden 1–2 —
 - **Bridge-CORS-Allowlist kannte nur 5173/5183 (W5/5A-Befund):** Agenten-Previews auf 5174–5177 bekamen CORS-geblockte `/jobs`-Aufrufe («Bridge nicht erreichbar»). Default in `_cors_origins()` um 5174–5177 erweitert (W6/6B, mit Python-Test); abweichende Ports weiterhin via `KOSMO_BRIDGE_ORIGIN`.
 - **deriveAll-Konsum-Kopplung (W4/4A):** Neue Szene-Artefakte dürfen NIE direkt in `deriveAll()` eingehängt werden — Schnitt/Axo/GLTF-Export/Kamera konsumieren sie generisch (Golden-/Zähler-Brüche). Muster: additive Hüll-Funktion (`deriveAllMitFensterdetails`), nur die 3D-Aufrufer wechseln.
 - **Welle-4-Lücken in 6B geschlossen:** Live-Schnittvorschau rendert die Flügelsymbolik jetzt ebenfalls (dünner Stift, additiv); `fenster-rahmen` hat einen echten Material-Eintrag. Verbleibend ehrlich: Symbole ohne Hidden-Line-Verdeckung (wie der Druckweg), IFC/DXF ohne Beschlag-Detail, Terrain handgesetzt ohne swissALTI3D.
+
+## v0.7.2-Statusrunde (11.07.2026, Auftrag «Visuelles Update»)
+
+Nachführung nach den acht Streams (ROADMAP 327–329) + Kritik-Runden 1–3 —
+append-only, Original-Einträge unangetastet:
+
+### H-53 — Teilphasen-Dropdown kannte die neue Strategie-Phase nicht (11.07.2026, Kritik-Runde 3, Fable-Schlussreview)
+- **Beobachtung:** W2-C führte `SiaPhase` additiv um `'strategie'` ein und die neue Header-Phasen-Leiste schreibt sie als repräsentative Phase der Gruppe 1 — das feine Teilphasen-Dropdown (`sia-phase-select`) listete aber weiterhin nur die 7 Alt-Werte: nach Klick auf «1 STRATEGIE» zeigte es einen leeren Wert.
+- **Triage:** bug (B — UI-Widerspruch zwischen zwei Stellschrauben derselben Einstellung).
+- **Entscheid + Fix (Fable-Finale, 44701f6):** Option ergänzt; kein Vertrag zählte die Optionen (geprüft), `waehleOption`-Specs unberührt.
+- **Status:** behoben (0.7.2, ROADMAP 329).
+
+**Notizen (keine H-Einträge):**
+- **Schnittstellen-Verträge zwischen Streams brauchen await-Semantik:** Die W2-D-Vorbereitung `onAbspielStart` war fire-and-forget — das §7-Vorspiel wäre PARALLEL zum Apply gelaufen statt davor. Der Opus-Leiter hat es vor dem W3-E-Dispatch entdeckt und mit `state/abspiel-anschluss.ts` (registrierbarer, await-fähiger Anschluss) gefixt; Undo-Atomarität blieb dadurch garantiert. Merkregel: **Vorbereitete Stream-Schnittstellen immer mit der Ziel-Semantik (sync/async, blockierend/nicht) spezifizieren.**
+- **Bridge-Neustart nach CORS-Änderungen ist Betriebspflicht:** Eine alte Bridge-Instanz (:8600) mit Vor-0.7.1-CORS-Allowlist liess W1-B-E2E auf Agent-Ports scheitern und sah wie ein Code-Fehler aus. Ergänzt die H-31-Familie der Umgebungs-Betriebsregeln.
+- **reducedMotion-Befund des Leiters KORRIGIERT (Fable-Repro):** Die Playwright-`contextOptions.reducedMotion:'reduce'`-Emulation kommt im gepinnten Chromium nachweislich an (Minimal-Repro; kosmo-zeichnet.spec hebt sie erfolgreich per 'no-preference' auf). Die Fehlmessung stammte mutmasslich aus manuell erzeugten Browser-Kontexten der Shot-Tools, die die Option nicht setzen. Kein Config-Fix nötig; Lehre: **Umgebungs-Befunde erst nach Minimal-Repro im echten Runner-Kontext als Fakt führen.**
+- **Sichtbeweis-Shots müssen den aktiven Zustand beweisen:** Die erste Kritik-3-Shot-Fassung zeigte eine deaktivierte Cursor-Ebene (webdriver-Hartvertrag) und einen Companion-Leerzustand (nicht auf die Karte gewartet) — «grüne» Bilder ohne Beweiskraft. Merkregel: Shot-Tools nutzen dieselben Test-Hooks wie die Specs (`__kosmoCursor.aktivieren()`, auf testids warten), sonst prüft die Kritik Attrappen.
+- **Worktree-Disk-Regel bestätigt** (0.7.1-Lehre): integrierte Agenten-Worktrees sofort abräumen — über den ganzen Auftrag gehalten, keine ENOSPC-Vorfälle an Tag 2–3.
+\n

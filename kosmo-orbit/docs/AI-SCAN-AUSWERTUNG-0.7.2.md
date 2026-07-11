@@ -28,6 +28,16 @@ und alle bis dahin erschienenen Scans werden hier als Nachtrag ausgewertet
 (`tools/ai-scan-delta.mjs`) prüft nur die Existenz dieser Datei — die
 inhaltliche Nachlauf-Pflicht ist hier dokumentiert und Teil des Finale-Gates.
 
+### Nachtrag (11.07.2026, ~23:00 UTC — Finale, vor dem Bump)
+
+Der Drei-Tage-Auftrag wurde in EINEM Tag fertig. Der Nachlauf wurde trotzdem
+durchgeführt (Notion-Suche über beide Scan-Linien): **neuester Scan bleibt
+der vom 11.07.2026** (05:13), vollständig ausgewertet im 0.7.0-§5-Nachlauf.
+**Ein 12.07.-Scan existiert zum Bump-Zeitpunkt noch nicht** (Scans erscheinen
+~05:15 früh). Kein unausgewertetes Delta — §2 ist ehrlich erfüllt, nicht
+umgangen. Die Scans vom 12.–14.07. werden im §0-Erstlauf des nächsten
+Auftrags (0.7.3) ausgewertet (Übergabe-Pflicht dorthin).
+
 ## 3 · Übertrag gültiger Verdikte in die 0.7.2-Blockplanung
 
 - **HiVG (WATCH):** bleibt HomeStation-Kandidat — v0.7.2 ist ein reines
