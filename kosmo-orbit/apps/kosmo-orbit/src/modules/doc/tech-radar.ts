@@ -37,7 +37,7 @@ export const TECH_RADAR: RadarPosten[] = [
   { bereich: 'Viewport & Pläne', baustein: 'Kamera', entscheid: 'ADOPT', paket: 'camera-controls', lizenz: 'MIT', kommentar: 'Maus-/Touch-Belegung läuft über das eigene Eingabemodell (Serie J).' },
   { bereich: 'Viewport & Pläne', baustein: 'Picking/Spatial', entscheid: 'ADOPT', paket: 'three-mesh-bvh', lizenz: 'MIT', kommentar: 'Schnelles Raycasting auch bei grossen Modellen.' },
   { bereich: 'Viewport & Pläne', baustein: 'Sonnenstand', entscheid: 'ADOPT', paket: 'suncalc', lizenz: 'BSD-2', kommentar: 'Echte Sonnen-Koordinaten für Schatten-/Besonnungsstudien.' },
-  { bereich: 'Viewport & Pläne', baustein: 'DXF schreiben/lesen', entscheid: 'ADOPT', paket: '@tarikjabiri/dxf · dxf', lizenz: 'MIT', kommentar: 'Interop AutoCAD/Rhino/Vectorworks (Block G).' },
+  { bereich: 'Viewport & Pläne', baustein: 'DXF schreiben/lesen', entscheid: 'SELBST', paket: 'dxf (Parser)', lizenz: 'MIT', kommentar: 'Interop AutoCAD/Rhino/Vectorworks: eigener R12-Writer inkl. Bemassungs-Layer (v0.7.1 konsolidiert, @tarikjabiri/dxf entfernt); Import-Parser bleibt Fremdpaket.' },
   { bereich: 'Viewport & Pläne', baustein: 'PDF (Vektor, A0–A4)', entscheid: 'ADOPT', paket: 'jspdf + svg2pdf.js', lizenz: 'MIT', kommentar: 'Druckfähige Plansätze direkt aus den SVG-Ableitungen.' },
   // App & UI
   { bereich: 'App & UI', baustein: 'Undo/Redo', entscheid: 'SELBST', paket: '', lizenz: '', kommentar: 'Command-Stack mit Patch-Inversen — atomare Gruppen, auch für Kosmo-Vorschläge.' },
