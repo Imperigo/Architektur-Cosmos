@@ -26,7 +26,7 @@ W1-A bis W4-H, inkl. beider Kritik-Runden).
       text: 'Neues drittes Thema «Orbit» (dunkel, Teal-Akzent) ist jetzt der Standard — «Papier» und «Tinte» bleiben unverändert wählbar (3-Segment-Wähler in den Einstellungen), eine bereits getroffene eigene Wahl wird respektiert.',
     },
     {
-      text: 'Neues Marken-Logo («6a», Satellit + Mittelpunkt), ein animierter Startbildschirm vor dem ersten App-Rendern und neue App-Icons (Standard/Tint/Glas/Hell) für Startbildschirm, Taskleiste und PWA-Installation.',
+      text: 'Neues Marken-Logo («6a», Satellit + Mittelpunkt), ein animierter Startbildschirm vor dem ersten App-Rendern und ein neues App-Icon (dunkle Standard-Variante mit Teal-Signal) für Startbildschirm, Taskleiste und PWA-Installation — die weiteren Handoff-Varianten (Tint/Glas/Hell) sind nicht gebaut.',
     },
     {
       text: '14 handgezeichnete Werkzeug-Glyphen (u. a. Entwerfen, Skizzieren, Daten, Visualisieren, Publizieren, Vorbereiten, Sprechen) mit je einem Rollen-Punkt in der jeweiligen Werkzeugfamilie-Farbe — sichtbar im Zentrale-Hub und im Entwurfs-Dock. Ehrlich vertagt: die ältere, app-weite Icon-Sammlung (`packages/kosmo-ui` KIcon-Registry, rund 30 Zeichen) trägt diesen Strichstil noch nicht — das folgt mit 0.7.3.',
@@ -38,7 +38,7 @@ W1-A bis W4-H, inkl. beider Kritik-Runden).
       text: 'Die Werkzeuge im Design-Fächer sortieren sich seither selbst um — nach einer Mischung aus «typisch für die aktuelle Phase» und «zuletzt tatsächlich genutzt», mit einer Sperre gegen Umsortier-«Nervosität». Ehrlich vertagt: diese Rang-Logik zeigt sich bisher nur im Design-Fächer (die anderen Stationen haben zu wenige Plätze, um Ränge sichtbar zu machen) — ein hub-weiter Ausbau ist für 0.7.3 vorgesehen.',
     },
     {
-      text: 'Kosmo zeigt jetzt neun klar unterscheidbare Zustände (u. a. Zuhören, Sprechen, Schreiben, Losschicken, Fertig, Fehler) durch eine eigene, punktbasierte Darstellung statt nur eines Beschäftigt-Indikators — inklusive eines Vollbild-Rahmens, wenn Kosmo gerade selbständig arbeitet («Takeover», mit ESC-Abbruch-Hinweis).',
+      text: 'Kosmo zeigt jetzt neun klar unterscheidbare Zustände (u. a. Zuhören, Sprechen, Schreiben, Losschicken, Fertig, Fehler) durch eine eigene, punktbasierte Darstellung statt nur eines Beschäftigt-Indikators — dazu eine vorbereitete Vollbild-Rahmen-Darstellung für den Takeover-Modus (Punkte laufen dem Fensterrand entlang, Hinweis-Chip) — in 0.7.2 löst sie noch kein realer Ablauf aus; Trigger und ESC-Abbruch folgen mit dem Desktop-Takeover in 0.7.3.',
     },
     {
       text: '«Kosmo zeichnet sichtbar»: bevor eine von Kosmo vorgeschlagene Änderung endgültig übernommen wird, zieht ein Orb den Vorschlag sichtbar auf dem Plan nach — Stufe 1 zeigt genau einen Orb (ein Schwarm mehrerer Orbs für grosse Pakete ist als Stufe 2 für 0.7.3 vorbereitet, aber nicht gebaut). Abschaltbar in den Einstellungen, per Default an; automatisch übersprungen bei reduzierter Bewegung.',
@@ -50,7 +50,7 @@ W1-A bis W4-H, inkl. beider Kritik-Runden).
       text: 'Nur in der Desktop-App: ein schwebendes Kosmo-Charakter-Fenster (unaufdringlich, immer über anderen Fenstern, unten rechts) plus ein Symbol in der System-Ablage (Tray) zum schnellen Öffnen der App. Ehrlich vertagt: eine choreografierte Übergangs-Animation beim Schliessen ist noch nicht verdrahtet (bräuchte einen Rust-seitigen Vorlauf, der heute nicht existiert); das Zusammenspiel beider Fenster liess sich in der Container-Umgebung nicht automatisiert prüfen (kein echtes Betriebssystem-Fenstersystem) — ein echter Desktop-Rundgang steht noch aus.',
     },
     {
-      text: 'Neue, schmale Companion-Ansicht (erreichbar über den bestehenden QR-Pairing-Weg): zeigt den Phasen-Fortschritt als Ring sowie Job-/Freigabe-Karten zum Mitlesen und Freigeben, ohne selbst zu zeichnen. Ehrlich benannt: Visualisierungs-Freigaben sind an die jeweilige Sitzung gebunden — ein frisch geöffneter Tab sieht keine fremden, bereits gerenderten Karten.',
+      text: 'Neue, schmale Companion-Ansicht — erreichbar auf jedem per QR gekoppelten Gerät, indem man an die App-Adresse «#companion» anhängt (einen eigenen Link im Koppeln-Dialog gibt es noch nicht, der folgt mit 0.7.3): zeigt den Phasen-Fortschritt als Ring sowie Job-/Freigabe-Karten zum Mitlesen und Freigeben, ohne selbst zu zeichnen. Ehrlich benannt: Visualisierungs-Freigaben sind an die jeweilige Sitzung gebunden — ein frisch geöffneter Tab sieht keine fremden, bereits gerenderten Karten.',
     },
     {
       text: 'Dezente Klick-/Bestätigungstöne stehen bereit, sind aber per Default AUS (Owner-Entscheid) — eine eigene Einstellung schaltet sie bei Bedarf ein.',
@@ -76,7 +76,9 @@ W1-A bis W4-H, inkl. beider Kritik-Runden).
   strukturell vorbereitet (`state/abspiel-ebene.ts`), aber nicht gebaut.
   Zusätzlich: nur Achsen-/Umriss-/Punkt-Commands bekommen echte Geometrie
   nachgezeichnet, alle anderen zeigen eine ehrliche Vorschau-Umkreisung statt
-  einer erfundenen Zeichnung.
+  einer erfundenen Zeichnung. Und: wer während des Abspielens pant oder
+  zoomt, verschiebt die Overlay-Abbildung nicht mit — sie ist auf den
+  Viewport-Stand beim Start fixiert (Kritik-3-Befund, 0.7.3-Kandidat).
 - **Kosmo-Charakter-Fenster**: die Schliessen-Choreografie aus der Spec
   (Hauptfenster skaliert zur Ecke, Orb «schluckt») ist NICHT verdrahtet — sie
   bräuchte ein Rust-seitiges Vorlauf-Event vor dem Verstecken, das

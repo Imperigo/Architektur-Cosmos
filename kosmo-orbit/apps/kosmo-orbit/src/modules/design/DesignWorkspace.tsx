@@ -2381,7 +2381,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               }}
             >
               {(
-                ['wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung', 'ausschreibung', 'ausfuehrung', 'abnahme'] as const
+                // 'strategie' seit 0.7.2: die SIA-112-Phasen-Leiste im Header
+                // schreibt sie als repräsentative Phase — ohne die Option
+                // zeigte das Dropdown dann einen leeren Wert (Kritik-3-Befund).
+                ['strategie', 'wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung', 'ausschreibung', 'ausfuehrung', 'abnahme'] as const
               ).map((p) => (
                 <option key={p} value={p}>
                   {siaPhaseLabel(p)}

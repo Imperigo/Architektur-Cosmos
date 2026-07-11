@@ -213,4 +213,50 @@ DOM) · Kernel-Goldens byte-identisch.
   Charakter-Fensters NICHT verdrahtet (bräuchte Rust-Vorlauf-Event —
   ehrlich vertagt).
 
-<!-- Weitere Einträge folgen je Welle -->
+## W4-H «Restfixe + Einstellungs-Verdrahtung» — integriert (203cdd0)
+
+- Commit c9df5da → 203cdd0 (cherry-pick + reset-author durch den Opus-Leiter,
+  18 Dateien, alle Besitzbereiche zum Zeitpunkt frei). Gates laut Leiter +
+  Nachprüfung Fable-Finale: App 847 · Kernel 728 · typecheck/Build/cargo
+  check grün.
+- Inhalt: 4 Schalter «Bewegung & Klang» (sounds/eigencursor mit Live-Event/
+  abspielen/charakter inkl. NEUEM Tauri-Command `charakter_fenster_umschalten`)
+  · Header-nowrap + Phasen-Leisten-Kollaps <1500 px · Cursor-Zonen-Attribute
+  (PlanView/SketchOverlay = praezision, NodeCanvas = eigen) · tote
+  IconDock-Definitionen entfernt · Punkt-Burst bei tool-*-Klick ·
+  NEUIGKEITEN-ENTWURF-0.7.2 · einstellungen.spec +4, cursor-ebene.spec +2.
+- Ehrliche Grenzen: Charakter-Schalter nur cargo-check-belegt (kein
+  Fenstersystem im Container) · chip-serie/orbit-loader bewusst unverdrahtet
+  (kein ganzzahliger Serien-Zähler, Ladezustand läge in fremdem Besitz —
+  0.7.3, dokumentiert im Kopf von kosmo-feedback.css).
+
+## Kritik-Runde 3 (Fable-Schlussreview) — freigeben mit Auflagen
+
+- Shots r3 (93fa0ff, nachgebessert im Finale): Companion orbit+paper MIT
+  echter Auftragskarte, Cursor default + precision-Fadenkreuz (Test-Hook
+  `__kosmoCursor.aktivieren()` — unter webdriver ist die Ebene per
+  Hartvertrag aus, der erste Shot-Lauf war deshalb beweislos), Einstellungen
+  «Bewegung & Klang», Header 1600 (volle Labels) vs. 1400 (Nummern-Pills),
+  Charakter-Fallback-Orb.
+- Diff-Gesamtschau 7140f42→HEAD: Kernel-Goldens byte-identisch; Kernel-Diff
+  = exakt die deklarierte additive 'strategie'-Erweiterung; alle 84
+  Nicht-Doku-Dateien einem Stream/deklarierter Ripple zuordenbar; harte
+  Verträge (18er-Menü, 4 orbit-haupt, Animationsnamen, kosmo-symbol-DOM,
+  tool-treppe/dach TEXT) intakt.
+- Auflagen umgesetzt (Fable-Finale): Cursor-/Companion-Shots neu ·
+  3 Ehrlichkeits-Umformulierungen im NEUIGKEITEN-ENTWURF (App-Icon nur
+  Standard-Variante · Takeover-Darstellung ohne realen Trigger/ESC ·
+  Companion-Zugang via #companion-Adresse, kein Koppel-Link) + Pan/Zoom-
+  Grenze des Abspiel-Overlays ergänzt · `sia-phase-select` kennt jetzt
+  'strategie' (sonst leerer Dropdown-Wert nach Klick auf «1 STRATEGIE»).
+- reducedMotion-Befund KORRIGIERT: `contextOptions.reducedMotion:'reduce'`
+  kommt im gepinnten Chromium nachweislich AN (Fable-Minimal-Repro;
+  kosmo-zeichnet.spec hebt die Emulation erfolgreich per 'no-preference'
+  auf). Der frühere Leiter-Befund «kommt nicht an» stammte mutmasslich aus
+  manuell erzeugten Kontexten der Shot-Tools (ohne die Option) — kein
+  Config-Fix nötig.
+- Neu vertagt auf 0.7.3: echter takeover-Trigger + ESC-Behandlung ·
+  chip-serie/orbit-loader-Verdrahtung · Companion-Link im Koppeln-Dialog ·
+  Abspiel-Overlay folgt Pan/Zoom.
+
+<!-- Abgeschlossen mit dem 0.7.1+0.7.2-Release. -->

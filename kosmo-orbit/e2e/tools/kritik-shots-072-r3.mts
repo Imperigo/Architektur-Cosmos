@@ -47,7 +47,10 @@ for (const thema of ['orbit', 'paper'] as const) {
     const c = (window as never as Record<string, any>)['__kosmoCompanion'];
     c?.erfasseAuftrag?.('Fassadenschnitt Ost als Werkplan ableiten');
   });
-  await page.waitForTimeout(600);
+  // Kritik-3-Auflage 2: auf die echte Karte warten, nicht blind schiessen —
+  // sonst zeigt der Shot nur den Leerzustand.
+  await page.locator('[data-testid^="companion-job-"]').first().waitFor({ timeout: 5000 });
+  await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/r3-${thema}-companion.png` });
   await page.context().close();
 }
@@ -67,6 +70,11 @@ for (const thema of ['orbit', 'paper'] as const) {
 // 3 — Cursor-Ebene: default über der Zentrale + precision über dem Plan
 {
   const page = await frisch('orbit', 1440, { 'kosmo.eigencursor': '1' });
+  // Kritik-3-Auflage 1: unter webdriver ist die Ebene per Hartvertrag AUS —
+  // für den Sichtbeweis den Test-Hook nutzen (derselbe wie cursor-ebene.spec).
+  await page.evaluate(() => {
+    (window as never as { __kosmoCursor?: { aktivieren(): void } }).__kosmoCursor?.aktivieren();
+  });
   await page.mouse.move(720, 450);
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${OUT}/r3-orbit-cursor-default.png` });
