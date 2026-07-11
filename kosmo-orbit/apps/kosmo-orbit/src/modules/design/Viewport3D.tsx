@@ -1759,6 +1759,17 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       },
       invalidate: () => invalidate(),
       renderBeiBedarfAktiv: () => renderBeiBedarfAn,
+      // K2 (v0.7.0 Stream 3B, ROADMAP 144-Restrisiko): ehrlicher Beweis-Anker
+      // für den Referenz-3D-Ladepfad — zählt WIRKLICH die Meshes im über
+      // `syncGlb()` geladenen `glbGroup` (GLTFLoader-Ergebnis), kein Fake.
+      // 0 solange kein GLB geladen ist (`glbGroup === null`).
+      glbMeshCount: (): number => {
+        let n = 0;
+        glbGroup?.traverse((o) => {
+          if ((o as THREE.Mesh).isMesh) n++;
+        });
+        return n;
+      },
     };
 
     return () => {

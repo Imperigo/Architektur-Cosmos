@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { expect, test } from '@playwright/test';
 
 /**
@@ -11,28 +13,19 @@ import { expect, test } from '@playwright/test';
  * im Dossier den (jetzt aktiven) Lade-Knopf klicken → der GLTFLoader lädt die
  * Blob-URL wirklich, das Dossier meldet «Referenz-Kontext im Design-Viewport».
  *
- * Braucht kein Bridge/Sync — reiner Offline-Seed + WebGL (SwiftShader in der
- * Playwright-Config). Gegenstück zu `kosmodata-dossier.spec.ts`, das den
- * ehrlichen «kein-lokal»-Hinweis prüft (Referenz OHNE verknüpftes Asset).
+ * K2-Härtung (v0.7.0 Stream 3B): die alte Fixture war eine GLB mit LEERER
+ * Szene (`scenes: [{ nodes: [] }]`) — sie bewies nur, dass der GLTFLoader
+ * ohne Fehler durchläuft, NICHT dass wirklich Geometrie ankommt (das
+ * benannte ROADMAP-144-Restrisiko). `e2e/fixtures/dreieck.glb` ist eine
+ * ECHTE, binäre GLB (glTF-2.0-Header + JSON- + BIN-Chunk, von der
+ * mitgelieferten `three`-`GLTFLoader` selbst gegengeprüft beim Erzeugen,
+ * s. Kommentar in der Datei-Historie) mit einem einzelnen Dreieck-Mesh (3
+ * Vertices). Der Beweis-Anker ist ehrlich: `window.__kosmoViewport.
+ * glbMeshCount()` (Viewport3D.tsx) traversiert das WIRKLICH über `syncGlb()`
+ * geladene `glbGroup` (das GLTFLoader-Ergebnis) und zählt seine Meshes —
+ * kein Fake-Zähler, 0 ohne geladenes GLB.
  */
-
-/** Minimal gültiges GLB: nur ein JSON-Chunk mit leerer Szene (wie ref-asset-verknuepfung.spec.ts). */
-function miniGlb(): Buffer {
-  const json = Buffer.from(
-    JSON.stringify({ asset: { version: '2.0' }, scenes: [{ nodes: [] }], scene: 0 }),
-    'utf8',
-  );
-  const pad = (4 - (json.length % 4)) % 4;
-  const jsonChunk = Buffer.concat([json, Buffer.alloc(pad, 0x20)]);
-  const header = Buffer.alloc(12);
-  header.writeUInt32LE(0x46546c67, 0); // magic «glTF»
-  header.writeUInt32LE(2, 4);
-  header.writeUInt32LE(12 + 8 + jsonChunk.length, 8);
-  const chunkHeader = Buffer.alloc(8);
-  chunkHeader.writeUInt32LE(jsonChunk.length, 0);
-  chunkHeader.writeUInt32LE(0x4e4f534a, 4); // «JSON»
-  return Buffer.concat([header, chunkHeader, jsonChunk]);
-}
+const DREIECK_GLB = readFileSync(path.join(__dirname, 'fixtures', 'dreieck.glb'));
 
 test('Referenz-3D laden (T4c): verknüpfte lokale GLB fährt den echten GLTFLoader-Pfad bis zur Erfolgsmeldung', async ({
   page,
@@ -48,7 +41,7 @@ test('Referenz-3D laden (T4c): verknüpfte lokale GLB fährt den echten GLTFLoad
     page.waitForEvent('filechooser'),
     page.click('[data-testid="glb-import"]'),
   ]);
-  await chooser.setFiles({ name: 'studienmodell.glb', mimeType: 'model/gltf-binary', buffer: miniGlb() });
+  await chooser.setFiles({ name: 'studienmodell.glb', mimeType: 'model/gltf-binary', buffer: DREIECK_GLB });
   await expect(page.locator('[data-testid="asset-card"]')).toHaveCount(1);
   await page.click('[data-testid="asset-card"]');
   await page.click('[data-testid="asset-ref-verknuepfen"]');
@@ -79,6 +72,16 @@ test('Referenz-3D laden (T4c): verknüpfte lokale GLB fährt den echten GLTFLoad
     'Referenz-Kontext im Design-Viewport',
     { timeout: 25_000 },
   );
+
+  // 5) DER echte Beweis (ROADMAP-144-Restrisiko): nicht nur die Toast-Meldung,
+  //    sondern das tatsächlich in der Three.js-Szene ankommende Dreieck-Mesh.
+  //    `glbMeshCount()` zählt live im geladenen `glbGroup` — ohne echtes GLB
+  //    (oder bei einer leeren Szene wie der alten Fixture) bliebe das 0.
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { __kosmoViewport?: { glbMeshCount?: () => number } }).__kosmoViewport?.glbMeshCount?.() ?? -1), {
+      timeout: 5_000,
+    })
+    .toBe(1);
 
   await page.screenshot({ path: 'e2e-results/ref3d-laden.png' });
 });
