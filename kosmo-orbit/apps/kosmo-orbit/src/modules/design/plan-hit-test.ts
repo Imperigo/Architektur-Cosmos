@@ -6,6 +6,7 @@ import {
   type Aussparung,
   type Column,
   type KosmoDoc,
+  type Opening,
   type Pt,
   type Stair,
   type Wall,
@@ -47,6 +48,12 @@ const TOLERANZ = 120;
 
 /** mm Toleranz fürs enge Aussparungs-Kästchen — bewusst klein, sonst gewinnt sie vor der Wand. */
 const AUSSPARUNG_TOLERANZ = 40;
+
+/** mm Toleranz fürs enge Öffnungs-Rechteck (Fenster/Tür) — dieselbe Grössen-
+ * ordnung wie AUSSPARUNG_TOLERANZ: die Öffnung sitzt auf ihrer Wirtswand und
+ * darf sie quer zur Achse nur knapp über die Wanddicke hinaus verdecken,
+ * sonst wäre die Wand neben dem Fenster kaum noch greifbar. */
+const OEFFNUNG_TOLERANZ = 40;
 
 /**
  * Weltposition einer Aussparung am Wirt: Wand → Mitte auf der Achse a→b
@@ -106,16 +113,91 @@ export function aussparungTreffer(doc: KosmoDoc, a: Aussparung, p: Pt): boolean 
   return Math.abs(p.x - pos.x) <= half && Math.abs(p.y - pos.y) <= half;
 }
 
+/** Wirtswand einer Öffnung — null statt raten, falls sie fehlt (verwaiste Öffnung). */
+function oeffnungWand(doc: KosmoDoc, o: Opening): Wall | null {
+  const wall = doc.get(o.wallId);
+  return wall && wall.kind === 'wall' ? wall : null;
+}
+
+/** Weltposition der Öffnungsmitte auf der Wandachse (a→b, `center` mm ab a). */
+export function oeffnungWeltpos(doc: KosmoDoc, o: Opening): Pt | null {
+  const wall = oeffnungWand(doc, o);
+  if (!wall) return null;
+  const dx = wall.b.x - wall.a.x;
+  const dy = wall.b.y - wall.a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  return { x: wall.a.x + (dx / len) * o.center, y: wall.a.y + (dy / len) * o.center };
+}
+
 /**
- * Trefferzone am Klickpunkt: Aussparungen zuerst (enges Kästchen — sie sitzen
- * auf ihrem Wirt und würden sonst nie gewählt), dann Linien-/Punktelemente
- * (Wand, Stütze, Treppe — Achse ± halbe Dicke + Toleranz), dann flächige
- * Elemente (Punkt-in-Polygon). Liefert die erste passende Entity-Id, sonst null.
+ * Trifft der Klickpunkt die Öffnung (Fenster/Tür, inkl. parametrischer
+ * Fenster)? Enges Rechteck AN der Wandachse: längs `center ± width/2`, quer
+ * halbe Wanddicke — beides plus die kleine OEFFNUNG_TOLERANZ. Analog zum
+ * Aussparungs-Kästchen bewusst NICHT die grosse Wand-Toleranz, damit die
+ * Wirtswand daneben (und knapp quer zur Achse) gut greifbar bleibt.
+ */
+export function oeffnungTreffer(doc: KosmoDoc, o: Opening, p: Pt): boolean {
+  const wall = oeffnungWand(doc, o);
+  if (!wall) return false;
+  const dx = wall.b.x - wall.a.x;
+  const dy = wall.b.y - wall.a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const rx = p.x - wall.a.x;
+  const ry = p.y - wall.a.y;
+  const laengs = rx * ux + ry * uy;
+  const quer = Math.abs(rx * -uy + ry * ux);
+  const asm = doc.get<Assembly>(wall.assemblyId);
+  const halbeDicke = asm && asm.kind === 'assembly' ? assemblyThickness(asm) / 2 : 150;
+  return (
+    Math.abs(laengs - o.center) <= o.width / 2 + OEFFNUNG_TOLERANZ &&
+    quer <= halbeDicke + OEFFNUNG_TOLERANZ
+  );
+}
+
+/** Symbol-Rechteck der Öffnung (width × Wanddicke), an der Wandachse ausgerichtet. */
+function oeffnungRect(doc: KosmoDoc, o: Opening, pos: Pt): Pt[] | null {
+  const wall = oeffnungWand(doc, o);
+  if (!wall) return null;
+  const dx = wall.b.x - wall.a.x;
+  const dy = wall.b.y - wall.a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const dir = { x: dx / len, y: dy / len };
+  const nx = -dir.y;
+  const ny = dir.x;
+  const asm = doc.get<Assembly>(wall.assemblyId);
+  const hb = o.width / 2;
+  const hh = (asm && asm.kind === 'assembly' ? assemblyThickness(asm) : 300) / 2;
+  return [
+    { x: pos.x - dir.x * hb - nx * hh, y: pos.y - dir.y * hb - ny * hh },
+    { x: pos.x + dir.x * hb - nx * hh, y: pos.y + dir.y * hb - ny * hh },
+    { x: pos.x + dir.x * hb + nx * hh, y: pos.y + dir.y * hb + ny * hh },
+    { x: pos.x - dir.x * hb + nx * hh, y: pos.y - dir.y * hb + ny * hh },
+  ];
+}
+
+/**
+ * Trefferzone am Klickpunkt: Aussparungen und Öffnungen zuerst (enge Zonen —
+ * sie sitzen auf ihrem Wirt und würden sonst nie gewählt), dann Linien-/
+ * Punktelemente (Wand, Stütze, Treppe — Achse ± halbe Dicke + Toleranz), dann
+ * flächige Elemente (Punkt-in-Polygon). Liefert die erste passende Entity-Id,
+ * sonst null.
  */
 export function pickEntityAt(doc: KosmoDoc, storeyId: string, p: Pt): string | null {
   for (const a of doc.byKind<Aussparung>('aussparung')) {
     if (a.storeyId !== storeyId) continue;
     if (aussparungTreffer(doc, a, p)) return a.id;
+  }
+  // Öffnungen (Fenster/Tür, inkl. parametrischer Fenster) VOR der Wirtswand —
+  // sonst gewinnt immer die Wand und die Öffnung wäre im Plan nie wählbar.
+  // Leibungen bleiben aussen vor (reines Werkplan-Detail am Fensteranschlag,
+  // kein eigenständig wählbares Symbol im Grundriss).
+  for (const o of doc.byKind<Opening>('opening')) {
+    if (o.openingType !== 'fenster' && o.openingType !== 'tuer') continue;
+    const wall = oeffnungWand(doc, o);
+    if (!wall || wall.storeyId !== storeyId) continue;
+    if (oeffnungTreffer(doc, o, p)) return o.id;
   }
   for (const w of doc.byKind<Wall>('wall')) {
     if (w.storeyId !== storeyId) continue;
@@ -181,6 +263,10 @@ export function outlineOf(doc: KosmoDoc, id: string): Pt[] | null {
     case 'aussparung': {
       const pos = aussparungWeltpos(doc, e);
       return pos ? aussparungRect(doc, e, pos) : null;
+    }
+    case 'opening': {
+      const pos = oeffnungWeltpos(doc, e);
+      return pos ? oeffnungRect(doc, e, pos) : null;
     }
     default:
       return null;

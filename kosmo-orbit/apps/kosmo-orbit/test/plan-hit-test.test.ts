@@ -4,6 +4,8 @@ import {
   aussparungTreffer,
   aussparungWeltpos,
   distToSegment,
+  oeffnungTreffer,
+  oeffnungWeltpos,
   outlineOf,
   pickEntityAt,
   pointInPolygon,
@@ -137,6 +139,116 @@ describe('pickEntityAt — Trefferzonen im Grundriss (T1: Anwählen)', () => {
     expect(pickEntityAt(doc, storeyId, { x: 3000, y: 210 })).toBe(wallId);
     // Weit weg auf der Wandachse: unverändert die Wand
     expect(pickEntityAt(doc, storeyId, { x: 500, y: 0 })).toBe(wallId);
+  });
+});
+
+describe('pickEntityAt — Öffnungen (Fenster/Tür) vor der Wirtswand (v0.7.0, Muster Aussparungs-Kästchen)', () => {
+  it('wählt ein Fenster vor der Wand, aber nur im engen Rechteck an der Wandachse', () => {
+    const { doc, storeyId, wallId } = setupDoc();
+    // Wand a=(0,0) b=(6000,0), Dicke 200 → halbe Dicke 100
+    const fensterId = (
+      execute(doc, 'design.oeffnungSetzen', {
+        wallId,
+        openingType: 'fenster',
+        center: 2000,
+        width: 1200,
+        height: 1500,
+        sill: 900,
+      }).patches[0] as { id: string }
+    ).id;
+
+    // Treffer mitten in der Öffnung
+    expect(pickEntityAt(doc, storeyId, { x: 2000, y: 0 })).toBe(fensterId);
+    // Längs noch im Rechteck (halbe Breite 600 + Toleranz 40 = 640)
+    expect(pickEntityAt(doc, storeyId, { x: 2635, y: 0 })).toBe(fensterId);
+    // Quer noch im Rechteck (halbe Dicke 100 + Toleranz 40 = 140)
+    expect(pickEntityAt(doc, storeyId, { x: 2000, y: 135 })).toBe(fensterId);
+    // Quer ausserhalb des engen Rechtecks, aber in der (grossen) Wand-
+    // Trefferzone → die Wand bleibt neben/über der Öffnung gut greifbar
+    expect(pickEntityAt(doc, storeyId, { x: 2000, y: 160 })).toBe(wallId);
+    expect(oeffnungWeltpos(doc, doc.get(fensterId) as import('@kosmo/kernel').Opening)).toEqual({ x: 2000, y: 0 });
+  });
+
+  it('trifft die Wand daneben (längs ausserhalb von center ± width/2 + Toleranz)', () => {
+    const { doc, storeyId, wallId } = setupDoc();
+    (void execute(doc, 'design.oeffnungSetzen', {
+      wallId,
+      openingType: 'fenster',
+      center: 2000,
+      width: 1200,
+      height: 1500,
+      sill: 900,
+    }));
+    // Knapp neben dem Rechteck (2000 + 640 = 2640) auf der Achse → Wand
+    expect(pickEntityAt(doc, storeyId, { x: 2700, y: 0 })).toBe(wallId);
+    // Weit weg auf der Wandachse: unverändert die Wand
+    expect(pickEntityAt(doc, storeyId, { x: 500, y: 0 })).toBe(wallId);
+  });
+
+  it('unterscheidet Tür und Fenster auf derselben Wand (je eigene Trefferzone)', () => {
+    const { doc, storeyId, wallId } = setupDoc();
+    const fensterId = (
+      execute(doc, 'design.oeffnungSetzen', {
+        wallId, openingType: 'fenster', center: 1500, width: 1200, height: 1500, sill: 900,
+      }).patches[0] as { id: string }
+    ).id;
+    const tuerId = (
+      execute(doc, 'design.oeffnungSetzen', {
+        wallId, openingType: 'tuer', center: 4500, width: 900, height: 2200, sill: 0,
+      }).patches[0] as { id: string }
+    ).id;
+    expect(pickEntityAt(doc, storeyId, { x: 1500, y: 0 })).toBe(fensterId);
+    expect(pickEntityAt(doc, storeyId, { x: 4500, y: 0 })).toBe(tuerId);
+    // Zwischen den beiden Öffnungen: die Wand
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: 0 })).toBe(wallId);
+  });
+
+  it('wählt auch ein parametrisches Fenster (fensterTyp/teilung ändern die Trefferzone nicht)', () => {
+    const { doc, storeyId, wallId } = setupDoc();
+    const fensterId = (
+      execute(doc, 'design.oeffnungSetzen', {
+        wallId, openingType: 'fenster', center: 2000, width: 1600, height: 1400, sill: 900,
+      }).patches[0] as { id: string }
+    ).id;
+    execute(doc, 'design.fensterParametrieren', {
+      openingId: fensterId, fensterTyp: 'zweifluegel', teilungN: 2, teilungM: 1, swing: 'links',
+    });
+    expect(pickEntityAt(doc, storeyId, { x: 2000, y: 0 })).toBe(fensterId);
+    // Rand des Rechtecks (halbe Breite 800 + 40 = 840)
+    expect(pickEntityAt(doc, storeyId, { x: 2835, y: 0 })).toBe(fensterId);
+    expect(pickEntityAt(doc, storeyId, { x: 2900, y: 0 })).toBe(wallId);
+  });
+
+  it('oeffnungTreffer/oeffnungWeltpos liefern false/null bei verwaister Öffnung (Wand fehlt)', () => {
+    const { doc } = setupDoc();
+    const verwaist: import('@kosmo/kernel').Opening = {
+      id: 'oeffnung-verwaist',
+      kind: 'opening',
+      wallId: 'existiert-nicht',
+      openingType: 'fenster',
+      center: 1000,
+      width: 1200,
+      height: 1500,
+      sill: 900,
+    };
+    expect(oeffnungWeltpos(doc, verwaist)).toBeNull();
+    expect(oeffnungTreffer(doc, verwaist, { x: 1000, y: 0 })).toBe(false);
+  });
+
+  it('outlineOf liefert für die Öffnung ihr Symbol-Rechteck (width × Wanddicke)', () => {
+    const { doc, wallId } = setupDoc();
+    const fensterId = (
+      execute(doc, 'design.oeffnungSetzen', {
+        wallId, openingType: 'fenster', center: 3000, width: 1200, height: 1500, sill: 900,
+      }).patches[0] as { id: string }
+    ).id;
+    const outline = outlineOf(doc, fensterId)!;
+    expect(outline).not.toBeNull();
+    expect(outline).toHaveLength(4);
+    const xs = outline.map((p) => p.x);
+    const ys = outline.map((p) => p.y);
+    expect(Math.max(...xs) - Math.min(...xs)).toBe(1200); // Wand horizontal → width entlang x
+    expect(Math.max(...ys) - Math.min(...ys)).toBe(200); // Aufbau-Dicke quer
   });
 });
 
