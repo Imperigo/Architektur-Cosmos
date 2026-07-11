@@ -6,6 +6,7 @@
  */
 import type { ChatProvider, ChatRequest, StreamEvent, ChatMessage } from './provider';
 import { verknuepfeToolIds } from './provider';
+import { bildBudget } from './bild-budget';
 
 export interface AnthropicConfig {
   /** Klassischer Weg: eingetippter API-Schlüssel → `x-api-key`. */
@@ -94,6 +95,14 @@ export class AnthropicProvider implements ChatProvider {
   constructor(private cfg: AnthropicConfig) {}
 
   async *chat(req: ChatRequest): AsyncIterable<StreamEvent> {
+    // Vorabprüfung OHNE Netzcall (H-Härtung v0.7.1): ein zu grosses Bild
+    // scheitert sonst erst nach dem Roundtrip mit derselben Botschaft —
+    // ehrlicher, den Fehler schon hier zu melden.
+    const budget = bildBudget(req.messages);
+    if (!budget.ok) {
+      yield { type: 'done', stopReason: 'error', error: budget.grund };
+      return;
+    }
     const { system, messages } = zuAnthropicNachrichten(req.messages);
     let response: Response;
     try {
@@ -136,8 +145,19 @@ export class AnthropicProvider implements ChatProvider {
     }
     if (!response.ok || !response.body) {
       const detail = await response.text().catch(() => '');
-      const hinweis =
-        response.status === 401
+      const hatBilder = req.messages.some((m) => (m.images?.length ?? 0) > 0);
+      // Bildspezifischer Fehlerpfad: 413 (Payload zu gross) bei einem
+      // Bild-Request ist praktisch immer die Bildgrösse; ein Anthropic-400
+      // mit einer Grössen-Meldung im Body (`exceeds`/`maximum`/`too large`
+      // zusammen mit `image`) ebenso — statt des generischen Statuscode-
+      // Texts bekommt der Architekt hier die ehrliche, konkrete Ursache.
+      const bildGrosseFehler =
+        hatBilder &&
+        (response.status === 413 ||
+          (response.status === 400 && /image/i.test(detail) && /(exceeds|maximum|too large)/i.test(detail)));
+      const hinweis = bildGrosseFehler
+        ? 'Bild zu gross — Kosmo verkleinert Blicke automatisch; dieses Bild überschreitet trotzdem das Limit.'
+        : response.status === 401
           ? 'API-Schlüssel prüfen (Einstellungen ⚙).'
           : response.status === 429
             ? 'Rate-Limit erreicht — kurz warten.'

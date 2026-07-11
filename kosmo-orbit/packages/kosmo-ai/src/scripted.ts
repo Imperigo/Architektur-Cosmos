@@ -167,7 +167,17 @@ export class ScriptedProvider implements ChatProvider {
       ? ''
       : ` (Hinweis: erwartete Nutzer-Eingabe passte nicht — Zug wird trotzdem gespielt.)`;
 
-    yield { type: 'text', delta: zug.antwortText + hinweis };
+    // v0.7.1-Härtung: trägt die letzte Nutzer-Nachricht `images`, geht dem
+    // Skript-Text ein Marker voran — E2E-Kampagnen (Stream 2A) können damit
+    // BEWEISEN, dass ein Blick tatsächlich ankam, ohne ein echtes Modell zu
+    // brauchen. Additiv: ohne Bilder bleibt die Antwort byte-identisch zum
+    // bestehenden Vertrag.
+    const bildMarker =
+      letzteNutzerNachricht?.images && letzteNutzerNachricht.images.length > 0
+        ? `[Blick empfangen: ${letzteNutzerNachricht.images.length} Bild(er)] `
+        : '';
+
+    yield { type: 'text', delta: bildMarker + zug.antwortText + hinweis };
     let i = 0;
     for (const tc of zug.toolCalls) {
       yield {
