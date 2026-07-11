@@ -3,7 +3,7 @@ import { newId } from '../model/ids';
 import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Mangel, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
-import type { AnyPatch, KosmoDoc } from '../model/doc';
+import type { AnyPatch, KosmoDoc, RaumRegel, ZonenVorlage } from '../model/doc';
 import { empfohlenePlanPhase, phaseLabel, siaPhaseLabel } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -1953,16 +1953,27 @@ export const generateFloorplan = registerCommand({
       const vertikalSeite = seite === 'links' || seite === 'rechts';
       const wb = vertikalSeite ? bbMaxY - bbMinY : bbMaxX - bbMinX;
       const wt = vertikalSeite ? bbMaxX - bbMinX : bbMaxY - bbMinY;
-      const passend = doc.settings.vorlagen
+      // Kandidaten nach Namens-/Stretch-Filter sortiert; ein F7-Lock-Konflikt
+      // (alle Zonen auf einer Achse fest, Zielmass passt nicht — achsenDehnung
+      // wirft) disqualifiziert NUR diesen Kandidaten, kein Command-Fehler:
+      // die nächste Vorlage bzw. am Ende das CH-Rezept übernimmt ehrlich.
+      const kandidaten = doc.settings.vorlagen
         .filter((v) => v.name.toLowerCase().includes(wohnung.program!.toLowerCase()))
         .map((v) => ({ v, sx: wb / v.breite, sy: wt / v.hoehe }))
         .filter(({ sx, sy }) => sx >= 0.7 && sx <= 1.4 && sy >= 0.7 && sy <= 1.4)
-        .sort((a, b) => Math.abs(a.sx * a.sy - 1) - Math.abs(b.sx * b.sy - 1))[0];
-      if (passend) {
-        const { v, sx, sy } = passend;
+        .sort((a, b) => Math.abs(a.sx * a.sy - 1) - Math.abs(b.sx * b.sy - 1));
+      for (const { v } of kandidaten) {
+        let mapX: (n: number) => number;
+        let mapY: (n: number) => number;
+        try {
+          mapX = achsenDehnung(v, 'x', wb);
+          mapY = achsenDehnung(v, 'y', wt);
+        } catch {
+          continue; // F7-Lock lässt sich hier nicht erfüllen — nächste Vorlage
+        }
         const tx = (u: number, w: number) => {
-          const su = u * sx;
-          const sw = w * sy;
+          const su = mapX(u);
+          const sw = mapY(w);
           switch (seite) {
             case 'unten': return { x: Math.round(bbMinX + su), y: Math.round(bbMinY + sw) };
             case 'oben': return { x: Math.round(bbMinX + su), y: Math.round(bbMaxY - sw) };
@@ -2001,6 +2012,19 @@ export const generateFloorplan = registerCommand({
             id: newId('tuer'), kind: 'zonentuer' as const, storeyId: wohnung.storeyId,
             at: tx(t.at.x, t.at.y), breite: t.breite,
           }));
+        }
+        // Regeln-in-Vorlagen (E5-v): Library-Treffer aktiviert eingebettete
+        // Presets, damit spätere Checks (pruefeGrundriss) das Ergebnis daran
+        // messen — vereinigt mit bestehenden Raumregeln, nie überschrieben.
+        if (v.regeln?.length) {
+          const vereint = vereinigeRaumRegeln(doc.settings.raumRegeln, v.regeln);
+          if (vereint) {
+            patches.push({
+              settings: true as const,
+              before: { raumRegeln: doc.settings.raumRegeln },
+              after: { raumRegeln: vereint },
+            });
+          }
         }
         return patches;
       }
@@ -2069,14 +2093,110 @@ export const setLocation = registerCommand({
   ],
 });
 
+/**
+ * F7-Locks (v0.7.0 E5-ii): baut den achsweisen Stretch-Verlauf einer Vorlage
+ * für EINE Achse. `cuts` = alle distinkten Koordinaten dieser Achse aus den
+ * Zonen-Umrissen (plus 0/gesamt als Rand-Garantie) — daraus entstehen
+ * Elementar-Abschnitte; ein Abschnitt ist `fest`, wenn ihn eine Zone mit
+ * `dehnung{X,Y}==='fest'` vollständig überdeckt. Feste Abschnitte behalten
+ * ihre Originallänge, die Differenz zwischen Ziel- und Ausgangsmass verteilt
+ * sich anteilig auf die dehnbaren. **Ohne Locks** (alle Zonen `dehnbar`, der
+ * Default) ist genau EIN dehnbarer Abschnitt über das ganze Mass die Folge —
+ * rechnerisch identisch zum alten `wert * (ziel/gesamt)`, also byte-gleiches
+ * Verhalten für jede bestehende Vorlage (bewiesen in
+ * «Alt-Vorlagen ohne Locks bleiben unverändert», kernel.test.ts).
+ * Sind ALLE Abschnitte fest und weicht das Zielmass von der Summe ab, ist
+ * stilles Verzerren unehrlich — `CommandError` statt falscher Geometrie.
+ */
+function achsenDehnung(
+  vorlage: ZonenVorlage,
+  achse: 'x' | 'y',
+  ziel: number | null,
+): (wert: number) => number {
+  const gesamt = achse === 'x' ? vorlage.breite : vorlage.hoehe;
+  if (!ziel || ziel === gesamt || gesamt <= 0) return (w) => w;
+  const key = achse === 'x' ? 'dehnungX' : 'dehnungY';
+  const koord = (pt: { x: number; y: number }) => (achse === 'x' ? pt.x : pt.y);
+  const cuts = [...new Set([0, gesamt, ...vorlage.zonen.flatMap((z) => z.outline.map(koord))])].sort(
+    (a, b) => a - b,
+  );
+  const baender = cuts.slice(0, -1).map((von, i) => {
+    const bis = cuts[i + 1]!;
+    const fest = vorlage.zonen.some((z) => {
+      if (z[key] !== 'fest') return false;
+      const werte = z.outline.map(koord);
+      return Math.min(...werte) <= von && bis <= Math.max(...werte);
+    });
+    return { von, bis, laenge: bis - von, fest };
+  });
+  const festSumme = baender.filter((b) => b.fest).reduce((s, b) => s + b.laenge, 0);
+  const dehnSumme = gesamt - festSumme;
+  const delta = ziel - gesamt;
+  if (dehnSumme <= 0) {
+    if (Math.abs(delta) > 0.01) {
+      throw new CommandError(
+        `Vorlage «${vorlage.name}»: alle Zonen sind auf der ${achse === 'x' ? 'X' : 'Y'}-Achse fest (F7-Lock) — Zielmass ${ziel} mm passt nicht zur festen Summe ${gesamt} mm.`,
+      );
+    }
+    return (w) => w;
+  }
+  const faktorDehnbar = (dehnSumme + delta) / dehnSumme;
+  let neuVon = 0;
+  const abgebildet = baender.map((b) => {
+    const faktor = b.fest ? 1 : faktorDehnbar;
+    const eintrag = { von: b.von, bis: b.bis, neuVon, faktor };
+    neuVon += b.laenge * faktor;
+    return eintrag;
+  });
+  return (wert: number) => {
+    const b = abgebildet.find((e) => wert >= e.von && wert <= e.bis) ?? abgebildet[abgebildet.length - 1]!;
+    return b.neuVon + (wert - b.von) * b.faktor;
+  };
+}
+
+/**
+ * Regeln-in-Vorlagen (v0.7.0 E5-v): vereinigt die Regelpreset-Ids einer
+ * Vorlage mit den bestehenden Projekt-Raumregeln — bestehende Einträge je
+ * Raumtyp gewinnen IMMER (kein stilles Überschreiben eigener Anpassungen),
+ * die Vorlage ergänzt nur fehlende Raumtypen. `null` = nichts Neues, kein
+ * Patch nötig.
+ */
+function vereinigeRaumRegeln(bestehende: RaumRegel[], presetIds: string[]): RaumRegel[] | null {
+  const bekannt = new Set(bestehende.map((r) => r.raumTyp));
+  const dazu: RaumRegel[] = [];
+  for (const id of presetIds) {
+    const preset = REGEL_PRESETS[id as keyof typeof REGEL_PRESETS] as RaumRegel[] | undefined;
+    if (!preset) continue; // an Speicherzeit schon geprüft (vorlageSpeichern) — hier defensiv
+    for (const regel of preset) {
+      if (!bekannt.has(regel.raumTyp)) {
+        bekannt.add(regel.raumTyp);
+        dazu.push(regel);
+      }
+    }
+  }
+  return dazu.length > 0 ? [...bestehende, ...dazu] : null;
+}
+
 export const saveTemplate = registerCommand({
   id: 'design.vorlageSpeichern',
   title: 'Zonen-Vorlage speichern',
   description:
-    'Speichert die angegebenen Zonen als benannte Vorlage (Wohnungs-Layout): Umrisse relativ zur linken unteren Ecke, mit Name/SIA/Raumtyp. Mit design.vorlageSetzen wieder absetzbar — auch gestreckt.',
-  params: z.object({ name: z.string().min(1), zoneIds: z.array(z.string()).min(1).max(40) }),
-  summarize: (p) => `Vorlage «${p.name}» (${p.zoneIds.length} Zonen)`,
+    'Speichert die angegebenen Zonen als benannte Vorlage (Wohnungs-Layout): Umrisse relativ zur linken unteren Ecke, mit Name/SIA/Raumtyp. dehnungFestX/dehnungFestY (Teilmenge von zoneIds) sperrt die betroffene Zone auf dieser Achse aufs Originalmass (F7-Lock, z.B. Nasszelle fix 2.4 m) — beim Strecken (design.vorlageSetzen/design.grundrissGenerieren) nehmen die übrigen (dehnbaren) Zonen die Differenz auf; Default leer = alles dehnbar wie bisher. regeln (Ids aus REGEL_PRESETS) werden beim Absetzen/Instanziieren dieser Vorlage im Projekt aktiviert (vereinigt mit bestehenden Raumregeln, nie überschrieben). Mit design.vorlageSetzen wieder absetzbar — auch gestreckt.',
+  params: z.object({
+    name: z.string().min(1),
+    zoneIds: z.array(z.string()).min(1).max(40),
+    dehnungFestX: z.array(z.string()).max(40).default([]),
+    dehnungFestY: z.array(z.string()).max(40).default([]),
+    regeln: z.array(z.string()).max(8).default([]),
+  }),
+  summarize: (p) =>
+    `Vorlage «${p.name}» (${p.zoneIds.length} Zonen${p.regeln.length > 0 ? `, Regeln ${p.regeln.join(', ')}` : ''})`,
   run: (doc, p) => {
+    for (const id of p.regeln) {
+      if (!(id in REGEL_PRESETS)) {
+        throw new CommandError(`Unbekanntes Regel-Preset «${id}» — bekannt: ${Object.keys(REGEL_PRESETS).join(', ')}`);
+      }
+    }
     const zonen = p.zoneIds.map((id) => require<Zone>(doc, id, 'zone'));
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     for (const z of zonen) {
@@ -2103,9 +2223,12 @@ export const saveTemplate = registerCommand({
         name: z.name,
         sia: z.sia,
         ...(z.raumTyp ? { raumTyp: z.raumTyp } : {}),
+        ...(p.dehnungFestX.includes(z.id) ? { dehnungX: 'fest' as const } : {}),
+        ...(p.dehnungFestY.includes(z.id) ? { dehnungY: 'fest' as const } : {}),
       })),
       ...(moebel.length > 0 ? { moebel } : {}),
       ...(tueren.length > 0 ? { tueren } : {}),
+      ...(p.regeln.length > 0 ? { regeln: p.regeln } : {}),
     };
     const after = {
       ...doc.settings,
@@ -2119,7 +2242,7 @@ export const placeTemplate = registerCommand({
   id: 'design.vorlageSetzen',
   title: 'Zonen-Vorlage absetzen',
   description:
-    'Setzt eine gespeicherte Zonen-Vorlage ab: at = linke untere Ecke (mm). Optional breite/hoehe (mm) strecken das Layout ACHSWEISE linear (alle Zonen skalieren mit — Verhältnis bleibt je Achse). Ein Undo-Schritt.',
+    'Setzt eine gespeicherte Zonen-Vorlage ab: at = linke untere Ecke (mm). Optional breite/hoehe (mm) strecken das Layout ACHSWEISE linear — feste Zonen (F7-Lock, dehnungX/dehnungY=fest) behalten ihr Originalmass, die dehnbaren nehmen die Differenz auf (ohne Locks: alle Zonen skalieren gleichmässig mit, Verhältnis bleibt je Achse, wie bisher). Trägt die Vorlage eingebettete Regeln, werden sie mit bestehenden Raumregeln vereinigt (nie überschrieben). Ein Undo-Schritt.',
   params: z.object({
     storeyId: z.string(),
     name: z.string(),
@@ -2129,19 +2252,28 @@ export const placeTemplate = registerCommand({
     /** true = an der senkrechten Mittelachse gespiegelt (Ost↔West). */
     spiegeln: z.boolean().default(false),
   }),
-  summarize: (p) => `Vorlage «${p.name}» absetzen${p.spiegeln ? ' (gespiegelt)' : ''}`,
+  summarize: (p, doc) => {
+    const vorlage = doc.settings.vorlagen.find((v) => v.name === p.name);
+    const regelnHinweis = vorlage?.regeln?.length ? ` + Regeln ${vorlage.regeln.join(', ')} übernommen` : '';
+    return `Vorlage «${p.name}» absetzen${p.spiegeln ? ' (gespiegelt)' : ''}${regelnHinweis}`;
+  },
   run: (doc, p) => {
     require<Storey>(doc, p.storeyId, 'storey');
     const vorlage = doc.settings.vorlagen.find((v) => v.name === p.name);
     if (!vorlage) throw new CommandError(`Vorlage «${p.name}» existiert nicht`);
-    const sx = p.breite ? p.breite / vorlage.breite : 1;
-    const sy = p.hoehe ? p.hoehe / vorlage.hoehe : 1;
-    // Spiegelung an der senkrechten Mittelachse: u → Breite − u
-    const u = (x: number) => (p.spiegeln ? vorlage.breite - x : x);
+    const mapX = achsenDehnung(vorlage, 'x', p.breite);
+    const mapY = achsenDehnung(vorlage, 'y', p.hoehe);
+    const zielX = p.breite ?? vorlage.breite;
+    // Spiegelung an der senkrechten Mittelachse NACH der Streckung (im
+    // Zielmass): zielX − mapX(x). Bei uniformer Streckung (Alt-Vorlagen ohne
+    // Locks, mapX(x) = x·sx) rechnerisch identisch zur alten Reihenfolge
+    // Spiegeln-dann-Skalieren — byte-gleich fürs Bestandsverhalten.
+    const px = (x: number) => (p.spiegeln ? zielX - mapX(x) : mapX(x));
+    const py = (y: number) => mapY(y);
     const patches: AnyPatch[] = vorlage.zonen.map((vz) => {
       const outline = vz.outline.map((pt) => ({
-        x: Math.round(p.at.x + u(pt.x) * sx),
-        y: Math.round(p.at.y + pt.y * sy),
+        x: Math.round(p.at.x + px(pt.x)),
+        y: Math.round(p.at.y + py(pt.y)),
       }));
       if (p.spiegeln) outline.reverse();
       return added({
@@ -2157,16 +2289,28 @@ export const placeTemplate = registerCommand({
     for (const m of vorlage.moebel ?? []) {
       patches.push(added({
         id: newId('moebel'), kind: 'furniture' as const, storeyId: p.storeyId,
-        typ: m.typ, at: { x: Math.round(p.at.x + u(m.at.x) * sx), y: Math.round(p.at.y + m.at.y * sy) },
+        typ: m.typ, at: { x: Math.round(p.at.x + px(m.at.x)), y: Math.round(p.at.y + py(m.at.y)) },
         rotationGrad: p.spiegeln ? ((360 - m.rotationGrad) % 360) : m.rotationGrad,
       }));
     }
     for (const t of vorlage.tueren ?? []) {
       patches.push(added({
         id: newId('tuer'), kind: 'zonentuer' as const, storeyId: p.storeyId,
-        at: { x: Math.round(p.at.x + u(t.at.x) * sx), y: Math.round(p.at.y + t.at.y * sy) },
+        at: { x: Math.round(p.at.x + px(t.at.x)), y: Math.round(p.at.y + py(t.at.y)) },
         breite: t.breite,
       }));
+    }
+    // Regeln-in-Vorlagen (E5-v): eingebettete Presets vereinigen, NIE still
+    // überschreiben — nur fehlende Raumtypen werden ergänzt.
+    if (vorlage.regeln?.length) {
+      const vereint = vereinigeRaumRegeln(doc.settings.raumRegeln, vorlage.regeln);
+      if (vereint) {
+        patches.push({
+          settings: true as const,
+          before: { raumRegeln: doc.settings.raumRegeln },
+          after: { raumRegeln: vereint },
+        });
+      }
     }
     return patches;
   },

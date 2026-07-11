@@ -27,6 +27,7 @@ import { moebelGeometrie } from '../src/derive/moebel';
 import { fassadenModule, moduleAlsCsv } from '../src/derive/fassadenmodule';
 import { parzelleZuOutline } from '../src/derive/standort';
 import { generiereGrundriss } from '../src/derive/grundrissgenerator';
+import { REGEL_PRESETS } from '../src/model/regelpresets';
 import {
   KosmoDoc,
   History,
@@ -3866,6 +3867,202 @@ describe('Zonen-Vorlagen (V2-F7)', () => {
         storeyId: (eg.patches[0] as { id: string }).id, name: 'gibtsnicht', at: { x: 0, y: 0 }, breite: null, hoehe: null,
       }),
     ).toThrow(/existiert nicht/);
+  });
+
+  it('Alt-Vorlagen-Kompatibilität (Charakterisierungstest): ohne dehnung/regeln bleibt der Stretch das alte Spiegeln-dann-Skalieren', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const z = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Raum', sia: 'HNF', raumTyp: 'wohnen',
+      outline: [{ x: 0, y: 0 }, { x: 4000, y: 0 }, { x: 4000, y: 2000 }, { x: 0, y: 2000 }],
+    });
+    execute(doc, 'design.vorlageSpeichern', { name: 'Alt-Muster', zoneIds: [(z.patches[0] as { id: string }).id] });
+    // sx = 6000/4000 = 1.5, sy = 5000/2000 = 2.5 — altes u(x)=Breite−x, dann ×sx
+    execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: 'Alt-Muster', at: { x: 1000, y: 1000 }, breite: 6000, hoehe: 5000, spiegeln: true,
+    });
+    const alteId = (z.patches[0] as { id: string }).id;
+    const raum = doc.byKind<Zone>('zone').find((zz) => zz.name === 'Raum' && zz.id !== alteId)!;
+    const xs = raum.outline.map((p) => p.x);
+    const ys = raum.outline.map((p) => p.y);
+    // (4000−0)×1.5 = 6000, an at.x=1000 gespiegelt platziert: 1000..7000
+    expect(Math.min(...xs)).toBe(1000);
+    expect(Math.max(...xs)).toBe(7000);
+    // (2000−0)×2.5 = 5000, kein Spiegeln in y: 1000..6000
+    expect(Math.min(...ys)).toBe(1000);
+    expect(Math.max(...ys)).toBe(6000);
+    // keine Vorlage trägt Locks/Regeln → keine Regel-Aktivierung, keine Überraschung
+    expect(doc.settings.raumRegeln).toHaveLength(0);
+  });
+});
+
+describe('F7-Locks (v0.7.0 E5-ii): feste/dehnbare Zonenkanten beim Vorlagen-Stretch', () => {
+  /** Bad (2 m breit, x 0–2000) + Zimmer (3 m breit, x 2000–5000), Höhe 3000
+   * bei beiden — Vorlagen-BBox 5000×3000. `festeZone` bestimmt, welche der
+   * beiden auf X gesperrt wird ('bad' | 'zimmer' | 'beide' | 'keine'). */
+  const bauVorlage = (doc: KosmoDoc, storeyId: string, festeZone: 'bad' | 'zimmer' | 'beide' | 'keine') => {
+    const bad = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Bad', sia: 'HNF', raumTyp: 'bad',
+      outline: [{ x: 0, y: 0 }, { x: 2000, y: 0 }, { x: 2000, y: 3000 }, { x: 0, y: 3000 }],
+    });
+    const zimmer = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 2000, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 3000 }, { x: 2000, y: 3000 }],
+    });
+    const badId = (bad.patches[0] as { id: string }).id;
+    const zimmerId = (zimmer.patches[0] as { id: string }).id;
+    const dehnungFestX =
+      festeZone === 'bad' ? [badId]
+      : festeZone === 'zimmer' ? [zimmerId]
+      : festeZone === 'beide' ? [badId, zimmerId]
+      : [];
+    execute(doc, 'design.vorlageSpeichern', {
+      name: 'Nasszelle-Muster', zoneIds: [badId, zimmerId], dehnungFestX,
+    });
+    return { badId, zimmerId };
+  };
+
+  const breiteVon = (doc: KosmoDoc, name: string) => {
+    const z = doc.byKind<Zone>('zone').find((zz) => zz.name === name && zz.outline.some((p) => p.x >= 10000));
+    const xs = z!.outline.map((p) => p.x);
+    return Math.max(...xs) - Math.min(...xs);
+  };
+
+  it('Bad fest (dehnungX) bleibt 2 m breit, Zimmer (dehnbar) nimmt die volle Differenz auf', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    bauVorlage(doc, storeyId, 'bad');
+    // Ziel-Breite 8000 statt 5000 → Δ = 3000, komplett aufs (einzig) dehnbare Zimmer
+    execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: 'Nasszelle-Muster', at: { x: 10000, y: 0 }, breite: 8000, hoehe: null,
+    });
+    expect(breiteVon(doc, 'Bad')).toBe(2000); // unverändert
+    expect(breiteVon(doc, 'Zimmer')).toBe(6000); // 3000 + 3000 Δ
+  });
+
+  it('Zimmer fest, Bad dehnbar — Rollen vertauscht, dieselbe Mechanik', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    bauVorlage(doc, storeyId, 'zimmer');
+    execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: 'Nasszelle-Muster', at: { x: 10000, y: 0 }, breite: 8000, hoehe: null,
+    });
+    expect(breiteVon(doc, 'Zimmer')).toBe(3000); // unverändert
+    expect(breiteVon(doc, 'Bad')).toBe(5000); // 2000 + 3000 Δ
+  });
+
+  it('ohne Locks (Default dehnbar) skalieren beide Zonen weiterhin proportional mit — Bestandsverhalten', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    bauVorlage(doc, storeyId, 'keine');
+    execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: 'Nasszelle-Muster', at: { x: 10000, y: 0 }, breite: 10000, hoehe: null,
+    });
+    // Faktor 2 (10000/5000) trifft beide Zonen gleichermassen
+    expect(breiteVon(doc, 'Bad')).toBe(4000);
+    expect(breiteVon(doc, 'Zimmer')).toBe(6000);
+  });
+
+  it('alle Zonen fest + Zielmass ≠ Summe → ehrlicher Fehler statt stillem Verzerren', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    bauVorlage(doc, storeyId, 'beide');
+    expect(() =>
+      execute(doc, 'design.vorlageSetzen', {
+        storeyId, name: 'Nasszelle-Muster', at: { x: 10000, y: 0 }, breite: 8000, hoehe: null,
+      }),
+    ).toThrow(/fest/);
+    // Zielmass = Ausgangsmass (keine Streckung nötig) bleibt auch mit «alle fest» erlaubt
+    expect(() =>
+      execute(doc, 'design.vorlageSetzen', {
+        storeyId, name: 'Nasszelle-Muster', at: { x: 20000, y: 0 }, breite: 5000, hoehe: null,
+      }),
+    ).not.toThrow();
+  });
+});
+
+describe('Regeln-in-Vorlagen (v0.7.0 E5-v)', () => {
+  it('unbekanntes Regel-Preset beim Speichern → ehrlicher Fehler', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const z = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 3000, y: 0 }, { x: 3000, y: 3000 }, { x: 0, y: 3000 }],
+    });
+    expect(() =>
+      execute(doc, 'design.vorlageSpeichern', {
+        name: 'Mit-Unfug-Regel', zoneIds: [(z.patches[0] as { id: string }).id], regeln: ['nichtvorhanden'],
+      }),
+    ).toThrow(/Unbekanntes Regel-Preset/);
+  });
+
+  it('vorlageSetzen aktiviert die eingebetteten Regeln (leeres Projekt → Presets 1:1 übernommen)', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const z = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 3000, y: 0 }, { x: 3000, y: 3000 }, { x: 0, y: 3000 }],
+    });
+    execute(doc, 'design.vorlageSpeichern', {
+      name: 'Mit-Regeln', zoneIds: [(z.patches[0] as { id: string }).id], regeln: ['ch-wohnbau'],
+    });
+    expect(doc.settings.raumRegeln).toHaveLength(0);
+    execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: 'Mit-Regeln', at: { x: 10000, y: 0 }, breite: null, hoehe: null,
+    });
+    expect(doc.settings.raumRegeln).toEqual(REGEL_PRESETS['ch-wohnbau']);
+  });
+
+  it('Vereinigungsfall: bestehende Projekt-Regel je Raumtyp gewinnt, Vorlage ergänzt nur fehlende Raumtypen', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    // Eigene, vom Preset abweichende Zimmer-Regel ist schon aktiv
+    execute(doc, 'design.regelnSetzen', {
+      regeln: [{ raumTyp: 'zimmer', minFlaeche: 99, minBreite: 1111, tageslicht: false }],
+    });
+    const z = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 3000, y: 0 }, { x: 3000, y: 3000 }, { x: 0, y: 3000 }],
+    });
+    execute(doc, 'design.vorlageSpeichern', {
+      name: 'Mit-Regeln-2', zoneIds: [(z.patches[0] as { id: string }).id], regeln: ['ch-wohnbau'],
+    });
+    execute(doc, 'design.vorlageSetzen', {
+      storeyId, name: 'Mit-Regeln-2', at: { x: 10000, y: 0 }, breite: null, hoehe: null,
+    });
+    const zimmerRegel = doc.settings.raumRegeln.find((r) => r.raumTyp === 'zimmer')!;
+    expect(zimmerRegel.minFlaeche).toBe(99); // eigene Regel NICHT überschrieben
+    // andere Raumtypen aus dem Preset sind ergänzt worden
+    expect(doc.settings.raumRegeln.some((r) => r.raumTyp === 'bad')).toBe(true);
+    expect(doc.settings.raumRegeln).toHaveLength(REGEL_PRESETS['ch-wohnbau'].length); // zimmer ersetzt kein zusätzliches
+  });
+
+  it('Generator: Library-Treffer mit eingebetteten Regeln aktiviert sie fürs Ergebnis (Checks greifen)', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const muster = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Master-Zimmer', sia: 'HNF', raumTyp: 'zimmer',
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 8000 }, { x: 0, y: 8000 }],
+    });
+    execute(doc, 'design.vorlageSpeichern', {
+      name: '3.5zi mit Regeln', zoneIds: [(muster.patches[0] as { id: string }).id], regeln: ['wettbewerb'],
+    });
+    expect(doc.settings.raumRegeln).toHaveLength(0);
+    const w = execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Whg Regeln', sia: 'HNF', program: 'mit regeln',
+      outline: [{ x: 20000, y: 0 }, { x: 30000, y: 0 }, { x: 30000, y: 8000 }, { x: 20000, y: 8000 }],
+    });
+    execute(doc, 'design.grundrissGenerieren', { zoneId: (w.patches[0] as { id: string }).id, korridorSeite: 'unten' });
+    expect(doc.settings.raumRegeln).toEqual(REGEL_PRESETS['wettbewerb']);
   });
 });
 

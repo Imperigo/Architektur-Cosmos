@@ -433,11 +433,27 @@ export interface ZonenVorlage {
     name: string;
     sia: string;
     raumTyp?: string;
+    /** F7-Locks (v0.7.0 E5-ii, Finch «locked/extendable»): Achse dieser
+     * Zone bleibt beim achsweisen Stretch (`design.vorlageSetzen`/
+     * `design.grundrissGenerieren`) mass-stabil, statt proportional
+     * mitzuskalieren (z.B. Nasszelle fest 2.4 m tief, während Diele/Küche
+     * die Differenz aufnehmen). Fehlend = `'dehnbar'` — heutiges
+     * Verhalten (alles skaliert gleichmässig), Alt-Vorlagen unverändert. */
+    dehnungX?: 'fest' | 'dehnbar';
+    dehnungY?: 'fest' | 'dehnbar';
   }[];
   /** Möbel relativ zur BBox-Ecke (beim Speichern in der BBox eingesammelt). */
   moebel?: { typ: string; at: { x: number; y: number }; rotationGrad: number }[];
   /** Zonentüren relativ zur BBox-Ecke (Review-Fix 8). */
   tueren?: { at: { x: number; y: number }; breite: number }[];
+  /** Regeln-in-Vorlagen (v0.7.0 E5-v, Finch «Graph Rules» je Plan): Ids aus
+   * `REGEL_PRESETS` (`regelpresets.ts`). Beim Absetzen/Instanziieren
+   * (`design.vorlageSetzen`, Plan-Library-Treffer in
+   * `design.grundrissGenerieren`) werden die referenzierten Presets in
+   * `DocSettings.raumRegeln` aktiviert — bestehende Projekt-Regeln werden
+   * NIE still überschrieben, nur um fehlende Raumtypen ergänzt (Vereinigung,
+   * im Command-Summary benannt). Fehlend/leer = keine Regel-Aktivierung. */
+  regeln?: string[];
 }
 
 /** Custom-Kennzahl (V2-F9): name = «Erstellungskosten», wert 3200, basis 'agf', einheit 'CHF'. */
