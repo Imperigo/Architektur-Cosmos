@@ -27,6 +27,7 @@ import {
   gesamtdicke,
   ladeReferenzenLive,
   materialkatalog,
+  modellUrlAusR2Key,
   uWert,
   type KatalogEintrag,
   type MaterialArt,
@@ -36,11 +37,13 @@ import {
   type RefEntryAnalysisLayer,
   type RefEntryMedia,
   type RefEntryMediaType,
+  type RefEntryModelAsset,
   type RefReviewStatus,
 } from '@kosmo/data';
 import { useProject } from '../../state/project-store';
 import { setGlbContext, subscribeGlbStatus } from '../design/Viewport3D';
 import { erfasseMaterial, listeGlb, listeMaterialien, loescheGlb, type KosmoAsset } from '../../state/asset-bibliothek';
+import { pruefeGlbHeader } from '../../state/glb-guard';
 import { renderStandbild } from '../asset/three-standbild';
 import {
   istTraining,
@@ -669,10 +672,18 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
   }, [selected]);
 
   // T4c: lokale GLB-Quelle für «Referenz-3D ins Modell laden» — bevorzugt vor
-  // der (für Seed-Einträge nicht existenten) Remote-URL; Ladezustand am Knopf.
+  // der Remote-Kaskade unten; Ladezustand am Knopf.
   const ref3dQuelle = useMemo(
     () => (selected ? lokaleRef3dQuelle(selected.id, refAssets) : undefined),
     [selected, refAssets],
+  );
+  // E4 (docs/V071-KONZEPT.md): fehlt ein lokales Asset, aber der Referenz-
+  // Eintrag trägt ein model_asset mit r2_key, ist ein Remote-Ladeversuch
+  // möglich (r2_key → modellUrlAusR2Key → fetch → Blob). NUR r2_key wird
+  // gelesen — keine url/local_path-Felder (Leak-Gates unberührt).
+  const remoteRef3dAsset: RefEntryModelAsset | undefined = useMemo(
+    () => (selected && !ref3dQuelle ? selected.model_assets?.find((m) => !!m.r2_key) : undefined),
+    [selected, ref3dQuelle],
   );
   const [ref3dLaden, setRef3dLaden] = useState(false);
   const ref3dMounted = useRef(true);
@@ -696,6 +707,29 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
     });
     setGlbContext(url, { revoke: true });
     (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open('design');
+  }
+
+  // E4: Remote-Fallback — holt die Bytes selbst (fetch), prüft sie durch
+  // denselben GLB-Guard wie der lokale Datei-Import (`pruefeGlbHeader`,
+  // AssetWorkspace.tsx, Serie I/B7 — Header/Grösse, kein State-Write bei
+  // Fehlern), dann läuft der Rest durch DENSELBEN Pfad wie eine lokale GLB
+  // (ladeRef3d → setGlbContext → GLTFLoader). Jeder Fehlschlag (404, Netz,
+  // oder der Guard lehnt die Bytes ab) wird ehrlich gemeldet — der
+  // «kein-lokal»-Hinweis bleibt daneben stehen, es wird nichts vorgetäuscht.
+  async function ladeRef3dRemote(entry: RefEntry, asset: RefEntryModelAsset): Promise<void> {
+    setRef3dLaden(true);
+    try {
+      const antwort = await fetch(modellUrlAusR2Key(asset.r2_key));
+      if (!antwort.ok) throw new Error(`HTTP ${antwort.status}`);
+      const buffer = await antwort.arrayBuffer();
+      const guard = pruefeGlbHeader(buffer);
+      if (!guard.ok) throw new Error(guard.fehler);
+      ladeRef3d(entry, new Blob([buffer], { type: 'model/gltf-binary' }));
+    } catch (err) {
+      if (ref3dMounted.current) setRef3dLaden(false);
+      const message = err instanceof Error ? err.message : String(err);
+      meldeFehler(`Remote-Modell nicht erreichbar (${message}).`);
+    }
   }
 
   const sectors = useMemo(() => {
@@ -1541,10 +1575,33 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                   </span>
                 </>
               ) : (
-                <span data-testid="ref3d-kein-lokal" style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
-                  Studienmodell noch nicht lokal verfügbar — verknüpfe in KosmoAsset ein 3D-Objekt
-                  mit dieser Referenz oder importiere die GLB dort.
-                </span>
+                <>
+                  {remoteRef3dAsset && (
+                    <>
+                      <KButton
+                        size="sm"
+                        tone="accent"
+                        data-testid="ref3d-laden-remote"
+                        disabled={ref3dLaden}
+                        onClick={() => {
+                          void ladeRef3dRemote(selected, remoteRef3dAsset);
+                          nutzungMelden('dossier:ref3d-laden-remote');
+                        }}
+                        {...elementStil('dossier', 'ref3d-laden-remote')}
+                      >
+                        {ref3dLaden ? 'Lädt …' : 'Referenz-3D vom Archiv laden (Remote)'}
+                      </KButton>
+                      <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                        Lädt das Studienmodell vom Architektur-Archiv — der Bestand dort kann noch
+                        unbefüllt sein, ein Fehlschlag wird ehrlich gemeldet.
+                      </span>
+                    </>
+                  )}
+                  <span data-testid="ref3d-kein-lokal" style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                    Studienmodell noch nicht lokal verfügbar — verknüpfe in KosmoAsset ein 3D-Objekt
+                    mit dieser Referenz oder importiere die GLB dort.
+                  </span>
+                </>
               )}
             </div>
           )}

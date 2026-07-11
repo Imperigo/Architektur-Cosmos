@@ -22,7 +22,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' blob: https://api.anthropic.com https://api3.geo.admin.ch https://graph.microsoft.com https://login.microsoftonline.com http://localhost:* ws://localhost:* https://architekturkosmos.ch wss://*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'"
+      "csp": "default-src 'self'; connect-src 'self' blob: https://api.anthropic.com https://api3.geo.admin.ch https://graph.microsoft.com https://login.microsoftonline.com http://localhost:* ws://localhost:* https://architekturkosmos.ch https://archiv.architekturkosmos.ch wss://*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'"
     }
   },
   "bundle": {
