@@ -6,6 +6,7 @@ import { deriveDimensions, dimensionLabel } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
 import { schraffurFuer, schraffurLinien } from './schraffur';
 import { pocheEntscheid } from './poche';
+import { fruehePhase } from '../model/doc';
 import { deriveAxo, type AxoSpec } from './axo';
 
 /**
@@ -190,7 +191,7 @@ export function planInnerSvg(
   // Möblierung (V2-F8/A4): feste Einbauten (Sanitär/Küche) ab Bauprojekt,
   // lose Möblierung erst im Werkplan — feiner Stift 0.18, ohne
   // Bewegungsflächen (die sind Arbeitshilfe am Bildschirm, kein Planinhalt)
-  if (doc.settings.phase !== 'vorprojekt') {
+  if (!fruehePhase(doc.settings.phase)) {
     for (const f of doc.byKind<Furniture>('furniture')) {
       if (f.storeyId !== storeyId) continue;
       if (doc.settings.phase === 'bauprojekt' && moebelTyp(f.typ)?.abPhase !== 'bauprojekt') continue;
@@ -304,7 +305,7 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
   }
   // B4: Rohboden-Linie — Decken mit Aufbau zeigen die Kante zwischen
   // Bodenaufbau und Rohdecke als feine Linie (Beläge getrennt, ab Bauprojekt)
-  if (doc.settings.phase !== 'vorprojekt') {
+  if (!fruehePhase(doc.settings.phase)) {
     const len = Math.hypot(spec.b.x - spec.a.x, spec.b.y - spec.a.y) || 1;
     const dRicht = { x: (spec.b.x - spec.a.x) / len, y: (spec.b.y - spec.a.y) / len };
     for (const slab of doc.byKind<import('../model/entities').Slab>('slab')) {

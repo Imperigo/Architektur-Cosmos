@@ -4,12 +4,9 @@
 <path d="M 2000 -180 L 180 -180 L 180 -5820 L 8820 -5820 L 8820 -180 L 7500 -180 L 7500 180 L 9180 180 L 9180 -6180 L -180 -6180 L -180 180 L 2000 180 Z M 6500 -180 L 4000 -180 L 4000 180 L 6500 180 Z" fill-rule="evenodd" fill="#1a1a1a" stroke="black" stroke-width="100"/>
 <line x1="2000" y1="-180" x2="2000" y2="180" stroke="black" stroke-width="50"/>
 <line x1="4000" y1="-180" x2="4000" y2="180" stroke="black" stroke-width="50"/>
-<line x1="2000" y1="25" x2="4000" y2="25" stroke="black" stroke-width="36"/>
-<line x1="2000" y1="-25" x2="4000" y2="-25" stroke="black" stroke-width="36"/>
+<line x1="2000" y1="0" x2="4000" y2="0" stroke="black" stroke-width="36"/>
 <line x1="6500" y1="-180" x2="6500" y2="180" stroke="black" stroke-width="50"/>
 <line x1="7500" y1="-180" x2="7500" y2="180" stroke="black" stroke-width="50"/>
-<line x1="6500" y1="-180" x2="6500" y2="-1180" stroke="black" stroke-width="50"/>
-<path d="M 7500 -180 A 1000 1000 0 0 0 6500 -1180" fill="none" stroke="#555" stroke-width="36" stroke-dasharray="200 140"/>
 <g stroke="black" fill="black">
 <line x1="0" y1="1200" x2="9000" y2="1200" stroke-width="36"/>
 <line x1="-160" y1="1360" x2="160" y2="1040" stroke-width="72"/>

@@ -13,6 +13,7 @@ import { treppenTeile } from './treppe';
 import { meshSchnittRinge } from './mesh-topo';
 import { dachGeometrie } from './dach';
 import { pocheEntscheid } from './poche';
+import { fruehePhase } from '../model/doc';
 
 /** Standard-Schnitthöhe des Grundrisses über Geschoss-OK (SIA-üblich 1 m) —
  * die Ebene, auf der FreeMesh-Körper ihre ehrliche Schnittfigur zeigen. */
@@ -374,8 +375,8 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       // Leibungslinien quer zur Wand
       lines.push({ a: at(r.s0, L), b: at(r.s0, R), classes: ['symbol', 'leibung', ...oRen] });
       lines.push({ a: at(r.s1, L), b: at(r.s1, R), classes: ['symbol', 'leibung', ...oRen] });
-      if (phase === 'vorprojekt') {
-        // Vorprojekt: Öffnung als Aussparung — Fenster mit EINER Glaslinie, Tür ohne Symbol
+      if (fruehePhase(phase)) {
+        // Wettbewerb/Vorprojekt: Öffnung als Aussparung — Fenster mit EINER Glaslinie, Tür ohne Symbol
         if (o.openingType === 'fenster') {
           const mid = (L + R) / 2;
           lines.push({ a: at(r.s0, mid), b: at(r.s1, mid), classes: ['symbol', 'fenster', ...oRen] });
@@ -586,7 +587,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
 
   // Etiketten (A6): assoziativ — der Text kommt LIVE aus der Parametrik.
   // Werkplan-Beschriftung: sichtbar ab Bauprojekt.
-  if (phase !== 'vorprojekt') {
+  if (!fruehePhase(phase)) {
     for (const et of doc.byKind<import('../model/entities').Etikett>('etikett')) {
       if (et.storeyId !== storeyId) continue;
       const target = doc.get(et.targetId);

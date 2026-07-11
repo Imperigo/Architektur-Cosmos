@@ -54,6 +54,16 @@ export function phaseLabel(phase: BauPhase): string {
 }
 
 /**
+ * Frühe Entwurfsphasen (Wettbewerb/Vorprojekt) zeichnen mit reduziertem
+ * Detail: Fenster als EINE Glaslinie, keine Etiketten/Möblierung, keine
+ * Rohboden-Linie (v0.7.0 E1 — Wettbewerb erbt die Vorprojekt-Reduktion).
+ * Reine Phasen-Frage; die FARBE entscheidet `derive/poche.ts` separat.
+ */
+export function fruehePhase(phase: BauPhase): boolean {
+  return phase === 'wettbewerb' || phase === 'vorprojekt';
+}
+
+/**
  * Aktuelle SIA-Teilphase des Projekts (v0.6.3, `docs/V063-VOLLPROJEKT-KONZEPT.md`
  * Abschnitt 2 + Lücken-Batch 1) — der reale Projektstand im SIA-102/112-Zyklus
  * vom Wettbewerb bis zur Gebäudeabnahme. Zeichnet NICHTS, steuert NICHTS am
