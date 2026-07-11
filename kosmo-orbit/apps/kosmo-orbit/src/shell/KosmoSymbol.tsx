@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { OrbitMark } from '@kosmo/ui';
 import { greeting } from '@kosmo/ai';
 import { useKosmoStatus, kurzform } from '../state/kosmo-status';
 import { useProject } from '../state/project-store';
+import { KosmoOrb } from './KosmoOrb';
 import './orbit-065.css';
 
 export interface KosmoSymbolProps {
@@ -21,9 +21,18 @@ export interface KosmoSymbolProps {
  * pulsiert das Symbol per CSS-Klasse (`.k-kosmo-symbol-beschaeftigt`,
  * aura.css) — der globale `prefers-reduced-motion`-Block in aura.css
  * killt jede Animation/Transition, auch diese, ohne Sonderfall hier.
+ * `k-kosmo-arbeitet` (aura.css) bleibt damit als Fallback bestehen, auch
+ * wenn der Store gerade keinen granularen `zustand` liefert.
+ *
+ * v0.7.2 §6 (Paket 06): das Innere des Knopfs ist jetzt der wiederverwendbare
+ * `KosmoOrb` (`shell/KosmoOrb.tsx`) statt des statischen `OrbitMark` — er
+ * zeigt den feingranularen `zustand` (idle/thinking/listening/…/takeover)
+ * über `data-zustand`. Testids/DOM-Vertrag (`kosmo-symbol`, `kosmo-mini`,
+ * Symbol↔Panel) bleiben exakt unverändert, nur das Icon-Innere wechselt.
  */
 export function KosmoSymbol({ onOpen }: KosmoSymbolProps) {
   const beschaeftigt = useKosmoStatus((s) => s.beschaeftigt);
+  const zustand = useKosmoStatus((s) => s.zustand);
   const letzteAktivitaet = useKosmoStatus((s) => s.letzteAktivitaet);
   const [zeigePopup, setZeigePopup] = useState(false);
 
@@ -106,7 +115,7 @@ export function KosmoSymbol({ onOpen }: KosmoSymbolProps) {
           boxShadow: 'var(--k-shadow-overlay)',
         }}
       >
-        <OrbitMark module="kosmo" size={30} />
+        <KosmoOrb zustand={zustand} size={30} />
       </button>
     </div>
   );

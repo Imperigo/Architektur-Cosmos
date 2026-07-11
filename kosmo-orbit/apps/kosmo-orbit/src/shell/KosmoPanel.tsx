@@ -39,6 +39,7 @@ import {
   mitApiSchluessel,
 } from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
+import { wusch } from '../state/sounds';
 import { KOSMO_AUSGESCHLOSSENE_COMMANDS, kosmoUiWerkzeuge } from '../state/kosmo-ui-werkzeuge';
 import {
   blickErfassen,
@@ -278,6 +279,16 @@ export function loadSettings(): KosmoSettings {
 async function speak(text: string): Promise<void> {
   const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
   const kurz = text.slice(0, 600);
+  // v0.7.2 §6 (TTS-Wiedergabe→speaking): der genaue Endzeitpunkt hängt vom
+  // gewählten Wiedergabeweg ab (Bridge-Audio ODER Browser-`speechSynthesis`)
+  // — beide Zweige setzen 'idle' selbst zurück, sobald IHRE Wiedergabe
+  // endet, statt sich auf ein gemeinsames `finally` zu verlassen (das würde
+  // vor dem tatsächlichen Audio-Ende feuern, `await audio.play()` löst schon
+  // beim Start der Wiedergabe auf, nicht beim Ende).
+  const beendeSprechenWennNochAktiv = () => {
+    if (useKosmoStatus.getState().zustand === 'speaking') useKosmoStatus.getState().setzeZustand('idle');
+  };
+  useKosmoStatus.getState().setzeZustand('speaking');
   try {
     const res = await fetch(`${bridge}/tts`, {
       method: 'POST',
@@ -287,7 +298,10 @@ async function speak(text: string): Promise<void> {
     if (!res.ok) throw new Error(String(res.status));
     const url = URL.createObjectURL(await res.blob());
     const audio = new Audio(url);
-    audio.onended = () => URL.revokeObjectURL(url);
+    audio.onended = () => {
+      URL.revokeObjectURL(url);
+      beendeSprechenWennNochAktiv();
+    };
     await audio.play();
   } catch {
     try {
@@ -296,9 +310,12 @@ async function speak(text: string): Promise<void> {
       const stimme = stimmen.find((v) => v.lang === 'de-CH') ?? stimmen.find((v) => v.lang.startsWith('de'));
       if (stimme) u.voice = stimme;
       u.lang = stimme?.lang ?? 'de-CH';
+      u.onend = beendeSprechenWennNochAktiv;
+      u.onerror = beendeSprechenWennNochAktiv;
       speechSynthesis.cancel();
       speechSynthesis.speak(u);
     } catch (err) {
+      beendeSprechenWennNochAktiv();
       console.info('Vorlesen nicht möglich (weder Bridge /tts noch speechSynthesis):', err);
     }
   }
@@ -338,7 +355,20 @@ async function bridgeErreichbar(bridge: string): Promise<boolean> {
   }
 }
 
-export function KosmoPanel({ onClose }: { onClose: () => void }) {
+export interface KosmoPanelProps {
+  onClose: () => void;
+  /**
+   * v0.7.2 §7/§12 («Kosmo zeichnet sichtbar», Stufe 1) — von Stream W2-D nur
+   * VORBEREITET: `applyPaket` ruft sie mit den offenen Paket-Schritten auf,
+   * BEVOR der synchrone, atomare `runCommand`-Weg läuft. Stream W3-E
+   * implementiert die eigentliche Overlay-Abspiel-Ebene (`state/abspiel-ebene.ts`)
+   * darüber, ohne `KosmoPanel.tsx` erneut anzufassen — ohne übergebene Prop
+   * bleibt der Aufruf ein folgenloser No-op.
+   */
+  onAbspielStart?: (schritte: PendingCard[]) => void;
+}
+
+export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   const [settings, setSettings] = useState<KosmoSettings>(loadSettings);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
@@ -460,6 +490,10 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           // Ausserhalb des Updaters akkumulieren — React batcht Updater,
           // onBusy(false) käme sonst vor dem letzten Textstück
           lastKosmoText.current += delta;
+          // v0.7.2 §6 (onText-Streaming→writing) — jedes Textstück hält den
+          // Zustand auf 'writing'; `onBusy(false)` (unten) räumt ihn zurück
+          // auf 'idle', sobald der Zug fertig ist.
+          useKosmoStatus.getState().setzeZustand('writing');
           setBubbles((b) => {
             const last = b[b.length - 1];
             if (last && last.who === 'kosmo' && last.id === currentKosmoBubble) {
@@ -495,6 +529,11 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
           }
         },
         onError: (msg) => {
+          // v0.7.2 §6 (onError→error) — Auto-Decay (4s, `state/kosmo-status.ts`)
+          // räumt selbst auf; das direkt danach folgende `onBusy(false)`
+          // (ChatSession-Lebenszyklus) lässt 'error' bewusst stehen (siehe
+          // `BEHAELT_BEI_BESCHAEFTIGT_FALSE` dort).
+          useKosmoStatus.getState().setzeZustand('error');
           push('kosmo', `⚠ ${msg}`);
           // HomeStation (lokales LLM) nicht erreichbar → direkt Cloud anbieten.
           const p = settingsRef.current.provider;
@@ -903,6 +942,11 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     rec.onend = () => {
       setRecording(false);
       erkennungRef.current = null;
+      // v0.7.2 §6 (Mic-Aufnahme→listening): «stoppt sofort bei Input» — hier
+      // endet die Aufnahme selbst (Nutzer losgelassen/Timeout); ein direkt
+      // anschliessendes `sendeMitBlick` (oben, `rec.onresult`) überschreibt
+      // 'listening' ohnehin sofort mit 'thinking' (`onBusy(true)`).
+      if (useKosmoStatus.getState().zustand === 'listening') useKosmoStatus.getState().setzeZustand('idle');
     };
     rec.onerror = (e) => {
       if (e.error && e.error !== 'no-speech' && e.error !== 'aborted') {
@@ -915,6 +959,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
     erkennungRef.current = rec;
     rec.start();
     setRecording(true);
+    useKosmoStatus.getState().setzeZustand('listening');
     if (!fallbackNotiert.current) {
       fallbackNotiert.current = true;
       melde('Browser-Spracherkennung aktiv — die Schweizerdeutsch-Qualität kommt über die HomeStation-Bridge.', { ton: 'info' });
@@ -943,6 +988,9 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       rec.onstop = async () => {
         stream.getTracks().forEach((t) => t.stop());
         setRecording(false);
+        // v0.7.2 §6: Aufnahme beendet — `sendeMitBlick` weiter unten (bei
+        // erkanntem Text) übernimmt sofort mit 'thinking' (`onBusy(true)`).
+        if (useKosmoStatus.getState().zustand === 'listening') useKosmoStatus.getState().setzeZustand('idle');
         const audio = new Blob(parts, { type: rec.mimeType });
         const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
         try {
@@ -969,6 +1017,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       recorderRef.current = rec;
       rec.start();
       setRecording(true);
+      useKosmoStatus.getState().setzeZustand('listening');
     } catch {
       setBubbles((b) => [
         ...b,
@@ -980,10 +1029,14 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
   };
 
   const applyCard = (card: PendingCard) => {
+    // v0.7.2 §6 (applyPaket/Auftrag-Übergabe→dispatching): die Übergabe an
+    // `runCommand` ist der Moment, in dem Kosmo den Vorschlag «losschickt».
+    useKosmoStatus.getState().setzeZustand('dispatching');
     try {
       const result = runCommand(card.commandId, card.params, { actor: 'kosmo' });
       setCards((c) => c.map((x) => (x.callId === card.callId ? { ...x, state: 'angewendet' } : x)));
       void session.resolveApplied(card.callId, result.summary);
+      useKosmoStatus.getState().setzeZustand('done');
     } catch (err) {
       const meldung = err instanceof Error ? err.message : 'Ausführung fehlgeschlagen';
       // H-28 (`docs/SIM-BEFUNDE.md`): ein gescheitertes Anwenden hinterliess
@@ -996,6 +1049,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       );
       push('kosmo', `⚠ Anwenden fehlgeschlagen: ${meldung}`);
       void session.resolveRejected(card.callId, meldung);
+      useKosmoStatus.getState().setzeZustand('error');
     }
   };
 
@@ -1043,6 +1097,16 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       .filter((c) => c.paket?.id === paketId && c.state === 'offen')
       .sort((a, b) => (a.paket!.index ?? 0) - (b.paket!.index ?? 0));
     if (schritte.length === 0) return;
+    // v0.7.2 §7/§12 (Schnittstelle für Stream W3-E, «Kosmo zeichnet sichtbar»
+    // Stufe 1): rein vorbereitend — der Aufruf selbst blockiert/verzögert das
+    // atomare Anwenden unten NICHT; die Abspiel-Ebene (Overlay-Vorspiel VOR
+    // dem Apply) implementiert Stream E später, ohne diese Datei nochmals
+    // anzufassen. Ohne übergebene Prop bleibt dieser Aufruf ein No-op.
+    onAbspielStart?.(schritte);
+    // v0.7.2 §6 (applyPaket→dispatching): die ganze Kette gilt als EIN
+    // «Losschicken» — «Wusch» begleitet den Start, falls Sounds an sind.
+    useKosmoStatus.getState().setzeZustand('dispatching');
+    wusch();
     const { history, undo } = useProject.getState();
     const neuIds: string[] = [];
     const ergebnisse: string[] = [];
@@ -1066,12 +1130,14 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
       for (const schritt of schritte) {
         await session.resolveRejected(schritt.callId, `Paket abgebrochen: ${fehler}`);
       }
+      useKosmoStatus.getState().setzeZustand('error');
       return;
     }
     setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'angewendet' } : x)));
     for (let i = 0; i < schritte.length; i++) {
       await session.resolveApplied(schritte[i]!.callId, ergebnisse[i]!);
     }
+    useKosmoStatus.getState().setzeZustand('done');
   };
 
   const rejectPaket = async (paketId: string) => {
