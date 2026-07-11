@@ -226,9 +226,14 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
   // Elevation) und mit toS/toT in dieselbe (s,z)-Ebene projiziert.
   //
   // Konvention (Spitze = Bandseite, Schenkel = Griff-/Gegenseite):
-  //  – 'dreh': Band links (Default, kein eigenes swing-Feld für die Ansicht)
-  //    — Spitze an der linken Kante (Mitte der Höhe), Schenkel zu den BEIDEN
-  //    rechten Ecken (Griffseite).
+  //  – 'dreh': Spitze an der Bandkante (Mitte der Höhe), Schenkel zu den
+  //    BEIDEN Ecken der Griffseite. Die Bandseite kommt aus `Opening.swing`
+  //    (Angelseite, 0.6.9) — dieselbe Quelle wie der Flügelbogen im
+  //    Grundriss, sonst widersprächen sich Grundriss und Ansicht. Die Spitze
+  //    sitzt an der PROJEKTION des Bandpunkts (s des Wandachsen-Endes), nicht
+  //    am Bildschirm-Minimum: von der Rückseite betrachtet erscheint ein
+  //    links angeschlagenes Fenster korrekt rechts angeschlagen.
+  //    `swing` fehlend = 'links' (derselbe Default wie im Grundriss).
   //  – 'kipp': Band unten — Spitze an der Unterkante (Mitte der Breite),
   //    Schenkel zu den beiden OBEREN Ecken (öffnet oben zur Raumseite).
   //  – 'drehkipp': beide Dreiecke gleichzeitig.
@@ -265,8 +270,10 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       fenstersymbole.push({ a: pA, b: pB, classes: ['symbol', klasse] });
     };
     if (o.fluegelTyp === 'dreh' || o.fluegelTyp === 'drehkipp') {
-      linie({ s: s0, z: zMid }, { s: s1, z: z0 }, 'fluegel-dreh');
-      linie({ s: s0, z: zMid }, { s: s1, z: z1 }, 'fluegel-dreh');
+      const sBand = o.swing === 'rechts' ? sB : sA;
+      const sGriff = o.swing === 'rechts' ? sA : sB;
+      linie({ s: sBand, z: zMid }, { s: sGriff, z: z0 }, 'fluegel-dreh');
+      linie({ s: sBand, z: zMid }, { s: sGriff, z: z1 }, 'fluegel-dreh');
     }
     if (o.fluegelTyp === 'kipp' || o.fluegelTyp === 'drehkipp') {
       linie({ s: sMid, z: z0 }, { s: s0, z: z1 }, 'fluegel-kipp');

@@ -154,6 +154,26 @@ describe('Ansicht — SIA-Öffnungssymbolik (Dreieck/Pfeil)', () => {
     expect(ersteZwei[0]!.a.s).toBeCloseTo(ersteZwei[1]!.a.s, 0);
   });
 
+  it('dreh: Spitze folgt der Angelseite — swing rechts spiegelt das Dreieck (Kritik-2 [A])', () => {
+    const { doc, spec } = testhausFluegeltypen();
+    const vorher = deriveSection(doc, spec)
+      .fenstersymbole.filter((l) => l.classes.includes('fluegel-dreh'))
+      .slice(0, 2);
+    const spitzeLinks = vorher[0]!.a.s;
+    const griffRechts = vorher[0]!.b.s;
+    const oeffnung = doc.byKind<Opening>('opening').find((o) => o.fluegelTyp === 'dreh')!;
+    execute(doc, 'design.eigenschaftSetzen', { entityId: oeffnung.id, feld: 'swing', wert: 'rechts' });
+    const nachher = deriveSection(doc, spec)
+      .fenstersymbole.filter((l) => l.classes.includes('fluegel-dreh'))
+      .slice(0, 2);
+    // Spitze beider Schenkel sitzt weiterhin auf EINER Kante — aber auf der
+    // anderen: exakt dort, wo vorher die Griffseite lag (dieselbe Angelseite
+    // wie der Flügelbogen im Grundriss, sonst widersprächen sich die Pläne).
+    expect(nachher[0]!.a.s).toBeCloseTo(nachher[1]!.a.s, 0);
+    expect(nachher[0]!.a.s).toBeCloseTo(griffRechts, 0);
+    expect(nachher[0]!.b.s).toBeCloseTo(spitzeLinks, 0);
+  });
+
   it('kipp: Spitze unten Mitte, Schenkel zu den oberen Ecken', () => {
     const { doc, spec } = testhausFluegeltypen();
     const g = deriveSection(doc, spec);
