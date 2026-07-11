@@ -13,7 +13,10 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+# v0.7.2 §9 (Paket 07, Stream W3-F): "tray-icon" für den System-Tray
+# (TrayIconBuilder in lib.rs, Menü Öffnen/Beenden) + "image-png" fürs Tray-
+# Icon (aus dem bestehenden `icons/`-Satz, PNG-Dekodierung zur Laufzeit).
+tauri = { version = "2", features = ["tray-icon", "image-png"] }
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
 serde = { version = "1", features = ["derive"] }

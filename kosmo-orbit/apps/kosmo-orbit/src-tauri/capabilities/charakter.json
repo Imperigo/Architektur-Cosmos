@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "charakter",
+  "description": "v0.7.2 §9 (Paket 07, Stream W3-F) — Fähigkeiten des Tauri-Zweitfensters `kosmo-charakter` (200×220, decorations:false/transparent/alwaysOnTop/skipTaskbar, unten rechts). `core:default` deckt den normalen IPC-Grundbedarf; die Window-Berechtigungen darunter sind explizit benannt (Spec-Wortlaut «window show/hide/set-position»), die Event-Berechtigungen «beidseitig» (das Hauptfenster emittiert `kosmo-zustand` über `shell/kosmo-zustand-bruecke.ts`, dieses Fenster hört zu — `allow-emit`/`allow-emit-to` stehen zusätzlich bereit, falls das Charakter-Fenster selbst je etwas zurücksendet).",
+  "windows": ["kosmo-charakter"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-set-position",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:event:allow-emit",
+    "core:event:allow-emit-to"
+  ]
+}

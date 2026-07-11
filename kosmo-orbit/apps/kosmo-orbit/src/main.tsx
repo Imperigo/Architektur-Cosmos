@@ -6,6 +6,7 @@ import './zod-jitless'; // muss vor ./App bleiben — siehe Kommentar dort (CSP/
 import { App } from './App';
 import { Companion } from './shell/Companion';
 import { istTauriDesktop } from './shell/cloud-login';
+import { KosmoCharakterFenster } from './shell/KosmoCharakterFenster';
 
 // Service Worker: NUR im Browser/PWA (Offline-Fähigkeit auf iPad & Co.).
 // Im Tauri-Desktop ist er schädlich — der Precache serviert nach einem
@@ -28,11 +29,11 @@ if (istTauriDesktop()) {
   void import('virtual:pwa-register').then(({ registerSW }) => registerSW({ immediate: true }));
 }
 
-// v072: fenster=charakter — Schnittstelle für W3-F (Paket 07, Zweitfenster
-// Tauri "kosmo-charakter"). Noch KEINE Funktion: W1-A legt hier nur den
-// dokumentierten Anker an (Spec §12 Stream-Schnittstellen); W3-F füllt die
-// tatsächliche Charakter-Ansicht ein, sobald die Route existiert.
-// const fensterCharakter = new URLSearchParams(window.location.search).get('fenster') === 'charakter';
+// v072: fenster=charakter — Paket 07 (Tauri-Zweitfenster "kosmo-charakter",
+// Spec §9/§12): W1-A legte hier nur den dokumentierten Anker an, W3-F
+// aktiviert ihn jetzt — sonst NICHTS an dieser Datei geändert (Spec §12,
+// die `#companion`-Weiche unten bleibt für W4-G unangetastet).
+const fensterCharakter = new URLSearchParams(window.location.search).get('fenster') === 'charakter';
 
 // v072: #companion — W4-G (Paket-Ergänzung «Companion minimal», Spec
 // §10/§12): die schmale, lese-/freigabe-fähige PWA-Ansicht rendert ANSTELLE
@@ -42,6 +43,9 @@ if (istTauriDesktop()) {
 // spec`/Splash).
 const istCompanion = window.location.hash.startsWith('#companion');
 
+// Weichen-Vorrang (Leiter-Merge W3-F+W4-G): das Tauri-Zweitfenster kommt mit
+// explizitem Query-Parameter und schlägt den Hash; ohne beides exakt die
+// bisherige App (Harte Verträge §11 unberührt).
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>{istCompanion ? <Companion /> : <App />}</StrictMode>,
+  <StrictMode>{fensterCharakter ? <KosmoCharakterFenster /> : istCompanion ? <Companion /> : <App />}</StrictMode>,
 );

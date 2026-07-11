@@ -1,5 +1,11 @@
 use std::process::Command;
 
+use tauri::{
+    menu::MenuBuilder,
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    Manager,
+};
+
 /// Cloud-Login mit Abo («Mit Claude anmelden», Owner-Auftrag T-Cloud-Login) —
 /// der Desktop-Weg zum echten OAuth-Token.
 ///
@@ -135,12 +141,91 @@ fn werkzeug_holen(befehle: Vec<Vec<String>>) -> Result<String, String> {
     Ok(protokoll)
 }
 
+/// v0.7.2 §9 (Paket 07, Stream W3-F): das Charakter-Zweitfenster
+/// (`tauri.conf.json`: label `kosmo-charakter`, `visible:false`) an die
+/// Bildschirm-Ecke unten rechts rücken — "Monitor − Fenster − 24px Rand"
+/// (Spec-Wortlaut). Läuft "zur Laufzeit" im `setup`-Hook, weil die feste
+/// Fenstergrösse aus der Config (200×220) zwar bekannt ist, der tatsächlich
+/// verfügbare Monitor (Grösse/Position, Multi-Monitor-Setups) das aber
+/// nicht ist. Fehlt das Fenster (z.B. Mobile-Build ohne Desktop-Fenster)
+/// oder lässt sich kein Monitor ermitteln, passiert nichts — kein Absturz
+/// für ein rein kosmetisches Detail.
+fn positioniere_charakter_fenster_unten_rechts(app: &tauri::App<tauri::Wry>) {
+    const RAND_PX: i32 = 24;
+    const BREITE_PX: i32 = 200;
+    const HOEHE_PX: i32 = 220;
+
+    let Some(fenster) = app.get_webview_window("kosmo-charakter") else {
+        return;
+    };
+    let Ok(Some(monitor)) = fenster.current_monitor() else {
+        return;
+    };
+    let monitor_pos = *monitor.position();
+    let monitor_groesse = *monitor.size();
+    let x = monitor_pos.x + monitor_groesse.width as i32 - BREITE_PX - RAND_PX;
+    let y = monitor_pos.y + monitor_groesse.height as i32 - HOEHE_PX - RAND_PX;
+    let _ = fenster.set_position(tauri::PhysicalPosition::new(x, y));
+}
+
+/// Zeigt/fokussiert das Hauptfenster — gemeinsamer Weg für Tray-Klick UND
+/// Menüpunkt «Öffnen» (Spec §9: "Klick zeigt Hauptfenster").
+fn zeige_hauptfenster(app: &tauri::AppHandle<tauri::Wry>) {
+    if let Some(fenster) = app.get_webview_window("main") {
+        let _ = fenster.show();
+        let _ = fenster.set_focus();
+    }
+}
+
+/// Baut den System-Tray (Spec §9: TrayIconBuilder, Menü Öffnen/Beenden,
+/// Klick zeigt Hauptfenster). Nutzt bewusst dasselbe Icon wie die Fenster
+/// (`app.default_window_icon()`, aus `tauri.conf.json`s `bundle.icon`
+/// gebaut) statt eines eigenen Assets — kein zusätzlicher Icon-Satz zu
+/// pflegen.
+fn baue_tray(app: &tauri::App<tauri::Wry>) -> tauri::Result<()> {
+    let menu = MenuBuilder::new(app)
+        .text("oeffnen", "Öffnen")
+        .separator()
+        .text("beenden", "Beenden")
+        .build()?;
+
+    let mut tray = TrayIconBuilder::new()
+        .tooltip("KosmoOrbit")
+        .menu(&menu)
+        .show_menu_on_left_click(false)
+        .on_menu_event(|app, event| match event.id().as_ref() {
+            "oeffnen" => zeige_hauptfenster(app),
+            "beenden" => app.exit(0),
+            _ => {}
+        })
+        .on_tray_icon_event(|tray, event| {
+            if let TrayIconEvent::Click {
+                button: MouseButton::Left,
+                button_state: MouseButtonState::Up,
+                ..
+            } = event
+            {
+                zeige_hauptfenster(tray.app_handle());
+            }
+        });
+    if let Some(icon) = app.default_window_icon() {
+        tray = tray.icon(icon.clone());
+    }
+    tray.build(app)?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![claude_login, werkzeug_holen])
+        .setup(|app| {
+            positioniere_charakter_fenster_unten_rechts(app);
+            baue_tray(app)?;
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("Fehler beim Starten von KosmoOrbit");
 }

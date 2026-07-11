@@ -66,6 +66,7 @@ import { qrSvg } from './state/qr';
 import { fokusKlasse, fokusStufe } from './state/fokus';
 import { AKZENTE } from './shell/akzente';
 import { Einstellungen } from './shell/Einstellungen';
+import { CursorEbene } from './shell/CursorEbene';
 import './shell/orbit-065.css';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
@@ -950,7 +951,7 @@ export function App() {
             : {})}
         />
       )}
-      {/* v072: cursor-ebene */}
+      <CursorEbene />
     </div>
   );
 }
