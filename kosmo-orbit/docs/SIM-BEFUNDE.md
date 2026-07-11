@@ -835,3 +835,45 @@ Nachführung nach den sechs Wellen (ROADMAP 311–320) + Kritik-Runden 1–3 —
 - **Triage:** bug (B — latent seit dem Motion-Rollout 0.6.6, im v0.7.0-Finale durch die Vollsuite ans Licht gekommen).
 - **Entscheid + Fix (Fable, Finale):** `createPortal(…, document.body)` nach dem Muster von `shell/Einstellungen.tsx` — der Dialog entkommt dem transformierten Vorfahren. Merkregel: **fixed-Dialoge unterhalb eines `.k-einblenden`-Wrappers brauchen ein Portal** (der Modul-Editor war der einzige Treffer, per grep belegt).
 - **Status:** behoben (0.7.0).
+
+## v0.7.1-Statusrunde (11.07.2026, Auftrag «Echt statt Attrappe»)
+
+Nachführung nach den sechs Wellen (ROADMAP 322–325) + Kritik-Runden 1–2 — append-only, Original-Einträge unangetastet:
+
+- **0.7.0-Notiz «Zwei DXF-Exporter» erledigt (W3/3A):** `derive/dxf.ts` + `@tarikjabiri/dxf` entfernt; `dxf/export.ts` (`planGraphicToDxf`) ist der EINE Exporter für Design-Export UND Publish. Der bewusste Publish-Verhaltenswechsel (y-gespiegelt, semantische Layer) ist im Neuigkeiten-Entwurf und in docs/INTEROP.md benannt.
+- **0.7.0-Notiz «LAYER_BEMASSUNG wird nie befüllt» erledigt (W3/3A):** `deriveDimensions()` wird jetzt als LINE/TICK/TEXT in den Bemassungs-Layer emittiert (y-gespiegelt, stabil sortiert = Determinismus-Vertrag hält); der Import ignoriert den Layer bewusst (Bemassung ist abgeleitet, kein Modell-Inhalt).
+
+### H-48 — SIA-Hochziffer verschwand im DXF-ASCII-Purge (11.07.2026, W3-Agent 3A)
+- **Beobachtung:** Beim Portieren der Bemassung fiel auf: `dxfText()` purgt Nicht-ASCII-Zeichen — die SIA-Hochzahl des mm-Rests (z.B. 12⁵) wäre stillschweigend aus dem Bemassungstext gefallen. Datenverlust, den niemand gemeldet hätte.
+- **Triage:** bug (B — stiller Datenverlust im Export).
+- **Entscheid + Fix (W3, 3A):** verlustfreie ASCII-Schreibweise als Pendant zu `dimensionLabel` (dokumentiert in dxf/export.ts).
+- **Status:** behoben (0.7.1, ROADMAP 323).
+
+### H-49 — CSP hätte die Remote-GLB-Kaskade lautlos blockiert (11.07.2026, W3-Agent 3B)
+- **Beobachtung:** Die CSP in `index.html` UND `src-tauri/tauri.conf.json` kannte den Modell-CDN-Host nicht — der Remote-`fetch` wäre in Web- wie Desktop-Build lautlos gescheitert; die gesamte neue Remote-Kaskade wäre trotz grüner Unit-Tests eine Attrappe gewesen (genau das Thema des Release).
+- **Triage:** bug (B — Attrappen-Risiko; nur durch den echten E2E-Fetch-Beweis entdeckt).
+- **Entscheid + Fix (W3, 3B):** `connect-src` beider CSPs um `archiv.architekturkosmos.ch` ergänzt; der E2E beweist den Fetch gegen die abgefangene Route.
+- **Status:** behoben (0.7.1, ROADMAP 323). Merkregel: **jeder neue externe Host braucht BEIDE CSPs** (Web + Tauri), sonst scheitert er lautlos.
+
+### H-50 — Kein OAuth-Abmelden, Alt-Token blieb in localStorage (11.07.2026, W2-Agent 2A)
+- **Beobachtung:** Nach dem Abo-Login gab es keinen Weg zurück — kein Abmelden-Knopf, und beim Wechsel auf einen API-Schlüssel blieb das alte OAuth-Token in localStorage liegen (Hygiene-/Sicherheitslücke auf geteilten Geräten).
+- **Triage:** bug (B — Auth-Hygiene).
+- **Entscheid + Fix (W5, 5B):** «Abmelden»-Knopf (`oauth-abmelden`, nur sichtbar mit aktivem Token; löscht NUR das Token, nicht den API-Schlüssel) + API-Schlüssel-Eintrag räumt ein liegengebliebenes Alt-Token mit; `e2e/oauth-roundtrip.spec.ts` deckt beide Wege (4 Tests).
+- **Status:** behoben (0.7.1).
+
+### H-51 — Grundriss zeigte importierte Kontext-Zonen nie (11.07.2026, Kritik-Runde 1)
+- **Beobachtung:** Nach dem Nachbarn-Import wirkte der Grundriss leer: `derivePlan` nimmt nur Raum-Zonen (mit `raumTyp`), Parzelle/Nachbarn wurden NIE gerendert, und `einpassen()` kannte nur `plan.bounds` — der Fit sprang ins Nichts.
+- **Triage:** bug (B — Feature ohne sichtbare Wirkung = Attrappe aus Nutzersicht).
+- **Entscheid + Fix (Fable, Kritik 1):** eigener `plan-kontext`-Layer in PlanView direkt aus dem Doc (Parzelle strichpunktiert papierkonstant, Nachbarn grau, jeder LOD, `pointerEvents: none`) + `einpassen()` erweitert die Bounds um die Kontext-Zonen.
+- **Status:** behoben (0.7.1).
+
+### H-52 — Ansicht-Drehsymbol ignorierte die Angelseite (11.07.2026, Kritik-Runde 2)
+- **Beobachtung:** Das neue SIA-Dreh-Dreieck der Ansicht war fest auf «Band links» codiert; der Grundriss-Flügelbogen respektiert `Opening.swing` seit 0.6.9 — bei `swing:'rechts'` hätten sich Grundriss und Ansicht fachlich widersprochen.
+- **Triage:** bug (B — fachlicher Planwiderspruch).
+- **Entscheid + Fix (Fable, Kritik 2):** Spitze sitzt an der Projektion des tatsächlichen Bandpunkts (sA/sB statt Bildschirm-Minimum) — damit spiegelt auch die Rückseiten-Ansicht korrekt; Regressionstest in fluegeltyp.test.ts.
+- **Status:** behoben (0.7.1).
+
+**Notizen (keine H-Einträge):**
+- **Bridge-CORS-Allowlist kannte nur 5173/5183 (W5/5A-Befund):** Agenten-Previews auf 5174–5177 bekamen CORS-geblockte `/jobs`-Aufrufe («Bridge nicht erreichbar»). Default in `_cors_origins()` um 5174–5177 erweitert (W6/6B, mit Python-Test); abweichende Ports weiterhin via `KOSMO_BRIDGE_ORIGIN`.
+- **deriveAll-Konsum-Kopplung (W4/4A):** Neue Szene-Artefakte dürfen NIE direkt in `deriveAll()` eingehängt werden — Schnitt/Axo/GLTF-Export/Kamera konsumieren sie generisch (Golden-/Zähler-Brüche). Muster: additive Hüll-Funktion (`deriveAllMitFensterdetails`), nur die 3D-Aufrufer wechseln.
+- **Welle-4-Lücken in 6B geschlossen:** Live-Schnittvorschau rendert die Flügelsymbolik jetzt ebenfalls (dünner Stift, additiv); `fenster-rahmen` hat einen echten Material-Eintrag. Verbleibend ehrlich: Symbole ohne Hidden-Line-Verdeckung (wie der Druckweg), IFC/DXF ohne Beschlag-Detail, Terrain handgesetzt ohne swissALTI3D.
