@@ -432,3 +432,70 @@ unser Graben ist CH-Regelwissen + SIA-Pläne + local-first, nicht Breite.
 5. **Finanzierung 2025** nur Sekundär-Snippets [S]; die Roadmap-Seite der Doku ist ein toter Link («broken://»), Prioritäten der Firma daher unbekannt.
 6. **Proxy-Blockaden dokumentiert:** WebFetch auf finch3d.com/aecmag/architosh lieferte 403 — umgangen via direktem curl über den Session-Proxy (erlaubter Weg); docs.finch3d.com brauchte Retries. Nicht erreichbar blieben: YouTube-Transkripte, Vimeo, LinkedIn-Posts der Gründer, Medium-Artikel (nicht versucht nach 403-Serie).
 7. **Preise/Zahlen sind Momentaufnahme** 07/2026 und Marketing-Angaben der Website.
+
+---
+
+## 8 · Nachtrag 11.07.2026 — Product-Page-Analyse & v0.7.0-Abdeckung
+
+> Stream 6A (v0.7.0 Welle 6, «BIM-Export-Härtung + Interop-Doku»). Anlass:
+> `docs/V070-KONZEPT.md` E5 wertet die aktuelle finch3d.com/product-Seite
+> (Text + Videos, 10.07.2026) neu aus — ein sechs Punkte umfassender Katalog,
+> der bündelt, was Finch heute als Kernprodukt bewirbt. Dieser Nachtrag hält
+> den Katalog fest, gleicht ihn gegen den v0.7.0-Stand von KosmoOrbit ab und
+> begründet die eine bewusste Auslassung (Enterprise/SSO). Append-only —
+> Abschnitte 1–7 oben bleiben unverändert.
+
+### (a) Der 6-Punkte-Katalog der Product-Page (10.07.2026)
+
+Aus `docs/V070-KONZEPT.md` E5 übernommen (dort bereits mit Quelle
+finch3d.com/product, Text+Videos, belegt):
+
+1. **Plan Library mit eingebetteten Regeln** (Accessibility/Code/Constraints)
+   als Generierungs-Basis.
+2. **Generierung** — «feasibility → detailed layouts in minutes», tausende
+   Echtzeit-Varianten, Instant-Feedback.
+3. **Agent «Archie»** — Türplatzierung, Compliance-Checks, verkettete
+   Einheiten-Updates.
+4. **BIM-Modell + Export** ohne Neuzeichnen.
+5. **Interop Rhino/Revit/Grasshopper.**
+6. **Enterprise/SSO/Teams.**
+
+### (b) Abdeckungstabelle: Finch-Claim → KosmoOrbit-v0.7.0-Stand
+
+| # | Finch-Claim | KosmoOrbit v0.7.0 | Befund |
+|---|---|---|---|
+| 1 | Plan Library mit eingebetteten Regeln | ✅ Vorlagen-Feld `regeln: string[]` (Regelpreset-Ids, ROADMAP 318, Stream 4B/v) + Adaptive Zonen-Vorlagen (F7-Locks, `dehnung: 'fest'\|'dehnbar'`, Stream 4B/ii) | Vorlagen tragen jetzt ihre eigenen Regeln UND ihre eigenen Verformungs-Constraints — beide Finch-Bausteine (Adaptive Plan Library + Graph Rules) sind im Vorlagen-Objekt vereint |
+| 2 | Generierung: feasibility → Layouts in Minuten, Echtzeit-Varianten | ✅ `derive/variantensuche.ts` (ROADMAP 317, Stream 4A/i): seeded synchroner Anytime-Generator (Greedy-DP-Start + Ruin-&-Recreate-Züge), Score = gewichtete Kennzahlensumme, deterministisch bei fixem Seed; dazu `VariantenPanel.tsx` + die verallgemeinerte `kennzahlMatrix()` (Stream 5A, «Echtzeit-Varianten-UI + Kennzahl-Matrix», Commit 8b3e7a6 — eigener ROADMAP-Eintrag dort noch offen), UI zieht in `requestIdleCallback`-Zeitscheiben — Echtzeit-Feedback wie Finchs Weights/Trade-off-Slider, aber ohne Worker-Infrastruktur | ✅ 317 (+ 5A) |
+| 3 | Agent «Archie»: Türplatzierung, Compliance-Checks, verkettete Updates | ✅ **Kosmo-Präzisier** (Stream 5B/iv): 3 Commands `design.tuerenPlatzieren` (Raumgraph-Erschliessung), `design.komplianzFixes` (Checks-Befunde → Diff-Karten-Patches via `runCommand`), `design.einheitTypAktualisieren` (eine Änderung → alle Instanzen, EINE Undo-Gruppe) — exakt Archies drei genannte Aufgaben, aber gated durch dieselbe Diff-Karten-Architektur wie jeder andere Kosmo-Vorschlag (kein stiller Agenten-Autopilot) | ✅ Kosmo-Präzisier |
+| 4 | BIM-Modell + Export ohne Neuzeichnen | ✅ IFC4 (`ifc/export.ts`, ifcopenshell-verifiziert) + DXF (`dxf/export.ts`, ezdxf-verifiziert, roundtrip-gehärtet in diesem Stream) — beide aus derselben Parametrik abgeleitet wie SVG/PDF, kein Neuzeichnen | ✅ IFC/DXF-Brücke mit Grenzen (s. `docs/INTEROP.md` §6) |
+| 5 | Interop Rhino/Revit/Grasshopper | ◐ `docs/INTEROP.md` (neu, dieser Stream): konkrete, ehrliche Wege über IFC/DXF für alle drei Werkzeuge — kein natives `.3dm`/`.rvt`, keine Revit-Familien, kein Live-Grasshopper-Endpunkt | ➜ `docs/INTEROP.md` |
+| 6 | Enterprise/SSO/Teams | ✖ bewusst ausgelassen | Begründung (c) unten |
+
+### (c) Begründete Enterprise/SSO-Auslassung
+
+KosmoOrbit baut **keine** SSO-/Mandanten-/Teams-Fassade nach — drei
+unabhängige, jede für sich hinreichende Gründe:
+
+1. **Lokal-first Einzelbüro statt Mandanten-Backend.** Der ganze Kernel ist
+   auf ein einzelnes Büro/einen einzelnen `.kosmo`-Datenraum ausgelegt
+   (`KosmoDoc` + Yjs-Dokument, kein serverseitiges Multi-Tenant-Modell, kein
+   Nutzerverzeichnis, keine Rollen-/Berechtigungstabelle im Datenmodell).
+   Ein «SSO-Knopf» ohne dahinterliegendes Mandanten-Backend wäre reine
+   Fassade — ein Login-Dialog, der auf nichts einzahlt, das im Modell
+   existiert.
+2. **Yjs-Sync deckt die reale Team-Kollaboration bereits ab.** Das
+   Kernbedürfnis hinter Finchs «Enterprise/Teams» — mehrere Personen arbeiten
+   gemeinsam am selben Projekt — ist in KosmoOrbit bereits gelöst
+   (`tools/sync-server`, Yjs-Dokument-Sync, Journal/Undo geteilt). Was fehlt,
+   ist nicht Kollaboration, sondern eine Enterprise-IT-Anbindung (SSO/SCIM/
+   Verzeichnisdienst) — die für ein «einzelnes Büro mit einem HomeStation-
+   Server» keinen Gegenwert hat, den es einzukaufen gäbe.
+3. **Owner-Mandat «Ehrlichkeit vor Politur» (CLAUDE.md) verbietet
+   SSO-Fassaden.** Ein SSO-Button, der auf keinen echten Identity-Provider-
+   Vertrag, kein Abo-Backend und kein Mandantenmodell trifft, wäre exakt das,
+   was das Owner-Mandat ausdrücklich untersagt: «was die HomeStation/ein
+   Konto/ein Schlüssel braucht, wird im UI offen benannt, nicht vorgetäuscht.»
+   Enterprise/SSO bleibt daher **kein GEPLANT-Punkt, sondern ein bewusster
+   architektonischer Nicht-Bau** — wie `.pln`/`.psd`/`.idml`/`.3dm` in
+   `docs/INTEROP-KONZEPT.md` §4: kein Rückstand, sondern ein Entscheid gegen
+   Lock-in-Nachbau von etwas, das ausserhalb des lokal-first-Modells liegt.
