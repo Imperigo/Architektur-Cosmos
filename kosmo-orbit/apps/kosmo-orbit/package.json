@@ -1,6 +1,6 @@
 {
   "name": "@kosmo/orbit-app",
-  "version": "0.6.9",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "description": "KosmoOrbit — die Architektur-Designzentrale (Desktop + iPad)",

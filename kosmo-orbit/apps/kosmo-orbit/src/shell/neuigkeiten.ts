@@ -35,6 +35,22 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.0',
+    datum: '2026-07-11',
+    punkte: [
+      { text: 'SIA-Planungsphasen komplett im Plan: Wettbewerb, Vorprojekt, Bauprojekt, Baueingabe und Werkplan sind wählbare Darstellungsphasen — bis und mit Baueingabe erscheinen geschnittene Bauteile SIA-gemäss schwarz (Wettbewerb/Vorprojekt als EIN Poché, Bauprojekt/Baueingabe mit Schichten: tragend schwarz, nichttragend grau, Dämmung weiss); Umbau-Farben (rot/gelb) behalten Vorrang, der Werkplan bleibt unverändert.', station: 'design' },
+      { text: '3D folgt der Phase: bis zur Baueingabe zeigt der Viewport ein Weissmodell, ab Ausschreibung Materialien — im Projekt-Menü übersteuerbar (auto/Material/weiss/schwarz), Fenster behalten ihre Transparenz.', station: 'design' },
+      { text: 'Situationsplan v1 (Schwarzplan): eigene Gebäude-Footprints schwarz, echte Parzellengrenze strichpunktiert, Nordpfeil und Massstabsbalken — als neuer Blatt-Typ in der Publikation; Nachbargebäude werden ehrlich weggelassen, solange keine erfassten Kontext-Polygone existieren.', station: 'publish' },
+      { text: 'Blätter füllen sich selbst: «Blatt füllen» ergänzt fehlende Ansichten, Schnitte und den Situationsplan automatisch aus dem Modell — ein Rückgängig-Schritt, nichts wird doppelt platziert.', station: 'publish' },
+      { text: 'Varianten in Echtzeit: das neue Varianten-Panel durchsucht Wohnungs-Aufteilungen live (vier Gewichte-Regler, fester Seed = reproduzierbar), zeigt die Top-8 mit Teilscores und Kennzahl-Matrix; «Übernehmen» schreibt über das bestehende Segmentier-Kommando — EIN Rückgängig-Schritt.', station: 'design' },
+      { text: 'Kosmo-Präzisier: drei neue Präzisions-Kommandos — Türen exakt platzieren, drei klar automatisierbare Grundriss-Befunde in einem Zug beheben, Wohnungstyp einer Einheit konsistent aktualisieren (jeweils EIN Rückgängig-Schritt).' },
+      { text: 'Zonen-Vorlagen lernen dazu: pro Achse fest oder dehnbar (Locks überleben das Absetzen mit Stretch), und Vorlagen können Regel-Sätze mitbringen, die beim Instanziieren aktiv werden.', station: 'design' },
+      { text: 'Fenster und Türen sind im Grundriss direkt klickbar (Öffnung vor Wand, 40 mm Toleranz); die Fenster-Aufschlagbögen lassen sich projektweit abschalten; das Inspector-Panel überdeckt bei schmalen Fenstern nicht mehr die Navigation.', station: 'design' },
+      { text: 'BIM-Brücke belegt: IFC- und DXF-Roundtrip-Tests beweisen den Weg nach Rhino/Revit/Grasshopper ohne Neuzeichnen; docs/INTEROP.md beschreibt die ehrlichen Grenzen (kein .rvt-Direktexport, DXF ohne Bemassungs-Layer).' },
+      { text: 'Unter der Haube: Parzellen-Zonen zählen nicht mehr in NGF-/Raumtyp-Kennzahlen; die 3D-Referenzlade-Prüfung misst jetzt echte Geometrie (die alte Test-Fixture war eine leere Szene); der 3D-Modus ist am Container per data-Attribut beweisbar.' },
+    ],
+  },
+  {
     version: '0.6.9',
     datum: '2026-07-10',
     punkte: [

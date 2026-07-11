@@ -24,7 +24,7 @@ export interface RadarPosten {
   unverifiziert?: boolean;
 }
 
-export const RADAR_STAND = 'verifiziert 02.07.2026 · Nachträge bis 08.07.2026 · Quelle docs/TECH-RADAR.md';
+export const RADAR_STAND = 'verifiziert 02.07.2026 · Nachträge bis 11.07.2026 · Quelle docs/TECH-RADAR.md';
 
 export const TECH_RADAR: RadarPosten[] = [
   // Geometrie & BIM-Kern
@@ -65,6 +65,9 @@ export const TECH_RADAR: RadarPosten[] = [
   { bereich: 'Beobachtung (Scan 10.07.)', baustein: 'Qwen-Vision lokal (Qwen2.5-VL 7B / Qwen3-VL)', entscheid: 'TEST', paket: 'ollama pull qwen2.5vl:7b', lizenz: 'Apache-2.0 (laut Scan)', kommentar: 'Lokaler Seh-Weg für «Kosmo sieht mit»: ohne Vision-Modell sieht die lokale Betriebsart keine Bilder — HomeStation-Posten.', unverifiziert: true },
   { bereich: 'Beobachtung (Scan 10.07.)', baustein: 'Qwen3-Embedding 0.6B', entscheid: 'WATCH', paket: 'ollama pull qwen3-embedding:0.6b', lizenz: 'Apache-2.0 (laut Scan)', kommentar: 'Mögliches Upgrade des RAG-Embeddings (bge-m3 → Qwen3) auf der HomeStation; erst dort messbar.', unverifiziert: true },
   { bereich: 'Beobachtung (Scan 10.07.)', baustein: 'Nemotron 3 Ultra (OpenRouter)', entscheid: 'WATCH', paket: 'openrouter.ai (Cloud)', lizenz: 'OpenMDW-1.1 (laut Scan)', kommentar: 'Cloud-Grossmodell für Konzepttexte (1M Kontext); lokal auf RTX 5090 unmöglich — Konto/Datenabfluss = Owner-Entscheid.', unverifiziert: true },
+  // Notion-Scan-Nachlauf 11.07. (AI-SCAN-AUSWERTUNG-0.7.0.md §5) — Scan-Aussagen, nicht selbst verifiziert
+  { bereich: 'Beobachtung (Scan 11.07.)', baustein: 'HiVG (Image-to-SVG)', entscheid: 'WATCH', paket: 'HiVG (MIT laut Scan)', lizenz: 'MIT (laut Scan)', kommentar: 'Hierarchisches Bild→SVG — Evaluations-Kandidat 0.7.x auf der HomeStation (~2–3 h); Scan warnt selbst: nicht CAD-genau. Kein Einbau ohne Messung gegen echte Handskizzen.', unverifiziert: true },
+  { bereich: 'Beobachtung (Scan 11.07.)', baustein: 'PosterCraft (FLUX)', entscheid: 'REJECT', paket: 'PosterCraft', lizenz: 'FLUX non-commercial ⚠', kommentar: 'Lizenz-Sperre: FLUX-Gewichte non-commercial — für Wettbewerbsabgaben eines Erwerbsbüros ungeeignet. Dokumentiert, damit künftige Scans ihn nicht erneut vorschlagen.', unverifiziert: true },
 ];
 
 /** Anzeige-Reihenfolge der Bereiche (stabil, testbar). */

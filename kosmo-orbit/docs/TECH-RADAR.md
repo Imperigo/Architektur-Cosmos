@@ -131,3 +131,16 @@ nicht selbst verifiziert — Details und Widersprüche in
 
 Alle Angaben dieser Tabelle sind Scan-Aussagen (4 Notion-Seiten 09.–10.07.),
 nicht selbst verifiziert — Details in `AI-SCAN-AUSWERTUNG-0.6.8.md` §4.
+
+## Nachtrag 2026-07-11 — aus dem Scan-Nachlauf v0.7.0 (AI-SCAN-AUSWERTUNG-0.7.0.md §5)
+
+| Baustein | Entscheid | Quelle | Lizenz |
+|---|---|---|---|
+| HiVG (Image-to-SVG) | **WATCH** — hierarchisches Bild→SVG, Evaluations-Kandidat 0.7.x auf der HomeStation (~2–3 h); Scan warnt selbst «nicht CAD-genau» — kein Einbau ohne Messung gegen echte Handskizzen. | HiVG | MIT (laut Scan) |
+| PosterCraft (FLUX) | **REJECT (Lizenz)** — FLUX-Gewichte non-commercial, für Wettbewerbsabgaben eines Erwerbsbüros ungeeignet; dokumentiert, damit künftige Scans ihn nicht erneut vorschlagen. | PosterCraft | FLUX non-commercial ⚠ |
+
+Prepare-Scan 11.07. bestätigt bestehende Posten (Qwen3-Embedding, Markitdown,
+Qwen2.5-VL) und liefert einen GIS-Merker (swissALTI3D 2026 LiDAR /
+swissNAMES3D 2026 — WATCH für die Standort-Kette). Details und Ehrlichkeit
+in `AI-SCAN-AUSWERTUNG-0.7.0.md` §5 — alles Scan-Aussagen, nicht selbst
+verifiziert.

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { ModulElement } from '@kosmo/kernel';
 import { KButton, KInput, KSelect } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
@@ -50,7 +51,12 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
     onClose();
   };
 
-  return (
+  // createPortal nach document.body (Muster shell/Einstellungen.tsx):
+  // der Stations-Wrapper traegt `.k-einblenden` (animation ... both) — die
+  // gefuellte Transform macht ihn zum Containing Block fuer position:fixed,
+  // der Dialog haengt sonst am gescrollten Panel statt am Viewport
+  // (v0.7.0-Finale-Befund, Modul-Editor-E2E).
+  return createPortal(
     <div
       data-testid="modul-editor"
       style={{
@@ -179,6 +185,7 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
           Speichern
         </KButton>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

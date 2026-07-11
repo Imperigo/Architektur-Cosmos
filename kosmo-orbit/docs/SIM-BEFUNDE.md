@@ -802,3 +802,36 @@ Nachführung nach den drei Wellen (ROADMAP 302–308) — append-only, Original-
 - **Status:** behoben (0.6.9).
 
 **Notiz (kein H-Eintrag):** Das neue CurtainWallPanel führt seine Sichtbarkeit lokal statt über `useUiZustand` — dokumentierte Abweichung, Vereinheitlichung als 0.7.0-Punkt notiert (zusammen mit H-43).
+
+---
+
+## v0.7.0-Statusrunde (11.07.2026, Auftrag «Schwarz auf Weiss»)
+
+Nachführung nach den sechs Wellen (ROADMAP 311–320) + Kritik-Runden 1–3 — append-only, Original-Einträge unangetastet:
+
+- **H-42 entschärft (311/W1):** Der Sichtbarkeits-Schalter existiert jetzt — `doc.settings.fensterBoegen` (Default an) + Command `design.fensterBoegenSetzen` + Checkbox im Projekt-Menü; `derive/plan.ts` hängt den Flügelbogen am Guard `settings.fensterBoegen !== false`. Der Geschmacks-Entscheid selbst bleibt beim Owner (Default weiterhin MIT Bögen). Status: entschärft → Owner kann abschalten.
+- **H-43 behoben (312/W1):** Inspector mit bottom-Anschlag + maxHeight; NavLeiste und Kosmo-Symbol bleiben bei 1280 px frei (echte Messung in e2e/inspector-layout.spec.ts). CurtainWallPanel-Sichtbarkeit läuft jetzt über `useUiZustand` (Notiz aus 0.6.9 miterledigt).
+- **Kritik-1-Befund Bildschirm-Schichten behoben (6B, 4663db6):** In der PlanView-Fill-Kette fielen nichttragende Schichten ohne Schraffur-Linien auf die Alt-Farben zurück; jetzt grau solid `#c9c9c9` (Dämmung `var(--k-raised)`), Beweis-Shot docs/rundgang/kritik-070/06.
+
+### H-45 — E2E-Fixture dreieck.glb enthielt eine LEERE Szene (11.07.2026, W3-Agent 3B)
+- **Beobachtung:** Die bisherige GLB-Fixture für den Referenz-3D-Ladepfad (K2/A2a) trug 0 Meshes — der «Lade-Beweis» konnte nie beweisen, dass Geometrie ankommt.
+- **Triage:** bug (B — Test-Beweiskraft; die App selbst war korrekt).
+- **Entscheid + Fix (W3, 3B):** echtes 684-Byte-Dreiecks-Mesh als Fixture, ref3d-laden.spec prüft jetzt `__kosmoViewport.glbMeshCount() > 0`.
+- **Status:** behoben (0.7.0, ROADMAP 315).
+
+### H-46 — Parzellen-Zone verschmutzte NGF/SIA-416-Kennzahlen (11.07.2026, W3-Agent 3B, D8-Auftrag)
+- **Beobachtung:** Eine als Zone importierte Parzelle (600 m²) zählte in NGF-/Raumtyp-Checks mit — Kennzahlen-Pollution im Wettbewerbs-Nachweis.
+- **Triage:** bug (B — fachlich falsche Kennzahl).
+- **Entscheid + Fix (W3, 3B):** eigener Zonentyp `zonenArt: 'parzelle'`; checks.ts/sia416.ts nehmen Parzellen aus den Raum-Checks aus.
+- **Status:** behoben (0.7.0, ROADMAP 315).
+
+**Notizen (keine H-Einträge):**
+- **Zwei DXF-Exporter:** `dxf/export.ts` (y-gespiegelt, mit Parser fürs Wieder-Einlesen) und `derive/dxf.ts` existieren parallel — W6-Befund (6A). Die Roundtrip-Tests decken den dxf/export-Weg; Konsolidierung als 0.7.1-Doku-/Refactor-Punkt.
+- **LAYER_BEMASSUNG wird nie befüllt:** Der DXF-Layer ist deklariert, aber kein Codepfad schreibt Bemassungen hinein (Bemassung lebt im SVG-/PDF-Weg). Ehrlich dokumentiert in docs/INTEROP.md; DXF-Bemassung = 0.7.1-Kandidat.
+- **Betriebsregel bestätigt (H-31-Nachwehe):** Vor Journey-Läufen im Container den historischen Store `/tmp/kosmo-jobs*` leeren — zwei rote Journey-Läufe am 11.07. hatten genau diese Ursache (in ROADMAP 316 verankert).
+
+### H-47 — Modul-Editor-Dialog hängt am gescrollten Panel statt am Viewport (11.07.2026, Finale-Vollsuite v0.7.0)
+- **Beobachtung:** Der Modul-Editor (`position: fixed, top: 70`) öffnete teils weit ausserhalb des Bildschirms (gemessen y=−528): der Stations-Wrapper trägt `.k-einblenden` (`animation … both`), dessen gefüllte Transform macht ihn per CSS-Spec zum Containing Block für fixed-Nachfahren — der Dialog ankerte am Wrapper, ragte unten aus dem `overflow:hidden`-Container, und der Fokus-Klick scrollte alles um ~640 px hoch. Auch für Menschen kaputt, nicht nur für den Test.
+- **Triage:** bug (B — latent seit dem Motion-Rollout 0.6.6, im v0.7.0-Finale durch die Vollsuite ans Licht gekommen).
+- **Entscheid + Fix (Fable, Finale):** `createPortal(…, document.body)` nach dem Muster von `shell/Einstellungen.tsx` — der Dialog entkommt dem transformierten Vorfahren. Merkregel: **fixed-Dialoge unterhalb eines `.k-einblenden`-Wrappers brauchen ein Portal** (der Modul-Editor war der einzige Treffer, per grep belegt).
+- **Status:** behoben (0.7.0).

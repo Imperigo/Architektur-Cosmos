@@ -103,7 +103,9 @@ test('Teilphase → Bewilligung: Preset wird angeboten, Anwenden hebt KV/Sonne, 
 
   await waehleOption(page, 'sia-phase-select', 'bewilligung');
   await expect(angebot).toBeVisible();
-  await expect(angebot).toContainText('Bewilligungsverfahren');
+  // v0.7.0 (E1): das Owner-bestätigte Phasenmodell benennt SIA 33 als
+  // «Baueingabe» (siaPhaseLabel in model/doc.ts) — vorher «Bewilligungsverfahren».
+  await expect(angebot).toContainText('Baueingabe');
   await expect(angebot).toContainText('KV');
   await expect(angebot).toContainText('Sonnenstudie');
 

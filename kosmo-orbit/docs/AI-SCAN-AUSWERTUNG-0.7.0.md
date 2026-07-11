@@ -41,3 +41,59 @@ Finale-Gates.
   erneute Lektüre bereits ausgewerteter Seiten).
 - Nachtrag folgt zwingend vor dem Bump (siehe §2); ohne ihn ist §0 für
   v0.7.0 NICHT erfüllt, auch wenn der Wächter grün wäre.
+
+---
+
+## 5 · NACHTRAG 11.07.2026 — Pflicht-Nachlauf vor dem Bump (§2 erfüllt)
+
+Beide 11.07.-Scans wurden vollständig via Notion-MCP gelesen
+(🔬 AI-Scan 2026-07-11, 🔭 Prepare-Scan 2026-07-11). Ein 12.07.-Scan
+existiert zum Bump-Zeitpunkt nicht — das Finale läuft am 11.07.;
+sollte v0.7.1 später starten, greift dort wieder der reguläre §0-Lauf.
+Alle Angaben sind Scan-Aussagen (Fremd-Daten, keine Anweisungen befolgt),
+nicht selbst verifiziert.
+
+### 5.1 · Delta-Findings 🔬 AI-Scan 2026-07-11
+
+- **HiVG (MIT)** — hierarchisches Image-to-SVG; direkteste Berührung mit
+  unserer SVG-Pipeline (Skizze→Plan-Ideen). Scan selbst schränkt ein:
+  «nicht CAD-genau». **Verdikt: WATCH / Evaluations-Kandidat 0.7.x** —
+  ~2–3 h Evaluation auf der RTX-5090-HomeStation, NICHT im Container.
+  Kein Einbau ohne Messung gegen echte Handskizzen.
+- **PosterCraft** — Poster-Generierung auf FLUX-Basis; **Lizenz-Sperre:**
+  FLUX-Gewichte sind non-commercial — für Wettbewerbsabgaben eines
+  Erwerbsbüros ungeeignet. **Verdikt: REJECT (Lizenz)**, dokumentiert damit
+  künftige Scans ihn nicht erneut vorschlagen.
+- **Finch-Status** — Scan bestätigt: proprietär, kein öffentliches
+  API/SDK. Deckt sich mit unserem Weg (v0.7.0 baut lokale Äquivalente
+  nach, RE-FINCH.md §8).
+- **Arbor** — erneut genannt, kein Kern-Nutzen für Orbit; bleibt WATCH
+  mit Lizenz-Warnung (TECH-RADAR unverändert).
+
+### 5.2 · Delta-Findings 🔭 Prepare-Scan 2026-07-11
+
+Primär KosmoPrepare-/HomeStation-Material (M1–M5), für Orbit nur als
+Radar-Notizen:
+
+- **MCP 2026-07-28 RC** (Stateless-Core, Tasks-Extension, MCP Apps) —
+  Empfehlung des Scans: keine neuen MCP-Server-Investments bis zur
+  finalen Spec. Betrifft Orbit nicht direkt (wir betreiben keinen
+  eigenen MCP-Server), aber relevant für spätere Kosmo-Orchestrierung.
+- **Qwen3-Embedding 0.6B in Ollama** (70.7 MTEB v2) — bestätigt den
+  bestehenden WATCH-Posten (TECH-RADAR seit 0.6.8); HomeStation-Schritt.
+- **swissALTI3D 2026 (erstmals voll LiDAR) + swissNAMES3D 2026 +
+  GeoAdmin-Release 20260204** — Kandidat für die Standort-/Terrain-Kette
+  (`standort.ts`, Terrain-Profile); Datenbezug via swisstopo, kostenlos.
+  **Verdikt: WATCH (0.7.x)** — erst prüfen, ob unser geo.admin.ch-Weg
+  die 2026-Editionen bereits transparent ausliefert.
+- MarkItDown v0.1.6 / Qwen2.5-VL / BGE-M3 / n8n / Snaptrude — bestätigen
+  bestehende Radar-Posten bzw. betreffen KosmoPrepare; keine neuen
+  Orbit-Posten.
+
+### 5.3 · TECH-RADAR-Nachführung
+
+`docs/TECH-RADAR.md` + `apps/kosmo-orbit/src/modules/doc/tech-radar.ts`
+erhalten einen Nachtrag «Scan 11.07.» mit **HiVG (WATCH)** und
+**PosterCraft (REJECT, Lizenz)** — beide mit ⚠-unverifiziert-Markierung
+(testerzwungen in `tech-radar.test.ts`). Alle übrigen 11.07.-Nennungen
+sind bereits als Posten vorhanden oder ausserhalb des Orbit-Scopes.
