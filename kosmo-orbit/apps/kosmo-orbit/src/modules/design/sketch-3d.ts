@@ -18,14 +18,13 @@ import type { Pt } from '@kosmo/kernel';
  * Wand-Treffer eines Strichs (Achsabstand × Höhe) wird zu Center/Breite/
  * Höhe/Brüstung.
  *
- * Ehrliche Grenze: ein echtes Terrain-Mesh (schräge Geländefläche) existiert
- * im 3D-Viewport (noch) nicht — `Terrain`-Entities fliessen bisher nur in
- * Schnitt/Plan-Ableitung, nicht in `derive/scene.ts`. „Boden/Terrain" heisst
- * hier daher: alles, was keine Wand ist (Bodenraster-Ebene, Decken/Platten,
- * Dach, Volumenkörper, Treppe, Knotenstücke) — sobald ein Terrain-Mesh im
- * Viewport existiert, greift dieselbe Klassifikation automatisch auch dafür,
- * weil sie rein am „ist es eine Wand"-Kriterium hängt, nicht an einer Liste
- * bekannter Bauteil-Arten.
+ * Seit v0.7.1 (E4) existiert das echte Terrain-Mesh im Viewport
+ * (`deriveTerrainBaender` in `derive/scene.ts`) — genau wie hier unten
+ * vorausgesagt greift die Klassifikation automatisch auch dafür, weil sie
+ * rein am „ist es eine Wand"-Kriterium hängt, nicht an einer Liste
+ * bekannter Bauteil-Arten. „Boden/Terrain" heisst weiterhin: alles, was
+ * keine Wand ist (Bodenraster-Ebene, Decken/Platten, Dach, Volumenkörper,
+ * Treppe, Terrain-Band, Knotenstücke).
  */
 
 export interface Ray3 {
