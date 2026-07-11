@@ -46,8 +46,15 @@ async function oeffneMitAutomatikAn(page: Page): Promise<void> {
   // (Hysterese-Timer) ist ab hier virtuell steuerbar. `pauseAt()` ist der
   // Teil, der die Uhr TATSÄCHLICH anhält (`install()` allein lässt sie in
   // Echtzeit weiterlaufen, s. Suiten-Kommentar oben).
-  await page.clock.install();
-  await page.clock.pauseAt(Date.now());
+  // pauseAt kann nie EXAKT die Install-Zeit treffen (die installierte Uhr
+  // tickt während des Node→Browser-Roundtrips weiter; «Cannot fast-forward
+  // to the past», Vollsuiten-Befund 0.7.2-Finale). Darum: bewusst auf einen
+  // Punkt IN DER ZUKUNFT pausieren — der Absolutwert ist egal, entscheidend
+  // ist nur, dass die Uhr steht, BEVOR die Hysterese-Timer registriert
+  // werden (module-design-Klick folgt erst danach).
+  const t0 = Date.now();
+  await page.clock.install({ time: t0 });
+  await page.clock.pauseAt(t0 + 60_000);
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG + Standard-Aufbauten
 }
 

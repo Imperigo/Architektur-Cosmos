@@ -346,7 +346,15 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
           // Hub-Rang (Spec §4): rang-fähige Slots (s. `toolIdVon`) folgen der
           // Rang-Reihenfolge dieses Fächers, alle anderen Untertools bleiben
           // an ihrer rollen-sortierten Position (s. `mitRang`-Kommentar).
-          const rangReihenfolge = rangReihenfolgeProHaupt[h.id] ?? [];
+          // AUSNAHME (Vollsuiten-Befund 0.7.2-Finale): Greift in DIESEM
+          // Fächer eine explizit gewählte Rolle (`rollenPrio` trifft
+          // mindestens ein Untertool), gewinnt die Rollen-Vorstufe
+          // (Vision D2, e2e/module.spec «Rolle Ausführung → Publish vorn»)
+          // — das ambiente Rang-Signal ordnet nur die Neutral-Rolle um.
+          const rolleGreift =
+            rollenPrio !== undefined &&
+            h.untertools.some((u) => u.moduleId !== undefined && rollenPrio.includes(u.moduleId));
+          const rangReihenfolge = rolleGreift ? [] : (rangReihenfolgeProHaupt[h.id] ?? []);
           const untertoolsFuerAnzeige = mitRang(untertoolsVon(h), rangReihenfolge);
           return (
             <div
