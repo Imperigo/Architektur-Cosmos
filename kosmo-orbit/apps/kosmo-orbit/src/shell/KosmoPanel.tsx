@@ -25,6 +25,7 @@ import { formatiereEreignisse, useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
 import { vorschauFuerProposal, type ProposalVorschau } from '../state/proposal-vorschau';
+import { abspielVorspiel } from '../state/abspiel-anschluss';
 import { DiagnosePanel } from './Diagnose';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { hydriereJournal, journalStore } from '../state/journal-store';
@@ -358,14 +359,17 @@ async function bridgeErreichbar(bridge: string): Promise<boolean> {
 export interface KosmoPanelProps {
   onClose: () => void;
   /**
-   * v0.7.2 §7/§12 («Kosmo zeichnet sichtbar», Stufe 1) — von Stream W2-D nur
-   * VORBEREITET: `applyPaket` ruft sie mit den offenen Paket-Schritten auf,
-   * BEVOR der synchrone, atomare `runCommand`-Weg läuft. Stream W3-E
-   * implementiert die eigentliche Overlay-Abspiel-Ebene (`state/abspiel-ebene.ts`)
-   * darüber, ohne `KosmoPanel.tsx` erneut anzufassen — ohne übergebene Prop
-   * bleibt der Aufruf ein folgenloser No-op.
+   * v0.7.2 §7/§12 («Kosmo zeichnet sichtbar», Stufe 1) — von Stream W2-D
+   * vorbereitet, vom Leiter nach der Integration AWAIT-fähig gemacht:
+   * `applyPaket` wartet das Vorspiel ab, BEVOR der synchrone, atomare
+   * `runCommand`-Weg läuft (sonst liefe das Overlay parallel zum Apply —
+   * §7 verlangt VORSPIEL). Ohne Prop greift der registrierbare Anschluss
+   * `state/abspiel-anschluss.ts` (dort registriert Stream W3-E seine
+   * Overlay-Ebene, ohne `KosmoPanel.tsx` oder `App.tsx` anzufassen) —
+   * unregistriert bleibt alles ein folgenloser No-op. Das Vorspiel kann
+   * den Apply nur verzögern, nie verhindern (Undo-Atomarität gewahrt).
    */
-  onAbspielStart?: (schritte: PendingCard[]) => void;
+  onAbspielStart?: (schritte: PendingCard[]) => Promise<void> | void;
 }
 
 export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
@@ -1097,12 +1101,13 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       .filter((c) => c.paket?.id === paketId && c.state === 'offen')
       .sort((a, b) => (a.paket!.index ?? 0) - (b.paket!.index ?? 0));
     if (schritte.length === 0) return;
-    // v0.7.2 §7/§12 (Schnittstelle für Stream W3-E, «Kosmo zeichnet sichtbar»
-    // Stufe 1): rein vorbereitend — der Aufruf selbst blockiert/verzögert das
-    // atomare Anwenden unten NICHT; die Abspiel-Ebene (Overlay-Vorspiel VOR
-    // dem Apply) implementiert Stream E später, ohne diese Datei nochmals
-    // anzufassen. Ohne übergebene Prop bleibt dieser Aufruf ein No-op.
-    onAbspielStart?.(schritte);
+    // v0.7.2 §7/§12 («Kosmo zeichnet sichtbar», Stufe 1): das Overlay-
+    // Vorspiel wird AWAITED — erst wenn es fertig (oder sofort, wenn nichts
+    // registriert/ESC/webdriver/reduced-motion) ist, läuft der unveränderte
+    // atomare Apply unten. Prop hat Vorrang (Tests), sonst der registrier-
+    // bare Anschluss aus `state/abspiel-anschluss.ts` (Stream W3-E).
+    const vorspiel = onAbspielStart ? onAbspielStart(schritte) : abspielVorspiel(schritte);
+    if (vorspiel) await vorspiel;
     // v0.7.2 §6 (applyPaket→dispatching): die ganze Kette gilt als EIN
     // «Losschicken» — «Wusch» begleitet den Start, falls Sounds an sind.
     useKosmoStatus.getState().setzeZustand('dispatching');
