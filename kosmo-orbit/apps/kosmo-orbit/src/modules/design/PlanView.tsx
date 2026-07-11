@@ -85,11 +85,11 @@ function federGefuehl(t: number): number {
  * Modus 'material' bleiben so exakt wie heute (kein zweiter, abweichender
  * Bildschirm-Regelsatz).
  */
-function pocheArtFuer(
+function pocheEntscheidFuer(
   classes: readonly string[],
   phase: BauPhase,
   modus: PocheModus,
-): ReturnType<typeof pocheEntscheid>['art'] {
+): ReturnType<typeof pocheEntscheid> {
   const umbau = classes.includes('renovation-neu')
     ? ('neu' as const)
     : classes.includes('renovation-abbruch')
@@ -107,7 +107,12 @@ function pocheArtFuer(
     },
     ...(umbau ? { umbau } : {}),
     kontext: 'grundriss',
-  }).art;
+  });
+}
+
+/** Nur die `art` — für Stellen, die keine Schichten-Feinheit brauchen (Trace). */
+function pocheArtFuer(classes: readonly string[], phase: BauPhase, modus: PocheModus) {
+  return pocheEntscheidFuer(classes, phase, modus).art;
 }
 
 export function PlanView({
@@ -947,9 +952,23 @@ export function PlanView({
                             // ist die EINE Quelle dafür (auch für den Export).
                             // Jede andere `art` fällt auf die heutige Kette
                             // zurück (Werkplan/Modus 'material' unverändert).
-                            pocheArtFuer(r.classes, doc.settings.phase, pocheModus) === 'schwarz'
-                            ? 'var(--k-ink)'
-                            : isCore
+                            (() => {
+                              // 6B (Kritik-1-Befund): In den Schwarz-Phasen
+                              // (schraffurLinien=false) zeigen auch die
+                              // NICHTTRAGENDEN Schichten am Bildschirm die
+                              // Export-Optik — grau solid statt Material-
+                              // Schraffur, Dämmung weiss. Werkplan/Modus
+                              // 'material' (schraffurLinien=true) bleibt
+                              // byte-genau bei der heutigen Kette darunter.
+                              const pe = pocheEntscheidFuer(r.classes, doc.settings.phase, pocheModus);
+                              return pe.art === 'schwarz'
+                                ? 'var(--k-ink)'
+                                : !pe.schraffurLinien && pe.art === 'grau'
+                                  ? '#c9c9c9'
+                                  : !pe.schraffurLinien && pe.art === 'daemmung'
+                                    ? 'var(--k-raised)'
+                                    : null;
+                            })() ?? (isCore
                               ? lod === 'voll'
                                 ? 'url(#hatch-beton)'
                                 // «mittel»/«fern»: Schraffur wird flaches Poché
@@ -961,7 +980,7 @@ export function PlanView({
                                   : 'var(--k-line)'
                                 : isProjection
                                   ? 'none'
-                                  : 'var(--k-surface)'
+                                  : 'var(--k-surface)')
                   }
                   stroke={neu ? '#b3261e' : abbruch ? '#8a7500' : 'var(--k-ink)'}
                   strokeWidth={isProjection ? 8 : isCore ? 24 : 12}
