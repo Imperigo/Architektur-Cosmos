@@ -231,3 +231,67 @@ export function extrudeWallWithOpenings(
 
   return b.build(entityId, materialKey);
 }
+
+/**
+ * Gelände-Band aus einem Terrain-Profil (v0.7.1 E4, docs/V071-KONZEPT.md;
+ * Vision A2-Rest, ROADMAP «Terrain-Entities fliessen in Schnitt/Plan, nicht
+ * in scene.ts»). `Terrain.punkte` ist eine echte 3D-Polylinie über das
+ * Grundstück (x/y frei, kein reines Höhenprofil entlang einer Achse) — die
+ * kleinste ehrliche Triangulation ist ein Quad-Streifen: pro Segment wird
+ * eine HORIZONTALE Querrichtung (Normale der Segmentrichtung in der
+ * xy-Ebene) um `halfWidthMm` nach beiden Seiten aufgespannt. ANNAHME
+ * (dokumentiert, kein DGM/swisstopo-Ausbau vorhanden): die Querneigung wird
+ * nicht simuliert — der Querschnitt bleibt an jedem Punkt horizontal, nur
+ * der Verlauf ENTLANG des Profils folgt den gesetzten Höhen. Jedes Segment
+ * bildet ein exaktes Parallelogramm (Quer-Offset ist pro Segment konstant),
+ * die Flächennormale ist daher pro Segment eindeutig und wird real aus den
+ * Eckpunkten berechnet (kein Fake-«nach oben»).
+ */
+export function extrudeTerrainBand(
+  entityId: string,
+  materialKey: string,
+  punkte: readonly { x: number; y: number; z: number }[],
+  halfWidthMm: number,
+): GeometryArtifact {
+  const b = new MeshBuilder();
+  if (punkte.length < 2) return b.build(entityId, materialKey);
+
+  for (let i = 0; i < punkte.length - 1; i++) {
+    const p0 = punkte[i]!;
+    const p1 = punkte[i + 1]!;
+    const dx = p1.x - p0.x;
+    const dy = p1.y - p0.y;
+    const dz = p1.z - p0.z;
+    const len = Math.hypot(dx, dy) || 1;
+    // Horizontale Normale der Segmentrichtung (Querrichtung des Bands).
+    const nx = (-dy / len) * halfWidthMm;
+    const ny = (dx / len) * halfWidthMm;
+
+    const left0: [number, number, number] = [p0.x + nx, p0.y + ny, p0.z];
+    const right0: [number, number, number] = [p0.x - nx, p0.y - ny, p0.z];
+    const left1: [number, number, number] = [p1.x + nx, p1.y + ny, p1.z];
+    const right1: [number, number, number] = [p1.x - nx, p1.y - ny, p1.z];
+
+    // Echte Flächennormale des (planaren) Parallelogramms: Segmentrichtung
+    // × Querrichtung, auf Aufwärts (z ≥ 0) normiert.
+    const cx = dy * 0 - dz * ny;
+    const cy = dz * nx - dx * 0;
+    const cz = dx * ny - dy * nx;
+    const clen = Math.hypot(cx, cy, cz) || 1;
+    const n: [number, number, number] = [cx / clen, cy / clen, cz / clen];
+
+    const vLeft0 = b.vertex(...left0, ...n);
+    const vRight0 = b.vertex(...right0, ...n);
+    const vLeft1 = b.vertex(...left1, ...n);
+    const vRight1 = b.vertex(...right1, ...n);
+    b.tri(vLeft0, vRight0, vRight1);
+    b.tri(vLeft0, vRight1, vLeft1);
+
+    b.edgeLine(...left0, ...left1);
+    b.edgeLine(...right0, ...right1);
+    if (i === 0) b.edgeLine(...left0, ...right0);
+    if (i === punkte.length - 2) b.edgeLine(...left1, ...right1);
+  }
+
+  return b.build(entityId, materialKey);
+}

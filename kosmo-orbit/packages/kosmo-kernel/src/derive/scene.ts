@@ -1,9 +1,9 @@
-import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type MassBody, type Opening, type Roof, type Slab, type Stair, type Storey, type Wall } from '../model/entities';
+import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type MassBody, type Opening, type Roof, type Slab, type Stair, type Storey, type Terrain, type Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
 import { treppenTeile } from './treppe';
-import { extrudePolygon, extrudeWallWithOpenings, type GeometryArtifact } from './mesh';
+import { extrudePolygon, extrudeTerrainBand, extrudeWallWithOpenings, type GeometryArtifact } from './mesh';
 import { featureKanten, flaechenNormale } from './mesh-topo';
 import { convexSkeleton } from '../geometry/skeleton';
 import { offsetPolygon } from '../geometry/clip';
@@ -46,6 +46,31 @@ export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
   }
   out.push(...deriveKnotenstuecke(doc));
   out.push(...deriveFensterProfile(doc));
+  out.push(...deriveTerrainBaender(doc));
+  return out;
+}
+
+/**
+ * Bandbreite des Terrain-Geländemeshs (v0.7.1 E4). ANNAHME (dokumentiert,
+ * s. extrudeTerrainBand-Kommentar in mesh.ts): fest, nicht von der
+ * Gebäudebreite abgeleitet — Terrain ist ein projektglobales Entity ohne
+ * Bezug zu Storey/Wand-Ausdehnung, ein von anderen Entities unabhängiger
+ * fixer Wert hält die Ableitung einfach und deterministisch.
+ */
+export const TERRAIN_BAND_BREITE_MM = 8000;
+
+/**
+ * Terrain-Entities → Gelände-Band-Artefakte (Daten-Guard: keine
+ * Terrain-Entity mit ≥2 Stützpunkten ⇒ leeres Array, deriveAll bleibt
+ * byte-identisch zum Vor-E4-Stand). materialKey 'terrain' markiert das
+ * Artefakt für den Viewport (Matt-Material, Raycast-Bevorzugung).
+ */
+function deriveTerrainBaender(doc: KosmoDoc): GeometryArtifact[] {
+  const out: GeometryArtifact[] = [];
+  for (const t of doc.byKind<Terrain>('terrain')) {
+    if (t.punkte.length < 2) continue;
+    out.push(extrudeTerrainBand(t.id, 'terrain', t.punkte, TERRAIN_BAND_BREITE_MM / 2));
+  }
   return out;
 }
 

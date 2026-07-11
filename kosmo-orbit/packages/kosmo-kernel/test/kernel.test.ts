@@ -61,6 +61,7 @@ import {
   exportGlb,
   parseKosmoSafe,
   VIS_NODE_KATALOG,
+  TERRAIN_BAND_BREITE_MM,
   type Storey,
   type Wall,
   type Assembly,
@@ -268,6 +269,94 @@ describe('Derive-3D', () => {
       program: 'wohnen',
     });
     expect(deriveAll(doc)).toHaveLength(3);
+  });
+});
+
+describe('Terrain-Mesh (v0.7.1 E4, docs/V071-KONZEPT.md): deriveAll trianguliert das Terrainprofil zu einem Gelände-Band', () => {
+  it('Daten-Guard: ohne Terrain-Entity bleibt deriveAll unverändert (byte-gleich zum Vor-E4-Stand)', () => {
+    const { doc, storeyId, assemblyId } = setupDoc();
+    execute(doc, 'design.wandZeichnen', { storeyId, a: { x: 0, y: 0 }, b: { x: 3000, y: 0 }, assemblyId });
+    expect(deriveAll(doc)).toHaveLength(1);
+  });
+
+  it('ein Terrain mit 4 Stützpunkten liefert genau ein Artefakt mit materialKey "terrain" und 4 Segment-Quads (8 Dreiecke, 16 Vertices)', () => {
+    const { doc } = setupDoc();
+    execute(doc, 'design.terrainSetzen', {
+      typ: 'gewachsen',
+      punkte: [
+        { x: 0, y: 0, z: 0 },
+        { x: 3000, y: 0, z: 500 },
+        { x: 6000, y: 1000, z: 800 },
+        { x: 9000, y: 1000, z: 200 },
+      ],
+    });
+    const terrainArtefakte = deriveAll(doc).filter((a) => a.materialKey === 'terrain');
+    expect(terrainArtefakte).toHaveLength(1);
+    const a = terrainArtefakte[0]!;
+    // 3 Segmente (4 Punkte) × 4 Vertices (links/rechts je Segmentende) = 12 Vertices, 3×2 Dreiecke = 6
+    expect(a.positions.length / 3).toBe(12);
+    expect(a.indices.length / 3).toBe(6);
+    expect(a.normals.length).toBe(a.positions.length);
+  });
+
+  it('die Höhen (z) der Vertices stimmen mit den gesetzten Stützpunkten überein — kein synthetischer Höhenwert', () => {
+    const { doc } = setupDoc();
+    const punkte = [
+      { x: 0, y: 0, z: 100 },
+      { x: 4000, y: 0, z: 900 },
+    ];
+    execute(doc, 'design.terrainSetzen', { typ: 'neu', punkte });
+    const a = deriveAll(doc).find((x) => x.materialKey === 'terrain')!;
+    const zWerte = new Set<number>();
+    for (let i = 2; i < a.positions.length; i += 3) zWerte.add(Math.round(a.positions[i]!));
+    expect([...zWerte].sort((x, y) => x - y)).toEqual([100, 900]);
+  });
+
+  it('das Band ist um die Profil-Achse zentriert (Bandbreite TERRAIN_BAND_BREITE_MM, symmetrisch)', () => {
+    const { doc } = setupDoc();
+    execute(doc, 'design.terrainSetzen', {
+      typ: 'gewachsen',
+      punkte: [
+        { x: 0, y: 0, z: 0 },
+        { x: 5000, y: 0, z: 0 },
+      ],
+    });
+    const a = deriveAll(doc).find((x) => x.materialKey === 'terrain')!;
+    const yWerte: number[] = [];
+    for (let i = 1; i < a.positions.length; i += 3) yWerte.push(a.positions[i]!);
+    expect(Math.max(...yWerte)).toBeCloseTo(TERRAIN_BAND_BREITE_MM / 2, 3);
+    expect(Math.min(...yWerte)).toBeCloseTo(-TERRAIN_BAND_BREITE_MM / 2, 3);
+  });
+
+  it('zwei Terrain-Profile (gewachsen + neu) liefern zwei eigene Artefakte, je mit ihrer eigenen entityId', () => {
+    const { doc } = setupDoc();
+    execute(doc, 'design.terrainSetzen', {
+      typ: 'gewachsen',
+      punkte: [
+        { x: 0, y: 0, z: 0 },
+        { x: 2000, y: 0, z: 300 },
+      ],
+    });
+    execute(doc, 'design.terrainSetzen', {
+      typ: 'neu',
+      punkte: [
+        { x: 0, y: 0, z: 0 },
+        { x: 2000, y: 0, z: 100 },
+      ],
+    });
+    const terrainArtefakte = deriveAll(doc).filter((a) => a.materialKey === 'terrain');
+    expect(terrainArtefakte).toHaveLength(2);
+    expect(new Set(terrainArtefakte.map((a) => a.entityId)).size).toBe(2);
+  });
+
+  it('ein Terrain mit nur einem Stützpunkt (< 2) wird ehrlich übersprungen statt eine Fehlgeometrie zu erzeugen', () => {
+    // design.terrainSetzen verlangt min(2) selbst schon (zod) — die Guard-Prüfung
+    // in deriveTerrainBaender greift zusätzlich, falls ein Doc direkt (ohne
+    // Command) ein degeneriertes Terrain trägt (z.B. nach einem Import).
+    const { doc } = setupDoc();
+    const terrain = { id: 'terrain-test-1', kind: 'terrain' as const, typ: 'gewachsen' as const, punkte: [{ x: 0, y: 0, z: 0 }] };
+    doc.entities.set(terrain.id, terrain);
+    expect(deriveAll(doc).some((a) => a.materialKey === 'terrain')).toBe(false);
   });
 });
 

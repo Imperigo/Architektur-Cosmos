@@ -226,6 +226,13 @@ const materialPalette: Record<string, { color: number; roughness: number; metaln
   ...pbrPalette,
   masse: { color: 0xd8cfc0, roughness: 0.95 },
   dach: { color: 0x6e5f52, roughness: 0.85 },
+  // E4 (docs/V071-KONZEPT.md): Terrain-Gelände-Band (derive/scene.ts,
+  // materialKey 'terrain') — erdiger Ton, sehr rau/matt, KEINE Textur
+  // (der Materialkatalog kennt den Schlüssel 'terrain' nicht, `materialKarten`
+  // liefert dafür immer null — s. texturen.ts). Im Weiss-/Schwarzmodell
+  // greift dieselbe darstellung3d-Weiche wie bei Wänden (unten), das
+  // Terrain folgt also dem Modus statt einer eigenen Sonderfarbe.
+  terrain: { color: 0x6b5842, roughness: 0.97 },
   default: { color: 0xcfccc4, roughness: 0.9 },
 };
 
