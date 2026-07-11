@@ -94,4 +94,27 @@ DOM) · Kernel-Goldens byte-identisch.
   farben), typecheck sauber, Wächter-Trio 1× grün (14 passed), r1-Shots
   neu erzeugt (Design-Punkt mint, Dock-Punkte erkennbar).
 
+### Tag 2 — Oberfläche & Zustand
+- **W2-D «Kosmo-Zustände + Feedback» integriert** als `4acec53`
+  (cherry-pick `2d67ad4`, konfliktfrei). Inhalt: kosmo-status.ts mit
+  9-Zustände-State-Machine (`beschaeftigt` abgeleitet; setzeBeschaeftigt(
+  false) überschreibt frisches done/error/takeover bewusst NICHT — 
+  ChatSession schiesst onBusy(false) nach onError nach; Auto-Decay 2 s/4 s;
+  Test-Hook window.__kosmoStatus) · NEU KosmoOrb.tsx (alle 9 §6-
+  Darstellungen inkl. Takeover-Fensterrahmen) · NEU kosmo-feedback.css
+  (§5-Bibliothek, je Klasse eigene reduced-motion-Regel) · NEU sounds.ts
+  (Default AUS) · KosmoSymbol nur Innenleben · KosmoPanel Verdrahtung +
+  onAbspielStart?-No-op für W3-E.
+- **Gates nach Integration:** App 770 (768 Stream + 2 Kritik-1-Fixe) ·
+  Kernel 728 · kosmo-ui 25 · typecheck sauber · Wächter-Trio +
+  kosmo-zustaende **2× grün** (23 passed je Lauf) · Build + Preview :5183
+  Bundle==dist. Worktree agent-a638a4f4a4900d62e entfernt.
+- **Ehrliche Grenzen W2-D (für Kritik-2/W4-H):** chip-serie/punkt-burst/
+  orbit-loader sind Bibliotheks-Klassen OHNE Verdrahtung (bewusst W4-H) ·
+  Sounds ohne echten Browser-Audio-Smoke · dispatching hängt an
+  applyCard/applyPaket, nicht an auftrag_erfassen (dokumentierte
+  Interpretation).
+- W2-C «Phasen & Ordnung» läuft noch (Worktree bei Basis 0ae35b5;
+  Kritik-1-Auflage «Top-3-Rollenfarben aus STATION_GLYPHE» nachgereicht).
+
 <!-- Weitere Einträge folgen je Welle -->
