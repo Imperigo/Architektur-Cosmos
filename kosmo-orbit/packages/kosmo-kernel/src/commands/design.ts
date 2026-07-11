@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Mangel, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair } from '../model/entities';
+import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Mangel, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, ZonenTuer } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
-import type { AnyPatch, KosmoDoc, RaumRegel, ZonenVorlage } from '../model/doc';
+import type { AnyPatch, KosmoDoc, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
 import { empfohlenePlanPhase, phaseLabel, siaPhaseLabel } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -14,6 +14,8 @@ import { generiereGrundriss, generiereGrundrissL, zerlegeRektilinear } from '../
 import { zonenZuWaenden } from '../derive/zonenwaende';
 import { boundingBox, kantenRichtung, richtungsModule, type Fassadenrichtung } from '../derive/fassadenmodule';
 import { segmentiere, sollMix, WOHNUNGS_GROESSEN, type WohnungsTypSoll } from '../derive/segmentierer';
+import { raumGraph } from '../derive/raumgraph';
+import { pruefeGrundriss, type PruefBefund } from '../derive/checks';
 
 export { stairSpec } from '../derive/treppe';
 
@@ -2845,5 +2847,411 @@ export const mangelLoeschen = registerCommand({
   run: (doc, p) => {
     const mangel = require<Mangel>(doc, p.mangelId, 'mangel');
     return [{ id: mangel.id, before: mangel, after: null }];
+  },
+});
+
+/**
+ * Kosmo-Präzisier (V2-E5-iv, `docs/V070-KONZEPT.md`, Finch-«Archie»-
+ * Äquivalent, `docs/RE-FINCH.md` §1): «repetitive Präzisionsarbeit — exakte
+ * Türplatzierung, Compliance-Checks, konsistente Updates über verknüpfte
+ * Einheiten». KEIN neues LLM: die drei Commands unten sind deterministische
+ * Kernel-Ableitungen + Patches, wie jeder andere Command — `commandTools()`
+ * macht sie automatisch zu Kosmo-Werkzeugen.
+ *
+ * WICHTIG für `summarize` (Command-Vertrag, s. `core.ts`): `summarize` läuft
+ * bei einem ECHTEN `execute()` NACH `doc.apply(patches)` — die hier neu
+ * gesetzten Zonentüren/Feldwerte stecken dann bereits im Doc, ein
+ * Neu-Berechnen der «Kandidaten» fände dieselben Stellen jetzt als behoben
+ * vor (dasselbe bekannte Verhalten wie `design.geschossErstellen`, s.
+ * dortigen H-38-Kommentar). Die Diff-Karte selbst zeigt IMMER den korrekten
+ * Vorher-Text, weil `validateToolCall` (`kosmo-ai/src/tools.ts`) und die
+ * `execute(doc, id, params, { dryRun: true })`-Vorschau (`proposal-
+ * vorschau.ts`) `summarize` auf dem UNVERÄNDERTEN Doc aufrufen, bevor
+ * `doc.apply()` läuft.
+ */
+
+/** Kollinearer Überlapp zweier Kanten in mm — reine Längenmessung für die
+ * RANGORDNUNG mehrerer Kandidaten; die Wand-Prüfung («liegt eine Wand
+ * dazwischen?») übernimmt weiterhin `raumGraph()` (nur «offene» Kanten sind
+ * überhaupt Kandidaten hier). */
+function kantenUeberlapp(a1: Pt, a2: Pt, b1: Pt, b2: Pt): number {
+  const d = { x: a2.x - a1.x, y: a2.y - a1.y };
+  const len = Math.hypot(d.x, d.y);
+  if (len < 1) return 0;
+  const e = { x: d.x / len, y: d.y / len };
+  const n = { x: -e.y, y: e.x };
+  const abst1 = Math.abs((b1.x - a1.x) * n.x + (b1.y - a1.y) * n.y);
+  const abst2 = Math.abs((b2.x - a1.x) * n.x + (b2.y - a1.y) * n.y);
+  if (abst1 > 60 || abst2 > 60) return 0; // nicht kollinear
+  const s1 = (b1.x - a1.x) * e.x + (b1.y - a1.y) * e.y;
+  const s2 = (b2.x - a1.x) * e.x + (b2.y - a1.y) * e.y;
+  const von = Math.max(0, Math.min(s1, s2));
+  const bis = Math.min(len, Math.max(s1, s2));
+  return Math.max(0, bis - von);
+}
+
+function laengsteKante(a: Pt[], b: Pt[]): number {
+  let best = 0;
+  for (let i = 0; i < a.length; i++) {
+    for (let j = 0; j < b.length; j++) {
+      best = Math.max(best, kantenUeberlapp(a[i]!, a[(i + 1) % a.length]!, b[j]!, b[(j + 1) % b.length]!));
+    }
+  }
+  return best;
+}
+
+/** Standardbreite einer neuen Zonentür «aus dem Bestand»: der häufigste
+ * bereits gesetzte Wert im Doc, sonst der Default von `design.tuerSetzen`
+ * (900 mm). */
+function standardZonentuerbreite(doc: KosmoDoc): number {
+  const alle = doc.byKind<ZonenTuer>('zonentuer').map((t) => t.breite);
+  if (alle.length === 0) return 900;
+  const zaehler = new Map<number, number>();
+  for (const b of alle) zaehler.set(b, (zaehler.get(b) ?? 0) + 1);
+  let best = alle[0]!;
+  let bestAnzahl = 0;
+  for (const [b, n] of zaehler) {
+    if (n > bestAnzahl) {
+      best = b;
+      bestAnzahl = n;
+    }
+  }
+  return best;
+}
+
+interface TuerVorschlag {
+  zone: Zone;
+  nachbar: Zone;
+  punkt: Pt;
+}
+
+/**
+ * Zonen MIT Raumtyp (echte Räume — Programm-Container und Parzellen-Zonen
+ * zählen nicht), die im Raumgraph KEINE «tuer»-Kante zu irgendeinem Nachbarn
+ * haben («unerschlossen»). Je Zone der fachlich sinnvollste Kandidat: ein
+ * Korridor-Nachbar gewinnt immer, sonst die längste gemeinsame OFFENE Kante
+ * (raumGraph hat den Wand-Check schon gemacht — «offen» heisst: begehbar,
+ * keine Wand dazwischen). Zonen ganz ohne begehbare Kante (rundum Wand ohne
+ * Lücke ≥ 60 cm) bleiben ehrlich als `ohneKandidat` ausgewiesen — dort
+ * erfindet der Command keine Tür.
+ */
+function tuerKandidaten(
+  doc: KosmoDoc,
+  storeyId: string,
+): { vorschlaege: TuerVorschlag[]; erschlossen: number; ohneKandidat: Zone[] } {
+  const graph = raumGraph(doc, storeyId);
+  const erschlossenIds = new Set<string>();
+  for (const k of graph.kanten) {
+    if (k.art === 'tuer') {
+      erschlossenIds.add(k.a);
+      erschlossenIds.add(k.b);
+    }
+  }
+  const raeume = graph.zonen.filter(
+    (z) => z.raumTyp && z.raumTyp !== 'korridor' && !z.program && z.zonenArt !== 'parzelle',
+  );
+  const vorschlaege: TuerVorschlag[] = [];
+  const ohneKandidat: Zone[] = [];
+  let erschlossen = 0;
+  for (const z of raeume) {
+    if (erschlossenIds.has(z.id)) {
+      erschlossen++;
+      continue;
+    }
+    const offene = graph.kanten.filter((k) => k.art === 'offen' && (k.a === z.id || k.b === z.id));
+    if (offene.length === 0) {
+      ohneKandidat.push(z);
+      continue;
+    }
+    let beste = offene[0]!;
+    let besteLaenge = -1;
+    let bestePrio = false;
+    for (const k of offene) {
+      const andereId = k.a === z.id ? k.b : k.a;
+      const andere = graph.zonen.find((zz) => zz.id === andereId);
+      if (!andere) continue;
+      const prio = andere.raumTyp === 'korridor';
+      const laenge = laengsteKante(z.outline, andere.outline);
+      if ((prio && !bestePrio) || (prio === bestePrio && laenge > besteLaenge)) {
+        beste = k;
+        besteLaenge = laenge;
+        bestePrio = prio;
+      }
+    }
+    const andereId = beste.a === z.id ? beste.b : beste.a;
+    const andere = graph.zonen.find((zz) => zz.id === andereId);
+    if (andere) vorschlaege.push({ zone: z, nachbar: andere, punkt: beste.punkt });
+  }
+  return { vorschlaege, erschlossen, ohneKandidat };
+}
+
+/** «Raum»/«Räume» — unregelmässiger Plural, NIE mit blossem «e»-Suffix bilden. */
+function raumWort(n: number): string {
+  return n === 1 ? 'Raum' : 'Räume';
+}
+
+function tuerenSummary(vorschlaege: TuerVorschlag[], erschlossen: number, ohneKandidat: Zone[]): string {
+  const ohneHinweis =
+    ohneKandidat.length > 0
+      ? `${vorschlaege.length > 0 ? ', ' : ''}${ohneKandidat.length} ohne begehbare Kante (Wand ohne Lücke — manuell prüfen)`
+      : '';
+  if (vorschlaege.length === 0) {
+    return erschlossen > 0 || ohneKandidat.length > 0
+      ? `Keine Türen ergänzt — ${erschlossen} ${raumWort(erschlossen)} bereits erschlossen${ohneHinweis}`
+      : 'Keine Türen ergänzt — keine Zonen mit Raumtyp auf diesem Geschoss';
+  }
+  const beispiele = vorschlaege
+    .slice(0, 3)
+    .map((v) => `${v.zone.name}↔${v.nachbar.name}`)
+    .join(', ');
+  const rest = vorschlaege.length > 3 ? ' u.a.' : '';
+  return `${vorschlaege.length} Tür${vorschlaege.length === 1 ? '' : 'en'} ergänzt (${beispiele}${rest}), ${erschlossen} ${raumWort(erschlossen)} bereits erschlossen${ohneHinweis}`;
+}
+
+export const tuerenPlatzieren = registerCommand({
+  id: 'design.tuerenPlatzieren',
+  title: 'Türen platzieren (Erschliessung)',
+  description:
+    'Findet Zonen mit Raumtyp, die über KEINE Tür mit einem Nachbarn verbunden sind (Raumgraph zeigt sie unerschlossen — Finch-Archie «exakte Türplatzierung»), und setzt je Raum eine Zonentür an der fachlich sinnvollsten gemeinsamen Kante: ein Korridor-Nachbar wird bevorzugt, sonst die längste gemeinsame begehbare Kante; die Tür sitzt mittig, Breite = häufigster Bestandswert (sonst 900 mm). Setzt NIE eine zweite Tür, wo schon eine Verbindung besteht; Räume ohne begehbare Kante (Wand ohne Lücke) bleiben ehrlich unangetastet.',
+  params: z.object({ storeyId: z.string() }),
+  summarize: (p, doc) => {
+    const { vorschlaege, erschlossen, ohneKandidat } = tuerKandidaten(doc, p.storeyId);
+    return tuerenSummary(vorschlaege, erschlossen, ohneKandidat);
+  },
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const { vorschlaege } = tuerKandidaten(doc, p.storeyId);
+    const breite = standardZonentuerbreite(doc);
+    return vorschlaege.map((v) =>
+      added({ id: newId('tuer'), kind: 'zonentuer' as const, storeyId: p.storeyId, at: v.punkt, breite }),
+    );
+  },
+});
+
+/**
+ * Regeln, für die es eine EINDEUTIGE, verlustfreie Korrektur gibt (geprüft
+ * gegen den Befunds-Katalog `derive/checks.ts`): eine zu schmale Tür, eine
+ * zu tiefe Fensterbrüstung, ein zu schmaler Treppenlauf — je ein einzelnes
+ * Zahlenfeld auf den SIA/CH-Richtwert angehoben, sonst nichts. ALLE anderen
+ * Befunde (Raumgrössen, Grenzabstände, Podeste, Schallschutz, Zonenregeln …)
+ * verlangen einen Entwurfsentscheid (Wand verschieben, Raum neu zuschneiden,
+ * Aufbau wählen) — die bleiben ABSICHTLICH manuell, auch wenn `nur` sie
+ * explizit anfragt.
+ *
+ * EHRLICHER AUSSCHLUSS «fluchtweg»: der Befund «hat keine Verbindung zum
+ * Treppenhaus (Tür fehlt?)» (`checks.ts` regelId `fluchtweg`, Distanz
+ * `Infinity`) ist mit `design.tuerenPlatzieren` NICHT automatisierbar,
+ * obwohl der Name es nahelegt — geprüft und verworfen: `fluchtwege()`
+ * (`derive/raumgraph.ts`) behandelt eine offene (wandlose) Kante als
+ * genauso gültigen Fluchtweg wie eine Zonentür; eine Zone zeigt dort NUR
+ * dann `Infinity`, wenn `raumGraph()` überhaupt KEINE Kante (weder «tuer»
+ * noch «offen») zu einem Nachbarn findet — meist eine echte Wand ohne
+ * Öffnung. Genau dort kann `tuerKandidaten()` (die «offene Kante» als
+ * Kandidat braucht) nie einen Vorschlag finden — der Fix wäre eine echte
+ * Türöffnung in einer bestehenden Wand (design.oeffnungSetzen, mit
+ * konkreter wallId), ein Entwurfsentscheid, kein Feld-Bump. Der Befund
+ * bleibt darum immer «manuell».
+ */
+const KOMPLIANZ_AUTOFIX_REGELN = ['tuerbreite', 'bruestung', 'laufbreite'] as const;
+
+interface KomplianzFix {
+  befund: PruefBefund;
+  patch: AnyPatch;
+  beschreibung: string;
+}
+
+function komplianzAutoFixes(
+  doc: KosmoDoc,
+  storeyId: string,
+  nur?: string[],
+): { fixes: KomplianzFix[]; manuell: PruefBefund[]; alle: PruefBefund[] } {
+  const alle = pruefeGrundriss(doc, storeyId).filter((b) => !nur || nur.includes(b.regelId));
+  const fixes: KomplianzFix[] = [];
+  const manuell: PruefBefund[] = [];
+
+  for (const b of alle) {
+    if (!(KOMPLIANZ_AUTOFIX_REGELN as readonly string[]).includes(b.regelId)) {
+      manuell.push(b);
+      continue;
+    }
+    if (b.regelId === 'tuerbreite' && b.entityId) {
+      const opening = doc.get<Opening>(b.entityId);
+      const wall = opening && opening.kind === 'opening' ? doc.get<Wall>(opening.wallId) : undefined;
+      if (opening?.kind === 'opening' && wall?.kind === 'wall' && opening.width < 800) {
+        const laenge = Math.hypot(wall.b.x - wall.a.x, wall.b.y - wall.a.y);
+        if (opening.center - 400 >= 0 && opening.center + 400 <= laenge) {
+          fixes.push({
+            befund: b,
+            patch: { id: opening.id, before: opening, after: { ...opening, width: 800 } },
+            beschreibung: `Türbreite ${opening.width}→800 mm`,
+          });
+          continue;
+        }
+      }
+    }
+    if (b.regelId === 'bruestung' && b.entityId) {
+      const opening = doc.get<Opening>(b.entityId);
+      if (opening?.kind === 'opening' && opening.sill > 0 && opening.sill < 600) {
+        fixes.push({
+          befund: b,
+          patch: { id: opening.id, before: opening, after: { ...opening, sill: 900 } },
+          beschreibung: `Brüstung ${opening.sill}→900 mm`,
+        });
+        continue;
+      }
+    }
+    if (b.regelId === 'laufbreite' && b.entityId) {
+      const stair = doc.get<Stair>(b.entityId);
+      if (stair?.kind === 'stair' && stair.width < 1000) {
+        fixes.push({
+          befund: b,
+          patch: { id: stair.id, before: stair, after: { ...stair, width: 1000 } },
+          beschreibung: `Laufbreite ${stair.width}→1000 mm`,
+        });
+        continue;
+      }
+    }
+    manuell.push(b);
+  }
+  return { fixes, manuell, alle };
+}
+
+function manuellKurz(manuell: PruefBefund[]): string {
+  const zaehler = new Map<string, number>();
+  for (const b of manuell) zaehler.set(b.regel, (zaehler.get(b.regel) ?? 0) + 1);
+  return [...zaehler.entries()].map(([regel, n]) => `${n}× ${regel}`).join(', ');
+}
+
+function komplianzSummary(fixes: KomplianzFix[], manuell: PruefBefund[], alle: PruefBefund[]): string {
+  if (alle.length === 0) return 'Keine Befunde — Grundriss-Check ist sauber.';
+  if (fixes.length === 0) {
+    return `Keine automatisch behebbaren Befunde — alle ${manuell.length} bleiben manuell: ${manuellKurz(manuell)}`;
+  }
+  const teile = fixes
+    .slice(0, 3)
+    .map((f) => f.beschreibung)
+    .join(', ');
+  const rest = fixes.length > 3 ? ' u.a.' : '';
+  const manuellText = manuell.length > 0 ? ` — manuell: ${manuellKurz(manuell)}` : '';
+  return `${fixes.length} Fix${fixes.length === 1 ? '' : 'e'} automatisch (${teile}${rest})${manuellText}`;
+}
+
+export const komplianzFixes = registerCommand({
+  id: 'design.komplianzFixes',
+  title: 'Kompliance-Fixes',
+  description:
+    'Läuft die Grundriss-Checks (derive/checks.ts, Finch-Archie «Compliance-Checks») und übersetzt automatisch behebbare Befunde in Patches: zu schmale Tür (< 800 mm → 800 mm, nur wenn die Wand Platz bietet), zu tiefe Fensterbrüstung (< 600 mm → 900 mm) und zu schmaler Treppenlauf (< 1000 mm → 1000 mm). Alle anderen Befunde (Raumgrössen, Grenzabstände, Podeste, Schallschutz, Zonenregeln, fehlende Fluchtweg-Verbindung …) verlangen einen Entwurfsentscheid und bleiben ehrlich als «manuell» gelistet — nichts wird automatisch übers Knie gebrochen. Eine fehlende Fluchtweg-Tür braucht eine echte Wandöffnung (design.oeffnungSetzen) statt einer Zonentür und bleibt darum ebenfalls manuell. nur schränkt die Prüfung auf bestimmte regelId ein. Ein Undo-Schritt.',
+  params: z.object({
+    storeyId: z.string(),
+    nur: z
+      .array(z.string())
+      .optional()
+      .describe('Nur diese regelId-Werte prüfen, z.B. ["fluchtweg", "tuerbreite"] — weggelassen: alle Befunde'),
+  }),
+  summarize: (p, doc) => {
+    const { fixes, manuell, alle } = komplianzAutoFixes(doc, p.storeyId, p.nur);
+    return komplianzSummary(fixes, manuell, alle);
+  },
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const { fixes } = komplianzAutoFixes(doc, p.storeyId, p.nur);
+    return fixes.map((f) => f.patch);
+  },
+});
+
+/** Zonen/Raumprogramm-Fussabdruck eines Wohnungstyps: `program`-getaggte
+ * Segmentierer-Zonen (die «verknüpften Einheiten», Finch «Plan Groups»)
+ * UND der Raumprogramm-Posten (`doc.settings.raumprogramm`), falls vorhanden.
+ * `anzahl` ist die Instanzenzahl für die Zielgrössen-Umrechnung: die Zahl der
+ * gefundenen Zonen, sonst (vor der Segmentierung) aus dem bestehenden
+ * hnfSoll ÷ Standardgrösse (`sollMix`-Logik) rückgerechnet. */
+function einheitTypInfo(
+  doc: KosmoDoc,
+  typ: string,
+): { zonen: Zone[]; posten: RaumprogrammPosten | undefined; anzahl: number } {
+  const zonen = doc.byKind<Zone>('zone').filter((z) => z.program === typ);
+  const posten = doc.settings.raumprogramm.find((p) => p.typ === typ);
+  const anzahl =
+    zonen.length > 0
+      ? zonen.length
+      : posten
+        ? Math.max(1, Math.round(posten.hnfSoll / (WOHNUNGS_GROESSEN[typ] ?? 85)))
+        : 0;
+  return { zonen, posten, anzahl };
+}
+
+export const einheitTypAktualisieren = registerCommand({
+  id: 'design.einheitTypAktualisieren',
+  title: 'Wohnungstyp aktualisieren (verkettet)',
+  description:
+    'Aktualisiert einen Wohnungstyp konsistent über verknüpfte Einheiten (Finch-Archie «Updates über verknüpfte Einheiten»): neuerTyp benennt den Raumprogramm-Posten UND alle Zonen mit passendem program-Schlüssel um (Zone.program, Segmentierer-Ergebnis) inkl. Namen «Whg N (typ)»; zielgroesseM2 passt das Raumprogramm-Soll (hnfSoll = Zielgrösse × Anzahl bestehender Einheiten dieses Typs) an. EHRLICH: v1 aktualisiert NUR Typ-Metadaten + Raumprogramm — eine geometrische Neu-Segmentierung macht es NICHT selbst (dafür design.wohnungenSegmentieren oder die Variantensuche erneut laufen lassen). Ein Undo-Schritt für alle betroffenen Zonen + das Raumprogramm zusammen.',
+  params: z.object({
+    typ: z.string().min(1).describe('Bestehender Wohnungstyp-Schlüssel (Raumprogramm-Posten bzw. Zone.program)'),
+    aenderung: z.object({
+      neuerTyp: z.string().min(1).optional().describe('Neuer Schlüssel — benennt Typ + alle verknüpften Zonen um'),
+      zielgroesseM2: z
+        .number()
+        .positive()
+        .optional()
+        .describe('Neue Zielgrösse je Einheit in m² — passt NUR das Raumprogramm-Soll an, keine Geometrie'),
+    }),
+  }),
+  summarize: (p, doc) => {
+    const info = einheitTypInfo(doc, p.typ);
+    const zielTyp = p.aenderung.neuerTyp ?? p.typ;
+    const teile: string[] = [];
+    if (p.aenderung.neuerTyp) {
+      teile.push(`«${p.typ}» → «${p.aenderung.neuerTyp}» (${info.zonen.length} Zone${info.zonen.length === 1 ? '' : 'n'})`);
+    }
+    if (p.aenderung.zielgroesseM2 !== undefined) {
+      const neuHnf = Math.round(p.aenderung.zielgroesseM2 * info.anzahl * 10) / 10;
+      teile.push(
+        `Raumprogramm-Soll ${zielTyp}: ${neuHnf} m² (${info.anzahl} × ${p.aenderung.zielgroesseM2} m²) — Geometrie unverändert, «Wohnungen segmentieren» erneut ausführen für neue Masse`,
+      );
+    }
+    return teile.join('; ');
+  },
+  run: (doc, p) => {
+    if (!p.aenderung.neuerTyp && p.aenderung.zielgroesseM2 === undefined) {
+      throw new CommandError('aenderung braucht neuerTyp und/oder zielgroesseM2 (mindestens eines)');
+    }
+    const info = einheitTypInfo(doc, p.typ);
+    if (info.zonen.length === 0 && !info.posten) {
+      throw new CommandError(`Wohnungstyp «${p.typ}» kommt weder im Raumprogramm noch in Zonen vor.`);
+    }
+    const neuerTyp = p.aenderung.neuerTyp && p.aenderung.neuerTyp !== p.typ ? p.aenderung.neuerTyp : null;
+    if (neuerTyp && doc.settings.raumprogramm.some((posten) => posten.typ === neuerTyp)) {
+      throw new CommandError(`Wohnungstyp «${neuerTyp}» existiert im Raumprogramm bereits.`);
+    }
+    const zielTyp = neuerTyp ?? p.typ;
+    const patches: AnyPatch[] = [];
+
+    if (neuerTyp) {
+      for (const z of info.zonen) {
+        const marke = `(${p.typ})`;
+        const neuerName = z.name.includes(marke) ? z.name.replace(marke, `(${neuerTyp})`) : z.name;
+        patches.push({ id: z.id, before: z, after: { ...z, program: neuerTyp, name: neuerName } });
+      }
+    }
+
+    if (neuerTyp || p.aenderung.zielgroesseM2 !== undefined) {
+      const vorher = doc.settings.raumprogramm;
+      const idx = vorher.findIndex((posten) => posten.typ === p.typ);
+      const hnfSoll =
+        p.aenderung.zielgroesseM2 !== undefined
+          ? Math.round(p.aenderung.zielgroesseM2 * info.anzahl * 10) / 10
+          : (idx >= 0 ? vorher[idx]!.hnfSoll : null);
+      let nachher = vorher;
+      if (idx >= 0) {
+        nachher = vorher.map((posten, i) => (i === idx ? { typ: zielTyp, hnfSoll: hnfSoll ?? posten.hnfSoll } : posten));
+      } else if (hnfSoll !== null) {
+        nachher = [...vorher, { typ: zielTyp, hnfSoll }];
+      }
+      if (nachher !== vorher) {
+        patches.push({ settings: true, before: { raumprogramm: vorher }, after: { raumprogramm: nachher } });
+      }
+    }
+
+    return patches;
   },
 });
