@@ -707,6 +707,30 @@ finally:
 os.environ["KOSMO_JOB_STORE"] = str(TMP_STORE)
 
 # ---------------------------------------------------------------------------
+# 11) Restfix Stream 6B (Befund 5A): Default-CORS-Allowlist kannte nur
+#     5173/5183 — parallele Agenten-Worktrees laufen je auf eigenen Ports
+#     5174–5177 und scheiterten ohne expliziten KOSMO_BRIDGE_ORIGIN-Override
+#     an CORS. `_cors_origins()` ist eine reine Funktion, testbar ohne
+#     Server/Prozess.
+# ---------------------------------------------------------------------------
+os.environ.pop("KOSMO_BRIDGE_ORIGIN", None)
+default_origins = bridge._cors_origins()
+for port in (5173, 5174, 5175, 5176, 5177, 5183):
+    for host in ("localhost", "127.0.0.1"):
+        origin = f"http://{host}:{port}"
+        check(f"Default-CORS enthält {origin}", origin in default_origins)
+check(
+    "Default-CORS bleibt auf die dokumentierten Ports beschränkt (kein '*')",
+    "*" not in default_origins,
+)
+os.environ["KOSMO_BRIDGE_ORIGIN"] = "http://localhost:5175,http://127.0.0.1:5175"
+check(
+    "KOSMO_BRIDGE_ORIGIN überschreibt den Default vollständig",
+    bridge._cors_origins() == ["http://localhost:5175", "http://127.0.0.1:5175"],
+)
+os.environ.pop("KOSMO_BRIDGE_ORIGIN", None)
+
+# ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis
 # ---------------------------------------------------------------------------
 shutil.rmtree(TMP_STORE, ignore_errors=True)

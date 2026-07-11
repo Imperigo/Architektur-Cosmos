@@ -122,6 +122,26 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
             strokeLinecap="square"
           />
         ))}
+        {/* SIA-Öffnungssymbolik (v0.7.1 E5/4B, Restfix Stream 6B): additiv zum
+            Druck-/Export-Weg (plansvg.ts `sectionInnerSvg`, dort die 0.18er-
+            Klasse) — dünner Stift, klar schwächer als der cuts-Stift oben
+            (strokeWidth 7 wie die Projektionslinien, aber volle Tinte statt
+            gedämpft, analog plansvg #333 vs. #444). Leer, solange keine
+            Öffnung ein `fluegelTyp` trägt (deriveSection-Guard) — bestehende
+            Schnitte/Ansichten bleiben unverändert. */}
+        {graphic.fenstersymbole.map((l, i) => (
+          <line
+            key={`fs${i}`}
+            data-testid={`fluegelsymbol-${l.classes[1] ?? 'symbol'}`}
+            className={l.classes.join(' ')}
+            x1={l.a.s}
+            y1={-l.a.z}
+            x2={l.b.s}
+            y2={-l.b.z}
+            stroke="var(--k-ink)"
+            strokeWidth={7}
+          />
+        ))}
         {/* Höhenkoten je Geschoss (OK fertig Boden) — Stil-Einstellung «hoehenKoten» */}
         {doc.settings.bemassung.hoehenKoten &&
           doc.storeysOrdered().map((st) => (

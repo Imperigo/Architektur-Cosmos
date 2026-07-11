@@ -94,10 +94,19 @@ def _cors_origins() -> list[str]:
     App). `KOSMO_BRIDGE_ORIGIN=*` ist eine bewusste Büronetz-Option (Owner
     setzt sie aktiv, z.B. für ein iPad im selben Netz) — kein Default, sonst
     wäre jede beliebige Website im Browser des Nutzers ein potenzieller
-    Bridge-Client."""
+    Bridge-Client. Restfix Stream 6B (Befund 5A): der Default kannte nur
+    5173 (Dev) und 5183 (Preview) — parallele Agenten-Worktrees laufen aber
+    je auf eigenen Ports 5174–5177 (jeder Stream/Agent sein eigener
+    KOSMO_E2E_PORT), was ohne expliziten Env-Override an CORS scheiterte.
+    `KOSMO_BRIDGE_ORIGIN` bleibt der Env-Override — wer ihn setzt, ersetzt
+    diese Liste vollständig."""
     raw = os.environ.get(
         "KOSMO_BRIDGE_ORIGIN",
-        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:5183,http://127.0.0.1:5183",
+        ",".join(
+            f"http://{host}:{port}"
+            for port in (5173, 5174, 5175, 5176, 5177, 5183)
+            for host in ("localhost", "127.0.0.1")
+        ),
     )
     if raw.strip() == "*":
         return ["*"]

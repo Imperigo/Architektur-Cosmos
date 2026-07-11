@@ -233,6 +233,15 @@ const materialPalette: Record<string, { color: number; roughness: number; metaln
   // greift dieselbe darstellung3d-Weiche wie bei Wänden (unten), das
   // Terrain folgt also dem Modus statt einer eigenen Sonderfarbe.
   terrain: { color: 0x6b5842, roughness: 0.97 },
+  // Restfix Stream 6B (docs/V071-KONZEPT.md E5/4A): Standard-Fensterrahmen
+  // (materialKey 'fenster-rahmen', derive/scene.ts `deriveFensterRahmenStandard`
+  // + das parametrische Profil in `deriveFensterProfile`) fehlte im
+  // Materialkatalog (`packages/kosmo-data` `materialkatalog.ts` kennt den
+  // Schlüssel nicht) und fiel deshalb auf 'default' zurück. Heller, leicht
+  // warmer Grauton (Fensterprofil-Lack/Aluminium), moderate Rauheit — sichtbar
+  // heller/wärmer als 'default', kein Metall-Glanz. Weissmodell-/Schwarzmodus-
+  // Weiche unten (darstellung3d) bleibt unberührt, sie überschreibt die Farbe ohnehin.
+  'fenster-rahmen': { color: 0xe4ddce, roughness: 0.55 },
   default: { color: 0xcfccc4, roughness: 0.9 },
 };
 
