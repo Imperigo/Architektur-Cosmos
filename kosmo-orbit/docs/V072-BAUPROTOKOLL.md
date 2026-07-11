@@ -77,4 +77,21 @@ DOM) · Kernel-Goldens byte-identisch.
   (Glas/Pop/Hover, Keyframes in orbit-065.css) liegt bei W2-C;
   kosmo-feedback.css als Bibliothek bei W2-D — disjunkt.
 
+- **Kritik-1-Verdikt (Fable) + Umsetzung:**
+  1. Hub-Punkte → ROLLENFARBEN (Spec §3 verbindlich; Modul-Orange las sich
+     als Generator-Familie). Direktfix orbit-icons.tsx: Punkt + Puls-Ring
+     aus STATION_GLYPHE (design→manuell, data→pn, kosmo→speak→signal;
+     office per Spec-Zeile «Hauptwerkzeug office» → --k-rolle-office);
+     akzent bleibt Signatur-Fallback (einfarbig-fähig). Auflage an W2-C
+     nachgereicht: Top-3-Border/Glow aus DERSELBEN Quelle.
+  2. KIcon-Registry (kosmo-ui/icons.tsx) → ehrlich 0.7.3; in Neuigkeiten-
+     ENTWURF + ROADMAP benennen; W4-H NICHT damit belasten.
+  3. Dock-Punkte → lesbar machen, nicht lauter: WerkzeugGlyphe rendert in
+     Klein-Kontexten (size ≤ 20) r 2.2 statt 1.7 (voll deckend, kein
+     Glow/Ring; Prop `punktRadius` als expliziter Override) —
+     EntwurfsDock.tsx selbst unangetastet (liegt gerade bei W2-C).
+  Beweis: App-Units 749→751 (2 neue: Klein-Kontext-Radius, Hub-Rollen-
+  farben), typecheck sauber, Wächter-Trio 1× grün (14 passed), r1-Shots
+  neu erzeugt (Design-Punkt mint, Dock-Punkte erkennbar).
+
 <!-- Weitere Einträge folgen je Welle -->

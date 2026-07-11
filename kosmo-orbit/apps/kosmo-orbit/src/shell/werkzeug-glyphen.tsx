@@ -143,14 +143,20 @@ export interface WerkzeugGlypheProps {
    *  `currentColor` (einfarbig-fähig, Spec-§3). Bei `art="orbit"` wirkungslos
    *  (kein Punkt, siehe Grundform-Ausnahme). */
   rolle?: string;
+  /** Akzent-Punkt-Radius im 24er-Raster. Default kontextabhängig
+   *  (Kritik-1-Auflage 3): 1.7 in normalen Grössen, 2.2 sobald die Glyphe
+   *  klein gerendert wird (`size` ≤ 20, z. B. EntwurfsDock) — sonst ist das
+   *  5-%-Signal faktisch unsichtbar. Voll deckend, kein Glow, kein Ring. */
+  punktRadius?: number;
 }
 
 /** `<WerkzeugGlyphe art size rolle?>` — die 14 Grundformen aus Spec-§3 (12 +
  *  2 Fable-Erweiterungen), gerendert nach der «Rund statt Block»-Grundregel:
- *  IMMER ein `<circle r={1.7}>` als Akzent (Quadrat-Ausnahme nur bei
- *  `orbit`). */
-export function WerkzeugGlyphe({ art, size = 24, rolle }: WerkzeugGlypheProps) {
+ *  IMMER ein `<circle>` als Akzent (r 1.7, in Klein-Kontexten 2.2 —
+ *  Quadrat-Ausnahme nur bei `orbit`). */
+export function WerkzeugGlyphe({ art, size = 24, rolle, punktRadius }: WerkzeugGlypheProps) {
   const punktFarbe = rolle ? `var(${rolle})` : 'currentColor';
+  const punktR = punktRadius ?? (size <= 20 ? 2.2 : 1.7);
   const punkt = art === 'orbit' ? null : PUNKT[art as Exclude<WerkzeugGlyphenArt, 'orbit'>];
   return (
     <svg
@@ -173,7 +179,7 @@ export function WerkzeugGlyphe({ art, size = 24, rolle }: WerkzeugGlypheProps) {
           strokeLinecap="round"
         />
       )}
-      {punkt && <circle cx={punkt.cx} cy={punkt.cy} r={1.7} fill={punktFarbe} stroke="none" />}
+      {punkt && <circle cx={punkt.cx} cy={punkt.cy} r={punktR} fill={punktFarbe} stroke="none" />}
     </svg>
   );
 }
