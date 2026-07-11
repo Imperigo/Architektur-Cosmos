@@ -165,6 +165,19 @@ export function PlanView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphAn, doc, activeStoreyId, revision]);
 
+  // v0.7.1 Kritik-1-Auflage [B]: Kontext-Zonen (Parzelle strichpunktiert,
+  // Nachbarn grau) waren nach dem Standort-Import im Grundriss UNSICHTBAR —
+  // sie fliessen nicht durch derivePlan (nur Raum-Zonen), also zeichnet die
+  // PlanView sie hier direkt aus dem Doc (Muster Auswahl-Highlight). Ohne
+  // Kontext-Zonen ist die Liste leer — kein Pixel ändert sich (Guard).
+  const kontextZonen = useMemo(() => {
+    if (!activeStoreyId) return [];
+    return doc
+      .byKind<Zone>('zone')
+      .filter((z) => z.storeyId === activeStoreyId && (z.zonenArt === 'parzelle' || z.zonenArt === 'nachbar'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc, activeStoreyId, revision]);
+
   // F3: Zonen mit Check-Befunden (Regeln/Fluchtweg) im Plan tönen
   const verletzteZonen = useMemo(() => {
     if (!activeStoreyId) return [];
@@ -412,7 +425,22 @@ export function PlanView({
   // beim Einhängen, z.B. geladenes Projekt). Ohne Inhalt: neutraler Startwert,
   // kein Sprung ins Leere.
   const einpassen = () => {
-    const b = plan?.bounds;
+    // v0.7.1 Kritik-1-Auflage [B]: Kontext-Zonen (Parzelle/Nachbarn) zählen
+    // zum Fit-Umfang — derivePlan kennt sie nicht, ohne diese Erweiterung
+    // fittete «Einpassen» nach dem Standort-Import ins Leere. Ohne
+    // Kontext-Zonen bleibt das Verhalten exakt wie bisher (Guard).
+    let b = plan?.bounds ? { ...plan.bounds } : null;
+    for (const z of kontextZonen) {
+      for (const p of z.outline) {
+        if (!b) b = { minX: p.x, minY: p.y, maxX: p.x, maxY: p.y };
+        else {
+          b.minX = Math.min(b.minX, p.x);
+          b.minY = Math.min(b.minY, p.y);
+          b.maxX = Math.max(b.maxX, p.x);
+          b.maxY = Math.max(b.maxY, p.y);
+        }
+      }
+    }
     const svg = svgRef.current;
     if (!svg) return;
     const rect = svg.getBoundingClientRect();
@@ -854,6 +882,34 @@ export function PlanView({
           <g data-testid="plan-grid" style={{ display: lod === 'voll' ? undefined : 'none' }}>
             <PlanGrid cx={view.cx} cy={view.cy} scale={view.scale} />
           </g>
+
+          {/* v0.7.1: Kontext-Layer (Parzelle/Nachbarn) — bewusst in JEDEM LOD
+              sichtbar (gerade weit rausgezoomt ist der Kontext das Thema),
+              hinter allem Planinhalt, nie interaktiv. */}
+          {kontextZonen.length > 0 && (
+            <g data-testid="plan-kontext" pointerEvents="none">
+              {kontextZonen.map((z) =>
+                z.zonenArt === 'parzelle' ? (
+                  <path
+                    key={`ktx-${z.id}`}
+                    d={`M ${z.outline.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`}
+                    fill="none"
+                    stroke="var(--k-ink-soft)"
+                    strokeWidth={Math.max(20, 1.2 / view.scale)}
+                    strokeDasharray={`${3 / view.scale} ${0.9 / view.scale} ${0.6 / view.scale} ${0.9 / view.scale}`}
+                  />
+                ) : (
+                  <path
+                    key={`ktx-${z.id}`}
+                    d={`M ${z.outline.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`}
+                    fill="var(--k-line-strong)"
+                    opacity={0.55}
+                    stroke="none"
+                  />
+                ),
+              )}
+            </g>
+          )}
 
           {/* Trace (A8): anderes Geschoss blass darunter — einfarbig, gedämpft */}
           {tracePlan && (
