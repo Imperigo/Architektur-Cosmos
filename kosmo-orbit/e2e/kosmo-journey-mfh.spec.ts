@@ -473,4 +473,105 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
       ),
     )
     .toBeGreaterThan(bilderVorher);
+
+  // =======================================================================
+  // NACHBARN-IMPORT (v0.7.1 E2/2B, docs/V071-KONZEPT.md) — additiver
+  // Abschnitt, berührt keine Assertion oben. Standort-Panel: Suche → Treffer
+  // → Parzelle importieren → Nachbarn übernehmen, exakt nach dem gemockten
+  // Muster aus `e2e/nachbarn-import.spec.ts` (SearchServer + zwei
+  // identify-Aufrufe; dieselben Fixture-Geometrien: Parzelle + 3 Gebäude,
+  // eines umschliesst das Parzellen-Zentrum = eigenes Gebäude, wird NICHT
+  // importiert). Zurück auf die Design-Bühne (die Journey steht seit «Aufs
+  // Blatt» in KosmoVis) — läuft auf dem aktiven Geschoss (topStoreyId, Zug 8).
+  // =======================================================================
+  await page.evaluate(() => window.__kosmo.open('design'));
+
+  await page.route('**/rest/services/api/SearchServer**', (route) =>
+    route.fulfill({
+      json: { results: [{ attrs: { label: '<b>Musterstrasse 1 Zug</b>', lat: 47.17, lon: 8.52, y: 2681500, x: 1224500 } }] },
+    }),
+  );
+  await page.route('**/rest/services/api/MapServer/identify**', (route) => {
+    const url = route.request().url();
+    if (url.includes('vec25-gebaeude')) {
+      // Nachbarn-Antwort (esriGeometryEnvelope): 3 Gebäude — 2 echte
+      // Nachbarn + 1 Ring, der das Parzellen-Zentrum (2681512/1224508)
+      // umschliesst = eigenes Gebäude (muss NICHT importiert werden).
+      route.fulfill({
+        json: {
+          results: [
+            {
+              featureId: 1,
+              geometry: {
+                rings: [[
+                  [2681505, 1224500], [2681525, 1224500], [2681525, 1224515], [2681505, 1224515], [2681505, 1224500],
+                ]],
+              },
+            },
+            {
+              featureId: 2,
+              geometry: {
+                rings: [[
+                  [2681455, 1224455], [2681470, 1224455], [2681470, 1224470], [2681455, 1224470], [2681455, 1224455],
+                ]],
+              },
+            },
+            {
+              featureId: 3,
+              geometry: {
+                rings: [[
+                  [2681550, 1224550], [2681565, 1224550], [2681565, 1224565], [2681550, 1224565], [2681550, 1224550],
+                ]],
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      // Parzellen-identify (esriGeometryPoint), bestehendes Muster.
+      route.fulfill({
+        json: {
+          results: [{ geometry: { rings: [[
+            [2681500, 1224500], [2681530, 1224500], [2681530, 1224520], [2681500, 1224520], [2681500, 1224500],
+          ]] } }],
+        },
+      });
+    }
+  });
+
+  await page.click('[data-testid="sonne-toggle"]'); // Standort-Panel öffnen (projektStarten hat es zu Beginn wieder geschlossen)
+  await page.fill('[data-testid="standort-suche"]', 'Musterstrasse 1');
+  await page.click('[data-testid="standort-suchen"]');
+  await page.click('[data-testid="standort-treffer"] button');
+  await page.click('[data-testid="parzelle-import"]');
+  await expect(page.locator('[data-testid="standort-meldung"]')).toContainText('Parzelle importiert');
+
+  // Ehrlichkeits-Fussnote (E2/2B: VECTOR25, Datenstand ~2008 — amtlich, nicht
+  // tagesaktuell) erscheint erst, sobald eine Parzelle da ist.
+  await expect(page.locator('[data-testid="nachbarn-fussnote"]')).toContainText('VECTOR25');
+
+  const nachbarZonenAnzahl = () =>
+    page.evaluate(() =>
+      window.__kosmo
+        .state()
+        .doc.byKind<{ zonenArt?: string }>('zone')
+        .filter((z) => z.zonenArt === 'nachbar').length,
+    );
+
+  // Nachbarn übernehmen: genau 2 Zonen zonenArt 'nachbar' — das eigene
+  // Gebäude (Ring enthält das Parzellen-Zentrum) fehlt.
+  await page.click('[data-testid="nachbarn-uebernehmen"]');
+  await expect(page.locator('[data-testid="standort-meldung"]')).toContainText('2 Nachbargebäude übernommen');
+  await expect.poll(nachbarZonenAnzahl).toBe(2);
+
+  // Grundriss trägt jetzt den Kontext-Layer (Parzelle + Nachbarn,
+  // apps/kosmo-orbit/src/modules/design/PlanView.tsx `plan-kontext`).
+  await page.click('[data-testid="view-2d"]');
+  await expect(page.locator('[data-testid="planview"] [data-testid="plan-kontext"]')).toHaveCount(1);
+
+  // Undo: `design.nachbarnUebernehmen` ist EIN Undo-Schritt (Löschen+Anlegen
+  // im selben Patch-Array, packages/kosmo-kernel/src/commands/design.ts) —
+  // ein Klick räumt alle 2 Nachbar-Zonen wieder weg.
+  await page.click('[data-testid="undo"]');
+  await expect.poll(nachbarZonenAnzahl).toBe(0);
 });

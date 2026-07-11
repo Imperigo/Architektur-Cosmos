@@ -251,6 +251,57 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
   const fensterBogen = page.locator('[data-testid="planview"] path.fenster-bogen');
   await expect.poll(() => fensterBogen.count()).toBeGreaterThan(0);
 
+  // ── Akt 1c: Fenster auf Drehkipp stellen (v0.7.1 E5, docs/V071-KONZEPT.md
+  //    Kernentscheid E5/4B) ────────────────────────────────────────────────
+  // Gleiches Muster wie Akt 1b: eigener, dritter `kosmoChatSkript`-Container
+  // (ScriptedProvider-Skripte sind STATISCH — die reale openingId kann nur
+  // NACH dem Rohbau real referenziert werden, EFH_SKRIPT/FENSTER_SKRIPT oben
+  // bleiben unangetastet). `design.eigenschaftSetzen` ändert GENAU ein Feld
+  // (fluegelTyp) am bestehenden, bereits zweiflügligen Wohnzimmerfenster —
+  // steuert die SIA-Öffnungssymbolik in Ansicht/Grundriss.
+  const FLUEGELTYP_SKRIPT: SzenarioSkript = {
+    id: 'journey-efh-fluegeltyp',
+    zuege: [
+      {
+        nutzerErwartung: 'drehkipp',
+        antwortText: 'Ich stelle das Wohnzimmerfenster auf Drehkipp.',
+        toolCalls: [
+          {
+            name: 'design_eigenschaftSetzen',
+            args: { entityId: wohnzimmerfensterId, feld: 'fluegelTyp', wert: 'drehkipp' },
+          },
+        ],
+      },
+    ],
+  };
+  const fluegeltypProtokoll = await kosmoChatSkript(page, 'journey-efh-fluegeltyp', FLUEGELTYP_SKRIPT, {
+    nutzerTexte: ['Stell das Wohnzimmerfenster auf Drehkipp'],
+  });
+  expect(fluegeltypProtokoll).toHaveLength(1);
+  expect(fluegeltypProtokoll[0]!.fehler, fluegeltypProtokoll[0]!.fehler ?? '').toBeUndefined();
+  // EIN Tool-Call → genau EINE Diff-Karte (`proposal-card`/`apply-proposal`,
+  // Baustein 23 `kosmoChatSkript`) ist bereits durch den Klick durchgelaufen —
+  // `proposals === 1` belegt, dass sie erschien und angewendet wurde.
+  expect(fluegeltypProtokoll[0]!.proposals).toBe(1);
+
+  // Doc: die Öffnung trägt jetzt fluegelTyp 'drehkipp'.
+  const fluegelTypAusgelesen = () =>
+    page.evaluate((id) => {
+      const o = window.__kosmo.state().doc.byKind('opening').find((x) => x.id === id) as unknown as
+        | { fluegelTyp?: string }
+        | undefined;
+      return o?.fluegelTyp;
+    }, wohnzimmerfensterId);
+  await expect.poll(fluegelTypAusgelesen).toBe('drehkipp');
+
+  // Undo: `design.eigenschaftSetzen` liefert GENAU EIN Patch
+  // (`[{ id, before, after }]`, packages/kosmo-kernel/src/commands/design.ts
+  // `setProperty`) — EIN Klick auf «Rückgängig» hebt den fluegelTyp wieder
+  // vollständig auf (kein Rest-Zustand, der zweiflüglige Fenstertyp aus
+  // Akt 1b bleibt davon unberührt).
+  await page.click('[data-testid="undo"]');
+  await expect.poll(fluegelTypAusgelesen).toBeUndefined();
+
   // ── Akt 2: Sehen — Drei Stimmungen, Render, Prompt-Transparenz ────────
   // Das offene Kosmo-Panel verdeckt die Stations-Navigation (Sim-Befund
   // 0.6.7, H-29: behoben — Schliessen-Knopf trägt jetzt data-testid
