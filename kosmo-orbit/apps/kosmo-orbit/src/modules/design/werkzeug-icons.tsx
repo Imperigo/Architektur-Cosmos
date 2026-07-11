@@ -17,6 +17,17 @@
  * seltener, spezialisierter, teils (Treppe) ohnehin durch einen bestehenden
  * Text-Selektor vertraglich gebunden (`e2e/module.spec.ts`
  * `button:text-is("Treppe")`).
+ *
+ * V0.7.2 W1-B (Paket 02): die vier Icons unten (Auswahl/Wand/Volumen/Zone)
+ * sind im neuen Strichstil der Glyphen-Bibliothek (`shell/werkzeug-
+ * glyphen.tsx`, Spec-§3 Grundregel) nachgezogen — sw-Verhältnis 1.75/24
+ * skaliert auf die 16er-Geometrie dieser Datei (≈1.17), runde Kappen/Joins,
+ * genau EIN Akzent-Punkt-Kreis (r ≈ 1.7·16/24 ≈ 1.13). Bewusst NICHT die
+ * `WerkzeugGlyphe`-Komponente selbst (24er-ViewBox, `var(--k-ink)`) — diese
+ * vier bleiben `currentColor`-only/16×16 (Vertrag `werkzeug-icons.test.tsx` +
+ * `e2e/oberflaeche-minimal.spec.ts`: aria-Label am Button, LEERER innerText,
+ * keine hartkodierte Farbe). Dach/Treppe/Stütze/Schnitt/Mesh/Entwurfs-/Dock-
+ * Icons bleiben unangetastet (ausserhalb dieses Auftrags).
  */
 
 const basis = {
@@ -27,28 +38,46 @@ const basis = {
   focusable: false,
 } as const;
 
-/** Auswahl — Zeigepfeil (Cursor), gefüllt wie ein Werkplan-Pfeil. */
+/** Auswahl — Zeigepfeil (Cursor) als Kontur, Spitze = Hotspot (Akzent-Punkt,
+ *  wie das Cursor-System in Spec-§8: «Spitze = Hotspot»). */
 export function IconAuswahl() {
   return (
     <svg {...basis}>
       <path
         d="M3 2.2 L3 12.6 L5.7 10.1 L7.5 13.9 L9.2 13.1 L7.4 9.3 L10.6 9 Z"
-        fill="currentColor"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.17"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
+      <circle cx="3" cy="2.2" r="1.13" fill="currentColor" />
     </svg>
   );
 }
 
-/** Wand — Poché-Balken (Wandschnitt in Draufsicht), wie im Grundriss. */
+/** Wand — Poché-Balken (Wandschnitt in Draufsicht) als Kontur, Akzent-Punkt
+ *  am rechten Wandende. */
 export function IconWand() {
   return (
     <svg {...basis}>
-      <rect x="2" y="6.3" width="12" height="3.4" fill="currentColor" />
+      <rect
+        x="2"
+        y="6.3"
+        width="12"
+        height="3.4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.17"
+        strokeLinejoin="round"
+      />
+      <circle cx="14" cy="8" r="1.13" fill="currentColor" />
     </svg>
   );
 }
 
-/** Volumen — Drahtgitter-Würfel (isometrisch), Massenkörper-Symbol. */
+/** Volumen — Drahtgitter-Würfel (isometrisch), Massenkörper-Symbol, Akzent-
+ *  Punkt am obersten Scheitelpunkt. */
 export function IconVolumen() {
   return (
     <svg {...basis}>
@@ -56,14 +85,17 @@ export function IconVolumen() {
         d="M8 1.6 L14 5 L14 11 L8 14.4 L2 11 L2 5 Z M2 5 L8 8.4 L14 5 M8 8.4 L8 14.4"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.17"
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
+      <circle cx="8" cy="1.6" r="1.13" fill="currentColor" />
     </svg>
   );
 }
 
-/** Zone — dünn umrissenes Raumfeld (SIA-Fläche), bewusst nur Kontur. */
+/** Zone — dünn umrissenes Raumfeld (SIA-Fläche), Akzent-Punkt an der
+ *  Eckmarke oben links. */
 export function IconZone() {
   return (
     <svg {...basis}>
@@ -74,8 +106,10 @@ export function IconZone() {
         height="11.2"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="1.17"
+        strokeLinejoin="round"
       />
+      <circle cx="2.4" cy="2.4" r="1.13" fill="currentColor" />
     </svg>
   );
 }

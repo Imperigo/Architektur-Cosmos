@@ -1,13 +1,7 @@
+import type { CSSProperties } from 'react';
 import { Hairline, KButton } from '@kosmo/ui';
-import {
-  IconDockDraw,
-  IconDockPrepare,
-  IconDockPublish,
-  IconDockVis,
-  IconEntwurfCad,
-  IconEntwurfSkizzieren,
-  IconEntwurfSprechen,
-} from './werkzeug-icons';
+import type { StationModulId } from '../../shell/stations-werkzeuge';
+import { STATION_GLYPHE, WerkzeugGlyphe } from '../../shell/werkzeug-glyphen';
 
 /**
  * K16 (Owner-Befund, wörtlich): «Drei Entwurfs-Icons in KosmoDesign: (1)
@@ -23,6 +17,25 @@ import {
  * Understatement statt Modal: drei kompakte Icon-Kacheln, keine Kachel-Wand,
  * kein Onboarding-Screen. Der aktive Modus bekommt `tone="accent"` +
  * `aria-pressed` — genau EIN Modus ist zu jeder Zeit aktiv markiert.
+ *
+ * V0.7.2 W1-B (Paket 02): die Icons kommen jetzt aus der neuen Glyphen-
+ * Bibliothek (`shell/werkzeug-glyphen.tsx`) über `STATION_GLYPHE` (Spec-§3
+ * «Station→Glyphe→Rolle») — sprechen→Station `speak` (Glyphe `chat`, Rolle
+ * Signal), skizzieren→Station `sketch` (Glyphe `skizze`, Rolle manuell),
+ * cad→Station `design` (Glyphe `draw`, Rolle manuell; dasselbe manuelle
+ * Zeichnen wie die Station selbst); die vier Grundicons unten sind 1:1 ihre
+ * Zielstationen (draw/vis/publish/prepare). Struktur, `data-testid`, `title`
+ * und Klick-Verhalten bleiben EXAKT wie zuvor — nur das Icon-Innere wechselt.
+ *
+ * Kontrast-Falle (gefunden beim Sichtbeweis-Screenshot): die Glyphen-Norm
+ * (Spec-§3) zeichnet den Strich FEST in `var(--k-ink)`, nicht `currentColor`
+ * — anders als die alten Icons hier. `.k-btn-accent` (aktiver Modus-Knopf)
+ * setzt `background: var(--k-accent)`, was in Paper/Ink praktisch derselbe
+ * Ton wie `--k-ink` ist ⇒ ohne Gegenmassnahme verschwindet das Icon auf dem
+ * aktiven Knopf. Fix: der aktive Knopf überschreibt `--k-ink` LOKAL auf
+ * `var(--k-accent-ink)` (die für genau diesen Hintergrund kontrastierende
+ * Textfarbe) — nur für sein eigenes Subtree, alle anderen Glyphen im Dock
+ * bleiben unangetastet.
  */
 
 export type EntwurfsModus = 'sprechen' | 'skizzieren' | 'cad';
@@ -47,16 +60,16 @@ const EINTRAEGE: {
   modus: EntwurfsModus;
   testid: string;
   titel: string;
-  Icon: () => React.JSX.Element;
+  station: StationModulId;
 }[] = [
-  { modus: 'sprechen', testid: 'entwurf-sprechen', titel: 'Sprechen/Schreiben — Kosmo zeichnet', Icon: IconEntwurfSprechen },
+  { modus: 'sprechen', testid: 'entwurf-sprechen', titel: 'Sprechen/Schreiben — Kosmo zeichnet', station: 'speak' },
   {
     modus: 'skizzieren',
     testid: 'entwurf-skizzieren',
     titel: 'Skizzieren — Kosmo schlägt 3 Annäherungen vor',
-    Icon: IconEntwurfSkizzieren,
+    station: 'sketch',
   },
-  { modus: 'cad', testid: 'entwurf-cad', titel: 'Manuelles CAD — klassische Werkzeuge', Icon: IconEntwurfCad },
+  { modus: 'cad', testid: 'entwurf-cad', titel: 'Manuelles CAD — klassische Werkzeuge', station: 'design' },
 ];
 
 /**
@@ -71,12 +84,12 @@ const EINTRAEGE: {
 const STATIONS_EINTRAEGE: {
   testid: string;
   titel: string;
-  Icon: () => React.JSX.Element;
+  station: StationModulId;
 }[] = [
-  { testid: 'dock-draw', titel: 'KosmoDraw — Modellbaum, Mengen, Ausmass (in KosmoDesign)', Icon: IconDockDraw },
-  { testid: 'dock-vis', titel: 'öffnet KosmoVis — Renderings, Varianten', Icon: IconDockVis },
-  { testid: 'dock-publish', titel: 'öffnet KosmoPublish — Plansätze, Layouts', Icon: IconDockPublish },
-  { testid: 'dock-prepare', titel: 'öffnet KosmoPrepare — Grundlagen, Ingestion', Icon: IconDockPrepare },
+  { testid: 'dock-draw', titel: 'KosmoDraw — Modellbaum, Mengen, Ausmass (in KosmoDesign)', station: 'draw' },
+  { testid: 'dock-vis', titel: 'öffnet KosmoVis — Renderings, Varianten', station: 'vis' },
+  { testid: 'dock-publish', titel: 'öffnet KosmoPublish — Plansätze, Layouts', station: 'publish' },
+  { testid: 'dock-prepare', titel: 'öffnet KosmoPrepare — Grundlagen, Ingestion', station: 'prepare' },
 ];
 
 export function EntwurfsDock({
@@ -119,25 +132,39 @@ export function EntwurfsDock({
         boxShadow: 'var(--k-shadow-raised)',
       }}
     >
-      {EINTRAEGE.map(({ modus: m, testid, titel, Icon }) => (
-        <KButton
-          key={m}
-          size="sm"
-          tone={modus === m ? 'accent' : 'quiet'}
-          title={titel}
-          aria-label={titel}
-          aria-pressed={modus === m}
-          data-testid={testid}
-          onClick={aktion[m]}
-          style={{ width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        >
-          <Icon />
-        </KButton>
-      ))}
+      {EINTRAEGE.map(({ modus: m, testid, titel, station }) => {
+        const aktiv = modus === m;
+        return (
+          <KButton
+            key={m}
+            size="sm"
+            tone={aktiv ? 'accent' : 'quiet'}
+            title={titel}
+            aria-label={titel}
+            aria-pressed={aktiv}
+            data-testid={testid}
+            onClick={aktion[m]}
+            style={{
+              width: 32,
+              height: 32,
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              // Kontrast-Fix (s. Kopfkommentar): auf dem aktiven Accent-Knopf
+              // löst `var(--k-ink)` in der Glyphe die kontrastierende
+              // Vordergrundfarbe des Knopfs auf statt der globalen Tinte.
+              ...(aktiv ? ({ '--k-ink': 'var(--k-accent-ink)' } as CSSProperties) : {}),
+            }}
+          >
+            <WerkzeugGlyphe {...STATION_GLYPHE[station]} size={20} />
+          </KButton>
+        );
+      })}
       <div style={{ padding: '2px 0' }}>
         <Hairline />
       </div>
-      {STATIONS_EINTRAEGE.map(({ testid, titel, Icon }) => (
+      {STATIONS_EINTRAEGE.map(({ testid, titel, station }) => (
         <KButton
           key={testid}
           size="sm"
@@ -148,7 +175,7 @@ export function EntwurfsDock({
           onClick={stationsAktion[testid]}
           style={{ width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.85 }}
         >
-          <Icon />
+          <WerkzeugGlyphe {...STATION_GLYPHE[station]} size={20} />
         </KButton>
       ))}
     </div>
