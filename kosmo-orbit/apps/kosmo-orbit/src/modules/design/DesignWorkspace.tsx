@@ -16,6 +16,7 @@ import {
   programmErfuellungJeVariante,
   variantenMatrix,
   parzelleZuOutline,
+  nachbarnZuOutlines,
   fassadenModule,
   moduleAlsCsv,
   magnetFang,
@@ -3809,6 +3810,24 @@ function FassadenModulSektion() {
 }
 
 
+/**
+ * Einfacher Ray-Casting-Test (v0.7.1 E2/2B): liegt `punkt` [e,n] (LV95-Meter)
+ * innerhalb des Rings? Dient dazu, das EIGENE Gebäude aus dem
+ * Nachbarn-Import auszuschliessen (der Ring, der das Parzellen-Zentrum
+ * umschliesst, ist das eigene Gebäude, kein Nachbar).
+ */
+function punktInRing(punkt: readonly [number, number], ring: readonly number[][]): boolean {
+  const [px, py] = punkt;
+  let innen = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i]![0]!, yi = ring[i]![1]!;
+    const xj = ring[j]![0]!, yj = ring[j]![1]!;
+    const schneidet = yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi;
+    if (schneidet) innen = !innen;
+  }
+  return innen;
+}
+
 /** V4: CH-Standort — Adresssuche (geo.admin.ch), Parzellen-Import, alles im Doc. */
 function StandortSuche() {
   const runCommand = useProject((s) => s.runCommand);
@@ -3816,6 +3835,11 @@ function StandortSuche() {
   const [text, setText] = useState('');
   const [treffer, setTreffer] = useState<{ label: string; lat: number; lon: number; e: number; n: number }[]>([]);
   const [meldung, setMeldung] = useState<string | null>(null);
+  // Parzellen-Zentrum (LV95-Meter) als Anker für den Nachbarn-Import (E2/2B).
+  // EHRLICH: nur Session-State — das Zentrum wird (noch) nicht im Doc
+  // persistiert, ein Parzellen-Import in DERSELBEN Sitzung ist nötig, bevor
+  // «Nachbarn übernehmen» aktiv wird.
+  const [parzellenZentrum, setParzellenZentrum] = useState<{ e: number; n: number } | null>(null);
 
   const suchen = async () => {
     if (text.trim().length < 3) return;
@@ -3870,55 +3894,113 @@ function StandortSuche() {
         // für die importierte Kataster-Parzelle (derive/checks.ts, sia416.ts).
         zonenArt: 'parzelle',
       });
+      // Zentrum für den Nachbarn-Import merken (E2/2B) — Anker, damit Parzelle
+      // UND Nachbargebäude im selben lokalen Koordinatensystem landen.
+      setParzellenZentrum(imp.zentrum);
       setMeldung(`Parzelle importiert (${imp.flaeche.toLocaleString('de-CH')} m², Nord = +y).`);
     } catch {
       setMeldung('Kein Netz — Parzellen-Import nicht verfügbar.');
     }
   };
 
+  const nachbarnUebernehmen = async () => {
+    if (!parzellenZentrum || !activeStoreyId) return;
+    setMeldung(null);
+    try {
+      const { e, n } = parzellenZentrum;
+      // ±60 m um das Parzellen-Zentrum = 120 m Kante (Layer-Verdikt E2/2B:
+      // ch.swisstopo.vec25-gebaeude ist der einzige identify-fähige Layer mit
+      // Gebäude-POLYGONEN in LV95).
+      const box = `${e - 60},${n - 60},${e + 60},${n + 60}`;
+      const res = await fetch(
+        `https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometry=${box}&geometryType=esriGeometryEnvelope&layers=all:ch.swisstopo.vec25-gebaeude&mapExtent=${box}&imageDisplay=400,400,96&tolerance=0&returnGeometry=true&sr=2056`,
+      );
+      const json = (await res.json()) as {
+        results?: { featureId?: number | string; geometry?: { rings?: number[][][] } }[];
+      };
+      // Dedublizieren per featureId — geo.admin liefert dieselbe Geometrie
+      // sonst mehrfach, wenn die Box mehrere interne Kacheln überlappt.
+      const gesehen = new Set<string>();
+      const ringsListe: number[][][][] = [];
+      for (const r of json.results ?? []) {
+        const id = r.featureId !== undefined ? String(r.featureId) : undefined;
+        if (id !== undefined) {
+          if (gesehen.has(id)) continue;
+          gesehen.add(id);
+        }
+        const rings = r.geometry?.rings ?? [];
+        if (rings.length === 0) continue;
+        // Das eigene Gebäude enthält das Parzellen-Zentrum — kein Nachbar.
+        if (rings.some((ring) => punktInRing([e, n], ring))) continue;
+        ringsListe.push(rings);
+      }
+      const outlines = nachbarnZuOutlines(ringsListe, parzellenZentrum).filter((o) => o.length >= 3);
+      if (outlines.length === 0) {
+        setMeldung('Keine Nachbargebäude gefunden.');
+        return;
+      }
+      const result = runCommand('design.nachbarnUebernehmen', { storeyId: activeStoreyId, outlines });
+      setMeldung(`${result.summary}.`);
+    } catch {
+      setMeldung('Kein Netz — Nachbarn-Import nicht verfügbar.');
+    }
+  };
+
   const standortGesetzt = !!useProject.getState().doc.settings.standort;
   return (
-    <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center', position: 'relative' }}>
-      <input
-        placeholder="Adresse / Parzelle …"
-        value={text}
-        data-testid="standort-suche"
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && void suchen()}
-        style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 170 }}
-      />
-      <KButton size="sm" tone="quiet" data-testid="standort-suchen" onClick={() => void suchen()}>
-        Suchen
-      </KButton>
-      {standortGesetzt && (
-        <KButton size="sm" tone="quiet" data-testid="parzelle-import" onClick={() => void parzelleImportieren()}>
-          Parzelle importieren
+    <span style={{ display: 'inline-flex', flexDirection: 'column', gap: 2 }}>
+      <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center', position: 'relative' }}>
+        <input
+          placeholder="Adresse / Parzelle …"
+          value={text}
+          data-testid="standort-suche"
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && void suchen()}
+          style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 170 }}
+        />
+        <KButton size="sm" tone="quiet" data-testid="standort-suchen" onClick={() => void suchen()}>
+          Suchen
         </KButton>
+        {standortGesetzt && (
+          <KButton size="sm" tone="quiet" data-testid="parzelle-import" onClick={() => void parzelleImportieren()}>
+            Parzelle importieren
+          </KButton>
+        )}
+        {parzellenZentrum && (
+          <KButton size="sm" tone="quiet" data-testid="nachbarn-uebernehmen" onClick={() => void nachbarnUebernehmen()}>
+            Nachbarn übernehmen
+          </KButton>
+        )}
+        {treffer.length > 0 && (
+          <div
+            style={{
+              position: 'absolute', top: '110%', left: 0, zIndex: 40, minWidth: 260,
+              background: 'var(--k-raised)', border: '1px solid var(--k-line-strong)', borderRadius: 8,
+              boxShadow: 'var(--k-shadow, 0 6px 18px rgba(0,0,0,0.18))', display: 'grid',
+            }}
+            data-testid="standort-treffer"
+          >
+            {treffer.map((t, i) => (
+              <button
+                key={i}
+                style={{ textAlign: 'left', padding: '6px 10px', background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
+                onClick={() => {
+                  runCommand('design.standortSetzen', { label: t.label, lat: t.lat, lon: t.lon, e: t.e, n: t.n });
+                  setTreffer([]);
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        )}
+        {meldung && <span style={{ color: 'var(--k-ink-faint)', maxWidth: 340 }} data-testid="standort-meldung">{meldung}</span>}
+      </span>
+      {parzellenZentrum && (
+        <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }} data-testid="nachbarn-fussnote">
+          Quelle: swisstopo VECTOR25 — amtlich, Datenstand ~2008
+        </span>
       )}
-      {treffer.length > 0 && (
-        <div
-          style={{
-            position: 'absolute', top: '110%', left: 0, zIndex: 40, minWidth: 260,
-            background: 'var(--k-raised)', border: '1px solid var(--k-line-strong)', borderRadius: 8,
-            boxShadow: 'var(--k-shadow, 0 6px 18px rgba(0,0,0,0.18))', display: 'grid',
-          }}
-          data-testid="standort-treffer"
-        >
-          {treffer.map((t, i) => (
-            <button
-              key={i}
-              style={{ textAlign: 'left', padding: '6px 10px', background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
-              onClick={() => {
-                runCommand('design.standortSetzen', { label: t.label, lat: t.lat, lon: t.lon, e: t.e, n: t.n });
-                setTreffer([]);
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      )}
-      {meldung && <span style={{ color: 'var(--k-ink-faint)', maxWidth: 340 }} data-testid="standort-meldung">{meldung}</span>}
     </span>
   );
 }
