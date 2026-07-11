@@ -177,10 +177,10 @@ export const placeView = registerCommand({
   id: 'publish.ansichtPlatzieren',
   title: 'Ansicht auf Blatt platzieren',
   description:
-    'Platziert einen Grundriss, Schnitt oder eine Axonometrie auf einem Planblatt. view: grundriss (braucht storeyId), schnitt (braucht Schnittlinie a→b) oder axo (Militärperspektive des ganzen Modells). scale: Massstab (100 = 1:100). x/y: Mittelpunkt der Zeichnung auf dem Blatt in Papier-mm.',
+    'Platziert einen Grundriss, Schnitt, eine Axonometrie oder einen Situationsplan auf einem Planblatt. view: grundriss (braucht storeyId), schnitt (braucht Schnittlinie a→b), axo (Militärperspektive des ganzen Modells) oder situationsplan (Parzellengrenze + Gebäude-Footprints, braucht eine als Parzelle erkennbare Zone — design.zoneErstellen mit sia: KF). scale: Massstab (100 = 1:100). x/y: Mittelpunkt der Zeichnung auf dem Blatt in Papier-mm.',
   params: z.object({
     sheetId: z.string(),
-    view: z.enum(['grundriss', 'schnitt', 'axo']),
+    view: z.enum(['grundriss', 'schnitt', 'axo', 'situationsplan']),
     storeyId: z.string().optional().describe('Quell-Geschoss (bei grundriss)'),
     a: PtSchema.optional().describe('Schnittlinien-Anfang (bei schnitt, Welt-mm)'),
     b: PtSchema.optional().describe('Schnittlinien-Ende (bei schnitt, Welt-mm)'),
@@ -194,7 +194,7 @@ export const placeView = registerCommand({
       .describe('Umbau-Filter: abbruch = Abbruchplan (Neubau weg), neu = Neubauplan (Abbruch weg), bestand = nur Bestand; weglassen = kombiniert'),
   }),
   summarize: (p) =>
-    `${p.view === 'schnitt' ? 'Schnitt' : p.view === 'axo' ? 'Axonometrie' : 'Grundriss'} 1:${p.scale} platzieren`,
+    `${p.view === 'schnitt' ? 'Schnitt' : p.view === 'axo' ? 'Axonometrie' : p.view === 'situationsplan' ? 'Situationsplan' : 'Grundriss'} 1:${p.scale} platzieren`,
   run: (doc, p) => {
     const sheet = requireSheet(doc, p.sheetId);
     const placement: SheetPlacement = {
@@ -216,6 +216,8 @@ export const placeView = registerCommand({
       if (!p.title) placement.title = `Grundriss ${storey.name}`;
     } else if (p.view === 'axo') {
       if (!p.title) placement.title = 'Axonometrie';
+    } else if (p.view === 'situationsplan') {
+      if (!p.title) placement.title = 'Situationsplan';
     } else {
       if (!p.a || !p.b) throw new CommandError('schnitt braucht a und b');
       placement.section = { a: p.a, b: p.b, depth: 30000, lookLeft: true };
@@ -582,7 +584,7 @@ export const fillSheet = registerCommand({
 
     let aktuell: Sheet = sheet;
     for (const v of vorschlag.vorschlaege) {
-      if (v.art === 'grundriss' || v.art === 'schnitt' || v.art === 'axo') {
+      if (v.art === 'grundriss' || v.art === 'schnitt' || v.art === 'axo' || v.art === 'situationsplan') {
         const placement: SheetPlacement = {
           id: newId('ansicht'),
           view: v.art,
@@ -594,6 +596,7 @@ export const fillSheet = registerCommand({
             ? { section: { a: v.a, b: v.b, depth: v.depth, lookLeft: v.lookLeft }, title: v.title }
             : {}),
           ...(v.art === 'axo' ? { title: v.title } : {}),
+          ...(v.art === 'situationsplan' ? { title: v.title } : {}),
         };
         aktuell = { ...aktuell, placements: [...aktuell.placements, placement] };
       } else if (v.art === 'bild') {

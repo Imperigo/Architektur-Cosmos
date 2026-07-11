@@ -42,6 +42,9 @@ function placementInner(doc: KosmoDoc, pl: SheetPlacement): InnerSvg {
   if (pl.view === 'schnitt' && pl.section) {
     return sectionInnerSvg(sicht, pl.section, pl.scale);
   }
+  if (pl.view === 'situationsplan') {
+    return situationsplanInnerSvg(sicht, pl.scale);
+  }
   return { inner: '', bounds: null };
 }
 
@@ -53,16 +56,14 @@ function placementInner(doc: KosmoDoc, pl: SheetPlacement): InnerSvg {
  * gefüllt, Geometrie/Guard aus `schwarzplanGeometrie()` (`derive/
  * schwarzplan.ts`, «gemeinsame Quelle» statt doppelter Entitäts-Erkennung).
  *
- * NOCH NICHT verdrahtet: `placementInner()` oben kennt nur `'grundriss' |
- * 'axo' | 'schnitt'`, weil `SheetPlacement.view` (`model/entities.ts`) den
- * Wert `'situationsplan'` noch nicht führt — Stream 3A erweitert den Union-
- * Typ + das Command-Schema (`publish.ansichtPlatzieren`) UND die
- * Auto-Befüllung (`blattfuellung.ts`); danach genügt hier EIN zusätzlicher
- * `if (pl.view === 'situationsplan') return situationsplanInnerSvg(sicht,
- * pl.scale);`-Zweig. Absichtlich OHNE Nordpfeil/Massstabsbalken-Chrome (die
- * trägt das eigenständige `schwarzplanSvg`-Blatt bereits vollständig) — ob
- * die Sheet-Platzierung eigene Chrome braucht, ist eine Layout-Entscheidung
- * von Stream 3A. `scale` (Massstab-Nenner, wie bei den Geschwistern oben)
+ * Verdrahtet (Stream 3A, K10): `SheetPlacement.view` (`model/entities.ts`)
+ * führt additiv `'situationsplan'`, `placementInner()` oben ruft
+ * `situationsplanInnerSvg` darüber, `publish.ansichtPlatzieren` UND die
+ * Auto-Befüllung (`blattfuellung.ts`) kennen den neuen Wert. Absichtlich OHNE
+ * Nordpfeil/Massstabsbalken-Chrome (die trägt das eigenständige
+ * `schwarzplanSvg`-Blatt bereits vollständig) — die Sheet-Platzierung bleibt
+ * bewusst schlank, analog zu Grundriss/Schnitt/Axo ohne eigenen Rahmen.
+ * `scale` (Massstab-Nenner, wie bei den Geschwistern oben)
  * skaliert die Stiftstärke papierkonstant vor — dieselbe Regel wie
  * `plansvg.ts`s Kommentar «Stiftstärken in Papier-mm → Welt-mm skaliert»,
  * weil `sheetToSvg` `inner` erst NACH dieser Funktion mit `scale(1/scale)`

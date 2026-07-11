@@ -3,20 +3,32 @@ import type { ImageAsset, Sheet, SheetImage, SheetPlacement, SheetText, Storey }
 import type { Pt } from '../model/units';
 import { deriveBerechnungsliste } from './berechnungsliste';
 import { axoInnerSvg, planInnerSvg, sectionInnerSvg } from './plansvg';
+import { schwarzplanGeometrie } from './schwarzplan';
 import { imagePaperBounds, placementPaperBounds, sheetPaperSize } from './sheet';
 
 /**
  * Blatt-Auto-Befüllung (Owner-Befund K10, PDF S. 12: «Publish-Blätter halb
  * leer»). Pure Ableitung — KEIN Layout-«KI»: ein einfaches Spaltenraster über
  * die freie Blattfläche, befüllt in fester Priorität mit dem, was das Modell
- * TATSÄCHLICH hergibt (Grundriss/Schnitt/Axo nur, wenn die jeweilige
- * Derivation echte Bounds liefert). Was fehlt (kein Schnitt definiert, kein
- * Raumprogramm, kein Render), wird als Hinweis gemeldet — nie erfunden.
+ * TATSÄCHLICH hergibt (Grundriss/Schnitt/Axo/Situationsplan nur, wenn die
+ * jeweilige Derivation echte Bounds liefert). Was fehlt (kein Schnitt
+ * definiert, keine Parzelle, kein Raumprogramm, kein Render), wird als
+ * Hinweis gemeldet — nie erfunden.
+ *
+ * Priorität: Grundriss je fehlendem Geschoss → Schnitt (aus bereits im
+ * Plansatz definierten SectionSpecs) → Situationsplan (Parzelle+Footprints,
+ * v0.7.0 E4) → Axonometrie → Kennzahlen → Renderbild.
  *
  * Schnitte kommen NICHT aus einer geratenen Schnittlinie (das wäre
  * Fake-Layout): sie werden aus bereits im Modell vorhandenen SectionSpecs
  * übernommen (irgendwo im Plansatz schon platzierte Schnitte). Gibt es
  * keinen, meldet die Ableitung das ehrlich statt eine Linie zu erfinden.
+ * Aus demselben Grund bleiben Fassaden/«Ansichten» (Süd zuerst, Owner-
+ * Formulierung K10) eine ehrliche Lücke, s. Hinweis unten: `SheetPlacement`
+ * kennt keinen eigenständigen Ansichts-/Elevations-Blatt-Typ, und eine
+ * Ansicht bräuchte — wie ein Schnitt — eine Schnittlinie ausserhalb des
+ * Baukörpers, die hier niemand vorgibt. Denselben Grundsatz dokumentiert
+ * `derive/baugesuch.ts` («kein eigener Blatt-Typ im Datenmodell»).
  */
 
 /** Ein Vorschlag deckt sich 1:1 mit den Feldern, die publish.blattFuellen
@@ -35,6 +47,7 @@ export type BlattVorschlag =
       scale: number;
     }
   | { art: 'axo'; title: string; x: number; y: number; scale: number }
+  | { art: 'situationsplan'; title: string; x: number; y: number; scale: number }
   | { art: 'bild'; assetId: string | null; title?: string; x: number; y: number; w: number }
   | { art: 'text'; text: string; size: number; x: number; y: number; titel?: boolean };
 
@@ -172,6 +185,32 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
           y,
           scale,
         }),
+      });
+    }
+  }
+
+  // 2b) Fassaden/«Ansichten» (Süd zuerst): ehrliche Lücke, s. Modul-Kommentar.
+  // `SheetPlacement.view` kennt keinen eigenen Ansichts-/Elevations-Typ, und
+  // eine Ansicht bräuchte — wie ein Schnitt — eine Schnittlinie ausserhalb
+  // des Baukörpers, die niemand vorgibt. Kein Kandidat, nur ein Hinweis.
+  hinweise.push(
+    'Ansichten (Fassaden): kein eigener Blatt-Typ im Datenmodell (SheetPlacement kennt Grundriss/Schnitt/Axonometrie/Situationsplan) — keine Ansichten ableitbar, Lücke bleibt offen.',
+  );
+
+  // 2c) Situationsplan — nur wenn eine Parzelle erkennbar ist (dieselbe
+  // Entitäts-Erkennung wie `schwarzplanSvg`, «gemeinsame Quelle»).
+  if (!sheet.placements.some((pl) => pl.view === 'situationsplan')) {
+    const geo = schwarzplanGeometrie(doc);
+    if (!geo) {
+      hinweise.push(
+        'Keine Parzelle erkennbar — kein Situationsplan ableitbar (Parzelle als Zone mit sia=KF importieren, design.zoneErstellen)',
+      );
+    } else {
+      kandidaten.push({
+        label: 'Situationsplan',
+        breite: geo.bounds.maxX - geo.bounds.minX,
+        hoehe: geo.bounds.maxY - geo.bounds.minY,
+        bauen: (x, y, scale) => ({ art: 'situationsplan', title: 'Situationsplan', x, y, scale }),
       });
     }
   }
@@ -323,6 +362,7 @@ export function formatBelegungsBericht(v: BlattBelegungsVorschlag): string {
   const s = anzahl('schnitt');
   if (g > 0) teile.push(`${g} Grundriss${g === 1 ? '' : 'e'}`);
   if (s > 0) teile.push(`${s} Schnitt${s === 1 ? '' : 'e'}`);
+  if (v.vorschlaege.some((x) => x.art === 'situationsplan')) teile.push('Situationsplan');
   if (v.vorschlaege.some((x) => x.art === 'axo')) teile.push('Axonometrie');
   if (v.vorschlaege.some((x) => x.art === 'text')) teile.push('Kennzahlen');
   const bild = v.vorschlaege.find((x): x is Extract<BlattVorschlag, { art: 'bild' }> => x.art === 'bild');

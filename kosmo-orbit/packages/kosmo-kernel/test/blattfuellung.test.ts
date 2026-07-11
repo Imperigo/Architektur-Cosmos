@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   CommandError,
   History,
@@ -6,6 +7,7 @@ import {
   execute,
   formatBelegungsBericht,
   schlageBlattBelegungVor,
+  sheetToSvg,
   type Sheet,
 } from '../src';
 
@@ -219,5 +221,210 @@ describe('Command publish.blattFuellen', () => {
   it('unbekanntes Blatt wirft CommandError', () => {
     const doc = new KosmoDoc();
     expect(() => execute(doc, 'publish.blattFuellen', { sheetId: 'gibt-es-nicht' })).toThrow(CommandError);
+  });
+});
+
+/** Parzelle als Zone mit `sia:'KF'` (dieselbe Erkennung wie `schwarzplan.ts`
+ * — s. dortigen Modul-Kommentar; hier eine kleinere Testkontur). */
+const PARZELLE_OUTLINE = [
+  { x: -6000, y: -5000 },
+  { x: 14000, y: -5000 },
+  { x: 14000, y: 11000 },
+  { x: -6000, y: 11000 },
+];
+
+function baueParzelle(doc: KosmoDoc, storeyId: string): void {
+  execute(doc, 'design.zoneErstellen', { storeyId, outline: PARZELLE_OUTLINE, name: 'Parzelle Test', sia: 'KF' });
+}
+
+describe('Situationsplan (Owner-Befund K10 + v0.7.0 E4) — Verdrahtung in die Auto-Befüllung', () => {
+  it('mit erkennbarer Parzelle: Situationsplan wird vorgeschlagen, kein Lücken-Hinweis', () => {
+    const { doc, storeyEg, sheetId } = setupZweiGeschosse();
+    baueParzelle(doc, storeyEg);
+    const vorschlag = schlageBlattBelegungVor(doc, doc.get<Sheet>(sheetId)!);
+    expect(vorschlag.vorschlaege.some((v) => v.art === 'situationsplan')).toBe(true);
+    expect(vorschlag.hinweise.some((h) => h.includes('Keine Parzelle erkennbar'))).toBe(false);
+  });
+
+  it('ohne Parzelle: ehrlicher Hinweis statt eines erfundenen Situationsplans', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const vorschlag = schlageBlattBelegungVor(doc, doc.get<Sheet>(sheetId)!);
+    expect(vorschlag.vorschlaege.some((v) => v.art === 'situationsplan')).toBe(false);
+    expect(vorschlag.hinweise.some((h) => h.includes('Keine Parzelle erkennbar'))).toBe(true);
+  });
+
+  it('bereits platzierter Situationsplan wird nicht doppelt vorgeschlagen (No-op)', () => {
+    const { doc, storeyEg, sheetId } = setupZweiGeschosse();
+    baueParzelle(doc, storeyEg);
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId, view: 'situationsplan', scale: 500, x: 200, y: 200 });
+    const vorschlag = schlageBlattBelegungVor(doc, doc.get<Sheet>(sheetId)!);
+    expect(vorschlag.vorschlaege.some((v) => v.art === 'situationsplan')).toBe(false);
+  });
+
+  it('Ansichten (Fassaden) bleiben ein ehrlicher, konstanter Hinweis — SheetPlacement kennt keinen Ansichts-Typ', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const vorschlag = schlageBlattBelegungVor(doc, doc.get<Sheet>(sheetId)!);
+    expect(vorschlag.hinweise.some((h) => h.includes('Ansichten (Fassaden)'))).toBe(true);
+  });
+
+  it('formatBelegungsBericht nennt «Situationsplan», wenn platziert', () => {
+    expect(
+      formatBelegungsBericht({
+        vorschlaege: [{ art: 'situationsplan', title: 'Situationsplan', x: 0, y: 0, scale: 500 }],
+        hinweise: [],
+      }),
+    ).toContain('Situationsplan');
+  });
+
+  it('publish.blattFuellen platziert den Situationsplan-Slot; sheetToSvg zeigt Parzellengrenze + Footprint', () => {
+    const { doc, storeyEg, sheetId } = setupZweiGeschosse();
+    baueParzelle(doc, storeyEg);
+    execute(doc, 'design.volumenErstellen', {
+      storeyId: storeyEg,
+      outline: [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 6000 }, { x: 0, y: 6000 }],
+      height: 6000,
+    });
+
+    const res = execute(doc, 'publish.blattFuellen', { sheetId });
+    expect(res.patches).toHaveLength(1);
+    expect(res.summary).toContain('Situationsplan');
+
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const platzierung = sheet.placements.find((p) => p.view === 'situationsplan');
+    expect(platzierung).toBeDefined();
+    expect(platzierung!.storeyId).toBeUndefined();
+    expect(platzierung!.section).toBeUndefined();
+
+    const svg = sheetToSvg(doc, sheetId, { projectName: 'Test', date: '11.07.2026' });
+    expect(svg).toContain('stroke-dasharray'); // Parzellengrenze strichpunktiert
+    expect(svg).toContain('#1a1a1a'); // Footprint schwarz gefüllt
+  });
+
+  it('publish.ansichtPlatzieren view=situationsplan: Default-Titel «Situationsplan», kein storeyId/section nötig', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId, view: 'situationsplan', scale: 500, x: 200, y: 200 });
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const pl = sheet.placements.find((p) => p.view === 'situationsplan')!;
+    expect(pl.title).toBe('Situationsplan');
+    expect(pl.storeyId).toBeUndefined();
+    expect(pl.section).toBeUndefined();
+  });
+
+  it('Determinismus: mit Parzelle+Footprint liefert schlageBlattBelegungVor zweimal dasselbe Ergebnis', () => {
+    const { doc, storeyEg, sheetId } = setupZweiGeschosse();
+    baueParzelle(doc, storeyEg);
+    execute(doc, 'design.volumenErstellen', {
+      storeyId: storeyEg,
+      outline: [{ x: 0, y: 0 }, { x: 8000, y: 0 }, { x: 8000, y: 6000 }, { x: 0, y: 6000 }],
+      height: 6000,
+    });
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const a = schlageBlattBelegungVor(doc, sheet);
+    const b = schlageBlattBelegungVor(doc, sheet);
+    expect(a).toEqual(b);
+  });
+});
+
+const AUTOFUELLUNG_TESTHAUS_OUTLINE = [
+  { x: 0, y: 0 },
+  { x: 8000, y: 0 },
+  { x: 8000, y: 6000 },
+  { x: 0, y: 6000 },
+];
+
+/**
+ * Volles Blatt: Testhaus (Wände + Decke, für Grundriss + Kennzahlen) +
+ * anderswo bereits platzierte Schnittlinie (für Schnitt) + Parzelle +
+ * MassBody-Footprint (für Situationsplan) — jeder Kandidat der Priorität
+ * ausser den ehrlichen Lücken (Ansichten/Render) hat hier echte Geometrie.
+ */
+function autofuellungFixtureDoc(): { doc: KosmoDoc; sheetId: string } {
+  const doc = new KosmoDoc();
+  doc.settings.projectName = 'Golden-Blatt-Autofuellung';
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [{ material: 'beton', thickness: 250, function: 'tragend' }],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  wand({ x: 0, y: 0 }, { x: 8000, y: 0 });
+  wand({ x: 8000, y: 0 }, { x: 8000, y: 6000 });
+  wand({ x: 8000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+  execute(doc, 'design.deckeZeichnen', { storeyId, outline: AUTOFUELLUNG_TESTHAUS_OUTLINE });
+
+  // Schnittlinie bereits anderswo im Plansatz platziert (Auto-Befüllung
+  // erfindet nie eine eigene Linie, s. Modul-Kommentar blattfuellung.ts).
+  const hilfsblatt = execute(doc, 'publish.blattErstellen', { name: 'Hilfsblatt', format: 'A3' });
+  const hilfsblattId = (hilfsblatt.patches[0] as { id: string }).id;
+  execute(doc, 'publish.ansichtPlatzieren', {
+    sheetId: hilfsblattId,
+    view: 'schnitt',
+    a: { x: -1000, y: 3000 },
+    b: { x: 9000, y: 3000 },
+    scale: 100,
+    x: 150,
+    y: 100,
+    title: 'Schnitt A-A',
+  });
+
+  // Parzelle (KF-Zone) + Footprint-Volumen — für den Situationsplan.
+  execute(doc, 'design.zoneErstellen', {
+    storeyId,
+    outline: [
+      { x: -6000, y: -5000 },
+      { x: 14000, y: -5000 },
+      { x: 14000, y: 11000 },
+      { x: -6000, y: 11000 },
+    ],
+    name: 'Parzelle Golden',
+    sia: 'KF',
+  });
+  execute(doc, 'design.volumenErstellen', {
+    storeyId,
+    outline: AUTOFUELLUNG_TESTHAUS_OUTLINE,
+    height: 6000,
+    program: 'wohnen',
+  });
+
+  const blatt = execute(doc, 'publish.blattErstellen', { name: 'Blatt Golden', format: 'A1', orientation: 'quer' });
+  const sheetId = (blatt.patches[0] as { id: string }).id;
+  return { doc, sheetId };
+}
+
+describe('Golden-SVG (Blatt-Autofuellung, K10) — Vektor-Qualität des vollen Blatts', () => {
+  it('publish.blattFuellen füllt jeden ableitbaren Slot (Grundriss, Schnitt, Situationsplan, Axo, Kennzahlen, Render-Platzhalter)', () => {
+    const { doc, sheetId } = autofuellungFixtureDoc();
+    const res = execute(doc, 'publish.blattFuellen', { sheetId });
+    expect(res.patches).toHaveLength(1);
+
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const views = new Set(sheet.placements.map((p) => p.view));
+    expect(views.has('grundriss')).toBe(true);
+    expect(views.has('schnitt')).toBe(true);
+    expect(views.has('situationsplan')).toBe(true);
+    expect(views.has('axo')).toBe(true);
+    expect(sheet.texte?.length ?? 0).toBeGreaterThan(0);
+    expect(sheet.bilder).toHaveLength(1);
+
+    expect(res.summary).toContain('Grundriss');
+    expect(res.summary).toContain('Schnitt');
+    expect(res.summary).toContain('Situationsplan');
+    expect(res.summary).toContain('Axonometrie');
+    expect(res.summary).toContain('Kennzahlen');
+    // Honestly-remaining gaps: no render asset yet, and elevations stay a documented gap
+    expect(res.summary).toContain('Kein Render im Modell');
+  });
+
+  it('das befüllte Blatt ist byte-identisch zur committeten Golden-Referenz', () => {
+    const { doc, sheetId } = autofuellungFixtureDoc();
+    execute(doc, 'publish.blattFuellen', { sheetId });
+    const svg = sheetToSvg(doc, sheetId, { projectName: doc.settings.projectName, date: '11.07.2026' });
+    const golden = readFileSync(new URL('./golden/blatt-autofuellung.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
   });
 });

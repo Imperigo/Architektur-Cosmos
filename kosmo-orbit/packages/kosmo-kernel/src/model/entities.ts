@@ -299,7 +299,10 @@ export type SheetFormat = 'A0' | 'A1' | 'A2' | 'A3' | 'A4';
 /** Eine platzierte Ansicht auf einem Blatt — Position in Papier-mm. */
 export interface SheetPlacement {
   id: string;
-  view: 'grundriss' | 'schnitt' | 'axo';
+  /** 'situationsplan' additiv (v0.7.0 E4/K10, Stream 3A): Parzellengrenze +
+   *  Gebäude-Footprints, s. `derive/sheet.ts` `situationsplanInnerSvg` — kein
+   *  `storeyId`/`section` nötig, nur `scale`/`x`/`y` wie bei `axo`. */
+  view: 'grundriss' | 'schnitt' | 'axo' | 'situationsplan';
   /** Grundriss: Quell-Geschoss. */
   storeyId?: string;
   /** Schnitt: Schnittlinie + Sichttiefe (Weltkoordinaten mm). */
