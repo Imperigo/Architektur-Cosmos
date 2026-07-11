@@ -189,4 +189,28 @@ DOM) · Kernel-Goldens byte-identisch.
   Beweis: Preset-Units 11 grün, Wächter+faehigkeiten-phasen+kosmo-
   zustaende 1× grün (28 passed), takeover-Shot neu (Statusleiste frei).
 
+- **W4-G «Companion minimal» integriert** als `7c81b99` (cherry-pick
+  `785450d`, konfliktfrei). #companion-Weiche, SVG-Phasenring aus
+  sia112Gruppe, Job-/Freigabe-Karten (companion-daten.ts pure, 9 Units),
+  4er-Glyphen-Dock. Gates: App 828 · Kernel 728 · Wächter+companion+splash
+  2× grün (20 je Lauf). Ehrliche Grenzen: Vis-Freigabe-Karten
+  sitzungsgebunden (frischer Tab sieht fremde Renders nicht — ehrlicher
+  Leerzustand; Neuigkeiten-Punkt) · Dock-Link = Hash weg + reload (Start
+  an der Zentrale) · QR-Pairing mit Zweitgerät nur im Owner-Rundgang.
+- **W3-F «Cursor & Desktop-Charakter» integriert** als `c1ed9d4`
+  (cherry-pick `74ff278`; EIN gelöster Konflikt in main.tsx — beide
+  Weichen kombiniert, Vorrang ?fenster=charakter > #companion > App).
+  CursorEbene (3 Schachteln, webdriver-Default-AUS + Test-Hook
+  __kosmoCursor), cursor-zustand.ts, KosmoCharakterFenster (nutzt KosmoOrb
+  wieder), kosmo-zustand-bruecke.ts (subscribe von aussen), Tauri:
+  Zweitfenster kosmo-charakter + Tray + capabilities/charakter.json.
+  **cargo check grün** (0 Warnungen, auch auf dem Merge-Stand). Gates:
+  App 847 · Kernel 728 · 32 E2E 2× grün (inkl. cursor-ebene, companion,
+  kosmo-zeichnet). Ehrliche Grenzen W3-F: Zonen-Attribute noch nirgends
+  gesetzt (Heuristik über computed cursor; W4-H verdrahtet) ·
+  pointer:coarse nicht per Playwright emulierbar (Vitest-Beweis statt
+  E2E, test.skip dokumentiert) · Schliessen-Choreografie des
+  Charakter-Fensters NICHT verdrahtet (bräuchte Rust-Vorlauf-Event —
+  ehrlich vertagt).
+
 <!-- Weitere Einträge folgen je Welle -->
