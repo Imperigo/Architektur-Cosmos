@@ -36,6 +36,20 @@ describe('ui-zustand — Defaults (v0.6.6 Bewegungskonzept §6)', () => {
     expect(s.mehrOffen).toBe(false);
     // Stream B (W1b): additiv ergänztes Feld — fehlte im Fundament.
     expect(s.projektMenuOffen).toBe(false);
+    // v0.7.0 (Stream 1B): CurtainWallPanel-Sichtbarkeit — vorher lokaler
+    // useState in DesignWorkspace.tsx (SIM-BEFUNDE-Notiz v0.6.9).
+    expect(s.cwSetzenOffen).toBe(false);
+  });
+
+  it('setCwSetzenOffen schreibt direkt und bleibt Session-only (v0.7.0 Stream 1B)', () => {
+    useUiZustand.getState().setCwSetzenOffen(true);
+    expect(useUiZustand.getState().cwSetzenOffen).toBe(true);
+    useUiZustand.getState().setCwSetzenOffen(false);
+    expect(useUiZustand.getState().cwSetzenOffen).toBe(false);
+    // Nicht persistiert: Neuladen setzt aufs Session-Default zurück.
+    useUiZustand.getState().setCwSetzenOffen(true);
+    neuLadenAusSpeicher();
+    expect(useUiZustand.getState().cwSetzenOffen).toBe(false);
   });
 
   it('setProjektMenuOffen schreibt direkt (kein funktionales Update, Stream-B-Migration)', () => {

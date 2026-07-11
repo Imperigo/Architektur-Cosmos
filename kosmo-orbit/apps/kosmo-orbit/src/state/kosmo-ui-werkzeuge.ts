@@ -65,6 +65,9 @@ const PANEL_LABEL: Record<PanelId, string> = {
   mehrOffen: 'Mehr-Menü',
   exportMenuOffen: 'Export-Menü',
   projektMenuOffen: 'Projekt-Menü',
+  // v0.7.0 (Stream 1B): CurtainWallPanel-Sichtbarkeit jetzt im Store —
+  // mechanische Folge des neuen PANEL_IDS-Eintrags (Record ist vollständig).
+  cwSetzenOffen: 'Fensterband/CW-Dialog',
 };
 
 const TOOL_LABEL: Record<ToolId, string> = {

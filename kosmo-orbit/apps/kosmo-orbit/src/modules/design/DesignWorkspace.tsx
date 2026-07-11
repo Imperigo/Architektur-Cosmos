@@ -398,12 +398,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // K5 (Owner-Rundgang 0.6.2, S. 10): Drag-Hover-Zustand der kompakten
   // Unternehmerplan-Upload-Fläche (rein visuell).
   const [uplanDragUeber, setUplanDragUeber] = useState(false);
-  // v0.6.9 Stream F: «Fensterband/CW setzen»-Dialog — bewusst LOKALER State
-  // statt eines neuen useUiZustand-Flags: der Knopf sitzt wie deckeZeichnen
-  // (H-7) ausserhalb der Werkzeug-Zähler-/Arbeitsmodi-Buchführung
-  // (ebenenPanelOffen/offenePanels unten), ein neues Flag dort würde diese
-  // Buchführung ohne Auftrag erweitern.
-  const [cwSetzenOffen, setCwSetzenOffen] = useState(false);
+  // «Fensterband/CW setzen»-Dialog — v0.7.0 (Stream 1B): vom lokalen useState
+  // in den useUiZustand-Store überführt (SIM-BEFUNDE-Notiz zur v0.6.9-Status-
+  // runde, Vereinheitlichung der Panel-Buchführung; jetzt generisch über
+  // `ui.panelSetzen` erreichbar). Der Knopf bleibt wie deckeZeichnen (H-7)
+  // ausserhalb der Werkzeug-Zähler-/Arbeitsmodi-Listen (ebenenPanelOffen/
+  // offenePanels unten) — nur die Flag-QUELLE wandert in den Store.
+  const cwSetzenOffen = useUiZustand((s) => s.cwSetzenOffen);
+  const setCwSetzenOffen = useUiZustand((s) => s.setCwSetzenOffen);
   const listeOffen = useUiZustand((s) => s.listeOffen);
   const setListeOffen = useUiZustand((s) => s.setListeOffen);
   const rasterOffen = useUiZustand((s) => s.rasterOffen);
