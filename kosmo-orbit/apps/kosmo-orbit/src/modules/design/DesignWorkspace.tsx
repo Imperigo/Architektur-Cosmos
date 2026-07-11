@@ -23,6 +23,7 @@ import {
   siaPhaseLabel,
   UMBAU_LABEL,
   type Assembly,
+  type BauPhase,
   type Column,
   type ErkannteDecke,
   type ErkannteWand,
@@ -2271,11 +2272,18 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               value={doc.settings.phase}
               data-testid="phase-stil"
               onChange={(e) => {
-                const phase = e.target.value as 'vorprojekt' | 'bauprojekt' | 'werkplan';
+                const phase = e.target.value as BauPhase;
+                // v0.7.0 E1: Bemassungs-Preset je Plan-Detaillierungsgrad —
+                // wettbewerb erbt das Vorprojekt-Preset (frühe Phasen zeichnen
+                // reduziert, s. `fruehePhase()`), baueingabe das Bauprojekt-
+                // Preset (SIA 400 C.2.2: Gesamt + Höhenkoten, keine feinen
+                // Innenketten vor dem Werkplan).
                 const bemassung = {
+                  wettbewerb: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: false },
                   vorprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
                   // SIA 400 C.2.2 (Lehrheft-Abgleich): Bauprojekt nur Haupt-/Gesamtmasse
                   bauprojekt: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
+                  baueingabe: { aussenKetten: 'gesamt' as const, innenKetten: false, hoehenKoten: true },
                   werkplan: { aussenKetten: 'beide' as const, innenKetten: true, hoehenKoten: true },
                 }[phase];
                 const { history } = useProject.getState();
@@ -2287,13 +2295,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   history.endGroup();
                 }
                 // B5: Massstabs-Automatik — Vorschlag, kein Zwang (Publish wählt frei)
-                const label = { vorprojekt: 'Vorprojekt', bauprojekt: 'Bauprojekt', werkplan: 'Werkplan' }[phase];
-                setMassstabHinweis(`${label}: Plan-Export neu 1:${PHASEN_MASSSTAB[phase]} (SIA-Empfehlung).`);
+                setMassstabHinweis(`${phaseLabel(phase)}: Plan-Export neu 1:${PHASEN_MASSSTAB[phase]} (SIA-Empfehlung).`);
               }}
             >
-              <option value="vorprojekt">Vorprojekt</option>
-              <option value="bauprojekt">Bauprojekt</option>
-              <option value="werkplan">Werkplan</option>
+              <option value="wettbewerb">{phaseLabel('wettbewerb')}</option>
+              <option value="vorprojekt">{phaseLabel('vorprojekt')}</option>
+              <option value="bauprojekt">{phaseLabel('bauprojekt')}</option>
+              <option value="baueingabe">{phaseLabel('baueingabe')}</option>
+              <option value="werkplan">{phaseLabel('werkplan')}</option>
             </KSelect>
           </label>
           {/* SIA-Teilphase (v0.6.3, Lücken-Batch 1): der reale Projektstand im
@@ -2350,6 +2359,58 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               <option value="aus">Aus</option>
               {bemassungPreset === 'eigen' && <option value="eigen">eigen</option>}
             </KSelect>
+          </label>
+          {/* v0.7.0 E3: 3D-Darstellungsmodus — Override zur Phasen-Automatik
+              (weiss bis inkl. Baueingabe, Material ab Ausschreibung). Reine
+              Projektsemantik (Yjs/Undo), der Textur-Toggle am Viewport
+              bleibt separat lokal. */}
+          <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+            Darstellung
+            <KSelect
+              size="sm"
+              value={doc.settings.darstellung3d ?? 'auto'}
+              data-testid="darstellung-3d"
+              onChange={(e) => {
+                const darstellung3d = e.target.value as 'auto' | 'material' | 'weiss' | 'schwarz';
+                runCommand('design.darstellung3dSetzen', { darstellung3d });
+              }}
+            >
+              <option value="auto">Automatisch (Phase)</option>
+              <option value="material">Material</option>
+              <option value="weiss">Weissmodell</option>
+              <option value="schwarz">Schwarzmodell</option>
+            </KSelect>
+          </label>
+          {/* v0.7.0 E2: Poché-Modus — Override zur Phasen-Automatik (Schwarz
+              vom Wettbewerb bis zur Baueingabe, Werkplan bleibt Material). */}
+          <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+            Poché
+            <KSelect
+              size="sm"
+              value={doc.settings.pocheModus ?? 'phase'}
+              data-testid="poche-modus"
+              onChange={(e) => {
+                const pocheModus = e.target.value as 'phase' | 'schwarz' | 'material';
+                runCommand('design.pocheModusSetzen', { pocheModus });
+              }}
+            >
+              <option value="phase">Nach Phase</option>
+              <option value="schwarz">Immer schwarz</option>
+              <option value="material">Immer Material</option>
+            </KSelect>
+          </label>
+          {/* H-42: Öffnungsflügel-Bogen bei parametrischen Fenstern im
+              Grundriss — Owner-Schalter, Default an (Bestandsverhalten). */}
+          <label
+            style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <input
+              type="checkbox"
+              data-testid="fenster-boegen"
+              checked={doc.settings.fensterBoegen !== false}
+              onChange={(e) => runCommand('design.fensterBoegenSetzen', { fensterBoegen: e.target.checked })}
+            />
+            Fensterbögen im Grundriss
           </label>
           <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
             Ändert sich mit der SIA-Phase des Projekts — bleibt über Jahre stabil, gehört nicht in die Dauerleiste.

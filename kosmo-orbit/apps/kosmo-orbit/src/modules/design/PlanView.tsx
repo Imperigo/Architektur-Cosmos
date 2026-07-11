@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect } from '@kosmo/ui';
-import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pruefeGrundriss, raumGraph, regionToPath, type Furniture, type Pt, type Zone } from '@kosmo/kernel';
+import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, type BauPhase, type Furniture, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUnternehmerplan } from './unternehmerplan';
 import type { ViewportHandlers } from './Viewport3D';
@@ -74,6 +74,41 @@ function federGefuehl(t: number): number {
  * feuern weiterhin SOFORT (keine Doppeltap-Wartezeit), Pinch-Zoom/Space-Pan/
  * Mausrad-Zoom (ohne Momentum) sind unverändert.
  */
+
+/**
+ * v0.7.0 E2 (`docs/V070-KONZEPT.md`): Bildschirm-Poché folgt derselben
+ * `pocheEntscheid()`-Utility wie der Export (`derive/plansvg.ts`) — statt
+ * eine zweite Farblogik zu pflegen, fragen wir nur nach dem `art`-Ergebnis.
+ * Bewusst schmal: nur `art === 'schwarz'` wechselt auf die Tinte
+ * (`var(--k-ink)`); jede andere `art` (grau/daemmung/tint/umbau/thema/none)
+ * lässt die bestehende, Theme-fähige Fill-Kette unangetastet — Werkplan/
+ * Modus 'material' bleiben so exakt wie heute (kein zweiter, abweichender
+ * Bildschirm-Regelsatz).
+ */
+function pocheArtFuer(
+  classes: readonly string[],
+  phase: BauPhase,
+  modus: PocheModus,
+): ReturnType<typeof pocheEntscheid>['art'] {
+  const umbau = classes.includes('renovation-neu')
+    ? ('neu' as const)
+    : classes.includes('renovation-abbruch')
+      ? ('abbruch' as const)
+      : classes.includes('renovation-bestand')
+        ? ('bestand' as const)
+        : undefined;
+  return pocheEntscheid({
+    phase,
+    modus,
+    klassen: {
+      tragend: classes.includes('tragend') || classes.includes('stuetze'),
+      daemmung: classes.includes('daemmung'),
+      projektion: classes.includes('projection'),
+    },
+    ...(umbau ? { umbau } : {}),
+    kontext: 'grundriss',
+  }).art;
+}
 
 export function PlanView({
   handlers,
@@ -334,6 +369,10 @@ export function PlanView({
     () => (activeStoreyId ? deriveDimensions(doc, activeStoreyId) : null),
     [doc, activeStoreyId, revision],
   );
+  // v0.7.0 E2: Poché-Modus-Override (Default 'phase' bei Abwesenheit, wie im
+  // Command `design.pocheModusSetzen`) — einmal gelesen, beide Fill-Stellen
+  // (Trace-Layer + Hauptregionen) nutzen denselben Wert.
+  const pocheModus: PocheModus = doc.settings.pocheModus ?? 'phase';
 
   // Plan-LOD: view.scale ist px pro mm Welt → × 1000 = px pro Meter.
   // lodRef trägt die zuletzt gültige Stufe für die Hysterese in planLod weiter.
@@ -819,7 +858,13 @@ export function PlanView({
                   key={`t${i}`}
                   d={regionToPath(r)}
                   fillRule="evenodd"
-                  fill={r.classes.includes('projection') ? 'none' : 'var(--k-ink-faint)'}
+                  fill={
+                    r.classes.includes('projection')
+                      ? 'none'
+                      : pocheArtFuer(r.classes, doc.settings.phase, pocheModus) === 'schwarz'
+                        ? 'var(--k-ink)'
+                        : 'var(--k-ink-faint)'
+                  }
                   stroke="var(--k-ink-soft)"
                   strokeWidth={10}
                 />
@@ -896,19 +941,27 @@ export function PlanView({
                         ? 'rgba(214, 178, 20, 0.35)'
                         : bestand
                           ? '#c9c9c9'
-                          : isCore
-                            ? lod === 'voll'
-                              ? 'url(#hatch-beton)'
-                              // «mittel»/«fern»: Schraffur wird flaches Poché
-                              // (Druckkonvention, gleicher Grauwert wie Bestand)
-                              : '#c9c9c9'
-                            : isDaemmung
+                          : // v0.7.0 E2: Wettbewerb…Baueingabe (bzw. Poché-Modus
+                            // 'schwarz') zeichnen die tragende Schicht als
+                            // Tinte statt Betonschraffur — `pocheEntscheid()`
+                            // ist die EINE Quelle dafür (auch für den Export).
+                            // Jede andere `art` fällt auf die heutige Kette
+                            // zurück (Werkplan/Modus 'material' unverändert).
+                            pocheArtFuer(r.classes, doc.settings.phase, pocheModus) === 'schwarz'
+                            ? 'var(--k-ink)'
+                            : isCore
                               ? lod === 'voll'
-                                ? 'url(#hatch-daemmung)'
-                                : 'var(--k-line)'
-                              : isProjection
-                                ? 'none'
-                                : 'var(--k-surface)'
+                                ? 'url(#hatch-beton)'
+                                // «mittel»/«fern»: Schraffur wird flaches Poché
+                                // (Druckkonvention, gleicher Grauwert wie Bestand)
+                                : '#c9c9c9'
+                              : isDaemmung
+                                ? lod === 'voll'
+                                  ? 'url(#hatch-daemmung)'
+                                  : 'var(--k-line)'
+                                : isProjection
+                                  ? 'none'
+                                  : 'var(--k-surface)'
                   }
                   stroke={neu ? '#b3261e' : abbruch ? '#8a7500' : 'var(--k-ink)'}
                   strokeWidth={isProjection ? 8 : isCore ? 24 : 12}
