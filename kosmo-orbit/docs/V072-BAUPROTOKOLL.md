@@ -38,6 +38,28 @@ DOM) · Kernel-Goldens byte-identisch.
 - **W1-B «Icon-Familie»** (Fable-Agent, Branch `worktree-agent-a032596d0324d06e6`):
   bei Übernahme noch nicht committet (Branch-HEAD = 9ebcb76). Integration =
   erste Handlung des Leiters, sobald Fable den Abschluss-Hash meldet.
-- Kritik-Runde 1 folgt nach W1-B-Integration.
+- **W1-B «Icon-Familie» integriert** als `b721924` (cherry-pick `f42738b`
+  vom Agent-Branch, konfliktfrei — Dateien disjunkt zu W1-A). Inhalt: NEU
+  `shell/werkzeug-glyphen.tsx` (14 Glyphen, STATION_GLYPHE, GLYPHEN_PUNKT),
+  orbit-icons.tsx, design/werkzeug-icons.tsx (sw 1.17 im 16er-Raster),
+  EntwurfsDock (7 Icons + Rollen-Punkt; Kontrast-Eigenfix: aktiver
+  Accent-Knopf setzt --k-ink lokal auf --k-accent-ink), Unit-Test, 4 Shots.
+- **Gates nach Integration:** Kernel 728 · App 749 (739+10 neue) · kosmo-ui
+  25 · typecheck sauber · Wächter oberflaeche-minimal/orbit-start/
+  kosmo-symbol **2× grün** (14 passed je Lauf) · faehigkeiten-phasen +
+  module.spec 75 grün. Der module.spec-Einzelfail des Agenten (Vis→Blatt)
+  war Umgebung: die alte Bridge-Instanz :8600 kannte CORS nur für 5183;
+  Bridge neu gestartet (aktueller Code, Ports 5174–5177), Fail weg.
+- Umgebung: Preview :5183 neu aufgesetzt (Bundle == dist, index-DXZKTcHe);
+  Worktrees agent-a032596d0324d06e6 + agent-a57fd714bc53e576a entfernt
+  (Disk 54 % → 44 %).
+- **Offene Befunde für Kritik-Runde 1:** (a) Rollen-Punkte hängen an
+  --k-rolle-*/--k-signal aus W1-A — real in orbit UND paper prüfen;
+  (b) `packages/kosmo-ui/src/icons.tsx` (KIcon-Registry, ~30 Zeichen)
+  bleibt im alten 16/1.5-Stil — Frage an Fable: app-weite Icon-Norm in
+  W4-H nachziehen oder ehrlich 0.7.3? (c) evtl. tote Dock-Icon-Exporte in
+  werkzeug-icons.tsx (DesignWorkspace war nicht W1-B-Besitz) — prüfen,
+  ggf. W4-H-Restfix.
+- Kritik-Runde 1 folgt (Shots paper+orbit auf :5183).
 
 <!-- Weitere Einträge folgen je Welle -->
