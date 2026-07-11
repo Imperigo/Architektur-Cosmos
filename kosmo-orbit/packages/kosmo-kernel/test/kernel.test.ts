@@ -325,6 +325,39 @@ describe('SIA-416 Kennzahlen (Owner-Methodik)', () => {
     expect(r.gfSchaetzung).toBeCloseTo(140.8); // ×1.10 Fassade
   });
 
+  it('D8/H-1: Site-Marker zonenArt="parzelle" pollutiert NGF NICHT, auch bei sia:"KF"', async () => {
+    const { areaReport } = await import('../src');
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.zoneErstellen', {
+      storeyId,
+      outline: [
+        { x: 0, y: 0 },
+        { x: 10000, y: 0 },
+        { x: 10000, y: 10000 },
+        { x: 0, y: 10000 },
+      ],
+      name: 'Wohnen',
+      sia: 'HNF',
+    });
+    // Grosse Parzelle (600 m²) — ohne Marker würde sie NGF/KF verunreinigen.
+    execute(doc, 'design.zoneErstellen', {
+      storeyId,
+      outline: [
+        { x: 20000, y: 0 },
+        { x: 40000, y: 0 },
+        { x: 40000, y: 30000 },
+        { x: 20000, y: 30000 },
+      ],
+      name: 'Parzelle Musterweg 1',
+      sia: 'KF',
+      zonenArt: 'parzelle',
+    });
+    const r = areaReport(doc);
+    expect(r.total.HNF).toBe(100);
+    expect(r.total.KF).toBe(0); // die Parzellen-Zone zählt NICHT als KF-Fläche
+    expect(r.totalNgf).toBe(100); // NICHT 700 (100 HNF + 600 Parzelle)
+  });
+
   it('Volumenkörper: GF = Grundfläche × abgeleitete Geschosse', async () => {
     const { areaReport } = await import('../src');
     const { doc, storeyId } = setupDoc();
@@ -3501,6 +3534,22 @@ describe('Regel-Sätze (V2-F3)', () => {
     });
     const b2 = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Regel zimmer');
     expect(b2.some((x) => x.text.includes('Tageslicht'))).toBe(false);
+  });
+
+  it('D8/H-1: Site-Marker zonenArt="parzelle" setzt Raumtyp-/Richtwert-Checks aus', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.regelnSetzen', { preset: 'ch-wohnbau' });
+    // Gleiche schmale 2.0×2.0m-Geometrie wie oben (raumTyp «zimmer» + kein
+    // Fenster würde ohne Marker «Regel zimmer»-Befunde auslösen) — mit dem
+    // Site-Marker bleibt die Zone unbeanstandet.
+    execute(doc, 'design.zoneErstellen', {
+      storeyId, name: 'Parzelle Test', sia: 'KF', raumTyp: 'zimmer', zonenArt: 'parzelle',
+      outline: [{ x: 0, y: 0 }, { x: 5000, y: 0 }, { x: 5000, y: 2000 }, { x: 0, y: 2000 }],
+    });
+    const b = pruefeGrundriss(doc, storeyId).filter((x) => x.regel === 'Regel zimmer');
+    expect(b).toHaveLength(0);
   });
 
   it('preset «aus» leert die Regeln; Zone ohne raumTyp fällt auf HNF-Richtwerte zurück', () => {

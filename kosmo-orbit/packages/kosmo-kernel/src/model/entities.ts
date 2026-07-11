@@ -206,6 +206,21 @@ export interface Zone extends Base {
   program?: string;
   /** Raumtyp für Raumgraph/Checks (V2-F1), z.B. 'korridor', 'treppenhaus'. */
   raumTyp?: string;
+  /**
+   * Site-/Parzellen-Marker (v0.7.0 D8/H-1): additiv, KEINE Migration nötig —
+   * Zonen ohne dieses Feld verhalten sich unverändert. Kennzeichnet eine
+   * Zone, die eine importierte Kataster-Parzelle repräsentiert (statt eines
+   * Raums). Solche Zonen werden von Raumtyp-Checks (`derive/checks.ts`) und
+   * von der SIA-416-Flächensumme (`derive/sia416.ts` `areaReport`/`totalNgf`)
+   * ausgenommen — die `sia`-Klasse bleibt (meist `'KF'`, Bestandskonvention
+   * für `derive/schwarzplan.ts`). Die Parzellenfläche für AZ läuft
+   * unverändert separat über `doc.settings.parzellenFlaeche`. EHRLICHE
+   * GRENZE: `derive/berechnungsliste.ts` (Δ Max) liegt ausserhalb dieses
+   * Streams (Datei nicht in der Besitzliste) — eine Parzellen-Zone OHNE
+   * `program` zählt dort weiterhin als «untypisiert» mit, wie jede andere
+   * Zone ohne `program` auch (unverändertes Bestandsverhalten).
+   */
+  zonenArt?: 'parzelle';
 }
 
 /** Treppe — Achse a→b, Breite; Steigung aus Geschosshöhe. Formen: V2-A2. */

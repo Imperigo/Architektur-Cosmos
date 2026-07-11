@@ -549,6 +549,12 @@ export const createZone = registerCommand({
       .enum(['zimmer', 'wohnen', 'kueche', 'bad', 'korridor', 'treppenhaus', 'abstellraum', 'balkon', 'technik', 'gewerbe'])
       .optional()
       .describe('Raumtyp für Raumgraph und Fluchtweg-Check'),
+    zonenArt: z
+      .enum(['parzelle'])
+      .optional()
+      .describe(
+        'Site-Marker (D8/H-1): «parzelle» kennzeichnet eine importierte Kataster-Parzelle statt eines Raums — nimmt die Zone von Raumtyp-Checks und der SIA-416-Flächensumme aus (die sia-Klasse bleibt, z.B. für die Schwarzplan-Erkennung).',
+      ),
   }),
   summarize: (p) => `Zone «${p.name}» (${p.sia})`,
   run: (doc, p) => {
@@ -562,6 +568,7 @@ export const createZone = registerCommand({
       sia: p.sia,
       ...(p.raumTyp ? { raumTyp: p.raumTyp } : {}),
       ...(p.program ? { program: p.program } : {}),
+      ...(p.zonenArt ? { zonenArt: p.zonenArt } : {}),
     };
     return [added(zone)];
   },

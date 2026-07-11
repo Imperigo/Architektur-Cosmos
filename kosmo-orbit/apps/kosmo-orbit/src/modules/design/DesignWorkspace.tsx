@@ -3842,6 +3842,9 @@ function StandortSuche() {
         outline: imp.outline,
         name: `Parzelle ${standort.label}`,
         sia: 'KF',
+        // Site-Marker (D8/H-1): keine Raumtyp-Checks/SIA-416-Flächenzählung
+        // für die importierte Kataster-Parzelle (derive/checks.ts, sia416.ts).
+        zonenArt: 'parzelle',
       });
       setMeldung(`Parzelle importiert (${imp.flaeche.toLocaleString('de-CH')} m², Nord = +y).`);
     } catch {
