@@ -80,6 +80,17 @@ function preset(phase: SiaPhase, imFokus: readonly FaehigkeitId[], umbauFilterDe
  * in `model/doc.ts`).
  */
 export const PHASEN_PRESETS: Record<SiaPhase, PhasenPreset> = {
+  // Strategische Planung (SIA 112 Ph. 1, additiv v0.7.2): laut
+  // `V072-VISUELLES-UPDATE-SPEZ.md` §4 (BASE-Zeile 1) ist diese Phase
+  // prepare/data/chat-lastig — reine Grundlagen-/Bedarfsklärung, noch VOR
+  // dem eigentlichen Wettbewerb. Keine der sechs Fähigkeits-Icons deckt
+  // "Grundlagen/Wissen sammeln" direkt ab (das ist KosmoPrepare/KosmoData/
+  // Kosmo-Speak, ausserhalb dieser Design-Werkzeugleisten-Gruppe) — die
+  // einzige der sechs, die schon VOR einem echten Wettbewerbsbeitrag
+  // sinnvoll ist, ist eine erste, grobe Machbarkeits-Massenstudie (dieselbe
+  // Fähigkeit, die auch 'wettbewerb' im Fokus hat — hier nur sie allein,
+  // ohne die Besonnung, die einen konkreteren Baukörper voraussetzt).
+  strategie: preset('strategie', ['volumenstudien']),
   // Wettbewerb/Studie (SIA 4.22): Massenstudien + Besonnungsnachweis sind die
   // beiden Entscheidungsgrundlagen eines Wettbewerbsbeitrags.
   wettbewerb: preset('wettbewerb', ['volumenstudien', 'sonne']),

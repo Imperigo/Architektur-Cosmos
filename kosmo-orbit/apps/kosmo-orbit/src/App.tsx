@@ -35,6 +35,7 @@ import { TrainWorkspace } from './modules/train/TrainWorkspace';
 import { AssetWorkspace } from './modules/asset/AssetWorkspace';
 import { DevWorkspace } from './modules/dev/DevWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
+import { PhasenLeiste } from './shell/PhasenLeiste';
 import { registerActions } from './shell/palette';
 import { Kurzbefehle } from './shell/Kurzbefehle';
 import {
@@ -431,6 +432,11 @@ export function App() {
             </Badge>
           </>
         )}
+        <Hairline vertical />
+        {/* V0.7.2 W2-C (Paket 03, Spec §4): App-weiter SIA-112-Schnellzugriff —
+            ergänzt `sia-phase-select` (fein, nur in KosmoDesign), schreibt
+            über dieselbe `design.siaPhaseSetzen`-Quelle. */}
+        <PhasenLeiste />
         <div style={{ flex: 1 }} />
         {/* Fokus-Systematik (docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md): die Stufe
             sitzt am umschliessenden Element — opacity wirkt so auf die ganze
@@ -944,6 +950,7 @@ export function App() {
             : {})}
         />
       )}
+      {/* v072: cursor-ebene */}
     </div>
   );
 }

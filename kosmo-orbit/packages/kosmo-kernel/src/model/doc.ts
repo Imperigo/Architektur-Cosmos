@@ -70,15 +70,19 @@ export function fruehePhase(phase: BauPhase): boolean {
  * Plan-Detaillierungsgrad (das bleibt `BauPhase` oben) — reiner
  * Kosmo-sichtbarer Statuszustand, additiv zu `DocSettings`, kein Kernel-Bruch.
  *
- * `'wettbewerb'` = SIA 4.22 (Auswahlverfahren/Studie, vor der eigentlichen
- * SIA-102-Nummerierung), `'vorprojekt'` = SIA 31, `'bauprojekt'` = SIA 32,
- * `'bewilligung'` = SIA 33 (Baugesuch), `'ausschreibung'` = SIA 41,
- * `'ausfuehrung'` = SIA 51/52 (Ausführungsprojekt/Werkplanung/Bauausführung),
- * `'abnahme'` = Gebäudeabnahme nach Bauende — SIA 102 kennt dafür keine
- * eigene Teilphase-Nummer im OCR-Korpus, hier ehrlich als eigene,
- * unbelegte Arbeitsphase geführt (kein SIA-Zitat erfunden).
+ * `'strategie'` = SIA 112 Phase 1 (Strategische Planung — Bedarf/Ziele/
+ * Machbarkeit, VOR der eigentlichen Auswahlverfahren-Nummerierung; additiv
+ * v0.7.2, `docs/V072-VISUELLES-UPDATE-SPEZ.md` §4), `'wettbewerb'` = SIA 4.22
+ * (Auswahlverfahren/Studie, vor der eigentlichen SIA-102-Nummerierung),
+ * `'vorprojekt'` = SIA 31, `'bauprojekt'` = SIA 32, `'bewilligung'` = SIA 33
+ * (Baugesuch), `'ausschreibung'` = SIA 41, `'ausfuehrung'` = SIA 51/52
+ * (Ausführungsprojekt/Werkplanung/Bauausführung), `'abnahme'` =
+ * Gebäudeabnahme nach Bauende — SIA 102 kennt dafür keine eigene
+ * Teilphase-Nummer im OCR-Korpus, hier ehrlich als eigene, unbelegte
+ * Arbeitsphase geführt (kein SIA-Zitat erfunden).
  */
 export type SiaPhase =
+  | 'strategie'
   | 'wettbewerb'
   | 'vorprojekt'
   | 'bauprojekt'
@@ -89,6 +93,8 @@ export type SiaPhase =
 
 export function siaPhaseLabel(phase: SiaPhase): string {
   switch (phase) {
+    case 'strategie':
+      return 'Strategische Planung (SIA 112 Ph. 1)';
     case 'wettbewerb':
       return 'Wettbewerb/Studie (SIA 4.22)';
     case 'vorprojekt':
@@ -115,6 +121,11 @@ export function siaPhaseLabel(phase: SiaPhase): string {
  */
 export function empfohlenePlanPhase(siaPhase: SiaPhase): BauPhase {
   switch (siaPhase) {
+    case 'strategie':
+      // Vor dem eigentlichen Wettbewerb entsteht noch kein Plan — dieselbe
+      // reduzierte Poché-Empfehlung wie 'wettbewerb' ist der ehrlichste
+      // Nächstwert (kein eigener, unbelegter Detaillierungsgrad erfunden).
+      return 'wettbewerb';
     case 'wettbewerb':
       return 'wettbewerb';
     case 'vorprojekt':
@@ -352,7 +363,10 @@ export interface DocSettings {
 export function aufgeloesteDarstellung3d(settings: DocSettings): 'material' | 'weiss' | 'schwarz' {
   const modus = settings.darstellung3d ?? 'auto';
   if (modus !== 'auto') return modus;
-  const fruehePhasen: SiaPhase[] = ['wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung'];
+  // v0.7.2: 'strategie' (SIA 112 Ph. 1, additiv) liegt VOR 'wettbewerb' —
+  // zählt aus demselben Grund als «früh» (noch kein Weissmodell-Anlass für
+  // Material).
+  const fruehePhasen: SiaPhase[] = ['strategie', 'wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung'];
   return fruehePhasen.includes(settings.siaPhase) ? 'weiss' : 'material';
 }
 

@@ -2541,7 +2541,20 @@ export const setSiaPhase = registerCommand({
   description:
     'Setzt die aktuelle SIA-Teilphase des Projekts (Wettbewerb/Vorprojekt/Bauprojekt/Bewilligung/Ausschreibung/Ausführung/Abnahme) — der reale Projektstand im SIA-102/112-Zyklus vom Wettbewerb bis zur Gebäudeabnahme nach Bauende. Getrennt von der Plan-Detaillierung (design.phaseSetzen): dieser Command koppelt den Plan-Detaillierungsgrad NICHT automatisch, nennt aber in der Zusammenfassung, welcher dazu passen würde — Owner entscheidet selbst, ob und wann er umschaltet.',
   params: z.object({
-    siaPhase: z.enum(['wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung', 'ausschreibung', 'ausfuehrung', 'abnahme']),
+    // v0.7.2 (Stream W2-C, Spec §4/§11 «Bewusste Änderung: zod-SiaPhase»):
+    // 'strategie' additiv aufgenommen (SIA 112 Ph. 1) — die einzige zod-
+    // Settings-Prüfung, die den erweiterten `SiaPhase`-Typ tatsächlich
+    // durchsetzt (`design.siaPhaseSetzen` ist der einzige Schreibweg).
+    siaPhase: z.enum([
+      'strategie',
+      'wettbewerb',
+      'vorprojekt',
+      'bauprojekt',
+      'bewilligung',
+      'ausschreibung',
+      'ausfuehrung',
+      'abnahme',
+    ]),
   }),
   summarize: (p, doc) => {
     const empfohlen = empfohlenePlanPhase(p.siaPhase);

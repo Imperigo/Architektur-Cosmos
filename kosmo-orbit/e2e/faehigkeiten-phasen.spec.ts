@@ -20,6 +20,14 @@ import { waehleOption } from './helfer/waehleOption';
  * lässt alles unverändert.
  */
 
+declare global {
+  interface Window {
+    __kosmo: {
+      run: (commandId: string, params: unknown) => unknown;
+    };
+  }
+}
+
 async function oeffneKosmoDesign(page: Page): Promise<void> {
   await page.goto('/');
   await page.evaluate(() => {
@@ -149,4 +157,35 @@ test('Ablehnen-Pfad: «Nicht jetzt» schliesst das Angebot ohne jede Änderung',
   // Die SIA-Teilphase selbst hat trotzdem gewechselt (das Angebot betrifft
   // nur die Icon-Betonung, nicht den Projektstand) — sichtbar im Phasen-Badge.
   await expect(page.locator('[data-testid="statusleiste-phase"]')).toContainText('Ausschreibung');
+});
+
+/**
+ * v0.7.2 W2-C — BEWUSSTE Anpassung dieser Datei (Spec §11, einzige erlaubte
+ * Spec-Änderung ausserhalb der neuen Dateien): `'strategie'` (SIA 112 Ph. 1)
+ * additiv zu `SiaPhase` (`model/doc.ts`) + eigenes Preset
+ * (`phasen-presets.ts`, `['volumenstudien']`, s. dortiger Kommentar). Die
+ * bestehende `sia-phase-select`-Dropdown (DesignWorkspace.tsx) bleibt
+ * UNVERÄNDERT bei den bisherigen 7 Werten (kein Fremdbesitz angefasst) — der
+ * neue Wert ist nur über `design.siaPhaseSetzen` direkt (hier: der
+ * bestehende `window.__kosmo.run`-Testhaken) ODER die neue `PhasenLeiste`
+ * (`e2e/phasen-leiste.spec.ts`) erreichbar.
+ */
+test('+strategie (additiv v0.7.2): design.siaPhaseSetzen("strategie") zeigt das neue Label und bietet das Volumenstudien-Preset an', async ({
+  page,
+}) => {
+  await oeffneKosmoDesign(page);
+
+  await page.evaluate(() => window.__kosmo.run('design.siaPhaseSetzen', { siaPhase: 'strategie' }));
+  await expect(page.locator('[data-testid="statusleiste-phase"]')).toContainText('Strategische Planung (SIA 112 Ph. 1)');
+
+  const angebot = page.locator('[data-testid="phasen-preset-angebot"]');
+  await expect(angebot).toBeVisible();
+  await expect(angebot).toContainText('Strategische Planung');
+  await expect(angebot).toContainText('Volumenstudien');
+
+  await page.click('[data-testid="phasen-preset-anwenden"]');
+  await expect(page.locator('[data-testid="faehigkeit-volumenstudien"]')).toHaveCSS('opacity', '1');
+  // Rest gedämpft (nur EINE Fähigkeit im Fokus) — feste Anker bleiben.
+  await expect(page.locator('[data-testid="faehigkeit-kv"]')).toHaveCSS('opacity', '0.6');
+  await expect(page.locator('[data-testid="faehigkeit-submission"]')).toHaveCSS('opacity', '0.6');
 });

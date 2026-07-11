@@ -348,6 +348,7 @@
    `--k-karte-rot`/`--k-karte-jog`, der Kreisgeometrie folgend). */
 .orbit065-karte {
   display: block;
+  position: relative; /* Anker für `.orbit065-rang-kreis` (v0.7.2 W2-C) */
   width: 100%;
   box-sizing: border-box;
   padding: var(--k-s3) var(--k-s4);
@@ -388,6 +389,57 @@
 @media (prefers-reduced-motion: reduce) {
   .orbit065-karte {
     transform: none !important;
+  }
+}
+
+/* ── Hub-Rang-Kreise (v0.7.2 W2-C, Paket 03/05 — Spec §4 «Phasen & Ordnung»)
+   Untertool-Kreise nach Rang: Top-3 innen 64px + Rollenfarben-Border/Glow,
+   Mitte 54px, aussen 46px. Bewusst top-LEFT positioniert (nicht top-right —
+   `.orbit065-karte`s 45°-Eckenschnitt, s. `clip-path` oben, sitzt rechts).
+   Grösse/Border-Farbe kommen als JS-Variablen vom Aufrufer
+   (`OrbitStart.tsx`); die Rollenfarbe ist EXAKT dieselbe Quelle wie das
+   Icon selbst (`STATION_GLYPHE`, `werkzeug-glyphen.tsx`) — keine zweite,
+   eigene Farbtabelle. FLIP (Umsortierung) bewegt die ganze Zeile
+   (`.k-orbit-untertool-zeile`, `packages/kosmo-ui/src/flip.ts`), nicht
+   diesen Kreis einzeln — er teilt die Transition seines Elternteils. */
+/* Reserviert Platz LINKS für den Kreis (grösster Fall: 64px `innen`-Tier +
+   Abstand), statt Titel/Kurzbeschrieb darunter zu verdecken — `:has()` wird
+   von der Chromium-Version dieses Repos unterstützt (s. Präzedenz
+   `.orbit065-home-rechts` oben). */
+.orbit065-karte:has(.orbit065-rang-kreis) {
+  padding-left: calc(64px + var(--k-s4) + var(--k-s2));
+}
+.orbit065-rang-kreis {
+  --k-rang-groesse: 46px;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: var(--k-rang-groesse);
+  height: var(--k-rang-groesse);
+  border-radius: var(--k-radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--k-surface);
+  border: 1.5px solid var(--k-line-strong);
+  flex: none;
+  pointer-events: none;
+  transition: width var(--k-motion-fast), height var(--k-motion-fast), border-color var(--k-motion-fast), box-shadow var(--k-motion-fast);
+}
+.orbit065-rang-kreis--innen {
+  --k-rang-groesse: 64px;
+  border-color: var(--k-rang-rolle, var(--k-accent));
+  box-shadow: 0 0 0 2px var(--k-rang-rolle, var(--k-accent)), 0 0 10px 1px var(--k-rang-rolle, var(--k-accent));
+}
+.orbit065-rang-kreis--mitte {
+  --k-rang-groesse: 54px;
+}
+.orbit065-rang-kreis--aussen {
+  --k-rang-groesse: 46px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit065-rang-kreis {
+    transition: none;
   }
 }
 
@@ -464,6 +516,148 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--k-ink-faint);
+}
+
+/* ── PhasenLeiste (v0.7.2 W2-C, Paket 03 — Spec §4 «Phasen & Ordnung») ───
+   Segmented-Pill der 5 SIA-112-Gruppen im Header. Rund-Regel (Spec §0.1):
+   Aussenkontur UND jedes Segment sind Pills (`--k-radius-pill`). Aktives
+   Segment: Chip-Hintergrund `var(--k-raised)` + ein kleiner Signal-Punkt
+   VOR dem Label (theme-invariante Markenfarbe `--k-signal`, Spec §1). */
+.orbit065-phasen-leiste {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-pill);
+  background: var(--k-surface);
+}
+.orbit065-phasen-segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  background: transparent;
+  color: var(--k-ink-faint);
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: var(--k-radius-pill);
+  cursor: pointer;
+  transition: background var(--k-motion-fast), color var(--k-motion-fast);
+  white-space: nowrap;
+}
+.orbit065-phasen-segment:hover {
+  color: var(--k-ink);
+}
+.orbit065-phasen-segment--aktiv {
+  background: var(--k-raised);
+  color: var(--k-ink);
+}
+.orbit065-phasen-signal {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--k-radius-pill);
+  background: var(--k-signal, var(--k-accent));
+  flex: none;
+}
+@media (max-width: 1100px) {
+  /* Enger Header (viele Kopfleisten-Knöpfe, s. App.tsx) — nur kompaktere
+     Masse, der Text selbst bleibt unverändert (kein JS-Kürzen gebaut). */
+  .orbit065-phasen-segment {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+}
+
+/* ── EntwurfsDock (v0.7.2 W2-C, Paket 03/05 — Spec §4 «Wirkung») ─────────
+   Layout 1:1 aus den vorherigen Inline-Styles übernommen (nur die
+   Style-QUELLE wandert in eine Klasse, damit die Glas-Optik unten per
+   Theme-Attribut-Selektor gezielt NUR im orbit-Theme überschreiben kann —
+   `EntwurfsDock.tsx` selbst importiert diese Datei NICHT eigens, das
+   Bundle lädt sie bereits global über `OrbitStart.tsx`/`App.tsx`, s.
+   Kopfkommentar dieser Datei). */
+.orbit065-dock {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--k-radius-pill);
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  box-shadow: var(--k-shadow-raised);
+}
+/* Glas-Optik NUR im orbit-Theme (Spec §4: rgba(20,23,31,.55) + blur 22 +
+   1px-Highlight) — via Theme-Attribut, `aura.css`/Stream-A-Tokens bleiben
+   unangetastet (eigene Klasse, kein Freeze-Bruch). */
+[data-theme='orbit'] .orbit065-dock {
+  background: rgba(20, 23, 31, 0.55);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(244, 246, 250, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(244, 246, 250, 0.08),
+    var(--k-shadow-raised);
+}
+
+/* Kreisrunde Knöpfe (Spec §4 + Grundregel §0.1 «Rund statt Block») — Grösse
+   selbst bleibt die bisherige 32×32 (Inline-Style in `EntwurfsDock.tsx`),
+   hier nur die Form + der Hover-Sog-Übergang. */
+.orbit065-dock-knopf {
+  transition: transform 180ms var(--k-ease-standard);
+}
+/* Hover-Sog (Spec §4: scale 1.22/translateY −8, 180ms, NUR Nachbarn) — der
+   gehoverte Knopf selbst bleibt unverändert, nur seine direkten
+   Geschwister im Dock-Stapel wachsen ihm entgegen. Bekannte Grenze: die
+   Trenn-Hairline zwischen den zwei Knopf-Gruppen unterbricht die
+   Geschwisterkette (kein Sog ÜBER die Hairline hinweg) — akzeptiert, s.
+   Baubericht. */
+.orbit065-dock-knopf:has(+ .orbit065-dock-knopf:hover),
+.orbit065-dock-knopf:hover + .orbit065-dock-knopf {
+  transform: scale(1.22) translateY(-8px);
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit065-dock-knopf {
+    transition: none;
+  }
+  .orbit065-dock-knopf:has(+ .orbit065-dock-knopf:hover),
+  .orbit065-dock-knopf:hover + .orbit065-dock-knopf {
+    transform: none;
+  }
+}
+
+/* Nutzungs-Pop (Spec §4: `kPop` 450ms) — eigener Name `k-dock-pop`
+   (kosmo-feedback.css/dessen Keyframes gehören Stream D, NICHT anfassen). */
+@keyframes k-dock-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.22);
+  }
+  70% {
+    transform: scale(0.94);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.orbit065-dock-pop {
+  animation: k-dock-pop 450ms var(--k-ease-bounce);
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit065-dock-pop {
+    animation: none;
+  }
 }
 
 /* ── Kurzbefehle: Technik-Stimme (Mass 7) — Mono-Kürzel rechtsbündig ───── */

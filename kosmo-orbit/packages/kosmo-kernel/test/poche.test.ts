@@ -239,6 +239,10 @@ describe('doc.ts — BauPhase additiv (E1)', () => {
 
   it('empfohlenePlanPhase folgt dem 6-Stufen-Mapping', () => {
     const erwartet: Record<SiaPhase, BauPhase> = {
+      // v0.7.2: 'strategie' additiv (SIA 112 Ph. 1) — erforderliche Ergänzung
+      // dieses `Record<SiaPhase, …>`-Literals, sonst TS-Fehler (kein Golden-
+      // Bezug, reine Typvollständigkeit).
+      strategie: 'wettbewerb',
       wettbewerb: 'wettbewerb',
       vorprojekt: 'vorprojekt',
       bauprojekt: 'bauprojekt',

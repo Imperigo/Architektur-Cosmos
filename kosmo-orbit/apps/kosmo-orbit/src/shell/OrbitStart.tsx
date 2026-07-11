@@ -1,11 +1,14 @@
 import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
   useState,
   type CSSProperties,
   type FocusEvent as ReactFocusEvent,
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
 } from 'react';
-import { moduleHue, type ModuleId } from '@kosmo/ui';
+import { flipFirst, flipPlay, moduleHue, type ModuleId } from '@kosmo/ui';
 import {
   ORBIT_HAUPTWERKZEUGE,
   type HauptwerkzeugId,
@@ -13,6 +16,21 @@ import {
   type OrbitUntertool,
 } from './orbit-werkzeuge';
 import { IconHauptData, IconHauptDesign, IconHauptKosmo, IconHauptOffice } from './orbit-icons';
+import { STATION_GLYPHE, WerkzeugGlyphe } from './werkzeug-glyphen';
+import type { StationModulId } from './stations-werkzeuge';
+import {
+  anfangsKontingent,
+  naechsteReihenfolge,
+  STATION_ZU_TOOLID,
+  tierFuerPosition,
+  type RangTier,
+  type ToolId,
+  type UmordnungsKontingent,
+} from '../state/orbit-rang';
+import { nutzungsProfil } from '../state/oberflaeche-adaption-kern';
+import { useProject } from '../state/project-store';
+import type { SiaPhase } from '@kosmo/kernel';
+import type { FlipRechteck } from '@kosmo/ui';
 import './orbit-065.css';
 
 /**
@@ -130,10 +148,170 @@ function verlaesstKnoten(
   return !knoten.contains(naechstes);
 }
 
+/**
+ * V0.7.2 W2-C (Paket 03/05, Spec §4 «Hub-Rang») — Untertool-Kreise nach Rang.
+ * Station → ToolId (Rückrichtung der Spec-§4-Tabelle: "draw→design ·
+ * viz→vis · data→data · pipeline→dev · chat→speak · publish→publish ·
+ * prepare→prepare · connect→(Sync, zählt nicht als Station)"). Nur Stationen
+ * mit einer echten BASE-Matrix-Zeile sind rang-fähig — die übrigen
+ * Untertools (Modellbaum/Sketch/Modell/Train/Doc/Asset/KosmoOffice) bleiben
+ * an ihrer ursprünglichen Position stehen (nur die RANG-FÄHIGEN Slots werden
+ * nach Rang neu befüllt, s. `mitRang`) — «nur Reihenfolge/Grösse/Transform
+ * ändern» (Harter Vertrag, Spec §11) bleibt damit so wörtlich wie möglich:
+ * kein Untertool verlässt seinen Platz, wenn es selbst nicht rang-fähig ist.
+ * `STATION_ZU_TOOLID` selbst lebt in `state/orbit-rang.ts` (einzige Quelle,
+ * `EntwurfsDock.tsx` importiert dieselbe Tabelle für seine
+ * `nutzungMelden`-Zuordnung).
+ */
+function toolIdVon(u: OrbitUntertool): ToolId | undefined {
+  // `testidOverride` markiert einen NICHT-kanonischen Zweitverweis auf
+  // dieselbe Station (z. B. «Modell» → `design`, dieselbe moduleId wie
+  // «Draw») — der zählt NICHT ein zweites Mal als rang-fähiger Slot.
+  if (u.testidOverride || !u.moduleId) return undefined;
+  return STATION_ZU_TOOLID[u.moduleId as StationModulId];
+}
+
+/** Die rang-fähigen ToolIds EINES Fächers, in Autorenreihenfolge (Eingabe
+ *  für `naechsteReihenfolge` — die Reihenfolge hier entscheidet nur über
+ *  stabile Gleichstand-Sortierung, nicht über den Rang selbst). */
+function rangfaehigeToolIds(untertools: readonly OrbitUntertool[]): ToolId[] {
+  const ids: ToolId[] = [];
+  for (const u of untertools) {
+    const t = toolIdVon(u);
+    if (t && !ids.includes(t)) ids.push(t);
+  }
+  return ids;
+}
+
+/** Setzt die rang-fähigen SLOTS einer (bereits rollen-sortierten) Untertool-
+ *  Liste auf die übergebene Rang-Reihenfolge um — nicht-rang-fähige
+ *  Untertools bleiben exakt an ihrer Position (s. Kopfkommentar). */
+function mitRang(untertools: readonly OrbitUntertool[], reihenfolge: readonly ToolId[]): OrbitUntertool[] {
+  if (reihenfolge.length === 0) return [...untertools];
+  const zuUntertool = new Map<ToolId, OrbitUntertool>();
+  for (const u of untertools) {
+    const t = toolIdVon(u);
+    if (t) zuUntertool.set(t, u);
+  }
+  const queue = [...reihenfolge];
+  return untertools.map((u) => {
+    const t = toolIdVon(u);
+    if (!t) return u;
+    const naechste = queue.shift();
+    return naechste !== undefined ? (zuUntertool.get(naechste) ?? u) : u;
+  });
+}
+
+/** Icon-Grösse (px) innerhalb des Rang-Kreises je Tier — kleiner als der
+ *  Kreis selbst (`TIER_GROESSE`, `orbit-rang.ts`), damit ein sichtbarer
+ *  Ring/Rand um das Icon bleibt. */
+const ICON_GROESSE: Record<RangTier, number> = { innen: 28, mitte: 24, aussen: 20 };
+
+/**
+ * Rang-Reihenfolge EINES Fächers, mit Hysterese/Anti-Nerv-Kontingent über
+ * die Lebensdauer DIESER Komponenten-Instanz hinweg (s. `orbit-rang.ts`
+ * Kopfkommentar zu `darfUmordnen`/`naechsteReihenfolge`). Absichtlich
+ * PRO-MOUNT-Zustand (kein Modul-Singleton): ein Wechsel zurück zur Zentrale
+ * (Remount von `OrbitStart`) darf frisch nach der aktuellen Phase sortieren
+ * — «Sitzungsminute» meint hier die laufende Betrachtung des Hubs, nicht
+ * die ganze App-Sitzung.
+ */
+function useHubRang(rangfaehig: readonly ToolId[], phase: SiaPhase): ToolId[] {
+  const kontingentRef = useRef<UmordnungsKontingent>(anfangsKontingent());
+  const raengeRef = useRef<Record<ToolId, number> | null>(null);
+  const rangfaehigSchluessel = rangfaehig.join(',');
+
+  const [reihenfolge, setReihenfolge] = useState<ToolId[]>(() => {
+    if (rangfaehig.length === 0) return [];
+    const ergebnis = naechsteReihenfolge({
+      toolIds: rangfaehig,
+      siaPhase: phase,
+      nutzung: nutzungsProfil(),
+      alteReihenfolge: [],
+      alteRaenge: null,
+      kontingent: kontingentRef.current,
+      jetztMs: Date.now(),
+    });
+    kontingentRef.current = ergebnis.kontingent;
+    raengeRef.current = ergebnis.raenge;
+    return ergebnis.reihenfolge;
+  });
+
+  useEffect(() => {
+    if (rangfaehig.length === 0) return;
+    const ergebnis = naechsteReihenfolge({
+      toolIds: rangfaehig,
+      siaPhase: phase,
+      nutzung: nutzungsProfil(),
+      alteReihenfolge: reihenfolge,
+      alteRaenge: raengeRef.current,
+      kontingent: kontingentRef.current,
+      jetztMs: Date.now(),
+    });
+    kontingentRef.current = ergebnis.kontingent;
+    raengeRef.current = ergebnis.raenge;
+    if (ergebnis.umgeordnet) setReihenfolge(ergebnis.reihenfolge);
+    // Bewusst NUR [phase, rangfaehigSchluessel] — Nutzung wird bei jedem
+    // Klick im EntwurfsDock gemeldet (anderes Modul), nicht hier live
+    // beobachtet; ein Phasenwechsel oder ein frischer Fächer-Inhalt genügt,
+    // um mit dem NEUESTEN Nutzungsstand neu zu rechnen.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, rangfaehigSchluessel]);
+
+  return reihenfolge;
+}
+
 export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
   const [aktiverHaupt, setAktiverHaupt] = useState<HauptwerkzeugId | null>(null);
 
   const untertoolsVon = (h: OrbitHauptwerkzeug) => sortiereNachRolle(h.untertools, rollenPrio);
+
+  // V0.7.2 W2-C (Hub-Rang, Spec §4): `revision` löst einen Re-Render aus,
+  // sobald sich `doc.settings.siaPhase` ändert (z. B. Klick auf
+  // `PhasenLeiste.tsx`, App-weiter Header) — `doc` selbst wird mutable über
+  // `getState()` gelesen (dasselbe Muster wie `DesignWorkspace.tsx`).
+  const revision = useProject((s) => s.revision);
+  void revision;
+  const aktuellePhase = useProject.getState().doc.settings.siaPhase;
+
+  const designHaupt = ORBIT_HAUPTWERKZEUGE.find((h) => h.id === 'design')!;
+  const dataHaupt = ORBIT_HAUPTWERKZEUGE.find((h) => h.id === 'data')!;
+  const kosmoHaupt = ORBIT_HAUPTWERKZEUGE.find((h) => h.id === 'kosmo')!;
+  const designReihenfolge = useHubRang(rangfaehigeToolIds(untertoolsVon(designHaupt)), aktuellePhase);
+  const dataReihenfolge = useHubRang(rangfaehigeToolIds(untertoolsVon(dataHaupt)), aktuellePhase);
+  const kosmoReihenfolge = useHubRang(rangfaehigeToolIds(untertoolsVon(kosmoHaupt)), aktuellePhase);
+  const rangReihenfolgeProHaupt: Partial<Record<HauptwerkzeugId, ToolId[]>> = {
+    design: designReihenfolge,
+    data: dataReihenfolge,
+    kosmo: kosmoReihenfolge,
+  };
+
+  // FLIP (Spec §4: 240–500ms `--k-ease-standard` bei Umsortierung) — Rang-
+  // Kreise bleiben permanent im DOM (Harter Vertrag), nur ihre Position im
+  // Fächer ändert sich; `flipPlay` prüft `prefers-reduced-motion` selbst
+  // (kein Sonderfall hier nötig, s. `packages/kosmo-ui/src/flip.ts`).
+  const kreisRefs = useRef<Map<HauptwerkzeugId, Map<ToolId, HTMLElement>>>(new Map());
+  const vorherigeRechtecke = useRef<Map<HauptwerkzeugId, Map<ToolId, FlipRechteck>>>(new Map());
+  useLayoutEffect(() => {
+    for (const hauptId of Object.keys(rangReihenfolgeProHaupt) as HauptwerkzeugId[]) {
+      const reihenfolge = rangReihenfolgeProHaupt[hauptId] ?? [];
+      const refs = kreisRefs.current.get(hauptId);
+      if (!refs) continue;
+      let rechtecke = vorherigeRechtecke.current.get(hauptId);
+      if (!rechtecke) {
+        rechtecke = new Map();
+        vorherigeRechtecke.current.set(hauptId, rechtecke);
+      }
+      for (const toolId of reihenfolge) {
+        const el = refs.get(toolId);
+        if (!el) continue;
+        const vorher = rechtecke.get(toolId);
+        if (vorher) flipPlay(el, vorher);
+        rechtecke.set(toolId, flipFirst(el));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [designReihenfolge.join(','), dataReihenfolge.join(','), kosmoReihenfolge.join(',')]);
 
   const klickHauptwerkzeug = (h: OrbitHauptwerkzeug) => {
     if (h.kommend) {
@@ -165,6 +343,11 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
           const Icon = ICONS[h.id];
           const delay = verzoegerung(index);
           const offen = aktiverHaupt === h.id;
+          // Hub-Rang (Spec §4): rang-fähige Slots (s. `toolIdVon`) folgen der
+          // Rang-Reihenfolge dieses Fächers, alle anderen Untertools bleiben
+          // an ihrer rollen-sortierten Position (s. `mitRang`-Kommentar).
+          const rangReihenfolge = rangReihenfolgeProHaupt[h.id] ?? [];
+          const untertoolsFuerAnzeige = mitRang(untertoolsVon(h), rangReihenfolge);
           return (
             <div
               key={h.id}
@@ -233,7 +416,7 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                     className={`k-orbit-faecher${offen ? ' offen' : ''}`}
                     data-testid={`orbit-faecher-${h.id}`}
                   >
-                    {untertoolsVon(h).map((u, kartenIndex) => {
+                    {untertoolsFuerAnzeige.map((u, kartenIndex) => {
                       const testid = u.kommend
                         ? `orbit-office-${u.id}`
                         : (u.testidOverride ?? (u.moduleId ? `module-${u.moduleId}` : `orbit-sub-${u.id}`));
@@ -247,11 +430,28 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                       // Öffnen. Der Klassenwechsel (weg/da) lässt die
                       // Animation bei jedem `offen`-Wechsel neu anlaufen.
                       const staggerVerzoegerung = `${Math.min(kartenIndex, 8) * 24}ms`;
+                      // Hub-Rang (Spec §4): Kreis-Grösse/-Betonung nur für
+                      // rang-fähige Untertools (s. Kopfkommentar `toolIdVon`).
+                      const rangToolId = toolIdVon(u);
+                      const rangPosition = rangToolId ? rangReihenfolge.indexOf(rangToolId) : -1;
+                      const rangTier: RangTier | null =
+                        rangToolId && rangPosition >= 0 ? tierFuerPosition(rangPosition) : null;
+                      const rangStation = rangTier && u.moduleId ? STATION_GLYPHE[u.moduleId as StationModulId] : undefined;
                       return (
                         <div
                           key={u.id}
                           className={`k-orbit-untertool-zeile${offen ? ' orbit065-sheet-kind' : ''}`}
                           style={offen ? ({ animationDelay: staggerVerzoegerung } as CSSProperties) : undefined}
+                          ref={(el) => {
+                            if (!rangToolId) return;
+                            let refs = kreisRefs.current.get(h.id);
+                            if (!refs) {
+                              refs = new Map();
+                              kreisRefs.current.set(h.id, refs);
+                            }
+                            if (el) refs.set(rangToolId, el);
+                            else refs.delete(rangToolId);
+                          }}
                         >
                           <button
                             type="button"
@@ -271,6 +471,19 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                               onOeffnen(u.moduleId);
                             }}
                           >
+                            {rangTier && rangStation && (
+                              // Hub-Rang-Kreis (Spec §4): Top-3 innen 64px +
+                              // Rollenfarben-Border/Glow, Mitte 54, aussen 46
+                              // — Rollenfarbe AUS DERSELBEN Quelle wie das
+                              // Icon (`STATION_GLYPHE`, keine Zweitquelle).
+                              <span
+                                className={`orbit065-rang-kreis orbit065-rang-kreis--${rangTier}`}
+                                style={{ '--k-rang-rolle': `var(${rangStation.rolle})` } as CSSProperties}
+                                aria-hidden
+                              >
+                                <WerkzeugGlyphe art={rangStation.art} rolle={rangStation.rolle} size={ICON_GROESSE[rangTier]} />
+                              </span>
+                            )}
                             <span className="orbit065-karte-titel">
                               {u.titel}
                               {u.kommend ? ' · kommend' : ''}

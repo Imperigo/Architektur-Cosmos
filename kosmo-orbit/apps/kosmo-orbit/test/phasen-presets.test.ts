@@ -12,13 +12,15 @@ import {
 /**
  * A8 (K18): reine Datentabelle, kein DOM/React nötig (Muster A4). Beweist
  * die drei Owner-Anforderungen aus dem Bauauftrag: (1) vollständig — jede
- * der 7 SIA-Teilphasen hat ein Preset; (2) referenzierte Fähigkeits-IDs
- * existieren; (3) die Plan-Detaillierungs-Empfehlung läuft ausschliesslich
- * über die bestehende Kernel-Funktion `empfohlenePlanPhase` (keine zweite,
- * divergierende Quelle).
+ * der (seit v0.7.2, W2-C: 8) SIA-Teilphasen hat ein Preset; (2) referenzierte
+ * Fähigkeits-IDs existieren; (3) die Plan-Detaillierungs-Empfehlung läuft
+ * ausschliesslich über die bestehende Kernel-Funktion `empfohlenePlanPhase`
+ * (keine zweite, divergierende Quelle).
  */
 
 const ALLE_SIA_PHASEN: readonly SiaPhase[] = [
+  // v0.7.2: 'strategie' additiv (SIA 112 Ph. 1) — s. `phasen-presets.ts`.
+  'strategie',
   'wettbewerb',
   'vorprojekt',
   'bauprojekt',
@@ -29,7 +31,7 @@ const ALLE_SIA_PHASEN: readonly SiaPhase[] = [
 ];
 
 describe('PHASEN_PRESETS — vollständig, je SIA-Teilphase genau ein Preset', () => {
-  it('kennt exakt die 7 SIA-Teilphasen, keine mehr, keine weniger', () => {
+  it('kennt exakt die 8 SIA-Teilphasen (inkl. additiv "strategie"), keine mehr, keine weniger', () => {
     expect(Object.keys(PHASEN_PRESETS).sort()).toEqual([...ALLE_SIA_PHASEN].sort());
   });
 

@@ -1,7 +1,8 @@
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Hairline, KButton } from '@kosmo/ui';
 import type { StationModulId } from '../../shell/stations-werkzeuge';
 import { STATION_GLYPHE, WerkzeugGlyphe } from '../../shell/werkzeug-glyphen';
+import { STATION_ZU_TOOLID, toolNutzungMelden } from '../../state/orbit-rang';
 
 /**
  * K16 (Owner-Befund, wörtlich): «Drei Entwurfs-Icons in KosmoDesign: (1)
@@ -36,6 +37,18 @@ import { STATION_GLYPHE, WerkzeugGlyphe } from '../../shell/werkzeug-glyphen';
  * `var(--k-accent-ink)` (die für genau diesen Hintergrund kontrastierende
  * Textfarbe) — nur für sein eigenes Subtree, alle anderen Glyphen im Dock
  * bleiben unangetastet.
+ *
+ * V0.7.2 W2-C (Paket 03/05, Spec §4 «Wirkung»): Glas-Optik (nur im orbit-
+ * Theme, via `orbit065-dock`-Klasse + `[data-theme='orbit']`-Attribut-
+ * Selektor in `orbit-065.css` — Stream A/`aura.css` bleiben unangetastet),
+ * kreisrunde Knöpfe (`--k-radius-pill`), Nutzungs-Pop (`k-dock-pop`, 450ms)
+ * bei JEDEM Klick, Hover-Sog (Nachbarn skalieren via CSS
+ * `:has()`/Geschwister-Selektoren) UND `nutzungMelden('orbit:'+toolId)`
+ * für jeden Klick, dessen Station eine echte BASE-Matrix-ToolId hat
+ * (`STATION_ZU_TOOLID`, `state/orbit-rang.ts` — einzige Quelle, KEINE
+ * eigene Zweit-Tabelle hier). ALLE testids/titles/DOM-Struktur/Icons/Klick-
+ * Callbacks aus W1-B bleiben exakt — nur Optik + der zusätzliche
+ * `nutzungMelden`-Seiteneffekt sind neu.
  */
 
 export type EntwurfsModus = 'sprechen' | 'skizzieren' | 'cad';
@@ -113,25 +126,26 @@ export function EntwurfsDock({
     'dock-publish': onDockPublish,
     'dock-prepare': onDockPrepare,
   };
+
+  // Nutzungs-Pop (Spec §4: `kPop` 450ms) bei JEDEM Dock-Klick — `poppendId`
+  // trägt das `testid` des zuletzt geklickten Knopfs, `onAnimationEnd` räumt
+  // wieder auf (derselbe Trick wie die bestehenden Sheet-Klassen in
+  // `orbit-065.css`: Klasse weg/da lässt die Animation bei jedem Klick neu
+  // anlaufen, auch bei schnellen Wiederholklicks auf denselben Knopf).
+  const [poppendId, setPoppendId] = useState<string | null>(null);
+
+  /** `nutzungMelden` (Spec §4) — NUR für Stationen mit echter BASE-Matrix-
+   *  ToolId (`STATION_ZU_TOOLID`); Skizzieren/KosmoDraw(Modellbaum) haben
+   *  keine — dort bleibt der Aufruf ein No-op (kein erfundener ToolId-Wert). */
+  function klick(testid: string, station: StationModulId, original: () => void): void {
+    setPoppendId(testid);
+    const toolId = STATION_ZU_TOOLID[station];
+    if (toolId) toolNutzungMelden(toolId);
+    original();
+  }
+
   return (
-    <div
-      data-testid="entwurf-dock"
-      style={{
-        position: 'absolute',
-        left: 12,
-        top: '50%',
-        transform: 'translateY(-50%)',
-        zIndex: 3,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4,
-        background: 'var(--k-surface)',
-        border: '1px solid var(--k-line)',
-        borderRadius: 'var(--k-radius-md)',
-        padding: 4,
-        boxShadow: 'var(--k-shadow-raised)',
-      }}
-    >
+    <div data-testid="entwurf-dock" className="orbit065-dock">
       {EINTRAEGE.map(({ modus: m, testid, titel, station }) => {
         const aktiv = modus === m;
         return (
@@ -143,7 +157,9 @@ export function EntwurfsDock({
             aria-label={titel}
             aria-pressed={aktiv}
             data-testid={testid}
-            onClick={aktion[m]}
+            className={`orbit065-dock-knopf${poppendId === testid ? ' orbit065-dock-pop' : ''}`}
+            onClick={() => klick(testid, station, aktion[m])}
+            onAnimationEnd={() => setPoppendId((id) => (id === testid ? null : id))}
             style={{
               width: 32,
               height: 32,
@@ -151,6 +167,7 @@ export function EntwurfsDock({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              borderRadius: 'var(--k-radius-pill)',
               // Kontrast-Fix (s. Kopfkommentar): auf dem aktiven Accent-Knopf
               // löst `var(--k-ink)` in der Glyphe die kontrastierende
               // Vordergrundfarbe des Knopfs auf statt der globalen Tinte.
@@ -172,8 +189,19 @@ export function EntwurfsDock({
           title={titel}
           aria-label={titel}
           data-testid={testid}
-          onClick={stationsAktion[testid]}
-          style={{ width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.85 }}
+          className={`orbit065-dock-knopf${poppendId === testid ? ' orbit065-dock-pop' : ''}`}
+          onClick={() => klick(testid, station, stationsAktion[testid]!)}
+          onAnimationEnd={() => setPoppendId((id) => (id === testid ? null : id))}
+          style={{
+            width: 32,
+            height: 32,
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 'var(--k-radius-pill)',
+            opacity: 0.85,
+          }}
         >
           <WerkzeugGlyphe {...STATION_GLYPHE[station]} size={20} />
         </KButton>
