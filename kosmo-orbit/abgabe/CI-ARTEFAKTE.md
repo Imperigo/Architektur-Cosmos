@@ -40,3 +40,14 @@ GitHub-Release-Tag `desktop-latest` (stabile Dateinamen
 versioniert). Genau diese Links zeigt `architekturkosmos.ch/orbit` an — der
 volle Ablauf inkl. Versions-Bump, Build-Trigger und Obsidian-Release-Notiz
 steht in `../docs/RELEASE-ABLAUF.md`.
+
+## Stand 11.07.2026 (gebündelter Release v0.7.1 + v0.7.2)
+
+Build-Requests (Desktop + Pages + iOS) auf `c9aa547` angestossen. **Pages ist
+verifiziert:** der Workflow hat um 23:34 UTC nach `gh-pages` deployt, und
+`https://imperigo.github.io/Architektur-Cosmos/` liefert den Bundle mit
+`version:"v0.7.2"` im Wordmark (direkt im ausgelieferten JS geprüft).
+**Desktop-/iOS-Asset-Zählung (18 Assets unter `desktop-latest`) steht noch
+aus:** diese Session hatte keinen GitHub-API-Zugriff (Connector nicht
+autorisiert) — Verifikation wird mit dem 0.7.3-Finale oder per Owner-Blick
+auf die Actions-Seite nachgereicht.
