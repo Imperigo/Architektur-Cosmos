@@ -176,4 +176,44 @@ export const shadow = {
   },
 } as const;
 
-export type ThemeName = 'paper' | 'ink';
+/**
+ * Orbit-Thema (`[data-theme='orbit']` in aura.css, v0.7.2 §1) — der neue
+ * Standard (Owner-Entscheid 11.07.). Hexwerte exakt gespiegelt; NICHT vom
+ * `token-spiegel.test.ts`-Wächter geprüft (der bleibt auf paper/ink+:root
+ * beschränkt, siehe dort), hier trotzdem als vollständiger TS-Spiegel für
+ * Code, das orbit-Farben ausserhalb von CSS-Variablen braucht.
+ */
+export const orbit = {
+  field: '#0b0d12',
+  surface: '#14171f',
+  raised: '#1a1e27',
+  ink: '#f4f6fa',
+  inkSoft: '#b6bdcb',
+  inkFaint: '#6e7686',
+  line: '#222732',
+  lineStrong: '#2a3140',
+  accent: '#57b6c2',
+  accentHover: '#6cc4cf',
+  accentInk: '#06141a',
+} as const;
+
+/** Signal — die themeninvariante Markenfarbe (spiegelt `--k-signal*`). */
+export const signal = {
+  signal: '#57b6c2',
+  hell: '#eaf6f8',
+  tinte: '#06141a',
+} as const;
+
+/** Rollenfarben (spiegelt `--k-rolle-*`, Spec §1/§3) — WER handelt. */
+export const rolle = {
+  manuell: '#74c2a0',
+  pn: '#6f9bcf',
+  pna: '#c082b4',
+  agent: '#cbb06a',
+  memory: '#cf9466',
+  generator: '#cd7670',
+  ak: '#b08a6e',
+  office: '#8a7b5a',
+} as const;
+
+export type ThemeName = 'paper' | 'ink' | 'orbit';

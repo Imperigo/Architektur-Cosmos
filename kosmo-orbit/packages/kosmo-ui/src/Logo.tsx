@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { Logo6a } from './logo-6a';
 import { moduleHue, type ModuleId } from './tokens';
 
 /**
@@ -46,6 +47,21 @@ export function OrbitMark({
   className,
   title,
 }: OrbitMarkProps) {
+  // v0.7.2 §2 (Paket 01): die App-Identität selbst (`module="orbit"`) ist
+  // jetzt das Logo «6a» — API (module/size/…) bleibt exakt bestehen, nur die
+  // Zeichnung dahinter wechselt. Alle anderen Modul-Werte (kosmo, design,
+  // draw, …) behalten die bisherige Ring+Trabant-Konstruktion unverändert
+  // (eigene Modul-Identität, ausserhalb des «6a ist die Marke»-Auftrags).
+  if (module === 'orbit') {
+    return (
+      <Logo6a
+        size={size}
+        {...(style !== undefined ? { style } : {})}
+        {...(className !== undefined ? { className } : {})}
+        {...(title !== undefined ? { title } : {})}
+      />
+    );
+  }
   const hue = moduleHue[module];
   const a = (orbitAngle[module] * Math.PI) / 180;
   const R = 11;
@@ -90,13 +106,16 @@ export interface WordmarkProps {
   version?: string;
 }
 
-/** Wortmarke «KosmoOrbit» — feine Grotesk, die Version als Exponent. */
+/** Wortmarke «KosmoOrbit» — v0.7.2 §2: Plakat-Schrift (`--k-font-titel`,
+ *  Tracking .28em) statt der bisherigen feinen Grotesk-Tracking von 0.01em —
+ *  API/DOM/`app-version`-Testid bleiben ein bestehender Vertrag, exakt. */
 export function Wordmark({ size = 18, style, version }: WordmarkProps) {
   return (
     <span
       style={{
         fontSize: size,
-        letterSpacing: '0.01em',
+        fontFamily: 'var(--k-font-titel)',
+        letterSpacing: '0.28em',
         fontWeight: 550,
         display: 'inline-flex',
         alignItems: 'baseline',

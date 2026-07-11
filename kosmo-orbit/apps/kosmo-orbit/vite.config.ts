@@ -28,8 +28,11 @@ export default defineConfig({
         lang: 'de-CH',
         display: 'standalone',
         orientation: 'any',
-        background_color: '#F5F3EE',
-        theme_color: '#F5F3EE',
+        // v0.7.2 §1 (Owner-Entscheid 11.07.): orbit ist der neue Standard —
+        // die PWA-Manifest-Farben folgen dem neuen orbit-`--k-field`-Ton
+        // statt dem alten Papier-Feld.
+        background_color: '#0B0D12',
+        theme_color: '#0B0D12',
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },

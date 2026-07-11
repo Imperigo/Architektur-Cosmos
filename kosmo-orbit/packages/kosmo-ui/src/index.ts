@@ -1,5 +1,6 @@
 export * from './tokens';
 export * from './Logo';
+export * from './logo-6a';
 export * from './components';
 export * from './meldungen';
 export * from './fehlerzone';

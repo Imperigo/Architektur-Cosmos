@@ -168,6 +168,35 @@
      pointerdown antwortet und NIE nachhinken darf. */
   --k-druck-dauer: 80ms;
   --k-druck-skala: 0.97;
+
+  /* v0.7.2 «Visuelles Update» §1 — additiv, ALLE Themes (paper/ink bleiben
+     byte-identisch: kein bestehender Wert oben in dieser Regel wurde
+     verändert, es kommen nur neue Variablen hinzu). */
+  --k-radius-pill: 999px;
+  /* Signal — die Markenfarbe, themeninvariant (nicht mit --k-accent
+     verwechseln: --k-accent ist wählbar/theme-abhängig, --k-signal ist die
+     EINE Teal-Konstante der Marke, unabhängig vom aktiven Thema/Akzent). */
+  --k-signal: #57b6c2;
+  --k-signal-hell: #eaf6f8;
+  --k-signal-tinte: #06141a;
+  /* Rollenfarben (Spec §1/§3) — WER handelt: Mensch, Planer, -Assistent,
+     Agent, Gedächtnis, Generator, Aussenkontakt, Büro. Nur an Symbolen im
+     Kontext von Agenten/Werkzeugen (Regel 3, §0), nie flächig. */
+  --k-rolle-manuell: #74c2a0;
+  --k-rolle-pn: #6f9bcf;
+  --k-rolle-pna: #c082b4;
+  --k-rolle-agent: #cbb06a;
+  --k-rolle-memory: #cf9466;
+  --k-rolle-generator: #cd7670;
+  --k-rolle-ak: #b08a6e;
+  --k-rolle-office: #8a7b5a;
+  /* Easings (additiv — die bestehenden --k-motion-Werte und --k-feder oben
+     bleiben unverändert und sind weiterhin die Standard-Übergänge; diese
+     drei sind die neuen benannten Kurven aus dem Bewegungsvokabular des
+     orbit-Themes). */
+  --k-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --k-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --k-ease-bounce: cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
 /* Alte Engines ohne linear()-Easing (Konzept §2): --k-feder zeigt dann die
@@ -180,6 +209,73 @@
 
 [data-theme='ink'] {
   --k-mod-draw: #8d887d;
+}
+
+/* v0.7.2 «Visuelles Update» §1 — drittes Thema `orbit` (Owner-Entscheid
+   11.07.: neuer Standard). Überschreibt NUR bestehende Variablen (exakt die
+   Spec-§1-Tabelle) — 'paper' und 'ink' oben bleiben byte-identisch, nichts
+   davon wurde angefasst. Fonts: siehe `apps/kosmo-orbit/src/fonts.css`
+   (self-hosted, Import NACH dieser Datei) — der bisherige Stack bleibt als
+   Fallback stehen, falls ein Font nicht lädt. */
+[data-theme='orbit'] {
+  --k-field: #0b0d12;
+  --k-surface: #14171f;
+  --k-raised: #1a1e27;
+  --k-ink: #f4f6fa;
+  --k-ink-soft: #b6bdcb;
+  --k-ink-faint: #6e7686;
+  --k-technik: #444b59;
+  --k-line: #222732;
+  --k-line-strong: #2a3140;
+  --k-accent: #57b6c2;
+  --k-accent-hover: #6cc4cf;
+  --k-accent-ink: #06141a;
+  --k-accent-wash: rgba(87, 182, 194, 0.12);
+  --k-danger: #cd7670;
+  --k-success: #74c2a0;
+  /* Radien-Override (Spec §1): paper/ink behalten 2/4/6 (siehe :root oben) —
+     NUR im orbit-Thema gelten die runden 8/12/16. */
+  --k-radius-sm: 8px;
+  --k-radius-md: 12px;
+  --k-radius-lg: 16px;
+  --k-font-ui: 'Lato', 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --k-font-titel: 'PT Sans Narrow', 'Archivo Narrow', 'Roboto Condensed', 'Arial Narrow', 'Helvetica Neue',
+    var(--k-font-ui);
+  /* Plan-Welt bleibt: dieselben dunklen Werte wie im Tinte-Thema. */
+  --k-plan-paper: #16150f;
+  --k-viewport-sky: #101012;
+  color-scheme: dark;
+}
+
+/* Logo «6a» (v0.7.2 §2, `logo-6a.tsx`) — Zustands-Animationen. Der globale
+   reduced-motion-Riegel weiter unten in dieser Datei killt Dauer/Delay jeder
+   Animation automatisch (0.01ms) — kein `@media`-Sonderfall hier nötig, der
+   `laeuft`-Ring/die `fehler`-Blinkung frieren dadurch bereits auf den
+   lesbaren Startzustand ein. */
+@keyframes k-logo6a-drehen {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes k-logo6a-blinken {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes k-logo6a-haken {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 html,

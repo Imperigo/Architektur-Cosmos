@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import '@kosmo/ui/aura.css';
+import './fonts.css'; // NACH aura.css (v0.7.2 §1) — self-gehostet, siehe Datei-Kopf
 import './zod-jitless'; // muss vor ./App bleiben — siehe Kommentar dort (CSP/Zod-eval-Probe)
 import { App } from './App';
 import { istTauriDesktop } from './shell/cloud-login';
@@ -25,6 +26,18 @@ if (istTauriDesktop()) {
 } else if ('serviceWorker' in navigator) {
   void import('virtual:pwa-register').then(({ registerSW }) => registerSW({ immediate: true }));
 }
+
+// v072: fenster=charakter — Schnittstelle für W3-F (Paket 07, Zweitfenster
+// Tauri "kosmo-charakter"). Noch KEINE Funktion: W1-A legt hier nur den
+// dokumentierten Anker an (Spec §12 Stream-Schnittstellen); W3-F füllt die
+// tatsächliche Charakter-Ansicht ein, sobald die Route existiert.
+// const fensterCharakter = new URLSearchParams(window.location.search).get('fenster') === 'charakter';
+
+// v072: #companion — Schnittstelle für W4-G (Paket-Ergänzung «Companion
+// minimal», Spec §10/§12). Noch KEINE Funktion: W1-A legt hier nur den
+// dokumentierten Anker an; W4-G verdrahtet die schmale Companion-Ansicht,
+// sobald sie existiert.
+// const istCompanion = window.location.hash.startsWith('#companion');
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

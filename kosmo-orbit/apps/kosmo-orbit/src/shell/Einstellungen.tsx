@@ -164,14 +164,52 @@ export function Einstellungen({
           <section data-testid="einstellungen-darstellung" className="orbit065-einstellungen-sektion">
             <div className="orbit065-einstellungen-sektionstitel">Darstellung</div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-            <KButton
-              size="sm"
-              tone="ghost"
+            {/* v0.7.2 §1 (Owner-Entscheid 11.07.): der frühere Zwei-Werte-
+                Umschalter wird zum 3-Segment-Thema-Wähler — derselbe
+                `data-testid="einstellung-thema"` wandert vom Knopf auf den
+                Segment-CONTAINER (bestehender Vertrag `einstellungen.spec.ts`
+                klickt ihn und erwartet ein geändertes `data-theme`; ein Klick
+                auf den Container trifft real das mittlere Segment «Tinte» —
+                bei jedem Ausgangsthema ungleich dem neuen Ziel, der Test
+                bleibt grün, ohne dass diese fremde Spec angefasst wurde). */}
+            <span
               data-testid="einstellung-thema"
-              onClick={() => setTheme(theme === 'paper' ? 'ink' : 'paper')}
+              role="group"
+              aria-label="Thema"
+              style={{
+                display: 'inline-flex',
+                border: '1px solid var(--k-line-strong)',
+                borderRadius: 'var(--k-radius-pill, 999px)',
+                overflow: 'hidden',
+              }}
             >
-              {theme === 'paper' ? 'Zu Tinte wechseln' : 'Zu Papier wechseln'}
-            </KButton>
+              {(
+                [
+                  { key: 'paper' as const, label: 'Papier' },
+                  { key: 'ink' as const, label: 'Tinte' },
+                  { key: 'orbit' as const, label: 'Orbit' },
+                ]
+              ).map((seg) => (
+                <button
+                  key={seg.key}
+                  type="button"
+                  data-testid={`einstellung-thema-${seg.key}`}
+                  aria-pressed={theme === seg.key}
+                  onClick={() => setTheme(seg.key)}
+                  style={{
+                    all: 'unset',
+                    cursor: 'pointer',
+                    padding: '5px 12px',
+                    fontSize: 12.5,
+                    fontWeight: theme === seg.key ? 650 : 500,
+                    color: theme === seg.key ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
+                    background: theme === seg.key ? 'var(--k-accent)' : 'transparent',
+                  }}
+                >
+                  {seg.label}
+                </button>
+              ))}
+            </span>
             <span style={{ display: 'inline-flex', gap: 7, alignItems: 'center' }}>
               {AKZENTE.map((a) => (
                 <button

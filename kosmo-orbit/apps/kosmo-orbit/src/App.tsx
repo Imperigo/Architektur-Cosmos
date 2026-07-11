@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import {
   Badge,
   Hairline,
@@ -121,8 +121,23 @@ const ROLLEN_REIHENFOLGE: Record<'entwurf' | 'ausfuehrung' | 'admin', ModuleId[]
 };
 
 export function App() {
+  // v0.7.2 §2 (Splash, Spec-Vertrag «e2e/splash.spec.ts»): `#splash` lebt
+  // inline in index.html VOR #root (eigener <style>-Block, blockiert nichts
+  // dank `pointer-events:none`) und wird HIER synchron im allerersten
+  // Mount-Effect entfernt — `useLayoutEffect` statt `useEffect`, damit der
+  // Wechsel VOR dem ersten Browser-Paint der echten App passiert (kein
+  // sichtbarer Doppel-Frame Splash→App). Kein Timer, kein Delay: der Splash
+  // ist rein CSS/HTML, sobald React einmal gemountet hat, übernimmt die App.
+  useLayoutEffect(() => {
+    document.getElementById('splash')?.remove();
+  }, []);
+
+  // v0.7.2 §1 (Owner-Entscheid 11.07.): orbit ist der neue Standard für
+  // Erst-Starts — eine bereits gespeicherte Wahl bestehender Nutzer:innen
+  // (`kosmo.thema` in localStorage) bleibt unangetastet respektiert, nur der
+  // Fallback ohne gespeicherten Wert ändert sich von 'paper' auf 'orbit'.
   const [theme, setTheme] = useState<ThemeName>(
-    (localStorage.getItem('kosmo.thema') as ThemeName | null) ?? 'paper',
+    (localStorage.getItem('kosmo.thema') as ThemeName | null) ?? 'orbit',
   );
   const [akzent, setAkzent] = useState(localStorage.getItem('kosmo.akzent') ?? 'tusche');
   const [screen, setScreen] = useState<Screen>('home');
