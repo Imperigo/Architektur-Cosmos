@@ -246,6 +246,70 @@ test('v0.7.0 E3: data-darstellung3d spiegelt den aufgelösten 3D-Darstellungsmod
   await expect(page.locator('[data-testid="viewport3d"]')).toHaveAttribute('data-darstellung3d', 'weiss');
 });
 
+test('v0.7.1 E5 4A («Fenster echt»): Wand + Fenster rendert sichtbar andere Geometrie als die Wand allein (echter Pixel-Beweis)', async ({ page }) => {
+  // deriveAllMitFensterdetails (scene.ts) fügt für JEDE Fenster-Öffnung eine
+  // Glas-Ebene + (ohne fensterTyp) einen Standard-Rahmen-Loop hinzu — NUR im
+  // 3D-Viewport (deriveAll für Schnitt/Axo/GLTF/Kamera bleibt bewusst
+  // unverändert, s. packages/kosmo-kernel/test/fenster.test.ts). Es gibt
+  // (bewusst) keinen Mesh-Zähler für die reguläre Modell-Gruppe im Viewport —
+  // `__kosmoViewport.glbMeshCount()` zählt NUR das separat geladene
+  // Referenz-GLB (`glbGroup`, s. e2e/ref3d-laden.spec.ts), keine three-Szene
+  // ist sonst ans `window` gehängt. Der ehrliche Beweis hier: derselbe
+  // Frame/dieselbe Kamera/dasselbe statische Licht — das gerenderte Bild
+  // ändert sich NUR, wenn tatsächlich neue Geometrie (Glas + Rahmen) in der
+  // Szene ankam. Kein Datenzähler, ein echter Pixel-Diff über den bereits
+  // bestehenden `captureFrame()`-Hook (0.6.7 P0, «Für Vis aufnehmen»).
+  await bootstrap3D(page);
+  type ViewportHook = CamHook & { captureFrame: () => string | null };
+
+  const { wallId } = await page.evaluate(() => {
+    const k = window.__kosmo as unknown as {
+      run: (id: string, p: unknown) => { patches: { id: string }[] };
+      state: () => { activeStoreyId: string | null; doc: { byKind: (k: string) => { id: string; name?: string }[] } };
+    };
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    const w = k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 0, y: 0 }, b: { x: 6000, y: 0 }, assemblyId: aw.id });
+    return { wallId: w.patches[0]!.id };
+  });
+  await page.waitForTimeout(600); // derive-Worker/Sync-Loop baut das Wand-Mesh (wie J1b oben)
+
+  // Kamera fix auf das kleine Modell — dieselbe Diagonalsicht wie J1b oben
+  // (dort bereits erprobt: zeigt ein 6m-Wandmodell vollständig im Bild).
+  await page.evaluate(() => (window as unknown as { __kosmoViewport: ViewportHook }).__kosmoViewport.setCamera(45, 32, 45, 0, 0, 0));
+  const vorFensterBild = await page.evaluate(() => {
+    const h = (window as unknown as { __kosmoViewport: ViewportHook }).__kosmoViewport;
+    h.renderOnce();
+    return h.captureFrame();
+  });
+  expect(vorFensterBild).toBeTruthy();
+
+  // Fenster OHNE fensterTyp in dieselbe Wand stanzen — Standardrahmen + Glas.
+  await page.evaluate(
+    ({ wallId }) => {
+      const k = window.__kosmo as unknown as { run: (id: string, p: unknown) => unknown };
+      k.run('design.oeffnungSetzen', { wallId, openingType: 'fenster', center: 3000, width: 1600, height: 1400, sill: 900 });
+    },
+    { wallId },
+  );
+  await page.waitForTimeout(300); // kleines Modell → synchroner Derive-Pfad, grosszügig für den Sync-Loop
+
+  const nachFensterBild = await page.evaluate(() => {
+    const h = (window as unknown as { __kosmoViewport: ViewportHook }).__kosmoViewport;
+    h.renderOnce();
+    return h.captureFrame();
+  });
+  expect(nachFensterBild).toBeTruthy();
+
+  // Der eigentliche Beweis: dieselbe Kamera, dasselbe statische Licht — das
+  // gerenderte Bild ändert sich, weil tatsächlich neue Geometrie ankam.
+  expect(nachFensterBild).not.toBe(vorFensterBild);
+
+  // Zusätzlich der Daten-Weg: die Öffnung existiert wirklich im Doc.
+  const oeffnungen = await page.evaluate(() => window.__kosmo.state().doc.byKind('opening').length);
+  expect(oeffnungen).toBe(1);
+});
+
 test('J1b: Long-Press öffnet das Kontextmenü', async ({ page }) => {
   await bootstrap3D(page);
   const cv = (await page.locator('canvas').first().boundingBox())!;

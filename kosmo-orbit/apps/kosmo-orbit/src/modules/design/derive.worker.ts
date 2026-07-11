@@ -1,9 +1,12 @@
-import { KosmoDoc, deriveAll, type DocJson, type GeometryArtifact } from '@kosmo/kernel';
+import { KosmoDoc, deriveAllMitFensterdetails, type DocJson, type GeometryArtifact } from '@kosmo/kernel';
 
 /**
  * Derive-Worker — der Kern ist bewusst DOM-frei und liefert transferable
  * Arrays: grosse Modelle werden hier abgeleitet, ohne den UI-Thread zu
  * blockieren. Die Puffer wandern per Transfer (kopiefrei) zurück.
+ * `deriveAllMitFensterdetails` (v0.7.1 E5 4A) statt `deriveAll`, damit auch
+ * grosse Modelle (Worker-Pfad) Fenster-Glas/-Rahmen im Viewport zeigen —
+ * derselbe Funktionsaufruf wie der synchrone Pfad in Viewport3D.tsx.
  */
 
 export interface DeriveRequest {
@@ -18,7 +21,7 @@ export interface DeriveResponse {
 
 self.onmessage = (e: MessageEvent<DeriveRequest>) => {
   const doc = KosmoDoc.fromJSON(e.data.json);
-  const artifacts = deriveAll(doc);
+  const artifacts = deriveAllMitFensterdetails(doc);
   const transfer: ArrayBuffer[] = [];
   for (const a of artifacts) {
     transfer.push(a.positions.buffer as ArrayBuffer, a.normals.buffer as ArrayBuffer);

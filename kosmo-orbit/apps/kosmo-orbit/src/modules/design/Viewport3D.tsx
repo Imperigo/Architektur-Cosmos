@@ -4,7 +4,7 @@ import CameraControls from 'camera-controls';
 import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
 import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
-import { aufgeloesteDarstellung3d, deriveAll, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
+import { aufgeloesteDarstellung3d, deriveAllMitFensterdetails, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
@@ -1118,11 +1118,16 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     // identisch; 'weiss'/'schwarz' überschreiben Farbe+Rauheit EINHEITLICH
     // für alle Bauteile und überspringen die Textur-Pipeline (auch wenn der
     // Textur-Toggle an ist — «weiss»/«schwarz» sind Studienmodelle, keine
-    // texturierten Materialansichten). Fenster bleiben unberührt: das
-    // Öffnungs-Loch in der Wandgeometrie trägt HIER kein eigenes Glas-Mesh
-    // (Glas gibt es nur als `fensterMaterial` im Modul-Editor-Overlay unten,
-    // :611 — ein separater, von `materialPalette` unabhängiger Zeichenpfad,
-    // von dieser Weiche gar nicht berührt).
+    // texturierten Materialansichten). v0.7.1 E5 4A (docs/V071-KONZEPT.md
+    // «Fenster echt»): Fenster-Öffnungen tragen jetzt ECHTE Glas-/Rahmen-
+    // Meshes (materialKey 'glas'/'fenster-rahmen', deriveAllMitFensterdetails
+    // in scene.ts — NUR hier im Viewport verkabelt, Schnitt/Axo/GLTF-Export
+    // bleiben beim unveränderten `deriveAll`). 'glas' ist die dokumentierte
+    // Ausnahme von der weiss/schwarz-Vereinheitlichung: Glas bleibt in JEDEM
+    // Modus transparent (0.7.0-Regel) statt einheitlich weiss/schwarz
+    // eingefärbt zu werden. 'fenster-rahmen' läuft normal durch die
+    // Farb-Weiche unten (folgt also dem Wand-/Studienmodell-Modus wie jedes
+    // andere Bauteil).
     function artifactToObjects(a: GeometryArtifact, darstellung3d: 'material' | 'weiss' | 'schwarz'): THREE.Object3D[] {
       const geo = new THREE.BufferGeometry();
       // Kern (x,y,z) → three (x, z, −y): per Umordnung beim Kopieren
@@ -1168,22 +1173,26 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         }
         geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
       }
+      // Glas-Ausnahme (v0.7.1 E5 4A): bleibt in JEDEM Modus transparent, die
+      // weiss/schwarz-Vereinheitlichung unten wird für 'glas' übersprungen.
       const materialParams =
-        darstellung3d === 'weiss'
-          ? { color: 0xffffff, roughness: 0.9 }
-          : darstellung3d === 'schwarz'
-            ? { color: 0x1c1c1c, roughness: 0.95 }
-            : {
-                color: karten ? 0xffffff : spec.color,
-                roughness: spec.roughness,
-                metalness: spec.metalness ?? 0,
-                ...(karten
-                  ? { map: karten.map, bumpMap: karten.bumpMap, bumpScale: karten.bumpScale }
-                  : {}),
-              };
+        a.materialKey === 'glas'
+          ? { color: 0x8fb6c4, roughness: 0.08, metalness: 0.15, transparent: true, opacity: 0.35, side: THREE.DoubleSide }
+          : darstellung3d === 'weiss'
+            ? { color: 0xffffff, roughness: 0.9 }
+            : darstellung3d === 'schwarz'
+              ? { color: 0x1c1c1c, roughness: 0.95 }
+              : {
+                  color: karten ? 0xffffff : spec.color,
+                  roughness: spec.roughness,
+                  metalness: spec.metalness ?? 0,
+                  ...(karten
+                    ? { map: karten.map, bumpMap: karten.bumpMap, bumpScale: karten.bumpScale }
+                    : {}),
+                };
       const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial(materialParams));
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
+      mesh.castShadow = a.materialKey !== 'glas';
+      mesh.receiveShadow = a.materialKey !== 'glas';
       mesh.userData['entityId'] = a.entityId;
 
       const eGeo = new THREE.BufferGeometry();
@@ -1227,7 +1236,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (revision === lastRevision) return;
       if (doc.entities.size < WORKER_AB) {
         lastRevision = revision;
-        applyArtifacts(deriveAll(doc));
+        applyArtifacts(deriveAllMitFensterdetails(doc));
         return;
       }
       if (pendingRevision === revision) return; // Anfrage läuft bereits

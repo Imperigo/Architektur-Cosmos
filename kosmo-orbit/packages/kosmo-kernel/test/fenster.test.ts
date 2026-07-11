@@ -6,7 +6,7 @@ import '../src/commands/design';
 import '../src/commands/publish';
 import type { Opening } from '../src/model/entities';
 import { derivePlan } from '../src/derive/plan';
-import { deriveAll } from '../src/derive/scene';
+import { deriveAll, deriveAllMitFensterdetails } from '../src/derive/scene';
 import { planToSvg, sectionInnerSvg, A3_QUER } from '../src/derive/plansvg';
 import { ansichtSvg, testhausFensterband, testhausFensterZweifluegel } from './fixtures';
 
@@ -214,18 +214,86 @@ describe('design.curtainWallSetzen', () => {
 });
 
 describe('Derive-Guards & parametrische Symbolik', () => {
-  it('Alt-Fenster ohne fensterTyp erzeugen KEINE Rahmen-Artefakte in der Szene', () => {
+  it('Alt-Fenster ohne fensterTyp erzeugen weiterhin KEINE Rahmen-Artefakte in `deriveAll` (Schnitt/Axo/GLTF/Kamera)', () => {
     const { doc, wallId } = grundgeruest();
     fensterSetzen(doc, wallId);
     const rahmen = deriveAll(doc).filter((a) => a.materialKey === 'fenster-rahmen');
     expect(rahmen).toHaveLength(0);
   });
 
-  it('parametrische Fenster bekommen Rahmen-, Pfosten- und Riegel-Boxen (fenster-rahmen)', () => {
+  it('parametrische Fenster bekommen Rahmen-, Pfosten- und Riegel-Boxen (fenster-rahmen) in `deriveAll`', () => {
     const { doc } = testhausFensterZweifluegel();
     const rahmen = deriveAll(doc).filter((a) => a.materialKey === 'fenster-rahmen');
     // Zweiflügel 2×1: 2 Blendrahmen vertikal + 1 Mittelpfosten + 2 Riegel = 5
     expect(rahmen).toHaveLength(5);
+  });
+
+  // v0.7.1 E5 Stream 4A (docs/V071-KONZEPT.md «Fenster echt», Vertrags-Audit
+  // «Glas-Artefakte ändern PLAN nicht»): die neuen Glas-/Standardrahmen-
+  // Artefakte hängen NICHT an `deriveAll` (das bleibt für Schnitt/Axo/GLTF-
+  // Export/Kamera unverändert, s. die beiden Tests oben), sondern NUR an der
+  // zusätzlichen `deriveAllMitFensterdetails` — einzig vom 3D-Viewport benutzt.
+  it('deriveAllMitFensterdetails: Alt-Fenster ohne fensterTyp bekommen einen Standard-Rahmen-Loop (4 Leisten) + Glas, `deriveAll` bleibt exakt gleich lang', () => {
+    const { doc, wallId } = grundgeruest();
+    fensterSetzen(doc, wallId);
+    const basis = deriveAll(doc);
+    const erweitert = deriveAllMitFensterdetails(doc);
+    const rahmen = erweitert.filter((a) => a.materialKey === 'fenster-rahmen');
+    // Standardrahmen: nur der Blendrahmen-Loop (links/rechts/unten/oben), KEINE Teilung
+    expect(rahmen).toHaveLength(4);
+    expect(rahmen.every((a) => a.entityId.includes(':rahmen-std:'))).toBe(true);
+    const glas = erweitert.filter((a) => a.materialKey === 'glas');
+    expect(glas).toHaveLength(1);
+    // `deriveAll` bleibt exakt so lang wie ohne die 4A-Erweiterung (Daten-Guard)
+    expect(erweitert.length).toBe(basis.length + rahmen.length + glas.length);
+  });
+
+  it('Tür-Öffnungen bekommen WEDER Glas NOCH Rahmen (nur openingType "fenster" zählt)', () => {
+    const { doc, wallId } = grundgeruest();
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId,
+      openingType: 'tuer',
+      center: 2000,
+      width: 900,
+      height: 2100,
+      sill: 0,
+    });
+    const arts = deriveAllMitFensterdetails(doc);
+    expect(arts.filter((a) => a.materialKey === 'glas')).toHaveLength(0);
+    expect(arts.filter((a) => a.materialKey === 'fenster-rahmen')).toHaveLength(0);
+  });
+
+  it('Glas-Masse stimmen mit der Öffnung überein (Zentrum der Wanddicke, Öffnungsbreite/-höhe)', () => {
+    const { doc, wallId } = grundgeruest();
+    fensterSetzen(doc, wallId); // center 4000, width 1600, height 1400, sill 900 — Wand a=(0,0)→b=(8000,0), Aufbau 410mm zentriert
+    const glas = deriveAllMitFensterdetails(doc).find((a) => a.materialKey === 'glas')!;
+    expect(glas).toBeDefined();
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, minZ = Infinity, maxZ = -Infinity;
+    for (let i = 0; i < glas.positions.length; i += 3) {
+      minX = Math.min(minX, glas.positions[i]!); maxX = Math.max(maxX, glas.positions[i]!);
+      minY = Math.min(minY, glas.positions[i + 1]!); maxY = Math.max(maxY, glas.positions[i + 1]!);
+      minZ = Math.min(minZ, glas.positions[i + 2]!); maxZ = Math.max(maxZ, glas.positions[i + 2]!);
+    }
+    expect(minX).toBeCloseTo(4000 - 800, 0); // center - width/2
+    expect(maxX).toBeCloseTo(4000 + 800, 0);
+    expect(minZ).toBeCloseTo(900, 0); // sill
+    expect(maxZ).toBeCloseTo(900 + 1400, 0); // sill + height
+    // Wanddicke 410mm zentriert (Achse in Wandmitte) → Glas mittig bei y=0, ±5mm dick
+    expect(minY).toBeCloseTo(-5, 1);
+    expect(maxY).toBeCloseTo(5, 1);
+  });
+
+  it('deriveAllMitFensterdetails: parametrische Fenster bekommen KEINEN Doppel-Rahmen, aber Glas', () => {
+    const { doc } = testhausFensterZweifluegel();
+    const arts = deriveAllMitFensterdetails(doc);
+    const rahmen = arts.filter((a) => a.materialKey === 'fenster-rahmen');
+    // Zweiflügel 2×1: weiterhin genau 5 (2 Blendrahmen + 1 Mittelpfosten + 2 Riegel) — KEIN
+    // zusätzlicher Standard-Loop (Guard `o.fensterTyp` in deriveFensterRahmenStandard)
+    expect(rahmen).toHaveLength(5);
+    expect(rahmen.some((a) => a.entityId.includes(':rahmen-std:'))).toBe(false);
+    // Glas kommt trotzdem dazu (ALLE Fenster-Öffnungen bekommen Glas)
+    const glas = arts.filter((a) => a.materialKey === 'glas');
+    expect(glas).toHaveLength(1);
   });
 
   it('Grundriss: Zweiflügel zeigt Teilungslinie + zwei Öffnungsbögen (fenster-bogen)', () => {

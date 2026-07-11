@@ -51,6 +51,25 @@ export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
 }
 
 /**
+ * v0.7.1 E5 Stream 4A (docs/V071-KONZEPT.md «Fenster echt»): `deriveAll`
+ * bleibt für Schnitt/Axo/GLTF-Export/Kamera-Einpassung UNVERÄNDERT (Vertrags-
+ * Audit-Guard: «Glas-Artefakte ändern PLAN nicht» — jene Ableitungen
+ * schneiden/zählen JEDES `deriveAll`-Artefakt generisch, ein zusätzliches
+ * 10-mm-Glas oder ein Standard-Rahmen-Loop je Fenster würde dort ungewollt
+ * neue Schnittlinien/Meshes erzeugen). Der 3D-Viewport dagegen SOLL die
+ * neuen Fenster-Details zeigen — additive Erweiterung NUR für diesen einen
+ * Aufrufer, kein zweiter Koordinaten-Pfad (dieselben `deriveFensterGlas`/
+ * `deriveFensterRahmenStandard`-Funktionen, nur ausserhalb von `deriveAll`
+ * gehalten).
+ */
+export function deriveAllMitFensterdetails(doc: KosmoDoc): GeometryArtifact[] {
+  const out = deriveAll(doc);
+  out.push(...deriveFensterGlas(doc));
+  out.push(...deriveFensterRahmenStandard(doc));
+  return out;
+}
+
+/**
  * Bandbreite des Terrain-Geländemeshs (v0.7.1 E4). ANNAHME (dokumentiert,
  * s. extrudeTerrainBand-Kommentar in mesh.ts): fest, nicht von der
  * Gebäudebreite abgeleitet — Terrain ist ein projektglobales Entity ohne
@@ -151,6 +170,117 @@ function deriveFensterProfile(doc: KosmoDoc): GeometryArtifact[] {
       const z = z0 + j * feldH;
       push(r.s0 + rb, r.s1 - rb, z - rb / 2, z + rb / 2);
     }
+  }
+  return out;
+}
+
+/** Dicke der Glas-Ebene (v0.7.1 E5 Stream 4A, docs/V071-KONZEPT.md «Fenster echt»). */
+export const FENSTER_GLAS_DICKE_MM = 10;
+
+/**
+ * Glas-Ebene je Fenster-Öffnung (v0.7.1 E5 Stream 4A): eine dünne Box
+ * (~10 mm) mittig in der Wanddicke — derselbe `midOff` wie die Rahmenprofile
+ * oben in deriveFensterProfile (dort dokumentiert: «dort liegt auch die
+ * Plan-Glasebene») und derselbe Weltkoordinaten-Weg (P(s, off) über
+ * axisDirection + Normale) — KEIN zweiter Berechnungspfad. Ausdehnung =
+ * Öffnungsrechteck (s0..s1, z0..z1 aus openingRects) — ALLE Fenster-
+ * Öffnungen bekommen Glas, parametrisch UND einfach (Türen NICHT:
+ * openingType-Guard). Daten-Guard: keine Fenster-Öffnung ⇒ leeres Array
+ * (Szene ohne Fenster bleibt byte-identisch).
+ */
+function deriveFensterGlas(doc: KosmoDoc): GeometryArtifact[] {
+  const out: GeometryArtifact[] = [];
+  for (const o of doc.byKind<Opening>('opening')) {
+    if (o.openingType !== 'fenster') continue;
+    const wall = doc.get<Wall>(o.wallId);
+    if (!wall || wall.kind !== 'wall') continue;
+    const storey = doc.get<Storey>(wall.storeyId);
+    const assembly = doc.get<Assembly>(wall.assemblyId);
+    if (!storey || storey.kind !== 'storey' || !assembly || assembly.kind !== 'assembly') continue;
+    const r = openingRects(wall, [o])[0];
+    if (!r) continue;
+    const { offsetLeft, offsetRight } = wallFrame(wall, assembly);
+    const midOff = (offsetLeft - offsetRight) / 2;
+    const halb = FENSTER_GLAS_DICKE_MM / 2;
+    const d = axisDirection(wall);
+    const nrm = { x: -d.y, y: d.x };
+    const P = (s: number, off: number): Pt => ({
+      x: Math.round(wall.a.x + d.x * s + nrm.x * off),
+      y: Math.round(wall.a.y + d.y * s + nrm.y * off),
+    });
+    const poly = [P(r.s0, midOff + halb), P(r.s1, midOff + halb), P(r.s1, midOff - halb), P(r.s0, midOff - halb)];
+    let f = 0;
+    for (let i = 0; i < poly.length; i++) {
+      const p1 = poly[i]!;
+      const p2 = poly[(i + 1) % poly.length]!;
+      f += p1.x * p2.y - p2.x * p1.y;
+    }
+    const ccw = f >= 0 ? poly : poly.reverse();
+    const z0 = storey.elevation + r.z0;
+    const z1 = storey.elevation + r.z1;
+    if (r.s1 - r.s0 < 1 || z1 - z0 < 1) continue;
+    out.push(extrudePolygon(`${o.id}:glas`, 'glas', ccw, [], z0, z1));
+  }
+  return out;
+}
+
+/**
+ * Standard-Rahmen für Fenster-Öffnungen OHNE fensterTyp (v0.7.1 E5 Stream
+ * 4A): ein einfacher Rahmen-Loop (4 Leisten, FENSTER_RAHMEN_DEFAULT_MM
+ * breit) folgt der GESAMTEN Wandtiefe (anders als das parametrische Profil
+ * oben in deriveFensterProfile, das nur die halbe Wanddicke zentriert auf
+ * die Wandmitte nutzt) — ohne Teilung, ohne Pfosten/Riegel, reiner
+ * Blendrahmen, der die Leibung komplett füllt. Öffnungen MIT fensterTyp
+ * werden hier übersprungen (Guard `o.fensterTyp`) — sie behalten ihre
+ * bestehenden Profile aus deriveFensterProfile, kein Doppelrahmen. Gleicher
+ * materialKey 'fenster-rahmen' wie das parametrische Profil (derselbe
+ * Bauteil-Charakter, dieselbe Viewport-Materialbehandlung).
+ */
+function deriveFensterRahmenStandard(doc: KosmoDoc): GeometryArtifact[] {
+  const out: GeometryArtifact[] = [];
+  for (const o of doc.byKind<Opening>('opening')) {
+    if (o.openingType !== 'fenster' || o.fensterTyp) continue;
+    const wall = doc.get<Wall>(o.wallId);
+    if (!wall || wall.kind !== 'wall') continue;
+    const storey = doc.get<Storey>(wall.storeyId);
+    const assembly = doc.get<Assembly>(wall.assemblyId);
+    if (!storey || storey.kind !== 'storey' || !assembly || assembly.kind !== 'assembly') continue;
+    const r = openingRects(wall, [o])[0];
+    if (!r) continue;
+    const { offsetLeft, offsetRight } = wallFrame(wall, assembly);
+    const d = axisDirection(wall);
+    const nrm = { x: -d.y, y: d.x };
+    const P = (s: number, off: number): Pt => ({
+      x: Math.round(wall.a.x + d.x * s + nrm.x * off),
+      y: Math.round(wall.a.y + d.y * s + nrm.y * off),
+    });
+    // Grundriss-Rechteck eines Leisten-Segments, über die GANZE Wandtiefe
+    // (offsetLeft..−offsetRight) — CCW ausgerichtet wie überall in scene.ts.
+    const quad = (sA: number, sB: number): Pt[] => {
+      const poly = [P(sA, offsetLeft), P(sB, offsetLeft), P(sB, -offsetRight), P(sA, -offsetRight)];
+      let f = 0;
+      for (let i = 0; i < poly.length; i++) {
+        const p1 = poly[i]!;
+        const p2 = poly[(i + 1) % poly.length]!;
+        f += p1.x * p2.y - p2.x * p1.y;
+      }
+      return f >= 0 ? poly : poly.reverse();
+    };
+    const rb = FENSTER_RAHMEN_DEFAULT_MM;
+    const z0 = storey.elevation + r.z0;
+    const z1 = storey.elevation + r.z1;
+    // Entartete Öffnungen (kleiner als der doppelte Rahmen) bekommen keinen Loop
+    if (r.s1 - r.s0 <= 2 * rb || z1 - z0 <= 2 * rb) continue;
+    let teil = 0;
+    const push = (sA: number, sB: number, zA: number, zB: number): void => {
+      if (sB - sA < 1 || zB - zA < 1) return;
+      out.push(extrudePolygon(`${o.id}:rahmen-std:${teil++}`, 'fenster-rahmen', quad(sA, sB), [], zA, zB));
+    };
+    // Vier Leisten: zwei stehende Blendrahmen + Brüstungs-/Sturzriegel dazwischen
+    push(r.s0, r.s0 + rb, z0, z1);
+    push(r.s1 - rb, r.s1, z0, z1);
+    push(r.s0 + rb, r.s1 - rb, z0, z0 + rb);
+    push(r.s0 + rb, r.s1 - rb, z1 - rb, z1);
   }
   return out;
 }
