@@ -27,6 +27,17 @@ ausgewertet (Delta-Findings + TECH-RADAR-Nachführung). Der Wächter
 inhaltliche Nachlauf-Pflicht ist damit hier dokumentiert und Teil des
 Finale-Gates.
 
+### Nachtrag (11.07.2026, ~18:00 UTC — Finale, vor dem Bump)
+
+Der Zwei-Tage-Auftrag wurde in EINEM Tag fertig — der Nachlauf wurde trotzdem
+durchgeführt (Notion-Suche über alle AI-Scan-Seiten): **neuester Scan bleibt
+der vom 11.07.2026** (05:13), vollständig ausgewertet im 0.7.0-§5-Nachlauf
+(HiVG WATCH, PosterCraft REJECT, TECH-RADAR-Nachtrag 11.07.). **Ein
+12.07.-Scan existiert zum Bump-Zeitpunkt noch nicht** (die Scans erscheinen
+~05:15 früh). Es gibt also kein unausgewertetes Delta — §2 ist ehrlich
+erfüllt, nicht umgangen. Der 12.07.-Scan wird im §0-Erstlauf des
+v0.7.2-Auftakts ausgewertet (Übergabe-Pflicht dorthin).
+
 ## 3 · Übertrag gültiger Verdikte in die 0.7.1-Blockplanung
 
 - **HiVG (WATCH, 0.7.0 §5):** bleibt HomeStation-Evaluations-Kandidat —

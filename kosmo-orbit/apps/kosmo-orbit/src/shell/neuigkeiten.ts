@@ -35,6 +35,37 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.1',
+    datum: '2026-07-11',
+    // Bau abgeschlossen am 11.07.; Auslieferung bewusst mit v0.7.2 gebündelt
+    // (Owner-Entscheid) — bis dahin «in dieser Version».
+    inArbeit: true,
+    punkte: [
+      {
+        text: 'Kosmo-Blick in der Cloud gehärtet: jedes Bild wird vor dem Versand auf ~1.15 Megapixel verkleinert und als JPEG neu encodiert, ein 4-MB-Budget prüft die Bildgrösse VOR dem Netz-Roundtrip, und ein zu grosses Bild bekommt eine konkrete deutsche Meldung statt eines generischen Fehlers — bewiesen per abgefangenem Anthropic-Request (Bild-Block im Request-Body); der echte Modell-Call mit einem echten Owner-Schlüssel bleibt Owner-Abnahme (Drehbuch in docs/BETRIEBSARTEN.md).',
+      },
+      {
+        text: 'Cloud-Anmeldung: ein «Abmelden»-Knopf löscht das Abo-Token gezielt (der API-Schlüssel bleibt unangetastet), und ein neu eingetragener API-Schlüssel räumt jetzt auch ein liegengebliebenes Alt-Token auf.',
+      },
+      {
+        text: 'Nachbargebäude amtlich: «Nachbarn übernehmen» im Standort-Panel holt echte Gebäude-Polygone von geo.admin.ch (VECTOR25, der einzige identify-fähige Layer mit Gebäude-Polygonen) und zeigt sie im Situationsplan als graue Footprints neben der eigenen, schwarzen Zone — offen benannt: der Datenstand ist ~2008, amtlich aber nicht tagesaktuell, neuere Gebäude können fehlen. Parzelle und Nachbarn erscheinen jetzt auch im Grundriss als eigener Kontext-Layer.',
+        station: 'design',
+      },
+      {
+        text: 'DXF-Export konsolidiert: es gibt jetzt nur noch EINEN Exporter, und er zeichnet Bemassungsketten (Mass, Ticks, Beschriftung) auf einem eigenen Layer mit — bewusster Verhaltenswechsel: Publish-DXF ist ab jetzt y-gespiegelt und trägt semantische Layer, konsistent mit dem Design-Export/Import (vorher unterschieden sich die beiden DXF-Wege).',
+        station: 'publish',
+      },
+      {
+        text: '3D-Referenzmodelle laden jetzt auch remote nach, wenn kein lokales Modell vorliegt (ehrlicher Fehler, falls das Archiv nicht erreichbar ist — dessen Inhalt kann derzeit noch leer sein); dazu ein erstes Gelände-Mesh im 3D-Viewport, wo ein Terrain-Profil erfasst ist.',
+        station: 'data',
+      },
+      {
+        text: 'Fenster bekommen echtes Glas in 3D (auch die bisher blossen Löcher der nicht-parametrischen Fenster) und eine SIA-gerechte Öffnungssymbolik in Ansicht UND Live-Schnittvorschau (Dreh-/Kipp-/Drehkipp-Dreieck mit Angelseite, Schiebe-Pfeil) — im Grundriss ergänzt Kipp ein kurzes Doppelstrich-Symbol; ohne gewählten Flügeltyp bleibt jedes Blatt byte-identisch zum bisherigen Bild.',
+        station: 'design',
+      },
+    ],
+  },
+  {
     version: '0.7.0',
     datum: '2026-07-11',
     punkte: [
