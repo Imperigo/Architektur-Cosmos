@@ -56,7 +56,11 @@ export function sollMix(doc: KosmoDoc): WohnungsTypSoll[] {
     .filter((s) => s.anzahl > 0);
 }
 
-const RASTER = 250; // mm Schnittstations-Raster
+/**
+ * Schnittstations-Raster (mm) — auch von `derive/variantensuche.ts`
+ * wiederverwendet (Ruin-&-Recreate-Züge jittern in Vielfachen davon).
+ */
+export const RASTER = 250;
 
 /** Wicklung normalisieren: signed area < 0 (cw) → umdrehen, sonst sind Flächen negativ. */
 function ccw(outline: Pt[]): Pt[] {
@@ -78,7 +82,12 @@ export interface SegmentierOptionen {
   kern?: boolean;
 }
 
-interface Band {
+/**
+ * Ein Band (Fassaden-Streifen) beidseits des Korridors. Exportiert für
+ * `derive/variantensuche.ts` (Ruin-&-Recreate-Züge bauen synthetische
+ * Teil-Bänder für Merge+Neuschnitt-Züge, siehe dort).
+ */
+export interface Band {
   /** Ursprung (Bandanfang an der Korridorachse). */
   o: Pt;
   /** Einheitsvektor entlang des Korridors. */
@@ -89,8 +98,13 @@ interface Band {
   tiefe: number;
 }
 
-/** Bänder beidseits des Korridors innerhalb des Footprints (BBox-Näherung). */
-function bilderBaender(footprint: Pt[], korridor: Pt[]): Band[] {
+/**
+ * Bänder beidseits des Korridors innerhalb des Footprints (BBox-Näherung).
+ * Exportiert (Refactor E5-i, Verhalten unverändert) — `variantenSuche()`
+ * braucht dieselben Bänder wie `segmentiere()`, um Züge auf ihnen zu bauen,
+ * statt die BBox-Herleitung zu duplizieren.
+ */
+export function bilderBaender(footprint: Pt[], korridor: Pt[]): Band[] {
   const bb = (poly: Pt[]) => {
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     for (const p of poly) {
@@ -127,8 +141,13 @@ function bilderBaender(footprint: Pt[], korridor: Pt[]): Band[] {
   return baender;
 }
 
-/** Beste Zerlegung EINES Bands: DP über Stationen, Rest wird letzte Einheit. */
-function schneideBand(
+/**
+ * Beste Zerlegung EINES Bands: DP über Stationen, Rest wird letzte Einheit.
+ * Exportiert (Refactor E5-i, Verhalten unverändert) — `variantenSuche()`
+ * ruft dieselbe Funktion für Merge+Neuschnitt-Züge auf synthetischen
+ * Teil-Bändern auf, statt die Schnitt-Mathematik zu duplizieren.
+ */
+export function schneideBand(
   band: Band,
   offenerBedarf: Map<string, { groesse: number; rest: number }>,
   minBreite: number,
@@ -202,28 +221,19 @@ function schneideBand(
 }
 
 /**
- * Segmentierung: grösste Zone = Footprint-Referenz? Nein — explizit:
- * footprint-Zone (Parzelle/Geschossfläche) und Korridor werden übergeben.
+ * Erschliessungskern reservieren: erste 3.0 m des ersten Bands (mutiert
+ * `baender[0]` in place — o/laenge rücken um KERN vor — exakt wie bisher
+ * inline in `segmentiere()`). Extrahiert (Refactor E5-i, Verhalten
+ * unverändert), damit `variantenSuche()` dieselbe Kern-Reservierung nutzt,
+ * statt sie zu duplizieren.
  */
-export function segmentiere(
-  footprint: Pt[],
-  korridor: Pt[],
-  mix: WohnungsTypSoll[],
-  opts: SegmentierOptionen = {},
-): SegmentierungsErgebnis {
-  const minBreite = opts.minBreite ?? 4500;
-  if (opts.groessen) {
-    mix = mix.map((m) => (opts.groessen![m.typ] ? { ...m, groesse: opts.groessen![m.typ]! } : m));
-  }
+export function reserviereKern(
+  baender: Band[],
+  opts: Pick<SegmentierOptionen, 'kern'>,
+): { kern: { outline: Pt[] } | null; diagnose: string[] } {
   const diagnose: string[] = [];
-  const baender = bilderBaender(footprint, korridor);
-  if (baender.length === 0) {
-    diagnose.push('Kein Band ≥ 3 m Tiefe neben dem Korridor — Korridorlage prüfen.');
-    return { wohnungen: [], mix: mix.map((m) => ({ typ: m.typ, soll: m.anzahl, ist: 0 })), kern: null, diagnose };
-  }
-  // Erschliessungskern: erste 3.0 m des ersten Bands reservieren
   let kern: { outline: Pt[] } | null = null;
-  if (opts.kern) {
+  if (opts.kern && baender.length > 0) {
     const b0 = baender[0]!;
     const KERN = 3000;
     if (b0.laenge > KERN + 4500) {
@@ -244,11 +254,21 @@ export function segmentiere(
       diagnose.push('Band zu kurz für den Kern — ohne Treppenhaus geschnitten.');
     }
   }
-  const bedarf = new Map(mix.map((m) => [m.typ, { groesse: m.groesse, rest: m.anzahl }]));
-  const wohnungen: GeschnitteneWohnung[] = [];
-  for (const band of baender) {
-    wohnungen.push(...schneideBand(band, bedarf, minBreite));
-  }
+  return { kern, diagnose };
+}
+
+/**
+ * Mix-Erfüllung + Diagnose aus einer fertigen Wohnungsliste ableiten (Ist
+ * je Typ zählen, Verfehlungen und Restfläche als Diagnosezeilen). Extrahiert
+ * (Refactor E5-i, Verhalten unverändert) aus dem Schwanz von `segmentiere()`
+ * — `variantenSuche()` braucht dieselbe Auswertung nach jedem Ruin-&-
+ * Recreate-Zug, statt sie zu duplizieren.
+ */
+export function ergebnisAusWohnungen(
+  wohnungen: GeschnitteneWohnung[],
+  mix: WohnungsTypSoll[],
+): { mix: { typ: string; soll: number; ist: number }[]; diagnose: string[] } {
+  const diagnose: string[] = [];
   const ist = new Map<string, number>();
   for (const w of wohnungen) {
     if (w.typ) ist.set(w.typ, (ist.get(w.typ) ?? 0) + 1);
@@ -265,5 +285,37 @@ export function segmentiere(
       `Restfläche ${rest.reduce((s2, w) => s2 + w.flaeche, 0).toFixed(1)} m² — als «Opfer-Wohnung» zusammenfassen oder Schnitt verschieben.`,
     );
   }
+  return { mix: mixErfuellung, diagnose };
+}
+
+/**
+ * Segmentierung: grösste Zone = Footprint-Referenz? Nein — explizit:
+ * footprint-Zone (Parzelle/Geschossfläche) und Korridor werden übergeben.
+ */
+export function segmentiere(
+  footprint: Pt[],
+  korridor: Pt[],
+  mix: WohnungsTypSoll[],
+  opts: SegmentierOptionen = {},
+): SegmentierungsErgebnis {
+  const minBreite = opts.minBreite ?? 4500;
+  if (opts.groessen) {
+    mix = mix.map((m) => (opts.groessen![m.typ] ? { ...m, groesse: opts.groessen![m.typ]! } : m));
+  }
+  const diagnose: string[] = [];
+  const baender = bilderBaender(footprint, korridor);
+  if (baender.length === 0) {
+    diagnose.push('Kein Band ≥ 3 m Tiefe neben dem Korridor — Korridorlage prüfen.');
+    return { wohnungen: [], mix: mix.map((m) => ({ typ: m.typ, soll: m.anzahl, ist: 0 })), kern: null, diagnose };
+  }
+  const { kern, diagnose: kernDiagnose } = reserviereKern(baender, opts);
+  diagnose.push(...kernDiagnose);
+  const bedarf = new Map(mix.map((m) => [m.typ, { groesse: m.groesse, rest: m.anzahl }]));
+  const wohnungen: GeschnitteneWohnung[] = [];
+  for (const band of baender) {
+    wohnungen.push(...schneideBand(band, bedarf, minBreite));
+  }
+  const { mix: mixErfuellung, diagnose: ergDiagnose } = ergebnisAusWohnungen(wohnungen, mix);
+  diagnose.push(...ergDiagnose);
   return { wohnungen, mix: mixErfuellung, kern, diagnose };
 }

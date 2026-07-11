@@ -64,6 +64,7 @@ export * from './derive/studienbeurteilung';
 export * from './derive/studienbericht';
 export * from './derive/schwarzplan';
 export * from './derive/segmentierer';
+export * from './derive/variantensuche';
 export * from './derive/raumtypcopilot';
 export * from './derive/renderprompt';
 export * from './derive/moebel';
