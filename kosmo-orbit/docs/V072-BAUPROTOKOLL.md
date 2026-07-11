@@ -117,4 +117,59 @@ DOM) · Kernel-Goldens byte-identisch.
 - W2-C «Phasen & Ordnung» läuft noch (Worktree bei Basis 0ae35b5;
   Kritik-1-Auflage «Top-3-Rollenfarben aus STATION_GLYPHE» nachgereicht).
 
+- **Leiter-Direktfix `82aed3d`:** W2-Ds `onAbspielStart` war fire-and-
+  forget (Vorspiel wäre PARALLEL zum Apply gelaufen) und App.tsx mountet
+  das Panel ohne Prop → Prop await-fähig + NEU `state/abspiel-anschluss.ts`
+  (registrierbarer Anschluss; W3-E meldet sich dort an, ohne KosmoPanel/
+  App.tsx anzufassen). Vorspiel verzögert den Apply nur, verhindert nie.
+- **W2-C «Phasen & Ordnung» integriert** als `6a0df3c` (cherry-pick
+  `573eef1`, konfliktfrei). PhasenLeiste (Header), orbit-rang.ts (BASE,
+  sia112Gruppe, Hysterese + Anti-Nerv), kosmo-ui/flip.ts, OrbitStart-Hub
+  (Top-3 64 px Rollenfarben-Border/Glow aus STATION_GLYPHE — Kritik-1-
+  Auflage erfüllt), EntwurfsDock Glas/Pop/Hover (nur orbit-Theme), Kernel
+  +'strategie' (doc.ts, commands/design.ts zod, Preset). Deklarierte
+  Ripples verifiziert: poche.test/phasen-presets.test (Record<SiaPhase>),
+  kosmo-ui/index.ts (flip-Export), design.ts (zod-Enum — im Commit
+  deklariert). App.tsx trägt den Anker `{/* v072: cursor-ebene */}`.
+- **Gates W2-C:** Kernel 728 (Goldens byte-identisch) · App 797 · UI 31 ·
+  typecheck · Wächter+kosmo-zustaende+faehigkeiten-phasen+phasen-leiste
+  **2× grün** (34 je Lauf) · **Journeys EFH/MFH grün** (Wellen-Gate).
+  Worktree agent-ad125be entfernt.
+- **W2-C-Vormerkungen für Kritik 2:** (a) Rang-Tiers sichtbar nur im
+  Design-Fächer (andere Fächer zu wenige Slots); (b) strategie-Preset nur
+  ['volumenstudien'] (Notlösung); (c) Dock-Pop/Hover ohne eigenen E2E —
+  Shots zeigen es; (d) Hover-Sog endet an der Hairline.
+
+### Tag 3 — Bühne & System
+- **W3-F «Cursor & Desktop-Charakter» dispatcht** (Sonnet, Port 5177,
+  Basis 6a0df3c) — cargo check als Gate (Toolchain vorhanden), Zonen-
+  Attribute in fremden Dateien bewusst W4-H, webdriver-Schutz für den
+  Cursor-Layer vorgeschrieben.
+- **W3-E «Kosmo zeichnet sichtbar» integriert** als `e0c816f` (cherry-pick
+  `f385b45`, Fable-Stream, konfliktfrei; DesignWorkspace-Diff = 1 Import +
+  1 Mount-Zeile). Abspiel-Ebene mehrspurig (Stufe 1 = 1 Orb), Abbruch-
+  Pfade webdriver/reduced-motion/kosmo.abspielen, Sicherheits-Wache
+  (8 s + 5 s/Schritt, Deckel 45 s — Apply hängt nie), Overlay mit
+  getScreenCTM-Welt-Abbildung, Orb + Schweif + Etikett-Chip, ESC/Leertaste.
+- **Gates W3-E:** App 819 (+22) · Kernel 728 · typecheck · Build ·
+  kosmo-zeichnet+Wächter-Trio+journey-efh **2× grün** (19/18). Worktree
+  agent-a8e0eb8 entfernt.
+- **Ehrliche Grenzen W3-E:** Geometrie nur für a/b-Achsen-, outline- und
+  at-Commands; sonst Vorschau-Umkreisung bzw. Orb-Puls (nie vorgetäuscht) ·
+  3D-only-Modus zentriert eingepasst (nicht plandeckungsgleich) ·
+  Pan/Zoom während Abspiel verschiebt die Abbildung nicht mit · Pause in
+  Snap-Pause läuft als Timer weiter (Wache gilt absolut).
+- **Suiteweiter Befund (W3-E):** `playwright.config.ts` Z.30
+  `reducedMotion:'reduce'` kommt in dieser Umgebung NICHT im Browser an
+  (matchMedia false in frischen Kontexten); nur explizites
+  `page.emulateMedia()` wirkt. Bestands-Specs emulieren selbst — aber die
+  Config-Absicht ist derzeit wirkungslos. → Kritik-2-Punkt/Finale.
+- **Kritik-Runde 2:** Shots via `e2e/tools/kritik-shots-072-r2.mts`
+  (:5183, Bundle==dist): 9 Zustände (Symbol 4× Pixeldichte, takeover
+  Vollbild), Phasen-Leiste default/Segment 4, Hub-Fächer Phase 2 vs. 4
+  (BASE-Umsortierung sichtbar: Draw→Publish an der Spitze), Dock
+  Glas/Hover orbit+paper. Eigenbefunde: Header wird in der Design-Station
+  eng (SYNC AUS/KOSMO ÖFFNEN brechen zweizeilig um) · takeover-Chip
+  überlappt die Statusleiste unten Mitte.
+
 <!-- Weitere Einträge folgen je Welle -->
