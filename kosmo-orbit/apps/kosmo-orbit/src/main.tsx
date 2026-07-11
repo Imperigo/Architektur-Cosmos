@@ -4,6 +4,7 @@ import '@kosmo/ui/aura.css';
 import './fonts.css'; // NACH aura.css (v0.7.2 §1) — self-gehostet, siehe Datei-Kopf
 import './zod-jitless'; // muss vor ./App bleiben — siehe Kommentar dort (CSP/Zod-eval-Probe)
 import { App } from './App';
+import { Companion } from './shell/Companion';
 import { istTauriDesktop } from './shell/cloud-login';
 
 // Service Worker: NUR im Browser/PWA (Offline-Fähigkeit auf iPad & Co.).
@@ -33,14 +34,14 @@ if (istTauriDesktop()) {
 // tatsächliche Charakter-Ansicht ein, sobald die Route existiert.
 // const fensterCharakter = new URLSearchParams(window.location.search).get('fenster') === 'charakter';
 
-// v072: #companion — Schnittstelle für W4-G (Paket-Ergänzung «Companion
-// minimal», Spec §10/§12). Noch KEINE Funktion: W1-A legt hier nur den
-// dokumentierten Anker an; W4-G verdrahtet die schmale Companion-Ansicht,
-// sobald sie existiert.
-// const istCompanion = window.location.hash.startsWith('#companion');
+// v072: #companion — W4-G (Paket-Ergänzung «Companion minimal», Spec
+// §10/§12): die schmale, lese-/freigabe-fähige PWA-Ansicht rendert ANSTELLE
+// der vollen App, sobald der Hash mit `#companion` beginnt. Ohne diesen Hash
+// bleibt das Verhalten BYTE-IDENTISCH zu vorher (Harter Vertrag §11 — kein
+// Einfluss auf `orbit-start.spec`/`oberflaeche-minimal.spec`/`kosmo-symbol.
+// spec`/Splash).
+const istCompanion = window.location.hash.startsWith('#companion');
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  <StrictMode>{istCompanion ? <Companion /> : <App />}</StrictMode>,
 );

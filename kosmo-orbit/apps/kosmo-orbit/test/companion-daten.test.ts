@@ -1,0 +1,138 @@
+import { describe, expect, it } from 'vitest';
+import {
+  STATUS_LABEL,
+  STATUS_TON,
+  auftragsKarten,
+  companionKarten,
+  phasenSegmente,
+  visKarten,
+  type CompanionKartenStatus,
+} from '../src/shell/companion-daten';
+import type { Auftrag } from '../src/state/auftragsbuch';
+import type { NodeLauf } from '../src/modules/vis/vis-runtime';
+
+/**
+ * V0.7.2 W4-G (Spec §10 «Companion minimal») — reine Karten-Ableitung aus
+ * den zwei bestehenden Laufzeit-Quellen. Kein DOM, keine IndexedDB/Bridge —
+ * die Fixtures unten sind exakt die Shapes, die `listeAuftraege()` bzw.
+ * `useVisRuntime.getState().laeufe` tatsächlich liefern.
+ */
+
+function auftrag(teil: Partial<Auftrag>): Auftrag {
+  return {
+    id: 'a1',
+    ts: '2026-07-11T08:00:00.000Z',
+    text: 'Türfarbe prüfen',
+    quelle: 'getippt',
+    station: 'KosmoDesign',
+    status: 'offen',
+    ...teil,
+  };
+}
+
+function lauf(status: NodeLauf['status'], extra: Partial<NodeLauf> = {}): NodeLauf {
+  return { status, memoKey: 'k', ...extra };
+}
+
+describe('companion-daten (Spec §10) — Auftragsbuch-Karten', () => {
+  it('zeigt offene und an-worker-Aufträge, aber NIE erledigte (kein "laufender" Auftrag mehr)', () => {
+    const auftraege = [
+      auftrag({ id: 'a1', status: 'offen' }),
+      auftrag({ id: 'a2', status: 'an-worker' }),
+      auftrag({ id: 'a3', status: 'erledigt' }),
+    ];
+    const karten = auftragsKarten(auftraege);
+    expect(karten.map((k) => k.id)).toEqual(['auftrag-a1', 'auftrag-a2']);
+    expect(karten.every((k) => k.brauchtFreigabe === false)).toBe(true);
+    expect(karten.every((k) => k.rolle === '--k-rolle-pna')).toBe(true);
+  });
+
+  it('leere Auftragsliste → leere Kartenliste (kein erfundener Platzhalter)', () => {
+    expect(auftragsKarten([])).toEqual([]);
+  });
+});
+
+describe('companion-daten (Spec §10) — Vis-Runtime-Karten', () => {
+  it('zeigt nur OFFENE_LAUF_STATUS-Einträge — fertig/fehler/abgebrochen fallen weg', () => {
+    const laeufe = {
+      n1: lauf('gesendet'),
+      n2: lauf('wartetFreigabe', { jobId: 'j1', approvalToken: 'tok' }),
+      n3: lauf('fertig'),
+      n4: lauf('fehler'),
+      n5: lauf('abgebrochen'),
+      n6: lauf('zeitueberschreitung'),
+    };
+    const karten = visKarten(laeufe);
+    expect(karten.map((k) => k.nodeId).sort()).toEqual(['n1', 'n2']);
+  });
+
+  it('brauchtFreigabe nur bei wartetFreigabe MIT jobId+approvalToken (sonst wäre die Route nicht aufrufbar)', () => {
+    const laeufe = {
+      ohneToken: lauf('wartetFreigabe'),
+      mitToken: lauf('wartetFreigabe', { jobId: 'j2', approvalToken: 'tok2' }),
+      rendert: lauf('rendert', { jobId: 'j3' }),
+    };
+    const karten = visKarten(laeufe);
+    const ohne = karten.find((k) => k.nodeId === 'ohneToken')!;
+    const mit = karten.find((k) => k.nodeId === 'mitToken')!;
+    const rendert = karten.find((k) => k.nodeId === 'rendert')!;
+    expect(ohne.brauchtFreigabe).toBe(false);
+    expect(mit.brauchtFreigabe).toBe(true);
+    expect(mit.jobId).toBe('j2');
+    expect(mit.approvalToken).toBe('tok2');
+    expect(rendert.brauchtFreigabe).toBe(false);
+  });
+
+  it('leere Läufe → leere Kartenliste', () => {
+    expect(visKarten({})).toEqual([]);
+  });
+});
+
+describe('companion-daten (Spec §10) — companionKarten() Zusammenführung', () => {
+  it('Freigabe-bedürftige Karten stehen zuoberst, sonst bleibt die Quellreihenfolge stabil', () => {
+    const auftraege = [auftrag({ id: 'a1', status: 'offen' }), auftrag({ id: 'a2', status: 'an-worker' })];
+    const laeufe = {
+      n1: lauf('gesendet'),
+      n2: lauf('wartetFreigabe', { jobId: 'j', approvalToken: 't' }),
+    };
+    const karten = companionKarten(auftraege, laeufe);
+    expect(karten[0]!.brauchtFreigabe).toBe(true);
+    expect(karten[0]!.nodeId).toBe('n2');
+    // Rest bleibt in Quellreihenfolge (Vis vor Auftragsbuch, je stabil).
+    expect(karten.slice(1).map((k) => k.id)).toEqual(['vis-n1', 'auftrag-a1', 'auftrag-a2']);
+  });
+
+  it('komplett leer (kein Auftrag, kein Lauf) → leere Liste — Companion.tsx zeigt dann den ehrlichen Leerzustand', () => {
+    expect(companionKarten([], {})).toEqual([]);
+  });
+});
+
+describe('companion-daten (Spec §10) — STATUS_LABEL/STATUS_TON decken jeden Status ab', () => {
+  it('jeder mögliche CompanionKartenStatus hat ein UPPERCASE-Label und einen Ton', () => {
+    const alle: CompanionKartenStatus[] = [
+      'offen',
+      'an-worker',
+      'erledigt',
+      'gesendet',
+      'wartetFreigabe',
+      'wartetGpu',
+      'rendert',
+      'fertig',
+      'fehler',
+      'abgebrochen',
+      'zeitueberschreitung',
+    ];
+    for (const status of alle) {
+      expect(STATUS_LABEL[status], status).toBe(STATUS_LABEL[status].toUpperCase());
+      expect(['ruhe', 'laeuft', 'erfolg', 'fehler']).toContain(STATUS_TON[status]);
+    }
+  });
+});
+
+describe('companion-daten (Spec §10) — phasenSegmente()', () => {
+  it('füllt genau n von 5 Segmenten, aufsteigend', () => {
+    expect(phasenSegmente(1)).toEqual([true, false, false, false, false]);
+    expect(phasenSegmente(3)).toEqual([true, true, true, false, false]);
+    expect(phasenSegmente(5)).toEqual([true, true, true, true, true]);
+  });
+});
