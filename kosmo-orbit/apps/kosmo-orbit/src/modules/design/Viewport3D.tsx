@@ -4,7 +4,7 @@ import CameraControls from 'camera-controls';
 import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
 import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
-import { deriveAll, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
+import { aufgeloesteDarstellung3d, deriveAll, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
@@ -250,6 +250,16 @@ const TOUCH_ACTION = {
 } as const;
 
 export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHandlers> }) {
+  // v0.7.0 E3: der aufgelöste 3D-Darstellungsmodus ('auto' reagiert auf
+  // siaPhase) als React-Zustand für den ehrlichen Beweis-Anker
+  // `data-darstellung3d` am Viewport-Container — der three.js-Rebuild selbst
+  // (Materialfarben unten) liest denselben Wert direkt aus dem Doc, dieser
+  // Selektor sorgt nur für den DOM-Beweis. `doc.settings` ist Teil des einen
+  // KosmoDoc, jede `runCommand`-Änderung (auch reine Settings-Patches, s.
+  // `KosmoDoc.apply`) bumpt die Store-`revision` — der Selektor reagiert
+  // also automatisch auf `design.darstellung3dSetzen` UND jeden
+  // `siaPhase`-Wechsel, ohne einen eigenen Revision-Zähler zu brauchen.
+  const darstellung3dAufgeloest = useProject((s) => aufgeloesteDarstellung3d(s.doc.settings));
   const mountRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<CameraControls | null>(null);
   const modelRef = useRef<THREE.Group | null>(null);
@@ -1096,7 +1106,17 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x2a2620 });
     const previewMaterial = new THREE.LineBasicMaterial({ color: 0xa84b2b });
 
-    function artifactToObjects(a: GeometryArtifact): THREE.Object3D[] {
+    // v0.7.0 E3 (docs/V070-KONZEPT.md): 3D-Darstellungsmodus — 'material' ist
+    // das heutige Verhalten (Katalog-Farben + Textur-Toggle) byte-/pixel-
+    // identisch; 'weiss'/'schwarz' überschreiben Farbe+Rauheit EINHEITLICH
+    // für alle Bauteile und überspringen die Textur-Pipeline (auch wenn der
+    // Textur-Toggle an ist — «weiss»/«schwarz» sind Studienmodelle, keine
+    // texturierten Materialansichten). Fenster bleiben unberührt: das
+    // Öffnungs-Loch in der Wandgeometrie trägt HIER kein eigenes Glas-Mesh
+    // (Glas gibt es nur als `fensterMaterial` im Modul-Editor-Overlay unten,
+    // :611 — ein separater, von `materialPalette` unabhängiger Zeichenpfad,
+    // von dieser Weiche gar nicht berührt).
+    function artifactToObjects(a: GeometryArtifact, darstellung3d: 'material' | 'weiss' | 'schwarz'): THREE.Object3D[] {
       const geo = new THREE.BufferGeometry();
       // Kern (x,y,z) → three (x, z, −y): per Umordnung beim Kopieren
       const n = a.positions.length / 3;
@@ -1116,7 +1136,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       const spec = materialPalette[a.materialKey] ?? materialPalette['default']!;
       // C2: metrische UVs über die dominante Normalenachse (1 UV = 1 m).
       // Seiten-/Deckelflächen haben eigene Vertices — Nähte fallen auf Kanten.
-      const karten = texturenAktiv() ? materialKarten(a.materialKey) : null;
+      // Weiss-/Schwarzmodell: KEINE Texturen (Studienmodell-Charakter), auch
+      // wenn der Textur-Toggle (localStorage) an ist.
+      const karten = darstellung3d === 'material' && texturenAktiv() ? materialKarten(a.materialKey) : null;
       if (karten) {
         const uv = new Float32Array(n * 2);
         for (let i = 0; i < n; i++) {
@@ -1139,17 +1161,20 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         }
         geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
       }
-      const mesh = new THREE.Mesh(
-        geo,
-        new THREE.MeshStandardMaterial({
-          color: karten ? 0xffffff : spec.color,
-          roughness: spec.roughness,
-          metalness: spec.metalness ?? 0,
-          ...(karten
-            ? { map: karten.map, bumpMap: karten.bumpMap, bumpScale: karten.bumpScale }
-            : {}),
-        }),
-      );
+      const materialParams =
+        darstellung3d === 'weiss'
+          ? { color: 0xffffff, roughness: 0.9 }
+          : darstellung3d === 'schwarz'
+            ? { color: 0x1c1c1c, roughness: 0.95 }
+            : {
+                color: karten ? 0xffffff : spec.color,
+                roughness: spec.roughness,
+                metalness: spec.metalness ?? 0,
+                ...(karten
+                  ? { map: karten.map, bumpMap: karten.bumpMap, bumpScale: karten.bumpScale }
+                  : {}),
+              };
+      const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial(materialParams));
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       mesh.userData['entityId'] = a.entityId;
@@ -1177,8 +1202,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
     function applyArtifacts(artifacts: GeometryArtifact[]) {
       model.clear();
+      // Frisch gelesen (nicht durchgereicht): die Worker-Antwort (unten)
+      // kommt asynchron — der Modus muss zum REBUILD-Zeitpunkt gelten, nicht
+      // zum Anfrage-Zeitpunkt.
+      const darstellung3d = aufgeloesteDarstellung3d(useProject.getState().doc.settings);
       for (const a of artifacts) {
-        for (const o of artifactToObjects(a)) model.add(o);
+        for (const o of artifactToObjects(a, darstellung3d)) model.add(o);
       }
     }
 
@@ -1811,7 +1840,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
-      <div ref={mountRef} style={{ position: 'absolute', inset: 0 }} data-testid="viewport3d" />
+      <div
+        ref={mountRef}
+        style={{ position: 'absolute', inset: 0 }}
+        data-testid="viewport3d"
+        data-darstellung3d={darstellung3dAufgeloest}
+      />
       <NavLeiste
         testid="nav-3d"
         aktionen={[

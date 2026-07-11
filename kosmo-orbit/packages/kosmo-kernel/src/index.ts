@@ -62,6 +62,7 @@ export * from './derive/besonnungsvergleich';
 export * from './derive/programmerfuellung';
 export * from './derive/studienbeurteilung';
 export * from './derive/studienbericht';
+export * from './derive/schwarzplan';
 export * from './derive/segmentierer';
 export * from './derive/raumtypcopilot';
 export * from './derive/renderprompt';

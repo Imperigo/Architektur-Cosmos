@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72.00mm" height="56.00mm" viewBox="0 0 72.00 56.00" font-family="Helvetica, Arial, sans-serif">
+<rect width="72.00" height="56.00" fill="white"/>
+<polygon points="6.00,50.00 66.00,50.00 66.00,6.00 6.00,6.00" fill="none" stroke="black" stroke-width="0.35" stroke-dasharray="3 0.9 0.6 0.9"/>
+<polygon points="26.00,34.00 44.00,34.00 44.00,22.00 26.00,22.00" fill="#1a1a1a" stroke="none"/>
+<g stroke="black" fill="none" stroke-width="0.35">
+<circle cx="62.00" cy="10.00" r="4"/>
+<path d="M 62.00 13.00 L 62.00 7.00 M 60.60 8.60 L 62.00 7.00 L 63.40 8.60"/>
+<text x="62.00" y="19.00" text-anchor="middle" font-size="3" stroke="none" fill="black">N</text>
+</g>
+<g stroke="black" fill="black" stroke-width="0.35">
+<line x1="10.00" y1="46.00" x2="50.00" y2="46.00"/>
+<line x1="10.00" y1="44.80" x2="10.00" y2="47.20"/>
+<line x1="50.00" y1="44.80" x2="50.00" y2="47.20"/>
+<text x="30.00" y="44.00" text-anchor="middle" font-size="3" stroke="none">20 m · 1:500</text>
+</g>
+</svg>

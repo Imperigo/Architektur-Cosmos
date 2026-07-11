@@ -79,6 +79,30 @@ function perimeterMm(outline: Pt[]): number {
 }
 
 /**
+ * Projiziert einen Umriss (Kern-mm) in ein rechteckiges Zielfenster (`boxX/
+ * boxY/boxSize` bzw. eine flächige `off`-Ecke + `scale`) — Nord bleibt oben
+ * (y gespiegelt), zentriert über `bb`. Gemeinsame Quelle für `situationSvg`
+ * (hier) UND `derive/schwarzplan.ts` (v0.7.0 E4, Situationsplan/Schwarzplan)
+ * — beide brauchen exakt dieselbe Parzelle/Footprint-Projektion, nur mit
+ * unterschiedlicher Zielgrösse (Report-Karte vs. massstabstreues Blatt).
+ */
+export function projiziereUmriss(
+  outline: Pt[],
+  bb: BBox,
+  scale: number,
+  offX: number,
+  offY: number,
+): string {
+  return outline
+    .map((p) => {
+      const x = offX + (p.x - bb.minX) * scale;
+      const y = offY + (bb.maxY - p.y) * scale;
+      return `${x.toFixed(2)},${y.toFixed(2)}`;
+    })
+    .join(' ');
+}
+
+/**
  * Situations-Diagramm einer Variante: Parzellen-Umriss (gestrichelt, sofern
  * übergeben) MIT dem Footprint darin platziert — Owner-Befund K1 verlangt
  * genau das (v1 zeigte nur den Footprint allein, «sagt gar nichts» über den
@@ -98,14 +122,7 @@ export function situationSvg(
   const vH = (bb.maxY - bb.minY) * scale;
   const offX = boxX + (boxSize - vW) / 2;
   const offY = boxY + (boxSize - vH) / 2;
-  const punkteZu = (outline: Pt[]): string =>
-    outline
-      .map((p) => {
-        const x = offX + (p.x - bb.minX) * scale;
-        const y = offY + (bb.maxY - p.y) * scale;
-        return `${x.toFixed(2)},${y.toFixed(2)}`;
-      })
-      .join(' ');
+  const punkteZu = (outline: Pt[]): string => projiziereUmriss(outline, bb, scale, offX, offY);
   const teile: string[] = [];
   if (parzelle && parzelle.length >= 3) {
     teile.push(

@@ -2,6 +2,8 @@ import { phaseLabel, type KosmoDoc } from '../model/doc';
 import type { ImageAsset, Sheet, SheetFormat, SheetImage, SheetPlacement } from '../model/entities';
 import { axoInnerSvg, escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
 import { docFuerUmbau, UMBAU_LABEL } from './umbau';
+import { schwarzplanGeometrie } from './schwarzplan';
+import type { Pt } from '../model/units';
 
 /**
  * Blatt-Komposition (KosmoPublish) — ein Sheet-Entity wird zum druckfähigen
@@ -41,6 +43,43 @@ function placementInner(doc: KosmoDoc, pl: SheetPlacement): InnerSvg {
     return sectionInnerSvg(sicht, pl.section, pl.scale);
   }
   return { inner: '', bounds: null };
+}
+
+/**
+ * Situationsplan-Inhalt in Welt-mm — additive Vorbereitung des neuen
+ * Blatt-Typs «Situationsplan» (v0.7.0 E4, `docs/V070-KONZEPT.md`): dieselbe
+ * `{inner, bounds}`-Form wie `planInnerSvg`/`axoInnerSvg`/`sectionInnerSvg`
+ * oben — Parzellengrenze strichpunktiert + Gebäude-Footprints schwarz
+ * gefüllt, Geometrie/Guard aus `schwarzplanGeometrie()` (`derive/
+ * schwarzplan.ts`, «gemeinsame Quelle» statt doppelter Entitäts-Erkennung).
+ *
+ * NOCH NICHT verdrahtet: `placementInner()` oben kennt nur `'grundriss' |
+ * 'axo' | 'schnitt'`, weil `SheetPlacement.view` (`model/entities.ts`) den
+ * Wert `'situationsplan'` noch nicht führt — Stream 3A erweitert den Union-
+ * Typ + das Command-Schema (`publish.ansichtPlatzieren`) UND die
+ * Auto-Befüllung (`blattfuellung.ts`); danach genügt hier EIN zusätzlicher
+ * `if (pl.view === 'situationsplan') return situationsplanInnerSvg(sicht,
+ * pl.scale);`-Zweig. Absichtlich OHNE Nordpfeil/Massstabsbalken-Chrome (die
+ * trägt das eigenständige `schwarzplanSvg`-Blatt bereits vollständig) — ob
+ * die Sheet-Platzierung eigene Chrome braucht, ist eine Layout-Entscheidung
+ * von Stream 3A. `scale` (Massstab-Nenner, wie bei den Geschwistern oben)
+ * skaliert die Stiftstärke papierkonstant vor — dieselbe Regel wie
+ * `plansvg.ts`s Kommentar «Stiftstärken in Papier-mm → Welt-mm skaliert»,
+ * weil `sheetToSvg` `inner` erst NACH dieser Funktion mit `scale(1/scale)`
+ * verkleinert (ein roher Papier-mm-Wert von 0.35 würde sonst unsichtbar dünn).
+ */
+export function situationsplanInnerSvg(doc: KosmoDoc, scale: number): InnerSvg {
+  const geo = schwarzplanGeometrie(doc);
+  if (!geo) return { inner: '', bounds: null };
+  const { parzelle, footprints, bounds } = geo;
+  const punkte = (o: Pt[]) => o.map((p) => `${p.x},${-p.y}`).join(' ');
+  const parts: string[] = [
+    `<polygon points="${punkte(parzelle)}" fill="none" stroke="black" stroke-width="${(0.35 * scale).toFixed(3)}" stroke-dasharray="${(3 * scale).toFixed(2)} ${(0.9 * scale).toFixed(2)} ${(0.6 * scale).toFixed(2)} ${(0.9 * scale).toFixed(2)}"/>`,
+  ];
+  for (const fp of footprints) {
+    parts.push(`<polygon points="${punkte(fp)}" fill="#1a1a1a" stroke="none"/>`);
+  }
+  return { inner: parts.join('\n'), bounds };
 }
 
 /** Papier-Bounds einer Platzierung (für Auswahl/Drag im Blatteditor). */

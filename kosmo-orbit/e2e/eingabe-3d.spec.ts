@@ -17,6 +17,18 @@ type CamHook = {
   setCamera: (px: number, py: number, pz: number, tx: number, ty: number, tz: number) => void;
 };
 
+// v0.7.0 E3: `window.__kosmo.run(...)` für den 3D-Darstellungsmodus-Test
+// unten — dieselbe globale Bridge wie in `abnahme.spec.ts` u.a., hier bisher
+// ungenutzt (der Rest der Datei arbeitet mit `__kosmoViewport` + rohen
+// PointerEvents).
+declare global {
+  interface Window {
+    __kosmo: {
+      run: (id: string, p: unknown) => { patches: { id: string }[] };
+    };
+  }
+}
+
 async function bootstrap3D(page: import('@playwright/test').Page) {
   await page.goto('/');
   await page.evaluate(() => {
@@ -214,6 +226,24 @@ test('J1b: Doppel-Tap passt die Ansicht ein (Kamera bewegt sich)', async ({ page
       { timeout: 4000 },
     )
     .toBeGreaterThan(0.2);
+});
+
+test('v0.7.0 E3: data-darstellung3d spiegelt den aufgelösten 3D-Darstellungsmodus (Default weiss, dann material/schwarz per Command)', async ({ page }) => {
+  await bootstrap3D(page);
+  // Frisches Projekt: darstellung3d fehlt (Default 'auto'), siaPhase-Default
+  // ist 'wettbewerb' (V070-KONZEPT E1) → aufgeloesteDarstellung3d() löst auf
+  // 'weiss' auf (Owner-Entscheid: Weissmodell als Phasen-Default).
+  await expect(page.locator('[data-testid="viewport3d"]')).toHaveAttribute('data-darstellung3d', 'weiss');
+
+  await page.evaluate(() => window.__kosmo.run('design.darstellung3dSetzen', { darstellung3d: 'schwarz' }));
+  await expect(page.locator('[data-testid="viewport3d"]')).toHaveAttribute('data-darstellung3d', 'schwarz');
+
+  await page.evaluate(() => window.__kosmo.run('design.darstellung3dSetzen', { darstellung3d: 'material' }));
+  await expect(page.locator('[data-testid="viewport3d"]')).toHaveAttribute('data-darstellung3d', 'material');
+
+  // 'auto' zurück: löst wieder über siaPhase auf (unverändert 'wettbewerb' → weiss).
+  await page.evaluate(() => window.__kosmo.run('design.darstellung3dSetzen', { darstellung3d: 'auto' }));
+  await expect(page.locator('[data-testid="viewport3d"]')).toHaveAttribute('data-darstellung3d', 'weiss');
 });
 
 test('J1b: Long-Press öffnet das Kontextmenü', async ({ page }) => {
