@@ -791,6 +791,19 @@ describe('Dach im 2D-Plan & Schnitt (Stream A / v0.6.8, SIM-Befunde H-2/H-18)', 
     const golden = readFileSync(new URL('./golden/schnitt-satteldach-querschnitt.svg', import.meta.url), 'utf8');
     expect(svg).toBe(golden);
   });
+
+  it('Golden: derselbe Satteldach-Querschnitt in Baueingabe zeichnet Schichten schwarz/grau (v0.7.0 E2)', () => {
+    const { doc } = testhausSatteldach();
+    execute(doc, 'design.phaseSetzen', { phase: 'baueingabe' });
+    const spec = { a: { x: 4000, y: -2000 }, b: { x: 4000, y: 8000 }, depth: 30000, lookLeft: true };
+    const { inner, bounds: b } = sectionInnerSvg(doc, spec, 14);
+    const pad = 500;
+    const w = b!.maxX - b!.minX + 2 * pad;
+    const h = b!.maxY - b!.minY + 2 * pad;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${b!.minX - pad} ${b!.minY - pad} ${w} ${h}">\n${inner}\n</svg>\n`;
+    const golden = readFileSync(new URL('./golden/schnitt-satteldach-baueingabe.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
+  });
 });
 
 describe('KosmoPublish (Blätter, DXF)', () => {
@@ -1105,6 +1118,55 @@ describe('Golden-SVG (Plan-Regression)', () => {
     const golden = readFileSync(new URL('./golden/grundriss-testhaus.svg', import.meta.url), 'utf8');
     expect(svg).toBe(golden);
     // Bewusste Plan-Änderungen: Golden neu erzeugen und im Diff begutachten.
+  });
+
+  // v0.7.0 «Schwarz auf Weiss» (E2, derive/poche.ts): dieselbe Testhaus-Geometrie
+  // wie oben, einmal in Wettbewerb (EIN schwarzes Poché) und einmal in
+  // Baueingabe (Schichten schwarz/grau) — bewusst NEUE Goldens, das Werkplan-
+  // Golden oben bleibt unangetastet (Byte-Identität ist der eigentliche Beweis).
+  const goldenTesthausMitPhase = async (phase: 'wettbewerb' | 'baueingabe') => {
+    const { planToSvg, A3_QUER } = await import('../src');
+    const doc = new KosmoDoc();
+    doc.settings.projectName = 'Golden-Testhaus';
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const sid = (eg.patches[0] as { id: string }).id;
+    const au = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW', target: 'wall',
+      layers: [
+        { material: 'putz', thickness: 20, function: 'bekleidung' },
+        { material: 'daemmung-mw', thickness: 160, function: 'daemmung' },
+        { material: 'beton', thickness: 180, function: 'tragend' },
+      ],
+    });
+    const aid = (au.patches[0] as { id: string }).id;
+    const W = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+      execute(doc, 'design.wandZeichnen', { storeyId: sid, a, b, assemblyId: aid }).patches[0] as { id: string };
+    const w1 = W({ x: 0, y: 0 }, { x: 9000, y: 0 });
+    W({ x: 9000, y: 0 }, { x: 9000, y: 6000 });
+    W({ x: 9000, y: 6000 }, { x: 0, y: 6000 });
+    W({ x: 0, y: 6000 }, { x: 0, y: 0 });
+    execute(doc, 'design.oeffnungSetzen', { wallId: w1.id, openingType: 'fenster', center: 3000, width: 2000, height: 1500, sill: 900 });
+    execute(doc, 'design.oeffnungSetzen', { wallId: w1.id, openingType: 'tuer', center: 7000, width: 1000, height: 2200, sill: 0, swing: 'links' });
+    execute(doc, 'design.phaseSetzen', { phase });
+    return planToSvg(doc, sid, {
+      scale: phase === 'wettbewerb' ? 200 : 100,
+      paper: A3_QUER,
+      projectName: 'Golden-Testhaus',
+      planTitle: 'Grundriss',
+      date: '10.07.2026',
+    });
+  };
+
+  it('Golden: Wettbewerb zeichnet die Wände als EIN schwarzes Poché (v0.7.0 E2)', async () => {
+    const svg = await goldenTesthausMitPhase('wettbewerb');
+    const golden = readFileSync(new URL('./golden/grundriss-testhaus-wettbewerb.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
+  });
+
+  it('Golden: Baueingabe zeichnet Schichten schwarz (tragend) und grau (nichttragend) (v0.7.0 E2)', async () => {
+    const svg = await goldenTesthausMitPhase('baueingabe');
+    const golden = readFileSync(new URL('./golden/grundriss-testhaus-baueingabe.svg', import.meta.url), 'utf8');
+    expect(svg).toBe(golden);
   });
 });
 
@@ -2172,10 +2234,13 @@ describe('SIA-Phasen-Detaillierung (Owner 03.07.)', () => {
     execute(doc, 'design.phaseSetzen', { phase: 'bauprojekt' });
     expect(deriveSection(doc, spec).faces).toHaveLength(3);
     expect(sectionInnerSvg(doc, spec, 100).inner).not.toContain('<polyline');
-    // vorprojekt: ein Face, einheitliches Grau
+    // vorprojekt: ein Face, einheitliches Schwarz (v0.7.0 «Schwarz auf
+    // Weiss» E2, derive/poche.ts — ersetzt das frühere einheitliche Grau
+    // #d7d4ce: Wettbewerb/Vorprojekt zeichnen SIA-konform schwarz).
     execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
     expect(deriveSection(doc, spec).faces).toHaveLength(1);
-    expect(sectionInnerSvg(doc, spec, 100).inner).toContain('#d7d4ce');
+    expect(sectionInnerSvg(doc, spec, 100).inner).toContain('#1a1a1a');
+    expect(sectionInnerSvg(doc, spec, 100).inner).not.toContain('#d7d4ce');
   });
 
   it('Phase steht im Plankopf; Command ist undo-fähig; Altbestand fällt auf werkplan', () => {

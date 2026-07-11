@@ -2280,9 +2280,9 @@ export const setPhase = registerCommand({
   id: 'design.phaseSetzen',
   title: 'SIA-Phase setzen',
   description:
-    'Stellt den Detaillierungsgrad der Pläne nach SIA-Phase ein: vorprojekt (Wände als einfaches Poché, Öffnungen als Aussparung, 1:200), bauprojekt (Schichten sichtbar, Symbole, ohne feine Materialschraffuren, 1:100), werkplan (volle Detaillierung mit SIA-Materialschraffuren, 1:50). Wirkt auf Grundriss, Schnitt, Druck und Plankopf.',
+    'Stellt den Detaillierungsgrad der Pläne nach SIA-Phase ein: wettbewerb (wie vorprojekt, 1:200), vorprojekt (Wände als einfaches Poché, Öffnungen als Aussparung, 1:200), bauprojekt (Schichten sichtbar, Symbole, ohne feine Materialschraffuren, 1:100), baueingabe (wie bauprojekt, 1:100), werkplan (volle Detaillierung mit SIA-Materialschraffuren, 1:50). Wirkt auf Grundriss, Schnitt, Druck und Plankopf; die konkrete Poché-Füllung (schwarz vs. Material) steuert zusätzlich design.pocheModusSetzen.',
   params: z.object({
-    phase: z.enum(['vorprojekt', 'bauprojekt', 'werkplan']),
+    phase: z.enum(['wettbewerb', 'vorprojekt', 'bauprojekt', 'baueingabe', 'werkplan']),
   }),
   summarize: (p) => `Phase: ${p.phase}`,
   run: (doc, p) => {
@@ -2308,6 +2308,70 @@ export const setSiaPhase = registerCommand({
   },
   run: (doc, p) => {
     return [{ settings: true, before: { siaPhase: doc.settings.siaPhase }, after: { siaPhase: p.siaPhase } }];
+  },
+});
+
+export const setPocheModus = registerCommand({
+  id: 'design.pocheModusSetzen',
+  title: 'Poché-Modus setzen',
+  description:
+    'Setzt den Poché-Modus für Grundriss und Schnitt (v0.7.0 E2): phase (Default, Abwesenheit) lässt die SIA-Phase entscheiden — Wettbewerb/Vorprojekt ein schwarzes Poché, Bauprojekt/Baueingabe Schichten schwarz/grau, Werkplan das heutige Material-Verhalten mit Schraffuren; schwarz erzwingt die Schwarz-Darstellung in jeder Phase; material erzwingt die Material-Tönung in jeder Phase (auch früh im SIA-Zyklus). Reine Darstellungsebene, ändert keine Geometrie/Mengen.',
+  params: z.object({
+    pocheModus: z.enum(['phase', 'schwarz', 'material']),
+  }),
+  summarize: (p) => `Poché-Modus: ${p.pocheModus}`,
+  run: (doc, p) => {
+    return [
+      {
+        settings: true as const,
+        // Schmales Patch (nur `pocheModus`), wie bei `schnitt` (s. dortigen
+        // Kommentar): ein optionales Feld ohne defaultSettings-Eintrag
+        // braucht beim Undo einen expliziten «vorher»-Wert, sonst löscht das
+        // Object-Spread-Undo den Schlüssel nicht zurück in die Abwesenheit.
+        before: { pocheModus: doc.settings.pocheModus ?? 'phase' },
+        after: { pocheModus: p.pocheModus },
+      },
+    ];
+  },
+});
+
+export const setDarstellung3d = registerCommand({
+  id: 'design.darstellung3dSetzen',
+  title: '3D-Darstellungsmodus setzen',
+  description:
+    'Setzt den 3D-Darstellungsmodus (v0.7.0 E3): auto (Default, Abwesenheit) löst über die SIA-Teilphase auf — bis und mit Baueingabe (Bewilligung) weiss, ab Ausschreibung Material; weiss/material/schwarz erzwingen den jeweiligen Modus. Fenster bleiben in jedem Modus transparent. Reine Projektsemantik (Yjs/Undo) — der Textur-Toggle am Viewport bleibt lokal.',
+  params: z.object({
+    darstellung3d: z.enum(['auto', 'material', 'weiss', 'schwarz']),
+  }),
+  summarize: (p) => `3D-Darstellung: ${p.darstellung3d}`,
+  run: (doc, p) => {
+    return [
+      {
+        settings: true as const,
+        before: { darstellung3d: doc.settings.darstellung3d ?? 'auto' },
+        after: { darstellung3d: p.darstellung3d },
+      },
+    ];
+  },
+});
+
+export const setFensterBoegen = registerCommand({
+  id: 'design.fensterBoegenSetzen',
+  title: 'Fenster-Öffnungsflügel-Bogen setzen',
+  description:
+    'Schaltet den Öffnungsflügel-Bogen (H-42) bei parametrischen Fenstern im Grundriss ein oder aus. Default (Abwesenheit) an — Bestandsverhalten. Aus blendet nur die Bogen-Symbolik aus, die Teilungslinien und das Fenstersymbol selbst bleiben.',
+  params: z.object({
+    fensterBoegen: z.boolean(),
+  }),
+  summarize: (p) => `Fenster-Öffnungsbogen: ${p.fensterBoegen ? 'an' : 'aus'}`,
+  run: (doc, p) => {
+    return [
+      {
+        settings: true as const,
+        before: { fensterBoegen: doc.settings.fensterBoegen ?? true },
+        after: { fensterBoegen: p.fensterBoegen },
+      },
+    ];
   },
 });
 

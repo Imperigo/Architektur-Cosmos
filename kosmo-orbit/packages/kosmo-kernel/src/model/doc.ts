@@ -36,14 +36,21 @@ export interface RaumprogrammPosten {
  * Die beiden Zustände sind bewusst getrennt (`doc.settings.phase` vs.
  * `doc.settings.siaPhase`) und werden NICHT automatisch gekoppelt.
  */
-export type BauPhase = 'vorprojekt' | 'bauprojekt' | 'werkplan';
+export type BauPhase = 'wettbewerb' | 'vorprojekt' | 'bauprojekt' | 'baueingabe' | 'werkplan';
 
 export function phaseLabel(phase: BauPhase): string {
-  return phase === 'vorprojekt'
-    ? 'Vorprojekt (SIA 31)'
-    : phase === 'bauprojekt'
-      ? 'Bauprojekt (SIA 32/33)'
-      : 'Werkplan (SIA 51)';
+  switch (phase) {
+    case 'wettbewerb':
+      return 'Wettbewerb (SIA 22)';
+    case 'vorprojekt':
+      return 'Vorprojekt (SIA 31)';
+    case 'bauprojekt':
+      return 'Bauprojekt (SIA 32)';
+    case 'baueingabe':
+      return 'Baueingabe (SIA 33)';
+    case 'werkplan':
+      return 'Werkplan (SIA 51)';
+  }
 }
 
 /**
@@ -79,7 +86,7 @@ export function siaPhaseLabel(phase: SiaPhase): string {
     case 'bauprojekt':
       return 'Bauprojekt (SIA 32)';
     case 'bewilligung':
-      return 'Bewilligungsverfahren (SIA 33)';
+      return 'Baueingabe (SIA 33)';
     case 'ausschreibung':
       return 'Ausschreibung (SIA 41)';
     case 'ausfuehrung':
@@ -99,12 +106,14 @@ export function siaPhaseLabel(phase: SiaPhase): string {
 export function empfohlenePlanPhase(siaPhase: SiaPhase): BauPhase {
   switch (siaPhase) {
     case 'wettbewerb':
+      return 'wettbewerb';
     case 'vorprojekt':
       return 'vorprojekt';
     case 'bauprojekt':
-    case 'bewilligung':
-    case 'ausschreibung':
       return 'bauprojekt';
+    case 'bewilligung':
+      return 'baueingabe';
+    case 'ausschreibung':
     case 'ausfuehrung':
     case 'abnahme':
       return 'werkplan';
@@ -303,6 +312,38 @@ export interface DocSettings {
    * fassadenmodule.ts`s `richtungsModule()` liest BEIDE Quellen (Volumenkörper
    * UND diese Liste); der bestehende MassBody-Weg bleibt unverändert. */
   wandFassadenModule?: WandFassadenZuweisung[];
+  /** Poché-Modus (v0.7.0, `docs/V070-KONZEPT.md` E2) — steuert, wie stark die
+   * SIA-Phase die Grundriss-/Schnitt-Füllung bestimmt: `'phase'` (Default bei
+   * Abwesenheit) lässt `phase` entscheiden (Wettbewerb/Vorprojekt = ein
+   * schwarzes Poché, Bauprojekt/Baueingabe = Schichten schwarz/grau, Werkplan
+   * = heutiges Material-Verhalten); `'schwarz'` erzwingt die Schwarz-Regeln
+   * phasenunabhängig; `'material'` erzwingt das heutige Tint-Verhalten
+   * phasenunabhängig. Duplikat-Union statt Import aus `derive/poche.ts` —
+   * `model/` importiert nicht aus `derive/` (s. `SchnittSpec`-Kommentar). Nur
+   * über `design.pocheModusSetzen` gesetzt. */
+  pocheModus?: 'phase' | 'schwarz' | 'material';
+  /** 3D-Darstellungsmodus (v0.7.0 E3) — `'auto'` (Default bei Abwesenheit)
+   * löst über `siaPhase` auf: bis und mit `'bewilligung'` weiss, ab
+   * `'ausschreibung'` Material. `'material'/'weiss'/'schwarz'` erzwingen den
+   * jeweiligen Modus. Reine Projektsemantik (Yjs/Undo) — der Textur-Toggle
+   * bleibt separat in localStorage. Auflösung: `aufgeloesteDarstellung3d()`
+   * unten. Nur über `design.darstellung3dSetzen` gesetzt. */
+  darstellung3d?: 'auto' | 'material' | 'weiss' | 'schwarz';
+  /** H-42: Öffnungsflügel-Bogen bei parametrischen Fenstern zeichnen —
+   * Default bei Abwesenheit `true` (Bestandsverhalten). `false` blendet die
+   * `fenster-bogen`-Symbolik aus (Owner-Schalter im Projekt-Menü). Nur über
+   * `design.fensterBoegenSetzen` gesetzt. */
+  fensterBoegen?: boolean;
+}
+
+/** Auflösung von `darstellung3d: 'auto'` (v0.7.0 E3) — pure Funktion, testbar
+ * ohne Viewport3D. Bis und mit `'bewilligung'` (Wettbewerb…Baueingabe) gilt
+ * das Weissmodell als Phasen-Default, ab `'ausschreibung'` Material. */
+export function aufgeloesteDarstellung3d(settings: DocSettings): 'material' | 'weiss' | 'schwarz' {
+  const modus = settings.darstellung3d ?? 'auto';
+  if (modus !== 'auto') return modus;
+  const fruehePhasen: SiaPhase[] = ['wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung'];
+  return fruehePhasen.includes(settings.siaPhase) ? 'weiss' : 'material';
 }
 
 /** Eine Fassadenseiten-Zuweisung im wand-basierten Baupfad (H-35, v0.6.8).

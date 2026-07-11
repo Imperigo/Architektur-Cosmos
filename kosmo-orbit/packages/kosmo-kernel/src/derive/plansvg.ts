@@ -5,6 +5,7 @@ import { derivePlan, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabel } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
 import { schraffurFuer, schraffurLinien } from './schraffur';
+import { pocheEntscheid } from './poche';
 import { deriveAxo, type AxoSpec } from './axo';
 
 /**
@@ -57,6 +58,8 @@ export function planInnerSvg(
   // Umbau-Farbcode (SIA 400 B.8.11): Bestand schwarz/grau, Neubau rot, Abbruch gelb
   const NEU_STIFT = '#b3261e';
   const ABBRUCH_STIFT = '#8a7500';
+  const phase = doc.settings.phase;
+  const pocheModus = doc.settings.pocheModus ?? 'phase';
   for (const r of plan.regions) {
     // A3: Stützen sind immer geschnitten → schwerer Stift + Poché wie tragend
     const isCore = r.classes.includes('tragend') || r.classes.includes('stuetze');
@@ -65,14 +68,10 @@ export function planInnerSvg(
     const neu = r.classes.includes('renovation-neu');
     const abbruch = r.classes.includes('renovation-abbruch');
     const bestand = r.classes.includes('renovation-bestand');
-    // svg2pdf rendert SVG-Patterns nicht zuverlässig → solides Poché (SIA-Druckkonvention)
-    let fill = isCore ? '#c9c9c9' : isDaemmung ? '#efefef' : isProjection ? 'none' : 'white';
     let stroke = 'black';
     if (neu) {
-      fill = isProjection ? 'none' : '#e9c8c5';
       stroke = NEU_STIFT;
     } else if (abbruch) {
-      fill = '#f3e29b';
       stroke = ABBRUCH_STIFT;
     } else if (bestand) {
       // K2 (Owner-Rundgang 0.6.2, S. 18): explizit als Bestand markierte
@@ -80,12 +79,24 @@ export function planInnerSvg(
       // Dämmung/Bekleidung) — vorher tönte nur die tragende Schicht grau,
       // die übrigen Schichten blieben weiss ("hälftig grau"). Der Umbau-
       // Status zeigt den Bestand als Ganzes, nicht den Materialaufbau.
-      fill = isProjection ? 'none' : '#c9c9c9';
       stroke = 'black';
     }
     // Themenplan (A5): Regel-Farbe übersteuert die Füllung, der Stift bleibt
     const themaFarbe = themaFuer(r.classes);
-    if (themaFarbe) fill = themaFarbe;
+    // svg2pdf rendert SVG-Patterns nicht zuverlässig → solides Poché
+    // (SIA-Druckkonvention). Die Füllfarbe entscheidet EINE Stelle
+    // (`derive/poche.ts`, v0.7.0 E2): Themenplan > Umbau > Phasen-Schwarz >
+    // heutige Tints/Grau — für `phase === 'werkplan'`/`modus === 'material'`
+    // byte-identisch zum Vorher (16 Alt-Goldens).
+    const entscheid = pocheEntscheid({
+      phase,
+      modus: pocheModus,
+      klassen: { tragend: isCore, daemmung: isDaemmung, projektion: isProjection },
+      kontext: 'grundriss',
+      ...(neu ? { umbau: 'neu' as const } : abbruch ? { umbau: 'abbruch' as const } : bestand ? { umbau: 'bestand' as const } : {}),
+      ...(themaFarbe ? { themaFarbe } : {}),
+    });
+    const fill = entscheid.fill ?? 'none';
     // Stiftstärken in Papier-mm → Welt-mm skaliert (0.5 / 0.35 / 0.18)
     const sw = (isProjection ? 0.18 : isCore ? 0.5 : 0.35) * scale;
     const dash = r.classes.includes('volumen')
@@ -254,17 +265,36 @@ export function planInnerSvg(
 export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number): InnerSvg {
   const g = deriveSection(doc, spec);
   const parts: string[] = [];
-  // Material-Poché zuerst (unter allen Stiften): Detaillierung nach SIA-Phase —
-  // Vorprojekt einheitlich grau, Bauprojekt Material-Tönung, Werkplan + Schraffur
+  // Material-Poché zuerst (unter allen Stiften): Detaillierung nach SIA-Phase
+  // — die Füllfarbe entscheidet `derive/poche.ts` (v0.7.0 E2): Wettbewerb/
+  // Vorprojekt ein schwarzes Poché, Bauprojekt/Baueingabe Schichten
+  // schwarz/grau, Werkplan (bzw. modus 'material') Material-Tönung +
+  // Schraffur — byte-identisch zum Vorher für `phase === 'werkplan'`.
   const phase = doc.settings.phase;
+  const pocheModus = doc.settings.pocheModus ?? 'phase';
   for (const f of g.faces) {
     const spec2 = schraffurFuer(f.material, f.functionKey);
     const d = f.loops
       .map((loop) => `M ${loop.map((p) => `${p.s} ${-p.z}`).join(' L ')} Z`)
       .join(' ');
-    const fill = phase === 'vorprojekt' ? '#d7d4ce' : spec2.tint;
+    const entscheid = pocheEntscheid({
+      phase,
+      modus: pocheModus,
+      material: f.material,
+      klassen: {
+        tragend: f.functionKey === 'tragend',
+        daemmung: f.functionKey === 'daemmung',
+        projektion: false,
+      },
+      kontext: 'schnitt',
+    });
+    // Material-Stil (art 'tint'/'none'): der lokal berechnete `spec2.tint`
+    // kennt den echten `functionKey` (bekleidung/dichtung/hohlraum), den
+    // `pocheEntscheid()` über die schmale `klassen`-Signatur nicht 1:1
+    // abbilden kann — deshalb hier bevorzugt, garantiert Byte-Identität.
+    const fill = entscheid.art === 'tint' || entscheid.art === 'none' ? spec2.tint : entscheid.fill;
     if (fill) parts.push(`<path d="${d}" fill-rule="evenodd" fill="${fill}" stroke="none"/>`);
-    if (phase === 'werkplan') {
+    if (entscheid.schraffurLinien) {
       for (const linie of schraffurLinien(f.loops, spec2, scale)) {
         parts.push(
           `<polyline points="${linie.map((p) => `${p.s},${-p.z}`).join(' ')}" fill="none" stroke="#333" stroke-width="${0.18 * scale}"/>`,

@@ -6,8 +6,10 @@ import { useProject } from '../../state/project-store';
 /** SIA-Massstabsempfehlung je Phase (B5, PLAN-DETAILLIERUNG Fig. 4) —
  * Vorschlag, kein Zwang: der Blatt-Editor (KosmoPublish) wählt frei. */
 export const PHASEN_MASSSTAB: Record<BauPhase, number> = {
+  wettbewerb: 200,
   vorprojekt: 200,
   bauprojekt: 100,
+  baueingabe: 100,
   werkplan: 50,
 };
 

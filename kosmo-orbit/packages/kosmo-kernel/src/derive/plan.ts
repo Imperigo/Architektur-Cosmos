@@ -12,6 +12,7 @@ import { dist, normal, polygonArea, pt, type Pt } from '../model/units';
 import { treppenTeile } from './treppe';
 import { meshSchnittRinge } from './mesh-topo';
 import { dachGeometrie } from './dach';
+import { pocheEntscheid } from './poche';
 
 /** Standard-Schnitthöhe des Grundrisses über Geschoss-OK (SIA-üblich 1 m) —
  * die Ebene, auf der FreeMesh-Körper ihre ehrliche Schnittfigur zeigen. */
@@ -284,6 +285,18 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   const renClasses = (ren?: string): string[] => (ren ? [`renovation-${ren}`] : []);
 
   const phase = doc.settings.phase;
+  // Poché-Geometrie (v0.7.0 E2, `derive/poche.ts`): EIN Poché über die
+  // Gesamtdicke (Wettbewerb/Vorprojekt bzw. modus 'schwarz' in diesen
+  // Phasen) statt der früheren reinen `phase === 'vorprojekt'`-Abfrage —
+  // `klassen`/`kontext` sind hier ohne Bedeutung (nur `einDeckung` zählt,
+  // eine Geometrie-Entscheidung VOR der Schichtbildung, unabhängig von der
+  // späteren Füllung je Region in `plansvg.ts`).
+  const einDeckung = pocheEntscheid({
+    phase,
+    modus: doc.settings.pocheModus ?? 'phase',
+    klassen: { tragend: false, daemmung: false, projektion: false },
+    kontext: 'grundriss',
+  }).einDeckung;
   for (const wall of walls) {
     const assembly = doc.get<Assembly>(wall.assemblyId);
     if (!assembly || assembly.kind !== 'assembly') continue;
@@ -310,8 +323,9 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
           classes: ['cut', 'tragend', `material-${material}`, 'renovation-abbruch'],
         });
       }
-    } else if (phase === 'vorprojekt') {
-      // Vorprojekt (SIA 31): Wand als EIN Poché über die Gesamtdicke — keine Schichten
+    } else if (einDeckung) {
+      // Wettbewerb/Vorprojekt (bzw. modus 'schwarz' in diesen Phasen, E2):
+      // Wand als EIN Poché über die Gesamtdicke — keine Schichten
       const outline = wallOutlineMitered(wall, assembly, endMiters);
       const cutPolys: Poly[] = strips.length > 0 ? difference([outline], strips) : [outline];
       const key = `masse|${ren ?? ''}`;
@@ -391,7 +405,12 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
             const s = r.s0 + i * feld;
             lines.push({ a: at(s, mid - 25), b: at(s, mid + 25), classes: ['symbol', 'fenster', ...oRen] });
           }
-          if (o.fensterTyp === 'einfluegel' || o.fensterTyp === 'zweifluegel') {
+          // H-42: Öffnungsflügel-Bogen abschaltbar (Default an, s. `doc.ts`
+          // `fensterBoegen`-Kommentar) — Owner-Schalter im Projekt-Menü.
+          if (
+            (o.fensterTyp === 'einfluegel' || o.fensterTyp === 'zweifluegel') &&
+            doc.settings.fensterBoegen !== false
+          ) {
             // Öffnungsbogen — dieselbe Winkelkonvention wie das Türsymbol
             // (Angel auf der L-Seite, Schwenk über die Wand-Normale), aber
             // eigene Klasse 'fenster-bogen' (Renderer/Export unterscheidbar).

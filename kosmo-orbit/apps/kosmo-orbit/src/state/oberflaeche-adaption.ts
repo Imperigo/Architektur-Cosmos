@@ -89,7 +89,7 @@ export interface TaetigkeitsKontext {
   /** ToolId aus DesignWorkspace (z.B. 'wand', 'auswahl', 'skizze'). */
   tool: string;
   /** SIA-Phase, `doc.settings.phase`. */
-  phase: 'vorprojekt' | 'bauprojekt' | 'werkplan';
+  phase: 'wettbewerb' | 'vorprojekt' | 'bauprojekt' | 'baueingabe' | 'werkplan';
   /** Punktkette offen, Pointer unten, Sketch pending — Anti-Nerv-Wache. */
   aktionLaeuft: boolean;
   /**
@@ -299,7 +299,7 @@ export function gehobenesElementDerGruppe(gruppe: LeistenGruppe, nutzung: Nutzun
  */
 export function leiteTaetigkeitsKontextAb(params: {
   tool: string;
-  phase: 'vorprojekt' | 'bauprojekt' | 'werkplan';
+  phase: 'wettbewerb' | 'vorprojekt' | 'bauprojekt' | 'baueingabe' | 'werkplan';
   punkteOffen: boolean;
   ziehtElement: boolean;
   /** Fable-Review-2-Auflage (J3c-0b): irgendein Ebenen-Panel gerade offen. */
