@@ -54,3 +54,46 @@ export function istAntFehltFehler(fehler: unknown): boolean {
   const text = fehler instanceof Error ? fehler.message : String(fehler ?? '');
   return /\bant\b/i.test(text) && text.toLowerCase().includes('nicht gefunden');
 }
+
+// -----------------------------------------------------------------------
+// Abmelden (v0.7.1 Stream 5B, Befund aus Stream 2A) — bis hierhin gab es
+// KEINEN dedizierten Abmelden-Knopf für den Abo-Login: der einzige Weg, den
+// Abo-Zustand zu verlassen, war ein neuer API-Schlüssel-Eintrag, der die
+// ANZEIGE ehrlich wechselte («API-Schlüssel hinterlegt»), das liegengeblie-
+// bene `anthropicOauthToken` in `localStorage` aber NIE löschte. Die beiden
+// reinen Zustands-Funktionen hier beheben genau das — ohne DOM/React, damit
+// sie unit-testbar bleiben und `KosmoPanel.tsx` (Owner: Stream 2A) nur die
+// beiden Aufrufe braucht, keine eigene Lösch-Logik.
+// -----------------------------------------------------------------------
+
+/** Minimaler Ausschnitt aus `KosmoSettings`, den die beiden Funktionen unten
+ *  anfassen — generisch gehalten, damit `KosmoPanel.tsx` sein volles
+ *  `KosmoSettings` (inkl. `CloudAuthArt` aus `@kosmo/ai`) unverändert
+ *  durchreichen kann. */
+export interface CloudAuthZustand {
+  cloudAuth: 'schluessel' | 'abo';
+  anthropicKey: string;
+  anthropicOauthToken: string;
+}
+
+/**
+ * «Abmelden»: löscht NUR das OAuth-Token (den API-Schlüssel fasst diese
+ * Funktion nicht an — der ist ein separater, vom Owner selbst eingetragener
+ * Weg) und setzt den Auth-Zustand ehrlich auf `'schluessel'` zurück. Die
+ * Anzeige zeigt danach je nach vorhandenem Schlüssel «API-Schlüssel
+ * hinterlegt» oder «nicht angemeldet» — nie mehr «angemeldet als Abo» mit
+ * einem in Wahrheit toten Token.
+ */
+export function mitAbmeldung<T extends CloudAuthZustand>(settings: T): T {
+  return { ...settings, anthropicOauthToken: '', cloudAuth: 'schluessel' };
+}
+
+/**
+ * Wechsel des Auth-Wegs auf einen (neuen) API-Schlüssel: ein liegen-
+ * gebliebenes Alt-Token aus einem früheren Abo-Login wird MITGELÖSCHT statt
+ * unbemerkt in `localStorage` liegen zu bleiben (der ehrlich benannte
+ * Rest-Befund aus Stream 2A/`e2e/oauth-roundtrip.spec.ts`).
+ */
+export function mitApiSchluessel<T extends CloudAuthZustand>(settings: T, schluessel: string): T {
+  return { ...settings, anthropicKey: schluessel, cloudAuth: 'schluessel', anthropicOauthToken: '' };
+}

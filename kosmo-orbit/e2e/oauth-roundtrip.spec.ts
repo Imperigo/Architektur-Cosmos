@@ -33,18 +33,21 @@ import { expect, test, type Page } from '@playwright/test';
  * Reload — NICHT geprüft: der reale `claude_login`-Rust-Code, `ant` selbst,
  * der echte Browser-Popup. Das bleibt Owner-Abnahme (Desktop-Build).
  *
- * «Abmelden»: die App hat AKTUELL (Stand 0.7.1) KEINEN dedizierten
- * Abmelden-Knopf für den Abo-Login — weder in `KosmoPanel.tsx` noch
- * anderswo (geprüft per Volltextsuche nach «abmelden»/«logout» im
- * App-Quellcode). Der einzige existierende Weg, den Abo-Zustand zu
- * verlassen, ist ein neuer API-Schlüssel-Eintrag (setzt `cloudAuth` auf
- * `'schluessel'`) — das ändert die ANZEIGE ehrlich («API-Schlüssel
- * hinterlegt» statt «angemeldet als Abo»), löscht aber NICHT das im
- * localStorage stehende `anthropicOauthToken` (das Feld bleibt schlicht
- * ungenutzt liegen, bis ggf. ein künftiger echter Login es überschreibt).
- * Diese Spec prüft GENAU das reale Verhalten, statt einen nicht
- * existierenden Abmelden-Knopf zu erfinden — der fehlende Token-Reset ist
- * ein ehrlich benannter Befund, kein Testartefakt.
+ * «Abmelden» (v0.7.1 Stream 5B, Härtung des Befunds aus Stream 2A): bis
+ * hierhin hatte die App KEINEN dedizierten Abmelden-Knopf für den Abo-Login,
+ * und ein Alt-Token blieb nach dem Wechsel auf den API-Schlüssel-Weg
+ * ungenutzt in `localStorage` liegen (`anthropicOauthToken` wurde nie
+ * gelöscht). Beide Lücken sind jetzt behoben (`shell/cloud-login.ts`,
+ * `mitAbmeldung`/`mitApiSchluessel` — reine, unit-testbare Zustandsfunktionen,
+ * `KosmoPanel.tsx` ruft nur noch diese auf):
+ *  - ein neuer «Abmelden»-Knopf (`data-testid="oauth-abmelden"`), sichtbar
+ *    GENAU DANN, wenn ein Abo-Token vorhanden ist — er löscht NUR das
+ *    OAuth-Token (der API-Schlüssel bleibt unangetastet) und setzt
+ *    `cloudAuth` ehrlich auf `'schluessel'` zurück;
+ *  - ein neuer API-Schlüssel-Eintrag (der bisherige einzige Weg aus dem
+ *    Abo-Zustand) löscht ein liegengebliebenes Alt-Token jetzt MIT, statt es
+ *    unbemerkt liegen zu lassen.
+ * Die letzten beiden Tests unten beweisen genau diese zwei Verhalten.
  */
 
 /** Stubbt die Tauri-IPC-Grenze VOR jeder Navigation (gilt auch über
@@ -122,9 +125,42 @@ test('Token-Persistenz über Reload: «angemeldet als Abo» bleibt nach einem vo
   expect(nachReload.anthropicOauthToken).toBe(FAKE_TOKEN);
 });
 
-test('«Abmelden» (ehrlicher Befund): ein neuer API-Schlüssel wechselt die Anzeige weg von «Abo», löscht das alte Token aber NICHT aus localStorage', async ({
+test('«Abmelden»: der Knopf erscheint nur mit aktivem Abo-Token, löscht NUR das Token und setzt die Anzeige ehrlich zurück', async ({
   page,
 }) => {
+  await stubTauriDesktop(page, FAKE_TOKEN);
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.panelOffen', '1');
+  });
+  await page.reload();
+  await oeffneCloudEinstellungen(page);
+
+  // Vor dem Login: noch kein Abo-Token, also auch kein Abmelden-Knopf.
+  await expect(page.locator('[data-testid="oauth-abmelden"]')).toHaveCount(0);
+
+  await page.click('[data-testid="cloud-login-abo"]');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+  await expect(page.locator('[data-testid="oauth-abmelden"]')).toBeVisible();
+
+  await page.click('[data-testid="oauth-abmelden"]');
+
+  // Die ANZEIGE ist ehrlich zurückgesetzt — kein «angemeldet als Abo» mehr,
+  // ohne hinterlegten Schlüssel bleibt «nicht angemeldet».
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('nicht angemeldet');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).not.toContainText('angemeldet als Abo');
+  // Der Knopf selbst verschwindet wieder (kein Token mehr, das er löschen könnte).
+  await expect(page.locator('[data-testid="oauth-abmelden"]')).toHaveCount(0);
+
+  const stand = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
+  expect(stand.cloudAuth).toBe('schluessel');
+  expect(stand.anthropicOauthToken).toBe('');
+  // Der API-Schlüssel wurde von «Abmelden» nicht angefasst (war/bleibt leer).
+  expect(stand.anthropicKey).toBe('');
+});
+
+test('Wechsel auf einen API-Schlüssel löscht ein liegengebliebenes Alt-Token mit', async ({ page }) => {
   await stubTauriDesktop(page, FAKE_TOKEN);
   await page.goto('/');
   await page.evaluate(() => {
@@ -136,20 +172,20 @@ test('«Abmelden» (ehrlicher Befund): ein neuer API-Schlüssel wechselt die Anz
   await page.click('[data-testid="cloud-login-abo"]');
   await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
 
-  // Es gibt (Stand 0.7.1) KEINEN «Abmelden»-Knopf — der einzige reale Weg,
-  // den Abo-Zustand zu verlassen, ist ein neuer API-Schlüssel-Eintrag.
-  await expect(page.locator('[data-testid="cloud-logout"]')).toHaveCount(0);
+  // Statt «Abmelden» zu drücken, trägt der Architekt direkt einen neuen
+  // API-Schlüssel ein — auch DIESER Weg darf das alte Token nicht liegen
+  // lassen (der ehrlich benannte Rest-Befund aus Stream 2A).
   await page.getByLabel('API-Schlüssel (bleibt auf diesem Gerät)').fill('sk-ant-anderer-weg');
 
-  // Die ANZEIGE ist ehrlich: nicht mehr «angemeldet als Abo».
   await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('API-Schlüssel hinterlegt');
   await expect(page.locator('[data-testid="cloud-login-status"]')).not.toContainText('angemeldet als Abo');
+  // Der Abmelden-Knopf ist konsequent auch weg — es gibt kein Token mehr,
+  // von dem man sich abmelden könnte.
+  await expect(page.locator('[data-testid="oauth-abmelden"]')).toHaveCount(0);
 
   const stand = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
   expect(stand.cloudAuth).toBe('schluessel');
   expect(stand.anthropicKey).toBe('sk-ant-anderer-weg');
-  // Ehrlich benannter Befund: das alte OAuth-Token bleibt liegen — kein
-  // Reset. Dieser Test dokumentiert den heutigen Stand, erfindet keinen
-  // Abmelden-Effekt, den es (noch) nicht gibt.
-  expect(stand.anthropicOauthToken).toBe(FAKE_TOKEN);
+  // Behoben (Stream 5B): das alte OAuth-Token bleibt NICHT mehr liegen.
+  expect(stand.anthropicOauthToken).toBe('');
 });

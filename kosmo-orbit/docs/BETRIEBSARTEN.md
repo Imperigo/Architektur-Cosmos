@@ -87,6 +87,93 @@ nie den echten Cloud-Bildcall selbst. Der erste echte Beweis, dass ein
 `images`-Zug bei Anthropic tatsächlich ankommt und sinnvoll beantwortet wird,
 ist HomeStation-/Owner-Arbeit (Abnahmepunkt: `docs/HOMESTATION-AUFTRAG.md`).
 
+## Blick Cloud — echt (v0.7.1)
+
+E1 aus `docs/V071-KONZEPT.md` härtet genau den oben benannten Rest: der
+Anthropic-Bild-Block-Weg existierte technisch bereits seit 0.6.8, aber es gab
+weder Downscale noch einen bildspezifischen Fehlerpfad noch einen bewiesenen
+echten Bildcall. v0.7.1 liefert die Härtung (`packages/kosmo-ai/src/bild-budget.ts`,
+`anthropic.ts`) und den Beweis (`e2e/kosmo-blick-cloud.spec.ts`) — der **letzte
+Meter**, der echte Call gegen die echte Anthropic-API mit einem echten
+Owner-Schlüssel, bleibt **Owner-Abnahme**. Dieses Drehbuch ist genau dafür.
+
+### Abnahme-Drehbuch (Schritt für Schritt, für den Owner)
+
+1. **Betriebsart Cloud setzen**: Kosmo (⚙) → Betriebsart **Cloud** wählen.
+2. **Anthropic-Schlüssel eintragen**: im selben Panel unter «Cloud-Anmeldung»
+   den eigenen `sk-ant-…`-Schlüssel ins Feld «API-Schlüssel (bleibt auf diesem
+   Gerät)» eintragen (oder — Desktop-Build — «Mit Claude-Abo anmelden»
+   nutzen, s. `docs/CLOUD-LOGIN-ABO.md`). Der Status wechselt auf «API-Schlüssel
+   hinterlegt» bzw. «angemeldet als Abo».
+3. **Blick aktivieren**: Häkchen «Kosmo sieht mit» setzen (bei Anthropic per
+   Default bereits AN).
+4. **Bild anhängen**: eine Station öffnen, die ein Bild liefert (KosmoDesign:
+   3D-Viewport, Grundriss oder Schnitt; KosmoVis: Node-Fläche oder ein
+   fertiger Render-Lauf) und im Kosmo-Chat eine Frage senden, z.B. «Was siehst
+   du im Grundriss?».
+5. **Was der Owner sehen MUSS**:
+   - Die Blick-Zeile «Kosmo sieht: ‹Station›» mit Mini-Thumbnail erscheint —
+     das Bild ist tatsächlich erfasst und verkleinert worden.
+   - **Mit `ScriptedProvider`** (Testskript, kein echtes Netz): die Antwort
+     trägt wörtlich den Beweis-Marker **«[Blick empfangen: n Bild(er)]»**
+     (`packages/kosmo-ai/src/scripted.ts`) — das beweist, dass das Bild den
+     `images`-Weg tatsächlich durchlaufen hat, ohne dass ein echtes Modell
+     geantwortet hätte.
+   - **Mit echtem Anthropic-Schlüssel + Provider `anthropic`**: statt des
+     Markers antwortet das echte Claude-Modell inhaltlich auf das Bild (z.B.
+     «ich sehe einen Grundriss mit …») — das ist der Teil, den diese
+     Container-Umgebung nicht prüfen kann (kein Netzzugang zu
+     `api.anthropic.com`, kein echter Schlüssel hier hinterlegt).
+6. **Fehlt der Schlüssel** (Provider `anthropic`, Feld leer): der reale
+   401-Fehlerpfad aus `anthropic.ts` erscheint ehrlich im Chat — «Anthropic
+   antwortet mit 401. API-Schlüssel prüfen (Einstellungen ⚙).» — keine
+   stille Falle, keine erfundene Erfolgsmeldung.
+
+### Budget, Downscale, Fehlerpfade (die Fakten aus dem Code)
+
+- **Downscale vor dem Versand** (`apps/kosmo-orbit/src/state/kosmo-blick.ts`):
+  jedes Blick-Bild (3D-Viewport UND SVG-Wege) wird vor dem Encode auf
+  **≤ ~1.15 Megapixel** herunterskaliert (Seitenverhältnis erhalten, kleinere
+  Bilder bleiben unangetastet, `downscaleGroesse()`) und als **JPEG mit
+  Qualität ≈0.8** neu encodiert (`BLICK_MAX_MEGAPIXEL`, `BLICK_JPEG_QUALITAET`)
+  statt eines ungebremsten PNG in Bildschirm-Naturgrösse. In der
+  Einstellungen-Anzeige steht dazu in Betriebsart Cloud der dezente Hinweis
+  «Blick geht als Bild an Claude (Cloud) — verkleinert auf ~1 MP»
+  (`data-testid="kosmo-blick-cloud-hinweis"`, NUR in Cloud sichtbar).
+- **4-MB-Budget VOR dem Netz-Roundtrip** (`packages/kosmo-ai/src/bild-budget.ts`,
+  `bildBudget()`): Anthropic erlaubt rund 5 MB je Bild (Rohbytes) API-seitig;
+  Kosmo kappt konservativ bei **4 MB codierter (base64-Text-)Länge** — das
+  entspricht rund 3 MB Rohbytes und lässt Reserve für den Rest des
+  Request-Bodies (System-Prompt, Verlauf, Tool-Schemas). Der
+  `AnthropicProvider` prüft das für ALLE Bilder in ALLEN Nachrichten
+  (nicht nur die letzte) BEVOR ein `fetch` läuft — bei Verstoss die deutsche
+  Meldung «Bild zu gross — Kosmo verkleinert Blicke automatisch; dieses Bild
+  überschreitet trotzdem das Limit (X.X MB codiert, Kosmo-Grenze 4 MB je
+  Bild).», ohne einen Netzcall zu riskieren, der ohnehin nur mit derselben
+  Botschaft scheitern würde.
+- **Bildspezifischer Fehlerpfad bei der echten API** (`packages/kosmo-ai/src/anthropic.ts`):
+  antwortet Anthropic trotz Downscale/Budget mit **413** (Payload zu gross)
+  oder mit **400**, dessen Fehlertext auf ein Bildproblem hindeutet
+  (Heuristik: Text enthält `image` UND eines von `exceeds`/`maximum`/`too
+  large`), erscheint «Bild zu gross — Kosmo verkleinert Blicke automatisch;
+  dieses Bild überschreitet trotzdem das Limit.» statt eines generischen
+  Fehlers. 401 → «API-Schlüssel prüfen (Einstellungen ⚙).», 429 → der
+  bestehende Rate-Limit-Hinweis.
+
+### Ehrlich benannte Grenze
+
+Alles oben ist per `e2e/kosmo-blick-cloud.spec.ts` bewiesen — **den
+Request-Bau**, nicht die Antwort des echten Dienstes: die Spec fängt
+`https://api.anthropic.com/v1/messages` per `page.route` ab und prüft, dass
+der Request-Body tatsächlich einen `{type:'image', source:{media_type:
+'image/jpeg', …}}`-Block trägt, dann liefert sie eine gefakte SSE-Antwort.
+Ob ein echter `images`-Zug bei Anthropic tatsächlich ankommt und ein echtes
+Modell sinnvoll antwortet, ist **hier nicht getestet** — diese
+Container-Umgebung hat weder einen Anthropic-Owner-Schlüssel noch Netzzugang
+zur echten API. Der erste echte Beweis ist Owner-Arbeit: Schritte 1–5 oben
+selbst durchspielen und beobachten, ob die Antwort inhaltlich zum
+angehängten Bild passt.
+
 ### Ehrlich: warum die Tools nicht *in* der .exe stecken
 
 Die App ist ~44 MB. Die schweren Werkzeuge zusammen sind zweistellige Gigabyte

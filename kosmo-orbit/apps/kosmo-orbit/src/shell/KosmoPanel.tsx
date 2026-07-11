@@ -30,7 +30,14 @@ import { WerkzeugSetup } from './WerkzeugSetup';
 import { hydriereJournal, journalStore } from '../state/journal-store';
 import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
-import { ANT_INSTALL_BEFEHL, claudeAboAnmeldung, istAntFehltFehler, istTauriDesktop } from './cloud-login';
+import {
+  ANT_INSTALL_BEFEHL,
+  claudeAboAnmeldung,
+  istAntFehltFehler,
+  istTauriDesktop,
+  mitAbmeldung,
+  mitApiSchluessel,
+} from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
 import { KOSMO_AUSGESCHLOSSENE_COMMANDS, kosmoUiWerkzeuge } from '../state/kosmo-ui-werkzeuge';
 import {
@@ -1253,6 +1260,19 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                   Mit-Claude-Anmeldung nur in der Desktop-App — im Browser bitte API-Schlüssel.
                 </div>
               )}
+              {settings.cloudAuth === 'abo' && settings.anthropicOauthToken.trim() && (
+                // v0.7.1 Stream 5B (Befund aus Stream 2A): der bisher fehlende
+                // Abmelden-Knopf — löscht NUR das OAuth-Token (`mitAbmeldung`,
+                // `./cloud-login`), lässt den API-Schlüssel unangetastet.
+                <KButton
+                  size="sm"
+                  tone="ghost"
+                  data-testid="oauth-abmelden"
+                  onClick={() => speichere(mitAbmeldung(settings))}
+                >
+                  Abmelden
+                </KButton>
+              )}
               {cliFehlt && (
                 <div
                   data-testid="cloud-login-anleitung"
@@ -1285,7 +1305,7 @@ export function KosmoPanel({ onClose }: { onClose: () => void }) {
                 label="API-Schlüssel (bleibt auf diesem Gerät)"
                 value={settings.anthropicKey}
                 typ="password"
-                onChange={(v) => speichere({ ...settings, anthropicKey: v, cloudAuth: 'schluessel' })}
+                onChange={(v) => speichere(mitApiSchluessel(settings, v))}
               />
               <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
                 Modell
