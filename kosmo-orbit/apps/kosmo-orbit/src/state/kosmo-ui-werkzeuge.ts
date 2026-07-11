@@ -68,6 +68,9 @@ const PANEL_LABEL: Record<PanelId, string> = {
   // v0.7.0 (Stream 1B): CurtainWallPanel-Sichtbarkeit jetzt im Store —
   // mechanische Folge des neuen PANEL_IDS-Eintrags (Record ist vollständig).
   cwSetzenOffen: 'Fensterband/CW-Dialog',
+  // v0.7.0 (Stream 5A): Varianten-Panel-Sichtbarkeit jetzt im Store —
+  // mechanische Folge des neuen PANEL_IDS-Eintrags (Record ist vollständig).
+  variantenPanelOffen: 'Varianten-Panel',
 };
 
 const TOOL_LABEL: Record<ToolId, string> = {

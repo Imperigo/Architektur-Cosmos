@@ -74,6 +74,11 @@ export const PANEL_IDS = [
   // vereinheitlicht (gleiches Muster wie die übrigen Panel-Flags: Sitzung,
   // nicht persistiert, generisch über `ui.panelSetzen` erreichbar).
   'cwSetzenOffen',
+  // v0.7.0 (Stream 5A, E5-i/iii): «Varianten»-Panel (VariantenPanel.tsx) —
+  // Anytime-Variantensuche + Kennzahl-Matrix. Gleiches Muster wie
+  // `cwSetzenOffen` (Sitzung, nicht persistiert, generisch über
+  // `ui.panelSetzen` erreichbar).
+  'variantenPanelOffen',
 ] as const;
 export type PanelId = (typeof PANEL_IDS)[number];
 
@@ -101,6 +106,9 @@ export interface UiZustand {
   /** v0.7.0 (Stream 1B): «Fensterband/CW setzen»-Dialog — vorher lokaler
    *  useState in DesignWorkspace.tsx (dokumentierte v0.6.9-Abweichung). */
   cwSetzenOffen: boolean;
+  /** v0.7.0 (Stream 5A): «Varianten»-Panel (Anytime-Variantensuche +
+   *  Kennzahl-Matrix, VariantenPanel.tsx). */
+  variantenPanelOffen: boolean;
 
   // ---- persistiert (kosmo.ui.v1) ----
   /** Neutral-Zustand `undefined` = Voll-UI, vor erster sicherer Erkennung (arbeitsmodi-kern.ts). */
@@ -130,6 +138,7 @@ export interface UiZustand {
   setExportMenuOffen: (v: boolean) => void;
   setProjektMenuOffen: (v: boolean) => void;
   setCwSetzenOffen: (v: boolean) => void;
+  setVariantenPanelOffen: (v: boolean) => void;
 
   setArbeitsmodus: (v: Arbeitsmodus | undefined) => void;
   setModusAutomatik: (v: boolean) => void;
@@ -313,6 +322,7 @@ function anfangsZustand() {
     exportMenuOffen: true,
     projektMenuOffen: false,
     cwSetzenOffen: false,
+    variantenPanelOffen: false,
     arbeitsmodus: gespeichert.arbeitsmodus,
     modusAutomatik: gespeichert.modusAutomatik,
     modusFesthalten: gespeichert.modusFesthalten,
@@ -340,6 +350,7 @@ export const useUiZustand = create<UiZustand>((set, get) => ({
   setExportMenuOffen: (v) => set({ exportMenuOffen: v }),
   setProjektMenuOffen: (v) => set({ projektMenuOffen: v }),
   setCwSetzenOffen: (v) => set({ cwSetzenOffen: v }),
+  setVariantenPanelOffen: (v) => set({ variantenPanelOffen: v }),
 
   setzePanel: (panel, offen) => set({ [panel]: offen } as Partial<UiZustand>),
 

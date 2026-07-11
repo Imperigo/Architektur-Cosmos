@@ -75,6 +75,7 @@ import { MaengelPanel } from './MaengelPanel';
 import { SubmissionsCheckPanel } from './SubmissionsCheckPanel';
 import { RasterPanel } from './RasterPanel';
 import { CurtainWallPanel } from './CurtainWallPanel';
+import { VariantenPanel } from './VariantenPanel';
 import { FAEHIGKEIT_LABEL, PHASEN_PRESETS, empfohlenePlanPhaseFuer, type FaehigkeitId } from './phasen-presets';
 import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
@@ -407,6 +408,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // offenePanels unten) — nur die Flag-QUELLE wandert in den Store.
   const cwSetzenOffen = useUiZustand((s) => s.cwSetzenOffen);
   const setCwSetzenOffen = useUiZustand((s) => s.setCwSetzenOffen);
+  // «Varianten»-Panel — v0.7.0 (Stream 5A, E5-i/iii): gleiches Muster wie
+  // cwSetzenOffen (Sichtbarkeit im useUiZustand-Store, Knopf ausserhalb der
+  // Werkzeug-Zähler-/Arbeitsmodi-Listen, siehe H-7-Kommentar oben).
+  const variantenPanelOffen = useUiZustand((s) => s.variantenPanelOffen);
+  const setVariantenPanelOffen = useUiZustand((s) => s.setVariantenPanelOffen);
   const listeOffen = useUiZustand((s) => s.listeOffen);
   const setListeOffen = useUiZustand((s) => s.setListeOffen);
   const rasterOffen = useUiZustand((s) => s.rasterOffen);
@@ -2651,6 +2657,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         {drawOffen && <DrawPanel />}
         {rasterOffen && <RasterPanel onClose={() => setRasterOffen(false)} />}
         {cwSetzenOffen && <CurtainWallPanel onClose={() => setCwSetzenOffen(false)} />}
+        {variantenPanelOffen && <VariantenPanel onClose={() => setVariantenPanelOffen(false)} />}
         {/* C4b (C-E4): Daten-Guard — die Karten-Liste erscheint automatisch,
             sobald ein Unternehmerplan geladen ist, kein eigener Toggle nötig
             (das Vorhandensein der Daten IST der Sichtbarkeits-Zustand). */}
@@ -2965,6 +2972,23 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             onClick={() => setCwSetzenOffen(true)}
           >
             Fensterband
+          </KButton>
+          {/* v0.7.0 Stream 5A: derive/variantensuche.ts (E5-i) hatte keine
+              UI-Fläche. Gleiches Muster wie «Fensterband»/«Decke» oben (H-7):
+              ein Panel-Knopf statt eines 19. Werkzeugs — der Vertrag toBe(18)
+              (e2e/oberflaeche-minimal.spec.ts, UEBERLAUFFAEHIGE_WERKZEUGE)
+              bleibt unberührt. Lebt neben «Wohnungen schneiden»
+              (BerechnungslistePanel.tsx, listeOffen) im selben Sinn: beides
+              Werkzeuge rund um die Wohnungs-Segmentierung des aktiven
+              Geschosses. */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="varianten-oeffnen"
+            title="Anytime-Variantensuche + Kennzahl-Matrix für die Wohnungs-Segmentierung des aktiven Geschosses"
+            onClick={() => setVariantenPanelOffen(true)}
+          >
+            Varianten
           </KButton>
         </div>
 

@@ -75,6 +75,15 @@ describe('kosmoUiWerkzeuge()', () => {
     expect(meldungen[0]!.text).toContain('geöffnet');
   });
 
+  it('ui_panelSetzen kennt das neue Varianten-Panel (v0.7.0 Stream 5A, PANEL_LABEL-Nachzug)', () => {
+    const meldungen: UiAktionMeldung[] = [];
+    const werkzeuge = kosmoUiWerkzeuge((m) => meldungen.push(m));
+    werkzeuge.find((w) => w.name === 'ui_panelSetzen')!.execute({ panel: 'variantenPanelOffen', offen: true });
+    expect(meldungen).toHaveLength(1);
+    expect(meldungen[0]!.text).toContain('Varianten-Panel');
+    expect(meldungen[0]!.text).toContain('geöffnet');
+  });
+
   it('ui_modusSetzen quittiert sich mit Label + ehrlicher Begründung «auf Wunsch» (Kritik-1-C1)', () => {
     const meldungen: UiAktionMeldung[] = [];
     const werkzeuge = kosmoUiWerkzeuge((m) => meldungen.push(m));

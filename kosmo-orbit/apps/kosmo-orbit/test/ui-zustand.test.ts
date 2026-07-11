@@ -39,6 +39,8 @@ describe('ui-zustand — Defaults (v0.6.6 Bewegungskonzept §6)', () => {
     // v0.7.0 (Stream 1B): CurtainWallPanel-Sichtbarkeit — vorher lokaler
     // useState in DesignWorkspace.tsx (SIM-BEFUNDE-Notiz v0.6.9).
     expect(s.cwSetzenOffen).toBe(false);
+    // v0.7.0 (Stream 5A): Varianten-Panel-Sichtbarkeit — gleiches Muster.
+    expect(s.variantenPanelOffen).toBe(false);
   });
 
   it('setCwSetzenOffen schreibt direkt und bleibt Session-only (v0.7.0 Stream 1B)', () => {
@@ -50,6 +52,22 @@ describe('ui-zustand — Defaults (v0.6.6 Bewegungskonzept §6)', () => {
     useUiZustand.getState().setCwSetzenOffen(true);
     neuLadenAusSpeicher();
     expect(useUiZustand.getState().cwSetzenOffen).toBe(false);
+  });
+
+  it('setVariantenPanelOffen schreibt direkt und bleibt Session-only (v0.7.0 Stream 5A)', () => {
+    useUiZustand.getState().setVariantenPanelOffen(true);
+    expect(useUiZustand.getState().variantenPanelOffen).toBe(true);
+    useUiZustand.getState().setVariantenPanelOffen(false);
+    expect(useUiZustand.getState().variantenPanelOffen).toBe(false);
+    // Nicht persistiert: Neuladen setzt aufs Session-Default zurück.
+    useUiZustand.getState().setVariantenPanelOffen(true);
+    neuLadenAusSpeicher();
+    expect(useUiZustand.getState().variantenPanelOffen).toBe(false);
+  });
+
+  it('ui.panelSetzen-Registry (PANEL_IDS) kennt variantenPanelOffen (generischer Setter)', () => {
+    useUiZustand.getState().setzePanel('variantenPanelOffen', true);
+    expect(useUiZustand.getState().variantenPanelOffen).toBe(true);
   });
 
   it('setProjektMenuOffen schreibt direkt (kein funktionales Update, Stream-B-Migration)', () => {

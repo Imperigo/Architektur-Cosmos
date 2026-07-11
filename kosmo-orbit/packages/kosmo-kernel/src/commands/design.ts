@@ -13,7 +13,7 @@ import { REGEL_PRESETS } from '../model/regelpresets';
 import { generiereGrundriss, generiereGrundrissL, zerlegeRektilinear } from '../derive/grundrissgenerator';
 import { zonenZuWaenden } from '../derive/zonenwaende';
 import { boundingBox, kantenRichtung, richtungsModule, type Fassadenrichtung } from '../derive/fassadenmodule';
-import { segmentiere, sollMix, WOHNUNGS_GROESSEN, type WohnungsTypSoll } from '../derive/segmentierer';
+import { segmentiere, sollMix, WOHNUNGS_GROESSEN, type WohnungsTypSoll, type GeschnitteneWohnung } from '../derive/segmentierer';
 import { raumGraph } from '../derive/raumgraph';
 import { pruefeGrundriss, type PruefBefund } from '../derive/checks';
 
@@ -1802,6 +1802,19 @@ export const segmentWohnungen = registerCommand({
     minBreite: z.number().int().min(3500).max(7000).default(4500).describe('Minimale Wohnungsbreite am Korridor (mm)'),
     groessenFaktor: z.number().min(0.5).max(2).default(1).describe('Skaliert alle Zielgrössen (F6-Regler-Äquivalent)'),
     kern: z.boolean().default(false).describe('Reserviert 3.0 m Erschliessungskern mit Treppenhaus, Treppe und Zonentür'),
+    vorberechneteWohnungen: z
+      .array(
+        z.object({
+          outline: z.array(PtSchema).min(3),
+          flaeche: z.number(),
+          typ: z.string().nullable(),
+          abweichung: z.number().nullable(),
+        }),
+      )
+      .optional()
+      .describe(
+        'v0.7.0 (Stream 5A): eine bereits vollständig gerechnete Wohnungsliste (z.B. eine Top-Variante aus der Anytime-Variantensuche, derive/variantensuche.ts) direkt übernehmen — überspringt den internen segmentiere()-Lauf, GEOMETRIE bytegenau. Weggelassen: es wird wie bisher aus footprint/korridor/mix neu geschnitten. Nicht kombinierbar mit kern (die Kern-Reservierung kennt die Variante nicht).',
+      ),
   }),
   summarize: (p) => `Wohnungen segmentieren${p.kern ? ' (mit Erschliessungskern)' : ''}`,
   run: (doc, p) => {
@@ -1816,28 +1829,53 @@ export const segmentWohnungen = registerCommand({
     if (!footprint) {
       throw new CommandError('Eine Footprint-Zone (Geschossfläche) zeichnen — sie wird geteilt.');
     }
-    const basis = p.mix ?? sollMix(doc);
-    if (basis.length === 0) {
-      throw new CommandError('Zuerst das Raumprogramm erfassen — daraus entsteht der Soll-Mix.');
-    }
-    const mix: WohnungsTypSoll[] = basis.map((m) => ({
-      typ: m.typ,
-      anzahl: m.anzahl,
-      groesse: m.groesse ?? WOHNUNGS_GROESSEN[m.typ] ?? 85,
-    }));
-    const groessen = Object.fromEntries(mix.map((m) => [m.typ, Math.round(m.groesse * p.groessenFaktor)]));
-    const ergebnis = segmentiere(footprint.outline, korridor.outline, mix, {
-      minBreite: p.minBreite,
-      groessen,
-      kern: p.kern,
-    });
-    if (ergebnis.wohnungen.length === 0) {
-      throw new CommandError(ergebnis.diagnose[0] ?? 'Segmentierung ergab keine Wohnungen — Korridorlage prüfen.');
+
+    let wohnungen: GeschnitteneWohnung[];
+    let kern: { outline: Pt[] } | null;
+    if (p.vorberechneteWohnungen) {
+      // v0.7.0 Stream 5A: eine fertige Variante aus derive/variantensuche.ts
+      // (Ruin-&-Recreate-Hill-Climber) direkt übernehmen, statt sie hier
+      // erneut zu segmentieren — die Geometrie ist bereits eine gültige,
+      // vollständig ausgewertete `SegmentVariante.wohnungen`. Die Kern-
+      // Reservierung kennt diese Variante NICHT (`SegmentVariante` trägt
+      // keine Kern-Outline) — ehrlich ausgeschlossen statt still falsch
+      // kombiniert.
+      if (p.kern) {
+        throw new CommandError(
+          'Kern-Reservierung ist mit einer vorberechneten Variante nicht unterstützt — ohne Kern übernehmen oder «Wohnungen schneiden» direkt mit Kern neu schneiden.',
+        );
+      }
+      if (p.vorberechneteWohnungen.length === 0) {
+        throw new CommandError('Vorberechnete Variante enthält keine Wohnungen.');
+      }
+      wohnungen = p.vorberechneteWohnungen;
+      kern = null;
+    } else {
+      const basis = p.mix ?? sollMix(doc);
+      if (basis.length === 0) {
+        throw new CommandError('Zuerst das Raumprogramm erfassen — daraus entsteht der Soll-Mix.');
+      }
+      const mix: WohnungsTypSoll[] = basis.map((m) => ({
+        typ: m.typ,
+        anzahl: m.anzahl,
+        groesse: m.groesse ?? WOHNUNGS_GROESSEN[m.typ] ?? 85,
+      }));
+      const groessen = Object.fromEntries(mix.map((m) => [m.typ, Math.round(m.groesse * p.groessenFaktor)]));
+      const ergebnis = segmentiere(footprint.outline, korridor.outline, mix, {
+        minBreite: p.minBreite,
+        groessen,
+        kern: p.kern,
+      });
+      if (ergebnis.wohnungen.length === 0) {
+        throw new CommandError(ergebnis.diagnose[0] ?? 'Segmentierung ergab keine Wohnungen — Korridorlage prüfen.');
+      }
+      wohnungen = ergebnis.wohnungen;
+      kern = ergebnis.kern;
     }
 
     const patches: AnyPatch[] = [];
     let i = 0;
-    for (const w of ergebnis.wohnungen) {
+    for (const w of wohnungen) {
       i++;
       patches.push(
         added({
@@ -1852,13 +1890,13 @@ export const segmentWohnungen = registerCommand({
       );
     }
 
-    if (ergebnis.kern) {
+    if (kern) {
       patches.push(
         added({
           id: newId('zone'),
           kind: 'zone',
           storeyId: p.storeyId,
-          outline: ergebnis.kern.outline,
+          outline: kern.outline,
           name: 'Treppenhaus',
           sia: 'VF',
           raumTyp: 'treppenhaus',
@@ -1866,8 +1904,8 @@ export const segmentWohnungen = registerCommand({
       );
       // Gerader Lauf mittig im Kern (identische Geometrie zum bisherigen
       // UI-Weg: BerechnungslistePanel.uebernehmen).
-      const xs = ergebnis.kern.outline.map((pt) => pt.x);
-      const ys = ergebnis.kern.outline.map((pt) => pt.y);
+      const xs = kern.outline.map((pt) => pt.x);
+      const ys = kern.outline.map((pt) => pt.y);
       const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
       const y0 = Math.min(...ys);
       const y1 = Math.max(...ys);
