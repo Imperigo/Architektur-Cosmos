@@ -70,9 +70,10 @@ export function pruefeGrundriss(doc: KosmoDoc, storeyId: string): PruefBefund[] 
     // Programm-Zonen (Wohnungs-Aggregate aus Liste/Segmentierer) sind keine
     // Zimmer — Richtwerte gelten für Räume, nicht für ganze Wohnungen
     if (z.program) continue;
-    // Site-/Parzellen-Zonen (D8/H-1): kein Raum, keine Raumtyp-Richtwerte —
-    // die Zone bildet eine Kataster-Parzelle ab, keine Zimmer-/Wohnfläche.
-    if (z.zonenArt === 'parzelle') continue;
+    // Site-/Parzellen-Zonen (D8/H-1) und Nachbar-Zonen (v0.7.1 E2/1B): kein
+    // Raum, keine Raumtyp-Richtwerte — die Zone bildet eine Kataster-Parzelle
+    // bzw. ein Nachbargebäude ab, keine Zimmer-/Wohnfläche.
+    if (z.zonenArt === 'parzelle' || z.zonenArt === 'nachbar') continue;
     const regel = z.raumTyp ? regeln.find((r) => r.raumTyp === z.raumTyp) : undefined;
     if (regel) {
       if (regel.minBreite !== null && b < regel.minBreite) {

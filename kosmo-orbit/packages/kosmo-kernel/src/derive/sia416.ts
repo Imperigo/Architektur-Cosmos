@@ -57,12 +57,13 @@ export function areaReport(doc: KosmoDoc): AreaReport {
     const byClass = emptyByClass();
     for (const z of zones) {
       if (z.storeyId !== s.id) continue;
-      // Site-/Parzellen-Zonen (D8/H-1): keine SIA-416-Fläche — eine
-      // importierte Kataster-Parzelle ist kein Raum und pollutierte sonst
-      // NGF (`ngf`/`totalNgf` unten) mit ihrer (meist viel grösseren)
-      // Fläche. Die Fläche für AZ läuft separat über
+      // Site-/Parzellen-Zonen (D8/H-1) und Nachbar-Zonen (v0.7.1 E2/1B):
+      // keine SIA-416-Fläche — eine importierte Kataster-Parzelle bzw. ein
+      // Nachbargebäude ist kein eigener Raum und pollutierte sonst NGF
+      // (`ngf`/`totalNgf` unten) mit ihrer (meist grossen) Fläche. Die
+      // Parzellenfläche für AZ läuft separat über
       // doc.settings.parzellenFlaeche.
-      if (z.zonenArt === 'parzelle') continue;
+      if (z.zonenArt === 'parzelle' || z.zonenArt === 'nachbar') continue;
       byClass[z.sia] += areaOf(z.outline);
     }
     const ngf = Object.values(byClass).reduce((a, b) => a + b, 0);

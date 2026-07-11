@@ -25,7 +25,7 @@ import { raumTypVorschlag } from '../src/derive/raumtypcopilot';
 import { finalerRenderPrompt, renderPromptBausteine } from '../src/derive/renderprompt';
 import { moebelGeometrie } from '../src/derive/moebel';
 import { fassadenModule, moduleAlsCsv } from '../src/derive/fassadenmodule';
-import { parzelleZuOutline } from '../src/derive/standort';
+import { parzelleZuOutline, ringsZuOutline, nachbarnZuOutlines } from '../src/derive/standort';
 import { generiereGrundriss } from '../src/derive/grundrissgenerator';
 import { REGEL_PRESETS } from '../src/model/regelpresets';
 import {
@@ -4087,6 +4087,153 @@ describe('CH-Standort (V2-V4)', () => {
     // Nordkante (N grösser) hat grössere y-Werte
     const nordPunkt = imp.outline.find((p) => p.y > 0)!;
     expect(nordPunkt).toBeDefined();
+  });
+});
+
+describe('Nachbarn amtlich (v0.7.1 E2/1B)', () => {
+  const gemeinde = [[2680000, 1220000], [2690000, 1220000], [2690000, 1230000], [2680000, 1230000], [2680000, 1220000]];
+  const parzelle = [[2681500, 1224500], [2681530, 1224500], [2681530, 1224520], [2681500, 1224520], [2681500, 1224500]];
+  const nachbar1 = [[2681540, 1224500], [2681555, 1224500], [2681555, 1224510], [2681540, 1224510], [2681540, 1224500]];
+  const nachbar2 = [[2681480, 1224495], [2681495, 1224495], [2681495, 1224505], [2681480, 1224505], [2681480, 1224495]];
+
+  it('ringsZuOutline: Ergebnis am eigenen (ungerundeten) Zentrum ist identisch zu parzelleZuOutline().outline', () => {
+    const imp = parzelleZuOutline([gemeinde, parzelle])!;
+    // parzelleZuOutline verankert am ungerundeten Mittelwert der Ringpunkte —
+    // exakt dem, den man erhält, wenn man denselben Ring separat mittelt.
+    let e = 0, n = 0;
+    for (const p of parzelle) { e += p[0]!; n += p[1]!; }
+    e /= parzelle.length;
+    n /= parzelle.length;
+    const direkt = ringsZuOutline([gemeinde, parzelle], { e, n });
+    expect(direkt).toEqual(imp.outline);
+  });
+
+  it('nachbarnZuOutlines: mehrere Gebäude-Ringe am selben (Parzellen-)Anker — Offset zwischen ihnen bleibt in LV95-m·1000 erhalten', () => {
+    const imp = parzelleZuOutline([gemeinde, parzelle])!;
+    const outlines = nachbarnZuOutlines([[nachbar1], [nachbar2]], imp.zentrum);
+    expect(outlines).toHaveLength(2);
+    expect(outlines[0]).toHaveLength(4);
+    expect(outlines[1]).toHaveLength(4);
+    // Nachbar 1 liegt östlich der Parzelle (grössere e) → grössere lokale x.
+    const parzelleMaxX = Math.max(...imp.outline.map((p) => p.x));
+    const nachbar1MinX = Math.min(...outlines[0]!.map((p) => p.x));
+    expect(nachbar1MinX).toBeGreaterThan(parzelleMaxX);
+    // Am selben Anker verankert wie die Parzelle: identischer Rundungs-Bezug
+    // (Punkte von Parzelle und Nachbar sind direkt vergleichbar/subtrahierbar).
+    const erwarteterOffsetX = Math.round((nachbar1[0]![0]! - imp.zentrum.e) * 1000);
+    expect(outlines[0]![0]!.x).toBe(erwarteterOffsetX);
+  });
+
+  it('leere Ringliste ⇒ leeres Outline an dieser Stelle (kein stillschweigendes Überspringen)', () => {
+    const gueltigesRing: number[][] = [[0, 0], [1, 1], [1, 0], [0, 0]];
+    const outlines = nachbarnZuOutlines([[], [gueltigesRing]], { e: 0, n: 0 });
+    expect(outlines).toHaveLength(2);
+    expect(outlines[0]).toEqual([]);
+  });
+
+  function bauGeschossMitParzelle(): { doc: KosmoDoc; storeyId: string } {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.zoneErstellen', {
+      storeyId,
+      name: 'Parzelle',
+      sia: 'KF',
+      zonenArt: 'parzelle',
+      outline: [{ x: -10000, y: -10000 }, { x: 10000, y: -10000 }, { x: 10000, y: 10000 }, { x: -10000, y: 10000 }],
+    });
+    return { doc, storeyId };
+  }
+
+  const NACHBAR_OUTLINES = [
+    [{ x: 12000, y: 0 }, { x: 16000, y: 0 }, { x: 16000, y: 4000 }, { x: 12000, y: 4000 }],
+    [{ x: -16000, y: 0 }, { x: -12000, y: 0 }, { x: -12000, y: 4000 }, { x: -16000, y: 4000 }],
+  ];
+
+  it('design.nachbarnUebernehmen legt je Outline eine Zone zonenArt:"nachbar" mit sia:"KF" an, ohne raumTyp', () => {
+    const { doc, storeyId } = bauGeschossMitParzelle();
+    execute(doc, 'design.nachbarnUebernehmen', { storeyId, outlines: NACHBAR_OUTLINES });
+    const nachbarn = doc.byKind<Zone>('zone').filter((z) => z.zonenArt === 'nachbar');
+    expect(nachbarn).toHaveLength(2);
+    for (const z of nachbarn) {
+      expect(z.sia).toBe('KF');
+      expect(z.raumTyp).toBeUndefined();
+    }
+    expect(nachbarn.map((z) => z.name).sort()).toEqual(['Nachbar 1', 'Nachbar 2']);
+  });
+
+  it('Idempotenz: zweimaliges Ausführen mit denselben Umrissen ergibt DIESELBE Zonen-Zahl (kein Duplikat)', () => {
+    const { doc, storeyId } = bauGeschossMitParzelle();
+    execute(doc, 'design.nachbarnUebernehmen', { storeyId, outlines: NACHBAR_OUTLINES });
+    execute(doc, 'design.nachbarnUebernehmen', { storeyId, outlines: NACHBAR_OUTLINES });
+    const nachbarn = doc.byKind<Zone>('zone').filter((z) => z.zonenArt === 'nachbar');
+    expect(nachbarn).toHaveLength(2);
+    // Die Parzellen-Zone bleibt unberührt (nur Nachbar-Zonen werden ersetzt).
+    expect(doc.byKind<Zone>('zone').filter((z) => z.zonenArt === 'parzelle')).toHaveLength(1);
+  });
+
+  it('Re-Import mit weniger Umrissen ersetzt vollständig (alte Nachbarn verschwinden)', () => {
+    const { doc, storeyId } = bauGeschossMitParzelle();
+    execute(doc, 'design.nachbarnUebernehmen', { storeyId, outlines: NACHBAR_OUTLINES });
+    execute(doc, 'design.nachbarnUebernehmen', { storeyId, outlines: [NACHBAR_OUTLINES[0]!] });
+    const nachbarn = doc.byKind<Zone>('zone').filter((z) => z.zonenArt === 'nachbar');
+    expect(nachbarn).toHaveLength(1);
+  });
+
+  it('Undo: EIN Undo-Schritt (Patch-Inverse) macht Löschen+Anlegen vollständig rückgängig', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    // execute() wendet Patches bereits an (core.ts) — kein zusätzliches doc.apply() nötig.
+    execute(doc, 'design.nachbarnUebernehmen', { storeyId, outlines: [NACHBAR_OUTLINES[0]!] });
+    expect(doc.byKind<Zone>('zone').filter((z) => z.zonenArt === 'nachbar')).toHaveLength(1);
+
+    const zweiter = execute(doc, 'design.nachbarnUebernehmen', { storeyId, outlines: NACHBAR_OUTLINES });
+    expect(doc.byKind<Zone>('zone').filter((z) => z.zonenArt === 'nachbar')).toHaveLength(2);
+
+    // Undo des zweiten Aufrufs: zurück auf den EINEN ursprünglichen Nachbarn —
+    // Löschen (des ersten) + Anlegen (der zwei neuen) waren EIN Patch-Array,
+    // die Inverse macht beides in einem Schritt rückgängig.
+    doc.apply(invertPatches(zweiter.patches));
+    const nachUndo = doc.byKind<Zone>('zone').filter((z) => z.zonenArt === 'nachbar');
+    expect(nachUndo).toHaveLength(1);
+    expect(nachUndo[0]!.outline).toEqual(NACHBAR_OUTLINES[0]);
+  });
+
+  it('D8/H-1-Analogon: zonenArt="nachbar" pollutiert NGF NICHT, auch bei sia:"KF"', async () => {
+    const { areaReport } = await import('../src');
+    const { doc, storeyId } = setupDoc();
+    execute(doc, 'design.zoneErstellen', {
+      storeyId,
+      outline: [{ x: 0, y: 0 }, { x: 10000, y: 0 }, { x: 10000, y: 10000 }, { x: 0, y: 10000 }],
+      name: 'Wohnen',
+      sia: 'HNF',
+    });
+    execute(doc, 'design.nachbarnUebernehmen', {
+      storeyId,
+      // Grosses Nachbarhaus (600 m²) — ohne Ausnahme würde es NGF/KF verunreinigen.
+      outlines: [[{ x: 20000, y: 0 }, { x: 40000, y: 0 }, { x: 40000, y: 30000 }, { x: 20000, y: 30000 }]],
+    });
+    const r = areaReport(doc);
+    expect(r.total.HNF).toBe(100);
+    expect(r.total.KF).toBe(0);
+    expect(r.totalNgf).toBe(100);
+  });
+
+  it('D8/H-1-Analogon: zonenArt="nachbar" setzt Raumtyp-/Richtwert-Checks aus', () => {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    execute(doc, 'design.regelnSetzen', { preset: 'ch-wohnbau' });
+    execute(doc, 'design.nachbarnUebernehmen', {
+      storeyId,
+      // Schmale 2×2m-Geometrie — würde MIT raumTyp «zimmer» Regel-Befunde
+      // auslösen, ABER nachbarnUebernehmen setzt raumTyp nie, UND die
+      // Ausnahme greift ohnehin unabhängig davon (analog zum Parzellen-Test).
+      outlines: [[{ x: 0, y: 0 }, { x: 2000, y: 0 }, { x: 2000, y: 2000 }, { x: 0, y: 2000 }]],
+    });
+    const b = pruefeGrundriss(doc, storeyId);
+    expect(b).toHaveLength(0);
   });
 });
 

@@ -2133,6 +2133,47 @@ export const setLocation = registerCommand({
   ],
 });
 
+export const nachbarnUebernehmen = registerCommand({
+  id: 'design.nachbarnUebernehmen',
+  title: 'Nachbargebäude übernehmen',
+  description:
+    'Übernimmt Nachbargebäude-Umrisse (z.B. aus einem amtlichen geo.admin.ch-Footprint-Import, s. `standort.ts` `nachbarnZuOutlines`) als Kontext-Zonen (zonenArt «nachbar») für den Schwarzplan/Situationsplan. Reine Kontext-Geometrie — kein Raum, keine SIA-416-/Checks-Relevanz. Erneutes Ausführen ersetzt die vorhandenen Nachbar-Zonen desselben Geschosses (Re-Import idempotent).',
+  params: z.object({
+    storeyId: z.string(),
+    outlines: z
+      .array(z.array(PtSchema).min(3))
+      .min(1)
+      .describe('Gebäude-Umrisse in lokalen mm, je Umriss mindestens 3 Punkte'),
+  }),
+  summarize: (p) => `${p.outlines.length} Nachbargebäude übernommen`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const patches: AnyPatch[] = [];
+    // Bestehende Nachbar-Zonen DESSELBEN Geschosses zuerst löschen — Re-Import
+    // ist damit idempotent (zweimaliges Ausführen mit denselben Umrissen
+    // ergibt dieselbe Zonen-Zahl, nicht doppelt so viele). Löschen + Anlegen
+    // laufen in EINEM Patch-Array, also EIN Undo-Schritt.
+    for (const z of doc.byKind<Zone>('zone')) {
+      if (z.storeyId === p.storeyId && z.zonenArt === 'nachbar') {
+        patches.push({ id: z.id, before: z, after: null });
+      }
+    }
+    p.outlines.forEach((outline, i) => {
+      const zone: Zone = {
+        id: newId('zone'),
+        kind: 'zone',
+        storeyId: p.storeyId,
+        outline: outline as Pt[],
+        name: `Nachbar ${i + 1}`,
+        sia: 'KF',
+        zonenArt: 'nachbar',
+      };
+      patches.push(added(zone));
+    });
+    return patches;
+  },
+});
+
 /**
  * F7-Locks (v0.7.0 E5-ii): baut den achsweisen Stretch-Verlauf einer Vorlage
  * für EINE Achse. `cuts` = alle distinkten Koordinaten dieser Achse aus den

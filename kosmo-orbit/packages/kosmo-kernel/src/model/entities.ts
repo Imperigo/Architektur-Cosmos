@@ -219,8 +219,17 @@ export interface Zone extends Base {
    * Streams (Datei nicht in der Besitzliste) — eine Parzellen-Zone OHNE
    * `program` zählt dort weiterhin als «untypisiert» mit, wie jede andere
    * Zone ohne `program` auch (unverändertes Bestandsverhalten).
+   *
+   * `'nachbar'` (v0.7.1 E2/1B): additiv nach demselben Muster wie
+   * `'parzelle'` — kennzeichnet eine Zone als importierten Nachbargebäude-
+   * Footprint (reine Kontext-Geometrie fürs Situationsplan-Bild, kein
+   * eigener Raum). Genau wie `'parzelle'` von Raumtyp-Checks und der
+   * SIA-416-Flächensumme ausgenommen (`derive/checks.ts`, `derive/
+   * sia416.ts`); `derive/schwarzplan.ts` zeichnet Nachbar-Zonen separat als
+   * graue Footprints. Entsteht NUR über `design.nachbarnUebernehmen`
+   * (`commands/design.ts`), nicht über das freie `zoneErstellen`.
    */
-  zonenArt?: 'parzelle';
+  zonenArt?: 'parzelle' | 'nachbar';
 }
 
 /** Treppe — Achse a→b, Breite; Steigung aus Geschosshöhe. Formen: V2-A2. */

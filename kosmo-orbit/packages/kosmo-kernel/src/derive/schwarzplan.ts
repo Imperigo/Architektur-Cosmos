@@ -31,12 +31,17 @@ import { bboxVonPunkte, projiziereUmriss, type BBox } from './studienbeurteilung
  *   KEINEN Footprint — eine Wandachsen-Näherung wäre erfunden statt aus dem
  *   Modell abgeleitet; die Lücke bleibt hier dokumentiert statt versteckt
  *   (Stream-Folgeauftrag: MassBody aus Wandzügen ableiten, falls gewünscht).
- * - Nachbarbebauung/Kontext (OSM o.ä.): es gibt KEINE persistente
- *   Kontext-Polygon-Quelle im Doc (`Viewport3D.tsx`s `contextMeshes` ist
- *   reine 3D-GLB-Laufzeitablage, sessionweit, NICHT im Doc/Yjs, keine 2D-
- *   Umrisse) — bewusst WEGGELASSEN statt erfunden. v1 zeigt nur das eigene
- *   Grundstück; Nachbarbebauung ist eine offene Lücke fürs UI (kein
- *   OSM-Import in v1).
+ * - Nachbarbebauung/Kontext (v0.7.1 E2/1B): Zonen mit `zonenArt:'nachbar'`
+ *   (`design.nachbarnUebernehmen`, amtlicher geo.admin.ch-Import, KEIN OSM)
+ *   erscheinen als GRAUE Footprints (`#8a8a8a`) — reine Kontext-Geometrie,
+ *   von Raumtyp-Checks/SIA-416 ausgenommen (s. `model/entities.ts`
+ *   `Zone.zonenArt`). Eigene Footprints (`MassBody`) bleiben SCHWARZ
+ *   (`#1a1a1a`) und zeichnen zuletzt — Situationsplan-Usanz «eigenes Objekt
+ *   hervorgehoben». OHNE Nachbar-Zonen bleibt die Ausgabe byte-identisch zu
+ *   v0.7.0 (Daten-Guard: der Nachbar-Block bleibt bei leerer Liste
+ *   wirkungslos). `Viewport3D.tsx`s `contextMeshes` (3D-GLB-Laufzeitablage,
+ *   sessionweit, NICHT im Doc/Yjs) bleibt weiterhin ausserhalb — das ist
+ *   3D-Referenzgeometrie, keine 2D-Situationsplan-Quelle.
  * - Nordpfeil: Modellkonvention `standort.ts` («Nord bleibt +y») — KEIN
  *   LV95-Koordinatenrahmen in v1 (nur Nordpfeil + Massstabsbalken verlangt,
  *   s. Auftragstext; ein Koordinatenraster wäre zusätzliche Politur, hier
@@ -81,15 +86,28 @@ function gebaeudeFootprints(doc: KosmoDoc): Pt[][] {
     .filter((o) => o.length >= 3);
 }
 
+/** Nachbar-Footprints (v0.7.1 E2/1B) — Zonen mit `zonenArt:'nachbar'`, s.
+ *  Modul-Kommentar. Leer, solange keine solchen Zonen existieren (Daten-
+ *  Guard: die Ausgabe bleibt dann byte-identisch zu v0.7.0). */
+function nachbarFootprints(doc: KosmoDoc): Pt[][] {
+  return doc
+    .byKind<Zone>('zone')
+    .filter((z) => z.zonenArt === 'nachbar')
+    .map((z) => z.outline)
+    .filter((o) => o.length >= 3);
+}
+
 export interface SchwarzplanGeometrie {
   parzelle: Pt[];
   footprints: Pt[][];
-  /** Welt-mm-Bounds von Parzelle+Footprints, OHNE Rand (roh). */
+  /** Nachbar-Footprints (v0.7.1 E2/1B) — leer ohne Nachbar-Zonen. */
+  nachbarn: Pt[][];
+  /** Welt-mm-Bounds von Parzelle+Footprints+Nachbarn, OHNE Rand (roh). */
   bounds: BBox;
 }
 
 /**
- * Sammelt Parzelle+Footprints+Bbox — Guard/Ehrlichkeitsregeln s.
+ * Sammelt Parzelle+Footprints+Nachbarn+Bbox — Guard/Ehrlichkeitsregeln s.
  * Modul-Kommentar. `null` ohne erkennbare Parzelle. Gemeinsame Quelle für
  * `schwarzplanSvg` (unten, eigenständiges Blatt) UND `sheet.ts`s additive
  * Situationsplan-Vorbereitung (`situationsplanInnerSvg`, v0.7.0 E4) — beide
@@ -99,9 +117,10 @@ export function schwarzplanGeometrie(doc: KosmoDoc): SchwarzplanGeometrie | null
   const parzelle = parzellenUmriss(doc);
   if (!parzelle) return null;
   const footprints = gebaeudeFootprints(doc);
-  const bounds = bboxVonPunkte([parzelle, ...footprints]);
+  const nachbarn = nachbarFootprints(doc);
+  const bounds = bboxVonPunkte([parzelle, ...footprints, ...nachbarn]);
   if (!bounds) return null;
-  return { parzelle, footprints, bounds };
+  return { parzelle, footprints, nachbarn, bounds };
 }
 
 /**
@@ -114,7 +133,7 @@ export function schwarzplanGeometrie(doc: KosmoDoc): SchwarzplanGeometrie | null
 export function schwarzplanSvg(doc: KosmoDoc, opts?: SchwarzplanOptionen): SchwarzplanErgebnis | null {
   const geo = schwarzplanGeometrie(doc);
   if (!geo) return null;
-  const { parzelle, footprints, bounds: bbRoh } = geo;
+  const { parzelle, footprints, nachbarn, bounds: bbRoh } = geo;
   const massstab = opts?.massstab ?? 500;
   const bb: BBox = {
     minX: bbRoh.minX - RAND_MM,
@@ -140,7 +159,15 @@ export function schwarzplanSvg(doc: KosmoDoc, opts?: SchwarzplanOptionen): Schwa
     `<polygon points="${projiziere(parzelle)}" fill="none" stroke="black" stroke-width="0.35" stroke-dasharray="3 0.9 0.6 0.9"/>`,
   );
 
-  // Gebäude-Footprints schwarz gefüllt
+  // Nachbar-Footprints grau (v0.7.1 E2/1B, Kontext-Geometrie) — zeichnen VOR
+  // den eigenen Footprints, damit «eigenes Objekt hervorgehoben» bleibt.
+  // Ohne Nachbar-Zonen ist `nachbarn` leer — dieser Block bleibt dann
+  // wirkungslos (Daten-Guard, byte-identisch zu v0.7.0).
+  for (const np of nachbarn) {
+    teile.push(`<polygon points="${projiziere(np)}" fill="#8a8a8a" stroke="none"/>`);
+  }
+
+  // Gebäude-Footprints schwarz gefüllt (eigene Objekte, zeichnen zuletzt)
   for (const fp of footprints) {
     teile.push(`<polygon points="${projiziere(fp)}" fill="#1a1a1a" stroke="none"/>`);
   }

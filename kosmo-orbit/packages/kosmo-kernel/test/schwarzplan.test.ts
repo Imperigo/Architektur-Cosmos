@@ -183,3 +183,78 @@ describe('Golden-SVG (Schwarzplan v1)', () => {
     expect(erg.svg).toBe(golden);
   });
 });
+
+describe('Nachbar-Zonen (v0.7.1 E2/1B) — Daten-Guard + Darstellung', () => {
+  const NACHBAR_1 = [
+    { x: 22000, y: -6000 },
+    { x: 28000, y: -6000 },
+    { x: 28000, y: 0 },
+    { x: 22000, y: 0 },
+  ];
+  const NACHBAR_2 = [
+    { x: -16000, y: 2000 },
+    { x: -10000, y: 2000 },
+    { x: -10000, y: 8000 },
+    { x: -16000, y: 8000 },
+  ];
+
+  function fixtureDocMitNachbarn(): KosmoDoc {
+    const doc = fixtureDoc();
+    const sid = doc.storeysOrdered()[0]!.id;
+    execute(doc, 'design.nachbarnUebernehmen', { storeyId: sid, outlines: [NACHBAR_1, NACHBAR_2] });
+    return doc;
+  }
+
+  it('OHNE Nachbar-Zonen bleibt die Ausgabe byte-identisch zu v0.7.0 (Daten-Guard)', () => {
+    // Dieselbe Fixtur wie oben, ohne den Nachbar-Import — muss exakt dem
+    // Golden aus dem v0.7.0-Block entsprechen (kein #8a8a8a im Markup).
+    const doc = fixtureDoc();
+    const erg = schwarzplanSvg(doc)!;
+    expect(erg.svg).not.toContain('#8a8a8a');
+    const golden = readFileSync(new URL('./golden/schwarzplan.svg', import.meta.url), 'utf8');
+    expect(erg.svg).toBe(golden);
+  });
+
+  it('Nachbar-Zonen erscheinen als graue Footprints (#8a8a8a), eigene bleiben schwarz, Parzelle strichpunktiert', () => {
+    const doc = fixtureDocMitNachbarn();
+    const erg = schwarzplanSvg(doc)!;
+    expect(erg.svg.match(/fill="#8a8a8a"/g)?.length).toBe(2);
+    expect(erg.svg.match(/fill="#1a1a1a"/g)?.length).toBe(1);
+    expect(erg.svg).toContain('stroke-dasharray="3 0.9 0.6 0.9"');
+  });
+
+  it('schwarzplanGeometrie liefert die Nachbar-Footprints separat und bezieht sie in die Bbox ein', () => {
+    const doc = fixtureDocMitNachbarn();
+    const geo = schwarzplanGeometrie(doc)!;
+    expect(geo.nachbarn).toHaveLength(2);
+    expect(geo.footprints).toHaveLength(1);
+    // Nachbar 1 liegt östlich ausserhalb der Parzelle → Bbox wächst mit.
+    const ohneNachbarn = schwarzplanGeometrie(fixtureDoc())!;
+    expect(geo.bounds.maxX).toBeGreaterThan(ohneNachbarn.bounds.maxX);
+  });
+
+  it('eigene Footprints zeichnen NACH den Nachbar-Footprints (eigenes Objekt hervorgehoben, on top im Markup)', () => {
+    const doc = fixtureDocMitNachbarn();
+    const erg = schwarzplanSvg(doc)!;
+    const letzterGrauIndex = erg.svg.lastIndexOf('#8a8a8a');
+    const ersterSchwarzIndex = erg.svg.indexOf('#1a1a1a');
+    expect(ersterSchwarzIndex).toBeGreaterThan(letzterGrauIndex);
+  });
+});
+
+describe('Golden-SVG (Schwarzplan mit Nachbarn, v0.7.1 E2/1B)', () => {
+  it('Schwarzplan der Fixtur (eigenes Volumen + Parzelle + 2 Nachbar-Zonen) ist byte-identisch zur committeten Referenz', () => {
+    const doc = fixtureDoc();
+    const sid = doc.storeysOrdered()[0]!.id;
+    execute(doc, 'design.nachbarnUebernehmen', {
+      storeyId: sid,
+      outlines: [
+        [{ x: 22000, y: -6000 }, { x: 28000, y: -6000 }, { x: 28000, y: 0 }, { x: 22000, y: 0 }],
+        [{ x: -16000, y: 2000 }, { x: -10000, y: 2000 }, { x: -10000, y: 8000 }, { x: -16000, y: 8000 }],
+      ],
+    });
+    const erg = schwarzplanSvg(doc)!;
+    const golden = readFileSync(new URL('./golden/schwarzplan-nachbarn.svg', import.meta.url), 'utf8');
+    expect(erg.svg).toBe(golden);
+  });
+});
