@@ -48,9 +48,9 @@
 </g>
 <g font-size="3.2">
 <line x1="10" y1="279" x2="410" y2="279" stroke="black" stroke-width="0.35"/>
-<text x="10" y="285" font-weight="bold" font-size="4.2">Golden-Fensterband</text>
+<text x="10" y="285" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="4.2">GOLDEN-FENSTERBAND</text>
 <text x="10" y="290.5">Grundriss Fensterband · EG</text>
-<text x="410" y="285" text-anchor="end">1:50 · Masse in cm/m</text>
-<text x="410" y="290.5" text-anchor="end">10.07.2026 · Werkplan (SIA 51)</text>
+<text x="410" y="285" text-anchor="end" font-family="'IBM Plex Mono', ui-monospace, monospace" font-feature-settings="'tnum'">1:50 · Masse in cm/m</text>
+<text x="410" y="290.5" text-anchor="end" font-family="'IBM Plex Mono', ui-monospace, monospace" font-feature-settings="'tnum'">10.07.2026 · Werkplan (SIA 51)</text>
 </g>
 </svg>

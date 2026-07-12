@@ -10,6 +10,7 @@ import { fruehePhase } from '../model/doc';
 import { deriveAxo, type AxoSpec } from './axo';
 import {
   BLATT,
+  BLATT_TYPO_MM,
   DASH,
   dashWelt,
   GRAU,
@@ -18,8 +19,10 @@ import {
   RADIER_WEISS,
   SCHRIFT_MESSBAR,
   STIFT,
+  titelAttr,
   UMBAU_FLAECHEN,
   UMBAU_STIFTE,
+  versal,
   ZONENTUER_LUECKE_STIFT,
 } from './stilblatt';
 
@@ -581,10 +584,10 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
   parts.push(
     `<g font-size="3.2">`,
     `<line x1="10" y1="${y0}" x2="${paper.width - 10}" y2="${y0}" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
-    `<text x="10" y="${y0 + 6}" font-weight="bold" font-size="4.2">${escapeXml(opts.projectName)}</text>`,
+    `<text x="10" y="${y0 + 6}" ${titelAttr(BLATT_TYPO_MM.titel)}>${escapeXml(versal(opts.projectName))}</text>`,
     `<text x="10" y="${y0 + 11.5}">${escapeXml(opts.planTitle)} · ${escapeXml(storey?.name ?? '')}</text>`,
-    `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end">1:${scale} \u00b7 Masse in cm/m</text>`,
-    `<text x="${paper.width - 10}" y="${y0 + 11.5}" text-anchor="end">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
+    `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end" font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'">1:${scale} \u00b7 Masse in cm/m</text>`,
+    `<text x="${paper.width - 10}" y="${y0 + 11.5}" text-anchor="end" font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
     `</g>`,
     '</svg>',
   );

@@ -293,3 +293,77 @@ hinweg identisch sein — sonst wirkt die zweite Stimme wie ein Zufall der
 Implementierung statt wie eine gestalterische Entscheidung. Der Touch bleibt
 bewusst eng (nur `font-family`, nur messbare Klassen, keine Geometrie/
 Grösse), damit er sich verlustfrei in den D4-Sammelwechsel einfaltet.
+
+## 7 · Plankopf: Titel Lato Heavy versal, Meta Mono
+
+Die letzte «Zwei Stimmen»-Lücke: der Plankopf von `planToSvg`
+(`plansvg.ts` ~Z. 582–588) sass noch komplett auf dem Root-SVG-Fallback
+`Helvetica, Arial, sans-serif`. Der Plankopf sitzt auf JEDEM gedruckten Plan
+(alle `grundriss-*`-Goldens tragen ihn) — damit war der prominenteste
+Titel-/Meta-Block der Serie noch stumm gegenüber den zwei Stimmen, während
+die Blatt-Module (`sheet.ts` §1) sie längst tragen. Dieser Nachtrag zieht den
+Plankopf exakt auf dasselbe Muster wie den Blatt-Plankopf (`sheet.ts`
+Z. 313–317).
+
+### Erwartungsliste (vor der Regeneration)
+
+| Stelle (`plansvg.ts`) | Vorher | Nachher |
+| --- | --- | --- |
+| Z. 584 Plankopf-Titel (`opts.projectName`) | `font-weight="bold" font-size="4.2"`, Root-Helvetica geerbt, gemischtschreibig | `titelAttr(BLATT_TYPO_MM.titel)` = Lato-Kette + `letter-spacing="0.04em"` + `font-weight="bold"` + `font-size="4.2"` (unverändert), Text `versal(...)` — exakt das Muster der Blatt-Modul-Titel |
+| Z. 586 Plankopf-Meta (Massstab · «Masse in cm/m») | keine `font-family` (Root-Helvetica geerbt), `font-size` 3.2 aus `<g>` geerbt | `font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'"` ergänzt, `font-size` **bleibt** geerbt 3.2 |
+| Z. 587 Plankopf-Meta (Datum · Phase) | wie Z. 586 | wie Z. 586 |
+
+**Bewusste Abweichung von `messbarAttr` bei den Meta-Zeilen:** `messbarAttr(size)`
+setzt eine EXPLIZITE `font-size` (im Blatt-Kontext `BLATT_TYPO_MM.meta` = 2.8).
+Der Plankopf-Meta erbt aber 3.2 vom umschliessenden `<g font-size="3.2">`;
+`messbarAttr(2.8)` würde die sichtbare Grösse 3.2 → 2.8 verkleinern — das wäre
+eine `font-size`-Änderung, die die harte D4-Grenze dieses Nachtrags verbietet.
+Darum trägt der Meta hier NUR `font-family` + `font-feature-settings="'tnum'"`
+(der `SCHRIFT_MESSBAR`-Weg ohne Grössenbindung), Grösse bleibt byte-gleich.
+
+**Grenzfall Untertitel (Z. 585, `planTitle · storey`):** bewusst NEUTRAL auf
+dem Root-Fallback belassen — kein Messwert, nicht der Haupttitel; Soll 5b zeigt
+den Untertitel in schlichtem Regular. Keine stille Änderung.
+
+**Legenden-Titel:** existiert im `plansvg.ts`-Pfad NICHT (Grep über
+`derive/`: `Legende`/`legende` nur in `sheet.ts` + den fünf Blatt-Modulen,
+nicht in `plansvg.ts`/`section.ts`). Nichts umzustellen.
+
+### Ist-Abgleich nach Regeneration (12.07.2026)
+
+13 Goldens geändert (`grundriss-*` ×12 + `werkplan-beschlag.svg` — der
+einzige weitere Grundriss mit Plankopf; `blatt-autofuellung.svg` und die
+`ansicht-*`/`schnitt-*`-Goldens tauchen NICHT auf: Schnitte/Ansichten laufen
+über einen Plankopf-losen Wrapper, das Blatt bettet Plankopf-lose Fragmente
+ein). Maschineller Beweis (Diff-Skript: Zeilenpaar-Vergleich nach Entfernen
+von `font-family`/`letter-spacing`/`font-weight`/`font-feature-settings` UND
+case-insensitivem Versal-Abgleich): **39 geänderte Zeilen über 13 Dateien (je
+3: Titel + 2 Meta), alle nach Normalisierung byte-identisch** — 0
+Geometrie-/Koordinaten-/`font-size`-Diff. Stichprobe `grundriss-testhaus.svg`:
+Titel `GOLDEN-TESTHAUS` (Lato-Kette, `letter-spacing="0.04em"`, `font-size="4.2"`
+unverändert, `x="10" y="285"` unverändert); beide Meta-Zeilen → Mono-Kette +
+`tnum`, Koordinaten `x="410"` unverändert; Untertitel byte-identisch.
+
+Gates: `npx tsx tools/svg-qa/pruefe-goldens.mts` → Exit 0, 28 Goldens, 0 harte
+Fehler (insbesondere Text-Containment aller `grundriss-*` ✓ — der versal +
+getrackte Titel sprengt die Plankopf-Breite NICHT, anders als die
+zusammengesetzten Report-Titel in §4b), 1 bekannte
+`abnahmeprotokoll.svg`-Overlap-Warnung; Kernel-Suite 33/33 · 747/747 grün;
+Kernel-Typecheck grün.
+
+### Begründung
+
+Der Plankopf ist der einzige Text, den JEDER gedruckte Plan trägt — die
+sichtbarste Stelle der zwei Stimmen überhaupt. Ihn auf dem generischen
+Helvetica-Fallback zu lassen, während Bemassung/Koten (§6) und die
+Blatt-Module (§1) bereits Lato/Mono sprechen, wäre die auffälligste
+verbleibende Inkonsistenz gewesen. Mit diesem Nachtrag ist D4 «Zwei Stimmen»
+über alle Renderer (Blatt-Module, Plan/Schnitt/Ansicht, Plankopf) durchgängig.
+
+### Offene 0.7.4-Zeile (nicht in D4 aufgemacht)
+
+Der Nordpfeil-Buchstabe «N» (`plansvg.ts` ~Z. 575) und der Untertitel bleiben
+auf dem Root-Fallback. «N» ist eine Kartografie-Signatur, kein Titel/Messwert
+— eine Zuordnung zu einer der zwei Stimmen ist Auslegungssache und wurde
+bewusst NICHT in diesem letzten D4-Touch entschieden, sondern als 0.7.4-Frage
+notiert (Konsistenz Nordpfeil-Signatur vs. Root-Neutralität).
