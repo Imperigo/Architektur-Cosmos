@@ -4,9 +4,10 @@ import { dir, normal, polygonArea, type Pt } from '../model/units';
 import { openingRects, pointOnAxis, wallFrame } from '../geometry/wall';
 import { difference, intersect } from '../geometry/clip';
 import { materialPrioritaet } from '../model/prioritaet';
-import { deriveAll } from './scene';
+import { deriveAll, FENSTER_RAHMEN_DEFAULT_MM } from './scene';
 import { clipEdges, type HlEdge, type HlTriInput } from './hiddenline';
 import { dachGeometrie } from './dach';
+import { abVorprojekt } from './stilblatt';
 
 /**
  * Schnitt/Ansicht-Derivation — Mesh-Slicing mit Verdeckungsrechnung.
@@ -55,6 +56,15 @@ export interface SectionGraphic {
    * Leer, solange KEINE Öffnung ein `fluegelTyp` trägt — bestehende
    * Ansichten/Schnitte bleiben dadurch byte-identisch (Goldens-Guard). */
   fenstersymbole: SectionLine2D[];
+  /** D2-Leibungslinien (v0.7.3 D1-Sammelwechsel, GOLDEN-WECHSEL-D1.md §2):
+   * ab Vorprojekt (`abVorprojekt()`, Stilblatt-Weiche) trägt JEDE Öffnung im
+   * Sichtbereich vor der Schnittebene ihr Öffnungsrechteck (Klasse
+   * `leibung`); der Werkplan ergänzt die Rahmenlinie (Innenrechteck, Inset
+   * `rahmenbreite ?? FENSTER_RAHMEN_DEFAULT_MM`, Klasse `rahmen`). Löst
+   * §11.3 «konturlose Lochungen». Leer im Wettbewerb (Weiche) — dieselben
+   * ehrlichen Grenzen wie `fenstersymbole` (keine Hidden-Line-Verdeckung;
+   * geschnittene Öffnungen erhalten keine Leibung). */
+  leibungen: SectionLine2D[];
   bounds: { minS: number; maxS: number; minZ: number; maxZ: number } | null;
 }
 
@@ -292,8 +302,55 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
     }
   }
 
+  // D2-Leibungslinien (v0.7.3, s. SectionGraphic.leibungen): ab Vorprojekt
+  // das Öffnungsrechteck jeder sichtbaren Öffnung (Fenster UND Türen),
+  // Werkplan zusätzlich die Rahmenlinie. Dieselbe Sichtbarkeitsregel wie die
+  // Flügelsymbolik oben (beide Enden 0 < t ≤ depth) — eine GESCHNITTENE
+  // Öffnung (t-Vorzeichenwechsel) ist Schnitt, nicht Ansicht, und erhält
+  // keine Leibung.
+  const leibungen: SectionLine2D[] = [];
+  if (abVorprojekt(doc.settings.phase)) {
+    for (const o of doc.byKind<Opening>('opening')) {
+      const wall = doc.get<Wall>(o.wallId);
+      if (!wall || wall.kind !== 'wall') continue;
+      const storey = doc.get<Storey>(wall.storeyId);
+      if (!storey || storey.kind !== 'storey') continue;
+      const r = openingRects(wall, [o])[0];
+      if (!r) continue;
+      const pLinks = pointOnAxis(wall, r.s0);
+      const pRechts = pointOnAxis(wall, r.s1);
+      const tLinks = toT(pLinks.x, pLinks.y);
+      const tRechts = toT(pRechts.x, pRechts.y);
+      if (!(tLinks > 0 && tRechts > 0 && tLinks <= spec.depth && tRechts <= spec.depth)) continue;
+      const sA = toS(pLinks.x, pLinks.y);
+      const sB = toS(pRechts.x, pRechts.y);
+      const s0 = Math.min(sA, sB);
+      const s1 = Math.max(sA, sB);
+      const z0 = storey.elevation + r.z0;
+      const z1 = storey.elevation + r.z1;
+      const rechteck = (sMin: number, sMax: number, zMin: number, zMax: number, klasse: string): void => {
+        const ecken = [
+          { s: sMin, z: zMin },
+          { s: sMax, z: zMin },
+          { s: sMax, z: zMax },
+          { s: sMin, z: zMax },
+        ];
+        for (let i = 0; i < 4; i++) {
+          leibungen.push({ a: ecken[i]!, b: ecken[(i + 1) % 4]!, classes: ['symbol', klasse] });
+        }
+      };
+      rechteck(s0, s1, z0, z1, 'leibung');
+      if (doc.settings.phase === 'werkplan') {
+        const rb = o.rahmenbreite ?? FENSTER_RAHMEN_DEFAULT_MM;
+        if (s1 - s0 > 2 * rb && z1 - z0 > 2 * rb) {
+          rechteck(s0 + rb, s1 - rb, z0 + rb, z1 - rb, 'rahmen');
+        }
+      }
+    }
+  }
+
   let bounds: SectionGraphic['bounds'] = null;
-  for (const l of [...cuts, ...projections, ...fenstersymbole]) {
+  for (const l of [...cuts, ...projections, ...fenstersymbole, ...leibungen]) {
     if (!bounds) {
       bounds = { minS: l.a.s, maxS: l.a.s, minZ: l.a.z, maxZ: l.a.z };
     }
@@ -304,7 +361,7 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       bounds.maxZ = Math.max(bounds.maxZ, p.z);
     }
   }
-  return { cuts, projections, faces, terrain, fenstersymbole, bounds };
+  return { cuts, projections, faces, terrain, fenstersymbole, leibungen, bounds };
 }
 
 // ---------------------------------------------------------------------------

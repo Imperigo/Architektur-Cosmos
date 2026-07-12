@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { KosmoDoc } from '../src/model/doc';
 import { execute } from '../src/commands/core';
 import '../src/commands/design';
@@ -210,7 +211,6 @@ describe('IFC-Fixture-Vergleich gegen committetes Referenz-IFC (normalisiert), v
     const { doc } = referenzDoc();
     const ifc = exportIfc(doc, 'Referenz');
     const normalisiert = normalisiereIfc(ifc);
-    const golden = readFileSync(new URL('./golden/interop-referenz-normalisiert.ifc', import.meta.url), 'utf8');
-    expect(normalisiert).toBe(golden);
+    pruefeGolden(normalisiert, new URL('./golden/interop-referenz-normalisiert.ifc', import.meta.url));
   });
 });

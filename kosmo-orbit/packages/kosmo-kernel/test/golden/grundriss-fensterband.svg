@@ -1,23 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297" font-family="Helvetica, Arial, sans-serif">
 <rect width="420" height="297" fill="white"/>
 <g transform="translate(141.45, 178.05) scale(0.02)">
-<path d="M 150 -150 L 205 -205 L 205 -5795 L 7795 -5795 L 7795 -205 L 7850 -150 L 7850 45 L 8045 45 L 8045 -6045 L -45 -6045 L -45 45 L 150 45 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="black" stroke-width="25"/>
-<path d="M 8205 205 L 8045 45 L 7850 45 L 7850 205 Z M 150 205 L 150 45 L -45 45 L -205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="17.5"/>
-<path d="M 8045 45 L 8045 -6045 L 8205 -6205 L 8205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="17.5"/>
-<path d="M 8045 -6045 L -45 -6045 L -205 -6205 L 8205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="17.5"/>
-<path d="M -45 -6045 L -45 45 L -205 205 L -205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="17.5"/>
-<line x1="150" y1="-205" x2="150" y2="205" stroke="black" stroke-width="12.5"/>
-<line x1="7850" y1="-205" x2="7850" y2="205" stroke="black" stroke-width="12.5"/>
-<line x1="150" y1="25" x2="7850" y2="25" stroke="black" stroke-width="9"/>
-<line x1="150" y1="-25" x2="7850" y2="-25" stroke="black" stroke-width="9"/>
-<line x1="190" y1="-205" x2="190" y2="-25" stroke="black" stroke-width="12.5"/>
-<line x1="7810" y1="-205" x2="7810" y2="-25" stroke="black" stroke-width="12.5"/>
-<line x1="1433" y1="25" x2="1433" y2="-25" stroke="black" stroke-width="9"/>
-<line x1="2717" y1="25" x2="2717" y2="-25" stroke="black" stroke-width="9"/>
-<line x1="4000" y1="25" x2="4000" y2="-25" stroke="black" stroke-width="9"/>
-<line x1="5283" y1="25" x2="5283" y2="-25" stroke="black" stroke-width="9"/>
-<line x1="6567" y1="25" x2="6567" y2="-25" stroke="black" stroke-width="9"/>
-<g stroke="black" fill="black">
+<path d="M 150 -150 L 205 -205 L 205 -5795 L 7795 -5795 L 7795 -205 L 7850 -150 L 7850 45 L 8045 45 L 8045 -6045 L -45 -6045 L -45 45 L 150 45 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="25"/>
+<path d="M 8205 205 L 8045 45 L 7850 45 L 7850 205 Z M 150 205 L 150 45 L -45 45 L -205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="17.5"/>
+<path d="M 8045 45 L 8045 -6045 L 8205 -6205 L 8205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="17.5"/>
+<path d="M 8045 -6045 L -45 -6045 L -205 -6205 L 8205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="17.5"/>
+<path d="M -45 -6045 L -45 45 L -205 205 L -205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="17.5"/>
+<line x1="150" y1="-205" x2="150" y2="205" stroke="#111" stroke-width="12.5"/>
+<line x1="7850" y1="-205" x2="7850" y2="205" stroke="#111" stroke-width="12.5"/>
+<line x1="150" y1="25" x2="7850" y2="25" stroke="#111" stroke-width="9"/>
+<line x1="150" y1="-25" x2="7850" y2="-25" stroke="#111" stroke-width="9"/>
+<line x1="190" y1="-205" x2="190" y2="-25" stroke="#111" stroke-width="12.5"/>
+<line x1="7810" y1="-205" x2="7810" y2="-25" stroke="#111" stroke-width="12.5"/>
+<line x1="1433" y1="25" x2="1433" y2="-25" stroke="#111" stroke-width="9"/>
+<line x1="2717" y1="25" x2="2717" y2="-25" stroke="#111" stroke-width="9"/>
+<line x1="4000" y1="25" x2="4000" y2="-25" stroke="#111" stroke-width="9"/>
+<line x1="5283" y1="25" x2="5283" y2="-25" stroke="#111" stroke-width="9"/>
+<line x1="6567" y1="25" x2="6567" y2="-25" stroke="#111" stroke-width="9"/>
+<g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="8000" y2="1200" stroke-width="9"/>
 <line x1="-40" y1="1240" x2="40" y2="1160" stroke-width="18"/>
 <line x1="110" y1="1240" x2="190" y2="1160" stroke-width="18"/>
@@ -28,13 +28,13 @@
 <text x="4000" y="1310" text-anchor="middle" font-size="100" stroke="none">190/80</text>
 <text x="7925" y="1140" text-anchor="middle" font-size="130" stroke="none">15</text>
 </g>
-<g stroke="black" fill="black">
+<g stroke="#111" fill="#111">
 <line x1="0" y1="2000" x2="8000" y2="2000" stroke-width="9"/>
 <line x1="-40" y1="2040" x2="40" y2="1960" stroke-width="18"/>
 <line x1="7960" y1="2040" x2="8040" y2="1960" stroke-width="18"/>
 <text x="4000" y="1940" text-anchor="middle" font-size="130" stroke="none">800</text>
 </g>
-<g stroke="black" fill="black">
+<g stroke="#111" fill="#111">
 <line x1="-1200" y1="0" x2="-1200" y2="-6000" stroke-width="9"/>
 <line x1="-1240" y1="-40" x2="-1160" y2="40" stroke-width="18"/>
 <line x1="-1240" y1="-6040" x2="-1160" y2="-5960" stroke-width="18"/>

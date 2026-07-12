@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import {
   CommandError,
@@ -424,7 +425,6 @@ describe('Golden-SVG (Blatt-Autofuellung, K10) — Vektor-Qualität des vollen B
     const { doc, sheetId } = autofuellungFixtureDoc();
     execute(doc, 'publish.blattFuellen', { sheetId });
     const svg = sheetToSvg(doc, sheetId, { projectName: doc.settings.projectName, date: '11.07.2026' });
-    const golden = readFileSync(new URL('./golden/blatt-autofuellung.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/blatt-autofuellung.svg', import.meta.url));
   });
 });

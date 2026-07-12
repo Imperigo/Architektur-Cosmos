@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import {
   KosmoDoc,
@@ -355,7 +356,6 @@ describe('Golden-SVG (Bauablaufblatt)', () => {
       datum: '08.07.2026',
       siaPhase: 'ausfuehrung',
     });
-    const golden = readFileSync(new URL('./golden/bauablaufblatt.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/bauablaufblatt.svg', import.meta.url));
   });
 });

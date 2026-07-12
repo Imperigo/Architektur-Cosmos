@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import {
   testhausMitQuertrakt,
@@ -734,8 +735,7 @@ describe('Golden-Sattel (Plan-Regression)', () => {
   it('Ansicht Süd des Satteldach-Testhauses ist byte-identisch zur Golden-Datei', () => {
     const { doc, spec } = testhausSatteldach();
     const svg = ansichtSvg(doc, spec);
-    const golden = readFileSync(new URL('./golden/ansicht-sued-satteldach.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/ansicht-sued-satteldach.svg', import.meta.url));
     // Bewusste Änderungen: `npx tsx e2e/tools/golden-ansicht-sattel.mts` (falls angelegt) und Diff begutachten.
   });
 });
@@ -870,8 +870,7 @@ describe('Dach im 2D-Plan & Schnitt (Stream A / v0.6.8, SIM-Befunde H-2/H-18)', 
       planTitle: 'Grundriss Dachaufsicht',
       date: '10.07.2026',
     });
-    const golden = readFileSync(new URL('./golden/grundriss-walmdach-flach.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-walmdach-flach.svg', import.meta.url));
   });
 
   it('Golden: Grundriss-Aufsicht eines Satteldachs mit sichtbarem First ist byte-identisch zur Referenz', async () => {
@@ -885,8 +884,7 @@ describe('Dach im 2D-Plan & Schnitt (Stream A / v0.6.8, SIM-Befunde H-2/H-18)', 
       planTitle: 'Grundriss Dachaufsicht',
       date: '10.07.2026',
     });
-    const golden = readFileSync(new URL('./golden/grundriss-satteldach-first.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-satteldach-first.svg', import.meta.url));
   });
 
   it('Golden: Grundriss des Geschosses UNTER dem Satteldach (gestrichelter Umriss) ist byte-identisch zur Referenz', async () => {
@@ -899,8 +897,7 @@ describe('Dach im 2D-Plan & Schnitt (Stream A / v0.6.8, SIM-Befunde H-2/H-18)', 
       planTitle: 'Grundriss EG',
       date: '10.07.2026',
     });
-    const golden = readFileSync(new URL('./golden/grundriss-satteldach-eg-darunter.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-satteldach-eg-darunter.svg', import.meta.url));
   });
 
   it('Golden: Querschnitt durch das Satteldach mit Wand-Anschluss ist byte-identisch zur Referenz', () => {
@@ -911,8 +908,7 @@ describe('Dach im 2D-Plan & Schnitt (Stream A / v0.6.8, SIM-Befunde H-2/H-18)', 
     const w = b!.maxX - b!.minX + 2 * pad;
     const h = b!.maxY - b!.minY + 2 * pad;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${b!.minX - pad} ${b!.minY - pad} ${w} ${h}">\n${inner}\n</svg>\n`;
-    const golden = readFileSync(new URL('./golden/schnitt-satteldach-querschnitt.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/schnitt-satteldach-querschnitt.svg', import.meta.url));
   });
 
   it('Golden: derselbe Satteldach-Querschnitt in Baueingabe zeichnet Schichten schwarz/grau (v0.7.0 E2)', () => {
@@ -924,8 +920,7 @@ describe('Dach im 2D-Plan & Schnitt (Stream A / v0.6.8, SIM-Befunde H-2/H-18)', 
     const w = b!.maxX - b!.minX + 2 * pad;
     const h = b!.maxY - b!.minY + 2 * pad;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${b!.minX - pad} ${b!.minY - pad} ${w} ${h}">\n${inner}\n</svg>\n`;
-    const golden = readFileSync(new URL('./golden/schnitt-satteldach-baueingabe.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/schnitt-satteldach-baueingabe.svg', import.meta.url));
   });
 });
 
@@ -1240,8 +1235,7 @@ describe('Golden-SVG (Plan-Regression)', () => {
     const svg = planToSvg(doc, sid, {
       scale: 100, paper: A3_QUER, projectName: 'Golden-Testhaus', planTitle: 'Grundriss', date: '01.07.2026',
     });
-    const golden = readFileSync(new URL('./golden/grundriss-testhaus.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-testhaus.svg', import.meta.url));
     // Bewusste Plan-Änderungen: Golden neu erzeugen und im Diff begutachten.
   });
 
@@ -1284,14 +1278,12 @@ describe('Golden-SVG (Plan-Regression)', () => {
 
   it('Golden: Wettbewerb zeichnet die Wände als EIN schwarzes Poché (v0.7.0 E2)', async () => {
     const svg = await goldenTesthausMitPhase('wettbewerb');
-    const golden = readFileSync(new URL('./golden/grundriss-testhaus-wettbewerb.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-testhaus-wettbewerb.svg', import.meta.url));
   });
 
   it('Golden: Baueingabe zeichnet Schichten schwarz (tragend) und grau (nichttragend) (v0.7.0 E2)', async () => {
     const svg = await goldenTesthausMitPhase('baueingabe');
-    const golden = readFileSync(new URL('./golden/grundriss-testhaus-baueingabe.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-testhaus-baueingabe.svg', import.meta.url));
   });
 });
 
@@ -1454,8 +1446,7 @@ describe('Golden-Ansicht (Hidden-Line)', () => {
   it('Ansicht Süd des Testhauses ist byte-identisch zur Golden-Datei', () => {
     const { doc, spec } = testhausMitQuertrakt();
     const svg = ansichtSvg(doc, spec);
-    const golden = readFileSync(new URL('./golden/ansicht-sued-testhaus.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/ansicht-sued-testhaus.svg', import.meta.url));
     // Bewusste Änderungen: `npx tsx e2e/tools/golden-ansicht.mts` und Diff begutachten.
   });
 });
@@ -2710,7 +2701,9 @@ describe('Zonentür-Drucksymbol + Möbel-Phasen (Vision A4)', () => {
     execute(doc, 'design.moebelSetzen', { storeyId, typ: 'wc', at: { x: 1000, y: 1000 }, rotationGrad: 0 });
     execute(doc, 'design.moebelSetzen', { storeyId, typ: 'bett-doppel', at: { x: 4000, y: 4000 }, rotationGrad: 0 });
     const { planInnerSvg } = await import('../src');
-    const zaehle = () => (planInnerSvg(doc, storeyId, 50).inner.match(/fill="none" stroke="black" stroke-width="9"/g) ?? []).length;
+    // v0.7.3 D1: Möbel-Korpus zeichnet im geschnitten-Grau des Stilblatts
+    // (#111 statt black — GOLDEN-WECHSEL-D1.md §1).
+    const zaehle = () => (planInnerSvg(doc, storeyId, 50).inner.match(/fill="none" stroke="#111" stroke-width="9"/g) ?? []).length;
     expect(zaehle()).toBe(2); // werkplan (Default): beide
     execute(doc, 'design.phaseSetzen', { phase: 'bauprojekt' });
     expect(zaehle()).toBe(1); // nur WC (fester Einbau)
@@ -3110,7 +3103,8 @@ describe('Koten roh/fertig + Absolutbezug (Vision B2)', () => {
     const spec = { a: { x: 4500, y: -2000 }, b: { x: 4500, y: 2000 }, depth: 5000, lookLeft: true } as const;
     // Ohne Decken-Aufbau: nur die gefüllte fertig-Kote, keine roh-Kote
     let svg = sectionInnerSvg(doc, spec, 100).inner;
-    expect(svg).toContain('Z" fill="black" stroke="black"'); // gefülltes Dreieck
+    // v0.7.3 D1: Koten zeichnen im geschnitten-Grau des Stilblatts (#111).
+    expect(svg).toContain('Z" fill="#111" stroke="#111"'); // gefülltes Dreieck
     expect(svg).not.toContain(' roh<');
     // Decken-Aufbau: Belag 10 + Unterlagsboden 70 + Trittschall 20 ÜBER tragend 240
     const au = execute(doc, 'design.aufbauErstellen', {

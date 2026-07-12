@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import { KosmoDoc } from '../src/model/doc';
 import { execute } from '../src/commands/core';
@@ -179,8 +180,7 @@ describe('Golden-SVG (Schwarzplan v1)', () => {
   it('Schwarzplan der Fixtur (Parzelle + Testhaus-Volumen) ist byte-identisch zur committeten Referenz', () => {
     const doc = fixtureDoc();
     const erg = schwarzplanSvg(doc)!;
-    const golden = readFileSync(new URL('./golden/schwarzplan.svg', import.meta.url), 'utf8');
-    expect(erg.svg).toBe(golden);
+    pruefeGolden(erg.svg, new URL('./golden/schwarzplan.svg', import.meta.url));
   });
 });
 
@@ -211,8 +211,7 @@ describe('Nachbar-Zonen (v0.7.1 E2/1B) — Daten-Guard + Darstellung', () => {
     const doc = fixtureDoc();
     const erg = schwarzplanSvg(doc)!;
     expect(erg.svg).not.toContain('#8a8a8a');
-    const golden = readFileSync(new URL('./golden/schwarzplan.svg', import.meta.url), 'utf8');
-    expect(erg.svg).toBe(golden);
+    pruefeGolden(erg.svg, new URL('./golden/schwarzplan.svg', import.meta.url));
   });
 
   it('Nachbar-Zonen erscheinen als graue Footprints (#8a8a8a), eigene bleiben schwarz, Parzelle strichpunktiert', () => {
@@ -254,7 +253,6 @@ describe('Golden-SVG (Schwarzplan mit Nachbarn, v0.7.1 E2/1B)', () => {
       ],
     });
     const erg = schwarzplanSvg(doc)!;
-    const golden = readFileSync(new URL('./golden/schwarzplan-nachbarn.svg', import.meta.url), 'utf8');
-    expect(erg.svg).toBe(golden);
+    pruefeGolden(erg.svg, new URL('./golden/schwarzplan-nachbarn.svg', import.meta.url));
   });
 });

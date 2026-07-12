@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import { KosmoDoc, invertPatches } from '../src/model/doc';
 import { execute } from '../src/commands/core';
@@ -267,8 +268,7 @@ describe('Grundriss — Flügeltyp-Symbolik (Doppelstrich/versetzte Doppellinie)
       planTitle: 'Grundriss Zweiflügel',
       date: '10.07.2026',
     });
-    const golden = readFileSync(new URL('./golden/grundriss-fenster-zweifluegel.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-fenster-zweifluegel.svg', import.meta.url));
     const plan = derivePlan(doc, storeyId);
     expect(plan.lines.filter((l) => l.classes.includes('fluegel-kipp') || l.classes.includes('fluegel-schiebe'))).toHaveLength(0);
   });
@@ -278,8 +278,7 @@ describe('Neue Goldens (v0.7.1 E5/4B)', () => {
   it('Golden: Ansicht mit vier Flügeltypen (dreh/kipp/drehkipp/schiebe) ist byte-identisch', () => {
     const { doc, spec } = testhausFluegeltypen();
     const svg = ansichtSvg(doc, spec);
-    const golden = readFileSync(new URL('./golden/ansicht-fluegeltypen.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/ansicht-fluegeltypen.svg', import.meta.url));
     // Bewusste Änderungen: `npx tsx e2e/tools/golden-fluegeltypen.mts` und Diff begutachten.
   });
 
@@ -292,8 +291,7 @@ describe('Neue Goldens (v0.7.1 E5/4B)', () => {
       planTitle: 'Grundriss Kipp/Drehkipp/Schiebe',
       date: '11.07.2026',
     });
-    const golden = readFileSync(new URL('./golden/grundriss-kipp.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-kipp.svg', import.meta.url));
     // Bewusste Änderungen: `npx tsx e2e/tools/golden-grundriss-kipp.mts` und Diff begutachten.
   });
 });

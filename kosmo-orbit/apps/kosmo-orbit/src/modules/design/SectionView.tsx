@@ -122,6 +122,22 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
             strokeLinecap="square"
           />
         ))}
+        {/* D2-Leibung (v0.7.3): Öffnungsrechteck ab Vorprojekt + Werkplan-
+            Rahmenlinie — derselbe derive-Kanal wie der Druckweg
+            (deriveSection().leibungen, Parität via Stilblatt), am Bildschirm
+            in Theme-Tinte unterhalb der Flügelsymbolik. Leer im Wettbewerb. */}
+        {graphic.leibungen.map((l, i) => (
+          <line
+            key={`lb${i}`}
+            className={l.classes.join(' ')}
+            x1={l.a.s}
+            y1={-l.a.z}
+            x2={l.b.s}
+            y2={-l.b.z}
+            stroke="var(--k-ink)"
+            strokeWidth={l.classes.includes('rahmen') ? BILDSCHIRM_SCHNITT.rahmen : BILDSCHIRM_SCHNITT.leibung}
+          />
+        ))}
         {/* SIA-Öffnungssymbolik (v0.7.1 E5/4B, Restfix Stream 6B): additiv zum
             Druck-/Export-Weg (plansvg.ts `sectionInnerSvg`, dort die 0.18er-
             Klasse) — dünner Stift, klar schwächer als der cuts-Stift oben

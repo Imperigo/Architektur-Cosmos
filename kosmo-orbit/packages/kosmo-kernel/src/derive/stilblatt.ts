@@ -42,39 +42,49 @@ export const MASS_STIFT = {
 export const ZONENTUER_LUECKE_STIFT = 120;
 
 // ───────────────────────────────────────────────────────────────────────────
-// Achse 2 · GRAU = Bildtiefe
-// Zielsystem laut Matrix (Soll 2b): #111 geschnitten · #3A3A3A gesehen ·
-// #666 projiziert · #8A8A8A Kontext. Stand HEUTE (vor dem D1-Sammelwechsel):
-// geschnitten zeichnet mit reinem `black`, gesehene Kanten (reine Ansicht,
-// Axo) mit #111, Schnitt-Projektionen mit #444, Kontext bereits #8a8a8a.
+// Achse 2 · GRAU = Bildtiefe (D1-Sammelwechsel, Soll 2b)
+// #111 geschnitten · #3A3A3A gesehen · #666 projiziert · #8A8A8A Kontext.
+// Bewusster Wechsel (GOLDEN-WECHSEL-D1.md): Projektionen wurden heller
+// (#444→#666), Gesehenes liegt neu auf dem dunkleren Mittelton #3A3A3A.
 // ───────────────────────────────────────────────────────────────────────────
 
 export const GRAU = {
   /** Geschnittene Bauteile, Symbole in der Schnittebene, Masse, Koten. */
-  geschnitten: 'black',
-  /** Gesehene Kanten: reine Ansicht (Fassade), Axonometrie. */
-  gesehen: '#111',
+  geschnitten: '#111',
+  /** Gesehene Kanten: reine Ansicht (Fassade), Axonometrie, Leibung. */
+  gesehen: '#3A3A3A',
   /** Projektionen hinter der Schnittebene (Hidden-Line-Kanal), Rohboden. */
-  projiziert: '#444',
-  /** Kontext-Geometrie (Nachbar-Footprints im Situationsplan). */
+  projiziert: '#666',
+  /** Kontext-Geometrie (Nachbar-Footprints im Situationsplan). Farbidentisch
+   * mit dem Matrix-Ton #8A8A8A — Kleinschreibung bewusst beibehalten, damit
+   * Schwarzplan/Situationsplan byte-stabil bleiben (D3: wie heute). */
   kontext: '#8a8a8a',
 } as const;
 
-/** Nebentöne ausserhalb der Vier-Ton-Achse (heutiger Bestand). Der
- * D1-Sammelwechsel legt sie auf die Achse — bis dahin tragen sie ihre
- * gewachsenen Werte, damit dieses Modul ein reiner Refactor bleibt. */
+/** Ehemalige Nebentöne (#333/#555/#777), im D1-Sammelwechsel auf die
+ * Vier-Ton-Achse gelegt (Herleitung je Zeile: GOLDEN-WECHSEL-D1.md §1). */
 export const GRAU_SONDER = {
-  /** Flügelsymbolik (Dreieck/Pfeil) in Ansicht/Schnitt. */
-  symbolik: '#333',
-  /** SIA-Material-Schraffurlinien im Schnitt. */
-  schraffur: '#333',
-  /** Terrainprofil «neu» (ausgezogen, 0.35er-Klasse). */
-  terrainNeu: '#333',
-  /** Terrainprofil «gewachsen» + flache Bodenlinie (gestrichelt). */
-  terrainGewachsen: '#777',
-  /** Ideelle Zeichen: Rasterachsen (strichpunktiert), Tür-/Fensterbögen. */
-  ideell: '#555',
+  /** Flügelsymbolik (Dreieck/Pfeil) liegt auf der GESEHENEN Fassade. */
+  symbolik: GRAU.gesehen,
+  /** SIA-Material-Schraffur: Feinzeichnung, nicht Kante → Mittelton. */
+  schraffur: GRAU.gesehen,
+  /** Terrain «neu» = 0.35er-Klasse «sekundär geschnitten» (Matrix). */
+  terrainNeu: GRAU.geschnitten,
+  /** Terrain «gewachsen» + flache Bodenlinie = Kontext. */
+  terrainGewachsen: GRAU.kontext,
+  /** Ideelle Zeichen (Rasterachsen, Tür-/Fensterbögen) = Nicht-Körper-Ton. */
+  ideell: GRAU.projiziert,
 } as const;
+
+/**
+ * D2-Weiche (v0.7.3): Leibungslinie 0.25 ist Standard AB Vorprojekt für
+ * alle Öffnungen in der Ansicht (löst §11.3, keine konturlosen Lochungen).
+ * Bewusst EIGENE Weiche — `fruehePhase()` (model/doc.ts) umfasst das
+ * Vorprojekt und meint damit das Gegenteil («reduziertes Detail»).
+ */
+export function abVorprojekt(phase: BauPhase): boolean {
+  return phase !== 'wettbewerb';
+}
 
 /** Radierer-Weiss der Zonentür-Lücke (Papiergrund). */
 export const RADIER_WEISS = 'white';
@@ -205,6 +215,9 @@ export const BILDSCHIRM_SCHNITT = {
   terrainGewachsen: 10,
   schraffur: 9,
   koten: 9,
+  /** D2-Leibung/Rahmen (v0.7.3): 0.25er-/0.18er-Klasse am Bildschirm. */
+  leibung: 13,
+  rahmen: 9,
   /** Massstabs-Nenner, mit dem SectionView die Schraffur-Kadenz rechnet. */
   schraffurMassstab: 50,
   terrainDash: '200 120',

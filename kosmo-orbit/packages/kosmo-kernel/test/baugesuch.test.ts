@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import {
   KosmoDoc,
@@ -292,8 +293,7 @@ describe('Golden-SVG (Ausnützungsnachweis)', () => {
       siaPhase: 'bewilligung',
       regelName: 'W2 Test',
     });
-    const golden = readFileSync(new URL('./golden/ausnuetzungsnachweis.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/ausnuetzungsnachweis.svg', import.meta.url));
   });
 });
 

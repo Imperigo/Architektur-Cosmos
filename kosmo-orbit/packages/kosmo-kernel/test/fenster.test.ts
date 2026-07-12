@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import { KosmoDoc } from '../src/model/doc';
 import { execute, CommandError } from '../src/commands/core';
@@ -333,8 +334,7 @@ describe('Fenster-Goldens (v0.6.9 Stream A)', () => {
       planTitle: 'Grundriss Zweiflügel',
       date: '10.07.2026',
     });
-    const golden = readFileSync(new URL('./golden/grundriss-fenster-zweifluegel.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-fenster-zweifluegel.svg', import.meta.url));
   });
 
   it('Golden: Grundriss mit Fensterband (Pfostentakt im Doppellinien-Band) ist byte-identisch', () => {
@@ -346,8 +346,7 @@ describe('Fenster-Goldens (v0.6.9 Stream A)', () => {
       planTitle: 'Grundriss Fensterband',
       date: '10.07.2026',
     });
-    const golden = readFileSync(new URL('./golden/grundriss-fensterband.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/grundriss-fensterband.svg', import.meta.url));
   });
 
   it('Golden: Schnitt durch das parametrische Fenster (Sturz/Brüstung + Riegelprofile) ist byte-identisch', () => {
@@ -357,14 +356,12 @@ describe('Fenster-Goldens (v0.6.9 Stream A)', () => {
     const w = b!.maxX - b!.minX + 2 * pad;
     const h = b!.maxY - b!.minY + 2 * pad;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${b!.minX - pad} ${b!.minY - pad} ${w} ${h}">\n${inner}\n</svg>\n`;
-    const golden = readFileSync(new URL('./golden/schnitt-fenster-parametrisch.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/schnitt-fenster-parametrisch.svg', import.meta.url));
   });
 
   it('Golden: Ansicht Süd der Fensterband-Fassade (Pfosten-Riegel-Raster) ist byte-identisch', () => {
     const { doc, spec } = testhausFensterband();
     const svg = ansichtSvg(doc, spec);
-    const golden = readFileSync(new URL('./golden/ansicht-curtainwall.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/ansicht-curtainwall.svg', import.meta.url));
   });
 });

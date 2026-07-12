@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import { studienBerichtSvg, type StudienBerichtOptionen } from '../src/derive/studienbericht';
 import { generiereVolumenstudien } from '../src/derive/volumenstudie';
@@ -264,7 +265,6 @@ describe('Golden-SVG (Grundlagenstudie-Bericht v2)', () => {
     // byte-identisch.
     const varianten = fixtureVarianten();
     const svg = studienBerichtSvg(varianten, { zielGf: 6000 });
-    const golden = readFileSync(new URL('./golden/studienbericht.svg', import.meta.url), 'utf8');
-    expect(svg).toBe(golden);
+    pruefeGolden(svg, new URL('./golden/studienbericht.svg', import.meta.url));
   });
 });

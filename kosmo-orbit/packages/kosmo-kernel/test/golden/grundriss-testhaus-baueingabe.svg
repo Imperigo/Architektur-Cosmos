@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297" font-family="Helvetica, Arial, sans-serif">
 <rect width="420" height="297" fill="white"/>
 <g transform="translate(171.60, 156.90) scale(0.01)">
-<path d="M 2000 0 L 0 0 L 0 -6000 L 9000 -6000 L 9000 0 L 7500 0 L 7500 180 L 9180 180 L 9180 -6180 L -180 -6180 L -180 180 L 2000 180 Z M 6500 0 L 4000 0 L 4000 180 L 6500 180 Z" fill-rule="evenodd" fill="#1a1a1a" stroke="black" stroke-width="50"/>
-<path d="M 8840 -160 L 8820 -180 L 7500 -180 L 7500 -160 Z M 6500 -160 L 6500 -180 L 4000 -180 L 4000 -160 Z M 2000 -160 L 2000 -180 L 180 -180 L 160 -160 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="black" stroke-width="35"/>
-<path d="M 9000 0 L 8840 -160 L 7500 -160 L 7500 0 Z M 6500 0 L 6500 -160 L 4000 -160 L 4000 0 Z M 2000 0 L 2000 -160 L 160 -160 L 0 0 Z" fill-rule="evenodd" fill="#ffffff" stroke="black" stroke-width="35"/>
-<path d="M 8820 -180 L 8820 -5820 L 8840 -5840 L 8840 -160 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="black" stroke-width="35"/>
-<path d="M 8840 -160 L 8840 -5840 L 9000 -6000 L 9000 0 Z" fill-rule="evenodd" fill="#ffffff" stroke="black" stroke-width="35"/>
-<path d="M 8820 -5820 L 180 -5820 L 160 -5840 L 8840 -5840 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="black" stroke-width="35"/>
-<path d="M 8840 -5840 L 160 -5840 L 0 -6000 L 9000 -6000 Z" fill-rule="evenodd" fill="#ffffff" stroke="black" stroke-width="35"/>
-<path d="M 180 -5820 L 180 -180 L 160 -160 L 160 -5840 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="black" stroke-width="35"/>
-<path d="M 160 -5840 L 160 -160 L 0 0 L 0 -6000 Z" fill-rule="evenodd" fill="#ffffff" stroke="black" stroke-width="35"/>
-<line x1="2000" y1="-180" x2="2000" y2="180" stroke="black" stroke-width="25"/>
-<line x1="4000" y1="-180" x2="4000" y2="180" stroke="black" stroke-width="25"/>
-<line x1="2000" y1="25" x2="4000" y2="25" stroke="black" stroke-width="18"/>
-<line x1="2000" y1="-25" x2="4000" y2="-25" stroke="black" stroke-width="18"/>
-<line x1="6500" y1="-180" x2="6500" y2="180" stroke="black" stroke-width="25"/>
-<line x1="7500" y1="-180" x2="7500" y2="180" stroke="black" stroke-width="25"/>
-<line x1="6500" y1="-180" x2="6500" y2="-1180" stroke="black" stroke-width="25"/>
-<path d="M 7500 -180 A 1000 1000 0 0 0 6500 -1180" fill="none" stroke="#555" stroke-width="18" stroke-dasharray="100 70"/>
-<g stroke="black" fill="black">
+<path d="M 2000 0 L 0 0 L 0 -6000 L 9000 -6000 L 9000 0 L 7500 0 L 7500 180 L 9180 180 L 9180 -6180 L -180 -6180 L -180 180 L 2000 180 Z M 6500 0 L 4000 0 L 4000 180 L 6500 180 Z" fill-rule="evenodd" fill="#1a1a1a" stroke="#111" stroke-width="50"/>
+<path d="M 8840 -160 L 8820 -180 L 7500 -180 L 7500 -160 Z M 6500 -160 L 6500 -180 L 4000 -180 L 4000 -160 Z M 2000 -160 L 2000 -180 L 180 -180 L 160 -160 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="35"/>
+<path d="M 9000 0 L 8840 -160 L 7500 -160 L 7500 0 Z M 6500 0 L 6500 -160 L 4000 -160 L 4000 0 Z M 2000 0 L 2000 -160 L 160 -160 L 0 0 Z" fill-rule="evenodd" fill="#ffffff" stroke="#111" stroke-width="35"/>
+<path d="M 8820 -180 L 8820 -5820 L 8840 -5840 L 8840 -160 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="35"/>
+<path d="M 8840 -160 L 8840 -5840 L 9000 -6000 L 9000 0 Z" fill-rule="evenodd" fill="#ffffff" stroke="#111" stroke-width="35"/>
+<path d="M 8820 -5820 L 180 -5820 L 160 -5840 L 8840 -5840 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="35"/>
+<path d="M 8840 -5840 L 160 -5840 L 0 -6000 L 9000 -6000 Z" fill-rule="evenodd" fill="#ffffff" stroke="#111" stroke-width="35"/>
+<path d="M 180 -5820 L 180 -180 L 160 -160 L 160 -5840 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="35"/>
+<path d="M 160 -5840 L 160 -160 L 0 0 L 0 -6000 Z" fill-rule="evenodd" fill="#ffffff" stroke="#111" stroke-width="35"/>
+<line x1="2000" y1="-180" x2="2000" y2="180" stroke="#111" stroke-width="25"/>
+<line x1="4000" y1="-180" x2="4000" y2="180" stroke="#111" stroke-width="25"/>
+<line x1="2000" y1="25" x2="4000" y2="25" stroke="#111" stroke-width="18"/>
+<line x1="2000" y1="-25" x2="4000" y2="-25" stroke="#111" stroke-width="18"/>
+<line x1="6500" y1="-180" x2="6500" y2="180" stroke="#111" stroke-width="25"/>
+<line x1="7500" y1="-180" x2="7500" y2="180" stroke="#111" stroke-width="25"/>
+<line x1="6500" y1="-180" x2="6500" y2="-1180" stroke="#111" stroke-width="25"/>
+<path d="M 7500 -180 A 1000 1000 0 0 0 6500 -1180" fill="none" stroke="#666" stroke-width="18" stroke-dasharray="100 70"/>
+<g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="9000" y2="1200" stroke-width="18"/>
 <line x1="-80" y1="1280" x2="80" y2="1120" stroke-width="36"/>
 <line x1="1920" y1="1280" x2="2080" y2="1120" stroke-width="36"/>
@@ -34,13 +34,13 @@
 <text x="7000" y="1420" text-anchor="middle" font-size="200" stroke="none">220</text>
 <text x="8250" y="1080" text-anchor="middle" font-size="260" stroke="none">150</text>
 </g>
-<g stroke="black" fill="black">
+<g stroke="#111" fill="#111">
 <line x1="0" y1="2000" x2="9000" y2="2000" stroke-width="18"/>
 <line x1="-80" y1="2080" x2="80" y2="1920" stroke-width="36"/>
 <line x1="8920" y1="2080" x2="9080" y2="1920" stroke-width="36"/>
 <text x="4500" y="1880" text-anchor="middle" font-size="260" stroke="none">900</text>
 </g>
-<g stroke="black" fill="black">
+<g stroke="#111" fill="#111">
 <line x1="-1200" y1="0" x2="-1200" y2="-6000" stroke-width="18"/>
 <line x1="-1280" y1="-80" x2="-1120" y2="80" stroke-width="36"/>
 <line x1="-1280" y1="-6080" x2="-1120" y2="-5920" stroke-width="36"/>

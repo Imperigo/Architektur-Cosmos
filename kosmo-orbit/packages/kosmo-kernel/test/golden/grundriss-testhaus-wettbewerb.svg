@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297" font-family="Helvetica, Arial, sans-serif">
 <rect width="420" height="297" fill="white"/>
 <g transform="translate(191.55, 146.45) scale(0.005)">
-<path d="M 2000 -180 L 180 -180 L 180 -5820 L 8820 -5820 L 8820 -180 L 7500 -180 L 7500 180 L 9180 180 L 9180 -6180 L -180 -6180 L -180 180 L 2000 180 Z M 6500 -180 L 4000 -180 L 4000 180 L 6500 180 Z" fill-rule="evenodd" fill="#1a1a1a" stroke="black" stroke-width="100"/>
-<line x1="2000" y1="-180" x2="2000" y2="180" stroke="black" stroke-width="50"/>
-<line x1="4000" y1="-180" x2="4000" y2="180" stroke="black" stroke-width="50"/>
-<line x1="2000" y1="0" x2="4000" y2="0" stroke="black" stroke-width="36"/>
-<line x1="6500" y1="-180" x2="6500" y2="180" stroke="black" stroke-width="50"/>
-<line x1="7500" y1="-180" x2="7500" y2="180" stroke="black" stroke-width="50"/>
-<g stroke="black" fill="black">
+<path d="M 2000 -180 L 180 -180 L 180 -5820 L 8820 -5820 L 8820 -180 L 7500 -180 L 7500 180 L 9180 180 L 9180 -6180 L -180 -6180 L -180 180 L 2000 180 Z M 6500 -180 L 4000 -180 L 4000 180 L 6500 180 Z" fill-rule="evenodd" fill="#1a1a1a" stroke="#111" stroke-width="100"/>
+<line x1="2000" y1="-180" x2="2000" y2="180" stroke="#111" stroke-width="50"/>
+<line x1="4000" y1="-180" x2="4000" y2="180" stroke="#111" stroke-width="50"/>
+<line x1="2000" y1="0" x2="4000" y2="0" stroke="#111" stroke-width="36"/>
+<line x1="6500" y1="-180" x2="6500" y2="180" stroke="#111" stroke-width="50"/>
+<line x1="7500" y1="-180" x2="7500" y2="180" stroke="#111" stroke-width="50"/>
+<g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="9000" y2="1200" stroke-width="36"/>
 <line x1="-160" y1="1360" x2="160" y2="1040" stroke-width="72"/>
 <line x1="1840" y1="1360" x2="2160" y2="1040" stroke-width="72"/>
@@ -23,13 +23,13 @@
 <text x="7000" y="1640" text-anchor="middle" font-size="400" stroke="none">220</text>
 <text x="8250" y="960" text-anchor="middle" font-size="520" stroke="none">150</text>
 </g>
-<g stroke="black" fill="black">
+<g stroke="#111" fill="#111">
 <line x1="0" y1="2000" x2="9000" y2="2000" stroke-width="36"/>
 <line x1="-160" y1="2160" x2="160" y2="1840" stroke-width="72"/>
 <line x1="8840" y1="2160" x2="9160" y2="1840" stroke-width="72"/>
 <text x="4500" y="1760" text-anchor="middle" font-size="520" stroke="none">900</text>
 </g>
-<g stroke="black" fill="black">
+<g stroke="#111" fill="#111">
 <line x1="-1200" y1="0" x2="-1200" y2="-6000" stroke-width="36"/>
 <line x1="-1360" y1="-160" x2="-1040" y2="160" stroke-width="72"/>
 <line x1="-1360" y1="-6160" x2="-1040" y2="-5840" stroke-width="72"/>

@@ -1,31 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297" font-family="Helvetica, Arial, sans-serif">
 <rect width="420" height="297" fill="white"/>
 <g transform="translate(175.00, 162.50) scale(0.01)">
-<path d="M 8045 45 L 8045 -6045 L -45 -6045 L -45 45 Z M 205 -5795 L 7795 -5795 L 7795 -205 L 205 -205 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="black" stroke-width="50"/>
-<path d="M -45 45 L 8045 45 L 8205 205 L -205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
-<path d="M 8045 45 L 8045 -6045 L 8205 -6205 L 8205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
-<path d="M 8045 -6045 L -45 -6045 L -205 -6205 L 8205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
-<path d="M -45 -6045 L -45 45 L -205 205 L -205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="black" stroke-width="35"/>
-<line x1="8500" y1="-6500" x2="-500" y2="-6500" stroke="black" stroke-width="35"/>
-<line x1="-500" y1="-6500" x2="3000" y2="-3000" stroke="black" stroke-width="18"/>
-<line x1="5000" y1="-3000" x2="8500" y2="-6500" stroke="black" stroke-width="18"/>
-<line x1="-500" y1="-6500" x2="-500" y2="500" stroke="black" stroke-width="35"/>
-<line x1="-500" y1="500" x2="3000" y2="-3000" stroke="black" stroke-width="18"/>
-<line x1="3000" y1="-3000" x2="-500" y2="-6500" stroke="black" stroke-width="18"/>
-<line x1="-500" y1="500" x2="8500" y2="500" stroke="black" stroke-width="35"/>
-<line x1="8500" y1="500" x2="5000" y2="-3000" stroke="black" stroke-width="18"/>
-<line x1="3000" y1="-3000" x2="-500" y2="500" stroke="black" stroke-width="18"/>
-<line x1="8500" y1="500" x2="8500" y2="-6500" stroke="black" stroke-width="35"/>
-<line x1="8500" y1="-6500" x2="5000" y2="-3000" stroke="black" stroke-width="18"/>
-<line x1="5000" y1="-3000" x2="8500" y2="500" stroke="black" stroke-width="18"/>
-<line x1="5000" y1="-3000" x2="3000" y2="-3000" stroke="black" stroke-width="50"/>
-<g stroke="black" fill="black">
+<path d="M 8045 45 L 8045 -6045 L -45 -6045 L -45 45 Z M 205 -5795 L 7795 -5795 L 7795 -205 L 205 -205 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="50"/>
+<path d="M -45 45 L 8045 45 L 8205 205 L -205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="35"/>
+<path d="M 8045 45 L 8045 -6045 L 8205 -6205 L 8205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="35"/>
+<path d="M 8045 -6045 L -45 -6045 L -205 -6205 L 8205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="35"/>
+<path d="M -45 -6045 L -45 45 L -205 205 L -205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="35"/>
+<line x1="8500" y1="-6500" x2="-500" y2="-6500" stroke="#111" stroke-width="35"/>
+<line x1="-500" y1="-6500" x2="3000" y2="-3000" stroke="#111" stroke-width="18"/>
+<line x1="5000" y1="-3000" x2="8500" y2="-6500" stroke="#111" stroke-width="18"/>
+<line x1="-500" y1="-6500" x2="-500" y2="500" stroke="#111" stroke-width="35"/>
+<line x1="-500" y1="500" x2="3000" y2="-3000" stroke="#111" stroke-width="18"/>
+<line x1="3000" y1="-3000" x2="-500" y2="-6500" stroke="#111" stroke-width="18"/>
+<line x1="-500" y1="500" x2="8500" y2="500" stroke="#111" stroke-width="35"/>
+<line x1="8500" y1="500" x2="5000" y2="-3000" stroke="#111" stroke-width="18"/>
+<line x1="3000" y1="-3000" x2="-500" y2="500" stroke="#111" stroke-width="18"/>
+<line x1="8500" y1="500" x2="8500" y2="-6500" stroke="#111" stroke-width="35"/>
+<line x1="8500" y1="-6500" x2="5000" y2="-3000" stroke="#111" stroke-width="18"/>
+<line x1="5000" y1="-3000" x2="8500" y2="500" stroke="#111" stroke-width="18"/>
+<line x1="5000" y1="-3000" x2="3000" y2="-3000" stroke="#111" stroke-width="50"/>
+<g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="8000" y2="1200" stroke-width="18"/>
 <line x1="-80" y1="1280" x2="80" y2="1120" stroke-width="36"/>
 <line x1="7920" y1="1280" x2="8080" y2="1120" stroke-width="36"/>
 <text x="4000" y="1080" text-anchor="middle" font-size="260" stroke="none">800</text>
 </g>
-<g stroke="black" fill="black">
+<g stroke="#111" fill="#111">
 <line x1="-1200" y1="0" x2="-1200" y2="-6000" stroke-width="18"/>
 <line x1="-1280" y1="-80" x2="-1120" y2="80" stroke-width="36"/>
 <line x1="-1280" y1="-6080" x2="-1120" y2="-5920" stroke-width="36"/>

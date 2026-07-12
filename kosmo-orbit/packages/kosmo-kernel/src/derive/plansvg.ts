@@ -387,6 +387,16 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
   // Umschalter oben, sonst würde die reine Ansicht (kein Schnittkanal) die
   // Symbole mit dem mittleren 0.35er-Projektionsstift zeichnen. Leer, wenn
   // keine Öffnung ein `fluegelTyp` trägt (Byte-Identität, Goldens-Guard).
+  // D2-Leibung (v0.7.3 D1-Sammelwechsel): Öffnungsrechteck 0.25 «gesehen»
+  // ab Vorprojekt, Werkplan-Rahmenlinie 0.18 — VOR der Flügelsymbolik
+  // gezeichnet (Symbolik liegt zuoberst). Leer im Wettbewerb (Weiche in
+  // deriveSection) — Stilblatt-Tripel: Stift kante/fein · gesehen · voll.
+  for (const l of g.leibungen) {
+    const stift = (l.classes.includes('rahmen') ? STIFT.fein : STIFT.kante) * scale;
+    parts.push(
+      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${GRAU.gesehen}" stroke-width="${stift}"/>`,
+    );
+  }
   for (const l of g.fenstersymbole) {
     parts.push(
       `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${GRAU_SONDER.symbolik}" stroke-width="${STIFT.fein * scale}"/>`,
