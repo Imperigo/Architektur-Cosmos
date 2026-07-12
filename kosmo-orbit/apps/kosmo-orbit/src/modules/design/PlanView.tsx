@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect } from '@kosmo/ui';
-import { derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, type BauPhase, type Furniture, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUnternehmerplan } from './unternehmerplan';
 import type { ViewportHandlers } from './Viewport3D';
@@ -1003,11 +1003,11 @@ export function PlanView({
                   className={cls}
                   fill={
                     neu
-                      ? 'rgba(179, 38, 30, 0.22)'
+                      ? UMBAU_FLAECHEN.neu
                       : abbruch
-                        ? 'rgba(214, 178, 20, 0.35)'
+                        ? UMBAU_FLAECHEN.abbruch
                         : bestand
-                          ? '#c9c9c9'
+                          ? UMBAU_FLAECHEN.bestand
                           : // v0.7.0 E2: Wettbewerb…Baueingabe (bzw. Poché-Modus
                             // 'schwarz') zeichnen die tragende Schicht als
                             // Tinte statt Betonschraffur — `pocheEntscheid()`
@@ -1026,7 +1026,7 @@ export function PlanView({
                               return pe.art === 'schwarz'
                                 ? 'var(--k-ink)'
                                 : !pe.schraffurLinien && pe.art === 'grau'
-                                  ? '#c9c9c9'
+                                  ? UMBAU_FLAECHEN.bestand
                                   : !pe.schraffurLinien && pe.art === 'daemmung'
                                     ? 'var(--k-raised)'
                                     : null;
@@ -1035,7 +1035,7 @@ export function PlanView({
                                 ? 'url(#hatch-beton)'
                                 // «mittel»/«fern»: Schraffur wird flaches Poché
                                 // (Druckkonvention, gleicher Grauwert wie Bestand)
-                                : '#c9c9c9'
+                                : UMBAU_FLAECHEN.bestand
                               : isDaemmung
                                 ? lod === 'voll'
                                   ? 'url(#hatch-daemmung)'
@@ -1044,15 +1044,17 @@ export function PlanView({
                                   ? 'none'
                                   : 'var(--k-surface)')
                   }
-                  stroke={neu ? '#b3261e' : abbruch ? '#8a7500' : 'var(--k-ink)'}
-                  strokeWidth={isProjection ? 8 : isCore ? 24 : 12}
+                  stroke={neu ? UMBAU_STIFTE.neu : abbruch ? UMBAU_STIFTE.abbruch : 'var(--k-ink)'}
+                  strokeWidth={isProjection ? BILDSCHIRM_PLAN.regionProjektion : isCore ? BILDSCHIRM_PLAN.regionGeschnitten : BILDSCHIRM_PLAN.regionSekundaer}
                   strokeDasharray={
                     r.classes.includes('volumen')
+                      // Bildschirm-Volumenkontur: bewusst feinere Kadenz als der
+                      // Druckweg (DASH.volumen wäre '200 100') — Bestand.
                       ? '120 60'
                       : abbruch
-                        ? '150 80'
+                        ? dashWelt(DASH.abbruch, 100)
                         : r.classes.includes('ueber-schnitt')
-                          ? '150 60 30 60'
+                          ? dashWelt(DASH.ueberSchnitt, 100)
                           : undefined
                   }
                   opacity={r.classes.includes('decke') ? 0.5 : 1}
@@ -1073,8 +1075,8 @@ export function PlanView({
               const d = (poly: Pt[]) => `M ${poly.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z`;
               return (
                 <g key={f.id} data-testid="moebel">
-                  <path d={d(g.korpus)} fill="none" stroke="var(--k-ink-soft)" strokeWidth={10} />
-                  <path d={d(g.bewegung)} fill="none" stroke="var(--k-ink-faint)" strokeWidth={6} strokeDasharray="60 40" />
+                  <path d={d(g.korpus)} fill="none" stroke="var(--k-ink-soft)" strokeWidth={BILDSCHIRM_PLAN.moebelKorpus} />
+                  <path d={d(g.bewegung)} fill="none" stroke="var(--k-ink-faint)" strokeWidth={BILDSCHIRM_PLAN.moebelBewegung} strokeDasharray="60 40" />
                 </g>
               );
             })}
@@ -1172,19 +1174,19 @@ export function PlanView({
                       : l.classes.includes('baugrenze')
                         ? 'var(--k-danger)'
                         : l.classes.includes('renovation-neu')
-                          ? '#b3261e'
+                          ? UMBAU_STIFTE.neu
                           : l.classes.includes('renovation-abbruch')
-                            ? '#8a7500'
+                            ? UMBAU_STIFTE.abbruch
                             : 'var(--k-ink)'
                   }
-                  strokeWidth={luecke ? 120 : fluegel ? 12 : l.classes.includes('fenster') || l.classes.includes('unterzug') ? 10 : l.classes.includes('baugrenze') ? 12 : 14}
+                  strokeWidth={luecke ? BILDSCHIRM_PLAN.luecke : fluegel ? BILDSCHIRM_PLAN.linieZonentuerFluegel : l.classes.includes('fenster') || l.classes.includes('unterzug') ? BILDSCHIRM_PLAN.linieFein : l.classes.includes('baugrenze') ? BILDSCHIRM_PLAN.linieBaugrenze : BILDSCHIRM_PLAN.linieStandard}
                   strokeDasharray={
                     l.classes.includes('baugrenze')
-                      ? '300 90 60 90'
+                      ? dashWelt(DASH.strichpunktBestand, 100)
                       : l.classes.includes('ueber-schnitt')
-                        ? '150 60 30 60'
+                        ? dashWelt(DASH.ueberSchnitt, 100)
                         : l.classes.includes('unterzug')
-                          ? '120 70'
+                          ? dashWelt(DASH.unterzug, 100)
                           : undefined
                   }
                 />
@@ -1228,7 +1230,7 @@ export function PlanView({
                     y2={-ax.b.y}
                     stroke="var(--k-ink-faint)"
                     strokeWidth={haupt ? 9 : 5}
-                    strokeDasharray={haupt ? '300 90 60 90' : '120 90'}
+                    strokeDasharray={haupt ? dashWelt(DASH.strichpunktBestand, 100) : dashWelt(DASH.achseWohn, 100)}
                   />
                   {haupt &&
                     ax.label &&
@@ -1269,7 +1271,9 @@ export function PlanView({
                   d={`M ${sx} ${-sy} A ${a.radius} ${a.radius} 0 ${large} 0 ${ex} ${-ey}`}
                   fill="none"
                   stroke="var(--k-ink-soft)"
-                  strokeWidth={8}
+                  strokeWidth={BILDSCHIRM_PLAN.bogen}
+                  // Bildschirm-Bogen: feinere Kadenz als der Druckweg
+                  // (DASH.bogen wäre '100 70') — Bestand.
                   strokeDasharray="60 40"
                 />
               );

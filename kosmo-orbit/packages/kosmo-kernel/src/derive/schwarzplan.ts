@@ -2,6 +2,7 @@ import type { KosmoDoc } from '../model/doc';
 import type { MassBody, Zone } from '../model/entities';
 import type { Pt } from '../model/units';
 import { bboxVonPunkte, projiziereUmriss, type BBox } from './studienbeurteilung';
+import { BLATT, DASH, SCHWARZPLAN_FARBEN, STIFT } from './stilblatt';
 
 /**
  * Schwarzplan/Situationsplan v1 (v0.7.0 E4, `docs/V070-KONZEPT.md`) —
@@ -156,7 +157,7 @@ export function schwarzplanSvg(doc: KosmoDoc, opts?: SchwarzplanOptionen): Schwa
   // Parzellengrenze strichpunktiert (dieselbe Dash-Kadenz wie `baugrenze` in
   // plansvg.ts, hier direkt in Papier-mm statt Welt-mm×scale).
   teile.push(
-    `<polygon points="${projiziere(parzelle)}" fill="none" stroke="black" stroke-width="0.35" stroke-dasharray="3 0.9 0.6 0.9"/>`,
+    `<polygon points="${projiziere(parzelle)}" fill="none" stroke="${SCHWARZPLAN_FARBEN.parzelle}" stroke-width="${STIFT.sekundaer}" stroke-dasharray="${DASH.strichpunktBestand.join(' ')}"/>`,
   );
 
   // Nachbar-Footprints grau (v0.7.1 E2/1B, Kontext-Geometrie) — zeichnen VOR
@@ -164,22 +165,22 @@ export function schwarzplanSvg(doc: KosmoDoc, opts?: SchwarzplanOptionen): Schwa
   // Ohne Nachbar-Zonen ist `nachbarn` leer — dieser Block bleibt dann
   // wirkungslos (Daten-Guard, byte-identisch zu v0.7.0).
   for (const np of nachbarn) {
-    teile.push(`<polygon points="${projiziere(np)}" fill="#8a8a8a" stroke="none"/>`);
+    teile.push(`<polygon points="${projiziere(np)}" fill="${SCHWARZPLAN_FARBEN.nachbar}" stroke="none"/>`);
   }
 
   // Gebäude-Footprints schwarz gefüllt (eigene Objekte, zeichnen zuletzt)
   for (const fp of footprints) {
-    teile.push(`<polygon points="${projiziere(fp)}" fill="#1a1a1a" stroke="none"/>`);
+    teile.push(`<polygon points="${projiziere(fp)}" fill="${SCHWARZPLAN_FARBEN.eigen}" stroke="none"/>`);
   }
 
   // Nordpfeil oben rechts (SIA 400 C.2.1) — Nord = +y (standort.ts-Konvention)
   const nx = paperW - 10;
   const ny = 10;
   teile.push(
-    `<g stroke="black" fill="none" stroke-width="0.35">`,
+    `<g stroke="${BLATT.tinte}" fill="none" stroke-width="${BLATT.rahmenStift}">`,
     `<circle cx="${nx.toFixed(2)}" cy="${ny.toFixed(2)}" r="4"/>`,
     `<path d="M ${nx.toFixed(2)} ${(ny + 3).toFixed(2)} L ${nx.toFixed(2)} ${(ny - 3).toFixed(2)} M ${(nx - 1.4).toFixed(2)} ${(ny - 1.4).toFixed(2)} L ${nx.toFixed(2)} ${(ny - 3).toFixed(2)} L ${(nx + 1.4).toFixed(2)} ${(ny - 1.4).toFixed(2)}"/>`,
-    `<text x="${nx.toFixed(2)}" y="${(ny + 9).toFixed(2)}" text-anchor="middle" font-size="3" stroke="none" fill="black">N</text>`,
+    `<text x="${nx.toFixed(2)}" y="${(ny + 9).toFixed(2)}" text-anchor="middle" font-size="3" stroke="none" fill="${BLATT.tinte}">N</text>`,
     `</g>`,
   );
 
@@ -189,7 +190,7 @@ export function schwarzplanSvg(doc: KosmoDoc, opts?: SchwarzplanOptionen): Schwa
   const bx = 10;
   const by = paperH - 10;
   teile.push(
-    `<g stroke="black" fill="black" stroke-width="0.35">`,
+    `<g stroke="${BLATT.tinte}" fill="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}">`,
     `<line x1="${bx.toFixed(2)}" y1="${by.toFixed(2)}" x2="${(bx + balkenPapierMm).toFixed(2)}" y2="${by.toFixed(2)}"/>`,
     `<line x1="${bx.toFixed(2)}" y1="${(by - 1.2).toFixed(2)}" x2="${bx.toFixed(2)}" y2="${(by + 1.2).toFixed(2)}"/>`,
     `<line x1="${(bx + balkenPapierMm).toFixed(2)}" y1="${(by - 1.2).toFixed(2)}" x2="${(bx + balkenPapierMm).toFixed(2)}" y2="${(by + 1.2).toFixed(2)}"/>`,

@@ -8,6 +8,23 @@ import { schraffurFuer, schraffurLinien } from './schraffur';
 import { pocheEntscheid } from './poche';
 import { fruehePhase } from '../model/doc';
 import { deriveAxo, type AxoSpec } from './axo';
+import {
+  BLATT,
+  DASH,
+  dashWelt,
+  GRAU,
+  GRAU_SONDER,
+  MASS_STIFT,
+  RADIER_WEISS,
+  STIFT,
+  UMBAU_STIFTE,
+  ZONENTUER_LUECKE_STIFT,
+} from './stilblatt';
+
+// Stilblatt-Tokens über den Paket-Index verfügbar machen (index.ts führt
+// `export * from './derive/plansvg'` — PlanView/SectionView lesen dieselbe
+// Tabelle, Grundsatz «Ein Stilblatt, zwei Renderer»).
+export * from './stilblatt';
 
 /**
  * Plansatz-SVG — druckfähige Grundrisse/Schnitte mit SIA-Stiften.
@@ -56,9 +73,10 @@ export function planInnerSvg(
     return null;
   };
 
-  // Umbau-Farbcode (SIA 400 B.8.11): Bestand schwarz/grau, Neubau rot, Abbruch gelb
-  const NEU_STIFT = '#b3261e';
-  const ABBRUCH_STIFT = '#8a7500';
+  // Umbau-Farbcode (SIA 400 B.8.11): Bestand schwarz/grau, Neubau rot, Abbruch
+  // gelb — Werte zentral im Stilblatt (v0.7.3 D1)
+  const NEU_STIFT = UMBAU_STIFTE.neu;
+  const ABBRUCH_STIFT = UMBAU_STIFTE.abbruch;
   const phase = doc.settings.phase;
   const pocheModus = doc.settings.pocheModus ?? 'phase';
   for (const r of plan.regions) {
@@ -69,7 +87,7 @@ export function planInnerSvg(
     const neu = r.classes.includes('renovation-neu');
     const abbruch = r.classes.includes('renovation-abbruch');
     const bestand = r.classes.includes('renovation-bestand');
-    let stroke = 'black';
+    let stroke: string = GRAU.geschnitten;
     if (neu) {
       stroke = NEU_STIFT;
     } else if (abbruch) {
@@ -80,7 +98,7 @@ export function planInnerSvg(
       // Dämmung/Bekleidung) — vorher tönte nur die tragende Schicht grau,
       // die übrigen Schichten blieben weiss ("hälftig grau"). Der Umbau-
       // Status zeigt den Bestand als Ganzes, nicht den Materialaufbau.
-      stroke = 'black';
+      stroke = GRAU.geschnitten;
     }
     // Themenplan (A5): Regel-Farbe übersteuert die Füllung, der Stift bleibt
     const themaFarbe = themaFuer(r.classes);
@@ -98,14 +116,14 @@ export function planInnerSvg(
       ...(themaFarbe ? { themaFarbe } : {}),
     });
     const fill = entscheid.fill ?? 'none';
-    // Stiftstärken in Papier-mm → Welt-mm skaliert (0.5 / 0.35 / 0.18)
-    const sw = (isProjection ? 0.18 : isCore ? 0.5 : 0.35) * scale;
+    // Stiftstärken in Papier-mm → Welt-mm skaliert (Stilblatt-Achse 1)
+    const sw = (isProjection ? STIFT.fein : isCore ? STIFT.primaer : STIFT.sekundaer) * scale;
     const dash = r.classes.includes('volumen')
-      ? ` stroke-dasharray="${2 * scale} ${scale}"`
+      ? ` stroke-dasharray="${dashWelt(DASH.volumen, scale)}"`
       : abbruch
-        ? ` stroke-dasharray="${1.5 * scale} ${0.8 * scale}"`
+        ? ` stroke-dasharray="${dashWelt(DASH.abbruch, scale)}"`
         : r.classes.includes('ueber-schnitt')
-          ? ` stroke-dasharray="${1.5 * scale} ${0.6 * scale} ${0.3 * scale} ${0.6 * scale}"`
+          ? ` stroke-dasharray="${dashWelt(DASH.ueberSchnitt, scale)}"`
           : '';
     parts.push(
       `<path d="${regionToPath(r)}" fill-rule="evenodd" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash}/>`,
@@ -129,29 +147,29 @@ export function planInnerSvg(
     // (plan.ts) und bekommt dadurch automatisch die mittlere Stärke; sein
     // `ueber-schnitt`-Dasharray (unten) bleibt unverändert.
     const dachStift = l.classes.includes('dach-first')
-      ? 0.5
+      ? STIFT.primaer
       : l.classes.includes('dach-traufe')
-        ? 0.35
+        ? STIFT.sekundaer
         : l.classes.includes('dach-ortgang') || l.classes.includes('dach-grat')
-          ? 0.18
+          ? STIFT.fein
           : null;
     // v0.7.1 E5/4B: Flügeltyp-Symbolik (Doppelstrich Kipp, versetzte
     // Doppellinie Schiebe) ist dieselbe dezente 0.18er-Klasse wie das
     // Fenstersymbol selbst.
     const fluegelSymbol = l.classes.includes('fluegel-kipp') || l.classes.includes('fluegel-schiebe');
     const sw = luecke
-      ? 120
-      : (dachStift ?? (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug || fluegelSymbol ? 0.18 : 0.25)) * scale;
-    const stroke = luecke ? 'white' : neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : 'black';
+      ? ZONENTUER_LUECKE_STIFT
+      : (dachStift ?? (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug || fluegelSymbol ? STIFT.fein : STIFT.kante)) * scale;
+    const stroke = luecke ? RADIER_WEISS : neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : GRAU.geschnitten;
     // Baugrenze strichpunktiert auch im Druck (wie am Bildschirm); B3: über dem
     // Schnitt liegende Treppenteile strichpunktiert; A3: Unterzüge verdeckt
     // gestrichelt (über der Schnittebene)
     const dash = baugrenze
-      ? ` stroke-dasharray="${3 * scale} ${0.9 * scale} ${0.6 * scale} ${0.9 * scale}"`
+      ? ` stroke-dasharray="${dashWelt(DASH.strichpunktBestand, scale)}"`
       : l.classes.includes('ueber-schnitt')
-        ? ` stroke-dasharray="${1.5 * scale} ${0.6 * scale} ${0.3 * scale} ${0.6 * scale}"`
+        ? ` stroke-dasharray="${dashWelt(DASH.ueberSchnitt, scale)}"`
         : unterzug
-          ? ` stroke-dasharray="${1.2 * scale} ${0.7 * scale}"`
+          ? ` stroke-dasharray="${dashWelt(DASH.unterzug, scale)}"`
           : '';
     parts.push(
       `<line x1="${l.a.x}" y1="${-l.a.y}" x2="${l.b.x}" y2="${-l.b.y}" stroke="${stroke}" stroke-width="${sw}"${dash}/>`,
@@ -161,15 +179,15 @@ export function planInnerSvg(
   for (const ax of plan.axes) {
     const haupt = ax.typ === 'haupt';
     const dash = haupt
-      ? `${3 * scale} ${0.9 * scale} ${0.6 * scale} ${0.9 * scale}`
-      : `${1.2 * scale} ${0.9 * scale}`;
+      ? dashWelt(DASH.strichpunktBestand, scale)
+      : dashWelt(DASH.achseWohn, scale);
     parts.push(
-      `<line x1="${ax.a.x}" y1="${-ax.a.y}" x2="${ax.b.x}" y2="${-ax.b.y}" stroke="#555" stroke-width="${0.18 * scale}" stroke-dasharray="${dash}"/>`,
+      `<line x1="${ax.a.x}" y1="${-ax.a.y}" x2="${ax.b.x}" y2="${-ax.b.y}" stroke="${GRAU_SONDER.ideell}" stroke-width="${STIFT.fein * scale}" stroke-dasharray="${dash}"/>`,
     );
     if (haupt && ax.label) {
       for (const p of [ax.a, ax.b]) {
         parts.push(
-          `<circle cx="${p.x}" cy="${-p.y}" r="${2.8 * scale}" fill="white" stroke="black" stroke-width="${0.18 * scale}"/>`,
+          `<circle cx="${p.x}" cy="${-p.y}" r="${2.8 * scale}" fill="white" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.fein * scale}"/>`,
           `<text x="${p.x}" y="${-p.y + scale}" text-anchor="middle" font-size="${3 * scale}" font-family="monospace">${escapeXml(ax.label)}</text>`,
         );
       }
@@ -189,7 +207,7 @@ export function planInnerSvg(
     const ex = a.center.x + a.radius * Math.cos(a.endAngle);
     const ey = a.center.y + a.radius * Math.sin(a.endAngle);
     parts.push(
-      `<path d="M ${sx} ${-sy} A ${a.radius} ${a.radius} 0 0 0 ${ex} ${-ey}" fill="none" stroke="#555" stroke-width="${0.18 * scale}" stroke-dasharray="${scale} ${0.7 * scale}"/>`,
+      `<path d="M ${sx} ${-sy} A ${a.radius} ${a.radius} 0 0 0 ${ex} ${-ey}" fill="none" stroke="${GRAU_SONDER.ideell}" stroke-width="${STIFT.fein * scale}" stroke-dasharray="${dashWelt(DASH.bogen, scale)}"/>`,
     );
   }
   // Möblierung (V2-F8/A4): feste Einbauten (Sanitär/Küche) ab Bauprojekt,
@@ -202,7 +220,7 @@ export function planInnerSvg(
       const g = moebelGeometrie(f);
       if (!g) continue;
       parts.push(
-        `<path d="M ${g.korpus.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z" fill="none" stroke="black" stroke-width="${0.18 * scale}"/>`,
+        `<path d="M ${g.korpus.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z" fill="none" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.fein * scale}"/>`,
       );
     }
   }
@@ -213,12 +231,12 @@ export function planInnerSvg(
   let dimMinY = Infinity;
   for (const c of dims.chains) {
     const innen = c.role === 'innen';
-    const sw = (innen ? 0.13 : 0.18) * scale;
+    const sw = (innen ? MASS_STIFT.innen : MASS_STIFT.aussen) * scale;
     const tickHalf = (innen ? 0.6 : 0.8) * scale;
     const fs = (innen ? 2.2 : 2.6) * scale;
     const t0 = c.ticks[0]!;
     const t1 = c.ticks[c.ticks.length - 1]!;
-    parts.push('<g stroke="black" fill="black">');
+    parts.push(`<g stroke="${GRAU.geschnitten}" fill="${GRAU.geschnitten}">`);
     if (c.axis === 'x') {
       dimMinY = Math.min(dimMinY, c.offset);
       parts.push(`<line x1="${t0}" y1="${-c.offset}" x2="${t1}" y2="${-c.offset}" stroke-width="${sw}"/>`);
@@ -302,7 +320,7 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
     if (entscheid.schraffurLinien) {
       for (const linie of schraffurLinien(f.loops, spec2, scale)) {
         parts.push(
-          `<polyline points="${linie.map((p) => `${p.s},${-p.z}`).join(' ')}" fill="none" stroke="#333" stroke-width="${0.18 * scale}"/>`,
+          `<polyline points="${linie.map((p) => `${p.s},${-p.z}`).join(' ')}" fill="none" stroke="${GRAU_SONDER.schraffur}" stroke-width="${STIFT.fein * scale}"/>`,
         );
       }
     }
@@ -344,21 +362,24 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
       sWerte.sort((a2, b2) => a2 - b2);
       for (let i = 0; i + 1 < sWerte.length; i += 2) {
         parts.push(
-          `<line x1="${Math.round(sWerte[i]!)}" y1="${-z}" x2="${Math.round(sWerte[i + 1]!)}" y2="${-z}" stroke="#444" stroke-width="${0.18 * scale}" class="rohboden"/>`,
+          `<line x1="${Math.round(sWerte[i]!)}" y1="${-z}" x2="${Math.round(sWerte[i + 1]!)}" y2="${-z}" stroke="${GRAU.projiziert}" stroke-width="${STIFT.fein * scale}" class="rohboden"/>`,
         );
       }
     }
   }
 
-  const projStift = (g.cuts.length === 0 ? 0.35 : 0.18) * scale;
+  // Reine Ansicht (kein Schnittkanal): die Fassade ist GESEHENE Kante —
+  // sekundärer Stift + «gesehen»-Grau. Im Schnitt sind die Kanten hinter der
+  // Ebene der feine Projektions-Kanal («projiziert»-Grau). Stilblatt-Achse 2.
+  const projStift = (g.cuts.length === 0 ? STIFT.sekundaer : STIFT.fein) * scale;
   for (const l of g.projections) {
     parts.push(
-      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${g.cuts.length === 0 ? '#111' : '#444'}" stroke-width="${projStift}"/>`,
+      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${g.cuts.length === 0 ? GRAU.gesehen : GRAU.projiziert}" stroke-width="${projStift}"/>`,
     );
   }
   for (const l of g.cuts) {
     parts.push(
-      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="black" stroke-width="${0.5 * scale}"/>`,
+      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.primaer * scale}"/>`,
     );
   }
   // SIA-Öffnungssymbolik (v0.7.1 E5/4B): eigener, dünner Stift (0.18er-Klasse
@@ -368,7 +389,7 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
   // keine Öffnung ein `fluegelTyp` trägt (Byte-Identität, Goldens-Guard).
   for (const l of g.fenstersymbole) {
     parts.push(
-      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="#333" stroke-width="${0.18 * scale}"/>`,
+      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${GRAU_SONDER.symbolik}" stroke-width="${STIFT.fein * scale}"/>`,
     );
   }
   const b = g.bounds;
@@ -377,14 +398,14 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
     if (g.terrain.length === 0) {
       // Ohne Terrainprofil: flache Linie bei z = 0 (Bestandsverhalten)
       parts.push(
-        `<line x1="${bounds.minX - 800}" y1="0" x2="${bounds.maxX + 800}" y2="0" stroke="#777" stroke-width="${0.18 * scale}" stroke-dasharray="${2 * scale} ${1.2 * scale}"/>`,
+        `<line x1="${bounds.minX - 800}" y1="0" x2="${bounds.maxX + 800}" y2="0" stroke="${GRAU_SONDER.terrainGewachsen}" stroke-width="${STIFT.fein * scale}" stroke-dasharray="${dashWelt(DASH.terrainGewachsen, scale)}"/>`,
       );
     } else {
       // Terrainprofile (A2): gewachsen gestrichelt, neu ausgezogen (SIA 400 C.2.1)
       for (const t of g.terrain) {
-        const dash = t.typ === 'gewachsen' ? ` stroke-dasharray="${2 * scale} ${1.2 * scale}"` : '';
-        const sw = (t.typ === 'neu' ? 0.35 : 0.18) * scale;
-        const stroke = t.typ === 'neu' ? '#333' : '#777';
+        const dash = t.typ === 'gewachsen' ? ` stroke-dasharray="${dashWelt(DASH.terrainGewachsen, scale)}"` : '';
+        const sw = (t.typ === 'neu' ? STIFT.sekundaer : STIFT.fein) * scale;
+        const stroke = t.typ === 'neu' ? GRAU_SONDER.terrainNeu : GRAU_SONDER.terrainGewachsen;
         parts.push(
           `<polyline points="${t.pts.map((p) => `${p.s},${-p.z}`).join(' ')}" fill="none" stroke="${stroke}" stroke-width="${sw}"${dash}/>`,
         );
@@ -420,14 +441,14 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
         const z = st.elevation;
         const zusatz = z === 0 && absolut !== undefined ? ` = ${absolut.toFixed(2)} m ü.M.` : '';
         parts.push(
-          `<path d="M ${s0} ${-z} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="black" stroke="black" stroke-width="${0.18 * scale}"/>`,
+          `<path d="M ${s0} ${-z} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="${GRAU.geschnitten}" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.fein * scale}"/>`,
           `<text x="${s0 - dreieck}" y="${-z - dreieck * 1.2}" text-anchor="end" font-size="${2.6 * scale}" font-family="monospace">${koteLabel(z)}${zusatz}</text>`,
         );
         const delta = bodenAufbauVon(st.id);
         if (delta > 0) {
           const zRoh = z - delta;
           parts.push(
-            `<path d="M ${s0} ${-zRoh} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="none" stroke="black" stroke-width="${0.18 * scale}"/>`,
+            `<path d="M ${s0} ${-zRoh} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="none" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.fein * scale}"/>`,
             `<text x="${s0 - dreieck}" y="${-zRoh + dreieck * 1.6}" text-anchor="end" font-size="${2.2 * scale}" font-family="monospace">${koteLabel(zRoh)} roh</text>`,
           );
         }
@@ -446,10 +467,11 @@ export function koteLabel(z: number): string {
 
 export function axoInnerSvg(doc: KosmoDoc, spec: AxoSpec, scale: number): InnerSvg {
   const g = deriveAxo(doc, spec);
-  const stift = 0.35 * scale;
+  // Axo-Kanten sind GESEHENE Kanten (Stilblatt-Achse 2, wie die reine Ansicht)
+  const stift = STIFT.sekundaer * scale;
   const parts = g.lines.map(
     (l) =>
-      `<line x1="${l.a.u}" y1="${-l.a.v}" x2="${l.b.u}" y2="${-l.b.v}" stroke="#111" stroke-width="${stift}"/>`,
+      `<line x1="${l.a.u}" y1="${-l.a.v}" x2="${l.b.u}" y2="${-l.b.v}" stroke="${GRAU.gesehen}" stroke-width="${stift}"/>`,
   );
   const b = g.bounds;
   const bounds = b ? { minX: b.minU, minY: -b.maxV, maxX: b.maxU, maxY: -b.minV } : null;
@@ -483,10 +505,10 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
   // Nordpfeil oben rechts (SIA 400 C.2.1: Grundriss mit Nordrichtung)
   const nx = paper.width - 16;
   parts.push(
-    `<g stroke="black" fill="none" stroke-width="0.35">`,
+    `<g stroke="${BLATT.tinte}" fill="none" stroke-width="${BLATT.rahmenStift}">`,
     `<circle cx="${nx}" cy="16" r="4"/>`,
     `<path d="M ${nx} 19 L ${nx} 13 M ${nx - 1.4} 14.6 L ${nx} 13 L ${nx + 1.4} 14.6" />`,
-    `<text x="${nx}" y="26" text-anchor="middle" font-size="3" stroke="none" fill="black">N</text>`,
+    `<text x="${nx}" y="26" text-anchor="middle" font-size="3" stroke="none" fill="${BLATT.tinte}">N</text>`,
     `</g>`,
   );
 
@@ -494,7 +516,7 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
   const y0 = paper.height - 18;
   parts.push(
     `<g font-size="3.2">`,
-    `<line x1="10" y1="${y0}" x2="${paper.width - 10}" y2="${y0}" stroke="black" stroke-width="0.35"/>`,
+    `<line x1="10" y1="${y0}" x2="${paper.width - 10}" y2="${y0}" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
     `<text x="10" y="${y0 + 6}" font-weight="bold" font-size="4.2">${escapeXml(opts.projectName)}</text>`,
     `<text x="10" y="${y0 + 11.5}">${escapeXml(opts.planTitle)} · ${escapeXml(storey?.name ?? '')}</text>`,
     `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end">1:${scale} \u00b7 Masse in cm/m</text>`,

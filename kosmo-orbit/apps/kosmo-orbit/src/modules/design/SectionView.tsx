@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { deriveSection, koteLabel, schraffurFuer, schraffurLinien, type SectionSpec } from '@kosmo/kernel';
+import { BILDSCHIRM_SCHNITT, deriveSection, koteLabel, schraffurFuer, schraffurLinien, type SectionSpec } from '@kosmo/kernel';
 import { Messrahmen } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 
@@ -59,8 +59,8 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
             x2={b.maxS + pad}
             y2={0}
             stroke="var(--k-ink-faint)"
-            strokeWidth={10}
-            strokeDasharray="200 120"
+            strokeWidth={BILDSCHIRM_SCHNITT.terrainGewachsen}
+            strokeDasharray={BILDSCHIRM_SCHNITT.terrainDash}
           />
         ) : (
           graphic.terrain.map((t, i) => (
@@ -70,8 +70,8 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
               points={t.pts.map((p) => `${p.s},${-p.z}`).join(' ')}
               fill="none"
               stroke={t.typ === 'neu' ? 'var(--k-ink)' : 'var(--k-ink-faint)'}
-              strokeWidth={t.typ === 'neu' ? 16 : 10}
-              strokeDasharray={t.typ === 'gewachsen' ? '200 120' : undefined}
+              strokeWidth={t.typ === 'neu' ? BILDSCHIRM_SCHNITT.terrainNeu : BILDSCHIRM_SCHNITT.terrainGewachsen}
+              strokeDasharray={t.typ === 'gewachsen' ? BILDSCHIRM_SCHNITT.terrainDash : undefined}
             />
           ))
         )}
@@ -87,13 +87,13 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
             <g key={`f${i}`}>
               {fill && <path d={d} fillRule="evenodd" fill={fill} stroke="none" />}
               {phase === 'werkplan' &&
-                schraffurLinien(f.loops, s, 50).map((linie, j) => (
+                schraffurLinien(f.loops, s, BILDSCHIRM_SCHNITT.schraffurMassstab).map((linie, j) => (
                   <polyline
                     key={j}
                     points={linie.map((p) => `${p.s},${-p.z}`).join(' ')}
                     fill="none"
                     stroke="var(--k-ink-soft)"
-                    strokeWidth={9}
+                    strokeWidth={BILDSCHIRM_SCHNITT.schraffur}
                   />
                 ))}
             </g>
@@ -107,7 +107,7 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
             x2={l.b.s}
             y2={-l.b.z}
             stroke="var(--k-ink-soft)"
-            strokeWidth={7}
+            strokeWidth={BILDSCHIRM_SCHNITT.projektion}
           />
         ))}
         {graphic.cuts.map((l, i) => (
@@ -118,7 +118,7 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
             x2={l.b.s}
             y2={-l.b.z}
             stroke="var(--k-ink)"
-            strokeWidth={26}
+            strokeWidth={BILDSCHIRM_SCHNITT.geschnitten}
             strokeLinecap="square"
           />
         ))}
@@ -139,7 +139,7 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
             x2={l.b.s}
             y2={-l.b.z}
             stroke="var(--k-ink)"
-            strokeWidth={7}
+            strokeWidth={BILDSCHIRM_SCHNITT.symbolik}
           />
         ))}
         {/* Höhenkoten je Geschoss (OK fertig Boden) — Stil-Einstellung «hoehenKoten» */}
@@ -149,7 +149,7 @@ export function SectionView({ spec, title }: { spec: SectionSpec | null; title: 
               <path
                 d={`M ${b.minS - 400} ${-st.elevation} l -80 -160 h 160 Z`}
                 fill="none"
-                strokeWidth={9}
+                strokeWidth={BILDSCHIRM_SCHNITT.koten}
               />
               <text
                 x={b.minS - 560}

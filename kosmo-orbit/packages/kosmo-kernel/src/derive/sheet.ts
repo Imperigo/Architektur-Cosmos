@@ -3,6 +3,7 @@ import type { ImageAsset, Sheet, SheetFormat, SheetImage, SheetPlacement } from 
 import { axoInnerSvg, escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
 import { docFuerUmbau, UMBAU_LABEL } from './umbau';
 import { schwarzplanGeometrie } from './schwarzplan';
+import { BLATT, DASH, PLATZHALTER, SCHWARZPLAN_FARBEN, STIFT, UMBAU_STIFTE } from './stilblatt';
 import type { Pt } from '../model/units';
 
 /**
@@ -75,16 +76,16 @@ export function situationsplanInnerSvg(doc: KosmoDoc, scale: number): InnerSvg {
   const { parzelle, footprints, nachbarn, bounds } = geo;
   const punkte = (o: Pt[]) => o.map((p) => `${p.x},${-p.y}`).join(' ');
   const parts: string[] = [
-    `<polygon points="${punkte(parzelle)}" fill="none" stroke="black" stroke-width="${(0.35 * scale).toFixed(3)}" stroke-dasharray="${(3 * scale).toFixed(2)} ${(0.9 * scale).toFixed(2)} ${(0.6 * scale).toFixed(2)} ${(0.9 * scale).toFixed(2)}"/>`,
+    `<polygon points="${punkte(parzelle)}" fill="none" stroke="${SCHWARZPLAN_FARBEN.parzelle}" stroke-width="${(STIFT.sekundaer * scale).toFixed(3)}" stroke-dasharray="${DASH.strichpunktBestand.map((d) => (d * scale).toFixed(2)).join(' ')}"/>`,
   ];
   // Nachbarn grau VOR den eigenen Footprints (v0.7.1 E2) — dieselbe
   // Reihenfolge/Farbe wie das eigenständige Schwarzplan-Blatt; ohne
   // Nachbar-Zonen bleibt die Liste leer und die Ausgabe byte-identisch.
   for (const np of nachbarn) {
-    parts.push(`<polygon points="${punkte(np)}" fill="#8a8a8a" stroke="none"/>`);
+    parts.push(`<polygon points="${punkte(np)}" fill="${SCHWARZPLAN_FARBEN.nachbar}" stroke="none"/>`);
   }
   for (const fp of footprints) {
-    parts.push(`<polygon points="${punkte(fp)}" fill="#1a1a1a" stroke="none"/>`);
+    parts.push(`<polygon points="${punkte(fp)}" fill="${SCHWARZPLAN_FARBEN.eigen}" stroke="none"/>`);
   }
   return { inner: parts.join('\n'), bounds };
 }
@@ -150,7 +151,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     `<svg xmlns="http://www.w3.org/2000/svg" width="${paper.width}mm" height="${paper.height}mm" viewBox="0 0 ${paper.width} ${paper.height}" font-family="Helvetica, Arial, sans-serif">`,
     `<rect width="${paper.width}" height="${paper.height}" fill="${opts.paperFill ?? 'white'}"/>`,
     // Blattrahmen (10 mm Rand, SIA-üblich)
-    `<rect x="10" y="10" width="${paper.width - 20}" height="${paper.height - 20}" fill="none" stroke="black" stroke-width="0.35"/>`,
+    `<rect x="10" y="10" width="${paper.width - 20}" height="${paper.height - 20}" fill="none" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
   );
 
   const scales = new Set<number>();
@@ -171,7 +172,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
       const umbauZusatz = pl.umbau ? ` · ${UMBAU_LABEL[pl.umbau]}` : '';
       const themaZusatz = pl.thema ? ` · ${pl.thema}` : '';
       parts.push(
-        `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(pl.title)}  <tspan font-weight="normal" fill="#444">1:${pl.scale}${umbauZusatz}${escapeXml(themaZusatz)}</tspan></text>`,
+        `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(pl.title)}  <tspan font-weight="normal" fill="${BLATT.textSekundaer}">1:${pl.scale}${umbauZusatz}${escapeXml(themaZusatz)}</tspan></text>`,
       );
       // Themenplan-Legende (A5): Farbkästchen + Label unter dem Titel
       const thema = pl.thema ? (doc.settings.themen ?? []).find((t) => t.name === pl.thema) : undefined;
@@ -181,7 +182,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
         for (const r of thema.regeln) {
           const label = r.label ?? r.wert;
           parts.push(
-            `<rect x="${lx.toFixed(2)}" y="${(legendeY - 3).toFixed(2)}" width="4" height="3" fill="${r.farbe}" stroke="black" stroke-width="0.18"/>`,
+            `<rect x="${lx.toFixed(2)}" y="${(legendeY - 3).toFixed(2)}" width="4" height="3" fill="${r.farbe}" stroke="${BLATT.tinte}" stroke-width="${BLATT.trennStift}"/>`,
             `<text x="${(lx + 5.5).toFixed(2)}" y="${legendeY.toFixed(2)}" font-size="2.8">${escapeXml(label)}</text>`,
           );
           lx += 5.5 + label.length * 1.7 + 6;
@@ -222,14 +223,14 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     }
     if (asset) {
       parts.push(
-        `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="none" stroke="black" stroke-width="0.25"/>`,
+        `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="none" stroke="${BLATT.tinte}" stroke-width="${BLATT.kastenStift}"/>`,
       );
     } else {
       parts.push(
-        `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="none" stroke="#666" stroke-width="0.25" stroke-dasharray="2.5 1.4"/>`,
-        `<line x1="${r.x}" y1="${r.y}" x2="${r.x + r.width}" y2="${r.y + r.height}" stroke="#bbb" stroke-width="0.18"/>`,
-        `<line x1="${r.x + r.width}" y1="${r.y}" x2="${r.x}" y2="${r.y + r.height}" stroke="#bbb" stroke-width="0.18"/>`,
-        `<text x="${r.x + r.width / 2}" y="${r.y + r.height / 2}" text-anchor="middle" font-size="3.2" fill="#666">Render folgt — HomeStation</text>`,
+        `<rect x="${r.x}" y="${r.y}" width="${r.width}" height="${r.height}" fill="none" stroke="${PLATZHALTER.linie}" stroke-width="${BLATT.kastenStift}" stroke-dasharray="${DASH.platzhalter.join(' ')}"/>`,
+        `<line x1="${r.x}" y1="${r.y}" x2="${r.x + r.width}" y2="${r.y + r.height}" stroke="${PLATZHALTER.kreuz}" stroke-width="${BLATT.trennStift}"/>`,
+        `<line x1="${r.x + r.width}" y1="${r.y}" x2="${r.x}" y2="${r.y + r.height}" stroke="${PLATZHALTER.kreuz}" stroke-width="${BLATT.trennStift}"/>`,
+        `<text x="${r.x + r.width / 2}" y="${r.y + r.height / 2}" text-anchor="middle" font-size="3.2" fill="${PLATZHALTER.linie}">Render folgt — HomeStation</text>`,
       );
     }
     if (b.title) {
@@ -257,9 +258,9 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
   // Änderungswolken (A7): Bogenkette ums Rechteck + Revisions-Marker
   for (const wo of sheet.wolken ?? []) {
     parts.push(
-      `<path d="${wolkenPfad(wo.x, wo.y, wo.w, wo.h)}" fill="none" stroke="#b3261e" stroke-width="0.35"/>`,
-      `<circle cx="${wo.x + wo.w}" cy="${wo.y}" r="3" fill="white" stroke="#b3261e" stroke-width="0.35"/>`,
-      `<text x="${wo.x + wo.w}" y="${wo.y + 1.1}" text-anchor="middle" font-size="3" fill="#b3261e" font-weight="bold">${escapeXml(wo.revision)}</text>`,
+      `<path d="${wolkenPfad(wo.x, wo.y, wo.w, wo.h)}" fill="none" stroke="${UMBAU_STIFTE.neu}" stroke-width="${BLATT.rahmenStift}"/>`,
+      `<circle cx="${wo.x + wo.w}" cy="${wo.y}" r="3" fill="white" stroke="${UMBAU_STIFTE.neu}" stroke-width="${BLATT.rahmenStift}"/>`,
+      `<text x="${wo.x + wo.w}" y="${wo.y + 1.1}" text-anchor="middle" font-size="3" fill="${UMBAU_STIFTE.neu}" font-weight="bold">${escapeXml(wo.revision)}</text>`,
     );
   }
 
@@ -278,14 +279,14 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     const ty = ky - 2 - th;
     parts.push(
       `<g font-size="2.8" data-teil="revisionen">`,
-      `<rect x="${kx}" y="${ty}" width="${kw}" height="${th}" fill="white" stroke="black" stroke-width="0.25"/>`,
+      `<rect x="${kx}" y="${ty}" width="${kw}" height="${th}" fill="white" stroke="${BLATT.tinte}" stroke-width="${BLATT.kastenStift}"/>`,
       `<text x="${kx + 3}" y="${ty + 4}" font-weight="bold">Revisionen</text>`,
     );
     rows.forEach((r, i) => {
       const yy = ty + 5 + (i + 1) * rh - 1.2;
       parts.push(
         `<text x="${kx + 3}" y="${yy}" font-weight="bold">${escapeXml(r.index)}</text>`,
-        `<text x="${kx + 10}" y="${yy}" fill="#444">${escapeXml(r.datum)}</text>`,
+        `<text x="${kx + 10}" y="${yy}" fill="${BLATT.textSekundaer}">${escapeXml(r.datum)}</text>`,
         `<text x="${kx + 28}" y="${yy}">${escapeXml(r.text)}</text>`,
       );
     });
@@ -294,13 +295,13 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
   const scaleText = [...scales].sort((a, b) => a - b).map((s) => `1:${s}`).join(' · ') || '—';
   parts.push(
     `<g font-size="3">`,
-    `<rect x="${kx}" y="${ky}" width="${kw}" height="${kh}" fill="white" stroke="black" stroke-width="0.35"/>`,
-    `<line x1="${kx}" y1="${ky + 9}" x2="${kx + kw}" y2="${ky + 9}" stroke="black" stroke-width="0.18"/>`,
+    `<rect x="${kx}" y="${ky}" width="${kw}" height="${kh}" fill="white" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
+    `<line x1="${kx}" y1="${ky + 9}" x2="${kx + kw}" y2="${ky + 9}" stroke="${BLATT.tinte}" stroke-width="${BLATT.trennStift}"/>`,
     `<text x="${kx + 3}" y="${ky + 6}" font-weight="bold" font-size="4">${escapeXml(opts.projectName)}</text>`,
     `<text x="${kx + 3}" y="${ky + 15}">${escapeXml(sheet.name)}</text>`,
-    `<text x="${kx + 3}" y="${ky + 22}" fill="#444">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
+    `<text x="${kx + 3}" y="${ky + 22}" fill="${BLATT.textSekundaer}">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
     `<text x="${kx + kw - 3}" y="${ky + 15}" text-anchor="end">${scaleText}</text>`,
-    `<text x="${kx + kw - 3}" y="${ky + 22}" text-anchor="end" fill="#444">Blatt ${sheet.index + 1} · ${sheet.format}</text>`,
+    `<text x="${kx + kw - 3}" y="${ky + 22}" text-anchor="end" fill="${BLATT.textSekundaer}">Blatt ${sheet.index + 1} · ${sheet.format}</text>`,
     `</g>`,
     '</svg>',
   );
