@@ -85,14 +85,16 @@ function speicherePng(dataUrl: string, out: string): void {
 //         Full-page: Dock (unten Mitte) + freies KosmoSymbol (unten rechts).
 // ---------------------------------------------------------------------------
 for (const theme of ['paper', 'orbit'] as const) {
-  // Zentrale (OrbitStart-Hub): der Dock ist app-weit → erscheint auch hier.
+  // Zentrale (OrbitStart-Hub): v073 S5b — der Dock erscheint hier NICHT mehr
+  // (der Hub IST die Navigation, sonst Text-Kollision mit den Teasern). Der
+  // Shot BELEGT die Abwesenheit; das freie KosmoSymbol bleibt.
   {
     const page = await seiteMitTheme(theme);
-    await page.locator('[data-testid="boden-dock"]').waitFor({ state: 'visible' });
     await page.locator('[data-testid="kosmo-symbol"]').waitFor({ state: 'visible' });
+    const dockDa = await page.locator('[data-testid="boden-dock"]').count();
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${OUT}/b-zentrale-${theme}.png` });
-    console.log('Shot:', `b-zentrale-${theme}`);
+    console.log('Shot:', `b-zentrale-${theme}`, `— Dock auf Zentrale: ${dockDa} (erwartet 0)`);
     await page.close();
   }
   // KosmoDesign: Dock + freies Symbol im selben Bild.
@@ -114,6 +116,7 @@ for (const theme of ['paper', 'orbit'] as const) {
 // ---------------------------------------------------------------------------
 {
   const page = await seiteMitTheme('orbit', { width: 1000, height: 800 });
+  await page.click('[data-testid="module-design"]'); // v073 S5b: Dock nur in Modul-Ansicht
   await page.locator('[data-testid="boden-dock"]').waitFor({ state: 'visible' });
   await page.waitForTimeout(400);
   const alle = page.locator('[data-testid="boden-dock"] .boden-dock-knopf');

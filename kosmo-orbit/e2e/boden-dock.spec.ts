@@ -1,8 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
 
 /**
- * v0.7.3 Bau-Agent S5 — Boden-Dock (app-weit, additiver Navigations-Layer
- * unten Mitte, `shell/BodenDock.tsx`). Drei harte Beweise:
+ * v0.7.3 Bau-Agent S5 — Boden-Dock (additiver Navigations-Layer unten Mitte,
+ * `shell/BodenDock.tsx`). v073 S5b: der Dock erscheint NUR in einer Arbeits-
+ * Modul-Ansicht, NICHT auf der Zentrale/Home (dort ist der OrbitStart-Hub
+ * bereits die Navigation — s. erster Test). Harte Beweise:
  *
  * 1. BoundingBox-Disjunktion: der Dock überlappt NICHT die bestehende
  *    KosmoDesign-Statusleiste (`data-testid="statusleiste"`,
@@ -24,14 +26,25 @@ import { expect, test, type Page } from '@playwright/test';
  * keine DOM-Verschachtelung.
  */
 
-async function oeffneKosmoDesign(page: Page): Promise<void> {
+async function seed(page: Page): Promise<void> {
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
     localStorage.setItem('kosmo.starterGuide.done', '1');
   });
   await page.reload();
+}
+
+/** v073 S5b: der Boden-Dock ist ein Modul-Navigations-Layer und erscheint NUR
+ *  in einer Arbeits-Modul-Ansicht (nicht auf der Zentrale/Home). Alle Dock-
+ *  Beweise öffnen deshalb zuerst ein Modul. */
+async function oeffneModulAnsicht(page: Page): Promise<void> {
+  await seed(page);
   await page.click('[data-testid="module-design"]'); // bootstrappt EG/OG + Standard-Aufbauten
+}
+
+async function oeffneKosmoDesign(page: Page): Promise<void> {
+  await oeffneModulAnsicht(page);
   await page.click('[data-testid="view-2d"]'); // Statusleiste ist im 2D-Plan am ruhigsten positioniert
 }
 
@@ -42,13 +55,14 @@ function ueberlappenSich(
   return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
 
-test('Boden-Dock ist app-weit sichtbar (auch auf der Zentrale)', async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.setItem('kosmo.onboarded', '1');
-    localStorage.setItem('kosmo.starterGuide.done', '1');
-  });
-  await page.reload();
+test('Boden-Dock erscheint in einer Modul-Ansicht, NICHT auf der Zentrale', async ({ page }) => {
+  // v073 S5b: auf der Zentrale/Home IST der OrbitStart-Hub die Navigation —
+  // der Dock würde dort doppeln und mit den Hub-Teasern kollidieren.
+  await seed(page);
+  await expect(page.locator('[data-testid="boden-dock"]')).toHaveCount(0);
+
+  // Modul öffnen → der Dock erscheint als zusätzlicher Navigations-Layer.
+  await page.click('[data-testid="module-design"]');
   await expect(page.locator('[data-testid="boden-dock"]')).toBeVisible();
   // Mindestens ein Werkzeug-Knopf ist im Dock (die 8 Canvas-Werkzeuge aus
   // `ALLE_TOOL_IDS`, `state/orbit-rang.ts`).
@@ -74,12 +88,7 @@ test('BoundingBox-Disjunktion: Boden-Dock überlappt die Statusleiste nicht', as
 test('Klick-Durchlässigkeit: eine Lücke im Dock-Bereich (ausserhalb der Knöpfe) blockiert keinen Klick', async ({
   page,
 }) => {
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.setItem('kosmo.onboarded', '1');
-    localStorage.setItem('kosmo.starterGuide.done', '1');
-  });
-  await page.reload();
+  await oeffneModulAnsicht(page);
 
   const dock = page.locator('[data-testid="boden-dock"]');
   await expect(dock).toBeVisible();
@@ -119,12 +128,7 @@ test('Klick-Durchlässigkeit: eine Lücke im Dock-Bereich (ausserhalb der Knöpf
 });
 
 test('Kosmo-Orb sichtbar, Boden-Dock zeigt Rang-Kreise mit Rollenfarben', async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.setItem('kosmo.onboarded', '1');
-    localStorage.setItem('kosmo.starterGuide.done', '1');
-  });
-  await page.reload();
+  await oeffneModulAnsicht(page);
 
   // K11-Vertrag bleibt unverändert: Kosmo-Symbol ist der Erstkontakt.
   await expect(page.locator('[data-testid="kosmo-symbol"]')).toBeVisible();
@@ -146,12 +150,7 @@ test('Kosmo-Orb sichtbar, Boden-Dock zeigt Rang-Kreise mit Rollenfarben', async 
 
 test('Kollaps unter ~1100px: nur Top-3-Knöpfe sichtbar, Rest bleibt im DOM', async ({ page }) => {
   await page.setViewportSize({ width: 1000, height: 800 });
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.setItem('kosmo.onboarded', '1');
-    localStorage.setItem('kosmo.starterGuide.done', '1');
-  });
-  await page.reload();
+  await oeffneModulAnsicht(page);
 
   const alleKnoepfe = page.locator('[data-testid="boden-dock"] .boden-dock-knopf');
   expect(await alleKnoepfe.count()).toBe(8); // KEIN DOM-Entfall

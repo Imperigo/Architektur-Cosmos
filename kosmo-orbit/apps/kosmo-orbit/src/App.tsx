@@ -977,7 +977,14 @@ export function App() {
         />
       )}
       <CursorEbene />
-      <BodenDock onOeffnen={oeffneModulById} onSyncToggle={() => setSyncOpen(!syncOpen)} />
+      {/* v073 S5b: der Boden-Dock ist ein Modul-Navigations-Layer — NUR in
+          den Arbeits-Modul-Ansichten, NICHT auf der Zentrale/Home, wo der
+          OrbitStart-Hub bereits DIE Navigation ist (sonst doppelt +
+          Text-Kollision mit den Hub-Teasern). Das freie KosmoSymbol (oben,
+          Zeile ~935) bleibt bewusst app-weit — es lebt nicht im Dock. */}
+      {screen !== 'home' && (
+        <BodenDock onOeffnen={oeffneModulById} onSyncToggle={() => setSyncOpen(!syncOpen)} />
+      )}
     </div>
   );
 }
