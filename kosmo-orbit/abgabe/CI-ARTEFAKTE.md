@@ -71,14 +71,20 @@ ist damit eingelöst:
   - KosmoOrbit Web (GitHub Pages) — `in_progress` (Run 29180988379)
   - KosmoOrbit iOS-Experiment — `in_progress` (Run 29180988355)
   - KosmoOrbit CI — `pending` (Run 29180988351)
-- **Pages-Verifikation:** der **neue** Pages-Deploy war zum Berichtszeitpunkt
-  noch nicht durch — die Live-Seite `https://imperigo.github.io/Architektur-Cosmos/`
-  liefert daher noch das **0.7.2**-Bundle (letzter grüner Pages-Deploy `c9aa547`
-  vom 11.07. 23:33). Der lokale 0.7.3-Build ist verifiziert (das ausgelieferte JS,
-  `derive.worker`, trägt `v0.7.3`); sobald der Pages-Lauf 29180988379 grün nach
-  `gh-pages` deployt, liefert die Live-Seite `v0.7.3`. **Ehrlich offen:
-  angestossen, läuft — die finale Live-Bestätigung ist bei Redaktionsschluss
-  noch ausstehend** (Owner-Blick auf die Actions-Seite oder Folge-Poll).
+- **Pages-Verifikation — GRÜN & LIVE bestätigt:** der Pages-Lauf 29180988379
+  (`8a13d89`) ist **`completed / success`** nach `gh-pages` deployt. Die Live-Seite
+  `https://imperigo.github.io/Architektur-Cosmos/` liefert jetzt das **0.7.3**-Bundle:
+  das ausgelieferte `assets/index-*.js` referenziert `derive.worker-B_rmxV6-.js` —
+  **byte-identisch zum Hash des lokalen 0.7.3-Builds** (der `derive.worker` trägt
+  `v0.7.3`), und `v0.7.3` erscheint im ausgelieferten JS. Damit ist der 0.7.2-Fall
+  «Pages verifiziert, Asset-Zählung offen» für 0.7.3 vollständig geschlossen.
+- **Desktop-/iOS-Läufe:** zum Redaktionsschluss noch `in_progress` (Runs
+  29180988347 / 29180988355). Sie produzieren die neuen `desktop-latest`-Assets
+  (erneut 18) bzw. das iOS-Xcode-Projekt; das Grün-Werden ist **angestossen, läuft**
+  — Owner-Blick auf die Actions-Seite oder Folge-Poll für die finale Bestätigung.
+  Der `KosmoOrbit CI`-Lauf auf `8a13d89` wurde durch den nachfolgenden Doku-Push
+  `93f9fb1` regulär superseded (concurrency-cancel); die Deterministik-Gates sind
+  lokal vollständig grün (s. u.).
 
 Hinweis zu vorherigen roten CI-Läufen am 12.07. (`d160283`, `dda67e3`): das waren
 Zwischenstände einzelner Bau-Wellen; die letzten regulären CI-Läufe vor dem Finale
