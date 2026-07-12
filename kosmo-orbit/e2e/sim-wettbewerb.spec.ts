@@ -147,7 +147,11 @@ test('Wettbewerbs-Testlauf: Grundlagen → Kosmo-Studie als atomare Undo-Gruppe 
   const pfad = await download.path();
   const svg = readFileSync(pfad!, 'utf8');
 
-  expect(svg).toContain('Grundlagenstudie'); // [Quelle: derive/studienbericht.ts Z.174]
+  // v0.7.3 W3-Integration: Titel ist seit D4 «Zwei Stimmen» (W2, Commit
+  // 447e598 — `versal()` in studienbericht.ts:165) VERSAL. Assertion an die
+  // bereits abgenommene D4-Entscheidung angeglichen (prüft weiter die
+  // Titel-Präsenz, nur in korrekter Schreibweise). Kein Stream-S5/S6-Bezug.
+  expect(svg).toContain('GRUNDLAGENSTUDIE'); // [Quelle: derive/studienbericht.ts Z.165 versal()]
   expect(svg).toContain(szenario.zonenRegel.name); // [Quelle: derive/studienbericht.ts Z.179 'aus Zonenregel «…»']
   expect(svg).toContain('Programm-Erfüllung'); // [Quelle: derive/studienbericht.ts Z.142 — nur mit gesetztem Raumprogramm]
   expect(svg).toContain('Anstoss, kein Entwurf'); // [Quelle: derive/studienbericht.ts Z.231]
