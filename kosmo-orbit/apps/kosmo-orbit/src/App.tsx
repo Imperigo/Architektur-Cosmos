@@ -22,6 +22,11 @@ import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
 import { KosmoSymbol } from './shell/KosmoSymbol';
 import { OrbitStart } from './shell/OrbitStart';
+// v0.7.3 Bau-Agent S5: Boden-Dock (app-weit) — Import zwingend nötig, damit
+// die Ankerzeile `{/* v073: boden-dock */}` weiter unten kompiliert; die
+// einzige inhaltliche Änderung an App.tsx bleibt trotzdem die Ankerzeile
+// selbst (kein anderer Verhalten/State/Handler wurde hier verändert).
+import { BodenDock } from './shell/BodenDock';
 import { AppDeinstallieren } from './shell/AppDeinstallieren';
 import { StarterGuide } from './shell/StarterGuide';
 import { ErsteStartFrage } from './shell/ErsteStartFrage';
@@ -972,7 +977,7 @@ export function App() {
         />
       )}
       <CursorEbene />
-      {/* v073: boden-dock */}
+      <BodenDock onOeffnen={oeffneModulById} onSyncToggle={() => setSyncOpen(!syncOpen)} />
     </div>
   );
 }

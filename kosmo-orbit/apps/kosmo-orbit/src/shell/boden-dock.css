@@ -1,0 +1,88 @@
+/*
+ * v0.7.3 Bau-Agent S5 — Boden-Dock (app-weit, additiver Navigations-Layer).
+ * Eigene Datei (aura.css/orbit-065.css sind TABU — fremder Dateibesitz), nur
+ * Token-Referenzen (`var(--k-*)`), keine neuen Farbwerte.
+ *
+ * Bottom-Offset (96px statt eines knappen 12/22px-Werts): die bestehende
+ * KosmoDesign-Statusleiste (`DesignWorkspace.tsx`, `data-testid="statusleiste"`)
+ * sitzt `position:absolute; left:12; bottom:12`, spannt praktisch die volle
+ * Breite (bis `right:88`) und ist damit horizontal NICHT vom mittig-fixierten
+ * Boden-Dock zu umgehen — nur ein klarer VERTIKALER Abstand verhindert eine
+ * BoundingBox-Überlappung zuverlässig (Spec-Beweis `boden-dock.spec.ts`,
+ * unabhängig von Zeilenumbruch/Viewport-Breite der Statusleiste).
+ */
+.boden-dock {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  z-index: 108;
+  display: flex;
+  align-items: flex-end;
+  max-width: min(640px, calc(100vw - 32px));
+  padding: 10px 16px;
+  border-radius: var(--k-radius-pill, 999px);
+  background: var(--k-raised);
+  border: 1px solid var(--k-line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--k-shadow-overlay);
+  /* Harte Lektion (Auftragskopf, arbeitsmodi:111): der Container selbst darf
+     KEIN unsichtbares Klick-Overlay sein — nur die Knöpfe unten bekommen
+     `pointer-events:auto` zurück. */
+  pointer-events: none;
+}
+
+.boden-dock-werkzeuge {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.boden-dock-knopf {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--k-surface);
+  border: 1.5px solid var(--k-line-strong);
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    width var(--k-motion-fast),
+    height var(--k-motion-fast),
+    box-shadow var(--k-motion-fast),
+    border-color var(--k-motion-fast);
+}
+
+/* Top-3 (Rang-Position 0-2, `tierFuerPosition`) — Rollenfarben-Border + Glow,
+   exakt dieselbe Betonung wie OrbitStarts `.orbit065-rang-kreis--innen`
+   (eigene Klasse, eigenes File — kein Import aus `orbit-065.css`). */
+.boden-dock-knopf--innen {
+  border-color: var(--k-dock-rolle, var(--k-accent));
+  box-shadow:
+    0 0 0 2px var(--k-dock-rolle, var(--k-accent)),
+    0 0 10px 1px var(--k-dock-rolle, var(--k-accent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boden-dock-knopf {
+    transition: none;
+  }
+}
+
+/* Statusleisten-/Schmalbildschirm-Kollision (Spec: «unter ~1100px Kollaps
+   auf Top-3-Buttons») — rein CSS, KEIN DOM-Entfall: die übrigen Knöpfe
+   bleiben im DOM (`display:none` versteckt nur optisch/aus dem Klickfluss,
+   `boden-dock-tool-<id>` bleibt für Tests ansprechbar-abwesend statt entfernt). */
+@media (max-width: 1099px) {
+  .boden-dock-werkzeuge > .boden-dock-knopf:nth-child(n + 4) {
+    display: none;
+  }
+}
