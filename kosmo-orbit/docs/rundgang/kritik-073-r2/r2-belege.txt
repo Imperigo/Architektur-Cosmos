@@ -1,0 +1,52 @@
+KRITIK-2 BELEGE (v0.7.3 Welle 2)
+
+D4-Golden-Diffstat (d160283..HEAD, nur test/golden/):
+ .../kosmo-kernel/test/golden/abnahmeprotokoll.svg  |  2 +-
+ .../test/golden/ansicht-curtainwall.svg            |  2 +-
+ .../test/golden/ansicht-fluegeltypen.svg           |  2 +-
+ .../test/golden/ansicht-sued-satteldach.svg        |  2 +-
+ .../test/golden/ansicht-sued-testhaus.svg          |  2 +-
+ .../test/golden/ausnuetzungsnachweis.svg           |  2 +-
+ .../kosmo-kernel/test/golden/bauablaufblatt.svg    |  2 +-
+ .../test/golden/blatt-autofuellung.svg             | 26 ++++++-------
+ .../test/golden/grundriss-fenster-zweifluegel.svg  | 18 ++++-----
+ .../test/golden/grundriss-fensterband.svg          | 18 ++++-----
+ .../kosmo-kernel/test/golden/grundriss-kipp.svg    | 30 +++++++--------
+ .../test/golden/grundriss-kontext-baueingabe.svg   | 10 ++---
+ .../test/golden/grundriss-kontext-werkplan.svg     | 10 ++---
+ .../test/golden/grundriss-kontext-wettbewerb.svg   | 10 ++---
+ .../golden/grundriss-satteldach-eg-darunter.svg    | 10 ++---
+ .../test/golden/grundriss-satteldach-first.svg     | 10 ++---
+ .../test/golden/grundriss-testhaus-baueingabe.svg  | 24 ++++++------
+ .../test/golden/grundriss-testhaus-wettbewerb.svg  | 24 ++++++------
+ .../test/golden/grundriss-testhaus.svg             | 24 ++++++------
+ .../test/golden/grundriss-walmdach-flach.svg       | 10 ++---
+ .../packages/kosmo-kernel/test/golden/kvblatt.svg  |  2 +-
+ .../test/golden/schnitt-fenster-parametrisch.svg   |  2 +-
+ .../test/golden/schnitt-satteldach-baueingabe.svg  |  2 +-
+ .../test/golden/schnitt-satteldach-querschnitt.svg |  2 +-
+ .../kosmo-kernel/test/golden/studienbericht.svg    |  2 +-
+ .../kosmo-kernel/test/golden/werkplan-beschlag.svg | 44 +++++++++++-----------
+ 26 files changed, 146 insertions(+), 146 deletions(-)
+
+pdffonts auf einem erzeugten Blatt-PDF (Lato + IBM Plex Mono muessen embedded=yes sein):
+name                                 type              encoding         emb sub uni object ID
+------------------------------------ ----------------- ---------------- --- --- --- ---------
+Helvetica                            Type 1            WinAnsi          no  no  no       5  0
+Helvetica-Bold                       Type 1            WinAnsi          no  no  no       6  0
+Helvetica-Oblique                    Type 1            WinAnsi          no  no  no       7  0
+Helvetica-BoldOblique                Type 1            WinAnsi          no  no  no       8  0
+Courier                              Type 1            WinAnsi          no  no  no       9  0
+Courier-Bold                         Type 1            WinAnsi          no  no  no      10  0
+Courier-Oblique                      Type 1            WinAnsi          no  no  no      11  0
+Courier-BoldOblique                  Type 1            WinAnsi          no  no  no      12  0
+Times-Roman                          Type 1            WinAnsi          no  no  no      13  0
+Times-Bold                           Type 1            WinAnsi          no  no  no      14  0
+Times-Italic                         Type 1            WinAnsi          no  no  no      15  0
+Times-BoldItalic                     Type 1            WinAnsi          no  no  no      16  0
+ZapfDingbats                         Type 1            ZapfDingbats     no  no  no      17  0
+Symbol                               Type 1            Symbol           no  no  no      18  0
+Lato                                 CID TrueType      Identity-H       yes no  yes     23  0
+IBM Plex Mono                        CID TrueType      Identity-H       yes no  yes     28  0
+IBM Plex Mono                        CID TrueType      Identity-H       yes no  yes     33  0
+
