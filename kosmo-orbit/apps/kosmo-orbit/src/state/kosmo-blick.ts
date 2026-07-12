@@ -171,13 +171,21 @@ function dataUrlAlsBild(dataUrl: string): Promise<HTMLImageElement> {
  * `viewMode:'2d'`) oder kein Frame zu holen war — dann übernimmt der SVG-
  * bzw. Text-Fallback. Die Naturgrösse-dataURL wird VOR der Rückgabe durch
  * denselben Downscale wie der SVG-Weg geschickt (s. oben).
+ * v0.7.3 D5: der Kosmo-Blick auf die Design-Station ist ein Beweis-Capture
+ * — ruft `captureFrame({ offiziell: true })`, damit IMMER im amtlichen,
+ * phasenbestimmten Modus gerendert wird (`offizielleDarstellung3d()`), nie
+ * im gerade gewählten Arbeitsmodus.
  */
 async function erfasseViewport3d(): Promise<BlickBild | null> {
-  const hook = (window as unknown as { __kosmoViewport?: { captureFrame?: () => string | null } }).__kosmoViewport;
+  const hook = (
+    window as unknown as {
+      __kosmoViewport?: { captureFrame?: (opts?: { offiziell?: boolean; zweck?: 'situation' | 'volumennachweis' }) => string | null };
+    }
+  ).__kosmoViewport;
   const capture = hook?.captureFrame;
   if (!capture) return null;
   try {
-    const dataUrl = capture();
+    const dataUrl = capture({ offiziell: true });
     if (!dataUrl) return null;
     const bild = await dataUrlAlsBild(dataUrl);
     const groesse = { breite: bild.naturalWidth || bild.width, hoehe: bild.naturalHeight || bild.height };

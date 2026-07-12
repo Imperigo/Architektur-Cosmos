@@ -3,6 +3,7 @@ import { pocheEntscheid, type PocheModus } from '../src/derive/poche';
 import {
   KosmoDoc,
   aufgeloesteDarstellung3d,
+  offizielleDarstellung3d,
   empfohlenePlanPhase,
   phaseLabel,
   siaPhaseLabel,
@@ -286,6 +287,49 @@ describe('aufgeloesteDarstellung3d (E3)', () => {
     expect(aufgeloesteDarstellung3d(doc.settings)).toBe('schwarz');
     doc.settings.darstellung3d = 'weiss';
     expect(aufgeloesteDarstellung3d(doc.settings)).toBe('weiss');
+  });
+});
+
+describe('offizielleDarstellung3d (v0.7.3 D5) — Phase entscheidet den Modus, manuell ist NIE amtlich', () => {
+  it("frühe Phasen (wettbewerb/vorprojekt/bauprojekt/bewilligung) → 'weiss'", () => {
+    const doc = new KosmoDoc();
+    for (const sia of ['wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung'] as const) {
+      doc.settings.siaPhase = sia;
+      expect(offizielleDarstellung3d(doc.settings)).toBe('weiss');
+    }
+  });
+
+  it("Werkplan-Phasen (ausschreibung/ausfuehrung/abnahme) → 'material' (Textur)", () => {
+    const doc = new KosmoDoc();
+    for (const sia of ['ausschreibung', 'ausfuehrung', 'abnahme'] as const) {
+      doc.settings.siaPhase = sia;
+      expect(offizielleDarstellung3d(doc.settings)).toBe('material');
+    }
+  });
+
+  it("zweck='situation' bzw. 'volumennachweis' → IMMER 'schwarz', unabhängig von der Phase", () => {
+    const doc = new KosmoDoc();
+    for (const sia of ['wettbewerb', 'bauprojekt', 'ausschreibung', 'ausfuehrung'] as const) {
+      doc.settings.siaPhase = sia;
+      expect(offizielleDarstellung3d(doc.settings, 'situation')).toBe('schwarz');
+      expect(offizielleDarstellung3d(doc.settings, 'volumennachweis')).toBe('schwarz');
+    }
+  });
+
+  it('Beweis: manuell ≠ amtlich — eine manuelle darstellung3d-Übersteuerung bei früher Phase ändert die offizielle Ableitung NICHT', () => {
+    const doc = new KosmoDoc();
+    doc.settings.siaPhase = 'wettbewerb'; // offiziell: weiss
+    doc.settings.darstellung3d = 'material'; // Arbeitsmodus-Übersteuerung
+    expect(aufgeloesteDarstellung3d(doc.settings)).toBe('material'); // Arbeitsmodus respektiert die Übersteuerung
+    expect(offizielleDarstellung3d(doc.settings)).toBe('weiss'); // amtlich bleibt phasenbestimmt
+  });
+
+  it('Beweis (Kehrseite): manuelle Übersteuerung bei Werkplan-Phase ändert die offizielle Ableitung ebenfalls nicht', () => {
+    const doc = new KosmoDoc();
+    doc.settings.siaPhase = 'ausfuehrung'; // offiziell: material
+    doc.settings.darstellung3d = 'weiss'; // Arbeitsmodus-Übersteuerung
+    expect(aufgeloesteDarstellung3d(doc.settings)).toBe('weiss');
+    expect(offizielleDarstellung3d(doc.settings)).toBe('material');
   });
 });
 

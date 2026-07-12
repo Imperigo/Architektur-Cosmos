@@ -370,6 +370,31 @@ export function aufgeloesteDarstellung3d(settings: DocSettings): 'material' | 'w
   return fruehePhasen.includes(settings.siaPhase) ? 'weiss' : 'material';
 }
 
+/** Amtliche 3D-Darstellung (v0.7.3 D5) — NICHT zu verwechseln mit
+ * `aufgeloesteDarstellung3d()` oben: jene respektiert eine manuelle
+ * `settings.darstellung3d`-Übersteuerung (Arbeitsmodus, frei wählbar,
+ * NIE amtlich); diese hier IGNORIERT `settings.darstellung3d` bewusst und
+ * leitet den Modus einzig aus der SIA-Phase ab (bzw. aus `zweck`, wenn
+ * gegeben). Grund: Beweisbares — «Für Vis aufnehmen», Blatt-Bildslots,
+ * Kosmo-Blick-Captures — muss IMMER im offiziellen, phasenbestimmten
+ * Modus rendern, unabhängig davon, was der/die Bearbeitende gerade als
+ * Arbeitsmodus eingestellt hat.
+ *
+ * `zweck`:
+ * - `'situation'` / `'volumennachweis'` → IMMER `'schwarz'` (Capture-
+ *   Kontext für Situationsplan/Volumennachweis, überschreibt die Phase).
+ * - abwesend → Phasen-Ableitung analog zu `aufgeloesteDarstellung3d`:
+ *   frühe Phasen (Strategie…Bewilligung) → `'weiss'` (Weissmodell),
+ *   ab Werkplan (Ausschreibung…Abnahme) → `'material'` (Textur). */
+export function offizielleDarstellung3d(
+  settings: DocSettings,
+  zweck?: 'situation' | 'volumennachweis',
+): 'material' | 'weiss' | 'schwarz' {
+  if (zweck === 'situation' || zweck === 'volumennachweis') return 'schwarz';
+  const fruehePhasen: SiaPhase[] = ['strategie', 'wettbewerb', 'vorprojekt', 'bauprojekt', 'bewilligung'];
+  return fruehePhasen.includes(settings.siaPhase) ? 'weiss' : 'material';
+}
+
 /** Eine Fassadenseiten-Zuweisung im wand-basierten Baupfad (H-35, v0.6.8).
  * `richtung` dupliziert absichtlich `Fassadenrichtung` aus `derive/
  * fassadenmodule.ts` statt sie zu importieren — `model/` importiert nicht aus

@@ -4,7 +4,7 @@ import CameraControls from 'camera-controls';
 import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
 import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
-import { aufgeloesteDarstellung3d, deriveAllMitFensterdetails, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
+import { aufgeloesteDarstellung3d, offizielleDarstellung3d, deriveAllMitFensterdetails, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
@@ -282,7 +282,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   // v0.6.7 P0: für den «Für Vis aufnehmen»-Knopf — rendert EINEN Frame mit
   // der aktuellen Kamera (wie jeder normale Frame, keine Bewegung) und liest
   // danach sofort das Canvas-Pixelbild; rührt sonst nichts an.
-  const captureRef = useRef<(() => string) | null>(null);
+  // v0.7.3 D5: optionale `{offiziell, zweck}` — s. Kommentar bei der
+  // Zuweisung unten (Material-Swap in den amtlichen Modus, garantierter
+  // Rückbau, KEINE bleibende Änderung am Arbeitsmodus).
+  const captureRef = useRef<((opts?: { offiziell?: boolean; zweck?: 'situation' | 'volumennachweis' }) => string) | null>(null);
   const [navModus, setNavModus] = useState<'orbit' | 'pan' | 'zoom'>('orbit');
   const navModusRef = useRef<'orbit' | 'pan' | 'zoom'>('orbit');
   // Serie J / J2: Rechtsklick-/Long-Press-Kontextmenü. x/y positionieren das
@@ -458,12 +461,15 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
    * gemeinsamen `useVisRuntime`-Store (`aufnahmen`, entities.ts:500-505:
    * Bilder gehen nie durchs Doc/Undo/Yjs) — der `aufnahme`-Node in KosmoVis
    * zeigt ihn als sein Bild. Kein Rendering, kein Bridge-Job.
+   * v0.7.3 D5: Beweis-Capture → rendert ZWINGEND im amtlichen Modus
+   * (`{ offiziell: true }`, s. `captureRef.current`-Kommentar unten), NIE im
+   * gerade gewählten Arbeitsmodus.
    */
   const fuerVisAufnehmen = () => {
     const capture = captureRef.current;
     if (!capture) return;
     try {
-      const dataUrl = capture();
+      const dataUrl = capture({ offiziell: true });
       useVisRuntime.getState().fuegeAufnahmeHinzu({
         id: `aufnahme_${Date.now()}_${Math.round(Math.random() * 1e6)}`,
         dataUrl,
@@ -1203,6 +1209,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       mesh.castShadow = a.materialKey !== 'glas';
       mesh.receiveShadow = a.materialKey !== 'glas';
       mesh.userData['entityId'] = a.entityId;
+      // D5 (v0.7.3, captureFrame({offiziell}) unten): der Original-Materialschlüssel
+      // wird für den amtlichen Beweis-Capture-Farbtausch gebraucht (Palette-
+      // Lookup je Mesh, Glas-Ausnahme erkennen) — reine Metadaten, ändert
+      // nichts am gerenderten Arbeitsmodus.
+      mesh.userData['materialKey'] = a.materialKey;
 
       const eGeo = new THREE.BufferGeometry();
       const eN = a.edges.length / 3;
@@ -1741,9 +1752,78 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     // v0.6.7 P0: «Für Vis aufnehmen» — EIN frischer Frame mit der jetzigen
     // Kamera (kein Sprung, keine Bewegung), sofort danach als dataURL gelesen
     // (kein `preserveDrawingBuffer`-Umweg nötig: synchron im selben Tick).
-    captureRef.current = () => {
+    //
+    // v0.7.3 D5 («Phase entscheidet den Modus», docs/soll-073/
+    // 6a-d5-phase-entscheidet-modus.png): JEDES Beweis-Capture — «Für Vis
+    // aufnehmen» (oben, onClick={fuerVisAufnehmen}), Blatt-Bildslots und der
+    // Kosmo-Blick (state/kosmo-blick.ts) — MUSS zwingend im AMTLICHEN Modus
+    // rendern (`offizielleDarstellung3d()`, packages/kosmo-kernel/src/model/
+    // doc.ts), nicht im aktuell gewählten Arbeitsmodus. Die manuelle
+    // Darstellung-Auswahl (DesignWorkspace.tsx, «Darstellung»-Select) bleibt
+    // sticky Arbeitsmodus, ist aber NIE amtlich — s. `offizielleDarstellung3d`-
+    // Kommentar für den Unterschied zu `aufgeloesteDarstellung3d`.
+    //
+    // `opts.offiziell` löst dafür EINEN synchronen Material-Farbtausch aus:
+    // Ziel-Modus bestimmen, jedes Mesh (ausser 'glas' — 0.7.0-Regel, Glas
+    // bleibt in JEDEM Modus transparent, UNANTASTBAR) auf die Zielfarben
+    // umfärben, EIN Frame rendern, `toDataURL` lesen, dann in einem
+    // try/finally GARANTIERT auf die vorherigen Arbeitsmodus-Farben
+    // zurückfärben und sofort erneut rendern (`renderer.render` direkt,
+    // nicht `renderFrame()` — das würde bei aktivem On-Demand-Rendering
+    // + FPS-Deckel den Rückbau-Frame u.U. verschlucken und das Canvas
+    // sichtbar im amtlichen Modus stehen lassen). So bleibt der
+    // Arbeitsmodus/das Doc unangetastet, und es gibt kein sichtbares
+    // Flackern: der Browser malt erst nach Rückkehr aus dieser synchronen
+    // Funktion, zu dem Zeitpunkt zeigt das Canvas bereits wieder den
+    // Arbeitsmodus. Bewusst NUR ein Farbtausch (kein Textur-/UV-Rebuild) —
+    // ein vollständiger Rebuild+Rückbau im selben Tick wäre unverhältnismässig
+    // riskant für einen einzelnen Beweis-Frame.
+    captureRef.current = (opts) => {
+      if (!opts?.offiziell) {
+        renderFrame();
+        return renderer.domElement.toDataURL('image/png');
+      }
+      // Modell auf den aktuellen Doc-Stand bringen (Arbeitsmodus-Frame),
+      // BEVOR der amtliche Farbtausch ansetzt — sonst könnte ein noch
+      // ausstehender Rebuild (syncModel) mitten in den Tausch fallen.
       renderFrame();
-      return renderer.domElement.toDataURL('image/png');
+      const zielModus = offizielleDarstellung3d(useProject.getState().doc.settings, opts.zweck);
+      const rueckbau: { mat: THREE.MeshStandardMaterial; color: number; roughness: number; metalness: number }[] = [];
+      try {
+        for (const child of model.children) {
+          const mesh = child as THREE.Mesh;
+          if (!mesh.isMesh) continue;
+          const materialKey = (mesh.userData['materialKey'] as string | undefined) ?? 'default';
+          // Glas-Ausnahme (0.7.0-Regel): bleibt in JEDEM Modus transparent,
+          // wird beim amtlichen Farbtausch NICHT angefasst.
+          if (materialKey === 'glas') continue;
+          const mat = mesh.material as THREE.MeshStandardMaterial;
+          rueckbau.push({ mat, color: mat.color.getHex(), roughness: mat.roughness, metalness: mat.metalness });
+          const spec = materialPalette[materialKey] ?? materialPalette['default']!;
+          const ziel =
+            zielModus === 'weiss'
+              ? { color: 0xffffff, roughness: 0.9, metalness: 0 }
+              : zielModus === 'schwarz'
+                ? { color: 0x1c1c1c, roughness: 0.95, metalness: 0 }
+                : { color: spec.color, roughness: spec.roughness, metalness: spec.metalness ?? 0 };
+          mat.color.setHex(ziel.color);
+          mat.roughness = ziel.roughness;
+          mat.metalness = ziel.metalness;
+        }
+        renderer.render(scene, camera);
+        return renderer.domElement.toDataURL('image/png');
+      } finally {
+        for (const b of rueckbau) {
+          b.mat.color.setHex(b.color);
+          b.mat.roughness = b.roughness;
+          b.mat.metalness = b.metalness;
+        }
+        // Sofort zurückrendern (direkter Aufruf, NICHT renderFrame(): das
+        // Render-Gate könnte den Frame bei aktivem On-Demand-Rendering
+        // verschlucken) — das Canvas zeigt danach wieder den Arbeitsmodus,
+        // bevor die Funktion zurückkehrt.
+        renderer.render(scene, camera);
+      }
     };
 
     // Deterministischer Test-Hook (Playwright): RAF stoppen, Einzelframe rendern
@@ -1753,7 +1833,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // oben (EIN frischer Frame mit der jetzigen Kamera, direkt danach
       // synchron `toDataURL`, kein dauerhaftes `preserveDrawingBuffer`).
       // `null`, solange kein Frame gerendert werden kann (z.B. nach Unmount).
-      captureFrame: (): string | null => captureRef.current?.() ?? null,
+      // v0.7.3 D5: `opts` optional durchgereicht — bestehende Aufrufer ohne
+      // Argument (e2e/eingabe-3d.spec.ts) bleiben unverändert kompatibel.
+      captureFrame: (opts?: { offiziell?: boolean; zweck?: 'situation' | 'volumennachweis' }): string | null =>
+        captureRef.current?.(opts) ?? null,
       renderOnce: () => {
         testMode = true;
         cancelAnimationFrame(raf);
