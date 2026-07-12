@@ -51,3 +51,36 @@ verifiziert:** der Workflow hat um 23:34 UTC nach `gh-pages` deployt, und
 aus:** diese Session hatte keinen GitHub-API-Zugriff (Connector nicht
 autorisiert) — Verifikation wird mit dem 0.7.3-Finale oder per Owner-Blick
 auf die Actions-Seite nachgereicht.
+
+## Stand 12.07.2026 (Release v0.7.3 «Kosmodesign»)
+
+Build-Requests (Desktop + Pages + iOS) auf **`8a13d89`** (Branch
+`claude/kosmo-orbit-v1-build-pzxkbj`) mit frischem Zeitstempel `2026-07-12T05:18:38Z`
+angestossen. Diese Session **hatte** GitHub-Zugriff (MCP-Tools) — der 0.7.2-Nachtrag
+ist damit eingelöst:
+
+- **Desktop-`desktop-latest`-Asset-Zählung nachgereicht:** die stabile
+  Release-Marke `desktop-latest` trägt aktuell **genau 18 Assets** — 3 Editionen
+  (standard/remote/cloud) × 6 Dateien je Edition (Linux `AppImage`+`deb`+`rpm`,
+  macOS `dmg`, Windows `setup.exe`+`msi`). **Soll 18 = Ist 18 ✓.** Stand der
+  hochgeladenen Assets: 0.7.2-Build (11.07. 23:43–23:45 UTC); der 0.7.3-Desktop-Lauf
+  ersetzt sie beim Grün-Werden (stabile Dateinamen, nicht versioniert).
+- **CI-Läufe auf `8a13d89` angestossen und laufen** (Stand ~05:19 UTC, alle 4
+  frisch getriggert durch den Build-Request-Push):
+  - KosmoOrbit Desktop-Builds — `in_progress` (Run 29180988347)
+  - KosmoOrbit Web (GitHub Pages) — `in_progress` (Run 29180988379)
+  - KosmoOrbit iOS-Experiment — `in_progress` (Run 29180988355)
+  - KosmoOrbit CI — `pending` (Run 29180988351)
+- **Pages-Verifikation:** der **neue** Pages-Deploy war zum Berichtszeitpunkt
+  noch nicht durch — die Live-Seite `https://imperigo.github.io/Architektur-Cosmos/`
+  liefert daher noch das **0.7.2**-Bundle (letzter grüner Pages-Deploy `c9aa547`
+  vom 11.07. 23:33). Der lokale 0.7.3-Build ist verifiziert (das ausgelieferte JS,
+  `derive.worker`, trägt `v0.7.3`); sobald der Pages-Lauf 29180988379 grün nach
+  `gh-pages` deployt, liefert die Live-Seite `v0.7.3`. **Ehrlich offen:
+  angestossen, läuft — die finale Live-Bestätigung ist bei Redaktionsschluss
+  noch ausstehend** (Owner-Blick auf die Actions-Seite oder Folge-Poll).
+
+Hinweis zu vorherigen roten CI-Läufen am 12.07. (`d160283`, `dda67e3`): das waren
+Zwischenstände einzelner Bau-Wellen; die letzten regulären CI-Läufe vor dem Finale
+(`97c755b`, `d9aef4f`) waren grün, und die Finale-Gates sind lokal vollständig grün
+nachgefahren (Kernel 752 · App 847 · svg-qa 28/0 · secret-scan · ai-scan-delta).
