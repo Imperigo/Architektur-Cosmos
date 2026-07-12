@@ -369,9 +369,11 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
   }
 
   // Reine Ansicht (kein Schnittkanal): die Fassade ist GESEHENE Kante —
-  // sekundärer Stift + «gesehen»-Grau. Im Schnitt sind die Kanten hinter der
-  // Ebene der feine Projektions-Kanal («projiziert»-Grau). Stilblatt-Achse 2.
-  const projStift = (g.cuts.length === 0 ? STIFT.sekundaer : STIFT.fein) * scale;
+  // Sichtkanten-Stift 0.25 (Matrix D1, Kritik-1-Auflage A1: der alte 0.35er-
+  // Bestand stammte aus der Zeit vor der Grau-Achse, als die Fassade #111
+  // war) + «gesehen»-Grau. Im Schnitt sind die Kanten hinter der Ebene der
+  // feine Projektions-Kanal («projiziert»-Grau). Stilblatt-Achse 1+2.
+  const projStift = (g.cuts.length === 0 ? STIFT.kante : STIFT.fein) * scale;
   for (const l of g.projections) {
     parts.push(
       `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${g.cuts.length === 0 ? GRAU.gesehen : GRAU.projiziert}" stroke-width="${projStift}"/>`,
@@ -477,8 +479,9 @@ export function koteLabel(z: number): string {
 
 export function axoInnerSvg(doc: KosmoDoc, spec: AxoSpec, scale: number): InnerSvg {
   const g = deriveAxo(doc, spec);
-  // Axo-Kanten sind GESEHENE Kanten (Stilblatt-Achse 2, wie die reine Ansicht)
-  const stift = STIFT.sekundaer * scale;
+  // Axo-Kanten sind GESEHENE Kanten (Stilblatt-Achsen 1+2, wie die reine
+  // Ansicht): Sichtkanten-Stift 0.25 (Kritik-1-Auflage A1).
+  const stift = STIFT.kante * scale;
   const parts = g.lines.map(
     (l) =>
       `<line x1="${l.a.u}" y1="${-l.a.v}" x2="${l.b.u}" y2="${-l.b.v}" stroke="${GRAU.gesehen}" stroke-width="${stift}"/>`,

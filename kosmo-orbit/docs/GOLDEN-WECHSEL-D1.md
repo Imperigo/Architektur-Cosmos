@@ -164,3 +164,33 @@ Zwei Unit-Tests prüften die alten Literale und wurden bewusst mitgezogen
 Bestand `abnahmeprotokoll.svg`, im Tool-Kopf dokumentiert) ·
 `npm test -w @kosmo/kernel` 728/728 grün · App-Suite 847/847 grün ·
 Typecheck aller Workspaces grün.
+
+## 7 · Nachtrag Kritik-1-Auflage A1 (Sichtkante 0.25) — eigener Golden-Wechsel
+
+Die Kritik-1-Runde (Fable-Verdikt) nahm D1 an, mit **einer bindenden
+Auflage**: die reine Ansicht und die Axonometrie zeichneten ihre
+Fassaden-Sichtkanten weiter mit dem **sekundären 0.35er-Stift**
+(`STIFT.sekundaer`), obwohl die Matrix (§D1, Soll 2b) für die **Sichtkante
+ausdrücklich 0.25** nennt. Der 0.35er-Wert war ein Vor-D1-Holdover aus der
+Zeit, als diese Kanten noch #111 (geschnitten-Ton) trugen; mit der
+Grau-Achse sind sie «gesehen» → Stift `STIFT.kante` (0.25). Der
+Bestandskommentar «sonst verschwindet die Fassade» bezog sich auf den
+#111-Zustand und ist mit dem #3A3A3A-Mittelton hinfällig.
+
+Änderung: `plansvg.ts` `sectionInnerSvg` (reine Ansicht, `g.cuts.length === 0`)
+und `axoInnerSvg` von `STIFT.sekundaer` auf `STIFT.kante`. Als eigener,
+dokumentierter Golden-Wechsel gefahren (nicht in D1b nachträglich versteckt).
+
+**Betroffene Goldens (5, maschinell verifiziert):** `ansicht-sued-testhaus`,
+`ansicht-sued-satteldach`, `ansicht-fluegeltypen`, `ansicht-curtainwall`,
+`blatt-autofuellung` (deren Axo-Platzierung). Diff je Datei: entfernte und
+hinzugefügte Zeilen sind **modulo `stroke-width` byte-identisch** (Koordinaten
++ Farbe unverändert) — 98 Sichtkanten `4.9`→`3.5` (=0.35·14→0.25·14), 0
+Geometrieänderung, 0 Farbänderung. Die 0.18er-Symbolik/Rahmen (`2.52`) und die
+Leibung (`3.5`, war schon 0.25) bleiben. Damit tragen Fassadenumriss und
+Leibung jetzt denselben Sichtkanten-Stift — matrix-konsistent.
+
+**Gates A1:** svg-qa Exit 0 · Kernel 728/728 · Typecheck grün. Die zwei in §4
+als «Folgewechsel-Kandidaten» offen gelassenen Punkte (Dash-Kadenz-
+Normalisierung, Grundriss-Projektions-Tontrennung) bleiben für 0.7.4 vertagt;
+die Schraffur=#3A3A3A-Deutung (§1/§5) wurde von Kritik-1 bestätigt.
