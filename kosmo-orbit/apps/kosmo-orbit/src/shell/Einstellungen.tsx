@@ -194,14 +194,16 @@ export function Einstellungen({
           <section data-testid="einstellungen-darstellung" className="orbit065-einstellungen-sektion">
             <div className="orbit065-einstellungen-sektionstitel">Darstellung</div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-            {/* v0.7.2 §1 (Owner-Entscheid 11.07.): der frühere Zwei-Werte-
-                Umschalter wird zum 3-Segment-Thema-Wähler — derselbe
-                `data-testid="einstellung-thema"` wandert vom Knopf auf den
-                Segment-CONTAINER (bestehender Vertrag `einstellungen.spec.ts`
-                klickt ihn und erwartet ein geändertes `data-theme`; ein Klick
-                auf den Container trifft real das mittlere Segment «Tinte» —
-                bei jedem Ausgangsthema ungleich dem neuen Ziel, der Test
-                bleibt grün, ohne dass diese fremde Spec angefasst wurde). */}
+            {/* v0.7.3 D7 (Owner-Entscheid, Gestaltungs-Spez): Tinte entfernt —
+                der 3-Segment-Wähler (0.7.2 §1) schrumpft zurück auf 2
+                Segmente PAPIER/KOSMOS. `data-testid="einstellung-thema"`
+                bleibt auf dem Segment-CONTAINER (Vertrag), aber
+                `e2e/einstellungen.spec.ts` klickt seit D7 gezielt ein
+                Segment statt den Container — mit nur zwei Segmenten läge ein
+                Container-Klick (Playwright klickt die Bounding-Box-Mitte)
+                GENAU auf der Grenze zwischen beiden Buttons, ein
+                browserabhängig unklares Ziel statt des früheren, zuverlässig
+                mittleren «Tinte»-Segments. */}
             <span
               data-testid="einstellung-thema"
               role="group"
@@ -216,8 +218,7 @@ export function Einstellungen({
               {(
                 [
                   { key: 'paper' as const, label: 'Papier' },
-                  { key: 'ink' as const, label: 'Tinte' },
-                  { key: 'orbit' as const, label: 'Orbit' },
+                  { key: 'orbit' as const, label: 'Kosmos' },
                 ]
               ).map((seg) => (
                 <button

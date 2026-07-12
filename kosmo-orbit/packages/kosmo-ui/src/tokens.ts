@@ -10,11 +10,13 @@
  * aura.css anfassen, dann hier den exakt gleichen Wert eintragen.
  *
  * Gestaltungshaltung (Owner-Mandat Q17–Q20): elegant, schlicht, für Architekten.
- * Papier-Hell als Primärmodus, Tinte-Dunkel als Zweitmodus. EIN präziser
- * Standard-Akzent (monochrom, Tusche) — wählbare Zweit-Akzente (Kupfer,
- * Signal, Blau, Grün) leben als `data-akzent`-Blöcke in aura.css. Sekundär
- * trägt jedes Modul einen eigenen, zurückhaltenden Farbton, der nur in
- * Zeichen, Badges und aktiven Zuständen erscheint — nie flächig.
+ * v0.7.3 D7 (Owner-Entscheid, Gestaltungs-Spez): Theme-PAAR Papier (hell) und
+ * Kosmos/`orbit` (dunkel) — Tinte (`ink`) wurde ENTFERNT (Migration
+ * `ink→orbit` in `App.tsx`, VOR dem `useState`). Standard-Akzent ist die
+ * Teal-Familie (Papier `#3e96a2`, Kosmos `#57b6c2`) — wählbare Zweit-Akzente
+ * (Kupfer, Signal, Blau, Grün) leben als `data-akzent`-Blöcke in aura.css.
+ * Sekundär trägt jedes Modul einen eigenen, zurückhaltenden Farbton, der nur
+ * in Zeichen, Badges und aktiven Zuständen erscheint — nie flächig.
  */
 
 /** Kupfer/Terracotta — entspricht `[data-akzent='kupfer']` in aura.css. */
@@ -35,24 +37,9 @@ export const paper = {
   inkFaint: '#8f897b',
   line: '#e4e0d6',
   lineStrong: '#c9c4b6',
-  /** Monochromer Standard-Akzent (kein `data-akzent` gesetzt). */
-  accent: '#1a1815',
-  accentInk: '#ffffff',
-} as const;
-
-/** Tinte-Thema (`[data-theme='ink']` in aura.css) — Hexwerte exakt gespiegelt. */
-export const ink = {
-  field: '#0c0b09',
-  surface: '#14130f',
-  raised: '#1b1a15',
-  ink: '#f2efe6',
-  inkSoft: '#a7a296',
-  inkFaint: '#6e6a5f',
-  line: '#2b2921',
-  lineStrong: '#4a4638',
-  /** Monochromer Standard-Akzent (kein `data-akzent` gesetzt). */
-  accent: '#f2efe6',
-  accentInk: '#14120e',
+  /** Standard-Akzent (kein `data-akzent` gesetzt) — Teal dunkel, v0.7.3 D7. */
+  accent: '#3e96a2',
+  accentInk: '#06141a',
 } as const;
 
 /** Semantische Töne — in beiden Themes lesbar (aura.css: paper-Werte, Referenz). */
@@ -134,11 +121,12 @@ export const scale = {
   s7: '32px',
 } as const;
 
-/** Radien — spiegelt `--k-radius-sm/-md/-lg` aus aura.css (Korrektur W0: die
- * alten Werte 6/10/14px waren von aura.css abgedriftet — 2/4/6px ist die
- * Wahrheit). `pill` bleibt als praktischer Zusatzwert (volle Rundung, keine
+/** Radien — spiegelt `--k-radius-sm/-md/-lg` aus aura.css. v0.7.3 D7: die
+ * runden Werte 8/12/16px waren bis 0.7.2 ein reiner `orbit`-Override —
+ * jetzt themenübergreifende Grammatik im `:root`-Block (Papier UND Kosmos).
+ * `pill` bleibt als praktischer Zusatzwert (volle Rundung, keine
  * aura-Variable nötig) bestehen. */
-export const radius = { sm: '2px', md: '4px', lg: '6px', pill: '999px' } as const;
+export const radius = { sm: '8px', md: '12px', lg: '16px', pill: '999px' } as const;
 
 export const motion = {
   /** Zurückhaltend-präzise (Owner Q20): kurz, physikalisch sauber, nie verspielt. */
@@ -158,11 +146,14 @@ export const motion = {
   druckSkala: '0.97',
 } as const;
 
-/** Schatten — aura.css führt je Thema unterschiedliche Werte (Tinte braucht
- * mehr Kontrast als Papier); `raised`/`overlay` (Legacy-Form, unverändert
- * exportiert) zeigen die Papier-Werte, `paper`/`ink` (NEU) beide Varianten
- * exakt. Der einzig erlaubte Schatten in der Oberfläche bleibt `overlay`,
- * ausschliesslich an schwebenden Overlays (Menü, Dialog, Palette). */
+/** Schatten — `raised`/`overlay` (Legacy-Form, unverändert exportiert) zeigen
+ * die Papier-Werte, `paper` (NEU) dieselben nochmal benannt. v0.7.3 D7: der
+ * `ink`-Zweig (dunklerer Schatten fürs entfernte Tinte-Thema) ist mit dem
+ * Theme weggefallen — `orbit` bekommt in aura.css weiterhin KEINEN eigenen
+ * `--k-shadow-*`-Override (unverändert seit 0.7.2), darum bleibt hier auch
+ * kein `shadow.orbit`-Zweig nötig. Der einzig erlaubte Schatten in der
+ * Oberfläche bleibt `overlay`, ausschliesslich an schwebenden Overlays
+ * (Menü, Dialog, Palette). */
 export const shadow = {
   raised: '0 1px 0 rgba(26, 24, 21, 0.08)',
   overlay: '0 1px 0 rgba(26, 24, 21, 0.12), 0 12px 40px rgba(26, 24, 21, 0.18)',
@@ -170,18 +161,15 @@ export const shadow = {
     raised: '0 1px 0 rgba(26, 24, 21, 0.08)',
     overlay: '0 1px 0 rgba(26, 24, 21, 0.12), 0 12px 40px rgba(26, 24, 21, 0.18)',
   },
-  ink: {
-    raised: '0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.45)',
-    overlay: '0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(0, 0, 0, 0.6)',
-  },
 } as const;
 
 /**
- * Orbit-Thema (`[data-theme='orbit']` in aura.css, v0.7.2 §1) — der neue
- * Standard (Owner-Entscheid 11.07.). Hexwerte exakt gespiegelt; NICHT vom
- * `token-spiegel.test.ts`-Wächter geprüft (der bleibt auf paper/ink+:root
- * beschränkt, siehe dort), hier trotzdem als vollständiger TS-Spiegel für
- * Code, das orbit-Farben ausserhalb von CSS-Variablen braucht.
+ * Orbit-Thema (`[data-theme='orbit']` in aura.css, v0.7.2 §1) — seit v0.7.3
+ * D7 die «Kosmos»-Hälfte des Theme-Paars (Tinte entfernt). Hexwerte exakt
+ * gespiegelt; NICHT vom `token-spiegel.test.ts`-Wächter geprüft (der bleibt
+ * auf paper+:root beschränkt, siehe dort), hier trotzdem als vollständiger
+ * TS-Spiegel für Code, das orbit-Farben ausserhalb von CSS-Variablen
+ * braucht.
  */
 export const orbit = {
   field: '#0b0d12',
@@ -204,7 +192,12 @@ export const signal = {
   tinte: '#06141a',
 } as const;
 
-/** Rollenfarben (spiegelt `--k-rolle-*`, Spec §1/§3) — WER handelt. */
+/** Rollenfarben (spiegelt das themeninvariante `--k-rolle-*` im `:root`-Block,
+ * Spec §1/§3) — WER handelt. Das sind die Kosmos-/`orbit`-Originalwerte
+ * (Spec D7: «Rollenfarben Original»); Papier überschreibt sie in aura.css
+ * eine Stufe dunkler (`[data-theme='paper']`, unter dem `:root`-Block) —
+ * dieser TS-Spiegel bleibt bewusst bei den ungedimmten Originalwerten, wie
+ * `orbit` oben auch keinen eigenen TS-Zweig für Radien/Fonts bekommt. */
 export const rolle = {
   manuell: '#74c2a0',
   pn: '#6f9bcf',
@@ -216,4 +209,8 @@ export const rolle = {
   office: '#8a7b5a',
 } as const;
 
-export type ThemeName = 'paper' | 'ink' | 'orbit';
+/** v0.7.3 D7 (Owner-Entscheid): Tinte (`ink`) entfernt — nur noch das
+ * Theme-Paar Papier/Kosmos. Migration bestehender `localStorage`-Werte
+ * `ink` → `orbit` lebt in `App.tsx` (VOR dem `useState`, das diesen Typ
+ * liest) und im Companion-Thema-Leser (`shell/Companion.tsx`). */
+export type ThemeName = 'paper' | 'orbit';

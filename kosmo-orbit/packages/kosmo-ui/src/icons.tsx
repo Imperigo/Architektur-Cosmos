@@ -194,7 +194,14 @@ export function KIcon({ name, size = 16, title, ...rest }: KIconProps) {
       height={size}
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.5}
+      /* v0.7.3 D7: 1.5 → 1.75 — dieselbe Strichstärke wie die 0.7.2-
+         Werkzeug-Glyphen (`werkzeug-glyphen.tsx`, sw 1.75), damit Utility-
+         und Werkzeug-Zeichen gleich kräftig wirken. KEIN Zwangs-Rollenpunkt
+         hier: KIcon ist die generische Utility-Registry (Schliessen,
+         Zahnrad, Chevron, …) — ohne Bezug zu «WER handelt» (Mensch/Agent/…,
+         Spec §1/§3); der Rollenpunkt bleibt den 0.7.2-Werkzeug-Glyphen
+         vorbehalten, die genau dafür gebaut wurden. */
+      strokeWidth={1.75}
       strokeLinecap="round"
       strokeLinejoin="round"
       {...(title !== undefined ? { role: 'img' } : { 'aria-hidden': true })}

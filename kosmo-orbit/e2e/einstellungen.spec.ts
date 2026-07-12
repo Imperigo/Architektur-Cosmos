@@ -34,7 +34,15 @@ test('Einstellungen: Thema-Wechsel wirkt sofort (data-theme am Wurzelelement)', 
   await bootstrap(page);
   const vorher = await page.evaluate(() => document.documentElement.dataset.theme);
   await page.click('[data-testid="einstellungen-oeffnen"]');
-  await page.click('[data-testid="einstellung-thema"]');
+  // v0.7.3 D7 (Owner-Entscheid: Tinte entfernt): der frühere Container-Klick-
+  // Trick traf zuverlässig das mittlere von drei Segmenten («Tinte») — bei
+  // jedem Ausgangsthema garantiert ein ANDERES Ziel. Mit nur noch zwei
+  // Segmenten (Papier/Kosmos) läge ein Klick auf die Bounding-Box-Mitte des
+  // Containers GENAU auf der Grenze zwischen beiden Buttons (unklares Ziel).
+  // Wir klicken darum bewusst das Segment, das NICHT dem aktuellen Thema
+  // entspricht — bleibt robust, egal welches Thema Ausgangspunkt ist.
+  const ziel = vorher === 'orbit' ? 'einstellung-thema-paper' : 'einstellung-thema-orbit';
+  await page.click(`[data-testid="${ziel}"]`);
   await expect
     .poll(() => page.evaluate(() => document.documentElement.dataset.theme))
     .not.toBe(vorher);

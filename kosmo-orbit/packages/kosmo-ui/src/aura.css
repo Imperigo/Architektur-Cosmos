@@ -1,7 +1,9 @@
 /* KosmoOrbit Aura «Werkplan» — Theme-Variablen und Grundstimmung.
-   Papier (hell, primär: Skizzenpapier + Tusche) und Tinte (dunkel).
-   Owner-Referenz 02.07.: Werkplan-Poster — Standard monochrom,
-   Farbakzent wählbar (data-akzent). Konzept: docs/GESTALTUNGSKONZEPT.md */
+   v0.7.3 D7 (Owner-Entscheid, Gestaltungs-Spez): Theme-PAAR Papier (hell)
+   und Kosmos (dunkel, `[data-theme='orbit']`) — Tinte (`ink`) wurde
+   ENTFERNT, alle `[data-theme='ink']`-Blöcke sind aus dieser Datei
+   verschwunden (Migration `ink→orbit`: `App.tsx`). Farbakzent weiterhin
+   wählbar (data-akzent). Konzept: docs/GESTALTUNGSKONZEPT.md */
 
 :root,
 [data-theme='paper'] {
@@ -14,10 +16,16 @@
   --k-line: #e4e0d6;
   --k-line-strong: #c9c4b6;
   --k-technik: #1a1815;
-  --k-accent: #1a1815;
-  --k-accent-hover: #3a362c;
-  --k-accent-ink: #ffffff;
-  --k-accent-wash: rgba(26, 24, 21, 0.08);
+  /* v0.7.3 D7: Standard-Akzent wechselt von monochromer Tusche auf die
+     dunkle Teal-Familie `#3E96A2` (Kosmos nutzt die hellere `#57b6c2` aus
+     derselben Familie — siehe `[data-theme='orbit']` unten) — dunkler, weil
+     der helle Papier-Grund mehr Kontrast braucht als das dunkle Kosmos-Feld.
+     `--k-accent-ink` bleibt dunkel (wie Kosmos' `--k-signal-tinte`), Weiss
+     hätte auf #3e96a2 nur ~3.4:1 Kontrast, Dunkel ~5.4:1. */
+  --k-accent: #3e96a2;
+  --k-accent-hover: #5ba6b0;
+  --k-accent-ink: #06141a;
+  --k-accent-wash: rgba(62, 150, 162, 0.12);
   --k-success: #4e6d49;
   --k-warning: #a37b22;
   --k-danger: #a33d31;
@@ -49,88 +57,34 @@
   --k-t-plakat: 20px;
 }
 
-[data-theme='ink'] {
-  --k-field: #0c0b09;
-  --k-surface: #14130f;
-  --k-raised: #1b1a15;
-  --k-ink: #f2efe6;
-  --k-ink-soft: #a7a296;
-  /* v0.6.5 Kritik-Runde 1: #6e6a5f lag auf dem fast-schwarzen Grund bei ~3:1
-     und fiel mit der k-selten-Dimmung unter 2:1 (EBENEN-Trigger, Karten-
-     Metazeilen, Portlabels unlesbar). #918c80 haelt ~5:1 nackt und bleibt
-     nach der 0.6-Dimmung ueber 3:1 — faint heisst zurueckgenommen, nicht weg. */
-  --k-ink-faint: #918c80;
-  --k-line: #2b2921;
-  --k-line-strong: #4a4638;
-  --k-technik: #f2efe6;
-  --k-accent: #f2efe6;
-  --k-accent-hover: #ffffff;
-  --k-accent-ink: #14120e;
-  --k-accent-wash: rgba(242, 239, 230, 0.1);
-  --k-success: #7fa079;
-  --k-warning: #d4ab52;
-  --k-danger: #cc5f52;
-  --k-info: #7590a8;
-  --k-shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.45);
-  --k-shadow-overlay: 0 2px 6px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(0, 0, 0, 0.6);
-  --k-viewport-sky: #101012;
-  --k-plan-paper: #16150f;
-  color-scheme: dark;
-}
-
-/* Wählbare Farbakzente (Standard = «tusche», monochrom — kein Attribut nötig).
-   Der Akzent färbt nur Primäraktionen/aktive Zustände, nie Flächen. */
-[data-akzent='kupfer'][data-theme='paper'],
-[data-akzent='kupfer']:not([data-theme='ink']) {
+/* Wählbare Farbakzente (Standard = die neue Teal-Familie im Paper-Block/
+   Kosmos' `#57b6c2`, kein Attribut nötig). Der Akzent färbt nur
+   Primäraktionen/aktive Zustände, nie Flächen. v0.7.3 D7: die Tinte-Variante
+   je Akzent ist mit dem Theme weggefallen — EINE Werte-Reihe pro Akzent für
+   Papier UND Kosmos (Selektor dadurch ohne `:not([data-theme='ink'])'). */
+[data-akzent='kupfer'] {
   --k-accent: #a84b2b;
   --k-accent-hover: #c25e3a;
   --k-accent-ink: #ffffff;
   --k-accent-wash: rgba(194, 94, 58, 0.1);
 }
-[data-akzent='kupfer'][data-theme='ink'] {
-  --k-accent: #d9743f;
-  --k-accent-hover: #e8854e;
-  --k-accent-ink: #14100c;
-  --k-accent-wash: rgba(217, 116, 63, 0.14);
-}
-[data-akzent='signal'][data-theme='paper'],
-[data-akzent='signal']:not([data-theme='ink']) {
+[data-akzent='signal'] {
   --k-accent: #c8501e;
   --k-accent-hover: #dd6229;
   --k-accent-ink: #ffffff;
   --k-accent-wash: rgba(200, 80, 30, 0.1);
 }
-[data-akzent='signal'][data-theme='ink'] {
-  --k-accent: #e06a30;
-  --k-accent-hover: #ef7c41;
-  --k-accent-ink: #14100c;
-  --k-accent-wash: rgba(224, 106, 48, 0.14);
-}
-[data-akzent='blau'][data-theme='paper'],
-[data-akzent='blau']:not([data-theme='ink']) {
+[data-akzent='blau'] {
   --k-accent: #2455a4;
   --k-accent-hover: #2f66bd;
   --k-accent-ink: #ffffff;
   --k-accent-wash: rgba(36, 85, 164, 0.1);
 }
-[data-akzent='blau'][data-theme='ink'] {
-  --k-accent: #6c96d6;
-  --k-accent-hover: #82a8e2;
-  --k-accent-ink: #10131a;
-  --k-accent-wash: rgba(108, 150, 214, 0.14);
-}
-[data-akzent='gruen'][data-theme='paper'],
-[data-akzent='gruen']:not([data-theme='ink']) {
+[data-akzent='gruen'] {
   --k-accent: #1e6b47;
   --k-accent-hover: #27815a;
   --k-accent-ink: #ffffff;
   --k-accent-wash: rgba(30, 107, 71, 0.1);
-}
-[data-akzent='gruen'][data-theme='ink'] {
-  --k-accent: #6fb593;
-  --k-accent-hover: #83c4a4;
-  --k-accent-ink: #0e1512;
-  --k-accent-wash: rgba(111, 181, 147, 0.14);
 }
 
 /* Modul-Farbtöne (Zeichen, Badges, Aktiv-Ringe — nie flächig) */
@@ -143,15 +97,23 @@
   --k-mod-publish: #6f8b6a;
   --k-mod-prepare: #7d5e78;
   --k-mod-kosmo: #b06a8c;
-  --k-font-ui: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  /* v0.7.3 D7: Lato (UI) / PT Sans Narrow (Titel) waren bis 0.7.2 ein
+     orbit-Override — jetzt Grammatik THEMENÜBERGREIFEND (`:root`), der
+     bisherige Stack bleibt als Fallback-Kette dahinter stehen. Fonts:
+     `apps/kosmo-orbit/src/fonts.css` (self-hosted, Import NACH dieser
+     Datei). */
+  --k-font-ui: 'Lato', 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     sans-serif;
   --k-font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
   /* Plakat-Titel: enge, schwere Grotesk (Systembestand, offline-fähig) */
-  --k-font-titel: 'Archivo Narrow', 'Roboto Condensed', 'Arial Narrow', 'Helvetica Neue',
-    var(--k-font-ui);
-  --k-radius-sm: 2px;
-  --k-radius-md: 4px;
-  --k-radius-lg: 6px;
+  --k-font-titel: 'PT Sans Narrow', 'Archivo Narrow', 'Roboto Condensed', 'Arial Narrow',
+    'Helvetica Neue', var(--k-font-ui);
+  /* v0.7.3 D7: die runden Radien (bis 0.7.2 nur `[data-theme='orbit']`)
+     wandern themenübergreifend in dieselbe Grammatik — kein Override mehr
+     unten im orbit-Block nötig. */
+  --k-radius-sm: 8px;
+  --k-radius-md: 12px;
+  --k-radius-lg: 16px;
   --k-motion-fast: 120ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-base: 200ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-settle: 320ms cubic-bezier(0.22, 0.9, 0.28, 1);
@@ -169,9 +131,9 @@
   --k-druck-dauer: 80ms;
   --k-druck-skala: 0.97;
 
-  /* v0.7.2 «Visuelles Update» §1 — additiv, ALLE Themes (paper/ink bleiben
-     byte-identisch: kein bestehender Wert oben in dieser Regel wurde
-     verändert, es kommen nur neue Variablen hinzu). */
+  /* v0.7.2 «Visuelles Update» §1 — additiv, ALLE Themes (kein bestehender
+     Wert oben in dieser Regel wurde verändert, es kommen nur neue Variablen
+     hinzu). */
   --k-radius-pill: 999px;
   /* Signal — die Markenfarbe, themeninvariant (nicht mit --k-accent
      verwechseln: --k-accent ist wählbar/theme-abhängig, --k-signal ist die
@@ -207,16 +169,29 @@
   }
 }
 
-[data-theme='ink'] {
-  --k-mod-draw: #8d887d;
+/* v0.7.3 D7: Rollenfarben (oben, `:root`) bleiben für Kosmos (`orbit`) das
+   ORIGINAL — diese Überschreibung gilt NUR für Papier, eine Stufe dunkler
+   (gegen den hellen Grund `#f5f3ee`/`#fbfaf6` lesbar); muss NACH dem
+   `:root`-Block stehen (gleiche Selektor-Spezifität, letzte Regel gewinnt). */
+[data-theme='paper'] {
+  --k-rolle-manuell: #5a977d;
+  --k-rolle-pn: #5779a1;
+  --k-rolle-pna: #96658c;
+  --k-rolle-agent: #9e8953;
+  --k-rolle-memory: #a17350;
+  --k-rolle-generator: #a05c57;
+  --k-rolle-ak: #896c56;
+  --k-rolle-office: #6c6046;
 }
 
 /* v0.7.2 «Visuelles Update» §1 — drittes Thema `orbit` (Owner-Entscheid
-   11.07.: neuer Standard). Überschreibt NUR bestehende Variablen (exakt die
-   Spec-§1-Tabelle) — 'paper' und 'ink' oben bleiben byte-identisch, nichts
-   davon wurde angefasst. Fonts: siehe `apps/kosmo-orbit/src/fonts.css`
-   (self-hosted, Import NACH dieser Datei) — der bisherige Stack bleibt als
-   Fallback stehen, falls ein Font nicht lädt. */
+   11.07.: neuer Standard, seit D7 der Kosmos-Namensteil des Theme-Paars).
+   Überschreibt NUR bestehende Variablen — Radien/Fonts sind seit v0.7.3 D7
+   themenübergreifende Grammatik (`:root` oben) und darum HIER NICHT MEHR
+   nötig; `--k-plan-paper` bleibt bewusst UNGESETZT (Invarianzregel D7 8c:
+   das Planblatt fällt auf denselben `:root`/Papier-Wert `#fdfcf9` zurück,
+   identisch in beiden Themes — nur `--k-viewport-sky`, der 3D-Raum
+   HINTER dem Planblatt, bleibt themenabhängig dunkel). */
 [data-theme='orbit'] {
   --k-field: #0b0d12;
   --k-surface: #14171f;
@@ -233,16 +208,6 @@
   --k-accent-wash: rgba(87, 182, 194, 0.12);
   --k-danger: #cd7670;
   --k-success: #74c2a0;
-  /* Radien-Override (Spec §1): paper/ink behalten 2/4/6 (siehe :root oben) —
-     NUR im orbit-Thema gelten die runden 8/12/16. */
-  --k-radius-sm: 8px;
-  --k-radius-md: 12px;
-  --k-radius-lg: 16px;
-  --k-font-ui: 'Lato', 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --k-font-titel: 'PT Sans Narrow', 'Archivo Narrow', 'Roboto Condensed', 'Arial Narrow', 'Helvetica Neue',
-    var(--k-font-ui);
-  /* Plan-Welt bleibt: dieselben dunklen Werte wie im Tinte-Thema. */
-  --k-plan-paper: #16150f;
   --k-viewport-sky: #101012;
   color-scheme: dark;
 }
@@ -287,10 +252,16 @@ body {
   color: var(--k-ink);
 }
 
-/* Skizzenpapier-Korn (Referenz: Werkplan-Poster) — nur im hellen Thema,
-   als feines feTurbulence-Rauschen über dem Grund. */
+/* Skizzenpapier-Korn (Referenz: Werkplan-Poster), feines feTurbulence-
+   Rauschen über dem Grund. v0.7.3 D7: der `:not([data-theme='ink'])`-Teil
+   ist mit dem Tinte-Thema tot — vereinfacht zu `:root` (unverändertes
+   Verhalten: die erste Teilregel `[data-theme='paper']` war ohnehin nur ein
+   redundanter Spezialfall von `:root`, das Korn lief schon vor D7
+   themenübergreifend mit, nicht nur im hellen Thema; eine Einschränkung
+   NUR auf Papier wäre ein Verhaltens-, kein Selektor-Wechsel — ausserhalb
+   dieses Auftrags). */
 [data-theme='paper'] body::before,
-:root:not([data-theme='ink']) body::before {
+:root body::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -435,18 +406,12 @@ progress {
 .k-druck:hover {
   filter: brightness(1.04);
 }
-[data-theme='ink'] .k-druck:hover {
-  filter: brightness(1.12);
-}
 .k-druck:active {
   transform: scale(var(--k-druck-skala));
   filter: brightness(0.96);
   transition:
     transform var(--k-druck-dauer),
     filter var(--k-druck-dauer);
-}
-[data-theme='ink'] .k-druck:active {
-  filter: brightness(1.08);
 }
 @media (prefers-reduced-motion: reduce) {
   .k-druck:active {
@@ -992,39 +957,24 @@ progress {
   background-size: 10px 6px;
   padding-right: var(--k-s6);
   cursor: pointer;
-  /* Standard = monochromer Tusche-Akzent (kein data-akzent gesetzt), paper. */
+  /* Standard = monochromer Tusche-Pfeil (kein data-akzent gesetzt) — gilt
+     für Papier UND Kosmos (Chevron war nie ans orbit-Feld angepasst, das
+     ändert D7 nicht — s. Bericht «offene Punkte»). */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%231a1815' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
-[data-theme='ink'] .k-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23f2efe6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-[data-akzent='kupfer']:not([data-theme='ink']) .k-select,
-[data-akzent='kupfer'][data-theme='paper'] .k-select {
+/* v0.7.3 D7: je Akzent nur noch EINE Chevron-Variante (Tinte-Variante
+   entfällt mit dem Theme, `:not([data-theme='ink'])` vereinfacht weg). */
+[data-akzent='kupfer'] .k-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23a84b2b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
-[data-akzent='kupfer'][data-theme='ink'] .k-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23d9743f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-[data-akzent='signal']:not([data-theme='ink']) .k-select,
-[data-akzent='signal'][data-theme='paper'] .k-select {
+[data-akzent='signal'] .k-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23c8501e' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
-[data-akzent='signal'][data-theme='ink'] .k-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%23e06a30' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-[data-akzent='blau']:not([data-theme='ink']) .k-select,
-[data-akzent='blau'][data-theme='paper'] .k-select {
+[data-akzent='blau'] .k-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%232455a4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
-[data-akzent='blau'][data-theme='ink'] .k-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%236c96d6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-[data-akzent='gruen']:not([data-theme='ink']) .k-select,
-[data-akzent='gruen'][data-theme='paper'] .k-select {
+[data-akzent='gruen'] .k-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%231e6b47' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
-[data-akzent='gruen'][data-theme='ink'] .k-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1L5 5L9 1' fill='none' stroke='%236fb593' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 .k-select:disabled {
   opacity: 0.5;

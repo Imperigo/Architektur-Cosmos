@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ink, motion, paper, radius, scale, type } from '../src/tokens';
+import { motion, paper, radius, scale, type } from '../src/tokens';
 
 /**
  * Token-Spiegel-Wächter (W0, UI-KONZEPT-065 §2): `aura.css` ist die einzige
@@ -46,11 +46,14 @@ function lies(blockCss: string, varName: string, blockLabel: string): string {
   return wert.trim();
 }
 
-// Die drei Theme-relevanten Blöcke — needle enthält die abschliessende
-// Klammer, damit z.B. "[data-theme='ink'] .k-select { ... }" NICHT trifft.
+// Die Theme-relevanten Blöcke — needle enthält die abschliessende Klammer,
+// damit z.B. "[data-theme='paper'] .k-select { ... }" NICHT trifft.
+// v0.7.3 D7 (Owner-Entscheid): Tinte (`ink`) wurde entfernt — der frühere
+// `inkBlock`/`ink`-Vergleich ist mit dem Theme weggefallen, NUR noch Papier
+// (+ der theme-unabhängige `:root`-Block) werden hier bewacht. `orbit` bleibt
+// bewusst unbewacht (siehe `tokens.ts`-Kommentar bei `export const orbit`).
 const paperBlock = block(auraCss, "[data-theme='paper']");
-const inkBlock = block(auraCss, "[data-theme='ink'] {");
-const rootBlock = block(auraCss, ':root {'); // der spätere, theme-unabhängige :root-Block (Radien/Motion)
+const rootBlock = block(auraCss, ':root {'); // der spätere, theme-unabhängige :root-Block (Radien/Fonts/Motion)
 
 describe('token-spiegel (W0): aura.css ist die Wahrheit, tokens.ts folgt exakt', () => {
   it('Radien (--k-radius-sm/-md/-lg) stimmen mit tokens.radius überein', () => {
@@ -59,13 +62,10 @@ describe('token-spiegel (W0): aura.css ist die Wahrheit, tokens.ts folgt exakt',
     expect(radius.lg, 'radius.lg vs. --k-radius-lg').toBe(lies(rootBlock, '--k-radius-lg', ':root'));
   });
 
-  it('die drei Papier-Grundtöne (field/surface/raised) stimmen für BEIDE Themes', () => {
+  it('die drei Papier-Grundtöne (field/surface/raised) stimmen mit tokens.paper überein', () => {
     expect(paper.field, 'paper.field vs. --k-field (paper)').toBe(lies(paperBlock, '--k-field', "paper"));
     expect(paper.surface, 'paper.surface vs. --k-surface (paper)').toBe(lies(paperBlock, '--k-surface', "paper"));
     expect(paper.raised, 'paper.raised vs. --k-raised (paper)').toBe(lies(paperBlock, '--k-raised', "paper"));
-    expect(ink.field, 'ink.field vs. --k-field (ink)').toBe(lies(inkBlock, '--k-field', 'ink'));
-    expect(ink.surface, 'ink.surface vs. --k-surface (ink)').toBe(lies(inkBlock, '--k-surface', 'ink'));
-    expect(ink.raised, 'ink.raised vs. --k-raised (ink)').toBe(lies(inkBlock, '--k-raised', 'ink'));
   });
 
   it('Spacing-Skala (--k-s1…--k-s7) stimmt mit tokens.scale überein', () => {

@@ -134,6 +134,18 @@ export function App() {
     document.getElementById('splash')?.remove();
   }, []);
 
+  // v0.7.3 D7 (Owner-Entscheid, Gestaltungs-Spez): Tinte («ink») wurde
+  // ENTFERNT — `ThemeName` kennt den Wert seit D7 nicht mehr. Eine bei
+  // bestehenden Nutzer:innen gespeicherte Wahl 'ink' muss migriert werden,
+  // BEVOR der `useState`-Initializer direkt darunter sie liest (sonst würde
+  // er sie klaglos als `ThemeName` durchwinken, obwohl keine
+  // `[data-theme='ink']`-Regel mehr existiert — das Ergebnis wären
+  // unstyled/Default-`:root`-Werte statt eines bewussten Themes). Migration
+  // schreibt sofort zurück, damit auch Companion.tsx (liest denselben Key,
+  // schreibt selbst nie) ab jetzt 'orbit' sieht.
+  if (localStorage.getItem('kosmo.thema') === 'ink') {
+    localStorage.setItem('kosmo.thema', 'orbit');
+  }
   // v0.7.2 §1 (Owner-Entscheid 11.07.): orbit ist der neue Standard für
   // Erst-Starts — eine bereits gespeicherte Wahl bestehender Nutzer:innen
   // (`kosmo.thema` in localStorage) bleibt unangetastet respektiert, nur der
@@ -365,9 +377,11 @@ export function App() {
       { id: 'nav-home', titel: 'Zentrale', gruppe: 'Module', run: () => gehZu('home') },
       {
         id: 'theme',
-        titel: 'Thema wechseln (Papier/Tinte)',
+        titel: 'Thema wechseln (Papier/Kosmos)',
         gruppe: 'Ansicht',
-        run: () => setTheme((t) => (t === 'paper' ? 'ink' : 'paper')),
+        // v0.7.3 D7: Tinte entfernt — der Umschalter kennt nur noch die
+        // beiden verbleibenden Themes.
+        run: () => setTheme((t) => (t === 'paper' ? 'orbit' : 'paper')),
       },
       ...AKZENTE.map((a) => ({
         id: `akzent-${a.key}`,
@@ -958,6 +972,7 @@ export function App() {
         />
       )}
       <CursorEbene />
+      {/* v073: boden-dock */}
     </div>
   );
 }

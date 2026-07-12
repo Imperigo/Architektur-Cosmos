@@ -240,9 +240,17 @@ export function Companion() {
 
   // Thema (Spec §1): dieselbe gespeicherte Wahl wie die Voll-App respektieren
   // (Default 'orbit') — Companion SCHREIBT die Wahl nicht (reine Ansicht),
-  // sie liest nur, was App.tsx zuletzt gespeichert hat.
+  // sie liest nur, was App.tsx zuletzt gespeichert hat. v0.7.3 D7: Tinte
+  // («ink») wurde entfernt — falls Companion (eigener Einstiegspunkt,
+  // `main.tsx`-Weiche) als ALLERERSTES in einer Session mountet, bevor
+  // App.tsx je die Migration ink→orbit ausführen konnte, fängt dieselbe
+  // Migration hier defensiv denselben Altwert ab (nur lesend für sich
+  // selbst — kein Widerspruch zu «Companion schreibt die Wahl nicht»,
+  // dieser Fallback verändert `localStorage` nicht, nur den lokal
+  // angewandten Wert).
   useLayoutEffect(() => {
-    document.documentElement.dataset.theme = localStorage.getItem('kosmo.thema') ?? 'orbit';
+    const gespeichert = localStorage.getItem('kosmo.thema');
+    document.documentElement.dataset.theme = gespeichert === 'ink' ? 'orbit' : (gespeichert ?? 'orbit');
   }, []);
 
   const revision = useProject((s) => s.revision);
