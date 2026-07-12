@@ -265,6 +265,32 @@ export interface BemassungsStil {
   rohKette?: boolean;
 }
 
+/** Projekt-Stammdaten (v0.7.5 A2, Welle 2) — die «langweiligen», aber auf
+ * jedem Plankopf/Baueingabeformular verlangten Fakten: Bauherrschaft,
+ * Adresse, Parzellennummer, Planverfasser:in, Fristen. Bewusst GETRENNT von
+ * `standort` (WGS84/LV95-Koordinaten für Sonnenstudie/Vermessung, V2-V4) und
+ * von `parzellenFlaeche` (reine Kennzahl für die AZ-Rechnung) — dieselbe
+ * Parzelle kann eine Nummer UND eine Fläche UND einen Standort haben, das
+ * sind drei unabhängige, additive Felder, keins ersetzt ein anderes. Nur
+ * über `design.projektInfoSetzen` gesetzt (Merge, nie Komplettüberschrieb —
+ * s. dortigen Kommentar). EHRLICH: läuft (wie jede DocSettings-Änderung)
+ * über Yjs/Undo/`.kosmo`-Paket, ABER `SyncClient` synct heute nur
+ * `entities` live, keine SettingsPatches — Stammdaten sind persistent
+ * (Vault/IndexedDB, `.kosmo`-Export, Undo), aber NICHT live-kollaborativ
+ * zwischen offenen Sitzungen. Das ist vertagte Folgearbeit an `@kosmo/sync`,
+ * kein Bug dieser Runde. */
+export interface ProjektInfo {
+  bauherr?: string;
+  adresse?: string;
+  parzelleNr?: string;
+  /** Verfasser:in/Planbüro — erscheint zusammen mit dem Bauherrn im Plankopf. */
+  verfasser?: string;
+  /** Fristen/Termine (Baueingabe, Ausschreibung, …) — je Eintrag ein Label +
+   * ISO-Datum. Noch ohne eigenes UI-Feld (A2), additiv für spätere
+   * Termin-Übersichten/Kosmo-Erinnerungen. */
+  fristen?: { label: string; datum: string }[];
+}
+
 export interface DocSettings {
   projectName: string;
   /** Faktor Raumprogramm→anrechenbare Geschossfläche (Owner-Wissen: 1.28 bzw. 1.22 je Büro). */
@@ -355,6 +381,11 @@ export interface DocSettings {
    * `fenster-bogen`-Symbolik aus (Owner-Schalter im Projekt-Menü). Nur über
    * `design.fensterBoegenSetzen` gesetzt. */
   fensterBoegen?: boolean;
+  /** Projekt-Stammdaten (v0.7.5 A2) — s. `ProjektInfo`-Kommentar oben. Fehlend
+   * (oder ein leeres `{}`) = kein Feld gesetzt, Plankopf zeigt keine
+   * Bauherr-/Verfasser-Zeile (Golden-Guard). Nur über
+   * `design.projektInfoSetzen` gesetzt. */
+  projekt?: ProjektInfo;
 }
 
 /** Auflösung von `darstellung3d: 'auto'` (v0.7.0 E3) — pure Funktion, testbar

@@ -85,3 +85,51 @@ getroffen.
   (vorbestehend, `abnahmeprotokoll.svg`).
 - `npm test -w @kosmo/orbit-app`: 64/64 Testdateien, 848/848 Tests grün
   (inkl. neuer `test/beschlag-inspector.test.tsx`).
+
+---
+
+# Anhang A2 (Welle 2) — Neues Golden «Plankopf-Stammdaten» (v0.7.5 A2)
+
+Golden-Regime (Grundsatz 4): **kein Sammelwechsel, kein einziger Bestands-Golden berührt** — dieser
+Anhang dokumentiert ausschliesslich das EINE neue Golden `plankopf-stammdaten.svg`, das die neue
+Plankopf-Zeile aus dem Projekt-Stammdatenmodell (`design.projektInfoSetzen`, additives Feld
+`DocSettings.projekt`) beweist. Beleg der Modellseite: `docs/V075-STAMMDATEN.md`.
+
+## 0 · Warum kein Bestandswechsel nötig ist
+
+Beide Emit-Stellen (`derive/plansvg.ts` `planToSvg`, `derive/sheet.ts` `sheetToSvg`) hängen die neue
+Bauherr-/Verfasser-Zeile ausschliesslich hinter `plankopfStammdatenZeile(doc.settings.projekt)`
+(`derive/stilblatt.ts`) — die Funktion liefert `null`, solange weder `projekt.bauherr` noch
+`projekt.verfasser` gesetzt sind, und beide Renderer pushen dann schlicht keine zusätzliche Zeile.
+Kein bestehendes Fixture (`test/fixtures.ts`) setzt `projekt` — der Guard bleibt für alle 29
+bisherigen Goldens wirkungslos. In `sheet.ts` wächst zusätzlich die Plankopf-Box (`kh`) nur, wenn die
+Zeile erscheint; ohne Daten bleibt `kh = 26` wie bisher.
+
+## 1 · Erwartung (VOR der Regeneration geschrieben)
+
+Fixture `testhausStammdaten()` (`test/fixtures.ts`): 8×6 m Testhaus (vier Wände, keine Öffnungen),
+Projektname umbenannt auf «Wohnhaus Ahornweg» (`design.projektNameSetzen`), Stammdaten gesetzt
+(`design.projektInfoSetzen`): Bauherr «Baugenossenschaft Ahorn», Adresse «Ahornweg 12, 6000 Luzern»,
+Parzellennummer «1847», Verfasser «Baubüro Andrin».
+
+Erwartetes Bild: Plankopf-Titel zeigt versal «WOHNHAUS AHORNWEG» (wie bisher), darunter (neu, in der
+Messbar-Stimme IBM Plex Mono, kleiner als die bestehenden Meta-Zeilen) genau eine Zeile
+`Bauherr: Baugenossenschaft Ahorn · Verfasser: Baubüro Andrin`. Adresse/Parzellennummer erscheinen
+NICHT im Plankopf (nur Bauherr/Verfasser sind Plankopf-Felder, s. `plankopfStammdatenZeile`) — sie
+sind trotzdem gesetzt, um den additiven Merge über mehrere Felder gleichzeitig zu beweisen.
+
+## 2 · Ist-Vergleich nach Regeneration (12.07.2026)
+
+`git status --porcelain -- packages/kosmo-kernel/test/golden/` zeigt genau EINE neue Datei
+(`plankopf-stammdaten.svg`), null geänderte. Erwartung exakt getroffen — die generierte Zeile lautet
+wörtlich `Bauherr: Baugenossenschaft Ahorn · Verfasser: Baubüro Andrin`, wie vorab notiert.
+
+## 3 · Gates
+
+- `npm run typecheck` (alle Workspaces): grün.
+- `npm test -w @kosmo/kernel`: 37/37 Testdateien, 788/788 Tests grün (inkl. 11 neue Assertions in
+  `test/projekt-stammdaten.test.ts`).
+- `npm run svg-qa`: 30 Goldens geprüft, 0 harte Fehler, 1 Text-Overlap-Warnung (vorbestehend,
+  `abnahmeprotokoll.svg`) — das neue Golden selbst ist warnungsfrei.
+- `npm test -w @kosmo/orbit-app`: 65/65 Testdateien, 849/849 Tests grün (inkl. neuer
+  `test/stammdaten-panel.test.tsx`).

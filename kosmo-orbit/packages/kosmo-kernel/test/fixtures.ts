@@ -503,3 +503,40 @@ export function testhausBeschlagS2(): { doc: KosmoDoc; storeyId: string } {
 
   return { doc, storeyId };
 }
+
+/** Projekt-Stammdaten (v0.7.5 Welle 2 A2): einfaches 8×6 m Testhaus, dessen
+ * `DocSettings.projekt` Bauherr UND Verfasser trägt (`design.projektInfoSetzen`)
+ * — für das Golden «plankopf-stammdaten» (beweist die geguardete
+ * Plankopf-Zeile). Adresse/Parzellennummer zusätzlich gesetzt, damit
+ * `projektInfoSetzen`s additiver Merge über mehrere Felder geprüft ist,
+ * auch wenn nur Bauherr/Verfasser im Plankopf erscheinen. */
+export function testhausStammdaten(): { doc: KosmoDoc; storeyId: string } {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  wand({ x: 0, y: 0 }, { x: 8000, y: 0 });
+  wand({ x: 8000, y: 0 }, { x: 8000, y: 6000 });
+  wand({ x: 8000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+
+  execute(doc, 'design.projektNameSetzen', { name: 'Wohnhaus Ahornweg' });
+  execute(doc, 'design.projektInfoSetzen', {
+    bauherr: 'Baugenossenschaft Ahorn',
+    adresse: 'Ahornweg 12, 6000 Luzern',
+    parzelleNr: '1847',
+    verfasser: 'Baubüro Andrin',
+  });
+
+  return { doc, storeyId };
+}

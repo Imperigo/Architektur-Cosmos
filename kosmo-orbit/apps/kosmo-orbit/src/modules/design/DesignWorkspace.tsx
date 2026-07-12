@@ -86,6 +86,7 @@ import { UnternehmerplanPanel } from './UnternehmerplanPanel';
 import { SplatPanel } from './SplatPanel';
 import type { SplatCloud } from './splat-import';
 import { Inspector } from './Inspector';
+import { StammdatenPanel } from './StammdatenPanel';
 import { KosmoZeichnet } from './KosmoZeichnet';
 import { SectionView } from './SectionView';
 import { exportIfcFile, exportPlanDxf, exportPlanPdf, exportPlanSvg, PHASEN_MASSSTAB } from './export-plan';
@@ -2317,6 +2318,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         >
           <span className="k-sekundaer" style={{ textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Projekt-Einstellungen
+          </span>
+          {/* v0.7.5 A2: Projekt-Stammdaten (Bauherr/Adresse/Parzellennr/
+              Verfasser + Projektname-Umbenennen) — eigene Zeile vor den
+              Phasen-/Darstellungs-Reglern, da inhaltlich am wenigsten mit
+              der Plan-Darstellung zu tun hat. */}
+          <span style={{ display: 'flex', width: '100%', marginBottom: 2 }}>
+            <StammdatenPanel />
           </span>
           {/* SIA-Phase (Owner 03.07.): Detaillierungsgrad der Pläne; koppelt den passenden Bemassungs-Stil */}
           <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>

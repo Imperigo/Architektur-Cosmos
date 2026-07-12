@@ -3,7 +3,7 @@ import { newId } from '../model/ids';
 import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Mangel, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, ZonenTuer } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
-import type { AnyPatch, KosmoDoc, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
+import type { AnyPatch, KosmoDoc, ProjektInfo, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
 import { empfohlenePlanPhase, phaseLabel, siaPhaseLabel } from '../model/doc';
 import { formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
@@ -2226,6 +2226,61 @@ export const setLocation = registerCommand({
       },
     },
   ],
+});
+
+export const setProjektName = registerCommand({
+  id: 'design.projektNameSetzen',
+  title: 'Projektname umbenennen',
+  description:
+    'Benennt das Projekt um (erscheint versal im Plankopf-Titel jedes Plans/Blatts). Bisher nur bei der Projekterstellung gesetzt — dieser Command schliesst die Lücke als reguläre, undo-fähige Mutation.',
+  params: z.object({
+    name: z.string().min(1),
+  }),
+  summarize: (p) => `Projektname: «${p.name}»`,
+  run: (doc, p) => {
+    return [{ settings: true, before: { projectName: doc.settings.projectName }, after: { projectName: p.name } }];
+  },
+});
+
+export const setProjektInfo = registerCommand({
+  id: 'design.projektInfoSetzen',
+  title: 'Projekt-Stammdaten setzen',
+  description:
+    'Setzt/ergänzt die Projekt-Stammdaten (Bauherrschaft, Adresse, Parzellennummer, Planverfasser:in, Fristen) — additiv, wie bei design.prioritaetSetzen (materialPrioritaeten): nur übergebene Felder werden geändert, der Rest bleibt. Bauherr/Verfasser erscheinen im Plankopf (nur wenn gesetzt, sonst keine Zeile). Getrennt von design.standortSetzen (Koordinaten) und parzellenFlaeche (AZ-Kennzahl) — unabhängige Felder derselben Parzelle.',
+  params: z.object({
+    bauherr: z.string().optional(),
+    adresse: z.string().optional(),
+    parzelleNr: z.string().optional(),
+    verfasser: z.string().optional(),
+    fristen: z.array(z.object({ label: z.string(), datum: z.string() })).optional(),
+  }),
+  summarize: (p) => {
+    const teile: string[] = [];
+    if (p.bauherr !== undefined) teile.push(`Bauherr «${p.bauherr}»`);
+    if (p.adresse !== undefined) teile.push(`Adresse «${p.adresse}»`);
+    if (p.parzelleNr !== undefined) teile.push(`Parzelle Nr. ${p.parzelleNr}`);
+    if (p.verfasser !== undefined) teile.push(`Verfasser «${p.verfasser}»`);
+    if (p.fristen !== undefined) teile.push(`${p.fristen.length} Frist(en)`);
+    return teile.length > 0 ? `Stammdaten: ${teile.join(', ')}` : 'Stammdaten: keine Änderung';
+  },
+  run: (doc, p) => {
+    // Schmales Patch (nur `projekt`), wie bei schnitt/themen/materialPrioritaeten:
+    // ein optionales Feld ohne defaultSettings-Eintrag — `vorher` braucht
+    // einen expliziten Wert, sonst löscht das Object-Spread-Undo den
+    // Schlüssel nicht zurück in die Abwesenheit. `{}` (statt `null`/
+    // `undefined`) ist der «leere» Absenz-Wert, wie bei materialPrioritaeten
+    // (`?? {}`) — bleibt unter exactOptionalPropertyTypes gültig zuweisbar.
+    const vorher: ProjektInfo = doc.settings.projekt ?? {};
+    const nachher: ProjektInfo = {
+      ...vorher,
+      ...(p.bauherr !== undefined ? { bauherr: p.bauherr } : {}),
+      ...(p.adresse !== undefined ? { adresse: p.adresse } : {}),
+      ...(p.parzelleNr !== undefined ? { parzelleNr: p.parzelleNr } : {}),
+      ...(p.verfasser !== undefined ? { verfasser: p.verfasser } : {}),
+      ...(p.fristen !== undefined ? { fristen: p.fristen } : {}),
+    };
+    return [{ settings: true, before: { projekt: vorher }, after: { projekt: nachher } }];
+  },
 });
 
 export const nachbarnUebernehmen = registerCommand({

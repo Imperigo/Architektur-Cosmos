@@ -19,6 +19,7 @@ import {
   GRAU_SONDER,
   LINIENTYP_SOLL,
   MASS_STIFT,
+  plankopfStammdatenZeile,
   RADIER_WEISS,
   SCHRIFT_MESSBAR,
   SCHRIFT_TITEL,
@@ -703,6 +704,10 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
 
   // Plankopf (SIA-angelehnt, schlicht)
   const y0 = paper.height - 18;
+  // v0.7.5 A2: Bauherr-/Verfasser-Zeile NUR wenn `DocSettings.projekt`
+  // Stammdaten trägt (Golden-Guard — s. `plankopfStammdatenZeile`-Kommentar).
+  // Ohne Daten bleibt der Plankopf byte-identisch zu vor A2.
+  const stammdatenZeile = plankopfStammdatenZeile(doc.settings.projekt);
   parts.push(
     `<g font-size="3.2">`,
     `<line x1="10" y1="${y0}" x2="${paper.width - 10}" y2="${y0}" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
@@ -710,6 +715,9 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     `<text x="10" y="${y0 + 11.5}" font-family="${SCHRIFT_TITEL}">${escapeXml(opts.planTitle)} · ${escapeXml(storey?.name ?? '')}</text>`,
     `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end" font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'">1:${scale} \u00b7 Masse in cm/m</text>`,
     `<text x="${paper.width - 10}" y="${y0 + 11.5}" text-anchor="end" font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
+    ...(stammdatenZeile !== null
+      ? [`<text x="10" y="${y0 + 16}" font-size="2.6" font-family="${SCHRIFT_MESSBAR}">${escapeXml(stammdatenZeile)}</text>`]
+      : []),
     `</g>`,
     '</svg>',
   );

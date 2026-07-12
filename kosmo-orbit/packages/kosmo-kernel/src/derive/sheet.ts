@@ -9,6 +9,7 @@ import {
   DASH,
   messbarAttr,
   PLATZHALTER,
+  plankopfStammdatenZeile,
   SCHWARZPLAN_FARBEN,
   STIFT,
   titelAttr,
@@ -279,7 +280,13 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
 
   // Plankopf unten rechts (SIA-angelehnt)
   const kw = 120;
-  const kh = 26;
+  // v0.7.5 A2: Bauherr-/Verfasser-Zeile NUR wenn `DocSettings.projekt`
+  // Stammdaten trägt (Golden-Guard — s. `plankopfStammdatenZeile`-Kommentar).
+  // Ohne Daten bleibt kh=26 wie bisher, der Plankopf byte-identisch zu vor A2;
+  // mit Daten wächst die Box um eine Zeile (kx/ky hängen von kh ab, wandern
+  // also konsistent mit — der Box-Boden ky+kh bleibt am Blattrand fix).
+  const stammdatenZeile = plankopfStammdatenZeile(doc.settings.projekt);
+  const kh = stammdatenZeile !== null ? 26 + 5 : 26;
   const kx = paper.width - 10 - kw;
   const ky = paper.height - 10 - kh;
 
@@ -315,6 +322,9 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     `<text x="${kx + 3}" y="${ky + 22}" fill="${BLATT.textSekundaer}" ${messbarAttr(BLATT_TYPO_MM.meta)}>${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
     `<text x="${kx + kw - 3}" y="${ky + 15}" text-anchor="end" ${messbarAttr(BLATT_TYPO_MM.meta)}>${scaleText}</text>`,
     `<text x="${kx + kw - 3}" y="${ky + 22}" text-anchor="end" fill="${BLATT.textSekundaer}" ${messbarAttr(BLATT_TYPO_MM.meta)}>Blatt ${sheet.index + 1} · ${sheet.format}</text>`,
+    ...(stammdatenZeile !== null
+      ? [`<text x="${kx + 3}" y="${ky + kh - 3}" fill="${BLATT.textSekundaer}" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(stammdatenZeile)}</text>`]
+      : []),
     `</g>`,
     '</svg>',
   );

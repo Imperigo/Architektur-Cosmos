@@ -14,7 +14,7 @@
  * wo sie liegt.
  */
 
-import type { BauPhase } from '../model/doc';
+import type { BauPhase, ProjektInfo } from '../model/doc';
 
 // ───────────────────────────────────────────────────────────────────────────
 // Achse 1 · STIFT = konstruktive Bedeutung (Papier-mm, massstabskonstant)
@@ -243,6 +243,19 @@ export function titelAttr(sizeMm: number): string {
  * rufen dieselbe Funktion, der Zahlenwert ist die jeweilige Einheit). */
 export function messbarAttr(size: number): string {
   return `font-family="${SCHRIFT_MESSBAR}" font-size="${size}" font-feature-settings="'tnum'"`;
+}
+
+/** Plankopf-Stammdatenzeile (v0.7.5 A2): «Bauherr: … · Verfasser: …» — NUR
+ * wenn mindestens eines der beiden Felder gesetzt ist, sonst `null` (Golden-
+ * Guard: kein `DocSettings.projekt`-Block → keine bisherige Plankopf-Golden
+ * ändert sich). `plansvg.ts`/`sheet.ts` rendern das Ergebnis in der
+ * Messbar-Stimme, unescaped — der Aufrufer übernimmt `escapeXml`. */
+export function plankopfStammdatenZeile(projekt: ProjektInfo | undefined): string | null {
+  if (!projekt?.bauherr && !projekt?.verfasser) return null;
+  const teile: string[] = [];
+  if (projekt.bauherr) teile.push(`Bauherr: ${projekt.bauherr}`);
+  if (projekt.verfasser) teile.push(`Verfasser: ${projekt.verfasser}`);
+  return teile.join(' · ');
 }
 
 // ───────────────────────────────────────────────────────────────────────────

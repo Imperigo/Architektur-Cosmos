@@ -35,6 +35,17 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.5',
+    datum: '2026-07-12',
+    inArbeit: true,
+    punkte: [
+      {
+        text: 'Neu: Projekt-Stammdaten — Bauherr, Adresse, Parzellennummer und Verfasser:in lassen sich im Projekt-Menü erfassen und erscheinen (Bauherr/Verfasser) automatisch im Plankopf jedes Plans. Ehrlich offen: diese Angaben werden wie jede Projekteinstellung über Undo und den Projekt-Export gespeichert, aber (noch) nicht live zwischen zwei gleichzeitig geöffneten Sitzungen desselben Projekts synchronisiert — das folgt in einer späteren Runde.',
+        station: 'design',
+      },
+    ],
+  },
+  {
     version: '0.7.4',
     datum: '2026-07-12',
     punkte: [
