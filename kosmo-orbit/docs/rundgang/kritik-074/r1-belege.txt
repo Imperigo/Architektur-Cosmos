@@ -1,0 +1,83 @@
+KRITIK-074 BELEGE (v0.7.4 Welle 1 — P1/P4/P5a/P5b)
+
+Erzeugt von e2e/tools/kritik-shots-074-r1.mts. Nachweis-Fixtur: Aussenwand
+3615 mm (P1: mm-Rest 5), Fenster Hoehe 1505/Bruestung 900 (P1-Komposit
+«150^5/90»), freistehende Abbruch-Wand (P5b), Volumenkoerper (P5a). Vorher =
+Stand c8e0a4b (0.7.3 released, per `git show` kurzzeitig eingesetzt und
+SOFORT per `git checkout --` zurueckgesetzt — kein Fenster mit unfertigem
+Code auf der Platte).
+
+## 1 — P1 SIA-Hochzahl: produktionsechtes PDF (jsPDF + svg2pdf.js + dieselben
+##     eingebetteten TTFs wie export-plan.ts), pdftoppm-Raster
+
+nachweis-074-vorher.pdf  → nachweis-074-vorher-1.png : Masszahl zeigt NUR
+  «361» — der mm-Rest (Unicode-Hochzahl U+2075) wird von den eingebetteten
+  Fonts (Lato/IBM Plex Mono, kein U+2074-2079-Glyphensatz) LAUTLOS
+  verschluckt. Kein Tofu-Kaestchen, kein Fehler — der Rest ist einfach weg.
+
+nachweis-074-nachher.pdf → nachweis-074-nachher-1.png : Masszahl zeigt
+  «361⁵» — normale, hochgestellte «5» als eigener <tspan> (normale Glyphe,
+  jeder Font hat sie), Grundlinie kommt danach exakt zurueck.
+
+Bestaetigt per Pixel-Stichprobe (Bemassungstext-Crop, 3x vergroessert):
+sichtbar in beiden *-1.png ohne Bildbearbeitung noetig.
+
+## 2 — P5a Projektions-Ton: Pixel-Farbwert am Volumenkoerper-Umriss
+
+Sample-Zeile durch die gestrichelte Volumen-Kontur (identische Pixel-
+Koordinate in beiden Rastern):
+  vorher:  RGB(18, 18, 18)   = #121212 ≈ #111 (GRAU.geschnitten)
+  nachher: RGB(102, 102, 102) = #666666 = #666 (GRAU.projiziert)
+
+## 3 — P5b Abbruch-Kadenz: Dash-Muster an der freistehenden Abbruch-Wand
+
+Visuell (crop 4x vergroessert, s. Screenshot-Notizen): vorher enge Strich-
+Punkt-aehnliche Kadenz (DASH.abbruch [1.5, 0.8] × scale), nachher spuerbar
+groebere, weiter auseinanderstehende Striche (LINIENTYP_SOLL.strich
+[3, 1.5] × scale — doppelte Periode). Golden-Numerik: stroke-dasharray
+"150 80" (vorher, scale 100) → "300 150" (nachher).
+
+## 4 — P4 Plankopf-Typografie: Screen-Rendering (Chromium, Lato 400+700 ALS
+##     data:-URI eingebettet — file://-Font-Ladung wird von Chromium aus
+##     einer file://-Seite verweigert, s.u.)
+
+r1-vorher-untertitel.png vs. r1-nachher-untertitel.png: SICHTBAR
+unterschiedliche Buchstabenformen («Nachweis-Fixtur Welle 1 · EG» —
+vorher generischer Sans-Fallback, nachher Lato). Byte-Diff bestaetigt
+(cmp meldet Unterschied ab Byte 36).
+
+r1-vorher-nordpfeil.png vs. r1-nachher-nordpfeil.png: ebenfalls Byte-Diff,
+bei 3mm-Schriftgroesse mit blossem Auge nur eine feine Differenz.
+
+## 5 — EHRLICHER BEFUND: P4 hat im PRODUKTIONS-PDF-EXPORT (nicht im
+##     Screen-Rendering) aktuell KEINE sichtbare Wirkung — dokumentierte
+##     Luecke, kein Fehler in der P4-Code-Aenderung selbst
+
+pdffonts auf beiden erzeugten PDFs zeigt in JEDEM Fall genau EINE
+eingebettete "Lato"-Referenz (CID TrueType, Identity-H) — vorher UND
+nachher identisch:
+
+name                                 type              encoding         emb sub uni object ID
+------------------------------------ ----------------- ---------------- --- --- --- ---------
+Lato                                 CID TrueType      Identity-H       yes no  yes     23  0
+IBM Plex Mono                        CID TrueType      Identity-H       yes no  yes     28  0
+IBM Plex Mono                        CID TrueType      Identity-H       yes no  yes     33  0
+
+Grund: `apps/kosmo-orbit/public/fonts/pdf/` liefert NUR Lato 900 (Black,
+fuers fette `TITEL_STIL`) — kein Lato 400 (Regular) fuer PDF-Einbettung.
+Untertitel/Nordpfeil «N» sind NICHT fett (kein `font-weight="bold"`) — die
+Anfrage an jsPDF/svg2pdf nach "Lato"/normal findet keinen registrierten
+Font dieses Schnitts und faellt lautlos auf jsPDFs eingebautes Helvetica
+zurueck. Pixelvergleich der Untertitel-Zeile in nachweis-074-{vorher,
+nachher}-1.png (PDF-Rasterisierung, NICHT die Screen-Screenshots aus §4):
+identisch.
+
+Damit ist der P4-Code (font-family="SCHRIFT_TITEL" an Nordpfeil/Untertitel
+in plansvg.ts, exakt wie beauftragt) korrekt UND golden-bestaetigt (s.
+GOLDEN-WECHSEL-074.md) — er greift im Screen-/SVG-Kontext (§4, beide
+Lato-Schnitte 400+700 sind dort self-hosted) sofort. Im PDF-Export bleibt
+er bis zum Ergaenzen einer Lato-400-PDF-TTF wirkungslos (0.7.4-Folgezeile,
+analog zur bereits dokumentierten Luecke in `apps/kosmo-orbit/public/
+fonts/pdf/README.md` fuer die Hochzahlen). Kein Blocker fuer P1/P5a/P5b,
+aber im Bericht an den Auftraggeber offen genannt statt stillschweigend
+uebergangen (Ehrlichkeit vor Politur).
