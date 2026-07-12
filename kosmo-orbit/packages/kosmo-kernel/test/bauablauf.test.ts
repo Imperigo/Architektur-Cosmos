@@ -324,7 +324,9 @@ describe('bauablaufBlattSvg', () => {
       datum: '08.07.2026',
       siaPhase: 'ausfuehrung',
     });
-    expect(mit).toContain('Bauablaufplan — Ersatzneubau Zürich-Altstetten');
+    // D4 (v0.7.3 «Zwei Stimmen»): Titel-Stimme setzt versal (Lato Heavy) —
+    // reiner Matcher-String, kein Golden (s. GOLDEN-WECHSEL-D4.md).
+    expect(mit).toContain('BAUABLAUFPLAN — ERSATZNEUBAU ZÜRICH-ALTSTETTEN');
     expect(mit).toContain('08.07.2026');
     expect(mit).toContain(siaPhaseLabel('ausfuehrung'));
   });

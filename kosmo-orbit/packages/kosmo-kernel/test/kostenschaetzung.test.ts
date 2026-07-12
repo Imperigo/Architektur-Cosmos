@@ -184,7 +184,9 @@ describe('kvBlattSvg', () => {
     expect(ohne).not.toContain('Wettbewerb/Studie');
 
     const mit = kvBlattSvg(kv, { titel: 'Ersatzneubau Zürich-Altstetten', datum: '08.07.2026', siaPhase: 'bauprojekt' });
-    expect(mit).toContain('Kostenvoranschlag-Grobschätzung — Ersatzneubau Zürich-Altstetten');
+    // D4 (v0.7.3 «Zwei Stimmen»): Titel-Stimme setzt versal — reiner
+    // Matcher-String, kein Golden (s. GOLDEN-WECHSEL-D4.md).
+    expect(mit).toContain('KOSTENVORANSCHLAG-GROBSCHÄTZUNG — ERSATZNEUBAU ZÜRICH-ALTSTETTEN');
     expect(mit).toContain('08.07.2026');
     expect(mit).toContain(siaPhaseLabel('bauprojekt'));
   });

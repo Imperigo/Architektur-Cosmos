@@ -1,6 +1,7 @@
 import type { SiaPhase } from '../model/doc';
 import { siaPhaseLabel } from '../model/doc';
 import { escapeXml } from './plansvg';
+import { messbarAttr, titelAttr, versal } from './stilblatt';
 import { BAUABLAUF_HINWEIS, type Bauablauf } from './bauablauf';
 
 /**
@@ -66,17 +67,15 @@ export function bauablaufBlattSvg(ablauf: Bauablauf, opts: BauablaufBlattOptione
   parts.push(`<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`);
 
   // ── Kopf ─────────────────────────────────────────────────────────────
-  const titelZeile = `Bauablaufplan${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`;
-  parts.push(
-    `<text x="${MARGIN}" y="${HEADER_TITLE_Y}" font-size="22" font-weight="bold" fill="#111111">${titelZeile}</text>`,
-  );
+  const titelZeile = versal(`Bauablaufplan${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`);
+  parts.push(`<text x="${MARGIN}" y="${HEADER_TITLE_Y}" ${titelAttr(22)} fill="#111111">${titelZeile}</text>`);
 
   const metaTeile: string[] = [];
   if (opts.siaPhase) metaTeile.push(escapeXml(siaPhaseLabel(opts.siaPhase)));
   if (opts.datum) metaTeile.push(escapeXml(opts.datum));
   metaTeile.push(ablauf.gesamtWochen > 0 ? `Gesamtdauer: ${ablauf.gesamtWochen} Wochen` : 'Gesamtdauer: —');
   parts.push(
-    `<text x="${MARGIN}" y="${HEADER_META_Y}" font-size="12.5" fill="#444444">${metaTeile.join(' · ')}</text>`,
+    `<text x="${MARGIN}" y="${HEADER_META_Y}" ${messbarAttr(12.5)} fill="#444444">${metaTeile.join(' · ')}</text>`,
   );
   parts.push(
     `<line x1="${MARGIN}" y1="${HEADER_RULE_Y}" x2="${W - MARGIN}" y2="${HEADER_RULE_Y}" stroke="#bbbbbb" stroke-width="1"/>`,
@@ -115,7 +114,7 @@ export function bauablaufBlattSvg(ablauf: Bauablauf, opts: BauablaufBlattOptione
         `<line x1="${x.toFixed(2)}" y1="${CHART_TOP}" x2="${x.toFixed(2)}" y2="${chartBottom.toFixed(2)}" stroke="#e2e2e2" stroke-width="1"/>`,
       );
       parts.push(
-        `<text x="${x.toFixed(2)}" y="${(CHART_TOP + WEEK_HEADER_H - 6).toFixed(2)}" font-size="9" text-anchor="middle" fill="#888888">${w}</text>`,
+        `<text x="${x.toFixed(2)}" y="${(CHART_TOP + WEEK_HEADER_H - 6).toFixed(2)}" ${messbarAttr(9)} text-anchor="middle" fill="#888888">${w}</text>`,
       );
     }
 

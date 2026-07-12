@@ -270,7 +270,9 @@ describe('ausnuetzungsnachweisSvg', () => {
       siaPhase: 'bewilligung',
       regelName: 'W2 Test',
     });
-    expect(mit).toContain('Ausnützungsnachweis — Ersatzneubau Zürich-Altstetten');
+    // D4 (v0.7.3 «Zwei Stimmen»): Titel-Stimme setzt versal — reiner
+    // Matcher-String, kein Golden (s. GOLDEN-WECHSEL-D4.md).
+    expect(mit).toContain('AUSNÜTZUNGSNACHWEIS — ERSATZNEUBAU ZÜRICH-ALTSTETTEN');
     expect(mit).toContain('08.07.2026');
     expect(mit).toContain('Zonenregel «W2 Test»');
   });

@@ -3,7 +3,19 @@ import type { ImageAsset, Sheet, SheetFormat, SheetImage, SheetPlacement } from 
 import { axoInnerSvg, escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
 import { docFuerUmbau, UMBAU_LABEL } from './umbau';
 import { schwarzplanGeometrie } from './schwarzplan';
-import { BLATT, DASH, PLATZHALTER, SCHWARZPLAN_FARBEN, STIFT, UMBAU_STIFTE } from './stilblatt';
+import {
+  BLATT,
+  BLATT_TYPO_MM,
+  DASH,
+  messbarAttr,
+  PLATZHALTER,
+  SCHWARZPLAN_FARBEN,
+  STIFT,
+  titelAttr,
+  TITEL_STIL,
+  UMBAU_STIFTE,
+  versal,
+} from './stilblatt';
 import type { Pt } from '../model/units';
 
 /**
@@ -172,7 +184,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
       const umbauZusatz = pl.umbau ? ` · ${UMBAU_LABEL[pl.umbau]}` : '';
       const themaZusatz = pl.thema ? ` · ${pl.thema}` : '';
       parts.push(
-        `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(pl.title)}  <tspan font-weight="normal" fill="${BLATT.textSekundaer}">1:${pl.scale}${umbauZusatz}${escapeXml(themaZusatz)}</tspan></text>`,
+        `<text x="${pl.x}" y="${labelY.toFixed(2)}" text-anchor="middle" ${titelAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(versal(pl.title))}  <tspan font-weight="normal" ${messbarAttr(BLATT_TYPO_MM.etikett)} fill="${BLATT.textSekundaer}">1:${pl.scale}${umbauZusatz}${escapeXml(themaZusatz)}</tspan></text>`,
       );
       // Themenplan-Legende (A5): Farbkästchen + Label unter dem Titel
       const thema = pl.thema ? (doc.settings.themen ?? []).find((t) => t.name === pl.thema) : undefined;
@@ -183,7 +195,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
           const label = r.label ?? r.wert;
           parts.push(
             `<rect x="${lx.toFixed(2)}" y="${(legendeY - 3).toFixed(2)}" width="4" height="3" fill="${r.farbe}" stroke="${BLATT.tinte}" stroke-width="${BLATT.trennStift}"/>`,
-            `<text x="${(lx + 5.5).toFixed(2)}" y="${legendeY.toFixed(2)}" font-size="2.8">${escapeXml(label)}</text>`,
+            `<text x="${(lx + 5.5).toFixed(2)}" y="${legendeY.toFixed(2)}" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(label)}</text>`,
           );
           lx += 5.5 + label.length * 1.7 + 6;
         }
@@ -204,7 +216,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
           const eintrag = (doc.settings.keynotes ?? []).find((k) => k.nr === nr);
           if (!eintrag) continue;
           parts.push(
-            `<text x="${lx.toFixed(2)}" y="${legendeY.toFixed(2)}" font-size="2.8"><tspan font-weight="bold">${escapeXml(nr)}</tspan>  ${escapeXml(eintrag.text)}</text>`,
+            `<text x="${lx.toFixed(2)}" y="${legendeY.toFixed(2)}" ${messbarAttr(BLATT_TYPO_MM.etikett)}><tspan font-weight="bold">${escapeXml(nr)}</tspan>  ${escapeXml(eintrag.text)}</text>`,
           );
           legendeY += 4;
         }
@@ -235,17 +247,18 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     }
     if (b.title) {
       parts.push(
-        `<text x="${r.x + r.width / 2}" y="${(r.y + r.height + 5).toFixed(2)}" text-anchor="middle" font-size="3.6" font-weight="bold">${escapeXml(b.title)}</text>`,
+        `<text x="${r.x + r.width / 2}" y="${(r.y + r.height + 5).toFixed(2)}" text-anchor="middle" ${titelAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(versal(b.title))}</text>`,
       );
     }
   }
 
-  // Freie Textblöcke (Plakat-Titel, Konzepttexte)
+  // Freie Textblöcke (Plakat-Titel, Konzepttexte) — Titel-Zeilen (`t.titel`)
+  // sprechen ab D4 die Titel-Stimme (Lato Heavy versal) statt vormals
+  // 'Archivo Narrow'; Grösse bleibt frei wählbar (`t.size`, kein Fixwert der
+  // BLATT_TYPO_MM-Leiter, darum `TITEL_STIL` ohne eingebackene font-size).
   for (const t of sheet.texte ?? []) {
-    const zeilen = t.text.split('\n');
-    const stil = t.titel
-      ? `font-weight="bold" letter-spacing="${(t.size * 0.02).toFixed(2)}" font-family="'Archivo Narrow', 'Arial Narrow', Helvetica, sans-serif"`
-      : '';
+    const zeilen = (t.titel ? versal(t.text) : t.text).split('\n');
+    const stil = t.titel ? TITEL_STIL : '';
     parts.push(
       `<text x="${t.x}" y="${t.y}" font-size="${t.size}" ${stil}>` +
         zeilen
@@ -260,7 +273,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     parts.push(
       `<path d="${wolkenPfad(wo.x, wo.y, wo.w, wo.h)}" fill="none" stroke="${UMBAU_STIFTE.neu}" stroke-width="${BLATT.rahmenStift}"/>`,
       `<circle cx="${wo.x + wo.w}" cy="${wo.y}" r="3" fill="white" stroke="${UMBAU_STIFTE.neu}" stroke-width="${BLATT.rahmenStift}"/>`,
-      `<text x="${wo.x + wo.w}" y="${wo.y + 1.1}" text-anchor="middle" font-size="3" fill="${UMBAU_STIFTE.neu}" font-weight="bold">${escapeXml(wo.revision)}</text>`,
+      `<text x="${wo.x + wo.w}" y="${wo.y + 1.1}" text-anchor="middle" fill="${UMBAU_STIFTE.neu}" font-weight="bold" ${messbarAttr(3)}>${escapeXml(wo.revision)}</text>`,
     );
   }
 
@@ -280,13 +293,13 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     parts.push(
       `<g font-size="2.8" data-teil="revisionen">`,
       `<rect x="${kx}" y="${ty}" width="${kw}" height="${th}" fill="white" stroke="${BLATT.tinte}" stroke-width="${BLATT.kastenStift}"/>`,
-      `<text x="${kx + 3}" y="${ty + 4}" font-weight="bold">Revisionen</text>`,
+      `<text x="${kx + 3}" y="${ty + 4}" ${TITEL_STIL}>${versal('Revisionen')}</text>`,
     );
     rows.forEach((r, i) => {
       const yy = ty + 5 + (i + 1) * rh - 1.2;
       parts.push(
-        `<text x="${kx + 3}" y="${yy}" font-weight="bold">${escapeXml(r.index)}</text>`,
-        `<text x="${kx + 10}" y="${yy}" fill="${BLATT.textSekundaer}">${escapeXml(r.datum)}</text>`,
+        `<text x="${kx + 3}" y="${yy}" font-weight="bold" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(r.index)}</text>`,
+        `<text x="${kx + 10}" y="${yy}" fill="${BLATT.textSekundaer}" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(r.datum)}</text>`,
         `<text x="${kx + 28}" y="${yy}">${escapeXml(r.text)}</text>`,
       );
     });
@@ -296,12 +309,12 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
   parts.push(
     `<g font-size="3">`,
     `<rect x="${kx}" y="${ky}" width="${kw}" height="${kh}" fill="white" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
-    `<line x1="${kx}" y1="${ky + 9}" x2="${kx + kw}" y2="${ky + 9}" stroke="${BLATT.tinte}" stroke-width="${BLATT.trennStift}"/>`,
-    `<text x="${kx + 3}" y="${ky + 6}" font-weight="bold" font-size="4">${escapeXml(opts.projectName)}</text>`,
-    `<text x="${kx + 3}" y="${ky + 15}">${escapeXml(sheet.name)}</text>`,
-    `<text x="${kx + 3}" y="${ky + 22}" fill="${BLATT.textSekundaer}">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
-    `<text x="${kx + kw - 3}" y="${ky + 15}" text-anchor="end">${scaleText}</text>`,
-    `<text x="${kx + kw - 3}" y="${ky + 22}" text-anchor="end" fill="${BLATT.textSekundaer}">Blatt ${sheet.index + 1} · ${sheet.format}</text>`,
+    `<line x1="${kx}" y1="${ky + 9}" x2="${kx + kw}" y2="${ky + 9}" stroke="${BLATT.tinte}" stroke-width="${BLATT_TYPO_MM.trennlinie}"/>`,
+    `<text x="${kx + 3}" y="${ky + 6}" ${titelAttr(BLATT_TYPO_MM.titel)}>${escapeXml(versal(opts.projectName))}</text>`,
+    `<text x="${kx + 3}" y="${ky + 15}" font-size="${BLATT_TYPO_MM.untertitel}">${escapeXml(sheet.name)}</text>`,
+    `<text x="${kx + 3}" y="${ky + 22}" fill="${BLATT.textSekundaer}" ${messbarAttr(BLATT_TYPO_MM.meta)}>${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
+    `<text x="${kx + kw - 3}" y="${ky + 15}" text-anchor="end" ${messbarAttr(BLATT_TYPO_MM.meta)}>${scaleText}</text>`,
+    `<text x="${kx + kw - 3}" y="${ky + 22}" text-anchor="end" fill="${BLATT.textSekundaer}" ${messbarAttr(BLATT_TYPO_MM.meta)}>Blatt ${sheet.index + 1} · ${sheet.format}</text>`,
     `</g>`,
     '</svg>',
   );

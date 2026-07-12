@@ -2,6 +2,7 @@ import type { KosmoDoc, SiaPhase } from '../model/doc';
 import { siaPhaseLabel } from '../model/doc';
 import type { Mangel } from '../model/entities';
 import { escapeXml } from './plansvg';
+import { messbarAttr, titelAttr, versal } from './stilblatt';
 import { MANGEL_GEWERK_VORSCHLAEGE } from './bauablauf';
 
 /**
@@ -87,6 +88,10 @@ const W = 794;
 const H = 1123;
 const MARGIN = 40;
 
+/** D4-Titel-Grösse (px), s. `kvblatt.ts`s ausführlichen Kommentar: versal +
+ * Tracking verbreitert lange Titel-Strings, 17 px hält innerhalb der viewBox. */
+const HEADER_TITLE_SIZE = 17;
+
 const HEADER_TITLE_Y = 54;
 const HEADER_META_Y = 78;
 const HEADER_RULE_Y = 90;
@@ -129,10 +134,8 @@ export function abnahmeprotokollSvg(protokoll: Abnahmeprotokoll, opts: Abnahmepr
   parts.push(`<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`);
 
   // ── Kopf ─────────────────────────────────────────────────────────────
-  const titelZeile = `Abnahmeprotokoll${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`;
-  parts.push(
-    `<text x="${MARGIN}" y="${HEADER_TITLE_Y}" font-size="22" font-weight="bold" fill="#111111">${titelZeile}</text>`,
-  );
+  const titelZeile = versal(`Abnahmeprotokoll${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`);
+  parts.push(`<text x="${MARGIN}" y="${HEADER_TITLE_Y}" ${titelAttr(HEADER_TITLE_SIZE)} fill="#111111">${titelZeile}</text>`);
 
   const metaTeile: string[] = [];
   if (opts.siaPhase) metaTeile.push(escapeXml(siaPhaseLabel(opts.siaPhase)));
@@ -141,7 +144,7 @@ export function abnahmeprotokollSvg(protokoll: Abnahmeprotokoll, opts: Abnahmepr
     `${protokoll.anzahlOffen} offen / ${protokoll.anzahlBehoben} behoben (${protokoll.anzahlTotal} total)`,
   );
   parts.push(
-    `<text x="${MARGIN}" y="${HEADER_META_Y}" font-size="12.5" fill="#444444">${metaTeile.join(' · ')}</text>`,
+    `<text x="${MARGIN}" y="${HEADER_META_Y}" ${messbarAttr(12.5)} fill="#444444">${metaTeile.join(' · ')}</text>`,
   );
   parts.push(
     `<line x1="${MARGIN}" y1="${HEADER_RULE_Y}" x2="${W - MARGIN}" y2="${HEADER_RULE_Y}" stroke="#bbbbbb" stroke-width="1"/>`,
@@ -205,10 +208,10 @@ export function abnahmeprotokollSvg(protokoll: Abnahmeprotokoll, opts: Abnahmepr
           `<text x="${beschreibungX}" y="${(y + 15).toFixed(2)}" font-size="11" fill="#333333">${escapeXml(m.beschreibung)}</text>`,
         );
         parts.push(
-          `<text x="${statusX}" y="${(y + 15).toFixed(2)}" font-size="11" fill="${m.status === 'behoben' ? '#2f7d3f' : '#a33333'}">${escapeXml(statusText(m))}</text>`,
+          `<text x="${statusX}" y="${(y + 15).toFixed(2)}" ${messbarAttr(11)} fill="${m.status === 'behoben' ? '#2f7d3f' : '#a33333'}">${escapeXml(statusText(m))}</text>`,
         );
         parts.push(
-          `<text x="${fristX}" y="${(y + 15).toFixed(2)}" font-size="11" fill="#666666">${escapeXml(m.frist ?? '—')}</text>`,
+          `<text x="${fristX}" y="${(y + 15).toFixed(2)}" ${messbarAttr(11)} fill="#666666">${escapeXml(m.frist ?? '—')}</text>`,
         );
         parts.push(
           `<line x1="${MARGIN}" y1="${(y + ROW_H).toFixed(2)}" x2="${W - MARGIN}" y2="${(y + ROW_H).toFixed(2)}" stroke="#e2e2e2" stroke-width="1"/>`,

@@ -3,6 +3,7 @@ import { siaPhaseLabel } from '../model/doc';
 import type { Boundary, MassBody, Storey, Wall } from '../model/entities';
 import { pruefeGrundriss } from './checks';
 import { escapeXml } from './plansvg';
+import { messbarAttr, titelAttr, versal } from './stilblatt';
 import { deriveBerechnungsliste, type Berechnungsliste } from './berechnungsliste';
 
 /**
@@ -38,6 +39,10 @@ export interface AusnuetzungKennwert {
 const W = 794;
 const H = 1123;
 const MARGIN = 40;
+
+/** D4-Titel-Grösse (px), s. `kvblatt.ts`s ausführlichen Kommentar: versal +
+ * Tracking verbreitert lange Titel-Strings, 17 px hält innerhalb der viewBox. */
+const HEADER_TITLE_SIZE = 17;
 
 const HEADER_TITLE_Y = 54;
 const HEADER_META_Y = 78;
@@ -235,17 +240,15 @@ export function ausnuetzungsnachweisSvg(
   parts.push(`<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`);
 
   // ── Kopf ─────────────────────────────────────────────────────────────
-  const titelZeile = `Ausnützungsnachweis${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`;
-  parts.push(
-    `<text x="${MARGIN}" y="${HEADER_TITLE_Y}" font-size="22" font-weight="bold" fill="#111111">${titelZeile}</text>`,
-  );
+  const titelZeile = versal(`Ausnützungsnachweis${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`);
+  parts.push(`<text x="${MARGIN}" y="${HEADER_TITLE_Y}" ${titelAttr(HEADER_TITLE_SIZE)} fill="#111111">${titelZeile}</text>`);
 
   const metaTeile: string[] = [];
   if (opts.siaPhase) metaTeile.push(escapeXml(siaPhaseLabel(opts.siaPhase)));
   if (opts.regelName) metaTeile.push(`Zonenregel «${escapeXml(opts.regelName)}»`);
   if (opts.datum) metaTeile.push(escapeXml(opts.datum));
   parts.push(
-    `<text x="${MARGIN}" y="${HEADER_META_Y}" font-size="12.5" fill="#444444">${metaTeile.join(' · ')}</text>`,
+    `<text x="${MARGIN}" y="${HEADER_META_Y}" ${messbarAttr(12.5)} fill="#444444">${metaTeile.join(' · ')}</text>`,
   );
   parts.push(
     `<line x1="${MARGIN}" y1="${HEADER_RULE_Y}" x2="${W - MARGIN}" y2="${HEADER_RULE_Y}" stroke="#bbbbbb" stroke-width="1"/>`,
@@ -256,7 +259,7 @@ export function ausnuetzungsnachweisSvg(
     `<rect x="${MARGIN}" y="${HINWEIS_TOP}" width="${W - 2 * MARGIN}" height="${HINWEIS_HEIGHT}" fill="#f6f2e6" stroke="#c9bfa0" stroke-width="1"/>`,
   );
   parts.push(
-    `<text x="${MARGIN + 14}" y="${HINWEIS_TOP + 18}" font-size="10.5" letter-spacing="1" fill="#8a7a4e">ZUSAMMENSTELLUNG — KEINE BEWILLIGUNG</text>`,
+    `<text x="${MARGIN + 14}" y="${HINWEIS_TOP + 18}" ${messbarAttr(10.5)} letter-spacing="1" fill="#8a7a4e">ZUSAMMENSTELLUNG — KEINE BEWILLIGUNG</text>`,
   );
   parts.push(
     `<text x="${MARGIN + 14}" y="${HINWEIS_TOP + 36}" font-size="13" font-weight="bold" fill="#111111">${escapeXml(BAUGESUCH_HINWEIS)}</text>`,
@@ -301,7 +304,7 @@ export function ausnuetzungsnachweisSvg(
         werte.forEach((w, ci) => {
           const cx = MARGIN + T1_TYP_W + ci * numColW + numColW - 6;
           parts.push(
-            `<text x="${cx.toFixed(2)}" y="${(rowY + 14).toFixed(2)}" font-size="10.5" text-anchor="end" fill="#222222">${w}</text>`,
+            `<text x="${cx.toFixed(2)}" y="${(rowY + 14).toFixed(2)}" ${messbarAttr(10.5)} text-anchor="end" fill="#222222">${w}</text>`,
           );
         });
       });
@@ -352,10 +355,10 @@ export function ausnuetzungsnachweisSvg(
       `<text x="${MARGIN + 6}" y="${(rowY + 17).toFixed(2)}" font-size="11.5" fill="#111111">${escapeXml(k.label)}</text>`,
     );
     parts.push(
-      `<text x="${(MARGIN + T2_LABEL_W + T2_COL_W / 2).toFixed(2)}" y="${(rowY + 17).toFixed(2)}" font-size="11.5" text-anchor="middle" fill="#222222">${escapeXml(k.ist)}</text>`,
+      `<text x="${(MARGIN + T2_LABEL_W + T2_COL_W / 2).toFixed(2)}" y="${(rowY + 17).toFixed(2)}" ${messbarAttr(11.5)} text-anchor="middle" fill="#222222">${escapeXml(k.ist)}</text>`,
     );
     parts.push(
-      `<text x="${(MARGIN + T2_LABEL_W + T2_COL_W + T2_COL_W / 2).toFixed(2)}" y="${(rowY + 17).toFixed(2)}" font-size="11.5" text-anchor="middle" fill="#222222">${escapeXml(k.erlaubt)}</text>`,
+      `<text x="${(MARGIN + T2_LABEL_W + T2_COL_W + T2_COL_W / 2).toFixed(2)}" y="${(rowY + 17).toFixed(2)}" ${messbarAttr(11.5)} text-anchor="middle" fill="#222222">${escapeXml(k.erlaubt)}</text>`,
     );
     parts.push(
       `<text x="${(MARGIN + T2_LABEL_W + 2 * T2_COL_W + T2_COL_W / 2).toFixed(2)}" y="${(rowY + 17).toFixed(2)}" font-size="11.5" font-weight="bold" text-anchor="middle" fill="${farbe.text}">${STATUS_LABEL[k.status]}</text>`,

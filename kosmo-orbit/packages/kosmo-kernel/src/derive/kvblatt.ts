@@ -1,6 +1,7 @@
 import type { SiaPhase } from '../model/doc';
 import { siaPhaseLabel } from '../model/doc';
 import { escapeXml } from './plansvg';
+import { messbarAttr, titelAttr, versal } from './stilblatt';
 import { KV_HINWEIS, type Kostenschaetzung } from './kostenschaetzung';
 
 /**
@@ -26,6 +27,15 @@ import { KV_HINWEIS, type Kostenschaetzung } from './kostenschaetzung';
 const W = 794;
 const H = 1123;
 const MARGIN = 40;
+
+/** D4-Titel-Grösse (px): 22 → 17. Der ehemals gemischtschreibige Titel
+ * (`font-size="22"`, kein Tracking) passte innerhalb der 794-px-Breite; die
+ * D4-Titel-Stimme (versal + `letter-spacing="0.04em"`) verbreitert densel­ben
+ * String um ~34 % (Grossbuchstaben + Tracking) — bei 22 px lief der Titel
+ * dieser Fixtur ~230 px über die viewBox hinaus (svg-qa Text-Containment,
+ * empirisch entdeckt). 17 px hält mit Marge unter der viewBox-Breite, auch
+ * für längere Projektnamen als die Golden-Fixtur. */
+const HEADER_TITLE_SIZE = 17;
 
 const HEADER_TITLE_Y = 54;
 const HEADER_META_Y = 78;
@@ -77,17 +87,15 @@ export function kvBlattSvg(schaetzung: Kostenschaetzung, opts: KvBlattOptionen =
   parts.push(`<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`);
 
   // ── Kopf ─────────────────────────────────────────────────────────────
-  const titelZeile = `Kostenvoranschlag-Grobschätzung${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`;
-  parts.push(
-    `<text x="${MARGIN}" y="${HEADER_TITLE_Y}" font-size="22" font-weight="bold" fill="#111111">${titelZeile}</text>`,
-  );
+  const titelZeile = versal(`Kostenvoranschlag-Grobschätzung${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`);
+  parts.push(`<text x="${MARGIN}" y="${HEADER_TITLE_Y}" ${titelAttr(HEADER_TITLE_SIZE)} fill="#111111">${titelZeile}</text>`);
 
   const metaTeile: string[] = [];
   if (opts.siaPhase) metaTeile.push(escapeXml(siaPhaseLabel(opts.siaPhase)));
   if (opts.datum) metaTeile.push(escapeXml(opts.datum));
   metaTeile.push(`GF-Basis: ${schaetzung.flaecheGf > 0 ? `${f1(schaetzung.flaecheGf)} m²` : '—'}`);
   parts.push(
-    `<text x="${MARGIN}" y="${HEADER_META_Y}" font-size="12.5" fill="#444444">${metaTeile.join(' · ')}</text>`,
+    `<text x="${MARGIN}" y="${HEADER_META_Y}" ${messbarAttr(12.5)} fill="#444444">${metaTeile.join(' · ')}</text>`,
   );
   parts.push(
     `<line x1="${MARGIN}" y1="${HEADER_RULE_Y}" x2="${W - MARGIN}" y2="${HEADER_RULE_Y}" stroke="#bbbbbb" stroke-width="1"/>`,
@@ -98,7 +106,7 @@ export function kvBlattSvg(schaetzung: Kostenschaetzung, opts: KvBlattOptionen =
     `<rect x="${MARGIN}" y="${HINWEIS_TOP}" width="${W - 2 * MARGIN}" height="${HINWEIS_HEIGHT}" fill="#f6f2e6" stroke="#c9bfa0" stroke-width="1"/>`,
   );
   parts.push(
-    `<text x="${MARGIN + 14}" y="${HINWEIS_TOP + 18}" font-size="10.5" letter-spacing="1" fill="#8a7a4e">RICHTWERT — KEIN DEVIS</text>`,
+    `<text x="${MARGIN + 14}" y="${HINWEIS_TOP + 18}" ${messbarAttr(10.5)} letter-spacing="1" fill="#8a7a4e">RICHTWERT — KEIN DEVIS</text>`,
   );
   parts.push(
     `<text x="${MARGIN + 14}" y="${HINWEIS_TOP + 36}" font-size="13" font-weight="bold" fill="#111111">${escapeXml(KV_HINWEIS)}</text>`,
@@ -134,13 +142,13 @@ export function kvBlattSvg(schaetzung: Kostenschaetzung, opts: KvBlattOptionen =
     schaetzung.positionen.forEach((pos, i) => {
       const rowY = TABLE_TOP + TABLE_HEADER_H + i * TABLE_ROW_H;
       parts.push(
-        `<text x="${MARGIN + 6}" y="${(rowY + 16).toFixed(2)}" font-size="11.5" fill="#333333">${escapeXml(pos.bkp)}</text>`,
+        `<text x="${MARGIN + 6}" y="${(rowY + 16).toFixed(2)}" ${messbarAttr(11.5)} fill="#333333">${escapeXml(pos.bkp)}</text>`,
       );
       parts.push(
         `<text x="${MARGIN + TABLE_BKP_COL_W + 6}" y="${(rowY + 16).toFixed(2)}" font-size="11.5" fill="#333333">${escapeXml(pos.bezeichnung)}</text>`,
       );
       parts.push(
-        `<text x="${(MARGIN + TABLE_BKP_COL_W + bezeichnungColW + TABLE_BETRAG_COL_W - 6).toFixed(2)}" y="${(rowY + 16).toFixed(2)}" font-size="11.5" text-anchor="end" fill="#222222">${chf(pos.betrag)}</text>`,
+        `<text x="${(MARGIN + TABLE_BKP_COL_W + bezeichnungColW + TABLE_BETRAG_COL_W - 6).toFixed(2)}" y="${(rowY + 16).toFixed(2)}" ${messbarAttr(11.5)} text-anchor="end" fill="#222222">${chf(pos.betrag)}</text>`,
       );
       parts.push(
         `<line x1="${MARGIN}" y1="${(rowY + TABLE_ROW_H).toFixed(2)}" x2="${W - MARGIN}" y2="${(rowY + TABLE_ROW_H).toFixed(2)}" stroke="#e2e2e2" stroke-width="1"/>`,
@@ -155,7 +163,7 @@ export function kvBlattSvg(schaetzung: Kostenschaetzung, opts: KvBlattOptionen =
       `<text x="${MARGIN + 6}" y="${(totalRowY + 16).toFixed(2)}" font-size="12.5" font-weight="bold" fill="#111111">Total</text>`,
     );
     parts.push(
-      `<text x="${(MARGIN + TABLE_BKP_COL_W + bezeichnungColW + TABLE_BETRAG_COL_W - 6).toFixed(2)}" y="${(totalRowY + 16).toFixed(2)}" font-size="12.5" font-weight="bold" text-anchor="end" fill="#111111">${chf(schaetzung.total)}</text>`,
+      `<text x="${(MARGIN + TABLE_BKP_COL_W + bezeichnungColW + TABLE_BETRAG_COL_W - 6).toFixed(2)}" y="${(totalRowY + 16).toFixed(2)}" ${messbarAttr(12.5)} font-weight="bold" text-anchor="end" fill="#111111">${chf(schaetzung.total)}</text>`,
     );
   }
 

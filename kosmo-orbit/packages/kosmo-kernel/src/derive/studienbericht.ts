@@ -4,6 +4,7 @@ import type { StudienVariante } from './volumenstudie';
 import { BESONNUNG_HINWEIS, type BesonnungsKennwert } from './besonnungsvergleich';
 import { PROGRAMM_ERFUELLUNG_HINWEIS, type ProgrammErfuellung } from './programmerfuellung';
 import { escapeXml } from './plansvg';
+import { messbarAttr, titelAttr, versal } from './stilblatt';
 import {
   bboxVonPunkte,
   beurteilungssaetze,
@@ -161,10 +162,8 @@ export function studienBerichtSvg(varianten: StudienVariante[], opts: StudienBer
   parts.push(`<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`);
 
   // ── Kopf ─────────────────────────────────────────────────────────────
-  const titelZeile = `Grundlagenstudie${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`;
-  parts.push(
-    `<text x="${MARGIN}" y="${HEADER_TITLE_Y}" font-size="26" font-weight="bold" fill="#111111">${titelZeile}</text>`,
-  );
+  const titelZeile = versal(`Grundlagenstudie${opts.titel ? ` — ${escapeXml(opts.titel)}` : ''}`);
+  parts.push(`<text x="${MARGIN}" y="${HEADER_TITLE_Y}" ${titelAttr(26)} fill="#111111">${titelZeile}</text>`);
 
   const metaTeile: string[] = [];
   if (opts.regelName) metaTeile.push(`aus Zonenregel «${escapeXml(opts.regelName)}»`);
@@ -183,15 +182,13 @@ export function studienBerichtSvg(varianten: StudienVariante[], opts: StudienBer
   }
   if (opts.datum) metaTeile.push(escapeXml(opts.datum));
   parts.push(
-    `<text x="${MARGIN}" y="${HEADER_META_Y}" font-size="12.5" fill="#444444">${metaTeile.join(' · ')}</text>`,
+    `<text x="${MARGIN}" y="${HEADER_META_Y}" ${messbarAttr(12.5)} fill="#444444">${metaTeile.join(' · ')}</text>`,
   );
 
   const zielTeile: string[] = [];
   zielTeile.push(`Ziel-GF: ${opts.zielGf !== null ? `${f1(opts.zielGf)} m²` : '—'}`);
   if (opts.zielGfHerkunft) zielTeile.push(`(${escapeXml(opts.zielGfHerkunft)})`);
-  parts.push(
-    `<text x="${MARGIN}" y="${HEADER_ZIEL_Y}" font-size="12.5" fill="#444444">${zielTeile.join(' ')}</text>`,
-  );
+  parts.push(`<text x="${MARGIN}" y="${HEADER_ZIEL_Y}" ${messbarAttr(12.5)} fill="#444444">${zielTeile.join(' ')}</text>`);
   parts.push(
     `<line x1="${MARGIN}" y1="${HEADER_RULE_Y}" x2="${W - MARGIN}" y2="${HEADER_RULE_Y}" stroke="#bbbbbb" stroke-width="1"/>`,
   );
@@ -201,7 +198,7 @@ export function studienBerichtSvg(varianten: StudienVariante[], opts: StudienBer
     `<rect x="${MARGIN}" y="${EMPFEHLUNG_TOP}" width="${W - 2 * MARGIN}" height="${EMPFEHLUNG_HEIGHT}" fill="#f6f2e6" stroke="#c9bfa0" stroke-width="1"/>`,
   );
   parts.push(
-    `<text x="${MARGIN + EMPFEHLUNG_PAD}" y="${EMPFEHLUNG_TOP + 16}" font-size="10.5" letter-spacing="1" fill="#8a7a4e">EMPFEHLUNG</text>`,
+    `<text x="${MARGIN + EMPFEHLUNG_PAD}" y="${EMPFEHLUNG_TOP + 16}" ${messbarAttr(10.5)} letter-spacing="1" fill="#8a7a4e">EMPFEHLUNG</text>`,
   );
   parts.push(
     `<text x="${MARGIN + EMPFEHLUNG_PAD}" y="${EMPFEHLUNG_TOP + 38}" font-size="18" font-weight="bold" fill="#111111">${escapeXml(empfehlung[0] ?? '—')}</text>`,
@@ -233,7 +230,7 @@ export function studienBerichtSvg(varianten: StudienVariante[], opts: StudienBer
         `<rect x="${colX.toFixed(2)}" y="${SITU_TOP}" width="${colW.toFixed(2)}" height="${SITU_CARD_H}" fill="none" stroke="#cccccc" stroke-width="1"/>`,
       );
       parts.push(
-        `<text x="${(colX + SITU_CARD_PAD).toFixed(2)}" y="${SITU_TOP + 14}" font-size="13" font-weight="bold" fill="#111111">${escapeXml(v.name)}</text>`,
+        `<text x="${(colX + SITU_CARD_PAD).toFixed(2)}" y="${SITU_TOP + 14}" ${titelAttr(13)} fill="#111111">${escapeXml(versal(v.name))}</text>`,
       );
       const boxX = colX + (colW - SITU_BOX) / 2;
       const boxY = SITU_TOP + SITU_LABEL_H + SITU_CARD_PAD;
@@ -243,10 +240,10 @@ export function studienBerichtSvg(varianten: StudienVariante[], opts: StudienBer
       const freiflaecheTxt =
         flaeche.freiflaecheProzent !== null ? `Freifläche ${f1(flaeche.freiflaecheProzent)} %` : 'Freifläche —';
       parts.push(
-        `<text x="${(colX + SITU_CARD_PAD).toFixed(2)}" y="${(boxY + SITU_BOX + 14).toFixed(2)}" font-size="11" fill="#333333">${escapeXml(freiflaecheTxt)}</text>`,
+        `<text x="${(colX + SITU_CARD_PAD).toFixed(2)}" y="${(boxY + SITU_BOX + 14).toFixed(2)}" ${messbarAttr(11)} fill="#333333">${escapeXml(freiflaecheTxt)}</text>`,
       );
       parts.push(
-        `<text x="${(colX + SITU_CARD_PAD).toFixed(2)}" y="${(boxY + SITU_BOX + 28).toFixed(2)}" font-size="11" fill="#333333">${escapeXml(`${v.geschosse} Geschosse · ${f1(v.hoehe / 1000)} m`)}</text>`,
+        `<text x="${(colX + SITU_CARD_PAD).toFixed(2)}" y="${(boxY + SITU_BOX + 28).toFixed(2)}" ${messbarAttr(11)} fill="#333333">${escapeXml(`${v.geschosse} Geschosse · ${f1(v.hoehe / 1000)} m`)}</text>`,
       );
     });
 
@@ -376,7 +373,7 @@ export function studienBerichtSvg(varianten: StudienVariante[], opts: StudienBer
     varianten.forEach((v, i) => {
       const colX = MARGIN + TABLE_LABEL_COL_W + i * valColW;
       parts.push(
-        `<text x="${(colX + valColW / 2).toFixed(2)}" y="${TABLE_TOP + 17}" font-size="11.5" font-weight="bold" text-anchor="middle" fill="#111111">${escapeXml(v.name)}</text>`,
+        `<text x="${(colX + valColW / 2).toFixed(2)}" y="${TABLE_TOP + 17}" ${titelAttr(11.5)} text-anchor="middle" fill="#111111">${escapeXml(versal(v.name))}</text>`,
       );
     });
     parts.push(
@@ -395,7 +392,7 @@ export function studienBerichtSvg(varianten: StudienVariante[], opts: StudienBer
           );
         }
         parts.push(
-          `<text x="${(colX + valColW / 2).toFixed(2)}" y="${(rowY + 15).toFixed(2)}" font-size="11" text-anchor="middle" font-weight="${zeile.besterIndex === i ? 'bold' : 'normal'}" fill="#222222">${escapeXml(wert)}</text>`,
+          `<text x="${(colX + valColW / 2).toFixed(2)}" y="${(rowY + 15).toFixed(2)}" ${messbarAttr(11)} text-anchor="middle" font-weight="${zeile.besterIndex === i ? 'bold' : 'normal'}" fill="#222222">${escapeXml(wert)}</text>`,
         );
       });
       if (zi < zeilen.length - 1) {

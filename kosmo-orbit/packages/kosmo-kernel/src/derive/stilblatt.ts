@@ -185,6 +185,67 @@ export const PLATZHALTER = {
 } as const;
 
 // ───────────────────────────────────────────────────────────────────────────
+// Blatt-Typografie «Zwei Stimmen» (v0.7.3 D4, Soll 5b) — Stream S3. Titel:
+// Lato Heavy, versal, +0.04em Tracking (Plankopf-Titel, Legenden-Titel =
+// Bildlegenden-Beschriftung je Ansicht/Bild). Alles Messbare (Masse, Koten,
+// Etiketten, Plankopf-Meta, Achskreise): IBM Plex Mono mit Tabellenziffern
+// (`font-feature-settings:'tnum'`). Generischer Sans-/Mono-Fallback dahinter,
+// weil der svg-qa-Rasterizer (echtes Chromium, aber ohne Lato/IBM Plex Mono
+// installiert) sonst auf Systemmetriken bricht statt sauber zurückzufallen.
+// Empirischer Entscheid Lato 700 vs. 900 («Heavy» 800 existiert bei
+// @fontsource/lato nicht): s. `docs/GOLDEN-WECHSEL-D4.md` — die font-family-
+// KETTE hier bleibt in jedem Fall `'Lato', …`, das Gewicht steckt in der
+// PDF-eingebetteten TTF-Datei (`apps/kosmo-orbit/public/fonts/pdf/`), nicht
+// im Golden-String.
+// ───────────────────────────────────────────────────────────────────────────
+
+/** Titel-Stimme: Plankopf-Titel + Legenden-Titel (Bildunterschrift je Ansicht/Bild). */
+export const SCHRIFT_TITEL = `'Lato', Helvetica, Arial, sans-serif`;
+
+/** Messbar-Stimme: Masse, Koten, Etiketten, Plankopf-Meta, Achskreise. */
+export const SCHRIFT_MESSBAR = `'IBM Plex Mono', ui-monospace, monospace`;
+
+/** Tracking der Titel-Stimme (versal gesetzt, D4-Fixwert). */
+export const TITEL_TRACKING_EM = 0.04;
+
+/** mm-Skala der Blatt-Typografie (Papier-mm, D4-Fixwerte); Bemassung bleibt
+ * unverändert bei ihren bestehenden Grössen (`MASS_STIFT`-Nachbarschaft). */
+export const BLATT_TYPO_MM = {
+  titel: 4.2,
+  untertitel: 3.2,
+  meta: 2.8,
+  etikett: 2.5,
+  /** Trennlinie unter dem Plankopf-Titel — eigener Wert, NICHT `BLATT.trennStift`
+   * (0.18, D1-Blattrahmen-Feinlinie): D4 setzt hier bewusst die kräftigere
+   * 0.35er-Klasse (Titel/Meta-Trennung soll sichtbarer sein als die
+   * Kastenlinien). */
+  trennlinie: 0.35,
+} as const;
+
+/** Versalsetzung der Titel-Stimme (Schweizer Deutsch: kein ß, `toLocaleUpperCase`
+ * reicht für Umlaute; ss-statt-ß-Texte kommen bereits so aus den Optionen). */
+export function versal(s: string): string {
+  return s.toLocaleUpperCase('de-CH');
+}
+
+/** Titel-Stimme OHNE Grössen-Bindung — für Freitext mit selbstgewählter
+ * Grösse (`sheet.texte[].size`, Plakat-/Konzepttitel), wo `font-size` separat
+ * am Aufrufer hängt statt an einer der vier `BLATT_TYPO_MM`-Stufen. */
+export const TITEL_STIL = `font-weight="bold" font-family="${SCHRIFT_TITEL}" letter-spacing="${TITEL_TRACKING_EM}em"`;
+
+/** SVG-Attribute der Titel-Stimme für eine gegebene mm-Grösse. */
+export function titelAttr(sizeMm: number): string {
+  return `${TITEL_STIL} font-size="${sizeMm}"`;
+}
+
+/** SVG-Attribute der Messbar-Stimme (Tabellenziffern) für eine gegebene Grösse
+ * (mm im Blatt-Kontext, px in den Report-Blatt-Modulen — beide Massstäbe
+ * rufen dieselbe Funktion, der Zahlenwert ist die jeweilige Einheit). */
+export function messbarAttr(size: number): string {
+  return `font-family="${SCHRIFT_MESSBAR}" font-size="${size}" font-feature-settings="'tnum'"`;
+}
+
+// ───────────────────────────────────────────────────────────────────────────
 // Bildschirm-Stiftsätze (Welt-mm bei Bildschirm-Zoom) — PlanView/SectionView
 // lesen dieselbe Tabelle wie der Druckweg; die FARBEN am Bildschirm bleiben
 // Theme-Variablen (var(--k-ink…)), «Papier ist Papier»: das Stilblatt liefert

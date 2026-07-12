@@ -955,7 +955,10 @@ describe('KosmoPublish (Blätter, DXF)', () => {
 
     const svg = sheetToSvg(doc, sheetId, { projectName: 'Test', date: '01.07.2026' });
     expect(svg).toContain('viewBox="0 0 841 594"');
-    expect(svg).toContain('Grundriss EG');
+    // D4 (v0.7.3 «Zwei Stimmen»): Legenden-Titel-Stimme setzt versal beim
+    // Rendern — die Entity-Daten (Zeile 954) bleiben unverändert, nur die
+    // Darstellung wird versal (reiner Matcher-String, kein Golden).
+    expect(svg).toContain('GRUNDRISS EG');
     expect(svg).toContain('1:100');
     expect(svg).toContain('Blatt 1 · A1');
 
@@ -1724,8 +1727,11 @@ describe('Blatt-Texte (Plakat)', () => {
     execute(doc, 'publish.textSetzen', { sheetId, textId, text: 'Haus am Hang\nWettbewerb 2026' });
     const { sheetToSvg } = await import('../src');
     const svg = sheetToSvg(doc, sheetId, { projectName: 'Test', date: '01.07.2026' });
-    expect(svg).toContain('Haus am Hang');
-    expect(svg).toContain('Wettbewerb 2026');
+    // D4 (v0.7.3 «Zwei Stimmen»): Titel-Freitext (`titel: true`) setzt versal
+    // beim Rendern (Lato Heavy statt vormals 'Archivo Narrow') — reiner
+    // Matcher-String, kein Golden (s. GOLDEN-WECHSEL-D4.md).
+    expect(svg).toContain('HAUS AM HANG');
+    expect(svg).toContain('WETTBEWERB 2026');
     execute(doc, 'publish.textSetzen', { sheetId, textId, text: '' });
     expect((doc.get(sheetId) as import('../src').Sheet).texte).toHaveLength(0);
   });
@@ -5359,7 +5365,10 @@ describe('Plan-Revisionen (RE-ARCHICAD A7)', () => {
       execute(doc, 'publish.wolkeSetzen', { sheetId, x: 0, y: 0, w: 10, h: 10, revision: 'Z' }),
     ).toThrow(CommandError);
     const svg = sheetToSvg(doc, sheetId, { projectName: 'T' });
-    expect(svg).toContain('Revisionen'); // Verzeichnis im Plankopf
+    // D4 (v0.7.3 «Zwei Stimmen»): die Revisionsverzeichnis-Überschrift ist
+    // eine Legenden-Titel-Stimme, versal gesetzt — reiner Matcher-String,
+    // kein Golden (s. GOLDEN-WECHSEL-D4.md).
+    expect(svg).toContain('REVISIONEN'); // Verzeichnis im Plankopf
     expect(svg).toContain('Fenster Küche 1.20 → 1.40');
     expect(svg).toContain('data-teil="revisionen"');
     expect(svg).toMatch(/<path d="M 100 100 A 3 3/); // Wolken-Bogenkette

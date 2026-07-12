@@ -152,7 +152,9 @@ describe('studienBerichtSvg', () => {
       regel: REGEL,
       datum: '07.07.2026',
     });
-    expect(mit).toContain('Grundlagenstudie — Wohnüberbauung Rank');
+    // D4 (v0.7.3 «Zwei Stimmen»): Titel-Stimme setzt versal — reiner
+    // Matcher-String, kein Golden (s. GOLDEN-WECHSEL-D4.md).
+    expect(mit).toContain('GRUNDLAGENSTUDIE — WOHNÜBERBAUUNG RANK');
     expect(mit).toContain('aus Zonenregel «W3»');
     expect(mit).toContain('AZ 0.6');
     expect(mit).toContain('max. Höhe 30 m');
@@ -229,7 +231,10 @@ describe('studienBerichtSvg', () => {
     const varianten = fixtureVarianten();
     const svg = studienBerichtSvg(varianten, { zielGf: 6000, titel: 'A & B <Test>', regelName: 'Zone "X"' });
     expect(svg).not.toContain('A & B <Test>');
-    expect(svg).toContain('A &#38; B &#60;Test&#62;');
+    // D4 (v0.7.3 «Zwei Stimmen»): Titel-Stimme setzt versal NACH dem
+    // XML-Escaping — Ziffern/Satzzeichen der Entities bleiben unverändert,
+    // Buchstaben werden versal (reiner Matcher-String, kein Golden).
+    expect(svg).toContain('A &#38; B &#60;TEST&#62;');
   });
 
   it('Programm-Erfüllung in % erscheint mit dem korrekten, gerundeten Wert je Variante', () => {
