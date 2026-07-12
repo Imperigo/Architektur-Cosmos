@@ -10,3 +10,5 @@ e2e-results-*/
 tools/sync-server/*.sqlite
 kosmo-sync.sqlite
 docs/handbuch/bilder/
+# D4-Build-Artefakt: per docs/rundgang/d4-pdffonts-stichprobe.mjs regenerierbar
+docs/rundgang/d4-pdffonts-stichprobe.pdf
