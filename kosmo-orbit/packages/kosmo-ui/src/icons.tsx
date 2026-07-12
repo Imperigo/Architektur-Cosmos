@@ -2,7 +2,7 @@ import type { ReactNode, SVGProps } from 'react';
 
 /**
  * KIcon (W0, UI-KONZEPT-065 §3) — Registry von selbstgezeichneten Zeichen,
- * ein 16×16-Raster, 1.5px-Stroke, `currentColor`, kein Fremd-SVG. Ersetzt die
+ * ein 16×16-Raster, 1.75px-Stroke, `currentColor`, kein Fremd-SVG. Ersetzt die
  * Emoji-Zeichen (👍 👎 ⚙ ⚠ ✕ ★ 🔍 ⚑ 🎙 …) überall dort, wo sie BEDIENELEMENT
  * sind; Emoji in Meldungs-TEXTEN dürfen bleiben (unberührt von dieser Datei).
  *

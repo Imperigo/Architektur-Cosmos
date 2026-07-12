@@ -1,6 +1,6 @@
 {
   "name": "kosmo-orbit-workspace",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "private": true,
   "description": "KosmoOrbit V1 — die Architektur-Designzentrale des ArchitekturKosmos. Eigenständiger Workspace; die Website im Repo-Root bleibt unberührt.",
   "license": "UNLICENSED",
@@ -18,6 +18,9 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "e2e": "playwright test",
+    "svg-qa": "npx tsx tools/svg-qa/pruefe-goldens.mts",
+    "journeys": "playwright test kosmo-journey",
+    "release-gate": "npm run typecheck && npm run test && npm run svg-qa && npm run security:secrets",
     "security:secrets": "node tools/secret-scan.mjs",
     "test:secret-scan": "node tools/secret-scan.test.mjs",
     "netz-check": "node tools/netz-check.mjs",

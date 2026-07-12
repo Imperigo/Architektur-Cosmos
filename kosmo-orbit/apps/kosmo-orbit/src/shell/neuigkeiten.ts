@@ -35,6 +35,48 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.4',
+    datum: '2026-07-12',
+    punkte: [
+      {
+        text: 'Der hochgestellte mm-Rest der SIA-Bemassung (z.B. «361⁵») überlebt jetzt auch im PDF-Export. Bisher setzte der Export ein Sonderzeichen, das die Druck-Fonts für die Reste 4–9 gar nicht kennen — «361⁵» wurde still zu «361». Neu wird der Rest als normale, klein hochgestellt positionierte Ziffer gezeichnet; alle Reste 1–9 kommen mit.',
+        station: 'design',
+      },
+      {
+        text: 'Plankopf-Feinschliff: Untertitel-Zeile und Nordpfeil-«N» stehen jetzt in der Titel-Schrift. Ehrlich offen: im PDF-Export fällt die Regular-Nebenzeile noch auf eine Sans-Ersatztype zurück (der Schnitt Lato 400 ist für den PDF-Pfad nicht eingebettet, nur Lato 900) — lesbar, aber nicht identisch zum Bildschirm; das Nachziehen ist als kleiner Folgepunkt dokumentiert.',
+        station: 'design',
+      },
+      {
+        text: 'Gedruckte Pläne: die Projektionslinien tragen jetzt ihren eigenen Grauton (#666) statt des Schnitt-Tons, und die Abbruch-/Soll-Linien folgen der SIA-Kadenz — beides schliesst die zwei ausdrücklich auf 0.7.4 vertagten Punkte aus der 0.7.3-Strich-Matrix.',
+        station: 'design',
+      },
+      {
+        text: 'Live-Plan: die Nachbarbebauung folgt jetzt der Bauphase wie der Druckweg — im Werkplan ausgeblendet, im Bauprojekt nur als Umriss, im Wettbewerb/Vorprojekt gefüllt. Die Parzellengrenze bleibt phasenunabhängig strichpunktiert.',
+        station: 'design',
+      },
+      {
+        text: 'Der Kosmo-Orb sitzt in einer Modul-Ansicht jetzt rechts im Boden-Dock (statt frei zu überlappen); auf der Zentrale bleibt er frei unten rechts. Er erscheint immer genau einmal — nie doppelt, nie verschwunden.',
+      },
+      {
+        text: 'Plan-Navigation: das Verschieben (Pan) hat jetzt eine Grenze — die Zeichnung kann nicht mehr versehentlich aus dem sichtbaren Fenster geschoben und «verloren» werden.',
+        station: 'design',
+      },
+      {
+        text: 'Wenn Kosmo selbstständig ein grosses Paket (ab 8 Schritten) anwendet, legt sich ein Vollbild-Rahmen «Kosmo arbeitet» über den Bildschirm, solange sichtbar gezeichnet wird. ESC überspringt die Schau — die Anwendung selbst läuft trotzdem atomar durch und bleibt wie immer per Rückgängig umkehrbar.',
+      },
+      {
+        text: 'Die Companion-Ansicht (Phasen-Ring, Job-/Freigabe-Karten fürs Zweitgerät) ist jetzt regulär über die Einstellungen auffindbar, statt nur über die von Hand ergänzte Adresse.',
+      },
+      {
+        text: 'Kleinere Politur: das Unterlabel im Orbit-Startmenü bricht bei Enge um, statt den Nachbarn zu überlagern.',
+      },
+      {
+        text: 'Beschlag-Katalog Stufe 1: 12 architektonische Beschläge (Türdrücker, Band/Scharnier, Einsteckschloss, Bodentürschliesser, Profilzylinder, Panikstange, Fenstergriff u.a.) sind als Katalog mit Plan-Symbol und IFC-Zuordnung angelegt. Ehrlich: das eigentliche Platzieren im Plan und die Bedienoberfläche folgen in Stufe 2 — Stufe 1 ist die Datengrundlage.',
+        station: 'design',
+      },
+    ],
+  },
+  {
     version: '0.7.3',
     datum: '2026-07-12',
     punkte: [
