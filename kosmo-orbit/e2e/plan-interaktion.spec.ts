@@ -64,8 +64,13 @@ test('Plan-Interaktion: Wand anwählen, per Maus-Drag verschieben (ein Undo-Schr
   await expect(page.locator('[data-testid="auswahl-highlight"]')).toBeVisible();
 
   // Klick ins Leere hebt die Auswahl wieder auf (Punkt bleibt sichtbar im
-  // Fenster, aber weit genug von der Wandachse weg, um sie nicht zu treffen)
-  const leer = await weltZuBildschirm(page, 5000, -2000);
+  // Fenster, aber weit genug von der Wandachse weg, um sie nicht zu treffen).
+  // v0.7.4: OBERHALB der Wand (Welt-y 6000) statt darunter (−2000) — das
+  // Boden-Dock (v0.7.3, `boden-dock`) sitzt unten-mittig und deckte den
+  // alten Punkt (Bildschirm ~y769) → der Deselect-Klick landete auf
+  // `boden-dock-tool-viz` und navigierte zu KosmoVis. Der neue Punkt liegt
+  // auf freier Planfläche über der Wandachse, klar oberhalb der Dock-Reihe.
+  const leer = await weltZuBildschirm(page, 5000, 6000);
   await page.mouse.click(leer.x, leer.y);
   await expect(page.locator('[data-testid="inspector"]')).toHaveCount(0);
 
