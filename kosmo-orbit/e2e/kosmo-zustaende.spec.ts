@@ -51,7 +51,7 @@ test('data-zustand wechselt korrekt über alle 9 Kosmo-Zustände', async ({ page
   }
 });
 
-test('takeover rendert den Fensterrahmen-Overlay mit Chip «KOSMO ARBEITET · ESC BRICHT AB»', async ({ page }) => {
+test('takeover rendert den Fensterrahmen-Overlay mit Chip «KOSMO ARBEITET · ESC ÜBERSPRINGT»', async ({ page }) => {
   await frischOhnePanel(page);
   await page.evaluate(() => {
     (window as unknown as { __kosmoStatus: { setzeZustand: (z: string) => void } }).__kosmoStatus.setzeZustand(
@@ -60,7 +60,10 @@ test('takeover rendert den Fensterrahmen-Overlay mit Chip «KOSMO ARBEITET · ES
   });
   const overlay = page.locator('[data-testid="kosmo-orb-takeover"]');
   await expect(overlay).toBeAttached();
-  await expect(overlay).toContainText('KOSMO ARBEITET · ESC BRICHT AB');
+  // v0.7.4 Welle 3 P9: Wortlaut korrigiert («ESC BRICHT AB» → «ESC
+  // ÜBERSPRINGT») — der Apply ist atomar und läuft immer, ESC beendet nur
+  // die sichtbare Übernahme (Begründung: `shell/KosmoOrb.tsx` Kommentar).
+  await expect(overlay).toContainText('KOSMO ARBEITET · ESC ÜBERSPRINGT');
   // 4 Ecken-Pulse vorhanden (§6 Punkt 8, wörtlich «4 Ecken pulsieren versetzt»).
   await expect(page.locator('.kosmo-orb-takeover-ecke')).toHaveCount(4);
 });

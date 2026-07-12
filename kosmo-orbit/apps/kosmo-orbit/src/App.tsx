@@ -21,6 +21,7 @@ import {
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 import { KosmoPanel } from './shell/KosmoPanel';
 import { KosmoSymbol } from './shell/KosmoSymbol';
+import { KosmoTakeoverWaechter } from './shell/KosmoTakeoverWaechter';
 import { OrbitStart } from './shell/OrbitStart';
 // v0.7.3 Bau-Agent S5: Boden-Dock (app-weit) — Import zwingend nötig, damit
 // die Ankerzeile `{/* v073: boden-dock */}` weiter unten kompiliert; die
@@ -930,6 +931,12 @@ export function App() {
         </div>
         {kosmoOpen && <KosmoPanel onClose={() => setKosmoOpen(false)} />}
       </main>
+      {/* v0.7.4 Welle 3 P9: schliesst die Mount-Lücke, in der `applyPaket`
+          (nur bei offenem Panel aufrufbar) `zustand==='takeover'` setzt,
+          aber weder `KosmoSymbol` noch `BodenDock` (beide NUR bei
+          geschlossenem Panel gemountet) den Rahmen zeigen könnten — s.
+          `shell/KosmoTakeoverWaechter.tsx`. */}
+      <KosmoTakeoverWaechter kosmoOpen={kosmoOpen} />
       {/* K11: das Symbol ist der Erstkontakt — es erscheint NUR, wenn das
           Panel zu ist (nie beide gleichzeitig), unten rechts über dem Inhalt.
           v0.7.4 P3: NUR noch auf der Zentrale/Home — in einer Modul-Ansicht

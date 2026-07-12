@@ -25,6 +25,40 @@ export interface KosmoOrbProps {
 }
 
 /**
+ * Der Vollbild-Fensterrahmen selbst (v0.7.2 §6 Punkt 8, Stufe 1) — als
+ * eigene Funktion EXPORTIERT (v0.7.4 Welle 3 P9), weil `KosmoOrb` allein
+ * keine verlässliche Bühne dafür ist: die einzigen Orte, die je einen
+ * `KosmoOrb` mounten (`KosmoSymbol.tsx`, direkt oder eingebettet im
+ * `BodenDock`), tun das NUR, wenn das KosmoPanel GESCHLOSSEN ist
+ * (Einzel-Instanz-Invariante, Welle 2: „kosmo-symbol nie doppelt"). Der
+ * einzige Auslöser von `zustand==='takeover'` (`KosmoPanel.applyPaket`,
+ * grosses Paket) läuft aber AUSSCHLIESSLICH bei OFFENEM Panel — ohne
+ * zusätzliche Wache bliebe der Rahmen also unsichtbar, genau wenn er
+ * gebraucht wird. Die Wache dafür: `shell/KosmoTakeoverWaechter.tsx`
+ * (mountet in `App.tsx`, exakt komplementär zu Symbol/BodenDock — nie
+ * beide gleichzeitig, `kosmo-orb-takeover` bleibt app-weit einfach da).
+ */
+export function KosmoTakeoverRahmen() {
+  return (
+    <div className="kosmo-orb-takeover" data-testid="kosmo-orb-takeover" aria-hidden="true">
+      <div className="kosmo-orb-takeover-rand k-fb-rand-lauf" />
+      <span className="kosmo-orb-takeover-ecke kosmo-orb-takeover-ecke--oben-links" />
+      <span className="kosmo-orb-takeover-ecke kosmo-orb-takeover-ecke--oben-rechts" />
+      <span className="kosmo-orb-takeover-ecke kosmo-orb-takeover-ecke--unten-rechts" />
+      <span className="kosmo-orb-takeover-ecke kosmo-orb-takeover-ecke--unten-links" />
+      {/* v0.7.4 Welle 3 P9: Wortlaut bewusst korrigiert («ESC BRICHT AB» →
+          «ESC ÜBERSPRINGT»). Der Apply ist atomar und läuft gemäss dem
+          Vertrag der Abspiel-Ebene (`state/abspiel-anschluss.ts`) IMMER —
+          ESC beendet nur die SICHTBARE Übernahme (diesen Rahmen bzw. ein
+          laufendes Vorspiel), nicht die Anwendung selbst. «Bricht ab» hätte
+          das Gegenteil suggeriert (Undo bleibt der einzige Weg, ein bereits
+          angewendetes Paket zurückzunehmen). */}
+      <span className="kosmo-orb-takeover-chip">KOSMO ARBEITET · ESC ÜBERSPRINGT</span>
+    </div>
+  );
+}
+
+/**
  * KosmoOrb (v0.7.2 §6, Stream W2-D) — wiederverwendbarer Orb: `KosmoSymbol.tsx`
  * ersetzt damit nur sein Inneres (Testids/DOM-Vertrag dort bleiben exakt),
  * das Charakter-Fenster (Paket 07, Stream W3-F) bindet denselben Orb später
@@ -32,10 +66,9 @@ export interface KosmoOrbProps {
  * Darstellung über CSS-Attribut-Selektoren (`kosmo-feedback.css`), kein
  * Zustand hängt sich an einen anderen an (Morph-Regel, §0.6).
  *
- * `takeover` (Stufe 1, §6 Punkt 8) rendert ZUSÄTZLICH einen fixed-position
- * Fensterrahmen-Overlay (Bildschirm bleibt sichtbar) — unabhängig von der
- * Grösse/Position, an der der kompakte Orb selbst eingebettet ist (52px im
- * Symbol, ~200×220 im Charakter-Fenster).
+ * `takeover` (Stufe 1, §6 Punkt 8) rendert ZUSÄTZLICH `KosmoTakeoverRahmen`
+ * (s.o.) — unabhängig von der Grösse/Position, an der der kompakte Orb
+ * selbst eingebettet ist (52px im Symbol, ~200×220 im Charakter-Fenster).
  */
 export function KosmoOrb({ zustand, size = 32, text, rollenfarbe }: KosmoOrbProps) {
   const zuvorZustand = useRef<KosmoZustand>(zustand);
@@ -94,16 +127,7 @@ export function KosmoOrb({ zustand, size = 32, text, rollenfarbe }: KosmoOrbProp
         </div>
       )}
 
-      {zustand === 'takeover' && (
-        <div className="kosmo-orb-takeover" data-testid="kosmo-orb-takeover" aria-hidden="true">
-          <div className="kosmo-orb-takeover-rand k-fb-rand-lauf" />
-          <span className="kosmo-orb-takeover-ecke kosmo-orb-takeover-ecke--oben-links" />
-          <span className="kosmo-orb-takeover-ecke kosmo-orb-takeover-ecke--oben-rechts" />
-          <span className="kosmo-orb-takeover-ecke kosmo-orb-takeover-ecke--unten-rechts" />
-          <span className="kosmo-orb-takeover-ecke kosmo-orb-takeover-ecke--unten-links" />
-          <span className="kosmo-orb-takeover-chip">KOSMO ARBEITET · ESC BRICHT AB</span>
-        </div>
-      )}
+      {zustand === 'takeover' && <KosmoTakeoverRahmen />}
     </div>
   );
 }

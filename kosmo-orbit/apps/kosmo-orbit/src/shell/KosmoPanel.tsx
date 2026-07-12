@@ -62,6 +62,14 @@ import {
  * Grenze in `kosmo-ui-werkzeuge.ts`.
  */
 
+/**
+ * v0.7.4 Welle 3 P9 (Owner-Entscheid, verbindlich) — «Grosses Paket»: der
+ * Vollbild-Takeover-Rahmen löst NUR aus, wenn `applyPaket` autonom ein
+ * Paket mit MINDESTENS dieser Schritt-Zahl anwendet. Kleinere Pakete (auch
+ * mit `paket-card`/Zusammenfassungszeile) bleiben unverändert unauffällig.
+ */
+const SCHWELLE_GROSSES_PAKET = 8;
+
 interface Bubble {
   id: number;
   who: 'du' | 'kosmo' | 'system';
@@ -1101,48 +1109,84 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       .filter((c) => c.paket?.id === paketId && c.state === 'offen')
       .sort((a, b) => (a.paket!.index ?? 0) - (b.paket!.index ?? 0));
     if (schritte.length === 0) return;
-    // v0.7.2 §7/§12 («Kosmo zeichnet sichtbar», Stufe 1): das Overlay-
-    // Vorspiel wird AWAITED — erst wenn es fertig (oder sofort, wenn nichts
-    // registriert/ESC/webdriver/reduced-motion) ist, läuft der unveränderte
-    // atomare Apply unten. Prop hat Vorrang (Tests), sonst der registrier-
-    // bare Anschluss aus `state/abspiel-anschluss.ts` (Stream W3-E).
-    const vorspiel = onAbspielStart ? onAbspielStart(schritte) : abspielVorspiel(schritte);
-    if (vorspiel) await vorspiel;
-    // v0.7.2 §6 (applyPaket→dispatching): die ganze Kette gilt als EIN
-    // «Losschicken» — «Wusch» begleitet den Start, falls Sounds an sind.
-    useKosmoStatus.getState().setzeZustand('dispatching');
-    wusch();
-    const { history, undo } = useProject.getState();
-    const neuIds: string[] = [];
-    const ergebnisse: string[] = [];
-    history.beginGroup();
-    let fehler: string | null = null;
+    // v0.7.4 Welle 3 P9 (Owner-Entscheid «Grosses Paket»): der Vollbild-
+    // Takeover-Rahmen (`KosmoOrb` zustand==='takeover', bereits seit einer
+    // früheren Welle vorhanden) löst NUR aus, wenn Kosmo autonom ein
+    // GROSSES Paket anwendet (≥ SCHWELLE_GROSSES_PAKET Schritte) — kleine
+    // Pakete (<8) verhalten sich exakt wie heute, keine Änderung.
+    const grosses = schritte.length >= SCHWELLE_GROSSES_PAKET;
+    // Globaler ESC-Handler NUR für die Dauer der sichtbaren Übernahme
+    // (sauber abgemeldet im `finally` unten). EHRLICHKEIT (hart, s. Commit):
+    // der Apply ist atomar und findet gemäss dem Vertrag der Abspiel-Ebene
+    // («das Vorspiel kann den Apply nur verzögern, nie verhindern»,
+    // `state/abspiel-anschluss.ts`) IMMER statt — ESC beendet NUR die
+    // SICHTBARE Übernahme (den Vollbild-Rahmen), NICHT die Anwendung selbst.
+    // Ein separates, bereits bestehendes ESC (`KosmoZeichnet.tsx`, capture-
+    // Phase) stoppt zusätzlich ein laufendes Vorspiel — unabhängig davon
+    // endet der Rahmen hier so oder so sofort, sobald ESC fällt.
+    let aufEsc: ((e: KeyboardEvent) => void) | null = null;
+    if (grosses) {
+      useKosmoStatus.getState().setzeZustand('takeover');
+      aufEsc = (e: KeyboardEvent) => {
+        if (e.key !== 'Escape') return;
+        // Abbruch-Flag der SICHTBAREN Übernahme: nur wenn wir aktuell noch
+        // im Rahmen stehen (Mehrfach-ESC/late-fire harmlos, `setzeZustand`
+        // ist idempotent-sicher über den Store).
+        if (useKosmoStatus.getState().zustand === 'takeover') {
+          useKosmoStatus.getState().setzeZustand('dispatching');
+        }
+      };
+      window.addEventListener('keydown', aufEsc, true);
+    }
     try {
-      for (const schritt of schritte) {
-        const params = ersetzeNeuIds(schritt.params, neuIds);
-        const result = runCommand(schritt.commandId, params, { actor: 'kosmo' });
-        neuIds.push((result.patches[0] as { id?: string } | undefined)?.id ?? '');
-        ergebnisse.push(result.summary);
+      // v0.7.2 §7/§12 («Kosmo zeichnet sichtbar», Stufe 1): das Overlay-
+      // Vorspiel wird AWAITED — erst wenn es fertig (oder sofort, wenn nichts
+      // registriert/ESC/webdriver/reduced-motion) ist, läuft der unveränderte
+      // atomare Apply unten. Prop hat Vorrang (Tests), sonst der registrier-
+      // bare Anschluss aus `state/abspiel-anschluss.ts` (Stream W3-E).
+      const vorspiel = onAbspielStart ? onAbspielStart(schritte) : abspielVorspiel(schritte);
+      if (vorspiel) await vorspiel;
+      // v0.7.2 §6 (applyPaket→dispatching): die ganze Kette gilt als EIN
+      // «Losschicken» — «Wusch» begleitet den Start, falls Sounds an sind.
+      // Bei einem grossen Paket verlässt dies spätestens hier den
+      // 'takeover'-Zustand (der Rahmen blendet aus) — unabhängig davon, ob
+      // ESC vorher schon gedrückt wurde (dann war er es schon vorher).
+      useKosmoStatus.getState().setzeZustand('dispatching');
+      wusch();
+      const { history, undo } = useProject.getState();
+      const neuIds: string[] = [];
+      const ergebnisse: string[] = [];
+      history.beginGroup();
+      let fehler: string | null = null;
+      try {
+        for (const schritt of schritte) {
+          const params = ersetzeNeuIds(schritt.params, neuIds);
+          const result = runCommand(schritt.commandId, params, { actor: 'kosmo' });
+          neuIds.push((result.patches[0] as { id?: string } | undefined)?.id ?? '');
+          ergebnisse.push(result.summary);
+        }
+      } catch (err) {
+        fehler = err instanceof Error ? err.message : String(err);
+      } finally {
+        history.endGroup();
       }
-    } catch (err) {
-      fehler = err instanceof Error ? err.message : String(err);
+      if (fehler) {
+        undo(); // Teilstand zurückrollen — Paket ist atomar
+        setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'abgelehnt' } : x)));
+        for (const schritt of schritte) {
+          await session.resolveRejected(schritt.callId, `Paket abgebrochen: ${fehler}`);
+        }
+        useKosmoStatus.getState().setzeZustand('error');
+        return;
+      }
+      setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'angewendet' } : x)));
+      for (let i = 0; i < schritte.length; i++) {
+        await session.resolveApplied(schritte[i]!.callId, ergebnisse[i]!);
+      }
+      useKosmoStatus.getState().setzeZustand('done');
     } finally {
-      history.endGroup();
+      if (aufEsc) window.removeEventListener('keydown', aufEsc, true);
     }
-    if (fehler) {
-      undo(); // Teilstand zurückrollen — Paket ist atomar
-      setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'abgelehnt' } : x)));
-      for (const schritt of schritte) {
-        await session.resolveRejected(schritt.callId, `Paket abgebrochen: ${fehler}`);
-      }
-      useKosmoStatus.getState().setzeZustand('error');
-      return;
-    }
-    setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'angewendet' } : x)));
-    for (let i = 0; i < schritte.length; i++) {
-      await session.resolveApplied(schritte[i]!.callId, ergebnisse[i]!);
-    }
-    useKosmoStatus.getState().setzeZustand('done');
   };
 
   const rejectPaket = async (paketId: string) => {
