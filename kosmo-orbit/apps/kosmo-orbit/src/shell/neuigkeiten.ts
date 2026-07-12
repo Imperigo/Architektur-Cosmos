@@ -35,6 +35,46 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.3',
+    datum: '2026-07-12',
+    punkte: [
+    {
+      text: 'Alle gedruckten Pläne folgen jetzt EINER Strich-Matrix aus Stiftstärke × Grauton × Linientyp: geschnitten #111, gesehen #3A3A3A, Projektionen #666, Kontext #8a8a8a — und die Fassaden-Sichtkante liegt neu bei 0.25 mm (vorher 0.35, ein Holdover aus der Zeit, als diese Kante noch schwarz war). Ehrlich offen: die Linientyp-Kadenzen sind noch nicht auf das volle SIA-Vokabular normalisiert und die Grundriss-Projektionsflächen tragen weiterhin den geschnitten-Ton — beides ist auf 0.7.4 vertagt.',
+      station: 'design',
+    },
+    {
+      text: 'Fensterflügel zeigen jetzt die Öffnungsrichtung: nach innen öffnend durchgezogen, nach aussen öffnend gestrichelt (2–1-mm-Kadenz), in Grundriss und Ansicht. Dazu bekommt ab der Vorprojekt-Phase JEDE Öffnung (Fenster und Türen) eine echte Leibungslinie — im Werkplan zusätzlich die Rahmenlinie —, womit die früher konturlosen Lochungen geschlossen sind. Grenze wie beim Bestand: keine Hidden-Line-Verdeckung, geschnittene Öffnungen erhalten keine Leibung (sie sind Schnitt, nicht Ansicht).',
+      station: 'design',
+    },
+    {
+      text: 'Der Nachbar-/Parzellen-Kontext im Grundriss folgt jetzt der Bauphase (LOD-Treppe): Wettbewerb/Vorprojekt gefüllt grau, Bauprojekt/Baueingabe nur als Umriss, im Werkplan ganz aus — die Parzellengrenze bleibt in jeder Phase strichpunktiert. Ehrlich offen: diese Phasen-Treppe greift bisher nur im Druck-/PDF-Weg; am Bildschirm (Live-Plan) bleiben die Nachbarn vorerst immer sichtbar — die Verdrahtung der Phasen-Weiche in die Live-Ansicht folgt mit 0.7.4.',
+      station: 'design',
+    },
+    {
+      text: 'Blätter sprechen jetzt mit «zwei Stimmen»: Titel in Lato (versal, leicht gesperrt), alles Messbare (Masse, Koten, Tabellen, Plankopf-Meta) in IBM Plex Mono mit echten Tabellenziffern — durchgängig über Blatt-Module, Plan/Schnitt/Ansicht und Plankopf; die Schriften sind fürs PDF fest eingebettet. Ehrlich benannt: das Soll nennt «Lato Heavy 800», die es frei nicht gibt — gewählt ist Lato 900 (Black), das dem kräftigen Soll-Strich empirisch am nächsten kommt (bewusst nicht als «800» ausgegeben).',
+      station: 'publish',
+    },
+    {
+      text: 'Zwei ehrliche Grenzen der neuen Blatt-Typografie: der DXF-Export trägt weiterhin die CAD-Standardschrift (keine Web-Fonts im DXF), und der hochgestellte SIA-mm-Rest zeigt im PDF-eingebetteten Font nur die Ziffern 1–3 (¹²³) — für den Rest 4–9 fehlt sowohl Lato als auch IBM Plex Mono die Hochzahl-Glyphe, «361⁵» wird im PDF still zu «361». Der Glyphen-Weg dafür ist auf 0.7.4 vertagt.',
+      station: 'publish',
+    },
+    {
+      text: '3D-Modusregel «Phase entscheidet»: bis zur Baueingabe zeigt der Viewport das Weissmodell, ab Ausschreibung Materialien — und für den amtlichen Charakter zwingt die Regel Visualisierungs-Aufnahmen in den zur Phase passenden Modus, damit kein Textur-Rendering eine Wettbewerbs- oder Vorprojektphase vortäuscht.',
+      station: 'vis',
+    },
+    {
+      text: 'Neuer Beschlag-Katalog im Werkplan: Fenster und Türen können Band, Griffseite, Antrieb (z. B. Motor «M») und Absturzsicherung tragen, dazu die aus Sturz/Brüstung etikettierte Brüstungshöhe — als Katalogsymbole, die NUR im Werkplan erscheinen (Daten-Guard). Ehrlich als Stufe S0 benannt: erst 6 Symbole, reine Linien-/Text-Piktogramme (keine pixelgenauen Katalogzeichen), nur im Werkplan — die volle 12-Symbol-Stufe S1 und die IFC-Abbildung des Beschlags folgen später.',
+      station: 'design',
+    },
+    {
+      text: 'Die Themenwahl ist auf ein klares Paar reduziert: «Papier» (hell) und «Kosmos» (dunkel) — das alte «Tinte»-Theme ist entfernt. Eine bereits getroffene eigene Theme-Wahl wird respektiert; die Papier-ist-Papier-Invarianz (identische Struktur in beiden Welten) ist per Regressionswache abgesichert.',
+    },
+    {
+      text: 'Neu ein app-weites Boden-Dock in den Arbeitsansichten — der Schnellzugriff auf die Werkzeuge sitzt jetzt durchgängig am unteren Rand statt nur im runden Zentrale-Hub. Ehrlich vertagt: der Kosmo-Orb sitzt vorerst NEBEN dem Dock, nicht darin — die Integration ins Dock folgt mit 0.7.4, wobei das freie Kosmo-Symbol überall verfügbar bleiben muss.',
+    },
+    ],
+  },
+  {
     version: '0.7.2',
     datum: '2026-07-11',
     punkte: [

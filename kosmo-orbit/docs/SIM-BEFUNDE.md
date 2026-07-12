@@ -895,4 +895,38 @@ append-only, Original-Einträge unangetastet:
 - **reducedMotion-Befund des Leiters KORRIGIERT (Fable-Repro):** Die Playwright-`contextOptions.reducedMotion:'reduce'`-Emulation kommt im gepinnten Chromium nachweislich an (Minimal-Repro; kosmo-zeichnet.spec hebt sie erfolgreich per 'no-preference' auf). Die Fehlmessung stammte mutmasslich aus manuell erzeugten Browser-Kontexten der Shot-Tools, die die Option nicht setzen. Kein Config-Fix nötig; Lehre: **Umgebungs-Befunde erst nach Minimal-Repro im echten Runner-Kontext als Fakt führen.**
 - **Sichtbeweis-Shots müssen den aktiven Zustand beweisen:** Die erste Kritik-3-Shot-Fassung zeigte eine deaktivierte Cursor-Ebene (webdriver-Hartvertrag) und einen Companion-Leerzustand (nicht auf die Karte gewartet) — «grüne» Bilder ohne Beweiskraft. Merkregel: Shot-Tools nutzen dieselben Test-Hooks wie die Specs (`__kosmoCursor.aktivieren()`, auf testids warten), sonst prüft die Kritik Attrappen.
 - **Worktree-Disk-Regel bestätigt** (0.7.1-Lehre): integrierte Agenten-Worktrees sofort abräumen — über den ganzen Auftrag gehalten, keine ENOSPC-Vorfälle an Tag 2–3.
+
+## v0.7.3-Statusrunde (12.07.2026, Auftrag «Kosmodesign»)
+
+Nachführung nach den drei Bauwellen (D1–D7 + Boden-Dock + D5) — append-only,
+Original-Einträge unangetastet. Diese Welle hatte **keine H-Bug-Einträge**:
+die Kritik-Auflagen D1–D7 sind dokumentierte, bewusste Golden-Wechsel bzw.
+additive Features (Belege: `docs/GOLDEN-WECHSEL-D1.md` / `-D4.md` /
+`GOLDEN-WECHSEL-S4.md`), keine Attrappen-/Regressionsbefunde.
+
+**Notizen (keine H-Einträge):**
+- **Container-Restore-Vorfall (Leiter, vor dem Finale):** Der lokale Checkout
+  stand beim Aufsetzen des Finales auf einem **v0.6.6-Snapshot** zurück
+  (Container-Zustand hinter dem Remote). Die gesamte D1–D7-Arbeit lag sicher
+  auf `origin/claude/kosmo-orbit-v1-build-pzxkbj` (HEAD `f43a85a`); wiederher-
+  gestellt per `git stash` (lokale Kleinreste) + **Fast-Forward** auf den
+  Remote-HEAD, kein `--force`, kein Verlust. Lehre (ergänzt H-31-Familie):
+  **Vor jedem Finale zuerst `git rev-parse HEAD` gegen `origin/<branch>`
+  prüfen — der Container-Checkout ist NICHT die Wahrheit, `origin` ist es.**
+- **Fable-Spend-Limit → Ausführung auf Sonnet (Modell-Ökonomie-Abweichung):**
+  Für 0.7.3 war **Fable gesperrt** (Monats-Spend-Limit). Abweichend vom
+  «Fable = Urteil»-Muster (`docs/KI-MODELL-GUIDELINE.md`) lief die Ausführung
+  der Streams **S3/W3 auf Sonnet**, Orchestrierung/Integration/Gates beim
+  Opus-Leiter + Hauptkontext. Ehrlich benannt: die härtesten Kritik-Verdikte
+  hatten diese Welle kein Fable-Siegel; die Golden-Wechsel sind stattdessen
+  maschinell Zeile-für-Zeile gegen die je vorab geschriebene Erwartungsliste
+  verifiziert (s. `-D1/-D4/S4`-Ist-Abschnitte). Auch in
+  `docs/AI-SCAN-AUSWERTUNG-0.7.3.md` §4 vermerkt.
+- **Golden-Regime im Finale bestätigt:** Zwei erlaubte Sammelwechsel (D1
+  «Strich-Matrix», D4 «Zwei Stimmen») + ein regulärer additiver S4-Wechsel
+  (D2/D3/D6, 1 verfeinert + 4 neu). Gates am Finale grün nachgefahren: Kernel
+  752/752 · App 847/847 · Typecheck alle Workspaces · svg-qa 28 Goldens,
+  0 harte Fehler (1 bekannte `abnahmeprotokoll.svg`-Text-Overlap-Warnung,
+  Bestand). Schutzliste unangetastet (`toBe(18)`, orbit-start, kosmo-symbol,
+  Journeys, Goldens ausserhalb der dokumentierten Wechsel).
 \n
