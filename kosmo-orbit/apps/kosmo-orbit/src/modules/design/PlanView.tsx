@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect } from '@kosmo/ui';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUnternehmerplan } from './unternehmerplan';
 import type { ViewportHandlers } from './Viewport3D';
@@ -246,7 +246,7 @@ export function PlanView({
     const schritt = (t: number) => {
       const dt = Math.min(t - letzte, 48); // Deckel gegen rAF-Aussetzer (Tab-Wechsel etc.)
       letzte = t;
-      setView((cur) => ({
+      setViewGeklemmt((cur) => ({
         ...cur,
         cx: cur.cx - (v.vx * dt) / cur.scale,
         cy: cur.cy + (v.vy * dt) / cur.scale,
@@ -288,7 +288,7 @@ export function PlanView({
     };
     stoppeZoomAnimation();
     if (reduzierteBewegung()) {
-      setView(ziel);
+      setViewGeklemmt(ziel);
       return;
     }
     const dauer = 260; // --k-feder
@@ -296,7 +296,7 @@ export function PlanView({
     const schritt = (t: number) => {
       const u = Math.min(1, (t - t0) / dauer);
       const e = federGefuehl(u);
-      setView({
+      setViewGeklemmt({
         cx: start.cx + (ziel.cx - start.cx) * e,
         cy: start.cy + (ziel.cy - start.cy) * e,
         scale: start.scale + (ziel.scale - start.scale) * e,
@@ -392,6 +392,50 @@ export function PlanView({
   // (Trace-Layer + Hauptregionen) nutzen denselben Wert.
   const pocheModus: PocheModus = doc.settings.pocheModus ?? 'phase';
 
+  // v0.7.4 P7 (Pan-Grenze, Owner-Befund «Inhalt kann off-screen verloren
+  // gehen»): dieselbe Bounding-Box wie «Einpassen» weiter unten (T3,
+  // `plan.bounds` ∪ Kontext-Zonen/Nachbarn — derivePlan kennt Letztere
+  // nicht), hier zusätzlich zum Klemmen von `cx`/`cy` genutzt. Ohne
+  // Modellinhalt (leeres Geschoss) gibt es nichts zu klemmen — Guard.
+  const modellBounds = useMemo(() => {
+    let b = plan?.bounds ? { ...plan.bounds } : null;
+    for (const z of kontextZonen) {
+      for (const p of z.outline) {
+        if (!b) b = { minX: p.x, minY: p.y, maxX: p.x, maxY: p.y };
+        else {
+          b.minX = Math.min(b.minX, p.x);
+          b.minY = Math.min(b.minY, p.y);
+          b.maxX = Math.max(b.maxX, p.x);
+          b.maxY = Math.max(b.maxY, p.y);
+        }
+      }
+    }
+    return b;
+  }, [plan, kontextZonen]);
+
+  // Zoom ist bereits geklemmt (0.005-1, s. die einzelnen `setView`-Aufrufe
+  // unten) — Pan (`cx`/`cy`) bisher nicht: `klemmeSicht` hält das Zentrum
+  // innerhalb der Modell-Bbox + grosszügigem Rand (die Hälfte der
+  // Standard-Fit-Marge, mind. 8m), damit immer ein Teil der Zeichnung
+  // sichtbar bleibt, ohne die freie Navigation spürbar einzuschränken.
+  const klemmeSicht = (v: { cx: number; cy: number; scale: number }): { cx: number; cy: number; scale: number } => {
+    if (!modellBounds) return v;
+    const randX = Math.max(8000, (modellBounds.maxX - modellBounds.minX) * 0.75);
+    const randY = Math.max(8000, (modellBounds.maxY - modellBounds.minY) * 0.75);
+    return {
+      ...v,
+      cx: Math.min(modellBounds.maxX + randX, Math.max(modellBounds.minX - randX, v.cx)),
+      cy: Math.min(modellBounds.maxY + randY, Math.max(modellBounds.minY - randY, v.cy)),
+    };
+  };
+  // Wrapper um den rohen State-Setter — jede Sicht-Änderung (Pan, Zoom,
+  // Fling, Einpassen) läuft hier durch, damit die Grenze unabhängig vom
+  // jeweiligen Eingabeweg gilt (Maus-Drag, Touch, Mausrad-Pinch,
+  // Doppeltap-Zoom-Animation, Fling-Momentum).
+  const setViewGeklemmt: typeof setView = (naechster) => {
+    setView((vorher) => klemmeSicht(typeof naechster === 'function' ? naechster(vorher) : naechster));
+  };
+
   // Plan-LOD: view.scale ist px pro mm Welt → × 1000 = px pro Meter.
   // lodRef trägt die zuletzt gültige Stufe für die Hysterese in planLod weiter.
   const lodRef = useRef<PlanLod>('voll');
@@ -452,6 +496,9 @@ export function PlanView({
     const w = Math.max(b.maxX - b.minX, 2000);
     const h = Math.max(b.maxY - b.minY, 2000);
     const scale = Math.min(1, Math.max(0.005, Math.min(rect.width / (w * 1.25), rect.height / (h * 1.25))));
+    // v0.7.4 P7: «Einpassen» zentriert exakt auf die Modell-Bbox — das liegt
+    // per Konstruktion innerhalb der Pan-Grenze, der rohe Setter reicht hier
+    // (kein Zusatznutzen durch `setViewGeklemmt`, aber auch kein Schaden).
     setView({ cx: (b.minX + b.maxX) / 2, cy: (b.minY + b.maxY) / 2, scale });
   };
 
@@ -708,7 +755,7 @@ export function PlanView({
               const mid = { x: (a!.x + b!.x) / 2, y: (a!.y + b!.y) / 2 };
               const { d0, mid0, v0 } = pinch.current;
               const scale = Math.min(1, Math.max(0.005, v0.scale * (d / d0)));
-              setView({
+              setViewGeklemmt({
                 scale,
                 cx: v0.cx - (mid.x - mid0.x) / scale,
                 cy: v0.cy + (mid.y - mid0.y) / scale,
@@ -728,7 +775,7 @@ export function PlanView({
           if (panning.current) {
             const dx = (e.clientX - panning.current.x) / view.scale;
             const dy = (e.clientY - panning.current.y) / view.scale;
-            setView((v) => ({ ...v, cx: panning.current!.cx - dx, cy: panning.current!.cy + dy }));
+            setViewGeklemmt((v) => ({ ...v, cx: panning.current!.cx - dx, cy: panning.current!.cy + dy }));
             flingRef.current!.sample(performance.now(), e.clientX, e.clientY); // §5: Fling-Fenster (Maus-Drag-Pan)
           } else if (moveActive.current) {
             handlers.current?.onMoveDrag?.(toWorld(e.clientX, e.clientY));
@@ -891,20 +938,46 @@ export function PlanView({
 
           {/* v0.7.1: Kontext-Layer (Parzelle/Nachbarn) — bewusst in JEDEM LOD
               sichtbar (gerade weit rausgezoomt ist der Kontext das Thema),
-              hinter allem Planinhalt, nie interaktiv. */}
+              hinter allem Planinhalt, nie interaktiv.
+              v0.7.4 P2 (D3 Live-Plan-Phasen-Weiche): Nachbarn folgen jetzt
+              derselben `nachbarKontextStufe(phase)`-Treppe wie der Druckweg
+              (`plansvg.ts` `planInnerSvg`, `derive/plan.ts` Kopfkommentar):
+              'aus' (Werkplan) → gar nicht zeichnen, 'umriss' (Bauprojekt/
+              Baueingabe) → nur Kontur (`fill:none` + Stroke), 'fill'
+              (Wettbewerb/Vorprojekt) → wie bisher gefüllt. Die Parzelle
+              selbst bleibt IMMER strichpunktiert, phasenunabhängig (sie ist
+              kein «Nachbar»-Kontext). Farben bleiben `var(--k-*)` — «Papier
+              ist Papier», der Bildschirm nutzt UI-Variablen, der Druck harte
+              Werte (GRAU.kontext). */}
           {kontextZonen.length > 0 && (
             <g data-testid="plan-kontext" pointerEvents="none">
-              {kontextZonen.map((z) =>
-                z.zonenArt === 'parzelle' ? (
-                  <path
-                    key={`ktx-${z.id}`}
-                    d={`M ${z.outline.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`}
-                    fill="none"
-                    stroke="var(--k-ink-soft)"
-                    strokeWidth={Math.max(20, 1.2 / view.scale)}
-                    strokeDasharray={`${3 / view.scale} ${0.9 / view.scale} ${0.6 / view.scale} ${0.9 / view.scale}`}
-                  />
-                ) : (
+              {kontextZonen.map((z) => {
+                if (z.zonenArt === 'parzelle') {
+                  return (
+                    <path
+                      key={`ktx-${z.id}`}
+                      d={`M ${z.outline.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`}
+                      fill="none"
+                      stroke="var(--k-ink-soft)"
+                      strokeWidth={Math.max(20, 1.2 / view.scale)}
+                      strokeDasharray={`${3 / view.scale} ${0.9 / view.scale} ${0.6 / view.scale} ${0.9 / view.scale}`}
+                    />
+                  );
+                }
+                const stufe = nachbarKontextStufe(doc.settings.phase);
+                if (stufe === 'aus') return null;
+                if (stufe === 'umriss') {
+                  return (
+                    <path
+                      key={`ktx-${z.id}`}
+                      d={`M ${z.outline.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`}
+                      fill="none"
+                      stroke="var(--k-line-strong)"
+                      strokeWidth={Math.max(20, 1 / view.scale)}
+                    />
+                  );
+                }
+                return (
                   <path
                     key={`ktx-${z.id}`}
                     d={`M ${z.outline.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`}
@@ -912,8 +985,8 @@ export function PlanView({
                     opacity={0.55}
                     stroke="none"
                   />
-                ),
-              )}
+                );
+              })}
             </g>
           )}
 
@@ -1493,7 +1566,7 @@ export function PlanView({
           // Bildschirm-px → Weltverschiebung über `view.scale`).
           onPanDelta={(dx, dy) => {
             stoppeFling();
-            setView((v) => ({ ...v, cx: v.cx - dx / v.scale, cy: v.cy + dy / v.scale }));
+            setViewGeklemmt((v) => ({ ...v, cx: v.cx - dx / v.scale, cy: v.cy + dy / v.scale }));
           }}
         />
       )}
