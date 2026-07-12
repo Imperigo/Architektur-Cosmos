@@ -16,6 +16,7 @@ import {
   GRAU_SONDER,
   MASS_STIFT,
   RADIER_WEISS,
+  SCHRIFT_MESSBAR,
   STIFT,
   UMBAU_FLAECHEN,
   UMBAU_STIFTE,
@@ -229,7 +230,7 @@ export function planInnerSvg(
       for (const p of [ax.a, ax.b]) {
         parts.push(
           `<circle cx="${p.x}" cy="${-p.y}" r="${2.8 * scale}" fill="white" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.fein * scale}"/>`,
-          `<text x="${p.x}" y="${-p.y + scale}" text-anchor="middle" font-size="${3 * scale}" font-family="monospace">${escapeXml(ax.label)}</text>`,
+          `<text x="${p.x}" y="${-p.y + scale}" text-anchor="middle" font-size="${3 * scale}" font-family="${SCHRIFT_MESSBAR}">${escapeXml(ax.label)}</text>`,
         );
       }
     }
@@ -242,7 +243,7 @@ export function planInnerSvg(
     // Standard-Beschriftung 2.2mm — Katalog-Nebentext, keine Kote/Etikett).
     const fontSize = (t.classes.includes('beschlag') ? 1.8 : 2.2) * scale;
     parts.push(
-      `<text x="${t.at.x}" y="${y}" text-anchor="middle" font-size="${fontSize}" font-family="monospace">${escapeXml(t.text)}</text>`,
+      `<text x="${t.at.x}" y="${y}" text-anchor="middle" font-size="${fontSize}" font-family="${SCHRIFT_MESSBAR}">${escapeXml(t.text)}</text>`,
     );
   }
   for (const a of plan.arcs) {
@@ -289,11 +290,11 @@ export function planInnerSvg(
       }
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
-        parts.push(`<text x="${mid}" y="${-c.offset - 1.2 * scale}" text-anchor="middle" font-size="${fs}" stroke="none">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
+        parts.push(`<text x="${mid}" y="${-c.offset - 1.2 * scale}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
         // B1: Öffnungs-Höhenmass «h/BH» als Zweitzeile unter der Masslinie
         const z = c.zusatz?.[i];
         if (z) {
-          parts.push(`<text x="${mid}" y="${-c.offset + 2.2 * scale}" text-anchor="middle" font-size="${2.0 * scale}" stroke="none">${escapeXml(z)}</text>`);
+          parts.push(`<text x="${mid}" y="${-c.offset + 2.2 * scale}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${escapeXml(z)}</text>`);
         }
       }
     } else {
@@ -304,10 +305,10 @@ export function planInnerSvg(
       }
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
-        parts.push(`<text x="${c.offset - 1.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${fs}" stroke="none" transform="rotate(-90 ${c.offset - 1.2 * scale} ${-mid})">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
+        parts.push(`<text x="${c.offset - 1.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${c.offset - 1.2 * scale} ${-mid})">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
         const z = c.zusatz?.[i];
         if (z) {
-          parts.push(`<text x="${c.offset + 2.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${2.0 * scale}" stroke="none" transform="rotate(-90 ${c.offset + 2.2 * scale} ${-mid})">${escapeXml(z)}</text>`);
+          parts.push(`<text x="${c.offset + 2.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${c.offset + 2.2 * scale} ${-mid})">${escapeXml(z)}</text>`);
         }
       }
     }
@@ -504,14 +505,14 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
         const zusatz = z === 0 && absolut !== undefined ? ` = ${absolut.toFixed(2)} m ü.M.` : '';
         parts.push(
           `<path d="M ${s0} ${-z} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="${GRAU.geschnitten}" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.fein * scale}"/>`,
-          `<text x="${s0 - dreieck}" y="${-z - dreieck * 1.2}" text-anchor="end" font-size="${2.6 * scale}" font-family="monospace">${koteLabel(z)}${zusatz}</text>`,
+          `<text x="${s0 - dreieck}" y="${-z - dreieck * 1.2}" text-anchor="end" font-size="${2.6 * scale}" font-family="${SCHRIFT_MESSBAR}">${koteLabel(z)}${zusatz}</text>`,
         );
         const delta = bodenAufbauVon(st.id);
         if (delta > 0) {
           const zRoh = z - delta;
           parts.push(
             `<path d="M ${s0} ${-zRoh} l ${-dreieck / 2} ${-dreieck} h ${dreieck} Z" fill="none" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.fein * scale}"/>`,
-            `<text x="${s0 - dreieck}" y="${-zRoh + dreieck * 1.6}" text-anchor="end" font-size="${2.2 * scale}" font-family="monospace">${koteLabel(zRoh)} roh</text>`,
+            `<text x="${s0 - dreieck}" y="${-zRoh + dreieck * 1.6}" text-anchor="end" font-size="${2.2 * scale}" font-family="${SCHRIFT_MESSBAR}">${koteLabel(zRoh)} roh</text>`,
           );
         }
       }

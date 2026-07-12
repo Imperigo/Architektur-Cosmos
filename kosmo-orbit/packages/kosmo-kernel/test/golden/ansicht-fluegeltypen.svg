@@ -84,5 +84,5 @@
 <line x1="18000" y1="-1600" x2="17850" y2="-1525" stroke="#3A3A3A" stroke-width="2.52"/>
 <line x1="1995" y1="0" x2="20005" y2="0" stroke="#8a8a8a" stroke-width="2.52" stroke-dasharray="28 16.8"/>
 <path d="M 1995 0 l -11.200000000000001 -22.400000000000002 h 22.400000000000002 Z" fill="#111" stroke="#111" stroke-width="2.52"/>
-<text x="1972.6" y="-26.880000000000003" text-anchor="end" font-size="36.4" font-family="monospace">±0.00</text>
+<text x="1972.6" y="-26.880000000000003" text-anchor="end" font-size="36.4" font-family="'IBM Plex Mono', ui-monospace, monospace">±0.00</text>
 </svg>

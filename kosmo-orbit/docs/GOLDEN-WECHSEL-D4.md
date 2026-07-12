@@ -228,3 +228,68 @@ in `bauablauf.test.ts`, `baugesuch.test.ts`, `kostenschaetzung.test.ts`,
 prüften vormals gemischtschreibige Titel-Substrings, die jetzt versal sind;
 reine Matcher-Strings, kein Golden, Kommentar mit Verweis auf diese Datei
 an jeder Stelle ergänzt); Kernel-Typecheck grün.
+
+## 6 · D4-Ergänzung: Messbare Plan-/Schnitt-Schrift auf IBM Plex Mono
+
+Schliesst den in §0 dokumentierten «Offenen Punkt an den Koordinator»: Die
+Messbar-Stimme (`SCHRIFT_MESSBAR`, §1) galt bisher nur für die Blatt-Module,
+NICHT für `plansvg.ts` (Grundriss/Schnitt/Ansicht) — dort stand die
+messbare Beschriftung noch auf hartcodiertem `font-family="monospace"` bzw.
+erbte (Bemassungstext) stillschweigend die Root-SVG-Kette
+`"Helvetica, Arial, sans-serif"`. Auf einem komponierten Blatt
+(`blatt-autofuellung.svg` platziert Grundriss/Schnitt NEBEN die
+Mono-Tabellen der Blatt-Module) stand darum Helvetica-Bemassung neben
+IBM-Plex-Mono-Tabellenwerten — ein Bruch der «Zwei Stimmen» innerhalb
+desselben Blatts. Dieser Nachtrag stellt das her, in engem Rahmen: **nur**
+`plansvg.ts`, **nur** die messbaren Textklassen.
+
+### Erwartungsliste (vor der zweiten Regeneration)
+
+| Stelle (`plansvg.ts`) | Vorher | Nachher |
+| --- | --- | --- |
+| Z. 233 Achskreis-Label | `font-family="monospace"` | `font-family="${SCHRIFT_MESSBAR}"` |
+| Z. 246 Plan-Etiketten (`plan.texte`: assoziative Wand-/Decken-/Stützen-/Unterzug-Etiketten, Aussparungs-Koten, Beschlag-Etiketten D6 — ausschliesslich technische Inhalte, KEINE Raumnamen/Zonen-Labels existieren in diesem Pfad) | `font-family="monospace"` | `font-family="${SCHRIFT_MESSBAR}"` |
+| Z. 293/297 Bemassungstext + Zusatzzeile (h/BH), horizontale Ketten | keine explizite `font-family` (erbt Root-Helvetica) | explizit `font-family="${SCHRIFT_MESSBAR}"` |
+| Z. 308/311 Bemassungstext + Zusatzzeile, vertikale Ketten | keine explizite `font-family` (erbt Root-Helvetica) | explizit `font-family="${SCHRIFT_MESSBAR}"` |
+| Z. 508/515 Höhenkoten (OK fertig/roh, Ansicht+Schnitt) | `font-family="monospace"` | `font-family="${SCHRIFT_MESSBAR}"` |
+
+`section.ts` bleibt **unverändert** — die Datei enthält kein einziges
+`<text>`/`font-family` (reine Geometrie-Ableitung `SectionSpec`); sämtliche
+SVG-Textausgabe für Schnitt UND Ansicht läuft über `plansvg.ts`s
+`sectionInnerSvg`, dieselbe Funktion, die auch die Höhenkoten zeichnet.
+
+**Bewusst unangetastet** (kein Messwert, Root-SVG-Fallback, Plankopf/
+Nordpfeil ausserhalb dieses Nachtrags-Mandats): der Root-SVG-Fallback
+`font-family="Helvetica, Arial, sans-serif"` (~Z. 562), der Nordpfeil-Text
+«N» (~Z. 575) und der Plankopf-Titel/-Meta-Text (~Z. 584–587) — diese drei
+Stellen tragen aktuell keine explizite Messbar-Kette, obwohl der
+Stilblatt-Kommentar «Plankopf-Meta» begrifflich unter Messbar-Stimme fasst;
+das ist ein dokumentierter Grenzfall (s. u.), keine übersehene Stelle.
+
+### Ist-Abgleich nach Regeneration (12.07.2026)
+
+21 Goldens geändert (`grundriss-*` ×12 inkl. `grundriss-kontext-*` ×3,
+`ansicht-*` ×4, `schnitt-*` ×3, `blatt-autofuellung.svg`,
+`werkplan-beschlag.svg`) — deckt sich mit der Erwartung
+(alle Goldens, die über `planToSvg`/`sectionInnerSvg` messbaren Text
+zeichnen). Maschineller Beweis (Diff-Skript, Zeilenpaar-Vergleich nach
+Entfernen des `font-family="…"`-Attributs): **92 geänderte Zeilen über 21
+Dateien, alle 92 nach Attribut-Entfernung byte-identisch** — 0
+Geometrie-/Koordinaten-/Farb-/`font-size`-Diff ausserhalb der
+`font-family`-Attribute. `abnahmeprotokoll.svg` etc. (die 6 Goldens aus §2)
+bleiben unverändert (fremder Textpfad, keine Bemassung/Koten).
+
+Gates: `npx tsx tools/svg-qa/pruefe-goldens.mts` → 28 Goldens geprüft, 0
+harte Fehler, 1 bekannte `abnahmeprotokoll.svg`-Text-Overlap-Warnung
+(unverändert seit §5); Kernel-Suite 33/33 Testdateien · 747/747 Tests grün;
+Kernel-Typecheck grün.
+
+### Begründung
+
+Kohärenz «Zwei Stimmen» gilt pro Blatt, nicht pro Renderer: Sobald ein
+Blatt (`blattfuellung.ts`) Grundriss/Schnitt/Ansicht NEBEN Blatt-Modul-
+Tabellen komponiert, muss die Messbar-Stimme über die Renderer-Grenze
+hinweg identisch sein — sonst wirkt die zweite Stimme wie ein Zufall der
+Implementierung statt wie eine gestalterische Entscheidung. Der Touch bleibt
+bewusst eng (nur `font-family`, nur messbare Klassen, keine Geometrie/
+Grösse), damit er sich verlustfrei in den D4-Sammelwechsel einfaltet.
