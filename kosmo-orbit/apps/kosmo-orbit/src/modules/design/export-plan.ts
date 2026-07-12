@@ -18,6 +18,11 @@ import { useProject } from '../../state/project-store';
  */
 const PDF_FONTS = [
   { url: '/fonts/pdf/lato-900-latin-pdf.ttf', datei: 'Lato-900.ttf', familie: 'Lato', stil: 'bold' },
+  // v0.7.5 A3: Lato 400 (normal) — schliesst die 0.7.4-Lücke, dass die
+  // Plankopf-Regular-Nebenzeile (Untertitel + Nordpfeil-«N», `plansvg.ts`,
+  // SCHRIFT_TITEL ohne font-weight) im PDF auf Helvetica fiel. Jetzt löst
+  // svg2pdf ('Lato','normal') gegen diesen Schnitt auf.
+  { url: '/fonts/pdf/lato-400-latin-pdf.ttf', datei: 'Lato-400.ttf', familie: 'Lato', stil: 'normal' },
   { url: '/fonts/pdf/ibm-plex-mono-400-latin-pdf.ttf', datei: 'IBMPlexMono-400.ttf', familie: 'IBM Plex Mono', stil: 'normal' },
   { url: '/fonts/pdf/ibm-plex-mono-600-latin-pdf.ttf', datei: 'IBMPlexMono-600.ttf', familie: 'IBM Plex Mono', stil: 'bold' },
 ] as const;

@@ -1,7 +1,7 @@
-# PDF-Einbettungs-Fonts (v0.7.3 D4 «Zwei Stimmen»)
+# PDF-Einbettungs-Fonts (v0.7.3 D4 «Zwei Stimmen», Lato-400 ergänzt v0.7.5 A3)
 
 jsPDF (v4.2.1, `svg2pdf.js`-Pfad) kann **kein woff2** einbetten — nur TrueType
-(TTF)/OpenType. Diese drei Dateien sind darum ein **eigener, zweiter**
+(TTF)/OpenType. Diese vier Dateien sind darum ein **eigener, zweiter**
 Font-Satz neben `apps/kosmo-orbit/public/fonts/*.woff2` (die UI-Fonts aus
 v0.7.2, self-hosted für `fonts.css`): latin-subsettete **TTF**, ausschliesslich
 für den PDF-Export (`jsPDF.addFileToVFS`/`addFont` in `export-plan.ts` und
@@ -10,10 +10,11 @@ für den PDF-Export (`jsPDF.addFileToVFS`/`addFont` in `export-plan.ts` und
 | Datei | Schrift/Schnitt | Grösse | Verwendung |
 | --- | --- | --- | --- |
 | `lato-900-latin-pdf.ttf` | Lato Black (900) | 26.0 KB | Titel (Plankopf-/Legenden-Titel, `font-weight="bold"` in den Goldens) |
+| `lato-400-latin-pdf.ttf` | Lato Regular (400) | 25.1 KB | Plankopf-Regular-Nebenzeile (Untertitel + Nordpfeil-«N», `SCHRIFT_TITEL` ohne font-weight) — **v0.7.5 A3** |
 | `ibm-plex-mono-400-latin-pdf.ttf` | IBM Plex Mono Regular (400) | 18.5 KB | Messbares (Masse, Koten, Etiketten, Plankopf-Meta, Achskreise) |
 | `ibm-plex-mono-600-latin-pdf.ttf` | IBM Plex Mono SemiBold (600) | 18.4 KB | Messbares, fett hervorgehoben (z.B. Total-Zeilen) |
 
-Alle drei zusammen **63 KB** — weit unter dem 200-KB-Einzellimit.
+Alle vier zusammen **~88 KB** — weit unter dem 200-KB-Einzellimit.
 
 ## Herkunft & Subsetting
 
@@ -57,23 +58,25 @@ gegen Soll 5b unter `docs/rundgang/d4-lato-700-vs-900*.png` — **900 (Black)**
 trifft die Strichstärke des Soll-Titels sichtbar näher als 700 (Bold), s.
 `docs/GOLDEN-WECHSEL-D4.md` für den vollständigen Vergleich.
 
-## Offene Grenze (v0.7.4): Plankopf-Untertitel/«N» im PDF nur als Bold-Fallback
+## Plankopf-Untertitel/«N» im PDF — GELÖST in v0.7.5 (A3)
 
-Eingebettet ist von Lato **nur der Schnitt 900 (Black)** — die Golden-Titel
-tragen `font-weight="bold"`, dafür genügt der eine Schnitt. Die v0.7.4-P4-
-Feinschliffe am Plankopf (Untertitel-Zeile + Nordpfeil-«N») nutzen aber Lato
-im **Regular-Schnitt (400)** auf dem Bildschirm. Im PDF-Pfad fehlt dieser
-Schnitt in der VFS — jsPDF fällt darum für diese eine Nebenzeile auf den
-nächstbesten eingebetteten Font zurück (kein Tofu, kein Informationsverlust:
-der Text erscheint, nur in einer sans-nahen Ersatz-Type statt in Lato 400).
-Der on-screen-Stand ist golden-bestätigt; nur der PDF-Export zeigt hier eine
-subtile Type-Abweichung in einer sekundären Zeile.
+**Bestand (v0.7.4):** Eingebettet war von Lato nur der Schnitt 900 (Black) —
+die v0.7.4-P4-Feinschliffe am Plankopf (Untertitel-Zeile + Nordpfeil-«N»)
+nutzen Lato aber im **Regular-Schnitt (400)** (`SCHRIFT_TITEL` ohne
+`font-weight`, `plansvg.ts`). Im PDF-Pfad fehlte dieser Schnitt in der VFS,
+jsPDF fiel für diese Nebenzeile auf Helvetica zurück (kein Tofu, aber eine
+sans-nahe Ersatz-Type statt Lato 400).
 
-**Ehrlicher Kandidat für später:** `lato-400-latin-pdf.ttf` analog zu den
-übrigen Dateien subsetten und in `export-plan.ts`/`export-sheets.ts`
-registrieren (~26 KB, weit unter dem 200-KB-Limit). Bewusst NICHT in v0.7.4
-gemacht — eigener Font-Bau + Golden-Berührung wären für eine Sekundärzeile
-unverhältnismässig; die Nebenzeile bleibt lesbar.
+**Fix (v0.7.5 A3):** `lato-400-latin-pdf.ttf` (25.1 KB, exakt dieselbe
+pyftsubset-Pipeline wie die übrigen PDF-TTF, aus dem vorhandenen
+`@fontsource/lato`) ist eingebettet und als vierter Eintrag
+(`('Lato','normal')`) in `PDF_FONTS` von `export-plan.ts` **und**
+`export-sheets.ts` registriert. Damit löst svg2pdf den Plankopf-Untertitel
+und das Nordpfeil-«N» jetzt gegen Lato 400 auf. **Golden-neutral:** die
+Registrierung lebt ausschliesslich in der App-Export-Schicht — kein
+`derive/`-Pfad und kein Golden-SVG ändert sich (nur der PDF-Ausgabepfad).
+Beleg-Skript `docs/rundgang/d4-pdffonts-stichprobe.mjs` trägt den vierten
+Eintrag mit.
 
 ## Lizenz
 

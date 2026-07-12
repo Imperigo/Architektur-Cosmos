@@ -27,6 +27,9 @@ import { baueHerkunft, ermittleEditionId, herkunftKennzeichnung, svgMitHerkunft 
  */
 const PDF_FONTS = [
   { url: '/fonts/pdf/lato-900-latin-pdf.ttf', datei: 'Lato-900.ttf', familie: 'Lato', stil: 'bold' },
+  // v0.7.5 A3: Lato 400 (normal) — s. export-plan.ts (dieselbe Ergänzung,
+  // Logik bewusst dupliziert). Registriert ('Lato','normal') für den PDF-Pfad.
+  { url: '/fonts/pdf/lato-400-latin-pdf.ttf', datei: 'Lato-400.ttf', familie: 'Lato', stil: 'normal' },
   { url: '/fonts/pdf/ibm-plex-mono-400-latin-pdf.ttf', datei: 'IBMPlexMono-400.ttf', familie: 'IBM Plex Mono', stil: 'normal' },
   { url: '/fonts/pdf/ibm-plex-mono-600-latin-pdf.ttf', datei: 'IBMPlexMono-600.ttf', familie: 'IBM Plex Mono', stil: 'bold' },
 ] as const;

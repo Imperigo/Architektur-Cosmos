@@ -23,6 +23,7 @@ const OUT_PDF = join(HIER, 'd4-pdffonts-stichprobe.pdf');
 
 const PDF_FONTS = [
   { datei: 'lato-900-latin-pdf.ttf', vfs: 'Lato-900.ttf', familie: 'Lato', stil: 'bold' },
+  { datei: 'lato-400-latin-pdf.ttf', vfs: 'Lato-400.ttf', familie: 'Lato', stil: 'normal' }, // v0.7.5 A3
   { datei: 'ibm-plex-mono-400-latin-pdf.ttf', vfs: 'IBMPlexMono-400.ttf', familie: 'IBM Plex Mono', stil: 'normal' },
   { datei: 'ibm-plex-mono-600-latin-pdf.ttf', vfs: 'IBMPlexMono-600.ttf', familie: 'IBM Plex Mono', stil: 'bold' },
 ];
