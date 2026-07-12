@@ -2,7 +2,7 @@ import { phaseLabel, type KosmoDoc } from '../model/doc';
 import type { Assembly, Furniture, Slab, Storey } from '../model/entities';
 import { moebelGeometrie, moebelTyp } from './moebel';
 import { derivePlan, nachbarKontextStufe, regionToPath } from './plan';
-import { deriveDimensions, dimensionLabel } from './dimensions';
+import { deriveDimensions, dimensionLabelParts } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
 import { schraffurFuer, schraffurLinien } from './schraffur';
 import { pocheEntscheid } from './poche';
@@ -15,9 +15,11 @@ import {
   dashWelt,
   GRAU,
   GRAU_SONDER,
+  LINIENTYP_SOLL,
   MASS_STIFT,
   RADIER_WEISS,
   SCHRIFT_MESSBAR,
+  SCHRIFT_TITEL,
   STIFT,
   titelAttr,
   UMBAU_FLAECHEN,
@@ -56,6 +58,50 @@ export const A3_QUER = { width: 420, height: 297 };
  * stilblatt.ts` ist S1-Revier (`docs/V073-GESTALTUNG-SPEZ.md` Stream-
  * Besitz-Tabelle), diese eine Kadenz gehört zur D2-Logik hier. */
 const FLUEGEL_AUSSEN_DASH = [2, 1] as const;
+
+/** Unicode-Hochzahlen-Ziffern 0–9 (dieselbe Zeichenfolge wie `dimensions.ts`
+ * HOCH, hier lokal gespiegelt — `hochzahlSvg` muss das Muster nur ERKENNEN,
+ * nicht selbst erzeugen, die SIA-Hochzahl-Logik bleibt allein in
+ * `dimensions.ts`). */
+const HOCHZAHL_ZEICHEN = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+
+/**
+ * Wandelt Unicode-Hochzahlen (z.B. im Zusatz-String «150⁵/90») in echte
+ * hochgestellte `<tspan>` um (v0.7.4 P1): Lato/IBM Plex Mono besitzen KEINE
+ * Glyphen für ⁴–⁹ (U+2074–U+2079) — im PDF-Pfad (svg2pdf, eingebettete TTF)
+ * verschwindet der Unicode-String lautlos («361⁵» → «361»). `dy` steht in
+ * NUTZEREINHEITEN (nicht `em`), damit die Grundlinie nach der Hochzahl exakt
+ * zurückkommt — svg2pdf-sicher. Kein Hochzahl-Zeichen im String → No-op
+ * (`escapeXml(s)`). Einzelne Hochzahl-Ziffer ist der SIA-Realfall (höchstens
+ * ein mm-Rest je Zahl) — aufeinanderfolgende Hochzahl-Ziffern werden bewusst
+ * NICHT unterstützt (kommen in der Praxis nicht vor).
+ */
+function hochzahlSvg(s: string, fs: number): string {
+  if (![...s].some((c) => HOCHZAHL_ZEICHEN.includes(c))) return escapeXml(s);
+  const hochDy = (-0.33 * fs).toFixed(3);
+  const normalDy = (0.33 * fs).toFixed(3);
+  const hochFs = (0.7 * fs).toFixed(3);
+  let out = '';
+  let buf = '';
+  let nachHoch = false;
+  const flush = () => {
+    if (!buf) return;
+    out += nachHoch ? `<tspan dy="${normalDy}" font-size="${fs}">${escapeXml(buf)}</tspan>` : escapeXml(buf);
+    buf = '';
+  };
+  for (const c of s) {
+    const ziffer = HOCHZAHL_ZEICHEN.indexOf(c);
+    if (ziffer >= 0) {
+      flush();
+      out += `<tspan dy="${hochDy}" font-size="${hochFs}">${ziffer}</tspan>`;
+      nachHoch = true;
+    } else {
+      buf += c;
+    }
+  }
+  flush();
+  return out;
+}
 
 export interface InnerSvg {
   /** SVG-Fragment in Welt-mm (Grundriss: y gespiegelt; Schnitt: (s,−z)). */
@@ -141,6 +187,15 @@ export function planInnerSvg(
       // die übrigen Schichten blieben weiss ("hälftig grau"). Der Umbau-
       // Status zeigt den Bestand als Ganzes, nicht den Materialaufbau.
       stroke = GRAU.geschnitten;
+    } else if (isProjection) {
+      // D1-Nachtrag (v0.7.4 P5a, schliesst GOLDEN-WECHSEL-D1.md §5 Punkt 3):
+      // Grundriss-Projektionsregionen (Treppe/Decke/Volumen/Zone/FreeMesh,
+      // Klasse `projection`) zeichneten trotz Bildtiefen-Achse weiterhin im
+      // geschnitten-Ton #111 — sie liegen aber NICHT in der Schnittebene,
+      // sondern darüber/darunter (wie die Projektions-Linien im Schnitt,
+      // die bereits `GRAU.projiziert` tragen). Themenplan/Poché-Füllung
+      // bleiben unberührt (nur der Stift wechselt).
+      stroke = GRAU.projiziert;
     }
     // Themenplan (A5): Regel-Farbe übersteuert die Füllung, der Stift bleibt
     const themaFarbe = themaFuer(r.classes);
@@ -163,7 +218,19 @@ export function planInnerSvg(
     const dash = r.classes.includes('volumen')
       ? ` stroke-dasharray="${dashWelt(DASH.volumen, scale)}"`
       : abbruch
-        ? ` stroke-dasharray="${dashWelt(DASH.abbruch, scale)}"`
+        // v0.7.4 P5b (Kadenz-Normalisierung, EINE Zeile): Abbruch ist im
+        // normativen Matrix-Vokabular (`LINIENTYP_SOLL`, `stilblatt.ts`
+        // §Achse 3) klar «Strich 3–1.5 = verdeckt/Abbruch» — die gewachsene
+        // `DASH.abbruch`-Kadenz [1.5, 0.8] war ein Bestandswert ohne
+        // Matrix-Bezug. Andere Bestands-Kadenzen bleiben BEWUSST unberührt
+        // (s. GOLDEN-WECHSEL-074.md §Kadenz): `strichpunktBestand` koppelt
+        // Parzelle/Baugrenze über mehrere Renderer-Stellen (Normalisierung
+        // wäre ein Mehrfach-Bruch), `volumen` hat keinen Matrix-Typ
+        // (Massenmodell ist keine der drei SOLL-Kategorien), `ueberSchnitt`
+        // ist eine bewusst FEINERE Sonderkadenz für Überzeichnungen und
+        // bliebe auch nach einer Matrix-Zuordnung `strich` optisch von
+        // `strich` selbst nicht unterscheidbar.
+        ? ` stroke-dasharray="${dashWelt(LINIENTYP_SOLL.strich, scale)}"`
         : r.classes.includes('ueber-schnitt')
           ? ` stroke-dasharray="${dashWelt(DASH.ueberSchnitt, scale)}"`
           : '';
@@ -293,11 +360,13 @@ export function planInnerSvg(
       }
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
-        parts.push(`<text x="${mid}" y="${-c.offset - 1.2 * scale}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
+        const { cm, rest } = dimensionLabelParts(c.ticks[i]!, c.ticks[i + 1]!);
+        const restSpan = rest ? `<tspan dy="${(-0.33 * fs).toFixed(3)}" font-size="${(0.7 * fs).toFixed(3)}">${rest}</tspan>` : '';
+        parts.push(`<text x="${mid}" y="${-c.offset - 1.2 * scale}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${escapeXml(cm)}${restSpan}</text>`);
         // B1: Öffnungs-Höhenmass «h/BH» als Zweitzeile unter der Masslinie
         const z = c.zusatz?.[i];
         if (z) {
-          parts.push(`<text x="${mid}" y="${-c.offset + 2.2 * scale}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${escapeXml(z)}</text>`);
+          parts.push(`<text x="${mid}" y="${-c.offset + 2.2 * scale}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${hochzahlSvg(z, 2.0 * scale)}</text>`);
         }
       }
     } else {
@@ -308,10 +377,12 @@ export function planInnerSvg(
       }
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
-        parts.push(`<text x="${c.offset - 1.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${c.offset - 1.2 * scale} ${-mid})">${dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!)}</text>`);
+        const { cm, rest } = dimensionLabelParts(c.ticks[i]!, c.ticks[i + 1]!);
+        const restSpan = rest ? `<tspan dy="${(-0.33 * fs).toFixed(3)}" font-size="${(0.7 * fs).toFixed(3)}">${rest}</tspan>` : '';
+        parts.push(`<text x="${c.offset - 1.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${c.offset - 1.2 * scale} ${-mid})">${escapeXml(cm)}${restSpan}</text>`);
         const z = c.zusatz?.[i];
         if (z) {
-          parts.push(`<text x="${c.offset + 2.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${c.offset + 2.2 * scale} ${-mid})">${escapeXml(z)}</text>`);
+          parts.push(`<text x="${c.offset + 2.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${c.offset + 2.2 * scale} ${-mid})">${hochzahlSvg(z, 2.0 * scale)}</text>`);
         }
       }
     }
@@ -575,7 +646,7 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     `<g stroke="${BLATT.tinte}" fill="none" stroke-width="${BLATT.rahmenStift}">`,
     `<circle cx="${nx}" cy="16" r="4"/>`,
     `<path d="M ${nx} 19 L ${nx} 13 M ${nx - 1.4} 14.6 L ${nx} 13 L ${nx + 1.4} 14.6" />`,
-    `<text x="${nx}" y="26" text-anchor="middle" font-size="3" stroke="none" fill="${BLATT.tinte}">N</text>`,
+    `<text x="${nx}" y="26" text-anchor="middle" font-size="3" font-family="${SCHRIFT_TITEL}" stroke="none" fill="${BLATT.tinte}">N</text>`,
     `</g>`,
   );
 
@@ -585,7 +656,7 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     `<g font-size="3.2">`,
     `<line x1="10" y1="${y0}" x2="${paper.width - 10}" y2="${y0}" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
     `<text x="10" y="${y0 + 6}" ${titelAttr(BLATT_TYPO_MM.titel)}>${escapeXml(versal(opts.projectName))}</text>`,
-    `<text x="10" y="${y0 + 11.5}">${escapeXml(opts.planTitle)} · ${escapeXml(storey?.name ?? '')}</text>`,
+    `<text x="10" y="${y0 + 11.5}" font-family="${SCHRIFT_TITEL}">${escapeXml(opts.planTitle)} · ${escapeXml(storey?.name ?? '')}</text>`,
     `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end" font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'">1:${scale} \u00b7 Masse in cm/m</text>`,
     `<text x="${paper.width - 10}" y="${y0 + 11.5}" text-anchor="end" font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
     `</g>`,

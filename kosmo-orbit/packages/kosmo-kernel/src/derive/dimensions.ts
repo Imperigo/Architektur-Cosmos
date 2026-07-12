@@ -225,3 +225,21 @@ export function dimensionLabel(a: Mm, b: Mm): string {
   const rest = mm % 10;
   return rest === 0 ? String(cm) : `${cm}${HOCH[rest]!}`;
 }
+
+/**
+ * Wie `dimensionLabel`, aber in Ganzzahl- und Hochzahl-Teil zerlegt statt als
+ * Unicode-String (v0.7.4 P1): Lato/IBM Plex Mono besitzen KEINE Glyphen für
+ * die Unicode-Hochzahlen ⁴–⁹ (U+2074–U+2079) — im PDF-Pfad (eingebettete
+ * TTF, `svg2pdf`) verschwindet der mm-Rest dadurch lautlos («361⁵» → «361»,
+ * s. `apps/kosmo-orbit/public/fonts/pdf/README.md`). `plansvg.ts` baut daraus
+ * einen echten hochgestellten `<tspan>` (normale Ziffer, kleiner, angehoben),
+ * der mit jeder Schrift funktioniert. `dimensionLabel` selbst bleibt
+ * unverändert (andere Aufrufer; ²³ als m²/m³-Hochzahlen sind in den Fonts
+ * vorhanden, nur 4–9 fehlen).
+ */
+export function dimensionLabelParts(a: Mm, b: Mm): { cm: string; rest: string } {
+  const mm = Math.round(Math.abs(b - a));
+  const cm = Math.floor(mm / 10);
+  const rest = mm % 10;
+  return { cm: String(cm), rest: rest === 0 ? '' : String(rest) };
+}
