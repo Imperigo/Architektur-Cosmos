@@ -98,6 +98,13 @@ export interface PlanGraphic {
   bounds: { minX: number; minY: number; maxX: number; maxY: number } | null;
 }
 
+/** Beschlag-Katalog S0 (v0.7.3 §D6): trägt die Öffnung mindestens eines der
+ * additiven Beschlag-Felder? Daten-Guard für den Werkplan-Beschlag-Block
+ * unten — ohne diese Felder bleibt der Grundriss byte-identisch. */
+function hatBeschlag(o: Opening): boolean {
+  return o.band !== undefined || o.griffseite !== undefined || o.antrieb === true || o.absturzsicherung === true;
+}
+
 /** Öffnungs-Ausschnitt im Grundriss: Streifen quer durch die Wanddicke. */
 function openingStrip(wall: Wall, assembly: Assembly, s0: number, s1: number): Pt[] {
   const { offsetLeft, offsetRight } = wallFrame(wall, assembly);
@@ -825,6 +832,100 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
         text: `${a.typ === 'schlitz' ? 'S' : 'D'} ${a.breite}×${a.hoehe}${a.sill !== undefined ? ` UK ${a.sill}` : ''}`,
         classes: ['aussparung'],
       });
+    }
+  }
+
+  // Beschlag-Katalog S0 (v0.7.3 §D6, docs/V073-GESTALTUNG-SPEZ.md): sechs
+  // Symbole je Öffnung (Band · Griffseite · Brüstungshöhe/BRH · Schiebe-Lauf
+  // · Motorantrieb · Absturzsicherung), NUR im Werkplan, hinter dem
+  // Daten-Guard `hatBeschlag()` unten — ohne die additiven Opening-Felder
+  // (`band`/`griffseite`/`antrieb`/`absturzsicherung`) bleibt der Grundriss
+  // byte-identisch. BRH trägt bewusst KEIN eigenes Feld (etikettiert das
+  // bestehende `sill`); Schiebe-Lauf hat ebenfalls kein eigenes Feld
+  // (abgeleitet aus dem bestehenden `fluegelTyp === 'schiebe'`). Ehrliche
+  // Vereinfachung (S0, «Minimum statt Politur»): reine Katalog-Piktogramme
+  // NEBEN der Öffnung (Draufsicht-Reihe ausserhalb der Wand), keine
+  // Kreisgeometrie (Ecken/Quadrate statt echter Kreise) — Anschläge/RWA/
+  // Dichtebene und die 12er-Ausbaustufe S1 bleiben bewusst vertagt.
+  if (phase === 'werkplan') {
+    for (const wall of walls) {
+      const assembly = doc.get<Assembly>(wall.assemblyId);
+      if (!assembly || assembly.kind !== 'assembly') continue;
+      const frame = wallFrame(wall, assembly);
+      const d = axisDirection(wall);
+      const n = { x: -d.y, y: d.x };
+      const at = (s: number, off: number): Pt => ({
+        x: Math.round(wall.a.x + d.x * s + n.x * off),
+        y: Math.round(wall.a.y + d.y * s + n.y * off),
+      });
+      // Basiszeile 500mm ausserhalb der Wandkante (Rechts-Offset-Seite) — frei
+      // von der Poché, unabhängig von Öffnungsbreite/-tiefe.
+      const basisOff = -(frame.offsetRight + 500);
+      for (const o of doc.openingsOf(wall.id)) {
+        if (o.openingType === 'leibung' || !hatBeschlag(o)) continue;
+        const ICON = 300;
+        const GAP = 150;
+        const zeichner: Array<(mitte: number) => void> = [];
+        const P = (mitte: number, dx: number, dy: number): Pt => at(mitte + dx, basisOff + dy);
+        const linieAt = (mitte: number, a2: [number, number], b2: [number, number], klasse: string) =>
+          lines.push({ a: P(mitte, ...a2), b: P(mitte, ...b2), classes: ['symbol', 'beschlag', klasse] });
+        if (o.band) {
+          zeichner.push((mitte) => {
+            linieAt(mitte, [0, -150], [0, 150], 'beschlag-band');
+            linieAt(mitte, [-30, -75], [30, -75], 'beschlag-band');
+            linieAt(mitte, [-30, 75], [30, 75], 'beschlag-band');
+          });
+        }
+        if (o.griffseite) {
+          zeichner.push((mitte) => {
+            const ecken: [number, number][] = [[-150, -100], [150, -100], [150, 100], [-150, 100]];
+            for (let i = 0; i < 4; i++) linieAt(mitte, ecken[i]!, ecken[(i + 1) % 4]!, 'beschlag-griffseite');
+            const px = o.griffseite === 'links' ? -110 : 110;
+            regions.push({
+              rings: [
+                [P(mitte, px - 20, -20), P(mitte, px + 20, -20), P(mitte, px + 20, 20), P(mitte, px - 20, 20)],
+              ],
+              classes: ['beschlag', 'beschlag-griffseite-punkt'],
+            });
+          });
+        }
+        // BRH (Brüstungshöhe): reitet auf jeder Beschlag-aktiven Öffnung mit —
+        // etikettiert das bestehende `sill`, kein eigenes Feld.
+        zeichner.push((mitte) => {
+          linieAt(mitte, [-150, 0], [150, 0], 'beschlag-brh');
+          linieAt(mitte, [-150, -25], [-150, 25], 'beschlag-brh');
+          linieAt(mitte, [150, -25], [150, 25], 'beschlag-brh');
+          texte.push({ at: P(mitte, 0, -70), text: `BRH ${Math.round(o.sill / 10)}`, classes: ['beschlag', 'beschlag-brh'] });
+        });
+        if (o.fluegelTyp === 'schiebe') {
+          zeichner.push((mitte) => {
+            linieAt(mitte, [-150, -20], [150, -20], 'beschlag-schiebelauf');
+            linieAt(mitte, [-150, 20], [150, 20], 'beschlag-schiebelauf');
+            linieAt(mitte, [150, -20], [120, -35], 'beschlag-schiebelauf');
+            linieAt(mitte, [150, -20], [120, -5], 'beschlag-schiebelauf');
+          });
+        }
+        if (o.antrieb) {
+          zeichner.push((mitte) => {
+            const ecken: [number, number][] = [[-80, -80], [80, -80], [80, 80], [-80, 80]];
+            for (let i = 0; i < 4; i++) linieAt(mitte, ecken[i]!, ecken[(i + 1) % 4]!, 'beschlag-antrieb');
+            texte.push({ at: P(mitte, 0, 30), text: 'M', classes: ['beschlag', 'beschlag-antrieb'] });
+          });
+        }
+        if (o.absturzsicherung) {
+          zeichner.push((mitte) => {
+            linieAt(mitte, [-150, -100], [150, -100], 'beschlag-absturzsicherung');
+            linieAt(mitte, [-90, -100], [-90, 40], 'beschlag-absturzsicherung');
+            linieAt(mitte, [90, -100], [90, 40], 'beschlag-absturzsicherung');
+          });
+        }
+        const gesamt = zeichner.length * ICON + (zeichner.length - 1) * GAP;
+        let cursor = o.center - gesamt / 2 + ICON / 2;
+        for (const zeichne of zeichner) {
+          zeichne(cursor);
+          cursor += ICON + GAP;
+        }
+      }
     }
   }
 

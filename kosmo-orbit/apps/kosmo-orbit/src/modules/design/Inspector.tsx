@@ -313,6 +313,7 @@ export function Inspector() {
             </Measure>
           </Row>
           {entity.openingType === 'fenster' && <FensterAbschnitt opening={entity} runCommand={runCommand} />}
+          {entity.openingType !== 'leibung' && <BeschlagAbschnitt opening={entity} runCommand={runCommand} />}
         </>
       )}
 
@@ -548,6 +549,95 @@ function FensterAbschnitt({
             </option>
           ))}
         </KSelect>
+      </Row>
+      <Row label="Öffnet">
+        <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+          <input
+            type="checkbox"
+            data-testid="fluegel-oeffnet-aussen"
+            checked={oeffnetNachAussen}
+            onChange={(e) => parametrieren({ oeffnetNachAussen: e.target.checked })}
+          />
+          <span style={{ color: 'var(--k-ink-faint)' }}>nach aussen (gestrichelt)</span>
+        </label>
+      </Row>
+    </>
+  );
+}
+
+/** Beschlag-Katalog S0 (v0.7.3 D6, docs/V073-GESTALTUNG-SPEZ.md §D6):
+ * Band/Griffseite/Motorantrieb/Absturzsicherung — additiv über
+ * `design.beschlagSetzen`. Sichtbar wird der Katalog erst im Werkplan
+ * (`derive/plan.ts`, Daten-Guard); die Felder lassen sich aber in jeder
+ * Phase setzen (wie `fluegelTyp`). BRH (Brüstungshöhe) trägt kein eigenes
+ * Feld — sie kommt aus `sill` (Zeile «Masse» oben zeigt Breite×Höhe, nicht
+ * die Brüstung; ein eigenes BRH-Feld wäre hier Doppelspurigkeit). */
+function BeschlagAbschnitt({
+  opening,
+  runCommand,
+}: {
+  opening: Opening;
+  runCommand: (commandId: string, params: unknown) => unknown;
+}) {
+  const setzen = (patch: {
+    band?: Opening['band'];
+    griffseite?: Opening['griffseite'];
+    antrieb?: boolean;
+    absturzsicherung?: boolean;
+  }) => {
+    try {
+      runCommand('design.beschlagSetzen', { openingId: opening.id, ...patch });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  return (
+    <>
+      <Hairline />
+      <Row label="Band">
+        <KSelect
+          size="sm"
+          data-testid="beschlag-band"
+          value={opening.band ?? ''}
+          onChange={(e) => setzen({ band: (e.target.value || undefined) as Opening['band'] })}
+          style={{ width: '100%' }}
+        >
+          <option value="">—</option>
+          <option value="links">Links</option>
+          <option value="rechts">Rechts</option>
+          <option value="oben">Oben</option>
+          <option value="unten">Unten</option>
+        </KSelect>
+      </Row>
+      <Row label="Griffseite">
+        <KSelect
+          size="sm"
+          data-testid="beschlag-griffseite"
+          value={opening.griffseite ?? ''}
+          onChange={(e) => setzen({ griffseite: (e.target.value || undefined) as Opening['griffseite'] })}
+          style={{ width: '100%' }}
+        >
+          <option value="">—</option>
+          <option value="links">Links</option>
+          <option value="rechts">Rechts</option>
+        </KSelect>
+      </Row>
+      <Row label="Antrieb">
+        <input
+          type="checkbox"
+          data-testid="beschlag-antrieb"
+          checked={opening.antrieb ?? false}
+          onChange={(e) => setzen({ antrieb: e.target.checked })}
+        />
+      </Row>
+      <Row label="Absturz">
+        <input
+          type="checkbox"
+          data-testid="beschlag-absturzsicherung"
+          checked={opening.absturzsicherung ?? false}
+          onChange={(e) => setzen({ absturzsicherung: e.target.checked })}
+        />
       </Row>
     </>
   );

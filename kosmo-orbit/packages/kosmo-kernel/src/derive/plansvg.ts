@@ -195,9 +195,12 @@ export function planInnerSvg(
     // Doppellinie Schiebe) ist dieselbe dezente 0.18er-Klasse wie das
     // Fenstersymbol selbst.
     const fluegelSymbol = l.classes.includes('fluegel-kipp') || l.classes.includes('fluegel-schiebe');
+    // Beschlag-Katalog S0 (v0.7.3 §D6): durchgehend Stift 0.18, wie
+    // Fenster-/Bruchlinien.
+    const beschlag = l.classes.includes('beschlag');
     const sw = luecke
       ? ZONENTUER_LUECKE_STIFT
-      : (dachStift ?? (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug || fluegelSymbol ? STIFT.fein : STIFT.kante)) * scale;
+      : (dachStift ?? (l.classes.includes('fenster') || l.classes.includes('bruchlinie') || unterzug || fluegelSymbol || beschlag ? STIFT.fein : STIFT.kante)) * scale;
     const stroke = luecke ? RADIER_WEISS : neu ? NEU_STIFT : abbruch ? ABBRUCH_STIFT : GRAU.geschnitten;
     // Baugrenze strichpunktiert auch im Druck (wie am Bildschirm); B3: über dem
     // Schnitt liegende Treppenteile strichpunktiert; A3: Unterzüge verdeckt
@@ -235,8 +238,11 @@ export function planInnerSvg(
   // mittig; zeile versetzt mehrzeilige Etiketten massstabsgerecht
   for (const t of plan.texte) {
     const y = -t.at.y + (t.zeile ?? 0) * 3 * scale;
+    // Beschlag-Katalog S0 (v0.7.3 §D6): Etiketten Mono 1.8mm (kleiner als die
+    // Standard-Beschriftung 2.2mm — Katalog-Nebentext, keine Kote/Etikett).
+    const fontSize = (t.classes.includes('beschlag') ? 1.8 : 2.2) * scale;
     parts.push(
-      `<text x="${t.at.x}" y="${y}" text-anchor="middle" font-size="${2.2 * scale}" font-family="monospace">${escapeXml(t.text)}</text>`,
+      `<text x="${t.at.x}" y="${y}" text-anchor="middle" font-size="${fontSize}" font-family="monospace">${escapeXml(t.text)}</text>`,
     );
   }
   for (const a of plan.arcs) {

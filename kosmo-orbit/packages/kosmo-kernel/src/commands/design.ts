@@ -1478,6 +1478,49 @@ export const parametrizeWindow = registerCommand({
       // Flügeltyp (v0.7.1 E5): additiv, unverändert lassen wenn weggelassen
       // (steckt schon in `ohneSwing`, sofern zuvor gesetzt).
       ...(p.fluegelTyp !== undefined ? { fluegelTyp: p.fluegelTyp } : {}),
+      // Öffnungsrichtung (v0.7.3 D2): additiv, unverändert lassen wenn
+      // weggelassen (steckt schon in `ohneSwing`, sofern zuvor gesetzt).
+      ...(p.oeffnetNachAussen !== undefined ? { oeffnetNachAussen: p.oeffnetNachAussen } : {}),
+    };
+    return [{ id: o.id, before: o, after }];
+  },
+});
+
+export const setBeschlag = registerCommand({
+  id: 'design.beschlagSetzen',
+  title: 'Beschlag setzen',
+  description:
+    'Setzt die Beschlag-Katalog-Attribute S0 (v0.7.3 D6, docs/V073-GESTALTUNG-SPEZ.md §D6) einer Öffnung: Bandseite (band: links/rechts/oben/unten), Griffseite (griffseite: links/rechts), Motorantrieb (antrieb) und Absturzsicherung (absturzsicherung). Additiv — weggelassene Felder bleiben unverändert. Die Brüstungshöhe (BRH) trägt bewusst KEIN eigenes Feld (die Ableitung etikettiert das bestehende sill), der Schiebe-Lauf ebenfalls nicht (abgeleitet aus fluegelTyp === schiebe). Sichtbar wird der Katalog NUR im Werkplan (derive/plan.ts, Daten-Guard).',
+  params: z.object({
+    openingId: z.string(),
+    band: z.enum(['links', 'rechts', 'oben', 'unten']).optional().describe('Bandseite (Scharnierlage)'),
+    griffseite: z.enum(['links', 'rechts']).optional().describe('Seite des Griffs/Drückers'),
+    antrieb: z.boolean().optional().describe('Motorantrieb vorhanden'),
+    absturzsicherung: z.boolean().optional().describe('Absturzsicherung vorhanden'),
+  }),
+  summarize: (p) =>
+    `Beschlag → ${
+      [
+        p.band ? `Band ${p.band}` : null,
+        p.griffseite ? `Griff ${p.griffseite}` : null,
+        p.antrieb !== undefined ? (p.antrieb ? 'Antrieb' : 'kein Antrieb') : null,
+        p.absturzsicherung !== undefined ? (p.absturzsicherung ? 'Absturzsicherung' : 'ohne Absturzsicherung') : null,
+      ]
+        .filter((s): s is string => s !== null)
+        .join(', ') || 'unverändert'
+    }`,
+  run: (doc, p) => {
+    const o = doc.get<Opening>(p.openingId);
+    if (!o || o.kind !== 'opening') throw new CommandError(`Öffnung «${p.openingId}» existiert nicht`);
+    if (o.openingType === 'leibung') {
+      throw new CommandError('Eine Leibung trägt keinen Beschlag');
+    }
+    const after: Opening = {
+      ...o,
+      ...(p.band !== undefined ? { band: p.band } : {}),
+      ...(p.griffseite !== undefined ? { griffseite: p.griffseite } : {}),
+      ...(p.antrieb !== undefined ? { antrieb: p.antrieb } : {}),
+      ...(p.absturzsicherung !== undefined ? { absturzsicherung: p.absturzsicherung } : {}),
     };
     return [{ id: o.id, before: o, after }];
   },

@@ -260,6 +260,7 @@ Rhino/Revit/Grasshopper-Frage zusätzlich oder anders liegt:
 | 5 | Kein Live-Node-Endpunkt für Grasshopper (nur Datei-Import/-Export) | Grasshopper | Abschnitt 4, `docs/INTEROP-KONZEPT.md` §4 |
 | 6 | Parametrische Fenster/Türen bleiben in IFC `IFCOPENINGELEMENT` (Void), nie `IFCWINDOW`/`IFCDOOR` | Rhino, Revit, Grasshopper (IFC-Weg) | `ifc/export.ts`, unverändert seit 0.6.9, re-belegt in `interop-ifc-haertung.test.ts` |
 | 7 | IFC bildet nur die tragende Kernschicht ab, kein `IFCMATERIALLAYERSET` | Rhino, Revit, Grasshopper (IFC-Weg) | identisch zu `docs/INTEROP-KONZEPT.md` Verlust-Matrix Zeile 1 (dort ausführlich, Batch G1) |
+| 8 | **NEU (v0.7.3 D6, Stream S4):** der Beschlag-Katalog S0 (Band/Griffseite/BRH/Schiebe-Lauf/Motorantrieb/Absturzsicherung, `Opening.band`/`griffseite`/`antrieb`/`absturzsicherung`) hat **keine IFC-Abbildung** — bewusst vertagt (Owner-Auftrag: DXF-Layer `BESCHLAG` zuerst, IFC-Beschlagsätze sind ein grösserer Schritt, `IfcDoorLiningProperties`/`IfcWindowLiningProperties`/`IfcDoorPanelProperties` o.ä. wären der saubere Weg, aber kein S0-Umfang). Die vier additiven Opening-Felder landen **nirgends** im IFC-Export (`ifc/export.ts` unverändert) — nur im DXF-Weg (`dxf/export.ts`, Layer `BESCHLAG`, aci 5) und in der Grundriss-SVG/PDF-Ausgabe (Werkplan-Phase). | Rhino, Revit, Grasshopper (IFC-Weg) | `packages/kosmo-kernel/test/werkplan-beschlag.test.ts` |
 
 **Was NICHT verloren geht (belegt, nicht nur behauptet):** Wand-Poché-Geometrie
 inkl. echter Fenster-/Tür-Notches übersteht den Design-Modul-DXF-Roundtrip

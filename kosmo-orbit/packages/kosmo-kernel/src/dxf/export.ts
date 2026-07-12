@@ -59,6 +59,10 @@ const LAYER_REGELN: { treffer: string; layer: DxfLayer }[] = [
   { treffer: 'stufe', layer: { name: 'TREPPE', aci: 3 } },
   { treffer: 'projection', layer: { name: 'PROJEKTION', aci: 8 } },
   { treffer: 'cut', layer: { name: 'SCHNITT', aci: 7 } },
+  // Beschlag-Katalog S0 (v0.7.3 §D6): eigener Layer, VOR 'symbol' — Beschlag-
+  // Linien tragen zusätzlich die Klasse 'symbol' (s. `derive/plan.ts`), die
+  // BESCHLAG-Regel muss darum zuerst greifen.
+  { treffer: 'beschlag', layer: { name: 'BESCHLAG', aci: 5 } },
   { treffer: 'symbol', layer: { name: 'SYMBOLE', aci: 5 } },
 ];
 const LAYER_TEXT: DxfLayer = { name: 'TEXT', aci: 2 };
