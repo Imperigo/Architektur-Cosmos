@@ -1,0 +1,12 @@
+KRITIK-3 BELEGE (v0.7.3 Welle 3)
+
+S5 Boden-Dock — boundingBox-Disjunktion Dock ↔ Statusleiste (live, KosmoDesign 2D):
+Dock   : x=445 y=718 w=550 h=86
+Status : x=12 y=862 w=1340 h=26
+Überlappung: NEIN (disjunkt ✓)
+
+S6 D5 — 3D-Captures im offiziellen Modus (gegen soll-073/6a):
+  d-3d-weiss-wettbewerb   : Weissmodell (frühe Phase, Owner-Palette #D8CFC0…)
+  d-3d-schwarz-situation  : Schwarzmodus (zweck=Situation, überschreibt Phase)
+  d-3d-textur-werkplan    : Textur/Material (späte Phase Ausführung)
+  In ALLEN drei Modi bleibt das Fenster-Glas transparent (0.7.0-Regel).
