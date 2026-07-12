@@ -119,6 +119,16 @@
 .k-orbit-knoten-gegendreh .k-orbit-hauptknopf {
   position: relative;
 }
+/* v0.7.4 P6 (kosmetischer Fix, Kritik-Befund «KOMMEND»-Label-Kollision):
+   `white-space:nowrap` liess das Unterlabel bei langen Namen (z.B.
+   «KosmoDesign» + «kommend»-Badge auf KosmoOffice) so breit werden, dass es
+   in den Bereich des Nachbarknotens auf dem Ring hineinragte — beide Texte
+   verwaschen sich dort optisch. Fix: `max-width` nahe der 108px-Kreisbreite
+   (`.k-orbit-hauptknopf`, aura.css) + echter Umbruch statt Einzeiler — der
+   Text bleibt UNTER seinem eigenen Kreis statt seitlich in den Nachbarn zu
+   wachsen. Reine Positionierungs-Eigenschaft dieser NEUEN Klasse (kein
+   Eingriff in aura.css/`k-orbit-hauptknopf-titel`), Text/DOM/Testid-Vertrag
+   unverändert (`toContainText`, OrbitStart.tsx). */
 .orbit065-hauptknopf-unterlabel {
   position: absolute;
   top: 100%;
@@ -129,7 +139,10 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  white-space: nowrap;
+  max-width: 110px;
+  white-space: normal;
+  text-align: center;
+  overflow-wrap: break-word;
 }
 
 /* ── R1-Fix (Kritik-065 p-01/i-01): Kreismittelpunkt ohne Fadenkreuz-Icon ──
