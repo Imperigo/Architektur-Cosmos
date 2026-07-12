@@ -1430,7 +1430,7 @@ export const parametrizeWindow = registerCommand({
   id: 'design.fensterParametrieren',
   title: 'Fenster parametrieren',
   description:
-    'Macht aus einer bestehenden Fenster-Öffnung ein parametrisches Fenster: Typ (einfluegel/zweifluegel/fest/fensterband), Teilung n×m Felder, Rahmenbreite in mm, Angelseite swing (nur Ein-/Zweiflügel — der Grundriss zeigt dann den Öffnungsbogen), Flügeltyp (dreh/kipp/drehkipp/schiebe/fest — steuert die SIA-Öffnungssymbolik in Ansicht und Grundriss, v0.7.1 E5). Türen und Leibungen werden abgelehnt. 3D und Schnitt bekommen Rahmen-/Pfostenprofile, der Grundriss Teilungslinien.',
+    'Macht aus einer bestehenden Fenster-Öffnung ein parametrisches Fenster: Typ (einfluegel/zweifluegel/fest/fensterband), Teilung n×m Felder, Rahmenbreite in mm, Angelseite swing (nur Ein-/Zweiflügel — der Grundriss zeigt dann den Öffnungsbogen), Flügeltyp (dreh/kipp/drehkipp/schiebe/fest — steuert die SIA-Öffnungssymbolik in Ansicht und Grundriss, v0.7.1 E5), Öffnungsrichtung oeffnetNachAussen (v0.7.3 D2 — steuert die Strichelung der Flügelsymbolik: durchgezogen = innen, gestrichelt = aussen). Türen und Leibungen werden abgelehnt. 3D und Schnitt bekommen Rahmen-/Pfostenprofile, der Grundriss Teilungslinien.',
   params: z.object({
     openingId: z.string(),
     fensterTyp: z.enum(['einfluegel', 'zweifluegel', 'fest', 'fensterband']),
@@ -1442,6 +1442,10 @@ export const parametrizeWindow = registerCommand({
       .enum(['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'])
       .optional()
       .describe('Flügeltyp für die SIA-Öffnungssymbolik (Ansicht/Grundriss, v0.7.1 E5)'),
+    oeffnetNachAussen: z
+      .boolean()
+      .optional()
+      .describe('Öffnungsrichtung (v0.7.3 D2): true = öffnet vom Betrachter weg (aussen, gestrichelt), fehlt/false = innen (durchgezogen, Default)'),
   }),
   summarize: (p) => {
     const teilung =

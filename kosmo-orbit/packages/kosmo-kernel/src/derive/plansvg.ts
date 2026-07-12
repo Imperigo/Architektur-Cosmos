@@ -47,6 +47,12 @@ export interface PlanSheetOptions {
 export const A4_QUER = { width: 297, height: 210 };
 export const A3_QUER = { width: 420, height: 297 };
 
+/** D2-Aussen-Kadenz (v0.7.3 §D2, Soll 3a): «gestrichelt 2–1 mm = öffnet vom
+ * Betrachter weg». Bewusst LOKAL (kein Stilblatt-Token) — `derive/
+ * stilblatt.ts` ist S1-Revier (`docs/V073-GESTALTUNG-SPEZ.md` Stream-
+ * Besitz-Tabelle), diese eine Kadenz gehört zur D2-Logik hier. */
+const FLUEGEL_AUSSEN_DASH = [2, 1] as const;
+
 export interface InnerSvg {
   /** SVG-Fragment in Welt-mm (Grundriss: y gespiegelt; Schnitt: (s,−z)). */
   inner: string;
@@ -432,8 +438,14 @@ export function sectionInnerSvg(doc: KosmoDoc, spec: SectionSpec, scale: number)
     );
   }
   for (const l of g.fenstersymbole) {
+    // D2-Vollkonvention (v0.7.3 §D2): durchgezogen = öffnet zum Betrachter
+    // (innen, Default) — gestrichelt Kadenz 2–1 mm = öffnet weg (aussen,
+    // `Opening.oeffnetNachAussen`, Klasse `aussen` s. `derive/section.ts`).
+    // Lokale Kadenz statt eines Stilblatt-Tokens (S1-Revier `stilblatt.ts`
+    // bleibt unangetastet, s. GOLDEN-WECHSEL-S4.md).
+    const aussenDash = l.classes.includes('aussen') ? ` stroke-dasharray="${dashWelt(FLUEGEL_AUSSEN_DASH, scale)}"` : '';
     parts.push(
-      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${GRAU_SONDER.symbolik}" stroke-width="${STIFT.fein * scale}"/>`,
+      `<line x1="${l.a.s}" y1="${-l.a.z}" x2="${l.b.s}" y2="${-l.b.z}" stroke="${GRAU_SONDER.symbolik}" stroke-width="${STIFT.fein * scale}"${aussenDash}/>`,
     );
   }
   const b = g.bounds;

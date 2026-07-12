@@ -276,8 +276,13 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
     const z1 = storey.elevation + r.z1;
     const sMid = (s0 + s1) / 2;
     const zMid = (z0 + z1) / 2;
+    // D2-Vollkonvention (v0.7.3, docs/V073-GESTALTUNG-SPEZ.md §D2, Soll 3a):
+    // durchgezogen = öffnet zum Betrachter (innen, Default) — gestrichelt
+    // (Kadenz 2–1 mm, `plansvg.ts` `sectionInnerSvg`) = öffnet weg (aussen,
+    // `Opening.oeffnetNachAussen`). Gilt für JEDE Flügellinie dieser Öffnung
+    // (Dreh/Kipp/Drehkipp/Schiebe gleichermassen), nicht nur den Dreh-Fall.
     const linie = (pA: { s: number; z: number }, pB: { s: number; z: number }, klasse: string): void => {
-      fenstersymbole.push({ a: pA, b: pB, classes: ['symbol', klasse] });
+      fenstersymbole.push({ a: pA, b: pB, classes: ['symbol', klasse, ...(o.oeffnetNachAussen ? ['aussen'] : [])] });
     };
     if (o.fluegelTyp === 'dreh' || o.fluegelTyp === 'drehkipp') {
       const sBand = o.swing === 'rechts' ? sB : sA;
@@ -290,10 +295,14 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
       linie({ s: sMid, z: z0 }, { s: s1, z: z1 }, 'fluegel-kipp');
     }
     if (o.fluegelTyp === 'schiebe') {
-      const laenge = Math.min((s1 - s0) * 0.7, 400);
-      const spitze = Math.min(laenge * 0.25, 100);
-      const sLinks = sMid - laenge / 2;
-      const sRechts = sMid + laenge / 2;
+      // D2-Vollkonvention: Doppelpfeil über die VOLLE Flügelbreite (vorher
+      // auf 400mm/70% der Breite gekappt — das zeigte auf breiten Fenstern
+      // nur einen kleinen Pfeil in der Mitte statt der SIA-üblichen
+      // Vollbreiten-Konvention, s. Soll 3a «SCHIEBE»).
+      const laenge = s1 - s0;
+      const spitze = Math.min(laenge * 0.12, 150);
+      const sLinks = s0;
+      const sRechts = s1;
       linie({ s: sLinks, z: zMid }, { s: sRechts, z: zMid }, 'fluegel-schiebe');
       linie({ s: sLinks, z: zMid }, { s: sLinks + spitze, z: zMid + spitze / 2 }, 'fluegel-schiebe');
       linie({ s: sLinks, z: zMid }, { s: sLinks + spitze, z: zMid - spitze / 2 }, 'fluegel-schiebe');

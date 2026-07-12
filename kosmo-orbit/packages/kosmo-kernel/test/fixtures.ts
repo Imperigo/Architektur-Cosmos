@@ -293,6 +293,15 @@ export function testhausFluegeltypen(): { doc: KosmoDoc; storeyId: string; spec:
     });
     const openingId = (oeffnung.patches[0] as { id: string }).id;
     execute(doc, 'design.fensterParametrieren', { openingId, fensterTyp: 'fest', fluegelTyp });
+    // D2-Vollkonvention (v0.7.3 §D2, Soll 3a «DREH · AUSSEN»): das Kipp-
+    // Fenster (zweites von links) öffnet nach aussen — zeigt die gestrichelte
+    // Kadenz NEBEN den drei durchgezogenen (innen, Default) im selben Golden,
+    // ohne die bestehenden Zeilen-/Zähl-Erwartungen der übrigen Tests in
+    // `fluegeltyp.test.ts` zu verschieben (kein fünftes Fenster, keine
+    // Indexänderung — reine Zusatz-Eigenschaft auf einem Bestandsfenster).
+    if (fluegelTyp === 'kipp') {
+      execute(doc, 'design.fensterParametrieren', { openingId, fensterTyp: 'fest', fluegelTyp, oeffnetNachAussen: true });
+    }
   });
   // Ansicht Süd: Linie südlich des Modells, Blick nach Norden
   const spec: SectionSpec = { a: { x: -3000, y: -3000 }, b: { x: 19000, y: -3000 }, depth: 30000, lookLeft: true };

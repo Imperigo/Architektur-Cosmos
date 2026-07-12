@@ -213,6 +213,41 @@ describe('Ansicht — SIA-Öffnungssymbolik (Dreieck/Pfeil)', () => {
     expect(schaft).toBeDefined();
   });
 
+  it('D2-Vollkonvention (Soll 3a): Schiebe-Doppelpfeil spannt die VOLLE Flügelbreite (nicht mehr auf 400mm gekappt)', () => {
+    const { doc, spec } = testhausFluegeltypen();
+    const g = deriveSection(doc, spec);
+    const schiebe = g.fenstersymbole.filter((l) => l.classes.includes('fluegel-schiebe'));
+    const schaft = schiebe.find((l) => Math.abs(l.a.z - l.b.z) < 1 && Math.abs(l.a.s - l.b.s) > 50)!;
+    // Das Schiebe-Fenster ist 1600mm breit — der Schaft muss (fast) die volle
+    // Breite spannen, nicht den alten 400mm-Deckel.
+    expect(Math.abs(schaft.a.s - schaft.b.s)).toBeGreaterThan(1500);
+  });
+
+  it('D2-Vollkonvention (Soll 3a): oeffnetNachAussen markiert die Flügellinien der Öffnung mit Klasse "aussen"', () => {
+    const { doc, spec } = testhausFluegeltypen();
+    const g = deriveSection(doc, spec);
+    // Fixture: nur das Kipp-Fenster (zweites von links) trägt oeffnetNachAussen
+    // — das drehkipp-Fenster (viertes) zeichnet ZUSÄTZLICH 'fluegel-kipp'-
+    // Linien, bleibt aber innen (Default): genau 2 von 4 sind 'aussen'.
+    const kipp = g.fenstersymbole.filter((l) => l.classes.includes('fluegel-kipp'));
+    expect(kipp).toHaveLength(4);
+    expect(kipp.filter((l) => l.classes.includes('aussen'))).toHaveLength(2);
+    // Dreh/Schiebe bleiben innen (Default) — kein 'aussen'.
+    const dreh = g.fenstersymbole.filter((l) => l.classes.includes('fluegel-dreh'));
+    const schiebe = g.fenstersymbole.filter((l) => l.classes.includes('fluegel-schiebe'));
+    expect(dreh.some((l) => l.classes.includes('aussen'))).toBe(false);
+    expect(schiebe.some((l) => l.classes.includes('aussen'))).toBe(false);
+  });
+
+  it('D2-Vollkonvention: ohne oeffnetNachAussen bleibt die Klasse "aussen" ganz weg (Daten-Guard)', () => {
+    const { doc, wallId } = grundgeruest();
+    const openingId = fensterSetzen(doc, wallId);
+    execute(doc, 'design.fensterParametrieren', { openingId, fensterTyp: 'fest', fluegelTyp: 'dreh' });
+    const spec = { a: { x: -2000, y: -3000 }, b: { x: 10000, y: -3000 }, depth: 30000, lookLeft: true } as const;
+    const g = deriveSection(doc, spec);
+    expect(g.fenstersymbole.some((l) => l.classes.includes('aussen'))).toBe(false);
+  });
+
   it('fest bzw. fehlendes fluegelTyp erzeugt KEINE Symbolik', () => {
     const { doc, wallId } = grundgeruest();
     const openingId = fensterSetzen(doc, wallId);
@@ -274,12 +309,14 @@ describe('Grundriss — Flügeltyp-Symbolik (Doppelstrich/versetzte Doppellinie)
   });
 });
 
-describe('Neue Goldens (v0.7.1 E5/4B)', () => {
-  it('Golden: Ansicht mit vier Flügeltypen (dreh/kipp/drehkipp/schiebe) ist byte-identisch', () => {
+describe('Neue Goldens (v0.7.1 E5/4B, v2 v0.7.3 §D2)', () => {
+  it('Golden v2: Ansicht mit vier Flügeltypen — Vollkonvention (Schiebe volle Breite) + Kipp-Fenster gestrichelt (oeffnetNachAussen)', () => {
     const { doc, spec } = testhausFluegeltypen();
     const svg = ansichtSvg(doc, spec);
     pruefeGolden(svg, new URL('./golden/ansicht-fluegeltypen.svg', import.meta.url));
-    // Bewusste Änderungen: `npx tsx e2e/tools/golden-fluegeltypen.mts` und Diff begutachten.
+    // Bewusster Golden-Wechsel v2 (v0.7.3 §D2, s. docs/GOLDEN-WECHSEL-S4.md):
+    // Regeneration via `GOLDEN_UPDATE=1 vitest run`, Diff-Review Zeile für
+    // Zeile gegen die dort vorab geschriebene Erwartungsliste.
   });
 
   it('Golden: Grundriss mit Kipp/Drehkipp/Schiebe ist byte-identisch', () => {

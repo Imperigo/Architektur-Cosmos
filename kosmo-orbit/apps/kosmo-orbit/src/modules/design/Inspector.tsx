@@ -444,15 +444,21 @@ function FensterAbschnitt({
 
   const fluegel = opening.fluegelTyp ?? 'fest';
 
+  // D2-Öffnungsrichtung (v0.7.3, docs/V073-GESTALTUNG-SPEZ.md §D2): additiv,
+  // Default false = innen (durchgezogen).
+  const oeffnetNachAussen = opening.oeffnetNachAussen ?? false;
+
   const parametrieren = (patch: {
     fensterTyp?: Opening['fensterTyp'];
     teilungN?: number;
     teilungM?: number;
     rahmenbreite?: number;
     fluegelTyp?: Opening['fluegelTyp'];
+    oeffnetNachAussen?: boolean;
   }) => {
     const naechsterTyp = patch.fensterTyp ?? typ;
     const naechsterFluegel = patch.fluegelTyp ?? opening.fluegelTyp;
+    const naechsteRichtung = patch.oeffnetNachAussen ?? opening.oeffnetNachAussen;
     try {
       runCommand('design.fensterParametrieren', {
         openingId: opening.id,
@@ -462,6 +468,7 @@ function FensterAbschnitt({
         rahmenbreite: patch.rahmenbreite ?? rahmenbreite,
         ...(naechsterTyp !== 'fensterband' && opening.swing ? { swing: opening.swing } : {}),
         ...(naechsterFluegel !== undefined ? { fluegelTyp: naechsterFluegel } : {}),
+        ...(naechsteRichtung !== undefined ? { oeffnetNachAussen: naechsteRichtung } : {}),
       });
     } catch (err) {
       meldeFehler(err);

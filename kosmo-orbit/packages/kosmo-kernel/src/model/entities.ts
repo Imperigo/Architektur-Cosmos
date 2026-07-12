@@ -196,6 +196,42 @@ export interface Opening extends Base {
    * byte-identisch (Goldens-Guard, wie `fensterTyp` in v0.6.9). Nur bei
    * openingType 'fenster' sinnvoll; unabhängig von `fensterTyp` (additiv). */
   fluegelTyp?: 'dreh' | 'kipp' | 'drehkipp' | 'schiebe' | 'fest';
+  /**
+   * Öffnungsrichtung (v0.7.3 D2, `docs/V073-GESTALTUNG-SPEZ.md` §D2):
+   * bestimmt die Strichelung der SIA-Flügelsymbolik in Ansicht/
+   * Live-Schnittvorschau — **durchgezogen = öffnet zum Betrachter (innen,
+   * Default)**, **gestrichelt (Kadenz 2–1 mm) = öffnet weg (aussen)**.
+   * Additiv und rein darstellerisch (keine Geometrieänderung): fehlt/false
+   * = heutiges durchgezogenes Bild bleibt byte-identisch (Goldens-Guard,
+   * wie `fluegelTyp` selbst). Es gab bisher KEIN Feld, das die
+   * Öffnungsrichtung trägt (`swing` ist die ANSCHLAGSEITE/Bandseite, nicht
+   * innen/aussen) — dieses Feld schliesst die Lücke, statt `swing`
+   * zweckzuentfremden. Nur bei `openingType 'fenster'` sinnvoll,
+   * unabhängig von `fluegelTyp` (eine Öffnung ohne `fluegelTyp` zeigt
+   * ohnehin keine Symbolik, das Feld bleibt dann wirkungslos). */
+  oeffnetNachAussen?: boolean;
+  /**
+   * Beschlag-Katalog S0 (v0.7.3 D6, `docs/V073-GESTALTUNG-SPEZ.md` §D6):
+   * additive Beschlag-Attribute, NUR im Werkplan sichtbar (Daten-Guard —
+   * ohne diese Felder bleibt der Grundriss byte-identisch). Sechs Symbole
+   * der Katalogstufe S0: Band, Griffseite, Brüstungshöhe (BRH — bewusst
+   * KEIN eigenes Feld, die Ableitung etikettiert das bestehende `sill`),
+   * Schiebe-Lauf (bewusst kein eigenes Feld — abgeleitet aus
+   * `fluegelTyp === 'schiebe'`, s. `derive/plan.ts`), Motorantrieb
+   * (`antrieb`) und Absturzsicherung (`absturzsicherung`). Anschläge/RWA/
+   * Dichtebene und die 12er-Ausbaustufe S1 bleiben bewusst vertagt (Canvas
+   * 7a) — NICHT gebaut.
+   */
+  /** Bandseite (Scharnierlage) am Blendrahmen — welche Kante des
+   * Öffnungsrahmens die Bänder trägt. */
+  band?: 'links' | 'rechts' | 'oben' | 'unten';
+  /** Seite des Griffs/Drückers (Bedienseite), unabhängig von `swing`
+   * (Anschlagseite) und `band`. */
+  griffseite?: 'links' | 'rechts';
+  /** Motorantrieb vorhanden (Katalogsymbol «M» im Werkplan). */
+  antrieb?: boolean;
+  /** Absturzsicherung (Geländer/Sicherheitsglas-Hinweis) vorhanden. */
+  absturzsicherung?: boolean;
 }
 
 /** Zone/Raum — Polygon mit SIA-416-Klassierung. */
