@@ -13,6 +13,52 @@ import {
 import { useProject } from '../../state/project-store';
 import { baueHerkunft, ermittleEditionId, herkunftKennzeichnung, svgMitHerkunft } from '../../state/herkunft';
 
+/**
+ * PDF-Font-Einbettung (v0.7.3 D4 «Zwei Stimmen») — dieselbe Logik wie
+ * `modules/design/export-plan.ts`s `betteD4PdfFontsEin` (bewusst dupliziert
+ * statt in einer neuen Modul-Datei geteilt, um innerhalb der D4-Besitz-Liste
+ * — nur `export-plan.ts`/`export-sheets.ts` — zu bleiben). jsPDF kann kein
+ * woff2 — latin-subsettete TTF unter `public/fonts/pdf/`, per
+ * `addFileToVFS`/`addFont` unter `'Lato'`/`'IBM Plex Mono'` registriert (den
+ * Namen, die `derive/stilblatt.ts`s `SCHRIFT_TITEL`/`SCHRIFT_MESSBAR` in den
+ * Kernel-Goldens ausgeben) — svg2pdf löst die `font-family`-Kette dagegen
+ * auf. Fehlt ein Font (Netzwerk/404), bleibt er unregistriert: jsPDF/svg2pdf
+ * fallen auf die eingebaute Helvetica zurück, `console.warn` statt Absturz.
+ */
+const PDF_FONTS = [
+  { url: '/fonts/pdf/lato-900-latin-pdf.ttf', datei: 'Lato-900.ttf', familie: 'Lato', stil: 'bold' },
+  { url: '/fonts/pdf/ibm-plex-mono-400-latin-pdf.ttf', datei: 'IBMPlexMono-400.ttf', familie: 'IBM Plex Mono', stil: 'normal' },
+  { url: '/fonts/pdf/ibm-plex-mono-600-latin-pdf.ttf', datei: 'IBMPlexMono-600.ttf', familie: 'IBM Plex Mono', stil: 'bold' },
+] as const;
+
+/** ArrayBuffer → base64 ohne `Buffer` (läuft im Browser); `null` bei Fehler. */
+async function ladePdfFontBase64(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    let binaer = '';
+    const CHUNK = 0x8000;
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+      binaer += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+    }
+    return btoa(binaer);
+  } catch (e) {
+    console.warn(`D4-PDF-Font konnte nicht geladen werden (${url}) — Fallback Helvetica.`, e);
+    return null;
+  }
+}
+
+/** Betten die D4-Fonts ins jsPDF-Dokument ein — VOR `svg2pdf` je Blatt/Seite. */
+async function betteD4PdfFontsEin(pdf: jsPDF): Promise<void> {
+  for (const f of PDF_FONTS) {
+    const b64 = await ladePdfFontBase64(f.url);
+    if (!b64) continue;
+    pdf.addFileToVFS(f.datei, b64);
+    pdf.addFont(f.datei, f.familie, f.stil);
+  }
+}
+
 /** Ganzer Plansatz (oder ein Publikations-Set, A4) als mehrseitiges Vektor-PDF. */
 export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
   const { doc } = useProject.getState();
@@ -37,6 +83,7 @@ export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
     const format: [number, number] = [paper.width, paper.height];
     if (!pdf) {
       pdf = new jsPDF({ orientation, unit: 'mm', format });
+      await betteD4PdfFontsEin(pdf); // einmal je Dokument, nicht je Seite
     } else {
       pdf.addPage(format, orientation);
     }

@@ -3,6 +3,56 @@ import { svg2pdf } from 'svg2pdf.js';
 import { A3_QUER, exportIfc, planToDxf, planToSvg, type BauPhase } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
+/**
+ * PDF-Font-Einbettung (v0.7.3 D4 «Zwei Stimmen»): jsPDF kann kein woff2 —
+ * latin-subsettete TTF unter `public/fonts/pdf/` (s. deren README für
+ * Herkunft/Lizenz/den 700-vs-900-Entscheid), per `addFileToVFS`/`addFont`
+ * unter denselben Namen registriert, die die Kernel-Goldens als
+ * `font-family` ausgeben (`'Lato'` / `'IBM Plex Mono'`, s. `derive/
+ * stilblatt.ts`s `SCHRIFT_TITEL`/`SCHRIFT_MESSBAR`) — svg2pdf löst die
+ * `font-family`-Kette im SVG gegen jsPDFs Font-Registry auf. Schlägt das
+ * Laden fehl (Netzwerk, 404), bleibt der Font schlicht unregistriert:
+ * jsPDF/svg2pdf fallen dann auf die eingebaute Helvetica zurück — kein
+ * Absturz, nur `console.warn` (Ehrlichkeit vor Politur: kein PDF ohne Text,
+ * lieber Helvetica statt Fehlschlag).
+ */
+const PDF_FONTS = [
+  { url: '/fonts/pdf/lato-900-latin-pdf.ttf', datei: 'Lato-900.ttf', familie: 'Lato', stil: 'bold' },
+  { url: '/fonts/pdf/ibm-plex-mono-400-latin-pdf.ttf', datei: 'IBMPlexMono-400.ttf', familie: 'IBM Plex Mono', stil: 'normal' },
+  { url: '/fonts/pdf/ibm-plex-mono-600-latin-pdf.ttf', datei: 'IBMPlexMono-600.ttf', familie: 'IBM Plex Mono', stil: 'bold' },
+] as const;
+
+/** ArrayBuffer → base64 ohne `Buffer` (läuft im Browser); `null` bei Fehler. */
+async function ladePdfFontBase64(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    let binaer = '';
+    const CHUNK = 0x8000;
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+      binaer += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+    }
+    return btoa(binaer);
+  } catch (e) {
+    console.warn(`D4-PDF-Font konnte nicht geladen werden (${url}) — Fallback Helvetica.`, e);
+    return null;
+  }
+}
+
+/** Betten die D4-Fonts (Titel Lato 900, Messbar IBM Plex Mono 400/600) ins
+ * jsPDF-Dokument ein — VOR `svg2pdf`, damit die Font-Registry beim Rendern
+ * schon steht. Bewusst best-effort: einzelne fehlende Fonts blockieren den
+ * Export nicht (Fallback Helvetica je Font, nicht ganzes PDF). */
+export async function betteD4PdfFontsEin(pdf: jsPDF): Promise<void> {
+  for (const f of PDF_FONTS) {
+    const b64 = await ladePdfFontBase64(f.url);
+    if (!b64) continue;
+    pdf.addFileToVFS(f.datei, b64);
+    pdf.addFont(f.datei, f.familie, f.stil);
+  }
+}
+
 /** SIA-Massstabsempfehlung je Phase (B5, PLAN-DETAILLIERUNG Fig. 4) —
  * Vorschlag, kein Zwang: der Blatt-Editor (KosmoPublish) wählt frei. */
 export const PHASEN_MASSSTAB: Record<BauPhase, number> = {
@@ -29,6 +79,7 @@ export async function exportPlanPdf(): Promise<void> {
   document.body.appendChild(svgEl);
   try {
     const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
+    await betteD4PdfFontsEin(pdf);
     await svg2pdf(svgEl, pdf, { x: 0, y: 0, width: A3_QUER.width, height: A3_QUER.height });
     pdf.save(`${doc.settings.projectName.replace(/\s+/g, '-')}-Grundriss.pdf`);
   } finally {
