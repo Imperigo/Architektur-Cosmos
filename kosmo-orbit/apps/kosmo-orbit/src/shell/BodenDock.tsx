@@ -13,6 +13,7 @@ import {
 } from '../state/orbit-rang';
 import { STATION_GLYPHE, WerkzeugGlyphe, type WerkzeugGlyphenArt } from './werkzeug-glyphen';
 import type { StationModulId } from './stations-werkzeuge';
+import { KosmoSymbol } from './KosmoSymbol';
 import './boden-dock.css';
 
 /**
@@ -52,25 +53,19 @@ import './boden-dock.css';
  * (App.tsx `sync-toggle`/`syncOpen`); `onSyncToggle` reicht diesen bereits
  * vorhandenen Header-Weg durch, erfindet keinen neuen.
  *
- * KOSMO-ORB — BEWUSST NICHT HIER EINGEBETTET (Abweichung von der Vorgabe
- * «Kosmo-Orb im Dock», ehrlich dokumentiert): App.tsx rendert
- * `<KosmoSymbol>` bereits an einer ANDEREN, nicht anfassbaren Stelle (Zeile
- * ~930, `{!kosmoOpen && <KosmoSymbol onOpen={...} />}`, WÖRTLICH
- * unverändert lt. Auftrag). `kosmoOpen` ist per Default `false` (kein
- * `kosmo.panelOffen` in localStorage) — in fast jedem bestehenden E2E-Lauf
- * ist das Symbol also bereits sichtbar. Ein zweites `<KosmoSymbol>` HIER
- * (auch mit `eingebettet`-Variante ohne Fixed-Hülle) liefe in JEDEM solchen
- * Fall auf ZWEI DOM-Knoten mit `data-testid="kosmo-symbol"` hinaus — das
- * bricht Playwrights Strict-Mode (`page.click('[data-testid="kosmo-
- * symbol"]')`, `kosmo-symbol.spec.ts` u.a.) sofort und unabhängig von jeder
- * Positionierungsfrage. Da die Ankerzeile die einzige erlaubte Änderung an
- * App.tsx ist, gibt es keinen Weg, die Zeile-930-Instanz zu entfernen/zu
- * bedingen, ohne genau dieses Verbot zu verletzen. Diese Datei verzichtet
- * deshalb bewusst auf eine zweite `<KosmoSymbol>`-Instanz («im Zweifel
- * enger/additiver bauen», Auftragskopf) — `KosmoSymbol.tsx` bleibt entsprechend
- * unangetastet (kein Grund, dort eine Komposition-Prop zu ergänzen, die hier
- * ungenutzt bliebe). Test 3 der Spec beweist nur «kosmo-symbol sichtbar»
- * (weiterhin wahr, unverändert), NICHT eine DOM-Verschachtelung im Dock.
+ * KOSMO-ORB IM DOCK (v0.7.4 P3, Owner-Wunschfeature, Nachtrag zur früheren
+ * Abweichung oben in der Historie): App.tsx rendert das freistehende
+ * `<KosmoSymbol>` jetzt NUR NOCH auf der Zentrale/Home
+ * (`!kosmoOpen && screen === 'home'`, App.tsx-Ankerzeile). In jeder
+ * Modul-Ansicht (`screen !== 'home'`, genau dort wo dieser Dock erscheint)
+ * lebt die EINZIGE `<KosmoSymbol>`-Instanz stattdessen HIER, als rechter
+ * Slot der Dock-Reihe, mit der `eingebettet`-Variante (keine
+ * `position:fixed`-Hülle, `KosmoSymbol.tsx`). Sie erscheint — wie das
+ * freistehende Symbol auf Home auch — NUR wenn `kosmoOpen` false ist (Panel
+ * zu); ist das Panel offen, verschwindet sie wieder, exakt wie bisher beim
+ * freistehenden Symbol. Damit gilt app-weit je Screen-Zustand genau EIN
+ * `data-testid="kosmo-symbol"`-Knoten: nie zwei (kein Playwright-Strict-
+ * Bruch), nie keiner solange das Panel zu ist.
  */
 
 export interface BodenDockProps {
@@ -78,6 +73,13 @@ export interface BodenDockProps {
   onOeffnen: (id: ModuleId) => void;
   /** Sync-Panel im Header umschalten (`connect`/Sync hat keine eigene Station). */
   onSyncToggle: () => void;
+  /** `kosmoOpen`-Zustand aus App.tsx — steuert, ob der eingebettete Kosmo-Orb
+   *  im rechten Slot erscheint (nur wenn das grosse Panel zu ist, s.
+   *  Kopfkommentar). */
+  kosmoOpen: boolean;
+  /** Öffnet das Kosmo-Panel — identisch zu App.tsx' `onOpen`-Weg für das
+   *  freistehende Symbol (`setKosmoOpen(true)`). */
+  onKosmoOpen: () => void;
 }
 
 /** ToolId → StationModulId, gespiegelt aus `STATION_ZU_TOOLID` (einzige
@@ -151,7 +153,7 @@ function werkzeugMeta(toolId: ToolId): WerkzeugMeta {
  *  dort, keine exportierte Schnittstelle zum Wiederverwenden). */
 const ICON_GROESSE: Record<RangTier, number> = { innen: 28, mitte: 24, aussen: 20 };
 
-export function BodenDock({ onOeffnen, onSyncToggle }: BodenDockProps) {
+export function BodenDock({ onOeffnen, onSyncToggle, kosmoOpen, onKosmoOpen }: BodenDockProps) {
   // Reagiert auf jeden Phasenwechsel (`design.siaPhaseSetzen`, PhasenLeiste)
   // — derselbe Selektor-Zugriff wie `Viewport3D.tsx` (Kopfkommentar dort).
   const siaPhase = useProject((s) => s.doc.settings.siaPhase);
@@ -211,6 +213,11 @@ export function BodenDock({ onOeffnen, onSyncToggle }: BodenDockProps) {
           );
         })}
       </div>
+      {!kosmoOpen && (
+        <div className="boden-dock-kosmo-slot">
+          <KosmoSymbol eingebettet onOpen={onKosmoOpen} />
+        </div>
+      )}
     </div>
   );
 }

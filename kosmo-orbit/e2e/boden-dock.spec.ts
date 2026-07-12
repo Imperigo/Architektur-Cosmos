@@ -17,13 +17,13 @@ import { expect, test, type Page } from '@playwright/test';
  * 3. Kosmo-Orb (`kosmo-symbol`) ist sichtbar, der Dock zeigt seine Rang-
  *    Kreise mit Rollenfarben.
  *
- * ABWEICHUNG (ehrlich dokumentiert, s. Kopfkommentar `BodenDock.tsx`): der
- * Kosmo-Orb ist NICHT als DOM-Kind von `boden-dock` eingebettet — App.tsx
- * rendert `<KosmoSymbol>` bereits an anderer, nicht anfassbarer Stelle
- * (Zeile ~930, WÖRTLICH unverändert). Eine zweite Instanz hier hätte zwei
- * `data-testid="kosmo-symbol"`-Knoten erzeugt (Playwright-Strict-Mode-Bruch,
- * u.a. in `kosmo-symbol.spec.ts`). Test 3 beweist deshalb nur Sichtbarkeit,
- * keine DOM-Verschachtelung.
+ * v0.7.4 P3 (Owner-Wunschfeature «Kosmo-Orb ins Dock»): der Kosmo-Orb ist
+ * jetzt tatsächlich als DOM-Kind von `boden-dock` eingebettet (rechter Slot,
+ * `.boden-dock-kosmo-slot`, `KosmoSymbol.tsx` `eingebettet`-Variante).
+ * App.tsx rendert das freistehende `<KosmoSymbol>` nur noch auf der
+ * Zentrale/Home (`screen === 'home'`) — in einer Modul-Ansicht existiert
+ * deshalb genau EIN `data-testid="kosmo-symbol"`-Knoten (hier im Dock),
+ * niemals zwei (Playwright-Strict bleibt unverletzt).
  */
 
 async function seed(page: Page): Promise<void> {
@@ -131,7 +131,10 @@ test('Kosmo-Orb sichtbar, Boden-Dock zeigt Rang-Kreise mit Rollenfarben', async 
   await oeffneModulAnsicht(page);
 
   // K11-Vertrag bleibt unverändert: Kosmo-Symbol ist der Erstkontakt.
-  await expect(page.locator('[data-testid="kosmo-symbol"]')).toBeVisible();
+  // v0.7.4 P3: in einer Modul-Ansicht ist es genau EIN Knoten, eingebettet
+  // im Dock (rechter Slot) — kein zweiter, freistehender Knoten daneben.
+  await expect(page.locator('[data-testid="kosmo-symbol"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="boden-dock"] [data-testid="kosmo-symbol"]')).toBeVisible();
 
   const knoepfe = page.locator('[data-testid="boden-dock"] .boden-dock-knopf');
   await expect(knoepfe.first()).toBeVisible();
@@ -146,6 +149,27 @@ test('Kosmo-Orb sichtbar, Boden-Dock zeigt Rang-Kreise mit Rollenfarben', async 
   // Top-3 (Rang-Position 0-2) tragen die Rollenfarben-Border/Glow-Klasse.
   const innenKreise = page.locator('[data-testid="boden-dock"] .boden-dock-knopf--innen');
   expect(await innenKreise.count()).toBe(3);
+});
+
+test('Einzel-Instanz-Invariante: Klick im Dock öffnet das Panel, Symbol verschwindet, Schliessen bringt genau eine Instanz zurück', async ({
+  page,
+}) => {
+  await oeffneModulAnsicht(page);
+
+  await expect(page.locator('[data-testid="kosmo-symbol"]')).toHaveCount(1);
+  await page.click('[data-testid="kosmo-symbol"]');
+  await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
+  // Panel offen → nirgends im Dock ODER app-weit ein zweites Symbol.
+  await expect(page.locator('[data-testid="kosmo-symbol"]')).toHaveCount(0);
+  // Boden-Dock selbst bleibt (Werkzeuge weiter erreichbar), nur der Slot leert sich.
+  await expect(page.locator('[data-testid="boden-dock"]')).toBeVisible();
+
+  await page.click('[aria-label="Schliessen"]');
+  await expect(page.locator('[data-testid="kosmo-panel"]')).toHaveCount(0);
+  // Wieder genau EINE Instanz, weiterhin eingebettet im Dock (Screen ist
+  // nicht Home).
+  await expect(page.locator('[data-testid="kosmo-symbol"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="boden-dock"] [data-testid="kosmo-symbol"]')).toBeVisible();
 });
 
 test('Kollaps unter ~1100px: nur Top-3-Knöpfe sichtbar, Rest bleibt im DOM', async ({ page }) => {

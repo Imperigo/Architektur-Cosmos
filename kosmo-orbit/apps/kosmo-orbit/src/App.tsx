@@ -931,8 +931,12 @@ export function App() {
         {kosmoOpen && <KosmoPanel onClose={() => setKosmoOpen(false)} />}
       </main>
       {/* K11: das Symbol ist der Erstkontakt — es erscheint NUR, wenn das
-          Panel zu ist (nie beide gleichzeitig), unten rechts über dem Inhalt. */}
-      {!kosmoOpen && <KosmoSymbol onOpen={() => setKosmoOpen(true)} />}
+          Panel zu ist (nie beide gleichzeitig), unten rechts über dem Inhalt.
+          v0.7.4 P3: NUR noch auf der Zentrale/Home — in einer Modul-Ansicht
+          lebt die einzige `kosmo-symbol`-Instanz eingebettet im Boden-Dock
+          (weiter unten, `screen !== 'home'`-Zweig), damit `data-testid=
+          "kosmo-symbol"` app-weit nie doppelt vorkommt. */}
+      {!kosmoOpen && screen === 'home' && <KosmoSymbol onOpen={() => setKosmoOpen(true)} />}
       {/* V1.6 Block E: nicht-modales Guide-Overlay — bewusst AUSSERHALB der
           Fehlerzonen-Stationen, damit es stationsübergreifend sichtbar
           bleibt. `key=guideLauf` sorgt dafür, dass ein erneuter Aufruf immer
@@ -980,10 +984,16 @@ export function App() {
       {/* v073 S5b: der Boden-Dock ist ein Modul-Navigations-Layer — NUR in
           den Arbeits-Modul-Ansichten, NICHT auf der Zentrale/Home, wo der
           OrbitStart-Hub bereits DIE Navigation ist (sonst doppelt +
-          Text-Kollision mit den Hub-Teasern). Das freie KosmoSymbol (oben,
-          Zeile ~935) bleibt bewusst app-weit — es lebt nicht im Dock. */}
+          Text-Kollision mit den Hub-Teasern). v0.7.4 P3: das KosmoSymbol
+          (oben, Zeile ~935) ist jetzt auf Home beschränkt — hier im Dock
+          lebt die einzige Modul-Ansicht-Instanz (rechter Slot). */}
       {screen !== 'home' && (
-        <BodenDock onOeffnen={oeffneModulById} onSyncToggle={() => setSyncOpen(!syncOpen)} />
+        <BodenDock
+          onOeffnen={oeffneModulById}
+          onSyncToggle={() => setSyncOpen(!syncOpen)}
+          kosmoOpen={kosmoOpen}
+          onKosmoOpen={() => setKosmoOpen(true)}
+        />
       )}
     </div>
   );

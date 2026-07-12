@@ -8,6 +8,15 @@ import './orbit-065.css';
 export interface KosmoSymbolProps {
   /** Öffnet das grosse Panel (Klick ODER Tastatur — natives <button>). */
   onOpen: () => void;
+  /**
+   * v0.7.4 P3 (Owner-Wunschfeature «Kosmo-Orb ins Dock»): wenn `true`, lässt
+   * das Symbol die `position:fixed`-Hülle weg und sitzt stattdessen im
+   * normalen Fluss des aufrufenden Layouts (hier: der rechte Slot in
+   * `BodenDock.tsx`). Testids (`kosmo-symbol`/`kosmo-mini`) und die gesamte
+   * Panel-Logik (Hover/Fokus-Popup, Klick öffnet) bleiben WÖRTLICH
+   * unverändert — nur die äussere Positionierung entfällt.
+   */
+  eingebettet?: boolean;
 }
 
 /**
@@ -15,7 +24,10 @@ export interface KosmoSymbolProps {
  * «Kosmo als Copilot-Symbol, nicht Dauerchat: Hover = Mini-Popup (letzte
  * Aktivität), Klick = entfaltet, volle Interaktion = grosses Panel; Animation
  * wenn Kosmo arbeitet»). Rendert NUR, solange das grosse Panel zu ist
- * (App.tsx) — unten rechts, fixed, über dem Inhalt.
+ * (App.tsx) — auf der Zentrale/Home frei schwebend unten rechts (fixed,
+ * über dem Inhalt); in einer Modul-Ansicht als `eingebettet`-Variante im
+ * rechten Slot des Boden-Docks (`BodenDock.tsx`, v0.7.4 P3) — so existiert
+ * je Screen-Zustand genau EINE Instanz mit `data-testid="kosmo-symbol"`.
  *
  * Arbeitet Kosmo gerade (Sende-Lebenszyklus, `state/kosmo-status.ts`),
  * pulsiert das Symbol per CSS-Klasse (`.k-kosmo-symbol-beschaeftigt`,
@@ -30,7 +42,7 @@ export interface KosmoSymbolProps {
  * über `data-zustand`. Testids/DOM-Vertrag (`kosmo-symbol`, `kosmo-mini`,
  * Symbol↔Panel) bleiben exakt unverändert, nur das Icon-Innere wechselt.
  */
-export function KosmoSymbol({ onOpen }: KosmoSymbolProps) {
+export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
   const beschaeftigt = useKosmoStatus((s) => s.beschaeftigt);
   const zustand = useKosmoStatus((s) => s.zustand);
   const letzteAktivitaet = useKosmoStatus((s) => s.letzteAktivitaet);
@@ -51,16 +63,27 @@ export function KosmoSymbol({ onOpen }: KosmoSymbolProps) {
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        right: 22,
-        bottom: 22,
-        zIndex: 110,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        gap: 8,
-      }}
+      style={
+        eingebettet
+          ? {
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              gap: 8,
+              pointerEvents: 'auto',
+            }
+          : {
+              position: 'fixed',
+              right: 22,
+              bottom: 22,
+              zIndex: 110,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              gap: 8,
+            }
+      }
     >
       {zeigePopup && (
         <div
