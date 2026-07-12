@@ -1,6 +1,7 @@
 import type { KosmoDoc } from '../model/doc';
 import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type Furniture, type MassBody, type Slab, type Storey, type Wall, type Zone } from '../model/entities';
 import { moebelGeometrie, moebelTyp } from '../derive/moebel';
+import { beschlagTyp } from '../derive/beschlag';
 import { dist } from '../model/units';
 import { axisDirection, assemblyThickness, openingRects, wallFrame } from '../geometry/wall';
 
@@ -209,6 +210,35 @@ export function exportIfc(doc: KosmoDoc, projectName?: string): string {
       );
       w.add('IFCRELVOIDSELEMENT', `'${newGuid()}',$,$,$,${wallId},${opening}`);
       renovationPset(opening, r.opening.meta?.renovation);
+
+      // Beschlag-Katalog S2 (v0.7.5 Welle 1 A1, `Opening.beschlaege`): je
+      // zugewiesenem Beschlag ein IFCDISCRETEACCESSORY (Möbel-Loop oben als
+      // 1:1-Vorlage), platziert an der Öffnungsmitte (Achse s, mittlere
+      // Höhe des Öffnungsrechtecks) — lokal zur Wand wie der Void selbst,
+      // darum dieselbe lokale x-Richtung `lx`. Kleiner Platzhalter-Würfel
+      // (40×40×20mm) statt echter Beschlaggeometrie — der Katalog liefert
+      // nur ein 2D-Plan-Piktogramm (`beschlagSymbol`), keine 3D-Form.
+      for (const key of r.opening.beschlaege ?? []) {
+        const typ = beschlagTyp(key);
+        if (!typ) continue; // kann nicht vorkommen — der Command validiert bereits gegen den Katalog
+        const sMitte = (r.s0 + r.s1) / 2;
+        const zMitte = (r.z0 + r.z1) / 2;
+        const accPoint = w.add('IFCCARTESIANPOINT', list([num(sMitte), num(0), num(zMitte)]));
+        const accAxis = w.add('IFCAXIS2PLACEMENT3D', `${accPoint},${zAxis},${lx}`);
+        const accPlace = w.add('IFCLOCALPLACEMENT', `${place},${accAxis}`);
+        const accProfile = profileOf([
+          { x: -20, y: -20 },
+          { x: 20, y: -20 },
+          { x: 20, y: 20 },
+          { x: -20, y: 20 },
+        ]);
+        const accSolid = extrudedSolid(accProfile, 0, 20);
+        const acc = w.add(
+          typ.ifcTyp,
+          `'${newGuid()}',$,${str(typ.name)},$,$,${accPlace},${bodyShape(accSolid)},$`,
+        );
+        storey.elements.push(acc);
+      }
     }
   }
 

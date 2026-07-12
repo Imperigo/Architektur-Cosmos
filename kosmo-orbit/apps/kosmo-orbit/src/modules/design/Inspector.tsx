@@ -3,11 +3,13 @@ import { Badge, Hairline, KButton, KIcon, KInput, KSelect, Measure, melde, melde
 import {
   areaOf,
   assemblyThickness,
+  BESCHLAG_KATALOG,
   dist,
   formatArea,
   formatLength,
   isSettingsPatch,
   type Assembly,
+  type BeschlagKategorie,
   type Entity,
   type Opening,
   type Patch,
@@ -572,6 +574,16 @@ function FensterAbschnitt({
  * Phase setzen (wie `fluegelTyp`). BRH (Brüstungshöhe) trägt kein eigenes
  * Feld — sie kommt aus `sill` (Zeile «Masse» oben zeigt Breite×Höhe, nicht
  * die Brüstung; ein eigenes BRH-Feld wäre hier Doppelspurigkeit). */
+/** Kategorie-Reihenfolge + deutsche Labels für den S2-Katalog-Unterabschnitt
+ * (v0.7.5 Welle 1 A1) — Reihenfolge folgt der fachlichen Gliederung des
+ * Katalogs selbst (`derive/beschlag.ts` BeschlagKategorie). */
+const BESCHLAG_KATEGORIE_LABEL: Record<BeschlagKategorie, string> = {
+  tuer: 'Tür',
+  fenster: 'Fenster',
+  sicherheit: 'Sicherheit',
+};
+const BESCHLAG_KATEGORIEN: BeschlagKategorie[] = ['tuer', 'fenster', 'sicherheit'];
+
 function BeschlagAbschnitt({
   opening,
   runCommand,
@@ -587,6 +599,23 @@ function BeschlagAbschnitt({
   }) => {
     try {
       runCommand('design.beschlagSetzen', { openingId: opening.id, ...patch });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  // Beschlag-Katalog S2 (v0.7.5 Welle 1 A1): Mehrfachauswahl aus
+  // BESCHLAG_KATALOG (@kosmo/kernel), gruppiert nach Kategorie. Toggle
+  // rechnet die neue Gesamtliste aus und ruft `design.beschlaegeSetzen` mit
+  // der VOLLEN Liste (der Command ersetzt, mischt nicht) — wie
+  // `design.moebelSetzen` ein Katalog-Feld setzt.
+  const zugewiesen = opening.beschlaege ?? [];
+  const toggleBeschlag = (key: string) => {
+    const naechste = zugewiesen.includes(key)
+      ? zugewiesen.filter((k) => k !== key)
+      : [...zugewiesen, key];
+    try {
+      runCommand('design.beschlaegeSetzen', { openingId: opening.id, beschlaege: naechste });
     } catch (err) {
       meldeFehler(err);
     }
@@ -639,6 +668,32 @@ function BeschlagAbschnitt({
           onChange={(e) => setzen({ absturzsicherung: e.target.checked })}
         />
       </Row>
+      <div style={{ marginTop: 'var(--k-s2)' }}>
+        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-fs-sm, 0.8em)' }}>
+          Beschlag-Katalog
+        </span>
+        {BESCHLAG_KATEGORIEN.map((kategorie) => (
+          <div key={kategorie} style={{ marginTop: 'var(--k-s1)' }}>
+            <span style={{ color: 'var(--k-ink-faint)' }}>{BESCHLAG_KATEGORIE_LABEL[kategorie]}</span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--k-s2)', marginTop: 'var(--k-s1)' }}>
+              {BESCHLAG_KATALOG.filter((t) => t.kategorie === kategorie).map((typ) => (
+                <label
+                  key={typ.key}
+                  style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s1)', fontSize: '0.9em' }}
+                >
+                  <input
+                    type="checkbox"
+                    data-testid={`beschlag-s2-${typ.key}`}
+                    checked={zugewiesen.includes(typ.key)}
+                    onChange={() => toggleBeschlag(typ.key)}
+                  />
+                  <span>{typ.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   );
 }

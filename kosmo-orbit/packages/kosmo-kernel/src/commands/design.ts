@@ -16,6 +16,7 @@ import { boundingBox, kantenRichtung, richtungsModule, type Fassadenrichtung } f
 import { segmentiere, sollMix, WOHNUNGS_GROESSEN, type WohnungsTypSoll, type GeschnitteneWohnung } from '../derive/segmentierer';
 import { raumGraph } from '../derive/raumgraph';
 import { pruefeGrundriss, type PruefBefund } from '../derive/checks';
+import { beschlagTyp } from '../derive/beschlag';
 
 export { stairSpec } from '../derive/treppe';
 
@@ -1521,6 +1522,40 @@ export const setBeschlag = registerCommand({
       ...(p.griffseite !== undefined ? { griffseite: p.griffseite } : {}),
       ...(p.antrieb !== undefined ? { antrieb: p.antrieb } : {}),
       ...(p.absturzsicherung !== undefined ? { absturzsicherung: p.absturzsicherung } : {}),
+    };
+    return [{ id: o.id, before: o, after }];
+  },
+});
+
+export const setBeschlaege = registerCommand({
+  id: 'design.beschlaegeSetzen',
+  title: 'Beschläge setzen',
+  description:
+    'Weist einer Öffnung Beschlag-Katalog-Typen zu (S2, v0.7.5 Welle 1 A1, BESCHLAG_KATALOG in derive/beschlag.ts, 12 Typen: Türdrücker, Türband/Scharnier, Einsteckschloss, Schliessblech, Bodentürschliesser, Türstopper, Profilzylinder, Panikstange, Fenstergriff, Kippbeschlag, Türspion, Bandseitensicherung). beschlaege ist eine Liste von Katalog-Keys und ERSETZT die bisherige Zuordnung vollständig (wie design.moebelSetzen ein Katalog-Feld setzt). Erscheint als Piktogramme im Werkplan, als Text auf dem DXF-Layer BESCHLAG und als IFCDISCRETEACCESSORY-Elemente im IFC-Export. Unbekannte Keys werfen einen Fehler; Leibungen tragen keinen Beschlag.',
+  params: z.object({
+    openingId: z.string(),
+    beschlaege: z.array(z.string()).describe('Katalog-Keys aus BESCHLAG_KATALOG, z.B. "tuerdruecker-garnitur"'),
+  }),
+  summarize: (p) => `Beschläge → ${p.beschlaege.length ? p.beschlaege.join(', ') : 'keine'}`,
+  run: (doc, p) => {
+    const o = doc.get<Opening>(p.openingId);
+    if (!o || o.kind !== 'opening') throw new CommandError(`Öffnung «${p.openingId}» existiert nicht`);
+    if (o.openingType === 'leibung') {
+      throw new CommandError('Eine Leibung trägt keinen Beschlag');
+    }
+    for (const key of p.beschlaege) {
+      if (!beschlagTyp(key)) {
+        throw new CommandError(`Unbekannter Beschlag-Katalog-Key «${key}» — siehe BESCHLAG_KATALOG (derive/beschlag.ts)`);
+      }
+    }
+    // Wie beim Umtypen auf Fensterband (fensterParametrieren): bestehendes
+    // Feld erst entfernen, dann bei Bedarf neu setzen — hält
+    // exactOptionalPropertyTypes ein (kein `beschlaege: undefined`).
+    const { beschlaege: alt, ...ohneBeschlaege } = o;
+    void alt;
+    const after: Opening = {
+      ...ohneBeschlaege,
+      ...(p.beschlaege.length > 0 ? { beschlaege: p.beschlaege } : {}),
     };
     return [{ id: o.id, before: o, after }];
   },

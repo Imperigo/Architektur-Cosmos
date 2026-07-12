@@ -14,6 +14,7 @@ import { meshSchnittRinge } from './mesh-topo';
 import { dachGeometrie } from './dach';
 import { pocheEntscheid } from './poche';
 import { fruehePhase, type BauPhase } from '../model/doc';
+import { beschlagTyp } from './beschlag';
 
 /** Standard-Schnitthöhe des Grundrisses über Geschoss-OK (SIA-üblich 1 m) —
  * die Ebene, auf der FreeMesh-Körper ihre ehrliche Schnittfigur zeigen. */
@@ -925,6 +926,44 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
           zeichne(cursor);
           cursor += ICON + GAP;
         }
+      }
+    }
+  }
+
+  // Beschlag-Katalog S2 (v0.7.5 Welle 1 A1, `Opening.beschlaege`, Katalog
+  // `derive/beschlag.ts` BESCHLAG_KATALOG): DXF-Pfad (Pfad A) — EIN
+  // Text-Primitive je Öffnung mit den zugewiesenen Beschlag-Namen, Klasse
+  // ['symbol','beschlag'] → landet automatisch auf dem bestehenden
+  // DXF-Layer BESCHLAG (`dxf/export.ts`, keine Layer-Änderung nötig). Die
+  // Piktogramme selbst (Pfad B, Bildschirm/PDF) zeichnet `derive/plansvg.ts`
+  // direkt aus `beschlagSymbol()` — DXF zeigt bewusst NUR Text statt
+  // Piktogramm (bestehende Grenze: DXF = CAD-Standardschrift, kein
+  // SVG-Icon-Export). Eigener Guard `o.beschlaege?.length`, unabhängig vom
+  // S0-Guard `hatBeschlag()` oben — ohne das Feld bleibt der Grundriss
+  // (inkl. S0-Katalog) byte-identisch. Eigene Zeile 900mm ausserhalb der
+  // Wandkante (weiter als die S0-Basiszeile bei 500mm), damit sich S0- und
+  // S2-Beschriftung nicht optisch überlagern.
+  if (phase === 'werkplan') {
+    for (const wall of walls) {
+      const assembly = doc.get<Assembly>(wall.assemblyId);
+      if (!assembly || assembly.kind !== 'assembly') continue;
+      const frame = wallFrame(wall, assembly);
+      const d = axisDirection(wall);
+      const n = { x: -d.y, y: d.x };
+      const at = (s: number, off: number): Pt => ({
+        x: Math.round(wall.a.x + d.x * s + n.x * off),
+        y: Math.round(wall.a.y + d.y * s + n.y * off),
+      });
+      // 2700mm ausserhalb der Wandkante — jenseits der Aussen-/Innen-
+      // Bemassungsketten (die zwischen ~1100 und ~2000mm liegen): der
+      // zusammengesetzte Katalog-Namenstext ist ein langer String und
+      // überlappte bei kleineren Abständen die Bemassungs-Beschriftung
+      // (`svg-qa`-Text-Overlap-Check auf dem neuen Golden hat das gezeigt).
+      const basisOffS2 = -(frame.offsetRight + 2700);
+      for (const o of doc.openingsOf(wall.id)) {
+        if (o.openingType === 'leibung' || !o.beschlaege?.length) continue;
+        const namen = o.beschlaege.map((key) => beschlagTyp(key)?.name ?? key).join(' · ');
+        texte.push({ at: at(o.center, basisOffS2), text: namen, classes: ['symbol', 'beschlag', 'beschlag-s2'] });
       }
     }
   }

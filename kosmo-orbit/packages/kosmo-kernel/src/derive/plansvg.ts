@@ -1,6 +1,8 @@
 import { phaseLabel, type KosmoDoc } from '../model/doc';
-import type { Assembly, Furniture, Slab, Storey } from '../model/entities';
+import type { Assembly, Furniture, Slab, Storey, Wall } from '../model/entities';
 import { moebelGeometrie, moebelTyp } from './moebel';
+import { beschlagSymbol, beschlagTyp } from './beschlag';
+import { axisDirection, wallFrame } from '../geometry/wall';
 import { derivePlan, nachbarKontextStufe, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabelParts } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
@@ -337,6 +339,55 @@ export function planInnerSvg(
       parts.push(
         `<path d="M ${g.korpus.map((p) => `${p.x} ${-p.y}`).join(' L ')} Z" fill="none" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.fein * scale}"/>`,
       );
+    }
+  }
+
+  // Beschlag-Katalog S2 (v0.7.5 Welle 1 A1, `Opening.beschlaege`, Katalog
+  // `derive/beschlag.ts` BESCHLAG_KATALOG): Pfad B (Bildschirm+PDF) —
+  // Piktogramme direkt aus `beschlagSymbol()` gezeichnet, analog zur
+  // Möblierung oben (eigene Geometrie, nicht über `derivePlan`-Primitive).
+  // Nur im Werkplan sichtbar (Daten-Guard `o.beschlaege?.length`, wie das
+  // gesamte Beschlag-Katalog S0) — ohne das Feld bleibt der Grundriss
+  // byte-identisch. Der begleitende Namens-Text (Pfad A, `derive/plan.ts`,
+  // Klasse `beschlag-s2`) erscheint zusätzlich über die generische
+  // `plan.texte`-Schleife oben — Bildschirm/PDF zeigen Piktogramm UND Text
+  // nebeneinander, DXF (Pfad A) nur den Text (bestehende Grenze: DXF = CAD-
+  // Standardschrift, kein SVG-Icon-Export).
+  if (phase === 'werkplan') {
+    const ICON_S2 = 220;
+    const GAP_S2 = 90;
+    for (const wall of doc.byKind<Wall>('wall')) {
+      if (wall.storeyId !== storeyId) continue;
+      const assembly = doc.get<Assembly>(wall.assemblyId);
+      if (!assembly || assembly.kind !== 'assembly') continue;
+      const frame = wallFrame(wall, assembly);
+      const d = axisDirection(wall);
+      const n = { x: -d.y, y: d.x };
+      const at = (s: number, off: number) => ({
+        x: wall.a.x + d.x * s + n.x * off,
+        y: wall.a.y + d.y * s + n.y * off,
+      });
+      // 2200mm ausserhalb der Wandkante — vor der S2-Textzeile
+      // (`derive/plan.ts`, 2700mm) und jenseits der Bemassungsketten
+      // (~1100–2000mm), damit Piktogramme/Bemassung/S2-Text sich nicht
+      // überlagern.
+      const basisOff = -(frame.offsetRight + 2200);
+      for (const o of doc.openingsOf(wall.id)) {
+        if (o.openingType === 'leibung' || !o.beschlaege?.length) continue;
+        const anzahl = o.beschlaege.length;
+        const gesamt = anzahl * ICON_S2 + (anzahl - 1) * GAP_S2;
+        let mitte = o.center - gesamt / 2 + ICON_S2 / 2;
+        for (const key of o.beschlaege) {
+          const typ = beschlagTyp(key);
+          if (typ) {
+            const p = at(mitte, basisOff);
+            const gx = p.x - ICON_S2 / 2;
+            const gy = -p.y - ICON_S2 / 2;
+            parts.push(`<g transform="translate(${gx} ${gy})" color="${GRAU.geschnitten}">${beschlagSymbol(typ, ICON_S2)}</g>`);
+          }
+          mitte += ICON_S2 + GAP_S2;
+        }
+      }
     }
   }
 

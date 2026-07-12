@@ -232,6 +232,19 @@ export interface Opening extends Base {
   antrieb?: boolean;
   /** Absturzsicherung (Geländer/Sicherheitsglas-Hinweis) vorhanden. */
   absturzsicherung?: boolean;
+  /**
+   * Beschlag-Katalog S2 (v0.7.5 Welle 1 A1): Liste zugewiesener Katalog-Keys
+   * aus `BESCHLAG_KATALOG` (`derive/beschlag.ts`, 12 Typen: Türdrücker,
+   * Scharnier, Schloss, …). Bewusst OPENING-GEHOSTET (additives Array-Feld)
+   * statt einer eigenen Entity wie `Furniture` — Beschläge sind
+   * bauteilgebunden (Tür/Fenster), das additive Feld bleibt golden-/undo-/
+   * vault-/.kosmo-sicher ohne neue Entity-Klasse. Eine freie, unabhängig
+   * platzierbare Beschlag-Instanz (die im S1-Header angedeutete «eigene
+   * Entity»-Variante) bleibt bewusst ein optionaler späterer S3-Weg. Additiv
+   * und nur im Werkplan sichtbar (Daten-Guard, wie die S0-Felder oben) —
+   * fehlt = heutiges Bild bleibt byte-identisch.
+   */
+  beschlaege?: string[];
 }
 
 /** Zone/Raum — Polygon mit SIA-416-Klassierung. */

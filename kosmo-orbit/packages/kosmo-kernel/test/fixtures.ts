@@ -453,3 +453,53 @@ export function testhausBeschlag(): { doc: KosmoDoc; storeyId: string } {
 
   return { doc, storeyId };
 }
+
+/** Beschlag-Katalog S2 (v0.7.5 Welle 1 A1): Testhaus 10×6 m mit ZWEI Türen
+ * in der Südwand — die erste trägt drei zugewiesene Beschlag-Katalog-Typen
+ * (`design.beschlaegeSetzen`), die zweite trägt KEINE Zuweisung
+ * (Daten-Guard-Beweis, wie das 4. Fenster in `testhausBeschlag()`) — für
+ * das Golden «werkplan-beschlag-s2». Läuft in der Default-Phase `werkplan`
+ * (s. `model/doc.ts` `defaultSettings`). */
+export function testhausBeschlagS2(): { doc: KosmoDoc; storeyId: string } {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  const sued = wand({ x: 0, y: 0 }, { x: 10000, y: 0 });
+  const suedId = (sued.patches[0] as { id: string }).id;
+  wand({ x: 10000, y: 0 }, { x: 10000, y: 6000 });
+  wand({ x: 10000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+
+  const setTuer = (center: number) =>
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: suedId,
+      openingType: 'tuer',
+      center,
+      width: 1000,
+      height: 2100,
+      sill: 0,
+    });
+
+  const t1 = (setTuer(2500).patches[0] as { id: string }).id;
+  execute(doc, 'design.beschlaegeSetzen', {
+    openingId: t1,
+    beschlaege: ['tuerdruecker-garnitur', 'tuerband-scharnier', 'einsteckschloss'],
+  });
+
+  // Zweite Tür OHNE jegliche Beschlag-Zuweisung — Daten-Guard-Beweis (bleibt
+  // ohne S2-Piktogramme/-Text, auch im Werkplan).
+  setTuer(7500);
+
+  return { doc, storeyId };
+}

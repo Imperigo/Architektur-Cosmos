@@ -46,6 +46,11 @@ interface DxfLayer {
  * = Priorität), damit z.B. eine geschnittene tragende Wand auf TRAGEND landet
  * und nicht auf einem allgemeineren Layer. Fällt nichts, kommt sie auf «0».
  */
+/** Beschlag-Katalog (S0 v0.7.3 §D6 + S2 v0.7.5): EIN gemeinsamer Layer für
+ * Linien UND Texte mit Klasse `beschlag` — s. `layerFuer()`/die
+ * Text-Emission unten (v0.7.5: Texte routen jetzt ebenfalls über
+ * `layerFuer`, vorher pauschal `LAYER_TEXT`, s. Beschlag-S2-Nachtrag). */
+const LAYER_BESCHLAG: DxfLayer = { name: 'BESCHLAG', aci: 5 };
 const LAYER_REGELN: { treffer: string; layer: DxfLayer }[] = [
   { treffer: 'stuetze', layer: { name: 'STUETZEN', aci: 1 } },
   { treffer: 'tragend', layer: { name: 'TRAGEND', aci: 1 } },
@@ -62,7 +67,7 @@ const LAYER_REGELN: { treffer: string; layer: DxfLayer }[] = [
   // Beschlag-Katalog S0 (v0.7.3 §D6): eigener Layer, VOR 'symbol' — Beschlag-
   // Linien tragen zusätzlich die Klasse 'symbol' (s. `derive/plan.ts`), die
   // BESCHLAG-Regel muss darum zuerst greifen.
-  { treffer: 'beschlag', layer: { name: 'BESCHLAG', aci: 5 } },
+  { treffer: 'beschlag', layer: LAYER_BESCHLAG },
   { treffer: 'symbol', layer: { name: 'SYMBOLE', aci: 5 } },
 ];
 const LAYER_TEXT: DxfLayer = { name: 'TEXT', aci: 2 };
@@ -76,6 +81,20 @@ function layerFuer(classes: string[]): DxfLayer {
     if (classes.includes(r.treffer)) return r.layer;
   }
   return LAYER_DEFAULT;
+}
+
+/**
+ * Layer für Beschriftungen (`plan.texte`): bewusst NICHT `layerFuer()`
+ * (dessen Fallback ist Layer «0», nicht TEXT — für Beschriftungen falsch).
+ * Einzige Sonderregel bisher: Beschlag-Katalog-Text (S0 BRH-Etikett, S2
+ * Katalog-Namen, Klasse `beschlag`) landet — wie die Beschlag-LINIEN — auf
+ * Layer BESCHLAG statt TEXT, damit der Layer je Werkplan-Öffnung ALLE
+ * zugehörigen Beschlag-Infos bündelt. Alle anderen Beschriftungen
+ * (Aussparungs-Koten, Achsköpfe, Etiketten, …) bleiben unverändert auf TEXT.
+ */
+function layerFuerText(classes: string[]): DxfLayer {
+  if (classes.includes('beschlag')) return LAYER_BESCHLAG;
+  return LAYER_TEXT;
 }
 
 /** DXF-Zahl: endlich, auf 1/1000 mm gerundet, «-0» normalisiert. */
@@ -130,7 +149,7 @@ export function planGraphicToDxf(plan: PlanGraphic, dims?: DimensionSet): string
   for (const r of plan.regions) merke(layerFuer(r.classes));
   for (const l of plan.lines) merke(layerFuer(l.classes));
   for (const a of plan.arcs) merke(layerFuer(a.classes));
-  for (const t of plan.texte) merke(LAYER_TEXT);
+  for (const t of plan.texte) merke(layerFuerText(t.classes));
   if (plan.axes.length) merke(LAYER_ACHSEN);
   if (dims && dims.chains.length) merke(LAYER_BEMASSUNG);
 
@@ -243,7 +262,7 @@ export function planGraphicToDxf(plan: PlanGraphic, dims?: DimensionSet): string
   for (const t of plan.texte) {
     const dy = (t.zeile ?? 0) * 300; // Zeilenversatz in mm (wie SVG-Renderer)
     s.zeile(0, 'TEXT');
-    s.zeile(8, LAYER_TEXT.name);
+    s.zeile(8, layerFuerText(t.classes).name);
     s.zeile(10, n(t.at.x));
     s.zeile(20, n(y(t.at.y) - dy));
     s.zeile(30, 0);
