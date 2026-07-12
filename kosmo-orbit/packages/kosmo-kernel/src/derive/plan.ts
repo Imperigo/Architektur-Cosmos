@@ -13,11 +13,32 @@ import { treppenTeile } from './treppe';
 import { meshSchnittRinge } from './mesh-topo';
 import { dachGeometrie } from './dach';
 import { pocheEntscheid } from './poche';
-import { fruehePhase } from '../model/doc';
+import { fruehePhase, type BauPhase } from '../model/doc';
 
 /** Standard-Schnitthöhe des Grundrisses über Geschoss-OK (SIA-üblich 1 m) —
  * die Ebene, auf der FreeMesh-Körper ihre ehrliche Schnittfigur zeigen. */
 export const PLAN_SCHNITTHOEHE = 1000;
+
+/**
+ * D3-Kontext-LOD-Treppe (v0.7.3 §D3, `docs/V073-GESTALTUNG-SPEZ.md`, Soll
+ * 4b): welche Darstellungsstufe Nachbar-Kontext in einer `BauPhase` verlangt
+ * — `'fill'` (Wettbewerb/Vorprojekt) · `'umriss'` (Bauprojekt/Baueingabe,
+ * nur Kontur) · `'aus'` (Werkplan, Nachbarn ganz weg). Reine, kleine
+ * Hilfsfunktion — der Druckweg (`plansvg.ts` `planInnerSvg`) verdrahtet sie
+ * bereits; der Live-Plan (`PlanView.tsx` `plan-kontext`-Layer, S1-Revier)
+ * liest die Zonen bisher direkt aus dem Doc statt über `derivePlan` (eigener
+ * Overlay, Kommentar dort «fliessen nicht durch derivePlan») und braucht
+ * darum eine EIGENE Verdrahtung dieser Funktion — s. GOLDEN-WECHSEL-S4.md
+ * §Offene Punkte, nicht Teil dieses Streams (S4 darf `PlanView.tsx` nicht
+ * ändern). Der Aufrufer wählt dann nur noch die Farbe («Papier ist Papier»:
+ * Druck hart kodiert, Live-Plan `var()`), die Stufe kommt von hier.
+ */
+export type KontextStufe = 'fill' | 'umriss' | 'aus';
+export function nachbarKontextStufe(phase: BauPhase): KontextStufe {
+  if (phase === 'werkplan') return 'aus';
+  if (phase === 'wettbewerb' || phase === 'vorprojekt') return 'fill';
+  return 'umriss';
+}
 
 /**
  * Grundriss-Derivation — symbolisch aus der Parametrik (nie aus dem Mesh).
@@ -698,7 +719,13 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   }
 
   // Volumen & Zonen als Projektion (feine Kontur); Zonen tragen ihren
-  // raumTyp als Klasse (A5: Themenplan-Kriterium)
+  // raumTyp als Klasse (A5: Themenplan-Kriterium). D3-Kontext-LOD-Treppe
+  // (v0.7.3 §D3, docs/V073-GESTALTUNG-SPEZ.md, Soll 4b): Zonen mit
+  // `zonenArt` (Modell/entities.ts) tragen zusätzlich eine `zone-<art>`-
+  // Klasse, damit `plansvg.ts` sie phasenabhängig unterscheiden kann — reine
+  // Zonen ohne `zonenArt` bleiben unverändert (Daten-Guard, byte-identisch).
+  // Das Schwarzplan-Modul (`derive/schwarzplan.ts`) bleibt UNABHÄNGIG davon
+  // unverändert («wie heute»); dies betrifft nur den Grundriss-Weg hier.
   for (const e of doc.inStorey(storeyId)) {
     if (e.kind === 'mass' || e.kind === 'zone') {
       regions.push({
@@ -707,6 +734,7 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
           'projection',
           e.kind === 'mass' ? 'volumen' : 'zone',
           ...(e.kind === 'zone' && e.raumTyp ? [`raumtyp-${e.raumTyp}`] : []),
+          ...(e.kind === 'zone' && e.zonenArt ? [`zone-${e.zonenArt}`] : []),
         ],
       });
     } else if (e.kind === 'slab') {

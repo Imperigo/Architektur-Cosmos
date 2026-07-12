@@ -1,7 +1,7 @@
 import { phaseLabel, type KosmoDoc } from '../model/doc';
 import type { Assembly, Furniture, Slab, Storey } from '../model/entities';
 import { moebelGeometrie, moebelTyp } from './moebel';
-import { derivePlan, regionToPath } from './plan';
+import { derivePlan, nachbarKontextStufe, regionToPath } from './plan';
 import { deriveDimensions, dimensionLabel } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
 import { schraffurFuer, schraffurLinien } from './schraffur';
@@ -17,6 +17,7 @@ import {
   MASS_STIFT,
   RADIER_WEISS,
   STIFT,
+  UMBAU_FLAECHEN,
   UMBAU_STIFTE,
   ZONENTUER_LUECKE_STIFT,
 } from './stilblatt';
@@ -80,6 +81,37 @@ export function planInnerSvg(
   const phase = doc.settings.phase;
   const pocheModus = doc.settings.pocheModus ?? 'phase';
   for (const r of plan.regions) {
+    // D3-Kontext-LOD-Treppe (v0.7.3 §D3, Soll 4b): Nachbar-/Parzellen-Zonen
+    // (Klassen `zone-nachbar`/`zone-parzelle`, s. `derive/plan.ts`) folgen
+    // `doc.settings.phase` (BauPhase, dieselbe Steuerung wie die Plan-
+    // Detaillierung) statt der generischen Poché-Logik unten — eigener,
+    // früher Zweig, damit sie nicht versehentlich als Tragwerk/Projektion
+    // gefüllt werden. Ohne `zonenArt` bleibt dieser Zweig wirkungslos
+    // (Daten-Guard, byte-identisch). Parzelle: IN JEDER Phase strichpunktiert
+    // 0.35 (dieselben Token wie `baugrenze`) — Nachbarn nie anwählbar bleibt
+    // eine App-seitige (PlanView.tsx) Angelegenheit, s. Abschlussbericht.
+    if (r.classes.includes('zone-parzelle')) {
+      parts.push(
+        `<path d="${regionToPath(r)}" fill-rule="evenodd" fill="none" stroke="${GRAU.geschnitten}" stroke-width="${STIFT.sekundaer * scale}" stroke-dasharray="${dashWelt(DASH.strichpunktBestand, scale)}"/>`,
+      );
+      continue;
+    }
+    if (r.classes.includes('zone-nachbar')) {
+      const stufe = nachbarKontextStufe(phase);
+      if (stufe === 'aus') continue; // Werkplan: Nachbarn AUS — nur Parzelle bleibt sichtbar
+      const nachbarFill = stufe === 'fill' ? UMBAU_FLAECHEN.bestand : 'none';
+      parts.push(
+        `<path d="${regionToPath(r)}" fill-rule="evenodd" fill="${nachbarFill}" stroke="${GRAU.kontext}" stroke-width="${STIFT.fein * scale}"/>`,
+      );
+      continue;
+    }
+    // Beschlag-Katalog S0 (v0.7.3 §D6): der Griffseite-Punkt ist die einzige
+    // GEFÜLLTE Beschlag-Fläche (Rest sind Linien, s. unten) — eigener,
+    // fixer Stil statt der Poché-Logik (die Punktregion ist kein Bauteil).
+    if (r.classes.includes('beschlag')) {
+      parts.push(`<path d="${regionToPath(r)}" fill-rule="evenodd" fill="${GRAU.geschnitten}" stroke="none"/>`);
+      continue;
+    }
     // A3: Stützen sind immer geschnitten → schwerer Stift + Poché wie tragend
     const isCore = r.classes.includes('tragend') || r.classes.includes('stuetze');
     const isDaemmung = r.classes.includes('daemmung');

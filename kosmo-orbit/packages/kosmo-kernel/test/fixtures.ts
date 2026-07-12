@@ -342,3 +342,105 @@ export function testhausFluegelGrundriss(): { doc: KosmoDoc; storeyId: string } 
   }
   return { doc, storeyId };
 }
+
+/** D3-Kontext-LOD-Treppe (v0.7.3 §D3, docs/V073-GESTALTUNG-SPEZ.md, Soll
+ * 4b): Testhaus 8×6 m + importierte Parzelle + zwei Nachbar-Footprints — für
+ * die Goldens `grundriss-kontext-{wettbewerb,baueingabe,werkplan}`. Die
+ * Phase wird vom jeweiligen Golden-Test selbst gesetzt (`design.
+ * phaseSetzen`), damit dieselbe Fixture alle drei Stufen der LOD-Treppe
+ * zeigt. */
+export function testhausMitKontext(): { doc: KosmoDoc; storeyId: string } {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  wand({ x: 0, y: 0 }, { x: 8000, y: 0 });
+  wand({ x: 8000, y: 0 }, { x: 8000, y: 6000 });
+  wand({ x: 8000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+  execute(doc, 'design.zoneErstellen', {
+    storeyId,
+    name: 'Parzelle',
+    sia: 'KF',
+    zonenArt: 'parzelle',
+    outline: [
+      { x: -10000, y: -10000 },
+      { x: 20000, y: -10000 },
+      { x: 20000, y: 16000 },
+      { x: -10000, y: 16000 },
+    ],
+  });
+  execute(doc, 'design.nachbarnUebernehmen', {
+    storeyId,
+    outlines: [
+      [{ x: 10000, y: 0 }, { x: 14000, y: 0 }, { x: 14000, y: 4000 }, { x: 10000, y: 4000 }],
+      [{ x: -6000, y: 8000 }, { x: -2000, y: 8000 }, { x: -2000, y: 12000 }, { x: -6000, y: 12000 }],
+    ],
+  });
+  return { doc, storeyId };
+}
+
+/** Beschlag-Katalog S0 (v0.7.3 §D6, docs/V073-GESTALTUNG-SPEZ.md, Soll 7b):
+ * Testhaus 16×6 m mit VIER Fenstern in der Südwand — Band+Griffseite,
+ * Schiebe-Lauf+Motorantrieb, Absturzsicherung, und eines OHNE jegliches
+ * Beschlag-Feld (Daten-Guard-Beweis) — für das Golden «werkplan-beschlag».
+ * Läuft in der Default-Phase `werkplan` (s. `model/doc.ts`
+ * `defaultSettings`) — kein expliziter Phasenwechsel nötig. */
+export function testhausBeschlag(): { doc: KosmoDoc; storeyId: string } {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  const sued = wand({ x: 0, y: 0 }, { x: 16000, y: 0 });
+  const suedId = (sued.patches[0] as { id: string }).id;
+  wand({ x: 16000, y: 0 }, { x: 16000, y: 6000 });
+  wand({ x: 16000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+
+  const setOeffnung = (center: number) =>
+    execute(doc, 'design.oeffnungSetzen', {
+      wallId: suedId,
+      openingType: 'fenster',
+      center,
+      width: 1600,
+      height: 1400,
+      sill: 900,
+    });
+
+  const o1 = (setOeffnung(2200).patches[0] as { id: string }).id;
+  execute(doc, 'design.beschlagSetzen', { openingId: o1, band: 'links', griffseite: 'rechts' });
+
+  const o2 = (setOeffnung(6200).patches[0] as { id: string }).id;
+  // Schiebe-Lauf hat kein eigenes Feld — abgeleitet aus fluegelTyp === 'schiebe'.
+  execute(doc, 'design.fensterParametrieren', { openingId: o2, fensterTyp: 'fest', fluegelTyp: 'schiebe' });
+  execute(doc, 'design.beschlagSetzen', { openingId: o2, antrieb: true });
+
+  const o3 = (setOeffnung(10200).patches[0] as { id: string }).id;
+  execute(doc, 'design.beschlagSetzen', { openingId: o3, absturzsicherung: true });
+
+  // Viertes Fenster OHNE jegliches Beschlag-Feld — Daten-Guard-Beweis
+  // (bleibt ohne Katalogsymbole, auch im Werkplan).
+  setOeffnung(14200);
+
+  return { doc, storeyId };
+}
