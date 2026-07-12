@@ -57,6 +57,22 @@ test('Einstellungen: «Rundgang erneut zeigen» startet den Guide', async ({ pag
   await expect(page.locator('[data-testid="starter-guide-ueberspringen"]')).toBeVisible();
 });
 
+test('Einstellungen: «Companion öffnen» ist auffindbar (v0.7.4 P8) und wechselt in die Companion-Ansicht', async ({
+  page,
+}) => {
+  // Bisher NUR über einen von Hand getippten `#companion`-URL-Hash erreichbar
+  // (`main.tsx` `istCompanion`, kein In-App-Link) — dieser Knopf lebt unter
+  // «Kosmo & Betrieb», setzt denselben Hash und lädt neu (main.tsx prüft den
+  // Hash nur einmal beim Laden).
+  await bootstrap(page);
+  await page.click('[data-testid="einstellungen-oeffnen"]');
+  const knopf = page.locator('[data-testid="einstellung-companion-oeffnen"]');
+  await expect(knopf).toBeVisible();
+  await knopf.click();
+  await expect(page.locator('[data-testid="companion"]')).toBeVisible();
+  expect(page.url()).toContain('#companion');
+});
+
 test('Einstellungen: «Funktionen & Neues» zeigt den 0.6.2-Eintrag', async ({ page }) => {
   await bootstrap(page);
   await page.click('[data-testid="einstellungen-oeffnen"]');

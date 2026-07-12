@@ -74,6 +74,20 @@ export interface EinstellungenProps {
   stationName?: string;
 }
 
+/**
+ * v0.7.4 P8 (Owner-Befund «Companion auffindbar»): der Companion
+ * (`shell/Companion.tsx`, die schmale Lese-/Freigabe-Ansicht) war bisher NUR
+ * über einen von Hand getippten `#companion`-URL-Hash erreichbar
+ * (`main.tsx` `istCompanion`) — kein In-App-Weg. `main.tsx` prüft den Hash
+ * nur EINMAL beim Laden (s. `Companion.tsx` `zurueckZurVollApp`-Kommentar),
+ * darum reicht ein blosses `location.hash = ...` nicht — derselbe
+ * Hash-setzen-und-neu-laden-Weg wie dort.
+ */
+function oeffneCompanion(): void {
+  window.location.hash = '#companion';
+  window.location.reload();
+}
+
 export function Einstellungen({
   theme,
   setTheme,
@@ -358,6 +372,15 @@ export function Einstellungen({
             </KButton>
             <KButton size="sm" tone="quiet" data-testid="einstellung-werkzeuge" onClick={() => setWerkzeugSetupOffen(true)}>
               Werkzeuge einrichten
+            </KButton>
+            <KButton
+              size="sm"
+              tone="quiet"
+              data-testid="einstellung-companion-oeffnen"
+              title="Wechselt in die schmale Companion-Ansicht (Lesen/Freigeben) — ein Klick zurück in KosmoOrbit steht dort bereit."
+              onClick={oeffneCompanion}
+            >
+              Companion öffnen
             </KButton>
           </div>
           <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', lineHeight: 1.5 }}>
