@@ -37,10 +37,17 @@ export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
     version: '0.7.5',
     datum: '2026-07-12',
-    inArbeit: true,
     punkte: [
       {
+        text: 'Beschlag-Katalog Stufe 2: die 12 Beschlagtypen aus 0.7.4 lassen sich jetzt konkret an Türen und Fenstern zuweisen (Auswahl im Inspector, nach Kategorie gruppiert). Zugewiesene Beschläge erscheinen im Werkplan als Piktogramm, im DXF als Texteintrag auf dem Layer BESCHLAG und im IFC-Export als eigenes Zubehör-Element (IFCDISCRETEACCESSORY). Ehrlich: die Zuweisung hängt an der Öffnung; frei platzierbare Beschlag-Instanzen bleiben ein späterer Ausbauweg.',
+        station: 'design',
+      },
+      {
         text: 'Neu: Projekt-Stammdaten — Bauherr, Adresse, Parzellennummer und Verfasser:in lassen sich im Projekt-Menü erfassen und erscheinen (Bauherr/Verfasser) automatisch im Plankopf jedes Plans. Ehrlich offen: diese Angaben werden wie jede Projekteinstellung über Undo und den Projekt-Export gespeichert, aber (noch) nicht live zwischen zwei gleichzeitig geöffneten Sitzungen desselben Projekts synchronisiert — das folgt in einer späteren Runde.',
+        station: 'design',
+      },
+      {
+        text: 'Die in 0.7.4 offen benannte PDF-Lücke ist geschlossen: der Plankopf-Untertitel und das Nordpfeil-«N» erscheinen im PDF-Export jetzt in der richtigen Schrift (Lato Regular) statt in einer Sans-Ersatztype — der eingebettete Font-Satz wurde um den fehlenden Schnitt ergänzt.',
         station: 'design',
       },
     ],

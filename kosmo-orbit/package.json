@@ -1,6 +1,6 @@
 {
   "name": "kosmo-orbit-workspace",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "private": true,
   "description": "KosmoOrbit V1 — die Architektur-Designzentrale des ArchitekturKosmos. Eigenständiger Workspace; die Website im Repo-Root bleibt unberührt.",
   "license": "UNLICENSED",
