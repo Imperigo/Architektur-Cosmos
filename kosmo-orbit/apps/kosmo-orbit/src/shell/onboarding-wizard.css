@@ -1,0 +1,52 @@
+/**
+ * Onboarding-Wizard (v0.7.6 Welle 3 Stream E) — NEUE, additive Styles, nur
+ * vom Wizard selbst importiert. `aura.css`/`packages/kosmo-ui` bleiben dabei
+ * komplett unangetastet (Freeze). Atmosphärischer Kosmos-Hintergrund aus dem
+ * Soll-Bild (`.ak-radial-depth`/`.ak-starfield` + Orbit-Ellipsen) — hier
+ * NEU aus Bord-Mitteln nachgebaut (reine CSS-Gradienten, kein Bild-Asset),
+ * ausschliesslich mit vorhandenen `--k-*`-Tokens, damit Papier UND Kosmos
+ * lesbar bleiben.
+ */
+
+.onboarding-tiefe {
+  background:
+    radial-gradient(120% 85% at 74% 8%, color-mix(in srgb, var(--k-accent) 10%, transparent), transparent 60%),
+    radial-gradient(90% 70% at 12% 92%, color-mix(in srgb, var(--k-rolle-generator) 7%, transparent), transparent 62%);
+}
+
+.onboarding-sternenfeld {
+  background-image:
+    radial-gradient(1.4px 1.4px at 20% 30%, color-mix(in srgb, var(--k-ink) 55%, transparent), transparent),
+    radial-gradient(1.2px 1.2px at 70% 62%, color-mix(in srgb, var(--k-ink) 45%, transparent), transparent),
+    radial-gradient(1.6px 1.6px at 42% 82%, color-mix(in srgb, var(--k-ink) 50%, transparent), transparent),
+    radial-gradient(1.1px 1.1px at 88% 18%, color-mix(in srgb, var(--k-ink) 40%, transparent), transparent),
+    radial-gradient(1.3px 1.3px at 58% 12%, color-mix(in srgb, var(--k-ink) 45%, transparent), transparent),
+    radial-gradient(1.2px 1.2px at 10% 68%, color-mix(in srgb, var(--k-ink) 40%, transparent), transparent);
+  background-repeat: no-repeat;
+  opacity: 0.35;
+}
+
+@keyframes onboarding-orbit-drehen {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.onboarding-orbit-ring {
+  animation: onboarding-orbit-drehen 36s linear infinite;
+}
+
+.onboarding-stepper-zeile {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  color: inherit;
+  font: inherit;
+}
+.onboarding-stepper-zeile:hover .onboarding-stepper-titel {
+  color: var(--k-ink);
+}

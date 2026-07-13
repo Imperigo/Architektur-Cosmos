@@ -204,6 +204,7 @@ export function ViewportChrome(props: ViewportChromeProps) {
     <>
       <style>{CHROME_STYLE}</style>
 
+      <div className="k-vp-chrome-root">
       {/* MODUS-SCHALTER + BADGE + TOOL-RAIL (linke Spalte, kompakt/oben
           gestapelt — Höhe folgt dem Inhalt statt die Spalte bis unten zu
           füllen). WICHTIG: `EntwurfsDock` (DesignWorkspace.tsx, `.orbit065-
@@ -213,7 +214,7 @@ export function ViewportChrome(props: ViewportChromeProps) {
           skizzieren»). Darum bleibt diese Spalte bewusst auf ihre
           tatsächliche Inhaltshöhe begrenzt (kein `bottom`/`flex:1`) und
           endet weit oberhalb der Bild-Mitte. */}
-      <div className="k-vp-chrome-spalte" style={{ top: 16, left: 16, width: 280 }}>
+      <div className="k-vp-chrome-spalte" style={{ top: 16, left: '50%', transform: 'translateX(-50%)', width: 280, alignItems: 'center' }}>
         <div className="k-glass" style={{ display: 'flex', gap: 4, padding: 4, flex: 'none' }}>
           {VIEWPORT_MODUS_REIHENFOLGE.map((m) => {
             const aktiv = m === props.modus;
@@ -436,6 +437,7 @@ export function ViewportChrome(props: ViewportChromeProps) {
           </div>
         </div>
       )}
+      </div>
     </>
   );
 }
@@ -468,6 +470,24 @@ function bottomChips(props: ViewportChromeProps): { k: string; icon: import('./v
  * bleibt unangetastet — dieser Block lebt in der App.
  */
 const CHROME_STYLE = `
+  /* v0.7.6-Integrationsfix: die Chrome-Schale liegt als Overlay über der
+     three.js-Bühne UND über der bestehenden DesignWorkspace-Möblierung
+     (Geschossleiste top-left, EntwurfsDock left-mitte). Standard-HUD-Muster:
+     der Overlay-Layer ist pointer-transparent, nur echte Bedienelemente
+     fangen Klicks — so gehen Zeichnen/Kamera auf dem Canvas UND Klicks auf
+     darunterliegende Design-Knöpfe (z. B. Geschoss stapeln) wieder durch. */
+  .k-vp-chrome-root {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .k-vp-chrome-root button,
+  .k-vp-chrome-root input,
+  .k-vp-chrome-root select,
+  .k-vp-chrome-root textarea,
+  .k-vp-chrome-root a,
+  .k-vp-chrome-root [role='button'],
+  .k-vp-chrome-root .k-vp-interaktiv { pointer-events: auto; }
   .k-vp-chrome-spalte {
     position: absolute;
     z-index: 6;

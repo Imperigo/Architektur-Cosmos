@@ -73,6 +73,7 @@ import { fokusKlasse, fokusStufe } from './state/fokus';
 import { AKZENTE } from './shell/akzente';
 import { Einstellungen } from './shell/Einstellungen';
 import { CursorEbene } from './shell/CursorEbene';
+import { OnboardingWizard } from './shell/OnboardingWizard';
 import './shell/orbit-065.css';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
@@ -808,6 +809,17 @@ export function App() {
                   verändert), siehe Bericht. Klassen aus `shell/orbit-065.css`
                   (importiert von OrbitStart.tsx, gilt global). */}
               <div className="orbit065-home-grid">
+                {onboarding && (
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <OnboardingWizard
+                      onAbschliessen={(zielDesign) => {
+                        setOnboarding(false);
+                        if (zielDesign) gehZu('design');
+                      }}
+                      onOeffneKosmoEinstellungen={() => setKosmoOpen(true)}
+                    />
+                  </div>
+                )}
                 <div className="orbit065-home-links">
                   <div>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
@@ -862,48 +874,6 @@ export function App() {
                         setErsteStartFrage(false);
                       }}
                     />
-                  )}
-                  {onboarding && (
-                    <Panel data-testid="onboarding" style={{ padding: '16px 18px', display: 'grid', gap: 10 }}>
-                      <div style={{ fontWeight: 550 }}>Erste Schritte</div>
-                      <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7, color: 'var(--k-ink-soft)' }}>
-                        <li>
-                          <b>Zeichnen:</b> In KosmoDesign Wände klicken (Snap aufs Raster), Fenster und Türen in die
-                          Wand setzen — Grundriss, Schnitt und Kennzahlen laufen live mit.
-                        </li>
-                        <li>
-                          <b>Kosmo fragen:</b> Rechts im Panel, z.&nbsp;B. «Zeichne eine Wand von 0,0 nach 8,0» —
-                          Vorschläge wendest du per Karte an, Rückgängig gilt immer.
-                        </li>
-                        <li>
-                          <b>Schnell springen:</b> ⌘K/Ctrl+K öffnet die Befehlspalette (Module, Ansichten, Exporte).
-                        </li>
-                      </ol>
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        <KButton
-                          size="sm"
-                          tone="accent"
-                          data-testid="onboarding-start"
-                          onClick={() => {
-                            localStorage.setItem('kosmo.onboarded', '1');
-                            setOnboarding(false);
-                            gehZu('design');
-                          }}
-                        >
-                          Los geht's — KosmoDesign öffnen
-                        </KButton>
-                        <KButton
-                          size="sm"
-                          tone="ghost"
-                          onClick={() => {
-                            localStorage.setItem('kosmo.onboarded', '1');
-                            setOnboarding(false);
-                          }}
-                        >
-                          Ausblenden
-                        </KButton>
-                      </div>
-                    </Panel>
                   )}
                   <ProjektListe onOpen={() => gehZu('design')} />
                   <VariantenArchiv onOpen={() => gehZu('design')} />
