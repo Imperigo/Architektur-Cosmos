@@ -1,5 +1,13 @@
 # KosmoOrbit — Arbeitsanleitung für Kosmo/Claude
 
+> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.7.7** (Stand 13.07.2026);
+> alles davor ist **Archiv**. Der Web-Container wird gelegentlich auf einen
+> älteren Commit zurückgerollt — **immer vom echten Remote-Kopf ausgehen**
+> (`git fetch origin claude/kosmo-orbit-v1-build-pzxkbj` +, falls lokal
+> dahinter, `git reset --hard origin/…`). Details und die verbindliche Regel:
+> **[`../STAND.md`](../STAND.md)**. Der SessionStart-Hook
+> (`.claude/hooks/session-start.sh`) erzwingt das automatisch.
+
 Dies ist die Architektur-Designzentrale des Baubüros Andrin (ArchitekturKosmos):
 ein **lokal-first Monorepo** für Architektur — BIM-Kern, 2D-Pläne, Visualisierung,
 Wissen und eine steuernde Büro-KI («Kosmo»). V1 ist fertig (04.07.2026,
@@ -94,4 +102,6 @@ Schlüssel braucht, wird im UI offen benannt, nicht vorgetäuscht.
 ## Branch
 
 Entwickelt wird auf einem Feature-Branch, nie direkt auf dem Default-Branch.
-Der aktuelle V1-Finish-Branch war `claude/kosmo-orbit-v1-build-pzxkbj`.
+Der aktuelle Entwicklungs-Branch ist `claude/kosmo-orbit-v1-build-pzxkbj`.
+**`origin/<branch>` ist die Wahrheit, nicht der lokale Container** — siehe
+[`../STAND.md`](../STAND.md) (Rollback-Riegel).
