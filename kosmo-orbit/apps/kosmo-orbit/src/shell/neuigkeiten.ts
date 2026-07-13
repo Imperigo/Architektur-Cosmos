@@ -35,6 +35,28 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.7',
+    datum: '2026-07-13',
+    punkte: [
+      {
+        text: 'Das Projekt-Dossier aus 0.7.6 ist jetzt direkt erreichbar: ein neuer Knopf «Dossier» in der Publish-Werkzeugleiste öffnet das mehrteilige Blatt und exportiert es als SVG oder PDF (aktiv, sobald ein Projekt geladen ist).',
+        station: 'publish',
+      },
+      {
+        text: 'Kosmos gibt jetzt dauerhaft frei: Wenn du im Companion oder im Kosmo-Panel «Für den Job erlauben» wählst, überlebt diese Erlaubnis einen Neustart. Sie endet ehrlich nur, wenn du sie ausdrücklich widerrufst — es wird kein automatisches Verfallsdatum vorgetäuscht.',
+      },
+      {
+        text: 'Der Erststart-Schritt «Kosmo-Zentrale koppeln» ist echt geworden: ein QR-Code zum Koppeln eines Zweitgeräts und ehrliche Zustände (suche / gefunden / nicht gefunden — manuell koppeln / im Cloud-Betrieb keine eigene Zentrale nötig), die aus dem echten Verbindungstest kommen — keine erfundenen Gerätezeilen.',
+      },
+      {
+        text: 'Die dunkle «Kosmos»-Oberfläche zieht sich jetzt durch alle Stationen: Publish, Grundlagen, Bibliothek, Training und Diagnose tragen denselben dezenten Glass-Kopf mit Modul-Tönung wie Entwerfen, Visualisieren und Daten. Rein optisch — Inhalte und Bedienung bleiben unverändert.',
+      },
+      {
+        text: 'Testpflege: ein hartnäckiger Fehlalarm im Blatt-Test (Gross-/Kleinschreibung) wurde behoben. Ehrlich offen: zwei Render-Tests (Viewport-Render, Vis→Blatt) lassen sich in der reinen Server-Testumgebung ohne echte Grafikkarte nicht abschliessen — das ist eine Umgebungsgrenze, kein Fehler in der App, und offen als nächster Punkt notiert.',
+      },
+    ],
+  },
+  {
     version: '0.7.6',
     datum: '2026-07-13',
     punkte: [
