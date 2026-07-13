@@ -453,6 +453,13 @@ export function effektiveLeistungsStufe(): LeistungsStufe {
   return speicher.letztesErgebnis?.stufe ?? STUFE_VOR_ERSTER_MESSUNG;
 }
 
+/** Menschenlesbares Kurz-Label je Stufe (v0.7.6 Welle 1 Stream A: 3D-
+ *  Viewport-Chrome «Darstellung»-Sektion im Eigenschaften-Panel) — rein additiv,
+ *  keine Verhaltensänderung an der Leistungs-Engine selbst. */
+export function leistungsStufeLabel(stufe: LeistungsStufe): string {
+  return stufe === 'hoch' ? 'Hoch' : stufe === 'mittel' ? 'Mittel' : 'Niedrig';
+}
+
 /** Menschenlesbarer Bericht (für `leistung-bericht` im Einstellungen-Panel) —
  *  benennt explizit, was NICHT gemessen werden konnte. */
 export function formatiereLeistungsBericht(ergebnis: LeistungsErgebnis): {

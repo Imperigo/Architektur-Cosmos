@@ -212,7 +212,19 @@ export interface ViewportHandlers {
 }
 
 import { materialKarten, texturenAktiv } from './texturen';
-import { effektiveLeistungsStufe, istRenderBeiBedarfAn, leistungRevisionAktuell, pixelRatioFuerStufe, schattenAnFuerStufe } from '../../state/leistung';
+import {
+  effektiveLeistungsStufe,
+  istRenderBeiBedarfAn,
+  leistungRevisionAktuell,
+  leistungsStufeLabel,
+  pixelRatioFuerStufe,
+  schattenAnFuerStufe,
+} from '../../state/leistung';
+// v0.7.6 Welle 1 Stream A: 3D-Viewport-Chrome (Header/Rail/Modi/HUD/
+// Achsenkreuz/Zoom) — reine Overlay-Komponente + Daten-Modul, s.
+// `ViewportChrome.tsx`-Kopfkommentar für die Layout-/Ehrlichkeits-Begründung.
+import { ViewportChrome } from './ViewportChrome';
+import { brennweiteAusFov, zoomProzent as chromeZoomProzent, type ViewportModusId } from './viewport-modi';
 
 // C2: Textur-Umschalter — Rebuild des Modells beim Wechsel
 let texturRevision = 0;
@@ -279,6 +291,34 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   const mountRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<CameraControls | null>(null);
   const modelRef = useRef<THREE.Group | null>(null);
+  // v0.7.6 Welle 1 Stream A: 3D-Viewport-Chrome — echte Kamera-Referenz +
+  // Ausgangsdistanz (fürs Zoom-Prozent, camera-controls kennt selbst keinen
+  // Prozentwert) + ein leichtgewichtiges Poll-Snapshot fürs HUD/Panel/
+  // Achsenkreuz. KEIN neuer Renderloop — dieselbe 400ms-Kadenz wie die
+  // bestehenden Polls in dieser Datei (Render-Status: 2500ms), nur enger,
+  // weil Kamera-Orientierung sich sichtbar schneller ändert.
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const distanzStartRef = useRef(1);
+  const [viewportBereit, setViewportBereit] = useState(false);
+  const [viewportModus, setViewportModus] = useState<ViewportModusId>('modellieren');
+  const [werkzeugProModus, setWerkzeugProModus] = useState<Record<ViewportModusId, string>>({
+    modellieren: 'auswahl',
+    kamera: 'auswahl',
+    review: 'auswahl',
+  });
+  const [texturenChromeAn, setTexturenChromeAn] = useState(() => texturenAktiv());
+  const [vollbildAktiv, setVollbildAktiv] = useState(false);
+  const [chromeSnapshot, setChromeSnapshot] = useState({
+    azimutRad: 0,
+    polarGrad: 90,
+    distanzM: 1,
+    fovGrad: 45,
+    breitePx: 16,
+    hoehePx: 9,
+    kontextAnzahl: 0,
+    splatAktiv: false,
+    sonnenDatum: null as Date | null,
+  });
   // v0.6.7 P0: für den «Für Vis aufnehmen»-Knopf — rendert EINEN Frame mit
   // der aktuellen Kamera (wie jeder normale Frame, keine Bewegung) und liest
   // danach sofort das Canvas-Pixelbild; rührt sonst nichts an.
@@ -395,6 +435,30 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     return () => clearInterval(t);
   }, []);
 
+  // v0.7.6 Welle 1 Stream A: Chrome-Snapshot — liest NUR echte, bereits
+  // vorhandene Laufzeitwerte (Kamera-Winkel/-Distanz/-FOV, Canvas-Grösse,
+  // Kontext-Mesh-Anzahl, Splat-/Sonnendatum-Zustand); erfindet nichts.
+  useEffect(() => {
+    const t = setInterval(() => {
+      const controls = controlsRef.current;
+      const camera = cameraRef.current;
+      const rect = mountRef.current?.getBoundingClientRect();
+      if (!controls || !camera || !rect) return;
+      setChromeSnapshot({
+        azimutRad: controls.azimuthAngle,
+        polarGrad: (controls.polarAngle * 180) / Math.PI,
+        distanzM: controls.distance,
+        fovGrad: camera.fov,
+        breitePx: Math.max(1, Math.round(rect.width)),
+        hoehePx: Math.max(1, Math.round(rect.height)),
+        kontextAnzahl: contextMeshes.length,
+        splatAktiv: splatCloud !== null,
+        sonnenDatum: sunDate,
+      });
+    }, 400);
+    return () => clearInterval(t);
+  }, []);
+
   const renderStarten = () => {
     const { doc } = useProject.getState();
     // Kein Formular im Viewport (bewusst schlank) — derselbe Zusammenführungs-
@@ -505,6 +569,63 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             ? 'Erneut versuchen'
             : 'Rendern';
 
+  // v0.7.6 Welle 1 Stream A: 3D-Viewport-Chrome — abgeleitete ECHTE
+  // Anzeigewerte fürs HUD/Eigenschaften-Panel (kein Fake, s. Kopfkommentar
+  // `ViewportChrome.tsx`). `standort`/`activeStoreyId` kommen reaktiv aus
+  // `useProject` (Doc/Undo-Zustand), der Rest aus dem 400ms-Poll oben bzw.
+  // aus `leistung.ts` (bereits importiert für den Renderer selbst).
+  const chromeStandort = useProject((s) => s.doc.settings.standort);
+  // WICHTIG (Zustand/`useSyncExternalStore`): der Selektor MUSS eine stabile
+  // Referenz liefern (hier die Storey-Entität selbst aus dem Doc), NIE ein
+  // frisches Objekt-Literal — sonst hält React den Snapshot für „uncached“
+  // und rendert in einer Endlosschleife (React-Fehler #185). Das abgeleitete
+  // Label wird darum AUSSERHALB des Selektors gebaut.
+  const chromeGeschossEntity = useProject((s) => {
+    const st = s.activeStoreyId ? s.doc.get(s.activeStoreyId) : null;
+    return st && st.kind === 'storey' ? st : null;
+  });
+  const chromeGeschossLabel = chromeGeschossEntity
+    ? `${chromeGeschossEntity.name} (${(chromeGeschossEntity.elevation / 1000).toFixed(2)} m)`
+    : null;
+  const chromeStandortLabel = chromeStandort?.label ?? 'Innerschweiz (Fallback, s. SONNE_STANDORT)';
+  const chromeBrennweiteMm = brennweiteAusFov(chromeSnapshot.fovGrad);
+  const chromeZoomProzentWert = chromeZoomProzent(chromeSnapshot.distanzM, distanzStartRef.current);
+  const chromeLeistungsStufeLabel = leistungsStufeLabel(effektiveLeistungsStufe());
+  const chromeSchattenAn = schattenAnFuerStufe(effektiveLeistungsStufe());
+
+  // «−»/«+» dollen relativ zur aktuellen Distanz (camera-controls kennt
+  // selbst kein Zoom-Prozent) — echte Kamerabewegung, kein Kosmetik-Zähler.
+  const chromeZoomKleiner = () => {
+    const c = controlsRef.current;
+    if (c) void c.dolly(-c.distance * 0.2, true);
+  };
+  const chromeZoomGroesser = () => {
+    const c = controlsRef.current;
+    if (c) void c.dolly(c.distance * 0.2, true);
+  };
+  useEffect(() => {
+    const onFullscreenChange = () => setVollbildAktiv(document.fullscreenElement != null);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
+  const chromeVollbild = () => {
+    const el = mountRef.current?.parentElement ?? mountRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void el.requestFullscreen();
+  };
+  // Spiegelt `setTexturModus` (oben, C2) in lokalen React-Zustand — der
+  // eigentliche three.js-Rebuild folgt weiterhin `texturRevision` unten,
+  // unverändert; die Chrome-Anzeige braucht nur ein sofort sichtbares Echo.
+  const chromeTexturToggle = () => {
+    const naechster = !texturenChromeAn;
+    setTexturModus(naechster);
+    setTexturenChromeAn(naechster);
+  };
+  const chromeWerkzeugWechsel = (id: string) => {
+    setWerkzeugProModus((prev) => ({ ...prev, [viewportModus]: id }));
+  };
+
   // Linker Klick folgt dem gewählten Modus (Mitteltaste/Rechts werden pro Geste
   // in onCaptureDown aus mausBelegung gesetzt, wegen Shift+Mitte). navModusRef
   // hält den aktuellen Modus für den Pointer-Handler bereit.
@@ -575,6 +696,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     }
     controls.saveState(); // Home-Punkt für die «Einpassen»-Taste (reset())
     controlsRef.current = controls;
+    // v0.7.6 Welle 1 Stream A: 3D-Viewport-Chrome — Kamera-Referenz +
+    // Ausgangsdistanz (Zoom-Prozent-Basis) + Sichtbarkeits-Guard («nur wenn
+    // Daten vorhanden», hier: sobald der Mount tatsächlich steht).
+    cameraRef.current = camera;
+    distanzStartRef.current = controls.distance;
+    setViewportBereit(true);
 
     // Licht: warme Sonne + weiches Himmelslicht
     const sun = new THREE.DirectionalLight(0xfff3e0, 2.6);
@@ -1900,6 +2027,8 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       controlsRef.current = null;
       modelRef.current = null;
       captureRef.current = null;
+      cameraRef.current = null;
+      setViewportBereit(false);
     };
     // navModus wird über den separaten Sync-Effekt oben nachgezogen (controlsRef) —
     // hier zählt nur der Startwert beim Aufbau der Szene.
@@ -1964,6 +2093,40 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         style={{ position: 'absolute', inset: 0 }}
         data-testid="viewport3d"
         data-darstellung3d={darstellung3dAufgeloest}
+      />
+      <ViewportChrome
+        sichtbar={viewportBereit}
+        modus={viewportModus}
+        onModusWechsel={setViewportModus}
+        aktivesWerkzeug={werkzeugProModus[viewportModus]}
+        onWerkzeugWechsel={chromeWerkzeugWechsel}
+        azimutRad={chromeSnapshot.azimutRad}
+        polarGrad={chromeSnapshot.polarGrad}
+        distanzM={chromeSnapshot.distanzM}
+        zoomProzentWert={chromeZoomProzentWert}
+        brennweiteMm={chromeBrennweiteMm}
+        aspektBreite={chromeSnapshot.breitePx}
+        aspektHoehe={chromeSnapshot.hoehePx}
+        geschossLabel={chromeGeschossLabel}
+        kontextAnzahl={chromeSnapshot.kontextAnzahl}
+        splatAktiv={chromeSnapshot.splatAktiv}
+        texturenAn={texturenChromeAn}
+        sonnenDatum={chromeSnapshot.sonnenDatum}
+        standortLabel={chromeStandortLabel}
+        leistungsStufeLabel={chromeLeistungsStufeLabel}
+        schattenAn={chromeSchattenAn}
+        darstellungsModus={darstellung3dAufgeloest}
+        renderStatusLabel={RENDER_STATUS_LABEL[renderStatus] ?? renderStatus}
+        renderCloudLeer={renderCloudLeer}
+        onEinpassen={einpassen}
+        onRendern={renderStarten}
+        onFuerVisAufnehmen={fuerVisAufnehmen}
+        onZoomKleiner={chromeZoomKleiner}
+        onZoomGroesser={chromeZoomGroesser}
+        onVollbild={chromeVollbild}
+        vollbildAktiv={vollbildAktiv}
+        onTexturToggle={chromeTexturToggle}
+        versteckeBottomLeiste={sketchModeAn}
       />
       <NavLeiste
         testid="nav-3d"

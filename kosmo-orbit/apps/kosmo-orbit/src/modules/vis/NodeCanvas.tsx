@@ -12,7 +12,7 @@ import {
   type VisNode,
   type VisPortTyp,
 } from '@kosmo/kernel';
-import { Badge, Karteikarte, KButton, KField, KIcon, KInput, KSelect, melde, meldeFehler, type KIconName } from '@kosmo/ui';
+import { KButton, KField, KIcon, KInput, KSelect, melde, meldeFehler, type KIconName } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import {
   abbrechenJob,
@@ -20,7 +20,6 @@ import {
   bildAufsBlatt,
   bridgeBase,
   bridgeVermutlichCspGeblockt,
-  formularFeldText,
   formularZusatz,
   freigebenJob,
   holeJob,
@@ -33,7 +32,6 @@ import {
   istZeitUeberschritten,
   memoKey,
   type Aufnahme,
-  type KurationEintrag,
   type NodeLauf,
   OFFENE_LAUF_STATUS,
   RENDER_TIMEOUT_MS_DEFAULT,
@@ -41,6 +39,8 @@ import {
   waehleAufnahme,
 } from './vis-runtime';
 import { BridgeBild } from './BridgeBild';
+import { KuratierFlaeche } from './KuratierFlaeche';
+import type { KuratierKartenDaten } from './varianten-diff';
 
 /**
  * NodeCanvas (V1-Finish P2, W1-Neubau UI-KONZEPT-065 §5) — der Blender-artige
@@ -752,30 +752,37 @@ export function NodeCanvas({
   // vorhandenen Viewport-Aufnahme ist eine Karte — dieselbe Kartenform, zwei
   // ehrlich unterschiedliche Bildquellen (wie `bildQuelle` es fürs Verbinden
   // schon kennt). Laufzeit bleibt in vis-runtime (`laeufe`/`aufnahmen`/
-  // `kuration`) — der Graph selbst kennt nur den Node, nie das Bild.
-  type KuratierQuelle = { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | { dataUrl: string };
-  const renderKarten = graph.nodes
+  // `kuration`) — der Graph selbst kennt nur den Node, nie das Bild. Der volle
+  // `lauf.qa` (nicht nur `verdict.passed`) wandert mit — die Kuratierfläche
+  // (Welle 1) leitet daraus Sterne-Bewertung + Parameter-Diff ab
+  // (`varianten-diff.ts`), ohne ein neues Datenfeld im Doc/in vis-runtime.
+  const renderKarten: KuratierKartenDaten[] = graph.nodes
     .filter((n) => n.typ === 'render')
     .map((n) => {
       const lauf = laeufe[n.id];
       if (!lauf || lauf.status !== 'fertig' || !lauf.jobId || !lauf.bild) return null;
-      const quelle: KuratierQuelle = { jobId: lauf.jobId, bild: lauf.bild, qa: lauf.qa };
-      return { node: n, quelle, kur: kuration[n.id] ?? { markiert: false, verworfen: false } };
+      const auftrag = auswertung?.renderAuftraege.get(n.id);
+      return {
+        node: n,
+        quelle: { jobId: lauf.jobId, bild: lauf.bild, qa: lauf.qa },
+        kur: kuration[n.id] ?? { markiert: false, verworfen: false },
+        ...(auftrag ? { auftrag } : {}),
+      };
     })
     .filter((k): k is NonNullable<typeof k> => k !== null);
-  const aufnahmeKarten = graph.nodes
+  const aufnahmeKarten: KuratierKartenDaten[] = graph.nodes
     .filter((n) => n.typ === 'aufnahme')
     .map((n) => {
       const gewaehlt = waehleAufnahme(aufnahmen, String((n.params ?? {})['kamera'] ?? 'aktuell'));
       if (!gewaehlt) return null;
-      const quelle: KuratierQuelle = { dataUrl: gewaehlt.dataUrl };
-      return { node: n, quelle, kur: kuration[n.id] ?? { markiert: false, verworfen: false } };
+      return {
+        node: n,
+        quelle: { dataUrl: gewaehlt.dataUrl },
+        kur: kuration[n.id] ?? { markiert: false, verworfen: false },
+      };
     })
     .filter((k): k is NonNullable<typeof k> => k !== null);
-  const kuratierKarten = [...renderKarten, ...aufnahmeKarten];
-  const kuratierAktiv = kuratierKarten.filter((k) => !k.kur.verworfen);
-  const kuratierAblage = kuratierKarten.filter((k) => k.kur.verworfen);
-  const vergleichKarten = kuratierKarten.filter((k) => vergleichAuswahl.includes(k.node.id));
+  const kuratierKarten: KuratierKartenDaten[] = [...renderKarten, ...aufnahmeKarten];
   const toggleVergleich = (nodeId: string) =>
     setVergleichAuswahl((sel) => {
       if (sel.includes(nodeId)) return sel.filter((id) => id !== nodeId);
@@ -1378,124 +1385,39 @@ export function NodeCanvas({
       </div>
     )}
 
-    {/* Kuratier-Fläche (V-H5, Welle 3): erzeugte Renderbilder als Karten
-        (Tusche-Rahmen, `Karteikarte`/`.k-karte` wie die bestehenden
-        Varianten-Serien-Karten) — markieren (Stern), verwerfen (in eine
-        Ablage, NICHTS wird gelöscht — VORFORM-UI-KONZEPT §1.5 «Layout 02»),
-        zwei Karten vergleichen (derselbe `BildKachel`-Baustein wie der
-        `vergleich`-Node). Laufzeitdaten (Bild/Kuration) bleiben in
+    {/* Kuratier-Fläche (Welle 1 — Soll-Bild `Kosmo Viz Kuratierung.dc.html`
+        §6.2): vom schwebenden Overlay zum Vollflächen-Raster ausgebaut
+        (`KuratierFlaeche.tsx`) — 3-spaltiges Karten-Raster ODER A/B-Vergleich
+        mit Parameter-Diff, Filter (Alle/Favoriten/Verworfen), Kurations-
+        Inspektor. Der Umschalt-Knopf bleibt oben rechts über der Fläche
+        erreichbar (schliessen). Laufzeitdaten (Bild/Kuration) bleiben in
         vis-runtime — der Doc kennt nur die Nodes. */}
-    <div style={{ position: 'absolute', right: 12, top: 12, zIndex: 5, maxWidth: 340 }}>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <KButton
-          size="sm"
-          tone="ghost"
-          data-testid="vis-kuratier-toggle"
-          title="Kuratieren"
-          aria-label="Kuratieren"
-          aria-expanded={kuratierOffen}
-          onClick={() => setKuratierOffen((o) => !o)}
-        >
-          <KIcon name="stern" size={16} title="Kuratieren" />
-          {kuratierKarten.length > 0 && (
-            <span style={{ fontSize: 10, fontFamily: 'var(--k-font-mono)' }}>{kuratierKarten.length}</span>
-          )}
-        </KButton>
-      </div>
-      {kuratierOffen && (
-        <div
-          data-testid="vis-kuratier-flaeche"
-          className="k-einblenden"
-          style={{
-            marginTop: 6,
-            maxHeight: '76vh',
-            overflow: 'auto',
-            display: 'grid',
-            gap: 10,
-            padding: 8,
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-sm)',
-          }}
-        >
-          {vergleichKarten.length === 2 && (
-            <div data-testid="vis-kuratier-vergleich-flaeche" style={{ display: 'grid', gap: 4 }}>
-              <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-soft)' }}>
-                Vergleich
-              </span>
-              <div style={{ display: 'flex', gap: 6 }}>
-                {vergleichKarten.map((k, i) =>
-                  'dataUrl' in k.quelle ? (
-                    <div key={k.node.id} style={{ flex: 1, display: 'grid', gap: 2, minWidth: 0 }}>
-                      <img src={k.quelle.dataUrl} alt={`Vergleich ${i + 1}`} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
-                    </div>
-                  ) : (
-                    <BildKachel key={k.node.id} jobId={k.quelle.jobId} bild={k.quelle.bild} qa={k.quelle.qa} alt={`Vergleich ${i + 1}`} />
-                  ),
-                )}
-              </div>
-            </div>
-          )}
-          {kuratierKarten.length === 0 ? (
-            // C-Befund (V1-Welle Commit 1, Muster vergleich-Leerzustand ~:1741):
-            // ein Tusche-Signet statt reiner Textwüste.
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center', padding: '8px 4px', textAlign: 'center' }}>
-              <svg width="26" height="22" viewBox="0 0 26 22" aria-hidden focusable="false">
-                <rect x="1.5" y="2.5" width="17" height="14" rx="1.5" fill="none" stroke="var(--k-ink-faint)" strokeWidth="1.4" />
-                <path
-                  d="M13 4.6 14.4 8 18 8.3 15.3 10.6 16.1 14.1 13 12.2 9.9 14.1 10.7 10.6 8 8.3 11.6 8Z"
-                  fill="none"
-                  stroke="var(--k-ink-faint)"
-                  strokeWidth="1.2"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span style={{ fontSize: 11, color: 'var(--k-ink-faint)', fontStyle: 'italic' }}>
-                Noch keine Renderbilder oder Aufnahmen — «Ausführen» an einem Render-Node oder eine Viewport-Aufnahme füllt die Fläche.
-              </span>
-            </div>
-          ) : (
-            <>
-              <div style={{ display: 'grid', gap: 8 }}>
-                {kuratierAktiv.map((k, i) => (
-                  <KuratierKarte
-                    key={k.node.id}
-                    nr={i + 1}
-                    knoten={k.node}
-                    quelle={k.quelle}
-                    kuration={k.kur}
-                    imVergleich={vergleichAuswahl.includes(k.node.id)}
-                    onMarkieren={() => markiereBild(k.node.id)}
-                    onVerwerfen={() => verwerfeBild(k.node.id)}
-                    onVergleichWahl={() => toggleVergleich(k.node.id)}
-                  />
-                ))}
-              </div>
-              {kuratierAblage.length > 0 && (
-                <div style={{ display: 'grid', gap: 8 }} data-testid="vis-kuratier-ablage">
-                  <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-faint)' }}>
-                    Ablage ({kuratierAblage.length})
-                  </span>
-                  {kuratierAblage.map((k, i) => (
-                    <KuratierKarte
-                      key={k.node.id}
-                      nr={i + 1}
-                      knoten={k.node}
-                      quelle={k.quelle}
-                      kuration={k.kur}
-                      imVergleich={vergleichAuswahl.includes(k.node.id)}
-                      onMarkieren={() => markiereBild(k.node.id)}
-                      onVerwerfen={() => verwerfeBild(k.node.id)}
-                      onVergleichWahl={() => toggleVergleich(k.node.id)}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
+    <div style={{ position: 'absolute', right: 12, top: 12, zIndex: 9 }}>
+      <KButton
+        size="sm"
+        tone="ghost"
+        data-testid="vis-kuratier-toggle"
+        title="Kuratieren"
+        aria-label="Kuratieren"
+        aria-expanded={kuratierOffen}
+        onClick={() => setKuratierOffen((o) => !o)}
+      >
+        <KIcon name={kuratierOffen ? 'schliessen' : 'stern'} size={16} title="Kuratieren" />
+        {kuratierKarten.length > 0 && (
+          <span style={{ fontSize: 10, fontFamily: 'var(--k-font-mono)' }}>{kuratierKarten.length}</span>
+        )}
+      </KButton>
     </div>
+    {kuratierOffen && (
+      <KuratierFlaeche
+        graph={graph}
+        karten={kuratierKarten}
+        vergleichAuswahl={vergleichAuswahl}
+        onMarkieren={markiereBild}
+        onVerwerfen={verwerfeBild}
+        onVergleichWahl={toggleVergleich}
+      />
+    )}
 
     {/* Zoom-Steuerleiste (W1 Massnahme 4) — schwebend unten rechts. `bottom:
         92` statt 12: das globale Kosmo-Symbol (KosmoSymbol.tsx, fixed
@@ -1649,94 +1571,6 @@ export function NodeCanvas({
       )}
     </div>
     </div>
-  );
-}
-
-/**
- * V-H5 (Welle 3): eine Kuratier-Karte — Tusche-Rahmen (`Karteikarte`, wie die
- * Varianten-Serien-Karten in der «Einfach»-Ansicht), Bild, QA-Badge, Stern
- * (markieren), Verwerfen (→ Ablage, nicht löschen) und eine Vergleich-Wahl
- * (Checkbox, genau zwei Karten füllen die Vergleichsfläche oben).
- */
-function KuratierKarte({
-  nr,
-  knoten,
-  quelle,
-  kuration,
-  imVergleich,
-  onMarkieren,
-  onVerwerfen,
-  onVergleichWahl,
-}: {
-  nr: number;
-  knoten: VisNode;
-  /** H-36 (V1-Welle Commit 1): Bridge-Render ODER Viewport-Aufnahme — dieselbe
-   * Unterscheidung wie `bildQuelle()`/`BildKachel` (kein Sonderfall am Ziel). */
-  quelle: { jobId: string; bild: string; qa?: { verdict: { passed: boolean } } | undefined } | { dataUrl: string };
-  kuration: KurationEintrag;
-  imVergleich: boolean;
-  onMarkieren: () => void;
-  onVerwerfen: () => void;
-  onVergleichWahl: () => void;
-}) {
-  const kat = VIS_NODE_KATALOG[knoten.typ];
-  const preset = knoten.params?.['formSzene'];
-  // H-30: `formSzene` trägt seit der Schlüssel-Ablösung einen stabilen
-  // Schlüssel (z.B. «hof») — die Bildunterschrift zeigt den Anzeigetext.
-  const presetText = typeof preset === 'string' && preset ? formularFeldText('formSzene', preset) : '';
-  const qa = 'qa' in quelle ? quelle.qa : undefined;
-  return (
-    <Karteikarte nr={nr} data-testid="vis-kuratier-karte" style={{ opacity: kuration.verworfen ? 0.6 : 1 }}>
-      <div style={{ display: 'grid', gap: 6 }}>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <span style={{ fontSize: 11.5, fontWeight: 650 }}>{kat?.label ?? knoten.typ}</span>
-          {presetText && (
-            <span style={{ fontSize: 10, color: 'var(--k-ink-faint)' }}>· {presetText}</span>
-          )}
-          <div style={{ flex: 1 }} />
-          {qa && (
-            <Badge hue={qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)'}>
-              QA {qa.verdict.passed ? 'ok' : 'verfehlt'}
-            </Badge>
-          )}
-        </div>
-        {'dataUrl' in quelle ? (
-          <img src={quelle.dataUrl} alt={kat?.label ?? 'Aufnahme'} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
-        ) : (
-          <BridgeBild jobId={quelle.jobId} imageName={quelle.bild} alt={kat?.label ?? 'Render'} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
-        )}
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          <button
-            type="button"
-            className="k-druck"
-            data-testid="vis-kuratier-stern"
-            title={kuration.markiert ? 'Markierung entfernen' : 'Bild markieren'}
-            aria-label={kuration.markiert ? 'Markierung entfernen' : 'Bild markieren'}
-            aria-pressed={kuration.markiert}
-            onClick={onMarkieren}
-            style={{ border: '1px solid var(--k-line)', borderRadius: 'var(--k-radius-sm)', background: 'var(--k-raised)', padding: '3px 6px', cursor: 'pointer', color: kuration.markiert ? 'var(--k-warning)' : 'var(--k-ink-soft)' }}
-          >
-            <KIcon name={kuration.markiert ? 'stern-voll' : 'stern'} size={14} />
-          </button>
-          <button
-            type="button"
-            className="k-druck"
-            data-testid="vis-kuratier-verwerfen"
-            title={kuration.verworfen ? 'Aus der Ablage zurückholen' : 'Verwerfen (in die Ablage — nicht gelöscht)'}
-            aria-label={kuration.verworfen ? 'Aus der Ablage zurückholen' : 'Verwerfen'}
-            aria-pressed={kuration.verworfen}
-            onClick={onVerwerfen}
-            style={{ border: '1px solid var(--k-line)', borderRadius: 'var(--k-radius-sm)', background: 'var(--k-raised)', padding: '3px 6px', cursor: 'pointer', color: kuration.verworfen ? 'var(--k-danger)' : 'var(--k-ink-soft)' }}
-          >
-            <KIcon name="schliessen" size={14} />
-          </button>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10.5, color: 'var(--k-ink-soft)', cursor: 'pointer' }}>
-            <input type="checkbox" data-testid="vis-kuratier-vergleich-wahl" checked={imVergleich} onChange={onVergleichWahl} />
-            Vergleichen
-          </label>
-        </div>
-      </div>
-    </Karteikarte>
   );
 }
 
