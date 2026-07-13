@@ -184,6 +184,36 @@
   --k-rolle-office: #6c6046;
 }
 
+/* v0.7.6 «Kosmo-Viz» §Fundament — Rollen-Tönungen (additiv, themenübergreifend
+   im `:root`, damit sie NACH den Rollen-Volltönen oben stehen): eine Füllung
+   (~12 %) für Chips/Karten-Hintergründe und eine Linie (~40 %) für Rahmen im
+   Rollenkontext (Node-Karten, HUD-Badges, Kuratier-Filter). Die Volltöne oben
+   bleiben WER-handelt-Symbolik; diese Tönungen sind ihre flächigen Ableitungen
+   NUR im Agenten-/Werkzeug-Kontext (Regel 3, §0 — nie als Stationsfläche). Als
+   8-stelliges Hex auf den orbit-Volltönen (Chromium-Ziel, wie Tauri-WebView);
+   Papier kann sie bei Bedarf später eine Stufe dunkler überschreiben. */
+:root {
+  --k-rolle-manuell-fill: #74c2a01f;
+  --k-rolle-manuell-line: #74c2a066;
+  --k-rolle-pn-fill: #6f9bcf1f;
+  --k-rolle-pn-line: #6f9bcf66;
+  --k-rolle-pna-fill: #c082b41f;
+  --k-rolle-pna-line: #c082b466;
+  --k-rolle-agent-fill: #cbb06a1f;
+  --k-rolle-agent-line: #cbb06a66;
+  --k-rolle-memory-fill: #cf94661f;
+  --k-rolle-memory-line: #cf946666;
+  --k-rolle-generator-fill: #cd76701f;
+  --k-rolle-generator-line: #cd767066;
+  --k-rolle-ak-fill: #b08a6e1f;
+  --k-rolle-ak-line: #b08a6e66;
+  --k-rolle-office-fill: #8a7b5a1f;
+  --k-rolle-office-line: #8a7b5a66;
+  /* Signal (die «system/teal»-Rolle der Soll-Referenz) als Tönung. */
+  --k-signal-fill: #57b6c21f;
+  --k-signal-line: #57b6c266;
+}
+
 /* v0.7.2 «Visuelles Update» §1 — drittes Thema `orbit` (Owner-Entscheid
    11.07.: neuer Standard, seit D7 der Kosmos-Namensteil des Theme-Paars).
    Überschreibt NUR bestehende Variablen — Radien/Fonts sind seit v0.7.3 D7
@@ -209,7 +239,43 @@
   --k-danger: #cd7670;
   --k-success: #74c2a0;
   --k-viewport-sky: #101012;
+  /* v0.7.6 «Kosmo-Viz» §Fundament — Glass-HUD-Rezept + Glow + feinere
+     Flächenstufen. Nur im dunklen `orbit`-Theme (token-spiegel bewacht orbit
+     nicht); genutzt via `.k-glass` unten. Das Glass ist die schwebende
+     Overlay-Sprache (Viewport-HUD, Achsenkreuz, Kuratier-Karten), NIE als
+     Stationsfläche. */
+  --k-glass-fill: rgba(20, 23, 31, 0.62);
+  --k-glass-stroke: rgba(255, 255, 255, 0.08);
+  --k-glass-schatten: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  /* Glow als sparsames Info-Signal (Regel §0: nie Deko), z. B. aktiver Modus. */
+  --k-glow-cyan: 0 0 20px rgba(87, 182, 194, 0.35);
+  --k-glow-cyan-sm: 0 0 10px rgba(87, 182, 194, 0.28);
+  /* Feinere Flächenstufen unter --k-field (Mockup ink-950/-1000): versenkte
+     Bühne bzw. Statusleiste. */
+  --k-sunken: #08090d;
+  --k-statusbar: #050608;
   color-scheme: dark;
+}
+
+/* v0.7.6 «Kosmo-Viz» §Fundament — Glass-HUD-Utility. Werte kommen aus dem
+   `orbit`-Block; auf Papier sind `--k-glass-*` ungesetzt und die Fallbacks
+   greifen (schlichte Fläche statt Glass). Der reduced-motion-Riegel weiter
+   unten betrifft nur Animationen, nicht `backdrop-filter` — hier kein
+   Sonderfall nötig. */
+.k-glass {
+  background: var(--k-glass-fill, var(--k-raised));
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-glass-schatten, var(--k-shadow-overlay));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+/* Alte Engines ohne backdrop-filter: schlichte, deckende Fläche statt
+   halbtransparentem Glas (sonst läge der Bühnen-Canvas ungefiltert durch). */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .k-glass {
+    background: var(--k-raised);
+  }
 }
 
 /* Logo «6a» (v0.7.2 §2, `logo-6a.tsx`) — Zustands-Animationen. Der globale
