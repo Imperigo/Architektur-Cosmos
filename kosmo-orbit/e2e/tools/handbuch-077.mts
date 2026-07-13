@@ -112,8 +112,10 @@ await page.keyboard.press('Escape').catch(() => {});
 await frisch(true);
 
 // 05 KosmoDesign — reine 3D-Ansicht (Glass-HUD, Bearbeitungsmodi).
+// TKB-Laden landet direkt in KosmoDesign — die Home-Kachel `module-design`
+// ist dann nicht mehr da; über den Testhook sicher in die Station gehen.
 await tryShot('05-design-3d', async () => {
-  await page.click('[data-testid="module-design"]');
+  await page.evaluate(() => (window as never as { __kosmo: Kosmo }).__kosmo.open('design'));
   await page.waitForTimeout(600);
   await page.click('[data-testid="view-3d"]');
 }, 1200);
