@@ -347,21 +347,26 @@ export function AssetWorkspace() {
     <div className="k-einblenden" style={{ position: 'absolute', inset: 0, display: 'flex' }}>
       <div style={{ flex: 1, overflow: 'auto', padding: 'var(--k-s5)' }}>
         <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 'var(--k-s4)' }}>
-          <KToolbar data-testid="asset-werkzeugleiste" style={{ flexWrap: 'wrap' }}>
-            <Badge hue={moduleHue.asset}>KosmoAsset</Badge>
-            <KTabs items={TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as typeof tab)} size="sm" />
-            {tab === 'objekte' && objekte !== null && (
-              <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
-                {filtered.length} von {objekte.length} Objekten
-              </span>
-            )}
-            <div style={{ flex: 1 }} />
-            {tab === 'objekte' && (
-              <KButton size="sm" tone="accent" onClick={importieren} data-testid="glb-import">
-                <KIcon name="plus" size={14} /> GLB importieren
-              </KButton>
-            )}
-          </KToolbar>
+          {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
+              Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
+              v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+          <div className="k-glass" style={{ borderTopColor: `color-mix(in srgb, ${moduleHue.asset} 65%, var(--k-glass-stroke, var(--k-line)))`, borderTopWidth: 2 }}>
+            <KToolbar data-testid="asset-werkzeugleiste" style={{ flexWrap: 'wrap', background: 'transparent', borderBottom: 'none' }}>
+              <Badge hue={moduleHue.asset}>KosmoAsset</Badge>
+              <KTabs items={TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as typeof tab)} size="sm" />
+              {tab === 'objekte' && objekte !== null && (
+                <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+                  {filtered.length} von {objekte.length} Objekten
+                </span>
+              )}
+              <div style={{ flex: 1 }} />
+              {tab === 'objekte' && (
+                <KButton size="sm" tone="accent" onClick={importieren} data-testid="glb-import">
+                  <KIcon name="plus" size={14} /> GLB importieren
+                </KButton>
+              )}
+            </KToolbar>
+          </div>
           <Hairline />
 
           {tab === 'bauteile' && <BauteilkatalogView />}

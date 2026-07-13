@@ -353,7 +353,21 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           overflow: 'auto',
         }}
       >
-        <div data-testid="publish-werkzeugleiste" style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+        {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
+            Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
+            v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+        <div
+          className="k-glass"
+          data-testid="publish-werkzeugleiste"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--k-s2)',
+            padding: 'var(--k-s2) var(--k-s3)',
+            borderTopColor: `color-mix(in srgb, ${moduleHue.publish} 65%, var(--k-glass-stroke, var(--k-line)))`,
+            borderTopWidth: 2,
+          }}
+        >
           <Badge hue={moduleHue.publish}>Plansatz</Badge>
           <div style={{ flex: 1 }} />
           {/* Stream A1: Report-Dossier (DossierPanel.tsx) war bislang ein

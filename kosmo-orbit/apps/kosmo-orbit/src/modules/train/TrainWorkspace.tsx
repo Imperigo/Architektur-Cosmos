@@ -58,16 +58,21 @@ export function TrainWorkspace() {
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
       <div style={{ maxWidth: 860, margin: '0 auto', padding: 'var(--k-s5) var(--k-s6)', display: 'grid', gap: 'var(--k-s4)' }}>
-        <KToolbar data-testid="train-werkzeugleiste" style={{ flexWrap: 'wrap' }}>
-          <Badge hue={moduleHue.train}>KosmoTrain</Badge>
-          <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
-            Das System lernt DICH — Journal kuratieren, Trainingspaket schnüren.
-          </span>
-          <div style={{ flex: 1 }} />
-          <KButton size="sm" tone="accent" onClick={exportJsonl} data-testid="train-export" disabled={eintraege.length === 0}>
-            JSONL exportieren
-          </KButton>
-        </KToolbar>
+        {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
+            Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
+            v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+        <div className="k-glass" style={{ borderTopColor: `color-mix(in srgb, ${moduleHue.train} 65%, var(--k-glass-stroke, var(--k-line)))`, borderTopWidth: 2 }}>
+          <KToolbar data-testid="train-werkzeugleiste" style={{ flexWrap: 'wrap', background: 'transparent', borderBottom: 'none' }}>
+            <Badge hue={moduleHue.train}>KosmoTrain</Badge>
+            <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+              Das System lernt DICH — Journal kuratieren, Trainingspaket schnüren.
+            </span>
+            <div style={{ flex: 1 }} />
+            <KButton size="sm" tone="accent" onClick={exportJsonl} data-testid="train-export" disabled={eintraege.length === 0}>
+              JSONL exportieren
+            </KButton>
+          </KToolbar>
+        </div>
         <Hairline />
 
         {/* Lernstand */}

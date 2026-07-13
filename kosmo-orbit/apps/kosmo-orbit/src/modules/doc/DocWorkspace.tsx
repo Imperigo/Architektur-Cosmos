@@ -81,14 +81,19 @@ export function DocWorkspace() {
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
       <div style={{ maxWidth: 860, margin: '0 auto', padding: 'var(--k-s5) var(--k-s6)', display: 'grid', gap: 'var(--k-s4)' }}>
-        <KToolbar data-testid="doc-werkzeugleiste" style={{ flexWrap: 'wrap' }}>
-          <Badge hue={moduleHue.draw}>KosmoDoc</Badge>
-          <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
-            Der Projektdoktor — Diagnose, Hilfe, Berichte.
-          </span>
-          <div style={{ flex: 1 }} />
-          <KTabs items={TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as Tab)} size="sm" />
-        </KToolbar>
+        {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
+            Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
+            v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+        <div className="k-glass" style={{ borderTopColor: `color-mix(in srgb, ${moduleHue.draw} 65%, var(--k-glass-stroke, var(--k-line)))`, borderTopWidth: 2 }}>
+          <KToolbar data-testid="doc-werkzeugleiste" style={{ flexWrap: 'wrap', background: 'transparent', borderBottom: 'none' }}>
+            <Badge hue={moduleHue.draw}>KosmoDoc</Badge>
+            <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+              Der Projektdoktor — Diagnose, Hilfe, Berichte.
+            </span>
+            <div style={{ flex: 1 }} />
+            <KTabs items={TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as Tab)} size="sm" />
+          </KToolbar>
+        </div>
         <Hairline />
 
         {tab === 'diagnose' && (

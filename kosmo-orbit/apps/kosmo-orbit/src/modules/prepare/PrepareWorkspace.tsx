@@ -95,12 +95,17 @@ export function PrepareWorkspace() {
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 'var(--k-s6)' }}>
       <div style={{ maxWidth: 860, margin: '0 auto', display: 'grid', gap: 'var(--k-s5)' }}>
-        <KToolbar data-testid="prepare-werkzeugleiste">
-          <Badge hue={moduleHue.prepare}>Grundlagen</Badge>
-          <span style={{ fontSize: 'var(--k-t-md)', color: 'var(--k-ink-faint)' }}>
-            Lokal aufgenommen — Dokumente verlassen das Gerät nie. Kosmo zitiert daraus.
-          </span>
-        </KToolbar>
+        {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
+            Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
+            v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+        <div className="k-glass" style={{ borderTopColor: `color-mix(in srgb, ${moduleHue.prepare} 65%, var(--k-glass-stroke, var(--k-line)))`, borderTopWidth: 2 }}>
+          <KToolbar data-testid="prepare-werkzeugleiste" style={{ background: 'transparent', borderBottom: 'none' }}>
+            <Badge hue={moduleHue.prepare}>Grundlagen</Badge>
+            <span style={{ fontSize: 'var(--k-t-md)', color: 'var(--k-ink-faint)' }}>
+              Lokal aufgenommen — Dokumente verlassen das Gerät nie. Kosmo zitiert daraus.
+            </span>
+          </KToolbar>
+        </div>
 
         {/* Quellensprung: der von Kosmo zitierte Abschnitt, hervorgehoben */}
         {sprung && (
