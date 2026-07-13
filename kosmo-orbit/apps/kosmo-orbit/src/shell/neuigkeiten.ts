@@ -35,6 +35,37 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.6',
+    datum: '2026-07-13',
+    punkte: [
+      {
+        text: 'Der 3D-Viewport hat eine neue Bedienschale bekommen: drei Bearbeitungsmodi (Modellieren, Kamera, Review) mit eigener Rollenfarbe, ein Glass-HUD mit Live-Werten (Ansicht, Raster, Kamera-Azimut/Neigung/Distanz, Brennweite), ein Orientierungs-Kreuz mit echtem Kompass-Label und eine Zoom-Steuerung. Alle Anzeigen sind aus echten Laufzeitwerten abgeleitet — keine erfundene Telemetrie.',
+        station: 'design',
+      },
+      {
+        text: 'Die KosmoVis-Kuratierung ist von einem kleinen Einblend-Fenster zu einer vollen Fläche gewachsen: Varianten als 3-spaltiges Kartenraster, Filter (Alle/Favoriten/Verworfen), Umschalter Raster/Vergleich, eine A/B-Parameter-Diff-Tabelle und ein Inspektor mit Herkunfts-Kette und Bewertung. Ehrlich: es gibt keine erfundene «Seed»-Nummer und die Sterne kommen aus den vorhandenen Qualitäts-Werten, nicht aus einem Handrating.',
+        station: 'vis',
+      },
+      {
+        text: 'Die Companion-Ansicht ist jetzt orb-zentriert: der grosse Kosmo-Orb mit seinen neun echten Zuständen steht im Mittelpunkt, daneben die laufenden Agenten und Aufträge. Neu ist ein abgestuftes Freigabe-Gate mit vier Stufen (Einmal erlauben / Für den Job erlauben / Nachfragen / Ablehnen) — jede Stufe mit echter Wirkung, auch das bisher gar nicht ansteuerbare Abbrechen eines Vis-Jobs.',
+      },
+      {
+        text: 'Die Datenstationen zeigen den Referenzkatalog jetzt als Tabelle (ID, Objekt, Quelle, Epoche, Material, Status) mit einer Quellen- und Epochen-Leiste zum Filtern. Ehrlich: Epoche wird aus dem Baujahr abgeleitet und der Status (Indexiert/Sync/Lokal) aus den vorhandenen Feldern konstruiert — nichts davon ist erfunden.',
+        station: 'data',
+      },
+      {
+        text: 'Der Erststart ist jetzt ein 4-Schritt-Assistent (Konto & Büro, Kosmo-Zentrale koppeln, Modelle & Core laden, erstes Projekt) mit klickbarem Fortschritts-Stepper. Ehrlich: die Hardware-Kopplung und der Modell-Download benennen offen, was erst mit einer angeschlossenen Zentrale kommt, statt einen Fortschritt vorzutäuschen.',
+      },
+      {
+        text: 'Neu im Druck: ein mehrteiliges Projekt-Dossier (A4, Übersicht, Kennzahlen, Bild-Slots, Herkunfts-Kette, Grenzen-Block) als eigenständiges Blatt mit SVG- und PDF-Export. Es kommt additiv dazu — die bestehenden Report-Blätter bleiben unverändert.',
+        station: 'publish',
+      },
+      {
+        text: 'Unter der Haube: die dunkle «Kosmos»-Oberfläche hat ein additives Gestaltungs-Fundament bekommen (Glass-Flächen, dezenter Glow, Rollen-Tönungen) — die Grundlage für die neue Bedienschale in Viewport, Kuratierung und Companion. Das helle «Papier» und der Plandruck bleiben davon unberührt.',
+      },
+    ],
+  },
+  {
     version: '0.7.5',
     datum: '2026-07-12',
     punkte: [
