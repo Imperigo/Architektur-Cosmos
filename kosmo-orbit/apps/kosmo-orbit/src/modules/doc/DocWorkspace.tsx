@@ -135,11 +135,23 @@ export function DocWorkspace() {
             {RADAR_BEREICHE.map((bereich) => (
               <div key={bereich} style={{ display: 'grid', gap: 'var(--k-s2)' }}>
                 <div className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>{bereich}</div>
+                {/* v0.7.8 Welle D PD3: Glass + dezente Doc-Hue-Note (40%,
+                    passend zum Stationskopf, der bewusst moduleHue.draw
+                    trägt) je Radar-Zeile — reine Kartenoptik. */}
                 {TECH_RADAR.filter((p) => p.bereich === bereich).map((p) => (
                   <div
                     key={p.baustein}
+                    className="k-glass"
                     data-testid="radar-posten"
-                    style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline', fontSize: 'var(--k-t-sm)', borderBottom: '1px solid var(--k-line)', paddingBottom: 'var(--k-s2)' }}
+                    style={{
+                      display: 'flex',
+                      gap: 'var(--k-s3)',
+                      alignItems: 'baseline',
+                      fontSize: 'var(--k-t-sm)',
+                      padding: 'var(--k-s2) var(--k-s3)',
+                      borderTopColor: `color-mix(in srgb, ${moduleHue.draw} 40%, var(--k-glass-stroke, var(--k-line)))`,
+                      borderTopWidth: 2,
+                    }}
                   >
                     <span
                       style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', fontWeight: 700, color: entscheidFarbe(p.entscheid), minWidth: 62 }}
@@ -168,7 +180,20 @@ export function DocWorkspace() {
         )}
 
         {tab === 'berichte' && (
-          <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="doc-berichte">
+          // v0.7.8 Welle D PD3: Glass-Rahmen + dezente Doc-Hue-Note (40%,
+          // passend zum Stationskopf) — die einzelnen Karteikarte-Einträge
+          // behalten ihre eigene Kartenoptik unangetastet.
+          <div
+            className="k-glass"
+            style={{
+              display: 'grid',
+              gap: 'var(--k-s3)',
+              padding: 'var(--k-s4)',
+              borderTopColor: `color-mix(in srgb, ${moduleHue.draw} 40%, var(--k-glass-stroke, var(--k-line)))`,
+              borderTopWidth: 2,
+            }}
+            data-testid="doc-berichte"
+          >
             <div style={{ display: 'flex', gap: 'var(--k-s5)', alignItems: 'baseline' }}>
               <span className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>Lernjournal</span>
               <Measure>{eintraege.length} Einträge</Measure>

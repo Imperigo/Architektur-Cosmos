@@ -68,15 +68,36 @@ export function TrainWorkspace() {
               Das System lernt DICH — Journal kuratieren, Trainingspaket schnüren.
             </span>
             <div style={{ flex: 1 }} />
-            <KButton size="sm" tone="accent" onClick={exportJsonl} data-testid="train-export" disabled={eintraege.length === 0}>
+            {/* v0.7.8 Welle D PD3: dezenter Train-Hue-Glow (35%) auf der
+                Primäraktion — reine Optik, Logik/Testid unverändert. */}
+            <KButton
+              size="sm"
+              tone="accent"
+              onClick={exportJsonl}
+              data-testid="train-export"
+              disabled={eintraege.length === 0}
+              style={{ boxShadow: `0 0 14px color-mix(in srgb, ${moduleHue.train} 35%, transparent)` }}
+            >
               JSONL exportieren
             </KButton>
           </KToolbar>
         </div>
         <Hairline />
 
-        {/* Lernstand */}
-        <div style={{ display: 'flex', gap: 'var(--k-s5)', alignItems: 'baseline', flexWrap: 'wrap' }} data-testid="train-stand">
+        {/* Lernstand — v0.7.8 Welle D PD3: Glass + dezente Train-Hue-Note (40%). */}
+        <div
+          className="k-glass"
+          style={{
+            display: 'flex',
+            gap: 'var(--k-s5)',
+            alignItems: 'baseline',
+            flexWrap: 'wrap',
+            padding: 'var(--k-s4)',
+            borderTopColor: `color-mix(in srgb, ${moduleHue.train} 40%, var(--k-glass-stroke, var(--k-line)))`,
+            borderTopWidth: 2,
+          }}
+          data-testid="train-stand"
+        >
           <span className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Lernstand</span>
           <Measure>{eintraege.length} Journal-Einträge</Measure>
           <Measure style={{ color: 'var(--k-success)' }}>{gut} 👍</Measure>
@@ -91,7 +112,20 @@ export function TrainWorkspace() {
             caption="Noch nichts zu kuratieren — 👍/👎 unter Kosmo-Antworten sammelt Beispiele"
           />
         ) : (
-          <div style={{ display: 'grid', gap: 'var(--k-s2)' }} data-testid="train-kuration">
+          // v0.7.8 Welle D PD3: Glass-Rahmen + dezente Train-Hue-Note (40%)
+          // um die Kuration-Liste — die einzelnen Karteikarte-Einträge
+          // behalten ihre eigene (geschnittene) Kartenoptik unangetastet.
+          <div
+            className="k-glass"
+            style={{
+              display: 'grid',
+              gap: 'var(--k-s2)',
+              padding: 'var(--k-s3)',
+              borderTopColor: `color-mix(in srgb, ${moduleHue.train} 40%, var(--k-glass-stroke, var(--k-line)))`,
+              borderTopWidth: 2,
+            }}
+            data-testid="train-kuration"
+          >
             {[...eintraege].reverse().map((e) => {
               const zitiert = ziel?.typ === 'journal' && ziel.ts === e.ts;
               return (

@@ -424,13 +424,23 @@ export function AssetWorkspace() {
                   <Panel
                     key={o.id}
                     pad={false}
+                    /* v0.7.8 Welle D PD3: Glass + dezente Asset-Hue-Note
+                       (40%) — ausgewählt bleibt die volle Akzentfarbe
+                       (borderColor gewinnt dank späterer Objekt-Position). */
+                    className="k-glass"
                     data-testid="asset-card"
                     onClick={() => setSelected(o)}
                     style={{
                       cursor: 'pointer',
                       overflow: 'hidden',
                       position: 'relative',
-                      borderColor: selected?.id === o.id ? 'var(--k-accent)' : undefined,
+                      background: 'var(--k-glass-fill, var(--k-surface))',
+                      border: '1px solid var(--k-glass-stroke, var(--k-line))',
+                      borderColor: selected?.id === o.id ? 'var(--k-accent)' : 'var(--k-glass-stroke, var(--k-line))',
+                      borderTopColor: selected?.id === o.id
+                        ? 'var(--k-accent)'
+                        : `color-mix(in srgb, ${moduleHue.asset} 40%, var(--k-glass-stroke, var(--k-line)))`,
+                      borderTopWidth: 2,
                     }}
                   >
                     <button
@@ -514,17 +524,21 @@ export function AssetWorkspace() {
       </div>
 
       {tab === 'objekte' && selected && (
+        // v0.7.8 Welle D PD3: Glass + dezente Asset-Hue-Note (40%) am
+        // linken Rand — reine Flächenoptik, Inhalt/Testid/Logik unverändert.
         <aside
+          className="k-glass"
           data-testid="asset-detail"
           style={{
             width: 420,
-            borderLeft: '1px solid var(--k-line)',
-            background: 'var(--k-surface)',
+            borderLeft: `1px solid color-mix(in srgb, ${moduleHue.asset} 40%, var(--k-glass-stroke, var(--k-line)))`,
+            background: 'var(--k-glass-fill, var(--k-surface))',
             overflow: 'auto',
             padding: 'var(--k-s5)',
             display: 'grid',
             gap: 'var(--k-s3)',
             alignContent: 'start',
+            borderRadius: 0,
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center' }}>

@@ -409,12 +409,26 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
         {sheets.map((s) => (
           <Panel
             key={s.id}
+            /* v0.7.8 Welle D PD3: Glass + dezente Publish-Hue-Note (40% —
+               zurückhaltender als der Stationskopf mit 65%), analog dem
+               Kopf-Muster von v0.7.7. Ausgewählt bleibt weiterhin die
+               volle Akzentfarbe (borderColor gewinnt dank späterer
+               Objekt-Position gegenüber `border`, borderTopColor danach
+               nochmals gegenüber der Top-Seite — reines Style-Merging,
+               keine Logik). */
+            className="k-glass"
             data-testid={`sheet-${s.index}`}
             onClick={() => setActiveSheetId(s.id)}
             style={{
               padding: 'var(--k-s3) var(--k-s4)',
               cursor: 'pointer',
-              borderColor: sheet?.id === s.id ? 'var(--k-accent)' : 'var(--k-line)',
+              background: 'var(--k-glass-fill, var(--k-surface))',
+              border: '1px solid var(--k-glass-stroke, var(--k-line))',
+              borderColor: sheet?.id === s.id ? 'var(--k-accent)' : 'var(--k-glass-stroke, var(--k-line))',
+              borderTopColor: sheet?.id === s.id
+                ? 'var(--k-accent)'
+                : `color-mix(in srgb, ${moduleHue.publish} 40%, var(--k-glass-stroke, var(--k-line)))`,
+              borderTopWidth: 2,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
@@ -540,8 +554,20 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           {(doc.settings.publikationsSets ?? []).map((set) => (
             <div
               key={set.name}
+              /* v0.7.8 Welle D PD3: Glass + dezente Publish-Hue-Note (40%,
+                 zurückhaltender als der Stationskopf) — reine Kartenoptik,
+                 Inhalt/Testid/Logik unverändert. */
+              className="k-glass"
               data-testid="pubset-karte"
-              style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center', fontSize: 'var(--k-t-sm)' }}
+              style={{
+                display: 'flex',
+                gap: 'var(--k-s2)',
+                alignItems: 'center',
+                fontSize: 'var(--k-t-sm)',
+                padding: 'var(--k-s2) var(--k-s3)',
+                borderTopColor: `color-mix(in srgb, ${moduleHue.publish} 40%, var(--k-glass-stroke, var(--k-line)))`,
+                borderTopWidth: 2,
+              }}
             >
               <span style={{ flex: 1, fontWeight: 550 }}>
                 {set.name}{' '}
@@ -650,7 +676,21 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
 
       {/* Blattfläche */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
-        <KToolbar data-testid="blattflaeche-werkzeugleiste" dicht style={{ flexWrap: 'wrap' }}>
+        {/* v0.7.8 Welle D PD3: Glass + dezente Publish-Hue-Note (40%, als
+            Unterkante statt Oberkante — die Leiste sitzt ÜBER dem Blatt,
+            keine Logik/Testid-Änderung). */}
+        <KToolbar
+          data-testid="blattflaeche-werkzeugleiste"
+          dicht
+          className="k-glass"
+          style={{
+            flexWrap: 'wrap',
+            background: 'var(--k-glass-fill, var(--k-surface))',
+            borderRadius: 0,
+            borderBottomColor: `color-mix(in srgb, ${moduleHue.publish} 40%, var(--k-glass-stroke, var(--k-line)))`,
+            borderBottomWidth: 2,
+          }}
+        >
           <KToolGruppe label="Platzieren">
             <KSelect
               size="sm"

@@ -124,8 +124,11 @@ export function PrepareWorkspace() {
           </div>
         )}
 
-        {/* Aufnahme-Zone */}
+        {/* Aufnahme-Zone — v0.7.8 Welle D PD3: Glass + dezente Prepare-Hue-
+            Note (40%) im Ruhezustand; der aktive Drag-Zustand (Akzentfarbe/
+            -Wash) bleibt unverändert Vorrang. */}
         <Panel
+          className="k-glass"
           data-testid="ingest-zone"
           onDragOver={(e) => {
             e.preventDefault();
@@ -141,8 +144,10 @@ export function PrepareWorkspace() {
             padding: 'var(--k-s6)',
             textAlign: 'center',
             borderStyle: 'dashed',
-            borderColor: dragOver ? 'var(--k-accent)' : 'var(--k-line-strong)',
-            background: dragOver ? 'var(--k-accent-wash)' : 'var(--k-surface)',
+            borderColor: dragOver
+              ? 'var(--k-accent)'
+              : `color-mix(in srgb, ${moduleHue.prepare} 40%, var(--k-line-strong))`,
+            background: dragOver ? 'var(--k-accent-wash)' : 'var(--k-glass-fill, var(--k-surface))',
           }}
         >
           <div style={{ fontWeight: 550, marginBottom: 'var(--k-s2)' }}>
@@ -176,7 +181,19 @@ export function PrepareWorkspace() {
           {hits.length > 0 && (
             <div style={{ display: 'grid', gap: 'var(--k-s3)', marginTop: 'var(--k-s3)' }}>
               {hits.map((h) => (
-                <Panel key={h.id} data-testid="knowledge-hit" style={{ padding: 'var(--k-s3) var(--k-s4)' }}>
+                <Panel
+                  key={h.id}
+                  /* v0.7.8 Welle D PD3: Glass + dezente Prepare-Hue-Note (40%). */
+                  className="k-glass"
+                  data-testid="knowledge-hit"
+                  style={{
+                    padding: 'var(--k-s3) var(--k-s4)',
+                    background: 'var(--k-glass-fill, var(--k-surface))',
+                    border: '1px solid var(--k-glass-stroke, var(--k-line))',
+                    borderTopColor: `color-mix(in srgb, ${moduleHue.prepare} 40%, var(--k-glass-stroke, var(--k-line)))`,
+                    borderTopWidth: 2,
+                  }}
+                >
                   <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)', marginBottom: 'var(--k-s1)' }}>
                     {h.docName} · Abschnitt {h.seq + 1}
                   </div>
@@ -456,7 +473,20 @@ function DossierSection() {
   ] as const;
 
   return (
-    <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="dossier">
+    // v0.7.8 Welle D PD3: Glass-Rahmen + dezente Prepare-Hue-Note (40%) um
+    // den ganzen Dossier-Block — reine Kartenoptik, Inhalt/Testid/Logik
+    // unverändert.
+    <div
+      className="k-glass"
+      style={{
+        display: 'grid',
+        gap: 'var(--k-s3)',
+        padding: 'var(--k-s4)',
+        borderTopColor: `color-mix(in srgb, ${moduleHue.prepare} 40%, var(--k-glass-stroke, var(--k-line)))`,
+        borderTopWidth: 2,
+      }}
+      data-testid="dossier"
+    >
       <div className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>Phase 0 — Wettbewerbsdossier</div>
       <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
         Harte Regeln und Fakten aus dem Programm. Kosmo behandelt sie in jeder Antwort als bindend.
