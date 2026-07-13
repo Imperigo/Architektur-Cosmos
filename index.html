@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="de-CH">
+  <head>
+    <meta charset="UTF-8" />
+    <!--
+      PWA-CSP-Basisriegel (Serie I / Batch B2, R6) — dieselbe Politik wie die
+      Tauri-Desktop-CSP (`src-tauri/tauri.conf.json`), hier als Meta-Tag, weil
+      die statisch gehostete PWA keine eigenen HTTP-Header setzen kann. Die
+      echte Produktions-Header-CSP bleibt Hosting-Sache (z. B. Cloudflare/
+      Nginx-Konfiguration architekturkosmos.ch) — dieser Tag ist die
+      Baseline-Absicherung, die JEDE Auslieferung mitbringt, auch ohne
+      Server-Konfiguration. Verifiziert per Playwright-Root-Smoke gegen den
+      echten `vite preview`-Build (keine CSP-Verstösse in der Konsole,
+      KosmoOrbit-Zentrale + eine Station laden fehlerfrei).
+
+      HomeStation-Bridge & LAN (KLEIN 9, bewusst NICHT geweitet): `connect-src`
+      deckt nur `http://localhost:*` und `http://127.0.0.1:*` — eine LAN-IP
+      (z. B. `http://192.168.1.20:8600` für ein iPad, das die Bridge auf einem
+      anderen Rechner im Büronetz anspricht) wird still geblockt und sieht dann
+      wie «offline» aus. CSP-Host-Quellen kennen KEINE CIDR-/Oktett-Wildcards;
+      eine saubere LAN-Freigabe ginge nur über `http://*:*`, was den Riegel weit
+      aufreisst — darum bleibt der Meta-Tag eng. Wer die Bridge übers LAN
+      erreichen muss, erweitert die echte Produktions-CSP am Hosting (Cloudflare/
+      Nginx) gezielt um den konkreten Ursprung; die App benennt den Fall ehrlich
+      (Diagnose-Panel + Render-Node-Offline-Meldung), statt ihn zu verschleiern.
+
+      Ref-3D-Remote (v0.7.1 E4, docs/V071-KONZEPT.md): `https://archiv.
+      architekturkosmos.ch` ist der geplante CDN-Host für Referenz-3D-Modelle
+      (`packages/kosmo-data/src/modell-url.ts`, `modellUrlAusR2Key`) — ohne
+      diesen Host in `connect-src` würde jeder Remote-Ladeversuch von der CSP
+      selbst geblockt, bevor die App überhaupt einen Netzfehler melden könnte.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src 'self' blob: https://api.anthropic.com https://api3.geo.admin.ch https://graph.microsoft.com https://login.microsoftonline.com http://localhost:* ws://localhost:* http://127.0.0.1:* ws://127.0.0.1:* https://architekturkosmos.ch https://archiv.architekturkosmos.ch wss://*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"
+    />
+    <!-- v0.7.2 §1: orbit ist der neue Standard — Browser-Chrome/Statusleiste
+         folgen dem neuen orbit-Feldton statt dem alten Papier-Weiss. -->
+    <meta name="theme-color" content="#0B0D12" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>KosmoOrbit</title>
+    <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+    <script type="module" crossorigin src="./assets/index-DiTt1FrJ.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CFVOrgou.css">
+  <link rel="manifest" href="./manifest.webmanifest"></head>
+  <body>
+    <!--
+      v0.7.2 «Visuelles Update» §2 — Splash, INLINE (eigener <style>-Block,
+      hartcodierte Hex-Werte statt CSS-Variablen aus aura.css) — genau der
+      Sinn ist «kein Bundle-Wait»: dieser Block muss anzeigen, BEVOR das
+      JS-Bundle (main.tsx) geladen/ausgeführt ist, darf also selbst von
+      nichts abhängen, das erst über den Bundle-Weg ankommt (weder Fonts noch
+      Theme-Variablen). App.tsx entfernt `#splash` synchron im allerersten
+      Mount-Effect (`useLayoutEffect`, VOR dem ersten eigenen Paint der
+      echten App) — siehe App.tsx-Kopf. `pointer-events:none` auf dem
+      gesamten Overlay: der Splash ist rein dekorativ und darf nie einen
+      Klick abfangen (E2E-Beweis: e2e/splash.spec.ts).
+    -->
+    <div id="splash" aria-hidden="true">
+      <style>
+        #splash {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          background: #0b0d12;
+          color: #f4f6fa;
+          pointer-events: none;
+        }
+        #splash-marke {
+          width: 64px;
+          height: 64px;
+        }
+        #splash-marke .splash-dreht {
+          transform-origin: 24px 24px;
+          animation: splash-drehen 1.8s linear infinite;
+        }
+        @keyframes splash-drehen {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        #splash-wort {
+          font-family: 'PT Sans Narrow', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+          font-size: 21px;
+          font-weight: 700;
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+        }
+        #splash-zeile {
+          font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+          font-size: 11px;
+          letter-spacing: 0.05em;
+          color: #8991a2;
+        }
+        #splash-pill {
+          position: relative;
+          width: 180px;
+          height: 2px;
+          border-radius: 999px;
+          background: #222732;
+          overflow: hidden;
+        }
+        #splash-pill-segment {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 52px;
+          height: 100%;
+          border-radius: 999px;
+          background: #57b6c2;
+          animation: splash-scan 1.6s ease-in-out infinite;
+        }
+        @keyframes splash-scan {
+          0% {
+            transform: translateX(-52px);
+          }
+          100% {
+            transform: translateX(180px);
+          }
+        }
+        /* Spec §0 Regel 4 / §2: reduced-motion → statischer, voll lesbarer
+           Zustand — keine Rotation, kein wanderndes Segment. */
+        @media (prefers-reduced-motion: reduce) {
+          #splash-marke .splash-dreht {
+            animation: none;
+          }
+          #splash-pill-segment {
+            animation: none;
+            transform: translateX(0);
+          }
+        }
+      </style>
+      <svg id="splash-marke" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="17" stroke="#f4f6fa" stroke-width="1.5" stroke-dasharray="2 4" stroke-linecap="round" opacity=".5" />
+        <g class="splash-dreht">
+          <path d="M 24 7 A 17 17 0 0 1 41 24" stroke="#57b6c2" stroke-width="2.2" stroke-linecap="round" />
+          <circle cx="40.3" cy="9.9" r="1.7" fill="#57b6c2" />
+        </g>
+        <rect x="17.5" y="17.5" width="13" height="13" rx="4" stroke="#f4f6fa" stroke-width="1.4" />
+        <path
+          d="M 21.8 17.5 V 30.5 M 26.2 17.5 V 30.5 M 17.5 21.8 H 30.5 M 17.5 26.2 H 30.5"
+          stroke="#f4f6fa"
+          stroke-width="1"
+          opacity=".7"
+        />
+        <circle cx="24" cy="24" r="1.6" fill="#57b6c2" />
+      </svg>
+      <div id="splash-wort">Kosmo Orbit</div>
+      <div id="splash-zeile">V0.7.2 · ● LOKAL</div>
+      <div id="splash-pill"><div id="splash-pill-segment"></div></div>
+    </div>
+    <div id="root"></div>
+  </body>
+</html>
