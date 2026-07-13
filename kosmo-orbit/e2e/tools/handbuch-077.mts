@@ -22,7 +22,7 @@
  *   PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium npx tsx e2e/tools/handbuch-077.mts
  */
 import { chromium, type Page } from 'playwright-core';
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import '@kosmo/kernel';
 import { allCommands } from '@kosmo/kernel';
 
@@ -40,7 +40,16 @@ mkdirSync(`${ROOT}abgabe/`, { recursive: true });
 
 type Kosmo = { open: (s: string) => void; run: (id: string, p: unknown) => { patches: { id: string }[] }; state: () => { activeStoreyId: string | null; doc: { byKind: (k: string) => { id: string; name?: string }[] } } };
 const shots: Record<string, string> = {};
+// Design-Iteration: mit HANDBUCH_SKIP_SHOTS=1 werden die vorhandenen Bilder
+// von der Platte geladen statt neu aufgenommen — nur das PDF wird neu gebaut.
+const SKIP_SHOTS = process.env['HANDBUCH_SKIP_SHOTS'] === '1';
 
+if (SKIP_SHOTS) {
+  for (const f of readdirSync(OUT_BILDER)) {
+    if (f.endsWith('.png')) shots[f.replace(/\.png$/, '')] = readFileSync(`${OUT_BILDER}${f}`).toString('base64');
+  }
+  console.log(`Teil 1 — ${Object.keys(shots).length} vorhandene Bilder geladen (HANDBUCH_SKIP_SHOTS=1).`);
+} else {
 const browser = await chromium.launch({
   executablePath: exe,
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
@@ -226,6 +235,7 @@ await tryShot('20-onboarding', async () => {
 
 await browser.close();
 console.log(`Teil 1 fertig — ${Object.keys(shots).length} Bilder.`);
+}
 
 // ─────────────────────────────────────────────────────────────────────────
 // TEIL 2 — Command-Register zur Laufzeit ziehen
@@ -251,10 +261,23 @@ console.log(`Teil 2 — ${cmds.length} Commands aus dem Kernel-Register.`);
 // TEIL 3 — HTML
 // ─────────────────────────────────────────────────────────────────────────
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const bild = (key: string, alt = '') =>
-  shots[key]
-    ? `<img class="shot" src="data:image/png;base64,${shots[key]}" alt="${esc(alt)}" />`
-    : `<div class="shot-fehlt">Screenshot «${esc(key)}» wurde in diesem Lauf nicht erzeugt (Station in der Container-Umgebung nicht erreichbar).</div>`;
+// Screenshot im Werkplan-Rahmen: 1px-Technik-Linie, vier Koordinatenkreuz-
+// Ecken (Passer) und eine Mono-Bildunterschrift «ABB NN · …».
+let abbNr = 0;
+const bild = (key: string, cap = ''): string => {
+  if (!shots[key]) {
+    return `<div class="shot-fehlt">Screenshot «${esc(key)}» wurde in diesem Lauf nicht erzeugt (Station in der Container-Umgebung nicht erreichbar).</div>`;
+  }
+  abbNr += 1;
+  const nr = String(abbNr).padStart(2, '0');
+  return `<figure class="figur">
+    <div class="figur-rahmen">
+      <span class="tick tl"></span><span class="tick tr"></span><span class="tick bl"></span><span class="tick br"></span>
+      <img class="shot" src="data:image/png;base64,${shots[key]}" alt="${esc(cap)}" />
+    </div>
+    <figcaption><span class="figur-glyph">⌖</span> ABB ${nr} · ${esc(cap)}</figcaption>
+  </figure>`;
+};
 
 interface Werkzeug { name: string; text: string; }
 interface Kapitel {
@@ -468,9 +491,15 @@ const STATIONEN: Kapitel[] = [
   },
 ];
 
-// Sonder-Kapitel (Kosmo-KI, Companion, Onboarding, Kurzbefehle, Einstellungen)
+// Sonder-Kapitel (Kosmo-KI, Companion, Onboarding, Kurzbefehle, Einstellungen).
+// `titel` kommt als «NN · Text» — die Nummer wandert in die Marken-Spalte.
 function sektion(titel: string, farbe: string, inhaltHtml: string): string {
-  return `<section class="kapitel"><div class="kapitel-kopf" style="--farbe:${farbe}"><h2>${titel}</h2></div>${inhaltHtml}</section>`;
+  const [nr, ...rest] = titel.split(' · ');
+  const text = rest.join(' · ');
+  return `<section class="kapitel" style="--farbe:${farbe}">
+    <div class="kap-kopf"><span class="kap-nr">${esc(nr)}</span><div class="kap-titelzeile"><div class="kap-label">Abschnitt</div><h2>${text}</h2></div></div>
+    ${inhaltHtml}
+  </section>`;
 }
 
 function stationHtml(kap: Kapitel): string {
@@ -478,14 +507,14 @@ function stationHtml(kap: Kapitel): string {
     .map((w) => `<li><b>${esc(w.name)}</b> — ${esc(w.text)}</li>`)
     .join('');
   const bd = kap.bedienung.map((s) => `<li>${esc(s)}</li>`).join('');
-  const neu = kap.neu077 ? `<p class="neu">◆ ${esc(kap.neu077)}</p>` : '';
-  return `<section class="kapitel">
-    <div class="kapitel-kopf" style="--farbe:${kap.farbe}"><span class="kap-nr">${kap.nr}</span><h2>${esc(kap.titel)}</h2></div>
+  const neu = kap.neu077 ? `<p class="neu"><span class="neu-glyph">◆</span> ${esc(kap.neu077)}</p>` : '';
+  return `<section class="kapitel" style="--farbe:${kap.farbe}">
+    <div class="kap-kopf"><span class="kap-nr">${esc(kap.nr.padStart(2, '0'))}</span><div class="kap-titelzeile"><div class="kap-label">Station</div><h2>${esc(kap.titel)}</h2></div></div>
     <p class="zweck">${esc(kap.zweck)}</p>
     ${bild(kap.shot, kap.titel)}
     <div class="zweispalt">
-      <div><h3>Werkzeuge &amp; Panels</h3><ul class="wk">${wk}</ul></div>
-      <div><h3>Schritt für Schritt</h3><ol class="bd">${bd}</ol>${neu}</div>
+      <div class="feld"><h3>Werkzeuge &amp; Panels</h3><ul class="wk">${wk}</ul></div>
+      <div class="feld"><h3>Schritt für Schritt</h3><ol class="bd">${bd}</ol>${neu}</div>
     </div>
   </section>`;
 }
@@ -517,92 +546,174 @@ function cmdListeHtml(): string {
 const stationenHtml = STATIONEN.map(stationHtml).join('\n');
 
 const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><style>
-  @page { size: A4; margin: 15mm 14mm 16mm; }
+  /* ── ClaudeDesign / «Kosmos» — die dunkle Werkplan-Sprache der App ──
+     Tokens gespiegelt aus packages/kosmo-ui/src/aura.css ([data-theme='orbit'])
+     und tokens.ts (moduleHue). Zwei Schriftstimmen: versal-enge Grotesk für
+     Titel, IBM Plex Mono für Marken/Labels/Masse. */
+  :root {
+    --field:#0b0d12; --surface:#14171f; --raised:#1a1e27; --sink:#0e1117;
+    --ink:#f4f6fa; --soft:#b6bdcb; --faint:#6e7686; --technik:#444b59;
+    --line:#222732; --line2:#2a3140; --signal:#57b6c2; --signal-tinte:#06141a;
+    --glass:rgba(20,23,31,0.72); --glass-stroke:rgba(255,255,255,0.08);
+    --grotesk:'Inter','SF Pro Display',-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  }
+  @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
-  body { font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif; color: #17150f; font-size: 10.7px; line-height: 1.5; }
-  h1, h2, h3 { line-height: 1.2; }
-  code, .mono { font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; }
+  html { background: var(--field); }
+  body { font-family: var(--grotesk); color: var(--soft); font-size: 10.6px; line-height: 1.52;
+    padding: 0 13mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* Vollflächiger dunkler Grund auf JEDER Seite (position:fixed wiederholt im Druck). */
+  .bg { position: fixed; inset: 0; background:
+      radial-gradient(120mm 120mm at 82% 20%, rgba(87,182,194,0.06), rgba(11,13,18,0) 70%),
+      var(--field); z-index: -2; }
+  .bg::after { content:''; position: fixed; inset: 0; z-index:-1;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 24px 24px; opacity: 0.14; }
+  h1,h2,h3 { line-height: 1.16; color: var(--ink); }
+  b { color: var(--ink); font-weight: 600; }
+  code, .mono { font-family: var(--mono); }
+  .mono { color: var(--soft); }
 
-  /* Titelseite — dunkler Kosmos-Look */
-  .titel { position: relative; height: 267mm; background: #0b0d12; color: #e9e6dd; margin: -15mm -14mm 0; padding: 40mm 24mm; page-break-after: always; display: flex; flex-direction: column; }
-  .titel .marke { font-family: 'IBM Plex Mono', monospace; letter-spacing: 4px; font-size: 12px; color: #8a93a3; text-transform: uppercase; }
-  .titel h1 { font-size: 42px; margin: auto 0 8px; font-weight: 800; letter-spacing: -1px; }
-  .titel .unter { font-size: 16px; color: #b9b3a6; margin: 0 0 26px; }
-  .titel .ver { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #0b0d12; background: #35b6a8; padding: 5px 12px; border-radius: 4px; margin-bottom: 30px; align-self: flex-start; }
-  .titel .fuss { font-size: 10.5px; color: #6f7787; border-top: 1px solid #23262e; padding-top: 12px; line-height: 1.6; }
-  .titel .glow { position: absolute; right: -30mm; top: 60mm; width: 120mm; height: 120mm; border-radius: 50%; background: radial-gradient(circle, rgba(53,182,168,0.18), rgba(11,13,18,0) 70%); }
+  /* ── Titelseite ── */
+  .titel { position: relative; height: 286mm; margin: 0 -13mm; padding: 40mm 24mm 22mm;
+    page-break-after: always; display: flex; flex-direction: column; overflow: hidden; }
+  .titel .passer { position: absolute; width: 16px; height: 16px; color: var(--signal); font-size: 16px; line-height: 16px; opacity: 0.9; }
+  .titel .p-tl { top: 12mm; left: 14mm; } .titel .p-tr { top: 12mm; right: 14mm; }
+  .titel .p-bl { bottom: 12mm; left: 14mm; } .titel .p-br { bottom: 12mm; right: 14mm; }
+  .titel .marke { font-family: var(--mono); letter-spacing: 4px; font-size: 11px; color: var(--faint); text-transform: uppercase; }
+  .titel .sig { margin-top: 3mm; width: 46px; height: 46px; border: 1.5px solid var(--signal); border-radius: 50%; position: relative; box-shadow: var(--k-glow, 0 0 26px rgba(87,182,194,0.45)); }
+  .titel .sig::before { content:''; position:absolute; inset: 13px; border-radius:50%; background: var(--signal); }
+  .titel .sig::after { content:''; position:absolute; left:50%; top:-10px; bottom:-10px; width:1px; background: linear-gradient(var(--signal), transparent); transform: translateX(-0.5px); opacity:.4; }
+  .titel h1 { font-size: 50px; margin: auto 0 6px; font-weight: 800; letter-spacing: -1.5px; text-transform: uppercase; color: var(--ink); }
+  .titel h1 .zeile2 { color: var(--signal); }
+  .titel .unter { font-size: 15px; color: var(--soft); margin: 0 0 22px; max-width: 130mm; }
+  .titel .ver { display: inline-flex; align-items:center; gap:8px; font-family: var(--mono); font-size: 12px; color: var(--signal);
+    border: 1px solid var(--signal-line, #57b6c266); background: var(--signal-fill, #57b6c21f); padding: 6px 12px; border-radius: 4px; align-self: flex-start; margin-bottom: 26px; }
+  .titel .ver::before { content:'▚'; opacity:.7; }
+  .titel .fuss { font-family: var(--mono); font-size: 9.5px; color: var(--faint); border-top: 1px solid var(--line2); padding-top: 12px; line-height: 1.7; letter-spacing: .2px; }
+  .titel .fuss b { color: var(--soft); font-weight: 500; }
 
-  /* Inhaltsverzeichnis */
+  /* ── Abschnitts-Titel (Werkplan-Kopf) ── */
+  h2.abschnitt { font-size: 19px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.4px; color: var(--ink);
+    margin: 10mm 0 4mm; padding-bottom: 6px; border-bottom: 1px solid var(--technik); position: relative; }
+  h2.abschnitt::before { content:'⌖'; color: var(--signal); font-weight: 400; margin-right: 9px; font-size: 15px; }
+  h2.abschnitt::after { content:'§'; position: absolute; right: 2px; bottom: 6px; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+  .lead { font-size: 11px; color: var(--soft); margin: 0 0 6mm; }
+  .lead .mono, .mono { color: var(--signal); }
+
+  /* ── Inhaltsverzeichnis ── */
   .toc { page-break-after: always; }
-  .toc h2 { font-size: 20px; border-bottom: 2px solid #17150f; padding-bottom: 6px; }
-  .toc ol { columns: 2; column-gap: 14mm; font-size: 11px; }
-  .toc li { margin: 3px 0; break-inside: avoid; }
+  ol.toc-liste { list-style: none; columns: 2; column-gap: 12mm; margin: 5mm 0 0; padding: 0; font-size: 10.5px; }
+  ol.toc-liste li { margin: 0 0 6px; break-inside: avoid; color: var(--soft); border-bottom: 1px dotted var(--line2); padding-bottom: 5px; }
+  .toc-nr { font-family: var(--mono); font-size: 9px; color: var(--signal); margin-right: 9px; }
 
-  h2.abschnitt { font-size: 18px; margin: 0 0 4mm; padding-bottom: 5px; border-bottom: 2px solid #17150f; }
-  .lead { font-size: 11.5px; color: #3a372f; margin: 0 0 6mm; }
+  /* ── Stationskarte (Glass, gekappte Ecke, Modul-Tönung) ── */
+  .kapitel { page-break-inside: avoid; margin: 6mm 0 8mm; padding: 6mm 6mm 5mm; position: relative;
+    background: var(--glass); border: 1px solid var(--glass-stroke); border-top: 2px solid var(--farbe, #888);
+    box-shadow: 0 10px 34px rgba(0,0,0,0.38);
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%); }
+  .kap-kopf { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .kap-nr { font-family: var(--mono); font-size: 30px; font-weight: 700; line-height: 1; color: var(--farbe, #888);
+    min-width: 46px; text-align: right; text-shadow: 0 0 18px color-mix(in srgb, var(--farbe, #888) 55%, transparent); }
+  .kap-titelzeile { border-left: 1px solid var(--line2); padding-left: 12px; }
+  .kap-label { font-family: var(--mono); font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--faint); margin-bottom: 1px; }
+  .kap-kopf h2 { font-size: 16px; margin: 0; font-weight: 700; letter-spacing: -0.3px; }
+  .zweck { margin: 2px 0 8px; color: var(--soft); }
 
-  .kapitel { page-break-inside: avoid; margin: 0 0 10mm; }
-  .kapitel-kopf { display: flex; align-items: baseline; gap: 10px; border-left: 5px solid var(--farbe, #888); padding-left: 10px; margin-bottom: 5px; }
-  .kapitel-kopf h2 { font-size: 16px; margin: 0; }
-  .kap-nr { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--farbe, #888); font-weight: 700; }
-  .zweck { margin: 4px 0 7px; color: #2c2a24; }
-  .shot { width: 100%; border: 1px solid #cdc8ba; border-radius: 5px; display: block; margin: 4px 0 8px; }
-  .shot-fehlt { width: 100%; border: 1px dashed #bdb8aa; border-radius: 5px; padding: 10px; font-size: 10px; color: #7a7568; background: #f4f2ec; margin: 4px 0 8px; }
-  .zweispalt { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; }
-  .zweispalt h3 { font-size: 11.5px; margin: 0 0 4px; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.5px; }
-  ul.wk { margin: 0; padding-left: 15px; } ul.wk li { margin: 0 0 4px; }
-  ol.bd { margin: 0; padding-left: 16px; } ol.bd li { margin: 0 0 4px; }
-  .neu { margin-top: 6px; font-size: 10px; color: #6f8b6a; background: #eef3ec; border-left: 3px solid #6f8b6a; padding: 5px 8px; border-radius: 3px; }
+  /* ── Screenshot im Passer-Rahmen ── */
+  .figur { margin: 5px 0 9px; }
+  .figur-rahmen { position: relative; padding: 5px; border: 1px solid var(--line2); background: var(--sink); }
+  .shot { width: 100%; display: block; border: 1px solid #000; }
+  .figur-rahmen .tick { position: absolute; width: 9px; height: 9px; z-index: 2; }
+  .figur-rahmen .tick::before, .figur-rahmen .tick::after { content:''; position:absolute; background: var(--signal); }
+  .figur-rahmen .tick::before { width: 9px; height: 1px; top: 0; } .figur-rahmen .tick::after { width: 1px; height: 9px; left: 0; }
+  .figur-rahmen .tl { top: -1px; left: -1px; } .figur-rahmen .tr { top: -1px; right: -1px; transform: scaleX(-1); }
+  .figur-rahmen .bl { bottom: -1px; left: -1px; transform: scaleY(-1); } .figur-rahmen .br { bottom: -1px; right: -1px; transform: scale(-1); }
+  figcaption { font-family: var(--mono); font-size: 8.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); margin-top: 5px; }
+  .figur-glyph { color: var(--signal); margin-right: 4px; }
+  .shot-fehlt { width: 100%; border: 1px dashed var(--line2); padding: 10px; font-size: 10px; color: var(--faint); background: var(--sink); margin: 5px 0 9px; }
 
+  /* ── Zwei-Spalten Werkzeuge / Bedienung ── */
+  .zweispalt { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; }
+  .feld h3 { font-family: var(--mono); font-size: 9px; margin: 0 0 5px; color: var(--signal); text-transform: uppercase; letter-spacing: 1.5px;
+    border-bottom: 1px dashed var(--line2); padding-bottom: 3px; }
+  ul.wk { margin: 0; padding-left: 14px; list-style: none; } ul.wk li { margin: 0 0 5px; position: relative; }
+  ul.wk li::before { content:'▪'; color: var(--farbe, var(--signal)); position: absolute; left: -13px; }
+  ol.bd { margin: 0; padding-left: 16px; } ol.bd li { margin: 0 0 5px; }
+  ol.bd li::marker { color: var(--faint); font-family: var(--mono); font-size: 9px; }
+  .neu { margin-top: 7px; font-size: 9.5px; color: var(--soft); background: var(--signal-fill, rgba(87,182,194,0.10));
+    border: 1px solid var(--signal-line, rgba(87,182,194,0.32)); border-left: 2px solid var(--signal); padding: 6px 9px; border-radius: 3px; }
+  .neu-glyph { color: var(--signal); }
+
+  /* ── Architektur ── */
   .arch { page-break-before: always; }
-  .arch p { margin: 0 0 6px; }
-  .flow { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; background: #0b0d12; color: #cfe9e4; padding: 10px 12px; border-radius: 5px; margin: 6px 0; white-space: pre-wrap; }
-  .paket { break-inside: avoid; border: 1px solid #ddd8ca; border-radius: 5px; padding: 8px 10px; margin: 5px 0; }
-  .paket b { color: #0b0d12; }
+  .arch p, .lead + p, p { margin: 0 0 6px; }
+  .arch h3, h3.blk { font-family: var(--grotesk); font-size: 12.5px; font-weight: 700; color: var(--ink);
+    margin: 7mm 0 3px; text-transform: uppercase; letter-spacing: 0.2px; }
+  .arch h3::before, h3.blk::before { content:'//'; color: var(--signal); font-family: var(--mono); margin-right: 7px; font-size: 11px; }
+  .flow { font-family: var(--mono); font-size: 10px; background: var(--sink); color: var(--signal-hell, #cfe9e4);
+    padding: 12px 14px; border: 1px solid var(--line2); border-left: 2px solid var(--signal); border-radius: 4px; margin: 7px 0; white-space: pre-wrap; line-height: 1.45; }
+  .paket { break-inside: avoid; background: var(--glass); border: 1px solid var(--glass-stroke); border-left: 2px solid var(--signal);
+    padding: 8px 11px; margin: 5px 0; border-radius: 3px; }
+  .paket b { color: var(--ink); }
 
-  .cmd-dom { font-size: 12px; margin: 8mm 0 3px; color: #0b0d12; border-bottom: 1px solid #cdc8ba; padding-bottom: 3px; }
-  .cmd-anz { font-family: 'IBM Plex Mono', monospace; color: #8a857a; font-weight: 400; font-size: 10px; }
-  table.cmd-tabelle { width: 100%; border-collapse: collapse; font-size: 9.2px; }
-  table.cmd-tabelle th { text-align: left; background: #f0eee7; padding: 3px 5px; border-bottom: 1px solid #cdc8ba; font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px; }
-  table.cmd-tabelle td { padding: 3px 5px; border-bottom: 1px solid #eae7de; vertical-align: top; }
-  td.cmd-id { font-family: 'IBM Plex Mono', monospace; color: #2a5c54; white-space: nowrap; }
-  td.cmd-titel { font-weight: 600; white-space: nowrap; }
-  td.cmd-desc { color: #3a372f; }
+  /* ── Command-Tabelle ── */
+  .cmd-dom { font-family: var(--grotesk); font-size: 12px; font-weight: 700; margin: 8mm 0 4px; color: var(--ink);
+    border-bottom: 1px solid var(--technik); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 0.2px; }
+  .cmd-dom::before { content:'▚'; color: var(--signal); margin-right: 7px; }
+  .cmd-anz { font-family: var(--mono); color: var(--faint); font-weight: 400; font-size: 10px; }
+  table.cmd-tabelle { width: 100%; border-collapse: collapse; font-size: 9px; }
+  table.cmd-tabelle th { text-align: left; background: var(--surface); color: var(--faint); padding: 4px 6px;
+    border-bottom: 1px solid var(--line2); font-family: var(--mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.8px; }
+  table.cmd-tabelle td { padding: 4px 6px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--soft); }
+  table.cmd-tabelle tr:nth-child(even) td { background: rgba(255,255,255,0.018); }
+  td.cmd-id { font-family: var(--mono); color: var(--signal); white-space: nowrap; }
+  td.cmd-titel { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  td.cmd-desc { color: var(--soft); }
   tr { break-inside: avoid; }
 
-  ul.neu-liste { padding-left: 16px; } ul.neu-liste li { margin: 0 0 4px; }
-  .fuss-block { margin-top: 8mm; font-size: 9.5px; color: #6f6a5e; border-top: 1px solid #ddd8ca; padding-top: 4mm; }
+  ul.neu-liste { padding-left: 16px; list-style: none; } ul.neu-liste li { margin: 0 0 5px; position: relative; }
+  ul.neu-liste li::before { content:'◆'; color: var(--signal); position: absolute; left: -15px; font-size: 8px; top: 2px; }
+  .fuss-block { margin-top: 8mm; font-family: var(--mono); font-size: 9px; color: var(--faint); border-top: 1px dashed var(--line2); padding-top: 4mm; line-height: 1.6; }
+  .fuss-block b { color: var(--soft); }
 </style></head><body>
+<div class="bg"></div>
 
 <!-- Titelseite -->
 <div class="titel">
-  <div class="glow"></div>
+  <span class="passer p-tl">⌖</span><span class="passer p-tr">⌖</span><span class="passer p-bl">⌖</span><span class="passer p-br">⌖</span>
   <div class="marke">ArchitekturKosmos · Baubüro Andrin</div>
-  <h1>KosmoOrbit — Software-Handbuch</h1>
+  <div class="sig"></div>
+  <h1>KosmoOrbit<br/><span class="zeile2">Software-Handbuch</span></h1>
   <div class="unter">Der vollständige Rundgang: jede Station, jedes Werkzeug — und wie die Software aufgebaut ist.</div>
   <span class="ver">Version 0.7.7 «Verankerung &amp; Feinschliff» · 13.07.2026</span>
   <div class="fuss">
-    Lokal-first Monorepo für Architektur — BIM-Kern, 2D-Pläne, Visualisierung, Wissen und die Büro-KI «Kosmo».<br/>
+    <b>Lokal-first Monorepo für Architektur</b> — BIM-Kern, 2D-Pläne, Visualisierung, Wissen und die Büro-KI «Kosmo».<br/>
     Alle Screenshots sind echte Aufnahmen des laufenden v0.7.7-Preview-Builds. Die Command-Liste stammt zur Laufzeit
-    aus dem Kernel-Register (<span class="mono" style="color:#8a93a3">allCommands()</span>).
+    aus dem Kernel-Register (allCommands()). · GESTALTUNG: Kosmos / ClaudeDesign
   </div>
 </div>
 
 <!-- Inhaltsverzeichnis -->
 <div class="toc">
-  <h2>Inhalt</h2>
-  <ol>
-    <li>Was KosmoOrbit ist</li>
-    ${STATIONEN.map((s) => `<li>${esc(s.titel)}</li>`).join('')}
-    <li>Kosmo — die Büro-KI (Chat &amp; Diff-Karten)</li>
-    <li>Companion — Mitlesen &amp; Freigeben am Zweitgerät</li>
-    <li>Erststart-Assistent (Onboarding)</li>
-    <li>Einstellungen, Kurzbefehle &amp; «Funktionen &amp; Neues»</li>
-    <li>Neuerungen 0.7.7</li>
-    <li>Architektur: Command → Patch → Undo/Sync/.kosmo</li>
-    <li>Vollständige Command-Liste (${cmds.length})</li>
-    <li>Pakete-Landkarte, KI-Provider &amp; Betriebsarten</li>
+  <h2 class="abschnitt">Inhalt</h2>
+  <ol class="toc-liste">
+    ${[
+      'Was KosmoOrbit ist',
+      ...STATIONEN.map((s) => s.titel),
+      'Kosmo — die Büro-KI (Chat & Diff-Karten)',
+      'Companion — Mitlesen & Freigeben am Zweitgerät',
+      'Erststart-Assistent (Onboarding)',
+      'Einstellungen, Kurzbefehle & «Funktionen & Neues»',
+      'Neuerungen 0.7.7',
+      'Architektur: Command → Patch → Undo/Sync/.kosmo',
+      `Vollständige Command-Liste (${cmds.length})`,
+      'Pakete-Landkarte, KI-Provider & Betriebsarten',
+    ]
+      .map((t, i) => `<li><span class="toc-nr">${String(i + 1).padStart(2, '0')}</span>${esc(t)}</li>`)
+      .join('')}
   </ol>
 </div>
 
@@ -766,10 +877,12 @@ await p2.pdf({
   format: 'A4',
   printBackground: true,
   displayHeaderFooter: true,
-  headerTemplate: '<span></span>',
+  headerTemplate: '<div></div>',
   footerTemplate:
-    '<div style="width:100%;text-align:center;font-size:8px;color:#8a857a;font-family:IBM Plex Mono,Menlo,monospace;">KosmoOrbit v0.7.7 — Software-Handbuch · Seite <span class="pageNumber"></span> / <span class="totalPages"></span></div>',
-  margin: { top: '0', bottom: '14mm', left: '0', right: '0' },
+    '<div style="width:100%;height:11mm;margin:0;background:#0b0d12;color:#6e7686;font-family:\'IBM Plex Mono\',Menlo,monospace;font-size:7.5px;letter-spacing:1px;display:flex;align-items:center;justify-content:space-between;padding:0 13mm;box-sizing:border-box;border-top:1px solid #222732;">' +
+    '<span>KOSMOORBIT · v0.7.7 «VERANKERUNG &amp; FEINSCHLIFF»</span>' +
+    '<span style="color:#57b6c2;">⌖ <span class="pageNumber"></span> / <span class="totalPages"></span></span></div>',
+  margin: { top: '0', bottom: '11mm', left: '0', right: '0' },
 });
 await b2.close();
 console.log(`\n✓ Handbuch-PDF → ${OUT_PDF}`);
