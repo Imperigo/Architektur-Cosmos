@@ -29,7 +29,7 @@ import { abspielVorspiel } from '../state/abspiel-anschluss';
 import { DiagnosePanel } from './Diagnose';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { GovernanceGate, RisikoPill } from './GovernanceGate';
-import { alleFuerJobErlaubt, erlaubeFuerJob, widerrufeFuerJob } from './governance-speicher';
+import { alleFuerJobErlaubt, alleWiderrufen, erlaubeFuerJob, widerrufeFuerJob } from './governance-speicher';
 import { hydriereJournal, journalStore } from '../state/journal-store';
 import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
@@ -1352,6 +1352,38 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           >
             Werkzeuge einrichten …
           </KButton>
+          {/* v0.7.8 Welle D (PD2) — ein `commandId` hat weiterhin KEIN
+              zuverlässiges «Job fertig»-Ereignis (s. `governance-speicher.ts`-
+              Kopfkommentar «AUTOMATISCH» → `'command'`) — statt das
+              vorzutäuschen, gibt es hier den EXPLIZITEN Sammel-Weg: der
+              Nutzer selbst erklärt den Auftrag für beendet. Nur sichtbar,
+              wenn mindestens eine `'command'`-Erlaubnis aktiv ist (sonst gäbe
+              es nichts zu widerrufen). */}
+          {autoErlaubt.size > 0 && (
+            <>
+              <Hairline />
+              <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>Governance</div>
+              <div style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+                {autoErlaubt.size} Command{autoErlaubt.size === 1 ? '' : 's'}{' '}
+                {autoErlaubt.size === 1 ? 'läuft' : 'laufen'} aktuell automatisch durch
+                («Für den Job erlauben»). Ein Command-Typ hat kein eigenes «fertig»-
+                Ereignis — darum endet das hier nur gesammelt oder einzeln über den
+                «… · widerrufen»-Knopf am jeweiligen Vorschlag.
+              </div>
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="governance-auftrag-beendet"
+                onClick={() => {
+                  alleWiderrufen('command');
+                  setAutoErlaubt(new Set());
+                  push('system', 'Auftrag beendet — alle Job-Freigaben widerrufen.', 'auftrag-beendet');
+                }}
+              >
+                Auftrag beendet — alle Job-Freigaben widerrufen
+              </KButton>
+            </>
+          )}
           <Hairline />
           <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
             Verbindung

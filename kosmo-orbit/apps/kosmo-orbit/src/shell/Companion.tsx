@@ -1,17 +1,17 @@
-import { useEffect, useLayoutEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { siaPhaseLabel } from '@kosmo/kernel';
 import { Hairline, KFehlerzone, KMeldungen, melde, meldeFehler } from '@kosmo/ui';
 import { sia112Gruppe } from '../state/orbit-rang';
 import { useProject } from '../state/project-store';
 import { initVault } from '../state/project-vault';
 import { auftragErfassen, listeAuftraege, type Auftrag } from '../state/auftragsbuch';
-import { useVisRuntime, type NodeLauf } from '../modules/vis/vis-runtime';
+import { OFFENE_LAUF_STATUS, useVisRuntime, type NodeLauf, type NodeLaufStatus } from '../modules/vis/vis-runtime';
 import { abbrechenJob, freigebenJob, mappeJobStatus } from '../modules/vis/vis-jobs';
 import { STATION_GLYPHE, WerkzeugGlyphe, type WerkzeugGlyphenArt } from './werkzeug-glyphen';
 import { KosmoOrb } from './KosmoOrb';
 import { useKosmoStatus } from '../state/kosmo-status';
 import { GovernanceGate } from './GovernanceGate';
-import { alleFuerJobErlaubt, erlaubeFuerJob, widerrufeFuerJob } from './governance-speicher';
+import { alleFuerJobErlaubt, erlaubeFuerJob, pruefeAutoWiderruf, widerrufeFuerJob } from './governance-speicher';
 import {
   ALLE_ZUSTAENDE,
   STATUS_LABEL,
@@ -429,6 +429,52 @@ export function Companion() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [laeufe, autoFreigabeNodes]);
 
+  /**
+   * v0.7.8 Welle D (PD2) — der ehrliche Gegenpart zur Auto-Freigabe oben: ein
+   * `NodeLauf` HAT ein reales Terminal-Ereignis (`NodeLaufStatus`, s.
+   * `vis-runtime.ts`), anders als ein `commandId` (dort bleibt es bei
+   * explizitem Widerruf/«Auftrag beendet», s. `governance-speicher.ts`-
+   * Kopfkommentar). Sobald ein Knoten, der auf der `'vis'`-Allowlist steht,
+   * in einen Terminalstatus ÜBERGEHT (nicht: schon terminal beim Mount —
+   * `vorherStatusRef` startet leer und füllt sich erst hier, damit ein
+   * Reload NACH Lauf-Ende die dokumentierte Reload-Überlebensgarantie nicht
+   * unterläuft), widerruft dieser Effekt automatisch und hinterlässt eine
+   * sichtbare Quittung (`autoWiderrufQuittungen`, Rendering unten).
+   */
+  const vorherStatusRef = useRef<Record<string, NodeLaufStatus>>({});
+  const quittungSeq = useRef(0);
+  const [autoWiderrufQuittungen, setAutoWiderrufQuittungen] = useState<
+    ReadonlyArray<{ id: number; nodeId: string }>
+  >([]);
+  useEffect(() => {
+    const vorher = vorherStatusRef.current;
+    const neu: Record<string, NodeLaufStatus> = {};
+    for (const [nodeId, lauf] of Object.entries(laeufe)) {
+      neu[nodeId] = lauf.status;
+      const vorherStatus = vorher[nodeId];
+      const uebergangZuTerminal =
+        vorherStatus !== undefined &&
+        (OFFENE_LAUF_STATUS as readonly string[]).includes(vorherStatus) &&
+        !(OFFENE_LAUF_STATUS as readonly string[]).includes(lauf.status);
+      // Nur EIN Lauf pro Knoten im Datenmodell (s. `vis-runtime.ts`) —
+      // «weitere offene Läufe» ist darum immer 0, s. Kommentar zu
+      // `pruefeAutoWiderruf`.
+      if (
+        uebergangZuTerminal &&
+        pruefeAutoWiderruf(autoFreigabeNodes.has(nodeId), lauf.status, 0)
+      ) {
+        widerrufeFuerJob('vis', nodeId);
+        setAutoFreigabeNodes((s) => {
+          const n = new Set(s);
+          n.delete(nodeId);
+          return n;
+        });
+        setAutoWiderrufQuittungen((q) => [...q, { id: ++quittungSeq.current, nodeId }]);
+      }
+    }
+    vorherStatusRef.current = neu;
+  }, [laeufe, autoFreigabeNodes]);
+
   const zustand = useKosmoStatus((s) => s.zustand);
   const zustandInfo = ZUSTAND_INFO[zustand];
 
@@ -652,6 +698,34 @@ export function Companion() {
             }}
           >
             <div style={MONO_FAINT}>Agenten &amp; Aufträge</div>
+            {/* v0.7.8 Welle D (PD2) — dezente Quittungszeile je automatischem
+                Widerruf (s. Effekt oben): der Vis-Job selbst ist zu diesem
+                Zeitpunkt schon aus `karten` verschwunden (terminal = nicht
+                mehr «offen», `companionKarten()` filtert danach), darum
+                steht die Quittung HIER, nicht mehr in einer `KarteZeile`. */}
+            {autoWiderrufQuittungen.length > 0 && (
+              <div style={{ display: 'grid', gap: 4 }}>
+                {autoWiderrufQuittungen.map((q) => (
+                  <div
+                    key={q.id}
+                    data-testid="governance-auto-widerruf"
+                    style={{
+                      fontFamily: 'var(--k-font-mono)',
+                      fontSize: 11,
+                      letterSpacing: '0.02em',
+                      color: 'var(--k-ink-faint)',
+                      padding: '4px 8px',
+                      borderRadius: 'var(--k-radius-sm)',
+                      background: 'var(--k-surface)',
+                      border: '1px solid var(--k-line)',
+                      width: 'fit-content',
+                    }}
+                  >
+                    Freigabe für „{q.nodeId}“ beendet — Lauf abgeschlossen
+                  </div>
+                ))}
+              </div>
+            )}
             {karten.length === 0 ? (
               <div
                 data-testid="companion-leer"

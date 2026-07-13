@@ -8,6 +8,11 @@ import { beforeEach, describe, expect, it } from 'vitest';
  * einen Reload (hier simuliert durch einen frischen `import()` nach echtem
  * `localStorage.setItem`/`.getItem`) und endet NUR über einen expliziten
  * Widerruf — nie von selbst.
+ *
+ * v0.7.8 Welle D (PD2) — ergänzt um die zwei ehrlichen Auto-Wege (s.
+ * Kopfkommentar der Quelle): `alleWiderrufen(art)` (art-scoped statt immer
+ * beide Arten) und `pruefeAutoWiderruf` (die reine Entscheidung hinter dem
+ * Vis-Auto-Widerruf in `Companion.tsx`, hier OHNE React/DOM getestet).
  */
 
 const SPEICHER_KEY = 'kosmo.governance.fuerJob';
@@ -113,6 +118,79 @@ describe('Persistenz über einen "Reload" hinweg (Owner-Kernanforderung)', () =>
     for (let i = 0; i < 5; i++) {
       expect(istFuerJobErlaubt('command', 'wall.add')).toBe(true);
     }
+  });
+});
+
+describe('alleWiderrufen(art) — räumt NUR eine Art, wenn angegeben (v0.7.8 Welle D)', () => {
+  it('räumt nur "command", "vis" bleibt unberührt', async () => {
+    const { erlaubeFuerJob, alleWiderrufen, istFuerJobErlaubt } = await import('../src/shell/governance-speicher');
+    erlaubeFuerJob('command', 'wall.add');
+    erlaubeFuerJob('vis', 'node-1');
+    alleWiderrufen('command');
+    expect(istFuerJobErlaubt('command', 'wall.add')).toBe(false);
+    expect(istFuerJobErlaubt('vis', 'node-1')).toBe(true);
+  });
+
+  it('räumt nur "vis", "command" bleibt unberührt', async () => {
+    const { erlaubeFuerJob, alleWiderrufen, istFuerJobErlaubt } = await import('../src/shell/governance-speicher');
+    erlaubeFuerJob('command', 'wall.add');
+    erlaubeFuerJob('vis', 'node-1');
+    alleWiderrufen('vis');
+    expect(istFuerJobErlaubt('vis', 'node-1')).toBe(false);
+    expect(istFuerJobErlaubt('command', 'wall.add')).toBe(true);
+  });
+
+  it('ohne Argument bleibt das bisherige Verhalten (beide Arten)', async () => {
+    const { erlaubeFuerJob, alleWiderrufen, istFuerJobErlaubt } = await import('../src/shell/governance-speicher');
+    erlaubeFuerJob('command', 'wall.add');
+    erlaubeFuerJob('vis', 'node-1');
+    alleWiderrufen();
+    expect(istFuerJobErlaubt('command', 'wall.add')).toBe(false);
+    expect(istFuerJobErlaubt('vis', 'node-1')).toBe(false);
+  });
+});
+
+describe('pruefeAutoWiderruf — reine Entscheidung für den Vis-Auto-Widerruf (v0.7.8 Welle D/PD2)', () => {
+  it('terminal + keine weiteren offenen Läufe → Widerruf', async () => {
+    const { pruefeAutoWiderruf } = await import('../src/shell/governance-speicher');
+    expect(pruefeAutoWiderruf(true, 'fertig', 0)).toBe(true);
+  });
+
+  it('gilt für alle vier Terminalstatus, nicht nur "fertig"', async () => {
+    const { pruefeAutoWiderruf } = await import('../src/shell/governance-speicher');
+    expect(pruefeAutoWiderruf(true, 'fehler', 0)).toBe(true);
+    expect(pruefeAutoWiderruf(true, 'abgebrochen', 0)).toBe(true);
+    expect(pruefeAutoWiderruf(true, 'zeitueberschreitung', 0)).toBe(true);
+  });
+
+  it('terminal, aber noch ein weiterer offener Lauf auf demselben Knoten → kein Widerruf', async () => {
+    const { pruefeAutoWiderruf } = await import('../src/shell/governance-speicher');
+    expect(pruefeAutoWiderruf(true, 'fertig', 1)).toBe(false);
+  });
+
+  it('offener Status (kein Übergang zu terminal) → kein Widerruf', async () => {
+    const { pruefeAutoWiderruf } = await import('../src/shell/governance-speicher');
+    expect(pruefeAutoWiderruf(true, 'rendert', 0)).toBe(false);
+    expect(pruefeAutoWiderruf(true, 'wartetFreigabe', 0)).toBe(false);
+  });
+
+  it('Knoten war gar nicht auf der Allowlist → no-op, egal welcher Status', async () => {
+    const { pruefeAutoWiderruf } = await import('../src/shell/governance-speicher');
+    expect(pruefeAutoWiderruf(false, 'fertig', 0)).toBe(false);
+  });
+
+  it('`weitereOffeneLaeufe` defaultet auf 0 (heutiges Datenmodell: ein Lauf je Knoten)', async () => {
+    const { pruefeAutoWiderruf } = await import('../src/shell/governance-speicher');
+    expect(pruefeAutoWiderruf(true, 'fertig')).toBe(true);
+  });
+
+  it('ist eine reine Funktion — ruft NICHT selbst widerrufeFuerJob auf (kein Effekt auf den Speicher)', async () => {
+    const { pruefeAutoWiderruf, erlaubeFuerJob, istFuerJobErlaubt } = await import('../src/shell/governance-speicher');
+    erlaubeFuerJob('vis', 'node-9');
+    pruefeAutoWiderruf(true, 'fertig', 0);
+    // Der Speicher bleibt unverändert — der Aufrufer (Companion.tsx) muss
+    // bei `true` selbst `widerrufeFuerJob` aufrufen.
+    expect(istFuerJobErlaubt('vis', 'node-9')).toBe(true);
   });
 });
 
