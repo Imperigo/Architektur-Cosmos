@@ -28,6 +28,7 @@ import { vorschauFuerProposal, type ProposalVorschau } from '../state/proposal-v
 import { abspielVorspiel } from '../state/abspiel-anschluss';
 import { DiagnosePanel } from './Diagnose';
 import { WerkzeugSetup } from './WerkzeugSetup';
+import { GovernanceGate, RisikoPill } from './GovernanceGate';
 import { hydriereJournal, journalStore } from '../state/journal-store';
 import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
@@ -434,6 +435,30 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   ttsRef.current = ttsOn;
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [cards, setCards] = useState<PendingCard[]>([]);
+  /**
+   * v0.7.6 Welle 2 (GovernanceGate, Stufe «Für den Job erlauben») — echtes
+   * Auto-Anwenden künftiger EINZEL-Vorschläge (kein Paket) DERSELBEN
+   * `commandId`, bis Widerruf (Set-Eintrag entfernen). `autoErlaubtRef`
+   * spiegelt den State synchron (Muster `settingsRef`/`cloudAnRef` in dieser
+   * Datei) — `onProposal` (im `session`-`useMemo` unten) braucht den
+   * AKTUELLEN Stand, nicht den zum Zeitpunkt des `useMemo`-Baus.
+   */
+  const [autoErlaubt, setAutoErlaubt] = useState<Set<string>>(new Set());
+  const autoErlaubtRef = useRef(autoErlaubt);
+  autoErlaubtRef.current = autoErlaubt;
+  const toggleAutoErlaubt = (commandId: string) => {
+    setAutoErlaubt((s) => {
+      const neu = new Set(s);
+      if (neu.has(commandId)) neu.delete(commandId);
+      else neu.add(commandId);
+      return neu;
+    });
+  };
+  /** Vorwärtsreferenz auf `applyCard` (unten definiert, braucht `session`
+   *  selbst) — exakt das `cloudAnRef`-Muster dieser Datei: `onProposal`
+   *  (im `session`-`useMemo`) ruft beim Auto-Anwenden `applyCardRef.current`
+   *  auf, das `useMemo` selbst braucht `applyCard` nicht bei seinem Bau. */
+  const applyCardRef = useRef<(card: PendingCard) => void>(() => {});
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   /** v0.6.9 Stream D: Vollbild-Vorschau der Blick-Miniatur — `null` = geschlossen. */
@@ -520,10 +545,19 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           // bereits vor dem Anwenden) — auf dem aktuellen Doc-Stand, nicht
           // dem beim Session-Start eingefrorenen `doc` oben im Closure.
           const vorschau = vorschauFuerProposal(useProject.getState().doc, p.commandId, p.params);
-          setCards((c) => [...c, { ...p, state: 'offen', vorschau }]);
+          const neueKarte: PendingCard = { ...p, state: 'offen', vorschau };
+          setCards((c) => [...c, neueKarte]);
           // Laufzeit-Status fürs Kosmo-Symbol (K11) — der Vorschlag selbst
           // geht weiter normal als Karte durchs Panel/den Undo-Weg.
           useKosmoStatus.getState().setzeLetzteAktivitaet(kurzform(p.summary));
+          // v0.7.6 Welle 2 (GovernanceGate «Für den Job erlauben»): NUR für
+          // Einzelvorschläge (kein Paket — ein Paket hat keine stabile,
+          // wiederkehrende Identität über `commandId` hinweg, s.
+          // `GovernanceGate.tsx`-Kopfkommentar). Echtes Auto-Anwenden über
+          // denselben `applyCard`-Weg wie ein «Einmal erlauben»-Klick.
+          if (!p.paket && autoErlaubtRef.current.has(p.commandId)) {
+            applyCardRef.current(neueKarte);
+          }
         },
         onBusy: (v) => {
           setBusy(v);
@@ -1064,6 +1098,9 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       useKosmoStatus.getState().setzeZustand('error');
     }
   };
+  // Muster `cloudAnRef` (s. oben): jede Zeile hier aktualisiert die
+  // Vorwärtsreferenz auf den JEWEILS aktuellen `applyCard`-Funktionswert.
+  applyCardRef.current = applyCard;
 
   const rejectCard = (card: PendingCard) => {
     setCards((c) => c.map((x) => (x.callId === card.callId ? { ...x, state: 'abgelehnt' } : x)));
@@ -1802,8 +1839,29 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                   background: 'var(--k-raised)',
                 }}
               >
-                <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Aktionskette — {schritte.length} Schritte
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                  <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Aktionskette — {schritte.length} Schritte
+                  </div>
+                  {/* v0.7.6 Welle 2: Risk-Level NUR, weil hier real ableitbar
+                      — dieselbe Schwelle (`SCHWELLE_GROSSES_PAKET`=8), die
+                      bereits den Vollbild-Takeover auslöst (s. `applyPaket`
+                      oben). Keine erfundene Einstufung, keine graduelle
+                      GovernanceGate hier: ein Paket hat keine wiederkehrende
+                      Identität, an der «Für den Job erlauben» ehrlich
+                      andocken könnte (s. `GovernanceGate.tsx`-Kopfkommentar) —
+                      die bestehenden Alle-anwenden/Ablehnen-Knöpfe bleiben
+                      darum unverändert. */}
+                  <RisikoPill
+                    risiko={
+                      schritte.length >= SCHWELLE_GROSSES_PAKET
+                        ? { label: `${schritte.length} Schritte · Übernahme`, ton: 'hoch' }
+                        : schritte.length >= 4
+                          ? { label: `${schritte.length} Schritte`, ton: 'mittel' }
+                          : { label: `${schritte.length} Schritte`, ton: 'niedrig' }
+                    }
+                    testid="paket-risiko"
+                  />
                 </div>
                 <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 3, fontSize: 12.5 }}>
                   {schritte.map((c) => (
@@ -1846,7 +1904,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Vorschlag von Kosmo
               </div>
-              <div style={{ fontWeight: 550, fontSize: 13.5 }}>{c.summary}</div>
+              {c.state !== 'offen' && <div style={{ fontWeight: 550, fontSize: 13.5 }}>{c.summary}</div>}
               {c.vorschau && (
                 <>
                   {c.vorschau.typologieHinweis && (
@@ -1893,14 +1951,33 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 </>
               )}
               {c.state === 'offen' ? (
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <KButton size="sm" tone="accent" onClick={() => applyCard(c)} data-testid="apply-proposal">
-                    Anwenden
-                  </KButton>
-                  <KButton size="sm" tone="ghost" onClick={() => rejectCard(c)}>
-                    Ablehnen
-                  </KButton>
-                </div>
+                // v0.7.6 Welle 2 — abgestuftes GovernanceGate, additiv zum
+                // bisherigen binären Anwenden/Ablehnen: `apply-proposal`
+                // bleibt exakt derselbe Knopf/Weg («Einmal erlauben» ist nur
+                // die neue Einordnung desselben `applyCard`-Aufrufs), jede
+                // der vier Aktionen hat echte Wirkung (Kopfkommentar
+                // `GovernanceGate.tsx`).
+                <GovernanceGate
+                  testid="proposal-governance-gate"
+                  titel={c.summary}
+                  unterzeile={c.commandId}
+                  onEinmal={() => applyCard(c)}
+                  einmalTestid="apply-proposal"
+                  onFuerJob={() => {
+                    const warAktiv = autoErlaubt.has(c.commandId);
+                    toggleAutoErlaubt(c.commandId);
+                    // Aktivieren wirkt SOFORT auch auf DIESEN Vorschlag (nicht
+                    // erst auf den nächsten) — Widerrufen lässt die offene
+                    // Karte unangetastet stehen (Status quo, keine Rücknahme
+                    // eines bereits Angewendeten).
+                    if (!warAktiv) applyCard(c);
+                  }}
+                  fuerJobAktiv={autoErlaubt.has(c.commandId)}
+                  fuerJobTestid="governance-fuer-job"
+                  onAblehnen={() => rejectCard(c)}
+                  ablehnenTestid="reject-proposal"
+                  onNachfragen={() => melde('Bleibt offen — wartet auf deine Entscheidung.')}
+                />
               ) : (
                 <Badge hue="var(--k-success)">Angewendet — mit ↩ rückgängig</Badge>
               )}

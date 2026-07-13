@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ALLE_ZUSTAENDE,
   STATUS_LABEL,
   STATUS_TON,
+  ZUSTAND_INFO,
   auftragsKarten,
   companionKarten,
   phasenSegmente,
@@ -10,6 +12,7 @@ import {
 } from '../src/shell/companion-daten';
 import type { Auftrag } from '../src/state/auftragsbuch';
 import type { NodeLauf } from '../src/modules/vis/vis-runtime';
+import type { KosmoZustand } from '../src/state/kosmo-status';
 
 /**
  * V0.7.2 W4-G (Spec §10 «Companion minimal») — reine Karten-Ableitung aus
@@ -134,5 +137,33 @@ describe('companion-daten (Spec §10) — phasenSegmente()', () => {
     expect(phasenSegmente(1)).toEqual([true, false, false, false, false]);
     expect(phasenSegmente(3)).toEqual([true, true, true, false, false]);
     expect(phasenSegmente(5)).toEqual([true, true, true, true, true]);
+  });
+});
+
+describe('v0.7.6 Welle 2 (Companion orb-zentriert) — ZUSTAND_INFO/ALLE_ZUSTAENDE', () => {
+  it('deckt alle 9 echten KosmoZustand-Werte ab, jeder mit UPPERCASE-Label + Farb-Token + Satz', () => {
+    const alle: KosmoZustand[] = [
+      'idle',
+      'thinking',
+      'listening',
+      'speaking',
+      'writing',
+      'dispatching',
+      'done',
+      'error',
+      'takeover',
+    ];
+    for (const z of alle) {
+      const info = ZUSTAND_INFO[z];
+      expect(info, z).toBeDefined();
+      expect(info.label, z).toBe(info.label.toUpperCase());
+      expect(info.farbe.startsWith('--'), z).toBe(true);
+      expect(info.caption.length, z).toBeGreaterThan(0);
+    }
+  });
+
+  it('ALLE_ZUSTAENDE ist exakt eine Permutation der 9 ZUSTAND_INFO-Schlüssel (keine Lücke, keine Dopplung)', () => {
+    expect([...ALLE_ZUSTAENDE].sort()).toEqual(Object.keys(ZUSTAND_INFO).sort());
+    expect(new Set(ALLE_ZUSTAENDE).size).toBe(ALLE_ZUSTAENDE.length);
   });
 });

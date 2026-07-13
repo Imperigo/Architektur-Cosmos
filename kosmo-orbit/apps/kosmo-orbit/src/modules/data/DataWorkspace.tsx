@@ -22,6 +22,9 @@ import {
 import { DataLeerbild } from './DataLeerbild';
 import { RefHeroBild } from './RefHeroBild';
 import { gedaechtnisQuerverweise, type GedaechtnisTreffer } from './data-runtime';
+import { epocheVonEntry } from './epochen';
+import { QuellenListe } from './QuellenListe';
+import { ReferenzTabelle } from './ReferenzTabelle';
 import {
   bauteilkatalog,
   gesamtdicke,
@@ -534,6 +537,12 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
   const [seedRetry, setSeedRetry] = useState(0);
   const [query, setQuery] = useState('');
   const [sector, setSector] = useState<string | null>(null);
+  // v0.7.6 Welle 2 Stream D: neue Facetten der Datenstationen-Tabelle
+  // (linke Spalte, `QuellenListe.tsx`) — Epoche aus `year_start` abgeleitet
+  // (`epochen.ts`), Quelle aus dem echten `source_quality`-Feld gezählt
+  // (`ref-ableitung.ts`). Kombinieren sich UND-verknüpft mit Suche/Sektor.
+  const [epoche, setEpoche] = useState<string | null>(null);
+  const [quelleFacet, setQuelleFacet] = useState<string | null>(null);
   const [selected, setSelected] = useState<RefEntry | null>(null);
   const [syncState, setSyncState] = useState<'seed' | 'synced' | 'fehler'>('seed');
   const [tab, setTab] = useState<DataTab>('referenzen');
@@ -745,6 +754,12 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
     return entries.filter((e) => {
       if (nurSammlung && !sammlung.has(e.id)) return false;
       if (sector && e.style_sector !== sector) return false;
+      // v0.7.6 Welle 2 Stream D: Epochen-/Quellen-Facette der linken Spalte.
+      if (epoche) {
+        const eb = epocheVonEntry(e);
+        if (!eb || eb.id !== epoche) return false;
+      }
+      if (quelleFacet && e.source_quality !== quelleFacet) return false;
       if (!q) return true;
       const hay = [e.title, e.city, e.country, ...(e.authors ?? []), ...(e.themes ?? []), ...(e.materials ?? [])]
         .filter(Boolean)
@@ -752,7 +767,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [entries, query, sector, nurSammlung, sammlung]);
+  }, [entries, query, sector, nurSammlung, sammlung, epoche, quelleFacet]);
 
   // E2: Live-Sync read-only — Live → Cache (letzter guter Stand) → Seed
   const [quelle, setQuelle] = useState<'seed' | 'live' | 'cache'>('seed');
@@ -802,7 +817,11 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
   return (
     <div className="k-einblenden" style={{ position: 'absolute', inset: 0, display: 'flex' }}>
       <div style={{ flex: 1, overflow: 'auto', padding: 'var(--k-s6)' }}>
-        <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 'var(--k-s5)' }}>
+        {/* v0.7.6 Welle 2 Stream D: der Referenzen-Tab bekommt eine
+            3-Spalten-Tabellenfläche (Quellen/Epochen-Rail + Tabelle) und
+            braucht dafür die volle Breite statt der 980px-Lesespalte der
+            übrigen sieben Tabs — deren Layout bleibt unverändert. */}
+        <div style={{ maxWidth: tab === 'referenzen' ? 'none' : 980, margin: '0 auto', display: 'grid', gap: 'var(--k-s5)' }}>
           {/* Serie J2 / Batch B1: reiner Test-/Gruppierungs-Wrapper (kein
               eigener Box-Effekt, `display: contents`) — analog zu Designs
               `design-werkzeugleiste`, hier zusätzlich über die (nur im
@@ -1034,81 +1053,41 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               />
             </div>
           )}
-          {geladen && !seedFehler && filtered.length === 0 && (
-            <Messrahmen
-              height={220}
-              caption="Keine Referenz passt zur Suche — Begriff lockern oder Filter lösen"
-            />
-          )}
           {!geladen && <KLade text="Referenzen laden …" height={200} />}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-              gap: 'var(--k-s4)',
-            }}
-          >
-            {filtered.map((e) => (
-              <KdKarte
-                key={e.id}
-                pad={false}
-                data-testid="ref-card"
-                aktiv={sammlung.has(e.id)}
-                onClick={() => setSelected(e)}
-                style={{ cursor: 'pointer', overflow: 'hidden' }}
-              >
-                <button
-                  aria-label="Zur Sammlung"
-                  data-testid={`stern-${e.id}`}
-                  className="k-druck"
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    toggleSammlung(e.id);
-                  }}
-                  style={{
-                    // .k-druck-Rollout: `all: 'unset'` (inline) hätte JEDE
-                    // Klassenregel — auch die Press-Simulation — überstimmt
-                    // (inline schlägt Stylesheet unabhängig von Pseudoklassen).
-                    // Ersetzt durch dieselben Resets einzeln, sichtbar
-                    // byte-identisch, `.k-druck` kann jetzt greifen.
-                    border: 'none',
-                    background: 'transparent',
-                    padding: 0,
-                    margin: 0,
-                    font: 'inherit',
-                    cursor: 'pointer',
-                    display: 'grid',
-                    placeItems: 'center',
-                    position: 'absolute',
-                    top: 'var(--k-s1)',
-                    right: 'var(--k-s2)',
-                    zIndex: 2,
-                    color: sammlung.has(e.id) ? 'var(--k-warning)' : 'var(--k-ink-faint)',
-                  }}
-                >
-                  <KIcon name={sammlung.has(e.id) ? 'stern-voll' : 'stern'} size={16} title="Zur Sammlung" />
-                </button>
-                <div
-                  style={{
-                    height: 110,
-                    background: 'var(--k-field)',
-                    display: 'grid',
-                    placeItems: 'center',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <RefHeroBild entry={e} />
+          {/* v0.7.6 Welle 2 Stream D (Soll-Bild `Kosmo Viz
+              Datenstationen.dc.html`, README §10): das frühere Karten-Grid
+              wird zur 2-Spalten-Fläche — links Datenquellen/Epochen-Facetten
+              (`QuellenListe`), rechts der Referenzkatalog als Tabelle
+              (`ReferenzTabelle`). Das rechte Detail-Dossier (`ref-detail-
+              dossier`) bleibt als dritte, unangetastete Spalte ausserhalb
+              dieses Blocks bestehen (Vertrag unverändert). */}
+          {geladen && !seedFehler && (
+            <div style={{ display: 'flex', gap: 'var(--k-s5)', alignItems: 'flex-start' }}>
+              <QuellenListe
+                entries={entries}
+                quelleFacet={quelleFacet}
+                setQuelleFacet={setQuelleFacet}
+                epoche={epoche}
+                setEpoche={setEpoche}
+              />
+              {filtered.length === 0 ? (
+                <div style={{ flex: 1 }}>
+                  <Messrahmen
+                    height={220}
+                    caption="Keine Referenz passt zur Suche — Begriff lockern oder Filter lösen"
+                  />
                 </div>
-                <div style={{ padding: `var(--k-s3) var(--k-s4)` }}>
-                  <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)', lineHeight: 1.3 }}>{e.title}</div>
-                  <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', marginTop: 'var(--k-s1)' }}>
-                    {[formatYear(e), e.city, e.country].filter(Boolean).join(' · ')}
-                    {e.has_3d ? ' · 3D' : ''}
-                  </div>
-                </div>
-              </KdKarte>
-            ))}
-          </div>
+              ) : (
+                <ReferenzTabelle
+                  entries={filtered}
+                  selectedId={selected?.id ?? null}
+                  onSelect={setSelected}
+                  sammlung={sammlung}
+                  toggleSammlung={toggleSammlung}
+                />
+              )}
+            </div>
+          )}
           </>)}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import type { Auftrag } from '../state/auftragsbuch';
 import type { Sia112Gruppe } from '../state/orbit-rang';
+import type { KosmoZustand } from '../state/kosmo-status';
 import { OFFENE_LAUF_STATUS, type NodeLauf, type NodeLaufStatus } from '../modules/vis/vis-runtime';
 
 /**
@@ -133,3 +134,88 @@ export function companionKarten(auftraege: readonly Auftrag[], laeufe: Record<st
 export function phasenSegmente(gruppe: Sia112Gruppe): readonly boolean[] {
   return [1, 2, 3, 4, 5].map((n) => n <= gruppe);
 }
+
+/**
+ * v0.7.6 Welle 2 (Companion-Fläche, orb-zentriert) — Anzeige-Text je echtem
+ * `KosmoZustand` (`state/kosmo-status.ts`, 9 Werte, bereits gebaute
+ * State-Machine — hier NUR eine reine Text-/Farb-Ableitung, KEIN zweiter
+ * Automat). `Companion.tsx` zeigt diese Info als RUHIGE LEGENDE, nicht als
+ * Wähler: Companion treibt keine `ChatSession` (Spec-Ehrlichkeitsgrenze,
+ * Kopfkommentar `Companion.tsx`) — ein Klick könnte den echten Zustand nicht
+ * ehrlich auslösen, darum bleibt die Legende rein lesend.
+ *
+ * Farben lehnen sich an den ClaudeDesign-Soll (Kosmo Viz Companion.dc.html)
+ * an — idle≈system/ruhig, hörend/spricht/schreibt≈Signal, denkt≈Agent-Rolle,
+ * dispatching≈Generator-Rolle (Hand-off an ein Werkzeug) — erweitert auf alle
+ * 9 echten Zustände (der Soll-Bild-Demo-Automat kannte nur 4). */
+export interface ZustandInfo {
+  /** UPPERCASE-Mono-Badge (Spec §0 Grundregel 5). */
+  label: string;
+  /** CSS-Custom-Property-NAME (ohne `var(...)`). */
+  farbe: string;
+  /** Ein Satz, grounded — «Der Architekt bleibt Autor» als wiederkehrender Ton. */
+  caption: string;
+}
+
+export const ZUSTAND_INFO: Record<KosmoZustand, ZustandInfo> = {
+  idle: {
+    label: 'BEREIT',
+    farbe: '--k-ink-faint',
+    caption: 'Bereit. Der Architekt bleibt Autor — ich bin das Instrument.',
+  },
+  thinking: {
+    label: 'DENKT NACH',
+    farbe: '--k-rolle-agent',
+    caption: 'Denkt nach — verknüpft Projektwissen und Kontext.',
+  },
+  listening: {
+    label: 'HÖRT ZU',
+    farbe: '--k-signal',
+    caption: 'Hört zu. Sag, was der Zweig tun soll.',
+  },
+  speaking: {
+    label: 'SPRICHT',
+    farbe: '--k-signal',
+    caption: 'Spricht die Antwort vor.',
+  },
+  writing: {
+    label: 'SCHREIBT',
+    farbe: '--k-signal',
+    caption: 'Schreibt die Antwort.',
+  },
+  dispatching: {
+    label: 'SENDET AUFTRAG',
+    farbe: '--k-rolle-generator',
+    caption: 'Übergibt den Vorschlag zur Ausführung.',
+  },
+  done: {
+    label: 'FERTIG',
+    farbe: '--k-success',
+    caption: 'Fertig — Ergebnis übernommen.',
+  },
+  error: {
+    label: 'FEHLER',
+    farbe: '--k-danger',
+    caption: 'Etwas ist schiefgelaufen — Details im Verlauf.',
+  },
+  takeover: {
+    label: 'ÜBERNIMMT',
+    farbe: '--k-signal',
+    caption: 'Wendet ein grösseres Paket sichtbar an — jederzeit unterbrechbar.',
+  },
+};
+
+/** Stabile Anzeige-Reihenfolge der Legende (Companion.tsx) — bewusst nicht
+ *  `Object.keys(ZUSTAND_INFO)` an der Render-Stelle (Reihenfolge dort nicht
+ *  spec-garantiert), sondern hier EINMAL explizit festgelegt. */
+export const ALLE_ZUSTAENDE: readonly KosmoZustand[] = [
+  'idle',
+  'listening',
+  'thinking',
+  'speaking',
+  'writing',
+  'dispatching',
+  'done',
+  'error',
+  'takeover',
+];
