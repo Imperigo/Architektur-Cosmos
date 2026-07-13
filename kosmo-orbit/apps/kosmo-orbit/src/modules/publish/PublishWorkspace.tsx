@@ -13,6 +13,7 @@ import {
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { exportSetSvgs, exportSheetSetPdf } from './export-sheets';
+import { DossierPanel } from './DossierPanel';
 
 /**
  * KosmoPublish — Blatteditor. Blätter sind Kernel-Entities (Undo/Sync/.kosmo
@@ -57,6 +58,11 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   const [drag, setDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
   const [textDrag, setTextDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
   const [bildDrag, setBildDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
+  // Stream A1: Report-Dossier-Panel — lokaler Ein/Aus-Zustand wie in
+  // DesignWorkspace.tsx (kvOffen/bauablaufOffen/…), aber ohne globalen
+  // ui-zustand-Store, weil DossierPanel bewusst ein eigenständiges Panel
+  // bleibt (nur `onClose`-Prop, kein Doc-/Undo-Zustand).
+  const [dossierOffen, setDossierOffen] = useState(false);
   const svgHostRef = useRef<HTMLDivElement>(null);
   const bildDateiRef = useRef<HTMLInputElement>(null);
 
@@ -350,6 +356,29 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
         <div data-testid="publish-werkzeugleiste" style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
           <Badge hue={moduleHue.publish}>Plansatz</Badge>
           <div style={{ flex: 1 }} />
+          {/* Stream A1: Report-Dossier (DossierPanel.tsx) war bislang ein
+              eigenständiges, aber ungehängtes Panel — hier der Zugang dazu,
+              in derselben Werkzeugleiste wie der Einstellungen-Knopf. Guard:
+              «Projekt geladen» heisst im Publish-Modul konkret «mind. ein
+              Geschoss existiert» (Zeile ~37/129, `bootstrapProject()` legt
+              das beim Öffnen der Station immer an) — dasselbe Kriterium, das
+              auch `placeGrundriss`/`placeAxo` u.a. voraussetzen. Anders als
+              «Baugesuch» (keine Sperre, meldet Lücken im Ergebnistext) ist
+              das Dossier hier vorsorglich gesperrt, weil es KEIN Command mit
+              Lücken-Meldung ist, sondern eine reine Editor-/Export-Vorschau
+              — ein leeres Panel ohne jedes Geschoss wäre ein «leeres Blatt
+              vortäuschen». */}
+          <KButton
+            size="sm"
+            tone={dossierOffen ? 'accent' : 'ghost'}
+            data-testid="publish-dossier"
+            title="Projekt-Dossier — Report-Blatt mit Kennzahlen, Übersicht und optionaler Governance-Freigabe (SVG-/PDF-Export)"
+            aria-label="Projekt-Dossier öffnen"
+            disabled={storeys.length === 0}
+            onClick={() => setDossierOffen((v) => !v)}
+          >
+            <KIcon name="dokument" size={14} title="Projekt-Dossier" /> Dossier
+          </KButton>
           {onEinstellungen && (
             <KButton
               size="sm"
@@ -606,7 +635,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
       </div>
 
       {/* Blattfläche */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
         <KToolbar data-testid="blattflaeche-werkzeugleiste" dicht style={{ flexWrap: 'wrap' }}>
           <KToolGruppe label="Platzieren">
             <KSelect
@@ -1046,6 +1075,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             </div>
           )}
         </div>
+        {dossierOffen && <DossierPanel onClose={() => setDossierOffen(false)} />}
       </div>
     </div>
   );

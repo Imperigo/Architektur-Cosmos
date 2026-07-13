@@ -26,11 +26,11 @@ import { useProject } from '../../state/project-store';
  * geteilt, damit dieses Panel als eigenständige, additive Datei lebt und
  * `export-sheets.ts` unangetastet bleibt).
  *
- * BEWUSST NOCH NICHT in `PublishWorkspace.tsx` eingehängt (Auftrag Stream F:
- * «bevorzugt eigenständiges Panel» statt Eingriff in die grosse, belegte
- * Werkstatt-Datei) — die Verdrahtung ins Stationsmenü ist vertagte
- * Folgearbeit, sobald ein Owner-Entscheid steht, WO das Dossier im
- * Publish-Modul erscheinen soll (eigener Reiter? Knopf neben «Baugesuch»?).
+ * Seit Stream A1 in `PublishWorkspace.tsx` eingehängt: Knopf «Dossier»
+ * (`data-testid="publish-dossier"`) in der `publish-werkzeugleiste`, neben
+ * dem Einstellungen-Zahnrad, gesperrt ohne mind. ein Geschoss (derselbe
+ * «Projekt geladen»-Guard wie bei `placeGrundriss`/`placeAxo`). Das Panel
+ * selbst blieb dabei unverändert — nur die Verdrahtung kam hinzu.
  *
  * Ehrlichkeit: Herkunfts-Kette und Governance-Freigabe sind reine
  * FREITEXT-Vorschau-Felder (lokaler State, nicht Teil des Doc/Undo) — sie

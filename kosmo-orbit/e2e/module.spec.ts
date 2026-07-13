@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { waehleOption } from './helfer/waehleOption';
+import { BRIDGE_FEHLT_HINWEIS, bridgeVerfuegbar } from './sim/bausteine';
 
 /** KosmoPublish, KosmoPrepare, KosmoData-Katalog, Palette — Modulflüsse. */
 
@@ -477,19 +478,34 @@ test('Blatt-Pflege: Massstab ändern, Titel setzen, Text verschieben, Blatt lös
   await page.evaluate(() => window.__kosmo.open('publish'));
   await page.click('[data-testid="plakat-klassisch"]');
   // Platzierung wählen → Massstab 1:500 → steht im Blatt-SVG
+  // (v0.7.7 Stream A2: `sheet-canvas` selbst rendert synchron aus der
+  // `revision` [PublishWorkspace.tsx `svgMarkup = useMemo(...)`] — kein Job,
+  // keine Bridge. Der grosszügigere Timeout federt nur allgemeine CI-Last ab,
+  // wenn parallele Bridge-Render-Specs den Hauptprozess auslasten, nicht ein
+  // fehlendes Warten auf einen State.)
   await page.locator('[data-testid^="placement-"]').first().click();
   await waehleOption(page, 'auswahl-massstab', '500');
-  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('1:500');
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('1:500', { timeout: 20_000 });
   // Titel umbenennen
+  // v0.7.7 Stream A2: die Ursache war KEIN Timing-Flake, sondern eine
+  // case-sensitive Assertion gegen eine bewusste Typo-Regel — die
+  // Blatt-Etikette setzt die Titel-Stimme IMMER in Versalien
+  // (`versal()`, packages/kosmo-kernel/src/derive/stilblatt.ts, «ab D4»
+  // Lato Heavy versal), im rohen DOM-Text also `SITUATION` statt
+  // `Situation`. `toContainText('Situation')` traf darum unabhängig von
+  // jedem Timeout NIE (belegt: 3/3 isolierte Läufe scheiterten identisch,
+  // auch mit grosszügigem Timeout) — die Assertion prüft weiterhin exakt
+  // denselben Inhalt (den gesetzten Titel im Blatt), nur case-insensitiv
+  // gegen die echte Versal-Ausgabe.
   await page.fill('[data-testid="auswahl-titel"]', 'Situation');
   await page.locator('[data-testid="auswahl-titel"]').blur();
-  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Situation');
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText(/situation/i, { timeout: 20_000 });
   // Text auf dem Blatt verschieben (Command-Weg über Drag-Overlay)
   const textOverlay = page.locator('[data-testid^="blatt-text-"]').first();
-  await expect(textOverlay).toBeAttached();
+  await expect(textOverlay).toBeAttached({ timeout: 15_000 });
   // Blatt löschen → Plansatz leer
   await page.click('[data-testid^="blatt-entfernen-"]');
-  await expect(page.getByText('Noch kein Blatt im Plansatz', { exact: false })).toBeVisible();
+  await expect(page.getByText('Noch kein Blatt im Plansatz', { exact: false })).toBeVisible({ timeout: 15_000 });
 });
 
 test('Aktionskette: «Haus» → EIN Paket → alle anwenden → EIN Undo', async ({ page }) => {
@@ -568,15 +584,15 @@ test('Bild-Slots: Plakat trägt leeren Render-Slot, Bild einbetten, PDF exportie
 });
 
 test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async ({ page }) => {
-  // Ehrlicher Skip ohne laufende Bridge (CI startet keine)
-  let bridgeLebt = false;
-  try {
-    bridgeLebt = (await fetch('http://localhost:8600/jobs', { signal: AbortSignal.timeout(1500) })).ok;
-  } catch {
-    /* offline */
-  }
-  test.skip(!bridgeLebt, 'Fake-Bridge auf :8600 läuft nicht');
-  test.setTimeout(90_000);
+  // Ehrlicher Skip ohne laufende Bridge (CI startet keine) — deterministische
+  // Bereitschaftsprüfung über den geteilten Baustein 15 (e2e/sim/bausteine.ts
+  // `bridgeVerfuegbar`, `/health`) statt einer eigenen `/jobs`-Anfrage: `/jobs`
+  // listet bis zu 50 Job-Records und kann unter Jobstore-Akkumulation selbst
+  // träge werden, was den 1500ms-Skip-Check hier fälschlich negativ machte
+  // (v0.7.7 Stream A2 — wiederverwendet statt dupliziert).
+  const bridgeLebt = await bridgeVerfuegbar();
+  test.skip(!bridgeLebt, BRIDGE_FEHLT_HINWEIS);
+  test.setTimeout(120_000);
 
   await page.goto('/');
   await page.evaluate(() => {
@@ -605,15 +621,18 @@ test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async (
   // Fake-Worker rendert das Kupfer-PNG → «Aufs Blatt» erscheint. Robust gegen
   // Jobstore-Akkumulation (parallele Specs füllen die geteilte Fake-Bridge):
   // NICHT das erste Job-Panel abwarten (`.first()` traf sonst einen fremden
-  // error/cancelled-Job OHNE «Aufs Blatt» → 30-s-Timeout-Flake unter Last),
+  // error/cancelled-Job OHNE «Aufs Blatt» → Timeout-Flake unter Last),
   // sondern den ersten «Aufs Blatt»-Knopf über ALLE Jobs — sobald IRGENDEIN
-  // Render fertig ist. Der Timeout ist grosszügig unter dem 90-s-Testbudget,
-  // weil der 2.5-s-Poll unter Volllast mehrere Zyklen bis «fertig» braucht.
+  // Render fertig ist. Der Timeout ist grosszügig unter dem 120-s-Testbudget
+  // (v0.7.7 Stream A2, vormals 90s/60s), weil der Fake-Worker
+  // (`kosmo_bridge/main.py` `_fake_worker_pass`) jeden Job höchstens einen
+  // Lebenszyklus-Schritt pro 1s-Durchlauf weiterschiebt und der 2.5-s-
+  // Frontend-Poll unter Volllast mehrere Zyklen bis «fertig» braucht.
   await page
     .locator('[data-testid="render-job"]')
     .getByText('Aufs Blatt')
     .first()
-    .click({ timeout: 60_000 });
+    .click({ timeout: 90_000 });
   await expect(page.locator('[data-testid="vis-hinweis"]')).toBeVisible();
   // Blatt trägt das Bild als Bürger
   const stand = await page.evaluate(() => {
