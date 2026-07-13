@@ -58,7 +58,7 @@ export const ONBOARDING_SCHRITTE: OnboardingSchrittMeta[] = [
     railUntertitel: 'Lokaler Core · Hardware',
     titel: 'Kosmo-Zentrale koppeln',
     beschreibung:
-      'Ohne eigene HomeStation im Netz ist hier ehrlich nichts vorgetäuscht: wir prüfen live, ob eine lokale Bridge erreichbar ist. Läuft noch keine, richtest du sie über «Werkzeuge einrichten» ein oder wählst eine andere Betriebsart.',
+      'Ohne eigene HomeStation im Netz ist hier ehrlich nichts vorgetäuscht: wir prüfen live, ob eine lokale Bridge erreichbar ist, und zeigen nur echte Werte aus ihrer Antwort. Läuft noch keine, trägst du die Adresse manuell ein oder koppelst über den QR-Code ein Gerät, das bereits verbunden ist.',
     hinweis: 'Verbindung bleibt lokal — keine Cloud, kein Upload.',
     farbe: 'var(--k-rolle-manuell)',
     farbeFill: 'var(--k-rolle-manuell-fill)',

@@ -11,6 +11,7 @@ import { STATION_GLYPHE, WerkzeugGlyphe, type WerkzeugGlyphenArt } from './werkz
 import { KosmoOrb } from './KosmoOrb';
 import { useKosmoStatus } from '../state/kosmo-status';
 import { GovernanceGate } from './GovernanceGate';
+import { alleFuerJobErlaubt, erlaubeFuerJob, widerrufeFuerJob } from './governance-speicher';
 import {
   ALLE_ZUSTAENDE,
   STATUS_LABEL,
@@ -49,7 +50,10 @@ import {
  *  - «Für den Job erlauben» → echtes Auto-Freigeben für DIESEN Render-Knoten
  *    (`nodeId`), bis Widerruf — ein Knoten kann mehrere Render-Läufe
  *    nacheinander bekommen (`vis-runtime.ts`), «für den Job» heisst hier
- *    ehrlich «für alle künftigen Freigaben dieses Knotens».
+ *    ehrlich «für alle künftigen Freigaben dieses Knotens». v0.7.7 Stream B1:
+ *    persistent über `shell/governance-speicher.ts` (localStorage-
+ *    Allowlist) — überlebt einen Reload, endet nur über den «… ·
+ *    widerrufen»-Knopf des Gate.
  *  - «Nachfragen»           → Status quo, keine Wirkung.
  *  - «Ablehnen»              → `abbrechenJob` (dieselbe reale Bridge-Route
  *    wie der bestehende Abbrechen-Weg in `NodeCanvas.tsx`) statt eines
@@ -333,10 +337,25 @@ export function Companion() {
 
   const [freigabeLaeuft, setFreigabeLaeuft] = useState<ReadonlySet<string>>(new Set());
   const [ablehnenLaeuft, setAblehnenLaeuft] = useState<ReadonlySet<string>>(new Set());
-  /** v0.7.6 Welle 2 («Für den Job erlauben») — Knoten, deren KÜNFTIGE
-   *  Freigaben automatisch laufen, bis Widerruf. Session-Speicher (wie
-   *  `vis-runtime.ts` selbst) — kein neuer persistenter Store. */
+  /**
+   * v0.7.6 Welle 2 («Für den Job erlauben») — Knoten, deren KÜNFTIGE
+   * Freigaben automatisch laufen, bis Widerruf. v0.7.7 Stream B1: PERSISTENT
+   * über `shell/governance-speicher.ts` (localStorage-Allowlist, Art
+   * `'vis'`) — überlebt einen Reload, endet nur über den bestehenden
+   * «… · widerrufen»-Knopf des Gate (dort `widerrufeFuerJob`, s. Ehrlichkeits-
+   * Kommentar in `governance-speicher.ts`: kein nodeId hat ein zuverlässiges
+   * «Job fertig»-Ereignis, ein Knoten bekommt gewollt mehrere Läufe
+   * nacheinander freigegeben — also kein Auto-Verfall). `autoFreigabeNodes`
+   * bleibt ein reaktiver UI-Spiegel des Speichers, einmal beim Mount
+   * eingelesen (Effekt unten), danach bei jedem Erlauben/Widerrufen synchron
+   * mitgeschrieben.
+   */
   const [autoFreigabeNodes, setAutoFreigabeNodes] = useState<ReadonlySet<string>>(new Set());
+  useEffect(() => {
+    // Persistenten Stand einmalig beim Mount einlesen — der Speicher
+    // (localStorage) ist die Quelle der Wahrheit, s. `governance-speicher.ts`.
+    setAutoFreigabeNodes(new Set(alleFuerJobErlaubt('vis')));
+  }, []);
 
   const freigeben = (karte: CompanionKarte) => {
     if (!karte.nodeId || !karte.jobId || !karte.approvalToken) return;
@@ -381,8 +400,13 @@ export function Companion() {
   const toggleAutoFreigabe = (nodeId: string) => {
     setAutoFreigabeNodes((s) => {
       const neu = new Set(s);
-      if (neu.has(nodeId)) neu.delete(nodeId);
-      else neu.add(nodeId);
+      if (neu.has(nodeId)) {
+        neu.delete(nodeId);
+        widerrufeFuerJob('vis', nodeId);
+      } else {
+        neu.add(nodeId);
+        erlaubeFuerJob('vis', nodeId);
+      }
       return neu;
     });
   };

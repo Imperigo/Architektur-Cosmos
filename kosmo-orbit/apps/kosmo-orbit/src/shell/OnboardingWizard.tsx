@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Badge, Hairline, KButton, KIcon, KInput, KSelect, OrbitMark } from '@kosmo/ui';
 import type { Betriebsart } from '@kosmo/ai';
+import type { BridgeHealth } from '@kosmo/contracts';
 import { useProject } from '../state/project-store';
 import { werkzeugeFuer, type Pruefung, type Werkzeug } from '../state/werkzeuge';
 import { loadSettings } from './KosmoPanel';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { ONBOARDING_SCHRITTE, type OnboardingSchrittId } from './onboarding-schritte';
 import { Fortschrittsbalken } from './Fortschrittsbalken';
+import { diensteZeile, gpuZeile, pingeZentrale, zentralePairingSvg } from './onboarding-pairing';
 import './onboarding-wizard.css';
 
 /**
@@ -20,7 +22,15 @@ import './onboarding-wizard.css';
  *
  * Ehrlichkeit vor Politur (verbindlich laut Auftrag): Schritt 02 täuscht
  * keine gefundene Zentrale vor — er prüft live, ob die HomeStation-Bridge
- * erreichbar ist (derselbe `/health`-Ping wie `WerkzeugSetup`). Schritt 03
+ * erreichbar ist (derselbe `/health`-Ping wie `WerkzeugSetup`, zusätzlich mit
+ * echtem JSON-Parse der Antwort via `onboarding-pairing.ts`/`@kosmo/contracts`
+ * `BridgeHealth`). Gefunden zeigt NUR echte Health-Felder (Version, Dienste,
+ * GPU-Zeile NUR wenn die Bridge sie liefert — sonst ehrlich «kommt mit
+ * deiner Zentrale», nie ein erfundenes «GPU 24 GB»). Nicht gefunden zeigt
+ * den echten QR-Pairing-Code (`state/qr.ts` `qrSvg`, derselbe
+ * `#sync=…&raum=…`-Link wie das bestehende «iPad koppeln» in `App.tsx` — P4
+ * QR-Pairing wiederverwendet, nicht neu gebaut) plus manuelle
+ * Bridge-Adress-Eingabe. Schritt 03
  * zeigt das reale Verhältnis erreichbarer Kern-Werkzeuge (`state/werkzeuge`),
  * keinen erfundenen Ladebalken, und öffnet bei Bedarf den ECHTEN
  * `WerkzeugSetup`-Dialog (importiert, nicht nachgebaut). Schritt 01/04
@@ -103,6 +113,8 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
   const [schritt, setSchritt] = useState(0);
   const [pruefLauf, setPruefLauf] = useState(0);
   const [bridgeErreichbar, setBridgeErreichbar] = useState<boolean | null>(null);
+  const [zentraleHealth, setZentraleHealth] = useState<BridgeHealth | null>(null);
+  const [manuelleBridgeUrl, setManuelleBridgeUrl] = useState('');
   const [werkzeugStatus, setWerkzeugStatus] = useState<Record<string, PruefStatus>>({});
   const [werkzeugSetupOffen, setWerkzeugSetupOffen] = useState(false);
 
@@ -126,23 +138,44 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
 
   // Schritt 02 — Kosmo-Zentrale: live prüfen, sobald der Schritt aktiv wird
   // (oder «Erneut prüfen» gedrückt wurde). Cloud-Betriebsart braucht keine
-  // eigene Zentrale — kein Ping, ehrlich als «nicht relevant» behandelt.
+  // eigene Zentrale — kein Ping, ehrlich als «nicht relevant» behandelt. Der
+  // Ping liest jetzt auch die echte `/health`-Antwort (BridgeHealth) statt
+  // nur `res.ok` — Grundlage für die ehrlichen Detailfelder unten.
   useEffect(() => {
     if (aktuell.id !== 'zentrale') return;
     if (betriebsart === 'cloud') {
       setBridgeErreichbar(null);
+      setZentraleHealth(null);
       return;
     }
     let lebt = true;
     setBridgeErreichbar(null);
-    void pruefeErreichbar(bridgeUrl, '/health').then((ok) => {
-      if (lebt) setBridgeErreichbar(ok);
+    setZentraleHealth(null);
+    void pingeZentrale(bridgeUrl).then(({ ok, health }) => {
+      if (!lebt) return;
+      setBridgeErreichbar(ok);
+      setZentraleHealth(health);
     });
     return () => {
       lebt = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aktuell.id, betriebsart, bridgeUrl, pruefLauf]);
+
+  // Manuelles Eingabefeld (nur im «nicht gefunden»-Zustand sichtbar) folgt
+  // dem echten `bridgeUrl`-Wert, solange der Owner nicht selbst tippt — so
+  // zeigt es nach einem Ping-Erfolg oder einer Änderung über das Kosmo-Panel
+  // immer die aktuell gespeicherte Adresse.
+  useEffect(() => {
+    setManuelleBridgeUrl(bridgeUrl);
+  }, [bridgeUrl]);
+
+  const uebernehmeManuelleBridgeUrl = () => {
+    const wert = manuelleBridgeUrl.trim();
+    if (wert.length === 0) return;
+    localStorage.setItem('kosmo.bridge', wert);
+    setPruefLauf((n) => n + 1);
+  };
 
   // Schritt 03 — Modelle & Core: die Kern-Werkzeuge der aktuellen
   // Betriebsart, real geprüft (derselbe Live-Ping wie oben, kein Fake-%).
@@ -352,15 +385,17 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
               {aktuell.id === 'zentrale' && (
                 <>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                    <Badge hue={aktuell.farbe}>
-                      {betriebsart === 'cloud'
-                        ? 'Cloud'
-                        : bridgeErreichbar === null
-                          ? 'prüft …'
-                          : bridgeErreichbar
-                            ? 'gefunden'
-                            : 'nicht gefunden'}
-                    </Badge>
+                    <span data-testid="onboarding-zentrale-status">
+                      <Badge hue={aktuell.farbe}>
+                        {betriebsart === 'cloud'
+                          ? 'Cloud-Betrieb'
+                          : bridgeErreichbar === null
+                            ? 'sucht …'
+                            : bridgeErreichbar
+                              ? 'Zentrale gefunden'
+                              : 'nicht gefunden — manuell koppeln'}
+                      </Badge>
+                    </span>
                     <div style={{ flex: 1 }} />
                     {betriebsart !== 'cloud' && (
                       <KButton size="sm" tone="ghost" data-testid="onboarding-zentrale-pruefen" onClick={() => setPruefLauf((n) => n + 1)}>
@@ -370,18 +405,55 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                   </div>
                   {betriebsart === 'cloud' ? (
                     <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', lineHeight: 1.55 }}>
-                      Cloud-Betriebsart — keine eigene Zentrale nötig. Kosmo läuft über Claude (mind. Opus 4.8).
+                      Cloud-Betrieb — keine eigene Zentrale nötig. Kosmo läuft über Claude (mind. Opus 4.8).
                     </div>
                   ) : (
                     <>
                       <SchrittZeile label="Bridge-Adresse" wert={bridgeUrl} mono />
                       <SchrittZeile label="Betriebsart" wert={BETRIEBSART_LABEL[betriebsart]} />
                       {betriebsart === 'remote' && <SchrittZeile label="HomePC-Adresse" wert={settings.remoteHost || '— nicht gesetzt —'} mono />}
+
+                      {/* Gefunden — NUR echte Health-Felder, kein erfundener
+                          Ladebalken/GPU-Wert. Fehlt ein Feld in der
+                          Antwort, steht dort ehrlich «kommt mit deiner
+                          Zentrale» statt einer Attrappe. */}
+                      {bridgeErreichbar === true && (
+                        <>
+                          <SchrittZeile label="Version" wert={zentraleHealth?.version ?? 'kommt mit deiner Zentrale'} mono />
+                          <SchrittZeile label="Dienste" wert={diensteZeile(zentraleHealth)} />
+                          <SchrittZeile label="GPU" wert={gpuZeile(zentraleHealth)} />
+                        </>
+                      )}
+
+                      {/* Nicht gefunden — ehrlicher Rückweg: manuelle
+                          Adress-Eingabe UND der echte QR-Pairing-Code (P4
+                          QR-Pairing wiederverwendet), falls ein Zweitgerät
+                          schon Kontakt zur selben Zentrale hat. */}
                       {bridgeErreichbar === false && (
-                        <div style={{ fontSize: 12.5, color: 'var(--k-warning)', lineHeight: 1.55 }}>
-                          Keine Bridge auf {bridgeUrl} erreichbar. Richte sie über «Werkzeuge einrichten» ein oder
-                          wähle im Kosmo-Panel eine andere Betriebsart/Adresse.
-                        </div>
+                        <>
+                          <div style={{ fontSize: 12.5, color: 'var(--k-warning)', lineHeight: 1.55 }}>
+                            Keine Bridge auf {bridgeUrl} erreichbar. Richte sie über «Werkzeuge einrichten» ein, trag
+                            eine andere Adresse ein oder koppel ein bereits verbundenes Gerät über den Code.
+                          </div>
+                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: 'var(--k-ink-soft)' }}>
+                            Bridge-Adresse manuell
+                            <span style={{ display: 'flex', gap: 8 }}>
+                              <KInput
+                                size="sm"
+                                value={manuelleBridgeUrl}
+                                data-testid="onboarding-zentrale-bridge-url"
+                                onChange={(e) => setManuelleBridgeUrl(e.target.value)}
+                                onBlur={uebernehmeManuelleBridgeUrl}
+                                onKeyDown={(e) => e.key === 'Enter' && uebernehmeManuelleBridgeUrl()}
+                                style={{ maxWidth: 260 }}
+                              />
+                              <KButton size="sm" tone="ghost" onClick={uebernehmeManuelleBridgeUrl}>
+                                Übernehmen
+                              </KButton>
+                            </span>
+                          </label>
+                          <ZentralePairingCode />
+                        </>
                       )}
                     </>
                   )}
@@ -522,6 +594,34 @@ function SchrittZeile({ label, wert, mono = false }: { label: string; wert: stri
         }}
       >
         {wert}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * Echter QR-Pairing-Code für Schritt 02 — derselbe Weg wie das bestehende
+ * «iPad koppeln» (`App.tsx`, P4 QR-Pairing): `qrSvg` aus `state/qr.ts`
+ * kodiert dasselbe `#sync=…&raum=…`-Fragment, das `App.tsx` beim Laden
+ * bereits auswertet und automatisch verbindet. Kein neuer Pairing-Weg,
+ * nur an dieser Stelle sichtbar gemacht.
+ */
+function ZentralePairingCode() {
+  const { svg, grund } = zentralePairingSvg();
+  return (
+    <div data-testid="onboarding-zentrale-qr" style={{ display: 'flex', gap: 14, alignItems: 'center', paddingTop: 4 }}>
+      {svg ? (
+        <div
+          style={{ width: 120, height: 120, flexShrink: 0, border: '1px solid var(--k-line)', background: '#fff' }}
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      ) : (
+        <div style={{ width: 120, flexShrink: 0, fontSize: 11.5, color: 'var(--k-danger)' }}>{grund}</div>
+      )}
+      <span style={{ fontSize: 12, color: 'var(--k-ink-soft)', maxWidth: 380, lineHeight: 1.5 }}>
+        Läuft die Zentrale bereits auf einem anderen Gerät im selben Netz? Mit dessen Kamera scannen — KosmoOrbit
+        öffnet sich dort und verbindet automatisch mit demselben Sync-Raum. Die Verbindung steckt im Link-Fragment,
+        nie in Server-Logs.
       </span>
     </div>
   );

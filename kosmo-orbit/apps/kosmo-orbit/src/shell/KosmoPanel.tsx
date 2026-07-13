@@ -29,6 +29,7 @@ import { abspielVorspiel } from '../state/abspiel-anschluss';
 import { DiagnosePanel } from './Diagnose';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { GovernanceGate, RisikoPill } from './GovernanceGate';
+import { alleFuerJobErlaubt, erlaubeFuerJob, widerrufeFuerJob } from './governance-speicher';
 import { hydriereJournal, journalStore } from '../state/journal-store';
 import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
@@ -438,19 +439,38 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   /**
    * v0.7.6 Welle 2 (GovernanceGate, Stufe «Für den Job erlauben») — echtes
    * Auto-Anwenden künftiger EINZEL-Vorschläge (kein Paket) DERSELBEN
-   * `commandId`, bis Widerruf (Set-Eintrag entfernen). `autoErlaubtRef`
-   * spiegelt den State synchron (Muster `settingsRef`/`cloudAnRef` in dieser
-   * Datei) — `onProposal` (im `session`-`useMemo` unten) braucht den
-   * AKTUELLEN Stand, nicht den zum Zeitpunkt des `useMemo`-Baus.
+   * `commandId`, bis Widerruf. v0.7.7 Stream B1: PERSISTENT über
+   * `shell/governance-speicher.ts` (localStorage-Allowlist, Art `'command'`)
+   * — überlebt einen Reload, endet nur über den bestehenden
+   * «… · widerrufen»-Knopf des Gate (dort `widerrufeFuerJob`, s. Ehrlichkeits-
+   * Kommentar in `governance-speicher.ts` — kein commandId hat ein
+   * zuverlässiges «Job fertig»-Ereignis, also kein Auto-Verfall). `autoErlaubt`
+   * bleibt ein reaktiver UI-Spiegel des Speichers: einmal beim Mount
+   * eingelesen (Effekt unten), danach bei jedem Erlauben/Widerrufen synchron
+   * mitgeschrieben, damit `fuerJobAktiv` sofort den richtigen Knopf-Zustand
+   * zeigt. `autoErlaubtRef` spiegelt ihn zusätzlich synchron in einen Ref
+   * (Muster `settingsRef`/`cloudAnRef` in dieser Datei) — `onProposal` (im
+   * `session`-`useMemo` unten) braucht den AKTUELLEN Stand, nicht den zum
+   * Zeitpunkt des `useMemo`-Baus.
    */
   const [autoErlaubt, setAutoErlaubt] = useState<Set<string>>(new Set());
   const autoErlaubtRef = useRef(autoErlaubt);
   autoErlaubtRef.current = autoErlaubt;
+  useEffect(() => {
+    // Persistenten Stand einmalig beim Mount einlesen — der Speicher
+    // (localStorage) ist die Quelle der Wahrheit, s. `governance-speicher.ts`.
+    setAutoErlaubt(new Set(alleFuerJobErlaubt('command')));
+  }, []);
   const toggleAutoErlaubt = (commandId: string) => {
     setAutoErlaubt((s) => {
       const neu = new Set(s);
-      if (neu.has(commandId)) neu.delete(commandId);
-      else neu.add(commandId);
+      if (neu.has(commandId)) {
+        neu.delete(commandId);
+        widerrufeFuerJob('command', commandId);
+      } else {
+        neu.add(commandId);
+        erlaubeFuerJob('command', commandId);
+      }
       return neu;
     });
   };
