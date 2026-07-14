@@ -3,28 +3,37 @@ import type { ViewportModusId } from '../modules/design/viewport-modi';
 
 /**
  * Viewport-Chrome-Laufzeit (v0.7.8 Welle 2 / Paket P5 — «HUDs als echte
- * Dock-Floats») — ein schlanker externer Store (Muster 1:1 wie
- * `modules/vis/vis-runtime.ts`/`state/leistung.ts`: Laufzeit-Werte, die
- * NICHT durchs Doc/Undo/Yjs laufen), der Viewport3D.tsx (Schreiber) von
- * DesignWorkspace.tsx (Leser, baut die `DockPanelEintrag[]` für
- * `DockFlaeche`) entkoppelt, OHNE die Kamera-Poll-Werte (400ms-Takt,
- * `azimutRad`) durch die ganze DesignWorkspace-Baumstruktur re-rendern zu
- * lassen: die vier gefloateten HUD-Mini-Komponenten (`ViewportChromeHuds.tsx`)
- * abonnieren HIER direkt per Selektor, DesignWorkspace selbst braucht nur
- * `bereit` (ändert sich nur bei Mount/Unmount des 3D-Viewports, nicht bei
- * jedem Kamera-Tick).
+ * Dock-Floats», erweitert v0.7.9 A1 — «Säulen ins Dock») — ein schlanker
+ * externer Store (Muster 1:1 wie `modules/vis/vis-runtime.ts`/`state/
+ * leistung.ts`: Laufzeit-Werte, die NICHT durchs Doc/Undo/Yjs laufen), der
+ * Viewport3D.tsx (Schreiber) von DesignWorkspace.tsx (Leser, baut die
+ * `DockPanelEintrag[]` für `DockFlaeche`) entkoppelt, OHNE die Kamera-Poll-
+ * Werte (400ms-Takt, `azimutRad`) durch die ganze DesignWorkspace-
+ * Baumstruktur re-rendern zu lassen: die gefloateten HUD-Mini-Komponenten
+ * (`ViewportChromeHuds.tsx`) abonnieren HIER direkt per Selektor,
+ * DesignWorkspace selbst braucht nur `bereit` (ändert sich nur bei Mount/
+ * Unmount des 3D-Viewports, nicht bei jedem Kamera-Tick).
  *
  * WARUM ein neuer Store statt Props/Ref-Drilling: `Viewport3D.tsx` besitzt
- * die echten `camera-controls`/`THREE.PerspectiveCamera`-Referenzen (Modus-
- * Umschalter, Werkzeug-Rail und Orientierungskreuz brauchen nur PRIMITIVE
- * Ableitungen daraus, s. `ViewportChrome.tsx`), `DesignWorkspace.tsx` rendert
- * aber die Dock-Floats (`designDockPanels`, `DockFlaeche`). Eine Prop-
- * Lift-Aktion beider ~2000-Zeilen-Dateien wäre riskanter und würde die
- * bestehende `chromeSnapshot`-Poll-Schleife in Viewport3D unnötig anfassen —
- * dieser Store spiegelt nur die vier Werte, die die HUD-Floats tatsächlich
- * brauchen, additiv NEBEN dem unveränderten internen State von Viewport3D
- * (der weiterhin die NICHT gefloateten Chrome-Teile — Kennzahlen-Kachel,
- * Eigenschaften-Panel, Zoom/Vollbild-Leiste — unverändert selbst rendert).
+ * die echten `camera-controls`/`THREE.PerspectiveCamera`-Referenzen (die
+ * gefloateten HUDs brauchen nur PRIMITIVE Ableitungen daraus, s.
+ * `ViewportChrome.tsx`), `DesignWorkspace.tsx` rendert aber die Dock-Floats
+ * (`designDockPanels`, `DockFlaeche`). Eine Prop-Lift-Aktion beider
+ * ~2000-Zeilen-Dateien wäre riskanter und würde die bestehende
+ * `chromeSnapshot`-Poll-Schleife in Viewport3D unnötig anfassen — dieser
+ * Store spiegelt nur die Werte, die die HUD-Floats tatsächlich brauchen,
+ * additiv NEBEN dem unveränderten internen State von Viewport3D.
+ *
+ * **v0.7.9 A1**: die HUD-Statuskarte + das Eigenschaften-Panel («die letzte
+ * verbliebene Überlappungs-Klasse», ROADMAP 357/358) sind jetzt ebenfalls
+ * Dock-Floats (`viewportHudStatuskarte`/`viewportEigenschaften`,
+ * `dock-stationen.ts`, Anker `top-right` — die additive Solver-Erweiterung
+ * in `dock-kern.ts`) statt fixer `position:absolute`-Chrome — sie lesen die
+ * ZUSÄTZLICHEN Felder unten (Kamera/Szene/Render/Darstellung-Werte + die vier
+ * Aktions-Callbacks), rein additiv NEBEN den P5-Feldern. `ViewportChrome.tsx`
+ * behält NUR noch die Bottom-Leiste (Zoom/Vollbild/Chips) als eigenen
+ * State/Props-Weg — die Bottom-Chips lesen weiterhin ihre eigenen Props
+ * (kein Duplikat hier nötig, s. `ViewportChrome.tsx`-Kopfkommentar).
  */
 export interface ViewportChromeRuntime {
   /** Echtes Mount-/Bereit-Signal (`Viewport3D`s `viewportBereit`) — false
@@ -39,6 +48,29 @@ export interface ViewportChromeRuntime {
   azimutRad: number;
   onModusWechsel: (m: ViewportModusId) => void;
   onWerkzeugWechsel: (id: string) => void;
+
+  // -- v0.7.9 A1 — HUD-Statuskarte + Eigenschaften-Panel ---------------------
+  /** camera-controls `polarAngle` in Grad — nur Eigenschaften/Kamera-Sektion. */
+  polarGrad: number;
+  distanzM: number;
+  brennweiteMm: number;
+  aspektBreite: number;
+  aspektHoehe: number;
+  geschossLabel: string | null;
+  kontextAnzahl: number;
+  splatAktiv: boolean;
+  texturenAn: boolean;
+  sonnenDatum: Date | null;
+  standortLabel: string;
+  leistungsStufeLabel: string;
+  schattenAn: boolean;
+  darstellungsModus: 'material' | 'weiss' | 'schwarz';
+  renderStatusLabel: string;
+  renderCloudLeer: boolean;
+  onEinpassen: () => void;
+  onRendern: () => void;
+  onFuerVisAufnehmen: () => void;
+  onTexturToggle: () => void;
 }
 
 function nichts(): void {
@@ -55,4 +87,24 @@ export const useViewportChromeRuntime = create<ViewportChromeRuntime>(() => ({
   azimutRad: 0,
   onModusWechsel: nichts,
   onWerkzeugWechsel: nichts,
+  polarGrad: 90,
+  distanzM: 1,
+  brennweiteMm: 35,
+  aspektBreite: 16,
+  aspektHoehe: 9,
+  geschossLabel: null,
+  kontextAnzahl: 0,
+  splatAktiv: false,
+  texturenAn: true,
+  sonnenDatum: null,
+  standortLabel: '',
+  leistungsStufeLabel: '',
+  schattenAn: false,
+  darstellungsModus: 'material',
+  renderStatusLabel: '',
+  renderCloudLeer: true,
+  onEinpassen: nichts,
+  onRendern: nichts,
+  onFuerVisAufnehmen: nichts,
+  onTexturToggle: nichts,
 }));

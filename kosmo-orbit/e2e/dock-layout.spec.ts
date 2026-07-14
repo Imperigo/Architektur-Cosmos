@@ -118,10 +118,17 @@ function ueberlappenSich(a: Box, b: Box, toleranz = 1): boolean {
  *  GEGENSTANDSLOS: Kennzahlen ist jetzt ein Dock-Panel, dessen Rechteck der
  *  Solver oberhalb der Statusleiste hält; gemessen wird das Panel-Rechteck,
  *  s. `FIXE_ELEMENTE`-Kommentar.)
- *  Das verbleibende Paar besteht aus Elementen, die «NICHT ins Dock wandern»
- *  (Auftrag, Abschnitt 3) — ihre gegenseitige Kollision zu beheben ist NICHT
- *  Teil dieses Pakets. JEDES andere Paar (jedes migrierte Panel gegen jedes
- *  Chrome-Element, Panels untereinander) wird weiterhin hart geprüft. */
+ *  v0.7.9 (A1): die DRITTE dokumentierte Ausnahme-Klasse — die fixen
+ *  ViewportChrome-Säulen (HUD-Statuskarte + Eigenschaften), die bis v0.7.8
+ *  gar nicht erst mitgemessen wurden (ROADMAP 357/358: «enge Split-Ansicht
+ *  kann Orientierungs-Float ↔ fixe Eigenschaften-Säule überlappen») — ist
+ *  GESCHLOSSEN: beide sind jetzt Dock-Floats (`viewportHudStatuskarte`/
+ *  `viewportEigenschaften`, `dock-stationen.ts`) und stehen unten in
+ *  `HUD_FLOAT_IDS`, werden also in JEDER Disjunktions-Prüfung hart
+ *  mitgeprüft statt ausgeklammert.
+ *  Das verbleibende Paar (1.) besteht aus Elementen, die «NICHT ins Dock
+ *  wandern» — B2-Stretch der v0.7.9-Planung, bewusst NICHT Teil von A1.
+ *  JEDES andere Paar wird weiterhin hart geprüft. */
 const BEKANNTE_VORBESTEHENDE_KOLLISIONEN: readonly [string, string][] = [
   ['geschossleiste', 'entwurf-dock'],
 ];
@@ -324,23 +331,53 @@ test('rechter Stack voll (Kennzahlen + Inspector + Draw gleichzeitig): keine Üb
   expect(planBox!.width).toBeGreaterThanOrEqual(380);
 });
 
-test('enges Fenster (1400×520): Draw (48) klappt zugunsten Kennzahlen (60) zuerst ein', async ({ page }) => {
-  // Gleiches Höhenrahmen-Muster wie `dock-interaktion.spec.ts`s Pin-Test —
-  // erzwingt eine vertikale Kollision im rechten Stack mit nur EINEM Klick
-  // (kennzahlen ist ohnehin immer offen, min 200 + draw min 170 + Gap
-  // sprengt die knappe Höhe sicher). Höhe 520 statt 420, damit nach dem
-  // Einklappen von Draw (Tab, 34px) die verbleibende Höhe noch für
-  // Kennzahlens min (200) reicht — bei 420 klappte auch Kennzahlen ein
-  // (Feld ≈ 223: 223−10−34 = 179 < 200), was hier nicht der Prüfpunkt ist
-  // (die Rangfolge ist es).
+// ---------------------------------------------------------------------------
+// v0.7.9 — `zuletztGeoeffnet`-Schutz (A6-Restpunkt der v0.7.8-Abnahme):
+// `DockFlaeche` füttert jetzt `opts.zuletztGeoeffnet` (das zuletzt per
+// Toggle/`ui.dock*` geöffnete Panel, bis zum nächsten externen Reflow) — ein
+// frisch geöffnetes Panel klappt nie im selben Atemzug SELBST wieder ein,
+// stattdessen weicht das unwichtigste ANDERE Flex-Panel. Die zwei Tests hier
+// beweisen beide Hälften der Semantik: (1) das Öffnen selbst ist geschützt —
+// selbst gegen ein WICHTIGERES Panel; (2) der Schutz ist transient — ein
+// Fenster-Resize (Reflow) verbraucht ihn, danach gilt wieder die reine
+// Wichtigkeits-Rangfolge (der frühere Prüfpunkt dieses Tests, jetzt über den
+// Resize-Weg statt über das Öffnen).
+// ---------------------------------------------------------------------------
+
+test('zuletztGeoeffnet (enges Fenster 1400×520): frisch geöffnetes Draw (48) klappt NIE selbst ein — Kennzahlen (60) weicht', async ({
+  page,
+}) => {
+  // Höhe 520: Feld ≈ 323 − TOP_BAND 34 → Kennzahlen min 200 + Draw min 170
+  // + Gap sprengen die Höhe sicher, nach EINEM Einklappen reicht der Platz
+  // (Begründung wie der Vorgänger-Test dieser Stelle, s. Git-Historie).
   await page.setViewportSize({ width: 1400, height: 520 });
   await oeffneDesignMitTkb(page);
 
   await page.click('[data-testid="draw-toggle"]');
 
-  // Kennzahlen (wichtigkeit 60) ist wichtiger als Draw (48) — der Solver
-  // wählt bei Platzmangel deterministisch das unwichtigste Flex-Panel
-  // (`stack()`, `dock-kern.ts`) — das ist hier Draw, nicht Kennzahlen.
+  // OHNE Schutz wählte `stack()` das unwichtigste Flex-Panel — Draw (48)
+  // selbst, das der Mensch GERADE eben geöffnet hat. MIT Schutz weicht das
+  // wichtigere Kennzahlen (60): nie das frische.
+  await expect(page.locator('[data-testid="dock-panel-kennzahlen-tab"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-drawOffen-tab"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="draw-panel"]')).toBeVisible();
+
+  await pruefeDisjunktion(page, selektorMap(['drawOffen', 'kennzahlen']));
+});
+
+test('zuletztGeoeffnet ist transient: nach einem Resize-Reflow klappt Draw (48) regulär vor Kennzahlen (60) ein', async ({
+  page,
+}) => {
+  // Draw bei GROSSEM Fenster öffnen (Platz reicht, nichts klappt) — dann
+  // schrumpfen: der Resize ist ein externer Reflow und verbraucht den
+  // Schutz, die reine Rangfolge entscheidet wieder (Draw 48 < Kennzahlen 60).
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="draw-toggle"]');
+  await expect(page.locator('[data-testid="draw-panel"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-kennzahlen-tab"]')).toHaveCount(0);
+
+  await page.setViewportSize({ width: 1400, height: 520 });
+
   await expect(page.locator('[data-testid="dock-panel-drawOffen-tab"]')).toBeVisible();
   await expect(page.locator('[data-testid="dock-panel-kennzahlen-tab"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
@@ -359,9 +396,19 @@ test('enges Fenster (1400×520): Draw (48) klappt zugunsten Kennzahlen (60) zuer
 // weiteren Klick schon da.
 // ---------------------------------------------------------------------------
 
-const HUD_FLOAT_IDS = ['viewportModusLeiste', 'viewportModusKarte', 'viewportWerkzeugRail', 'viewportOrientierung'] as const;
+// v0.7.9 (A1): + die zwei ehemals fixen Säulen-Blöcke (`viewportHudStatuskarte`/
+// `viewportEigenschaften`, Anker `top-right`) — seit ihrer Migration ins Dock
+// laufen sie in JEDER Disjunktions-Prüfung dieser Datei hart mit.
+const HUD_FLOAT_IDS = [
+  'viewportModusLeiste',
+  'viewportModusKarte',
+  'viewportWerkzeugRail',
+  'viewportOrientierung',
+  'viewportHudStatuskarte',
+  'viewportEigenschaften',
+] as const;
 
-test('3D-/Split-Ansicht: alle vier Viewport-HUD-Floats + zwei offene Dock-Panels — keine Überlappung untereinander/gegen die Spalten', async ({
+test('3D-/Split-Ansicht: alle sechs Viewport-HUD-Floats + zwei offene Dock-Panels — keine Überlappung untereinander/gegen die Spalten', async ({
   page,
 }) => {
   await oeffneDesignMitTkb(page);
@@ -375,6 +422,48 @@ test('3D-/Split-Ansicht: alle vier Viewport-HUD-Floats + zwei offene Dock-Panels
   await expect(page.locator('[data-testid="dock-panel-kvOffen"]')).toBeVisible();
 
   await pruefeDisjunktion(page, selektorMap([...HUD_FLOAT_IDS, 'rasterOffen', 'kvOffen', 'kennzahlen']));
+});
+
+// ---------------------------------------------------------------------------
+// v0.7.9 (A1) — der bis v0.7.8 AUSGEKLAMMERTE Fall (ROADMAP 357): enge
+// Split-Ansicht (Default-View) + offenes linkes Panel liess das
+// `viewportOrientierung`-Float mit der unteren Ecke der damals FIXEN
+// Eigenschaften-Säule überlappen (real gemessen ~130×85px, 1400×900 +
+// `kv-oeffnen`). Seit die Säule selbst zwei Dock-Floats ist
+// (`viewportHudStatuskarte`/`viewportEigenschaften`), entzerrt `solve()`/
+// `separate()` sie wie jedes andere Panel — genau DIESE Konstellation wird
+// hier hart nachgestellt und paarweise geprüft (inkl. Statusleiste: die
+// Eigenschaften-Höhe wird vom Solver aufs Feld geklemmt statt wie früher
+// darüber hinauszuragen).
+// ---------------------------------------------------------------------------
+
+test('enge Split-Ansicht (1400×900 + kv offen): Orientierungs-Float und Eigenschaften-Säule sind DISJUNKT — der frühere P5-Restfall', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+  // Default-viewMode ist bereits 'split' — hier trotzdem explizit, damit der
+  // Test nicht von einem künftigen Default-Wechsel abhängt.
+  await page.click('[data-testid="view-split"]');
+  await page.click('[data-testid="kv-oeffnen"]');
+  await expect(page.locator('[data-testid="dock-panel-kvOffen"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-viewportEigenschaften"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-viewportHudStatuskarte"]')).toBeVisible();
+
+  // Der historische Problem-Paarfall zuerst (sprechende Meldung), dann die
+  // volle paarweise Prüfung inkl. Chrome.
+  const orient = await stabileBox(page.locator('[data-testid="dock-panel-viewportOrientierung"]'));
+  const eigenschaften = await stabileBox(page.locator('[data-testid="dock-panel-viewportEigenschaften"]'));
+  expect(
+    ueberlappenSich(orient, eigenschaften),
+    'Orientierungs-Float überlappt die Eigenschaften-Säule (ROADMAP-357-Fall)',
+  ).toBe(false);
+
+  await pruefeDisjunktion(page, selektorMap([...HUD_FLOAT_IDS, 'kvOffen', 'kennzahlen']));
+
+  // Die Säule bleibt im Feld (früher ragte die fixe Spalte bei knapper Höhe
+  // unter das Feld): untere Kante über der Statusleiste.
+  const statusleiste = await stabileBox(page.locator('[data-testid="statusleiste"]'));
+  expect(eigenschaften.y + eigenschaften.height).toBeLessThanOrEqual(statusleiste.y + 1);
 });
 
 test('schmaler Viewport (1400×900, volle linke + rechte Spalte): HUD-Floats bleiben im zentralen Feld geklemmt, keine Überlappung mit den Spalten', async ({
@@ -476,6 +565,16 @@ test('B-Modus (Design-Station): HUD-Floats erscheinen als ctop-Streifen bzw. Spa
   // Orientierung sitzt in der linken Spalte: gleicher x-Bereich wie rasterOffen.
   const orientBox = await stabileBox(page.locator('[data-testid="dock-panel-viewportOrientierung"]'));
   expect(Math.abs(orientBox.x - rasterBox.x)).toBeLessThanOrEqual(1);
+  // v0.7.9 (A1, ROADMAP-358-Fall): die zwei Säulen-Floats (`anker:
+  // 'top-right'`) fallen im B-Routing GENAUSO auf die linke Spalte zurück
+  // (dock-kern.ts `solve()`: `else d = 'left'`) — als Spalten-Panels können
+  // B-Streifen/Linksspalte sie nicht mehr überdecken (die Disjunktions-
+  // Prüfung oben misst sie bereits mit, hier zusätzlich die Spalten-Position
+  // explizit).
+  for (const id of ['viewportHudStatuskarte', 'viewportEigenschaften'] as const) {
+    const box = await stabileBox(page.locator(`[data-testid="dock-panel-${id}"]`));
+    expect(Math.abs(box.x - rasterBox.x)).toBeLessThanOrEqual(1);
+  }
 
   // Kein Pop-out-Knopf im B-Modus (DockPanel.tsx: `modus==='A' && …`) — für
   // JEDES Panel, nicht nur die HUDs.

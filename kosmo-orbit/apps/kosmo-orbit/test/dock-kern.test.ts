@@ -512,6 +512,77 @@ describe('placeFloats — Anker-Platzierung', () => {
     expect(rects.a!.y).toBeCloseTo(vp.y + vp.h - 14 - 90, 6);
   });
 
+  // v0.7.9 (A1) — der additive `top-right`-Anker (Spiegelung von
+  // `bottom-left`, s. `dock-kern.ts`s `FloatAnker`-Kommentar): rechtsbündig,
+  // Stapel wächst von der OBEREN Kante nach UNTEN.
+  it('top-right stapelt von oben rechts (rechtsbündig)', () => {
+    const floats: FloatItem[] = [{ id: 'a', wichtigkeit: 10, anker: 'top-right', fw: 280, fh: 160 }];
+    const rects: Record<string, DockRect> = {};
+    placeFloats(floats, vp, rects, undefined);
+    expect(rects.a!.x).toBeCloseTo(vp.x + vp.w - 14 - 280, 6);
+    expect(rects.a!.y).toBeCloseTo(vp.y + 14, 6);
+  });
+
+  it('top-right: zweites Element landet UNTER dem ersten (Registry-Reihenfolge = Stapelreihenfolge)', () => {
+    const floats: FloatItem[] = [
+      { id: 'statuskarte', wichtigkeit: 72, anker: 'top-right', fw: 280, fh: 160 },
+      { id: 'eigenschaften', wichtigkeit: 74, anker: 'top-right', fw: 280, fh: 300 },
+    ];
+    const rects: Record<string, DockRect> = {};
+    placeFloats(floats, vp, rects, undefined);
+    expect(rects.statuskarte!.y).toBeCloseTo(vp.y + 14, 6);
+    expect(rects.eigenschaften!.y).toBeCloseTo(vp.y + 14 + 160 + 10, 6); // + fh + GAP
+    expect(rects.eigenschaften!.x).toBeCloseTo(rects.statuskarte!.x, 6);
+    expect(ueberlapptEcht(rects.statuskarte!, rects.eigenschaften!)).toBe(false);
+  });
+
+  it('top-right weicht einer x-schneidenden top-Reihe nach UNTEN aus — die Reihe selbst bleibt byte-identisch', () => {
+    // `separate()` könnte eine top-Reihe↔top-right-Kollision nie auflösen
+    // (beide kleben an vp.y, der y-Ausweichzug klemmt sofort zurück) — darum
+    // beginnt der Stapel unterhalb jeder Reihen-Zeile, die seinen x-Bereich
+    // schneidet (s. Kommentar in `placeFloats()`). Die Reihe wird dabei
+    // NICHT angefasst (Prototyp-Formel unverändert).
+    const floats: FloatItem[] = [
+      { id: 'reihe', wichtigkeit: 50, anker: 'top', fw: 700, fh: 44 },
+      { id: 'saeule', wichtigkeit: 74, anker: 'top-right', fw: 280, fh: 160 },
+    ];
+    const rects: Record<string, DockRect> = {};
+    placeFloats(floats, vp, rects, undefined);
+    // Reihe: exakt die unveränderte Prototyp-Position (zentriert).
+    expect(rects.reihe!.x).toBeCloseTo(vp.x + (vp.w - 700) / 2, 6);
+    expect(rects.reihe!.y).toBeCloseTo(vp.y + 14, 6);
+    // Säule: rechtsbündig, aber UNTER der Reihe (nicht bei vp.y+14).
+    expect(rects.saeule!.x).toBeCloseTo(vp.x + vp.w - 14 - 280, 6);
+    expect(rects.saeule!.y).toBeCloseTo(vp.y + 14 + 44 + 10, 6);
+    expect(ueberlapptEcht(rects.reihe!, rects.saeule!)).toBe(false);
+  });
+
+  it('top-right bleibt OBEN (vp.y+pad), wenn die top-Reihe seinen x-Bereich nicht erreicht', () => {
+    const floats: FloatItem[] = [
+      { id: 'reihe', wichtigkeit: 50, anker: 'top', fw: 150, fh: 44 }, // zentriert, endet weit vor der Spalte
+      { id: 'saeule', wichtigkeit: 74, anker: 'top-right', fw: 280, fh: 160 },
+    ];
+    const rects: Record<string, DockRect> = {};
+    placeFloats(floats, vp, rects, undefined);
+    expect(rects.saeule!.y).toBeCloseTo(vp.y + 14, 6);
+    expect(ueberlapptEcht(rects.reihe!, rects.saeule!)).toBe(false);
+  });
+
+  it('top-right klemmt die Wunschhöhe aufs Feld (fh = Wunsch, nicht Pflicht) — nichts ragt unter vp hinaus', () => {
+    // fh 900 in einem 600 hohen Feld: der Stapel endet an der Feld-Unterkante
+    // (Inhalt scrollt intern, s. ViewportChromeHuds.tsx) statt über
+    // Statusleiste/Boden-Chrome zu ragen.
+    const floats: FloatItem[] = [
+      { id: 'karte', wichtigkeit: 72, anker: 'top-right', fw: 280, fh: 160 },
+      { id: 'saeule', wichtigkeit: 74, anker: 'top-right', fw: 280, fh: 900 },
+    ];
+    const rects: Record<string, DockRect> = {};
+    placeFloats(floats, vp, rects, undefined);
+    expect(rects.karte!.h).toBeCloseTo(160, 6); // Wunsch passt → unverändert
+    expect(rects.saeule!.y + rects.saeule!.h).toBeLessThanOrEqual(vp.y + vp.h - 14 + 0.01);
+    expect(rects.saeule!.h).toBeGreaterThanOrEqual(40);
+  });
+
   it('fx/fy gesetzt: Position wird in den Viewport geklemmt', () => {
     const floats: FloatItem[] = [{ id: 'a', wichtigkeit: 10, fx: -500, fy: 5000, fw: 100, fh: 60 }];
     const rects: Record<string, DockRect> = {};
@@ -604,6 +675,15 @@ describe('placeFloats — Anker-Platzierung', () => {
     // für den das Docking in der App gedacht ist (wenige HUDs in einem
     // grosszügigen Viewport), nicht beliebig dichte worst-case-Packungen.
     const vpGross = { x: 40, y: 40, w: 1400, h: 900 };
+    // `top-right` (v0.7.9) läuft BEWUSST NICHT in diesem Pool mit: die
+    // Spalte klebt an der rechten Kante, und frei positionierte (fx/fy)
+    // Floats mit Wichtigkeit unter der Spalte können sich beim Ausweichen
+    // an derselben Kante festklemmen — exakt die im Kopfkommentar dieses
+    // Tests dokumentierte Kanten-Grenze des Prototyp-`separate()`, kein
+    // neues Verhalten des Ankers (dieselbe Deadlock-Klasse existiert am
+    // linken/unteren Rand seit P1). Der eigene Property-Test direkt darunter
+    // deckt den top-right-Betriebsbereich ab (verankerte Floats, wie die
+    // echte Design-Station ihn nutzt).
     const anker: Array<FloatItem['anker']> = ['top', 'bottom-center', 'bottom-left', undefined];
     for (let seed = 1; seed <= 60; seed++) {
       const rnd = mulberry32(seed * 7919);
@@ -632,6 +712,37 @@ describe('placeFloats — Anker-Platzierung', () => {
       const rects: Record<string, DockRect> = {};
       placeFloats(floats, vpGross, rects, undefined);
       expect(keinePaarUeberlappen(rects)).toBe(true);
+    }
+  });
+
+  it('Property (v0.7.9, 60 Seeds): top-right-Stapel + verankerte Floats — keine Überlappung, Stapel bleibt im Feld', () => {
+    // Der Betriebsbereich des neuen Ankers, wie die Design-Station ihn real
+    // nutzt (`dock-stationen.ts`): 1-2 top-right-Blöcke (Statuskarte/
+    // Eigenschaften) + eine variable top-Reihe + bottom-left-Stapel. Keine
+    // frei positionierten fx/fy-Floats (s. Pool-Kommentar im Property-Test
+    // darüber — deren Kanten-Deadlock ist eine vorbestehende Prototyp-
+    // Grenze, kein top-right-Thema).
+    const vpGross = { x: 40, y: 40, w: 1400, h: 900 };
+    for (let seed = 1; seed <= 60; seed++) {
+      const rnd = mulberry32(seed * 31337);
+      const floats: FloatItem[] = [];
+      const trAnzahl = 1 + Math.floor(rnd() * 2); // 1..2 wie die echte Station
+      for (let i = 0; i < trAnzahl; i++) {
+        floats.push({ id: 'tr' + i, wichtigkeit: 70 + i, anker: 'top-right', fw: 200 + Math.floor(rnd() * 120), fh: 120 + Math.floor(rnd() * 500) });
+      }
+      const topAnzahl = 1 + Math.floor(rnd() * 3); // 1..3 Reihen-HUDs
+      for (let i = 0; i < topAnzahl; i++) {
+        floats.push({ id: 't' + i, wichtigkeit: 40 + i, anker: 'top', fw: 180 + Math.floor(rnd() * 140), fh: 44 + Math.floor(rnd() * 60) });
+      }
+      floats.push({ id: 'bl', wichtigkeit: 30, anker: 'bottom-left', fw: 150 + Math.floor(rnd() * 60), fh: 80 + Math.floor(rnd() * 50) });
+      const rects: Record<string, DockRect> = {};
+      placeFloats(floats, vpGross, rects, undefined);
+      expect(keinePaarUeberlappen(rects)).toBe(true);
+      for (let i = 0; i < trAnzahl; i++) {
+        const r = rects['tr' + i]!;
+        expect(r.y + r.h).toBeLessThanOrEqual(vpGross.y + vpGross.h - 14 + 0.01);
+        expect(r.x + r.w).toBeLessThanOrEqual(vpGross.x + vpGross.w - 14 + 0.01);
+      }
     }
   });
 
@@ -844,6 +955,24 @@ describe('solve — Grundinvarianten über 3 synthetische Stationen × Breiten-S
     const erg = solve(STATIONEN.design!, grundOptionen(1800, 'B'));
     expect(erg.rects.orient!.z).toBe(14);
     expect(erg.rects.orient!.schwebend).not.toBe(true);
+  });
+
+  it('Konzept B: top-right-Float wird (wie bottom-left) zu "left" umgeroutet — v0.7.9-Anker, gleicher else-Zweig', () => {
+    // Ein `top-right`-Float per Override in die Design-Station gemischt —
+    // im B-Routing (`solve()`: nur `top`→ctop und `bottom-center`→cbot haben
+    // eigene Streifen, ALLES andere fällt auf `left`) landet er im linken
+    // Stack, nicht schwebend.
+    const defs: PanelDef[] = [
+      ...STATIONEN.design!,
+      { id: 'saeule', titel: 'EIGENSCHAFTEN-SÄULE', rolle: 'system', wichtigkeit: 74, dock: 'float', anker: 'top-right', fw: 280, fh: 610, start: 'offen', schliessbar: false, bewegbar: true },
+    ];
+    const erg = solve(defs, grundOptionen(1800, 'B'));
+    expect(erg.rects.saeule!.z).toBe(14);
+    expect(erg.rects.saeule!.schwebend).not.toBe(true);
+    // Im A-Modus dagegen schwebt sie oben rechts im Viewport.
+    const ergA = solve(defs, grundOptionen(1800, 'A'));
+    expect(ergA.rects.saeule!.schwebend).toBe(true);
+    expect(ergA.rects.saeule!.x + ergA.rects.saeule!.w).toBeLessThanOrEqual(ergA.viewport.x + ergA.viewport.w);
   });
 
   it('splitters nur wo Panels: kein spL, wenn keine linken Panels sichtbar sind', () => {

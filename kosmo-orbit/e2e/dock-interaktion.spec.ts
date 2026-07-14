@@ -180,12 +180,21 @@ test('Tab-Klick öffnet ein eingeklapptes Panel wieder', async ({ page }) => {
   await expect(page.locator('[data-testid="bauablauf-panel"]')).toBeVisible();
 });
 
-test('Pin schützt Grösse: geht ein zweites Panel auf, klappt das ANDERE (nicht angeheftete) ein', async ({
+test('Pin schützt Grösse + zuletztGeoeffnet schützt das Frische: das dritte Panel öffnet, das ANDERE (weder gepinnt noch frisch) klappt ein', async ({
   page,
 }) => {
-  // Knapper Höhenrahmen erzwingt eine Kollision zwischen zwei Panels mit nur
-  // je einem Öffnen-Klick (statt vieler Panels bei Standardgrösse).
-  await page.setViewportSize({ width: 1400, height: 420 });
+  // Knapper Höhenrahmen erzwingt eine Kollision mit wenigen Öffnen-Klicks.
+  // v0.7.9 (A6-Restpunkt): seit `DockFlaeche` `zuletztGeoeffnet` an den
+  // Solver füttert, klappt das FRISCH geöffnete Panel nie selbst ein — die
+  // alte Zwei-Panel-Fassung dieses Tests («kv gepinnt, bauablauf öffnet und
+  // klappt sofort selbst zum Tab») ist damit BEWUSST Geschichte: bauablauf
+  // war dort zugleich das frische UND das einzige Flex-Panel. Neue
+  // Konstellation mit DREI Panels: kv (45) gepinnt, bauablauf (44) offen,
+  // dann maengel (42) frisch geöffnet → einklappen muss bauablauf — NICHT
+  // maengel (frisch geschützt, obwohl es mit 42 das unwichtigste ist!) und
+  // NICHT kv (Pin). Damit beweist derselbe Test beide Schutzmechanismen und
+  // ihre Rangfolge-Umkehrung.
+  await page.setViewportSize({ width: 1400, height: 470 });
   await oeffneDesignMitTkb(page);
 
   await page.click('[data-testid="kv-oeffnen"]');
@@ -195,13 +204,20 @@ test('Pin schützt Grösse: geht ein zweites Panel auf, klappt das ANDERE (nicht
   // Abnahme-Fix C4 (Pin-Badge): sichtbar im Kopf, sobald angeheftet.
   await expect(page.locator('[data-testid="dock-panel-kvOffen-pin-badge"]')).toBeVisible();
 
+  // bauablauf öffnen: als frisches Panel selbst geschützt, kv gepinnt —
+  // es gibt keinen Einklapp-Kandidaten, beide bleiben offen (gequetscht).
   await page.click('[data-testid="bauablauf-oeffnen"]');
+  await expect(page.locator('[data-testid="dock-panel-bauablaufOffen"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-bauablaufOffen-tab"]')).toHaveCount(0);
 
-  // kv bleibt offen (angeheftet schützt), bauablauf (das ANDERE, nicht
-  // geschützte Panel) klappt zum Tab.
+  // maengel öffnen: jetzt ist MAENGEL das frische (geschützt), kv gepinnt —
+  // bauablauf ist der einzige legale Kandidat und klappt zum Tab.
+  await page.click('[data-testid="maengel-oeffnen"]');
+
   await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
   await expect(page.locator('[data-testid="dock-panel-kvOffen-tab"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="dock-panel-bauablaufOffen-tab"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-maengelOffen-tab"]')).toHaveCount(0);
 });
 
 test('Touch-Variante: col-Splitter reagiert auf pointerType=touch', async ({ page }) => {
@@ -434,9 +450,20 @@ test('Pop-out: Panel schwebt frei, lässt sich ziehen (Magnet an Kante) und snap
 // ---------------------------------------------------------------------------
 
 async function zieheHudGriffNach(page: Page, panelId: string, zielX: number, zielY: number): Promise<void> {
+  // v0.7.9-Robustheits-Fix (real diagnostiziert): der Griffstreifen ist nur
+  // 5px hoch (`top:-5`), und die bottom-left-verankerten HUDs sacken nach
+  // dem Projekt-Load noch einmal um ~3px nach OBEN nach (späte
+  // Statusleisten-/Feld-Nachmessung, teils NACH dem `stabileBox()`-
+  // Ruhefenster des Aufrufers) — ein Mausklick auf die VERALTETE Griff-
+  // Mitte traf dann haarscharf UNTER den Griff (Panel-Inhalt → kein Drag,
+  // Textselektion; delta 0). Zwei Gegenmittel: (1) der Griff wird HIER
+  // frisch und mit eigenem, längerem Ruhefenster gemessen (600ms statt
+  // 300ms — die beobachtete Nachmessung fällt in dieses Fenster);
+  // (2) gezielt wird der OBERSTE Griff-Pixel + 1 (statt der Mitte) — ein
+  // weiteres Nachsacken um bis zu ~4px nach oben bleibt damit im Griff.
   const griff = page.locator(`[data-testid="dock-panel-${panelId}"] .k-dock-panel-griff`);
-  const box = (await griff.boundingBox())!;
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  const box = await stabileBox(griff, 6000, 100, 300, 600);
+  await page.mouse.move(box.x + box.width / 2, box.y + 1);
   await page.mouse.down();
   await page.mouse.move(zielX, zielY, { steps: 10 });
   await page.mouse.up();
@@ -472,22 +499,21 @@ test('HUD frei ziehen (Griffstreifen): bleibt an freier Position liegen, snappt 
   expect(overrideNachRueck?.fx).toBeUndefined();
 });
 
-test('Auto-Reaktions-Hinweis (C6): zweites Panel öffnen lässt das ANDERE (angeheftete kv bleibt) einklappen — Chip zeigt den richtigen Titel und verschwindet wieder', async ({
+test('Auto-Reaktions-Hinweis (C6): drittes Panel öffnen lässt das ANDERE (weder gepinnt noch frisch) einklappen — Chip zeigt den richtigen Titel und verschwindet wieder', async ({
   page,
 }) => {
-  // EXAKT dieselbe Ausgangslage wie der Pin-Test oben («Pin schützt Grösse»,
-  // dort bereits als 12/12-grün bewiesen) — kv (45) offen+angeheftet, DANACH
-  // bauablauf (44) geöffnet, klappt zum Tab (das ANDERE, nicht angeheftete
-  // Panel). Ohne Pin klappen bei 1400×420 BEIDE Panels ein (Summe der `min`
-  // sprengt selbst nach einem Einklappen noch die Höhe) — Pin ist hier
-  // darum nicht nur einer der drei im Auftrag genannten Trigger
-  // («geöffnet/gedockt/gepinnt»), sondern auch die einzige Konstellation,
-  // in der GENAU EIN Panel automatisch reagiert (testbare Eindeutigkeit).
-  // Kein Chevron wird in diesem Test manuell geklickt — `ausgeloestId`
-  // (`DockFlaeche.tsx`) bleibt darum undefiniert, nichts wird ausgeschlossen;
-  // `eingeklappteDiff()` findet genau EINEN neu eingeklappten Titel
-  // («Bauablauf») und meldet ihn.
-  await page.setViewportSize({ width: 1400, height: 420 });
+  // EXAKT dieselbe Ausgangslage wie der Pin-Test oben — kv (45) gepinnt,
+  // bauablauf (44) offen, DANN maengel (42) frisch geöffnet: bauablauf (das
+  // ANDERE — weder gepinnt noch das frische) klappt zum Tab und der Chip
+  // meldet GENAU diesen Titel. v0.7.9 (A6-Restpunkt): die alte Zwei-Panel-
+  // Fassung («bauablauf öffnet und klappt sofort SELBST ein, der Chip
+  // erklärt die Überraschung») ist Geschichte — der `zuletztGeoeffnet`-
+  // Schutz verhindert das Sofort-Selbst-Einklappen jetzt strukturell, der
+  // Chip erklärt stattdessen die Reaktion am ANDEREN Panel. Die Chip-
+  // SEMANTIK (`eingeklappteDiff()`, P5) ist unangetastet: kein Chevron wird
+  // manuell geklickt, `ausgeloestId` bleibt undefiniert, nichts wird aus dem
+  // Diff ausgenommen.
+  await page.setViewportSize({ width: 1400, height: 470 });
   await oeffneDesignMitTkb(page);
 
   await page.click('[data-testid="kv-oeffnen"]');
@@ -495,10 +521,16 @@ test('Auto-Reaktions-Hinweis (C6): zweites Panel öffnen lässt das ANDERE (ange
   await page.click('[data-testid="dock-panel-kvOffen-pin"]');
   await expect(page.locator('[data-testid="dock-panel-kvOffen-pin"]')).toHaveAttribute('aria-pressed', 'true');
 
+  // bauablauf öffnen: frisch geschützt + kv gepinnt → kein Kandidat, kein
+  // Einklappen, KEIN Chip.
+  await page.click('[data-testid="bauablauf-oeffnen"]');
+  await expect(page.locator('[data-testid="dock-panel-bauablaufOffen"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-bauablaufOffen-tab"]')).toHaveCount(0);
+
   const chip = page.locator('[data-testid="dock-auto-hinweis"]');
   await expect(chip).toHaveCount(0);
 
-  await page.click('[data-testid="bauablauf-oeffnen"]');
+  await page.click('[data-testid="maengel-oeffnen"]');
   await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
   await expect(page.locator('[data-testid="dock-panel-bauablaufOffen-tab"]')).toBeVisible();
 

@@ -855,9 +855,18 @@ test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ pa
   await page.click('[data-testid="dock-panel-kennzahlen-einklappen"]');
   await page.click('button:text-is("Treppe")');
   await waehleOption(page, 'treppen-form', 'u');
-  // Zwei Klicks im Plan (rechte Hälfte, auto-zentriert um 5000/3000)
-  await page.mouse.click(680, 480);
-  await page.mouse.click(950, 480);
+  // Zwei Klicks im Plan (rechte Hälfte, auto-zentriert um 5000/3000).
+  // v0.7.9 (A1): die Klicks sassen bei x=680/950 — seit der Säulen-Migration
+  // schwebt dort das `viewportEigenschaften`-Float (Anker `top-right` des
+  // Solver-Zentrums; mit dem hier per Seed offenen Kosmo-Panel liegt die
+  // Säule real bei x≈421-701, gemessen am Fehlschlag-Screenshot) und gewänne
+  // den ersten Klick. Gleiches Muster wie der P4-Kennzahlen-Kommentar oben:
+  // die Klicks wandern in den freien Plan-Streifen RECHTS der Säule
+  // (x 715-1050 — unterhalb des eingeklappten Kennzahlen-Tabs ist die
+  // Dock-Spalte leer, der Plan liegt frei). Der Treppen-Flow selbst
+  // (Form/Assertions) ist koordinatenunabhängig.
+  await page.mouse.click(740, 480);
+  await page.mouse.click(1010, 480);
   const stand = await page.evaluate(() => {
     const st = window.__kosmo.state().doc.byKind('stair')[0] as unknown as { form?: string } | undefined;
     return st ? { form: st.form } : null;

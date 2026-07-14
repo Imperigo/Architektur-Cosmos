@@ -122,7 +122,17 @@ export function DockPanel({
     top: rect.y,
     width: rect.w,
     height: rect.h,
-    zIndex: rect.schwebend ? 30 : 14,
+    // v0.7.9 (A1, Bugfix am P3-Bestand): der SOLVER-z-Wert statt des
+    // früheren hartkodierten `rect.schwebend ? 30 : 14`. Der 1:1-Port
+    // (`dock-kern.ts`) unterscheidet seit P1 drei Stufen — Stack/Rail 14,
+    // B-Streifen 16, verankerte Floats 30, FREI positionierte Floats
+    // (fx/fy, also vom Menschen gezogene/geploppte Panels) 32 — der
+    // hartkodierte Wert plättete 32→30 und liess ein frei abgelegtes Panel
+    // HINTER den später gerenderten HUD-Chrome-Floats verschwinden (real ab
+    // A1 sichtbar: kv-Float hinter der Eigenschaften-Säule, Kopf nicht mehr
+    // greifbar). Mit `rect.z` gewinnt das vom Menschen platzierte Panel —
+    // wie im Prototyp.
+    zIndex: rect.z,
   };
 
   // v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»): eine schlanke

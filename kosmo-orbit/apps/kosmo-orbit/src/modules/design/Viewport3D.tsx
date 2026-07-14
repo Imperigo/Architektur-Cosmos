@@ -683,6 +683,46 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     [],
   );
 
+  // v0.7.9 (A1, «Säulen ins Dock») — dieselbe Spiegelung wie der P5-Effekt
+  // oben, additiv um genau die Werte erweitert, die die zwei NEU gefloateten
+  // Blöcke (`viewportHudStatuskarte`/`viewportEigenschaften`,
+  // `dock-stationen.ts`) brauchen — vorher direkt als `ViewportChromeProps`
+  // durchgereicht (`ViewportChrome.tsx` behält die Props-Deklaration
+  // unverändert für die weiterhin dort lebende Bottom-Leiste, liest diese
+  // Felder selbst aber nicht mehr, s. dortigen Kopfkommentar). Reiner
+  // Zusatz-Effekt, ändert nichts am bestehenden Zustand dieser Komponente.
+  useEffect(() => {
+    useViewportChromeRuntime.setState({
+      polarGrad: chromeSnapshot.polarGrad,
+      distanzM: chromeSnapshot.distanzM,
+      brennweiteMm: chromeBrennweiteMm,
+      aspektBreite: chromeSnapshot.breitePx,
+      aspektHoehe: chromeSnapshot.hoehePx,
+      geschossLabel: chromeGeschossLabel,
+      kontextAnzahl: chromeSnapshot.kontextAnzahl,
+      splatAktiv: chromeSnapshot.splatAktiv,
+      texturenAn: texturenChromeAn,
+      sonnenDatum: chromeSnapshot.sonnenDatum,
+      standortLabel: chromeStandortLabel,
+      leistungsStufeLabel: chromeLeistungsStufeLabel,
+      schattenAn: chromeSchattenAn,
+      darstellungsModus: darstellung3dAufgeloest,
+      renderStatusLabel: RENDER_STATUS_LABEL[renderStatus] ?? renderStatus,
+      renderCloudLeer,
+    });
+  }, [
+    chromeSnapshot,
+    chromeBrennweiteMm,
+    chromeGeschossLabel,
+    texturenChromeAn,
+    chromeStandortLabel,
+    chromeLeistungsStufeLabel,
+    chromeSchattenAn,
+    darstellung3dAufgeloest,
+    renderStatus,
+    renderCloudLeer,
+  ]);
+
   // Linker Klick folgt dem gewählten Modus (Mitteltaste/Rechts werden pro Geste
   // in onCaptureDown aus mausBelegung gesetzt, wegen Shift+Mitte). navModusRef
   // hält den aktuellen Modus für den Pointer-Handler bereit.
@@ -2104,6 +2144,41 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       void controls.reset(true);
     }
   };
+
+  // v0.7.9 (A1) — Aktions-Callbacks der zwei neu gefloateten Blöcke
+  // (`viewportHudStatuskarte`/`viewportEigenschaften`) in
+  // `viewport-chrome-runtime.ts` spiegeln, s. Kopfkommentar dort.
+  // `einpassen`/`renderStarten`/`fuerVisAufnehmen`/`chromeTexturToggle` sind
+  // (anders als `chromeWerkzeugWechsel` oben) bei jedem Render frische
+  // Closures — in den Store geschrieben wird darum EINMAL ein stabiler
+  // Wrapper, der über einen Ref immer die aktuelle Closure ruft. WICHTIG:
+  // NICHT bei jedem Commit vier neue Funktions-Referenzen in den Store
+  // schreiben — jede solche Schreibung benachrichtigt alle Store-Leser
+  // (die HUD-Floats) und erzeugte bei der hohen Commit-Frequenz dieser
+  // Komponente (400ms-Kamera-Poll + Render-Status-Poll) einen permanenten
+  // Re-Render-Strom.
+  const chromeAktionenRef = useRef({
+    einpassen,
+    rendern: renderStarten,
+    fuerVis: fuerVisAufnehmen,
+    texturToggle: chromeTexturToggle,
+  });
+  useEffect(() => {
+    chromeAktionenRef.current = {
+      einpassen,
+      rendern: renderStarten,
+      fuerVis: fuerVisAufnehmen,
+      texturToggle: chromeTexturToggle,
+    };
+  });
+  useEffect(() => {
+    useViewportChromeRuntime.setState({
+      onEinpassen: () => chromeAktionenRef.current.einpassen(),
+      onRendern: () => chromeAktionenRef.current.rendern(),
+      onFuerVisAufnehmen: () => chromeAktionenRef.current.fuerVis(),
+      onTexturToggle: () => chromeAktionenRef.current.texturToggle(),
+    });
+  }, []);
 
   // Serie J / J2: Raycast am Kontextmenü-Klickpunkt (Body-Ebene, über die Refs).
   const kontextTreffer = (clientX: number, clientY: number) => {

@@ -28,7 +28,25 @@
 // ---------------------------------------------------------------------------
 
 export type DockZone = 'rail' | 'left' | 'right' | 'float';
-export type FloatAnker = 'top' | 'bottom-center' | 'bottom-left';
+/**
+ * `'top-right'` (v0.7.9 A1) ist die EINE additive Erweiterung dieser Datei
+ * seit dem P1-Port — kein zweiter Prototyp-Fund, sondern eine bewusste,
+ * rückwärtskompatible Ergänzung: die vier bestehenden Anker deckten «Reihe
+ * oben zentriert» (`top`)/«Reihe unten zentriert» (`bottom-center`)/«Stapel
+ * unten links» (`bottom-left`) ab, aber keinen «Stapel oben rechts» — genau
+ * die Geometrie, die ROADMAP 357/358 als letzte offene Überlappungs-Klasse
+ * benennen (die fixen ViewportChrome-Säulen, s. `dock-stationen.ts`s
+ * `viewportHudStatuskarte`/`viewportEigenschaften`). Mechanik ist die
+ * SPIEGELUNG von `'bottom-left'` (rechtsbündige x-Position statt linksbündige,
+ * Stapel-Richtung nach UNTEN statt nach OBEN) mit ZWEI dokumentierten
+ * Zusätzen (beides in `placeFloats()` kommentiert): (1) der Stapel beginnt
+ * UNTERHALB jeder top-Reihen-Zeile, die seinen x-Bereich schneidet, weil
+ * `separate()` eine Oberkante↔Oberkante-Kollision strukturell nie auflösen
+ * kann; (2) die Stapel-Höhen werden aufs Feld geklemmt (`fh` = Wunschhöhe),
+ * weil die migrierte Säule vorher höhen-adaptiv war. Bestehende Anker/
+ * Verhalten (inkl. der top-Reihe) bleiben byte-identisch — der neue Code
+ * liest die Reihen-Rechtecke nur; `separate()` selbst ist unverändert. */
+export type FloatAnker = 'top' | 'bottom-center' | 'bottom-left' | 'top-right';
 export type DockModus = 'A' | 'B';
 
 export interface PanelDef {
@@ -330,9 +348,10 @@ export function rowLayout(
 
 // ---------------------------------------------------------------------------
 // placeFloats / separate — schwebende Panels (Konzept A). placeFloats platziert
-// zuerst automatisch verankerte Floats (top/bottom-center/bottom-left) und
-// frei positionierte (fx/fy gesetzt), dann räumt separate() Überlappungen
-// aus dem Weg (Prototyp Zeile 665-689).
+// zuerst automatisch verankerte Floats (top/bottom-center/bottom-left, seit
+// v0.7.9 A1 zusätzlich top-right, s. `FloatAnker`-Kommentar oben) und frei
+// positionierte (fx/fy gesetzt), dann räumt separate() Überlappungen aus dem
+// Weg (Prototyp Zeile 665-689 + die additive top-right-Ergänzung).
 // ---------------------------------------------------------------------------
 
 export interface FloatItem {
@@ -399,6 +418,46 @@ export function placeFloats(
     put(f, vp.x + pad, ly);
     ly -= DOCK_KONSTANTEN.GAP;
   });
+
+  // v0.7.9 (A1) — der `top-right`-Stapel: rechtsbündig, wächst von der
+  // OBEREN Kante nach UNTEN (Spiegelung von `bl` oben). Reihenfolge =
+  // Registry-Reihenfolge, erstes Element am nächsten zur oberen Kante.
+  // ZWEI dokumentierte Zusätze gegenüber den Prototyp-Ankern (s. auch
+  // `FloatAnker`-Kommentar):
+  //  (1) Der Stapel beginnt UNTERHALB jeder top-Reihen-Zeile, deren
+  //      Rechteck seinen x-Bereich schneidet — `separate()` kann eine
+  //      Oberkante↔Oberkante-Kollision strukturell nie auflösen (beide
+  //      kleben an `vp.y`, der y-Ausweichzug klemmt sofort zurück; dieselbe
+  //      dokumentierte Kanten-Grenze wie im «9-Iterationen-Kappe»-Test).
+  //      Die top-REIHE selbst bleibt dabei byte-identisch zum Prototyp —
+  //      nur die Spalte weicht nach unten aus (bewusst NICHT umgekehrt:
+  //      eine Breiten-Reserve für die Spalte liess die Reihe in engen
+  //      Split-Ansichten in drei Zeilen kaskadieren — real probiert und
+  //      verworfen).
+  //  (2) Die Höhen werden aufs Feld GEKLEMMT (`fh` = WUNSCH-Höhe): die
+  //      migrierte Eigenschaften-Säule war als fixes Chrome höhen-adaptiv
+  //      (`top:16;bottom:180` + inneres `overflowY:auto`) — eine starre fh
+  //      ragte bei kleinen Fenstern unter das Feld (über Statusleiste/
+  //      Boden-Chrome). Der Inhalt scrollt intern weiter
+  //      (s. `ViewportChromeHuds.tsx`).
+  const tr = floats.filter((f) => f.anker === 'top-right' && f.fx === undefined);
+  if (tr.length) {
+    const spalteX = vp.x + vp.w - pad - Math.max(...tr.map((f) => f.fw || 200));
+    let ry = vp.y + pad;
+    top.forEach((t) => {
+      const r = rects[t.id];
+      if (r && r.x + r.w + DOCK_KONSTANTEN.GAP > spalteX) {
+        ry = Math.max(ry, r.y + r.h + DOCK_KONSTANTEN.GAP);
+      }
+    });
+    const trBoden = vp.y + vp.h - pad;
+    tr.forEach((f) => {
+      const w = f.fw || 200;
+      const h = Math.max(40, Math.min(f.fh || 90, trBoden - ry));
+      rects[f.id] = { x: vp.x + vp.w - pad - w, y: ry, w, h, z: 30, eingeklappt: false, schwebend: true };
+      ry += h + DOCK_KONSTANTEN.GAP;
+    });
+  }
 
   floats
     .filter((f) => f.fx !== undefined)

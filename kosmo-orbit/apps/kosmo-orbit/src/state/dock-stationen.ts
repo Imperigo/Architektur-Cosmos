@@ -290,17 +290,16 @@ const DESIGN_PANELS: readonly PanelDef[] = [
   },
 
   // ---- v0.7.8 Welle 2 (P5) — Viewport-HUDs als echte Dock-Floats ----------
-  // Vier der fünf heutigen 3D-Viewport-HUDs (`modules/design/ViewportChrome
-  // .tsx`/`ViewportChromeHuds.tsx`) sind jetzt `dock:'float'`-Panels
+  // Vier der fünf damaligen 3D-Viewport-HUDs (`modules/design/ViewportChrome
+  // .tsx`/`ViewportChromeHuds.tsx`) wurden hier `dock:'float'`-Panels
   // derselben Design-Station statt handgetunter `position:absolute`-Kinder:
   // Modus-Umschalter, Modus-Infokarte, Werkzeug-Rail, Orientierungskreuz.
-  // NICHT gefloatet (Ist-Zustand-Entscheid, s. Abschlussbericht): die kleine
-  // HUD-Statuskarte (`viewport-hud`, ANSICHT/RASTER/GESCHOSS/…) und das
-  // Eigenschaften-Panel bleiben fixe Chrome IN `ViewportChrome.tsx` — beide
-  // gehören zur rechten `k-vp-spalte-rechts`-Säule, die unverändert bleibt;
-  // die gemessene HUD-Statuskarten-Grösse (~280×154, alle drei Modi) passte
-  // zu keinem der vier hier definierten Float-Slots. Der Zoom-/Vollbild-
-  // Cluster bleibt ebenfalls unverändert (Teil der Bottom-Statuszeile).
+  // Die restlichen zwei (HUD-Statuskarte + Eigenschaften-Panel, damals
+  // Ist-Zustand-Entscheid) sind seit v0.7.9 A1 GENAUSO Floats — s.
+  // `viewportHudStatuskarte`/`viewportEigenschaften` weiter unten (eigener
+  // Anker `top-right`, eigener Kommentarblock mit der Überlapp-Historie).
+  // Der Zoom-/Vollbild-Cluster bleibt unverändert (Teil der Bottom-
+  // Statuszeile, `ViewportChrome.tsx`).
   //
   // Sichtbarkeit ist wie `kennzahlen`/`inspector` oben ein reiner Daten-Guard
   // (kein `…Offen`-Flag in `ui-zustand.ts`): `DesignWorkspace.tsx` leitet
@@ -376,6 +375,67 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     anker: 'bottom-left',
     fw: 188,
     fh: 86,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    floatChrome: 'schlank',
+  },
+
+  // ---- v0.7.9 A1 — die letzte Überlappungs-Klasse (ROADMAP 357/358) -------
+  // Die zwei P5-Ausnahmen (HUD-Statuskarte `viewport-hud` + das
+  // Eigenschaften-Panel) waren bis v0.7.8 fixes `position:absolute`-Chrome
+  // in `ViewportChrome.tsx` (`k-vp-spalte-rechts`, verankert relativ zum
+  // `Viewport3D`-DOM-Element statt zum Solver-`vp` — die Ursache des
+  // dokumentierten ~130×85px-Überlapps mit `viewportOrientierung` in enger
+  // Split-Ansicht, s. ROADMAP 357/358 + `ViewportChrome.tsx`s
+  // Kopfkommentar). Jetzt zwei eigene Floats wie die vier oben — NEUER Anker
+  // `top-right` (additive `dock-kern.ts`-Erweiterung, s. dortigen
+  // `FloatAnker`-Kommentar): rechtsbündiger Stapel von der oberen Kante nach
+  // unten, Registry-Reihenfolge = Stapel-Reihenfolge (Statuskarte zuerst,
+  // Eigenschaften direkt darunter — dieselbe Optik wie die alte
+  // `k-vp-spalte-rechts`).
+  //
+  // `wichtigkeit` bewusst ÜBER allen vier P5-HUD-Floats (deren höchste ist
+  // `viewportModusLeiste` mit 70): beide waren vorher UNBEWEGLICHES, nie
+  // einklappendes/nie verdrängtes Chrome — die höchste Priorität in dieser
+  // Float-Gruppe erhält denselben Charakter zurück (`separate()` verschiebt
+  // bei Kollision das Panel mit der NIEDRIGEREN Wichtigkeit, s.
+  // `dock-kern.ts`), jetzt aber kollisions-SICHER statt kollisions-BLIND.
+  //
+  // `fw`/`fh` sind ECHTE gerenderte Grössen (Playwright-Messung am
+  // v0.7.8-Stand, 1400×900, alle drei Modi durchgeklickt — HUD-Statuskarte
+  // ist in allen drei Modi exakt gleich hoch, das Eigenschaften-Panel
+  // braucht im «Modellieren»-Modus am meisten Platz, wegen der zusätzlichen
+  // Texturen-Zeile):
+  //   viewport-hud (Karte)  gemessen 280×153.6 (Card inkl. Padding) → fw 280/fh 160
+  //   Eigenschaften-Inhalt  Kopf 40.9 + Content-`scrollHeight` max. 513
+  //                         (Modellieren, 3 Sektionen + Texturen-Zeile) +
+  //                         Fuss 51.1 ≈ 605 → fw 280/fh 610 (das Panel behält
+  //                         sein eigenes `overflowY:auto` als Sicherheitsnetz
+  //                         für seltenere, noch längere Inhalte).
+  {
+    id: 'viewportHudStatuskarte',
+    titel: 'Viewport-HUD',
+    rolle: 'system',
+    wichtigkeit: 72,
+    dock: 'float',
+    anker: 'top-right',
+    fw: 280,
+    fh: 160,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    floatChrome: 'schlank',
+  },
+  {
+    id: 'viewportEigenschaften',
+    titel: 'Eigenschaften',
+    rolle: 'system',
+    wichtigkeit: 74,
+    dock: 'float',
+    anker: 'top-right',
+    fw: 280,
+    fh: 610,
     start: 'zu',
     schliessbar: false,
     bewegbar: true,

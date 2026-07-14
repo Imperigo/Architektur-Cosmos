@@ -15,40 +15,49 @@
  * rendern jetzt als `DockPanel`-Float-Inhalte über `DesignWorkspace.tsx` /
  * `DockFlaeche` (Registry in `dock-stationen.ts`, `dock:'float'`) — echtes
  * Ziehen/Magnet/Snap-zurück aus P4, kollisionsfrei gegen die Dock-Spalten.
- * Diese Datei hier behält NUR, was NICHT gefloatet wird (Ist-Zustand-
- * Entscheid, s. Abschlussbericht): die HUD-Statuskarte (`viewport-hud`,
- * bleibt fixe Chrome — ihre gemessene Grösse passte zu keinem der vier
- * Registry-Slots), das Eigenschaften-Panel und die Bottom-Leiste
- * (kontextuelle Chips + Zoom + Vollbild — Teil der Statuszeile, bleibt wo
- * sie ist). Layout-Hinweis (Koexistenz mit bestehender Chrome, die NICHT
- * verschoben wird — `NavLeiste`/Render-Knopf-Spalte bleiben bei `right:88`,
- * die DesignWorkspace-Statusleiste bei `left:12…right:88,bottom:12`, beides
- * ausserhalb dieser Datei/dieses Streams): die Eigenschaften-Spalte endet
- * bei `bottom:180` (Luft über der Render-Spalte im Ruhezustand). Bei einem
- * sehr hohen Render-Ergebnis-Panel (Bild sichtbar) ist ein knapper Überlapp
- * möglich — bewusst in Kauf genommen (transienter Zustand, s.
- * Abschlussbericht «vertagt»), statt die fremde Statusleiste/NavLeiste-
- * Position anzufassen.
+ *
+ * **v0.7.9 A1 («Säulen ins Dock» — die letzte Überlappungs-Klasse,
+ * ROADMAP 357/358)**: die zwei P5-Ausnahmen — die HUD-Statuskarte
+ * (`viewport-hud`) und das Eigenschaften-Panel — sind jetzt EBENFALLS
+ * `DockPanel`-Floats (`viewportHudStatuskarte`/`viewportEigenschaften`,
+ * `dock-stationen.ts`, Anker `top-right` — die additive Solver-Erweiterung
+ * in `dock-kern.ts`, s. dortigen `FloatAnker`-Kommentar), Inhalt/testids
+ * byte-gleich nach `ViewportChromeHuds.tsx` umgezogen (`ViewportHudStatuskarteHud`/
+ * `ViewportEigenschaftenHud`, lesen `viewport-chrome-runtime.ts`). Grund für
+ * den Umzug: die alte `k-vp-spalte-rechts` (`position:absolute;right:16`) war
+ * relativ zum `Viewport3D`-DOM-Element verankert — in der Split-Ansicht ist
+ * dieses Element nur die LINKE Hälfte des vom Solver verwalteten zentralen
+ * Feldes (`vp`, `dock-kern.ts`), während `viewportOrientierung` (der andere
+ * Float) relativ zu GENAU DIESEM `vp` positioniert wird. Bei schmalem
+ * `Viewport3D`-Element (Split + offene Dock-Spalten) überragte die 280px
+ * breite, absolut positionierte Spalte ihr eigenes, zu schmales Elternfeld
+ * nach LINKS — geometrisch real gemessen ~130×85px Überlapp mit der unteren
+ * Ecke von `viewportOrientierung` (ROADMAP 357/358, im Code hier bis
+ * v0.7.8 dokumentiert). Als Dock-Float lebt die Spalte jetzt im SELBEN
+ * Koordinatensystem (`vp`) wie jeder andere Float — `separate()`
+ * (`dock-kern.ts`, unverändert) hält sie automatisch von allem anderen fern,
+ * genau wie die vier P5-HUDs. Fixe `fw`/`fh` (statt der alten
+ * `top:16;bottom:180`-Streckung) sind ein bewusster Kompromiss wie bei den
+ * P5-Floats — Werte real gemessen (1400×900, alle drei Modi, s.
+ * `dock-stationen.ts`-Kommentar), das Eigenschaften-Panel behält sein
+ * eigenes `overflowY:auto` als Sicherheitsnetz für seltene längere Inhalte.
+ *
+ * Diese Datei hier behält NUR noch die Bottom-Leiste (kontextuelle Chips +
+ * Zoom + Vollbild — Teil der Statuszeile, unverändert).
  */
-import { Badge, KButton, KIcon } from '@kosmo/ui';
+import { KIcon } from '@kosmo/ui';
 import { VIcon } from './viewport-chrome-icons';
-import { VIEWPORT_MODUS_TEXT, VIEWPORT_ROLLEN, aspektLabel, sonnenLabel, type ViewportModusId } from './viewport-modi';
+import { VIEWPORT_ROLLEN, aspektLabel, sonnenLabel, type ViewportModusId } from './viewport-modi';
 
-const DARSTELLUNG_LABEL: Record<'material' | 'weiss' | 'schwarz', string> = {
+// v0.7.9 (A1) — exportiert, weil `ViewportChromeHuds.tsx`s neue
+// `ViewportEigenschaftenHud` dieselbe Zuordnung braucht (Darstellungs-Sektion
+// zog dorthin um) — ein Duplikat der drei Zeilen wäre schlechter als ein
+// Export.
+export const DARSTELLUNG_LABEL: Record<'material' | 'weiss' | 'schwarz', string> = {
   material: 'Material',
   weiss: 'Weissmodell',
   schwarz: 'Schwarzmodell',
 };
-
-interface HudZeile {
-  k: string;
-  v: string;
-}
-
-interface PanelSektion {
-  label: string;
-  zeilen: HudZeile[];
-}
 
 export interface ViewportChromeProps {
   /** Guard (README-Auflage «nur wenn Daten vorhanden») — erst wahr, sobald
@@ -100,100 +109,6 @@ export interface ViewportChromeProps {
 export function ViewportChrome(props: ViewportChromeProps) {
   if (!props.sichtbar) return null;
   const rolle = VIEWPORT_ROLLEN[props.modus];
-  const text = VIEWPORT_MODUS_TEXT[props.modus];
-  const aspekt = aspektLabel(props.aspektBreite, props.aspektHoehe);
-
-  const hud: HudZeile[] =
-    props.modus === 'modellieren'
-      ? [
-          { k: 'ANSICHT', v: 'Perspektive' },
-          { k: 'RASTER', v: '1 m / 10 m' },
-          { k: 'GESCHOSS', v: props.geschossLabel ?? '—' },
-          { k: 'KONTEXT', v: `${props.kontextAnzahl} Mesh${props.kontextAnzahl === 1 ? '' : 'e'}` },
-        ]
-      : props.modus === 'kamera'
-        ? [
-            { k: 'BRENNWEITE', v: `${props.brennweiteMm} mm (35 mm-äquiv.)` },
-            { k: 'FORMAT', v: aspekt },
-            { k: 'ZIEL-NODE', v: 'Visualisierung' },
-            { k: 'RENDER', v: props.renderStatusLabel },
-          ]
-        : [
-            { k: 'ANSICHT', v: 'Perspektive' },
-            { k: 'KONTEXT', v: `${props.kontextAnzahl} Mesh${props.kontextAnzahl === 1 ? '' : 'e'}` },
-            { k: 'SPLAT', v: props.splatAktiv ? 'aktiv' : 'aus' },
-            { k: 'SONNE', v: sonnenLabel(props.sonnenDatum) },
-          ];
-
-  const darstellungSektion: PanelSektion = {
-    label: 'Darstellung',
-    zeilen: [
-      { k: 'MODUS', v: DARSTELLUNG_LABEL[props.darstellungsModus] },
-      { k: 'QUALITÄT', v: props.leistungsStufeLabel },
-      { k: 'SCHATTEN', v: props.schattenAn ? 'an' : 'aus' },
-    ],
-  };
-
-  const panel: PanelSektion[] =
-    props.modus === 'modellieren'
-      ? [
-          {
-            label: 'Kamera',
-            zeilen: [
-              { k: 'AZIMUT', v: `${Math.round(((-props.azimutRad * 180) / Math.PI + 360) % 360)}°` },
-              { k: 'NEIGUNG', v: `${Math.round(props.polarGrad)}°` },
-              { k: 'DISTANZ', v: `${props.distanzM.toFixed(1)} m` },
-            ],
-          },
-          {
-            label: 'Szene',
-            zeilen: [
-              { k: 'GESCHOSS', v: props.geschossLabel ?? '—' },
-              { k: 'KONTEXT', v: `${props.kontextAnzahl}` },
-              { k: 'TEXTUREN', v: props.texturenAn ? 'an' : 'aus' },
-            ],
-          },
-          darstellungSektion,
-        ]
-      : props.modus === 'kamera'
-        ? [
-            {
-              label: 'Objektiv',
-              zeilen: [
-                { k: 'BRENNWEITE', v: `${props.brennweiteMm} mm` },
-                { k: 'FORMAT', v: aspekt },
-              ],
-            },
-            {
-              label: 'Render',
-              zeilen: [
-                { k: 'STATUS', v: props.renderStatusLabel },
-                { k: 'CLOUD', v: props.renderCloudLeer ? 'nicht verbunden' : 'verbunden' },
-                { k: 'ZIEL-NODE', v: 'Visualisierung' },
-              ],
-            },
-            darstellungSektion,
-          ]
-        : [
-            {
-              label: 'Kontext',
-              zeilen: [
-                { k: 'KONTEXT-MESHES', v: `${props.kontextAnzahl}` },
-                { k: 'SPLAT', v: props.splatAktiv ? 'aktiv' : 'aus' },
-              ],
-            },
-            {
-              label: 'Sonnenstand',
-              zeilen: [
-                { k: 'DATUM', v: sonnenLabel(props.sonnenDatum) },
-                { k: 'STANDORT', v: props.standortLabel },
-              ],
-            },
-            darstellungSektion,
-          ];
-
-  const aktion =
-    props.modus === 'modellieren' ? props.onEinpassen : props.modus === 'kamera' ? props.onRendern : props.onFuerVisAufnehmen;
 
   return (
     <>
@@ -204,126 +119,13 @@ export function ViewportChrome(props: ViewportChromeProps) {
           Badge-Karte + Werkzeug-Rail) ist ausgezogen — die drei Blöcke
           rendern jetzt einzeln als `DockPanel`-Floats über
           `ViewportChromeHuds.tsx`/`DesignWorkspace.tsx` (s. Datei-
-          Kopfkommentar). Hier bleibt nichts mehr an ihrer Stelle. */}
+          Kopfkommentar). Hier bleibt nichts mehr an ihrer Stelle.
 
-      {/* HUD + EIGENSCHAFTEN (oben rechts, gestapelt) — Ist-Zustand-Entscheid
-          P5 (s. Datei-Kopfkommentar): bleibt fixes Chrome, NICHT Teil der
-          Dock-Float-Registry.
-          BEKANNTE, DOKUMENTIERTE LÜCKE: diese Spalte ist dem Dock-Solver
-          (`DockFlaeche.tsx`) unbekannt (kein gemessener Geschwister-Rect wie
-          `geschossleiste`/`entwurf-dock`) — in der Split-Ansicht (der
-          App-Default, `ui-zustand.ts`), wenn der 3D-Viewport-Anteil dadurch
-          schmal wird UND ein linkes/rechtes Panel offen ist, kann das
-          `viewportOrientierung`-Float (Anker `bottom-left`) mit der UNTEREN
-          Ecke dieser Spalte überlappen (real gemessen, 1400×900, Split +
-          `kv-oeffnen`: ~130×85px Überlapp). `placeFloats()`/`separate()`
-          (dock-kern.ts) kennen nur Floats untereinander, keine externen
-          Ausschlusszonen — ein sauberer Fix bräuchte entweder (a) eine
-          Erweiterung des Solvers um phantome/feste Ausschlussrechtecke oder
-          (b) diese Spalte selbst ins Dock zu migrieren (wie `kennzahlen`/
-          `inspector` in P4) — beides ausserhalb des P5-Umfangs (Auftrag
-          nennt nur die vier HUD-Floats). Bewusst nicht behoben, s.
-          Abschlussbericht «Restpunkte» — Nutzer:innen können das HUD am
-          Griffstreifen frei wegziehen. */}
-      <div className="k-vp-spalte-rechts">
-        <div className="k-glass" style={{ padding: '14px 16px', flex: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <span
-              style={{
-                fontFamily: 'var(--k-font-mono)',
-                fontSize: 10,
-                letterSpacing: '0.16em',
-                textTransform: 'uppercase',
-                color: 'var(--k-ink-faint)',
-              }}
-            >
-              {text.hudTitel}
-            </span>
-            <VIcon name={text.tabIcon} size={15} style={{ color: rolle.farbe }} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }} data-testid="viewport-hud">
-            {hud.map((h) => (
-              <div key={h.k} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--k-ink-faint)' }}>
-                  {h.k}
-                </span>
-                <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 12, color: 'var(--k-ink-soft)' }}>{h.v}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="k-glass" style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-          <div
-            style={{
-              flex: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '12px 16px',
-              borderBottom: '1px solid var(--k-glass-stroke)',
-            }}
-          >
-            <span
-              style={{
-                fontFamily: 'var(--k-font-mono)',
-                fontSize: 10,
-                letterSpacing: '0.16em',
-                textTransform: 'uppercase',
-                color: 'var(--k-ink-faint)',
-              }}
-            >
-              Eigenschaften
-            </span>
-            <Badge hue={rolle.farbe}>{text.badge}</Badge>
-          </div>
-          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {panel.map((sec) => (
-              <div key={sec.label}>
-                <div
-                  style={{
-                    fontFamily: 'var(--k-font-mono)',
-                    fontSize: 10,
-                    letterSpacing: '0.14em',
-                    textTransform: 'uppercase',
-                    color: 'var(--k-ink-faint)',
-                    marginBottom: 8,
-                  }}
-                >
-                  {sec.label}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 1, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--k-glass-stroke)' }}>
-                  {sec.zeilen.map((r) => (
-                    <div key={r.k} style={{ padding: '9px 11px', background: 'rgba(255,255,255,.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 11, color: 'var(--k-ink-faint)' }}>{r.k}</span>
-                      <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 12, color: 'var(--k-ink-soft)' }}>{r.v}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-            {props.modus === 'modellieren' && (
-              <button type="button" className="k-vp-toggle-row k-druck" onClick={props.onTexturToggle} data-testid="viewport-texturen-toggle">
-                <span>Texturen</span>
-                <span style={{ color: props.texturenAn ? rolle.farbe : 'var(--k-ink-faint)' }}>{props.texturenAn ? 'AN' : 'AUS'}</span>
-              </button>
-            )}
-          </div>
-          <div style={{ flex: 'none', padding: '12px 16px', borderTop: '1px solid var(--k-glass-stroke)' }}>
-            <KButton tone="accent" size="sm" style={{ width: '100%' }} onClick={aktion} data-testid="viewport-panel-aktion">
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center', width: '100%' }}>
-                <VIcon name={text.aktionIcon} size={14} />
-                {text.aktionLabel}
-              </span>
-            </KButton>
-          </div>
-        </div>
-      </div>
-
-      {/* v0.7.8 Welle 2 / Paket P5: das Achsenkreuz («ORIENTIERUNG») sass
-          hier vorher als eigenes `position:absolute`-Overlay — jetzt ein
-          `DockPanel`-Float (`ViewportOrientierungHud`, `dock-stationen.ts`
-          `viewportOrientierung`, Anker `bottom-left`). */}
+          v0.7.9 A1: dasselbe gilt jetzt für die vorher hier fest verankerte
+          rechte Spalte (HUD-Statuskarte + Eigenschaften) — s. Datei-
+          Kopfkommentar für die Überlapp-Historie (ROADMAP 357/358) und den
+          Umzugsgrund. `ViewportOrientierungHud` (Achsenkreuz) war schon seit
+          P5 ein Float, unverändert. */}
 
       {/* BOTTOM: kontextuelle Chips + Zoom (unten mittig) */}
       {!props.versteckeBottomLeiste && (
@@ -410,17 +212,10 @@ const CHROME_STYLE = `
   .k-vp-chrome-root a,
   .k-vp-chrome-root [role='button'],
   .k-vp-chrome-root .k-vp-interaktiv { pointer-events: auto; }
-  .k-vp-spalte-rechts {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    bottom: 180px;
-    width: 280px;
-    z-index: 6;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  /* v0.7.9 A1: .k-vp-spalte-rechts (die frühere fixe rechte Säule,
+     position:absolute/right:16) entfällt — HUD-Statuskarte + Eigenschaften
+     sind jetzt DockPanel-Floats (ViewportChromeHuds.tsx, eigene
+     Kopfkommentare dort), ihre Positionierung übernimmt der Dock-Solver. */
   .k-vp-rail {
     display: flex;
     flex-direction: row;

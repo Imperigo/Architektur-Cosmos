@@ -365,21 +365,31 @@ const GUELTIGE_ROLLEN = ['manuell', 'pn', 'pna', 'agent', 'memory', 'generator',
 const DATEN_GUARD_IDS = ['unternehmerplan', 'kennzahlen', 'inspector'] as const;
 
 /** v0.7.8 Welle 2 (P5) — die vier gefloateten Viewport-HUDs (Modus-Leiste/
- *  -Karte/-Werkzeug-Rail/-Orientierungskreuz). Wie die `DATEN_GUARD_IDS`
- *  oben haben sie KEIN `…Offen`-Flag in `ui-zustand.ts` (Sichtbarkeit kommt
- *  aus `viewport-chrome-runtime.ts`s `bereit`, s. `DesignWorkspace.tsx`) —
- *  anders als die Daten-Guards sind sie aber `dock:'float'` statt
- *  `'left'`/`'right'` und NICHT schliessbar (kein Schliessen-Weg im Ist-
- *  Zustand). Eigene Konstante statt Erweiterung von `DATEN_GUARD_IDS`, weil
- *  ein paar Invarianten unten (Wichtigkeits-Band, `min`/`groesse`,
- *  `schliessbar`) für Floats bewusst ANDERS gelten, s. jeweilige Tests. */
-const HUD_FLOAT_IDS = ['viewportModusLeiste', 'viewportModusKarte', 'viewportWerkzeugRail', 'viewportOrientierung'] as const;
+ *  -Karte/-Werkzeug-Rail/-Orientierungskreuz), erweitert v0.7.9 (A1) um die
+ *  zwei ehemals fixen Säulen-Blöcke (HUD-Statuskarte + Eigenschaften-Panel,
+ *  Anker `top-right` — «die letzte Überlappungs-Klasse», ROADMAP 357/358).
+ *  Wie die `DATEN_GUARD_IDS` oben haben sie KEIN `…Offen`-Flag in
+ *  `ui-zustand.ts` (Sichtbarkeit kommt aus `viewport-chrome-runtime.ts`s
+ *  `bereit`, s. `DesignWorkspace.tsx`) — anders als die Daten-Guards sind
+ *  sie aber `dock:'float'` statt `'left'`/`'right'` und NICHT schliessbar
+ *  (kein Schliessen-Weg im Ist-Zustand). Eigene Konstante statt Erweiterung
+ *  von `DATEN_GUARD_IDS`, weil ein paar Invarianten unten (Wichtigkeits-Band,
+ *  `min`/`groesse`, `schliessbar`) für Floats bewusst ANDERS gelten, s.
+ *  jeweilige Tests. */
+const HUD_FLOAT_IDS = [
+  'viewportModusLeiste',
+  'viewportModusKarte',
+  'viewportWerkzeugRail',
+  'viewportOrientierung',
+  'viewportHudStatuskarte',
+  'viewportEigenschaften',
+] as const;
 
 describe('dock-stationen — Registry-Invarianten (design)', () => {
   const panels = stationsPanels('design');
 
-  it('enthält genau 18 Panels (Welle 1: 12 + Welle 2/P4: kennzahlen/inspector + Welle 2/P5: 4 HUD-Floats)', () => {
-    expect(panels.length).toBe(18);
+  it('enthält genau 20 Panels (Welle 1: 12 + Welle 2/P4: kennzahlen/inspector + Welle 2/P5: 4 HUD-Floats + v0.7.9/A1: Statuskarte/Eigenschaften)', () => {
+    expect(panels.length).toBe(20);
   });
 
   it('alle IDs sind paarweise eindeutig', () => {
@@ -400,12 +410,17 @@ describe('dock-stationen — Registry-Invarianten (design)', () => {
     expect(ohneEntsprechung.map((p) => p.id).sort()).toEqual([...DATEN_GUARD_IDS, ...HUD_FLOAT_IDS].sort());
   });
 
-  it('Wichtigkeiten liegen im Band 38-52, ausser den P4-Sonderfällen kennzahlen (60)/inspector (82) und den P5-HUD-Floats', () => {
+  it('Wichtigkeiten liegen im Band 38-52, ausser den P4-Sonderfällen kennzahlen (60)/inspector (82) und den HUD-Floats', () => {
     const erwarteteFloatWichtigkeit: Record<string, number> = {
       viewportModusLeiste: 70,
       viewportModusKarte: 50,
       viewportWerkzeugRail: 64,
       viewportOrientierung: 30,
+      // v0.7.9 A1: bewusst ÜBER allen P5-Floats — die ehemals fixen Säulen-
+      // Blöcke sollen bei `separate()`-Kollisionen ihren Platz behalten
+      // (das jeweils UNwichtigere Panel weicht), s. `dock-stationen.ts`.
+      viewportHudStatuskarte: 72,
+      viewportEigenschaften: 74,
     };
     for (const p of panels) {
       if (p.id === 'kennzahlen') {
@@ -476,7 +491,7 @@ describe('dock-stationen — Registry-Invarianten (design)', () => {
     expect(dockbarePanelIds('design')).toEqual(panels.map((p) => p.id));
   });
 
-  it('"left"/"right"/"float" sind die einzigen dock-Zonen — GENAU die vier HUD-IDs sind "float"', () => {
+  it('"left"/"right"/"float" sind die einzigen dock-Zonen — GENAU die HUD-IDs sind "float"', () => {
     for (const p of panels) {
       expect(['left', 'right', 'float']).toContain(p.dock);
     }

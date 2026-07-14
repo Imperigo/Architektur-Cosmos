@@ -103,7 +103,14 @@ import { useDockTourZustand } from '../../state/dock-tour-zustand';
 // -Orientierungskreuz, s. `dock-stationen.ts` — sind selbst-genügsame
 // Komponenten (lesen `viewport-chrome-runtime.ts` direkt); hier nur die
 // `bereit`-Fahne für die `sichtbar`-Prop der Dock-Panel-Einträge.
-import { ViewportModusKarteHud, ViewportModusLeisteHud, ViewportOrientierungHud, ViewportWerkzeugRailHud } from './ViewportChromeHuds';
+import {
+  ViewportEigenschaftenHud,
+  ViewportHudStatuskarteHud,
+  ViewportModusKarteHud,
+  ViewportModusLeisteHud,
+  ViewportOrientierungHud,
+  ViewportWerkzeugRailHud,
+} from './ViewportChromeHuds';
 import { useViewportChromeRuntime } from '../../state/viewport-chrome-runtime';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
@@ -1853,6 +1860,21 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         id: 'viewportOrientierung',
         sichtbar: viewportHudFloatsSichtbar,
         inhalt: <ViewportOrientierungHud />,
+      },
+      // v0.7.9 A1 («Säulen ins Dock»): HUD-Statuskarte + Eigenschaften-Panel
+      // — die zwei P5-Ausnahmen, jetzt Floats wie die vier oben (gleicher
+      // Sichtbarkeits-Guard, gleiches Selbst-Genügsamkeits-Muster; Anker
+      // `top-right`, s. `dock-stationen.ts`). Damit ist die letzte fixe
+      // ViewportChrome-Säule aufgelöst (ROADMAP 357/358).
+      {
+        id: 'viewportHudStatuskarte',
+        sichtbar: viewportHudFloatsSichtbar,
+        inhalt: <ViewportHudStatuskarteHud />,
+      },
+      {
+        id: 'viewportEigenschaften',
+        sichtbar: viewportHudFloatsSichtbar,
+        inhalt: <ViewportEigenschaftenHud />,
       },
     ],
     [

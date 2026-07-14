@@ -382,20 +382,68 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   // Eingabe in einem Panel) NICHT neu zu lösen.
   const sichtKey = panels.map((p) => `${p.id}:${p.sichtbar ? '1' : '0'}`).join(',');
 
-  // HINWEIS (bewusst KEIN `opts.zuletztGeoeffnet`-Tracking): der Solver
-  // kennt einen `schutz`-Parameter, der EIN Panel vor automatischem
-  // Einklappen bewahrt. Naheliegend wäre, ihn an "zuletzt vom Menschen
-  // geöffnet" zu binden — das widerspricht aber genau dem im Auftrag
-  // geforderten (und in `dock-interaktion.spec.ts` geprüften) Verhalten:
-  // «Pin schützt Grösse, wenn ein zweites Panel aufgeht (das ANDERE klappt
-  // ein)» — das "andere" ist dort GENAU das gerade neu geöffnete, nicht
-  // gepinnte Panel; ein Auto-Schutz für "zuletzt geöffnet" würde das
-  // verhindern. Schutz läuft in Welle 1 daher ausschliesslich über
-  // `angeheftet` (Pin, `PanelOverride.angeheftet` — bereits Teil jedes
-  // Panels über `fx = exp.filter(x=>!x.angeheftet)` in `dock-kern.ts`s
-  // `stack()`). Die «zuletzt geöffnet»-Auto-Reaktion bleibt, wie
-  // `dock-zustand.ts`s Kopfkommentar zu `eingeklappteDiff()` selbst sagt,
-  // Grundlage eines SPÄTEREN Auto-Reaktions-Chips — nicht dieses Pakets.
+  // -----------------------------------------------------------------------
+  // v0.7.9 (A6-Restpunkt der v0.7.8-Abnahme) — `zuletztGeoeffnet`-Schutz:
+  // Der Solver kennt seit P1 einen `schutz`-Parameter (`opts.
+  // zuletztGeoeffnet` → `stack()`s Kandidaten-Filter), der EIN Panel vor
+  // dem automatischen Einklappen bewahrt. Welle 1 hatte ihn BEWUSST nicht
+  // verdrahtet (der damalige Kommentar hier begründete das mit dem Pin-
+  // Testverhalten) — der v0.7.9-Owner-Entscheid dreht das um: ein FRISCH
+  // per Toggle/`ui.dock*`-Befehl geöffnetes Panel darf nicht im selben
+  // Atemzug selbst wieder einklappen (die verwirrendste aller Auto-
+  // Reaktionen; der P5-Hinweis-Chip ERKLÄRTE sie bisher nur). Die zwei
+  // betroffenen Bestands-Specs (Pin-Test/Chip-Test, `dock-interaktion.
+  // spec.ts`) sind auf die neue Semantik nachgezogen — s. dortige
+  // Kommentare.
+  //
+  // Semantik («bis zum nächsten Reflow», Auftrag):
+  //  - GESETZT, wenn GENAU EIN Panel von unsichtbar → sichtbar wechselt
+  //    (menschlicher Toggle / `ui.dock*` — beide laufen über dieselbe
+  //    `sichtbar`-Prop). Bulk-Wechsel (mehrere gleichzeitig, z. B. die
+  //    sechs HUD-Floats beim Viewport-Bereit-Signal oder die Tour-Schritte)
+  //    setzen NICHTS und LÖSCHEN einen bestehenden Schutz — das ist keine
+  //    Einzel-Öffnungsgeste.
+  //  - GELÖSCHT, sobald das geschützte Panel wieder zugeht ODER ein
+  //    externer Reflow kommt (Feld-/Splitterbreiten-/Modus-Wechsel) — ein
+  //    später schrumpfendes Fenster darf das Panel wieder ganz normal nach
+  //    Wichtigkeit einklappen (deshalb bleibt der Rangfolge-Beweis
+  //    «draw 48 vor kennzahlen 60» in `dock-layout.spec.ts` gültig, nur
+  //    jetzt über den Resize-Weg statt über das Öffnen).
+  //
+  // Implementiert als «Ableitung aus vorherigem Render» (setState WÄHREND
+  // des Renders, offizielles React-Muster) statt eines useEffect — so löst
+  // der Öffnen-Klick EINEN solve()-Lauf mit bereits gesetztem Schutz aus,
+  // ohne 1-Frame-Zwischenzustand, in dem das frische Panel kurz als Tab
+  // aufblitzte (und ohne Phantom-Chip). Kein localStorage — reiner
+  // Laufzeit-Zustand (Auftrag).
+  //
+  // Chip-Semantik bleibt UNANGETASTET (P5-Entscheid): `eingeklappteDiff()`
+  // nimmt weiterhin nur das selbst per Chevron bediente Panel aus — klappt
+  // wegen des Schutzes jetzt ein ANDERES Panel ein, benennt der Chip
+  // korrekt dieses andere.
+  const [zuletztGeoeffnet, setZuletztGeoeffnet] = useState<string | undefined>(undefined);
+  const [sichtSnapshot, setSichtSnapshot] = useState(sichtKey);
+  if (sichtSnapshot !== sichtKey) {
+    setSichtSnapshot(sichtKey);
+    const alteSicht = new Map(sichtSnapshot.split(',').map((t) => t.split(':') as [string, string]));
+    const neuOffen = panels.filter((p) => p.sichtbar && alteSicht.get(p.id) === '0').map((p) => p.id);
+    if (neuOffen.length === 1) {
+      setZuletztGeoeffnet(neuOffen[0]);
+    } else if (neuOffen.length > 1) {
+      setZuletztGeoeffnet(undefined);
+    } else if (zuletztGeoeffnet !== undefined) {
+      // Kein neues Panel — prüfen, ob das geschützte gerade zuging.
+      const nochSichtbar = panels.some((p) => p.id === zuletztGeoeffnet && p.sichtbar);
+      if (!nochSichtbar) setZuletztGeoeffnet(undefined);
+    }
+  }
+  const reflowKey = `${station}|${dockModus}|${leftW}|${rightW}|${feld.x},${feld.y},${feld.w},${feld.h}`;
+  const [reflowSnapshot, setReflowSnapshot] = useState(reflowKey);
+  if (reflowSnapshot !== reflowKey) {
+    setReflowSnapshot(reflowKey);
+    if (zuletztGeoeffnet !== undefined) setZuletztGeoeffnet(undefined);
+  }
+
   const overrides = useMemo(() => {
     const sichtbarById = new Map(panels.map((p) => [p.id, p.sichtbar]));
     const ergebnis: Record<string, PanelOverride> = {};
@@ -520,8 +568,23 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
 
   const [floatDragId, setFloatDragId] = useState<string | undefined>(undefined);
   const floatDatenRef = useRef<FloatDragDatensatz | null>(null);
+  const floatAufraeumenRef = useRef<(() => void) | null>(null);
 
+  // v0.7.9 (A1, Regressions-Fix am P4-Bestand): die window-Listener werden
+  // SYNCHRON hier im Start-Handler registriert, nicht mehr über einen
+  // `useEffect([floatDragId])`. Der Effekt-Weg hatte ein latentes Renn-
+  // fenster: passive Effekte laufen erst NACH Commit+Paint — unter Last
+  // (SwiftShader + inzwischen 20 Design-Panels) verarbeitete der Browser
+  // die gesamte Pointer-Sequenz eines schnellen Drags (moves + up), BEVOR
+  // der Listener hing; der Drag verpuffte komplett und der liegengebliebene
+  // Späte-Listener vergiftete die nächste Geste (real ab P5+2 Floats
+  // reproduziert, `dock-interaktion.spec.ts` «HUD frei ziehen»/«Pop-out»).
+  // Closure-Semantik ist identisch zum alten Effekt (`station` ist über die
+  // Lebensdauer einer DockFlaeche konstant, `panelOverrideSetzen` eine
+  // stabile Store-Action, `vp` steckt wie bisher in `daten`). Der
+  // `floatDragId`-State bleibt NUR als Solver-Eingabe (`floatGesperrtId`).
   const floatDragStart = (id: string, rect: DockRect, clientX: number, clientY: number, anker: FloatAnker | undefined) => {
+    floatAufraeumenRef.current?.(); // Sicherheitsnetz gegen Doppel-Starts
     floatDatenRef.current = {
       id,
       startFx: rect.x,
@@ -534,10 +597,7 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       vp: ergebnis.viewport,
     };
     setFloatDragId(id);
-  };
 
-  useEffect(() => {
-    if (!floatDragId) return;
     const bewege = (ev: PointerEvent) => {
       const daten = floatDatenRef.current;
       if (!daten) return;
@@ -550,34 +610,36 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       ny = magnet(ny, [vp.y, vp.y + (vp.h - daten.h) / 2, vp.y + vp.h - daten.h], FLOAT_MAGNET_T);
       panelOverrideSetzen(station, daten.id, { fx: Math.round(nx), fy: Math.round(ny) });
     };
-    const loslassen = () => {
+    const aufraeumen = () => {
       window.removeEventListener('pointermove', bewege);
       window.removeEventListener('pointerup', loslassen);
       window.removeEventListener('pointercancel', loslassen);
+      floatAufraeumenRef.current = null;
+    };
+    const loslassen = () => {
+      aufraeumen();
       const daten = floatDatenRef.current;
       floatDatenRef.current = null;
       setFloatDragId(undefined);
       if (!daten) return;
-      const anker = ankerAutoPosition(daten.anker, daten.w, daten.h, daten.vp);
+      const anker2 = ankerAutoPosition(daten.anker, daten.w, daten.h, daten.vp);
       const aktuellesLayout = useDockZustand.getState().layoutFuer(station);
       const aktuellesOverride = aktuellesLayout.panels[daten.id];
       const curX = aktuellesOverride?.fx ?? daten.startFx;
       const curY = aktuellesOverride?.fy ?? daten.startFy;
-      const distanz = Math.hypot(curX - anker.x, curY - anker.y);
+      const distanz = Math.hypot(curX - anker2.x, curY - anker2.y);
       if (distanz <= FLOAT_SNAPBACK_T) {
         panelOverrideSetzen(station, daten.id, { fx: undefined, fy: undefined });
       }
     };
+    floatAufraeumenRef.current = aufraeumen;
     window.addEventListener('pointermove', bewege);
     window.addEventListener('pointerup', loslassen);
     window.addEventListener('pointercancel', loslassen);
-    return () => {
-      window.removeEventListener('pointermove', bewege);
-      window.removeEventListener('pointerup', loslassen);
-      window.removeEventListener('pointercancel', loslassen);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [floatDragId, station]);
+  };
+
+  // Unmount mitten im Drag (theoretisch: Stationswechsel) — Listener lösen.
+  useEffect(() => () => floatAufraeumenRef.current?.(), []);
 
   const popOut = (id: string, rect: DockRect) => {
     panelOverrideSetzen(station, id, {
@@ -622,6 +684,9 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       overrides,
       ...(redockAktivId !== undefined ? { gedraggtId: redockAktivId } : {}),
       ...(floatDragId !== undefined ? { floatGesperrtId: floatDragId } : {}),
+      // v0.7.9 (A6-Restpunkt): das frisch geöffnete Panel klappt nie selbst
+      // ein — s. Kommentarblock bei `zuletztGeoeffnet` oben.
+      ...(zuletztGeoeffnet !== undefined ? { zuletztGeoeffnet } : {}),
     };
     const haupt = solve(defs, { feld, ...basisOpts });
     // P6 (Konzept B): ctop-Umbruch-Kompensation — NUR die Panels, die der
@@ -661,7 +726,7 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
     ];
     wickleCtopStreifen(rects, ctopIds, feld.y, haupt.viewport);
     return { rects, viewport: haupt.viewport, splitters };
-  }, [defs, feld, dockModus, leftW, rightW, overrides, redockAktivId, floatDragId]);
+  }, [defs, feld, dockModus, leftW, rightW, overrides, redockAktivId, floatDragId, zuletztGeoeffnet]);
 
   // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — exponiert die aktuellen Panel-
   // Kopf-Rechtecke an `useDockOrbRuntime`, NACH jedem `solve()`-Lauf (also
