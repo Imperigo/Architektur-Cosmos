@@ -57,7 +57,10 @@ test.describe('Kosmo-Präzisier (5B): Türen platzieren + Kompliance-Fixes als e
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
     await page.click('[data-testid="load-tkb"]');
-    await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+    // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+    // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+    // `dock-layout.spec.ts` Kommentar).
+    await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 
     // Frisches Geschoss mit Korridor + Zimmer, OFFEN aneinandergrenzend (keine
     // Wand, keine Tür) — genau das Muster aus `packages/kosmo-kernel/test/
@@ -154,7 +157,10 @@ test.describe('Kosmo-Präzisier (5B): Türen platzieren + Kompliance-Fixes als e
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
     await page.click('[data-testid="load-tkb"]');
-    await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+    // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+    // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+    // `dock-layout.spec.ts` Kommentar).
+    await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 
     // Zwei UNABHÄNGIGE Befunde: ein zu schmales Zimmer (2.0 m < 2.40 m
     // Richtwert — NICHT automatisierbar, bleibt «manuell») und eine zu

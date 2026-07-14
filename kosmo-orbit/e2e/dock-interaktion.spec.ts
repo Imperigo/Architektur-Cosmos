@@ -23,7 +23,16 @@ async function oeffneDesignMitTkb(page: Page): Promise<void> {
   await page.goto('/');
   await page.evaluate(() => localStorage.removeItem('kosmo.dock.v1'));
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): vorher `locator('text=KENNZAHLEN')` — seit
+  // `kennzahlen` selbst ein Dock-Panel ist, trägt auch dessen Dock-Kopf
+  // («Doppel-Chrome», `DockPanel.tsx`) den Titel «Kennzahlen» als Text,
+  // zusätzlich zur schon vorher vorhandenen Badge im Panel-Inhalt — ein
+  // reiner Text-Locator träfe jetzt beide (Playwright-Strict-Bruch).
+  // PANEL-testid statt Inhalt-testid, weil der Pin-Test dieser Datei mit
+  // extrem knapper Fensterhöhe fährt (1400×420): dort klappt der Solver das
+  // Kennzahlen-Panel planmässig zum Tab (Inhalt unmountet) — das Panel-
+  // Rechteck selbst ist in JEDEM Zustand da.
+  await expect(page.locator('[data-testid="dock-panel-kennzahlen"]')).toBeVisible();
 }
 
 interface Box {
@@ -230,4 +239,184 @@ test('Persistenz: reload behält die per Splitter gesetzte leftW', async ({ page
   await expect(panel).toBeVisible();
   const breiteNachReload = (await stabileBox(panel)).width;
   expect(Math.abs(breiteNachReload - breiteVorReload)).toBeLessThanOrEqual(1);
+});
+
+// ---------------------------------------------------------------------------
+// v0.7.8 Welle 2 / Paket P4 («Header-Drag & Neu-Andocken») — Beweise für
+// `DockSnapZonen.tsx` + die Drag-Erweiterungen in `DockPanel.tsx`/
+// `DockFlaeche.tsx`: Redock-Drag (Snap-Zonen links/rechts/schwebend),
+// Pop-out, freies Verschieben eines schwebenden Panels (Magnet + Snap-
+// zurück), Touch-Variante.
+// ---------------------------------------------------------------------------
+
+/** Liest `kosmo.dock.v1` und gibt die `PanelOverride` EINES Panels der
+ *  aktiven `A:design`-Layout-Zeile zurück (oder `undefined`, wenn (noch)
+ *  keine Overrides existieren) — dieselbe Rohform wie `dock-zustand.ts`s
+ *  `DockSpeicher`, hier nur lesend/typlos für die Spec gebraucht. */
+async function leseOverride(
+  page: Page,
+  panelId: string,
+): Promise<{ dock?: string; fx?: number; fy?: number; anker?: string } | undefined> {
+  return page.evaluate((id) => {
+    const roh = localStorage.getItem('kosmo.dock.v1');
+    if (!roh) return undefined;
+    const geparst = JSON.parse(roh) as { layouts?: Record<string, { panels?: Record<string, unknown> }> };
+    return geparst.layouts?.['A:design']?.panels?.[id] as
+      | { dock?: string; fx?: number; fy?: number; anker?: string }
+      | undefined;
+  }, panelId);
+}
+
+/** Greift den Kopf (Ziehgriff) eines Dock-Panels an einer Stelle, die
+ *  garantiert KEIN `<button>` trifft — die Kopf-Buttons sitzen alle am
+ *  rechten Rand (`.k-dock-panel-titel` hat `flex:1 1 auto`, füllt den Rest),
+ *  20px vom linken Rand liegt darum immer auf Rollenpunkt/Titel. */
+async function kopfGriff(page: Page, panelId: string): Promise<{ locator: Locator; box: Box }> {
+  const kopf = page.locator(`[data-testid="dock-panel-${panelId}"] .k-dock-panel-kopf`);
+  const box = (await kopf.boundingBox())!;
+  return { locator: kopf, box };
+}
+
+test('Header-Drag: Kennzahlen von rechts nach links (Snap-Zone links) dockt neu an, nichts überlappt', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+
+  const panel = page.locator('[data-testid="dock-panel-kennzahlen"]');
+  await expect(panel).toBeVisible();
+  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  const vorher = await stabileBox(panel);
+  // Kennzahlen sitzt anfangs rechts (dock:'right', wichtigkeit 60).
+  expect(vorher.x).toBeGreaterThan(feldBox.x + feldBox.width / 2);
+
+  const { box: kopfBox } = await kopfGriff(page, 'kennzahlen');
+  const startX = kopfBox.x + 20;
+  const startY = kopfBox.y + kopfBox.height / 2;
+
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  // In die linke Snap-Zone ziehen (deutlich unter der Feld-Mitte, nahe der
+  // linken Feldkante) — die Zone muss währenddessen als aktiv markiert sein.
+  await page.mouse.move(feldBox.x + 20, feldBox.y + 60, { steps: 10 });
+  await expect(page.locator('[data-testid="dock-snap-links"]')).toHaveAttribute('data-aktiv', 'true');
+  await expect(page.locator('[data-testid="dock-drag-geist"]')).toBeVisible();
+  await page.mouse.up();
+
+  const override = await leseOverride(page, 'kennzahlen');
+  expect(override?.dock).toBe('left');
+
+  const nachher = await stabileBox(panel);
+  expect(nachher.x).toBeLessThan(feldBox.x + feldBox.width / 2);
+  // Snap-Zonen-Overlay verschwindet nach dem Loslassen wieder.
+  await expect(page.locator('[data-testid="dock-snap-links"]')).toHaveCount(0);
+
+  // Nichts überlappt: der zentrale Viewport bleibt kollisionsfrei und ≥380px.
+  const viewportBox = await page.locator('[data-testid="viewport3d"]').boundingBox();
+  expect(viewportBox!.width).toBeGreaterThanOrEqual(380);
+});
+
+test('Touch-Variante: Header-Drag reagiert auf pointerType=touch', async ({ page }) => {
+  await oeffneDesignMitTkb(page);
+
+  const panel = page.locator('[data-testid="dock-panel-kennzahlen"]');
+  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  const vorher = await stabileBox(panel);
+  expect(vorher.x).toBeGreaterThan(feldBox.x + feldBox.width / 2);
+
+  const { locator: kopf, box: kopfBox } = await kopfGriff(page, 'kennzahlen');
+  const startX = kopfBox.x + 20;
+  const startY = kopfBox.y + kopfBox.height / 2;
+  const zielX = feldBox.x + 20;
+  const zielY = feldBox.y + 60;
+  const init = { pointerId: 11, pointerType: 'touch', bubbles: true, clientX: startX, clientY: startY };
+
+  // WICHTIG: nur der pointerdown geht an den Kopf — pointermove/pointerup
+  // werden auf <body> dispatcht. Der Redock-Drag nimmt das gegriffene Panel
+  // sofort aus dem Solver-Routing (`gedraggtId`, Panel unmountet zum Geist)
+  // — ein dispatchEvent auf den (weg-)gelösten Kopf-Locator würde ewig auf
+  // ein wieder auftauchendes Element warten. `DockFlaeche` hört ohnehin auf
+  // window-Listener (bubbles:true reicht).
+  await kopf.dispatchEvent('pointerdown', init);
+  const body = page.locator('body');
+  await body.dispatchEvent('pointermove', { ...init, clientX: zielX, clientY: zielY });
+  await expect(page.locator('[data-testid="dock-snap-links"]')).toHaveAttribute('data-aktiv', 'true');
+  await body.dispatchEvent('pointerup', { ...init, clientX: zielX, clientY: zielY });
+
+  const override = await leseOverride(page, 'kennzahlen');
+  expect(override?.dock).toBe('left');
+  const nachher = await stabileBox(panel);
+  expect(nachher.x).toBeLessThan(feldBox.x + feldBox.width / 2);
+});
+
+/** Zieht ein SCHWEBENDES Panel am Kopf-Griff, sodass seine LINKE OBERE Ecke
+ *  möglichst bei (zielX, zielY) landet (Klemmung/Magnet der App dürfen das
+ *  Ergebnis verschieben — genau das prüfen die Tests). Griffpunkt ist 20px
+ *  vom linken Panel-Rand (sicher auf Rollenpunkt/Titel, nie auf einem
+ *  Kopf-Knopf) und vertikal in der Kopfmitte (~17px). */
+async function ziehePanelNach(page: Page, panelId: string, zielX: number, zielY: number): Promise<void> {
+  const panel = page.locator(`[data-testid="dock-panel-${panelId}"]`);
+  const pBox = (await panel.boundingBox())!;
+  await page.mouse.move(pBox.x + 20, pBox.y + 17);
+  await page.mouse.down();
+  await page.mouse.move(zielX + 20, zielY + 17, { steps: 10 });
+  await page.mouse.up();
+}
+
+test('Pop-out: Panel schwebt frei, lässt sich ziehen (Magnet an Kante) und snappt nahe dem Ursprung zurück', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="kv-oeffnen"]');
+  const panel = page.locator('[data-testid="dock-panel-kvOffen"]');
+  await expect(panel).toBeVisible();
+  await expect(panel).toHaveAttribute('data-schwebend', 'false');
+
+  await page.click('[data-testid="dock-panel-kvOffen-popout"]');
+  await expect(panel).toHaveAttribute('data-schwebend', 'true');
+  await expect(page.locator('[data-testid="dock-panel-kvOffen-redock"]')).toBeVisible();
+  const geschwebt = await stabileBox(panel);
+  const w = geschwebt.width;
+
+  // Die Klemm-Grenzen des floatmove sind der SOLVER-Viewport (zentraler
+  // Bereich zwischen den Spalten), nicht das `viewport3d`-DOM-Element — der
+  // Test SONDIERT sie deshalb mit Extrem-Drags, statt sie aus einem anderen
+  // Element zu raten: weit links/oben/rechts ziehen → die geklemmte Position
+  // IST die jeweilige Viewport-Kante.
+  await ziehePanelNach(page, 'kvOffen', 0, 300);
+  const vpX = (await stabileBox(panel)).x;
+  await ziehePanelNach(page, 'kvOffen', 5000, 300);
+  const vpRechts = (await stabileBox(panel)).x + w; // rechte Viewport-Kante
+  await ziehePanelNach(page, 'kvOffen', 500, 0);
+  const vpY = (await stabileBox(panel)).y;
+  expect(vpRechts - vpX).toBeGreaterThan(300); // Sanity: echter Zwischenraum
+
+  // 1) Frei ziehen ABSEITS jeder Magnet-Linie (>16px zu Kanten/Mitte):
+  //    Panel bleibt an der Zielposition liegen (kein ungewolltes Einrasten).
+  const frei = vpX + 60;
+  await ziehePanelNach(page, 'kvOffen', frei, 300);
+  const nachFrei = await stabileBox(panel);
+  expect(Math.abs(nachFrei.x - frei)).toBeLessThanOrEqual(6);
+
+  // 2) NAHE der linken Kante (<16px) loslassen — Magnet rastet EXAKT ein.
+  await ziehePanelNach(page, 'kvOffen', vpX + 10, 300);
+  const anKante = await stabileBox(panel);
+  expect(Math.abs(anKante.x - vpX)).toBeLessThanOrEqual(2);
+
+  // 3) Zurück nahe der Ausgangsanker-Position (Konzept A `anker:'top'`:
+  //    oben-mittig im Viewport, 14px Pad — `dock-kern.ts` `placeFloats()`)
+  //    — Loslassen <30px daneben löscht `fx`/`fy` wieder (Snap-zurück).
+  const ankerX = vpX + (vpRechts - vpX - w) / 2;
+  const ankerY = vpY; // vpY-Probe oben ist bereits die geklemmte Pad-Position
+  await ziehePanelNach(page, 'kvOffen', ankerX + 8, ankerY + 8);
+  await stabileBox(panel);
+
+  const override = await leseOverride(page, 'kvOffen');
+  expect(override?.dock).toBe('float'); // weiterhin schwebend …
+  expect(override?.fx).toBeUndefined(); // … aber ohne eigene fx/fy — zurück am Anker.
+
+  // Re-Dock-Knopf: löscht auch `dock`/`anker` — zurück in die Ursprungsspalte.
+  await page.click('[data-testid="dock-panel-kvOffen-redock"]');
+  await expect(panel).toHaveAttribute('data-schwebend', 'false');
+  const overrideNachRedock = await leseOverride(page, 'kvOffen');
+  expect(overrideNachRedock?.dock).toBeUndefined();
 });

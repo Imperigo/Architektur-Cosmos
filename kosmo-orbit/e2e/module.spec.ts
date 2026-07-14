@@ -845,6 +845,14 @@ test('Treppen-Formen: U-Lauf mit Wendepodest per Werkzeug zeichnen', async ({ pa
   });
   await page.reload();
   await page.click('[data-testid="module-design"]');
+  // v0.7.8 Welle 2 (P4): `kennzahlen` ist jetzt ein IMMER offenes Dock-Panel
+  // der rechten Spalte — der Spalten-Stack füllt die verfügbare Höhe
+  // (`waterfill`, dock-kern.ts) und läge damit über dem zweiten Plan-Klick
+  // bei x=950 (das alte absolute Panel war nur so hoch wie sein Inhalt und
+  // endete über y=480). Einklappen zum 34px-Tab ist der vorgesehene
+  // Nutzerweg, die Plan-Fläche freizulegen — testids/Klickpunkte des
+  // eigentlichen Treppen-Flows bleiben unverändert.
+  await page.click('[data-testid="dock-panel-kennzahlen-einklappen"]');
   await page.click('button:text-is("Treppe")');
   await waehleOption(page, 'treppen-form', 'u');
   // Zwei Klicks im Plan (rechte Hälfte, auto-zentriert um 5000/3000)

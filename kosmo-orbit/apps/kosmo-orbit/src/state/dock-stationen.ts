@@ -1,30 +1,39 @@
 import type { PanelDef } from './dock-kern';
 
 /**
- * Stations-Registry (v0.7.8 Welle 1 / Paket P2 — «Intelligente Werkzeugtabs»)
- * — die `PanelDef[]`-Datensätze je Station für den Dock-Kern (`dock-kern.ts`,
- * NUR importiert, nicht verändert). Diese Datei ist reine Deklaration: kein
- * DOM, kein Store, keine Persistenz (die lebt in `dock-zustand.ts`).
+ * Stations-Registry (v0.7.8 Welle 1 / Paket P2, erweitert Welle 2 / Paket P4
+ * — «Intelligente Werkzeugtabs») — die `PanelDef[]`-Datensätze je Station für
+ * den Dock-Kern (`dock-kern.ts`, NUR importiert, nicht verändert). Diese
+ * Datei ist reine Deklaration: kein DOM, kein Store, keine Persistenz (die
+ * lebt in `dock-zustand.ts`).
  *
- * **Welle 1 (P2)**: Station `'design'` ist vollständig definiert — die 12
- * Panels, die in P3 aus ihrer heutigen Kollisions-/Handposition
- * (`DesignWorkspace.tsx`, feste `position:'absolute'`-Overlays) in den neuen
- * Dock migriert werden. `'plan'`/`'vis'` folgen in Welle 3 (leere Arrays,
- * s.u.).
+ * **Welle 1 (P2)**: Station `'design'` startete mit den 12 Panels, die in P3
+ * aus ihrer heutigen Kollisions-/Handposition (`DesignWorkspace.tsx`, feste
+ * `position:'absolute'`-Overlays) in den neuen Dock migriert wurden.
+ * **Welle 2 (P4)**: zwei weitere — `kennzahlen`/`inspector` — kommen hinzu
+ * (die letzten zwei verbliebenen Design-Überlagerungen ausserhalb des Docks,
+ * s. u.), macht 14 Panels total. `'plan'`/`'vis'` folgen in Welle 3 (leere
+ * Arrays, s.u.).
  *
  * **WICHTIG — ID-Kopplung an `ui-zustand.ts`**: Jede `PanelDef.id` unten ist
  * 1:1 der kanonische `PanelId`-String aus `ui-zustand.ts` (`PANEL_IDS`,
  * Z.52-82), NICHT ein verkürzter/eigener Name — z.B. `'rasterOffen'`, nicht
  * `'raster'`. Das erlaubt P3 die Booleans (`studieOffen`, `drawOffen`, …)
  * direkt als `eingeklappt`/`geschlossen`-Quelle zu verdrahten, ohne eine
- * zweite Namenstabelle zu pflegen. EINE Ausnahme: `'unternehmerplan'` hat
- * (Stand heute) KEIN `…Offen`-Flag in `ui-zustand.ts` — das Panel ist ein
- * Daten-Guard (rendert immer, sobald ein Unternehmerplan geladen ist, s.
- * `DesignWorkspace.tsx` Kommentar C4b/C-E4). Diese Lücke ist eine bewusste,
- * dokumentierte Abweichung (s. Test `dock-stationen.test.ts` und der
- * Abschlussbericht von P2) — P3 muss entscheiden, ob `unternehmerplanOffen`
- * ergänzt wird oder ob der Dock dieses eine Panel weiter datengetrieben statt
- * togglegetrieben behandelt.
+ * zweite Namenstabelle zu pflegen. DREI Ausnahmen ohne `…Offen`-Flag in
+ * `ui-zustand.ts` — alle drei sind Daten-Guards (rendern, sobald die
+ * jeweilige Bedingung zutrifft, kein Boolean-Toggle):
+ *   - `'unternehmerplan'` — sobald ein Unternehmerplan geladen ist (s.
+ *     `DesignWorkspace.tsx` Kommentar C4b/C-E4).
+ *   - `'kennzahlen'` (P4) — IMMER sichtbar in der Design-Station (die
+ *     Live-Kennzahlen liefen schon vorher ohne eigenen Toggle, s.
+ *     `KennzahlenPanel.tsx`); Sichtbarkeit für `DockFlaeche` ist schlicht
+ *     `true`, kein Store-Feld nötig.
+ *   - `'inspector'` (P4) — sobald eine Entität ausgewählt ist (`selection`,
+ *     `state/project-store.ts`), gespiegelt aus `Inspector.tsx`s eigenem
+ *     `if (!entity) return null`-Guard.
+ * Diese Lücke ist eine bewusste, dokumentierte Abweichung (s. Test
+ * `dock-zustand.test.ts`s Registry-Invarianten).
  *
  * **Wichtigkeits-Rangfolge (Band 38-52, unter `checks`≈60, über `orient`≈30
  * — Bandgrenzen aus dem Design-Handoff-Prototyp, hier nicht importiert, weil
@@ -56,7 +65,15 @@ import type { PanelDef } from './dock-kern';
  *   52 studien            — Volumenstudien/Massenvarianten: die am längsten
  *                           offen bearbeitete Fähigkeit (Owner-Rundgang
  *                           0.6.2 S.8 — iterative Geschosshöhen-/GF-Runden),
- *                           daher am wichtigsten, klappt zuletzt ein.
+ *                           daher am wichtigsten unter dem Welle-1-Band,
+ *                           klappt innerhalb dieses Bands zuletzt ein.
+ *   60 kennzahlen (P4)    — der `checks`-Tier aus dem Prototyp: Live-
+ *                           Kennzahlen/Checks sind IMMER sichtbar, sollen
+ *                           daher später einklappen als jedes Welle-1-Panel
+ *                           (auch `draw`/`unternehmerplan`).
+ *   82 inspector (P4)     — solange eine Entität ausgewählt ist, ist ihre
+ *                           Bearbeitung die unmittelbare Nutzerabsicht —
+ *                           klappt praktisch nie zugunsten anderer Panels.
  *
  * `min`/`groesse` sind Höhen-Budgets für den Stack-Solver (NICHT die
  * Panel-Breite — die bleibt in der Dock-Spalte einheitlich `leftW`/`rightW`),
@@ -211,6 +228,62 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     dock: 'right',
     min: 170,
     groesse: 320,
+    start: 'zu',
+    schliessbar: true,
+    bewegbar: true,
+  },
+  // ---- v0.7.8 Welle 2 (P4) — Rechts-Stack-Migration -----------------------
+  // `kennzahlen` (KennzahlenPanel.tsx) und `inspector` (Inspector.tsx) waren
+  // bislang die letzten zwei Design-Überlagerungen ausserhalb des Docks
+  // (`DesignWorkspace.tsx` rendert sie noch als eigene `<KennzahlenPanel/>`/
+  // `<Inspector/>`-Geschwister NEBEN `DockFlaeche` — P4 macht daraus zwei
+  // weitere `DockPanelEintrag`s derselben rechten Spalte). Beide sind reine
+  // Daten-Guards wie `unternehmerplan` oben (KEIN `…Offen`-Flag in
+  // `ui-zustand.ts`, s. `dock-zustand.test.ts`s erweiterte Registry-
+  // Invarianten) — `kennzahlen` ist in der Design-Station IMMER sichtbar
+  // (Sichtbarkeit = `true`, kein Toggle), `inspector` nur solange eine
+  // Entität ausgewählt ist (Sichtbarkeit = `selection.length > 0`, gespiegelt
+  // aus `Inspector.tsx`s eigenem `if (!entity) return null`-Guard).
+  //
+  // Wichtigkeit: `kennzahlen` = 60 — der «checks»-Tier aus dem Design-Handoff-
+  // Prototyp (s. Kopfkommentar oben, «unter `checks`≈60»), also wichtiger als
+  // JEDES Panel der Design-Station (Band 38-52 + `unternehmerplan`/`draw`
+  // 47/48) — die Live-Kennzahlen/Checks sollen bei Platzmangel als LETZTES
+  // einklappen, `draw` (48) als vorletztes. `inspector` = 82 — noch wichtiger:
+  // solange eine Entität ausgewählt ist, ist das Bearbeiten dieser Entität
+  // die unmittelbare Absicht des Nutzers, das darf so gut wie nie einklappen.
+  {
+    id: 'kennzahlen',
+    titel: 'Kennzahlen',
+    rolle: 'generator',
+    wichtigkeit: 60,
+    dock: 'right',
+    min: 200,
+    groesse: 380,
+    // `start` ist wie bei `unternehmerplan` oben irrelevant für die Design-
+    // Station: `DockFlaeche.tsx` überschreibt `geschlossen` bei JEDEM Panel
+    // immer aus der `sichtbar`-Prop (Daten-Guard statt `def.start`) — `'zu'`
+    // hier ist nur die Registry-weite Konvention, kein tatsächlicher Default.
+    start: 'zu',
+    schliessbar: true,
+    bewegbar: true,
+  },
+  {
+    id: 'inspector',
+    titel: 'Inspector',
+    // `dock-kern.ts`s `PanelDef['rolle']`-Union kennt `'system'`, nicht
+    // `'office'` (dieselbe dokumentierte Diskrepanz wie im Kopfkommentar
+    // oben) — `dock-flaeche.css` legt den Alias `--k-rolle-system` auf
+    // `--k-rolle-office` (Prüfung: `dock-zustand.test.ts`).
+    rolle: 'system',
+    wichtigkeit: 82,
+    dock: 'right',
+    min: 180,
+    groesse: 320,
+    // `start` ist wie bei `unternehmerplan` oben irrelevant für die Design-
+    // Station: `DockFlaeche.tsx` überschreibt `geschlossen` bei JEDEM Panel
+    // immer aus der `sichtbar`-Prop (Daten-Guard statt `def.start`) — `'zu'`
+    // hier ist nur die Registry-weite Konvention, kein tatsächlicher Default.
     start: 'zu',
     schliessbar: true,
     bewegbar: true,

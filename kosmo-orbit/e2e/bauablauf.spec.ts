@@ -22,7 +22,10 @@ import { readFileSync } from 'node:fs';
 test('Bauablauf-Panel: Gewerke-Tabelle sichtbar, Reihenfolge stimmt, Ehrlichkeits-Hinweis sichtbar, Export lädt SVG', async ({ page }) => {
   await page.goto('/');
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 
   await page.click('[data-testid="bauablauf-oeffnen"]');
   await expect(page.locator('[data-testid="bauablauf-panel"]')).toBeVisible();
@@ -55,6 +58,9 @@ test('Bauablauf-Panel: Gewerke-Tabelle sichtbar, Reihenfolge stimmt, Ehrlichkeit
   const pfad = await download.path();
   const svg = readFileSync(pfad!, 'utf8');
   expect(svg).toContain('<svg');
-  expect(svg).toContain('Bauablaufplan');
+  // Seit v0.7.3 D4 (447e598, Blatt-Typografie «Zwei Stimmen») setzt das Blatt
+  // den Titel versal («BAUABLAUFPLAN») — die Prüfung ist deshalb case-
+  // insensitiv, wie der analoge 344er-Fix der Blatt-Pflege-Assertion.
+  expect(svg.toLowerCase()).toContain('bauablaufplan');
   expect(svg).toContain('Abgeleiteter Grob-Terminplan, ersetzt keine Bauleitung.');
 });

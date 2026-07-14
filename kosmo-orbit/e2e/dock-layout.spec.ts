@@ -18,13 +18,29 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
  * 280ms, bis `getBoundingClientRect()` einen stabilen Endwert liefert.
  */
 
-const FIXE_ELEMENTE = ['geschossleiste', 'entwurf-dock', 'kennzahlen', 'statusleiste'] as const;
+// v0.7.8 Welle 2 (P4): `kennzahlen` ist KEIN fixes Chrome-Element mehr — es
+// ist selbst ein Dock-Panel der rechten Spalte (`dock-stationen.ts`). Für die
+// Disjunktions-Prüfung zählt jetzt sein PANEL-Rechteck (`dock-panel-
+// kennzahlen`, immer offen — steht darum in jedem `selektorMap`-Aufruf unten
+// in der Panel-Liste). Der INHALT (`data-testid="kennzahlen"`) taugt seit P4
+// nicht mehr als Mess-Ziel: er liegt in einem Scroll-Container
+// (`.k-dock-panel-inhalt`) und sein BoundingRect ist die UNGECLIPPTE
+// Layout-Höhe (real gemessen: ~850px Inhalt in einem ~550px-Panel), die
+// visuell gar nicht gerendert wird — geometrische Vergleiche damit wären
+// Phantom-Überlappungen.
+const FIXE_ELEMENTE = ['geschossleiste', 'entwurf-dock', 'statusleiste'] as const;
 
 async function oeffneDesignMitTkb(page: Page): Promise<void> {
   await page.goto('/');
   await page.evaluate(() => localStorage.removeItem('kosmo.dock.v1'));
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): vorher `locator('text=KENNZAHLEN')` — seit
+  // `kennzahlen` selbst ein Dock-Panel ist, trägt auch dessen Dock-Kopf
+  // («Doppel-Chrome», `DockPanel.tsx`) den Titel «Kennzahlen» als Text,
+  // zusätzlich zur schon vorher vorhandenen Badge im Panel-Inhalt — ein
+  // reiner Text-Locator träfe jetzt beide (Playwright-Strict-Bruch). Der
+  // testid-Locator auf den Panel-INHALT selbst bleibt eindeutig.
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 }
 
 interface Box {
@@ -89,7 +105,7 @@ function ueberlappenSich(a: Box, b: Box, toleranz = 1): boolean {
   );
 }
 
-/** BEKANNTE, VORBESTEHENDE Kollisionen ausserhalb dieses Pakets — beide
+/** BEKANNTE, VORBESTEHENDE Kollisionen ausserhalb dieses Pakets —
  *  reproduzierbar auch auf dem unveränderten `main`, PER Probe-Skript
  *  nachgemessen, unabhängig vom Dock:
  *   1. Bei genug Geschossen (die TKB-Demo hat 7, `demo-tkb.ts`) wächst die
@@ -97,20 +113,17 @@ function ueberlappenSich(a: Box, b: Box, toleranz = 1): boolean {
  *      sie den vertikal MITTIG verankerten EntwurfsDock (`orbit065-dock`,
  *      `top:50%`) überlappt (1400×900: Geschossleiste y 139-476,
  *      EntwurfsDock y 386-653).
- *   2. `KennzahlenPanel` (`top:44`, `maxHeight:calc(100% - 56px)`) kann bei
- *      genug Befunden so tief wachsen, dass es die Statusleiste
- *      (`bottom:12`) überlappt (1400×900: Kennzahlen bis y≈888,
- *      Statusleiste ab y≈862).
- *  Beide Paare bestehen aus Elementen, die «NICHT ins Dock wandern» (Auftrag,
- *  Abschnitt 3) bzw. laut Auftrag in Welle 1 «unangetastet» bleiben
- *  (KennzahlenPanel, Welle 2) — ihre gegenseitige Kollision zu beheben ist
- *  NICHT Teil von P3 (weder Solver noch migrierte Panels sind daran
- *  beteiligt). Diese zwei Paare bleiben darum bewusst von der Prüfung
- *  ausgenommen; JEDES andere Paar (jedes migrierte Panel gegen jedes
+ *  (Der frühere zweite Eintrag — `kennzahlen`×`statusleiste`, der alte
+ *  absolute Overlay mit `maxHeight:calc(100% - 56px)` — ist seit P4
+ *  GEGENSTANDSLOS: Kennzahlen ist jetzt ein Dock-Panel, dessen Rechteck der
+ *  Solver oberhalb der Statusleiste hält; gemessen wird das Panel-Rechteck,
+ *  s. `FIXE_ELEMENTE`-Kommentar.)
+ *  Das verbleibende Paar besteht aus Elementen, die «NICHT ins Dock wandern»
+ *  (Auftrag, Abschnitt 3) — ihre gegenseitige Kollision zu beheben ist NICHT
+ *  Teil dieses Pakets. JEDES andere Paar (jedes migrierte Panel gegen jedes
  *  Chrome-Element, Panels untereinander) wird weiterhin hart geprüft. */
 const BEKANNTE_VORBESTEHENDE_KOLLISIONEN: readonly [string, string][] = [
   ['geschossleiste', 'entwurf-dock'],
-  ['kennzahlen', 'statusleiste'],
 ];
 
 /** Sammelt die STABILE BoundingBox jedes sichtbaren Selektors aus
@@ -157,7 +170,8 @@ test('zwei Panels gleichzeitig offen: keine Überlappung mit Chrome + Viewport b
   await page.click('[data-testid="kv-oeffnen"]');
   await expect(page.locator('[data-testid="dock-panel-kvOffen"]')).toBeVisible();
 
-  await pruefeDisjunktion(page, selektorMap(['rasterOffen', 'kvOffen']));
+  // `kennzahlen` ist seit P4 immer als Dock-Panel offen — in jeder Prüfung dabei.
+  await pruefeDisjunktion(page, selektorMap(['rasterOffen', 'kvOffen', 'kennzahlen']));
 
   const viewportBox = await page.locator('[data-testid="viewport3d"]').boundingBox();
   expect(viewportBox!.width).toBeGreaterThanOrEqual(380);
@@ -174,7 +188,7 @@ test('drei Panels gleichzeitig offen (links + rechts gemischt): keine Überlappu
   await expect(page.locator('[data-testid="dock-panel-kvOffen"]')).toBeVisible();
   await expect(page.locator('[data-testid="dock-panel-drawOffen"]')).toBeVisible();
 
-  await pruefeDisjunktion(page, selektorMap(['rasterOffen', 'kvOffen', 'drawOffen']));
+  await pruefeDisjunktion(page, selektorMap(['rasterOffen', 'kvOffen', 'drawOffen', 'kennzahlen']));
 
   const planBox = await page.locator('[data-testid="planview"]').boundingBox();
   expect(planBox!.width).toBeGreaterThanOrEqual(380);
@@ -197,7 +211,7 @@ test('vier Panels gleichzeitig offen: keine Überlappung, bestehende Toggles ble
   await expect(page.locator('[data-testid="raster-panel"] [aria-label="Schliessen"]')).toBeVisible();
   await expect(page.locator('[data-testid="bauablauf-panel"]')).toBeVisible();
 
-  await pruefeDisjunktion(page, selektorMap(['rasterOffen', 'kvOffen', 'bauablaufOffen', 'drawOffen']));
+  await pruefeDisjunktion(page, selektorMap(['rasterOffen', 'kvOffen', 'bauablaufOffen', 'drawOffen', 'kennzahlen']));
 
   const viewportBox = await page.locator('[data-testid="viewport3d"]').boundingBox();
   expect(viewportBox!.width).toBeGreaterThanOrEqual(380);
@@ -224,7 +238,7 @@ test('schmales Fenster (1000×800): unwichtigstes offenes Panel klappt zum Tab, 
 
   await expect(page.locator('[data-testid="dock-panel-rasterOffen-tab"]')).toBeVisible();
 
-  const offenePanelIds = ['rasterOffen', 'cwSetzenOffen', 'splatPanelOffen', 'maengelOffen', 'submissionOffen'];
+  const offenePanelIds = ['rasterOffen', 'cwSetzenOffen', 'splatPanelOffen', 'maengelOffen', 'submissionOffen', 'kennzahlen'];
   await pruefeDisjunktion(page, selektorMap(offenePanelIds));
 
   const viewportBox = await page.locator('[data-testid="viewport3d"]').boundingBox();
@@ -273,4 +287,63 @@ test('Reset-Knopf räumt Overrides der Design-Station', async ({ page }) => {
   await expect
     .poll(async () => (await panel.boundingBox())?.width, { timeout: 5000 })
     .toBeLessThanOrEqual(vorher.width + 1);
+});
+
+// ---------------------------------------------------------------------------
+// v0.7.8 Welle 2 / Paket P4 («Rechts-Stack-Migration») — `kennzahlen`
+// (IMMER sichtbar) und `inspector` (Daten-Guard: Selektion) sind jetzt Dock-
+// Panels derselben rechten Spalte wie `unternehmerplan`/`draw`. Diese zwei
+// Tests decken genau das ab, was Welle 1 strukturell noch nicht prüfen
+// konnte: einen VOLLEN rechten Stack (bis zu vier Panels) und die neue
+// Wichtigkeits-Rangfolge zwischen den P4-Neuzugängen und den Welle-1-Panels.
+// ---------------------------------------------------------------------------
+
+test('rechter Stack voll (Kennzahlen + Inspector + Draw gleichzeitig): keine Überlappung', async ({ page }) => {
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="view-split"]');
+
+  // Inspector erscheint nur bei Selektion (Daten-Guard) — Wand zeichnen + auswählen.
+  const wallId = await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    const r = k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 0, y: 0 }, b: { x: 8000, y: 0 }, assemblyId: aw.id });
+    return r.patches[0]!.id;
+  });
+  await page.evaluate((id) => window.__kosmo.state().select([id]), wallId);
+  await expect(page.locator('[data-testid="dock-panel-inspector"]')).toBeVisible();
+
+  await page.click('[data-testid="draw-toggle"]');
+  await expect(page.locator('[data-testid="dock-panel-drawOffen"]')).toBeVisible();
+  // Kennzahlen ist ohne eigenen Klick bereits da (kein Toggle, Daten-Guard "immer").
+  await expect(page.locator('[data-testid="dock-panel-kennzahlen"]')).toBeVisible();
+
+  await pruefeDisjunktion(page, selektorMap(['drawOffen', 'inspector', 'kennzahlen']));
+
+  const planBox = await page.locator('[data-testid="planview"]').boundingBox();
+  expect(planBox!.width).toBeGreaterThanOrEqual(380);
+});
+
+test('enges Fenster (1400×520): Draw (48) klappt zugunsten Kennzahlen (60) zuerst ein', async ({ page }) => {
+  // Gleiches Höhenrahmen-Muster wie `dock-interaktion.spec.ts`s Pin-Test —
+  // erzwingt eine vertikale Kollision im rechten Stack mit nur EINEM Klick
+  // (kennzahlen ist ohnehin immer offen, min 200 + draw min 170 + Gap
+  // sprengt die knappe Höhe sicher). Höhe 520 statt 420, damit nach dem
+  // Einklappen von Draw (Tab, 34px) die verbleibende Höhe noch für
+  // Kennzahlens min (200) reicht — bei 420 klappte auch Kennzahlen ein
+  // (Feld ≈ 223: 223−10−34 = 179 < 200), was hier nicht der Prüfpunkt ist
+  // (die Rangfolge ist es).
+  await page.setViewportSize({ width: 1400, height: 520 });
+  await oeffneDesignMitTkb(page);
+
+  await page.click('[data-testid="draw-toggle"]');
+
+  // Kennzahlen (wichtigkeit 60) ist wichtiger als Draw (48) — der Solver
+  // wählt bei Platzmangel deterministisch das unwichtigste Flex-Panel
+  // (`stack()`, `dock-kern.ts`) — das ist hier Draw, nicht Kennzahlen.
+  await expect(page.locator('[data-testid="dock-panel-drawOffen-tab"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-kennzahlen-tab"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
+
+  await pruefeDisjunktion(page, selektorMap(['drawOffen', 'kennzahlen']));
 });

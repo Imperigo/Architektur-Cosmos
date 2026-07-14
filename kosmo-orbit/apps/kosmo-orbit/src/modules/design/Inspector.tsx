@@ -60,27 +60,21 @@ export function Inspector() {
     <div
       data-testid="inspector"
       // K3 (Owner S. 8): «Popup-Texte dürfen niemals den Block verlassen».
+      //
+      // v0.7.8 Welle 2 (P4, Rechts-Stack-Migration): vorher ein eigener
+      // `position:'absolute'`-Overlay — H-43s `bottom: calc(var(--k-s4) +
+      // 78px)`-Anhebung existierte NUR, um NavLeiste (right:88/bottom:50) und
+      // das freistehende Kosmo-Symbol nicht zu schneiden (s. `git blame`/
+      // `inspector-layout.spec.ts`). Jetzt ein Dock-Panel-INHALT
+      // (`dock-stationen.ts` `'inspector'`, wichtigkeit 82): Position/Breite/
+      // Höhe kommen aus `DockPanel.tsx`/`dock-kern.ts`s Solver, der DIESELBE
+      // Kollisionsfreiheit strukturell garantiert (der rechte Stack reicht
+      // nie in den unteren Chrome-Streifen, s. `DockFlaeche.tsx`s
+      // BOT-Reserve) — der H-43-Sonderabstand entfällt ersatzlos. Doppel-
+      // Chrome bewusst (wie `RasterPanel.tsx`): Hintergrund/Rahmen/Schatten
+      // bleiben, Position/Breiten-/Höhen-Deckel entfallen.
       className="k-dialog"
       style={{
-        position: 'absolute',
-        right: 'var(--k-s4)',
-        // H-43 (v0.7.0, Stream 1B): vorher `bottom: var(--k-s4)` — damit lagen
-        // die untersten Inspector-Zeilen («Umbau»-KSelect, «Löschen») GENAU im
-        // Streifen der rechten unteren Ecke, den NavLeiste (right:88/bottom:50,
-        // z-5) und Kosmo-Symbol (right:22/bottom:22, z-110) belegen; beide
-        // gewannen den Klick, Trigger darunter waren nur per dispatchEvent
-        // erreichbar (waehleOption-Fallback). Der Konflikt ist breiten-
-        // UNabhängig (beide Blöcke sind rechts-unten verankert) — die
-        // Unterkante rückt deshalb IMMER über diese Ecke (NavLeiste top ≈
-        // 84 px, Kosmo-Symbol top ≈ 76 px → 90 px + Atemraum), statt eines
-        // neuen Layout-Systems oder einer Media-Query. K3-Regel «Blöcke
-        // kollisionsfrei» — dieselbe Entstapelung wie NavLeiste↔Kosmo-Symbol.
-        bottom: 'calc(var(--k-s4) + 78px)',
-        width: 250,
-        // Oberkanten-Abstand bleibt wie vorher (12 px Luft): 24 px alt +
-        // die 78 px, um die die Unterkante angehoben wurde.
-        maxHeight: 'calc(100% - 102px)',
-        overflow: 'auto',
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',
         borderRadius: 'var(--k-radius-md)',
@@ -89,7 +83,6 @@ export function Inspector() {
         display: 'grid',
         gap: 'var(--k-s3)',
         fontSize: 'var(--k-t-sm)',
-        zIndex: 3,
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>

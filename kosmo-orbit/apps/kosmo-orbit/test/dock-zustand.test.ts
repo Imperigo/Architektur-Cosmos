@@ -353,18 +353,22 @@ describe('eingeklappteDiff', () => {
 // ---------------------------------------------------------------------------
 
 /** Bekannte `--k-rolle-*`-Schlüssel aus `packages/kosmo-ui/src/aura.css`
- *  (manuell/pn/pna/agent/memory/generator/ak/office). `PanelDef['rolle']`
- *  (dock-kern.ts) hat statt `office` ein `system` — eine vorbestehende
- *  Diskrepanz in P1, hier NICHT korrigiert (dock-kern.ts ist fertig/nicht
- *  anzufassen). Diese Registry verwendet nur Werte, die in BEIDEN Listen
- *  vorkommen. */
-const GUELTIGE_ROLLEN = ['manuell', 'pn', 'pna', 'agent', 'memory', 'generator', 'ak'] as const;
+ *  (manuell/pn/pna/agent/memory/generator/ak/office) PLUS `system` — der
+ *  Alias, den `dock-flaeche.css` für `PanelDef['rolle']`s `'system'`-Wert
+ *  anlegt (`--k-rolle-system: var(--k-rolle-office)`, s. Kopfkommentar dort);
+ *  `'inspector'` (P4) ist die erste Registry-Zeile, die ihn nutzt. */
+const GUELTIGE_ROLLEN = ['manuell', 'pn', 'pna', 'agent', 'memory', 'generator', 'ak', 'system'] as const;
+
+/** Daten-Guard-IDs ohne `…Offen`-Flag in `ui-zustand.ts` (s. `dock-stationen.ts`
+ *  Kopfkommentar) — Welle 1: `unternehmerplan`; Welle 2 (P4): `kennzahlen`/
+ *  `inspector` kommen hinzu. */
+const DATEN_GUARD_IDS = ['unternehmerplan', 'kennzahlen', 'inspector'] as const;
 
 describe('dock-stationen — Registry-Invarianten (design)', () => {
   const panels = stationsPanels('design');
 
-  it('enthält genau 12 Panels für Welle 1', () => {
-    expect(panels.length).toBe(12);
+  it('enthält genau 14 Panels (Welle 1: 12 + Welle 2/P4: kennzahlen/inspector)', () => {
+    expect(panels.length).toBe(14);
   });
 
   it('alle IDs sind paarweise eindeutig', () => {
@@ -372,22 +376,28 @@ describe('dock-stationen — Registry-Invarianten (design)', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('alle IDs ausser der dokumentierten Ausnahme "unternehmerplan" sind ⊆ PANEL_IDS aus ui-zustand.ts', () => {
-    const ohneAusnahme = panels.filter((p) => p.id !== 'unternehmerplan').map((p) => p.id);
+  it('alle IDs ausser den dokumentierten Daten-Guard-Ausnahmen sind ⊆ PANEL_IDS aus ui-zustand.ts', () => {
+    const ohneAusnahme = panels.filter((p) => !(DATEN_GUARD_IDS as readonly string[]).includes(p.id)).map((p) => p.id);
     for (const id of ohneAusnahme) {
       expect((PANEL_IDS as readonly string[]).includes(id)).toBe(true);
     }
   });
 
-  it('"unternehmerplan" ist die EINZIGE ID ohne Entsprechung in PANEL_IDS (Daten-Guard, kein …Offen-Flag)', () => {
+  it('"unternehmerplan"/"kennzahlen"/"inspector" sind GENAU die IDs ohne Entsprechung in PANEL_IDS (Daten-Guards, kein …Offen-Flag)', () => {
     const ohneEntsprechung = panels.filter((p) => !(PANEL_IDS as readonly string[]).includes(p.id));
-    expect(ohneEntsprechung.map((p) => p.id)).toEqual(['unternehmerplan']);
+    expect(ohneEntsprechung.map((p) => p.id).sort()).toEqual([...DATEN_GUARD_IDS].sort());
   });
 
-  it('Wichtigkeiten liegen im Band 38-52', () => {
+  it('Wichtigkeiten liegen im Band 38-52, ausser den P4-Sonderfällen kennzahlen (60) und inspector (82)', () => {
     for (const p of panels) {
-      expect(p.wichtigkeit).toBeGreaterThanOrEqual(38);
-      expect(p.wichtigkeit).toBeLessThanOrEqual(52);
+      if (p.id === 'kennzahlen') {
+        expect(p.wichtigkeit).toBe(60);
+      } else if (p.id === 'inspector') {
+        expect(p.wichtigkeit).toBe(82);
+      } else {
+        expect(p.wichtigkeit).toBeGreaterThanOrEqual(38);
+        expect(p.wichtigkeit).toBeLessThanOrEqual(52);
+      }
     }
   });
 

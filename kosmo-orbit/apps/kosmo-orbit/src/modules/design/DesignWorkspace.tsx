@@ -498,6 +498,23 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   const uplanAbgleich = useUnternehmerplan((s) => s.abgleich);
   const uplanPdfHinweis = useUnternehmerplan((s) => s.pdfHinweis);
   const unternehmerplanSichtbar = !!((uplanDxf && uplanAbgleich) || uplanPdfHinweis);
+  // v0.7.8 Welle 2 (P4, Rechts-Stack-Migration): `inspector` ist — wie
+  // `unternehmerplan` oben — ein Daten-Guard ohne eigenes `…Offen`-Flag
+  // (`dock-stationen.ts` Kopfkommentar). Der Guard ist wörtlich derselbe wie
+  // `Inspector.tsx`s eigener `if (!entity) return null` (Selektion muss auf
+  // eine tatsächlich im Doc vorhandene Entität zeigen, nicht nur eine nicht-
+  // leere `selection`-Liste — sonst reservierte `DockFlaeche` Platz für ein
+  // Panel, das gleich darauf selbst `null` rendert). `selection`/`revision`
+  // sind bereits reaktive Subscriptions dieser Komponente (Zeile oben) bzw.
+  // hier neu ergänzt; `doc` bleibt bewusst der nicht-reaktive
+  // `getState()`-Zugriff (wie überall sonst in dieser Datei) — die
+  // Neuberechnung hängt an `revision`, nicht an einer `doc`-Referenzänderung.
+  const selection = useProject((s) => s.selection);
+  const inspectorSichtbar = useMemo(() => {
+    const id = selection[0];
+    return !!(id && useProject.getState().doc.get(id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selection, revision]);
   // «Auf schlaues Layout zurücksetzen» (Auftrag): löscht NUR Spaltenbreiten/
   // Panel-Overrides dieser Station+diesem Modus (dock-zustand.ts) — die
   // Sichtbarkeit (ui-zustand.ts) bleibt unberührt.
@@ -1766,6 +1783,22 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         schliessen: () => setDrawOffen(false),
         inhalt: <DrawPanel />,
       },
+      {
+        // v0.7.8 Welle 2 (P4): IMMER sichtbar in der Design-Station (kein
+        // Toggle) — kein `schliessen`, exakt wie `unternehmerplan` oben.
+        id: 'kennzahlen',
+        sichtbar: true,
+        inhalt: <KennzahlenPanel />,
+      },
+      {
+        // Daten-Guard (Selektion), kein `schliessen` — s. `inspectorSichtbar`
+        // Kommentar oben. `Inspector.tsx` selbst rendert weiterhin `null`,
+        // solange keine Entität ausgewählt ist (Doppel-Guard: hier NUR damit
+        // `DockFlaeche` weiss, ob Platz reserviert werden muss).
+        id: 'inspector',
+        sichtbar: inspectorSichtbar,
+        inhalt: <Inspector />,
+      },
     ],
     [
       rasterOffen,
@@ -1784,6 +1817,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
       maxHoeheM,
       unternehmerplanSichtbar,
       drawOffen,
+      inspectorSichtbar,
       setRasterOffen,
       setCwSetzenOffen,
       setSplatPanelOffen,
@@ -2883,19 +2917,26 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             Unternehmerplan hier ablegen — DXF wird verglichen, PDF wird erkannt
           </div>
         )}
-        {/* v0.7.8 Welle 1 (P3, «Intelligente Werkzeugtabs», Herzstück): die
-            12 Design-Panels sassen hier bisher als handgetunte
-            `position:'absolute'`-Overlays (feste `left/top:52` bzw.
-            `right:12/top:52` — kollidierten bei genug gleichzeitig offenen
-            Panels sichtbar). Jetzt EIN kollisionsfreier Dock
-            (`shell/dock/DockFlaeche.tsx`, Solver in `state/dock-kern.ts`):
-            Sichtbarkeit bleibt exakt wie vorher in `ui-zustand.ts` (jedes
-            Panel bekommt weiterhin GENAU denselben `onClose`, den es schon
-            hatte — nur zusätzlich an `DockFlaeche` gespiegelt, damit auch der
-            Dock-Kopf schliessen kann, s. `DockPanel.tsx`-Kommentar zum
-            Doppel-Chrome-Kompromiss). Reihenfolge hier ist beliebig — der
-            Solver sortiert nach `wichtigkeit` aus `dock-stationen.ts`, nicht
-            nach Array-Reihenfolge. */}
+        {/* v0.7.8 Welle 1 (P3, «Intelligente Werkzeugtabs», Herzstück), erweitert
+            Welle 2 (P4, Rechts-Stack-Migration): die 14 Design-Panels sassen
+            ursprünglich hier als handgetunte `position:'absolute'`-Overlays
+            (feste `left/top:52` bzw. `right:12/top:52` — kollidierten bei
+            genug gleichzeitig offenen Panels sichtbar). Jetzt EIN
+            kollisionsfreier Dock (`shell/dock/DockFlaeche.tsx`, Solver in
+            `state/dock-kern.ts`): Sichtbarkeit bleibt exakt wie vorher in
+            `ui-zustand.ts` (jedes Panel bekommt weiterhin GENAU denselben
+            `onClose`, den es schon hatte — nur zusätzlich an `DockFlaeche`
+            gespiegelt, damit auch der Dock-Kopf schliessen kann, s.
+            `DockPanel.tsx`-Kommentar zum Doppel-Chrome-Kompromiss). P4 zieht
+            die letzten zwei verbliebenen Design-Überlagerungen —
+            `<KennzahlenPanel/>`/`<Inspector/>`, vorher als eigene
+            Geschwister GLEICH NACH dieser Zeile gerendert — ebenfalls in
+            `designDockPanels` hinein (rechte Spalte, Daten-Guards, s.
+            `dock-stationen.ts`/`inspectorSichtbar`-Kommentar oben); sie
+            haben deshalb hier KEINE eigenen `<KennzahlenPanel/>`/
+            `<Inspector/>`-Zeilen mehr. Reihenfolge im Array ist beliebig —
+            der Solver sortiert nach `wichtigkeit` aus `dock-stationen.ts`,
+            nicht nach Array-Reihenfolge. */}
         <DockFlaeche station="design" panels={designDockPanels} />
         {/* C4b (C-E4): Daten-Guard bleibt — die Karten-Liste im
             Unternehmerplan-Panel erscheint automatisch, sobald ein
@@ -2965,8 +3006,6 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           </>
         )}
 
-        <KennzahlenPanel />
-        <Inspector />
         {/* v0.7.2 §7 (W3-E): Abspiel-Overlay «Kosmo zeichnet sichtbar» — pointer-events:none, rendert nur während eines Vorspiels. */}
         <KosmoZeichnet />
 

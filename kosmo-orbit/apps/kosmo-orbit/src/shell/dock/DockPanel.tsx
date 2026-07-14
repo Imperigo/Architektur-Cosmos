@@ -1,35 +1,58 @@
 import type { ReactNode } from 'react';
 import { KIcon } from '@kosmo/ui';
-import { DOCK_KONSTANTEN, type DockRect, type PanelDef } from '../../state/dock-kern';
+import { DOCK_KONSTANTEN, type DockModus, type DockRect, type PanelDef } from '../../state/dock-kern';
 import type { DockStation } from '../../state/dock-stationen';
 import { useDockZustand } from '../../state/dock-zustand';
 
 /**
  * DockPanel (v0.7.8 Welle 1 / Paket P3 — «Intelligente Werkzeugtabs»,
- * Herzstück) — der Chrome-Rahmen EINES angedockten Panels: absolut
+ * Herzstück; erweitert Welle 2 / Paket P4 — Header-Drag & Pop-out) — der
+ * Chrome-Rahmen EINES angedockten (oder schwebenden) Panels: absolut
  * positionierter Container (Rechteck aus `dock-kern.ts`s `solve()`,
  * `.28s`-Reflow-Übergang aus `dock-flaeche.css`), ein schmaler Mono-Kopf
- * (Titel/Rollenpunkt/Einklappen/Anheften/Schliessen) und ein intern
- * scrollender Inhaltsbereich für die unverändert migrierten Panel-Inhalte.
+ * (Titel/Rollenpunkt/Einklappen/Anheften/Pop-out/Re-Dock/Schliessen) und ein
+ * intern scrollender Inhaltsbereich für die unverändert migrierten
+ * Panel-Inhalte.
  *
  * Doppel-Chrome ist HIER bewusst in Kauf genommen (Auftrag, Abschnitt 2):
  * fast jedes migrierte Panel trägt selbst schon eine Badge-/Schliessen-Zeile,
  * deren `aria-label="Schliessen"` bestehende Specs direkt anklicken
  * (`'[data-testid="raster-panel"] [aria-label="Schliessen"]'` u.ä.) — die
  * darf NICHT verschwinden. Dieser Kopf hier ist additiv, kein Ersatz.
+ *
+ * **Header-Drag (P4)**: der Kopf (`.k-dock-panel-kopf`, `data-drag`) ist ein
+ * Ziehgriff — Pointerdown darauf startet (falls `def.bewegbar`, Ziel kein
+ * `<button>`) je nach aktuellem Zustand `onRedockDragStart` (angedockt →
+ * Redock-Drag mit Snap-Zonen, `DockFlaeche.tsx`) oder `onFloatDragStart`
+ * (schon schwebend → freies Verschieben). Der Kopf selbst trägt NUR den
+ * `pointerdown`; `pointermove`/`pointerup` laufen komplett in `DockFlaeche.tsx`
+ * über `window`-Listener (nicht hier — beim Redock-Drag verschwindet DIESES
+ * Panel während der Ziehgeste aus `ergebnis.rects` (`gedraggtId`), ein
+ * `pointermove`-Handler auf einem Element, das gerade unmountet, wäre
+ * unzuverlässig).
  */
 
 export interface DockPanelProps {
   station: DockStation;
   def: PanelDef;
   rect: DockRect;
+  modus: DockModus;
   /** Persistierte «Anheften»-Fahne (dock-zustand.ts, PanelOverride.angeheftet). */
   angeheftet: boolean;
+  /** Startet einen Redock-Drag (angedocktes Panel → Snap-Zonen). */
+  onRedockDragStart: (id: string, rect: DockRect, clientX: number, clientY: number) => void;
+  /** Startet ein freies Verschieben (schon schwebendes Panel). */
+  onFloatDragStart: (id: string, rect: DockRect, clientX: number, clientY: number, anker: PanelDef['anker']) => void;
+  /** Pop-out-Knopf (nur Konzept A, nur angedockt): sofortiges Umschalten auf schwebend. */
+  onPopOut: (id: string, rect: DockRect) => void;
+  /** Re-Dock-Knopf (nur schwebend): löscht ALLE Float-Overrides, zurück in die Ursprungsspalte. */
+  onRedock: (id: string) => void;
   /** Fehlt bei datengetriebenen Panels ohne eigenes Auf/Zu-Flag
-   *  (`unternehmerplan` — Sichtbarkeit = Datenvorhandensein, s.
-   *  `dock-stationen.ts` Kopfkommentar). Ohne Callback bleibt der
-   *  Schliessen-Knopf im Dock-Kopf weg, auch wenn `def.schliessbar` true ist —
-   *  das Panel lässt sich trotzdem einklappen (Chevron) oder anheften. */
+   *  (`unternehmerplan`/`kennzahlen`/`inspector` — Sichtbarkeit =
+   *  Datenvorhandensein, s. `dock-stationen.ts` Kopfkommentar). Ohne
+   *  Callback bleibt der Schliessen-Knopf im Dock-Kopf weg, auch wenn
+   *  `def.schliessbar` true ist — das Panel lässt sich trotzdem einklappen
+   *  (Chevron) oder anheften. */
   onSchliessen?: () => void;
   children: ReactNode;
 }
@@ -45,11 +68,45 @@ const ROLLEN_LABEL: Record<PanelDef['rolle'], string> = {
   system: 'Büro',
 };
 
-export function DockPanel({ station, def, rect, angeheftet, onSchliessen, children }: DockPanelProps) {
+export function DockPanel({
+  station,
+  def,
+  rect,
+  modus,
+  angeheftet,
+  onRedockDragStart,
+  onFloatDragStart,
+  onPopOut,
+  onRedock,
+  onSchliessen,
+  children,
+}: DockPanelProps) {
   const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
 
   const einklappenUmschalten = () => panelOverrideSetzen(station, def.id, { eingeklappt: !rect.eingeklappt });
   const anheftenUmschalten = () => panelOverrideSetzen(station, def.id, { angeheftet: !angeheftet });
+
+  const kopfPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!def.bewegbar) return;
+    // WICHTIG: `instanceof HTMLElement` wäre hier ein Bug — die Kopf-Knöpfe
+    // rendern `KIcon`s `<svg>`/`<path>` (SVGElement, KEIN HTMLElement-
+    // Subtyp trotz gemeinsamer `Element`-Basis). Klickt man (wie Playwright
+    // per Bounding-Box-Mitte) genau aufs Icon-Glyph statt den umgebenden
+    // `<button>`-Rand, wäre `e.target instanceof HTMLElement` false und
+    // dieser Guard würde NIE greifen — ein Knopfklick löste dann fälschlich
+    // einen Drag aus (reproduzierbar: Chevron/Pin/Tab-Tests scheiterten
+    // genau daran). `.closest()` existiert auf `Element` selbst, HTML- wie
+    // SVG-Knoten gleichermassen.
+    if (e.target instanceof Element && e.target.closest('button')) return;
+    // Nur der Primärzeiger/-finger startet einen Drag (kein Rechtsklick).
+    if (e.button !== 0) return;
+    e.preventDefault();
+    if (rect.schwebend) {
+      onFloatDragStart(def.id, rect, e.clientX, e.clientY, def.anker);
+    } else {
+      onRedockDragStart(def.id, rect, e.clientX, e.clientY);
+    }
+  };
 
   const style = {
     left: rect.x,
@@ -61,7 +118,7 @@ export function DockPanel({ station, def, rect, angeheftet, onSchliessen, childr
 
   if (rect.eingeklappt) {
     return (
-      <div className="k-dock-panel" style={style} data-testid={`dock-panel-${def.id}`}>
+      <div className="k-dock-panel" style={style} data-testid={`dock-panel-${def.id}`} data-schwebend={!!rect.schwebend}>
         <button
           type="button"
           className="k-dock-panel-tab"
@@ -82,8 +139,8 @@ export function DockPanel({ station, def, rect, angeheftet, onSchliessen, childr
   }
 
   return (
-    <div className="k-dock-panel" style={style} data-testid={`dock-panel-${def.id}`}>
-      <div className="k-dock-panel-kopf">
+    <div className="k-dock-panel" style={style} data-testid={`dock-panel-${def.id}`} data-schwebend={!!rect.schwebend}>
+      <div className="k-dock-panel-kopf" data-drag onPointerDown={kopfPointerDown}>
         <span
           className="k-dock-panel-rollenpunkt"
           aria-hidden
@@ -93,6 +150,30 @@ export function DockPanel({ station, def, rect, angeheftet, onSchliessen, childr
         <span className="k-dock-panel-titel" title={def.titel}>
           {def.titel}
         </span>
+        {modus === 'A' && def.bewegbar && !rect.schwebend && (
+          <button
+            type="button"
+            className="k-dock-panel-knopf"
+            data-testid={`dock-panel-${def.id}-popout`}
+            title="Aus dem Dock heben — schwebt frei"
+            aria-label="Aus dem Dock heben"
+            onClick={() => onPopOut(def.id, rect)}
+          >
+            <KIcon name="schweben" size={14} />
+          </button>
+        )}
+        {rect.schwebend && (
+          <button
+            type="button"
+            className="k-dock-panel-knopf"
+            data-testid={`dock-panel-${def.id}-redock`}
+            title="Zurück andocken"
+            aria-label="Zurück andocken"
+            onClick={() => onRedock(def.id)}
+          >
+            <KIcon name="andocken" size={14} />
+          </button>
+        )}
         <button
           type="button"
           className="k-dock-panel-knopf"

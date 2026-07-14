@@ -28,7 +28,10 @@ test('Voller Entwurfs-Loop: TKB → Wand → Pläne → Kennzahlen → IFC', asy
 
   // 1) Beispielprojekt laden
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 
   // 2) Modellieren über den Command-Weg (derselbe wie Maus/Chat/Sprache)
   const wandId = await page.evaluate(() => {

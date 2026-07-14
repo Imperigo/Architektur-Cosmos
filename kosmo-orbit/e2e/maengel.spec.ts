@@ -20,7 +20,10 @@ import { readFileSync } from 'node:fs';
 test('Mängel-Panel: erfassen, Status umschalten, Protokoll-Export, vollständige Undo-Kette', async ({ page }) => {
   await page.goto('/');
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 
   await page.click('[data-testid="maengel-oeffnen"]');
   await expect(page.locator('[data-testid="maengel-panel"]')).toBeVisible();

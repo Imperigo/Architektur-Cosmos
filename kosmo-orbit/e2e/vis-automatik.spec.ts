@@ -42,7 +42,10 @@ test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-
 
   // TKB laden (Beispielprojekt) — nicht leer, damit Auto-Kamera echte Bounds hat
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 
   // Vis öffnen (der Home-Kachelweg ist nach dem TKB-Laden nicht mehr sichtbar —
   // derselbe __kosmo.open()-Weg wie in e2e/module.spec.ts)
@@ -120,7 +123,10 @@ test('F6: Pannen nach «Kamera vorschlagen» stürzt nicht ab (Maus-Pan + synchr
   // W1: eigene Bridge (Begründung siehe Datei-Kopf)
   await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
   await page.evaluate(() => window.__kosmo.open('vis'));
   await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
 

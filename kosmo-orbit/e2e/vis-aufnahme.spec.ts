@@ -41,7 +41,11 @@ async function aufnahmeVorbereiten(page: import('@playwright/test').Page): Promi
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.click('[data-testid="load-tkb"]'); // [Quelle: vis-automatik.spec.ts Z.43]
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible(); // [Quelle: vis-automatik.spec.ts Z.44]
+  // v0.7.8 Welle 2 (P4): `text=KENNZAHLEN` träfe jetzt zusätzlich den
+  // Dock-Kopf-Titel des migrierten `kennzahlen`-Panels (Playwright-Strict-
+  // Bruch, s. `dock-layout.spec.ts` Kommentar) — testid-Locator auf den
+  // Panel-Inhalt bleibt eindeutig.
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible(); // [Quelle: vis-automatik.spec.ts Z.44]
 
   await viewportAufnahme(page); // Design → 3D → renderOnce → «Für Vis aufnehmen» → zurück zu Vis
   await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible(); // [Quelle: vis-automatik.spec.ts Z.49]

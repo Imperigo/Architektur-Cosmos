@@ -30,7 +30,10 @@ test('ScriptedProvider spielt ein Skript via kosmoChatSkript durch den echten Ch
   // App-Kontext-Defaults, die ChatSession.applyDefaults() für
   // design_wandZeichnen braucht (KosmoPanel.tsx contextDefaults).
   await page.click('[data-testid="load-tkb"]'); // [Quelle: vis-automatik.spec.ts Z.43]
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible(); // [Quelle: vis-automatik.spec.ts Z.44]
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible(); // [Quelle: vis-automatik.spec.ts Z.44]
 
   const waendeVorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length);
 
@@ -85,7 +88,10 @@ test('H-28: ein beim Anwenden (nicht bei der Validierung) scheiternder Vorschlag
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
   const deckenVorher = await page.evaluate(() => window.__kosmo.state().doc.byKind('slab').length);
 
   const skript: SzenarioSkript = {
@@ -187,7 +193,10 @@ test('Aufgabe 3: ein Paket mit ≥2 Schritten zeigt eine aggregierte Zusammenfas
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 
   const skript: SzenarioSkript = {
     id: 'paket-zusammenfassung-demo',

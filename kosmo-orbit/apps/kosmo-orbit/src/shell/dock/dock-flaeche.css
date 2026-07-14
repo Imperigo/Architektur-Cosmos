@@ -40,6 +40,17 @@
   border-bottom: 1px solid var(--k-line);
   background: var(--k-surface);
   flex: 0 0 auto;
+  /* v0.7.8 Welle 2 (P4, Header-Drag): der Kopf ist der Ziehgriff — touch-
+     action:none NUR hier (nicht auf der ganzen Fläche/den Knöpfen, s.
+     Regel direkt unten), sonst konkurriert eine Touch-Scroll-Geste mit dem
+     Drag. Cursor signalisiert die Ziehbarkeit; die Knöpfe selbst setzen
+     `cursor:pointer` (s. `.k-dock-panel-knopf`, gewinnt per Spezifität auf
+     dem Button-Element selbst). */
+  touch-action: none;
+  cursor: grab;
+}
+.k-dock-panel-kopf:active {
+  cursor: grabbing;
 }
 
 .k-dock-panel-rollenpunkt {
@@ -74,6 +85,10 @@
   border-radius: var(--k-radius-sm);
   color: var(--k-ink-faint);
   flex: 0 0 auto;
+  /* Gegenstück zu `.k-dock-panel-kopf`s `touch-action:none` (P4, Header-
+     Drag) — die Knöpfe SELBST sollen normal tippbar bleiben, kein
+     Drag-Gate. */
+  touch-action: manipulation;
 }
 .k-dock-panel-knopf:hover,
 .k-dock-panel-knopf:focus-visible {
@@ -157,8 +172,41 @@
 
 /* Rollenfarben-Alias (Spec-Lücke): `dock-kern.ts`s `PanelDef.rolle`-Union
    kennt `'system'`, `aura.css`s Rollenpalette (v0.7.3 D7) nennt dieselbe
-   Rolle `office` — keine Design-Panels der Welle 1 nutzen `'system'`, aber
-   künftige Stationen (Welle 3) könnten es. Alias statt neuer Farbe. */
+   Rolle `office` — Welle 2 (P4) `inspector` ist die erste Registry-Zeile,
+   die `'system'` tatsächlich nutzt. Alias statt neuer Farbe. */
 :root {
   --k-rolle-system: var(--k-rolle-office);
+}
+
+/* v0.7.8 Welle 2 (P4, Header-Drag & Neu-Andocken) — Snap-Zonen-Overlay
+   (`DockSnapZonen.tsx`) + Geist-Rechteck während eines Redock-Drags. Rein
+   visuell, `pointer-events:none` (die Zonenlogik selbst läuft auf
+   Zeiger-Koordinaten in `DockFlaeche.tsx`, nicht auf DOM-Hit-Testing dieser
+   Overlays). */
+.k-dock-snap-zone {
+  position: absolute;
+  pointer-events: none;
+  z-index: 25;
+  box-sizing: border-box;
+  border: 2px dashed var(--k-line-strong, var(--k-line));
+  border-radius: var(--k-radius-md);
+  background: transparent;
+  transition:
+    background 0.12s var(--k-ease-standard),
+    border-color 0.12s var(--k-ease-standard);
+}
+.k-dock-snap-zone[data-aktiv='true'] {
+  border-color: var(--k-accent);
+  background: color-mix(in srgb, var(--k-accent) 12%, transparent);
+}
+
+.k-dock-drag-geist {
+  position: absolute;
+  pointer-events: none;
+  z-index: 40;
+  box-sizing: border-box;
+  border: 2px dashed var(--k-accent);
+  border-radius: var(--k-radius-md);
+  background: color-mix(in srgb, var(--k-accent) 18%, transparent);
+  box-shadow: var(--k-shadow-overlay);
 }

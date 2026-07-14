@@ -337,7 +337,10 @@ test('H-36-Nachweis: Kuratier-Fläche nimmt auch einen aufnahme-Node mit vorhand
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
   await viewportAufnahme(page);
   await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
   await page.click('[data-testid="graph-neu"]');

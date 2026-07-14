@@ -49,7 +49,15 @@ test('H-43: Inspector offen (1280×800) — Umbau-KSelect, NavLeiste und linke L
 
   // Kein physischer Überlapp mehr: Inspector-Rechteck schneidet weder die
   // NavLeiste (nav-fit als Stellvertreter) noch das Kosmo-Symbol.
-  const inspBox = (await inspector.boundingBox())!;
+  // v0.7.8 Welle 2 (P4): gemessen wird das DOCK-PANEL-Rechteck — der
+  // Inspector ist jetzt ein Dock-Panel der rechten Spalte; sein INHALT
+  // (`data-testid="inspector"`) liegt in einem Scroll-Container, dessen
+  // BoundingRect die UNGECLIPPTE Layout-Höhe meldet (ragt rechnerisch unter
+  // das sichtbar gerenderte Panel hinaus). Die H-43-Garantie «keine
+  // physische Überdeckung» gilt für die GEMALTEN Pixel, also das
+  // Panel-Rechteck; die Klick-Beweise unten (der eigentliche Kern von H-43)
+  // bleiben unverändert echte Playwright-Klicks.
+  const inspBox = (await page.locator('[data-testid="dock-panel-inspector"]').boundingBox())!;
   for (const testid of ['nav-fit', 'kosmo-symbol']) {
     const box = await page.locator(`[data-testid="${testid}"]`).boundingBox();
     expect(box, `${testid} muss sichtbar sein`).not.toBeNull();

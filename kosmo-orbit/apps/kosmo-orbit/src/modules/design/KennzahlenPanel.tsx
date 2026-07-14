@@ -50,20 +50,22 @@ export function KennzahlenPanel() {
       data-testid="kennzahlen"
       // K3 (Owner S. 8): «Popup-Texte dürfen niemals den Block verlassen» —
       // dieselbe zentrale Overflow-Regel wie alle anderen Panels (T4b).
+      //
+      // v0.7.8 Welle 2 (P4, Rechts-Stack-Migration): vorher ein eigener
+      // `position:'absolute'`-Overlay (`right`/`top:44`/`width:240`/
+      // `maxHeight`) — jetzt ein Dock-Panel-INHALT (`dock-stationen.ts`
+      // `'kennzahlen'`, wichtigkeit 60), Chrome/Position/Grösse kommen von
+      // `DockPanel.tsx`/`dock-kern.ts`s Solver. Doppel-Chrome bewusst (wie
+      // `RasterPanel.tsx`): Hintergrund/Rahmen/Schatten bleiben, nur
+      // Position/Breite/Höhen-Deckel entfallen — der äussere
+      // `.k-dock-panel-inhalt` (dock-flaeche.css) übernimmt das Scrollen.
       className="k-dialog"
       style={{
-        position: 'absolute',
-        right: 'var(--k-s4)',
-        // unter den Trace/Graph-Knöpfen des Plans (keine Überlappung im Split)
-        top: 44,
-        width: 240,
-        maxHeight: 'calc(100% - 56px)',
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',
         borderRadius: 'var(--k-radius-md)',
         boxShadow: 'var(--k-shadow-raised)',
         fontSize: 'var(--k-t-sm)',
-        overflow: 'hidden',
       }}
     >
       <button

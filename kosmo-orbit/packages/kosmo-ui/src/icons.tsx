@@ -40,7 +40,9 @@ export type KIconName =
   | 'schloss'
   | 'stift'
   | 'hand'
-  | 'mehr';
+  | 'mehr'
+  | 'schweben'
+  | 'andocken';
 
 const REGISTRY: Record<KIconName, ReactNode> = {
   zahnrad: (
@@ -172,6 +174,22 @@ const REGISTRY: Record<KIconName, ReactNode> = {
       <circle cx="4" cy="8" r="1.1" fill="currentColor" stroke="none" />
       <circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none" />
       <circle cx="12" cy="8" r="1.1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  // v0.7.8 Welle 2 (P4, Dock-Pop-out): «aus dem Dock heben» — Pfeil, der
+  // aus einer Ablage nach oben heraustritt.
+  schweben: (
+    <>
+      <path d="M3 2.6h10" />
+      <path d="M8 12.4V5.2M5 8l3-3 3 3" />
+    </>
+  ),
+  // Gegenstück zu `schweben` — «zurück in den Dock legen»: Pfeil nach unten
+  // auf eine Ablage.
+  andocken: (
+    <>
+      <path d="M3 13.4h10" />
+      <path d="M8 3.6v7.2M5 8l3 3 3-3" />
     </>
   ),
 };

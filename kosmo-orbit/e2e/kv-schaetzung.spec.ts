@@ -22,7 +22,10 @@ function parseChf(text: string): number {
 test('KV-Panel: Summe > 0, Ehrlichkeits-Hinweis sichtbar, Kennwert-Änderung wirkt sofort, Undo stellt wieder her', async ({ page }) => {
   await page.goto('/');
   await page.click('[data-testid="load-tkb"]');
-  await expect(page.locator('text=KENNZAHLEN')).toBeVisible();
+  // v0.7.8 Welle 2 (P4): testid statt Text-Locator (Doppel-Chrome-Kollision
+  // mit dem Dock-Kopf-Titel des migrierten `kennzahlen`-Panels, s.
+  // `dock-layout.spec.ts` Kommentar).
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
 
   await page.click('[data-testid="kv-oeffnen"]');
   await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
