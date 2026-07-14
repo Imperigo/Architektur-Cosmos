@@ -76,6 +76,7 @@ test('Mängel-Panel: erfassen, Status umschalten, Protokoll-Export, vollständig
   const pfad = await download.path();
   const svg = readFileSync(pfad!, 'utf8');
   expect(svg).toContain('<svg');
+  // Fragil (V079-Anhang B3): trifft aktuell den nicht-versal'ten Disclaimer-Fliesstext, nicht den (versal gesetzten) Blatttitel — nur Beobachtung, kein Fix hier.
   expect(svg).toContain('Abnahmeprotokoll');
   expect(svg).toContain('kein rechtsgültiges Abnahmeprotokoll (SIA 118 Abnahme bleibt Sache der Parteien).');
   expect(svg).toContain('Sanitär/Heizung');

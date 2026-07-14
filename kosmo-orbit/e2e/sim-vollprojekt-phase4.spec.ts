@@ -117,8 +117,12 @@ test('VP6 Phase 4 — Bewilligung: Preset (KV+Sonne) → Schnitt platzieren → 
 
   // Ausnützungsnachweis-Blatt (als letztes erzeugt → letzter Eintrag der Blattliste).
   await page.locator('[data-testid^="sheet-"]:not([data-testid="sheet-canvas"])').last().click();
-  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Ausnützungsnachweis');
-  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Prüfung durch die Behörde'); // [Quelle: derive/ausnuetzungsnachweis.ts BAUGESUCH_HINWEIS]
+  // Der Blatttitel läuft durch `versal()` (`derive/stilblatt.ts`), im DOM also
+  // «AUSNÜTZUNGSNACHWEIS» statt «Ausnützungsnachweis» — case-insensitiv wie
+  // der analoge 344er-Fix (`e2e/module.spec.ts`, ROADMAP 344/356).
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText(/ausnützungsnachweis/i);
+  // Versal auf Blatt-Ebene (v0.7.3 D4) — case-insensitiv, B3-Zusatzfund wie in baugesuch.spec.
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText(/prüfung durch die behörde/i); // [Quelle: derive/ausnuetzungsnachweis.ts BAUGESUCH_HINWEIS]
 
   // ---------------------------------------------------------------------
   // Akt 5 — Undo-Beweis: EIN Undo räumt den ganzen Baugesuch-Satz weg (nur

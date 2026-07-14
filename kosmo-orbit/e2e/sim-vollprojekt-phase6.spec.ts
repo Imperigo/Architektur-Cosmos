@@ -76,6 +76,7 @@ test('VP6 Phase 6 — Abnahme: Preset (Mängel) → zwei Mängel erfassen, einen
   const pfad = await B.berichtExportPruefen(page, 'maengel-protokoll', 'abnahmeprotokoll.svg'); // [Quelle: MaengelPanel.tsx Z.108/136]
   const { readFileSync } = await import('node:fs');
   const svg = readFileSync(pfad, 'utf8');
+  // Fragil (V079-Anhang B3): trifft aktuell den nicht-versal'ten Disclaimer-Fliesstext, nicht den (versal gesetzten) Blatttitel — nur Beobachtung, kein Fix hier.
   expect(svg).toContain('Abnahmeprotokoll');
   expect(svg).toContain('kein rechtsgültiges Abnahmeprotokoll (SIA 118 Abnahme bleibt Sache der Parteien).');
   expect(svg).toContain('Sanitär/Heizung');

@@ -89,8 +89,13 @@ test('Baugesuch: TKB → Publish → Wand + Schnitt → Baugesuch-Knopf → mehr
   // (sheetToSvg rendert den Bild-Slot-Titel als <text>, nicht als Pixel im
   // eingebetteten Bild), darum genügt ein textbasierter Sichtbarkeits-Check.
   await page.locator('[data-testid^="sheet-"]:not([data-testid="sheet-canvas"])').last().click();
-  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Ausnützungsnachweis');
-  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Prüfung durch die Behörde');
+  // Der Blatttitel läuft durch `versal()` (`derive/stilblatt.ts`), im DOM also
+  // «AUSNÜTZUNGSNACHWEIS» statt «Ausnützungsnachweis» — case-insensitiv wie
+  // der analoge 344er-Fix (`e2e/module.spec.ts`, ROADMAP 344/356).
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText(/ausnützungsnachweis/i);
+  // Der Bild-Slot-Titel wird auf Blatt-Ebene versal gesetzt (v0.7.3 D4) —
+  // case-insensitiv prüfen, dieselbe Klasse wie die Zeile darüber (B3-Zusatzfund).
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText(/prüfung durch die behörde/i);
 
   // EIN Undo räumt ALLES weg: Blätter zurück auf den Vorzustand vor dem
   // Baugesuch-Knopf (nur noch das manuell angelegte Arbeitsblatt mit dem

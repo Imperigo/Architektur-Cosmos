@@ -117,7 +117,9 @@ test('VP6 Phase 1 — Wettbewerb/Studie: Zonenregel + Parzelle + Raumprogramm �
   const pfad = await B.berichtExportPruefen(page, 'studie-bericht', 'grundlagenstudie.svg'); // [Quelle: DesignWorkspace.tsx Z.2062]
   const { readFileSync } = await import('node:fs');
   const svg = readFileSync(pfad, 'utf8');
-  expect(svg).toContain('Grundlagenstudie'); // [Quelle: derive/studienbericht.ts Z.174]
+  // Seit v0.7.3 D4 (447e598) setzt das Blatt den Titel versal — case-
+  // insensitiv wie der analoge 356er-Fix in `e2e/bauablauf.spec.ts`.
+  expect(svg.toLowerCase()).toContain('grundlagenstudie'); // [Quelle: derive/studienbericht.ts Z.174]
   expect(svg).toContain(szenario.zonenRegel.name); // [Quelle: derive/studienbericht.ts Z.179]
   expect(svg).toContain('Programm-Erfüllung'); // [Quelle: derive/studienbericht.ts Z.142]
   expect(svg).toContain('Anstoss, kein Entwurf'); // [Quelle: derive/studienbericht.ts Z.231]

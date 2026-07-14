@@ -145,7 +145,10 @@ test('VP6 Phase 3 — Bauprojekt: Plan-Detaillierung + Bemassung → KV-Kennwert
   const pfad = await B.berichtExportPruefen(page, 'bauablauf-blatt', 'bauablaufblatt.svg');
   const { readFileSync } = await import('node:fs');
   const svg = readFileSync(pfad, 'utf8');
-  expect(svg).toContain('Bauablaufplan');
+  // Seit v0.7.3 D4 (447e598, Blatt-Typografie «Zwei Stimmen») setzt das Blatt
+  // den Titel versal («BAUABLAUFPLAN») — die Prüfung ist deshalb case-
+  // insensitiv, wie der analoge 356er-Fix in `e2e/bauablauf.spec.ts`.
+  expect(svg.toLowerCase()).toContain('bauablaufplan');
   expect(svg).toContain('Abgeleiteter Grob-Terminplan, ersetzt keine Bauleitung.');
 
   // 🔒 Was real bleibt (Konzept §2, Phase 33, Punkt e): die eigentliche

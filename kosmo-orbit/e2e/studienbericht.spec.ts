@@ -79,8 +79,12 @@ test('Grundlagenstudie-Bericht: SVG-Download enthält Empfehlung, Zonenregel-Eck
   expect(svg).toContain('<svg');
   expect(svg.trim().endsWith('</svg>')).toBe(true);
   expect(svg).toContain('viewBox="0 0 1587 1123"'); // A3 quer (v2)
-  expect(svg).toContain('Grundlagenstudie');
-  expect(svg).toContain('Teppich'); // Variantenname aus generiereVolumenstudien
+  // Seit v0.7.3 D4 (447e598, Blatt-Typografie «Zwei Stimmen») laufen Titel-
+  // Stimme (Blatttitel) UND Variantenname durch `versal()`
+  // (`derive/studienbericht.ts` Z.165/233/376) — beide Prüfungen darum
+  // case-insensitiv, wie der analoge 356er-Fix in `e2e/bauablauf.spec.ts`.
+  expect(svg.toLowerCase()).toContain('grundlagenstudie');
+  expect(svg.toLowerCase()).toContain('teppich'); // Variantenname aus generiereVolumenstudien
   expect(svg).toContain('Anstoss, kein Entwurf');
 
   // K1: Erst das Urteil — die Empfehlung ist ein prominenter Block, kein
