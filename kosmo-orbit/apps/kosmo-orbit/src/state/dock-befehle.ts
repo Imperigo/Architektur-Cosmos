@@ -16,6 +16,19 @@ import { useDockOrbRuntime } from './dock-orb-runtime';
  * Befehl mutiert direkt `useDockZustand` (analog zu `ui.panelSetzen` und
  * `useUiZustand`).
  *
+ * v0.7.8 Abnahme-Fix (Matrix-Muss, Entscheids-Dokumentation) — der
+ * Undo-Entscheid EXPLIZIT: Dock-Layout ist Laufzeit-UI-Zustand, kein
+ * Doc/Yjs/Undo-Bestand — exakt dieselbe Grenze, die die v0.6.6-`ui.*`-Brücke
+ * (`ui-befehle.ts`, oben) schon vorlebt: Werkzeug/Ansicht/Panel-Sichtbarkeit
+ * gehen nie durch `runCommand`, weil sie nichts am `KosmoDoc` ändern. Die
+ * Spec-Formulierung «Command→Patch→Undo» gilt für DOC-SCHREIBER (die
+ * `design.*`/`draw.*`-Commands, die echte `AnyPatch[]` zurückgeben) — die
+ * `ui.dock*`-Befehle hier sind bewusst KEINE davon; sie laufen als
+ * quittierte ReadTools-artige Aktionen (Chat-Zeile ja, Undo-Gruppe nein),
+ * genau wie jeder andere `ui.*`-Befehl. Ein Redock/Einklappen landet darum
+ * nie im Undo-Stack — das ist kein Versehen, sondern dieselbe bewusste
+ * Trennung wie bei Werkzeugwechsel/Panel-Toggle.
+ *
  * **Aktive Station**: `dockbarePanelIds()` gibt es je Station (`design`/
  * `plan`/`vis`, `dock-stationen.ts`) — welche Station gerade sichtbar ist,
  * bestimmt der Screen (`App.tsx`), nicht dieser Namensraum. Analog zu `ui.

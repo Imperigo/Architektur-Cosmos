@@ -2,7 +2,8 @@
    Herzstück) — Optik für `DockFlaeche.tsx`/`DockPanel.tsx`/`DockSplitter.tsx`.
    Reine CSS-Klassen-Schicht über den Solver-Rechtecken aus `dock-kern.ts`;
    KEINE neuen Farben ausserhalb der bestehenden `aura.css`-Tokens, Reflow-
-   Timing (.28s) + Easing (`--k-ease-standard`) exakt wie im Auftrag verlangt.
+   Timing (`--k-dock-reflow`, .28s) + Easing (`--k-ease-standard`) exakt wie
+   im Auftrag verlangt.
    `prefers-reduced-motion` ist bereits GLOBAL in `aura.css` geregelt (killt
    jede `transition-duration` auf 0.01ms) — hier bewusst KEIN eigener
    `@media`-Riegel, das wäre eine zweite Quelle der Wahrheit. */
@@ -26,10 +27,10 @@
   box-shadow: var(--k-shadow-overlay);
   overflow: hidden;
   transition:
-    left 0.28s var(--k-ease-standard),
-    top 0.28s var(--k-ease-standard),
-    width 0.28s var(--k-ease-standard),
-    height 0.28s var(--k-ease-standard);
+    left var(--k-dock-reflow) var(--k-ease-standard),
+    top var(--k-dock-reflow) var(--k-ease-standard),
+    width var(--k-dock-reflow) var(--k-ease-standard),
+    height var(--k-dock-reflow) var(--k-ease-standard);
 }
 
 .k-dock-panel-kopf {
@@ -60,10 +61,18 @@
   flex: 0 0 auto;
 }
 
+/* v0.7.8 Abnahme-Fix (F5, Matrix-Muss) — Spec verlangt 12px/uppercase/
+   .14em für die Mono-Kopf-Labels; war 11px/0.06em. NUR diese Dock-Chrome-
+   Labels (`.k-dock-panel-titel`/`.k-dock-panel-tab`), keine app-weiten
+   Mono-Bestände (`.k-toolgruppe-label` u.ä. in `aura.css` bleiben
+   unangetastet). Die Köpfe sind schmal — `white-space:nowrap` +
+   `text-overflow:ellipsis` (unten) fängt das ab: ein zu langer Titel
+   trunkiert lesbar statt umzubrechen/den Kopf zu sprengen, das ist hier
+   bewusst in Kauf genommen (Sichtprüfung Screenshot). */
 .k-dock-panel-titel {
   font-family: var(--k-font-mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--k-ink-soft);
   white-space: nowrap;
@@ -100,6 +109,28 @@
   box-shadow: inset 0 0 0 1px var(--k-accent);
 }
 
+/* v0.7.8 Abnahme-Fix (C4, Matrix-Muss) — Pin-Badge im Kopf, additiv neben
+   dem Titel. Spec verlangt «Pin-Badge + Innenring» — der Innenring existiert
+   bereits (Regel direkt oben, `[data-aktiv='true']`), das Badge war die
+   Lücke. Dieselbe dezente Machart wie `.k-dock-kosmo-badge` (Pille, Mono,
+   9px) weiter unten, aber NEUTRAL/teal (`--k-accent`, dieselbe Farbe wie
+   der Pin-Innenring selbst) statt Gold — ein einzelner Mono-Punkt-Glyph
+   statt eines Wortes, damit der schmale Kopf nicht mit einem zweiten
+   Text-Badge überladen wird (das Pin-Symbol selbst sitzt schon rechts auf
+   dem Knopf). Sichtbar NUR solange `angeheftet` true ist (`DockPanel.tsx`). */
+.k-dock-panel-pin-badge {
+  flex: 0 0 auto;
+  font-family: var(--k-font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--k-accent);
+  background: var(--k-accent-wash);
+  border: 1px solid color-mix(in srgb, var(--k-accent) 45%, transparent);
+  border-radius: var(--k-radius-pill, 999px);
+  padding: 2px 5px;
+}
+
 .k-dock-panel-inhalt {
   flex: 1 1 auto;
   min-height: 0;
@@ -129,7 +160,7 @@
   cursor: grab;
   touch-action: none;
   z-index: 2;
-  transition: opacity 0.12s var(--k-ease-standard);
+  transition: opacity var(--k-dock-schnell) var(--k-ease-standard);
 }
 .k-dock-panel-griff:hover,
 .k-dock-panel-griff:active {
@@ -154,8 +185,12 @@
   padding: 0 var(--k-s3);
   cursor: pointer;
   font-family: var(--k-font-mono);
-  font-size: 11px;
-  letter-spacing: 0.04em;
+  /* F5: der sichtbare Titeltext im eingeklappten Tab ist `.k-dock-panel-
+     titel` (dieselbe Klasse, s.o.) und überschreibt diese Werte bereits —
+     hier trotzdem mitgezogen (Konsistenz, falls der Button je ohne den
+     Titel-Span Text zeigen sollte). */
+  font-size: 12px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--k-ink-soft);
 }
@@ -189,8 +224,8 @@
   border-radius: 2px;
   background: transparent;
   transition:
-    background 0.12s var(--k-ease-standard),
-    box-shadow 0.12s var(--k-ease-standard);
+    background var(--k-dock-schnell) var(--k-ease-standard),
+    box-shadow var(--k-dock-schnell) var(--k-ease-standard);
 }
 .k-dock-splitter[data-art='col-left']::after,
 .k-dock-splitter[data-art='col-right']::after {
@@ -229,8 +264,8 @@
   border-radius: var(--k-radius-md);
   background: transparent;
   transition:
-    background 0.12s var(--k-ease-standard),
-    border-color 0.12s var(--k-ease-standard);
+    background var(--k-dock-schnell) var(--k-ease-standard),
+    border-color var(--k-dock-schnell) var(--k-ease-standard);
 }
 .k-dock-snap-zone[data-aktiv='true'] {
   border-color: var(--k-accent);
@@ -274,10 +309,17 @@
 /* v0.7.8 Welle 3 (P7, «Kosmo ordnet») — der goldene Orb, der zur Kopfleiste
    des zuletzt von Kosmo bedienten Panels wandert (`KosmoOrdnetOrb.tsx`).
    `left`/`top` sind Solver-Rechteck-Koordinaten (dieselbe Welt wie
-   `DockPanel.tsx`s Rechtecke) — die `.55s ease-out`-Transition (Auftrag)
-   lässt den Orb dorthin GLEITEN statt zu springen. Farbe `--k-rolle-agent`
-   (bereits vorhandenes Rollenfarben-Token, `aura.css`) statt einer neuen
-   Farbe. */
+   `DockPanel.tsx`s Rechtecke) — die `.55s ease-out`-Transition (Auftrag,
+   Token `--k-dock-orb`) lässt den Orb dorthin GLEITEN statt zu springen.
+   Farbe `--k-rolle-agent` (bereits vorhandenes Rollenfarben-Token,
+   `aura.css`) statt einer neuen Farbe.
+   v0.7.8 Abnahme-Fix (D2, Matrix-Muss): `--k-ease-standard` ist die
+   Standard-EIN/AUS-Kurve (`cubic-bezier(0.4,0,0.2,1)`), KEIN echtes
+   ease-out (das würde am Ende ausklingen, nicht am Anfang UND Ende) — der
+   alte Kommentar/Fallback-Wert hier war schlicht falsch benannt. Jetzt
+   `--k-ease-entrance` (`cubic-bezier(0.16,1,0.3,1)`), die tatsächliche
+   Entrance-/Out-Kurve des Systems: schnell raus, weich einrasten — genau
+   das «ease-out»-Gefühl, das der Auftrag verlangt. */
 .k-dock-kosmo-orb {
   position: absolute;
   z-index: 50;
@@ -286,8 +328,8 @@
   height: 14px;
   margin: -7px 0 0 -7px;
   transition:
-    left 0.55s var(--k-ease-standard, ease-out),
-    top 0.55s var(--k-ease-standard, ease-out);
+    left var(--k-dock-orb) var(--k-ease-entrance),
+    top var(--k-dock-orb) var(--k-ease-entrance);
 }
 .k-dock-kosmo-orb-kern {
   position: absolute;
@@ -330,6 +372,25 @@
   border-radius: var(--k-radius-pill, 999px);
   padding: 1px 6px;
   white-space: nowrap;
+}
+
+/* v0.7.8 Abnahme-Fix (D3, Matrix-Muss) — der goldene Highlight-RING um das
+   Panel, das Kosmo GERADE bedient: die Spec verlangt «goldener
+   Highlight-Ring + KOSMO-Badge» zusammen, das Badge (oben) gab es schon,
+   der Ring war die tatsächliche Lücke. Gleiches Gate wie die Badge
+   (`kosmoBadgeSichtbar` in `DockPanel.tsx`) — additive Klasse auf dem
+   Panel-Container selbst (`.k-dock-panel`), in BEIDEM Zustand (voller Kopf
+   UND eingeklappter Tab). Optik wie der Pin-Innenring oben
+   (`.k-dock-panel-knopf[data-aktiv='true']`), aber AUSSEN am ganzen Panel
+   statt innen am Knopf, und golden (`--k-rolle-agent`) statt Akzent-Teal —
+   ein zusätzlicher `box-shadow`-Ring NEBEN dem bestehenden
+   `--k-shadow-overlay` (ergänzt, ersetzt ihn nicht), plus ein dezenter
+   Glow, dieselbe Rezeptur wie der Orb-Kern (`.k-dock-kosmo-orb-kern`). */
+.k-dock-panel--kosmo-ring {
+  box-shadow:
+    var(--k-shadow-overlay),
+    0 0 0 2px var(--k-rolle-agent),
+    0 0 10px 1px color-mix(in srgb, var(--k-rolle-agent) 55%, transparent);
 }
 
 /* STOPP-Chip (Auftrag: sichtbar solange `laeuft`) — Muster `.kz-bedienung`

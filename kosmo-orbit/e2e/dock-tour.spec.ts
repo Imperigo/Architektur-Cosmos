@@ -67,7 +67,11 @@ interface BenannteBox extends Box {
  *  (links/rechts angedockte Panels + `kennzahlen`), nicht die Floats. */
 async function sichtbareDockPanelBoxen(page: Page): Promise<BenannteBox[]> {
   const roh = await page.evaluate(() => {
-    const suffixe = ['-tab', '-kosmo-badge', '-pin', '-popout', '-redock', '-einklappen', '-schliessen'];
+    // '-pin-badge' (Abnahme-Fix C4) VOR '-pin' unnötig — endsWith prüft jeden
+    // Suffix einzeln; das neue Kopf-Badge muss aber explizit dabei sein, sonst
+    // zählte es als eigene "Panel-Wurzel" und überlappte trivialerweise sein
+    // eigenes Panel.
+    const suffixe = ['-tab', '-kosmo-badge', '-pin-badge', '-pin', '-popout', '-redock', '-einklappen', '-schliessen'];
     return Array.from(document.querySelectorAll('[data-testid^="dock-panel-"]'))
       .filter((el) => {
         const id = el.getAttribute('data-testid') ?? '';

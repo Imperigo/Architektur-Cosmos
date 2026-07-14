@@ -114,6 +114,16 @@
   --k-radius-sm: 8px;
   --k-radius-md: 12px;
   --k-radius-lg: 16px;
+  /* v0.7.8 Abnahme-Fix (F3/F1, Handoff-Abgleich 14.07.) — drei fehlende
+     DS-Radiusstufen, additiv (themen-agnostisch wie die drei obigen).
+     Owner-Entscheid, was NICHT mitkommt: das 48px-Raster-Utility und die
+     Schatten-Skala aus demselben Handoff bleiben aussen vor — keine
+     Dock-Fläche braucht sie heute (nur die drei Radien werden von den
+     Fixes dieser Runde tatsächlich referenziert); nachziehen, sobald eine
+     echte Fläche danach fragt, statt vorsorglich zu tokenisieren. */
+  --k-radius-xs: 6px;
+  --k-radius-karte: 14px;
+  --k-radius-node: 18px;
   --k-motion-fast: 120ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-base: 200ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-settle: 320ms cubic-bezier(0.22, 0.9, 0.28, 1);
@@ -159,6 +169,22 @@
   --k-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --k-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
   --k-ease-bounce: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* v0.7.8 Abnahme-Fix (F3/F1, Matrix-Muss) — Dock-Dauern als benannte
+     Tokens statt roher Literale in `dock-flaeche.css`/`dock-tour.css`:
+     `--k-dock-reflow` ist der Spalten-/Panel-Reflow (Auftrag: .28s),
+     `--k-dock-orb` die Kosmo-Orb-Gleitfahrt (Auftrag: .55s), `--k-dock-
+     schnell` die kleinen Hover-/Griff-Rückmeldungen (Splitter, Snap-Zone,
+     Griffstreifen — bisher inline `0.12s`, hier bewusst auf .16s
+     angehoben: eine eigene, etwas grosszügigere „schnell"-Stufe statt
+     `--k-motion-fast` (120ms) 1:1 zweitzuverwenden, weil diese Stellen alle
+     im Dock-Koordinatensystem neben `--k-dock-reflow`/`--k-dock-orb`
+     stehen — EINE zusammenhängende Dock-Zeitskala statt eines Fremdtokens
+     mittendrin). Orbit-agnostisch (kein Theme-Override nötig, reine
+     Zeitwerte). */
+  --k-dock-reflow: 0.28s;
+  --k-dock-orb: 0.55s;
+  --k-dock-schnell: 0.16s;
 }
 
 /* Alte Engines ohne linear()-Easing (Konzept §2): --k-feder zeigt dann die
@@ -254,6 +280,15 @@
      Bühne bzw. Statusleiste. */
   --k-sunken: #08090d;
   --k-statusbar: #050608;
+  /* v0.7.8 Abnahme-Fix (F3/F1, Handoff-Abgleich 14.07.) — zwei fehlende
+     DS-Stufen, additiv, NUR Kosmos (`orbit`): `--k-flaeche-zwischen` ist
+     die DS-«raised»-Stufe ZWISCHEN `--k-field` (#0b0d12) und `--k-surface`
+     (#14171f) — bislang übersprungen; `--k-ink-muted` ist die vierte
+     Textstufe unter `--k-ink-faint`. Kein bestehender Wert oben in diesem
+     Block wurde verändert. Papier bekommt (noch) kein Gegenstück — die
+     Lücke betraf laut Handoff nur das dunkle Theme. */
+  --k-flaeche-zwischen: #101319;
+  --k-ink-muted: #8b92a2;
   color-scheme: dark;
 }
 

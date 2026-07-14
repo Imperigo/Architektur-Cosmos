@@ -487,6 +487,12 @@ const VIS_PANELS: readonly PanelDef[] = [
  * Panels sind bereits (Welle 1/2) im Dock der Station `'design'`. Ein
  * separates `'plan'`-Preset entfiele ersatzlos; die vier PlanView-Toggle-
  * Buttons (`top:8`) bleiben fixe Chrome.
+ *
+ * v0.7.8 Abnahme-Fix (Matrix-Muss, Entscheids-Dokumentation): dieselbe
+ * Begründung trägt die «generic»-Station des Design-Handoff-Prototyps —
+ * auch sie war reine Regel-Demo (ein Platzhalter-Panel-Set ohne echte
+ * Registry-Einträge) ohne Produkt-Pendant und entfällt darum ebenso bewusst,
+ * nicht nur `'plan'`.
  */
 export function stationsPanels(station: DockStation): readonly PanelDef[] {
   switch (station) {

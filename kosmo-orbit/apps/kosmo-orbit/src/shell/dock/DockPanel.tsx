@@ -156,9 +156,14 @@ export function DockPanel({
     );
   }
 
+  // v0.7.8 Abnahme-Fix (D3, Matrix-Muss) — der goldene Ring gilt für BEIDE
+  // Zustände (voller Kopf UND eingeklappter Tab), dasselbe Gate wie das
+  // KOSMO-Badge (`kosmoBadgeSichtbar`, s.o.).
+  const panelKlasse = `k-dock-panel${kosmoBadgeSichtbar ? ' k-dock-panel--kosmo-ring' : ''}`;
+
   if (rect.eingeklappt) {
     return (
-      <div className="k-dock-panel" style={style} data-testid={`dock-panel-${def.id}`} data-schwebend={!!rect.schwebend}>
+      <div className={panelKlasse} style={style} data-testid={`dock-panel-${def.id}`} data-schwebend={!!rect.schwebend}>
         <button
           type="button"
           className="k-dock-panel-tab"
@@ -173,6 +178,11 @@ export function DockPanel({
             style={{ background: `var(--k-rolle-${def.rolle})` }}
           />
           <span className="k-dock-panel-titel">{def.titel}</span>
+          {angeheftet && (
+            <span className="k-dock-panel-pin-badge" data-testid={`dock-panel-${def.id}-pin-badge`} aria-hidden="true">
+              •
+            </span>
+          )}
           {kosmoBadgeSichtbar && (
             <span className="k-dock-kosmo-badge" data-testid={`dock-panel-${def.id}-kosmo-badge`} aria-hidden="true">
               KOSMO
@@ -184,7 +194,7 @@ export function DockPanel({
   }
 
   return (
-    <div className="k-dock-panel" style={style} data-testid={`dock-panel-${def.id}`} data-schwebend={!!rect.schwebend}>
+    <div className={panelKlasse} style={style} data-testid={`dock-panel-${def.id}`} data-schwebend={!!rect.schwebend}>
       <div className="k-dock-panel-kopf" data-drag onPointerDown={kopfPointerDown}>
         <span
           className="k-dock-panel-rollenpunkt"
@@ -195,6 +205,11 @@ export function DockPanel({
         <span className="k-dock-panel-titel" title={def.titel}>
           {def.titel}
         </span>
+        {angeheftet && (
+          <span className="k-dock-panel-pin-badge" data-testid={`dock-panel-${def.id}-pin-badge`} aria-hidden="true">
+            •
+          </span>
+        )}
         {kosmoBadgeSichtbar && (
           <span className="k-dock-kosmo-badge" data-testid={`dock-panel-${def.id}-kosmo-badge`} aria-hidden="true">
             KOSMO

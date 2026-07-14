@@ -3,7 +3,8 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 /**
  * v0.7.8 Welle 3 / Paket P7 («Kosmo ordnet») — Kosmo steuert das Dock über
  * echte `ui.dock*`-Befehle (`apps/kosmo-orbit/src/state/dock-befehle.ts`),
- * sichtbar über den goldenen Orb + die «KOSMO»-Kopf-Badge
+ * sichtbar über den goldenen Orb + die «KOSMO»-Kopf-Badge + den goldenen
+ * Highlight-Ring am Panel-Container (Abnahme-Fix D3)
  * (`shell/dock/KosmoOrdnetOrb.tsx`, `DockPanel.tsx`) und quittiert im Chat
  * wie jeder andere `ui.*`-Befehl (`kosmo-ui-aktion-dock`, Muster
  * `kosmo-ui-bruecke.spec.ts`).
@@ -178,6 +179,9 @@ test.describe('(b) Direktweg — fuehreUiBefehlAus spielt die «Planprüfung»-S
     });
     await expect(page.locator('[data-testid="dock-kosmo-orb"]')).toBeVisible();
     await expect(page.locator('[data-testid="dock-panel-kennzahlen-kosmo-badge"]')).toBeVisible();
+    // Abnahme-Fix D3 (goldener Highlight-Ring): läuft am selben Gate wie die
+    // Badge — Ring UND Badge zeigen zusammen aufs Kennzahlen-Panel.
+    await expect(page.locator('[data-testid="dock-panel-kennzahlen"]')).toHaveClass(/k-dock-panel--kosmo-ring/);
     let orbBox = await stabileBox(page.locator('[data-testid="dock-kosmo-orb"]'));
     let kennzahlenBox = await stabileBox(page.locator('[data-testid="dock-panel-kennzahlen"]'));
     // Orb-Position = Panel-Rechteck + 17px (Kopfleiste, `KosmoOrdnetOrb.tsx`)
@@ -205,9 +209,13 @@ test.describe('(b) Direktweg — fuehreUiBefehlAus spielt die «Planprüfung»-S
     });
     await expect(page.locator('[data-testid="dock-panel-inspector-tab"]')).toBeVisible();
     await expect(page.locator('[data-testid="dock-panel-inspector-kosmo-badge"]')).toBeVisible();
+    // D3: der Ring wandert mit — auch im eingeklappten Tab-Zustand trägt der
+    // Panel-Container (nicht der Tab-Button selbst) die Ring-Klasse.
+    await expect(page.locator('[data-testid="dock-panel-inspector"]')).toHaveClass(/k-dock-panel--kosmo-ring/);
     // Das VORHERIGE Ziel (Kennzahlen) trägt die Badge jetzt NICHT mehr — genau
     // EIN Panel zeigt sie zu jedem Zeitpunkt (`badgePanelId`, `dock-orb-runtime.ts`).
     await expect(page.locator('[data-testid="dock-panel-kennzahlen-kosmo-badge"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="dock-panel-kennzahlen"]')).not.toHaveClass(/k-dock-panel--kosmo-ring/);
 
     // Nichts überlappt: die aktuell sichtbaren Dock-Panels bleiben disjunkt.
     kennzahlenBox = await stabileBox(page.locator('[data-testid="dock-panel-kennzahlen"]'));
@@ -225,6 +233,7 @@ test.describe('(b) Direktweg — fuehreUiBefehlAus spielt die «Planprüfung»-S
       window.__kosmoUiBefehle.ausfuehren('ui.dockGroesseSetzen', { panelId: 'rasterOffen', groesse: 400 });
     });
     await expect(page.locator('[data-testid="dock-panel-rasterOffen-kosmo-badge"]')).toBeVisible();
+    await expect(page.locator('[data-testid="dock-panel-rasterOffen"]')).toHaveClass(/k-dock-panel--kosmo-ring/);
     orbBox = await stabileBox(page.locator('[data-testid="dock-kosmo-orb"]'));
     const rasterBox = await stabileBox(page.locator('[data-testid="dock-panel-rasterOffen"]'));
     expect(ueberlappenSich(orbBox, rasterBox)).toBe(true);
@@ -239,9 +248,10 @@ test.describe('(b) Direktweg — fuehreUiBefehlAus spielt die «Planprüfung»-S
     expect(snapshot.panels['kennzahlen']).toBeUndefined();
     expect(snapshot.panels['rasterOffen']).toBeUndefined();
 
-    // STOPP: Orb + Badge verschwinden sofort.
+    // STOPP: Orb + Badge + Ring verschwinden sofort.
     await page.click('[data-testid="dock-kosmo-stopp"]');
     await expect(page.locator('[data-testid="dock-kosmo-orb"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="dock-panel-rasterOffen-kosmo-badge"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="dock-panel-rasterOffen"]')).not.toHaveClass(/k-dock-panel--kosmo-ring/);
   });
 });

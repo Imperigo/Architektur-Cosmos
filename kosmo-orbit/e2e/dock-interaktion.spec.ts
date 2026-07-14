@@ -192,6 +192,8 @@ test('Pin schützt Grösse: geht ein zweites Panel auf, klappt das ANDERE (nicht
   await expect(page.locator('[data-testid="dock-panel-kvOffen"]')).toBeVisible();
   await page.click('[data-testid="dock-panel-kvOffen-pin"]');
   await expect(page.locator('[data-testid="dock-panel-kvOffen-pin"]')).toHaveAttribute('aria-pressed', 'true');
+  // Abnahme-Fix C4 (Pin-Badge): sichtbar im Kopf, sobald angeheftet.
+  await expect(page.locator('[data-testid="dock-panel-kvOffen-pin-badge"]')).toBeVisible();
 
   await page.click('[data-testid="bauablauf-oeffnen"]');
 

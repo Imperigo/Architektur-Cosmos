@@ -47,6 +47,14 @@ import './dock-tour.css';
  * Jeder Schritt selbst ist eine VOLLSTÄNDIGE Ersetzung (Reset via
  * `layoutZuruecksetzen()` + Neuaufbau), keine Inkremente über den vorherigen
  * Schritt — Vor/Zurück bleiben so deterministisch in beide Richtungen.
+ *
+ * v0.7.8 Abnahme-Fix (Matrix-Muss, Entscheids-Dokumentation): der
+ * Panel-Zustands-Snapshot oben ist bewusst KEIN globaler `ui-zustand.ts`-
+ * Rundumschlag — er sichert exakt die `GESTEUERTE_PANEL_IDS`-Teilmenge (die
+ * zehn linken Panel-Booleans unten), weil die Tour selbst auch nur GENAU
+ * diese zehn anfasst (`schrittAnwenden()` unten schreibt ausschliesslich
+ * über diese Liste). Jedes andere Panel/jeder andere UI-Zustand bleibt
+ * während der Tour unberührt und braucht darum auch keinen Snapshot-Eintrag.
  */
 
 const STATION: DockStation = 'design';
