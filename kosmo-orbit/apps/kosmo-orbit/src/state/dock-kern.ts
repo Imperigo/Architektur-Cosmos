@@ -45,6 +45,17 @@ export interface PanelDef {
   start: 'offen' | 'zu';
   schliessbar: boolean;
   bewegbar: boolean;
+  /**
+   * v0.7.8 Welle 2 / Paket P5 (HUD-Floats): reine RENDER-Weiche für
+   * `DockPanel.tsx` — der Solver hier kennt/braucht das Feld nicht (kein
+   * Einfluss auf `solve()`/`stack()`/`placeFloats()`, nur strukturell
+   * durchgereicht). `'schlank'` = kein Dock-Kopf (Titel/Pin/Chevron/Re-Dock),
+   * nur ein dünner Griffstreifen zum Ziehen — für HUDs, die als kompakte
+   * Glass-Karten ohne eigenes Chrome wirken sollen (Viewport-Modus-Leiste,
+   * -Werkzeug-Rail, -Orientierungskreuz, s. `dock-stationen.ts`). Fehlt das
+   * Feld (`undefined`), rendert `DockPanel` wie bisher den vollen Kopf.
+   */
+  floatChrome?: 'voll' | 'schlank';
 }
 
 export interface PanelOverride {

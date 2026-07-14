@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
@@ -225,6 +225,11 @@ import {
 // `ViewportChrome.tsx`-Kopfkommentar für die Layout-/Ehrlichkeits-Begründung.
 import { ViewportChrome } from './ViewportChrome';
 import { brennweiteAusFov, zoomProzent as chromeZoomProzent, type ViewportModusId } from './viewport-modi';
+// v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»): Modus-Leiste,
+// Werkzeug-Rail und Orientierungskreuz rendern jetzt als `DockPanel`-Floats
+// über `DesignWorkspace.tsx`/`DockFlaeche` — dieser Store spiegelt NUR die
+// dafür nötigen primitiven Werte nach aussen (s. Kopfkommentar der Datei).
+import { useViewportChromeRuntime } from '../../state/viewport-chrome-runtime';
 
 // C2: Textur-Umschalter — Rebuild des Modells beim Wechsel
 let texturRevision = 0;
@@ -341,6 +346,20 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     kontextOffenRef.current = !!kontext;
   }, [kontext]);
 
+  // v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»): Modus-Leiste
+  // und Werkzeug-Rail rendern jetzt ausserhalb dieser Komponente (Floats in
+  // `DesignWorkspace.tsx`/`DockFlaeche`, s. `viewport-chrome-runtime.ts`).
+  // `viewportModusRef` hält den aktuellen Modus für `chromeWerkzeugWechsel`
+  // bereit (unten, jetzt `useCallback([])` für eine STABILE Funktions-
+  // Referenz — der Store registriert sie NUR EINMAL, s. Registrier-Effekt
+  // weiter unten) — ohne den Ref griffe die Closure sonst dauerhaft den
+  // Modus vom ERSTEN Render (klassischer Stale-Closure-Bug bei `useCallback`
+  // mit leeren Deps).
+  const viewportModusRef = useRef<ViewportModusId>('modellieren');
+  useEffect(() => {
+    viewportModusRef.current = viewportModus;
+  }, [viewportModus]);
+
   // T5 (Owner-Laptoptest, Punkt 3) + A4-Erweiterung (ROADMAP 155, Owner-
   // Entscheid «Beides/Raycast»): Freihand-Skizzieren im 3D-Viewport — der
   // Bildschirm-Strahl trifft jetzt per Raycast die tatsächliche Fläche
@@ -455,6 +474,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         splatAktiv: splatCloud !== null,
         sonnenDatum: sunDate,
       });
+      // P5: Orientierungskreuz-Float liest NUR `azimutRad` aus dem Runtime-
+      // Store (s. Kopfkommentar dort) — derselbe 400ms-Takt, kein zweiter
+      // Poll. Bewusst NICHT der ganze Snapshot: die anderen Werte hier
+      // ändern sich (Distanz/FOV/Kontext) und würden sonst unnötig oft den
+      // Store-Selektor der Orientierungs-Float-Komponente feuern.
+      useViewportChromeRuntime.setState({ azimutRad: controls.azimuthAngle });
     }, 400);
     return () => clearInterval(t);
   }, []);
@@ -622,9 +647,41 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     setTexturModus(naechster);
     setTexturenChromeAn(naechster);
   };
-  const chromeWerkzeugWechsel = (id: string) => {
-    setWerkzeugProModus((prev) => ({ ...prev, [viewportModus]: id }));
-  };
+  // `useCallback([])` (STABILE Referenz, liest `viewportModusRef` statt der
+  // geschlossenen `viewportModus`-Variable) — der Registrier-Effekt unten
+  // schreibt diese Funktion nur EINMAL in den Store, s. Kommentar dort.
+  const chromeWerkzeugWechsel = useCallback((id: string) => {
+    setWerkzeugProModus((prev) => ({ ...prev, [viewportModusRef.current]: id }));
+  }, []);
+
+  // v0.7.8 Welle 2 / Paket P5: Modus/Werkzeug/Bereit-Zustand in
+  // `viewport-chrome-runtime.ts` spiegeln — die vier HUD-Floats
+  // (`DesignWorkspace.tsx`) lesen NUR von dort, kein Prop-Drilling durch
+  // zwei ~2000-Zeilen-Dateien. Reine Zusatz-Effekte, ändern NICHTS am
+  // bestehenden lokalen State/Verhalten dieser Komponente.
+  useEffect(() => {
+    useViewportChromeRuntime.setState({
+      bereit: viewportBereit,
+      modus: viewportModus,
+      aktivesWerkzeug: werkzeugProModus[viewportModus] ?? 'auswahl',
+    });
+  }, [viewportBereit, viewportModus, werkzeugProModus]);
+  useEffect(() => {
+    // Registriert die (stabilen) Aktions-Callbacks EINMAL — `setViewportModus`
+    // (React-Setter) und `chromeWerkzeugWechsel` (`useCallback([])`, s.o.)
+    // sind über die gesamte Lebensdauer dieser Komponenteninstanz identisch.
+    useViewportChromeRuntime.setState({ onModusWechsel: setViewportModus, onWerkzeugWechsel: chromeWerkzeugWechsel });
+  }, [chromeWerkzeugWechsel]);
+  useEffect(
+    () => () => {
+      // Unmount (z.B. Wechsel in die 2D-Ansicht, s. `DesignWorkspace.tsx`
+      // `viewMode!=='2d'`-Guard) — die Floats müssen verschwinden, sonst
+      // zeigt der Dock nach dem Wechsel Geister-HUDs ohne lebendige Kamera
+      // dahinter.
+      useViewportChromeRuntime.setState({ bereit: false });
+    },
+    [],
+  );
 
   // Linker Klick folgt dem gewählten Modus (Mitteltaste/Rechts werden pro Geste
   // in onCaptureDown aus mausBelegung gesetzt, wegen Shift+Mitte). navModusRef
@@ -2097,9 +2154,6 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       <ViewportChrome
         sichtbar={viewportBereit}
         modus={viewportModus}
-        onModusWechsel={setViewportModus}
-        aktivesWerkzeug={werkzeugProModus[viewportModus]}
-        onWerkzeugWechsel={chromeWerkzeugWechsel}
         azimutRad={chromeSnapshot.azimutRad}
         polarGrad={chromeSnapshot.polarGrad}
         distanzM={chromeSnapshot.distanzM}

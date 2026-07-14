@@ -116,6 +116,37 @@ export function DockPanel({
     zIndex: rect.schwebend ? 30 : 14,
   };
 
+  // v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»): eine schlanke
+  // Chrome-Variante für Panels, die als kompakte Glass-Karte OHNE Dock-Kopf
+  // wirken sollen (Viewport-Modus-Leiste/-Karte/-Werkzeug-Rail/
+  // -Orientierungskreuz, s. `dock-stationen.ts` `floatChrome:'schlank'`) —
+  // KEIN Titel/Pin/Chevron/Re-Dock/Schliessen, nur ein dünner Griffstreifen
+  // oben zum Ziehen (derselbe `onFloatDragStart`/`onRedockDragStart`-
+  // Umschalter wie beim vollen Kopf, s. `kopfPointerDown` oben — floatende
+  // HUDs nehmen dabei IMMER den Float-Zweig, da `def.dock==='float'` schon
+  // in der Registry steht, nie erst durch einen Redock-Drag entsteht). Der
+  // Inhalt selbst bringt bereits sein eigenes `.k-glass`-Aussehen mit (aus
+  // `ViewportChromeHuds.tsx`) — der äussere Rahmen bleibt darum bewusst
+  // unsichtbar (kein zweites, doppeltes Glass), s. `.k-dock-panel--schlank`
+  // in `dock-flaeche.css`. Ein eingeklapptes `schlank`-Panel gibt es nicht
+  // (`placeFloats()` in `dock-kern.ts` setzt `eingeklappt` für Floats immer
+  // fix auf `false` — der Solver kennt für Floats gar kein Einklappen), der
+  // `rect.eingeklappt`-Zweig unten wird für sie darum nie erreicht.
+  if (def.floatChrome === 'schlank') {
+    return (
+      <div className="k-dock-panel k-dock-panel--schlank" style={style} data-testid={`dock-panel-${def.id}`} data-schwebend={!!rect.schwebend}>
+        <div
+          className="k-dock-panel-griff"
+          data-drag
+          title={def.titel}
+          aria-hidden="true"
+          onPointerDown={kopfPointerDown}
+        />
+        <div className="k-dock-panel-inhalt-schlank">{children}</div>
+      </div>
+    );
+  }
+
   if (rect.eingeklappt) {
     return (
       <div className="k-dock-panel" style={style} data-testid={`dock-panel-${def.id}`} data-schwebend={!!rect.schwebend}>

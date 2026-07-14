@@ -10,10 +10,11 @@ import {
   type PanelOverride,
 } from '../../state/dock-kern';
 import { stationsPanels, type DockStation } from '../../state/dock-stationen';
-import { useDockZustand } from '../../state/dock-zustand';
+import { eingeklappteDiff, useDockZustand } from '../../state/dock-zustand';
 import { DockPanel } from './DockPanel';
 import { DockSplitter } from './DockSplitter';
 import { DockSnapZonen, type DockGeistZustand } from './DockSnapZonen';
+import { DockAutoHinweisChip } from './DockAutoHinweisChip';
 import './dock-flaeche.css';
 
 /**
@@ -110,6 +111,14 @@ const FLOAT_MAGNET_T = 16;
 const FLOAT_SNAPBACK_T = 30;
 const FLOAT_MIN_W = 220;
 const FLOAT_MAX_H = 240;
+/** C6 (Auto-Reaktions-Hinweis, P5) — 40ms-Defer wie im Design-Handoff-
+ *  Prototyp `announce()` (s. `dock-zustand.ts`s `eingeklappteDiff()`-
+ *  Kopfkommentar): lässt den Solver/DOM eine Runde setteln, bevor die
+ *  «nachher»-Menge eingeklappter Panels gemessen wird. */
+const HINWEIS_DEFER_MS = 40;
+/** Anzeigedauer des Chips (Auftrag: «~2,9 s»). */
+const HINWEIS_DAUER_MS = 2900;
+
 /** Mindest-Feldhöhe, unterhalb derer die Kosmo-Band-BOT-Reserve entfällt
  *  (s. Kopfkommentar «ADAPTIV») — bewusst derselbe Wert wie
  *  `DOCK_KONSTANTEN.MIN_VIEWPORT` (die horizontale Untergrenze des Solvers),
@@ -565,6 +574,80 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
     return { rects, viewport: haupt.viewport, splitters };
   }, [defs, feld, dockModus, leftW, rightW, overrides, redockAktivId, floatDragId]);
 
+  // -----------------------------------------------------------------------
+  // C6 — Auto-Reaktions-Hinweis (P5): vergleicht die Menge eingeklappter
+  // Panel-IDs vor/nach jeder Layout-verändernden Aktion (Panel geöffnet,
+  // Chevron-Ein/Ausklappen, Anheften, Neu-Andocken) und zeigt kurz einen
+  // Chip (`eingeklappteDiff()`, `dock-zustand.ts`, Semantik 1:1 wie der
+  // Prototyp `announce()`). `ausgeloesterIdRef` hält NUR das Panel fest,
+  // dessen EIGENES `eingeklappt` der Mensch gerade DIREKT per Chevron/Tab
+  // umgeschaltet hat (`einklappenUmschalten`, `DockPanel.tsx`) — das darf
+  // laut `eingeklappteDiff()`-Vertrag nicht als «Auto-Reaktion» auf SICH
+  // SELBST gemeldet werden (sonst ein redundanter Chip für die eigene,
+  // bewusste Geste). BEWUSST NICHT ausgeschlossen: das gerade frisch
+  // GEÖFFNETE Panel selbst — wenn GENAU DAS wegen Platzmangel sofort
+  // einklappt (der Alltagsfall des Auftragsbeispiels «zweites Panel öffnen
+  // bis eines einklappt», Solver wählt das unwichtigste EXPANDIERTE Panel,
+  // das kann das gerade geöffnete selbst sein, s. `stack()` in
+  // `dock-kern.ts`), ist das GENAU die Überraschung, die der Chip erklären
+  // soll — kein Grund, sie zu unterdrücken.
+  // -----------------------------------------------------------------------
+  const eingeklapptKey = useMemo(
+    () =>
+      Object.entries(ergebnis.rects)
+        .filter(([, r]) => r.eingeklappt)
+        .map(([id]) => id)
+        .sort()
+        .join(','),
+    [ergebnis],
+  );
+  const eingeklapptVorherRef = useRef<string[]>([]);
+  const ausgeloesterIdRef = useRef<string | undefined>(undefined);
+  const vorherigeOverridesRef = useRef<Record<string, PanelOverride>>({});
+  const [hinweisText, setHinweisText] = useState<string | null>(null);
+  const hinweisAblaufRef = useRef<number | undefined>(undefined);
+
+  // Der Mensch klappt EIN bestimmtes Panel selbst per Chevron/Tab ein oder
+  // aus (`einklappenUmschalten`, `DockPanel.tsx` → persistierter
+  // `override.eingeklappt` wechselt) — Selbstbedienung, keine automatische
+  // Reaktion des Solvers auf DIESES Panel.
+  useEffect(() => {
+    const vorherOv = vorherigeOverridesRef.current;
+    for (const [id, ov] of Object.entries(gespeichertePanels)) {
+      const altEingeklappt = vorherOv[id]?.eingeklappt ?? false;
+      const neuEingeklappt = ov.eingeklappt ?? false;
+      if (altEingeklappt !== neuEingeklappt) ausgeloesterIdRef.current = id;
+    }
+    vorherigeOverridesRef.current = gespeichertePanels;
+  }, [gespeichertePanels]);
+
+  // Der eigentliche Diff — 40ms-Defer, EXAKT EINMAL je tatsächlicher
+  // Änderung der eingeklappten Menge (`eingeklapptKey`), nicht je Render.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const vorher = eingeklapptVorherRef.current;
+      const nachher = eingeklapptKey ? eingeklapptKey.split(',') : [];
+      const diff = eingeklappteDiff(vorher, nachher, ausgeloesterIdRef.current);
+      eingeklapptVorherRef.current = nachher;
+      ausgeloesterIdRef.current = undefined;
+      const meldungId = diff.neuEingeklappt ?? diff.wiederOffen;
+      if (!meldungId) return;
+      const titel = defs.find((d) => d.id === meldungId)?.titel ?? meldungId;
+      const text = diff.neuEingeklappt ? `${titel} eingeklappt · Platz geschaffen` : `${titel} wieder geöffnet`;
+      setHinweisText(text);
+      if (hinweisAblaufRef.current) window.clearTimeout(hinweisAblaufRef.current);
+      hinweisAblaufRef.current = window.setTimeout(() => setHinweisText(null), HINWEIS_DAUER_MS);
+    }, HINWEIS_DEFER_MS);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eingeklapptKey, defs]);
+  useEffect(
+    () => () => {
+      if (hinweisAblaufRef.current) window.clearTimeout(hinweisAblaufRef.current);
+    },
+    [],
+  );
+
   if (feld.w <= 0 || feld.h <= 0) {
     // Erster Messlauf noch nicht gelaufen (Layout-Effekt läuft nach dem
     // ersten Paint) — nichts rendern statt kollabierter Rechtecke zu zeigen.
@@ -573,6 +656,7 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
 
   return (
     <div ref={wurzelRef} className="k-dock-flaeche" data-testid="dock-flaeche">
+      <DockAutoHinweisChip text={hinweisText} />
       {panels.map((p) => {
         const rect = ergebnis.rects[p.id];
         if (!rect) return null; // geschlossen ODER gerade gedraggt — kein Platz reserviert

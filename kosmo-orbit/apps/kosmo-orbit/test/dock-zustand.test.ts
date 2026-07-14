@@ -364,11 +364,22 @@ const GUELTIGE_ROLLEN = ['manuell', 'pn', 'pna', 'agent', 'memory', 'generator',
  *  `inspector` kommen hinzu. */
 const DATEN_GUARD_IDS = ['unternehmerplan', 'kennzahlen', 'inspector'] as const;
 
+/** v0.7.8 Welle 2 (P5) — die vier gefloateten Viewport-HUDs (Modus-Leiste/
+ *  -Karte/-Werkzeug-Rail/-Orientierungskreuz). Wie die `DATEN_GUARD_IDS`
+ *  oben haben sie KEIN `…Offen`-Flag in `ui-zustand.ts` (Sichtbarkeit kommt
+ *  aus `viewport-chrome-runtime.ts`s `bereit`, s. `DesignWorkspace.tsx`) —
+ *  anders als die Daten-Guards sind sie aber `dock:'float'` statt
+ *  `'left'`/`'right'` und NICHT schliessbar (kein Schliessen-Weg im Ist-
+ *  Zustand). Eigene Konstante statt Erweiterung von `DATEN_GUARD_IDS`, weil
+ *  ein paar Invarianten unten (Wichtigkeits-Band, `min`/`groesse`,
+ *  `schliessbar`) für Floats bewusst ANDERS gelten, s. jeweilige Tests. */
+const HUD_FLOAT_IDS = ['viewportModusLeiste', 'viewportModusKarte', 'viewportWerkzeugRail', 'viewportOrientierung'] as const;
+
 describe('dock-stationen — Registry-Invarianten (design)', () => {
   const panels = stationsPanels('design');
 
-  it('enthält genau 14 Panels (Welle 1: 12 + Welle 2/P4: kennzahlen/inspector)', () => {
-    expect(panels.length).toBe(14);
+  it('enthält genau 18 Panels (Welle 1: 12 + Welle 2/P4: kennzahlen/inspector + Welle 2/P5: 4 HUD-Floats)', () => {
+    expect(panels.length).toBe(18);
   });
 
   it('alle IDs sind paarweise eindeutig', () => {
@@ -376,24 +387,33 @@ describe('dock-stationen — Registry-Invarianten (design)', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('alle IDs ausser den dokumentierten Daten-Guard-Ausnahmen sind ⊆ PANEL_IDS aus ui-zustand.ts', () => {
-    const ohneAusnahme = panels.filter((p) => !(DATEN_GUARD_IDS as readonly string[]).includes(p.id)).map((p) => p.id);
+  it('alle IDs ausser den dokumentierten Daten-Guard-/HUD-Float-Ausnahmen sind ⊆ PANEL_IDS aus ui-zustand.ts', () => {
+    const ausnahmen = new Set<string>([...DATEN_GUARD_IDS, ...HUD_FLOAT_IDS]);
+    const ohneAusnahme = panels.filter((p) => !ausnahmen.has(p.id)).map((p) => p.id);
     for (const id of ohneAusnahme) {
       expect((PANEL_IDS as readonly string[]).includes(id)).toBe(true);
     }
   });
 
-  it('"unternehmerplan"/"kennzahlen"/"inspector" sind GENAU die IDs ohne Entsprechung in PANEL_IDS (Daten-Guards, kein …Offen-Flag)', () => {
+  it('Daten-Guards + HUD-Floats sind GENAU die IDs ohne Entsprechung in PANEL_IDS (kein …Offen-Flag)', () => {
     const ohneEntsprechung = panels.filter((p) => !(PANEL_IDS as readonly string[]).includes(p.id));
-    expect(ohneEntsprechung.map((p) => p.id).sort()).toEqual([...DATEN_GUARD_IDS].sort());
+    expect(ohneEntsprechung.map((p) => p.id).sort()).toEqual([...DATEN_GUARD_IDS, ...HUD_FLOAT_IDS].sort());
   });
 
-  it('Wichtigkeiten liegen im Band 38-52, ausser den P4-Sonderfällen kennzahlen (60) und inspector (82)', () => {
+  it('Wichtigkeiten liegen im Band 38-52, ausser den P4-Sonderfällen kennzahlen (60)/inspector (82) und den P5-HUD-Floats', () => {
+    const erwarteteFloatWichtigkeit: Record<string, number> = {
+      viewportModusLeiste: 70,
+      viewportModusKarte: 50,
+      viewportWerkzeugRail: 64,
+      viewportOrientierung: 30,
+    };
     for (const p of panels) {
       if (p.id === 'kennzahlen') {
         expect(p.wichtigkeit).toBe(60);
       } else if (p.id === 'inspector') {
         expect(p.wichtigkeit).toBe(82);
+      } else if ((HUD_FLOAT_IDS as readonly string[]).includes(p.id)) {
+        expect(p.wichtigkeit).toBe(erwarteteFloatWichtigkeit[p.id]);
       } else {
         expect(p.wichtigkeit).toBeGreaterThanOrEqual(38);
         expect(p.wichtigkeit).toBeLessThanOrEqual(52);
@@ -401,16 +421,36 @@ describe('dock-stationen — Registry-Invarianten (design)', () => {
     }
   });
 
-  it('Wichtigkeiten sind paarweise eindeutig (klare Einklapp-Rangfolge)', () => {
-    const werte = panels.map((p) => p.wichtigkeit);
+  it('Wichtigkeiten der Stack-Panels (links/rechts) sind paarweise eindeutig (klare Einklapp-Rangfolge)', () => {
+    // Floats ausgeschlossen: `stack()`/`separate()` (dock-kern.ts) vergleichen
+    // Wichtigkeit NIE gruppenübergreifend (Stack- vs. Float-Panels) — ein
+    // Wert wie `variantenPanelOffen`s 50 darf darum mit einem Float
+    // (`viewportModusKarte`, ebenfalls 50) kollidieren, ohne die Solver-
+    // Ordnung innerhalb einer Gruppe zu beeinflussen.
+    const werte = panels.filter((p) => p.dock !== 'float').map((p) => p.wichtigkeit);
     expect(new Set(werte).size).toBe(werte.length);
   });
 
-  it('min <= groesse für jedes Panel', () => {
-    for (const p of panels) {
+  it('Wichtigkeiten der Float-HUDs sind paarweise eindeutig (Überlapp-Priorität in separate())', () => {
+    const werte = panels.filter((p) => p.dock === 'float').map((p) => p.wichtigkeit);
+    expect(new Set(werte).size).toBe(werte.length);
+  });
+
+  it('min <= groesse für jedes Stack-Panel (Floats nutzen fw/fh statt min/groesse)', () => {
+    for (const p of panels.filter((x) => x.dock !== 'float')) {
       expect(p.min).toBeDefined();
       expect(p.groesse).toBeDefined();
       expect(p.min!).toBeLessThanOrEqual(p.groesse!);
+    }
+  });
+
+  it('fw/fh sind definiert und positiv für jedes Float-HUD', () => {
+    for (const p of panels.filter((x) => x.dock === 'float')) {
+      expect(p.fw).toBeDefined();
+      expect(p.fh).toBeDefined();
+      expect(p.fw!).toBeGreaterThan(0);
+      expect(p.fh!).toBeGreaterThan(0);
+      expect(p.anker).toBeDefined();
     }
   });
 
@@ -420,11 +460,15 @@ describe('dock-stationen — Registry-Invarianten (design)', () => {
     }
   });
 
-  it('alle Panels sind start:"zu", schliessbar und bewegbar', () => {
+  it('alle Stack-Panels sind start:"zu", schliessbar und bewegbar; HUD-Floats sind start:"zu", NICHT schliessbar, aber bewegbar', () => {
     for (const p of panels) {
       expect(p.start).toBe('zu');
-      expect(p.schliessbar).toBe(true);
       expect(p.bewegbar).toBe(true);
+      if ((HUD_FLOAT_IDS as readonly string[]).includes(p.id)) {
+        expect(p.schliessbar).toBe(false);
+      } else {
+        expect(p.schliessbar).toBe(true);
+      }
     }
   });
 
@@ -432,10 +476,12 @@ describe('dock-stationen — Registry-Invarianten (design)', () => {
     expect(dockbarePanelIds('design')).toEqual(panels.map((p) => p.id));
   });
 
-  it('nur "left"/"right" als dock-Zone (kein rail/float in Welle 1)', () => {
+  it('"left"/"right"/"float" sind die einzigen dock-Zonen — GENAU die vier HUD-IDs sind "float"', () => {
     for (const p of panels) {
-      expect(['left', 'right']).toContain(p.dock);
+      expect(['left', 'right', 'float']).toContain(p.dock);
     }
+    const floatIds = panels.filter((p) => p.dock === 'float').map((p) => p.id);
+    expect(floatIds.sort()).toEqual([...HUD_FLOAT_IDS].sort());
   });
 });
 

@@ -2,37 +2,37 @@
  * v0.7.6 Welle 1 Stream A — 3D-Viewport-Chrome (rein präsentational).
  *
  * Portiert das ClaudeDesign-Soll-Bild `Kosmo Viz Viewport.dc.html`
- * (Handoff-README §6.1) in den echten React-Stack: Modus-Schalter+Badge
- * (oben links), HUD (oben rechts, gestapelt über dem Eigenschaften-Panel),
- * Achsenkreuz (unten links), kontextuelle Bottom-Leiste + Zoom (unten
- * mittig). Alle Overlays nutzen `.k-glass` (kosmo-ui `aura.css`, W0-Freeze)
- * und schweben ÜBER dem echten three.js-Canvas — kein Bild-Slot, keine
- * Fake-Daten: jeder hereingereichte Wert kommt aus `Viewport3D.tsx` (echte
- * Kamera-/Projekt-/Leistungs-Werte), s. Kommentar in `viewport-modi.ts`.
+ * (Handoff-README §6.1) in den echten React-Stack. Alle Overlays nutzen
+ * `.k-glass` (kosmo-ui `aura.css`, W0-Freeze) und schweben ÜBER dem echten
+ * three.js-Canvas — kein Bild-Slot, keine Fake-Daten: jeder hereingereichte
+ * Wert kommt aus `Viewport3D.tsx` (echte Kamera-/Projekt-/Leistungs-Werte),
+ * s. Kommentar in `viewport-modi.ts`.
  *
- * Layout-Hinweis (Koexistenz mit bestehender Chrome, die NICHT verschoben
- * wird — `NavLeiste`/Render-Knopf-Spalte bleiben bei `right:88`, die
- * DesignWorkspace-Statusleiste bei `left:12…right:88,bottom:12`, beides
+ * **v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»)**: vier der
+ * ehemals hier fest `position:absolute` verankerten HUD-Blöcke — Modus-
+ * Umschalter (Tabs), Modus-Infokarte (Badge/Titel), Werkzeug-Rail,
+ * Orientierungskreuz — sind ausgezogen nach `ViewportChromeHuds.tsx` und
+ * rendern jetzt als `DockPanel`-Float-Inhalte über `DesignWorkspace.tsx` /
+ * `DockFlaeche` (Registry in `dock-stationen.ts`, `dock:'float'`) — echtes
+ * Ziehen/Magnet/Snap-zurück aus P4, kollisionsfrei gegen die Dock-Spalten.
+ * Diese Datei hier behält NUR, was NICHT gefloatet wird (Ist-Zustand-
+ * Entscheid, s. Abschlussbericht): die HUD-Statuskarte (`viewport-hud`,
+ * bleibt fixe Chrome — ihre gemessene Grösse passte zu keinem der vier
+ * Registry-Slots), das Eigenschaften-Panel und die Bottom-Leiste
+ * (kontextuelle Chips + Zoom + Vollbild — Teil der Statuszeile, bleibt wo
+ * sie ist). Layout-Hinweis (Koexistenz mit bestehender Chrome, die NICHT
+ * verschoben wird — `NavLeiste`/Render-Knopf-Spalte bleiben bei `right:88`,
+ * die DesignWorkspace-Statusleiste bei `left:12…right:88,bottom:12`, beides
  * ausserhalb dieser Datei/dieses Streams): die Eigenschaften-Spalte endet
- * bei `bottom:180` (Luft über der Render-Spalte im Ruhezustand), Achsenkreuz
- * + Bottom-Leiste sitzen bei `bottom:56` (Luft über der Statusleiste). Bei
- * einem sehr hohen Render-Ergebnis-Panel (Bild sichtbar) ist ein knapper
- * Überlapp möglich — bewusst in Kauf genommen (transienter Zustand, s.
+ * bei `bottom:180` (Luft über der Render-Spalte im Ruhezustand). Bei einem
+ * sehr hohen Render-Ergebnis-Panel (Bild sichtbar) ist ein knapper Überlapp
+ * möglich — bewusst in Kauf genommen (transienter Zustand, s.
  * Abschlussbericht «vertagt»), statt die fremde Statusleiste/NavLeiste-
  * Position anzufassen.
  */
 import { Badge, KButton, KIcon } from '@kosmo/ui';
-import { AchsenGizmo, VIcon } from './viewport-chrome-icons';
-import {
-  VIEWPORT_MODUS_REIHENFOLGE,
-  VIEWPORT_MODUS_TEXT,
-  VIEWPORT_ROLLEN,
-  VIEWPORT_WERKZEUGE,
-  aspektLabel,
-  kompassLabel,
-  sonnenLabel,
-  type ViewportModusId,
-} from './viewport-modi';
+import { VIcon } from './viewport-chrome-icons';
+import { VIEWPORT_MODUS_TEXT, VIEWPORT_ROLLEN, aspektLabel, sonnenLabel, type ViewportModusId } from './viewport-modi';
 
 const DARSTELLUNG_LABEL: Record<'material' | 'weiss' | 'schwarz', string> = {
   material: 'Material',
@@ -55,9 +55,6 @@ export interface ViewportChromeProps {
    *  der three.js-Mount tatsächlich steht (kein leerer/kaputter Flash). */
   sichtbar: boolean;
   modus: ViewportModusId;
-  onModusWechsel: (m: ViewportModusId) => void;
-  aktivesWerkzeug: string;
-  onWerkzeugWechsel: (id: string) => void;
 
   /** Echte Kamera-Werte (camera-controls, Polling in Viewport3D). */
   azimutRad: number;
@@ -104,8 +101,6 @@ export function ViewportChrome(props: ViewportChromeProps) {
   if (!props.sichtbar) return null;
   const rolle = VIEWPORT_ROLLEN[props.modus];
   const text = VIEWPORT_MODUS_TEXT[props.modus];
-  const werkzeuge = VIEWPORT_WERKZEUGE[props.modus];
-  const orientierung = kompassLabel(props.azimutRad);
   const aspekt = aspektLabel(props.aspektBreite, props.aspektHoehe);
 
   const hud: HudZeile[] =
@@ -205,93 +200,31 @@ export function ViewportChrome(props: ViewportChromeProps) {
       <style>{CHROME_STYLE}</style>
 
       <div className="k-vp-chrome-root">
-      {/* MODUS-SCHALTER + BADGE + TOOL-RAIL (linke Spalte, kompakt/oben
-          gestapelt — Höhe folgt dem Inhalt statt die Spalte bis unten zu
-          füllen). WICHTIG: `EntwurfsDock` (DesignWorkspace.tsx, `.orbit065-
-          dock`) sitzt vertikal MITTIG an derselben linken Kante (`left:12`,
-          `top:50%`); eine volle Spalte hätte dessen Klicks abgefangen
-          (real in E2E beobachtet: «Rotieren» blockierte `entwurf-
-          skizzieren»). Darum bleibt diese Spalte bewusst auf ihre
-          tatsächliche Inhaltshöhe begrenzt (kein `bottom`/`flex:1`) und
-          endet weit oberhalb der Bild-Mitte. */}
-      <div className="k-vp-chrome-spalte" style={{ top: 16, left: '50%', transform: 'translateX(-50%)', width: 280, alignItems: 'center' }}>
-        <div className="k-glass" style={{ display: 'flex', gap: 4, padding: 4, flex: 'none' }}>
-          {VIEWPORT_MODUS_REIHENFOLGE.map((m) => {
-            const aktiv = m === props.modus;
-            const r = VIEWPORT_ROLLEN[m];
-            const t = VIEWPORT_MODUS_TEXT[m];
-            return (
-              <button
-                key={m}
-                type="button"
-                className="k-vp-tab k-druck"
-                data-testid={`viewport-modus-${m}`}
-                onClick={() => props.onModusWechsel(m)}
-                style={{
-                  background: aktiv ? r.fill : 'transparent',
-                  border: `1px solid ${aktiv ? r.linie : 'transparent'}`,
-                  color: aktiv ? r.farbe : 'var(--k-ink-soft)',
-                }}
-              >
-                <VIcon name={t.tabIcon} size={14} />
-                {t.tabLabel}
-              </button>
-            );
-          })}
-        </div>
-        <div className="k-glass" style={{ padding: '14px 16px', flex: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
-            <span className="k-vp-puls" style={{ background: rolle.farbe }} />
-            <span
-              style={{
-                fontFamily: 'var(--k-font-mono)',
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: '0.16em',
-                color: rolle.farbe,
-              }}
-              data-testid="viewport-modus-badge"
-            >
-              {text.badge}
-            </span>
-            <div style={{ flex: 1 }} />
-            <Badge hue={rolle.farbe}>{text.tagLabel}</Badge>
-          </div>
-          <div style={{ fontWeight: 700, fontSize: 19, lineHeight: 1.15, color: 'var(--k-ink)' }}>{text.titel}</div>
-          <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', marginTop: 3 }}>{text.sub}</div>
-        </div>
+      {/* v0.7.8 Welle 2 / Paket P5: die frühere linke Modus-Spalte (Tabs +
+          Badge-Karte + Werkzeug-Rail) ist ausgezogen — die drei Blöcke
+          rendern jetzt einzeln als `DockPanel`-Floats über
+          `ViewportChromeHuds.tsx`/`DesignWorkspace.tsx` (s. Datei-
+          Kopfkommentar). Hier bleibt nichts mehr an ihrer Stelle. */}
 
-        {/* TOOL-RAIL — kompakte horizontale Zeile (Werkzeuge des aktiven
-            Modus; Chrome-Highlight, s. Datei-Kommentar oben zu «bewusst
-            vertagt: keine echte Transform-Wirkung»). Bewusst KEINE volle
-            vertikale Spalte, s. Kommentar am Container oben. */}
-        <div className="k-glass k-vp-rail" style={{ flex: 'none' }}>
-          {werkzeuge.map((w) => {
-            const aktiv = w.id === props.aktivesWerkzeug;
-            return (
-              <button
-                key={w.id}
-                type="button"
-                className="k-vp-tool k-druck"
-                title={w.label}
-                aria-label={w.label}
-                aria-pressed={aktiv}
-                data-testid={`viewport-werkzeug-${w.id}`}
-                onClick={() => props.onWerkzeugWechsel(w.id)}
-                style={{
-                  background: aktiv ? rolle.fill : 'transparent',
-                  border: `1px solid ${aktiv ? rolle.linie : 'transparent'}`,
-                  color: aktiv ? rolle.farbe : 'var(--k-ink-soft)',
-                }}
-              >
-                <VIcon name={w.icon} size={20} />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* HUD + EIGENSCHAFTEN (oben rechts, gestapelt) */}
+      {/* HUD + EIGENSCHAFTEN (oben rechts, gestapelt) — Ist-Zustand-Entscheid
+          P5 (s. Datei-Kopfkommentar): bleibt fixes Chrome, NICHT Teil der
+          Dock-Float-Registry.
+          BEKANNTE, DOKUMENTIERTE LÜCKE: diese Spalte ist dem Dock-Solver
+          (`DockFlaeche.tsx`) unbekannt (kein gemessener Geschwister-Rect wie
+          `geschossleiste`/`entwurf-dock`) — in der Split-Ansicht (der
+          App-Default, `ui-zustand.ts`), wenn der 3D-Viewport-Anteil dadurch
+          schmal wird UND ein linkes/rechtes Panel offen ist, kann das
+          `viewportOrientierung`-Float (Anker `bottom-left`) mit der UNTEREN
+          Ecke dieser Spalte überlappen (real gemessen, 1400×900, Split +
+          `kv-oeffnen`: ~130×85px Überlapp). `placeFloats()`/`separate()`
+          (dock-kern.ts) kennen nur Floats untereinander, keine externen
+          Ausschlusszonen — ein sauberer Fix bräuchte entweder (a) eine
+          Erweiterung des Solvers um phantome/feste Ausschlussrechtecke oder
+          (b) diese Spalte selbst ins Dock zu migrieren (wie `kennzahlen`/
+          `inspector` in P4) — beides ausserhalb des P5-Umfangs (Auftrag
+          nennt nur die vier HUD-Floats). Bewusst nicht behoben, s.
+          Abschlussbericht «Restpunkte» — Nutzer:innen können das HUD am
+          Griffstreifen frei wegziehen. */}
       <div className="k-vp-spalte-rechts">
         <div className="k-glass" style={{ padding: '14px 16px', flex: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -387,21 +320,10 @@ export function ViewportChrome(props: ViewportChromeProps) {
         </div>
       </div>
 
-      {/* ACHSENKREUZ (unten links) */}
-      <div className="k-glass" style={{ position: 'absolute', left: 16, bottom: 56, display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px 12px 12px', zIndex: 6 }}>
-        <AchsenGizmo size={56} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, letterSpacing: '0.14em', color: 'var(--k-ink-faint)' }}>ORIENTIERUNG</span>
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 13, color: 'var(--k-ink-soft)' }} data-testid="viewport-orientierung">
-            {orientierung}
-          </span>
-          <div style={{ display: 'flex', gap: 8, marginTop: 2 }}>
-            <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-rolle-generator)' }}>X</span>
-            <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-rolle-manuell)' }}>Y</span>
-            <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-rolle-pn)' }}>Z</span>
-          </div>
-        </div>
-      </div>
+      {/* v0.7.8 Welle 2 / Paket P5: das Achsenkreuz («ORIENTIERUNG») sass
+          hier vorher als eigenes `position:absolute`-Overlay — jetzt ein
+          `DockPanel`-Float (`ViewportOrientierungHud`, `dock-stationen.ts`
+          `viewportOrientierung`, Anker `bottom-left`). */}
 
       {/* BOTTOM: kontextuelle Chips + Zoom (unten mittig) */}
       {!props.versteckeBottomLeiste && (
@@ -488,13 +410,6 @@ const CHROME_STYLE = `
   .k-vp-chrome-root a,
   .k-vp-chrome-root [role='button'],
   .k-vp-chrome-root .k-vp-interaktiv { pointer-events: auto; }
-  .k-vp-chrome-spalte {
-    position: absolute;
-    z-index: 6;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
   .k-vp-spalte-rechts {
     position: absolute;
     top: 16px;

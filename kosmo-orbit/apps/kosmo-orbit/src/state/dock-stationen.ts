@@ -288,6 +288,99 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     schliessbar: true,
     bewegbar: true,
   },
+
+  // ---- v0.7.8 Welle 2 (P5) — Viewport-HUDs als echte Dock-Floats ----------
+  // Vier der fünf heutigen 3D-Viewport-HUDs (`modules/design/ViewportChrome
+  // .tsx`/`ViewportChromeHuds.tsx`) sind jetzt `dock:'float'`-Panels
+  // derselben Design-Station statt handgetunter `position:absolute`-Kinder:
+  // Modus-Umschalter, Modus-Infokarte, Werkzeug-Rail, Orientierungskreuz.
+  // NICHT gefloatet (Ist-Zustand-Entscheid, s. Abschlussbericht): die kleine
+  // HUD-Statuskarte (`viewport-hud`, ANSICHT/RASTER/GESCHOSS/…) und das
+  // Eigenschaften-Panel bleiben fixe Chrome IN `ViewportChrome.tsx` — beide
+  // gehören zur rechten `k-vp-spalte-rechts`-Säule, die unverändert bleibt;
+  // die gemessene HUD-Statuskarten-Grösse (~280×154, alle drei Modi) passte
+  // zu keinem der vier hier definierten Float-Slots. Der Zoom-/Vollbild-
+  // Cluster bleibt ebenfalls unverändert (Teil der Bottom-Statuszeile).
+  //
+  // Sichtbarkeit ist wie `kennzahlen`/`inspector` oben ein reiner Daten-Guard
+  // (kein `…Offen`-Flag in `ui-zustand.ts`): `DesignWorkspace.tsx` leitet
+  // `sichtbar` aus `viewport-chrome-runtime.ts`s `bereit` (Viewport3D
+  // gemountet UND fertig) UND `viewMode ∈ {'3d','split'}` ab — Quad-Ansicht
+  // ist bewusst ausgeschlossen: die vier Viewport3D-Chrome-Werte kommen zwar
+  // auch dort (Viewport3D mountet in jeder Nicht-2D-Ansicht inkl. Quad), die
+  // Floats selbst würden dort aber über das GANZE 2×2-Feld schweben (der
+  // Solver kennt nur EIN zentrales Viewport-Rechteck je Station, nicht vier
+  // Grid-Zellen) statt nur über der Viewport3D-Zelle — reale
+  // Überlappungsgefahr mit PlanView/SectionView-Zellen. «3D-/Split-Ansicht
+  // wie heute» (Auftrag) schliesst Quad damit aus.
+  //
+  // `fw`/`fh` sind ECHTE gerenderte Grössen (Playwright-Messung am
+  // unveränderten v0.7.7-Stand, 1400×900, alle drei Modi durchgeklickt),
+  // NICHT die groben Prototyp-Näherungen aus dem Auftrag — Details/
+  // Abweichungen im Abschlussbericht:
+  //   mode            Ziel ~250×44  → gemessen 259×44  (fast exakt)
+  //   card/Massing    Ziel ~200×92  → gemessen 204-240×99 (Titeltext variiert
+  //                   je Modus, «Kamera & Render-Setup» ist am längsten)
+  //   gizmo/Transform Ziel ~196×56  → gemessen 288×58 (6 Werkzeuge je Modus,
+  //                   ungewrappt — der Ziel-Wert unterschätzt die reale
+  //                   Rail-Breite deutlich)
+  //   orient          Ziel ~150×92  → gemessen 185×84
+  {
+    id: 'viewportModusLeiste',
+    titel: 'Modus',
+    rolle: 'system',
+    wichtigkeit: 70,
+    dock: 'float',
+    anker: 'top',
+    fw: 260,
+    fh: 44,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    floatChrome: 'schlank',
+  },
+  {
+    id: 'viewportModusKarte',
+    titel: 'Modus-Info',
+    rolle: 'manuell',
+    wichtigkeit: 50,
+    dock: 'float',
+    anker: 'top',
+    fw: 244,
+    fh: 100,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    floatChrome: 'schlank',
+  },
+  {
+    id: 'viewportWerkzeugRail',
+    titel: 'Werkzeuge',
+    rolle: 'system',
+    wichtigkeit: 64,
+    dock: 'float',
+    anker: 'top',
+    fw: 290,
+    fh: 60,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    floatChrome: 'schlank',
+  },
+  {
+    id: 'viewportOrientierung',
+    titel: 'Orientierung',
+    rolle: 'system',
+    wichtigkeit: 30,
+    dock: 'float',
+    anker: 'bottom-left',
+    fw: 188,
+    fh: 86,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    floatChrome: 'schlank',
+  },
 ];
 
 /**

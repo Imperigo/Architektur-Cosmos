@@ -96,6 +96,13 @@ import { requestKosmoFokus } from '../../state/kosmo-focus';
 import { EntwurfsDock, type EntwurfsModus } from './EntwurfsDock';
 import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
 import { useDockZustand } from '../../state/dock-zustand';
+// v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»): die vier
+// gefloateten Viewport-HUDs — Modus-Leiste/-Karte/-Werkzeug-Rail/
+// -Orientierungskreuz, s. `dock-stationen.ts` — sind selbst-genügsame
+// Komponenten (lesen `viewport-chrome-runtime.ts` direkt); hier nur die
+// `bereit`-Fahne für die `sichtbar`-Prop der Dock-Panel-Einträge.
+import { ViewportModusKarteHud, ViewportModusLeisteHud, ViewportOrientierungHud, ViewportWerkzeugRailHud } from './ViewportChromeHuds';
+import { useViewportChromeRuntime } from '../../state/viewport-chrome-runtime';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
 import { registerActions } from '../../shell/palette';
@@ -413,6 +420,16 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
   const viewMode = useUiZustand((s) => s.viewMode);
   const setViewMode = useUiZustand((s) => s.setViewMode);
+  // v0.7.8 Welle 2 / Paket P5: Sichtbarkeits-Guard der vier Viewport-HUD-
+  // Floats — `bereit` ändert sich nur bei Mount/Unmount von `Viewport3D`
+  // (nicht bei jedem 400ms-Kamera-Tick, s. `viewport-chrome-runtime.ts`
+  // Kopfkommentar), verursacht hier also KEIN häufiges Re-Render dieser
+  // ~2000-Zeilen-Komponente. Quad-Ansicht bewusst ausgeschlossen (s.
+  // `dock-stationen.ts`-Kommentar «Sichtbarkeit» — der Solver kennt nur EIN
+  // zentrales Viewport-Rechteck, die Floats würden im 2×2-Raster über alle
+  // vier Zellen schweben statt nur über der Viewport3D-Zelle).
+  const viewportChromeBereit = useViewportChromeRuntime((s) => s.bereit);
+  const viewportHudFloatsSichtbar = viewportChromeBereit && (viewMode === '3d' || viewMode === 'split');
   // SK-D1 Massnahme 2: Export-Gruppe hinter einem echten Auf/Zu-Trigger,
   // Default OFFEN (Begründung: Kommentar am `export-menu-toggle`-Knopf unten).
   const exportMenuOffen = useUiZustand((s) => s.exportMenuOffen);
@@ -1799,6 +1816,34 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         sichtbar: inspectorSichtbar,
         inhalt: <Inspector />,
       },
+      // v0.7.8 Welle 2 (P5): die vier gefloateten Viewport-HUDs — Daten-Guard
+      // wie `kennzahlen`/`inspector` oben (kein `…Offen`-Flag), Sichtbarkeit
+      // = `viewportHudFloatsSichtbar` (Viewport3D bereit + 3D/Split-Ansicht,
+      // s. Kommentar dort). Kein `schliessen` (keine der vier hat einen
+      // Schliessen-Weg, s. `dock-stationen.ts` `schliessbar:false`). Jede
+      // Komponente ist selbst-genügsam (`ViewportChromeHuds.tsx` liest
+      // `viewport-chrome-runtime.ts` direkt) — `inhalt` reicht sie darum
+      // ohne weitere Props durch.
+      {
+        id: 'viewportModusLeiste',
+        sichtbar: viewportHudFloatsSichtbar,
+        inhalt: <ViewportModusLeisteHud />,
+      },
+      {
+        id: 'viewportModusKarte',
+        sichtbar: viewportHudFloatsSichtbar,
+        inhalt: <ViewportModusKarteHud />,
+      },
+      {
+        id: 'viewportWerkzeugRail',
+        sichtbar: viewportHudFloatsSichtbar,
+        inhalt: <ViewportWerkzeugRailHud />,
+      },
+      {
+        id: 'viewportOrientierung',
+        sichtbar: viewportHudFloatsSichtbar,
+        inhalt: <ViewportOrientierungHud />,
+      },
     ],
     [
       rasterOffen,
@@ -1818,6 +1863,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
       unternehmerplanSichtbar,
       drawOffen,
       inspectorSichtbar,
+      viewportHudFloatsSichtbar,
       setRasterOffen,
       setCwSetzenOffen,
       setSplatPanelOffen,

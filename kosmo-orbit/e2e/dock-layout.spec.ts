@@ -347,3 +347,61 @@ test('enges Fenster (1400×520): Draw (48) klappt zugunsten Kennzahlen (60) zuer
 
   await pruefeDisjunktion(page, selektorMap(['drawOffen', 'kennzahlen']));
 });
+
+// ---------------------------------------------------------------------------
+// v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats») — die vier
+// Viewport-HUDs (Modus-Leiste/-Karte/-Werkzeug-Rail/-Orientierungskreuz,
+// `dock-stationen.ts` `dock:'float'`) sind jetzt `DockPanel`-Floats
+// derselben Design-Station wie die Spalten-Panels — ein EINZIGER
+// `solve()`-Lauf platziert beides, Disjunktion ist darum strukturell
+// gratis, wird hier aber wie jede andere Panel-Kombination hart geprüft.
+// Default-`viewMode` ist `'split'` (`ui-zustand.ts`) — die HUDs sind ohne
+// weiteren Klick schon da.
+// ---------------------------------------------------------------------------
+
+const HUD_FLOAT_IDS = ['viewportModusLeiste', 'viewportModusKarte', 'viewportWerkzeugRail', 'viewportOrientierung'] as const;
+
+test('3D-/Split-Ansicht: alle vier Viewport-HUD-Floats + zwei offene Dock-Panels — keine Überlappung untereinander/gegen die Spalten', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+  for (const id of HUD_FLOAT_IDS) {
+    await expect(page.locator(`[data-testid="dock-panel-${id}"]`)).toBeVisible();
+  }
+
+  await page.click('[data-testid="raster-toggle"]');
+  await page.click('[data-testid="kv-oeffnen"]');
+  await expect(page.locator('[data-testid="dock-panel-rasterOffen"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-kvOffen"]')).toBeVisible();
+
+  await pruefeDisjunktion(page, selektorMap([...HUD_FLOAT_IDS, 'rasterOffen', 'kvOffen', 'kennzahlen']));
+});
+
+test('schmaler Viewport (1400×900, volle linke + rechte Spalte): HUD-Floats bleiben im zentralen Feld geklemmt, keine Überlappung mit den Spalten', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="raster-toggle"]');
+  await page.click('[data-testid="cw-setzen-oeffnen"]');
+  await page.click('[data-testid="kv-oeffnen"]');
+  await page.click('[data-testid="draw-toggle"]');
+  await expect(page.locator('[data-testid="dock-panel-rasterOffen"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-drawOffen"]')).toBeVisible();
+
+  await pruefeDisjunktion(
+    page,
+    selektorMap([...HUD_FLOAT_IDS, 'rasterOffen', 'cwSetzenOffen', 'kvOffen', 'drawOffen', 'kennzahlen']),
+  );
+
+  // `placeFloats()` (dock-kern.ts) klemmt jeden Float strukturell auf das
+  // zentrale `vp`-Rechteck (zwischen den Spalten) — hier zusätzlich explizit
+  // gegen das gemessene Feld geprüft (kein Float ragt über die Fläche hinaus).
+  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  for (const id of HUD_FLOAT_IDS) {
+    const box = await stabileBox(page.locator(`[data-testid="dock-panel-${id}"]`));
+    expect(box.x).toBeGreaterThanOrEqual(feldBox.x - 1);
+    expect(box.y).toBeGreaterThanOrEqual(feldBox.y - 1);
+    expect(box.x + box.width).toBeLessThanOrEqual(feldBox.x + feldBox.width + 1);
+    expect(box.y + box.height).toBeLessThanOrEqual(feldBox.y + feldBox.height + 1);
+  }
+});

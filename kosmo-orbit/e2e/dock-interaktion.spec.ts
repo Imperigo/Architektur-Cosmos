@@ -420,3 +420,89 @@ test('Pop-out: Panel schwebt frei, lässt sich ziehen (Magnet an Kante) und snap
   const overrideNachRedock = await leseOverride(page, 'kvOffen');
   expect(overrideNachRedock?.dock).toBeUndefined();
 });
+
+// ---------------------------------------------------------------------------
+// v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats» / «C6» Auto-
+// Reaktions-Hinweis) — die vier Viewport-HUDs sind IMMER schwebend
+// (`dock-stationen.ts`, `dock:'float'` steht schon in der Registry, kein
+// Redock-Weg) und tragen KEINEN vollen Dock-Kopf (`floatChrome:'schlank'`,
+// `DockPanel.tsx`) — nur einen dünnen Griffstreifen (`.k-dock-panel-griff`)
+// zum Ziehen. `kopfGriff()`/`ziehePanelNach()` oben setzen einen vollen Kopf
+// voraus (Klick 20px vom linken Rand) — dafür der eigene Helfer unten.
+// ---------------------------------------------------------------------------
+
+async function zieheHudGriffNach(page: Page, panelId: string, zielX: number, zielY: number): Promise<void> {
+  const griff = page.locator(`[data-testid="dock-panel-${panelId}"] .k-dock-panel-griff`);
+  const box = (await griff.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(zielX, zielY, { steps: 10 });
+  await page.mouse.up();
+}
+
+test('HUD frei ziehen (Griffstreifen): bleibt an freier Position liegen, snappt nahe dem Ursprungsanker zurück', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+  const panel = page.locator('[data-testid="dock-panel-viewportOrientierung"]');
+  await expect(panel).toBeVisible();
+  // Die vier HUDs sind IMMER schwebend (Registry-`dock:'float'`, kein
+  // Redock-Weg — anders als `kvOffen` oben, das erst per Pop-out schwebend
+  // wird).
+  await expect(panel).toHaveAttribute('data-schwebend', 'true');
+  const vorher = await stabileBox(panel);
+
+  // 1) Weit weg ziehen (fernab jeder Magnet-Linie) — bleibt liegen.
+  const zielX = vorher.x + 220;
+  const zielY = vorher.y - 180;
+  await zieheHudGriffNach(page, 'viewportOrientierung', zielX, zielY);
+  const nachDrag = await stabileBox(panel);
+  expect(Math.abs(nachDrag.x - vorher.x)).toBeGreaterThan(100);
+  const overrideNachDrag = await leseOverride(page, 'viewportOrientierung');
+  expect(overrideNachDrag?.fx).toBeDefined();
+
+  // 2) Nahe an die Ausgangsanker-Position zurückziehen (< 30px, s.
+  //    `DockFlaeche.tsx`s `FLOAT_SNAPBACK_T`) — `fx`/`fy` werden gelöscht,
+  //    das HUD kehrt an seinen `anker:'bottom-left'`-Platz zurück.
+  await zieheHudGriffNach(page, 'viewportOrientierung', vorher.x + 8, vorher.y + 8);
+  await stabileBox(panel);
+  const overrideNachRueck = await leseOverride(page, 'viewportOrientierung');
+  expect(overrideNachRueck?.fx).toBeUndefined();
+});
+
+test('Auto-Reaktions-Hinweis (C6): zweites Panel öffnen lässt das ANDERE (angeheftete kv bleibt) einklappen — Chip zeigt den richtigen Titel und verschwindet wieder', async ({
+  page,
+}) => {
+  // EXAKT dieselbe Ausgangslage wie der Pin-Test oben («Pin schützt Grösse»,
+  // dort bereits als 12/12-grün bewiesen) — kv (45) offen+angeheftet, DANACH
+  // bauablauf (44) geöffnet, klappt zum Tab (das ANDERE, nicht angeheftete
+  // Panel). Ohne Pin klappen bei 1400×420 BEIDE Panels ein (Summe der `min`
+  // sprengt selbst nach einem Einklappen noch die Höhe) — Pin ist hier
+  // darum nicht nur einer der drei im Auftrag genannten Trigger
+  // («geöffnet/gedockt/gepinnt»), sondern auch die einzige Konstellation,
+  // in der GENAU EIN Panel automatisch reagiert (testbare Eindeutigkeit).
+  // Kein Chevron wird in diesem Test manuell geklickt — `ausgeloestId`
+  // (`DockFlaeche.tsx`) bleibt darum undefiniert, nichts wird ausgeschlossen;
+  // `eingeklappteDiff()` findet genau EINEN neu eingeklappten Titel
+  // («Bauablauf») und meldet ihn.
+  await page.setViewportSize({ width: 1400, height: 420 });
+  await oeffneDesignMitTkb(page);
+
+  await page.click('[data-testid="kv-oeffnen"]');
+  await expect(page.locator('[data-testid="dock-panel-kvOffen"]')).toBeVisible();
+  await page.click('[data-testid="dock-panel-kvOffen-pin"]');
+  await expect(page.locator('[data-testid="dock-panel-kvOffen-pin"]')).toHaveAttribute('aria-pressed', 'true');
+
+  const chip = page.locator('[data-testid="dock-auto-hinweis"]');
+  await expect(chip).toHaveCount(0);
+
+  await page.click('[data-testid="bauablauf-oeffnen"]');
+  await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-bauablaufOffen-tab"]')).toBeVisible();
+
+  await expect(chip).toBeVisible({ timeout: 2000 });
+  await expect(chip).toHaveText('Bauablauf eingeklappt · Platz geschaffen');
+
+  // Verschwindet nach ~2,9s von selbst wieder (Auftrag).
+  await expect(chip).toHaveCount(0, { timeout: 4500 });
+});
