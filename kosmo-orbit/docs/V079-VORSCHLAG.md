@@ -212,6 +212,12 @@ Punkte gehört in eine v0.7.9-Container-Planung.
 
 ---
 
+> **OWNER-ENTSCHEID (14.07.2026): «Kern so übernehmen.»** Der unten empfohlene
+> Kern (A1 + A3 + B3, B1 als Owner-Aktion mit vorbereitetem Geräte-Drehbuch,
+> B2 als Stretch) ist damit der verbindliche v0.7.9-Arbeitsauftrag. Start nach
+> dem v0.7.8-Release-Finale; dateidisjunkte Vorarbeit (B3-Scan, B1-Drehbuch)
+> läuft bereits parallel.
+
 ## Empfohlener Kern (mein Vorschlag — Owner/Fable entscheiden die tatsächliche Priorität)
 
 Wenn ich v0.7.9 aus dieser Liste zusammenstellen müsste, wäre das mein Vorschlag —
