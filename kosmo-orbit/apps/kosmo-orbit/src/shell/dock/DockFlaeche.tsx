@@ -125,6 +125,65 @@ const HINWEIS_DAUER_MS = 2900;
  *  damit «genug Platz» in beiden Achsen dieselbe Zahl bedeutet. */
 const BOT_RESERVE_MIN_FELD_H = DOCK_KONSTANTEN.MIN_VIEWPORT;
 
+/**
+ * v0.7.8 Welle 3 (P6, Konzept B «Raster-Kachel») — Umbruch-Kompensation für
+ * den `ctop`-Streifen. Der Prototyp-Solver (`rowLayout()`, dock-kern.ts —
+ * 1:1-Port, wird NICHT verändert) kennt keinen Zeilenumbruch: passen die
+ * `fw`-Breiten einer Streifen-Reihe nicht in die Center-Breite, laufen die
+ * Rechtecke rechts ÜBER die rechte Dock-Spalte (real gemessen: die drei
+ * top-HUDs der Design-Station brauchen 814px, das Center bei vollen Spalten
+ * ~645px → `viewportWerkzeugRail` überlappte `kennzahlen`). Kompensation
+ * hier auf der RENDER-Seite (dieselbe Werkstatt wie der P4-Zwei-Felder-
+ * Kompromiss unten): NUR wenn die Solver-Reihe überläuft, werden die
+ * ctop-Rechtecke zeilenweise neu gewickelt (Greedy, zentriert je Zeile,
+ * Original-Breiten/-Höhen unangetastet — kein Stauchen von HUD-Inhalten);
+ * Folgezeilen ragen dabei bewusst in den Viewport hinein (dasselbe
+ * akzeptierte Verhalten wie A-Modus-Floats, die IMMER über dem Viewport
+ * liegen). Läuft nichts über, bleiben die Solver-Rects byte-identisch.
+ * `cbot` bekommt bewusst KEINE Entsprechung: keine registrierte Station hat
+ * ein `anker:'bottom-center'`-Panel, der Fall bleibt Solver-Unit-Test-Gebiet
+ * (`dock-kern.test.ts`).
+ */
+function wickleCtopStreifen(
+  rects: Record<string, DockRect>,
+  ctopIds: readonly string[],
+  feldY: number,
+  vp: DockRect,
+): void {
+  const vorhanden = ctopIds.filter((id) => rects[id]);
+  if (vorhanden.length === 0) return;
+  const maxBreite = vp.w - DOCK_KONSTANTEN.GAP * 2;
+  const gesamt =
+    vorhanden.reduce((s, id) => s + rects[id]!.w, 0) + DOCK_KONSTANTEN.GAP * (vorhanden.length - 1);
+  if (gesamt <= maxBreite) return; // Solver-Reihe passt — nichts anfassen.
+
+  // Greedy in Zeilen aufteilen (Reihenfolge = Solver-Reihenfolge = x-sortiert).
+  const sortiert = [...vorhanden].sort((a, b) => rects[a]!.x - rects[b]!.x);
+  const zeilen: string[][] = [[]];
+  let zeilenBreite = 0;
+  for (const id of sortiert) {
+    const w = rects[id]!.w;
+    const naechste = zeilenBreite === 0 ? w : zeilenBreite + DOCK_KONSTANTEN.GAP + w;
+    if (zeilenBreite > 0 && naechste > maxBreite) {
+      zeilen.push([id]);
+      zeilenBreite = w;
+    } else {
+      zeilen[zeilen.length - 1]!.push(id);
+      zeilenBreite = naechste;
+    }
+  }
+  zeilen.forEach((zeile, i) => {
+    const total = zeile.reduce((s, id) => s + rects[id]!.w, 0) + DOCK_KONSTANTEN.GAP * (zeile.length - 1);
+    let x = vp.x + Math.max(DOCK_KONSTANTEN.GAP, (vp.w - total) / 2);
+    const bandY = feldY + i * (DOCK_KONSTANTEN.STRIP + DOCK_KONSTANTEN.GAP);
+    for (const id of zeile) {
+      const r = rects[id]!;
+      rects[id] = { ...r, x, y: bandY + (DOCK_KONSTANTEN.STRIP - r.h) / 2 };
+      x += r.w + DOCK_KONSTANTEN.GAP;
+    }
+  });
+}
+
 /** TOP-Band NUR für die RECHTE Spalte (P4): `PlanView.tsx` trägt oben rechts
  *  eine feste Chrome-Zeile (`trace-select`/`graph-toggle`/`achsen-toggle`,
  *  alle `top:8`, Höhe ≈26px, z-5) — genau der Streifen, in dem seit P4 die
@@ -553,12 +612,29 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       ...(floatDragId !== undefined ? { floatGesperrtId: floatDragId } : {}),
     };
     const haupt = solve(defs, { feld, ...basisOpts });
+    // P6 (Konzept B): ctop-Umbruch-Kompensation — NUR die Panels, die der
+    // Solver im B-Modus tatsächlich in den ctop-Streifen routet (dieselbe
+    // Regel wie `solve()`: effektives dock 'float' ⊕ effektiver anker 'top').
+    const ctopIds =
+      dockModus === 'B'
+        ? defs
+            .filter(
+              (d) =>
+                (overrides[d.id]?.dock ?? d.dock) === 'float' &&
+                (overrides[d.id]?.anker ?? d.anker) === 'top',
+            )
+            .map((d) => d.id)
+        : [];
     // Effektive rechte Spalte = Registry-Dock ⊕ persistierter Override
     // (identisch zur `mischePanel`-Regel im Solver: Override gewinnt).
     const rechtsIds = new Set(
       defs.filter((d) => (overrides[d.id]?.dock ?? d.dock) === 'right').map((d) => d.id),
     );
-    if (rechtsIds.size === 0 || feld.h <= TOP_BAND_RECHTS) return haupt;
+    if (rechtsIds.size === 0 || feld.h <= TOP_BAND_RECHTS) {
+      const rects: typeof haupt.rects = { ...haupt.rects };
+      wickleCtopStreifen(rects, ctopIds, feld.y, haupt.viewport);
+      return { rects, viewport: haupt.viewport, splitters: haupt.splitters };
+    }
     const feldRechts = { x: feld.x, y: feld.y + TOP_BAND_RECHTS, w: feld.w, h: feld.h - TOP_BAND_RECHTS };
     const rechts = solve(defs, { feld: feldRechts, ...basisOpts });
     const rects: typeof haupt.rects = { ...haupt.rects };
@@ -571,6 +647,7 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       ...haupt.splitters.filter((s) => s.id !== 'spR' && !(s.a !== undefined && rechtsIds.has(s.a))),
       ...rechts.splitters.filter((s) => s.id === 'spR' || (s.a !== undefined && rechtsIds.has(s.a))),
     ];
+    wickleCtopStreifen(rects, ctopIds, feld.y, haupt.viewport);
     return { rects, viewport: haupt.viewport, splitters };
   }, [defs, feld, dockModus, leftW, rightW, overrides, redockAktivId, floatDragId]);
 

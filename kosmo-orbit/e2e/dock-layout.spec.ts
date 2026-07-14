@@ -405,3 +405,232 @@ test('schmaler Viewport (1400×900, volle linke + rechte Spalte): HUD-Floats ble
     expect(box.y + box.height).toBeLessThanOrEqual(feldBox.y + feldBox.height + 1);
   }
 });
+
+// ---------------------------------------------------------------------------
+// v0.7.8 Welle 3 / Paket P6 («Raster-Kachel», Konzept B als zweiter Modus
+// DESSELBEN Solvers) — der Solver selbst (ctop/cbot-Routing via `rowLayout()`)
+// ist bereits seit Welle 1 (P1) unit-getestet (`dock-kern.test.ts`, «Konzept
+// B: top-Floats werden zu einem ctop-Streifen» u.ä.); `DockFlaeche.tsx`/
+// `DockPanel.tsx`/`DockSnapZonen.tsx` lasen `modus` schon seit P4/P5 (Pop-out
+// nur `modus==='A'`, «schwebend»-Snap-Zone nur `modus==='A'`). Diese Sektion
+// deckt NEU ab: den B-Modus tatsächlich END-TO-END über die Einstellungen
+// erreichen (statt nur Solver-Unit-Tests), inkl. Persistenz + getrennter
+// A/B-Layout-Overrides. KEIN registriertes Panel (weder Design noch Vis)
+// nutzt `anker:'bottom-center'` — der `cbot`-Streifen bleibt darum ein reiner
+// Solver-Unit-Test-Fall (`dock-kern.test.ts`), hier nicht zusätzlich
+// nachgestellt (kein Weg, ihn ohne einen fiktiven Test-Override zu erreichen).
+// ---------------------------------------------------------------------------
+
+async function oeffneDesignInModus(page: Page, modus: 'A' | 'B'): Promise<void> {
+  await page.goto('/');
+  await page.evaluate((m) => {
+    localStorage.setItem('kosmo.dock.v1', JSON.stringify({ version: 1, modus: m, layouts: {} }));
+  }, modus);
+  await page.reload();
+  await page.click('[data-testid="load-tkb"]');
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
+}
+
+test('B-Modus (Design-Station): HUD-Floats erscheinen als ctop-Streifen bzw. Spalten-Panel, alles disjunkt, kein Pop-out/Schweben-Snap', async ({
+  page,
+}) => {
+  await oeffneDesignInModus(page, 'B');
+
+  // Alle vier HUD-Floats bleiben sichtbar (Sichtbarkeits-Guard unverändert —
+  // nur ihre ROUTING-Zone im Solver ändert sich zwischen A und B).
+  for (const id of HUD_FLOAT_IDS) {
+    await expect(page.locator(`[data-testid="dock-panel-${id}"]`)).toBeVisible();
+  }
+
+  await page.click('[data-testid="raster-toggle"]');
+  await expect(page.locator('[data-testid="dock-panel-rasterOffen"]')).toBeVisible();
+  await pruefeDisjunktion(page, selektorMap([...HUD_FLOAT_IDS, 'rasterOffen', 'kennzahlen']));
+
+  // `viewportModusLeiste`/`viewportModusKarte`/`viewportWerkzeugRail` sind
+  // alle `anker:'top'` → im B-Modus routet `solve()` (dock-kern.ts) sie in
+  // den ctop-STREIFEN oben im Center: horizontal ZWISCHEN linker Spalte
+  // (rasterOffen) und rechter Spalte (kennzahlen), vertikal in 56px-Bändern
+  // ab Feld-Oberkante (`rowLayout()` zentriert jedes Element in seinem
+  // Band; passt die Reihe nicht in die Center-Breite, wickelt `DockFlaeche`
+  // sie zeilenweise um — `wickleCtopStreifen()`, real der Fall bei
+  // 1400×900 + vollen Spalten: 814px Reihenbreite vs. ~645px Center).
+  // `viewportOrientierung` (`anker:'bottom-left'`) fällt im B-Routing auf
+  // die linke SPALTE zurück (dock-kern.ts `solve()`: `else d = 'left'`).
+  const rasterBox = await stabileBox(page.locator('[data-testid="dock-panel-rasterOffen"]'));
+  const kennzahlenBox = await stabileBox(page.locator('[data-testid="dock-panel-kennzahlen"]'));
+  const flaecheBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  const BAND = 56 + 10; // STRIP + GAP (dock-kern.ts DOCK_KONSTANTEN)
+  const bandStart = flaecheBox.y + 10; // feld.y = GAP relativ zum Container
+  for (const id of ['viewportModusLeiste', 'viewportModusKarte', 'viewportWerkzeugRail'] as const) {
+    const box = await stabileBox(page.locator(`[data-testid="dock-panel-${id}"]`));
+    // Horizontal im Center (nicht unter den Spalten):
+    expect(box.x).toBeGreaterThanOrEqual(rasterBox.x + rasterBox.width - 1);
+    expect(box.x + box.width).toBeLessThanOrEqual(kennzahlenBox.x + 1);
+    // Vertikal in einem der obersten zwei Streifen-Bänder, mittig im Band:
+    const mitte = box.y + box.height / 2 - bandStart;
+    const bandIndex = Math.round((mitte - 28) / BAND);
+    expect(bandIndex).toBeGreaterThanOrEqual(0);
+    expect(bandIndex).toBeLessThanOrEqual(1);
+    expect(Math.abs(mitte - (bandIndex * BAND + 28))).toBeLessThanOrEqual(2);
+  }
+  // Orientierung sitzt in der linken Spalte: gleicher x-Bereich wie rasterOffen.
+  const orientBox = await stabileBox(page.locator('[data-testid="dock-panel-viewportOrientierung"]'));
+  expect(Math.abs(orientBox.x - rasterBox.x)).toBeLessThanOrEqual(1);
+
+  // Kein Pop-out-Knopf im B-Modus (DockPanel.tsx: `modus==='A' && …`) — für
+  // JEDES Panel, nicht nur die HUDs.
+  for (const id of [...HUD_FLOAT_IDS, 'kennzahlen', 'rasterOffen']) {
+    await expect(page.locator(`[data-testid="dock-panel-${id}-popout"]`)).toHaveCount(0);
+  }
+
+  // Header-Drag anstossen (Kopf von `kennzahlen`) — die «schwebend»-Snap-Zone
+  // (DockSnapZonen.tsx: `modus==='A' && …`) darf NICHT erscheinen, nur
+  // links/rechts.
+  const kopf = page.locator('[data-testid="dock-panel-kennzahlen"] .k-dock-panel-kopf');
+  const kopfBox = (await kopf.boundingBox())!;
+  await page.mouse.move(kopfBox.x + kopfBox.width / 2, kopfBox.y + kopfBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(kopfBox.x + kopfBox.width / 2 - 40, kopfBox.y + 20, { steps: 5 });
+  await expect(page.locator('[data-testid="dock-snap-schwebend"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="dock-snap-links"]')).toHaveCount(1);
+  await expect(page.locator('[data-testid="dock-snap-rechts"]')).toHaveCount(1);
+  await page.mouse.up();
+});
+
+test('Einstellungen: Umschalten A↔B wirkt sofort, persistiert über Reload, A-Overrides bleiben getrennt von B-Overrides', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+
+  // Seed: eine A:design-Spaltenbreite, die sich klar von jedem B-Default
+  // unterscheidet (Drag am Splitter, gleiches Muster wie der Reset-Test oben).
+  await page.click('[data-testid="kv-oeffnen"]');
+  const panel = page.locator('[data-testid="dock-panel-kvOffen"]');
+  await expect(panel).toBeVisible();
+  const aVorher = await stabileBox(panel);
+  const splitter = page.locator('[data-testid="dock-splitter-spL"]');
+  const sBox = (await splitter.boundingBox())!;
+  await page.mouse.move(sBox.x + sBox.width / 2, sBox.y + sBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(sBox.x + sBox.width / 2 + 80, sBox.y + sBox.height / 2, { steps: 5 });
+  await page.mouse.up();
+  const aNachDrag = await stabileBox(panel);
+  expect(Math.abs(aNachDrag.width - aVorher.width)).toBeGreaterThan(20);
+
+  // Einstellungen öffnen (Kopfleiste — stationsunabhängig) und auf B wechseln.
+  await page.click('[data-testid="einstellungen-oeffnen"]');
+  await expect(page.locator('[data-testid="einstellungen-panel"]')).toBeVisible();
+  await expect(page.locator('[data-testid="einstellungen-dock-modus-A"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.click('[data-testid="einstellungen-dock-modus-B"]');
+  await expect(page.locator('[data-testid="einstellungen-dock-modus-B"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.click('[data-testid="einstellungen-panel"] [aria-label="Schliessen"]');
+
+  // Wirkt SOFORT, ohne Reload: kein Pop-out-Knopf mehr am kv-Panel.
+  await expect(page.locator('[data-testid="dock-panel-kvOffen-popout"]')).toHaveCount(0);
+
+  const gespeichert = await page.evaluate(() => {
+    const roh = localStorage.getItem('kosmo.dock.v1');
+    return roh ? (JSON.parse(roh) as { modus?: string }) : null;
+  });
+  expect(gespeichert?.modus).toBe('B');
+
+  // Persistiert über Reload. Nach dem Reload ist das TKB-Projekt weg (die
+  // Demo lebt nur im Speicher) — gleiches Muster wie der Persistenz-Test in
+  // `dock-interaktion.spec.ts`: `load-tkb` erneut klicken.
+  await page.reload();
+  await page.click('[data-testid="load-tkb"]');
+  await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
+  await page.click('[data-testid="einstellungen-oeffnen"]');
+  await expect(page.locator('[data-testid="einstellungen-dock-modus-B"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.click('[data-testid="einstellungen-panel"] [aria-label="Schliessen"]');
+
+  // A:design bleibt vom B-Wechsel unberührt: zurück auf A, die vorher
+  // gezogene Breite ist noch da (kv-Panel wieder ähnlich breit wie `aNachDrag`,
+  // NICHT der unveränderte `aVorher`-Default).
+  await page.click('[data-testid="einstellungen-oeffnen"]');
+  await page.click('[data-testid="einstellungen-dock-modus-A"]');
+  await page.click('[data-testid="einstellungen-panel"] [aria-label="Schliessen"]');
+  await page.click('[data-testid="kv-oeffnen"]');
+  const aWiederhergestellt = await stabileBox(page.locator('[data-testid="dock-panel-kvOffen"]'));
+  expect(Math.abs(aWiederhergestellt.width - aNachDrag.width)).toBeLessThan(2);
+});
+
+// ---------------------------------------------------------------------------
+// Vis-Station (v0.7.8 Welle 3 / P6) — die vier dockbaren Panels (Palette/
+// Ausrichten/Legende/Minimap, `state/dock-stationen.ts` `VIS_PANELS`) bleiben
+// in BEIDEN Modi disjunkt. `visLegende`/`visMinimap` waren bisher EIN
+// gemeinsamer Flex-Stapel, jetzt zwei getrennte Floats — diese Disjunktions-
+// Prüfung ist genau der Beweis, dass die Trennung nichts überlappen lässt.
+// ---------------------------------------------------------------------------
+
+async function oeffneVisMitGraph(page: Page, modus: 'A' | 'B'): Promise<void> {
+  await page.goto('/');
+  await page.evaluate((m) => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.bridge', 'http://localhost:8600');
+    localStorage.setItem('kosmo.dock.v1', JSON.stringify({ version: 1, modus: m, layouts: {} }));
+  }, modus);
+  await page.reload();
+  await page.click('[data-testid="module-vis"]');
+  await page.click('[data-testid="graph-neu"]');
+  await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
+}
+
+async function visNodeHinzu(page: Page, typ: string): Promise<void> {
+  await page.click('[data-testid="node-hinzu"]');
+  await page.waitForSelector('[data-testid="node-hinzu-popup"]');
+  await page.click(`[data-testid="node-hinzu-popup"] [data-value="${typ}"]`);
+  await page.waitForSelector('[data-testid="node-hinzu-popup"]', { state: 'hidden' });
+}
+
+for (const modus of ['A', 'B'] as const) {
+  test(`Vis-Station (Modus ${modus}): Palette + Minimap + Legende + Ausrichten disjunkt`, async ({ page }) => {
+    await oeffneVisMitGraph(page, modus);
+
+    // Genug Nodes für die Minimap-Schwelle (MINIMAP_KNOTEN_MIN=5) + alle
+    // sechs Porttypen für die Legende.
+    for (const typ of ['modell', 'material', 'prompt', 'zahl', 'kamera', 'render']) {
+      await visNodeHinzu(page, typ);
+    }
+    await expect(page.locator('[data-testid="dock-panel-visMinimap"]')).toBeVisible();
+    await expect(page.locator('[data-testid="dock-panel-visLegende"]')).toBeVisible();
+
+    // Palette öffnen (Toggle bleibt fixe Chrome, unverändert in A/B).
+    await page.click('[data-testid="vis-palette-toggle"]');
+    await expect(page.locator('[data-testid="dock-panel-visPalette"]')).toBeVisible();
+
+    // Ausrichten-Leiste: ≥2 Nodes auswählen (Shift-Marquee über den ganzen Canvas).
+    const canvasBox = (await page.locator('[data-testid="node-canvas"]').boundingBox())!;
+    await page.mouse.move(canvasBox.x + 5, canvasBox.y + 5);
+    await page.keyboard.down('Shift');
+    await page.mouse.down();
+    await page.mouse.move(canvasBox.x + canvasBox.width - 5, canvasBox.y + canvasBox.height - 5, { steps: 10 });
+    await page.mouse.up();
+    await page.keyboard.up('Shift');
+    await expect(page.locator('[data-testid="dock-panel-visAusrichten"]')).toBeVisible();
+
+    await pruefeDisjunktion(page, {
+      visPalette: '[data-testid="dock-panel-visPalette"]',
+      visAusrichten: '[data-testid="dock-panel-visAusrichten"]',
+      visLegende: '[data-testid="dock-panel-visLegende"]',
+      visMinimap: '[data-testid="dock-panel-visMinimap"]',
+    });
+
+    // y-Ordnung Minimap/Legende ist MODUS-abhängig (ehrlich dokumentiert,
+    // s. `dock-stationen.ts`-Kopfkommentar): im A-Modus stapelt
+    // `placeFloats()` die bottom-left-Floats von unten nach oben (erstes
+    // Registry-Element zuunterst → Minimap ÜBER der Legende, dieselbe
+    // Optik wie der frühere gemeinsame Flex-Stapel). Im B-Modus werden
+    // beide zu LINKEN Spalten-Panels, und `stack()` stapelt von OBEN nach
+    // unten in Registry-Reihenfolge — die Ordnung kehrt sich um (Legende
+    // über Minimap). Beide Ordnungen mit EINER Registry-Reihenfolge zu
+    // erfüllen ist unmöglich; A (die historische Optik) gewinnt.
+    const minimapBox = (await page.locator('[data-testid="dock-panel-visMinimap"]').boundingBox())!;
+    const legendeBox = (await page.locator('[data-testid="dock-panel-visLegende"]').boundingBox())!;
+    if (modus === 'A') {
+      expect(minimapBox.y).toBeLessThan(legendeBox.y);
+    } else {
+      expect(legendeBox.y).toBeLessThan(minimapBox.y);
+    }
+  });
+}

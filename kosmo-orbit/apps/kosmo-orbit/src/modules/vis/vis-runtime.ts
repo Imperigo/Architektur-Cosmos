@@ -112,17 +112,30 @@ interface VisRuntime {
   laeufe: Record<string, NodeLauf>;
   kuration: Record<string, KurationEintrag>;
   aufnahmen: Record<string, Aufnahme>;
+  /**
+   * v0.7.8 Welle 3 (P6, Dock-Migration) — Sichtbarkeit der Node-Palette
+   * (`NodeCanvas.tsx`, Knopf `vis-palette-toggle`). Lebte bisher als
+   * lokaler `useState` in `NodeCanvas.tsx`; für `DockFlaeche` (das die
+   * Palette jetzt als `visPalette`-Dock-Panel rendert) minimal-invasiv
+   * hierher gehoben — reiner In-Memory-Zustand wie `kuration`/`laeufe`
+   * oben, KEIN neues `localStorage` (bewusst KEINE Persistenz über einen
+   * Neustart hinweg, wie das alte `useState` es auch nicht hatte).
+   */
+  paletteOffen: boolean;
   setzeLauf: (nodeId: string, lauf: NodeLauf) => void;
   patchLauf: (nodeId: string, patch: Partial<NodeLauf>) => void;
   markiereBild: (nodeId: string) => void;
   verwerfeBild: (nodeId: string) => void;
   fuegeAufnahmeHinzu: (a: Aufnahme) => void;
+  paletteUmschalten: () => void;
+  paletteSchliessen: () => void;
 }
 
 export const useVisRuntime = create<VisRuntime>((set) => ({
   laeufe: {},
   kuration: {},
   aufnahmen: {},
+  paletteOffen: false,
   setzeLauf: (nodeId, lauf) => set((s) => ({ laeufe: { ...s.laeufe, [nodeId]: lauf } })),
   patchLauf: (nodeId, patch) =>
     set((s) => {
@@ -141,6 +154,8 @@ export const useVisRuntime = create<VisRuntime>((set) => ({
       return { kuration: { ...s.kuration, [nodeId]: { ...alt, verworfen: !alt.verworfen } } };
     }),
   fuegeAufnahmeHinzu: (a) => set((s) => ({ aufnahmen: { ...s.aufnahmen, [a.id]: a } })),
+  paletteUmschalten: () => set((s) => ({ paletteOffen: !s.paletteOffen })),
+  paletteSchliessen: () => set({ paletteOffen: false }),
 }));
 
 /**

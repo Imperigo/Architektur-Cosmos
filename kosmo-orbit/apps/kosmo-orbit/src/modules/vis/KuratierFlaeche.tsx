@@ -119,7 +119,13 @@ export function KuratierFlaeche({
     <div
       data-testid="vis-kuratier-flaeche"
       className="k-einblenden"
-      style={{ position: 'absolute', inset: 0, zIndex: 8, display: 'flex', flexDirection: 'column', background: 'var(--k-field)' }}
+      // zIndex 35 statt 8 (v0.7.8 Welle 3/P6): die früheren z-5-Overlays
+      // (Palette/Minimap/Legende/Ausrichten) sind jetzt Dock-Panels mit
+      // z-14 (gedockt) bzw. z-30 (schwebend, `DockPanel.tsx`) — die
+      // Vollbild-Kuratier-Fläche muss weiterhin ÜBER ihnen liegen (wie 8
+      // vorher über 5 lag). Ihr Schliessen-Knopf (`vis-kuratier-toggle`,
+      // NodeCanvas.tsx) liegt eine Stufe höher (36).
+      style={{ position: 'absolute', inset: 0, zIndex: 35, display: 'flex', flexDirection: 'column', background: 'var(--k-field)' }}
     >
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
         {/* Herkunft-Rail (Entsprechung Soll-Bild "Node-Palette 268") */}

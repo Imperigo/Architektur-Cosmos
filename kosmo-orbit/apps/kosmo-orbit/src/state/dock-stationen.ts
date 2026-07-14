@@ -384,21 +384,119 @@ const DESIGN_PANELS: readonly PanelDef[] = [
 ];
 
 /**
- * Panel-Registry je Station. `'plan'`/`'vis'` sind TODO Welle 3 — bewusst
- * leere Arrays statt Platzhalter-Panels, damit `stationsPanels()` schon
- * heute für alle drei Stationen aufrufbar ist (P3/spätere Wellen müssen die
- * Aufrufstelle nicht anfassen, nur hier die Liste füllen).
+ * v0.7.8 Welle 3 (P6) — KosmoVis-Station: vier Panels, alle vier OHNE
+ * `…Offen`-Flag in `ui-zustand.ts` (dieselbe Daten-Guard-/Toggle-Ausnahme wie
+ * `unternehmerplan`/`kennzahlen`/`inspector` in `DESIGN_PANELS` oben — die
+ * ⊆-`PANEL_IDS`-Invariante gilt darum NICHT für diese Station, s.
+ * `dock-zustand.test.ts`s eigene «vis»-Registry-Tests statt der Design-
+ * Variante):
+ *   - `visPalette` — die Node-Palette (`NodeCanvas.tsx`), Sichtbarkeit ist
+ *     ein lokales Toggle-Boolean (`vis-palette-toggle`), das bisher als
+ *     `useState` in `NodeCanvas.tsx` lebte — für die Dock-Migration nach
+ *     `vis-runtime.ts` gehoben (kein neues `localStorage`, reiner In-Memory-
+ *     Zustand wie `kuration`/`laeufe` dort). `dock:'left'`, keine Float-
+ *     Geometrie nötig (Breite = Spaltenbreite `leftW`).
+ *   - `visAusrichten` — die Ausrichten-Leiste, ein Daten-Guard (Sichtbarkeit
+ *     = `auswahl.size >= 2`, keine Toggle-Möglichkeit).
+ *   - `visMinimap`/`visLegende` — Daten-Guards (Sichtbarkeit = Graph hat
+ *     Nodes, Minimap zusätzlich `minimapSichtbar`). Beide waren bisher EIN
+ *     gemeinsamer Flex-Container (`NodeCanvas.tsx`, «unten links, EIN
+ *     verankerter Stapel») — als Dock-Floats werden daraus ZWEI getrennte
+ *     `anker:'bottom-left'`-Panels (dokumentierte Abweichung, s.
+ *     Abschlussbericht P6): `placeFloats()` (`dock-kern.ts`) stapelt mehrere
+ *     `bottom-left`-Floats selbst schon (letzter `bl`-Loop) — die REGISTRY-
+ *     REIHENFOLGE bestimmt dabei die Stapelrichtung (das ERSTE Element im
+ *     `bl`-Filter landet am NÄCHSTEN zum unteren Rand, jedes weitere darüber,
+ *     s. `placeFloats()`-Kopfkommentar) — `visLegende` steht darum VOR
+ *     `visMinimap` unten, damit die Minimap weiterhin ÜBER der Legende
+ *     erscheint (unverändertes Bild trotz getrennter Panels).
+ *
+ * `fw`/`fh` sind ECHTE gerenderte Grössen (Playwright-Messung am
+ * unveränderten v0.7.7-Stand, 1400×900, Graph mit allen 6 Porttypen
+ * vertreten):
+ *   ausrichten-leiste  gemessen 193.5×36   → fw 200 / fh 40
+ *   minimap            gemessen 160×100    → fw 160 / fh 100 (= MINIMAP_W/H)
+ *   legende            gemessen 70.5×120.3 (6 Zeilen, Höchstfall — alle
+ *                      sechs Porttypen gleichzeitig im Graph) → fw 90 / fh 124
+ */
+const VIS_PANELS: readonly PanelDef[] = [
+  {
+    id: 'visPalette',
+    titel: 'Node-Palette',
+    rolle: 'ak',
+    wichtigkeit: 40,
+    dock: 'left',
+    min: 200,
+    groesse: 360,
+    start: 'zu',
+    schliessbar: true,
+    bewegbar: true,
+  },
+  {
+    id: 'visAusrichten',
+    titel: 'Ausrichten',
+    rolle: 'manuell',
+    wichtigkeit: 45,
+    dock: 'float',
+    anker: 'top',
+    fw: 200,
+    fh: 40,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    // Schlankes Chrome (wie die vier Design-Viewport-HUDs, P5) — die Leiste
+    // trägt schon ihre eigene kompakte Knopfreihe, ein zusätzlicher Dock-Kopf
+    // (Titel/Pin/Chevron) wäre hier reine Redundanz für 3 Knöpfe.
+    floatChrome: 'schlank',
+  },
+  {
+    id: 'visLegende',
+    titel: 'Legende',
+    rolle: 'system',
+    wichtigkeit: 27,
+    dock: 'float',
+    anker: 'bottom-left',
+    fw: 90,
+    fh: 124,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    floatChrome: 'schlank',
+  },
+  {
+    id: 'visMinimap',
+    titel: 'Übersichtskarte',
+    rolle: 'system',
+    wichtigkeit: 26,
+    dock: 'float',
+    anker: 'bottom-left',
+    fw: 160,
+    fh: 100,
+    start: 'zu',
+    schliessbar: false,
+    bewegbar: true,
+    floatChrome: 'schlank',
+  },
+];
+
+/**
+ * Panel-Registry je Station. `'plan'` bleibt ein bewusst leeres Array —
+ * KEIN Welle-3-TODO mehr, sondern ein endgültiger Scope-Entscheid (s.
+ * Abschlussbericht P6): die 2D-«Plan»-Station ist im echten Produkt keine
+ * eigene Station, sondern der `viewMode:'2d'` DER DESIGN-STATION — deren
+ * Panels sind bereits (Welle 1/2) im Dock der Station `'design'`. Ein
+ * separates `'plan'`-Preset entfiele ersatzlos; die vier PlanView-Toggle-
+ * Buttons (`top:8`) bleiben fixe Chrome.
  */
 export function stationsPanels(station: DockStation): readonly PanelDef[] {
   switch (station) {
     case 'design':
       return DESIGN_PANELS;
     case 'plan':
-      // TODO Welle 3
+      // Bewusst leer — s. Kopfkommentar direkt über dieser Funktion.
       return [];
     case 'vis':
-      // TODO Welle 3
-      return [];
+      return VIS_PANELS;
   }
 }
 

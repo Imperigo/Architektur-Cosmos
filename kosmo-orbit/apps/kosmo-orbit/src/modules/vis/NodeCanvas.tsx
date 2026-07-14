@@ -14,6 +14,7 @@ import {
 } from '@kosmo/kernel';
 import { KButton, KField, KIcon, KInput, KSelect, melde, meldeFehler, type KIconName } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
 import {
   abbrechenJob,
   aufnahmeAufsBlatt,
@@ -357,7 +358,14 @@ export function NodeCanvas({
   const graph = doc.get<VisGraph>(graphId);
   // V-H5 (Welle 3): Palette + Kuratier-Fläche starten beide zu — reines
   // Overlay-UI, kein Layout-Shift am Canvas selbst.
-  const [paletteOffen, setPaletteOffen] = useState(false);
+  // v0.7.8 Welle 3 (P6): `paletteOffen` lebte hier als lokaler `useState` —
+  // für die Dock-Migration nach `vis-runtime.ts` gehoben (s. dortiger
+  // Kommentar), damit `DockFlaeche`/das `visDockPanels`-Array unten dieselbe
+  // Sichtbarkeit lesen. `kuratierOffen` bleibt lokal (Kuratier-Fläche ist
+  // Vollbild-Chrome, NICHT im Dock — s. Abschlussbericht P6).
+  const paletteOffen = useVisRuntime((s) => s.paletteOffen);
+  const paletteUmschalten = useVisRuntime((s) => s.paletteUmschalten);
+  const paletteSchliessen = useVisRuntime((s) => s.paletteSchliessen);
   const [kuratierOffen, setKuratierOffen] = useState(false);
   const [vergleichAuswahl, setVergleichAuswahl] = useState<readonly string[]>([]);
   // Minimap (Welle 3): `null` = Default folgt der Node-Schwelle
@@ -791,6 +799,211 @@ export function NodeCanvas({
       const next = [...sel, nodeId];
       return next.length > 2 ? next.slice(next.length - 2) : next;
     });
+
+  // v0.7.8 Welle 3 (P6, Dock-Migration) — die vier dockbaren Vis-Panels
+  // (`state/dock-stationen.ts` `stationsPanels('vis')`) als `DockPanelEintrag[]`
+  // für `DockFlaeche` (Muster `DesignWorkspace.tsx`s `designDockPanels`,
+  // panels-Render-Map + Sichtbarkeits-Map). BEWUSST OHNE `useMemo` (anders als
+  // dort): `designDockPanels` durfte über Panel-Toggles hinweg stabil bleiben,
+  // weil Design-Panel-Sichtbarkeit selten wechselt — hier hängt der Inhalt an
+  // `view`/`flaeche` (Minimap) und `auswahl` (Ausrichten), die bei JEDEM Pan/
+  // Zoom/Klick wechseln; eine Memoisierung mit vollständigen Deps würde bei
+  // praktisch jedem Render ohnehin neu bauen, brächte also keinen Gewinn, nur
+  // eine lange Deps-Liste. Testids bleiben BYTE-GLEICH — nur der ehemalige
+  // `position:absolute`-Wrapper jedes Overlays entfällt (den liefert jetzt
+  // `DockPanel.tsx`s Rechteck). Minimap/Legende waren bisher EIN gemeinsamer
+  // Flex-Container («unten links, EIN verankerter Stapel») — als Dock-Floats
+  // sind es jetzt ZWEI getrennte Panels (dokumentierte Abweichung, s.
+  // `dock-stationen.ts`-Kopfkommentar zu `VIS_PANELS`/Abschlussbericht P6);
+  // die Registry-Reihenfolge dort hält die Minimap trotzdem optisch über der
+  // Legende.
+  const visDockPanels: DockPanelEintrag[] = [
+    {
+      id: 'visPalette',
+      sichtbar: paletteOffen,
+      schliessen: paletteSchliessen,
+      inhalt: (
+        <div data-testid="vis-palette" style={{ display: 'grid', gap: 10 }}>
+          {KATEGORIE_REIHENFOLGE.map((kat) => {
+            const eintraege = Object.values(VIS_NODE_KATALOG).filter((t) => t.kategorie === kat);
+            if (eintraege.length === 0) return null;
+            return (
+              <div key={kat} data-testid={`vis-palette-kategorie-${kat}`}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                  <span aria-hidden style={{ width: 20, height: 3, borderRadius: 1, background: VIS_KATEGORIE_HUE[kat] }} />
+                  <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-soft)' }}>
+                    {KATEGORIE_LABEL[kat]}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gap: 3 }}>
+                  {eintraege.map((t) => (
+                    <button
+                      key={t.typ}
+                      type="button"
+                      className="k-druck"
+                      data-testid={`vis-palette-eintrag-${t.typ}`}
+                      title={t.hilfe}
+                      onClick={() => onNodeHinzu?.(t.typ)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '4px 6px',
+                        border: '1px solid var(--k-line)',
+                        borderRadius: 'var(--k-radius-sm)',
+                        background: 'var(--k-raised)',
+                        fontSize: 11,
+                        color: 'var(--k-ink)',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <KIcon name={KATEGORIE_ICON[kat]} size={14} style={{ color: 'var(--k-ink-soft)', flexShrink: 0 }} />
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ),
+    },
+    {
+      // V1-Welle Commit 1: Ausrichten-Leiste — nur bei ≥2 ausgewählten Nodes
+      // (Daten-Guard, kein Toggle/`schliessen`).
+      id: 'visAusrichten',
+      sichtbar: auswahl.size >= 2,
+      inhalt: (
+        <div
+          data-testid="vis-ausrichten-leiste"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 4,
+            width: '100%',
+            height: '100%',
+            padding: 4,
+            boxSizing: 'border-box',
+            // Karten-Optik wie vor der Dock-Migration (der `--schlank`-
+            // Panel-Rahmen ist bewusst transparent, s. dock-flaeche.css —
+            // der Inhalt bringt sein Aussehen selbst mit, wie die
+            // Viewport-HUDs mit ihrem `.k-glass`).
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-sm)',
+          }}
+        >
+          <KButton size="sm" tone="ghost" data-testid="vis-ausrichten-links" title="Links ausrichten" onClick={() => ausrichtenAn('x')}>
+            Links
+          </KButton>
+          <KButton size="sm" tone="ghost" data-testid="vis-ausrichten-oben" title="Oben ausrichten" onClick={() => ausrichtenAn('y')}>
+            Oben
+          </KButton>
+          <KButton size="sm" tone="ghost" data-testid="vis-vertikal-verteilen" title="Vertikal verteilen" onClick={vertikalVerteilen}>
+            Verteilen
+          </KButton>
+        </div>
+      ),
+    },
+    {
+      // Porttyp-Legende (W1 Massnahme 5) — Daten-Guard: Graph hat Nodes UND
+      // mindestens einen bekannten Porttyp.
+      id: 'visLegende',
+      sichtbar: graph.nodes.length > 0 && legendeTypen.length > 0,
+      inhalt: (
+        <div
+          data-testid="vis-legende"
+          style={{
+            display: 'grid',
+            gap: 3,
+            width: '100%',
+            height: '100%',
+            padding: '6px 8px',
+            boxSizing: 'border-box',
+            background: 'var(--k-surface)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-sm)',
+            fontSize: 'var(--k-t-xs)',
+            color: 'var(--k-ink-soft)',
+          }}
+        >
+          {legendeTypen.map((t) => (
+            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, background: PORT_FARBE[t] }} />
+              <span>{PORT_TYP_NAME[t]}</span>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      // Minimap (Welle 3) — Daten-Guard: Graph hat Nodes UND (Default-Schwelle
+      // ODER manuell eingeschaltet, `minimapSichtbar`). Der Toggle-Knopf
+      // (`vis-minimap-toggle`) bleibt fixe Chrome unten links (unten im JSX).
+      id: 'visMinimap',
+      sichtbar: graph.nodes.length > 0 && minimapSichtbar,
+      inhalt: (
+        <svg
+          data-testid="vis-minimap"
+          width={MINIMAP_W}
+          height={MINIMAP_H}
+          viewBox={`0 0 ${MINIMAP_W} ${MINIMAP_H}`}
+          style={{
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            background: 'var(--k-raised)',
+            border: '1px solid var(--k-line)',
+            borderRadius: 'var(--k-radius-sm)',
+            cursor: 'crosshair',
+            touchAction: 'none',
+          }}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            (e.currentTarget as SVGSVGElement).setPointerCapture?.(e.pointerId);
+            minimapSpringeZu(e);
+          }}
+          onPointerMove={(e) => {
+            // Nur bei gedrückter Haupttaste nachziehen (Drag) — reiner
+            // Hover soll den Viewport nicht verschieben.
+            if (e.buttons !== 1) return;
+            minimapSpringeZu(e);
+          }}
+        >
+          {graph.nodes.map((n) => {
+            const kat = VIS_NODE_KATALOG[n.typ];
+            if (!kat) return null;
+            const x = (n.x - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
+            const y = (n.y - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
+            const w = Math.max(2, NODE_W * minimapAnsicht.scale);
+            const h = Math.max(2, nodeHoehe(n) * minimapAnsicht.scale);
+            return <rect key={n.id} x={x} y={y} width={w} height={h} fill={VIS_KATEGORIE_HUE[kat.kategorie]} opacity={0.8} />;
+          })}
+          {(() => {
+            const vw = flaeche.w / view.scale;
+            const vh = flaeche.h / view.scale;
+            const x = (view.cx - vw / 2 - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
+            const y = (view.cy - vh / 2 - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
+            return (
+              <rect
+                data-testid="vis-minimap-viewport"
+                x={x}
+                y={y}
+                width={vw * minimapAnsicht.scale}
+                height={vh * minimapAnsicht.scale}
+                fill="none"
+                stroke="var(--k-ink)"
+                strokeWidth={1.5}
+                pointerEvents="none"
+              />
+            );
+          })()}
+        </svg>
+      ),
+    },
+  ];
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -1267,17 +1480,26 @@ export function NodeCanvas({
       })}
     </svg>
 
-    {/* Node-Palette (Welle 3): kategorisierte, klickbare Fläche ZUSÄTZLICH
-        zum nativen `node-hinzu`-Select in der Werkzeugzeile (VisWorkspace) —
-        der bleibt der E2E-Vertrag (`selectOption`), diese Fläche ist ein
-        zweiter, visuellerer Weg zum selben `nodeHinzu`. Kategorien + Icons/
-        Hue kommen 1:1 aus dem bestehenden Katalog (VIS_NODE_KATALOG /
-        VIS_KATEGORIE_HUE) — keine neuen Metadaten, minimal-invasiv.
-        `top: 56` statt 12: (30, 30) relativ zum Canvas ist ein bestehender
-        E2E-Vertrag (visgraph.spec.ts + diese Datei) — «irgendwo ins leere
-        Canvas klicken, um ein Textfeld zu blur(en)». Bei top:12 lag der
-        Palette-Knopf GENAU über diesem Punkt und fing den Klick ab. */}
-    <div style={{ position: 'absolute', left: 12, top: 56, zIndex: 5 }}>
+    {/* Node-Palette (Welle 3): der Umschalt-Knopf bleibt fixe Chrome — der
+        Inhalt (kategorisierte, klickbare Fläche ZUSÄTZLICH zum nativen
+        `node-hinzu`-Select in der Werkzeugzeile, VisWorkspace — der bleibt
+        der E2E-Vertrag) rendert seit v0.7.8 Welle 3 (P6) als `visPalette`-
+        Dock-Panel (s. `visDockPanels` oben), sein `position:absolute`-
+        Wrapper ist entfallen. `top: 56` statt 12: (30, 30) relativ zum
+        Canvas ist ein bestehender E2E-Vertrag (visgraph.spec.ts + diese
+        Datei) — «irgendwo ins leere Canvas klicken, um ein Textfeld zu
+        blur(en)». Bei top:12 lag der Palette-Knopf GENAU über diesem Punkt
+        und fing den Klick ab.
+        zIndex 32 statt 5 (P6): über den Dock-Panels (z-14 gedockt / z-30
+        schwebend, `DockPanel.tsx`) — im B-Modus routet der Solver die
+        bottom-left-Floats (Minimap/Legende) in die LINKE SPALTE, deren
+        Panels genau diesen Knopf überdeckten (Playwright: «subtree
+        intercepts pointer events»). Dasselbe «Chrome gewinnt den Klick per
+        z-Ordnung»-Muster wie Boden-Dock/Kosmo-Symbol (z-108/110) über den
+        Design-Panels, s. `DockFlaeche.tsx`-Kopfkommentar. Bewusst UNTER der
+        Kuratier-Fläche (z-35, `KuratierFlaeche.tsx`) — während der Kuration
+        bleibt dieser Knopf wie bisher verdeckt. */}
+    <div style={{ position: 'absolute', left: 12, top: 56, zIndex: 32 }}>
       <KButton
         size="sm"
         tone="ghost"
@@ -1285,105 +1507,11 @@ export function NodeCanvas({
         title="Node-Palette"
         aria-label="Node-Palette"
         aria-expanded={paletteOffen}
-        onClick={() => setPaletteOffen((o) => !o)}
+        onClick={paletteUmschalten}
       >
         <KIcon name="ordner" size={16} title="Node-Palette" />
       </KButton>
-      {paletteOffen && (
-        <div
-          data-testid="vis-palette"
-          className="k-einblenden"
-          style={{
-            marginTop: 6,
-            width: 200,
-            maxHeight: '70vh',
-            overflow: 'auto',
-            display: 'grid',
-            gap: 10,
-            padding: 8,
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-sm)',
-          }}
-        >
-          {KATEGORIE_REIHENFOLGE.map((kat) => {
-            const eintraege = Object.values(VIS_NODE_KATALOG).filter((t) => t.kategorie === kat);
-            if (eintraege.length === 0) return null;
-            return (
-              <div key={kat} data-testid={`vis-palette-kategorie-${kat}`}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-                  {/* C-Befund (V1-Welle Commit 1): kräftigerer Tonstreifen —
-                      3px statt der bisher blassen 2px-Linie, leichte Rundung. */}
-                  <span aria-hidden style={{ width: 20, height: 3, borderRadius: 1, background: VIS_KATEGORIE_HUE[kat] }} />
-                  <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-soft)' }}>
-                    {KATEGORIE_LABEL[kat]}
-                  </span>
-                </div>
-                <div style={{ display: 'grid', gap: 3 }}>
-                  {eintraege.map((t) => (
-                    <button
-                      key={t.typ}
-                      type="button"
-                      className="k-druck"
-                      data-testid={`vis-palette-eintrag-${t.typ}`}
-                      title={t.hilfe}
-                      onClick={() => onNodeHinzu?.(t.typ)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        padding: '4px 6px',
-                        border: '1px solid var(--k-line)',
-                        borderRadius: 'var(--k-radius-sm)',
-                        background: 'var(--k-raised)',
-                        fontSize: 11,
-                        color: 'var(--k-ink)',
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                      }}
-                    >
-                      <KIcon name={KATEGORIE_ICON[kat]} size={14} style={{ color: 'var(--k-ink-soft)', flexShrink: 0 }} />
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
     </div>
-
-    {/* V1-Welle Commit 1: Ausrichten-Leiste — nur bei ≥2 ausgewählten Nodes,
-        zentriert oben. EIN beginGroup-Batch je Aktion. */}
-    {auswahl.size >= 2 && (
-      <div
-        data-testid="vis-ausrichten-leiste"
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 12,
-          transform: 'translateX(-50%)',
-          zIndex: 5,
-          display: 'flex',
-          gap: 4,
-          padding: 4,
-          background: 'var(--k-surface)',
-          border: '1px solid var(--k-line)',
-          borderRadius: 'var(--k-radius-sm)',
-        }}
-      >
-        <KButton size="sm" tone="ghost" data-testid="vis-ausrichten-links" title="Links ausrichten" onClick={() => ausrichtenAn('x')}>
-          Links
-        </KButton>
-        <KButton size="sm" tone="ghost" data-testid="vis-ausrichten-oben" title="Oben ausrichten" onClick={() => ausrichtenAn('y')}>
-          Oben
-        </KButton>
-        <KButton size="sm" tone="ghost" data-testid="vis-vertikal-verteilen" title="Vertikal verteilen" onClick={vertikalVerteilen}>
-          Verteilen
-        </KButton>
-      </div>
-    )}
 
     {/* Kuratier-Fläche (Welle 1 — Soll-Bild `Kosmo Viz Kuratierung.dc.html`
         §6.2): vom schwebenden Overlay zum Vollflächen-Raster ausgebaut
@@ -1391,8 +1519,12 @@ export function NodeCanvas({
         mit Parameter-Diff, Filter (Alle/Favoriten/Verworfen), Kurations-
         Inspektor. Der Umschalt-Knopf bleibt oben rechts über der Fläche
         erreichbar (schliessen). Laufzeitdaten (Bild/Kuration) bleiben in
-        vis-runtime — der Doc kennt nur die Nodes. */}
-    <div style={{ position: 'absolute', right: 12, top: 12, zIndex: 9 }}>
+        vis-runtime — der Doc kennt nur die Nodes.
+        zIndex 36 statt 9 (P6): die Kuratier-Fläche selbst liegt jetzt bei
+        z-35 (über den Dock-Panels z-14/30, wie sie vorher mit 8 über den
+        z-5-Overlays lag) — der Schliessen-Knopf muss weiterhin EINE Stufe
+        darüber bleiben. */}
+    <div style={{ position: 'absolute', right: 12, top: 12, zIndex: 36 }}>
       <KButton
         size="sm"
         tone="ghost"
@@ -1419,11 +1551,16 @@ export function NodeCanvas({
       />
     )}
 
-    {/* Zoom-Steuerleiste (W1 Massnahme 4) — schwebend unten rechts. `bottom:
-        92` statt 12: das globale Kosmo-Symbol (KosmoSymbol.tsx, fixed
-        right:22/bottom:22, zIndex 110) sitzt GENAU in der Ecke und würde bei
-        12px sonst die Hälfte des Zoom-Plus-Knopfs verdecken (unklickbar). */}
-    <div style={{ position: 'absolute', right: 12, bottom: 92, display: 'flex', gap: 4 }}>
+    {/* Zoom-Steuerleiste (W1 Massnahme 4) — schwebend unten rechts, bleibt
+        fixe Chrome (P6-Scope-Entscheid: Statuszeilen-Charakter wie der
+        Design-Zoom in P5, wandert NICHT ins Dock). `bottom: 92` statt 12:
+        das globale Kosmo-Symbol (KosmoSymbol.tsx, fixed right:22/bottom:22,
+        zIndex 110) sitzt GENAU in der Ecke und würde bei 12px sonst die
+        Hälfte des Zoom-Plus-Knopfs verdecken (unklickbar).
+        zIndex 32 (P6, vorher auto): über den Dock-Panels — ein nach rechts
+        gezogenes/gedocktes Panel darf die Zoom-/Snap-/Routing-Knöpfe nie
+        unklickbar machen (gleiche Begründung wie beim Palette-Toggle oben). */}
+    <div style={{ position: 'absolute', right: 12, bottom: 92, zIndex: 32, display: 'flex', gap: 4 }}>
       {/* V1-Welle Commit 1/2: Raster-Snap + Kanten-Routing — Werkzeug-
           Umschalter neben der Zoom-Leiste, fern von Testpunkt (30,30) und
           der Minimap (unten links). */}
@@ -1460,116 +1597,43 @@ export function NodeCanvas({
       </KButton>
     </div>
 
-    {/* Unten links, EIN verankerter Stapel (Welle 3): Minimap ÜBER der
-        Legende — beide Kinder liegen im normalen Fluss desselben Flex-
-        Containers, können einander also nie überlappen, ganz gleich wie
-        viele Legende-Zeilen oder wie gross die Minimap gerade ist. Die
-        Legende bleibt an ihrer historischen Stelle (letztes Kind, also am
-        Container-Boden bei `bottom: 12`) — unverändertes Aussehen, wenn die
-        Minimap unter der Node-Schwelle verborgen bleibt. */}
-    <div style={{ position: 'absolute', left: 12, bottom: 12, zIndex: 5, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
-      {/* Minimap (Welle 3): kleine Übersichtskarte, Papier-Stil — Nodes als
-          kategorie-getönte Rechtecke (VIS_KATEGORIE_HUE), der aktuelle
-          Viewport als Tusche-Rahmen. Default AN ab MINIMAP_KNOTEN_MIN Nodes,
-          per Toggle jederzeit übersteuerbar. Klick/Drag setzt das View-
-          Zentrum DIREKT (kein Easing) — «keine animierten Sprünge» bei
-          reduced-motion gilt dadurch immer, nicht nur unter der Media-Query. */}
-      {graph.nodes.length > 0 && (
-        <div style={{ display: 'grid', gap: 4, justifyItems: 'start' }}>
-          <KButton
-            size="sm"
-            tone="ghost"
-            data-testid="vis-minimap-toggle"
-            title="Übersichtskarte"
-            aria-label="Übersichtskarte"
-            aria-pressed={minimapSichtbar}
-            onClick={() => setMinimapManuell(!minimapSichtbar)}
-          >
-            <KIcon name="ebenen" size={16} title="Übersichtskarte" />
-          </KButton>
-          {minimapSichtbar && (
-            <svg
-              data-testid="vis-minimap"
-              width={MINIMAP_W}
-              height={MINIMAP_H}
-              viewBox={`0 0 ${MINIMAP_W} ${MINIMAP_H}`}
-              style={{
-                display: 'block',
-                background: 'var(--k-raised)',
-                border: '1px solid var(--k-line)',
-                borderRadius: 'var(--k-radius-sm)',
-                cursor: 'crosshair',
-                touchAction: 'none',
-              }}
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                (e.currentTarget as SVGSVGElement).setPointerCapture?.(e.pointerId);
-                minimapSpringeZu(e);
-              }}
-              onPointerMove={(e) => {
-                // Nur bei gedrückter Haupttaste nachziehen (Drag) — reiner
-                // Hover soll den Viewport nicht verschieben.
-                if (e.buttons !== 1) return;
-                minimapSpringeZu(e);
-              }}
-            >
-              {graph.nodes.map((n) => {
-                const kat = VIS_NODE_KATALOG[n.typ];
-                if (!kat) return null;
-                const x = (n.x - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
-                const y = (n.y - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
-                const w = Math.max(2, NODE_W * minimapAnsicht.scale);
-                const h = Math.max(2, nodeHoehe(n) * minimapAnsicht.scale);
-                return <rect key={n.id} x={x} y={y} width={w} height={h} fill={VIS_KATEGORIE_HUE[kat.kategorie]} opacity={0.8} />;
-              })}
-              {(() => {
-                const vw = flaeche.w / view.scale;
-                const vh = flaeche.h / view.scale;
-                const x = (view.cx - vw / 2 - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
-                const y = (view.cy - vh / 2 - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
-                return (
-                  <rect
-                    data-testid="vis-minimap-viewport"
-                    x={x}
-                    y={y}
-                    width={vw * minimapAnsicht.scale}
-                    height={vh * minimapAnsicht.scale}
-                    fill="none"
-                    stroke="var(--k-ink)"
-                    strokeWidth={1.5}
-                    pointerEvents="none"
-                  />
-                );
-              })()}
-            </svg>
-          )}
-        </div>
-      )}
-
-      {/* Porttyp-Legende (W1 Massnahme 5) — nur wenn der Graph Nodes hat. */}
-      {graph.nodes.length > 0 && legendeTypen.length > 0 && (
-        <div
-          data-testid="vis-legende"
-          style={{
-            display: 'grid',
-            gap: 3,
-            padding: '6px 8px',
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-sm)',
-            fontSize: 'var(--k-t-xs)',
-            color: 'var(--k-ink-soft)',
-          }}
+    {/* Minimap-Toggle (Welle 3) bleibt fixe Chrome, unten links — der
+        Kartenkörper selbst ist seit v0.7.8 Welle 3 (P6) das `visMinimap`-
+        Dock-Panel (Float, `anker:'bottom-left'`, s. `visDockPanels` oben).
+        Minimap+Legende waren bisher EIN gemeinsamer Flex-Stapel («unten
+        links, EIN verankerter Container») — jetzt ZWEI getrennte Floats
+        (dokumentierte Abweichung, s. `dock-stationen.ts`-Kopfkommentar);
+        die Registry-Reihenfolge dort hält die Minimap trotzdem optisch über
+        der Legende. zIndex 32 (P6): über den Dock-Panels, gleiche Begründung
+        wie beim Palette-Toggle oben (B-Modus-Linksspalte). */}
+    {graph.nodes.length > 0 && (
+      <div style={{ position: 'absolute', left: 12, bottom: 12, zIndex: 32 }}>
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="vis-minimap-toggle"
+          title="Übersichtskarte"
+          aria-label="Übersichtskarte"
+          aria-pressed={minimapSichtbar}
+          onClick={() => setMinimapManuell(!minimapSichtbar)}
         >
-          {legendeTypen.map((t) => (
-            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, background: PORT_FARBE[t] }} />
-              <span>{PORT_TYP_NAME[t]}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+          <KIcon name="ebenen" size={16} title="Übersichtskarte" />
+        </KButton>
+      </div>
+    )}
+
+    {/* v0.7.8 Welle 3 (P6) — die vier dockbaren Vis-Panels (Palette/
+        Ausrichten/Legende/Minimap, `visDockPanels` oben) kollisionsfrei
+        gedockt, analog zu `DesignWorkspace.tsx`s `<DockFlaeche station=
+        "design" .../>`. Rendert innerhalb DIESES `position:'relative'`-
+        Wrappers (statt in `VisWorkspace.tsx`) — die vier Panels hängen eng
+        an lokalem NodeCanvas-Zustand (Auswahl/View/Minimap-Geometrie), der
+        bei jedem Pan/Zoom/Klick wechselt; das Feld, das `DockFlaeche` misst,
+        ist ohnehin identisch (dieser Wrapper füllt exakt den Node-Canvas-
+        Bereich UNTER der `VisTabs`-Werkzeugleiste, dieselbe Fläche, die ein
+        Sibling in `VisWorkspace.tsx` messen würde) — s. Abschlussbericht P6
+        für die volle Begründung dieser Platzierung. */}
+    <DockFlaeche station="vis" panels={visDockPanels} />
     </div>
   );
 }

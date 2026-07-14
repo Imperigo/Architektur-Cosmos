@@ -22,6 +22,8 @@ import { istTauriDesktop } from './cloud-login';
 import { sindSoundsAn, setSoundsAn } from '../state/sounds';
 import { eigencursorAktiv, setEigencursorEingestellt } from '../state/cursor-zustand';
 import { abspielenEingestellt, setAbspielenEingestellt } from '../state/abspiel-ebene';
+import { useDockZustand } from '../state/dock-zustand';
+import type { DockModus } from '../state/dock-kern';
 
 /**
  * Zentrales Einstellungs-Panel (Serie K / Batch A4, Owner-Befund K14, wörtlich:
@@ -102,6 +104,14 @@ export function Einstellungen({
 }: EinstellungenProps) {
   const [werkzeugSetupOffen, setWerkzeugSetupOffen] = useState(false);
   const [adaptionIstAn, setAdaptionIstAn] = useState(() => adaptionAktiv());
+
+  // v0.7.8 Welle 3 (P6): Dock-Modus (Konzept A «Orbit-Zonen» / Konzept B
+  // «Raster-Kachel») — derselbe Store, den `DockFlaeche.tsx` liest (`modus`),
+  // hier nur gespiegelt für den 2-Segment-Wähler unten. `dock-zustand.ts`
+  // persistiert `modus` bereits selbst (`kosmo.dock.v1`) — kein zweiter
+  // Speicherweg nötig.
+  const dockModus = useDockZustand((s) => s.modus);
+  const dockModusSetzen = useDockZustand((s) => s.modusSetzen);
 
   // A9 (Owner-Befund K19, Leistungs-Autotuning): Zustimmung, letztes Ergebnis
   // und Override leben in leistung.ts (localStorage kosmo.leistung.v1) — hier
@@ -277,6 +287,60 @@ export function Einstellungen({
                   }}
                 />
               ))}
+            </span>
+          </div>
+
+          {/* v0.7.8 Welle 3 (P6): Werkzeug-Anordnung — Umschalter zwischen den
+              zwei Modi DESSELBEN Dock-Solvers (`state/dock-kern.ts` `solve()`):
+              Konzept A «Orbit-Zonen» (Standard, schwebende Panels möglich) und
+              Konzept B «Raster-Kachel» (Tiling — nichts schwebt, alle Panels
+              teilen sich den Platz als Streifen/Spalten). Gleiches 2-Segment-
+              Muster wie `einstellung-thema` oben (Container-Testid + je
+              Segment ein eigener, additiver Testid). */}
+          <div style={{ marginTop: 12, display: 'grid', gap: 6 }}>
+            <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>Werkzeug-Anordnung</span>
+            <span
+              data-testid="einstellungen-dock-modus"
+              role="group"
+              aria-label="Werkzeug-Anordnung"
+              style={{
+                display: 'inline-flex',
+                width: 'fit-content',
+                border: '1px solid var(--k-line-strong)',
+                borderRadius: 'var(--k-radius-pill, 999px)',
+                overflow: 'hidden',
+              }}
+            >
+              {(
+                [
+                  { key: 'A' as const, label: 'Orbit-Zonen (A, Standard)' },
+                  { key: 'B' as const, label: 'Raster-Kachel (B)' },
+                ]
+              ).map((seg) => (
+                <button
+                  key={seg.key}
+                  type="button"
+                  data-testid={`einstellungen-dock-modus-${seg.key}`}
+                  aria-pressed={dockModus === seg.key}
+                  onClick={() => dockModusSetzen(seg.key as DockModus)}
+                  style={{
+                    all: 'unset',
+                    cursor: 'pointer',
+                    padding: '5px 12px',
+                    fontSize: 12.5,
+                    fontWeight: dockModus === seg.key ? 650 : 500,
+                    color: dockModus === seg.key ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
+                    background: dockModus === seg.key ? 'var(--k-accent)' : 'transparent',
+                  }}
+                >
+                  {seg.label}
+                </button>
+              ))}
+            </span>
+            <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+              {dockModus === 'A'
+                ? 'A: Panels können frei schweben (Pop-out möglich), Kollisionen löst der Solver automatisch.'
+                : 'B: nichts schwebt, alle teilen sich den Platz — Panels erscheinen als Streifen ohne Pop-out.'}
             </span>
           </div>
         </section>
