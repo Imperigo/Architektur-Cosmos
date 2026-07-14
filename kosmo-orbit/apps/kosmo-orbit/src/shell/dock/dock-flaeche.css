@@ -1,0 +1,164 @@
+/* Dock-Fläche (v0.7.8 Welle 1 / Paket P3 — «Intelligente Werkzeugtabs»,
+   Herzstück) — Optik für `DockFlaeche.tsx`/`DockPanel.tsx`/`DockSplitter.tsx`.
+   Reine CSS-Klassen-Schicht über den Solver-Rechtecken aus `dock-kern.ts`;
+   KEINE neuen Farben ausserhalb der bestehenden `aura.css`-Tokens, Reflow-
+   Timing (.28s) + Easing (`--k-ease-standard`) exakt wie im Auftrag verlangt.
+   `prefers-reduced-motion` ist bereits GLOBAL in `aura.css` geregelt (killt
+   jede `transition-duration` auf 0.01ms) — hier bewusst KEIN eigener
+   `@media`-Riegel, das wäre eine zweite Quelle der Wahrheit. */
+
+.k-dock-flaeche {
+  position: absolute;
+  inset: 0;
+  /* Lücken zwischen den Panels müssen Klicks zum Viewport/Plan durchlassen —
+     nur die Panels/Splitter selbst (unten) schalten pointer-events wieder an. */
+  pointer-events: none;
+}
+
+.k-dock-panel {
+  position: absolute;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--k-raised);
+  border: 1px solid var(--k-technik);
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-shadow-overlay);
+  overflow: hidden;
+  transition:
+    left 0.28s var(--k-ease-standard),
+    top 0.28s var(--k-ease-standard),
+    width 0.28s var(--k-ease-standard),
+    height 0.28s var(--k-ease-standard);
+}
+
+.k-dock-panel-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  padding: var(--k-s2) var(--k-s3);
+  border-bottom: 1px solid var(--k-line);
+  background: var(--k-surface);
+  flex: 0 0 auto;
+}
+
+.k-dock-panel-rollenpunkt {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.k-dock-panel-titel {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--k-ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.k-dock-panel-knopf {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--k-radius-sm);
+  color: var(--k-ink-faint);
+  flex: 0 0 auto;
+}
+.k-dock-panel-knopf:hover,
+.k-dock-panel-knopf:focus-visible {
+  background: var(--k-field);
+  color: var(--k-ink);
+}
+.k-dock-panel-knopf[data-aktiv='true'] {
+  color: var(--k-accent);
+  box-shadow: inset 0 0 0 1px var(--k-accent);
+}
+
+.k-dock-panel-inhalt {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.k-dock-panel-tab {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--k-s3);
+  cursor: pointer;
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--k-ink-soft);
+}
+.k-dock-panel-tab:hover,
+.k-dock-panel-tab:focus-visible {
+  color: var(--k-ink);
+  background: var(--k-field);
+}
+
+.k-dock-splitter {
+  position: absolute;
+  pointer-events: auto;
+  z-index: 5;
+  /* Touch NUR auf dem Griff selbst deaktivieren (Auftrag: "touch-action:none
+     NUR auf dem Griff") — verhindert Scroll-Gesten während des Ziehens, ohne
+     den Rest der Fläche zu berühren. */
+  touch-action: none;
+}
+.k-dock-splitter[data-art='col-left'],
+.k-dock-splitter[data-art='col-right'] {
+  cursor: col-resize;
+}
+.k-dock-splitter[data-art='row'] {
+  cursor: row-resize;
+}
+.k-dock-splitter::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 2px;
+  background: transparent;
+  transition:
+    background 0.12s var(--k-ease-standard),
+    box-shadow 0.12s var(--k-ease-standard);
+}
+.k-dock-splitter[data-art='col-left']::after,
+.k-dock-splitter[data-art='col-right']::after {
+  width: 2px;
+  height: 100%;
+}
+.k-dock-splitter[data-art='row']::after {
+  width: 100%;
+  height: 2px;
+}
+.k-dock-splitter:hover::after,
+.k-dock-splitter[data-aktiv='true']::after {
+  background: var(--k-accent);
+  box-shadow: var(--k-glow-cyan-sm, 0 0 8px rgba(87, 182, 194, 0.35));
+}
+
+/* Rollenfarben-Alias (Spec-Lücke): `dock-kern.ts`s `PanelDef.rolle`-Union
+   kennt `'system'`, `aura.css`s Rollenpalette (v0.7.3 D7) nennt dieselbe
+   Rolle `office` — keine Design-Panels der Welle 1 nutzen `'system'`, aber
+   künftige Stationen (Welle 3) könnten es. Alias statt neuer Farbe. */
+:root {
+  --k-rolle-system: var(--k-rolle-office);
+}

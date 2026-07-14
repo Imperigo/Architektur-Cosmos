@@ -339,12 +339,7 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
       data-testid="varianten-panel"
       className="k-dialog"
       style={{
-        position: 'absolute',
-        left: 90,
-        top: 52,
         zIndex: 20,
-        width: 'min(460px, calc(100vw - 122px))',
-        maxHeight: 'calc(100vh - 96px)',
         overflowY: 'auto',
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',

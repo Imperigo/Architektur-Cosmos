@@ -34,11 +34,7 @@ export function CurtainWallPanel({ onClose }: { onClose: () => void }) {
       data-testid="cw-setzen-panel"
       className="k-dialog"
       style={{
-        position: 'absolute',
-        left: 90,
-        top: 52,
         zIndex: 20,
-        width: 'min(420px, calc(100vw - 122px))',
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
         boxShadow: 'var(--k-shadow-overlay)',

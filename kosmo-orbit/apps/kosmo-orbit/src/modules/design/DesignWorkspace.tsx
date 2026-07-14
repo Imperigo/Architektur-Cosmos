@@ -38,7 +38,7 @@ import {
   type Zone,
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
-import { verarbeiteUnternehmerplanDatei } from './unternehmerplan';
+import { verarbeiteUnternehmerplanDatei, useUnternehmerplan } from './unternehmerplan';
 import { VERSCHIEBBAR } from './plan-hit-test';
 import { masseingabeTaste, punktInRichtung, zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { istEingabefeld, KURZTASTEN, kurztasteFuer } from './kurztasten';
@@ -94,6 +94,8 @@ import { consumeDeepLink } from '../../state/deep-link';
 import { journalStore } from '../../state/journal-store';
 import { requestKosmoFokus } from '../../state/kosmo-focus';
 import { EntwurfsDock, type EntwurfsModus } from './EntwurfsDock';
+import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
+import { useDockZustand } from '../../state/dock-zustand';
 import { importIfc } from './ifc-import';
 import { setContextMeshes, setSplatCloud, setSunDate, setTexturModus } from './Viewport3D';
 import { registerActions } from '../../shell/palette';
@@ -486,6 +488,20 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // Crop/Ausdünnen/Export laufen lokal, siehe SplatPanel.tsx.
   const splatPanelOffen = useUiZustand((s) => s.splatPanelOffen);
   const setSplatPanelOffen = useUiZustand((s) => s.setSplatPanelOffen);
+  // v0.7.8 Welle 1 (P3, Dock-Migration): `unternehmerplan` hat KEIN
+  // `…Offen`-Flag in `ui-zustand.ts` (dock-stationen.ts Kopfkommentar) — die
+  // Sichtbarkeit für den Dock-Solver ist derselbe Daten-Guard, den
+  // `UnternehmerplanPanel.tsx` intern schon prüft (dxf+abgleich ODER
+  // pdfHinweis), hier nur zusätzlich gespiegelt, damit `DockFlaeche` VORHER
+  // weiss, ob sie Platz reservieren muss (kein neuer Boolean-Store).
+  const uplanDxf = useUnternehmerplan((s) => s.dxf);
+  const uplanAbgleich = useUnternehmerplan((s) => s.abgleich);
+  const uplanPdfHinweis = useUnternehmerplan((s) => s.pdfHinweis);
+  const unternehmerplanSichtbar = !!((uplanDxf && uplanAbgleich) || uplanPdfHinweis);
+  // «Auf schlaues Layout zurücksetzen» (Auftrag): löscht NUR Spaltenbreiten/
+  // Panel-Overrides dieser Station+diesem Modus (dock-zustand.ts) — die
+  // Sichtbarkeit (ui-zustand.ts) bleibt unberührt.
+  const dockLayoutZuruecksetzen = useDockZustand((s) => s.layoutZuruecksetzen);
   const [splatCloud, setSplatCloudState] = useState<SplatCloud | null>(null);
   // T7: Projekt-Lebenszyklus — Phase/Bemassungsstil sind projektspezifisch und
   // wechseln über Jahre selten; sie stehen nicht mehr dauerhaft in der Werk-
@@ -507,14 +523,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   const [maxHoeheM, setMaxHoeheM] = useState(25);
   // K3 (Owner-Rundgang 0.6.2, S. 8): «Textblöcke dürfen niemals überlappen» —
   // die Geschossleiste (links oben) und das Volumenstudien-Panel sassen
-  // beide fest bei left:12, nur 40 px Top-Abstand auseinander; schon ab
-  // einem einzigen Geschoss ragt die Geschossleiste (Buttons + Stapeln-
-  // Knopf) tiefer als das und überdeckt das Studien-Panel. Fix weiter unten
-  // (nach `storeys`): das Studien-Panel misst die tatsächliche Geschoss-
-  // leisten-Höhe und rückt IMMER darunter — keine Kollision, unabhängig von
-  // der Geschosszahl.
-  const geschossleisteRef = useRef<HTMLDivElement>(null);
-  const [geschossleisteHoehe, setGeschossleisteHoehe] = useState(40);
+  // beide fest bei left:12, nur 40 px Top-Abstand auseinander. v0.7.8 Welle 1
+  // (P3, Dock-Migration): das Studien-Panel ist jetzt ein Dock-Panel — die
+  // Kollisionsfreiheit stellt `DockFlaeche`/`dock-kern.ts`s Solver zentral
+  // sicher (misst die Geschossleiste selbst per `data-testid`-Abfrage). Die
+  // frühere lokale `offsetHeight`-Messung (Ref + State + Effekt) entfällt
+  // ersatzlos, s. `shell/dock/DockFlaeche.tsx` Kopfkommentar.
 
   // D1: Deep-Links der Zentrale — KosmoDraw/KosmoSketch öffnen die Werkstatt
   // mit dem passenden Panel bzw. Werkzeug (einmaliger Merker)
@@ -633,11 +647,6 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     return areaReport(doc).storeys.find((s) => s.storeyId === activeStoreyId)?.ngf ?? 0;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc, revision, activeStoreyId]);
-  // K3: Geschossleisten-Höhe nachmessen, sobald sich die Geschosszahl ändert
-  // (neues Geschoss, Undo, Projektwechsel) — das Studien-Panel liest das ab.
-  useEffect(() => {
-    setGeschossleisteHoehe(geschossleisteRef.current?.offsetHeight ?? 40);
-  }, [storeys.length]);
   // Aktives Bemassungs-Preset aus den Settings ableiten (Anzeige im Select)
   const bemassungPreset = useMemo(() => {
     const b = doc.settings.bemassung;
@@ -1648,6 +1657,150 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         })()
       : [];
 
+  // v0.7.8 Welle 1 (P3, Dock-Migration): die 12 Design-Panels als
+  // `DockPanelEintrag[]` für `DockFlaeche` — `id` MUSS der `PanelId`-Schlüssel
+  // aus `ui-zustand.ts` sein (Ausnahme `unternehmerplan`, s.
+  // `dock-stationen.ts` Kopfkommentar), `schliessen` bleibt identisch mit dem
+  // `onClose`, das der Panel-Inhalt selbst schon bekommt (Doppel-Chrome-
+  // Kompromiss, s. `DockPanel.tsx`). `useMemo`, damit Tippen in einem
+  // Panel-Feld (React-State dieser Komponente, nicht der Dock-Store) keine
+  // neue Array-Referenz erzwingt, wo es nicht nötig ist — `DockFlaeche`
+  // selbst entkoppelt zusätzlich über einen reinen Sichtbarkeits-String
+  // (s. dortigen Kommentar), diese Memoisierung ist also eine zusätzliche,
+  // nicht die einzige Absicherung.
+  const designDockPanels: DockPanelEintrag[] = useMemo(
+    () => [
+      {
+        id: 'rasterOffen',
+        sichtbar: rasterOffen,
+        schliessen: () => setRasterOffen(false),
+        inhalt: <RasterPanel onClose={() => setRasterOffen(false)} />,
+      },
+      {
+        id: 'cwSetzenOffen',
+        sichtbar: cwSetzenOffen,
+        schliessen: () => setCwSetzenOffen(false),
+        inhalt: <CurtainWallPanel onClose={() => setCwSetzenOffen(false)} />,
+      },
+      {
+        id: 'splatPanelOffen',
+        sichtbar: splatPanelOffen,
+        schliessen: () => setSplatPanelOffen(false),
+        inhalt: (
+          <SplatPanel
+            cloud={splatCloud}
+            onCloud={(cloud) => {
+              setSplatCloudState(cloud);
+              setSplatCloud(cloud);
+            }}
+            onClose={() => setSplatPanelOffen(false)}
+          />
+        ),
+      },
+      {
+        id: 'maengelOffen',
+        sichtbar: maengelOffen,
+        schliessen: () => setMaengelOffen(false),
+        inhalt: <MaengelPanel onClose={() => setMaengelOffen(false)} />,
+      },
+      {
+        id: 'submissionOffen',
+        sichtbar: submissionOffen,
+        schliessen: () => setSubmissionOffen(false),
+        inhalt: <SubmissionsCheckPanel onClose={() => setSubmissionOffen(false)} />,
+      },
+      {
+        id: 'bauablaufOffen',
+        sichtbar: bauablaufOffen,
+        schliessen: () => setBauablaufOffen(false),
+        inhalt: <BauablaufPanel onClose={() => setBauablaufOffen(false)} />,
+      },
+      {
+        id: 'kvOffen',
+        sichtbar: kvOffen,
+        schliessen: () => setKvOffen(false),
+        inhalt: <KvPanel onClose={() => setKvOffen(false)} />,
+      },
+      {
+        id: 'listeOffen',
+        sichtbar: listeOffen,
+        schliessen: () => setListeOffen(false),
+        inhalt: (
+          <BerechnungslistePanel
+            wohnungstyp={wohnungstyp}
+            setWohnungstyp={setWohnungstyp}
+            onClose={() => setListeOffen(false)}
+          />
+        ),
+      },
+      {
+        id: 'variantenPanelOffen',
+        sichtbar: variantenPanelOffen,
+        schliessen: () => setVariantenPanelOffen(false),
+        inhalt: <VariantenPanel onClose={() => setVariantenPanelOffen(false)} />,
+      },
+      {
+        id: 'studieOffen',
+        sichtbar: studieOffen,
+        schliessen: () => setStudieOffen(false),
+        inhalt: (
+          <StudienPanel
+            zielGf={zielGf}
+            setZielGf={setZielGf}
+            maxHoeheM={maxHoeheM}
+            setMaxHoeheM={setMaxHoeheM}
+            onClose={() => setStudieOffen(false)}
+          />
+        ),
+      },
+      {
+        // Kein `schliessen` — Sichtbarkeit ist der Daten-Guard
+        // (`unternehmerplanSichtbar`), kein Boolean in `ui-zustand.ts`.
+        id: 'unternehmerplan',
+        sichtbar: unternehmerplanSichtbar,
+        inhalt: <UnternehmerplanPanel />,
+      },
+      {
+        id: 'drawOffen',
+        sichtbar: drawOffen,
+        schliessen: () => setDrawOffen(false),
+        inhalt: <DrawPanel />,
+      },
+    ],
+    [
+      rasterOffen,
+      cwSetzenOffen,
+      splatPanelOffen,
+      splatCloud,
+      maengelOffen,
+      submissionOffen,
+      bauablaufOffen,
+      kvOffen,
+      listeOffen,
+      wohnungstyp,
+      variantenPanelOffen,
+      studieOffen,
+      zielGf,
+      maxHoeheM,
+      unternehmerplanSichtbar,
+      drawOffen,
+      setRasterOffen,
+      setCwSetzenOffen,
+      setSplatPanelOffen,
+      setMaengelOffen,
+      setSubmissionOffen,
+      setBauablaufOffen,
+      setKvOffen,
+      setListeOffen,
+      setVariantenPanelOffen,
+      setStudieOffen,
+      setDrawOffen,
+      setWohnungstyp,
+      setZielGf,
+      setMaxHoeheM,
+    ],
+  );
+
   return (
     <div
       style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}
@@ -2299,6 +2452,23 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               ↪ Wiederholen
             </KButton>
           </span>
+          <Hairline vertical />
+          {/* v0.7.8 Welle 1 (P3, Dock-Migration): «Auf schlaues Layout
+              zurücksetzen» — löscht NUR Spaltenbreiten/Panel-Overrides der
+              Design-Station (dock-zustand.ts), lässt die Sichtbarkeit
+              (ui-zustand.ts) unangetastet. Ausserhalb des scrollenden
+              Bereichs, damit sie unabhängig vom Kontextzeilen-Inhalt
+              erreichbar bleibt (gleiches Muster wie «Rückgängig»/
+              «Wiederholen» oben). */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="dock-zuruecksetzen"
+            title="Alle Spaltenbreiten und Panel-Grössen der Design-Station auf die Vorgabe zurücksetzen"
+            onClick={() => dockLayoutZuruecksetzen('design')}
+          >
+            Layout zurücksetzen
+          </KButton>
         </div>
       </div>
 
@@ -2713,47 +2883,28 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             Unternehmerplan hier ablegen — DXF wird verglichen, PDF wird erkannt
           </div>
         )}
-        {drawOffen && <DrawPanel />}
-        {rasterOffen && <RasterPanel onClose={() => setRasterOffen(false)} />}
-        {cwSetzenOffen && <CurtainWallPanel onClose={() => setCwSetzenOffen(false)} />}
-        {variantenPanelOffen && <VariantenPanel onClose={() => setVariantenPanelOffen(false)} />}
-        {/* C4b (C-E4): Daten-Guard — die Karten-Liste erscheint automatisch,
-            sobald ein Unternehmerplan geladen ist, kein eigener Toggle nötig
-            (das Vorhandensein der Daten IST der Sichtbarkeits-Zustand). */}
-        <UnternehmerplanPanel />
-        {splatPanelOffen && (
-          <SplatPanel
-            cloud={splatCloud}
-            onCloud={(cloud) => {
-              setSplatCloudState(cloud);
-              setSplatCloud(cloud);
-            }}
-            onClose={() => setSplatPanelOffen(false)}
-          />
-        )}
-        {listeOffen && (
-          <BerechnungslistePanel
-            wohnungstyp={wohnungstyp}
-            setWohnungstyp={setWohnungstyp}
-            onClose={() => setListeOffen(false)}
-          />
-        )}
-        {kvOffen && <KvPanel onClose={() => setKvOffen(false)} />}
-        {bauablaufOffen && <BauablaufPanel onClose={() => setBauablaufOffen(false)} />}
-        {maengelOffen && <MaengelPanel onClose={() => setMaengelOffen(false)} />}
-        {submissionOffen && <SubmissionsCheckPanel onClose={() => setSubmissionOffen(false)} />}
-        {studieOffen && (
-          <StudienPanel
-            zielGf={zielGf}
-            setZielGf={setZielGf}
-            maxHoeheM={maxHoeheM}
-            setMaxHoeheM={setMaxHoeheM}
-            // K3: rückt IMMER unter die Geschossleiste, egal wie viele
-            // Geschosse (keine Bauteil-/Panel-Überlappung, s. Kommentar oben).
-            topOffset={geschossleisteHoehe + 20}
-            onClose={() => setStudieOffen(false)}
-          />
-        )}
+        {/* v0.7.8 Welle 1 (P3, «Intelligente Werkzeugtabs», Herzstück): die
+            12 Design-Panels sassen hier bisher als handgetunte
+            `position:'absolute'`-Overlays (feste `left/top:52` bzw.
+            `right:12/top:52` — kollidierten bei genug gleichzeitig offenen
+            Panels sichtbar). Jetzt EIN kollisionsfreier Dock
+            (`shell/dock/DockFlaeche.tsx`, Solver in `state/dock-kern.ts`):
+            Sichtbarkeit bleibt exakt wie vorher in `ui-zustand.ts` (jedes
+            Panel bekommt weiterhin GENAU denselben `onClose`, den es schon
+            hatte — nur zusätzlich an `DockFlaeche` gespiegelt, damit auch der
+            Dock-Kopf schliessen kann, s. `DockPanel.tsx`-Kommentar zum
+            Doppel-Chrome-Kompromiss). Reihenfolge hier ist beliebig — der
+            Solver sortiert nach `wichtigkeit` aus `dock-stationen.ts`, nicht
+            nach Array-Reihenfolge. */}
+        <DockFlaeche station="design" panels={designDockPanels} />
+        {/* C4b (C-E4): Daten-Guard bleibt — die Karten-Liste im
+            Unternehmerplan-Panel erscheint automatisch, sobald ein
+            Unternehmerplan geladen ist (kein eigener Toggle). Der Dock oben
+            reserviert dafür Platz via `unternehmerplanSichtbar` (derselbe
+            Guard, gespiegelt); das Panel selbst entscheidet weiterhin intern
+            (`UnternehmerplanPanel.tsx`), ob es Karten oder den PDF-Hinweis
+            zeigt, oder — theoretisch — `null` (Dock hat dann kein Rechteck
+            reserviert, konsistent). */}
         {viewMode === 'quad' ? (
           <div
             style={{
@@ -2930,7 +3081,6 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             hier ist es keine Werkplan-Karte). Dockt jetzt bündig an die
             Viewport-Kante (0/0 statt 12/12), testids/Texte unverändert. */}
         <div
-          ref={geschossleisteRef}
           data-testid="geschossleiste"
           className="k-karte"
           style={{
@@ -3359,16 +3509,12 @@ function StudienPanel({
   setZielGf,
   maxHoeheM,
   setMaxHoeheM,
-  topOffset,
   onClose,
 }: {
   zielGf: number | null;
   setZielGf: (v: number) => void;
   maxHoeheM: number;
   setMaxHoeheM: (v: number) => void;
-  /** K3: Top-Position in px — misst sich an der tatsächlichen Geschoss-
-   * leisten-Höhe, damit die beiden Panels nie überlappen (Owner S. 8). */
-  topOffset: number;
   onClose: () => void;
 }) {
   const revision = useProject((s) => s.revision);
@@ -3509,11 +3655,6 @@ function StudienPanel({
       data-testid="studien-panel"
       className="k-dialog"
       style={{
-        position: 'absolute',
-        left: 12,
-        top: topOffset,
-        width: 268,
-        maxHeight: `calc(100% - ${topOffset + 12}px)`,
         zIndex: 4,
         background: 'var(--k-surface)',
         border: '1px solid var(--k-line)',

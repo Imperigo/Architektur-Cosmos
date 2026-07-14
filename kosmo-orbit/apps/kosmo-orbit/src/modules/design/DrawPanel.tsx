@@ -116,12 +116,8 @@ export function DrawPanel() {
     <div
       data-testid="draw-panel"
       style={{
-        position: 'absolute',
-        right: 12,
-        bottom: 12,
         zIndex: 20,
-        width: 340,
-        maxHeight: '52%',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         background: 'var(--k-raised)',

@@ -58,12 +58,7 @@ export function UnternehmerplanPanel() {
         data-testid="unternehmerplan-panel"
         className="k-dialog"
         style={{
-          position: 'absolute',
-          right: 12,
-          top: 52,
           zIndex: 20,
-          width: 'min(420px, calc(100vw - 122px))',
-          maxHeight: 'calc(100% - 90px)',
           overflow: 'auto',
           background: 'var(--k-raised)',
           border: '1px solid var(--k-technik)',

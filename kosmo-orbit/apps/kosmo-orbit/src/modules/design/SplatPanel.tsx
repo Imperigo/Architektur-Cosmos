@@ -112,12 +112,7 @@ export function SplatPanel({
       data-testid="splat-panel"
       className="k-dialog"
       style={{
-        position: 'absolute',
-        left: 90,
-        top: 52,
         zIndex: 20,
-        width: 'min(640px, calc(100vw - 122px))',
-        maxHeight: 'calc(100% - 90px)',
         overflowY: 'auto',
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',

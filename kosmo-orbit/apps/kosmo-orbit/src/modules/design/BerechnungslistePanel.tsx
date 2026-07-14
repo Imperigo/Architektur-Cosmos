@@ -113,12 +113,7 @@ export function BerechnungslistePanel({
     <div
       data-testid="berechnungsliste-panel"
       style={{
-        position: 'absolute',
-        left: 90,
-        top: 52,
         zIndex: 20,
-        width: 430,
-        maxHeight: 'calc(100% - 90px)',
         overflow: 'auto',
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
